@@ -1,0 +1,23 @@
+{
+  "name": "tandem",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tandem-ui/tandem.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tandem-ui/tandem/issues"
+  },
+  "homepage": "https://github.com/tandem-ui/tandem#readme"
+}

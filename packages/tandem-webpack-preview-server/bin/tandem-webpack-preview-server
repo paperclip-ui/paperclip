@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+const path = require("path");
+const DevServer = require("..");
+const cwd = process.cwd();
+const argv = require('yargs').argv;
+
+const resolvePath = (relativePath) =>  relativePath.charAt(0) !== "/" ? path.join(cwd, relativePath) : relativePath
+const configPath = resolvePath(argv.config || "webpack.config.js");
+
+const server = new DevServer({
+  port: Number(process.env.PORT || 60431),
+  includeScripts: (Array.isArray(argv.includeScript) ? argv.includeScript : argv.includeScript ? [argv.includeScript] : []).map(resolvePath),
+  config: require(configPath)
+});
+
+server.start();
+

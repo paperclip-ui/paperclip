@@ -1,0 +1,240 @@
+{
+  "id": "483373f936",
+  "version": "0.0.6",
+  "metadata": {},
+  "name": "module",
+  "children": [
+    {
+      "label": "Editor",
+      "is": "div",
+      "style": {
+        "box-sizing": "border-box",
+        "display": "flex",
+        "flex-direction": "column",
+        "width": "100%",
+        "height": "100%",
+        "border-bottom": "1px solid var(--51588fd610365)"
+      },
+      "attributes": {},
+      "id": "483373f987277",
+      "name": "component",
+      "children": [
+        {
+          "id": "483373f987275",
+          "variant": {},
+          "is": "ab406a6b770940",
+          "name": "component-instance",
+          "attributes": {},
+          "style": {
+            "display": "flex",
+            "position": "relative",
+            "flex-grow": "0",
+            "height": "36px",
+            "flex-shrink": "0"
+          },
+          "children": [
+            {
+              "id": "483373f9139767",
+              "propertyName": "style",
+              "targetIdPath": [
+                "fde5849e438439",
+                "fde5849e449846"
+              ],
+              "value": {
+                "align-items": "cente\ncolor"
+              },
+              "name": "override",
+              "children": []
+            },
+            {
+              "id": "6cbd9c7d17642",
+              "propertyName": "style",
+              "targetIdPath": [
+                "fde5849e307480"
+              ],
+              "value": {
+                "padding": "4px 16px"
+              },
+              "name": "override",
+              "children": []
+            },
+            {
+              "id": "eb20349c161920",
+              "propertyName": "style",
+              "targetIdPath": [],
+              "value": {},
+              "name": "override",
+              "children": []
+            },
+            {
+              "id": "70e2870d251",
+              "propertyName": "variant",
+              "targetIdPath": [
+                "fde5849e438439",
+                "fde5849e449846"
+              ],
+              "value": {
+                "f4e04d3116": true
+              },
+              "name": "override",
+              "children": []
+            },
+            {
+              "id": "9b6f5cb5159",
+              "propertyName": "variant",
+              "targetIdPath": [
+                "fde5849e438439",
+                "fde5849e455558"
+              ],
+              "value": {
+                "f4e04d3116": false
+              },
+              "name": "override",
+              "children": []
+            }
+          ],
+          "metadata": {
+            "bounds": {
+              "left": 478,
+              "top": 331,
+              "right": 1939,
+              "bottom": 373
+            }
+          },
+          "label": "toolbar"
+        },
+        {
+          "id": "483373f987276",
+          "label": "Content",
+          "is": "div",
+          "name": "element",
+          "attributes": {},
+          "style": {
+            "box-sizing": "border-box",
+            "background": "var(--1934368810788)",
+            "width": "100%",
+            "height": "100%"
+          },
+          "children": [],
+          "metadata": {
+            "bounds": {
+              "left": 739.8080233741173,
+              "top": 844.8692816221826,
+              "right": 839.8080233741173,
+              "bottom": 944.8692816221826
+            }
+          }
+        },
+        {
+          "id": "7b7795226011",
+          "is": "174f96bb76034",
+          "label": "Editor Footer",
+          "name": "component-instance",
+          "attributes": {},
+          "style": {
+            "display": "flex",
+            "flex-shrink": "0"
+          },
+          "children": [],
+          "metadata": {
+            "bounds": {
+              "left": 426,
+              "top": 1697,
+              "right": 1376,
+              "bottom": 1806
+            }
+          },
+          "variant": {}
+        },
+        {
+          "id": "7b7795227540",
+          "name": "variant",
+          "label": "active",
+          "isDefault": true,
+          "children": [],
+          "metadata": {}
+        },
+        {
+          "id": "7b7795227541",
+          "variantId": "7b7795227540",
+          "propertyName": "variant",
+          "targetIdPath": [
+            "483373f987275"
+          ],
+          "value": {
+            "e0030d447938": true
+          },
+          "name": "override",
+          "children": []
+        },
+        {
+          "id": "7b7795227542",
+          "variantId": "7b7795227540",
+          "propertyName": "style",
+          "targetIdPath": [
+            "7b7795226011"
+          ],
+          "value": {
+            "display": "flex"
+          },
+          "name": "override",
+          "children": []
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 352,
+          "top": 963,
+          "right": 1558.7505661263158,
+          "bottom": 1732.8733593566594
+        }
+      },
+      "controllers": [
+        "./editor-controller.tsx"
+      ],
+      "variant": {}
+    },
+    {
+      "id": "483373f993093",
+      "variant": {},
+      "is": "483373f987277",
+      "name": "component-instance",
+      "attributes": {},
+      "style": {},
+      "children": [
+        {
+          "id": "483373f9367294",
+          "propertyName": "style",
+          "targetIdPath": [
+            "483373f987276"
+          ],
+          "value": {},
+          "name": "override",
+          "children": []
+        },
+        {
+          "id": "f4e04d3118",
+          "variantId": "f4e04d3116",
+          "propertyName": "style",
+          "targetIdPath": [
+            "483373f987275",
+            "fde5849e438439",
+            "fde5849e449846"
+          ],
+          "value": {},
+          "name": "override",
+          "children": []
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 1869,
+          "top": 971,
+          "right": 3237.426483792069,
+          "bottom": 1740.8733593566594
+        }
+      },
+      "label": "Preview"
+    }
+  ]
+}

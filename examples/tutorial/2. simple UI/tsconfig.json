@@ -1,0 +1,16 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "target": "es5",
+    "sourceMap": true,
+    "lib": ["es2015.promise", "dom", "es5", "esnext"],
+    "module": "commonjs",
+    "outDir": "lib",
+    "jsx": "react",
+    "baseUrl": "src",
+    "experimentalDecorators": true
+  },
+  "exclude": ["node_modules", "*-test", "lib", "index.d.ts"],
+  "filesGlob": ["./src/**/*.ts"],
+  "rootDirs": ["node_modules"]
+}

@@ -1,0 +1,482 @@
+{
+  "id": "605914a72",
+  "name": "module",
+  "version": "0.0.5",
+  "children": [
+    {
+      "label": "Application",
+      "is": "div",
+      "style": {},
+      "attributes": {},
+      "id": "605914a71",
+      "name": "component",
+      "children": [
+        {
+          "id": "ec5cc9db21",
+          "label": "Element",
+          "is": "div",
+          "name": "element",
+          "attributes": {},
+          "style": {
+            "box-sizing": "border-box",
+            "display": "flex",
+            "width": "700px",
+            "height": "600px",
+            "margin-left": "auto",
+            "margin-right": "auto",
+            "margin-top": "100px",
+            "flex-direction": "column"
+          },
+          "children": [
+            {
+              "id": "ec5cc9db43",
+              "name": "text",
+              "label": "Text",
+              "value": "Todos",
+              "style": {
+                "display": "inline-block",
+                "width": "100%",
+                "margin-bottom": "12px",
+                "text-align": "center",
+                "font-size": "32px"
+              },
+              "children": [],
+              "metadata": {},
+              "styleMixins": {
+                "864556972835": {
+                  "priority": 0
+                }
+              }
+            },
+            {
+              "id": "ec5cc9db242",
+              "label": "header",
+              "is": "div",
+              "name": "element",
+              "attributes": {},
+              "style": {
+                "box-sizing": "border-box",
+                "display": "flex"
+              },
+              "children": [
+                {
+                  "id": "ec5cc9db96",
+                  "label": "input",
+                  "is": "input",
+                  "name": "element",
+                  "attributes": {
+                    "placeholder": "New todo"
+                  },
+                  "style": {
+                    "box-sizing": "border-box",
+                    "display": "block",
+                    "width": "100%",
+                    "border": "1px solid rgba(189, 189, 189, 1)",
+                    "border-bottom-left-radius": "2px",
+                    "border-top-left-radius": "2px",
+                    "border-top-right-radius": "2px",
+                    "border-bottom-right-radius": "2px",
+                    "font-size": "14px",
+                    "padding-left": "12px",
+                    "padding-top": "6px",
+                    "padding-right": "12px",
+                    "padding-bottom": "6px",
+                    "margin-right": "6px"
+                  },
+                  "children": [],
+                  "metadata": {}
+                },
+                {
+                  "id": "8645569773",
+                  "is": "8645569772",
+                  "label": "button",
+                  "name": "component-instance",
+                  "attributes": {},
+                  "style": {},
+                  "children": [],
+                  "metadata": {},
+                  "variant": {}
+                }
+              ],
+              "metadata": {}
+            },
+            {
+              "id": "ec5cc9db738",
+              "label": "items",
+              "is": "div",
+              "name": "element",
+              "attributes": {},
+              "style": {
+                "box-sizing": "border-box",
+                "display": "block",
+                "margin-top": "12px",
+                "margin-bottom": "12px"
+              },
+              "children": [
+                {
+                  "id": "8645569739",
+                  "is": "8645569738",
+                  "label": "list item",
+                  "name": "component-instance",
+                  "attributes": {},
+                  "style": {},
+                  "children": [],
+                  "metadata": {},
+                  "variant": {}
+                },
+                {
+                  "id": "ec5cc9db1392",
+                  "label": "list item",
+                  "is": "8645569738",
+                  "name": "component-instance",
+                  "attributes": {},
+                  "style": {
+                    "box-sizing": "border-box",
+                    "display": "block",
+                    "border-bottom": "1px solid rgba(189, 189, 189, 1)",
+                    "padding-left": "12px",
+                    "padding-top": "6px",
+                    "padding-right": "12px",
+                    "padding-bottom": "6px"
+                  },
+                  "children": [
+                    {
+                      "id": "864556972169",
+                      "variantId": null,
+                      "propertyName": "text",
+                      "targetIdPath": [
+                        "8645569737"
+                      ],
+                      "value": "Wash hair",
+                      "name": "override",
+                      "children": []
+                    }
+                  ],
+                  "metadata": {},
+                  "variant": {}
+                },
+                {
+                  "id": "ec5cc9db1375",
+                  "label": "list item",
+                  "is": "8645569738",
+                  "name": "component-instance",
+                  "attributes": {},
+                  "style": {
+                    "box-sizing": "border-box",
+                    "display": "block",
+                    "border-bottom": "1px solid rgba(189, 189, 189, 1)",
+                    "padding-left": "12px",
+                    "padding-top": "6px",
+                    "padding-right": "12px",
+                    "padding-bottom": "6px"
+                  },
+                  "children": [
+                    {
+                      "id": "864556971778",
+                      "variantId": null,
+                      "propertyName": "text",
+                      "targetIdPath": [
+                        "8645569737"
+                      ],
+                      "value": "Clean car",
+                      "name": "override",
+                      "children": []
+                    }
+                  ],
+                  "metadata": {},
+                  "variant": {}
+                },
+                {
+                  "id": "ec5cc9db1360",
+                  "label": "list item",
+                  "is": "8645569738",
+                  "name": "component-instance",
+                  "attributes": {},
+                  "style": {
+                    "box-sizing": "border-box",
+                    "display": "block",
+                    "border-bottom": "1px solid rgba(189, 189, 189, 1)",
+                    "padding-left": "12px",
+                    "padding-top": "6px",
+                    "padding-right": "12px",
+                    "padding-bottom": "6px"
+                  },
+                  "children": [
+                    {
+                      "id": "864556971231",
+                      "variantId": null,
+                      "propertyName": "text",
+                      "targetIdPath": [
+                        "8645569737"
+                      ],
+                      "value": "Take dogs out",
+                      "name": "override",
+                      "children": []
+                    }
+                  ],
+                  "metadata": {},
+                  "variant": {}
+                },
+                {
+                  "id": "ec5cc9db811",
+                  "label": "list item",
+                  "is": "8645569738",
+                  "name": "component-instance",
+                  "attributes": {},
+                  "style": {
+                    "box-sizing": "border-box",
+                    "display": "block",
+                    "padding-left": "12px",
+                    "padding-top": "6px",
+                    "padding-right": "12px",
+                    "padding-bottom": "6px"
+                  },
+                  "children": [
+                    {
+                      "id": "86455697879",
+                      "variantId": null,
+                      "propertyName": "text",
+                      "targetIdPath": [
+                        "8645569737"
+                      ],
+                      "value": "Eat food",
+                      "name": "override",
+                      "children": []
+                    }
+                  ],
+                  "metadata": {},
+                  "variant": {
+                    "864556972716": true
+                  }
+                }
+              ],
+              "metadata": {}
+            },
+            {
+              "id": "ec5cc9db2757",
+              "label": "footer",
+              "is": "div",
+              "name": "element",
+              "attributes": {},
+              "style": {
+                "box-sizing": "border-box",
+                "display": "block"
+              },
+              "children": [
+                {
+                  "id": "ec5cc9db2935",
+                  "label": "button",
+                  "is": "8645569772",
+                  "name": "component-instance",
+                  "attributes": {},
+                  "style": {
+                    "box-sizing": "border-box",
+                    "display": "inline-block",
+                    "background": "rgba(231, 230, 230, 1)",
+                    "border-bottom-left-radius": "2px",
+                    "border-top-left-radius": "2px",
+                    "border-top-right-radius": "2px",
+                    "border-bottom-right-radius": "2px",
+                    "padding-left": "12px",
+                    "padding-top": "6px",
+                    "padding-right": "12px",
+                    "padding-bottom": "6px",
+                    "float": "right"
+                  },
+                  "children": [
+                    {
+                      "id": "86455697293",
+                      "variantId": null,
+                      "propertyName": "text",
+                      "targetIdPath": [
+                        "8645569771"
+                      ],
+                      "value": "clear completed",
+                      "name": "override",
+                      "children": []
+                    }
+                  ],
+                  "metadata": {},
+                  "variant": {}
+                }
+              ],
+              "metadata": {
+                "bounds": {
+                  "left": 277.41981558562503,
+                  "top": -81.97514783735204,
+                  "right": 377.41981558562503,
+                  "bottom": 18.02485216264796
+                }
+              }
+            }
+          ],
+          "metadata": {}
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 4,
+          "right": 1504,
+          "top": 0,
+          "bottom": 1000
+        }
+      },
+      "variant": {}
+    },
+    {
+      "label": "list item",
+      "is": "div",
+      "style": {
+        "box-sizing": "border-box",
+        "display": "block",
+        "border-bottom": "1px solid rgba(189, 189, 189, 1)",
+        "padding-left": "12px",
+        "padding-top": "6px",
+        "padding-right": "12px",
+        "padding-bottom": "6px"
+      },
+      "attributes": {},
+      "id": "8645569738",
+      "name": "component",
+      "children": [
+        {
+          "id": "8645569736",
+          "label": "Element",
+          "is": "input",
+          "name": "element",
+          "attributes": {
+            "type": "checkbox"
+          },
+          "style": {
+            "box-sizing": "border-box",
+            "display": "inline-block",
+            "margin-right": "6px"
+          },
+          "children": [],
+          "metadata": {}
+        },
+        {
+          "id": "8645569737",
+          "name": "text",
+          "label": "Text",
+          "value": "Pick up groceries",
+          "style": {},
+          "children": [],
+          "metadata": {},
+          "styleMixins": {
+            "864556972835": {
+              "priority": 0
+            }
+          }
+        },
+        {
+          "id": "864556972716",
+          "name": "variant",
+          "label": "last",
+          "isDefault": false,
+          "children": [],
+          "metadata": {}
+        },
+        {
+          "id": "864556972756",
+          "variantId": "864556972716",
+          "propertyName": "style",
+          "targetIdPath": [],
+          "value": {
+            "border-bottom": "1px solid rgba(189, 189, 189, 0)"
+          },
+          "name": "override",
+          "children": []
+        },
+        {
+          "id": "864556973356",
+          "variantId": "864556972716",
+          "propertyName": "style",
+          "targetIdPath": [
+            "8645569737"
+          ],
+          "value": {},
+          "name": "override",
+          "children": []
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 1514,
+          "top": 0,
+          "right": 2214,
+          "bottom": 35
+        }
+      },
+      "variant": {}
+    },
+    {
+      "label": "button",
+      "is": "div",
+      "style": {
+        "box-sizing": "border-box",
+        "display": "block",
+        "background": "rgba(231, 230, 230, 1)",
+        "border-bottom-left-radius": "2px",
+        "border-top-left-radius": "2px",
+        "border-top-right-radius": "2px",
+        "border-bottom-right-radius": "2px",
+        "padding-left": "12px",
+        "padding-top": "6px",
+        "padding-right": "12px",
+        "padding-bottom": "6px"
+      },
+      "attributes": {},
+      "id": "8645569772",
+      "name": "component",
+      "children": [
+        {
+          "id": "8645569771",
+          "name": "text",
+          "label": "Text",
+          "value": "add item",
+          "style": {
+            "white-space": "nowrap"
+          },
+          "children": [],
+          "metadata": {},
+          "styleMixins": {
+            "864556972835": {
+              "priority": 0
+            }
+          }
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 2224,
+          "top": 0,
+          "right": 2311.984375,
+          "bottom": 34
+        }
+      },
+      "variant": {}
+    },
+    {
+      "id": "864556972835",
+      "name": "style-mixin",
+      "label": "Default text style",
+      "style": {
+        "font-family": "Avenir",
+        "color": "rgba(96, 96, 96, 1)"
+      },
+      "value": "Todos",
+      "targetType": "text",
+      "children": [],
+      "metadata": {
+        "bounds": {
+          "left": 2321.984375,
+          "top": 0,
+          "right": 3021.984375,
+          "bottom": 44
+        }
+      }
+    }
+  ],
+  "metadata": {}
+}

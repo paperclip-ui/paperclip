@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+function realpath() { /usr/bin/python -c "import os,sys; print(os.path.realpath(sys.argv[1]))" "$0"; }
+CONTENTS="$(dirname "$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")")"
+ELECTRON="$CONTENTS/MacOS/Tandem"
+CLI="$CONTENTS/Resources/app/lib/index.js"
+echo "$CLI"
+"$ELECTRON" "$CLI" "$@"
+exit $?

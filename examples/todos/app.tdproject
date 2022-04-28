@@ -1,0 +1,11 @@
+{
+  "exclude": [
+    "node_modules"
+  ],
+  "mainFilePath": "./src/components/main/view.pc",
+  "rootDir": ".",
+  "scripts": {
+    "build": "npm install && npm run build:watch",
+    "open": "open http://localhost:8080/"
+  }
+}

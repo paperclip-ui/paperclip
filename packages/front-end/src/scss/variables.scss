@@ -1,0 +1,87 @@
+$default-font-family: Helvetica;
+
+$color-blue-0: #2C333F;
+$color-blue-1: #3D4859;
+$color-blue-2: #465266;
+$color-blue-3: #586375;
+$color-blue-4: #758196;
+$color-blue-7: #a4b7d7;
+$color-blue-9: #cad6eb;
+$color-blue-10: #E9EEF6;
+$color-blue-11: #f1f4f7;
+
+
+$color-purple-6: #B9B0FF;
+$color-purple-7: #e0dcff;
+
+$color-sky-blue-3: #5f87cd;
+$color-sky-blue-4: #6f98e0;
+$color-aqua-1: #00B5FF;
+
+$color-grey-0: #222;
+$color-grey-1: #333;
+$color-grey-2: #555;
+$color-grey-5: #777;
+$color-grey-7: #999;
+$color-grey-8: #CCC;
+$color-grey-10: #F0F0F0;
+$color-grey-11: #F9F9F9;
+
+$color-orange-7: #F5AB35;
+$color-red-1: #990000;
+
+/*$color-green-*/
+$color-tan-10:#FEF4B7;
+
+$color-green-10: #A8FE9D;
+
+
+/* https://color.adobe.com/create/color-wheel/?base=2&rule=Monochromatic&selected=3&name=My%20Color%20Theme&mode=rgb&rgbvalues=0.4960784313725491,0.30663115639956773,0.43162729658792615,0.9967320261437909,0.3170706602851114,0.7655070253877436,0.996078431372549,0.615686274509804,0.8666666666666667,0.4960784313725491,0.157807626987803,0.38099661132412954,0.7960784313725491,0.4920642272657095,0.6926509186351699&swatchOrder=0,1,2,3,4*/
+$color-pink-2: #7E2861;
+$color-pink-10: #FE9DDD;
+
+$color-white-offset-1: rgba(255, 255, 255, 0.1);
+$color-white-offset-3: rgba(255, 255, 255, 0.3);
+$color-white-offset-5: rgba(255, 255, 255, 0.5);
+$color-white-offset-8: rgba(255, 255, 255, 0.8);
+
+$color-black-offset-1: rgba(0, 0, 0, 0.1);
+$color-black-offset-2: rgba(0, 0, 0, 0.2);
+$color-black-offset-8: rgba(0, 0, 0, 0.8);
+
+$padding-base: 2px;
+$padding-000: 1px;
+$padding-00: 2px;
+$padding-0: 4px;
+$padding-1: 8px;
+$padding-2: 16px;
+$padding-3: 32px;
+$padding-4: 46px;
+
+$letter-spacing-1: 0.04em;
+
+$border-radius-1: 2px;
+$border-radius-2: 4px;
+$border-radius-3: 8px;
+
+$font-size-sm: 10px;
+$font-size-rg: 12px;
+$font-size-md: 14px;
+
+/* deprecated*/
+$font-size-0: 10px;
+$font-size-1: 11px;
+$font-size-2: 12px;
+$font-size-3: 14px;
+$font-size-4: 16px;
+$font-size-5: 18px;
+
+$font-family-0: Roboto, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Avenir, Cantarell, Open Sans, Helvetica Neue, sans-serif;
+$font-family-1: Avenir;
+
+$font-color-white: $color-white-offset-8;
+
+
+.color-pink-10 {
+  color: #F549B8;
+}

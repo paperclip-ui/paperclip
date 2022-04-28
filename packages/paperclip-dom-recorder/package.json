@@ -1,0 +1,27 @@
+{
+  "name": "paperclip-dom-recorder",
+  "version": "10.1.33",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "build:watch": "webpack --watch",
+    "clean": "rm -rf node_modules"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "paperclip": "^10.1.33",
+    "tandem-common": "^10.1.33"
+  },
+  "devDependencies": {
+    "@types/node": "^10.11.4",
+    "null-loader": "^0.1.1",
+    "ts-loader": "^5.2.1",
+    "typescript": "^3.1.1",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2"
+  },
+  "gitHead": "62ff73f435d5ddc97b8ff23b2356ed36f69c1486"
+}

@@ -1,0 +1,48 @@
+{
+  "name": "my-app-name",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "paperclip-react-compiler src/**/*.pc --definition --write; webpack",
+    "build:watch": "concurrently 'paperclip-react-compiler \"src/**/*.pc\" --definition --write --watch' 'webpack-dev-server --port=8080 --open'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tandemcode/tandem-react-starter-kit.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tandemcode/tandem-react-starter-kit/issues"
+  },
+  "homepage": "https://github.com/tandemcode/tandem-react-starter-kit#readme",
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
+  "devDependencies": {
+    "@types/classnames": "^2.2.6",
+    "@types/react": "^16.7.3",
+    "@types/react-dom": "^16.0.9",
+    "concurrently": "^4.0.1",
+    "html-webpack-plugin": "^3.2.0",
+    "husky": "^1.2.1",
+    "paperclip-react-compiler": "^10.0.36",
+    "paperclip-react-loader": "^10.0.10",
+    "prettier": "1.15.3",
+    "pretty-quick": "^1.8.0",
+    "ts-loader": "^4.4.2",
+    "typescript": "^2.9.2",
+    "webpack": "^4.15.1",
+    "webpack-cli": "^3.0.8",
+    "webpack-dev-server": "^3.1.10"
+  },
+  "dependencies": {
+    "classnames": "^2.2.6",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1"
+  }
+}

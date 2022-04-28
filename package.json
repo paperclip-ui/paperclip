@@ -1,23 +1,53 @@
 {
   "name": "tandem",
+  "version": "10.0.0",
   "private": true,
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "workspaces": [
-    "packages/*"
-  ],
+  "description": "Aerial is a virtual browser for visually creating web applications.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tandem-ui/tandem.git"
+    "url": "git+https://github.com/crcn/tandem-preview.git"
   },
+  "main": "index.js",
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/tandem-ui/tandem/issues"
+  "scripts": {
+    "test": "lerna exec --parallel -- npm test",
+    "lint": "eslint packages/*/src/**/*.ts",
+    "precommit": "lint-staged",
+    "design": "cd packages/front-end && \"../desktop/node_modules/.bin/electron\" \"../desktop/lib/index.js\"",
+    "design:front-end": "cd packages/front-end && \"../desktop/node_modules/.bin/electron\" \"../desktop/lib/index.js\" app.tdproject",
+    "clean": "lerna exec --parallel -- npm run clean",
+    "bootstrap": "lerna bootstrap",
+    "build": "lerna exec --parallel -- npm run build",
+    "build:watch": "lerna exec --parallel -- npm run build:watch",
+    "build:dist": "NODE_ENV=production npm run build && cd packages/desktop && npm run build:dist",
+    "build:dist:win": "npm run build && cd packages/desktop && npm run build:dist:win",
+    "postinstall": "opencollective-postinstall"
   },
-  "homepage": "https://github.com/tandem-ui/tandem#readme"
+  "lint-staged": {
+    "*.{ts,tsx,json,css,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "^1.3.0",
+    "eslint": "^5.13.0",
+    "husky": "^1.0.1",
+    "lerna": "^2.11.0",
+    "lint-staged": "^7.2.0",
+    "prettier": "^1.14.2",
+    "typescript": "^3.3.1"
+  },
+  "dependencies": {
+    "opencollective-postinstall": "^2.0.2",
+    "terminate": "^2.1.2",
+    "opencollective": "^1.0.3",
+    "@typescript-eslint/eslint-plugin": "^1.3.0",
+    "terminate": "^2.1.2"
+  },
+  "collective": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/tandem"
+  }
 }

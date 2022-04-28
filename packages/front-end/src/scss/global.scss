@@ -1,0 +1,56 @@
+:root {
+  --font-size-sm: 11px;
+  --font-size-rg: 12px;
+  --font-color-1: rgba(0, 0, 0, 0.5);
+  --active-color-1: rgb(58, 150, 247);
+  --font-family: Roboto, sans-serif;
+  --background-1: rgb(228, 228, 228);
+  --background-2: rgb(238, 238, 238);
+  --background-3: rgb(247, 247, 247);
+  --boundary-color-1: rgba(0, 0, 0, 0.2);
+}
+
+html, body {
+  font-family: var(--font-family);
+  padding: 0px;
+  margin: 0px;
+  font-size: var(--font-size-rg);
+  color: var(--font-color-1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+input::placeholder {
+  color: rgba(0,0,0,0.02);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background:rgba(242, 242, 242, 1);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+::-webkit-scrollbar-corner {
+  background-color: rgba(242, 242, 242, 1);
+}
+
+/* trick to only apply in webkit */
+@media screen and (-webkit-min-device-pixel-ratio:0) { 
+
+}

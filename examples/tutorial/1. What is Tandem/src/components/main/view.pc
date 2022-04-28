@@ -1,0 +1,39 @@
+{
+  "id": "a9bb1eee4",
+  "name": "module",
+  "version": "0.0.6",
+  "children": [
+    {
+      "label": "Application",
+      "is": "div",
+      "style": {},
+      "attributes": {},
+      "id": "a9bb1eee3",
+      "name": "component",
+      "children": [
+        {
+          "id": "a9bb1eee2",
+          "name": "text",
+          "label": "App content",
+          "value": "App content",
+          "style": {},
+          "children": [],
+          "metadata": {}
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": -11,
+          "right": 589,
+          "top": -133,
+          "bottom": 267
+        }
+      },
+      "variant": {},
+      "controllers": [
+        "./controller.tsx"
+      ]
+    }
+  ],
+  "metadata": {}
+}

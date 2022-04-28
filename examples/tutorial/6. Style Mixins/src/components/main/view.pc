@@ -1,0 +1,346 @@
+{
+  "id": "df32c2544",
+  "name": "module",
+  "version": "0.0.6",
+  "children": [
+    {
+      "label": "Application",
+      "is": "div",
+      "style": {},
+      "attributes": {},
+      "id": "df32c2543",
+      "name": "component",
+      "children": [
+        {
+          "id": "df32c254226",
+          "label": "Center",
+          "is": "div",
+          "name": "element",
+          "attributes": {},
+          "style": {
+            "box-sizing": "border-box",
+            "display": "block",
+            "max-width": "600px",
+            "margin-left": "auto",
+            "margin-right": "auto",
+            "margin-bottom": "auto",
+            "margin-top": "10%"
+          },
+          "children": [
+            {
+              "id": "df32c254228",
+              "name": "text",
+              "label": "titley",
+              "value": "Todos",
+              "style": {
+                "display": "block",
+                "font-size": "32px",
+                "font-family": "Helvetica",
+                "color": "var(--dd856bec89)"
+              },
+              "children": [],
+              "metadata": {}
+            },
+            {
+              "id": "df32c254230",
+              "label": "controls",
+              "is": "div",
+              "name": "element",
+              "attributes": {},
+              "style": {
+                "box-sizing": "border-box",
+                "display": "inline-flex"
+              },
+              "children": [
+                {
+                  "id": "df32c254232",
+                  "label": "add new item input",
+                  "is": "input",
+                  "name": "element",
+                  "attributes": {},
+                  "style": {
+                    "box-sizing": "border-box",
+                    "display": "block",
+                    "border-bottom-right-radius": "0px",
+                    "border-top-right-radius": "0px"
+                  },
+                  "children": [],
+                  "metadata": {},
+                  "styleMixins": {
+                    "34c930ae99": {
+                      "priority": 0
+                    }
+                  }
+                },
+                {
+                  "id": "df32c254234",
+                  "label": "add todo button",
+                  "is": "div",
+                  "name": "element",
+                  "attributes": {},
+                  "style": {
+                    "box-sizing": "border-box",
+                    "display": "block",
+                    "background-image": "linear-gradient(var(--34c930ae98), var(--34c930ae98))",
+                    "padding-left": "12px",
+                    "padding-top": "6px",
+                    "padding-right": "12px",
+                    "padding-bottom": "6px",
+                    "border-top-left-radius": "0px",
+                    "border-bottom-left-radius": "0px"
+                  },
+                  "children": [
+                    {
+                      "id": "df32c254236",
+                      "name": "text",
+                      "label": "Text",
+                      "value": "Add",
+                      "style": {
+                        "font-family": "Helvetica",
+                        "color": "var(--dd856bec89)"
+                      },
+                      "children": [],
+                      "metadata": {}
+                    }
+                  ],
+                  "metadata": {},
+                  "styleMixins": {
+                    "34c930ae99": {
+                      "priority": 0
+                    }
+                  }
+                }
+              ],
+              "metadata": {}
+            },
+            {
+              "id": "df32c254238",
+              "label": "items container",
+              "is": "div",
+              "name": "element",
+              "attributes": {},
+              "style": {
+                "box-sizing": "border-box",
+                "display": "block",
+                "margin-top": "2px"
+              },
+              "children": [
+                {
+                  "id": "5e22de885",
+                  "children": [
+                    {
+                      "id": "df32c254272",
+                      "is": "df32c254261",
+                      "label": "Item",
+                      "name": "component-instance",
+                      "attributes": {},
+                      "style": {},
+                      "children": [
+                        {
+                          "id": "df32c254290",
+                          "variantId": null,
+                          "propertyName": "text",
+                          "targetIdPath": [
+                            "df32c254260"
+                          ],
+                          "value": "Item 4",
+                          "name": "override",
+                          "children": []
+                        }
+                      ],
+                      "metadata": {},
+                      "variant": {}
+                    },
+                    {
+                      "id": "35161a79149",
+                      "is": "df32c254261",
+                      "label": "Item",
+                      "name": "component-instance",
+                      "attributes": {},
+                      "style": {},
+                      "children": [
+                        {
+                          "id": "35161a79150",
+                          "variantId": null,
+                          "propertyName": "text",
+                          "targetIdPath": [
+                            "df32c254260"
+                          ],
+                          "value": "Item 4",
+                          "name": "override",
+                          "children": []
+                        }
+                      ],
+                      "metadata": {},
+                      "variant": {}
+                    },
+                    {
+                      "id": "df32c254280",
+                      "is": "df32c254261",
+                      "label": "Item",
+                      "name": "component-instance",
+                      "attributes": {},
+                      "style": {},
+                      "children": [
+                        {
+                          "id": "df32c254288",
+                          "variantId": null,
+                          "propertyName": "text",
+                          "targetIdPath": [
+                            "df32c254260"
+                          ],
+                          "value": "Item 2",
+                          "name": "override",
+                          "children": []
+                        }
+                      ],
+                      "metadata": {},
+                      "variant": {}
+                    },
+                    {
+                      "id": "df32c254284",
+                      "is": "df32c254261",
+                      "label": "Item",
+                      "name": "component-instance",
+                      "attributes": {},
+                      "style": {},
+                      "children": [],
+                      "metadata": {},
+                      "variant": {}
+                    }
+                  ],
+                  "metadata": {},
+                  "name": "slot",
+                  "label": "items"
+                }
+              ],
+              "metadata": {}
+            }
+          ],
+          "metadata": {}
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 0,
+          "top": -1,
+          "right": 1033,
+          "bottom": 1000
+        }
+      },
+      "variant": {},
+      "controllers": [
+        "./controller.tsx"
+      ]
+    },
+    {
+      "label": "Item",
+      "is": "div",
+      "style": {
+        "box-sizing": "border-box",
+        "display": "block",
+        "margin-left": "0px",
+        "margin-top": "6px",
+        "margin-right": "12px",
+        "margin-bottom": "6px"
+      },
+      "attributes": {},
+      "id": "df32c254261",
+      "name": "component",
+      "children": [
+        {
+          "id": "df32c254260",
+          "name": "text",
+          "label": "label",
+          "value": "Item 1",
+          "style": {
+            "font-family": "Helvetica",
+            "color": "var(--dd856bec89)"
+          },
+          "children": [],
+          "metadata": {}
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 1043,
+          "top": -1,
+          "right": 1639,
+          "bottom": 17
+        }
+      },
+      "variant": {},
+      "controllers": [
+        "./item-controller.tsx"
+      ]
+    },
+    {
+      "id": "dd856bec89",
+      "name": "variable",
+      "value": "rgba(100, 100, 100, 1)",
+      "label": "Grey 1",
+      "type": "color",
+      "children": [],
+      "metadata": {}
+    },
+    {
+      "id": "34c930ae96",
+      "label": "Element",
+      "is": "div",
+      "name": "element",
+      "attributes": {},
+      "style": {},
+      "children": [],
+      "metadata": {
+        "bounds": {
+          "left": 417.08475199419564,
+          "top": -172.6920813065595,
+          "right": 517.0847519941956,
+          "bottom": -72.69208130655949
+        }
+      },
+      "styleMixins": {
+        "34c930ae99": {
+          "priority": 0
+        }
+      }
+    },
+    {
+      "id": "34c930ae98",
+      "name": "variable",
+      "value": "rgba(215, 214, 214, 1)",
+      "label": "Grey 2",
+      "type": "color",
+      "children": [],
+      "metadata": {}
+    },
+    {
+      "id": "34c930ae99",
+      "label": "Border style",
+      "name": "style-mixin",
+      "style": {
+        "box-sizing": "border-box",
+        "display": "block",
+        "border-left": "1px solid var(--34c930ae98)",
+        "border-top": "1px solid var(--34c930ae98)",
+        "border-right": "1px solid var(--34c930ae98)",
+        "border-bottom": "1px solid var(--34c930ae98)",
+        "border-top-left-radius": "20px",
+        "border-top-right-radius": "20px",
+        "border-bottom-left-radius": "20px",
+        "border-bottom-right-radius": "20px"
+      },
+      "targetType": "element",
+      "children": [],
+      "metadata": {
+        "bounds": {
+          "left": 542,
+          "top": -172,
+          "right": 642,
+          "bottom": -72
+        }
+      }
+    }
+  ],
+  "metadata": {}
+}

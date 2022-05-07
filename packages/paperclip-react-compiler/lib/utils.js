@@ -10,40 +10,48 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addWarning = exports.makeSafeVarName = exports.getPublicLayerVarName = exports.getPublicComponentClassName = exports.getScopedLayerLabelIndex = exports.getInternalVarName = exports.addScopedLayerLabel = exports.setCurrentScope = exports.addCloseTag = exports.addOpenTag = exports.addLine = exports.addLineItem = exports.addBuffer = void 0;
 var lodash_1 = require("lodash");
 var tandem_common_1 = require("tandem-common");
 var INDENT = "  ";
-exports.addBuffer = function (buffer, context) {
+var addBuffer = function (buffer, context) {
     if (buffer === void 0) { buffer = ""; }
     return (__assign(__assign({}, context), { buffer: (context.buffer || "") + buffer }));
 };
-exports.addLineItem = function (buffer, context) {
+exports.addBuffer = addBuffer;
+var addLineItem = function (buffer, context) {
     if (buffer === void 0) { buffer = ""; }
-    return exports.addBuffer((context.newLine ? lodash_1.repeat(INDENT, context.depth) : "") + buffer, __assign(__assign({}, context), { newLine: buffer.lastIndexOf("\n") === buffer.length - 1 }));
+    return (0, exports.addBuffer)((context.newLine ? (0, lodash_1.repeat)(INDENT, context.depth) : "") + buffer, __assign(__assign({}, context), { newLine: buffer.lastIndexOf("\n") === buffer.length - 1 }));
 };
-exports.addLine = function (buffer, context) {
+exports.addLineItem = addLineItem;
+var addLine = function (buffer, context) {
     if (buffer === void 0) { buffer = ""; }
-    return exports.addLineItem(buffer + "\n", context);
+    return (0, exports.addLineItem)(buffer + "\n", context);
 };
-exports.addOpenTag = function (buffer, context, indent) {
+exports.addLine = addLine;
+var addOpenTag = function (buffer, context, indent) {
     if (indent === void 0) { indent = true; }
-    return (__assign(__assign({}, exports.addLineItem(buffer, context)), { depth: indent ? context.depth + 1 : context.depth }));
+    return (__assign(__assign({}, (0, exports.addLineItem)(buffer, context)), { depth: indent ? context.depth + 1 : context.depth }));
 };
-exports.addCloseTag = function (buffer, context, indent) {
+exports.addOpenTag = addOpenTag;
+var addCloseTag = function (buffer, context, indent) {
     if (indent === void 0) { indent = true; }
-    return exports.addLineItem(buffer, __assign(__assign({}, context), { depth: indent ? context.depth - 1 : context.depth }));
+    return (0, exports.addLineItem)(buffer, __assign(__assign({}, context), { depth: indent ? context.depth - 1 : context.depth }));
 };
-exports.setCurrentScope = function (currentScope, context) { return (__assign(__assign({}, context), { currentScope: currentScope })); };
-exports.addScopedLayerLabel = function (label, id, context) {
+exports.addCloseTag = addCloseTag;
+var setCurrentScope = function (currentScope, context) { return (__assign(__assign({}, context), { currentScope: currentScope })); };
+exports.setCurrentScope = setCurrentScope;
+var addScopedLayerLabel = function (label, id, context) {
     var _a, _b, _c;
     label = String(label).toLowerCase();
     if (context.scopedLabelRefs[id]) {
@@ -53,27 +61,34 @@ exports.addScopedLayerLabel = function (label, id, context) {
     if (!context.scopedLabelRefs[scope]) {
         context = __assign(__assign({}, context), { scopedLabelRefs: __assign(__assign({}, context.scopedLabelRefs), (_a = {}, _a[context.currentScope] = tandem_common_1.EMPTY_OBJECT, _a)) });
     }
-    return __assign(__assign({}, context), { scopedLabelRefs: __assign(__assign({}, context.scopedLabelRefs), (_b = {}, _b[scope] = __assign(__assign({}, context.scopedLabelRefs[scope]), (_c = {}, _c[label] = lodash_1.uniq(__spreadArrays((context.scopedLabelRefs[scope][label] || tandem_common_1.EMPTY_ARRAY), [
+    return __assign(__assign({}, context), { scopedLabelRefs: __assign(__assign({}, context.scopedLabelRefs), (_b = {}, _b[scope] = __assign(__assign({}, context.scopedLabelRefs[scope]), (_c = {}, _c[label] = (0, lodash_1.uniq)(__spreadArray(__spreadArray([], (context.scopedLabelRefs[scope][label] || tandem_common_1.EMPTY_ARRAY), true), [
             id
-        ])), _c)), _b)) });
+        ], false)), _c)), _b)) });
 };
-exports.getInternalVarName = function (node) { return "_" + node.id; };
-exports.getScopedLayerLabelIndex = function (label, id, context) {
+exports.addScopedLayerLabel = addScopedLayerLabel;
+var getInternalVarName = function (node) { return "_" + node.id; };
+exports.getInternalVarName = getInternalVarName;
+var getScopedLayerLabelIndex = function (label, id, context) {
     return context.scopedLabelRefs[context.currentScope][String(label).toLowerCase()].indexOf(id);
 };
-exports.getPublicComponentClassName = function (component, context) {
-    var varName = exports.getPublicLayerVarName(component.label, component.id, context);
+exports.getScopedLayerLabelIndex = getScopedLayerLabelIndex;
+var getPublicComponentClassName = function (component, context) {
+    var varName = (0, exports.getPublicLayerVarName)(component.label, component.id, context);
     return varName.substr(0, 1).toUpperCase() + varName.substr(1);
 };
-exports.getPublicLayerVarName = function (label, id, context) {
-    var i = exports.getScopedLayerLabelIndex(label, id, context);
-    return exports.makeSafeVarName(lodash_1.camelCase(label || "child") + (i === 0 ? "" : i));
+exports.getPublicComponentClassName = getPublicComponentClassName;
+var getPublicLayerVarName = function (label, id, context) {
+    var i = (0, exports.getScopedLayerLabelIndex)(label, id, context);
+    return (0, exports.makeSafeVarName)((0, lodash_1.camelCase)(label || "child") + (i === 0 ? "" : i));
 };
-exports.makeSafeVarName = function (varName) {
+exports.getPublicLayerVarName = getPublicLayerVarName;
+var makeSafeVarName = function (varName) {
     if (/^\d/.test(varName)) {
         varName = "$" + varName;
     }
     return varName;
 };
-exports.addWarning = function (warning, context) { return (__assign(__assign({}, context), { warnings: __spreadArrays(context.warnings, [warning]) })); };
+exports.makeSafeVarName = makeSafeVarName;
+var addWarning = function (warning, context) { return (__assign(__assign({}, context), { warnings: __spreadArray(__spreadArray([], context.warnings, true), [warning], false) })); };
+exports.addWarning = addWarning;
 //# sourceMappingURL=utils.js.map

@@ -10,12 +10,14 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createPaperclipVirtualDOMtranslator = void 0;
@@ -29,33 +31,33 @@ var tandem_common_1 = require("tandem-common");
 var path = require("path");
 var utils_1 = require("./utils");
 var paperclip_2 = require("paperclip");
-exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
+var createPaperclipVirtualDOMtranslator = function (parts, translators) {
     var translateModule = function (module, context) {
         context = translators.translateModule(module, context, function (context) {
-            var imports = lodash_1.uniq(paperclip_1.getComponentRefIds(module)
+            var imports = (0, lodash_1.uniq)((0, paperclip_1.getComponentRefIds)(module)
                 .map(function (refId) {
-                return paperclip_1.getPCNodeDependency(refId, context.graph);
+                return (0, paperclip_1.getPCNodeDependency)(refId, context.graph);
             })
                 .filter(function (dep) { return dep && dep !== context.entry; }));
             if (imports.length) {
-                context = utils_1.addLine("\nvar _imports = {};", context);
+                context = (0, utils_1.addLine)("\nvar _imports = {};", context);
                 for (var _i = 0, imports_1 = imports; _i < imports_1.length; _i++) {
                     var uri = imports_1[_i].uri;
                     // Change Windows OS path to Unix
                     var relativePath = path
-                        .relative(path.dirname(tandem_common_1.stripProtocol(context.entry.uri)), tandem_common_1.stripProtocol(uri))
+                        .relative(path.dirname((0, tandem_common_1.stripProtocol)(context.entry.uri)), (0, tandem_common_1.stripProtocol)(uri))
                         .replace(/\\/g, "/");
                     if (relativePath.charAt(0) !== ".") {
                         relativePath = "./" + relativePath;
                     }
-                    context = utils_1.addLine("Object.assign(_imports, require(\"" + relativePath + "\"));", context);
+                    context = (0, utils_1.addLine)("Object.assign(_imports, require(\"".concat(relativePath, "\"));"), context);
                 }
             }
             context = addToNativePropsFunction(context);
             context = addMergeFunction(context);
             context = addStylesToDocumentFunction(context);
-            context = utils_1.addLine("\nvar _EMPTY_OBJECT = {}", context);
-            context = utils_1.addLine("\nvar EMPTY_ARRAY = []", context);
+            context = (0, utils_1.addLine)("\nvar _EMPTY_OBJECT = {}", context);
+            context = (0, utils_1.addLine)("\nvar EMPTY_ARRAY = []", context);
             context = module.children
                 .filter(paperclip_1.isComponent)
                 .reduce(function (context, component) {
@@ -63,7 +65,7 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
             }, context);
             if (context.options.compileNonComponents !== false) {
                 context = module.children
-                    .filter(lodash_1.negate(paperclip_1.isComponent))
+                    .filter((0, lodash_1.negate)(paperclip_1.isComponent))
                     .reduce(function (context, component) {
                     return translateContentNode(component, module, context);
                 }, context);
@@ -73,88 +75,88 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
         return context;
     };
     var addToNativePropsFunction = function (context) {
-        context = utils_1.addOpenTag("\nfunction _toNativeProps(props) {\n", context);
-        context = utils_1.addLine("var newProps = {};", context);
-        context = utils_1.addOpenTag("for (var key in props) {\n", context);
-        context = utils_1.addLine("var value = props[key];", context);
-        context = utils_1.addLine("var tov = typeof value;", context);
-        context = utils_1.addOpenTag("if((tov !== \"object\" && key !== \"text\" && (tov !== \"function\" || key === \"ref\" || key.substr(0, 2) === \"on\")) || key === \"style\") {\n", context);
-        context = utils_1.addLine("newProps[key] = value;", context);
-        context = utils_1.addCloseTag("}\n", context);
-        context = utils_1.addCloseTag("}\n", context);
-        context = utils_1.addLine("return newProps;", context);
-        context = utils_1.addCloseTag("}\n", context);
+        context = (0, utils_1.addOpenTag)("\nfunction _toNativeProps(props) {\n", context);
+        context = (0, utils_1.addLine)("var newProps = {};", context);
+        context = (0, utils_1.addOpenTag)("for (var key in props) {\n", context);
+        context = (0, utils_1.addLine)("var value = props[key];", context);
+        context = (0, utils_1.addLine)("var tov = typeof value;", context);
+        context = (0, utils_1.addOpenTag)("if((tov !== \"object\" && key !== \"text\" && (tov !== \"function\" || key === \"ref\" || key.substr(0, 2) === \"on\")) || key === \"style\") {\n", context);
+        context = (0, utils_1.addLine)("newProps[key] = value;", context);
+        context = (0, utils_1.addCloseTag)("}\n", context);
+        context = (0, utils_1.addCloseTag)("}\n", context);
+        context = (0, utils_1.addLine)("return newProps;", context);
+        context = (0, utils_1.addCloseTag)("}\n", context);
         return context;
     };
     var addMergeFunction = function (context) {
-        context = utils_1.addOpenTag("\nfunction mergeProps(target, object, keyFilter) {\n", context);
-        context = utils_1.addLine("if (object == null) return target; ", context);
-        context = utils_1.addLine("if (!target || typeof object !== 'object' || Array.isArray(object)) return object; ", context);
-        context = utils_1.addOpenTag("for (var key in object) {\n", context);
-        context = utils_1.addOpenTag("if (!keyFilter || keyFilter(key, object)) {\n", context);
-        context = utils_1.addLine("target[key] = key === \"" + parts.classAttributeName + "\" ? (target[key] ?  object[key] + \" \" + target[key] : object[key]) : mergeProps(target[key], object[key], keyFilter);", context);
-        context = utils_1.addCloseTag("}\n", context);
-        context = utils_1.addCloseTag("}\n", context);
-        context = utils_1.addLine("return target;", context);
-        context = utils_1.addCloseTag("}\n", context);
+        context = (0, utils_1.addOpenTag)("\nfunction mergeProps(target, object, keyFilter) {\n", context);
+        context = (0, utils_1.addLine)("if (object == null) return target; ", context);
+        context = (0, utils_1.addLine)("if (!target || typeof object !== 'object' || Array.isArray(object)) return object; ", context);
+        context = (0, utils_1.addOpenTag)("for (var key in object) {\n", context);
+        context = (0, utils_1.addOpenTag)("if (!keyFilter || keyFilter(key, object)) {\n", context);
+        context = (0, utils_1.addLine)("target[key] = key === \"".concat(parts.classAttributeName, "\" ? (target[key] ?  object[key] + \" \" + target[key] : object[key]) : mergeProps(target[key], object[key], keyFilter);"), context);
+        context = (0, utils_1.addCloseTag)("}\n", context);
+        context = (0, utils_1.addCloseTag)("}\n", context);
+        context = (0, utils_1.addLine)("return target;", context);
+        context = (0, utils_1.addCloseTag)("}\n", context);
         return context;
     };
     var addStylesToDocumentFunction = function (context) {
-        context = utils_1.addLine("// messy, but we need a way to skip selectors that have already been injected into the document", context);
-        context = utils_1.addLine("var stringifiedStyles = typeof window !== \"undefined\" ? window.__stringifiedStyles || (window.__stringifiedStyles = {}) : {};", context);
-        context = utils_1.addOpenTag("\nfunction stringifyStyleRulesInner(key, value) {\n", context);
-        context = utils_1.addLine("if (typeof value === \"string\") return key + \":\" + value + \";\\n\"", context);
-        context = utils_1.addLine("if (key.charAt(0) !== \"@\" && stringifiedStyles[key]) return \"\"", context);
-        context = utils_1.addLine("stringifiedStyles[key] = true;", context);
-        context = utils_1.addLine("return key + \"{\\n\" + stringifyStyleRules(value) + \"}\\n\"", context);
-        context = utils_1.addCloseTag("}\n", context);
-        context = utils_1.addOpenTag("\nfunction stringifyStyleRules(styleRules) {\n", context);
-        context = utils_1.addLine("var buffer = [];", context);
-        context = utils_1.addOpenTag("for (const key in styleRules) {\n", context);
-        context = utils_1.addLine("buffer.push(stringifyStyleRulesInner(key, styleRules[key]));", context);
-        context = utils_1.addCloseTag("}\n", context);
-        context = utils_1.addLine("return buffer.join(\"\");", context);
-        context = utils_1.addCloseTag("}\n", context);
-        context = utils_1.addOpenTag("\nfunction addStylesToDocument(styleRules) {\n", context);
-        context = utils_1.addLine("if (typeof document === \"undefined\") return;", context);
-        context = utils_1.addLine("var cssText = stringifyStyleRules(styleRules);", context);
-        context = utils_1.addLine("var style = document.createElement(\"style\");", context);
-        context = utils_1.addLine("style.type = \"text/css\";", context);
-        context = utils_1.addLine("style.textContent = cssText;", context);
-        context = utils_1.addLine("document.head.appendChild(style);", context);
-        context = utils_1.addCloseTag("}\n", context);
+        context = (0, utils_1.addLine)("// messy, but we need a way to skip selectors that have already been injected into the document", context);
+        context = (0, utils_1.addLine)("var stringifiedStyles = typeof window !== \"undefined\" ? window.__stringifiedStyles || (window.__stringifiedStyles = {}) : {};", context);
+        context = (0, utils_1.addOpenTag)("\nfunction stringifyStyleRulesInner(key, value) {\n", context);
+        context = (0, utils_1.addLine)("if (typeof value === \"string\") return key + \":\" + value + \";\\n\"", context);
+        context = (0, utils_1.addLine)("if (key.charAt(0) !== \"@\" && stringifiedStyles[key]) return \"\"", context);
+        context = (0, utils_1.addLine)("stringifiedStyles[key] = true;", context);
+        context = (0, utils_1.addLine)("return key + \"{\\n\" + stringifyStyleRules(value) + \"}\\n\"", context);
+        context = (0, utils_1.addCloseTag)("}\n", context);
+        context = (0, utils_1.addOpenTag)("\nfunction stringifyStyleRules(styleRules) {\n", context);
+        context = (0, utils_1.addLine)("var buffer = [];", context);
+        context = (0, utils_1.addOpenTag)("for (const key in styleRules) {\n", context);
+        context = (0, utils_1.addLine)("buffer.push(stringifyStyleRulesInner(key, styleRules[key]));", context);
+        context = (0, utils_1.addCloseTag)("}\n", context);
+        context = (0, utils_1.addLine)("return buffer.join(\"\");", context);
+        context = (0, utils_1.addCloseTag)("}\n", context);
+        context = (0, utils_1.addOpenTag)("\nfunction addStylesToDocument(styleRules) {\n", context);
+        context = (0, utils_1.addLine)("if (typeof document === \"undefined\") return;", context);
+        context = (0, utils_1.addLine)("var cssText = stringifyStyleRules(styleRules);", context);
+        context = (0, utils_1.addLine)("var style = document.createElement(\"style\");", context);
+        context = (0, utils_1.addLine)("style.type = \"text/css\";", context);
+        context = (0, utils_1.addLine)("style.textContent = cssText;", context);
+        context = (0, utils_1.addLine)("document.head.appendChild(style);", context);
+        context = (0, utils_1.addCloseTag)("}\n", context);
         return context;
     };
     var translateComponentStyles = function (component, context) {
         // basic styles
         context = translateComponentStyleInner(component, context);
         // variant styles
-        context = utils_1.addLine("const styleVariantKey = (overrides.variantPrefixSelectors ? JSON.stringify(overrides.variantPrefixSelectors) : \"" + component.id + "\") + \"Style\";", context);
+        context = (0, utils_1.addLine)("const styleVariantKey = (overrides.variantPrefixSelectors ? JSON.stringify(overrides.variantPrefixSelectors) : \"".concat(component.id, "\") + \"Style\";"), context);
         context = translateStyleOverrides(component, context);
         return context;
     };
     var translateComponentStyleInner = function (component, context) {
-        context = tandem_common_1.flattenTreeNode(component)
+        context = (0, tandem_common_1.flattenTreeNode)(component)
             .filter(function (node) {
-            return paperclip_1.isVisibleNode(node) || node.name === paperclip_1.PCSourceTagNames.COMPONENT;
+            return (0, paperclip_1.isVisibleNode)(node) || node.name === paperclip_1.PCSourceTagNames.COMPONENT;
         })
             .reduce(function (context, node) {
             if (!hasStyle(node)) {
                 return context;
             }
-            context = utils_1.addOpenTag("mergeProps(styleRules, {\n", context);
-            context = utils_1.addOpenTag("\"._" + node.id + "\": {\n", context);
-            context = translateStyle(node, __assign(__assign({}, getInheritedStyle(node.styleMixins, context)), node.style), context, paperclip_1.getPCNodeDependency(node.id, context.graph).uri);
-            context = utils_1.addCloseTag("}\n", context);
-            context = utils_1.addCloseTag("});\n\n", context);
+            context = (0, utils_1.addOpenTag)("mergeProps(styleRules, {\n", context);
+            context = (0, utils_1.addOpenTag)("\"._".concat(node.id, "\": {\n"), context);
+            context = translateStyle(node, __assign(__assign({}, getInheritedStyle(node.styleMixins, context)), node.style), context, (0, paperclip_1.getPCNodeDependency)(node.id, context.graph).uri);
+            context = (0, utils_1.addCloseTag)("}\n", context);
+            context = (0, utils_1.addCloseTag)("});\n\n", context);
             return context;
         }, context);
         return context;
     };
-    var isSVGPCNode = tandem_common_1.memoize(function (node, graph) {
+    var isSVGPCNode = (0, tandem_common_1.memoize)(function (node, graph) {
         return (node &&
             (node.is === "svg" ||
-                isSVGPCNode(tandem_common_1.getParentTreeNode(node.id, paperclip_1.getPCNodeModule(node.id, graph)), graph)));
+                isSVGPCNode((0, tandem_common_1.getParentTreeNode)(node.id, (0, paperclip_1.getPCNodeModule)(node.id, graph)), graph)));
     });
     var SVG_STYLE_PROP_MAP = {
         background: "fill"
@@ -170,7 +172,7 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
             return styleMixins[a].priority > styleMixins[b].priority ? 1 : -1;
         });
         return styleMixinIds.reduce(function (style, styleMixinId) {
-            var styleMixin = paperclip_1.getPCNode(styleMixinId, context.graph);
+            var styleMixin = (0, paperclip_1.getPCNode)(styleMixinId, context.graph);
             if (!styleMixin) {
                 return style;
             }
@@ -189,19 +191,19 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
             // TODO - add vendor prefix stuff here
             for (var key in style) {
                 var propName = key;
-                context = utils_1.addLine("\"" + (SVG_STYLE_PROP_MAP[propName] || propName) + "\": \"" + stringifyValue(translateStyleValue(key, style[key], context, sourceUri).replace(/[\n\r]/g, " ")) + "\",", context);
+                context = (0, utils_1.addLine)("\"".concat(SVG_STYLE_PROP_MAP[propName] || propName, "\": \"").concat(stringifyValue(translateStyleValue(key, style[key], context, sourceUri).replace(/[\n\r]/g, " ")), "\","), context);
             }
         }
         else {
             // TODO - add vendor prefix stuff here
             for (var key in style) {
-                context = utils_1.addLine("\"" + key + "\": \"" + translateStyleValue(key, style[key], context, sourceUri).replace(/[\n\r]/g, " ") + "\",", context);
+                context = (0, utils_1.addLine)("\"".concat(key, "\": \"").concat(translateStyleValue(key, style[key], context, sourceUri).replace(/[\n\r]/g, " "), "\","), context);
             }
         }
         return context;
     };
     var translateStyleOverrides = function (contentNode, context) {
-        var instances = tandem_common_1.filterNestedNodes(contentNode, function (node) {
+        var instances = (0, tandem_common_1.filterNestedNodes)(contentNode, function (node) {
             return node.name === paperclip_1.PCSourceTagNames.COMPONENT_INSTANCE ||
                 node.name === paperclip_1.PCSourceTagNames.COMPONENT;
         });
@@ -213,7 +215,7 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
     };
     var translateStyleVariantOverrides = function (instance, component, context) {
         // FIXME: need to sort based on variant priority
-        var styleOverrides = paperclip_1.getOverrides(instance).filter(function (node) {
+        var styleOverrides = (0, paperclip_1.getOverrides)(instance).filter(function (node) {
             return node.propertyName === paperclip_1.PCOverridablePropertyName.STYLE &&
                 Object.keys(node.value).length;
         }).sort(function (a, b) {
@@ -223,7 +225,7 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
             // console.log(instance.id, component.id, override.targetIdPath.length === 0 && instance.id === component.id);
             // override id is added as className to target element when imported. Necessary
             // to ensure that edge-cases like portals still maintain override values.
-            var targetSelector = "._" + (override.targetIdPath.length === 0 && instance.id === component.id
+            var targetSelector = "._".concat(override.targetIdPath.length === 0 && instance.id === component.id
                 ? instance.id
                 : override.id);
             var selector = targetSelector;
@@ -239,29 +241,29 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
             var mediaTriggers = [];
             var variableTriggerPassed = void 0;
             if (override.variantId) {
-                var variant = paperclip_1.getPCNode(override.variantId, context.graph);
-                var variantTriggers = (variant && paperclip_1.getVariantTriggers(variant, component)) ||
+                var variant = (0, paperclip_1.getPCNode)(override.variantId, context.graph);
+                var variantTriggers = (variant && (0, paperclip_1.getVariantTriggers)(variant, component)) ||
                     tandem_common_1.EMPTY_ARRAY;
                 var queryTriggers = variantTriggers.filter(function (trigger) {
                     return trigger.source &&
                         trigger.source.type === paperclip_1.PCVariantTriggerSourceType.QUERY;
                 });
                 variableTriggerPassed = queryTriggers.some(function (trigger) {
-                    var query = paperclip_1.getPCNode(trigger.source.queryId, context.graph);
+                    var query = (0, paperclip_1.getPCNode)(trigger.source.queryId, context.graph);
                     if (query && query.type == paperclip_2.PCQueryType.VARIABLE) {
-                        return paperclip_1.variableQueryPassed(query, paperclip_1.getAllVariableRefMap(context.graph));
+                        return (0, paperclip_1.variableQueryPassed)(query, (0, paperclip_1.getAllVariableRefMap)(context.graph));
                     }
                     return false;
                 });
                 if (variableTriggerPassed) {
-                    selector = "" + targetSelector;
+                    selector = "".concat(targetSelector);
                 }
                 else {
-                    baseSelector = "\" + (overrides.variantPrefixSelectors && overrides.variantPrefixSelectors[\"" + override.variantId + "\"] && overrides.variantPrefixSelectors[\"" + override.variantId + "\"].map(prefix => prefix + \"" + targetSelector + "\").join(\", \") + \", \" || \"\") + \" ";
-                    selector = baseSelector + " ._" + override.variantId + " " + targetSelector + ", ._" + override.variantId + targetSelector;
+                    baseSelector = "\" + (overrides.variantPrefixSelectors && overrides.variantPrefixSelectors[\"".concat(override.variantId, "\"] && overrides.variantPrefixSelectors[\"").concat(override.variantId, "\"].map(prefix => prefix + \"").concat(targetSelector, "\").join(\", \") + \", \" || \"\") + \" ");
+                    selector = "".concat(baseSelector, " ._").concat(override.variantId, " ").concat(targetSelector, ", ._").concat(override.variantId).concat(targetSelector);
                 }
                 mediaTriggers = queryTriggers.filter(function (trigger) {
-                    var query = paperclip_1.getPCNode(trigger.source.queryId, context.graph);
+                    var query = (0, paperclip_1.getPCNode)(trigger.source.queryId, context.graph);
                     return query && query.type === paperclip_2.PCQueryType.MEDIA;
                 });
                 var variantTriggerSelectors = variantTriggers
@@ -270,9 +272,9 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
                         return null;
                     }
                     if (trigger.source.type === paperclip_1.PCVariantTriggerSourceType.STATE) {
-                        var prefix = "._" + component.id + ":" + trigger.source.state;
-                        if (targetSelector !== "._" + component.id) {
-                            return prefix + " " + targetSelector;
+                        var prefix = "._".concat(component.id, ":").concat(trigger.source.state);
+                        if (targetSelector !== "._".concat(component.id)) {
+                            return "".concat(prefix, " ").concat(targetSelector);
                         }
                         return prefix;
                     }
@@ -282,38 +284,38 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
                     selector += ", " + variantTriggerSelectors.join(", ");
                 }
             }
-            context = utils_1.addOpenTag("mergeProps(styleRules, {\n", context);
-            context = utils_1.addOpenTag("[\"" + selector + "\"]: {\n", context);
-            context = translateStyle(paperclip_1.getPCNode(lodash_1.last(override.targetIdPath), context.graph), override.value, context, paperclip_1.getPCNodeDependency(override.id, context.graph).uri);
-            context = utils_1.addCloseTag("}\n", context);
-            context = utils_1.addCloseTag("});\n\n", context);
+            context = (0, utils_1.addOpenTag)("mergeProps(styleRules, {\n", context);
+            context = (0, utils_1.addOpenTag)("[\"".concat(selector, "\"]: {\n"), context);
+            context = translateStyle((0, paperclip_1.getPCNode)((0, lodash_1.last)(override.targetIdPath), context.graph), override.value, context, (0, paperclip_1.getPCNodeDependency)(override.id, context.graph).uri);
+            context = (0, utils_1.addCloseTag)("}\n", context);
+            context = (0, utils_1.addCloseTag)("});\n\n", context);
             if (mediaTriggers.length && !variableTriggerPassed) {
                 var mediaText = "@media all";
                 mediaText += mediaTriggers
                     .map(function (trigger) {
                     var buffer = "";
                     var source = trigger.source;
-                    var mediaQuery = paperclip_1.getPCNode(source.queryId, context.graph);
+                    var mediaQuery = (0, paperclip_1.getPCNode)(source.queryId, context.graph);
                     if (!mediaQuery) {
                         return null;
                     }
                     if (mediaQuery.condition && mediaQuery.condition.minWidth) {
-                        buffer += " and (min-width: " + px(mediaQuery.condition.minWidth) + ")";
+                        buffer += " and (min-width: ".concat(px(mediaQuery.condition.minWidth), ")");
                     }
                     if (mediaQuery.condition && mediaQuery.condition.maxWidth) {
-                        buffer += " and (max-width: " + px(mediaQuery.condition.maxWidth) + ")";
+                        buffer += " and (max-width: ".concat(px(mediaQuery.condition.maxWidth), ")");
                     }
                     return buffer;
                 })
                     .filter(Boolean)
                     .join(", ");
-                context = utils_1.addOpenTag("mergeProps(styleRules, {\n", context);
-                context = utils_1.addOpenTag("[\"" + mediaText + "\"]: {\n", context);
-                context = utils_1.addOpenTag("[\"" + baseSelector + " " + targetSelector + "\"]: {\n", context);
-                context = translateStyle(paperclip_1.getPCNode(lodash_1.last(override.targetIdPath), context.graph), override.value, context, paperclip_1.getPCNodeDependency(override.id, context.graph).uri);
-                context = utils_1.addCloseTag("}\n", context);
-                context = utils_1.addCloseTag("}\n", context);
-                context = utils_1.addCloseTag("});\n\n", context);
+                context = (0, utils_1.addOpenTag)("mergeProps(styleRules, {\n", context);
+                context = (0, utils_1.addOpenTag)("[\"".concat(mediaText, "\"]: {\n"), context);
+                context = (0, utils_1.addOpenTag)("[\"".concat(baseSelector, " ").concat(targetSelector, "\"]: {\n"), context);
+                context = translateStyle((0, paperclip_1.getPCNode)((0, lodash_1.last)(override.targetIdPath), context.graph), override.value, context, (0, paperclip_1.getPCNodeDependency)(override.id, context.graph).uri);
+                context = (0, utils_1.addCloseTag)("}\n", context);
+                context = (0, utils_1.addCloseTag)("}\n", context);
+                context = (0, utils_1.addCloseTag)("});\n\n", context);
             }
         };
         for (var _i = 0, styleOverrides_1 = styleOverrides; _i < styleOverrides_1.length; _i++) {
@@ -324,13 +326,13 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
     };
     var px = function (value) {
         if (!isNaN(Number(value))) {
-            return value + "px";
+            return "".concat(value, "px");
         }
         return value;
     };
     var translateStyleValue = function (key, value, _a, sourceUri) {
         var graph = _a.graph, rootDirectory = _a.rootDirectory;
-        value = paperclip_1.computeStyleValue(value, paperclip_1.getAllVariableRefMap(graph));
+        value = (0, paperclip_1.computeStyleValue)(value, (0, paperclip_1.getAllVariableRefMap)(graph));
         if (typeof value === "number" && key !== "opacity") {
             return value + "px";
         }
@@ -338,12 +340,12 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
             if (/url\(.*?\)/.test(value) && !/https?:\/\//.test(value)) {
                 var uri = value.match(/url\(["']?(.*?)["']?\)/)[1];
                 if (uri.charAt(0) === ".") {
-                    uri = path.dirname(sourceUri) + "/" + uri;
+                    uri = "".concat(path.dirname(sourceUri), "/").concat(uri);
                 }
                 else {
-                    uri = "file://" + tandem_common_1.stripProtocol(rootDirectory) + "/" + uri;
+                    uri = "file://".concat((0, tandem_common_1.stripProtocol)(rootDirectory), "/").concat(uri);
                 }
-                value = value.replace(/url\(["']?(.*?)["']?\)/, "url(" + uri + ")");
+                value = value.replace(/url\(["']?(.*?)["']?\)/, "url(".concat(uri, ")"));
                 // strip file if it exists.
                 // value = value.replace("file://", "");
                 // value = value.replace(
@@ -358,52 +360,52 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
         return String(value);
     };
     var translateContentNode = function (contentNode, module, context) {
-        context = utils_1.setCurrentScope(module.id, context);
-        context = utils_1.addScopedLayerLabel(contentNode.label, contentNode.id, context);
-        var internalVarName = utils_1.getInternalVarName(contentNode);
-        context = utils_1.addOpenTag("\nfunction " + internalVarName + "(overrides) {\n", context);
-        context = utils_1.addLine("var styleRules = {};", context);
+        context = (0, utils_1.setCurrentScope)(module.id, context);
+        context = (0, utils_1.addScopedLayerLabel)(contentNode.label, contentNode.id, context);
+        var internalVarName = (0, utils_1.getInternalVarName)(contentNode);
+        context = (0, utils_1.addOpenTag)("\nfunction ".concat(internalVarName, "(overrides) {\n"), context);
+        context = (0, utils_1.addLine)("var styleRules = {};", context);
         context = translatedUsedComponentInstances(contentNode, context);
         context = translateStaticOverrides(contentNode, context);
         if (context.options.includeCSS !== false) {
             context = translateComponentStyles(contentNode, context);
         }
         var variantLabelMap = getVariantLabelMap(contentNode);
-        context = utils_1.addOpenTag("const VARIANT_LABEL_ID_MAP = {\n", context);
+        context = (0, utils_1.addOpenTag)("const VARIANT_LABEL_ID_MAP = {\n", context);
         for (var id in variantLabelMap) {
-            context = utils_1.addLine("\"" + variantLabelMap[id][0] + "\": \"" + id + "\",", context);
+            context = (0, utils_1.addLine)("\"".concat(variantLabelMap[id][0], "\": \"").concat(id, "\","), context);
         }
-        context = utils_1.addCloseTag("};\n", context);
-        context = utils_1.addLine("var _variantMapCache = {};\n", context);
-        context = utils_1.addOpenTag("var getVariantMap = function(variant) {\n", context);
-        context = utils_1.addLine("return _variantMapCache[variant] || (_variantMapCache[variant] = variant.split(\" \").map(function(label) { return VARIANT_LABEL_ID_MAP[label.trim()] || label.trim(); }));", context);
-        context = utils_1.addCloseTag("};\n\n", context);
+        context = (0, utils_1.addCloseTag)("};\n", context);
+        context = (0, utils_1.addLine)("var _variantMapCache = {};\n", context);
+        context = (0, utils_1.addOpenTag)("var getVariantMap = function(variant) {\n", context);
+        context = (0, utils_1.addLine)("return _variantMapCache[variant] || (_variantMapCache[variant] = variant.split(\" \").map(function(label) { return VARIANT_LABEL_ID_MAP[label.trim()] || label.trim(); }));", context);
+        context = (0, utils_1.addCloseTag)("};\n\n", context);
         var baseRenderName = translators.getBaseRenderName(contentNode, context);
         var publicRenderName = translators.getPublicRenderName(contentNode, context);
         context = translators.translateRenderer(contentNode, context, function (context) {
-            if (paperclip_1.isPCComponentOrInstance(contentNode) &&
-                !paperclip_1.extendsComponent(contentNode)) {
-                context = utils_1.addLineItem("var _" + contentNode.id + "Props = Object.assign({}, _" + contentNode.id + "StaticProps, props);\n", context);
-                context = addClassNameCheck("" + contentNode.id, "props", context);
+            if ((0, paperclip_1.isPCComponentOrInstance)(contentNode) &&
+                !(0, paperclip_1.extendsComponent)(contentNode)) {
+                context = (0, utils_1.addLineItem)("var _".concat(contentNode.id, "Props = Object.assign({}, _").concat(contentNode.id, "StaticProps, props);\n"), context);
+                context = addClassNameCheck("".concat(contentNode.id), "props", context);
             }
             else {
-                context = utils_1.addLine("var _" + contentNode.id + "Props = Object.assign({}, overrides, props);", context);
+                context = (0, utils_1.addLine)("var _".concat(contentNode.id, "Props = Object.assign({}, overrides, props);"), context);
             }
-            context = utils_1.addLine("var variant = props.variant != null ? getVariantMap(props.variant) : EMPTY_ARRAY;", context);
-            context = utils_1.setCurrentScope(contentNode.id, context);
-            context = defineNestedObject(["_" + contentNode.id + "Props"], false, context);
-            context = tandem_common_1.flattenTreeNode(contentNode)
-                .filter(function (node) { return paperclip_1.isVisibleNode(node); })
+            context = (0, utils_1.addLine)("var variant = props.variant != null ? getVariantMap(props.variant) : EMPTY_ARRAY;", context);
+            context = (0, utils_1.setCurrentScope)(contentNode.id, context);
+            context = defineNestedObject(["_".concat(contentNode.id, "Props")], false, context);
+            context = (0, tandem_common_1.flattenTreeNode)(contentNode)
+                .filter(function (node) { return (0, paperclip_1.isVisibleNode)(node); })
                 .reduce(function (context, node) {
                 if (node === contentNode)
                     return context;
-                context = utils_1.addScopedLayerLabel(node.label + " Props", node.id, context);
+                context = (0, utils_1.addScopedLayerLabel)("".concat(node.label, " Props"), node.id, context);
                 var propsVarName = getNodePropsVarName(node, context);
-                context = defineNestedObject(["_" + node.id + "Props"], false, context);
+                context = defineNestedObject(["_".concat(node.id, "Props")], false, context);
                 // context = addLineItem(`var _${node.id}Props = (_${contentNode.id}Props.${propsVarName} || _${contentNode.id}Props._${node.id}) && `, context);
-                context = utils_1.addLine("var _" + node.id + "Props = Object.assign({}, _" + node.id + "StaticProps, _" + contentNode.id + "Props._" + node.id + ", _" + contentNode.id + "Props." + propsVarName + ");", context);
+                context = (0, utils_1.addLine)("var _".concat(node.id, "Props = Object.assign({}, _").concat(node.id, "StaticProps, _").concat(contentNode.id, "Props._").concat(node.id, ", _").concat(contentNode.id, "Props.").concat(propsVarName, ");"), context);
                 if (node.name !== paperclip_1.PCSourceTagNames.COMPONENT_INSTANCE) {
-                    context = addClassNameCheck(node.id, "_" + node.id + "Props", context);
+                    context = addClassNameCheck(node.id, "_".concat(node.id, "Props"), context);
                 }
                 // context = addLine(
                 //   `_${node.id}Props = Object.assign({}, _${node.id}StaticProps, _${
@@ -413,59 +415,59 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
                 // );
                 return context;
             }, context);
-            context = utils_1.addLine("", context);
+            context = (0, utils_1.addLine)("", context);
             // variants need to come first since there may be child overrides that have variant styles
             context = translateDynamicOverrideKeys(contentNode, context);
             context = translateContentNodeVariantOverrides(contentNode, context);
             context = translateContentNodeOverrides(contentNode, context);
-            context = utils_1.addLine("", context);
-            context = utils_1.addLineItem("return ", context);
+            context = (0, utils_1.addLine)("", context);
+            context = (0, utils_1.addLineItem)("return ", context);
             if (contentNode.name === paperclip_1.PCSourceTagNames.TEXT) {
-                context = utils_1.addOpenTag(parts.elementCreator + "('span', null, ", context);
+                context = (0, utils_1.addOpenTag)("".concat(parts.elementCreator, "('span', null, "), context);
                 context = translateVisibleNode(contentNode, context);
-                context = utils_1.addCloseTag(");", context);
+                context = (0, utils_1.addCloseTag)(");", context);
             }
             else {
                 context = translateElement(contentNode, context);
             }
-            context = utils_1.addLine(";", context);
+            context = (0, utils_1.addLine)(";", context);
             return context;
         });
-        if (paperclip_1.isComponent(contentNode)) {
+        if ((0, paperclip_1.isComponent)(contentNode)) {
             context = translateControllers(baseRenderName, contentNode, context);
         }
-        context = utils_1.addLine("return { renderer: " + baseRenderName + ", styleRules: styleRules };", context);
-        context = utils_1.addCloseTag("};\n", context);
+        context = (0, utils_1.addLine)("return { renderer: ".concat(baseRenderName, ", styleRules: styleRules };"), context);
+        context = (0, utils_1.addCloseTag)("};\n", context);
         // necessary or other imported modules
-        context = utils_1.addLine("\nexports." + internalVarName + " = " + internalVarName + ";", context);
-        context = utils_1.addLine("var " + publicRenderName + "Imp = " + internalVarName + "({});", context);
-        context = utils_1.addLine("exports." + publicRenderName + " = " + publicRenderName + "Imp.renderer;", context);
-        context = utils_1.addLine("addStylesToDocument(" + publicRenderName + "Imp.styleRules);", context);
+        context = (0, utils_1.addLine)("\nexports.".concat(internalVarName, " = ").concat(internalVarName, ";"), context);
+        context = (0, utils_1.addLine)("var ".concat(publicRenderName, "Imp = ").concat(internalVarName, "({});"), context);
+        context = (0, utils_1.addLine)("exports.".concat(publicRenderName, " = ").concat(publicRenderName, "Imp.renderer;"), context);
+        context = (0, utils_1.addLine)("addStylesToDocument(".concat(publicRenderName, "Imp.styleRules);"), context);
         return context;
     };
     var getVariantLabelMap = function (contentNode) {
         var map = {};
-        var variants = paperclip_1.getPCVariants(contentNode);
+        var variants = (0, paperclip_1.getPCVariants)(contentNode);
         for (var _i = 0, variants_1 = variants; _i < variants_1.length; _i++) {
             var variant = variants_1[_i];
             map[variant.id] = [
-                utils_1.makeSafeVarName(lodash_1.camelCase(variant.label)),
+                (0, utils_1.makeSafeVarName)((0, lodash_1.camelCase)(variant.label)),
                 variant.isDefault
             ];
         }
         return map;
     };
     var addClassNameCheck = function (id, varName, context) {
-        context = utils_1.addOpenTag("if(" + varName + "." + parts.classAttributeName + " !== _" + id + "StaticProps." + parts.classAttributeName + ") {\n", context);
-        context = utils_1.addLine("_" + id + "Props." + parts.classAttributeName + " = _" + id + "StaticProps." + parts.classAttributeName + " + (" + varName + "." + parts.classAttributeName + " ? \" \" + " + varName + "." + parts.classAttributeName + " : \"\");", context);
-        context = utils_1.addCloseTag("}\n\n", context);
+        context = (0, utils_1.addOpenTag)("if(".concat(varName, ".").concat(parts.classAttributeName, " !== _").concat(id, "StaticProps.").concat(parts.classAttributeName, ") {\n"), context);
+        context = (0, utils_1.addLine)("_".concat(id, "Props.").concat(parts.classAttributeName, " = _").concat(id, "StaticProps.").concat(parts.classAttributeName, " + (").concat(varName, ".").concat(parts.classAttributeName, " ? \" \" + ").concat(varName, ".").concat(parts.classAttributeName, " : \"\");"), context);
+        context = (0, utils_1.addCloseTag)("}\n\n", context);
         return context;
     };
     var translatedUsedComponentInstances = function (component, context) {
-        var componentInstances = tandem_common_1.filterNestedNodes(component, paperclip_1.isPCComponentInstance);
+        var componentInstances = (0, tandem_common_1.filterNestedNodes)(component, paperclip_1.isPCComponentInstance);
         // dirty 🙈
         var usedComponent = false;
-        if (paperclip_1.isPCComponentOrInstance(component) && paperclip_1.extendsComponent(component)) {
+        if ((0, paperclip_1.isPCComponentOrInstance)(component) && (0, paperclip_1.extendsComponent)(component)) {
             usedComponent = true;
             context = translateUsedComponentInstance(component, context);
         }
@@ -479,18 +481,18 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
         return context;
     };
     var translateUsedComponentInstance = function (instance, context) {
-        var overrideProp = "" + (instance.name === paperclip_1.PCSourceTagNames.COMPONENT
+        var overrideProp = "".concat(instance.name === paperclip_1.PCSourceTagNames.COMPONENT
             ? "overrides"
-            : "overrides._" + instance.id);
-        context = utils_1.addOpenTag("var _" + instance.id + "ComponentImp = " + (!tandem_common_1.getNestedTreeNodeById(instance.is, context.entry.content)
+            : "overrides._".concat(instance.id));
+        context = (0, utils_1.addOpenTag)("var _".concat(instance.id, "ComponentImp = ").concat(!(0, tandem_common_1.getNestedTreeNodeById)(instance.is, context.entry.content)
             ? "_imports."
-            : "") + "_" + instance.is + "(mergeProps({\n", context);
+            : "", "_").concat(instance.is, "(mergeProps({\n"), context);
         context = translateUsedComponentOverrides(instance, context);
-        var contentNode = paperclip_1.getPCNodeContentNode(instance.id, context.entry.content) || instance;
+        var contentNode = (0, paperclip_1.getPCNodeContentNode)(instance.id, context.entry.content) || instance;
         context = translateStaticStyleOverride(instance.id, getAllNodeOverrides(instance.id, contentNode), context, true);
-        context = utils_1.addCloseTag("}, " + overrideProp + "));\n", context);
-        context = utils_1.addLine("var _" + instance.id + "Component = _" + instance.id + "ComponentImp.renderer;", context);
-        context = utils_1.addLine("mergeProps(styleRules, _" + instance.id + "ComponentImp.styleRules);\n", context);
+        context = (0, utils_1.addCloseTag)("}, ".concat(overrideProp, "));\n"), context);
+        context = (0, utils_1.addLine)("var _".concat(instance.id, "Component = _").concat(instance.id, "ComponentImp.renderer;"), context);
+        context = (0, utils_1.addLine)("mergeProps(styleRules, _".concat(instance.id, "ComponentImp.styleRules);\n"), context);
         return context;
     };
     var translateVariantSelectors = function (instance, map) {
@@ -503,7 +505,7 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
                 variantSelectors[variantId] = [];
             }
             // tee-up for combo classes
-            variantSelectors[variantId].push("._" + instance.id, "._" + instance.id + " ");
+            variantSelectors[variantId].push("._".concat(instance.id), "._".concat(instance.id, " "));
         }
         for (var key in map) {
             var instanceMap = map[key][instance.id] || tandem_common_1.EMPTY_OBJECT;
@@ -513,7 +515,7 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
                 if (override.propertyName !== paperclip_1.PCOverridablePropertyName.VARIANT) {
                     continue;
                 }
-                var instancePathSelector = override.targetIdPath.map(function (id) { return "._" + id; });
+                var instancePathSelector = override.targetIdPath.map(function (id) { return "._".concat(id); });
                 var newKey = void 0;
                 if (key === paperclip_1.COMPUTED_OVERRIDE_DEFAULT_KEY) {
                     newKey = instance.id;
@@ -532,7 +534,7 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
                         postfix += " ";
                     }
                     // tee-up for combo classes
-                    variantSelectors[variantId].push("._" + newKey + " " + postfix);
+                    variantSelectors[variantId].push("._".concat(newKey, " ").concat(postfix));
                 }
             }
         }
@@ -567,12 +569,12 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
         return newMap;
     };
     var translateUsedComponentOverrides = function (instance, context) {
-        var contentNode = paperclip_1.getPCNodeContentNode(instance.id, context.entry.content) || instance;
-        var overrideMap = paperclip_1.getOverrideMap(instance, contentNode);
-        context = translateUsedComponentOverrideMap(paperclip_1.mergeVariantOverrides(overrideMap), context);
+        var contentNode = (0, paperclip_1.getPCNodeContentNode)(instance.id, context.entry.content) || instance;
+        var overrideMap = (0, paperclip_1.getOverrideMap)(instance, contentNode);
+        context = translateUsedComponentOverrideMap((0, paperclip_1.mergeVariantOverrides)(overrideMap), context);
         var variantSelectors = translateVariantSelectors(instance, overrideMap);
         if (Object.keys(variantSelectors).length) {
-            context = utils_1.addLine("variantPrefixSelectors: " + JSON.stringify(variantSelectors) + ",", context);
+            context = (0, utils_1.addLine)("variantPrefixSelectors: ".concat(JSON.stringify(variantSelectors), ","), context);
         }
         return context;
     };
@@ -580,61 +582,61 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
         for (var key in map) {
             var _a = map[key], children = _a.children, overrides = _a.overrides;
             if (mapContainsStaticOverrides(map[key])) {
-                context = utils_1.addOpenTag("_" + key + ": {\n", context);
+                context = (0, utils_1.addOpenTag)("_".concat(key, ": {\n"), context);
                 for (var _i = 0, overrides_3 = overrides; _i < overrides_3.length; _i++) {
                     var override = overrides_3[_i];
                     context = translateStaticOverride(override, context);
                 }
                 context = translateStaticStyleOverride(key, overrides, context, false);
                 context = translateUsedComponentOverrideMap(children, context);
-                context = utils_1.addCloseTag("},\n", context);
+                context = (0, utils_1.addCloseTag)("},\n", context);
             }
         }
         return context;
     };
     var translateStaticOverrides = function (component, context) {
-        var visibleNodes = tandem_common_1.filterNestedNodes(component, function (node) { return paperclip_1.isVisibleNode(node) || node.name === paperclip_1.PCSourceTagNames.COMPONENT; });
+        var visibleNodes = (0, tandem_common_1.filterNestedNodes)(component, function (node) { return (0, paperclip_1.isVisibleNode)(node) || node.name === paperclip_1.PCSourceTagNames.COMPONENT; });
         for (var _i = 0, visibleNodes_1 = visibleNodes; _i < visibleNodes_1.length; _i++) {
             var node = visibleNodes_1[_i];
             // overrides provided when component is created, so ski
-            if (node.name === paperclip_1.PCSourceTagNames.COMPONENT && paperclip_1.extendsComponent(node)) {
+            if (node.name === paperclip_1.PCSourceTagNames.COMPONENT && (0, paperclip_1.extendsComponent)(node)) {
                 continue;
             }
-            var overrideProp = "" + (node.name === paperclip_1.PCSourceTagNames.COMPONENT
+            var overrideProp = "".concat(node.name === paperclip_1.PCSourceTagNames.COMPONENT
                 ? "overrides"
-                : "overrides._" + node.id);
+                : "overrides._".concat(node.id));
             if (node.name === paperclip_1.PCSourceTagNames.COMPONENT_INSTANCE) {
-                context = utils_1.addOpenTag("var _" + node.id + "StaticProps = {\n", context);
+                context = (0, utils_1.addOpenTag)("var _".concat(node.id, "StaticProps = {\n"), context);
             }
             else {
-                context = utils_1.addOpenTag("var _" + node.id + "StaticProps = mergeProps({\n", context);
+                context = (0, utils_1.addOpenTag)("var _".concat(node.id, "StaticProps = mergeProps({\n"), context);
             }
             if (node.name === paperclip_1.PCSourceTagNames.ELEMENT ||
                 node.name === paperclip_1.PCSourceTagNames.COMPONENT ||
                 node.name === paperclip_1.PCSourceTagNames.COMPONENT_INSTANCE) {
                 context = translateInnerAttributes(node.id, node.attributes, context);
             }
-            context = utils_1.addLine("key: \"" + node.id + "\",", context);
+            context = (0, utils_1.addLine)("key: \"".concat(node.id, "\","), context);
             // class name provided in override
             if (node.name !== paperclip_1.PCSourceTagNames.COMPONENT_INSTANCE) {
                 context = translateStaticStyleOverride(node.id, getAllNodeOverrides(node.id, component), context);
             }
             if (node.name === paperclip_1.PCSourceTagNames.TEXT) {
-                context = utils_1.addLine("text: " + JSON.stringify(node.value) + ",", context);
+                context = (0, utils_1.addLine)("text: ".concat(JSON.stringify(node.value), ","), context);
             }
             if (node.name === paperclip_1.PCSourceTagNames.COMPONENT_INSTANCE) {
-                context = utils_1.addCloseTag("};\n\n", context);
+                context = (0, utils_1.addCloseTag)("};\n\n", context);
             }
             else {
-                context = utils_1.addCloseTag("}, " + overrideProp + ", function(key) { return key.charAt(0) !== \"_\"; });\n\n", context);
+                context = (0, utils_1.addCloseTag)("}, ".concat(overrideProp, ", function(key) { return key.charAt(0) !== \"_\"; });\n\n"), context);
             }
         }
         return context;
     };
     var getAllNodeOverrides = function (nodeId, contentNode) {
-        var node = tandem_common_1.getNestedTreeNodeById(nodeId, contentNode);
-        return tandem_common_1.getTreeNodesByName(paperclip_1.PCSourceTagNames.OVERRIDE, contentNode).filter(function (override) {
-            return (lodash_1.last(override.targetIdPath) === nodeId ||
+        var node = (0, tandem_common_1.getNestedTreeNodeById)(nodeId, contentNode);
+        return (0, tandem_common_1.getTreeNodesByName)(paperclip_1.PCSourceTagNames.OVERRIDE, contentNode).filter(function (override) {
+            return ((0, lodash_1.last)(override.targetIdPath) === nodeId ||
                 (override.targetIdPath.length === 0 &&
                     node.children.indexOf(override) !== -1));
         });
@@ -643,21 +645,21 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
         if (!component.controllers) {
             return context;
         }
-        var internalVarName = utils_1.getInternalVarName(component);
+        var internalVarName = (0, utils_1.getInternalVarName)(component);
         var i = 0;
         for (var _i = 0, _a = component.controllers; _i < _a.length; _i++) {
             var relativePath = _a[_i];
-            var controllerVarName = internalVarName + "Controller" + ++i;
+            var controllerVarName = "".concat(internalVarName, "Controller").concat(++i);
             // TODO - need to filter based on language (javascript). to be provided in context
-            context = utils_1.addLine("var " + controllerVarName + " = require(\"" + relativePath + "\");", context);
-            context = utils_1.addLine(renderName + " = (" + controllerVarName + ".default || " + controllerVarName + ")(" + translators
+            context = (0, utils_1.addLine)("var ".concat(controllerVarName, " = require(\"").concat(relativePath, "\");"), context);
+            context = (0, utils_1.addLine)("".concat(renderName, " = (").concat(controllerVarName, ".default || ").concat(controllerVarName, ")(").concat(translators
                 .getControllerParameters(renderName)
-                .join(", ") + ");", context);
+                .join(", "), ");"), context);
         }
         return context;
     };
     var translateContentNodeOverrides = function (component, context) {
-        var instances = tandem_common_1.filterNestedNodes(component, function (node) {
+        var instances = (0, tandem_common_1.filterNestedNodes)(component, function (node) {
             return node.name === paperclip_1.PCSourceTagNames.COMPONENT ||
                 node.name === paperclip_1.PCSourceTagNames.COMPONENT_INSTANCE;
         });
@@ -675,11 +677,11 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
         //     node.name === PCSourceTagNames.COMPONENT ||
         //     node.name === PCSourceTagNames.COMPONENT_INSTANCE
         // );
-        var variants = paperclip_1.getPCVariants(component);
+        var variants = (0, paperclip_1.getPCVariants)(component);
         for (var _i = 0, variants_2 = variants; _i < variants_2.length; _i++) {
             var variant = variants_2[_i];
-            context = utils_1.addOpenTag("if (variant.indexOf(\"" + variant.id + "\") !== -1) {\n", context);
-            context = utils_1.addLine("_" + context.currentScope + "Props." + parts.classAttributeName + " = (_" + context.currentScope + "Props." + parts.classAttributeName + " ? _" + context.currentScope + "Props." + parts.classAttributeName + " + \" \" : \"\") + \"_" + variant.id + "\";", context);
+            context = (0, utils_1.addOpenTag)("if (variant.indexOf(\"".concat(variant.id, "\") !== -1) {\n"), context);
+            context = (0, utils_1.addLine)("_".concat(context.currentScope, "Props.").concat(parts.classAttributeName, " = (_").concat(context.currentScope, "Props.").concat(parts.classAttributeName, " ? _").concat(context.currentScope, "Props.").concat(parts.classAttributeName, " + \" \" : \"\") + \"_").concat(variant.id, "\";"), context);
             // for (let i = instances.length; i--; ) {
             //   const instance = instances[i];
             //   const overrideMap = getOverrideMap(instance);
@@ -693,7 +695,7 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
             //     context
             //   );
             // }
-            context = utils_1.addCloseTag("}\n", context);
+            context = (0, utils_1.addCloseTag)("}\n", context);
         }
         return context;
     };
@@ -701,7 +703,7 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
         return Boolean(map.children);
     };
     var mapContainersOverride = function (filter) {
-        var check = tandem_common_1.memoize(function (map) {
+        var check = (0, tandem_common_1.memoize)(function (map) {
             if (isComputedOverride(map)) {
                 if (map.overrides.find(filter)) {
                     return true;
@@ -743,12 +745,12 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
             var ref = currentPath.join(".");
             if (!context.definedObjects[context.currentScope][ref]) {
                 if (setObject) {
-                    context = utils_1.addOpenTag("if (" + ref + ") {\n", context);
-                    context = utils_1.addLine(ref + " = Object.assign({}, " + ref + ");", context);
-                    context = utils_1.addCloseTag("}", context);
-                    context = utils_1.addOpenTag(" else {\n", context);
-                    context = utils_1.addLine(ref + " = {};", context);
-                    context = utils_1.addCloseTag("}\n", context);
+                    context = (0, utils_1.addOpenTag)("if (".concat(ref, ") {\n"), context);
+                    context = (0, utils_1.addLine)("".concat(ref, " = Object.assign({}, ").concat(ref, ");"), context);
+                    context = (0, utils_1.addCloseTag)("}", context);
+                    context = (0, utils_1.addOpenTag)(" else {\n", context);
+                    context = (0, utils_1.addLine)("".concat(ref, " = {};"), context);
+                    context = (0, utils_1.addCloseTag)("}\n", context);
                 }
                 context = __assign(__assign({}, context), { definedObjects: __assign(__assign({}, context.definedObjects), (_b = {}, _b[context.currentScope] = __assign(__assign({}, context.definedObjects[context.currentScope]), (_c = {}, _c[ref] = true, _c)), _b)) });
             }
@@ -756,22 +758,22 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
         return context;
     };
     var translateDynamicOverrideKeys = function (contentNode, context) {
-        var instances = tandem_common_1.filterNestedNodes(contentNode, function (node) {
+        var instances = (0, tandem_common_1.filterNestedNodes)(contentNode, function (node) {
             return node.name === paperclip_1.PCSourceTagNames.COMPONENT_INSTANCE ||
                 node.name === paperclip_1.PCSourceTagNames.COMPONENT;
         });
         for (var _i = 0, instances_2 = instances; _i < instances_2.length; _i++) {
             var instance = instances_2[_i];
-            var overrides = paperclip_1.getOverrides(instance);
+            var overrides = (0, paperclip_1.getOverrides)(instance);
             for (var _a = 0, overrides_4 = overrides; _a < overrides_4.length; _a++) {
                 var override = overrides_4[_a];
                 if (isDynamicOverride(override)) {
                     var keyPath = void 0;
-                    if (tandem_common_1.getNestedTreeNodeById(lodash_1.last(override.targetIdPath), contentNode)) {
-                        keyPath = ["_" + lodash_1.last(override.targetIdPath) + "Props"];
+                    if ((0, tandem_common_1.getNestedTreeNodeById)((0, lodash_1.last)(override.targetIdPath), contentNode)) {
+                        keyPath = ["_".concat((0, lodash_1.last)(override.targetIdPath), "Props")];
                     }
                     else {
-                        keyPath = __spreadArrays([instance.id + "Props"], override.targetIdPath).map(function (id) { return "_" + id; });
+                        keyPath = __spreadArray([instance.id + "Props"], override.targetIdPath, true).map(function (id) { return "_".concat(id); });
                     }
                     context = defineNestedObject(keyPath, true, context);
                 }
@@ -783,41 +785,41 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
         var plugs = instance.children.filter(function (child) { return child.name === paperclip_1.PCSourceTagNames.PLUG; });
         for (var _i = 0, plugs_1 = plugs; _i < plugs_1.length; _i++) {
             var plug = plugs_1[_i];
-            var visibleChildren = plug.children.filter(function (child) { return paperclip_1.isVisibleNode(child) || child.name === paperclip_1.PCSourceTagNames.SLOT; });
-            var slot = paperclip_1.getPCNode(plug.slotId, context.graph);
+            var visibleChildren = plug.children.filter(function (child) { return (0, paperclip_1.isVisibleNode)(child) || child.name === paperclip_1.PCSourceTagNames.SLOT; });
+            var slot = (0, paperclip_1.getPCNode)(plug.slotId, context.graph);
             if (!slot) {
-                console.log("Orphaned plug found for slot " + plug.slotId);
+                console.log("Orphaned plug found for slot ".concat(plug.slotId));
                 continue;
             }
             // context = addScopedLayerLabel(slot.label, slot.id, context);
-            var publicLayerVarName = slot.label && utils_1.makeSafeVarName(lodash_1.camelCase(slot.label));
+            var publicLayerVarName = slot.label && (0, utils_1.makeSafeVarName)((0, lodash_1.camelCase)(slot.label));
             // We use the slot's name here so that developers can programatically override
             // the slot via controllers. This value should be unique, so if there's ever colliding slot names,
             // then there's an issue with the component file being translated.
-            var slotPropName = publicLayerVarName || "_" + slot.id;
-            context = utils_1.addOpenTag("if (!_" + instance.id + "Props." + slotPropName + ") {\n", context);
-            context = utils_1.addOpenTag("_" + instance.id + "Props." + slotPropName + " = [\n", context);
+            var slotPropName = publicLayerVarName || "_".concat(slot.id);
+            context = (0, utils_1.addOpenTag)("if (!_".concat(instance.id, "Props.").concat(slotPropName, ") {\n"), context);
+            context = (0, utils_1.addOpenTag)("_".concat(instance.id, "Props.").concat(slotPropName, " = [\n"), context);
             for (var _a = 0, visibleChildren_1 = visibleChildren; _a < visibleChildren_1.length; _a++) {
                 var child = visibleChildren_1[_a];
                 context = translateVisibleNode(child, context);
-                context = utils_1.addLineItem(",\n", context);
+                context = (0, utils_1.addLineItem)(",\n", context);
             }
-            context = utils_1.addCloseTag("];\n", context);
-            context = utils_1.addCloseTag("}\n", context);
+            context = (0, utils_1.addCloseTag)("];\n", context);
+            context = (0, utils_1.addCloseTag)("}\n", context);
         }
         return context;
     };
     var translateDynamicOverrides = function (component, instance, variantId, context) {
-        var overrides = paperclip_1.getOverrides(instance);
+        var overrides = (0, paperclip_1.getOverrides)(instance);
         for (var _i = 0, overrides_5 = overrides; _i < overrides_5.length; _i++) {
             var override = overrides_5[_i];
             if (isDynamicOverride(override) && override.variantId == variantId) {
                 var keyPath = void 0;
-                if (tandem_common_1.getNestedTreeNodeById(lodash_1.last(override.targetIdPath), component)) {
-                    keyPath = ["_" + lodash_1.last(override.targetIdPath) + "Props"];
+                if ((0, tandem_common_1.getNestedTreeNodeById)((0, lodash_1.last)(override.targetIdPath), component)) {
+                    keyPath = ["_".concat((0, lodash_1.last)(override.targetIdPath), "Props")];
                 }
                 else {
-                    keyPath = __spreadArrays([instance.id + "Props"], override.targetIdPath).map(function (id) { return "_" + id; });
+                    keyPath = __spreadArray([instance.id + "Props"], override.targetIdPath, true).map(function (id) { return "_".concat(id); });
                 }
                 context = translateDynamicOverrideSetter(keyPath.join("."), override, context);
             }
@@ -843,11 +845,11 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
         if (override.variantId) {
             switch (override.propertyName) {
                 case paperclip_1.PCOverridablePropertyName.STYLE: {
-                    context = utils_1.addLine(varName + "." + parts.classAttributeName + " = (" + varName + "." + parts.classAttributeName + " ? " + varName + "." + parts.classAttributeName + " + \" \" : \"\") + \"_" + override.id + " _" + override.variantId + "\";", context);
+                    context = (0, utils_1.addLine)("".concat(varName, ".").concat(parts.classAttributeName, " = (").concat(varName, ".").concat(parts.classAttributeName, " ? ").concat(varName, ".").concat(parts.classAttributeName, " + \" \" : \"\") + \"_").concat(override.id, " _").concat(override.variantId, "\";"), context);
                     return context;
                 }
                 case paperclip_1.PCOverridablePropertyName.VARIANT: {
-                    context = utils_1.addLine(varName + ".variant = (" + varName + ".variant ? " + varName + ".variant + \" \" : \"\") + \"" + Object.keys(override.value).join(" ") + "\";", context);
+                    context = (0, utils_1.addLine)("".concat(varName, ".variant = (").concat(varName, ".variant ? ").concat(varName, ".variant + \" \" : \"\") + \"").concat(Object.keys(override.value).join(" "), "\";"), context);
                     return context;
                 }
             }
@@ -860,13 +862,13 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
         }
         switch (override.propertyName) {
             case paperclip_1.PCOverridablePropertyName.TEXT: {
-                return utils_1.addLine("text: " + JSON.stringify(override.value) + ",", context);
+                return (0, utils_1.addLine)("text: ".concat(JSON.stringify(override.value), ","), context);
             }
             case paperclip_1.PCOverridablePropertyName.VARIANT: {
-                return utils_1.addLine("variant: \"" + Object.keys(override.value).join(" ") + "\",", context);
+                return (0, utils_1.addLine)("variant: \"".concat(Object.keys(override.value).join(" "), "\","), context);
             }
             case paperclip_1.PCOverridablePropertyName.ATTRIBUTES: {
-                context = translateInnerAttributes(lodash_1.last(override.targetIdPath), override.value, context);
+                context = translateInnerAttributes((0, lodash_1.last)(override.targetIdPath), override.value, context);
                 break;
             }
         }
@@ -880,11 +882,11 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
         }
         var nodeIds = styleOverrides.map(function (override) { return override.id; });
         if (includeNodeId) {
-            nodeIds = __spreadArrays([nodeId], nodeIds);
+            nodeIds = __spreadArray([nodeId], nodeIds, true);
         }
-        context = utils_1.addLine("\"" + parts.classAttributeName + "\": \"" + nodeIds
+        context = (0, utils_1.addLine)("\"".concat(parts.classAttributeName, "\": \"").concat(nodeIds
             .map(function (nodeId) { return "_" + nodeId; })
-            .join(" ") + "\", ", context);
+            .join(" "), "\", "), context);
         return context;
     };
     var canTranslateAttributeKey = function (key) {
@@ -894,9 +896,9 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
             key !== "class";
     };
     var translateInnerAttributes = function (nodeId, attributes, context) {
-        var node = paperclip_1.getPCNode(nodeId, context.graph);
+        var node = (0, paperclip_1.getPCNode)(nodeId, context.graph);
         if (!node) {
-            return utils_1.addWarning(new Error("cannot find PC node"), context);
+            return (0, utils_1.addWarning)(new Error("cannot find PC node"), context);
         }
         for (var key in attributes) {
             if (!canTranslateAttributeKey(key)) {
@@ -904,16 +906,16 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
             }
             var value = JSON.stringify(attributes[key]);
             if (key === "src" && node.is === "img") {
-                value = "require(" + value + ")";
+                value = "require(".concat(value, ")");
             }
-            context = utils_1.addLine(utils_1.makeSafeVarName(lodash_1.camelCase(key)) + ": " + value + ",", context);
+            context = (0, utils_1.addLine)("".concat((0, utils_1.makeSafeVarName)((0, lodash_1.camelCase)(key)), ": ").concat(value, ","), context);
         }
         return context;
     };
     var getNodePropsVarName = function (node, context) {
         return node.name === paperclip_1.PCSourceTagNames.COMPONENT
             ? "props"
-            : "" + utils_1.getPublicLayerVarName(node.label + " Props", node.id, context);
+            : "".concat((0, utils_1.getPublicLayerVarName)("".concat(node.label, " Props"), node.id, context));
     };
     var hasStyle = function (node) {
         return (Object.keys(node.style).length > 0 ||
@@ -922,12 +924,12 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
     var translateVisibleNode = function (node, context) {
         switch (node.name) {
             case paperclip_1.PCSourceTagNames.TEXT: {
-                var textValue = "_" + node.id + "Props.text || " + JSON.stringify(node.value);
+                var textValue = "_".concat(node.id, "Props.text || ").concat(JSON.stringify(node.value));
                 if (hasStyle(node)) {
-                    return utils_1.addLineItem(parts.elementCreator + "(\"span\", _" + node.id + "Props, " + textValue + ")", context);
+                    return (0, utils_1.addLineItem)("".concat(parts.elementCreator, "(\"span\", _").concat(node.id, "Props, ").concat(textValue, ")"), context);
                 }
                 else {
-                    return utils_1.addLineItem(textValue, context);
+                    return (0, utils_1.addLineItem)(textValue, context);
                 }
             }
             case paperclip_1.PCSourceTagNames.COMPONENT_INSTANCE:
@@ -941,55 +943,55 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
         return context;
     };
     var translateSlot = function (slot, context) {
-        var visibleChildren = slot.children.filter(function (child) { return paperclip_1.isVisibleNode(child) || paperclip_1.isSlot(child); });
-        context = utils_1.addScopedLayerLabel(slot.label, slot.id, context);
-        var slotPropName = utils_1.getPublicLayerVarName(slot.label, slot.id, context);
+        var visibleChildren = slot.children.filter(function (child) { return (0, paperclip_1.isVisibleNode)(child) || (0, paperclip_1.isSlot)(child); });
+        context = (0, utils_1.addScopedLayerLabel)(slot.label, slot.id, context);
+        var slotPropName = (0, utils_1.getPublicLayerVarName)(slot.label, slot.id, context);
         if (slotPropName) {
-            context = utils_1.addLineItem("_" + context.currentScope + "Props." + slotPropName + " || ", context);
+            context = (0, utils_1.addLineItem)("_".concat(context.currentScope, "Props.").concat(slotPropName, " || "), context);
         }
-        context = utils_1.addLineItem("_" + context.currentScope + "Props._" + slot.id, context);
+        context = (0, utils_1.addLineItem)("_".concat(context.currentScope, "Props._").concat(slot.id), context);
         if (visibleChildren.length) {
-            context = utils_1.addOpenTag(" || [\n", context);
+            context = (0, utils_1.addOpenTag)(" || [\n", context);
             context = visibleChildren.reduce(function (context, node, index, array) {
                 context = translateVisibleNode(node, context);
                 if (index < array.length - 1) {
-                    context = utils_1.addBuffer(",", context);
+                    context = (0, utils_1.addBuffer)(",", context);
                 }
-                return utils_1.addLine("", context);
+                return (0, utils_1.addLine)("", context);
             }, context);
-            context = utils_1.addCloseTag("]", context);
+            context = (0, utils_1.addCloseTag)("]", context);
         }
         return context;
     };
     var translateElement = function (elementOrComponent, context) {
-        var visibleChildren = elementOrComponent.children.filter(function (child) { return paperclip_1.isVisibleNode(child) || paperclip_1.isSlot(child); });
+        var visibleChildren = elementOrComponent.children.filter(function (child) { return (0, paperclip_1.isVisibleNode)(child) || (0, paperclip_1.isSlot)(child); });
         var hasVisibleChildren = visibleChildren.length > 0;
-        context = utils_1.addOpenTag(parts.elementCreator + "(", context, hasVisibleChildren);
-        context = utils_1.addLineItem((paperclip_1.extendsComponent(elementOrComponent)
-            ? "_" + elementOrComponent.id + "Component"
-            : '"' + elementOrComponent.is + '"') + ", ", context);
-        if (!paperclip_1.extendsComponent(elementOrComponent)) {
-            context = utils_1.addLineItem("_toNativeProps(_" + elementOrComponent.id + "Props)", context);
+        context = (0, utils_1.addOpenTag)("".concat(parts.elementCreator, "("), context, hasVisibleChildren);
+        context = (0, utils_1.addLineItem)("".concat((0, paperclip_1.extendsComponent)(elementOrComponent)
+            ? "_".concat(elementOrComponent.id, "Component")
+            : '"' + elementOrComponent.is + '"', ", "), context);
+        if (!(0, paperclip_1.extendsComponent)(elementOrComponent)) {
+            context = (0, utils_1.addLineItem)("_toNativeProps(_".concat(elementOrComponent.id, "Props)"), context);
         }
         else {
-            context = utils_1.addLineItem("_" + elementOrComponent.id + "Props", context);
+            context = (0, utils_1.addLineItem)("_".concat(elementOrComponent.id, "Props"), context);
         }
         // TODO - deprecate child overrides like this
-        context = utils_1.addLineItem(", _" + elementOrComponent.id + "Props.children", context);
+        context = (0, utils_1.addLineItem)(", _".concat(elementOrComponent.id, "Props.children"), context);
         if (visibleChildren.length) {
-            context = utils_1.addLineItem(" || [\n", context);
+            context = (0, utils_1.addLineItem)(" || [\n", context);
             context = visibleChildren.reduce(function (context, node, index, array) {
                 context = translateVisibleNode(node, context);
                 if (index < array.length - 1) {
-                    context = utils_1.addBuffer(",", context);
+                    context = (0, utils_1.addBuffer)(",", context);
                 }
-                return utils_1.addLine("", context);
+                return (0, utils_1.addLine)("", context);
             }, context);
         }
         else if (hasVisibleChildren) {
-            context = utils_1.addLineItem("\n", context);
+            context = (0, utils_1.addLineItem)("\n", context);
         }
-        context = utils_1.addCloseTag(hasVisibleChildren ? "])" : ")", context, hasVisibleChildren);
+        context = (0, utils_1.addCloseTag)(hasVisibleChildren ? "])" : ")", context, hasVisibleChildren);
         return context;
     };
     return function (entry, graph, rootDirectory, options) {
@@ -1007,4 +1009,5 @@ exports.createPaperclipVirtualDOMtranslator = function (parts, translators) {
         });
     };
 };
+exports.createPaperclipVirtualDOMtranslator = createPaperclipVirtualDOMtranslator;
 //# sourceMappingURL=code-compiler.js.map

@@ -10,17 +10,17 @@ module.exports = function (source) {
     var _this = this;
     this.cacheable && this.cacheable();
     var callback = this.async();
-    var uri = tandem_common_1.normalizeFilePath(this.resource);
+    var uri = (0, tandem_common_1.normalizeFilePath)(this.resource);
     var options = loaderUtils.getOptions(this) || {};
     var useHMR = options.hmr == null ? true : options.hmr;
-    var graph = paperclip_1.loadFSDependencyGraphSync(options.config, process.cwd(), migrate);
+    var graph = (0, paperclip_1.loadFSDependencyGraphSync)(options.config, process.cwd(), migrate);
     var entry = graph["file://" + uri];
-    var content = paperclip_react_compiler_1.translatePaperclipModuleToReact(entry, graph, process.cwd())
+    var content = (0, paperclip_react_compiler_1.translatePaperclipModuleToReact)(entry, graph, process.cwd())
         .buffer;
-    var refMap = paperclip_1.getComponentGraphRefMap(entry.content, graph);
+    var refMap = (0, paperclip_1.getComponentGraphRefMap)(entry.content, graph);
     var depUriMap = {};
     for (var refId in refMap) {
-        var ref = paperclip_1.getPCNodeDependency(refId, graph);
+        var ref = (0, paperclip_1.getPCNodeDependency)(refId, graph);
         depUriMap[ref.uri] = 1;
     }
     Object.keys(depUriMap).forEach(function (uri) {

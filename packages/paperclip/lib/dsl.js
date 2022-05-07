@@ -1072,7 +1072,9 @@ exports.getNodeStyleRefIds = (0, tandem_common_1.memoize)(function (style) {
     }
     return Object.keys(refIds);
 });
-exports.filterNestedOverrides = (0, tandem_common_1.memoize)(function (node) { return (0, tandem_common_1.filterNestedNodes)(node, exports.isPCOverride); });
+exports.filterNestedOverrides = (0, tandem_common_1.memoize)(function (node) {
+    return (0, tandem_common_1.filterNestedNodes)(node, exports.isPCOverride);
+});
 exports.getOverrideMap = (0, tandem_common_1.memoize)(function (node, contentNode, includeSelf) {
     var map = {
         default: {}

@@ -22,9 +22,9 @@ var bundler_1 = require("./bundler");
 var crypto = require("crypto");
 var stringifyStyleRuleValue = function (key, value, space, tab) {
     if (typeof value === "string") {
-        return "" + space + key + ": " + value + ";\n";
+        return "".concat(space).concat(key, ": ").concat(value, ";\n");
     }
-    return "" + space + key + "{\n" + stringifyStyleRules(value, space + tab) + "}\n";
+    return "".concat(space).concat(key, "{\n").concat(stringifyStyleRules(value, space + tab), "}\n");
 };
 var stringifyStyleRules = function (rules, space, tab) {
     if (space === void 0) { space = ""; }
@@ -39,33 +39,34 @@ var stringifyStyleRules = function (rules, space, tab) {
     }
     return buffer.join("");
 };
-exports.translatePaperclipModuleToStaticHTML = function (config, cwd) {
+var translatePaperclipModuleToStaticHTML = function (config, cwd) {
     for (var _i = 0, _a = config.pages; _i < _a.length; _i++) {
         var page = _a[_i];
         translatePage(page, config, cwd);
     }
 };
+exports.translatePaperclipModuleToStaticHTML = translatePaperclipModuleToStaticHTML;
 var translatePage = function (page, config, cwd) {
     var outputFile = config.outputDirectory
         ? resolvePath(path.join(config.outputDirectory, page.fileName), cwd)
         : resolvePath(page.fileName, cwd);
     var outputDir = path.dirname(outputFile);
-    console.log("Creating " + outputFile);
-    var graph = paperclip_1.loadFSDependencyGraphSync(config.project, cwd, lodash_1.identity);
+    console.log("Creating ".concat(outputFile));
+    var graph = (0, paperclip_1.loadFSDependencyGraphSync)(config.project, cwd, lodash_1.identity);
     graph = injectVaraibles(page.variables, graph);
     var component = page.component.id
-        ? paperclip_1.getPCNode(page.component.id, graph)
+        ? (0, paperclip_1.getPCNode)(page.component.id, graph)
         : page.component.name
-            ? paperclip_1.getAllPCComponents(graph).find(function (component) { return component.label === page.component.name; })
+            ? (0, paperclip_1.getAllPCComponents)(graph).find(function (component) { return component.label === page.component.name; })
             : null;
     if (!component) {
-        console.error("Could not find component : " + JSON.stringify(page.component) + ".");
+        console.error("Could not find component : ".concat(JSON.stringify(page.component), "."));
         return;
     }
-    var componentDep = paperclip_1.getPCNodeDependency(component.id, graph);
-    var bundle = bundler_1.bundleDependencyGraph(graph, cwd);
+    var componentDep = (0, paperclip_1.getPCNodeDependency)(component.id, graph);
+    var bundle = (0, bundler_1.bundleDependencyGraph)(graph, cwd);
     var externalDepOutputFilePaths = {};
-    var evaluatedModule = bundler_1.evaluateBundle(componentDep.uri, bundle, function (uri) {
+    var evaluatedModule = (0, bundler_1.evaluateBundle)(componentDep.uri, bundle, function (uri) {
         if (externalDepOutputFilePaths[uri]) {
             return externalDepOutputFilePaths[uri];
         }
@@ -75,7 +76,7 @@ var translatePage = function (page, config, cwd) {
             .digest("hex") + path.extname(uri));
         return path.relative(outputDir, (externalDepOutputFilePaths[uri] = outputPath));
     });
-    var imp = evaluatedModule["_" + component.id]({});
+    var imp = evaluatedModule["_".concat(component.id)]({});
     var vnode = imp.renderer({});
     vnode = {
         id: "html",
@@ -129,7 +130,7 @@ var translatePage = function (page, config, cwd) {
             }
         ]
     };
-    var html = html_compiler_1.stringifyVirtualNode(vnode);
+    var html = (0, html_compiler_1.stringifyVirtualNode)(vnode);
     try {
         fsa.mkdirpSync(path.dirname(outputFile));
     }
@@ -140,16 +141,16 @@ var translatePage = function (page, config, cwd) {
     }
 };
 var injectVaraibles = function (injections, graph) {
-    var variables = paperclip_1.getGlobalVariables(graph);
+    var variables = (0, paperclip_1.getGlobalVariables)(graph);
     var _loop_1 = function (labelOrId) {
-        var variable = (paperclip_1.getPCNode(labelOrId, graph) ||
+        var variable = ((0, paperclip_1.getPCNode)(labelOrId, graph) ||
             variables.find(function (variable) { return variable.label === labelOrId; }));
         if (!variable) {
-            console.error("Variable " + labelOrId + " does not exist.");
+            console.error("Variable ".concat(labelOrId, " does not exist."));
             return "continue";
         }
         variable = __assign(__assign({}, variable), { value: injections[labelOrId] });
-        graph = paperclip_1.replacePCNode(variable, variable, graph);
+        graph = (0, paperclip_1.replacePCNode)(variable, variable, graph);
     };
     for (var labelOrId in injections) {
         _loop_1(labelOrId);

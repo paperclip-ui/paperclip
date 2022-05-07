@@ -690,7 +690,8 @@ var maybeOverride = function (propertyName, value, variant, mapOverride, updater
             .map(function (variant) { return variant.id; })
         : [];
     var variantOverrides = (0, tandem_common_1.filterNestedNodes)(contentSourceNode, function (node) {
-        return (0, dsl_1.isPCOverride)(node) && defaultVariantIds.indexOf(node.variantId) !== -1;
+        return (0, dsl_1.isPCOverride)(node) &&
+            defaultVariantIds.indexOf(node.variantId) !== -1;
     }).filter(function (override) {
         return (0, lodash_1.last)(override.targetIdPath) === sourceNode.id ||
             (override.targetIdPath.length === 0 &&

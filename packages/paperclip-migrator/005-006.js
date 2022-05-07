@@ -40,10 +40,9 @@ module.exports = (module) => {
       }
     }
 
-    return {
-      ...node,
+    return Object.assign({}, node, {
       children: node.children.map(mapNode)
-    };
+    });
   };
 
   return mapModule(module);

@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
-    "build:watch": "webpack --watch",
+    "build2": "webpack",
+    "build2:watch": "webpack --watch",
     "clean": "rm -rf node_modules"
   },
   "author": "",
@@ -19,8 +19,7 @@
     "@types/node": "^10.11.4",
     "null-loader": "^0.1.1",
     "ts-loader": "^5.2.1",
-    "webpack": "^4.20.2",
-    "webpack-cli": "^3.1.2"
+    "webpack": "^5.72.0"
   },
   "gitHead": "62ff73f435d5ddc97b8ff23b2356ed36f69c1486"
 }

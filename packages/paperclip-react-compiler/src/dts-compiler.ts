@@ -149,7 +149,8 @@ const translateComponent = (
   );
   const labeledNestedChildren = getLabeledNestedChildren(component) as (
     | PCVisibleNode
-    | PCSlot)[];
+    | PCSlot
+  )[];
 
   // const labeledNestedChildren =
   context = addOpenTag(
@@ -261,7 +262,7 @@ const translateComponent = (
 };
 
 const getLabeledNestedChildren = (parent: PCNode) => {
-  return filterNestedNodes(parent, child => child.label);
+  return filterNestedNodes(parent, child => (child as any).label);
 };
 
 const getComponentPropsName = (

@@ -209,9 +209,7 @@ export const createPaperclipVirtualDOMtranslator = (
       context
     );
     context = addLine(
-      `target[key] = key === "${
-        parts.classAttributeName
-      }" ? (target[key] ?  object[key] + " " + target[key] : object[key]) : mergeProps(target[key], object[key], keyFilter);`,
+      `target[key] = key === "${parts.classAttributeName}" ? (target[key] ?  object[key] + " " + target[key] : object[key]) : mergeProps(target[key], object[key], keyFilter);`,
       context
     );
     context = addCloseTag(`}\n`, context);
@@ -292,9 +290,7 @@ export const createPaperclipVirtualDOMtranslator = (
     // variant styles
 
     context = addLine(
-      `const styleVariantKey = (overrides.variantPrefixSelectors ? JSON.stringify(overrides.variantPrefixSelectors) : "${
-        component.id
-      }") + "Style";`,
+      `const styleVariantKey = (overrides.variantPrefixSelectors ? JSON.stringify(overrides.variantPrefixSelectors) : "${component.id}") + "Style";`,
       context
     );
     context = translateStyleOverrides(component, context);
@@ -431,7 +427,11 @@ export const createPaperclipVirtualDOMtranslator = (
     );
 
     for (const instance of instances) {
-      context = translateStyleVariantOverrides(instance, contentNode, context);
+      context = translateStyleVariantOverrides(
+        instance as PCComponentInstanceElement,
+        contentNode,
+        context
+      );
     }
 
     return context;
@@ -509,15 +509,9 @@ export const createPaperclipVirtualDOMtranslator = (
         if (variableTriggerPassed) {
           selector = `${targetSelector}`;
         } else {
-          baseSelector = `" + (overrides.variantPrefixSelectors && overrides.variantPrefixSelectors["${
-            override.variantId
-          }"] && overrides.variantPrefixSelectors["${
-            override.variantId
-          }"].map(prefix => prefix + "${targetSelector}").join(", ") + ", " || "") + " `;
+          baseSelector = `" + (overrides.variantPrefixSelectors && overrides.variantPrefixSelectors["${override.variantId}"] && overrides.variantPrefixSelectors["${override.variantId}"].map(prefix => prefix + "${targetSelector}").join(", ") + ", " || "") + " `;
 
-          selector = `${baseSelector} ._${
-            override.variantId
-          } ${targetSelector}, ._${override.variantId}${targetSelector}`;
+          selector = `${baseSelector} ._${override.variantId} ${targetSelector}, ._${override.variantId}${targetSelector}`;
         }
 
         mediaTriggers = queryTriggers.filter(trigger => {
@@ -705,9 +699,7 @@ export const createPaperclipVirtualDOMtranslator = (
         !extendsComponent(contentNode)
       ) {
         context = addLineItem(
-          `var _${contentNode.id}Props = Object.assign({}, _${
-            contentNode.id
-          }StaticProps, props);\n`,
+          `var _${contentNode.id}Props = Object.assign({}, _${contentNode.id}StaticProps, props);\n`,
           context
         );
         context = addClassNameCheck(`${contentNode.id}`, `props`, context);
@@ -739,11 +731,7 @@ export const createPaperclipVirtualDOMtranslator = (
           context = defineNestedObject([`_${node.id}Props`], false, context);
           // context = addLineItem(`var _${node.id}Props = (_${contentNode.id}Props.${propsVarName} || _${contentNode.id}Props._${node.id}) && `, context);
           context = addLine(
-            `var _${node.id}Props = Object.assign({}, _${
-              node.id
-            }StaticProps, _${contentNode.id}Props._${node.id}, _${
-              contentNode.id
-            }Props.${propsVarName});`,
+            `var _${node.id}Props = Object.assign({}, _${node.id}StaticProps, _${contentNode.id}Props._${node.id}, _${contentNode.id}Props.${propsVarName});`,
             context
           );
 
@@ -831,17 +819,11 @@ export const createPaperclipVirtualDOMtranslator = (
     context: TranslateContext
   ) => {
     context = addOpenTag(
-      `if(${varName}.${parts.classAttributeName} !== _${id}StaticProps.${
-        parts.classAttributeName
-      }) {\n`,
+      `if(${varName}.${parts.classAttributeName} !== _${id}StaticProps.${parts.classAttributeName}) {\n`,
       context
     );
     context = addLine(
-      `_${id}Props.${parts.classAttributeName} = _${id}StaticProps.${
-        parts.classAttributeName
-      } + (${varName}.${parts.classAttributeName} ? " " + ${varName}.${
-        parts.classAttributeName
-      } : "");`,
+      `_${id}Props.${parts.classAttributeName} = _${id}StaticProps.${parts.classAttributeName} + (${varName}.${parts.classAttributeName} ? " " + ${varName}.${parts.classAttributeName} : "");`,
       context
     );
     context = addCloseTag(`}\n\n`, context);
@@ -1180,7 +1162,7 @@ export const createPaperclipVirtualDOMtranslator = (
       node =>
         node.name === PCSourceTagNames.COMPONENT ||
         node.name === PCSourceTagNames.COMPONENT_INSTANCE
-    );
+    ) as PCComponentInstanceElement[];
 
     for (let i = instances.length; i--; ) {
       const instance = instances[i];
@@ -1210,11 +1192,7 @@ export const createPaperclipVirtualDOMtranslator = (
       );
 
       context = addLine(
-        `_${context.currentScope}Props.${parts.classAttributeName} = (_${
-          context.currentScope
-        }Props.${parts.classAttributeName} ? _${context.currentScope}Props.${
-          parts.classAttributeName
-        } + " " : "") + "_${variant.id}";`,
+        `_${context.currentScope}Props.${parts.classAttributeName} = (_${context.currentScope}Props.${parts.classAttributeName} ? _${context.currentScope}Props.${parts.classAttributeName} + " " : "") + "_${variant.id}";`,
         context
       );
       // for (let i = instances.length; i--; ) {
@@ -1460,11 +1438,7 @@ export const createPaperclipVirtualDOMtranslator = (
       switch (override.propertyName) {
         case PCOverridablePropertyName.STYLE: {
           context = addLine(
-            `${varName}.${parts.classAttributeName} = (${varName}.${
-              parts.classAttributeName
-            } ? ${varName}.${parts.classAttributeName} + " " : "") + "_${
-              override.id
-            } _${override.variantId}";`,
+            `${varName}.${parts.classAttributeName} = (${varName}.${parts.classAttributeName} ? ${varName}.${parts.classAttributeName} + " " : "") + "_${override.id} _${override.variantId}";`,
             context
           );
           return context;

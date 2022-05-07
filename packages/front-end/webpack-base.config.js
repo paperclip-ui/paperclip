@@ -22,7 +22,10 @@ module.exports = {
     },
     fallback: {
       stream: "stream-browserify",
-      path: "path-browserify"
+      path: "path-browserify",
+      buffer: "buffer",
+      util: "util",
+      process: "process/browser"
     },  
     modules: [
       resolve(__dirname, 'src'),

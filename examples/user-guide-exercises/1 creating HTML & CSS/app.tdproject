@@ -1,8 +1,0 @@
-{
-  "scripts": {},
-  "rootDir": ".",
-  "exclude": [
-    "node_modules"
-  ],
-  "mainFilePath": "./src/main.pc"
-}

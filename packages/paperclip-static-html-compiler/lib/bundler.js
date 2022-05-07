@@ -15,16 +15,17 @@ exports.evaluateBundle = exports.bundleDependencyGraph = void 0;
 var path = require("path");
 var html_compiler_1 = require("./html-compiler");
 var tandem_common_1 = require("tandem-common");
-exports.bundleDependencyGraph = function (graph, rootDirectory) {
+var bundleDependencyGraph = function (graph, rootDirectory) {
     var bundle = {};
     for (var uri in graph) {
         bundle = addDependencyToBundle(uri, bundle, graph, rootDirectory);
     }
     return bundle;
 };
+exports.bundleDependencyGraph = bundleDependencyGraph;
 var addDependencyToBundle = function (uri, bundle, graph, rootDirectory) {
     var _a, _b;
-    var filePath = tandem_common_1.stripProtocol(uri);
+    var filePath = (0, tandem_common_1.stripProtocol)(uri);
     if (bundle[filePath]) {
         return bundle;
     }
@@ -36,28 +37,28 @@ var addDependencyToBundle = function (uri, bundle, graph, rootDirectory) {
     // PC module
     if (graph[uri]) {
         var entry = graph[uri];
-        var content = html_compiler_1.translatePaperclipModuleToHTMLRenderers(entry, graph, rootDirectory).buffer;
+        var content = (0, html_compiler_1.translatePaperclipModuleToHTMLRenderers)(entry, graph, rootDirectory).buffer;
         var imports = (content.match(/require\(.*?\)/g) || tandem_common_1.EMPTY_ARRAY).map(function (req) {
             return req.match(/require\(["'](.*?)["']\)/)[1];
         });
         var resolvedImports = {};
         for (var _i = 0, imports_1 = imports; _i < imports_1.length; _i++) {
             var relativePath = imports_1[_i];
-            var fullPath = path.resolve(path.dirname(tandem_common_1.stripProtocol(entry.uri)), relativePath);
+            var fullPath = path.resolve(path.dirname((0, tandem_common_1.stripProtocol)(entry.uri)), relativePath);
             resolvedImports[relativePath] = fullPath;
             bundle = addDependencyToBundle(fullPath, bundle, graph, rootDirectory);
         }
-        var module = new Function("require", "module", "exports", content);
+        var module_1 = new Function("require", "module", "exports", content);
         return __assign(__assign({}, bundle), (_b = {}, _b[filePath] = {
             imports: resolvedImports,
-            module: module
+            module: module_1
         }, _b));
     }
     else {
     }
     return bundle;
 };
-exports.evaluateBundle = function (entryPath, bundle, resolveExternal) {
+var evaluateBundle = function (entryPath, bundle, resolveExternal) {
     var imported = {};
     var require = function (filePath) {
         if (imported[filePath]) {
@@ -78,6 +79,7 @@ exports.evaluateBundle = function (entryPath, bundle, resolveExternal) {
         }
         return module.exports;
     };
-    return require(tandem_common_1.stripProtocol(entryPath));
+    return require((0, tandem_common_1.stripProtocol)(entryPath));
 };
+exports.evaluateBundle = evaluateBundle;
 //# sourceMappingURL=bundler.js.map

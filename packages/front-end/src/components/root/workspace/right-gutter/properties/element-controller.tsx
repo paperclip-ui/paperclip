@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import {
   PCSourceTagNames,
   SyntheticVisibleNode,
@@ -146,9 +146,8 @@ const getTypeMenuOptions = memoize(
       ...getComponentDropdownOptions(components).filter(
         component => component.value !== targetSourceNode.id
       )
-    ].sort(
-      (a, b) =>
-        String(a.label).toLowerCase() < String(b.label).toLowerCase() ? -1 : 1
+    ].sort((a, b) =>
+      String(a.label).toLowerCase() < String(b.label).toLowerCase() ? -1 : 1
     );
   }
 );

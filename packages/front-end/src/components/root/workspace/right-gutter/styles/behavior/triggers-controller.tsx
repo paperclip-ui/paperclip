@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Dispatch } from "redux";
-import * as cx from "classnames";
+import cx from "classnames";
 import { PCVariantTrigger, PCVariant, PCQuery } from "paperclip";
 import { BaseTriggersPaneProps, TriggerItem } from "./triggers.pc";
 import {

@@ -36,7 +36,7 @@ function download(
       if (force) {
         fs.unlinkSync(filePath);
       } else {
-        return resolve();
+        return resolve(null);
       }
     }
 
@@ -76,7 +76,7 @@ function download(
 function install(filePath, unzipPath) {
   return new Promise((resolve, reject) => {
     if (fs.existsSync(unzipPath)) {
-      return resolve();
+      return resolve(null);
     }
     yauzl.open(filePath, (err, zipFile) => {
       const bar = new ProgressBar(`Unzipping Tandem ${distVersion} [:bar]`, {
@@ -88,7 +88,7 @@ function install(filePath, unzipPath) {
         if (err) {
           return console.error(err);
         }
-        resolve();
+        resolve(null);
       });
     });
   });

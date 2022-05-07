@@ -3,9 +3,7 @@
   "version": "10.1.33",
   "description": "",
   "main": "index.js",
-  "bin": {
-    "paperclip-react-compiler": "./bin/paperclip-react-compiler"
-  },
+  "bin": "./bin/paperclip-react-compiler",
   "scripts": {
     "test": "echo \"\"",
     "build": "tsc",
@@ -16,13 +14,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/enzyme": "^3.1.10",
     "@types/lodash": "^4.14.108",
     "@types/mocha": "^5.2.0",
     "chai": "^4.1.2",
-    "enzyme": "^3.3.0",
-    "mocha": "^5.2.0",
-    "typescript": "3.0.x"
+    "mocha": "^5.2.0"
   },
   "dependencies": {
     "chokidar": "^2.0.4",

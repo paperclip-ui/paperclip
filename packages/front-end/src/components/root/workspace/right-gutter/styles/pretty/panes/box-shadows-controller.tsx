@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import { BoxShadowItem } from "./box-shadow.pc";
 import { BoxShadowInfo } from "./box-shadow-item-controller";
 import { memoize, EMPTY_ARRAY, arraySplice } from "tandem-common";
@@ -190,28 +190,26 @@ const stringifyBoxShadowInfo = (value: BoxShadowInfo[]) =>
     })
     .join(", ");
 
-const parseBoxShadows = memoize(
-  (value: string = ""): BoxShadowInfo[] => {
-    return (
-      value.match(/(inset\s+)?((-?\d*\w*)\s+)*(\w+\(.*?\)|#[\d\w]+)/g) ||
-      EMPTY_ARRAY
-    )
-      .map(shadow => {
-        const inset = String(shadow).indexOf("inset") !== -1;
-        const [, , x, y, blur, spread, color] =
-          String(shadow + "").match(
-            /(inset\s)?([^\s]+)\s([^\s]+)\s([^\s]+)\s([^\s]+)\s(.*)/
-          ) || EMPTY_ARRAY;
+const parseBoxShadows = memoize((value: string = ""): BoxShadowInfo[] => {
+  return (
+    value.match(/(inset\s+)?((-?\d*\w*)\s+)*(\w+\(.*?\)|#[\d\w]+)/g) ||
+    EMPTY_ARRAY
+  )
+    .map(shadow => {
+      const inset = String(shadow).indexOf("inset") !== -1;
+      const [, , x, y, blur, spread, color] =
+        String(shadow + "").match(
+          /(inset\s)?([^\s]+)\s([^\s]+)\s([^\s]+)\s([^\s]+)\s(.*)/
+        ) || EMPTY_ARRAY;
 
-        return {
-          inset: Boolean(inset),
-          x,
-          y,
-          blur,
-          spread,
-          color
-        };
-      })
-      .filter(Boolean);
-  }
-);
+      return {
+        inset: Boolean(inset),
+        x,
+        y,
+        blur,
+        spread,
+        color
+      };
+    })
+    .filter(Boolean);
+});

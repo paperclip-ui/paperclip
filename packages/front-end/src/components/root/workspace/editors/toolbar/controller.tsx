@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as path from "path";
-import * as cx from "classnames";
+import cx from "classnames";
 import {
   toolbarToolClicked,
   editorTabClicked,

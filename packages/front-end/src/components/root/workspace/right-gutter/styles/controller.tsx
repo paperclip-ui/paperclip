@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import { BaseStylesProps, ElementProps } from "./view.pc";
 import { Dispatch } from "redux";
 import {

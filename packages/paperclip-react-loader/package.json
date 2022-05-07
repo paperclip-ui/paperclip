@@ -20,8 +20,5 @@
     "paperclip-react-compiler": "^10.1.33",
     "tandem-common": "^10.1.33"
   },
-  "devDependencies": {
-    "typescript": "3.0.x"
-  },
   "gitHead": "62ff73f435d5ddc97b8ff23b2356ed36f69c1486"
 }

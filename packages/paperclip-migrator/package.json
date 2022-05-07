@@ -3,9 +3,7 @@
   "version": "10.1.33",
   "description": "",
   "main": "index.js",
-  "bin": {
-    "paperclip-migrator": "./bin/paperclip-migrator"
-  },
+  "bin": "./bin/paperclip-migrator",
   "scripts": {
     "test": "echo \"\"",
     "clean": "rm -rf node_modules",

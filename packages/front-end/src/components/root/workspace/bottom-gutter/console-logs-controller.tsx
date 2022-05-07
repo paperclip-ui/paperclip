@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import { BaseConsoleLogsProps, ConsoleLog } from "./view.pc";
 import { ScriptProcess } from "../../../../state";
 

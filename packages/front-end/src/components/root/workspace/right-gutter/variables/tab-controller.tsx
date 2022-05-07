@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import { BaseVariablesTabProps } from "./view.pc";
 import { Dispatch } from "redux";
 import { PCVariable } from "paperclip";

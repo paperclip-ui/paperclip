@@ -172,19 +172,15 @@ export type Frame = {
  * GETTERS
  *-----------------------------------------*/
 
-export const getFramesContentNodeIdMap = memoize(
-  (
-    frames: Frame[]
-  ): {
-    [identifier: string]: Frame;
-  } => {
-    const map = {};
-    for (const frame of frames) {
-      map[frame.syntheticContentNodeId] = frame;
-    }
-    return map;
+export const getFramesContentNodeIdMap = memoize((frames: Frame[]): {
+  [identifier: string]: Frame;
+} => {
+  const map = {};
+  for (const frame of frames) {
+    map[frame.syntheticContentNodeId] = frame;
   }
-);
+  return map;
+});
 
 export const getSyntheticDocumentFrames = memoize(
   (document: SyntheticDocument, frames: Frame[]) => {
@@ -396,7 +392,10 @@ export const removeInspectorNode = <TState extends PCEditorState>(
   state: TState
 ) => {
   const document = getSyntheticVisibleNodeDocument(node.id, state.documents);
-  const syntheticNode = getInspectorSyntheticNode(node, state.documents);
+  const syntheticNode = getInspectorSyntheticNode(
+    node,
+    state.documents
+  ) as SyntheticDocument;
   if (!syntheticNode) {
     return null;
   }
@@ -1130,10 +1129,10 @@ export const persistAppendPCClips = <TState extends PCEditorState>(
     offset === TreeMoveOffset.BEFORE
       ? parentSourceNode.children.indexOf(targetSourceNode)
       : offset === TreeMoveOffset.AFTER
-        ? parentSourceNode.children.indexOf(targetSourceNode) + 1
-        : offset === TreeMoveOffset.APPEND
-          ? parentSourceNode.children.length
-          : 0;
+      ? parentSourceNode.children.indexOf(targetSourceNode) + 1
+      : offset === TreeMoveOffset.APPEND
+      ? parentSourceNode.children.length
+      : 0;
 
   const targetNodeIsModule = parentSourceNode === targetDep.content;
 
@@ -1469,11 +1468,12 @@ const maybeOverride = (
         .filter(variant => variant.isDefault)
         .map(variant => variant.id)
     : [];
-  const variantOverrides = filterNestedNodes(
+  const variantOverrides = ((filterNestedNodes(
     contentSourceNode,
     node =>
-      isPCOverride(node) && defaultVariantIds.indexOf(node.variantId) !== -1
-  ).filter(
+      isPCOverride(node) &&
+      defaultVariantIds.indexOf((node as PCOverride).variantId) !== -1
+  ) as any) as PCOverride[]).filter(
     (override: PCOverride) =>
       last(override.targetIdPath) === sourceNode.id ||
       (override.targetIdPath.length === 0 &&
@@ -1496,11 +1496,11 @@ const maybeOverride = (
       node,
       document,
       graph
-    );
+    ) as SyntheticNode[];
 
     const mutableInstance: SyntheticVisibleNode = nearestComponentInstances.find(
-      instance => !instance.immutable
-    );
+      instance => !(instance as any).immutable
+    ) as SyntheticVisibleNode;
 
     const mutableInstanceSourceNode = getSyntheticSourceNode(
       mutableInstance,

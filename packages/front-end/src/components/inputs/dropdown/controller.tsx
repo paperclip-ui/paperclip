@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import { DropdownMenuItem } from "./menu.pc";
 import { EMPTY_ARRAY, memoize } from "tandem-common";
 import { BaseDropdownProps, ElementProps } from "./view.pc";

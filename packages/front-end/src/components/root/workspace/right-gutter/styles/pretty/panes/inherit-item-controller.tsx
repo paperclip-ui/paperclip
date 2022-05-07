@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import { PCComponent, PCStyleMixin } from "paperclip";
 import { DropdownMenuOption } from "../../../../../../inputs/dropdown/controller";
 import { memoize } from "tandem-common";

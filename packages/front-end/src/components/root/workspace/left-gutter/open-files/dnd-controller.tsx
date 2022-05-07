@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import {
   TreeMoveOffset,
   containsNestedTreeNodeById,
@@ -114,8 +114,8 @@ export const withNodeDropTarget = (offset: TreeMoveOffset) =>
           ) {
             return (
               parentSourceNode &&
-              (parentSourceNode.name !== PCSourceTagNames.COMPONENT_INSTANCE &&
-                !extendsComponent(parentSourceNode))
+              parentSourceNode.name !== PCSourceTagNames.COMPONENT_INSTANCE &&
+                !extendsComponent(parentSourceNode)
             );
           }
 

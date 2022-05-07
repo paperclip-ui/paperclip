@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import { BaseTodoItemProps } from "./todo-item.pc";
 import { Dispatch } from "redux";
 import { TodoItem } from "./state";

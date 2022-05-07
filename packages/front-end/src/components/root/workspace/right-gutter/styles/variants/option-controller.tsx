@@ -9,7 +9,7 @@ import {
   getPCNode
 } from "paperclip";
 import { Dispatch } from "redux";
-import * as cx from "classnames";
+import cx from "classnames";
 import {
   variantDefaultSwitchClicked,
   variantLabelChanged

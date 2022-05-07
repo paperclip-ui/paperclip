@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import { BaseStarterKitFormOptionsProps } from "./form.pc";
 import { Dispatch } from "redux";
 import { ProjectTemplate } from "tandem-starter-kits";

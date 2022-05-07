@@ -3,7 +3,7 @@ const webpack   = require('webpack');
 const fs = require("fs");
 
 module.exports = {
-  devtool: 'none',
+  // devtool: 'none',
   entry: {
     index: [__dirname + '/src/index.ts']
   },
@@ -20,6 +20,10 @@ module.exports = {
       tls: 'null-loader?tls',
       fs: 'null-loader?fs'
     },
+    fallback: {
+      stream: "stream-browserify",
+      path: "path-browserify"
+    },  
     modules: [
       resolve(__dirname, 'src'),
       resolve(__dirname, 'node_modules'),
@@ -43,7 +47,9 @@ module.exports = {
           {
             loader: 'sass-loader',
             options: {
-              includePaths: [__dirname + '/src']
+              sassOptions: {
+                includePaths: [__dirname + '/src']
+              }
             }
           }
         ]

@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import { pure, compose, lifecycle, withState, withHandlers } from "recompose";
 import { memoize, EMPTY_ARRAY } from "tandem-common";
 import { GrabberAxis } from "./canvas-controller";

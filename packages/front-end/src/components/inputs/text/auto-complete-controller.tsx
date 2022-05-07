@@ -1,6 +1,6 @@
 import * as React from "react";
 import { noop } from "lodash";
-import * as cx from "classnames";
+import cx from "classnames";
 import { compose } from "recompose";
 import { BaseAutoComleteTextInputProps } from "./view.pc";
 import { withPureInputHandlers, WithInputHandlersProps } from "./controller";

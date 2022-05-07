@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import { Dispatch } from "redux";
 import { PCQuery, PCQueryType, PCVariable } from "paperclip";
 import { BaseQueryItemProps, QueryOptions } from "./view.pc";

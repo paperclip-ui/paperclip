@@ -13,7 +13,7 @@ import {
 } from "paperclip";
 import { EMPTY_ARRAY, EMPTY_OBJECT, stripProtocol } from "tandem-common";
 import { RightGutterTab } from "./tab.pc";
-import * as cx from "classnames";
+import cx from "classnames";
 import { BaseRightGutterProps, ElementProps } from "./view.pc";
 import { RootState, getGlobalFileUri, getProjectCWD } from "../../../../state";
 import { Dispatch } from "redux";

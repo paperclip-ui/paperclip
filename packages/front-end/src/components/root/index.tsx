@@ -1,6 +1,6 @@
 import "./index.scss";
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import { Dispatch } from "redux";
 import { Workspace } from "./workspace/view.pc";
 import { Welcome } from "./welcome/view.pc";

@@ -11,7 +11,7 @@ import {
   PCVariantTriggerQuerySource
 } from "paperclip";
 import { isEqual } from "lodash";
-import * as cx from "classnames";
+import cx from "classnames";
 import { memoize } from "tandem-common";
 import { Dispatch } from "redux";
 import { DropdownMenuOption } from "../../../../../inputs/dropdown/controller";

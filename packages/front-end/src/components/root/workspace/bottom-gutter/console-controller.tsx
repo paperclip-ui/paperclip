@@ -1,8 +1,8 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import { BaseConsoleProps, ConsoleTab } from "./view.pc";
 import { ScriptProcess } from "../../../../state";
-import { Dispatch } from "../../../../../../desktop/node_modules/redux";
+import { Dispatch } from "redux";
 
 export type Props = {
   scriptProcesses: ScriptProcess[];

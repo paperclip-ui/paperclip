@@ -21,7 +21,6 @@ module.exports = merge({}, base, {
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
-    new webpack.NamedModulesPlugin(),
     new WrapperPlugin({
       footer: `
         var Component = entry["_"+_ENTRY_COMPONENT_ID]({});

@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import { BaseTblrInputProps } from "./view.pc";
 import { ButtonBarOption } from "../../../../../../../inputs/button-bar/controller";
 import {

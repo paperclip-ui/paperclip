@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import { BaseColorSwatchesProps, ColorSwatchItem } from "./picker.pc";
 import { EMPTY_ARRAY, memoize } from "tandem-common";
 import { DropdownMenuOption } from "../dropdown/controller";

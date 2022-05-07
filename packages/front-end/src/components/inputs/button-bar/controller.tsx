@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import { EMPTY_ARRAY } from "tandem-common";
 import { BaseButtonBarProps } from "./view.pc";
 import { ButtonBarItem as ButtonBarItemComponent } from "./item.pc";

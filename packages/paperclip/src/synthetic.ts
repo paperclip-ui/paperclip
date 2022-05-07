@@ -367,11 +367,19 @@ export const getAllParentComponentInstance = memoize(
     root: SyntheticVisibleNode | SyntheticDocument,
     graph: DependencyGraph
   ) => {
-    let current = findClosestParentComponentInstance(node, root, graph);
+    let current = findClosestParentComponentInstance(
+      node,
+      root,
+      graph
+    ) as SyntheticVisibleNode;
     if (!current) return [];
     const instances = [current];
     while (current) {
-      const parent = findClosestParentComponentInstance(current, root, graph);
+      const parent = findClosestParentComponentInstance(
+        current,
+        root,
+        graph
+      ) as SyntheticVisibleNode;
       if (!parent) break;
       current = parent;
 
@@ -481,9 +489,9 @@ const getSyntheticSourceFlatMap = memoize(
     const flatMap = [map];
     for (let i = 0, { length } = current.children; i < length; i++) {
       flatMap.push(
-        ...getSyntheticSourceFlatMap(current.children[
-          i
-        ] as SyntheticVisibleNode)
+        ...getSyntheticSourceFlatMap(
+          current.children[i] as SyntheticVisibleNode
+        )
       );
     }
 

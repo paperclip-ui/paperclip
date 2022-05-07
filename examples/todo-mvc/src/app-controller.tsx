@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import { BaseAppProps } from "./main.pc";
 import { RootState, TodoItemFilter } from "./state";
 import { reducer } from "./reducer";

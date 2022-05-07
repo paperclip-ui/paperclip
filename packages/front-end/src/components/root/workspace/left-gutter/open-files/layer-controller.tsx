@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 import * as path from "path";
 import scrollIntoView from "scroll-into-view-if-needed";
 import { FocusComponent } from "../../../../focus";
-import * as cx from "classnames";
+import cx from "classnames";
 import { compose } from "recompose";
 import { DragSource } from "react-dnd";
 import { withNodeDropTarget } from "./dnd-controller";

@@ -3,9 +3,7 @@
   "version": "10.1.33",
   "description": "",
   "main": "index.js",
-  "bin": {
-    "paperclip-static-html-compiler": "./bin/paperclip-static-html-compiler"
-  },
+  "bin": "./bin/paperclip-static-html-compiler",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
@@ -15,8 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/fs-extra": "^5.0.4",
-    "typescript": "^3.1.6"
+    "@types/fs-extra": "^5.0.4"
   },
   "dependencies": {
     "@types/lodash": "^4.14.118",

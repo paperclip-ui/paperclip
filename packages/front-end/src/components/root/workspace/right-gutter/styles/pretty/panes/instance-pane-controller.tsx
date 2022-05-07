@@ -1,7 +1,7 @@
 import * as React from "react";
 import { BaseInstancePaneProps } from "./instance.pc";
 import { Dispatch } from "redux";
-import * as cx from "classnames";
+import cx from "classnames";
 import {
   DependencyGraph,
   PCVariant,

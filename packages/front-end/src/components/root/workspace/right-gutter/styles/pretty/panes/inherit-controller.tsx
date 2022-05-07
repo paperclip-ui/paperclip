@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import { Dispatch } from "redux";
 import { EMPTY_OBJECT } from "tandem-common";
 import { InheritItem } from "./inherit-item.pc";

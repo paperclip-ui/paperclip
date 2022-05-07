@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import { BaseFooterButtonProps } from "./footer-button.pc";
 import { Dispatch } from "redux";
 import { TodoAppAction, todoFilterItemButtonClicked } from "./actions";

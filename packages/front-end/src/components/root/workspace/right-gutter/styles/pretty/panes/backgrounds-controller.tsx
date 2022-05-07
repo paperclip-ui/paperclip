@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import {
   cssPropertyChangeCompleted,
   cssPropertyChanged,
@@ -55,8 +55,8 @@ export default (Base: React.ComponentClass<BaseBackgroundsProps>) =>
           "background-image",
           value
             ? value +
-              "," +
-              `linear-gradient(${DEFAULT_COLOR}, ${DEFAULT_COLOR})`
+                "," +
+                `linear-gradient(${DEFAULT_COLOR}, ${DEFAULT_COLOR})`
             : `linear-gradient(${DEFAULT_COLOR}, ${DEFAULT_COLOR})`
         )
       );

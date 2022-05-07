@@ -87,7 +87,7 @@ export const getFilePath = memoize((file: File, directory: Directory) => {
 });
 
 export const getFilePathFromNodePath = (path: number[], directory: Directory) =>
-  getFilePath(getTreeNodeFromPath(path, directory) as File, directory);
+  getFilePath((getTreeNodeFromPath(path, directory) as any) as File, directory);
 
 export const getFileFromUri = (uri: string, root: Directory) =>
   findNestedNode(root, child => child.uri === uri);
@@ -250,7 +250,7 @@ export const updateFSItemAlts = <TItem extends FSItem>(root: TItem): TItem => {
       getParentTreeNode(node.id, root).expanded
   );
 
-  const map = (node: FSItem) => {
+  const map = (node: TItem) => {
     const alt = flattened.indexOf(node) % 2 !== 0;
 
     let children = node.children;

@@ -2343,10 +2343,9 @@ export const canvasReducer = (state: RootState, action: Action) => {
         {
           prompt: null,
           selectedVariant: last(
-            getPCVariants(getSyntheticSourceNode(
-              contentNode,
-              state.graph
-            ) as PCVisibleNode)
+            getPCVariants(
+              getSyntheticSourceNode(contentNode, state.graph) as PCVisibleNode
+            )
           )
         },
         state
@@ -2600,13 +2599,13 @@ const persistInsertNodeFromPoint = (
   let targetNode: SyntheticVisibleNode | SyntheticDocument =
     targetNodeId && getSyntheticNodeById(targetNodeId, state.documents);
 
-  let insertableSourceNode: PCNode =
+  let insertableSourceNode =
     targetNodeId &&
-    getInsertableSourceNodeFromSyntheticNode(
+    (getInsertableSourceNodeFromSyntheticNode(
       targetNode,
       getSyntheticVisibleNodeDocument(targetNodeId, state.documents),
       state.graph
-    );
+    ) as PCNode);
 
   if (!targetNode) {
     const newPoint = shiftPoint(
@@ -3262,8 +3261,8 @@ const shortcutReducer = (state: RootState, action: Action): RootState => {
         ? nextChildren[clamp(index, 0, nextChildren.length - 1)].id
         : getParentTreeNode(parent.id, state.sourceNodeInspector).name !==
           InspectorTreeNodeName.ROOT
-          ? parent.id
-          : null;
+        ? parent.id
+        : null;
 
       if (nextSelectedNodeId) {
         const nextInspectorNode: InspectorNode = getNestedTreeNodeById(

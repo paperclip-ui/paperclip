@@ -913,13 +913,12 @@ export const isElementLikePCNode = (node: PCNode): node is PCElementLikeNode =>
  * GETTERS
  *-----------------------------------------*/
 
-export const getModuleComponents = memoize(
-  (root: PCModule): PCComponent[] =>
-    root.children.reduce((components, contentNode) => {
-      return contentNode.name === PCSourceTagNames.COMPONENT
-        ? [...components, contentNode]
-        : components;
-    }, [])
+export const getModuleComponents = memoize((root: PCModule): PCComponent[] =>
+  root.children.reduce((components, contentNode) => {
+    return contentNode.name === PCSourceTagNames.COMPONENT
+      ? [...components, contentNode]
+      : components;
+  }, [])
 );
 
 export const getVisibleChildren = memoize(
@@ -934,15 +933,14 @@ export const getVisibleOrSlotChildren = memoize(
 );
 export const getOverrides = memoize(
   (node: PCNode) =>
-    (node.children.filter(isPCOverride) as PCOverride[]).sort(
-      (a, b) =>
-        a.propertyName === PCOverridablePropertyName.CHILDREN
-          ? 1
-          : a.variantId
-            ? -1
-            : b.propertyName === PCOverridablePropertyName.CHILDREN
-              ? 0
-              : 1
+    (node.children.filter(isPCOverride) as PCOverride[]).sort((a, b) =>
+      a.propertyName === PCOverridablePropertyName.CHILDREN
+        ? 1
+        : a.variantId
+        ? -1
+        : b.propertyName === PCOverridablePropertyName.CHILDREN
+        ? 0
+        : 1
     ) as PCOverride[]
 );
 
@@ -1054,11 +1052,9 @@ export const getInstanceSlots = memoize(
   }
 );
 
-export const getComponentSlots = memoize(
-  (component: PCComponent): PCSlot[] => {
-    return flattenTreeNode(component).filter(isSlot);
-  }
-);
+export const getComponentSlots = memoize((component: PCComponent): PCSlot[] => {
+  return flattenTreeNode(component as PCNode).filter(isSlot);
+});
 
 export const getComponentVariantTriggers = (component: PCComponent) => {
   return getTreeNodesByName(
@@ -1079,7 +1075,7 @@ export const getVariantTriggers = (
 export const getInstanceSlotContent = memoize(
   (slotId: string, node: PCComponentInstanceElement | PCComponent) => {
     return node.children.find(
-      child => isPCPlug(child) && child.slotId === slotId
+      child => isPCPlug(child) && (child as PCPlug).slotId === slotId
     ) as PCPlug;
   }
 );
@@ -1245,29 +1241,27 @@ export const getAllStyleMixins = memoize(
 export const isVoidTagName = (name: string) =>
   VOID_TAG_NAMES.indexOf(name) !== -1;
 
-export const getComponentRefIds = memoize(
-  (node: PCNode): string[] => {
-    return uniq(
-      reduceTree(
-        node,
-        (iss: string[], node: PCNode) => {
-          if (
-            node.name === PCSourceTagNames.COMPONENT_INSTANCE ||
-            (node.name === PCSourceTagNames.COMPONENT && extendsComponent(node))
-          ) {
-            iss = [...iss, node.is];
-          }
+export const getComponentRefIds = memoize((node: PCNode): string[] => {
+  return uniq(
+    reduceTree(
+      node,
+      (iss: string[], node: PCNode) => {
+        if (
+          node.name === PCSourceTagNames.COMPONENT_INSTANCE ||
+          (node.name === PCSourceTagNames.COMPONENT && extendsComponent(node))
+        ) {
+          iss = [...iss, node.is];
+        }
 
-          if ((node as PCVisibleNode).styleMixins) {
-            iss = [...iss, ...Object.keys((node as PCVisibleNode).styleMixins)];
-          }
-          return iss;
-        },
-        []
-      )
-    );
-  }
-);
+        if ((node as PCVisibleNode).styleMixins) {
+          iss = [...iss, ...Object.keys((node as PCVisibleNode).styleMixins)];
+        }
+        return iss;
+      },
+      []
+    )
+  );
+});
 
 export const getSortedStyleMixinIds = memoize(
   (node: PCVisibleNode | PCStyleMixin | PCComponent) => {
@@ -1518,7 +1512,7 @@ export const getAllVariableRefMap = memoize(
 );
 
 export const getQueryGraphRefs = memoize(
-  (node: PCNode, graph: DependencyGraph): PCMediaQuery[] => {
+  (node: PCNode, graph: DependencyGraph): PCQuery[] => {
     const triggers = getTreeNodesByName(
       PCSourceTagNames.VARIANT_TRIGGER,
       node
@@ -1565,8 +1559,8 @@ export const getVariableGraphRefs = memoize(
         ? getNodeStyleRefIds(node.style)
         : isPCOverride(node) &&
           node.propertyName === PCOverridablePropertyName.STYLE
-          ? getNodeStyleRefIds(node.value)
-          : EMPTY_ARRAY;
+        ? getNodeStyleRefIds(node.value)
+        : EMPTY_ARRAY;
 
     for (let i = 0, { length } = refIds; i < length; i++) {
       const variable = getPCNode(refIds[i], graph) as PCVariable;
@@ -1659,7 +1653,8 @@ export const getNodeStyleRefIds = memoize((style: KeyValue<string>) => {
 });
 
 export const filterNestedOverrides = memoize(
-  (node: PCNode): PCOverride[] => filterNestedNodes(node, isPCOverride)
+  (node: PCNode): PCOverride[] =>
+    filterNestedNodes(node, isPCOverride) as PCOverride[]
 );
 
 export const getOverrideMap = memoize(

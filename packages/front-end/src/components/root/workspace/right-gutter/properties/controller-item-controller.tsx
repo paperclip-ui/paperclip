@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import { openControllerButtonClicked } from "../../../../../actions";
 import { Dispatch } from "redux";
 import { BaseControllerItemProps } from "./controller-item.pc";

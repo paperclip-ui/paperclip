@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import * as path from "path";
 import { BaseChromeProps } from "./chrome.pc";
 import { Dispatch } from "redux";

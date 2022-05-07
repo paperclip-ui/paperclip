@@ -1,6 +1,6 @@
 import * as React from "react";
 import { compose } from "recompose";
-import * as cx from "classnames";
+import cx from "classnames";
 import {
   default as checkboxController,
   Props as CheckboxProps

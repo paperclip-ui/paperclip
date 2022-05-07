@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import * as path from "path";
-import * as cx from "classnames";
+import cx from "classnames";
 import { compose } from "recompose";
 import {
   BaseFileNavigatorLayerProps,

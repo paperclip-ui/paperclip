@@ -1,0 +1,26 @@
+0 silly input [ 'npm', 'run', 'build' ]
+1 silly flags {
+1 silly flags   _: [ 'exec' ],
+1 silly flags   'reject-cycles': false,
+1 silly flags   rejectCycles: false,
+1 silly flags   parallel: true,
+1 silly flags   command: 'npm',
+1 silly flags   args: [ 'run', 'build' ]
+1 silly flags }
+2 verbose rootPath /Users/crcn/Developer/private/tandem3
+3 info version 2.11.0
+4 silly existsSync /Users/crcn/Developer/private/tandem3/VERSION
+5 silly initialize attempt
+6 silly initialize success
+7 silly execute attempt
+8 info exec in 18 package(s): npm run build
+9 error execute callback with error
+10 error Error: Command failed: npm run build
+10 error sh: webpack: command not found
+10 error
+10 error
+10 error > paperclip-dom-recorder@10.1.33 build
+10 error > webpack
+10 error
+10 error
+10 error     at /Users/crcn/Developer/private/tandem3/node_modules/execa/index.js:236:11

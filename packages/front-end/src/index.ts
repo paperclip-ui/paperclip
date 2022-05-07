@@ -89,7 +89,7 @@ export const setup = (
         openContextMenu,
         deleteFile,
         openFile
-      } = yield call(createSideEffects);
+      } = (yield call(createSideEffects)) as FrontEndOptions;
 
       readFile = setReaderMimetype(
         PAPERCLIP_MIME_TYPE,

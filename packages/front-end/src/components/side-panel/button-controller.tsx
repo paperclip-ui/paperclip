@@ -1,7 +1,7 @@
 import * as React from "react";
 import { BaseSidePanelButtonProps, SidePanel } from "./view.pc";
 import { Bounds, moveBounds, Point } from "tandem-common";
-import * as cx from "classnames";
+import cx from "classnames";
 
 export type Props = {
   content?: any;

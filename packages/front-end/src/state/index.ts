@@ -508,7 +508,11 @@ export const getInsertableSourceNodeScope = memoize(
     }
 
     return getSyntheticInspectorNode(
-      findTreeNodeParent(relative.id, document, containsSource),
+      findTreeNodeParent(
+        relative.id,
+        document,
+        containsSource
+      ) as SyntheticNode,
       document,
       rootInspectorNode,
       graph
@@ -1372,8 +1376,8 @@ export const centerEditorCanvas = (
           (height - INITIAL_ZOOM_PADDING) / innerSize.height
         )
       : typeof zoomOrZoomToFit === "number"
-        ? zoomOrZoomToFit
-        : translate.zoom;
+      ? zoomOrZoomToFit
+      : translate.zoom;
 
   state = updateEditorWindow(
     {
@@ -1520,7 +1524,7 @@ export const getCanvasMouseTargetInspectorNode = (
     state.graph
   );
 
-  return insertableSourceNode;
+  return insertableSourceNode as InspectorNode;
 };
 
 const getSelectedInspectorNodeParentShadowId = (state: RootState) => {

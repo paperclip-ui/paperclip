@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as cx from "classnames";
+import cx from "classnames";
 import { InspectorNode } from "paperclip";
 import { BaseLabeledCssInputProps } from "./view.pc";
 import { Dispatch } from "redux";

@@ -6,7 +6,7 @@ import {
   CSSLinearGradientBackground,
   CSSImageBackground
 } from "./state";
-import * as cx from "classnames";
+import cx from "classnames";
 import { BaseBackgroundPickerProps } from "./view.pc";
 import { ColorSwatchGroup } from "../../../../../../../../inputs/color/color-swatch-controller";
 

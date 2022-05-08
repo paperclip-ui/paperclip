@@ -4,7 +4,11 @@
     "target": "es6",
     "sourceMap": true,
     "lib": ["es2015.promise", "dom", "es5", "esnext"],
-    "module": "commonjs",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "module": "esnext",
     "outDir": "lib",
     "jsx": "react"
   },

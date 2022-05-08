@@ -21,6 +21,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sortFSItems = exports.updateFSItemAlts = exports.mergeFSItems = exports.convertFlatFilesToNested2 = exports.convertFlatFilesToNested = exports.getFilesWithExtension = exports.getFileFromUri = exports.getFilePathFromNodePath = exports.getFilePath = exports.createDirectory = exports.createFile = exports.isDirectory = exports.isFile = exports.FileAttributeNames = exports.FSItemTagNames = exports.FSItemNamespaces = void 0;
+console.log("TS", typeof process);
 var tree_1 = require("./tree");
 var memoization_1 = require("../utils/memoization");
 var path = require("path");

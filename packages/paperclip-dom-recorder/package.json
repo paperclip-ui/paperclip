@@ -17,7 +17,6 @@
   },
   "devDependencies": {
     "@types/node": "^10.11.4",
-    "null-loader": "^0.1.1",
     "ts-loader": "^5.2.1",
     "webpack": "^5.72.0"
   },

@@ -1,8 +1,15 @@
-const {resolve} = require('path');
+const {resolve, dirname, join} = require('path');
 const nodeExternals = require('webpack-node-externals');
+const CopyPlugin = require('copy-webpack-plugin');
 
+console.log(join(dirname(require.resolve("tandem-front-end")), "lib"));
 
 module.exports = {
+  plugins: [new CopyPlugin({
+    patterns: [
+      { from: join(dirname(require.resolve("tandem-front-end")), "lib"), to: join(__dirname, "lib")}
+    ]
+  })],
   externals: [nodeExternals()],
   entry: {
     entry: [__dirname + '/src/front-end/entry.ts']
@@ -11,6 +18,7 @@ module.exports = {
     path: resolve(__dirname, 'lib', 'front-end'),
     filename: 'entry.bundle.js'
   },
+  devtool: false,
   mode: "development",
   target: "electron-renderer",
   devServer: {
@@ -20,14 +28,14 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.ts', '.tsx'],
     alias: {
-      cluster: 'null-loader?cluster',
-      net: 'null-loader?net',
-      tls: 'null-loader?tls',
-      fs: 'null-loader?fs',
-      fsevents: 'null-loader?fs'
+      cluster: false,
+      net: false,
+      tls: false,
+      fs: false,
+      fsevents: false
     },
     fallback: {
-      // process: "process/browser"
+      process: "process/browser"
     },  
     modules: [
       resolve(__dirname, 'src'),

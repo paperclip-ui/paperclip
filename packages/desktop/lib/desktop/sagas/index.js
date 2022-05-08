@@ -240,7 +240,6 @@ function openMainWindow() {
             case 2:
                 state = _a.sent();
                 withFrame = false;
-                console.log("WINDO!W");
                 mainWindow = new electron_2.BrowserWindow({
                     width: 900,
                     height: 600,

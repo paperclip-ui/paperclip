@@ -41,7 +41,6 @@
     "html-webpack-plugin": "^5.5.0",
     "mocha": "^3.4.2",
     "node-sass": "^7.0.1",
-    "null-loader": "^0.1.1",
     "paperclip-react-compiler": "^10.1.33",
     "paperclip-react-loader": "^10.1.33",
     "path-browserify": "^1.0.1",

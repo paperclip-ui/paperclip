@@ -1,0 +1,1 @@
+{"version":3,"file":"utils.js","sourceRoot":"","sources":["../../../../../../src/components/root/workspace/right-gutter/queries/utils.ts"],"names":[],"mappings":"AAAA,OAAO,EAAW,WAAW,EAAE,MAAM,WAAW,CAAC;AAGjD,MAAM,CAAC,MAAM,sBAAsB,GAAyB;IAC1D;QACE,KAAK,EAAE,aAAa;QACpB,KAAK,EAAE,WAAW,CAAC,KAAK;KACzB;IACD;QACE,KAAK,EAAE,iBAAiB;QACxB,KAAK,EAAE,WAAW,CAAC,QAAQ;KAC5B;CACF,CAAC"}

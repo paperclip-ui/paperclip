@@ -5,7 +5,6 @@ import { fork, call } from "redux-saga/effects";
 import { rootReducer } from "./reducers";
 import { createRootSaga, FrontEndSagaOptions } from "./sagas";
 import { init as initBugReporting } from "./bug-reporting";
-const PaperclipWorker = require("./paperclip.worker");
 
 import {
   createPaperclipSaga,
@@ -37,6 +36,7 @@ export type FrontEndOptions = FrontEndSagaOptions &
   FSSandboxOptions &
   FrontEndContextOptions;
 export type SideEffectCreator = () => IterableIterator<FrontEndOptions>;
+console.log("OK");
 
 const SLOW_ACTION_INTERVAL = 10;
 
@@ -52,6 +52,7 @@ export const setup = (
 ) => {
   return (initialState: any) => {
     let bugReporter;
+    console.log("SETUP");
 
     const sagaMiddleware = createSagaMiddleware({
       onError: e => bugReporter.triggerError(e)
@@ -112,7 +113,10 @@ export const setup = (
         yield fork(
           createPaperclipSaga({
             createRuntime: () => {
-              return createRemotePCRuntime(new PaperclipWorker());
+              console.log("RT");
+              return createRemotePCRuntime(
+                new Worker(new URL("./paperclip.worker", import.meta.url))
+              );
             },
             getRootDirectory: (state: RootState) => {
               return getProjectCWD(state);

@@ -1,5 +1,5 @@
 import "./resizer.scss";
-import React = require("react");
+import React from "react";
 import { debounce } from "lodash";
 import {
   RootState,

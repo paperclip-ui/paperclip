@@ -3,7 +3,7 @@ import { EventEmitter } from "events";
 import { SyntheticDocument } from "./synthetic";
 import { evaluateDependencyGraph } from "./evaluate";
 import { KeyValue, pmark, EMPTY_OBJECT } from "tandem-common";
-import { isEqual } from "lodash";
+import { isEqual, remove } from "lodash";
 import {
   patchTreeNode,
   TreeNodeOperationalTransform,
@@ -143,16 +143,11 @@ export type DependencyGraphChanges = KeyValue<
   PCModule | TreeNodeOperationalTransform[]
 >;
 
-export type RemoteConnection = {
-  addEventListener(type: "message", listener: any): any;
-  postMessage(message: Object): any;
-};
-
 export class RemotePCRuntime extends EventEmitter implements PCRuntime {
   private _info: LocalRuntimeInfo;
   private _syntheticDocuments: KeyValue<SyntheticDocument>;
   private _lastUpdatedAt: number;
-  constructor(private _remote: RemoteConnection, info?: LocalRuntimeInfo) {
+  constructor(private _remote: Worker, info?: LocalRuntimeInfo) {
     super();
 
     if (info) {
@@ -203,7 +198,7 @@ export class RemotePCRuntime extends EventEmitter implements PCRuntime {
           changes,
           variants: value.variants,
           priorityUris: value.priorityUris,
-          lastUpdatedAt: (this._lastUpdatedAt = timestamp)
+          lastUpdatedAt: this._lastUpdatedAt = timestamp
         }
       });
     }
@@ -254,7 +249,7 @@ export class RemotePCRuntime extends EventEmitter implements PCRuntime {
 export const createLocalPCRuntime = (info?: LocalRuntimeInfo) =>
   new LocalPCRuntime(info);
 export const createRemotePCRuntime = (
-  remote: RemoteConnection,
+  remote: Worker,
   info?: LocalRuntimeInfo
 ) => new RemotePCRuntime(remote, info);
 
@@ -277,9 +272,11 @@ const patchDependencyGraph = (
   return newGraph;
 };
 
+console.log("OK");
+
 export const hookRemotePCRuntime = async (
   localRuntime: PCRuntime,
-  remote: RemoteConnection
+  remote: Worker
 ) => {
   let _sentDocuments = false;
 
@@ -292,6 +289,7 @@ export const hookRemotePCRuntime = async (
   };
 
   remote.addEventListener("message", event => {
+    console.log("FET");
     const { type, payload } = event.data;
     if (type === "fetchAllSyntheticDocuments") {
       sendDocuments();

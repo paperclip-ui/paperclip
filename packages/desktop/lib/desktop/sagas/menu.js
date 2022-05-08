@@ -237,8 +237,8 @@ function handleMenu() {
                                 },
                                 { role: "toggledevtools" },
                                 { type: "separator" },
-                                // { role: "resetzoom" },
                                 ,
+                                // { role: "resetzoom" },
                                 {
                                     label: "Zoom In",
                                     accelerator: "".concat(cmdKey, "+="),

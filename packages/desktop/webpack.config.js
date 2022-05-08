@@ -14,7 +14,6 @@ module.exports = merge({}, base, {
       template: __dirname + '/src/front-end/index.html'
     }),
     new ScriptExtHtmlWebpackPlugin({
-      defaultAttribute: 'async'
     })
   ],
   module: {

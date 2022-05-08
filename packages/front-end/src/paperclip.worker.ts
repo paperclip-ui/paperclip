@@ -1,2 +1,2 @@
 import { createLocalPCRuntime, hookRemotePCRuntime } from "paperclip";
-hookRemotePCRuntime(createLocalPCRuntime(), self);
+hookRemotePCRuntime(createLocalPCRuntime(), self as any);

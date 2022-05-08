@@ -3,7 +3,7 @@ const webpack   = require('webpack');
 const fs = require("fs");
 
 module.exports = {
-  // devtool: 'none',
+  devtool: false,
   entry: {
     index: [__dirname + '/src/index.ts']
   },
@@ -15,10 +15,10 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.ts', '.tsx', '.json'],
     alias: {
-      cluster: 'null-loader?cluster',
-      net: 'null-loader?net',
-      tls: 'null-loader?tls',
-      fs: 'null-loader?fs'
+      cluster: false,
+      net: false,
+      tls: false,
+      fs: false
     },
     fallback: {
       stream: "stream-browserify",
@@ -71,13 +71,7 @@ module.exports = {
           }
         }]
       },
-      { test: /\.tsx?$/, use: ['ts-loader'] },
-      { test: /\.worker.js?$/, use: [{
-        loader: 'worker-loader',
-        options: {
-          inline: true
-        }
-      }] }
+      { test: /\.tsx?$/, use: ['ts-loader'] }
     ]
   }
 };

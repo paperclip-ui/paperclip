@@ -265,6 +265,7 @@ var patchDependencyGraph = function (changes, oldGraph) {
     }
     return newGraph;
 };
+console.log("OK");
 var hookRemotePCRuntime = function (localRuntime, remote) { return __awaiter(void 0, void 0, void 0, function () {
     var _sentDocuments, sendDocuments;
     return __generator(this, function (_a) {
@@ -277,6 +278,7 @@ var hookRemotePCRuntime = function (localRuntime, remote) { return __awaiter(voi
             });
         };
         remote.addEventListener("message", function (event) {
+            console.log("FET");
             var _a = event.data, type = _a.type, payload = _a.payload;
             if (type === "fetchAllSyntheticDocuments") {
                 sendDocuments();

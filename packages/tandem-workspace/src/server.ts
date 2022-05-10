@@ -14,6 +14,8 @@ export const startTandemServer = async ({
 }: TandemServerOptions): Promise<TandemServerOptions> => {
   const port = fixedPort || (await getPort());
 
+  console.log(`Starting HTTP server on port ${port}`);
+
   const server = express();
   server.listen(port);
 

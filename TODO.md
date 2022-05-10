@@ -37,6 +37,7 @@ MVP:
 - variant combos
 - trigger architecture re-do
   - needs to be part of the paint panel
+- CRDTs
 
 Milestone X:
 

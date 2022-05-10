@@ -7,7 +7,9 @@
     "module": "commonjs",
     "outDir": "lib",
     "jsx": "react",
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
   },
   "exclude": ["node_modules", "*-test", "*-old", "lib", "index.d.ts"],
   "filesGlob": ["./src/*.ts"],

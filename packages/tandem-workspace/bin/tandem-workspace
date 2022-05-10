@@ -1,1 +1,17 @@
 #!/usr/bin/env node
+const yargs = require("yargs/yargs");
+const { hideBin } = require("yargs/helpers");
+const { startTandemServer } = require("../lib");
+
+yargs(hideBin(process.argv))
+  .command(
+    `start [directory]`,
+    `start a new workspace`,
+    (yargs) => {
+      return yargs.positional(`port`, { description: "port to bind on " });
+    },
+    (argv) => {
+      startTandemServer(argv);
+    }
+  )
+  .parse();

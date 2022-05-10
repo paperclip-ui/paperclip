@@ -13,7 +13,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "get-port": "^6.1.2",
-    "tandem-designer": "workspace:^"
+    "express": "^4.18.1",
+    "get-port": "^5.0.0",
+    "tandem-designer": "workspace:^",
+    "yargs": "^17.4.1"
   }
 }

@@ -1,0 +1,19 @@
+{
+  "name": "tandem-worksapce",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch"
+  },
+  "bin": {
+    "tandem-workspace": "./bin/tandem-workspace"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "get-port": "^6.1.2",
+    "tandem-designer": "workspace:^"
+  }
+}

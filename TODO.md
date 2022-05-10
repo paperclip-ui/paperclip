@@ -1,3 +1,13 @@
+TODOs:
+
+- get to work on CLI
+- convert JSON to readable PC
+
+- PC <> JSON converter
+  - load PC to JSON
+  - english readable IDs
+  - CSS declarations need to be parsed
+
 Milestone 1:
 
 Get working
@@ -19,4 +29,19 @@ Make user-friendly w/ designers
 
 - CLI tool for loading server
 - GIT integration, ability to check out branches
--
+
+MVP:
+
+- GIT integration + online editor
+- file format needs to be readable
+- variant combos
+- trigger architecture re-do
+  - needs to be part of the paint panel
+
+Milestone X:
+
+- Plugin for Figma (copy to clipboard)
+
+Milestone Y:
+
+- Browser extension for spot-editing UI

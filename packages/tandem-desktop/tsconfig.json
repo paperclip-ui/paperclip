@@ -1,0 +1,26 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "target": "es5",
+    "sourceMap": true,
+    "lib": ["es2015.promise", "dom", "es5", "esnext"],
+    "module": "commonjs",
+    "outDir": "lib",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "jsx": "react",
+    "experimentalDecorators": true
+  },
+  "exclude": [
+    "node_modules",
+    "*-test",
+    "lib",
+    "index.d.ts",
+    "../front-end/**",
+    "dist"
+  ],
+  "filesGlob": ["./src/**/*.ts"],
+  "rootDirs": ["node_modules"]
+}

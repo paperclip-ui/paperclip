@@ -1,0 +1,16 @@
+<style>
+  @variant Test media and (max-width: 100px) {
+    @content;
+  }
+</style>
+
+<div export component as="Component">
+  <script src="./script.ts" />
+  <style>
+    color: red;
+    @if test {
+      color: red;
+    }
+  </style>
+  <div></div>
+</div>

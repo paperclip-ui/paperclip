@@ -1,3 +1,16 @@
+IMMEDIATE:
+
+- esbuild
+- get UI to work in dummy browser
+  - start testing?
+- CLI
+
+TODO:
+
+- get Tandem to work in the browser
+  - Litmus test -
+-
+
 TODOs:
 
 - get to work on CLI

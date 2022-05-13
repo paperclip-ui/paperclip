@@ -4,9 +4,6 @@ const fs = require("fs");
 
 module.exports = {
   devtool: false,
-  entry: {
-    index: [__dirname + "/src/index.ts"],
-  },
   output: {
     path: resolve(__dirname, "lib", "front-end"),
     libraryTarget: "umd",
@@ -75,4 +72,9 @@ module.exports = {
       { test: /\.tsx?$/, use: ["ts-loader"] },
     ],
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      "process.env": "({})",
+    }),
+  ],
 };

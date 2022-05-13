@@ -8,7 +8,7 @@
     "build:watch": "tsc --watch"
   },
   "bin": {
-    "tandem-workspace": "./bin/tandem-workspace"
+    "tandem-workspace": "./bin/tandem-workspace.js"
   },
   "author": "",
   "license": "ISC",
@@ -26,6 +26,7 @@
     "process": "^0.11.10",
     "stream-browserify": "^3.0.0",
     "ts-loader": "^9.3.0",
+    "typescript": "next",
     "url-loader": "^4.1.1",
     "util": "^0.12.4",
     "webpack": "^5.72.1",

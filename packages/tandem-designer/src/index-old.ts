@@ -5,16 +5,14 @@ import { fork, call } from "redux-saga/effects";
 import { rootReducer } from "./reducers";
 import { createRootSaga, FrontEndSagaOptions } from "./sagas";
 import { init as initBugReporting } from "./bug-reporting";
-
 import {
   createPaperclipSaga,
   PAPERCLIP_MIME_TYPE,
   PAPERCLIP_DEFAULT_EXTENSIONS,
-  PCVariant,
   getPCNodeModule,
   PCComponent,
 } from "paperclip";
-import { RootState, EditorWindow, getProjectCWD } from "./state";
+import { RootState, getProjectCWD } from "./state";
 import { appLoaded } from "./actions";
 import {
   FSSandboxOptions,

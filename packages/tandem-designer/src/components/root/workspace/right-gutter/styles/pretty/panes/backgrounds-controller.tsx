@@ -38,7 +38,7 @@ export default (Base: React.ComponentClass<BaseBackgroundsProps>) =>
       this.props.dispatch(cssPropertiesChangeCompleted(style));
     };
 
-    private _getChangedStyle(item: CSSBackground, index: number) {
+    _getChangedStyle(item: CSSBackground, index: number) {
       const backgrounds = arraySplice(
         computeCSSBackgrounds(this.props.computedStyleInfo),
         index,

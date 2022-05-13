@@ -20,7 +20,7 @@ export default (Base: React.ComponentClass<BaseFileInputProps>) =>
       _value: this.props.value,
       value: this.props.value,
     };
-    private _openFile: FileOpener;
+    _openFile: FileOpener;
     onBrowseButtonClick = async () => {
       const filePath = await this._openFile({
         name: "Open Image",

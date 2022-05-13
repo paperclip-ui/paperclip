@@ -4,14 +4,15 @@
     "target": "es5",
     "sourceMap": true,
     "lib": ["es2015.promise", "dom", "es5", "esnext"],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "moduleResolution": "node",
     "module": "commonjs",
     "outDir": "lib",
-    "jsx": "react",
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
+    "jsx": "react"
   },
-  "exclude": ["node_modules", "*-test", "*-old", "lib", "index.d.ts"],
-  "filesGlob": ["./src/*.ts"],
-  "rootDirs": ["node_modules"]
+  "exclude": ["node_modules", "*-test", "lib", "index.d.ts"],
+  "filesGlob": ["./src/**/*.ts"]
 }

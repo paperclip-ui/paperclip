@@ -25,21 +25,21 @@ const getPercent = ({ min = DEFAULT_MIN, max = DEFAULT_MAX, value }: Props) => {
 
 export default (Base: React.ComponentClass<BaseSliderProps>) =>
   class SliderController extends React.PureComponent<Props, State> {
-    private _slider: HTMLDivElement;
+    _slider: HTMLDivElement;
     constructor(props: Props) {
       super(props);
       this.state = {
         percent: getPercent(props),
       };
     }
-    private setPercent = (value: number) => {
+    setPercent = (value: number) => {
       this.setState({ ...this.state, percent: value });
     };
-    private setSlider = (slider: HTMLDivElement) => {
+    setSlider = (slider: HTMLDivElement) => {
       this._slider = slider;
     };
 
-    private onMouseDown = (event) => {
+    onMouseDown = (event) => {
       const {
         min = DEFAULT_MIN,
         max = DEFAULT_MAX,

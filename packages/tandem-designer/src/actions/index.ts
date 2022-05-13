@@ -32,11 +32,11 @@ import {
   PCQuery,
   PCVariableQueryCondition,
 } from "paperclip";
-import { RegisteredComponent } from "..";
 import {
   FrameMode,
   ToolType,
   EditorWindow,
+  RegisteredComponent,
   ProjectConfig,
   ProjectInfo,
   BaseQuickSearchResult,

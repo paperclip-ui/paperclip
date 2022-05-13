@@ -73,7 +73,7 @@ export default (Base: React.ComponentClass<BaseFileNavigatorProps>) =>
     onAddFolderButtonClick = () => {
       this.props.dispatch(fileNavigatorNewFileClicked(AddFileType.DIRECTORY));
     };
-    private onFileDropdownComplete = (value: AddFileType) => {
+    onFileDropdownComplete = (value: AddFileType) => {
       this.props.dispatch(fileNavigatorNewFileClicked(value));
     };
     onNewFileInputChange = (value: string) => {};

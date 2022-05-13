@@ -6,15 +6,27 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const base = require("./webpack-base.config.js");
 
-module.exports = merge({}, base, {
-  mode: "development",
-  plugins: [
-    new HtmlWebpackPlugin({
-      title: "Aerial Playground",
-      template: __dirname + "/src/index.html",
-    }),
-    new webpack.DefinePlugin({
-      "process.env": "({})",
-    }),
-  ],
-});
+module.exports = [
+  // ESM
+  merge({}, base, {
+    entry: {
+      index: [__dirname + "/src/index.tsx"],
+    },
+    mode: "development",
+    plugins: [],
+  }),
+
+  // standalone
+  merge({}, base, {
+    mode: "development",
+    entry: {
+      index: [__dirname + "/src/entry.ts"],
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        title: "Aerial Playground",
+        template: __dirname + "/src/index.html",
+      }),
+    ],
+  }),
+];

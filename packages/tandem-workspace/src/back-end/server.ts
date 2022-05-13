@@ -19,7 +19,7 @@ export const startTandemServer = async ({
   console.log(`Starting HTTP server on port ${port}`);
 
   const server = express();
-  server.use(express.static(path.resolve("tandem-designer")));
+  server.use(express.static(path.join(__dirname, "..", "front-end")));
   server.listen(port);
 
   execa(`open`, [`http://localhost:${port}`]);

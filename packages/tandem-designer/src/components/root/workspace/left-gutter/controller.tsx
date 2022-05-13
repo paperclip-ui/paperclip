@@ -32,7 +32,7 @@ export default (Base: React.ComponentClass<BaseLeftGutterProps>) =>
       width: 250,
     };
 
-    private _dragger: HTMLDivElement;
+    _dragger: HTMLDivElement;
     setDragger = (dragger: HTMLDivElement) => {
       this._dragger = dragger;
     };

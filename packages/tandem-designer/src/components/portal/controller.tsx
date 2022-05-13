@@ -14,7 +14,7 @@ export const portal =
   ({ didMount }: PortalOptions = {}) =>
   () => {
     return class Portal extends React.Component<PortalProps> {
-      private _mount: HTMLDivElement;
+      _mount: HTMLDivElement;
 
       constructor(props) {
         super(props);

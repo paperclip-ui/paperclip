@@ -1,3 +1,1 @@
-import { setup } from "tandem-designer";
-
-console.log(setup);
+import { TandemDesigner } from "tandem-designer";

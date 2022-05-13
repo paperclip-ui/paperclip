@@ -7,7 +7,7 @@ import { isEqual, remove } from "lodash";
 import {
   patchTreeNode,
   TreeNodeOperationalTransform,
-  diffTreeNode
+  diffTreeNode,
 } from "./ot";
 import { PCModule, createPCDependency } from "./dsl";
 
@@ -198,25 +198,25 @@ export class RemotePCRuntime extends EventEmitter implements PCRuntime {
           changes,
           variants: value.variants,
           priorityUris: value.priorityUris,
-          lastUpdatedAt: this._lastUpdatedAt = timestamp
-        }
+          lastUpdatedAt: (this._lastUpdatedAt = timestamp),
+        },
       });
     }
   }
 
-  private _onRemoteMessage = event => {
+  private _onRemoteMessage = (event) => {
     const { type, payload } = event.data;
     const marker = pmark("Runtime._onRemoteMessage()");
     if (type === "fetchInfo") {
       this._remote.postMessage({
         type: "info",
-        payload: this._info
+        payload: this._info,
       });
     } else if (type === "evaluate") {
       const [newDocuments, diffs, deletedDocumentUris, timestamp] = payload;
       this._syntheticDocuments = {
         ...this._syntheticDocuments,
-        ...newDocuments
+        ...newDocuments,
       };
 
       for (const uri in diffs) {
@@ -272,8 +272,6 @@ const patchDependencyGraph = (
   return newGraph;
 };
 
-console.log("OK");
-
 export const hookRemotePCRuntime = async (
   localRuntime: PCRuntime,
   remote: Worker
@@ -284,11 +282,11 @@ export const hookRemotePCRuntime = async (
     _sentDocuments = true;
     remote.postMessage({
       type: "allSyntheticDocuments",
-      payload: localRuntime.syntheticDocuments
+      payload: localRuntime.syntheticDocuments,
     });
   };
 
-  remote.addEventListener("message", event => {
+  remote.addEventListener("message", (event) => {
     console.log("FET");
     const { type, payload } = event.data;
     if (type === "fetchAllSyntheticDocuments") {
@@ -302,7 +300,7 @@ export const hookRemotePCRuntime = async (
           ...localInfo,
           variants: payload.variants,
           graph: patchDependencyGraph(payload.changes, localInfo.graph),
-          priorityUris: payload.priorityUris
+          priorityUris: payload.priorityUris,
         },
         payload.lastUpdatedAt
       );

@@ -1,7 +1,7 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
-    "target": "es6",
+    "target": "esnext",
     "sourceMap": true,
     "lib": ["es2015.promise", "dom", "es5", "esnext"],
     "esModuleInterop": true,

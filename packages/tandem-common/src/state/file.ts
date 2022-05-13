@@ -1,4 +1,3 @@
-console.log("TS", typeof process);
 import {
   TreeNode,
   getChildParentMap,

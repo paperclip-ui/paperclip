@@ -36,7 +36,6 @@ export type FrontEndOptions = FrontEndSagaOptions &
   FSSandboxOptions &
   FrontEndContextOptions;
 export type SideEffectCreator = () => IterableIterator<FrontEndOptions>;
-console.log("OK");
 
 const SLOW_ACTION_INTERVAL = 10;
 

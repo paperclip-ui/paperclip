@@ -43,8 +43,8 @@ export const updateGraphDependency = (
   ...graph,
   [uri]: {
     ...graph[uri],
-    ...properties
-  }
+    ...properties,
+  },
 });
 
 export const getModifiedDependencies = (
@@ -66,7 +66,9 @@ export const isPaperclipUri = (uri: string) => {
 
 const createDependencyFromFileCacheItem = memoize(
   ({ uri, content }: { uri: string; content: Buffer }): Dependency<any> => {
+    console.log("DDA");
     const source = content.toString("utf8");
+    console.log("ONTE", content, source);
 
     return {
       uri,
@@ -75,7 +77,7 @@ const createDependencyFromFileCacheItem = memoize(
       content:
         source.trim() === ""
           ? createPCModule()
-          : migratePCModule(JSON.parse(source))
+          : migratePCModule(JSON.parse(source)),
     };
   }
 );
@@ -86,7 +88,7 @@ export const addFileCacheItemToDependencyGraph = (
 ): DependencyGraph => {
   return {
     ...graph,
-    [item.uri]: createDependencyFromFileCacheItem(item)
+    [item.uri]: createDependencyFromFileCacheItem(item),
   };
 };
 

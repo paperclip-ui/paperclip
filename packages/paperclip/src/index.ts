@@ -17,3 +17,4 @@ export * from "./vanilla-compiler";
 export * from "./inspector";
 export * from "./style";
 export * from "./utils";
+export * from "./engine";

@@ -287,7 +287,6 @@ export const hookRemotePCRuntime = async (
   };
 
   remote.addEventListener("message", (event) => {
-    console.log("FET");
     const { type, payload } = event.data;
     if (type === "fetchAllSyntheticDocuments") {
       sendDocuments();

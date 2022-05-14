@@ -28,8 +28,6 @@ export const engineReduxMiddleware = <TState>(
 
     return (next: (action: Action) => void) => {
       return (action: Action) => {
-        console.log("ACC", action.type);
-
         // Do this now so that the action is handled by the store
         next(action);
 

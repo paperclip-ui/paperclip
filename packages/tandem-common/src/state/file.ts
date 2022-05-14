@@ -4,11 +4,7 @@ import {
   filterNestedNodes,
   getTreeNodeFromPath,
   findNestedNode,
-  updateNestedNode,
-  createTreeNode,
-  appendChildNode,
   flattenTreeNode,
-  reduceTree,
   getParentTreeNode,
 } from "./tree";
 import { memoize } from "../utils/memoization";
@@ -16,7 +12,7 @@ import * as path from "path";
 import { generateUID } from "../utils/uid";
 import { uniqBy } from "lodash";
 import { addProtocol, FILE_PROTOCOL, stripProtocol } from "../utils/protocol";
-import { arraySplice, EMPTY_ARRAY } from "..";
+import { EMPTY_ARRAY } from "..";
 
 export enum FSItemNamespaces {
   CORE = "core",
@@ -29,8 +25,14 @@ export enum FSItemTagNames {
 
 type BaseFSItem<TName extends string> = {
   uri: string;
+
+  // TODO - this is visual-specific, and should be removed
   alt?: boolean;
+
+  // TODO - this should be removed
   expanded?: boolean;
+
+  // TODO - this should be deprecated
   selected?: boolean;
 } & TreeNode<TName>;
 

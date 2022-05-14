@@ -30,6 +30,7 @@ import {
   updateProperties,
   addProtocol,
   FILE_PROTOCOL,
+  boundsToSize,
 } from "tandem-common";
 import {
   SyntheticVisibleNode,
@@ -190,7 +191,7 @@ export type EditorWindow = {
   fullScreen?: boolean;
 
   // TODO - this needs to be the virtual element instead of the actual DOM
-  container?: HTMLElement;
+  canvasBounds?: Bounds;
 };
 
 export enum ConfirmType {
@@ -1379,9 +1380,9 @@ export const centerEditorCanvas = (
 
   const editorWindow = getEditorWindowWithFileUri(editorFileUri, state);
   const openFile = getOpenFile(editorFileUri, state.openFiles);
-  const { container } = editorWindow;
+  const { canvasBounds } = editorWindow;
 
-  if (!container) {
+  if (!canvasBounds) {
     console.warn("cannot center canvas without a container");
     return state;
   }
@@ -1390,7 +1391,7 @@ export const centerEditorCanvas = (
     canvas: { translate },
   } = openFile;
 
-  const { width, height } = container.getBoundingClientRect();
+  const { width, height } = boundsToSize(canvasBounds);
 
   const innerSize = getBoundsSize(innerBounds);
 

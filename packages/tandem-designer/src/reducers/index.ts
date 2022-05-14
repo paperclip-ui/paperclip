@@ -428,6 +428,7 @@ import {
   arraySplice,
   FILE_PROTOCOL,
   updateFSItemAlts,
+  clientRectToBounds,
 } from "tandem-common";
 import { clamp, last } from "lodash";
 import {
@@ -840,7 +841,7 @@ export const rootReducer = (state: RootState, action: Action): RootState => {
 
       state = updateEditorWindow(
         {
-          container: element,
+          canvasBounds: clientRectToBounds(element.getBoundingClientRect()),
         },
         fileUri,
         state
@@ -3346,7 +3347,7 @@ const setCanvasZoom = (
     {
       translate: centerTransformZoom(
         openFile.canvas.translate,
-        editorWindow.container.getBoundingClientRect(),
+        editorWindow.canvasBounds!,
         clamp(zoom, MIN_ZOOM, MAX_ZOOM),
         editorWindow.mousePosition
       ),

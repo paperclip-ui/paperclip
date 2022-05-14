@@ -23,24 +23,24 @@ export const reactSaga = ({ openFile }: FrontEndContextOptions) =>
       }
     });
 
-    while (1) {
-      // slight performance boost
-      yield call(() => new Promise(requestAnimationFrame));
-      const root: RootState = yield select();
-      ReactDOM.render(
-        React.createElement(
-          OpenFileContext.Provider,
-          { value: openFile },
-          React.createElement(
-            RootComponent as any,
-            {
-              root,
-              dispatch,
-            } as any
-          )
-        ),
-        root.mount
-      );
-      yield take();
-    }
+    // while (1) {
+    //   // slight performance boost
+    //   yield call(() => new Promise(requestAnimationFrame));
+    //   const root: RootState = yield select();
+    //   ReactDOM.render(
+    //     React.createElement(
+    //       OpenFileContext.Provider,
+    //       { value: openFile },
+    //       React.createElement(
+    //         RootComponent as any,
+    //         {
+    //           root,
+    //           dispatch,
+    //         } as any
+    //       )
+    //     ),
+    //     // root.mount
+    //   );
+    //   yield take();
+    // }
   };

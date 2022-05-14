@@ -208,6 +208,22 @@ export const boundsFromRect = ({ width, height }: Element): Bounds => ({
 
 export const getBoundsWidth = (bounds: Bounds) => bounds.right - bounds.left;
 export const getBoundsHeight = (bounds: Bounds) => bounds.bottom - bounds.top;
+export const boundsToSize = ({ left, right, top, bottom }: Bounds): Size => ({
+  width: right - left,
+  height: bottom - top,
+});
+export const clientRectToBounds = ({
+  left,
+  right,
+  top,
+  bottom,
+}: DOMRect): Bounds => ({
+  left,
+  right,
+  top,
+  bottom,
+});
+
 export const getBoundsSize = memoize(
   (bounds: Bounds): Size => ({
     width: getBoundsWidth(bounds),

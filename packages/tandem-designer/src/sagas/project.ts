@@ -20,7 +20,7 @@ import {
   getFileFromUri,
   stripProtocol,
 } from "tandem-common";
-import { ProjectConfig, ProjectInfo, RootState } from "../state";
+import { ProjectInfo, RootState } from "../state";
 
 export type ProjectSagaOptions = {
   loadProjectInfo(): IterableIterator<ProjectInfo>;

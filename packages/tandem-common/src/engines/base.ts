@@ -26,7 +26,7 @@ export const engineReduxMiddleware = <TState>(
       createEngine(store.dispatch, currState)
     );
 
-    return (next: (action: Action) => void) => {
+    return (next: (action: Action) => any) => {
       return (action: Action) => {
         // Do this now so that the action is handled by the store
         next(action);

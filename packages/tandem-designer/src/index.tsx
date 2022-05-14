@@ -18,7 +18,7 @@ export const init = ({ document, engineOptions }: InitOptions) => {
     reducer: rootReducer,
     preloadedState: INITIAL_STATE as any,
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(reduxMiddleware(engineOptions)),
+      getDefaultMiddleware().concat(reduxMiddleware(engineOptions) as any),
   });
 
   ReactDOM.render(

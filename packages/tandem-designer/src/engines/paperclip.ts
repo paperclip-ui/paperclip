@@ -14,12 +14,11 @@ import {
 import { getProjectCWD, RootState } from "../state";
 const reuseUris = reuser(10, (uris: string[]) => uris.join(","));
 
+const worker = new Worker(new URL("./paperclip.worker", import.meta.url));
+
 export const startPaperclipTandemEngine = () =>
   startPaperclipEngine({
-    createRuntime: () =>
-      createRemotePCRuntime(
-        new Worker(new URL("./paperclip.worker", import.meta.url))
-      ),
+    createRuntime: () => createRemotePCRuntime(worker),
     getRootDirectory: (state: RootState) => getProjectCWD(state),
     getPriorityUris: (state: RootState) => {
       if (!state.editorWindows.length) {

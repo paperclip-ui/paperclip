@@ -69,8 +69,8 @@ module.exports = (createConfig) =>
         },
         {
           test: /\.tsx?$/,
-          loader: "esbuild-loader",
-          options: { loader: "tsx", target: "es6" },
+          loader: "ts-loader",
+          // options: { loader: "tsx", target: "es6" },
         },
       ],
     },

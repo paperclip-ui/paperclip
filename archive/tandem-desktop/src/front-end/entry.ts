@@ -43,8 +43,6 @@ import { eventChannel } from "redux-saga";
 import { FileOpenerOptions } from "tandem-designer/src/components/contexts";
 const pkg = require("../../package.json");
 
-console.log("ENTTT");
-
 // initSentry({
 //   dsn: "https://a2621f1c757749a895ba5ad69be5ac76@sentry.io/1331704",
 //   release: pkg.version

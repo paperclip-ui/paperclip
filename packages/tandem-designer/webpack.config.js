@@ -11,15 +11,18 @@ module.exports = [
   }),
 
   createConfig((config) => {
-    (config.entry = {
+    config.entry = {
       index: [__dirname + "/src/entry.ts"],
-    }),
-      config.plugins.push(
-        new HtmlWebpackPlugin({
-          title: "Tandem Playground",
-          template: __dirname + "/src/index.html",
-        })
-      );
+    };
+
+    delete config.output["libraryTarget"];
+
+    config.plugins.push(
+      new HtmlWebpackPlugin({
+        title: "Tandem Playground",
+        template: __dirname + "/src/index.html",
+      })
+    );
 
     return config;
   }),

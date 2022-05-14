@@ -2,10 +2,15 @@ import { mapValues, omit } from "lodash";
 import {
   SyntheticVisibleNode,
   SyntheticElement,
-  SyntheticTextNode
+  SyntheticTextNode,
 } from "./synthetic";
 import { ComputedDisplayInfo } from "./edit";
-import { getTreeNodeFromPath, EMPTY_OBJECT, memoize } from "tandem-common";
+import {
+  getTreeNodeFromPath,
+  EMPTY_OBJECT,
+  memoize,
+  clientRectToBounds,
+} from "tandem-common";
 import {
   TreeNodeOperationalTransformType,
   MoveChildNodeOperationalTransform,
@@ -13,7 +18,7 @@ import {
   patchTreeNode,
   SetNodePropertyOperationalTransform,
   InsertChildNodeOperationalTransform,
-  RemoveChildNodeOperationalTransform
+  RemoveChildNodeOperationalTransform,
 } from "./ot";
 import { PCSourceTagNames } from "./dsl";
 
@@ -43,13 +48,13 @@ export const renderDOM = (
 };
 
 export const waitForDOMReady = (map: SyntheticNativeNodeMap) => {
-  const loadableElements = Object.values(map).filter(element =>
+  const loadableElements = Object.values(map).filter((element) =>
     /img/.test(element.nodeName)
-  ) as (HTMLImageElement)[];
+  ) as HTMLImageElement[];
   return Promise.all(
     loadableElements.map(
-      element =>
-        new Promise(resolve => {
+      (element) =>
+        new Promise((resolve) => {
           element.onload = resolve;
         })
     )
@@ -64,15 +69,11 @@ export const computeDisplayInfo = (
   for (const id in map) {
     const node = map[id];
     const rect = (node as HTMLElement).getBoundingClientRect();
+    clientRectToBounds;
     if (node.nodeType === 1) {
       computed[id] = {
         style: window.getComputedStyle(node as Element),
-        bounds: {
-          left: rect.left,
-          top: rect.top,
-          right: rect.right,
-          bottom: rect.bottom
-        }
+        bounds: clientRectToBounds(rect),
       };
     }
   }
@@ -116,7 +117,7 @@ const setAttribute = (target: HTMLElement, name: string, value: string) => {
 };
 
 const SVG_STYlE_KEY_MAP = {
-  background: "fill"
+  background: "fill",
 };
 
 const setStyle = (target: HTMLElement, style: any) => {
@@ -150,9 +151,11 @@ const createNativeNode = (
     xmlns = attrs.xmlns;
   }
 
-  const nativeElement = (xmlns
-    ? document.createElementNS(xmlns, tagName)
-    : document.createElement(tagName)) as HTMLElement;
+  const nativeElement = (
+    xmlns
+      ? document.createElementNS(xmlns, tagName)
+      : document.createElement(tagName)
+  ) as HTMLElement;
 
   applySyntheticNodeProps(
     nativeElement,
@@ -232,10 +235,8 @@ export const patchDOM = (
     );
     switch (transform.type) {
       case TreeNodeOperationalTransformType.SET_PROPERTY: {
-        const {
-          name,
-          value
-        } = transform as SetNodePropertyOperationalTransform;
+        const { name, value } =
+          transform as SetNodePropertyOperationalTransform;
 
         if (name === "style") {
           resetElementStyle(target, syntheticTarget);
@@ -255,7 +256,7 @@ export const patchDOM = (
             newMap = { ...map };
           }
           const xmlnsTransform = transforms.find(
-            transform =>
+            (transform) =>
               transform.type ===
                 TreeNodeOperationalTransformType.SET_PROPERTY &&
               transform.name === "attributes" &&
@@ -278,10 +279,8 @@ export const patchDOM = (
         break;
       }
       case TreeNodeOperationalTransformType.INSERT_CHILD: {
-        const {
-          child,
-          index
-        } = transform as InsertChildNodeOperationalTransform;
+        const { child, index } =
+          transform as InsertChildNodeOperationalTransform;
 
         if (newMap === map) {
           newMap = { ...map };
@@ -307,10 +306,8 @@ export const patchDOM = (
         break;
       }
       case TreeNodeOperationalTransformType.MOVE_CHILD: {
-        const {
-          oldIndex,
-          newIndex
-        } = transform as MoveChildNodeOperationalTransform;
+        const { oldIndex, newIndex } =
+          transform as MoveChildNodeOperationalTransform;
         const child = target.childNodes[oldIndex];
         target.removeChild(child);
         insertChild(target, child, newIndex);
@@ -350,10 +347,10 @@ const EMPTY_ELEMENT_STYLE_NAMES = [
   "border-bottom",
   "line-height",
   "font-size",
-  "text-alignment"
+  "text-alignment",
 ];
 
-const stripEmptyElement = memoize(style =>
+const stripEmptyElement = memoize((style) =>
   omit(style, EMPTY_ELEMENT_STYLE_NAMES)
 );
 
@@ -376,7 +373,7 @@ const makeElementClickable = (
         border: `2px dashed rgba(0,0,0,0.05)`,
         boxSizing: `border-box`,
         borderRadius: `2px`,
-        position: `relative`
+        position: `relative`,
       });
 
       const placeholder = document.createElement("div");
@@ -386,7 +383,7 @@ const makeElementClickable = (
         position: `absolute`,
         transform: `translate(-50%, -50%)`,
         color: `rgba(0,0,0,0.05)`,
-        fontFamily: "Helvetica"
+        fontFamily: "Helvetica",
       });
 
       placeholder.textContent = `Empty element`;

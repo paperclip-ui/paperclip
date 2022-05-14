@@ -37,7 +37,6 @@
     "chai": "^4.0.2",
     "concurrently": "4.1.x",
     "css-loader": "^0.28.4",
-    "esbuild-loader": "^2.18.0",
     "file-loader": "^1.1.11",
     "html-webpack-plugin": "^5.5.0",
     "mocha": "^3.4.2",

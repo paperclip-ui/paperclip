@@ -137,7 +137,7 @@ export const startProjectEngine =
       await deleteFile((action as FileItemContextMenuAction).item.uri);
     };
 
-    init();
+    setTimeout(init);
 
     return (action: Action, state: RootState, prevState: RootState) => {
       projectLoadedHandler(action);

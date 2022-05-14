@@ -77,6 +77,7 @@ import {
   getInspectorSyntheticNode,
   getSyntheticDocumentByDependencyUri,
   getPCNodeClip,
+  createRootInspectorNode,
 } from "paperclip";
 import {
   CanvasToolOverlayMouseMoved,
@@ -187,6 +188,8 @@ export type EditorWindow = {
   smooth?: boolean;
   secondarySelection?: boolean;
   fullScreen?: boolean;
+
+  // TODO - this needs to be the virtual element instead of the actual DOM
   container?: HTMLElement;
 };
 
@@ -294,7 +297,6 @@ export type Unloader = {
 
 export type RootState = {
   editorWindows: EditorWindow[];
-  mount: Element;
   openFiles: OpenFile[];
   toolType?: ToolType;
   activeEditorFilePath?: string;
@@ -347,6 +349,30 @@ export type RootState = {
   queuedDndInfo?: CanvasDroppedItem;
 } & PCEditorState &
   FSSandboxRootState;
+
+export const INITIAL_STATE: RootState = {
+  editorWindows: [],
+  customChrome: false,
+  selectedInspectorNodes: [],
+  hoveringInspectorNodes: [],
+  unloaders: [],
+  readyType: RootReadyType.LOADING,
+  scriptProcesses: [],
+  editMode: EditMode.PRIMARY,
+  selectedFileNodeIds: [],
+  sourceNodeInspector: createRootInspectorNode(),
+  sourceNodeInspectorMap: {},
+  history: {
+    index: 0,
+    items: [],
+  },
+  openFiles: [],
+  frames: [],
+  documents: [],
+  graph: {},
+  fileCache: {},
+  selectedComponentId: null,
+};
 
 // TODO - change this to Editor
 export type OpenFile = {

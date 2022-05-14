@@ -22,7 +22,6 @@ module.exports = {
       path: "path-browserify",
       buffer: "buffer",
       util: "util",
-      process: "process/browser",
     },
     modules: [
       resolve(__dirname, "src"),
@@ -69,12 +68,16 @@ module.exports = {
           },
         ],
       },
-      { test: /\.tsx?$/, use: ["ts-loader"] },
+      {
+        test: /\.tsx?$/,
+        loader: "esbuild-loader",
+        options: { loader: "tsx", target: "es6" },
+      },
     ],
   },
   plugins: [
-    new webpack.DefinePlugin({
-      "process.env": "({})",
+    new webpack.ProvidePlugin({
+      process: "process/browser",
     }),
   ],
 };

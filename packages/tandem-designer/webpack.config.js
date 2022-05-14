@@ -24,8 +24,11 @@ module.exports = [
     },
     plugins: [
       new HtmlWebpackPlugin({
-        title: "Aerial Playground",
+        title: "Tandem Playground",
         template: __dirname + "/src/index.html",
+      }),
+      new webpack.ProvidePlugin({
+        process: "process/browser",
       }),
     ],
   }),

@@ -1,4 +1,3 @@
-import "./selectables.scss";
 import * as React from "react";
 import { Frame } from "paperclip";
 

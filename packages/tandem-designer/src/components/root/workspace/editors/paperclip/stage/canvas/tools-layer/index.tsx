@@ -2,7 +2,6 @@
  * tools overlay like measurements, resizers, etc
  */
 
-import "./index.scss";
 import * as React from "react";
 import { Dispatch } from "redux";
 import {
@@ -18,6 +17,7 @@ import { NodeOverlaysTool } from "./document-overlay";
 import { SelectionCanvasTool } from "./selection";
 import { Frames } from "./frames-view.pc";
 import { InsertLayer } from "./insert-layer";
+import * as styles from "./styles";
 import {
   getSyntheticDocumentByDependencyUri,
   SyntheticDocument,
@@ -86,7 +86,7 @@ export class ToolsLayerComponent extends React.PureComponent<ToolsLayerComponent
       selectedInspectorNodes[0] &&
       getInspectorSyntheticNode(selectedInspectorNodes[0], documents);
     return (
-      <div className="m-tools-layer">
+      <styles.ToolsLayer>
         <InsertLayer
           selectedComponentId={selectedComponentId}
           activeEditorUri={activeEditorUri}
@@ -148,7 +148,7 @@ export class ToolsLayerComponent extends React.PureComponent<ToolsLayerComponent
             selectedSyntheticNode={selectedSyntheticNode as SyntheticTextNode}
           />
         ) : null}
-      </div>
+      </styles.ToolsLayer>
     );
   }
 }

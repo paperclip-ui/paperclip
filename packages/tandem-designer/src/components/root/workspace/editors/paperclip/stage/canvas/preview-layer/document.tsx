@@ -1,11 +1,4 @@
-import "./document.scss";
-import React, {
-  memo,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { memo, useLayoutEffect, useRef, useState } from "react";
 import {
   Frame,
   Dependency,
@@ -19,6 +12,7 @@ import {
   computeDisplayInfo,
 } from "paperclip";
 import { useDispatch } from "react-redux";
+import * as styles from "./styles";
 
 export type DocumentPreviewOuterProps = {
   frame: Frame;
@@ -78,11 +72,12 @@ export const DocumentPreviewComponent = memo(
       height: bounds.bottom - bounds.top,
       background: "white",
     } as any;
+    console.log(frame);
 
     return (
-      <div className="m-preview-document" style={style}>
+      <styles.DocumentContainer style={style}>
         <DesignPreview contentNode={contentNode} />
-      </div>
+      </styles.DocumentContainer>
     );
   }
 );

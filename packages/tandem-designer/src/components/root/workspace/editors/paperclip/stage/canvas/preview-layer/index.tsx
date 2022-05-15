@@ -2,7 +2,6 @@
  * preview of all components & artboards
  */
 
-import "./index.scss";
 import * as React from "react";
 import { DocumentPreviewComponent } from "./document";
 import {
@@ -12,6 +11,7 @@ import {
   getSyntheticDocumentById,
   getSyntheticNodeById,
 } from "paperclip";
+import * as styles from "./styles";
 
 export type PreviewLayerOuterProps = {
   frames: Frame[];
@@ -23,7 +23,7 @@ export class PreviewLayerComponent extends React.PureComponent<PreviewLayerOuter
   render() {
     const { frames, dependency, documents } = this.props;
     return (
-      <div className="m-preview-layer">
+      <styles.PreviewLayer>
         {frames.map((frame) => (
           <DocumentPreviewComponent
             key={frame.syntheticContentNodeId}
@@ -35,7 +35,7 @@ export class PreviewLayerComponent extends React.PureComponent<PreviewLayerOuter
             dependency={dependency}
           />
         ))}
-      </div>
+      </styles.PreviewLayer>
     );
   }
 }

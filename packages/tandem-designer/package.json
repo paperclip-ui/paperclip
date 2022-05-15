@@ -33,6 +33,7 @@
     "@types/react-dom": "^16.0.7",
     "@types/recompose": "0.x.x",
     "@types/request": "^2.0.0",
+    "@types/styled-components": "^5.1.25",
     "buffer": "^6.0.3",
     "chai": "^4.0.2",
     "concurrently": "4.1.x",
@@ -79,6 +80,7 @@
     "redux": "^4.2.0",
     "redux-saga": "^0.16.0",
     "scroll-into-view-if-needed": "^2.2.16",
+    "styled-components": "^5.3.5",
     "tandem-common": "^10.1.33",
     "tandem-starter-kits": "^10.1.33"
   },

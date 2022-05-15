@@ -1,4 +1,6 @@
-.m-panel {
+import styled from "styled-components";
+
+export const Container = styled.div`
   display: flex;
   flex-direction: column;
   &.headerless {
@@ -29,4 +31,4 @@
     flex: 1;
     overflow: scroll;
   }
-}
+`;

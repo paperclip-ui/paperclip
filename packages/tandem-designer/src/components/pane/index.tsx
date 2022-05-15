@@ -1,6 +1,6 @@
-import "./index.scss";
 import * as React from "react";
 import cx from "classnames";
+import * as styles from "./styles";
 
 export type PaneComponentInnerProps = {
   header?: any;
@@ -15,13 +15,10 @@ export const PaneComponent = ({
   className,
   secondary,
 }: PaneComponentInnerProps) => (
-  <div
-    className={cx(
-      { "m-panel": true, headerless: !header, secondary },
-      className
-    )}
+  <styles.Container
+    className={cx({ headerless: !header, secondary }, className)}
   >
     {header && <div className="header">{header}</div>}
     <div className="content-outer">{children}</div>
-  </div>
+  </styles.Container>
 );

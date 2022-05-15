@@ -1,4 +1,3 @@
-import "./document-overlay.scss";
 const cx = require("classnames");
 import * as React from "react";
 import Hammer from "react-hammerjs";

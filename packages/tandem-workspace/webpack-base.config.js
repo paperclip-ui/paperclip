@@ -46,7 +46,16 @@ module.exports = {
         test: /\.css$/,
         use: [{ loader: "style-loader" }, { loader: "css-loader" }],
       },
-      { test: /\.tsx?$/, use: ["ts-loader"] },
+      {
+        test: /\.tsx?$/,
+        use: {
+          loader: "ts-loader",
+          options: {
+            transpileOnly: true,
+            configFile: "./tsconfig.webpack.json",
+          },
+        },
+      },
     ],
   },
 };

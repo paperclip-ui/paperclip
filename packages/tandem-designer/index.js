@@ -1,1 +1,1 @@
-module.exports = require("./lib/front-end/index.bundle.js");
+module.exports = require("./lib/front-end/index.esm.js");

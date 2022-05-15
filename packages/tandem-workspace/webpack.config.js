@@ -1,6 +1,7 @@
 const { resolve } = require("path");
 const { merge } = require("lodash");
 const webpack = require("webpack");
+const createWebpackConfig = require("tandem-designer/webpack/base.config");
 
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
@@ -10,7 +11,7 @@ module.exports = merge({}, base, {
   mode: "development",
   plugins: [
     new HtmlWebpackPlugin({
-      title: "Aerial Playground",
+      title: "Tandem Playground",
       template: __dirname + "/src/front-end/index.html",
     }),
     new webpack.DefinePlugin({

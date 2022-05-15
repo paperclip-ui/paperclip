@@ -1,8 +1,8 @@
 IMMEDIATE:
 
-- fix bounding client rect pos
-- shortcuts
 - CLI
+- context menu
+- shortcuts
 - serializer
 - update rendering engine to use native
 

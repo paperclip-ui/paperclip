@@ -11,6 +11,7 @@ export type InitOptions = {
   document: Document;
   engineOptions: FrontEndEngineOptions;
 };
+console.log("OK");
 
 export const init = ({ document, engineOptions }: InitOptions) => {
   const element = document.createElement("div");
@@ -22,7 +23,10 @@ export const init = ({ document, engineOptions }: InitOptions) => {
 
     // engines
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(reduxMiddleware(engineOptions) as any),
+      // dissable serialize check because of content Buffer
+      getDefaultMiddleware({ serializableCheck: false }).concat(
+        reduxMiddleware(engineOptions) as any
+      ),
   });
 
   ReactDOM.render(

@@ -32,12 +32,14 @@ export const engineReduxMiddleware = <TState>(
         next(action);
 
         const nextState = store.getState();
-
-        for (const handleAction of engineActionHandlers) {
-          handleAction(action, nextState, currState);
-        }
-
+        const pevState = currState;
         currState = nextState;
+
+        requestAnimationFrame(() => {
+          for (const handleAction of engineActionHandlers) {
+            handleAction(action, nextState, pevState);
+          }
+        });
       };
     };
   };

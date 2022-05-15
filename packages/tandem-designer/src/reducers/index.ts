@@ -834,14 +834,14 @@ export const rootReducer = (state: RootState, action: Action): RootState => {
     }
 
     case CANVAS_MOUNTED: {
-      const { fileUri, element } = action as CanvasMounted;
-      if (!element) {
+      const { fileUri, bounds } = action as CanvasMounted;
+      if (!bounds) {
         return state;
       }
 
       state = updateEditorWindow(
         {
-          canvasBounds: clientRectToBounds(element.getBoundingClientRect()),
+          canvasBounds: bounds,
         },
         fileUri,
         state

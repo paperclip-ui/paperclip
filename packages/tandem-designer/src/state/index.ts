@@ -355,6 +355,7 @@ export const INITIAL_STATE: RootState = {
   editorWindows: [],
   customChrome: false,
   selectedInspectorNodes: [],
+  fontFamilies: [],
   hoveringInspectorNodes: [],
   unloaders: [],
   readyType: RootReadyType.LOADING,

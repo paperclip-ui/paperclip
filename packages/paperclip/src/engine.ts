@@ -222,7 +222,7 @@ export const startPaperclipEngine =
         const body = iframe.contentDocument.body;
         dispatch(
           pcFrameRendered(
-            frame,
+            frame.syntheticContentNodeId,
             computeDisplayInfo(
               (frameNodeMap[frame.syntheticContentNodeId] = renderDOM(
                 body,

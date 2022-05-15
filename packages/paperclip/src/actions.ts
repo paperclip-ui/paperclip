@@ -22,7 +22,7 @@ export type PCSourceFileUrisReceived = {
 } & Action;
 
 export type PCFrameRendered = {
-  frame: Frame;
+  syntheticContentNodeId: string;
   computed: ComputedDisplayInfo;
 } & Action;
 
@@ -38,26 +38,26 @@ export type PCRuntimeEvaluated = {
 } & Action;
 
 export const pcFrameRendered = (
-  frame: Frame,
+  syntheticContentNodeId: string,
   computed: ComputedDisplayInfo
 ): PCFrameRendered => ({
   type: PC_SYNTHETIC_FRAME_RENDERED,
-  frame,
-  computed
+  syntheticContentNodeId,
+  computed,
 });
 
 export const pcDependencyGraphLoaded = (
   graph: DependencyGraph
 ): PCDependencyGraphLoaded => ({
   graph,
-  type: PC_DEPENDENCY_GRAPH_LOADED
+  type: PC_DEPENDENCY_GRAPH_LOADED,
 });
 
 export const pcSourceFileUrisReceived = (
   uris: string[]
 ): PCSourceFileUrisReceived => ({
   uris,
-  type: PC_SOURCE_FILE_URIS_RECEIVED
+  type: PC_SOURCE_FILE_URIS_RECEIVED,
 });
 
 export const pcFrameContainerCreated = (
@@ -66,7 +66,7 @@ export const pcFrameContainerCreated = (
 ): PCFrameContainerCreated => ({
   frame,
   $container,
-  type: PC_SYNTHETIC_FRAME_CONTAINER_CREATED
+  type: PC_SYNTHETIC_FRAME_CONTAINER_CREATED,
 });
 
 export const pcRuntimeEvaluated = (
@@ -79,5 +79,5 @@ export const pcRuntimeEvaluated = (
   diffs,
   catchingUp,
   allDocuments,
-  type: PC_RUNTIME_EVALUATED
+  type: PC_RUNTIME_EVALUATED,
 });

@@ -68,10 +68,3 @@ export const RootComponent = () => {
 
   return content;
 };
-
-// export class RootComponent extends React.PureComponent<RootOuterProps> {
-//   render() {
-//     const { root, dispatch } = this.props;
-
-//   }
-// }

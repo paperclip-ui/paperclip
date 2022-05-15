@@ -1,11 +1,7 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, forwardRef } from "react";
 import ReactDOM from "react-dom";
 import { bubbleHTMLIframeEvents, Point } from "tandem-common";
-import {
-  Provider as ReduxProvider,
-  ReactReduxContext,
-  useStore,
-} from "react-redux";
+import { Provider as ReduxProvider, useStore } from "react-redux";
 import { Consumer } from "react-dnd/lib/DragDropContext";
 
 export type IsolateProps = {
@@ -26,7 +22,7 @@ export type IsolateProps = {
   onDrop?: any;
 };
 
-export const Isoalte = ({
+export const Isolate = ({
   className,
   children,
   onLoad: onLoad2,
@@ -68,7 +64,7 @@ export const Isoalte = ({
   };
 
   useEffect(() => {
-    if (!dragDropManager || !iframe?.contentWindow || !loaded) {
+    if (!dragDropManager || !iframe?.contentWindow) {
       return;
     }
 
@@ -110,7 +106,7 @@ export const Isoalte = ({
   }, [dragDropManager, inheritCSS, loaded, iframe?.contentWindow]);
 
   useEffect(() => {
-    if (!iframe?.contentWindow || !loaded) {
+    if (!iframe?.contentWindow) {
       return;
     }
     bubbleHTMLIframeEvents(iframe, {
@@ -120,7 +116,7 @@ export const Isoalte = ({
   }, [loaded, iframe?.contentWindow]);
 
   useEffect(() => {
-    if (!iframe?.contentWindow || !loaded) {
+    if (!iframe?.contentWindow) {
       return;
     }
 
@@ -138,6 +134,7 @@ export const Isoalte = ({
     if (!mountElement) {
       return;
     }
+
     ReactDOM.render(
       <ReduxProvider store={store}>{children}</ReduxProvider>,
       mountElement
@@ -147,10 +144,11 @@ export const Isoalte = ({
   return (
     <Consumer>
       {({ dragDropManager }) => {
-        !dragDropManager && setDragDropManager(dragDropManager);
         return (
-          <iframe
+          <Inner
             ref={setIframe}
+            dragDropManager={dragDropManager}
+            setDragDropManager={setDragDropManager}
             onDragOver={onDragOver}
             onDrop={onDrop}
             onWheel={onWheel}
@@ -164,6 +162,15 @@ export const Isoalte = ({
     </Consumer>
   );
 };
+
+const Inner = forwardRef(
+  ({ setDragDropManager, dragDropManager, ...rest }: any, ref) => {
+    useEffect(() => {
+      setDragDropManager(dragDropManager);
+    }, [dragDropManager]);
+    return <iframe ref={ref} {...rest} />;
+  }
+);
 
 // export class Isolate extends React.Component<
 //   IsolateProps,

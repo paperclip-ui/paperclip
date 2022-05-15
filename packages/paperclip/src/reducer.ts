@@ -18,7 +18,12 @@ import {
   PC_RUNTIME_EVALUATED,
   PCRuntimeEvaluated,
 } from "./actions";
-import { PCEditorState, updateFrame, upsertFrames } from "./edit";
+import {
+  getFrameByContentNodeId,
+  PCEditorState,
+  updateFrame,
+  upsertFrames,
+} from "./edit";
 import {
   addFileCacheItemToDependencyGraph,
   DependencyGraph,
@@ -61,12 +66,12 @@ export const paperclipReducer = <
       return pruneDependencyGraph(state as any);
     }
     case PC_SYNTHETIC_FRAME_RENDERED: {
-      const { frame, computed } = action as PCFrameRendered;
+      const { syntheticContentNodeId, computed } = action as PCFrameRendered;
       return updateFrame(
         {
           computed,
         },
-        frame,
+        getFrameByContentNodeId(syntheticContentNodeId, state.frames),
         state
       );
     }

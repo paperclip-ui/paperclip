@@ -69,10 +69,9 @@ export const computeDisplayInfo = (
   for (const id in map) {
     const node = map[id];
     const rect = (node as HTMLElement).getBoundingClientRect();
-    clientRectToBounds;
     if (node.nodeType === 1) {
       computed[id] = {
-        style: window.getComputedStyle(node as Element),
+        style: Object.assign({}, window.getComputedStyle(node as Element)),
         bounds: clientRectToBounds(rect),
       };
     }

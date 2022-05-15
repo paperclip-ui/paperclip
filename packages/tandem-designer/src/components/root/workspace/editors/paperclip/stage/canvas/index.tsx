@@ -35,6 +35,7 @@ import {
 } from "../../../../../../../actions";
 import { DropTarget, DropTargetMonitor } from "react-dnd";
 import { InspectorNode } from "paperclip";
+import { clientRectToBounds } from "tandem-common";
 
 export type CanvasOuterProps = {
   frames: Frame[];
@@ -236,7 +237,10 @@ const enhance = compose<CanvasInnerProps, CanvasOuterProps>(
         ({ dispatch, editorWindow }) =>
         (element: HTMLDivElement) => {
           dispatch(
-            canvasContainerMounted(element, editorWindow.activeFilePath)
+            canvasContainerMounted(
+              element && clientRectToBounds(element.getBoundingClientRect()),
+              editorWindow.activeFilePath
+            )
           );
         },
       onWheel:

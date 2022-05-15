@@ -1,6 +1,24 @@
 import "./document.scss";
-import * as React from "react";
-import { Frame, Dependency, SyntheticVisibleNode } from "paperclip";
+import React, {
+  memo,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import {
+  Frame,
+  Dependency,
+  SyntheticVisibleNode,
+  renderDOM,
+  diffTreeNode,
+  patchTreeNode,
+  patchDOM,
+  SyntheticNativeNodeMap,
+  pcFrameRendered,
+  computeDisplayInfo,
+} from "paperclip";
+import { useDispatch } from "react-redux";
 
 export type DocumentPreviewOuterProps = {
   frame: Frame;
@@ -9,39 +27,41 @@ export type DocumentPreviewOuterProps = {
 };
 
 type DesignPreviewOuterProps = {
-  frame: Frame;
-  dependency: Dependency<any>;
+  contentNode: SyntheticVisibleNode;
+  // dependency: Dependency<any>;
 };
 
-class DesignPreview extends React.PureComponent<DesignPreviewOuterProps> {
-  componentDidUpdate({ frame: oldFrame }: DocumentPreviewOuterProps) {
-    const props = this.props;
-    if (!oldFrame || oldFrame.$container !== props.frame.$container) {
-      const container = this.refs.container as HTMLElement;
-      while (container.childNodes.length) {
-        container.removeChild(container.childNodes[0]);
-      }
-      if (props.frame.$container) {
-        container.appendChild(props.frame.$container);
-      }
+const DesignPreview = memo(({ contentNode }: DesignPreviewOuterProps) => {
+  const container = useRef<HTMLDivElement>();
+  const [currentContentNode, setCurrentContentNode] =
+    useState<SyntheticVisibleNode>(contentNode);
+  const [map, setNodeMap] = useState<SyntheticNativeNodeMap>();
+  const dispatch = useDispatch();
+  useLayoutEffect(() => {
+    if (!container.current) {
+      return;
     }
-  }
-  componentDidMount() {
-    const container = this.refs.container as HTMLElement;
-    if (container && this.props.frame.$container) {
-      container.appendChild(
-        (this.props as DocumentPreviewOuterProps).frame.$container
-      );
-    }
-  }
-  render() {
-    return <div ref="container" />;
-  }
-}
 
-export class DocumentPreviewComponent extends React.PureComponent<DocumentPreviewOuterProps> {
-  render() {
-    const { contentNode, frame, dependency } = this.props;
+    let newMap: SyntheticNativeNodeMap;
+
+    if (currentContentNode === contentNode) {
+      newMap = renderDOM(container.current, contentNode);
+    } else {
+      const ots = diffTreeNode(currentContentNode, contentNode);
+      newMap = patchDOM(ots, currentContentNode, container.current, map);
+    }
+
+    setNodeMap(newMap);
+
+    dispatch(pcFrameRendered(contentNode.id, computeDisplayInfo(newMap)));
+    setCurrentContentNode(contentNode);
+  }, [container.current, currentContentNode, contentNode]);
+
+  return <div ref={container} />;
+});
+
+export const DocumentPreviewComponent = memo(
+  ({ contentNode, frame, dependency }: DocumentPreviewOuterProps) => {
     if (!contentNode) {
       return null;
     }
@@ -61,8 +81,8 @@ export class DocumentPreviewComponent extends React.PureComponent<DocumentPrevie
 
     return (
       <div className="m-preview-document" style={style}>
-        <DesignPreview frame={frame} dependency={dependency} />
+        <DesignPreview contentNode={contentNode} />
       </div>
     );
   }
-}
+);

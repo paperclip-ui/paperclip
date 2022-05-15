@@ -535,7 +535,7 @@ export type BreadCrumbClicked = {
 } & Action;
 
 export type CanvasMounted = {
-  element: HTMLDivElement;
+  bounds: Bounds;
   fileUri: string;
 } & Action;
 
@@ -1859,10 +1859,10 @@ export const canvasToolOverlayMouseDoubleClicked = (
 });
 
 export const canvasContainerMounted = (
-  element: HTMLDivElement,
+  bounds: Bounds,
   fileUri: string
 ): CanvasMounted => ({
-  element,
+  bounds,
   fileUri,
   type: CANVAS_MOUNTED,
 });

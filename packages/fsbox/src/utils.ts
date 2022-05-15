@@ -5,8 +5,6 @@ export const setReaderMimetypes =
   (resolve: Record<string, string[]>) =>
   (readFile: FSSandboxFileReader) =>
   async (uri: string) => {
-    console.log("RF");
-
     const { content, mimeType: defaultMimeType } = await readFile(uri);
 
     for (const mimeType in resolve) {

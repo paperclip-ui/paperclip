@@ -292,6 +292,7 @@ import {
   RootReadyType,
   IS_WINDOWS,
   AddFileType,
+  getScaledMouseCanvasPosition,
 } from "../state";
 import {
   PCSourceTagNames,
@@ -2603,16 +2604,7 @@ const persistInsertNodeFromPoint = (
     ) as PCNode);
 
   if (!targetNode) {
-    const newPoint = shiftPoint(
-      normalizePoint(
-        getOpenFile(fileUri, state.openFiles).canvas.translate,
-        point
-      ),
-      {
-        left: -(INSERT_ARTBOARD_WIDTH / 2),
-        top: -(INSERT_ARTBOARD_HEIGHT / 2),
-      }
-    );
+    const canvasPoint = getScaledMouseCanvasPosition(state, point);
 
     let bounds = {
       left: 0,
@@ -2628,8 +2620,16 @@ const persistInsertNodeFromPoint = (
         bottom: INSERT_TEXT_ARTBOARD_HEIGHT,
       };
     }
+    const { width, height } = boundsToSize(bounds);
 
-    bounds = moveBounds(bounds, newPoint);
+    // center
+    bounds = moveBounds(
+      bounds,
+      shiftPoint(canvasPoint, {
+        left: -width / 2,
+        top: -height / 2,
+      })
+    );
 
     newNode = updatePCNodeMetadata(
       {

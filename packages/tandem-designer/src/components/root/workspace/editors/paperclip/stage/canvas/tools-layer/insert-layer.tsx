@@ -18,17 +18,7 @@ type InsertLayerOuterProps = {
   activeEditorUri: string;
 };
 
-const CURSOR_MAP = {
-  [ToolType.COMPONENT]: "crosshair",
-  [ToolType.ELEMENT]: "crosshair",
-  [ToolType.TEXT]: "text",
-};
-
 const TEXT_PADDING = 5;
-
-type State = {
-  previewBounds: Bounds;
-};
 
 export const InsertLayer = ({
   editorWindow,
@@ -41,11 +31,10 @@ export const InsertLayer = ({
   selectedComponentId,
 }: InsertLayerOuterProps) => {
   const dispatch = useDispatch();
-  const [previewBounds, setPreviewBounds] = useState<Bounds>(null);
 
   const onMouseDown = (startEvent: React.MouseEvent<any>) => {
-    const startX = startEvent.clientX;
-    const startY = startEvent.clientY;
+    const startX = startEvent.pageX;
+    const startY = startEvent.pageY;
     dispatch(
       insertToolFinished(
         {
@@ -78,34 +67,6 @@ export const InsertLayer = ({
     transformOrigin: `top left`,
   };
 
-  let preview;
-
-  if (previewBounds) {
-    const { width, height } = getBoundsSize(previewBounds);
-    preview = (
-      <div>
-        <div
-          className="preview"
-          style={{
-            left: previewBounds.left,
-            top: previewBounds.top,
-            width,
-            height,
-          }}
-        />
-        <div
-          className="preview-text"
-          style={{
-            left: previewBounds.left + width + TEXT_PADDING,
-            top: previewBounds.top + height + TEXT_PADDING,
-          }}
-        >
-          {width} x {height}
-        </div>
-      </div>
-    );
-  }
-
   let insertOutline;
 
   if (insertInspectorNodeBounds) {
@@ -135,9 +96,7 @@ export const InsertLayer = ({
         className="m-insert-layer"
         style={outerStyle}
         onMouseDown={onMouseDown}
-      >
-        {preview}
-      </div>
+      ></div>
       {insertOutline}
     </div>
   );

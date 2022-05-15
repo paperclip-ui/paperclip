@@ -1677,6 +1677,7 @@ export const canvasReducer = (state: RootState, action: Action) => {
         sourceEvent: { pageX, pageY },
       } = action as CanvasMouseMoved;
 
+      // need to offset mouse event with canvas position
       state = updateEditorWindow(
         {
           mousePosition: {

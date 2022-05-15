@@ -189,8 +189,6 @@ export type EditorWindow = {
   smooth?: boolean;
   secondarySelection?: boolean;
   fullScreen?: boolean;
-
-  // TODO - this needs to be the virtual element instead of the actual DOM
   canvasBounds?: Bounds;
 };
 
@@ -1505,10 +1503,26 @@ export const getScaledMouseCanvasPosition = (
     state.activeEditorFilePath,
     state.openFiles
   ).canvas;
+
+  const editorWindow = getEditorWindowWithFileUri(
+    state.activeEditorFilePath,
+    state
+  );
+
+  if (!editorWindow) {
+    console.warn(
+      `Editor window not active for ${state.activeEditorFilePath}, returned mouse position will be inaccurate.`
+    );
+  }
+
   const translate = getCanvasTranslate(canvas);
 
-  const scaledPageX = (point.left - translate.left) / translate.zoom;
-  const scaledPageY = (point.top - translate.top) / translate.zoom;
+  const scaledPageX =
+    (point.left - translate.left - (editorWindow?.canvasBounds?.left || 0)) /
+    translate.zoom;
+  const scaledPageY =
+    (point.top - translate.top - (editorWindow?.canvasBounds?.top || 0)) /
+    translate.zoom;
   return { left: scaledPageX, top: scaledPageY };
 };
 
@@ -1656,6 +1670,7 @@ export const getCanvasMouseTargetNodeIdFromPoint = (
 
   const mouseX = scaledPageX - frame.bounds.left;
   const mouseY = scaledPageY - frame.bounds.top;
+  console.log(scaledPageX, frame.bounds.left, frame.bounds.top);
 
   const computedInfo = frame.computed || {};
   const intersectingBounds: Bounds[] = [];

@@ -1,6 +1,6 @@
 IMMEDIATE:
 
-- fix center zooming
+- fix bounding client rect pos
 - shortcuts
 - CLI
 - serializer

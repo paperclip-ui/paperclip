@@ -195,8 +195,12 @@ export const CanvasComponent = memo(
     }, [canvasContainer]);
 
     const onWheel = (event) => {
-      const rect = canvasOuter.getBoundingClientRect();
-      dispatch(canvasWheel(rect.width, rect.height, event));
+      dispatch(
+        canvasWheel(
+          clientRectToBounds(canvasContainer.getBoundingClientRect()),
+          event
+        )
+      );
     };
     return (
       <BaseCanvasComponent

@@ -429,6 +429,7 @@ import {
   FILE_PROTOCOL,
   updateFSItemAlts,
   clientRectToBounds,
+  boundsToSize,
 } from "tandem-common";
 import { clamp, last } from "lodash";
 import {
@@ -1526,7 +1527,7 @@ export const canvasReducer = (state: RootState, action: Action) => {
     }
 
     case CANVAS_WHEEL: {
-      const { metaKey, ctrlKey, deltaX, deltaY, canvasHeight, canvasWidth } =
+      const { metaKey, ctrlKey, deltaX, deltaY, bounds } =
         action as CanvasWheel;
 
       let delta2X = deltaX * PAN_X_SENSITIVITY;
@@ -1543,10 +1544,7 @@ export const canvasReducer = (state: RootState, action: Action) => {
       if (metaKey || ctrlKey) {
         translate = centerTransformZoom(
           translate,
-          boundsFromRect({
-            width: canvasWidth,
-            height: canvasHeight,
-          }),
+          bounds,
           clamp(
             translate.zoom + (translate.zoom * deltaY) / ZOOM_SENSITIVITY,
             MIN_ZOOM,
@@ -1675,11 +1673,17 @@ export const canvasReducer = (state: RootState, action: Action) => {
 
     case CANVAS_MOUSE_MOVED: {
       const {
-        editorWindow: { activeFilePath },
+        editorWindow: { activeFilePath, canvasBounds },
         sourceEvent: { pageX, pageY },
       } = action as CanvasMouseMoved;
+
       state = updateEditorWindow(
-        { mousePosition: { left: pageX, top: pageY } },
+        {
+          mousePosition: {
+            left: pageX - canvasBounds.left,
+            top: pageY - canvasBounds.top,
+          },
+        },
         state.activeEditorFilePath,
         state
       );

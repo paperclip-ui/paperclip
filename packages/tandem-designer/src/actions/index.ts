@@ -453,8 +453,7 @@ export type ElementVariantToggled = {
 } & Action;
 
 export type CanvasWheel = {
-  canvasWidth: number;
-  canvasHeight: number;
+  bounds: Bounds;
   type: string;
   metaKey: boolean;
   ctrlKey: boolean;
@@ -1900,13 +1899,11 @@ export const canvasMouseDoubleClicked = (
 });
 
 export const canvasWheel = (
-  canvasWidth: number,
-  canvasHeight: number,
+  bounds: Bounds,
   { metaKey, ctrlKey, deltaX, deltaY, clientX, clientY }: React.WheelEvent<any>
 ): CanvasWheel => ({
   metaKey,
-  canvasWidth,
-  canvasHeight,
+  bounds,
   ctrlKey,
   deltaX,
   deltaY,

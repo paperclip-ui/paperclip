@@ -1,6 +1,7 @@
 IMMEDIATE:
 
 - fix center zooming
+- shortcuts
 - CLI
 - serializer
 - update rendering engine to use native

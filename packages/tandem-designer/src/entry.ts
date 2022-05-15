@@ -1,8 +1,6 @@
 import { createMockEngineOptions } from "./engines/adaptes/mock";
 import { init } from "./index";
 
-console.log("OKDaa");
-
 const { element } = init({
   document,
   engineOptions: createMockEngineOptions({

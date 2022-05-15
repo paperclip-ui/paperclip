@@ -22,7 +22,7 @@ import {
 } from "./dom-renderer";
 import { Frame, getSyntheticDocumentFrames, PCEditorState } from "./edit";
 import { DependencyGraph } from "./graph";
-import { TreeNodeOperationalTransform } from "./ot";
+import { patchTreeNode, TreeNodeOperationalTransform } from "./ot";
 import { PCRuntime, LocalRuntimeInfo } from "./runtime";
 import {
   getSyntheticDocumentByDependencyUri,
@@ -114,11 +114,11 @@ export const startPaperclipEngine =
         )) {
           // container may not exist of project is reloaded
           if (
-            !initedFrames[newFrame.syntheticContentNodeId] ||
-            !newFrame.$container
+            !initedFrames[newFrame.syntheticContentNodeId]
+            // !newFrame.$container
           ) {
             initedFrames[newFrame.syntheticContentNodeId] = true;
-            initContainer(newFrame, state);
+            // initContainer(newFrame, state);
           } else {
             const frameOts = mapContentNodeOperationalTransforms(
               newFrame.syntheticContentNodeId,
@@ -166,30 +166,27 @@ export const startPaperclipEngine =
       contentNode: SyntheticVisibleNode,
       ots: TreeNodeOperationalTransform[]
     ) => {
-      const marker = pmark(`*patchContainer()`);
-      const container: HTMLElement = frame.$container;
-      const iframe = container.children[0] as HTMLIFrameElement;
-      const body = iframe.contentDocument && iframe.contentDocument.body;
-      if (!body) {
-        marker.end();
-        return;
-      }
-
-      frameNodeMap[frame.syntheticContentNodeId] = patchDOM(
-        ots,
-        contentNode,
-        body,
-        frameNodeMap[frame.syntheticContentNodeId]
-      );
-
-      dispatch(
-        pcFrameRendered(
-          frame,
-          computeDisplayInfo(frameNodeMap[frame.syntheticContentNodeId])
-        )
-      );
-
-      marker.end();
+      // const marker = pmark(`*patchContainer()`);
+      // const container: HTMLElement = frame.$container;
+      // const iframe = container.children[0] as HTMLIFrameElement;
+      // const body = iframe.contentDocument && iframe.contentDocument.body;
+      // if (!body) {
+      //   marker.end();
+      //   return;
+      // }
+      // frameNodeMap[frame.syntheticContentNodeId] = patchDOM(
+      //   ots,
+      //   contentNode,
+      //   body,
+      //   frameNodeMap[frame.syntheticContentNodeId]
+      // );
+      // dispatch(
+      //   pcFrameRendered(
+      //     frame,
+      //     computeDisplayInfo(frameNodeMap[frame.syntheticContentNodeId])
+      //   )
+      // );
+      // marker.end();
     };
 
     const initContainer = (frame: Frame, state: PCEditorState) => {
@@ -273,7 +270,7 @@ export const startPaperclipEngine =
 
     return (action: Action, state: PCEditorState, prevState: PCEditorState) => {
       const marker = pmark(`[PapeclipEngine] handle action`);
-      handleRuntimeEvaluated(action, state, prevState);
+      // handleRuntimeEvaluated(action, state, prevState);
       handleGraphChange(state);
       marker.end();
     };

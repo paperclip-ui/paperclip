@@ -14,9 +14,13 @@ export type InitOptions = {
 
 export const init = ({ document, engineOptions }: InitOptions) => {
   const element = document.createElement("div");
+
+  // global state management
   const store = configureStore({
     reducer: rootReducer,
     preloadedState: INITIAL_STATE as any,
+
+    // engines
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(reduxMiddleware(engineOptions) as any),
   });

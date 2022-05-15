@@ -1,9 +1,9 @@
 IMMEDIATE:
 
-- esbuild
-- get UI to work in dummy browser
-  - start testing?
+- store synthetic browser in the state instead of DOM
 - CLI
+- serializer
+- update rendering engine to use native
 
 TODO:
 

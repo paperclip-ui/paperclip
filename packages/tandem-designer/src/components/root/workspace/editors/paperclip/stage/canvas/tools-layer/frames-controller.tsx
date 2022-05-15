@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { memo } from "react";
 import { RootState, EditorWindow, Canvas } from "../../../../../../../../state";
 import { wrapEventToDispatch } from "../../../../../../../../utils";
 import { Dispatch } from "redux";
@@ -14,22 +14,21 @@ import {
 import { Frame as FrameComponent } from "./frames-view.pc";
 import { canvasToolWindowBackgroundClicked } from "../../../../../../../../actions";
 import { BaseFramesProps } from "./frames-view.pc";
+import { useDispatch } from "react-redux";
 
 export type Props = {
   frames: Frame[];
   documents: SyntheticDocument[];
   graph: DependencyGraph;
   editorWindow: EditorWindow;
-  dispatch: Dispatch<any>;
   translate: Translate;
   canvas: Canvas;
 };
 
-export default (Base: React.ComponentClass<BaseFramesProps>) =>
-  class FramesController extends React.PureComponent<Props> {
-    render() {
-      const { translate, editorWindow, frames, graph, documents, dispatch } =
-        this.props;
+export default (Base: React.ComponentClass<BaseFramesProps>) => {
+  return memo(
+    ({ translate, editorWindow, frames, graph, documents }: Props) => {
+      const dispatch = useDispatch();
       const backgroundStyle = {
         transform: `translate(${-translate.left / translate.zoom}px, ${
           -translate.top / translate.zoom
@@ -77,4 +76,5 @@ export default (Base: React.ComponentClass<BaseFramesProps>) =>
         />
       );
     }
-  };
+  );
+};

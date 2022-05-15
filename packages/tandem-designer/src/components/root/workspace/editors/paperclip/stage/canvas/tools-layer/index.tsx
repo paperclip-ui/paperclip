@@ -26,13 +26,7 @@ import {
   getSyntheticVisibleNodeRelativeBounds,
   Frame,
 } from "paperclip";
-import {
-  getNestedTreeNodeById,
-  memoize,
-  mergeBounds,
-  Bounds,
-  findNestedNode,
-} from "tandem-common";
+import { memoize, mergeBounds, Bounds, findNestedNode } from "tandem-common";
 import {
   InspectorNode,
   getInspectorSyntheticNode,
@@ -110,7 +104,6 @@ export class ToolsLayerComponent extends React.PureComponent<ToolsLayerComponent
           documents={documents}
           graph={graph}
           translate={canvas.translate}
-          dispatch={dispatch}
           editorWindow={editorWindow}
         />
         <NodeOverlaysTool

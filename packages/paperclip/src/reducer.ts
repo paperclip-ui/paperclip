@@ -6,7 +6,7 @@ import {
   FSSandboxItemLoaded,
   queueOpenFile,
   FILE_CHANGED,
-  FileChangedEventType
+  FileChangedEventType,
 } from "fsbox";
 import {
   PC_SYNTHETIC_FRAME_RENDERED,
@@ -16,13 +16,13 @@ import {
   PC_SOURCE_FILE_URIS_RECEIVED,
   PCSourceFileUrisReceived,
   PC_RUNTIME_EVALUATED,
-  PCRuntimeEvaluated
+  PCRuntimeEvaluated,
 } from "./actions";
 import { PCEditorState, updateFrame, upsertFrames } from "./edit";
 import {
   addFileCacheItemToDependencyGraph,
   DependencyGraph,
-  isPaperclipUri
+  isPaperclipUri,
 } from "./graph";
 import { PAPERCLIP_MIME_TYPE } from "./constants";
 // import { FILE_CHANGED, FileChanged, FileChangedEventType } from "index";
@@ -38,8 +38,8 @@ export const paperclipReducer = <
       const { frame, $container } = action as PCFrameContainerCreated;
       return updateFrame(
         {
-          $container,
-          computed: null
+          // $container,
+          computed: null,
         },
         frame,
         state
@@ -52,7 +52,7 @@ export const paperclipReducer = <
       }
       return upsertFrames({
         ...Object(state as any),
-        documents: allDocuments
+        documents: allDocuments,
       });
     }
     case PC_SOURCE_FILE_URIS_RECEIVED: {
@@ -64,7 +64,7 @@ export const paperclipReducer = <
       const { frame, computed } = action as PCFrameRendered;
       return updateFrame(
         {
-          computed
+          computed,
         },
         frame,
         state
@@ -81,7 +81,7 @@ export const paperclipReducer = <
           delete newGraph[uri];
           state = {
             ...(state as any),
-            graph: newGraph
+            graph: newGraph,
           };
         } else if (eventType === FileChangedEventType.ADD) {
           state = queueOpenFile(uri, state);

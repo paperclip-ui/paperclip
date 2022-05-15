@@ -129,6 +129,8 @@ const BaseCanvasComponent = ({
                 backfaceVisibility: `hidden`,
                 transform: `translate(${translate.left}px, ${translate.top}px) scale(${translate.zoom})`,
                 transformOrigin: "top left",
+                width: "100%",
+                height: "100%",
               } as any
             }
           >

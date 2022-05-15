@@ -25,7 +25,7 @@ export const portal =
         document.body.appendChild(this._mount);
 
         // Ugly fix around unmounted child nodes 🙈
-        setImmediate(() => {
+        setTimeout(() => {
           didMount(this.props)(this._mount);
         });
       }

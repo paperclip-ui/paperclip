@@ -38,7 +38,7 @@ export default compose(
           setCanvas((_canvas = canvas));
           if (canvas) {
             // need to set immediate to ensure that canvas is actually mounted
-            setImmediate(() => {
+            setTimeout(() => {
               const { width, height } =
                 canvas.parentElement.getBoundingClientRect();
               draw(canvas, width || 100, height || 100);
@@ -101,7 +101,7 @@ export default compose(
       value,
     }: InnerProps) {
       if (canvas && this.props.draw !== draw && this.props.draw) {
-        setImmediate(() => {
+        setTimeout(() => {
           const { width, height } =
             canvas.parentElement.getBoundingClientRect();
           this.props.draw(canvas, width, height);
@@ -109,7 +109,7 @@ export default compose(
       }
 
       if (canvas && this.props.value !== value) {
-        setImmediate(() => {
+        setTimeout(() => {
           const { width, height } =
             canvas.parentElement.getBoundingClientRect();
           setGrabberPoint(getGraggerPoint(this.props.value, width, height));

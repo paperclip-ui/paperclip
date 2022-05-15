@@ -91,7 +91,6 @@ export const ToolsLayerComponent = (props: ToolsLayerComponentProps) => {
         zoom={zoom}
         editorWindow={editorWindow}
         toolType={toolType}
-        dispatch={dispatch}
         insertInspectorNode={insertInspectorNode}
         insertInspectorNodeBounds={insertInspectorNodeBounds}
       />

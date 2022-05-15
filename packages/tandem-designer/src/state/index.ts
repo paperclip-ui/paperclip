@@ -1670,7 +1670,6 @@ export const getCanvasMouseTargetNodeIdFromPoint = (
 
   const mouseX = scaledPageX - frame.bounds.left;
   const mouseY = scaledPageY - frame.bounds.top;
-  console.log(scaledPageX, frame.bounds.left, frame.bounds.top);
 
   const computedInfo = frame.computed || {};
   const intersectingBounds: Bounds[] = [];

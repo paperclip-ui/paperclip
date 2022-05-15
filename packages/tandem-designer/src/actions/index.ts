@@ -673,7 +673,9 @@ export type SelectorDoubleClicked = {
   nodeId: string;
 } & WrappedEvent<React.MouseEvent<any>>;
 
-export type ShortcutKeyDown = {};
+export type ShortcutKeyDown = {
+  type: string;
+};
 
 export type CreateProjectButtonClicked = {
   files: Object;
@@ -1781,11 +1783,9 @@ export const projectDirectoryLoaded = publicActionCreator(
   })
 );
 
-export const shortcutKeyDown = publicActionCreator(
-  (type: string): ShortcutKeyDown => ({
-    type,
-  })
-);
+export const shortcutKeyDown = (type: string): ShortcutKeyDown => ({
+  type,
+});
 
 export const inspectorNodePasted = (
   clips: PCNodeClip[]

@@ -611,6 +611,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/mousetrap@npm:^1.6.9":
+  version: 1.6.9
+  resolution: "@types/mousetrap@npm:1.6.9"
+  checksum: 9362f0aadf4b66deb39e506159248592ec422583fe8c1b3e6e98a6ba193828b4221b50b832829333089e577729d967423165c692a995b1deafa85934b2b63125
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:*":
   version: 17.0.31
   resolution: "@types/node@npm:17.0.31"
@@ -6979,6 +6986,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mousetrap@npm:^1.6.5":
+  version: 1.6.5
+  resolution: "mousetrap@npm:1.6.5"
+  checksum: 1ce36af5ac57e1fab687e3da004cc18914275f8ceef33f16d01110edc5126a5dbaace578b1e61179f93a506e71a88fe886f305db537a3673cf9f73affd1dffa6
+  languageName: node
+  linkType: hard
+
 "mri@npm:^1.1.5":
   version: 1.2.0
   resolution: "mri@npm:1.2.0"
@@ -10409,6 +10423,7 @@ __metadata:
     "@types/http-proxy": ^1.12.1
     "@types/lodash": ^4.14.106
     "@types/mocha": ^2.2.41
+    "@types/mousetrap": ^1.6.9
     "@types/react": ^16.4.11
     "@types/react-dom": ^16.0.7
     "@types/recompose": 0.x.x
@@ -10426,6 +10441,7 @@ __metadata:
     lodash: ^4.17.10
     mime-types: ^2.1.20
     mocha: ^3.4.2
+    mousetrap: ^1.6.5
     node-sass: ^7.0.1
     paperclip: ^10.1.33
     paperclip-migrator: ^10.1.33

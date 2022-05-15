@@ -248,7 +248,7 @@ export const startPaperclipEngine =
 
       iframe.addEventListener("load", onDone);
       if (iframe.contentDocument && iframe.contentDocument.body) {
-        setImmediate(onDone);
+        setTimeout(onDone);
       }
 
       watchContainer(container, frame, state);

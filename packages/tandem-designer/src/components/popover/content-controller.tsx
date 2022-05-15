@@ -68,7 +68,7 @@ export default compose<any, Props>(
                 _popoverCount === this._popoverIndex
               ) {
                 // beat onClick handler for dropdown button
-                setImmediate(() => {
+                setTimeout(() => {
                   onShouldClose(event);
                 });
               }

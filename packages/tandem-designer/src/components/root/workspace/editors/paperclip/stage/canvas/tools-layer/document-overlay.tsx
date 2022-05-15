@@ -120,7 +120,7 @@ class ArtboardOverlayTools extends React.PureComponent<ArtboardOverlayToolsOuter
   };
   onPanEnd = (event) => {
     event.preventDefault();
-    setImmediate(() => {
+    setTimeout(() => {
       this.props.dispatch(
         canvasToolOverlayMousePanEnd(this.props.frame.syntheticContentNodeId)
       );

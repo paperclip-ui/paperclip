@@ -5,14 +5,12 @@
 import * as React from "react";
 import { Dispatch } from "redux";
 import {
-  RootState,
   EditorWindow,
   getOpenFile,
   OpenFile,
   ToolType,
   EditMode,
-  setSelectedInspectorNodes,
-} from "../../../../../../../../state";
+} from "tandem-designer/src/state";
 import { NodeOverlaysTool } from "./document-overlay";
 import { SelectionCanvasTool } from "./selection";
 import { Frames } from "./frames-view.pc";
@@ -34,6 +32,7 @@ import {
   getInspectorNodeOwnerInstance,
 } from "paperclip";
 import { EditText } from "./edit-text.pc";
+import { useDispatch } from "react-redux";
 
 export type ToolsLayerComponentProps = {
   editorWindow: EditorWindow;
@@ -46,112 +45,108 @@ export type ToolsLayerComponentProps = {
   selectedInspectorNodes: InspectorNode[];
   sourceNodeInspector: InspectorNode;
   openFiles: OpenFile[];
-  dispatch: Dispatch<any>;
   documents: SyntheticDocument[];
   frames: Frame[];
   graph: DependencyGraph;
 };
 
-export class ToolsLayerComponent extends React.PureComponent<ToolsLayerComponentProps> {
-  render() {
-    const {
-      editorWindow,
-      hoveringInspectorNodes,
-      selectedInspectorNodes,
-      sourceNodeInspector,
-      activeEditorUri,
-      openFiles,
-      selectedComponentId,
-      zoom,
-      dispatch,
-      editMode,
-      graph,
-      documents,
-      toolType,
-      frames,
-    } = this.props;
+export const ToolsLayerComponent = (props: ToolsLayerComponentProps) => {
+  const {
+    editorWindow,
+    hoveringInspectorNodes,
+    selectedInspectorNodes,
+    sourceNodeInspector,
+    activeEditorUri,
+    openFiles,
+    selectedComponentId,
+    zoom,
+    editMode,
+    graph,
+    documents,
+    toolType,
+    frames,
+  } = props;
 
-    const canvas = getOpenFile(editorWindow.activeFilePath, openFiles).canvas;
-    const insertInspectorNode = hoveringInspectorNodes[0];
-    const insertInspectorNodeBounds =
-      insertInspectorNode &&
-      calcInspectorNodeBounds(
-        insertInspectorNode,
-        sourceNodeInspector,
-        documents,
-        frames,
-        graph
-      );
-    const selectedSyntheticNode =
-      selectedInspectorNodes[0] &&
-      getInspectorSyntheticNode(selectedInspectorNodes[0], documents);
-    return (
-      <styles.ToolsLayer>
-        <InsertLayer
-          selectedComponentId={selectedComponentId}
-          activeEditorUri={activeEditorUri}
-          canvas={canvas}
-          zoom={zoom}
-          editorWindow={editorWindow}
-          toolType={toolType}
-          dispatch={dispatch}
-          insertInspectorNode={insertInspectorNode}
-          insertInspectorNodeBounds={insertInspectorNodeBounds}
-        />
-        <Frames
-          canvas={canvas}
-          frames={frames}
-          documents={documents}
-          graph={graph}
-          translate={canvas.translate}
-          editorWindow={editorWindow}
-        />
-        <NodeOverlaysTool
-          frames={frames}
-          documents={documents}
-          hoveringInspectorNodes={hoveringInspectorNodes}
-          selectedInspectorNodes={selectedInspectorNodes}
-          graph={graph}
-          zoom={zoom}
-          dispatch={dispatch}
-          document={getSyntheticDocumentByDependencyUri(
-            editorWindow.activeFilePath,
-            documents,
-            graph
-          )}
-          editorWindow={editorWindow}
-        />
-        <SelectionCanvasTool
-          canvas={canvas}
-          rootInspectorNode={sourceNodeInspector}
-          selectedInspectorNodes={selectedInspectorNodes}
-          documents={documents}
-          frames={frames}
-          graph={graph}
-          dispatch={dispatch}
-          zoom={zoom}
-          document={getSyntheticDocumentByDependencyUri(
-            editorWindow.activeFilePath,
-            documents,
-            graph
-          )}
-          editorWindow={editorWindow}
-        />
-        {editMode === EditMode.SECONDARY && selectedInspectorNodes.length ? (
-          <EditText
-            dispatch={dispatch}
-            frames={frames}
-            documents={documents}
-            graph={graph}
-            rootInspectorNode={sourceNodeInspector}
-            selectedInspectorNode={selectedInspectorNodes[0]}
-            selectedSyntheticNode={selectedSyntheticNode as SyntheticTextNode}
-          />
-        ) : null}
-      </styles.ToolsLayer>
+  const dispatch = useDispatch();
+  const canvas = getOpenFile(editorWindow.activeFilePath, openFiles).canvas;
+  const insertInspectorNode = hoveringInspectorNodes[0];
+  const insertInspectorNodeBounds =
+    insertInspectorNode &&
+    calcInspectorNodeBounds(
+      insertInspectorNode,
+      sourceNodeInspector,
+      documents,
+      frames,
+      graph
     );
-  }
-}
+  const selectedSyntheticNode =
+    selectedInspectorNodes[0] &&
+    getInspectorSyntheticNode(selectedInspectorNodes[0], documents);
+  return (
+    <styles.ToolsLayer>
+      <InsertLayer
+        selectedComponentId={selectedComponentId}
+        activeEditorUri={activeEditorUri}
+        canvas={canvas}
+        zoom={zoom}
+        editorWindow={editorWindow}
+        toolType={toolType}
+        dispatch={dispatch}
+        insertInspectorNode={insertInspectorNode}
+        insertInspectorNodeBounds={insertInspectorNodeBounds}
+      />
+      <Frames
+        canvas={canvas}
+        frames={frames}
+        documents={documents}
+        graph={graph}
+        translate={canvas.translate}
+        editorWindow={editorWindow}
+      />
+      <NodeOverlaysTool
+        frames={frames}
+        documents={documents}
+        hoveringInspectorNodes={hoveringInspectorNodes}
+        selectedInspectorNodes={selectedInspectorNodes}
+        graph={graph}
+        zoom={zoom}
+        dispatch={dispatch}
+        document={getSyntheticDocumentByDependencyUri(
+          editorWindow.activeFilePath,
+          documents,
+          graph
+        )}
+        editorWindow={editorWindow}
+      />
+      <SelectionCanvasTool
+        canvas={canvas}
+        rootInspectorNode={sourceNodeInspector}
+        selectedInspectorNodes={selectedInspectorNodes}
+        documents={documents}
+        frames={frames}
+        graph={graph}
+        zoom={zoom}
+        document={getSyntheticDocumentByDependencyUri(
+          editorWindow.activeFilePath,
+          documents,
+          graph
+        )}
+        editorWindow={editorWindow}
+      />
+      {editMode === EditMode.SECONDARY && selectedInspectorNodes.length ? (
+        <EditText
+          dispatch={dispatch}
+          frames={frames}
+          documents={documents}
+          graph={graph}
+          rootInspectorNode={sourceNodeInspector}
+          selectedInspectorNode={selectedInspectorNodes[0]}
+          selectedSyntheticNode={selectedSyntheticNode as SyntheticTextNode}
+        />
+      ) : null}
+    </styles.ToolsLayer>
+  );
+};
 
 const calcInspectorNodeBounds = memoize(
   (

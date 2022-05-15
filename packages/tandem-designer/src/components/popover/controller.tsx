@@ -30,7 +30,7 @@ export default (Base: React.ComponentClass<BasePopoverProps>) => {
         ) as HTMLDivElement;
         let rect = getRealElementBounds(anchor);
         this.setState({ anchorRect: rect });
-      } else if (!open) {
+      } else if (!open && !this.state.anchorRect) {
         this.setState({ anchorRect: null });
       }
     }

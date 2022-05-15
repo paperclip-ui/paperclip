@@ -2,6 +2,7 @@
   flex: 1;
   flex-grow: 1;
   position: relative;
+  overflow: hidden;
 
   .stage-component-isolate {
     // prevents the canvas content from moving around

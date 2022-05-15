@@ -66,10 +66,7 @@ export const isPaperclipUri = (uri: string) => {
 
 const createDependencyFromFileCacheItem = memoize(
   ({ uri, content }: { uri: string; content: Buffer }): Dependency<any> => {
-    console.log("DDA");
     const source = content.toString("utf8");
-    console.log("ONTE", content, source);
-
     return {
       uri,
 

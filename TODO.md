@@ -1,6 +1,6 @@
 IMMEDIATE:
 
-- store synthetic browser in the state instead of DOM
+- fix center zooming
 - CLI
 - serializer
 - update rendering engine to use native

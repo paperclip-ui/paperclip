@@ -1,5 +1,5 @@
 import "./index.scss";
-import * as React from "react";
+import React, { memo } from "react";
 import { Resizer } from "./resizer";
 import { Dispatch } from "redux";
 import {
@@ -21,7 +21,6 @@ import { getNestedTreeNodeById } from "tandem-common";
 
 export type SelectionOuterProps = {
   canvas: Canvas;
-  dispatch: Dispatch<any>;
   rootInspectorNode: InspectorNode;
   zoom: number;
   document: SyntheticDocument;
@@ -72,34 +71,30 @@ const SelectionBounds = ({
   return <div style={boundsStyle as any} />;
 };
 
-export class SelectionCanvasTool extends React.PureComponent<SelectionOuterProps> {
-  onDoubleClick = (event: React.MouseEvent<any>) => {
-    const { dispatch, selectedInspectorNodes, documents, frames, graph } =
-      this.props;
-    const selection = getBoundedSelection(
-      selectedInspectorNodes,
-      documents,
-      frames,
-      graph
-    );
-    if (selection.length === 1) {
-      // dispatch(selectorDoubleClicked(selection[0], event));
-    }
-  };
-  render() {
-    const {
-      canvas,
-      editorWindow,
-      selectedInspectorNodes,
-      documents,
-      frames,
-      graph,
-      rootInspectorNode,
-      dispatch,
-      document,
-      zoom,
-    } = this.props;
-    const { onDoubleClick } = this;
+export const SelectionCanvasTool = memo(
+  ({
+    editorWindow,
+    zoom,
+    document,
+    rootInspectorNode,
+    canvas,
+    selectedInspectorNodes,
+    documents,
+    frames,
+    graph,
+  }: SelectionOuterProps) => {
+    const onDoubleClick = (event: React.MouseEvent<any>) => {
+      const selection = getBoundedSelection(
+        selectedInspectorNodes,
+        documents,
+        frames,
+        graph
+      );
+      if (selection.length === 1) {
+        // dispatch(selectorDoubleClicked(selection[0], event));
+      }
+    };
+
     const selection = getBoundedSelection(
       selectedInspectorNodes,
       documents,
@@ -127,12 +122,11 @@ export class SelectionCanvasTool extends React.PureComponent<SelectionOuterProps
           selectedInspectorNodes={selectedInspectorNodes}
           editorWindow={editorWindow}
           canvas={canvas}
-          dispatch={dispatch}
           zoom={zoom}
         />
       </div>
     );
   }
-}
+);
 
 export * from "./resizer";

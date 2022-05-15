@@ -68,7 +68,6 @@ export class StageComponent extends React.PureComponent<StageOuterProps> {
           graph={graph}
           documents={documents}
           dependency={dependency}
-          dispatch={dispatch}
           editorWindow={editorWindow}
         />
         {/* <FooterComponent /> */}

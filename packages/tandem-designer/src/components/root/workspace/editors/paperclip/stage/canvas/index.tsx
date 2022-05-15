@@ -1,5 +1,5 @@
 import "./index.scss";
-import * as React from "react";
+import React, { useState, memo, useEffect } from "react";
 import { Dispatch } from "redux";
 import { compose, pure, withState, withHandlers } from "recompose";
 import {
@@ -36,6 +36,7 @@ import {
 import { DropTarget, DropTargetMonitor } from "react-dnd";
 import { InspectorNode } from "paperclip";
 import { clientRectToBounds } from "tandem-common";
+import { useDispatch } from "react-redux";
 
 export type CanvasOuterProps = {
   frames: Frame[];
@@ -50,17 +51,13 @@ export type CanvasOuterProps = {
   activeFilePath: string;
   editorWindow: EditorWindow;
   dependency: Dependency<any>;
-  dispatch: Dispatch<any>;
   editMode: EditMode;
 };
 
 export type CanvasInnerProps = {
-  canvasOuter: HTMLElement;
   connectDropTarget: any;
-  onWheel: (event: React.SyntheticEvent<MouseEvent>) => any;
-  shouldTransitionZoom: boolean;
-  canvasContainer: HTMLElement;
-  setCanvasContainer(element: HTMLElement);
+  onWheel: React.WheelEventHandler<any>;
+  setCanvasContainer(element: HTMLDivElement);
   onMotionRest: () => any;
   onDrop: (event: React.SyntheticEvent<any>) => any;
   onMouseEvent: (event: React.SyntheticEvent<any>) => any;
@@ -76,7 +73,6 @@ const BaseCanvasComponent = ({
   frames,
   documents,
   graph,
-  dispatch,
   dependency,
   openFiles,
   toolType,
@@ -111,188 +107,227 @@ const BaseCanvasComponent = ({
   const translate = canvas.translate;
 
   return (
-    <div className="m-canvas" ref={setCanvasContainer}>
-      {/* isolate necessary here for bounding client rect information */}
-      <Isolate
-        inheritCSS
-        ignoreInputEvents
-        className="canvas-component-isolate"
-        onWheel={onWheel}
-        scrolling={false}
-        translateMousePositions={true}
+    <div className="m-canvas" ref={setCanvasContainer} onWheel={onWheel}>
+      <div
+        ref={setCanvasOuter}
+        onMouseMove={onMouseEvent}
+        onDragOver={onDragOver}
+        onContextMenu={onContextMenu}
+        onDrop={onDrop}
+        onClick={onMouseClick}
+        onDoubleClick={onMouseDoubleClick}
+        tabIndex={-1}
+        onDragExit={onDragExit}
+        className="canvas-inner"
       >
-        <span>
-          <style>
-            {`html, body {
-                overflow: hidden;
-              }`}
-          </style>
-
+        {connectDropTarget(
           <div
-            ref={setCanvasOuter}
-            onMouseMove={onMouseEvent}
-            onDragOver={onDragOver}
-            onContextMenu={onContextMenu}
-            onDrop={onDrop}
-            onClick={onMouseClick}
-            onDoubleClick={onMouseDoubleClick}
-            tabIndex={-1}
-            onDragExit={onDragExit}
-            className="canvas-inner"
+            style={
+              {
+                willChange: `transform`,
+                WebkitFontSmoothing: `subpixel-antialiased`,
+                backfaceVisibility: `hidden`,
+                transform: `translate(${translate.left}px, ${translate.top}px) scale(${translate.zoom})`,
+                transformOrigin: "top left",
+              } as any
+            }
           >
-            {connectDropTarget(
-              <div
-                style={
-                  {
-                    willChange: `transform`,
-                    WebkitFontSmoothing: `subpixel-antialiased`,
-                    backfaceVisibility: `hidden`,
-                    transform: `translate(${translate.left}px, ${translate.top}px) scale(${translate.zoom})`,
-                    transformOrigin: "top left",
-                  } as any
-                }
-              >
-                <PreviewLayerComponent
-                  frames={activeFrames}
-                  dependency={dependency}
-                  documents={documents}
-                />
-                <ToolsLayerComponent
-                  toolType={toolType}
-                  selectedComponentId={selectedComponentId}
-                  editMode={editMode}
-                  activeEditorUri={activeFilePath}
-                  openFiles={openFiles}
-                  sourceNodeInspector={sourceNodeInspector}
-                  selectedInspectorNodes={selectedInspectorNodes}
-                  hoveringInspectorNodes={hoveringInspectorNodes}
-                  documents={documents}
-                  graph={graph}
-                  frames={frames}
-                  dispatch={dispatch}
-                  zoom={translate.zoom}
-                  editorWindow={editorWindow}
-                />
-              </div>
-            )}
+            <PreviewLayerComponent
+              frames={activeFrames}
+              documents={documents}
+            />
+            <ToolsLayerComponent
+              toolType={toolType}
+              selectedComponentId={selectedComponentId}
+              editMode={editMode}
+              activeEditorUri={activeFilePath}
+              openFiles={openFiles}
+              sourceNodeInspector={sourceNodeInspector}
+              selectedInspectorNodes={selectedInspectorNodes}
+              hoveringInspectorNodes={hoveringInspectorNodes}
+              documents={documents}
+              graph={graph}
+              frames={frames}
+              zoom={translate.zoom}
+              editorWindow={editorWindow}
+            />
           </div>
-        </span>
-      </Isolate>
+        )}
+      </div>
     </div>
   );
 };
 
 const MAX_WHEEL_DELTA = 150;
 
-const enhance = compose<CanvasInnerProps, CanvasOuterProps>(
-  pure,
-  withState("canvasOuter", "setCanvasOuter", null),
-  withState("canvasContainer", "setCanvasContainer", null),
-  withHandlers(() => {
-    let previousDeltaX: number = 0;
-    let previousDeltaY: number = 0;
-    const onWheel = (event: React.WheelEvent<any>, dispatch, canvasOuter) => {
-      // slight bug in Windows (maybe it's just within a VM), but deltaX & deltaY "hop" on occassion. Here
-      // // we're trying to prevent that.
-      // if (Math.abs(event.deltaX) - Math.abs(previousDeltaX) > MAX_WHEEL_DELTA || Math.abs(event.deltaY) - Math.abs(previousDeltaY) > MAX_WHEEL_DELTA) {
-      //   return;
-      // }
+export const CanvasComponent = memo(
+  ({ editorWindow, ...rest }: CanvasOuterProps) => {
+    const [canvasOuter, setCanvasOuter] = useState<HTMLElement>();
+    const [canvasContainer, setCanvasContainer] = useState<HTMLDivElement>();
+    const dispatch = useDispatch();
 
-      // previousDeltaX = event.deltaX;
-      // previousDeltaY = event.deltaY;
+    const onMouseEvent = (event: React.MouseEvent<any>) => {
+      dispatch(canvasMouseMoved(editorWindow, event));
+    };
+    const onMotionRest = () => {
+      dispatch(canvasMotionRested());
+    };
+    const onMouseClick = (event) => {
+      dispatch(canvasMouseClicked(event));
+    };
+    const onMouseDoubleClick = (event) => {
+      dispatch(canvasMouseDoubleClicked(event));
+    };
+    const onContextMenu = (event) => {
+      dispatch(canvasRightClicked(event));
+      event.preventDefault();
+      event.stopPropagation();
+    };
 
+    useEffect(() => {
+      dispatch(
+        canvasContainerMounted(
+          canvasContainer &&
+            clientRectToBounds(canvasContainer.getBoundingClientRect()),
+          editorWindow.activeFilePath
+        )
+      );
+    }, [canvasContainer]);
+
+    const onWheel = (event) => {
       const rect = canvasOuter.getBoundingClientRect();
       dispatch(canvasWheel(rect.width, rect.height, event));
     };
-
-    return {
-      onMouseEvent:
-        ({ dispatch, editorWindow }) =>
-        (event: React.MouseEvent<any>) => {
-          dispatch(canvasMouseMoved(editorWindow, event));
-        },
-      onMotionRest:
-        ({ dispatch }) =>
-        () => {
-          dispatch(canvasMotionRested());
-        },
-      onMouseClick:
-        ({ dispatch }) =>
-        (event: React.MouseEvent<any>) => {
-          dispatch(canvasMouseClicked(event));
-        },
-      onMouseDoubleClick:
-        ({ dispatch }) =>
-        (event: React.MouseEvent<any>) => {
-          dispatch(canvasMouseDoubleClicked(event));
-        },
-      onContextMenu:
-        ({ dispatch }) =>
-        (event: React.MouseEvent<any>) => {
-          dispatch(canvasRightClicked(event));
-          event.preventDefault();
-          event.stopPropagation();
-        },
-      setCanvasContainer:
-        ({ dispatch, editorWindow }) =>
-        (element: HTMLDivElement) => {
-          dispatch(
-            canvasContainerMounted(
-              element && clientRectToBounds(element.getBoundingClientRect()),
-              editorWindow.activeFilePath
-            )
-          );
-        },
-      onWheel:
-        ({ dispatch, canvasOuter }: CanvasInnerProps) =>
-        (event: React.WheelEvent<any>) => {
-          // event.persist();
-          // event.preventDefault();
-          // event.stopPropagation();
-          onWheel(event, dispatch, canvasOuter);
-        },
-    };
-  }),
-  DropTarget(
-    [REGISTERED_COMPONENT, "FILE", "INSPECTOR_NODE"],
-    {
-      hover: throttle(
-        ({ dispatch }: CanvasOuterProps, monitor: DropTargetMonitor) => {
-          if (!monitor.getClientOffset()) {
-            return;
-          }
-          const { x, y } = monitor.getClientOffset();
-          const item = monitor.getItem();
-          dispatch(canvasDraggedOver(item, { left: x, top: y }));
-        },
-        100
-      ),
-      canDrop: () => {
-        return true;
-      },
-      drop: (
-        { dispatch, editorWindow }: CanvasOuterProps,
-        monitor: DropTargetMonitor
-      ) => {
-        const item = monitor.getItem() as RegisteredComponent;
-        const offset = monitor.getClientOffset();
-        const point = {
-          left: offset.x,
-          top: offset.y,
-        };
-
-        dispatch(canvasDroppedItem(item, point, editorWindow.activeFilePath));
-      },
-    },
-    (connect, monitor) => {
-      return {
-        connectDropTarget: connect.dropTarget(),
-        isOver: !!monitor.isOver(),
-        canDrop: !!monitor.canDrop(),
-      };
-    }
-  ),
-  pure
+    return (
+      <BaseCanvasComponent
+        {...rest}
+        editorWindow={editorWindow}
+        onDrop={null}
+        onDragExit={null}
+        onDragOver={null}
+        connectDropTarget={(v) => v}
+        setCanvasContainer={setCanvasContainer}
+        setCanvasOuter={setCanvasOuter}
+        onMouseEvent={onMouseEvent}
+        onMotionRest={onMotionRest}
+        onMouseClick={onMouseClick}
+        onMouseDoubleClick={onMouseDoubleClick}
+        onContextMenu={onContextMenu}
+        onWheel={onWheel}
+      />
+    );
+  }
 );
 
-export const CanvasComponent = enhance(BaseCanvasComponent);
+// const enhance = compose<CanvasInnerProps, CanvasOuterProps>(
+//   pure,
+//   withState("canvasOuter", "setCanvasOuter", null),
+//   withState("canvasContainer", "setCanvasContainer", null),
+//   withHandlers(() => {
+//     let previousDeltaX: number = 0;
+//     let previousDeltaY: number = 0;
+//     const onWheel = (event: React.WheelEvent<any>, dispatch, canvasOuter) => {
+//       // slight bug in Windows (maybe it's just within a VM), but deltaX & deltaY "hop" on occassion. Here
+//       // // we're trying to prevent that.
+//       // if (Math.abs(event.deltaX) - Math.abs(previousDeltaX) > MAX_WHEEL_DELTA || Math.abs(event.deltaY) - Math.abs(previousDeltaY) > MAX_WHEEL_DELTA) {
+//       //   return;
+//       // }
+
+//       // previousDeltaX = event.deltaX;
+//       // previousDeltaY = event.deltaY;
+
+//       const rect = canvasOuter.getBoundingClientRect();
+//       dispatch(canvasWheel(rect.width, rect.height, event));
+//     };
+
+//     return {
+//       onMouseEvent:
+//         ({ dispatch, editorWindow }) =>
+//         (event: React.MouseEvent<any>) => {
+//           dispatch(canvasMouseMoved(editorWindow, event));
+//         },
+//       onMotionRest:
+//         ({ dispatch }) =>
+//         () => {
+//           dispatch(canvasMotionRested());
+//         },
+//       onMouseClick:
+//         ({ dispatch }) =>
+//         (event: React.MouseEvent<any>) => {
+//           dispatch(canvasMouseClicked(event));
+//         },
+//       onMouseDoubleClick:
+//         ({ dispatch }) =>
+//         (event: React.MouseEvent<any>) => {
+//           dispatch(canvasMouseDoubleClicked(event));
+//         },
+//       onContextMenu:
+//         ({ dispatch }) =>
+//         (event: React.MouseEvent<any>) => {
+//           dispatch(canvasRightClicked(event));
+//           event.preventDefault();
+//           event.stopPropagation();
+//         },
+//       setCanvasContainer:
+//         ({ dispatch, editorWindow }) =>
+//         (element: HTMLDivElement) => {
+//           dispatch(
+//             canvasContainerMounted(
+//               element && clientRectToBounds(element.getBoundingClientRect()),
+//               editorWindow.activeFilePath
+//             )
+//           );
+//         },
+//       onWheel:
+//         ({ dispatch, canvasOuter }: CanvasInnerProps) =>
+//         (event: React.WheelEvent<any>) => {
+//           // event.persist();
+//           // event.preventDefault();
+//           // event.stopPropagation();
+//           onWheel(event, dispatch, canvasOuter);
+//         },
+//     };
+//   }),
+//   DropTarget(
+//     [REGISTERED_COMPONENT, "FILE", "INSPECTOR_NODE"],
+//     {
+//       hover: throttle(
+//         ({ dispatch }: CanvasOuterProps, monitor: DropTargetMonitor) => {
+//           if (!monitor.getClientOffset()) {
+//             return;
+//           }
+//           const { x, y } = monitor.getClientOffset();
+//           const item = monitor.getItem();
+//           dispatch(canvasDraggedOver(item, { left: x, top: y }));
+//         },
+//         100
+//       ),
+//       canDrop: () => {
+//         return true;
+//       },
+//       drop: (
+//         { dispatch, editorWindow }: CanvasOuterProps,
+//         monitor: DropTargetMonitor
+//       ) => {
+//         const item = monitor.getItem() as RegisteredComponent;
+//         const offset = monitor.getClientOffset();
+//         const point = {
+//           left: offset.x,
+//           top: offset.y,
+//         };
+
+//         dispatch(canvasDroppedItem(item, point, editorWindow.activeFilePath));
+//       },
+//     },
+//     (connect, monitor) => {
+//       return {
+//         connectDropTarget: connect.dropTarget(),
+//         isOver: !!monitor.isOver(),
+//         canDrop: !!monitor.canDrop(),
+//       };
+//     }
+//   ),
+//   pure
+// );
+
+// export const CanvasComponent2 = enhance(BaseCanvasComponent);

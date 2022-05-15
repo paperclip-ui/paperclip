@@ -7,6 +7,7 @@ module.exports = [
     config.entry = {
       index: [__dirname + "/src/index.tsx"],
     };
+    config.output.filename = "[name].esm.js";
     return config;
   }),
 
@@ -14,6 +15,7 @@ module.exports = [
     config.entry = {
       index: [__dirname + "/src/entry.ts"],
     };
+    config.output.filename = "[name].bundle.js";
 
     delete config.output["libraryTarget"];
 

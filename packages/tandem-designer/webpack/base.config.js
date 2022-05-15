@@ -70,7 +70,9 @@ module.exports = (createConfig) =>
         {
           test: /\.tsx?$/,
           loader: "ts-loader",
-          // options: { loader: "tsx", target: "es6" },
+
+          // performance
+          options: { transpileOnly: true },
         },
       ],
     },

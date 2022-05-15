@@ -16,12 +16,11 @@ import * as styles from "./styles";
 export type PreviewLayerOuterProps = {
   frames: Frame[];
   documents: SyntheticDocument[];
-  dependency: Dependency<any>;
 };
 
 export class PreviewLayerComponent extends React.PureComponent<PreviewLayerOuterProps> {
   render() {
-    const { frames, dependency, documents } = this.props;
+    const { frames, documents } = this.props;
     return (
       <styles.PreviewLayer>
         {frames.map((frame) => (
@@ -32,7 +31,6 @@ export class PreviewLayerComponent extends React.PureComponent<PreviewLayerOuter
               documents
             )}
             frame={frame}
-            dependency={dependency}
           />
         ))}
       </styles.PreviewLayer>

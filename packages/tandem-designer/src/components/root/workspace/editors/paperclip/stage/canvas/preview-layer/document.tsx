@@ -1,4 +1,10 @@
-import React, { memo, useLayoutEffect, useRef, useState } from "react";
+import React, {
+  Fragment,
+  memo,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   Frame,
   Dependency,
@@ -12,11 +18,10 @@ import {
   computeDisplayInfo,
 } from "paperclip";
 import { useDispatch } from "react-redux";
-import * as styles from "./styles";
+import { Isolate } from "tandem-designer/src/components/isolated";
 
 export type DocumentPreviewOuterProps = {
   frame: Frame;
-  dependency: Dependency<any>;
   contentNode: SyntheticVisibleNode;
 };
 
@@ -55,7 +60,7 @@ const DesignPreview = memo(({ contentNode }: DesignPreviewOuterProps) => {
 });
 
 export const DocumentPreviewComponent = memo(
-  ({ contentNode, frame, dependency }: DocumentPreviewOuterProps) => {
+  ({ contentNode, frame }: DocumentPreviewOuterProps) => {
     if (!contentNode) {
       return null;
     }
@@ -64,6 +69,7 @@ export const DocumentPreviewComponent = memo(
     if (!bounds) {
       return null;
     }
+
     const style = {
       position: "absolute",
       left: bounds.left,
@@ -72,12 +78,11 @@ export const DocumentPreviewComponent = memo(
       height: bounds.bottom - bounds.top,
       background: "white",
     } as any;
-    console.log(frame);
 
     return (
-      <styles.DocumentContainer style={style}>
+      <Isolate style={style}>
         <DesignPreview contentNode={contentNode} />
-      </styles.DocumentContainer>
+      </Isolate>
     );
   }
 );

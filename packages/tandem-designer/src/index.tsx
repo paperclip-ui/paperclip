@@ -11,7 +11,6 @@ export type InitOptions = {
   document: Document;
   engineOptions: FrontEndEngineOptions;
 };
-console.log("OK");
 
 export const init = ({ document, engineOptions }: InitOptions) => {
   const element = document.createElement("div");

@@ -5,7 +5,7 @@ import * as fs from "fs";
 const DESIGNER_DIST_PATH = path.join(
   path.dirname(require.resolve("@tandem-ui/designer")),
   "..",
-  "dist"
+  "lib"
 );
 
 // simple assertion - this must exist

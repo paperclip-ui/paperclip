@@ -1,6 +1,6 @@
 {
-  "name": "tandem-designer",
-  "version": "10.1.35",
+  "name": "@tandem-ui/designer",
+  "version": "18.5.6",
   "description": "Visual editor for web components",
   "main": "index.js",
   "scripts": {

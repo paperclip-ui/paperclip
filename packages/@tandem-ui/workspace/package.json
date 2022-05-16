@@ -15,9 +15,6 @@
     "build:watch": "tsc --watch --preserveWatchOutput",
     "start": "nodemon ./lib/cli --watch lib"
   },
-  "installConfig": {
-    "pnp": true
-  },
   "author": "",
   "license": "ISC",
   "devDependencies": {

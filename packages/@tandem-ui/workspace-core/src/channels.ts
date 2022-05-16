@@ -46,10 +46,6 @@ export const editCodeChannel = remoteChannel<
   void
 >("editCodeChannel");
 
-export const popoutWindowChannel = remoteChannel<{ path: string }, void>(
-  "popoutWindowChannel"
-);
-
 export const eventsChannel = remoteChannel<any, void>("eventsChannel");
 export const commitChangesChannel = remoteChannel<
   { description: string },

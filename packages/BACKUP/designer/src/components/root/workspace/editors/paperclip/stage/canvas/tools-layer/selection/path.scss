@@ -1,0 +1,21 @@
+.resizer-path {
+  & .point-circle-0-0,
+  .point-circle-100-100 {
+    cursor: nwse-resize;
+  }
+
+  & .point-circle-0-100,
+  .point-circle-100-0 {
+    cursor: nesw-resize;
+  }
+
+  & .point-circle-50-100,
+  .point-circle-50-0 {
+    cursor: ew-resize;
+  }
+
+  & .point-circle-0-50,
+  .point-circle-100-50 {
+    cursor: ns-resize;
+  }
+}

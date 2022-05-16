@@ -1,0 +1,29 @@
+// FIXME: this is janky as hell. Need better selectors
+
+.m-quick-search {
+  top: 0;
+  left: 0;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+  > .background {
+    width: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.6);
+  }
+  > .modal {
+    left: 50%;
+    position: absolute;
+    transform: translateX(-50%);
+    height: auto;
+    width: 400px;
+    max-height: 250px;
+    * {
+      max-height: 250px;
+    }
+  }
+}

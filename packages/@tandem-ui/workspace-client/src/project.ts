@@ -24,7 +24,6 @@ export class Project {
   private _paperclip: PaperclipManager;
   private _openProject: ReturnType<typeof openProjectChannel>;
   private _getAllPaperclipFiles: ReturnType<typeof getAllPaperclipFilesChannel>;
-  private _popoutWindow: ReturnType<typeof popoutWindowChannel>;
 
   /**
    */
@@ -35,7 +34,6 @@ export class Project {
     private _client: RPCClientAdapter
   ) {
     this._openProject = openProjectChannel(_client);
-    this._popoutWindow = popoutWindowChannel(_client);
     this._getAllPaperclipFiles = getAllPaperclipFilesChannel(_client);
     this._paperclip = new PaperclipManager(this._client);
   }
@@ -52,13 +50,6 @@ export class Project {
 
   getPaperclip() {
     return this._paperclip;
-  }
-
-  /**
-   */
-
-  openNewWindow(path: string) {
-    this._popoutWindow.call({ path });
   }
 
   /**

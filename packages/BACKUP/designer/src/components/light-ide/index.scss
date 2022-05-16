@@ -1,0 +1,26 @@
+.m-light-text-editor {
+  position: relative;
+  cursor: text;
+  > .cursor {
+    width: 1px;
+    height: 20px;
+    visibility: hidden;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    animation: text-editor-blink 1s steps(2, start) infinite;
+  }
+
+  &:focus {
+    > .cursor {
+      visibility: visible;
+    }
+    outline: none;
+  }
+}
+
+@keyframes text-editor-blink {
+  100% {
+    visibility: hidden;
+  }
+}

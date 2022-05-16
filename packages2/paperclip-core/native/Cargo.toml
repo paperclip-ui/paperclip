@@ -1,0 +1,38 @@
+[profile.release]
+debug = false
+opt-level = 3
+lto = true
+
+
+[package]
+name = "paperclip"
+version = "0.1.0"
+authors = ["Craig Condon <craig.j.condon@gmail.com>"]
+edition = "2018"
+exclude = ["artifacts.json", "index.node"]
+
+[lib]
+name = "paperclip"
+crate-type = ["cdylib"]
+
+[dependencies]
+matches = "0.1.9"
+uuid = { version = "0.8", features = ["serde", "v4", "wasm-bindgen"] }
+serde = { version = "1.0.130", features = ["derive"] }
+serde_json = { version = "1.0.72" }
+crc = "1.8.1"
+web-sys = "0.3.55"
+console_error_panic_hook = "0.1.6"
+console_log = "0.2.0" 
+cached = "0.26.2"
+futures = "0.3.18"
+regex = "1.5.4"
+to_absolute = "0.1.0"
+js-sys = "0.3.55"
+serde_derive = "1.0.130"
+wasm-bindgen-futures = "0.4.28"
+lazy_static = "1.4.0"
+
+[dependencies.wasm-bindgen]
+version = "^0.2"
+features = ["serde-serialize"]

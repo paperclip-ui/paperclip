@@ -1,0 +1,25 @@
+{
+  "name": "@paperclip-ui/common",
+  "version": "18.5.3",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch --preserveWatchOutput"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@msgpack/msgpack": "^2.7.1",
+    "fs-extra": "^10.0.0",
+    "immer": "^9.0.5",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "typescript": "^4.6.2"
+  },
+  "gitHead": "28439bfc22f88290b1a12e4f364bdd19667d715a"
+}

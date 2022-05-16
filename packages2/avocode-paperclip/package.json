@@ -1,0 +1,18 @@
+{
+  "name": "avocode-paperclip",
+  "version": "18.4.7",
+  "description": "",
+  "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "echo ''"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^4.6.2"
+  },
+  "gitHead": "28439bfc22f88290b1a12e4f364bdd19667d715a"
+}

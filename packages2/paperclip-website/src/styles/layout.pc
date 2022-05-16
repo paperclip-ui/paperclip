@@ -1,0 +1,180 @@
+<style>
+
+
+
+  @export {
+    @mixin py-6 {
+      padding-top: var(--gap-6);
+      padding-bottom: var(--gap-6);
+    }
+    ._my-1 {
+      margin-top: var(--gap-4);
+      margin-bottom: var(--gap-4);
+    }
+    ._py-6 {
+      @include py-6;
+    }
+  }
+
+  :global(:root) {
+    --gap-inc: 2.2;
+    --gap-2: 2px;
+    --gap-3: calc(var(--gap-2) * var(--gap-inc));
+    --gap-4: calc(var(--gap-3) * var(--gap-inc));
+    --gap-5: calc(var(--gap-4) * var(--gap-inc));
+    --gap-6: calc(var(--gap-5) * var(--gap-inc));
+    --gap-7: calc(var(--gap-6) * var(--gap-inc));
+    --col-gap: var(--gap-5);
+  }
+
+  @export {
+    @mixin col-3 {
+      width: 25%;
+    }
+
+    @mixin col-2 {
+      width: 20%;
+    }
+
+    @mixin col-6 {
+      width: 50%;
+    }
+
+    @mixin row {
+      display: flex;
+      padding-left: var(--gap-7);
+      padding-right: var(--gap-7);
+      max-width: var(--row-max-width);
+      margin: 0px auto;
+      position: relative;
+      box-sizing: border-box;
+    }
+    ._section {
+      @include py-6;
+    }
+
+    ._row {
+      @include row;
+    }
+
+    ._col {
+      display: inline-block;
+      box-sizing: border-box;
+      padding-right: var(--col-gap);
+      &:last-child {
+        padding-right: 0;
+      }
+    }
+    ._col2 {
+      @include col-2;
+    }
+    ._col3 {
+      @include col-3;
+    }
+    ._col9 {
+      width: 75%;
+    }
+    ._col6 {
+      @include col-6;
+    }
+    ._col8 {
+      width: 66.6666%;
+    }
+    ._col4 {
+      width: 33.3333%;
+    }
+    ._col10 {
+      width: 83.3333%;
+    }
+    ._col12 {
+      width: 100%;
+    }
+
+    @media screen and (max-width: 900px) {
+      ._row {
+        flex-direction: column;
+        padding-left: var(--gap-5);
+        padding-right: var(--gap-5);
+      }
+      ._col {
+        width: 100%;
+        margin-bottom: var(--col-gap);
+        margin-right: 0;
+        padding-right: 0;
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+
+
+  @export {
+    @mixin text-center {
+      text-align: center;
+    }
+    .text-center {
+      @include text-center;
+    }
+  }
+
+
+
+</style>
+
+
+<!--
+  @frame { visible: false, width: 1024, height: 768, x: 79, y: 156 }
+-->
+<div export component as="C3" class="_col _col3 {class?}">{children}</div>
+
+<!--
+  @frame { visible: false, width: 1024, height: 768, x: 62, y: 125 }
+-->
+<div export component as="C6" class="_col _col6 {class?}">{children}</div>
+
+<!--
+  @frame { visible: false, width: 1024, height: 768, x: 69, y: 114 }
+-->
+<div export component as="C9" class="_col _col9 {class?}">{children}</div>
+
+<!--
+  @frame { visible: false, width: 1024, height: 768, x: 50, y: 77 }
+-->
+<div export component as="C12" class="_col _col12 {class?}">{children}</div>
+
+<!--
+  @frame { visible: false, width: 1024, height: 768, x: 48, y: 71 }
+-->
+<div export component as="Row" class="_row {class?}">{children}</div>
+
+<!--
+  @frame { visible: false, width: 1024, height: 768, x: 73, y: 104 }
+-->
+<div export component as="Container" class="_container {class?}">
+  {children}
+</div>
+
+
+<!--
+  @frame { title: "Grid", width: 1024, height: 768, x: 38, y: 69 }
+-->
+<Container>
+  <Row>
+    <C3>3</C3>
+    <C3>3</C3>
+    <C3>3</C3>
+  </Row>
+  <Row>
+    <C3>3</C3>
+    <C9>9</C9>
+  </Row>
+  <Row>
+    <C6>6</C6>
+    <C6>6</C6>
+  </Row>
+  <Row>
+    <C12>12</C12>
+  </Row>
+</Container>

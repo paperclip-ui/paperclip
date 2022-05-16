@@ -10663,6 +10663,7 @@ __metadata:
     util: ^0.12.4
     webpack: ^5.72.1
     webpack-cli: ^4.9.2
+    ws: ^8.6.0
     yargs: ^17.4.1
   bin:
     tandem-workspace: ./bin/tandem-workspace.js
@@ -11747,7 +11748,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^8.4.2":
+"ws@npm:^8.4.2, ws@npm:^8.6.0":
   version: 8.6.0
   resolution: "ws@npm:8.6.0"
   peerDependencies:

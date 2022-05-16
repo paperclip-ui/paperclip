@@ -1,0 +1,11 @@
+{
+  "name": "wrapper-module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "pull": "../../bin/figma-paperclip pull --token=199110-84ad649f-a49c-41a7-9b00-a672bb4772bf"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,13 @@
+<import src="./typography.pc" as="typography" inject-styles />
+
+<div>
+  <div class="text-default">
+    <style>
+      background: blue;
+      height: 300px;
+      color: white;
+    </style>
+
+    <div>Paperclip</div>
+  </div>
+</div>

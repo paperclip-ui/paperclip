@@ -1,0 +1,41 @@
+<style>
+  .font {
+    font-size: 24px;
+  }
+  .extra-light {
+    font-weight: 100;
+  }
+  .light {
+    font-weight: 200;
+  }
+  .medium {
+    font-weight: 500;
+  }
+  .bold {
+    font-weight: 600;
+  }
+  .extra-bold {
+    font-weight: 700;
+  }
+</style>
+
+
+<!--
+  @frame { visible: false }
+-->
+<div component as="Sample" class="font {class}">
+  A quick brown fox jumped over the lazy dog
+</div>
+
+
+<!--
+  @frame { title: "Font Family", width: 1024, height: 768, x: 108, y: 125 }
+-->
+<div export component as="default" style="font-family: {fontFamily}">
+  <Sample class="extra-light" />
+  <Sample class="light" />
+  <Sample />
+  <Sample class="medium" />
+  <Sample class="bold" />
+  <Sample class="extra-bold" />
+</div>

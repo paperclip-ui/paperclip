@@ -1,0 +1,31 @@
+#!/usr/bin/env node
+const {
+  translateModuleToVanilla,
+  openPCConfig,
+  loadFSDependencyGraphSync,
+  getComponentGraphRefMap,
+  getVariableRefMap,
+  getQueryRefMap,
+} = require("..");
+const { addProtocol, FILE_PROTOCOL } = require("tandem-common");
+const migrate = require("paperclip-migrator");
+const fs = require("fs");
+const path = require("path");
+const relPath = process.argv[2];
+const cwd = process.cwd();
+const absPath = relPath.charAt(0) === "/" ? relPath : path.join(cwd, relPath);
+const absUri = addProtocol(FILE_PROTOCOL, absPath);
+const { config, directory } = openPCConfig(path.dirname(absPath));
+const graph = loadFSDependencyGraphSync(config, directory, migrate);
+const entry = graph[absUri];
+
+console.log(
+  translateModuleToVanilla(
+    entry.content,
+    getComponentGraphRefMap(entry.content, graph),
+    getVariableRefMap(entry.content, graph),
+    getQueryRefMap(entry.content, graph),
+    absUri,
+    directory
+  )
+);

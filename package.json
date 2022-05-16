@@ -8,7 +8,8 @@
     "url": "git+https://github.com/crcn/tandem-preview.git"
   },
   "workspaces": [
-    "./packages/*"
+    "./packages/legacy-tandem/*",
+    "./packages/@tandem-ui/*"
   ],
   "main": "index.js",
   "author": "",

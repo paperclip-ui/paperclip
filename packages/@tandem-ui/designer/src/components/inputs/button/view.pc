@@ -1,0 +1,99 @@
+{
+  "id": "9f364d2139376",
+  "version": "0.0.6",
+  "metadata": {},
+  "name": "module",
+  "children": [
+    {
+      "label": "Button",
+      "is": "div",
+      "style": {
+        "box-sizing": "border-box",
+        "color": "#777",
+        "cursor": "pointer",
+        "display": "inline-block",
+        "padding-left": "8px",
+        "padding-top": "4px",
+        "padding-right": "8px",
+        "padding-bottom": "4px",
+        "background": "rgba(214, 213, 213, 1)",
+        "border-bottom-left-radius": "2px",
+        "border-top-left-radius": "2px",
+        "border-top-right-radius": "2px",
+        "border-bottom-right-radius": "2px",
+        "user-select": "none"
+      },
+      "attributes": {},
+      "id": "9f364d2139415",
+      "name": "component",
+      "children": [
+        {
+          "id": "9f364d2139650",
+          "name": "text",
+          "label": "Text",
+          "value": "Label",
+          "style": {
+            "font-weight": "500",
+            "user-select": "none"
+          },
+          "children": [],
+          "metadata": {},
+          "styleMixins": {
+            "dc3b39eb1275": {
+              "priority": 0
+            }
+          }
+        },
+        {
+          "id": "38b32d581121",
+          "name": "variant",
+          "label": "secondary",
+          "isDefault": false,
+          "children": [],
+          "metadata": {}
+        },
+        {
+          "id": "38b32d581284",
+          "variantId": "38b32d581121",
+          "propertyName": "style",
+          "targetIdPath": [],
+          "value": {
+            "background": "rgba(227, 227, 227, 1)",
+            "color": "var(--24ce1e4d482)"
+          },
+          "name": "override",
+          "children": []
+        },
+        {
+          "id": "c6acc7ee1385",
+          "name": "variant",
+          "label": "disabled",
+          "isDefault": true,
+          "children": [],
+          "metadata": {}
+        },
+        {
+          "id": "c6acc7ee1386",
+          "variantId": "c6acc7ee1385",
+          "propertyName": "style",
+          "targetIdPath": [],
+          "value": {
+            "cursor": "default",
+            "opacity": 0.253
+          },
+          "name": "override",
+          "children": []
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 300,
+          "top": 120,
+          "right": 400,
+          "bottom": 220
+        }
+      },
+      "variant": {}
+    }
+  ]
+}

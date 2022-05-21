@@ -1,0 +1,98 @@
+{
+  "id": "1173728894",
+  "name": "module",
+  "version": "0.0.6",
+  "children": [
+    {
+      "label": "file input",
+      "is": "div",
+      "style": {
+        "box-sizing": "border-box",
+        "display": "flex"
+      },
+      "attributes": {},
+      "id": "9fb9afea1357",
+      "name": "component",
+      "children": [
+        {
+          "id": "9fb9afea1354",
+          "is": "7149f8199122",
+          "label": "file path input",
+          "name": "component-instance",
+          "attributes": {},
+          "style": {
+            "margin-right": "6px"
+          },
+          "children": [],
+          "metadata": {
+            "bounds": {
+              "left": 384,
+              "top": 298,
+              "right": 484,
+              "bottom": 327.0358087589019
+            }
+          },
+          "variant": {}
+        },
+        {
+          "id": "6fc47e06486",
+          "label": "Element",
+          "is": "div",
+          "name": "element",
+          "attributes": {},
+          "style": {
+            "box-sizing": "border-box",
+            "display": "flex",
+            "position": "relative"
+          },
+          "children": [
+            {
+              "id": "9fb9afea1355",
+              "is": "9f364d2139415",
+              "label": "browse button",
+              "name": "component-instance",
+              "attributes": {},
+              "style": {},
+              "children": [
+                {
+                  "id": "9fb9afea1356",
+                  "variantId": null,
+                  "propertyName": "text",
+                  "targetIdPath": [
+                    "9f364d2139650"
+                  ],
+                  "value": "browse",
+                  "name": "override",
+                  "children": []
+                }
+              ],
+              "metadata": {
+                "bounds": {
+                  "left": 300,
+                  "top": 120,
+                  "right": 400,
+                  "bottom": 220
+                }
+              },
+              "variant": {}
+            }
+          ],
+          "metadata": {}
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 193,
+          "top": 21,
+          "right": 531,
+          "bottom": 121
+        }
+      },
+      "variant": {},
+      "controllers": [
+        "./controller.tsx"
+      ]
+    }
+  ],
+  "metadata": {}
+}

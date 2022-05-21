@@ -23,5 +23,6 @@ walkFiles(process.cwd(), (filePath) => {
   }
 
   const dest = filePath.replace(process.cwd(), path.join(process.cwd(), "..", "@tandem-ui", "designer"))
+  console.log(dest);
   fs.copyFileSync(filePath, dest);
 });

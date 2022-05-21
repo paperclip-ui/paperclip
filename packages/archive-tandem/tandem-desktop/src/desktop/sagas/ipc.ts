@@ -2,7 +2,7 @@ import { fork, select, take, put, spawn, call } from "redux-saga/effects";
 import { eventChannel } from "redux-saga";
 import { ipcMain, MenuItemConstructorOptions, Menu } from "electron";
 import { DesktopState } from "../state";
-import { ContextMenuOption } from "tandem-designer";
+import { ContextMenuOption } from "@tandem-ui/designer";
 import { dialog } from "electron";
 import { normalizeFilePath } from "tandem-common";
 export const pid = Date.now() + "_" + Math.random();

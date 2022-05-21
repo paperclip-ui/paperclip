@@ -13,7 +13,7 @@ module.exports = merge({}, base, {
     new CopyPlugin({
       patterns: [
         {
-          from: join(dirname(require.resolve("tandem-designer")), "lib"),
+          from: join(dirname(require.resolve("@tandem-ui/designer")), "lib"),
           to: join(__dirname, "lib"),
           filter(filePath) {
             return !["index.html", "index.js"].some((pt) =>

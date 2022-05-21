@@ -18,7 +18,7 @@ import {
   computeDisplayInfo,
 } from "paperclip";
 import { useDispatch } from "react-redux";
-import { Isolate } from "tandem-designer/src/components/isolated";
+import { Isolate } from "@tandem-ui/designer/src/components/isolated";
 
 export type DocumentPreviewOuterProps = {
   frame: Frame;

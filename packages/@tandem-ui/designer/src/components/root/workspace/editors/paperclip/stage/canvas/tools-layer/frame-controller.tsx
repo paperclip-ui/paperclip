@@ -14,12 +14,12 @@ import {
   canvasToolDocumentTitleClicked,
   frameModeChangeComplete,
   canvasToolPreviewButtonClicked,
-} from "tandem-designer/src/actions";
+} from "@tandem-ui/designer/src/actions";
 import {
   DropdownMenuOption,
   dropdownMenuOptionFromValue,
-} from "tandem-designer/src/components/inputs/dropdown/controller";
-import { FrameMode } from "tandem-designer/src/state";
+} from "@tandem-ui/designer/src/components/inputs/dropdown/controller";
+import { FrameMode } from "@tandem-ui/designer/src/state";
 import { BaseFrameProps } from "./frames-view.pc";
 import { useDispatch } from "react-redux";
 

@@ -39,7 +39,7 @@ import * as path from "path";
 import {
   ConfirmCloseWindow,
   CreateProjectButtonClicked,
-} from "tandem-designer";
+} from "@tandem-ui/designer";
 import { eventChannel, Channel } from "redux-saga";
 import { DesktopRootState } from "../../front-end/state";
 

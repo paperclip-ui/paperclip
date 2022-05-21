@@ -18,7 +18,7 @@ import { publicActionCreator, stripProtocol } from "tandem-common";
 import {
   FileItemContextMenuAction,
   OpenTextEditorButtonClicked,
-} from "tandem-designer/src/actions";
+} from "@tandem-ui/designer/src/actions";
 
 const shortcutKeyDown = publicActionCreator((type: string) => ({
   type,

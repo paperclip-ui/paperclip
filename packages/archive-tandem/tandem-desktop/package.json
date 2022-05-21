@@ -57,7 +57,7 @@
     "redux": "^4.0.0",
     "redux-saga": "^0.16.0",
     "tandem-common": "^10.1.33",
-    "tandem-designer": "^10.1.35",
+    "@tandem-ui/designer": "^10.1.35",
     "terminate": "^2.1.2",
     "update-electron-app": "^1.3.0"
   },

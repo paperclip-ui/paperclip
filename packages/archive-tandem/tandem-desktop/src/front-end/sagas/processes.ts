@@ -20,7 +20,7 @@ import {
   createUnloader,
   unloaderCreated,
   unloaderCompleted,
-} from "tandem-designer";
+} from "@tandem-ui/designer";
 import { stripProtocol } from "tandem-common";
 
 export function* processSaga() {

@@ -48,7 +48,7 @@ import {
   inspectorNodePasted,
   INSPECTOR_NODE_CONTEXT_MENU_PASTE_CLICKED,
   INSPECTOR_NODE_CONTEXT_MENU_COPY_CLICKED,
-} from "tandem-designer";
+} from "@tandem-ui/designer";
 import {
   findPaperclipSourceFiles,
   pcSourceFileUrisReceived,
@@ -78,7 +78,7 @@ import {
 } from "tandem-common";
 import { DesktopRootState } from "../state";
 import { processSaga } from "./processes";
-import { unloadApplication } from "tandem-designer";
+import { unloadApplication } from "@tandem-ui/designer";
 import { exec } from "child_process";
 
 export function* rootSaga() {

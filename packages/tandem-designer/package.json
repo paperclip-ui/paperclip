@@ -1,5 +1,5 @@
 {
-  "name": "tandem-designer",
+  "name": "@tandem-ui/designer",
   "version": "10.1.35",
   "description": "Visual editor for web components",
   "main": "index.js",

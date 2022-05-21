@@ -1,7 +1,7 @@
 import { FSItem, FSItemTagNames } from "tandem-common";
 
-import { FrontEndEngineOptions } from "tandem-designer/src/engines";
-import { ProjectInfo } from "tandem-designer/src/state";
+import { FrontEndEngineOptions } from "@tandem-ui/designer/src/engines";
+import { ProjectInfo } from "@tandem-ui/designer/src/state";
 import * as mime from "mime-types";
 import { setReaderMimetypes } from "fsbox";
 import { PAPERCLIP_MIME_TYPE } from "paperclip";

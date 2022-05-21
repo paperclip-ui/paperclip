@@ -2,7 +2,7 @@ const { resolve, dirname, join } = require("path");
 const nodeExternals = require("webpack-node-externals");
 const CopyPlugin = require("copy-webpack-plugin");
 
-// console.log(join(dirname(require.resolve("tandem-designer")), "lib"));
+// console.log(join(dirname(require.resolve("@tandem-ui/designer")), "lib"));
 
 module.exports = {
   externals: [nodeExternals()],

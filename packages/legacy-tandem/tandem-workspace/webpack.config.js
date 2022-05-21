@@ -1,7 +1,7 @@
 const { resolve } = require("path");
 const { merge } = require("lodash");
 const webpack = require("webpack");
-const createWebpackConfig = require("tandem-designer/webpack/base.config");
+const createWebpackConfig = require("@tandem-ui/designer/webpack/base.config");
 
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
@@ -18,7 +18,7 @@ module.exports = merge({}, base, {
       patterns: [
         {
           from: path.join(
-            path.dirname(require.resolve("tandem-designer")),
+            path.dirname(require.resolve("@tandem-ui/designer")),
             "lib",
             "front-end"
           ),

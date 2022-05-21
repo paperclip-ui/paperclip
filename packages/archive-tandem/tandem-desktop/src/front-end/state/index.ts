@@ -1,4 +1,4 @@
-import { RootState } from "tandem-designer";
+import { RootState } from "@tandem-ui/designer";
 import { DesktopState } from "../../desktop/state";
 
 export type DesktopRootState = {

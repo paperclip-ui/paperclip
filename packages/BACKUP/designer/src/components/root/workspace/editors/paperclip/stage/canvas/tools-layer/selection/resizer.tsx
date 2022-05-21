@@ -7,13 +7,13 @@ import {
   isSelectionMovable,
   isSelectionResizable,
   Canvas,
-} from "tandem-designer/src/state";
+} from "@tandem-ui/designer/src/state";
 import {
   resizerMoved,
   resizerStoppedMoving,
   resizerMouseDown,
   resizerStartDrag,
-} from "tandem-designer/src/actions";
+} from "@tandem-ui/designer/src/actions";
 import { startDOMDrag } from "tandem-common";
 import { Dispatch } from "redux";
 import { Path } from "./path";

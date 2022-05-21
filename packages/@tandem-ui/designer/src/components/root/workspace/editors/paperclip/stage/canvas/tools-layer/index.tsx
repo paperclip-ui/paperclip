@@ -10,7 +10,7 @@ import {
   OpenFile,
   ToolType,
   EditMode,
-} from "tandem-designer/src/state";
+} from "@tandem-ui/designer/src/state";
 import { NodeOverlaysTool } from "./document-overlay";
 import { SelectionCanvasTool } from "./selection";
 import { Frames } from "./frames-view.pc";

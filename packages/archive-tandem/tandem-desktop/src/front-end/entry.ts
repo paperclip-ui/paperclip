@@ -19,7 +19,7 @@ import {
   ContextMenuItem,
   EditMode,
   RootReadyType,
-} from "tandem-designer";
+} from "@tandem-ui/designer";
 import {
   stripProtocol,
   createDirectory,
@@ -40,7 +40,7 @@ import {
   getPCNodeDependency,
 } from "paperclip";
 import { eventChannel } from "redux-saga";
-import { FileOpenerOptions } from "tandem-designer/src/components/contexts";
+import { FileOpenerOptions } from "@tandem-ui/designer/src/components/contexts";
 const pkg = require("../../package.json");
 
 // initSentry({

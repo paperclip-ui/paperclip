@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="23px" height="21px" viewBox="0 0 23 21" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>split-2</title>
+    <desc>Created with Sketch.</desc>
+    <g id="icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="split-2" transform="translate(11.500000, 10.500000) rotate(-270.000000) translate(-11.500000, -10.500000) translate(1.000000, -1.000000)" fill="#000000">
+            <rect id="Rectangle" x="10" y="0" width="1" height="3"></rect>
+            <rect id="Rectangle" x="10" y="4" width="1" height="3"></rect>
+            <rect id="Rectangle" x="10" y="8" width="1" height="3"></rect>
+            <rect id="Rectangle" x="10" y="12" width="1" height="3"></rect>
+            <rect id="Rectangle" x="10" y="16" width="1" height="3"></rect>
+            <rect id="Rectangle" x="10" y="20" width="1" height="3"></rect>
+            <polygon id="Path" points="0.8 2 8 2 8 1 0 1 0 22 8 22 8 21 0.8 21"></polygon>
+            <rect id="Rectangle" x="2" y="3" width="6" height="17"></rect>
+            <polygon id="Path" points="20.2 21 13 21 13 22 21 22 21 1 13 1 13 2 20.2 2"></polygon>
+            <rect id="Rectangle" x="13" y="3" width="6" height="17"></rect>
+        </g>
+    </g>
+</svg>

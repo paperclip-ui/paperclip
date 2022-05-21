@@ -1,0 +1,8 @@
+.visual-tools-node-overlay {
+  position: absolute;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0);
+  &.hovering {
+    opacity: 1;
+  }
+}

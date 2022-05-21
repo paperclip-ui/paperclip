@@ -1,0 +1,9 @@
+{
+  "exclude": [
+    "node_modules"
+  ],
+  "globalFilePath": "./src/global.pc",
+  "rootDir": ".",
+  "scripts": {
+  }
+}

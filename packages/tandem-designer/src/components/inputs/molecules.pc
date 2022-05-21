@@ -1,0 +1,362 @@
+{
+  "id": "76b155a0889212",
+  "version": "0.0.6",
+  "metadata": {},
+  "name": "module",
+  "children": [
+    {
+      "label": "Labeled Input",
+      "is": "div",
+      "style": {
+        "width": "100%",
+        "flex": "1"
+      },
+      "attributes": {},
+      "id": "7149f8192509",
+      "name": "component",
+      "children": [
+        {
+          "id": "38fc2a4724622",
+          "label": "Element",
+          "is": "div",
+          "name": "element",
+          "attributes": {},
+          "style": {
+            "margin-bottom": "2px"
+          },
+          "children": [
+            {
+              "label": "label",
+              "id": "ba94dac93878",
+              "children": [
+                {
+                  "id": "7149f8192506",
+                  "name": "text",
+                  "label": "Text",
+                  "value": "Label",
+                  "style": {
+                    "margin-left": "2px",
+                    "margin-bottom": "0px"
+                  },
+                  "children": [],
+                  "metadata": {},
+                  "styleMixins": {
+                    "33b5126b196": {
+                      "priority": 0
+                    }
+                  }
+                }
+              ],
+              "metadata": {},
+              "name": "slot"
+            }
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "7149f81937818",
+          "label": "Input",
+          "is": "div",
+          "name": "element",
+          "attributes": {},
+          "style": {
+            "margin-bottom": "6px"
+          },
+          "children": [
+            {
+              "label": "input",
+              "id": "e73029b416045",
+              "children": [
+                {
+                  "id": "7149f8199969",
+                  "variant": {},
+                  "is": "7149f8199122",
+                  "name": "component-instance",
+                  "attributes": {},
+                  "style": {},
+                  "children": [
+                    {
+                      "id": "80b0b6e7408",
+                      "variantId": null,
+                      "propertyName": "attributes",
+                      "targetIdPath": [],
+                      "value": {},
+                      "name": "override",
+                      "children": []
+                    }
+                  ],
+                  "metadata": {},
+                  "label": "project name input",
+                  "bind": {
+                    "properties": [
+                      {
+                        "from": "value",
+                        "to": "value"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "metadata": {},
+              "name": "slot"
+            }
+          ],
+          "metadata": {},
+          "bind": {
+            "properties": []
+          }
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 486,
+          "top": 306,
+          "right": 586,
+          "bottom": 353.5832678332798
+        }
+      },
+      "variant": {}
+    },
+    {
+      "label": "Tooltip",
+      "is": "div",
+      "style": {
+        "box-sizing": "border-box",
+        "display": "flex",
+        "flex-direction": "column",
+        "filter": "drop-shadow(4px 4px 2px rgba(0,0,0,0.1))",
+        "position": "relative"
+      },
+      "attributes": {},
+      "id": "936f2927707",
+      "name": "component",
+      "children": [
+        {
+          "id": "936f2927704",
+          "label": "arrow container",
+          "is": "div",
+          "name": "element",
+          "attributes": {},
+          "style": {
+            "box-sizing": "border-box",
+            "display": "block",
+            "width": "100%",
+            "height": "12px",
+            "flex-shrink": "0"
+          },
+          "children": [
+            {
+              "id": "936f2927705",
+              "label": "arrow",
+              "is": "div",
+              "name": "element",
+              "attributes": {},
+              "style": {
+                "display": "block",
+                "border-top": "12px solid rgba(255, 0, 0, 0)",
+                "border-right": "12px solid rgba(255, 0, 0, 0)",
+                "border-bottom": "12px solid var(--bc891e755312)",
+                "border-left": "12px solid rgba(255, 0, 0, 0)",
+                "box-sizing": "border-box",
+                "left": "50%",
+                "position": "absolute",
+                "filter": "drop-shadow(0px -1px 0px var(--30f4693267675))",
+                "transform": "translate(-50%, calc(-50% + 1px))",
+                "top": "1px"
+              },
+              "children": [],
+              "metadata": {}
+            }
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "936f2927706",
+          "label": "Card",
+          "is": "div",
+          "name": "element",
+          "attributes": {},
+          "style": {
+            "background-image": "linear-gradient(var(--bc891e755312), var(--bc891e755312))",
+            "display": "flex",
+            "width": "100%",
+            "height": "100%",
+            "border-left": "1px solid var(--30f4693267675)",
+            "border-top": "1px solid var(--30f4693267675)",
+            "border-right": "1px solid var(--30f4693267675)",
+            "border-bottom": "1px solid var(--30f4693267675)",
+            "box-sizing": "border-box",
+            "border-top-left-radius": "2px",
+            "border-top-right-radius": "2px",
+            "border-bottom-left-radius": "2px",
+            "border-bottom-right-radius": "2px"
+          },
+          "children": [
+            {
+              "id": "936f2927712",
+              "label": "Content Wrapper",
+              "is": "div",
+              "name": "element",
+              "attributes": {},
+              "style": {
+                "box-sizing": "border-box",
+                "display": "block",
+                "padding-left": "12px",
+                "padding-top": "12px",
+                "padding-right": "12px",
+                "padding-bottom": "12px",
+                "width": "100%",
+                "height": "100%",
+                "position": "relative"
+              },
+              "children": [
+                {
+                  "id": "936f2927716",
+                  "children": [
+                    {
+                      "id": "936f2927714",
+                      "name": "text",
+                      "label": "Text",
+                      "value": "Some content",
+                      "style": {},
+                      "children": [],
+                      "metadata": {},
+                      "styleMixins": {
+                        "dc3b39eb1275": {
+                          "priority": 0
+                        }
+                      }
+                    }
+                  ],
+                  "metadata": {},
+                  "name": "slot",
+                  "label": "content"
+                }
+              ],
+              "metadata": {}
+            }
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "368712de18492",
+          "name": "variant",
+          "label": "right",
+          "isDefault": true,
+          "children": [],
+          "metadata": {}
+        },
+        {
+          "id": "368712de18493",
+          "variantId": "368712de18492",
+          "propertyName": "style",
+          "targetIdPath": [
+            "936f2927705"
+          ],
+          "value": {
+            "left": "calc(100% - 30px)"
+          },
+          "name": "override",
+          "children": []
+        },
+        {
+          "id": "4496ba59214",
+          "variantId": "368712de18492",
+          "propertyName": "style",
+          "targetIdPath": [],
+          "value": {
+            "transform": "translate(-70%, 0px)"
+          },
+          "name": "override",
+          "children": []
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 58,
+          "top": 295,
+          "right": 393,
+          "bottom": 508
+        }
+      },
+      "variant": {},
+      "styleMixins": {
+        "fb4d37ca18486": {
+          "priority": 0
+        }
+      }
+    },
+    {
+      "id": "4496ba59215",
+      "label": "Element",
+      "is": "div",
+      "name": "element",
+      "attributes": {},
+      "style": {
+        "box-sizing": "border-box",
+        "display": "block"
+      },
+      "children": [
+        {
+          "id": "4496ba59221",
+          "label": "Element",
+          "is": "div",
+          "name": "element",
+          "attributes": {},
+          "style": {},
+          "children": [
+            {
+              "id": "4496ba59217",
+              "is": "9f364d2139415",
+              "label": "Button",
+              "name": "component-instance",
+              "attributes": {},
+              "style": {},
+              "children": [],
+              "metadata": {
+                "bounds": {
+                  "left": 300,
+                  "top": 120,
+                  "right": 400,
+                  "bottom": 220
+                }
+              },
+              "variant": {}
+            },
+            {
+              "id": "4496ba59226",
+              "is": "936f2927707",
+              "label": "Tooltip",
+              "name": "component-instance",
+              "attributes": {},
+              "style": {
+                "position": "absolute"
+              },
+              "children": [],
+              "metadata": {
+                "bounds": {
+                  "left": 58,
+                  "top": 297,
+                  "right": 393,
+                  "bottom": 510
+                }
+              },
+              "variant": {
+                "368712de18492": true
+              }
+            }
+          ],
+          "metadata": {}
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 620,
+          "top": 437,
+          "right": 1215,
+          "bottom": 804
+        }
+      }
+    }
+  ]
+}

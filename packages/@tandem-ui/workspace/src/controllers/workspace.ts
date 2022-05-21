@@ -2,10 +2,8 @@ import { VFS } from "./vfs";
 import * as url from "url";
 import { SSHKeys } from "./ssh";
 import { Options } from "../core/options";
-import { EngineMode, loadEngineDelegate } from "@paperclip-ui/core";
 import { getProjectId, Project } from "./project";
 import { Logger, RPCServer } from "@paperclip-ui/common";
-import { EditorHost } from "@paperclip-ui/editor-engine/lib/host/host";
 
 export class Workspace {
   private _projects: Record<string, Project> = {};
@@ -25,16 +23,6 @@ export class Workspace {
 
     this._logger.info(`Starting repo ${repoUrl}#${branch}`);
 
-    const paperclipEngine = await loadEngineDelegate({
-      mode: EngineMode.MultiFrame,
-    });
-
-    const documentManager = await EditorHost.start(
-      paperclipEngine,
-      this._rpcServer,
-      this._logger
-    );
-
     const projectId = getProjectId(repoUrl);
     const project =
       this._projects[projectId] ||
@@ -43,18 +31,13 @@ export class Workspace {
         branch,
         this.vfs,
         this._logger,
-        paperclipEngine,
         this._options,
-        this._httpPort,
-        documentManager
+        this._httpPort
       ));
     return await project.start();
   }
 
   dispose() {
-    for (const id in this._projects) {
-      this._projects[id].dispose();
-    }
     this._projects = {};
   }
 

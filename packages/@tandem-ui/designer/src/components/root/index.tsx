@@ -13,12 +13,15 @@ import {
 } from "../../state";
 import { Chrome } from "./chrome.pc";
 
+console.log("DDASSS");
+
 export const RootComponent = () => {
   const root = useSelector((v) => v) as RootState;
   const dispatch = useDispatch();
 
   // TODO - add loading state here
   if (root.readyType === RootReadyType.LOADING) {
+    console.log("DDA");
     return null;
   }
 
@@ -65,6 +68,5 @@ export const RootComponent = () => {
       />
     );
   }
-
   return content;
 };

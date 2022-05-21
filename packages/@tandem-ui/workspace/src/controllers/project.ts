@@ -1,22 +1,15 @@
 import execa from "execa";
 import { VFS } from "./vfs";
 import * as URL from "url";
-import * as fs from "fs";
 import { Logger } from "@paperclip-ui/common";
 import { Options } from "../core/options";
 import { Package } from "./package";
 import * as crypto from "crypto";
 import { Repository } from "./git";
-import { PaperclipManager } from "./paperclip";
-import { EngineDelegate, EngineDelegateEvent } from "@paperclip-ui/core";
-import { EditorHost } from "@paperclip-ui/editor-engine/lib/host/host";
-import { PaperclipLanguageService } from "@paperclip-ui/language-service";
 
 export class Project {
-  private _pc: PaperclipManager;
   readonly repository: Repository;
   readonly package: Package;
-  private _languageService: PaperclipLanguageService;
 
   /**
    */
@@ -26,45 +19,14 @@ export class Project {
     private _branch: string,
     _vfs: VFS,
     _logger: Logger,
-    private _engine: EngineDelegate,
     private _options: Options,
-    private _httpPort: number,
-    documentManager: EditorHost
+    private _httpPort: number
   ) {
     const directory = isUrlLocal(this.url)
       ? URL.fileURLToPath(this.url)
       : getTemporaryDirectory(this.url, this._branch);
     this.repository = new Repository(directory, _logger);
     this.package = new Package(directory, _logger);
-    this._languageService = new PaperclipLanguageService(_engine, fs as any);
-    this._pc = new PaperclipManager(
-      this.repository.localDirectory,
-      _vfs,
-      _logger,
-      _engine,
-      documentManager
-    );
-  }
-
-  /**
-   */
-
-  getLanguageService() {
-    return this._languageService;
-  }
-
-  /**
-   */
-
-  getEngine() {
-    return this._engine;
-  }
-
-  /**
-   */
-
-  dispose() {
-    this._pc.dispose();
   }
 
   /**
@@ -117,27 +79,6 @@ export class Project {
   /**
    */
 
-  openPCFile = (uri: string) => {
-    return this._engine.open(uri);
-  };
-
-  /**
-   */
-
-  getPCContent = (uri: string) => {
-    return this._engine.getVirtualContent(uri);
-  };
-
-  /**
-   */
-
-  updatePCContent = (uri: string, content: string) => {
-    return this._engine.updateVirtualFileContent(uri, content);
-  };
-
-  /**
-   */
-
   async start() {
     if (!isUrlLocal(this.url)) {
       await this.repository.clone(this.url);
@@ -148,9 +89,6 @@ export class Project {
       await this.package.install();
     }
 
-    // start the PC engine. At this point we're ready to start working
-    this._pc.start();
-
     return this;
   }
 
@@ -158,9 +96,6 @@ export class Project {
    */
 
   async pushAllChanges(message: string) {
-    // save files stored in PC engine locally
-    this._pc.saveLocally();
-
     // save all changes
     await this.repository.add("-A");
     await this.repository.commit(message);
@@ -168,20 +103,6 @@ export class Project {
     // need to be cognizant of rejections here. In that case, should
     // create new branch, push to that, and prompt user to fix using CLI
     await this.repository.push();
-  }
-
-  /**
-   */
-
-  onPCEngineEvent = (listener: (event: EngineDelegateEvent) => void) => {
-    return this._pc.onEngineEvent(listener);
-  };
-
-  /**
-   */
-
-  getAllPaperclipScreens() {
-    return this._engine.getAllLoadedData();
   }
 }
 

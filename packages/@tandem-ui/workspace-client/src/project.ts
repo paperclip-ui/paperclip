@@ -2,7 +2,6 @@ import { RPCClientAdapter } from "@paperclip-ui/common";
 import {
   getAllPaperclipFilesChannel,
   openProjectChannel,
-  popoutWindowChannel,
 } from "@tandem-ui/workspace-core";
 import { EditorClient } from "@paperclip-ui/editor-engine/lib/client/client";
 import { PCDocument } from "@paperclip-ui/editor-engine/lib/client/documents";

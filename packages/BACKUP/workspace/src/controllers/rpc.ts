@@ -69,9 +69,9 @@ class Connection {
       .loadVirtualNodeSourcesChannel(connection)
       .listen(this._loadNodeSources);
     channels.helloChannel(connection).listen(this._initialize);
-    channels
-      .loadInsertableNodesChannel(connection)
-      .listen(this._loadInsertableNodes);
+    // channels
+    //   .loadInsertableNodesChannel(connection)
+    //   .listen(this._loadInsertableNodes);
     // channels.loadDirectoryChannel(connection).listen(this._loadDirectory);
     channels.openProjectChannel(connection).listen(this._openProject);
     channels
@@ -84,7 +84,7 @@ class Connection {
     channels
       .revealNodeSourceByIdChannel(connection)
       .listen(this._revealSourceById);
-    channels.popoutWindowChannel(connection).listen(this._popoutWindow);
+    // channels.popoutWindowChannel(connection).listen(this._popoutWindow);
     channels.openFileChannel(connection).listen(this._openFile);
     channels.commitChangesChannel(connection).listen(this._commitChanges);
     // channels.setBranchChannel(connection).listen(this._setBranch);

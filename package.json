@@ -9,7 +9,8 @@
   },
   "workspaces": [
     "./packages/legacy-tandem/*",
-    "./packages/@tandem-ui/*"
+    "./packages/@tandem-ui/*",
+    "./packages/@paperclip-lang/*"
   ],
   "main": "index.js",
   "author": "",

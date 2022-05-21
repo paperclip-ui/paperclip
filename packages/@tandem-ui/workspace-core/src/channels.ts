@@ -26,11 +26,6 @@ export const revealNodeSourceByIdChannel = remoteChannel<string, void>(
   "revealNodeSourceByIdChannel"
 );
 
-export const loadInsertableNodesChannel = remoteChannel<
-  { activeUri: string },
-  AvailableNode[]
->("loadInsertableNodesChannel");
-
 export const openProjectChannel = remoteChannel<
   { uri?: string; branch?: string; id?: string },
   { id: string; directoryPath: string; directoryUri: string }

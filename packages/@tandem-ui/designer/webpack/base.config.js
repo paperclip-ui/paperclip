@@ -7,7 +7,7 @@ module.exports = (createConfig) =>
     devtool: false,
     mode: "development",
     output: {
-      path: resolve(__dirname, "..", "lib", "front-end"),
+      path: resolve(__dirname, "..", "lib"),
       libraryTarget: "umd",
       filename: "[name].bundle.js",
     },

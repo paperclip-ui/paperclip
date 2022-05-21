@@ -64,14 +64,7 @@ class Connection {
     private _options: Options
   ) {
     this._events = channels.eventsChannel(connection);
-    channels.getAllScreensChannel(connection).listen(this._getAllScreens);
-    channels
-      .loadVirtualNodeSourcesChannel(connection)
-      .listen(this._loadNodeSources);
     channels.helloChannel(connection).listen(this._initialize);
-    channels
-      .loadInsertableNodesChannel(connection)
-      .listen(this._loadInsertableNodes);
     // channels.loadDirectoryChannel(connection).listen(this._loadDirectory);
     channels.openProjectChannel(connection).listen(this._openProject);
     channels
@@ -79,13 +72,7 @@ class Connection {
       .listen(this._getAllPaperclipFiles);
 
     // TODO
-    channels.inspectNodeStyleChannel(connection).listen(this._inspectNode);
-    channels.revealNodeSourceChannel(connection).listen(this._revealSource);
-    channels
-      .revealNodeSourceByIdChannel(connection)
-      .listen(this._revealSourceById);
-    channels.popoutWindowChannel(connection).listen(this._popoutWindow);
-    channels.openFileChannel(connection).listen(this._openFile);
+    // channels.popoutWindowChannel(connection).listen(this._popoutWindow);
     channels.commitChangesChannel(connection).listen(this._commitChanges);
     // channels.setBranchChannel(connection).listen(this._setBranch);
     // channels.editPCSourceChannel(connection).listen(this._editPCSource);
@@ -126,96 +113,13 @@ class Connection {
     this._vfs.updateFileContent(uri, value);
   };
 
-  private _revealSource = async (source: VirtNodeSource) => {
-    const project = this.getProject();
-    const info = project
-      .getEngine()
-      .getVirtualNodeSourceInfo(source.path, source.uri);
-
-    if (info) {
-      this._options.adapter?.revealSource(info);
-    } else {
-      console.error(
-        `Could not find node source: `,
-        JSON.stringify(source, null, 2)
-      );
-    }
-  };
-
-  private _revealSourceById = async (sourceId: string) => {
-    const project = this.getProject();
-    const [uri, expr] = project.getEngine().getExpressionById(sourceId) as [
-      string,
-      Expression
-    ];
-
-    this._options.adapter?.revealSource({
-      sourceId,
-      textSource: {
-        range: expr.range,
-        uri,
-      },
-    });
-  };
-
-  private _loadNodeSources = async (
-    sources: VirtNodeSource[]
-  ): Promise<VirtualNodeSourceInfo[]> => {
-    const project = this.getProject();
-
-    return sources.map((info) => {
-      return project.getEngine().getVirtualNodeSourceInfo(info.path, info.uri);
-      // return {
-      //   virtualNodePath: info.path,
-      //   sourceId: this._engine.getVirtualNodeSourceInfo(info.path, info.uri).sourceId
-      // };
-    });
-  };
-
   private _popoutWindow = async ({ path }) => {
     let host = `http://localhost:${this._httpPort}`;
     let url = host + path;
     exec(`open "${url}"`);
   };
-
-  private _inspectNode = async (
-    sources: VirtNodeSource[]
-  ): Promise<Array<[VirtNodeSource, NodeStyleInspection]>> => {
-    const project = this.getProject();
-    return sources.map((source) => [
-      source,
-      project.getEngine().inspectNodeStyles(source, 0),
-    ]);
-  };
-
-  private _getAllScreens = async () => {
-    const project = this.getProject();
-    return project?.getAllPaperclipScreens() || {};
-  };
-  private _openFile = async ({ uri }) => {
-    const project = this.getProject();
-
-    if (isPaperclipFile(uri)) {
-      const data = project.openPCFile(uri);
-      return {
-        uri,
-        data: project.openPCFile(uri),
-        document: project.getPCContent(uri),
-      };
-    }
-
-    return {
-      uri,
-      data: null,
-      document: isPlainTextFile(uri) ? fs.readFileSync(uri, "utf-8") : null,
-    };
-  };
   private _commitChanges = async ({ description }) => {
     return await this.getProject().commitAndPushChanges(description);
-  };
-  private _loadInsertableNodes = async ({ activeUri }) => {
-    const project = this.getProject();
-    return project.getLanguageService().getAllAvailableNodes({ activeUri });
   };
   private _initialize = async ({ projectId }) => {
     this._logger.info(`Setting connection project ID to ${projectId}`);
@@ -257,10 +161,6 @@ class Connection {
     }
 
     const project = this.getProject();
-
-    this._disposeEngineListener = project.onPCEngineEvent((event) => {
-      this._events.call(engineDelegateChanged(event));
-    });
   }
 
   private _setBranch = ({ branchName }) => {

@@ -4,7 +4,7 @@ import { RootComponent } from "./components/root";
 import { configureStore } from "@reduxjs/toolkit";
 import { rootReducer } from "./reducers";
 import { Provider as ReduxProvider } from "react-redux";
-import { INITIAL_STATE, ProjectInfo } from "./state";
+import { INITIAL_STATE } from "./state";
 import { FrontEndEngineOptions, reduxMiddleware } from "./engines";
 
 export type InitOptions = {
@@ -12,11 +12,7 @@ export type InitOptions = {
   engineOptions: FrontEndEngineOptions;
 };
 
-// export { FrontEndEngineOptions, ProjectInfo };
-
 export const init = ({ document, engineOptions }: InitOptions) => {
-  console.log(document);
-
   const element = document.createElement("div");
 
   // global state management

@@ -202,6 +202,8 @@ const enhance = compose<CanvasInnerProps, CanvasOuterProps>(
 
       const rect = canvasOuter.getBoundingClientRect();
       dispatch(canvasWheel(rect.width, rect.height, event));
+
+      return false;
     };
 
     return {

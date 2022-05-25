@@ -196,7 +196,9 @@ export const CanvasComponent = memo(
       );
     }, [canvasContainer]);
 
-    const onWheel = (event) => {
+    const onWheel = (event: React.WheelEvent<any>) => {
+      // event.preventDefault();
+      event.nativeEvent.preventDefault();
       dispatch(
         canvasWheel(
           clientRectToBounds(canvasContainer.getBoundingClientRect()),

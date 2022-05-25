@@ -5,6 +5,7 @@ import { FSSandboxEngineOptions } from "fsbox/src/base";
 import { startPaperclipTandemEngine } from "./paperclip";
 import { startShortcutsEngine } from "./shortcuts";
 import { GLOBAL_MENU } from "../menu";
+import { fixesEngine } from "./fixes";
 
 export type FrontEndEngineOptions = ProjectEngineOptions &
   FSSandboxEngineOptions;
@@ -15,4 +16,5 @@ export const reduxMiddleware = (options: FrontEndEngineOptions) =>
     startPaperclipTandemEngine(),
     startFSBoxEngine(options),
     startShortcutsEngine(GLOBAL_MENU),
+    fixesEngine,
   ]);

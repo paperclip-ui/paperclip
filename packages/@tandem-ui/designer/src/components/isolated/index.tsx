@@ -63,6 +63,11 @@ export const Isolate = ({
     }
   };
 
+  const onWheel2 = (event) => {
+    const handleNative = onWheel(event);
+    console.log(handleNative);
+  };
+
   useEffect(() => {
     if (!dragDropManager || !iframe?.contentWindow) {
       return;
@@ -151,7 +156,7 @@ export const Isolate = ({
             setDragDropManager={setDragDropManager}
             onDragOver={onDragOver}
             onDrop={onDrop}
-            onWheel={onWheel}
+            onWheel={onWheel2}
             onScroll={onScroll}
             onLoad={onLoad}
             className={className}

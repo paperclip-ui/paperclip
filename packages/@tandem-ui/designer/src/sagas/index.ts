@@ -1,12 +1,10 @@
 import { fork, put, take, select, call } from "redux-saga/effects";
-import { reactSaga } from "./react";
 import { RootState } from "../state";
 import {
   CANVAS_TOOL_PREVIEW_BUTTON_CLICKED,
   CanvasToolArtboardTitleClicked,
 } from "../actions";
 import { popupSaga } from "./popup";
-import { projectSaga, ProjectSagaOptions } from "./project";
 import {
   shortcutSaga,
   ShortcutSagaOptions,
@@ -24,18 +22,17 @@ import { processSaga } from "./process";
 
 export type FrontEndSagaOptions = {
   openPreview(frame: Frame, state: RootState);
-} & ProjectSagaOptions &
-  ShortcutSagaOptions &
+} & ShortcutSagaOptions &
   FrontEndContextOptions;
 
 export const createRootSaga = (options: FrontEndSagaOptions) => {
   return function* rootSaga() {
     yield fork(copyPasteSaga);
-    yield fork(reactSaga(options));
+    // yield fork(reactSaga(options));
     yield fork(popupSaga);
     yield fork(createShortcutSaga(options));
     // yield fork(PaperclipStateSaga);
-    yield fork(projectSaga(options));
+    // yield fork(projectSaga(options));
     yield fork(shortcutSaga);
     yield fork(createPreviewSaga(options));
     yield fork(processSaga);

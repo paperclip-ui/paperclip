@@ -1,6 +1,7 @@
 const { resolve } = require("path");
 const webpack = require("webpack");
 const fs = require("fs");
+const path = require("path");
 
 module.exports = (createConfig) =>
   createConfig({
@@ -62,7 +63,12 @@ module.exports = (createConfig) =>
             {
               loader: "paperclip-react-loader",
               options: {
-                config: JSON.parse(fs.readFileSync("./app.tdproject", "utf8")),
+                config: JSON.parse(
+                  fs.readFileSync(
+                    path.join(__dirname, "..", "./app.tdproject"),
+                    "utf8"
+                  )
+                ),
               },
             },
           ],

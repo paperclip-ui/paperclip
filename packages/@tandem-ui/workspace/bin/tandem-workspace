@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const yargs = require("yargs");
 const { start } = require("../lib/server");
+const execa = require("execa");
 
 yargs.command(
   "start [project]",
@@ -8,7 +9,7 @@ yargs.command(
   (yargs) => {
     return yargs
       .option("port", {
-        default: 8080,
+        // default: 8080,
       })
       .option("open")
       .option("autoSave")
@@ -18,15 +19,15 @@ yargs.command(
     start({
       cwd: process.cwd(),
       autoSave,
+      project,
+      branch,
       http: {
         port: port,
       },
-    })
-      .then((workspace) => workspace.start(project, branch))
-      .then((project) => {
-        if (open) {
-          project.open();
-        }
-      });
+    }).then((server) => {
+      if (open) {
+        execa(`open`, [`http://localhost:${server.getPort()}`]);
+      }
+    });
   }
 ).argv;

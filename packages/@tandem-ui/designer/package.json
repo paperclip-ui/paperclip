@@ -2,13 +2,13 @@
   "name": "@tandem-ui/designer",
   "version": "18.5.6",
   "description": "Visual editor for web components",
-  "main": "index.js",
+  "module": "lib/index.esm.js",
   "scripts": {
     "test": "mocha ./lib/**/*-test.js",
     "build": "npm run build:types && webpack",
     "build:types": "paperclip-react-compiler  \"src/**/*.pc\" --definition --write",
     "build:watch": "concurrently \"paperclip-react-compiler \\\"src/**/*.pc\\\" --definition --write --watch\" \"webpack --watch\"",
-    "start": "node lib/back-end/entry",
+    "start": "../workspace/bin/tandem-workspace start .",
     "tandem-preview-server": "tandem-webpack-preview-server --config=webpack-tandem-preview.config.js --include-script=node_modules/react/dist/react.min.js --include-script=node_modules/react-dom/dist/react-dom.min.js",
     "clean": "rm -rf lib && rm -rf node_modules",
     "prepare": "npm run build"

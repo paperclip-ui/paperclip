@@ -9,7 +9,7 @@ import { WebSocketServer } from "ws";
 import { VFS } from "./controllers/vfs";
 import { Logger, wsServerAdapter } from "@paperclip-ui/common";
 import { RPC } from "./controllers/rpc";
-import { Designer } from "./controllers/designer";
+import { addDesignerRoutes } from "./controllers/designer";
 
 const getPort = require("get-port");
 
@@ -69,7 +69,7 @@ export class Server {
     ));
 
     if (expressServer) {
-      new Designer(expressServer);
+      addDesignerRoutes(expressServer);
       addRoutes(expressServer, this._logger, workspace);
     }
     new RPC(rpcServer, workspace, vfs, this._logger, this._port, this.options);

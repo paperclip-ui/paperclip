@@ -1,5 +1,5 @@
-import { createMockEngineOptions } from "./engines/adapters/mock";
-import { init } from "./index";
+import { createMockEngineOptions } from "./engine-adapter";
+import { init } from "@tandem-ui/designer";
 
 const { element } = init({
   document,

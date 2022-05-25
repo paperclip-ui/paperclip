@@ -1,6 +1,7 @@
 IMMEDIATE:
 
-- CLI
+- get designer project to load
+
 - context menu
 - shortcuts
 - serializer

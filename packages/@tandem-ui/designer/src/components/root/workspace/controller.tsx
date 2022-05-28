@@ -9,8 +9,8 @@ import { DragDropContext } from "react-dnd";
 import HTML5Backend from "react-dnd-html5-backend";
 import { BaseWorkspaceProps, WorkspacePrompt } from "./view.pc";
 import { mapStateToProps as mapStatetoPromptControllerProps } from "./prompt-controller";
-import { ContextMenu } from "../../context-menu/view.pc";
 import { ConfigureBuildModal } from "../../configure-build/view.pc";
+import { ContextMenuContainer } from "../../context-menu/container";
 
 export type Props = {
   root: RootState;
@@ -75,6 +75,7 @@ export default (Base: React.ComponentClass<BaseWorkspaceProps>) =>
               }}
             />
 
+            <ContextMenuContainer />
             <QuickSearchModal root={root} dispatch={dispatch} />
             <ComponentPickerModal root={root} dispatch={dispatch} />
             {showConfigureBuildModal ? (

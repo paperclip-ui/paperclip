@@ -1,12 +1,14 @@
 import { addPCFileUris, createRootInspectorNode } from "paperclip";
 import { Action } from "redux";
 import { getFileFromUri, mergeFSItems } from "tandem-common";
+import { produce } from "immer";
 import {
   ACTIVE_EDITOR_URI_DIRS_LOADED,
   ProjectDirectoryDirLoaded,
   ProjectInfoLoaded,
   PROJECT_DIRECTORY_DIR_LOADED,
   PROJECT_INFO_LOADED,
+  SHORTCUT_SAVE_KEY_DOWN,
 } from "../../actions";
 import {
   getBuildScriptProcess,
@@ -16,6 +18,7 @@ import {
   setRootStateFileNodeExpanded,
   updateRootState,
 } from "../../state";
+import { saveDirtyFiles } from "fsbox";
 
 export const projectReducer = (state: RootState, action: Action): RootState => {
   switch (action.type) {
@@ -96,6 +99,10 @@ export const projectReducer = (state: RootState, action: Action): RootState => {
       }
 
       return state;
+    }
+
+    case SHORTCUT_SAVE_KEY_DOWN: {
+      return saveDirtyFiles(state);
     }
   }
   return state;

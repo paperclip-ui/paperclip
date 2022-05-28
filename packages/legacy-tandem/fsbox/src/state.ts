@@ -1,7 +1,9 @@
 import { memoize } from "tandem-common";
 import * as mime from "mime-types";
+import { produce } from "immer";
 
 export type FSSandboxRootState = {
+  saving?: boolean;
   fileCache: FileCache;
 };
 
@@ -13,15 +15,14 @@ export enum FileCacheItemStatus {
   CREATED,
   LOADING,
   LOADED,
-  SAVE_REQUESTED,
   SAVING,
 }
 
 export type FileCacheItem = {
   uri: string;
   status: FileCacheItemStatus;
-  dirty?: boolean;
   content: Buffer;
+  sourceContent: Buffer;
   mimeType: string;
 };
 
@@ -52,15 +53,12 @@ export const isImageUri = (uri: string) =>
   /^image\//.test(mime.lookup(uri) || "");
 export const isSvgUri = (uri: string) => /\.svg$/.test(uri);
 
-export const queueSaveFile = <TState extends FSSandboxRootState>(
-  uri: string,
+export const saveDirtyFiles = <TState extends FSSandboxRootState>(
   state: TState
 ): TState => {
-  return updateFileCacheItem(
-    { status: FileCacheItemStatus.SAVE_REQUESTED },
-    uri,
-    state
-  );
+  return produce(state, (newState) => {
+    newState.saving = true;
+  });
 };
 
 export const fsCacheBusy = memoize((fileCache: FileCache) => {
@@ -97,15 +95,30 @@ export const updateFileCacheItem = <TState extends FSSandboxRootState>(
     [uri]: {
       ...state.fileCache[uri],
       ...properties,
-      dirty: state.fileCache[uri].dirty || Boolean(properties.content),
     },
   },
 });
+
+export const isDirty = (item: FileCacheItem) => {
+  if (item.status === FileCacheItemStatus.SAVING) {
+    return false;
+  }
+
+  if (item.content && !item.sourceContent) {
+    return true;
+  }
+
+  return (
+    new TextDecoder().decode(item.content) !==
+    new TextDecoder().decode(item.sourceContent)
+  );
+};
 
 const createFileCacheItem = (uri: string): FileCacheItem => ({
   uri,
   status: FileCacheItemStatus.CREATED,
   content: null,
+  sourceContent: null,
   mimeType: null,
 });
 

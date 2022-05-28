@@ -94,3 +94,12 @@ export const loadProjectInfoChannel = remoteChannel<
   { projectId: string },
   ProjectInfo
 >("loadProjectInfoChannel");
+
+export const openUrlChannel = remoteChannel<{ url: string }, void>(
+  "openUrlChannel"
+);
+
+export const writeFileChannel = remoteChannel<
+  { url: string; content: Buffer },
+  void
+>("writeFileChannel");

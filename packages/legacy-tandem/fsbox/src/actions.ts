@@ -4,6 +4,7 @@ import { Action } from "redux";
 export const FS_SANDBOX_ITEM_LOADING = "FS_SANDBOX_ITEM_LOADING";
 export const FS_SANDBOX_ITEM_LOADED = "FS_SANDBOX_ITEM_LOADED";
 export const FS_SANDBOX_ITEM_SAVED = "FS_SANDBOX_ITEM_SAVED";
+export const FS_SANDBOX_SAVING = "FS_SANDBOX_SAVING";
 export const FS_SANDBOX_ITEM_SAVING = "FS_SANDBOX_ITEM_SAVING";
 export const FILE_CHANGED = "FILE_CHANGED";
 
@@ -62,6 +63,10 @@ export const fsSandboxItemSaving = (uri: string): FsSandboxItemSaving => ({
 export const fsSandboxItemSaved = (uri: string): FsSandboxItemSaved => ({
   uri,
   type: FS_SANDBOX_ITEM_SAVED,
+});
+
+export const fsSandboxSaving = () => ({
+  type: FS_SANDBOX_SAVING,
 });
 
 export const fileChanged = (

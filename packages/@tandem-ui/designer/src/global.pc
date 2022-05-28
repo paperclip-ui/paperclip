@@ -179,6 +179,36 @@
       "type": "color",
       "children": [],
       "metadata": {}
+    },
+    {
+      "id": "4926249658",
+      "label": "Element",
+      "is": "div",
+      "name": "element",
+      "attributes": {},
+      "style": {
+        "box-sizing": "border-box",
+        "display": "block"
+      },
+      "children": [
+        {
+          "id": "a6227a3d59",
+          "name": "text",
+          "label": "Text",
+          "value": "something",
+          "style": {},
+          "children": [],
+          "metadata": {}
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 202,
+          "top": 256,
+          "right": 302,
+          "bottom": 356
+        }
+      }
     }
   ]
 }

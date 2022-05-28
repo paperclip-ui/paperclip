@@ -206,6 +206,11 @@ export const boundsFromRect = ({ width, height }: Element): Bounds => ({
   bottom: height,
 });
 
+export const mouseEventToPoint = ({ pageX, pageY }: MouseEvent): Point => ({
+  left: pageX,
+  top: pageY,
+});
+
 export const getBoundsWidth = (bounds: Bounds) => bounds.right - bounds.left;
 export const getBoundsHeight = (bounds: Bounds) => bounds.bottom - bounds.top;
 export const boundsToSize = ({ left, right, top, bottom }: Bounds): Size => ({

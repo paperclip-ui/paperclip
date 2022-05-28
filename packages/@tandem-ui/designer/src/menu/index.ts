@@ -4,6 +4,10 @@ import {
   SHORTCUT_C_KEY_DOWN,
   SHORTCUT_T_KEY_DOWN,
   SHORTCUT_DELETE_KEY_DOWN,
+  OPEN_PROJECT_BUTTON_CLICKED,
+  SHORTCUT_QUICK_SEARCH_KEY_DOWN,
+  SHORTCUT_SAVE_KEY_DOWN,
+  SHORTCUT_ESCAPE_KEY_DOWN,
 } from "../actions";
 import { MenuItems } from "./base";
 
@@ -17,6 +21,9 @@ TODO:
 
 */
 
+// const cmdKey = platform() === "win32" ? "ctrl" : "meta";
+const cmdKey = "meta";
+
 export const GLOBAL_MENU: MenuItems = [
   {
     label: "Edit",
@@ -26,6 +33,31 @@ export const GLOBAL_MENU: MenuItems = [
         label: "Delete",
         keyboardShortcut: "backspace",
         action: shortcutKeyDown(SHORTCUT_DELETE_KEY_DOWN),
+      },
+      {
+        label: "Escape",
+        keyboardShortcut: "escape",
+        action: shortcutKeyDown(SHORTCUT_ESCAPE_KEY_DOWN),
+      },
+    ],
+  },
+  {
+    label: "File",
+    children: [
+      {
+        label: "Save",
+        keyboardShortcut: `${cmdKey}+s`,
+        action: shortcutKeyDown(SHORTCUT_SAVE_KEY_DOWN),
+      },
+      {
+        label: "Search",
+        keyboardShortcut: `${cmdKey}+t`,
+        action: shortcutKeyDown(SHORTCUT_QUICK_SEARCH_KEY_DOWN),
+      },
+      {
+        label: "Open Project...",
+        keyboardShortcut: `${cmdKey}+o`,
+        action: shortcutKeyDown(OPEN_PROJECT_BUTTON_CLICKED),
       },
     ],
   },

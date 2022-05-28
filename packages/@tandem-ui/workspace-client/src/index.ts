@@ -5,12 +5,16 @@ import { DOMFactory } from "@paperclip-ui/web-renderer/lib/base";
 import {
   readFileChannel,
   readDirectoryChannel,
+  openUrlChannel,
+  writeFileChannel,
 } from "@tandem-ui/workspace-core";
 
 export class WorkspaceClient {
   private _editorClient: EditorClient;
   private _readFileChannel: ReturnType<typeof readFileChannel>;
   private _readDirectory: ReturnType<typeof readDirectoryChannel>;
+  private _openUrl: ReturnType<typeof openUrlChannel>;
+  private _writeFile: ReturnType<typeof writeFileChannel>;
 
   constructor(
     private _client: RPCClientAdapter,
@@ -20,6 +24,8 @@ export class WorkspaceClient {
     this._editorClient = new EditorClient(_client);
     this._readFileChannel = readFileChannel(_client);
     this._readDirectory = readDirectoryChannel(_client);
+    this._openUrl = openUrlChannel(_client);
+    this._writeFile = writeFileChannel(_client);
   }
   openProject = async (options: LoadOptions) => {
     return await Project.load(options, this._editorClient, this._client);
@@ -32,9 +38,18 @@ export class WorkspaceClient {
     );
     return result;
   };
+  writeFile = async (url: string, content: Buffer) => {
+    const result = await this._writeFile.call({ url, content });
+    return result;
+  };
 
   readDirectory = async (url: string) => {
     console.log(`WorkspaceClient.readDirectory(${url})`);
     return await this._readDirectory.call({ url });
+  };
+
+  openUrl = async (url: string) => {
+    console.log(`WorkspaceClient.openUrl(${url})`);
+    return await this._openUrl.call({ url });
   };
 }

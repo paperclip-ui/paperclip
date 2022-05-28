@@ -1,19 +1,65 @@
-import * as React from "react";
-import { BaseContextMenuProps } from "./view.pc";
+import React, { memo } from "react";
+import * as styles from "./view.pc";
 import { Point } from "tandem-common";
-import { ContextMenuOption } from "../../state";
+import {
+  ContextMenuGroup,
+  ContextMenuItem,
+  ContextMenuOption,
+  ContextMenuOptionType,
+} from "../../state";
+import { useDispatch } from "react-redux";
 
 export type Props = {
   anchor: Point;
   options: ContextMenuOption[];
-} & BaseContextMenuProps;
+} & styles.BaseContextMenuProps;
 
 export const ContextMenuContext = React.createContext({});
 
-export default (Base: React.ComponentClass<BaseContextMenuProps>) =>
-  class ContextMenuController extends React.PureComponent<Props> {
-    render() {
-      const { anchor, options, ...rest } = this.props;
-      return <Base style={anchor} {...rest} />;
-    }
+export default (Base: React.ComponentClass<styles.BaseContextMenuProps>) =>
+  ({ options, anchor, ...rest }: Props) => {
+    return (
+      <Base {...rest} style={{ left: anchor.left, top: anchor.top }}>
+        {options.map((option, i) => {
+          if (option.type === ContextMenuOptionType.GROUP) {
+            return <Group option={option} key={i} />;
+          }
+          return <Item option={option} key={i} />;
+        })}
+      </Base>
+    );
   };
+
+type GroupProps = {
+  option: ContextMenuGroup;
+};
+
+const Group = memo(({ option }: GroupProps) => {
+  return (
+    <>
+      {option.options.map((option) => (
+        <Item option={option} key={option.label} />
+      ))}
+    </>
+  );
+});
+
+type ItemProps = {
+  option: ContextMenuItem;
+};
+
+const Item = memo(({ option }: ItemProps) => {
+  const dispatch = useDispatch();
+  console.log(option);
+
+  const onClick = (event: React.MouseEvent<any>) => {
+    dispatch(option.action);
+  };
+
+  return (
+    <styles.ContextMenuItem
+      textProps={{ text: option.label }}
+      onClick={onClick}
+    />
+  );
+});

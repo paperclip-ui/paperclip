@@ -15,6 +15,7 @@ import globby from "globby";
 import { Directory, FSItem, FSItemTagNames } from "tandem-common";
 import { FSReadResult } from "fsbox/src/base";
 import * as mime from "mime-types";
+import execa from "execa";
 
 // TODO - this needs to be moved to project RPC
 export class RPC {
@@ -73,6 +74,8 @@ class Connection {
     channels.loadProjectInfoChannel(connection).listen(this._loadProjectInfo);
     channels.readDirectoryChannel(connection).listen(this._readDirectory);
     channels.readFileChannel(connection).listen(this._readFile);
+    channels.openUrlChannel(connection).listen(this._openUrl);
+    channels.writeFileChannel(connection).listen(this._writeFile);
     // channels.setBranchChannel(connection).listen(this._setBranch);
     // channels.editPCSourceChannel(connection).listen(this._editPCSource);
   }
@@ -81,8 +84,14 @@ class Connection {
     return this._workspace.getProjectById(this._projectId);
   }
 
+  private _writeFile = async ({ url, content }) => {
+    this._logger.info(`Connection.writeFile({url: ${url}})`);
+
+    await fsa.writeFile(URL.fileURLToPath(url), content);
+  };
+
   private _readDirectory = async ({ url }): Promise<FSItem[]> => {
-    console.log(`Connection.readDirectory(${JSON.stringify({ url })})`);
+    this._logger.info(`Connection.readDirectory(${JSON.stringify({ url })})`);
     return fsa.readdir(URL.fileURLToPath(url)).then((basenames) =>
       basenames.map((basename) => {
         const childUrl = url + "/" + basename;
@@ -99,12 +108,17 @@ class Connection {
   };
 
   private _readFile = async ({ url }): Promise<FSReadResult> => {
-    console.log(`Connection.readFile(${JSON.stringify({ url })})`);
+    this._logger.info(`Connection.readFile(${JSON.stringify({ url })})`);
     const filePath = URL.fileURLToPath(url);
     return {
       content: await fsa.readFile(filePath),
       mimeType: mime.lookup(filePath),
     };
+  };
+
+  private _openUrl = async ({ url }) => {
+    this._logger.info(`Connection.openUrl(${JSON.stringify({ url })})`);
+    await execa(`open`, [url]);
   };
 
   private _getAllPaperclipFiles = async ({ projectId }) => {

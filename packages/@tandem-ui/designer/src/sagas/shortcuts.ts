@@ -194,7 +194,10 @@ export const createShortcutSaga = ({
         item,
       }: FileItemRightClicked) {
         const state: RootState = yield select();
-        const targetNodeId = getCanvasMouseTargetNodeId(state, event);
+        const targetNodeId = getCanvasMouseTargetNodeId(state, {
+          left: event.pageX,
+          top: event.pageY,
+        });
         if (targetNodeId) {
           yield call(
             openCanvasSyntheticNodeContextMenu,

@@ -7,10 +7,6 @@ import {
   NEW_FILE_ADDED,
   CANVAS_TOOL_ARTBOARD_TITLE_CLICKED,
   CanvasToolOverlayMouseMoved,
-  PROJECT_DIRECTORY_LOADED,
-  ProjectDirectoryLoaded,
-  FILE_NAVIGATOR_ITEM_CLICKED,
-  FileNavigatorItemClicked,
   CANVAS_WHEEL,
   CANVAS_MOUSE_MOVED,
   CANVAS_MOUNTED,
@@ -36,7 +32,6 @@ import {
   OPEN_FILE_ITEM_CLOSE_CLICKED,
   OpenFilesItemClick,
   SAVED_FILE,
-  SavedFile,
   SAVED_ALL_FILES,
   RAW_CSS_TEXT_CHANGED,
   RawCSSTextChanged,
@@ -427,6 +422,7 @@ import {
   FILE_PROTOCOL,
   updateFSItemAlts,
   boundsToSize,
+  mouseEventToPoint,
 } from "tandem-common";
 import { clamp, last } from "lodash";
 import {
@@ -725,10 +721,6 @@ export const legacyReducer = (state: RootState, action: Action): RootState => {
         removeTemporaryOpenFiles(openFile(uri, false, false, state))
       );
       return state;
-    }
-    case SAVED_FILE: {
-      const { uri } = action as SavedFile;
-      return updateOpenFile({ newContent: null }, uri, state);
     }
     case SAVED_ALL_FILES: {
       return updateRootState(
@@ -1417,7 +1409,9 @@ export const canvasReducer = (state: RootState, action: Action) => {
         if (state.toolType != null) {
           targetInspectorNode = getCanvasMouseTargetInspectorNode(
             state,
-            action as CanvasToolOverlayMouseMoved,
+            mouseEventToPoint(
+              (action as CanvasToolOverlayMouseMoved).sourceEvent.nativeEvent
+            ),
             getInsertFilter(state)
           );
           state = setHoveringInspectorNodes(
@@ -1427,7 +1421,9 @@ export const canvasReducer = (state: RootState, action: Action) => {
         } else {
           targetNodeId = getCanvasMouseTargetNodeId(
             state,
-            (action as CanvasToolOverlayMouseMoved).sourceEvent
+            mouseEventToPoint(
+              (action as CanvasToolOverlayMouseMoved).sourceEvent.nativeEvent
+            )
           );
           state = setHoveringSyntheticVisibleNodeIds(
             state,
@@ -1481,7 +1477,9 @@ export const canvasReducer = (state: RootState, action: Action) => {
 
       const targetNodeId = getCanvasMouseTargetNodeId(
         state,
-        (action as CanvasToolOverlayMouseMoved).sourceEvent
+        mouseEventToPoint(
+          (action as CanvasToolOverlayMouseMoved).sourceEvent.nativeEvent
+        )
       );
 
       if (!targetNodeId) {
@@ -2259,7 +2257,9 @@ const handleCanvasMouseClicked = (
 
   const targetNodeId = getCanvasMouseTargetNodeId(
     state,
-    (action as CanvasToolOverlayMouseMoved).sourceEvent
+    mouseEventToPoint(
+      (action as CanvasToolOverlayMouseMoved).sourceEvent.nativeEvent
+    )
   );
 
   // meta key

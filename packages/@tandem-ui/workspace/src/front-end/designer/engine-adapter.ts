@@ -1,7 +1,6 @@
-import { FSItem, FSItemTagNames } from "tandem-common";
+import { FSItem } from "tandem-common";
 import { FrontEndEngineOptions } from "@tandem-ui/designer/lib/engines";
 import { ProjectInfo } from "@tandem-ui/designer/lib/state";
-import * as mime from "mime-types";
 import { setReaderMimetypes } from "fsbox";
 import { PAPERCLIP_MIME_TYPE } from "paperclip";
 import { WorkspaceClient } from "@tandem-ui/workspace-client";
@@ -39,17 +38,23 @@ export const createDesignerEngine = ({
 
   const readFile = setReaderMimetypes({
     [PAPERCLIP_MIME_TYPE]: [".pc"],
-  })(async (uri: string) => {
-    return wsClient.readFile(uri);
+  })(async (url: string) => {
+    return wsClient.readFile(url);
   });
 
-  const writeFile = async (uri: string, content: Buffer) => {
+  const writeFile = async (url: string, content: Buffer) => {
+    wsClient.writeFile(url, content);
     return true;
+  };
+
+  const openExternalFile = (url: string) => {
+    wsClient.openUrl(url);
   };
 
   return {
     readDirectory,
     deleteFile,
+    openExternalFile,
     loadProjectInfo,
     readFile,
     writeFile,

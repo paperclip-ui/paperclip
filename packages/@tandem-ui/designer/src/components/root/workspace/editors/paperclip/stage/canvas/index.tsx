@@ -181,7 +181,7 @@ export const CanvasComponent = memo(
       dispatch(canvasMouseDoubleClicked(event));
     };
     const onContextMenu = (event) => {
-      dispatch(canvasRightClicked(event));
+      dispatch(canvasRightClicked({ left: event.pageX, top: event.pageY }));
       event.preventDefault();
       event.stopPropagation();
     };

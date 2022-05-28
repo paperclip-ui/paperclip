@@ -86,7 +86,14 @@ import {
   CanvasDroppedItem,
 } from "../actions";
 import { uniq, values, clamp, last } from "lodash";
-import { FSSandboxRootState, queueOpenFile, hasFileCacheItem } from "fsbox";
+import {
+  FSSandboxRootState,
+  queueOpenFile,
+  hasFileCacheItem,
+  updateFileCacheItem,
+  isDirty,
+  getFSItem,
+} from "fsbox";
 import {
   refreshInspectorTree,
   InspectorTreeBaseNode,
@@ -94,7 +101,6 @@ import {
   InspectorNode,
   getInsertableInspectorNode,
 } from "paperclip";
-import { ContextMenuItem } from "../components/context-menu/view.pc";
 import { Action } from "redux";
 
 export enum ToolType {
@@ -297,6 +303,11 @@ export type Unloader = {
   completed: boolean;
 };
 
+export type ContextMenuOptions = {
+  anchor: Point;
+  options: ContextMenuOption[];
+};
+
 export type RootState = {
   editorWindows: EditorWindow[];
   openFiles: OpenFile[];
@@ -321,6 +332,7 @@ export type RootState = {
   customChrome: boolean;
   renameInspectorNodeId?: string;
   addNewFileInfo?: NewFSItemInfo;
+  contextMenu?: ContextMenuOptions;
 
   // TODO - may need to be moved to EditorWindow
   selectedVariant?: PCVariant;
@@ -380,7 +392,6 @@ export const INITIAL_STATE: RootState = {
 // TODO - change this to Editor
 export type OpenFile = {
   temporary: boolean;
-  newContent?: Buffer;
   uri: string;
   canvas: Canvas;
 };
@@ -411,7 +422,8 @@ export const persistRootState = (
   state = addHistory(oldGraph, state.graph, state);
 
   state = modifiedDeps.reduce(
-    (state, dep: Dependency<any>) => setOpenFileContent(dep, state),
+    (state, dep: Dependency<any>) =>
+      setOpenFileContent(dep.uri, JSON.stringify(dep.content, null, 2), state),
     state
   );
 
@@ -594,15 +606,17 @@ export const getSyntheticRelativesOfParentSource = memoize(
   }
 );
 
-const setOpenFileContent = (dep: Dependency<any>, state: RootState) =>
-  updateOpenFile(
+const setOpenFileContent = (uri: string, content: string, state: RootState) => {
+  state = updateOpenFile(
     {
       temporary: false,
-      newContent: new Buffer(JSON.stringify(dep.content, null, 2), "utf8"),
     },
-    dep.uri,
+    uri,
     state
   );
+  state = updateFileCacheItem({ content: Buffer.from(content) }, uri, state);
+  return state;
+};
 
 const addHistory = (
   oldGraph: DependencyGraph,
@@ -728,7 +742,7 @@ const moveDependencyRecordHistory = (
 };
 
 export const isUnsaved = (state: RootState) =>
-  state.openFiles.some((openFile) => Boolean(openFile.newContent));
+  state.openFiles.some((openFile) => isDirty(getFSItem(openFile.uri, state)));
 
 export const removeBuildScriptProcess = (state: RootState) => {
   state = {
@@ -759,24 +773,6 @@ export const redo = (root: RootState) => moveDependencyRecordHistory(1, root);
 export const getOpenFile = (uri: string, openFiles: OpenFile[]) =>
   openFiles.find((openFile) => openFile.uri === uri);
 
-export const getOpenFilesWithContent = (state: RootState) =>
-  state.openFiles.filter((openFile) => openFile.newContent);
-
-export const updateOpenFileContent = (
-  uri: string,
-  newContent: Buffer,
-  state: RootState
-) => {
-  return updateOpenFile(
-    {
-      temporary: false,
-      newContent,
-    },
-    uri,
-    state
-  );
-};
-
 export const updateProjectScripts = (
   scripts: Partial<ProjectScripts>,
   state: RootState
@@ -802,12 +798,9 @@ export const updateProjectScripts = (
 };
 
 const queueSaveProjectFile = (state: RootState) => {
-  state = updateOpenFile(
-    {
-      temporary: false,
-      newContent: new Buffer(JSON.stringify(state.projectInfo.config, null, 2)),
-    },
+  state = setOpenFileContent(
     state.projectInfo.path,
+    JSON.stringify(state.projectInfo.config, null, 2),
     state
   );
   return state;
@@ -1140,6 +1133,8 @@ export const closeFile = (uri: string, state: RootState): RootState => {
 
   return state;
 };
+
+export const getContextMenuOptions = (state: RootState) => state.contextMenu;
 
 export const setNextOpenFile = (state: RootState): RootState => {
   const hasOpenFile = state.openFiles.find((openFile) =>
@@ -1531,29 +1526,18 @@ export const getScaledMouseCanvasPosition = (
 
 export const getCanvasMouseTargetNodeId = (
   state: RootState,
-  event: React.MouseEvent<any>,
+  point: Point,
   filter?: (node: TreeNode<any>) => boolean
 ): string => {
-  return getCanvasMouseTargetNodeIdFromPoint(
-    state,
-    {
-      left: event.pageX,
-      top: event.pageY,
-    },
-    filter
-  );
+  return getCanvasMouseTargetNodeIdFromPoint(state, point, filter);
 };
 
 export const getCanvasMouseTargetInspectorNode = (
   state: RootState,
-  event: CanvasToolOverlayMouseMoved | CanvasToolOverlayClicked,
+  point: Point,
   filter?: (node: TreeNode<any>) => boolean
 ): InspectorNode => {
-  const syntheticNodeId = getCanvasMouseTargetNodeId(
-    state,
-    event.sourceEvent,
-    filter
-  );
+  const syntheticNodeId = getCanvasMouseTargetNodeId(state, point, filter);
   if (!syntheticNodeId) {
     return null;
   }

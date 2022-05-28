@@ -7,7 +7,7 @@ import {
   stripProtocol,
 } from "tandem-common";
 import { Action } from "redux";
-import { ProjectInfo, RootState } from "../state";
+import { getActiveEditorWindow, ProjectInfo, RootState } from "../state";
 import * as path from "path";
 import { Dispatch } from "react";
 import {
@@ -17,6 +17,8 @@ import {
   FILE_ITEM_CONTEXT_MENU_COPY_PATH_CLICKED,
   FILE_NAVIGATOR_ITEM_CLICKED,
   FILE_NAVIGATOR_TOGGLE_DIRECTORY_CLICKED,
+  OpenTextEditorButtonClicked,
+  OPEN_TEXT_EDITOR_BUTTON_CLICKED,
   projectDirectoryDirLoaded,
   projectInfoLoaded,
   PROJECT_INFO_LOADED,
@@ -27,10 +29,17 @@ export type ProjectEngineOptions = {
   readDirectory(path: string): Promise<FSItem[]>;
   deleteFile(path: string);
   loadProjectInfo(): Promise<ProjectInfo>;
+  openExternalFile(uri: string): void;
+  // saveFile(uri: string, content: Buffer): Promise<void>;
 };
 
 export const startProjectEngine =
-  ({ loadProjectInfo, readDirectory, deleteFile }: ProjectEngineOptions) =>
+  ({
+    loadProjectInfo,
+    readDirectory,
+    deleteFile,
+    openExternalFile,
+  }: ProjectEngineOptions) =>
   (dispatch: Dispatch<any>) => {
     const init = async () => {
       await dispatch(projectInfoLoaded(await loadProjectInfo()));
@@ -140,11 +149,21 @@ export const startProjectEngine =
 
     setTimeout(init);
 
+    const openInTextEditorHandler = (action: Action) => {
+      if (action.type !== OPEN_TEXT_EDITOR_BUTTON_CLICKED) {
+        return;
+      }
+      const { uri } = action as OpenTextEditorButtonClicked;
+
+      openExternalFile(uri);
+    };
+
     return (action: Action, state: RootState, prevState: RootState) => {
       projectLoadedHandler(action);
       projectinfoLoadedHandler(action, state, prevState);
       fileNavigatorClickHandler(action, state);
       activeFileUriHandler(state, prevState);
       fileItemContextMenuItemDeletedHandler(action);
+      openInTextEditorHandler(action);
     };
   };

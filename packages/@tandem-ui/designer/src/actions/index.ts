@@ -26,11 +26,8 @@ import {
   PCVariant,
   PCVariantTriggerSource,
   PCVariableType,
-  PCMediaQuery,
   PCQueryType,
-  PCMediaQueryCondition,
   PCQuery,
-  PCVariableQueryCondition,
 } from "paperclip";
 import {
   FrameMode,
@@ -302,6 +299,7 @@ export const VARIABLE_QUERY_SOURCE_VARIABLE_CHANGE =
   "VARIABLE_QUERY_SOURCE_VARIABLE_CHANGE";
 export const BREAD_CRUMB_CLICKED = "BREAD_CRUMB_CLICKED";
 export const BUILD_BUTTON_START_CLICKED = "BUILD_BUTTON_START_CLICKED";
+export const ROOT_CLICKED = "ROOT_CLICKED";
 export const BUILD_BUTTON_STOP_CLICKED = "BUILD_BUTTON_STOP_CLICKED";
 export const BUILD_BUTTON_OPEN_APP_CLICKED = "BUILD_BUTTON_OPEN_APP_CLICKED";
 export const BUILD_BUTTON_CONFIGURE_CLICKED = "BUILD_BUTTON_CONFIGURE_CLICKED";
@@ -694,10 +692,6 @@ export type RemoveComponentControllerButtonClicked = {
   relativePath: string;
 } & Action;
 
-export type SavedFile = {
-  uri: string;
-} & Action;
-
 export type ScriptProcessStarted = {
   process: ScriptProcess;
 } & Action;
@@ -737,7 +731,7 @@ export type FileItemRightClicked = {
 } & Action;
 
 export type CanvasRightClicked = {
-  event: React.MouseEvent<any>;
+  point: Point;
 } & Action;
 
 export type PCLayerRightClicked = {
@@ -894,6 +888,8 @@ export const fileItemContextMenuCopyPathClicked = publicActionCreator(
     type: FILE_ITEM_CONTEXT_MENU_COPY_PATH_CLICKED,
   })
 );
+
+export const rootClicked = () => ({ type: ROOT_CLICKED });
 
 export const variableQuerySourceVariableChange = (
   query: PCQuery,
@@ -1438,11 +1434,9 @@ export const fileItemRightClicked = (
   item,
 });
 
-export const canvasRightClicked = (
-  event: React.MouseEvent<any>
-): CanvasRightClicked => ({
+export const canvasRightClicked = (point: Point): CanvasRightClicked => ({
   type: CANVAS_RIGHT_CLICKED,
-  event,
+  point,
 });
 
 export const pcLayerRightClicked = (
@@ -1803,11 +1797,6 @@ export const documentRendered = (
   documentId,
   info,
   type: DOCUMENT_RENDERED,
-});
-
-export const savedFile = (uri: string): SavedFile => ({
-  uri,
-  type: SAVED_FILE,
 });
 
 export const savedAllFiles = (uri: string): SavedAllFiles => ({

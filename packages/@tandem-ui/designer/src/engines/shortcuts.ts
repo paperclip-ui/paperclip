@@ -10,7 +10,10 @@ export const startShortcutsEngine =
   (dispatch: Dispatch<Action>): EngineActionHandler<RootState> => {
     const bindMenuItem = (item: MenuItem) => {
       if (item.keyboardShortcut && item.action) {
-        Mousetrap.bind(item.keyboardShortcut, () => dispatch(item.action));
+        Mousetrap.bind(item.keyboardShortcut, () => {
+          dispatch(item.action);
+          return false;
+        });
       }
     };
 

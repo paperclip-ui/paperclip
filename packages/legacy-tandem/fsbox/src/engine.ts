@@ -9,12 +9,14 @@ import {
   fsSandboxItemLoading,
   fsSandboxItemSaved,
   fsSandboxItemSaving,
+  fsSandboxSaving,
 } from "./actions";
 import {
   FileCache,
   FileCacheItem,
   FileCacheItemStatus,
   FSSandboxRootState,
+  isDirty,
 } from "./state";
 
 export const startFSBoxEngine =
@@ -40,8 +42,6 @@ export const startFSBoxEngine =
     const handleUpdatedFile = async (item: FileCacheItem) => {
       if (item.status === FileCacheItemStatus.CREATED) {
         await loadFile(item.uri);
-      } else if (item.status === FileCacheItemStatus.SAVE_REQUESTED) {
-        await saveFile(item);
       }
     };
 
@@ -80,6 +80,24 @@ export const startFSBoxEngine =
       }
     };
 
+    const saveHandler = async (
+      state: FSSandboxRootState,
+      prevState: FSSandboxRootState
+    ) => {
+      if (!state.saving || prevState.saving) {
+        return;
+      }
+
+      dispatch(fsSandboxSaving());
+
+      for (const uri in state.fileCache) {
+        const item = state.fileCache[uri];
+        if (isDirty(item)) {
+          await saveFile(item);
+        }
+      }
+    };
+
     return (
       action: Action,
       state: FSSandboxRootState,
@@ -87,5 +105,6 @@ export const startFSBoxEngine =
     ) => {
       fileChangedHandler(action, state);
       fileUpdatedHandler(state, prevState);
+      saveHandler(state, prevState);
     };
   };

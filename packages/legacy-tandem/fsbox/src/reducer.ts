@@ -1,8 +1,10 @@
 import { Action } from "redux";
+import { produce } from "immer";
 import {
   FSSandboxRootState,
   updateFileCacheItem,
   FileCacheItemStatus,
+  getFSItem,
 } from "./state";
 import {
   FS_SANDBOX_ITEM_LOADING,
@@ -13,6 +15,7 @@ import {
   FS_SANDBOX_ITEM_SAVED,
   FsSandboxItemSaved,
   FsSandboxItemSaving,
+  FS_SANDBOX_SAVING,
 } from "./actions";
 
 export const fsSandboxReducer = <TState extends FSSandboxRootState>(
@@ -31,7 +34,12 @@ export const fsSandboxReducer = <TState extends FSSandboxRootState>(
     case FS_SANDBOX_ITEM_LOADED: {
       const { uri, content, mimeType } = action as FSSandboxItemLoaded;
       return updateFileCacheItem(
-        { status: FileCacheItemStatus.LOADED, content, mimeType },
+        {
+          status: FileCacheItemStatus.LOADED,
+          content,
+          sourceContent: content,
+          mimeType,
+        },
         uri,
         state
       );
@@ -44,10 +52,17 @@ export const fsSandboxReducer = <TState extends FSSandboxRootState>(
         state
       );
     }
+    case FS_SANDBOX_SAVING: {
+      console.log("SAVE");
+      return produce(state, (newState) => {
+        newState.saving = false;
+      });
+    }
     case FS_SANDBOX_ITEM_SAVED: {
       const { uri } = action as FsSandboxItemSaved;
+      const item = getFSItem(uri, state);
       return updateFileCacheItem(
-        { status: FileCacheItemStatus.LOADED, dirty: false },
+        { status: FileCacheItemStatus.LOADED, sourceContent: item.content },
         uri,
         state
       );

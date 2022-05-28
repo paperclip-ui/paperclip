@@ -5,6 +5,7 @@ import { ProjectInfo } from "../../state";
 import * as mime from "mime-types";
 import { setReaderMimetypes } from "fsbox";
 import { PAPERCLIP_MIME_TYPE } from "paperclip";
+import { noop } from "lodash";
 
 export type MockEngineOptions = {
   files: Record<string, string>;
@@ -60,6 +61,7 @@ export const createMockEngineOptions = ({
   return {
     readDirectory,
     deleteFile,
+    openExternalFile: noop,
     loadProjectInfo,
     readFile,
     writeFile,

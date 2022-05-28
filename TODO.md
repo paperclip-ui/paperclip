@@ -1,8 +1,9 @@
 IMMEDIATE:
 
-- get designer project to load
-
 - context menu
+  - UI in reducer
+- ability to save files
+- quick search files
 - shortcuts
 - serializer
 - update rendering engine to use native

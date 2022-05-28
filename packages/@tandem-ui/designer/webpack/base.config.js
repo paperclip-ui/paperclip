@@ -23,6 +23,7 @@ module.exports = (createConfig) =>
       fallback: {
         stream: "stream-browserify",
         path: "path-browserify",
+        os: "os-browserify/browser",
         buffer: "buffer",
         util: "util",
       },

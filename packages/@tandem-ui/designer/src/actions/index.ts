@@ -725,7 +725,7 @@ export type FrameBoundsChanged = {
 } & Action;
 
 export type FileItemRightClicked = {
-  event: React.MouseEvent<any>;
+  point: Point;
   type: string;
   item: FSItem;
 } & Action;
@@ -1427,10 +1427,10 @@ export const removeVariantTriggerButtonClicked = (
 
 export const fileItemRightClicked = (
   item: FSItem,
-  event: React.MouseEvent<any>
+  point: Point
 ): FileItemRightClicked => ({
   type: FILE_ITEM_RIGHT_CLICKED,
-  event,
+  point,
   item,
 });
 

@@ -8,20 +8,17 @@ import {
   Directory,
   memoize,
   FSItemTagNames,
-  getNestedTreeNodeById,
   FSItem,
-  getParentTreeNode,
   EMPTY_ARRAY,
-  getFileFromUri,
 } from "tandem-common";
 import { Dispatch } from "redux";
 import { FileNavigatorContext, FileNavigatorContextProps } from "./contexts";
 import {
   fileNavigatorNewFileEntered,
   fileNavigatorNewFileClicked,
-} from "../../../../../actions";
-import { DropdownMenuOption } from "../../../../inputs/dropdown/controller";
-import { AddFileType, NewFSItemInfo } from "../../../../../state";
+} from "@tandem-ui/designer/src/actions";
+import { DropdownMenuOption } from "@tandem-ui/designer/src/components/inputs/dropdown/controller";
+import { AddFileType, NewFSItemInfo } from "@tandem-ui/designer/src/state";
 export type Props = {
   newFSItemInfo: NewFSItemInfo;
   activeEditorUri: string;

@@ -17,6 +17,15 @@ import { Action } from "redux";
 import {
   CanvasRightClicked,
   CANVAS_RIGHT_CLICKED,
+  fileItemContextMenuCopyPathClicked,
+  fileItemContextMenuCreateBlankFileClicked,
+  fileItemContextMenuCreateComponentFileClicked,
+  fileItemContextMenuCreateDirectoryClicked,
+  fileItemContextMenuDeleteClicked,
+  fileItemContextMenuOpenClicked,
+  fileItemContextMenuRenameClicked,
+  FileItemRightClicked,
+  FILE_ITEM_RIGHT_CLICKED,
   inspectorNodeContextMenuConvertTextStylesToMixinClicked,
   inspectorNodeContextMenuConvertToComponentClicked,
   inspectorNodeContextMenuConvertToStyleMixinClicked,
@@ -40,7 +49,7 @@ import {
   RootState,
 } from "../../state";
 import { produce } from "immer";
-import { Point } from "tandem-common";
+import { FSItemTagNames, Point } from "tandem-common";
 
 export const contextMenuReducer = (
   state: RootState,
@@ -78,6 +87,72 @@ export const contextMenuReducer = (
       state = openNodeContextMenu(inspectorNode, point, state);
 
       return state;
+    }
+    case FILE_ITEM_RIGHT_CLICKED: {
+      const { item, point: anchor } = action as FileItemRightClicked;
+      return produce(state, (newState) => {
+        newState.contextMenu = {
+          anchor,
+          options: [
+            {
+              type: ContextMenuOptionType.GROUP,
+              options: [
+                {
+                  type: ContextMenuOptionType.ITEM,
+                  label: "Copy Path",
+                  action: fileItemContextMenuCopyPathClicked(item),
+                },
+                {
+                  type: ContextMenuOptionType.ITEM,
+                  label:
+                    item.name === FSItemTagNames.DIRECTORY
+                      ? "Open in Finder"
+                      : "Open in Text Editor",
+                  action: fileItemContextMenuOpenClicked(item),
+                },
+              ] as ContextMenuItem[],
+            },
+            {
+              type: ContextMenuOptionType.GROUP,
+              options: [
+                {
+                  type: ContextMenuOptionType.ITEM,
+                  label: "Rename",
+                  action: fileItemContextMenuRenameClicked(item),
+                },
+                {
+                  type: ContextMenuOptionType.ITEM,
+                  label: "Delete",
+                  action: fileItemContextMenuDeleteClicked(item),
+                },
+              ],
+            },
+            item.name === FSItemTagNames.DIRECTORY
+              ? {
+                  type: ContextMenuOptionType.GROUP,
+                  options: [
+                    {
+                      type: ContextMenuOptionType.ITEM,
+                      label: "Create Directory",
+                      action: fileItemContextMenuCreateDirectoryClicked(item),
+                    },
+                    {
+                      type: ContextMenuOptionType.ITEM,
+                      label: "Create Blank File",
+                      action: fileItemContextMenuCreateBlankFileClicked(item),
+                    },
+                    {
+                      type: ContextMenuOptionType.ITEM,
+                      label: "Create Component File",
+                      action:
+                        fileItemContextMenuCreateComponentFileClicked(item),
+                    },
+                  ],
+                }
+              : null,
+          ].filter(Boolean) as ContextMenuOption[],
+        };
+      });
     }
   }
   return state;

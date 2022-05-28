@@ -14,6 +14,7 @@ import {
   FSItemTagNames,
   Directory,
   TreeMoveOffset,
+  mouseEventToPoint,
 } from "tandem-common";
 import { Dispatch } from "redux";
 import {
@@ -143,7 +144,13 @@ export default (Base: React.ComponentClass<BaseFileNavigatorLayerProps>) => {
           this.props.dispatch(fileNavigatorItemClicked(this.props.item));
         };
         onContextMenu = (event: React.MouseEvent<any>) => {
-          this.props.dispatch(fileItemRightClicked(this.props.item, event));
+          event.preventDefault();
+          this.props.dispatch(
+            fileItemRightClicked(
+              this.props.item,
+              mouseEventToPoint(event.nativeEvent)
+            )
+          );
         };
         onDoubleClick = () => {
           this.props.dispatch(fileNavigatorItemDoubleClicked(this.props.item));

@@ -1,5 +1,7 @@
 IMMEDIATE:
 
+- fix right click canvas
+- quick search
 - context menu
   - UI in reducer
 - ability to save files

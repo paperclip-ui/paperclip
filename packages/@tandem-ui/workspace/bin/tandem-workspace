@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const yargs = require("yargs");
-const { start } = require("../lib/server");
+const { start } = require("../lib/server.js");
 const execa = require("execa");
 
 yargs.command(

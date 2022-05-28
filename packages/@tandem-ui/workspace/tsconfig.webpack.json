@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "outDir": "./lib",
-    "target": "ESNext",
-    "moduleResolution": "Node",
+    "target": "es6",
+    "moduleResolution": "NodeNext",
     "declaration": true,
-    "module": "commonjs",
+    "module": "esnext",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "jsx": "react",

@@ -53,5 +53,6 @@ const { element } = init({
 
 const mount = document.createElement("div");
 mount.appendChild(element);
+document.querySelector(".loader-container").remove();
 
 document.body.appendChild(mount);

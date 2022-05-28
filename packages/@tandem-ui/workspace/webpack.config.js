@@ -40,18 +40,25 @@ module.exports = {
       {
         test: /\.tsx?$/,
         loader: "ts-loader",
-
-        // performance
-        options: { transpileOnly: true },
+        options: {
+          transpileOnly: true,
+          configFile: require.resolve("./tsconfig.webpack.json"),
+        },
       },
     ],
   },
   plugins: [
-    // new CopyPlugin({
-    //   patterns: [
-    //     // { from: path.join(path.dirname(require.resolve("@tandem-ui/designer")), "lib"), to: path.join(__dirname, "lib", "front-end") }
-    //   ]
-    // }),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.join(
+            path.dirname(require.resolve("@tandem-ui/designer")),
+            "lib"
+          ),
+          to: path.join(__dirname, "lib", "front-end"),
+        },
+      ],
+    }),
     new webpack.ProvidePlugin({
       process: "process/browser",
       Buffer: ["buffer", "Buffer"],

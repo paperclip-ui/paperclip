@@ -43,6 +43,7 @@ const { element } = init({
       }),
     },
     projectInfo: {
+      pcUrls: [],
       config: {
         exclude: [],
       },

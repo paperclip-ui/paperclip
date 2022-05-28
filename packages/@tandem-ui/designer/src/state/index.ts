@@ -128,6 +128,7 @@ export type ProjectConfig = {
 
 export type ProjectInfo = {
   config: ProjectConfig;
+  pcUrls: string[];
 
   // TODO: change to url
   path: string;

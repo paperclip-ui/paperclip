@@ -10,6 +10,7 @@ import * as crypto from "crypto";
 import { Repository } from "./git";
 import { ProjectInfo } from "@tandem-ui/designer";
 import { ProjectConfig } from "@tandem-ui/designer/lib/state";
+import { findPaperclipSourceFiles } from "paperclip";
 
 const DEFAULT_PROJECT_FILE_NAME = "app.tdproject";
 
@@ -44,7 +45,11 @@ export class Project {
     const config: ProjectConfig = JSON.parse(
       await fsa.readFile(filePath, "utf8")
     );
-    return { path: filePath, config };
+    const pcUrls = findPaperclipSourceFiles(config, path.dirname(filePath)).map(
+      (filePath) => URL.pathToFileURL(filePath)
+    );
+
+    return { path: filePath, config, pcUrls };
   }
 
   /**

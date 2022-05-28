@@ -15,7 +15,6 @@ import {
   FileItemContextMenuAction,
   FileNavigatorItemClicked,
   FILE_ITEM_CONTEXT_MENU_COPY_PATH_CLICKED,
-  FILE_ITEM_RIGHT_CLICKED,
   FILE_NAVIGATOR_ITEM_CLICKED,
   FILE_NAVIGATOR_TOGGLE_DIRECTORY_CLICKED,
   projectDirectoryDirLoaded,

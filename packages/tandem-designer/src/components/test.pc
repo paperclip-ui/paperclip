@@ -1,7 +1,0 @@
-{
-  "id": "402e38993",
-  "version": "0.0.5",
-  "metadata": {},
-  "name": "module",
-  "children": []
-}

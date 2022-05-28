@@ -10,7 +10,6 @@ import { Project } from "@tandem-ui/workspace-client/lib/project";
 
 export type DesignerEngineOptions = {
   files: Record<string, string>;
-  projectInfo: ProjectInfo;
   projectId: string;
 };
 

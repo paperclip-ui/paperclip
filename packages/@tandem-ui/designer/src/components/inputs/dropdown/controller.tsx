@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import cx from "classnames";
 import { DropdownMenuItem } from "./menu.pc";
 import { EMPTY_ARRAY, memoize } from "tandem-common";
@@ -43,43 +43,34 @@ type DropdownState = {
   filter: string;
 };
 
-export default (Base: React.ComponentClass<BaseDropdownProps>) => {
-  return class DropdownController extends React.PureComponent<
-    Props,
-    DropdownState
-  > {
-    constructor(props) {
-      super(props);
-      this.state = {
-        open: false,
-        filter: null,
-      };
-    }
-    onMouseDown = (event) => {
-      // only open if _not_ opened yet. The popover will call onShouldClose if already open
-      // since the button is technically out of the popover scope.
-      if (!this.state.open) {
-        this.setState({ ...this.state, open: true });
-      }
+export default (Base: React.ComponentClass<BaseDropdownProps>) =>
+  ({
+    value,
+    options = EMPTY_ARRAY,
+    filterable,
+    onMouseDown: onMouseDown2,
+    onChange,
+    onChangeComplete,
+    ...rest
+  }: Props) => {
+    const [open, setOpen] = useState(false);
+    const [filter, setFilter] = useState<string | null>(null);
 
-      if (this.props.onMouseDown) {
-        this.props.onMouseDown(event);
+    const onMouseDown = (event) => {
+      if (!open) {
+        setOpen(true);
+      }
+      if (onMouseDown2) {
+        onMouseDown2(event);
       }
     };
-    onFilterChange = (value) => {
-      this.setState({
-        ...this.state,
-        filter: value ? String(value).toLowerCase() : null,
-      });
+
+    const onFilterChange = (value) => {
+      setFilter(value ? String(value).toLowerCase() : null);
     };
-    componentWillUpdate(props) {
-      if (this.props.value !== props.value && this.state.filter) {
-        this.setState({ ...this.state, filter: null, open: false });
-      }
-    }
-    onItemClick = (item, event) => {
-      const { onChange, onChangeComplete } = this.props;
-      this.setState({ ...this.state, open: false });
+
+    const onItemClick = (item, event) => {
+      setOpen(false);
       if (onChange) {
         onChange(item.value);
       }
@@ -87,84 +78,75 @@ export default (Base: React.ComponentClass<BaseDropdownProps>) => {
         onChangeComplete(item.value);
       }
     };
-    onKeyDown = (event) => {
+    const onKeyDown = (event) => {
       if (event.key === "Enter") {
-        this.setState({ ...this.state, open: true });
+        setOpen(true);
       }
     };
-    onShouldClose = () => {
-      this.setState({ ...this.state, open: false });
+    const onShouldClose = () => {
+      setOpen(false);
     };
 
-    render() {
-      const {
-        value,
-        options = EMPTY_ARRAY,
-        filterable,
-        onMouseDown,
-        onChange,
-        onChangeComplete,
-        ...rest
-      } = this.props;
-      const { open, filter } = this.state;
+    useEffect(() => {
+      setFilter(filter);
+      setOpen(false);
+    }, [value]);
 
-      const menuItems = open
-        ? options
-            .filter(
-              ({ label }) =>
-                !filter || String(label).toLowerCase().indexOf(filter) !== -1
-            )
-            .map((item, i) => {
-              return (
-                <DropdownMenuItem
-                  key={i}
-                  variant={cx({
-                    alt: Boolean(i % 2),
-                    special: item.special,
-                  })}
-                  onClick={(event) => this.onItemClick(item, event)}
-                >
-                  {item.label}
-                </DropdownMenuItem>
-              );
-            })
-        : EMPTY_ARRAY;
+    const menuItems = open
+      ? options
+          .filter(
+            ({ label }) =>
+              !filter || String(label).toLowerCase().indexOf(filter) !== -1
+          )
+          .map((item, i) => {
+            return (
+              <DropdownMenuItem
+                key={i}
+                variant={cx({
+                  alt: Boolean(i % 2),
+                  special: item.special,
+                })}
+                onClick={(event) => onItemClick(item, event)}
+              >
+                {item.label}
+              </DropdownMenuItem>
+            );
+          })
+      : EMPTY_ARRAY;
 
-      const selectedItem: DropdownMenuOption = options.find(
-        (item) => item.value === value
-      );
-      const showFilter = open && filterable !== false;
+    const selectedItem: DropdownMenuOption = options.find(
+      (item) => item.value === value
+    );
+    const showFilter = open && filterable !== false;
 
-      return (
-        <Base
-          {...rest}
-          variant={cx({
-            special: selectedItem && selectedItem.special,
-          })}
-          popoverProps={{
-            open,
-            onShouldClose: this.onShouldClose,
-          }}
-          filterInputProps={{
-            style: {
-              display: showFilter ? "block" : "none",
-            } as any,
-            value: selectedItem && selectedItem.label,
-            focus: showFilter,
-            onChange: this.onFilterChange,
-          }}
-          tabIndex={0}
-          onKeyDown={this.onKeyDown}
-          options={menuItems}
-          labelProps={{
-            style: {
-              display: showFilter ? "none" : "block",
-            },
-            text: (selectedItem && selectedItem.label) || "--",
-          }}
-          onMouseDown={this.onMouseDown}
-        />
-      );
-    }
+    return (
+      <Base
+        {...rest}
+        variant={cx({
+          special: selectedItem && selectedItem.special,
+        })}
+        popoverProps={{
+          open,
+          onShouldClose,
+        }}
+        filterInputProps={{
+          style: {
+            display: showFilter ? "block" : "none",
+          } as any,
+          value: selectedItem && selectedItem.label,
+          focus: showFilter,
+          onChange: onFilterChange,
+        }}
+        tabIndex={0}
+        onKeyDown={onKeyDown}
+        options={menuItems}
+        labelProps={{
+          style: {
+            display: showFilter ? "none" : "block",
+          },
+          text: (selectedItem && selectedItem.label) || "--",
+        }}
+        onMouseDown={onMouseDown}
+      />
+    );
   };
-};

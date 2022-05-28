@@ -1,33 +1,46 @@
 #!/usr/bin/env node
 const yargs = require("yargs");
-const { start } = require("../lib/server.js");
+const { start, Server } = require("../lib/server.js");
 const execa = require("execa");
 
 yargs.command(
-  "start [project]",
+  "start [project-source]",
   `start workspace`,
   (yargs) => {
     return yargs
-      .option("port", {
-        // default: 8080,
-      })
+      .option("port")
       .option("open")
       .option("autoSave")
       .option("branch");
   },
-  ({ project, port, open, autoSave, branch }) => {
+  ({ projectSource, port, open, autoSave, branch }) => {
+    let _server;
+
     start({
       cwd: process.cwd(),
       autoSave,
-      project,
       branch,
       http: {
         port: port,
       },
-    }).then((server) => {
-      if (open) {
-        execa(`open`, [`http://localhost:${server.getPort()}`]);
-      }
-    });
+      project: {
+        installDependencies: false,
+      },
+    })
+      .then((server) => {
+        _server = server;
+        if (projectSource) {
+          return server.getWorkspace().start(projectSource);
+        }
+      })
+      .then((project) => {
+        if (open && project) {
+          if (open) {
+            execa(`open`, [
+              `http://localhost:${_server.getPort()}?projectId=${project.getId()}`,
+            ]);
+          }
+        }
+      });
   }
 ).argv;

@@ -2,7 +2,6 @@ import { RPCClientAdapter } from "@paperclip-ui/common";
 import { VirtNodeSource } from "@paperclip-ui/utils";
 import {
   inspectNodeStyleChannel,
-  // loadInsertableNodesChannel,
   revealNodeSourceByIdChannel,
   revealNodeSourceChannel,
 } from "@tandem-ui/workspace-core";

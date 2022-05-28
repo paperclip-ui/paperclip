@@ -4,17 +4,34 @@ import { ProjectInfo } from "@tandem-ui/designer/lib/state";
 import * as mime from "mime-types";
 import { setReaderMimetypes } from "fsbox";
 import { PAPERCLIP_MIME_TYPE } from "paperclip";
+import { WorkspaceClient } from "@tandem-ui/workspace-client";
+import { workerRPCClientAdapter, wsAdapter } from "@paperclip-ui/common";
 
-export type MockEngineOptions = {
+export type DesignerEngineOptions = {
   files: Record<string, string>;
   projectInfo: ProjectInfo;
+  projectId: string;
 };
 
+const createDefaultRPCClient = () =>
+  wsAdapter(() => new WebSocket("ws://" + location.host + "/ws"));
+
 // TODO - move this to an isolated file
-export const createMockEngineOptions = ({
+export const createDesignerEngine = ({
   files,
   projectInfo,
-}: MockEngineOptions): FrontEndEngineOptions => {
+  projectId,
+}: DesignerEngineOptions): FrontEndEngineOptions => {
+  const wsClient = new WorkspaceClient(createDefaultRPCClient());
+
+  wsClient
+    .openProject({
+      id: projectId,
+    })
+    .then((project) => {
+      console.log(project);
+    });
+
   const readDirectory = async (dir: string): Promise<FSItem[]> => {
     const dirTester = new RegExp(`^${dir}`);
 

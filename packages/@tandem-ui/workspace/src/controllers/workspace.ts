@@ -4,6 +4,7 @@ import { SSHKeys } from "./ssh";
 import { Options } from "../core/options";
 import { getProjectId, Project } from "./project";
 import { Logger, RPCServer } from "@paperclip-ui/common";
+import { Server } from "../server";
 
 export class Workspace {
   private _projects: Record<string, Project> = {};

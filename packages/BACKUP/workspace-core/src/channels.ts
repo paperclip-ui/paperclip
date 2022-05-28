@@ -88,3 +88,8 @@ export const getAllPaperclipFilesChannel = remoteChannel<
   { projectId: string },
   string[]
 >("getAllPaperclipFilesChannel");
+
+export const readFileChannel = remoteChannel<
+  { uri: string },
+  { content: Buffer; mimeType: string }
+>("readFileChannel");

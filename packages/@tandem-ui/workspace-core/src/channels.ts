@@ -6,6 +6,8 @@ import {
   LoadedData,
 } from "@paperclip-ui/utils";
 import { Directory, WorkspaceState } from "./state";
+import { FSItem } from "tandem-common";
+import { FSReadResult } from "fsbox/src/base";
 import { VirtualNodeSourceInfo } from "@paperclip-ui/core/src/core/delegate";
 import { AvailableNode } from "@paperclip-ui/language-service";
 
@@ -79,3 +81,10 @@ export const getAllPaperclipFilesChannel = remoteChannel<
   { projectId: string },
   string[]
 >("getAllPaperclipFilesChannel");
+
+export const readFileChannel = remoteChannel<{ uri: string }, FSReadResult>(
+  "readFileChannel"
+);
+export const readDirectoryChannel = remoteChannel<{ uri: string }, FSItem>(
+  "readDirectoryChannel"
+);

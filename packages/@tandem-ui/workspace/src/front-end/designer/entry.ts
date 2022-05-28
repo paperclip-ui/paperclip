@@ -1,9 +1,12 @@
-import { createMockEngineOptions } from "./engine-adapter";
+import { createDesignerEngine } from "./engine-adapter";
 import { init } from "@tandem-ui/designer";
+
+const qs = new URLSearchParams(location.search);
 
 const { element } = init({
   document,
-  engineOptions: createMockEngineOptions({
+  engineOptions: createDesignerEngine({
+    projectId: qs.get("projectId"),
     files: {
       "file:///hello.pc": JSON.stringify({
         id: "ee973a824",
@@ -53,5 +56,6 @@ const { element } = init({
 
 const mount = document.createElement("div");
 mount.appendChild(element);
+document.querySelector(".loader-container").remove();
 
 document.body.appendChild(mount);

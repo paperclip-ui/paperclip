@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "./lib",
     "target": "es6",
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "node",
     "declaration": true,
     "module": "esnext",
     "allowSyntheticDefaultImports": true,

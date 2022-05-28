@@ -11,7 +11,8 @@ module.exports = {
     index: path.join(__dirname, "src", "front-end", "designer", "entry.ts"),
   },
   resolve: {
-    extensions: [".js", ".ts", ".tsx", ".json"],
+    extensions: [".js", ".ts", ".tsx", ".json", ".mjs"],
+    fullySpecified: false,
     alias: {
       cluster: false,
       net: false,
@@ -43,6 +44,12 @@ module.exports = {
         options: {
           transpileOnly: true,
           configFile: require.resolve("./tsconfig.webpack.json"),
+        },
+      },
+      {
+        test: /\.m?js/,
+        resolve: {
+          fullySpecified: false,
         },
       },
     ],

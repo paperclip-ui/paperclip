@@ -224,7 +224,6 @@ import {
   updateOpenFile,
   deselectRootProjectFiles,
   setHoveringSyntheticVisibleNodeIds,
-  setSelectedFileNodeIds,
   undo,
   redo,
   getEditorWithActiveFileUri,

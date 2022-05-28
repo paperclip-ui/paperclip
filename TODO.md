@@ -1,9 +1,8 @@
 IMMEDIATE:
 
+- fix dropdown
 - ability to rename file
 - convert shortcuts saga
-- quick search
-- quick search files
 - shortcuts
 - serializer
 - update rendering engine to use native

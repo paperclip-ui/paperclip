@@ -23,6 +23,8 @@ import {
   updateEditorWindow,
   confirm,
   ConfirmType,
+  isFileNodeSelected,
+  isFileNodeExpanded,
 } from "../../state";
 import {
   isDirectory,
@@ -51,8 +53,14 @@ export const fileNavigatorReducer = (
     case FILE_NAVIGATOR_ITEM_CLICKED: {
       const { node } = action as FileNavigatorItemClicked;
       const uri = node.uri;
+      state = setFileExpanded(
+        node,
+        isFileNodeSelected(node, state)
+          ? !isFileNodeExpanded(node, state)
+          : true,
+        state
+      );
       state = setSelectedFileNodeIds(state, node.id);
-      state = setFileExpanded(node, true, state);
 
       if (!isDirectory(node)) {
         state = openFile(uri, true, false, state);

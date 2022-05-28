@@ -1877,10 +1877,10 @@ export const setSelectedFileNodeIds = (
   ...selectionIds: string[]
 ) => {
   const nodeIds = uniq([...selectionIds]);
-  root = nodeIds.reduce(
-    (state, nodeId) => setRootStateFileNodeExpanded(nodeId, true, root),
-    root
-  );
+  // root = nodeIds.reduce(
+  //   (state, nodeId) => setRootStateFileNodeExpanded(nodeId, true, root),
+  //   root
+  // );
 
   root = updateRootState(
     {
@@ -1889,6 +1889,14 @@ export const setSelectedFileNodeIds = (
     root
   );
   return root;
+};
+
+export const isFileNodeSelected = (node: FSItem, root: RootState) => {
+  return root.selectedFileNodeIds.includes(node.id);
+};
+
+export const isFileNodeExpanded = (node: FSItem, root: RootState) => {
+  return node.expanded;
 };
 
 export const setHoveringSyntheticVisibleNodeIds = (

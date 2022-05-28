@@ -26,7 +26,11 @@ export class WorkspaceClient {
   };
 
   readFile = async (url: string) => {
-    return await this._readFileChannel.call({ url });
+    const result = await this._readFileChannel.call({ url });
+    console.log(
+      `WorkspaceClient.readFile({${url}}): {content: ..., mimeType: ${result.mimeType}}`
+    );
+    return result;
   };
 
   readDirectory = async (url: string) => {

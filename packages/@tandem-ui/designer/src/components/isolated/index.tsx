@@ -135,21 +135,10 @@ export const Isolate = ({
     }
   }, [scrollPosition, loaded, iframe?.contentWindow]);
 
-  useEffect(() => {
-    if (!mountElement) {
-      return;
-    }
-
-    ReactDOM.render(
-      <ReduxProvider store={store}>{children}</ReduxProvider>,
-      mountElement
-    );
-  }, [mountElement, store, children]);
-
   return (
     <Consumer>
       {({ dragDropManager }) => {
-        return (
+        return [
           <Inner
             ref={setIframe}
             dragDropManager={dragDropManager}
@@ -161,8 +150,9 @@ export const Isolate = ({
             onLoad={onLoad}
             className={className}
             style={style}
-          />
-        );
+          />,
+          mountElement && ReactDOM.createPortal(children, mountElement),
+        ];
       }}
     </Consumer>
   );

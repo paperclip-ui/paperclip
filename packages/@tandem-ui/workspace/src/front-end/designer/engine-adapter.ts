@@ -19,8 +19,6 @@ const createDefaultRPCClient = () =>
 
 // TODO - move this to an isolated file
 export const createDesignerEngine = ({
-  files,
-  projectInfo,
   projectId,
 }: DesignerEngineOptions): FrontEndEngineOptions => {
   const wsClient = new WorkspaceClient(createDefaultRPCClient());
@@ -37,17 +35,14 @@ export const createDesignerEngine = ({
 
   const loadProjectInfo = async (): Promise<ProjectInfo> => {
     const info = await getProject().then((project) => project.getInfo());
-    console.log(info);
     return info;
   };
 
   const readFile = setReaderMimetypes({
     [PAPERCLIP_MIME_TYPE]: [".pc"],
   })(async (uri: string) => {
-    return {
-      content: Buffer.from(files[uri], "utf8"),
-      mimeType: mime.lookup(uri) || null,
-    };
+    console.log("READ", uri);
+    return wsClient.readFile(uri);
   });
 
   const writeFile = async (uri: string, content: Buffer) => {

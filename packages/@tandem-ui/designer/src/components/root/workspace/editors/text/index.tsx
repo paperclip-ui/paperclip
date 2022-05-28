@@ -23,7 +23,8 @@ export class TextEditorWindow extends React.PureComponent<TextEditorProps> {
       <div
         dangerouslySetInnerHTML={{
           __html:
-            fileCacheItem && formatText(fileCacheItem.content.toString("utf8")),
+            fileCacheItem &&
+            formatText(new TextDecoder("utf-8").decode(fileCacheItem.content)),
         }}
       />
     );

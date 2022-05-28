@@ -10,8 +10,11 @@ export const fixesEngine = (
   // prevent page zooming when zooming into the canvas
   document.addEventListener(
     "wheel",
-    (event) => {
-      event.preventDefault();
+    (event: WheelEvent) => {
+      // zooming?
+      if (event.metaKey) {
+        event.preventDefault();
+      }
     },
     { passive: false }
   );

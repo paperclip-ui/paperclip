@@ -2850,7 +2850,7 @@ const handleLoadedDroppedItem = (
         }
       );
       if (isSvgUri(item.uri)) {
-        const source = content.toString("utf8");
+        const source = new TextDecoder("utf-8").decode(content);
         sourceNode = xmlToPCNode(source);
       }
     } else if (isJavaScriptFile(item.uri)) {

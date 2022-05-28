@@ -786,8 +786,8 @@ __metadata:
     fs-extra: ^10.0.0
     get-port: ^5.1.1
     globby: 11
+    mime-types: ^2.1.35
     mocha: ^9.2.0
-    mocka: ^0.0.1
     nodemon: ^2.0.12
     sockjs: ^0.3.21
     webpack: ^5.72.1
@@ -8664,7 +8664,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mime-types@npm:^2.1.12, mime-types@npm:^2.1.20, mime-types@npm:^2.1.27, mime-types@npm:^2.1.31, mime-types@npm:^2.1.32, mime-types@npm:~2.1.17, mime-types@npm:~2.1.19, mime-types@npm:~2.1.24, mime-types@npm:~2.1.34":
+"mime-types@npm:^2.1.12, mime-types@npm:^2.1.20, mime-types@npm:^2.1.27, mime-types@npm:^2.1.31, mime-types@npm:^2.1.32, mime-types@npm:^2.1.35, mime-types@npm:~2.1.17, mime-types@npm:~2.1.19, mime-types@npm:~2.1.24, mime-types@npm:~2.1.34":
   version: 2.1.35
   resolution: "mime-types@npm:2.1.35"
   dependencies:
@@ -9097,13 +9097,6 @@ __metadata:
     _mocha: bin/_mocha
     mocha: bin/mocha
   checksum: 4d5ca4ce33fc66627e63acdf09a634e2358c9a00f61de7788b1091b6aad430da04f97f9ecb82d56dc034b623cb833b65576136fd010d77679c03fcea5bc1e12d
-  languageName: node
-  linkType: hard
-
-"mocka@npm:^0.0.1":
-  version: 0.0.1
-  resolution: "mocka@npm:0.0.1"
-  checksum: 0035de3f26017ac4b52c48bb407cd6eeca3049dc15ae6871f077be7298d6385105a36eb6f25f0a08dd130b53e4e0fd31aeb9c1253dde12ff48320fe54e4c337e
   languageName: node
   linkType: hard
 

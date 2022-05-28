@@ -14,6 +14,7 @@ import { EngineDelegate, paperclipSourceGlobPattern } from "@paperclip-ui/core";
 import globby from "globby";
 import { Directory, FSItem, FSItemTagNames } from "tandem-common";
 import { FSReadResult } from "fsbox/src/base";
+import * as mime from "mime-types";
 
 // TODO - this needs to be moved to project RPC
 export class RPC {
@@ -98,8 +99,12 @@ class Connection {
   };
 
   private _readFile = async ({ url }): Promise<FSReadResult> => {
-    console.log("READ FILE", url);
-    return;
+    console.log(`Connection.readFile(${JSON.stringify({ url })})`);
+    const filePath = URL.fileURLToPath(url);
+    return {
+      content: await fsa.readFile(filePath),
+      mimeType: mime.lookup(filePath),
+    };
   };
 
   private _getAllPaperclipFiles = async ({ projectId }) => {

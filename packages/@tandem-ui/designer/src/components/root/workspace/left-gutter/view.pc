@@ -15,7 +15,8 @@
         "justify-content": "flex-start",
         "position": "relative",
         "display": "flex",
-        "background": "var(--bc891e755312)"
+        "background": "var(--bc891e755312)",
+        "overflow": "hidden"
       },
       "attributes": {},
       "id": "317401b1484197",

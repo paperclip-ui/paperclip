@@ -736,7 +736,7 @@ export type CanvasRightClicked = {
 
 export type PCLayerRightClicked = {
   item: InspectorNode;
-  event: React.MouseEvent<any>;
+  point: Point;
 } & Action;
 
 export type FileNavigatorNewFileEntered = {
@@ -1441,20 +1441,20 @@ export const canvasRightClicked = (point: Point): CanvasRightClicked => ({
 
 export const pcLayerRightClicked = (
   item: InspectorNode,
-  event: React.MouseEvent<any>
+  point: Point
 ): PCLayerRightClicked => ({
   item,
   type: PC_LAYER_RIGHT_CLICKED,
-  event,
+  point,
 });
 
 export const pcLayerDoubleClicked = (
   item: InspectorNode,
-  event: React.MouseEvent<any>
+  point: Point
 ): PCLayerRightClicked => ({
   item,
   type: PC_LAYER_DOUBLE_CLICKED,
-  event,
+  point,
 });
 
 export const unhandledError = (error: Error): UnhandledError => ({

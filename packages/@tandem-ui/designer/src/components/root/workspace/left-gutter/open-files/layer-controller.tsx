@@ -28,7 +28,11 @@ import {
   pcLayerRightClicked,
   pcLayerDoubleClicked,
 } from "../../../../../actions";
-import { containsNestedTreeNodeById, TreeMoveOffset } from "tandem-common";
+import {
+  containsNestedTreeNodeById,
+  mouseEventToPoint,
+  TreeMoveOffset,
+} from "tandem-common";
 import { BaseNodeLayerProps } from "./layer.pc";
 import { withLayersPaneContext, LayersPaneContextProps } from "./contexts";
 import { getInspectorContentNodeContainingChild } from "paperclip";
@@ -206,8 +210,12 @@ export default (Base: React.ComponentClass<BaseNodeLayerProps>) => {
           }
         };
         onLabelRightClick = (event: React.MouseEvent<any>) => {
+          event.preventDefault();
           this.props.dispatch(
-            pcLayerRightClicked(this.props.inspectorNode, event)
+            pcLayerRightClicked(
+              this.props.inspectorNode,
+              mouseEventToPoint(event.nativeEvent)
+            )
           );
         };
         onLabelInputKeyDown = (event) => {

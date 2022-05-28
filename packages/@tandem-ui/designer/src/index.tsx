@@ -20,7 +20,8 @@ export const init = ({ document, engineOptions }: InitOptions) => {
     reducer: rootReducer,
     preloadedState: INITIAL_STATE as any,
 
-    // engines
+    // Note: default middleware is omitted because
+    // it's slow AF.
     middleware: () => [reduxMiddleware(engineOptions) as any],
   });
 

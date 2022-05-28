@@ -104,7 +104,7 @@ export const Isolate = ({
     }
 
     return () => {
-      if (dragDropManager) {
+      if (dragDropManager && iframe?.contentWindow) {
         dragDropManager.getBackend().removeEventListeners(iframe.contentWindow);
       }
     };

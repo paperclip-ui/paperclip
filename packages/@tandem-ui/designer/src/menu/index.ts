@@ -51,7 +51,7 @@ export const GLOBAL_MENU: MenuItems = [
       },
       {
         label: "Search",
-        keyboardShortcut: `${cmdKey}+t`,
+        keyboardShortcut: `ctrl+t`,
         action: shortcutKeyDown(SHORTCUT_QUICK_SEARCH_KEY_DOWN),
       },
       {

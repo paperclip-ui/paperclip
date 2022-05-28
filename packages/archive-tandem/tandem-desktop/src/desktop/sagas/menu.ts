@@ -138,39 +138,6 @@ function* handleMenu() {
         ],
       },
       {
-        label: "File",
-        submenu: [
-          {
-            label: "Save",
-            accelerator: `${cmdKey}+s`,
-            click: () => {
-              emit(shortcutKeyDown("SHORTCUT_SAVE_KEY_DOWN"));
-            },
-          },
-          {
-            label: "Search",
-            accelerator: `${cmdKey}+t`,
-            click: () => {
-              emit(shortcutKeyDown("SHORTCUT_QUICK_SEARCH_KEY_DOWN"));
-            },
-          },
-          {
-            label: "Open Project...",
-            accelerator: `${cmdKey}+o`,
-            click: () => {
-              emit(shortcutKeyDown(OPEN_PROJECT_MENU_ITEM_CLICKED));
-            },
-          },
-          // {
-          //   label: "New Project...",
-          //   accelerator: `${cmdKey}+shift+n`,
-          //   click: () => {
-          //     emit(shortcutKeyDown(NEW_PROJECT_MENU_ITEM_CLICKED));
-          //   }
-          // }
-        ],
-      },
-      {
         label: "Insert",
         submenu: [
           {

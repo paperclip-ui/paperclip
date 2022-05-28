@@ -3,6 +3,7 @@ import {
   getAllPaperclipFilesChannel,
   loadProjectInfoChannel,
   openProjectChannel,
+  searchProjectChannel,
 } from "@tandem-ui/workspace-core";
 import { EditorClient } from "@paperclip-ui/editor-engine/lib/client/client";
 import { PCDocument } from "@paperclip-ui/editor-engine/lib/client/documents";
@@ -25,6 +26,7 @@ export class Project {
   private _openProject: ReturnType<typeof openProjectChannel>;
   private _getAllPaperclipFiles: ReturnType<typeof getAllPaperclipFilesChannel>;
   private _loadProjectChannel: ReturnType<typeof loadProjectInfoChannel>;
+  private _searchProject: ReturnType<typeof searchProjectChannel>;
 
   /**
    */
@@ -37,6 +39,7 @@ export class Project {
     this._openProject = openProjectChannel(_client);
     this._getAllPaperclipFiles = getAllPaperclipFilesChannel(_client);
     this._loadProjectChannel = loadProjectInfoChannel(_client);
+    this._searchProject = searchProjectChannel(_client);
     this._paperclip = new PaperclipManager(this._client);
   }
 
@@ -45,6 +48,16 @@ export class Project {
 
   async getInfo() {
     return await this._loadProjectChannel.call({
+      projectId: this._properties.id,
+    });
+  }
+
+  /**
+   */
+
+  search(filterText: string) {
+    return this._searchProject.call({
+      filterText,
       projectId: this._properties.id,
     });
   }

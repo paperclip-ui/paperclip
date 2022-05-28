@@ -5,6 +5,7 @@ import * as fsa from "fs-extra";
 import { Workspace } from "./workspace";
 import { isPlainTextFile } from "@tandem-ui/common";
 import * as URL from "url";
+import * as path from "path";
 import * as fs from "fs";
 import { VFS } from "./vfs";
 import { exec } from "child_process";
@@ -12,10 +13,18 @@ import { Options } from "../core/options";
 import { Logger } from "@paperclip-ui/common";
 import { EngineDelegate, paperclipSourceGlobPattern } from "@paperclip-ui/core";
 import globby from "globby";
-import { Directory, FSItem, FSItemTagNames } from "tandem-common";
+import {
+  addProtocol,
+  Directory,
+  FILE_PROTOCOL,
+  FSItem,
+  FSItemTagNames,
+} from "tandem-common";
 import { FSReadResult } from "fsbox/src/base";
 import * as mime from "mime-types";
 import execa from "execa";
+import { walkPCRootDirectory } from "paperclip";
+import { QuickSearchUriResult } from "@tandem-ui/designer/lib/state";
 
 // TODO - this needs to be moved to project RPC
 export class RPC {
@@ -76,6 +85,7 @@ class Connection {
     channels.readFileChannel(connection).listen(this._readFile);
     channels.openUrlChannel(connection).listen(this._openUrl);
     channels.writeFileChannel(connection).listen(this._writeFile);
+    channels.searchProjectChannel(connection).listen(this._searchProject);
     // channels.setBranchChannel(connection).listen(this._setBranch);
     // channels.editPCSourceChannel(connection).listen(this._editPCSource);
   }
@@ -88,6 +98,42 @@ class Connection {
     this._logger.info(`Connection.writeFile({url: ${url}})`);
 
     await fsa.writeFile(URL.fileURLToPath(url), content);
+  };
+
+  private _searchProject = async ({
+    filterText,
+    projectId,
+  }): Promise<QuickSearchUriResult[]> => {
+    this._logger.info(
+      `Connection.searchProject({ filterText: ${filterText} })`
+    );
+
+    const pattern = new RegExp(
+      escapeRegExp(filterText).split(" ").join(".*?"),
+      "i"
+    );
+
+    const project = this._workspace.getProjectById(projectId);
+    const info = await project.getInfo();
+    const projectDir = path.dirname(info.path);
+
+    const results: QuickSearchUriResult[] = [];
+
+    walkPCRootDirectory(info.config, projectDir, (filePath, isDirectory) => {
+      if (!isDirectory && pattern.test(filePath)) {
+        results.push({
+          url: URL.pathToFileURL(filePath).href,
+          label: path.basename(filePath),
+          description: path.dirname(filePath),
+
+          // TODO - need to use constant
+          type: "url" as any,
+        });
+      }
+    });
+
+    // limit results
+    return results.slice(0, 50);
   };
 
   private _readDirectory = async ({ url }): Promise<FSItem[]> => {
@@ -210,34 +256,8 @@ class Connection {
   private _setBranch = ({ branchName }) => {
     this.getProject().checkout(branchName);
   };
-  // private _loadDirectory = async ({
-  //   path: dirPath,
-  //   ...rest
-  // }): Promise<Directory> => {
-  //   return new Promise((resolve, reject) => {
-  //     fs.readdir(dirPath, (err, basenames) => {
-  //       if (err) {
-  //         return reject(err);
-  //       }
+}
 
-  //       resolve({
-  //         absolutePath: dirPath,
-  //         url: URL.pathToFileURL(dirPath).toString(),
-  //         kind: FSItemKind.DIRECTORY,
-  //         name: path.basename(dirPath),
-  //         children: basenames.map((basename) => {
-  //           const absolutePath = path.join(dirPath, basename);
-  //           const isDir = fs.lstatSync(absolutePath).isDirectory();
-  //           return {
-  //             absolutePath,
-  //             url: URL.pathToFileURL(absolutePath).toString(),
-  //             name: basename,
-  //             kind: isDir ? FSItemKind.DIRECTORY : FSItemKind.FILE,
-  //             children: isDir ? [] : undefined,
-  //           };
-  //         }),
-  //       });
-  //     });
-  //   });
-  // };
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 }

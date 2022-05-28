@@ -1,10 +1,8 @@
 IMMEDIATE:
 
-- fix right click canvas
+- ability to rename file
+- convert shortcuts saga
 - quick search
-- context menu
-  - UI in reducer
-- ability to save files
 - quick search files
 - shortcuts
 - serializer

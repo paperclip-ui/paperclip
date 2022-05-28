@@ -58,9 +58,12 @@ export const createMockEngineOptions = ({
     return true;
   };
 
+  const searchProject = async (filterText) => [];
+
   return {
     readDirectory,
     deleteFile,
+    searchProject,
     openExternalFile: noop,
     loadProjectInfo,
     readFile,

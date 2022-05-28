@@ -27,7 +27,7 @@ export const globalsEngine = (
     state: RootState,
     prevState: RootState
   ) => {
-    if (state.confirm && state.confirm === prevState.confirm) {
+    if (!state.confirm || state.confirm === prevState.confirm) {
       return;
     }
     alert(state.confirm.message);

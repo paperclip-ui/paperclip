@@ -79,6 +79,13 @@ import {
   getSyntheticDocumentByDependencyUri,
   getPCNodeClip,
   createRootInspectorNode,
+  persistConvertNodeToComponent,
+  getInspectorNodeBySourceNodeId,
+  getInspectorSourceNode,
+  getPCNodeContentNode,
+  persistConvertInspectorNodeStyleToMixin,
+  persistWrapInSlot,
+  expandInspectorNode,
 } from "paperclip";
 import {
   CanvasToolOverlayMouseMoved,
@@ -223,7 +230,7 @@ export type FontFamily = {
 };
 
 export enum QuickSearchResultType {
-  URI = "uri",
+  URL = "url",
   COMPONENT = "component",
 }
 
@@ -258,8 +265,8 @@ export type ContextMenuGroup = {
 export type ContextMenuOption = ContextMenuGroup | ContextMenuItem;
 
 export type QuickSearchUriResult = {
-  uri: string;
-} & BaseQuickSearchResult<QuickSearchResultType.URI>;
+  url: string;
+} & BaseQuickSearchResult<QuickSearchResultType.URL>;
 
 export type QuickSearchComponentResult = {
   componentId: string;
@@ -409,6 +416,128 @@ export const deselectRootProjectFiles = (state: RootState) =>
     state
   );
 
+export const convertInspectorNodeStyleToMixin = (
+  node: InspectorNode,
+  state: RootState,
+  justTextStyles?: boolean
+) => {
+  const oldState = state;
+
+  state = persistRootState(
+    (state) =>
+      persistConvertInspectorNodeStyleToMixin(
+        node,
+        state.selectedVariant,
+        state,
+        justTextStyles
+      ),
+    state
+  );
+
+  state = setSelectedInspectorNodes(state);
+
+  state = selectInsertedSyntheticVisibleNodes(
+    oldState,
+    state,
+    getInspectorNodeBySourceNodeId(
+      state.graph[state.activeEditorFilePath].content.id,
+      state.sourceNodeInspector
+    )
+  );
+
+  return state;
+};
+
+export const wrapInspectorNodeInSlot = (
+  { id }: InspectorNode,
+  state: RootState
+) => {
+  // const node = getSyntheticNodeById(id, state.documents);
+  const node = getNestedTreeNodeById(id, state.sourceNodeInspector);
+
+  const sourceNode = getInspectorSourceNode(
+    node,
+    state.sourceNodeInspector,
+    state.graph
+  );
+  const sourceModule = getPCNodeModule(sourceNode.id, state.graph);
+  const contentNode = getPCNodeContentNode(sourceNode.id, sourceModule);
+  const contentInspectorNode = getInspectorContentNode(
+    node,
+    state.sourceNodeInspector
+  );
+
+  if (inspectorNodeInShadow(node, contentInspectorNode)) {
+    return confirm(
+      "Cannot perform this action for shadow elements.",
+      ConfirmType.ERROR,
+      state
+    );
+  }
+
+  if (contentNode.name !== PCSourceTagNames.COMPONENT) {
+    return confirm(
+      "Slots are only supported for elements that are within a component.",
+      ConfirmType.ERROR,
+      state
+    );
+  }
+
+  if (sourceNode.id === contentNode.id) {
+    return confirm(
+      "Cannot convert components into slots.",
+      ConfirmType.ERROR,
+      state
+    );
+  }
+
+  state = persistRootState((state) => {
+    return persistWrapInSlot(node, state);
+  }, state);
+
+  return state;
+};
+
+export const convertInspectorNodeToComponent = (
+  node: InspectorNode,
+  state: RootState
+) => {
+  const oldState = state;
+
+  state = persistRootState(
+    (state) => persistConvertNodeToComponent(node, state),
+    state
+  );
+
+  state = setSelectedInspectorNodes(state);
+
+  state = selectInsertedSyntheticVisibleNodes(
+    oldState,
+    state,
+    getInspectorNodeBySourceNodeId(
+      state.graph[state.activeEditorFilePath].content.id,
+      state.sourceNodeInspector
+    )
+  );
+
+  return state;
+};
+
+export const isInputSelected = (state: RootState, doc: Document = document) => {
+  // ick -- this needs to be moved into a saga
+
+  if (doc.activeElement.tagName === "IFRAME") {
+    return isInputSelected(
+      state,
+      (doc.activeElement as HTMLIFrameElement).contentDocument
+    );
+  }
+  return (
+    doc.activeElement &&
+    /textarea|input|button/i.test(doc.activeElement.tagName)
+  );
+};
+
 export const persistRootState = (
   persistPaperclipState: (state: RootState) => RootState,
   state: RootState
@@ -428,6 +557,20 @@ export const persistRootState = (
   );
 
   state = refreshModuleInspectorNodes(state);
+  return state;
+};
+
+export const selectInspectorNode = (node: InspectorNode, state: RootState) => {
+  state = updateSourceInspectorNode(state, (sourceNodeInspector) => {
+    return expandInspectorNode(node, sourceNodeInspector);
+  });
+
+  state = updateRootState(
+    {
+      selectedInspectorNodes: [node],
+    },
+    state
+  );
   return state;
 };
 

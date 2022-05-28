@@ -7,6 +7,7 @@ import {
   readDirectoryChannel,
   openUrlChannel,
   writeFileChannel,
+  searchProjectChannel,
 } from "@tandem-ui/workspace-core";
 
 export class WorkspaceClient {

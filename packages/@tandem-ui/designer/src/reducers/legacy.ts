@@ -124,38 +124,11 @@ import {
   VariablePropertyChanged,
   AddVariableButtonClicked,
   VARIABLE_VALUE_CHANGE_COMPLETED,
-  PROJECT_INFO_LOADED,
-  ProjectInfoLoaded,
-  PROJECT_DIRECTORY_DIR_LOADED,
-  ProjectDirectoryDirLoaded,
-  FILE_NAVIGATOR_BASENAME_CHANGED,
-  FileNavigatorBasenameChanged,
-  QUICK_SEARCH_RESULT_LOADED,
-  QuickSearchFilterChanged,
-  QUICK_SEARCH_FILTER_CHANGED,
-  QuickSearchResultLoaded,
   FRAME_BOUNDS_CHANGE_COMPLETED,
   FRAME_BOUNDS_CHANGED,
   FrameBoundsChanged,
-  ACTIVE_EDITOR_URI_DIRS_LOADED,
-  FILE_ITEM_CONTEXT_MENU_RENAME_CLICKED,
-  FileItemContextMenuAction,
-  FILE_NAVIGATOR_ITEM_BLURRED,
-  INSPECTOR_NODE_CONTEXT_MENU_CONVERT_TO_COMPONENT_CLICKED,
-  INSPECTOR_NODE_CONTEXT_MENU_WRAP_IN_ELEMENT_CLICKED,
-  InspectorNodeContextMenuAction,
-  INSPECTOR_NODE_CONTEXT_MENU_WRAP_IN_SLOT_CLICKED,
-  INSPECTOR_NODE_CONTEXT_MENU_SELECT_PARENT_CLICKED,
-  INSPECTOR_NODE_CONTEXT_MENU_SELECT_SOURCE_NODE_CLICKED,
-  INSPECTOR_NODE_CONTEXT_MENU_REMOVE_CLICKED,
   CSS_RESET_PROPERTY_OPTION_CLICKED,
   ResetPropertyOptionClicked,
-  EXPORT_NAME_CHANGED,
-  INSPECTOR_NODE_CONTEXT_MENU_CONVERT_TO_STYLE_MIXIN_CLICKED,
-  QUICK_SEARCH_RESULT_ITEM_SPLIT_BUTTON_CLICKED,
-  QuickSearchResultItemSplitButtonClicked,
-  ModuleContextMenuOptionClicked,
-  EDITOR_TAB_CONTEXT_MENU_OPEN_IN_BOTTOM_OPTION_CLICKED,
   OPEN_CONTROLLER_BUTTON_CLICKED,
   IMAGE_SOURCE_INPUT_CHANGED,
   ImageSourceInputChanged,
@@ -288,6 +261,10 @@ import {
   IS_WINDOWS,
   AddFileType,
   getScaledMouseCanvasPosition,
+  isInputSelected,
+  convertInspectorNodeToComponent,
+  wrapInspectorNodeInSlot,
+  selectInspectorNode,
 } from "../state";
 import {
   PCSourceTagNames,
@@ -452,20 +429,6 @@ export const legacyReducer = (state: RootState, action: Action): RootState => {
   state = clipboardReducer(state, action);
 
   switch (action.type) {
-    case QUICK_SEARCH_INPUT_ENTERED:
-    case QUICK_SEARCH_ITEM_CLICKED: {
-      const { item } = action as QuickSearchItemClicked;
-      if (item.type === QuickSearchResultType.URI) {
-        const uri = item.uri;
-        state = openFile(uri, false, false, state);
-        state = updateRootState({ showQuickSearch: false }, state);
-      } else {
-      }
-      return state;
-    }
-    case QUICK_SEARCH_BACKGROUND_CLICK: {
-      return (state = updateRootState({ showQuickSearch: false }, state));
-    }
     case FILE_CHANGED: {
       const { eventType, uri }: FileChanged = action as FileChanged;
 
@@ -540,66 +503,6 @@ export const legacyReducer = (state: RootState, action: Action): RootState => {
         state = pruneOpenFiles(state);
       }
 
-      return state;
-    }
-
-    case QUICK_SEARCH_RESULT_LOADED: {
-      const { matches } = action as QuickSearchResultLoaded;
-      state = updateRootState(
-        {
-          quickSearch: {
-            ...state.quickSearch,
-            matches: [...state.quickSearch.matches, ...matches].sort((a, b) => {
-              return a.label < b.label ? -1 : 1;
-            }),
-          },
-        },
-        state
-      );
-      return state;
-    }
-
-    case QUICK_SEARCH_FILTER_CHANGED: {
-      const { value } = action as QuickSearchFilterChanged;
-      state = updateRootState(
-        {
-          quickSearch: {
-            filter: value,
-            matches: [],
-          },
-        },
-        state
-      );
-      return state;
-    }
-    case FILE_ITEM_CONTEXT_MENU_CREATE_COMPONENT_FILE_CLICKED:
-    case FILE_ITEM_CONTEXT_MENU_CREATE_DIRECTORY_CLICKED:
-    case FILE_ITEM_CONTEXT_MENU_CREATE_BLANK_FILE_CLICKED: {
-      const map = {
-        [FILE_ITEM_CONTEXT_MENU_CREATE_BLANK_FILE_CLICKED]: AddFileType.BLANK,
-        [FILE_ITEM_CONTEXT_MENU_CREATE_DIRECTORY_CLICKED]:
-          AddFileType.DIRECTORY,
-        [FILE_ITEM_CONTEXT_MENU_CREATE_COMPONENT_FILE_CLICKED]:
-          AddFileType.COMPONENT,
-      };
-      const { item } = action as FileItemContextMenuAction;
-      state = {
-        ...state,
-        addNewFileInfo: {
-          directory: item as Directory,
-          fileType: map[action.type],
-        },
-      };
-      return state;
-    }
-    case FILE_ITEM_CONTEXT_MENU_RENAME_CLICKED: {
-      const {
-        item: { uri },
-      } = action as FileItemContextMenuAction;
-      state = {
-        ...state,
-        editingBasenameUri: uri,
-      };
       return state;
     }
 
@@ -882,15 +785,6 @@ export const legacyReducer = (state: RootState, action: Action): RootState => {
     case EDITOR_TAB_CLOSE_BUTTON_CLICKED: {
       const { uri } = action as EditorTabClicked;
       return closeFile(uri, state);
-    }
-    case MODULE_CONTEXT_MENU_CLOSE_OPTION_CLICKED: {
-      const { uri } = action as ModuleContextMenuOptionClicked;
-      return closeFile(uri, state);
-    }
-    case EDITOR_TAB_CONTEXT_MENU_OPEN_IN_BOTTOM_OPTION_CLICKED: {
-      const { uri } = action as ModuleContextMenuOptionClicked;
-      state = openFile(uri, false, true, state);
-      return state;
     }
     case PC_DEPENDENCY_GRAPH_LOADED: {
       state = centerEditorCanvasOrLater(state, state.activeEditorFilePath);
@@ -1650,14 +1544,6 @@ export const canvasReducer = (state: RootState, action: Action) => {
           state
         );
       }, state);
-      return state;
-    }
-
-    case QUICK_SEARCH_RESULT_ITEM_SPLIT_BUTTON_CLICKED: {
-      const { item } = action as QuickSearchResultItemSplitButtonClicked;
-      if (item.type === QuickSearchResultType.URI) {
-        state = openFile(item.uri, false, true, state);
-      }
       return state;
     }
 
@@ -2656,71 +2542,8 @@ const getResizeActionBounds = (action: ResizerPathMoved | ResizerMoved) => {
   return newBounds;
 };
 
-const isInputSelected = (state: RootState, doc: Document = document) => {
-  // ick -- this needs to be moved into a saga
-
-  if (doc.activeElement.tagName === "IFRAME") {
-    return isInputSelected(
-      state,
-      (doc.activeElement as HTMLIFrameElement).contentDocument
-    );
-  }
-  return (
-    doc.activeElement &&
-    /textarea|input|button/i.test(doc.activeElement.tagName)
-  );
-};
-
 const shortcutReducer = (state: RootState, action: Action): RootState => {
   switch (action.type) {
-    case SHORTCUT_QUICK_SEARCH_KEY_DOWN: {
-      return isInputSelected(state)
-        ? state
-        : updateRootState(
-            {
-              showQuickSearch: !state.showQuickSearch,
-            },
-            state
-          );
-    }
-    case SHORTCUT_UNDO_KEY_DOWN: {
-      return undo(state);
-    }
-    case SHORTCUT_REDO_KEY_DOWN: {
-      return redo(state);
-    }
-    case SHORTCUT_T_KEY_DOWN: {
-      return isInputSelected(state) ? state : setTool(ToolType.TEXT, state);
-    }
-    case SHORTCUT_R_KEY_DOWN: {
-      return isInputSelected(state) ? state : setTool(ToolType.ELEMENT, state);
-    }
-    case SHORTCUT_C_KEY_DOWN: {
-      return isInputSelected(state)
-        ? state
-        : setTool(ToolType.COMPONENT, state);
-    }
-
-    case INSPECTOR_NODE_CONTEXT_MENU_SELECT_PARENT_CLICKED: {
-      const { item: inspectorNode } = action as InspectorNodeContextMenuAction;
-      const parent = getParentTreeNode(
-        inspectorNode.id,
-        state.sourceNodeInspector
-      );
-      state = parent ? selectInspectorNode(parent, state) : state;
-      return state;
-    }
-
-    case INSPECTOR_NODE_CONTEXT_MENU_SELECT_SOURCE_NODE_CLICKED: {
-      const { item } = action as InspectorNodeContextMenuAction;
-
-      state = openSyntheticVisibleNodeOriginFile(
-        getInspectorSyntheticNode(item, state.documents),
-        state
-      );
-      return state;
-    }
-
     case IMAGE_SOURCE_INPUT_CHANGED: {
       const { value } = action as ImageSourceInputChanged;
       const element = getInspectorSyntheticNode(
@@ -2784,40 +2607,6 @@ const shortcutReducer = (state: RootState, action: Action): RootState => {
       }
       return state;
     }
-    case INSPECTOR_NODE_CONTEXT_MENU_REMOVE_CLICKED: {
-      const { item: inspectorNode } = action as InspectorNodeContextMenuAction;
-      state = persistRootState((state) => {
-        return persistRemoveInspectorNode(inspectorNode, state);
-      }, state);
-      state = setSelectedInspectorNodes(state);
-      return state;
-    }
-
-    case INSPECTOR_NODE_CONTEXT_MENU_RENAME_CLICKED: {
-      const { item } = action as InspectorNodeContextMenuAction;
-      state = {
-        ...state,
-        renameInspectorNodeId: item.id,
-      };
-      return state;
-    }
-
-    case INSPECTOR_NODE_CONTEXT_MENU_SHOW_IN_CANVAS_CLICKED: {
-      const { item } = action as InspectorNodeContextMenuAction;
-
-      if (!item) {
-        return state;
-      }
-      const syntheticNode = getInspectorSyntheticNode(item, state.documents);
-
-      const uri = getSyntheticDocumentDependencyUri(
-        getSyntheticVisibleNodeDocument(syntheticNode.id, state.documents),
-        state.graph
-      );
-      state = centerEditorCanvasOrLater(state, uri);
-      return state;
-    }
-
     case PC_LAYER_DOUBLE_CLICKED: {
       const { item } = action as PCLayerRightClicked;
       state = {
@@ -2825,177 +2614,6 @@ const shortcutReducer = (state: RootState, action: Action): RootState => {
         renameInspectorNodeId: item.id,
       };
       return state;
-    }
-
-    case INSPECTOR_NODE_CONTEXT_MENU_WRAP_IN_SLOT_CLICKED: {
-      const { item } = action as InspectorNodeContextMenuAction;
-      state = wrapInspectorNodeInSlot(item, state);
-      return state;
-    }
-
-    case INSPECTOR_NODE_CONTEXT_MENU_CONVERT_TO_COMPONENT_CLICKED: {
-      const { item } = action as InspectorNodeContextMenuAction;
-      state = convertInspectorNodeToComponent(item, state);
-      return state;
-    }
-
-    case INSPECTOR_NODE_CONTEXT_MENU_WRAP_IN_ELEMENT_CLICKED: {
-      const { item } = action as InspectorNodeContextMenuAction;
-      state = persistRootState((state) => {
-        const sourceNode = getInspectorSourceNode(
-          item,
-          state.sourceNodeInspector,
-          state.graph
-        ) as PCVisibleNode;
-        state = persistReplacePCNode(
-          createPCElement("div", null, null, [sourceNode], "Element"),
-          sourceNode,
-          state
-        );
-
-        return state;
-      }, state);
-      return state;
-    }
-
-    case INSPECTOR_NODE_CONTEXT_MENU_CONVERT_TO_STYLE_MIXIN_CLICKED: {
-      const { item } = action as InspectorNodeContextMenuAction;
-      state = convertInspectorNodeStyleToMixin(item, state);
-      return state;
-    }
-
-    case INSPECTOR_NODE_CONTEXT_MENU_CONVERT_TEXT_STYLES_TO_MIXIN_CLICKED: {
-      const { item } = action as InspectorNodeContextMenuAction;
-      state = convertInspectorNodeStyleToMixin(item, state, true);
-      return state;
-    }
-
-    case SHORTCUT_CONVERT_TO_COMPONENT_KEY_DOWN: {
-      // TODO - should be able to conver all selected nodes to components
-      if (state.selectedInspectorNodes.length > 1) {
-        return state;
-      }
-
-      state = convertInspectorNodeToComponent(
-        state.selectedInspectorNodes[0],
-        state
-      );
-      return state;
-    }
-    case SHORTCUT_WRAP_IN_SLOT_KEY_DOWN: {
-      state = wrapInspectorNodeInSlot(state.selectedInspectorNodes[0], state);
-      return state;
-    }
-    case SHORTCUT_ESCAPE_KEY_DOWN: {
-      if (isInputSelected(state)) {
-        return state;
-      }
-      if (state.toolType != null) {
-        return setTool(null, state);
-      } else {
-        state = setSelectedInspectorNodes(state);
-        state = setSelectedFileNodeIds(state);
-        return state;
-      }
-    }
-
-    case SHORTCUT_DELETE_KEY_DOWN: {
-      if (isInputSelected(state) || state.selectedInspectorNodes.length === 0) {
-        return state;
-      }
-
-      const firstNode = state.selectedInspectorNodes[0];
-
-      const sourceNode = getInspectorSourceNode(
-        firstNode,
-        state.sourceNodeInspector,
-        state.graph
-      );
-
-      if (!canRemovePCNode(sourceNode, state)) {
-        return confirm(
-          "Please remove all instances of component before deleting it.",
-          ConfirmType.ERROR,
-          state
-        );
-      }
-
-      let parent: InspectorNode = getParentTreeNode(
-        firstNode.id,
-        state.sourceNodeInspector
-      );
-      const index = parent.children.findIndex(
-        (child) => child.id === firstNode.id
-      );
-
-      state = persistRootState((state) => {
-        return state.selectedInspectorNodes.reduce((state, { id }) => {
-          const inspectorNode = getNestedTreeNodeById(
-            id,
-            state.sourceNodeInspector
-          );
-          if (inspectorNodeInShadow(inspectorNode, state.sourceNodeInspector)) {
-            const sourceNode = getInspectorSourceNode(
-              inspectorNode,
-              state.sourceNodeInspector,
-              state.graph
-            );
-
-            // content, or slot. Ignore
-            if (!isVisibleNode(sourceNode)) {
-              return state;
-            }
-            return persistInspectorNodeStyle(
-              { display: "none" },
-              inspectorNode,
-              null,
-              state
-            );
-          }
-
-          return persistRemovePCNode(sourceNode, state);
-        }, state);
-      }, state);
-
-      parent = getNestedTreeNodeById(
-        parent.id,
-        state.sourceNodeInspector
-      ) as InspectorNode;
-
-      const nextChildren = parent.children.filter(
-        (child) => child.sourceNodeId !== sourceNode.id
-      );
-
-      const nextSelectedNodeId = nextChildren.length
-        ? nextChildren[clamp(index, 0, nextChildren.length - 1)].id
-        : getParentTreeNode(parent.id, state.sourceNodeInspector).name !==
-          InspectorTreeNodeName.ROOT
-        ? parent.id
-        : null;
-
-      if (nextSelectedNodeId) {
-        const nextInspectorNode: InspectorNode = getNestedTreeNodeById(
-          nextSelectedNodeId,
-          state.sourceNodeInspector
-        );
-        if (nextInspectorNode) {
-          state = setSelectedInspectorNodes(state, [nextInspectorNode]);
-        } else {
-          // does not exist as rep
-          state = updateRootState(
-            { selectedInspectorNodes: EMPTY_ARRAY },
-            state
-          );
-        }
-      } else {
-        // does not exist as rep
-        state = updateRootState(
-          {
-            selectedInspectorNodes: EMPTY_ARRAY,
-          },
-          state
-        );
-      }
     }
   }
 
@@ -3102,122 +2720,4 @@ const normalizePoint = (translate: Translate, point: Point) => {
 
 const normalizeZoom = (zoom) => {
   return zoom < 1 ? 1 / Math.round(1 / zoom) : Math.round(zoom);
-};
-
-const convertInspectorNodeStyleToMixin = (
-  node: InspectorNode,
-  state: RootState,
-  justTextStyles?: boolean
-) => {
-  const oldState = state;
-
-  state = persistRootState(
-    (state) =>
-      persistConvertInspectorNodeStyleToMixin(
-        node,
-        state.selectedVariant,
-        state,
-        justTextStyles
-      ),
-    state
-  );
-
-  state = setSelectedInspectorNodes(state);
-
-  state = selectInsertedSyntheticVisibleNodes(
-    oldState,
-    state,
-    getInspectorNodeBySourceNodeId(
-      state.graph[state.activeEditorFilePath].content.id,
-      state.sourceNodeInspector
-    )
-  );
-
-  return state;
-};
-
-const convertInspectorNodeToComponent = (
-  node: InspectorNode,
-  state: RootState
-) => {
-  const oldState = state;
-
-  state = persistRootState(
-    (state) => persistConvertNodeToComponent(node, state),
-    state
-  );
-
-  state = setSelectedInspectorNodes(state);
-
-  state = selectInsertedSyntheticVisibleNodes(
-    oldState,
-    state,
-    getInspectorNodeBySourceNodeId(
-      state.graph[state.activeEditorFilePath].content.id,
-      state.sourceNodeInspector
-    )
-  );
-
-  return state;
-};
-
-const wrapInspectorNodeInSlot = ({ id }: InspectorNode, state: RootState) => {
-  // const node = getSyntheticNodeById(id, state.documents);
-  const node = getNestedTreeNodeById(id, state.sourceNodeInspector);
-
-  const sourceNode = getInspectorSourceNode(
-    node,
-    state.sourceNodeInspector,
-    state.graph
-  );
-  const sourceModule = getPCNodeModule(sourceNode.id, state.graph);
-  const contentNode = getPCNodeContentNode(sourceNode.id, sourceModule);
-  const contentInspectorNode = getInspectorContentNode(
-    node,
-    state.sourceNodeInspector
-  );
-
-  if (inspectorNodeInShadow(node, contentInspectorNode)) {
-    return confirm(
-      "Cannot perform this action for shadow elements.",
-      ConfirmType.ERROR,
-      state
-    );
-  }
-
-  if (contentNode.name !== PCSourceTagNames.COMPONENT) {
-    return confirm(
-      "Slots are only supported for elements that are within a component.",
-      ConfirmType.ERROR,
-      state
-    );
-  }
-
-  if (sourceNode.id === contentNode.id) {
-    return confirm(
-      "Cannot convert components into slots.",
-      ConfirmType.ERROR,
-      state
-    );
-  }
-
-  state = persistRootState((state) => {
-    return persistWrapInSlot(node, state);
-  }, state);
-
-  return state;
-};
-
-const selectInspectorNode = (node: InspectorNode, state: RootState) => {
-  state = updateSourceInspectorNode(state, (sourceNodeInspector) => {
-    return expandInspectorNode(node, sourceNodeInspector);
-  });
-
-  state = updateRootState(
-    {
-      selectedInspectorNodes: [node],
-    },
-    state
-  );
-  return state;
 };

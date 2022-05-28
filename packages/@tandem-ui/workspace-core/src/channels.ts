@@ -9,7 +9,7 @@ import { Directory, WorkspaceState } from "./state";
 import { FSItem } from "tandem-common";
 import { FSReadResult } from "fsbox/src/base";
 import { VirtualNodeSourceInfo } from "@paperclip-ui/core/src/core/delegate";
-import { ProjectInfo } from "@tandem-ui/designer/lib/state";
+import { ProjectInfo, QuickSearchResult } from "@tandem-ui/designer/lib/state";
 
 export const inspectNodeStyleChannel = remoteChannel<
   VirtNodeSource[],
@@ -103,3 +103,8 @@ export const writeFileChannel = remoteChannel<
   { url: string; content: Buffer },
   void
 >("writeFileChannel");
+
+export const searchProjectChannel = remoteChannel<
+  { filterText: string; projectId: string },
+  QuickSearchResult[]
+>("searchProjectChannel");

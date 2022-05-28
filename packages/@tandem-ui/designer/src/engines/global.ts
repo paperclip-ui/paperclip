@@ -22,5 +22,18 @@ export const globalsEngine = (
     dispatch(rootClicked());
   });
 
-  return (action: Action, state: RootState) => {};
+  const handleConfirm = (
+    action: Action,
+    state: RootState,
+    prevState: RootState
+  ) => {
+    if (state.confirm && state.confirm === prevState.confirm) {
+      return;
+    }
+    alert(state.confirm.message);
+  };
+
+  return (action: Action, state: RootState, prevState: RootState) => {
+    handleConfirm(action, state, prevState);
+  };
 };

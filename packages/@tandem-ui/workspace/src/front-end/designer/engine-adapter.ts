@@ -5,7 +5,8 @@ import * as mime from "mime-types";
 import { setReaderMimetypes } from "fsbox";
 import { PAPERCLIP_MIME_TYPE } from "paperclip";
 import { WorkspaceClient } from "@tandem-ui/workspace-client";
-import { workerRPCClientAdapter, wsAdapter } from "@paperclip-ui/common";
+import { wsAdapter } from "@paperclip-ui/common";
+import { Project } from "@tandem-ui/workspace-client/lib/project";
 
 export type DesignerEngineOptions = {
   files: Record<string, string>;
@@ -23,41 +24,21 @@ export const createDesignerEngine = ({
   projectId,
 }: DesignerEngineOptions): FrontEndEngineOptions => {
   const wsClient = new WorkspaceClient(createDefaultRPCClient());
-
-  wsClient
-    .openProject({
-      id: projectId,
-    })
-    .then((project) => {
-      console.log(project);
-    });
+  let _project: Project;
 
   const readDirectory = async (dir: string): Promise<FSItem[]> => {
-    const dirTester = new RegExp(`^${dir}`);
-
-    return Object.keys(files)
-      .filter((uri) => uri.match(dirTester) != null)
-      .map((uri) => {
-        const rest = uri.replace(dirTester, "");
-
-        if (rest.includes("/")) {
-          const dirUri = dir + "/" + rest.split("/")[0];
-          return {
-            id: dirUri,
-            name: FSItemTagNames.DIRECTORY,
-            uri: dirUri,
-            children: [],
-          };
-        }
-
-        return { id: uri, name: FSItemTagNames.FILE, uri, children: [] };
-      });
+    return wsClient.readDirectory(dir);
   };
 
   const deleteFile = (filePath: string) => {};
 
+  const getProject = async () =>
+    _project || (_project = await wsClient.openProject({ id: projectId }));
+
   const loadProjectInfo = async (): Promise<ProjectInfo> => {
-    return Promise.resolve(projectInfo);
+    const info = await getProject().then((project) => project.getInfo());
+    console.log(info);
+    return info;
   };
 
   const readFile = setReaderMimetypes({

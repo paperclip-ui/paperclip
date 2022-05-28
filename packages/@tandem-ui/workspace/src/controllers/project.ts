@@ -1,4 +1,6 @@
 import execa from "execa";
+import * as fsa from "fs-extra";
+import * as path from "path";
 import { VFS } from "./vfs";
 import * as URL from "url";
 import { Logger } from "@paperclip-ui/common";
@@ -6,6 +8,10 @@ import { Options } from "../core/options";
 import { Package } from "./package";
 import * as crypto from "crypto";
 import { Repository } from "./git";
+import { ProjectInfo } from "@tandem-ui/designer";
+import { ProjectConfig } from "@tandem-ui/designer/lib/state";
+
+const DEFAULT_PROJECT_FILE_NAME = "app.tdproject";
 
 export class Project {
   readonly repository: Repository;
@@ -18,7 +24,7 @@ export class Project {
     readonly url: string,
     private _branch: string,
     _vfs: VFS,
-    _logger: Logger,
+    private _logger: Logger,
     private _options: Options,
     private _httpPort: number
   ) {
@@ -27,6 +33,18 @@ export class Project {
       : getTemporaryDirectory(this.url, this._branch);
     this.repository = new Repository(directory, _logger);
     this.package = new Package(directory, _logger);
+  }
+
+  async getInfo(): Promise<ProjectInfo> {
+    this._logger.info(`Project.getInfo()`);
+    const filePath = path.join(
+      URL.fileURLToPath(this.url),
+      DEFAULT_PROJECT_FILE_NAME
+    );
+    const config: ProjectConfig = JSON.parse(
+      await fsa.readFile(filePath, "utf8")
+    );
+    return { path: filePath, config };
   }
 
   /**

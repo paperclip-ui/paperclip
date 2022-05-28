@@ -1,24 +1,19 @@
 import { RPCClientAdapter, RPCServer } from "@paperclip-ui/common";
 import * as channels from "@tandem-ui/workspace-core/lib/channels";
 import { Channel } from "@paperclip-ui/common";
+import * as fsa from "fs-extra";
 import { Workspace } from "./workspace";
 import { isPlainTextFile } from "@tandem-ui/common";
 import * as URL from "url";
 import * as fs from "fs";
-import {
-  engineDelegateChanged,
-  Expression,
-  isPaperclipFile,
-  NodeStyleInspection,
-  VirtNodeSource,
-} from "@paperclip-ui/utils";
 import { VFS } from "./vfs";
 import { exec } from "child_process";
 import { Options } from "../core/options";
 import { Logger } from "@paperclip-ui/common";
 import { EngineDelegate, paperclipSourceGlobPattern } from "@paperclip-ui/core";
-import { VirtualNodeSourceInfo } from "@paperclip-ui/core/src/core/delegate";
 import globby from "globby";
+import { Directory, FSItem, FSItemTagNames } from "tandem-common";
+import { FSReadResult } from "fsbox/src/base";
 
 // TODO - this needs to be moved to project RPC
 export class RPC {
@@ -74,6 +69,9 @@ class Connection {
     // TODO
     // channels.popoutWindowChannel(connection).listen(this._popoutWindow);
     channels.commitChangesChannel(connection).listen(this._commitChanges);
+    channels.loadProjectInfoChannel(connection).listen(this._loadProjectInfo);
+    channels.readDirectoryChannel(connection).listen(this._readDirectory);
+    channels.readFileChannel(connection).listen(this._readFile);
     // channels.setBranchChannel(connection).listen(this._setBranch);
     // channels.editPCSourceChannel(connection).listen(this._editPCSource);
   }
@@ -81,6 +79,28 @@ class Connection {
   private getProject() {
     return this._workspace.getProjectById(this._projectId);
   }
+
+  private _readDirectory = async ({ url }): Promise<FSItem[]> => {
+    console.log(`Connection.readDirectory(${JSON.stringify({ url })})`);
+    return fsa.readdir(URL.fileURLToPath(url)).then((basenames) =>
+      basenames.map((basename) => {
+        const childUrl = url + "/" + basename;
+        return {
+          id: childUrl,
+          uri: childUrl,
+          children: [],
+          name: fsa.lstatSync(URL.fileURLToPath(childUrl)).isDirectory()
+            ? FSItemTagNames.DIRECTORY
+            : FSItemTagNames.FILE,
+        } as Directory;
+      })
+    );
+  };
+
+  private _readFile = async ({ url }): Promise<FSReadResult> => {
+    console.log("READ FILE", url);
+    return;
+  };
 
   private _getAllPaperclipFiles = async ({ projectId }) => {
     const project = this._workspace.getProjectById(projectId);
@@ -93,6 +113,11 @@ class Connection {
       }
     );
     return filePaths.map((filePath) => URL.pathToFileURL(filePath).href);
+  };
+
+  private _loadProjectInfo = async ({ projectId }) => {
+    const project = this._workspace.getProjectById(projectId);
+    return project.getInfo();
   };
 
   private _openProject = async ({ id, uri, branch }) => {

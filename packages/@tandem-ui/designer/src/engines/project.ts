@@ -16,6 +16,7 @@ import {
   FileNavigatorItemClicked,
   FILE_ITEM_CONTEXT_MENU_COPY_PATH_CLICKED,
   FILE_ITEM_RIGHT_CLICKED,
+  FILE_NAVIGATOR_ITEM_CLICKED,
   FILE_NAVIGATOR_TOGGLE_DIRECTORY_CLICKED,
   projectDirectoryDirLoaded,
   projectInfoLoaded,
@@ -97,13 +98,14 @@ export const startProjectEngine =
     ) => {
       if (
         action.type !== FILE_NAVIGATOR_TOGGLE_DIRECTORY_CLICKED &&
-        action.type !== FILE_ITEM_RIGHT_CLICKED
+        action.type !== FILE_NAVIGATOR_ITEM_CLICKED
       ) {
         return;
       }
-      const { node, type } = action as FileNavigatorItemClicked;
 
-      if (node.name === FSItemTagNames.DIRECTORY) {
+      const { node } = action as FileNavigatorItemClicked;
+
+      if (node.name !== FSItemTagNames.DIRECTORY) {
         return;
       }
 
@@ -120,7 +122,7 @@ export const startProjectEngine =
       ) {
         return;
       }
-      await loadDirectory(state.activeEditorFilePath, state);
+      await loadDirectory(path.dirname(state.activeEditorFilePath), state);
       dispatch(activeEditorUriDirsLoaded());
     };
 

@@ -1,6 +1,7 @@
 import { RPCClientAdapter } from "@paperclip-ui/common";
 import {
   getAllPaperclipFilesChannel,
+  loadProjectInfoChannel,
   openProjectChannel,
 } from "@tandem-ui/workspace-core";
 import { EditorClient } from "@paperclip-ui/editor-engine/lib/client/client";
@@ -23,6 +24,7 @@ export class Project {
   private _paperclip: PaperclipManager;
   private _openProject: ReturnType<typeof openProjectChannel>;
   private _getAllPaperclipFiles: ReturnType<typeof getAllPaperclipFilesChannel>;
+  private _loadProjectChannel: ReturnType<typeof loadProjectInfoChannel>;
 
   /**
    */
@@ -34,7 +36,17 @@ export class Project {
   ) {
     this._openProject = openProjectChannel(_client);
     this._getAllPaperclipFiles = getAllPaperclipFilesChannel(_client);
+    this._loadProjectChannel = loadProjectInfoChannel(_client);
     this._paperclip = new PaperclipManager(this._client);
+  }
+
+  /**
+   */
+
+  async getInfo() {
+    return await this._loadProjectChannel.call({
+      projectId: this._properties.id,
+    });
   }
 
   /**

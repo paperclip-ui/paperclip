@@ -9,7 +9,7 @@ import { Directory, WorkspaceState } from "./state";
 import { FSItem } from "tandem-common";
 import { FSReadResult } from "fsbox/src/base";
 import { VirtualNodeSourceInfo } from "@paperclip-ui/core/src/core/delegate";
-import { AvailableNode } from "@paperclip-ui/language-service";
+import { ProjectInfo } from "@tandem-ui/designer/lib/state";
 
 export const inspectNodeStyleChannel = remoteChannel<
   VirtNodeSource[],
@@ -82,9 +82,15 @@ export const getAllPaperclipFilesChannel = remoteChannel<
   string[]
 >("getAllPaperclipFilesChannel");
 
-export const readFileChannel = remoteChannel<{ uri: string }, FSReadResult>(
+export const readFileChannel = remoteChannel<{ url: string }, FSReadResult>(
   "readFileChannel"
 );
-export const readDirectoryChannel = remoteChannel<{ uri: string }, FSItem>(
+
+export const readDirectoryChannel = remoteChannel<{ url: string }, FSItem[]>(
   "readDirectoryChannel"
 );
+
+export const loadProjectInfoChannel = remoteChannel<
+  { projectId: string },
+  ProjectInfo
+>("loadProjectInfoChannel");

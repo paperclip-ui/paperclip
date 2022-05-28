@@ -1,4 +1,4 @@
-import { createRootInspectorNode } from "paperclip";
+import { addPCFileUris, createRootInspectorNode } from "paperclip";
 import { Action } from "redux";
 import { getFileFromUri, mergeFSItems } from "tandem-common";
 import {
@@ -80,6 +80,9 @@ export const projectReducer = (state: RootState, action: Action): RootState => {
           state
         );
       }
+
+      state = addPCFileUris(state, projectInfo.pcUrls);
+
       const buildProcess = getBuildScriptProcess(state);
 
       if (buildProcess) {

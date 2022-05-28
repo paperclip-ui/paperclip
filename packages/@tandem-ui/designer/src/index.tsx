@@ -21,11 +21,7 @@ export const init = ({ document, engineOptions }: InitOptions) => {
     preloadedState: INITIAL_STATE as any,
 
     // engines
-    middleware: (getDefaultMiddleware) =>
-      // dissable serialize check because of content Buffer
-      getDefaultMiddleware({ serializableCheck: false }).concat(
-        reduxMiddleware(engineOptions) as any
-      ),
+    middleware: () => [reduxMiddleware(engineOptions) as any],
   });
 
   ReactDOM.render(

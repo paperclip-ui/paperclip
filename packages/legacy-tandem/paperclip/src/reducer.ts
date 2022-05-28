@@ -21,16 +21,12 @@ import {
 import {
   getFrameByContentNodeId,
   PCEditorState,
+  pruneDependencyGraph,
   updateFrame,
   upsertFrames,
 } from "./edit";
-import {
-  addFileCacheItemToDependencyGraph,
-  DependencyGraph,
-  isPaperclipUri,
-} from "./graph";
+import { addFileCacheItemToDependencyGraph, isPaperclipUri } from "./graph";
 import { PAPERCLIP_MIME_TYPE } from "./constants";
-// import { FILE_CHANGED, FileChanged, FileChangedEventType } from "index";
 
 export const paperclipReducer = <
   TState extends PCEditorState & FSSandboxRootState
@@ -40,7 +36,7 @@ export const paperclipReducer = <
 ): TState => {
   switch (action.type) {
     case PC_SYNTHETIC_FRAME_CONTAINER_CREATED: {
-      const { frame, $container } = action as PCFrameContainerCreated;
+      const { frame } = action as PCFrameContainerCreated;
       return updateFrame(
         {
           // $container,
@@ -112,38 +108,5 @@ export const paperclipReducer = <
       return state;
     }
   }
-  return state;
-};
-
-const pruneDependencyGraph = <TState extends PCEditorState>(
-  state: TState
-): TState => {
-  const { graph } = state;
-
-  let fullyLoaded: boolean = true;
-
-  for (const uri in state.fileCache) {
-    if (isPaperclipUri(uri) && !graph[uri]) {
-      fullyLoaded = false;
-    }
-  }
-
-  // prune old deps
-  if (fullyLoaded) {
-    let newGraph: DependencyGraph;
-    for (const uri in graph) {
-      if (!state.fileCache[uri]) {
-        if (!newGraph) {
-          newGraph = { ...graph };
-        }
-        delete newGraph[uri];
-      }
-    }
-
-    if (newGraph) {
-      return { ...(state as any), graph: newGraph } as TState;
-    }
-  }
-
   return state;
 };

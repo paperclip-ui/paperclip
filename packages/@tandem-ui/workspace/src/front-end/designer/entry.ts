@@ -45,12 +45,6 @@ const { element } = init({
         metadata: {},
       }),
     },
-    projectInfo: {
-      config: {
-        exclude: [],
-      },
-      path: "/",
-    },
   }),
 });
 

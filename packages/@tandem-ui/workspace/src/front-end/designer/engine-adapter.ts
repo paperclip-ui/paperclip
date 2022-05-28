@@ -40,7 +40,6 @@ export const createDesignerEngine = ({
   const readFile = setReaderMimetypes({
     [PAPERCLIP_MIME_TYPE]: [".pc"],
   })(async (uri: string) => {
-    console.log("READ", uri);
     return wsClient.readFile(uri);
   });
 

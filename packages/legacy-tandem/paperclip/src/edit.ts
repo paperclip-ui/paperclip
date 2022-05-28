@@ -25,7 +25,7 @@ import {
   updateProperties,
 } from "tandem-common";
 import { values, identity, uniq, last, pickBy, isNull } from "lodash";
-import { DependencyGraph, Dependency } from "./graph";
+import { DependencyGraph, Dependency, isPaperclipUri } from "./graph";
 import {
   PCNode,
   getPCNode,
@@ -94,7 +94,7 @@ import * as path from "path";
 import { convertFixedBoundsToRelative } from "./synthetic-layout";
 import { diffTreeNode, patchTreeNode } from "./ot";
 import { evaluateDependencyGraph } from "./evaluate";
-import { FSSandboxRootState } from "fsbox";
+import { FSSandboxRootState, queueOpenFiles } from "fsbox";
 import {
   InspectorNode,
   getInspectorSourceNode,
@@ -185,6 +185,44 @@ export const getFramesContentNodeIdMap = memoize(
     return map;
   }
 );
+
+export const addPCFileUris = (state: PCEditorState, uris: string[]) => {
+  state = queueOpenFiles(uris, state);
+  return pruneDependencyGraph(state as any);
+};
+
+export const pruneDependencyGraph = <TState extends PCEditorState>(
+  state: TState
+): TState => {
+  const { graph } = state;
+
+  let fullyLoaded: boolean = true;
+
+  for (const uri in state.fileCache) {
+    if (isPaperclipUri(uri) && !graph[uri]) {
+      fullyLoaded = false;
+    }
+  }
+
+  // prune old deps
+  if (fullyLoaded) {
+    let newGraph: DependencyGraph;
+    for (const uri in graph) {
+      if (!state.fileCache[uri]) {
+        if (!newGraph) {
+          newGraph = { ...graph };
+        }
+        delete newGraph[uri];
+      }
+    }
+
+    if (newGraph) {
+      return { ...(state as any), graph: newGraph } as TState;
+    }
+  }
+
+  return state;
+};
 
 export const getSyntheticDocumentFrames = memoize(
   (document: SyntheticDocument, frames: Frame[]) => {

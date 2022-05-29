@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import { Dispatch } from "redux";
 import { RootState } from "../../state";
 import { ComponentOption } from "./cell.pc";
@@ -13,7 +13,7 @@ export type Props = {
 };
 
 export default (Base: React.ComponentClass<BasePickerProps>) =>
-  (props: Props) => {
+  memo((props: Props) => {
     const { root } = props;
     const [filter, setFilter] = useState<string[]>();
     const dispatch = useDispatch();
@@ -63,4 +63,4 @@ export default (Base: React.ComponentClass<BasePickerProps>) =>
         optionsProps={{ children: options }}
       />
     );
-  };
+  });

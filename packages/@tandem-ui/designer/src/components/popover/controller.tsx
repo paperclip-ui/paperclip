@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as ReactDOM from "react-dom";
 import { Bounds, shiftBounds, shiftPoint, Point } from "tandem-common";
 import { BasePopoverProps, ElementProps } from "./view.pc";
@@ -15,56 +15,50 @@ type PopoverState = {
   anchorRect: Bounds;
 };
 
-export default (Base: React.ComponentClass<BasePopoverProps>) => {
-  return class Popover extends React.PureComponent<Props, PopoverState> {
-    constructor(props) {
-      super(props);
-      this.state = {
-        anchorRect: null,
-      };
-    }
-    componentWillUpdate({ open }: Props) {
-      if (!this.props.open && open) {
-        const anchor: HTMLDivElement = ReactDOM.findDOMNode(
-          this as any
-        ) as HTMLDivElement;
-        let rect = getRealElementBounds(anchor);
-        this.setState({ anchorRect: rect });
-      } else if (!open && !this.state.anchorRect) {
-        this.setState({ anchorRect: null });
-      }
-    }
-    render() {
-      const { centered, open, onShouldClose, updateContentPosition, ...rest } =
-        this.props;
-      const { anchorRect } = this.state;
+export default (Base: React.ComponentClass<BasePopoverProps>) =>
+  ({
+    centered,
+    open,
+    onShouldClose,
+    updateContentPosition,
+    ...rest
+  }: Props) => {
+    const [anchorRect, setAnchorRect] = useState<Bounds>(null);
+    const ref = useRef<HTMLDivElement>(null);
 
-      let overrideProps: BasePopoverProps = {
+    useEffect(() => {
+      if (ref.current && open) {
+        const rect = getRealElementBounds(ref.current);
+        setAnchorRect(rect);
+      } else {
+        setAnchorRect(null);
+      }
+    }, [open, ref.current]);
+
+    let overrideProps: BasePopoverProps = {
+      contentProps: {
+        onShouldClose,
+        anchorRect,
+      },
+    };
+
+    if (anchorRect) {
+      overrideProps = {
         contentProps: {
+          updateContentPosition,
           onShouldClose,
+          centered,
           anchorRect,
+          style: {
+            display: "block",
+            position: "fixed",
+          },
         },
       };
-
-      if (anchorRect) {
-        overrideProps = {
-          contentProps: {
-            updateContentPosition,
-            onShouldClose,
-            centered,
-            anchorRect,
-            style: {
-              display: "block",
-              position: "fixed",
-            },
-          },
-        };
-      }
-
-      return <Base {...rest} {...overrideProps} />;
     }
+
+    return <Base ref={ref} {...rest} {...overrideProps} />;
   };
-};
 
 const getRealElementBounds = (element: HTMLElement) => {
   const parentIframes = [];

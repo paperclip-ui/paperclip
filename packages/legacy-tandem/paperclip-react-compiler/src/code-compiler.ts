@@ -66,18 +66,15 @@ export const translatePaperclipModuleToReact =
         const publicClassName = getBaseRenderName(contentNode, context);
 
         context = addOpenTag(
-          `var ${publicClassName} = class extends React.PureComponent {\n`,
+          `var ${publicClassName}  = React.forwardRef((_props, ref) => {\n`,
           context
         );
 
-        context = addOpenTag(`render() {\n`, context);
-
-        context = addLine(`var props = this.props;\n`, context);
+        context = addLine(`var props = {..._props, ref};\n`, context);
 
         context = inner(context);
 
-        context = addCloseTag(`}\n`, context);
-        context = addCloseTag(`}\n\n`, context);
+        context = addCloseTag(`});\n\n`, context);
 
         return context;
       },

@@ -1,8 +1,9 @@
-import * as React from "react";
 import { compose, pure, withState } from "recompose";
 import { portal } from "../portal/controller";
 import { Bounds, mergeBounds, getBoundsSize, Point } from "tandem-common";
 import { BaseContentProps } from "./view.pc";
+import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 const calcPortalPosition = (
   centered: boolean,
@@ -24,6 +25,21 @@ const calcPortalPosition = (
   };
 };
 
+const usePortal = () => {
+  const [portal, setPortal] = useState<HTMLDivElement>(null);
+  useEffect(() => {
+    const mount = document.createElement("div");
+    document.body.appendChild(mount);
+    setPortal(mount);
+
+    return () => {
+      mount.remove();
+    };
+  }, []);
+
+  return portal;
+};
+
 // ick, but okay for now. Will need to change
 // when tests are added
 let _popoverCount = 0;
@@ -36,102 +52,75 @@ export type Props = {
   updateContentPosition?: (position: Point, rect: Bounds) => Point;
 } & BaseContentProps;
 
-export default compose<any, Props>(
-  (Base: React.ComponentClass<any>) => {
-    return class extends React.Component<any, any> {
-      private _emptySpaceListener: any;
-      private _scrollListener: any;
-      private _popoverIndex: number;
-      setContainer = (container: HTMLDivElement) => {
-        const { onShouldClose } = this.props;
-        if (this._emptySpaceListener) {
-          if (this._popoverIndex) {
-            _popoverCount--;
-          }
-          document.body.removeEventListener(
-            "mousedown",
-            this._emptySpaceListener
-          );
-          document.removeEventListener("scroll", this._scrollListener, true);
-          this._emptySpaceListener = null;
-        }
-        if (container && onShouldClose) {
-          // note that we keep track of how many popovers there are currently in the root in case any pop over
-          // opens a separate popover -- in this case the user will need to click multiple times in order to close
-          // all popovers
-          this._popoverIndex = ++_popoverCount;
-          document.body.addEventListener(
-            "mousedown",
-            (this._emptySpaceListener = (event) => {
-              if (
-                !container.contains(event.target) &&
-                _popoverCount === this._popoverIndex
-              ) {
-                // beat onClick handler for dropdown button
-                setTimeout(() => {
-                  onShouldClose(event);
-                });
-              }
-            })
-          );
+export default (Base: React.FC<BaseContentProps>) =>
+  ({
+    centered,
+    updateContentPosition,
+    onShouldClose,
+    children,
+    anchorRect,
+    ...rest
+  }: Props) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const wrapperRef = useRef<HTMLDivElement>(null);
+    const portal = usePortal();
+    const [style, setStyle] = useState<any>({});
 
-          document.addEventListener(
-            "scroll",
-            (this._scrollListener = (event) => {
-              if (!container.contains(event.target)) {
-                onShouldClose(event);
-              }
-            }),
-            true
-          );
+    useEffect(() => {
+      const onScroll = (event) => {
+        if (!containerRef?.current?.contains(event.target)) {
+          onShouldClose();
         }
       };
-      render() {
-        const { anchorRect, children, setContainer, ...rest } = this.props;
-        return anchorRect ? (
-          <Base anchorRect={anchorRect} {...rest}>
-            <div
-              ref={this.setContainer}
-              style={{ width: anchorRect.right - anchorRect.left }}
-            >
-              {children}
-            </div>
-          </Base>
-        ) : null;
+      const onMouseDown = (event) => {
+        if (!containerRef?.current?.contains(event.target)) {
+          onShouldClose();
+        }
+      };
+      document.addEventListener("scroll", onScroll, true);
+      document.addEventListener("mousedown", onMouseDown, true);
+      return () => {
+        document.removeEventListener("scroll", onScroll, true);
+        document.removeEventListener("mousedown", onMouseDown, true);
+      };
+    }, [containerRef?.current]);
+
+    useEffect(() => {
+      if (!wrapperRef.current || !portal || !anchorRect) {
+        return;
       }
-    };
-  },
-  pure,
-  withState(`style`, `setStyle`, null),
-  portal({
-    didMount:
-      ({ centered, anchorRect, setStyle, updateContentPosition }) =>
-      (portalMount) => {
-        if (
-          !portalMount ||
-          !portalMount.children[0] ||
-          !portalMount.children[0].children[0]
-        ) {
-          return;
-        }
-        const popoverRect = calcInnerBounds(
-          portalMount.children[0].children[0].children[0] as HTMLElement
-        );
+      const popoverRect = calcInnerBounds(wrapperRef.current);
 
-        let position = calcPortalPosition(centered, anchorRect, popoverRect);
+      let position = calcPortalPosition(centered, anchorRect, popoverRect);
 
-        if (updateContentPosition) {
-          position = updateContentPosition(position, popoverRect);
-        }
-        const newStyle = {
-          position: "absolute",
-          zIndex: 1024,
-          ...position,
-        };
-        setStyle(newStyle);
-      },
-  })
-);
+      if (updateContentPosition) {
+        position = updateContentPosition(position, popoverRect);
+      }
+      const newStyle = {
+        position: "fixed",
+        zIndex: 1024,
+        ...position,
+      };
+
+      setStyle(newStyle);
+    }, [anchorRect, wrapperRef, portal]);
+
+    return (
+      anchorRect && (
+        <div ref={wrapperRef}>
+          {portal &&
+            createPortal(
+              <Base {...rest}>
+                <div ref={containerRef} style={style}>
+                  {children}
+                </div>
+              </Base>,
+              portal
+            )}
+        </div>
+      )
+    );
+  };
 
 const calcInnerBounds = (
   element: HTMLElement,

@@ -65,6 +65,9 @@ export default (Base: React.FC<BaseContentProps>) =>
     const [style, setStyle] = useState<any>({});
 
     useEffect(() => {
+      if (!anchorRect) {
+        return;
+      }
       const onScroll = (event) => {
         if (!containerRef?.current?.contains(event.target)) {
           onShouldClose();
@@ -81,7 +84,7 @@ export default (Base: React.FC<BaseContentProps>) =>
         document.removeEventListener("scroll", onScroll, true);
         document.removeEventListener("mousedown", onMouseDown, true);
       };
-    }, [containerRef?.current]);
+    }, [containerRef?.current, anchorRect]);
 
     useEffect(() => {
       if (!wrapperRef.current || !portal || !anchorRect) {

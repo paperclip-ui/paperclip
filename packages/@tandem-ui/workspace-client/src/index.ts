@@ -34,9 +34,6 @@ export class WorkspaceClient {
 
   readFile = async (url: string) => {
     const result = await this._readFileChannel.call({ url });
-    console.log(
-      `WorkspaceClient.readFile({${url}}): {content: ..., mimeType: ${result.mimeType}}`
-    );
     return result;
   };
   writeFile = async (url: string, content: Buffer) => {
@@ -45,12 +42,10 @@ export class WorkspaceClient {
   };
 
   readDirectory = async (url: string) => {
-    console.log(`WorkspaceClient.readDirectory(${url})`);
     return await this._readDirectory.call({ url });
   };
 
   openUrl = async (url: string) => {
-    console.log(`WorkspaceClient.openUrl(${url})`);
     return await this._openUrl.call({ url });
   };
 }

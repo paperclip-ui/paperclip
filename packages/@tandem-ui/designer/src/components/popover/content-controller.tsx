@@ -1,5 +1,3 @@
-import { compose, pure, withState } from "recompose";
-import { portal } from "../portal/controller";
 import { Bounds, mergeBounds, getBoundsSize, Point } from "tandem-common";
 import { BaseContentProps } from "./view.pc";
 import React, { useEffect, useRef, useState } from "react";

@@ -63,6 +63,7 @@ export const createMockEngineOptions = ({
   return {
     readDirectory,
     createDirectory: noop,
+    renameFile: noop,
     deleteFile,
     searchProject,
     openExternalFile: noop,

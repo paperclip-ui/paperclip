@@ -116,3 +116,8 @@ export const createDirectoryChannel = remoteChannel<{ url: string }, void>(
 export const deleteFileChannel = remoteChannel<{ url: string }, void>(
   "deleteFileChannel"
 );
+
+export const renameFileChannel = remoteChannel<
+  { url: string; newBaseName: string },
+  void
+>("renameFileChannel");

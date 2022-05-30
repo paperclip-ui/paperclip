@@ -50,9 +50,9 @@ type ItemProps = {
 
 const Item = memo(({ option }: ItemProps) => {
   const dispatch = useDispatch();
-  console.log(option);
 
-  const onClick = (event: React.MouseEvent<any>) => {
+  const onClick = () => {
+    console.log("ISP", option.action);
     dispatch(option.action);
   };
 

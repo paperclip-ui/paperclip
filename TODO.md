@@ -1,12 +1,5 @@
 IMMEDIATE:
 
-- file navigator
-
-  - ability to create file
-  - ability to rename file
-  - re-consider this.
-
-- ability to rename file
 - convert shortcuts saga
 - shortcuts
 - serializer

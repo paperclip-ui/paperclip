@@ -19,9 +19,11 @@ import {
 } from "tandem-common";
 import {
   FileItemContextMenuAction,
+  FileNavigatorBasenameChanged,
   FileNavigatorNewFileEntered,
   fileRemoved,
   FILE_ITEM_CONTEXT_MENU_DELETE_CLICKED,
+  FILE_NAVIGATOR_BASENAME_CHANGED,
   FILE_NAVIGATOR_NEW_FILE_ENTERED,
   newFileAdded,
 } from "../actions";
@@ -30,11 +32,17 @@ import { RootState } from "../state";
 export type FileNavigatorEngineOptions = {
   createDirectory(url: string): void;
   writeFile(url: string, content: Buffer): any;
+  renameFile(url: string, newBaseName: string): any;
   deleteFile(url: string): void;
 };
 
 export const fileNavigatorEngine =
-  ({ createDirectory, deleteFile, writeFile }: FileNavigatorEngineOptions) =>
+  ({
+    createDirectory,
+    deleteFile,
+    writeFile,
+    renameFile,
+  }: FileNavigatorEngineOptions) =>
   (dispatch: Dispatch<Action>) => {
     const handleWriteFile = async (
       action: Action,
@@ -80,9 +88,18 @@ export const fileNavigatorEngine =
       dispatch(fileRemoved(item));
     };
 
+    const handleBaseNameChanged = async (action: Action) => {
+      if (action.type !== FILE_NAVIGATOR_BASENAME_CHANGED) {
+        return;
+      }
+      const { item, basename } = action as FileNavigatorBasenameChanged;
+      await renameFile(item.uri, basename);
+    };
+
     return (action: Action, state: RootState) => {
       handleWriteFile(action, state);
       handleDeleteFile(action, state);
+      handleBaseNameChanged(action);
     };
   };
 

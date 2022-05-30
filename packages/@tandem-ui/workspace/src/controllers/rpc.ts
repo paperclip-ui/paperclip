@@ -88,6 +88,7 @@ class Connection {
     channels.searchProjectChannel(connection).listen(this._searchProject);
     channels.createDirectoryChannel(connection).listen(this._createDirectory);
     channels.deleteFileChannel(connection).listen(this._deleteFile);
+    channels.renameFileChannel(connection).listen(this._renameFile);
     // channels.setBranchChannel(connection).listen(this._setBranch);
     // channels.editPCSourceChannel(connection).listen(this._editPCSource);
   }
@@ -105,7 +106,17 @@ class Connection {
   private _deleteFile = async ({ url }) => {
     this._logger.info(`Connection.deleteFile({url: ${url}})`);
     const filePath = URL.fileURLToPath(url);
-    fsa.rmSync(filePath, { recursive: true, force: true });
+    await fsa.rm(filePath, { recursive: true, force: true });
+  };
+
+  private _renameFile = async ({ url, newBaseName }) => {
+    this._logger.info(
+      `Connection.renameFile({url: ${url}, newBaseName: ${newBaseName}})`
+    );
+    await fsa.rename(
+      URL.fileURLToPath(url),
+      path.join(path.dirname(URL.fileURLToPath(url)), newBaseName)
+    );
   };
 
   private _writeFile = async ({ url, content }) => {

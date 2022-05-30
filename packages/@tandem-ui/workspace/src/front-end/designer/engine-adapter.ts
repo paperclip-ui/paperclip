@@ -57,6 +57,10 @@ export const createDesignerEngine = ({
     wsClient.createDirectory(filePath);
   };
 
+  const renameFile = (url: string, newBaseName: string) => {
+    wsClient.renameFile(url, newBaseName);
+  };
+
   const searchProject = async (
     filterText: string
   ): Promise<QuickSearchResult[]> => {
@@ -69,6 +73,7 @@ export const createDesignerEngine = ({
     searchProject,
     createDirectory,
     deleteFile,
+    renameFile,
     openExternalFile,
     loadProjectInfo,
     readFile,

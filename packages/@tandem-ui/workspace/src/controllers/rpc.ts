@@ -86,6 +86,8 @@ class Connection {
     channels.openUrlChannel(connection).listen(this._openUrl);
     channels.writeFileChannel(connection).listen(this._writeFile);
     channels.searchProjectChannel(connection).listen(this._searchProject);
+    channels.createDirectoryChannel(connection).listen(this._createDirectory);
+    channels.deleteFileChannel(connection).listen(this._deleteFile);
     // channels.setBranchChannel(connection).listen(this._setBranch);
     // channels.editPCSourceChannel(connection).listen(this._editPCSource);
   }
@@ -93,6 +95,18 @@ class Connection {
   private getProject() {
     return this._workspace.getProjectById(this._projectId);
   }
+
+  private _createDirectory = async ({ url }) => {
+    this._logger.info(`Connection.createDirectory({url: ${url}})`);
+    const filePath = URL.fileURLToPath(url);
+    await fsa.mkdirp(filePath);
+  };
+
+  private _deleteFile = async ({ url }) => {
+    this._logger.info(`Connection.deleteFile({url: ${url}})`);
+    const filePath = URL.fileURLToPath(url);
+    fsa.rmSync(filePath, { recursive: true, force: true });
+  };
 
   private _writeFile = async ({ url, content }) => {
     this._logger.info(`Connection.writeFile({url: ${url}})`);

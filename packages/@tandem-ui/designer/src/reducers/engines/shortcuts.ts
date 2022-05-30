@@ -50,7 +50,7 @@ export const shortcutReducer = (
 ): RootState => {
   switch (action.type) {
     case SHORTCUT_QUICK_SEARCH_KEY_DOWN: {
-      return isInputSelected(state)
+      return isInputSelected()
         ? state
         : updateRootState(
             {
@@ -66,15 +66,13 @@ export const shortcutReducer = (
       return redo(state);
     }
     case SHORTCUT_T_KEY_DOWN: {
-      return isInputSelected(state) ? state : setTool(ToolType.TEXT, state);
+      return isInputSelected() ? state : setTool(ToolType.TEXT, state);
     }
     case SHORTCUT_R_KEY_DOWN: {
-      return isInputSelected(state) ? state : setTool(ToolType.ELEMENT, state);
+      return isInputSelected() ? state : setTool(ToolType.ELEMENT, state);
     }
     case SHORTCUT_C_KEY_DOWN: {
-      return isInputSelected(state)
-        ? state
-        : setTool(ToolType.COMPONENT, state);
+      return isInputSelected() ? state : setTool(ToolType.COMPONENT, state);
     }
 
     case SHORTCUT_CONVERT_TO_COMPONENT_KEY_DOWN: {
@@ -94,7 +92,7 @@ export const shortcutReducer = (
       return state;
     }
     case SHORTCUT_ESCAPE_KEY_DOWN: {
-      if (isInputSelected(state)) {
+      if (isInputSelected()) {
         return state;
       }
       if (state.toolType != null) {
@@ -107,7 +105,7 @@ export const shortcutReducer = (
     }
 
     case SHORTCUT_DELETE_KEY_DOWN: {
-      if (isInputSelected(state) || state.selectedInspectorNodes.length === 0) {
+      if (isInputSelected() || state.selectedInspectorNodes.length === 0) {
         return state;
       }
 

@@ -8,6 +8,8 @@ import {
   openUrlChannel,
   writeFileChannel,
   searchProjectChannel,
+  createDirectoryChannel,
+  deleteFileChannel,
 } from "@tandem-ui/workspace-core";
 
 export class WorkspaceClient {
@@ -16,6 +18,8 @@ export class WorkspaceClient {
   private _readDirectory: ReturnType<typeof readDirectoryChannel>;
   private _openUrl: ReturnType<typeof openUrlChannel>;
   private _writeFile: ReturnType<typeof writeFileChannel>;
+  private _createDirectory: ReturnType<typeof createDirectoryChannel>;
+  private _deleteFile: ReturnType<typeof deleteFileChannel>;
 
   constructor(
     private _client: RPCClientAdapter,
@@ -27,6 +31,8 @@ export class WorkspaceClient {
     this._readDirectory = readDirectoryChannel(_client);
     this._openUrl = openUrlChannel(_client);
     this._writeFile = writeFileChannel(_client);
+    this._createDirectory = createDirectoryChannel(_client);
+    this._deleteFile = deleteFileChannel(_client);
   }
   openProject = async (options: LoadOptions) => {
     return await Project.load(options, this._editorClient, this._client);
@@ -47,5 +53,13 @@ export class WorkspaceClient {
 
   openUrl = async (url: string) => {
     return await this._openUrl.call({ url });
+  };
+
+  createDirectory = async (url: string) => {
+    return await this._createDirectory.call({ url });
+  };
+
+  deleteFile = async (url: string) => {
+    return await this._deleteFile.call({ url });
   };
 }

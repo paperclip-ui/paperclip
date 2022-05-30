@@ -7,14 +7,20 @@ import { startShortcutsEngine } from "./shortcuts";
 import { GLOBAL_MENU } from "../menu";
 import { globalsEngine } from "./global";
 import { quickSearchEngine, QuickSearchEngineOptions } from "./quick-search";
+import {
+  fileNavigatorEngine,
+  FileNavigatorEngineOptions,
+} from "./file-navigator";
 
 export type FrontEndEngineOptions = ProjectEngineOptions &
   FSSandboxEngineOptions &
-  QuickSearchEngineOptions;
+  QuickSearchEngineOptions &
+  FileNavigatorEngineOptions;
 
 export const reduxMiddleware = (options: FrontEndEngineOptions) =>
   engineReduxMiddleware([
     startProjectEngine(options),
+    fileNavigatorEngine(options),
     quickSearchEngine(options),
     startPaperclipTandemEngine(),
     startFSBoxEngine(options),

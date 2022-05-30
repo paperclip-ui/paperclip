@@ -1,9 +1,15 @@
 import { addPCFileUris, createRootInspectorNode } from "paperclip";
 import { Action } from "redux";
-import { getFileFromUri, mergeFSItems } from "tandem-common";
+import {
+  getFileFromUri,
+  mergeFSItems,
+  removeNestedTreeNode,
+} from "tandem-common";
 import { produce } from "immer";
 import {
   ACTIVE_EDITOR_URI_DIRS_LOADED,
+  FileRemoved,
+  FILE_REMOVED,
   ProjectDirectoryDirLoaded,
   ProjectInfoLoaded,
   PROJECT_DIRECTORY_DIR_LOADED,
@@ -103,6 +109,15 @@ export const projectReducer = (state: RootState, action: Action): RootState => {
 
     case SHORTCUT_SAVE_KEY_DOWN: {
       return saveDirtyFiles(state);
+    }
+    case FILE_REMOVED: {
+      const { item } = action as FileRemoved;
+      return produce(state, (newState) => {
+        newState.projectDirectory = removeNestedTreeNode(
+          item,
+          newState.projectDirectory
+        );
+      });
     }
   }
   return state;

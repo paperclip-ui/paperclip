@@ -108,3 +108,11 @@ export const searchProjectChannel = remoteChannel<
   { filterText: string; projectId: string },
   QuickSearchResult[]
 >("searchProjectChannel");
+
+export const createDirectoryChannel = remoteChannel<{ url: string }, void>(
+  "createDirectoryChannel"
+);
+
+export const deleteFileChannel = remoteChannel<{ url: string }, void>(
+  "deleteFileChannel"
+);

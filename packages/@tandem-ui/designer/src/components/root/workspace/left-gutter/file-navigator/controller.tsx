@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import {
   BaseFileNavigatorProps,
   FileNavigatorLayer,
@@ -16,9 +16,11 @@ import { FileNavigatorContext, FileNavigatorContextProps } from "./contexts";
 import {
   fileNavigatorNewFileEntered,
   fileNavigatorNewFileClicked,
+  fileNavigatorNewFileEscaped,
 } from "@tandem-ui/designer/src/actions";
 import { DropdownMenuOption } from "@tandem-ui/designer/src/components/inputs/dropdown/controller";
 import { AddFileType, NewFSItemInfo } from "@tandem-ui/designer/src/state";
+import { useDispatch } from "react-redux";
 export type Props = {
   newFSItemInfo: NewFSItemInfo;
   activeEditorUri: string;
@@ -66,19 +68,26 @@ const ADD_FILE_OPTIONS: DropdownMenuOption[] = [
 ];
 
 export default (Base: React.ComponentClass<BaseFileNavigatorProps>) =>
-  class FileNavigatorController extends React.PureComponent<Props> {
-    onAddFolderButtonClick = () => {
-      this.props.dispatch(fileNavigatorNewFileClicked(AddFileType.DIRECTORY));
+  ({
+    rootDirectory,
+    selectedFileNodeIds,
+    activeEditorUri,
+    editingFileNameUri,
+    newFSItemInfo,
+    ...rest
+  }: Props) => {
+    const dispatch = useDispatch();
+    const onAddFolderButtonClick = () => {
+      dispatch(fileNavigatorNewFileClicked(AddFileType.DIRECTORY));
     };
-    onFileDropdownComplete = (value: AddFileType) => {
-      this.props.dispatch(fileNavigatorNewFileClicked(value));
+    const onFileDropdownComplete = (value: AddFileType) => {
+      dispatch(fileNavigatorNewFileClicked(value));
     };
-    onNewFileInputChange = (value: string) => {};
-    onNewFileChangeComplete = (name: string) => {
+    const onNewFileInputChange = (value: string) => {};
+    const onNewFileChangeComplete = (name: string) => {
       if (!name) {
-        return this.onNewFileEscape();
+        return onNewFileEscape();
       }
-      const { newFSItemInfo } = this.props;
 
       if (
         newFSItemInfo.fileType === AddFileType.COMPONENT &&
@@ -87,7 +96,7 @@ export default (Base: React.ComponentClass<BaseFileNavigatorProps>) =>
         name += ".pc";
       }
 
-      this.props.dispatch(
+      dispatch(
         fileNavigatorNewFileEntered(
           name,
           newFSItemInfo.fileType === AddFileType.DIRECTORY
@@ -97,67 +106,49 @@ export default (Base: React.ComponentClass<BaseFileNavigatorProps>) =>
         )
       );
     };
-    onNewFileEscape = () => {
-      this.setState({ ...this.state, newFSItemInfo: null });
+    const onNewFileEscape = () => {
+      dispatch(fileNavigatorNewFileEscaped());
     };
-    render() {
-      const {
-        dispatch,
-        newFSItemInfo,
-        rootDirectory,
-        selectedFileNodeIds,
-        activeEditorUri,
-        editingFileNameUri,
-        ...rest
-      } = this.props;
 
-      if (!rootDirectory) {
-        return <Base content={EMPTY_ARRAY} addFileDropdownProps={null} />;
-      }
-      const {
-        onNewFileChangeComplete,
-        onFileDropdownComplete,
-        onNewFileInputChange,
-        onNewFileEscape,
-      } = this;
+    if (!rootDirectory) {
+      return <Base content={EMPTY_ARRAY} addFileDropdownProps={null} />;
+    }
+    const content = rootDirectory.children.map((child) => {
+      return <FileNavigatorLayer key={child.id} item={child as FSItem} />;
+    });
 
-      const content = rootDirectory.children.map((child) => {
-        return <FileNavigatorLayer key={child.id} item={child as FSItem} />;
-      });
-
-      if (newFSItemInfo && rootDirectory.uri === newFSItemInfo.directory.uri) {
-        content.unshift(
-          <NewFileInput
-            key="new-file-input"
-            onChangeComplete={onNewFileChangeComplete}
-            onChange={onNewFileInputChange as any}
-            onEscape={onNewFileEscape}
-          />
-        );
-      }
-
-      return (
-        <FileNavigatorContext.Provider
-          value={generateFileNavigatorContext(
-            newFSItemInfo,
-            selectedFileNodeIds,
-            onNewFileChangeComplete,
-            onNewFileInputChange,
-            onNewFileEscape,
-            activeEditorUri,
-            editingFileNameUri,
-            dispatch
-          )}
-        >
-          <Base
-            {...rest}
-            content={content}
-            addFileDropdownProps={{
-              onChangeComplete: onFileDropdownComplete,
-              options: ADD_FILE_OPTIONS,
-            }}
-          />
-        </FileNavigatorContext.Provider>
+    if (newFSItemInfo && rootDirectory.uri === newFSItemInfo.directory.uri) {
+      content.unshift(
+        <NewFileInput
+          key="new-file-input"
+          onChangeComplete={onNewFileChangeComplete}
+          onChange={onNewFileInputChange as any}
+          onEscape={onNewFileEscape}
+        />
       );
     }
+
+    return (
+      <FileNavigatorContext.Provider
+        value={generateFileNavigatorContext(
+          newFSItemInfo,
+          selectedFileNodeIds,
+          onNewFileChangeComplete,
+          onNewFileInputChange,
+          onNewFileEscape,
+          activeEditorUri,
+          editingFileNameUri,
+          dispatch
+        )}
+      >
+        <Base
+          {...rest}
+          content={content}
+          addFileDropdownProps={{
+            onChangeComplete: onFileDropdownComplete,
+            options: ADD_FILE_OPTIONS,
+          }}
+        />
+      </FileNavigatorContext.Provider>
+    );
   };

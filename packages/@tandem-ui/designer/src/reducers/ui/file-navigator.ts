@@ -13,6 +13,7 @@ import {
   FILE_NAVIGATOR_NEW_FILE_ENTERED,
   FILE_NAVIGATOR_NEW_FILE_CLICKED,
   FileNavigatorNewFileClicked,
+  FILE_NAVIGATOR_NEW_FILE_ESCAPED,
 } from "../../actions";
 import {
   RootState,
@@ -179,6 +180,10 @@ export const fileNavigatorReducer = (
     }
 
     case FILE_NAVIGATOR_NEW_FILE_ENTERED: {
+      state = { ...state, addNewFileInfo: null };
+      return state;
+    }
+    case FILE_NAVIGATOR_NEW_FILE_ESCAPED: {
       state = { ...state, addNewFileInfo: null };
       return state;
     }

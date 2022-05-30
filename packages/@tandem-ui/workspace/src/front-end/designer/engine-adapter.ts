@@ -26,7 +26,9 @@ export const createDesignerEngine = ({
     return wsClient.readDirectory(dir);
   };
 
-  const deleteFile = (filePath: string) => {};
+  const deleteFile = (url: string) => {
+    wsClient.deleteFile(url);
+  };
 
   const getProject = async () =>
     _project || (_project = await wsClient.openProject({ id: projectId }));
@@ -51,17 +53,21 @@ export const createDesignerEngine = ({
     wsClient.openUrl(url);
   };
 
+  const createDirectory = (filePath: string) => {
+    wsClient.createDirectory(filePath);
+  };
+
   const searchProject = async (
     filterText: string
   ): Promise<QuickSearchResult[]> => {
     const results = await _project.search(filterText);
-    console.log(results);
     return results;
   };
 
   return {
     readDirectory,
     searchProject,
+    createDirectory,
     deleteFile,
     openExternalFile,
     loadProjectInfo,

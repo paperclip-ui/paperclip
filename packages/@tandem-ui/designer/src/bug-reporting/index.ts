@@ -15,7 +15,7 @@ export const init = (dispatch: Function) => {
 
     const div = document.createElement("div");
     document.body.appendChild(div);
-    ReactDOM.render(React.createElement(Main, { dispatch }), div);
+    ReactDOM.render(React.createElement(Main), div);
   };
   return {
     triggerError,

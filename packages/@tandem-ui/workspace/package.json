@@ -8,11 +8,11 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && webpack",
     "test": "mocha lib/test --exit",
     "test:watch": "mocha lib/test --watch",
     "build:docker": "docker build .",
-    "build:watch": "tsc --watch --preserveWatchOutput",
+    "build:watch": "concurrently \"tsc --watch --preserveWatchOutput \" \"webpack --watch\"",
     "start": "nodemon ./lib/cli --watch lib"
   },
   "author": "",
@@ -24,6 +24,7 @@
     "@types/mocha": "^9.0.0",
     "@types/yargs": "^17.0.2",
     "chai": "^4.3.6",
+    "concurrently": "^7.2.1",
     "copy-webpack-plugin": "^11.0.0",
     "cypress": "^8.4.1",
     "mocha": "^9.2.0",

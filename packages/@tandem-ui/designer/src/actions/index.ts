@@ -83,6 +83,8 @@ export const FILE_NAVIGATOR_BASENAME_CHANGED =
   "FILE_NAVIGATOR_BASENAME_CHANGED";
 export const FILE_NAVIGATOR_NEW_FILE_ENTERED =
   "FILE_NAVIGATOR_NEW_FILE_ENTERED";
+export const FILE_NAVIGATOR_NEW_FILE_ESCAPED =
+  "FILE_NAVIGATOR_NEW_FILE_ESCAPED";
 export const FILE_NAVIGATOR_DROPPED_ITEM = "FILE_NAVIGATOR_DROPPED_ITEM";
 export const TOOLBAR_TOOL_CLICKED = "TOOLBAR_TOOL_CLICKED";
 export const EDITOR_TAB_CLICKED = "EDITOR_TAB_CLICKED";
@@ -168,6 +170,7 @@ export const SHORTCUT_TOGGLE_SIDEBAR = "SHORTCUT_TOGGLE_SIDEBAR";
 export const INHERIT_PANE_ADD_BUTTON_CLICK = "INHERIT_PANE_ADD_BUTTON_CLICK";
 export const FILE_ITEM_CONTEXT_MENU_DELETE_CLICKED =
   "FILE_ITEM_CONTEXT_MENU_DELETE_CLICKED";
+export const FILE_REMOVED = "FILE_REMOVED";
 export const FILE_ITEM_CONTEXT_MENU_OPEN_CLICKED =
   "FILE_ITEM_CONTEXT_MENU_OPEN_CLICKED";
 export const FILE_ITEM_CONTEXT_MENU_OPEN_IN_FINDER_CLICKED =
@@ -566,6 +569,10 @@ export type FileItemContextMenuAction = {
   item: FSItem;
 } & Action;
 
+export type FileRemoved = {
+  item: FSItem;
+} & Action;
+
 export type InspectorNodeContextMenuAction = {
   item: InspectorNode;
 } & Action;
@@ -879,6 +886,12 @@ export const fileItemContextMenuDeleteClicked = publicActionCreator(
   (item: FSItem): FileItemContextMenuAction => ({
     item,
     type: FILE_ITEM_CONTEXT_MENU_DELETE_CLICKED,
+  })
+);
+export const fileRemoved = publicActionCreator(
+  (item: FSItem): FileRemoved => ({
+    item,
+    type: FILE_REMOVED,
   })
 );
 
@@ -1581,6 +1594,10 @@ export const openFilesItemClick = (
   uri,
   sourceEvent,
   type: OPEN_FILE_ITEM_CLICKED,
+});
+
+export const fileNavigatorNewFileEscaped = (): Action => ({
+  type: FILE_NAVIGATOR_NEW_FILE_ESCAPED,
 });
 
 export const openFilesItemCloseClick = (uri: string): OpenFilesItemClick => ({

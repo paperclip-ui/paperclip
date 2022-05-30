@@ -523,12 +523,11 @@ export const convertInspectorNodeToComponent = (
   return state;
 };
 
-export const isInputSelected = (state: RootState, doc: Document = document) => {
+export const isInputSelected = (doc: Document = document) => {
   // ick -- this needs to be moved into a saga
 
   if (doc.activeElement.tagName === "IFRAME") {
     return isInputSelected(
-      state,
       (doc.activeElement as HTMLIFrameElement).contentDocument
     );
   }

@@ -18,7 +18,7 @@ import {
   getPCNodeModule,
   ComputedStyleInfo,
   getInstanceVariantInfo,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { dropdownMenuOptionFromValue } from "../../../../../../inputs/dropdown/controller";
 import {
   cssResetPropertyOptionClicked,

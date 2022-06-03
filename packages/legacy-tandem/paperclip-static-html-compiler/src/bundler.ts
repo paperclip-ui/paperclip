@@ -1,4 +1,4 @@
-import { DependencyGraph, Dependency } from "paperclip";
+import { DependencyGraph, Dependency } from "@paperclip-lang/core";
 import * as path from "path";
 import { translatePaperclipModuleToHTMLRenderers } from "./html-compiler";
 import {

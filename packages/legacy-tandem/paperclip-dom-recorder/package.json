@@ -12,7 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "paperclip": "^10.1.33",
+    "@paperclip-lang/core": "^10.1.33",
     "tandem-common": "^10.1.33"
   },
   "devDependencies": {

@@ -3,7 +3,7 @@ import { stringifyStyle, EMPTY_OBJECT } from "tandem-common";
 import { rawCssTextChanged } from "../../../../../../../actions";
 import { BaseCodeProps } from "./code.pc";
 import { Dispatch } from "redux";
-import { SyntheticElement, ComputedStyleInfo } from "paperclip";
+import { SyntheticElement, ComputedStyleInfo } from "@paperclip-lang/core";
 
 export type Props = {
   dispatch: Dispatch<any>;

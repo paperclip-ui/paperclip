@@ -1,6 +1,5 @@
 IMMEDIATE:
 
-- convert shortcuts saga
 - shortcuts
 - serializer
 - update rendering engine to use native

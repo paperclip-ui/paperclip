@@ -2,7 +2,7 @@
 // - variants for props
 // - variants for classes
 // - tests**
-import { PCModule, PCDependency, DependencyGraph } from "paperclip";
+import { PCModule, PCDependency, DependencyGraph } from "@paperclip-lang/core";
 import {
   ContentNode,
   getPublicComponentClassName,

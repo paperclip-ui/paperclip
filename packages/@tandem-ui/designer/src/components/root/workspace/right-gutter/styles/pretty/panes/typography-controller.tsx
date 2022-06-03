@@ -23,7 +23,7 @@ import {
   isElementLikePCNode,
   getNativeComponentName,
   DependencyGraph,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import {
   mapVariablesToCSSVarDropdownOptions,
   getPrettyPaneColorSwatchOptionGroups,

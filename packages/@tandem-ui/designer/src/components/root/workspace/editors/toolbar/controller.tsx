@@ -11,7 +11,7 @@ import { ToolType, EditorWindow } from "../../../../../state";
 import { Dispatch } from "redux";
 import { BaseToolbarProps } from "./view.pc";
 import { EditorTab } from "./tab.pc";
-import { DependencyGraph } from "paperclip";
+import { DependencyGraph } from "@paperclip-lang/core";
 
 export type Props = {
   editorWindow: EditorWindow;

@@ -6,7 +6,10 @@ const { _ } = require("yargs").argv;
 const { difference } = require("lodash");
 const { translatePaperclipModuleToStaticHTML } = require("..");
 const migrate = require("paperclip-migrator");
-const { openPCConfig, loadFSDependencyGraphSync } = require("paperclip");
+const {
+  openPCConfig,
+  loadFSDependencyGraphSync,
+} = require("@paperclip-lang/core");
 const { addProtocol, FILE_PROTOCOL } = require("tandem-common");
 const chokidar = require("chokidar");
 

@@ -16,7 +16,7 @@ import {
   SyntheticNativeNodeMap,
   pcFrameRendered,
   computeDisplayInfo,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { useDispatch } from "react-redux";
 import { Isolate } from "@tandem-ui/designer/src/components/isolated";
 

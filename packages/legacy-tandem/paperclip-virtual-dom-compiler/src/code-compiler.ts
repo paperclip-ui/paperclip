@@ -49,7 +49,7 @@ import {
   PCVariantTriggerQuerySource,
   getPCNodeModule,
   getPCVariants,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { camelCase, uniq, last, negate } from "lodash";
 import {
   flattenTreeNode,
@@ -79,7 +79,7 @@ import {
   addScopedLayerLabel,
   makeSafeVarName,
 } from "./utils";
-import { PCQueryType } from "paperclip";
+import { PCQueryType } from "@paperclip-lang/core";
 
 export type TranslateParts = {
   elementCreator: string;

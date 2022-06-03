@@ -2,7 +2,7 @@ import * as React from "react";
 import { BaseVariablesInputProps, VariableRowItem } from "./view.pc";
 import { Dispatch } from "redux";
 import { addVariableButtonClicked } from "../../../../../actions";
-import { PCVariable, PCVariableType } from "paperclip";
+import { PCVariable, PCVariableType } from "@paperclip-lang/core";
 import { FontFamily } from "../../../../../state";
 
 export type Props = {

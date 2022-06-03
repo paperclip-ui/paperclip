@@ -7,7 +7,7 @@ import {
   PCSourceTagNames,
   SyntheticElement,
   DependencyGraph,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { EMPTY_ARRAY, stripProtocol } from "tandem-common";
 import {
   addComponentControllerButtonClicked,

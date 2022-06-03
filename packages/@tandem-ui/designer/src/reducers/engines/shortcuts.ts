@@ -8,7 +8,7 @@ import {
   isVisibleNode,
   persistInspectorNodeStyle,
   persistRemovePCNode,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { Action } from "redux";
 import {
   EMPTY_ARRAY,

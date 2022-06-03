@@ -1,7 +1,7 @@
 import * as React from "react";
 import cx from "classnames";
 import { Dispatch } from "redux";
-import { PCQuery, PCQueryType, PCVariable } from "paperclip";
+import { PCQuery, PCQueryType, PCVariable } from "@paperclip-lang/core";
 import { BaseQueryItemProps, QueryOptions } from "./view.pc";
 import { queryLabelChanged } from "../../../../../actions";
 

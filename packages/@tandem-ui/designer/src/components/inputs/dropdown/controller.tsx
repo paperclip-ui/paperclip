@@ -3,7 +3,7 @@ import cx from "classnames";
 import { DropdownMenuItem } from "./menu.pc";
 import { EMPTY_ARRAY, memoize } from "tandem-common";
 import { BaseDropdownProps, ElementProps } from "./view.pc";
-import { PCVariable } from "paperclip";
+import { PCVariable } from "@paperclip-lang/core";
 import labeledInputController from "../../root/workspace/right-gutter/styles/pretty/panes/inputs/labeled-input-controller";
 
 export type DropdownMenuOption = {

@@ -428,6 +428,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@paperclip-lang/core@^10.1.33, @paperclip-lang/core@workspace:packages/@paperclip-lang/core":
+  version: 0.0.0-use.local
+  resolution: "@paperclip-lang/core@workspace:packages/@paperclip-lang/core"
+  dependencies:
+    "@types/mocha": ^5.2.0
+    "@types/node": ^17.0.35
+    "@types/redux": ^3.6.0
+    "@types/redux-saga": ^0.10.5
+    "@types/xml-js": ^1.0.0
+    chai: ^4.1.2
+    crc32: ^0.2.2
+    fsbox: ^10.1.33
+    husky: ^0.14.3
+    lint-staged: ^7.1.2
+    lodash: ^4.17.10
+    mocha: ^5.2.0
+    paperclip-migrator: ^10.1.33
+    redux: ^4.0.0
+    redux-saga: ^0.16.0
+    tandem-common: ^10.1.33
+    xml-js: ^1.6.8
+  bin:
+    paperclip-vanilla-compiler: ./bin/paperclip-vanilla-compiler
+  languageName: unknown
+  linkType: soft
+
 "@paperclip-ui/autocomplete@workspace:packages/@paperclip-lang/autocomplete":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/autocomplete@workspace:packages/@paperclip-lang/autocomplete"
@@ -5720,6 +5746,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"fsbox@npm:^10.1.38":
+  version: 10.1.38
+  resolution: "fsbox@npm:10.1.38"
+  dependencies:
+    lodash: ^4.17.10
+    mime-types: ^2.1.20
+    redux: ^4.0.0
+    redux-saga: ^0.16.0
+    tandem-common: ^10.1.38
+  checksum: fb3b84d45b2de557c1d3cd62597d54ddc6ae4e85b53b2bffcdc52b498f380ecb9217d3a084995807d6dec55113d0ad4bc189a5c0c9c01c0c157356897c325217
+  languageName: node
+  linkType: hard
+
 "fsevents@npm:^1.2.7":
   version: 1.2.13
   resolution: "fsevents@npm:1.2.13"
@@ -9934,17 +9973,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "paperclip-dom-recorder@workspace:packages/legacy-tandem/paperclip-dom-recorder"
   dependencies:
+    "@paperclip-lang/core": ^10.1.33
     "@types/node": ^17.0.35
-    paperclip: ^10.1.33
     tandem-common: ^10.1.33
     ts-loader: ^5.2.1
     webpack: ^5.72.0
-  languageName: unknown
-  linkType: soft
-
-"paperclip-linter@workspace:packages/legacy-tandem/paperclip-linter":
-  version: 0.0.0-use.local
-  resolution: "paperclip-linter@workspace:packages/legacy-tandem/paperclip-linter"
   languageName: unknown
   linkType: soft
 
@@ -9959,10 +9992,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"paperclip-migrator@npm:^10.1.38":
+  version: 10.1.38
+  resolution: "paperclip-migrator@npm:10.1.38"
+  dependencies:
+    lodash: ^4.17.10
+    tandem-common: ^10.1.38
+  bin:
+    paperclip-migrator: ./bin/paperclip-migrator
+  checksum: 533d5a26e1113091bd67ca372687b14c9e0dafa23ce369e221e5c9a256a0ce08fe9817830d2414dff466dad1ff9fc00160d5eb2318b6d3f0ccd2f5102d01182f
+  languageName: node
+  linkType: hard
+
 "paperclip-react-compiler@^10.1.33, paperclip-react-compiler@workspace:packages/legacy-tandem/paperclip-react-compiler":
   version: 0.0.0-use.local
   resolution: "paperclip-react-compiler@workspace:packages/legacy-tandem/paperclip-react-compiler"
   dependencies:
+    "@paperclip-lang/core": ^10.1.33
     "@types/lodash": ^4.14.108
     "@types/mocha": ^5.2.0
     chai: ^4.1.2
@@ -9971,7 +10017,6 @@ __metadata:
     glob: ^7.1.2
     lodash: ^4.17.10
     mocha: ^5.2.0
-    paperclip: ^10.1.33
     paperclip-migrator: ^10.1.33
     paperclip-virtual-dom-compiler: ^10.1.33
     tandem-common: ^10.1.33
@@ -9985,18 +10030,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "paperclip-react-loader@workspace:packages/legacy-tandem/paperclip-react-loader"
   dependencies:
+    "@paperclip-lang/core": ^10.1.33
     "@types/node": ^17.0.35
     loader-utils: ^1.1.0
-    paperclip: ^10.1.33
     paperclip-migrator: ^10.1.33
     paperclip-react-compiler: ^10.1.33
     tandem-common: ^10.1.33
-  languageName: unknown
-  linkType: soft
-
-"paperclip-sketch@workspace:packages/legacy-tandem/paperclip-sketch":
-  version: 0.0.0-use.local
-  resolution: "paperclip-sketch@workspace:packages/legacy-tandem/paperclip-sketch"
   languageName: unknown
   linkType: soft
 
@@ -10004,6 +10043,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "paperclip-static-html-compiler@workspace:packages/legacy-tandem/paperclip-static-html-compiler"
   dependencies:
+    "@paperclip-lang/core": ^10.1.33
     "@types/fs-extra": ^9.0.13
     "@types/lodash": ^4.14.118
     "@types/node": ^17.0.35
@@ -10011,7 +10051,6 @@ __metadata:
     fs-extra: ^10.0.0
     glob: ^7.1.3
     lodash: ^4.17.11
-    paperclip: ^10.1.33
     paperclip-migrator: ^10.1.33
     paperclip-virtual-dom-compiler: ^10.1.33
     tandem-common: ^10.1.33
@@ -10021,48 +10060,35 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"paperclip-tandem@workspace:packages/legacy-tandem/paperclip-tandem":
-  version: 0.0.0-use.local
-  resolution: "paperclip-tandem@workspace:packages/legacy-tandem/paperclip-tandem"
-  languageName: unknown
-  linkType: soft
-
 "paperclip-virtual-dom-compiler@^10.1.33, paperclip-virtual-dom-compiler@workspace:packages/legacy-tandem/paperclip-virtual-dom-compiler":
   version: 0.0.0-use.local
   resolution: "paperclip-virtual-dom-compiler@workspace:packages/legacy-tandem/paperclip-virtual-dom-compiler"
   dependencies:
+    "@paperclip-lang/core": ^10.1.33
     "@types/node": ^17.0.35
     lodash: ^4.17.11
-    paperclip: ^10.1.33
     tandem-common: ^10.1.33
   languageName: unknown
   linkType: soft
 
-"paperclip@^10.1.33, paperclip@workspace:packages/legacy-tandem/paperclip":
-  version: 0.0.0-use.local
-  resolution: "paperclip@workspace:packages/legacy-tandem/paperclip"
+"paperclip@npm:^10.1.33":
+  version: 10.1.38
+  resolution: "paperclip@npm:10.1.38"
   dependencies:
-    "@types/mocha": ^5.2.0
-    "@types/node": ^17.0.35
-    "@types/redux": ^3.6.0
-    "@types/redux-saga": ^0.10.5
-    "@types/xml-js": ^1.0.0
     chai: ^4.1.2
     crc32: ^0.2.2
-    fsbox: ^10.1.33
-    husky: ^0.14.3
-    lint-staged: ^7.1.2
+    fsbox: ^10.1.38
     lodash: ^4.17.10
-    mocha: ^5.2.0
-    paperclip-migrator: ^10.1.33
+    paperclip-migrator: ^10.1.38
     redux: ^4.0.0
     redux-saga: ^0.16.0
-    tandem-common: ^10.1.33
+    tandem-common: ^10.1.38
     xml-js: ^1.6.8
   bin:
     paperclip-vanilla-compiler: ./bin/paperclip-vanilla-compiler
-  languageName: unknown
-  linkType: soft
+  checksum: 8ded075e614fea2fa6fb865a30e36e386735609a98011f6a51821abfe391cafd824695d5bc40d879afb85560bf974a54f1d3cd0bb4d4e793c3098d4f3ec4169d
+  languageName: node
+  linkType: hard
 
 "param-case@npm:^3.0.4":
   version: 3.0.4
@@ -13023,6 +13049,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"tandem-common@npm:^10.1.38":
+  version: 10.1.38
+  resolution: "tandem-common@npm:10.1.38"
+  dependencies:
+    crc32: ^0.2.2
+    lodash: ^4.17.10
+    lru-cache: ^4.1.3
+    xml-js: ^1.6.4
+  checksum: 09f6fd549734825e1cd24ffa2a655dc665a464d3cd5c3d4f741eeb61e3ee4a258886efc225f83c3654b50ef5503757d4f30b6e3423114f2b77f5f6eeee716c69
+  languageName: node
+  linkType: hard
+
 "tandem-paperclip-serializer@workspace:packages/legacy-tandem/tandem-paperclip-serializer":
   version: 0.0.0-use.local
   resolution: "tandem-paperclip-serializer@workspace:packages/legacy-tandem/tandem-paperclip-serializer"
@@ -13033,8 +13071,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "tandem-starter-kits@workspace:packages/legacy-tandem/starter-kits"
   dependencies:
+    "@paperclip-lang/core": ^10.1.33
     "@types/node": ^17.0.35
-    paperclip: ^10.1.33
     tandem-common: ^10.1.33
   languageName: unknown
   linkType: soft

@@ -1,7 +1,7 @@
 import * as React from "react";
 import cx from "classnames";
 import { Dispatch } from "redux";
-import { PCVariable, PCVariableType } from "paperclip";
+import { PCVariable, PCVariableType } from "@paperclip-lang/core";
 import { BaseVariableRowItemProps } from "./view.pc";
 import { DropdownMenuOption } from "../../../../inputs/dropdown/controller";
 import {

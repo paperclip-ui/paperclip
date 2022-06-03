@@ -2,7 +2,7 @@ import * as React from "react";
 import cx from "classnames";
 import { BaseVariablesTabProps } from "./view.pc";
 import { Dispatch } from "redux";
-import { PCVariable } from "paperclip";
+import { PCVariable } from "@paperclip-lang/core";
 import { FontFamily } from "../../../../../state";
 
 export type Props = {

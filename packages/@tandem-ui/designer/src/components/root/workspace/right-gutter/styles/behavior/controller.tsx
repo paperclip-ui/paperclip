@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Dispatch } from "redux";
 import { BaseStyleBehaviorTabProps } from "./view.pc";
-import { PCVariantTrigger, PCVariant, PCQuery } from "paperclip";
+import { PCVariantTrigger, PCVariant, PCQuery } from "@paperclip-lang/core";
 
 export type Props = {
   dispatch: Dispatch<any>;

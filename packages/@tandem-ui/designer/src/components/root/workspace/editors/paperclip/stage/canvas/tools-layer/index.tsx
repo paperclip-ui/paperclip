@@ -23,14 +23,14 @@ import {
   SyntheticTextNode,
   getSyntheticVisibleNodeRelativeBounds,
   Frame,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { memoize, mergeBounds, Bounds, findNestedNode } from "tandem-common";
 import {
   InspectorNode,
   getInspectorSyntheticNode,
   InspectorTreeNodeName,
   getInspectorNodeOwnerInstance,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { EditText } from "./edit-text.pc";
 import { useDispatch } from "react-redux";
 

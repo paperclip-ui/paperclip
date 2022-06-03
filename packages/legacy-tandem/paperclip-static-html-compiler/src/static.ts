@@ -11,7 +11,7 @@ import {
   replacePCNode,
   getAllPCComponents,
   getPCNodeDependency,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { identity } from "lodash";
 import { stringifyVirtualNode } from "./html-compiler";
 import { bundleDependencyGraph, evaluateBundle } from "./bundler";

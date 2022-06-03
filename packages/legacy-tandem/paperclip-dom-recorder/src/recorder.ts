@@ -17,7 +17,7 @@ import {
   PCTextStyleMixin,
   elevateCommonStylesToGlobal,
   createPCTextStyleMixin,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import {
   appendChildNode,
   EMPTY_ARRAY,

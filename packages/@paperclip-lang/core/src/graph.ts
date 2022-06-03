@@ -1,5 +1,4 @@
 import { memoize } from "tandem-common";
-import * as migratePCModule from "paperclip-migrator";
 import { createPCModule } from "./dsl";
 
 /*------------------------------------------
@@ -71,10 +70,7 @@ const createDependencyFromFileCacheItem = memoize(
       uri,
 
       // if an empty string, then it's a new file.
-      content:
-        source.trim() === ""
-          ? createPCModule()
-          : migratePCModule(JSON.parse(source)),
+      content: source.trim() === "" ? createPCModule() : JSON.parse(source),
     };
   }
 );

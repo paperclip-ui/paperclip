@@ -1,6 +1,6 @@
 import * as React from "react";
 import { BaseColorsInputProps } from "./borders.pc";
-import { PCVariable, ComputedStyleInfo } from "paperclip";
+import { PCVariable, ComputedStyleInfo } from "@paperclip-lang/core";
 import { memoize } from "tandem-common";
 
 export type Props = {

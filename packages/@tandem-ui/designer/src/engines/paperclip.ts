@@ -4,7 +4,7 @@ import {
   getPCNodeModule,
   PCComponent,
   startPaperclipEngine,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import {
   EMPTY_ARRAY,
   EMPTY_OBJECT,

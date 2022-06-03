@@ -5,7 +5,7 @@ import {
   inspectorNodeInShadow,
   getInspectorContentNode,
   InspectorTreeNodeName,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { Dispatch } from "redux";
 import { exportNameChanged } from "../../../../../actions";
 

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Dispatch } from "redux";
-import { InspectorNode, DependencyGraph } from "paperclip";
+import { InspectorNode, DependencyGraph } from "@paperclip-lang/core";
 import { BaseEditorFooterProps, ElementProps } from "./view.pc";
 import { Canvas } from "../../../../../state";
 

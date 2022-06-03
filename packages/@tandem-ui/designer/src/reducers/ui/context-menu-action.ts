@@ -7,7 +7,7 @@ import {
   PCVisibleNode,
   persistRemoveInspectorNode,
   persistReplacePCNode,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { Action } from "redux";
 import { Directory, getParentTreeNode } from "tandem-common";
 import {

@@ -18,8 +18,8 @@ import {
   getNativeComponentName,
   PCModule,
   getPCNodeModule,
-} from "paperclip";
-import { InspectorNode, InspectorTreeNodeName } from "paperclip";
+} from "@paperclip-lang/core";
+import { InspectorNode, InspectorTreeNodeName } from "@paperclip-lang/core";
 import { Dispatch } from "redux";
 import {
   sourceInspectorLayerClicked,
@@ -35,7 +35,7 @@ import {
 } from "tandem-common";
 import { BaseNodeLayerProps } from "./layer.pc";
 import { withLayersPaneContext, LayersPaneContextProps } from "./contexts";
-import { getInspectorContentNodeContainingChild } from "paperclip";
+import { getInspectorContentNodeContainingChild } from "@paperclip-lang/core";
 
 export type Props = {
   depth?: number;

@@ -1,7 +1,7 @@
 import * as React from "react";
 import cx from "classnames";
 import { Dispatch } from "redux";
-import { PCVariable, PCQuery } from "@paperclip-lang/core";
+import { PCVariable, PCQuery } from "paperclip";
 import { FontFamily } from "../../../../state";
 import { BaseGlobalPropertiesProps } from "./view.pc";
 

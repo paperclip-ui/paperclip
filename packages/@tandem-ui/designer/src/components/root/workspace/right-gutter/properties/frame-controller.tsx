@@ -6,7 +6,7 @@ import {
   DependencyGraph,
   isPCContentNode,
   PCVisibleNodeMetadataKey,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import {
   Bounds,
   memoize,

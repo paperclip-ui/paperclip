@@ -10,7 +10,7 @@ import {
   SyntheticDocument,
   getSyntheticDocumentById,
   getSyntheticNodeById,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import * as styles from "./styles";
 
 export type PreviewLayerOuterProps = {

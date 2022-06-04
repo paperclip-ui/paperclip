@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Dispatch } from "redux";
 import { BaseBorders2Props } from "./borders.pc";
-import { PCVariable, ComputedStyleInfo } from "@paperclip-lang/core";
+import { PCVariable, ComputedStyleInfo } from "paperclip";
 import {
   cssPropertyChanged,
   cssPropertyChangeCompleted,

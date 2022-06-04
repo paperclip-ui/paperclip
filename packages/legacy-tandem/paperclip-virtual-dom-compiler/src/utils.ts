@@ -4,7 +4,7 @@ import {
   PCNode,
   PCVisibleNode,
   PCComponent,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { repeat, uniq, camelCase } from "lodash";
 import { EMPTY_ARRAY, EMPTY_OBJECT } from "tandem-common";
 

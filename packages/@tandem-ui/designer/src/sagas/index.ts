@@ -16,7 +16,7 @@ import {
   getSyntheticSourceNode,
   getPCNodeDependency,
   Frame,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { FrontEndContextOptions } from "../components/contexts";
 import { processSaga } from "./process";
 

@@ -2,7 +2,7 @@ import * as React from "react";
 import { Dispatch } from "redux";
 import { BaseSpacingPaneProps } from "./spacing.pc";
 import { Side } from "./spacing-input-controller";
-import { ComputedStyleInfo } from "@paperclip-lang/core";
+import { ComputedStyleInfo } from "paperclip";
 import { memoize } from "tandem-common";
 import {
   cssPropertyChanged,

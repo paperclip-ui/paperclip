@@ -9,7 +9,7 @@ import {
   PCComponent,
   InspectorNode,
   getInspectorContentNode,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { Dispatch } from "redux";
 import { VariantOption } from "./option.pc";
 import { EMPTY_ARRAY } from "tandem-common";

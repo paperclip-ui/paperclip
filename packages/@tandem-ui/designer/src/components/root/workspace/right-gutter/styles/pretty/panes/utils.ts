@@ -1,4 +1,4 @@
-import { PCVariable } from "@paperclip-lang/core";
+import { PCVariable } from "paperclip";
 import { DropdownMenuOption } from "../../../../../../inputs/dropdown/controller";
 import { ColorSwatchGroup } from "../../../../../../inputs/color/color-swatch-controller";
 import { memoize } from "tandem-common";

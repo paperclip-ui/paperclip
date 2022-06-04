@@ -12,7 +12,7 @@ import {
   getSyntheticVisibleNodeRelativeBounds,
   Frame,
   SyntheticTextNode,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { Dispatch } from "redux";
 import { FocusComponent } from "../../../../../../../focus";
 import { canvasTextEditChangeComplete } from "../../../../../../../../actions";

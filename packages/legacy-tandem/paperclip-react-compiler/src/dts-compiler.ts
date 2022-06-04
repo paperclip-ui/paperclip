@@ -16,7 +16,7 @@ import {
   isComponentOrInstance,
   isPCComponentInstance,
   getPCVariants,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import {
   TranslateContext,
   addScopedLayerLabel,
@@ -31,12 +31,12 @@ import {
 } from "./utils";
 import { EMPTY_ARRAY, filterNestedNodes, stripProtocol } from "tandem-common";
 import { camelCase, uniq } from "lodash";
-import { PCSlot } from "@paperclip-lang/core";
+import { PCSlot } from "paperclip";
 import {
   PCComponentInstanceElement,
   getPCParentComponentInstances,
   getInstanceExtends,
-} from "@paperclip-lang/core";
+} from "paperclip";
 
 export const translatePaperclipModuleToReactTSDefinition = (
   entry: PCDependency,

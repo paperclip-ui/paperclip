@@ -12,7 +12,7 @@ import {
   InspectorTreeNodeName,
   inspectorNodeInShadow,
   getPCNodeContentNode,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import {
   getPCNode,
   PCSourceTagNames,
@@ -20,7 +20,7 @@ import {
   extendsComponent,
   DependencyGraph,
   getPCNodeModule,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { compose, Dispatch } from "redux";
 import { sourceInspectorLayerDropped } from "../../../../../actions";
 import { withLayersPaneContext, LayersPaneContextProps } from "./contexts";
@@ -28,7 +28,7 @@ import { shouldUpdate } from "recompose";
 import {
   getSyntheticNodeInspectorNode,
   getInspectorContentNodeContainingChild,
-} from "@paperclip-lang/core";
+} from "paperclip";
 
 export type WithNodeDropTargetProps = {
   inspectorNode: InspectorNode;

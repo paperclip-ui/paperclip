@@ -7,11 +7,7 @@ import {
   ComponentPickerPopdownItem as BaseComponentPickerPopdownItem,
   BaseComponentPickerPopdownItemProps,
 } from "./picker.pc";
-import {
-  PCComponent,
-  DependencyGraph,
-  getAllPCComponents,
-} from "@paperclip-lang/core";
+import { PCComponent, DependencyGraph, getAllPCComponents } from "paperclip";
 import { componentPickerItemClick } from "../../actions";
 import scrollIntoView from "scroll-into-view-if-needed";
 

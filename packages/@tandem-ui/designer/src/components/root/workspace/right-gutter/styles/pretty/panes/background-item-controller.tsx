@@ -1,6 +1,6 @@
 import * as React from "react";
 import { BaseBackgroundItemProps } from "./backgrounds.pc";
-import { PCVariable } from "@paperclip-lang/core";
+import { PCVariable } from "paperclip";
 import { getPrettyPaneColorSwatchOptionGroups } from "./utils";
 import {
   CSSBackground,

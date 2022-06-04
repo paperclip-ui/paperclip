@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { kebabCase } from "lodash";
-import { PCModule } from "@paperclip-lang/core";
+import { PCModule } from "paperclip";
 
 export enum DesignType {
   SKETCH,

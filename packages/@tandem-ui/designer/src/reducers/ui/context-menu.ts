@@ -12,7 +12,7 @@ import {
   InspectorNode,
   inspectorNodeInShadow,
   PCSourceTagNames,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { Action } from "redux";
 import {
   CanvasRightClicked,

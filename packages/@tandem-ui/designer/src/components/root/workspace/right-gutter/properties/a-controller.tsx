@@ -6,7 +6,7 @@ import {
   PCElement,
   PCComponent,
   PCComponentInstanceElement,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { attributeChanged } from "../../../../../actions";
 
 export type Props = {

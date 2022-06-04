@@ -19,7 +19,7 @@ import {
   InspectorTreeNodeName,
   PCVariant,
   ComputedStyleInfo,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { Dispatch } from "redux";
 
 const BASE_DISPLAY_VALUES = ["block", "inline-block", "none", "inline"];

@@ -10,7 +10,7 @@ import {
   InspectorContent,
   getGlobalMediaQueries,
   getInspectorNodeSyntheticDocument,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { EMPTY_ARRAY, EMPTY_OBJECT, stripProtocol } from "tandem-common";
 import { RightGutterTab } from "./tab.pc";
 import cx from "classnames";

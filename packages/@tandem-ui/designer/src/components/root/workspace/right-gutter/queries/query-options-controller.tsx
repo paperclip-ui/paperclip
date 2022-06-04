@@ -8,7 +8,7 @@ import {
   PCVariableQuery,
   PCVariable,
   PCMediaQuery,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { QUERY_DROPDOWN_OPTIONS } from "./utils";
 import { queryTypeChanged } from "../../../../../actions";
 

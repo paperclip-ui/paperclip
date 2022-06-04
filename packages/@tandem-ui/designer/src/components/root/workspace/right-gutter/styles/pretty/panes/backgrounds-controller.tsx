@@ -8,11 +8,7 @@ import {
 } from "../../../../../../../actions";
 import { arraySplice } from "tandem-common";
 import { Dispatch } from "redux";
-import {
-  PCVariable,
-  isTextLikePCNode,
-  ComputedStyleInfo,
-} from "@paperclip-lang/core";
+import { PCVariable, isTextLikePCNode, ComputedStyleInfo } from "paperclip";
 import { BaseBackgroundsProps } from "./backgrounds.pc";
 import {
   computeCSSBackgrounds,

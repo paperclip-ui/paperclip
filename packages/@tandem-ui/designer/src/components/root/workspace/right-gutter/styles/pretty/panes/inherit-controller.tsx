@@ -16,7 +16,7 @@ import {
   isElementLikePCNode,
   getNativeComponentName,
   InspectorNode,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import {
   inheritPaneAddButtonClick,
   inheritPaneRemoveButtonClick,

@@ -10,7 +10,7 @@ import {
   Frame,
   SyntheticDocument,
   DependencyGraph,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { Frame as FrameComponent } from "./frames-view.pc";
 import { canvasToolWindowBackgroundClicked } from "../../../../../../../../actions";
 import { BaseFramesProps } from "./frames-view.pc";

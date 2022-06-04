@@ -7,7 +7,7 @@ import {
   PCSourceTagNames,
   extendsComponent,
   PCNode,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { Dispatch } from "redux";
 import { VariantOption } from "./option.pc";
 import { instanceVariantToggled } from "../../../../../../actions";

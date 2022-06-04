@@ -8,12 +8,13 @@ export class StringScanner {
   getPos() {
     return this._pos;
   }
-  // scan(until) {
-  //   const buffer = "";
-  //   while (!this.isEOF() && !until(this.currChar())) {
-  //     buffer += this.currChar();
-  //   }
-  // }
+  scan(regexp) {
+    let buffer = "";
+    while (!this.isEOF() && !regexp.test(this.currChar())) {
+      buffer += this.currChar();
+    }
+    return buffer;
+  }
   currChar() {
     return this.source.charAt(this._pos);
   }

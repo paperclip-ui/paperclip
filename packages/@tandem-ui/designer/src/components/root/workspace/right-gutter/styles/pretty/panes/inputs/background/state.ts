@@ -1,5 +1,5 @@
 import { EMPTY_ARRAY, KeyValue } from "tandem-common";
-import { ComputedStyleInfo } from "@paperclip-lang/core";
+import { ComputedStyleInfo } from "paperclip";
 
 // TODO - compute this information based on CSS properties
 

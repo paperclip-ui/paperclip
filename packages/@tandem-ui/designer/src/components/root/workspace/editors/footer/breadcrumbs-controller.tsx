@@ -14,7 +14,7 @@ import {
   PCSlot,
   PCPlug,
   InspectorTreeNodeName,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { getTreeNodeAncestors, EMPTY_ARRAY } from "tandem-common";
 
 export type Props = {

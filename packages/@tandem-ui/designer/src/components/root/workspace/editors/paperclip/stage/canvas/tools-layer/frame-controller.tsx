@@ -8,7 +8,7 @@ import {
   isComponent,
   PCVisibleNode,
   DependencyGraph,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { getBoundsSize, Translate } from "tandem-common";
 import {
   canvasToolDocumentTitleClicked,

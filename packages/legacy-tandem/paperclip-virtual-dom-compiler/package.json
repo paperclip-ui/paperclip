@@ -12,9 +12,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@paperclip-lang/core": "^10.1.33",
     "@types/node": "^17.0.35",
     "lodash": "^4.17.11",
+    "paperclip": "^10.1.33",
     "tandem-common": "^10.1.33"
   },
   "gitHead": "62ff73f435d5ddc97b8ff23b2356ed36f69c1486"

@@ -7,7 +7,7 @@ import {
   isVariantTriggered,
   getVariantTriggers,
   getPCNode,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { Dispatch } from "redux";
 import cx from "classnames";
 import {

@@ -1,7 +1,7 @@
 import * as React from "react";
 import cx from "classnames";
 import { BaseBoxShadowItemProps } from "./box-shadow.pc";
-import { PCVariable } from "@paperclip-lang/core";
+import { PCVariable } from "paperclip";
 import { getPrettyPaneColorSwatchOptionGroups } from "./utils";
 export type BoxShadowInfo = {
   inset: boolean;

@@ -2,7 +2,7 @@
 // - variants for props
 // - variants for classes
 // - tests**
-import { PCModule, isVoidTagName } from "@paperclip-lang/core";
+import { PCModule, isVoidTagName } from "paperclip";
 import {
   ContentNode,
   getPublicComponentClassName,

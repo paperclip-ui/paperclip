@@ -10,10 +10,7 @@ const {
   translatePaperclipModuleToReactTSDefinition,
 } = require("..");
 const migrate = require("paperclip-migrator");
-const {
-  openPCConfig,
-  loadFSDependencyGraphSync,
-} = require("@paperclip-lang/core");
+const { openPCConfig, loadFSDependencyGraphSync } = require("paperclip");
 const {
   addProtocol,
   FILE_PROTOCOL,

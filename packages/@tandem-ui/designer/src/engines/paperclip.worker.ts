@@ -1,5 +1,2 @@
-import {
-  createLocalPCRuntime,
-  hookRemotePCRuntime,
-} from "@paperclip-lang/core";
+import { createLocalPCRuntime, hookRemotePCRuntime } from "paperclip";
 hookRemotePCRuntime(createLocalPCRuntime(), self as any);

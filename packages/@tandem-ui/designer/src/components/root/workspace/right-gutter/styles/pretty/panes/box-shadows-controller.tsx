@@ -15,7 +15,7 @@ import {
   PCSourceTagNames,
   isTextLikePCNode,
   ComputedStyleInfo,
-} from "@paperclip-lang/core";
+} from "paperclip";
 
 export type Props = {
   inset?: Boolean;

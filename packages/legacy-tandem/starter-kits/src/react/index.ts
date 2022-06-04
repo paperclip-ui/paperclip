@@ -4,7 +4,7 @@ import {
   createPCComponent,
   createPCTextNode,
   PCVisibleNodeMetadataKey,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { createBounds } from "tandem-common";
 
 export const template: ProjectTemplate = {

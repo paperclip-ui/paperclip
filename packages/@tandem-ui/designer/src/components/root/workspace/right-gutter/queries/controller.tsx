@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Dispatch } from "redux";
-import { PCQuery, PCQueryType, PCVariable } from "@paperclip-lang/core";
+import { PCQuery, PCQueryType, PCVariable } from "paperclip";
 import { BaseQueriesPaneProps, QueryItem } from "./view.pc";
 import { addQueryButtonClick } from "../../../../../actions";
 import { QUERY_DROPDOWN_OPTIONS } from "./utils";

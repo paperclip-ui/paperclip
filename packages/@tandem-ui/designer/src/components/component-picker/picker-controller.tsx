@@ -2,7 +2,7 @@ import React, { useState, memo } from "react";
 import { Dispatch } from "redux";
 import { RootState } from "../../state";
 import { ComponentOption } from "./cell.pc";
-import { getAllPCComponents } from "@paperclip-lang/core";
+import { getAllPCComponents } from "paperclip";
 import { componentPickerItemClick } from "../../actions";
 import { BasePickerProps } from "./picker.pc";
 import { useDispatch } from "react-redux";

@@ -6,8 +6,8 @@ import {
   getPCNodeDependency,
   getPCNode,
   SyntheticDocument,
-} from "@paperclip-lang/core";
-import { InspectorNode } from "@paperclip-lang/core";
+} from "paperclip";
+import { InspectorNode } from "paperclip";
 import { Dispatch } from "redux";
 import { BaseLayersPaneProps } from "./view.pc";
 import { OpenModule } from "./open-module.pc";

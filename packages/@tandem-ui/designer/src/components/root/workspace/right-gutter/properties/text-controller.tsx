@@ -3,7 +3,7 @@ import {
   PCSourceTagNames,
   SyntheticVisibleNode,
   SyntheticTextNode,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { textValueChanged } from "../../../../../actions";
 import { BaseTextPropertiesProps, ElementProps } from "./view.pc";
 import { Dispatch } from "redux";

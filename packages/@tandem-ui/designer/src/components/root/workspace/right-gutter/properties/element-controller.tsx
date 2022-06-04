@@ -12,7 +12,7 @@ import {
   PCElement,
   getNativeComponentName,
   PCTextNode,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { elementTypeChanged, attributeChanged } from "../../../../../actions";
 import {
   DropdownMenuOption,

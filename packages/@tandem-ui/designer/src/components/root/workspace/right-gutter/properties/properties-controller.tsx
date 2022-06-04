@@ -9,9 +9,9 @@ import {
   isPCContentNode,
   isElementLikePCNode,
   isTextLikePCNode,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { BasePropertiesProps, ElementProps } from "./view.pc";
-import { InspectorNode } from "@paperclip-lang/core";
+import { InspectorNode } from "paperclip";
 import { Dispatch } from "redux";
 
 export type PropertiesControllerOuterProps = {};

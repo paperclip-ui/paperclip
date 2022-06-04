@@ -4,7 +4,7 @@ import {
   PCComponent,
   PCComponentInstanceElement,
   PCElement,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { Dispatch } from "redux";
 import { BaseImgPropertiesProps, ElementProps } from "./view.pc";
 import {

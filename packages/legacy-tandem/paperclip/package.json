@@ -1,5 +1,5 @@
 {
-  "name": "@paperclip-lang/core",
+  "name": "paperclip",
   "version": "10.1.33",
   "description": "Paperclip DSL specific for visual development.",
   "bin": {

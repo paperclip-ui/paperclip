@@ -8,7 +8,7 @@ import {
   dropdownMenuOptionFromValue,
 } from "../../../../../../inputs/dropdown/controller";
 import { memoize } from "tandem-common";
-import { ComputedStyleInfo } from "@paperclip-lang/core";
+import { ComputedStyleInfo } from "paperclip";
 // import { BaseBoxModelProps } from "./spacing.pc";
 import { Dispatch } from "redux";
 

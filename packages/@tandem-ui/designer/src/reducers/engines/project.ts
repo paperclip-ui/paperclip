@@ -1,4 +1,4 @@
-import { addPCFileUris, createRootInspectorNode } from "@paperclip-lang/core";
+import { addPCFileUris, createRootInspectorNode } from "paperclip";
 import { Action } from "redux";
 import {
   getFileFromUri,

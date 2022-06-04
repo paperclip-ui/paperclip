@@ -22,7 +22,7 @@ import {
   SyntheticDocument,
   DependencyGraph,
   InspectorNode,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { useDispatch } from "react-redux";
 
 export type ResizerOuterProps = {

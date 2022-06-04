@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ComputedStyleInfo } from "@paperclip-lang/core";
+import { ComputedStyleInfo } from "paperclip";
 import { BaseRadiusInputProps } from "./borders.pc";
 import { memoize } from "tandem-common";
 import {

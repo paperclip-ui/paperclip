@@ -21,7 +21,7 @@ import {
   InspectorNode,
   getInspectorContentNode,
   getPCNode,
-} from "@paperclip-lang/core";
+} from "paperclip";
 
 export type Props = {
   dispatch: Dispatch<any>;

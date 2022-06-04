@@ -28,7 +28,7 @@ import {
   PCVariableType,
   PCQueryType,
   PCQuery,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import {
   FrameMode,
   ToolType,
@@ -43,7 +43,7 @@ import {
   Unloader,
   AddFileType,
 } from "../state";
-import { InspectorNode } from "@paperclip-lang/core";
+import { InspectorNode } from "paperclip";
 import { ProjectTemplate } from "tandem-starter-kits";
 
 export const PROJECT_LOADED = "PROJECT_LOADED";

@@ -15,7 +15,7 @@ import {
   DependencyGraph,
   getInspectorNodeBySourceNodeId,
   getInspectorContentNode,
-} from "@paperclip-lang/core";
+} from "paperclip";
 import { getFSItem } from "fsbox";
 import { BaseEditorProps } from "./editor.pc";
 import { TextEditorWindow } from "./text";

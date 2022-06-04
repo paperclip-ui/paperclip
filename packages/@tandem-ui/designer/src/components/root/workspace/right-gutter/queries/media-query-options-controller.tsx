@@ -2,7 +2,7 @@ import * as React from "react";
 import { Dispatch } from "redux";
 import { BaseMediaQueryOptionsProps } from "./view.pc";
 import { queryConditionChanged } from "../../../../../actions";
-import { PCQuery, PCMediaQuery } from "@paperclip-lang/core";
+import { PCQuery, PCMediaQuery } from "paperclip";
 import { EMPTY_OBJECT } from "tandem-common";
 export type Props = {
   query: PCMediaQuery;

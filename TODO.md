@@ -1,8 +1,8 @@
 IMMEDIATE:
 
-- shortcuts
-- serializer
-- update rendering engine to use native
+- create converter for old PC files to new format
+  - println instead of saving files
+  - backup PC files
 
 TODO:
 

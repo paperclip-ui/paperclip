@@ -1,5 +1,5 @@
 import * as React from "react";
-import { InspectorNode } from "@paperclip-lang/core";
+import { InspectorNode } from "paperclip";
 import { BaseOpenModuleProps } from "./open-module.pc";
 import { NodeLayer } from "./layer.pc";
 

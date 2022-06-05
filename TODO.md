@@ -1,8 +1,8 @@
 IMMEDIATE:
 
-- create converter for old PC files to new format
-  - println instead of saving files
-  - backup PC files
+- create parser for existing Tandem format
+- convert all PC files to new format
+- Update Tandem + legacy Paperclip to
 
 TODO:
 

@@ -1,4 +1,9 @@
-import { EndOfFileError, UnknownTokenError } from "./errors";
+import { negate } from "lodash";
+import {
+  EndOfFileError,
+  UnexpectedTokenError,
+  UnknownTokenError,
+} from "./errors";
 import { StringScanner } from "./string-scanner";
 
 export enum TokenKind {
@@ -34,8 +39,9 @@ const Testers = {
 
 export class Tokenizer {
   private _scanner: StringScanner;
+  private _curr: Token;
 
-  constructor(readonly source: string) {
+  constructor(source: string) {
     this._scanner = new StringScanner(source);
   }
   isEOF() {
@@ -43,13 +49,43 @@ export class Tokenizer {
   }
 
   eatWhitespace() {
-    if (this.isEOF()) {
-      return "";
+    if (this._curr && this._curr.kind === TokenKind.Whitespace) {
+      const curr = this._curr;
+      this.next();
+      return curr.value;
     }
-    const next = this.peek();
+
+    return "";
+
+    // if (this.isEOF()) {
+    //   return "";
+    // }
+    // const c = this._scanner.currChar();
+
+    // if (isWhitespace(c)) {
+    //   return this.next().value;
+    // }
+
+    // return "";
   }
 
-  next(): Token {
+  curr() {
+    return this._curr;
+  }
+
+  currValue(kind: TokenKind) {
+    const token = this._curr;
+    if (token.kind !== kind) {
+      throw new UnexpectedTokenError(token.value);
+    }
+    return this._curr.value;
+  }
+
+  next() {
+    return (this._curr = this._next());
+  }
+
+  _next(): Token {
     if (this.isEOF()) {
       throw new EndOfFileError();
     }
@@ -144,17 +180,14 @@ export class Tokenizer {
       }
     }
 
-    if (chr.match(Testers.Whitespace)) {
-      return token(
-        TokenKind.Whitespace,
-        chr + this._scanner.scanUntil((c) => !c.match(Testers.Whitespace))
-      );
+    if (isWhitespace(chr)) {
+      return token(TokenKind.Whitespace, chr + this._scanWhitespaceValue());
     }
 
-    if (chr.match(Testers.Keyword)) {
+    if (isLetter(chr)) {
       return token(
         TokenKind.Keyword,
-        chr + this._scanner.scanUntil((c) => !c.match(Testers.Keyword))
+        chr + this._scanner.scanUntil(negate(isLetter))
       );
     }
 
@@ -163,6 +196,10 @@ export class Tokenizer {
     }
 
     throw new UnknownTokenError(chr);
+  }
+
+  private _scanWhitespaceValue() {
+    return this._scanner.scanUntil(negate(isWhitespace));
   }
 
   private _scanNumberValue() {
@@ -175,7 +212,7 @@ export class Tokenizer {
   }
 
   private _scanDigitValue() {
-    return this._scanner.scanUntil((c) => !c.match(Testers.Digit));
+    return this._scanner.scanUntil(negate(isDigit));
   }
 
   peek(count: number = 1) {
@@ -192,3 +229,18 @@ export const token = (kind: TokenKind, value: string): Token => ({
   kind,
   value,
 });
+
+const isDigit = (value: string) => {
+  const c = value.charCodeAt(0);
+  return c > 47 && c < 58;
+};
+
+const isLetter = (value: string) => {
+  const c = value.charCodeAt(0);
+  return (c > 96 && c < 123) || (c > 64 && c < 91);
+};
+
+const isWhitespace = (value: string) => {
+  const c = value.charCodeAt(0);
+  return c === 10 || c === 115 || c === 9 || c === 13 || c === 32;
+};

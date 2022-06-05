@@ -21,12 +21,13 @@ describe(__dirname + "#", () => {
     ["// a bba \n", [token(TokenKind.SingleLineComment, "// a bba \n")]],
     ["10", [token(TokenKind.Number, "10")]],
     ["-10", [token(TokenKind.Number, "-10")]],
-    ["-10.444", [token(TokenKind.Number, "-10.555")]],
+    ["-10.444", [token(TokenKind.Number, "-10.444")]],
     ["[", [token(TokenKind.SquareOpen, "[")]],
     ["]", [token(TokenKind.SquareClose, "]")]],
     [`"abba"`, [token(TokenKind.String, `"abba"`)]],
     [`"abba\\""`, [token(TokenKind.String, `"abba\\""`)]],
     [`"abba\\""`, [token(TokenKind.String, `"abba\\""`)]],
+    [`'abba'`, [token(TokenKind.String, `'abba'`)]],
   ].forEach(([source, expectedTokens]: [string, Token[]]) => {
     it(`Can tokenize "${source}"`, () => {
       const tokenizer = new Tokenizer(source);

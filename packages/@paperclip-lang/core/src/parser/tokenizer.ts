@@ -29,6 +29,7 @@ export type Token = {
 const Testers = {
   Whitespace: /[\s\r\n\t]/,
   Keyword: /[a-z]/i,
+  Digit: /[0-9]/i,
 };
 
 export class Tokenizer {
@@ -52,50 +53,129 @@ export class Tokenizer {
     if (this.isEOF()) {
       throw new EndOfFileError();
     }
-    const curr = this._scanner.currChar();
+    const chr = this._scanner.currChar();
     this._scanner.nextChar();
 
-    if (curr === "(") {
-      return token(TokenKind.ParenOpen, curr);
+    if (chr === "(") {
+      return token(TokenKind.ParenOpen, chr);
     }
 
-    if (curr === ")") {
-      return token(TokenKind.ParenClose, curr);
+    if (chr === ")") {
+      return token(TokenKind.ParenClose, chr);
     }
 
-    if (curr === "{") {
-      return token(TokenKind.CurlyOpen, curr);
+    if (chr === "{") {
+      return token(TokenKind.CurlyOpen, chr);
     }
 
-    if (curr === "}") {
-      return token(TokenKind.CurlyClose, curr);
+    if (chr === "}") {
+      return token(TokenKind.CurlyClose, chr);
     }
 
-    if (curr === ",") {
-      return token(TokenKind.Comma, curr);
+    if (chr === ",") {
+      return token(TokenKind.Comma, chr);
     }
 
-    if (curr === "/") {
-      if (this._scanner.currChar() === "*") {
+    if (chr === "[") {
+      return token(TokenKind.SquareOpen, chr);
+    }
+
+    if (chr === "]") {
+      return token(TokenKind.SquareClose, chr);
+    }
+
+    if (chr === "/") {
+      const curr = this._scanner.currChar();
+      if (curr === "*") {
+        this._scanner.nextChar(); // eat *
+        let buffer = "/*";
+        while (!this._scanner.isEOF()) {
+          const curr = this._scanner.currChar();
+          if (curr === "*" && this._scanner.peekChar() === "/") {
+            buffer += "*/";
+            this._scanner.skip(2);
+            break;
+          }
+          buffer += curr;
+          this._scanner.nextChar();
+        }
+        return token(TokenKind.MultiLineComment, buffer);
+      } else if (curr === "/") {
+        this._scanner.nextChar(); // eat *
+        let buffer = "//" + this._scanner.scanUntil((c) => c === "\n");
+
+        // maybe EOF
+        if (this._scanner.currChar() === "\n") {
+          this._scanner.nextChar(); // eat \n
+          buffer += "\n";
+        }
+        return token(TokenKind.SingleLineComment, buffer);
       }
-      return token(TokenKind.Comma, curr);
     }
 
-    if (curr.match(Testers.Whitespace)) {
+    if (chr === '"' || chr === "'") {
+      let buffer = chr;
+
+      while (!this._scanner.isEOF()) {
+        if (this._scanner.currChar() === chr) {
+          break;
+        }
+
+        // Escape
+        if (this._scanner.currChar() === "\\") {
+          buffer += "\\" + this._scanner.nextChar();
+          this._scanner.nextChar(); // eat escaped
+          continue;
+        }
+
+        buffer += this._scanner.currChar();
+        this._scanner.nextChar();
+      }
+
+      buffer += this._scanner.currChar();
+      this._scanner.nextChar(); // eat " '
+
+      return token(TokenKind.String, buffer);
+    }
+
+    if (chr === "-") {
+      if (this._scanner.currChar().match(Testers.Digit)) {
+        return token(TokenKind.Number, chr + this._scanNumberValue());
+      }
+    }
+
+    if (chr.match(Testers.Whitespace)) {
       return token(
         TokenKind.Whitespace,
-        curr + this._scanner.scanUntil((c) => !c.match(Testers.Whitespace))
+        chr + this._scanner.scanUntil((c) => !c.match(Testers.Whitespace))
       );
     }
 
-    if (curr.match(Testers.Keyword)) {
+    if (chr.match(Testers.Keyword)) {
       return token(
         TokenKind.Keyword,
-        curr + this._scanner.scanUntil((c) => !c.match(Testers.Keyword))
+        chr + this._scanner.scanUntil((c) => !c.match(Testers.Keyword))
       );
     }
 
-    throw new UnknownTokenError(curr);
+    if (chr.match(Testers.Digit)) {
+      return token(TokenKind.Number, chr + this._scanNumberValue());
+    }
+
+    throw new UnknownTokenError(chr);
+  }
+
+  private _scanNumberValue() {
+    let buffer = this._scanDigitValue();
+    if (this._scanner.currChar() === ".") {
+      this._scanner.nextChar(); // eat .
+      buffer += "." + this._scanDigitValue();
+    }
+    return buffer;
+  }
+
+  private _scanDigitValue() {
+    return this._scanner.scanUntil((c) => !c.match(Testers.Digit));
   }
 
   peek(count: number = 1) {

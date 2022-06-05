@@ -12,7 +12,10 @@ export class StringScanner {
   nextChar() {
     return this.source.charAt(++this._pos);
   }
-  peek(step: number = 1) {
+  skip(count: number = 1) {
+    this._pos += count;
+  }
+  peekChar(step: number = 1) {
     return this.source.charAt(this._pos + step);
   }
   scanUntil(test: (c: string) => boolean) {

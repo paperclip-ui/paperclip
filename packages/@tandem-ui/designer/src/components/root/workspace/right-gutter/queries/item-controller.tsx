@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Dispatch } from "redux";
-import { PCMediaQuery } from "paperclip";
+import { PCMediaQuery } from "@paperclip-lang/core";
 // import { BaseMediaQueryItemProps } from "./view.pc";
 import { queryConditionChanged } from "../../../../../actions";
 export type Props = {

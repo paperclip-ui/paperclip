@@ -2,7 +2,7 @@
 
 const path = require("path");
 const fs = require("fs");
-const { PC_CONFIG_FILE_NAME } = require("paperclip");
+const { PC_CONFIG_FILE_NAME } = require("@paperclip-lang/core");
 const filePath = path.join(process.cwd(), PC_CONFIG_FILE_NAME);
 
 const argv = require("yargs").option("keep-empty", {

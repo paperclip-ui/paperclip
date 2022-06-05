@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Dispatch } from "redux";
 import cx from "classnames";
-import { PCVariantTrigger, PCVariant, PCQuery } from "paperclip";
+import { PCVariantTrigger, PCVariant, PCQuery } from "@paperclip-lang/core";
 import { BaseTriggersPaneProps, TriggerItem } from "./triggers.pc";
 import {
   addVariantTriggerButtonClicked,

@@ -10,7 +10,7 @@ import {
   DependencyGraph,
   InspectorNode,
   getInspectorSyntheticNode,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import {
   Bounds,
   memoize,

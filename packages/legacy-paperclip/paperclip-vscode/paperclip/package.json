@@ -1,6 +1,6 @@
 {
-  "name": "paperclip",
-  "displayName": "paperclip",
+  "name": "@paperclip-lang/core",
+  "displayName": "@paperclip-lang/core",
   "description": "Template language that compiles to code",
   "version": "0.0.1",
   "engines": {
@@ -12,10 +12,10 @@
   "contributes": {
     "languages": [
       {
-        "id": "paperclip",
+        "id": "@paperclip-lang/core",
         "aliases": [
-          "Paperclip",
-          "paperclip"
+          "@paperclip-lang/core",
+          "@paperclip-lang/core"
         ],
         "extensions": [
           ".pc"
@@ -25,7 +25,7 @@
     ],
     "grammars": [
       {
-        "language": "paperclip",
+        "language": "@paperclip-lang/core",
         "scopeName": "source.paperclip",
         "path": "./syntaxes/paperclip.tmLanguage.json"
       }

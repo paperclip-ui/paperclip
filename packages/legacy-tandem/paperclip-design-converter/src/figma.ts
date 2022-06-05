@@ -21,7 +21,7 @@ import {
   PCNode,
   PCComponent,
   elevateCommonStylesToGlobal,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import {
   KeyValue,
   EMPTY_OBJECT,
@@ -43,7 +43,7 @@ import {
   PCTextLikeNode,
   PCTextNode,
   createPCElementStyleMixin,
-} from "paperclip";
+} from "@paperclip-lang/core";
 
 export type FigmaDesign = {
   document: figma.Document;

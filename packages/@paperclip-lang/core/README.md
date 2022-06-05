@@ -20,7 +20,7 @@ import {
   createPCTextNode,
   createDependencyGraph,
   createPCComponentInstance,
-} from "paperclip";
+} from "@paperclip-lang/core";
 
 const component = createPCComponent("Test");
 

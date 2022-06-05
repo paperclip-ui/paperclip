@@ -4,7 +4,7 @@ import {
   loadFSDependencyGraphSync,
   getComponentGraphRefMap,
   getPCNodeDependency,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { normalizeFilePath } from "tandem-common";
 const loaderUtils = require("loader-utils");
 

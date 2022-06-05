@@ -1,6 +1,6 @@
 import * as React from "react";
 import cx from "classnames";
-import { PCComponent, PCStyleMixin } from "paperclip";
+import { PCComponent, PCStyleMixin } from "@paperclip-lang/core";
 import { DropdownMenuOption } from "../../../../../../inputs/dropdown/controller";
 import { memoize } from "tandem-common";
 import { inheritItemComponentTypeChangeComplete } from "../../../../../../../actions";

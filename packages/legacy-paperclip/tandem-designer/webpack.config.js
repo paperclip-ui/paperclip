@@ -38,7 +38,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       publicPath: "/",
-      title: "Paperclip",
+      title: "@paperclip-lang/core",
       template: path.resolve(__dirname, "src", "index.html"),
     }),
     new webpack.ProvidePlugin({

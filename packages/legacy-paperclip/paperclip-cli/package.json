@@ -7,7 +7,7 @@
     "access": "public"
   },
   "bin": {
-    "paperclip": "./bin/paperclip"
+    "@paperclip-lang/core": "./bin/paperclip"
   },
   "scripts": {
     "build": "tsc",

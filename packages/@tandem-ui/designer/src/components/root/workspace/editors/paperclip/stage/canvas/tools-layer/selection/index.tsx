@@ -16,7 +16,7 @@ import {
   Frame,
   DependencyGraph,
   InspectorNode,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { getNestedTreeNodeById } from "tandem-common";
 
 export type SelectionOuterProps = {

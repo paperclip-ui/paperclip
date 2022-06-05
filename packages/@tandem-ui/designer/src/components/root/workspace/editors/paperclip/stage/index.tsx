@@ -8,7 +8,7 @@ import {
   DependencyGraph,
   SyntheticDocument,
   Frame,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import {
   RootState,
   EditorWindow,
@@ -16,7 +16,7 @@ import {
   ToolType,
   EditMode,
 } from "../../../../../../state";
-import { InspectorNode } from "paperclip";
+import { InspectorNode } from "@paperclip-lang/core";
 
 export type StageOuterProps = {
   editorWindow: EditorWindow;

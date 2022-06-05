@@ -6,7 +6,7 @@ import {
   PCVariableQuery,
   PCVariableQueryCondition,
   PCQueryType,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import {
   variableQuerySourceVariableChange,
   queryConditionChanged,

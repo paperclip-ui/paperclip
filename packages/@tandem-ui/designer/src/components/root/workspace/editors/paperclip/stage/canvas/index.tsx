@@ -17,7 +17,7 @@ import {
   Frame,
   SyntheticDocument,
   DependencyGraph,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { PreviewLayerComponent } from "./preview-layer";
 import { throttle } from "lodash";
 import { ToolsLayerComponent } from "./tools-layer";
@@ -34,7 +34,7 @@ import {
   canvasRightClicked,
 } from "../../../../../../../actions";
 import { DropTarget, DropTargetMonitor } from "react-dnd";
-import { InspectorNode } from "paperclip";
+import { InspectorNode } from "@paperclip-lang/core";
 import { clientRectToBounds } from "tandem-common";
 import { useDispatch } from "react-redux";
 

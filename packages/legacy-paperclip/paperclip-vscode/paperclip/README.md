@@ -1,6 +1,6 @@
 # paperclip README
 
-This is the README for your extension "paperclip". After writing up a brief description, we recommend including the following sections.
+This is the README for your extension "@paperclip-lang/core". After writing up a brief description, we recommend including the following sections.
 
 ## Features
 

@@ -11,7 +11,7 @@ import { PaperclipEngineAsyncInfoProvider } from "./service/async-provider";
 
 export const registerLanguages = (monaco: Monaco, options: Options) => {
   monaco.languages.register({
-    id: "paperclip",
+    id: "@paperclip-lang/core",
     extensions: [".pc"],
     mimetypes: ["text/paperclip"],
   });
@@ -28,8 +28,14 @@ export const registerLanguages = (monaco: Monaco, options: Options) => {
     mimetypes: ["text/pcs"],
   });
 
-  monaco.languages.setLanguageConfiguration("paperclip", html.config);
-  monaco.languages.setMonarchTokensProvider("paperclip", html.language as any);
+  monaco.languages.setLanguageConfiguration(
+    "@paperclip-lang/core",
+    html.config
+  );
+  monaco.languages.setMonarchTokensProvider(
+    "@paperclip-lang/core",
+    html.language as any
+  );
 
   monaco.languages.setLanguageConfiguration("pcss", pcss.config);
   monaco.languages.setMonarchTokensProvider("pcss", pcss.language as any);
@@ -40,6 +46,9 @@ export const registerLanguages = (monaco: Monaco, options: Options) => {
   const service = new PaperclipEngineAsyncInfoProvider();
   const adapter = new PaperclipMonacoServiceAdapter(service, options);
 
-  monaco.languages.registerColorProvider("paperclip", adapter);
-  monaco.languages.registerCompletionItemProvider("paperclip", adapter);
+  monaco.languages.registerColorProvider("@paperclip-lang/core", adapter);
+  monaco.languages.registerCompletionItemProvider(
+    "@paperclip-lang/core",
+    adapter
+  );
 };

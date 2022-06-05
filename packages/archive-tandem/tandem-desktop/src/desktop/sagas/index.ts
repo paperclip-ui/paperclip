@@ -29,7 +29,7 @@ import {
   createPCComponent,
   PCVisibleNodeMetadataKey,
   createPCTextNode,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { DesktopState, TDProject } from "../state";
 import { isPublicAction, createBounds, normalizeFilePath } from "tandem-common";
 import { shortcutsSaga } from "./menu";

@@ -15,7 +15,7 @@ import {
   getInspectorContentNode,
   isComponent,
   getComponentVariants,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { EMPTY_ARRAY } from "tandem-common";
 import { FontFamily, ProjectOptions } from "../../../../../state";
 

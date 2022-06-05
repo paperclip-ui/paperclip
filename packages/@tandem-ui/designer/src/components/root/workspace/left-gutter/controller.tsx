@@ -1,6 +1,10 @@
 import * as React from "react";
 import { BaseLeftGutterProps } from "./view.pc";
-import { DependencyGraph, InspectorNode, SyntheticDocument } from "paperclip";
+import {
+  DependencyGraph,
+  InspectorNode,
+  SyntheticDocument,
+} from "@paperclip-lang/core";
 import { Dispatch } from "redux";
 import { Directory, startDOMDrag } from "tandem-common";
 import { NewFSItemInfo } from "../../../../state";

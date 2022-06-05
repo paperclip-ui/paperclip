@@ -1,6 +1,6 @@
 {
   "name": "paperclip-vscode",
-  "displayName": "Paperclip",
+  "displayName": "@paperclip-lang/core",
   "version": "18.5.6",
   "electronVersion": "7.1.10",
   "publisher": "crcn",
@@ -39,7 +39,7 @@
   ],
   "contributes": {
     "configuration": {
-      "title": "Paperclip",
+      "title": "@paperclip-lang/core",
       "properties": {
         "credentials.browserstackUsername": {
           "type": "string"
@@ -89,10 +89,10 @@
     ],
     "languages": [
       {
-        "id": "paperclip",
+        "id": "@paperclip-lang/core",
         "aliases": [
-          "paperclip",
-          "paperclip"
+          "@paperclip-lang/core",
+          "@paperclip-lang/core"
         ],
         "extensions": [
           ".pc"
@@ -113,7 +113,7 @@
     ],
     "grammars": [
       {
-        "language": "paperclip",
+        "language": "@paperclip-lang/core",
         "scopeName": "text.html.paperclip-html",
         "path": "./syntaxes/paperclip-html.tmLanguage.json",
         "embeddedLanguages": {

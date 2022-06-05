@@ -6,7 +6,7 @@ import {
   PCVariant,
   PCVariable,
   ComputedStyleInfo,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { BaseElementStylerProps } from "./view.pc";
 import { Dispatch } from "redux";
 import { FontFamily, ProjectOptions } from "../../../../../../state";

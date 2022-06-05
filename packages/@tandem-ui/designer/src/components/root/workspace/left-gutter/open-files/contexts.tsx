@@ -1,6 +1,6 @@
 import * as React from "react";
-import { DependencyGraph, SyntheticDocument } from "paperclip";
-import { InspectorNode } from "paperclip";
+import { DependencyGraph, SyntheticDocument } from "@paperclip-lang/core";
+import { InspectorNode } from "@paperclip-lang/core";
 import { Dispatch } from "redux";
 
 export type LayersPaneContextProps = {

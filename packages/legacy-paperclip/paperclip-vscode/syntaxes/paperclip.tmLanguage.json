@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "name": "paperclip",
+  "name": "@paperclip-lang/core",
   "patterns": [
     {
       "include": "#keywords"

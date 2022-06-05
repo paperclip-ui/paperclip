@@ -1,5 +1,9 @@
-import { InspectorNode } from "paperclip";
-import { DependencyGraph, getPCNode, PCSourceTagNames } from "paperclip";
+import { InspectorNode } from "@paperclip-lang/core";
+import {
+  DependencyGraph,
+  getPCNode,
+  PCSourceTagNames,
+} from "@paperclip-lang/core";
 
 // export const getContentNode = (
 //   inspectorNode: InspectorNode,

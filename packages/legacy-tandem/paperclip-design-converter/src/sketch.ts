@@ -1,8 +1,8 @@
 import { BaseDesign, DesignType, ConversionOptions } from "./base";
-import { createPCModule, PCVisibleNodeMetadataKey } from "paperclip";
+import { createPCModule, PCVisibleNodeMetadataKey } from "@paperclip-lang/core";
 import * as ns from "node-sketch";
 import { appendChildNode, EMPTY_OBJECT } from "tandem-common";
-import { PCNode, PCSourceTagNames } from "paperclip";
+import { PCNode, PCSourceTagNames } from "@paperclip-lang/core";
 
 const EMPTY_ARRAY = [];
 

@@ -7,7 +7,7 @@ import {
   PCComponentInstanceElement,
   getNativeComponentName,
   DependencyGraph,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { Dispatch } from "redux";
 import { BaseInputPropertiesProps } from "./input.pc";
 import { dropdownMenuOptionFromValue } from "../../../../inputs/dropdown/controller";

@@ -1,6 +1,6 @@
 import * as React from "react";
 import cx from "classnames";
-import { InspectorNode } from "paperclip";
+import { InspectorNode } from "@paperclip-lang/core";
 import { BaseLabeledCssInputProps } from "./view.pc";
 import { Dispatch } from "redux";
 import { cssInheritedFromLabelClicked } from "../../../../../../../../actions";

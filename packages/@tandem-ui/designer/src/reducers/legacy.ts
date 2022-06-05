@@ -360,7 +360,7 @@ import {
   persistAddVariantTrigger,
   PCVariableQuery,
   getInspectorContentNode,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import {
   roundBounds,
   scaleInnerBounds,
@@ -411,7 +411,7 @@ import {
   InspectorNode,
   inspectorNodeInShadow,
   getSyntheticInspectorNode,
-} from "paperclip";
+} from "@paperclip-lang/core";
 
 const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
 const PAN_X_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;

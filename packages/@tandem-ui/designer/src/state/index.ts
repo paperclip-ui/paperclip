@@ -86,7 +86,7 @@ import {
   persistConvertInspectorNodeStyleToMixin,
   persistWrapInSlot,
   expandInspectorNode,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import {
   CanvasToolOverlayMouseMoved,
   CanvasToolOverlayClicked,
@@ -107,7 +107,7 @@ import {
   getSyntheticInspectorNode,
   InspectorNode,
   getInsertableInspectorNode,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { Action } from "redux";
 
 export enum ToolType {

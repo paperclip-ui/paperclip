@@ -50,7 +50,7 @@
     "get-port": "^3.2.0",
     "lodash": "^4.17.11",
     "mime-types": "^2.1.20",
-    "paperclip": "^10.1.33",
+    "@paperclip-lang/core": "^10.1.33",
     "paperclip-migrator": "^10.1.33",
     "process": "^0.11.10",
     "raven-js": "^3.27.0",

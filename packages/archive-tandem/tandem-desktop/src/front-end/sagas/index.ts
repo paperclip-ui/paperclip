@@ -22,7 +22,7 @@ import {
   createPCModule,
   createPCElement,
   PCVisibleNodeMetadataKey,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import {
   fileChanged,
   FileChanged,

@@ -4,10 +4,10 @@ import { createEngineDelegate } from "@paperclip-ui/core";
 
 export const languages: Partial<SupportLanguage>[] = [
   {
-    name: "paperclip",
-    parsers: ["paperclip"],
+    name: "@paperclip-lang/core",
+    parsers: ["@paperclip-lang/core"],
     extensions: [".pc"],
-    vscodeLanguageIds: ["paperclip"],
+    vscodeLanguageIds: ["@paperclip-lang/core"],
   },
 ];
 

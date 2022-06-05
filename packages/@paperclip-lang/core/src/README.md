@@ -23,7 +23,7 @@ Example:
 VM:
 
 ```typescript
-import { loadEntry, evaluateEntry } from "paperclip";
+import { loadEntry, evaluateEntry } from "@paperclip-lang/core";
 const info = await loadEntry("test.pc", { openFile, graph });
 const { componentPreviews } = evaluateEntry(
   await loadEntry("test.pc", { openFile })

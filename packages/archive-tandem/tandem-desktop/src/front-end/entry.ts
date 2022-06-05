@@ -38,7 +38,7 @@ import {
   getSyntheticSourceNode,
   getSyntheticNodeById,
   getPCNodeDependency,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { eventChannel } from "redux-saga";
 import { FileOpenerOptions } from "@tandem-ui/designer/src/components/contexts";
 const pkg = require("../../package.json");

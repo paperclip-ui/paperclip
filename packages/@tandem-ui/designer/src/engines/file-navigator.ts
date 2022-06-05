@@ -2,7 +2,7 @@ import {
   createPCElement,
   createPCModule,
   PCVisibleNodeMetadataKey,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import * as path from "path";
 import { Dispatch } from "react";
 import { Action } from "redux";

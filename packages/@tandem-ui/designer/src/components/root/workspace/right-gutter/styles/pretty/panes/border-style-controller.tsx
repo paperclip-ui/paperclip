@@ -3,7 +3,7 @@ import { dropdownMenuOptionFromValue } from "../../../../../../inputs/dropdown/c
 import { memoize, EMPTY_ARRAY } from "tandem-common";
 import { BaseBorderStyleProps } from "./borders.pc";
 import { mapPCVariablesToColorSwatchOptions } from "../../state";
-import { PCVariable } from "paperclip";
+import { PCVariable } from "@paperclip-lang/core";
 import { getColorSwatchOptionsFromValues } from "../../../../../../inputs/color/color-swatch-controller";
 import { getPrettyPaneColorSwatchOptionGroups } from "./utils";
 

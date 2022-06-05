@@ -17,12 +17,12 @@ import { useDispatch } from "react-redux";
 export type Monaco = typeof monacoEditor;
 // TODO: https://github.com/microsoft/monaco-editor/issues/221
 
-export type EditorProps = {
+export interface EditorProps {
   uri: string;
   value: string;
   highlightLocation: StringRange;
   onChange: (value: string) => void;
-};
+}
 
 export const MonacoEditor = ({
   uri,
@@ -111,7 +111,7 @@ export const MonacoEditor = ({
       activatePaperclipExtension(monaco as any, { getCurrentUri: null });
 
       const editor = monaco.editor.create(editorRef.current, {
-        language: "paperclip",
+        language: "@paperclip-lang/core",
         tabSize: 2,
         automaticLayout: true,
         insertSpaces: true,

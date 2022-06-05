@@ -1,5 +1,5 @@
 import { memoize } from "tandem-common";
-import { PCVariable, PCVariableType } from "paperclip";
+import { PCVariable, PCVariableType } from "@paperclip-lang/core";
 import { ColorSwatchOption } from "../../../../inputs/color/color-swatch-controller";
 
 export const mapPCVariablesToColorSwatchOptions = memoize(

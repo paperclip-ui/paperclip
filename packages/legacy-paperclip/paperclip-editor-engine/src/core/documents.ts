@@ -1,6 +1,6 @@
 export enum DocumentKind {
   Image = "Image",
-  Paperclip = "Paperclip",
+  Paperclip = "@paperclip-lang/core",
   CSS = "CSS",
   PlainText = "PlainText",
 }

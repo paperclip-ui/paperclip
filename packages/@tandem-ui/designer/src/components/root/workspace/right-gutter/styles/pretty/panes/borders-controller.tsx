@@ -10,7 +10,7 @@ import {
   PCSourceTagNames,
   isTextLikePCNode,
   ComputedStyleInfo,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { Dispatch } from "redux";
 import { BaseBorderProps } from "./borders.pc";
 

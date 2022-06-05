@@ -1,7 +1,7 @@
 import { eventChannel } from "redux-saga";
 import { fork, take, select, put } from "redux-saga/effects";
 import { RootState, getInspectorNodeClipboardData } from "../state";
-import { PCNodeClip, xmlToPCNode } from "paperclip";
+import { PCNodeClip, xmlToPCNode } from "@paperclip-lang/core";
 import { inspectorNodePasted } from "../actions";
 
 export function* copyPasteSaga() {

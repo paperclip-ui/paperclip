@@ -68,7 +68,7 @@ import {
   getTreeNodesByName,
 } from "tandem-common";
 import { PCEditorState } from "./edit";
-// import { SyntheticNode, PCNode, PCModule, PCComponent, DependencyGraph, PCComponentInstanceElement, PCSourceTagNames, PCOverride, PCChildrenOverride } from "paperclip";
+// import { SyntheticNode, PCNode, PCModule, PCComponent, DependencyGraph, PCComponentInstanceElement, PCSourceTagNames, PCOverride, PCChildrenOverride } from "@paperclip-lang/core";
 
 // /**
 //  * Inspector tree node combines source & synthetic nodes together

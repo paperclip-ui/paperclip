@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Frame } from "paperclip";
+import { Frame } from "@paperclip-lang/core";
 
 export type SelectableToolsOuterProps = {
   frames: Frame[];

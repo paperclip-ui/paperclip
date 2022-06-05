@@ -9,7 +9,7 @@ import {
   PCVariantTriggerSource,
   PCQuery,
   PCVariantTriggerQuerySource,
-} from "paperclip";
+} from "@paperclip-lang/core";
 import { isEqual } from "lodash";
 import cx from "classnames";
 import { memoize } from "tandem-common";

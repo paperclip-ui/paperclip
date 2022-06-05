@@ -9,7 +9,7 @@ import { Package } from "./package";
 import * as crypto from "crypto";
 import { Repository } from "./git";
 import { ProjectConfig, ProjectInfo } from "@tandem-ui/designer/lib/state";
-import { findPaperclipSourceFiles } from "paperclip";
+import { findPaperclipSourceFiles } from "@paperclip-lang/core";
 
 const DEFAULT_PROJECT_FILE_NAME = "app.tdproject";
 

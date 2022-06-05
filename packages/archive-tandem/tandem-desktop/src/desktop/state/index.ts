@@ -1,4 +1,4 @@
-import { PCConfig } from "paperclip";
+import { PCConfig } from "@paperclip-lang/core";
 import { ProjectConfig } from "@tandem-ui/designer";
 
 export type TDProject = ProjectConfig;

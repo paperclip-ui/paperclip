@@ -11,7 +11,7 @@
 //   PAPERCLIP_DEFAULT_EXTENSIONS,
 //   getPCNodeModule,
 //   PCComponent,
-// } from "paperclip";
+// } from "@paperclip-lang/core";
 // import { RootState, getProjectCWD } from "./state";
 // import { appLoaded } from "./actions";
 // import {
@@ -20,7 +20,7 @@
 //   setReaderMimetype,
 // } from "fsbox";
 // import { FrontEndContextOptions } from "./components/contexts";
-// import { createRemotePCRuntime } from "paperclip";
+// import { createRemotePCRuntime } from "@paperclip-lang/core";
 // import {
 //   pmark,
 //   EMPTY_OBJECT,
@@ -162,6 +162,6 @@
 
 // export * from "./state";
 // export * from "./actions";
-// export * from "paperclip";
+// export * from "@paperclip-lang/core";
 // export * from "./starter-kits";
 // export * from "./sagas/process";

@@ -1,25 +1,25 @@
 module.exports = {
-  title: "Paperclip",
+  title: "@paperclip-lang/core",
   tagline:
     "A tiny language that brings scoped CSS to any kind of web application.",
   url: "https://paperclip.dev",
   baseUrl: "/",
   favicon: "img/favicon.ico",
   organizationName: "crcn", // Usually your GitHub org/user name.
-  projectName: "paperclip", // Usually your repo name.
+  projectName: "@paperclip-lang/core", // Usually your repo name.
   themeConfig: {
     algolia: {
       apiKey: "692b36b7f6c2f8b247884702fc82e7c3",
-      indexName: "paperclip",
+      indexName: "@paperclip-lang/core",
     },
     prism: {
       theme: require("prism-react-renderer/themes/oceanicNext"),
       additionalLanguages: ["php"],
     },
     navbar: {
-      title: "Paperclip",
+      title: "@paperclip-lang/core",
       logo: {
-        alt: "Paperclip",
+        alt: "@paperclip-lang/core",
         src: "img/logo-color.svg",
         srcDark: "img/logo-dark-2.svg",
       },

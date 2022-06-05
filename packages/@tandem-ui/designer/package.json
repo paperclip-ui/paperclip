@@ -65,6 +65,7 @@
     "wrapper-webpack-plugin": "^2.0.0"
   },
   "dependencies": {
+    "@paperclip-lang/core": "^10.1.33",
     "@reduxjs/toolkit": "^1.8.1",
     "classnames": "^2.2.5",
     "crc32": "^0.2.2",
@@ -73,7 +74,6 @@
     "lodash": "^4.17.10",
     "mime-types": "^2.1.20",
     "mousetrap": "^1.6.5",
-    "paperclip": "^10.1.33",
     "paperclip-migrator": "^10.1.33",
     "react": "^18.1.0",
     "react-dnd": "^5.0.0",

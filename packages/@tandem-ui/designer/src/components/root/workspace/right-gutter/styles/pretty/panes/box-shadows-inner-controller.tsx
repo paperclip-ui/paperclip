@@ -1,5 +1,9 @@
 import * as React from "react";
-import { SyntheticElement, PCVariable, ComputedStyleInfo } from "paperclip";
+import {
+  SyntheticElement,
+  PCVariable,
+  ComputedStyleInfo,
+} from "@paperclip-lang/core";
 import { Dispatch } from "redux";
 import { BaseInnerShadowsProps } from "./box-shadows.pc";
 

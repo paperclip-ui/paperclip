@@ -17,7 +17,7 @@ export class PCSourceDocument extends CRDTTextDocument {
   //   try {
   //   const now = Date.now();
   //   const code = this.getText();
-  //   const formattedCode = prettier.format(code, { parser: "paperclip"});
+  //   const formattedCode = prettier.format(code, { parser: "@paperclip-lang/core"});
   //   console.log(diff);
   //   const patch = diff.createPatch("a", code, formattedCode);
   //   console.log(patch);

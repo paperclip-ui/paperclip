@@ -70,7 +70,7 @@ import {
   InspectorTreeNodeName,
   getPCNode,
   InspectorNode,
-} from "paperclip";
+} from "@paperclip-lang/core";
 
 export type ShortcutSagaOptions = {
   openContextMenu: (anchor: Point, options: ContextMenuOption[]) => void;

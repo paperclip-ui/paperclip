@@ -1,8 +1,10 @@
 IMMEDIATE:
 
+- start on translator
+
 - create parser for existing Tandem format
 - convert all PC files to new format
-- Update Tandem + legacy Paperclip to
+- Update Tandem + legacy Paperclip to git c
 
 TODO:
 

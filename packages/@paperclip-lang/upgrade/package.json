@@ -4,8 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pc-upgrade": "./bin/pc-upgrade"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "globby": "11",
+    "yargs": "^17.5.1"
+  },
+  "dependencies": {
+    "@paperclip-lang/core": "workspace:^",
+    "@tandem-ui/designer": "workspace:^",
+    "fs-extra": "^10.1.0"
+  }
 }

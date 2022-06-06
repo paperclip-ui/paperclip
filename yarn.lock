@@ -373,7 +373,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@paperclip-lang/core@^10.1.33, @paperclip-lang/core@workspace:packages/@paperclip-lang/core":
+"@paperclip-lang/core@^10.1.33, @paperclip-lang/core@workspace:^, @paperclip-lang/core@workspace:packages/@paperclip-lang/core":
   version: 0.0.0-use.local
   resolution: "@paperclip-lang/core@workspace:packages/@paperclip-lang/core"
   dependencies:
@@ -399,9 +399,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@paperclip-lang/serialize@workspace:packages/@paperclip-lang/serialize":
+"@paperclip-lang/upgrade@workspace:packages/@paperclip-lang/upgrade":
   version: 0.0.0-use.local
-  resolution: "@paperclip-lang/serialize@workspace:packages/@paperclip-lang/serialize"
+  resolution: "@paperclip-lang/upgrade@workspace:packages/@paperclip-lang/upgrade"
+  dependencies:
+    "@paperclip-lang/core": "workspace:^"
+    "@tandem-ui/designer": "workspace:^"
+    fs-extra: ^10.1.0
+    globby: 11
+    yargs: ^17.5.1
   languageName: unknown
   linkType: soft
 
@@ -5359,7 +5365,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fs-extra@npm:^10.0.0":
+"fs-extra@npm:^10.0.0, fs-extra@npm:^10.1.0":
   version: 10.1.0
   resolution: "fs-extra@npm:10.1.0"
   dependencies:
@@ -14070,7 +14076,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:^17.3.1":
+"yargs@npm:^17.3.1, yargs@npm:^17.5.1":
   version: 17.5.1
   resolution: "yargs@npm:17.5.1"
   dependencies:

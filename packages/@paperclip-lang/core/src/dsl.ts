@@ -888,7 +888,9 @@ export const isPCComponentInstance = (
   node: PCNode
 ): node is PCComponentInstanceElement =>
   node.name === PCSourceTagNames.COMPONENT_INSTANCE;
-export const isPCComponentOrInstance = (node: PCNode) =>
+export const isPCComponentOrInstance = (
+  node: PCNode
+): node is PCComponent | PCComponentInstanceElement =>
   isPCComponentInstance(node) || isComponent(node);
 
 export const extendsComponent = (element: PCNode) =>

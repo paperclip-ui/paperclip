@@ -33,18 +33,27 @@ export const upgradeProject = async ({ projectFilePath }: UpgradeOptions) => {
   // console.log(pcFiles);
 };
 
-const translateDependencyGraph = (graph: DependencyGraph) => {
-  const newGraph: Record<string, string> = {};
-  for (const filePath in graph) {
-    console.log(filePath);
+const pruneGraph = (graph: DependencyGraph) => {
+  const newGraph: DependencyGraph = {};
 
-    // invalid, just delete. This is blah but w/e
-    if (!graph[filePath].content.version) {
-      delete graph[filePath];
-      continue;
+  for (const url in graph) {
+    if (graph[url].content.version) {
+      newGraph[url] = graph[url];
     }
+  }
 
-    newGraph[filePath] = translateDependency(graph[filePath], graph);
+  return newGraph;
+};
+
+const translateDependencyGraph = (graph: DependencyGraph) => {
+  const prunedGraph = pruneGraph(graph);
+  const newGraph: Record<string, string> = {};
+
+  for (const filePath in prunedGraph) {
+    newGraph[filePath] = translateDependency(
+      prunedGraph[filePath],
+      prunedGraph
+    );
   }
 
   return newGraph;

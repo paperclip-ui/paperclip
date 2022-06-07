@@ -7,6 +7,7 @@ export type TranslateContext = {
   blockCount: number;
   module: PCModule;
   url: string;
+  importedUrls: string[];
 };
 
 export const addBuffer = (

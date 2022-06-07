@@ -407,6 +407,7 @@ __metadata:
     "@tandem-ui/designer": "workspace:^"
     fs-extra: ^10.1.0
     globby: 11
+    lodash: ^4.17.21
     yargs: ^17.5.1
   languageName: unknown
   linkType: soft

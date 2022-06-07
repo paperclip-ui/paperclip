@@ -15,6 +15,7 @@
   "dependencies": {
     "@paperclip-lang/core": "workspace:^",
     "@tandem-ui/designer": "workspace:^",
-    "fs-extra": "^10.1.0"
+    "fs-extra": "^10.1.0",
+    "lodash": "^4.17.21"
   }
 }

@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
+  "bin": {
     "pc-upgrade": "./bin/pc-upgrade"
+  },
+  "scripts": {
+    "build:watch": "tsc --watch",
+    "build": "tsc --watch"
   },
   "author": "",
   "license": "ISC",

@@ -7,19 +7,28 @@ import {
   isElementLikePCNode,
   isPCComponentInstance,
   isPCComponentOrInstance,
+  isVisibleNode,
   PCComponent,
   PCComponentInstanceElement,
   PCElement,
   PCElementLikeNode,
   PCModule,
   PCNode,
+  PCOverridablePropertyName,
+  PCOverride,
   PCSlot,
   PCSourceTagNames,
+  PCVisibleNode,
 } from "@paperclip-lang/core";
 import * as URL from "url";
 import * as path from "path";
-import { camelCase } from "lodash";
-import { getNestedTreeNodeById, getTreeNodeIdMap } from "tandem-common";
+import { camelCase, over } from "lodash";
+import {
+  EMPTY_OBJECT,
+  getNestedTreeNodeById,
+  getTreeNodeIdMap,
+  Translate,
+} from "tandem-common";
 import {
   addBuffer,
   endBlock,
@@ -83,29 +92,19 @@ const translateComponentRender = (
 const translateNode = (node: PCNode, context: TranslateContext) => {
   if (isPCVisibleElement(node)) {
     context = addBuffer(getRef(node, context), context);
-    if (Object.keys(node.attributes).length) {
-      for (const key in node.attributes) {
-      }
-    }
-
-    if (node.label) {
+    if (node.label && node.label !== "Element") {
       context = addBuffer(` ${camelCase(node.label)}`, context);
     }
-
-    if (node.children) {
-      context = addBuffer(` {\n`, context);
-      context = startBlock(context);
-      context = node.children.reduce(
-        (context, child) => translateNode(child, context),
-        context
-      );
-      context = endBlock(context);
-      context = addBuffer(`}`, context);
-    }
+    context = translateAttributes(node.attributes, context);
+    context = translateChildren(node, context);
     context = addBuffer(`\n`, context);
   } else if (node.name === PCSourceTagNames.TEXT) {
+    context = addBuffer(`text`, context);
+    if (node.label && node.label !== "Text") {
+      context = addBuffer(` ${camelCase(node.label)}`, context);
+    }
     context = addBuffer(
-      `text "${node.value.replace(/"/g, '\\"').trim()}"\n`,
+      ` "${node.value.replace(/"/g, '\\"').trim()}"\n`,
       context
     );
   } else if (node.name === PCSourceTagNames.SLOT) {
@@ -119,18 +118,67 @@ const translateNode = (node: PCNode, context: TranslateContext) => {
     }
     context = addBuffer(`insert ${camelCase(slot.label)}`, context);
     context = translateChildren(node, context);
+    context = addBuffer(`\n`, context);
     return context;
-  } else {
-    console.log(node);
   }
 
   return context;
 };
 
+const translateStyle = (node: PCVisibleNode, context: TranslateContext) => {
+  if (!hasStyles(node)) {
+    return context;
+  }
+  context = addBuffer(`style {\n`, context);
+  context = startBlock(context);
+  for (const key in node.style) {
+    context = addBuffer(`${key}: ${node.style[key]}\n`, context);
+  }
+  context = endBlock(context);
+  context = addBuffer(`}\n`, context);
+  return context;
+};
+
+const translateAttributes = (
+  attributes: Record<string, string>,
+  context: TranslateContext
+) => {
+  const attrNames = Object.keys(attributes).filter(
+    (name) => !name.includes(":") && name !== "xmlns"
+  );
+  if (!attrNames.length) {
+    return context;
+  }
+  context = addBuffer(` (`, context);
+  for (let i = 0, { length } = attrNames; i < length; i++) {
+    const name = attrNames[i];
+    const value = attributes[name];
+    context = addBuffer(`${name}: "${value}"`, context);
+    if (i < length - 1) {
+      context = addBuffer(`, `, context);
+    }
+  }
+  context = addBuffer(`)`, context);
+
+  return context;
+};
+
 const translateChildren = (node: PCNode, context: TranslateContext) => {
+  const overrides = getOverrides(node);
+  const visibleChildren = node.children.filter(isNodeChild);
+
+  if (!overrides.length && !visibleChildren.length && !hasStyles(node)) {
+    return context;
+  }
+
   context = addBuffer(` {\n`, context);
   context = startBlock(context);
-  context = node.children.reduce(
+  if (isVisibleNode(node)) {
+    context = translateStyle(node, context);
+  }
+  context = translateOverrides(overrides, context);
+
+  context = visibleChildren.reduce(
     (context, child) => translateNode(child, context),
     context
   );
@@ -139,6 +187,82 @@ const translateChildren = (node: PCNode, context: TranslateContext) => {
 
   return context;
 };
+
+const hasStyles = (node: PCNode) => {
+  return (
+    isVisibleNode(node) &&
+    (Object.keys(node.style).length > 0 ||
+      Object.keys(node.styleMixins || EMPTY_OBJECT).length > 0)
+  );
+};
+
+const translateOverrides = (
+  overrides: PCOverride[],
+  context: TranslateContext
+) => {
+  const overridesByPath: Record<string, PCOverride[]> = {};
+
+  for (const override of overrides) {
+    const targetPath = override.targetIdPath
+      .map((idPath) => {
+        const node = getPCNode(idPath, context.graph) as PCVisibleNode;
+        if (!node) {
+          return null;
+        }
+        return camelCase(node.label);
+      })
+      .filter(Boolean)
+      .join(".");
+    if (!overridesByPath[targetPath]) {
+      overridesByPath[targetPath] = [];
+    }
+    overridesByPath[targetPath].push(override);
+  }
+
+  for (const targetPath in overridesByPath) {
+    const overrides = overridesByPath[targetPath];
+    context = addBuffer(`override`, context);
+    if (targetPath) {
+      context = addBuffer(` ${targetPath}`, context);
+    }
+
+    // value overrides first...
+    for (const override of overrides) {
+      if (override.propertyName === PCOverridablePropertyName.ATTRIBUTES) {
+        context = translateAttributes(override.value, context);
+        context = addBuffer(`\n`, context);
+        continue;
+      } else if (override.propertyName === PCOverridablePropertyName.TEXT) {
+        context = addBuffer(` "${override.value}"\n`, context);
+      }
+    }
+
+    const styleOverrides = overrides.filter((override) => {
+      return override.propertyName === PCOverridablePropertyName.STYLE;
+    });
+
+    if (styleOverrides.length) {
+      context = addBuffer(` {\n`, context);
+      context = startBlock(context);
+      console.log(context);
+      context = endBlock(context);
+      context = addBuffer(`}\n`, context);
+    }
+  }
+  return context;
+};
+
+const isNodeChild = (node: PCNode) =>
+  isPCVisibleElement(node) ||
+  node.name === PCSourceTagNames.TEXT ||
+  node.name === PCSourceTagNames.SLOT ||
+  node.name === PCSourceTagNames.PLUG;
+const getOverrides = (node: PCNode) =>
+  node.children.filter(
+    (child) =>
+      child.name === PCSourceTagNames.OVERRIDE &&
+      (child as PCOverride).propertyName !== PCOverridablePropertyName.STYLE
+  ) as PCOverride[];
 
 const isPCVisibleElement = (
   node: PCNode
@@ -168,7 +292,6 @@ const getRef = (node: PCElementLike, context: TranslateContext) => {
 
 const translateImports = (context: TranslateContext) => {
   const filePath = URL.fileURLToPath(context.url);
-  const nodes = Object.values(getTreeNodeIdMap(context.module)) as PCNode[];
   const importUrls = context.importedUrls;
 
   for (const url of importUrls) {
@@ -200,8 +323,6 @@ const getImportedUrls = (
   const importUrls: Set<string> = new Set();
 
   for (const node of nodes) {
-    // const dep = getPCNodeDependency(node.id, graph);
-
     if (isPCComponentOrInstance(node)) {
       const instanceDep = getPCNodeDependency(node.is, graph);
       if (instanceDep && instanceDep.uri !== url) {

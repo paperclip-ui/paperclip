@@ -13,6 +13,7 @@ import {
   PCElementLikeNode,
   PCModule,
   PCNode,
+  PCSlot,
   PCSourceTagNames,
 } from "@paperclip-lang/core";
 import * as URL from "url";
@@ -83,10 +84,12 @@ const translateNode = (node: PCNode, context: TranslateContext) => {
   if (isPCVisibleElement(node)) {
     context = addBuffer(getRef(node, context), context);
     if (Object.keys(node.attributes).length) {
-      // context = addBuffer(` (`, context);
-
       for (const key in node.attributes) {
       }
+    }
+
+    if (node.label) {
+      context = addBuffer(` ${camelCase(node.label)}`, context);
     }
 
     if (node.children) {
@@ -102,10 +105,37 @@ const translateNode = (node: PCNode, context: TranslateContext) => {
     context = addBuffer(`\n`, context);
   } else if (node.name === PCSourceTagNames.TEXT) {
     context = addBuffer(
-      `text "${node.value.replace('"', '\\"').trim()}"\n`,
+      `text "${node.value.replace(/"/g, '\\"').trim()}"\n`,
       context
     );
+  } else if (node.name === PCSourceTagNames.SLOT) {
+    if (node.label) {
+      context = addBuffer(`slot ${camelCase(node.label)}\n`, context);
+    }
+  } else if (node.name === PCSourceTagNames.PLUG) {
+    const slot = getPCNode(node.slotId, context.graph) as PCSlot;
+    if (!slot) {
+      return context;
+    }
+    context = addBuffer(`insert ${camelCase(slot.label)}`, context);
+    context = translateChildren(node, context);
+    return context;
+  } else {
+    console.log(node);
   }
+
+  return context;
+};
+
+const translateChildren = (node: PCNode, context: TranslateContext) => {
+  context = addBuffer(` {\n`, context);
+  context = startBlock(context);
+  context = node.children.reduce(
+    (context, child) => translateNode(child, context),
+    context
+  );
+  context = endBlock(context);
+  context = addBuffer(`}`, context);
 
   return context;
 };

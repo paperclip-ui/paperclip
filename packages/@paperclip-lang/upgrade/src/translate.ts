@@ -18,6 +18,7 @@ import {
   PCOverride,
   PCSlot,
   PCSourceTagNames,
+  PCVariant,
   PCVisibleNode,
 } from "@paperclip-lang/core";
 import * as URL from "url";
@@ -237,14 +238,38 @@ const translateOverrides = (
       }
     }
 
+    const bodyOverrides = overrides.filter((override) => {
+      if (override.propertyName === PCOverridablePropertyName.VARIANT) {
+        return true;
+      }
+      return false;
+    });
+
     const styleOverrides = overrides.filter((override) => {
       return override.propertyName === PCOverridablePropertyName.STYLE;
     });
 
-    if (styleOverrides.length) {
+    if (bodyOverrides.length || styleOverrides.length) {
       context = addBuffer(` {\n`, context);
       context = startBlock(context);
-      console.log(context);
+      for (const override of bodyOverrides) {
+        if (override.propertyName === PCOverridablePropertyName.VARIANT) {
+          for (const variantId in override.value) {
+            const variant = getPCNode(variantId, context.graph) as PCVariant;
+            if (variant) {
+              const enabled = override.value[variantId];
+              context = addBuffer(
+                `variant ${camelCase(variant.label)} (on: ${enabled})\n`,
+                context
+              );
+            }
+          }
+        }
+      }
+
+      for (const override of styleOverrides) {
+        console.log("OVERRR", override);
+      }
       context = endBlock(context);
       context = addBuffer(`}\n`, context);
     }
@@ -259,9 +284,7 @@ const isNodeChild = (node: PCNode) =>
   node.name === PCSourceTagNames.PLUG;
 const getOverrides = (node: PCNode) =>
   node.children.filter(
-    (child) =>
-      child.name === PCSourceTagNames.OVERRIDE &&
-      (child as PCOverride).propertyName !== PCOverridablePropertyName.STYLE
+    (child) => child.name === PCSourceTagNames.OVERRIDE
   ) as PCOverride[];
 
 const isPCVisibleElement = (

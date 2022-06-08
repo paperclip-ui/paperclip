@@ -1,5 +1,10 @@
 IMMEDIATE:
 
+- PC bridge
+
+  - DSL -> PC 2.0
+  - PC 2.0 -> DSL
+
 - start on translator
 
 - create parser for existing Tandem format

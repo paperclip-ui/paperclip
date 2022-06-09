@@ -7,7 +7,8 @@
     "module": "commonjs",
     "outDir": "lib",
     "jsx": "react",
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "declaration": true
   },
   "exclude": ["node_modules", "*-test", "*-old", "lib", "index.d.ts"],
   "filesGlob": ["./src/*.ts"],

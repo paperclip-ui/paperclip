@@ -16,12 +16,15 @@ import {
   PCComponentInstanceElement,
   PCElement,
   PCElementLikeNode,
+  PCMediaQuery,
   PCModule,
   PCNode,
   PCOverridablePropertyName,
   PCOverride,
+  PCQueryType,
   PCSlot,
   PCSourceTagNames,
+  PCStyleMixin,
   PCStyleOverride,
   PCVariable,
   PCVariant,
@@ -61,10 +64,57 @@ export const translateModule = (
     importedUrls: getImportedUrls(module, url, graph),
   };
   context = translateImports(context);
+  context = translateStyleVars(context);
   context = translateComponents(context);
   console.log("translate", url);
   console.log(context.content);
   return context.content;
+};
+
+const translateStyleVars = (context: TranslateContext) => {
+  for (const contentNode of context.module.children) {
+    if (contentNode.name === PCSourceTagNames.VARIABLE) {
+      context = translateStyleVar(contentNode as PCVariable, context);
+    } else if (contentNode.name === PCSourceTagNames.STYLE_MIXIN) {
+      context = translateStyleMixin(contentNode as PCStyleMixin, context);
+    } else if (contentNode.name === PCSourceTagNames.QUERY) {
+      context = translateMediaQuery(contentNode as PCMediaQuery, context);
+    }
+  }
+  return context;
+};
+
+const translateStyleVar = (node: PCVariable, context: TranslateContext) => {
+  if (node.value) {
+    context = addBuffer(
+      `export string ${camelCase(node.label)} "${node.value}"\n`,
+      context
+    );
+  }
+
+  return context;
+};
+
+const translateStyleMixin = (node: PCStyleMixin, context: TranslateContext) => {
+  context = addBuffer(`export style ${camelCase(node.label)} {\n`, context);
+  context = startBlock(context);
+  context = translateStyleValues(node.style, context);
+  context = endBlock(context);
+  context = addBuffer(`}\n\n`, context);
+  return context;
+};
+
+const translateMediaQuery = (node: PCMediaQuery, context: TranslateContext) => {
+  if (node.type === PCQueryType.MEDIA) {
+    context = addBuffer(
+      `export trigger ${camelCase(node.label)} media screen and (min-width: ${
+        node.condition.minWidth || 0
+      }, max-width: ${node.condition.maxWidth})\n`,
+      context
+    );
+  }
+
+  return context;
 };
 
 const translateComponents = (context: TranslateContext) => {
@@ -230,19 +280,24 @@ const translateStyleOverridesInner = (
       context = addBuffer(`if ${camelCase(variant.label)} {\n`, context);
       context = startBlock(context);
     }
-    for (const key in override.value) {
-      context = addBuffer(
-        `${key}: ${translateStyleValue(
-          String(override.value[key]),
-          context
-        )}\n`,
-        context
-      );
-    }
+    context = translateStyleValues(override.value, context);
     if (variant) {
       context = endBlock(context);
       context = addBuffer(`}\n`, context);
     }
+  }
+  return context;
+};
+
+const translateStyleValues = (
+  style: Record<string, string>,
+  context: TranslateContext
+) => {
+  for (const key in style) {
+    context = addBuffer(
+      `${key}: ${translateStyleValue(String(style[key]), context)}\n`,
+      context
+    );
   }
   return context;
 };
@@ -387,28 +442,12 @@ const translateOverrides = (
 
   for (const targetPath in overridesByPath) {
     const overrides = overridesByPath[targetPath];
-    context = addBuffer(`override`, context);
-    if (targetPath) {
-      context = addBuffer(` ${targetPath}`, context);
-    }
 
     const valueOverride = overrides.find(
       (override) =>
         override.propertyName === PCOverridablePropertyName.ATTRIBUTES ||
         override.propertyName === PCOverridablePropertyName.TEXT
     );
-
-    if (valueOverride) {
-      if (valueOverride.propertyName === PCOverridablePropertyName.ATTRIBUTES) {
-        context = translateAttributes(valueOverride.value, context);
-        context = addBuffer(`\n`, context);
-      } else if (
-        valueOverride.propertyName === PCOverridablePropertyName.TEXT
-      ) {
-        context = addBuffer(` "${valueOverride.value.trim()}"\n`, context);
-      }
-    }
-
     const bodyOverrides = overrides.filter((override) => {
       if (override.propertyName === PCOverridablePropertyName.VARIANT) {
         return true;
@@ -422,6 +461,27 @@ const translateOverrides = (
         override.targetIdPath.length > 1
       );
     });
+
+    if (!valueOverride && !bodyOverrides.length && !styleOverrides.length) {
+      continue;
+    }
+
+    context = addBuffer(`override`, context);
+    if (targetPath) {
+      context = addBuffer(` ${targetPath}`, context);
+    }
+
+    if (valueOverride) {
+      if (valueOverride.propertyName === PCOverridablePropertyName.ATTRIBUTES) {
+        context = translateAttributes(valueOverride.value, context);
+        context = addBuffer(`\n`, context);
+      } else if (
+        valueOverride.propertyName === PCOverridablePropertyName.TEXT
+      ) {
+        context = addBuffer(` "${valueOverride.value.trim()}"\n`, context);
+      }
+    }
+
     if (bodyOverrides.length || styleOverrides.length) {
       context = addBuffer(` {\n`, context);
       context = startBlock(context);
@@ -442,6 +502,8 @@ const translateOverrides = (
 
       context = endBlock(context);
       context = addBuffer(`}\n`, context);
+    } else {
+      context = addBuffer(`\n`, context);
     }
   }
   return context;

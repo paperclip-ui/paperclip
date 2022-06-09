@@ -2,7 +2,7 @@
   "name": "@paperclip-lang/upgrade",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
   "bin": {
     "pc-upgrade": "./bin/pc-upgrade"
   },

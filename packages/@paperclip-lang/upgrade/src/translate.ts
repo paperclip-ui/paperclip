@@ -130,7 +130,10 @@ const translateComponent = (
   context: TranslateContext
 ) => {
   context = translateMetadata(component, context);
-  context = addBuffer(`component ${pascalCase(component.label!)} {\n`, context);
+  context = addBuffer(
+    `export component ${pascalCase(component.label!)} {\n`,
+    context
+  );
   if (pascalCase(component.label!) === "Welcome") {
     console.log(JSON.stringify(component, null, 2));
   }

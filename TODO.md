@@ -1,9 +1,25 @@
-IMMEDIATE:
+Immediate:
+
+- global variables
+- global mixins
+- parser
+- AST -> DSL
+- runtime bridge
+
+Milestone:
 
 - PC bridge
 
   - DSL -> PC 2.0
+    - variables
+    - variant triggers
   - PC 2.0 -> DSL
+  - Update Tandem for changes
+  - Wedge Parser in visual editor for smoke testing
+  - Tandem updates
+    - combo variants
+  - Tandem 2.0
+    - Dark mode (like spline.design)
 
 - start on translator
 

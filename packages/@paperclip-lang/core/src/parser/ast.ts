@@ -18,7 +18,7 @@ export enum ExpressionKind {
   If = "If",
 
   // (a:b, c:d)
-  Parameters = "Parameters",
+  Parameter = "Parameter",
 
   // 1px 1em
   Measurement = "Measurement",
@@ -33,8 +33,10 @@ export enum ExpressionKind {
   }
   */
   Style = "Style",
+  StyleDeclaration = "StyleDeclaration",
 
   Text = "Text",
+  Variant = "Variant",
   Render = "Render",
   Element = "Element",
   Fragment = "Fragment",
@@ -43,8 +45,8 @@ export enum ExpressionKind {
 }
 
 export type Raws = {
-  before: string;
-  after: string;
+  before?: string;
+  after?: string;
 };
 
 export type BaseExpression<TKind extends ExpressionKind> = {
@@ -62,13 +64,28 @@ export type Import = {
 
 export type Component = {
   name: string;
-  body: ComponentBodyExpression;
+  body: ComponentBodyExpression[];
 } & BaseExpression<ExpressionKind.Component>;
 
-export type ComponentBodyExpression = Render;
+export type ComponentBodyExpression = Render | Variant;
+
+export type Parameter = {
+  raws: Raws;
+} & BaseExpression<ExpressionKind.Parameter>;
+
+export type ElementChild = Style | Node;
+
+export type Style = {} & BaseExpression<ExpressionKind.Style>;
+
+export type StyleDeclaration = {
+  name: string;
+  value: string;
+} & BaseExpression<ExpressionKind.StyleDeclaration>;
 
 export type Element = {
-  children: Node;
+  children: ElementChild[];
+  name: string;
+  parameters: Parameter[];
 } & BaseExpression<ExpressionKind.Element>;
 
 export type Fragment = {
@@ -78,6 +95,11 @@ export type Fragment = {
 export type Text = {
   value: string;
 } & BaseExpression<ExpressionKind.Text>;
+
+export type Variant = {
+  name: string;
+  parameters: Parameter[];
+} & BaseExpression<ExpressionKind.Variant>;
 
 export type Render = {
   node: VisibleNode;

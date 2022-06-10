@@ -48,6 +48,13 @@ export class Tokenizer {
     return this._scanner.isEOF();
   }
 
+  peekEatWhitespace() {
+    const pos = this._scanner.getPos();
+    const ws = this.eatWhitespace();
+    this._scanner.setPos(pos);
+    return ws;
+  }
+
   eatWhitespace() {
     if (this._curr && this._curr.kind === TokenKind.Whitespace) {
       const curr = this._curr;
@@ -84,10 +91,17 @@ export class Tokenizer {
   next() {
     return (this._curr = this._next());
   }
+  nextEatWhitespace() {
+    const curr = this.next();
+    if (curr.kind === TokenKind.Whitespace) {
+      return this.next();
+    }
+    return curr;
+  }
 
   _next(): Token {
     if (this.isEOF()) {
-      throw new EndOfFileError();
+      return null;
     }
     const chr = this._scanner.currChar();
     this._scanner.nextChar();
@@ -110,6 +124,10 @@ export class Tokenizer {
 
     if (chr === ",") {
       return token(TokenKind.Comma, chr);
+    }
+
+    if (chr === ":") {
+      return token(TokenKind.Colon, chr);
     }
 
     if (chr === "[") {

@@ -2,12 +2,17 @@ import {
   BaseExpression,
   BodyExpression,
   Component,
-  ComponentBody,
+  ComponentBodyExpression,
   Document,
   DocumentExpression,
+  Element,
+  ElementChild,
   ExpressionKind,
   Node,
+  Parameter,
   Render,
+  Text,
+  Variant,
   VisibleNode,
 } from "./ast";
 import { UnexpectedTokenError } from "./errors";
@@ -39,9 +44,7 @@ export const parseDocument = (source: string): Document => {
 const parseDocumentExpressions = (context: Context) => {
   const expressions: DocumentExpression[] = [];
   while (!context.tokenizer.isEOF()) {
-    console.log(context);
     expressions.push(parseDocumentExpression(context));
-    context.tokenizer.next();
   }
   return expressions;
 };
@@ -77,11 +80,11 @@ const parseComponent = (context: Context): Component => {
 
 const bodyParser =
   <TBodyExpression extends BaseExpression<any>>(
-    parseBodyExpression: (context: Context) => TBodyExpression
+    parseBodyExpression: (context: Context) => TBodyExpression | null
   ) =>
   (context: Context): TBodyExpression[] => {
     context.tokenizer.currValue(TokenKind.CurlyOpen);
-    context.tokenizer.next(); // eat {
+    context.tokenizer.nextEatWhitespace(); // eat {
 
     const expressions = [];
 
@@ -98,23 +101,111 @@ const bodyParser =
     return expressions;
   };
 
-const parseComponentBody = bodyParser<ComponentBody>((context) => {
-  return parseRender(context);
+const parseComponentBody = bodyParser<ComponentBodyExpression>((context) => {
+  context.tokenizer.eatWhitespace();
+  const keyword = context.tokenizer.curr();
+  if (keyword.value === "variant") {
+    return parseVariant(context);
+  } else if (keyword.value === "render") {
+    return parseRender(context);
+  }
+
+  throw new UnexpectedTokenError(keyword.value);
+  return null;
 });
 
-const parseRender = (context: Context): Render => {
-  context.tokenizer.next(); // eat
+const parseNodeChildren = bodyParser<ElementChild>((context) => {
+  return parseNode(context);
+});
+
+const parseVariant = (context: Context): Variant => {
+  context.tokenizer.next(); // eat variant
+  const name = context.tokenizer.nextEatWhitespace();
+  context.tokenizer.nextEatWhitespace(); // eat name
+  let parameters: Parameter[] = [];
+  if (context.tokenizer.curr().kind === TokenKind.ParenOpen) {
+    parameters = parseParameters(context);
+  }
+  context.tokenizer.eatWhitespace();
 
   return {
+    raws: {},
+    name: name.value,
+    parameters,
+    kind: ExpressionKind.Variant,
+  };
+};
+
+const parseParameters = (context: Context) => {
+  const parameters = [];
+  context.tokenizer.nextEatWhitespace(); // eat (
+  while (!context.tokenizer.isEOF()) {
+    const name = context.tokenizer.currValue(TokenKind.Keyword);
+    console.log(context.tokenizer.curr(), "S");
+    context.tokenizer.nextEatWhitespace();
+    context.tokenizer.currValue(TokenKind.Colon);
+    context.tokenizer.nextEatWhitespace();
+    const value = context.tokenizer.currValue(TokenKind.Keyword);
+    context.tokenizer.nextEatWhitespace();
+    const fin = context.tokenizer.curr();
+    context.tokenizer.next();
+    if (fin.kind === TokenKind.ParenClose) {
+      break;
+    }
+  }
+  return parameters;
+};
+
+const parseRender = (context: Context): Render => {
+  context.tokenizer.next(); // eat render
+  const before = context.tokenizer.eatWhitespace();
+  const node = parseNode(context);
+  const after = context.tokenizer.eatWhitespace();
+
+  return {
+    raws: { before, after },
     kind: ExpressionKind.Render,
-    node: parseNode(context),
+    node,
   };
 };
 
 const parseNode = (context: Context) => {
   const before = context.tokenizer.eatWhitespace();
-  // const name = context.tokenizer.
-  const after = context.tokenizer.eatWhitespace();
+  const keyword = context.tokenizer.curr();
+  if (keyword.value === "text") {
+    return parseText(context, before);
+  } else {
+    return parseElement(context);
+  }
 
   return null;
+};
+
+const parseText = (context: Context, before: string): Text => {
+  context.tokenizer.next(); // eat text
+  const value = context.tokenizer.curr();
+  const after = context.tokenizer.next().value;
+  return {
+    raws: { before, after },
+    kind: ExpressionKind.Text,
+    value: value.value,
+  };
+};
+
+const parseElement = (context: Context): Element => {
+  const name = context.tokenizer.curr();
+  let next = context.tokenizer.nextEatWhitespace();
+  let children: ElementChild[] = [];
+  if (next.kind === TokenKind.CurlyOpen) {
+    children = parseNodeChildren(context);
+  }
+  context.tokenizer.eatWhitespace();
+
+  return {
+    raws: {},
+    name: name.value,
+    kind: ExpressionKind.Element,
+    parameters: [],
+    children,
+  };
 };

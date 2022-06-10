@@ -33,6 +33,9 @@ export class StringScanner {
   getPos() {
     return this._pos;
   }
+  getLength() {
+    return this.source.length;
+  }
   setPos(value: number) {
     this._pos = value;
   }

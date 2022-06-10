@@ -83,7 +83,7 @@ export const computeStyleInfo = memoize(
         ) as PCElement;
         if (isPCComponentOrInstance(parent)) {
           // defaults -- parents cannot disable
-          defaults(style, parent.style);
+          defaults(style, (parent as any).style);
         }
         current = parent;
       }

@@ -10,12 +10,10 @@ export enum ExpressionKind {
   }
   */
   Component = "Component",
+  Override = "Override",
 
   // div {},
   Instance = "Instance",
-
-  // If condition { }
-  If = "If",
 
   // (a:b, c:d)
   Parameter = "Parameter",
@@ -33,6 +31,7 @@ export enum ExpressionKind {
   }
   */
   Style = "Style",
+  StyleCondition = "StyleCondition",
   StyleDeclaration = "StyleDeclaration",
 
   Text = "Text",
@@ -60,6 +59,7 @@ export type Document = {
 
 export type Import = {
   path: string;
+  namespace: string;
 } & BaseExpression<ExpressionKind.Import>;
 
 export type Component = {
@@ -73,20 +73,45 @@ export type Parameter = {
   raws: Raws;
 } & BaseExpression<ExpressionKind.Parameter>;
 
-export type ElementChild = Style | Node;
+export type ElementChild = Style | Node | Override;
 
-export type Style = {} & BaseExpression<ExpressionKind.Style>;
+export type Style = {
+  name?: string;
+  body: StyleBodyExpression[];
+} & BaseExpression<ExpressionKind.Style>;
+
+export type StyleBodyExpression = StyleCondition | StyleDeclaration;
+
+export type StyleCondition = {
+  conditionName: string;
+  body: StyleBodyExpression[];
+} & BaseExpression<ExpressionKind.StyleCondition>;
 
 export type StyleDeclaration = {
   name: string;
   value: string;
 } & BaseExpression<ExpressionKind.StyleDeclaration>;
 
+export type Override = {
+  target: string[];
+  constructorValue?: OverrideConstructorValue;
+  body: OverrideBodyExpression[];
+} & BaseExpression<ExpressionKind.Override>;
+
+export type OverrideConstructorValue = Parameter[] | string;
+
+export type OverrideBodyExpression = Style;
+
 export type Element = {
   children: ElementChild[];
-  name: string;
+  name: ElementName;
   parameters: Parameter[];
 } & BaseExpression<ExpressionKind.Element>;
+
+export type ElementName = {
+  name: string;
+  namespace?: string;
+};
 
 export type Fragment = {
   children: Node[];
@@ -94,7 +119,10 @@ export type Fragment = {
 
 export type Text = {
   value: string;
+  children: TextChild[];
 } & BaseExpression<ExpressionKind.Text>;
+
+export type TextChild = Style;
 
 export type Variant = {
   name: string;
@@ -117,5 +145,5 @@ export type Comment = MultiLineComment | SingleLineComment;
 
 export type VisibleNode = Text | Element | Fragment;
 export type Node = VisibleNode | Comment;
-export type DocumentExpression = Node | Component;
+export type DocumentExpression = Node | Component | Style | Import;
 export type BodyExpression = Component | Node;

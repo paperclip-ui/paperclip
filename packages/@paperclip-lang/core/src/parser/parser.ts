@@ -1,3 +1,5 @@
+import { EMPTY_ARRAY } from "tandem-common";
+import { runInNewContext } from "vm";
 import {
   BaseExpression,
   BodyExpression,
@@ -7,16 +9,26 @@ import {
   DocumentExpression,
   Element,
   ElementChild,
+  ElementName,
   ExpressionKind,
+  Import,
   Node,
+  Override,
+  OverrideBodyExpression,
+  OverrideConstructorValue,
   Parameter,
   Render,
+  Style,
+  StyleBodyExpression,
+  StyleCondition,
+  StyleDeclaration,
   Text,
+  TextChild,
   Variant,
   VisibleNode,
 } from "./ast";
 import { UnexpectedTokenError } from "./errors";
-import { token, Tokenizer, TokenKind } from "./tokenizer";
+import { Token, token, Tokenizer, TokenKind } from "./tokenizer";
 
 type Context = {
   tokenizer: Tokenizer;
@@ -52,11 +64,32 @@ const parseDocumentExpressions = (context: Context) => {
 const parseDocumentExpression = (context: Context): DocumentExpression => {
   const curr = context.tokenizer.curr();
 
-  if (curr.kind === TokenKind.Keyword) {
+  if (curr.value === "component") {
     return parseComponent(context);
+  } else if (isStyleToken(curr)) {
+    return parseStyle(context);
+  } else if (curr.value === "import") {
+    return parseImport(context);
   }
 
   throw new UnexpectedTokenError(curr.value);
+};
+
+const parseImport = (context: Context): Import => {
+  context.tokenizer.currValue(TokenKind.Keyword);
+  context.tokenizer.nextEatWhitespace();
+  const path = context.tokenizer.currValue(TokenKind.String);
+  context.tokenizer.nextEatWhitespace();
+  context.tokenizer.currValue(TokenKind.Keyword);
+  context.tokenizer.nextEatWhitespace();
+  const namespace = context.tokenizer.currValue(TokenKind.Keyword);
+  context.tokenizer.nextEatWhitespace();
+  return {
+    raws: {},
+    kind: ExpressionKind.Import,
+    namespace,
+    path,
+  };
 };
 
 const parseComponent = (context: Context): Component => {
@@ -92,7 +125,13 @@ const bodyParser =
       !context.tokenizer.isEOF() &&
       context.tokenizer.curr().kind !== TokenKind.CurlyClose
     ) {
-      expressions.push(parseBodyExpression(context));
+      context.tokenizer.eatWhitespace();
+      const curr = context.tokenizer.curr();
+      const expr = parseBodyExpression(context);
+      if (!expr) {
+        throw new UnexpectedTokenError(curr.value);
+      }
+      expressions.push(expr);
     }
 
     context.tokenizer.currValue(TokenKind.CurlyClose);
@@ -102,20 +141,12 @@ const bodyParser =
   };
 
 const parseComponentBody = bodyParser<ComponentBodyExpression>((context) => {
-  context.tokenizer.eatWhitespace();
   const keyword = context.tokenizer.curr();
   if (keyword.value === "variant") {
     return parseVariant(context);
   } else if (keyword.value === "render") {
     return parseRender(context);
   }
-
-  throw new UnexpectedTokenError(keyword.value);
-  return null;
-});
-
-const parseNodeChildren = bodyParser<ElementChild>((context) => {
-  return parseNode(context);
 });
 
 const parseVariant = (context: Context): Variant => {
@@ -138,17 +169,21 @@ const parseVariant = (context: Context): Variant => {
 
 const parseParameters = (context: Context) => {
   const parameters = [];
-  context.tokenizer.nextEatWhitespace(); // eat (
+  context.tokenizer.nextEatWhitespace();
   while (!context.tokenizer.isEOF()) {
     const name = context.tokenizer.currValue(TokenKind.Keyword);
-    console.log(context.tokenizer.curr(), "S");
     context.tokenizer.nextEatWhitespace();
     context.tokenizer.currValue(TokenKind.Colon);
     context.tokenizer.nextEatWhitespace();
-    const value = context.tokenizer.currValue(TokenKind.Keyword);
+    const value = context.tokenizer.currValue(
+      TokenKind.Keyword,
+      TokenKind.String,
+      TokenKind.Number
+    );
     context.tokenizer.nextEatWhitespace();
     const fin = context.tokenizer.curr();
     context.tokenizer.next();
+    context.tokenizer.eatWhitespace();
     if (fin.kind === TokenKind.ParenClose) {
       break;
     }
@@ -177,35 +212,170 @@ const parseNode = (context: Context) => {
   } else {
     return parseElement(context);
   }
-
-  return null;
 };
 
 const parseText = (context: Context, before: string): Text => {
-  context.tokenizer.next(); // eat text
+  context.tokenizer.nextEatWhitespace(); // eat text
   const value = context.tokenizer.curr();
-  const after = context.tokenizer.next().value;
+  let children: TextChild[] = EMPTY_ARRAY;
+  const next = context.tokenizer.nextEatWhitespace();
+  if (next.kind === TokenKind.CurlyOpen) {
+    children = parseTextChildren(context);
+  }
   return {
-    raws: { before, after },
+    raws: { before, after: "" },
     kind: ExpressionKind.Text,
     value: value.value,
+    children,
   };
 };
 
+const parseTextChildren = bodyParser<TextChild>((context) => {
+  const keyword = context.tokenizer.curr();
+  if (isStyleToken(keyword)) {
+    return parseStyle(context);
+  }
+});
+
+const parseStyle = (context: Context): Style => {
+  context.tokenizer.currValue(TokenKind.Keyword);
+  const next = context.tokenizer.nextEatWhitespace(); // eat keyword
+  let name: string;
+  if (next.kind === TokenKind.Keyword) {
+    name = next.value;
+    context.tokenizer.nextEatWhitespace();
+  }
+  context.tokenizer.currValue(TokenKind.CurlyOpen);
+  const body = parseStyleBody(context);
+  context.tokenizer.eatWhitespace();
+
+  return {
+    kind: ExpressionKind.Style,
+    name,
+    raws: {},
+    body,
+  };
+};
+
+const parseStyleBody = bodyParser<StyleBodyExpression>((context: Context) => {
+  const keyword = context.tokenizer.curr();
+  if (keyword.value === "if") {
+    return parseStyleCondition(context);
+  }
+  return parseStyleDeclaration(context);
+});
+
+const parseStyleCondition = (context: Context): StyleCondition => {
+  context.tokenizer.currValue(TokenKind.Keyword);
+  context.tokenizer.nextEatWhitespace();
+  const conditionName = context.tokenizer.currValue(TokenKind.Keyword);
+  context.tokenizer.nextEatWhitespace();
+  const body = parseStyleBody(context);
+  context.tokenizer.eatWhitespace();
+
+  return {
+    kind: ExpressionKind.StyleCondition,
+    conditionName,
+    raws: {},
+    body,
+  };
+};
+
+const parseStyleDeclaration = (context: Context): StyleDeclaration => {
+  const name = context.tokenizer.currValue(TokenKind.Keyword);
+  context.tokenizer.nextEatWhitespace();
+  context.tokenizer.currValue(TokenKind.Colon);
+  context.tokenizer.nextEatWhitespace();
+  const value = context.tokenizer.currValue(TokenKind.Keyword);
+  context.tokenizer.nextEatWhitespace();
+
+  return {
+    kind: ExpressionKind.StyleDeclaration,
+    raws: {},
+    name,
+    value,
+  };
+};
+
+const parseElementName = (context: Context): ElementName => {
+  const [name, namespace] = parseRef(context);
+  return { name, namespace };
+};
+
 const parseElement = (context: Context): Element => {
-  const name = context.tokenizer.curr();
-  let next = context.tokenizer.nextEatWhitespace();
-  let children: ElementChild[] = [];
+  const name = parseElementName(context);
+  let next = context.tokenizer.curr();
+  let children: ElementChild[] = EMPTY_ARRAY;
+  let parameters: Parameter[] = EMPTY_ARRAY;
+  if (next.kind === TokenKind.ParenOpen) {
+    parameters = parseParameters(context);
+    next = context.tokenizer.curr();
+  }
+
   if (next.kind === TokenKind.CurlyOpen) {
-    children = parseNodeChildren(context);
+    children = parseElementChildren(context);
   }
   context.tokenizer.eatWhitespace();
 
   return {
     raws: {},
-    name: name.value,
+    name,
     kind: ExpressionKind.Element,
-    parameters: [],
+    parameters,
     children,
   };
 };
+
+const parseElementChildren = bodyParser<ElementChild>((context) => {
+  const curr = context.tokenizer.curr();
+  if (isStyleToken(curr)) {
+    return parseStyle(context);
+  } else if (curr.value === "override") {
+    return parseOverride(context);
+  }
+  return parseNode(context);
+});
+
+const parseRef = (context: Context): string[] => {
+  const name = context.tokenizer.curr().value;
+  let next = context.tokenizer.nextEatWhitespace();
+  const parts: string[] = [name];
+  while (next.kind === TokenKind.Dot) {
+    parts.push(context.tokenizer.nextEatWhitespace().value);
+    next = context.tokenizer.nextEatWhitespace(); // queue dot
+  }
+
+  return parts;
+};
+
+const parseOverride = (context: Context): Override => {
+  context.tokenizer.nextEatWhitespace(); // eat override + ws
+  let curr = context.tokenizer.curr();
+  const target = curr.kind === TokenKind.Keyword ? parseRef(context) : null;
+  let constructorValue: OverrideConstructorValue;
+  curr = context.tokenizer.curr();
+  if (curr.kind === TokenKind.ParenOpen) {
+    constructorValue = parseParameters(context);
+  } else if (curr.kind === TokenKind.String) {
+    constructorValue = curr.value;
+    context.tokenizer.nextEatWhitespace();
+  }
+  const body = parseOverrideBody(context);
+  context.tokenizer.eatWhitespace();
+  return {
+    kind: ExpressionKind.Override,
+    raws: {},
+    target,
+    constructorValue,
+    body,
+  };
+};
+
+const parseOverrideBody = bodyParser<OverrideBodyExpression>((context) => {
+  const curr = context.tokenizer.curr();
+  if (isStyleToken(curr)) {
+    return parseStyle(context);
+  }
+});
+
+const isStyleToken = (token: Token) => token.value === "style";

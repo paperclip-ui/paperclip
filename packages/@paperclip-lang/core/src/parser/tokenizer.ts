@@ -1,13 +1,10 @@
 import { negate } from "lodash";
-import {
-  EndOfFileError,
-  UnexpectedTokenError,
-  UnknownTokenError,
-} from "./errors";
+import { UnexpectedTokenError, UnknownTokenError } from "./errors";
 import { StringScanner } from "./string-scanner";
 
 export enum TokenKind {
   Keyword,
+  Dot,
   Number,
   CurlyOpen,
   CurlyClose,
@@ -16,6 +13,7 @@ export enum TokenKind {
   Colon,
   SquareOpen,
   SquareClose,
+  Boolean,
 
   // tokenizer handles this since it's much more efficient
   MultiLineComment,
@@ -63,26 +61,15 @@ export class Tokenizer {
     }
 
     return "";
-
-    // if (this.isEOF()) {
-    //   return "";
-    // }
-    // const c = this._scanner.currChar();
-
-    // if (isWhitespace(c)) {
-    //   return this.next().value;
-    // }
-
-    // return "";
   }
 
   curr() {
     return this._curr;
   }
 
-  currValue(kind: TokenKind) {
+  currValue(...kinds: TokenKind[]) {
     const token = this._curr;
-    if (token.kind !== kind) {
+    if (!kinds.includes(token.kind)) {
       throw new UnexpectedTokenError(token.value);
     }
     return this._curr.value;
@@ -93,7 +80,7 @@ export class Tokenizer {
   }
   nextEatWhitespace() {
     const curr = this.next();
-    if (curr.kind === TokenKind.Whitespace) {
+    if (curr?.kind === TokenKind.Whitespace) {
       return this.next();
     }
     return curr;
@@ -136,6 +123,10 @@ export class Tokenizer {
 
     if (chr === "]") {
       return token(TokenKind.SquareClose, chr);
+    }
+
+    if (chr === ".") {
+      return token(TokenKind.Dot, chr);
     }
 
     if (chr === "/") {
@@ -203,10 +194,9 @@ export class Tokenizer {
     }
 
     if (isLetter(chr)) {
-      return token(
-        TokenKind.Keyword,
-        chr + this._scanner.scanUntil(negate(isLetter))
-      );
+      const keyword = chr + this._scanner.scanUntil(negate(isLetter));
+
+      return token(TokenKind.Keyword, keyword);
     }
 
     if (chr.match(Testers.Digit)) {
@@ -260,5 +250,5 @@ const isLetter = (value: string) => {
 
 const isWhitespace = (value: string) => {
   const c = value.charCodeAt(0);
-  return c === 10 || c === 115 || c === 9 || c === 13 || c === 32;
+  return c === 10 || c === 9 || c === 13 || c === 32;
 };

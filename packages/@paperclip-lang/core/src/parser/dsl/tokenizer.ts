@@ -11,26 +11,31 @@ import {
 import { isDigit, isLetter, isWhitespace } from "../base/utils";
 
 export enum DSLTokenKind {
-  Keyword,
-  Dot,
-  Number,
-  CurlyOpen,
-  CurlyClose,
-  ParenOpen,
-  ParenClose,
-  Colon,
-  SquareOpen,
-  SquareClose,
-  Boolean,
+  Keyword = 1 << 1,
+  Dot = 1 << 2,
+  Number = 1 << 3,
+  CurlyOpen = 1 << 4,
+  CurlyClose = 1 << 5,
+  ParenOpen = 1 << 6,
+  ParenClose = 1 << 7,
+  Colon = 1 << 8,
+  SquareOpen = 1 << 9,
+  SquareClose = 1 << 10,
+  Boolean = 1 << 11,
 
   // tokenizer handles this since it's much more efficient
-  MultiLineComment,
-  SingleLineComment,
-  Comma,
-  At,
-  String,
-  Whitespace,
+  MultiLineComment = 1 << 12,
+  SingleLineComment = 1 << 13,
+  Comma = 1 << 14,
+  At = 1 << 15,
+  String = 1 << 16,
+  Whitespace = 1 << 17,
 }
+
+export const DSL_SUPERFLUOUS_TOKENS =
+  DSLTokenKind.Whitespace |
+  DSLTokenKind.SingleLineComment |
+  DSLTokenKind.MultiLineComment;
 
 export type Token = BaseToken<DSLTokenKind>;
 
@@ -41,14 +46,6 @@ const Testers = {
 };
 
 export class DSLTokenizer extends BaseTokenizer<DSLTokenKind> {
-  isCurrSuperfluous(): boolean {
-    return (
-      this._curr.kind === DSLTokenKind.Whitespace ||
-      this._curr.kind === DSLTokenKind.MultiLineComment ||
-      this._curr.kind === DSLTokenKind.SingleLineComment
-    );
-  }
-
   _next(): Token {
     const chr = this._scanner.currChar();
     this._scanner.nextChar();

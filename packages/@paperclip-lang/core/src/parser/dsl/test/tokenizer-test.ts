@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { StringScanner } from "../../base/string-scanner";
 import { token } from "../../base/tokenizer";
 import { Token, DSLTokenizer, DSLTokenKind } from "../tokenizer";
 
@@ -31,7 +32,7 @@ describe(__dirname + "#", () => {
     [`'abba'`, [token(DSLTokenKind.String, `'abba'`)]],
   ].forEach(([source, expectedTokens]: [string, Token[]]) => {
     it(`Can tokenize "${source}"`, () => {
-      const tokenizer = new DSLTokenizer(source);
+      const tokenizer = new DSLTokenizer(new StringScanner(source));
       const tokens: Token[] = [];
       while (!tokenizer.isEOF()) {
         tokens.push(tokenizer.next());

@@ -118,17 +118,19 @@ describe(__filename + "#", () => {
     ],
     [
       `Can parse a multi-line comment`,
-      `import "./a/b/c.pc" as imp
+      `
 
       /**
        * Hello world
-       * @preview { }
+       * @a (width: 100)
+       * @bbba()
+       * @something this is some random text that works
+       * @bla something else with a multi-line
+       * value 
        */
 
       component Test {
-        render imp.Test (a: true) {
-          override a.b.c "efc"
-        }
+        
       }`,
     ],
   ].forEach(([title, source]) => {

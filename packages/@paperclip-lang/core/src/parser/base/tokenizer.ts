@@ -3,32 +3,34 @@ import { StringScanner } from "../base/string-scanner";
 import { negate } from "lodash";
 import { isDigit, isWhitespace } from "./utils";
 
-export type BaseToken<TKind> = {
+export type BaseToken<TKind extends number> = {
   kind: TKind;
   value: string;
 };
 
-export abstract class BaseTokenizer<TTokenKind> {
-  protected _scanner: StringScanner;
+export abstract class BaseTokenizer<TTokenKind extends number> {
   protected _curr: BaseToken<TTokenKind>;
 
-  constructor(source: string) {
-    this._scanner = new StringScanner(source);
+  constructor(protected _scanner: StringScanner) {}
+
+  getScanner() {
+    return this._scanner;
   }
+
   isEOF() {
     return this._scanner.isEOF();
   }
 
-  peekEatSuperfluous() {
+  peekEat(kind: number) {
     const pos = this._scanner.getPos();
-    const ws = this.eatSuperfluous();
+    const ws = this.eat(kind);
     this._scanner.setPos(pos);
     return ws;
   }
 
-  eatSuperfluous() {
+  eat(kind: number) {
     if (this._curr) {
-      while (this.isCurrSuperfluous()) {
+      while (kind & this._curr.kind) {
         this.next();
       }
       return this.curr().value;
@@ -40,8 +42,6 @@ export abstract class BaseTokenizer<TTokenKind> {
   curr() {
     return this._curr;
   }
-
-  abstract isCurrSuperfluous(): boolean;
 
   currValue(...kinds: TTokenKind[]) {
     const token = this._curr;
@@ -57,9 +57,9 @@ export abstract class BaseTokenizer<TTokenKind> {
     }
     return (this._curr = this._next());
   }
-  nextEatSuperfluous() {
+  nextEat(kind: number) {
     this.next();
-    this.eatSuperfluous();
+    this.eat(kind);
     return this.curr();
   }
 

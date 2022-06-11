@@ -1,6 +1,11 @@
 import { negate } from "lodash";
-import { UnexpectedTokenError, UnknownTokenError } from "./errors";
-import { StringScanner } from "./string-scanner";
+import { buffer } from "stream/consumers";
+import { UnexpectedTokenError, UnknownTokenError } from "../base/errors";
+import { StringScanner } from "../base/string-scanner";
+import * as base from "../base/tokenizer";
+import { isDigit, isLetter, isWhitespace } from "../base/utils";
+
+const { token } = base;
 
 export enum TokenKind {
   Keyword,
@@ -16,7 +21,8 @@ export enum TokenKind {
   Boolean,
 
   // tokenizer handles this since it's much more efficient
-  MultiLineComment,
+  MultiLineOpen,
+  MultiLineClose,
   SingleLineComment,
   Comma,
   At,
@@ -24,10 +30,7 @@ export enum TokenKind {
   Whitespace,
 }
 
-export type Token = {
-  kind: TokenKind;
-  value: string;
-};
+export type Token = base.Token<TokenKind>;
 
 const Testers = {
   Whitespace: /[\s\r\n\t]/,
@@ -35,61 +38,20 @@ const Testers = {
   Digit: /[0-9]/i,
 };
 
-export class Tokenizer {
-  private _scanner: StringScanner;
-  private _curr: Token;
-
-  constructor(source: string) {
-    this._scanner = new StringScanner(source);
-  }
+export class Tokenizer extends base.BaseTokenizer<TokenKind> {
   isEOF() {
     return this._scanner.isEOF();
   }
 
-  peekEatWhitespace() {
-    const pos = this._scanner.getPos();
-    const ws = this.eatWhitespace();
-    this._scanner.setPos(pos);
-    return ws;
-  }
-
-  eatWhitespace() {
-    if (this._curr && this._curr.kind === TokenKind.Whitespace) {
-      const curr = this._curr;
-      this.next();
-      return curr.value;
-    }
-
-    return "";
-  }
-
-  curr() {
-    return this._curr;
-  }
-
-  currValue(...kinds: TokenKind[]) {
-    const token = this._curr;
-    if (!kinds.includes(token.kind)) {
-      throw new UnexpectedTokenError(token.value);
-    }
-    return this._curr.value;
-  }
-
-  next() {
-    return (this._curr = this._next());
-  }
-  nextEatWhitespace() {
-    const curr = this.next();
-    if (curr?.kind === TokenKind.Whitespace) {
-      return this.next();
-    }
-    return curr;
+  isCurrSuperfluous(): boolean {
+    return (
+      this._curr.kind === TokenKind.Whitespace ||
+      this._curr.kind === TokenKind.MultiLineComment ||
+      this._curr.kind === TokenKind.SingleLineComment
+    );
   }
 
   _next(): Token {
-    if (this.isEOF()) {
-      return null;
-    }
     const chr = this._scanner.currChar();
     this._scanner.nextChar();
 
@@ -129,22 +91,24 @@ export class Tokenizer {
       return token(TokenKind.Dot, chr);
     }
 
+    if (chr === "@") {
+      return token(TokenKind.At, chr);
+    }
+
+    if (chr === "*") {
+      const curr = this._scanner.currChar();
+      if (curr === "/") {
+        this._scanner.nextChar();
+        return token(TokenKind.MultiLineClose, "*/");
+      }
+    }
+
     if (chr === "/") {
       const curr = this._scanner.currChar();
       if (curr === "*") {
         this._scanner.nextChar(); // eat *
         let buffer = "/*";
-        while (!this._scanner.isEOF()) {
-          const curr = this._scanner.currChar();
-          if (curr === "*" && this._scanner.peekChar() === "/") {
-            buffer += "*/";
-            this._scanner.skip(2);
-            break;
-          }
-          buffer += curr;
-          this._scanner.nextChar();
-        }
-        return token(TokenKind.MultiLineComment, buffer);
+        return token(TokenKind.MultiLineOpen, "/*");
       } else if (curr === "/") {
         this._scanner.nextChar(); // eat *
         let buffer = "//" + this._scanner.scanUntil((c) => c === "\n");
@@ -232,23 +196,3 @@ export class Tokenizer {
     this._scanner.setPos(pos);
   }
 }
-
-export const token = (kind: TokenKind, value: string): Token => ({
-  kind,
-  value,
-});
-
-const isDigit = (value: string) => {
-  const c = value.charCodeAt(0);
-  return c > 47 && c < 58;
-};
-
-const isLetter = (value: string) => {
-  const c = value.charCodeAt(0);
-  return (c > 96 && c < 123) || (c > 64 && c < 91);
-};
-
-const isWhitespace = (value: string) => {
-  const c = value.charCodeAt(0);
-  return c === 10 || c === 9 || c === 13 || c === 32;
-};

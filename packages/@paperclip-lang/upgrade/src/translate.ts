@@ -146,8 +146,9 @@ const translateComponent = (
 };
 
 const translateMetadata = (node: PCNode, context: TranslateContext) => {
+  context = addBuffer(`/**\n`, context);
   for (const key in node.metadata) {
-    context = addBuffer(`@${key}(`, context);
+    context = addBuffer(` * @${key}(`, context);
     const value = node.metadata[key];
     const keys = Object.keys(value);
     for (let i = 0, { length } = keys; i < length; i++) {
@@ -164,6 +165,7 @@ const translateMetadata = (node: PCNode, context: TranslateContext) => {
     }
     context = addBuffer(`)\n`, context);
   }
+  context = addBuffer(` */\n`, context);
   return context;
 };
 

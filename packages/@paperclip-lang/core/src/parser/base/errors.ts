@@ -1,4 +1,4 @@
-import { TokenKind } from "./tokenizer";
+import { TokenKind } from "../dsl/tokenizer";
 
 export class EndOfFileError extends Error {}
 export class UnknownTokenError extends Error {

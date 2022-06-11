@@ -1,5 +1,6 @@
 import { expect } from "chai";
-import { Token, token, Tokenizer, TokenKind } from "../tokenizer";
+import { token } from "../../base/tokenizer";
+import { Token, Tokenizer, TokenKind } from "../tokenizer";
 
 describe(__dirname + "#", () => {
   [

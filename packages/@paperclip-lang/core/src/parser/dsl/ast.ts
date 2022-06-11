@@ -95,7 +95,7 @@ export type StyleDeclaration = {
 export type Override = {
   target: string[];
   constructorValue?: OverrideConstructorValue;
-  body: OverrideBodyExpression[];
+  body?: OverrideBodyExpression[];
 } & BaseExpression<ExpressionKind.Override>;
 
 export type OverrideConstructorValue = Parameter[] | string;

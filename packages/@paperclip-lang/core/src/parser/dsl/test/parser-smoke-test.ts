@@ -107,6 +107,30 @@ describe(__filename + "#", () => {
         }
       }`,
     ],
+    [
+      `Can parse an override with a target and a constructor value`,
+      `import "./a/b/c.pc" as imp
+      component Test {
+        render imp.Test (a: true) {
+          override a.b.c "efc"
+        }
+      }`,
+    ],
+    [
+      `Can parse a multi-line comment`,
+      `import "./a/b/c.pc" as imp
+
+      /**
+       * Hello world
+       * @preview { }
+       */
+
+      component Test {
+        render imp.Test (a: true) {
+          override a.b.c "efc"
+        }
+      }`,
+    ],
   ].forEach(([title, source]) => {
     it(title, () => {
       const ast = parseDocument(source);

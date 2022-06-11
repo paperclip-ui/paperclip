@@ -1,3 +1,5 @@
+import { DocComment } from "../docco/ast";
+
 export enum ExpressionKind {
   Document = "Document",
 
@@ -65,6 +67,8 @@ export type Import = {
 export type Component = {
   name: string;
   body: ComponentBodyExpression[];
+  docComment?: DocComment;
+  isPublic?: boolean;
 } & BaseExpression<ExpressionKind.Component>;
 
 export type ComponentBodyExpression = Render | Variant;
@@ -78,6 +82,7 @@ export type ElementChild = Style | Node | Override;
 export type Style = {
   name?: string;
   body: StyleBodyExpression[];
+  isPublic?: boolean;
 } & BaseExpression<ExpressionKind.Style>;
 
 export type StyleBodyExpression = StyleCondition | StyleDeclaration;
@@ -100,11 +105,12 @@ export type Override = {
 
 export type OverrideConstructorValue = Parameter[] | string;
 
-export type OverrideBodyExpression = Style;
+export type OverrideBodyExpression = Style | Variant;
 
 export type Element = {
   children: ElementChild[];
-  name: ElementName;
+  tagName: ElementName;
+  name?: string;
   parameters: Parameter[];
 } & BaseExpression<ExpressionKind.Element>;
 

@@ -28,6 +28,7 @@ describe(__filename + "#", () => {
       `component Test {
         render text "Hello" {
           style {
+            a: 10px
           }
         }
       }`,
@@ -132,6 +133,41 @@ describe(__filename + "#", () => {
       component Test {
         
       }`,
+    ],
+    [`Can have digits in refs `, `component Test123 {}`],
+    [`Can parse elements in the doc`, `div test\n`],
+    [
+      `Can parse components with styles and children `,
+      `
+     public component Main {
+       render div {
+         div container {
+           style {
+             color: ed
+           }
+           div {
+           }
+         }
+       }
+     }`,
+    ],
+    [
+      `Can override a variant state `,
+      `
+     public component Main {
+       render div {
+         override a {
+           variant a (on: true)
+         }
+       }
+     }`,
+    ],
+    [
+      `Can parse vars on the document body`,
+      `
+      public string grey1 "rgba(230, 230, 230, 1)"
+      public trigger mobile media screen and (min-width: 0, max-width: 500)
+      `,
     ],
   ].forEach(([title, source]) => {
     it(title, () => {

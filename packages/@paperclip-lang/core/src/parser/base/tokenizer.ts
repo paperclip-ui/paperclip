@@ -29,23 +29,19 @@ export abstract class BaseTokenizer<TTokenKind extends number> {
   }
 
   eat(kind: number) {
-    if (this._curr) {
-      while (kind & this._curr.kind) {
-        this.next();
-      }
-      return this.curr().value;
+    while (this._curr && kind & this._curr.kind) {
+      this.next();
     }
-
-    return "";
+    return this.curr()?.value;
   }
 
   curr() {
     return this._curr;
   }
 
-  currValue(...kinds: TTokenKind[]) {
+  currValue(kind: number) {
     const token = this._curr;
-    if (!kinds.includes(token.kind)) {
+    if (!(kind & token.kind)) {
       throw new UnexpectedTokenError(token.value);
     }
     return this._curr.value;

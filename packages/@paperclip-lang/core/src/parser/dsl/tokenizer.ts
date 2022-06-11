@@ -8,7 +8,12 @@ import {
   scanWhitespace,
   token,
 } from "../base/tokenizer";
-import { isDigit, isLetter, isWhitespace } from "../base/utils";
+import {
+  isDigit,
+  isLetter,
+  isLetterOrDigit,
+  isWhitespace,
+} from "../base/utils";
 
 export enum DSLTokenKind {
   Keyword = 1 << 1,
@@ -30,6 +35,10 @@ export enum DSLTokenKind {
   At = 1 << 15,
   String = 1 << 16,
   Whitespace = 1 << 17,
+  Minus = 1 << 18,
+  Percent = 1 << 19,
+  Pound = 1 << 20,
+  Char = 1 << 21,
 }
 
 export const DSL_SUPERFLUOUS_TOKENS =
@@ -38,12 +47,6 @@ export const DSL_SUPERFLUOUS_TOKENS =
   DSLTokenKind.MultiLineComment;
 
 export type Token = BaseToken<DSLTokenKind>;
-
-const Testers = {
-  Whitespace: /[\s\r\n\t]/,
-  Keyword: /[a-z]/i,
-  Digit: /[0-9]/i,
-};
 
 export class DSLTokenizer extends BaseTokenizer<DSLTokenKind> {
   _next(): Token {
@@ -90,6 +93,14 @@ export class DSLTokenizer extends BaseTokenizer<DSLTokenKind> {
       return token(DSLTokenKind.At, chr);
     }
 
+    if (chr === "%") {
+      return token(DSLTokenKind.Percent, chr);
+    }
+
+    if (chr === "#") {
+      return token(DSLTokenKind.Pound, chr);
+    }
+
     if (chr === "/") {
       const curr = this._scanner.currChar();
       if (curr === "*") {
@@ -124,9 +135,10 @@ export class DSLTokenizer extends BaseTokenizer<DSLTokenKind> {
     }
 
     if (chr === "-") {
-      if (this._scanner.currChar().match(Testers.Digit)) {
+      if (isDigit(this._scanner.currChar())) {
         return token(DSLTokenKind.Number, chr + scanNumberValue(this._scanner));
       }
+      return token(DSLTokenKind.Minus, chr);
     }
 
     if (isWhitespace(chr)) {
@@ -137,14 +149,18 @@ export class DSLTokenizer extends BaseTokenizer<DSLTokenKind> {
     }
 
     if (isLetter(chr)) {
-      const keyword = chr + this._scanner.scanUntil(negate(isLetter));
+      const keyword =
+        chr +
+        this._scanner.scanUntil(
+          negate((c) => isLetter(c) || isDigit(c) || c === "-" || c === "_")
+        );
       return token(DSLTokenKind.Keyword, keyword);
     }
 
-    if (chr.match(Testers.Digit)) {
+    if (isDigit(chr)) {
       return token(DSLTokenKind.Number, chr + scanNumberValue(this._scanner));
     }
 
-    throw new UnknownTokenError(chr);
+    return token(DSLTokenKind.Char, chr);
   }
 }

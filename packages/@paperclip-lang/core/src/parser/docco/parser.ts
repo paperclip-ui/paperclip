@@ -65,8 +65,6 @@ const parseProperties = (context: Context): DocCommentProperty[] => {
     }
   }
 
-  console.log(properties);
-
   return properties;
 };
 
@@ -97,7 +95,7 @@ const parseParameters = (context: Context): DocCommentParameters => {
   while (!(context.tokenizer.curr().kind & DoccoTokenKind.ParenClose)) {
     values.push(parseParameter(context));
     if (context.tokenizer.curr().kind & DoccoTokenKind.Comma) {
-      context.tokenizer.next(); //
+      context.tokenizer.nextEat(DOCCO_SUPERFLUOUS_TOKEN_KIND); //
     }
   }
 
@@ -123,7 +121,7 @@ const parseParameterValue = (context: Context): DocCommentParameterValue => {
   const curr = context.tokenizer.curr();
 
   if (curr.kind === DoccoTokenKind.Number) {
-    context.tokenizer.next();
+    context.tokenizer.nextEat(DOCCO_SUPERFLUOUS_TOKEN_KIND);
     return { kind: DocCommentExpressionKind.Number, value: curr.value };
   } else {
     return {

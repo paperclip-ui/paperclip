@@ -324,7 +324,12 @@ export type PCModule = {
   >;
 } & PCBaseSourceNode<PCSourceTagNames.MODULE>;
 
-export type PCComponentChild = PCVisibleNode | PCVariant | PCOverride | PCSlot;
+export type PCComponentChild =
+  | PCVisibleNode
+  | PCVariant
+  | PCOverride
+  | PCSlot
+  | PCVariantTrigger;
 
 export type PCComponent = {
   /**

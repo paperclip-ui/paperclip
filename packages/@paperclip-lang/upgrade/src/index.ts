@@ -1,12 +1,9 @@
 import { ProjectConfig } from "@tandem-ui/designer/lib/state";
 import * as path from "path";
 import * as fsa from "fs-extra";
-import * as globby from "globby";
 import {
   Dependency,
   DependencyGraph,
-  getDependents,
-  getModuleComponents,
   loadFSDependencyGraphSync,
   PCModule,
 } from "@paperclip-lang/core";

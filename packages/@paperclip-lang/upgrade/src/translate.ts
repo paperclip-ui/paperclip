@@ -12,6 +12,7 @@ import {
   isPCComponentInstance,
   isPCComponentOrInstance,
   isVisibleNode,
+  parseDocument,
   PCComponent,
   PCComponentInstanceElement,
   PCElement,
@@ -28,11 +29,13 @@ import {
   PCStyleOverride,
   PCVariable,
   PCVariant,
+  PCVariantTrigger,
+  PCVariantTriggerSourceType,
   PCVisibleNode,
 } from "@paperclip-lang/core";
 import * as URL from "url";
 import * as path from "path";
-import { camelCase, isEqual, over, uniq } from "lodash";
+import { camelCase, uniq, capitalize } from "lodash";
 import {
   EMPTY_OBJECT,
   getNestedTreeNodeById,
@@ -66,8 +69,11 @@ export const translateModule = (
   context = translateImports(context);
   context = translateStyleVars(context);
   context = translateComponents(context);
+  context = translateFrames(context);
   console.log("translate", url);
+  console.log(context.module);
   console.log(context.content);
+  // console.log("TRAN", parseDocument(context.content))
   return context.content;
 };
 
@@ -87,7 +93,7 @@ const translateStyleVars = (context: TranslateContext) => {
 const translateStyleVar = (node: PCVariable, context: TranslateContext) => {
   if (node.value) {
     context = addBuffer(
-      `export string ${camelCase(node.label)} "${node.value}"\n`,
+      `public string ${camelCase(node.label)} "${node.value}"\n`,
       context
     );
   }
@@ -96,7 +102,7 @@ const translateStyleVar = (node: PCVariable, context: TranslateContext) => {
 };
 
 const translateStyleMixin = (node: PCStyleMixin, context: TranslateContext) => {
-  context = addBuffer(`export style ${camelCase(node.label)} {\n`, context);
+  context = addBuffer(`public style ${camelCase(node.label)} {\n`, context);
   context = startBlock(context);
   context = translateStyleValues(node.style, context);
   context = endBlock(context);
@@ -107,7 +113,7 @@ const translateStyleMixin = (node: PCStyleMixin, context: TranslateContext) => {
 const translateMediaQuery = (node: PCMediaQuery, context: TranslateContext) => {
   if (node.type === PCQueryType.MEDIA) {
     context = addBuffer(
-      `export trigger ${camelCase(node.label)} media screen and (min-width: ${
+      `public trigger ${camelCase(node.label)} media screen and (min-width: ${
         node.condition.minWidth || 0
       }, max-width: ${node.condition.maxWidth})\n`,
       context
@@ -125,13 +131,31 @@ const translateComponents = (context: TranslateContext) => {
   return context;
 };
 
+const translateFrames = (context: TranslateContext) => {
+  const contentNodes = context.module.children.filter(
+    (child) => child.name !== PCSourceTagNames.COMPONENT
+  );
+  for (const contentNode of contentNodes) {
+    context = translateFrame(contentNode, context);
+  }
+  return context;
+};
+
+const translateFrame = (contentNode: PCNode, context: TranslateContext) => {
+  if (contentNode.name === PCSourceTagNames.ELEMENT) {
+    context = translateMetadata(contentNode, context);
+    context = translateNode(contentNode, context);
+  }
+  return context;
+};
+
 const translateComponent = (
   component: PCComponent,
   context: TranslateContext
 ) => {
   context = translateMetadata(component, context);
   context = addBuffer(
-    `export component ${pascalCase(component.label!)} {\n`,
+    `public component ${pascalCase(component.label!)} {\n`,
     context
   );
   if (pascalCase(component.label!) === "Welcome") {
@@ -178,11 +202,36 @@ const translateVariants = (
     context = addBuffer(
       `variant ${camelCase(variant.label)} (on: ${
         variant.isDefault === true
-      })\n`,
+      }, trigger: ${translateVariantTrigger(variant, component)})\n`,
       context
     );
   }
   return context;
+};
+
+const translateVariantTrigger = (
+  variant: PCVariant,
+  component: PCComponent
+) => {
+  let buffer = `[`;
+
+  const triggers = component.children.filter(
+    (child) =>
+      child.name === PCSourceTagNames.VARIANT_TRIGGER &&
+      child.targetVariantId === variant.id
+  ) as PCVariantTrigger[];
+
+  buffer += triggers
+    .map((trigger) => {
+      if (trigger.source.type === PCVariantTriggerSourceType.STATE) {
+        return `PseudoElement.${capitalize(trigger.source.state)}`;
+      }
+    })
+    .join(", ");
+
+  buffer += `]`;
+
+  return buffer;
 };
 
 const translateComponentRender = (
@@ -523,8 +572,8 @@ const isNodeChild = (node: PCNode) =>
 const getOverrides = (node: PCNode, graph: DependencyGraph) =>
   node.children.filter(
     (child) =>
-      child.name === PCSourceTagNames.OVERRIDE &&
-      (child as PCOverride).targetIdPath.every((idPath) =>
+      (child as PCNode).name === PCSourceTagNames.OVERRIDE &&
+      (child as any as PCOverride).targetIdPath.every((idPath) =>
         getPCNode(idPath, graph)
       )
   ) as PCOverride[];

@@ -1,12 +1,16 @@
-Immediate:
+Milestone (Bridge):
 
-- global variables
-- global mixins
-- parser
-- AST -> DSL
-- runtime bridge
+Get new DSL to run in designer
 
-Milestone:
+Milestone (Convert):
+
+Milestone (DSL Upgrades):
+
+**DSL Upgrades**
+
+Milestone (Online editing):
+
+Milestone (eject):
 
 - PC bridge
 

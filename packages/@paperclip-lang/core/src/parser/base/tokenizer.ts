@@ -1,14 +1,16 @@
 import { UnexpectedTokenError } from "./errors";
 import { StringScanner } from "../base/string-scanner";
+import { negate } from "lodash";
+import { isDigit, isWhitespace } from "./utils";
 
-export type Token<TKind> = {
+export type BaseToken<TKind> = {
   kind: TKind;
   value: string;
 };
 
 export abstract class BaseTokenizer<TTokenKind> {
   protected _scanner: StringScanner;
-  protected _curr: Token<TTokenKind>;
+  protected _curr: BaseToken<TTokenKind>;
 
   constructor(source: string) {
     this._scanner = new StringScanner(source);
@@ -61,10 +63,52 @@ export abstract class BaseTokenizer<TTokenKind> {
     return this.curr();
   }
 
-  abstract _next(): Token<any>;
+  abstract _next(): BaseToken<any>;
 }
 
-export const token = (kind: any, value: string): Token<any> => ({
+export const token = (kind: any, value: string): BaseToken<any> => ({
   kind,
   value,
 });
+
+export const scanString = (scanner: StringScanner, chr: string) => {
+  let buffer = chr;
+
+  while (!scanner.isEOF()) {
+    if (scanner.currChar() === chr) {
+      break;
+    }
+
+    // Escape
+    if (scanner.currChar() === "\\") {
+      buffer += "\\" + scanner.nextChar();
+      scanner.nextChar(); // eat escaped
+      continue;
+    }
+
+    buffer += scanner.currChar();
+    scanner.nextChar();
+  }
+
+  buffer += scanner.currChar();
+  scanner.nextChar(); // eat " '
+
+  return buffer;
+};
+
+export const scanWhitespace = (scanner: StringScanner) => {
+  return scanner.scanUntil(negate(isWhitespace));
+};
+
+export const scanNumberValue = (scanner: StringScanner) => {
+  let buffer = scanDigitValue(scanner);
+  if (scanner.currChar() === ".") {
+    scanner.nextChar(); // eat .
+    buffer += "." + scanDigitValue(scanner);
+  }
+  return buffer;
+};
+
+export const scanDigitValue = (scanner: StringScanner) => {
+  return scanner.scanUntil(negate(isDigit));
+};

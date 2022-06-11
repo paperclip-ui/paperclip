@@ -28,14 +28,14 @@ import {
   VisibleNode,
 } from "./ast";
 import { UnexpectedTokenError } from "../base/errors";
-import { Token, token, Tokenizer, TokenKind } from "./tokenizer";
+import { Token, DSLTokenizer, DSLTokenKind } from "./tokenizer";
 
 type Context = {
-  tokenizer: Tokenizer;
+  tokenizer: DSLTokenizer;
 };
 
 export const parseDocument = (source: string): Document => {
-  const tokenizer = new Tokenizer(source);
+  const tokenizer = new DSLTokenizer(source);
 
   // setup current token
   tokenizer.next();
@@ -78,13 +78,13 @@ const parseDocumentExpression = (context: Context): DocumentExpression => {
 };
 
 const parseImport = (context: Context): Import => {
-  context.tokenizer.currValue(TokenKind.Keyword);
+  context.tokenizer.currValue(DSLTokenKind.Keyword);
   context.tokenizer.nextEatSuperfluous();
-  const path = context.tokenizer.currValue(TokenKind.String);
+  const path = context.tokenizer.currValue(DSLTokenKind.String);
   context.tokenizer.nextEatSuperfluous();
-  context.tokenizer.currValue(TokenKind.Keyword);
+  context.tokenizer.currValue(DSLTokenKind.Keyword);
   context.tokenizer.nextEatSuperfluous();
-  const namespace = context.tokenizer.currValue(TokenKind.Keyword);
+  const namespace = context.tokenizer.currValue(DSLTokenKind.Keyword);
   context.tokenizer.nextEatSuperfluous();
   return {
     raws: {},
@@ -98,7 +98,7 @@ const parseComponent = (context: Context): Component => {
   const before = context.tokenizer.eatSuperfluous();
   context.tokenizer.next(); // eat component
   context.tokenizer.eatSuperfluous();
-  const name = context.tokenizer.currValue(TokenKind.Keyword);
+  const name = context.tokenizer.currValue(DSLTokenKind.Keyword);
   context.tokenizer.next(); // eat keyword
   context.tokenizer.eatSuperfluous();
   const body = parseComponentBody(context);
@@ -118,14 +118,14 @@ const bodyParser =
     parseBodyExpression: (context: Context) => TBodyExpression | null
   ) =>
   (context: Context): TBodyExpression[] => {
-    context.tokenizer.currValue(TokenKind.CurlyOpen);
+    context.tokenizer.currValue(DSLTokenKind.CurlyOpen);
     context.tokenizer.nextEatSuperfluous(); // eat {
 
     const expressions = [];
 
     while (
       !context.tokenizer.isEOF() &&
-      context.tokenizer.curr().kind !== TokenKind.CurlyClose
+      context.tokenizer.curr().kind !== DSLTokenKind.CurlyClose
     ) {
       context.tokenizer.eatSuperfluous();
       const curr = context.tokenizer.curr();
@@ -136,7 +136,7 @@ const bodyParser =
       expressions.push(expr);
     }
 
-    context.tokenizer.currValue(TokenKind.CurlyClose);
+    context.tokenizer.currValue(DSLTokenKind.CurlyClose);
     context.tokenizer.next(); // eat }
 
     return expressions;
@@ -156,7 +156,7 @@ const parseVariant = (context: Context): Variant => {
   const name = context.tokenizer.nextEatSuperfluous();
   context.tokenizer.nextEatSuperfluous(); // eat name
   let parameters: Parameter[] = [];
-  if (context.tokenizer.curr().kind === TokenKind.ParenOpen) {
+  if (context.tokenizer.curr().kind === DSLTokenKind.ParenOpen) {
     parameters = parseParameters(context);
   }
   context.tokenizer.eatSuperfluous();
@@ -173,20 +173,20 @@ const parseParameters = (context: Context) => {
   const parameters = [];
   context.tokenizer.nextEatSuperfluous();
   while (!context.tokenizer.isEOF()) {
-    const name = context.tokenizer.currValue(TokenKind.Keyword);
+    const name = context.tokenizer.currValue(DSLTokenKind.Keyword);
     context.tokenizer.nextEatSuperfluous();
-    context.tokenizer.currValue(TokenKind.Colon);
+    context.tokenizer.currValue(DSLTokenKind.Colon);
     context.tokenizer.nextEatSuperfluous();
     const value = context.tokenizer.currValue(
-      TokenKind.Keyword,
-      TokenKind.String,
-      TokenKind.Number
+      DSLTokenKind.Keyword,
+      DSLTokenKind.String,
+      DSLTokenKind.Number
     );
     context.tokenizer.nextEatSuperfluous();
     const fin = context.tokenizer.curr();
     context.tokenizer.next();
     context.tokenizer.eatSuperfluous();
-    if (fin.kind === TokenKind.ParenClose) {
+    if (fin.kind === DSLTokenKind.ParenClose) {
       break;
     }
   }
@@ -221,7 +221,7 @@ const parseText = (context: Context, before: string): Text => {
   const value = context.tokenizer.curr();
   let children: TextChild[] = EMPTY_ARRAY;
   const next = context.tokenizer.nextEatSuperfluous();
-  if (next.kind === TokenKind.CurlyOpen) {
+  if (next.kind === DSLTokenKind.CurlyOpen) {
     children = parseTextChildren(context);
   }
   return {
@@ -240,14 +240,14 @@ const parseTextChildren = bodyParser<TextChild>((context) => {
 });
 
 const parseStyle = (context: Context): Style => {
-  context.tokenizer.currValue(TokenKind.Keyword);
+  context.tokenizer.currValue(DSLTokenKind.Keyword);
   const next = context.tokenizer.nextEatSuperfluous(); // eat keyword
   let name: string;
-  if (next.kind === TokenKind.Keyword) {
+  if (next.kind === DSLTokenKind.Keyword) {
     name = next.value;
     context.tokenizer.nextEatSuperfluous();
   }
-  context.tokenizer.currValue(TokenKind.CurlyOpen);
+  context.tokenizer.currValue(DSLTokenKind.CurlyOpen);
   const body = parseStyleBody(context);
   context.tokenizer.eatSuperfluous();
 
@@ -268,9 +268,9 @@ const parseStyleBody = bodyParser<StyleBodyExpression>((context: Context) => {
 });
 
 const parseStyleCondition = (context: Context): StyleCondition => {
-  context.tokenizer.currValue(TokenKind.Keyword);
+  context.tokenizer.currValue(DSLTokenKind.Keyword);
   context.tokenizer.nextEatSuperfluous();
-  const conditionName = context.tokenizer.currValue(TokenKind.Keyword);
+  const conditionName = context.tokenizer.currValue(DSLTokenKind.Keyword);
   context.tokenizer.nextEatSuperfluous();
   const body = parseStyleBody(context);
   context.tokenizer.eatSuperfluous();
@@ -284,11 +284,11 @@ const parseStyleCondition = (context: Context): StyleCondition => {
 };
 
 const parseStyleDeclaration = (context: Context): StyleDeclaration => {
-  const name = context.tokenizer.currValue(TokenKind.Keyword);
+  const name = context.tokenizer.currValue(DSLTokenKind.Keyword);
   context.tokenizer.nextEatSuperfluous();
-  context.tokenizer.currValue(TokenKind.Colon);
+  context.tokenizer.currValue(DSLTokenKind.Colon);
   context.tokenizer.nextEatSuperfluous();
-  const value = context.tokenizer.currValue(TokenKind.Keyword);
+  const value = context.tokenizer.currValue(DSLTokenKind.Keyword);
   context.tokenizer.nextEatSuperfluous();
 
   return {
@@ -309,12 +309,12 @@ const parseElement = (context: Context): Element => {
   let next = context.tokenizer.curr();
   let children: ElementChild[] = EMPTY_ARRAY;
   let parameters: Parameter[] = EMPTY_ARRAY;
-  if (next.kind === TokenKind.ParenOpen) {
+  if (next.kind === DSLTokenKind.ParenOpen) {
     parameters = parseParameters(context);
     next = context.tokenizer.curr();
   }
 
-  if (next.kind === TokenKind.CurlyOpen) {
+  if (next.kind === DSLTokenKind.CurlyOpen) {
     children = parseElementChildren(context);
   }
   context.tokenizer.eatSuperfluous();
@@ -342,7 +342,7 @@ const parseRef = (context: Context): string[] => {
   const name = context.tokenizer.curr().value;
   let next = context.tokenizer.nextEatSuperfluous();
   const parts: string[] = [name];
-  while (next.kind === TokenKind.Dot) {
+  while (next.kind === DSLTokenKind.Dot) {
     parts.push(context.tokenizer.nextEatSuperfluous().value);
     next = context.tokenizer.nextEatSuperfluous(); // queue dot
   }
@@ -353,18 +353,18 @@ const parseRef = (context: Context): string[] => {
 const parseOverride = (context: Context): Override => {
   context.tokenizer.nextEatSuperfluous(); // eat override + ws
   let curr = context.tokenizer.curr();
-  const target = curr.kind === TokenKind.Keyword ? parseRef(context) : null;
+  const target = curr.kind === DSLTokenKind.Keyword ? parseRef(context) : null;
   let constructorValue: OverrideConstructorValue;
   curr = context.tokenizer.curr();
-  if (curr.kind === TokenKind.ParenOpen) {
+  if (curr.kind === DSLTokenKind.ParenOpen) {
     constructorValue = parseParameters(context);
-  } else if (curr.kind === TokenKind.String) {
+  } else if (curr.kind === DSLTokenKind.String) {
     constructorValue = curr.value;
     context.tokenizer.nextEatSuperfluous();
   }
   let body: OverrideBodyExpression[];
 
-  if (context.tokenizer.curr().kind === TokenKind.CurlyOpen) {
+  if (context.tokenizer.curr().kind === DSLTokenKind.CurlyOpen) {
     body = parseOverrideBody(context);
     context.tokenizer.eatSuperfluous();
   }

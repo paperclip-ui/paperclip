@@ -1,4 +1,4 @@
-import { TokenKind } from "../dsl/tokenizer";
+import { DSLTokenKind } from "../dsl/tokenizer";
 
 export class EndOfFileError extends Error {}
 export class UnknownTokenError extends Error {
@@ -8,7 +8,7 @@ export class UnknownTokenError extends Error {
 }
 
 export class UnexpectedTokenError extends Error {
-  constructor(readonly char: string, expectedToken?: TokenKind) {
+  constructor(readonly char: string, expectedToken?: DSLTokenKind) {
     super(
       expectedToken
         ? `Unexpected token "${char}", expected ${expectedToken}`

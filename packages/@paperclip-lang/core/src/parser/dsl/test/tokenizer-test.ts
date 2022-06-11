@@ -1,37 +1,37 @@
 import { expect } from "chai";
 import { token } from "../../base/tokenizer";
-import { Token, Tokenizer, TokenKind } from "../tokenizer";
+import { Token, DSLTokenizer, DSLTokenKind } from "../tokenizer";
 
 describe(__dirname + "#", () => {
   [
-    [`{`, [token(TokenKind.CurlyOpen, "{")]],
-    [`component`, [token(TokenKind.Keyword, "component")]],
+    [`{`, [token(DSLTokenKind.CurlyOpen, "{")]],
+    [`component`, [token(DSLTokenKind.Keyword, "component")]],
     [
       `component Test`,
       [
-        token(TokenKind.Keyword, "component"),
-        token(TokenKind.Whitespace, " "),
-        token(TokenKind.Keyword, "Test"),
+        token(DSLTokenKind.Keyword, "component"),
+        token(DSLTokenKind.Whitespace, " "),
+        token(DSLTokenKind.Keyword, "Test"),
       ],
     ],
-    ["}", [token(TokenKind.CurlyClose, "}")]],
-    ["(", [token(TokenKind.ParenOpen, "(")]],
-    [")", [token(TokenKind.ParenClose, ")")]],
-    [",", [token(TokenKind.Comma, ",")]],
-    ["/* abba \n */", [token(TokenKind.MultiLineComment, "/* abba \n */")]],
-    ["// a bba \n", [token(TokenKind.SingleLineComment, "// a bba \n")]],
-    ["10", [token(TokenKind.Number, "10")]],
-    ["-10", [token(TokenKind.Number, "-10")]],
-    ["-10.444", [token(TokenKind.Number, "-10.444")]],
-    ["[", [token(TokenKind.SquareOpen, "[")]],
-    ["]", [token(TokenKind.SquareClose, "]")]],
-    [`"abba"`, [token(TokenKind.String, `"abba"`)]],
-    [`"abba\\""`, [token(TokenKind.String, `"abba\\""`)]],
-    [`"abba\\""`, [token(TokenKind.String, `"abba\\""`)]],
-    [`'abba'`, [token(TokenKind.String, `'abba'`)]],
+    ["}", [token(DSLTokenKind.CurlyClose, "}")]],
+    ["(", [token(DSLTokenKind.ParenOpen, "(")]],
+    [")", [token(DSLTokenKind.ParenClose, ")")]],
+    [",", [token(DSLTokenKind.Comma, ",")]],
+    ["/* abba \n */", [token(DSLTokenKind.MultiLineComment, "/* abba \n */")]],
+    ["// a bba \n", [token(DSLTokenKind.SingleLineComment, "// a bba \n")]],
+    ["10", [token(DSLTokenKind.Number, "10")]],
+    ["-10", [token(DSLTokenKind.Number, "-10")]],
+    ["-10.444", [token(DSLTokenKind.Number, "-10.444")]],
+    ["[", [token(DSLTokenKind.SquareOpen, "[")]],
+    ["]", [token(DSLTokenKind.SquareClose, "]")]],
+    [`"abba"`, [token(DSLTokenKind.String, `"abba"`)]],
+    [`"abba\\""`, [token(DSLTokenKind.String, `"abba\\""`)]],
+    [`"abba\\""`, [token(DSLTokenKind.String, `"abba\\""`)]],
+    [`'abba'`, [token(DSLTokenKind.String, `'abba'`)]],
   ].forEach(([source, expectedTokens]: [string, Token[]]) => {
     it(`Can tokenize "${source}"`, () => {
-      const tokenizer = new Tokenizer(source);
+      const tokenizer = new DSLTokenizer(source);
       const tokens: Token[] = [];
       while (!tokenizer.isEOF()) {
         tokens.push(tokenizer.next());

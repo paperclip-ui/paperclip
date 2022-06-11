@@ -1,13 +1,16 @@
 import { negate } from "lodash";
-import { buffer } from "stream/consumers";
-import { UnexpectedTokenError, UnknownTokenError } from "../base/errors";
-import { StringScanner } from "../base/string-scanner";
-import * as base from "../base/tokenizer";
+import { UnknownTokenError } from "../base/errors";
+import {
+  BaseToken,
+  BaseTokenizer,
+  scanNumberValue,
+  scanString,
+  scanWhitespace,
+  token,
+} from "../base/tokenizer";
 import { isDigit, isLetter, isWhitespace } from "../base/utils";
 
-const { token } = base;
-
-export enum TokenKind {
+export enum DSLTokenKind {
   Keyword,
   Dot,
   Number,
@@ -21,8 +24,7 @@ export enum TokenKind {
   Boolean,
 
   // tokenizer handles this since it's much more efficient
-  MultiLineOpen,
-  MultiLineClose,
+  MultiLineComment,
   SingleLineComment,
   Comma,
   At,
@@ -30,7 +32,7 @@ export enum TokenKind {
   Whitespace,
 }
 
-export type Token = base.Token<TokenKind>;
+export type Token = BaseToken<DSLTokenKind>;
 
 const Testers = {
   Whitespace: /[\s\r\n\t]/,
@@ -38,16 +40,12 @@ const Testers = {
   Digit: /[0-9]/i,
 };
 
-export class Tokenizer extends base.BaseTokenizer<TokenKind> {
-  isEOF() {
-    return this._scanner.isEOF();
-  }
-
+export class DSLTokenizer extends BaseTokenizer<DSLTokenKind> {
   isCurrSuperfluous(): boolean {
     return (
-      this._curr.kind === TokenKind.Whitespace ||
-      this._curr.kind === TokenKind.MultiLineComment ||
-      this._curr.kind === TokenKind.SingleLineComment
+      this._curr.kind === DSLTokenKind.Whitespace ||
+      this._curr.kind === DSLTokenKind.MultiLineComment ||
+      this._curr.kind === DSLTokenKind.SingleLineComment
     );
   }
 
@@ -56,51 +54,43 @@ export class Tokenizer extends base.BaseTokenizer<TokenKind> {
     this._scanner.nextChar();
 
     if (chr === "(") {
-      return token(TokenKind.ParenOpen, chr);
+      return token(DSLTokenKind.ParenOpen, chr);
     }
 
     if (chr === ")") {
-      return token(TokenKind.ParenClose, chr);
+      return token(DSLTokenKind.ParenClose, chr);
     }
 
     if (chr === "{") {
-      return token(TokenKind.CurlyOpen, chr);
+      return token(DSLTokenKind.CurlyOpen, chr);
     }
 
     if (chr === "}") {
-      return token(TokenKind.CurlyClose, chr);
+      return token(DSLTokenKind.CurlyClose, chr);
     }
 
     if (chr === ",") {
-      return token(TokenKind.Comma, chr);
+      return token(DSLTokenKind.Comma, chr);
     }
 
     if (chr === ":") {
-      return token(TokenKind.Colon, chr);
+      return token(DSLTokenKind.Colon, chr);
     }
 
     if (chr === "[") {
-      return token(TokenKind.SquareOpen, chr);
+      return token(DSLTokenKind.SquareOpen, chr);
     }
 
     if (chr === "]") {
-      return token(TokenKind.SquareClose, chr);
+      return token(DSLTokenKind.SquareClose, chr);
     }
 
     if (chr === ".") {
-      return token(TokenKind.Dot, chr);
+      return token(DSLTokenKind.Dot, chr);
     }
 
     if (chr === "@") {
-      return token(TokenKind.At, chr);
-    }
-
-    if (chr === "*") {
-      const curr = this._scanner.currChar();
-      if (curr === "/") {
-        this._scanner.nextChar();
-        return token(TokenKind.MultiLineClose, "*/");
-      }
+      return token(DSLTokenKind.At, chr);
     }
 
     if (chr === "/") {
@@ -108,7 +98,17 @@ export class Tokenizer extends base.BaseTokenizer<TokenKind> {
       if (curr === "*") {
         this._scanner.nextChar(); // eat *
         let buffer = "/*";
-        return token(TokenKind.MultiLineOpen, "/*");
+        while (!this._scanner.isEOF()) {
+          const curr = this._scanner.currChar();
+          if (curr === "*" && this._scanner.peekChar() === "/") {
+            buffer += "*/";
+            this._scanner.skip(2);
+            break;
+          }
+          buffer += curr;
+          this._scanner.nextChar();
+        }
+        return token(DSLTokenKind.MultiLineComment, buffer);
       } else if (curr === "/") {
         this._scanner.nextChar(); // eat *
         let buffer = "//" + this._scanner.scanUntil((c) => c === "\n");
@@ -118,81 +118,36 @@ export class Tokenizer extends base.BaseTokenizer<TokenKind> {
           this._scanner.nextChar(); // eat \n
           buffer += "\n";
         }
-        return token(TokenKind.SingleLineComment, buffer);
+        return token(DSLTokenKind.SingleLineComment, buffer);
       }
     }
 
     if (chr === '"' || chr === "'") {
-      let buffer = chr;
-
-      while (!this._scanner.isEOF()) {
-        if (this._scanner.currChar() === chr) {
-          break;
-        }
-
-        // Escape
-        if (this._scanner.currChar() === "\\") {
-          buffer += "\\" + this._scanner.nextChar();
-          this._scanner.nextChar(); // eat escaped
-          continue;
-        }
-
-        buffer += this._scanner.currChar();
-        this._scanner.nextChar();
-      }
-
-      buffer += this._scanner.currChar();
-      this._scanner.nextChar(); // eat " '
-
-      return token(TokenKind.String, buffer);
+      return token(DSLTokenKind.String, scanString(this._scanner, chr));
     }
 
     if (chr === "-") {
       if (this._scanner.currChar().match(Testers.Digit)) {
-        return token(TokenKind.Number, chr + this._scanNumberValue());
+        return token(DSLTokenKind.Number, chr + scanNumberValue(this._scanner));
       }
     }
 
     if (isWhitespace(chr)) {
-      return token(TokenKind.Whitespace, chr + this._scanWhitespaceValue());
+      return token(
+        DSLTokenKind.Whitespace,
+        chr + scanWhitespace(this._scanner)
+      );
     }
 
     if (isLetter(chr)) {
       const keyword = chr + this._scanner.scanUntil(negate(isLetter));
-
-      return token(TokenKind.Keyword, keyword);
+      return token(DSLTokenKind.Keyword, keyword);
     }
 
     if (chr.match(Testers.Digit)) {
-      return token(TokenKind.Number, chr + this._scanNumberValue());
+      return token(DSLTokenKind.Number, chr + scanNumberValue(this._scanner));
     }
 
     throw new UnknownTokenError(chr);
-  }
-
-  private _scanWhitespaceValue() {
-    return this._scanner.scanUntil(negate(isWhitespace));
-  }
-
-  private _scanNumberValue() {
-    let buffer = this._scanDigitValue();
-    if (this._scanner.currChar() === ".") {
-      this._scanner.nextChar(); // eat .
-      buffer += "." + this._scanDigitValue();
-    }
-    return buffer;
-  }
-
-  private _scanDigitValue() {
-    return this._scanner.scanUntil(negate(isDigit));
-  }
-
-  peek(count: number = 1) {
-    const pos = this._scanner.getPos();
-    let last: Token;
-    for (let i = 0; i < count; i++) {
-      last = this.next();
-    }
-    this._scanner.setPos(pos);
   }
 }

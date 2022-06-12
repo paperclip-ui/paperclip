@@ -55,7 +55,7 @@ const deserializeComponent =
       label: component.name,
       variant,
       children: [],
-      is: "",
+      is: "div",
       attributes: {},
       style: {},
       metadata: {},

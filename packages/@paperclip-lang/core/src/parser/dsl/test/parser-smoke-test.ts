@@ -165,9 +165,15 @@ describe(__filename + "#", () => {
     [
       `Can parse vars on the document body`,
       `
-      public string grey1 "rgba(230, 230, 230, 1)"
-      public trigger mobile media screen and (min-width: 0, max-width: 500)
+      public token grey1 rgba(230, 230, 230, 1)
+
       `,
+    ],
+    [
+      `Can define a variant with a trigger`,
+      `component Test {
+        variant a (on: true, trigger: [PseudoElement.Hover])
+      }`,
     ],
   ].forEach(([title, source]) => {
     it(title, () => {

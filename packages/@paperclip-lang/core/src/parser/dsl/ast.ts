@@ -4,6 +4,8 @@ export enum ExpressionKind {
   Document = "Document",
 
   Import = "Import",
+  Token = "Token",
+  Array = "Array",
 
   /*
 
@@ -64,6 +66,12 @@ export type Import = {
   namespace: string;
 } & BaseExpression<ExpressionKind.Import>;
 
+export type ValueToken = {
+  isPublic?: boolean;
+  name: string;
+  value: string;
+} & BaseExpression<ExpressionKind.Token>;
+
 export type Component = {
   name: string;
   body: ComponentBodyExpression[];
@@ -75,6 +83,8 @@ export type ComponentBodyExpression = Render | Variant;
 
 export type Parameter = {
   raws: Raws;
+  name: string;
+  value: ParameterValue;
 } & BaseExpression<ExpressionKind.Parameter>;
 
 export type ElementChild = Style | Node | Override;
@@ -151,5 +161,5 @@ export type Comment = MultiLineComment | SingleLineComment;
 
 export type VisibleNode = Text | Element | Fragment;
 export type Node = VisibleNode | Comment;
-export type DocumentExpression = Node | Component | Style | Import;
+export type DocumentExpression = Node | Component | Style | Import | ValueToken;
 export type BodyExpression = Component | Node;

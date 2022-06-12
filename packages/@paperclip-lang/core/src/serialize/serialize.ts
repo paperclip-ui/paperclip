@@ -1,22 +1,16 @@
 import {
-  DependencyGraph,
   getModuleComponents,
-  getOverrideMap,
   getPCNode,
   getPCNodeContentNode,
   getPCNodeDependency,
   getPCNodeModule,
   getPCVariants,
-  isComponentOrInstance,
-  isElementLikePCNode,
   isPCComponentInstance,
   isPCComponentOrInstance,
   isVisibleNode,
-  parseDocument,
   PCComponent,
   PCComponentInstanceElement,
   PCElement,
-  PCElementLikeNode,
   PCMediaQuery,
   PCModule,
   PCNode,
@@ -32,27 +26,25 @@ import {
   PCVariantTrigger,
   PCVariantTriggerSourceType,
   PCVisibleNode,
-} from "@paperclip-lang/core";
+} from "../dsl";
+import { DependencyGraph } from "../graph";
+
 import * as URL from "url";
 import * as path from "path";
 import { camelCase, uniq, capitalize } from "lodash";
-import {
-  EMPTY_OBJECT,
-  getNestedTreeNodeById,
-  getTreeNodeIdMap,
-  Translate,
-} from "tandem-common";
+import { EMPTY_OBJECT, getTreeNodeIdMap } from "tandem-common";
 import {
   addBuffer,
   endBlock,
   startBlock,
   TranslateContext,
-} from "./translate-context";
+} from "./serialize-context";
 import { pascalCase } from "./utils";
+import { parseDocument } from "../parser/dsl/parser";
 
 type PCElementLike = PCComponent | PCComponentInstanceElement | PCElement;
 
-export const translateModule = (
+export const serializeModule = (
   module: PCModule,
   url: string,
   graph: DependencyGraph
@@ -70,10 +62,6 @@ export const translateModule = (
   context = translateStyleVars(context);
   context = translateComponents(context);
   context = translateFrames(context);
-  console.log("translate", url);
-  console.log(context.module);
-  console.log(context.content);
-  // console.log("TRAN", parseDocument(context.content))
   return context.content;
 };
 
@@ -93,7 +81,7 @@ const translateStyleVars = (context: TranslateContext) => {
 const translateStyleVar = (node: PCVariable, context: TranslateContext) => {
   if (node.value) {
     context = addBuffer(
-      `public string ${camelCase(node.label)} "${node.value}"\n`,
+      `public token ${camelCase(node.label)} ${node.value}\n`,
       context
     );
   }
@@ -112,12 +100,12 @@ const translateStyleMixin = (node: PCStyleMixin, context: TranslateContext) => {
 
 const translateMediaQuery = (node: PCMediaQuery, context: TranslateContext) => {
   if (node.type === PCQueryType.MEDIA) {
-    context = addBuffer(
-      `public trigger ${camelCase(node.label)} media screen and (min-width: ${
-        node.condition.minWidth || 0
-      }, max-width: ${node.condition.maxWidth})\n`,
-      context
-    );
+    // context = addBuffer(
+    //   `public trigger ${camelCase(node.label)} media screen and (min-width: ${
+    //     node.condition.minWidth || 0
+    //   }, max-width: ${node.condition.maxWidth})\n`,
+    //   context
+    // );
   }
 
   return context;
@@ -213,6 +201,7 @@ const translateVariantTrigger = (
   variant: PCVariant,
   component: PCComponent
 ) => {
+  return 1;
   let buffer = `[`;
 
   const triggers = component.children.filter(
@@ -245,7 +234,11 @@ const translateComponentRender = (
 
 const translateNode = (node: PCNode, context: TranslateContext) => {
   if (isPCVisibleElement(node)) {
-    context = addBuffer(getRef(node, context), context);
+    const ref = getRef(node, context);
+    if (ref === "style") {
+      return context;
+    }
+    context = addBuffer(ref, context);
     if (
       node.label &&
       node.label !== "Element" &&

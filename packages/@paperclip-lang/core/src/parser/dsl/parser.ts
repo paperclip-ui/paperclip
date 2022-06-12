@@ -1,4 +1,4 @@
-import { EMPTY_ARRAY } from "tandem-common";
+import { centerTransformZoom, EMPTY_ARRAY } from "tandem-common";
 import {
   BaseExpression,
   Component,
@@ -22,6 +22,7 @@ import {
   StyleDeclaration,
   Text,
   TextChild,
+  ValueToken,
   Variant,
 } from "./ast";
 import { UnexpectedTokenError } from "../base/errors";
@@ -90,9 +91,26 @@ const parseDocumentExpression = (context: Context): DocumentExpression => {
     return parseStyle(context, isPublic);
   } else if (curr.value === "import") {
     return parseImport(context);
+  } else if (curr.value === "token") {
+    return parseToken(context, isPublic);
   }
 
   return parseNode(context);
+};
+
+const parseToken = (
+  context: Context,
+  isPublic: boolean = false
+): ValueToken => {
+  const { value: name } = context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
+  const value = parseStyleDeclarationValue(context);
+  return {
+    isPublic,
+    raws: {},
+    kind: ExpressionKind.Token,
+    name,
+    value,
+  };
 };
 
 const parseImport = (context: Context): Import => {
@@ -166,6 +184,15 @@ const bodyParser =
     return expressions;
   };
 
+const parseArray = (context: Context) => {
+  const items: any[] = [];
+  context.tokenizer.currValue(DSLTokenKind.SquareOpen);
+  context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
+  context.tokenizer.currValue(DSLTokenKind.SquareClose);
+  context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
+  return items;
+};
+
 const parseComponentBody = bodyParser<ComponentBodyExpression>((context) => {
   const keyword = context.tokenizer.curr();
   if (keyword.value === "variant") {
@@ -193,18 +220,10 @@ const parseVariant = (context: Context): Variant => {
   };
 };
 
-export const parseParameters = (context: Context) => {
+export const parseParameters = (context: Context): Parameter[] => {
   const parameters = [];
   context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
   while (!context.tokenizer.isEOF()) {
-    const name = context.tokenizer.currValue(DSLTokenKind.Keyword);
-    context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
-    context.tokenizer.currValue(DSLTokenKind.Colon);
-    context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
-    const value = context.tokenizer.currValue(
-      DSLTokenKind.Keyword | DSLTokenKind.String | DSLTokenKind.Number
-    );
-    context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
     const fin = context.tokenizer.curr();
     context.tokenizer.next();
     context.tokenizer.eat(DSL_SUPERFLUOUS_TOKENS);
@@ -213,6 +232,19 @@ export const parseParameters = (context: Context) => {
     }
   }
   return parameters;
+};
+
+const parseParameter = (context: Context) => {
+  const name = context.tokenizer.currValue(DSLTokenKind.Keyword);
+  context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
+  context.tokenizer.currValue(DSLTokenKind.Colon);
+  context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
+
+  // TODO - handle array
+  const value = context.tokenizer.currValue(
+    DSLTokenKind.Keyword | DSLTokenKind.String | DSLTokenKind.Number
+  );
+  context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
 };
 
 const parseRender = (context: Context): Render => {
@@ -317,12 +349,7 @@ const parseStyleDeclaration = (context: Context): StyleDeclaration => {
   context.tokenizer.currValue(DSLTokenKind.Colon);
   context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
 
-  let value = "";
-  while (!context.tokenizer.curr().value.includes("\n")) {
-    value += context.tokenizer.curr().value;
-    context.tokenizer.next();
-  }
-  context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
+  const value = parseStyleDeclarationValue(context);
 
   return {
     kind: ExpressionKind.StyleDeclaration,
@@ -330,6 +357,16 @@ const parseStyleDeclaration = (context: Context): StyleDeclaration => {
     name,
     value,
   };
+};
+
+const parseStyleDeclarationValue = (context: Context) => {
+  let value = "";
+  while (!context.tokenizer.curr().value.includes("\n")) {
+    value += context.tokenizer.curr().value;
+    context.tokenizer.next();
+  }
+  context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
+  return value;
 };
 
 const parseElementName = (context: Context): ElementName => {

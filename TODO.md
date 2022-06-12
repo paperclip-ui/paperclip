@@ -2,6 +2,9 @@ Milestone (Bridge):
 
 Get new DSL to run in designer
 
+- variant triggers
+- #{} templates
+
 Milestone (Convert):
 
 Milestone (DSL Upgrades):

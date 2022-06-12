@@ -19,3 +19,4 @@ export * from "./style";
 export * from "./utils";
 export * from "./engine";
 export * from "./parser/dsl/parser";
+export * from "./serialize";

@@ -6,8 +6,8 @@ import {
   DependencyGraph,
   loadFSDependencyGraphSync,
   PCModule,
+  serializeModule,
 } from "@paperclip-lang/core";
-import { translateModule } from "./translate";
 
 export type UpgradeOptions = {
   projectFilePath: string;
@@ -25,6 +25,11 @@ export const upgradeProject = async ({ projectFilePath }: UpgradeOptions) => {
   );
 
   const newDependencyGraph = translateDependencyGraph(oldDependencyGraph);
+
+  for (const uri in newDependencyGraph) {
+    console.log(`Serialize ${uri}`);
+    console.log(newDependencyGraph[uri]);
+  }
 
   // const pcFiles = await globby("**/*.pc", { cwd: sourceDir });
   // console.log(pcFiles);
@@ -60,7 +65,7 @@ const translateDependency = (
   { uri, content }: Dependency<PCModule>,
   graph: DependencyGraph
 ) => {
-  return translateModule(content, uri, graph);
+  return serializeModule(content, uri, graph);
 };
 
 const loadConfig = async (filePath: string): Promise<ProjectConfig> => {

@@ -21,12 +21,15 @@ export enum ExpressionKind {
 
   // (a:b, c:d)
   Parameter = "Parameter",
+  String = "String",
+  Reference = "Reference",
 
   // 1px 1em
   Measurement = "Measurement",
 
   // 1, 100, -100
   Number = "Number",
+  Boolean = "Boolean",
 
   /*
   style {
@@ -84,8 +87,35 @@ export type ComponentBodyExpression = Render | Variant;
 export type Parameter = {
   raws: Raws;
   name: string;
-  value: ParameterValue;
+  value: ValueExpression;
 } & BaseExpression<ExpressionKind.Parameter>;
+
+export type StringExpression = {
+  value: string;
+} & BaseExpression<ExpressionKind.String>;
+
+export type NumberExpression = {
+  value: number;
+} & BaseExpression<ExpressionKind.Number>;
+
+export type BooleanExpression = {
+  value: boolean;
+} & BaseExpression<ExpressionKind.Boolean>;
+
+export type Reference = {
+  path: string[];
+} & BaseExpression<ExpressionKind.Reference>;
+
+export type ArrayExpression = {
+  items: ValueExpression[];
+} & BaseExpression<ExpressionKind.Array>;
+
+export type ValueExpression =
+  | StringExpression
+  | NumberExpression
+  | BooleanExpression
+  | Reference
+  | ArrayExpression;
 
 export type ElementChild = Style | Node | Override;
 
@@ -134,6 +164,7 @@ export type Fragment = {
 } & BaseExpression<ExpressionKind.Fragment>;
 
 export type Text = {
+  name?: string;
   value: string;
   children: TextChild[];
 } & BaseExpression<ExpressionKind.Text>;

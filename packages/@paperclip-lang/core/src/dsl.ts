@@ -319,10 +319,15 @@ export type PCDependency = Dependency<PCModule>;
 
 export type PCModule = {
   version: string;
-  children: Array<
-    PCComponent | PCVisibleNode | PCVariable | PCStyleMixin | PCMediaQuery
-  >;
+  children: PCModuleChild[];
 } & PCBaseSourceNode<PCSourceTagNames.MODULE>;
+
+export type PCModuleChild =
+  | PCComponent
+  | PCVisibleNode
+  | PCVariable
+  | PCStyleMixin
+  | PCMediaQuery;
 
 export type PCComponentChild =
   | PCVisibleNode

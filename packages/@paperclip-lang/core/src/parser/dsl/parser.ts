@@ -1,5 +1,6 @@
 import { centerTransformZoom, EMPTY_ARRAY } from "tandem-common";
 import {
+  ArrayExpression,
   BaseExpression,
   Component,
   ComponentBodyExpression,
@@ -15,6 +16,7 @@ import {
   OverrideBodyExpression,
   OverrideConstructorValue,
   Parameter,
+  Reference,
   Render,
   Style,
   StyleBodyExpression,
@@ -22,6 +24,7 @@ import {
   StyleDeclaration,
   Text,
   TextChild,
+  ValueExpression,
   ValueToken,
   Variant,
 } from "./ast";
@@ -103,6 +106,7 @@ const parseToken = (
   isPublic: boolean = false
 ): ValueToken => {
   const { value: name } = context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
+  context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
   const value = parseStyleDeclarationValue(context);
   return {
     isPublic,
@@ -184,15 +188,6 @@ const bodyParser =
     return expressions;
   };
 
-const parseArray = (context: Context) => {
-  const items: any[] = [];
-  context.tokenizer.currValue(DSLTokenKind.SquareOpen);
-  context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
-  context.tokenizer.currValue(DSLTokenKind.SquareClose);
-  context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
-  return items;
-};
-
 const parseComponentBody = bodyParser<ComponentBodyExpression>((context) => {
   const keyword = context.tokenizer.curr();
   if (keyword.value === "variant") {
@@ -224,6 +219,7 @@ export const parseParameters = (context: Context): Parameter[] => {
   const parameters = [];
   context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
   while (!context.tokenizer.isEOF()) {
+    parameters.push(parseParameter(context));
     const fin = context.tokenizer.curr();
     context.tokenizer.next();
     context.tokenizer.eat(DSL_SUPERFLUOUS_TOKENS);
@@ -234,17 +230,59 @@ export const parseParameters = (context: Context): Parameter[] => {
   return parameters;
 };
 
-const parseParameter = (context: Context) => {
+const parseParameter = (context: Context): Parameter => {
   const name = context.tokenizer.currValue(DSLTokenKind.Keyword);
   context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
   context.tokenizer.currValue(DSLTokenKind.Colon);
   context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
+  const value = parseExpression(context);
+  context.tokenizer.eat(DSL_SUPERFLUOUS_TOKENS);
 
-  // TODO - handle array
-  const value = context.tokenizer.currValue(
-    DSLTokenKind.Keyword | DSLTokenKind.String | DSLTokenKind.Number
-  );
+  return {
+    kind: ExpressionKind.Parameter,
+    name,
+    value,
+    raws: {},
+  };
+};
+
+const parseExpression = (context: Context): ValueExpression => {
+  const curr = context.tokenizer.curr();
+  if (curr.kind === DSLTokenKind.Number) {
+    context.tokenizer.next();
+    return { kind: ExpressionKind.Number, raws: {}, value: Number(curr.value) };
+  } else if (curr.kind === DSLTokenKind.String) {
+    context.tokenizer.next();
+    return { kind: ExpressionKind.String, raws: {}, value: curr.value };
+  } else if (curr.kind === DSLTokenKind.Boolean) {
+    context.tokenizer.next();
+    return {
+      kind: ExpressionKind.Boolean,
+      raws: {},
+      value: curr.value === "true",
+    };
+  } else if (curr.kind === DSLTokenKind.SquareOpen) {
+    return parseArray(context);
+  } else if (curr.kind === DSLTokenKind.Keyword) {
+    return parseRef(context);
+  }
+  throw new UnexpectedTokenError(curr.value);
+};
+
+const parseArray = (context: Context): ArrayExpression => {
+  const items: ValueExpression[] = [];
+  context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS); // eat [
+  while (!(context.tokenizer.curr().kind & DSLTokenKind.SquareClose)) {
+    items.push(parseExpression(context));
+    context.tokenizer.eat(DSL_SUPERFLUOUS_TOKENS); // eat ]
+  }
   context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
+
+  return {
+    kind: ExpressionKind.Array,
+    raws: {},
+    items,
+  };
 };
 
 const parseRender = (context: Context): Render => {
@@ -370,7 +408,7 @@ const parseStyleDeclarationValue = (context: Context) => {
 };
 
 const parseElementName = (context: Context): ElementName => {
-  const [name, namespace] = parseRef(context);
+  const [name, namespace] = parseRef(context).path;
   return { name, namespace };
 };
 
@@ -416,22 +454,27 @@ const parseElementChildren = bodyParser<ElementChild>((context) => {
   return parseNode(context);
 });
 
-const parseRef = (context: Context): string[] => {
+const parseRef = (context: Context): Reference => {
   const name = context.tokenizer.curr().value;
   let next = context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
-  const parts: string[] = [name];
+  const path: string[] = [name];
   while (next.kind === DSLTokenKind.Dot) {
-    parts.push(context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS).value);
+    path.push(context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS).value);
     next = context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS); // queue dot
   }
 
-  return parts;
+  return {
+    kind: ExpressionKind.Reference,
+    raws: {},
+    path,
+  };
 };
 
 const parseOverride = (context: Context): Override => {
   context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS); // eat override + ws
   let curr = context.tokenizer.curr();
-  const target = curr.kind === DSLTokenKind.Keyword ? parseRef(context) : null;
+  const target =
+    curr.kind === DSLTokenKind.Keyword ? parseRef(context).path : null;
   let constructorValue: OverrideConstructorValue;
   curr = context.tokenizer.curr();
   if (curr.kind === DSLTokenKind.ParenOpen) {

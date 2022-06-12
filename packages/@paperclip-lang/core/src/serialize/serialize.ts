@@ -40,7 +40,8 @@ import {
   TranslateContext,
 } from "./serialize-context";
 import { pascalCase } from "./utils";
-import { parseDocument } from "../parser/dsl/parser";
+import { deserialize } from "v8";
+import { deserializeModule } from "../deserialize/deserialize";
 
 type PCElementLike = PCComponent | PCComponentInstanceElement | PCElement;
 
@@ -62,6 +63,8 @@ export const serializeModule = (
   context = translateStyleVars(context);
   context = translateComponents(context);
   context = translateFrames(context);
+  const dsl = deserializeModule(context.content, url);
+  console.log("DSL", dsl);
   return context.content;
 };
 
@@ -201,7 +204,6 @@ const translateVariantTrigger = (
   variant: PCVariant,
   component: PCComponent
 ) => {
-  return 1;
   let buffer = `[`;
 
   const triggers = component.children.filter(

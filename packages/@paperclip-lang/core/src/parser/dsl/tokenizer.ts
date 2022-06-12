@@ -154,6 +154,11 @@ export class DSLTokenizer extends BaseTokenizer<DSLTokenKind> {
         this._scanner.scanUntil(
           negate((c) => isLetter(c) || isDigit(c) || c === "-" || c === "_")
         );
+
+      if (keyword === "true" || keyword === "false") {
+        return token(DSLTokenKind.Boolean, keyword);
+      }
+
       return token(DSLTokenKind.Keyword, keyword);
     }
 

@@ -22,6 +22,7 @@ import {
   StyleBodyExpression,
   StyleCondition,
   StyleDeclaration,
+  StyleInclude,
   Text,
   TextChild,
   ValueExpression,
@@ -38,6 +39,7 @@ import {
 import { isDocComment, parseDocComment } from "../docco/parser";
 import { DocComment } from "../docco/ast";
 import { StringScanner } from "../base/string-scanner";
+import { Context } from "mocha";
 
 type Context = {
   tokenizer: DSLTokenizer;
@@ -360,9 +362,20 @@ const parseStyleBody = bodyParser<StyleBodyExpression>((context: Context) => {
   const keyword = context.tokenizer.curr();
   if (keyword.value === "if") {
     return parseStyleCondition(context);
+  } else if (keyword.value === "include") {
+    return parseStyleInclude(context);
   }
   return parseStyleDeclaration(context);
 });
+
+const parseStyleInclude = (context: Context): StyleInclude => {
+  context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
+  return {
+    kind: ExpressionKind.StyleInclude,
+    raws: {},
+    ref: parseRef(context),
+  };
+};
 
 const parseStyleCondition = (context: Context): StyleCondition => {
   context.tokenizer.currValue(DSLTokenKind.Keyword);

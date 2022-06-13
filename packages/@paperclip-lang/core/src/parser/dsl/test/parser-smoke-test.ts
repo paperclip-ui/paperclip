@@ -175,6 +175,16 @@ describe(__filename + "#", () => {
         variant a (on: true, trigger: [PseudoElement.Hover])
       }`,
     ],
+    [
+      `Can define an include`,
+      `component Test {
+        render div {
+          style {
+            include test
+          }
+        }
+      }`,
+    ],
   ].forEach(([title, source]) => {
     it(title, () => {
       const ast = parseDocument(source);

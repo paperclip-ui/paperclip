@@ -40,6 +40,7 @@ export enum ExpressionKind {
   Style = "Style",
   StyleCondition = "StyleCondition",
   StyleDeclaration = "StyleDeclaration",
+  StyleInclude = "StyleInclude",
 
   Text = "Text",
   Variant = "Variant",
@@ -125,7 +126,10 @@ export type Style = {
   isPublic?: boolean;
 } & BaseExpression<ExpressionKind.Style>;
 
-export type StyleBodyExpression = StyleCondition | StyleDeclaration;
+export type StyleBodyExpression =
+  | StyleCondition
+  | StyleDeclaration
+  | StyleInclude;
 
 export type StyleCondition = {
   conditionName: string;
@@ -136,6 +140,10 @@ export type StyleDeclaration = {
   name: string;
   value: string;
 } & BaseExpression<ExpressionKind.StyleDeclaration>;
+
+export type StyleInclude = {
+  ref: Reference;
+} & BaseExpression<ExpressionKind.StyleInclude>;
 
 export type Override = {
   target: string[];

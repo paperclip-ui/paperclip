@@ -253,7 +253,11 @@ const parseExpression = (context: Context): ValueExpression => {
     return { kind: ExpressionKind.Number, raws: {}, value: Number(curr.value) };
   } else if (curr.kind === DSLTokenKind.String) {
     context.tokenizer.next();
-    return { kind: ExpressionKind.String, raws: {}, value: curr.value };
+    return {
+      kind: ExpressionKind.String,
+      raws: {},
+      value: curr.value.substring(1, curr.value.length - 1),
+    };
   } else if (curr.kind === DSLTokenKind.Boolean) {
     context.tokenizer.next();
     return {

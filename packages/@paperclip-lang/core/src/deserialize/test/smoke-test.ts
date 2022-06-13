@@ -5,21 +5,68 @@ import { DependencyGraph } from "../../graph";
 
 describe(__filename + "#", () => {
   [
-    {
-      "entry.pc": `component Test {}`,
-    },
-  ].forEach((graph) => {
-    it(`${graph} can be deserialized`, () => {
+    [
+      {
+        "file:///entry.pc": `public component Test {
+          render span
+        }`,
+      },
+    ],
+    [
+      {
+        "file:///entry.pc": `public component Test {
+          render div
+        }`,
+      },
+    ],
+    [
+      {
+        "file:///entry.pc": `public component Test {
+          variant a (on: true, trigger: [])
+          variant b (on: false, trigger: [])
+          render div  (a: "b", c: "d") {
+            style {
+              color: red
+            }
+          }
+        }`,
+      },
+    ],
+    [
+      {
+        "file:///entry.pc": `public component Test {
+          variant a (on: true, trigger: [PseudoElement.Hover])
+          render div  (a: "b", c: "d") {
+            style {
+              color: red
+              if a {
+                color: blue
+              }
+            }
+          }
+        }`,
+      },
+    ],
+  ].forEach(([graph]) => {
+    it(`${JSON.stringify(graph)} can be deserialized`, () => {
       const dslGraph: DependencyGraph = {};
       for (const uri in graph) {
         dslGraph[uri] = { uri, content: deserializeModule(graph[uri], uri) };
       }
 
-      console.log(JSON.stringify(dslGraph, null, 2));
+      // console.log(JSON.stringify(dslGraph, null, 2));
 
       expect(
-        serializeModule(dslGraph["entry.pc"].content, "entry.pc", dslGraph)
-      ).to.eql(graph["entry.pc"]);
+        trim(
+          serializeModule(
+            dslGraph["file:///entry.pc"].content,
+            "file:///entry.pc",
+            dslGraph
+          )
+        )
+      ).to.eql(trim(graph["file:///entry.pc"]));
     });
   });
 });
+
+const trim = (content: string) => content.replace(/\s+/g, " ").trim();

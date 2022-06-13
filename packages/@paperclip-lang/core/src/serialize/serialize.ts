@@ -5,6 +5,7 @@ import {
   getPCNodeDependency,
   getPCNodeModule,
   getPCVariants,
+  isComponent,
   isPCComponentInstance,
   isPCComponentOrInstance,
   isVisibleNode,
@@ -63,8 +64,8 @@ export const serializeModule = (
   context = translateStyleVars(context);
   context = translateComponents(context);
   context = translateFrames(context);
-  const dsl = deserializeModule(context.content, url);
-  console.log("DSL", dsl);
+  // const dsl = deserializeModule(context.content, url);
+  console.log(context.content);
   return context.content;
 };
 
@@ -149,9 +150,6 @@ const translateComponent = (
     `public component ${pascalCase(component.label!)} {\n`,
     context
   );
-  if (pascalCase(component.label!) === "Welcome") {
-    console.log(JSON.stringify(component, null, 2));
-  }
   context = startBlock(context);
   context = translateVariants(component, context);
   context = translateComponentRender(component, context);
@@ -161,6 +159,9 @@ const translateComponent = (
 };
 
 const translateMetadata = (node: PCNode, context: TranslateContext) => {
+  if (Object.keys(node.metadata).length === 0) {
+    return context;
+  }
   context = addBuffer(`/**\n`, context);
   for (const key in node.metadata) {
     context = addBuffer(` * @${key}(`, context);
@@ -301,6 +302,7 @@ const translateStyle = (
   }
   context = addBuffer(`style {\n`, context);
   context = startBlock(context);
+  context = translateStyleMixins(node, context);
   for (const key in node.style) {
     context = addBuffer(
       `${key}: ${translateStyleValue(node.style[key], context)}\n`,
@@ -338,6 +340,24 @@ const translateStyleOverridesInner = (
   return context;
 };
 
+const translateStyleMixins = (
+  node: PCVisibleNode | PCComponent | PCComponentInstanceElement,
+  context: TranslateContext
+) => {
+  if (!node.styleMixins) {
+    return context;
+  }
+
+  for (const mixinId in node.styleMixins) {
+    const mixinName = getRefPath(mixinId, context);
+    if (mixinName) {
+      context = addBuffer(`include ${mixinName}\n`, context);
+    }
+  }
+
+  return context;
+};
+
 const translateStyleValues = (
   style: Record<string, string>,
   context: TranslateContext
@@ -364,20 +384,31 @@ const translateStyleValue = (value: string, context: TranslateContext) => {
   const varId = getVarId(value);
 
   if (varId) {
-    const vr = getPCNode(varId, context.graph) as PCVariable;
-    if (!vr) {
+    const varName = getRefPath(varId, context);
+    if (!varName) {
       return value;
-    }
-
-    let varName = camelCase(vr.label);
-    const dep = getPCNodeDependency(varId, context.graph);
-    if (dep.uri !== context.url) {
-      varName = `imp${context.importedUrls.indexOf(dep.uri)}.${varName}`;
     }
 
     value = value.replace(/var\(.*?\)/g, `#{${varName}}`);
   }
   return value;
+};
+
+const getRefPath = (
+  nodeId: string,
+  context: TranslateContext,
+  format: any = camelCase
+) => {
+  const vr = getPCNode(nodeId, context.graph) as PCVariable;
+  if (!vr) {
+    return null;
+  }
+  let varName = format(vr.label);
+  const dep = getPCNodeDependency(nodeId, context.graph);
+  if (dep.uri !== context.url) {
+    return `imp${context.importedUrls.indexOf(dep.uri)}.${varName}`;
+  }
+  return varName;
 };
 
 const getVariantStyleOverrides = (node: PCNode, context: TranslateContext) => {
@@ -583,16 +614,9 @@ const isPCVisibleElement = (
 
 const getRef = (node: PCElementLike, context: TranslateContext) => {
   if (isPCComponentOrInstance(node)) {
-    const component = getPCNode(node.is, context.graph) as PCComponent;
-    if (component) {
-      const origin = getPCNodeDependency(component.id, context.graph);
-      if (origin.uri !== context.url) {
-        return `imp${context.importedUrls.indexOf(origin.uri)}.${pascalCase(
-          component.label!
-        )}`;
-      } else {
-        return `${pascalCase(component.label!)}`;
-      }
+    const nodeName = getRefPath(node.is, context, pascalCase);
+    if (nodeName) {
+      return nodeName;
     }
   }
 
@@ -602,6 +626,10 @@ const getRef = (node: PCElementLike, context: TranslateContext) => {
 const translateImports = (context: TranslateContext) => {
   const filePath = URL.fileURLToPath(context.url);
   const importUrls = context.importedUrls;
+
+  if (!importUrls.length) {
+    return context;
+  }
 
   for (const url of importUrls) {
     let relativePath = path.relative(
@@ -638,6 +666,7 @@ const getImportedUrls = (
         importUrls.add(instanceDep.uri);
       }
     }
+
     if (
       node.name === PCSourceTagNames.OVERRIDE &&
       node.propertyName === PCOverridablePropertyName.STYLE
@@ -651,12 +680,24 @@ const getImportedUrls = (
       }
     }
 
-    if (isVisibleNode(node) || isPCComponentInstance(node)) {
+    if (
+      isVisibleNode(node) ||
+      isPCComponentInstance(node) ||
+      isComponent(node)
+    ) {
       for (const key in node.style) {
         const varId = getVarId(node.style[key]);
         const dep = getPCNodeDependency(varId, graph);
         if (dep) {
           importUrls.add(dep.uri);
+        }
+      }
+      if (node.styleMixins) {
+        for (const id in node.styleMixins) {
+          const dep = getPCNodeDependency(id, graph);
+          if (dep) {
+            importUrls.add(dep.uri);
+          }
         }
       }
     }

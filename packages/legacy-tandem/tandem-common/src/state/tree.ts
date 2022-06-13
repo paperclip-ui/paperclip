@@ -4,6 +4,7 @@ import { arraySplice } from "../utils/array";
 import { createUIDGenerator } from "../utils/uid";
 import { generateUID } from "../utils/uid";
 import { EMPTY_ARRAY } from "../utils/object";
+import { createTreeUtils } from "./tree2";
 
 export enum TreeMoveOffset {
   PREPEND = 0,
@@ -46,6 +47,10 @@ export const findNestedNode = memoize(
   }
 );
 
+const utils = createTreeUtils<TreeNode<any>>({
+  flattenShallow: (node) => node.children,
+});
+
 export const createTreeNode = (
   name: string,
   children: TreeNode<any>[] = []
@@ -76,24 +81,7 @@ export const filterNestedNodes = memoize(
   }
 );
 
-export const getChildParentMap = memoize(
-  (
-    current: TreeNode<any>
-  ): {
-    [identifier: string]: TreeNode<any>;
-  } => {
-    const idMap = getTreeNodeIdMap(current);
-    const parentChildMap: any = {};
-
-    for (const id in idMap) {
-      const parent = idMap[id];
-      for (const child of parent.children) {
-        parentChildMap[child.id] = parent;
-      }
-    }
-    return parentChildMap;
-  }
-);
+export const getChildParentMap = utils.getChildParentMap;
 
 export type TreeNodeNameMap = {
   [identifier: string]: TreeNode<any>[];
@@ -120,26 +108,8 @@ export type TreeNodeIdMap = {
   [identifier: string]: TreeNode<any>;
 };
 
-export const getTreeNodeIdMap = memoize(
-  (current: TreeNode<any>): TreeNodeIdMap => {
-    if (!current.id) {
-      throw new Error(`ID missing from node`);
-    }
-
-    const map = {
-      [current.id]: current,
-    };
-    Object.assign(map, ...current.children.map(getTreeNodeIdMap));
-    return map;
-  }
-);
-
-export const flattenTreeNode = memoize(
-  <TTree extends TreeNode<any>>(current: TTree): TTree[] => {
-    const treeNodeMap = getTreeNodeIdMap(current);
-    return Object.values(treeNodeMap) as TTree[];
-  }
-);
+export const getTreeNodeIdMap = utils.getIdMap;
+export const flattenTreeNode = utils.flatten;
 
 export const getTreeNodePath = memoize(
   (nodeId: string, root: TreeNode<any>) => {
@@ -167,35 +137,17 @@ export const findTreeNodeParent = (
   root: TreeNode<any>,
   filter: (node: TreeNode<any>) => boolean
 ) => {
-  const path = getTreeNodePath(nodeId, root);
-  if (!path.length) return null;
-  for (let i = path.length; i--; ) {
-    const parent = getTreeNodeFromPath(path.slice(0, i), root);
-    if (filter(parent)) {
-      return parent;
-    }
-  }
+  return getTreeNodeAncestors(nodeId, root).find(filter);
 };
 
-export const getTreeNodeAncestors = (nodeId: string, root: TreeNode<any>) => {
-  return filterTreeNodeParents(nodeId, root, () => true);
-};
+export const getTreeNodeAncestors = utils.getAncestors;
 
 export const filterTreeNodeParents = (
   nodeId: string,
   root: TreeNode<any>,
   filter: (node: TreeNode<any>) => boolean
 ) => {
-  const parents: TreeNode<any>[] = [];
-  const path = getTreeNodePath(nodeId, root);
-  if (!path.length) return null;
-  for (let i = path.length; i--; ) {
-    const parent = getTreeNodeFromPath(path.slice(0, i), root);
-    if (filter(parent)) {
-      parents.push(parent);
-    }
-  }
-  return parents;
+  return getTreeNodeAncestors(nodeId, root).filter(filter);
 };
 
 export const findNodeByTagName = memoize(

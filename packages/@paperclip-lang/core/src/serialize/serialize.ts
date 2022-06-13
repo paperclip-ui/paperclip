@@ -291,6 +291,7 @@ const translateStyle = (
   context: TranslateContext
 ) => {
   const styleOverrides = getVariantStyleOverrides(node, context);
+  console.log("OVER", node, styleOverrides);
 
   if (!hasStyles(node) && !styleOverrides.length) {
     return context;

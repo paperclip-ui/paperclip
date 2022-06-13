@@ -19,20 +19,26 @@ import { StringScanner } from "../base/string-scanner";
 
 type Context = {
   tokenizer: DoccoTokenizer;
+  nextID: () => string;
 };
 
 export const isDocComment = (value: string) => value.substring(0, 3) === "/**";
 
-export const parseDocComment = (value: string): DocComment => {
+export const parseDocComment = (
+  value: string,
+  nextID: () => string
+): DocComment => {
   const context = {
     tokenizer: new DoccoTokenizer(
       new StringScanner(value.substring(3, value.length - 3))
     ),
+    nextID,
   };
   context.tokenizer.next();
   const description = parseTextValue(context, DoccoTokenKind.At);
   const properties = parseProperties(context);
   return {
+    id: nextID(),
     kind: DocCommentExpressionKind.Comment,
     description,
     properties,
@@ -74,6 +80,7 @@ const parseProperty = (context: Context): DocCommentProperty => {
   context.tokenizer.nextEat(DoccoTokenKind.Whitespace);
   const value = parsePropertyValue(context);
   return {
+    id: context.nextID(),
     kind: DocCommentExpressionKind.CommentProperty,
     name,
     value,
@@ -100,6 +107,7 @@ const parseParameters = (context: Context): DocCommentParameters => {
   }
 
   return {
+    id: context.nextID(),
     kind: DocCommentExpressionKind.CommentParameters,
     values,
   };
@@ -111,6 +119,7 @@ const parseParameter = (context: Context): DocCommentParameter => {
   context.tokenizer.nextEat(DOCCO_SUPERFLUOUS_TOKEN_KIND); // eat :
   const value = parseParameterValue(context);
   return {
+    id: context.nextID(),
     kind: DocCommentExpressionKind.CommentParameter,
     name,
     value,
@@ -122,9 +131,14 @@ const parseParameterValue = (context: Context): DocCommentParameterValue => {
 
   if (curr.kind === DoccoTokenKind.Number) {
     context.tokenizer.nextEat(DOCCO_SUPERFLUOUS_TOKEN_KIND);
-    return { kind: DocCommentExpressionKind.Number, value: curr.value };
+    return {
+      id: context.nextID(),
+      kind: DocCommentExpressionKind.Number,
+      value: curr.value,
+    };
   } else {
     return {
+      id: context.nextID(),
       kind: DocCommentExpressionKind.Text,
       value: parseTextValue(context, DoccoTokenKind.Comma),
     };
@@ -135,6 +149,7 @@ const parseParamText = (context: Context): DocCommentText => {
   let value = parseTextValue(context, DoccoTokenKind.At);
 
   return {
+    id: context.nextID(),
     kind: DocCommentExpressionKind.Text,
     value,
   };

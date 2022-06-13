@@ -47,14 +47,29 @@ describe(__filename + "#", () => {
         }`,
       },
     ],
+    [
+      {
+        "file:///entry.pc": `public component A {
+          render div
+        }
+        public component B {
+          render A {
+            override {
+              style {
+                color: blue
+              }
+            }
+          }
+        }
+        `,
+      },
+    ],
   ].forEach(([graph]) => {
     it(`${JSON.stringify(graph)} can be deserialized`, () => {
       const dslGraph: DependencyGraph = {};
       for (const uri in graph) {
         dslGraph[uri] = { uri, content: deserializeModule(graph[uri], uri) };
       }
-
-      // console.log(JSON.stringify(dslGraph, null, 2));
 
       expect(
         trim(

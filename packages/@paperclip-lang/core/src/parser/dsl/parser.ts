@@ -1,4 +1,8 @@
-import { centerTransformZoom, EMPTY_ARRAY } from "tandem-common";
+import {
+  centerTransformZoom,
+  createUIDGenerator,
+  EMPTY_ARRAY,
+} from "tandem-common";
 import {
   ArrayExpression,
   BaseExpression,
@@ -39,10 +43,11 @@ import {
 import { isDocComment, parseDocComment } from "../docco/parser";
 import { DocComment } from "../docco/ast";
 import { StringScanner } from "../base/string-scanner";
-import { Context } from "mocha";
+import * as crypto from "crypto";
 
 type Context = {
   tokenizer: DSLTokenizer;
+  nextID: () => string;
 };
 
 export const parseDocument = (source: string): Document => {
@@ -51,15 +56,23 @@ export const parseDocument = (source: string): Document => {
   // setup current token
   tokenizer.next();
 
-  const context: Context = { tokenizer };
+  const context: Context = {
+    tokenizer,
+    nextID: createUIDGenerator(md5(source)),
+  };
   const expressions = parseDocumentExpressions(context);
   const after = tokenizer.eat(DSL_SUPERFLUOUS_TOKENS);
 
   return {
+    id: context.nextID(),
     kind: ExpressionKind.Document,
     raws: { after },
     expressions,
   };
+};
+
+const md5 = (value: string) => {
+  return crypto.createHash("md5").update(value).digest("hex");
 };
 
 const parseDocumentExpressions = (context: Context) => {
@@ -80,7 +93,7 @@ const parseDocumentExpression = (context: Context): DocumentExpression => {
 
   if (curr.kind === DSLTokenKind.MultiLineComment) {
     if (isDocComment(curr.value)) {
-      docComment = parseDocComment(curr.value);
+      docComment = parseDocComment(curr.value, context.nextID);
     }
     curr = context.tokenizer.nextEat(DSLTokenKind.Whitespace);
   }
@@ -111,6 +124,7 @@ const parseToken = (
   context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
   const value = parseStyleDeclarationValue(context);
   return {
+    id: context.nextID(),
     isPublic,
     raws: {},
     kind: ExpressionKind.Token,
@@ -128,7 +142,9 @@ const parseImport = (context: Context): Import => {
   context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
   const namespace = context.tokenizer.currValue(DSLTokenKind.Keyword);
   context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
+
   return {
+    id: context.nextID(),
     raws: {},
     kind: ExpressionKind.Import,
     namespace,
@@ -152,6 +168,7 @@ const parseComponent = (
   const after = context.tokenizer.eat(DSL_SUPERFLUOUS_TOKENS);
 
   return {
+    id: context.nextID(),
     kind: ExpressionKind.Component,
     name,
     docComment,
@@ -210,6 +227,7 @@ const parseVariant = (context: Context): Variant => {
   context.tokenizer.eat(DSL_SUPERFLUOUS_TOKENS);
 
   return {
+    id: context.nextID(),
     raws: {},
     name: name.value,
     parameters,
@@ -241,6 +259,7 @@ const parseParameter = (context: Context): Parameter => {
   context.tokenizer.eat(DSL_SUPERFLUOUS_TOKENS);
 
   return {
+    id: context.nextID(),
     kind: ExpressionKind.Parameter,
     name,
     value,
@@ -252,10 +271,16 @@ const parseExpression = (context: Context): ValueExpression => {
   const curr = context.tokenizer.curr();
   if (curr.kind === DSLTokenKind.Number) {
     context.tokenizer.next();
-    return { kind: ExpressionKind.Number, raws: {}, value: Number(curr.value) };
+    return {
+      id: context.nextID(),
+      kind: ExpressionKind.Number,
+      raws: {},
+      value: Number(curr.value),
+    };
   } else if (curr.kind === DSLTokenKind.String) {
     context.tokenizer.next();
     return {
+      id: context.nextID(),
       kind: ExpressionKind.String,
       raws: {},
       value: curr.value.substring(1, curr.value.length - 1),
@@ -263,6 +288,7 @@ const parseExpression = (context: Context): ValueExpression => {
   } else if (curr.kind === DSLTokenKind.Boolean) {
     context.tokenizer.next();
     return {
+      id: context.nextID(),
       kind: ExpressionKind.Boolean,
       raws: {},
       value: curr.value === "true",
@@ -285,6 +311,7 @@ const parseArray = (context: Context): ArrayExpression => {
   context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
 
   return {
+    id: context.nextID(),
     kind: ExpressionKind.Array,
     raws: {},
     items,
@@ -298,6 +325,7 @@ const parseRender = (context: Context): Render => {
   context.tokenizer.eat(DSL_SUPERFLUOUS_TOKENS);
 
   return {
+    id: context.nextID(),
     raws: {},
     kind: ExpressionKind.Render,
     node,
@@ -323,6 +351,7 @@ const parseText = (context: Context, before: string): Text => {
     children = parseTextChildren(context);
   }
   return {
+    id: context.nextID(),
     raws: { before, after: "" },
     kind: ExpressionKind.Text,
     value: value.value,
@@ -350,6 +379,7 @@ const parseStyle = (context: Context, isPublic?: boolean): Style => {
   context.tokenizer.eat(DSL_SUPERFLUOUS_TOKENS);
 
   return {
+    id: context.nextID(),
     kind: ExpressionKind.Style,
     name,
     isPublic,
@@ -371,6 +401,7 @@ const parseStyleBody = bodyParser<StyleBodyExpression>((context: Context) => {
 const parseStyleInclude = (context: Context): StyleInclude => {
   context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
   return {
+    id: context.nextID(),
     kind: ExpressionKind.StyleInclude,
     raws: {},
     ref: parseRef(context),
@@ -386,6 +417,7 @@ const parseStyleCondition = (context: Context): StyleCondition => {
   context.tokenizer.eat(DSL_SUPERFLUOUS_TOKENS);
 
   return {
+    id: context.nextID(),
     kind: ExpressionKind.StyleCondition,
     conditionName,
     raws: {},
@@ -407,6 +439,7 @@ const parseStyleDeclaration = (context: Context): StyleDeclaration => {
   const value = parseStyleDeclarationValue(context);
 
   return {
+    id: context.nextID(),
     kind: ExpressionKind.StyleDeclaration,
     raws: {},
     name,
@@ -452,6 +485,7 @@ const parseElement = (context: Context): Element => {
   context.tokenizer.eat(DSL_SUPERFLUOUS_TOKENS);
 
   return {
+    id: context.nextID(),
     raws: {},
     name,
     tagName,
@@ -481,6 +515,7 @@ const parseRef = (context: Context): Reference => {
   }
 
   return {
+    id: context.nextID(),
     kind: ExpressionKind.Reference,
     raws: {},
     path,
@@ -508,6 +543,7 @@ const parseOverride = (context: Context): Override => {
   }
 
   return {
+    id: context.nextID(),
     kind: ExpressionKind.Override,
     raws: {},
     target,

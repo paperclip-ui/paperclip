@@ -8,7 +8,10 @@ import {
   PCModule,
   PCModuleChild,
   PCNode,
+  PCOverridablePropertyName,
+  PCOverride,
   PCSourceTagNames,
+  PCStyleOverride,
   PCTextNode,
   PCVariant,
   PCVariantTrigger,
@@ -18,6 +21,7 @@ import {
 import * as ast from "../parser/dsl/ast";
 import { parseDocument } from "../parser/dsl/parser";
 import * as crypto from "crypto";
+import { memoize } from "tandem-common";
 
 type Context = {
   ast: ast.Document;
@@ -64,9 +68,7 @@ const deserializeComponent =
     const style = node.children.find(
       (child) => child.kind === ast.ExpressionKind.Style
     ) as ast.Style;
-    const variants = component.body.filter(
-      (item) => item.kind === ast.ExpressionKind.Variant
-    ) as ast.Variant[];
+    const variants = getComponentVariants(component);
 
     const variantTriggers: Array<[ast.Reference, ast.Variant]> = [];
 
@@ -87,20 +89,70 @@ const deserializeComponent =
       children: [
         ...variants.map(deserializeVariant(context)),
         ...variantTriggers.map(deserializeVariantTrigger(context)),
+        ...deserializeVariantOverrides(node, component, context),
         ...(node.children
           .filter(isComponentChild)
           .map(deserializeElementChild(context))
           .filter(Boolean) as PCComponentChild[]),
+        ,
       ],
       is: tagName,
       attributes: deserializeAttributes(node),
-      style: style ? deserializeBaseStyle(style) : {},
+      style: style ? deserializeStyleDeclarations(style) : {},
       metadata: {},
     } as PCComponent;
   };
 
 const isComponentChild = (child: ast.ElementChild) => {
   return child.kind === ast.ExpressionKind.Element || ast.ExpressionKind.Text;
+};
+
+const getComponentVariants = memoize((component: ast.Component) => {
+  const variants = component.body.filter(
+    (item) => item.kind === ast.ExpressionKind.Variant
+  ) as ast.Variant[];
+  return variants;
+});
+
+const deserializeVariantOverrides = (
+  node: ast.Element,
+  component: ast.Component,
+  context: Context
+): PCOverride[] => {
+  const overrides: PCOverride[] = [];
+
+  for (const descendent of ast.flatten(node)) {
+    if (descendent.kind === ast.ExpressionKind.StyleCondition) {
+      let owner = ast.getAncestors(descendent.id, node).find(ast.isStyleable);
+      const ownerComponent = ast
+        .getAncestors(owner.id, component)
+        .find(ast.isComponent);
+      if (ast.getComponentRenderNode(ownerComponent) === owner) {
+        owner = ownerComponent;
+      }
+
+      if (owner) {
+        const targetIdPath =
+          owner.kind == ast.ExpressionKind.Override ? owner.target : [owner.id];
+        const variant = component.body.find(
+          (child) =>
+            child.kind === ast.ExpressionKind.Variant &&
+            child.name === descendent.conditionName
+        );
+
+        overrides.push({
+          id: descendent.id,
+          name: PCSourceTagNames.OVERRIDE,
+          targetIdPath,
+          variantId: variant.id,
+          children: [],
+          propertyName: PCOverridablePropertyName.STYLE,
+          value: deserializeStyleDeclarations(descendent),
+        } as PCStyleOverride);
+      }
+    }
+  }
+  return overrides;
 };
 
 const deserializeVariantTrigger =
@@ -126,7 +178,7 @@ const deserializeVariant =
   (context: Context) =>
   (variant: ast.Variant): PCVariant => {
     return {
-      id: getNodeId(variant, context),
+      id: variant.id,
       name: PCSourceTagNames.VARIANT,
       label: variant.name,
       children: [],
@@ -139,7 +191,9 @@ const deserializeVariant =
     };
   };
 
-const deserializeBaseStyle = (style: ast.Style) => {
+const deserializeStyleDeclarations = (
+  style: ast.Style | ast.StyleCondition
+) => {
   const style2 = {};
   for (const item of style.body) {
     if (item.kind === ast.ExpressionKind.StyleDeclaration) {
@@ -214,13 +268,12 @@ const deserializeTextNode = (node: ast.Text, context: Context): PCTextNode => {
   };
 };
 
-const getNodeId = (
-  node: ast.Text | ast.Element | ast.Component | ast.Variant,
-  context: Context
-) =>
-  node.name
-    ? `${context.id}_${node.name}`
-    : String(Math.round(Math.random() * 99999999));
+const getNodeId = memoize(
+  (
+    node: ast.Text | ast.Element | ast.Component | ast.Variant,
+    context: Context
+  ) => node.id
+);
 
 const md5 = (value: string) => {
   return crypto.createHash("md5").update(value).digest("hex");

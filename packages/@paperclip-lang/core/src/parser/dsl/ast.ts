@@ -1,3 +1,5 @@
+import { AST } from "eslint";
+import { createTreeUtils, memoize } from "tandem-common";
 import { DocComment } from "../docco/ast";
 
 export enum ExpressionKind {
@@ -57,6 +59,7 @@ export type Raws = {
 };
 
 export type BaseExpression<TKind extends ExpressionKind> = {
+  id: string;
   raws: Raws;
   kind: TKind;
 };
@@ -202,3 +205,65 @@ export type VisibleNode = Text | Element | Fragment;
 export type Node = VisibleNode | Comment;
 export type DocumentExpression = Node | Component | Style | Import | ValueToken;
 export type BodyExpression = Component | Node;
+export type Expression =
+  | MultiLineComment
+  | SingleLineComment
+  | Render
+  | Variant
+  | Text
+  | Fragment
+  | Element
+  | Override
+  | StyleInclude
+  | StyleDeclaration
+  | StyleCondition
+  | Style
+  | ArrayExpression
+  | Reference
+  | StringExpression
+  | BooleanExpression
+  | NumberExpression
+  | Parameter
+  | Component
+  | ValueToken
+  | Import
+  | Document
+  | DocComment;
+
+const flattenShallow = memoize((tree: Expression) => {
+  switch (tree.kind) {
+    case ExpressionKind.Array: {
+      return [...tree.items];
+    }
+    case ExpressionKind.Component: {
+      return [...tree.body, tree.docComment].filter(Boolean);
+    }
+    case ExpressionKind.Element: {
+      return [...tree.children, ...tree.parameters];
+    }
+    case ExpressionKind.Override:
+    case ExpressionKind.StyleCondition:
+    case ExpressionKind.Style: {
+      return [...tree.body];
+    }
+    case ExpressionKind.Render: {
+      return [tree.node];
+    }
+  }
+  return [];
+});
+
+const { getIdMap, flatten, getAncestors, getById, getChildParentMap } =
+  createTreeUtils<Expression>({
+    flattenShallow,
+  });
+
+export const isStyleable = (node: Element | Text | Override) =>
+  node.kind === ExpressionKind.Element || node.kind === ExpressionKind.Text;
+export const isComponent = (node: Expression): node is Component =>
+  node.kind === ExpressionKind.Component;
+export const getComponentRenderNode = (component: Component) =>
+  (component.body.find((item) => item.kind === ExpressionKind.Render) as Render)
+    ?.node;
+
+export { getIdMap, flatten, getAncestors, getById, getChildParentMap };

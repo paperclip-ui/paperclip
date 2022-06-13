@@ -9,6 +9,7 @@ export enum DocCommentExpressionKind {
 
 export type BaseDocCommentExpression<TKind extends DocCommentExpressionKind> = {
   kind: TKind;
+  id: string;
 };
 
 export type DocComment = {

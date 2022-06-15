@@ -22,20 +22,23 @@ import * as ast from "../parser/dsl/ast";
 import { parseDocument } from "../parser/dsl/parser";
 import * as crypto from "crypto";
 import { memoize } from "tandem-common";
+import * as path from "path";
 
 type Context = {
   ast: ast.Document;
   fileUrl: string;
   id: string;
+  graph: Record<string, ast.Document>;
 };
 
 export const deserializeModule = (
   source: string,
-  fileUrl: string
+  fileUrl: string,
+  graph: Record<string, ast.Document>
 ): PCModule => {
   const ast = parseDocument(source);
   const id = md5(fileUrl);
-  const context = { fileUrl, ast, id };
+  const context = { fileUrl, ast, id, graph };
 
   return {
     id: `${id}_module`,
@@ -102,8 +105,6 @@ const deserializeComponent =
       metadata: {},
     } as PCComponent;
 
-    console.log("RET", JSON.stringify(ret, null, 2));
-
     return ret;
   };
 
@@ -126,7 +127,7 @@ const deserializeVariantOverrides = (
 
   for (const descendent of ast.flatten(node)) {
     if (descendent.kind === ast.ExpressionKind.Style) {
-      const override = deserializeOverride(descendent, node, component);
+      const override = deserializeStyleOverride(descendent, component);
       if (override) {
         overrides.push(override);
       }
@@ -140,28 +141,30 @@ const getVariantByName = (name: string, component: ast.Component) =>
     (child) => child.kind === ast.ExpressionKind.Variant && child.name === name
   );
 
-const deserializeOverride = (
+const deserializeStyleOverride = (
   style: ast.Style,
-  target: ast.Element,
   component: ast.Component
 ) => {
   const parent = ast.getParent(style.id, component);
 
-  if (parent.kind !== ast.ExpressionKind.Override || !style.conditionName) {
+  if (parent.kind !== ast.ExpressionKind.Override && !style.conditionName) {
     return null;
   }
 
-  let owner = ast.getAncestors(style.id, target).find(ast.isStyleable);
-  const ownerComponent = ast
-    .getAncestors(owner.id, component)
-    .find(ast.isComponent);
-  if (ast.getComponentRenderNode(ownerComponent) === owner) {
-    owner = ownerComponent;
-  }
+  // covers syntax: `render B { style { color red }}`, `render B { override nested { }}
+  // let styleTarget = ast.getAncestors(style.id, component).find(el => {
+  //   if (el.kind === ast.ExpressionKind.Element) {
+  //     return true;
+  //   }
+  // }) as ast.Element | ast.Component;
 
-  console.log("OWN", owner, style);
   const targetIdPath =
-    owner.kind == ast.ExpressionKind.Override ? owner.target : [owner.id];
+    parent.kind === ast.ExpressionKind.Override ? parent.target : [];
+
+  // if (ast.getParent(styleTarget.id, component).kind === ast.ExpressionKind.Render) {
+  //   styleTarget = component;
+  // }
+
   const variant = style.conditionName
     ? getVariantByName(style.conditionName, component)
     : null;
@@ -175,6 +178,71 @@ const deserializeOverride = (
     propertyName: PCOverridablePropertyName.STYLE,
     value: deserializeStyleDeclarations(style),
   } as PCStyleOverride;
+};
+
+const getOverrideRef = (
+  targetNamePath: string[],
+  scope: ast.Element,
+  context: Context
+) => {
+  const idPath: string[];
+
+  let currentScope: ast.Expression = scope;
+
+  for (const name of targetNamePath) {
+    const ref = getRef([name], scope, context);
+    scope = ref;
+  }
+
+  return idPath;
+};
+
+type ExpressionInfo = { uri: string; expr: ast.Expression };
+
+const getRef = (
+  refPath: string[],
+  scope: ast.Expression,
+  context: Context
+): ExpressionInfo => {
+  let currFileUri = context.fileUrl;
+
+  return refPath.reduce(
+    ({ uri, expr }, name) => {
+      if (expr.kind === ast.ExpressionKind.Element) {
+        const info = getRef(
+          expr.tagName.namespace
+            ? [expr.tagName.namespace, expr.tagName.name]
+            : [expr.tagName.name],
+          context.ast,
+          context
+        ) || { uri, expr: scope };
+        uri = info.uri;
+        expr = info.expr;
+      }
+
+      if (expr.kind === ast.ExpressionKind.Import) {
+        uri = path.relative(currFileUri, expr.path);
+        scope = context.graph[uri];
+        return { uri, expr: scope };
+      }
+
+      return {
+        expr: ast.flatten(scope).find((expr) => {
+          if (expr.kind === ast.ExpressionKind.Import) {
+            return expr.namespace === name;
+          } else if (
+            expr.kind === ast.ExpressionKind.Component ||
+            expr.kind === ast.ExpressionKind.Style ||
+            expr.kind === ast.ExpressionKind.Token
+          ) {
+            return expr.name === name;
+          }
+        }),
+        uri,
+      };
+    },
+    { uri: context.fileUrl, expr: scope }
+  );
 };
 
 const deserializeVariantTrigger =

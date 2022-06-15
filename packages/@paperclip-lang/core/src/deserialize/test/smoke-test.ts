@@ -50,11 +50,13 @@ describe(__filename + "#", () => {
     [
       {
         "file:///entry.pc": `public component A {
-          render div
+          render div {
+            span el
+          }
         }
         public component B {
           render A {
-            override {
+            override el {
               style {
                 color: blue
               }

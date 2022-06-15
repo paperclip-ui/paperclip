@@ -61,9 +61,9 @@ describe(__filename + "#", () => {
       `Can parse a style with a conditional`,
       `style test {
         color: red
-        if something {
-          color:blue
-        }
+        
+      } style if something {
+        color:blue
       }`,
     ],
     [

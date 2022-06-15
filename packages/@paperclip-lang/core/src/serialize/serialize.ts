@@ -291,7 +291,6 @@ const translateStyle = (
   context: TranslateContext
 ) => {
   const styleOverrides = getVariantStyleOverrides(node, context);
-  console.log("OVER", node, styleOverrides);
 
   if (!hasStyles(node) && !styleOverrides.length) {
     return context;
@@ -313,6 +312,7 @@ const translateStyle = (
   context = translateStyleOverridesInner(styleOverrides, context);
   context = endBlock(context);
   context = addBuffer(`}\n`, context);
+  context = translateStyleVariants(styleOverrides, context);
   if (isPCComponentInstance(node)) {
     context = endBlock(context);
     context = addBuffer(`}\n`, context);
@@ -329,14 +329,29 @@ const translateStyleOverridesInner = (
       override.variantId &&
       (getPCNode(override.variantId, context.graph) as PCVariant);
     if (variant) {
-      context = addBuffer(`if ${camelCase(variant.label)} {\n`, context);
-      context = startBlock(context);
+      continue;
     }
     context = translateStyleValues(override.value, context);
-    if (variant) {
-      context = endBlock(context);
-      context = addBuffer(`}\n`, context);
+  }
+  return context;
+};
+
+const translateStyleVariants = (
+  styleOverrides: PCStyleOverride[],
+  context: TranslateContext
+) => {
+  for (const override of styleOverrides) {
+    const variant =
+      override.variantId &&
+      (getPCNode(override.variantId, context.graph) as PCVariant);
+    if (!variant) {
+      continue;
     }
+    context = addBuffer(`style if ${camelCase(variant.label)} {\n`, context);
+    context = startBlock(context);
+    context = translateStyleValues(override.value, context);
+    context = endBlock(context);
+    context = addBuffer(`}\n`, context);
   }
   return context;
 };

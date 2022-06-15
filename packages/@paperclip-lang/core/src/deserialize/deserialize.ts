@@ -81,7 +81,7 @@ const deserializeComponent =
       }
     }
 
-    return {
+    const ret = {
       id: getNodeId(component, context),
       name: PCSourceTagNames.COMPONENT,
       label: component.name,
@@ -89,7 +89,7 @@ const deserializeComponent =
       children: [
         ...variants.map(deserializeVariant(context)),
         ...variantTriggers.map(deserializeVariantTrigger(context)),
-        ...deserializeVariantOverrides(node, component, context),
+        ...deserializeVariantOverrides(node, component),
         ...(node.children
           .filter(isComponentChild)
           .map(deserializeElementChild(context))
@@ -101,6 +101,10 @@ const deserializeComponent =
       style: style ? deserializeStyleDeclarations(style) : {},
       metadata: {},
     } as PCComponent;
+
+    console.log("RET", JSON.stringify(ret, null, 2));
+
+    return ret;
   };
 
 const isComponentChild = (child: ast.ElementChild) => {
@@ -116,43 +120,61 @@ const getComponentVariants = memoize((component: ast.Component) => {
 
 const deserializeVariantOverrides = (
   node: ast.Element,
-  component: ast.Component,
-  context: Context
+  component: ast.Component
 ): PCOverride[] => {
   const overrides: PCOverride[] = [];
 
   for (const descendent of ast.flatten(node)) {
-    if (descendent.kind === ast.ExpressionKind.StyleCondition) {
-      let owner = ast.getAncestors(descendent.id, node).find(ast.isStyleable);
-      const ownerComponent = ast
-        .getAncestors(owner.id, component)
-        .find(ast.isComponent);
-      if (ast.getComponentRenderNode(ownerComponent) === owner) {
-        owner = ownerComponent;
-      }
-
-      if (owner) {
-        const targetIdPath =
-          owner.kind == ast.ExpressionKind.Override ? owner.target : [owner.id];
-        const variant = component.body.find(
-          (child) =>
-            child.kind === ast.ExpressionKind.Variant &&
-            child.name === descendent.conditionName
-        );
-
-        overrides.push({
-          id: descendent.id,
-          name: PCSourceTagNames.OVERRIDE,
-          targetIdPath,
-          variantId: variant.id,
-          children: [],
-          propertyName: PCOverridablePropertyName.STYLE,
-          value: deserializeStyleDeclarations(descendent),
-        } as PCStyleOverride);
+    if (descendent.kind === ast.ExpressionKind.Style) {
+      const override = deserializeOverride(descendent, node, component);
+      if (override) {
+        overrides.push(override);
       }
     }
   }
   return overrides;
+};
+
+const getVariantByName = (name: string, component: ast.Component) =>
+  component.body.find(
+    (child) => child.kind === ast.ExpressionKind.Variant && child.name === name
+  );
+
+const deserializeOverride = (
+  style: ast.Style,
+  target: ast.Element,
+  component: ast.Component
+) => {
+  const parent = ast.getParent(style.id, component);
+
+  if (parent.kind !== ast.ExpressionKind.Override || !style.conditionName) {
+    return null;
+  }
+
+  let owner = ast.getAncestors(style.id, target).find(ast.isStyleable);
+  const ownerComponent = ast
+    .getAncestors(owner.id, component)
+    .find(ast.isComponent);
+  if (ast.getComponentRenderNode(ownerComponent) === owner) {
+    owner = ownerComponent;
+  }
+
+  console.log("OWN", owner, style);
+  const targetIdPath =
+    owner.kind == ast.ExpressionKind.Override ? owner.target : [owner.id];
+  const variant = style.conditionName
+    ? getVariantByName(style.conditionName, component)
+    : null;
+
+  return {
+    id: style.id,
+    name: PCSourceTagNames.OVERRIDE,
+    targetIdPath,
+    variantId: variant?.id,
+    children: [],
+    propertyName: PCOverridablePropertyName.STYLE,
+    value: deserializeStyleDeclarations(style),
+  } as PCStyleOverride;
 };
 
 const deserializeVariantTrigger =
@@ -191,9 +213,7 @@ const deserializeVariant =
     };
   };
 
-const deserializeStyleDeclarations = (
-  style: ast.Style | ast.StyleCondition
-) => {
+const deserializeStyleDeclarations = (style: ast.Style) => {
   const style2 = {};
   for (const item of style.body) {
     if (item.kind === ast.ExpressionKind.StyleDeclaration) {

@@ -39,9 +39,9 @@ describe(__filename + "#", () => {
           render div  (a: "b", c: "d") {
             style {
               color: red
-              if a {
-                color: blue
-              }
+            }
+            style if a {
+              color: blue;
             }
           }
         }`,

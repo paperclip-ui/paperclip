@@ -125,19 +125,12 @@ export type ElementChild = Style | Node | Override;
 
 export type Style = {
   name?: string;
+  conditionName?: string;
   body: StyleBodyExpression[];
   isPublic?: boolean;
 } & BaseExpression<ExpressionKind.Style>;
 
-export type StyleBodyExpression =
-  | StyleCondition
-  | StyleDeclaration
-  | StyleInclude;
-
-export type StyleCondition = {
-  conditionName: string;
-  body: StyleBodyExpression[];
-} & BaseExpression<ExpressionKind.StyleCondition>;
+export type StyleBodyExpression = StyleDeclaration | StyleInclude;
 
 export type StyleDeclaration = {
   name: string;
@@ -216,7 +209,6 @@ export type Expression =
   | Override
   | StyleInclude
   | StyleDeclaration
-  | StyleCondition
   | Style
   | ArrayExpression
   | Reference
@@ -242,7 +234,6 @@ const flattenShallow = memoize((tree: Expression) => {
       return [...tree.children, ...tree.parameters];
     }
     case ExpressionKind.Override:
-    case ExpressionKind.StyleCondition:
     case ExpressionKind.Style: {
       return [...tree.body];
     }
@@ -253,10 +244,16 @@ const flattenShallow = memoize((tree: Expression) => {
   return [];
 });
 
-const { getIdMap, flatten, getAncestors, getById, getChildParentMap } =
-  createTreeUtils<Expression>({
-    flattenShallow,
-  });
+const {
+  getIdMap,
+  flatten,
+  getAncestors,
+  getById,
+  getChildParentMap,
+  getParent,
+} = createTreeUtils<Expression>({
+  flattenShallow,
+});
 
 export const isStyleable = (node: Element | Text | Override) =>
   node.kind === ExpressionKind.Element || node.kind === ExpressionKind.Text;
@@ -266,4 +263,11 @@ export const getComponentRenderNode = (component: Component) =>
   (component.body.find((item) => item.kind === ExpressionKind.Render) as Render)
     ?.node;
 
-export { getIdMap, flatten, getAncestors, getById, getChildParentMap };
+export {
+  getIdMap,
+  flatten,
+  getAncestors,
+  getById,
+  getChildParentMap,
+  getParent,
+};

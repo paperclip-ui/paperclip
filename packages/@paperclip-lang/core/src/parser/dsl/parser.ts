@@ -1,8 +1,4 @@
-import {
-  centerTransformZoom,
-  createUIDGenerator,
-  EMPTY_ARRAY,
-} from "tandem-common";
+import { createUIDGenerator, EMPTY_ARRAY } from "tandem-common";
 import {
   ArrayExpression,
   BaseExpression,
@@ -24,7 +20,6 @@ import {
   Render,
   Style,
   StyleBodyExpression,
-  StyleCondition,
   StyleDeclaration,
   StyleInclude,
   Text,
@@ -370,8 +365,13 @@ const parseStyle = (context: Context, isPublic?: boolean): Style => {
   context.tokenizer.currValue(DSLTokenKind.Keyword);
   const next = context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS); // eat keyword
   let name: string;
+  let conditionName: string;
   if (next.kind === DSLTokenKind.Keyword) {
-    name = next.value;
+    if (next.value === "if") {
+      conditionName = context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS).value;
+    } else {
+      name = next.value;
+    }
     context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
   }
   context.tokenizer.currValue(DSLTokenKind.CurlyOpen);
@@ -382,6 +382,7 @@ const parseStyle = (context: Context, isPublic?: boolean): Style => {
     id: context.nextID(),
     kind: ExpressionKind.Style,
     name,
+    conditionName,
     isPublic,
     raws: {},
     body,
@@ -390,9 +391,7 @@ const parseStyle = (context: Context, isPublic?: boolean): Style => {
 
 const parseStyleBody = bodyParser<StyleBodyExpression>((context: Context) => {
   const keyword = context.tokenizer.curr();
-  if (keyword.value === "if") {
-    return parseStyleCondition(context);
-  } else if (keyword.value === "include") {
+  if (keyword.value === "include") {
     return parseStyleInclude(context);
   }
   return parseStyleDeclaration(context);
@@ -405,23 +404,6 @@ const parseStyleInclude = (context: Context): StyleInclude => {
     kind: ExpressionKind.StyleInclude,
     raws: {},
     ref: parseRef(context),
-  };
-};
-
-const parseStyleCondition = (context: Context): StyleCondition => {
-  context.tokenizer.currValue(DSLTokenKind.Keyword);
-  context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
-  const conditionName = context.tokenizer.currValue(DSLTokenKind.Keyword);
-  context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
-  const body = parseStyleBody(context);
-  context.tokenizer.eat(DSL_SUPERFLUOUS_TOKENS);
-
-  return {
-    id: context.nextID(),
-    kind: ExpressionKind.StyleCondition,
-    conditionName,
-    raws: {},
-    body,
   };
 };
 

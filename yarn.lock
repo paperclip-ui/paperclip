@@ -409,6 +409,8 @@ __metadata:
     globby: 11
     lodash: ^4.17.21
     yargs: ^17.5.1
+  bin:
+    pc-upgrade: ./bin/pc-upgrade
   languageName: unknown
   linkType: soft
 

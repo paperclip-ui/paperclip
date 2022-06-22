@@ -188,7 +188,6 @@ describe(__filename + "#", () => {
   ].forEach(([title, source]) => {
     it(title, () => {
       const ast = parseDocument(source);
-      console.log(JSON.stringify(ast, null, 2));
     });
   });
 });

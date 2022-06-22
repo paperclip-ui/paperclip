@@ -468,7 +468,7 @@ export type PCLabelOverride = PCBaseValueOverride<
 >;
 export type PCVariantOverride = PCBaseValueOverride<
   PCOverridablePropertyName.VARIANT_IS_DEFAULT,
-  string[]
+  Record<string, boolean>
 >;
 
 export type PCVariant2Override = PCBaseValueOverride<

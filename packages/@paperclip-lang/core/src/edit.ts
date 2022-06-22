@@ -1345,7 +1345,7 @@ const maybeOverride2 =
     const topMostInspectorNode = getInspectorNodeBySourceNodeId(
       topMostNodeId,
       rootInspector
-    );
+    ) as InspectorNode;
 
     // call getInspectorNodeBySourceNodeId on parent if assoc inspector node doesn't exist. In this case, we're probably dealing with a source node
     // that does not have an assoc inspector node, so we defer to the owner (parent) instead.

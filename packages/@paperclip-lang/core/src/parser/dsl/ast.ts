@@ -1,6 +1,10 @@
 import { AST } from "eslint";
 import { createTreeUtils, memoize } from "tandem-common";
 import { DocComment } from "../docco/ast";
+import * as path from "path";
+import * as URL from "url";
+
+export type ASTDependencyGraph = Record<string, Document>;
 
 export enum ExpressionKind {
   Document = "Document",
@@ -17,9 +21,6 @@ export enum ExpressionKind {
   */
   Component = "Component",
   Override = "Override",
-
-  // div {},
-  Instance = "Instance",
 
   // (a:b, c:d)
   Parameter = "Parameter",
@@ -125,7 +126,7 @@ export type ElementChild = Style | Node | Override;
 
 export type Style = {
   name?: string;
-  conditionName?: string;
+  conditionNames: string[];
   body: StyleBodyExpression[];
   isPublic?: boolean;
 } & BaseExpression<ExpressionKind.Style>;
@@ -142,7 +143,7 @@ export type StyleInclude = {
 } & BaseExpression<ExpressionKind.StyleInclude>;
 
 export type Override = {
-  target: string[];
+  target?: string[];
   constructorValue?: OverrideConstructorValue;
   body?: OverrideBodyExpression[];
 } & BaseExpression<ExpressionKind.Override>;
@@ -224,6 +225,9 @@ export type Expression =
 
 const flattenShallow = memoize((tree: Expression) => {
   switch (tree.kind) {
+    case ExpressionKind.Document: {
+      return [...tree.expressions];
+    }
     case ExpressionKind.Array: {
       return [...tree.items];
     }
@@ -233,7 +237,9 @@ const flattenShallow = memoize((tree: Expression) => {
     case ExpressionKind.Element: {
       return [...tree.children, ...tree.parameters];
     }
-    case ExpressionKind.Override:
+    case ExpressionKind.Override: {
+      return tree.body ? [...tree.body] : [];
+    }
     case ExpressionKind.Style: {
       return [...tree.body];
     }
@@ -259,9 +265,103 @@ export const isStyleable = (node: Element | Text | Override) =>
   node.kind === ExpressionKind.Element || node.kind === ExpressionKind.Text;
 export const isComponent = (node: Expression): node is Component =>
   node.kind === ExpressionKind.Component;
+export const isVisibleNode = (node: Expression): node is Element | Text =>
+  node.kind === ExpressionKind.Element || node.kind === ExpressionKind.Text;
+export const isInstance = (node: Expression, graph: ASTDependencyGraph) =>
+  node.kind == ExpressionKind.Element &&
+  getInstanceComponent(node, graph) != null;
+export const getExprByName = (name: string, ctx: Expression) =>
+  flatten(ctx).find((node) => {
+    if (
+      node.kind === ExpressionKind.Element ||
+      node.kind === ExpressionKind.Text ||
+      node.kind === ExpressionKind.Variant
+    ) {
+      return node.name === name;
+    }
+  }) as Text | Element;
+
+export const getInstanceComponent = memoize(
+  (element: Element, graph: ASTDependencyGraph) => {
+    const instanceUrl = getExprDocUri(element, graph);
+    const originUrl = element.tagName.namespace
+      ? getNSUrl(element.tagName.namespace, instanceUrl, graph)
+      : instanceUrl;
+    const originDoc = graph[originUrl];
+    return flatten(originDoc).find((el) => {
+      return (
+        el.kind === ExpressionKind.Component && el.name === element.tagName.name
+      );
+    });
+  }
+);
+
+export const getImportByNS = (ns: string, doc: Document) =>
+  flatten(doc).find(
+    (imp) => imp.kind === ExpressionKind.Import && imp.namespace === ns
+  ) as Import;
+const getNSUrl = (
+  ns: string,
+  documentUri: string,
+  graph: ASTDependencyGraph
+) => {
+  const instancePath = URL.fileURLToPath(documentUri);
+
+  const filePath = path.resolve(
+    path.dirname(instancePath),
+    getImportByNS(ns, graph[documentUri]).path
+  );
+
+  return URL.pathToFileURL(filePath).href;
+};
+
+export const getOwnerInstance = (
+  node: Expression,
+  graph: ASTDependencyGraph
+) => {
+  const doc = getExprDocument(node, graph);
+  const ancestors = getAncestors(node.id, doc);
+
+  // TODO - check for insert parent, then skip next if present
+  for (let i = 0, { length } = ancestors; i < length; i++) {
+    const ancestor = ancestors[i];
+    if (isComponent(ancestor)) {
+      return getComponentRenderNode(ancestor);
+    }
+    if (isInstance(ancestor, graph)) {
+      return ancestor;
+    }
+  }
+};
+
+export const getExprDocUri = (node: Expression, graph: ASTDependencyGraph) => {
+  return Object.keys(graph).find((uri) => {
+    return getById(node.id, graph[uri]);
+  });
+};
+
 export const getComponentRenderNode = (component: Component) =>
   (component.body.find((item) => item.kind === ExpressionKind.Render) as Render)
     ?.node;
+
+export const getExprDocument = (
+  node: Expression,
+  graph: ASTDependencyGraph
+) => {
+  for (const uri in graph) {
+    if (getById(node.id, graph[uri])) {
+      return graph[uri];
+    }
+  }
+};
+
+export const getExpContentNode = (
+  node: Expression,
+  graph: ASTDependencyGraph
+) => {
+  const doc = getExprDocument(node, graph);
+  return doc.expressions.find((contentNode) => getById(node.id, contentNode));
+};
 
 export {
   getIdMap,

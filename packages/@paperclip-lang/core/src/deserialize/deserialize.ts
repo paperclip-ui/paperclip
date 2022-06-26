@@ -21,7 +21,7 @@ import {
 import * as ast from "../parser/dsl/ast";
 import { parseDocument } from "../parser/dsl/parser";
 import * as crypto from "crypto";
-import { memoize } from "tandem-common";
+import { EMPTY_ARRAY, memoize } from "tandem-common";
 import * as path from "path";
 
 type Context = {
@@ -32,11 +32,10 @@ type Context = {
 };
 
 export const deserializeModule = (
-  source: string,
+  ast: ast.Document,
   fileUrl: string,
   graph: Record<string, ast.Document>
 ): PCModule => {
-  const ast = parseDocument(source);
   const id = md5(fileUrl);
   const context = { fileUrl, ast, id, graph };
 
@@ -68,6 +67,10 @@ const deserializeComponent =
     const node = render?.node as ast.Element;
     const { name: tagName, namespace } = node.tagName || {};
 
+    const componentTagName = namespace
+      ? ast.getInstanceComponent(node, context.graph).id
+      : tagName;
+
     const style = node.children.find(
       (child) => child.kind === ast.ExpressionKind.Style
     ) as ast.Style;
@@ -92,14 +95,13 @@ const deserializeComponent =
       children: [
         ...variants.map(deserializeVariant(context)),
         ...variantTriggers.map(deserializeVariantTrigger(context)),
-        ...deserializeVariantOverrides(node, component),
+        ...deserializeOverrides(node, context),
         ...(node.children
-          .filter(isComponentChild)
-          .map(deserializeElementChild(context))
+          .map(deserializeVisibleNode(context))
           .filter(Boolean) as PCComponentChild[]),
         ,
       ],
-      is: tagName,
+      is: componentTagName,
       attributes: deserializeAttributes(node),
       style: style ? deserializeStyleDeclarations(style) : {},
       metadata: {},
@@ -119,83 +121,220 @@ const getComponentVariants = memoize((component: ast.Component) => {
   return variants;
 });
 
-const deserializeVariantOverrides = (
-  node: ast.Element,
-  component: ast.Component
+// const deserializeStyleOverrides = (
+//   node: ast.Element,
+//   component: ast.Component
+// ): PCOverride[] => {
+//   const overrides: PCOverride[] = [];
+
+//   for (const descendent of ast.flatten(node)) {
+//     if (descendent.kind === ast.ExpressionKind.Style) {
+//       const override = deserializeStyleOverride(descendent, component);
+//       if (override) {
+//         overrides.push(override);
+//       }
+//     }
+//   }
+//   return overrides;
+// };
+
+/**
+ * Deserializes all nested overrides of this specific instance. Note that this function
+ * is only
+ */
+
+const deserializeOverrides = (
+  instance: ast.Element,
+  context: Context
+): PCOverride[] => {
+  if (
+    !ast.isInstance(instance, context.graph) &&
+    ast.getParent(instance.id, ast.getExprDocument(instance, context.graph))
+      .kind !== ast.ExpressionKind.Render
+  ) {
+    return EMPTY_ARRAY;
+  }
+  const overrides: PCOverride[] = [];
+
+  // flatten all nested children of this instance
+  for (const descendent of ast.flatten(instance)) {
+    if (ast.getOwnerInstance(descendent, context.graph) !== instance) {
+      continue;
+    }
+
+    // styles to be handled separately since conditional styles are style overrides. Styles
+    // may also be defined independently of overrides
+    if (
+      descendent.kind === ast.ExpressionKind.Style &&
+      isStyleOverride(descendent, instance)
+    ) {
+      overrides.push(
+        deserializeStyleOverride(descendent, instance, context.graph)
+      );
+    } else if (descendent.kind === ast.ExpressionKind.Override) {
+      overrides.push(
+        ...deserializeOverride(descendent, instance, context.graph)
+      );
+    }
+  }
+
+  return overrides;
+};
+
+const isStyleOverride = (node: ast.Style, instance: ast.Element) => {
+  const styleParent = ast.getParent(node.id, instance);
+
+  // if no condition name
+  if (
+    !node.conditionNames.length &&
+    styleParent.kind !== ast.ExpressionKind.Override
+  ) {
+    return null;
+  }
+
+  return true;
+};
+
+const deserializeOverride = (
+  override: ast.Override,
+  instance: ast.Element,
+  graph: ast.ASTDependencyGraph
 ): PCOverride[] => {
   const overrides: PCOverride[] = [];
 
-  for (const descendent of ast.flatten(node)) {
-    if (descendent.kind === ast.ExpressionKind.Style) {
-      const override = deserializeStyleOverride(descendent, component);
-      if (override) {
-        overrides.push(override);
-      }
+  if (typeof override.constructorValue === "string") {
+    overrides.push(deserializeTextOverride(override, instance, graph));
+  }
+
+  if (override.body) {
+    const hasVariantOverride = override.body.some(
+      (child) => child.kind === ast.ExpressionKind.Variant
+    );
+    if (hasVariantOverride) {
+      overrides.push(deserializeVariantOverride(override, instance, graph));
     }
   }
+
   return overrides;
+};
+
+const deserializeVariantOverride = (
+  override: ast.Override,
+  instance: ast.Element,
+  graph: ast.ASTDependencyGraph
+): PCOverride => {
+  return {
+    id: override.id,
+    name: PCSourceTagNames.OVERRIDE,
+    propertyName: PCOverridablePropertyName.VARIANT_IS_DEFAULT,
+    value: getOverrideVariantIds(override, instance, graph),
+    targetIdPath: override.target
+      ? getInstanceRef(override.target, instance, graph)
+      : EMPTY_ARRAY,
+    variantId: null,
+    metadata: {},
+    children: [],
+  };
+};
+
+const getOverrideVariantIds = (
+  override: ast.Override,
+  instance: ast.Element,
+  graph: ast.ASTDependencyGraph
+): Record<string, boolean> => {
+  const variantOverrides = override.body.filter(
+    (child) => child.kind === ast.ExpressionKind.Variant
+  ) as ast.Variant[];
+  const variantIds: Record<string, boolean> = {};
+  for (const variantOverride of variantOverrides) {
+    const onParam = variantOverride.parameters.find(
+      (param) => param.name === "on"
+    );
+    if (onParam) {
+      variantIds[getInstanceRef([variantOverride.name], instance, graph)[0]] = (
+        onParam.value as ast.BooleanExpression
+      ).value;
+    }
+  }
+
+  return variantIds;
+};
+
+const deserializeTextOverride = (
+  override: ast.Override,
+  instance: ast.Element,
+  graph: ast.ASTDependencyGraph
+): PCOverride => {
+  return {
+    id: override.id,
+    name: PCSourceTagNames.OVERRIDE,
+    propertyName: PCOverridablePropertyName.TEXT,
+    value: String(override.constructorValue),
+    children: [],
+    metadata: {},
+    targetIdPath: getInstanceRef(override.target, instance, graph),
+    variantId: null,
+  };
+};
+
+const deserializeStyleOverride = (
+  node: ast.Style,
+  instance: ast.Element,
+  graph: ast.ASTDependencyGraph
+): PCOverride => {
+  const styleParent = ast.getParent(node.id, instance);
+
+  // if no condition name
+  if (
+    !node.conditionNames.length &&
+    styleParent.kind !== ast.ExpressionKind.Override
+  ) {
+    return null;
+  }
+
+  let targetIdPath: string[] =
+    styleParent.kind == ast.ExpressionKind.Override
+      ? getInstanceRef(styleParent.target, instance, graph)
+      : [];
+
+  const contentNode = ast.getExpContentNode(node, graph) as ast.Component;
+  const variant = node.conditionNames.length
+    ? getVariantByName(node.conditionNames[0], contentNode)
+    : null;
+
+  return {
+    id: node.id,
+    name: PCSourceTagNames.OVERRIDE,
+    propertyName: PCOverridablePropertyName.STYLE,
+    value: deserializeStyleDeclarations(node),
+    targetIdPath,
+    variantId: variant?.id,
+    metadata: {},
+    children: [],
+  };
+};
+
+const getInstanceRef = (
+  target: string[],
+  ctx: ast.Element | ast.Text | ast.Component,
+  graph: ast.ASTDependencyGraph
+) => {
+  return target.map((name) => {
+    if (ast.isInstance(ctx, graph)) {
+      ctx = ast.getInstanceComponent(
+        ctx as ast.Element,
+        graph
+      ) as ast.Component;
+    }
+
+    return (ctx = ast.getExprByName(name, ctx)).id;
+  });
 };
 
 const getVariantByName = (name: string, component: ast.Component) =>
   component.body.find(
     (child) => child.kind === ast.ExpressionKind.Variant && child.name === name
   );
-
-const deserializeStyleOverride = (
-  style: ast.Style,
-  component: ast.Component
-) => {
-  const parent = ast.getParent(style.id, component);
-
-  if (parent.kind !== ast.ExpressionKind.Override && !style.conditionName) {
-    return null;
-  }
-
-  // covers syntax: `render B { style { color red }}`, `render B { override nested { }}
-  // let styleTarget = ast.getAncestors(style.id, component).find(el => {
-  //   if (el.kind === ast.ExpressionKind.Element) {
-  //     return true;
-  //   }
-  // }) as ast.Element | ast.Component;
-
-  const targetIdPath =
-    parent.kind === ast.ExpressionKind.Override ? parent.target : [];
-
-  // if (ast.getParent(styleTarget.id, component).kind === ast.ExpressionKind.Render) {
-  //   styleTarget = component;
-  // }
-
-  const variant = style.conditionName
-    ? getVariantByName(style.conditionName, component)
-    : null;
-
-  return {
-    id: style.id,
-    name: PCSourceTagNames.OVERRIDE,
-    targetIdPath,
-    variantId: variant?.id,
-    children: [],
-    propertyName: PCOverridablePropertyName.STYLE,
-    value: deserializeStyleDeclarations(style),
-  } as PCStyleOverride;
-};
-
-const getOverrideRef = (
-  targetNamePath: string[],
-  scope: ast.Element,
-  context: Context
-) => {
-  const idPath: string[];
-
-  let currentScope: ast.Expression = scope;
-
-  for (const name of targetNamePath) {
-    const ref = getRef([name], scope, context);
-    scope = ref;
-  }
-
-  return idPath;
-};
 
 type ExpressionInfo = { uri: string; expr: ast.Expression };
 
@@ -272,14 +411,22 @@ const deserializeVariant =
       name: PCSourceTagNames.VARIANT,
       label: variant.name,
       children: [],
-      isDefault: variant.parameters.some(
-        (param) =>
-          param.name === "on" &&
-          (param.value as ast.BooleanExpression).value === true
-      ),
+      isDefault: isVariantEnabledByDefault(variant),
       metadata: {},
     };
   };
+
+const isVariantEnabledByDefault = (variant: ast.Variant) => {
+  for (const param of variant.parameters) {
+    if (param.name === ast.VARIANT_ENABLED_PARAM_NAME) {
+      return ast
+        .flatten(param.value)
+        .some(
+          (value) => value.kind === ast.ExpressionKind.Boolean && value.value
+        );
+    }
+  }
+};
 
 const deserializeStyleDeclarations = (style: ast.Style) => {
   const style2 = {};
@@ -310,24 +457,13 @@ const deserializeValue = (node: ast.ValueExpression) => {
   }
 };
 
-const deserializeNode = (
-  node: ast.Node,
-  context: Context
-): PCElement | PCTextNode => {
-  if (node.kind === ast.ExpressionKind.Element) {
-    return deserializeElement(node, context);
-  } else if (node.kind === ast.ExpressionKind.Text) {
-    return deserializeTextNode(node, context);
-  }
-};
-
-const deserializeElementChild =
+const deserializeVisibleNode =
   (context: Context) =>
-  (node: ast.ElementChild): PCBaseElementChild => {
-    if (node.kind === ast.ExpressionKind.Override) {
-    } else if (node.kind === ast.ExpressionKind.Style) {
-    } else {
-      return deserializeNode(node, context);
+  (node: ast.Node): PCElement | PCTextNode => {
+    if (node.kind === ast.ExpressionKind.Element) {
+      return deserializeElement(node, context);
+    } else if (node.kind === ast.ExpressionKind.Text) {
+      return deserializeTextNode(node, context);
     }
   };
 
@@ -336,11 +472,13 @@ const deserializeElement = (node: ast.Element, context: Context): PCElement => {
     id: getNodeId(node, context),
     name: PCSourceTagNames.ELEMENT,
     attributes: {},
+    label: node.name,
     is: node.tagName.name,
     style: {},
-    children: node.children
-      .map(deserializeElementChild(context))
-      .filter(Boolean),
+    children: [
+      ...node.children.map(deserializeVisibleNode(context)).filter(Boolean),
+      ...deserializeOverrides(node, context),
+    ],
     metadata: {},
   };
 };
@@ -350,6 +488,7 @@ const deserializeTextNode = (node: ast.Text, context: Context): PCTextNode => {
     id: getNodeId(node, context),
     name: PCSourceTagNames.TEXT,
     value: node.value,
+    label: node.name,
     style: {},
     children: [],
     metadata: {},

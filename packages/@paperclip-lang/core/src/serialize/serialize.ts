@@ -43,6 +43,7 @@ import {
 import { pascalCase } from "./utils";
 import { deserialize } from "v8";
 import { deserializeModule } from "../deserialize/deserialize";
+import { VARIANT_ENABLED_PARAM_NAME } from "../parser/dsl/ast";
 
 type PCElementLike = PCComponent | PCComponentInstanceElement | PCElement;
 
@@ -65,7 +66,6 @@ export const serializeModule = (
   context = translateComponents(context);
   context = translateFrames(context);
   // const dsl = deserializeModule(context.content, url);
-  console.log(context.content);
   return context.content;
 };
 
@@ -192,9 +192,12 @@ const translateVariants = (
   const variants = getPCVariants(component);
   for (const variant of variants) {
     context = addBuffer(
-      `variant ${camelCase(variant.label)} (on: ${
-        variant.isDefault === true
-      }, trigger: ${translateVariantTrigger(variant, component)})\n`,
+      `variant ${camelCase(
+        variant.label
+      )} (${VARIANT_ENABLED_PARAM_NAME}: ${translateVariantTrigger(
+        variant,
+        component
+      )})\n`,
       context
     );
   }
@@ -212,6 +215,13 @@ const translateVariantTrigger = (
       child.name === PCSourceTagNames.VARIANT_TRIGGER &&
       child.targetVariantId === variant.id
   ) as PCVariantTrigger[];
+
+  if (variant.isDefault) {
+    buffer += `true`;
+    if (triggers.length) {
+      buffer += ", ";
+    }
+  }
 
   buffer += triggers
     .map((trigger) => {
@@ -303,16 +313,11 @@ const translateStyle = (
   context = addBuffer(`style {\n`, context);
   context = startBlock(context);
   context = translateStyleMixins(node, context);
-  for (const key in node.style) {
-    context = addBuffer(
-      `${key}: ${translateStyleValue(node.style[key], context)}\n`,
-      context
-    );
-  }
+  context = translateStyleValues(node.style, context);
   context = translateStyleOverridesInner(styleOverrides, context);
   context = endBlock(context);
   context = addBuffer(`}\n`, context);
-  context = translateStyleVariants(styleOverrides, context);
+  context = translateStyleOverrides(styleOverrides, context);
   if (isPCComponentInstance(node)) {
     context = endBlock(context);
     context = addBuffer(`}\n`, context);
@@ -336,7 +341,7 @@ const translateStyleOverridesInner = (
   return context;
 };
 
-const translateStyleVariants = (
+const translateStyleOverrides = (
   styleOverrides: PCStyleOverride[],
   context: TranslateContext
 ) => {
@@ -347,12 +352,28 @@ const translateStyleVariants = (
     if (!variant) {
       continue;
     }
-    context = addBuffer(`style if ${camelCase(variant.label)} {\n`, context);
-    context = startBlock(context);
-    context = translateStyleValues(override.value, context);
-    context = endBlock(context);
-    context = addBuffer(`}\n`, context);
+    context = translateStyleOverride(override, context);
   }
+  return context;
+};
+
+const translateStyleOverride = (
+  override: PCStyleOverride,
+  context: TranslateContext
+) => {
+  const variant =
+    override.variantId &&
+    (getPCNode(override.variantId, context.graph) as PCVariant);
+
+  context = addBuffer(
+    `style ${variant ? `if ${camelCase(variant.label)} ` : ""}{\n`,
+    context
+  );
+  context = startBlock(context);
+  context = translateStyleValues(override.value, context);
+  context = endBlock(context);
+  context = addBuffer(`}\n`, context);
+
   return context;
 };
 
@@ -482,7 +503,7 @@ const translateChildren = (node: PCNode, context: TranslateContext) => {
     context = translateStyle(node, context);
   }
 
-  if (isPCComponentInstance(node)) {
+  if (isPCComponentInstance(node) || node.name === PCSourceTagNames.COMPONENT) {
     context = translateOverrides(overrides, context);
   }
 
@@ -522,10 +543,10 @@ const translateOverrides = (
       .filter(Boolean)
       .join(".");
 
-    // skip overrides taht are on the instance itself
+    // skip overrides that are on the instance itself
     if (
       override.propertyName === PCOverridablePropertyName.STYLE &&
-      override.targetIdPath.length < 2
+      override.targetIdPath.length < 1
     ) {
       continue;
     }
@@ -554,9 +575,9 @@ const translateOverrides = (
     const styleOverrides = overrides.filter((override) => {
       return (
         override.propertyName === PCOverridablePropertyName.STYLE &&
-        override.targetIdPath.length > 1
+        override.targetIdPath.length >= 1
       );
-    });
+    }) as PCStyleOverride[];
 
     if (!valueOverride && !bodyOverrides.length && !styleOverrides.length) {
       continue;
@@ -581,10 +602,12 @@ const translateOverrides = (
     if (bodyOverrides.length || styleOverrides.length) {
       context = addBuffer(` {\n`, context);
       context = startBlock(context);
+      console.log(bodyOverrides);
       for (const override of bodyOverrides) {
         if (override.propertyName === PCOverridablePropertyName.VARIANT) {
           for (const variantId in override.value) {
             const variant = getPCNode(variantId, context.graph) as PCVariant;
+
             if (variant) {
               const enabled = override.value[variantId];
               context = addBuffer(
@@ -594,6 +617,10 @@ const translateOverrides = (
             }
           }
         }
+      }
+
+      for (const styleOverride of styleOverrides) {
+        context = translateStyleOverride(styleOverride, context);
       }
 
       context = endBlock(context);

@@ -882,7 +882,7 @@ export const expandSyntheticInspectorNode = (
   const sourceNodeId = node.sourceNodeId;
 
   const relatedInspectorNode = flattenTreeNode(rootInspectorNode).find(
-    (child) =>
+    (child: InspectorNode) =>
       child.instancePath === instancePath && child.sourceNodeId === sourceNodeId
   );
 
@@ -980,7 +980,7 @@ export const getSyntheticNodeInspectorNode = <TState extends PCEditorState>(
 ) => {
   const sourceNode = getSyntheticSourceNode(node, state.graph);
   return flattenTreeNode(state.sourceNodeInspector).find(
-    (child) => child.sourceNodeId === sourceNode.id
+    (child: InspectorNode) => child.sourceNodeId === sourceNode.id
   );
 };
 
@@ -989,7 +989,8 @@ export const getInspectorNodeBySourceNodeId = <TState extends PCEditorState>(
   root: InspectorNode
 ) => {
   return flattenTreeNode(root).find(
-    (child) => !child.instancePath && child.sourceNodeId === sourceNodeId
+    (child: InspectorNode) =>
+      !child.instancePath && child.sourceNodeId === sourceNodeId
   );
 };
 

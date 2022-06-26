@@ -74,7 +74,7 @@ describe(__filename + "#", () => {
           }
         }
         public component B {
-          variant b (enabled: [])
+          variant b (enabled: [true])
           render A {
             override el {
               style if b {

@@ -473,7 +473,7 @@ export type PCVariantOverride = PCBaseValueOverride<
 
 export type PCVariant2Override = PCBaseValueOverride<
   PCOverridablePropertyName.VARIANT,
-  string[]
+  Record<string, boolean>
 >;
 
 export type PCVisibleNodeOverride = PCStyleOverride | PCLabelOverride;

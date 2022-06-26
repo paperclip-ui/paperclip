@@ -226,7 +226,7 @@ const deserializeVariantOverride = (
   return {
     id: override.id,
     name: PCSourceTagNames.OVERRIDE,
-    propertyName: PCOverridablePropertyName.VARIANT_IS_DEFAULT,
+    propertyName: PCOverridablePropertyName.VARIANT,
     value: getOverrideVariantIds(override, instance, graph),
     targetIdPath: override.target
       ? getInstanceRef(override.target, instance, graph)
@@ -247,13 +247,9 @@ const getOverrideVariantIds = (
   ) as ast.Variant[];
   const variantIds: Record<string, boolean> = {};
   for (const variantOverride of variantOverrides) {
-    const onParam = variantOverride.parameters.find(
-      (param) => param.name === "on"
-    );
-    if (onParam) {
-      variantIds[getInstanceRef([variantOverride.name], instance, graph)[0]] = (
-        onParam.value as ast.BooleanExpression
-      ).value;
+    if (isVariantEnabledByDefault(variantOverride)) {
+      variantIds[getInstanceRef([variantOverride.name], instance, graph)[0]] =
+        true;
     }
   }
 

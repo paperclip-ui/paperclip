@@ -611,7 +611,7 @@ const translateOverrides = (
             if (variant) {
               const enabled = override.value[variantId];
               context = addBuffer(
-                `variant ${camelCase(variant.label)} (on: ${enabled})\n`,
+                `variant ${camelCase(variant.label)} (enabled: ${enabled})\n`,
                 context
               );
             }

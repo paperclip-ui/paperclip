@@ -193,6 +193,24 @@ describe(__filename + "#", () => {
         `,
       },
     ],
+    [
+      `Can turn on instance variants`,
+      {
+        "file:///entry.pc": `
+        public component A {
+          variant small (enabled: [])
+          render div
+        }
+        public component B {
+          render A {
+            override {
+              variant small (enabled: true)
+            }
+          }
+        }
+        `,
+      },
+    ],
   ].forEach(([title, sourceGraph]: any) => {
     it(title, () => {
       const dslGraph: DependencyGraph = {};

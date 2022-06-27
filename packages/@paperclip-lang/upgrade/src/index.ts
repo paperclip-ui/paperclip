@@ -5,9 +5,12 @@ import {
   Dependency,
   DependencyGraph,
   loadFSDependencyGraphSync,
+  parseDocument,
   PCModule,
   serializeModule,
 } from "@paperclip-lang/core";
+import { mapValues } from "lodash";
+import { deserializeModule } from "@paperclip-lang/core/lib/deserialize/deserialize";
 
 export type UpgradeOptions = {
   projectFilePath: string;
@@ -31,8 +34,16 @@ export const upgradeProject = async ({ projectFilePath }: UpgradeOptions) => {
     console.log(newDependencyGraph[uri]);
   }
 
+  sanityCheck(newDependencyGraph);
+
   // const pcFiles = await globby("**/*.pc", { cwd: sourceDir });
   // console.log(pcFiles);
+};
+
+const sanityCheck = (graph: Record<string, string>) => {
+  // temporary sanity check about serializing
+  const astGraph = mapValues(graph, (content) => parseDocument(content));
+  mapValues(astGraph, (ast, uri) => deserializeModule(ast, uri, astGraph));
 };
 
 const pruneGraph = (graph: DependencyGraph) => {

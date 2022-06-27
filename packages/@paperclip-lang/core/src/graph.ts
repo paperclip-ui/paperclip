@@ -93,7 +93,10 @@ export const addFileCacheItemToDependencyGraph = (
 export const deserializeDependencyGraph = (
   cache: FileCache
 ): DependencyGraph => {
-  // Temporary functionality here to test whether serializer / deserializer works
+  // The logic here is all temporary until the serializer + deserializer stabilizes. Once that happens,
+  // the only thing that should be here is the deserializer.
+
+  // TODO: delete me after things stabilize
   const dslGraph = mapValues(cache, (fileItem) => {
     try {
       return JSON.parse(fileItem.content.toString("utf-8"));
@@ -102,12 +105,11 @@ export const deserializeDependencyGraph = (
     }
   });
 
-  // (SMOKE TEST) serialize DSL graph to string
   const astGraph = mapValues(dslGraph, (module, url) => {
+    // TODO - assume module is text source
     return parseDocument(serializeModule(module, url, dslGraph));
   });
 
-  // (SMOKE TEST)
   const dslGraph2 = mapValues(astGraph, (doc, uri) => {
     return {
       uri,

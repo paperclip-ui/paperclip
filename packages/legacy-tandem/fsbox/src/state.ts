@@ -7,9 +7,7 @@ export type FSSandboxRootState = {
   fileCache: FileCache;
 };
 
-export type FileCache = {
-  [identifier: string]: FileCacheItem;
-};
+export type FileCache = Record<string, FileCacheItem>;
 
 export enum FileCacheItemStatus {
   CREATED,

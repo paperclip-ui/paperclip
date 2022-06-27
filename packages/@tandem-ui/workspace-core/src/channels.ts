@@ -1,4 +1,4 @@
-import { remoteChannel } from "@paperclip-ui/common";
+import { remoteChannel } from "@paperclip-lang/common";
 import { ContentChange, PCMutation } from "@paperclip-ui/source-writer";
 import {
   NodeStyleInspection,

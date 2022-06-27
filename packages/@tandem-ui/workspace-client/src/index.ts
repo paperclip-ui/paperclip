@@ -1,7 +1,5 @@
-import { RPCClientAdapter } from "@paperclip-ui/common";
+import { RPCClientAdapter } from "@paperclip-lang/common";
 import { LoadOptions, Project } from "./project";
-import { EditorClient } from "@paperclip-ui/editor-engine/lib/client/client";
-import { DOMFactory } from "@paperclip-ui/web-renderer/lib/base";
 import {
   readFileChannel,
   readDirectoryChannel,
@@ -14,7 +12,7 @@ import {
 } from "@tandem-ui/workspace-core";
 
 export class WorkspaceClient {
-  private _editorClient: EditorClient;
+  // private _editorClient: EditorClient;
   private _readFileChannel: ReturnType<typeof readFileChannel>;
   private _readDirectory: ReturnType<typeof readDirectoryChannel>;
   private _openUrl: ReturnType<typeof openUrlChannel>;
@@ -23,12 +21,9 @@ export class WorkspaceClient {
   private _deleteFile: ReturnType<typeof deleteFileChannel>;
   private _renameFileChannel: ReturnType<typeof renameFileChannel>;
 
-  constructor(
-    private _client: RPCClientAdapter,
-    domFactory: DOMFactory = document
-  ) {
+  constructor(private _client: RPCClientAdapter) {
     // for managing documents,
-    this._editorClient = new EditorClient(_client);
+    // this._editorClient = new EditorClient(_client);
     this._readFileChannel = readFileChannel(_client);
     this._readDirectory = readDirectoryChannel(_client);
     this._openUrl = openUrlChannel(_client);
@@ -38,7 +33,7 @@ export class WorkspaceClient {
     this._renameFileChannel = renameFileChannel(_client);
   }
   openProject = async (options: LoadOptions) => {
-    return await Project.load(options, this._editorClient, this._client);
+    return await Project.load(options, this._client);
   };
 
   readFile = async (url: string) => {

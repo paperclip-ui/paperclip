@@ -14,7 +14,7 @@ import {
 } from "@paperclip-ui/utils";
 import { EngineDelegate } from "@paperclip-ui/core";
 import { EventEmitter } from "events";
-import { createListener } from "@paperclip-ui/common";
+import { createListener } from "@paperclip-lang/common";
 
 /**
  * The diagnostic's severity.

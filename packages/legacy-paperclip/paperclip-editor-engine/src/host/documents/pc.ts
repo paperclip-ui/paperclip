@@ -4,7 +4,7 @@ import { CRDTTextDocument } from "../../core/crdt-document";
 import { DocumentKind } from "../../core/documents";
 import { BaseDocument } from "./base";
 import { EventEmitter } from "events";
-import { Logger } from "@paperclip-ui/common";
+import { Logger } from "@paperclip-lang/common";
 
 export class PCDocument extends BaseDocument<LoadedPCData> {
   readonly kind = DocumentKind.Paperclip;

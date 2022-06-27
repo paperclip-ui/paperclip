@@ -1,6 +1,6 @@
 import { Store } from "../base";
 import { WorkspaceClient } from "@tandem-ui/workspace-client";
-import { RPCClientAdapter, wsAdapter } from "@paperclip-ui/common";
+import { RPCClientAdapter, wsAdapter } from "@paperclip-lang/common";
 import { Action } from "../..";
 import { DocumentsManager } from "./managers/documents";
 import { PaperclipEngineManager } from "./managers/paperclip-engine";

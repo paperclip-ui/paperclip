@@ -1,5 +1,5 @@
 import { EngineDelegate, getEngineImports } from "@paperclip-ui/core";
-import { Observable } from "@paperclip-ui/common";
+import { Observable } from "@paperclip-lang/common";
 import {
   DependencyNodeContent,
   getAttributeStringValue,

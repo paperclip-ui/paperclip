@@ -2,7 +2,7 @@
 // import { Project } from "@tandem-ui/workspace-client/lib/project";
 // import SockJSClient from "sockjs-client";
 // import { WorkspaceClient } from "@tandem-ui/workspace-client";
-// import { sockjsClientAdapter } from "@paperclip-ui/common";
+// import { sockjsClientAdapter } from "@paperclip-lang/common";
 
 // export function* handleWorkspace() {
 //   const client = new WorkspaceClient(

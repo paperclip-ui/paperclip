@@ -1,6 +1,6 @@
 import { IPaperclipEngineInfoProvider } from "./base";
 import * as channels from "./channel";
-import { workerRPCClientAdapter } from "@paperclip-ui/common";
+import { workerRPCClientAdapter } from "@paperclip-lang/common";
 
 export class PaperclipEngineAsyncInfoProvider
   implements IPaperclipEngineInfoProvider

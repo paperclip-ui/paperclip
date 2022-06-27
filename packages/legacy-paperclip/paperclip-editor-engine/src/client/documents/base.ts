@@ -6,7 +6,7 @@ import { openDocumentChannel, OpenDocumentResult } from "../../core";
 import { DocumentKind } from "../../core/documents";
 import { EventEmitter } from "events";
 import { createListener } from "../../core/utils";
-import { RPCClientAdapter } from "@paperclip-ui/common";
+import { RPCClientAdapter } from "@paperclip-lang/common";
 
 export abstract class BaseDocument<
   TContent extends OpenDocumentResult["content"]

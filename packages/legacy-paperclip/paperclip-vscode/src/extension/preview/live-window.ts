@@ -1,10 +1,10 @@
 import { window, WebviewPanel, ViewColumn } from "vscode";
 import * as path from "path";
-import { ImmutableStore } from "@paperclip-ui/common";
+import { ImmutableStore } from "@paperclip-lang/common";
 import { EventEmitter } from "events";
 import * as qs from "querystring";
 
-type LiveWindowLocation = {
+interface LiveWindowLocation {
   pathname: string;
   query: Partial<{
     canvasFile: string;
@@ -13,13 +13,13 @@ type LiveWindowLocation = {
     expanded: boolean;
     frame: number;
   }>;
-};
+}
 
-export type LiveWindowState = {
+export interface LiveWindowState {
   location: LiveWindowLocation;
   sticky: boolean;
   panelVisible?: boolean;
-};
+}
 
 export class LiveWindow {
   static TYPE = "@paperclip-ui/preview";

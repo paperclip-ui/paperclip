@@ -10,7 +10,7 @@ import {
 import { collectASTInfo } from "./ast-info";
 import * as channels from "./channel";
 import { getSuggestions } from "./autocomplete";
-import { workerRPCClientAdapter } from "@paperclip-ui/common";
+import { workerRPCClientAdapter } from "@paperclip-lang/common";
 
 const init = () => {
   const channel = new BroadcastChannel("@paperclip-ui/core");

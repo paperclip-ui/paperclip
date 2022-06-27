@@ -1,4 +1,4 @@
-import { remoteChannel } from "@paperclip-ui/common";
+import { remoteChannel } from "@paperclip-lang/common";
 import { VirtualObjectEdit } from "../virtual-object-edit";
 
 export const editVirtualObjectsChannel = remoteChannel<

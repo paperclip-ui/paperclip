@@ -719,7 +719,7 @@ export const createPaperclipVirtualDOMtranslator = (
       context = setCurrentScope(contentNode.id, context);
       context = defineNestedObject([`_${contentNode.id}Props`], false, context);
       context = flattenTreeNode(contentNode)
-        .filter((node) => isVisibleNode(node))
+        .filter((node) => isVisibleNode(node as any))
         .reduce((context, node: ContentNode) => {
           if (node === contentNode) return context;
           context = addScopedLayerLabel(

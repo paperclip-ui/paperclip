@@ -2,7 +2,7 @@ import * as fsa from "fs-extra";
 import * as path from "path";
 import { exec } from "child_process";
 import { ok } from "@tandem-ui/common";
-import { Logger } from "@paperclip-ui/common";
+import { Logger } from "@paperclip-lang/common";
 
 const ID_RSA_FILE = `/root/.ssh/id_rsa`;
 

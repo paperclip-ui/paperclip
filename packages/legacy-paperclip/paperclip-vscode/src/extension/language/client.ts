@@ -1,4 +1,4 @@
-import { Disposable, RPCClientAdapter } from "@paperclip-ui/common";
+import { Disposable, RPCClientAdapter } from "@paperclip-lang/common";
 import { workspace, ExtensionContext } from "vscode";
 
 import {

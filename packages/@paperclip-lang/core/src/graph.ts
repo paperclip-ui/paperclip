@@ -1,5 +1,10 @@
+import { FileCache } from "fsbox";
+import { mapValues } from "lodash";
 import { memoize } from "tandem-common";
 import { createPCModule } from "./dsl";
+import { serializeModule } from "./serialize";
+import { parseDocument } from "./parser/dsl/parser";
+import { deserializeModule } from "./deserialize/deserialize";
 
 /*------------------------------------------
  * TYPES
@@ -83,6 +88,34 @@ export const addFileCacheItemToDependencyGraph = (
     ...graph,
     [item.uri]: createDependencyFromFileCacheItem(item),
   };
+};
+
+export const deserializeDependencyGraph = (
+  cache: FileCache
+): DependencyGraph => {
+  // Temporary functionality here to test whether serializer / deserializer works
+  const dslGraph = mapValues(cache, (fileItem) => {
+    try {
+      return JSON.parse(fileItem.content.toString("utf-8"));
+    } catch (e) {
+      return createPCModule();
+    }
+  });
+
+  // (SMOKE TEST) serialize DSL graph to string
+  const astGraph = mapValues(dslGraph, (module, url) => {
+    return parseDocument(serializeModule(module, url, dslGraph));
+  });
+
+  // (SMOKE TEST)
+  const dslGraph2 = mapValues(astGraph, (doc, uri) => {
+    return {
+      uri,
+      content: deserializeModule(doc, uri, astGraph),
+    };
+  });
+
+  return dslGraph2;
 };
 
 /*------------------------------------------

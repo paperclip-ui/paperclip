@@ -25,7 +25,7 @@ import { PaperclipLanguageClient } from "./language";
 import { DesignServerStartedInfo } from "./channels";
 import * as pce from "@paperclip-ui/editor-engine/lib/core/crdt-document";
 import { EditorClient } from "@paperclip-ui/editor-engine/lib/client/client";
-import { wsAdapter } from "@paperclip-ui/common";
+import { wsAdapter } from "@paperclip-lang/common";
 import * as ws from "ws";
 
 enum OpenLivePreviewOptions {

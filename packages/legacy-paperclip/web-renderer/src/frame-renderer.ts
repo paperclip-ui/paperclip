@@ -25,7 +25,7 @@ import { arraySplice, getFrameBounds, traverseNativeNode } from "./utils";
 import { patchNativeNode, Patchable } from "./dom-patcher";
 import { DOMFactory } from "./base";
 import { patchCSSOM } from "./cssom-patcher";
-import { ImmutableStore } from "@paperclip-ui/common";
+import { ImmutableStore } from "@paperclip-lang/common";
 
 type Box = {
   width: number;

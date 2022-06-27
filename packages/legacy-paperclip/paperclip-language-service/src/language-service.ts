@@ -9,7 +9,7 @@ Considerations:
 
 */
 
-import { Observable } from "@paperclip-ui/common";
+import { Observable } from "@paperclip-lang/common";
 import { AutocompleteService } from "./autocomplete";
 import { getAllAvailableNodes } from "./state";
 import { collectASTInfo, ColorInfo } from "./collect-ast-info";

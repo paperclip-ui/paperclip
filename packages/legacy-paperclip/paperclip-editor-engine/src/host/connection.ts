@@ -1,7 +1,7 @@
-import { RPCClientAdapter } from "@paperclip-ui/common";
+import { RPCClientAdapter } from "@paperclip-lang/common";
 import { EngineDelegate, EngineDelegateEvent } from "@paperclip-ui/core";
 import { EventEmitter } from "events";
-import { Logger } from "@paperclip-ui/common";
+import { Logger } from "@paperclip-lang/common";
 import {
   sourceDocumentCRDTChangesChannel,
   openDocumentChannel,

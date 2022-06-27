@@ -1,6 +1,6 @@
 // TODO - identify yarn lock
 import execa from "execa";
-import { Logger } from "@paperclip-ui/common";
+import { Logger } from "@paperclip-lang/common";
 
 // TODO - add ident script for repo type
 export class Package {

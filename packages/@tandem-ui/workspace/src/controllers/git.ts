@@ -2,7 +2,7 @@ import * as fsa from "fs-extra";
 import execa from "execa";
 import { exec } from "child_process";
 import { ok } from "@tandem-ui/common";
-import { Logger } from "@paperclip-ui/common";
+import { Logger } from "@paperclip-lang/common";
 
 export class Repository {
   /**

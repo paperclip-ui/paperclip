@@ -1,4 +1,4 @@
-import { LogLevel } from "@paperclip-ui/common";
+import { LogLevel } from "@paperclip-lang/common";
 import { start } from "./server";
 
 start({

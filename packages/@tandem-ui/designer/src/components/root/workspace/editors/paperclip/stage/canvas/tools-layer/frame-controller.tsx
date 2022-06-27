@@ -46,9 +46,6 @@ export default (Base: React.ComponentClass<BaseFrameProps>) =>
     const onPreviewButtonClick = (event: React.MouseEvent<any>) => {
       dispatch(canvasToolPreviewButtonClicked(frame, event));
     };
-    const onModeChangeComplete = (mode: FrameMode) => {
-      dispatch(frameModeChangeComplete(frame, mode));
-    };
 
     const { width, height } = getBoundsSize(frame.bounds);
 

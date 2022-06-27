@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as URL from "url";
 import { EventEmitter } from "events";
-import { Logger } from "@paperclip-ui/common";
+import { Logger } from "@paperclip-lang/common";
 
 export class VFS {
   private _contents: Record<string, string>;

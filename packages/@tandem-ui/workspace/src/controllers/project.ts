@@ -3,7 +3,7 @@ import * as fsa from "fs-extra";
 import * as path from "path";
 import { VFS } from "./vfs";
 import * as URL from "url";
-import { Logger } from "@paperclip-ui/common";
+import { Logger } from "@paperclip-lang/common";
 import { Options } from "../core/options";
 import { Package } from "./package";
 import * as crypto from "crypto";

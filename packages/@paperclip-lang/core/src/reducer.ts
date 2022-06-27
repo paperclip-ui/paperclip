@@ -1,4 +1,5 @@
 import { Action } from "redux";
+import { produce } from "immer";
 import {
   queueOpenFiles,
   FSSandboxRootState,
@@ -7,6 +8,8 @@ import {
   queueOpenFile,
   FILE_CHANGED,
   FileChangedEventType,
+  FileChanged,
+  fsCacheBusy,
 } from "fsbox";
 import {
   PC_SYNTHETIC_FRAME_RENDERED,
@@ -25,7 +28,11 @@ import {
   updateFrame,
   upsertFrames,
 } from "./edit";
-import { addFileCacheItemToDependencyGraph, isPaperclipUri } from "./graph";
+import {
+  addFileCacheItemToDependencyGraph,
+  isPaperclipUri,
+  deserializeDependencyGraph,
+} from "./graph";
 import { PAPERCLIP_MIME_TYPE } from "./constants";
 
 export const paperclipReducer = <
@@ -75,7 +82,7 @@ export const paperclipReducer = <
     // ick, this needs to be strongly typed and pulled fron fsbox. Currently
     // living in front-end
     case FILE_CHANGED: {
-      const { uri, eventType } = action as any;
+      const { uri, eventType } = action as FileChanged;
       if (isPaperclipUri(uri)) {
         if (eventType === FileChangedEventType.UNLINK) {
           const newGraph = { ...state.graph };
@@ -93,19 +100,30 @@ export const paperclipReducer = <
     case FS_SANDBOX_ITEM_LOADED: {
       const { uri, content, mimeType } = action as FSSandboxItemLoaded;
 
+      // only
+      if (fsCacheBusy(state.fileCache)) {
+        return state;
+      }
+
       // dependency graph can only load files that are within the scope of the project via PC_SOURCE_FILE_URIS_RECEIVED
       if (mimeType !== PAPERCLIP_MIME_TYPE) {
         return state;
       }
 
-      let graph = addFileCacheItemToDependencyGraph(
-        { uri, content },
-        state.graph
-      );
+      const now = Date.now();
+      const graph = deserializeDependencyGraph(state.fileCache);
+      console.log(Date.now() - now);
 
-      state = pruneDependencyGraph({ ...(state as any), graph });
+      // let graph = addFileCacheItemToDependencyGraph(
+      //   { uri, content },
+      //   state.graph
+      // );
 
-      return state;
+      // state = pruneDependencyGraph({ ...(state as any), graph });
+
+      return produce(state, (newState) => {
+        newState.graph = deserializeDependencyGraph(state.fileCache);
+      });
     }
   }
   return state;

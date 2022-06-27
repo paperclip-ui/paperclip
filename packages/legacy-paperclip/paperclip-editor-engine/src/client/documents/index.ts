@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { RPCClientAdapter } from "@paperclip-ui/common";
+import { RPCClientAdapter } from "@paperclip-lang/common";
 import { isPaperclipFile } from "@paperclip-ui/utils";
 import { PCDocument } from "./pc";
 import { createListener } from "../../core/utils";

@@ -1,10 +1,10 @@
-import { remoteChannel } from "@paperclip-ui/common";
+import { remoteChannel } from "@paperclip-lang/common";
 import { ExprSource } from "@paperclip-ui/utils";
 
-export type DesignServerStartedInfo = {
+export interface DesignServerStartedInfo {
   httpPort: number;
   projectId: string;
-};
+}
 
 export const designServerStartedChannel = remoteChannel<
   DesignServerStartedInfo,

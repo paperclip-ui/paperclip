@@ -22,7 +22,7 @@
     "design": "cd packages/front-end && \"../desktop/node_modules/.bin/electron\" \"../desktop/lib/index.js\"",
     "design:front-end": "cd packages/front-end && \"../desktop/node_modules/.bin/electron\" \"../desktop/lib/index.js\" app.tdproject",
     "clean": "yarn workspaces foreach run clean",
-    "build": "yarn workspaces foreach -t run build",
+    "build": "yarn workspaces foreach --topological-dev -i run build",
     "build:watch": "yarn workspaces foreach -pi --all run build:watch",
     "build:dist": "NODE_ENV=production npm run build && cd packages/desktop && npm run build:dist",
     "build:dist:win": "npm run build && cd packages/desktop && npm run build:dist:win",

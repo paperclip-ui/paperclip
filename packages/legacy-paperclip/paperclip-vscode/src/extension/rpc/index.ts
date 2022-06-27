@@ -1,4 +1,4 @@
-import { RPCClientAdapter } from "@paperclip-ui/common";
+import { RPCClientAdapter } from "@paperclip-lang/common";
 import { createListener } from "../utils";
 import { LanguageClient } from "vscode-languageclient";
 import { EventEmitter } from "events";

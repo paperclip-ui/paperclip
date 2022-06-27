@@ -1,5 +1,5 @@
 import { EngineDelegate } from "@paperclip-ui/core";
-import { Logger, RPCClientAdapter, RPCServer } from "@paperclip-ui/common";
+import { Logger, RPCClientAdapter, RPCServer } from "@paperclip-lang/common";
 import { EventEmitter } from "events";
 import { ClientConnection } from "./connection";
 import { DocumentManager } from "./documents/manager";

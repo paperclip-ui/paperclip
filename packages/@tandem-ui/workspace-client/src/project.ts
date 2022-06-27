@@ -1,12 +1,10 @@
-import { RPCClientAdapter } from "@paperclip-ui/common";
+import { RPCClientAdapter } from "@paperclip-lang/common";
 import {
   getAllPaperclipFilesChannel,
   loadProjectInfoChannel,
   openProjectChannel,
   searchProjectChannel,
 } from "@tandem-ui/workspace-core";
-import { EditorClient } from "@paperclip-ui/editor-engine/lib/client/client";
-import { PCDocument } from "@paperclip-ui/editor-engine/lib/client/documents";
 import { PaperclipManager } from "./paperclip";
 
 export type LoadOptions = {
@@ -33,7 +31,7 @@ export class Project {
 
   private constructor(
     private _loadOptions: LoadOptions,
-    private _editorClient: EditorClient,
+    // private _editorClient: EditorClient,
     private _client: RPCClientAdapter
   ) {
     this._openProject = openProjectChannel(_client);
@@ -81,10 +79,10 @@ export class Project {
 
   static async load(
     options: LoadOptions,
-    documents: EditorClient,
+    // documents: EditorClient,
     client: RPCClientAdapter
   ) {
-    const project = new Project(options, documents, client);
+    const project = new Project(options, client);
     await project._open();
     return project;
   }
@@ -92,9 +90,9 @@ export class Project {
   /**
    */
 
-  getDocuments() {
-    return this._editorClient.getDocuments();
-  }
+  // getDocuments() {
+  //   return this._editorClient.getDocuments();
+  // }
 
   /**
    */
@@ -106,15 +104,15 @@ export class Project {
   /**
    */
 
-  async openAllPaperclipDocuments() {
-    const fileUris = await this._getAllPaperclipFiles.call({
-      projectId: this._properties.id,
-    });
-    const docs: PCDocument[] = await Promise.all(
-      fileUris.map((uri) => {
-        return this._editorClient.getDocuments().open(uri);
-      })
-    );
-    return docs;
-  }
+  // async openAllPaperclipDocuments() {
+  //   const fileUris = await this._getAllPaperclipFiles.call({
+  //     projectId: this._properties.id,
+  //   });
+  //   const docs: PCDocument[] = await Promise.all(
+  //     fileUris.map((uri) => {
+  //       return this._editorClient.getDocuments().open(uri);
+  //     })
+  //   );
+  //   return docs;
+  // }
 }

@@ -1,4 +1,4 @@
-import { remoteChannel } from "@paperclip-ui/common";
+import { remoteChannel } from "@paperclip-lang/common";
 import { LoadedData } from "@paperclip-ui/core";
 import { EngineDelegateEvent } from "@paperclip-ui/core";
 import * as Automerge from "automerge";

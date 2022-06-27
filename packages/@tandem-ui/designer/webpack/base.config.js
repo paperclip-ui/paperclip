@@ -26,6 +26,7 @@ module.exports = (createConfig) =>
         os: "os-browserify/browser",
         buffer: "buffer",
         util: "util",
+        crypto: "crypto-browserify",
       },
       modules: [
         resolve(__dirname, "..", "src"),

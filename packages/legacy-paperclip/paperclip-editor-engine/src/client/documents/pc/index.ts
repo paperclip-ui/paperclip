@@ -24,7 +24,7 @@ import { DocumentKind } from "../../../core/documents";
 import { BaseDocument } from "../base";
 import { createListener } from "../../../core/utils";
 import { editVirtualObjectsChannel } from "../../../core/channels";
-import { RPCClientAdapter } from "@paperclip-ui/common";
+import { RPCClientAdapter } from "@paperclip-lang/common";
 import { produce } from "immer";
 import { EventEmitter } from "events";
 import { BinaryChange } from "automerge";

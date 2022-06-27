@@ -19,7 +19,7 @@ import {
   CompletionParams,
 } from "vscode-languageserver";
 import * as fs from "fs";
-import { deferPromise } from "@paperclip-ui/common";
+import { deferPromise } from "@paperclip-lang/common";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { PaperclipLanguageService } from "@paperclip-ui/language-service";
 import { fixFileUrlCasing } from "../../utils";

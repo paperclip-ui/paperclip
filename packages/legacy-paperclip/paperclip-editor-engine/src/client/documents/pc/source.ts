@@ -2,7 +2,7 @@
  * Editable virtual object document
  */
 
-import { RPCClientAdapter } from "@paperclip-ui/common";
+import { RPCClientAdapter } from "@paperclip-lang/common";
 import { sourceDocumentCRDTChangesChannel } from "../../../core";
 import { CRDTTextDocument, TextEdit } from "../../../core/crdt-document";
 import { EventEmitter } from "events";

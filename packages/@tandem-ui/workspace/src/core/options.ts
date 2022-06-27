@@ -1,6 +1,6 @@
 import { ContentChange } from "@paperclip-ui/source-writer";
 import { ExprSource } from "@paperclip-ui/utils";
-import { LogLevel, RPCServer } from "@paperclip-ui/common";
+import { LogLevel, RPCServer } from "@paperclip-lang/common";
 
 export type ProjectOptions = {
   installDependencies?: boolean;

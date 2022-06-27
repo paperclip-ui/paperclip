@@ -1,4 +1,4 @@
-import { RPCClientAdapter } from "@paperclip-ui/common";
+import { RPCClientAdapter } from "@paperclip-lang/common";
 import { VirtNodeSource } from "@paperclip-ui/utils";
 import {
   inspectNodeStyleChannel,

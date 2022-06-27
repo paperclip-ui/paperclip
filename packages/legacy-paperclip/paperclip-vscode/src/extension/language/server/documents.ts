@@ -1,5 +1,5 @@
 import { TextEdit } from "vscode-languageserver";
-import { Observable } from "@paperclip-ui/common";
+import { Observable } from "@paperclip-lang/common";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { PaperclipDesignServer } from "./design-server";
 

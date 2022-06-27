@@ -7,11 +7,9 @@ import React, {
 } from "react";
 import {
   Frame,
-  Dependency,
   SyntheticVisibleNode,
   renderDOM,
   diffTreeNode,
-  patchTreeNode,
   patchDOM,
   SyntheticNativeNodeMap,
   pcFrameRendered,

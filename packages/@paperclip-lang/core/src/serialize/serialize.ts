@@ -666,8 +666,12 @@ const getRef = (node: PCElementLike, context: TranslateContext) => {
   return node.is;
 };
 
+const fileURLToPath = (url: string) => {
+  return url.replace("file://", "");
+};
+
 const translateImports = (context: TranslateContext) => {
-  const filePath = URL.fileURLToPath(context.url);
+  const filePath = fileURLToPath(context.url);
   const importUrls = context.importedUrls;
 
   if (!importUrls.length) {
@@ -677,7 +681,7 @@ const translateImports = (context: TranslateContext) => {
   for (const url of importUrls) {
     let relativePath = path.relative(
       path.dirname(filePath),
-      URL.fileURLToPath(url)
+      fileURLToPath(url)
     );
     if (relativePath.charAt(0) !== ".") {
       relativePath = "./" + relativePath;

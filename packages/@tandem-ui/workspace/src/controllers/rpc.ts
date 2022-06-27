@@ -1,6 +1,6 @@
-import { RPCClientAdapter, RPCServer } from "@paperclip-ui/common";
+import { RPCClientAdapter, RPCServer } from "@paperclip-lang/common";
 import * as channels from "@tandem-ui/workspace-core/lib/channels";
-import { Channel } from "@paperclip-ui/common";
+import { Channel } from "@paperclip-lang/common";
 import * as fsa from "fs-extra";
 import { Workspace } from "./workspace";
 import { isPlainTextFile } from "@tandem-ui/common";
@@ -10,7 +10,7 @@ import * as fs from "fs";
 import { VFS } from "./vfs";
 import { exec } from "child_process";
 import { Options } from "../core/options";
-import { Logger } from "@paperclip-ui/common";
+import { Logger } from "@paperclip-lang/common";
 import { EngineDelegate, paperclipSourceGlobPattern } from "@paperclip-ui/core";
 import globby from "globby";
 import {

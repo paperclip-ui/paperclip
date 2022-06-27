@@ -12,7 +12,7 @@ import {
 } from "redux-saga/effects";
 import { eventChannel } from "redux-saga";
 
-import { Channel } from "@paperclip-ui/common";
+import { Channel } from "@paperclip-lang/common";
 import {
   fileLoaded,
   StyleRuleFileNameClicked,

@@ -1,4 +1,4 @@
-import { RPCClientAdapter } from "@paperclip-ui/common";
+import { RPCClientAdapter } from "@paperclip-lang/common";
 import { inspectNodeStyleChannel } from "@tandem-ui/workspace-core/lib/channels";
 import {
   commitChangesChannel,

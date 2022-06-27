@@ -7,7 +7,7 @@ import { Options } from "./core/options";
 import { addRoutes } from "./routes";
 import { WebSocketServer } from "ws";
 import { VFS } from "./controllers/vfs";
-import { Logger, wsServerAdapter } from "@paperclip-ui/common";
+import { Logger, wsServerAdapter } from "@paperclip-lang/common";
 import { RPC } from "./controllers/rpc";
 import { addDesignerRoutes } from "./controllers/designer";
 

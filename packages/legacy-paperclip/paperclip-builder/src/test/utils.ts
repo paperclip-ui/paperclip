@@ -4,7 +4,7 @@ import * as fsa from "fs-extra";
 import { buildDirectory } from "../index";
 import { createEngineDelegate } from "@paperclip-ui/core";
 import { DirectoryBuilder } from "../build";
-import { saveTmpFixtureFiles as saveTmpFixtureFiles2 } from "@paperclip-ui/common/lib/test-utils";
+import { saveTmpFixtureFiles as saveTmpFixtureFiles2 } from "@paperclip-lang/common/lib/test-utils";
 import { kebabCase } from "lodash";
 
 const TMP_FIXTURE_DIR = path.join(

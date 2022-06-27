@@ -1,4 +1,4 @@
-import { RPCClientAdapter } from "@paperclip-ui/common";
+import { RPCClientAdapter } from "@paperclip-lang/common";
 
 // eslint-disable-next-line
 const getPort = require("get-port");
@@ -8,7 +8,7 @@ import {
   Project,
   Server,
 } from "@tandem-ui/workspace/lib/server";
-import { LogLevel } from "@paperclip-ui/common";
+import { LogLevel } from "@paperclip-lang/common";
 import { ExprSource } from "@paperclip-ui/utils";
 import { EventEmitter } from "events";
 import { createListener } from "../../utils";

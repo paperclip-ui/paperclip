@@ -1,4 +1,4 @@
-import { Logger } from "@paperclip-ui/common";
+import { Logger } from "@paperclip-lang/common";
 import { EngineDelegate, isPaperclipFile } from "@paperclip-ui/core";
 import { EventEmitter } from "events";
 import { createListener } from "../../core/utils";

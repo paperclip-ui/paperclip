@@ -8,7 +8,7 @@ import {
 } from "../completion-items";
 import { addCompletionItemData } from "../utils";
 import { createEngineDelegate } from "@paperclip-ui/core";
-import { saveTmpFixtureFiles } from "@paperclip-ui/common/lib/test-utils";
+import { saveTmpFixtureFiles } from "@paperclip-lang/common/lib/test-utils";
 
 describe(__filename + "#", () => {
   [

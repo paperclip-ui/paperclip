@@ -1,4 +1,4 @@
-import { RPCClientAdapter } from "@paperclip-ui/common";
+import { RPCClientAdapter } from "@paperclip-lang/common";
 
 export class WorkspaceClientConnection {
   constructor(private _connection: RPCClientAdapter) {}

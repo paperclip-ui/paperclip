@@ -2,12 +2,11 @@ import {
   RPCClientAdapter,
   wsAdapter,
   createMockRPCServer,
-} from "@paperclip-ui/common";
-import { saveTmpFixtureFiles } from "@paperclip-ui/common/lib/test-utils";
+} from "@paperclip-lang/common";
+import { saveTmpFixtureFiles } from "@paperclip-lang/common/lib/test-utils";
 import { WorkspaceClient } from "@tandem-ui/workspace-client";
-import { mockDOMFactory } from "@paperclip-ui/web-renderer/lib/test/utils";
 import { start } from "../server";
-import { LogLevel } from "@paperclip-ui/common";
+import { LogLevel } from "@paperclip-lang/common";
 import * as ws from "ws";
 
 export type TestServer = {
@@ -48,7 +47,7 @@ export const createTestServer = async (
     },
     createConnection,
     createClient() {
-      return new WorkspaceClient(createConnection(), mockDOMFactory);
+      return new WorkspaceClient(createConnection());
     },
   };
 };

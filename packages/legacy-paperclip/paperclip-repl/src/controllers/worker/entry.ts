@@ -1,4 +1,4 @@
-import { LogLevel, RPCClientAdapter } from "@paperclip-ui/common";
+import { LogLevel, RPCClientAdapter } from "@paperclip-lang/common";
 import { Server } from "@tandem-ui/workspace/lib/server";
 import { WindowConnection } from "../worker-connection";
 // import { WindowConnection } from "../worker-connection";

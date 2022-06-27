@@ -1,7 +1,7 @@
 import express from "express";
 import * as http from "http";
 import cors from "cors";
-import { Logger } from "@paperclip-ui/common";
+import { Logger } from "@paperclip-lang/common";
 
 export const startHTTPServer = (
   port: number,

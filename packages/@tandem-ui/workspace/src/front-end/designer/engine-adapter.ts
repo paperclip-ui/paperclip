@@ -4,7 +4,7 @@ import { ProjectInfo, QuickSearchResult } from "@tandem-ui/designer/lib/state";
 import { setReaderMimetypes } from "fsbox";
 import { PAPERCLIP_MIME_TYPE } from "@paperclip-lang/core";
 import { WorkspaceClient } from "@tandem-ui/workspace-client";
-import { wsAdapter } from "@paperclip-ui/common";
+import { wsAdapter } from "@paperclip-lang/common";
 import { Project } from "@tandem-ui/workspace-client/lib/project";
 
 export type DesignerEngineOptions = {

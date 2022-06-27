@@ -1,17 +1,13 @@
 import {
   PAPERCLIP_MODULE_VERSION,
-  PCBaseElementChild,
   PCComponent,
   PCComponentChild,
   PCElement,
-  PCElementState,
   PCModule,
   PCModuleChild,
-  PCNode,
   PCOverridablePropertyName,
   PCOverride,
   PCSourceTagNames,
-  PCStyleOverride,
   PCTextNode,
   PCVariant,
   PCVariantTrigger,
@@ -19,7 +15,6 @@ import {
   PCVariantTriggerSourceType,
 } from "../dsl";
 import * as ast from "../parser/dsl/ast";
-import { parseDocument } from "../parser/dsl/parser";
 import * as crypto from "crypto";
 import { EMPTY_ARRAY, memoize } from "tandem-common";
 import * as path from "path";

@@ -1,5 +1,5 @@
 import { IConnection } from "@tandem-ui/designer/src/sagas/rpc/connection";
-import { remoteChannel } from "@paperclip-ui/common";
+import { remoteChannel } from "@paperclip-lang/common";
 
 const getFiles = remoteChannel<null, Record<string, string>>("getFiles");
 const getMainFile = remoteChannel<null, string>("getMainFile");

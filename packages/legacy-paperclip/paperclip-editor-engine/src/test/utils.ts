@@ -1,4 +1,4 @@
-import { createMockRPCServer, Logger, LogLevel } from "@paperclip-ui/common";
+import { createMockRPCServer, Logger, LogLevel } from "@paperclip-lang/common";
 import { EventEmitter } from "events";
 import { EditorHost } from "../host/host";
 import { createMockEngine } from "@paperclip-ui/core/lib/test/utils";

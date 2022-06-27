@@ -89,7 +89,7 @@
                 {
                   "id": "4325aac312614",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text2",
                   "value": "If you're able to reproduce this issue, please help us make the app better by ",
                   "style": {
                     "color": "var(--24ce1e4d482)",
@@ -123,7 +123,7 @@
                     {
                       "id": "2cb68e4e12630",
                       "name": "text",
-                      "label": "Text",
+                      "label": "Text3",
                       "value": "filing a bug ticket on GitHub.",
                       "style": {
                         "color": "var(--24ce1e4d13456)",
@@ -142,7 +142,7 @@
                 },
                 {
                   "id": "2cb68e4e12635",
-                  "label": "Element",
+                  "label": "Element2",
                   "is": "div",
                   "name": "element",
                   "attributes": {},

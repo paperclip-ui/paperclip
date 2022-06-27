@@ -293,7 +293,7 @@
             {
               "id": "c72e5283641",
               "name": "text",
-              "label": "Text",
+              "label": "Text1",
               "value": "property",
               "style": {},
               "children": [],
@@ -327,7 +327,7 @@
             {
               "id": "c72e5283645",
               "name": "text",
-              "label": "Text",
+              "label": "Text2",
               "value": "value",
               "style": {},
               "children": [],
@@ -495,7 +495,7 @@
                     {
                       "id": "850332f711260",
                       "name": "text",
-                      "label": "Text",
+                      "label": "Text3",
                       "value": "Inspector",
                       "style": {},
                       "children": [],

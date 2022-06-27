@@ -82,7 +82,7 @@
                 {
                   "id": "18a9cfc32807",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text1",
                   "value": "Configure Build",
                   "style": {},
                   "children": [],

@@ -374,7 +374,7 @@
             {
               "id": "1ecbd3745444",
               "name": "text",
-              "label": "Text",
+              "label": "Text1",
               "value": "Tandem Preview",
               "style": {},
               "children": [],
@@ -386,7 +386,7 @@
         {
           "id": "885720672882",
           "name": "text",
-          "label": "Text",
+          "label": "Text2",
           "value": "TODO - instructions here",
           "style": {},
           "children": [],

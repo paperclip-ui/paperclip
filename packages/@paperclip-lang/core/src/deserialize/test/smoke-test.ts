@@ -38,7 +38,7 @@ describe(__filename + "#", () => {
             style {
               color: red
             }
-            style if a {
+            style variant a {
               color: blue
             }
           }
@@ -77,7 +77,7 @@ describe(__filename + "#", () => {
           variant b (enabled: [true])
           render A {
             override el {
-              style if b {
+              style variant b {
                 color: blue
               }
             }
@@ -100,7 +100,7 @@ describe(__filename + "#", () => {
           variant b (enabled: [])
           render imp0.A {
             override bbb {
-              style if b {
+              style variant b {
                 color: blue
               }
             }
@@ -205,6 +205,22 @@ describe(__filename + "#", () => {
           render A {
             override {
               variant small (enabled: true)
+            }
+          }
+        }
+        `,
+      },
+    ],
+    [
+      `Can define text styles`,
+      {
+        "file:///entry.pc": `
+        public component A {
+          render div {
+            text "hello" {
+              style {
+                color: blue
+              }
             }
           }
         }

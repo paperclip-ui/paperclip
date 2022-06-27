@@ -29,7 +29,7 @@
             {
               "id": "c389e38220",
               "name": "text",
-              "label": "Text",
+              "label": "Text1",
               "value": "Cell\n",
               "style": {
                 "padding-left": "8",

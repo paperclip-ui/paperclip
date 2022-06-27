@@ -32,7 +32,7 @@
                 {
                   "id": "7149f8192506",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text1",
                   "value": "Label",
                   "style": {
                     "margin-left": "2px",
@@ -216,7 +216,7 @@
                     {
                       "id": "936f2927714",
                       "name": "text",
-                      "label": "Text",
+                      "label": "Text2",
                       "value": "Some content",
                       "style": {},
                       "children": [],

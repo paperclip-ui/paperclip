@@ -30,7 +30,7 @@
         {
           "id": "9f364d2139650",
           "name": "text",
-          "label": "Text",
+          "label": "Text1",
           "value": "Label",
           "style": {
             "font-weight": "500",

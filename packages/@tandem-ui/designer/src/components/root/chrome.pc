@@ -177,7 +177,7 @@
                     {
                       "id": "32ef79b7267",
                       "name": "text",
-                      "label": "Text",
+                      "label": "Text1",
                       "value": "app.tdproject",
                       "style": {
                         "display": "inline-block",
@@ -276,7 +276,7 @@
                 {
                   "id": "32ef79b7131",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text2",
                   "value": "Content",
                   "style": {},
                   "children": [],

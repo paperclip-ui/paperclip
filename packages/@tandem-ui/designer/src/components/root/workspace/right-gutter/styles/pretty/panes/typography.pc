@@ -707,7 +707,7 @@
                     {
                       "id": "b117fdbf558566",
                       "name": "text",
-                      "label": "Text",
+                      "label": "Text1",
                       "value": "Typography",
                       "style": {},
                       "children": [],

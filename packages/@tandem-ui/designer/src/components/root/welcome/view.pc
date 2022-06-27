@@ -163,7 +163,7 @@
             {
               "id": "692f56f3337",
               "name": "text",
-              "label": "Text",
+              "label": "Text1",
               "value": "New project type",
               "style": {},
               "children": [],
@@ -682,7 +682,7 @@
                 {
                   "id": "4cc9edbe663",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text2",
                   "value": "TODO:",
                   "style": {},
                   "children": [],
@@ -691,7 +691,7 @@
                 {
                   "id": "4cc9edbe669",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text3",
                   "value": "- Welcome screen for new users",
                   "style": {
                     "display": "block"
@@ -702,7 +702,7 @@
                 {
                   "id": "4cc9edbe671",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text4",
                   "value": "- Welcome screen should have \"display on start up\"",
                   "style": {
                     "display": "block"
@@ -781,7 +781,7 @@
                 {
                   "id": "4cc9edbe703",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text6",
                   "value": "Videos",
                   "style": {},
                   "children": [],
@@ -790,7 +790,7 @@
                 {
                   "id": "4cc9edbe701",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text7",
                   "value": "Documentation",
                   "style": {},
                   "children": [],
@@ -799,7 +799,7 @@
                 {
                   "id": "4cc9edbe699",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text8",
                   "value": "Updates",
                   "style": {},
                   "children": [],
@@ -808,7 +808,7 @@
                 {
                   "id": "4cc9edbe697",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text9",
                   "value": "Tutorial",
                   "style": {},
                   "children": [],
@@ -879,7 +879,7 @@
                     {
                       "id": "4cc9edbe689",
                       "name": "text",
-                      "label": "Text",
+                      "label": "Text10",
                       "value": "New...",
                       "style": {},
                       "children": [],
@@ -913,7 +913,7 @@
                     {
                       "id": "4cc9edbe687",
                       "name": "text",
-                      "label": "Text",
+                      "label": "Text11",
                       "value": "Open",
                       "style": {},
                       "children": [],

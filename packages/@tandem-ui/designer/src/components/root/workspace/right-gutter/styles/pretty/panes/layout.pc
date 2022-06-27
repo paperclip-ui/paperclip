@@ -54,7 +54,7 @@
                 {
                   "id": "b117fdbf273238",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text1",
                   "value": "layout",
                   "style": {},
                   "children": [],

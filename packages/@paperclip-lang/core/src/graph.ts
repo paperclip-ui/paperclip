@@ -99,18 +99,34 @@ export const deserializeDependencyGraph = (
   // TODO: delete me after things stabilize
   const dslGraph = mapValues(cache, (fileItem) => {
     try {
-      return JSON.parse(fileItem.content.toString("utf-8"));
+      return {
+        uri: fileItem.uri,
+        content: JSON.parse(new TextDecoder("utf-8").decode(fileItem.content)),
+      };
     } catch (e) {
-      return createPCModule();
+      return {
+        uri: fileItem.uri,
+        content: createPCModule(),
+      };
     }
   });
 
-  const astGraph = mapValues(dslGraph, (module, url) => {
-    // TODO - assume module is text source
-    return parseDocument(serializeModule(module, url, dslGraph));
+  const astGraph = mapValues(dslGraph, (dep) => {
+    const content = serializeModule(dep.content, dep.uri, dslGraph);
+
+    // // TODO - assume module is text source
+    if (dep.uri.includes("dropdown/view.pc")) {
+      console.log(content, module);
+    }
+
+    // console.log("PS", dep.uri, content);
+
+    return parseDocument(content);
   });
 
   const dslGraph2 = mapValues(astGraph, (doc, uri) => {
+    console.log("URI", uri);
+
     return {
       uri,
       content: deserializeModule(doc, uri, astGraph),

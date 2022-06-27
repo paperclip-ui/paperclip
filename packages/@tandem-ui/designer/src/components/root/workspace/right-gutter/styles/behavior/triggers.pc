@@ -31,7 +31,7 @@
                 {
                   "id": "8f20d2148422",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text1",
                   "value": "Triggers",
                   "style": {},
                   "children": [],
@@ -252,7 +252,7 @@
                 {
                   "id": "8f20d2148430",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text2",
                   "value": "Action",
                   "style": {
                     "width": "100%",
@@ -286,7 +286,7 @@
                 {
                   "id": "8f20d2148432",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text3",
                   "value": "Variant",
                   "style": {
                     "text-align": "center",
@@ -532,7 +532,7 @@
         {
           "id": "36c603e98133",
           "name": "text",
-          "label": "Text",
+          "label": "Text4",
           "value": "►",
           "style": {
             "display": "inline-block",

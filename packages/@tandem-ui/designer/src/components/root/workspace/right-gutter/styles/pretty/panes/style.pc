@@ -304,7 +304,7 @@
                             {
                               "id": "a06d2e8146706",
                               "name": "text",
-                              "label": "Text",
+                              "label": "Text1",
                               "value": "Inherit",
                               "style": {
                                 "margin-bottom": "4px",

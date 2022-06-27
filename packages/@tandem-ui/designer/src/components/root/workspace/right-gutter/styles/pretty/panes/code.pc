@@ -87,7 +87,7 @@
             {
               "id": "144aa5a18204",
               "name": "text",
-              "label": "Text",
+              "label": "Text1",
               "value": "Custom CSS",
               "style": {},
               "children": [],

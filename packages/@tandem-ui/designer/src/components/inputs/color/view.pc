@@ -100,16 +100,6 @@
               ],
               "metadata": {},
               "name": "plug"
-            },
-            {
-              "id": "e68983c8240615",
-              "propertyName": "style",
-              "targetIdPath": [
-                "d227ff68826765"
-              ],
-              "value": {},
-              "name": "override",
-              "children": []
             }
           ],
           "metadata": {

@@ -24,6 +24,7 @@ export const createTreeUtils = <TTree extends BasicTree>({
     const map = {
       [current.id]: current,
     };
+
     Object.assign(map, ...flattenShallow(current).map(getIdMap));
     return map;
   });

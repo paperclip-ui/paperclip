@@ -267,9 +267,11 @@ const translateNode = (node: PCNode, context: TranslateContext) => {
       context = addBuffer(` ${camelCase(node.label)}`, context);
     }
     context = addBuffer(
-      ` "${node.value.replace(/"/g, '\\"').trim()}"\n`,
+      ` "${node.value.replace(/"/g, '\\"').trim()}"`,
       context
     );
+
+    context = translateChildren(node, context);
   } else if (node.name === PCSourceTagNames.SLOT) {
     if (node.label) {
       context = addBuffer(`slot ${camelCase(node.label)}`, context);
@@ -366,7 +368,7 @@ const translateStyleOverride = (
     (getPCNode(override.variantId, context.graph) as PCVariant);
 
   context = addBuffer(
-    `style ${variant ? `if ${camelCase(variant.label)} ` : ""}{\n`,
+    `style ${variant ? `variant ${camelCase(variant.label)} ` : ""}{\n`,
     context
   );
   context = startBlock(context);
@@ -401,7 +403,10 @@ const translateStyleValues = (
 ) => {
   for (const key in style) {
     context = addBuffer(
-      `${key}: ${translateStyleValue(String(style[key]), context)}\n`,
+      `${key}: ${translateStyleValue(
+        String(style[key]).replace(/[\n\r]+/g, " "),
+        context
+      )}\n`,
       context
     );
   }
@@ -602,7 +607,6 @@ const translateOverrides = (
     if (bodyOverrides.length || styleOverrides.length) {
       context = addBuffer(` {\n`, context);
       context = startBlock(context);
-      console.log(bodyOverrides);
       for (const override of bodyOverrides) {
         if (override.propertyName === PCOverridablePropertyName.VARIANT) {
           for (const variantId in override.value) {

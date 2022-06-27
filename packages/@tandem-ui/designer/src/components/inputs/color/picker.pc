@@ -201,19 +201,7 @@
             "border-top": "1px solid var(--d8f6340b1442)"
           },
           "children": [
-            {
-              "id": "d7ae73f2333",
-              "variantId": "d7ae73f2167",
-              "propertyName": "style",
-              "targetIdPath": [
-                "db9643831"
-              ],
-              "value": {
-                "display": "none"
-              },
-              "name": "override",
-              "children": []
-            }
+            
           ],
           "metadata": {
             "bounds": {
@@ -223,7 +211,7 @@
               "bottom": 1416.2966411360896
             }
           },
-          "label": "Color Swatches"
+          "label": "Color Swatches Inst"
         },
         {
           "id": "d7ae73f2167",

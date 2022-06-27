@@ -284,7 +284,7 @@ const deserializeStyleOverride = (
   }
 
   let targetIdPath: string[] =
-    styleParent.kind == ast.ExpressionKind.Override
+    styleParent.kind == ast.ExpressionKind.Override && styleParent.target
       ? getInstanceRef(styleParent.target, instance, graph)
       : [];
 
@@ -475,12 +475,16 @@ const deserializeElement = (node: ast.Element, context: Context): PCElement => {
 };
 
 const deserializeTextNode = (node: ast.Text, context: Context): PCTextNode => {
+  const style = node.children.find(
+    (child) => child.kind === ast.ExpressionKind.Style
+  ) as ast.Style;
+
   return {
     id: getNodeId(node, context),
     name: PCSourceTagNames.TEXT,
     value: node.value,
     label: node.name,
-    style: {},
+    style: style ? deserializeStyleDeclarations(style) : {},
     children: [],
     metadata: {},
   };

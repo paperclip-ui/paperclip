@@ -210,7 +210,7 @@
                     {
                       "id": "decafdc72790",
                       "name": "text",
-                      "label": "Text",
+                      "label": "Text1",
                       "value": "Styles",
                       "style": {
                         "width": "100%"

@@ -19,7 +19,7 @@
             {
               "id": "d3dca34c812",
               "name": "text",
-              "label": "Text",
+              "label": "Text1",
               "value": "button",
               "style": {},
               "children": [],
@@ -36,7 +36,7 @@
             {
               "id": "d3dca34c2722",
               "name": "text",
-              "label": "Text",
+              "label": "Text2",
               "value": "Click to edit",
               "style": {},
               "children": [],
@@ -89,7 +89,7 @@
                 {
                   "id": "c00d8561190",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text3",
                   "value": "Click to edit",
                   "style": {},
                   "children": [],

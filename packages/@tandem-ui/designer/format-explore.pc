@@ -47,7 +47,7 @@
         {
           "id": "71d0d1f825",
           "name": "text",
-          "label": "Text",
+          "label": "Label text",
           "value": "Double click to edit",
           "style": {},
           "children": [],

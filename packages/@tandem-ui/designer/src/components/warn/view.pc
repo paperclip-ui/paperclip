@@ -41,7 +41,7 @@
             {
               "id": "5f48853345174",
               "name": "text",
-              "label": "Text",
+              "label": "Text1",
               "value": "This is an experimental feature",
               "style": {},
               "children": [],

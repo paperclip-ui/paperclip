@@ -21,7 +21,7 @@
         {
           "id": "8b8bbe2c859176",
           "name": "text",
-          "label": "Text",
+          "label": "Text1",
           "value": "menu item 1",
           "style": {
             "padding": "8px"

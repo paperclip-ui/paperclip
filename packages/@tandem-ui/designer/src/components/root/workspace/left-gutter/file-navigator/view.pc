@@ -44,7 +44,7 @@
                     {
                       "id": "5a14767c291815",
                       "name": "text",
-                      "label": "Text",
+                      "label": "Text1",
                       "value": "files",
                       "style": {},
                       "children": [],

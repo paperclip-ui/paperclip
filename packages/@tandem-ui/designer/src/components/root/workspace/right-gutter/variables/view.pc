@@ -55,7 +55,7 @@
                     {
                       "id": "66811b5c39404",
                       "name": "text",
-                      "label": "Text",
+                      "label": "Text1",
                       "value": "Colors",
                       "style": {},
                       "children": [],
@@ -896,7 +896,7 @@
                             {
                               "id": "4b46931a14275",
                               "name": "text",
-                              "label": "Text",
+                              "label": "Text2",
                               "value": "Name",
                               "style": {},
                               "children": [],
@@ -949,7 +949,7 @@
                             {
                               "id": "4b46931a304432",
                               "name": "text",
-                              "label": "Text",
+                              "label": "Text3",
                               "value": "Value",
                               "style": {},
                               "children": [],
@@ -1131,7 +1131,7 @@
         {
           "id": "7973c9598612",
           "name": "text",
-          "label": "Text",
+          "label": "Text4",
           "value": "You must define a global file in your project config before using variables.",
           "style": {
             "display": "none"

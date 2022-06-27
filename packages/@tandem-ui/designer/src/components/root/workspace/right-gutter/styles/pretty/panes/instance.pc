@@ -213,7 +213,7 @@
                     {
                       "id": "f657bb09171714",
                       "name": "text",
-                      "label": "Text",
+                      "label": "Text1",
                       "value": "Instance",
                       "style": {},
                       "children": [],

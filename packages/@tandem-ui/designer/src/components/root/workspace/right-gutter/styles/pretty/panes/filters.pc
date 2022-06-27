@@ -52,7 +52,7 @@
                 {
                   "id": "43fa80866967",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text1",
                   "value": "Filters",
                   "style": {},
                   "children": [],

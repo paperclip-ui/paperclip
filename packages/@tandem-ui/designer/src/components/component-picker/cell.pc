@@ -52,7 +52,7 @@
                 {
                   "id": "1d3c2e8470",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text2",
                   "value": "Component\n",
                   "style": {},
                   "children": [],

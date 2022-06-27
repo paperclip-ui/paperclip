@@ -43,7 +43,7 @@
                     {
                       "id": "d6261ad5197",
                       "name": "text",
-                      "label": "Text",
+                      "label": "Text1",
                       "value": "TODO\n",
                       "style": {},
                       "children": [],
@@ -130,7 +130,7 @@
                 {
                   "id": "97a34b151010441",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text2",
                   "value": "comment text here",
                   "style": {
                     "color": "#444",

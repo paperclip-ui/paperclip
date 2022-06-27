@@ -600,7 +600,7 @@
           },
           "children": [],
           "metadata": {},
-          "label": "Text"
+          "label": "Text1"
         },
         {
           "id": "50ae5f7b3",
@@ -647,7 +647,7 @@
         {
           "id": "50ae5f7b7",
           "name": "variant",
-          "label": "text",
+          "label": "text2",
           "isDefault": false,
           "children": [],
           "metadata": {}
@@ -985,7 +985,7 @@
                     {
                       "id": "60ea77f711",
                       "name": "text",
-                      "label": "Text",
+                      "label": "Text3",
                       "value": "Controllers\n",
                       "style": {},
                       "children": [],
@@ -1864,7 +1864,7 @@
                 {
                   "id": "80c8fafc2391",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text4",
                   "value": "label",
                   "style": {},
                   "children": [],
@@ -2165,7 +2165,7 @@
                     {
                       "id": "5a5fe4fa2336",
                       "name": "text",
-                      "label": "Text",
+                      "label": "Text5",
                       "value": "custom attributes",
                       "style": {},
                       "children": [],

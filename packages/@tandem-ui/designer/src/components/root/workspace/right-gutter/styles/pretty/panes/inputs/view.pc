@@ -228,7 +228,7 @@
                 {
                   "id": "9798784b2220",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text1",
                   "value": "css-property",
                   "style": {},
                   "children": [],

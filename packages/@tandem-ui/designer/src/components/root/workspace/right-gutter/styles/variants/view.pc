@@ -48,7 +48,7 @@
                     {
                       "id": "d31aa23826983",
                       "name": "text",
-                      "label": "Text",
+                      "label": "Text1",
                       "value": "Variant",
                       "style": {
                         "margin-bottom": "0px"

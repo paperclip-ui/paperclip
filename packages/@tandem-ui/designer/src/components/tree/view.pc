@@ -137,7 +137,7 @@
         {
           "id": "b34e7ef4147857",
           "name": "text",
-          "label": "Text",
+          "label": "Text1",
           "value": "Label",
           "style": {},
           "children": [],

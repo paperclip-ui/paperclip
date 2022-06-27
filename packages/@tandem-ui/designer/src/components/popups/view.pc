@@ -45,7 +45,7 @@
         {
           "id": "67d74e288",
           "name": "text",
-          "label": "Text",
+          "label": "Text1",
           "value": "Banner",
           "style": {},
           "children": [],

@@ -306,15 +306,17 @@ const getNSUrl = (
   documentUri: string,
   graph: ASTDependencyGraph
 ) => {
-  const instancePath = URL.fileURLToPath(documentUri);
+  const instancePath = fileURLToPath(documentUri);
 
   const filePath = path.resolve(
     path.dirname(instancePath),
     getImportByNS(ns, graph[documentUri]).path
   );
 
-  return URL.pathToFileURL(filePath).href;
+  return "file://" + filePath;
 };
+
+const fileURLToPath = (url) => url.replace("file://", "");
 
 export const getOwnerInstance = (
   node: Expression,

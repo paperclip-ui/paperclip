@@ -297,11 +297,17 @@ const parseExpression = (context: Context): ValueExpression => {
 };
 
 const parseArray = (context: Context): ArrayExpression => {
+  // console.log(context.tokenizer.getScanner().source.substring(context.tokenizer.getScanner().getPos()))
   const items: ValueExpression[] = [];
   context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS); // eat [
-  while (!(context.tokenizer.curr().kind & DSLTokenKind.SquareClose)) {
+
+  while (context.tokenizer.curr().kind !== DSLTokenKind.SquareClose) {
     items.push(parseExpression(context));
     context.tokenizer.eat(DSL_SUPERFLUOUS_TOKENS); // eat ]
+    const c = context.tokenizer.curr();
+    if (c.kind === DSLTokenKind.Comma) {
+      context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
+    }
   }
   context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
 
@@ -350,6 +356,7 @@ const parseText = (context: Context, before: string): Text => {
   const next = context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
   if (next.kind === DSLTokenKind.CurlyOpen) {
     children = parseTextChildren(context);
+    context.tokenizer.eat(DSL_SUPERFLUOUS_TOKENS);
   }
   return {
     id: context.nextID(),
@@ -374,7 +381,7 @@ const parseStyle = (context: Context, isPublic?: boolean): Style => {
   let name: string;
   let conditionNames: string[] = [];
   if (next.kind === DSLTokenKind.Keyword) {
-    if (next.value === "if") {
+    if (next.value === "variant") {
       conditionNames.push(
         context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS).value
       );

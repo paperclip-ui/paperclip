@@ -377,7 +377,7 @@
                 {
                   "id": "3fb9d47e40",
                   "name": "text",
-                  "label": "Text",
+                  "label": "Text1",
                   "value": "box shadows\n",
                   "style": {},
                   "children": [

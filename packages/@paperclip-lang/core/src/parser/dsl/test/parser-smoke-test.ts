@@ -62,7 +62,7 @@ describe(__filename + "#", () => {
       `style test {
         color: red
         
-      } style if something {
+      } style variant something {
         color:blue
       }`,
     ],
@@ -183,6 +183,12 @@ describe(__filename + "#", () => {
             include test
           }
         }
+      }`,
+    ],
+    [
+      `Can parse a doc with multiple items in the array`,
+      `component Test {
+        variant a (on: true, enabled: [true, PseudoElement.Hover])
       }`,
     ],
   ].forEach(([title, source]) => {

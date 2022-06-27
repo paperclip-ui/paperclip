@@ -33,7 +33,7 @@
               "children": [
                 {
                   "id": "d31aa23823126",
-                  "label": "Element",
+                  "label": "Element1",
                   "is": "div",
                   "name": "element",
                   "attributes": {},
@@ -63,7 +63,7 @@
                     },
                     {
                       "id": "4a49eea9109443",
-                      "label": "Element",
+                      "label": "Element2",
                       "is": "div",
                       "name": "element",
                       "attributes": {},

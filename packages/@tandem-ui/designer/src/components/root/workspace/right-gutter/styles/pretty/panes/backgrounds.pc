@@ -470,7 +470,7 @@
           "children": [
             {
               "id": "b117fdbf563941",
-              "label": "Element",
+              "label": "Element1",
               "is": "div",
               "name": "element",
               "attributes": {},
@@ -496,7 +496,7 @@
                 },
                 {
                   "id": "8e601d2b320801",
-                  "label": "Element",
+                  "label": "Element2",
                   "is": "div",
                   "name": "element",
                   "attributes": {},

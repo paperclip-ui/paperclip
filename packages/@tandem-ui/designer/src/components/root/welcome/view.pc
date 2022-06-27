@@ -176,7 +176,7 @@
             },
             {
               "id": "692f56f3340",
-              "label": "Element",
+              "label": "Element1",
               "is": "div",
               "name": "element",
               "attributes": {},
@@ -268,7 +268,7 @@
                 },
                 {
                   "id": "e3cff01b850",
-                  "label": "Element",
+                  "label": "Element2",
                   "is": "div",
                   "name": "element",
                   "attributes": {},
@@ -627,7 +627,7 @@
     },
     {
       "id": "1fb4e790526",
-      "label": "Element",
+      "label": "Element3",
       "is": "div",
       "name": "element",
       "attributes": {},
@@ -670,7 +670,7 @@
           "children": [
             {
               "id": "4cc9edbe659",
-              "label": "Element",
+              "label": "Element4",
               "is": "div",
               "name": "element",
               "attributes": {},
@@ -730,7 +730,7 @@
     },
     {
       "id": "4cc9edbe673",
-      "label": "Element",
+      "label": "Element5",
       "is": "div",
       "name": "element",
       "attributes": {},

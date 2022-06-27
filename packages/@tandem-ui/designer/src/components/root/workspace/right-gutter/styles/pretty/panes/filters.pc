@@ -38,7 +38,7 @@
           "children": [
             {
               "id": "43fa80866959",
-              "label": "Element",
+              "label": "Element1",
               "is": "div",
               "name": "element",
               "attributes": {},
@@ -65,7 +65,7 @@
                 },
                 {
                   "id": "43fa80866971",
-                  "label": "Element",
+                  "label": "Element2",
                   "is": "div",
                   "name": "element",
                   "attributes": {},

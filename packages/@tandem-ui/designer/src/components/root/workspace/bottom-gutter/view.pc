@@ -46,7 +46,7 @@
         },
         {
           "id": "b597af43979",
-          "label": "Element",
+          "label": "Element1",
           "is": "div",
           "name": "element",
           "attributes": {},
@@ -160,7 +160,7 @@
         },
         {
           "id": "694404cc2675",
-          "label": "Element",
+          "label": "Element2",
           "is": "div",
           "name": "element",
           "attributes": {},

@@ -130,7 +130,7 @@
                   "children": [
                     {
                       "id": "e6638364114",
-                      "label": "Element",
+                      "label": "Element1",
                       "is": "div",
                       "name": "element",
                       "attributes": {},
@@ -148,29 +148,6 @@
               ],
               "metadata": {},
               "name": "plug"
-            },
-            {
-              "id": "eec65c3e5051",
-              "propertyName": "style",
-              "targetIdPath": [
-                "806ffd0684"
-              ],
-              "value": {
-                "min-width": "100px",
-                "box-shadow": "0px 2px 2px 1px rgba(0, 0, 0, 0.19)"
-              },
-              "name": "override",
-              "children": []
-            },
-            {
-              "id": "bc891e7571",
-              "propertyName": "style",
-              "targetIdPath": [
-                "2c83e997741"
-              ],
-              "value": {},
-              "name": "override",
-              "children": []
             }
           ],
           "metadata": {},
@@ -274,7 +251,7 @@
           "children": [
             {
               "id": "e691a1d915159",
-              "label": "Element",
+              "label": "Element2",
               "is": "div",
               "name": "element",
               "attributes": {},

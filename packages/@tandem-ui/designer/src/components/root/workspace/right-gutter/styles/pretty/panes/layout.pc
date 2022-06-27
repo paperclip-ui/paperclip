@@ -43,7 +43,7 @@
           "children": [
             {
               "id": "b117fdbf271909",
-              "label": "Element",
+              "label": "Element2",
               "is": "div",
               "name": "element",
               "attributes": {},

@@ -126,7 +126,7 @@
     },
     {
       "id": "f91245fc598",
-      "label": "Element",
+      "label": "Element2",
       "is": "div",
       "name": "element",
       "attributes": {},

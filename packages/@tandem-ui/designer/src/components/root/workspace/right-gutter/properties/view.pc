@@ -567,7 +567,7 @@
               "bottom": 526
             }
           },
-          "label": "Element"
+          "label": "Element1"
         },
         {
           "id": "68832d8a200758",
@@ -605,7 +605,7 @@
         {
           "id": "50ae5f7b3",
           "name": "variant",
-          "label": "element",
+          "label": "element2",
           "isDefault": false,
           "children": [],
           "metadata": {}
@@ -971,7 +971,7 @@
               "children": [
                 {
                   "id": "60ea77f79",
-                  "label": "Element",
+                  "label": "Element3",
                   "is": "div",
                   "name": "element",
                   "attributes": {},
@@ -998,7 +998,7 @@
                     },
                     {
                       "id": "60ea77f718",
-                      "label": "Element",
+                      "label": "Element4",
                       "is": "div",
                       "name": "element",
                       "attributes": {},
@@ -1460,7 +1460,7 @@
         },
         {
           "id": "3acea128129773",
-          "label": "Element",
+          "label": "Element5",
           "is": "div",
           "name": "element",
           "attributes": {},
@@ -1509,7 +1509,7 @@
         },
         {
           "id": "3acea128129772",
-          "label": "Element",
+          "label": "Element6",
           "is": "div",
           "name": "element",
           "attributes": {},
@@ -1628,7 +1628,7 @@
               "children": [
                 {
                   "id": "891523ff46322",
-                  "label": "Element",
+                  "label": "Element7",
                   "is": "div",
                   "name": "element",
                   "attributes": {},
@@ -1914,7 +1914,7 @@
       "children": [
         {
           "id": "80c8fafc2275",
-          "label": "Element",
+          "label": "Element8",
           "is": "div",
           "name": "element",
           "attributes": {},
@@ -2118,7 +2118,7 @@
     },
     {
       "id": "5a5fe4fa2318",
-      "label": "Element",
+      "label": "Element9",
       "is": "div",
       "name": "element",
       "attributes": {},
@@ -2152,7 +2152,7 @@
               "children": [
                 {
                   "id": "5a5fe4fa2332",
-                  "label": "Element",
+                  "label": "Element10",
                   "is": "div",
                   "name": "element",
                   "attributes": {},
@@ -2178,7 +2178,7 @@
                     },
                     {
                       "id": "5a5fe4fa2338",
-                      "label": "Element",
+                      "label": "Element11",
                       "is": "f27782548182",
                       "name": "component-instance",
                       "attributes": {},

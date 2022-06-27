@@ -198,7 +198,7 @@
                 },
                 {
                   "id": "decafdc71418",
-                  "label": "Element",
+                  "label": "Element1",
                   "is": "div",
                   "name": "element",
                   "attributes": {},
@@ -220,7 +220,7 @@
                     },
                     {
                       "id": "b117fdbf37038",
-                      "label": "Element",
+                      "label": "Element2",
                       "is": "div",
                       "name": "element",
                       "attributes": {},

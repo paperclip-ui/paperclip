@@ -40,7 +40,7 @@
               "children": [
                 {
                   "id": "66811b5c52339",
-                  "label": "Element",
+                  "label": "Element6",
                   "is": "div",
                   "name": "element",
                   "attributes": {},
@@ -165,7 +165,7 @@
                         {
                           "id": "7d27fc31180",
                           "is": "f97289c6592",
-                          "label": "Element",
+                          "label": "Element1",
                           "name": "component-instance",
                           "attributes": {},
                           "style": {},
@@ -176,7 +176,7 @@
                         {
                           "id": "f97289c6770",
                           "is": "f97289c6592",
-                          "label": "Element",
+                          "label": "Element2",
                           "name": "component-instance",
                           "attributes": {},
                           "style": {},
@@ -187,7 +187,7 @@
                         {
                           "id": "f97289c6761",
                           "is": "f97289c6592",
-                          "label": "Element",
+                          "label": "Element3",
                           "name": "component-instance",
                           "attributes": {},
                           "style": {},
@@ -198,7 +198,7 @@
                         {
                           "id": "f97289c6752",
                           "is": "f97289c6592",
-                          "label": "Element",
+                          "label": "Element4",
                           "name": "component-instance",
                           "attributes": {},
                           "style": {},
@@ -209,7 +209,7 @@
                         {
                           "id": "7d27fc31198",
                           "is": "f97289c6592",
-                          "label": "Element",
+                          "label": "Element5",
                           "name": "component-instance",
                           "attributes": {},
                           "style": {},

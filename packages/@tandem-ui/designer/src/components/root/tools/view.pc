@@ -288,7 +288,7 @@
           "children": [
             {
               "id": "d8b0f2c217788",
-              "label": "Element",
+              "label": "Element1",
               "is": "def97aeb17794",
               "name": "component-instance",
               "attributes": {},
@@ -314,7 +314,7 @@
             },
             {
               "id": "d99c0d09326",
-              "label": "Element",
+              "label": "Element2",
               "is": "def97aeb17794",
               "name": "component-instance",
               "attributes": {},
@@ -343,7 +343,7 @@
             },
             {
               "id": "8f7fdf07880",
-              "label": "Element",
+              "label": "Element3",
               "is": "def97aeb17794",
               "name": "component-instance",
               "attributes": {},

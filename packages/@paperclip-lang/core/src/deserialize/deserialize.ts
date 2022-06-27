@@ -318,6 +318,8 @@ const getInstanceRef = (
       ) as ast.Component;
     }
 
+    console.log(name);
+
     return (ctx = ast.getExprByName(name, ctx)).id;
   });
 };

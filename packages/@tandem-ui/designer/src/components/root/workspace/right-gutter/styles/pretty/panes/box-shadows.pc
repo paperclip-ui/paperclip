@@ -363,7 +363,7 @@
           "children": [
             {
               "id": "3fb9d47e38",
-              "label": "Element",
+              "label": "Element1",
               "is": "div",
               "name": "element",
               "attributes": {},
@@ -381,52 +381,6 @@
                   "value": "box shadows\n",
                   "style": {},
                   "children": [
-                    {
-                      "id": "3fb9d47e42",
-                      "is": "38fc2a476190",
-                      "name": "component-instance",
-                      "attributes": {},
-                      "style": {},
-                      "children": [
-                        {
-                          "id": "3fb9d47e43",
-                          "is": "8e601d2b23050",
-                          "name": "component-instance",
-                          "attributes": {},
-                          "style": {},
-                          "children": [],
-                          "metadata": {
-                            "bounds": {
-                              "left": 145,
-                              "top": 1503,
-                              "right": 545,
-                              "bottom": 1803
-                            }
-                          }
-                        },
-                        {
-                          "id": "3fb9d47e45",
-                          "label": "controls",
-                          "is": "div",
-                          "name": "element",
-                          "attributes": {},
-                          "style": {
-                            "box-sizing": "border-box",
-                            "display": "block"
-                          },
-                          "children": [],
-                          "metadata": {}
-                        }
-                      ],
-                      "metadata": {
-                        "bounds": {
-                          "left": 607,
-                          "top": 358,
-                          "right": 1007,
-                          "bottom": 658
-                        }
-                      }
-                    }
                   ],
                   "metadata": {},
                   "styleMixins": {
@@ -437,7 +391,7 @@
                 },
                 {
                   "id": "3fb9d47e46",
-                  "label": "Element",
+                  "label": "Element2",
                   "is": "div",
                   "name": "element",
                   "attributes": {},

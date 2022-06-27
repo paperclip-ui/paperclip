@@ -209,6 +209,13 @@ const parseComponentBody = bodyParser<ComponentBodyExpression>((context) => {
   } else if (keyword.value === "render") {
     return parseRender(context);
   }
+
+  console.log(
+    "DIN",
+    context.tokenizer
+      .getScanner()
+      .source.substring(context.tokenizer.getScanner().getPos())
+  );
 });
 
 const parseVariant = (context: Context): Variant => {

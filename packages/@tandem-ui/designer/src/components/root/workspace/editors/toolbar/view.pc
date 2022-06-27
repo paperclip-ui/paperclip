@@ -411,6 +411,7 @@
             "f4e04d3116": true
           },
           "is": "fde5849e96847",
+          "label": "Inst",
           "name": "component-instance",
           "attributes": {},
           "style": {
@@ -471,6 +472,7 @@
           },
           "is": "fde5849e96847",
           "name": "component-instance",
+          "label": "inst2",
           "attributes": {},
           "style": {},
           "children": [

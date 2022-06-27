@@ -41,7 +41,7 @@
               "children": [
                 {
                   "id": "66811b5c39388",
-                  "label": "Element",
+                  "label": "Element1",
                   "is": "div",
                   "name": "element",
                   "attributes": {},
@@ -68,7 +68,7 @@
                     },
                     {
                       "id": "66811b5c39412",
-                      "label": "Element",
+                      "label": "Element2",
                       "is": "div",
                       "name": "element",
                       "attributes": {},

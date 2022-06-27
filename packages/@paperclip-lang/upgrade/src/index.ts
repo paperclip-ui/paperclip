@@ -42,8 +42,22 @@ export const upgradeProject = async ({ projectFilePath }: UpgradeOptions) => {
 
 const sanityCheck = (graph: Record<string, string>) => {
   // temporary sanity check about serializing
-  const astGraph = mapValues(graph, (content) => parseDocument(content));
-  mapValues(astGraph, (ast, uri) => deserializeModule(ast, uri, astGraph));
+  const astGraph = mapValues(graph, (content, uri) => {
+    try {
+      return parseDocument(content);
+    } catch (e) {
+      console.error(`Failed to parse ${uri}`);
+      throw e;
+    }
+  });
+  mapValues(astGraph, (ast, uri) => {
+    try {
+      return deserializeModule(ast, uri, astGraph);
+    } catch (e) {
+      console.error(`Failed to serialize ${uri}`);
+      throw e;
+    }
+  });
 };
 
 const pruneGraph = (graph: DependencyGraph) => {

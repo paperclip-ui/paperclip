@@ -127,7 +127,7 @@
     },
     {
       "id": "5a5fe4fa441",
-      "label": "Element",
+      "label": "Element1",
       "is": "div",
       "name": "element",
       "attributes": {},

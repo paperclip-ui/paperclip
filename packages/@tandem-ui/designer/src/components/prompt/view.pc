@@ -24,7 +24,7 @@
       "children": [
         {
           "id": "9f364d217179",
-          "label": "Element",
+          "label": "Element1",
           "is": "div",
           "name": "element",
           "attributes": {},
@@ -81,7 +81,7 @@
             },
             {
               "id": "9f364d2139202",
-              "label": "Element",
+              "label": "Element3",
               "is": "div",
               "name": "element",
               "attributes": {},
@@ -223,7 +223,7 @@
         },
         {
           "id": "81d340df1447",
-          "label": "Element",
+          "label": "Element4",
           "is": "div",
           "name": "element",
           "attributes": {},

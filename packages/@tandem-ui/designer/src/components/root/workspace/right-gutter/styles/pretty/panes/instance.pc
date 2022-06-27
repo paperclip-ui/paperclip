@@ -199,7 +199,7 @@
               "children": [
                 {
                   "id": "f657bb09256379",
-                  "label": "Element",
+                  "label": "Element1",
                   "is": "div",
                   "name": "element",
                   "attributes": {},

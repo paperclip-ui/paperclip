@@ -17,7 +17,7 @@
           "children": [
             {
               "id": "8f20d2148421",
-              "label": "Element",
+              "label": "Element1",
               "is": "div",
               "name": "element",
               "attributes": {},
@@ -44,7 +44,7 @@
                 },
                 {
                   "id": "8f20d2148423",
-                  "label": "Element",
+                  "label": "Element2",
                   "is": "div",
                   "name": "element",
                   "attributes": {},
@@ -268,7 +268,7 @@
                 },
                 {
                   "id": "8f20d2148431",
-                  "label": "Element",
+                  "label": "Element3",
                   "is": "div",
                   "name": "element",
                   "attributes": {},

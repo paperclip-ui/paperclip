@@ -533,7 +533,7 @@
         {
           "id": "7b7795223391",
           "name": "variant",
-          "label": "element",
+          "label": "element2",
           "isDefault": false,
           "children": [],
           "metadata": {}
@@ -758,7 +758,7 @@
     },
     {
       "id": "7b7795221533",
-      "label": "Element",
+      "label": "Element1",
       "is": "div",
       "name": "element",
       "attributes": {},

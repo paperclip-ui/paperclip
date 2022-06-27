@@ -222,7 +222,7 @@
           "children": [
             {
               "id": "308dd31376",
-              "label": "Element",
+              "label": "Element1",
               "is": "div",
               "name": "element",
               "attributes": {},
@@ -248,7 +248,7 @@
                 },
                 {
                   "id": "a4d4c3d71",
-                  "label": "Element",
+                  "label": "Element2",
                   "is": "div",
                   "name": "element",
                   "attributes": {},

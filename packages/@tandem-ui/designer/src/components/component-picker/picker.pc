@@ -921,7 +921,7 @@
     },
     {
       "id": "5c5f499e426",
-      "label": "Element",
+      "label": "Element1",
       "is": "div",
       "name": "element",
       "attributes": {},

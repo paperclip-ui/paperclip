@@ -540,12 +540,8 @@ const translateOverrides = (
     const targetPath = override.targetIdPath
       .map((idPath) => {
         const node = getPCNode(idPath, context.graph) as PCVisibleNode;
-        if (!node) {
-          return null;
-        }
         return camelCase(node.label);
       })
-      .filter(Boolean)
       .join(".");
 
     // skip overrides that are on the instance itself

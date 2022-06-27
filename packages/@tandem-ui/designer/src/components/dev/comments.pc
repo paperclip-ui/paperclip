@@ -18,7 +18,7 @@
           "children": [
             {
               "id": "d6261ad5195",
-              "label": "Element",
+              "label": "Element1",
               "is": "ul",
               "name": "element",
               "attributes": {},
@@ -32,7 +32,7 @@
               "children": [
                 {
                   "id": "d6261ad5196",
-                  "label": "Element",
+                  "label": "Element2",
                   "is": "li",
                   "name": "element",
                   "attributes": {},
@@ -95,7 +95,7 @@
       "children": [
         {
           "id": "97a34b151010438",
-          "label": "Element",
+          "label": "Element3",
           "is": "div",
           "name": "element",
           "attributes": {},
@@ -113,7 +113,7 @@
         },
         {
           "id": "97a34b151010440",
-          "label": "Element",
+          "label": "Element4",
           "is": "div",
           "name": "element",
           "attributes": {},

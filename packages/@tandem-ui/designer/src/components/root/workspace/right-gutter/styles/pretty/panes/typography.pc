@@ -519,7 +519,7 @@
                 },
                 {
                   "id": "647e59ac32628",
-                  "label": "Element",
+                  "label": "Element1",
                   "is": "div",
                   "name": "element",
                   "attributes": {},
@@ -686,7 +686,7 @@
           "children": [
             {
               "id": "b117fdbf555893",
-              "label": "Element",
+              "label": "Element2",
               "is": "div",
               "name": "element",
               "attributes": {},
@@ -694,7 +694,7 @@
               "children": [
                 {
                   "id": "b117fdbf558565",
-                  "label": "Element",
+                  "label": "Element3",
                   "is": "div",
                   "name": "element",
                   "attributes": {},

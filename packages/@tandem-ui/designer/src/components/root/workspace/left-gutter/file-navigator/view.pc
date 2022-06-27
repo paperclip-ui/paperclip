@@ -31,7 +31,7 @@
               "children": [
                 {
                   "id": "5a14767c291814",
-                  "label": "Element",
+                  "label": "Element1",
                   "is": "div",
                   "name": "element",
                   "attributes": {},
@@ -168,7 +168,7 @@
                       "children": [
                         {
                           "id": "5a14767c291820",
-                          "label": "Element",
+                          "label": "Element2",
                           "is": "div",
                           "name": "element",
                           "attributes": {},

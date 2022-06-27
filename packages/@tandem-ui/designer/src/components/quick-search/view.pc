@@ -457,7 +457,7 @@
         },
         {
           "id": "63257bfd1978827",
-          "label": "Element",
+          "label": "Element1",
           "is": "div",
           "name": "element",
           "attributes": {},
@@ -477,27 +477,6 @@
               "attributes": {},
               "style": {},
               "children": [
-                {
-                  "id": "63257bfd1978829",
-                  "propertyName": "style",
-                  "targetIdPath": [
-                    "33e083be5",
-                    "808486bb16"
-                  ],
-                  "value": {},
-                  "name": "override",
-                  "children": []
-                },
-                {
-                  "id": "63257bfd1978830",
-                  "propertyName": "style",
-                  "targetIdPath": [
-                    "33e083be5"
-                  ],
-                  "value": {},
-                  "name": "override",
-                  "children": []
-                }
               ],
               "metadata": {
                 "bounds": {

@@ -11,7 +11,7 @@ describe(__dirname + "#", () => {
       `component Test`,
       [
         token(DSLTokenKind.Keyword, "component"),
-        token(DSLTokenKind.Whitespace, " "),
+        token(DSLTokenKind.Space, " "),
         token(DSLTokenKind.Keyword, "Test"),
       ],
     ],

@@ -246,6 +246,23 @@ describe(__filename + "#", () => {
         `,
       },
     ],
+    [
+      `Can parse multiple style declarations`,
+      {
+        "file:///entry.pc": `
+        public component B {
+          render div
+        }
+        public component A {
+          render div {
+            style {
+              color: red
+            }
+          }
+        }
+        `,
+      },
+    ],
   ].forEach(([title, sourceGraph]: any) => {
     it(title, () => {
       const dslGraph: DependencyGraph = {};

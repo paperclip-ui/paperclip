@@ -1,7 +1,7 @@
 import { UnexpectedTokenError } from "./errors";
 import { StringScanner } from "../base/string-scanner";
 import { negate } from "lodash";
-import { isDigit, isWhitespace } from "./utils";
+import { isDigit, isNewLine, isWhitespace } from "./utils";
 import { BaseToken } from "./state";
 
 export abstract class BaseTokenizer<TTokenKind extends number> {
@@ -87,6 +87,9 @@ export const scanString = (scanner: StringScanner, chr: string) => {
 
 export const scanWhitespace = (scanner: StringScanner) => {
   return scanner.scanUntil(negate(isWhitespace));
+};
+export const scanNewLine = (scanner: StringScanner) => {
+  return scanner.scanUntil(negate(isNewLine));
 };
 
 export const scanNumberValue = (scanner: StringScanner) => {

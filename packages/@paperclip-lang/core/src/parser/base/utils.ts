@@ -11,9 +11,12 @@ export const isLetter = (value: string) => {
 export const isLetterOrDigit = (value: string) =>
   isLetter(value) || isDigit(value);
 
-export const isWhitespace = (value: string) => {
+export const isWhitespace = (value: string) =>
+  isSpace(value) || isNewLine(value);
+
+export const isSpace = (value: string) => {
   const c = value.charCodeAt(0);
-  return c === 9 || c === 32 || isNewLine(value);
+  return c === 9 || c === 32;
 };
 
 export const isNewLine = (value: string) => {

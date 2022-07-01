@@ -34,6 +34,7 @@ import {
   DSLTokenizer,
   DSLTokenKind,
   DSL_SUPERFLUOUS_TOKENS,
+  DSL_WHITESPACE_TOKENS,
 } from "./tokenizer";
 import { isDocComment, parseDocComment } from "../docco/parser";
 import { DocComment } from "../docco/ast";
@@ -74,7 +75,7 @@ const parseDocumentExpressions = (context: Context) => {
   const expressions: DocumentExpression[] = [];
   while (!context.tokenizer.isEOF()) {
     context.tokenizer.eat(
-      DSLTokenKind.Whitespace | DSLTokenKind.SingleLineComment
+      DSL_WHITESPACE_TOKENS | DSLTokenKind.SingleLineComment
     );
     expressions.push(parseDocumentExpression(context));
   }
@@ -90,12 +91,12 @@ const parseDocumentExpression = (context: Context): DocumentExpression => {
     if (isDocComment(curr.value)) {
       docComment = parseDocComment(curr.value, context.nextID);
     }
-    curr = context.tokenizer.nextEat(DSLTokenKind.Whitespace);
+    curr = context.tokenizer.nextEat(DSL_WHITESPACE_TOKENS);
   }
 
   if (curr.value === "public") {
     isPublic = true;
-    curr = context.tokenizer.nextEat(DSLTokenKind.Whitespace);
+    curr = context.tokenizer.nextEat(DSL_WHITESPACE_TOKENS);
   }
 
   if (curr.value === "component") {
@@ -299,7 +300,6 @@ const parseExpression = (context: Context): ValueExpression => {
 };
 
 const parseArray = (context: Context): ArrayExpression => {
-  // console.log(context.tokenizer.getScanner().source.substring(context.tokenizer.getScanner().getPos()))
   const items: ValueExpression[] = [];
   context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS); // eat [
 
@@ -427,7 +427,6 @@ const parseStyleInclude = (context: Context): StyleInclude => {
 
 const parseStyleDeclaration = (context: Context): StyleDeclaration => {
   let name: string = "";
-  console.log(context.tokenizer.getLocation());
   while (context.tokenizer.curr().kind !== DSLTokenKind.Colon) {
     name += context.tokenizer.curr().value;
     context.tokenizer.next();
@@ -459,7 +458,6 @@ const parseStyleDeclarationValue = (context: Context) => {
 };
 
 const parseElementName = (context: Context): ElementName => {
-  console.log("P REF");
   const parts = parseRef(context).path;
   if (parts.length === 1) {
     return { name: parts[0] };
@@ -471,6 +469,7 @@ const parseElementName = (context: Context): ElementName => {
 const parseElement = (context: Context): Element => {
   const tagName = parseElementName(context);
   let name: string;
+  context.tokenizer.eat(DSLTokenKind.Space);
   let next = context.tokenizer.curr();
   let children: ElementChild[] = EMPTY_ARRAY;
   let parameters: Parameter[] = EMPTY_ARRAY;
@@ -519,6 +518,7 @@ const parseRef = (context: Context): Reference => {
     path.push(context.tokenizer.next().value);
     next = context.tokenizer.next();
   }
+  context.tokenizer.eat(DSLTokenKind.Space);
 
   return {
     id: context.nextID(),

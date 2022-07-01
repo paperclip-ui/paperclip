@@ -3,6 +3,7 @@ import { UnknownTokenError } from "../base/errors";
 import { BaseToken } from "../base/state";
 import {
   BaseTokenizer,
+  scanNewLine,
   scanNumberValue,
   scanString,
   scanWhitespace,
@@ -12,6 +13,8 @@ import {
   isDigit,
   isLetter,
   isLetterOrDigit,
+  isNewLine,
+  isSpace,
   isWhitespace,
 } from "../base/utils";
 
@@ -34,17 +37,21 @@ export enum DSLTokenKind {
   Comma = 1 << 14,
   At = 1 << 15,
   String = 1 << 16,
-  Whitespace = 1 << 17,
-  Minus = 1 << 18,
-  Percent = 1 << 19,
-  Pound = 1 << 20,
-  Char = 1 << 21,
+  Space = 1 << 17,
+  NewLine = 1 << 18,
+  Minus = 1 << 19,
+  Percent = 1 << 20,
+  Pound = 1 << 21,
+  Char = 1 << 22,
 }
 
 export const DSL_SUPERFLUOUS_TOKENS =
-  DSLTokenKind.Whitespace |
+  DSLTokenKind.Space |
+  DSLTokenKind.NewLine |
   DSLTokenKind.SingleLineComment |
   DSLTokenKind.MultiLineComment;
+
+export const DSL_WHITESPACE_TOKENS = DSLTokenKind.Space | DSLTokenKind.NewLine;
 
 export type Token = BaseToken<DSLTokenKind>;
 
@@ -141,11 +148,12 @@ export class DSLTokenizer extends BaseTokenizer<DSLTokenKind> {
       return token(DSLTokenKind.Minus, chr);
     }
 
-    if (isWhitespace(chr)) {
-      return token(
-        DSLTokenKind.Whitespace,
-        chr + scanWhitespace(this._scanner)
-      );
+    if (isNewLine(chr)) {
+      return token(DSLTokenKind.NewLine, chr);
+    }
+
+    if (isSpace(chr)) {
+      return token(DSLTokenKind.Space, chr);
     }
 
     if (isLetter(chr)) {

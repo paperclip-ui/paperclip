@@ -1,6 +1,6 @@
-import { isNumber, negate } from "lodash";
+import { negate } from "lodash";
+import { BaseToken } from "../base/state";
 import {
-  BaseToken,
   BaseTokenizer,
   scanNumberValue,
   scanWhitespace,

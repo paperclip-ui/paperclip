@@ -2,11 +2,7 @@ import { UnexpectedTokenError } from "./errors";
 import { StringScanner } from "../base/string-scanner";
 import { negate } from "lodash";
 import { isDigit, isWhitespace } from "./utils";
-
-export type BaseToken<TKind extends number> = {
-  kind: TKind;
-  value: string;
-};
+import { BaseToken } from "./state";
 
 export abstract class BaseTokenizer<TTokenKind extends number> {
   protected _curr: BaseToken<TTokenKind>;
@@ -17,15 +13,12 @@ export abstract class BaseTokenizer<TTokenKind extends number> {
     return this._scanner;
   }
 
-  isEOF() {
-    return this._scanner.isEOF();
+  getLocation() {
+    return this._scanner.getLocation();
   }
 
-  peekEat(kind: number) {
-    const pos = this._scanner.getPos();
-    const ws = this.eat(kind);
-    this._scanner.setPos(pos);
-    return ws;
+  isEOF() {
+    return this._scanner.isEOF();
   }
 
   eat(kind: number) {
@@ -42,7 +35,7 @@ export abstract class BaseTokenizer<TTokenKind extends number> {
   currValue(kind: number) {
     const token = this._curr;
     if (!(kind & token.kind)) {
-      throw new UnexpectedTokenError(token.value);
+      throw new UnexpectedTokenError(token.value, this._scanner.getLocation());
     }
     return this._curr.value;
   }

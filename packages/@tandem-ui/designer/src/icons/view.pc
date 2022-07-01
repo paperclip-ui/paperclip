@@ -44,6 +44,7 @@
         },
         {
           "id": "64740a7710",
+          "label": "Element 122",
           "is": "path",
           "name": "element",
           "attributes": {
@@ -713,6 +714,7 @@
           "children": [
             {
               "id": "289d8e3439",
+              "label": "Element 12",
               "is": "polygon",
               "name": "element",
               "attributes": {
@@ -2142,6 +2144,7 @@
       "children": [
         {
           "id": "8bf103e214",
+          "label": "node 3",
           "is": "path",
           "name": "element",
           "attributes": {
@@ -2155,6 +2158,7 @@
         },
         {
           "id": "8bf103e215",
+          "label": "el 123",
           "is": "path",
           "name": "element",
           "attributes": {
@@ -2168,6 +2172,7 @@
         },
         {
           "id": "8bf103e216",
+          "label": "node 1",
           "is": "path",
           "name": "element",
           "attributes": {
@@ -2181,6 +2186,7 @@
         },
         {
           "id": "8bf103e217",
+          "label": "node 5",
           "is": "path",
           "name": "element",
           "attributes": {
@@ -2664,6 +2670,7 @@
             {
               "id": "a6fd80836",
               "is": "path",
+              "label": "Element 11",
               "name": "element",
               "attributes": {
                 "d": "M82.111,95c1.207,0,2.185-0.978,2.185-2.185V28.593c0-0.144-0.015-0.287-0.043-0.429c-0.014-0.066-0.037-0.128-0.058-0.193   c-0.021-0.071-0.037-0.145-0.066-0.213c-0.032-0.077-0.075-0.148-0.116-0.221c-0.027-0.053-0.051-0.106-0.083-0.155   c-0.082-0.12-0.173-0.234-0.276-0.337L62.251,5.643c-0.103-0.104-0.216-0.194-0.336-0.275c-0.05-0.032-0.104-0.056-0.155-0.084   c-0.073-0.041-0.144-0.084-0.221-0.116c-0.069-0.029-0.142-0.045-0.214-0.066c-0.065-0.02-0.126-0.044-0.193-0.058   C60.991,5.016,60.848,5,60.704,5H17.889c-1.206,0-2.185,0.978-2.185,2.185v85.631c0,1.207,0.979,2.185,2.185,2.185H82.111z    M62.889,12.458l13.949,13.949H62.889V12.458z M20.072,9.368H58.52v19.225c0,1.206,0.979,2.185,2.185,2.185h19.223v59.854H20.072   V9.368z"
@@ -3403,6 +3410,7 @@
       "children": [
         {
           "id": "ec3f9b216703",
+          "label": "ndoe 99",
           "is": "path",
           "name": "element",
           "attributes": {
@@ -3629,6 +3637,7 @@
           "children": [
             {
               "id": "d330cc11282",
+              "label": "ndoe 77",
               "is": "path",
               "name": "element",
               "attributes": {
@@ -3642,6 +3651,7 @@
             },
             {
               "id": "d330cc11283",
+              "label": "node 66",
               "is": "path",
               "name": "element",
               "attributes": {
@@ -3655,6 +3665,7 @@
             },
             {
               "id": "d330cc11284",
+              "label": "node 55",
               "is": "path",
               "name": "element",
               "attributes": {
@@ -3668,6 +3679,7 @@
             },
             {
               "id": "d330cc11285",
+              "label": "node 88",
               "is": "path",
               "name": "element",
               "attributes": {
@@ -4533,6 +4545,7 @@
             {
               "id": "b57b95b54349",
               "is": "g",
+              "label": "Element 32111",
               "name": "element",
               "attributes": {
                 "i:extraneous": "self"
@@ -4541,6 +4554,7 @@
               "children": [
                 {
                   "id": "b57b95b54350",
+                  "label": "node 32",
                   "is": "path",
                   "name": "element",
                   "attributes": {

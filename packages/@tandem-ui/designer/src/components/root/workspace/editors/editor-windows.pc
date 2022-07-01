@@ -19,6 +19,7 @@
       "children": [
         {
           "id": "5d6bd010465269",
+          "label": "Node 1221",
           "variant": {},
           "is": "483373f987277",
           "name": "component-instance",

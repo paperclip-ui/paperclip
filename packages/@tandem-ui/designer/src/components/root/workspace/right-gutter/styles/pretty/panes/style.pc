@@ -465,6 +465,7 @@
         {
           "id": "a06d2e816172",
           "is": "50e32bec2591",
+          "label": "node 3331",
           "name": "component-instance",
           "attributes": {},
           "style": {},

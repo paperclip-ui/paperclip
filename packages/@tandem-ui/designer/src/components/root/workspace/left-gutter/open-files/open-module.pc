@@ -31,6 +31,7 @@
             {
               "id": "fe256b423",
               "is": "d3bf183b20",
+              "label": "Instance 122",
               "name": "component-instance",
               "attributes": {},
               "style": {
@@ -99,6 +100,7 @@
             },
             {
               "id": "d3bf183b22",
+              "label": "Element 1234",
               "is": "d3bf183b20",
               "name": "component-instance",
               "attributes": {},
@@ -154,6 +156,7 @@
             },
             {
               "id": "fe256b42",
+              "label": "Instance 12",
               "is": "d3bf183b20",
               "name": "component-instance",
               "attributes": {},
@@ -217,6 +220,7 @@
             },
             {
               "id": "d3bf183b43",
+              "label": "Element 122",
               "is": "d3bf183b20",
               "name": "component-instance",
               "attributes": {},
@@ -291,6 +295,7 @@
             },
             {
               "id": "d3bf183b52",
+              "label": "Element 12",
               "is": "d3bf183b20",
               "name": "component-instance",
               "attributes": {},
@@ -357,6 +362,7 @@
             },
             {
               "id": "d3bf183b50",
+              "label": "Inst 123",
               "is": "d3bf183b20",
               "name": "component-instance",
               "attributes": {},
@@ -407,6 +413,7 @@
             {
               "id": "d3bf183b54",
               "is": "d3bf183b20",
+              "label": "Inst 144",
               "name": "component-instance",
               "attributes": {},
               "style": {

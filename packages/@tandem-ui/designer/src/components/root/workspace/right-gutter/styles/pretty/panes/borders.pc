@@ -884,6 +884,7 @@
             {
               "id": "8bf103e229",
               "is": "8bf103e218",
+              "label": "Elll",
               "name": "component-instance",
               "attributes": {},
               "style": {

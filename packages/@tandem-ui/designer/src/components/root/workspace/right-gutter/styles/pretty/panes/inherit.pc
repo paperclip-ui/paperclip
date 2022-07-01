@@ -67,6 +67,7 @@
           "children": [
             {
               "id": "d19a9272052",
+              "label": "aafoao",
               "is": "5f48853331665",
               "name": "component-instance",
               "attributes": {},

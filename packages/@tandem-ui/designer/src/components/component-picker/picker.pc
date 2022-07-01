@@ -59,6 +59,7 @@
             {
               "id": "33949bb8180402",
               "variant": {},
+              "label": "Instance 123",
               "is": "dcd2c13f1453155",
               "name": "component-instance",
               "attributes": {},

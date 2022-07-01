@@ -530,6 +530,16 @@ const hasStyles = (node: PCNode) => {
   );
 };
 
+const overrideTargetExists = (
+  override: PCOverride,
+  context: TranslateContext
+) => {
+  return override.targetIdPath.every((idPath) => {
+    const node = getPCNode(idPath, context.graph) as PCVisibleNode;
+    return node != null;
+  });
+};
+
 const translateOverrides = (
   overrides: PCOverride[],
   context: TranslateContext
@@ -537,9 +547,18 @@ const translateOverrides = (
   const overridesByPath: Record<string, PCOverride[]> = {};
 
   for (const override of overrides) {
+    if (!overrideTargetExists(override, context)) {
+      throw new Error(
+        `Override target ${override.targetIdPath.join(".")} doesn't exist!`
+      );
+    }
+
     const targetPath = override.targetIdPath
       .map((idPath) => {
         const node = getPCNode(idPath, context.graph) as PCVisibleNode;
+        if (!node.label) {
+          throw new Error(`label doesn't exist for node ${node.id}!`);
+        }
         return camelCase(node.label);
       })
       .join(".");

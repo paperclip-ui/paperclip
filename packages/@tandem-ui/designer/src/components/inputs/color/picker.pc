@@ -1066,6 +1066,7 @@
                 {
                   "id": "b9d1103b8",
                   "is": "b9d1103b2",
+                  "label": "Instance 322",
                   "name": "component-instance",
                   "attributes": {},
                   "style": {},

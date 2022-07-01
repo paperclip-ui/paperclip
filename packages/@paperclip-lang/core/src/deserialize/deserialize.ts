@@ -318,7 +318,7 @@ const getInstanceRef = (
       ) as ast.Component;
     }
 
-    console.log(name);
+    // console.log(ast.flatten(ctx))
 
     return (ctx = ast.getExprByName(name, ctx)).id;
   });

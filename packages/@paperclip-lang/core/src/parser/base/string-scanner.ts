@@ -1,7 +1,11 @@
 import { EndOfFileError } from "./errors";
+import { SourceLocation } from "./state";
+import { isNewLine, isWhitespace } from "./utils";
 
 export class StringScanner {
   private _pos: number = 0;
+  private _column: number = 0;
+  private _line: number = 0;
   constructor(readonly source: string) {}
   isEOF() {
     return this._pos >= this.source.length;
@@ -10,10 +14,25 @@ export class StringScanner {
     return this.source.charAt(this._pos);
   }
   nextChar() {
-    return this.source.charAt(++this._pos);
+    const c = this.source.charAt(++this._pos);
+    if (isNewLine(c)) {
+      this._line++;
+      this._column = 0;
+    } else {
+      this._column++;
+    }
+    return c;
+  }
+  getLocation(): SourceLocation {
+    return {
+      line: this._line,
+      column: this._column,
+      pos: this._pos,
+    };
   }
   skip(count: number = 1) {
-    this._pos += count;
+    let i = 0;
+    while (i++ < count) this.nextChar();
   }
   peekChar(step: number = 1) {
     return this.source.charAt(this._pos + step);
@@ -26,7 +45,7 @@ export class StringScanner {
         break;
       }
       buffer += curr;
-      this._pos++;
+      this.nextChar();
     }
     return buffer;
   }

@@ -866,6 +866,7 @@
       "children": [
         {
           "id": "cc878eb5615546",
+          "label": "El 112211",
           "is": "c389e38216",
           "name": "component-instance",
           "attributes": {},
@@ -879,6 +880,7 @@
               "children": [
                 {
                   "id": "cc878eb5615548",
+                  "label": "El 111",
                   "is": "c389e38219",
                   "name": "component-instance",
                   "attributes": {},
@@ -934,6 +936,7 @@
                 },
                 {
                   "id": "cc878eb5615550",
+                  "label": "Node 12331",
                   "is": "c389e38219",
                   "name": "component-instance",
                   "attributes": {},

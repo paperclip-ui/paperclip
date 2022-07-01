@@ -1,7 +1,7 @@
 import { negate } from "lodash";
 import { UnknownTokenError } from "../base/errors";
+import { BaseToken } from "../base/state";
 import {
-  BaseToken,
   BaseTokenizer,
   scanNumberValue,
   scanString,

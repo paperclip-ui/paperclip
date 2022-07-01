@@ -67,6 +67,7 @@
                 },
                 {
                   "id": "b117fdbf315949",
+                  "label": "Node 22131",
                   "variant": {},
                   "is": "38fc2a473732",
                   "name": "component-instance",
@@ -1391,6 +1392,7 @@
                 },
                 {
                   "id": "a258f47017684",
+                  "label": "node 1122",
                   "variant": {},
                   "is": "7149f8192509",
                   "name": "component-instance",

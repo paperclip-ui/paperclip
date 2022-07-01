@@ -13,5 +13,10 @@ export const isLetterOrDigit = (value: string) =>
 
 export const isWhitespace = (value: string) => {
   const c = value.charCodeAt(0);
-  return c === 10 || c === 9 || c === 13 || c === 32;
+  return c === 9 || c === 32 || isNewLine(value);
+};
+
+export const isNewLine = (value: string) => {
+  const c = value.charCodeAt(0);
+  return c === 10 || c === 13;
 };

@@ -189,9 +189,10 @@ const bodyParser =
     ) {
       context.tokenizer.eat(DSL_SUPERFLUOUS_TOKENS);
       const curr = context.tokenizer.curr();
+      const start = context.tokenizer.getLocation();
       const expr = parseBodyExpression(context);
       if (!expr) {
-        throw new UnexpectedTokenError(curr.value);
+        throw new UnexpectedTokenError(curr.value, start);
       }
       expressions.push(expr);
     }
@@ -209,13 +210,6 @@ const parseComponentBody = bodyParser<ComponentBodyExpression>((context) => {
   } else if (keyword.value === "render") {
     return parseRender(context);
   }
-
-  console.log(
-    "DIN",
-    context.tokenizer
-      .getScanner()
-      .source.substring(context.tokenizer.getScanner().getPos())
-  );
 });
 
 const parseVariant = (context: Context): Variant => {
@@ -271,6 +265,7 @@ const parseParameter = (context: Context): Parameter => {
 
 const parseExpression = (context: Context): ValueExpression => {
   const curr = context.tokenizer.curr();
+  const start = context.tokenizer.getLocation();
   if (curr.kind === DSLTokenKind.Number) {
     context.tokenizer.next();
     return {
@@ -300,7 +295,7 @@ const parseExpression = (context: Context): ValueExpression => {
   } else if (curr.kind === DSLTokenKind.Keyword) {
     return parseRef(context);
   }
-  throw new UnexpectedTokenError(curr.value);
+  throw new UnexpectedTokenError(curr.value, start);
 };
 
 const parseArray = (context: Context): ArrayExpression => {
@@ -432,6 +427,7 @@ const parseStyleInclude = (context: Context): StyleInclude => {
 
 const parseStyleDeclaration = (context: Context): StyleDeclaration => {
   let name: string = "";
+  console.log(context.tokenizer.getLocation());
   while (context.tokenizer.curr().kind !== DSLTokenKind.Colon) {
     name += context.tokenizer.curr().value;
     context.tokenizer.next();
@@ -463,6 +459,7 @@ const parseStyleDeclarationValue = (context: Context) => {
 };
 
 const parseElementName = (context: Context): ElementName => {
+  console.log("P REF");
   const parts = parseRef(context).path;
   if (parts.length === 1) {
     return { name: parts[0] };
@@ -519,8 +516,8 @@ const parseRef = (context: Context): Reference => {
   let next = context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
   const path: string[] = [name];
   while (next.kind === DSLTokenKind.Dot) {
-    path.push(context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS).value);
-    next = context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS); // queue dot
+    path.push(context.tokenizer.next().value);
+    next = context.tokenizer.next();
   }
 
   return {

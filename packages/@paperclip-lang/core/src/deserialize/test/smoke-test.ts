@@ -227,6 +227,25 @@ describe(__filename + "#", () => {
         `,
       },
     ],
+    [
+      `Can define a slot`,
+      {
+        "file:///entry.pc": `
+        public component B {
+          render div
+        }
+        public component A {
+          render div {
+            slot test {
+              B {
+                text "Hello"
+              }
+            }
+          }
+        }
+        `,
+      },
+    ],
   ].forEach(([title, sourceGraph]: any) => {
     it(title, () => {
       const dslGraph: DependencyGraph = {};

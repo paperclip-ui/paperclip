@@ -240,6 +240,7 @@
                           "children": [
                             {
                               "id": "f657bb09149437",
+                              "label": "Node 12442",
                               "is": "3f456f80651",
                               "name": "component-instance",
                               "attributes": {},

@@ -430,6 +430,7 @@
             },
             {
               "id": "bcda9fb5211067",
+              "label": "Node 11231",
               "variant": {},
               "is": "bcda9fb5211066",
               "name": "component-instance",

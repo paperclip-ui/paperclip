@@ -66,6 +66,7 @@
                 {
                   "id": "f6f985951",
                   "is": "1fd9c8366",
+                  "label": "Instance 111",
                   "name": "component-instance",
                   "attributes": {},
                   "style": {

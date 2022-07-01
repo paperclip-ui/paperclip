@@ -192,6 +192,7 @@ const bodyParser =
       const curr = context.tokenizer.curr();
       const start = context.tokenizer.getLocation();
       const expr = parseBodyExpression(context);
+      context.tokenizer.eat(DSL_SUPERFLUOUS_TOKENS);
       if (!expr) {
         throw new UnexpectedTokenError(curr.value, start);
       }
@@ -427,6 +428,7 @@ const parseStyleInclude = (context: Context): StyleInclude => {
 
 const parseStyleDeclaration = (context: Context): StyleDeclaration => {
   let name: string = "";
+
   while (context.tokenizer.curr().kind !== DSLTokenKind.Colon) {
     name += context.tokenizer.curr().value;
     context.tokenizer.next();

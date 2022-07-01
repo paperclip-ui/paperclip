@@ -247,16 +247,19 @@ describe(__filename + "#", () => {
       },
     ],
     [
-      `Can parse multiple style declarations`,
+      `Can import mixins from another file`,
       {
+        "file:///test.pc": `
+          export style test {
+            color: red
+          }
+        `,
         "file:///entry.pc": `
-        public component B {
-          render div
-        }
-        public component A {
+        import "./test.pc" as imp1
+        public component ComponentOption {
           render div {
             style {
-              color: red
+              include imp1.test
             }
           }
         }

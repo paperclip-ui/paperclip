@@ -283,7 +283,7 @@ const translateNode = (node: PCNode, context: TranslateContext) => {
     }
   } else if (node.name === PCSourceTagNames.PLUG) {
     const slot = getPCNode(node.slotId, context.graph) as PCSlot;
-    if (!slot) {
+    if (!slot || !node.children.length) {
       return context;
     }
     context = addBuffer(`insert ${camelCase(slot.label)}`, context);

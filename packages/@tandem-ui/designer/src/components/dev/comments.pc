@@ -12,60 +12,7 @@
       "id": "d6261ad5198",
       "name": "component",
       "children": [
-        {
-          "slotId": "88156175335",
-          "id": "d6261ad5194",
-          "children": [
-            {
-              "id": "d6261ad5195",
-              "label": "Element1",
-              "is": "ul",
-              "name": "element",
-              "attributes": {},
-              "style": {
-                "box-sizing": "border-box",
-                "margin-left": "0px",
-                "margin-top": "0px",
-                "margin-right": "0px",
-                "margin-bottom": "0px"
-              },
-              "children": [
-                {
-                  "id": "d6261ad5196",
-                  "label": "Element2",
-                  "is": "li",
-                  "name": "element",
-                  "attributes": {},
-                  "style": {
-                    "box-sizing": "border-box"
-                  },
-                  "children": [
-                    {
-                      "id": "d6261ad5197",
-                      "name": "text",
-                      "label": "Text1",
-                      "value": "TODO\n",
-                      "style": {},
-                      "children": [],
-                      "metadata": {}
-                    }
-                  ],
-                  "metadata": {
-                    "bounds": {
-                      "left": -82.02623104308414,
-                      "top": 119.13820878685686,
-                      "right": 17.973768956915862,
-                      "bottom": 219.13820878685686
-                    }
-                  }
-                }
-              ],
-              "metadata": {}
-            }
-          ],
-          "metadata": {},
-          "name": "plug"
-        }
+        
       ],
       "metadata": {
         "bounds": {

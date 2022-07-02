@@ -137,41 +137,12 @@
           "metadata": {}
         },
         {
-          "id": "3fb9d47e52",
-          "variantId": "3fb9d47e51",
-          "propertyName": "style",
-          "targetIdPath": [
-            "3fb9d47e50"
-          ],
-          "value": {
-            "display": "block"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
           "id": "a9acb8771",
           "name": "variant",
           "label": "has items",
           "isDefault": true,
           "children": [],
           "metadata": {}
-        },
-        {
-          "id": "a9acb8772",
-          "variantId": "a9acb8771",
-          "propertyName": "style",
-          "targetIdPath": [
-            "cdcf193c7"
-          ],
-          "value": {
-            "display": "flex",
-            "padding-right": "12px",
-            "padding-left": "48px",
-            "padding-top": "6px"
-          },
-          "name": "override",
-          "children": []
         },
         {
           "id": "a9acb8773",
@@ -282,6 +253,21 @@
                 "padding-right": "16px"
               },
               "children": [
+                {
+                  "id": "a9acb8772",
+                  "variantId": "a9acb8771",
+                  "propertyName": "style",
+                  "targetIdPath": [
+                  ],
+                  "value": {
+                    "display": "flex",
+                    "padding-right": "12px",
+                    "padding-left": "48px",
+                    "padding-top": "6px"
+                  },
+                  "name": "override",
+                  "children": []
+                },
                 {
                   "id": "cdcf193c25",
                   "name": "text",
@@ -414,7 +400,21 @@
                         "top": "-1px",
                         "margin-right": "8px"
                       },
-                      "children": [],
+                      "children": [
+                        {
+                          "id": "3fb9d47e52",
+                          "variantId": "3fb9d47e51",
+                          "propertyName": "style",
+                          "targetIdPath": [
+                            "3fb9d47e50"
+                          ],
+                          "value": {
+                            "display": "block"
+                          },
+                          "name": "override",
+                          "children": []
+                        }
+                      ],
                       "metadata": {
                         "bounds": {
                           "left": 788.016231873803,

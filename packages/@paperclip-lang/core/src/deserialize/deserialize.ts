@@ -243,8 +243,13 @@ const getOverrideVariantIds = (
   const variantIds: Record<string, boolean> = {};
   for (const variantOverride of variantOverrides) {
     if (isVariantEnabledByDefault(variantOverride)) {
-      variantIds[getInstanceRef([variantOverride.name], instance, graph)[0]] =
-        true;
+      const ref = getInstanceRef(
+        [...(override.target || EMPTY_ARRAY), variantOverride.name],
+        instance,
+        graph
+      );
+
+      variantIds[ref[ref.length - 1]] = true;
     }
   }
 
@@ -318,9 +323,25 @@ const getInstanceRef = (
       ) as ast.Component;
     }
 
-    // console.log(ast.flatten(ctx))
+    let ctx2 = ast.getExprByName(name, ctx);
+    console.log(target, ctx);
 
-    return (ctx = ast.getExprByName(name, ctx)).id;
+    // TEMPORARY! See https://github.com/tandem-ui/tandem/issues/60
+    while (!ctx2 && ctx.kind === ast.ExpressionKind.Component) {
+      const render = ctx.body.find(
+        (child) => child.kind === ast.ExpressionKind.Render
+      ) as ast.Render;
+      if (render && ast.isInstance(render?.node, graph)) {
+        ctx = ast.getInstanceComponent(render.node as ast.Element, graph);
+        ctx2 = ast.getExprByName(name, ctx);
+      } else {
+        break;
+      }
+    }
+
+    ctx = ctx2;
+
+    return ctx.id;
   });
 };
 

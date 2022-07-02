@@ -310,7 +310,6 @@
                   "variantId": "1a11459311",
                   "propertyName": "variant",
                   "targetIdPath": [
-                    "2b3a6c6d2278"
                   ],
                   "value": {
                     "66d16f05": true
@@ -327,7 +326,7 @@
                   "bottom": 632.610825819163
                 }
               },
-              "label": "Tab"
+              "label": "Tab1"
             },
             {
               "id": "3a6461fb1080589",
@@ -445,7 +444,6 @@
                   "variantId": "2842a72d17",
                   "propertyName": "style",
                   "targetIdPath": [
-                    "45055e8e10"
                   ],
                   "value": {
                     "display": "none"
@@ -743,19 +741,6 @@
           "children": []
         },
         {
-          "id": "2c202ccf590856",
-          "variantId": "2c202ccf114501",
-          "propertyName": "style",
-          "targetIdPath": [
-            "3a6461fb1889703"
-          ],
-          "value": {
-            "display": "flex"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
           "id": "9a387b6152491",
           "variantId": "3a6461fb1987864",
           "propertyName": "style",
@@ -912,11 +897,22 @@
           },
           "children": [
             {
+              "id": "2c202ccf590856",
+              "variantId": "2c202ccf114501",
+              "propertyName": "style",
+              "targetIdPath": [
+              ],
+              "value": {
+                "display": "flex"
+              },
+              "name": "override",
+              "children": []
+            },
+            {
               "id": "3a6461fb2007497",
               "variantId": "3a6461fb1987864",
               "propertyName": "style",
               "targetIdPath": [
-                "3a6461fb1889703"
               ],
               "value": {
                 "display": "block"

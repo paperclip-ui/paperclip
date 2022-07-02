@@ -50,11 +50,15 @@ const sanityCheck = (graph: Record<string, string>) => {
       throw e;
     }
   });
+  const uris = Object.keys(astGraph);
+
   mapValues(astGraph, (ast, uri) => {
     try {
       return deserializeModule(ast, uri, astGraph);
     } catch (e) {
-      console.error(`Failed to serialize ${uri}`);
+      console.error(
+        `(${uris.indexOf(uri)}/${uris.length}) Failed to serialize ${uri}`
+      );
       throw e;
     }
   });

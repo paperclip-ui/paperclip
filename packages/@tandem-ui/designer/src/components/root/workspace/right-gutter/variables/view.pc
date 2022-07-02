@@ -252,16 +252,6 @@
                                   "value": "Font",
                                   "name": "override",
                                   "children": []
-                                },
-                                {
-                                  "id": "55a06cf6119686",
-                                  "propertyName": "style",
-                                  "targetIdPath": [
-                                    "4b46931a1469100"
-                                  ],
-                                  "value": {},
-                                  "name": "override",
-                                  "children": []
                                 }
                               ],
                               "metadata": {
@@ -821,17 +811,6 @@
           },
           "name": "override",
           "children": []
-        },
-        {
-          "id": "5ce6558d12835",
-          "variantId": "4b46931a1525369",
-          "propertyName": "style",
-          "targetIdPath": [
-            "4b46931a1610861"
-          ],
-          "value": {},
-          "name": "override",
-          "children": []
         }
       ],
       "metadata": {
@@ -913,15 +892,6 @@
                       ],
                       "metadata": {},
                       "name": "plug"
-                    },
-                    {
-                      "id": "55a06cf6248904",
-                      "variantId": "3a6461fb961320",
-                      "propertyName": "style",
-                      "targetIdPath": [],
-                      "value": {},
-                      "name": "override",
-                      "children": []
                     }
                   ],
                   "metadata": {
@@ -990,7 +960,6 @@
               "variantId": "cc878eb5628884",
               "propertyName": "variant",
               "targetIdPath": [
-                "cc878eb5615546"
               ],
               "value": {
                 "c389e38227": true
@@ -1003,19 +972,10 @@
               "variantId": "cc878eb5708986",
               "propertyName": "variant",
               "targetIdPath": [
-                "cc878eb5615546"
               ],
               "value": {
                 "c389e38229": true
               },
-              "name": "override",
-              "children": []
-            },
-            {
-              "id": "3a6461fb2262653",
-              "propertyName": "style",
-              "targetIdPath": [],
-              "value": {},
               "name": "override",
               "children": []
             }
@@ -1092,7 +1052,6 @@
               "variantId": "7973c9592974",
               "propertyName": "style",
               "targetIdPath": [
-                "3a6461fb1889701"
               ],
               "value": {
                 "display": "none"

@@ -278,19 +278,6 @@
                   "value": {},
                   "name": "override",
                   "children": []
-                },
-                {
-                  "id": "4353cabb27094",
-                  "variantId": null,
-                  "propertyName": "text",
-                  "targetIdPath": [
-                    "bcda9fb5100610",
-                    "bcda9fb5211067",
-                    "53e3d7ba5876"
-                  ],
-                  "value": "rgba(255, 255, 255, 0)",
-                  "name": "override",
-                  "children": []
                 }
               ],
               "metadata": {

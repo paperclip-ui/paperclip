@@ -11,6 +11,7 @@ import {
   ElementName,
   ExpressionKind,
   Import,
+  Insert,
   Node,
   Override,
   OverrideBodyExpression,
@@ -18,6 +19,8 @@ import {
   Parameter,
   Reference,
   Render,
+  Slot,
+  SlotChild,
   Style,
   StyleBodyExpression,
   StyleDeclaration,
@@ -508,6 +511,10 @@ const parseElementChildren = bodyParser<ElementChild>((context) => {
     return parseStyle(context);
   } else if (curr.value === "override") {
     return parseOverride(context);
+  } else if (curr.value === "insert") {
+    return parseInsert(context);
+  } else if (curr.value === "slot") {
+    return parseSlot(context);
   }
   return parseNode(context);
 });
@@ -529,6 +536,53 @@ const parseRef = (context: Context): Reference => {
     path,
   };
 };
+
+const parseInsert = (context: Context): Insert => {
+  context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
+  const name = context.tokenizer.curr().value;
+  context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
+  const body = parseInsertChildren(context);
+
+  return {
+    id: context.nextID(),
+    raws: {},
+    kind: ExpressionKind.Insert,
+    name,
+    body,
+  };
+};
+
+const parseInsertChildren = bodyParser<Node>((context) => {
+  return parseNode(context);
+});
+
+const parseSlot = (context: Context): Slot => {
+  context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
+  const name = context.tokenizer.curr().value;
+  context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS);
+  let body: SlotChild[];
+
+  if (context.tokenizer.curr().kind === DSLTokenKind.CurlyOpen) {
+    body = parseSlotChildren(context);
+  }
+
+  return {
+    id: context.nextID(),
+    raws: {},
+    kind: ExpressionKind.Slot,
+    name,
+    body,
+  };
+};
+
+const parseSlotChildren = bodyParser<SlotChild>((context) => {
+  const curr = context.tokenizer.curr();
+  if (curr.value === "slot") {
+    return parseSlot(context);
+  }
+
+  return parseNode(context);
+});
 
 const parseOverride = (context: Context): Override => {
   context.tokenizer.nextEat(DSL_SUPERFLUOUS_TOKENS); // eat override + ws

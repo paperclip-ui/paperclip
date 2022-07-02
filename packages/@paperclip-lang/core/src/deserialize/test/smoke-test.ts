@@ -228,6 +228,85 @@ describe(__filename + "#", () => {
       },
     ],
     [
+      `Can override a nested instance variant`,
+      {
+        "file:///entry.pc": `
+        public component B {
+          variant selected (enabled: [])
+          render span
+        }
+        public component A {
+          render div {
+            B inst
+          }
+        }
+        public component A1 {
+          render A {
+            override inst {
+              variant selected (enabled: true)
+            }
+          }
+        }
+        `,
+      },
+    ],
+
+    // TEMPORARY behavior until designer is
+    [
+      `Can override instance children at the root without specifying ID`,
+      {
+        "file:///entry.pc": `
+        public component C {
+          variant selected (enabled: [])
+          render span {
+            span nested
+          }
+        }
+        public component B {
+          render C
+        }
+        public component A {
+          render B {
+            override nested {
+              style {
+                color: blue;
+              }
+            }
+          }
+        }
+        `,
+      },
+    ],
+    [
+      `Can insert an element with a name that's shared with the owner`,
+      {
+        "file:///entry.pc": `
+        public component B {
+          render div {
+            slot test
+            span test2
+          }
+        }
+        public component A {
+          render div {
+            insert test {
+              B test
+            }
+          }
+        }
+        public component A1 {
+          render A {
+            override test.test2 {
+              style {
+                color: red
+              }
+            }
+          }
+        }
+        `,
+      },
+    ],
+    [
       `Can define a slot`,
       {
         "file:///entry.pc": `

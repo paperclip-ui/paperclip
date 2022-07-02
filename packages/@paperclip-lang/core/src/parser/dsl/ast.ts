@@ -22,6 +22,8 @@ export enum ExpressionKind {
   */
   Component = "Component",
   Override = "Override",
+  Insert = "Insert",
+  Slot = "Slot",
 
   // (a:b, c:d)
   Parameter = "Parameter",
@@ -123,7 +125,7 @@ export type ValueExpression =
   | Reference
   | ArrayExpression;
 
-export type ElementChild = Style | Node | Override;
+export type ElementChild = Style | Node | Override | Insert | Slot;
 
 export type Style = {
   name?: string;
@@ -148,6 +150,18 @@ export type Override = {
   constructorValue?: OverrideConstructorValue;
   body?: OverrideBodyExpression[];
 } & BaseExpression<ExpressionKind.Override>;
+
+export type Insert = {
+  name: string;
+  body: Node[];
+} & BaseExpression<ExpressionKind.Insert>;
+
+export type Slot = {
+  name: string;
+  body?: SlotChild[];
+} & BaseExpression<ExpressionKind.Slot>;
+
+export type SlotChild = Slot | Node;
 
 export type OverrideConstructorValue = Parameter[] | string;
 
@@ -213,6 +227,8 @@ export type Expression =
   | StyleDeclaration
   | Style
   | ArrayExpression
+  | Insert
+  | Slot
   | Reference
   | StringExpression
   | BooleanExpression
@@ -247,6 +263,12 @@ const flattenShallow = memoize((tree: Expression) => {
     case ExpressionKind.Render: {
       return [tree.node];
     }
+    case ExpressionKind.Insert: {
+      return tree.body;
+    }
+    case ExpressionKind.Slot: {
+      return tree.body || [];
+    }
   }
   return [];
 });
@@ -276,7 +298,8 @@ export const getExprByName = (name: string, ctx: Expression) =>
     if (
       node.kind === ExpressionKind.Element ||
       node.kind === ExpressionKind.Text ||
-      node.kind === ExpressionKind.Variant
+      node.kind === ExpressionKind.Variant ||
+      node.kind === ExpressionKind.Slot
     ) {
       return node.name === name;
     }
@@ -293,7 +316,7 @@ export const getInstanceComponent = memoize(
       return (
         el.kind === ExpressionKind.Component && el.name === element.tagName.name
       );
-    });
+    }) as Component;
   }
 );
 

@@ -329,7 +329,7 @@ describe(__filename + "#", () => {
       `Can import mixins from another file`,
       {
         "file:///test.pc": `
-          export style test {
+          public style test {
             color: red
           }
         `,

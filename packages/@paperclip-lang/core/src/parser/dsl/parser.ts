@@ -110,6 +110,8 @@ const parseDocumentExpression = (context: Context): DocumentExpression => {
     return parseImport(context);
   } else if (curr.value === "token") {
     return parseToken(context, isPublic);
+  } else if (curr.value === "style") {
+    return parseStyle(context, isPublic);
   }
 
   return parseNode(context);

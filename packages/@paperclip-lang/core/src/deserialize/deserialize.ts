@@ -7,12 +7,15 @@ import {
   PCModuleChild,
   PCOverridablePropertyName,
   PCOverride,
+  PCPlug,
+  PCSlot,
   PCSourceTagNames,
   PCTextNode,
   PCVariant,
   PCVariantTrigger,
   PCVariantTriggerSource,
   PCVariantTriggerSourceType,
+  StyleMixins,
 } from "../dsl";
 import * as ast from "../parser/dsl/ast";
 import * as crypto from "crypto";
@@ -92,12 +95,15 @@ const deserializeComponent =
         ...variantTriggers.map(deserializeVariantTrigger(context)),
         ...deserializeOverrides(node, context),
         ...(node.children
-          .map(deserializeVisibleNode(context))
+          .map((child) =>
+            deserializeVisibleNode(child as ast.Node, node, context)
+          )
           .filter(Boolean) as PCComponentChild[]),
         ,
       ],
       is: componentTagName,
       attributes: deserializeAttributes(node),
+      styleMixins: style ? deserializeStyleMixins(style, node, context) : {},
       style: style ? deserializeStyleDeclarations(style) : {},
       metadata: {},
     } as PCComponent;
@@ -324,7 +330,6 @@ const getInstanceRef = (
     }
 
     let ctx2 = ast.getExprByName(name, ctx);
-    console.log(target, ctx);
 
     // TEMPORARY! See https://github.com/tandem-ui/tandem/issues/60
     while (!ctx2 && ctx.kind === ast.ExpressionKind.Component) {
@@ -361,26 +366,46 @@ const getRef = (
 
   return refPath.reduce(
     ({ uri, expr }, name) => {
-      if (expr.kind === ast.ExpressionKind.Element) {
-        const info = getRef(
-          expr.tagName.namespace
-            ? [expr.tagName.namespace, expr.tagName.name]
-            : [expr.tagName.name],
-          context.ast,
-          context
-        ) || { uri, expr: scope };
-        uri = info.uri;
-        expr = info.expr;
+      if (expr.kind === ast.ExpressionKind.StyleInclude) {
+        const doc = context.ast;
+        expr = ast.getExprByName(name, doc);
+
+        // const info = getRef(
+        //   expr.ref.path,
+        //   context.ast,
+        //   context
+        // );
+
+        // uri = info.uri;
+        // expr = info.expr;
+        // return { uri, expr };
       }
 
+      // if (expr.kind === ast.ExpressionKind.Element) {
+      //   const doc = context.ast;
+      //   expr = ast.getExprByName(name, doc);
+
+      //   // const info = getRef(
+      //   //   expr.tagName.namespace
+      //   //     ? [expr.tagName.namespace, expr.tagName.name]
+      //   //     : [expr.tagName.name],
+      //   //   context.ast,
+      //   //   context
+      //   // ) || { uri, expr: scope };
+      //   // uri = info.uri;
+      //   // expr = info.expr;
+      // }
+
       if (expr.kind === ast.ExpressionKind.Import) {
-        uri = path.relative(currFileUri, expr.path);
+        const dir = path.dirname(currFileUri.replace("file:///", ""));
+
+        uri = "file:///" + path.relative(dir, expr.path);
         scope = context.graph[uri];
         return { uri, expr: scope };
       }
 
       return {
-        expr: ast.flatten(scope).find((expr) => {
+        expr: ast.flatten(expr).find((expr) => {
           if (expr.kind === ast.ExpressionKind.Import) {
             return expr.namespace === name;
           } else if (
@@ -452,6 +477,31 @@ const deserializeStyleDeclarations = (style: ast.Style) => {
   return style2;
 };
 
+const deserializeStyleMixins = (
+  style: ast.Style,
+  node: ast.Node,
+  context: Context
+) => {
+  const mixins: StyleMixins = {};
+  const variantId = style.conditionNames.length
+    ? getRef([style.conditionNames[0]], node, context).expr.id
+    : null;
+
+  let i = 0;
+
+  for (const item of style.body) {
+    if (item.kind === ast.ExpressionKind.StyleInclude) {
+      mixins[getRef(item.ref.path, item, context).expr.id] = {
+        priority: i,
+        variantId,
+      };
+      i++;
+    }
+  }
+
+  return mixins;
+};
+
 const deserializeAttributes = (node: ast.Element) => {
   const attributes = {};
   for (const param of node.parameters) {
@@ -471,29 +521,72 @@ const deserializeValue = (node: ast.ValueExpression) => {
   }
 };
 
-const deserializeVisibleNode =
-  (context: Context) =>
-  (node: ast.Node): PCElement | PCTextNode => {
-    if (node.kind === ast.ExpressionKind.Element) {
-      return deserializeElement(node, context);
-    } else if (node.kind === ast.ExpressionKind.Text) {
-      return deserializeTextNode(node, context);
-    }
-  };
+const deserializeVisibleNode = (
+  node: ast.Node | ast.Slot | ast.Insert,
+  parent: ast.Node | ast.Slot | ast.Insert,
+  context: Context
+): PCElement | PCTextNode | PCSlot | PCPlug => {
+  if (node.kind === ast.ExpressionKind.Element) {
+    return deserializeElement(node, context);
+  } else if (node.kind === ast.ExpressionKind.Text) {
+    return deserializeTextNode(node, context);
+  } else if (node.kind === ast.ExpressionKind.Insert) {
+    return deserializeInsert(node, parent as ast.Element, context);
+  } else if (node.kind === ast.ExpressionKind.Slot) {
+    return deserializeSlot(node, context);
+  }
+};
 
 const deserializeElement = (node: ast.Element, context: Context): PCElement => {
+  const style = node.children.find(
+    (child) => child.kind === ast.ExpressionKind.Style
+  ) as ast.Style;
+
   return {
     id: getNodeId(node, context),
     name: PCSourceTagNames.ELEMENT,
     attributes: {},
     label: node.name,
     is: node.tagName.name,
+    styleMixins: style ? deserializeStyleMixins(style, node, context) : {},
     style: {},
     children: [
-      ...node.children.map(deserializeVisibleNode(context)).filter(Boolean),
+      ...node.children
+        .map((child) =>
+          deserializeVisibleNode(child as ast.Node, node, context)
+        )
+        .filter(Boolean),
       ...deserializeOverrides(node, context),
     ],
     metadata: {},
+  };
+};
+
+const deserializeSlot = (node: ast.Slot, context: Context): PCSlot => {
+  return {
+    id: getNodeId(node, context),
+    name: PCSourceTagNames.SLOT,
+    label: node.name,
+    metadata: {},
+    children: (node.body || EMPTY_ARRAY).map((child) =>
+      deserializeVisibleNode(child, node, context)
+    ),
+  };
+};
+
+const deserializeInsert = (
+  node: ast.Insert,
+  parent: ast.Element,
+  context: Context
+): PCPlug => {
+  return {
+    id: getNodeId(node, context),
+    name: PCSourceTagNames.PLUG,
+    slotId: getInstanceRef([node.name], parent, context.graph)[0],
+    metadata: {},
+    children: (node.body || EMPTY_ARRAY).map((child) =>
+      deserializeVisibleNode(child, node, context)
+    ),
   };
 };
 
@@ -506,6 +599,7 @@ const deserializeTextNode = (node: ast.Text, context: Context): PCTextNode => {
     id: getNodeId(node, context),
     name: PCSourceTagNames.TEXT,
     value: node.value,
+    styleMixins: style ? deserializeStyleMixins(style, node, context) : {},
     label: node.name,
     style: style ? deserializeStyleDeclarations(style) : {},
     children: [],
@@ -515,7 +609,13 @@ const deserializeTextNode = (node: ast.Text, context: Context): PCTextNode => {
 
 const getNodeId = memoize(
   (
-    node: ast.Text | ast.Element | ast.Component | ast.Variant,
+    node:
+      | ast.Text
+      | ast.Element
+      | ast.Component
+      | ast.Variant
+      | ast.Slot
+      | ast.Insert,
     context: Context
   ) => node.id
 );

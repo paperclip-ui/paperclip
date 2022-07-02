@@ -299,9 +299,13 @@ export const getExprByName = (name: string, ctx: Expression) =>
       node.kind === ExpressionKind.Element ||
       node.kind === ExpressionKind.Text ||
       node.kind === ExpressionKind.Variant ||
-      node.kind === ExpressionKind.Slot
+      node.kind === ExpressionKind.Slot ||
+      node.kind === ExpressionKind.Style
     ) {
       return node.name === name;
+    }
+    if (node.kind === ExpressionKind.Import) {
+      return node.namespace === name;
     }
   }) as Text | Element;
 

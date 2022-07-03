@@ -345,6 +345,71 @@ describe(__filename + "#", () => {
         `,
       },
     ],
+    [
+      `Can define bounds `,
+      {
+        "file:///entry.pc": `
+
+        /**
+         * @bounds(width: 100, height: 200)
+         */
+
+        public component Test {
+          render div
+        }
+
+
+        /**
+         * @bounds(width: 100, height: 200)
+         */
+
+        public component Test2 {
+          render div
+        }
+
+
+        /**
+         * @bounds(width: 100, height: 200)
+         */
+
+        div {
+          style {
+            color: red
+          }
+        }
+
+        /**
+         * @bounds(width: 100, height: 200)
+         */
+
+        text "hello world"
+        `,
+      },
+    ],
+    [
+      `Can define metadata for component with imports`,
+      {
+        "file:///test.pc": `
+          public style test {
+            color: blue
+          }
+        `,
+        "file:///entry.pc": `
+          import "./test.pc" as imp0 
+
+          /**
+           * @bounds(left: 101, top: -60, right: 1541, bottom: 840)
+           */
+          public component Main {
+            render div {
+              style {
+                include imp0.test
+              }
+            }
+          }
+        `,
+      },
+    ],
   ].forEach(([title, sourceGraph]: any) => {
     it(title, () => {
       const dslGraph: DependencyGraph = {};

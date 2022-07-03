@@ -85,7 +85,7 @@ const translateStyleVars = (context: TranslateContext) => {
 const translateStyleVar = (node: PCVariable, context: TranslateContext) => {
   if (node.value) {
     context = addBuffer(
-      `public token ${camelCase(node.label)} ${node.value}\n`,
+      `public token ${getName(node.label)} ${node.value}\n`,
       context
     );
   }
@@ -94,7 +94,7 @@ const translateStyleVar = (node: PCVariable, context: TranslateContext) => {
 };
 
 const translateStyleMixin = (node: PCStyleMixin, context: TranslateContext) => {
-  context = addBuffer(`public style ${camelCase(node.label)} {\n`, context);
+  context = addBuffer(`public style ${getName(node.label)} {\n`, context);
   context = startBlock(context);
   context = translateStyleValues(node.style, context);
   context = endBlock(context);
@@ -109,7 +109,7 @@ const translateMediaQuery = (node: PCMediaQuery, context: TranslateContext) => {
     //     node.condition.minWidth || 0
     //   }, max-width: ${node.condition.maxWidth})\n`,
     //   context
-    // );
+    // ;)
   }
 
   return context;
@@ -134,7 +134,10 @@ const translateFrames = (context: TranslateContext) => {
 };
 
 const translateFrame = (contentNode: PCNode, context: TranslateContext) => {
-  if (contentNode.name === PCSourceTagNames.ELEMENT) {
+  if (
+    contentNode.name === PCSourceTagNames.ELEMENT ||
+    contentNode.name === PCSourceTagNames.TEXT
+  ) {
     context = translateMetadata(contentNode, context);
     context = translateNode(contentNode, context);
   }
@@ -192,7 +195,7 @@ const translateVariants = (
   const variants = getPCVariants(component);
   for (const variant of variants) {
     context = addBuffer(
-      `variant ${camelCase(
+      `variant ${getName(
         variant.label
       )} (${VARIANT_ENABLED_PARAM_NAME}: ${translateVariantTrigger(
         variant,
@@ -245,6 +248,12 @@ const translateComponentRender = (
   return context;
 };
 
+const getName = (label: string) => {
+  return isNaN(Number(label.charAt(0)))
+    ? camelCase(label)
+    : "l" + camelCase(label);
+};
+
 const translateNode = (node: PCNode, context: TranslateContext) => {
   if (isPCVisibleElement(node)) {
     const ref = getRef(node, context);
@@ -257,14 +266,14 @@ const translateNode = (node: PCNode, context: TranslateContext) => {
       node.label !== "Element" &&
       node.name !== PCSourceTagNames.COMPONENT
     ) {
-      context = addBuffer(` ${camelCase(node.label)}`, context);
+      context = addBuffer(` ${getName(node.label)}`, context);
     }
     context = translateAttributes(node.attributes, context);
     context = translateChildren(node, context);
   } else if (node.name === PCSourceTagNames.TEXT) {
     context = addBuffer(`text`, context);
     if (node.label && node.label !== "Text") {
-      context = addBuffer(` ${camelCase(node.label)}`, context);
+      context = addBuffer(` ${getName(node.label)}`, context);
     }
     context = addBuffer(
       ` "${node.value.replace(/"/g, '\\"').trim()}"`,
@@ -274,7 +283,7 @@ const translateNode = (node: PCNode, context: TranslateContext) => {
     context = translateChildren(node, context);
   } else if (node.name === PCSourceTagNames.SLOT) {
     if (node.label) {
-      context = addBuffer(`slot ${camelCase(node.label)}`, context);
+      context = addBuffer(`slot ${getName(node.label)}`, context);
       if (node.children.length) {
         context = translateChildren(node, context);
       } else {
@@ -286,7 +295,7 @@ const translateNode = (node: PCNode, context: TranslateContext) => {
     if (!slot || !node.children.length) {
       return context;
     }
-    context = addBuffer(`insert ${camelCase(slot.label)}`, context);
+    context = addBuffer(`insert ${getName(slot.label)}`, context);
     context = translateChildren(node, context);
     return context;
   }
@@ -368,7 +377,7 @@ const translateStyleOverride = (
     (getPCNode(override.variantId, context.graph) as PCVariant);
 
   context = addBuffer(
-    `style ${variant ? `variant ${camelCase(variant.label)} ` : ""}{\n`,
+    `style ${variant ? `variant ${getName(variant.label)} ` : ""}{\n`,
     context
   );
   context = startBlock(context);
@@ -439,7 +448,7 @@ const translateStyleValue = (value: string, context: TranslateContext) => {
 const getRefPath = (
   nodeId: string,
   context: TranslateContext,
-  format: any = camelCase
+  format: any = getName
 ) => {
   const vr = getPCNode(nodeId, context.graph) as PCVariable;
   if (!vr) {
@@ -559,10 +568,7 @@ const translateOverrides = (
         if (!node.label) {
           throw new Error(`label doesn't exist for node ${node.id}!`);
         }
-        if (idPath === "7be245712") {
-          console.log("LAB", node.label);
-        }
-        return camelCase(node.label);
+        return getName(node.label);
       })
       .join(".");
 
@@ -633,7 +639,7 @@ const translateOverrides = (
             if (variant) {
               const enabled = override.value[variantId];
               context = addBuffer(
-                `variant ${camelCase(variant.label)} (enabled: ${enabled})\n`,
+                `variant ${getName(variant.label)} (enabled: ${enabled})\n`,
                 context
               );
             }

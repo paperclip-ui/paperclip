@@ -113,20 +113,14 @@ export const deserializeDependencyGraph = (
 
   const astGraph = mapValues(dslGraph, (dep) => {
     const content = serializeModule(dep.content, dep.uri, dslGraph);
-
-    // // TODO - assume module is text source
-    if (dep.uri.includes("dropdown/view.pc")) {
-      console.log(content, module);
+    if (dep.uri.includes("all.pc")) {
+      console.log(content);
     }
-
-    // console.log("PS", dep.uri, content);
-
-    return parseDocument(content);
+    const ast = parseDocument(content);
+    return ast;
   });
 
   const dslGraph2 = mapValues(astGraph, (doc, uri) => {
-    console.log("URI", uri);
-
     return {
       uri,
       content: deserializeModule(doc, uri, astGraph),

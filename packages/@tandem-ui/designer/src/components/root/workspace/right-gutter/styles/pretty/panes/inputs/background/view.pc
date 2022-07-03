@@ -670,8 +670,7 @@
               "top": 367,
               "right": -98,
               "bottom": 910
-            },
-            "mode": "preview"
+            }
           },
           "variant": {}
         }
@@ -750,8 +749,7 @@
               "top": 367,
               "right": -98,
               "bottom": 910
-            },
-            "mode": "preview"
+            }
           },
           "variant": {}
         }

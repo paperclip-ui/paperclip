@@ -171,6 +171,7 @@ export type Element = {
   children: ElementChild[];
   tagName: ElementName;
   name?: string;
+  docComment: DocComment;
   parameters: Parameter[];
 } & BaseExpression<ExpressionKind.Element>;
 
@@ -186,6 +187,7 @@ export type Fragment = {
 export type Text = {
   name?: string;
   value: string;
+  docComment: DocComment;
   children: TextChild[];
 } & BaseExpression<ExpressionKind.Text>;
 

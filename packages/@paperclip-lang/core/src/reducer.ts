@@ -110,9 +110,7 @@ export const paperclipReducer = <
         return state;
       }
 
-      const now = Date.now();
-      const graph = deserializeDependencyGraph(state.fileCache);
-      console.log(Date.now() - now);
+      // const graph = deserializeDependencyGraph(state.fileCache);
 
       // let graph = addFileCacheItemToDependencyGraph(
       //   { uri, content },
@@ -122,7 +120,9 @@ export const paperclipReducer = <
       // state = pruneDependencyGraph({ ...(state as any), graph });
 
       return produce(state, (newState) => {
+        const now = Date.now();
         newState.graph = deserializeDependencyGraph(state.fileCache);
+        console.log(Date.now() - now);
       });
     }
   }

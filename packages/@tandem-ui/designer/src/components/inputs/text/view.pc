@@ -309,6 +309,7 @@
                         },
                         {
                           "id": "2c83e997956",
+                          "label": "Inst77",
                           "is": "8b8bbe2c859177",
                           "name": "component-instance",
                           "attributes": {},

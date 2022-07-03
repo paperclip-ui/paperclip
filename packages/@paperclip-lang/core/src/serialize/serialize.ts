@@ -30,10 +30,9 @@ import {
 } from "../dsl";
 import { DependencyGraph } from "../graph";
 
-import * as URL from "url";
 import * as path from "path";
 import { camelCase, uniq, capitalize } from "lodash";
-import { EMPTY_OBJECT, getTreeNodeIdMap } from "tandem-common";
+import { EMPTY_OBJECT, getTreeNodeIdMap, Translate } from "tandem-common";
 import {
   addBuffer,
   endBlock,
@@ -41,9 +40,8 @@ import {
   TranslateContext,
 } from "./serialize-context";
 import { pascalCase } from "./utils";
-import { deserialize } from "v8";
-import { deserializeModule } from "../deserialize/deserialize";
 import { VARIANT_ENABLED_PARAM_NAME } from "../parser/dsl/ast";
+import { countReset } from "console";
 
 type PCElementLike = PCComponent | PCComponentInstanceElement | PCElement;
 
@@ -136,7 +134,8 @@ const translateFrames = (context: TranslateContext) => {
 const translateFrame = (contentNode: PCNode, context: TranslateContext) => {
   if (
     contentNode.name === PCSourceTagNames.ELEMENT ||
-    contentNode.name === PCSourceTagNames.TEXT
+    contentNode.name === PCSourceTagNames.TEXT ||
+    contentNode.name === PCSourceTagNames.COMPONENT_INSTANCE
   ) {
     context = translateMetadata(contentNode, context);
     context = translateNode(contentNode, context);
@@ -154,10 +153,23 @@ const translateComponent = (
     context
   );
   context = startBlock(context);
+  context = translateScripts(component, context);
   context = translateVariants(component, context);
   context = translateComponentRender(component, context);
   context = endBlock(context);
   context = addBuffer("}\n\n", context);
+  return context;
+};
+
+const translateScripts = (
+  component: PCComponent,
+  context: TranslateContext
+) => {
+  if (component.controllers) {
+    for (const src of component.controllers) {
+      context = addBuffer(`script (src: "${src}")\n`, context);
+    }
+  }
   return context;
 };
 

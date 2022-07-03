@@ -13,8 +13,6 @@ import {
   DoccoTokenKind,
   DOCCO_SUPERFLUOUS_TOKEN_KIND,
 } from "./tokenizer";
-import { parseParameters as parseDSLParameters } from "../dsl/parser";
-import { DSLTokenizer } from "../dsl/tokenizer";
 import { StringScanner } from "../base/string-scanner";
 
 type Context = {

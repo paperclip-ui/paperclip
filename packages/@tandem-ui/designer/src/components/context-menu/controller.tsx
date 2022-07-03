@@ -52,7 +52,6 @@ const Item = memo(({ option }: ItemProps) => {
   const dispatch = useDispatch();
 
   const onClick = () => {
-    console.log("ISP", option.action);
     dispatch(option.action);
   };
 

@@ -161,6 +161,7 @@ const deserializeComponent = (
       ),
     ].filter(Boolean),
     is: componentTagName,
+    controllers: deserializeControllers(component),
     attributes: deserializeAttributes(node),
     styleMixins: style
       ? deserializeAppliedStyleMixins(style, node, context)
@@ -170,6 +171,21 @@ const deserializeComponent = (
   } as PCComponent;
 
   return ret;
+};
+
+const deserializeControllers = (component: ast.Component) => {
+  return (
+    component.body.filter(
+      (child) =>
+        child.kind === ast.ExpressionKind.Script &&
+        child.parameters.some((param) => param.name === "src")
+    ) as ast.Script[]
+  ).map((script) => {
+    return (
+      script.parameters.find((param) => param.name === "src")
+        .value as ast.StringExpression
+    ).value;
+  });
 };
 
 const deserializeMetadata = (node: ast.Component | ast.Element | ast.Text) => {
@@ -370,13 +386,13 @@ const deserializeStyleOverride = (
       ? getInstanceRef(styleParent.target, instance, context.graph)
       : [];
 
-  const contentNode = ast.getExpContentNode(
-    node,
-    context.graph
-  ) as ast.Component;
-  const variant = node.conditionNames.length
-    ? getVariantByName(node.conditionNames[0], contentNode)
-    : null;
+  const contentNode = ast.getExpContentNode(node, context.graph);
+
+  const variant =
+    node.conditionNames.length &&
+    contentNode.kind === ast.ExpressionKind.Component
+      ? getVariantByName(node.conditionNames[0], contentNode)
+      : null;
 
   return {
     id: node.id,
@@ -613,11 +629,7 @@ const deserializeVisibleNode = (
   context: Context
 ): PCElement | PCTextNode | PCSlot | PCPlug | PCComponentInstanceElement => {
   if (node.kind === ast.ExpressionKind.Element) {
-    if (ast.isInstance(node, context.graph)) {
-      return deserializeInstanceElement(node, context);
-    } else {
-      return deserializeElement(node, context);
-    }
+    return deserializeElement(node, context);
   } else if (node.kind === ast.ExpressionKind.Text) {
     return deserializeTextNode(node, context);
   } else if (node.kind === ast.ExpressionKind.Insert) {
@@ -627,23 +639,32 @@ const deserializeVisibleNode = (
   }
 };
 
-const deserializeInstanceElement = (
+const deserializeElement = (
   node: ast.Element,
   context: Context
-): PCComponentInstanceElement => {
+): PCElement | PCComponentInstanceElement => {
   const style = node.children.find(
     (child) => child.kind === ast.ExpressionKind.Style
   ) as ast.Style;
 
-  const component = ast.getInstanceComponent(node, context.graph);
+  const isInstance = ast.isInstance(node, context.graph);
+
+  if (isInstance) {
+    return deserializeInstanceElement(node, context);
+  } else {
+    return deserializeNativeElement(node, context);
+  }
+};
+
+const deserializeBaseElementProps = (node: ast.Element, context: Context) => {
+  const style = node.children.find(
+    (child) => child.kind === ast.ExpressionKind.Style
+  ) as ast.Style;
 
   return {
-    id: getNodeId(node, context),
-    name: PCSourceTagNames.COMPONENT_INSTANCE,
-    variant: {},
+    id: node.id,
     attributes: deserializeAttributes(node),
     label: node.name,
-    is: component.id,
     styleMixins: style
       ? deserializeAppliedStyleMixins(style, style, context)
       : {},
@@ -658,30 +679,32 @@ const deserializeInstanceElement = (
   };
 };
 
-const deserializeElement = (node: ast.Element, context: Context): PCElement => {
+const deserializeInstanceElement = (
+  node: ast.Element,
+  context: Context
+): PCComponentInstanceElement => {
+  const component = ast.getInstanceComponent(node, context.graph);
+
+  return {
+    ...deserializeBaseElementProps(node, context),
+    name: PCSourceTagNames.COMPONENT_INSTANCE,
+    variant: {},
+    is: component.id,
+  };
+};
+
+const deserializeNativeElement = (
+  node: ast.Element,
+  context: Context
+): PCElement => {
   const style = node.children.find(
     (child) => child.kind === ast.ExpressionKind.Style
   ) as ast.Style;
 
-  const isInstance = ast.isInstance(node, context.graph);
-
   return {
-    id: getNodeId(node, context),
+    ...deserializeBaseElementProps(node, context),
     name: PCSourceTagNames.ELEMENT,
-    attributes: deserializeAttributes(node),
-    label: node.name,
     is: node.tagName.name,
-    styleMixins: style
-      ? deserializeAppliedStyleMixins(style, style, context)
-      : {},
-    style: style ? deserializeStyleDeclarations(style, context) : {},
-    metadata: deserializeMetadata(node),
-    children: [
-      ...node.children.map((child) =>
-        deserializeVisibleNode(child as ast.Node, node, context)
-      ),
-      ...deserializeOverrides(node, context),
-    ].filter(Boolean),
   };
 };
 

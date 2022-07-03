@@ -100,17 +100,15 @@ export const paperclipReducer = <
     case FS_SANDBOX_ITEM_LOADED: {
       const { uri, content, mimeType } = action as FSSandboxItemLoaded;
 
-      // only
-      if (fsCacheBusy(state.fileCache)) {
-        return state;
-      }
-
       // dependency graph can only load files that are within the scope of the project via PC_SOURCE_FILE_URIS_RECEIVED
       if (mimeType !== PAPERCLIP_MIME_TYPE) {
         return state;
       }
 
-      // const graph = deserializeDependencyGraph(state.fileCache);
+      /*
+
+      LEGACY
+      */
 
       // let graph = addFileCacheItemToDependencyGraph(
       //   { uri, content },
@@ -119,6 +117,14 @@ export const paperclipReducer = <
 
       // state = pruneDependencyGraph({ ...(state as any), graph });
 
+      // return state;
+
+      // LEGACY END
+
+      // NEW CODE
+      if (fsCacheBusy(state.fileCache)) {
+        return state;
+      }
       return produce(state, (newState) => {
         const now = Date.now();
         newState.graph = deserializeDependencyGraph(state.fileCache);
@@ -126,5 +132,12 @@ export const paperclipReducer = <
       });
     }
   }
+  return state;
+};
+
+const legacyGraphLoader = (uri: string, content: Buffer, state: any) => {
+  let graph = addFileCacheItemToDependencyGraph({ uri, content }, state.graph);
+
+  state = pruneDependencyGraph({ ...(state as any), graph });
   return state;
 };

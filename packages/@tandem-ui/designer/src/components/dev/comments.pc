@@ -73,6 +73,7 @@
             {
               "exportName": null,
               "id": "88156175335",
+              "label": "slot11",
               "children": [
                 {
                   "id": "97a34b151010441",

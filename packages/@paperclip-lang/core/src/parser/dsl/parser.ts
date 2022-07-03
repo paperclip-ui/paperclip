@@ -19,6 +19,7 @@ import {
   Parameter,
   Reference,
   Render,
+  Script,
   Slot,
   SlotChild,
   Style,
@@ -218,8 +219,21 @@ const parseComponentBody = bodyParser<ComponentBodyExpression>((context) => {
     return parseVariant(context);
   } else if (keyword.value === "render") {
     return parseRender(context);
+  } else if (keyword.value === "script") {
+    return parseScript(context);
   }
 });
+
+const parseScript = (context: Context): Script => {
+  context.tokenizer.nextEat(DSLTokenKind.Space);
+
+  return {
+    kind: ExpressionKind.Script,
+    raws: {},
+    id: context.nextID(),
+    parameters: parseParameters(context),
+  };
+};
 
 const parseVariant = (context: Context): Variant => {
   context.tokenizer.next(); // eat variant

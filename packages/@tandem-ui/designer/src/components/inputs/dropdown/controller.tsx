@@ -88,8 +88,6 @@ export default (Base: React.ComponentClass<BaseDropdownProps>) =>
       setOpen(false);
     }, [value]);
 
-    console.log(options);
-
     const menuItems = open
       ? options
           .filter(

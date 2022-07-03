@@ -50,6 +50,7 @@ export enum ExpressionKind {
 
   Text = "Text",
   Variant = "Variant",
+  Script = "Script",
   Render = "Render",
   Element = "Element",
   Fragment = "Fragment",
@@ -90,7 +91,7 @@ export type Component = {
   isPublic?: boolean;
 } & BaseExpression<ExpressionKind.Component>;
 
-export type ComponentBodyExpression = Render | Variant;
+export type ComponentBodyExpression = Render | Variant | Script;
 
 export type Parameter = {
   raws: Raws;
@@ -198,6 +199,10 @@ export type Variant = {
   parameters: Parameter[];
 } & BaseExpression<ExpressionKind.Variant>;
 
+export type Script = {
+  parameters: Parameter[];
+} & BaseExpression<ExpressionKind.Script>;
+
 export type Render = {
   node: VisibleNode;
 } & BaseExpression<ExpressionKind.Render>;
@@ -224,6 +229,7 @@ export type Expression =
   | Text
   | Fragment
   | Element
+  | Script
   | Override
   | StyleInclude
   | StyleDeclaration

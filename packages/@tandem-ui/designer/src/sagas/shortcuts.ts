@@ -343,7 +343,7 @@ export const createShortcutSaga = ({
               inShadow || extendsComponent(sourceNode)
                 ? {
                     type: ContextMenuOptionType.ITEM,
-                    label: "Select Source Layer",
+                    label: "Go To Source",
                     action:
                       inspectorNodeContextMenuSelectSourceNodeClicked(node),
                   }

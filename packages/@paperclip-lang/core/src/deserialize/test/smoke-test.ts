@@ -429,6 +429,29 @@ describe(__filename + "#", () => {
         `,
       },
     ],
+    [
+      `Can define a script on a component`,
+      {
+        "file:///entry.pc": `
+          public component Main {
+            script (src: "./test.tsx")
+            render div
+          }
+        `,
+      },
+    ],
+    [
+      `Can render an instance as a frame`,
+      {
+        "file:///entry.pc": `
+          public component Main {
+            render div
+          }
+
+          Main 
+        `,
+      },
+    ],
   ].forEach(([title, sourceGraph]: any) => {
     it(title, () => {
       const dslGraph: DependencyGraph = {};

@@ -667,6 +667,7 @@
         {
           "slotId": "88156175335",
           "id": "4cc9edbe660",
+          "label": "plug11",
           "children": [
             {
               "id": "4cc9edbe659",

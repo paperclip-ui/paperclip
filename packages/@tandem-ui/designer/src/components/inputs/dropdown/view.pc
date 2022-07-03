@@ -265,6 +265,7 @@
                       "children": [
                         {
                           "id": "9c4dcc9c484",
+                          "label": "Inst66",
                           "is": "8b8bbe2c859177",
                           "name": "component-instance",
                           "attributes": {},
@@ -281,6 +282,7 @@
                         },
                         {
                           "id": "9c4dcc9c578",
+                          "label": "Insttt",
                           "is": "8b8bbe2c859177",
                           "name": "component-instance",
                           "attributes": {},
@@ -317,6 +319,7 @@
                         {
                           "id": "9c4dcc9c784",
                           "is": "8b8bbe2c859177",
+                          "label": "inst11",
                           "name": "component-instance",
                           "attributes": {},
                           "style": {},
@@ -352,6 +355,7 @@
                         {
                           "id": "9c4dcc9c1014",
                           "is": "8b8bbe2c859177",
+                          "label": "Inst22",
                           "name": "component-instance",
                           "attributes": {},
                           "style": {},
@@ -386,6 +390,7 @@
                         },
                         {
                           "id": "9c4dcc9c1268",
+                          "label": "Inst33",
                           "is": "8b8bbe2c859177",
                           "name": "component-instance",
                           "attributes": {},
@@ -405,6 +410,7 @@
                         },
                         {
                           "id": "9c4dcc9c1404",
+                          "label": "inst44",
                           "is": "8b8bbe2c859177",
                           "name": "component-instance",
                           "attributes": {},
@@ -421,6 +427,7 @@
                         },
                         {
                           "id": "e6638364329",
+                          "label": "Inst55",
                           "is": "8b8bbe2c859177",
                           "name": "component-instance",
                           "attributes": {},

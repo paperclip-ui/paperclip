@@ -613,7 +613,7 @@ const deserializeInstanceElement = (
     id: getNodeId(node, context),
     name: PCSourceTagNames.COMPONENT_INSTANCE,
     variant: {},
-    attributes: {},
+    attributes: deserializeAttributes(node),
     label: node.name,
     is: component.id,
     styleMixins: style
@@ -640,7 +640,7 @@ const deserializeElement = (node: ast.Element, context: Context): PCElement => {
   return {
     id: getNodeId(node, context),
     name: PCSourceTagNames.ELEMENT,
-    attributes: {},
+    attributes: deserializeAttributes(node),
     label: node.name,
     is: node.tagName.name,
     styleMixins: style

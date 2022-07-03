@@ -1395,7 +1395,7 @@ export const canvasReducer = (state: RootState, action: Action) => {
           document,
           state.sourceNodeInspector,
           state.graph
-        );
+        ) as InspectorNode;
 
         let currentInstance = inspectorNode;
 

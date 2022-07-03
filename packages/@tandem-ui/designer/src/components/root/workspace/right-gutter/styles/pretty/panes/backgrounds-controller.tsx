@@ -114,6 +114,7 @@ export default (Base: React.ComponentClass<BaseBackgroundsProps>) =>
           variant={cx({
             hasBackground: Boolean(children.length),
           })}
+          node11231Props={null}
           contentProps={{ children }}
           plusButtonProps={{ onClick: onPlusButtonClick }}
         />

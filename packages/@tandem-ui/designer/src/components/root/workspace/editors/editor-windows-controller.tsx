@@ -14,7 +14,7 @@ export default (Base: React.ComponentClass<BaseEditorWindowsProps>) =>
     render() {
       const { root, dispatch } = this.props;
       return (
-        <Base>
+        <Base node1221Props={null}>
           {root.editorWindows.map((editorWindow, i) => {
             return (
               <Editor

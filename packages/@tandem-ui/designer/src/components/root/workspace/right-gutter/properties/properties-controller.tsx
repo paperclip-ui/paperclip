@@ -71,11 +71,12 @@ export default (Base: React.ComponentClass<BasePropertiesProps>) =>
             dispatch,
             sourceNodeUri,
           }}
-          textProps={{
+          text1Props={{
             dispatch,
             selectedNodes,
           }}
-          elementProps={{
+          text2Props={null}
+          element1Props={{
             sourceNode: sourceNode as PCVisibleNode,
             graph,
             dispatch,

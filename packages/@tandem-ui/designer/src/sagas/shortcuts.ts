@@ -115,10 +115,7 @@ export const createShortcutSaga = ({
 
     yield takeEvery(
       CANVAS_RIGHT_CLICKED,
-      function* handleFileItemRightClick({
-        event,
-        item,
-      }: FileItemRightClicked) {
+      function* handleFileItemRightClick({ event, item }: any) {
         const state: RootState = yield select();
         const targetNodeId = getCanvasMouseTargetNodeId(state, {
           left: event.pageX,
@@ -176,7 +173,7 @@ export const createShortcutSaga = ({
 
     yield takeEvery(
       PC_LAYER_RIGHT_CLICKED,
-      function* handleFileItemRightClick({ event, item }: PCLayerRightClicked) {
+      function* handleFileItemRightClick({ event, item }: any) {
         // this will happen for
         if (!item) {
           console.warn(

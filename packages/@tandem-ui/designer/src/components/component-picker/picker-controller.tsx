@@ -57,6 +57,7 @@ export default (Base: React.ComponentClass<BasePickerProps>) =>
 
     return (
       <Base
+        instance123Props={null}
         filterInputProps={{
           onChange: onFilterChange,
         }}

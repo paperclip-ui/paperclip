@@ -66,6 +66,7 @@ export default (Base: React.ComponentClass<BaseColorInputProps>) =>
       return (
         <Base
           {...rest}
+          node12343Props={null}
           buttonProps={{
             tabIndex: 0,
             onClick: onButtonClick,

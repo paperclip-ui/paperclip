@@ -991,7 +991,7 @@ export const getInspectorNodeBySourceNodeId = <TState extends PCEditorState>(
   return flattenTreeNode(root).find(
     (child: InspectorNode) =>
       !child.instancePath && child.sourceNodeId === sourceNodeId
-  );
+  ) as InspectorNode;
 };
 
 export const getInspectorContentNodeContainingChild = memoize(
@@ -1063,7 +1063,7 @@ export const getSyntheticInspectorNode = memoize(
             child.sourceNodeId === node.sourceNodeId
         );
       }
-    );
+    ) as InspectorNode;
   }
 );
 

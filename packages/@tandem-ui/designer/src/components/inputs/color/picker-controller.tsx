@@ -158,7 +158,7 @@ export default compose(
             onChangeComplete: onOpacityChangeComplete,
             grabberAxis: GrabberAxis.X,
           }}
-          colorSwatchesProps={{
+          colorSwatchesInstProps={{
             onChange: onColorSwatchChange,
             optionGroups: swatchOptionGroups,
             value,

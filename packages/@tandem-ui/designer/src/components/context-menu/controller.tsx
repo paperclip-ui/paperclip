@@ -58,7 +58,7 @@ const Item = memo(({ option }: ItemProps) => {
 
   return (
     <styles.ContextMenuItem
-      textProps={{ text: option.label }}
+      text1Props={{ text: option.label }}
       onClick={onClick}
     />
   );

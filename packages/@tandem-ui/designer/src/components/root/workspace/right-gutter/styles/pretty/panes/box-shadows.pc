@@ -406,7 +406,6 @@
                           "variantId": "3fb9d47e51",
                           "propertyName": "style",
                           "targetIdPath": [
-                            "3fb9d47e50"
                           ],
                           "value": {
                             "display": "block"

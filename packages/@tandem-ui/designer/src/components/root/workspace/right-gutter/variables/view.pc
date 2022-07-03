@@ -638,7 +638,6 @@
                   "variantId": "4b46931a1525369",
                   "propertyName": "style",
                   "targetIdPath": [
-                    "4b46931a1610861"
                   ],
                   "value": {
                     "display": "block"

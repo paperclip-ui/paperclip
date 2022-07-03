@@ -1494,20 +1494,6 @@
                       "children": []
                     },
                     {
-                      "id": "8480ea5b7424",
-                      "propertyName": "style",
-                      "targetIdPath": [
-                        "36f723a46296",
-                        "7be245712"
-                      ],
-                      "value": {
-                        "padding-bottom": "0px",
-                        "margin-right": "6px"
-                      },
-                      "name": "override",
-                      "children": []
-                    },
-                    {
                       "id": "8480ea5b7425",
                       "propertyName": "style",
                       "targetIdPath": [

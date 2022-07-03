@@ -3,6 +3,7 @@ import {
   PCComponent,
   PCComponentChild,
   PCElement,
+  PCElementStyleMixin,
   PCModule,
   PCModuleChild,
   PCOverridablePropertyName,
@@ -49,67 +50,97 @@ export const deserializeModule = (
 const deserializeModuleChildren = (context: Context): PCModuleChild[] => {
   return [
     ...context.ast.expressions
-      .filter((expr) => expr.kind === ast.ExpressionKind.Component)
-      .map(deserializeComponent(context)),
+      .map((child) => deserializeModuleChild(child, context))
+      .filter(Boolean),
   ];
 };
 
-const deserializeComponent =
-  (context: Context) =>
-  (component: ast.Component): PCComponent => {
-    const variant = {};
+const deserializeModuleChild = (
+  child: ast.Expression,
+  context: Context
+): PCModuleChild => {
+  if (child.kind === ast.ExpressionKind.Component) {
+    return deserializeComponent(child, context);
+  } else if (child.kind === ast.ExpressionKind.Style) {
+    return deserializeStyleMixin(child, context);
+  }
+};
 
-    const render = component.body.find(
-      (expr) => expr.kind === ast.ExpressionKind.Render
-    ) as ast.Render;
-    const node = render?.node as ast.Element;
-    const { name: tagName, namespace } = node.tagName || {};
-
-    const componentTagName = namespace
-      ? ast.getInstanceComponent(node, context.graph).id
-      : tagName;
-
-    const style = node.children.find(
-      (child) => child.kind === ast.ExpressionKind.Style
-    ) as ast.Style;
-    const variants = getComponentVariants(component);
-
-    const variantTriggers: Array<[ast.Reference, ast.Variant]> = [];
-
-    for (const variant of variants) {
-      const trigger = variant.parameters.find(
-        (param) => param.value.kind === ast.ExpressionKind.Array
-      )?.value as ast.ArrayExpression;
-      if (trigger?.items[0]?.kind === ast.ExpressionKind.Reference) {
-        variantTriggers.push([trigger?.items[0], variant]);
-      }
-    }
-
-    const ret = {
-      id: getNodeId(component, context),
-      name: PCSourceTagNames.COMPONENT,
-      label: component.name,
-      variant,
-      children: [
-        ...variants.map(deserializeVariant(context)),
-        ...variantTriggers.map(deserializeVariantTrigger(context)),
-        ...deserializeOverrides(node, context),
-        ...(node.children
-          .map((child) =>
-            deserializeVisibleNode(child as ast.Node, node, context)
-          )
-          .filter(Boolean) as PCComponentChild[]),
-        ,
-      ],
-      is: componentTagName,
-      attributes: deserializeAttributes(node),
-      styleMixins: style ? deserializeStyleMixins(style, node, context) : {},
-      style: style ? deserializeStyleDeclarations(style) : {},
-      metadata: {},
-    } as PCComponent;
-
-    return ret;
+const deserializeStyleMixin = (
+  style: ast.Style,
+  context: Context
+): PCElementStyleMixin => {
+  return {
+    id: style.id,
+    name: PCSourceTagNames.STYLE_MIXIN,
+    targetType: PCSourceTagNames.ELEMENT,
+    label: style.name,
+    metadata: {},
+    children: [],
+    styleMixins: deserializeAppliedStyleMixins(style, style, context),
+    style: deserializeStyleDeclarations(style),
   };
+};
+
+const deserializeComponent = (
+  component: ast.Component,
+  context: Context
+): PCComponent => {
+  const variant = {};
+
+  const render = component.body.find(
+    (expr) => expr.kind === ast.ExpressionKind.Render
+  ) as ast.Render;
+  const node = render?.node as ast.Element;
+  const { name: tagName, namespace } = node.tagName || {};
+
+  const componentTagName = namespace
+    ? ast.getInstanceComponent(node, context.graph).id
+    : tagName;
+
+  const style = node.children.find(
+    (child) => child.kind === ast.ExpressionKind.Style
+  ) as ast.Style;
+  const variants = getComponentVariants(component);
+
+  const variantTriggers: Array<[ast.Reference, ast.Variant]> = [];
+
+  for (const variant of variants) {
+    const trigger = variant.parameters.find(
+      (param) => param.value.kind === ast.ExpressionKind.Array
+    )?.value as ast.ArrayExpression;
+    if (trigger?.items[0]?.kind === ast.ExpressionKind.Reference) {
+      variantTriggers.push([trigger?.items[0], variant]);
+    }
+  }
+
+  const ret = {
+    id: getNodeId(component, context),
+    name: PCSourceTagNames.COMPONENT,
+    label: component.name,
+    variant,
+    children: [
+      ...variants.map(deserializeVariant(context)),
+      ...variantTriggers.map(deserializeVariantTrigger(context)),
+      ...deserializeOverrides(node, context),
+      ...(node.children
+        .map((child) =>
+          deserializeVisibleNode(child as ast.Node, node, context)
+        )
+        .filter(Boolean) as PCComponentChild[]),
+      ,
+    ],
+    is: componentTagName,
+    attributes: deserializeAttributes(node),
+    styleMixins: style
+      ? deserializeAppliedStyleMixins(style, node, context)
+      : {},
+    style: style ? deserializeStyleDeclarations(style) : {},
+    metadata: {},
+  } as PCComponent;
+
+  return ret;
+};
 
 const isComponentChild = (child: ast.ElementChild) => {
   return child.kind === ast.ExpressionKind.Element || ast.ExpressionKind.Text;
@@ -121,23 +152,6 @@ const getComponentVariants = memoize((component: ast.Component) => {
   ) as ast.Variant[];
   return variants;
 });
-
-// const deserializeStyleOverrides = (
-//   node: ast.Element,
-//   component: ast.Component
-// ): PCOverride[] => {
-//   const overrides: PCOverride[] = [];
-
-//   for (const descendent of ast.flatten(node)) {
-//     if (descendent.kind === ast.ExpressionKind.Style) {
-//       const override = deserializeStyleOverride(descendent, component);
-//       if (override) {
-//         overrides.push(override);
-//       }
-//     }
-//   }
-//   return overrides;
-// };
 
 /**
  * Deserializes all nested overrides of this specific instance. Note that this function
@@ -397,9 +411,9 @@ const getRef = (
       // }
 
       if (expr.kind === ast.ExpressionKind.Import) {
-        const dir = path.dirname(currFileUri.replace("file:///", ""));
+        const dir = path.dirname(currFileUri.replace("file://", ""));
 
-        uri = "file:///" + path.relative(dir, expr.path);
+        uri = "file://" + path.join(dir, expr.path);
         scope = context.graph[uri];
         return { uri, expr: scope };
       }
@@ -477,9 +491,9 @@ const deserializeStyleDeclarations = (style: ast.Style) => {
   return style2;
 };
 
-const deserializeStyleMixins = (
+const deserializeAppliedStyleMixins = (
   style: ast.Style,
-  node: ast.Node,
+  node: ast.Expression,
   context: Context
 ) => {
   const mixins: StyleMixins = {};
@@ -548,7 +562,9 @@ const deserializeElement = (node: ast.Element, context: Context): PCElement => {
     attributes: {},
     label: node.name,
     is: node.tagName.name,
-    styleMixins: style ? deserializeStyleMixins(style, node, context) : {},
+    styleMixins: style
+      ? deserializeAppliedStyleMixins(style, style, context)
+      : {},
     style: {},
     children: [
       ...node.children
@@ -599,7 +615,9 @@ const deserializeTextNode = (node: ast.Text, context: Context): PCTextNode => {
     id: getNodeId(node, context),
     name: PCSourceTagNames.TEXT,
     value: node.value,
-    styleMixins: style ? deserializeStyleMixins(style, node, context) : {},
+    styleMixins: style
+      ? deserializeAppliedStyleMixins(style, node, context)
+      : {},
     label: node.name,
     style: style ? deserializeStyleDeclarations(style) : {},
     children: [],

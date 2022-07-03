@@ -334,11 +334,11 @@ describe(__filename + "#", () => {
           }
         `,
         "file:///entry.pc": `
-        import "./test.pc" as imp1
+        import "./test.pc" as imp0
         public component ComponentOption {
           render div {
             style {
-              include imp1.test
+              include imp0.test
             }
           }
         }

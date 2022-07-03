@@ -559,6 +559,9 @@ const translateOverrides = (
         if (!node.label) {
           throw new Error(`label doesn't exist for node ${node.id}!`);
         }
+        if (idPath === "7be245712") {
+          console.log("LAB", node.label);
+        }
         return camelCase(node.label);
       })
       .join(".");

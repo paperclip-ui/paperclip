@@ -410,6 +410,25 @@ describe(__filename + "#", () => {
         `,
       },
     ],
+    [
+      `Can use a color token`,
+      {
+        "file:///test.pc": `
+          public token color1 rgba(0,0,0.5)
+        `,
+        "file:///entry.pc": `
+          import "./test.pc" as imp0 
+
+          public component Main {
+            render div {
+              style {
+                color: #{imp0.color1}
+              }
+            }
+          }
+        `,
+      },
+    ],
   ].forEach(([title, sourceGraph]: any) => {
     it(title, () => {
       const dslGraph: DependencyGraph = {};

@@ -131,38 +131,6 @@
       "metadata": {}
     },
     {
-      "id": "a02b133a705",
-      "name": "variable",
-      "value": "light",
-      "label": "theme",
-      "type": "text",
-      "children": [],
-      "metadata": {}
-    },
-    {
-      "id": "a02b133a706",
-      "name": "query",
-      "type": 1,
-      "label": "Dark Theme",
-      "condition": {
-        "equals": "dark"
-      },
-      "children": [],
-      "metadata": {},
-      "sourceVariableId": "a02b133a705"
-    },
-    {
-      "id": "b25b32a6666",
-      "name": "query",
-      "type": 0,
-      "label": "Mobile",
-      "condition": {
-        "maxWidth": 500
-      },
-      "children": [],
-      "metadata": {}
-    },
-    {
       "id": "4325aac312609",
       "name": "variable",
       "value": "rgba(255, 51, 51, 1)",

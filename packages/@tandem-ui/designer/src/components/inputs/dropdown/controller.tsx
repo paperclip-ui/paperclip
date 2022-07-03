@@ -88,6 +88,8 @@ export default (Base: React.ComponentClass<BaseDropdownProps>) =>
       setOpen(false);
     }, [value]);
 
+    console.log(options);
+
     const menuItems = open
       ? options
           .filter(
@@ -136,7 +138,7 @@ export default (Base: React.ComponentClass<BaseDropdownProps>) =>
         tabIndex={0}
         onKeyDown={onKeyDown}
         options={menuItems}
-        labelProps={{
+        label2Props={{
           style: {
             display: showFilter ? "none" : "block",
           },

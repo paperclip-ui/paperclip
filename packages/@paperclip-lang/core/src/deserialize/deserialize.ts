@@ -13,6 +13,8 @@ import {
   PCSlot,
   PCSourceTagNames,
   PCTextNode,
+  PCVariable,
+  PCVariableType,
   PCVariant,
   PCVariantTrigger,
   PCVariantTriggerSource,
@@ -73,7 +75,24 @@ const deserializeModuleChild = (
     return deserializeElement(child, context);
   } else if (child.kind === ast.ExpressionKind.Text) {
     return deserializeTextNode(child, context);
+  } else if (child.kind === ast.ExpressionKind.Token) {
+    return deserializeToken(child, context);
   }
+};
+
+const deserializeToken = (
+  child: ast.ValueToken,
+  context: Context
+): PCVariable => {
+  return {
+    id: child.id,
+    name: PCSourceTagNames.VARIABLE,
+    type: PCVariableType.COLOR,
+    label: child.name,
+    value: child.value,
+    metadata: {},
+    children: [],
+  };
 };
 
 const deserializeStyleMixin = (
@@ -90,7 +109,7 @@ const deserializeStyleMixin = (
     },
     children: [],
     styleMixins: deserializeAppliedStyleMixins(style, style, context),
-    style: deserializeStyleDeclarations(style),
+    style: deserializeStyleDeclarations(style, context),
   };
 };
 
@@ -128,10 +147,6 @@ const deserializeComponent = (
 
   const metadata = deserializeMetadata(component);
 
-  if (!metadata["bounds"]) {
-    console.log("NO BOUNDS", context.fileUrl);
-  }
-
   const ret = {
     id: getNodeId(component, context),
     name: PCSourceTagNames.COMPONENT,
@@ -150,7 +165,7 @@ const deserializeComponent = (
     styleMixins: style
       ? deserializeAppliedStyleMixins(style, node, context)
       : {},
-    style: style ? deserializeStyleDeclarations(style) : {},
+    style: style ? deserializeStyleDeclarations(style, context) : {},
     metadata,
   } as PCComponent;
 
@@ -227,9 +242,7 @@ const deserializeOverrides = (
       descendent.kind === ast.ExpressionKind.Style &&
       isStyleOverride(descendent, instance)
     ) {
-      overrides.push(
-        deserializeStyleOverride(descendent, instance, context.graph)
-      );
+      overrides.push(deserializeStyleOverride(descendent, instance, context));
     } else if (descendent.kind === ast.ExpressionKind.Override) {
       overrides.push(
         ...deserializeOverride(descendent, instance, context.graph)
@@ -340,7 +353,7 @@ const deserializeTextOverride = (
 const deserializeStyleOverride = (
   node: ast.Style,
   instance: ast.Element,
-  graph: ast.ASTDependencyGraph
+  context: Context
 ): PCOverride => {
   const styleParent = ast.getParent(node.id, instance);
 
@@ -354,10 +367,13 @@ const deserializeStyleOverride = (
 
   let targetIdPath: string[] =
     styleParent.kind == ast.ExpressionKind.Override && styleParent.target
-      ? getInstanceRef(styleParent.target, instance, graph)
+      ? getInstanceRef(styleParent.target, instance, context.graph)
       : [];
 
-  const contentNode = ast.getExpContentNode(node, graph) as ast.Component;
+  const contentNode = ast.getExpContentNode(
+    node,
+    context.graph
+  ) as ast.Component;
   const variant = node.conditionNames.length
     ? getVariantByName(node.conditionNames[0], contentNode)
     : null;
@@ -366,7 +382,7 @@ const deserializeStyleOverride = (
     id: node.id,
     name: PCSourceTagNames.OVERRIDE,
     propertyName: PCOverridablePropertyName.STYLE,
-    value: deserializeStyleDeclarations(node),
+    value: deserializeStyleDeclarations(node, context),
     targetIdPath,
     variantId: variant?.id,
     metadata: {},
@@ -424,7 +440,10 @@ const getRef = (
 
   return refPath.reduce(
     ({ uri, expr }, name) => {
-      if (expr.kind === ast.ExpressionKind.StyleInclude) {
+      if (
+        expr.kind === ast.ExpressionKind.StyleInclude ||
+        expr.kind === ast.ExpressionKind.StyleDeclaration
+      ) {
         const doc = context.ast;
         expr = ast.getExprByName(name, doc);
 
@@ -525,11 +544,20 @@ const isVariantEnabledByDefault = (variant: ast.Variant) => {
   }
 };
 
-const deserializeStyleDeclarations = (style: ast.Style) => {
+const deserializeStyleDeclarations = (style: ast.Style, context: Context) => {
   const style2 = {};
   for (const item of style.body) {
     if (item.kind === ast.ExpressionKind.StyleDeclaration) {
-      style2[item.name] = item.value;
+      let value = item.value;
+
+      // naughty!
+      while (value.includes("#{")) {
+        const ref = value.match(/\#{(.*?)\}/)[1].split(".");
+        const token = getRef(ref, item, context);
+        value = value.replace(/#\{.*?\}/, `var(--${token.expr.id})`);
+      }
+
+      style2[item.name] = value;
     }
   }
   return style2;
@@ -619,7 +647,7 @@ const deserializeInstanceElement = (
     styleMixins: style
       ? deserializeAppliedStyleMixins(style, style, context)
       : {},
-    style: style ? deserializeStyleDeclarations(style) : {},
+    style: style ? deserializeStyleDeclarations(style, context) : {},
     metadata: deserializeMetadata(node),
     children: [
       ...node.children.map((child) =>
@@ -646,7 +674,7 @@ const deserializeElement = (node: ast.Element, context: Context): PCElement => {
     styleMixins: style
       ? deserializeAppliedStyleMixins(style, style, context)
       : {},
-    style: style ? deserializeStyleDeclarations(style) : {},
+    style: style ? deserializeStyleDeclarations(style, context) : {},
     metadata: deserializeMetadata(node),
     children: [
       ...node.children.map((child) =>
@@ -698,7 +726,7 @@ const deserializeTextNode = (node: ast.Text, context: Context): PCTextNode => {
       ? deserializeAppliedStyleMixins(style, node, context)
       : {},
     label: node.name,
-    style: style ? deserializeStyleDeclarations(style) : {},
+    style: style ? deserializeStyleDeclarations(style, context) : {},
     children: [],
     metadata: deserializeMetadata(node),
   };

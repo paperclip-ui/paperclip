@@ -109,7 +109,7 @@ export const translateModuleToVanilla = memoize(
     sourceUri: string,
     rootDirectory: string
   ) => {
-    return module.children
+    const content = module.children
       .filter(
         (child) =>
           child.name !== PCSourceTagNames.VARIABLE &&
@@ -127,6 +127,7 @@ export const translateModuleToVanilla = memoize(
           )}`
       )
       .join("\n");
+    return content;
   }
 );
 
@@ -168,6 +169,19 @@ const translateContentNode = memoize(
       }
       return ${translateVisibleNode(node, true)};
     }`;
+
+    if (buffer.includes("7be5e4502abd551ea1485cd5ed385fc265")) {
+      console.log("IT HAS IT", sourceUri);
+      console.log(JSON.stringify(node, null, 2));
+      console.log(buffer);
+    }
+
+    if (
+      sourceUri.includes("borders.pc") ||
+      sourceUri.includes("icons/view.pc")
+    ) {
+      // console.log(node.label, buffer);
+    }
 
     return buffer + `})()`;
   }

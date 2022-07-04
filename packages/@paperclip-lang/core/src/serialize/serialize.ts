@@ -39,7 +39,7 @@ import {
   startBlock,
   TranslateContext,
 } from "./serialize-context";
-import { pascalCase } from "./utils";
+import { pascalCase, getName } from "./utils";
 import { VARIANT_ENABLED_PARAM_NAME } from "../parser/dsl/ast";
 import { countReset } from "console";
 
@@ -258,12 +258,6 @@ const translateComponentRender = (
   context = addBuffer(`render `, context);
   context = translateNode(component, context);
   return context;
-};
-
-const getName = (label: string) => {
-  return isNaN(Number(label.charAt(0)))
-    ? camelCase(label)
-    : "l" + camelCase(label);
 };
 
 const translateNode = (node: PCNode, context: TranslateContext) => {

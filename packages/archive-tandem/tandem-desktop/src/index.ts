@@ -16,8 +16,6 @@ if (projectPath) {
   project = JSON.parse(fs.readFileSync(projectPath, "utf8"));
 }
 
-console.log("OKOKOKO");
-
 init({
   tdProjectPath: projectPath && normalizeFilePath(projectPath),
   tdProject: project,

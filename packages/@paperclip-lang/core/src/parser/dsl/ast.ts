@@ -154,8 +154,10 @@ export type Override = {
 
 export type Insert = {
   name: string;
-  body: Node[];
+  body: InsertChild[];
 } & BaseExpression<ExpressionKind.Insert>;
+
+type InsertChild = Node | Slot;
 
 export type Slot = {
   name: string;

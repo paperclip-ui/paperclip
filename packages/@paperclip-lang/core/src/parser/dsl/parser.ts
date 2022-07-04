@@ -547,7 +547,8 @@ const parseRef = (context: Context): Reference => {
   let next = context.tokenizer.nextEat(DSLTokenKind.Space);
   const path: string[] = [name];
   while (next?.kind === DSLTokenKind.Dot) {
-    path.push(context.tokenizer.next().value);
+    context.tokenizer.next();
+    path.push(context.tokenizer.currValue(DSLTokenKind.Keyword));
     next = context.tokenizer.next();
   }
   context.tokenizer.eat(DSLTokenKind.Space);
@@ -575,7 +576,11 @@ const parseInsert = (context: Context): Insert => {
   };
 };
 
-const parseInsertChildren = bodyParser<Node>((context) => {
+const parseInsertChildren = bodyParser<Node | Slot>((context) => {
+  const curr = context.tokenizer.curr();
+  if (curr.value === "slot") {
+    return parseSlot(context);
+  }
   return parseNode(context, null);
 });
 

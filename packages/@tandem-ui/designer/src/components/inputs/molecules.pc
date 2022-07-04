@@ -55,7 +55,7 @@
         },
         {
           "id": "7149f81937818",
-          "label": "Input",
+          "label": "Input1",
           "is": "div",
           "name": "element",
           "attributes": {},

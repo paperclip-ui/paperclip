@@ -95,7 +95,7 @@
           },
           "children": [
             {
-              "label": "content",
+              "label": "content2",
               "id": "d6261ad52883",
               "children": [
                 {

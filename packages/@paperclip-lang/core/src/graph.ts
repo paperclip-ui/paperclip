@@ -113,17 +113,19 @@ export const deserializeDependencyGraph = (
 
   const astGraph = mapValues(dslGraph, (dep) => {
     const content = serializeModule(dep.content, dep.uri, dslGraph);
-    if (dep.uri.includes("all.pc")) {
-      console.log(content);
-    }
     const ast = parseDocument(content);
     return ast;
   });
 
   const dslGraph2 = mapValues(astGraph, (doc, uri) => {
+    const content = deserializeModule(doc, uri, astGraph);
+
+    if (uri.includes("icons/view.pc") || uri.includes("borders.pc")) {
+      console.log("DESERRR", JSON.stringify(content, null, 2));
+    }
     return {
       uri,
-      content: deserializeModule(doc, uri, astGraph),
+      content,
     };
   });
 

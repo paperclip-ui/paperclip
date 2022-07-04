@@ -605,10 +605,14 @@ const deserializeAppliedStyleMixins = (
 };
 
 const deserializeAttributes = (node: ast.Element) => {
-  const attributes = {};
+  const attributes: any = {};
   for (const param of node.parameters) {
     attributes[param.name] = deserializeValue(param.value);
   }
+  if (node.tagName.name === "svg") {
+    attributes.xmlns = "http://www.w3.org/2000/svg";
+  }
+
   return attributes;
 };
 
@@ -697,10 +701,6 @@ const deserializeNativeElement = (
   node: ast.Element,
   context: Context
 ): PCElement => {
-  const style = node.children.find(
-    (child) => child.kind === ast.ExpressionKind.Style
-  ) as ast.Style;
-
   return {
     ...deserializeBaseElementProps(node, context),
     name: PCSourceTagNames.ELEMENT,
@@ -710,7 +710,7 @@ const deserializeNativeElement = (
 
 const deserializeSlot = (node: ast.Slot, context: Context): PCSlot => {
   return {
-    id: getNodeId(node, context),
+    id: node.id,
     name: PCSourceTagNames.SLOT,
     label: node.name,
     metadata: {},
@@ -726,7 +726,7 @@ const deserializeInsert = (
   context: Context
 ): PCPlug => {
   return {
-    id: getNodeId(node, context),
+    id: node.id,
     name: PCSourceTagNames.PLUG,
     slotId: getInstanceRef([node.name], parent, context.graph)[0],
     metadata: {},

@@ -1,0 +1,205 @@
+{
+  "id": "2b5298ab3",
+  "name": "module",
+  "version": "0.0.3",
+  "children": [
+    {
+      "id": "4e494cbf1",
+      "variant": {},
+      "is": "97a34b151010442",
+      "name": "component-instance",
+      "attributes": {},
+      "style": {},
+      "children": [
+        {
+          "id": "4e494cbf6",
+          "propertyName": "text",
+          "targetIdPath": ["97a34b151010439"],
+          "value": " ",
+          "name": "override",
+          "children": []
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": -188,
+          "top": 142,
+          "right": 105.65422704948787,
+          "bottom": 342.7213373757045
+        }
+      },
+      "label": "TODO"
+    },
+    {
+      "label": "Welcome",
+      "is": "div",
+      "style": {
+        "box-sizing": "border-box",
+        "display": "block",
+        "flex-direction": "row",
+        "height": "100%",
+        "width": "100%"
+      },
+      "attributes": {},
+      "id": "2b5298ab6",
+      "name": "component",
+      "children": [
+        {
+          "id": "83e8944c8",
+          "label": "Buttons",
+          "is": "div",
+          "name": "element",
+          "attributes": {},
+          "style": {
+            "box-sizing": "border-box",
+            "display": "block",
+            "position": "relative",
+            "top": "50%",
+            "left": "50%",
+            "padding-left": "16px",
+            "padding-top": "16px",
+            "padding-right": "16px",
+            "padding-bottom": "16px",
+            "transform": "translate(-50%, -50%)",
+            "text-align": "center"
+          },
+          "children": [
+            {
+              "id": "83e8944c9",
+              "is": "83e8944c4",
+              "name": "component-instance",
+              "attributes": {},
+              "style": {
+                "box-sizing": "border-box",
+                "display": "inline-block",
+                "padding-left": "16px",
+                "padding-top": "8px",
+                "padding-right": "16px",
+                "text-align": "center",
+                "border-radius": "4px",
+                "background": "rgba(224, 224, 224, 1)",
+                "margin-right": "16px"
+              },
+              "children": [
+                {
+                  "id": "83e8944c12",
+                  "variantId": null,
+                  "propertyName": "text",
+                  "targetIdPath": ["83e8944c5"],
+                  "value": "Open project",
+                  "name": "override",
+                  "children": []
+                }
+              ],
+              "metadata": {
+                "bounds": {
+                  "left": 1029.6472850476437,
+                  "top": 82.1850188166938,
+                  "right": 1129.6472850476437,
+                  "bottom": 182.1850188166938
+                }
+              },
+              "label": "Open project button"
+            },
+            {
+              "id": "83e8944c10",
+              "is": "83e8944c4",
+              "name": "component-instance",
+              "attributes": {},
+              "style": {
+                "box-sizing": "border-box",
+                "display": "inline-block",
+                "padding-left": "16px",
+                "padding-top": "8px",
+                "padding-right": "16px",
+                "text-align": "center",
+                "border-radius": "4px",
+                "background": "rgba(224, 224, 224, 1)"
+              },
+              "children": [
+                {
+                  "id": "83e8944c13",
+                  "variantId": null,
+                  "propertyName": "text",
+                  "targetIdPath": ["83e8944c5"],
+                  "value": "Create project",
+                  "name": "override",
+                  "children": []
+                }
+              ],
+              "metadata": {
+                "bounds": {
+                  "left": 1029.6472850476437,
+                  "top": 82.1850188166938,
+                  "right": 1129.6472850476437,
+                  "bottom": 182.1850188166938
+                }
+              },
+              "label": "Create project button"
+            }
+          ],
+          "metadata": {}
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 173,
+          "top": 74,
+          "right": 786.7378517733734,
+          "bottom": 438.5938443057661
+        }
+      },
+      "styleMixins": {
+        "ca6d1d8454": {
+          "priority": 0
+        },
+        "ca6d1d842": {
+          "priority": 2
+        }
+      },
+      "controllers": ["./controller.tsx"]
+    },
+    {
+      "label": "Welcome button",
+      "is": "div",
+      "style": {
+        "box-sizing": "border-box",
+        "display": "inline-block",
+        "padding-left": "16px",
+        "padding-top": "8px",
+        "padding-right": "16px",
+        "padding-bottom": "8px",
+        "cursor": "pointer",
+        "user-select": "none",
+        "text-align": "center",
+        "border-radius": "4px",
+        "background": "rgba(224, 224, 224, 1)"
+      },
+      "attributes": {},
+      "id": "83e8944c4",
+      "name": "component",
+      "children": [
+        {
+          "id": "83e8944c5",
+          "name": "text",
+          "label": "Text1",
+          "value": "label",
+          "style": {
+            "font-family": "Avenir Next"
+          },
+          "children": [],
+          "metadata": {}
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 1029.6472850476437,
+          "top": 82.1850188166938,
+          "right": 1129.6472850476437,
+          "bottom": 182.1850188166938
+        }
+      }
+    }
+  ],
+  "metadata": {}
+}

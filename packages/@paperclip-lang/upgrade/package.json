@@ -1,0 +1,25 @@
+{
+  "name": "@paperclip-lang/upgrade",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "bin": {
+    "pc-upgrade": "./bin/pc-upgrade"
+  },
+  "scripts": {
+    "build:watch": "tsc --watch",
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "globby": "11",
+    "yargs": "^17.5.1"
+  },
+  "dependencies": {
+    "@paperclip-lang/core": "workspace:^",
+    "@tandem-ui/designer": "workspace:^",
+    "fs-extra": "^10.1.0",
+    "lodash": "^4.17.21"
+  }
+}

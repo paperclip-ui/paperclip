@@ -1,0 +1,192 @@
+{
+  "name": "paperclip-vscode",
+  "displayName": "@paperclip-lang/core",
+  "version": "18.5.6",
+  "electronVersion": "7.1.10",
+  "publisher": "crcn",
+  "preview": true,
+  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "React",
+    "CSS",
+    "HTML",
+    "visual",
+    "preview",
+    "realtime",
+    "live",
+    "template"
+  ],
+  "description": "IDE extension for Paperclip",
+  "homepage": "http://paperclip.dev",
+  "icon": "assets/logo.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/paperclipui/paperclip.git"
+  },
+  "main": "lib/extension/index.js",
+  "engines": {
+    "vscode": "^1.41.0"
+  },
+  "activationEvents": [
+    "onLanguage:paperclip",
+    "onWebviewPanel:paperclip-preview"
+  ],
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "configuration": {
+      "title": "@paperclip-lang/core",
+      "properties": {
+        "credentials.browserstackUsername": {
+          "type": "string"
+        },
+        "credentials.browserstackPassword": {
+          "type": "string"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "paperclip.openPreview",
+        "title": "Paperclip: Open Live Preview"
+      },
+      {
+        "command": "paperclip.openStickyPreview",
+        "title": "Paperclip: Open Sticky Preview"
+      },
+      {
+        "command": "paperclip.giveFeedback",
+        "title": "Paperclip: Give Feedback"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "paperclip.openPreview",
+          "when": "editorLangId == paperclip"
+        },
+        {
+          "command": "paperclip.openStickyPreview",
+          "when": "editorLangId == paperclip"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "paperclip.openPreview",
+        "key": "shift+cmd+v",
+        "when": "editorLangId == paperclip"
+      },
+      {
+        "command": "paperclip.openStickyPreview",
+        "key": "shift+cmd+b",
+        "when": "editorLangId == paperclip"
+      }
+    ],
+    "languages": [
+      {
+        "id": "@paperclip-lang/core",
+        "aliases": [
+          "@paperclip-lang/core",
+          "@paperclip-lang/core"
+        ],
+        "extensions": [
+          ".pc"
+        ],
+        "configuration": "./languages/paperclip-html-language-configuration.json"
+      },
+      {
+        "id": "pcss",
+        "aliases": [
+          "paperclip-css",
+          "paperclip-css"
+        ],
+        "extensions": [
+          ".pcss"
+        ],
+        "configuration": "./languages/paperclip-css-language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "@paperclip-lang/core",
+        "scopeName": "text.html.paperclip-html",
+        "path": "./syntaxes/paperclip-html.tmLanguage.json",
+        "embeddedLanguages": {
+          "source.pcss": "pcss",
+          "source.js": "javascript"
+        }
+      },
+      {
+        "language": "pcss",
+        "scopeName": "source.pcss",
+        "path": "./syntaxes/paperclip-css.json"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "tsc && npm run build:syntaxes",
+    "build:syntaxes": "node lib/scripts/build",
+    "build:syntaxes:watch": "nodemon --exec \"node lib/scripts/build\" --watch ./syntaxes/paperclip-html.yaml",
+    "xtest": "node lib/test/run",
+    "lint": "eslint src",
+    "build:watch": "concurrently \"tsc --watch --preserveWatchOutput\" \"npm run build:syntaxes:watch\"",
+    "prepublishOnly": "npm run build",
+    "rm-ngrok": "rm -rf node_modules/ngrok/bin",
+    "publish:local": "rm -rf node_modules && npm install && npm run rm-ngrok && vsce package && vsce publish",
+    "publish:marketplace": "rm -rf node_modules && npm install && npm run rm-ngrok && vsce package && vsce publish -p $VSCE_TOKEN"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/lodash": "^4.14.157",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^13.1.8",
+    "@types/vscode": "^1.41.0",
+    "@typescript-eslint/eslint-plugin": "^3.6.1",
+    "@typescript-eslint/parser": "^3.6.1",
+    "chai": "^4.2.0",
+    "concurrently": "^5.3.0",
+    "eslint": "^7.4.0",
+    "js-yaml": "^4.0.0",
+    "mocha": "^8.0.1",
+    "nodemon": "^2.0.7",
+    "plist": "^3.0.1",
+    "typescript": "^4.6.2",
+    "vscode-test": "^1.4.0",
+    "vscode-textmate": "^5.2.0"
+  },
+  "dependencies": {
+    "@paperclip-ui/autocomplete": "^18.5.6",
+    "@paperclip-lang/common": "^18.5.3",
+    "@paperclip-ui/core": "^18.5.6",
+    "@paperclip-ui/language-service": "^18.5.6",
+    "@paperclip-ui/source-writer": "^18.5.6",
+    "@paperclip-ui/utils": "^18.5.6",
+    "@paperclip-ui/web-renderer": "^18.5.6",
+    "@tandem-ui/designer": "^18.5.6",
+    "@tandem-ui/workspace": "^18.5.6",
+    "axios": "^0.21.1",
+    "browserstack": "^1.6.1",
+    "browserstack-local": "^1.4.8",
+    "cheerio": "^1.0.0-rc.3",
+    "color": "^3.1.2",
+    "find-up": "^4.1.0",
+    "glob": "^7.1.6",
+    "lodash": "^4.17.15",
+    "mousetrap": "^1.6.5",
+    "p-limit": "^3.0.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "vscode-languageclient": "6.0.1",
+    "vscode-languageserver": "6.0.1",
+    "vscode-languageserver-protocol": "3.15.3",
+    "vscode-languageserver-textdocument": "^1.0.0",
+    "ws": "^8.4.2"
+  },
+  "gitHead": "28439bfc22f88290b1a12e4f364bdd19667d715a"
+}

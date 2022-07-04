@@ -1,0 +1,93 @@
+<import src="@tandem-ui/design-system/src/atoms.pc" inject-styles />
+<import src="./Toolbar/index.pc" as="Toolbar" />
+<!--
+  @frame { visible: false }
+-->
+<div export component as="Container" class="v2 dark font-default">
+  <style>
+    display: flex;
+    flex-direction: column;
+    width: var(--code-editor-width, 70%);
+    overflow: hidden;
+    border-top-left-radius: var(--editor-border-radius);
+    border-bottom-left-radius: var(--editor-border-radius);
+    background: rgb(40, 44, 52);
+    min-height: 300px;
+    &:within(:global(.floating-preview)) {
+      width: 100%;
+      height: 100%;
+      border-top-right-radius: var(--editor-border-radius);
+      border-bottom-right-radius: var(--editor-border-radius);
+    }
+    &:within(:global(.show-left-sidebar)) {
+      border-top-left-radius: 0px;
+      border-bottom-left-radius: 0px;
+    }
+    &:within(:global(.compact)) {
+      width: 100%;
+      height: 80%;
+      border-bottom-left-radius: var(--border-radius-1);
+      border-bottom-right-radius: var(--border-radius-1);
+    }
+
+  </style>
+  {children}
+</div>
+
+
+<!--
+  @frame { visible: false }
+-->
+<div export component as="Content" class:slim="slim">
+  <style>
+    height: 100%;
+    overflow: scroll;
+    &.slim {
+      height: auto;
+      padding: 14px 28px;
+    }
+  </style>
+  {children}
+</div>
+
+
+<!--
+  @frame { visible: false }
+-->
+<div export component as="CantEditScreen" class="v2 dark">
+  <style>
+    width: 100%;
+    height: 100%;
+    color: rgba(255, 255, 255, 0.6);
+    text-align: center;
+  </style>
+  <div>
+    <style>
+      position: relative;
+      top: 30%;
+    </style>
+    Unable to edit this file
+  </div>
+</div>
+
+<!--
+  @frame { visible: false, title: "CodeMode", width: 1024, height: 768, x: 1309, y: 171 }
+-->
+<Container export component as="Preview" {slim?} {float?}>
+  {showSlimNav && <Toolbar.Preview {showFileMenu?} {showFileMenu?} />}
+  {!cantEdit && <Content>
+    <!--  <img src="./code-screenshot.png">
+      <style>
+      height: 100%;
+      </style>
+      </img>-->
+  </Content>}
+  {cantEdit && <CantEditScreen />}
+</Container>
+
+
+
+<!--
+  @frame { width: 1024, height: 768, x: 0, y: 0 }
+-->
+<Preview cantEdit />

@@ -1,0 +1,32 @@
+<import src="@tandem-ui/design-system/src/atoms.pc" as="atoms" />
+
+<!--
+  @frame { visible: false }
+-->
+<div export component as="default" {class?}>
+  <style>
+    display: flex;
+    grid-column-gap: var(--gap);
+    grid-row-gap: var(--gap);
+  </style>
+  {children}
+</div>
+
+
+<!--
+  @frame { visible: false }
+-->
+<div export component as="test" {a?}>
+  <style>
+    display: flex;
+    grid-column-gap: var(--gap);
+    grid-row-gap: var(--gap);
+  </style>
+  {children}
+</div>
+
+
+<!--
+  @frame { visible: false }
+-->
+<test class="a" a />

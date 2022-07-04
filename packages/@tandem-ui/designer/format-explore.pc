@@ -1,0 +1,111 @@
+{
+  "id": "67320b7d21",
+  "name": "module",
+  "version": "0.0.6",
+  "children": [
+    {
+      "id": "71d0d1f827",
+      "is": "71d0d1f826",
+      "label": "Instance",
+      "name": "component-instance",
+      "attributes": {},
+      "style": {},
+      "children": [
+        {
+          "id": "71d0d1f833",
+          "propertyName": "style",
+          "targetIdPath": [
+            "71d0d1f825"
+          ],
+          "value": {
+            "color": "red"
+          },
+          "name": "override",
+          "children": []
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 0,
+          "right": 600,
+          "top": 0,
+          "bottom": 400
+        }
+      },
+      "variant": {
+        "71d0d1f836": true
+      }
+    },
+    {
+      "label": "Component",
+      "is": "div",
+      "style": {},
+      "attributes": {},
+      "id": "71d0d1f826",
+      "name": "component",
+      "children": [
+        {
+          "id": "71d0d1f825",
+          "name": "text",
+          "label": "Label text",
+          "value": "Double click to edit",
+          "style": {},
+          "children": [],
+          "metadata": {}
+        },
+        {
+          "id": "71d0d1f834",
+          "name": "variant",
+          "label": "a",
+          "isDefault": true,
+          "children": [],
+          "metadata": {}
+        },
+        {
+          "id": "71d0d1f835",
+          "variantId": "71d0d1f834",
+          "propertyName": "style",
+          "targetIdPath": [
+            "71d0d1f825"
+          ],
+          "value": {
+            "color": "red"
+          },
+          "name": "override",
+          "children": []
+        },
+        {
+          "id": "71d0d1f836",
+          "name": "variant",
+          "label": "b",
+          "isDefault": true,
+          "children": [],
+          "metadata": {}
+        },
+        {
+          "id": "71d0d1f837",
+          "variantId": "71d0d1f836",
+          "propertyName": "style",
+          "targetIdPath": [
+            "71d0d1f825"
+          ],
+          "value": {
+            "color": "blue"
+          },
+          "name": "override",
+          "children": []
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 610,
+          "top": 0,
+          "right": 789,
+          "bottom": 121
+        }
+      },
+      "variant": {}
+    }
+  ],
+  "metadata": {}
+}

@@ -1,3 +1,45 @@
+Milestone (Bridge):
+
+Get new DSL to run in designer
+
+- variant triggers
+- #{} templates
+
+Milestone (Convert):
+
+Milestone (DSL Upgrades):
+
+**DSL Upgrades**
+
+Milestone (Online editing):
+
+Milestone (eject):
+
+- PC bridge
+
+  - DSL -> PC 2.0
+    - variables
+    - variant triggers
+  - PC 2.0 -> DSL
+  - Update Tandem for changes
+  - Wedge Parser in visual editor for smoke testing
+  - Tandem updates
+    - combo variants
+  - Tandem 2.0
+    - Dark mode (like spline.design)
+
+- start on translator
+
+- create parser for existing Tandem format
+- convert all PC files to new format
+- Update Tandem + legacy Paperclip to git c
+
+TODO:
+
+- get Tandem to work in the browser
+  - Litmus test -
+-
+
 TODOs:
 
 - get to work on CLI

@@ -1,0 +1,40 @@
+{
+  "name": "@paperclip-ui/utils",
+  "version": "18.5.6",
+  "description": "Internal utils for Paperclip",
+  "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src",
+    "build:watch": "tsc --watch --preserveWatchOutput",
+    "test": "mocha ./lib/test/**/*-test.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@types/mocha": "^5.2.7",
+    "chai": "^4.2.0",
+    "crc32": "^0.2.2",
+    "events": "^3.2.0",
+    "html-entities": "^1.3.1",
+    "lru-cache": "^6.0.0",
+    "path": "^0.12.7",
+    "url": "^0.11.0"
+  },
+  "gitHead": "28439bfc22f88290b1a12e4f364bdd19667d715a",
+  "devDependencies": {
+    "@types/chokidar": "^2.1.3",
+    "@types/glob": "^7.1.3",
+    "@types/node": "^14.0.20",
+    "@typescript-eslint/eslint-plugin": "^3.6.1",
+    "@typescript-eslint/parser": "^3.6.1",
+    "chokidar": "^3.4.1",
+    "eslint": "^7.4.0",
+    "glob": "^7.1.6",
+    "mocha": "^7.2.0",
+    "typescript": "^4.6.2"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "name": "paperclip-react-compiler",
+  "version": "10.1.33",
+  "description": "",
+  "main": "index.js",
+  "bin": "./bin/paperclip-react-compiler",
+  "scripts": {
+    "test": "echo \"\"",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rm -rf lib && rm -rf node_modules",
+    "prepare": "npm run build"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/lodash": "^4.14.108",
+    "@types/mocha": "^5.2.0",
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0"
+  },
+  "dependencies": {
+    "@paperclip-lang/core": "^10.1.33",
+    "chokidar": "^2.0.4",
+    "fs-extra": "^10.0.0",
+    "glob": "^7.1.2",
+    "lodash": "^4.17.10",
+    "paperclip-migrator": "^10.1.33",
+    "paperclip-virtual-dom-compiler": "^10.1.33",
+    "tandem-common": "^10.1.33",
+    "yargs": "^12.0.1"
+  },
+  "gitHead": "62ff73f435d5ddc97b8ff23b2356ed36f69c1486"
+}

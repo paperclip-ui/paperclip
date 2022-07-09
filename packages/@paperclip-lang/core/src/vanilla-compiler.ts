@@ -170,17 +170,18 @@ const translateContentNode = memoize(
       return ${translateVisibleNode(node, true)};
     }`;
 
-    if (buffer.includes("7be5e4502abd551ea1485cd5ed385fc265")) {
-      console.log("IT HAS IT", sourceUri);
-      console.log(JSON.stringify(node, null, 2));
-      console.log(buffer);
-    }
+    // check for height override.
+    // if (buffer.includes("3086ac43f11520d3e10632d217b0cfa862")) {
+    //   // console.log("IT HAS IT", sourceUri);
+    //   // console.log(JSON.stringify(node, null, 2));
+    //   console.log(buffer);
+    // }
 
     if (
       sourceUri.includes("borders.pc") ||
       sourceUri.includes("icons/view.pc")
     ) {
-      // console.log(node.label, buffer);
+      // console.log("fdfds", node.label, buffer);
     }
 
     return buffer + `})()`;

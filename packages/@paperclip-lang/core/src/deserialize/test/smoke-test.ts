@@ -452,6 +452,21 @@ describe(__filename + "#", () => {
         `,
       },
     ],
+    [
+      `A style mixin can include another style mixins`,
+      {
+        "file:///entry.pc": `
+          public style a {
+            color: blue
+          }
+
+          public style b {
+            include a
+            font-family: Helvetica
+          }
+        `,
+      },
+    ],
   ].forEach(([title, sourceGraph]: any) => {
     it(title, () => {
       const dslGraph: DependencyGraph = {};

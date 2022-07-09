@@ -672,7 +672,7 @@ const deserializeBaseElementProps = (node: ast.Element, context: Context) => {
     styleMixins: style
       ? deserializeAppliedStyleMixins(style, style, context)
       : {},
-    style: style ? deserializeStyleDeclarations(style, context) : {},
+    style: deserializeStyleDeclarations2(node, context),
     metadata: deserializeMetadata(node),
     children: [
       ...node.children.map((child) =>
@@ -681,6 +681,38 @@ const deserializeBaseElementProps = (node: ast.Element, context: Context) => {
       ...deserializeOverrides(node, context),
     ].filter(Boolean),
   };
+};
+
+const deserializeStyleDeclarations2 = (node: ast.Element, context: Context) => {
+  const entireStyle = {};
+
+  const style = node.children.find(
+    (child) => child.kind === ast.ExpressionKind.Style
+  ) as ast.Style;
+
+  const styleOverrides = node.children.filter((child) => {
+    return (
+      child.kind === ast.ExpressionKind.Override &&
+      !child.target &&
+      child.body?.find((nested) => {
+        return (
+          nested.kind === ast.ExpressionKind.Style &&
+          nested.conditionNames.length === 0
+        );
+      })
+    );
+  }) as ast.Override[];
+
+  if (style) {
+    Object.assign(entireStyle, deserializeStyleDeclarations(style, context));
+  }
+
+  // for (const override of styleOverrides) {
+  //   const style = override.body.find(child => child.kind === ast.ExpressionKind.Style) as ast.Style;
+  //   Object.assign(entireStyle, deserializeStyleDeclarations(style, context));
+  // }
+
+  return entireStyle;
 };
 
 const deserializeInstanceElement = (

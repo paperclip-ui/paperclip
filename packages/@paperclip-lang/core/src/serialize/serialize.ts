@@ -94,6 +94,7 @@ const translateStyleVar = (node: PCVariable, context: TranslateContext) => {
 const translateStyleMixin = (node: PCStyleMixin, context: TranslateContext) => {
   context = addBuffer(`public style ${getName(node.label)} {\n`, context);
   context = startBlock(context);
+  context = translateStyleMixinIncludes(node, context);
   context = translateStyleValues(node.style, context);
   context = endBlock(context);
   context = addBuffer(`}\n\n`, context);
@@ -323,22 +324,24 @@ const translateStyle = (
     return context;
   }
 
-  if (isPCComponentInstance(node)) {
-    context = addBuffer(`override {\n`, context);
-    context = startBlock(context);
-  }
+  // eventually we want this. Currently the DSL doesn't support this however.
+  // if (isPCComponentInstance(node)) {
+  //   context = addBuffer(`override {\n`, context);
+  //   context = startBlock(context);
+  // }
+
   context = addBuffer(`style {\n`, context);
   context = startBlock(context);
-  context = translateStyleMixins(node, context);
+  context = translateStyleMixinIncludes(node, context);
   context = translateStyleValues(node.style, context);
   context = translateStyleOverridesInner(styleOverrides, context);
   context = endBlock(context);
   context = addBuffer(`}\n`, context);
   context = translateStyleOverrides(styleOverrides, context);
-  if (isPCComponentInstance(node)) {
-    context = endBlock(context);
-    context = addBuffer(`}\n`, context);
-  }
+  // if (isPCComponentInstance(node)) {
+  //   context = endBlock(context);
+  //   context = addBuffer(`}\n`, context);
+  // }
   return context;
 };
 
@@ -394,8 +397,8 @@ const translateStyleOverride = (
   return context;
 };
 
-const translateStyleMixins = (
-  node: PCVisibleNode | PCComponent | PCComponentInstanceElement,
+const translateStyleMixinIncludes = (
+  node: PCVisibleNode | PCComponent | PCComponentInstanceElement | PCStyleMixin,
   context: TranslateContext
 ) => {
   if (!node.styleMixins) {

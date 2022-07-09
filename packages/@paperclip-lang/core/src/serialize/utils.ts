@@ -1,8 +1,8 @@
 import { camelCase } from "lodash";
 
 export const pascalCase = (buffer: string) => {
-  buffer = buffer.trim();
-  return buffer.charAt(0).toUpperCase() + getName(buffer.substring(1));
+  const newName = getName(buffer);
+  return newName.charAt(0).toUpperCase() + newName.substring(1);
 };
 
 export const getName = (label: string) => {

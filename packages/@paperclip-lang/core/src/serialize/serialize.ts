@@ -517,7 +517,16 @@ const translateChildren = (node: PCNode, context: TranslateContext) => {
   const overrides = getOverrides(node, context.graph);
   const visibleChildren = node.children.filter(isNodeChild);
 
-  if (!overrides.length && !visibleChildren.length && !hasStyles(node)) {
+  if (
+    !overrides.length &&
+    !visibleChildren.length &&
+    !hasStyles(node) &&
+    !(
+      (isPCComponentInstance(node) ||
+        node.name === PCSourceTagNames.COMPONENT) &&
+      Object.keys(node.variant).length
+    )
+  ) {
     return addBuffer("\n", context);
   }
 

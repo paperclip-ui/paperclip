@@ -117,8 +117,6 @@ const deserializeComponent = (
   component: ast.Component,
   context: Context
 ): PCComponent => {
-  const variant = {};
-
   const render = component.body.find(
     (expr) => expr.kind === ast.ExpressionKind.Render
   ) as ast.Render;
@@ -151,7 +149,6 @@ const deserializeComponent = (
     id: getNodeId(component, context),
     name: PCSourceTagNames.COMPONENT,
     label: component.name,
-    variant,
     children: [
       ...variants.map(deserializeVariant(context)),
       ...variantTriggers.map(deserializeVariantTrigger(context)),
@@ -168,6 +165,7 @@ const deserializeComponent = (
       : {},
     style: style ? deserializeStyleDeclarations(style, context) : {},
     metadata,
+    variant: deserializeInstanceVariants(node, context),
   } as PCComponent;
 
   return ret;
@@ -294,7 +292,7 @@ const deserializeOverride = (
     overrides.push(deserializeTextOverride(override, instance, graph));
   }
 
-  if (override.body) {
+  if (override.body && override.target) {
     const hasVariantOverride = override.body.some(
       (child) => child.kind === ast.ExpressionKind.Variant
     );
@@ -724,9 +722,33 @@ const deserializeInstanceElement = (
   return {
     ...deserializeBaseElementProps(node, context),
     name: PCSourceTagNames.COMPONENT_INSTANCE,
-    variant: {},
+    variant: deserializeInstanceVariants(node, context),
     is: component.id,
   };
+};
+
+const deserializeInstanceVariants = (node: ast.Element, context: Context) => {
+  const variantOverrides = node.children.filter(
+    (child) =>
+      child.kind === ast.ExpressionKind.Override &&
+      !child.target &&
+      child.body?.some((child) => {
+        return child.kind === ast.ExpressionKind.Variant;
+      })
+  ) as ast.Override[];
+
+  const retVariant: Record<string, boolean> = {};
+
+  for (const variantOverride of variantOverrides) {
+    for (const expr of variantOverride.body) {
+      if (expr.kind === ast.ExpressionKind.Variant) {
+        const [refId] = getInstanceRef([expr.name], node, context.graph);
+        retVariant[refId] = true;
+      }
+    }
+  }
+
+  return retVariant;
 };
 
 const deserializeNativeElement = (

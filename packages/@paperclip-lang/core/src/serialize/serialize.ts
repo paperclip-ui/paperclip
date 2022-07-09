@@ -24,6 +24,7 @@ import {
   PCStyleOverride,
   PCVariable,
   PCVariant,
+  PCVariant2Override,
   PCVariantTrigger,
   PCVariantTriggerSourceType,
   PCVisibleNode,
@@ -31,7 +32,7 @@ import {
 import { DependencyGraph } from "../graph";
 
 import * as path from "path";
-import { camelCase, uniq, capitalize } from "lodash";
+import { camelCase, uniq, capitalize, over } from "lodash";
 import { EMPTY_OBJECT, getTreeNodeIdMap, Translate } from "tandem-common";
 import {
   addBuffer,
@@ -527,7 +528,7 @@ const translateChildren = (node: PCNode, context: TranslateContext) => {
   }
 
   if (isPCComponentInstance(node) || node.name === PCSourceTagNames.COMPONENT) {
-    context = translateOverrides(overrides, context);
+    context = translateOverrides(node, overrides, context);
   }
 
   context = visibleChildren.reduce(
@@ -559,10 +560,26 @@ const overrideTargetExists = (
 };
 
 const translateOverrides = (
+  owner: PCComponent | PCComponentInstanceElement,
   overrides: PCOverride[],
   context: TranslateContext
 ) => {
   const overridesByPath: Record<string, PCOverride[]> = {};
+
+  if (owner.variant && Object.keys(owner.variant).length) {
+    overridesByPath[""] = [
+      {
+        name: PCSourceTagNames.OVERRIDE,
+        propertyName: PCOverridablePropertyName.VARIANT,
+        variantId: null,
+        id: owner.id + "_variant",
+        targetIdPath: [],
+        children: [],
+        metadata: [],
+        value: owner.variant,
+      } as PCVariant2Override,
+    ];
+  }
 
   for (const override of overrides) {
     if (!overrideTargetExists(override, context)) {
@@ -571,7 +588,17 @@ const translateOverrides = (
       );
     }
 
-    const targetPath = override.targetIdPath
+    const targetIdPath = [...override.targetIdPath];
+
+    // if override is VARIANT_IS_DEFAULT, then the target is the variant itself.
+    // This
+    if (
+      override.propertyName === PCOverridablePropertyName.VARIANT_IS_DEFAULT
+    ) {
+      targetIdPath.pop();
+    }
+
+    const targetPath = targetIdPath
       .map((idPath) => {
         const node = getPCNode(idPath, context.graph) as PCVisibleNode;
         if (!node.label) {
@@ -604,7 +631,10 @@ const translateOverrides = (
         override.propertyName === PCOverridablePropertyName.TEXT
     );
     const bodyOverrides = overrides.filter((override) => {
-      if (override.propertyName === PCOverridablePropertyName.VARIANT) {
+      if (
+        override.propertyName === PCOverridablePropertyName.VARIANT ||
+        override.propertyName === PCOverridablePropertyName.VARIANT_IS_DEFAULT
+      ) {
         return true;
       }
       return false;
@@ -652,6 +682,24 @@ const translateOverrides = (
                 context
               );
             }
+          }
+        }
+
+        // DEPRECATED
+        if (
+          override.propertyName === PCOverridablePropertyName.VARIANT_IS_DEFAULT
+        ) {
+          const variant = getPCNode(
+            override.targetIdPath[override.targetIdPath.length - 1],
+            context.graph
+          ) as PCVariant;
+
+          if (variant && variant.label) {
+            const enabled = override.value;
+            context = addBuffer(
+              `variant ${getName(variant.label)} (enabled: ${enabled})\n`,
+              context
+            );
           }
         }
       }

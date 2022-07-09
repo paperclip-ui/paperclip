@@ -1,6 +1,6 @@
 import * as React from "react";
 import cx from "classnames";
-import { BaseConsoleLogsProps, ConsoleLog } from "./view.pc";
+import { BaseConsoleLogsProps, ConsoleLog7 } from "./view.pc";
 import { ScriptProcess } from "../../../../state";
 
 export type Props = {
@@ -17,9 +17,9 @@ export default (Base: React.ComponentClass<BaseConsoleLogsProps>) =>
 
       const logs = scriptProcess.logs.map((log, i) => {
         return (
-          <ConsoleLog
+          <ConsoleLog7
             key={i}
-            labelProps={{ text: log.text }}
+            label1Props={{ text: log.text }}
             variant={cx({
               error: log.error,
             })}

@@ -153,7 +153,7 @@
               "children": [
                 {
                   "id": "7d27fc31151",
-                  "label": "items",
+                  "label": "items 2",
                   "is": "div",
                   "name": "element",
                   "attributes": {},
@@ -455,7 +455,7 @@
         {
           "id": "f97289c62002",
           "is": "7149f8192509",
-          "label": "Labeled Input",
+          "label": "Labeled Input 2",
           "name": "component-instance",
           "attributes": {},
           "style": {},
@@ -511,7 +511,7 @@
         {
           "id": "f97289c61990",
           "is": "7149f8192509",
-          "label": "Labeled Input",
+          "label": "Labeled Input 3",
           "name": "component-instance",
           "attributes": {},
           "style": {},
@@ -596,7 +596,7 @@
         {
           "id": "680bc1b51702",
           "is": "7149f8192509",
-          "label": "Labeled Input",
+          "label": "Labeled Input 4",
           "name": "component-instance",
           "attributes": {},
           "style": {},
@@ -664,7 +664,7 @@
         {
           "id": "f97289c62055",
           "is": "7149f8192509",
-          "label": "Labeled Input",
+          "label": "Labeled Input 5",
           "name": "component-instance",
           "attributes": {},
           "style": {},
@@ -720,7 +720,7 @@
         {
           "id": "f97289c62057",
           "is": "7149f8192509",
-          "label": "Labeled Input",
+          "label": "Labeled Input 6",
           "name": "component-instance",
           "attributes": {},
           "style": {},
@@ -805,7 +805,7 @@
         {
           "id": "29d031fa1121",
           "is": "7149f8192509",
-          "label": "Labeled Input",
+          "label": "Labeled Input 7",
           "name": "component-instance",
           "attributes": {},
           "style": {},

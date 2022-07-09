@@ -445,7 +445,7 @@ export default (Base: React.ComponentClass<BaseNodeLayerProps>) => {
                       arrowProps={{
                         onClick: onArrowButtonClick,
                       }}
-                      labelProps={{
+                      label1Props={{
                         text: label,
                       }}
                       style={{ paddingLeft: depth * LAYER_PADDING }}

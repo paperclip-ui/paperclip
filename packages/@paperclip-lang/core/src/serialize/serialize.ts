@@ -524,7 +524,7 @@ const translateChildren = (node: PCNode, context: TranslateContext) => {
     !(
       (isPCComponentInstance(node) ||
         node.name === PCSourceTagNames.COMPONENT) &&
-      Object.keys(node.variant).length
+      Object.keys(node.variant || EMPTY_OBJECT).length
     )
   ) {
     return addBuffer("\n", context);

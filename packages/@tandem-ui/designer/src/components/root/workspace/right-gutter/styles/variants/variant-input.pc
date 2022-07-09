@@ -330,7 +330,7 @@
               ],
               "metadata": {},
               "name": "slot",
-              "label": "options"
+              "label": "options 2"
             }
           ],
           "metadata": {}

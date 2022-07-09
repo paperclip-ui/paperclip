@@ -540,7 +540,7 @@
                 {
                   "id": "d3bf183b18",
                   "name": "text",
-                  "label": "label",
+                  "label": "label 1",
                   "value": "Layer",
                   "style": {
                     "user-select": "none",
@@ -558,7 +558,7 @@
               ],
               "metadata": {},
               "name": "slot",
-              "label": "label"
+              "label": "label 2"
             },
             {
               "id": "fc243cf091",

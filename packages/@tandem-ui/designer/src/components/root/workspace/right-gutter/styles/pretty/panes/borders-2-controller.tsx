@@ -29,7 +29,7 @@ export default (Base: React.ComponentClass<BaseBorders2Props>) =>
       return (
         <Base
           {...rest}
-          colorInputProps={{
+          colorInput2Props={{
             documentColors,
             globalVariables,
             computedStyleInfo,

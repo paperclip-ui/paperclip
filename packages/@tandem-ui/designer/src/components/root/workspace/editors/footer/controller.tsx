@@ -30,7 +30,7 @@ export default (Base: React.ComponentClass<BaseEditorFooterProps>) =>
             text:
               canvas && `${String(Math.round(canvas.translate.zoom * 100))}%`,
           }}
-          breadcrumbsProps={{
+          breadcrumbs1Props={{
             dispatch,
             graph,
             rootInspectorNode,

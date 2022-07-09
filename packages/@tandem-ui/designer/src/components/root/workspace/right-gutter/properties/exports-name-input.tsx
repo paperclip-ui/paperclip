@@ -41,7 +41,7 @@ export default (Base: React.ComponentClass<BaseExportNameInputProps>) =>
       return (
         <Base
           {...rest}
-          inputProps={null}
+          input2Props={null}
           variant={cx({
             invalid: !valid,
             onChange,

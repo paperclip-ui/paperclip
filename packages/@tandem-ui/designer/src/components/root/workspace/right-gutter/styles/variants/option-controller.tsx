@@ -97,7 +97,7 @@ export default (Base: React.ComponentClass<BaseVariantOptionProps>) =>
               display: onReset ? "block" : "none",
             },
           }}
-          input={
+          input2={
             editingLabel ? (
               <FocusComponent>
                 {

@@ -82,9 +82,9 @@ export default (Base: React.ComponentClass<BaseTriggersPaneProps>) =>
         <Base
           {...rest}
           itemProps={null}
-          itemProps1={null}
-          itemProps2={null}
-          items={items}
+          item3Props={null}
+          item2Props={null}
+          items2={items}
           removeTriggerButtonProps={{
             onClick: onRemoveTriggerClick,
           }}

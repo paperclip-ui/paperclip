@@ -162,7 +162,7 @@
                       "children": [
                         {
                           "id": "4e40c2b98531",
-                          "label": "icon",
+                          "label": "icon 2",
                           "is": "98d3a3ab395",
                           "name": "component-instance",
                           "attributes": {},

@@ -27,12 +27,12 @@ export default (Base: React.ComponentClass<BaseRgbaInputProps>) =>
         );
       return (
         <Base
-          rInputProps={{
+          rInput1Props={{
             value: r,
             onChange: changeCallback(0),
             onChangeComplete: changeCompleteCallback(0),
           }}
-          gInputProps={{
+          gInput1Props={{
             value: g,
             onChange: changeCallback(1),
             onChangeComplete: changeCompleteCallback(1),
@@ -42,7 +42,7 @@ export default (Base: React.ComponentClass<BaseRgbaInputProps>) =>
             onChange: changeCallback(2),
             onChangeComplete: changeCompleteCallback(2),
           }}
-          aInputProps={{
+          aInput1Props={{
             value: a,
             onChange: changeCallback(3),
             onChangeComplete: changeCompleteCallback(3),

@@ -256,7 +256,7 @@
         },
         {
           "id": "32ef79b755",
-          "label": "content",
+          "label": "content 1",
           "is": "div",
           "name": "element",
           "attributes": {},

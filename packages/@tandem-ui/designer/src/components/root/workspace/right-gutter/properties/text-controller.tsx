@@ -37,7 +37,7 @@ export default (Base: React.ComponentClass<BaseTextPropertiesProps>) =>
       return (
         <Base
           {...rest}
-          textInputProps={{
+          textInput3Props={{
             value: textNode.value,
             onChange: onTextValueChange,
           }}

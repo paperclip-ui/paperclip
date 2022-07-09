@@ -331,7 +331,7 @@
         {
           "id": "d227ff68422138",
           "name": "text",
-          "label": "Label",
+          "label": "Label1",
           "value": "RGBA",
           "style": {
             "font-size": "0.8em",
@@ -361,7 +361,7 @@
           },
           "children": [],
           "metadata": {},
-          "label": "R Input"
+          "label": "R Input1"
         },
         {
           "id": "d227ff68422140",
@@ -379,7 +379,7 @@
           },
           "children": [],
           "metadata": {},
-          "label": "G Input"
+          "label": "G Input1"
         },
         {
           "id": "d227ff68422141",
@@ -414,7 +414,7 @@
           },
           "children": [],
           "metadata": {},
-          "label": "A Input"
+          "label": "A Input 1"
         }
       ],
       "metadata": {
@@ -482,7 +482,7 @@
               "bottom": 114.5
             }
           },
-          "label": "R Input"
+          "label": "R Input2"
         },
         {
           "id": "d227ff68507400",
@@ -518,7 +518,7 @@
           },
           "children": [],
           "metadata": {},
-          "label": "A Input"
+          "label": "A Input 2"
         },
         {
           "id": "d227ff68557441",
@@ -535,7 +535,7 @@
           },
           "children": [],
           "metadata": {},
-          "label": "A Input"
+          "label": "A Input 3"
         }
       ],
       "metadata": {
@@ -564,7 +564,7 @@
         {
           "id": "d227ff68554494",
           "name": "text",
-          "label": "Label",
+          "label": "Label122",
           "value": "HEX",
           "style": {
             "margin-right": "8px"
@@ -607,7 +607,7 @@
               "bottom": 114.5
             }
           },
-          "label": "R Input"
+          "label": "R Input3"
         }
       ],
       "metadata": {

@@ -62,6 +62,6 @@ export default (
 
       const options = EMPTY_ARRAY;
 
-      return <Base options={options} />;
+      return <Base options2={options} />;
     }
   };

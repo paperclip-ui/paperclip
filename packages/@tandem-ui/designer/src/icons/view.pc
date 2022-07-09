@@ -1315,7 +1315,6 @@
             {
               "id": "289d8e34127",
               "name": "text",
-              "label": "Created with Sketch.",
               "value": "Created with Sketch.",
               "style": {},
               "children": [],
@@ -1926,7 +1925,7 @@
             {
               "id": "82eac94a16",
               "name": "text",
-              "label": "Created with Sketch.",
+              "label": "Created with Sketch. 4",
               "value": "Created with Sketch.",
               "style": {},
               "children": [],
@@ -3788,7 +3787,7 @@
             {
               "id": "430b36f22781",
               "name": "text",
-              "label": "Created with Sketch.",
+              "label": "Created with Sketch. 5",
               "value": "Created with Sketch.",
               "style": {},
               "children": [],
@@ -4286,7 +4285,7 @@
             {
               "id": "711f2f581665",
               "name": "text",
-              "label": "Created with Sketch.",
+              "label": "Created with Sketch. 6 ",
               "value": "Created with Sketch.",
               "style": {},
               "children": [],
@@ -4582,7 +4581,7 @@
       "variant": {}
     },
     {
-      "label": "Play Icon",
+      "label": "Play Icon 1",
       "is": "svg",
       "style": {},
       "attributes": {
@@ -4792,7 +4791,7 @@
             {
               "id": "993f9ad81117",
               "name": "text",
-              "label": "Created with Sketch.",
+              "label": "Created with Sketch 8",
               "value": "Created with Sketch.",
               "style": {},
               "children": [],

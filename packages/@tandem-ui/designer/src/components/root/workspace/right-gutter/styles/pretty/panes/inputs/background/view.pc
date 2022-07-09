@@ -28,7 +28,7 @@
     {
       "id": "641b17c23339",
       "is": "feaf302b1678",
-      "label": "Background picker preview",
+      "label": "Background picker preview 2",
       "name": "component-instance",
       "attributes": {},
       "style": {},
@@ -49,7 +49,7 @@
     {
       "id": "641b17c23010",
       "is": "feaf302b1678",
-      "label": "Background picker preview",
+      "label": "Background picker preview 3",
       "name": "component-instance",
       "attributes": {},
       "style": {
@@ -611,7 +611,7 @@
                 },
                 {
                   "id": "feaf302b1948",
-                  "label": "color stop",
+                  "label": "color stop 2",
                   "is": "641b17c22220",
                   "name": "component-instance",
                   "attributes": {},
@@ -689,7 +689,7 @@
       ]
     },
     {
-      "label": "color stop",
+      "label": "color stop 3",
       "is": "div",
       "style": {
         "box-sizing": "border-box",
@@ -733,7 +733,7 @@
         {
           "id": "641b17c22611",
           "is": "67e386c762",
-          "label": "Color Picker",
+          "label": "Color Picker 2",
           "name": "component-instance",
           "attributes": {},
           "style": {
@@ -837,7 +837,7 @@
         {
           "id": "641b17c24355",
           "is": "7149f8192509",
-          "label": "Labeled Input",
+          "label": "Labeled Input 2",
           "name": "component-instance",
           "attributes": {},
           "style": {},
@@ -895,7 +895,7 @@
         {
           "id": "641b17c23930",
           "is": "7149f8192509",
-          "label": "Labeled Input",
+          "label": "Labeled Input 3",
           "name": "component-instance",
           "attributes": {},
           "style": {},
@@ -953,7 +953,7 @@
         {
           "id": "641b17c24775",
           "is": "7149f8192509",
-          "label": "Labeled Input",
+          "label": "Labeled Input 4",
           "name": "component-instance",
           "attributes": {},
           "style": {},

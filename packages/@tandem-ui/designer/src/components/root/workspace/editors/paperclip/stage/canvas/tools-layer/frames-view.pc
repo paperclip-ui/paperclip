@@ -17,7 +17,7 @@
       "children": [
         {
           "id": "11188f8619482",
-          "label": "Background",
+          "label": "Background 1",
           "is": "div",
           "name": "element",
           "attributes": {},

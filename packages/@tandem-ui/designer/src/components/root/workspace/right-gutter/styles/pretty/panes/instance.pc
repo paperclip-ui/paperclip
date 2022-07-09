@@ -76,7 +76,7 @@
                     {
                       "id": "719b02ff946",
                       "is": "1d51efba14",
-                      "label": "Variant option",
+                      "label": "Variant option 2",
                       "name": "component-instance",
                       "attributes": {},
                       "style": {},
@@ -110,7 +110,7 @@
                     {
                       "id": "719b02ff908",
                       "is": "1d51efba14",
-                      "label": "Variant option",
+                      "label": "Variant option 3",
                       "name": "component-instance",
                       "attributes": {},
                       "style": {},
@@ -140,7 +140,7 @@
                     {
                       "id": "719b02ff889",
                       "is": "1d51efba14",
-                      "label": "Variant option",
+                      "label": "Variant option 4",
                       "name": "component-instance",
                       "attributes": {},
                       "style": {},

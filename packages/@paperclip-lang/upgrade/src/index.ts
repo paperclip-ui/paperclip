@@ -11,6 +11,7 @@ import {
 } from "@paperclip-lang/core";
 import { mapValues } from "lodash";
 import { deserializeModule } from "@paperclip-lang/core/lib/deserialize/deserialize";
+import { assertUniqueNames } from "@paperclip-lang/core/lib/parser/dsl/ast";
 
 export type UpgradeOptions = {
   projectFilePath: string;
@@ -53,6 +54,8 @@ const sanityCheck = (graph: Record<string, string>) => {
   const uris = Object.keys(astGraph);
 
   mapValues(astGraph, (ast, uri) => {
+    assertUniqueNames(ast, uri);
+
     try {
       return deserializeModule(ast, uri, astGraph);
     } catch (e) {

@@ -290,7 +290,7 @@ export default (Base: React.ComponentClass<BaseFileNavigatorLayerProps>) => {
                           selected: selected && !draggingOver,
                           blur: Boolean(newFileInfo && newFileInfo.directory),
                         })}
-                        label={editingBasename ? "" : basename}
+                        label2={editingBasename ? "" : basename}
                       />
                     </div>
                   )}

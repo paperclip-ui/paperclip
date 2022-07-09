@@ -781,7 +781,7 @@
                       "bottom": 439
                     }
                   },
-                  "label": "Display Input"
+                  "label": "Display Input 2"
                 }
               ],
               "metadata": {},

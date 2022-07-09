@@ -17,7 +17,7 @@ export default (Base: React.ComponentClass<BaseInlineLabeledInputProps>) =>
       return (
         <Base
           {...rest}
-          textInputProps={{
+          textInput3Props={{
             disabled,
             tabIndex,
             value,

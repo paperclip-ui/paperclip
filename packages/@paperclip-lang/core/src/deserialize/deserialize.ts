@@ -743,7 +743,9 @@ const deserializeInstanceVariants = (node: ast.Element, context: Context) => {
     for (const expr of variantOverride.body) {
       if (expr.kind === ast.ExpressionKind.Variant) {
         const [refId] = getInstanceRef([expr.name], node, context.graph);
-        retVariant[refId] = true;
+        if (isVariantEnabledByDefault(expr)) {
+          retVariant[refId] = true;
+        }
       }
     }
   }

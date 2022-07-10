@@ -9,7 +9,6 @@ import {
   PCNode,
 } from "@paperclip-lang/core";
 import { Dispatch } from "redux";
-import { VariantOption } from "./option.pc";
 import { instanceVariantToggled } from "../../../../../../actions";
 import { BaseComponentInstanceVariantProps } from "./variant-input.pc";
 import { EMPTY_ARRAY } from "tandem-common";

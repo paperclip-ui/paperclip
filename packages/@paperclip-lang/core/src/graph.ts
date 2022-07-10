@@ -120,7 +120,7 @@ export const deserializeDependencyGraph = (
   const dslGraph2 = mapValues(astGraph, (doc, uri) => {
     const content = deserializeModule(doc, uri, astGraph);
 
-    if (uri.includes("dropdown/view.pc") || uri.includes("popover/view.pc")) {
+    if (uri.includes("panes/inputs/view.pc")) {
       console.log("DESERRR", uri, JSON.stringify(content, null, 2));
     }
     return {

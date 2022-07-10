@@ -367,7 +367,7 @@
         {
           "id": "ddeb65fe282",
           "name": "variant",
-          "label": "new project options",
+          "label": "new project options 1",
           "isDefault": false,
           "children": [],
           "metadata": {}
@@ -407,7 +407,7 @@
               ],
               "metadata": {},
               "name": "slot",
-              "label": "new project options"
+              "label": "new project options 2"
             }
           ],
           "metadata": {}
@@ -591,7 +591,7 @@
               ],
               "metadata": {},
               "name": "slot",
-              "label": "icon"
+              "label": "icon 1"
             }
           ],
           "metadata": {}

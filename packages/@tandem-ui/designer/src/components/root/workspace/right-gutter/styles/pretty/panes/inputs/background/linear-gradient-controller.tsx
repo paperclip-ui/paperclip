@@ -1,5 +1,5 @@
 import * as React from "react";
-import { BaseLinearGradientPickerProps, ColorStop } from "./view.pc";
+import { BaseLinearGradientPickerProps } from "./view.pc";
 import { CSSLinearGradientBackground, stringifyCSSBackground } from "./state";
 import { ColorSwatchGroup } from "../../../../../../../../inputs/color/color-swatch-controller";
 

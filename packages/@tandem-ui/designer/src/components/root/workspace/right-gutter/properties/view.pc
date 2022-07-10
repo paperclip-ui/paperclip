@@ -130,7 +130,7 @@
                               "bottom": 147.60843173541303
                             }
                           },
-                          "label": "Text Input",
+                          "label": "Text Input 3",
                           "styleMixins": {
                             "dc3b39eb1275": {
                               "priority": 0
@@ -164,7 +164,7 @@
               "bottom": 277.3571410945104
             }
           },
-          "label": "Pane"
+          "label": "Pane 1"
         }
       ],
       "metadata": {
@@ -1456,7 +1456,7 @@
             }
           },
           "variant": {},
-          "label": "input"
+          "label": "input 2"
         },
         {
           "id": "3acea128129773",
@@ -1606,7 +1606,7 @@
         {
           "id": "891523ff46319",
           "is": "7149f8192509",
-          "label": "Labeled Input",
+          "label": "Labeled Input 2",
           "name": "component-instance",
           "attributes": {},
           "style": {},
@@ -1640,7 +1640,7 @@
                     {
                       "id": "891523ff46323",
                       "is": "7149f8199122",
-                      "label": "path input",
+                      "label": "path input 1",
                       "name": "component-instance",
                       "attributes": {
                         "placeholder": "../img.png"
@@ -1735,7 +1735,7 @@
         {
           "id": "45cb3afa42257",
           "is": "7149f8192509",
-          "label": "Labeled Input",
+          "label": "Labeled Input 4",
           "name": "component-instance",
           "attributes": {},
           "style": {},
@@ -1818,7 +1818,7 @@
         {
           "id": "80c8fafc2137",
           "is": "7149f8192509",
-          "label": "Labeled Input",
+          "label": "Labeled Input 3",
           "name": "component-instance",
           "attributes": {},
           "style": {},
@@ -1833,7 +1833,7 @@
                     {
                       "id": "80c8fafc2139",
                       "is": "80c8fafc2300",
-                      "label": "Text Input",
+                      "label": "Text Input 2",
                       "name": "component-instance",
                       "attributes": {},
                       "style": {},
@@ -1948,7 +1948,7 @@
             {
               "id": "80c8fafc2277",
               "is": "9f364d2139415",
-              "label": "upload button",
+              "label": "upload button 2",
               "name": "component-instance",
               "attributes": {},
               "style": {},
@@ -2130,7 +2130,7 @@
         {
           "id": "5a5fe4fa2320",
           "is": "b6c162d113",
-          "label": "Pane",
+          "label": "Pane 2",
           "name": "component-instance",
           "attributes": {},
           "style": {},
@@ -2205,7 +2205,7 @@
                 {
                   "id": "fa0a27ce2158",
                   "is": "c389e3829",
-                  "label": "Table",
+                  "label": "Table 2",
                   "name": "component-instance",
                   "attributes": {},
                   "style": {},

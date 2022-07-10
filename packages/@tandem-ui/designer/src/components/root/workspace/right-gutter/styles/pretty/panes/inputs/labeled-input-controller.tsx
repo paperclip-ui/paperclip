@@ -25,7 +25,7 @@ export default (Base: React.ComponentClass<BaseLabeledCssInputProps>) =>
       return (
         <Base
           {...rest}
-          textInputProps={null}
+          textInput2Props={null}
           projectNameInputProps={null}
           variant={cx({
             inherited: Boolean(inheritedFromNode),

@@ -56,7 +56,7 @@
                     {
                       "id": "829de032649",
                       "is": "bc641d4124463",
-                      "label": "Pointer Icon",
+                      "label": "Pointer Icon 1",
                       "name": "component-instance",
                       "attributes": {},
                       "style": {

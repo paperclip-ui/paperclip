@@ -38,7 +38,7 @@ export default (Base: React.ComponentClass<BaseImgPropertiesProps>) =>
       return (
         <Base
           {...rest}
-          pathInputProps={{
+          pathInput1Props={{
             value: sourceNode.attributes.src,
             onChangeComplete: onPathChangeComplete,
           }}

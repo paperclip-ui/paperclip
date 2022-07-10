@@ -112,7 +112,7 @@
                 {
                   "id": "82e036ac24626",
                   "is": "7149f8199122",
-                  "label": "Text Input",
+                  "label": "Text Input 2",
                   "name": "component-instance",
                   "attributes": {},
                   "style": {
@@ -242,7 +242,7 @@
               ],
               "metadata": {},
               "name": "slot",
-              "label": "label"
+              "label": "label 222"
             }
           ],
           "metadata": {}
@@ -283,7 +283,7 @@
               ],
               "metadata": {},
               "name": "slot",
-              "label": "input"
+              "label": "input 2"
             }
           ],
           "metadata": {}
@@ -454,7 +454,7 @@
                               ],
                               "metadata": {},
                               "name": "slot",
-                              "label": "primary input"
+                              "label": "primary input 2"
                             },
                             {
                               "id": "8480ea5b7413",
@@ -559,7 +559,7 @@
                                 {
                                   "id": "49786f442050",
                                   "is": "6489655782851",
-                                  "label": "Button Bar Item",
+                                  "label": "Button Bar Item 2",
                                   "name": "component-instance",
                                   "attributes": {},
                                   "style": {},
@@ -574,7 +574,7 @@
                                             {
                                               "id": "af62926b1769",
                                               "is": "993f9ad81121",
-                                              "label": "Borders Icon",
+                                              "label": "Borders Icon 2",
                                               "name": "component-instance",
                                               "attributes": {},
                                               "style": {
@@ -725,7 +725,7 @@
                                 {
                                   "id": "b591086f4053",
                                   "is": "8bf103e218",
-                                  "label": "Borders Icon",
+                                  "label": "Borders Icon 3",
                                   "name": "component-instance",
                                   "attributes": {},
                                   "style": {
@@ -746,7 +746,7 @@
                               ],
                               "metadata": {},
                               "name": "slot",
-                              "label": "first icon"
+                              "label": "first icon 2"
                             }
                           ],
                           "metadata": {},
@@ -766,7 +766,7 @@
                   ],
                   "metadata": {},
                   "name": "slot",
-                  "label": "first input"
+                  "label": "first input 2"
                 }
               ],
               "metadata": {}
@@ -846,7 +846,7 @@
                   ],
                   "metadata": {},
                   "name": "slot",
-                  "label": "second input"
+                  "label": "second input 2"
                 }
               ],
               "metadata": {
@@ -892,7 +892,7 @@
                                 {
                                   "id": "b591086f4097",
                                   "is": "8bf103e218",
-                                  "label": "Borders Icon",
+                                  "label": "Borders Icon 4",
                                   "name": "component-instance",
                                   "attributes": {},
                                   "style": {
@@ -933,7 +933,7 @@
                   ],
                   "metadata": {},
                   "name": "slot",
-                  "label": "third input"
+                  "label": "third input 2"
                 }
               ],
               "metadata": {
@@ -977,7 +977,7 @@
                                 {
                                   "id": "b591086f4143",
                                   "is": "8bf103e218",
-                                  "label": "borders icon",
+                                  "label": "borders icon 5",
                                   "name": "component-instance",
                                   "attributes": {},
                                   "style": {
@@ -1018,7 +1018,7 @@
                   ],
                   "metadata": {},
                   "name": "slot",
-                  "label": "fourth input"
+                  "label": "fourth input 2"
                 }
               ],
               "metadata": {
@@ -1520,7 +1520,7 @@
                 {
                   "id": "af62926b2314",
                   "is": "7149f8199122",
-                  "label": "Text Input",
+                  "label": "Text Input 3",
                   "name": "component-instance",
                   "attributes": {},
                   "style": {
@@ -1547,7 +1547,7 @@
               ],
               "metadata": {},
               "name": "slot",
-              "label": "input"
+              "label": "input 3"
             },
             {
               "id": "c475e80b13477",
@@ -1580,7 +1580,7 @@
                     {
                       "id": "af62926b2317",
                       "is": "8bf103e218",
-                      "label": "Borders Icon",
+                      "label": "Borders Icon 6",
                       "name": "component-instance",
                       "attributes": {},
                       "style": {

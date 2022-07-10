@@ -120,7 +120,7 @@
                 {
                   "id": "5673c5c21319",
                   "name": "text",
-                  "label": "Content",
+                  "label": "Content 2",
                   "value": "Content here",
                   "style": {
                     "padding-left": "12px",
@@ -141,7 +141,7 @@
               ],
               "metadata": {},
               "name": "slot",
-              "label": "content"
+              "label": "content 3"
             }
           ],
           "metadata": {}
@@ -276,7 +276,7 @@
                   "children": [],
                   "metadata": {},
                   "name": "slot",
-                  "label": "content"
+                  "label": "content 4"
                 }
               ],
               "metadata": {},
@@ -347,7 +347,7 @@
         {
           "id": "1f58a7a8205",
           "is": "5673c5c2846",
-          "label": "Side Panel",
+          "label": "Side Panel 2",
           "name": "component-instance",
           "attributes": {},
           "style": {},

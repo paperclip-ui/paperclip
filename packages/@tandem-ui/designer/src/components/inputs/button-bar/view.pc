@@ -138,7 +138,7 @@
             },
             {
               "id": "6489655782886",
-              "label": "node 6",
+              "label": "node 622",
               "variant": {},
               "is": "6489655782851",
               "name": "component-instance",

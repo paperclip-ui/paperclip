@@ -51,7 +51,7 @@
           ],
           "metadata": {},
           "name": "slot",
-          "label": "content"
+          "label": "content2"
         },
         {
           "id": "c389e38235",
@@ -180,7 +180,7 @@
           ],
           "metadata": {},
           "name": "slot",
-          "label": "content"
+          "label": "content1"
         },
         {
           "id": "c389e38227",

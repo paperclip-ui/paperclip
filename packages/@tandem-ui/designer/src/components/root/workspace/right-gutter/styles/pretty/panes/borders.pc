@@ -693,7 +693,7 @@
           "children": [
             {
               "id": "7be2457110",
-              "label": "Element1",
+              "label": "Element11",
               "is": "div",
               "name": "element",
               "attributes": {},
@@ -1476,7 +1476,7 @@
                 {
                   "id": "1b9666ba6828",
                   "is": "1b9666ba6827",
-                  "label": "color input",
+                  "label": "color input 2",
                   "name": "component-instance",
                   "attributes": {},
                   "style": {},
@@ -1866,7 +1866,7 @@
                     {
                       "id": "ba6ac0ff7755",
                       "is": "d330cc11286",
-                      "label": "corners",
+                      "label": "corners 2",
                       "name": "component-instance",
                       "attributes": {},
                       "style": {
@@ -1944,7 +1944,7 @@
                     {
                       "id": "ba6ac0ff7771",
                       "is": "d330cc11286",
-                      "label": "corners",
+                      "label": "corners 3",
                       "name": "component-instance",
                       "attributes": {},
                       "style": {
@@ -2018,7 +2018,7 @@
                     {
                       "id": "ba6ac0ff7787",
                       "is": "d330cc11286",
-                      "label": "corners",
+                      "label": "corners 4",
                       "name": "component-instance",
                       "attributes": {},
                       "style": {
@@ -2090,7 +2090,7 @@
                     {
                       "id": "ba6ac0ff7803",
                       "is": "d330cc11286",
-                      "label": "corners",
+                      "label": "corners 5",
                       "name": "component-instance",
                       "attributes": {},
                       "style": {
@@ -2250,7 +2250,7 @@
             {
               "id": "1b9666ba6810",
               "is": "38fc2a479877",
-              "label": "Top Left Corner Icon",
+              "label": "Top Left Corner Icon 2",
               "name": "component-instance",
               "attributes": {},
               "style": {
@@ -2279,7 +2279,7 @@
             {
               "id": "1b9666ba6812",
               "is": "38fc2a478648",
-              "label": "Top Right Corner Icon",
+              "label": "Top Right Corner Icon 2",
               "name": "component-instance",
               "attributes": {},
               "style": {
@@ -2312,7 +2312,7 @@
             {
               "id": "1b9666ba6814",
               "is": "38fc2a4712335",
-              "label": "Bottom Right Corner Icon",
+              "label": "Bottom Right Corner Icon 2",
               "name": "component-instance",
               "attributes": {},
               "style": {
@@ -2345,7 +2345,7 @@
             {
               "id": "1b9666ba6816",
               "is": "38fc2a4711106",
-              "label": " Bottom Left Corner Icon",
+              "label": " Bottom Left Corner Icon 2",
               "name": "component-instance",
               "attributes": {},
               "style": {
@@ -2625,7 +2625,7 @@
             {
               "id": "36f723a46296",
               "is": "7be245712",
-              "label": "primary input",
+              "label": "primary input 2",
               "name": "component-instance",
               "attributes": {},
               "style": {
@@ -2719,7 +2719,7 @@
       "children": [
         {
           "id": "8991b20d6973",
-          "label": "Element2",
+          "label": "Element22",
           "is": "div",
           "name": "element",
           "attributes": {},

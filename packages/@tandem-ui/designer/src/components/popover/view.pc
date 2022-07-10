@@ -76,7 +76,7 @@
       "children": [
         {
           "id": "46686eab3161",
-          "label": "Anchor",
+          "label": "Anchor1",
           "is": "div",
           "name": "element",
           "attributes": {},
@@ -151,7 +151,7 @@
             }
           ],
           "metadata": {},
-          "label": "Content",
+          "label": "Content1",
           "bind": {
             "properties": [
               {

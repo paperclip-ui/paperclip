@@ -94,7 +94,7 @@ export default (Base: React.ComponentClass<BaseWelcomeProps>) =>
             onMouseOver={() => onPillMouseOver(template)}
             onMouseLeave={() => onPillMouseLeave()}
             labelProps={{ text: template.label }}
-            icon={template.icon && <img src={template.icon} />}
+            icon1={template.icon && <img src={template.icon} />}
           />
         );
       });
@@ -108,7 +108,7 @@ export default (Base: React.ComponentClass<BaseWelcomeProps>) =>
           projectDescriptionProps={{
             text: (hoveringTemplate && hoveringTemplate.description) || " ",
           }}
-          newProjectOptions={
+          newProjectOptions2={
             page === Page.NEW_PROJECT_OPTIONS ? (
               <StarterKitFormOptions
                 selectedDirectory={selectedDirectory}

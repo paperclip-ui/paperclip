@@ -72,7 +72,7 @@ export default (Base: React.ComponentClass<BaseChromeProps>) =>
           headerProps={{
             onClick: onHeaderClick,
           }}
-          contentProps={{
+          content1Props={{
             onScroll: resetScroll,
           }}
           closeButtonProps={{

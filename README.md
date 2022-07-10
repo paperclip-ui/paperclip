@@ -3,20 +3,18 @@
   <h1 align="center">Tandem (Preview)</h1>
 </p>
 
-> Tandem is still new, so expect bugs. If you'd like to contribute, feel free to reach out to hello@tandemcode.com.
+> Tandem is still new, so expect bugs. If you'd like to contribute, feel free to reach out!
 
 <!-- [![Backers on Open Collective](https://opencollective.com/tandem/backers/badge.svg)](#backers)
 [![Sponsors on Open Collective](https://opencollective.com/tandem/sponsors/badge.svg)](#sponsors) -->
 
-Tandem is a UI builder for web applications. It currently works with React, other languages & frameworks will be supported in the future. The primary goal for Tandem is to provide a faster, easier, safer, and more scalable alternative to handwritten HTML & CSS code.
+Tandem is a UI builder for that aims to make it easier for anyone to build web applications. It compiles down to plain code, and plugs into existing frameworks, so you can use Tandem with your existing codebase. Here's what it looks like:
 
 ![Split view](./assets/screenshots/v10.1.7.png)
 
 ### Installation
 
 Tandem works in Windows & MacOS. There are a few ways you can install it:
-
-a. Download the stand alone version: https://github.com/tandemcode/tandem/releases
 
 b. Install the command line tools:
 
@@ -35,14 +33,94 @@ The command line tools can manage multiple versions of Tandem, which is helpful 
 
 More info can be found in the [installation docs](./docs/installation.md)
 
-### Highlights
+### File format
 
-- Designed to work with existing code (currently only React).
-- Not a code replacement. Tandem only allows you to create simple HTML & CSS.
-- Unopinionated, so you can adapt Tandem to fit your needs.
-- UI files can be split out into multiple files, and organized however you want.
-- Handwritten HTML & CSS can be mixed with Tandem UIs (this is helpful if you need to integrate complex code).
-- Few abstractions. Tandem gives you transparent tooling that's based on web standards.
+Tandem saves to a superset of HTML and CSS called Paperclip. Here's what that looks like:
+
+```jsx
+import "../components/atoms/view.pc" as imp0
+import "./react/form.pc" as imp1
+import "../components/inputs/molecules.pc" as imp2
+import "../components/inputs/text/view.pc" as imp3
+import "../components/inputs/button/view.pc" as imp4
+
+/**
+ * @bounds(left: 0, right: 600, top: 0, bottom: 400)
+ */
+public component StarterKitFormOptions {
+  script (src: "./form-controller.tsx")
+  variant react (enabled: [])
+  render div {
+    style {
+      padding-left: 12px
+      padding-top: 12px
+      padding-right: 12px
+      padding-bottom: 12px
+      max-width: 300px
+      margin-right: auto
+      margin-left: auto
+      position: relative
+      top: 20%
+    }
+    div element1 {
+      style {
+        box-sizing: border-box
+        display: block
+      }
+      text title "New TYPE Project" {
+        style {
+          include imp0.baseFont
+          padding-bottom: 12px
+          display: inline-block
+          font-size: 18px
+          font-weight: 600
+        }
+      }
+    }
+    imp1.ReactStartKitOptionsForm reactStartKitOptionsForm {
+      style {
+        display: none
+      }
+    }
+    imp2.LabeledInput labeledInput {
+      override text1 "Project Directory"
+
+      insert input {
+        div element2 {
+          style {
+            box-sizing: border-box
+            display: flex
+          }
+          imp3.TextInput directoryInput (placeholder: "path/to/directory") {
+            style {
+              margin-right: 12px
+            }
+          }
+          imp4.Button browseButton {
+            override text1 "browse"
+
+          }
+        }
+      }
+    }
+    div element3 {
+      style {
+        box-sizing: border-box
+        display: flex
+        justify-content: flex-end
+        padding-top: 6px
+      }
+      imp4.Button createProjectButton {
+        override {
+          variant disabled (enabled: false)
+        }
+        override text1 "Create Project"
+
+      }
+    }
+  }
+}
+```
 
 ### Resources
 

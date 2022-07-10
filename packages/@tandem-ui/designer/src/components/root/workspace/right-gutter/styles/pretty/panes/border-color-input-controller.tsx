@@ -47,7 +47,7 @@ export default (Base: React.ComponentClass<BaseColorsInputProps>) =>
           {...rest}
           connected={connected}
           selectedId={computedStyleInfo.sourceNode.id}
-          primaryInputProps={{
+          primaryInput2Props={{
             value: connected ? computedStyleInfo.style["border-left"] : null,
             documentColors,
             globalVariables,

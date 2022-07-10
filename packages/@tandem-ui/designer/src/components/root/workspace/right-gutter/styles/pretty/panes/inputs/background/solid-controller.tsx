@@ -30,7 +30,7 @@ export default (Base: React.ComponentClass<BaseSolidColorPickerProps>) =>
       return (
         <Base
           {...rest}
-          colorPickerProps={{
+          colorPicker2Props={{
             value: value.color || "rgba(0,0,0,1)",
             onChange,
             onChangeComplete,

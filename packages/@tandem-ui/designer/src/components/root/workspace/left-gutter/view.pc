@@ -101,18 +101,6 @@
               "value": true,
               "name": "override",
               "children": []
-            },
-            {
-              "id": "d3bf183b45",
-              "variantId": null,
-              "propertyName": "isDefault",
-              "targetIdPath": [
-                "d3bf183b43",
-                "d3bf183b25"
-              ],
-              "value": false,
-              "name": "override",
-              "children": []
             }
           ],
           "metadata": {

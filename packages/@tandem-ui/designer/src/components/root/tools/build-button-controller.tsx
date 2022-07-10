@@ -138,7 +138,7 @@ export default (Base: React.ComponentClass<BaseBuildButtonProps>) =>
             onShouldClose,
             centered: true,
           }}
-          labelProps={{
+          label1Props={{
             text: label,
           }}
           buildButtonProps={{

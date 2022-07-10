@@ -173,9 +173,9 @@ export default (Base: React.ComponentClass<BaseInstancePaneProps>) =>
         <Base
           {...rest}
           variantOptionProps={null}
-          variantOptionProps1={null}
-          variantOptionProps2={null}
-          variantOptionProps3={null}
+          variantOption2Props={null}
+          variantOption3Props={null}
+          variantOption4Props={null}
           variant={cx({
             hasOverrides: overrideKeys.length > 0,
           })}

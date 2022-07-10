@@ -83,13 +83,13 @@ export default (Base: React.ComponentClass<BaseSidePanelButtonProps>) =>
             onShouldClose: onShouldClose,
             updateContentPosition: updatePopoverPosition,
           }}
-          content={
+          content4={
             <SidePanel
               variant={cx({
                 left,
                 right,
               })}
-              content={<div onKeyUp={onKeyUp}>{content}</div>}
+              content3={<div onKeyUp={onKeyUp}>{content}</div>}
               closeButtonProps={{
                 onClick: onCloseButtonClick,
               }}

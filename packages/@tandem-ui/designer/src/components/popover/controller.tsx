@@ -36,7 +36,7 @@ export default (Base: React.ComponentClass<BasePopoverProps>) =>
     }, [open, ref.current]);
 
     let overrideProps: BasePopoverProps = {
-      contentProps: {
+      content1Props: {
         onShouldClose,
         anchorRect,
       },
@@ -44,7 +44,7 @@ export default (Base: React.ComponentClass<BasePopoverProps>) =>
 
     if (anchorRect) {
       overrideProps = {
-        contentProps: {
+        content1Props: {
           updateContentPosition,
           onShouldClose,
           centered,

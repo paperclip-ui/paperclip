@@ -26,7 +26,7 @@
       "name": "component",
       "children": [
         {
-          "label": "icon",
+          "label": "icon1",
           "id": "e42107633",
           "children": [
             {

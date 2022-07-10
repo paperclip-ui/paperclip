@@ -344,7 +344,7 @@
               "children": [
                 {
                   "id": "936f29271343",
-                  "label": "content",
+                  "label": "content2",
                   "is": "div",
                   "name": "element",
                   "attributes": {},
@@ -395,7 +395,7 @@
                     },
                     {
                       "id": "936f29271346",
-                      "label": "Items",
+                      "label": "Items122",
                       "is": "div",
                       "name": "element",
                       "attributes": {},
@@ -412,7 +412,7 @@
                             {
                               "id": "936f29271354",
                               "is": "936f29271179",
-                              "label": "item",
+                              "label": "item1",
                               "name": "component-instance",
                               "attributes": {},
                               "style": {},
@@ -425,7 +425,7 @@
                             {
                               "id": "936f29271353",
                               "is": "936f29271179",
-                              "label": "item",
+                              "label": "item2",
                               "name": "component-instance",
                               "attributes": {},
                               "style": {},
@@ -436,7 +436,7 @@
                             {
                               "id": "936f29271352",
                               "is": "936f29271179",
-                              "label": "item",
+                              "label": "item3",
                               "name": "component-instance",
                               "attributes": {},
                               "style": {},
@@ -450,7 +450,7 @@
                             {
                               "id": "936f29271351",
                               "is": "936f29271179",
-                              "label": "item",
+                              "label": "item4",
                               "name": "component-instance",
                               "attributes": {},
                               "style": {},
@@ -461,7 +461,7 @@
                             {
                               "id": "936f29271350",
                               "is": "936f29271179",
-                              "label": "item",
+                              "label": "item5",
                               "name": "component-instance",
                               "attributes": {},
                               "style": {},
@@ -474,7 +474,7 @@
                             {
                               "id": "936f29271349",
                               "is": "936f29271179",
-                              "label": "item",
+                              "label": "item6",
                               "name": "component-instance",
                               "attributes": {},
                               "style": {},
@@ -485,7 +485,7 @@
                             {
                               "id": "417f19f2468",
                               "is": "936f29271179",
-                              "label": "item",
+                              "label": "item7",
                               "name": "component-instance",
                               "attributes": {},
                               "style": {},
@@ -498,7 +498,7 @@
                             {
                               "id": "417f19f2498",
                               "is": "936f29271179",
-                              "label": "item",
+                              "label": "item8",
                               "name": "component-instance",
                               "attributes": {},
                               "style": {},
@@ -511,7 +511,7 @@
                             {
                               "id": "417f19f2513",
                               "is": "936f29271179",
-                              "label": "item",
+                              "label": "item9",
                               "name": "component-instance",
                               "attributes": {},
                               "style": {},
@@ -524,7 +524,7 @@
                             {
                               "id": "417f19f2483",
                               "is": "936f29271179",
-                              "label": "item",
+                              "label": "item10",
                               "name": "component-instance",
                               "attributes": {},
                               "style": {},
@@ -537,7 +537,7 @@
                             {
                               "id": "417f19f2453",
                               "is": "936f29271179",
-                              "label": "item",
+                              "label": "item11",
                               "name": "component-instance",
                               "attributes": {},
                               "style": {},
@@ -550,7 +550,7 @@
                             {
                               "id": "936f29271348",
                               "is": "936f29271179",
-                              "label": "item",
+                              "label": "item12",
                               "name": "component-instance",
                               "attributes": {},
                               "style": {},
@@ -563,7 +563,7 @@
                             {
                               "id": "936f29271347",
                               "is": "936f29271179",
-                              "label": "item",
+                              "label": "item13",
                               "name": "component-instance",
                               "attributes": {},
                               "style": {},
@@ -797,7 +797,7 @@
           "id": "936f29271184",
           "name": "text",
           "label": "component name",
-          "value": "Item",
+          "value": "Item14",
           "style": {
             "margin-left": "6px",
             "display": "block",

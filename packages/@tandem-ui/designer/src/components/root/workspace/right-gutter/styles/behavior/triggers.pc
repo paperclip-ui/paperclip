@@ -224,7 +224,7 @@
                     {
                       "id": "82a5e55b4629",
                       "is": "26f623457441",
-                      "label": "item",
+                      "label": "item 2",
                       "name": "component-instance",
                       "attributes": {},
                       "style": {},
@@ -260,7 +260,7 @@
                     {
                       "id": "8f20d2148427",
                       "is": "26f623457441",
-                      "label": "item",
+                      "label": "item 3",
                       "name": "component-instance",
                       "attributes": {},
                       "style": {},
@@ -296,7 +296,7 @@
                   ],
                   "metadata": {},
                   "name": "slot",
-                  "label": "items"
+                  "label": "items 2"
                 }
               ],
               "metadata": {}

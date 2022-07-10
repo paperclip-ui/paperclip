@@ -333,7 +333,7 @@
               "bottom": 1986.0052298662222
             }
           },
-          "label": "Inner Shadows Pane",
+          "label": "Inner Shadows Pane 2",
           "variant": {}
         },
         {

@@ -28,7 +28,7 @@
                 {
                   "id": "22a403a63975",
                   "is": "22a403a6740",
-                  "label": "menu button",
+                  "label": "menu button1",
                   "name": "component-instance",
                   "attributes": {},
                   "style": {},
@@ -60,7 +60,7 @@
                 {
                   "id": "22a403a63973",
                   "is": "22a403a6740",
-                  "label": "menu button",
+                  "label": "menu button2",
                   "name": "component-instance",
                   "attributes": {},
                   "style": {},
@@ -120,7 +120,7 @@
               ],
               "metadata": {},
               "name": "slot",
-              "label": "items"
+              "label": "items1"
             }
           ],
           "metadata": {}
@@ -239,7 +239,7 @@
                   "children": [
                     {
                       "id": "22a403a63889",
-                      "label": "option",
+                      "label": "option 2",
                       "is": "22a403a63903",
                       "name": "component-instance",
                       "attributes": {},
@@ -291,7 +291,7 @@
                     },
                     {
                       "id": "22a403a63942",
-                      "label": "option",
+                      "label": "option 3",
                       "is": "22a403a63903",
                       "name": "component-instance",
                       "attributes": {},
@@ -319,7 +319,7 @@
                     },
                     {
                       "id": "22a403a63956",
-                      "label": "option",
+                      "label": "option 4",
                       "is": "22a403a63903",
                       "name": "component-instance",
                       "attributes": {},

@@ -20,7 +20,7 @@
       "children": [
         {
           "id": "174f96bb143549",
-          "label": "zoom",
+          "label": "zoom 1",
           "is": "div",
           "name": "element",
           "attributes": {},
@@ -71,7 +71,7 @@
         {
           "id": "7b7795224407",
           "is": "5dee72436",
-          "label": "Breadcrumbs",
+          "label": "Breadcrumbs 1",
           "name": "component-instance",
           "attributes": {},
           "style": {

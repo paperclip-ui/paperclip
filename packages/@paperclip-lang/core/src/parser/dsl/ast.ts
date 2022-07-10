@@ -3,6 +3,7 @@ import { createTreeUtils, memoize } from "tandem-common";
 import { DocComment } from "../docco/ast";
 import * as path from "path";
 import * as URL from "url";
+import { notDeepStrictEqual } from "assert";
 
 export type ASTDependencyGraph = Record<string, Document>;
 export const VARIANT_ENABLED_PARAM_NAME = "enabled";
@@ -413,4 +414,26 @@ export {
   getById,
   getChildParentMap,
   getParent,
+};
+
+export const assertUniqueNames = (node: Expression, uri: string) => {
+  const allNodes = flatten(node);
+  const names: Record<string, boolean> = {};
+  for (const nested of allNodes) {
+    if (
+      nested.kind === ExpressionKind.Element ||
+      nested.kind === ExpressionKind.Text ||
+      nested.kind === ExpressionKind.Slot ||
+      nested.kind === ExpressionKind.Component
+    ) {
+      if (!nested.name) {
+        continue;
+      }
+
+      if (names[nested.name]) {
+        console.error(`${nested.name} already defined in ${uri}`);
+      }
+      names[nested.name] = true;
+    }
+  }
 };

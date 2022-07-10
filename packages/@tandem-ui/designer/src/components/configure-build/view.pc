@@ -128,7 +128,7 @@
                 {
                   "id": "7b302ae8213",
                   "is": "7149f8192509",
-                  "label": "Build Script",
+                  "label": "Build Script1",
                   "name": "component-instance",
                   "attributes": {},
                   "style": {},

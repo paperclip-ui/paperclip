@@ -45,7 +45,7 @@ export default (Base: React.ComponentClass<BaseExportNameInputProps>) =>
             invalid: !valid,
           })}
           errorProps={{ text: errorMessage }}
-          inputProps={{
+          input2Props={{
             onChange,
             onChangeComplete,
           }}

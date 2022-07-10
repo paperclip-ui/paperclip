@@ -79,7 +79,7 @@
                 {
                   "id": "808486bb16",
                   "name": "text",
-                  "label": "label",
+                  "label": "label 1",
                   "value": "basename.tsx",
                   "style": {
                     "display": "inline-block",
@@ -147,7 +147,7 @@
               ],
               "metadata": {},
               "name": "slot",
-              "label": "description"
+              "label": "description 2"
             }
           ],
           "metadata": {}

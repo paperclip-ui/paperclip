@@ -48,7 +48,7 @@ export default (Base: React.ComponentClass<BaseSearchResultProps>) =>
             preselected,
           })}
           onClick={onClick}
-          labelProps={{ text: item.label }}
+          label1Props={{ text: item.label }}
           descriptionProps={{ text: item.description }}
         />
       );

@@ -31,16 +31,17 @@ export const upgradeProject = async ({ projectFilePath }: UpgradeOptions) => {
 
   const newDependencyGraph = translateDependencyGraph(oldDependencyGraph);
 
-  for (const uri in newDependencyGraph) {
-    const filePath = URL.fileURLToPath(uri);
-    fsa.writeFileSync(
-      filePath + ".backup",
-      fsa.readFileSync(filePath, "utf-8")
-    );
-    fsa.writeFileSync(filePath, newDependencyGraph[uri]);
-    // console.log(`Serialize ${uri}`);
-    // console.log(newDependencyGraph[uri]);
-  }
+  if (false)
+    for (const uri in newDependencyGraph) {
+      const filePath = URL.fileURLToPath(uri);
+      fsa.writeFileSync(
+        filePath + ".backup",
+        fsa.readFileSync(filePath, "utf-8")
+      );
+      fsa.writeFileSync(filePath, newDependencyGraph[uri]);
+      // console.log(`Serialize ${uri}`);
+      // console.log(newDependencyGraph[uri]);
+    }
 
   sanityCheck(newDependencyGraph);
 

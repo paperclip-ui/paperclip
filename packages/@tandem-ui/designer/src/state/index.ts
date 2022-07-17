@@ -86,6 +86,7 @@ import {
   persistConvertInspectorNodeStyleToMixin,
   persistWrapInSlot,
   expandInspectorNode,
+  serializeModule,
 } from "@paperclip-lang/core";
 import {
   CanvasToolOverlayMouseMoved,
@@ -551,7 +552,11 @@ export const persistRootState = (
 
   state = modifiedDeps.reduce(
     (state, dep: Dependency<any>) =>
-      setOpenFileContent(dep.uri, JSON.stringify(dep.content, null, 2), state),
+      setOpenFileContent(
+        dep.uri,
+        serializeModule(dep.content, dep.uri, state.graph),
+        state
+      ),
     state
   );
 

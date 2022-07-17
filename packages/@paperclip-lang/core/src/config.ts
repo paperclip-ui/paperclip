@@ -1,9 +1,13 @@
 import * as fs from "fs";
 import * as path from "path";
+import * as URL from "url";
 import { PCModule, createPCDependency } from "./dsl";
 import { isPaperclipUri, DependencyGraph } from "./graph";
 import { PAPERCLIP_CONFIG_DEFAULT_EXTENSION } from "./constants";
 import { addProtocol, FILE_PROTOCOL, normalizeFilePath } from "tandem-common";
+import { parseDocument } from "./parser/dsl/parser";
+import { deserializeModule } from "./deserialize/deserialize";
+import { mapValues } from "lodash";
 
 export type PCConfigInfo = {
   directory: string;
@@ -109,13 +113,16 @@ export const loadFSDependencyGraphSync = (
   config: PCConfig,
   cwd: string,
   mapModule: (module: any) => PCModule
-): DependencyGraph =>
-  findPaperclipSourceFiles(config, cwd).reduce((config, sourceFilePath) => {
-    const uri = addProtocol(FILE_PROTOCOL, sourceFilePath);
-    const content = fs.readFileSync(sourceFilePath, "utf8") || "{}";
+): DependencyGraph => {
+  const pcFilePaths = findPaperclipSourceFiles(config, cwd);
 
-    return {
-      ...config,
-      [uri]: createPCDependency(uri, mapModule(JSON.parse(content))),
-    };
+  const astGraph = pcFilePaths.reduce((graph, sourceFilePath) => {
+    const href = URL.pathToFileURL(sourceFilePath).href;
+    graph[href] = parseDocument(fs.readFileSync(sourceFilePath, "utf8"));
+    return graph;
   }, {});
+
+  return mapValues(astGraph, (ast, uri) => {
+    return createPCDependency(uri, deserializeModule(ast, uri, astGraph));
+  });
+};

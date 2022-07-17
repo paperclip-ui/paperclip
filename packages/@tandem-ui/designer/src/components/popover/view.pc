@@ -72,5 +72,5 @@ Popover {
  * @bounds(left: 438, top: 340, right: 718, bottom: 541)
  */
 imp0.Comment notice {
-  override text2 "Use this component for any UI that needs to "pop over" ALLL of the UI"
+  override text2 "Use this component for any UI that needs to 'pop over' ALLL of the UI"
 }

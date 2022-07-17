@@ -97,32 +97,29 @@ export const deserializeDependencyGraph = (
   // the only thing that should be here is the deserializer.
 
   // TODO: delete me after things stabilize
-  const dslGraph = mapValues(cache, (fileItem) => {
-    try {
-      return {
-        uri: fileItem.uri,
-        content: JSON.parse(new TextDecoder("utf-8").decode(fileItem.content)),
-      };
-    } catch (e) {
-      return {
-        uri: fileItem.uri,
-        content: createPCModule(),
-      };
-    }
-  });
+  // const dslGraph = mapValues(cache, (fileItem) => {
+  //   try {
+  //     return {
+  //       uri: fileItem.uri,
+  //       content: JSON.parse(new TextDecoder("utf-8").decode(fileItem.content)),
+  //     };
+  //   } catch (e) {
+  //     return {
+  //       uri: fileItem.uri,
+  //       content: createPCModule(),
+  //     };
+  //   }
+  // });
 
-  const astGraph = mapValues(dslGraph, (dep) => {
-    const content = serializeModule(dep.content, dep.uri, dslGraph);
-    const ast = parseDocument(content);
+  const astGraph = mapValues(cache, (fileItem) => {
+    const ast = parseDocument(
+      new TextDecoder("utf-8").decode(fileItem.content)
+    );
     return ast;
   });
 
-  const dslGraph2 = mapValues(astGraph, (doc, uri) => {
-    const content = deserializeModule(doc, uri, astGraph);
-
-    if (uri.includes("layer.pc")) {
-      console.log("DESERRR", uri, JSON.stringify(content, null, 2));
-    }
+  const dslGraph2 = mapValues(astGraph, (ast, uri) => {
+    const content = deserializeModule(ast, uri, astGraph);
     return {
       uri,
       content,

@@ -1,4 +1,4 @@
-import { createUIDGenerator, EMPTY_ARRAY } from "tandem-common";
+import { createUIDGenerator, EMPTY_ARRAY, memoize } from "tandem-common";
 import {
   ArrayExpression,
   BaseExpression,
@@ -50,7 +50,7 @@ type Context = {
   nextID: () => string;
 };
 
-export const parseDocument = (source: string): Document => {
+export const parseDocument = memoize((source: string): Document => {
   const tokenizer = new DSLTokenizer(new StringScanner(source));
 
   // setup current token
@@ -69,7 +69,7 @@ export const parseDocument = (source: string): Document => {
     raws: { after },
     expressions,
   };
-};
+});
 
 const md5 = (value: string) => {
   return crypto.createHash("md5").update(value).digest("hex");

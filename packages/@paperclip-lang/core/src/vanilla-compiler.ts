@@ -171,25 +171,6 @@ const translateContentNode = memoize(
       return ${translateVisibleNode(node, true)};
     }`;
 
-    // check for height override.
-    console.log("DEEE");
-    if (buffer.includes("271129984329b1f8b960d1ea139538b866")) {
-      // console.log("IT HAS IT", sourceUri);
-      // console.log(JSON.stringify(node, null, 2));
-      console.log(buffer);
-    }
-
-    if (
-      sourceUri.includes("borders.pc") ||
-      sourceUri.includes("icons/view.pc")
-    ) {
-      // console.log("fdfds", node.label, buffer);
-    }
-
-    if (sourceUri.includes("layer.pc")) {
-      console.log("CONTENT", sourceUri, buffer);
-    }
-
     return buffer + `})()`;
   }
 );

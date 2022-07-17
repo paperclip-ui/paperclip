@@ -1,354 +1,100 @@
-{
-  "id": "6a863e8637",
-  "version": "0.0.6",
-  "metadata": {},
-  "name": "module",
-  "children": [
-    {
-      "id": "a0474dc08233",
-      "is": "1d51efba14",
-      "label": "Variant option",
-      "name": "component-instance",
-      "attributes": {},
-      "style": {},
-      "children": [],
-      "metadata": {
-        "bounds": {
-          "left": 412,
-          "top": 320,
-          "right": 732,
-          "bottom": 346.11895175049244
-        }
-      },
-      "variant": {
-        "a0474dc08215": true,
-        "4f6549161307": false,
-        "7219652c1307": true,
-        "a0474dc08464": false
-      }
-    },
-    {
-      "label": "Variant option",
-      "is": "div",
-      "style": {
-        "box-sizing": "border-box",
-        "padding-left": "12px",
-        "padding-top": "6px",
-        "padding-right": "8px",
-        "padding-bottom": "6px"
-      },
-      "attributes": {},
-      "id": "1d51efba14",
-      "name": "component",
-      "children": [
-        {
-          "id": "1d51efba15",
-          "label": "Element1",
-          "is": "div",
-          "name": "element",
-          "attributes": {},
-          "style": {
-            "box-sizing": "border-box",
-            "display": "flex",
-            "align-items": "center"
-          },
-          "children": [
-            {
-              "id": "6f30576e9",
-              "variant": {
-                "246c305d8": false
-              },
-              "is": "6f30576e8",
-              "name": "component-instance",
-              "attributes": {},
-              "style": {
-                "margin-right": "8px"
-              },
-              "children": [
-                {
-                  "id": "2a94b5ff3",
-                  "variantId": null,
-                  "propertyName": "style",
-                  "targetIdPath": [
-                    "6f30576e7"
-                  ],
-                  "value": {},
-                  "name": "override",
-                  "children": []
-                }
-              ],
-              "metadata": {
-                "bounds": {
-                  "left": 277,
-                  "top": 316,
-                  "right": 377,
-                  "bottom": 416
-                }
-              },
-              "label": "switch"
-            },
-            {
-              "id": "5b8ce42a3",
-              "label": "Input",
-              "is": "div",
-              "name": "element",
-              "attributes": {},
-              "style": {
-                "box-sizing": "border-box",
-                "border-radius": "2px",
-                "display": "flex",
-                "flex-grow": "1",
-                "justify-content": "space-between",
-                "align-items": "center"
-              },
-              "children": [
-                {
-                  "id": "1893abe61325",
-                  "children": [
-                    {
-                      "id": "1d51efba20",
-                      "name": "text",
-                      "label": "label",
-                      "value": "Variant",
-                      "style": {},
-                      "children": [],
-                      "metadata": {},
-                      "styleMixins": {
-                        "dc3b39eb1275": {
-                          "priority": 0
-                        }
-                      }
-                    }
-                  ],
-                  "metadata": {},
-                  "name": "slot",
-                  "label": "input 2"
-                }
-              ],
-              "metadata": {}
-            },
-            {
-              "id": "a0474dc08216",
-              "is": "98d3a3ab395",
-              "label": "Bolt icon",
-              "name": "component-instance",
-              "attributes": {},
-              "style": {
-                "display": "none",
-                "color": "var(--24ce1e4d13456)"
-              },
-              "children": [],
-              "metadata": {
-                "bounds": {
-                  "left": 1357,
-                  "top": -156,
-                  "right": 1757,
-                  "bottom": 144
-                }
-              },
-              "variant": {}
-            },
-            {
-              "id": "57bf93b03",
-              "variant": [],
-              "is": "82eac94a20",
-              "name": "component-instance",
-              "attributes": {},
-              "style": {
-                "display": "none",
-                "height": "10px",
-                "position": "relative",
-                "top": "3px",
-                "cursor": "pointer"
-              },
-              "children": [],
-              "metadata": {
-                "bounds": {
-                  "left": -2109,
-                  "top": 1121,
-                  "right": -1709,
-                  "bottom": 1421
-                }
-              },
-              "label": "reset button"
-            }
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "6cf317c23",
-          "variantId": "c2b44e3f3",
-          "propertyName": "style",
-          "targetIdPath": [],
-          "value": {
-            "background": "rgba(212, 222, 240, 1)"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "cc845f08779",
-          "name": "variant",
-          "isDefault": false,
-          "children": [],
-          "metadata": {},
-          "label": "on"
-        },
-        {
-          "id": "cc845f081098",
-          "name": "variant",
-          "label": "alt",
-          "isDefault": false,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "cc845f081417",
-          "variantId": "cc845f081098",
-          "propertyName": "style",
-          "targetIdPath": [],
-          "value": {},
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "24793dfa522",
-          "variantId": "cc845f08779",
-          "propertyName": "variant",
-          "targetIdPath": [
-            "6f30576e9"
-          ],
-          "value": {
-            "246c305d8": true
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "147a2c92522",
-          "variantId": "cc845f081098",
-          "propertyName": "variant",
-          "targetIdPath": [
-            "6f30576e9"
-          ],
-          "value": {
-            "246c305d8": false
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "a0474dc08232",
-          "variantId": "a0474dc08215",
-          "propertyName": "style",
-          "targetIdPath": [
-            "a0474dc08216"
-          ],
-          "value": {
-            "display": "block",
-            "height": "9px"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "a0474dc08255",
-          "variantId": "a0474dc08215",
-          "propertyName": "variant",
-          "targetIdPath": [
-            "6f30576e9"
-          ],
-          "value": {
-            "246c305d8": false
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "a0474dc08464",
-          "name": "variant",
-          "label": "has trigger",
-          "isDefault": true,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "a0474dc08465",
-          "variantId": "a0474dc08464",
-          "propertyName": "style",
-          "targetIdPath": [
-            "a0474dc08216"
-          ],
-          "value": {
-            "display": "block",
-            "height": "12px",
-            "color": "var(--32ef79b7820935)"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "64db157d1307",
-          "variantId": "a0474dc08215",
-          "propertyName": "style",
-          "targetIdPath": [
-            "6f30576e9"
-          ],
-          "value": {
-            "opacity": 1
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "4f6549161308",
-          "variantId": "4f6549161307",
-          "propertyName": "style",
-          "targetIdPath": [
-            "6f30576e9"
-          ],
-          "value": {
-            "opacity": 1
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "7219652c1307",
-          "name": "variant",
-          "label": "triggered",
-          "isDefault": false,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "7219652c1308",
-          "variantId": "7219652c1307",
-          "propertyName": "style",
-          "targetIdPath": [
-            "a0474dc08216"
-          ],
-          "value": {
-            "display": "block",
-            "height": "12px",
-            "color": "var(--24ce1e4d13456)"
-          },
-          "name": "override",
-          "children": []
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 410,
-          "top": 267,
-          "right": 730,
-          "bottom": 293.11895175049244
-        }
-      },
-      "controllers": [
-        "./option-controller.tsx"
-      ],
-      "variant": {}
+import "../../../../../inputs/switch/view.pc" as imp0
+import "../../../../../atoms/view.pc" as imp1
+import "../../../../../../icons/view.pc" as imp2
+import "../../../../../../global.pc" as imp3
+
+
+/**
+ * @bounds(left: 410, top: 267, right: 730, bottom: 293)
+ */
+public component VariantOption {
+  script (src: "./option-controller.tsx")
+  variant on (enabled: [])
+  variant alt (enabled: [])
+  variant hasTrigger (enabled: [true])
+  variant triggered (enabled: [])
+  render div {
+    style {
+      box-sizing: border-box
+      padding-left: 12px
+      padding-top: 6px
+      padding-right: 8px
+      padding-bottom: 6px
     }
-  ]
+    style variant alt {
+    }
+    override switch {
+      variant on (enabled: [on])
+      variant on (enabled: [alt])
+    }
+    div element1 {
+      style {
+        box-sizing: border-box
+        display: flex
+        align-items: center
+      }
+      imp0.Switch switch {
+        style {
+          margin-right: 8px
+        }
+        override {
+        }
+        override dot {
+          style {
+          }
+        }
+      }
+      div input {
+        style {
+          box-sizing: border-box
+          border-radius: 2px
+          display: flex
+          flex-grow: 1
+          justify-content: space-between
+          align-items: center
+        }
+        slot input2 {
+          text label "Variant" {
+            style {
+              include imp1.baseFont
+            }
+          }
+        }
+      }
+      imp2.BoltIcon boltIcon {
+        style {
+          display: none
+          color: #{imp3.blue1}
+        }
+        style variant hasTrigger {
+          display: block
+          height: 12px
+          color: #{imp3.blackTransparent}
+        }
+        style variant triggered {
+          display: block
+          height: 12px
+          color: #{imp3.blue1}
+        }
+      }
+      imp2.ResetIcon resetButton {
+        style {
+          display: none
+          height: 10px
+          position: relative
+          top: 3px
+          cursor: pointer
+        }
+      }
+    }
+  }
+}
+
+/**
+ * @bounds(left: 412, top: 320, right: 732, bottom: 346)
+ */
+VariantOption variantOption {
+  override {
+    variant triggered (enabled: [true])
+  }
 }

@@ -1,182 +1,75 @@
-{
-  "id": "b78f10d1027",
-  "version": "0.0.5",
-  "metadata": {},
-  "name": "module",
-  "children": [
-    {
-      "label": "Pane",
-      "is": "div",
-      "style": {
-        "display": "flex",
-        "flex-direction": "column",
-        "border-bottom": "1px solid var(--d8f6340b1442)"
-      },
-      "attributes": {},
-      "id": "b6c162d113",
-      "name": "component",
-      "children": [
-        {
-          "id": "b6c162d132",
-          "is": "div",
-          "name": "element",
-          "attributes": {},
-          "style": {
-            "width": "100%",
-            "padding-bottom": "6px",
-            "box-sizing": "border-box",
-            "text-transform": "uppercase",
-            "color": "var(--24ce1e4d482)",
-            "font-size": "0.9em",
-            "font-weight": "500",
-            "display": "no",
-            "pointer": "default",
-            "user-select": "none",
-            "letter-spacing": "0.1em",
-            "padding-left": "12px",
-            "padding-top": "12px",
-            "padding-right": "12px"
-          },
-          "children": [
-            {
-              "label": "header",
-              "id": "d6261ad53069",
-              "children": [
-                {
-                  "id": "b6c162d1281",
-                  "name": "text",
-                  "value": "pane",
-                  "style": {
-                    "text-transform": "uppercase",
-                    "user-select": "none",
-                    "pointer": "default"
-                  },
-                  "children": [],
-                  "label": "text",
-                  "metadata": {},
-                  "styleMixins": {
-                    "dc3b39eb1627": {
-                      "priority": 0
-                    }
-                  }
-                }
-              ],
-              "metadata": {},
-              "name": "slot"
-            }
-          ],
-          "label": "Title",
-          "metadata": {},
-          "bind": {
-            "properties": [
-              {
-                "from": "title",
-                "to": "children"
-              }
-            ]
-          }
-        },
-        {
-          "id": "b6c162d140",
-          "is": "div",
-          "name": "element",
-          "attributes": {},
-          "style": {
-            "height": "100%",
-            "width": "100%",
-            "padding-top": "6px",
-            "box-sizing": "border-box",
-            "flex": "1",
-            "position": "relative",
-            "color": "var(--24ce1e4d482)",
-            "padding-left": "12px",
-            "padding-right": "12px",
-            "padding-bottom": "6px"
-          },
-          "children": [
-            {
-              "label": "content2",
-              "id": "d6261ad52883",
-              "children": [
-                {
-                  "id": "6fd27ae1495",
-                  "name": "text",
-                  "value": "Content",
-                  "style": {},
-                  "children": [],
-                  "label": "inner",
-                  "metadata": {},
-                  "styleMixins": {
-                    "dc3b39eb1275": {
-                      "priority": 0
-                    }
-                  }
-                }
-              ],
-              "metadata": {},
-              "name": "slot"
-            }
-          ],
-          "label": "Content",
-          "metadata": {},
-          "bind": {
-            "properties": [
-              {
-                "from": "content",
-                "to": "children"
-              }
-            ]
-          }
-        },
-        {
-          "id": "b6e7db9d12815",
-          "name": "variant",
-          "label": "left",
-          "isDefault": true,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "b6e7db9d12816",
-          "variantId": "b6e7db9d12815",
-          "propertyName": "style",
-          "targetIdPath": [],
-          "value": {
-            "box-shadow": "inset  -1px 0px 0px 0px var(--f63574de434), inset  0px -1px 0px 0px var(--f63574de434)"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "b6e7db9d12817",
-          "name": "variant",
-          "label": "right",
-          "isDefault": false,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "b6e7db9d12818",
-          "variantId": "b6e7db9d12817",
-          "propertyName": "style",
-          "targetIdPath": [],
-          "value": {
-            "box-shadow": "inset  0px -1px 0px 0px var(--f63574de434), inset  1px 0px 0px 0px var(--f63574de434)",
-            "border-bottom": "1px solid var(--d8f6340b1442)"
-          },
-          "name": "override",
-          "children": []
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 321,
-          "top": 189,
-          "right": 525,
-          "bottom": 287.3571410945104
-        }
-      },
-      "variant": {}
+import "../../global.pc" as imp0
+import "../atoms/view.pc" as imp1
+
+
+/**
+ * @bounds(left: 321, top: 189, right: 525, bottom: 287)
+ */
+public component Pane {
+  variant left (enabled: [true])
+  variant right (enabled: [])
+  render div {
+    style {
+      display: flex
+      flex-direction: column
+      border-bottom: 1px solid #{imp0.grey1}
     }
-  ]
+    style variant left {
+      box-shadow: inset  -1px 0px 0px 0px #{imp0.grey0}, inset  0px -1px 0px 0px #{imp0.grey0}
+    }
+    style variant right {
+      box-shadow: inset  0px -1px 0px 0px #{imp0.grey0}, inset  1px 0px 0px 0px #{imp0.grey0}
+      border-bottom: 1px solid #{imp0.grey1}
+    }
+    div title {
+      style {
+        width: 100%
+        padding-bottom: 6px
+        box-sizing: border-box
+        text-transform: uppercase
+        color: #{imp0.grey3}
+        font-size: 0.9em
+        font-weight: 500
+        display: no
+        pointer: default
+        user-select: none
+        letter-spacing: 0.1em
+        padding-left: 12px
+        padding-top: 12px
+        padding-right: 12px
+      }
+      slot header {
+        text text "pane" {
+          style {
+            include imp1.headerFontStyle
+            text-transform: uppercase
+            user-select: none
+            pointer: default
+          }
+        }
+      }
+    }
+    div content {
+      style {
+        height: 100%
+        width: 100%
+        padding-top: 6px
+        box-sizing: border-box
+        flex: 1
+        position: relative
+        color: #{imp0.grey3}
+        padding-left: 12px
+        padding-right: 12px
+        padding-bottom: 6px
+      }
+      slot content2 {
+        text inner "Content" {
+          style {
+            include imp1.baseFont
+          }
+        }
+      }
+    }
+  }
 }
+

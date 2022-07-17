@@ -40,22 +40,24 @@ type Context = {
   graph: Record<string, ast.Document>;
 };
 
-export const deserializeModule = (
-  ast: ast.Document,
-  fileUrl: string,
-  graph: Record<string, ast.Document>
-): PCModule => {
-  const id = md5(fileUrl);
-  const context = { fileUrl, ast, id, graph };
+export const deserializeModule = memoize(
+  (
+    ast: ast.Document,
+    fileUrl: string,
+    graph: Record<string, ast.Document>
+  ): PCModule => {
+    const id = md5(fileUrl);
+    const context = { fileUrl, ast, id, graph };
 
-  return {
-    id: `${id}_module`,
-    version: PAPERCLIP_MODULE_VERSION,
-    name: PCSourceTagNames.MODULE,
-    children: deserializeModuleChildren(context),
-    metadata: {},
-  };
-};
+    return {
+      id: `${id}_module`,
+      version: PAPERCLIP_MODULE_VERSION,
+      name: PCSourceTagNames.MODULE,
+      children: deserializeModuleChildren(context),
+      metadata: {},
+    };
+  }
+);
 
 const deserializeModuleChildren = (context: Context): PCModuleChild[] => {
   return [

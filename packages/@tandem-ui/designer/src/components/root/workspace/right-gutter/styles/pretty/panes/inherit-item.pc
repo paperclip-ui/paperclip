@@ -1,313 +1,102 @@
-{
-  "id": "b78264862",
-  "version": "0.0.5",
-  "metadata": {},
-  "name": "module",
-  "children": [
-    {
-      "label": "Inherit Item",
-      "is": "div",
-      "style": {
-        "display": "flex",
-        "align-items": "center",
-        "padding-left": "12px",
-        "padding-top": "6px",
-        "padding-right": "12px",
-        "padding-bottom": "6px"
-      },
-      "attributes": {},
-      "id": "9e4a454812260",
-      "name": "component",
-      "children": [
-        {
-          "id": "9e4a454812258",
-          "label": "Element1",
-          "is": "div",
-          "name": "element",
-          "attributes": {},
-          "style": {
-            "height": "22px",
-            "border": "1px none",
-            "border-radius": "2px",
-            "margin-right": "8px",
-            "box-sizing": "border-box",
-            "display": "flex",
-            "align-items": "center"
-          },
-          "children": [
-            {
-              "id": "899e765b754",
-              "is": "ec3f9b216704",
-              "label": "Color Palette Icon",
-              "name": "component-instance",
-              "attributes": {},
-              "style": {
-                "display": "block",
-                "height": "10px",
-                "color": "var(--30f4693267675)"
-              },
-              "children": [
-                {
-                  "id": "899e765b915",
-                  "propertyName": "style",
-                  "targetIdPath": [
-                    "ec3f9b216703"
-                  ],
-                  "value": {
-                    "background": "currentColor"
-                  },
-                  "name": "override",
-                  "children": []
-                },
-                {
-                  "id": "32237e6824916",
-                  "variantId": "308dd31382",
-                  "propertyName": "style",
-                  "targetIdPath": [
-                    "ec3f9b216703"
-                  ],
-                  "value": {
-                    "background": "var(--f63574de434)"
-                  },
-                  "name": "override",
-                  "children": []
-                }
-              ],
-              "metadata": {
-                "bounds": {
-                  "left": -1125,
-                  "top": -666,
-                  "right": -725,
-                  "bottom": -366
-                }
-              },
-              "variant": {}
-            }
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "14f530171",
-          "is": "50e32bec2591",
-          "name": "component-instance",
-          "attributes": {},
-          "style": {
-            "box-shadow": "unset"
-          },
-          "children": [
-            {
-              "id": "14f530172",
-              "variantId": null,
-              "propertyName": "style",
-              "targetIdPath": [
-                "8b8bbe2c232831"
-              ],
-              "value": {
-                "padding": "0px",
-                "border": "none",
-                "background": "transparent",
-                "box-shadow": " 0px 0px 0px 0px var(--dd86347b1545)"
-              },
-              "name": "override",
-              "children": []
-            },
-            {
-              "id": "14f530173",
-              "variantId": null,
-              "propertyName": "style",
-              "targetIdPath": [
-                "782254018619"
-              ],
-              "value": {
-                "display": "block"
-              },
-              "name": "override",
-              "children": []
-            },
-            {
-              "id": "14f530174",
-              "variantId": null,
-              "propertyName": "style",
-              "targetIdPath": [
-                "67e386c7935"
-              ],
-              "value": {
-                "margin-right": "8px"
-              },
-              "name": "override",
-              "children": []
-            },
-            {
-              "id": "14f530175",
-              "variantId": null,
-              "propertyName": "style",
-              "targetIdPath": [
-                "628c465922"
-              ],
-              "value": {
-                "top": "3px"
-              },
-              "name": "override",
-              "children": []
-            },
-            {
-              "id": "14f530176",
-              "variantId": null,
-              "propertyName": "style",
-              "targetIdPath": [
-                "628c465922",
-                "64740a7710"
-              ],
-              "value": {
-                "display": "none"
-              },
-              "name": "override",
-              "children": []
-            },
-            {
-              "id": "ac2d4f9a1740",
-              "variantId": null,
-              "propertyName": "text",
-              "targetIdPath": [
-                "67e386c7935"
-              ],
-              "value": "Some item",
-              "name": "override",
-              "children": []
-            },
-            {
-              "id": "ac2d4f9a1741",
-              "variantId": "308dd31382",
-              "propertyName": "style",
-              "targetIdPath": [
-                "67e386c7935"
-              ],
-              "value": {
-                "color": "white"
-              },
-              "name": "override",
-              "children": []
-            }
-          ],
-          "metadata": {
-            "bounds": {
-              "left": 396,
-              "top": 286,
-              "right": 597,
-              "bottom": 314.23603217974676
-            }
-          },
-          "label": "dropdown"
-        },
-        {
-          "id": "308dd31382",
-          "name": "variant",
-          "label": "selected",
-          "isDefault": true,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "308dd31383",
-          "variantId": "308dd31382",
-          "propertyName": "style",
-          "targetIdPath": [],
-          "value": {
-            "background": "var(--24ce1e4d13456)",
-            "color": "rgba(255, 255, 255, 1)"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "be1fb4993",
-          "variantId": null,
-          "propertyName": "isDefault",
-          "targetIdPath": [
-            "69c680a12"
-          ],
-          "value": true,
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "c7da0a1d90996",
-          "name": "variant",
-          "label": "alt",
-          "isDefault": false,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "c7da0a1d96284",
-          "variantId": "c7da0a1d90996",
-          "propertyName": "style",
-          "targetIdPath": [],
-          "value": {},
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "6bb53bbd671",
-          "variantId": "c7da0a1d90996",
-          "propertyName": "style",
-          "targetIdPath": [
-            "308dd31392"
-          ],
-          "value": {
-            "color": "var(--24ce1e4d482)"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "6bb53bbd915",
-          "variantId": "c7da0a1d90996",
-          "propertyName": "style",
-          "targetIdPath": [
-            "9e4a454812258"
-          ],
-          "value": {},
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "ac2d4f9a1739",
-          "variantId": "308dd31382",
-          "propertyName": "style",
-          "targetIdPath": [
-            "14f530171"
-          ],
-          "value": {
-            "color": "var(--f63574de434)"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "ac2d4f9a1742",
-          "variantId": "308dd31382",
-          "propertyName": "style",
-          "targetIdPath": [
-            "899e765b754"
-          ],
-          "value": {},
-          "name": "override",
-          "children": []
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 351,
-          "top": 293,
-          "right": 539,
-          "bottom": 317
-        }
-      },
-      "controllers": [
-        "./inherit-item-controller.tsx"
-      ],
-      "variant": {}
+import "../../../../../../../icons/view.pc" as imp0
+import "../../../../../../../global.pc" as imp1
+import "../../../../../../inputs/dropdown/view.pc" as imp2
+
+
+/**
+ * @bounds(left: 351, top: 293, right: 539, bottom: 317)
+ */
+public component InheritItem {
+  script (src: "./inherit-item-controller.tsx")
+  variant selected (enabled: [true])
+  variant alt (enabled: [])
+  render div {
+    style {
+      display: flex
+      align-items: center
+      padding-left: 12px
+      padding-top: 6px
+      padding-right: 12px
+      padding-bottom: 6px
     }
-  ]
+    style variant selected {
+      background: #{imp1.blue1}
+      color: rgba(255, 255, 255, 1)
+    }
+    style variant alt {
+    }
+    override {
+      variant filterable (enabled: [true])
+    }
+    div element1 {
+      style {
+        height: 22px
+        border: 1px none
+        border-radius: 2px
+        margin-right: 8px
+        box-sizing: border-box
+        display: flex
+        align-items: center
+      }
+      style variant alt {
+      }
+      imp0.ColorPaletteIcon colorPaletteIcon {
+        style {
+          display: block
+          height: 10px
+          color: #{imp1.grey4}
+        }
+        style variant selected {
+        }
+        override ndoe99 {
+          style {
+            background: currentColor
+          }
+          style variant selected {
+            background: #{imp1.grey0}
+          }
+        }
+      }
+    }
+    imp2.Dropdown dropdown {
+      style {
+        box-shadow: unset
+      }
+      style variant selected {
+        color: #{imp1.grey0}
+      }
+      override button22 {
+        style {
+          padding: 0px
+          border: none
+          background: transparent
+          box-shadow:  0px 0px 0px 0px #{imp1.blackTransparent2}
+        }
+      }
+      override popover {
+        style {
+          display: block
+        }
+      }
+      override label2 "Some item" {
+        style {
+          margin-right: 8px
+        }
+        style variant selected {
+          color: white
+        }
+      }
+      override node54 {
+        style {
+          top: 3px
+        }
+      }
+      override node54.element122 {
+        style {
+          display: none
+        }
+      }
+    }
+  }
 }
+

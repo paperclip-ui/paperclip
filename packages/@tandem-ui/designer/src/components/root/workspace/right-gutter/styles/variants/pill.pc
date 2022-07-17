@@ -1,64 +1,23 @@
-{
-  "id": "612dda3e4",
-  "version": "0.0.5",
-  "metadata": {},
-  "name": "module",
-  "children": [
-    {
-      "label": "variant pill",
-      "is": "div",
-      "style": {
-        "background": "rgba(237, 236, 236, 1)",
-        "padding-left": "8px",
-        "padding-top": "2px",
-        "padding-right": "8px",
-        "padding-bottom": "2px",
-        "font-size": "10px",
-        "border-radius": "2px",
-        "margin-right": "8px"
-      },
-      "attributes": {},
-      "id": "2c32917123",
-      "name": "component",
-      "children": [
-        {
-          "id": "2c32917122",
-          "name": "text",
-          "label": "Text1",
-          "value": "variant 1",
-          "style": {},
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "ef1965693",
-          "name": "variant",
-          "label": "empty",
-          "isDefault": false,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "ef1965694",
-          "variantId": "ef1965693",
-          "propertyName": "style",
-          "targetIdPath": [],
-          "value": {
-            "background": "rgba(255, 255, 255, 1)"
-          },
-          "name": "override",
-          "children": []
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 308,
-          "top": 268,
-          "right": 598.6807196696789,
-          "bottom": 299.0179917419708
-        }
-      },
-      "variant": {}
+/**
+ * @bounds(left: 308, top: 268, right: 599, bottom: 299)
+ */
+public component VariantPill {
+  variant empty (enabled: [])
+  render div {
+    style {
+      background: rgba(237, 236, 236, 1)
+      padding-left: 8px
+      padding-top: 2px
+      padding-right: 8px
+      padding-bottom: 2px
+      font-size: 10px
+      border-radius: 2px
+      margin-right: 8px
     }
-  ]
+    style variant empty {
+      background: rgba(255, 255, 255, 1)
+    }
+    text text1 "variant 1"
+  }
 }
+

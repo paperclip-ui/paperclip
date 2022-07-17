@@ -1,0 +1,86 @@
+{
+  "id": "67d74e285",
+  "version": "0.0.5",
+  "metadata": {},
+  "name": "module",
+  "children": [
+    {
+      "id": "25d5776e3",
+      "is": "67d74e287",
+      "name": "component-instance",
+      "attributes": {},
+      "style": {
+        "font-family": "unset"
+      },
+      "children": [],
+      "metadata": {
+        "bounds": {
+          "left": 82,
+          "top": 369,
+          "right": 477.62566591881614,
+          "bottom": 469
+        }
+      },
+      "variant": {},
+      "styleMixins": {
+        "1542269688891": {
+          "priority": 0
+        }
+      }
+    },
+    {
+      "label": "Banner",
+      "is": "div",
+      "style": {
+        "box-sizing": "border-box",
+        "padding-left": "8px",
+        "padding-top": "8px",
+        "padding-right": "8px",
+        "padding-bottom": "8px"
+      },
+      "attributes": {},
+      "id": "67d74e287",
+      "name": "component",
+      "children": [
+        {
+          "id": "67d74e288",
+          "name": "text",
+          "label": "Text1",
+          "value": "Banner",
+          "style": {},
+          "children": [],
+          "metadata": {
+            "bounds": {
+              "left": 347.97162956155205,
+              "top": 205.41940484919706,
+              "right": 447.97162956155205,
+              "bottom": 305.41940484919706
+            }
+          }
+        },
+        {
+          "id": "67d74e289",
+          "name": "variant",
+          "label": "warning",
+          "isDefault": true,
+          "children": [],
+          "metadata": {}
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 24,
+          "top": 195,
+          "right": 419.62566591881614,
+          "bottom": 295
+        }
+      },
+      "variant": {},
+      "styleMixins": {
+        "dc3b39eb1275": {
+          "priority": 0
+        }
+      }
+    }
+  ]
+}

@@ -46,7 +46,7 @@ export const GLOBAL_MENU: MenuItems = [
     children: [
       {
         label: "Save",
-        keyboardShortcut: `${cmdKey}+s`,
+        keyboardShortcut: `ctrl+s`,
         action: shortcutKeyDown(SHORTCUT_SAVE_KEY_DOWN),
       },
       {

@@ -1,1750 +1,522 @@
-{
-  "id": "9672de3b355557",
-  "version": "0.0.6",
-  "metadata": {},
-  "name": "module",
-  "children": [
-    {
-      "label": "CSS Measurement Input",
-      "is": "7149f8199122",
-      "style": {},
-      "attributes": {},
-      "id": "a329dd6d16879",
-      "name": "component",
-      "children": [],
-      "metadata": {
-        "bounds": {
-          "left": 783.484050288946,
-          "top": 164.5285555122662,
-          "right": 1015.484050288946,
-          "bottom": 193.56436427116807
+import "../../../../../../../inputs/text/view.pc" as imp0
+import "../../../../../../../inputs/dropdown/view.pc" as imp1
+import "../../../../../../../inputs/molecules.pc" as imp2
+import "../../../../../../../atoms/view.pc" as imp3
+import "../../../../../../../../global.pc" as imp4
+import "../../../../../../../../icons/view.pc" as imp5
+import "../../../../../../../inputs/button-bar/view.pc" as imp6
+import "../../../../../../../inputs/button-bar/item.pc" as imp7
+import "../../../../../../../inputs/color/view.pc" as imp8
+import "./background/view.pc" as imp9
+
+
+/**
+ * @bounds(left: 783, top: 165, right: 1015, bottom: 194)
+ */
+public component CssMeasurementInput {
+  script (src: "./style-value-controller.tsx")
+  render imp0.TextInput
+}
+
+/**
+ * @bounds(left: 779, top: 247, right: 980, bottom: 335)
+ */
+public component CssDropdownInput {
+  script (src: "./dropdown-controller.tsx")
+  render imp1.Dropdown {
+    override button22 {
+      style {
+        border-left: 0px none rgba(1, 0, 1, 0)
+        border-top: 0px none rgba(1, 0, 1, 0)
+        border-right: 0px none rgba(1, 0, 1, 0)
+        border-bottom: 0px none rgba(1, 0, 1, 0)
+      }
+    }
+    override label2 "Label"
+  }
+}
+
+/**
+ * @bounds(left: 447, top: 138, right: 547, bottom: 186)
+ */
+public component LabeledCssInput {
+  script (src: "./labeled-input-controller.tsx")
+  variant inherited (enabled: [true])
+  render imp2.LabeledInput {
+    override text1 {
+      style variant inherited {
+        text-decoration: underline
+      }
+    }
+    override label {
+      style variant inherited {
+        text-decoration: unset
+        margin-bottom: unset
+        color: #{imp4.blue1}
+        cursor: pointer
+        font-weight: 500
+      }
+    }
+    insert input {
+      slot input {
+        imp0.TextInput textInput2 {
+          style {
+            line-height: 1
+          }
         }
-      },
-      "variant": {},
-      "controllers": [
-        "./style-value-controller.tsx"
-      ]
-    },
-    {
-      "label": "CSS Dropdown Input",
-      "is": "50e32bec2591",
-      "style": {},
-      "attributes": {},
-      "id": "d2bdce074664",
-      "name": "component",
-      "children": [
-        {
-          "id": "148624df10078",
-          "propertyName": "style",
-          "targetIdPath": [
-            "8b8bbe2c232831"
-          ],
-          "value": {
-            "border-left": "0px none rgba(1, 0, 1, 0)",
-            "border-top": "0px none rgba(1, 0, 1, 0)",
-            "border-right": "0px none rgba(1, 0, 1, 0)",
-            "border-bottom": "0px none rgba(1, 0, 1, 0)"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "148624df10079",
-          "variantId": null,
-          "propertyName": "text",
-          "targetIdPath": [
-            "67e386c7935"
-          ],
-          "value": "Label",
-          "name": "override",
-          "children": []
+      }
+    }
+    insert label {
+      text label "label" {
+        style {
+          include imp3.labelFont
+          margin-bottom: 0px
+          margin-left: 2px
         }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 779,
-          "top": 247,
-          "right": 980,
-          "bottom": 334.77512727534497
+        style variant inherited {
+          text-decoration: unset
+          margin-bottom: unset
+          color: #{imp4.blue1}
+          cursor: pointer
+          font-weight: 500
         }
-      },
-      "variant": {},
-      "controllers": [
-        "./dropdown-controller.tsx"
-      ]
-    },
-    {
-      "label": "labeled css input",
-      "is": "7149f8192509",
-      "style": {},
-      "attributes": {},
-      "id": "82e036ac7328",
-      "name": "component",
-      "children": [
-        {
-          "id": "82e036ac8235",
-          "name": "variant",
-          "label": "inherited",
-          "isDefault": true,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "82e036ac9142",
-          "variantId": "82e036ac8235",
-          "propertyName": "style",
-          "targetIdPath": [
-            "7149f8192506"
-          ],
-          "value": {
-            "text-decoration": "underline"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "slotId": "e73029b416045",
-          "id": "82e036ac24627",
-          "children": [
-            {
-              "id": "82e036ac25545",
-              "children": [
-                {
-                  "id": "82e036ac24626",
-                  "is": "7149f8199122",
-                  "label": "Text Input 2",
-                  "name": "component-instance",
-                  "attributes": {},
-                  "style": {
-                    "line-height": "1"
-                  },
-                  "children": [],
-                  "metadata": {
-                    "bounds": {
-                      "left": 384,
-                      "top": 298,
-                      "right": 484,
-                      "bottom": 327.0358087589019
-                    }
-                  },
-                  "variant": {}
-                }
-              ],
-              "metadata": {},
-              "name": "slot",
-              "label": "input"
+      }
+    }
+  }
+}
+
+/**
+ * @bounds(left: 422, top: 214, right: 732, bottom: 314)
+ */
+public component CssInputRow {
+  render div {
+    style {
+      box-sizing: border-box
+      display: flex
+      align-items: center
+      width: 100%
+      padding-top: 8px
+      padding-bottom: 8px
+    }
+    div left {
+      style {
+        box-sizing: border-box
+        display: block
+        padding-right: 8px
+        width: 100px
+      }
+      slot label222 {
+        text text1 "css-property" {
+          style {
+            include imp3.baseFontNobreak
+          }
+        }
+      }
+    }
+    div right {
+      style {
+        box-sizing: border-box
+        display: block
+        width: 100%
+      }
+      slot input2 {
+        imp0.TextInput textInput
+      }
+    }
+  }
+}
+
+/**
+ * @bounds(left: 1036, top: 142, right: 1414, bottom: 266)
+ */
+public component TblrInput {
+  script (src: "./tblr-input-controller.tsx")
+  variant connected (enabled: [])
+  variant disconnected (enabled: [true])
+  render div {
+    style {
+      box-sizing: border-box
+      display: block
+    }
+    style variant disconnected {
+      background: #{imp4.grey2}
+    }
+    override buttonBarItem {
+      variant selected (enabled: [connected])
+    }
+    override buttonBarItem2 {
+      variant selected (enabled: [connected])
+      variant selected (enabled: [disconnected])
+    }
+    override primaryInput {
+      variant disabled (enabled: [disconnected])
+    }
+    div element1 {
+      style {
+        box-sizing: border-box
+        display: flex
+        align-items: center
+      }
+      style variant disconnected {
+        margin-bottom: unset
+      }
+      imp2.LabeledInput labeledInput {
+        override input1 {
+          style {
+            margin-bottom: 0px
+          }
+        }
+        insert input {
+          div element2 {
+            style {
+              box-sizing: border-box
+              display: flex
+              position: relative
+              opacity: 1
+              margin-right: 0px
             }
-          ],
-          "metadata": {},
-          "name": "plug"
-        },
-        {
-          "slotId": "ba94dac93878",
-          "id": "82e036ac28301",
-          "children": [
-            {
-              "id": "82e036ac28300",
-              "name": "text",
-              "label": "label",
-              "value": "label",
-              "style": {
-                "margin-bottom": "0px",
-                "margin-left": "2px"
-              },
-              "children": [],
-              "metadata": {},
-              "styleMixins": {
-                "33b5126b196": {
-                  "priority": 0
-                }
+            style variant disconnected {
+              margin-right: 0px
+            }
+            div primaryInputContainer {
+              style {
+                box-sizing: border-box
+                display: block
+                position: relative
+                width: 100%
               }
-            }
-          ],
-          "metadata": {},
-          "name": "plug"
-        },
-        {
-          "id": "82e036ac36573",
-          "variantId": "82e036ac8235",
-          "propertyName": "style",
-          "targetIdPath": [
-            "82e036ac28300"
-          ],
-          "value": {
-            "text-decoration": "unset",
-            "margin-bottom": "unset",
-            "color": "var(--24ce1e4d13456)",
-            "cursor": "pointer",
-            "font-weight": "500"
-          },
-          "name": "override",
-          "children": []
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 447,
-          "top": 138,
-          "right": 547,
-          "bottom": 185.58326783327993
-        }
-      },
-      "variant": {},
-      "controllers": [
-        "./labeled-input-controller.tsx"
-      ]
-    },
-    {
-      "label": "css input row",
-      "is": "div",
-      "style": {
-        "box-sizing": "border-box",
-        "display": "flex",
-        "align-items": "center",
-        "width": "100%",
-        "padding-top": "8px",
-        "padding-bottom": "8px"
-      },
-      "attributes": {},
-      "id": "488ffe1f6704",
-      "name": "component",
-      "children": [
-        {
-          "id": "9798784b2225",
-          "label": "left",
-          "is": "div",
-          "name": "element",
-          "attributes": {},
-          "style": {
-            "box-sizing": "border-box",
-            "display": "block",
-            "padding-right": "8px",
-            "width": "100px"
-          },
-          "children": [
-            {
-              "id": "9798784b2222",
-              "children": [
-                {
-                  "id": "9798784b2220",
-                  "name": "text",
-                  "label": "Text1",
-                  "value": "css-property",
-                  "style": {},
-                  "children": [],
-                  "metadata": {},
-                  "styleMixins": {
-                    "9798784b2419": {
-                      "priority": 0
+              style variant disconnected {
+                position: relative
+                opacity: 1
+                width: 100%
+              }
+              slot primaryInput2 {
+                InlineLabeledInput primaryInput {
+                  style {
+                    padding-right: 6px
+                  }
+                  override {
+                  }
+                  override bordersIcon6.el123 {
+                    style variant disconnected {
+                      color: #{imp4.grey1}
+                      background: #{imp4.grey1}
+                    }
+                  }
+                  insert icon {
+                    slot firstIcon {
+                      imp5.BordersIcon bordersIcon {
+                        style {
+                          display: none
+                          height: 1em
+                        }
+                      }
                     }
                   }
                 }
-              ],
-              "metadata": {},
-              "name": "slot",
-              "label": "label 222"
-            }
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "9798784b2229",
-          "label": "right",
-          "is": "div",
-          "name": "element",
-          "attributes": {},
-          "style": {
-            "box-sizing": "border-box",
-            "display": "block",
-            "width": "100%"
-          },
-          "children": [
-            {
-              "id": "4c8367f41704",
-              "children": [
-                {
-                  "id": "9798784b2421",
-                  "is": "7149f8199122",
-                  "label": "Text Input",
-                  "name": "component-instance",
-                  "attributes": {},
-                  "style": {},
-                  "children": [],
-                  "metadata": {
-                    "bounds": {
-                      "left": 384,
-                      "top": 298,
-                      "right": 484,
-                      "bottom": 327.0358087589019
-                    }
-                  },
-                  "variant": {}
-                }
-              ],
-              "metadata": {},
-              "name": "slot",
-              "label": "input 2"
-            }
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "378f728c1789",
-          "variantId": "378f728c1788",
-          "propertyName": "style",
-          "targetIdPath": [],
-          "value": {
-            "padding-left": "12px"
-          },
-          "name": "override",
-          "children": []
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 422,
-          "top": 214,
-          "right": 732,
-          "bottom": 314
-        }
-      },
-      "variant": {}
-    },
-    {
-      "label": "TBLR input",
-      "is": "div",
-      "style": {
-        "box-sizing": "border-box",
-        "display": "block"
-      },
-      "attributes": {},
-      "id": "49786f441973",
-      "name": "component",
-      "children": [
-        {
-          "id": "49786f441977",
-          "label": "Element1",
-          "is": "div",
-          "name": "element",
-          "attributes": {},
-          "style": {
-            "box-sizing": "border-box",
-            "display": "flex",
-            "align-items": "center"
-          },
-          "children": [
-            {
-              "id": "c6b2d08b7238",
-              "is": "7149f8192509",
-              "label": "Labeled Input",
-              "name": "component-instance",
-              "attributes": {},
-              "style": {},
-              "children": [
-                {
-                  "slotId": "e73029b416045",
-                  "id": "c6b2d08b7296",
-                  "children": [
-                    {
-                      "id": "f58613a66880",
-                      "label": "Element2",
-                      "is": "div",
-                      "name": "element",
-                      "attributes": {},
-                      "style": {
-                        "box-sizing": "border-box",
-                        "display": "flex",
-                        "position": "relative",
-                        "opacity": 1,
-                        "margin-right": "0px"
-                      },
-                      "children": [
-                        {
-                          "id": "8480ea5b7291",
-                          "label": "primary input container",
-                          "is": "div",
-                          "name": "element",
-                          "attributes": {},
-                          "style": {
-                            "box-sizing": "border-box",
-                            "display": "block",
-                            "position": "relative",
-                            "width": "100%"
-                          },
-                          "children": [
-                            {
-                              "id": "f58613a66764",
-                              "children": [
-                                {
-                                  "id": "f58613a66649",
-                                  "is": "af62926b2310",
-                                  "label": "primary input",
-                                  "name": "component-instance",
-                                  "attributes": {},
-                                  "style": {
-                                    "padding-right": "6px"
-                                  },
-                                  "children": [
-                                    {
-                                      "id": "f58613a66650",
-                                      "variantId": "af62926b2038",
-                                      "propertyName": "style",
-                                      "targetIdPath": [
-                                        "af62926b2317",
-                                        "8bf103e215"
-                                      ],
-                                      "value": {
-                                        "color": "var(--d8f6340b1442)",
-                                        "background": "var(--d8f6340b1442)"
-                                      },
-                                      "name": "override",
-                                      "children": []
-                                    },
-                                    {
-                                      "slotId": "af62926b2330",
-                                      "id": "f58613a66651",
-                                      "children": [
-                                        {
-                                          "id": "f58613a66652",
-                                          "children": [
-                                            {
-                                              "id": "f58613a66653",
-                                              "is": "8bf103e218",
-                                              "label": "Borders Icon",
-                                              "name": "component-instance",
-                                              "attributes": {},
-                                              "style": {
-                                                "display": "none",
-                                                "height": "1em"
-                                              },
-                                              "children": [],
-                                              "metadata": {
-                                                "bounds": {
-                                                  "left": -1676,
-                                                  "top": 2307,
-                                                  "right": -1276,
-                                                  "bottom": 2607
-                                                }
-                                              },
-                                              "variant": {}
-                                            }
-                                          ],
-                                          "metadata": {},
-                                          "name": "slot",
-                                          "label": "first icon"
-                                        }
-                                      ],
-                                      "metadata": {},
-                                      "name": "plug"
-                                    }
-                                  ],
-                                  "metadata": {
-                                    "bounds": {
-                                      "left": 1081,
-                                      "top": -10,
-                                      "right": 1230,
-                                      "bottom": 90
-                                    }
-                                  },
-                                  "variant": {
-                                    "c475e80b13475": false,
-                                    "a40b6a374094": false
-                                  }
-                                }
-                              ],
-                              "metadata": {},
-                              "name": "slot",
-                              "label": "primary input 2"
-                            },
-                            {
-                              "id": "8480ea5b7413",
-                              "label": "overlay",
-                              "is": "div",
-                              "name": "element",
-                              "attributes": {},
-                              "style": {
-                                "box-sizing": "border-box",
-                                "display": "none",
-                                "position": "absolute",
-                                "width": "100%",
-                                "height": "100%",
-                                "top": "0px"
-                              },
-                              "children": [],
-                              "metadata": {}
-                            }
-                          ],
-                          "metadata": {
-                            "bounds": {
-                              "left": 1182.59867431585,
-                              "top": 54.60555742538986,
-                              "right": 1282.59867431585,
-                              "bottom": 154.60555742538986
-                            }
-                          }
-                        },
-                        {
-                          "id": "49786f441985",
-                          "is": "6489655782833",
-                          "label": "toggler",
-                          "name": "component-instance",
-                          "attributes": {},
-                          "style": {
-                            "flex-shrink": "0",
-                            "width": "55px"
-                          },
-                          "children": [
-                            {
-                              "slotId": "a282a90069",
-                              "id": "e5bfec5b970",
-                              "children": [
-                                {
-                                  "id": "e5bfec5b987",
-                                  "is": "6489655782851",
-                                  "label": "Button Bar Item",
-                                  "name": "component-instance",
-                                  "attributes": {},
-                                  "style": {},
-                                  "children": [
-                                    {
-                                      "slotId": "e42107633",
-                                      "id": "3110f57f986",
-                                      "children": [
-                                        {
-                                          "id": "d330cc19219",
-                                          "children": [
-                                            {
-                                              "id": "3110f57f992",
-                                              "is": "8bf103e27",
-                                              "label": "Empty Square Icon",
-                                              "name": "component-instance",
-                                              "attributes": {},
-                                              "style": {
-                                                "display": "block",
-                                                "height": "0.9em"
-                                              },
-                                              "children": [],
-                                              "metadata": {
-                                                "bounds": {
-                                                  "left": -1662,
-                                                  "top": 1915,
-                                                  "right": -1262,
-                                                  "bottom": 2215
-                                                }
-                                              },
-                                              "variant": {}
-                                            }
-                                          ],
-                                          "metadata": {},
-                                          "name": "slot",
-                                          "label": "connected icon"
-                                        }
-                                      ],
-                                      "metadata": {},
-                                      "name": "plug"
-                                    }
-                                  ],
-                                  "metadata": {
-                                    "bounds": {
-                                      "left": 1020,
-                                      "top": 92,
-                                      "right": 1120,
-                                      "bottom": 118.00000000000003
-                                    }
-                                  },
-                                  "variant": {
-                                    "af62926b2035": true
-                                  }
-                                },
-                                {
-                                  "id": "49786f442050",
-                                  "is": "6489655782851",
-                                  "label": "Button Bar Item 2",
-                                  "name": "component-instance",
-                                  "attributes": {},
-                                  "style": {},
-                                  "children": [
-                                    {
-                                      "slotId": "e42107633",
-                                      "id": "af62926b1761",
-                                      "children": [
-                                        {
-                                          "id": "d330cc19183",
-                                          "children": [
-                                            {
-                                              "id": "af62926b1769",
-                                              "is": "993f9ad81121",
-                                              "label": "Borders Icon 2",
-                                              "name": "component-instance",
-                                              "attributes": {},
-                                              "style": {
-                                                "display": "block",
-                                                "height": "11px",
-                                                "width": "11px"
-                                              },
-                                              "children": [],
-                                              "metadata": {
-                                                "bounds": {
-                                                  "left": -1676,
-                                                  "top": 2307,
-                                                  "right": -1276,
-                                                  "bottom": 2607
-                                                }
-                                              },
-                                              "variant": {}
-                                            }
-                                          ],
-                                          "metadata": {},
-                                          "name": "slot",
-                                          "label": "disconnected icon"
-                                        }
-                                      ],
-                                      "metadata": {},
-                                      "name": "plug"
-                                    }
-                                  ],
-                                  "metadata": {
-                                    "bounds": {
-                                      "left": 1020,
-                                      "top": 92,
-                                      "right": 1120,
-                                      "bottom": 118.00000000000003
-                                    }
-                                  },
-                                  "variant": {
-                                    "15d6c81f3": true,
-                                    "15d6c81f5": false
-                                  }
-                                }
-                              ],
-                              "metadata": {},
-                              "name": "plug"
-                            }
-                          ],
-                          "metadata": {
-                            "bounds": {
-                              "left": 455,
-                              "top": 310,
-                              "right": 688.4524790701034,
-                              "bottom": 372
-                            }
-                          },
-                          "variant": {}
-                        }
-                      ],
-                      "metadata": {}
-                    }
-                  ],
-                  "metadata": {},
-                  "name": "plug"
-                },
-                {
-                  "id": "8480ea5b7426",
-                  "propertyName": "style",
-                  "targetIdPath": [
-                    "7149f81937818"
-                  ],
-                  "value": {
-                    "margin-bottom": "0px"
-                  },
-                  "name": "override",
-                  "children": []
-                }
-              ],
-              "metadata": {
-                "bounds": {
-                  "left": 486,
-                  "top": 306,
-                  "right": 586,
-                  "bottom": 353.5832678332798
-                }
-              },
-              "variant": {}
-            }
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "49786f441979",
-          "label": "Element3",
-          "is": "div",
-          "name": "element",
-          "attributes": {},
-          "style": {
-            "box-sizing": "border-box",
-            "display": "none",
-            "margin-top": "6px"
-          },
-          "children": [
-            {
-              "id": "1b9666ba6044",
-              "label": "first outer",
-              "is": "div",
-              "name": "element",
-              "attributes": {},
-              "style": {
-                "box-sizing": "border-box",
-                "display": "block"
-              },
-              "children": [
-                {
-                  "id": "266255b85099",
-                  "children": [
-                    {
-                      "id": "af62926b2390",
-                      "is": "af62926b2310",
-                      "label": "first input",
-                      "name": "component-instance",
-                      "attributes": {},
-                      "style": {
-                        "padding-right": "6px"
-                      },
-                      "children": [
-                        {
-                          "id": "af62926b2411",
-                          "variantId": "af62926b2038",
-                          "propertyName": "style",
-                          "targetIdPath": [
-                            "af62926b2317",
-                            "8bf103e215"
-                          ],
-                          "value": {
-                            "color": "var(--d8f6340b1442)",
-                            "background": "var(--d8f6340b1442)"
-                          },
-                          "name": "override",
-                          "children": []
-                        },
-                        {
-                          "slotId": "af62926b2330",
-                          "id": "af62926b2413",
-                          "children": [
-                            {
-                              "id": "b591086f4066",
-                              "children": [
-                                {
-                                  "id": "b591086f4053",
-                                  "is": "8bf103e218",
-                                  "label": "Borders Icon 3",
-                                  "name": "component-instance",
-                                  "attributes": {},
-                                  "style": {
-                                    "display": "block",
-                                    "height": "1em"
-                                  },
-                                  "children": [],
-                                  "metadata": {
-                                    "bounds": {
-                                      "left": -1676,
-                                      "top": 2307,
-                                      "right": -1276,
-                                      "bottom": 2607
-                                    }
-                                  },
-                                  "variant": {}
-                                }
-                              ],
-                              "metadata": {},
-                              "name": "slot",
-                              "label": "first icon 2"
-                            }
-                          ],
-                          "metadata": {},
-                          "name": "plug"
-                        }
-                      ],
-                      "metadata": {
-                        "bounds": {
-                          "left": 1081,
-                          "top": -10,
-                          "right": 1230,
-                          "bottom": 90
-                        }
-                      },
-                      "variant": {}
-                    }
-                  ],
-                  "metadata": {},
-                  "name": "slot",
-                  "label": "first input 2"
-                }
-              ],
-              "metadata": {}
-            },
-            {
-              "id": "1b9666ba6129",
-              "label": "second outer",
-              "is": "div",
-              "name": "element",
-              "attributes": {},
-              "style": {
-                "box-sizing": "border-box",
-                "display": "block"
-              },
-              "children": [
-                {
-                  "id": "266255b85169",
-                  "children": [
-                    {
-                      "id": "af62926b2374",
-                      "is": "af62926b2310",
-                      "label": "second input",
-                      "name": "component-instance",
-                      "attributes": {},
-                      "style": {
-                        "padding-right": "6px"
-                      },
-                      "children": [
-                        {
-                          "slotId": "af62926b2330",
-                          "id": "b591086f4082",
-                          "children": [
-                            {
-                              "id": "b591086f4128",
-                              "children": [
-                                {
-                                  "id": "b591086f4081",
-                                  "is": "8bf103e218",
-                                  "label": "bottom input icon",
-                                  "name": "component-instance",
-                                  "attributes": {},
-                                  "style": {
-                                    "display": "block",
-                                    "height": "1em"
-                                  },
-                                  "children": [],
-                                  "metadata": {
-                                    "bounds": {
-                                      "left": -1676,
-                                      "top": 2307,
-                                      "right": -1276,
-                                      "bottom": 2607
-                                    }
-                                  },
-                                  "variant": {}
-                                }
-                              ],
-                              "metadata": {},
-                              "name": "slot",
-                              "label": "second icon"
-                            }
-                          ],
-                          "metadata": {},
-                          "name": "plug"
-                        }
-                      ],
-                      "metadata": {
-                        "bounds": {
-                          "left": 1081,
-                          "top": -10,
-                          "right": 1230,
-                          "bottom": 90
-                        }
-                      },
-                      "variant": {}
-                    }
-                  ],
-                  "metadata": {},
-                  "name": "slot",
-                  "label": "second input 2"
-                }
-              ],
-              "metadata": {
-                "bounds": {
-                  "left": 1119.5091269966595,
-                  "top": 60.00321368274717,
-                  "right": 1219.5091269966595,
-                  "bottom": 160.00321368274717
-                }
               }
-            },
-            {
-              "id": "1b9666ba6125",
-              "label": "third outer",
-              "is": "div",
-              "name": "element",
-              "attributes": {},
-              "style": {
-                "box-sizing": "border-box",
-                "display": "block"
-              },
-              "children": [
-                {
-                  "id": "266255b85239",
-                  "children": [
-                    {
-                      "id": "af62926b2358",
-                      "is": "af62926b2310",
-                      "label": "third input",
-                      "name": "component-instance",
-                      "attributes": {},
-                      "style": {
-                        "padding-right": "6px"
-                      },
-                      "children": [
-                        {
-                          "slotId": "af62926b2330",
-                          "id": "b591086f4098",
-                          "children": [
-                            {
-                              "id": "b591086f4113",
-                              "children": [
-                                {
-                                  "id": "b591086f4097",
-                                  "is": "8bf103e218",
-                                  "label": "Borders Icon 4",
-                                  "name": "component-instance",
-                                  "attributes": {},
-                                  "style": {
-                                    "display": "block",
-                                    "height": "1em"
-                                  },
-                                  "children": [],
-                                  "metadata": {
-                                    "bounds": {
-                                      "left": -1676,
-                                      "top": 2307,
-                                      "right": -1276,
-                                      "bottom": 2607
-                                    }
-                                  },
-                                  "variant": {}
-                                }
-                              ],
-                              "metadata": {},
-                              "name": "slot",
-                              "label": "third icon"
-                            }
-                          ],
-                          "metadata": {},
-                          "name": "plug"
-                        }
-                      ],
-                      "metadata": {
-                        "bounds": {
-                          "left": 1081,
-                          "top": -10,
-                          "right": 1230,
-                          "bottom": 90
-                        }
-                      },
-                      "variant": {}
-                    }
-                  ],
-                  "metadata": {},
-                  "name": "slot",
-                  "label": "third input 2"
+              div overlay {
+                style {
+                  box-sizing: border-box
+                  display: none
+                  position: absolute
+                  width: 100%
+                  height: 100%
+                  top: 0px
                 }
-              ],
-              "metadata": {
-                "bounds": {
-                  "left": 1119.5091269966595,
-                  "top": 60.00321368274717,
-                  "right": 1219.5091269966595,
-                  "bottom": 160.00321368274717
-                }
-              }
-            },
-            {
-              "id": "1b9666ba6120",
-              "label": "fourth outer",
-              "is": "div",
-              "name": "element",
-              "attributes": {},
-              "style": {
-                "box-sizing": "border-box",
-                "display": "block"
-              },
-              "children": [
-                {
-                  "id": "266255b85309",
-                  "children": [
-                    {
-                      "id": "af62926b2342",
-                      "is": "af62926b2310",
-                      "label": "fourth input",
-                      "name": "component-instance",
-                      "attributes": {},
-                      "style": {},
-                      "children": [
-                        {
-                          "slotId": "af62926b2330",
-                          "id": "b591086f4144",
-                          "children": [
-                            {
-                              "id": "b591086f4159",
-                              "children": [
-                                {
-                                  "id": "b591086f4143",
-                                  "is": "8bf103e218",
-                                  "label": "borders icon 5",
-                                  "name": "component-instance",
-                                  "attributes": {},
-                                  "style": {
-                                    "display": "block",
-                                    "height": "1em"
-                                  },
-                                  "children": [],
-                                  "metadata": {
-                                    "bounds": {
-                                      "left": -1676,
-                                      "top": 2307,
-                                      "right": -1276,
-                                      "bottom": 2607
-                                    }
-                                  },
-                                  "variant": {}
-                                }
-                              ],
-                              "metadata": {},
-                              "name": "slot",
-                              "label": "fourth icon"
-                            }
-                          ],
-                          "metadata": {},
-                          "name": "plug"
-                        }
-                      ],
-                      "metadata": {
-                        "bounds": {
-                          "left": 1081,
-                          "top": -10,
-                          "right": 1230,
-                          "bottom": 90
-                        }
-                      },
-                      "variant": {}
-                    }
-                  ],
-                  "metadata": {},
-                  "name": "slot",
-                  "label": "fourth input 2"
-                }
-              ],
-              "metadata": {
-                "bounds": {
-                  "left": 1119.5091269966595,
-                  "top": 60.00321368274717,
-                  "right": 1219.5091269966595,
-                  "bottom": 160.00321368274717
+                style variant disconnected {
+                  background: #{imp4.grey2}
+                  opacity: 0.662
+                  display: block
                 }
               }
             }
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "af62926b2037",
-          "name": "variant",
-          "label": "connected",
-          "isDefault": false,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "af62926b2038",
-          "name": "variant",
-          "label": "disconnected",
-          "isDefault": true,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "af62926b2057",
-          "variantId": "af62926b2038",
-          "propertyName": "style",
-          "targetIdPath": [
-            "49786f441979"
-          ],
-          "value": {
-            "display": "flex"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "af62926b2163",
-          "variantId": "af62926b2038",
-          "propertyName": "style",
-          "targetIdPath": [
-            "af62926b2154"
-          ],
-          "value": {
-            "height": "9px"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "af62926b2265",
-          "variantId": "af62926b2038",
-          "propertyName": "style",
-          "targetIdPath": [
-            "af62926b2247"
-          ],
-          "value": {
-            "height": "9px"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "af62926b2286",
-          "variantId": "af62926b2038",
-          "propertyName": "style",
-          "targetIdPath": [
-            "af62926b2268"
-          ],
-          "value": {
-            "height": "9px"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "af62926b2307",
-          "variantId": "af62926b2038",
-          "propertyName": "style",
-          "targetIdPath": [
-            "af62926b2289"
-          ],
-          "value": {
-            "height": "9px"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "af62926b2406",
-          "variantId": "af62926b2038",
-          "propertyName": "style",
-          "targetIdPath": [
-            "af62926b2390"
-          ],
-          "value": {
-            "padding-right": "6px"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "af62926b2407",
-          "variantId": "af62926b2038",
-          "propertyName": "style",
-          "targetIdPath": [
-            "af62926b2374"
-          ],
-          "value": {
-            "padding-right": "6px"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "af62926b2408",
-          "variantId": "af62926b2038",
-          "propertyName": "style",
-          "targetIdPath": [
-            "af62926b2358"
-          ],
-          "value": {
-            "padding-right": "6px"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "af62926b2409",
-          "variantId": "af62926b2038",
-          "propertyName": "style",
-          "targetIdPath": [
-            "af62926b2342"
-          ],
-          "value": {
-            "padding-right": "unset"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "af62926b2410",
-          "variantId": "af62926b2038",
-          "propertyName": "style",
-          "targetIdPath": [
-            "49786f441977"
-          ],
-          "value": {
-            "margin-bottom": "unset"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "af62926b2421",
-          "variantId": "af62926b2038",
-          "propertyName": "style",
-          "targetIdPath": [
-            "af62926b2412"
-          ],
-          "value": {
-            "display": "block",
-            "height": "1em"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "af62926b5587",
-          "variantId": "af62926b2037",
-          "propertyName": "style",
-          "targetIdPath": [
-            "af62926b2374"
-          ],
-          "value": {
-            "display": "unset",
-            "padding-right": "unset",
-            "margin-right": "unset"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "af62926b5588",
-          "variantId": "af62926b2037",
-          "propertyName": "style",
-          "targetIdPath": [
-            "af62926b2358"
-          ],
-          "value": {},
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "af62926b5589",
-          "variantId": "af62926b2037",
-          "propertyName": "style",
-          "targetIdPath": [
-            "af62926b2342"
-          ],
-          "value": {},
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "af62926b5590",
-          "variantId": "af62926b2037",
-          "propertyName": "variant",
-          "targetIdPath": [
-            "e5bfec5b987"
-          ],
-          "value": {
-            "15d6c81f5": true
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "af62926b5591",
-          "variantId": "af62926b2037",
-          "propertyName": "variant",
-          "targetIdPath": [
-            "49786f442050"
-          ],
-          "value": {
-            "15d6c81f5": false
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "af62926b5592",
-          "variantId": "af62926b2037",
-          "propertyName": "style",
-          "targetIdPath": [
-            "af62926b2390"
-          ],
-          "value": {
-            "padding-right": "0px",
-            "width": "unset"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "af62926b5593",
-          "variantId": "af62926b2037",
-          "propertyName": "style",
-          "targetIdPath": [
-            "49786f441979"
-          ],
-          "value": {
-            "display": "none"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "af62926b5596",
-          "variantId": "af62926b2038",
-          "propertyName": "variant",
-          "targetIdPath": [
-            "49786f442050"
-          ],
-          "value": {
-            "15d6c81f5": true
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "1b9666ba6340",
-          "variantId": "af62926b2037",
-          "propertyName": "style",
-          "targetIdPath": [
-            "1b9666ba6129"
-          ],
-          "value": {
-            "display": "block",
-            "margin-right": "unset"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "1b9666ba6341",
-          "variantId": "af62926b2037",
-          "propertyName": "style",
-          "targetIdPath": [
-            "1b9666ba6125"
-          ],
-          "value": {
-            "display": "block"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "1b9666ba6342",
-          "variantId": "af62926b2037",
-          "propertyName": "style",
-          "targetIdPath": [
-            "1b9666ba6120"
-          ],
-          "value": {
-            "display": "block"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "f58613a67012",
-          "variantId": "af62926b2038",
-          "propertyName": "style",
-          "targetIdPath": [
-            "f58613a67001"
-          ],
-          "value": {
-            "display": "block",
-            "opacity": 0.773,
-            "z-index": "999"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "8480ea5b7419",
-          "variantId": "af62926b2038",
-          "propertyName": "style",
-          "targetIdPath": [
-            "8480ea5b7413"
-          ],
-          "value": {
-            "background": "var(--bc891e755312)",
-            "opacity": 0.662,
-            "display": "block"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "8480ea5b7420",
-          "variantId": "af62926b2038",
-          "propertyName": "style",
-          "targetIdPath": [
-            "8480ea5b7291"
-          ],
-          "value": {
-            "position": "relative",
-            "opacity": 1,
-            "width": "100%"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "8480ea5b7421",
-          "variantId": "af62926b2038",
-          "propertyName": "style",
-          "targetIdPath": [],
-          "value": {
-            "background": "var(--bc891e755312)"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "8480ea5b7423",
-          "variantId": "af62926b2038",
-          "propertyName": "style",
-          "targetIdPath": [
-            "f58613a66880"
-          ],
-          "value": {
-            "margin-right": "0px"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "48fccb0f15541",
-          "variantId": "af62926b2038",
-          "propertyName": "style",
-          "targetIdPath": [
-            "b591086f4143"
-          ],
-          "value": {
-            "height": "0.9em"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "48fccb0f15542",
-          "variantId": "af62926b2038",
-          "propertyName": "style",
-          "targetIdPath": [
-            "b591086f4097"
-          ],
-          "value": {
-            "height": "0.9em"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "48fccb0f15543",
-          "variantId": "af62926b2038",
-          "propertyName": "style",
-          "targetIdPath": [
-            "b591086f4081"
-          ],
-          "value": {
-            "height": "0.9em"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "48fccb0f15544",
-          "variantId": "af62926b2038",
-          "propertyName": "style",
-          "targetIdPath": [
-            "b591086f4053"
-          ],
-          "value": {
-            "height": "0.9em"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "a40b6a374097",
-          "variantId": "af62926b2038",
-          "propertyName": "variant",
-          "targetIdPath": [
-            "f58613a66649"
-          ],
-          "value": {
-            "a40b6a374094": false
-          },
-          "name": "override",
-          "children": []
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 1036,
-          "top": 142,
-          "right": 1414,
-          "bottom": 266
-        }
-      },
-      "variant": {},
-      "controllers": [
-        "./tblr-input-controller.tsx"
-      ]
-    },
-    {
-      "label": "inline labeled input",
-      "is": "div",
-      "style": {
-        "box-sizing": "border-box",
-        "display": "block"
-      },
-      "attributes": {},
-      "id": "af62926b2310",
-      "name": "component",
-      "children": [
-        {
-          "id": "af62926b2312",
-          "label": "Element4",
-          "is": "div",
-          "name": "element",
-          "attributes": {},
-          "style": {
-            "box-sizing": "border-box",
-            "display": "flex",
-            "flex-direction": "row",
-            "align-items": "center",
-            "border-bottom-left-radius": "2px",
-            "border-top-left-radius": "2px",
-            "border-top-right-radius": "2px",
-            "border-bottom-right-radius": "2px",
-            "background": "var(--f63574de434)",
-            "position": "relative"
-          },
-          "children": [
-            {
-              "id": "af62926b2338",
-              "children": [
-                {
-                  "id": "af62926b2314",
-                  "is": "7149f8199122",
-                  "label": "Text Input 3",
-                  "name": "component-instance",
-                  "attributes": {},
-                  "style": {
-                    "border": "0px none",
-                    "top": "0px",
-                    "box-sizing": "border-box",
-                    "display": "block",
-                    "padding-right": "12px"
-                  },
-                  "children": [],
-                  "metadata": {
-                    "bounds": {
-                      "left": 384,
-                      "top": 298,
-                      "right": 484,
-                      "bottom": 327.0358087589019
+            imp6.ButtonBar toggler {
+              style {
+                flex-shrink: 0
+                width: 55px
+              }
+              insert items {
+                imp7.ButtonBarItem buttonBarItem {
+                  override {
+                    variant first (enabled: [true])
+                  }
+                  insert icon1 {
+                    slot connectedIcon {
+                      imp5.EmptySquareIcon emptySquareIcon {
+                        style {
+                          display: block
+                          height: 0.9em
+                        }
+                      }
                     }
-                  },
-                  "variant": {
-                    "6507b7e31381": false,
-                    "e87522711522": false
                   }
                 }
-              ],
-              "metadata": {},
-              "name": "slot",
-              "label": "input 3"
-            },
-            {
-              "id": "c475e80b13477",
-              "name": "variant-trigger",
-              "targetVariantId": "c475e80b13475",
-              "source": {
-                "type": 1,
-                "state": "focus"
-              },
-              "children": [],
-              "metadata": {}
-            },
-            {
-              "id": "48fccb0f2346",
-              "label": "icon container",
-              "is": "div",
-              "name": "element",
-              "attributes": {},
-              "style": {
-                "box-sizing": "border-box",
-                "display": "block",
-                "position": "absolute",
-                "top": "4px",
-                "right": "4px"
-              },
-              "children": [
-                {
-                  "id": "af62926b2330",
-                  "children": [
-                    {
-                      "id": "af62926b2317",
-                      "is": "8bf103e218",
-                      "label": "Borders Icon 6",
-                      "name": "component-instance",
-                      "attributes": {},
-                      "style": {
-                        "display": "block",
-                        "height": "0.6em",
-                        "color": "var(--24ce1e4d482)",
-                        "position": "relative",
-                        "top": "2px"
-                      },
-                      "children": [],
-                      "metadata": {
-                        "bounds": {
-                          "left": 1207.2281995719882,
-                          "top": -45.86440795832965,
-                          "right": 1607.2281995719882,
-                          "bottom": 254.1355920416704
+                imp7.ButtonBarItem buttonBarItem2 {
+                  override {
+                    variant last (enabled: [true])
+                  }
+                  insert icon1 {
+                    slot disconnectedIcon {
+                      imp5.BordersIcon3 bordersIcon2 {
+                        style {
+                          display: block
+                          height: 11px
+                          width: 11px
                         }
-                      },
-                      "variant": {},
-                      "styleMixins": {}
+                      }
                     }
-                  ],
-                  "metadata": {},
-                  "name": "slot",
-                  "label": "icon"
+                  }
                 }
-              ],
-              "metadata": {}
-            }
-          ],
-          "metadata": {},
-          "styleMixins": {
-            "c29da5f4213993": {
-              "priority": 0
+              }
             }
           }
-        },
-        {
-          "id": "c475e80b13475",
-          "name": "variant",
-          "label": "focus",
-          "isDefault": false,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "c475e80b13476",
-          "variantId": "c475e80b13475",
-          "propertyName": "style",
-          "targetIdPath": [
-            "af62926b2312"
-          ],
-          "value": {
-            "box-shadow": "inset  0px 0px 0px 1px var(--24ce1e4d13456)"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "c475e80b13478",
-          "variantId": "c475e80b13475",
-          "propertyName": "style",
-          "targetIdPath": [
-            "af62926b2314"
-          ],
-          "value": {
-            "box-shadow": "none"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "a40b6a374094",
-          "name": "variant",
-          "label": "disabled",
-          "isDefault": false,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "a40b6a374095",
-          "variantId": "a40b6a374094",
-          "propertyName": "variant",
-          "targetIdPath": [
-            "af62926b2314"
-          ],
-          "value": {
-            "e87522711522": true
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "a40b6a374096",
-          "variantId": "a40b6a374094",
-          "propertyName": "style",
-          "targetIdPath": [
-            "af62926b2314"
-          ],
-          "value": {},
-          "name": "override",
-          "children": []
         }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 1081,
-          "top": -10,
-          "right": 1230,
-          "bottom": 90
-        }
-      },
-      "variant": {},
-      "controllers": [
-        "./inline-labeled-input-controller.tsx"
-      ]
-    },
-    {
-      "label": "Background input",
-      "is": "d227ff68826768",
-      "style": {},
-      "attributes": {},
-      "id": "5b0f4e2a2138",
-      "name": "component",
-      "children": [
-        {
-          "slotId": "6a8da795139",
-          "id": "5b0f4e2a2769",
-          "children": [
-            {
-              "id": "5b0f4e2a2284",
-              "is": "feaf302b1678",
-              "label": "Background picker",
-              "name": "component-instance",
-              "attributes": {},
-              "style": {},
-              "children": [],
-              "metadata": {
-                "bounds": {
-                  "left": 533.0355763746126,
-                  "top": 331.0532508850925,
-                  "right": 1010.0355763746126,
-                  "bottom": 832.0532508850924
-                }
-              },
-              "variant": {}
-            }
-          ],
-          "metadata": {},
-          "name": "plug"
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 547.2986301369864,
-          "top": 426.2944129527409,
-          "right": 966.6467438812415,
-          "bottom": 755.0388698062293
-        }
-      },
-      "variant": {},
-      "controllers": [
-        "./background-input-controller.tsx"
-      ]
+      }
     }
-  ]
+    div element3 {
+      style {
+        box-sizing: border-box
+        display: none
+        margin-top: 6px
+      }
+      style variant disconnected {
+        display: flex
+      }
+      style variant connected {
+        display: none
+      }
+      div firstOuter {
+        style {
+          box-sizing: border-box
+          display: block
+        }
+        slot firstInput2 {
+          InlineLabeledInput firstInput {
+            style {
+              padding-right: 6px
+            }
+            style variant disconnected {
+              padding-right: 6px
+            }
+            style variant connected {
+              padding-right: 0px
+              width: unset
+            }
+            override bordersIcon6.el123 {
+              style variant disconnected {
+                color: #{imp4.grey1}
+                background: #{imp4.grey1}
+              }
+            }
+            insert icon {
+              slot firstIcon2 {
+                imp5.BordersIcon bordersIcon3 {
+                  style {
+                    display: block
+                    height: 1em
+                  }
+                  style variant disconnected {
+                    height: 0.9em
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      div secondOuter {
+        style {
+          box-sizing: border-box
+          display: block
+        }
+        style variant connected {
+          display: block
+          margin-right: unset
+        }
+        slot secondInput2 {
+          InlineLabeledInput secondInput {
+            style {
+              padding-right: 6px
+            }
+            style variant disconnected {
+              padding-right: 6px
+            }
+            style variant connected {
+              display: unset
+              padding-right: unset
+              margin-right: unset
+            }
+            insert icon {
+              slot secondIcon {
+                imp5.BordersIcon bottomInputIcon {
+                  style {
+                    display: block
+                    height: 1em
+                  }
+                  style variant disconnected {
+                    height: 0.9em
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      div thirdOuter {
+        style {
+          box-sizing: border-box
+          display: block
+        }
+        style variant connected {
+          display: block
+        }
+        slot thirdInput2 {
+          InlineLabeledInput thirdInput {
+            style {
+              padding-right: 6px
+            }
+            style variant disconnected {
+              padding-right: 6px
+            }
+            style variant connected {
+            }
+            insert icon {
+              slot thirdIcon {
+                imp5.BordersIcon bordersIcon4 {
+                  style {
+                    display: block
+                    height: 1em
+                  }
+                  style variant disconnected {
+                    height: 0.9em
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      div fourthOuter {
+        style {
+          box-sizing: border-box
+          display: block
+        }
+        style variant connected {
+          display: block
+        }
+        slot fourthInput2 {
+          InlineLabeledInput fourthInput {
+            style {
+            }
+            style variant disconnected {
+              padding-right: unset
+            }
+            style variant connected {
+            }
+            insert icon {
+              slot fourthIcon {
+                imp5.BordersIcon bordersIcon5 {
+                  style {
+                    display: block
+                    height: 1em
+                  }
+                  style variant disconnected {
+                    height: 0.9em
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
+
+/**
+ * @bounds(left: 1081, top: -10, right: 1230, bottom: 90)
+ */
+public component InlineLabeledInput {
+  script (src: "./inline-labeled-input-controller.tsx")
+  variant focus (enabled: [])
+  variant disabled (enabled: [])
+  render div {
+    style {
+      box-sizing: border-box
+      display: block
+    }
+    override textInput3 {
+      variant disabled (enabled: [disabled])
+    }
+    div element4 {
+      style {
+        include imp3.defaultBorder
+        box-sizing: border-box
+        display: flex
+        flex-direction: row
+        align-items: center
+        border-bottom-left-radius: 2px
+        border-top-left-radius: 2px
+        border-top-right-radius: 2px
+        border-bottom-right-radius: 2px
+        background: #{imp4.grey0}
+        position: relative
+      }
+      style variant focus {
+        box-shadow: inset  0px 0px 0px 1px #{imp4.blue1}
+      }
+      slot input3 {
+        imp0.TextInput textInput3 {
+          style {
+            border: 0px none
+            top: 0px
+            box-sizing: border-box
+            display: block
+            padding-right: 12px
+          }
+          style variant focus {
+            box-shadow: none
+          }
+          style variant disabled {
+          }
+          override {
+          }
+        }
+      }
+      div iconContainer {
+        style {
+          box-sizing: border-box
+          display: block
+          position: absolute
+          top: 4px
+          right: 4px
+        }
+        slot icon {
+          imp5.BordersIcon bordersIcon6 {
+            style {
+              display: block
+              height: 0.6em
+              color: #{imp4.grey3}
+              position: relative
+              top: 2px
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * @bounds(left: 547, top: 426, right: 967, bottom: 755)
+ */
+public component BackgroundInput {
+  script (src: "./background-input-controller.tsx")
+  render imp8.ColorInput {
+    insert content {
+      imp9.BackgroundPicker backgroundPicker
+    }
+  }
+}
+

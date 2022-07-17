@@ -1,483 +1,162 @@
-{
-  "id": "e40c6eeb82",
-  "name": "module",
-  "version": "0.0.6",
-  "children": [
-    {
-      "label": "Build button",
-      "is": "div",
-      "style": {
-        "box-sizing": "border-box",
-        "display": "block",
-        "cursor": "pointer"
-      },
-      "attributes": {},
-      "id": "fe72344f18313",
-      "name": "component",
-      "children": [
-        {
-          "id": "368712de18250",
-          "is": "9b7b527f175442",
-          "label": "Popover",
-          "name": "component-instance",
-          "attributes": {},
-          "style": {},
-          "children": [
-            {
-              "slotId": "c00d8561361",
-              "id": "368712de18307",
-              "children": [
-                {
-                  "id": "fe72344f18315",
-                  "label": "build button",
-                  "is": "div",
-                  "name": "element",
-                  "attributes": {},
-                  "style": {
-                    "box-sizing": "border-box",
-                    "display": "inline-flex",
-                    "padding-left": "6px",
-                    "padding-top": "4px",
-                    "padding-right": "6px",
-                    "padding-bottom": "4px",
-                    "align-items": "center",
-                    "background-image": "linear-gradient(rgba(200, 200, 200, 0), rgba(200, 200, 200, 0))"
-                  },
-                  "children": [
-                    {
-                      "id": "fe72344f18344",
-                      "is": "1fb4e79017899",
-                      "label": "Play Icon",
-                      "name": "component-instance",
-                      "attributes": {},
-                      "style": {
-                        "display": "none",
-                        "height": "9px",
-                        "color": "var(--24ce1e4d482)",
-                        "margin-right": "3px"
-                      },
-                      "children": [],
-                      "metadata": {
-                        "bounds": {
-                          "left": -1384,
-                          "top": -1350,
-                          "right": -984,
-                          "bottom": -1050
-                        }
-                      },
-                      "variant": {}
-                    },
-                    {
-                      "id": "81d340df1797",
-                      "is": "1fb4e79017906",
-                      "label": "Pause Icon",
-                      "name": "component-instance",
-                      "attributes": {},
-                      "style": {
-                        "display": "none",
-                        "height": "9px",
-                        "color": "var(--24ce1e4d482)"
-                      },
-                      "children": [],
-                      "metadata": {
-                        "bounds": {
-                          "left": -138,
-                          "top": -1534,
-                          "right": 262,
-                          "bottom": -1234
-                        }
-                      },
-                      "variant": {}
-                    },
-                    {
-                      "id": "fe72344f18317",
-                      "name": "text",
-                      "label": "label 1",
-                      "value": "Build project",
-                      "style": {
-                        "font-size": "9px",
-                        "font-weight": "700",
-                        "user-select": "none"
-                      },
-                      "children": [],
-                      "metadata": {},
-                      "styleMixins": {
-                        "dc3b39eb1275": {
-                          "priority": 0
-                        }
-                      }
-                    }
-                  ],
-                  "metadata": {},
-                  "styleMixins": {
-                    "c29da5f4213993": {
-                      "priority": 1
-                    }
-                  }
-                }
-              ],
-              "metadata": {},
-              "name": "plug"
-            },
-            {
-              "slotId": "e6638364254",
-              "id": "eae71b2517753",
-              "children": [
-                {
-                  "id": "368712de18336",
-                  "is": "936f2927707",
-                  "label": "Tooltip",
-                  "name": "component-instance",
-                  "attributes": {},
-                  "style": {
-                    "width": "200px",
-                    "padding-right": "12px"
-                  },
-                  "children": [
-                    {
-                      "slotId": "936f2927716",
-                      "id": "d8b0f2c217761",
-                      "children": [
-                        {
-                          "id": "d8b0f2c217758",
-                          "is": "d8b0f2c217756",
-                          "label": "build button menu",
-                          "name": "component-instance",
-                          "attributes": {},
-                          "style": {},
-                          "children": [],
-                          "metadata": {
-                            "bounds": {
-                              "left": -96.74734568013432,
-                              "top": 24.367900641597956,
-                              "right": 3.2526543198656555,
-                              "bottom": 124.36790064159797
-                            }
-                          },
-                          "variant": {}
-                        }
-                      ],
-                      "metadata": {},
-                      "name": "plug"
-                    },
-                    {
-                      "id": "54ecbc94891",
-                      "propertyName": "style",
-                      "targetIdPath": [
-                        "936f2927712"
-                      ],
-                      "value": {
-                        "padding-left": "0px",
-                        "padding-top": "0px",
-                        "padding-right": "0px",
-                        "padding-bottom": "0px"
-                      },
-                      "name": "override",
-                      "children": []
-                    },
-                    {
-                      "id": "76bc545f474",
-                      "propertyName": "style",
-                      "targetIdPath": [
-                        "936f2927705"
-                      ],
-                      "value": {
-                        "left": "calc(100% - 50px)"
-                      },
-                      "name": "override",
-                      "children": []
-                    }
-                  ],
-                  "metadata": {
-                    "bounds": {
-                      "left": 58,
-                      "top": 297,
-                      "right": 393,
-                      "bottom": 510
-                    }
-                  },
-                  "variant": {
-                    "368712de18492": false
-                  }
-                }
-              ],
-              "metadata": {},
-              "name": "plug"
+import "../../popover/view.pc" as imp0
+import "../../atoms/view.pc" as imp1
+import "../../../icons/view.pc" as imp2
+import "../../../global.pc" as imp3
+import "../../inputs/molecules.pc" as imp4
+
+
+/**
+ * @bounds(left: 197, top: 59, right: 539, bottom: 159)
+ */
+public component BuildButton {
+  script (src: "./build-button-controller.tsx")
+  variant building (enabled: [true])
+  variant paused (enabled: [])
+  render div {
+    style {
+      box-sizing: border-box
+      display: block
+      cursor: pointer
+    }
+    imp0.Popover popover {
+      insert anchor {
+        div buildButton {
+          style {
+            include imp1.defaultBorder
+            box-sizing: border-box
+            display: inline-flex
+            padding-left: 6px
+            padding-top: 4px
+            padding-right: 6px
+            padding-bottom: 4px
+            align-items: center
+            background-image: linear-gradient(rgba(200, 200, 200, 0), rgba(200, 200, 200, 0))
+          }
+          imp2.PlayIcon1 playIcon {
+            style {
+              display: none
+              height: 9px
+              color: #{imp3.grey3}
+              margin-right: 3px
             }
-          ],
-          "metadata": {
-            "bounds": {
-              "left": 227,
-              "top": 361,
-              "right": 327,
-              "bottom": 461
-            }
-          },
-          "variant": {}
-        },
-        {
-          "id": "81d340df1803",
-          "name": "variant",
-          "label": "building",
-          "isDefault": true,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "81d340df1804",
-          "name": "variant",
-          "label": "paused",
-          "isDefault": false,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "81d340df1805",
-          "variantId": "81d340df1804",
-          "propertyName": "style",
-          "targetIdPath": [
-            "fe72344f18344"
-          ],
-          "value": {
-            "display": "inline-block"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "81d340df1806",
-          "variantId": "81d340df1803",
-          "propertyName": "style",
-          "targetIdPath": [
-            "81d340df1797"
-          ],
-          "value": {
-            "display": "inline-block",
-            "margin-right": "3px"
-          },
-          "name": "override",
-          "children": []
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 197,
-          "top": 59,
-          "right": 539,
-          "bottom": 159
-        }
-      },
-      "variant": {},
-      "controllers": [
-        "./build-button-controller.tsx"
-      ]
-    },
-    {
-      "label": "build button menu",
-      "is": "div",
-      "style": {
-        "box-sizing": "border-box",
-        "display": "block"
-      },
-      "attributes": {},
-      "id": "d8b0f2c217756",
-      "name": "component",
-      "children": [
-        {
-          "id": "8f7fdf07888",
-          "children": [
-            {
-              "id": "d8b0f2c217788",
-              "label": "Element1",
-              "is": "def97aeb17794",
-              "name": "component-instance",
-              "attributes": {},
-              "style": {
-                "box-sizing": "border-box",
-                "display": "block"
-              },
-              "children": [
-                {
-                  "id": "d99c0d09325",
-                  "variantId": null,
-                  "propertyName": "text",
-                  "targetIdPath": [
-                    "def97aeb17793"
-                  ],
-                  "value": "Open Console\n",
-                  "name": "override",
-                  "children": []
-                }
-              ],
-              "metadata": {},
-              "variant": {}
-            },
-            {
-              "id": "d99c0d09326",
-              "label": "Element2",
-              "is": "def97aeb17794",
-              "name": "component-instance",
-              "attributes": {},
-              "style": {
-                "box-sizing": "border-box",
-                "display": "block"
-              },
-              "children": [
-                {
-                  "id": "d99c0d09327",
-                  "variantId": null,
-                  "propertyName": "text",
-                  "targetIdPath": [
-                    "def97aeb17793"
-                  ],
-                  "value": "Stop\n",
-                  "name": "override",
-                  "children": []
-                }
-              ],
-              "metadata": {},
-              "variant": {
-                "def97aeb17835": false,
-                "997ae068321": true
-              }
-            },
-            {
-              "id": "8f7fdf07880",
-              "label": "Element3",
-              "is": "def97aeb17794",
-              "name": "component-instance",
-              "attributes": {},
-              "style": {
-                "box-sizing": "border-box",
-                "display": "block"
-              },
-              "children": [
-                {
-                  "id": "8f7fdf07881",
-                  "variantId": null,
-                  "propertyName": "text",
-                  "targetIdPath": [
-                    "def97aeb17793"
-                  ],
-                  "value": "Open",
-                  "name": "override",
-                  "children": []
-                }
-              ],
-              "metadata": {},
-              "variant": {
-                "def97aeb17835": false
-              }
-            }
-          ],
-          "metadata": {},
-          "name": "slot",
-          "label": "items"
-        },
-        {
-          "id": "997ae068320",
-          "name": "variant",
-          "label": "hover",
-          "isDefault": true,
-          "children": [],
-          "metadata": {}
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 678.7384756938143,
-          "top": 33.00360021146375,
-          "right": 778.7384756938143,
-          "bottom": 133.00360021146375
-        }
-      },
-      "variant": {}
-    },
-    {
-      "label": "build button option",
-      "is": "div",
-      "style": {
-        "padding-left": "12px",
-        "padding-top": "6px",
-        "padding-right": "12px",
-        "padding-bottom": "6px",
-        "cursor": "pointer"
-      },
-      "attributes": {},
-      "id": "def97aeb17794",
-      "styleMixins": {
-        "dc3b39eb1275": {
-          "priority": 0
-        }
-      },
-      "name": "component",
-      "children": [
-        {
-          "id": "def97aeb17793",
-          "name": "text",
-          "label": "label",
-          "value": "open app",
-          "style": {},
-          "children": [],
-          "metadata": {},
-          "styleMixins": {
-            "61225017220906": {
-              "priority": 0
+            style variant paused {
+              display: inline-block
             }
           }
-        },
-        {
-          "id": "def97aeb17836",
-          "variantId": "def97aeb17835",
-          "propertyName": "style",
-          "targetIdPath": [],
-          "value": {
-            "background-image": "linear-gradient(rgba(200, 200, 200, 1), rgba(200, 200, 200, 1))"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "997ae068321",
-          "name": "variant",
-          "label": "hover",
-          "isDefault": true,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "997ae068322",
-          "variantId": "997ae068321",
-          "propertyName": "style",
-          "targetIdPath": [],
-          "value": {
-            "background-image": "linear-gradient(var(--bc891e755312), var(--bc891e755312))"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "997ae068323",
-          "name": "variant-trigger",
-          "targetVariantId": "997ae068321",
-          "source": {
-            "type": 1,
-            "state": "hover"
-          },
-          "children": [],
-          "metadata": {}
+          imp2.PauseIcon pauseIcon {
+            style {
+              display: none
+              height: 9px
+              color: #{imp3.grey3}
+            }
+            style variant building {
+              display: inline-block
+              margin-right: 3px
+            }
+          }
+          text label1 "Build project" {
+            style {
+              include imp1.baseFont
+              font-size: 9px
+              font-weight: 700
+              user-select: none
+            }
+          }
         }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 788.7384756938143,
-          "top": 33.00360021146375,
-          "right": 888.7384756938143,
-          "bottom": 59.00360021146375
+      }
+      insert content {
+        imp4.Tooltip tooltip {
+          style {
+            width: 200px
+            padding-right: 12px
+          }
+          override {
+          }
+          override contentWrapper {
+            style {
+              padding-left: 0px
+              padding-top: 0px
+              padding-right: 0px
+              padding-bottom: 0px
+            }
+          }
+          override arrow {
+            style {
+              left: calc(100% - 50px)
+            }
+          }
+          insert content {
+            BuildButtonMenu buildButtonMenu
+          }
         }
-      },
-      "variant": {}
+      }
     }
-  ],
-  "metadata": {}
+  }
 }
+
+/**
+ * @bounds(left: 679, top: 33, right: 779, bottom: 133)
+ */
+public component BuildButtonMenu {
+  variant hover (enabled: [true])
+  render div {
+    style {
+      box-sizing: border-box
+      display: block
+    }
+    slot items {
+      BuildButtonOption element1 {
+        style {
+          box-sizing: border-box
+          display: block
+        }
+        override label "Open Console"
+      }
+      BuildButtonOption element2 {
+        style {
+          box-sizing: border-box
+          display: block
+        }
+        override {
+          variant hover (enabled: [true])
+        }
+        override label "Stop"
+      }
+      BuildButtonOption element3 {
+        style {
+          box-sizing: border-box
+          display: block
+        }
+        override {
+        }
+        override label "Open"
+      }
+    }
+  }
+}
+
+/**
+ * @bounds(left: 789, top: 33, right: 889, bottom: 59)
+ */
+public component BuildButtonOption {
+  variant hover (enabled: [true, PseudoElement.Hover])
+  render div {
+    style {
+      include imp1.baseFont
+      padding-left: 12px
+      padding-top: 6px
+      padding-right: 12px
+      padding-bottom: 6px
+      cursor: pointer
+    }
+    style variant hover {
+      background-image: linear-gradient(#{imp3.grey2}, #{imp3.grey2})
+    }
+    text label "open app" {
+      style {
+        include imp1.nowrapEllipsis
+      }
+    }
+  }
+}
+

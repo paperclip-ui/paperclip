@@ -1,125 +1,61 @@
-{
-  "id": "2f74552e141",
-  "name": "module",
-  "version": "0.0.5",
-  "children": [
-    {
-      "label": "Node overlay",
-      "is": "div",
-      "style": {
-        "display": "block",
-        "position": "relative",
-        "box-shadow": "inset  0px 0px 0px 1px rgba(88, 185, 255, 1)"
-      },
-      "attributes": {},
-      "id": "7a40476a1359",
-      "name": "component",
-      "children": [
-        {
-          "id": "c2bda15b455",
-          "label": "label container",
-          "is": "div",
-          "name": "element",
-          "attributes": {},
-          "style": {
-            "box-sizing": "border-box",
-            "display": "block",
-            "position": "absolute",
-            "white-space": "nowrap",
-            "bottom": "-25px",
-            "background": "rgba(88, 185, 255, 1)",
-            "border": "1px none rgba(230, 230, 230, 1)",
-            "padding-left": "8px",
-            "padding-top": "4px",
-            "padding-right": "8px",
-            "padding-bottom": "4px",
-            "right": "0px"
-          },
-          "children": [
-            {
-              "id": "c2bda15b463",
-              "name": "text",
-              "label": "label",
-              "value": "100 x 400",
-              "style": {
-                "color": "rgba(255, 255, 255, 1)",
-                "font-size": "10px",
-                "display": "inline-block",
-                "letter-spacing": "0.04em",
-                "font-weight": "600"
-              },
-              "children": [],
-              "metadata": {},
-              "styleMixins": {
-                "dc3b39eb1275": {
-                  "priority": 0
-                }
-              }
-            }
-          ],
-          "metadata": {},
-          "styleMixins": {
-            "c29da5f4213993": {
-              "priority": 0
-            }
-          }
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 0,
-          "right": 600,
-          "top": 0,
-          "bottom": 400
-        }
-      },
-      "variant": {}
-    },
-    {
-      "id": "c2bda15b353",
-      "label": "Preview",
-      "is": "div",
-      "name": "element",
-      "attributes": {},
-      "style": {
-        "box-sizing": "border-box",
-        "display": "block"
-      },
-      "children": [
-        {
-          "id": "c2bda15b372",
-          "is": "7a40476a1359",
-          "label": "Node overlay",
-          "name": "component-instance",
-          "attributes": {},
-          "style": {
-            "width": "400px",
-            "height": "200px",
-            "position": "relative",
-            "left": "100px",
-            "top": "100px"
-          },
-          "children": [],
-          "metadata": {
-            "bounds": {
-              "left": 0,
-              "right": 600,
-              "top": 0,
-              "bottom": 400
-            }
-          },
-          "variant": {}
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 812,
-          "top": 167,
-          "right": 1443,
-          "bottom": 620
+import "../../../../../../../atoms/view.pc" as imp0
+
+
+/**
+ * @bounds(left: 0, right: 600, top: 0, bottom: 400)
+ */
+public component NodeOverlay {
+  render div {
+    style {
+      display: block
+      position: relative
+      box-shadow: inset  0px 0px 0px 1px rgba(88, 185, 255, 1)
+    }
+    div labelContainer {
+      style {
+        include imp0.defaultBorder
+        box-sizing: border-box
+        display: block
+        position: absolute
+        white-space: nowrap
+        bottom: -25px
+        background: rgba(88, 185, 255, 1)
+        border: 1px none rgba(230, 230, 230, 1)
+        padding-left: 8px
+        padding-top: 4px
+        padding-right: 8px
+        padding-bottom: 4px
+        right: 0px
+      }
+      text label "100 x 400" {
+        style {
+          include imp0.baseFont
+          color: rgba(255, 255, 255, 1)
+          font-size: 10px
+          display: inline-block
+          letter-spacing: 0.04em
+          font-weight: 600
         }
       }
     }
-  ],
-  "metadata": {}
+  }
+}
+
+/**
+ * @bounds(left: 812, top: 167, right: 1443, bottom: 620)
+ */
+div preview {
+  style {
+    box-sizing: border-box
+    display: block
+  }
+  NodeOverlay nodeOverlay {
+    style {
+      width: 400px
+      height: 200px
+      position: relative
+      left: 100px
+      top: 100px
+    }
+  }
 }

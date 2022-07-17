@@ -1,0 +1,104 @@
+{
+  "id": "664248a04",
+  "version": "0.0.5",
+  "metadata": {},
+  "name": "module",
+  "children": [
+    {
+      "label": "Right Gutter Tab",
+      "is": "div",
+      "style": {
+        "text-transform": "uppercase",
+        "text-align": "center",
+        "width": "100%",
+        "padding": "8px",
+        "cursor": "pointer",
+        "background": "var(--51588fd610365)",
+        "padding-top": "10px",
+        "padding-bottom": "10px",
+        "user-select": "none",
+        "font-weight": "600"
+      },
+      "attributes": {},
+      "id": "5d7d4069129476",
+      "name": "component",
+      "children": [
+        {
+          "id": "5d7d4069129475",
+          "name": "text",
+          "label": "label",
+          "value": "tab",
+          "style": {
+            "font-size": "10px",
+            "cursor": "pointer"
+          },
+          "children": [],
+          "metadata": {},
+          "styleMixins": {
+            "dc3b39eb1627": {
+              "priority": 0
+            }
+          }
+        },
+        {
+          "id": "66d16f05",
+          "name": "variant",
+          "label": "selected",
+          "isDefault": true,
+          "children": [],
+          "metadata": {}
+        },
+        {
+          "id": "66d16f06",
+          "variantId": "66d16f05",
+          "propertyName": "style",
+          "targetIdPath": [],
+          "value": {
+            "background": "var(--bc891e755312)",
+            "border": "0px  var(--bc891e755312)"
+          },
+          "name": "override",
+          "children": []
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 454,
+          "top": 294,
+          "right": 570,
+          "bottom": 329.99299530568595
+        }
+      },
+      "variant": {}
+    },
+    {
+      "id": "a0c265a6155173",
+      "is": "97a34b151010442",
+      "name": "component-instance",
+      "attributes": {},
+      "style": {},
+      "children": [
+        {
+          "id": "a0c265a6184739",
+          "variantId": null,
+          "propertyName": "text",
+          "targetIdPath": [
+            "97a34b151010441"
+          ],
+          "value": "padding is a bit uneven here to match editor tabs",
+          "name": "override",
+          "children": []
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 602,
+          "top": 233,
+          "right": 985.1708291271775,
+          "bottom": 433.7213373757045
+        }
+      },
+      "variant": {}
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "id": "8d443eb51221151",
+  "name": "module",
+  "version": "0.0.5",
+  "children": [
+    {
+      "label": "App",
+      "is": "div",
+      "style": {
+        "box-sizing": "border-box",
+        "display": "block"
+      },
+      "attributes": {},
+      "id": "8d443eb51250574",
+      "name": "component",
+      "children": [
+        {
+          "id": "8d443eb51338887",
+          "label": "",
+          "is": "div",
+          "name": "element",
+          "attributes": {},
+          "style": {
+            "box-sizing": "border-box",
+            "display": "block"
+          },
+          "children": [
+            {
+              "id": "8d443eb51294772",
+              "is": "33b1b6b133319",
+              "name": "component-instance",
+              "attributes": {},
+              "style": {},
+              "children": [],
+              "metadata": {
+                "bounds": {
+                  "left": -129,
+                  "top": 991,
+                  "right": 1833.8518233326877,
+                  "bottom": 1974.4100056728703
+                }
+              },
+              "variant": {}
+            }
+          ],
+          "metadata": {
+            "bounds": {
+              "left": 221.21705274758563,
+              "top": 477.49613585536326,
+              "right": 321.2170527475856,
+              "bottom": 577.4961358553633
+            }
+          }
+        }
+      ],
+      "metadata": {
+        "bounds": {
+          "left": 532,
+          "top": 330,
+          "right": 2934.3147563023094,
+          "bottom": 1689.3120136703856
+        }
+      },
+      "variant": {}
+    }
+  ],
+  "metadata": {}
+}

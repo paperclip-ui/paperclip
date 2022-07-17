@@ -1,0 +1,25 @@
+{
+  "id": "e852a449142",
+  "name": "module",
+  "version": "0.0.5",
+  "children": [
+    {
+      "id": "e852a449141",
+      "label": "Variable triggers pane",
+      "is": "div",
+      "name": "element",
+      "attributes": {},
+      "style": {},
+      "children": [],
+      "metadata": {
+        "bounds": {
+          "left": 0,
+          "right": 600,
+          "top": 0,
+          "bottom": 400
+        }
+      }
+    }
+  ],
+  "metadata": {}
+}

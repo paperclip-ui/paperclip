@@ -1,183 +1,84 @@
-{
-  "id": "d7a10bcb1",
-  "version": "0.0.6",
-  "metadata": {},
-  "name": "module",
-  "children": [
-    {
-      "label": "before drop zone",
-      "is": "6f0de1ad85",
-      "style": {},
-      "attributes": {},
-      "id": "207a949d27",
-      "name": "component",
-      "children": [],
-      "metadata": {
-        "bounds": {
-          "left": 333,
-          "top": 131,
-          "right": 433,
-          "bottom": 231
-        }
-      },
-      "controllers": [
-        "./before-dnd-controller.tsx"
-      ],
-      "variant": {}
-    },
-    {
-      "label": "after drop zone",
-      "is": "6f0de1ad85",
-      "style": {},
-      "attributes": {},
-      "id": "207a949d21",
-      "name": "component",
-      "children": [],
-      "metadata": {
-        "bounds": {
-          "left": 523,
-          "top": 128,
-          "right": 623,
-          "bottom": 228
-        }
-      },
-      "controllers": [
-        "./after-dnd-controller.tsx"
-      ],
-      "variant": {}
-    },
-    {
-      "label": "Drop Zone",
-      "is": "div",
-      "style": {
-        "box-sizing": "content-box",
-        "display": "block",
-        "position": "absolute",
-        "right": "0px",
-        "border": "1px solid rgba(255, 255, 255, 1)",
-        "height": "2px",
-        "opacity": "0",
-        "background": "#00B5FF",
-        "width": "100%",
-        "z-index": "1",
-        "transform": "translateY(-50%)"
-      },
-      "attributes": {},
-      "id": "6f0de1ad85",
-      "name": "component",
-      "children": [
-        {
-          "id": "44d6279341",
-          "name": "variant",
-          "label": "hover",
-          "isDefault": true,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "44d6279342",
-          "variantId": "44d6279341",
-          "propertyName": "style",
-          "targetIdPath": [],
-          "value": {
-            "display": "block",
-            "opacity": "1",
-            "margin-left": "3px"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "8e5b50993616",
-          "label": "dot",
-          "is": "div",
-          "name": "element",
-          "attributes": {},
-          "style": {
-            "box-sizing": "border-box",
-            "display": "block"
-          },
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "8e5b50993621",
-          "variantId": "44d6279341",
-          "propertyName": "style",
-          "targetIdPath": [
-            "8e5b50993616"
-          ],
-          "value": {
-            "width": "8px",
-            "height": "8px",
-            "position": "absolute",
-            "display": "block",
-            "background-image": "linear-gradient(var(--24ce1e4d13456), var(--24ce1e4d13456))",
-            "left": "-1px",
-            "top": "50%",
-            "transform": "translateY(-50%)",
-            "border-top-left-radius": "99px",
-            "border-top-right-radius": "99px",
-            "border-bottom-left-radius": "99px",
-            "border-bottom-right-radius": "99px"
-          },
-          "name": "override",
-          "children": []
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 156,
-          "top": 111,
-          "right": 256,
-          "bottom": 211
-        }
-      },
-      "variant": {}
-    },
-    {
-      "id": "8e5b50993609",
-      "label": "Preview",
-      "is": "div",
-      "name": "element",
-      "attributes": {},
-      "style": {
-        "box-sizing": "border-box",
-        "display": "block"
-      },
-      "children": [
-        {
-          "id": "8e5b50993611",
-          "is": "6f0de1ad85",
-          "label": "Drop Zone",
-          "name": "component-instance",
-          "attributes": {},
-          "style": {
-            "left": "20px",
-            "top": "20px"
-          },
-          "children": [],
-          "metadata": {
-            "bounds": {
-              "left": 154,
-              "top": 127,
-              "right": 254,
-              "bottom": 227
-            }
-          },
-          "variant": {
-            "44d6279341": true
-          }
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 232,
-          "top": 342,
-          "right": 617,
-          "bottom": 442
-        }
+import "../../../../../global.pc" as imp0
+
+
+/**
+ * @bounds(left: 333, top: 131, right: 433, bottom: 231)
+ */
+public component BeforeDropZone {
+  script (src: "./before-dnd-controller.tsx")
+  render DropZone
+}
+
+/**
+ * @bounds(left: 523, top: 128, right: 623, bottom: 228)
+ */
+public component AfterDropZone {
+  script (src: "./after-dnd-controller.tsx")
+  render DropZone
+}
+
+/**
+ * @bounds(left: 156, top: 111, right: 256, bottom: 211)
+ */
+public component DropZone {
+  variant hover (enabled: [true])
+  render div {
+    style {
+      box-sizing: content-box
+      display: block
+      position: absolute
+      right: 0px
+      border: 1px solid rgba(255, 255, 255, 1)
+      height: 2px
+      opacity: 0
+      background: #00B5FF
+      width: 100%
+      z-index: 1
+      transform: translateY(-50%)
+    }
+    style variant hover {
+      display: block
+      opacity: 1
+      margin-left: 3px
+    }
+    div dot {
+      style {
+        box-sizing: border-box
+        display: block
+      }
+      style variant hover {
+        width: 8px
+        height: 8px
+        position: absolute
+        display: block
+        background-image: linear-gradient(#{imp0.blue1}, #{imp0.blue1})
+        left: -1px
+        top: 50%
+        transform: translateY(-50%)
+        border-top-left-radius: 99px
+        border-top-right-radius: 99px
+        border-bottom-left-radius: 99px
+        border-bottom-right-radius: 99px
       }
     }
-  ]
+  }
+}
+
+/**
+ * @bounds(left: 232, top: 342, right: 617, bottom: 442)
+ */
+div preview {
+  style {
+    box-sizing: border-box
+    display: block
+  }
+  DropZone dropZone {
+    style {
+      left: 20px
+      top: 20px
+    }
+    override {
+      variant hover (enabled: [true])
+    }
+  }
 }

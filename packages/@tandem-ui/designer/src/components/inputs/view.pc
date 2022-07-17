@@ -1,127 +1,36 @@
-{
-  "id": "b78f10d2499",
-  "version": "0.0.5",
-  "metadata": {},
-  "name": "module",
-  "children": [
-    {
-      "id": "76b155a0873548",
-      "variant": {},
-      "is": "2657ec412855",
-      "name": "component-instance",
-      "attributes": {},
-      "style": {},
-      "children": [],
-      "metadata": {
-        "bounds": {
-          "left": 424,
-          "top": 399,
-          "right": 709,
-          "bottom": 458.471217980185
-        }
-      }
-    },
-    {
-      "id": "76b155a0875499",
-      "variant": {},
-      "is": "bcda9fb551452",
-      "name": "component-instance",
-      "attributes": {},
-      "style": {},
-      "children": [],
-      "metadata": {
-        "bounds": {
-          "left": 422,
-          "top": 552,
-          "right": 650,
-          "bottom": 616.1275206975329
-        }
-      }
-    },
-    {
-      "id": "76b155a0883315",
-      "variant": {},
-      "is": "6489655782833",
-      "name": "component-instance",
-      "attributes": {},
-      "style": {},
-      "children": [],
-      "metadata": {
-        "bounds": {
-          "left": 441,
-          "top": 174,
-          "right": 674.4524790701034,
-          "bottom": 236
-        }
-      }
-    },
-    {
-      "id": "76b155a0897094",
-      "variant": {},
-      "is": "50e32bec2591",
-      "name": "component-instance",
-      "attributes": {},
-      "style": {},
-      "children": [],
-      "metadata": {
-        "bounds": {
-          "left": 403,
-          "top": 290,
-          "right": 604,
-          "bottom": 318.23603217974676
-        }
-      }
-    },
-    {
-      "id": "76b155a0903070",
-      "variant": {},
-      "is": "67e386c762",
-      "name": "component-instance",
-      "attributes": {},
-      "style": {},
-      "children": [],
-      "metadata": {
-        "bounds": {
-          "left": 829,
-          "top": 80,
-          "right": 1041.7928111413887,
-          "bottom": 261.38668024462754
-        }
-      }
-    },
-    {
-      "id": "76b155a0915058",
-      "variant": {},
-      "is": "7149f8199122",
-      "name": "component-instance",
-      "attributes": {},
-      "style": {},
-      "children": [],
-      "metadata": {
-        "bounds": {
-          "left": 795,
-          "top": 320,
-          "right": 895,
-          "bottom": 349.0358087589019
-        }
-      }
-    },
-    {
-      "id": "76b155a0919057",
-      "variant": {},
-      "is": "956880c910105",
-      "name": "component-instance",
-      "attributes": {},
-      "style": {},
-      "children": [],
-      "metadata": {
-        "bounds": {
-          "left": 529,
-          "top": 258,
-          "right": 717,
-          "bottom": 264.4870090036885
-        }
-      }
-    }
-  ]
-}
+import "./atoms.pc" as imp0
+import "./button-bar/view.pc" as imp1
+import "./dropdown/view.pc" as imp2
+import "./color/picker.pc" as imp3
+import "./text/view.pc" as imp4
+import "./slider/view.pc" as imp5
+
+
+/**
+ * @bounds(left: 424, top: 399, right: 709, bottom: 458)
+ */
+imp0.InputRow
+/**
+ * @bounds(left: 422, top: 552, right: 650, bottom: 616)
+ */
+imp0.InputRowItem
+/**
+ * @bounds(left: 441, top: 174, right: 674, bottom: 236)
+ */
+imp1.ButtonBar
+/**
+ * @bounds(left: 403, top: 290, right: 604, bottom: 318)
+ */
+imp2.Dropdown
+/**
+ * @bounds(left: 829, top: 80, right: 1042, bottom: 261)
+ */
+imp3.ColorPicker
+/**
+ * @bounds(left: 795, top: 320, right: 895, bottom: 349)
+ */
+imp4.TextInput
+/**
+ * @bounds(left: 529, top: 258, right: 717, bottom: 264)
+ */
+imp5.Slider

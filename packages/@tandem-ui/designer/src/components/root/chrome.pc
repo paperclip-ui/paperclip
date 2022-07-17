@@ -1,831 +1,287 @@
-{
-  "id": "8d443eb52125392",
-  "version": "0.0.6",
-  "metadata": {},
-  "name": "module",
-  "children": [
-    {
-      "label": "Chrome",
-      "is": "div",
-      "style": {
-        "box-sizing": "border-box",
-        "display": "flex",
-        "flex-direction": "column",
-        "font-family": "Avenir Next",
-        "font-size": "12px",
-        "color": "rgba(123, 123, 123, 1)",
-        "background": "var(--51588fd610365)",
-        "border-bottom-left-radius": "4px",
-        "border-top-left-radius": "4px",
-        "border-top-right-radius": "4px",
-        "border-bottom-right-radius": "4px",
-        "width": "100vw",
-        "height": "100vh"
-      },
-      "attributes": {},
-      "id": "8d443eb52140093",
-      "name": "component",
-      "children": [
-        {
-          "id": "32ef79b725",
-          "label": "header",
-          "is": "div",
-          "name": "element",
-          "attributes": {},
-          "style": {
-            "box-sizing": "border-box",
-            "flex-shrink": "0",
-            "padding-top": "0px",
-            "padding-bottom": "0px",
-            "font-size": "12px",
-            "border-bottom": "1px solid rgba(209, 209, 209, 1)",
-            "align-items": "center",
-            "position": "relative",
-            "-webkit-app-region": "drag",
-            "background": "var(--51588fd610365)",
-            "padding-right": "0px",
-            "padding-left": "0px",
-            "height": "33px"
-          },
-          "children": [
-            {
-              "id": "32ef79b71042996",
-              "label": "MacOS buttons",
-              "is": "div",
-              "name": "element",
-              "attributes": {},
-              "style": {
-                "box-sizing": "border-box",
-                "display": "none",
-                "top": "6px",
-                "left": "12px",
-                "transform": "translateY(-50%)",
-                "position": "relative"
-              },
-              "children": [
-                {
-                  "id": "32ef79b71531706",
-                  "is": "32ef79b71331754",
-                  "name": "component-instance",
-                  "attributes": {},
-                  "style": {
-                    "background": "rgba(255, 143, 143, 1)"
-                  },
-                  "children": [],
-                  "metadata": {
-                    "bounds": {
-                      "left": 137.47101981775978,
-                      "top": 133.49090256999708,
-                      "right": 237.47101981775978,
-                      "bottom": 233.49090256999708
-                    }
-                  },
-                  "variant": {},
-                  "label": "close button"
-                },
-                {
-                  "id": "32ef79b71509488",
-                  "is": "32ef79b71331754",
-                  "name": "component-instance",
-                  "attributes": {},
-                  "style": {
-                    "background": "rgba(255, 221, 134, 1)"
-                  },
-                  "children": [],
-                  "metadata": {
-                    "bounds": {
-                      "left": 137.47101981775978,
-                      "top": 133.49090256999708,
-                      "right": 237.47101981775978,
-                      "bottom": 233.49090256999708
-                    }
-                  },
-                  "variant": {},
-                  "label": "minimize button"
-                },
-                {
-                  "id": "32ef79b71376185",
-                  "is": "32ef79b71331754",
-                  "name": "component-instance",
-                  "attributes": {},
-                  "style": {
-                    "background": "rgba(117, 201, 101, 1)"
-                  },
-                  "children": [],
-                  "metadata": {
-                    "bounds": {
-                      "left": 137.47101981775978,
-                      "top": 133.49090256999708,
-                      "right": 237.47101981775978,
-                      "bottom": 233.49090256999708
-                    }
-                  },
-                  "variant": {},
-                  "label": "maximize button"
-                }
-              ],
-              "metadata": {
-                "bounds": {
-                  "left": 179,
-                  "top": 74,
-                  "right": 579,
-                  "bottom": 374
-                }
-              }
-            },
-            {
-              "id": "22a403a621750",
-              "is": "22a403a63977",
-              "label": "Menu",
-              "name": "component-instance",
-              "attributes": {},
-              "style": {
-                "display": "none"
-              },
-              "children": [],
-              "metadata": {
-                "bounds": {
-                  "left": 0,
-                  "right": 600,
-                  "top": 0,
-                  "bottom": 400
-                }
-              },
-              "variant": {}
-            },
-            {
-              "id": "32ef79b7242",
-              "label": "center",
-              "is": "div",
-              "name": "element",
-              "attributes": {},
-              "style": {
-                "box-sizing": "border-box",
-                "display": "inline-block",
-                "align-self": "center",
-                "position": "relative",
-                "left": "50%",
-                "transform": "translate(-50%, -50%)",
-                "font-weight": "500",
-                "top": "50%",
-                "user-select": "none"
-              },
-              "children": [
-                {
-                  "id": "32ef79b73620481",
-                  "children": [
-                    {
-                      "id": "32ef79b7267",
-                      "name": "text",
-                      "label": "Text1",
-                      "value": "app.tdproject",
-                      "style": {
-                        "display": "inline-block",
-                        "position": "relative"
-                      },
-                      "children": [],
-                      "metadata": {}
-                    }
-                  ],
-                  "metadata": {},
-                  "name": "slot",
-                  "label": "label"
-                },
-                {
-                  "id": "9f8abd4b15261",
-                  "label": "unsaved circle",
-                  "is": "div",
-                  "name": "element",
-                  "attributes": {},
-                  "style": {
-                    "box-sizing": "border-box",
-                    "display": "none"
-                  },
-                  "children": [],
-                  "metadata": {}
-                }
-              ],
-              "metadata": {}
-            },
-            {
-              "id": "1fb4e79016876",
-              "label": "controls",
-              "is": "div",
-              "name": "element",
-              "attributes": {},
-              "style": {
-                "box-sizing": "border-box",
-                "display": "none",
-                "width": "auto",
-                "flex-grow": "0",
-                "flex-shrink": "0",
-                "position": "absolute",
-                "right": "8px"
-              },
-              "children": [
-                {
-                  "id": "fe72344f18319",
-                  "is": "fe72344f18313",
-                  "label": "Build button",
-                  "name": "component-instance",
-                  "attributes": {},
-                  "style": {},
-                  "children": [],
-                  "metadata": {
-                    "bounds": {
-                      "left": 197,
-                      "top": 59,
-                      "right": 539,
-                      "bottom": 159
-                    }
-                  },
-                  "variant": {}
-                }
-              ],
-              "metadata": {}
-            }
-          ],
-          "metadata": {
-            "bounds": {
-              "left": 107,
-              "top": 47,
-              "right": 507,
-              "bottom": 347
+import "../../global.pc" as imp0
+import "../menubar/view.pc" as imp1
+import "./tools/view.pc" as imp2
+import "./welcome/view.pc" as imp3
+import "./workspace/view.pc" as imp4
+import "../component-picker/picker.pc" as imp5
+
+
+/**
+ * @bounds(left: 19, top: 309, right: 1032, bottom: 914)
+ */
+public component Chrome {
+  script (src: "./chrome-controller.tsx")
+  variant unsaved (enabled: [])
+  variant minimal (enabled: [])
+  variant hasSelectedProject (enabled: [])
+  variant macos (enabled: [])
+  variant windows (enabled: [true])
+  render div {
+    style {
+      box-sizing: border-box
+      display: flex
+      flex-direction: column
+      font-family: Avenir Next
+      font-size: 12px
+      color: rgba(123, 123, 123, 1)
+      background: #{imp0.grey6}
+      border-bottom-left-radius: 4px
+      border-top-left-radius: 4px
+      border-top-right-radius: 4px
+      border-bottom-right-radius: 4px
+      width: 100vw
+      height: 100vh
+    }
+    div header {
+      style {
+        box-sizing: border-box
+        flex-shrink: 0
+        padding-top: 0px
+        padding-bottom: 0px
+        font-size: 12px
+        border-bottom: 1px solid rgba(209, 209, 209, 1)
+        align-items: center
+        position: relative
+        -webkit-app-region: drag
+        background: #{imp0.grey6}
+        padding-right: 0px
+        padding-left: 0px
+        height: 33px
+      }
+      style variant minimal {
+        border-bottom: 1px solid rgba(209, 209, 209, 0)
+        background: #{imp0.grey2}
+      }
+      style variant macos {
+        height: 22px
+      }
+      style variant windows {
+        display: none
+      }
+      div macOsButtons {
+        style {
+          box-sizing: border-box
+          display: none
+          top: 6px
+          left: 12px
+          transform: translateY(-50%)
+          position: relative
+        }
+        style variant macos {
+          display: none
+          top: 50%
+          position: absolute
+          height: 12px
+        }
+        ChromeHeaderButton closeButton {
+          style {
+            background: rgba(255, 143, 143, 1)
+          }
+        }
+        ChromeHeaderButton minimizeButton {
+          style {
+            background: rgba(255, 221, 134, 1)
+          }
+        }
+        ChromeHeaderButton maximizeButton {
+          style {
+            background: rgba(117, 201, 101, 1)
+          }
+        }
+      }
+      imp1.Menu menu {
+        style {
+          display: none
+        }
+        style variant windows {
+          display: inline-block
+          height: 33px
+          position: absolute
+        }
+      }
+      div center {
+        style {
+          box-sizing: border-box
+          display: inline-block
+          align-self: center
+          position: relative
+          left: 50%
+          transform: translate(-50%, -50%)
+          font-weight: 500
+          top: 50%
+          user-select: none
+        }
+        style variant unsaved {
+          display: inline-flex
+          align-items: center
+        }
+        style variant minimal {
+          display: inline-block
+          opacity: 0
+        }
+        style variant macos {
+        }
+        slot label {
+          text text1 "app.tdproject" {
+            style {
+              display: inline-block
+              position: relative
             }
           }
-        },
-        {
-          "id": "32ef79b755",
-          "label": "content 1",
-          "is": "div",
-          "name": "element",
-          "attributes": {},
-          "style": {
-            "box-sizing": "border-box",
-            "display": "flex",
-            "width": "100%",
-            "position": "relative",
-            "flex-grow": "1",
-            "overflow": "hidden",
-            "background": "var(--bc891e755312)"
-          },
-          "children": [
-            {
-              "id": "32ef79b7590",
-              "children": [
-                {
-                  "id": "32ef79b7131",
-                  "name": "text",
-                  "label": "Text2",
-                  "value": "Content",
-                  "style": {},
-                  "children": [],
-                  "metadata": {}
-                }
-              ],
-              "metadata": {},
-              "name": "slot",
-              "label": "content"
-            }
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "9f8abd4b7720",
-          "name": "variant",
-          "label": "unsaved",
-          "isDefault": false,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "9f8abd4b30346",
-          "variantId": "9f8abd4b7720",
-          "propertyName": "style",
-          "targetIdPath": [
-            "9f8abd4b15261"
-          ],
-          "value": {
-            "width": "6px",
-            "height": "6px",
-            "display": "inline-block",
-            "background": "var(--24ce1e4d13456)",
-            "border-bottom-left-radius": "99px",
-            "border-top-left-radius": "99px",
-            "border-top-right-radius": "99px",
-            "border-bottom-right-radius": "99px",
-            "margin-left": "8px",
-            "position": "relative",
-            "top": "1px",
-            "color": "var(--24ce1e4d13456)"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "9f8abd4b113309",
-          "variantId": "9f8abd4b7720",
-          "propertyName": "style",
-          "targetIdPath": [
-            "32ef79b7242"
-          ],
-          "value": {
-            "display": "inline-flex",
-            "align-items": "center"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "2d4f742013506",
-          "name": "variant",
-          "label": "minimal",
-          "isDefault": false,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "2d4f742013507",
-          "variantId": "2d4f742013506",
-          "propertyName": "style",
-          "targetIdPath": [
-            "32ef79b725"
-          ],
-          "value": {
-            "border-bottom": "1px solid rgba(209, 209, 209, 0)",
-            "background": "var(--bc891e755312)"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "2d4f742013508",
-          "variantId": "2d4f742013506",
-          "propertyName": "style",
-          "targetIdPath": [
-            "32ef79b7242"
-          ],
-          "value": {
-            "display": "inline-block",
-            "opacity": 0
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "1fb4e79017946",
-          "variantId": "1fb4e79017945",
-          "propertyName": "style",
-          "targetIdPath": [
-            "1fb4e79017911"
-          ],
-          "value": {
-            "display": "block"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "1fb4e79017948",
-          "variantId": "1fb4e79017947",
-          "propertyName": "style",
-          "targetIdPath": [
-            "1fb4e79017929"
-          ],
-          "value": {
-            "display": "block"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "1fb4e79017949",
-          "variantId": "1fb4e79017947",
-          "propertyName": "style",
-          "targetIdPath": [
-            "1fb4e79016876"
-          ],
-          "value": {
-            "cursor": "pointer"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "fb4d37ca17575",
-          "variantId": "1fb4e79017945",
-          "propertyName": "style",
-          "targetIdPath": [
-            "1fb4e79016876"
-          ],
-          "value": {
-            "display": "block",
-            "right": "12px"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "986370a717748",
-          "name": "variant",
-          "label": "has selected project",
-          "isDefault": false,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "986370a717749",
-          "variantId": "986370a717748",
-          "propertyName": "style",
-          "targetIdPath": [
-            "1fb4e79016876"
-          ],
-          "value": {
-            "display": "block",
-            "top": "50%",
-            "transform": "translateY(-50%)"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "7c7f4dd718003",
-          "name": "variant",
-          "label": "macos",
-          "isDefault": false,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "7c7f4dd718004",
-          "variantId": "7c7f4dd718003",
-          "propertyName": "style",
-          "targetIdPath": [
-            "32ef79b71042996"
-          ],
-          "value": {
-            "display": "none",
-            "top": "50%",
-            "position": "absolute",
-            "height": "12px"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "7c7f4dd718005",
-          "variantId": "7c7f4dd718003",
-          "propertyName": "style",
-          "targetIdPath": [
-            "32ef79b7242"
-          ],
-          "value": {},
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "7c7f4dd718006",
-          "variantId": "7c7f4dd718003",
-          "propertyName": "style",
-          "targetIdPath": [
-            "32ef79b725"
-          ],
-          "value": {
-            "height": "22px"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "7c7f4dd735451",
-          "name": "variant",
-          "label": "windows",
-          "isDefault": true,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "7c7f4dd735452",
-          "variantId": "7c7f4dd735451",
-          "propertyName": "style",
-          "targetIdPath": [
-            "22a403a621750"
-          ],
-          "value": {
-            "display": "inline-block",
-            "height": "33px",
-            "position": "absolute"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "ac63f2db35429",
-          "variantId": "7c7f4dd735451",
-          "propertyName": "style",
-          "targetIdPath": [
-            "32ef79b725"
-          ],
-          "value": {
-            "display": "none"
-          },
-          "name": "override",
-          "children": []
         }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 19,
-          "top": 309,
-          "right": 1032.2144217789437,
-          "bottom": 913.8563042613177
+        div unsavedCircle {
+          style {
+            box-sizing: border-box
+            display: none
+          }
+          style variant unsaved {
+            width: 6px
+            height: 6px
+            display: inline-block
+            background: #{imp0.blue1}
+            border-bottom-left-radius: 99px
+            border-top-left-radius: 99px
+            border-top-right-radius: 99px
+            border-bottom-right-radius: 99px
+            margin-left: 8px
+            position: relative
+            top: 1px
+            color: #{imp0.blue1}
+          }
         }
-      },
-      "variant": {},
-      "controllers": [
-        "./chrome-controller.tsx"
-      ]
-    },
-    {
-      "id": "1503b1927954",
-      "is": "8d443eb52140093",
-      "name": "component-instance",
-      "attributes": {},
-      "style": {},
-      "children": [
-        {
-          "slotId": "32ef79b7590",
-          "id": "1503b1927955",
-          "children": [
-            {
-              "id": "1503b192167864",
-              "is": "2b5298ab6",
-              "name": "component-instance",
-              "attributes": {},
-              "style": {},
-              "children": [],
-              "metadata": {},
-              "variant": {}
-            }
-          ],
-          "metadata": {},
-          "name": "plug"
-        },
-        {
-          "id": "1503b1927959",
-          "propertyName": "style",
-          "targetIdPath": [
-            "32ef79b725"
-          ],
-          "value": {
-            "padding-top": "12px",
-            "padding-bottom": "12px",
-            "font-weight": "400"
-          },
-          "name": "override",
-          "children": []
+      }
+      div controls {
+        style {
+          box-sizing: border-box
+          display: none
+          width: auto
+          flex-grow: 0
+          flex-shrink: 0
+          position: absolute
+          right: 8px
         }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 1284,
-          "top": 1654,
-          "right": 3270.2998338659963,
-          "bottom": 2695.8391994102403
+        style variant hasSelectedProject {
+          display: block
+          top: 50%
+          transform: translateY(-50%)
         }
-      },
-      "variant": {},
-      "label": "Welcome Preview"
-    },
-    {
-      "id": "7c7f4dd718007",
-      "is": "8d443eb52140093",
-      "name": "component-instance",
-      "attributes": {},
-      "style": {},
-      "children": [
-        {
-          "slotId": "32ef79b7590",
-          "id": "7c7f4dd718008",
-          "children": [
-            {
-              "id": "7c7f4dd718009",
-              "is": "33b1b6b133319",
-              "name": "component-instance",
-              "attributes": {},
-              "style": {},
-              "children": [
-                {
-                  "id": "7c7f4dd718010",
-                  "propertyName": "style",
-                  "targetIdPath": [
-                    "33b1b6b171359",
-                    "2b3a6c6d1159"
-                  ],
-                  "value": {},
-                  "name": "override",
-                  "children": []
-                },
-                {
-                  "id": "7c7f4dd718011",
-                  "propertyName": "variant",
-                  "targetIdPath": [
-                    "33b1b6b171359",
-                    "2b3a6c6d2278"
-                  ],
-                  "value": {
-                    "66d16f05": true
-                  },
-                  "name": "override",
-                  "children": []
-                }
-              ],
-              "metadata": {
-                "bounds": {
-                  "left": -129,
-                  "top": 991,
-                  "right": 1833.8518233326877,
-                  "bottom": 1974.4100056728703
-                }
-              },
-              "variant": {}
-            }
-          ],
-          "metadata": {},
-          "name": "plug"
-        },
-        {
-          "id": "7c7f4dd718012",
-          "propertyName": "style",
-          "targetIdPath": [
-            "32ef79b725"
-          ],
-          "value": {
-            "padding-top": "0px",
-            "padding-bottom": "0px",
-            "font-weight": "400",
-            "padding-left": "0px",
-            "padding-right": "0px"
-          },
-          "name": "override",
-          "children": []
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 3696,
-          "top": 293,
-          "right": 5682.299833865996,
-          "bottom": 1334.8391994102403
-        }
-      },
-      "variant": {
-        "1fb4e79017947": false,
-        "1fb4e79017945": true,
-        "7c7f4dd735451": true
-      },
-      "label": "Windows Preview"
-    },
-    {
-      "id": "8d443eb52162144",
-      "is": "8d443eb52140093",
-      "name": "component-instance",
-      "attributes": {},
-      "style": {},
-      "children": [
-        {
-          "slotId": "32ef79b7590",
-          "id": "32ef79b78007",
-          "children": [
-            {
-              "id": "32ef79b78006",
-              "is": "33b1b6b133319",
-              "name": "component-instance",
-              "attributes": {},
-              "style": {},
-              "children": [
-                {
-                  "id": "a0c265a67494",
-                  "propertyName": "style",
-                  "targetIdPath": [
-                    "33b1b6b171359",
-                    "2b3a6c6d1159"
-                  ],
-                  "value": {},
-                  "name": "override",
-                  "children": []
-                },
-                {
-                  "id": "a0c265a637028",
-                  "propertyName": "variant",
-                  "targetIdPath": [
-                    "33b1b6b171359",
-                    "2b3a6c6d2278"
-                  ],
-                  "value": {
-                    "66d16f05": true
-                  },
-                  "name": "override",
-                  "children": []
-                }
-              ],
-              "metadata": {
-                "bounds": {
-                  "left": -129,
-                  "top": 991,
-                  "right": 1833.8518233326877,
-                  "bottom": 1974.4100056728703
-                }
-              },
-              "variant": {}
-            }
-          ],
-          "metadata": {},
-          "name": "plug"
-        },
-        {
-          "id": "32ef79b7332424",
-          "propertyName": "style",
-          "targetIdPath": [
-            "32ef79b725"
-          ],
-          "value": {
-            "padding-top": "0px",
-            "padding-bottom": "0px",
-            "font-weight": "400",
-            "padding-left": "0px",
-            "padding-right": "0px"
-          },
-          "name": "override",
-          "children": []
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 1265,
-          "top": 299,
-          "right": 3251.2998338659963,
-          "bottom": 1340.8391994102403
-        }
-      },
-      "variant": {
-        "1fb4e79017947": false,
-        "1fb4e79017945": true,
-        "7c7f4dd718003": true
-      },
-      "label": "MacOS Preview"
-    },
-    {
-      "label": "chrome header button",
-      "is": "div",
-      "style": {
-        "box-sizing": "border-box",
-        "display": "inline-block",
-        "margin-right": "8px",
-        "width": "12px",
-        "height": "12px",
-        "cursor": "pointer",
-        "background": "rgba(119, 119, 119, 1)",
-        "border-bottom-left-radius": "99px",
-        "border-top-left-radius": "99px",
-        "border-top-right-radius": "99px",
-        "border-bottom-right-radius": "99px",
-        "border-left": "1px none rgba(255, 255, 255, 0.4)",
-        "border-top": "1px none rgba(255, 255, 255, 0.4)",
-        "border-right": "1px none rgba(255, 255, 255, 0.4)",
-        "border-bottom": "1px none rgba(255, 255, 255, 0.4)"
-      },
-      "attributes": {},
-      "id": "32ef79b71331754",
-      "name": "component",
-      "children": [],
-      "metadata": {
-        "bounds": {
-          "left": 137.47101981775978,
-          "top": 133.49090256999708,
-          "right": 237.47101981775978,
-          "bottom": 233.49090256999708
-        }
-      },
-      "variant": {}
-    },
-    {
-      "id": "fb4d37ca17921",
-      "is": "936f29271179",
-      "label": "Component picker popdown item",
-      "name": "component-instance",
-      "attributes": {},
-      "style": {},
-      "children": [],
-      "metadata": {
-        "bounds": {
-          "left": 453.19920465416897,
-          "top": 128.89561795822186,
-          "right": 1232.199204654169,
-          "bottom": 178.89561795822192
-        }
-      },
-      "variant": {}
+        imp2.BuildButton buildButton
+      }
     }
-  ]
+    div content1 {
+      style {
+        box-sizing: border-box
+        display: flex
+        width: 100%
+        position: relative
+        flex-grow: 1
+        overflow: hidden
+        background: #{imp0.grey2}
+      }
+      slot content {
+        text text2 "Content"
+      }
+    }
+  }
 }
+
+/**
+ * @bounds(left: 137, top: 133, right: 237, bottom: 233)
+ */
+public component ChromeHeaderButton {
+  render div {
+    style {
+      box-sizing: border-box
+      display: inline-block
+      margin-right: 8px
+      width: 12px
+      height: 12px
+      cursor: pointer
+      background: rgba(119, 119, 119, 1)
+      border-bottom-left-radius: 99px
+      border-top-left-radius: 99px
+      border-top-right-radius: 99px
+      border-bottom-right-radius: 99px
+      border-left: 1px none rgba(255, 255, 255, 0.4)
+      border-top: 1px none rgba(255, 255, 255, 0.4)
+      border-right: 1px none rgba(255, 255, 255, 0.4)
+      border-bottom: 1px none rgba(255, 255, 255, 0.4)
+    }
+  }
+}
+
+/**
+ * @bounds(left: 1284, top: 1654, right: 3270, bottom: 2696)
+ */
+Chrome welcomePreview {
+  override header {
+    style {
+      padding-top: 12px
+      padding-bottom: 12px
+      font-weight: 400
+    }
+  }
+  insert content {
+    imp3.Welcome
+  }
+}
+/**
+ * @bounds(left: 3696, top: 293, right: 5682, bottom: 1335)
+ */
+Chrome windowsPreview {
+  override {
+    variant windows (enabled: [true])
+  }
+  override header {
+    style {
+      padding-top: 0px
+      padding-bottom: 0px
+      font-weight: 400
+      padding-left: 0px
+      padding-right: 0px
+    }
+  }
+  insert content {
+    imp4.Workspace {
+      override rightGutter.tabs {
+        style {
+        }
+      }
+      override rightGutter.tab1 {
+        variant selected (enabled: [true])
+      }
+    }
+  }
+}
+/**
+ * @bounds(left: 1265, top: 299, right: 3251, bottom: 1341)
+ */
+Chrome macOsPreview {
+  override {
+    variant macos (enabled: [true])
+  }
+  override header {
+    style {
+      padding-top: 0px
+      padding-bottom: 0px
+      font-weight: 400
+      padding-left: 0px
+      padding-right: 0px
+    }
+  }
+  insert content {
+    imp4.Workspace {
+      override rightGutter.tabs {
+        style {
+        }
+      }
+      override rightGutter.tab1 {
+        variant selected (enabled: [true])
+      }
+    }
+  }
+}
+/**
+ * @bounds(left: 453, top: 129, right: 1232, bottom: 179)
+ */
+imp5.ComponentPickerPopdownItem componentPickerPopdownItem

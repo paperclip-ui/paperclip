@@ -1,970 +1,234 @@
-{
-  "id": "ef4ef14483",
-  "version": "0.0.6",
-  "metadata": {},
-  "name": "module",
-  "children": [
-    {
-      "label": "Queries Pane",
-      "is": "div",
-      "style": {
-        "box-sizing": "border-box",
-        "display": "block"
-      },
-      "attributes": {},
-      "id": "66811b5c421",
-      "name": "component",
-      "children": [
-        {
-          "id": "66811b5c36308",
-          "is": "b6c162d113",
-          "label": "Pane",
-          "name": "component-instance",
-          "attributes": {},
-          "style": {},
-          "children": [
-            {
-              "id": "66811b5c49500",
-              "variantId": null,
-              "propertyName": "text",
-              "targetIdPath": [
-                "b6c162d1281"
-              ],
-              "value": "Media Queries",
-              "name": "override",
-              "children": []
-            },
-            {
-              "slotId": "d6261ad53069",
-              "id": "66811b5c52340",
-              "children": [
-                {
-                  "id": "66811b5c52339",
-                  "label": "Element6",
-                  "is": "div",
-                  "name": "element",
-                  "attributes": {},
-                  "style": {
-                    "box-sizing": "border-box",
-                    "display": "flex",
-                    "justify-content": "space-between",
-                    "align-items": "center"
-                  },
-                  "children": [
-                    {
-                      "id": "66811b5c52353",
-                      "name": "text",
-                      "label": "Label",
-                      "value": "Queries",
-                      "style": {},
-                      "children": [],
-                      "metadata": {},
-                      "styleMixins": {
-                        "dc3b39eb1627": {
-                          "priority": 0
-                        }
-                      }
-                    },
-                    {
-                      "id": "66811b5c52360",
-                      "label": "controls",
-                      "is": "div",
-                      "name": "element",
-                      "attributes": {},
-                      "style": {
-                        "box-sizing": "border-box",
-                        "display": "inline-block",
-                        "cursor": "pointer"
-                      },
-                      "children": [
-                        {
-                          "id": "64a04cc1510",
-                          "is": "50e32bec2591",
-                          "label": "add query dropdown",
-                          "name": "component-instance",
-                          "attributes": {},
-                          "style": {},
-                          "children": [
-                            {
-                              "slotId": "87568a7232485",
-                              "id": "64a04cc1583",
-                              "children": [
-                                {
-                                  "id": "66811b5c52367",
-                                  "is": "f27782548182",
-                                  "label": "add button",
-                                  "name": "component-instance",
-                                  "attributes": {},
-                                  "style": {
-                                    "height": "9px"
-                                  },
-                                  "children": [],
-                                  "metadata": {
-                                    "bounds": {
-                                      "left": -720,
-                                      "top": 2434,
-                                      "right": -320,
-                                      "bottom": 2734
-                                    }
-                                  },
-                                  "variant": {}
-                                }
-                              ],
-                              "metadata": {},
-                              "name": "plug"
-                            },
-                            {
-                              "id": "f4c726de582",
-                              "propertyName": "style",
-                              "targetIdPath": [
-                                "806ffd0684"
-                              ],
-                              "value": {
-                                "box-shadow": "0px 2px 2px 1px rgba(0, 0, 0, 0.19)",
-                                "min-width": "130px"
-                              },
-                              "name": "override",
-                              "children": []
-                            }
-                          ],
-                          "metadata": {
-                            "bounds": {
-                              "left": 133,
-                              "top": 279,
-                              "right": 334,
-                              "bottom": 521.2360321797468
-                            }
-                          },
-                          "variant": {}
-                        }
-                      ],
-                      "metadata": {}
-                    }
-                  ],
-                  "metadata": {}
-                }
-              ],
-              "metadata": {},
-              "name": "plug"
-            },
-            {
-              "slotId": "d6261ad52883",
-              "id": "7d27fc31124",
-              "children": [
-                {
-                  "id": "7d27fc31151",
-                  "label": "items 2",
-                  "is": "div",
-                  "name": "element",
-                  "attributes": {},
-                  "style": {},
-                  "children": [
-                    {
-                      "id": "7d27fc31161",
-                      "children": [
-                        {
-                          "id": "7d27fc31180",
-                          "is": "f97289c6592",
-                          "label": "Element1",
-                          "name": "component-instance",
-                          "attributes": {},
-                          "style": {},
-                          "children": [],
-                          "metadata": {},
-                          "variant": {}
-                        },
-                        {
-                          "id": "f97289c6770",
-                          "is": "f97289c6592",
-                          "label": "Element2",
-                          "name": "component-instance",
-                          "attributes": {},
-                          "style": {},
-                          "children": [],
-                          "metadata": {},
-                          "variant": {}
-                        },
-                        {
-                          "id": "f97289c6761",
-                          "is": "f97289c6592",
-                          "label": "Element3",
-                          "name": "component-instance",
-                          "attributes": {},
-                          "style": {},
-                          "children": [],
-                          "metadata": {},
-                          "variant": {}
-                        },
-                        {
-                          "id": "f97289c6752",
-                          "is": "f97289c6592",
-                          "label": "Element4",
-                          "name": "component-instance",
-                          "attributes": {},
-                          "style": {},
-                          "children": [],
-                          "metadata": {},
-                          "variant": {}
-                        },
-                        {
-                          "id": "7d27fc31198",
-                          "is": "f97289c6592",
-                          "label": "Element5",
-                          "name": "component-instance",
-                          "attributes": {},
-                          "style": {},
-                          "children": [],
-                          "metadata": {},
-                          "variant": {}
-                        }
-                      ],
-                      "metadata": {},
-                      "name": "slot",
-                      "label": "items"
-                    }
-                  ],
-                  "metadata": {}
-                }
-              ],
-              "metadata": {},
-              "name": "plug"
-            },
-            {
-              "id": "7d27fc31127",
-              "propertyName": "style",
-              "targetIdPath": [
-                "b6c162d140"
-              ],
-              "value": {
-                "padding-top": "6px",
-                "padding-right": "0px",
-                "padding-bottom": "6px",
-                "padding-left": "0px"
-              },
-              "name": "override",
-              "children": []
-            },
-            {
-              "id": "f4e4ad4e637",
-              "variantId": "f4e4ad4e636",
-              "propertyName": "style",
-              "targetIdPath": [
-                "b6c162d140"
-              ],
-              "value": {
-                "padding-bottom": "6px"
-              },
-              "name": "override",
-              "children": []
-            },
-            {
-              "id": "f4e4ad4e638",
-              "propertyName": "style",
-              "targetIdPath": [
-                "b6c162d132"
-              ],
-              "value": {
-                "padding-bottom": "0px"
-              },
-              "name": "override",
-              "children": []
-            }
-          ],
-          "metadata": {
-            "bounds": {
-              "left": 321,
-              "top": 189,
-              "right": 525,
-              "bottom": 287.3571410945104
-            }
-          },
-          "variant": {}
-        },
-        {
-          "id": "7d27fc31215",
-          "variantId": "7d27fc31214",
-          "propertyName": "style",
-          "targetIdPath": [
-            "7d27fc31148"
-          ],
-          "value": {
-            "display": "flex",
-            "margin-bottom": "12px"
-          },
-          "name": "override",
-          "children": []
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 318,
-          "top": 147,
-          "right": 730,
-          "bottom": 421
-        }
-      },
-      "variant": {},
-      "controllers": [
-        "./controller.tsx"
-      ]
-    },
-    {
-      "label": "Query item",
-      "is": "div",
-      "style": {
-        "box-sizing": "border-box",
-        "display": "flex",
-        "align-items": "center",
-        "padding-top": "6px",
-        "padding-right": "12px",
-        "padding-bottom": "6px",
-        "padding-left": "12px"
-      },
-      "attributes": {},
-      "id": "f97289c6592",
-      "name": "component",
-      "children": [
-        {
-          "id": "f97289c6590",
-          "is": "5673c5c21327",
-          "label": "edit button",
-          "name": "component-instance",
-          "attributes": {},
-          "style": {
-            "display": "block",
-            "color": "var(--24ce1e4d482)",
-            "height": "16px",
-            "margin-right": "12px"
-          },
-          "children": [
-            {
-              "slotId": "5673c5c21336",
-              "id": "987eb92e765",
-              "children": [
-                {
-                  "id": "987eb92e764",
-                  "is": "9f7a77048356",
-                  "label": "Pencil Icon 2",
-                  "name": "component-instance",
-                  "attributes": {},
-                  "style": {
-                    "display": "block",
-                    "height": "14px"
-                  },
-                  "children": [],
-                  "metadata": {
-                    "bounds": {
-                      "left": 126,
-                      "top": 437,
-                      "right": 526,
-                      "bottom": 737
-                    }
-                  },
-                  "variant": {}
-                }
-              ],
-              "metadata": {},
-              "name": "plug"
-            },
-            {
-              "slotId": "9bda7c6d981",
-              "id": "1bfde795862",
-              "children": [
-                {
-                  "id": "9bda7c6d906",
-                  "is": "9bda7c6d850",
-                  "label": "Query Options",
-                  "name": "component-instance",
-                  "attributes": {},
-                  "style": {},
-                  "children": [],
-                  "metadata": {
-                    "bounds": {
-                      "left": 481,
-                      "top": 524,
-                      "right": 759,
-                      "bottom": 801
-                    }
-                  },
-                  "variant": {}
-                }
-              ],
-              "metadata": {},
-              "name": "plug"
-            }
-          ],
-          "metadata": {
-            "bounds": {
-              "left": 126,
-              "top": 437,
-              "right": 526,
-              "bottom": 737
-            }
-          },
-          "variant": {}
-        },
-        {
-          "id": "f97289c6591",
-          "is": "7149f8199122",
-          "label": "label input",
-          "name": "component-instance",
-          "attributes": {
-            "placeholder": "Name"
-          },
-          "style": {},
-          "children": [],
-          "metadata": {
-            "bounds": {
-              "left": 384,
-              "top": 298,
-              "right": 484,
-              "bottom": 327.0358087589019
-            }
-          },
-          "variant": {}
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 753,
-          "top": 273,
-          "right": 1200,
-          "bottom": 391
-        }
-      },
-      "variant": {},
-      "controllers": [
-        "./query-item-controller.tsx"
-      ]
-    },
-    {
-      "label": "Media Query Options",
-      "is": "div",
-      "style": {
-        "box-sizing": "border-box",
-        "display": "block",
-        "padding-left": "0px",
-        "padding-top": "0px",
-        "padding-right": "0px",
-        "padding-bottom": "0px"
-      },
-      "attributes": {},
-      "id": "f97289c61969",
-      "name": "component",
-      "children": [
-        {
-          "id": "f97289c62002",
-          "is": "7149f8192509",
-          "label": "Labeled Input 2",
-          "name": "component-instance",
-          "attributes": {},
-          "style": {},
-          "children": [
-            {
-              "id": "f97289c62014",
-              "variantId": null,
-              "propertyName": "text",
-              "targetIdPath": [
-                "7149f8192506"
-              ],
-              "value": "Min Width",
-              "name": "override",
-              "children": []
-            },
-            {
-              "slotId": "e73029b416045",
-              "id": "680bc1b52431",
-              "children": [
-                {
-                  "id": "680bc1b52430",
-                  "is": "7149f8199122",
-                  "label": "min width input",
-                  "name": "component-instance",
-                  "attributes": {},
-                  "style": {},
-                  "children": [],
-                  "metadata": {
-                    "bounds": {
-                      "left": 384,
-                      "top": 298,
-                      "right": 484,
-                      "bottom": 327.0358087589019
-                    }
-                  },
-                  "variant": {}
-                }
-              ],
-              "metadata": {},
-              "name": "plug"
-            }
-          ],
-          "metadata": {
-            "bounds": {
-              "left": 486,
-              "top": 306,
-              "right": 586,
-              "bottom": 353.5832678332798
-            }
-          },
-          "variant": {}
-        },
-        {
-          "id": "f97289c61990",
-          "is": "7149f8192509",
-          "label": "Labeled Input 3",
-          "name": "component-instance",
-          "attributes": {},
-          "style": {},
-          "children": [
-            {
-              "id": "f97289c62015",
-              "variantId": null,
-              "propertyName": "text",
-              "targetIdPath": [
-                "7149f8192506"
-              ],
-              "value": "Max Width",
-              "name": "override",
-              "children": []
-            },
-            {
-              "slotId": "e73029b416045",
-              "id": "680bc1b52457",
-              "children": [
-                {
-                  "id": "680bc1b52456",
-                  "is": "7149f8199122",
-                  "label": "max width input",
-                  "name": "component-instance",
-                  "attributes": {},
-                  "style": {},
-                  "children": [],
-                  "metadata": {
-                    "bounds": {
-                      "left": 384,
-                      "top": 298,
-                      "right": 484,
-                      "bottom": 327.0358087589019
-                    }
-                  },
-                  "variant": {}
-                }
-              ],
-              "metadata": {},
-              "name": "plug"
-            }
-          ],
-          "metadata": {
-            "bounds": {
-              "left": 486,
-              "top": 306,
-              "right": 586,
-              "bottom": 353.5832678332798
-            }
-          },
-          "variant": {}
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 801,
-          "top": 445,
-          "right": 1191,
-          "bottom": 663
-        }
-      },
-      "variant": {},
-      "controllers": [
-        "./media-query-options-controller.tsx"
-      ]
-    },
-    {
-      "label": "Variable Query Options",
-      "is": "div",
-      "style": {
-        "box-sizing": "border-box",
-        "display": "block",
-        "padding-left": "0px",
-        "padding-top": "0px",
-        "padding-right": "0px",
-        "padding-bottom": "0px"
-      },
-      "attributes": {},
-      "id": "f97289c62059",
-      "name": "component",
-      "children": [
-        {
-          "id": "680bc1b51702",
-          "is": "7149f8192509",
-          "label": "Labeled Input 4",
-          "name": "component-instance",
-          "attributes": {},
-          "style": {},
-          "children": [
-            {
-              "id": "680bc1b51703",
-              "variantId": null,
-              "propertyName": "text",
-              "targetIdPath": [
-                "7149f8192506"
-              ],
-              "value": "Variable",
-              "name": "override",
-              "children": []
-            },
-            {
-              "slotId": "e73029b416045",
-              "id": "680bc1b51793",
-              "children": [
-                {
-                  "id": "680bc1b51792",
-                  "is": "50e32bec2591",
-                  "label": "variable input",
-                  "name": "component-instance",
-                  "attributes": {},
-                  "style": {},
-                  "children": [
-                    {
-                      "id": "680bc1b52482",
-                      "variantId": null,
-                      "propertyName": "text",
-                      "targetIdPath": [
-                        "67e386c7935"
-                      ],
-                      "value": "Some var",
-                      "name": "override",
-                      "children": []
-                    }
-                  ],
-                  "metadata": {
-                    "bounds": {
-                      "left": 133,
-                      "top": 279,
-                      "right": 334,
-                      "bottom": 521.2360321797468
-                    }
-                  },
-                  "variant": {}
-                }
-              ],
-              "metadata": {},
-              "name": "plug"
-            }
-          ],
-          "metadata": {
-            "bounds": {
-              "left": 486,
-              "top": 306,
-              "right": 586,
-              "bottom": 353.5832678332798
-            }
-          },
-          "variant": {}
-        },
-        {
-          "id": "f97289c62055",
-          "is": "7149f8192509",
-          "label": "Labeled Input 5",
-          "name": "component-instance",
-          "attributes": {},
-          "style": {},
-          "children": [
-            {
-              "id": "f97289c62056",
-              "variantId": null,
-              "propertyName": "text",
-              "targetIdPath": [
-                "7149f8192506"
-              ],
-              "value": "Equals",
-              "name": "override",
-              "children": []
-            },
-            {
-              "slotId": "e73029b416045",
-              "id": "680bc1b52379",
-              "children": [
-                {
-                  "id": "680bc1b52378",
-                  "is": "7149f8199122",
-                  "label": "equals input",
-                  "name": "component-instance",
-                  "attributes": {},
-                  "style": {},
-                  "children": [],
-                  "metadata": {
-                    "bounds": {
-                      "left": 384,
-                      "top": 298,
-                      "right": 484,
-                      "bottom": 327.0358087589019
-                    }
-                  },
-                  "variant": {}
-                }
-              ],
-              "metadata": {},
-              "name": "plug"
-            }
-          ],
-          "metadata": {
-            "bounds": {
-              "left": 486,
-              "top": 306,
-              "right": 586,
-              "bottom": 353.5832678332798
-            }
-          },
-          "variant": {}
-        },
-        {
-          "id": "f97289c62057",
-          "is": "7149f8192509",
-          "label": "Labeled Input 6",
-          "name": "component-instance",
-          "attributes": {},
-          "style": {},
-          "children": [
-            {
-              "id": "f97289c62058",
-              "variantId": null,
-              "propertyName": "text",
-              "targetIdPath": [
-                "7149f8192506"
-              ],
-              "value": "Doesn't Equal",
-              "name": "override",
-              "children": []
-            },
-            {
-              "slotId": "e73029b416045",
-              "id": "680bc1b52405",
-              "children": [
-                {
-                  "id": "680bc1b52404",
-                  "is": "7149f8199122",
-                  "label": "not equals input",
-                  "name": "component-instance",
-                  "attributes": {},
-                  "style": {},
-                  "children": [],
-                  "metadata": {
-                    "bounds": {
-                      "left": 384,
-                      "top": 298,
-                      "right": 484,
-                      "bottom": 327.0358087589019
-                    }
-                  },
-                  "variant": {}
-                }
-              ],
-              "metadata": {},
-              "name": "plug"
-            }
-          ],
-          "metadata": {
-            "bounds": {
-              "left": 486,
-              "top": 306,
-              "right": 586,
-              "bottom": 353.5832678332798
-            }
-          },
-          "variant": {}
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 797,
-          "top": 700,
-          "right": 1186,
-          "bottom": 875
-        }
-      },
-      "variant": {},
-      "controllers": [
-        "./variable-query-options-controller.tsx"
-      ]
-    },
-    {
-      "label": "Query Options",
-      "is": "div",
-      "style": {
-        "box-sizing": "border-box",
-        "display": "block",
-        "padding-left": "12px",
-        "padding-top": "12px",
-        "padding-right": "12px",
-        "padding-bottom": "12px"
-      },
-      "attributes": {},
-      "id": "9bda7c6d850",
-      "name": "component",
-      "children": [
-        {
-          "id": "29d031fa1121",
-          "is": "7149f8192509",
-          "label": "Labeled Input 7",
-          "name": "component-instance",
-          "attributes": {},
-          "style": {},
-          "children": [
-            {
-              "id": "29d031fa1199",
-              "variantId": null,
-              "propertyName": "text",
-              "targetIdPath": [
-                "7149f8192506"
-              ],
-              "value": "Type",
-              "name": "override",
-              "children": []
-            },
-            {
-              "slotId": "e73029b416045",
-              "id": "29d031fa1201",
-              "children": [
-                {
-                  "id": "29d031fa1200",
-                  "is": "50e32bec2591",
-                  "label": "type input",
-                  "name": "component-instance",
-                  "attributes": {},
-                  "style": {},
-                  "children": [
-                    {
-                      "id": "29d031fa1713",
-                      "variantId": null,
-                      "propertyName": "text",
-                      "targetIdPath": [
-                        "67e386c7935"
-                      ],
-                      "value": "Type",
-                      "name": "override",
-                      "children": []
-                    }
-                  ],
-                  "metadata": {
-                    "bounds": {
-                      "left": 133,
-                      "top": 279,
-                      "right": 334,
-                      "bottom": 521.2360321797468
-                    }
-                  },
-                  "variant": {}
-                }
-              ],
-              "metadata": {},
-              "name": "plug"
-            }
-          ],
-          "metadata": {
-            "bounds": {
-              "left": 486,
-              "top": 306,
-              "right": 586,
-              "bottom": 353.5832678332798
-            }
-          },
-          "variant": {}
-        },
-        {
-          "id": "9bda7c6d852",
-          "is": "f97289c61969",
-          "label": "Media Query Options",
-          "name": "component-instance",
-          "attributes": {},
-          "style": {
-            "display": "none"
-          },
-          "children": [],
-          "metadata": {
-            "bounds": {
-              "left": 801,
-              "top": 445,
-              "right": 1191,
-              "bottom": 663
-            }
-          },
-          "variant": {}
-        },
-        {
-          "id": "9bda7c6d877",
-          "is": "f97289c62059",
-          "label": "Variable Query Options",
-          "name": "component-instance",
-          "attributes": {},
-          "style": {
-            "display": "none"
-          },
-          "children": [],
-          "metadata": {
-            "bounds": {
-              "left": 797,
-              "top": 700,
-              "right": 1186,
-              "bottom": 875
-            }
-          },
-          "variant": {}
-        },
-        {
-          "id": "9bda7c6d902",
-          "name": "variant",
-          "label": "media",
-          "isDefault": false,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "9bda7c6d903",
-          "variantId": "9bda7c6d902",
-          "propertyName": "style",
-          "targetIdPath": [
-            "9bda7c6d852"
-          ],
-          "value": {
-            "display": "block"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "9bda7c6d904",
-          "name": "variant",
-          "label": "variable",
-          "isDefault": true,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "9bda7c6d905",
-          "variantId": "9bda7c6d904",
-          "propertyName": "style",
-          "targetIdPath": [
-            "9bda7c6d877"
-          ],
-          "value": {
-            "display": "block"
-          },
-          "name": "override",
-          "children": []
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 232,
-          "top": 596,
-          "right": 510,
-          "bottom": 873
-        }
-      },
-      "variant": {},
-      "controllers": [
-        "./query-options-controller.tsx"
-      ]
+import "../../../../pane/view.pc" as imp0
+import "../../../../atoms/view.pc" as imp1
+import "../../../../inputs/dropdown/view.pc" as imp2
+import "../../../../../icons/view.pc" as imp3
+import "../../../../side-panel/view.pc" as imp4
+import "../../../../../global.pc" as imp5
+import "../../../../inputs/text/view.pc" as imp6
+import "../../../../inputs/molecules.pc" as imp7
+
+
+/**
+ * @bounds(left: 318, top: 147, right: 730, bottom: 421)
+ */
+public component QueriesPane {
+  script (src: "./controller.tsx")
+  render div {
+    style {
+      box-sizing: border-box
+      display: block
     }
-  ]
+    imp0.Pane pane {
+      override text "Media Queries"
+      override content {
+        style {
+          padding-top: 6px
+          padding-right: 0px
+          padding-bottom: 6px
+          padding-left: 0px
+        }
+      }
+      override title {
+        style {
+          padding-bottom: 0px
+        }
+      }
+      insert header {
+        div element6 {
+          style {
+            box-sizing: border-box
+            display: flex
+            justify-content: space-between
+            align-items: center
+          }
+          text label "Queries" {
+            style {
+              include imp1.headerFontStyle
+            }
+          }
+          div controls {
+            style {
+              box-sizing: border-box
+              display: inline-block
+              cursor: pointer
+            }
+            imp2.Dropdown addQueryDropdown {
+              override menu {
+                style {
+                  box-shadow: 0px 2px 2px 1px rgba(0, 0, 0, 0.19)
+                  min-width: 130px
+                }
+              }
+              insert button {
+                imp3.AddIcon addButton {
+                  style {
+                    height: 9px
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      insert content2 {
+        div items2 {
+          slot items {
+            QueryItem element1
+            QueryItem element2
+            QueryItem element3
+            QueryItem element4
+            QueryItem element5
+          }
+        }
+      }
+    }
+  }
 }
+
+/**
+ * @bounds(left: 753, top: 273, right: 1200, bottom: 391)
+ */
+public component QueryItem {
+  script (src: "./query-item-controller.tsx")
+  render div {
+    style {
+      box-sizing: border-box
+      display: flex
+      align-items: center
+      padding-top: 6px
+      padding-right: 12px
+      padding-bottom: 6px
+      padding-left: 12px
+    }
+    imp4.SidePanelButton editButton {
+      style {
+        display: block
+        color: #{imp5.grey3}
+        height: 16px
+        margin-right: 12px
+      }
+      insert button {
+        imp3.PencilIcon2 pencilIcon2 {
+          style {
+            display: block
+            height: 14px
+          }
+        }
+      }
+      insert content4 {
+        QueryOptions queryOptions
+      }
+    }
+    imp6.TextInput labelInput (placeholder: "Name")
+  }
+}
+
+/**
+ * @bounds(left: 801, top: 445, right: 1191, bottom: 663)
+ */
+public component MediaQueryOptions {
+  script (src: "./media-query-options-controller.tsx")
+  render div {
+    style {
+      box-sizing: border-box
+      display: block
+      padding-left: 0px
+      padding-top: 0px
+      padding-right: 0px
+      padding-bottom: 0px
+    }
+    imp7.LabeledInput labeledInput2 {
+      override text1 "Min Width"
+      insert input {
+        imp6.TextInput minWidthInput
+      }
+    }
+    imp7.LabeledInput labeledInput3 {
+      override text1 "Max Width"
+      insert input {
+        imp6.TextInput maxWidthInput
+      }
+    }
+  }
+}
+
+/**
+ * @bounds(left: 797, top: 700, right: 1186, bottom: 875)
+ */
+public component VariableQueryOptions {
+  script (src: "./variable-query-options-controller.tsx")
+  render div {
+    style {
+      box-sizing: border-box
+      display: block
+      padding-left: 0px
+      padding-top: 0px
+      padding-right: 0px
+      padding-bottom: 0px
+    }
+    imp7.LabeledInput labeledInput4 {
+      override text1 "Variable"
+      insert input {
+        imp2.Dropdown variableInput {
+          override label2 "Some var"
+        }
+      }
+    }
+    imp7.LabeledInput labeledInput5 {
+      override text1 "Equals"
+      insert input {
+        imp6.TextInput equalsInput
+      }
+    }
+    imp7.LabeledInput labeledInput6 {
+      override text1 "Doesn't Equal"
+      insert input {
+        imp6.TextInput notEqualsInput
+      }
+    }
+  }
+}
+
+/**
+ * @bounds(left: 232, top: 596, right: 510, bottom: 873)
+ */
+public component QueryOptions {
+  script (src: "./query-options-controller.tsx")
+  variant media (enabled: [])
+  variant variable (enabled: [true])
+  render div {
+    style {
+      box-sizing: border-box
+      display: block
+      padding-left: 12px
+      padding-top: 12px
+      padding-right: 12px
+      padding-bottom: 12px
+    }
+    imp7.LabeledInput labeledInput7 {
+      override text1 "Type"
+      insert input {
+        imp2.Dropdown typeInput {
+          override label2 "Type"
+        }
+      }
+    }
+    MediaQueryOptions mediaQueryOptions {
+      style {
+        display: none
+      }
+      style variant media {
+        display: block
+      }
+    }
+    VariableQueryOptions variableQueryOptions {
+      style {
+        display: none
+      }
+      style variant variable {
+        display: block
+      }
+    }
+  }
+}
+

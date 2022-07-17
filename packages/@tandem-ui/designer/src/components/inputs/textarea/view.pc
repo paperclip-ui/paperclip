@@ -1,74 +1,28 @@
-{
-  "id": "d65d17fd64",
-  "version": "0.0.6",
-  "metadata": {},
-  "name": "module",
-  "children": [
-    {
-      "label": "Textarea",
-      "is": "textarea",
-      "style": {
-        "width": "100%",
-        "height": "150px",
-        "border-radius": "2px",
-        "box-sizing": "border-box",
-        "border-left": "0px none rgba(1, 0, 1, 0)",
-        "border-top": "0px none rgba(1, 0, 1, 0)",
-        "border-right": "0px none rgba(1, 0, 1, 0)",
-        "border-bottom": "0px none rgba(1, 0, 1, 0)"
-      },
-      "attributes": {},
-      "id": "d65d17fd4015",
-      "name": "component",
-      "children": [
-        {
-          "id": "c475e80b836",
-          "name": "variant",
-          "label": "focus",
-          "isDefault": true,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "c475e80b837",
-          "name": "variant-trigger",
-          "targetVariantId": "c475e80b836",
-          "source": {
-            "type": 1,
-            "state": "focus"
-          },
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "c475e80b1644",
-          "variantId": "c475e80b836",
-          "propertyName": "style",
-          "targetIdPath": [],
-          "value": {
-            "box-shadow": "inset  0px 0px 0px 1px var(--24ce1e4d13456)"
-          },
-          "name": "override",
-          "children": []
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 681,
-          "top": 263.5,
-          "right": 781,
-          "bottom": 363.5
-        }
-      },
-      "controllers": [
-        "./controller.tsx"
-      ],
-      "variant": {},
-      "styleMixins": {
-        "c29da5f4213993": {
-          "priority": 0
-        }
-      }
+import "../../atoms/view.pc" as imp0
+import "../../../global.pc" as imp1
+
+
+/**
+ * @bounds(left: 681, top: 264, right: 781, bottom: 364)
+ */
+public component Textarea {
+  script (src: "./controller.tsx")
+  variant focus (enabled: [true, PseudoElement.Focus])
+  render textarea {
+    style {
+      include imp0.defaultBorder
+      width: 100%
+      height: 150px
+      border-radius: 2px
+      box-sizing: border-box
+      border-left: 0px none rgba(1, 0, 1, 0)
+      border-top: 0px none rgba(1, 0, 1, 0)
+      border-right: 0px none rgba(1, 0, 1, 0)
+      border-bottom: 0px none rgba(1, 0, 1, 0)
     }
-  ]
+    style variant focus {
+      box-shadow: inset  0px 0px 0px 1px #{imp1.blue1}
+    }
+  }
 }
+

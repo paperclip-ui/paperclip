@@ -1,268 +1,102 @@
-{
-  "id": "28fcdf040",
-  "version": "0.0.6",
-  "metadata": {},
-  "name": "module",
-  "children": [
-    {
-      "id": "711f2f581696",
-      "is": "808486bb13",
-      "label": "Search Result",
-      "name": "component-instance",
-      "attributes": {},
-      "style": {
-        "padding-top": "6px",
-        "padding-right": "12px",
-        "padding-bottom": "6px",
-        "padding-left": "12px"
-      },
-      "children": [
-        {
-          "id": "d4d9389d1339",
-          "name": "variant-trigger",
-          "targetVariantId": null,
-          "source": null,
-          "children": [],
-          "metadata": {}
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 397,
-          "top": 371,
-          "right": 665.470266729453,
-          "bottom": 438
-        }
-      },
-      "variant": {
-        "646b96f948608": true
-      }
-    },
-    {
-      "id": "808486bb13",
-      "name": "component",
-      "is": "div",
-      "style": {
-        "width": "100%",
-        "boxSizing": "border-box",
-        "marginTop": "1px",
-        "user-select": "none",
-        "cursor": "pointer",
-        "vertical-align": "center",
-        "display": "flex",
-        "padding-top": "6px",
-        "padding-right": "12px",
-        "padding-bottom": "4px",
-        "align-items": "center",
-        "position": "relative",
-        "padding-left": "12px"
-      },
-      "attributes": {},
-      "label": "Search Result",
-      "children": [
-        {
-          "id": "808486bb15",
-          "name": "element",
-          "label": "label container",
-          "style": {
-            "display": "inline-block",
-            "margin-right": "8px",
-            "user-select": "none"
-          },
-          "container": "container5ab7d6b5",
-          "attributes": {},
-          "is": "div",
-          "children": [
-            {
-              "id": "c9e5dd7680092",
-              "children": [
-                {
-                  "id": "808486bb16",
-                  "name": "text",
-                  "label": "label 1",
-                  "value": "basename.tsx",
-                  "style": {
-                    "display": "inline-block",
-                    "position": "relative",
-                    "height": "18",
-                    "vertical-align": "center",
-                    "color": "var(--24ce1e4d482)"
-                  },
-                  "children": [],
-                  "metadata": {},
-                  "attributes": {},
-                  "styleMixins": {
-                    "dc3b39eb1275": {
-                      "priority": 0
-                    }
-                  }
-                }
-              ],
-              "metadata": {},
-              "name": "slot",
-              "label": "label"
-            }
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "63257bfd1439557",
-          "name": "element",
-          "label": "description container",
-          "style": {
-            "display": "flex",
-            "flex": "1",
-            "user-select": "none",
-            "width": "0"
-          },
-          "container": "container5ab7d6b5",
-          "attributes": {},
-          "is": "div",
-          "children": [
-            {
-              "id": "c9e5dd7680107",
-              "children": [
-                {
-                  "id": "63257bfd1439558",
-                  "name": "text",
-                  "label": "description",
-                  "value": "super/nested/directory/path/that/will/wa/a/b/c/d/e/f/g/h/i/g/h/i/j/k/l/",
-                  "style": {
-                    "display": "inline-block",
-                    "width": "100%",
-                    "color": "var(--24ce1e4d482)"
-                  },
-                  "children": [],
-                  "metadata": {},
-                  "attributes": {},
-                  "styleMixins": {
-                    "dc3b39eb1275": {
-                      "priority": 0
-                    },
-                    "61225017220906": {
-                      "priority": 1
-                    }
-                  }
-                }
-              ],
-              "metadata": {},
-              "name": "slot",
-              "label": "description 2"
-            }
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "1dc9871d4870",
-          "variantId": "1dc9871d3624",
-          "propertyName": "style",
-          "targetIdPath": [],
-          "value": {
-            "background": "var(--f63574de434)"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "646b96f933019",
-          "is": "711f2f581678",
-          "label": "split tab button",
-          "name": "component-instance",
-          "attributes": {},
-          "style": {
-            "display": "none",
-            "height": "0.8em",
-            "flex-grow": "0",
-            "flex-shrink": "0",
-            "width": "17px",
-            "color": "var(--24ce1e4d482)"
-          },
-          "children": [],
-          "metadata": {
-            "bounds": {
-              "left": 439,
-              "top": -695,
-              "right": 839,
-              "bottom": -395
-            }
-          },
-          "variant": {}
-        },
-        {
-          "id": "646b96f948608",
-          "name": "variant",
-          "label": "hovering",
-          "isDefault": false,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "646b96f949286",
-          "variantId": "646b96f948608",
-          "propertyName": "style",
-          "targetIdPath": [
-            "646b96f933019"
-          ],
-          "value": {
-            "display": "inline-block"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "f32ac6af39966",
-          "name": "variant-trigger",
-          "targetVariantId": "646b96f948608",
-          "source": {
-            "type": 1,
-            "state": "hover"
-          },
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "564cd8f1605",
-          "name": "variant",
-          "label": "preselected",
-          "isDefault": false,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "564cd8f1606",
-          "variantId": "564cd8f1605",
-          "propertyName": "style",
-          "targetIdPath": [],
-          "value": {
-            "background-image": "linear-gradient(var(--32c1eebd7630), var(--32c1eebd7630))"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "f7d6a42945",
-          "variantId": "646b96f948608",
-          "propertyName": "style",
-          "targetIdPath": [],
-          "value": {
-            "background-image": "linear-gradient(var(--1934368810788), var(--1934368810788))"
-          },
-          "name": "override",
-          "children": []
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 395,
-          "top": 260,
-          "right": 663.470266729453,
-          "bottom": 327
-        }
-      },
-      "controllers": [
-        "./search-result-controller.tsx"
-      ],
-      "variant": {}
+import "../../global.pc" as imp0
+import "../atoms/view.pc" as imp1
+import "../../icons/view.pc" as imp2
+
+
+/**
+ * @bounds(left: 395, top: 260, right: 663, bottom: 327)
+ */
+public component SearchResult {
+  script (src: "./search-result-controller.tsx")
+  variant hovering (enabled: [PseudoElement.Hover])
+  variant preselected (enabled: [])
+  render div {
+    style {
+      width: 100%
+      boxSizing: border-box
+      marginTop: 1px
+      user-select: none
+      cursor: pointer
+      vertical-align: center
+      display: flex
+      padding-top: 6px
+      padding-right: 12px
+      padding-bottom: 4px
+      align-items: center
+      position: relative
+      padding-left: 12px
     }
-  ]
+    style variant preselected {
+      background-image: linear-gradient(#{imp0.blue3}, #{imp0.blue3})
+    }
+    style variant hovering {
+      background-image: linear-gradient(#{imp0.grey7}, #{imp0.grey7})
+    }
+    div labelContainer {
+      style {
+        display: inline-block
+        margin-right: 8px
+        user-select: none
+      }
+      slot label {
+        text label1 "basename.tsx" {
+          style {
+            include imp1.baseFont
+            display: inline-block
+            position: relative
+            height: 18
+            vertical-align: center
+            color: #{imp0.grey3}
+          }
+        }
+      }
+    }
+    div descriptionContainer {
+      style {
+        display: flex
+        flex: 1
+        user-select: none
+        width: 0
+      }
+      slot description2 {
+        text description "super/nested/directory/path/that/will/wa/a/b/c/d/e/f/g/h/i/g/h/i/j/k/l/" {
+          style {
+            include imp1.baseFont
+            include imp1.nowrapEllipsis
+            display: inline-block
+            width: 100%
+            color: #{imp0.grey3}
+          }
+        }
+      }
+    }
+    imp2.SplitIcon2 splitTabButton {
+      style {
+        display: none
+        height: 0.8em
+        flex-grow: 0
+        flex-shrink: 0
+        width: 17px
+        color: #{imp0.grey3}
+      }
+      style variant hovering {
+        display: inline-block
+      }
+    }
+  }
+}
+
+/**
+ * @bounds(left: 397, top: 371, right: 665, bottom: 438)
+ */
+SearchResult searchResult {
+  style {
+    padding-top: 6px
+    padding-right: 12px
+    padding-bottom: 6px
+    padding-left: 12px
+  }
+  override {
+    variant hovering (enabled: [true])
+  }
 }

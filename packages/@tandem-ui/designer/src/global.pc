@@ -1,152 +1,16 @@
-{
-  "id": "76b155a08696099",
-  "version": "0.0.6",
-  "metadata": {},
-  "name": "module",
-  "children": [
-    {
-      "id": "d8f6340b1442",
-      "name": "variable",
-      "label": "grey 1",
-      "type": "color",
-      "children": [],
-      "metadata": {},
-      "value": "rgba(230, 230, 230, 1)"
-    },
-    {
-      "id": "bc891e755312",
-      "name": "variable",
-      "label": "grey 2",
-      "type": "color",
-      "children": [],
-      "metadata": {},
-      "value": "rgba(250, 250, 250, 1)"
-    },
-    {
-      "id": "f63574de434",
-      "name": "variable",
-      "label": "grey 0",
-      "type": "color",
-      "children": [],
-      "metadata": {},
-      "value": "rgba(255, 255, 255, 1)"
-    },
-    {
-      "id": "24ce1e4d482",
-      "name": "variable",
-      "label": "grey 3",
-      "type": "color",
-      "children": [],
-      "metadata": {},
-      "value": "rgba(123, 123, 123, 1)"
-    },
-    {
-      "id": "24ce1e4d13456",
-      "name": "variable",
-      "label": "blue 1",
-      "type": "color",
-      "children": [],
-      "metadata": {},
-      "value": "rgba(0, 181, 255, 1)"
-    },
-    {
-      "id": "24ce1e4d22305",
-      "name": "variable",
-      "label": "blue 2",
-      "type": "color",
-      "children": [],
-      "metadata": {},
-      "value": "rgba(202, 234, 255, 1)"
-    },
-    {
-      "id": "30f4693267675",
-      "name": "variable",
-      "value": "rgba(184, 184, 184, 1)",
-      "label": "grey 4",
-      "type": "color",
-      "children": [],
-      "metadata": {}
-    },
-    {
-      "id": "32ef79b7820935",
-      "name": "variable",
-      "value": "rgba(1, 0, 0, 0.16)",
-      "label": "black transparent",
-      "type": "color",
-      "children": [],
-      "metadata": {}
-    },
-    {
-      "id": "32c1eebd7630",
-      "name": "variable",
-      "value": "rgba(0, 181, 255, 0.1)",
-      "label": "blue 3",
-      "type": "color",
-      "children": [],
-      "metadata": {}
-    },
-    {
-      "id": "8d8f489920787",
-      "name": "variable",
-      "value": "rgba(147, 147, 147, 1)",
-      "label": "grey 5",
-      "type": "color",
-      "children": [],
-      "metadata": {}
-    },
-    {
-      "id": "51588fd610365",
-      "name": "variable",
-      "value": "rgba(225, 225, 225, 1)",
-      "label": "grey 6",
-      "type": "color",
-      "children": [],
-      "metadata": {}
-    },
-    {
-      "id": "1934368810788",
-      "name": "variable",
-      "value": "rgba(240, 240, 240, 1)",
-      "label": "grey 7",
-      "type": "color",
-      "children": [],
-      "metadata": {}
-    },
-    {
-      "id": "fe88bcb21388",
-      "name": "variable",
-      "value": "rgba(170, 96, 255, 1)",
-      "label": "purple 1",
-      "type": "color",
-      "children": [],
-      "metadata": {}
-    },
-    {
-      "id": "dd86347b1545",
-      "name": "variable",
-      "value": "rgba(1, 0, 0, 0.09)",
-      "label": "black transparent 2",
-      "type": "color",
-      "children": [],
-      "metadata": {}
-    },
-    {
-      "id": "4325aac312609",
-      "name": "variable",
-      "value": "rgba(255, 51, 51, 1)",
-      "label": "red 1",
-      "type": "color",
-      "children": [],
-      "metadata": {}
-    },
-    {
-      "id": "564cd8f1607",
-      "name": "variable",
-      "value": "rgba(229, 241, 245, 1)",
-      "label": "blue 3",
-      "type": "color",
-      "children": [],
-      "metadata": {}
-    }
-  ]
-}
+public token grey1 rgba(230, 230, 230, 1)
+public token grey2 rgba(250, 250, 250, 1)
+public token grey0 rgba(255, 255, 255, 1)
+public token grey3 rgba(123, 123, 123, 1)
+public token blue1 rgba(0, 181, 255, 1)
+public token blue2 rgba(202, 234, 255, 1)
+public token grey4 rgba(184, 184, 184, 1)
+public token blackTransparent rgba(1, 0, 0, 0.16)
+public token blue3 rgba(0, 181, 255, 0.1)
+public token grey5 rgba(147, 147, 147, 1)
+public token grey6 rgba(225, 225, 225, 1)
+public token grey7 rgba(240, 240, 240, 1)
+public token purple1 rgba(170, 96, 255, 1)
+public token blackTransparent2 rgba(1, 0, 0, 0.09)
+public token red1 rgba(255, 51, 51, 1)
+public token blue3 rgba(229, 241, 245, 1)

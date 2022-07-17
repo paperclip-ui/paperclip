@@ -1,5 +1,6 @@
 import { ProjectConfig } from "@tandem-ui/designer/lib/state";
 import * as path from "path";
+import * as URL from "url";
 import * as fsa from "fs-extra";
 import {
   Dependency,
@@ -31,8 +32,14 @@ export const upgradeProject = async ({ projectFilePath }: UpgradeOptions) => {
   const newDependencyGraph = translateDependencyGraph(oldDependencyGraph);
 
   for (const uri in newDependencyGraph) {
-    console.log(`Serialize ${uri}`);
-    console.log(newDependencyGraph[uri]);
+    const filePath = URL.fileURLToPath(uri);
+    fsa.writeFileSync(
+      filePath + ".backup",
+      fsa.readFileSync(filePath, "utf-8")
+    );
+    fsa.writeFileSync(filePath, newDependencyGraph[uri]);
+    // console.log(`Serialize ${uri}`);
+    // console.log(newDependencyGraph[uri]);
   }
 
   sanityCheck(newDependencyGraph);

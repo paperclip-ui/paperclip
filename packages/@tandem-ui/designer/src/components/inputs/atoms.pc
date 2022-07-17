@@ -1,50 +1,24 @@
-{
-  "id": "76b155a0869608",
-  "version": "0.0.5",
-  "metadata": {},
-  "name": "module",
-  "children": [
-    {
-      "label": "Input Row",
-      "is": "div",
-      "style": {
-        "display": "flex",
-        "align-items": "center"
-      },
-      "attributes": {},
-      "id": "2657ec412855",
-      "name": "component",
-      "children": [],
-      "metadata": {
-        "bounds": {
-          "left": 1305,
-          "top": 1327,
-          "right": 1590,
-          "bottom": 1386.471217980185
-        }
-      },
-      "variant": {}
-    },
-    {
-      "label": "Input Row Item",
-      "is": "div",
-      "style": {
-        "margin-right": "8px",
-        "box-sizing": "border-box"
-      },
-      "attributes": {},
-      "id": "bcda9fb551452",
-      "name": "component",
-      "children": [],
-      "metadata": {
-        "bounds": {
-          "left": 1321,
-          "top": 1474,
-          "right": 1549,
-          "bottom": 1538.1275206975329
-        }
-      },
-      "variant": {}
+/**
+ * @bounds(left: 1305, top: 1327, right: 1590, bottom: 1386)
+ */
+public component InputRow {
+  render div {
+    style {
+      display: flex
+      align-items: center
     }
-  ]
+  }
 }
+
+/**
+ * @bounds(left: 1321, top: 1474, right: 1549, bottom: 1538)
+ */
+public component InputRowItem {
+  render div {
+    style {
+      margin-right: 8px
+      box-sizing: border-box
+    }
+  }
+}
+

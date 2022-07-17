@@ -1,269 +1,130 @@
-{
-  "id": "cf827dd439",
-  "name": "module",
-  "version": "0.0.6",
-  "children": [
-    {
-      "label": "Main",
-      "is": "div",
-      "style": {
-        "box-sizing": "border-box",
-        "display": "block",
-        "background": "rgba(255, 255, 255, 0.6)",
-        "position": "fixed",
-        "left": "0px",
-        "top": "0px",
-        "width": "100vw",
-        "height": "100vh",
-        "z-index": "99999"
-      },
-      "attributes": {},
-      "id": "900e27cd182",
-      "name": "component",
-      "children": [
-        {
-          "id": "900e27cd184",
-          "label": "Container",
-          "is": "div",
-          "name": "element",
-          "attributes": {},
-          "style": {
-            "box-sizing": "border-box",
-            "display": "block",
-            "position": "absolute",
-            "left": "0px",
-            "top": "0px",
-            "width": "100%",
-            "height": "100%"
-          },
-          "children": [
-            {
-              "id": "900e27cd186",
-              "label": "Center",
-              "is": "div",
-              "name": "element",
-              "attributes": {},
-              "style": {
-                "box-sizing": "border-box",
-                "display": "block",
-                "width": "400px",
-                "margin-right": "auto",
-                "margin-left": "auto",
-                "position": "relative",
-                "top": "20%",
-                "background": "var(--d8f6340b1442)",
-                "border-top-left-radius": "2px",
-                "border-top-right-radius": "2px",
-                "border-bottom-left-radius": "2px",
-                "border-bottom-right-radius": "2px",
-                "border-left": "1px solid var(--30f4693267675)",
-                "border-top": "1px solid var(--30f4693267675)",
-                "border-right": "1px solid var(--30f4693267675)",
-                "border-bottom": "1px solid var(--30f4693267675)",
-                "padding-left": "12px",
-                "padding-top": "12px",
-                "padding-right": "12px",
-                "padding-bottom": "12px"
-              },
-              "children": [
-                {
-                  "id": "4325aac312606",
-                  "name": "text",
-                  "label": "Title",
-                  "value": "Whoops, looks like an unexpected error occurred.",
-                  "style": {
-                    "font-weight": "600",
-                    "font-size": "14px",
-                    "color": "var(--24ce1e4d482)",
-                    "display": "block",
-                    "margin-bottom": "12px"
-                  },
-                  "children": [],
-                  "metadata": {},
-                  "styleMixins": {
-                    "dc3b39eb1275": {
-                      "priority": 0
-                    }
-                  }
-                },
-                {
-                  "id": "4325aac312614",
-                  "name": "text",
-                  "label": "Text2",
-                  "value": "If you're able to reproduce this issue, please help us make the app better by ",
-                  "style": {
-                    "color": "var(--24ce1e4d482)",
-                    "font-weight": "500",
-                    "margin-bottom": "12px",
-                    "display": "inline"
-                  },
-                  "children": [],
-                  "metadata": {},
-                  "styleMixins": {
-                    "dc3b39eb1275": {
-                      "priority": 0
-                    }
-                  }
-                },
-                {
-                  "id": "2cb68e4e12627",
-                  "label": "link button",
-                  "is": "a",
-                  "name": "element",
-                  "attributes": {
-                    "href": "https://github.com/tandemcode/tandem/issues"
-                  },
-                  "style": {
-                    "box-sizing": "border-box",
-                    "display": "inline",
-                    "font-weight": "600",
-                    "color": "var(--24ce1e4d13456)"
-                  },
-                  "children": [
-                    {
-                      "id": "2cb68e4e12630",
-                      "name": "text",
-                      "label": "Text3",
-                      "value": "filing a bug ticket on GitHub.",
-                      "style": {
-                        "color": "var(--24ce1e4d13456)",
-                        "text-decoration": "none"
-                      },
-                      "children": [],
-                      "metadata": {}
-                    }
-                  ],
-                  "metadata": {},
-                  "styleMixins": {
-                    "dc3b39eb1275": {
-                      "priority": 0
-                    }
-                  }
-                },
-                {
-                  "id": "2cb68e4e12635",
-                  "label": "Element2",
-                  "is": "div",
-                  "name": "element",
-                  "attributes": {},
-                  "style": {
-                    "box-sizing": "border-box",
-                    "display": "flex",
-                    "margin-top": "12px",
-                    "justify-content": "flex-end"
-                  },
-                  "children": [
-                    {
-                      "id": "2cb68e4e12641",
-                      "label": "restart button",
-                      "is": "9f364d2139415",
-                      "name": "component-instance",
-                      "attributes": {},
-                      "style": {
-                        "box-sizing": "border-box",
-                        "display": "inline-block"
-                      },
-                      "children": [
-                        {
-                          "id": "2cb68e4e12648",
-                          "variantId": null,
-                          "propertyName": "text",
-                          "targetIdPath": [
-                            "9f364d2139650"
-                          ],
-                          "value": "Restart app",
-                          "name": "override",
-                          "children": []
-                        }
-                      ],
-                      "metadata": {},
-                      "variant": {}
-                    }
-                  ],
-                  "metadata": {}
-                }
-              ],
-              "metadata": {}
-            }
-          ],
-          "metadata": {}
+import "../../../global.pc" as imp0
+import "../../../components/atoms/view.pc" as imp1
+import "../../../components/inputs/button/view.pc" as imp2
+import "../../../components/root/workspace/view.pc" as imp3
+
+
+/**
+ * @bounds(left: 101, top: -60, right: 1541, bottom: 840)
+ */
+public component Main {
+  script (src: "./controller.tsx")
+  render div {
+    style {
+      box-sizing: border-box
+      display: block
+      background: rgba(255, 255, 255, 0.6)
+      position: fixed
+      left: 0px
+      top: 0px
+      width: 100vw
+      height: 100vh
+      z-index: 99999
+    }
+    div container {
+      style {
+        box-sizing: border-box
+        display: block
+        position: absolute
+        left: 0px
+        top: 0px
+        width: 100%
+        height: 100%
+      }
+      div center {
+        style {
+          box-sizing: border-box
+          display: block
+          width: 400px
+          margin-right: auto
+          margin-left: auto
+          position: relative
+          top: 20%
+          background: #{imp0.grey1}
+          border-top-left-radius: 2px
+          border-top-right-radius: 2px
+          border-bottom-left-radius: 2px
+          border-bottom-right-radius: 2px
+          border-left: 1px solid #{imp0.grey4}
+          border-top: 1px solid #{imp0.grey4}
+          border-right: 1px solid #{imp0.grey4}
+          border-bottom: 1px solid #{imp0.grey4}
+          padding-left: 12px
+          padding-top: 12px
+          padding-right: 12px
+          padding-bottom: 12px
         }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 101,
-          "top": -60,
-          "right": 1541,
-          "bottom": 840
+        text title "Whoops, looks like an unexpected error occurred." {
+          style {
+            include imp1.baseFont
+            font-weight: 600
+            font-size: 14px
+            color: #{imp0.grey3}
+            display: block
+            margin-bottom: 12px
+          }
         }
-      },
-      "variant": {},
-      "controllers": [
-        "./controller.tsx"
-      ]
-    },
-    {
-      "id": "900e27cd237",
-      "label": "Preview",
-      "is": "div",
-      "name": "element",
-      "attributes": {},
-      "style": {
-        "box-sizing": "border-box",
-        "display": "block"
-      },
-      "children": [
-        {
-          "id": "900e27cd12658",
-          "is": "900e27cd182",
-          "label": "Main",
-          "name": "component-instance",
-          "attributes": {},
-          "style": {
-            "z-index": "9999"
-          },
-          "children": [],
-          "metadata": {
-            "bounds": {
-              "left": 101,
-              "top": -60,
-              "right": 1541,
-              "bottom": 840
-            }
-          },
-          "variant": {}
-        },
-        {
-          "id": "900e27cd239",
-          "is": "33b1b6b133319",
-          "label": "Workspace",
-          "name": "component-instance",
-          "attributes": {},
-          "style": {
-            "opacity": 0.982,
-            "display": "block"
-          },
-          "children": [],
-          "metadata": {
-            "bounds": {
-              "left": -129,
-              "top": 991,
-              "right": 1833.8518233326877,
-              "bottom": 1974.4100056728703
-            }
-          },
-          "variant": {}
+        text text2 "If you're able to reproduce this issue, please help us make the app better by" {
+          style {
+            include imp1.baseFont
+            color: #{imp0.grey3}
+            font-weight: 500
+            margin-bottom: 12px
+            display: inline
+          }
         }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 2207,
-          "top": 64,
-          "right": 4221,
-          "bottom": 1247
+        a linkButton (href: "https://github.com/tandemcode/tandem/issues") {
+          style {
+            include imp1.baseFont
+            box-sizing: border-box
+            display: inline
+            font-weight: 600
+            color: #{imp0.blue1}
+          }
+          text text3 "filing a bug ticket on GitHub." {
+            style {
+              color: #{imp0.blue1}
+              text-decoration: none
+            }
+          }
+        }
+        div element2 {
+          style {
+            box-sizing: border-box
+            display: flex
+            margin-top: 12px
+            justify-content: flex-end
+          }
+          imp2.Button restartButton {
+            style {
+              box-sizing: border-box
+              display: inline-block
+            }
+            override text1 "Restart app"
+          }
         }
       }
     }
-  ],
-  "metadata": {}
+  }
+}
+
+/**
+ * @bounds(left: 2207, top: 64, right: 4221, bottom: 1247)
+ */
+div preview {
+  style {
+    box-sizing: border-box
+    display: block
+  }
+  Main main {
+    style {
+      z-index: 9999
+    }
+  }
+  imp3.Workspace workspace {
+    style {
+      opacity: 0.982
+      display: block
+    }
+  }
 }

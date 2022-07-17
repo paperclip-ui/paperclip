@@ -1,109 +1,50 @@
-{
-  "id": "97a34b159010",
-  "version": "0.0.5",
-  "metadata": {},
-  "name": "module",
-  "children": [
-    {
-      "label": "TODO",
-      "is": "97a34b151010442",
-      "style": {},
-      "attributes": {},
-      "id": "d6261ad5198",
-      "name": "component",
-      "children": [
-        
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 20,
-          "top": 103,
-          "right": 403.1708291271775,
-          "bottom": 303.7213373757045
-        }
-      },
-      "variant": {}
-    },
-    {
-      "label": "Comment",
-      "is": "div",
-      "style": {
-        "background": "yellow",
-        "overflow": "none",
-        "padding": "8px",
-        "font-family": "Helvetica",
-        "font-size": "12px",
-        "display": "flex",
-        "flex-direction": "column"
-      },
-      "attributes": {},
-      "id": "97a34b151010442",
-      "name": "component",
-      "children": [
-        {
-          "id": "97a34b151010438",
-          "label": "Element3",
-          "is": "div",
-          "name": "element",
-          "attributes": {},
-          "style": {
-            "background": "rgba(0,0,0,0.07)",
-            "width": "20px",
-            "height": "20px",
-            "position": "absolute",
-            "right": "0",
-            "transform": "translate(50%, -50%)",
-            "top": "0"
-          },
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "97a34b151010440",
-          "label": "Element4",
-          "is": "div",
-          "name": "element",
-          "attributes": {},
-          "style": {
-            "height": "100%",
-            "width": "100%",
-            "margin-top": "8px"
-          },
-          "children": [
-            {
-              "exportName": null,
-              "id": "88156175335",
-              "label": "slot11",
-              "children": [
-                {
-                  "id": "97a34b151010441",
-                  "name": "text",
-                  "label": "Text2",
-                  "value": "comment text here",
-                  "style": {
-                    "color": "#444",
-                    "opacity": "0.8"
-                  },
-                  "children": [],
-                  "metadata": {}
-                }
-              ],
-              "metadata": {},
-              "name": "slot"
-            }
-          ],
-          "metadata": {}
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 509.1992294346617,
-          "top": 118.07285735609861,
-          "right": 892.3700585618392,
-          "bottom": 318.7941947318031
-        }
-      },
-      "variant": {}
-    }
-  ]
+/**
+ * @bounds(left: 20, top: 103, right: 403, bottom: 304)
+ */
+public component Todo {
+  render Comment
 }
+
+/**
+ * @bounds(left: 509, top: 118, right: 892, bottom: 319)
+ */
+public component Comment {
+  render div {
+    style {
+      background: yellow
+      overflow: none
+      padding: 8px
+      font-family: Helvetica
+      font-size: 12px
+      display: flex
+      flex-direction: column
+    }
+    div element3 {
+      style {
+        background: rgba(0,0,0,0.07)
+        width: 20px
+        height: 20px
+        position: absolute
+        right: 0
+        transform: translate(50%, -50%)
+        top: 0
+      }
+    }
+    div element4 {
+      style {
+        height: 100%
+        width: 100%
+        margin-top: 8px
+      }
+      slot slot11 {
+        text text2 "comment text here" {
+          style {
+            color: #444
+            opacity: 0.8
+          }
+        }
+      }
+    }
+  }
+}
+

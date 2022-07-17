@@ -1,33 +1,15 @@
-{
-  "id": "c4e8096c109",
-  "name": "module",
-  "version": "0.0.5",
-  "children": [
-    {
-      "label": "edit text",
-      "is": "7149f8199122",
-      "style": {
-        "position": "absolute"
-      },
-      "attributes": {
-        "placeholder": "text"
-      },
-      "id": "6cb86618699",
-      "name": "component",
-      "children": [],
-      "metadata": {
-        "bounds": {
-          "left": 0,
-          "right": 600,
-          "top": 0,
-          "bottom": 400
-        }
-      },
-      "variant": {},
-      "controllers": [
-        "./edit-text-controller.tsx"
-      ]
+import "../../../../../../../inputs/text/view.pc" as imp0
+
+
+/**
+ * @bounds(left: 0, right: 600, top: 0, bottom: 400)
+ */
+public component EditText {
+  script (src: "./edit-text-controller.tsx")
+  render imp0.TextInput (placeholder: "text") {
+    style {
+      position: absolute
     }
-  ],
-  "metadata": {}
+  }
 }
+

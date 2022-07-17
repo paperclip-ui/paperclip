@@ -1,213 +1,83 @@
-{
-  "id": "1273009774",
-  "version": "0.0.5",
-  "metadata": {},
-  "name": "module",
-  "children": [
-    {
-      "label": "Editor Tab",
-      "is": "div",
-      "style": {
-        "box-sizing": "border-box",
-        "padding": "8px 16px",
-        "align-items": "center",
-        "background": "var(--51588fd610365)",
-        "color": "rgba(112, 112, 112, 1)",
-        "cursor": "pointer",
-        "padding-left": "20px",
-        "height": "100%",
-        "overflow": "hidden",
-        "text-overflow": "\"\"",
-        "user-select": "none",
-        "white-space": "nowrap"
-      },
-      "attributes": {},
-      "id": "fde5849e96847",
-      "name": "component",
-      "children": [
-        {
-          "id": "fde5849e113917",
-          "name": "text",
-          "label": "label",
-          "value": "tab",
-          "style": {},
-          "children": [],
-          "metadata": {},
-          "styleMixins": {
-            "dc3b39eb1275": {
-              "priority": 0
-            }
-          }
-        },
-        {
-          "id": "f0d3191523498",
-          "name": "text",
-          "label": "x button",
-          "value": "×",
-          "style": {
-            "margin-left": "8px",
-            "visibility": "hidden",
-            "cursor": "pointer"
-          },
-          "children": [
-            {
-              "id": "e24f65cc1559",
-              "name": "variant-trigger",
-              "targetVariantId": "e24f65cc1557",
-              "source": {
-                "type": 1,
-                "state": "hover"
-              },
-              "children": [],
-              "metadata": {}
-            }
-          ],
-          "metadata": {},
-          "styleMixins": {
-            "dc3b39eb1275": {
-              "priority": 0
-            }
-          }
-        },
-        {
-          "id": "f4e04d3116",
-          "name": "variant",
-          "label": "selected",
-          "isDefault": false,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "f4e04d3117",
-          "variantId": "f4e04d3116",
-          "propertyName": "style",
-          "targetIdPath": [],
-          "value": {
-            "background": "var(--1934368810788)",
-            "user-select": "none"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
-          "id": "e24f65cc1557",
-          "name": "variant",
-          "label": "hovering",
-          "isDefault": true,
-          "children": [],
-          "metadata": {}
-        },
-        {
-          "id": "e24f65cc1558",
-          "variantId": "e24f65cc1557",
-          "propertyName": "style",
-          "targetIdPath": [
-            "f0d3191523498"
-          ],
-          "value": {
-            "visibility": "visible",
-            "font-size": "12px",
-            "position": "relative",
-            "top": "1px"
-          },
-          "name": "override",
-          "children": []
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 409,
-          "top": 207,
-          "right": 1269.793564786476,
-          "bottom": 487.39435041328807
-        }
-      },
-      "variant": {}
-    },
-    {
-      "id": "f91245fc598",
-      "label": "Element2",
-      "is": "div",
-      "name": "element",
-      "attributes": {},
-      "style": {
-        "box-sizing": "border-box",
-        "display": "block",
-        "white-space": "nowrap"
-      },
-      "children": [
-        {
-          "id": "f91245fc561",
-          "is": "fde5849e96847",
-          "label": "Editor Tab",
-          "name": "component-instance",
-          "attributes": {},
-          "style": {
-            "display": "inline-block",
-            "height": "unset",
-            "padding-left": "20px",
-            "overflow": "hidden",
-            "width": "100%",
-            "padding-top": "unset",
-            "position": "relative"
-          },
-          "children": [
-            {
-              "id": "f91245fc942",
-              "variantId": null,
-              "propertyName": "text",
-              "targetIdPath": [
-                "fde5849e113917"
-              ],
-              "value": "123456789rwewrwrrwe",
-              "name": "override",
-              "children": []
-            },
-            {
-              "id": "f91245fc1456",
-              "propertyName": "style",
-              "targetIdPath": [
-                "fde5849e113917"
-              ],
-              "value": {
-                "width": "100%",
-                "display": "inline-block"
-              },
-              "name": "override",
-              "children": []
-            },
-            {
-              "id": "f91245fc4345",
-              "propertyName": "style",
-              "targetIdPath": [
-                "f0d3191523498"
-              ],
-              "value": {
-                "white-space": "nowrap"
-              },
-              "name": "override",
-              "children": []
-            }
-          ],
-          "metadata": {
-            "bounds": {
-              "left": 727,
-              "top": 672,
-              "right": 1587.793564786476,
-              "bottom": 952.3943504132881
-            }
-          },
-          "variant": {}
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 1139,
-          "top": 1118,
-          "right": 1271,
-          "bottom": 1496
-        }
+import "../../../../../global.pc" as imp0
+import "../../../../atoms/view.pc" as imp1
+
+
+/**
+ * @bounds(left: 409, top: 207, right: 1270, bottom: 487)
+ */
+public component EditorTab {
+  variant selected (enabled: [])
+  variant hovering (enabled: [true])
+  render div {
+    style {
+      box-sizing: border-box
+      padding: 8px 16px
+      align-items: center
+      background: #{imp0.grey6}
+      color: rgba(112, 112, 112, 1)
+      cursor: pointer
+      padding-left: 20px
+      height: 100%
+      overflow: hidden
+      text-overflow: ""
+      user-select: none
+      white-space: nowrap
+    }
+    style variant selected {
+      background: #{imp0.grey7}
+      user-select: none
+    }
+    text label "tab" {
+      style {
+        include imp1.baseFont
       }
     }
-  ]
+    text xButton "×" {
+      style {
+        include imp1.baseFont
+        margin-left: 8px
+        visibility: hidden
+        cursor: pointer
+      }
+      style variant hovering {
+        visibility: visible
+        font-size: 12px
+        position: relative
+        top: 1px
+      }
+    }
+  }
+}
+
+/**
+ * @bounds(left: 1139, top: 1118, right: 1271, bottom: 1496)
+ */
+div element2 {
+  style {
+    box-sizing: border-box
+    display: block
+    white-space: nowrap
+  }
+  EditorTab editorTab {
+    style {
+      display: inline-block
+      height: unset
+      padding-left: 20px
+      overflow: hidden
+      width: 100%
+      padding-top: unset
+      position: relative
+    }
+    override label "123456789rwewrwrrwe" {
+      style {
+        width: 100%
+        display: inline-block
+      }
+    }
+    override xButton {
+      style {
+        white-space: nowrap
+      }
+    }
+  }
 }

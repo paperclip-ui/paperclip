@@ -1,59 +1,25 @@
-{
-  "id": "5f6a017190",
-  "version": "0.0.6",
-  "metadata": {},
-  "name": "module",
-  "children": [
-    {
-      "label": "Style behavior tab",
-      "is": "div",
-      "style": {
-        "box-sizing": "border-box",
-        "display": "block"
-      },
-      "attributes": {},
-      "id": "4e40c2b98546",
-      "name": "component",
-      "children": [
-        {
-          "id": "8f20d2148435",
-          "is": "8f20d2148434",
-          "label": "triggers pane",
-          "name": "component-instance",
-          "attributes": {},
-          "style": {},
-          "children": [
-            {
-              "id": "8f20d2149397",
-              "propertyName": "style",
-              "targetIdPath": [
-                "b6c162d140"
-              ],
-              "value": {
-                "padding-bottom": "6px"
-              },
-              "name": "override",
-              "children": []
-            }
-          ],
-          "metadata": {},
-          "variant": {
-            "8f20d2149395": false
-          }
-        }
-      ],
-      "metadata": {
-        "bounds": {
-          "left": 690,
-          "top": 9,
-          "right": 878,
-          "bottom": 229
-        }
-      },
-      "variant": {},
-      "controllers": [
-        "./controller.tsx"
-      ]
+import "./triggers.pc" as imp0
+
+
+/**
+ * @bounds(left: 690, top: 9, right: 878, bottom: 229)
+ */
+public component StyleBehaviorTab {
+  script (src: "./controller.tsx")
+  render div {
+    style {
+      box-sizing: border-box
+      display: block
     }
-  ]
+    imp0.TriggersPane triggersPane {
+      override {
+      }
+      override content {
+        style {
+          padding-bottom: 6px
+        }
+      }
+    }
+  }
 }
+

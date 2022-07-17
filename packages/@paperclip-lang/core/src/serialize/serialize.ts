@@ -210,7 +210,6 @@ const translateVariants = (
   const used = {};
 
   for (const variant of variants) {
-    console.log("VAR", variant);
     const name = getName(variant.label);
 
     if (used[name]) {
@@ -582,7 +581,6 @@ const translateOverrides = (
   overrides: PCOverride[],
   context: TranslateContext
 ) => {
-  console.log("INST DD", owner);
   const overridesByPath: Record<string, PCOverride[]> = {};
 
   if (owner.variant && Object.keys(owner.variant).length) {
@@ -695,7 +693,6 @@ const translateOverrides = (
             const variant = getPCNode(variantId, context.graph) as PCVariant;
 
             const enabled = override.value[variantId] || override.variantId;
-            console.log("VARR", variant, variantId);
             if (variant && enabled) {
               context = translateVariantOverride(
                 override,

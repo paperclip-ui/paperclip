@@ -30,6 +30,8 @@ import {
   DocCommentParameterValue,
   DocCommentPropertyValue,
 } from "../parser/docco/ast";
+import { last } from "lodash";
+import { DependencyGraph } from "..";
 
 type Context = {
   ast: ast.Document;
@@ -324,32 +326,20 @@ const deserializeOverride = (
       instance,
       context.graph
     ) as ast.Component;
-    const instanceComponent = ast.getInstanceComponent(
-      instance,
-      context.graph
-    ) as ast.Component;
+
     for (const name in variantOverridesByTrigger) {
       const triggerExpr = getComponentVariant(name, component);
 
-      const value = variantOverridesByTrigger[name].reduce((map, override) => {
-        const variantTarget = getComponentVariant(
-          override.name,
-          instanceComponent
+      const value = variantOverridesByTrigger[name].reduce((map, variant) => {
+        const refId = getVariantOverrideTargetId(
+          override,
+          variant,
+          instance,
+          context.graph
         );
-        map[variantTarget.id] = true;
+        map[refId] = true;
         return map;
       }, {});
-
-      console.log({
-        id: `${Object.keys(value).join("_")}_override`,
-        name: PCSourceTagNames.OVERRIDE,
-        variantId: triggerExpr.id,
-        propertyName: PCOverridablePropertyName.VARIANT,
-        value,
-        targetIdPath: [],
-        metadata: {},
-        children: [],
-      });
 
       overrides.push({
         id: `${Object.keys(value).join("_")}_override`,
@@ -367,8 +357,22 @@ const deserializeOverride = (
   return overrides;
 };
 
+const getVariantOverrideTargetId = (
+  override: ast.Override,
+  variant: ast.Variant,
+  instance: ast.Element,
+  graph: ast.ASTDependencyGraph
+) =>
+  last(
+    getInstanceRef(
+      [...(override.target || EMPTY_ARRAY), variant.name],
+      instance,
+      graph
+    )
+  );
+
 const getComponentVariant = (name: string, component: ast.Component) =>
-  component.body.find(
+  component.body?.find(
     (child) => child.kind === ast.ExpressionKind.Variant && child.name === name
   ) as ast.Variant;
 
@@ -402,13 +406,13 @@ const getOverrideVariantIds = (
   const variantIds: Record<string, boolean> = {};
   for (const variantOverride of variantOverrides) {
     if (isVariantEnabledByDefault(variantOverride)) {
-      const ref = getInstanceRef(
-        [...(override.target || EMPTY_ARRAY), variantOverride.name],
+      const ref = getVariantOverrideTargetId(
+        override,
+        variantOverride,
         instance,
         graph
       );
-
-      variantIds[ref[ref.length - 1]] = true;
+      variantIds[ref] = true;
     }
   }
 

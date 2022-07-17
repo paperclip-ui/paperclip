@@ -280,6 +280,9 @@ const flattenShallow = memoize((tree: Expression) => {
     case ExpressionKind.Slot: {
       return tree.body || [];
     }
+    case ExpressionKind.Text: {
+      return tree.children;
+    }
   }
   return [];
 });

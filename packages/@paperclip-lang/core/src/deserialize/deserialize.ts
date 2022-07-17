@@ -123,11 +123,10 @@ const deserializeComponent = (
     (expr) => expr.kind === ast.ExpressionKind.Render
   ) as ast.Render;
   const node = render?.node as ast.Element;
-  const { name: tagName, namespace } = node.tagName || {};
+  const { name: tagName } = node.tagName || {};
 
-  const componentTagName = namespace
-    ? ast.getInstanceComponent(node, context.graph).id
-    : tagName;
+  const componentTagName =
+    ast.getInstanceComponent(node, context.graph)?.id || tagName;
 
   const style = node.children.find(
     (child) => child.kind === ast.ExpressionKind.Style
@@ -154,10 +153,14 @@ const deserializeComponent = (
     children: [
       ...variants.map(deserializeVariant(context)),
       ...variantTriggers.map(deserializeVariantTrigger(context)),
-      ...deserializeOverrides(node, context),
       ...node.children.map((child) =>
         deserializeVisibleNode(child as ast.Node, node, context)
       ),
+
+      // strange behavior, but we set overrides at the end to ensure
+      // that nested overrides don't get overridden. This will be
+      // fixed when the old DSL is removed
+      ...deserializeOverrides(node, context),
     ].filter(Boolean),
     is: componentTagName,
     controllers: deserializeControllers(component),
@@ -451,10 +454,28 @@ const deserializeStyleOverride = (
     return null;
   }
 
-  let targetIdPath: string[] =
-    styleParent.kind == ast.ExpressionKind.Override && styleParent.target
-      ? getInstanceRef(styleParent.target, instance, context.graph)
-      : [];
+  let targetIdPath: string[] = EMPTY_ARRAY;
+
+  if (styleParent.kind === ast.ExpressionKind.Override) {
+    if (styleParent.target) {
+      targetIdPath = getInstanceRef(
+        styleParent.target,
+        instance,
+        context.graph
+      );
+    }
+  } else if (
+    !ast.isInstance(styleParent, context.graph) &&
+    ast.getParent(styleParent.id, context.ast)?.kind !==
+      ast.ExpressionKind.Render
+  ) {
+    targetIdPath = [styleParent.id];
+  }
+
+  // let targetIdPath: string[] =
+  //   styleParent.kind == ast.ExpressionKind.Override && styleParent.target
+  //     ? getInstanceRef(styleParent.target, instance, context.graph)
+  //     : (styleParent.kind === ast.ExpressionKind.Component || ast.isInstance(styleParent, context.graph)) ? [] : [styleParent.id];
 
   const contentNode = ast.getExpContentNode(node, context.graph);
 

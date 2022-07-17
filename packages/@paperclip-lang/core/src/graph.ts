@@ -120,7 +120,7 @@ export const deserializeDependencyGraph = (
   const dslGraph2 = mapValues(astGraph, (doc, uri) => {
     const content = deserializeModule(doc, uri, astGraph);
 
-    if (uri.includes("variants/option.pc")) {
+    if (uri.includes("layer.pc")) {
       console.log("DESERRR", uri, JSON.stringify(content, null, 2));
     }
     return {

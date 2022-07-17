@@ -565,7 +565,9 @@
               "label": "label input",
               "is": "input",
               "name": "element",
-              "attributes": {},
+              "attributes": {
+                "placeholder": "Input"
+              },
               "style": {
                 "box-sizing": "border-box",
                 "display": "none"
@@ -759,19 +761,6 @@
           "children": []
         },
         {
-          "id": "54ad1ce773",
-          "variantId": null,
-          "propertyName": "attributes",
-          "targetIdPath": [
-            "fc243cf091"
-          ],
-          "value": {
-            "placeholder": "label"
-          },
-          "name": "override",
-          "children": []
-        },
-        {
           "id": "6f0de1ad114",
           "name": "variant",
           "label": "hover",
@@ -877,17 +866,6 @@
           "isDefault": false,
           "children": [],
           "metadata": {}
-        },
-        {
-          "id": "5a14767c28925",
-          "variantId": "5a14767c27719",
-          "propertyName": "style",
-          "targetIdPath": [],
-          "value": {
-            "background": "unset"
-          },
-          "name": "override",
-          "children": []
         },
         {
           "id": "7982ea828779",

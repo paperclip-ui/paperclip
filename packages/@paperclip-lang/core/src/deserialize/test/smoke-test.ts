@@ -506,6 +506,29 @@ describe(__filename + "#", () => {
         `,
       },
     ],
+    [
+      `Can bind two variants together 2`,
+      {
+        "file:///entry.pc": `
+          public component A {
+            render div {
+              text label2 "hello"
+            }
+          }
+
+          public component B {
+            variant selected (enabled: [true])
+            render A {
+              override label2 {
+                style variant selected {
+                  color: white;
+                }
+              }
+            }
+          }
+        `,
+      },
+    ],
   ].forEach(([title, sourceGraph]: any) => {
     it(title, () => {
       const dslGraph: DependencyGraph = {};

@@ -22,6 +22,7 @@ import {
   PCSourceTagNames,
   PCStyleMixin,
   PCStyleOverride,
+  PCTextNode,
   PCVariable,
   PCVariant,
   PCVariant2Override,
@@ -41,7 +42,10 @@ import {
   TranslateContext,
 } from "./serialize-context";
 import { pascalCase, getName } from "./utils";
-import { VARIANT_ENABLED_PARAM_NAME } from "../parser/dsl/ast";
+import {
+  getOwnerInstance,
+  VARIANT_ENABLED_PARAM_NAME,
+} from "../parser/dsl/ast";
 import { countReset } from "console";
 
 type PCElementLike = PCComponent | PCComponentInstanceElement | PCElement;
@@ -327,6 +331,7 @@ const translateStyle = (
   context: TranslateContext
 ) => {
   const styleOverrides = getVariantStyleOverrides(node, context);
+  // console.log("SVER", styleOverrides.length, context)
 
   if (!hasStyles(node) && !styleOverrides.length) {
     return context;
@@ -346,10 +351,6 @@ const translateStyle = (
   context = endBlock(context);
   context = addBuffer(`}\n`, context);
   context = translateStyleOverrides(styleOverrides, context);
-  // if (isPCComponentInstance(node)) {
-  //   context = endBlock(context);
-  //   context = addBuffer(`}\n`, context);
-  // }
   return context;
 };
 
@@ -486,7 +487,9 @@ const getVariantStyleOverrides = (node: PCNode, context: TranslateContext) => {
 
   const overrides = uniq([
     ...getOverrides(node, context.graph),
-    ...getOverrides(contentNode, context.graph),
+    ...getOverrides(contentNode, context.graph).filter((override) => {
+      return override.targetIdPath.includes(node.id);
+    }),
   ]).filter(
     (override) =>
       override.propertyName === PCOverridablePropertyName.STYLE &&
@@ -529,6 +532,7 @@ const translateChildren = (node: PCNode, context: TranslateContext) => {
     !overrides.length &&
     !visibleChildren.length &&
     !hasStyles(node) &&
+    !getVariantStyleOverrides(node, context).length &&
     !(
       (isPCComponentInstance(node) ||
         node.name === PCSourceTagNames.COMPONENT) &&
@@ -542,6 +546,7 @@ const translateChildren = (node: PCNode, context: TranslateContext) => {
   context = startBlock(context);
   if (isVisibleNode(node) || isPCComponentOrInstance(node)) {
     context = translateStyle(node, context);
+    // context = translateOverrides(node, overrides, context);
   }
 
   if (isPCComponentInstance(node) || node.name === PCSourceTagNames.COMPONENT) {
@@ -577,25 +582,30 @@ const overrideTargetExists = (
 };
 
 const translateOverrides = (
-  owner: PCComponent | PCComponentInstanceElement,
+  owner: PCComponent | PCComponentInstanceElement | PCElement | PCTextNode,
   overrides: PCOverride[],
   context: TranslateContext
 ) => {
   const overridesByPath: Record<string, PCOverride[]> = {};
 
-  if (owner.variant && Object.keys(owner.variant).length) {
-    overridesByPath[""] = [
-      {
-        name: PCSourceTagNames.OVERRIDE,
-        propertyName: PCOverridablePropertyName.VARIANT,
-        variantId: null,
-        id: owner.id + "_variant",
-        targetIdPath: [],
-        children: [],
-        metadata: [],
-        value: owner.variant,
-      } as PCVariant2Override,
-    ];
+  if (
+    owner.name === PCSourceTagNames.COMPONENT ||
+    owner.name === PCSourceTagNames.COMPONENT_INSTANCE
+  ) {
+    if (owner.variant && Object.keys(owner.variant).length) {
+      overridesByPath[""] = [
+        {
+          name: PCSourceTagNames.OVERRIDE,
+          propertyName: PCOverridablePropertyName.VARIANT,
+          variantId: null,
+          id: owner.id + "_variant",
+          targetIdPath: [],
+          children: [],
+          metadata: [],
+          value: owner.variant,
+        } as PCVariant2Override,
+      ];
+    }
   }
 
   for (const override of overrides) {
@@ -626,11 +636,20 @@ const translateOverrides = (
       .join(".");
 
     // skip overrides that are on the instance itself
-    if (
-      override.propertyName === PCOverridablePropertyName.STYLE &&
-      override.targetIdPath.length < 1
-    ) {
-      continue;
+
+    if (override.propertyName === PCOverridablePropertyName.STYLE) {
+      if (
+        owner.name === PCSourceTagNames.COMPONENT &&
+        !getPCNode(owner.is, context.graph)
+      ) {
+        if (override.targetIdPath.length <= 1) {
+          continue;
+        }
+      } else {
+        if (override.targetIdPath.length < 1) {
+          continue;
+        }
+      }
     }
 
     if (!overridesByPath[targetPath]) {
@@ -676,11 +695,10 @@ const translateOverrides = (
     if (valueOverride) {
       if (valueOverride.propertyName === PCOverridablePropertyName.ATTRIBUTES) {
         context = translateAttributes(valueOverride.value, context);
-        context = addBuffer(`\n`, context);
       } else if (
         valueOverride.propertyName === PCOverridablePropertyName.TEXT
       ) {
-        context = addBuffer(` "${valueOverride.value.trim()}"\n`, context);
+        context = addBuffer(` "${valueOverride.value.trim()}"`, context);
       }
     }
 

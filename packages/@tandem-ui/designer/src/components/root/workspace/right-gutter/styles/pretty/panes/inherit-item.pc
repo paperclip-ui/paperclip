@@ -171,7 +171,7 @@
               "targetIdPath": [
                 "67e386c7935"
               ],
-              "value": "Label",
+              "value": "Some item",
               "name": "override",
               "children": []
             },
@@ -183,7 +183,7 @@
                 "67e386c7935"
               ],
               "value": {
-                "color": "rgba(255, 255, 255, 1)"
+                "color": "white"
               },
               "name": "override",
               "children": []

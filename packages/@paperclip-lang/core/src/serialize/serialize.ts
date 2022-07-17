@@ -207,11 +207,19 @@ const translateVariants = (
   context: TranslateContext
 ) => {
   const variants = getPCVariants(component);
+  const used = {};
+
   for (const variant of variants) {
+    console.log("VAR", variant);
+    const name = getName(variant.label);
+
+    if (used[name]) {
+      console.warn(`Variant ${name} already defined`);
+    }
+
+    used[name] = true;
     context = addBuffer(
-      `variant ${getName(
-        variant.label
-      )} (${VARIANT_ENABLED_PARAM_NAME}: ${translateVariantTrigger(
+      `variant ${name} (${VARIANT_ENABLED_PARAM_NAME}: ${translateVariantTrigger(
         variant,
         component
       )})\n`,
@@ -351,10 +359,7 @@ const translateStyleOverridesInner = (
   context: TranslateContext
 ) => {
   for (const override of styleOverrides) {
-    const variant =
-      override.variantId &&
-      (getPCNode(override.variantId, context.graph) as PCVariant);
-    if (variant) {
+    if (override.variantId) {
       continue;
     }
     context = translateStyleValues(override.value, context);
@@ -385,6 +390,10 @@ const translateStyleOverride = (
   const variant =
     override.variantId &&
     (getPCNode(override.variantId, context.graph) as PCVariant);
+
+  if (override.variantId && !variant) {
+    return context;
+  }
 
   context = addBuffer(
     `style ${variant ? `variant ${getName(variant.label)} ` : ""}{\n`,
@@ -573,6 +582,7 @@ const translateOverrides = (
   overrides: PCOverride[],
   context: TranslateContext
 ) => {
+  console.log("INST DD", owner);
   const overridesByPath: Record<string, PCOverride[]> = {};
 
   if (owner.variant && Object.keys(owner.variant).length) {
@@ -684,10 +694,12 @@ const translateOverrides = (
           for (const variantId in override.value) {
             const variant = getPCNode(variantId, context.graph) as PCVariant;
 
-            if (variant) {
-              const enabled = override.value[variantId];
-              context = addBuffer(
-                `variant ${getName(variant.label)} (enabled: ${enabled})\n`,
+            const enabled = override.value[variantId] || override.variantId;
+            console.log("VARR", variant, variantId);
+            if (variant && enabled) {
+              context = translateVariantOverride(
+                override,
+                variant.label,
                 context
               );
             }
@@ -703,10 +715,11 @@ const translateOverrides = (
             context.graph
           ) as PCVariant;
 
-          if (variant && variant.label) {
-            const enabled = override.value;
-            context = addBuffer(
-              `variant ${getName(variant.label)} (enabled: ${enabled})\n`,
+          const enabled = override.value || override.variantId;
+          if (variant && variant.label && enabled) {
+            context = translateVariantOverride(
+              override,
+              variant.label,
               context
             );
           }
@@ -723,6 +736,35 @@ const translateOverrides = (
       context = addBuffer(`\n`, context);
     }
   }
+  return context;
+};
+
+const translateVariantOverride = (
+  override: PCOverride,
+  label: string,
+  context: TranslateContext
+) => {
+  let trigger = "";
+
+  if (override.variantId) {
+    const triggerVariant = getPCNode(
+      override.variantId,
+      context.graph
+    ) as PCVariant;
+    if (triggerVariant) {
+      trigger = getName(triggerVariant.label);
+    } else {
+      return context;
+    }
+  } else {
+    trigger = `true`;
+  }
+
+  context = addBuffer(
+    `variant ${getName(label)} (enabled: [${trigger}])\n`,
+    context
+  );
+
   return context;
 };
 

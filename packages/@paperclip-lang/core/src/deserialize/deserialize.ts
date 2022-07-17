@@ -258,9 +258,7 @@ const deserializeOverrides = (
     ) {
       overrides.push(deserializeStyleOverride(descendent, instance, context));
     } else if (descendent.kind === ast.ExpressionKind.Override) {
-      overrides.push(
-        ...deserializeOverride(descendent, instance, context.graph)
-      );
+      overrides.push(...deserializeOverride(descendent, instance, context));
     }
   }
 
@@ -284,25 +282,95 @@ const isStyleOverride = (node: ast.Style, instance: ast.Element) => {
 const deserializeOverride = (
   override: ast.Override,
   instance: ast.Element,
-  graph: ast.ASTDependencyGraph
+  context: Context
 ): PCOverride[] => {
   const overrides: PCOverride[] = [];
 
   if (typeof override.constructorValue === "string") {
-    overrides.push(deserializeTextOverride(override, instance, graph));
+    overrides.push(deserializeTextOverride(override, instance, context.graph));
   }
 
-  if (override.body && override.target) {
-    const hasVariantOverride = override.body.some(
+  const variantOverridesByTrigger: Record<string, ast.Variant[]> = {};
+
+  const variantOverrides =
+    (override.body?.filter(
       (child) => child.kind === ast.ExpressionKind.Variant
+    ) as ast.Variant[]) || EMPTY_ARRAY;
+
+  for (const variant of variantOverrides) {
+    const enabledParam = variant.parameters.find(
+      (param) => param.name === "enabled"
     );
-    if (hasVariantOverride) {
-      overrides.push(deserializeVariantOverride(override, instance, graph));
+    const values = enabledParam && ast.flatten(enabledParam.value);
+    const ref = values.find(
+      (value) => value.kind === ast.ExpressionKind.Reference
+    ) as ast.Reference;
+    if (ref) {
+      if (!variantOverridesByTrigger[ref.path[0]]) {
+        variantOverridesByTrigger[ref.path[0]] = [];
+      }
+      variantOverridesByTrigger[ref.path[0]].push(variant);
+    }
+  }
+
+  if (override.body && override.target && variantOverrides.length) {
+    overrides.push(
+      deserializeVariantOverride(override, instance, context.graph)
+    );
+  }
+
+  if (Object.keys(variantOverridesByTrigger).length) {
+    const component = ast.getExpContentNode(
+      instance,
+      context.graph
+    ) as ast.Component;
+    const instanceComponent = ast.getInstanceComponent(
+      instance,
+      context.graph
+    ) as ast.Component;
+    for (const name in variantOverridesByTrigger) {
+      const triggerExpr = getComponentVariant(name, component);
+
+      const value = variantOverridesByTrigger[name].reduce((map, override) => {
+        const variantTarget = getComponentVariant(
+          override.name,
+          instanceComponent
+        );
+        map[variantTarget.id] = true;
+        return map;
+      }, {});
+
+      console.log({
+        id: `${Object.keys(value).join("_")}_override`,
+        name: PCSourceTagNames.OVERRIDE,
+        variantId: triggerExpr.id,
+        propertyName: PCOverridablePropertyName.VARIANT,
+        value,
+        targetIdPath: [],
+        metadata: {},
+        children: [],
+      });
+
+      overrides.push({
+        id: `${Object.keys(value).join("_")}_override`,
+        name: PCSourceTagNames.OVERRIDE,
+        variantId: triggerExpr.id,
+        propertyName: PCOverridablePropertyName.VARIANT,
+        value,
+        targetIdPath: [],
+        metadata: {},
+        children: [],
+      });
     }
   }
 
   return overrides;
 };
+
+const getComponentVariant = (name: string, component: ast.Component) =>
+  component.body.find(
+    (child) => child.kind === ast.ExpressionKind.Variant && child.name === name
+  ) as ast.Variant;
 
 const deserializeVariantOverride = (
   override: ast.Override,

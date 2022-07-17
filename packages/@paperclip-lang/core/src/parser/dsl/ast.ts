@@ -433,7 +433,7 @@ export const assertUniqueNames = (node: Expression, uri: string) => {
       if (names[nested.name]) {
         console.error(`${nested.name} already defined in ${uri}`);
       }
-      names[nested.name] = true;
+      names[nested.name] = nested as any;
     }
   }
 };

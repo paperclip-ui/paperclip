@@ -110,14 +110,14 @@ export const paperclipReducer = <
       LEGACY
       */
 
-      // let graph = addFileCacheItemToDependencyGraph(
-      //   { uri, content },
-      //   state.graph
-      // );
+      let graph = addFileCacheItemToDependencyGraph(
+        { uri, content },
+        state.graph
+      );
 
-      // state = pruneDependencyGraph({ ...(state as any), graph });
+      state = pruneDependencyGraph({ ...(state as any), graph });
 
-      // return state;
+      return state;
 
       // LEGACY END
 

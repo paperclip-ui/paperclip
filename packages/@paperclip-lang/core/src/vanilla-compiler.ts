@@ -127,6 +127,7 @@ export const translateModuleToVanilla = memoize(
           )}`
       )
       .join("\n");
+
     return content;
   }
 );
@@ -171,17 +172,22 @@ const translateContentNode = memoize(
     }`;
 
     // check for height override.
-    // if (buffer.includes("3086ac43f11520d3e10632d217b0cfa862")) {
-    //   // console.log("IT HAS IT", sourceUri);
-    //   // console.log(JSON.stringify(node, null, 2));
-    //   console.log(buffer);
-    // }
+    console.log("DEEE");
+    if (buffer.includes("271129984329b1f8b960d1ea139538b866")) {
+      // console.log("IT HAS IT", sourceUri);
+      // console.log(JSON.stringify(node, null, 2));
+      console.log(buffer);
+    }
 
     if (
       sourceUri.includes("borders.pc") ||
       sourceUri.includes("icons/view.pc")
     ) {
       // console.log("fdfds", node.label, buffer);
+    }
+
+    if (sourceUri.includes("layer.pc")) {
+      console.log("CONTENT", sourceUri, buffer);
     }
 
     return buffer + `})()`;
@@ -479,6 +485,8 @@ const translateStaticVariants = (
   for (const variant of variants) {
     buffer += `_${variant.id}: {`;
 
+    // console.log("DO", variant.id, variantNodes);
+
     // we want to start with the _last_ items first, then work our way to the front
     // so that we have proper order of operations
     for (let i = variantNodes.length; i--; ) {
@@ -489,6 +497,9 @@ const translateStaticVariants = (
         node.name === PCSourceTagNames.COMPONENT_INSTANCE ||
           node.name === PCSourceTagNames.COMPONENT
       );
+      // if (sourceUri.includes("inherit-item.pc")) {
+      //   console.log("OMAP", overrideMap);
+      // }
       if (!overrideMap[variant.id]) {
         continue;
       }

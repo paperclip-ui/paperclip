@@ -204,7 +204,7 @@ describe(__filename + "#", () => {
         public component B {
           render A {
             override {
-              variant small (enabled: true)
+              variant small (enabled: [true])
             }
           }
         }
@@ -243,7 +243,7 @@ describe(__filename + "#", () => {
         public component A1 {
           render A {
             override inst {
-              variant selected (enabled: true)
+              variant selected (enabled: [true])
             }
           }
         }
@@ -479,7 +479,50 @@ describe(__filename + "#", () => {
           public component B {
             render A {
               override {
-                variant a1 (enabled: true)
+                variant a1 (enabled: [true])
+              }
+            }
+          }
+        `,
+      },
+    ],
+    [
+      `Can bind two variants together`,
+      {
+        "file:///entry.pc": `
+          public component A {
+            variant a1 (enabled: [true])
+            render div
+          }
+
+          public component B {
+            variant b1 (enabled: [true])
+            render A {
+              override {
+                variant a1 (enabled: [b1])
+              }
+            }
+          }
+        `,
+      },
+    ],
+    [
+      `Can bind two variants together 2`,
+      {
+        "file:///entry.pc": `
+          public component A {
+            render div {
+              text label2 "hello"
+            }
+          }
+
+          public component B {
+            variant selected (enabled: [true])
+            render A {
+              override label2 {
+                style variant selected {
+                  color: white;
+                }
               }
             }
           }

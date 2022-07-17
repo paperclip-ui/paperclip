@@ -97,6 +97,7 @@ export default (Base: React.FC<BaseContentProps>) =>
       if (updateContentPosition) {
         position = updateContentPosition(position, popoverRect);
       }
+
       const newStyle = {
         position: "fixed",
         zIndex: 1024,
@@ -111,10 +112,14 @@ export default (Base: React.FC<BaseContentProps>) =>
         <div ref={wrapperRef}>
           {portal &&
             createPortal(
-              <Base {...rest}>
-                <div ref={containerRef} style={style}>
-                  {children}
-                </div>
+              <Base
+                {...rest}
+                style={{
+                  ...(rest.style || {}),
+                  ...style,
+                }}
+              >
+                <div ref={containerRef}>{children}</div>
               </Base>,
               portal
             )}

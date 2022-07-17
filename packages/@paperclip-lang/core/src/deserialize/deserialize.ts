@@ -30,6 +30,8 @@ import {
   DocCommentParameterValue,
   DocCommentPropertyValue,
 } from "../parser/docco/ast";
+import { last } from "lodash";
+import { DependencyGraph } from "..";
 
 type Context = {
   ast: ast.Document;
@@ -121,11 +123,10 @@ const deserializeComponent = (
     (expr) => expr.kind === ast.ExpressionKind.Render
   ) as ast.Render;
   const node = render?.node as ast.Element;
-  const { name: tagName, namespace } = node.tagName || {};
+  const { name: tagName } = node.tagName || {};
 
-  const componentTagName = namespace
-    ? ast.getInstanceComponent(node, context.graph).id
-    : tagName;
+  const componentTagName =
+    ast.getInstanceComponent(node, context.graph)?.id || tagName;
 
   const style = node.children.find(
     (child) => child.kind === ast.ExpressionKind.Style
@@ -152,10 +153,14 @@ const deserializeComponent = (
     children: [
       ...variants.map(deserializeVariant(context)),
       ...variantTriggers.map(deserializeVariantTrigger(context)),
-      ...deserializeOverrides(node, context),
       ...node.children.map((child) =>
         deserializeVisibleNode(child as ast.Node, node, context)
       ),
+
+      // strange behavior, but we set overrides at the end to ensure
+      // that nested overrides don't get overridden. This will be
+      // fixed when the old DSL is removed
+      ...deserializeOverrides(node, context),
     ].filter(Boolean),
     is: componentTagName,
     controllers: deserializeControllers(component),
@@ -258,9 +263,7 @@ const deserializeOverrides = (
     ) {
       overrides.push(deserializeStyleOverride(descendent, instance, context));
     } else if (descendent.kind === ast.ExpressionKind.Override) {
-      overrides.push(
-        ...deserializeOverride(descendent, instance, context.graph)
-      );
+      overrides.push(...deserializeOverride(descendent, instance, context));
     }
   }
 
@@ -284,25 +287,97 @@ const isStyleOverride = (node: ast.Style, instance: ast.Element) => {
 const deserializeOverride = (
   override: ast.Override,
   instance: ast.Element,
-  graph: ast.ASTDependencyGraph
+  context: Context
 ): PCOverride[] => {
   const overrides: PCOverride[] = [];
 
   if (typeof override.constructorValue === "string") {
-    overrides.push(deserializeTextOverride(override, instance, graph));
+    overrides.push(deserializeTextOverride(override, instance, context.graph));
   }
 
-  if (override.body && override.target) {
-    const hasVariantOverride = override.body.some(
+  const variantOverridesByTrigger: Record<string, ast.Variant[]> = {};
+
+  const variantOverrides =
+    (override.body?.filter(
       (child) => child.kind === ast.ExpressionKind.Variant
+    ) as ast.Variant[]) || EMPTY_ARRAY;
+
+  for (const variant of variantOverrides) {
+    const enabledParam = variant.parameters.find(
+      (param) => param.name === "enabled"
     );
-    if (hasVariantOverride) {
-      overrides.push(deserializeVariantOverride(override, instance, graph));
+    const values = enabledParam && ast.flatten(enabledParam.value);
+    const ref = values.find(
+      (value) => value.kind === ast.ExpressionKind.Reference
+    ) as ast.Reference;
+    if (ref) {
+      if (!variantOverridesByTrigger[ref.path[0]]) {
+        variantOverridesByTrigger[ref.path[0]] = [];
+      }
+      variantOverridesByTrigger[ref.path[0]].push(variant);
+    }
+  }
+
+  if (override.body && override.target && variantOverrides.length) {
+    overrides.push(
+      deserializeVariantOverride(override, instance, context.graph)
+    );
+  }
+
+  if (Object.keys(variantOverridesByTrigger).length) {
+    const component = ast.getExpContentNode(
+      instance,
+      context.graph
+    ) as ast.Component;
+
+    for (const name in variantOverridesByTrigger) {
+      const triggerExpr = getComponentVariant(name, component);
+
+      const value = variantOverridesByTrigger[name].reduce((map, variant) => {
+        const refId = getVariantOverrideTargetId(
+          override,
+          variant,
+          instance,
+          context.graph
+        );
+        map[refId] = true;
+        return map;
+      }, {});
+
+      overrides.push({
+        id: `${Object.keys(value).join("_")}_override`,
+        name: PCSourceTagNames.OVERRIDE,
+        variantId: triggerExpr.id,
+        propertyName: PCOverridablePropertyName.VARIANT,
+        value,
+        targetIdPath: [],
+        metadata: {},
+        children: [],
+      });
     }
   }
 
   return overrides;
 };
+
+const getVariantOverrideTargetId = (
+  override: ast.Override,
+  variant: ast.Variant,
+  instance: ast.Element,
+  graph: ast.ASTDependencyGraph
+) =>
+  last(
+    getInstanceRef(
+      [...(override.target || EMPTY_ARRAY), variant.name],
+      instance,
+      graph
+    )
+  );
+
+const getComponentVariant = (name: string, component: ast.Component) =>
+  component.body?.find(
+    (child) => child.kind === ast.ExpressionKind.Variant && child.name === name
+  ) as ast.Variant;
 
 const deserializeVariantOverride = (
   override: ast.Override,
@@ -334,13 +409,13 @@ const getOverrideVariantIds = (
   const variantIds: Record<string, boolean> = {};
   for (const variantOverride of variantOverrides) {
     if (isVariantEnabledByDefault(variantOverride)) {
-      const ref = getInstanceRef(
-        [...(override.target || EMPTY_ARRAY), variantOverride.name],
+      const ref = getVariantOverrideTargetId(
+        override,
+        variantOverride,
         instance,
         graph
       );
-
-      variantIds[ref[ref.length - 1]] = true;
+      variantIds[ref] = true;
     }
   }
 
@@ -379,10 +454,28 @@ const deserializeStyleOverride = (
     return null;
   }
 
-  let targetIdPath: string[] =
-    styleParent.kind == ast.ExpressionKind.Override && styleParent.target
-      ? getInstanceRef(styleParent.target, instance, context.graph)
-      : [];
+  let targetIdPath: string[] = EMPTY_ARRAY;
+
+  if (styleParent.kind === ast.ExpressionKind.Override) {
+    if (styleParent.target) {
+      targetIdPath = getInstanceRef(
+        styleParent.target,
+        instance,
+        context.graph
+      );
+    }
+  } else if (
+    !ast.isInstance(styleParent, context.graph) &&
+    ast.getParent(styleParent.id, context.ast)?.kind !==
+      ast.ExpressionKind.Render
+  ) {
+    targetIdPath = [styleParent.id];
+  }
+
+  // let targetIdPath: string[] =
+  //   styleParent.kind == ast.ExpressionKind.Override && styleParent.target
+  //     ? getInstanceRef(styleParent.target, instance, context.graph)
+  //     : (styleParent.kind === ast.ExpressionKind.Component || ast.isInstance(styleParent, context.graph)) ? [] : [styleParent.id];
 
   const contentNode = ast.getExpContentNode(node, context.graph);
 

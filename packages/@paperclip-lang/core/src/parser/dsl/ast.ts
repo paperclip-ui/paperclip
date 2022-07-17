@@ -280,6 +280,9 @@ const flattenShallow = memoize((tree: Expression) => {
     case ExpressionKind.Slot: {
       return tree.body || [];
     }
+    case ExpressionKind.Text: {
+      return tree.children;
+    }
   }
   return [];
 });
@@ -433,7 +436,7 @@ export const assertUniqueNames = (node: Expression, uri: string) => {
       if (names[nested.name]) {
         console.error(`${nested.name} already defined in ${uri}`);
       }
-      names[nested.name] = true;
+      names[nested.name] = nested as any;
     }
   }
 };

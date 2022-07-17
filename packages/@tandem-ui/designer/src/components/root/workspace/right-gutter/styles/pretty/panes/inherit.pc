@@ -113,16 +113,6 @@
                       "children": []
                     },
                     {
-                      "id": "308dd31384",
-                      "propertyName": "isDefault",
-                      "targetIdPath": [
-                        "308dd31382"
-                      ],
-                      "value": true,
-                      "name": "override",
-                      "children": []
-                    },
-                    {
                       "id": "406b307b73141",
                       "variantId": null,
                       "propertyName": "text",

@@ -301,14 +301,6 @@
           "children": []
         },
         {
-          "id": "4f6549161307",
-          "name": "variant",
-          "label": "on",
-          "isDefault": false,
-          "children": [],
-          "metadata": {}
-        },
-        {
           "id": "4f6549161308",
           "variantId": "4f6549161307",
           "propertyName": "style",

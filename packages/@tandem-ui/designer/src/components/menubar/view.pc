@@ -35,8 +35,6 @@ public component MenuBarItem {
       display: inline-block
       position: relative
     }
-    style variant active {
-    }
     override button {
       variant active (enabled: [active])
     }
@@ -49,10 +47,6 @@ public component MenuBarItem {
         padding-bottom: 8px
         padding-left: 12px
         height: 33px
-      }
-      style variant active {
-      }
-      override {
       }
       override label {
         style {
@@ -75,8 +69,6 @@ public component MenuBarItem {
           box-sizing: border-box
           display: block
           position: absolute
-        }
-        style variant active {
         }
         slot items {
           MenuBarItemOption option2 {

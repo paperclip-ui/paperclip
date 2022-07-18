@@ -21,8 +21,6 @@ public component VariantOption {
       padding-right: 8px
       padding-bottom: 6px
     }
-    style variant alt {
-    }
     override switch {
       variant on (enabled: [on])
       variant on (enabled: [alt])

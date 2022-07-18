@@ -379,8 +379,6 @@ public component TblrInput {
             style variant disconnected {
               padding-right: 6px
             }
-            style variant connected {
-            }
             insert icon {
               slot thirdIcon {
                 imp5.BordersIcon bordersIcon4 {
@@ -411,8 +409,6 @@ public component TblrInput {
             }
             style variant disconnected {
               padding-right: unset
-            }
-            style variant connected {
             }
             insert icon {
               slot fourthIcon {
@@ -477,10 +473,6 @@ public component InlineLabeledInput {
           }
           style variant focus {
             box-shadow: none
-          }
-          style variant disabled {
-          }
-          override {
           }
         }
       }

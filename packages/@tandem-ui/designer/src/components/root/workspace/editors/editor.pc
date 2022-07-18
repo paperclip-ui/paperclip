@@ -67,12 +67,4 @@ public component Editor {
  * @bounds(left: 1869, top: 971, right: 3237, bottom: 1741)
  */
 Editor preview {
-  override content {
-    style {
-    }
-  }
-  override toolbar.tabs.inst {
-    style variant selected {
-    }
-  }
 }

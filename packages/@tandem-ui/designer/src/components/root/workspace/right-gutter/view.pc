@@ -47,8 +47,6 @@ public component RightGutter {
           font-size: 9px
           cursor: pointer
         }
-        style variant stylesTab {
-        }
         override label "style"
         override {
           variant selected (enabled: [stylesTab])
@@ -99,8 +97,6 @@ public component RightGutter {
           font-size: 9px
           cursor: pointer
         }
-        style variant propertiesTab {
-        }
         override label "properties"
         override {
           variant selected (enabled: [propertiesTab])
@@ -119,30 +115,14 @@ public component RightGutter {
         style variant propertiesTab {
           display: none
         }
-        style variant variablesTab {
-        }
-        style variant propertiesTab {
-        }
         style variant stylesTab {
           display: flex
         }
         override properties.inheritPane.content {
-          style {
-          }
-          style {
-          }
-          style {
-          }
-          style {
-          }
         }
         override styleSwitcher.removeStyleButton {
-          style variant stylesTab {
-          }
         }
         override styleSwitcher.element2 {
-          style variant stylesTab {
-          }
         }
       }
       imp4.Properties properties {

@@ -61,12 +61,6 @@ public component BaseLayer {
       font-size: 12px
       color: #{imp0.grey3}
     }
-    style variant component {
-    }
-    style variant alt {
-    }
-    style variant file {
-    }
     style variant selected {
       background: #00B5FF
       color: rgba(255, 255, 255, 1)
@@ -279,15 +273,11 @@ public component BaseLayer {
           style variant editingLabel {
             display: none
           }
-          style variant file {
-          }
           style variant unlabeled {
             display: none
           }
           style variant selected {
             color: rgba(255, 255, 255, 1)
-          }
-          style variant header {
           }
           style variant inShadow {
             color: #{imp0.purple1}

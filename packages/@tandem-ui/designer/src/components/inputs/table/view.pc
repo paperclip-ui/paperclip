@@ -38,8 +38,6 @@ public component TableCell {
           display: block
           text-align: left
         }
-        style variant alt {
-        }
       }
     }
   }

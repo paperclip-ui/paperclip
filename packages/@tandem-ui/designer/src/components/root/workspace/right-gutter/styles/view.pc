@@ -32,10 +32,6 @@ public component Styles {
       style variant showPropertiesTab {
         display: block
       }
-      style variant triggersTab {
-      }
-      style variant propertiesTab {
-      }
       div tabBar {
         style {
           box-sizing: border-box
@@ -51,17 +47,11 @@ public component Styles {
         style variant showPropertiesTab {
           display: flex
         }
-        style variant triggersTab {
-        }
-        style variant propertiesTab {
-        }
         div element1 {
           style {
             box-sizing: border-box
             display: inline-block
             width: 100%
-          }
-          style variant propertiesTab {
           }
           text propertiesText "Appearance" {
             style {
@@ -69,8 +59,6 @@ public component Styles {
             }
             style variant triggersTab {
               display: none
-            }
-            style variant propertiesTab {
             }
           }
           text trigggersText "Behavior" {
@@ -109,10 +97,6 @@ public component Styles {
                 color: #{imp0.blue1}
                 position: relative
               }
-              style variant triggersTab {
-              }
-              style variant showPropertiesTab {
-              }
             }
           }
           span triggersTabButton {
@@ -125,8 +109,6 @@ public component Styles {
               }
               style variant triggersTab {
                 color: #{imp0.blue1}
-              }
-              style variant propertiesTab {
               }
             }
           }

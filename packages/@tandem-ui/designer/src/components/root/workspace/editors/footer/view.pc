@@ -137,8 +137,6 @@ public component Breadcrumb {
         style {
           margin-right: 6px
         }
-        style variant component {
-        }
         style variant hovering {
           color: #{imp0.blue1}
         }

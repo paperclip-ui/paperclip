@@ -312,8 +312,6 @@ public component BorderStyles {
         display: block
         margin-top: 8px
       }
-      style variant all {
-      }
       imp8.ButtonBar toggler {
         style {
           display: inline-flex

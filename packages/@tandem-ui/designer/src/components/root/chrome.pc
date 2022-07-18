@@ -119,8 +119,6 @@ public component Chrome {
           display: inline-block
           opacity: 0
         }
-        style variant macos {
-        }
         slot label {
           text text1 "app.tdproject" {
             style {

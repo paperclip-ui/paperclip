@@ -23,8 +23,6 @@ public component InheritItem {
       background: #{imp1.blue1}
       color: rgba(255, 255, 255, 1)
     }
-    style variant alt {
-    }
     override {
       variant filterable (enabled: [true])
     }
@@ -38,15 +36,11 @@ public component InheritItem {
         display: flex
         align-items: center
       }
-      style variant alt {
-      }
       imp0.ColorPaletteIcon colorPaletteIcon {
         style {
           display: block
           height: 10px
           color: #{imp1.grey4}
-        }
-        style variant selected {
         }
         override ndoe99 {
           style {

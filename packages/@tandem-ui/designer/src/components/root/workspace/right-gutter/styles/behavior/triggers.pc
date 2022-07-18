@@ -13,10 +13,6 @@ public component TriggersPane {
   variant hasTriggers (enabled: [])
   variant hasItemSelected (enabled: [true])
   render imp0.Pane {
-    style {
-    }
-    style variant hasItemSelected {
-    }
     override {
       variant right (enabled: [true])
     }

@@ -19,8 +19,6 @@ public component Dropdown {
       outline: none
       font-size: 11px
     }
-    style variant special {
-    }
     imp0.Popover popover {
       insert anchor {
         slot button {

@@ -433,7 +433,7 @@ const deserializeTextOverride = (
     id: override.id,
     name: PCSourceTagNames.OVERRIDE,
     propertyName: PCOverridablePropertyName.TEXT,
-    value: String(override.constructorValue),
+    value: String(override.constructorValue).replace(/\\/g, ""),
     children: [],
     metadata: {},
     targetIdPath: getInstanceRef(override.target, instance, graph),
@@ -895,7 +895,7 @@ const deserializeTextNode = (node: ast.Text, context: Context): PCTextNode => {
   return {
     id: getNodeId(node, context),
     name: PCSourceTagNames.TEXT,
-    value: node.value,
+    value: node.value.replace(/\\/g, ""),
     styleMixins: style
       ? deserializeAppliedStyleMixins(style, node, context)
       : {},

@@ -529,6 +529,18 @@ describe(__filename + "#", () => {
         `,
       },
     ],
+    [
+      `Can create a text block with an escaped quote`,
+      {
+        "file:///entry.pc": `
+          public component A {
+            render div {
+              text "\\"hello\\""
+            }
+          }
+        `,
+      },
+    ],
   ].forEach(([title, sourceGraph]: any) => {
     it(title, () => {
       const dslGraph: DependencyGraph = {};

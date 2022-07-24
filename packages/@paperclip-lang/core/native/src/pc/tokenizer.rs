@@ -84,6 +84,10 @@ impl<'scan, 'src> Tokenizer<'scan, 'src> {
                 let e_pos = self.source.scan(is_space).u8_pos;
                 return Ok(Token::Space(&self.source.source[s_pos..e_pos]));
             }
+            _ if is_newline(start) => {
+                let e_pos = self.source.scan(is_newline).u8_pos;
+                return Ok(Token::Space(&self.source.source[s_pos..e_pos]));
+            }
             _ if is_az(start) => {
                 let e_pos = self.source.scan(|b| is_az(b) || is_digit(b)).u8_pos;
                 return Ok(Token::Word(&self.source.source[s_pos..e_pos]));
@@ -98,9 +102,6 @@ impl<'scan, 'src> Tokenizer<'scan, 'src> {
         TTest: Fn(&Token) -> bool,
     {
         loop {
-            if self.is_eof() {
-                break;
-            }
             if test(&self.curr) {
                 self.next();
             } else {
@@ -139,6 +140,9 @@ pub fn is_digit(c: u8) -> bool {
 
 pub fn is_space(c: u8) -> bool {
     matches!(c, b'\t' | b' ')
+}
+pub fn is_newline(c: u8) -> bool {
+    matches!(c, b'\n' | b'\r')
 }
 
 pub fn is_superfluous(token: &Token) -> bool {

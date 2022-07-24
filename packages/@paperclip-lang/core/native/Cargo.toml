@@ -21,4 +21,5 @@ serde_json = { version = "1.0.72" }
 uuid = { version = "0.8", features = ["serde", "v4", "wasm-bindgen"] }
 crc = "1.8.1"
 pretty_assertions = "1.2.1"
+textwrap = "0.15.0"
 

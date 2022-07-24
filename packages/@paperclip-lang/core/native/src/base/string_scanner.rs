@@ -123,7 +123,7 @@ impl<'src> StringScanner<'src> {
         }
     }
     pub fn is_eof(&self) -> bool {
-        self.source.len() == 0 || self.pos >= self.source.len() - 1
+        self.source.len() == 0 || self.pos >= self.source.len()
     }
 
     pub fn search<FF>(&mut self, test: FF) -> &'src [u8]

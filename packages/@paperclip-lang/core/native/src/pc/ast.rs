@@ -20,7 +20,7 @@ pub struct Variant {
 pub struct Style {
     pub id: String,
     pub range: Range,
-    body: Vec<StyleBodyItem>,
+    pub body: Vec<StyleBodyItem>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -40,7 +40,7 @@ pub enum StyleBodyItem {
 pub struct Render {
     pub id: String,
     pub range: Range,
-    node: RenderNode,
+    node: Node,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -70,7 +70,7 @@ pub enum TextNodeBodyItem {
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
-pub enum RenderNode {
+pub enum Node {
     Element(Element),
     Text(TextNode),
 }
@@ -92,6 +92,7 @@ pub struct Import {
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub enum DocumentBodyItem {
     Import(Import),
+    Style(Style),
     Component(Component),
 }
 

@@ -50,6 +50,7 @@ fn parse_document_child<'scan, 'src>(
             Ok(ast::DocumentBodyItem::Component(parse_component(context)?))
         }
         Token::Word(b"import") => Ok(ast::DocumentBodyItem::Import(parse_import(context)?)),
+        Token::Word(b"style") => Ok(ast::DocumentBodyItem::Style(parse_style(context)?)),
         _ => {
             return Err(context.new_unexpected_token_error());
         }
@@ -87,6 +88,7 @@ fn parse_import<'scan, 'src>(
 
     // eat namespace
     context.next_token();
+    context.skip(is_superfluous_or_newline);
 
     let end = context.curr_16pos().clone();
 
@@ -94,6 +96,28 @@ fn parse_import<'scan, 'src>(
         id: context.next_id(),
         path,
         namespace,
+        range: Range::new(start, end),
+    })
+}
+
+fn parse_style<'scan, 'src>(
+    context: &mut Context<'scan, 'src>,
+) -> Result<ast::Style, err::ParserError> {
+    let start = context.curr_16pos().clone();
+
+    // eat statement
+    context.next_token();
+    context.skip(is_superfluous_or_newline);
+    context.next_token(); // eat {
+    context.skip(is_superfluous_or_newline);
+    context.next_token(); // eat }
+    context.skip(is_superfluous_or_newline);
+
+    let end = context.curr_16pos().clone();
+
+    Ok(ast::Style {
+        id: context.next_id(),
+        body: vec![],
         range: Range::new(start, end),
     })
 }
@@ -115,6 +139,11 @@ fn parse_component<'scan, 'src>(
 
     // eat name
     context.next_token();
+    context.skip(is_superfluous_or_newline);
+    context.next_token(); // eat {
+    context.skip(is_superfluous_or_newline);
+    context.next_token(); // eat }
+    context.skip(is_superfluous_or_newline);
 
     let end = context.curr_16pos().clone();
 
@@ -156,66 +185,4 @@ fn parse_component_body<'scan, 'src>(
 
 fn trim_string(value: &str) -> String {
     value[1..value.len() - 1].to_string()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::base::ast::{Range, U16Position};
-    use pretty_assertions;
-
-    #[test]
-    fn can_parse_various_contents() {
-        let tests: [(&str, Result<ast::Document, err::ParserError>); 4] = [
-            // Can parse an empty document
-            (
-                "",
-                Ok(ast::Document {
-                    id: "9afa003c-1".to_string(),
-                    range: Range::new(U16Position::new(0, 1, 1), U16Position::new(0, 1, 1)),
-                    body: vec![],
-                }),
-            ),
-            // Can parse a component
-            (
-                "component ABC {}",
-                Ok(ast::Document {
-                    id: "9afa003c-2".to_string(),
-                    range: Range::new(U16Position::new(9, 1, 10), U16Position::new(13, 1, 14)),
-                    body: vec![ast::DocumentBodyItem::Component(ast::Component {
-                        id: "9afa003c-1".to_string(),
-                        body: vec![],
-                        range: Range::new(U16Position::new(0, 1, 1), U16Position::new(13, 1, 14)),
-                        name: "ABC".to_string(),
-                    })],
-                }),
-            ),
-            (
-                "component",
-                Err(err::ParserError::new(
-                    "Unexpected token".to_string(),
-                    Range::new(U16Position::new(9, 1, 10), U16Position::new(9, 1, 10)),
-                    err::ErrorKind::UnexpectedToken,
-                )),
-            ),
-            (
-                "import 'abcde' as imp1",
-                Ok(ast::Document {
-                    id: "9afa003c-2".to_string(),
-                    range: Range::new(U16Position::new(6, 1, 7), U16Position::new(22, 1, 23)),
-                    body: vec![ast::DocumentBodyItem::Import(ast::Import {
-                        id: "9afa003c-1".to_string(),
-                        range: Range::new(U16Position::new(0, 1, 1), U16Position::new(22, 1, 23)),
-                        namespace: "imp1".to_string(),
-                        path: "abcde".to_string(),
-                    })],
-                }),
-            ),
-        ];
-
-        for (source, expected_struct) in tests {
-            let ast = parse(source, &"".to_string());
-            pretty_assertions::assert_eq!(ast, expected_struct);
-        }
-    }
 }

@@ -1,8 +1,24 @@
-[package]
-name = "engine"
-version = "0.1.0"
-edition = "2021"
+[profile.release]
+debug = false
+opt-level = 3
+lto = true
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[package]
+name = "paperclip_lang_core"
+version = "0.1.0"
+authors = ["Craig Condon <craig.j.condon@gmail.com>"]
+edition = "2018"
+exclude = ["artifacts.json", "index.node"]
+
+[lib]
+name = "paperclip_lang_core"
+crate-type = ["cdylib"]
 
 [dependencies]
+serde = { version = "1.0.130", features = ["derive"] }
+serde_json = { version = "1.0.72" }
+uuid = { version = "0.8", features = ["serde", "v4", "wasm-bindgen"] }
+crc = "1.8.1"
+pretty_assertions = "1.2.1"
+

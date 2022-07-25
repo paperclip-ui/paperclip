@@ -1,3 +1,21 @@
+- Rust engine
+
+  - parser
+    - expressions
+      - attributes
+      - overrides
+        - paths
+    - ensure that style declarations work
+      - css varaibles need to work
+    - update variant syntax
+  - evaluator
+    - should render virtual DOM
+    - A\* diffing (exercise)
+  - translator
+    - interim
+  - CLI
+  - FE engine in Rust?
+
 - save entire graph
 - Rust rendering engine
 - migrate over to AST instead of DSL

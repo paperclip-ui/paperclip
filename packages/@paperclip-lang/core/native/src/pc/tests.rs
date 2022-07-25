@@ -9,7 +9,7 @@ use textwrap::dedent;
 
 #[test]
 fn can_parse_various_contents() {
-    let tests: [(&str, Result<(), err::ParserError>); 14] = [
+    let tests: [(&str, Result<(), err::ParserError>); 17] = [
         // Can parse an empty document
         ("", Ok(())),
         // Can parse a component
@@ -112,6 +112,40 @@ fn can_parse_various_contents() {
             component A {
             }
             component B {
+            }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+            component A {
+                render div {
+                    override {
+                    }
+                }
+            }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+            component A {
+                render div {
+                    override {
+                        style {
+                            color: blue
+                        }
+                    }
+                }
+            }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+            component A {
+                render div(a: "blah", b: "barb") {
+                }
             }
         "#,
             Ok(()),

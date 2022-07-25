@@ -84,6 +84,19 @@ fn serialize_style(style: &ast::Style, context: &mut Context) {
     context.end_block();
     context.add_buffer("}\n".to_string());
 }
+
+fn serialize_override(style: &ast::Override, context: &mut Context) {
+    context.add_buffer(format!("override {{\n"));
+    context.start_block();
+    for item in &style.body {
+        match item {
+            ast::OverrideBodyItem::Style(style) => serialize_style(style, context),
+        }
+    }
+    context.end_block();
+    context.add_buffer("}\n".to_string());
+}
+
 fn serialize_style_declaration(style: &ast::StyleDeclaration, context: &mut Context) {
     context.add_buffer(format!("{}: {}\n", style.name, style.value));
 }
@@ -126,6 +139,7 @@ fn serialize_element(node: &ast::Element, context: &mut Context) {
             match item {
                 ast::ElementBodyItem::Element(element) => serialize_element(element, context),
                 ast::ElementBodyItem::Style(style) => serialize_style(style, context),
+                ast::ElementBodyItem::Override(over) => serialize_override(over, context),
                 ast::ElementBodyItem::Text(text) => serialize_text(text, context),
             }
         }

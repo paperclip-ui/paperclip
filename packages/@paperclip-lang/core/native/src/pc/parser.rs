@@ -262,6 +262,38 @@ fn parse_text<'scan, 'src>(
     })
 }
 
+
+fn parse_override<'scan, 'src>(
+    context: &mut Context<'scan, 'src>,
+) -> Result<ast::Override, err::ParserError> {
+    let start = context.get_u16pos().clone();
+    context.next_token(); // eat override
+    context.skip(is_superfluous_or_newline);
+    let path = vec![];
+
+    let body = if context.curr_token() == &Token::CurlyOpen {
+        parse_body(
+            context,
+            |context: &mut Context| match context.curr_token() {
+                Token::Word(b"style") => Ok(ast::OverrideBodyItem::Style(parse_style(context)?)),
+                _ => Err(context.new_unexpected_token_error()),
+            },
+            Some((Token::CurlyOpen, Token::CurlyClose)),
+        )?
+    } else {
+        vec![]
+    };
+
+    let end = context.get_u16pos().clone();
+
+    Ok(ast::Override {
+        id: context.next_id(),
+        range: Range::new(start, end),
+        path,
+        body,
+    })
+}
+
 fn parse_element<'scan, 'src>(
     context: &mut Context<'scan, 'src>,
 ) -> Result<ast::Element, err::ParserError> {
@@ -281,6 +313,7 @@ fn parse_element<'scan, 'src>(
             |context: &mut Context| match context.curr_token() {
                 Token::Word(b"style") => Ok(ast::ElementBodyItem::Style(parse_style(context)?)),
                 Token::Word(b"text") => Ok(ast::ElementBodyItem::Text(parse_text(context)?)),
+                Token::Word(b"override") => Ok(ast::ElementBodyItem::Override(parse_override(context)?)),
                 Token::Word(_) => Ok(ast::ElementBodyItem::Element(parse_element(context)?)),
                 _ => Err(context.new_unexpected_token_error()),
             },

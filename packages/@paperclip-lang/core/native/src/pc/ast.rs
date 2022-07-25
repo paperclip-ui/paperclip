@@ -56,6 +56,7 @@ pub enum ElementBodyItem {
     Style(Style),
     Element(Element),
     Text(TextNode),
+    Override(Override),
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -64,6 +65,19 @@ pub struct TextNode {
     pub value: String,
     pub range: Range,
     pub body: Vec<TextNodeBodyItem>,
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
+pub struct Override {
+    pub id: String,
+    pub path: Vec<String>,
+    pub range: Range,
+    pub body: Vec<OverrideBodyItem>,
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
+pub enum OverrideBodyItem {
+    Style(Style)
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

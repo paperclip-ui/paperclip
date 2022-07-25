@@ -40,19 +40,70 @@ pub enum StyleBodyItem {
 pub struct Render {
     pub id: String,
     pub range: Range,
-    pub node: Node,
+    pub node: RenderNode,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Element {
     pub tag_name: String,
+    pub parameters: Vec<Parameter>,
     pub id: String,
     pub range: Range,
     pub body: Vec<ElementBodyItem>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
+pub struct Insert {
+    pub name: String,
+    pub id: String,
+    pub range: Range,
+    pub body: Vec<InsertBody>,
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
+pub enum InsertBody {
+    Element(Element),
+    Text(TextNode),
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
+pub struct Slot {
+    pub id: String,
+    pub range: Range,
+    pub name: String,
+    pub body: Vec<SlotBodyItem>,
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
+pub enum SlotBodyItem {
+    Element(Element),
+    Text(TextNode),
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
+pub struct Parameter {
+    pub id: String,
+    pub range: Range,
+    pub name: String,
+    pub value: ParameterValue,
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
+pub struct Str {
+    pub id: String,
+    pub range: Range,
+    pub value: String,
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
+pub enum ParameterValue {
+    String(Str),
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
 pub enum ElementBodyItem {
+    Slot(Slot),
+    Insert(Insert),
     Style(Style),
     Element(Element),
     Text(TextNode),
@@ -77,7 +128,7 @@ pub struct Override {
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub enum OverrideBodyItem {
-    Style(Style)
+    Style(Style),
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -86,7 +137,8 @@ pub enum TextNodeBodyItem {
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
-pub enum Node {
+pub enum RenderNode {
+    Slot(Slot),
     Element(Element),
     Text(TextNode),
 }

@@ -103,13 +103,14 @@ fn serialize_style_declaration(style: &ast::StyleDeclaration, context: &mut Cont
 
 fn serialize_render(imp: &ast::Render, context: &mut Context) {
     context.add_buffer("render ".to_string());
-    serialize_node(&imp.node, context);
+    serialize_render_node(&imp.node, context);
 }
 
-fn serialize_node(node: &ast::Node, context: &mut Context) {
+fn serialize_render_node(node: &ast::RenderNode, context: &mut Context) {
     match node {
-        ast::Node::Text(text) => serialize_text(text, context),
-        ast::Node::Element(text) => serialize_element(text, context),
+        ast::RenderNode::Text(text) => serialize_text(text, context),
+        ast::RenderNode::Slot(slot) => serialize_slot(slot, context),
+        ast::RenderNode::Element(text) => serialize_element(text, context),
     }
 }
 
@@ -132,12 +133,17 @@ fn serialize_text(node: &ast::TextNode, context: &mut Context) {
 
 fn serialize_element(node: &ast::Element, context: &mut Context) {
     context.add_buffer(format!("{}", node.tag_name));
+    if node.parameters.len() > 0 {
+        serialize_parameters(&node.parameters, context);
+    }
     if node.body.len() > 0 {
         context.add_buffer(" {\n".to_string());
         context.start_block();
         for item in &node.body {
             match item {
                 ast::ElementBodyItem::Element(element) => serialize_element(element, context),
+                ast::ElementBodyItem::Slot(slot) => serialize_slot(slot, context),
+                ast::ElementBodyItem::Insert(insert) => serialize_insert(insert, context),
                 ast::ElementBodyItem::Style(style) => serialize_style(style, context),
                 ast::ElementBodyItem::Override(over) => serialize_override(over, context),
                 ast::ElementBodyItem::Text(text) => serialize_text(text, context),
@@ -147,6 +153,60 @@ fn serialize_element(node: &ast::Element, context: &mut Context) {
         context.add_buffer("}".to_string());
     }
     context.add_buffer("\n".to_string());
+}
+
+fn serialize_parameters(parameters: &Vec<ast::Parameter>, context: &mut Context) {
+    context.add_buffer("(".to_string());
+    let mut it = parameters.into_iter().peekable();
+    while let Some(param) = it.next() {
+        serialize_parameter(param, context);
+        if it.peek().is_some() {
+            context.add_buffer(", ".to_string());
+        }
+    }
+
+    context.add_buffer(")".to_string());
+}
+
+fn serialize_parameter(param: &ast::Parameter, context: &mut Context) {
+    context.add_buffer(format!("{}: ", param.name));
+    serialize_parameter_value(&param.value, context);
+}
+
+fn serialize_slot(slot: &ast::Slot, context: &mut Context) {
+    context.add_buffer(format!("slot {} {{\n", slot.name));
+    context.start_block();
+    for item in &slot.body {
+        match item {
+            ast::SlotBodyItem::Element(element) => serialize_element(element, context),
+            ast::SlotBodyItem::Text(text) => serialize_text(text, context),
+        }
+    }
+    context.end_block();
+    context.add_buffer("}\n".to_string());
+}
+
+fn serialize_insert(insert: &ast::Insert, context: &mut Context) {
+    context.add_buffer(format!("insert {} {{\n", insert.name));
+    context.start_block();
+    for item in &insert.body {
+        match item {
+            ast::InsertBody::Element(element) => serialize_element(element, context),
+            ast::InsertBody::Text(text) => serialize_text(text, context),
+        }
+    }
+    context.end_block();
+    context.add_buffer("}\n".to_string());
+}
+
+fn serialize_parameter_value(node: &ast::ParameterValue, context: &mut Context) {
+    match node {
+        ast::ParameterValue::String(value) => serialize_string(value, context),
+    }
+}
+
+fn serialize_string(node: &ast::Str, context: &mut Context) {
+    context.add_buffer(format!("\"{}\"", node.value));
 }
 
 fn serialize_variant(imp: &ast::Variant, context: &mut Context) {}

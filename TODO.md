@@ -1,6 +1,8 @@
 - Rust engine
 
   - parser
+
+    - use struct parser
     - expressions
       - attributes
       - overrides
@@ -8,6 +10,7 @@
     - ensure that style declarations work
       - css varaibles need to work
     - update variant syntax
+
   - evaluator
     - should render virtual DOM
     - A\* diffing (exercise)

@@ -8,6 +8,9 @@ pub enum Token<'src> {
     None,
     CurlyOpen,
     CurlyClose,
+    ParenOpen,
+    Comma,
+    ParenClose,
     Colon,
     Dot,
     NewLine(&'src [u8]),
@@ -60,6 +63,9 @@ impl<'scan, 'src> Tokenizer<'scan, 'src> {
         return match start {
             b'{' => Ok(Token::CurlyOpen),
             b'}' => Ok(Token::CurlyClose),
+            b'(' => Ok(Token::ParenOpen),
+            b')' => Ok(Token::ParenClose),
+            b',' => Ok(Token::Comma),
             b':' => Ok(Token::Colon),
             b'\"' | b'\'' => {
                 while !self.source.is_eof() {

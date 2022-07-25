@@ -24,12 +24,13 @@ impl Context {
     }
     pub fn add_buffer(&mut self, buffer: String) {
         let indent = if self.is_new_line {
-            " ".repeat((self.depth * self.indent_size) as usize)
+            "  ".repeat((self.depth * self.indent_size) as usize)
         } else {
             "".to_string()
         };
 
-        self.buffer = format!("{}{}{}", indent, self.buffer, buffer);
+
+        self.buffer = format!("{}{}{}", self.buffer, indent, buffer);
 
         self.is_new_line = if let Some(pos) = buffer.rfind("\n") {
             pos == buffer.len() - 1
@@ -62,6 +63,7 @@ fn serialize_import(imp: &ast::Import, context: &mut Context) {
 fn serialize_component(component: &ast::Component, context: &mut Context) {
     context.add_buffer(format!("component {} {{\n", component.name));
     context.start_block();
+
     for item in &component.body {
         match item {
             ast::ComponentBodyItem::Render(render) => serialize_render(render, context),
@@ -76,13 +78,20 @@ fn serialize_style(style: &ast::Style, context: &mut Context) {
     context.add_buffer(format!("style {{\n"));
     context.start_block();
     for item in &style.body {
+        match item {
+            ast::StyleBodyItem::Declaration(decl) => serialize_style_declaration(decl, context)
+        }
     }
     context.end_block();
-    context.add_buffer("}".to_string());
+    context.add_buffer("}\n".to_string());
+}
+fn serialize_style_declaration(style: &ast::StyleDeclaration, context: &mut Context) {
+    context.add_buffer(format!("{}: {}\n", style.name, style.value));
 }
 
 fn serialize_render(imp: &ast::Render, context: &mut Context) {
-    context.add_buffer("render".to_string());
+    context.add_buffer("render ".to_string());
+    serialize_node(&imp.node, context);
 }
 
 fn serialize_node(node: &ast::Node, context: &mut Context) {
@@ -92,8 +101,26 @@ fn serialize_node(node: &ast::Node, context: &mut Context) {
     }
 }
 
-fn serialize_text(node: &ast::TextNode, context: &mut Context) {}
+fn serialize_text(node: &ast::TextNode, context: &mut Context) {
+    context.add_buffer(format!("text \"{}\"", node.value));
+    if node.body.len() > 0 {
+        context.add_buffer(" {\n".to_string());
+        context.start_block();
+        for item in &node.body {
+            match item {
+                ast::TextNodeBodyItem::Style(style) => serialize_style(style, context)
+            }
+        }
+        context.end_block();
+        context.add_buffer("}".to_string());
+    }
 
-fn serialize_element(node: &ast::Element, context: &mut Context) {}
+    context.add_buffer("\n".to_string());
+}
+
+fn serialize_element(node: &ast::Element, context: &mut Context) {
+    context.add_buffer(format!("{}", node.tag_name));
+    context.add_buffer("\n".to_string());
+}
 
 fn serialize_variant(imp: &ast::Variant, context: &mut Context) {}

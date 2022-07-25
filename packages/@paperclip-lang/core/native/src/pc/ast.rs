@@ -27,8 +27,8 @@ pub struct Style {
 pub struct StyleDeclaration {
     pub id: String,
     pub range: Range,
-    name: String,
-    value: String,
+    pub name: String,
+    pub value: String,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -40,14 +40,15 @@ pub enum StyleBodyItem {
 pub struct Render {
     pub id: String,
     pub range: Range,
-    node: Node,
+    pub node: Node,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Element {
+    pub tag_name: String,
     pub id: String,
     pub range: Range,
-    body: Vec<ElementBodyItem>,
+    pub body: Vec<ElementBodyItem>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -60,8 +61,9 @@ pub enum ElementBodyItem {
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct TextNode {
     pub id: String,
+    pub value: String,
     pub range: Range,
-    body: Vec<TextNodeBodyItem>,
+    pub body: Vec<TextNodeBodyItem>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

@@ -107,11 +107,15 @@ fn parse_style<'scan, 'src>(
     context.next_token();
     context.skip(is_superfluous_or_newline);
 
-
-    let body = parse_body(context, |context: &mut Context| {
-        Ok(ast::StyleBodyItem::Declaration(parse_style_declaration(context)?))
-    }, Some((Token::CurlyOpen, Token::CurlyClose)))?;
-
+    let body = parse_body(
+        context,
+        |context: &mut Context| {
+            Ok(ast::StyleBodyItem::Declaration(parse_style_declaration(
+                context,
+            )?))
+        },
+        Some((Token::CurlyOpen, Token::CurlyClose)),
+    )?;
 
     let end = context.curr_16pos().clone();
 
@@ -125,7 +129,6 @@ fn parse_style<'scan, 'src>(
 fn parse_style_declaration<'scan, 'src>(
     context: &mut Context<'scan, 'src>,
 ) -> Result<ast::StyleDeclaration, err::ParserError> {
-
     let start = context.get_u16pos().clone();
 
     let name = if let Token::Word(name) = context.curr_token() {
@@ -138,7 +141,6 @@ fn parse_style_declaration<'scan, 'src>(
     context.skip(is_superfluous_or_newline);
     context.next_token(); // eat :
     context.skip(is_superfluous_or_newline);
-
 
     let value = if let Token::Word(value) = context.curr_token() {
         str::from_utf8(value).unwrap().to_string()
@@ -155,7 +157,7 @@ fn parse_style_declaration<'scan, 'src>(
         id: context.next_id(),
         range: Range::new(start, end),
         name,
-        value
+        value,
     })
 }
 
@@ -178,15 +180,14 @@ fn parse_component<'scan, 'src>(
     context.next_token();
     context.skip(is_superfluous_or_newline);
 
-    let body = parse_body(context, |context: &mut Context| {
-        match context.curr_token() {
+    let body = parse_body(
+        context,
+        |context: &mut Context| match context.curr_token() {
             Token::Word(b"render") => Ok(ast::ComponentBodyItem::Render(parse_render(context)?)),
-            _ => {
-                Err(context.new_unexpected_token_error())
-            }
-        }
-
-    }, Some((Token::CurlyOpen, Token::CurlyClose)))?;
+            _ => Err(context.new_unexpected_token_error()),
+        },
+        Some((Token::CurlyOpen, Token::CurlyClose)),
+    )?;
 
     let end = context.curr_16pos().clone();
 
@@ -210,25 +211,23 @@ fn parse_render<'scan, 'src>(
     Ok(ast::Render {
         id: context.next_id(),
         range: Range::new(start, end),
-        node
+        node,
     })
 }
 
 fn parse_node<'scan, 'src>(
     context: &mut Context<'scan, 'src>,
-) -> Result<ast::Node, err::ParserError> {  
+) -> Result<ast::Node, err::ParserError> {
     match context.curr_token() {
         Token::Word(b"text") => Ok(ast::Node::Text(parse_text(context)?)),
         Token::Word(_) => Ok(ast::Node::Element(parse_element(context)?)),
-        _ => Err(context.new_unexpected_token_error())
+        _ => Err(context.new_unexpected_token_error()),
     }
 }
 
-
-
 fn parse_text<'scan, 'src>(
     context: &mut Context<'scan, 'src>,
-) -> Result<ast::TextNode, err::ParserError> {  
+) -> Result<ast::TextNode, err::ParserError> {
     let start = context.get_u16pos().clone();
     context.next_token(); // eat render
     context.skip(is_superfluous_or_newline);
@@ -239,29 +238,33 @@ fn parse_text<'scan, 'src>(
     };
     context.next_token(); // eat value
     context.skip(is_superfluous_or_newline);
-    let body = parse_body(context, |context: &mut Context| {
-        match context.curr_token() {
-            Token::Word(b"style") => Ok(ast::TextNodeBodyItem::Style(parse_style(context)?)),
-            _ => Err(context.new_unexpected_token_error())
-        }
-    }, Some((Token::CurlyOpen, Token::CurlyClose)))?;
+
+    let body = if context.curr_token() == &Token::CurlyOpen {
+        parse_body(
+            context,
+            |context: &mut Context| match context.curr_token() {
+                Token::Word(b"style") => Ok(ast::TextNodeBodyItem::Style(parse_style(context)?)),
+                _ => Err(context.new_unexpected_token_error()),
+            },
+            Some((Token::CurlyOpen, Token::CurlyClose)),
+        )?
+    } else {
+        vec![]
+    };
 
     let end = context.get_u16pos().clone();
-
 
     Ok(ast::TextNode {
         id: context.next_id(),
         range: Range::new(start, end),
         value,
-        body
+        body,
     })
 }
 
-
-
 fn parse_element<'scan, 'src>(
     context: &mut Context<'scan, 'src>,
-) -> Result<ast::Element, err::ParserError> {  
+) -> Result<ast::Element, err::ParserError> {
     let start = context.get_u16pos().clone();
     let tag_name: String = if let Token::Word(word) = context.curr_token() {
         str::from_utf8(word).unwrap().to_string()
@@ -271,19 +274,40 @@ fn parse_element<'scan, 'src>(
 
     context.next_token(); // eat tag name
     context.skip(is_superfluous_or_newline);
+
+    let body = if context.curr_token() == &Token::CurlyOpen {
+        parse_body(
+            context,
+            |context: &mut Context| match context.curr_token() {
+                Token::Word(b"style") => Ok(ast::ElementBodyItem::Style(parse_style(context)?)),
+                Token::Word(b"text") => Ok(ast::ElementBodyItem::Text(parse_text(context)?)),
+                Token::Word(_) => Ok(ast::ElementBodyItem::Element(parse_element(context)?)),
+                _ => Err(context.new_unexpected_token_error()),
+            },
+            Some((Token::CurlyOpen, Token::CurlyClose)),
+        )?
+    } else {
+        vec![]
+    };
+
     let end = context.get_u16pos().clone();
 
     Ok(ast::Element {
         id: context.next_id(),
         tag_name,
         range: Range::new(start, end),
-        body: vec![]
+        body,
     })
 }
 
-
-
-fn parse_body<TItem, TTest>(context: &mut Context, parse_item: TTest, ends: Option<(Token, Token)>) -> Result<Vec<TItem>, err::ParserError> where TTest: Fn(&mut Context) -> Result<TItem, err::ParserError> {
+fn parse_body<TItem, TTest>(
+    context: &mut Context,
+    parse_item: TTest,
+    ends: Option<(Token, Token)>,
+) -> Result<Vec<TItem>, err::ParserError>
+where
+    TTest: Fn(&mut Context) -> Result<TItem, err::ParserError>,
+{
     if ends != None {
         context.next_token();
         context.skip(is_superfluous_or_newline);
@@ -292,7 +316,6 @@ fn parse_body<TItem, TTest>(context: &mut Context, parse_item: TTest, ends: Opti
     let mut body: Vec<TItem> = vec![];
 
     while context.curr_token() != &Token::None {
-
         if let Some((_, end)) = &ends {
             if context.curr_token() == end {
                 context.next_token();
@@ -300,7 +323,6 @@ fn parse_body<TItem, TTest>(context: &mut Context, parse_item: TTest, ends: Opti
                 break;
             }
         }
-
 
         body.push(parse_item(context)?);
     }

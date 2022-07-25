@@ -5,13 +5,11 @@ use super::serializer::serialize;
 
 use crate::base::ast::{Range, U16Position};
 use pretty_assertions;
-use textwrap::{dedent};
+use textwrap::dedent;
 
 #[test]
 fn can_parse_various_contents() {
-
-
-    let tests: [(&str, Result<(), err::ParserError>); 9] = [
+    let tests: [(&str, Result<(), err::ParserError>); 14] = [
         // Can parse an empty document
         ("", Ok(())),
         // Can parse a component
@@ -26,21 +24,31 @@ fn can_parse_various_contents() {
         ),
         ("import \"abcde\" as imp1\n", Ok(())),
         ("style {\n}", Ok(())),
-        (r#"
+        (
+            r#"
             component A {
             }
-        "#, Ok(())),
-        (r#"
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
             component A {
                 render div
             }
-        "#, Ok(())),
-        (r#"
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
             component A {
                 render text "hello world"
             }
-        "#, Ok(())),
-        (r#"
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
             component A {
                 render text "hello world" {
                     style {
@@ -48,7 +56,66 @@ fn can_parse_various_contents() {
                     }
                 }
             }
-        "#, Ok(())),
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+            component A {
+                render div {
+                    style {
+                        color: red
+                    }
+                }
+            }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+            component A {
+                render div {
+                    style {
+                        color: red
+                    }
+                    text "hello world"
+                    span
+                }
+            }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+            import "" as d
+            component A {
+                render div {
+                    style {
+                        color: red
+                    }
+                    text "hello world"
+                    span
+                }
+            }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+            import "" as d
+            import "" as b
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+            component A {
+            }
+            component B {
+            }
+        "#,
+            Ok(()),
+        ),
     ];
 
     for (source, result) in tests {

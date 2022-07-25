@@ -29,7 +29,6 @@ impl Context {
             "".to_string()
         };
 
-
         self.buffer = format!("{}{}{}", self.buffer, indent, buffer);
 
         self.is_new_line = if let Some(pos) = buffer.rfind("\n") {
@@ -71,7 +70,7 @@ fn serialize_component(component: &ast::Component, context: &mut Context) {
         }
     }
     context.end_block();
-    context.add_buffer("}".to_string());
+    context.add_buffer("}\n".to_string());
 }
 
 fn serialize_style(style: &ast::Style, context: &mut Context) {
@@ -79,7 +78,7 @@ fn serialize_style(style: &ast::Style, context: &mut Context) {
     context.start_block();
     for item in &style.body {
         match item {
-            ast::StyleBodyItem::Declaration(decl) => serialize_style_declaration(decl, context)
+            ast::StyleBodyItem::Declaration(decl) => serialize_style_declaration(decl, context),
         }
     }
     context.end_block();
@@ -108,7 +107,7 @@ fn serialize_text(node: &ast::TextNode, context: &mut Context) {
         context.start_block();
         for item in &node.body {
             match item {
-                ast::TextNodeBodyItem::Style(style) => serialize_style(style, context)
+                ast::TextNodeBodyItem::Style(style) => serialize_style(style, context),
             }
         }
         context.end_block();
@@ -120,6 +119,19 @@ fn serialize_text(node: &ast::TextNode, context: &mut Context) {
 
 fn serialize_element(node: &ast::Element, context: &mut Context) {
     context.add_buffer(format!("{}", node.tag_name));
+    if node.body.len() > 0 {
+        context.add_buffer(" {\n".to_string());
+        context.start_block();
+        for item in &node.body {
+            match item {
+                ast::ElementBodyItem::Element(element) => serialize_element(element, context),
+                ast::ElementBodyItem::Style(style) => serialize_style(style, context),
+                ast::ElementBodyItem::Text(text) => serialize_text(text, context),
+            }
+        }
+        context.end_block();
+        context.add_buffer("}".to_string());
+    }
     context.add_buffer("\n".to_string());
 }
 

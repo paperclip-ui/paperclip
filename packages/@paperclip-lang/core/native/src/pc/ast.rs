@@ -54,7 +54,7 @@ pub struct Element {
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub enum ElementBodyItem {
     Style(Style),
-    Element(Box<Element>),
+    Element(Element),
     Text(TextNode),
 }
 

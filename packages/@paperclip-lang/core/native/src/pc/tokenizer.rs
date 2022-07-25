@@ -86,7 +86,7 @@ impl<'scan, 'src> Tokenizer<'scan, 'src> {
             }
             _ if is_newline(start) => {
                 let e_pos = self.source.scan(is_newline).u8_pos;
-                return Ok(Token::Space(&self.source.source[s_pos..e_pos]));
+                return Ok(Token::NewLine(&self.source.source[s_pos..e_pos]));
             }
             _ if is_az(start) => {
                 let e_pos = self.source.scan(|b| is_az(b) || is_digit(b)).u8_pos;

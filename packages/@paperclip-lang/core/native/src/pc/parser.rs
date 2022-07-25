@@ -66,11 +66,7 @@ fn parse_import<'scan, 'src>(
     context.next_token();
     context.skip(is_superfluous_or_newline);
 
-    let path = if let Token::String(name) = context.curr_token() {
-        trim_string(str::from_utf8(name).unwrap())
-    } else {
-        return Err(context.new_unexpected_token_error());
-    };
+    let path = extract_string_value(context)?;
 
     // eat string
     context.next_token();
@@ -79,12 +75,7 @@ fn parse_import<'scan, 'src>(
     // eat "as"
     context.next_token();
     context.skip(is_superfluous_or_newline);
-
-    let namespace = if let Token::Word(name) = context.curr_token() {
-        str::from_utf8(name).unwrap().to_string()
-    } else {
-        return Err(context.new_unexpected_token_error());
-    };
+    let namespace = extract_word_value(context)?;
 
     // eat namespace
     context.next_token();
@@ -130,13 +121,7 @@ fn parse_style_declaration<'scan, 'src>(
     context: &mut Context<'scan, 'src>,
 ) -> Result<ast::StyleDeclaration, err::ParserError> {
     let start = context.get_u16pos().clone();
-
-    let name = if let Token::Word(name) = context.curr_token() {
-        str::from_utf8(name).unwrap().to_string()
-    } else {
-        return Err(context.new_unexpected_token_error());
-    };
-
+    let name = extract_word_value(context)?;
     context.next_token();
     context.skip(is_superfluous_or_newline);
     context.next_token(); // eat :
@@ -163,13 +148,7 @@ fn parse_component<'scan, 'src>(
     // eat component
     context.next_token();
     context.skip(is_superfluous_or_newline);
-
-    let name = if let Token::Word(name) = context.curr_token() {
-        str::from_utf8(name).unwrap().to_string()
-    } else {
-        return Err(context.new_unexpected_token_error());
-    };
-
+    let name = extract_word_value(context)?;
     // eat name
     context.next_token();
     context.skip(is_superfluous_or_newline);
@@ -366,11 +345,7 @@ fn parse_element<'scan, 'src>(
     context: &mut Context<'scan, 'src>,
 ) -> Result<ast::Element, err::ParserError> {
     let start = context.get_u16pos().clone();
-    let tag_name: String = if let Token::Word(word) = context.curr_token() {
-        str::from_utf8(word).unwrap().to_string()
-    } else {
-        return Err(context.new_unexpected_token_error());
-    };
+    let tag_name: String = extract_word_value(context)?;
 
     context.next_token(); // eat tag name
     context.skip(is_superfluous_or_newline);
@@ -466,11 +441,7 @@ fn parse_string<'scan, 'src>(
     context: &mut Context<'scan, 'src>,
 ) -> Result<ast::Str, err::ParserError> {
     let start = context.curr_16pos().clone();
-    let value = if let Token::String(value) = &context.curr_token() {
-        trim_string(str::from_utf8(value).unwrap())
-    } else {
-        return Err(context.new_unexpected_token_error());
-    };
+    let value = extract_string_value(context)?;
     context.next_token();
     let end = context.curr_16pos().clone();
 
@@ -520,11 +491,7 @@ fn parse_component_body<'scan, 'src>(
     context.next_token();
     context.skip(is_superfluous_or_newline);
 
-    let name = if let Token::Word(name) = context.curr_token() {
-        str::from_utf8(name).unwrap().to_string()
-    } else {
-        return Err(context.new_unexpected_token_error());
-    };
+    let name = extract_word_value(context)?;
 
     // eat name
     context.next_token();

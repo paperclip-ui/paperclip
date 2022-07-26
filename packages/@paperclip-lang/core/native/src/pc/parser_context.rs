@@ -40,6 +40,12 @@ impl<'scan, 'src> Context<'scan, 'src> {
     {
         self.tokenizer.skip(test)
     }
+    pub fn mark_start_range<'context>(&'context mut self) -> RangeMarker<'context, 'scan, 'src> {
+        RangeMarker {
+            start_pos: self.get_u16pos(),
+            context: self,
+        }
+    }
     pub fn get_u16pos(&self) -> U16Position {
         self.tokenizer.source.get_u16pos()
     }
@@ -67,5 +73,16 @@ impl<'scan, 'src> Context<'scan, 'src> {
             ),
             ErrorKind::UnexpectedToken,
         )
+    }
+}
+
+pub struct RangeMarker<'context, 'scan, 'src> {
+    pub start_pos: U16Position,
+    pub context: &'context mut Context<'scan, 'src>,
+}
+
+impl<'context, 'scan, 'src> RangeMarker<'context, 'scan, 'src> {
+    pub fn mark(&self) -> Range {
+        Range::new(self.start_pos.clone(), self.context.get_u16pos())
     }
 }

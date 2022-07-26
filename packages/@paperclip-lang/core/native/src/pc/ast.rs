@@ -13,7 +13,8 @@ pub struct Component {
 pub struct Variant {
     pub id: String,
     pub range: Range,
-    name: String,
+    pub name: String,
+    pub parameters: Vec<Parameter>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -67,6 +68,20 @@ pub enum InsertBody {
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
+pub struct Array {
+    pub items: Vec<ArrayItem>,
+    pub id: String,
+    pub range: Range,
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
+pub enum ArrayItem {
+    String(Str),
+    Number(Number),
+    Boolean(Boolean),
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Slot {
     pub id: String,
     pub range: Range,
@@ -96,8 +111,25 @@ pub struct Str {
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
+pub struct Number {
+    pub id: String,
+    pub range: Range,
+    pub value: String,
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
+pub struct Boolean {
+    pub id: String,
+    pub range: Range,
+    pub value: String,
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
 pub enum ParameterValue {
     String(Str),
+    Number(Number),
+    Boolean(Boolean),
+    Array(Array),
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

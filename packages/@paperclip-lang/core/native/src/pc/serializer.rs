@@ -202,6 +202,9 @@ fn serialize_insert(insert: &ast::Insert, context: &mut Context) {
 fn serialize_parameter_value(node: &ast::ParameterValue, context: &mut Context) {
     match node {
         ast::ParameterValue::String(value) => serialize_string(value, context),
+        ast::ParameterValue::Number(value) => serialize_number(value, context),
+        ast::ParameterValue::Boolean(value) => serialize_boolean(value, context),
+        ast::ParameterValue::Array(value) => serialize_array(value, context),
     }
 }
 
@@ -209,4 +212,38 @@ fn serialize_string(node: &ast::Str, context: &mut Context) {
     context.add_buffer(format!("\"{}\"", node.value));
 }
 
-fn serialize_variant(imp: &ast::Variant, context: &mut Context) {}
+fn serialize_number(node: &ast::Number, context: &mut Context) {}
+
+fn serialize_array(node: &ast::Array, context: &mut Context) {
+    context.add_buffer("[".to_string());
+    serialize_items(
+        &node.items,
+        context,
+        |item: &ast::ArrayItem, context: &mut Context| {},
+    );
+    context.add_buffer("]".to_string());
+}
+
+fn serialize_items<TItem, TSerializeFun>(
+    items: &Vec<TItem>,
+    context: &mut Context,
+    serialize_item: TSerializeFun,
+) where
+    TSerializeFun: Fn(&TItem, &mut Context),
+{
+    let mut it = items.into_iter().peekable();
+    while let Some(item) = it.next() {
+        serialize_item(&item, context);
+        if it.peek().is_some() {
+            context.add_buffer(", ".to_string());
+        }
+    }
+}
+
+fn serialize_boolean(node: &ast::Boolean, context: &mut Context) {}
+
+fn serialize_variant(imp: &ast::Variant, context: &mut Context) {
+    context.add_buffer(format!("variant {} ", imp.name));
+    serialize_parameters(&imp.parameters, context);
+    context.add_buffer("\n".to_string());
+}

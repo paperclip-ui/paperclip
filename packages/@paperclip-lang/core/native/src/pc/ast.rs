@@ -55,6 +55,7 @@ pub struct Render {
 pub struct Element {
     pub namespace: Option<String>,
     pub tag_name: String,
+    pub name: Option<String>,
     pub parameters: Vec<Parameter>,
     pub id: String,
     pub range: Range,
@@ -154,6 +155,7 @@ pub enum ElementBodyItem {
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct TextNode {
     pub id: String,
+    pub name: Option<String>,
     pub value: String,
     pub range: Range,
     pub body: Vec<TextNodeBodyItem>,

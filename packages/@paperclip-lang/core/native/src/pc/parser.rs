@@ -279,6 +279,7 @@ fn parse_text(context: &mut Context) -> Result<ast::TextNode, err::ParserError> 
     let start = context.curr_u16pos();
     context.next_token(); // eat render
     context.skip(is_superfluous_or_newline);
+    let ref_name = parse_optional_ref_name(context)?;
     let value = extract_string_value(context)?;
     context.next_token(); // eat value
     context.skip(is_superfluous_or_newline);
@@ -301,6 +302,7 @@ fn parse_text(context: &mut Context) -> Result<ast::TextNode, err::ParserError> 
     Ok(ast::TextNode {
         id: context.next_id(),
         range: Range::new(start, end),
+        name: ref_name,
         value,
         body,
     })
@@ -319,6 +321,17 @@ fn extract_word_value(context: &mut Context) -> Result<String, err::ParserError>
         Ok(str::from_utf8(value).unwrap().to_string())
     } else {
         return Err(context.new_unexpected_token_error());
+    }
+}
+
+fn parse_optional_ref_name(context: &mut Context) -> Result<Option<String>, err::ParserError> {
+    if let Token::Word(_) = context.curr_token() {
+        let ref_name = extract_word_value(context)?;
+        context.next_token();
+        context.skip(is_superfluous_or_newline);
+        Ok(Some(ref_name))
+    } else {
+        Ok(None)
     }
 }
 
@@ -373,6 +386,8 @@ fn parse_element(context: &mut Context) -> Result<ast::Element, err::ParserError
 
     context.skip(is_superfluous_or_newline);
 
+    let ref_name = parse_optional_ref_name(context)?;
+
     let parameters = if context.curr_token() == &Token::ParenOpen {
         parse_parameters(context)?
     } else {
@@ -403,6 +418,7 @@ fn parse_element(context: &mut Context) -> Result<ast::Element, err::ParserError
     Ok(ast::Element {
         id: context.next_id(),
         parameters,
+        name: ref_name,
         namespace,
         tag_name,
         range: Range::new(start, end),

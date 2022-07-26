@@ -87,7 +87,6 @@ fn serialize_style(style: &ast::Style, context: &mut Context) {
 }
 
 fn serialize_override(over: &ast::Override, context: &mut Context) {
-
     if over.path.len() > 0 {
         context.add_buffer(format!("override {} {{\n", over.path.join(".")));
     } else {
@@ -123,7 +122,9 @@ fn serialize_render_node(node: &ast::RenderNode, context: &mut Context) {
 }
 
 fn serialize_text(node: &ast::TextNode, context: &mut Context) {
-    context.add_buffer(format!("text \"{}\"", node.value));
+    context.add_buffer("text".to_string());
+    maybe_serialize_ref_name(&node.name, context);
+    context.add_buffer(format!(" \"{}\"", node.value));
     if node.body.len() > 0 {
         context.add_buffer(" {\n".to_string());
         context.start_block();
@@ -144,6 +145,7 @@ fn serialize_element(node: &ast::Element, context: &mut Context) {
         context.add_buffer(format!("{}.", namespace));
     }
     context.add_buffer(format!("{}", node.tag_name));
+    maybe_serialize_ref_name(&node.name, context);
     if node.parameters.len() > 0 {
         serialize_parameters(&node.parameters, context);
     }
@@ -164,6 +166,12 @@ fn serialize_element(node: &ast::Element, context: &mut Context) {
         context.add_buffer("}".to_string());
     }
     context.add_buffer("\n".to_string());
+}
+
+fn maybe_serialize_ref_name(ref_name: &Option<String>, context: &mut Context) {
+    if let Some(ref_name) = ref_name {
+        context.add_buffer(format!(" {}", ref_name));
+    }
 }
 
 fn serialize_parameters(parameters: &Vec<ast::Parameter>, context: &mut Context) {

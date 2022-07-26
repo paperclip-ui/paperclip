@@ -223,9 +223,10 @@ fn can_parse_various_contents() {
             r#"
             component A {
                 render div {
-                    style {
-                        target a.b.c {
-                            color: red
+                    override a.b.c {
+                        variant a (enabled: true)
+                        style {
+                            color: blue
                         }
                     }
                 }

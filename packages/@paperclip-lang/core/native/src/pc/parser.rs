@@ -326,12 +326,21 @@ fn parse_override(context: &mut Context) -> Result<ast::Override, err::ParserErr
     let start = context.curr_u16pos();
     context.next_token(); // eat override
     context.skip(is_superfluous_or_newline);
-    let path = vec![];
+    let path = if matches!(context.curr_token(), &Token::Word(_)) {
+        parse_path(context)?
+    } else {
+        vec![]
+    };
+
+    context.skip(is_superfluous_or_newline);
 
     let body = if context.curr_token() == &Token::CurlyOpen {
         parse_body(
             context,
             |context: &mut Context| match context.curr_token() {
+                Token::Word(b"variant") => {
+                    Ok(ast::OverrideBodyItem::Variant(parse_variant(context)?))
+                }
                 Token::Word(b"style") => Ok(ast::OverrideBodyItem::Style(parse_style(context)?)),
                 _ => Err(context.new_unexpected_token_error()),
             },

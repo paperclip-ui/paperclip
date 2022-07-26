@@ -170,6 +170,7 @@ pub struct Override {
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub enum OverrideBodyItem {
     Style(Style),
+    Variant(Variant),
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

@@ -67,6 +67,7 @@ fn serialize_component(component: &ast::Component, context: &mut Context) {
         match item {
             ast::ComponentBodyItem::Render(render) => serialize_render(render, context),
             ast::ComponentBodyItem::Variant(variant) => serialize_variant(variant, context),
+            ast::ComponentBodyItem::Script(script) => serialize_script(script, context),
         }
     }
     context.end_block();
@@ -132,6 +133,9 @@ fn serialize_text(node: &ast::TextNode, context: &mut Context) {
 }
 
 fn serialize_element(node: &ast::Element, context: &mut Context) {
+    if let Some(namespace) = &node.namespace {
+        context.add_buffer(format!("{}.", namespace));
+    }
     context.add_buffer(format!("{}", node.tag_name));
     if node.parameters.len() > 0 {
         serialize_parameters(&node.parameters, context);
@@ -170,7 +174,7 @@ fn serialize_parameters(parameters: &Vec<ast::Parameter>, context: &mut Context)
 
 fn serialize_parameter(param: &ast::Parameter, context: &mut Context) {
     context.add_buffer(format!("{}: ", param.name));
-    serialize_parameter_value(&param.value, context);
+    serialize_simple_expression(&param.value, context);
 }
 
 fn serialize_slot(slot: &ast::Slot, context: &mut Context) {
@@ -199,12 +203,13 @@ fn serialize_insert(insert: &ast::Insert, context: &mut Context) {
     context.add_buffer("}\n".to_string());
 }
 
-fn serialize_parameter_value(node: &ast::ParameterValue, context: &mut Context) {
+fn serialize_simple_expression(node: &ast::SimpleExpression, context: &mut Context) {
     match node {
-        ast::ParameterValue::String(value) => serialize_string(value, context),
-        ast::ParameterValue::Number(value) => serialize_number(value, context),
-        ast::ParameterValue::Boolean(value) => serialize_boolean(value, context),
-        ast::ParameterValue::Array(value) => serialize_array(value, context),
+        ast::SimpleExpression::String(value) => serialize_string(value, context),
+        ast::SimpleExpression::Number(value) => serialize_number(value, context),
+        ast::SimpleExpression::Reference(value) => serialize_reference(value, context),
+        ast::SimpleExpression::Boolean(value) => serialize_boolean(value, context),
+        ast::SimpleExpression::Array(value) => serialize_array(value, context),
     }
 }
 
@@ -213,14 +218,13 @@ fn serialize_string(node: &ast::Str, context: &mut Context) {
 }
 
 fn serialize_number(node: &ast::Number, context: &mut Context) {}
+fn serialize_reference(node: &ast::Reference, context: &mut Context) {
+    context.add_buffer(node.path.join("."));
+}
 
 fn serialize_array(node: &ast::Array, context: &mut Context) {
     context.add_buffer("[".to_string());
-    serialize_items(
-        &node.items,
-        context,
-        |item: &ast::ArrayItem, context: &mut Context| {},
-    );
+    serialize_items(&node.items, context, serialize_simple_expression);
     context.add_buffer("]".to_string());
 }
 
@@ -240,10 +244,22 @@ fn serialize_items<TItem, TSerializeFun>(
     }
 }
 
-fn serialize_boolean(node: &ast::Boolean, context: &mut Context) {}
+fn serialize_boolean(node: &ast::Boolean, context: &mut Context) {
+    context.add_buffer(if node.value {
+        "true".to_string()
+    } else {
+        "false".to_string()
+    });
+}
 
 fn serialize_variant(imp: &ast::Variant, context: &mut Context) {
     context.add_buffer(format!("variant {} ", imp.name));
     serialize_parameters(&imp.parameters, context);
+    context.add_buffer("\n".to_string());
+}
+
+fn serialize_script(script: &ast::Script, context: &mut Context) {
+    context.add_buffer("script".to_string());
+    serialize_parameters(&script.parameters, context);
     context.add_buffer("\n".to_string());
 }

@@ -21,11 +21,9 @@ pub fn parse_with_string_scanner<'src>(
     parse_document(&mut context)
 }
 
-fn parse_document<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<ast::Document, err::ParserError> {
+fn parse_document(context: &mut Context) -> Result<ast::Document, err::ParserError> {
     let mut body: Vec<ast::DocumentBodyItem> = vec![];
-    let start = context.get_u16pos();
+    let start = context.curr_u16pos();
     loop {
         context.skip(is_superfluous_or_newline);
         if context.curr_token() == &Token::None {
@@ -33,7 +31,7 @@ fn parse_document<'scan, 'src>(
         }
         body.push(parse_document_child(context)?);
     }
-    let end = context.tokenizer.source.get_u16pos();
+    let end = context.curr_u16pos();
 
     Ok(ast::Document {
         id: context.id_generator.new_id(),
@@ -42,9 +40,7 @@ fn parse_document<'scan, 'src>(
     })
 }
 
-fn parse_document_child<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<ast::DocumentBodyItem, err::ParserError> {
+fn parse_document_child(context: &mut Context) -> Result<ast::DocumentBodyItem, err::ParserError> {
     match context.curr_token() {
         Token::Word(b"component") => {
             Ok(ast::DocumentBodyItem::Component(parse_component(context)?))
@@ -57,10 +53,8 @@ fn parse_document_child<'scan, 'src>(
     }
 }
 
-fn parse_import<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<ast::Import, err::ParserError> {
-    let start = context.curr_16pos().clone();
+fn parse_import(context: &mut Context) -> Result<ast::Import, err::ParserError> {
+    let start = context.curr_u16pos();
 
     // eat statement
     context.next_token();
@@ -81,7 +75,7 @@ fn parse_import<'scan, 'src>(
     context.next_token();
     context.skip(is_superfluous_or_newline);
 
-    let end = context.curr_16pos().clone();
+    let end = context.curr_u16pos();
 
     Ok(ast::Import {
         id: context.next_id(),
@@ -91,10 +85,8 @@ fn parse_import<'scan, 'src>(
     })
 }
 
-fn parse_style<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<ast::Style, err::ParserError> {
-    let start = context.curr_16pos().clone();
+fn parse_style(context: &mut Context) -> Result<ast::Style, err::ParserError> {
+    let start = context.curr_u16pos();
     context.next_token();
     context.skip(is_superfluous_or_newline);
 
@@ -108,7 +100,7 @@ fn parse_style<'scan, 'src>(
         Some((Token::CurlyOpen, Token::CurlyClose)),
     )?;
 
-    let end = context.curr_16pos().clone();
+    let end = context.curr_u16pos();
 
     Ok(ast::Style {
         id: context.next_id(),
@@ -117,10 +109,10 @@ fn parse_style<'scan, 'src>(
     })
 }
 
-fn parse_style_declaration<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
+fn parse_style_declaration(
+    context: &mut Context,
 ) -> Result<ast::StyleDeclaration, err::ParserError> {
-    let start = context.get_u16pos();
+    let start = context.curr_u16pos();
     let name = extract_word_value(context)?;
     context.next_token();
     context.skip(is_superfluous_or_newline);
@@ -130,7 +122,7 @@ fn parse_style_declaration<'scan, 'src>(
     context.next_token();
     context.skip(is_superfluous_or_newline);
 
-    let end = context.get_u16pos();
+    let end = context.curr_u16pos();
 
     Ok(ast::StyleDeclaration {
         id: context.next_id(),
@@ -140,10 +132,8 @@ fn parse_style_declaration<'scan, 'src>(
     })
 }
 
-fn parse_component<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<ast::Component, err::ParserError> {
-    let start = context.curr_16pos().clone();
+fn parse_component(context: &mut Context) -> Result<ast::Component, err::ParserError> {
+    let start = context.curr_u16pos();
 
     // eat component
     context.next_token();
@@ -158,12 +148,13 @@ fn parse_component<'scan, 'src>(
         |context: &mut Context| match context.curr_token() {
             Token::Word(b"render") => Ok(ast::ComponentBodyItem::Render(parse_render(context)?)),
             Token::Word(b"variant") => Ok(ast::ComponentBodyItem::Variant(parse_variant(context)?)),
+            Token::Word(b"script") => Ok(ast::ComponentBodyItem::Script(parse_script(context)?)),
             _ => Err(context.new_unexpected_token_error()),
         },
         Some((Token::CurlyOpen, Token::CurlyClose)),
     )?;
 
-    let end = context.curr_16pos().clone();
+    let end = context.curr_u16pos();
 
     Ok(ast::Component {
         id: context.next_id(),
@@ -173,14 +164,12 @@ fn parse_component<'scan, 'src>(
     })
 }
 
-fn parse_render<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<ast::Render, err::ParserError> {
-    let start = context.get_u16pos();
+fn parse_render(context: &mut Context) -> Result<ast::Render, err::ParserError> {
+    let start = context.curr_u16pos();
     context.next_token(); // eat render
     context.skip(is_superfluous_or_newline);
     let node = parse_render_node(context)?;
-    let end = context.get_u16pos();
+    let end = context.curr_u16pos();
 
     Ok(ast::Render {
         id: context.next_id(),
@@ -189,10 +178,8 @@ fn parse_render<'scan, 'src>(
     })
 }
 
-fn parse_variant<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<ast::Variant, err::ParserError> {
-    let start = context.get_u16pos();
+fn parse_variant(context: &mut Context) -> Result<ast::Variant, err::ParserError> {
+    let start = context.curr_u16pos();
     context.next_token();
     context.skip(is_superfluous_or_newline);
     let name = extract_word_value(context)?;
@@ -203,7 +190,7 @@ fn parse_variant<'scan, 'src>(
     } else {
         vec![]
     };
-    let end = context.get_u16pos();
+    let end = context.curr_u16pos();
 
     Ok(ast::Variant {
         id: context.next_id(),
@@ -213,9 +200,19 @@ fn parse_variant<'scan, 'src>(
     })
 }
 
-fn parse_render_node<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<ast::RenderNode, err::ParserError> {
+fn parse_script(context: &mut Context) -> Result<ast::Script, err::ParserError> {
+    context.next_token(); // eat script
+    let start = context.curr_u16pos();
+    let parameters = parse_parameters(context)?;
+    let end = context.curr_u16pos();
+    Ok(ast::Script {
+        id: context.next_id(),
+        range: Range::new(start, end),
+        parameters,
+    })
+}
+
+fn parse_render_node(context: &mut Context) -> Result<ast::RenderNode, err::ParserError> {
     match context.curr_token() {
         Token::Word(b"text") => Ok(ast::RenderNode::Text(parse_text(context)?)),
         Token::Word(b"slot") => Ok(ast::RenderNode::Slot(parse_slot(context)?)),
@@ -224,16 +221,14 @@ fn parse_render_node<'scan, 'src>(
     }
 }
 
-fn parse_slot<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<ast::Slot, err::ParserError> {
-    let start = context.get_u16pos();
+fn parse_slot(context: &mut Context) -> Result<ast::Slot, err::ParserError> {
+    let start = context.curr_u16pos();
     context.next_token(); // eat keyword
     context.skip(is_superfluous_or_newline);
     let name = extract_word_value(context)?;
     context.next_token(); // eat value
     context.skip(is_superfluous_or_newline);
-    let end = context.get_u16pos();
+    let end = context.curr_u16pos();
     let body = parse_body(
         context,
         |context: &mut Context| match context.curr_token() {
@@ -253,16 +248,14 @@ fn parse_slot<'scan, 'src>(
     })
 }
 
-fn parse_insert<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<ast::Insert, err::ParserError> {
-    let start = context.get_u16pos();
+fn parse_insert(context: &mut Context) -> Result<ast::Insert, err::ParserError> {
+    let start = context.curr_u16pos();
     context.next_token(); // eat keyword
     context.skip(is_superfluous_or_newline);
     let name = extract_word_value(context)?;
     context.next_token(); // eat value
     context.skip(is_superfluous_or_newline);
-    let end = context.get_u16pos();
+    let end = context.curr_u16pos();
     let body = parse_body(
         context,
         |context: &mut Context| match context.curr_token() {
@@ -282,10 +275,8 @@ fn parse_insert<'scan, 'src>(
     })
 }
 
-fn parse_text<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<ast::TextNode, err::ParserError> {
-    let start = context.get_u16pos();
+fn parse_text(context: &mut Context) -> Result<ast::TextNode, err::ParserError> {
+    let start = context.curr_u16pos();
     context.next_token(); // eat render
     context.skip(is_superfluous_or_newline);
     let value = extract_string_value(context)?;
@@ -305,7 +296,7 @@ fn parse_text<'scan, 'src>(
         vec![]
     };
 
-    let end = context.get_u16pos();
+    let end = context.curr_u16pos();
 
     Ok(ast::TextNode {
         id: context.next_id(),
@@ -315,9 +306,7 @@ fn parse_text<'scan, 'src>(
     })
 }
 
-fn extract_string_value<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<String, err::ParserError> {
+fn extract_string_value(context: &mut Context) -> Result<String, err::ParserError> {
     if let Token::String(value) = context.curr_token() {
         Ok(trim_string(str::from_utf8(value).unwrap()))
     } else {
@@ -325,9 +314,7 @@ fn extract_string_value<'scan, 'src>(
     }
 }
 
-fn extract_word_value<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<String, err::ParserError> {
+fn extract_word_value(context: &mut Context) -> Result<String, err::ParserError> {
     if let Token::Word(value) = context.curr_token() {
         Ok(str::from_utf8(value).unwrap().to_string())
     } else {
@@ -335,10 +322,8 @@ fn extract_word_value<'scan, 'src>(
     }
 }
 
-fn parse_override<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<ast::Override, err::ParserError> {
-    let start = context.get_u16pos();
+fn parse_override(context: &mut Context) -> Result<ast::Override, err::ParserError> {
+    let start = context.curr_u16pos();
     context.next_token(); // eat override
     context.skip(is_superfluous_or_newline);
     let path = vec![];
@@ -356,7 +341,7 @@ fn parse_override<'scan, 'src>(
         vec![]
     };
 
-    let end = context.get_u16pos();
+    let end = context.curr_u16pos();
 
     Ok(ast::Override {
         id: context.next_id(),
@@ -366,13 +351,17 @@ fn parse_override<'scan, 'src>(
     })
 }
 
-fn parse_element<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<ast::Element, err::ParserError> {
-    let start = context.get_u16pos();
-    let tag_name: String = extract_word_value(context)?;
+fn parse_element(context: &mut Context) -> Result<ast::Element, err::ParserError> {
+    let start = context.curr_u16pos();
+    let tag_parts = parse_path(context)?;
+    let namespace: Option<String> = if tag_parts.len() == 2 {
+        Some(tag_parts.first().unwrap().clone())
+    } else {
+        None
+    };
 
-    context.next_token(); // eat tag name
+    let tag_name: String = tag_parts.last().unwrap().clone();
+
     context.skip(is_superfluous_or_newline);
 
     let parameters = if context.curr_token() == &Token::ParenOpen {
@@ -400,20 +389,19 @@ fn parse_element<'scan, 'src>(
         vec![]
     };
 
-    let end = context.get_u16pos();
+    let end = context.curr_u16pos();
 
     Ok(ast::Element {
         id: context.next_id(),
         parameters,
+        namespace,
         tag_name,
         range: Range::new(start, end),
         body,
     })
 }
 
-fn parse_parameters<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<Vec<ast::Parameter>, err::ParserError> {
+fn parse_parameters(context: &mut Context) -> Result<Vec<ast::Parameter>, err::ParserError> {
     context.next_token(); // eat (
     context.skip(is_superfluous_or_newline);
     let mut parameters: Vec<ast::Parameter> = vec![];
@@ -428,17 +416,15 @@ fn parse_parameters<'scan, 'src>(
     Ok(parameters)
 }
 
-fn parse_parameter<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<ast::Parameter, err::ParserError> {
-    let start = context.curr_16pos().clone();
+fn parse_parameter(context: &mut Context) -> Result<ast::Parameter, err::ParserError> {
+    let start = context.curr_u16pos();
     let name = extract_word_value(context)?;
     context.next_token(); // eat name
     context.skip(is_superfluous_or_newline);
     context.next_token(); // eat :
     context.skip(is_superfluous_or_newline);
-    let value = parse_parameter_value(context)?;
-    let end = context.curr_16pos().clone();
+    let value = parse_simple_expression(context)?;
+    let end = context.curr_u16pos();
 
     // Since this isn't used anywhere else, we can include comma logic here
     context.skip(is_superfluous_or_newline);
@@ -455,30 +441,32 @@ fn parse_parameter<'scan, 'src>(
     })
 }
 
-fn parse_parameter_value<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<ast::ParameterValue, err::ParserError> {
+fn parse_simple_expression(
+    context: &mut Context,
+) -> Result<ast::SimpleExpression, err::ParserError> {
     match context.curr_token() {
-        Token::String(value) => Ok(ast::ParameterValue::String(parse_string(context)?)),
-        Token::SquareOpen => Ok(ast::ParameterValue::Array(parse_array(context)?)),
+        Token::String(value) => Ok(ast::SimpleExpression::String(parse_string(context)?)),
+        Token::Word(b"true" | b"false") => {
+            Ok(ast::SimpleExpression::Boolean(parse_boolean(context)?))
+        }
+        Token::Word(_) => Ok(ast::SimpleExpression::Reference(parse_ref(context)?)),
+        Token::SquareOpen => Ok(ast::SimpleExpression::Array(parse_array(context)?)),
         _ => return Err(context.new_unexpected_token_error()),
     }
 }
 
-fn parse_array<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<ast::Array, err::ParserError> {
-    let start = context.get_u16pos();
+fn parse_array(context: &mut Context) -> Result<ast::Array, err::ParserError> {
+    let start = context.curr_u16pos();
     context.next_token(); // eat [
     context.skip(is_superfluous_or_newline);
-    let mut items: Vec<ast::ArrayItem> = vec![];
+    let mut items: Vec<ast::SimpleExpression> = vec![];
 
     while context.curr_token() != &Token::SquareClose {
-        items.push(parse_array_item(context)?);
+        items.push(parse_simple_expression(context)?);
     }
 
     context.next_token(); // eat ]
-    let end = context.get_u16pos();
+    let end = context.curr_u16pos();
 
     Ok(ast::Array {
         id: context.next_id(),
@@ -487,22 +475,11 @@ fn parse_array<'scan, 'src>(
     })
 }
 
-fn parse_array_item<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<ast::ArrayItem, err::ParserError> {
-    Err(context.new_unexpected_token_error())
-    // match context.curr_token() {
-    //     Token::String(_) => ast::ArrayItem::parse_string(context)
-    // }
-}
-
-fn parse_string<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<ast::Str, err::ParserError> {
-    let start = context.curr_16pos().clone();
+fn parse_string(context: &mut Context) -> Result<ast::Str, err::ParserError> {
+    let start = context.curr_u16pos();
     let value = extract_string_value(context)?;
     context.next_token();
-    let end = context.curr_16pos().clone();
+    let end = context.curr_u16pos();
 
     Ok(ast::Str {
         id: context.next_id(),
@@ -510,6 +487,42 @@ fn parse_string<'scan, 'src>(
         value,
     })
 }
+
+fn parse_boolean(context: &mut Context) -> Result<ast::Boolean, err::ParserError> {
+    let start = context.curr_u16pos();
+    let value = context.curr_token() == &Token::Word(b"true");
+    context.next_token();
+    let end = context.curr_u16pos();
+
+    Ok(ast::Boolean {
+        id: context.next_id(),
+        range: Range::new(start, end),
+        value,
+    })
+}
+
+fn parse_ref(context: &mut Context) -> Result<ast::Reference, err::ParserError> {
+    let start = context.curr_u16pos();
+    let path: Vec<String> = parse_path(context)?;
+    let end = context.curr_u16pos();
+    Ok(ast::Reference {
+        id: context.next_id(),
+        range: Range::new(start, end),
+        path,
+    })
+}
+
+fn parse_path(context: &mut Context) -> Result<Vec<String>, err::ParserError> {
+    let mut path: Vec<String> = vec![extract_word_value(context)?];
+    context.next_token();
+    while context.curr_token() == &Token::Dot {
+        context.next_token();
+        path.push(extract_word_value(context)?);
+        context.next_token();
+    }
+    Ok(path)
+}
+
 fn parse_body<TItem, TTest>(
     context: &mut Context,
     parse_item: TTest,
@@ -540,10 +553,8 @@ where
     Ok(body)
 }
 
-fn parse_component_body<'scan, 'src>(
-    context: &mut Context<'scan, 'src>,
-) -> Result<ast::Component, err::ParserError> {
-    let start = context.curr_16pos().clone();
+fn parse_component_body(context: &mut Context) -> Result<ast::Component, err::ParserError> {
+    let start = context.curr_u16pos();
 
     // eat component
     context.next_token();
@@ -554,7 +565,7 @@ fn parse_component_body<'scan, 'src>(
     // eat name
     context.next_token();
 
-    let end = context.curr_16pos().clone();
+    let end = context.curr_u16pos();
 
     Ok(ast::Component {
         id: context.next_id(),

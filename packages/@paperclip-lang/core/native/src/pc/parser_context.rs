@@ -55,8 +55,8 @@ impl<'scan, 'src> Context<'scan, 'src> {
     pub fn curr_token(&self) -> &Token<'src> {
         &self.tokenizer.curr
     }
-    pub fn curr_16pos(&self) -> &U16Position {
-        &self.tokenizer.curr_16pos
+    pub fn curr_u16pos(&self) -> U16Position {
+        self.tokenizer.curr_16pos.clone()
     }
     pub fn curr_token_range(&self) -> Range {
         Range::new(
@@ -67,10 +67,7 @@ impl<'scan, 'src> Context<'scan, 'src> {
     pub fn new_unexpected_token_error(&self) -> ParserError {
         ParserError::new(
             "Unexpected token".to_string(),
-            Range::new(
-                self.curr_16pos().clone(),
-                self.tokenizer.source.get_u16pos(),
-            ),
+            Range::new(self.curr_u16pos(), self.get_u16pos()),
             ErrorKind::UnexpectedToken,
         )
     }

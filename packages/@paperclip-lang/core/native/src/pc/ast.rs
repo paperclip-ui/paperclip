@@ -18,6 +18,13 @@ pub struct Variant {
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
+pub struct Script {
+    pub id: String,
+    pub range: Range,
+    pub parameters: Vec<Parameter>,
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Style {
     pub id: String,
     pub range: Range,
@@ -46,6 +53,7 @@ pub struct Render {
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Element {
+    pub namespace: Option<String>,
     pub tag_name: String,
     pub parameters: Vec<Parameter>,
     pub id: String,
@@ -69,16 +77,9 @@ pub enum InsertBody {
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Array {
-    pub items: Vec<ArrayItem>,
+    pub items: Vec<SimpleExpression>,
     pub id: String,
     pub range: Range,
-}
-
-#[derive(Debug, PartialEq, Serialize, Clone)]
-pub enum ArrayItem {
-    String(Str),
-    Number(Number),
-    Boolean(Boolean),
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -100,7 +101,7 @@ pub struct Parameter {
     pub id: String,
     pub range: Range,
     pub name: String,
-    pub value: ParameterValue,
+    pub value: SimpleExpression,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -121,14 +122,22 @@ pub struct Number {
 pub struct Boolean {
     pub id: String,
     pub range: Range,
-    pub value: String,
+    pub value: bool,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
-pub enum ParameterValue {
+pub struct Reference {
+    pub id: String,
+    pub range: Range,
+    pub path: Vec<String>,
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
+pub enum SimpleExpression {
     String(Str),
     Number(Number),
     Boolean(Boolean),
+    Reference(Reference),
     Array(Array),
 }
 
@@ -179,6 +188,7 @@ pub enum RenderNode {
 pub enum ComponentBodyItem {
     Render(Render),
     Variant(Variant),
+    Script(Script),
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

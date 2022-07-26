@@ -4,18 +4,19 @@
 
     - use struct parser
     - expressions
-      - attributes
-      - overrides
-        - paths
+      - docco
+      - styles
+        - variants
+        - targets
     - ensure that style declarations work
       - css varaibles need to work
     - update variant syntax
 
   - evaluator
     - should render virtual DOM
-    - A\* diffing (exercise)
   - translator
     - interim
+  - inspector
   - CLI
   - FE engine in Rust?
 
@@ -24,3 +25,7 @@
 - migrate over to AST instead of DSL
 - start upgrading UI
 - rust packages
+
+```
+
+```

@@ -3,23 +3,24 @@ use serde::Serialize;
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Comment {
-  body: Vec<CommentBodyItem>
+  pub body: Vec<CommentBodyItem>
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub enum CommentBodyItem {
-  Text(Text)
+  Text(Text),
+  Property(Property)
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Text {
-  value: String
+  pub value: String
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Property {
-  name: String,
-  value: PropertyValue
+  pub name: String,
+  pub value: PropertyValue
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -30,7 +31,7 @@ pub enum PropertyValue {
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Parameters {
-  items: ParameterValue
+  pub items: ParameterValue
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

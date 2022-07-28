@@ -1,4 +1,4 @@
-use crate::base::ast::Range;
+use crate::base::ast::{Range, Str};
 use serde::Serialize;
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -103,13 +103,6 @@ pub struct Parameter {
     pub range: Range,
     pub name: String,
     pub value: SimpleExpression,
-}
-
-#[derive(Debug, PartialEq, Serialize, Clone)]
-pub struct Str {
-    pub id: String,
-    pub range: Range,
-    pub value: String,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

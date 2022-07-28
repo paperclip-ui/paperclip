@@ -1,7 +1,7 @@
 use super::ast;
-use super::errors as err;
 use super::parser::parse;
 use super::serializer::serialize;
+use crate::base::errors as err;
 
 use crate::base::ast::{Range, U16Position};
 use pretty_assertions;
@@ -244,8 +244,11 @@ fn can_parse_various_contents() {
         ),
         (
             r#"
+            /**
+             * @bounds(width: 100, height: 100)
+             */
             component A {
-                render text refName "some value"
+                render div
             }
         "#,
             Ok(()),

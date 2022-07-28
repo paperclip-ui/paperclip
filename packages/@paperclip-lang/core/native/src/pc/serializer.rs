@@ -1,4 +1,5 @@
 use super::ast;
+use crate::base::ast as base_ast;
 
 struct Context {
     pub is_new_line: bool,
@@ -228,7 +229,7 @@ fn serialize_simple_expression(node: &ast::SimpleExpression, context: &mut Conte
     }
 }
 
-fn serialize_string(node: &ast::Str, context: &mut Context) {
+fn serialize_string(node: &base_ast::Str, context: &mut Context) {
     context.add_buffer(format!("\"{}\"", node.value));
 }
 

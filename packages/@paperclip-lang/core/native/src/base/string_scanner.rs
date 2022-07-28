@@ -59,6 +59,14 @@ impl<'src> StringScanner<'src> {
             u16_column: 1,
         }
     }
+
+    pub fn peek(&self, step: usize) -> Option<u8> {
+        if self.pos + step < self.source.len() {
+            Some(self.source[self.pos + step])
+        } else {
+            None
+        }
+    }
     pub fn forward(&mut self, steps: usize) {
         let mut subcol = 0;
 
@@ -157,4 +165,27 @@ impl<'src> StringScanner<'src> {
 
         return self.get_pos();
     }
+}
+
+pub fn step_ws(c: u8) -> bool {
+    matches!(c, b'a'..=b'z' | b'A'..=b'Z')
+}
+
+pub fn is_az(c: u8) -> bool {
+    matches!(c, b'a'..=b'z' | b'A'..=b'Z')
+}
+
+pub fn is_kw_or_digit(c: u8) -> bool {
+    matches!(c, b'0'..=b'8')
+}
+
+pub fn is_digit(c: u8) -> bool {
+    matches!(c, b'0'..=b'8')
+}
+
+pub fn is_space(c: u8) -> bool {
+    matches!(c, b'\t' | b' ')
+}
+pub fn is_newline(c: u8) -> bool {
+    matches!(c, b'\n' | b'\r')
 }

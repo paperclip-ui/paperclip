@@ -42,6 +42,20 @@ impl Position {
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
+pub struct Str {
+    pub id: String,
+    pub range: Range,
+    pub value: String,
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
+pub struct Number {
+    pub id: String,
+    pub range: Range,
+    pub value: String,
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Range {
     pub start: U16Position,
     pub end: U16Position,

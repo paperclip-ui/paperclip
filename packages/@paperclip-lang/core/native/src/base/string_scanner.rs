@@ -189,3 +189,25 @@ pub fn is_space(c: u8) -> bool {
 pub fn is_newline(c: u8) -> bool {
     matches!(c, b'\n' | b'\r')
 }
+
+pub fn scan_string<'src>(scanner: &mut StringScanner<'src>, start: u8) -> &'src [u8] {
+    let s_pos = scanner.pos - 1;
+
+    while !scanner.is_eof() {
+        let mut curr = scanner.source[scanner.pos];
+
+        // escape next
+        if curr == b'\\' {
+            scanner.forward(2);
+            curr = scanner.source[scanner.pos];
+        }
+
+        scanner.forward(1);
+
+        if curr == start {
+            break;
+        }
+    }
+
+    &scanner.source[s_pos..scanner.pos]
+}

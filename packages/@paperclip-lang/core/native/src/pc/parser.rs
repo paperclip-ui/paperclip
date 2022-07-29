@@ -1,5 +1,5 @@
 use super::ast;
-use super::tokenizer::{is_superfluous_or_newline, Token, next_token};
+use super::tokenizer::{is_superfluous_or_newline, next_token, Token};
 use crate::base::ast as base_ast;
 use crate::base::errors as err;
 use crate::base::parser_context::Context;

@@ -1,6 +1,8 @@
 // Inspired by https://github.com/servo/rust-cssparser/blob/master/src/tokenizer.rs
 use crate::base::ast::U16Position;
-use crate::base::string_scanner::{StringScanner, is_az, is_digit, is_space, is_newline};
+use crate::base::string_scanner::{
+    is_az, is_digit, is_newline, is_space, scan_string, StringScanner,
+};
 use serde::Serialize;
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -29,8 +31,7 @@ pub enum Token<'src> {
     Cluster(&'src [u8]),
 }
 
-
-pub fn next_token<'src>(source:&mut StringScanner<'src>) -> Token<'src> {
+pub fn next_token<'src>(source: &mut StringScanner<'src>) -> Token<'src> {
     if source.is_eof() {
         return Token::None;
     }
@@ -76,25 +77,7 @@ pub fn next_token<'src>(source:&mut StringScanner<'src>) -> Token<'src> {
                 Token::Backslack
             }
         }
-        b'\"' | b'\'' => {
-            while !source.is_eof() {
-                let mut curr = source.source[source.pos];
-
-                // escape next
-                if curr == b'\\' {
-                    source.forward(2);
-                    curr = source.source[source.pos];
-                }
-
-                source.forward(1);
-
-                if curr == start {
-                    break;
-                }
-            }
-
-            return Token::String(&source.source[s_pos..source.pos]);
-        }
+        b'\"' | b'\'' => Token::String(scan_string(source, start)),
         _ if is_space(start) => {
             let e_pos = source.scan(is_space).u8_pos;
             return Token::Space(&source.source[s_pos..e_pos]);
@@ -113,7 +96,7 @@ pub fn next_token<'src>(source:&mut StringScanner<'src>) -> Token<'src> {
 }
 
 pub fn is_superfluous(token: &Token) -> bool {
-    matches!(token, Token::Space(_))
+    matches!(token, Token::Space(_) | Token::MultiLineComment(_))
 }
 
 pub fn is_superfluous_or_newline(token: &Token) -> bool {
@@ -128,7 +111,10 @@ mod tests {
     fn can_tokenize_multiline_comment() {
         let mut scanner = StringScanner::new("hello/*gfdfdsfsd*//**abba");
         assert_eq!(next_token(&mut scanner), Token::Word(b"hello"));
-        assert_eq!(next_token(&mut scanner), Token::MultiLineComment(b"/*gfdfdsfsd*/"));
+        assert_eq!(
+            next_token(&mut scanner),
+            Token::MultiLineComment(b"/*gfdfdsfsd*/")
+        );
         assert_eq!(next_token(&mut scanner), Token::DoccoStart);
         assert_eq!(next_token(&mut scanner), Token::Word(b"abba"));
     }

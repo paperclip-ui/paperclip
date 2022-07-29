@@ -244,9 +244,7 @@ fn can_parse_various_contents() {
         ),
         (
             r#"
-            /**
-             * @bounds(width: 100, height: 100)
-             */
+            
             component A {
                 render div
             }

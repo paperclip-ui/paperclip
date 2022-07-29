@@ -1,41 +1,41 @@
-use crate::base::ast::{Range, Str, Number};
+use crate::base::ast::{Number, Range, Str};
 use serde::Serialize;
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Comment {
-  pub body: Vec<CommentBodyItem>
+    pub body: Vec<CommentBodyItem>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub enum CommentBodyItem {
-  Text(Text),
-  Property(Property)
+    Text(Text),
+    Property(Property),
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Text {
-  pub value: String
+    pub value: String,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Property {
-  pub name: String,
-  pub value: PropertyValue
+    pub name: String,
+    pub value: PropertyValue,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub enum PropertyValue {
-  String(Str),
-  Parameters(Parameters)
+    String(Str),
+    Parameters(Parameters),
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Parameters {
-  pub items: ParameterValue
+    pub items: ParameterValue,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub enum ParameterValue {
-  String(Str),
-  NUmber(Number)
+    String(Str),
+    NUmber(Number),
 }

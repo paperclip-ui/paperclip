@@ -1,7 +1,7 @@
 use super::ast;
 use super::parser::parse;
 use super::serializer::serialize;
-use crate::base::errors as err;
+use crate::core::errors as err;
 
 use crate::base::ast::{Range, U16Position};
 use pretty_assertions;

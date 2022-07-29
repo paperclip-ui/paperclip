@@ -1,4 +1,4 @@
-use crate::base::string_scanner::{is_az, is_newline, is_space, scan_string, Char, StringScanner};
+use crate::core::string_scanner::{is_az, is_newline, is_space, scan_string, Char, StringScanner};
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Token<'src> {
@@ -22,10 +22,8 @@ pub fn next_token<'src>(scanner: &mut StringScanner<'src>) -> Token<'src> {
         return Token::None;
     }
     let s_pos = scanner.pos;
-    let c = scanner.next_char();
-    if let Ok(Char::Byte(b)) = c {
-        println!("{:?} {}", b, b'(');
-        return match b {
+    match scanner.next_char() {
+        Ok(Char::Byte(b)) => match b {
             b'@' => Token::At,
             b'(' => Token::ParenOpen,
             b')' => Token::ParenClose,
@@ -60,12 +58,10 @@ pub fn next_token<'src>(scanner: &mut StringScanner<'src>) -> Token<'src> {
                 Token::NewLine(&scanner.source[s_pos..e_pos])
             }
             _ => return Token::Byte(b),
-        };
-    } else if let Ok(Char::Cluster(c)) = c {
-        return Token::Cluster(c);
+        },
+        Ok(Char::Cluster(cluster)) => Token::Cluster(cluster),
+        _ => Token::None,
     }
-
-    return Token::None;
 }
 
 #[cfg(test)]

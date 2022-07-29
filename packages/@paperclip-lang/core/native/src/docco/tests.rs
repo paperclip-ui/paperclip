@@ -1,7 +1,7 @@
 use super::ast;
 use super::parser::parse;
-use crate::base::errors::ParserError;
-use crate::base::string_scanner::StringScanner;
+use crate::core::errors::ParserError;
+use crate::core::string_scanner::StringScanner;
 
 #[test]
 fn can_parse_various_comments() {

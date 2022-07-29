@@ -1,8 +1,8 @@
 use super::ast;
 use super::tokenizer::{next_token, Token};
-use crate::base::errors::ParserError;
-use crate::base::parser_context::Context;
-use crate::base::string_scanner::StringScanner;
+use crate::core::errors::ParserError;
+use crate::core::parser_context::Context;
+use crate::core::string_scanner::StringScanner;
 
 type ParserContext<'tokenizer, 'src> = Context<'tokenizer, 'src, Token<'src>>;
 

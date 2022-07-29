@@ -6,6 +6,7 @@ use std::fmt;
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub enum ErrorKind {
     UnexpectedToken,
+    EOF,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -21,6 +22,13 @@ impl ParserError {
             message,
             range,
             kind,
+        }
+    }
+    pub fn new_eof(message: String, range: Range) -> ParserError {
+        ParserError {
+            message,
+            range,
+            kind: ErrorKind::EOF,
         }
     }
 }

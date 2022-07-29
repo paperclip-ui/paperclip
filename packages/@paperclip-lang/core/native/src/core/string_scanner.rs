@@ -1,6 +1,4 @@
-use super::ast::Range;
-use super::ast::{Position, U16Position};
-use serde::Serialize;
+use crate::base::ast::{Position, U16Position};
 
 pub enum Char<'src> {
     Byte(u8),
@@ -59,7 +57,6 @@ impl<'src> StringScanner<'src> {
             u16_column: 1,
         }
     }
-
     pub fn peek(&self, step: usize) -> Option<u8> {
         if self.pos + step < self.source.len() {
             Some(self.source[self.pos + step])

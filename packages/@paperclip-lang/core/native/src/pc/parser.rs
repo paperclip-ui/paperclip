@@ -1,9 +1,9 @@
 use super::ast;
 use super::tokenizer::{is_superfluous_or_newline, next_token, Token};
 use crate::base::ast as base_ast;
-use crate::base::errors as err;
-use crate::base::parser_context::Context;
-use crate::base::string_scanner::StringScanner;
+use crate::core::errors as err;
+use crate::core::parser_context::Context;
+use crate::core::string_scanner::StringScanner;
 use std::str;
 
 type PCContext<'tokenizer, 'scan, 'src> = Context<'tokenizer, 'src, Token<'src>>;

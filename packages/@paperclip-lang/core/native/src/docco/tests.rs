@@ -5,8 +5,8 @@ use crate::core::string_scanner::StringScanner;
 
 #[test]
 fn can_parse_various_comments() {
-    let tests: [(&str, Result<ast::Comment, ParserError>); 1] =
-        [("/**/", Ok(ast::Comment { body: vec![] }))];
+    let tests: Vec<(&str, Result<ast::Comment, ParserError>)> =
+        vec![("/**/", Ok(ast::Comment { body: vec![] }))];
 
     for (source, expected_result) in tests {
         let ast = parse(source, &"".to_string());

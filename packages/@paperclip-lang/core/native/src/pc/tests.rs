@@ -9,7 +9,7 @@ use textwrap::dedent;
 
 #[test]
 fn can_parse_various_contents() {
-    let tests: [(&str, Result<(), err::ParserError>); 28] = [
+    let tests: Vec<(&str, Result<(), err::ParserError>)> = vec![
         // Can parse an empty document
         ("", Ok(())),
         // Can parse a component

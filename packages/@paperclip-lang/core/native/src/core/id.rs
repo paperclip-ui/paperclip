@@ -26,10 +26,10 @@ pub fn generate_seed() -> String {
     Uuid::new_v4().to_string()
 }
 
-pub fn get_document_id<'a>(uri: &String) -> String {
-    let mut buff = uri.clone();
+pub fn get_document_id<'a>(url: &String) -> String {
+    let mut buff = url.clone();
 
-    if !uri.starts_with("file://") {
+    if !url.starts_with("file://") {
         buff = format!("file://{}", buff);
     }
 

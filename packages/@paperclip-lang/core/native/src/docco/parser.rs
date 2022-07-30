@@ -1,21 +1,25 @@
 use super::ast;
 use super::tokenizer::{next_token, Token};
 use crate::core::errors::ParserError;
+use crate::core::id::{get_document_id, IDGenerator};
 use crate::core::parser_context::Context;
 use crate::core::string_scanner::StringScanner;
 
-type ParserContext<'tokenizer, 'src> = Context<'tokenizer, 'src, Token<'src>>;
+type ParserContext<'tokenizer, 'idgenerator, 'src> =
+    Context<'tokenizer, 'idgenerator, 'src, Token<'src>>;
 
 pub fn parse<'src>(source: &'src str, url: &String) -> Result<ast::Comment, ParserError> {
     let mut scanner = StringScanner::new(source);
-    parse_with_string_scanner(&mut scanner, url)
+    let mut id_generator = IDGenerator::new(get_document_id(url));
+    parse_with_string_scanner(&mut scanner, &mut id_generator, url)
 }
 
-pub fn parse_with_string_scanner<'src>(
+pub fn parse_with_string_scanner<'src, 'idgenerator>(
     source: &'src mut StringScanner<'src>,
+    id_generator: &'idgenerator mut IDGenerator,
     url: &String,
 ) -> Result<ast::Comment, ParserError> {
-    let mut context = Context::new(source, &next_token, url);
+    let mut context = Context::new(source, url, &next_token, id_generator)?;
     parse_comment(&mut context)
 }
 

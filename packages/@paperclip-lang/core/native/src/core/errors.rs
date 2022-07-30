@@ -1,4 +1,4 @@
-use crate::base::ast::Range;
+use crate::base::ast::{Range, U16Position};
 use serde::Serialize;
 use std::error::Error;
 use std::fmt;
@@ -24,10 +24,10 @@ impl ParserError {
             kind,
         }
     }
-    pub fn new_eof(message: String, range: Range) -> ParserError {
+    pub fn new_eof() -> ParserError {
         ParserError {
-            message,
-            range,
+            message: "End of file".to_string(),
+            range: Range::new(U16Position::new(0, 0, 0), U16Position::new(0, 0, 0)),
             kind: ErrorKind::EOF,
         }
     }

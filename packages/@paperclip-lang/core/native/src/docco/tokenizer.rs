@@ -17,7 +17,7 @@ pub enum Token<'src> {
     NewLine(&'src [u8]),
     String(&'src [u8]),
     Byte(u8),
-    Cluster(&'src [u8])
+    Cluster(&'src [u8]),
 }
 
 pub fn next_token<'src>(
@@ -41,8 +41,8 @@ pub fn next_token<'src>(
                 }
             }
             b'/' => {
-                if scanner.peek(0) == Some(b'*') {
-                    scanner.forward(1);
+                if scanner.peek_some(2) == Some(b"**") {
+                    scanner.forward(2);
                     Token::CommentStart
                 } else {
                     Token::Byte(b'/')
@@ -67,13 +67,18 @@ pub fn next_token<'src>(
     })
 }
 
+pub fn is_superfluous(token: &Token) -> bool {
+    matches!(token, Token::Space(_))
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn can_tokenize_multiline_comment() {
-        let mut scanner = StringScanner::new("/*@a(blah:\"abba\") \n\n*/");
+        let mut scanner = StringScanner::new("/**@a(blah:\"abba\") \n\n*/");
         assert_eq!(next_token(&mut scanner), Ok(Token::CommentStart));
         assert_eq!(next_token(&mut scanner), Ok(Token::At));
         assert_eq!(next_token(&mut scanner), Ok(Token::Word(b"a")));

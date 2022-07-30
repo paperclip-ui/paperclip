@@ -1,9 +1,10 @@
 use super::ast;
 use crate::core::serialize_context::Context;
 
-pub fn serialize(comment: &ast::Comment) {
+pub fn serialize(comment: &ast::Comment) -> String {
     let mut context = Context::new();
     serialize_comment(comment, &mut context);
+    context.buffer
 }
 
 pub fn serialize_comment(comment: &ast::Comment, context: &mut Context) {

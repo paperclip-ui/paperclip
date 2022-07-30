@@ -1,23 +1,29 @@
 use super::ast;
 use super::parser::parse;
-use crate::base::ast::U16Position;
+use crate::base::ast::{U16Position, Range};
 use crate::core::errors::ParserError;
+use super::serialize::serialize;
 use crate::core::string_scanner::StringScanner;
 
 #[test]
 fn can_parse_various_comments() {
-    let tests: Vec<(&str, Result<ast::Comment, ParserError>)> =
-        vec![
-            ("/**/", Ok(ast::Comment { id: "".to_string(), range: Range.now(U16Position::new(0, 0, 0), U16Position::new(0,0,0)), body: vec![] })),
-            ("/** This is some text */", Ok(ast::Comment {
-                body: vec![
-                    ast::CommentBodyItem::Text(b"This is some text")
-                ]
-            }))
-        ];
+    let tests: Vec<(&str, Result<(), ParserError>)> = vec![
+        (
+            "/***/",
+            Ok(()),
+        ),
+        (
+            "/** This is some text */",
+            Ok(()),
+        ),
+    ];
 
     for (source, expected_result) in tests {
-        let ast = parse(source, &"".to_string());
-        assert_eq!(ast, expected_result);
+        let result = parse(source, &"".to_string());
+        if let Ok(ast) = result {
+            assert_eq!(source, serialize(&ast));
+        } else if let Err(err) = result {
+            assert_eq!(Err(err), expected_result);
+        }
     }
 }

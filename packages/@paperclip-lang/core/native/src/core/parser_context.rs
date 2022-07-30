@@ -15,7 +15,7 @@ pub struct Context<'tokenizer, 'idgenerator, 'src, TToken> {
     pub source_url: String,
     pub id_generator: &'idgenerator mut IDGenerator,
     _next_token: &'tokenizer NextToken<'src, TToken>,
-    scanner: &'src mut StringScanner<'src>, // pub tokenizer: &'tokenizer mut TTokenizer,
+    pub scanner: &'src mut StringScanner<'src>, // pub tokenizer: &'tokenizer mut TTokenizer,
 }
 
 impl<'tokenizer, 'idgenerator, 'src, TToken> Context<'tokenizer, 'idgenerator, 'src, TToken> {

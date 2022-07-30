@@ -64,6 +64,13 @@ impl<'src> StringScanner<'src> {
             None
         }
     }
+    pub fn peek_some(&self, step: usize) -> Option<&'src [u8]> {
+        if self.pos + step < self.source.len() {
+            Some(&self.source[self.pos..(self.pos + step)])
+        } else {
+            None
+        }
+    }
     pub fn forward(&mut self, steps: usize) {
         let mut subcol = 0;
 

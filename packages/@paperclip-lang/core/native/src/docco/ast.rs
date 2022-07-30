@@ -16,6 +16,8 @@ pub enum CommentBodyItem {
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Text {
+    pub id: String,
+    pub range: Range,
     pub value: String,
 }
 

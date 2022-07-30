@@ -3,6 +3,8 @@ use serde::Serialize;
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Comment {
+    pub id: String,
+    pub range: Range,
     pub body: Vec<CommentBodyItem>,
 }
 
@@ -19,6 +21,8 @@ pub struct Text {
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Property {
+    pub id: String,
+    pub range: Range,
     pub name: String,
     pub value: PropertyValue,
 }
@@ -31,6 +35,8 @@ pub enum PropertyValue {
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Parameters {
+    pub id: String,
+    pub range: Range,
     pub items: ParameterValue,
 }
 

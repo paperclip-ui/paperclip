@@ -1,4 +1,5 @@
 use super::ast;
+use crate::base::ast::Range;
 use super::tokenizer::{next_token, Token};
 use crate::core::errors::ParserError;
 use crate::core::id::{get_document_id, IDGenerator};
@@ -24,7 +25,13 @@ pub fn parse_with_string_scanner<'src, 'idgenerator>(
 }
 
 pub fn parse_comment(context: &mut ParserContext) -> Result<ast::Comment, ParserError> {
+    let start = context.curr_u16pos.clone();
     let mut body: Vec<ast::CommentBodyItem> = vec![];
+    let end = context.curr_u16pos.clone();
 
-    Ok(ast::Comment { body })
+    Ok(ast::Comment { 
+        id: context.next_id(),
+        range: Range::new(start, end),
+        body
+    })
 }

@@ -17,8 +17,7 @@ pub enum Token<'src> {
     NewLine(&'src [u8]),
     String(&'src [u8]),
     Byte(u8),
-    Cluster(&'src [u8]),
-    None,
+    Cluster(&'src [u8])
 }
 
 pub fn next_token<'src>(

@@ -1,4 +1,5 @@
 use super::ast;
+use crate::base::ast as base_ast;
 use std::str;
 use crate::core::errors as err;
 use super::tokenizer::{next_token, is_superfluous, Token};
@@ -36,8 +37,8 @@ pub fn parse_comment(context: &mut ParserContext) -> Result<ast::Comment, Parser
             break;
         }
         body.push(match &context.curr_token {
-            Token::At => parse_property(context),
-            _ => parse_text(context)
+            Some(Token::At) => parse_property(context),
+            _ => parse_string(context)
         });
     }
     let end = context.curr_u16pos.clone();
@@ -49,10 +50,6 @@ pub fn parse_comment(context: &mut ParserContext) -> Result<ast::Comment, Parser
     })
 }
 
-pub fn parse_text(cnotext: &mut ParserContext) -> Result<ast::Text, ParserError> {
-    
-}
-
 
 fn trim_string(value: &str) -> String {
     value[1..value.len() - 1].to_string()
@@ -60,16 +57,38 @@ fn trim_string(value: &str) -> String {
 
 
 pub fn parse_property(context: &mut ParserContext) -> Result<ast::Property, ParserError> {
+    let start = context.curr_u16pos.clone();
     context.next_token()?; // eat @
     let name = extract_word_value(context)?;
     context.next_token()?;
     let value = match context.curr_token {
-        Token::ParenOpen => parse_parameters(context),
-        Token::String(value) => 
-    }
+        Some(Token::ParenOpen) => ast::PropertyValue::Parameters(parse_parameters(context)?),
+        Token::String(value) => ast::PropertyValue::String(parse_string(context)?)
+    };
+    let end = context.curr_u16pos.clone();
+
+    Ok(ast::Property {
+        id: context.next_id(),
+        range: Range::new(start, end),
+        name,
+        value
+    })
+}
+pub fn parse_string(context: &mut ParserContext) -> Result<base_ast::Str, ParserError> {
+    let start = context.curr_u16pos.clone();
+    let value = extract_string_value(context)?;
+    context.next_token()?; // eat
+    let end = context.curr_u16pos.clone();
+    Ok(base_ast::Str {
+        id: context.next_id(),
+        range: Range::new(start, end),
+        value
+    })
 }
 
-fn extract_string_value(context: &mut PCContext) -> Result<String, err::ParserError> {
+
+
+fn extract_string_value(context: &mut ParserContext) -> Result<String, err::ParserError> {
     if let Some(Token::String(value)) = context.curr_token {
         Ok(trim_string(str::from_utf8(value).unwrap()))
     } else {
@@ -86,9 +105,32 @@ fn extract_word_value(context: &mut ParserContext) -> Result<String, err::Parser
     }
 }
 
-fn parse_parameters(context: &mut ParserContext) -> Result<String, err::ParserError> {
+fn parse_parameters(context: &mut ParserContext) -> Result<ast::Parameters, err::ParserError> {
+    context.next_token(); // eat (
+        
+    let mut items: Vec<ast::Parameter> = vec![];
+    while ast.curr_token !== Token::ParenClose {
+        items.push(parse_parameter(context)?);
+    }
 
+
+    // let name = extract_word_value(context)?;
+    // context.next_token(); // eat :
 }
+
+fn parse_parameter(context: &mut ParserContext) -> Result<ast::Parameter, err::ParserError> {
+    let start = context.curr_u16pos.clone();
+    let name = extract_word_value(context)?;
+    context.next_token(); // eat :
+    let end = context.curr_u16pos.clone();
+
+
+    Ok(ast::Parameter {
+        id: context.next_id(),
+        range: Range::new(start, end)
+    });
+}
+
 
 // TODO - generalize this - make a trait
 fn parse_body<TItem, TTest>(

@@ -43,6 +43,14 @@ pub struct Parameters {
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
+pub struct Parameter {
+    pub id: String,
+    pub range: Range,
+    pub name: String,
+    pub value: ParameterValue
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
 pub enum ParameterValue {
     String(Str),
     NUmber(Number),

@@ -52,7 +52,7 @@ pub struct Str {
 pub struct Number {
     pub id: String,
     pub range: Range,
-    pub value: String,
+    pub value: f32,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

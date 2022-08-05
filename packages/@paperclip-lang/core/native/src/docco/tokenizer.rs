@@ -1,7 +1,9 @@
 use crate::base::tokenizer::next_scanner_char;
 use crate::core::errors as err;
+use std::str;
 use crate::core::string_scanner::{
-    is_az, is_newline, is_space, scan_string, Char, StringScanner, StringScannerError,
+    is_az, is_newline, is_space, is_digit, scan_number, is_whitespace, scan_string, Char, StringScanner,
+    StringScannerError,
 };
 
 #[derive(Debug, PartialEq, Clone)]
@@ -13,9 +15,11 @@ pub enum Token<'src> {
     ParenOpen,
     ParenClose,
     Colon,
-    Space(&'src [u8]),
-    NewLine(&'src [u8]),
+    Comma,
+    PropertyName(&'src [u8]),
+    Whitespace(&'src [u8]),
     String(&'src [u8]),
+    Number(f32),
     Byte(u8),
     Cluster(&'src [u8]),
 }
@@ -32,6 +36,18 @@ pub fn next_token<'src>(
             b'(' => Token::ParenOpen,
             b')' => Token::ParenClose,
             b':' => Token::Colon,
+            b',' => Token::Comma,
+            b'-' => {
+                if let Some(b2) = scanner.peek(0) {
+                    if is_digit(b2) {
+                        Token::Number(scan_number2(scanner, s_pos))
+                    } else {
+                        Token::Byte(b'-')
+                    }
+                } else {
+                    Token::Byte(b'-')
+                }
+            },
             b'*' => {
                 if scanner.peek(0) == Some(b'/') {
                     scanner.forward(1);
@@ -53,13 +69,12 @@ pub fn next_token<'src>(
                 let e_pos = scanner.scan(is_az).u8_pos;
                 Token::Word(&scanner.source[s_pos..e_pos])
             }
-            _ if is_space(b) => {
-                let e_pos = scanner.scan(is_space).u8_pos;
-                Token::Space(&scanner.source[s_pos..e_pos])
+            _ if is_digit(b) => {
+                Token::Number(scan_number2(scanner, s_pos))
             }
-            _ if is_newline(b) => {
-                let e_pos = scanner.scan(is_newline).u8_pos;
-                Token::NewLine(&scanner.source[s_pos..e_pos])
+            _ if is_space(b) | is_newline(b) => {
+                let e_pos = scanner.scan(is_whitespace).u8_pos;
+                Token::Whitespace(&scanner.source[s_pos..e_pos])
             }
             _ => Token::Byte(b),
         },
@@ -67,10 +82,14 @@ pub fn next_token<'src>(
     })
 }
 
-pub fn is_superfluous(token: &Token) -> bool {
-    matches!(token, Token::Space(_))
+fn scan_number2<'src>(scanner: &mut StringScanner<'src>, s_pos: usize) -> f32 {
+    let buffer = str::from_utf8(scan_number(scanner, s_pos)).unwrap();
+    buffer.parse::<f32>().unwrap()
 }
 
+pub fn is_superfluous(token: &Token) -> bool {
+    matches!(token, Token::Whitespace(_))
+}
 
 #[cfg(test)]
 mod tests {
@@ -87,8 +106,7 @@ mod tests {
         assert_eq!(next_token(&mut scanner), Ok(Token::Colon));
         assert_eq!(next_token(&mut scanner), Ok(Token::String(b"\"abba\"")));
         assert_eq!(next_token(&mut scanner), Ok(Token::ParenClose));
-        assert_eq!(next_token(&mut scanner), Ok(Token::Space(b" ")));
-        assert_eq!(next_token(&mut scanner), Ok(Token::NewLine(b"\n\n")));
+        assert_eq!(next_token(&mut scanner), Ok(Token::Whitespace(b" \n\n")));
         assert_eq!(next_token(&mut scanner), Ok(Token::CommentEnd));
     }
 }

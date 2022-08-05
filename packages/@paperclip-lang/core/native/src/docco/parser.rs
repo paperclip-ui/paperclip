@@ -1,13 +1,13 @@
 use super::ast;
+use super::tokenizer::{is_superfluous, next_token, Token};
 use crate::base::ast as base_ast;
-use std::str;
-use crate::core::errors as err;
-use super::tokenizer::{next_token, is_superfluous, Token};
 use crate::base::ast::Range;
+use crate::core::errors as err;
 use crate::core::errors::ParserError;
 use crate::core::id::{get_document_id, IDGenerator};
 use crate::core::parser_context::Context;
 use crate::core::string_scanner::StringScanner;
+use std::str;
 
 type ParserContext<'tokenizer, 'idgenerator, 'src> =
     Context<'tokenizer, 'idgenerator, 'src, Token<'src>>;
@@ -30,17 +30,14 @@ pub fn parse_with_string_scanner<'src, 'idgenerator>(
 pub fn parse_comment(context: &mut ParserContext) -> Result<ast::Comment, ParserError> {
     context.next_token()?; // eat /**
     let start = context.curr_u16pos.clone();
-    println!("{:?}", context.curr_token);
     let mut body: Vec<ast::CommentBodyItem> = vec![];
-    loop {
-        if context.curr_token == None {
-            break;
-        }
+    while context.curr_token != Some(Token::CommentEnd) {
         body.push(match &context.curr_token {
-            Some(Token::At) => parse_property(context),
-            _ => parse_string(context)
+            Some(Token::At) => ast::CommentBodyItem::Property(parse_property(context)?),
+            _ => ast::CommentBodyItem::Text(parse_text(context)?),
         });
     }
+    context.next_token()?; // eat CommentEnd
     let end = context.curr_u16pos.clone();
 
     Ok(ast::Comment {
@@ -50,20 +47,20 @@ pub fn parse_comment(context: &mut ParserContext) -> Result<ast::Comment, Parser
     })
 }
 
-
 fn trim_string(value: &str) -> String {
     value[1..value.len() - 1].to_string()
 }
-
 
 pub fn parse_property(context: &mut ParserContext) -> Result<ast::Property, ParserError> {
     let start = context.curr_u16pos.clone();
     context.next_token()?; // eat @
     let name = extract_word_value(context)?;
     context.next_token()?;
+    context.skip(is_superfluous);
     let value = match context.curr_token {
         Some(Token::ParenOpen) => ast::PropertyValue::Parameters(parse_parameters(context)?),
-        Token::String(value) => ast::PropertyValue::String(parse_string(context)?)
+        Some(Token::String(_)) => ast::PropertyValue::String(parse_string(context)?),
+        _ => return Err(context.new_unexpected_token_error()),
     };
     let end = context.curr_u16pos.clone();
 
@@ -71,7 +68,7 @@ pub fn parse_property(context: &mut ParserContext) -> Result<ast::Property, Pars
         id: context.next_id(),
         range: Range::new(start, end),
         name,
-        value
+        value,
     })
 }
 pub fn parse_string(context: &mut ParserContext) -> Result<base_ast::Str, ParserError> {
@@ -82,11 +79,70 @@ pub fn parse_string(context: &mut ParserContext) -> Result<base_ast::Str, Parser
     Ok(base_ast::Str {
         id: context.next_id(),
         range: Range::new(start, end),
-        value
+        value,
     })
 }
 
+pub fn parse_text(context: &mut ParserContext) -> Result<base_ast::Str, ParserError> {
+    let start = context.curr_u16pos.clone();
 
+    let mut buffer: Vec<String> = vec![];
+
+    loop {
+        // EOF
+        if context.curr_token == None || context.curr_token == Some(Token::CommentEnd) {
+            break;
+        }
+
+        // is prop
+        if context.curr_token == Some(Token::At) && matches!(context.peek(1), &Some(Token::Word(_)))
+        {
+            break;
+        }
+
+        if let Some(token) = &context.curr_token {
+            match token {
+                Token::Whitespace(b) | Token::Word(b) => {
+                    buffer.push(str::from_utf8(b).unwrap().to_string());
+                }
+                Token::Byte(b) => {
+                    buffer.push(str::from_utf8(&[b.clone()]).unwrap().to_string());
+                }
+                _ => {
+                    return Err(context.new_unexpected_token_error());
+                }
+            }
+        }
+
+        context.next_token()?;
+    }
+    let end = context.curr_u16pos.clone();
+    Ok(base_ast::Str {
+        id: context.next_id(),
+        range: Range::new(start, end),
+        value: buffer.join(""),
+    })
+}
+
+pub fn parse_number(context: &mut ParserContext) -> Result<base_ast::Number, ParserError> {
+    let start = context.curr_u16pos.clone();
+    let value = extract_number_value(context)?;
+    context.next_token()?; // eat
+    let end = context.curr_u16pos.clone();
+    Ok(base_ast::Number {
+        id: context.next_id(),
+        range: Range::new(start, end),
+        value,
+    })
+}
+
+fn extract_number_value(context: &mut ParserContext) -> Result<f32, err::ParserError> {
+    if let Some(Token::Number(value)) = context.curr_token {
+        Ok(value)
+    } else {
+        return Err(context.new_unexpected_token_error());
+    }
+}
 
 fn extract_string_value(context: &mut ParserContext) -> Result<String, err::ParserError> {
     if let Some(Token::String(value)) = context.curr_token {
@@ -95,7 +151,6 @@ fn extract_string_value(context: &mut ParserContext) -> Result<String, err::Pars
         return Err(context.new_unexpected_token_error());
     }
 }
-
 
 fn extract_word_value(context: &mut ParserContext) -> Result<String, err::ParserError> {
     if let Some(Token::Word(value)) = context.curr_token {
@@ -106,61 +161,57 @@ fn extract_word_value(context: &mut ParserContext) -> Result<String, err::Parser
 }
 
 fn parse_parameters(context: &mut ParserContext) -> Result<ast::Parameters, err::ParserError> {
+    let start = context.curr_u16pos.clone();
+
+
     context.next_token(); // eat (
-        
+
     let mut items: Vec<ast::Parameter> = vec![];
-    while ast.curr_token !== Token::ParenClose {
+    while context.curr_token != None {
         items.push(parse_parameter(context)?);
+        if context.curr_token == Some(Token::ParenClose) {
+            break;
+        }
+        if context.curr_token == Some(Token::Comma) {
+            context.next_token()?; // eat ,
+            context.skip(is_superfluous);
+        }
     }
+    context.next_token(); // eat )
 
+    let end = context.curr_u16pos.clone();
 
-    // let name = extract_word_value(context)?;
-    // context.next_token(); // eat :
+    Ok(ast::Parameters {
+        id: context.next_id(),
+        range: Range::new(start, end),
+        items,
+    })
 }
 
 fn parse_parameter(context: &mut ParserContext) -> Result<ast::Parameter, err::ParserError> {
     let start = context.curr_u16pos.clone();
     let name = extract_word_value(context)?;
-    context.next_token(); // eat :
+    context.next_token()?; // eat name
+    context.skip(is_superfluous);
+    context.next_token()?; // eat :
+    context.skip(is_superfluous);
+    let value = parse_parameter_value(context)?;
     let end = context.curr_u16pos.clone();
-
 
     Ok(ast::Parameter {
         id: context.next_id(),
-        range: Range::new(start, end)
-    });
+        range: Range::new(start, end),
+        name,
+        value,
+    })
 }
 
-
-// TODO - generalize this - make a trait
-fn parse_body<TItem, TTest>(
+fn parse_parameter_value(
     context: &mut ParserContext,
-    parse_item: TTest,
-    ends: Option<(Token, Token)>,
-) -> Result<Vec<TItem>, err::ParserError>
-where
-    TTest: Fn(&mut ParserContext) -> Result<TItem, err::ParserError>,
-{
-    if ends != None {
-        context.next_token()?;
-        context.skip(is_superfluous);
+) -> Result<ast::ParameterValue, err::ParserError> {
+    match context.curr_token {
+        Some(Token::String(_)) => Ok(ast::ParameterValue::String(parse_string(context)?)),
+        Some(Token::Number(_)) => Ok(ast::ParameterValue::Number(parse_number(context)?)),
+        _ => Err(context.new_unexpected_token_error()),
     }
-
-    let mut body: Vec<TItem> = vec![];
-
-    while context.curr_token != None {
-        if let Some((_, end)) = &ends {
-            if let Some(curr) = &context.curr_token {
-                if curr == end {
-                    context.next_token()?;
-                    context.skip(is_superfluous);
-                    break;
-                }
-            }
-        }
-
-        body.push(parse_item(context)?);
-    }
-
-    Ok(body)
 }

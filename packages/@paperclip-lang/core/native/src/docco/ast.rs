@@ -10,15 +10,8 @@ pub struct Comment {
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub enum CommentBodyItem {
-    Text(Text),
+    Text(Str),
     Property(Property),
-}
-
-#[derive(Debug, PartialEq, Serialize, Clone)]
-pub struct Text {
-    pub id: String,
-    pub range: Range,
-    pub value: String,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -39,7 +32,7 @@ pub enum PropertyValue {
 pub struct Parameters {
     pub id: String,
     pub range: Range,
-    pub items: ParameterValue,
+    pub items: Vec<Parameter>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -47,11 +40,11 @@ pub struct Parameter {
     pub id: String,
     pub range: Range,
     pub name: String,
-    pub value: ParameterValue
+    pub value: ParameterValue,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub enum ParameterValue {
     String(Str),
-    NUmber(Number),
+    Number(Number),
 }

@@ -11,6 +11,9 @@
     - ensure that style declarations work
       - css varaibles need to work
     - update variant syntax
+    - styles
+      - declare mixins
+      - include mixins (extends)
 
   - evaluator
     - should render virtual DOM

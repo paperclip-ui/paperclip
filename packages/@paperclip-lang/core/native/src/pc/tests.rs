@@ -244,10 +244,47 @@ fn can_parse_various_contents() {
         ),
         (
             r#"
-            /*** Test! */
+            /*** @bounds(width: 100, height: 100, x: -100.5, y: -0.5) */
             component A {
                 render div
             }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+            /** define a mixin */
+            style {
+                color: blue
+            }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+            style a {
+
+            }
+            style b {
+
+            }
+            style extends a, b {
+                
+            }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+            style a {
+
+            }
+            style b {
+
+            }
+            style variant b extends c, d {
+            }
+            
         "#,
             Ok(()),
         ),

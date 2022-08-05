@@ -1,5 +1,7 @@
 use super::ast;
 use crate::base::ast as base_ast;
+use crate::docco::serialize::serialize_comment as serialize_doc_comment;
+use crate::docco::ast as docco_ast;
 use crate::core::serialize_context::Context;
 
 pub fn serialize(document: &ast::Document) -> String {
@@ -11,6 +13,7 @@ pub fn serialize(document: &ast::Document) -> String {
 fn serialize_document(document: &ast::Document, context: &mut Context) {
     for item in &document.body {
         match item {
+            ast::DocumentBodyItem::DocComment(docco) => serialize_doc_comment2(docco, context),
             ast::DocumentBodyItem::Import(imp) => serialize_import(imp, context),
             ast::DocumentBodyItem::Component(comp) => serialize_component(comp, context),
             ast::DocumentBodyItem::Style(style) => serialize_style(style, context),
@@ -20,6 +23,11 @@ fn serialize_document(document: &ast::Document, context: &mut Context) {
 
 fn serialize_import(imp: &ast::Import, context: &mut Context) {
     context.add_buffer(format!("import \"{}\" as {}\n", imp.path, imp.namespace));
+}
+
+fn serialize_doc_comment2(docco: &docco_ast::Comment, context: &mut Context) {
+    serialize_doc_comment(docco, context);
+    context.add_buffer("\n".to_string());
 }
 
 fn serialize_component(component: &ast::Component, context: &mut Context) {

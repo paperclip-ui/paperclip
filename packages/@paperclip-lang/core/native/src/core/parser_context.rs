@@ -10,23 +10,23 @@ struct Error {}
 
 type NextToken<'src, Token> = dyn Fn(&mut StringScanner<'src>) -> Result<Token, ParserError>;
 
-pub struct Context<'tokenizer, 'idgenerator, 'src, TToken> {
+pub struct Context<'tokenizer, 'scanner, 'idgenerator, 'src, TToken> {
     pub curr_u16pos: U16Position,
     pub curr_token: Option<TToken>,
     pub token_pool: VecDeque<(Option<TToken>, U16Position)>,
     pub source_url: String,
     pub id_generator: &'idgenerator mut IDGenerator,
     _next_token: &'tokenizer NextToken<'src, TToken>,
-    pub scanner: &'src mut StringScanner<'src>, // pub tokenizer: &'tokenizer mut TTokenizer,
+    pub scanner: &'scanner mut StringScanner<'src>, // pub tokenizer: &'tokenizer mut TTokenizer,
 }
 
-impl<'tokenizer, 'idgenerator, 'src, TToken> Context<'tokenizer, 'idgenerator, 'src, TToken> {
+impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken> Context<'tokenizer, 'scanner, 'idgenerator, 'src, TToken> {
     pub fn new(
-        scanner: &'src mut StringScanner<'src>,
+        scanner: &'scanner mut StringScanner<'src>,
         source_url: &String,
         _next_token: &'tokenizer NextToken<'src, TToken>,
         id_generator: &'idgenerator mut IDGenerator,
-    ) -> Result<Context<'tokenizer, 'idgenerator, 'src, TToken>, ParserError> {
+    ) -> Result<Context<'tokenizer, 'scanner, 'idgenerator, 'src, TToken>, ParserError> {
         Ok(Context {
             curr_u16pos: scanner.get_u16pos(),
             token_pool: VecDeque::new(),

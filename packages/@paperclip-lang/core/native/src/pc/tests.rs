@@ -244,7 +244,7 @@ fn can_parse_various_contents() {
         ),
         (
             r#"
-            
+            /*** Test! */
             component A {
                 render div
             }
@@ -259,7 +259,7 @@ fn can_parse_various_contents() {
 
         if let Ok(ast) = parse_result {
             let output = serialize(&ast);
-            assert_eq!(dedent(source).trim(), output.trim());
+            assert_eq!(dedent(source).trim(), dedent(output.as_str()).trim());
         } else if let Err(err) = parse_result {
             pretty_assertions::assert_eq!(Err(err), result);
         }

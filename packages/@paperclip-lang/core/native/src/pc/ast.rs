@@ -1,5 +1,6 @@
 use crate::base::ast::{Range, Str};
 use serde::Serialize;
+use crate::docco::ast as docco_ast;
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Component {
@@ -200,6 +201,7 @@ pub enum DocumentBodyItem {
     Import(Import),
     Style(Style),
     Component(Component),
+    DocComment(docco_ast::Comment),
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

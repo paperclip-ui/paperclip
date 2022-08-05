@@ -3,12 +3,14 @@ use super::tokenizer::{is_superfluous_or_newline, next_token, Token};
 use crate::base::ast as base_ast;
 use crate::core::errors as err;
 use crate::core::id::IDGenerator;
+use crate::docco::ast as docco_ast;
+use crate::docco::parser::parse_with_string_scanner as parse_doc_comment;
 use crate::core::parser_context::{create_initial_context, Context};
 use crate::core::string_scanner::StringScanner;
 use std::str;
 
-type PCContext<'tokenizer, 'idgenerator, 'scan, 'src> =
-    Context<'tokenizer, 'idgenerator, 'src, Token<'src>>;
+type PCContext<'tokenizer, 'scanner, 'idgenerator, 'scan, 'src> =
+    Context<'tokenizer, 'scanner, 'idgenerator, 'src, Token<'src>>;
 
 pub fn parse<'src>(
     source: &'src str,
@@ -58,6 +60,9 @@ fn parse_document_child(
     context: &mut PCContext,
 ) -> Result<ast::DocumentBodyItem, err::ParserError> {
     match context.curr_token {
+        Some(Token::DoccoStart) => {
+            Ok(ast::DocumentBodyItem::DocComment(parse_docco(context)?))
+        }
         Some(Token::Word(b"component")) => {
             Ok(ast::DocumentBodyItem::Component(parse_component(context)?))
         }
@@ -67,6 +72,15 @@ fn parse_document_child(
             return Err(context.new_unexpected_token_error());
         }
     }
+}
+
+fn parse_docco(context: &mut PCContext) -> Result<docco_ast::Comment, err::ParserError> {
+    context.scanner.unshift(3); // rewise /**
+    let ret = parse_doc_comment(&mut context.scanner, &mut context.id_generator, &context.source_url);
+    context.scanner.unshift(2); // rewind */
+    context.next_token()?;
+    println!("{:?}", context.curr_token);
+    ret
 }
 
 fn parse_import(context: &mut PCContext) -> Result<ast::Import, err::ParserError> {

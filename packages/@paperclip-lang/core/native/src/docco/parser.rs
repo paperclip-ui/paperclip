@@ -9,8 +9,8 @@ use crate::core::parser_context::Context;
 use crate::core::string_scanner::StringScanner;
 use std::str;
 
-type ParserContext<'tokenizer, 'idgenerator, 'src> =
-    Context<'tokenizer, 'idgenerator, 'src, Token<'src>>;
+type ParserContext<'tokenizer, 'scanner, 'idgenerator, 'src> =
+    Context<'tokenizer, 'scanner, 'idgenerator, 'src, Token<'src>>;
 
 pub fn parse<'src>(source: &'src str, url: &String) -> Result<ast::Comment, ParserError> {
     let mut scanner = StringScanner::new(source);
@@ -18,8 +18,8 @@ pub fn parse<'src>(source: &'src str, url: &String) -> Result<ast::Comment, Pars
     parse_with_string_scanner(&mut scanner, &mut id_generator, url)
 }
 
-pub fn parse_with_string_scanner<'src, 'idgenerator>(
-    source: &'src mut StringScanner<'src>,
+pub fn parse_with_string_scanner<'src, 'scanner, 'idgenerator>(
+    source: &'scanner mut StringScanner<'src>,
     id_generator: &'idgenerator mut IDGenerator,
     url: &String,
 ) -> Result<ast::Comment, ParserError> {
@@ -37,6 +37,7 @@ pub fn parse_comment(context: &mut ParserContext) -> Result<ast::Comment, Parser
             _ => ast::CommentBodyItem::Text(parse_text(context)?),
         });
     }
+    println!("DDD{:?}", context.curr_token);
     context.next_token()?; // eat CommentEnd
     let end = context.curr_u16pos.clone();
 

@@ -26,6 +26,7 @@ pub enum Token<'src> {
     Space(&'src [u8]),
     Number(&'src [u8]),
     Word(&'src [u8]),
+    KeywordExtends,
     String(&'src [u8]),
     Byte(u8),
 
@@ -75,7 +76,12 @@ pub fn next_token<'src>(source: &mut StringScanner<'src>) -> Result<Token<'src>,
                 }
                 _ if is_az(b) => {
                     let e_pos = source.scan(|b| is_az(b) || is_digit(b)).u8_pos;
-                    Token::Word(&source.source[s_pos.u8_pos..e_pos])
+                    let word = &source.source[s_pos.u8_pos..e_pos];
+                    if word == b"extends" {
+                        Token::KeywordExtends
+                    } else {
+                        Token::Word(word)
+                    }
                 }
                 b'.' => Token::Dot,
                 b => Token::Byte(b),

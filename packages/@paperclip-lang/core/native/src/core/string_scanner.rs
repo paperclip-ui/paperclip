@@ -194,7 +194,7 @@ pub fn is_digit(c: u8) -> bool {
     matches!(c, b'0'..=b'8')
 }
 
-pub fn scan_number<'src>(scanner: &mut StringScanner<'src>, start: usize) -> &'src [u8] {    
+pub fn scan_number<'src>(scanner: &mut StringScanner<'src>, start: usize) -> &'src [u8] {
     scanner.scan(is_digit);
 
     let end = if scanner.peek(0) == Some(b'.') {

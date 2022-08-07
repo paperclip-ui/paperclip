@@ -1,10 +1,10 @@
 use crate::base::tokenizer::next_scanner_char;
 use crate::core::errors as err;
-use std::str;
 use crate::core::string_scanner::{
-    is_az, is_newline, is_space, is_digit, scan_number, is_whitespace, scan_string, Char, StringScanner,
-    StringScannerError,
+    is_az, is_digit, is_newline, is_space, is_whitespace, scan_number, scan_string, Char,
+    StringScanner, StringScannerError,
 };
+use std::str;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Token<'src> {
@@ -47,7 +47,7 @@ pub fn next_token<'src>(
                 } else {
                     Token::Byte(b'-')
                 }
-            },
+            }
             b'*' => {
                 if scanner.peek(0) == Some(b'/') {
                     scanner.forward(1);
@@ -69,9 +69,7 @@ pub fn next_token<'src>(
                 let e_pos = scanner.scan(is_az).u8_pos;
                 Token::Word(&scanner.source[s_pos..e_pos])
             }
-            _ if is_digit(b) => {
-                Token::Number(scan_number2(scanner, s_pos))
-            }
+            _ if is_digit(b) => Token::Number(scan_number2(scanner, s_pos)),
             _ if is_space(b) | is_newline(b) => {
                 let e_pos = scanner.scan(is_whitespace).u8_pos;
                 Token::Whitespace(&scanner.source[s_pos..e_pos])

@@ -1,6 +1,6 @@
 use crate::base::ast::{Range, Str};
-use serde::Serialize;
 use crate::docco::ast as docco_ast;
+use serde::Serialize;
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Component {
@@ -28,6 +28,8 @@ pub struct Script {
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Style {
     pub id: String,
+    pub name: Option<String>,
+    pub extends: Option<Vec<Reference>>,
     pub range: Range,
     pub body: Vec<StyleBodyItem>,
 }

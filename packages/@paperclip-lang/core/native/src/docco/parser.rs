@@ -164,7 +164,6 @@ fn extract_word_value(context: &mut ParserContext) -> Result<String, err::Parser
 fn parse_parameters(context: &mut ParserContext) -> Result<ast::Parameters, err::ParserError> {
     let start = context.curr_u16pos.clone();
 
-
     context.next_token(); // eat (
 
     let mut items: Vec<ast::Parameter> = vec![];

@@ -263,13 +263,6 @@ fn can_parse_various_contents() {
         (
             r#"
             style a {
-
-            }
-            style b {
-
-            }
-            style extends a, b {
-                
             }
         "#,
             Ok(()),
@@ -277,14 +270,11 @@ fn can_parse_various_contents() {
         (
             r#"
             style a {
-
             }
             style b {
-
             }
-            style variant b extends c, d {
+            style extends a, b.d.e {
             }
-            
         "#,
             Ok(()),
         ),

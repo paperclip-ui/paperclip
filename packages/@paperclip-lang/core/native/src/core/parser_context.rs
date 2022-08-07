@@ -20,7 +20,9 @@ pub struct Context<'tokenizer, 'scanner, 'idgenerator, 'src, TToken> {
     pub scanner: &'scanner mut StringScanner<'src>, // pub tokenizer: &'tokenizer mut TTokenizer,
 }
 
-impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken> Context<'tokenizer, 'scanner, 'idgenerator, 'src, TToken> {
+impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken>
+    Context<'tokenizer, 'scanner, 'idgenerator, 'src, TToken>
+{
     pub fn new(
         scanner: &'scanner mut StringScanner<'src>,
         source_url: &String,

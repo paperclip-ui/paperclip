@@ -57,9 +57,7 @@ fn serialize_parameters(value: &ast::Parameters, context: &mut Context) {
 fn serialize_parameter(value: &ast::Parameter, context: &mut Context) {
     context.add_buffer(format!("{}: ", value.name));
     match &value.value {
-        ast::ParameterValue::Number(value) => {
-            context.add_buffer(format!("{}", value.value))
-        },
+        ast::ParameterValue::Number(value) => context.add_buffer(format!("{}", value.value)),
         ast::ParameterValue::String(value) => {
             serialize_string(&value, context);
         }

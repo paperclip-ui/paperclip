@@ -1,8 +1,8 @@
 use super::ast;
 use crate::base::ast as base_ast;
-use crate::docco::serialize::serialize_comment as serialize_doc_comment;
-use crate::docco::ast as docco_ast;
 use crate::core::serialize_context::Context;
+use crate::docco::ast as docco_ast;
+use crate::docco::serialize::serialize_comment as serialize_doc_comment;
 
 pub fn serialize(document: &ast::Document) -> String {
     let mut context = Context::new();
@@ -46,7 +46,23 @@ fn serialize_component(component: &ast::Component, context: &mut Context) {
 }
 
 fn serialize_style(style: &ast::Style, context: &mut Context) {
-    context.add_buffer(format!("style {{\n"));
+    context.add_buffer(format!("style"));
+    if let Some(name) = &style.name {
+        context.add_buffer(format!(" {}", name));
+    }
+
+    if let Some(extends) = &style.extends {
+        context.add_buffer(format!(
+            " extends {}",
+            extends
+                .into_iter()
+                .map(|reference| { reference.path.join(".") })
+                .collect::<Vec<String>>()
+                .join(", ")
+        ));
+    }
+
+    context.add_buffer(" {\n".to_string());
     context.start_block();
     for item in &style.body {
         match item {

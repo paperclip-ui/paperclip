@@ -3,10 +3,10 @@ use super::tokenizer::{is_superfluous_or_newline, next_token, Token};
 use crate::base::ast as base_ast;
 use crate::core::errors as err;
 use crate::core::id::IDGenerator;
-use crate::docco::ast as docco_ast;
-use crate::docco::parser::parse_with_string_scanner as parse_doc_comment;
 use crate::core::parser_context::{create_initial_context, Context};
 use crate::core::string_scanner::StringScanner;
+use crate::docco::ast as docco_ast;
+use crate::docco::parser::parse_with_string_scanner as parse_doc_comment;
 use std::str;
 
 type PCContext<'tokenizer, 'scanner, 'idgenerator, 'scan, 'src> =
@@ -60,9 +60,7 @@ fn parse_document_child(
     context: &mut PCContext,
 ) -> Result<ast::DocumentBodyItem, err::ParserError> {
     match context.curr_token {
-        Some(Token::DoccoStart) => {
-            Ok(ast::DocumentBodyItem::DocComment(parse_docco(context)?))
-        }
+        Some(Token::DoccoStart) => Ok(ast::DocumentBodyItem::DocComment(parse_docco(context)?)),
         Some(Token::Word(b"component")) => {
             Ok(ast::DocumentBodyItem::Component(parse_component(context)?))
         }
@@ -76,10 +74,13 @@ fn parse_document_child(
 
 fn parse_docco(context: &mut PCContext) -> Result<docco_ast::Comment, err::ParserError> {
     context.scanner.unshift(3); // rewise /**
-    let ret = parse_doc_comment(&mut context.scanner, &mut context.id_generator, &context.source_url);
+    let ret = parse_doc_comment(
+        &mut context.scanner,
+        &mut context.id_generator,
+        &context.source_url,
+    );
     context.scanner.unshift(2); // rewind */
     context.next_token()?;
-    println!("{:?}", context.curr_token);
     ret
 }
 
@@ -117,8 +118,22 @@ fn parse_import(context: &mut PCContext) -> Result<ast::Import, err::ParserError
 
 fn parse_style(context: &mut PCContext) -> Result<ast::Style, err::ParserError> {
     let start = context.curr_u16pos.clone();
-    context.next_token()?;
+    context.next_token()?; // eat style
     context.skip(is_superfluous_or_newline);
+
+    let name = if let Some(Token::Word(name)) = context.curr_token {
+        context.next_token()?;
+        context.skip(is_superfluous_or_newline);
+        Some(str::from_utf8(name).unwrap().to_string())
+    } else {
+        None
+    };
+
+    let extends = if context.curr_token == Some(Token::KeywordExtends) {
+        Some(parse_style_extends(context)?)
+    } else {
+        None
+    };
 
     let body = parse_body(
         context,
@@ -134,9 +149,31 @@ fn parse_style(context: &mut PCContext) -> Result<ast::Style, err::ParserError> 
 
     Ok(ast::Style {
         id: context.next_id(),
+        name,
+        extends,
         body,
         range: base_ast::Range::new(start, end),
     })
+}
+
+fn parse_style_extends(context: &mut PCContext) -> Result<Vec<ast::Reference>, err::ParserError> {
+    context.next_token()?; // eat
+    context.skip(is_superfluous_or_newline);
+
+    println!("CM {:?}", context.curr_token);
+
+    let mut extends: Vec<ast::Reference> = vec![];
+    loop {
+        extends.push(parse_ref(context)?);
+        context.skip(is_superfluous_or_newline);
+        if context.curr_token != Some(Token::Comma) {
+            break;
+        }
+        context.next_token()?;
+        context.skip(is_superfluous_or_newline);
+    }
+
+    Ok(extends)
 }
 
 fn parse_style_declaration(

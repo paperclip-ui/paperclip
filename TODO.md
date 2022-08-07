@@ -14,6 +14,7 @@
     - styles
       - declare mixins
       - include mixins (extends)
+      - variants
 
   - evaluator
     - should render virtual DOM

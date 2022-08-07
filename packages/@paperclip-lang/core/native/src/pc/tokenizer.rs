@@ -27,6 +27,11 @@ pub enum Token<'src> {
     Number(&'src [u8]),
     Word(&'src [u8]),
     KeywordExtends,
+    KeywordPublic,
+    KeywordStyle,
+    KeywordImport,
+    KeywordComponent,
+    KeywordVariant,
     String(&'src [u8]),
     Byte(u8),
 
@@ -77,10 +82,14 @@ pub fn next_token<'src>(source: &mut StringScanner<'src>) -> Result<Token<'src>,
                 _ if is_az(b) => {
                     let e_pos = source.scan(|b| is_az(b) || is_digit(b)).u8_pos;
                     let word = &source.source[s_pos.u8_pos..e_pos];
-                    if word == b"extends" {
-                        Token::KeywordExtends
-                    } else {
-                        Token::Word(word)
+                    match word {
+                        b"extends" => Token::KeywordExtends,
+                        b"public" => Token::KeywordPublic,
+                        b"variant" => Token::KeywordVariant,
+                        b"import" => Token::KeywordImport,
+                        b"component" => Token::KeywordComponent,
+                        b"style" => Token::KeywordStyle,
+                        _ => Token::Word(word),
                     }
                 }
                 b'.' => Token::Dot,

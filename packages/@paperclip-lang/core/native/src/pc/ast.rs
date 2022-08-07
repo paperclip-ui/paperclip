@@ -5,6 +5,7 @@ use serde::Serialize;
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Component {
     pub id: String,
+    pub is_public: bool,
     pub range: Range,
     pub name: String,
     pub body: Vec<ComponentBodyItem>,
@@ -28,7 +29,9 @@ pub struct Script {
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Style {
     pub id: String,
+    pub is_public: bool,
     pub name: Option<String>,
+    pub variant_name: Option<String>,
     pub extends: Option<Vec<Reference>>,
     pub range: Range,
     pub body: Vec<StyleBodyItem>,

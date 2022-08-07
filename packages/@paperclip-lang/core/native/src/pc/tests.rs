@@ -269,11 +269,43 @@ fn can_parse_various_contents() {
         ),
         (
             r#"
-            style a {
-            }
-            style b {
-            }
             style extends a, b.d.e {
+            }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+            style variant test extends a, b.d.e {
+            }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+            style ab variant test extends a, b.d.e {
+                color: blue
+            }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+            public style {
+            }
+            public component A {
+            }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+            public component A {
+                variant ab (enabled: [])
+                render div test {
+                    style variant test {
+                    }
+                }
             }
         "#,
             Ok(()),

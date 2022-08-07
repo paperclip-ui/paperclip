@@ -59,20 +59,37 @@ fn parse_document(context: &mut PCContext) -> Result<ast::Document, err::ParserE
 fn parse_document_child(
     context: &mut PCContext,
 ) -> Result<ast::DocumentBodyItem, err::ParserError> {
+    let is_public = if context.curr_token == Some(Token::KeywordPublic) {
+        context.next_token()?; // eat
+        context.skip(is_superfluous_or_newline);
+        true
+    } else {
+        false
+    };
+
     match context.curr_token {
-        Some(Token::DoccoStart) => Ok(ast::DocumentBodyItem::DocComment(parse_docco(context)?)),
-        Some(Token::Word(b"component")) => {
-            Ok(ast::DocumentBodyItem::Component(parse_component(context)?))
-        }
-        Some(Token::Word(b"import")) => Ok(ast::DocumentBodyItem::Import(parse_import(context)?)),
-        Some(Token::Word(b"style")) => Ok(ast::DocumentBodyItem::Style(parse_style(context)?)),
+        Some(Token::DoccoStart) => Ok(ast::DocumentBodyItem::DocComment(parse_docco(
+            context, is_public,
+        )?)),
+        Some(Token::KeywordComponent) => Ok(ast::DocumentBodyItem::Component(parse_component(
+            context, is_public,
+        )?)),
+        Some(Token::KeywordImport) => Ok(ast::DocumentBodyItem::Import(parse_import(
+            context, is_public,
+        )?)),
+        Some(Token::KeywordStyle) => Ok(ast::DocumentBodyItem::Style(parse_style(
+            context, is_public,
+        )?)),
         _ => {
             return Err(context.new_unexpected_token_error());
         }
     }
 }
 
-fn parse_docco(context: &mut PCContext) -> Result<docco_ast::Comment, err::ParserError> {
+fn parse_docco(
+    context: &mut PCContext,
+    is_public: bool,
+) -> Result<docco_ast::Comment, err::ParserError> {
     context.scanner.unshift(3); // rewise /**
     let ret = parse_doc_comment(
         &mut context.scanner,
@@ -84,7 +101,7 @@ fn parse_docco(context: &mut PCContext) -> Result<docco_ast::Comment, err::Parse
     ret
 }
 
-fn parse_import(context: &mut PCContext) -> Result<ast::Import, err::ParserError> {
+fn parse_import(context: &mut PCContext, is_public: bool) -> Result<ast::Import, err::ParserError> {
     let start = context.curr_u16pos.clone();
 
     // eat statement
@@ -116,7 +133,7 @@ fn parse_import(context: &mut PCContext) -> Result<ast::Import, err::ParserError
     })
 }
 
-fn parse_style(context: &mut PCContext) -> Result<ast::Style, err::ParserError> {
+fn parse_style(context: &mut PCContext, is_public: bool) -> Result<ast::Style, err::ParserError> {
     let start = context.curr_u16pos.clone();
     context.next_token()?; // eat style
     context.skip(is_superfluous_or_newline);
@@ -125,6 +142,17 @@ fn parse_style(context: &mut PCContext) -> Result<ast::Style, err::ParserError> 
         context.next_token()?;
         context.skip(is_superfluous_or_newline);
         Some(str::from_utf8(name).unwrap().to_string())
+    } else {
+        None
+    };
+
+    let variant_name = if context.curr_token == Some(Token::KeywordVariant) {
+        context.next_token()?; // eat keyword
+        context.skip(is_superfluous_or_newline);
+        let name = extract_word_value(context)?;
+        context.next_token()?; // eat name
+        context.skip(is_superfluous_or_newline);
+        Some(name)
     } else {
         None
     };
@@ -149,6 +177,8 @@ fn parse_style(context: &mut PCContext) -> Result<ast::Style, err::ParserError> 
 
     Ok(ast::Style {
         id: context.next_id(),
+        is_public,
+        variant_name,
         name,
         extends,
         body,
@@ -199,7 +229,10 @@ fn parse_style_declaration(
     })
 }
 
-fn parse_component(context: &mut PCContext) -> Result<ast::Component, err::ParserError> {
+fn parse_component(
+    context: &mut PCContext,
+    is_public: bool,
+) -> Result<ast::Component, err::ParserError> {
     let start = context.curr_u16pos.clone();
 
     // eat component
@@ -216,7 +249,7 @@ fn parse_component(context: &mut PCContext) -> Result<ast::Component, err::Parse
             Some(Token::Word(b"render")) => {
                 Ok(ast::ComponentBodyItem::Render(parse_render(context)?))
             }
-            Some(Token::Word(b"variant")) => {
+            Some(Token::KeywordVariant) => {
                 Ok(ast::ComponentBodyItem::Variant(parse_variant(context)?))
             }
             Some(Token::Word(b"script")) => {
@@ -231,6 +264,7 @@ fn parse_component(context: &mut PCContext) -> Result<ast::Component, err::Parse
 
     Ok(ast::Component {
         id: context.next_id(),
+        is_public,
         name,
         body,
         range: base_ast::Range::new(start, end),
@@ -361,8 +395,8 @@ fn parse_text(context: &mut PCContext) -> Result<ast::TextNode, err::ParserError
         parse_body(
             context,
             |context: &mut PCContext| match context.curr_token {
-                Some(Token::Word(b"style")) => {
-                    Ok(ast::TextNodeBodyItem::Style(parse_style(context)?))
+                Some(Token::KeywordStyle) => {
+                    Ok(ast::TextNodeBodyItem::Style(parse_style(context, false)?))
                 }
                 _ => Err(context.new_unexpected_token_error()),
             },
@@ -426,11 +460,11 @@ fn parse_override(context: &mut PCContext) -> Result<ast::Override, err::ParserE
         parse_body(
             context,
             |context: &mut PCContext| match context.curr_token {
-                Some(Token::Word(b"variant")) => {
+                Some(Token::KeywordVariant) => {
                     Ok(ast::OverrideBodyItem::Variant(parse_variant(context)?))
                 }
-                Some(Token::Word(b"style")) => {
-                    Ok(ast::OverrideBodyItem::Style(parse_style(context)?))
+                Some(Token::KeywordStyle) => {
+                    Ok(ast::OverrideBodyItem::Style(parse_style(context, false)?))
                 }
                 _ => Err(context.new_unexpected_token_error()),
             },
@@ -475,8 +509,8 @@ fn parse_element(context: &mut PCContext) -> Result<ast::Element, err::ParserErr
         parse_body(
             context,
             |context: &mut PCContext| match context.curr_token {
-                Some(Token::Word(b"style")) => {
-                    Ok(ast::ElementBodyItem::Style(parse_style(context)?))
+                Some(Token::KeywordStyle) => {
+                    Ok(ast::ElementBodyItem::Style(parse_style(context, false)?))
                 }
                 Some(Token::Word(b"text")) => Ok(ast::ElementBodyItem::Text(parse_text(context)?)),
                 Some(Token::Word(b"insert")) => {
@@ -659,28 +693,6 @@ where
     }
 
     Ok(body)
-}
-
-fn parse_component_body(context: &mut PCContext) -> Result<ast::Component, err::ParserError> {
-    let start = context.curr_u16pos.clone();
-
-    // eat component
-    context.next_token()?;
-    context.skip(is_superfluous_or_newline);
-
-    let name = extract_word_value(context)?;
-
-    // eat name
-    context.next_token()?;
-
-    let end = context.curr_u16pos.clone();
-
-    Ok(ast::Component {
-        id: context.next_id(),
-        name,
-        body: vec![],
-        range: base_ast::Range::new(start, end),
-    })
 }
 
 fn trim_string(value: &str) -> String {

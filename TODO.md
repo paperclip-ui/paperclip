@@ -1,3 +1,5 @@
+- Consider _not_ building a CSS parser and using _computed_ state instead.
+
 - Rust engine
 
   - parser

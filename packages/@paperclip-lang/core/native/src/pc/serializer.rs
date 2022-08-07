@@ -31,6 +31,9 @@ fn serialize_doc_comment2(docco: &docco_ast::Comment, context: &mut Context) {
 }
 
 fn serialize_component(component: &ast::Component, context: &mut Context) {
+    if component.is_public {
+        context.add_buffer("public ".to_string());
+    }
     context.add_buffer(format!("component {} {{\n", component.name));
     context.start_block();
 
@@ -46,10 +49,18 @@ fn serialize_component(component: &ast::Component, context: &mut Context) {
 }
 
 fn serialize_style(style: &ast::Style, context: &mut Context) {
+    if style.is_public {
+        context.add_buffer("public ".to_string());
+    }
     context.add_buffer(format!("style"));
     if let Some(name) = &style.name {
         context.add_buffer(format!(" {}", name));
     }
+
+    if let Some(variant_name) = &style.variant_name {
+        context.add_buffer(format!(" variant {}", variant_name));
+    }
+
 
     if let Some(extends) = &style.extends {
         context.add_buffer(format!(

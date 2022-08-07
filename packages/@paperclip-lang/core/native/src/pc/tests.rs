@@ -278,6 +278,8 @@ fn can_parse_various_contents() {
         (
             r#"
             style extends a, b.d.e {
+                display: inline-block
+                width: 100%
             }
         "#,
             Ok(()),

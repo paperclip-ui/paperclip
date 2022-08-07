@@ -27,10 +27,10 @@ public component SearchResult {
       padding-left: 12px
     }
     style variant preselected {
-      background-image: linear-gradient(#{imp0.blue3}, #{imp0.blue3})
+      background-image: linear-gradient(var(imp0.blue3), var(imp0.blue3))
     }
     style variant hovering {
-      background-image: linear-gradient(#{imp0.grey7}, #{imp0.grey7})
+      background-image: linear-gradient(var(imp0.grey7), var(imp0.grey7))
     }
     div labelContainer {
       style {
@@ -60,12 +60,10 @@ public component SearchResult {
       }
       slot description2 {
         text description "super/nested/directory/path/that/will/wa/a/b/c/d/e/f/g/h/i/g/h/i/j/k/l/" {
-          style {
-            include imp1.baseFont
-            include imp1.nowrapEllipsis
+          style extends imp1.baseFont, imp1.nowrapEllipsis  {
             display: inline-block
             width: 100%
-            color: #{imp0.grey3}
+            color: var(imp0.grey3)
           }
         }
       }

@@ -55,8 +55,7 @@ public component Main {
           padding-bottom: 12px
         }
         text title "Whoops, looks like an unexpected error occurred." {
-          style {
-            include imp1.baseFont
+          style extends imp1.baseFont {
             font-weight: 600
             font-size: 14px
             color: #{imp0.grey3}
@@ -65,17 +64,15 @@ public component Main {
           }
         }
         text text2 "If you're able to reproduce this issue, please help us make the app better by" {
-          style {
-            include imp1.baseFont
-            color: #{imp0.grey3}
+          style extends imp1.baseFont {
+            color: var(imp0.grey3)
             font-weight: 500
             margin-bottom: 12px
             display: inline
           }
         }
         a linkButton (href: "https://github.com/tandemcode/tandem/issues") {
-          style {
-            include imp1.baseFont
+          style imp1.baseFont {
             box-sizing: border-box
             display: inline
             font-weight: 600

@@ -1,4 +1,5 @@
 use crate::base::ast::{Range, Str};
+use crate::css::ast as css_ast;
 use crate::docco::ast as docco_ast;
 use serde::Serialize;
 
@@ -34,20 +35,7 @@ pub struct Style {
     pub variant_name: Option<String>,
     pub extends: Option<Vec<Reference>>,
     pub range: Range,
-    pub body: Vec<StyleBodyItem>,
-}
-
-#[derive(Debug, PartialEq, Serialize, Clone)]
-pub struct StyleDeclaration {
-    pub id: String,
-    pub range: Range,
-    pub name: String,
-    pub value: String,
-}
-
-#[derive(Debug, PartialEq, Serialize, Clone)]
-pub enum StyleBodyItem {
-    Declaration(StyleDeclaration),
+    pub declarations: Vec<css_ast::StyleDeclaration>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

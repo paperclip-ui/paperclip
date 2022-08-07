@@ -6,10 +6,10 @@ pub struct Context {
 }
 
 impl Context {
-    pub fn new() -> Context {
+    pub fn new(depth: u8) -> Context {
         Context {
             buffer: "".to_string(),
-            depth: 0,
+            depth,
             is_new_line: false,
             indent_size: 2,
         }

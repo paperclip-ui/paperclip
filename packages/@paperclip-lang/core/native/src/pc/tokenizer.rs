@@ -71,17 +71,10 @@ pub fn next_token<'src>(source: &mut StringScanner<'src>) -> Result<Token<'src>,
                     }
                 }
                 b'\"' | b'\'' => Token::String(scan_string(source, b)),
-                _ if is_space(b) => {
-                    let e_pos = source.scan(is_space).u8_pos;
-                    Token::Space(&source.source[s_pos.u8_pos..e_pos])
-                }
-                _ if is_newline(b) => {
-                    let e_pos = source.scan(is_newline).u8_pos;
-                    Token::NewLine(&source.source[s_pos.u8_pos..e_pos])
-                }
+                _ if is_space(b) => Token::Space(source.slice_until(s_pos.u8_pos, is_space)),
+                _ if is_newline(b) => Token::NewLine(source.slice_until(s_pos.u8_pos, is_newline)),
                 _ if is_az(b) => {
-                    let e_pos = source.scan(|b| is_az(b) || is_digit(b)).u8_pos;
-                    let word = &source.source[s_pos.u8_pos..e_pos];
+                    let word = source.slice_until(s_pos.u8_pos, |b| is_az(b) || is_digit(b));
                     match word {
                         b"extends" => Token::KeywordExtends,
                         b"public" => Token::KeywordPublic,

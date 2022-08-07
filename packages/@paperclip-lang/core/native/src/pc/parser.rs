@@ -3,8 +3,10 @@ use super::tokenizer::{is_superfluous_or_newline, next_token, Token};
 use crate::base::ast as base_ast;
 use crate::core::errors as err;
 use crate::core::id::IDGenerator;
-use crate::core::parser_context::{create_initial_context, Context, ParserContext};
+use crate::core::parser_context::{create_initial_context, Context};
 use crate::core::string_scanner::StringScanner;
+use crate::css::ast as css_ast;
+use crate::css::parser::parse_style_declarations_with_string_scanner;
 use crate::docco::ast as docco_ast;
 use crate::docco::parser::parse_with_string_scanner as parse_doc_comment;
 use std::str;
@@ -163,15 +165,24 @@ fn parse_style(context: &mut PCContext, is_public: bool) -> Result<ast::Style, e
         None
     };
 
-    let body = parse_body(
-        context,
-        |context: &mut PCContext| {
-            Ok(ast::StyleBodyItem::Declaration(parse_style_declaration(
-                context,
-            )?))
-        },
-        Some((Token::CurlyOpen, Token::CurlyClose)),
-    )?;
+    context.skip(is_superfluous_or_newline);
+    let declarations: Vec<css_ast::StyleDeclaration> =
+        if context.curr_token == Some(Token::CurlyOpen) {
+            let ret = parse_style_declarations_with_string_scanner(
+                context.scanner,
+                context.id_generator,
+                &context.source_url,
+            )?;
+
+            // context.scanner.unshift(1);
+            context.next_token()?; // prime
+
+            ret
+        } else {
+            vec![]
+        };
+
+    context.skip(is_superfluous_or_newline);
 
     let end = context.curr_u16pos.clone();
 
@@ -181,7 +192,7 @@ fn parse_style(context: &mut PCContext, is_public: bool) -> Result<ast::Style, e
         variant_name,
         name,
         extends,
-        body,
+        declarations,
         range: base_ast::Range::new(start, end),
     })
 }
@@ -189,8 +200,6 @@ fn parse_style(context: &mut PCContext, is_public: bool) -> Result<ast::Style, e
 fn parse_style_extends(context: &mut PCContext) -> Result<Vec<ast::Reference>, err::ParserError> {
     context.next_token()?; // eat
     context.skip(is_superfluous_or_newline);
-
-    println!("CM {:?}", context.curr_token);
 
     let mut extends: Vec<ast::Reference> = vec![];
     loop {
@@ -204,29 +213,6 @@ fn parse_style_extends(context: &mut PCContext) -> Result<Vec<ast::Reference>, e
     }
 
     Ok(extends)
-}
-
-fn parse_style_declaration(
-    context: &mut PCContext,
-) -> Result<ast::StyleDeclaration, err::ParserError> {
-    let start = context.curr_u16pos.clone();
-    let name = extract_word_value(context)?;
-    context.next_token()?;
-    context.skip(is_superfluous_or_newline);
-    context.next_token()?; // eat :
-    context.skip(is_superfluous_or_newline);
-    let value = extract_word_value(context)?;
-    context.next_token()?;
-    context.skip(is_superfluous_or_newline);
-
-    let end = context.curr_u16pos.clone();
-
-    Ok(ast::StyleDeclaration {
-        id: context.next_id(),
-        range: base_ast::Range::new(start, end),
-        name,
-        value,
-    })
 }
 
 fn parse_component(
@@ -319,24 +305,18 @@ fn parse_script(context: &mut PCContext) -> Result<ast::Script, err::ParserError
     })
 }
 
-fn parse_list<
-    CContext,
-    TItem,
-    TToken,
-    TParseItem,
->(
-    context: &mut CContext,
+fn parse_list<TItem, TParseItem>(
+    context: &mut PCContext,
     parse_item: TParseItem,
-    delim: TToken,
+    delim: Token,
 ) -> Result<Vec<TItem>, err::ParserError>
 where
-    TParseItem: Fn(&mut CContext) -> Result<TItem, err::ParserError>,
-    CContext: ParserContext<TToken>,
+    TParseItem: Fn(&mut PCContext) -> Result<TItem, err::ParserError>,
 {
     let mut items = vec![];
     loop {
         items.push(parse_item(context)?);
-        if context.get_curr_token() == &Some(delim) {
+        if context.curr_token == Some(delim) {
             context.next_token()?; // eat ,
             context.skip(is_superfluous_or_newline);
         } else {

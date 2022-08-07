@@ -263,7 +263,7 @@ fn can_parse_various_contents() {
             r#"
             /** define a mixin */
             style {
-                color: blue
+                background-color: blue
             }
         "#,
             Ok(()),
@@ -310,6 +310,7 @@ fn can_parse_various_contents() {
             r#"
             public component A {
                 variant ab (enabled: [])
+                variant abc (enabled: [])
                 render div test {
                     style variant test {
                     }

@@ -3,7 +3,7 @@ use crate::base::ast as base_ast;
 use crate::core::serialize_context::Context;
 
 pub fn serialize(comment: &ast::Comment) -> String {
-    let mut context = Context::new();
+    let mut context = Context::new(0);
     serialize_comment(comment, &mut context);
     context.buffer
 }

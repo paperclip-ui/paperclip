@@ -41,6 +41,12 @@ impl<'src> StringScanner<'src> {
             column: self.u16_column,
         }
     }
+    pub fn slice_until<FF>(&mut self, from: usize, until: FF) -> &'src [u8]
+    where
+        FF: Fn(u8) -> bool,
+    {
+        &self.source[from..self.scan(until).u8_pos]
+    }
     pub fn set_pos(&mut self, pos: &Position) {
         self.pos = pos.u8_pos;
         self.u16_pos = pos.u16_pos;

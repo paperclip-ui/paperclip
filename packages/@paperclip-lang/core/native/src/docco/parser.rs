@@ -37,7 +37,6 @@ pub fn parse_comment(context: &mut ParserContext) -> Result<ast::Comment, Parser
             _ => ast::CommentBodyItem::Text(parse_text(context)?),
         });
     }
-    println!("DDD{:?}", context.curr_token);
     context.next_token()?; // eat CommentEnd
     let end = context.curr_u16pos.clone();
 

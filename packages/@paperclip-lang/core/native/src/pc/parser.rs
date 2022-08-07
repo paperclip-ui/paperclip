@@ -3,7 +3,7 @@ use super::tokenizer::{is_superfluous_or_newline, next_token, Token};
 use crate::base::ast as base_ast;
 use crate::core::errors as err;
 use crate::core::id::IDGenerator;
-use crate::core::parser_context::{create_initial_context, Context};
+use crate::core::parser_context::{create_initial_context, Context, ParserContext};
 use crate::core::string_scanner::StringScanner;
 use crate::docco::ast as docco_ast;
 use crate::docco::parser::parse_with_string_scanner as parse_doc_comment;
@@ -319,6 +319,34 @@ fn parse_script(context: &mut PCContext) -> Result<ast::Script, err::ParserError
     })
 }
 
+fn parse_list<
+    CContext,
+    TItem,
+    TToken,
+    TParseItem,
+>(
+    context: &mut CContext,
+    parse_item: TParseItem,
+    delim: TToken,
+) -> Result<Vec<TItem>, err::ParserError>
+where
+    TParseItem: Fn(&mut CContext) -> Result<TItem, err::ParserError>,
+    CContext: ParserContext<TToken>,
+{
+    let mut items = vec![];
+    loop {
+        items.push(parse_item(context)?);
+        if context.get_curr_token() == &Some(delim) {
+            context.next_token()?; // eat ,
+            context.skip(is_superfluous_or_newline);
+        } else {
+            break;
+        }
+    }
+
+    Ok(items)
+}
+
 fn parse_render_node(context: &mut PCContext) -> Result<ast::RenderNode, err::ParserError> {
     match context.curr_token {
         Some(Token::Word(b"text")) => Ok(ast::RenderNode::Text(parse_text(context)?)),
@@ -599,11 +627,12 @@ fn parse_array(context: &mut PCContext) -> Result<ast::Array, err::ParserError> 
     let start = context.curr_u16pos.clone();
     context.next_token()?; // eat [
     context.skip(is_superfluous_or_newline);
-    let mut items: Vec<ast::SimpleExpression> = vec![];
 
-    while context.curr_token != Some(Token::SquareClose) {
-        items.push(parse_simple_expression(context)?);
-    }
+    let items = if context.curr_token != Some(Token::SquareClose) {
+        parse_list(context, parse_simple_expression, Token::Comma)?
+    } else {
+        vec![]
+    };
 
     context.next_token()?; // eat ]
     let end = context.curr_u16pos.clone();

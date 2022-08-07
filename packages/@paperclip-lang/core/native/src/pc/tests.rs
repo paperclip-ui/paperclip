@@ -214,6 +214,14 @@ fn can_parse_various_contents() {
         (
             r#"
             component A {
+                variant a (enabled: [a, b])
+            }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+            component A {
                 script(src: "abba")
             }
         "#,

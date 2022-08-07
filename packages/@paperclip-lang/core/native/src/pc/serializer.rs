@@ -61,7 +61,6 @@ fn serialize_style(style: &ast::Style, context: &mut Context) {
         context.add_buffer(format!(" variant {}", variant_name));
     }
 
-
     if let Some(extends) = &style.extends {
         context.add_buffer(format!(
             " extends {}",

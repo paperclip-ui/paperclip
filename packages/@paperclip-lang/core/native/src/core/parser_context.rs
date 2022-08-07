@@ -10,6 +10,19 @@ struct Error {}
 
 type NextToken<'src, Token> = dyn Fn(&mut StringScanner<'src>) -> Result<Token, ParserError>;
 
+pub trait ParserContext<TToken> {
+    fn get_curr_token(&self) -> &Option<TToken>;
+    fn next_id(&mut self) -> String;
+    fn peek(&mut self, step: usize) -> &Option<TToken>;
+    fn next_token(&mut self) -> Result<(), ParserError>;
+    fn skip<TTest>(&mut self, test: TTest)
+    where
+        TTest: Fn(&TToken) -> bool;
+    fn get_u16pos(&self) -> U16Position;
+    fn is_eof(&self) -> bool;
+    fn new_unexpected_token_error(&self) -> ParserError;
+}
+
 pub struct Context<'tokenizer, 'scanner, 'idgenerator, 'src, TToken> {
     pub curr_u16pos: U16Position,
     pub curr_token: Option<TToken>,
@@ -39,11 +52,31 @@ impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken>
             scanner,
         })
     }
-    pub fn next_id(&mut self) -> String {
+
+    fn next_token2(&mut self) -> Result<(Option<TToken>, U16Position), ParserError> {
+        Ok((
+            if self.is_eof() {
+                None
+            } else {
+                Some((self._next_token)(self.scanner)?)
+            },
+            self.scanner.get_u16pos(),
+        ))
+    }
+}
+
+impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken> ParserContext<TToken>
+    for Context<'tokenizer, 'scanner, 'idgenerator, 'src, TToken>
+{
+    fn next_id(&mut self) -> String {
         self.id_generator.new_id()
     }
 
-    pub fn peek(&mut self, step: usize) -> &Option<TToken> {
+    fn get_curr_token(&self) -> &Option<TToken> {
+        &self.curr_token
+    }
+
+    fn peek(&mut self, step: usize) -> &Option<TToken> {
         let diff = step - self.token_pool.len();
         for i in [0..diff] {
             if let Ok(token_info) = self.next_token2() {
@@ -58,7 +91,7 @@ impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken>
         }
     }
 
-    pub fn next_token(&mut self) -> Result<(), ParserError> {
+    fn next_token(&mut self) -> Result<(), ParserError> {
         if let Some((tokenOption, pos)) = self.token_pool.pop_front() {
             self.curr_token = tokenOption;
             self.curr_u16pos = pos;
@@ -71,17 +104,7 @@ impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken>
         Ok(())
     }
 
-    fn next_token2(&mut self) -> Result<(Option<TToken>, U16Position), ParserError> {
-        Ok((
-            if self.is_eof() {
-                None
-            } else {
-                Some((self._next_token)(self.scanner)?)
-            },
-            self.scanner.get_u16pos(),
-        ))
-    }
-    pub fn skip<TTest>(&mut self, test: TTest)
+    fn skip<TTest>(&mut self, test: TTest)
     where
         TTest: Fn(&TToken) -> bool,
     {
@@ -97,13 +120,13 @@ impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken>
             }
         }
     }
-    pub fn get_u16pos(&self) -> U16Position {
+    fn get_u16pos(&self) -> U16Position {
         self.scanner.get_u16pos()
     }
-    pub fn is_eof(&self) -> bool {
+    fn is_eof(&self) -> bool {
         self.scanner.is_eof()
     }
-    pub fn new_unexpected_token_error(&self) -> ParserError {
+    fn new_unexpected_token_error(&self) -> ParserError {
         ParserError::new(
             "Unexpected token".to_string(),
             Range::new(self.curr_u16pos.clone(), self.get_u16pos()),

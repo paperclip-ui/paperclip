@@ -7,7 +7,7 @@ use crate::core::string_scanner::{
 };
 use serde::Serialize;
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Serialize, Clone, Copy)]
 pub enum Token<'src> {
     None,
     CurlyOpen,

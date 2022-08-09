@@ -74,13 +74,10 @@ fn serialize_style(style: &ast::Style, context: &mut Context) {
         ));
     }
 
-    context.add_buffer(" {\n".to_string());
-    context.start_block();
-    if style.declarations.len() > 0 {
-        context.add_buffer(serialize_declarations(&style.declarations, context.depth));
-    }
-    context.end_block();
-    context.add_buffer("}\n".to_string());
+    context.add_buffer(format!(
+        " {}",
+        serialize_declarations(&style.declarations, context.depth)
+    ));
 }
 
 fn serialize_override(over: &ast::Override, context: &mut Context) {
@@ -99,10 +96,6 @@ fn serialize_override(over: &ast::Override, context: &mut Context) {
     }
     context.end_block();
     context.add_buffer("}\n".to_string());
-}
-
-fn serialize_style_declaration(style: &css_ast::StyleDeclaration, context: &mut Context) {
-    context.add_buffer(format!("{}: {}\n", style.name, style.value));
 }
 
 fn serialize_render(imp: &ast::Render, context: &mut Context) {

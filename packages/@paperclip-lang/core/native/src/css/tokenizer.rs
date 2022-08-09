@@ -13,7 +13,10 @@ pub enum Token<'src> {
     ParenOpen,
     ParenClose,
     Colon,
+    Period,
+    Comma,
     Byte(u8),
+    Number(f32),
     Keyword(&'src [u8]),
     Newline(&'src [u8]),
     Space(&'src [u8]),
@@ -33,12 +36,15 @@ pub fn next_token<'src>(
             b'}' => Token::CurlyClose,
             b'(' => Token::ParenOpen,
             b')' => Token::ParenClose,
+            b',' => Token::Comma,
             b':' => Token::Colon,
+            b'.' => Token::Period,
             b'\"' | b'\'' => Token::String(scan_string(scanner, b)),
             _ if is_az(b) => {
                 let e_pos = scanner.scan(is_keyword_part).u8_pos;
                 Token::Keyword(&scanner.source[s_pos..e_pos])
             }
+            _ if is_digit(b) => Token::Number(scan_number2(scanner, s_pos)),
             _ if is_space(b) => Token::Space(&scanner.source[s_pos..scanner.scan(is_space).u8_pos]),
             _ if is_newline(b) => {
                 Token::Newline(&scanner.source[s_pos..scanner.scan(is_newline).u8_pos])

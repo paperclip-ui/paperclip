@@ -24,6 +24,7 @@ pub fn parse_style_declarations_with_string_scanner<'src, 'scanner, 'idgenerator
 fn parse_style_declarations(
     context: &mut ParserContext,
 ) -> Result<Vec<ast::StyleDeclaration>, err::ParserError> {
+    println!("11OK");
     context.skip(is_superfluous_or_newline);
     context.next_token()?;
     context.skip(is_superfluous_or_newline);
@@ -55,8 +56,6 @@ fn parse_style_declaration(
 
     let value = parse_comma_list(context)?;
 
-    context.next_token()?; // eat name
-
     let end = context.curr_u16pos.clone();
 
     return Ok(ast::StyleDeclaration {
@@ -72,6 +71,7 @@ fn parse_comma_list(
     context: &mut ParserContext,
 ) -> Result<ast::DeclarationValue, err::ParserError> {
     let start = context.curr_u16pos.clone();
+    println!("OK");
     let first = parse_spaced_list(context)?;
     context.skip(is_superfluous);
     Ok(if matches!(context.curr_token, Some(Token::Comma)) {
@@ -97,6 +97,7 @@ fn parse_spaced_list(
 ) -> Result<ast::DeclarationValue, err::ParserError> {
     let start = context.curr_u16pos.clone();
     let first = parse_decl_value(context)?;
+
     Ok(if matches!(context.curr_token, Some(Token::Space(_))) {
         let mut items = vec![first];
         while matches!(context.curr_token, Some(Token::Space(_))) {
@@ -147,7 +148,10 @@ fn parse_call(context: &mut ParserContext) -> Result<ast::FunctionCall, err::Par
         return Err(context.new_unexpected_token_error());
     };
 
+    context.next_token()?;
+    context.next_token()?; // eat (
     let arguments = parse_comma_list(context)?;
+    context.next_token()?;
     let end = context.curr_u16pos.clone();
     Ok(ast::FunctionCall {
         id: context.next_id(),

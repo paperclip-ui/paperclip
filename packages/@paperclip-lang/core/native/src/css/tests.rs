@@ -47,7 +47,23 @@ fn can_parse_various_contents() {
         (
             r#"
           {
-              background: var(--red)
+              background: var(red)
+          }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+          {
+              background: var(a, b, c)
+          }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+          {
+              background: var(--color)
           }
         "#,
             Ok(()),

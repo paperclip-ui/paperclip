@@ -44,10 +44,12 @@ impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken>
     }
 
     pub fn peek(&mut self, step: usize) -> &Option<TToken> {
-        let diff = step - self.token_pool.len();
-        for i in [0..diff] {
-            if let Ok(token_info) = self.next_token2() {
-                self.token_pool.push_back(token_info);
+        if step > self.token_pool.len() {
+            let diff = step - self.token_pool.len();
+            for _i in [0..diff] {
+                if let Ok(token_info) = self.next_token2() {
+                    self.token_pool.push_back(token_info);
+                }
             }
         }
 

@@ -32,7 +32,13 @@ fn serialize_decl_value(value: &ast::DeclarationValue, context: &mut Context) {
             context.add_buffer(format!("{}{}", measurement.value, measurement.unit))
         }
         ast::DeclarationValue::Number(number) => {
-            context.add_buffer(format!("{}", number.value))
+            context.add_buffer(format!("{}", number.value));
+        }
+        ast::DeclarationValue::FunctionCall(call) => {
+            context.add_buffer(format!("{}(", call.name));
+            // context.add_buffer(format!("{}", call.name));
+            serialize_decl_value(&call.arguments, context);
+            context.add_buffer(")".to_string());
         }
         ast::DeclarationValue::SpacedList(list) => {
             let mut it = list.items.iter().peekable();
@@ -52,8 +58,11 @@ fn serialize_decl_value(value: &ast::DeclarationValue, context: &mut Context) {
                 }
             }
         }
-        _ => {
-
+        ast::DeclarationValue::HexColor(color) => {
+            context.add_buffer(format!("#{}", color.value));
+        }
+        ast::DeclarationValue::Keyword(keyword) => {
+            context.add_buffer(format!("{}", keyword.path.join(".")));
         }
     }
 }

@@ -192,8 +192,7 @@ public component Typograph {
             justify-content: space-between
           }
           text text1 "Typography" {
-            style {
-              include imp4.headerFontStyle
+            style extends imp4.headerFontStyle {
             }
           }
           imp5.MoreIcon {

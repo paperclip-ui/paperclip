@@ -27,15 +27,14 @@ public component Button {
     }
     style variant secondary {
       background: rgba(227, 227, 227, 1)
-      color: #{imp1.grey3}
+      color: var(imp1.grey3)
     }
     style variant disabled {
       cursor: default
       opacity: 0.253
     }
     text text1 "Label" {
-      style {
-        include imp0.baseFont
+      style extends imp0.baseFont {
         font-weight: 500
         user-select: none
       }

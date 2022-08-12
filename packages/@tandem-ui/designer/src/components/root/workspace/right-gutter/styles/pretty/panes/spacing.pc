@@ -13,7 +13,7 @@ public component SpacingPane {
     style {
       box-sizing: border-box
       display: block
-      background: #{imp0.grey2}
+      background: var(imp0.grey2)
     }
     imp1.Pane pane {
       override {
@@ -84,13 +84,13 @@ public component SpacingInput {
         }
         override bordersIcon6 {
           style {
-            color: #{imp0.grey1}
+            color: var(imp0.grey1)
             height: 10px
           }
         }
         override bordersIcon6.node1 {
           style {
-            color: #{imp0.grey3}
+            color: var(imp0.grey3)
           }
         }
       }
@@ -102,13 +102,13 @@ public component SpacingInput {
         }
         override bordersIcon6 {
           style {
-            color: #{imp0.grey1}
+            color: var(imp0.grey1)
             height: 10px
           }
         }
         override bordersIcon6.node5 {
           style {
-            color: #{imp0.grey3}
+            color: var(imp0.grey3)
           }
         }
       }
@@ -120,13 +120,13 @@ public component SpacingInput {
         }
         override bordersIcon6 {
           style {
-            color: #{imp0.grey1}
+            color: var(imp0.grey1)
             height: 10px
           }
         }
         override bordersIcon6.node3 {
           style {
-            color: #{imp0.grey3}
+            color: var(imp0.grey3)
           }
         }
       }
@@ -135,13 +135,13 @@ public component SpacingInput {
       imp3.InlineLabeledInput leftInput {
         override bordersIcon6 {
           style {
-            color: #{imp0.grey1}
+            color: var(imp0.grey1)
             height: 10px
           }
         }
         override bordersIcon6.el123 {
           style {
-            color: #{imp0.grey3}
+            color: var(imp0.grey3)
           }
         }
       }

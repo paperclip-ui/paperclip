@@ -14,7 +14,7 @@ public component Inherit {
   variant hasItemSelected (enabled: [true])
   render imp0.Pane {
     style {
-      background: #{imp1.grey2}
+      background: var(imp1.grey2)
     }
     override {
       variant right (enabled: [true])
@@ -23,7 +23,7 @@ public component Inherit {
     override content {
       style {
         padding-top: 0px
-        color: #{imp1.grey3}
+        color: var(imp1.grey3)
         padding-left: 0px
         padding-right: 0px
         padding-bottom: 6px
@@ -74,8 +74,7 @@ public component Inherit {
           justify-content: space-between
         }
         text text1 "Mixins" {
-          style {
-            include imp4.headerFontStyle
+          style extends imp4.headerFontStyle {
           }
         }
         div element2 {

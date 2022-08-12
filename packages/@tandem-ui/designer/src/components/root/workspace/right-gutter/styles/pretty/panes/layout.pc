@@ -33,8 +33,7 @@ public component Layout {
           position: relative
         }
         text text1 "layout" {
-          style {
-            include imp1.headerFontStyle
+          style extends imp1.headerFontStyle {
           }
         }
         imp2.MoreIcon node22131 {

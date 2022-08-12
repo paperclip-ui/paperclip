@@ -24,18 +24,17 @@ public component ControllerItem {
       align-items: center
     }
     style variant selected {
-      background: #{imp2.blue1}
-      color: #{imp2.grey0}
+      background: var(imp2.blue1)
+      color: var(imp2.grey0)
     }
     style variant alt {
       background: rgba(247, 247, 247, 1)
     }
     text label "./controller.tsx" {
-      style {
-        include imp0.baseFont
+      style extends imp0.baseFont {
       }
       style variant selected {
-        color: #{imp2.grey0}
+        color: var(imp2.grey0)
       }
     }
     imp1.OpenIcon2 openButton {

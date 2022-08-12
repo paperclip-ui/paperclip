@@ -40,13 +40,12 @@ public component SearchResult {
       }
       slot label {
         text label1 "basename.tsx" {
-          style {
-            include imp1.baseFont
+          style extends imp1.baseFont {
             display: inline-block
             position: relative
             height: 18
             vertical-align: center
-            color: #{imp0.grey3}
+            color: var(imp0.grey3)
           }
         }
       }
@@ -75,7 +74,7 @@ public component SearchResult {
         flex-grow: 0
         flex-shrink: 0
         width: 17px
-        color: #{imp0.grey3}
+        color: var(imp0.grey3)
       }
       style variant hovering {
         display: inline-block

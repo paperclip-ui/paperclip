@@ -11,7 +11,12 @@ pub enum Token<'src> {
     CurlyOpen,
     CurlyClose,
     ParenOpen,
+    Percent,
     ParenClose,
+    Minus,
+    Plus,
+    Backslash,
+    Star,
     Colon,
     Period,
     Comma,
@@ -36,13 +41,31 @@ pub fn next_token<'src>(
             b'}' => Token::CurlyClose,
             b'(' => Token::ParenOpen,
             b')' => Token::ParenClose,
+            b'%' => Token::Percent,
             b',' => Token::Comma,
             b':' => Token::Colon,
             b'.' => Token::Period,
+            b'*' => Token::Star,
+            b'/' => Token::Backslash,
+            b'+' => Token::Plus,
             b'\"' | b'\'' => Token::String(scan_string(scanner, b)),
             _ if is_az(b) => {
                 let e_pos = scanner.scan(is_keyword_part).u8_pos;
                 Token::Keyword(&scanner.source[s_pos..e_pos])
+            }
+            b'-' => {
+                if let Some(b) = scanner.peek(0) {
+                    if is_digit(b) {
+                        Token::Number(scan_number2(scanner, s_pos))
+                    } else if is_keyword_part(b) {
+                        let e_pos = scanner.scan(is_keyword_part).u8_pos;
+                        Token::Keyword(&scanner.source[s_pos..e_pos])
+                    } else {
+                        Token::Minus
+                    }
+                } else {
+                    Token::Minus
+                }
             }
             _ if is_digit(b) => Token::Number(scan_number2(scanner, s_pos)),
             _ if is_space(b) => Token::Space(&scanner.source[s_pos..scanner.scan(is_space).u8_pos]),

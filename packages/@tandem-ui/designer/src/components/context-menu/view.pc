@@ -10,11 +10,11 @@ public component ContextMenu {
   render div {
     style {
       min-width: 150px
-      background: #{imp0.grey2}
+      background: var(imp0.grey2)
       position: fixed
       border-radius: 2px
       box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.23)
-      color: #{imp0.grey3}
+      color: var(imp0.grey3)
       width: unset
       left: 0px
       top: 0px
@@ -53,11 +53,10 @@ public component ContextMenuItem {
       text-align: left
     }
     style variant selected {
-      background: #{imp0.grey1}
+      background: var(imp0.grey1)
     }
     text text1 "Menu Item" {
-      style {
-        include imp1.baseFont
+      style extends imp1.baseFont {
       }
     }
   }
@@ -69,7 +68,7 @@ public component ContextMenuItem {
 public component Divider {
   render div {
     style {
-      background: #{imp0.grey1}
+      background: var(imp0.grey1)
     }
   }
 }

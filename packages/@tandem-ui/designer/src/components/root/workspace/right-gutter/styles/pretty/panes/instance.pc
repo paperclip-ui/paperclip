@@ -63,8 +63,7 @@ public component InstancePane {
             align-items: center
           }
           text text1 "Instance" {
-            style {
-              include imp2.headerFontStyle
+            style extends imp2.headerFontStyle {
             }
           }
           imp3.Dropdown resetDropdown {

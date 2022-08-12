@@ -40,7 +40,7 @@ public component BoxShadowItem {
           display: block
           height: 12px
           flex-shrink: 0
-          color: #{imp1.grey3}
+          color: var(imp1.grey3)
           margin-right: 4px
           opacity: 0
           margin-left: -4px

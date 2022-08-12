@@ -11,15 +11,14 @@ public component ButtonBarItem {
   variant selected (enabled: [])
   variant first (enabled: [])
   render div {
-    style {
-      include imp1.baseFont
-      background: #{imp0.grey0}
+    style extends imp1.baseFont {
+      background: var(imp0.grey0)
       box-sizing: border-box
       width: 100%
       text-align: center
       position: relative
       height: 20px
-      border-right: 1px solid #{imp0.grey1}
+      border-right: 1px solid var(imp0.grey1)
       color: rgba(123, 123, 123, 1)
       padding-left: 6px
       padding-top: 4px
@@ -44,7 +43,7 @@ public component ButtonBarItem {
       imp2.TextJustifyIcon icon {
         style {
           height: 100%
-          color: #{imp0.grey3}
+          color: var(imp0.grey3)
         }
       }
     }

@@ -97,8 +97,7 @@ public component StylePane {
                 align-items: center
               }
               text text1 "Inherit" {
-                style {
-                  include imp3.baseFont
+                style extends imp3.baseFont {
                   margin-bottom: 4px
                   display: inline-block
                   margin-left: 2px

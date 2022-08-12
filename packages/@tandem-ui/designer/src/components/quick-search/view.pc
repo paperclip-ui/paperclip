@@ -11,9 +11,8 @@ public component QuickSearch {
   script (src: "./quick-search-controller.tsx")
   variant noItems (enabled: [true])
   render div {
-    style {
-      include imp1.defaultShadowStyle
-      border: 1px solid #{imp0.grey1}
+    style extends imp1.defaultShadowStyle {
+      border: 1px solid var(imp0.grey1)
       border-bottom-left-radius: 2px
       border-bottom-right-radius: 2px
       border-top: none

@@ -26,9 +26,9 @@ public component RightGutter {
       flex-shrink: 0
       display: flex
       flex-direction: column
-      border-left: 1px solid #{imp0.grey6}
+      border-left: 1px solid var(imp0.grey6)
       z-index: 3
-      background: #{imp0.grey2}
+      background: var(imp0.grey2)
     }
     div tabs {
       style {
@@ -191,7 +191,7 @@ public component GlobalProperties {
     style {
       box-sizing: border-box
       display: block
-      background: #{imp0.grey2}
+      background: var(imp0.grey2)
     }
     imp7.VariablesTab variablesSection {
       style {
@@ -236,7 +236,7 @@ RightGutter propertiesPreview {
  */
 RightGutter stylesTabPreview {
   style {
-    border-left: 1px solid #{imp0.grey1}
+    border-left: 1px solid var(imp0.grey1)
   }
   override {
     variant stylesTab (enabled: [true])

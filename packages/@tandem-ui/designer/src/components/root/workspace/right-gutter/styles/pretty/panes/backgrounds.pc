@@ -51,16 +51,13 @@ public component BackgroundItem {
       }
     }
     span info {
-      style {
-        include imp2.nowrapEllipsis
+      style extends imp2.nowrapEllipsis {
         display: inline-block
         width: 100%
         overflow: hidden
       }
       text label "rgba(255, 255, 255, 0)" {
-        style {
-          include imp2.baseFontNobreak
-          include imp2.nowrapEllipsis
+        style extends imp2.baseFontNobreak, imp2.nowrapEllipsis {
           cursor: default
         }
       }
@@ -118,8 +115,7 @@ public component Backgrounds {
           align-items: center
         }
         text text1 "backgrounds" {
-          style {
-            include imp2.headerFontStyle
+          style extends imp2.headerFontStyle {
           }
         }
         div element2 {

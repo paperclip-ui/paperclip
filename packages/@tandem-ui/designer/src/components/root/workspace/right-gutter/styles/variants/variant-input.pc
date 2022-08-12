@@ -17,7 +17,7 @@ public component ComponentInstanceVariant {
     div options {
       style {
         box-sizing: border-box
-        background: #{imp0.grey2}
+        background: var(imp0.grey2)
       }
       slot options2 {
         imp1.VariantOption {

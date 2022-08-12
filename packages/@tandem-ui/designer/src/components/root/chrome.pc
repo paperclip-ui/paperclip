@@ -24,7 +24,7 @@ public component Chrome {
       font-family: Avenir Next
       font-size: 12px
       color: rgba(123, 123, 123, 1)
-      background: #{imp0.grey6}
+      background: var(imp0.grey6)
       border-bottom-left-radius: 4px
       border-top-left-radius: 4px
       border-top-right-radius: 4px
@@ -43,14 +43,14 @@ public component Chrome {
         align-items: center
         position: relative
         -webkit-app-region: drag
-        background: #{imp0.grey6}
+        background: var(imp0.grey6)
         padding-right: 0px
         padding-left: 0px
         height: 33px
       }
       style variant minimal {
         border-bottom: 1px solid rgba(209, 209, 209, 0)
-        background: #{imp0.grey2}
+        background: var(imp0.grey2)
       }
       style variant macos {
         height: 22px
@@ -136,7 +136,7 @@ public component Chrome {
             width: 6px
             height: 6px
             display: inline-block
-            background: #{imp0.blue1}
+            background: var(imp0.blue1)
             border-bottom-left-radius: 99px
             border-top-left-radius: 99px
             border-top-right-radius: 99px
@@ -144,7 +144,7 @@ public component Chrome {
             margin-left: 8px
             position: relative
             top: 1px
-            color: #{imp0.blue1}
+            color: var(imp0.blue1)
           }
         }
       }
@@ -174,7 +174,7 @@ public component Chrome {
         position: relative
         flex-grow: 1
         overflow: hidden
-        background: #{imp0.grey2}
+        background: var(imp0.grey2)
       }
       slot content {
         text text2 "Content"

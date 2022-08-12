@@ -17,6 +17,7 @@ pub enum DeclarationValue {
     Reference(Reference),
     Measurement(Measurement),
     FunctionCall(FunctionCall),
+    Arithmetic(Arithmetic),
     HexColor(HexColor),
     SpacedList(SpacedList),
     CommaList(CommaList),
@@ -27,6 +28,15 @@ pub struct Reference {
     pub id: String,
     pub range: Range,
     pub path: Vec<String>,
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
+pub struct Arithmetic {
+    pub id: String,
+    pub range: Range,
+    pub left: Box<DeclarationValue>,
+    pub right: Box<DeclarationValue>,
+    pub operator: String,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -42,7 +52,7 @@ pub struct FunctionCall {
     pub id: String,
     pub range: Range,
     pub name: String,
-    pub arguments: Box<DeclarationValue>
+    pub arguments: Box<DeclarationValue>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

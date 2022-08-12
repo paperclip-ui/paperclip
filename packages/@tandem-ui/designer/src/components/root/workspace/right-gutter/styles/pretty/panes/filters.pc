@@ -27,8 +27,7 @@ public component Filters {
           justify-content: space-between
         }
         text text1 "Filters" {
-          style {
-            include imp1.headerFontStyle
+          style extends imp1.headerFontStyle {
           }
         }
         div element2 {

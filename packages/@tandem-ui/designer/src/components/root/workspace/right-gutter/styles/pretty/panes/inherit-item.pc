@@ -20,7 +20,7 @@ public component InheritItem {
       padding-bottom: 6px
     }
     style variant selected {
-      background: #{imp1.blue1}
+      background: var(imp1.blue1)
       color: rgba(255, 255, 255, 1)
     }
     override {
@@ -40,14 +40,14 @@ public component InheritItem {
         style {
           display: block
           height: 10px
-          color: #{imp1.grey4}
+          color: var(imp1.grey4)
         }
         override ndoe99 {
           style {
             background: currentColor
           }
           style variant selected {
-            background: #{imp1.grey0}
+            background: var(imp1.grey0)
           }
         }
       }
@@ -57,14 +57,14 @@ public component InheritItem {
         box-shadow: unset
       }
       style variant selected {
-        color: #{imp1.grey0}
+        color: var(imp1.grey0)
       }
       override button22 {
         style {
           padding: 0px
           border: none
           background: transparent
-          box-shadow:  0px 0px 0px 0px #{imp1.blackTransparent2}
+          box-shadow:  0px 0px 0px 0px var(imp1.blackTransparent2)
         }
       }
       override popover {

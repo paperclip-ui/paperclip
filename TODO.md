@@ -1,3 +1,16 @@
+#### Milestone 1: parser
+
+- Get all basic stuff done
+- get dependency graph done
+- scan entire dependency graph
+
+#### Milestone 2: evaluator
+
+#### Milestone 3: compiler
+
+- React-based compiler
+- vanilla compiler for CSS
+
 - Consider _not_ building a CSS parser and using _computed_ state instead.
 
 - Rust engine
@@ -6,7 +19,6 @@
 
     - use struct parser
     - expressions
-      - docco
       - styles
         - variants
         - targets

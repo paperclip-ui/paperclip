@@ -43,7 +43,7 @@ public component Welcome {
           margin-right: 8px
         }
         style variant start {
-          background-image: linear-gradient(#{imp3.blue1}, #{imp3.blue1})
+          background-image: linear-gradient(var(imp3.blue1), var(imp3.blue1))
         }
         override text1 "Tutorials" {
           style variant start {
@@ -78,8 +78,7 @@ public component Welcome {
         text-align: center
       }
       text text1 "New project type" {
-        style {
-          include imp1.baseFont
+        style extends imp1.baseFont {
         }
         style variant createProject {
           font-weight: 400
@@ -122,8 +121,7 @@ public component Welcome {
             position: absolute
           }
           text projectDescription "Project description" {
-            style {
-              include imp1.baseFont
+            style extends imp1.baseFont {
             }
             style variant createProject {
               letter-spacing: 0.05em
@@ -171,7 +169,7 @@ public component ProjectPill {
         display: block
         margin-bottom: 8px
         width: 100%
-        border: 1px solid #{imp3.grey4}
+        border: 1px solid var(imp3.grey4)
         padding-top: 8px
         padding-bottom: 8px
         border-bottom-left-radius: 4px
@@ -191,7 +189,7 @@ public component ProjectPill {
           imp4.FileIcon fileIcon {
             override element11 {
               style {
-                background: #{imp3.grey4}
+                background: var(imp3.grey4)
               }
             }
           }
@@ -199,8 +197,7 @@ public component ProjectPill {
       }
     }
     text label "something" {
-      style {
-        include imp1.baseFont
+      style extends imp1.baseFont {
         text-align: center
         display: inline-block
         width: 100%
@@ -309,8 +306,7 @@ div element5 {
           padding-bottom: 6px
         }
         text text10 "New..." {
-          style {
-            include imp1.baseFont
+          style extends imp1.baseFont {
           }
         }
       }
@@ -326,8 +322,7 @@ div element5 {
           padding-bottom: 6px
         }
         text text11 "Open" {
-          style {
-            include imp1.baseFont
+          style extends imp1.baseFont {
           }
         }
       }

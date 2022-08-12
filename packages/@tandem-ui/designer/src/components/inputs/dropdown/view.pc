@@ -23,8 +23,7 @@ public component Dropdown {
       insert anchor {
         slot button {
           div button22 {
-            style {
-              include imp1.defaultBorder
+            style extends imp1.defaultBorder {
               box-sizing: border-box
               display: flex
               align-items: center
@@ -60,9 +59,7 @@ public component Dropdown {
               }
             }
             text label2 "Label" {
-              style {
-                include imp1.baseFont
-                include imp1.nowrapEllipsis
+              style extends imp1.baseFont, imp1.nowrapEllipsis {
                 display: inline-block
                 width: 100%
               }
@@ -90,8 +87,7 @@ public component Dropdown {
       }
       insert content {
         div menu {
-          style {
-            include imp1.defaultShadowStyle
+          style extends imp1.defaultShadowStyle {
             box-sizing: border-box
             display: block
             max-height: 200px

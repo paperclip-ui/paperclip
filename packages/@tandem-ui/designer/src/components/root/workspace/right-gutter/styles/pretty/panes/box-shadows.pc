@@ -87,29 +87,25 @@ public component BoxShadows {
           padding-top: 6px
         }
         text x "x" {
-          style {
-            include imp0.labelFont
+          style extends imp0.labelFont {
             display: block
             width: 100%
           }
         }
         text y "y" {
-          style {
-            include imp0.labelFont
+          style extends imp0.labelFont {
             display: block
             width: 100%
           }
         }
         text blur "Blur" {
-          style {
-            include imp0.labelFont
+          style extends imp0.labelFont {
             display: block
             width: 100%
           }
         }
         text spread "Spread" {
-          style {
-            include imp0.labelFont
+          style extends imp0.labelFont {
             display: block
             width: 100%
           }
@@ -125,8 +121,7 @@ public component BoxShadows {
           align-items: center
         }
         text text1 "box shadows" {
-          style {
-            include imp0.headerFontStyle
+          style extends imp0.headerFontStyle {
           }
         }
         div element2 {

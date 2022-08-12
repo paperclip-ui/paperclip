@@ -24,7 +24,7 @@ public component ElementStyler {
     style {
       flex-direction: column
       color: #666
-      background: #{imp0.grey2}
+      background: var(imp0.grey2)
     }
     imp1.InstancePane instancePane {
       override {

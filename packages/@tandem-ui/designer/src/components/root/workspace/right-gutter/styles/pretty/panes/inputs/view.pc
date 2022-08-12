@@ -52,7 +52,7 @@ public component LabeledCssInput {
       style variant inherited {
         text-decoration: unset
         margin-bottom: unset
-        color: #{imp4.blue1}
+        color: var(imp4.blue1)
         cursor: pointer
         font-weight: 500
       }
@@ -68,15 +68,14 @@ public component LabeledCssInput {
     }
     insert label {
       text label "label" {
-        style {
-          include imp3.labelFont
+        style extends imp3.labelFont {
           margin-bottom: 0px
           margin-left: 2px
         }
         style variant inherited {
           text-decoration: unset
           margin-bottom: unset
-          color: #{imp4.blue1}
+          color: var(imp4.blue1)
           cursor: pointer
           font-weight: 500
         }
@@ -107,8 +106,7 @@ public component CssInputRow {
       }
       slot label222 {
         text text1 "css-property" {
-          style {
-            include imp3.baseFontNobreak
+          style extends imp3.baseFontNobreak {
           }
         }
       }
@@ -139,7 +137,7 @@ public component TblrInput {
       display: block
     }
     style variant disconnected {
-      background: #{imp4.grey2}
+      background: var(imp4.grey2)
     }
     override buttonBarItem {
       variant selected (enabled: [connected])
@@ -199,8 +197,8 @@ public component TblrInput {
                   }
                   override bordersIcon6.el123 {
                     style variant disconnected {
-                      color: #{imp4.grey1}
-                      background: #{imp4.grey1}
+                      color: var(imp4.grey1)
+                      background: var(imp4.grey1)
                     }
                   }
                   insert icon {
@@ -225,7 +223,7 @@ public component TblrInput {
                   top: 0px
                 }
                 style variant disconnected {
-                  background: #{imp4.grey2}
+                  background: var(imp4.grey2)
                   opacity: 0.662
                   display: block
                 }
@@ -305,8 +303,8 @@ public component TblrInput {
             }
             override bordersIcon6.el123 {
               style variant disconnected {
-                color: #{imp4.grey1}
-                background: #{imp4.grey1}
+                color: var(imp4.grey1)
+                background: var(imp4.grey1)
               }
             }
             insert icon {
@@ -446,8 +444,7 @@ public component InlineLabeledInput {
       variant disabled (enabled: [disabled])
     }
     div element4 {
-      style {
-        include imp3.defaultBorder
+      style extends imp3.defaultBorder {
         box-sizing: border-box
         display: flex
         flex-direction: row
@@ -456,11 +453,11 @@ public component InlineLabeledInput {
         border-top-left-radius: 2px
         border-top-right-radius: 2px
         border-bottom-right-radius: 2px
-        background: #{imp4.grey0}
+        background: var(imp4.grey0)
         position: relative
       }
       style variant focus {
-        box-shadow: inset  0px 0px 0px 1px #{imp4.blue1}
+        box-shadow: inset  0px 0px 0px 1px var(imp4.blue1)
       }
       slot input3 {
         imp0.TextInput textInput3 {
@@ -489,7 +486,7 @@ public component InlineLabeledInput {
             style {
               display: block
               height: 0.6em
-              color: #{imp4.grey3}
+              color: var(imp4.grey3)
               position: relative
               top: 2px
             }

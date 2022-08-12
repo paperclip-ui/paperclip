@@ -14,7 +14,7 @@ public component ComponentOption {
       height: 100px
       display: inline-block
       padding: 8px
-      color: #{imp0.grey3}
+      color: var(imp0.grey3)
     }
     div inner {
       style {

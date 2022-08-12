@@ -219,8 +219,7 @@ public component Border {
           justify-content: space-between
         }
         text text1 "borders" {
-          style {
-            include imp4.headerFontStyle
+          style extends imp4.headerFontStyle {
           }
         }
       }
@@ -397,7 +396,7 @@ public component Borders2 {
     style {
       box-sizing: border-box
       display: block
-      background: #{imp10.grey2}
+      background: var(imp10.grey2)
     }
     imp0.Pane pane {
       override {
@@ -533,14 +532,14 @@ public component RadiusInput {
           imp3.CornersIcon corners2 {
             style {
               display: block
-              color: #{imp10.grey1}
+              color: var(imp10.grey1)
               height: 1em
               position: relative
               top: 2px
             }
             override node66 {
               style {
-                color: #{imp10.grey3}
+                color: var(imp10.grey3)
               }
             }
           }
@@ -557,13 +556,13 @@ public component RadiusInput {
             style {
               display: block
               height: 1em
-              color: #{imp10.grey1}
+              color: var(imp10.grey1)
               position: relative
               top: 2px
             }
             override ndoe77 {
               style {
-                color: #{imp10.grey3}
+                color: var(imp10.grey3)
               }
             }
           }
@@ -580,13 +579,13 @@ public component RadiusInput {
             style {
               display: block
               height: 1em
-              color: #{imp10.grey1}
+              color: var(imp10.grey1)
               position: relative
               top: 2px
             }
             override node55 {
               style {
-                color: #{imp10.grey3}
+                color: var(imp10.grey3)
               }
             }
           }
@@ -600,13 +599,13 @@ public component RadiusInput {
             style {
               display: block
               height: 1em
-              color: #{imp10.grey1}
+              color: var(imp10.grey1)
               position: relative
               top: 2px
             }
             override node88 {
               style {
-                color: #{imp10.grey3}
+                color: var(imp10.grey3)
               }
             }
           }
@@ -692,17 +691,17 @@ public component ColorsInput {
       BorderStyle topInput {
         override elll.node1 {
           style {
-            color: #{imp10.grey3}
+            color: var(imp10.grey3)
           }
         }
         override elll.node5 {
           style {
-            color: #{imp10.grey1}
+            color: var(imp10.grey1)
           }
         }
         override elll {
           style {
-            color: #{imp10.grey1}
+            color: var(imp10.grey1)
           }
         }
       }
@@ -711,12 +710,12 @@ public component ColorsInput {
       BorderStyle rightInput {
         override elll.node5 {
           style {
-            color: #{imp10.grey3}
+            color: var(imp10.grey3)
           }
         }
         override elll {
           style {
-            color: #{imp10.grey1}
+            color: var(imp10.grey1)
           }
         }
       }
@@ -730,7 +729,7 @@ public component ColorsInput {
         }
         override elll {
           style {
-            color: #{imp10.grey1}
+            color: var(imp10.grey1)
           }
         }
       }
@@ -748,7 +747,7 @@ public component ColorsInput {
         }
         override elll {
           style {
-            color: #{imp10.grey1}
+            color: var(imp10.grey1)
           }
         }
       }
@@ -761,7 +760,7 @@ public component ColorsInput {
         }
         override elll {
           style {
-            color: #{imp10.grey3}
+            color: var(imp10.grey3)
             display: none
           }
         }

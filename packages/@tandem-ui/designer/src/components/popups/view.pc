@@ -7,8 +7,7 @@ import "../atoms/view.pc" as imp0
 public component Banner {
   variant warning (enabled: [true])
   render div {
-    style {
-      include imp0.baseFont
+    style extends imp0.baseFont {
       box-sizing: border-box
       padding-left: 8px
       padding-top: 8px

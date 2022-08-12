@@ -29,8 +29,7 @@ public component StarterKitFormOptions {
         display: block
       }
       text title "New TYPE Project" {
-        style {
-          include imp0.baseFont
+        style extends imp0.baseFont {
           padding-bottom: 12px
           display: inline-block
           font-size: 18px

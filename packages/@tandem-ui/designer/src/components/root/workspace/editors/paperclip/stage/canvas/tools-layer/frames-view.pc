@@ -28,7 +28,7 @@ public component Frame {
         top: -4px
         position: absolute
         width: 100%
-        color: #{imp0.grey3}
+        color: var(imp0.grey3)
         cursor: default
         display: flex
         overflow: hidden
@@ -86,7 +86,7 @@ public component Frames {
   script (src: "./frames-controller.tsx")
   render div {
     style {
-      background: #{imp0.grey2}
+      background: var(imp0.grey2)
     }
     div background {
       style {

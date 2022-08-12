@@ -27,7 +27,7 @@ fn serialize_decl_value(value: &ast::DeclarationValue, context: &mut Context) {
     match value {
         ast::DeclarationValue::Reference(reference) => {
             context.add_buffer(reference.path.join("."));
-        },
+        }
         ast::DeclarationValue::Measurement(measurement) => {
             context.add_buffer(format!("{}{}", measurement.value, measurement.unit))
         }
@@ -57,6 +57,11 @@ fn serialize_decl_value(value: &ast::DeclarationValue, context: &mut Context) {
                     context.add_buffer(", ".to_string());
                 }
             }
+        }
+        ast::DeclarationValue::Arithmetic(arithmetic) => {
+            serialize_decl_value(&arithmetic.left, context);
+            context.add_buffer(format!(" {} ", arithmetic.operator));
+            serialize_decl_value(&arithmetic.right, context);
         }
         ast::DeclarationValue::HexColor(color) => {
             context.add_buffer(format!("#{}", color.value));

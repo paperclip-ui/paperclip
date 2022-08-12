@@ -13,10 +13,9 @@ public component ColorPicker {
   variant gradient (enabled: [true])
   variant noTabs (enabled: [])
   render div {
-    style {
-      include imp1.defaultShadowStyle
+    style extends imp1.defaultShadowStyle {
       box-sizing: border-box
-      background: #{imp0.grey2}
+      background: var(imp0.grey2)
       display: inline-block
       flex-direction: column
       position: relative
@@ -58,7 +57,7 @@ public component ColorPicker {
           height: 12px
           width: 100%
           margin-top: 12px
-          border: 0px  #{imp0.grey1}
+          border: 0px  var(imp0.grey1)
           opacity: 0.991
         }
         style variant gradient {
@@ -71,7 +70,7 @@ public component ColorPicker {
             border-radius: 2px
             left: 20%
             top: 0
-            border: 1px solid #{imp0.grey3}
+            border: 1px solid var(imp0.grey3)
             width: 12px
           }
           style variant gradient {
@@ -89,7 +88,7 @@ public component ColorPicker {
           height: 12px
           width: 100%
           margin-top: 12px
-          border: 0px  #{imp0.grey1}
+          border: 0px  var(imp0.grey1)
           opacity: 0.991
         }
         override grabber {
@@ -98,7 +97,7 @@ public component ColorPicker {
             transform: translateX(-50%)
             border-radius: 2px
             left: 50%
-            border: 1px solid #{imp0.grey3}
+            border: 1px solid var(imp0.grey3)
             width: 12px
           }
           style variant gradient {
@@ -124,7 +123,7 @@ public component ColorPicker {
         box-sizing: border-box
         display: block
         padding-left: 4px
-        border-top: 1px solid #{imp0.grey1}
+        border-top: 1px solid var(imp0.grey1)
       }
     }
   }
@@ -143,8 +142,7 @@ public component RgbaInput {
       align-items: center
     }
     text label1 "RGBA" {
-      style {
-        include imp1.baseFont
+      style extends imp1.baseFont {
         font-size: 0.8em
         margin-right: 8px
       }
@@ -203,8 +201,7 @@ public component HslInput {
       align-items: center
     }
     text label "HSLA" {
-      style {
-        include imp1.baseFont
+      style extends imp1.baseFont {
         margin-right: 8px
       }
     }
@@ -263,8 +260,7 @@ public component HexInput {
       align-items: center
     }
     text label122 "HEX" {
-      style {
-        include imp1.baseFont
+      style extends imp1.baseFont {
         margin-right: 8px
       }
     }
@@ -327,7 +323,7 @@ public component Picker {
       position: relative
       height: 100px
       opacity: 0.991
-      background: #{imp0.grey0}
+      background: var(imp0.grey0)
       width: 100%
     }
     div canvasContainer {
@@ -341,8 +337,7 @@ public component Picker {
         border-radius: 2px
       }
       canvas canvas {
-        style {
-          include imp1.defaultBorder
+        style extends imp1.defaultBorder {
           width: 100%
           height: 100%
           position: absolute
@@ -352,7 +347,7 @@ public component Picker {
     }
     Grabber grabber {
       style {
-        border: 1px solid #{imp0.grey3}
+        border: 1px solid var(imp0.grey3)
         width: 10px
         height: 10px
         position: absolute
@@ -498,7 +493,7 @@ public component ColorSwatchItem {
       position: relative
     }
     style variant selected {
-      background: #{imp0.blue1}
+      background: var(imp0.blue1)
       margin-right: 4px
       padding-left: 2px
       padding-top: 2px
@@ -510,7 +505,7 @@ public component ColorSwatchItem {
         box-sizing: border-box
         display: block
         border-radius: 2px
-        background: #{imp0.grey1}
+        background: var(imp0.grey1)
         width: 100%
         height: 100%
         cursor: pointer
@@ -550,7 +545,7 @@ div preview {
     }
     override colorSwatchesInst.instance322 {
       style {
-        background: #{imp0.blue1}
+        background: var(imp0.blue1)
       }
     }
     override spectrum {

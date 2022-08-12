@@ -13,7 +13,7 @@ public component EditorTab {
       box-sizing: border-box
       padding: 8px 16px
       align-items: center
-      background: #{imp0.grey6}
+      background: var(imp0.grey6)
       color: rgba(112, 112, 112, 1)
       cursor: pointer
       padding-left: 20px
@@ -24,17 +24,15 @@ public component EditorTab {
       white-space: nowrap
     }
     style variant selected {
-      background: #{imp0.grey7}
+      background: var(imp0.grey7)
       user-select: none
     }
     text label "tab" {
-      style {
-        include imp1.baseFont
+      style extends imp1.baseFont {
       }
     }
     text xButton "×" {
-      style {
-        include imp1.baseFont
+      style extends imp1.baseFont {
         margin-left: 8px
         visibility: hidden
         cursor: pointer

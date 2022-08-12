@@ -53,8 +53,7 @@ public component VariantOption {
         }
         slot input2 {
           text label "Variant" {
-            style {
-              include imp1.baseFont
+            style extends imp1.baseFont {
             }
           }
         }
@@ -62,17 +61,17 @@ public component VariantOption {
       imp2.BoltIcon boltIcon {
         style {
           display: none
-          color: #{imp3.blue1}
+          color: var(imp3.blue1)
         }
         style variant hasTrigger {
           display: block
           height: 12px
-          color: #{imp3.blackTransparent}
+          color: var(imp3.blackTransparent)
         }
         style variant triggered {
           display: block
           height: 12px
-          color: #{imp3.blue1}
+          color: var(imp3.blue1)
         }
       }
       imp2.ResetIcon resetButton {

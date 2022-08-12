@@ -4,7 +4,7 @@ use crate::base::ast as base_ast;
 use crate::base::ast::Range;
 use crate::core::errors as err;
 use crate::core::errors::ParserError;
-use crate::core::id::{IDGenerator};
+use crate::core::id::IDGenerator;
 use crate::core::parser_context::Context;
 use crate::core::string_scanner::StringScanner;
 use std::str;
@@ -24,7 +24,6 @@ pub fn parse_style_declarations_with_string_scanner<'src, 'scanner, 'idgenerator
 fn parse_style_declarations(
     context: &mut ParserContext,
 ) -> Result<Vec<ast::StyleDeclaration>, err::ParserError> {
-    println!("11OK");
     context.skip(is_superfluous_or_newline);
     context.next_token()?;
     context.skip(is_superfluous_or_newline);
@@ -66,12 +65,10 @@ fn parse_style_declaration(
     });
 }
 
-
 fn parse_comma_list(
     context: &mut ParserContext,
 ) -> Result<ast::DeclarationValue, err::ParserError> {
     let start = context.curr_u16pos.clone();
-    println!("OK");
     let first = parse_spaced_list(context)?;
     context.skip(is_superfluous);
     Ok(if matches!(context.curr_token, Some(Token::Comma)) {
@@ -85,7 +82,7 @@ fn parse_comma_list(
         ast::DeclarationValue::CommaList(ast::CommaList {
             id: context.next_id(),
             range: Range::new(start, end),
-            items: Box::new(items)
+            items: Box::new(items),
         })
     } else {
         first
@@ -96,36 +93,61 @@ fn parse_spaced_list(
     context: &mut ParserContext,
 ) -> Result<ast::DeclarationValue, err::ParserError> {
     let start = context.curr_u16pos.clone();
-    let first = parse_decl_value(context)?;
-
+    let first = parse_arithmetic(context)?;
     Ok(if matches!(context.curr_token, Some(Token::Space(_))) {
         let mut items = vec![first];
         while matches!(context.curr_token, Some(Token::Space(_))) {
             context.next_token()?;
-            items.push(parse_decl_value(context)?);
+            items.push(parse_arithmetic(context)?);
         }
         let end = context.curr_u16pos.clone();
         ast::DeclarationValue::SpacedList(ast::SpacedList {
             id: context.next_id(),
             range: Range::new(start, end),
-            items: Box::new(items)
+            items: Box::new(items),
         })
     } else {
         first
     })
 }
 
+fn parse_arithmetic(
+    context: &mut ParserContext,
+) -> Result<ast::DeclarationValue, err::ParserError> {
+    let start = context.curr_u16pos.clone();
+    let left = parse_decl_value(context)?;
+    let operator_option = match context.peek_skip(0, is_superfluous) {
+        Some(Token::Plus) => Some("+".to_string()),
+        Some(Token::Minus) => Some("-".to_string()),
+        Some(Token::Star) => Some("*".to_string()),
+        Some(Token::Backslash) => Some("/".to_string()),
+        _ => None,
+    };
+
+    Ok(if let Some(operator) = operator_option {
+        context.skip(is_superfluous);
+        context.next_token()?; // eat operator
+        context.skip(is_superfluous);
+        let right = parse_decl_value(context)?;
+        let end = context.curr_u16pos.clone();
+        ast::DeclarationValue::Arithmetic(ast::Arithmetic {
+            id: context.next_id(),
+            range: Range::new(start, end),
+            left: Box::new(left),
+            right: Box::new(right),
+            operator,
+        })
+    } else {
+        left
+    })
+}
 
 fn parse_decl_value(
     context: &mut ParserContext,
 ) -> Result<ast::DeclarationValue, err::ParserError> {
     match context.curr_token {
-        Some(Token::Number(_)) => {
-            parse_decl_number(context)
-        },
-        Some(Token::Keyword(_)) => {
-            Ok(parse_keyword(context)?)
-        },
+        Some(Token::Number(_)) => parse_decl_number(context),
+        Some(Token::Keyword(_)) => Ok(parse_keyword(context)?),
         _ => {
             return Err(context.new_unexpected_token_error());
         }
@@ -134,9 +156,9 @@ fn parse_decl_value(
 
 fn parse_keyword(context: &mut ParserContext) -> Result<ast::DeclarationValue, err::ParserError> {
     Ok(if context.peek(1) == &Some(Token::ParenOpen) {
-       ast::DeclarationValue::FunctionCall(parse_call(context)?)
+        ast::DeclarationValue::FunctionCall(parse_call(context)?)
     } else {
-       ast::DeclarationValue::Reference(parse_reference(context)?)
+        ast::DeclarationValue::Reference(parse_reference(context)?)
     })
 }
 
@@ -157,7 +179,7 @@ fn parse_call(context: &mut ParserContext) -> Result<ast::FunctionCall, err::Par
         id: context.next_id(),
         range: Range::new(start, end),
         name,
-        arguments: Box::new(arguments)
+        arguments: Box::new(arguments),
     })
 }
 
@@ -180,7 +202,7 @@ fn parse_reference(context: &mut ParserContext) -> Result<ast::Reference, err::P
     Ok(ast::Reference {
         id: context.next_id(),
         range: Range::new(start, end),
-        path
+        path,
     })
 }
 
@@ -189,18 +211,22 @@ fn parse_decl_number(
 ) -> Result<ast::DeclarationValue, err::ParserError> {
     let start = context.curr_u16pos.clone();
     if let Some(Token::Number(value)) = context.curr_token {
-       Ok(if let Some(Token::Keyword(unit)) = context.peek(1) {
-            let unit = str::from_utf8(unit).unwrap().to_string();
-            context.next_token()?;
-            context.next_token()?;
+        let unit_option = match context.peek(1) {
+            Some(Token::Keyword(unit)) => Some(str::from_utf8(unit).unwrap().to_string()),
+            Some(Token::Percent) => Some("%".to_string()),
+            _ => None,
+        };
+        context.next_token()?; // eat number
+
+        Ok(if let Some(unit) = unit_option {
+            context.next_token()?; // eat unit
             ast::DeclarationValue::Measurement(ast::Measurement {
                 id: context.next_id(),
                 range: Range::new(start, context.curr_u16pos.clone()),
                 value,
-                unit
+                unit,
             })
         } else {
-            context.next_token()?;
             ast::DeclarationValue::Number(base_ast::Number {
                 id: context.next_id(),
                 range: Range::new(start, context.curr_u16pos.clone()),

@@ -42,8 +42,7 @@ public component QueriesPane {
             align-items: center
           }
           text label "Queries" {
-            style {
-              include imp1.headerFontStyle
+            style extends imp1.headerFontStyle {
             }
           }
           div controls {
@@ -103,7 +102,7 @@ public component QueryItem {
     imp4.SidePanelButton editButton {
       style {
         display: block
-        color: #{imp5.grey3}
+        color: var(imp5.grey3)
         height: 16px
         margin-right: 12px
       }

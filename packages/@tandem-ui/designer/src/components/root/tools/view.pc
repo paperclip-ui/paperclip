@@ -21,8 +21,7 @@ public component BuildButton {
     imp0.Popover popover {
       insert anchor {
         div buildButton {
-          style {
-            include imp1.defaultBorder
+          style extends imp1.defaultBorder {
             box-sizing: border-box
             display: inline-flex
             padding-left: 6px
@@ -36,7 +35,7 @@ public component BuildButton {
             style {
               display: none
               height: 9px
-              color: #{imp3.grey3}
+              color: var(imp3.grey3)
               margin-right: 3px
             }
             style variant paused {
@@ -47,7 +46,7 @@ public component BuildButton {
             style {
               display: none
               height: 9px
-              color: #{imp3.grey3}
+              color: var(imp3.grey3)
             }
             style variant building {
               display: inline-block
@@ -55,8 +54,7 @@ public component BuildButton {
             }
           }
           text label1 "Build project" {
-            style {
-              include imp1.baseFont
+            style extends imp1.baseFont {
               font-size: 9px
               font-weight: 700
               user-select: none
@@ -141,8 +139,7 @@ public component BuildButtonMenu {
 public component BuildButtonOption {
   variant hover (enabled: [true, PseudoElement.Hover])
   render div {
-    style {
-      include imp1.baseFont
+    style extends imp1.baseFont {
       padding-left: 12px
       padding-top: 6px
       padding-right: 12px
@@ -150,11 +147,10 @@ public component BuildButtonOption {
       cursor: pointer
     }
     style variant hover {
-      background-image: linear-gradient(#{imp3.grey2}, #{imp3.grey2})
+      background-image: linear-gradient(var(imp3.grey2), var(imp3.grey2))
     }
     text label "open app" {
-      style {
-        include imp1.nowrapEllipsis
+      style extends imp1.nowrapEllipsis {
       }
     }
   }

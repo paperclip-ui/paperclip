@@ -43,8 +43,7 @@ public component FileNavigator {
             justify-content: space-between
           }
           text text1 "files" {
-            style {
-              include imp1.headerFontStyle
+            style extends imp1.headerFontStyle {
             }
           }
           div control {
@@ -188,14 +187,13 @@ public component FileNavigatorLayer {
   variant blur (enabled: [])
   variant active (enabled: [true])
   render imp4.BaseLayer {
-    style {
-      include imp1.baseFontNobreak
+    style extends imp1.baseFontNobreak {
     }
     style variant blur {
       opacity: 0.419
     }
     style variant active {
-      background: #{imp5.blue3}
+      background: var(imp5.blue3)
     }
     override {
       variant file (enabled: [file])
@@ -249,7 +247,7 @@ public component FileNavigatorLayerContainer {
       display: block
     }
     style variant hovering {
-      background: #{imp5.blue2}
+      background: var(imp5.blue2)
     }
   }
 }

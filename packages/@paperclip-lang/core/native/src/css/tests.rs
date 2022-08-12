@@ -63,11 +63,86 @@ fn can_parse_various_contents() {
         (
             r#"
           {
-              background: var(--color)
+              background: var(--abc)
           }
         "#,
             Ok(()),
-        )
+        ),
+        (
+            r#"
+          {
+              background: var(--abc)
+          }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+          {
+              background: calc(50%)
+          }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+          {
+              background: calc(-50%)
+          }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+          {
+              transform: translate(10px + 10px)
+          }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+          {
+              transform: translate(-50%, calc(-50% + 1px))
+          }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+          {
+              filter: drop-shadow(4px 4px 2px rgba(0, 0, 0, 0.1))
+              background-image: linear-gradient(rgba(241, 240, 240, 1), rgba(241, 240, 240, 1))
+          }
+        "#,
+            Ok(()),
+        ),
+
+        // Smoke tests
+        (
+            r#"
+          {
+              width: 100%
+              boxSizing: border-box
+              marginTop: 1px
+              user-select: none
+              cursor: pointer
+              vertical-align: center
+              display: flex
+              padding-top: 6px
+              padding-right: 12px
+              padding-bottom: 4px
+              align-items: center
+              position: relative
+              padding-left: 12px
+              display: inline-block
+              position: relative
+              height: 18
+              vertical-align: center
+          }
+        "#,
+            Ok(()),
+        ),
     ];
 
     for (source, result) in tests {

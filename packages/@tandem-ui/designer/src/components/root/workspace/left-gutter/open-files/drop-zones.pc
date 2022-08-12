@@ -51,7 +51,7 @@ public component DropZone {
         height: 8px
         position: absolute
         display: block
-        background-image: linear-gradient(#{imp0.blue1}, #{imp0.blue1})
+        background-image: linear-gradient(var(imp0.blue1), var(imp0.blue1))
         left: -1px
         top: 50%
         transform: translateY(-50%)

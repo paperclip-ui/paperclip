@@ -8,8 +8,7 @@ import "./layer.pc" as imp1
 public component OpenModule {
   script (src: "./open-module-controller.tsx")
   render div {
-    style {
-      include imp0.baseFont
+    style extends imp0.baseFont {
       box-sizing: border-box
       flex-direction: column
       display: inline-block

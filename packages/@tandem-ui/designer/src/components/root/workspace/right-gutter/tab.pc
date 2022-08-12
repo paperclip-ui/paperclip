@@ -15,19 +15,18 @@ public component RightGutterTab {
       width: 100%
       padding: 8px
       cursor: pointer
-      background: #{imp0.grey6}
+      background: var(imp0.grey6)
       padding-top: 10px
       padding-bottom: 10px
       user-select: none
       font-weight: 600
     }
     style variant selected {
-      background: #{imp0.grey2}
-      border: 0px  #{imp0.grey2}
+      background: var(imp0.grey2)
+      border: 0px  var(imp0.grey2)
     }
     text label "tab" {
-      style {
-        include imp1.headerFontStyle
+      style extends imp1.headerFontStyle {
         font-size: 10px
         cursor: pointer
       }

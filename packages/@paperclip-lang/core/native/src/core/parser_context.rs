@@ -10,7 +10,7 @@ struct Error {}
 
 type NextToken<'src, Token> = dyn Fn(&mut StringScanner<'src>) -> Result<Token, ParserError>;
 
-pub struct Context<'tokenizer, 'scanner, 'idgenerator, 'src, TToken> {
+pub struct Context<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone> {
     pub curr_u16pos: U16Position,
     pub curr_token: Option<TToken>,
     pub token_pool: VecDeque<(Option<TToken>, U16Position)>,
@@ -20,7 +20,7 @@ pub struct Context<'tokenizer, 'scanner, 'idgenerator, 'src, TToken> {
     pub scanner: &'scanner mut StringScanner<'src>, // pub tokenizer: &'tokenizer mut TTokenizer,
 }
 
-impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken>
+impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone>
     Context<'tokenizer, 'scanner, 'idgenerator, 'src, TToken>
 {
     pub fn new(
@@ -43,7 +43,29 @@ impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken>
         self.id_generator.new_id()
     }
 
+    pub fn peek_skip<TSkip>(&mut self, step: usize, skip: TSkip) -> &Option<TToken>
+    where
+        TSkip: Fn(&TToken) -> bool,
+    {
+        let mut i = 0;
+        while let Some(token) = self.peek(i) {
+            if skip(token) {
+                i += 1;
+            } else {
+                break;
+            }
+        }
+
+        let actual_step = step + i;
+
+        self.peek(step + i)
+    }
+
     pub fn peek(&mut self, step: usize) -> &Option<TToken> {
+        if (step == 0) {
+            return &self.curr_token;
+        }
+
         if step > self.token_pool.len() {
             let diff = step - self.token_pool.len();
             for _i in [0..diff] {

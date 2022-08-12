@@ -98,8 +98,7 @@ public component ButtonBar {
       }
     }
     div border {
-      style {
-        include imp2.defaultBorder
+      style extends imp2.defaultBorder {
         box-sizing: border-box
         display: block
         pointer-events: none

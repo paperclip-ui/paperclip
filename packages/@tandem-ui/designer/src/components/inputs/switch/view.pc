@@ -22,7 +22,7 @@ public component Switch {
         position: relative
       }
       style variant on {
-        background: #{imp0.blue1}
+        background: var(imp0.blue1)
         position: relative
       }
       div dot {

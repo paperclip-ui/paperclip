@@ -9,8 +9,7 @@ import "./open-module.pc" as imp2
 public component LayersPane {
   script (src: "./layers-pane-controller.tsx")
   render imp0.Pane {
-    style {
-      include imp1.baseFont
+    style extends imp1.baseFont {
       display: flex
       flex-direction: column
       min-height: 200px

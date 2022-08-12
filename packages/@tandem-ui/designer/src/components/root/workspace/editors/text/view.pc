@@ -25,8 +25,7 @@ public component TextPreview {
         flex-shrink: 0
       }
       text text2 "You're viewing this file in read-only mode." {
-        style {
-          include imp0.baseFont
+        style extends imp0.baseFont {
           color: rgba(255, 255, 255, 1)
           font-weight: 600
           user-select: none

@@ -13,27 +13,26 @@ public component SidePanel {
     style {
       min-width: 300px
       min-height: 200px
-      background: #{imp0.grey2}
-      border-left: 1px solid #{imp0.grey1}
-      border-top: 1px solid #{imp0.grey1}
-      border-right: 1px solid #{imp0.grey1}
-      border-bottom: 1px solid #{imp0.grey1}
+      background: var(imp0.grey2)
+      border-left: 1px solid var(imp0.grey1)
+      border-top: 1px solid var(imp0.grey1)
+      border-right: 1px solid var(imp0.grey1)
+      border-bottom: 1px solid var(imp0.grey1)
       position: relative
     }
     style variant left {
-      background: #{imp0.grey2}
+      background: var(imp0.grey2)
     }
     style variant right {
-      border-left: 1px solid #{imp0.grey1}
-      border-top: 1px solid #{imp0.grey1}
-      border-right: 1px hidden #{imp0.grey1}
-      border-bottom: 1px solid #{imp0.grey1}
+      border-left: 1px solid var(imp0.grey1)
+      border-top: 1px solid var(imp0.grey1)
+      border-right: 1px hidden var(imp0.grey1)
+      border-bottom: 1px solid var(imp0.grey1)
       border-top-left-radius: 4px
       border-bottom-left-radius: 4px
     }
     text closeButton "×" {
-      style {
-        include imp1.baseFont
+      style extends imp1.baseFont {
         position: absolute
         font-size: 24px
         cursor: pointer
@@ -70,8 +69,7 @@ public component SidePanel {
       }
       slot content3 {
         text content2 "Content here" {
-          style {
-            include imp1.baseFont
+          style extends imp1.baseFont {
             padding-left: 12px
             padding-top: 12px
             padding-right: 12px
@@ -108,8 +106,7 @@ public component SidePanelButton {
           }
           slot button {
             text text1 "Button" {
-              style {
-                include imp1.baseFont
+              style extends imp1.baseFont {
               }
             }
           }

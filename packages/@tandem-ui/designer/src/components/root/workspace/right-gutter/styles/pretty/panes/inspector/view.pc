@@ -78,7 +78,7 @@ public component StylePropRow {
       padding-bottom: 6px
     }
     style variant alt {
-      background-image: linear-gradient(#{imp1.grey2}, #{imp1.grey2})
+      background-image: linear-gradient(var(imp1.grey2), var(imp1.grey2))
     }
     style variant isVariant {
       color: rgba(65, 111, 243, 1)
@@ -92,8 +92,7 @@ public component StylePropRow {
         width: 100%
       }
       text text1 "property" {
-        style {
-          include imp0.baseFont
+        style extends imp0.baseFont {
         }
         style variant isOverride {
           color: rgba(48, 243, 94, 1)
@@ -118,8 +117,7 @@ public component StylePropRow {
         text-overflow: ellipsis
       }
       text text2 "value" {
-        style {
-          include imp0.baseFont
+        style extends imp0.baseFont {
         }
       }
     }
@@ -152,8 +150,7 @@ public component StyleInspector {
             justify-content: space-between
           }
           text text3 "Inspector" {
-            style {
-              include imp0.headerFontStyle
+            style extends imp0.headerFontStyle {
             }
           }
           div element9 {

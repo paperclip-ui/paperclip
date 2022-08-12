@@ -24,7 +24,7 @@ public style baseFont {
 public style headerFontStyle extends baseFont {
   text-transform: uppercase
   font-size: 10px
-  color: #{imp0.grey3}
+  color: var(imp0.grey3)
   font-weight: 600
   user-select: none
   cursor: default
@@ -58,8 +58,7 @@ public style inputBackground {
   background: rgba(250, 250, 250, 1)
 }
 
-public style baseFontNobreak {
-  include baseFont
+public style baseFontNobreak extends baseFont {
   white-space: nowrap
 }
 

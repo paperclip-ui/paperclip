@@ -12,9 +12,7 @@ public component TextInput {
   variant focus (enabled: [PseudoElement.Focus])
   variant disabled (enabled: [true])
   render input {
-    style {
-      include imp0.defaultBorder
-      include imp0.baseFont
+    style extends imp0.defaultBorder, imp0.baseFont {
       width: 100%
       box-sizing: border-box
       padding-left: 6px
@@ -23,11 +21,11 @@ public component TextInput {
       padding-right: 6px
     }
     style variant focus {
-      box-shadow: inset  0px 0px 0px 1px #{imp1.blue1}
+      box-shadow: inset  0px 0px 0px 1px var(imp1.blue1)
     }
     style variant disabled {
-      background-image: linear-gradient(#{imp1.grey2}, #{imp1.grey2})
-      box-shadow: inset  0px 0px 0px 1px #{imp1.grey7}
+      background-image: linear-gradient(var(imp1.grey2), var(imp1.grey2))
+      box-shadow: inset  0px 0px 0px 1px var(imp1.grey7)
       opacity: 1
     }
   }
@@ -59,7 +57,7 @@ public component AutoComleteTextInput {
             border-top-left-radius: 2px
             border-top-right-radius: 2px
             border-bottom-right-radius: 2px
-            border: 1px solid #{imp1.grey1}
+            border: 1px solid var(imp1.grey1)
             overflow: scroll
           }
           slot menu {
@@ -106,7 +104,7 @@ AutoComleteTextInput {
   }
   override menuOuter {
     style {
-      border: 1px solid #{imp1.grey1}
+      border: 1px solid var(imp1.grey1)
     }
   }
   override inst77 {

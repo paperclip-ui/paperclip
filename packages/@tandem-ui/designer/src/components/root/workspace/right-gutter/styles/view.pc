@@ -21,12 +21,12 @@ public component Styles {
       flex-direction: column
       height: 100%
       overflow: hidden
-      background: #{imp0.grey2}
+      background: var(imp0.grey2)
     }
     div top {
       style {
-        border-bottom: 1px solid #{imp0.grey1}
-        box-shadow: inset  1px 0px 0px 0px #{imp0.grey0}, inset  0px -1px 0px 0px #{imp0.grey0}
+        border-bottom: 1px solid var(imp0.grey1)
+        box-shadow: inset  1px 0px 0px 0px var(imp0.grey0), inset  0px -1px 0px 0px var(imp0.grey0)
         display: none
       }
       style variant showPropertiesTab {
@@ -54,16 +54,14 @@ public component Styles {
             width: 100%
           }
           text propertiesText "Appearance" {
-            style {
-              include imp1.headerFontStyle
+            style extends imp1.headerFontStyle {
             }
             style variant triggersTab {
               display: none
             }
           }
           text trigggersText "Behavior" {
-            style {
-              include imp1.headerFontStyle
+            style extends imp1.headerFontStyle {
               display: none
             }
             style variant triggersTab {
@@ -89,12 +87,12 @@ public component Styles {
                 display: inline-block
                 height: 14px
                 margin-right: 6px
-                color: #{imp0.grey4}
+                color: var(imp0.grey4)
                 position: relative
                 top: 1px
               }
               style variant propertiesTab {
-                color: #{imp0.blue1}
+                color: var(imp0.blue1)
                 position: relative
               }
             }
@@ -105,10 +103,10 @@ public component Styles {
                 box-sizing: border-box
                 display: inline-block
                 height: 12px
-                color: #{imp0.grey4}
+                color: var(imp0.grey4)
               }
               style variant triggersTab {
-                color: #{imp0.blue1}
+                color: var(imp0.blue1)
               }
             }
           }

@@ -15,7 +15,7 @@ public component Toolbar {
   render div {
     style {
       display: flex
-      background: #{imp0.grey6}
+      background: var(imp0.grey6)
       position: relative
       flex-grow: 0
       height: 38px
@@ -26,7 +26,7 @@ public component Toolbar {
         display: flex
         align-items: center
         padding: 8px 16px
-        color: #{imp0.grey3}
+        color: var(imp0.grey3)
         opacity: 0
       }
       style variant active {
@@ -199,7 +199,7 @@ public component ToolbarButton {
       display: block
     }
     style variant selected {
-      color: #{imp0.blue1}
+      color: var(imp0.blue1)
     }
     slot icon {
       imp1.PointerIcon pointerIcon {
@@ -211,7 +211,7 @@ public component ToolbarButton {
           font-size: unset
           display: block
           height: 1em
-          color: #{imp0.blue1}
+          color: var(imp0.blue1)
         }
         override element12 {
           style variant selected {
@@ -243,7 +243,7 @@ div preview {
   }
   imp5.Frames framesPreview {
     style {
-      background: #{imp0.grey2}
+      background: var(imp0.grey2)
       height: 100%
       position: relative
     }

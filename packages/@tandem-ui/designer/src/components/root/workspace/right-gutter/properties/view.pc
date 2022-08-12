@@ -45,8 +45,7 @@ public component TextProperties {
           }
           insert input {
             imp2.Textarea textInput3 {
-              style {
-                include imp3.baseFont
+              style extends imp3.baseFont {
                 display: block
                 height: 100px
                 resize: none
@@ -140,7 +139,7 @@ public component Properties {
   variant contentNode (enabled: [])
   render div {
     style {
-      background: #{imp7.grey2}
+      background: var(imp7.grey2)
     }
     ElementProperties element1 {
       style {
@@ -249,8 +248,7 @@ public component ControllersPane {
             align-items: center
           }
           text text3 "Controllers" {
-            style {
-              include imp3.headerFontStyle
+            style extends imp3.headerFontStyle {
             }
           }
           div element4 {
@@ -367,9 +365,9 @@ public component ExportNameInput {
         box-sizing: border-box
         z-index: 3
         position: relative
-        color: #{imp7.grey3}
+        color: var(imp7.grey3)
         font-size: unset
-        border: 1px solid #{imp7.grey1}
+        border: 1px solid var(imp7.grey1)
       }
       style variant invalid {
         border: 1px solid rgba(221, 0, 0, 0.5)
@@ -490,8 +488,7 @@ public component AttributeField {
       }
       insert label {
         text text4 "label" {
-          style {
-            include imp3.labelFont
+          style extends imp3.labelFont {
           }
         }
       }
@@ -591,8 +588,7 @@ div element9 {
           justify-content: space-between
         }
         text text5 "custom attributes" {
-          style {
-            include imp3.headerFontStyle
+          style extends imp3.headerFontStyle {
           }
         }
         imp9.AddIcon element11 {

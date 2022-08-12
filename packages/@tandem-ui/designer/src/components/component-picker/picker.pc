@@ -16,7 +16,7 @@ public component Picker {
       box-sizing: border-box
       width: 400px
       height: 300px
-      background: #{imp0.grey2}
+      background: var(imp0.grey2)
       padding: 8px
       border-radius: 2px
       display: flex
@@ -87,8 +87,7 @@ public component ComponentPopdownPicker {
   script (src: "./picker2-controller.tsx")
   variant noComponents (enabled: [true])
   render div {
-    style {
-      include imp3.defaultShadowStyle
+    style extends imp3.defaultShadowStyle {
       box-sizing: border-box
       display: block
       width: 200px
@@ -184,8 +183,7 @@ public component ComponentPopdownPicker {
               padding-bottom: 12px
             }
             text noneFound "No components found." {
-              style {
-                include imp3.baseFont
+              style extends imp3.baseFont {
                 text-align: left
                 display: block
                 font-weight: 600
@@ -193,23 +191,20 @@ public component ComponentPopdownPicker {
               }
             }
             text desc "To create one, right click a layer and click" {
-              style {
-                include imp3.baseFont
+              style extends imp3.baseFont {
                 text-align: left
                 display: inline
               }
             }
             text ctra "\"Convert to Component\"" {
-              style {
-                include imp3.baseFont
+              style extends im3.baseFont {
                 text-align: left
                 display: inline
                 font-weight: 600
               }
             }
             text period "." {
-              style {
-                include imp3.baseFont
+              style extends imp3.baseFont {
                 text-align: left
                 display: inline-block
               }
@@ -240,30 +235,28 @@ public component ComponentPickerPopdownItem {
       cursor: pointer
     }
     style variant alt {
-      background-image: linear-gradient(#{imp0.grey7}, #{imp0.grey7})
+      background-image: linear-gradient(var(imp0.grey7), var(imp0.grey7))
       display: flex
       align-items: center
     }
     style variant hover {
-      background-image: linear-gradient(#{imp0.grey7}, #{imp0.grey7})
+      background-image: linear-gradient(var(imp0.grey7), var(imp0.grey7))
     }
     style variant preselected {
-      background-image: linear-gradient(#{imp0.blue3}, #{imp0.blue3})
+      background-image: linear-gradient(var(imp0.blue3), var(imp0.blue3))
     }
     imp5.ComponentIcon componentIcon {
       style {
-        color: #{imp0.grey3}
+        color: var(imp0.grey3)
         display: block
         height: 12px
       }
       style variant alt {
-        color: #{imp0.grey3}
+        color: var(imp0.grey3)
       }
     }
     text componentName "Item14" {
-      style {
-        include imp3.baseFont
-        include imp3.nowrapEllipsis
+      style imp3.baseFont, imp3.nowrapEllipsis {
         margin-left: 6px
         display: block
         width: 100%

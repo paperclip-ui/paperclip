@@ -12,14 +12,14 @@ public component Pane {
     style {
       display: flex
       flex-direction: column
-      border-bottom: 1px solid #{imp0.grey1}
+      border-bottom: 1px solid var(imp0.grey1)
     }
     style variant left {
-      box-shadow: inset  -1px 0px 0px 0px #{imp0.grey0}, inset  0px -1px 0px 0px #{imp0.grey0}
+      box-shadow: inset  -1px 0px 0px 0px var(imp0.grey0), inset  0px -1px 0px 0px var(imp0.grey0)
     }
     style variant right {
-      box-shadow: inset  0px -1px 0px 0px #{imp0.grey0}, inset  1px 0px 0px 0px #{imp0.grey0}
-      border-bottom: 1px solid #{imp0.grey1}
+      box-shadow: inset  0px -1px 0px 0px var(imp0.grey0), inset  1px 0px 0px 0px var(imp0.grey0)
+      border-bottom: 1px solid var(imp0.grey1)
     }
     div title {
       style {
@@ -27,7 +27,7 @@ public component Pane {
         padding-bottom: 6px
         box-sizing: border-box
         text-transform: uppercase
-        color: #{imp0.grey3}
+        color: var(imp0.grey3)
         font-size: 0.9em
         font-weight: 500
         display: no
@@ -40,8 +40,7 @@ public component Pane {
       }
       slot header {
         text text "pane" {
-          style {
-            include imp1.headerFontStyle
+          style extends imp1.headerFontStyle {
             text-transform: uppercase
             user-select: none
             pointer: default
@@ -57,15 +56,14 @@ public component Pane {
         box-sizing: border-box
         flex: 1
         position: relative
-        color: #{imp0.grey3}
+        color: var(imp0.grey3)
         padding-left: 12px
         padding-right: 12px
         padding-bottom: 6px
       }
       slot content2 {
         text inner "Content" {
-          style {
-            include imp1.baseFont
+          style extends imp1.baseFont {
           }
         }
       }

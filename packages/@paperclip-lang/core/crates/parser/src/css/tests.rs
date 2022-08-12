@@ -117,7 +117,6 @@ fn can_parse_various_contents() {
         "#,
             Ok(()),
         ),
-
         // Smoke tests
         (
             r#"

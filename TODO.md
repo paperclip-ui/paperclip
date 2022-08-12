@@ -1,8 +1,8 @@
 #### Milestone 1: parser
 
-- Get all basic stuff done
 - get dependency graph done
 - scan entire dependency graph
+- use threads for parser
 
 #### Milestone 2: evaluator
 

@@ -1,0 +1,6 @@
+[package]
+name = "paperclip_compiler_react"
+version = "0.1.1"
+authors = ["Craig Condon <craig.j.condon@gmail.com>"]
+edition = "2021"
+exclude = []

@@ -233,6 +233,10 @@ name = "paperclip_cli"
 version = "0.1.1"
 
 [[package]]
+name = "paperclip_compiler_react"
+version = "0.1.1"
+
+[[package]]
 name = "paperclip_engine"
 version = "0.1.1"
 dependencies = [

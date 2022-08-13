@@ -206,3 +206,15 @@ pub struct Document {
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub enum Expression {}
+
+impl Document {
+    pub fn get_imports(&self) -> Vec<&Import> {
+        let mut imports = vec![];
+        for item in &self.body {
+            if let DocumentBodyItem::Import(import) = item {
+                imports.push(import);
+            }
+        }
+        imports
+    }
+}

@@ -77,6 +77,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "glob"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9b919933a397b79c37e33b77bb2aa3dc8eb6e165ad809e58ff75bc7db2e34574"
+
+[[package]]
 name = "itoa"
 version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -128,10 +134,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "paperclip_lang_core"
+name = "paperclip_cli"
+version = "0.1.1"
+
+[[package]]
+name = "paperclip_engine"
 version = "0.1.1"
 dependencies = [
  "crc",
+ "glob",
  "pretty_assertions",
  "serde",
  "serde_json",

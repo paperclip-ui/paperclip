@@ -1,21 +1,17 @@
-
 [package]
-name = "paperclip_lang_core"
+name = "paperclip_engine"
 version = "0.1.1"
 authors = ["Craig Condon <craig.j.condon@gmail.com>"]
 edition = "2021"
 exclude = []
-
 
 [profile.release]
 debug = false
 opt-level = 3
 lto = true
 
-
 [lib]
-name = "paperclip_lang_core"
-crate-type = ["cdylib"]
+name = "paperclip_engine"
 
 [dependencies]
 serde = { version = "1.0.130", features = ["derive"] }
@@ -24,4 +20,5 @@ uuid = { version = "0.8", features = ["serde", "v4", "wasm-bindgen"] }
 crc = "1.8.1"
 pretty_assertions = "1.2.1"
 textwrap = "0.15.0"
+glob = "0.3.0"
 

@@ -1,33 +1,37 @@
 use crate::config::config::Config;
 use crate::pc::ast::Document;
 use crate::pc::parser::parse as parse_pc;
-use futures::future;
+use futures::future::select_all;
 use std::collections::HashMap;
+use std::marker::PhantomPinned;
+use std::pin::Pin;
 
 pub trait IO {
     fn resolve(&self, from_path: &String, to_path: &String) -> String;
     fn read(&self, path: &String) -> String;
 }
 
+#[derive(Debug)]
 pub struct Dependency {
     path: String,
     imports: HashMap<String, String>,
     document: Document,
 }
 
+#[derive(Debug)]
 pub struct Graph<'io, TIO: IO> {
     dependencies: HashMap<String, Dependency>,
     io: &'io TIO,
 }
 
 impl<'io, TIO: IO> Graph<'io, TIO> {
-    pub fn new(io: &'io TIO) -> Graph<'io, TIO> {
+    pub fn new(io: &'io TIO) -> Self {
         Graph {
             dependencies: HashMap::new(),
             io,
         }
     }
-    pub async fn load(&mut self, path: &String) {
+    pub async fn load(mut self: Pin<&mut Self>, path: &String) {
         if self.dependencies.contains_key(path) {
             return;
         }
@@ -40,10 +44,6 @@ impl<'io, TIO: IO> Graph<'io, TIO> {
                 imports.insert(import.path.to_string(), import_path);
             }
 
-            self.load_imports(&imports).await;
-
-          
-
             self.dependencies.insert(
                 path.to_string(),
                 Dependency {
@@ -52,19 +52,21 @@ impl<'io, TIO: IO> Graph<'io, TIO> {
                     document,
                 },
             );
+
+            let dep = self.dependencies.get(path).unwrap();
+            
+
+            self.load_imports(&dep.imports.clone()).await;
         }
     }
 
+    async fn load_imports(mut self: Pin<&mut Self>, imports: &HashMap<String, String>) {
+        let mut loads = vec![];
 
-    async fn load_imports(&mut self, imports: &HashMap<String, String>) {
+        for (_, path) in imports {
+            loads.push(self.load(path));
+        }
 
-      let mut loads = vec![];
-
-      for (_, path) in imports {
-        loads.push(self.load(path));
-      }
-
-      future::select_all(loads).await;
-    }    
+        select_all(loads).await;
+    }
 }
-

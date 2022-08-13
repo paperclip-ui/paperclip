@@ -1,6 +1,7 @@
 #### Milestone 1: parser
 
 - get dependency graph done
+  - make it async
 - scan entire dependency graph
 - use threads for parser
 

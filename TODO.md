@@ -4,6 +4,9 @@
   - make it async
 - scan entire dependency graph
 - use threads for parser
+- crates/cli
+  - load GLOB
+  - start on compiler
 
 #### Milestone 2: evaluator
 

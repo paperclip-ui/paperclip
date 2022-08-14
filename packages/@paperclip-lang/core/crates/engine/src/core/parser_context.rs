@@ -62,7 +62,7 @@ impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone>
     }
 
     pub fn peek(&mut self, step: usize) -> &Option<TToken> {
-        if (step == 0) {
+        if step == 0 {
             return &self.curr_token;
         }
 

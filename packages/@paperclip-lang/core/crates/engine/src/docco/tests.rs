@@ -3,7 +3,6 @@ use super::parser::parse;
 use super::serialize::serialize;
 use crate::base::ast::{Range, U16Position};
 use crate::core::errors::ParserError;
-use crate::core::string_scanner::StringScanner;
 
 #[test]
 fn can_parse_various_comments() {

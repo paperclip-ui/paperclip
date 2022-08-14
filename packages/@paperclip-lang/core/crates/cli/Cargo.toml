@@ -5,3 +5,5 @@ authors = ["Craig Condon <craig.j.condon@gmail.com>"]
 edition = "2021"
 exclude = []
 
+[dependencies]
+clap = "3.2.17"

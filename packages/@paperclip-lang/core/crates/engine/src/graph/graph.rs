@@ -1,4 +1,3 @@
-use crate::config::config::Config;
 use crate::pc::ast::Document;
 use crate::pc::parser::parse as parse_pc;
 use futures::future::{select_all, BoxFuture, Future, FutureExt};

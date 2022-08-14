@@ -1,7 +1,6 @@
 #### Milestone 1: parser
 
-- get dependency graph done
-  - make it async
+- CLI tool
 - scan entire dependency graph
 - use threads for parser
 - crates/cli

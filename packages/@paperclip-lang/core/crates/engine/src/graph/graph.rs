@@ -19,20 +19,28 @@ pub struct Dependency {
 }
 
 #[derive(Debug)]
-pub struct Graph<'io, TIO: IO> {
+pub struct Graph {
     pub dependencies: Arc<Mutex<HashMap<String, Dependency>>>,
-    io: &'io TIO,
 }
 
-impl<'io, TIO: IO> Graph<'io, TIO> {
-    pub fn new(io: &'io TIO) -> Self {
+impl Graph {
+    pub fn new() -> Self {
         Graph {
             dependencies: Arc::new(Mutex::new(HashMap::new())),
-            io,
         }
     }
-    pub async fn load(&mut self, path: &String) {
-        load_dependencies::<TIO>(path.clone(), Arc::new(&self.io), self.dependencies.clone()).await;
+    pub async fn load<TIO: IO>(&mut self, path: &str, io: &TIO) {
+        load_dependencies::<TIO>(String::from(path), Arc::new(&io), self.dependencies.clone())
+            .await;
+    }
+    pub async fn load_files<TIO: IO>(&mut self, paths: Vec<String>, io: &TIO) {
+        for path in paths {
+            load_dependencies_wrapper::<TIO>(
+                path.clone(),
+                Arc::new(&io),
+                self.dependencies.clone(),
+            ).await;
+        }
     }
 }
 
@@ -50,6 +58,7 @@ async fn load_dependencies<'io, TIO: IO>(
     {
         let mut deps = dependencies.lock().await;
         if deps.contains_key(&path) {
+            println!("SKIP");
             return;
         }
 
@@ -71,9 +80,12 @@ async fn load_dependencies<'io, TIO: IO>(
                         document,
                     },
                 );
+            } else {
+                println!("FAIL {}", path);
             }
         }
     }
+
 
     if imports.len() > 0 {
         select_all(

@@ -65,19 +65,35 @@ pub struct CompilerOptions {
 }
 
 impl Config {
-    pub fn load(cwd: String, file_name: Option<String>) -> Result<Config> {
+    pub fn load(cwd: &str, file_name: Option<String>) -> Result<Config> {
         load_config(cwd, file_name)
+    }
+    pub fn get_src_dir(&self) -> String {
+        if let Some(src_dir) = &self.src_dir {
+            src_dir.to_string()
+        } else {
+            ".".to_string()
+        }
+    }
+    pub fn get_relative_source_files_glob_pattern(&self) -> String {
+        String::from(
+            Path::new(&self.get_src_dir())
+                .join("**")
+                .join("*.pc")
+                .to_str()
+                .unwrap(),
+        )
     }
 }
 
-fn load_config(cwd: String, file_name: Option<String>) -> Result<Config> {
+fn load_config(cwd: &str, file_name: Option<String>) -> Result<Config> {
     let file_name = if let Some(value) = file_name {
         value
     } else {
         DEFAULT_CONFIG_NAME.to_string()
     };
 
-    let file_path = Path::new(cwd.as_str()).join(file_name);
+    let file_path = Path::new(cwd).join(file_name);
 
     let content = fs::read_to_string(file_path)?;
     let config = serde_json::from_str::<Config>(content.as_str())?;

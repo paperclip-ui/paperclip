@@ -52,8 +52,8 @@ fn can_load_a_simple_graph() {
         ])),
     };
 
-    let mut graph = Graph::new(&mock_fs);
-    block_on(graph.load(&"/entry.pc".to_string()));
+    let mut graph = Graph::new();
+    block_on(graph.load(&"/entry.pc".to_string(), &mock_fs));
 
     let deps = block_on(graph.dependencies.lock());
     assert_eq!(deps.len(), 2);
@@ -86,8 +86,8 @@ fn recursive_graphs_work() {
         ])),
     };
 
-    let mut graph = Graph::new(&mock_fs);
-    block_on(graph.load(&"/entry.pc".to_string()));
+    let mut graph = Graph::new();
+    block_on(graph.load(&"/entry.pc".to_string(), &mock_fs));
 
     let deps = block_on(graph.dependencies.lock());
     assert_eq!(deps.len(), 2);

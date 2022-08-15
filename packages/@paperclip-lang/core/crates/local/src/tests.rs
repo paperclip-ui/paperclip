@@ -1,11 +1,14 @@
-use crate::config::{CompilerOptions, Config};
+use super::config::Config;
+use super::project::Project;
+use futures::executor::block_on;
 use std::path::Path;
 
 #[test]
-fn can_load_a_simple_dependency_graph() {
-    let config = Config::load(get_fixtures_dir("simple"), None).unwrap();
+fn can_load_a_simple_project() {
+    let directory = get_fixtures_dir("simple");
+    let project = block_on(Project::load(&directory, None)).unwrap();
     assert_eq!(
-        config,
+        project.config,
         Config {
             src_dir: Some(".".to_string()),
             global_css: None,

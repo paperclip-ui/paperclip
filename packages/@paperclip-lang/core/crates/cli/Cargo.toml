@@ -11,6 +11,8 @@ paperclip_engine = { path = "../engine" }
 paperclip_local = { path = "../local" }
 glob = "0.3.0"
 serde = "1.0.143"
+futures = "0.3.21"
+anyhow = "1.0.61"
 
 [dev-dependencies]
 assert_cmd = "2.0.4"

@@ -7,20 +7,16 @@ use clap::{Parser, Subcommand};
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
-
     #[clap(subcommand)]
-   command: Command,
-
+    command: Command,
 }
-
 
 #[derive(Subcommand, Debug)]
 enum Command {
-
     /// Builds a paperclip project
     #[clap(arg_required_else_help = false)]
     Build {
-        /// Prints the compiled output 
+        /// Prints the compiled output
         #[clap(short, long, value_parser, default_value_t = true)]
         print: bool,
 
@@ -30,39 +26,33 @@ enum Command {
 
         /// The config file to use for compiling
         #[clap(short, long)]
-        config: Option<String>
+        config: Option<String>,
     },
 
     /// Configures Paperclip with your current project & installs compilers.
     #[clap(arg_required_else_help = false)]
-    Init {
-
-    },
+    Init {},
 
     /// Starts the visual development tooling
     #[clap(arg_required_else_help = false)]
-    Dev {
-
-    }
+    Dev {},
 }
-
 
 fn main() {
     let args = Args::parse();
 
     match args.command {
-        Command::Build { print, watch, config } => {
+        Command::Build {
+            print,
+            watch,
+            config,
+        } => {
             println!("DDDDDD");
-        },
-        Command::Init { } => {
-
-        },
-        Command::Dev {} => {
-
         }
+        Command::Init {} => {}
+        Command::Dev {} => {}
     };
 
- 
     // for _ in 0..args.count {
     //     println!("Hello {}!", args.name)
     // }

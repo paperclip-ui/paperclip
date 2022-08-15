@@ -3,8 +3,8 @@
 
 mod commands;
 use clap::{Parser, Subcommand};
-use commands::build::{BuildArgs, build};
-
+use commands::build::{build, BuildArgs};
+use std::env::current_dir;
 
 /// Simple program to greet a person
 #[derive(Parser, Debug)]

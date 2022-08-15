@@ -1,7 +1,10 @@
 // https://github.com/clap-rs/clap/blob/495e49e1a70989f4c8904c355f90d6149f673ce2/examples/git-derive.rs
 // https://paperclip.dev/docs/usage-cli
 
+mod commands;
 use clap::{Parser, Subcommand};
+use commands::build::{BuildArgs, build};
+
 
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
@@ -15,19 +18,7 @@ struct Args {
 enum Command {
     /// Builds a paperclip project
     #[clap(arg_required_else_help = false)]
-    Build {
-        /// Prints the compiled output
-        #[clap(short, long, value_parser, default_value_t = true)]
-        print: bool,
-
-        /// Starts the file watcher
-        #[clap(short, long, value_parser, default_value_t = false)]
-        watch: bool,
-
-        /// The config file to use for compiling
-        #[clap(short, long)]
-        config: Option<String>,
-    },
+    Build(BuildArgs),
 
     /// Configures Paperclip with your current project & installs compilers.
     #[clap(arg_required_else_help = false)]
@@ -42,12 +33,8 @@ fn main() {
     let args = Args::parse();
 
     match args.command {
-        Command::Build {
-            print,
-            watch,
-            config,
-        } => {
-            println!("DDDDDD");
+        Command::Build(args) => {
+            build(args);
         }
         Command::Init {} => {}
         Command::Dev {} => {}

@@ -19,11 +19,10 @@ public component VariablesInput {
       display: block
       width: 100%
     }
-    imp0.Pane pane {
+    imp0.Pane pane(text: "Variables") {
       override {
         variant right (enabled: [true])
       }
-      override text "Variables"
       override content {
         style {
           padding-bottom: 12px
@@ -87,8 +86,6 @@ public component VariablesInput {
               override {
                 variant header (enabled: [true])
               }
-              override el111.text1 "Name"
-              override node12331.text1 "Value"
             }
             slot items {
               VariableRowItem {
@@ -105,14 +102,12 @@ public component VariablesInput {
                 override {
                   variant limited (enabled: [true])
                 }
-                override limitedInput.label2 "block"
               }
               VariableRowItem {
                 override {
                   variant alt (enabled: [true])
                   variant color (enabled: [true])
                 }
-                override limitedInput.label2 "block"
               }
             }
           }
@@ -315,7 +310,6 @@ public component VariablesTab {
       style variant noGlobalFile {
         display: none
       }
-      override text1 "Variables"
     }
     text text4 "You must define a global file in your project config before using variables." {
       style {

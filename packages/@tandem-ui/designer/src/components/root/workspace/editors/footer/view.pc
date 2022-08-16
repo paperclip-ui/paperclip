@@ -71,19 +71,16 @@ public component Breadcrumbs {
           variant plug (enabled: [true])
           variant hovering (enabled: [true])
         }
-        override label "plug"
       }
       Breadcrumb {
         override {
           variant shadow (enabled: [true])
         }
-        override label "Element"
       }
       Breadcrumb {
         override {
-          variant component (enabled: [true])
+          variant component2 (enabled: [true])
         }
-        override label "bready"
       }
       Breadcrumb {
         override {
@@ -99,7 +96,7 @@ public component Breadcrumbs {
  * @bounds(left: 440, top: 2365, right: 806, bottom: 2397)
  */
 public component Breadcrumb {
-  variant component (enabled: [])
+  variant component2 (enabled: [])
   variant shadow (enabled: [])
   variant text (enabled: [])
   variant element2 (enabled: [])
@@ -162,7 +159,7 @@ public component Breadcrumb {
           style {
             display: none
           }
-          style variant component {
+          style variant component2 {
             display: block
             height: 1em
           }

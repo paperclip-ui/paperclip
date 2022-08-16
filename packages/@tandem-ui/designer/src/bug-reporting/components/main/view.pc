@@ -72,7 +72,7 @@ public component Main {
           }
         }
         a linkButton (href: "https://github.com/tandemcode/tandem/issues") {
-          style imp1.baseFont {
+          style extends imp1.baseFont {
             box-sizing: border-box
             display: inline
             font-weight: 600
@@ -97,7 +97,6 @@ public component Main {
               box-sizing: border-box
               display: inline-block
             }
-            override text1 "Restart app"
           }
         }
       }

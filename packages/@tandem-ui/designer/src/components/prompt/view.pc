@@ -64,10 +64,8 @@ public component Prompt {
           override {
             variant secondary (enabled: [true])
           }
-          override text1 "Cancel"
         }
         imp3.Button okButton {
-          override text1 "OK"
         }
       }
     }

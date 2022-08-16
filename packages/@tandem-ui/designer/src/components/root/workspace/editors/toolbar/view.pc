@@ -74,8 +74,6 @@ public component Toolbar {
           margin-right: 16px
           cursor: pointer
         }
-        override {
-        }
         insert icon {
           imp1.RectangleIcon rectangleIcon {
             style {
@@ -87,7 +85,7 @@ public component Toolbar {
           }
         }
       }
-      imp2.Popover component {
+      imp2.Popover component2 {
         insert anchor {
           ToolbarButton componentIcon (title: "insert component tool") {
             style {
@@ -130,15 +128,14 @@ public component EditorTabs {
       flex: 1
       width: 0px
     }
-    imp4.EditorTab {
-      override label "index.pc"
+    imp4.EditorTab (label: "index.pc") {
       override xButton {
         style {
           visibility: hidden
         }
       }
     }
-    imp4.EditorTab inst {
+    imp4.EditorTab inst (label: "view.pc") {
       style {
         box-sizing: border-box
         font-family: Avenir Next
@@ -152,33 +149,25 @@ public component EditorTabs {
       override {
         variant selected (enabled: [true])
       }
-      override label "view.pc"
       override xButton {
         style {
           visibility: hidden
         }
       }
     }
-    imp4.EditorTab inst2 {
+    imp4.EditorTab inst2 (label: "component.pc", xButton: "x") {
       override {
         variant hovering (enabled: [true])
       }
-      override label "component.pc"
-      override xButton "×" {
-        style {
-        }
-      }
     }
-    imp4.EditorTab {
-      override label "component.pc"
+    imp4.EditorTab(label: "component.pc") {
       override xButton {
         style {
           visibility: hidden
         }
       }
     }
-    imp4.EditorTab {
-      override label "pills.pc"
+    imp4.EditorTab(label: "pills.pc") {
       override xButton {
         style {
           visibility: hidden

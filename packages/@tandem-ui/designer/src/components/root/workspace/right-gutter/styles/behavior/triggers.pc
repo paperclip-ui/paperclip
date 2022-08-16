@@ -74,20 +74,12 @@ public component TriggersPane {
       div items {
         slot items2 {
           TriggerItem item {
-            override sourceInput.label2 "hover"
             override {
               variant selected (enabled: [hasItemSelected])
             }
-            override targetInput.label2 "hovering"
           }
-          TriggerItem item2 {
-            override targetInput.label2 "focusing"
-            override sourceInput.label2 "active"
-          }
-          TriggerItem item3 {
-            override targetInput.label2 "focusing"
-            override sourceInput.label2 "variable"
-          }
+          TriggerItem item2
+          TriggerItem item3
         }
       }
       div footer {
@@ -158,13 +150,7 @@ public component TriggerItem {
         left: 0px
       }
     }
-    imp3.Dropdown sourceInput {
-      override label2 "action"
-      override button22 {
-        style {
-        }
-      }
-    }
+    imp3.Dropdown sourceInput(label2: "action")
     text text4 "►" {
       style {
         display: inline-block
@@ -177,9 +163,7 @@ public component TriggerItem {
         color: var(imp4.grey0)
       }
     }
-    imp3.Dropdown targetInput {
-      override label2 "variant"
-    }
+    imp3.Dropdown targetInput(label2: "variant")
   }
 }
 

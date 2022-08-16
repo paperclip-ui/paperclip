@@ -8,11 +8,7 @@ import "../../../../../../../icons/view.pc" as imp3
  * @bounds(left: 1029, top: 489, right: 1429, bottom: 789)
  */
 public component OuterShadows {
-  render BoxShadows {
-    override {
-    }
-    override text1 "outer
- shadows"
+  render BoxShadows(text1: "outer shadows") {
   }
 }
 
@@ -21,11 +17,7 @@ public component OuterShadows {
  */
 public component InnerShadows {
   script (src: "./box-shadows-inner-controller.tsx")
-  render BoxShadows {
-    override {
-    }
-    override text1 "Inner shadows"
-  }
+  render BoxShadows(text1: "Inner shadows")
 }
 
 /**
@@ -35,7 +27,7 @@ public component BoxShadows {
   script (src: "./box-shadows-controller.tsx")
   variant hasSelectedShadow (enabled: [])
   variant hasItems (enabled: [true])
-  render imp1.Pane {
+  render imp1.Pane(text: "Box Shadows", inner: "") {
     style {
       display: flex
       flex-direction: column
@@ -44,8 +36,6 @@ public component BoxShadows {
     override {
       variant right (enabled: [true])
     }
-    override text "Box Shadows"
-    override inner ""
     override title {
       style {
       }

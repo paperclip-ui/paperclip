@@ -153,7 +153,6 @@ public component Dropdown {
  * @bounds(left: 357, top: 282, right: 558, bottom: 524)
  */
 Dropdown dropdown {
-  override label2 "super long label that should ellipsis if it overflows"
 }
 /**
  * @bounds(left: 132, top: 580, right: 333, bottom: 822)
@@ -202,8 +201,6 @@ Dropdown dropdownOpen {
   override inst66 {
     variant special (enabled: [true])
   }
-  override inst66.text1 "variable 1"
-  override insttt.text1 "variable 2"
 }
 /**
  * @bounds(left: 1119, top: 291, right: 1643, bottom: 622)

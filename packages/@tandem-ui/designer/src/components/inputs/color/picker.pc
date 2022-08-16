@@ -397,7 +397,6 @@ public component ColorSwatches {
       style variant hasMultipleGroups {
         display: block
       }
-      override label2 "Global colors"
     }
     div element1 {
       style {

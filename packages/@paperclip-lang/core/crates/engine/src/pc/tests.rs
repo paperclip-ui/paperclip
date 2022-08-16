@@ -321,6 +321,75 @@ fn can_parse_various_contents() {
         "#,
             Ok(()),
         ),
+        (
+            r#"
+            style {
+                height: 100vh
+                z-index: 99999
+            }
+            "#,
+            Ok(()),
+        ),
+        (
+            r#"
+            style {
+                background: var(imp0.grey1)
+            }
+            "#,
+            Ok(()),
+        ),
+        (
+            r#"
+                div preview {
+                    style {
+                        display: block
+                    }
+                }
+            "#,
+            Ok(()),
+        ),
+        (
+            r#"
+                public component Test {
+                    script(src: "./controller.tsx")
+                }
+            "#,
+            Ok(()),
+        ),
+        (
+            r#"
+            public component Picker {
+                render div {
+                    a.b
+                    a.b
+                }
+            }
+            "#,
+            Ok(()),
+        ),
+        (
+            r#"
+            public component Picker {
+                render div {
+                    a.b
+                    a.b
+                }
+            }
+            "#,
+            Ok(()),
+        ),
+        (
+            r#"
+                text ab
+            "#,
+            Ok(()),
+        ),
+        (
+            r#"
+                public token blackTransparent rgba(1, 0, 0, 0.16)
+            "#,
+            Ok(()),
+        )
     ];
 
     for (source, result) in tests {

@@ -42,8 +42,7 @@ public component StarterKitFormOptions {
         display: none
       }
     }
-    imp2.LabeledInput labeledInput {
-      override text1 "Project Directory"
+    imp2.LabeledInput labeledInput(text1: "Project Directory") {
       insert input {
         div element2 {
           style {
@@ -55,9 +54,7 @@ public component StarterKitFormOptions {
               margin-right: 12px
             }
           }
-          imp4.Button browseButton {
-            override text1 "browse"
-          }
+          imp4.Button browseButton(text1: "browse")
         }
       }
     }
@@ -68,11 +65,7 @@ public component StarterKitFormOptions {
         justify-content: flex-end
         padding-top: 6px
       }
-      imp4.Button createProjectButton {
-        override {
-        }
-        override text1 "Create Project"
-      }
+      imp4.Button createProjectButton(text1: "Create Project")
     }
   }
 }

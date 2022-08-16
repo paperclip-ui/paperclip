@@ -21,6 +21,16 @@ pub fn parse_style_declarations_with_string_scanner<'src, 'scanner, 'idgenerator
     parse_style_declarations(&mut context)
 }
 
+pub fn parse_style_declaration_with_string_scanner<'src, 'scanner, 'idgenerator>(
+    source: &'scanner mut StringScanner<'src>,
+    id_generator: &'idgenerator mut IDGenerator,
+    url: &String,
+) -> Result<ast::DeclarationValue, ParserError> {
+    let mut context = Context::new(source, url, &next_token, id_generator)?;
+    println!("{:?}", context.curr_token);
+    parse_decl_value(&mut context)
+}
+
 fn parse_style_declarations(
     context: &mut ParserContext,
 ) -> Result<Vec<ast::StyleDeclaration>, err::ParserError> {
@@ -76,7 +86,7 @@ fn parse_comma_list(
         while matches!(context.curr_token, Some(Token::Comma)) {
             context.next_token()?;
             context.skip(is_superfluous);
-            items.push(parse_decl_value(context)?);
+            items.push(parse_spaced_list(context)?);
         }
         let end = context.curr_u16pos.clone();
         ast::DeclarationValue::CommaList(ast::CommaList {
@@ -148,6 +158,8 @@ fn parse_decl_value(
     match context.curr_token {
         Some(Token::Number(_)) => parse_decl_number(context),
         Some(Token::Keyword(_)) => Ok(parse_keyword(context)?),
+        Some(Token::String(_)) => Ok(parse_string(context)?),
+        Some(Token::HexColor(_)) => Ok(parse_hex_color(context)?),
         _ => {
             return Err(context.new_unexpected_token_error());
         }
@@ -160,6 +172,42 @@ fn parse_keyword(context: &mut ParserContext) -> Result<ast::DeclarationValue, e
     } else {
         ast::DeclarationValue::Reference(parse_reference(context)?)
     })
+}
+
+fn parse_string(context: &mut ParserContext) -> Result<ast::DeclarationValue, err::ParserError> {
+    if let Some(Token::String(value)) = context.curr_token {
+        let start = context.curr_u16pos.clone();
+        context.next_token()?;
+        let end = context.curr_u16pos.clone();
+        Ok(ast::DeclarationValue::String(base_ast::Str {
+            id: context.next_id(),
+            range: Range::new(start, end),
+            value: trim_string(str::from_utf8(value).unwrap())
+        }))
+    } else {
+        Err(context.new_unexpected_token_error())
+    }
+}
+
+fn trim_string(value: &str) -> String {
+    value[1..value.len() - 1].to_string()
+}
+
+fn parse_hex_color(context: &mut ParserContext) -> Result<ast::DeclarationValue, err::ParserError> {
+    let start = context.curr_u16pos.clone();
+    let value = if let Some(Token::HexColor(value)) = context.curr_token {
+        str::from_utf8(value).unwrap().to_string()
+    } else {
+        return Err(context.new_unexpected_token_error());
+    };
+    context.next_token()?; // eat #
+    let end = context.curr_u16pos.clone();
+
+    Ok(ast::DeclarationValue::HexColor(ast::HexColor {
+        id: context.next_id(),
+        range: Range::new(start, end),
+        value,
+    }))
 }
 
 fn parse_call(context: &mut ParserContext) -> Result<ast::FunctionCall, err::ParserError> {
@@ -190,6 +238,7 @@ fn parse_reference(context: &mut ParserContext) -> Result<ast::Reference, err::P
     loop {
         if let Some(Token::Keyword(word)) = context.curr_token {
             path.push(str::from_utf8(word).unwrap().to_string());
+            context.next_token()?;
         }
         if context.curr_token == Some(Token::Period) {
             context.next_token()?;
@@ -197,7 +246,6 @@ fn parse_reference(context: &mut ParserContext) -> Result<ast::Reference, err::P
             break;
         }
     }
-    context.next_token()?;
     let end = context.curr_u16pos.clone();
     Ok(ast::Reference {
         id: context.next_id(),

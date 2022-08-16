@@ -7,12 +7,10 @@ import "../../../../../../../icons/view.pc" as imp2
  * @bounds(left: 656, top: 479, right: 1056, bottom: 779)
  */
 public component Filters {
-  render imp0.Pane {
+  render imp0.Pane(text: "Filters", inner: "") {
     override {
       variant right (enabled: [true])
     }
-    override text "Filters"
-    override inner ""
     override content {
       style {
         padding-bottom: 0px

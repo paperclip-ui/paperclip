@@ -1,12 +1,12 @@
 use super::ast;
-use super::tokenizer::{is_superfluous_or_newline, next_token, Token};
+use super::tokenizer::{is_superfluous, is_superfluous_or_newline, next_token, Token};
 use crate::base::ast as base_ast;
 use crate::core::errors as err;
 use crate::core::id::IDGenerator;
 use crate::core::parser_context::{create_initial_context, Context};
 use crate::core::string_scanner::StringScanner;
 use crate::css::ast as css_ast;
-use crate::css::parser::parse_style_declarations_with_string_scanner;
+use crate::css::parser::{parse_style_declarations_with_string_scanner, parse_style_declaration_with_string_scanner};
 use crate::docco::ast as docco_ast;
 use crate::docco::parser::parse_with_string_scanner as parse_doc_comment;
 use std::str;
@@ -82,23 +82,51 @@ fn parse_document_child(
         Some(Token::KeywordStyle) => Ok(ast::DocumentBodyItem::Style(parse_style(
             context, is_public,
         )?)),
+        Some(Token::Word(b"token")) => Ok(ast::DocumentBodyItem::Atom(parse_atom(context, is_public)?)),
+        Some(Token::Word(b"text")) => Ok(ast::DocumentBodyItem::Text(parse_text(context)?)),
+        Some(Token::Word(_)) => Ok(ast::DocumentBodyItem::Element(parse_element(context)?)),
         _ => {
             return Err(context.new_unexpected_token_error());
         }
     }
 }
 
+fn parse_atom(context: &mut PCContext, is_public: bool) -> Result<ast::Atom, err::ParserError> {
+    let start = context.curr_u16pos.clone();
+    context.next_token()?; // eat atom
+    context.skip(is_superfluous);
+    let name = extract_word_value(context)?;
+    let value = parse_style_declaration_with_string_scanner(
+        context.scanner,
+        context.id_generator,
+        &context.source_url,
+    )?;
+    println!("{:?}", value);
+    context.scanner.unshift(1);
+    context.next_token()?;
+    let end = context.curr_u16pos.clone();
+
+
+    Ok(ast::Atom {
+        id: context.next_id(),
+        range: base_ast::Range::new(start, end),
+        name,
+        is_public,
+        value
+    })
+}
+
 fn parse_docco(
     context: &mut PCContext,
     is_public: bool,
 ) -> Result<docco_ast::Comment, err::ParserError> {
-    context.scanner.unshift(3); // rewise /**
+    context.scanner.unshift(3); // rewind /**
     let ret = parse_doc_comment(
         &mut context.scanner,
         &mut context.id_generator,
         &context.source_url,
     );
-    context.scanner.unshift(2); // rewind */
+    context.scanner.unshift(1); // rewind /
     context.next_token()?;
     ret
 }
@@ -262,7 +290,7 @@ fn parse_component(
 fn parse_render(context: &mut PCContext) -> Result<ast::Render, err::ParserError> {
     let start = context.curr_u16pos.clone();
     context.next_token()?; // eat render
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous);
     let node = parse_render_node(context)?;
     let end = context.curr_u16pos.clone();
 
@@ -297,6 +325,7 @@ fn parse_variant(context: &mut PCContext) -> Result<ast::Variant, err::ParserErr
 
 fn parse_script(context: &mut PCContext) -> Result<ast::Script, err::ParserError> {
     context.next_token()?; // eat script
+    context.skip(is_superfluous_or_newline);
     let start = context.curr_u16pos.clone();
     let parameters = parse_parameters(context)?;
     let end = context.curr_u16pos.clone();
@@ -397,8 +426,13 @@ fn parse_text(context: &mut PCContext) -> Result<ast::TextNode, err::ParserError
     context.next_token()?; // eat render
     context.skip(is_superfluous_or_newline);
     let ref_name = parse_optional_ref_name(context)?;
-    let value = extract_string_value(context)?;
-    context.next_token()?; // eat value
+    context.skip(is_superfluous_or_newline);
+    let value = if let Some(Token::String(value)) = context.curr_token {
+        context.next_token()?; // eat value
+        Some(trim_string(str::from_utf8(value).unwrap()))
+    } else {
+        None
+    };
     context.skip(is_superfluous_or_newline);
 
     let body = if context.curr_token == Some(Token::CurlyOpen) {
@@ -505,7 +539,7 @@ fn parse_element(context: &mut PCContext) -> Result<ast::Element, err::ParserErr
 
     let tag_name: String = tag_parts.last().unwrap().clone();
 
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous);
 
     let ref_name = parse_optional_ref_name(context)?;
 
@@ -537,6 +571,8 @@ fn parse_element(context: &mut PCContext) -> Result<ast::Element, err::ParserErr
     } else {
         vec![]
     };
+
+    context.skip(is_superfluous_or_newline);
 
     let end = context.curr_u16pos.clone();
 

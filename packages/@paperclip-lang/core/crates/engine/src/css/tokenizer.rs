@@ -17,12 +17,14 @@ pub enum Token<'src> {
     Plus,
     Backslash,
     Star,
+    Hash,
     Colon,
     Period,
     Comma,
     Byte(u8),
     Number(f32),
     Keyword(&'src [u8]),
+    HexColor(&'src [u8]),
     Newline(&'src [u8]),
     Space(&'src [u8]),
     String(&'src [u8]),
@@ -48,6 +50,9 @@ pub fn next_token<'src>(
             b'*' => Token::Star,
             b'/' => Token::Backslash,
             b'+' => Token::Plus,
+            b'#' => Token::HexColor(
+                &scanner.source[(s_pos + 1)..scanner.scan(is_hex_color_part).u8_pos],
+            ),
             b'\"' | b'\'' => Token::String(scan_string(scanner, b)),
             _ if is_az(b) => {
                 let e_pos = scanner.scan(is_keyword_part).u8_pos;
@@ -83,8 +88,12 @@ fn scan_number2<'src>(scanner: &mut StringScanner<'src>, s_pos: usize) -> f32 {
     buffer.parse::<f32>().unwrap()
 }
 
+fn is_hex_color_part(b: u8) -> bool {
+    is_digit(b) || is_az(b)
+}
+
 fn is_keyword_part(b: u8) -> bool {
-    b == b'-' || is_az(b)
+    b == b'-' || is_az(b) || is_digit(b)
 }
 
 pub fn is_superfluous(token: &Token) -> bool {

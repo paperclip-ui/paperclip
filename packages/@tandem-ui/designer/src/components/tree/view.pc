@@ -3,12 +3,7 @@
  */
 public component Tree {
   render div {
-    Node {
-      override children {
-        style {
-        }
-      }
-    }
+    Node
   }
 }
 
@@ -95,6 +90,5 @@ div preview {
         background: rgba(200, 200, 200, 1)
       }
     }
-    override label.text1 "Quick Search"
   }
 }

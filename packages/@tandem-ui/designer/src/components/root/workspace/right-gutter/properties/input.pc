@@ -9,25 +9,14 @@ import "../../../../inputs/dropdown/view.pc" as imp2
 public component InputProperties {
   script (src: "./input-controller.tsx")
   render div {
-    imp0.LabeledInput {
-      override text1 "Placeholder" {
-        style {
-        }
-      }
-      override projectNameInput {
-        style {
-        }
-      }
+    imp0.LabeledInput(text1: "Placeholder") {
       insert input {
         imp1.TextInput placeholderInput
       }
     }
-    imp0.LabeledInput labeledInput {
-      override text1 "Input type"
+    imp0.LabeledInput labeledInput (text1: "Input type") {
       insert input {
-        imp2.Dropdown inputTypeInput {
-          override label2 "text"
-        }
+        imp2.Dropdown inputTypeInput (label2: "text")
       }
     }
   }

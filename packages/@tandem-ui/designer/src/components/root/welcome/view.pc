@@ -45,7 +45,7 @@ public component Welcome {
         style variant start {
           background-image: linear-gradient(var(imp3.blue1), var(imp3.blue1))
         }
-        override text1 "Tutorials" {
+        override text1 {
           style variant start {
             color: rgba(255, 255, 255, 1)
           }
@@ -55,13 +55,11 @@ public component Welcome {
         style {
           margin-right: 8px
         }
-        override text1 "Open project"
       }
       imp0.Button createProjectButton {
         override {
           variant secondary (enabled: [true])
         }
-        override text1 "Create project"
       }
     }
     div createProject {
@@ -95,16 +93,13 @@ public component Welcome {
         }
         slot options {
           ProjectPill createReactProjectButton {
-            override label "React"
             override iconOuter {
               style variant createProject {
                 cursor: pointer
               }
             }
           }
-          ProjectPill createBlankProjectButton {
-            override label "Blank"
-          }
+          ProjectPill createBlankProjectButton
         }
         div element2 {
           style {
@@ -219,7 +214,6 @@ div element3 {
  * @bounds(left: 907, top: 115, right: 1290, bottom: 315)
  */
 imp5.Comment comment {
-  override text2 "TODO:"
   insert slot11 {
     div element4 {
       style {

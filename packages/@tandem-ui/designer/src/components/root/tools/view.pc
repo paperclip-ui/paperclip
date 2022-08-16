@@ -108,7 +108,6 @@ public component BuildButtonMenu {
           box-sizing: border-box
           display: block
         }
-        override label "Open Console"
       }
       BuildButtonOption element2 {
         style {
@@ -118,16 +117,12 @@ public component BuildButtonMenu {
         override {
           variant hover (enabled: [true])
         }
-        override label "Stop"
       }
       BuildButtonOption element3 {
         style {
           box-sizing: border-box
           display: block
         }
-        override {
-        }
-        override label "Open"
       }
     }
   }

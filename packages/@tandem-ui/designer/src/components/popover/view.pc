@@ -10,7 +10,6 @@ public component Popover {
   render div {
     div anchor1 {
       slot anchor {
-        text text3 "Click to edit"
       }
     }
     Content content1 {
@@ -62,15 +61,12 @@ Popover {
     variant open (enabled: [true])
   }
   insert anchor {
-    text text1 "button"
   }
   insert content {
-    text text2 "Click to edit"
   }
 }
 /**
  * @bounds(left: 438, top: 340, right: 718, bottom: 541)
  */
 imp0.Comment notice {
-  override text2 "Use this component for any UI that needs to 'pop over' ALLL of the UI"
 }

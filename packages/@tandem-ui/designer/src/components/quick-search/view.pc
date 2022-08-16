@@ -68,7 +68,7 @@ public component QuickSearch {
                 width: 100%
               }
             }
-            override description "super/nested/directory/path/that/will/wa" {
+            override description {
               style {
                 width: 100%
                 overflow: auto

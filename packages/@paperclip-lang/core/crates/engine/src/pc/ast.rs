@@ -143,7 +143,7 @@ pub enum ElementBodyItem {
 pub struct TextNode {
     pub id: String,
     pub name: Option<String>,
-    pub value: String,
+    pub value: Option<String>,
     pub range: Range,
     pub body: Vec<TextNodeBodyItem>,
 }
@@ -195,6 +195,9 @@ pub enum DocumentBodyItem {
     Style(Style),
     Component(Component),
     DocComment(docco_ast::Comment),
+    Text(TextNode),
+    Atom(Atom),
+    Element(Element),
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -202,6 +205,15 @@ pub struct Document {
     pub id: String,
     pub range: Range,
     pub body: Vec<DocumentBodyItem>,
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
+pub struct Atom {
+    pub id: String,
+    pub is_public: bool,
+    pub name: String,
+    pub range: Range,
+    pub value: css_ast::DeclarationValue,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

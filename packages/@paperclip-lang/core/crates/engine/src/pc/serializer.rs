@@ -2,7 +2,7 @@ use super::ast;
 use crate::base::ast as base_ast;
 use crate::core::serialize_context::Context;
 use crate::css::ast as css_ast;
-use crate::css::serializer::serialize_declarations;
+use crate::css::serializer::{serialize_declarations, serialize_decl_value};
 use crate::docco::ast as docco_ast;
 use crate::docco::serialize::serialize_comment as serialize_doc_comment;
 
@@ -17,14 +17,25 @@ fn serialize_document(document: &ast::Document, context: &mut Context) {
         match item {
             ast::DocumentBodyItem::DocComment(docco) => serialize_doc_comment2(docco, context),
             ast::DocumentBodyItem::Import(imp) => serialize_import(imp, context),
+            ast::DocumentBodyItem::Atom(imp) => serialize_atom(imp, context),
             ast::DocumentBodyItem::Component(comp) => serialize_component(comp, context),
             ast::DocumentBodyItem::Style(style) => serialize_style(style, context),
+            ast::DocumentBodyItem::Element(element) => serialize_element(element, context),
+            ast::DocumentBodyItem::Text(text) => serialize_text(text, context),
         }
     }
 }
 
 fn serialize_import(imp: &ast::Import, context: &mut Context) {
     context.add_buffer(format!("import \"{}\" as {}\n", imp.path, imp.namespace));
+}
+
+fn serialize_atom(atom: &ast::Atom, context: &mut Context) {
+    if atom.is_public {
+        context.add_buffer("public ".to_string());
+    }
+    context.add_buffer(format!("{}", atom.name));
+    serialize_decl_value(&atom.value, context);
 }
 
 fn serialize_doc_comment2(docco: &docco_ast::Comment, context: &mut Context) {
@@ -114,7 +125,9 @@ fn serialize_render_node(node: &ast::RenderNode, context: &mut Context) {
 fn serialize_text(node: &ast::TextNode, context: &mut Context) {
     context.add_buffer("text".to_string());
     maybe_serialize_ref_name(&node.name, context);
-    context.add_buffer(format!(" \"{}\"", node.value));
+    if let Some(value) = &node.value {
+        context.add_buffer(format!(" \"{}\"", value));
+    }
     if node.body.len() > 0 {
         context.add_buffer(" {\n".to_string());
         context.start_block();

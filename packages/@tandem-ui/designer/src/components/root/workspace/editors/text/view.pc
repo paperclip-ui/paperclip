@@ -42,7 +42,7 @@ public component TextPreview {
             background: rgba(255, 255, 255, 1)
             white-space: nowrap
           }
-          override text1 "Open in Text Editor" {
+          override text1 {
             style {
               font-size: 10px
               color: rgba(88, 185, 255, 1)

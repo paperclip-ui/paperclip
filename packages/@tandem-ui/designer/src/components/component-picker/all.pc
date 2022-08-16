@@ -5,12 +5,6 @@ import "./picker.pc" as imp3
 
 
 /**
- * @bounds(left: 101, top: 551, right: 395, bottom: 752)
- */
-imp0.Comment notice {
-  override text2 "TODO: component picker should be part of quick search HUD instead"
-}
-/**
  * @bounds(left: 1193, top: 617, right: 2931, bottom: 1616)
  */
 div preview {

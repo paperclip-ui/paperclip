@@ -39,7 +39,8 @@ impl Graph {
                 path.clone(),
                 Arc::new(&io),
                 self.dependencies.clone(),
-            ).await;
+            )
+            .await;
         }
     }
 }
@@ -85,7 +86,6 @@ async fn load_dependencies<'io, TIO: IO>(
             }
         }
     }
-
 
     if imports.len() > 0 {
         select_all(

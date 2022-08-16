@@ -19,7 +19,7 @@ public component OpenModule {
         box-sizing: border-box
         display: block
       }
-      imp1.BaseLayer instance122 {
+      imp1.BaseLayer instance122(label1: "Module") {
         style {
           box-sizing: border-box
           display: flex
@@ -39,9 +39,8 @@ public component OpenModule {
           style {
           }
         }
-        override label1 "Module"
       }
-      imp1.BaseLayer element1234 {
+      imp1.BaseLayer element1234 (label1: "Button") {
         style {
           box-sizing: border-box
           display: flex
@@ -53,17 +52,16 @@ public component OpenModule {
           justify-content: space-between
         }
         override {
-          variant component (enabled: [true])
+          variant component2 (enabled: [true])
           variant expanded (enabled: [true])
-          variant component (enabled: [true])
+          variant component2 (enabled: [true])
         }
         override circleIcon {
           style {
           }
         }
-        override label1 "Button"
       }
-      imp1.BaseLayer instance12 {
+      imp1.BaseLayer instance12(label1: "Hello World") {
         style {
           padding-left: 50px
         }
@@ -71,7 +69,6 @@ public component OpenModule {
           variant alt (enabled: [true])
           variant alt (enabled: [true])
         }
-        override label1 "Hello World"
         override textIcon {
           style {
             margin-left: 2px
@@ -79,7 +76,7 @@ public component OpenModule {
           }
         }
       }
-      imp1.BaseLayer element122 {
+      imp1.BaseLayer element122(label1: "div") {
         style {
           padding-left: 50px
         }
@@ -94,9 +91,8 @@ public component OpenModule {
             top: -8px
           }
         }
-        override label1 "div"
       }
-      imp1.BaseLayer element12 {
+      imp1.BaseLayer element12(label1: "Button") {
         style {
           box-sizing: border-box
           display: flex
@@ -113,9 +109,8 @@ public component OpenModule {
           variant instance (enabled: [true])
           variant alt (enabled: [true])
         }
-        override label1 "Button"
       }
-      imp1.BaseLayer inst123 {
+      imp1.BaseLayer inst123(label1: "Shadow") {
         style {
           padding-left: 50px
         }
@@ -124,9 +119,8 @@ public component OpenModule {
           variant alt (enabled: [true])
           variant shadow (enabled: [true])
         }
-        override label1 "Shadow"
       }
-      imp1.BaseLayer inst144 {
+      imp1.BaseLayer inst144(label1: "Text") {
         style {
           padding-left: 50px
         }
@@ -134,7 +128,6 @@ public component OpenModule {
           variant alt (enabled: [true])
           variant plug (enabled: [true])
         }
-        override label1 "Text"
       }
     }
   }

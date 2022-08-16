@@ -142,6 +142,23 @@ fn can_parse_various_contents() {
         "#,
             Ok(()),
         ),
+        (
+            r#"
+          {
+              color: #444
+              box-shadow: inset -1px var(imp0.grey0), inset 2px var(imp0.grey0)
+          }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+          {
+              text-content: "abba"
+          }
+        "#,
+            Ok(()),
+        ),
     ];
 
     for (source, result) in tests {

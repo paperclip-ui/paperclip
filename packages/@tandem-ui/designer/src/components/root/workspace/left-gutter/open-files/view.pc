@@ -8,7 +8,7 @@ import "./open-module.pc" as imp2
  */
 public component LayersPane {
   script (src: "./layers-pane-controller.tsx")
-  render imp0.Pane {
+  render imp0.Pane(text: "Layers") {
     style extends imp1.baseFont {
       display: flex
       flex-direction: column
@@ -32,7 +32,6 @@ public component LayersPane {
         display: inline-block
       }
     }
-    override text "Layers"
     insert content2 {
       imp2.OpenModule {
         style {
@@ -99,9 +98,6 @@ public component LayersPane {
           variant hover (enabled: [true])
           variant inShadow (enabled: [true])
         }
-        override inst144 {
-        }
-        override element1234.labelInput (placeholder: "label")
       }
     }
   }

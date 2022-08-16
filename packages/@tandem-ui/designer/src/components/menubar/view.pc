@@ -76,14 +76,12 @@ public component MenuBarItem {
               box-sizing: border-box
               display: block
             }
-            override label "Option 1"
           }
           MenuBarItemOption option {
             style {
               box-sizing: border-box
               display: block
             }
-            override label "Option 1"
           }
           MenuBarItemOption option3 {
             style {
@@ -93,14 +91,12 @@ public component MenuBarItem {
             override {
               variant hasCommand (enabled: [true])
             }
-            override label "Option 1"
           }
           MenuBarItemOption option4 {
             style {
               box-sizing: border-box
               display: block
             }
-            override label "Option 1"
           }
         }
       }

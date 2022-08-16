@@ -16,11 +16,10 @@ public component InstancePane {
       box-sizing: border-box
       display: block
     }
-    imp0.Pane {
+    imp0.Pane(text: "Instance") {
       override {
         variant right (enabled: [true])
       }
-      override text "Instance"
       override content {
         style {
           padding-left: 0px
@@ -31,26 +30,18 @@ public component InstancePane {
       }
       insert content2 {
         slot content {
-          imp1.VariantOption variantOption {
-            override {
-            }
-            override label "Variant 1"
-          }
-          imp1.VariantOption variantOption2 {
+          imp1.VariantOption variantOption(label: "Variant 1")
+          imp1.VariantOption variantOption2(label: "Variant 2") {
             override {
               variant alt (enabled: [true])
               variant triggered (enabled: [true])
             }
-            override label "Variant 2"
           }
-          imp1.VariantOption variantOption3 {
-            override label "Variant 3"
-          }
-          imp1.VariantOption variantOption4 {
+          imp1.VariantOption variantOption3(label: "Variant 3")
+          imp1.VariantOption variantOption4(label: "Variant 4") {
             override {
               variant alt (enabled: [true])
             }
-            override label "Variant 4"
           }
         }
       }
@@ -73,8 +64,6 @@ public component InstancePane {
             }
             style variant hasOverrides {
               display: block
-            }
-            override popover {
             }
             override menu {
               style {

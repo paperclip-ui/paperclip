@@ -64,27 +64,22 @@ public component AutoComleteTextInput {
             imp3.DropdownMenuItem {
               override {
               }
-              override text1 "Padding 4"
             }
             imp3.DropdownMenuItem {
               override {
                 variant alt (enabled: [true])
               }
-              override text1 "Padding 3"
             }
             imp3.DropdownMenuItem {
               override {
               }
-              override text1 "Padding 2"
             }
             imp3.DropdownMenuItem inst77 {
               override {
                 variant alt (enabled: [true])
               }
-              override text1 "Padding 1"
             }
             imp3.DropdownMenuItem {
-              override text1 "Padding 5"
             }
           }
         }

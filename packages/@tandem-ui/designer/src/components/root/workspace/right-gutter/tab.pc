@@ -37,6 +37,4 @@ public component RightGutterTab {
 /**
  * @bounds(left: 602, top: 233, right: 985, bottom: 434)
  */
-imp2.Comment {
-  override text2 "padding is a bit uneven here to match editor tabs"
-}
+imp2.Comment(text2: "padding is a bit uneven here to match editor tabs")

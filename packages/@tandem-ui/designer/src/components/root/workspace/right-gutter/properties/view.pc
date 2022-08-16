@@ -22,7 +22,7 @@ public component TextProperties {
     style {
       font-size: 10px
     }
-    imp0.Pane pane1 {
+    imp0.Pane pane1(text: "Properties") {
       style {
         display: flex
         flex-direction: column
@@ -30,17 +30,12 @@ public component TextProperties {
       override {
         variant right (enabled: [true])
       }
-      override text "Properties"
       insert content2 {
-        imp1.LabeledInput {
-          override text1 "Text" {
+        imp1.LabeledInput(text1: "Text") {
+          override {
             style {
               color: black
               opacity: 0.4
-            }
-          }
-          override projectNameInput {
-            style {
             }
           }
           insert input {
@@ -65,17 +60,13 @@ public component ElementProperties {
   script (src: "./element-controller.tsx")
   variant allowTitle (enabled: [])
   render div {
-    imp0.Pane pane {
+    imp0.Pane pane(text: "Properties") {
       style {
         display: flex
         flex-direction: column
       }
       override {
         variant right (enabled: [true])
-      }
-      override text "Properties" {
-        style {
-        }
       }
       override content {
         style {
@@ -88,33 +79,28 @@ public component ElementProperties {
         }
       }
       insert content2 {
-        imp1.LabeledInput {
+        imp1.LabeledInput(text1: "Label") {
           style {
             display: none
           }
-          override text1 "Label"
           insert input {
             imp4.TextInput labelInput
           }
         }
         div fields {
-          imp1.LabeledInput typeSection {
-            override text1 "Element Type"
+          imp1.LabeledInput typeSection (text1: "Element Type") {
             insert input {
-              imp5.Dropdown elementTypeInput {
-                override label2 "Input"
-              }
+              imp5.Dropdown elementTypeInput (label2: "Input")
             }
           }
           ImgProperties imgTagProperties
-          imp1.LabeledInput labeledInput {
+          imp1.LabeledInput labeledInput (text1: "title") {
             style {
               display: none
             }
             style variant allowTitle {
               display: block
             }
-            override text1 "title"
             insert input {
               imp4.TextInput titleInput
             }
@@ -133,7 +119,7 @@ public component ElementProperties {
 public component Properties {
   script (src: "./properties-controller.tsx")
   variant element2 (enabled: [])
-  variant component (enabled: [])
+  variant component2 (enabled: [])
   variant text2 (enabled: [])
   variant slot (enabled: [])
   variant contentNode (enabled: [])
@@ -169,7 +155,7 @@ public component Properties {
       style {
         display: none
       }
-      style variant component {
+      style variant component2 {
         display: block
       }
     }
@@ -196,15 +182,11 @@ public component BehaviorPane {
     style {
       box-sizing: border-box
     }
-    imp0.Pane {
-      override text "behavior"
+    imp0.Pane (text: "behavior") {
       insert content2 {
-        imp1.LabeledInput {
-          override text1 "Repeat"
+        imp1.LabeledInput (text1: "Repeat") {
           insert input {
-            imp5.Dropdown {
-              override label2 "someRepeatableProp"
-            }
+            imp5.Dropdown (label2: "someRepeatableProp")
           }
         }
       }
@@ -228,11 +210,10 @@ public component ControllersPane {
       variant alt (enabled: [true])
       variant selected (enabled: [true])
     }
-    imp0.Pane {
+    imp0.Pane(text: "Controllers") {
       override {
         variant right (enabled: [true])
       }
-      override text "Controllers"
       override content {
         style {
           padding: 0px
@@ -293,24 +274,18 @@ public component ControllersPane {
       }
       insert content2 {
         slot content {
-          imp10.ControllerItem {
-            override label "./controller.rb"
-          }
-          imp10.ControllerItem {
+          imp10.ControllerItem(label: "./controller.rb")
+          imp10.ControllerItem(label: "./controller.view.tsx") {
             override {
               variant selected (enabled: [true])
               variant hovering (enabled: [true])
             }
-            override label "./controller.view.tsx"
           }
-          imp10.ControllerItem {
-            override label "./controller.php"
-          }
-          imp10.ControllerItem {
+          imp10.ControllerItem (label: "./controller.php")
+          imp10.ControllerItem (label: "./controller.react.tsx") {
             override {
               variant hovering (enabled: [true])
             }
-            override label "./controller.react.tsx"
           }
         }
       }
@@ -323,17 +298,13 @@ public component ControllersPane {
  */
 public component ExportsPane {
   script (src: "./exports-controller.tsx")
-  render imp0.Pane {
-    override text "export"
+  render imp0.Pane(text: "export") {
     insert content2 {
-      imp1.LabeledInput {
-        override text1 "Name"
+      imp1.LabeledInput(text1: "Name") {
         insert input {
           ExportNameInput exportsNameInput {
             style {
               display: block
-            }
-            override {
             }
           }
         }
@@ -430,8 +401,7 @@ public component ImgProperties {
       box-sizing: border-box
       display: block
     }
-    imp1.LabeledInput labeledInput2 {
-      override text1 "src"
+    imp1.LabeledInput labeledInput2(text1: "src") {
       insert input {
         div element7 {
           style {
@@ -443,9 +413,7 @@ public component ImgProperties {
               margin-right: 8px
             }
           }
-          imp11.Button uploadButton {
-            override text1 "Browse"
-          }
+          imp11.Button uploadButton(text1: "Browse")          
         }
       }
     }
@@ -462,8 +430,7 @@ public component AProperties {
       box-sizing: border-box
       display: block
     }
-    imp1.LabeledInput labeledInput4 {
-      override text1 "href"
+    imp1.LabeledInput labeledInput4(text1: "href") {
       insert input {
         imp4.TextInput hrefInput (placeholder: "http://website.com/")
       }
@@ -515,9 +482,7 @@ public component BrowseAttributeInput {
           margin-right: 8px
         }
       }
-      imp11.Button uploadButton2 {
-        override text1 "Browse"
-      }
+      imp11.Button uploadButton2(text1: "Browse")
     }
   }
 }
@@ -569,10 +534,7 @@ div element9 {
     box-sizing: border-box
     display: block
   }
-  imp0.Pane pane2 {
-    override {
-    }
-    override text "Attributes"
+  imp0.Pane pane2(text: "Attributes") {
     override content {
       style {
         padding-right: 0px

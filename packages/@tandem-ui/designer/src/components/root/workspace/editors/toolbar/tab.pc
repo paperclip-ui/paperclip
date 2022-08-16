@@ -27,11 +27,11 @@ public component EditorTab {
       background: var(imp0.grey7)
       user-select: none
     }
-    text label "tab" {
+    text label {
       style extends imp1.baseFont {
       }
     }
-    text xButton "×" {
+    text xButton {
       style extends imp1.baseFont {
         margin-left: 8px
         visibility: hidden
@@ -66,7 +66,7 @@ div element2 {
       padding-top: unset
       position: relative
     }
-    override label "123456789rwewrwrrwe" {
+    override label {
       style {
         width: 100%
         display: inline-block

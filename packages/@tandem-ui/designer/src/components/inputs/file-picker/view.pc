@@ -24,7 +24,6 @@ public component FileInput {
         position: relative
       }
       imp1.Button browseButton {
-        override text1 "browse"
       }
     }
   }

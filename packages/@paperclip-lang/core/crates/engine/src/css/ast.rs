@@ -15,6 +15,7 @@ pub enum DeclarationValue {
     Keyword(Reference),
     Number(Number),
     Reference(Reference),
+    String(Str),
     Measurement(Measurement),
     FunctionCall(FunctionCall),
     Arithmetic(Arithmetic),

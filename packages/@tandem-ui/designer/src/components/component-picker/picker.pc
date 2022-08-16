@@ -39,7 +39,6 @@ public component Picker {
       imp1.ComponentOption
       imp1.ComponentOption
       imp1.ComponentOption {
-        override text2 "Box"
       }
       imp1.ComponentOption
       imp1.ComponentOption
@@ -256,7 +255,7 @@ public component ComponentPickerPopdownItem {
       }
     }
     text componentName "Item14" {
-      style imp3.baseFont, imp3.nowrapEllipsis {
+      style extends imp3.baseFont, imp3.nowrapEllipsis {
         margin-left: 6px
         display: block
         width: 100%

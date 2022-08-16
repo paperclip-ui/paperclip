@@ -8,13 +8,9 @@ import "../../../../../../atoms/view.pc" as imp2
  */
 public component Code {
   script (src: "./code.tsx")
-  render imp0.Pane {
+  render imp0.Pane(text: "custom CSS") {
     override {
       variant right (enabled: [true])
-    }
-    override text "custom CSS" {
-      style {
-      }
     }
     override content {
       style {
@@ -33,8 +29,6 @@ public component Code {
           border-top: 0px none
           border-right: 0px none
           border-bottom: 0px none
-        }
-        override {
         }
       }
     }

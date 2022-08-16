@@ -23,7 +23,7 @@ public component CssMeasurementInput {
  */
 public component CssDropdownInput {
   script (src: "./dropdown-controller.tsx")
-  render imp1.Dropdown {
+  render imp1.Dropdown(label2: "Label") {
     override button22 {
       style {
         border-left: 0px none rgba(1, 0, 1, 0)
@@ -32,7 +32,6 @@ public component CssDropdownInput {
         border-bottom: 0px none rgba(1, 0, 1, 0)
       }
     }
-    override label2 "Label"
   }
 }
 
@@ -192,8 +191,6 @@ public component TblrInput {
                 InlineLabeledInput primaryInput {
                   style {
                     padding-right: 6px
-                  }
-                  override {
                   }
                   override bordersIcon6.el123 {
                     style variant disconnected {

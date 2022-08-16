@@ -78,13 +78,11 @@ public component ConfigureBuildModal {
           padding-top: 12px
         }
         imp2.LabeledInput buildScript1 {
-          override text1 "Build Command"
           insert input {
             imp3.TextInput buildCommandInput (placeholder: "webpack --watch")
           }
         }
         imp2.LabeledInput buildScript {
-          override text1 "Open Application Command"
           insert input {
             imp3.TextInput openCommandInput (placeholder: "open http://localhost:8080/")
           }

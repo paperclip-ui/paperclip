@@ -21,10 +21,6 @@ public component StyleSwitcher {
       font-size: 11px
     }
     imp0.LabeledInput {
-      override text1 {
-        style {
-        }
-      }
       override element1 {
         style {
           margin-bottom: unset
@@ -85,9 +81,7 @@ public component StyleSwitcher {
         }
       }
       insert input {
-        imp4.Dropdown dropdown {
-          override label2 "--"
-        }
+        imp4.Dropdown dropdow(label2: "--")
       }
     }
   }

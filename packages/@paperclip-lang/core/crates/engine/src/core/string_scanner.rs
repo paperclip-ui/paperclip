@@ -193,11 +193,11 @@ pub fn is_az(c: u8) -> bool {
 }
 
 pub fn is_kw_or_digit(c: u8) -> bool {
-    matches!(c, b'0'..=b'8')
+    matches!(c, b'0'..=b'9')
 }
 
 pub fn is_digit(c: u8) -> bool {
-    matches!(c, b'0'..=b'8')
+    matches!(c, b'0'..=b'9')
 }
 
 pub fn scan_number<'src>(scanner: &mut StringScanner<'src>, start: usize) -> &'src [u8] {

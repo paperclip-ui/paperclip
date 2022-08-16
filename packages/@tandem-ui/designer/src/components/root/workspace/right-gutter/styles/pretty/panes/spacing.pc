@@ -15,23 +15,19 @@ public component SpacingPane {
       display: block
       background: var(imp0.grey2)
     }
-    imp1.Pane pane {
+    imp1.Pane pane(text: "Spacing") {
       override {
         variant right (enabled: [true])
       }
-      override text "Spacing"
       override content {
         style {
           padding-bottom: 12px
         }
       }
       insert content2 {
-        imp2.LabeledInput {
-          override text1 "Sizing"
+        imp2.LabeledInput(text1: "Sizing") {
           insert input {
-            imp3.CssDropdownInput boxSizingInput {
-              override label2 "border-box"
-            }
+            imp3.CssDropdownInput boxSizingInput(label2: "border-box")
           }
         }
         MarginInput marginInput {
@@ -49,18 +45,14 @@ public component SpacingPane {
  * @bounds(left: 1255, top: 332, right: 1533, bottom: 419)
  */
 public component MarginInput {
-  render SpacingInput {
-    override labeledInput.text1 "Margin"
-  }
+  render SpacingInput
 }
 
 /**
  * @bounds(left: 1253, top: 447, right: 1531, bottom: 534)
  */
 public component PaddingInput {
-  render SpacingInput {
-    override labeledInput.text1 "Padding"
-  }
+  render SpacingInput
 }
 
 /**
@@ -69,9 +61,6 @@ public component PaddingInput {
 public component SpacingInput {
   script (src: "./spacing-input-controller.tsx")
   render imp3.TblrInput {
-    override {
-    }
-    override labeledInput.text1 "Spacing"
     override element3 {
       style {
         padding-right: 0px

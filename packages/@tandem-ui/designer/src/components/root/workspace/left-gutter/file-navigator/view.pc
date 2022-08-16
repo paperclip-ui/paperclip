@@ -94,14 +94,13 @@ public component FileNavigator {
                 box-sizing: border-box
                 display: block
               }
-              FileNavigatorLayer {
+              FileNavigatorLayer (label1: "src") {
                 override {
                   variant folder (enabled: [true])
                   variant expanded (enabled: [true])
                 }
-                override label1 "src"
               }
-              FileNavigatorLayer {
+              FileNavigatorLayer(label1: "entry.ts") {
                 style {
                   padding-left: 30px
                 }
@@ -109,9 +108,8 @@ public component FileNavigator {
                   variant file (enabled: [true])
                   variant alt (enabled: [true])
                 }
-                override label1 "entry.ts"
               }
-              FileNavigatorLayer {
+              FileNavigatorLayer(label1: "components") {
                 style {
                   padding-left: 30px
                 }
@@ -119,9 +117,8 @@ public component FileNavigator {
                   variant folder (enabled: [true])
                   variant expanded (enabled: [true])
                 }
-                override label1 "components"
               }
-              FileNavigatorLayer {
+              FileNavigatorLayer(label1: "main") {
                 style {
                   padding-left: 45px
                 }
@@ -130,19 +127,16 @@ public component FileNavigator {
                   variant expanded (enabled: [true])
                   variant alt (enabled: [true])
                 }
-                override label1 "main"
               }
-              FileNavigatorLayer {
+              FileNavigatorLayer(label1: "index.tsx") {
                 style {
                   padding-left: 60px
                 }
                 override {
                   variant file (enabled: [true])
                 }
-                override label1 "index
-.tsx"
               }
-              FileNavigatorLayer {
+              FileNavigatorLayer(label1: "welcome.tsx") {
                 style {
                   padding-left: 60px
                 }
@@ -152,9 +146,8 @@ public component FileNavigator {
                   variant alt (enabled: [true])
                   variant active (enabled: [true])
                 }
-                override label1 "welcome.tsx"
               }
-              FileNavigatorLayer {
+              FileNavigatorLayer(label1: "about.tsx") {
                 style {
                   padding-left: 60px
                 }
@@ -162,7 +155,6 @@ public component FileNavigator {
                   variant expanded (enabled: [true])
                   variant file (enabled: [true])
                 }
-                override label1 "about.tsx"
               }
             }
           }
@@ -255,6 +247,5 @@ public component FileNavigatorLayerContainer {
 /**
  * @bounds(left: 1435, top: 153, right: 1818, bottom: 354)
  */
-imp6.Comment {
-  override text2 "Error UI for existing file (like vscode), ability to move files, ability to delete files"
+imp6.Comment(text2: "Error UI for existing file (like vscode), ability to move files, ability to delete files") {
 }

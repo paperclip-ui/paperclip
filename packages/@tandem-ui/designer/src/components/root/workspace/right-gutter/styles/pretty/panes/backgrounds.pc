@@ -71,7 +71,7 @@ public component BackgroundItem {
 public component Backgrounds {
   script (src: "./backgrounds-controller.tsx")
   variant hasBackground (enabled: [true])
-  render imp3.Pane {
+  render imp3.Pane(text: "backgrounds") {
     style {
       display: flex
       flex-direction: column
@@ -82,7 +82,6 @@ public component Backgrounds {
     override {
       variant right (enabled: [true])
     }
-    override text "backgrounds"
     override content {
       style {
         padding-top: 0px
@@ -157,54 +156,48 @@ public component BackgroundImageInput {
     style {
       padding: 8px
     }
-    imp4.LabeledInput {
+    imp4.LabeledInput(text1: "Src") {
       style {
         width: 100%
         flex: 1
         margin-right: 8px
       }
-      override text1 "Src" {
+      override text1 {
         style {
           left: opacity
         }
       }
     }
-    imp4.LabeledInput {
-      override text1 "Repeat"
+    imp4.LabeledInput(text1: "Repeat") {
       insert input {
-        imp5.Dropdown displayInput {
-          override label2 "no-repeat"
-        }
+        imp5.Dropdown displayInput(label2: "no-repeat")
       }
     }
-    imp4.LabeledInput {
-      override text1 "Alignment"
+    imp4.LabeledInput(text1: "Alignment") {
       insert input {
-        imp5.Dropdown displayInput2 {
-          override label2 "top left"
-        }
+        imp5.Dropdown displayInput2(label2: "top left")
       }
     }
     div {
-      imp4.LabeledInput {
+      imp4.LabeledInput(text1: "Left") {
         style {
           width: 100%
           flex: 1
           margin-right: 8px
         }
-        override text1 "Left" {
+        override text1 {
           style {
             left: opacity
           }
         }
       }
-      imp4.LabeledInput {
+      imp4.LabeledInput(text1: "Top") {
         style {
           width: 100%
           flex: 1
           margin-right: 8px
         }
-        override text1 "Top" {
+        override text1 {
           style {
             left: opacity
           }

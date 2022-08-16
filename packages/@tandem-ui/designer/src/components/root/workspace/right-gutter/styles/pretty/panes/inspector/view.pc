@@ -13,49 +13,37 @@ public component StyleProps {
       box-sizing: border-box
       display: block
     }
-    StylePropRow element2 {
+    StylePropRow element2(text1: "display", text2: "inline-block") {
       override {
         variant isOverride (enabled: [true])
       }
-      override text1 "display"
-      override text2 "inline-block"
     }
-    StylePropRow element3 {
+    StylePropRow element3(text1: "font-family", text2: "Helvetica, Arial") {
       override {
         variant alt (enabled: [true])
         variant isOverride (enabled: [true])
       }
-      override text1 "font-family"
-      override text2 "Helvetica, Arial"
     }
-    StylePropRow element4 {
+    StylePropRow element4(text1: "width", text2: "calc(100% - 10px)") {
       override {
         variant isInherited (enabled: [true])
       }
-      override text1 "width"
-      override text2 "calc(100% - 10px)"
     }
-    StylePropRow element5 {
+    StylePropRow element5(text1: "whitespace", text2: "nowrap") {
       override {
         variant alt (enabled: [true])
         variant isVariant (enabled: [true])
       }
-      override text1 "whitespace"
-      override text2 "nowrap"
     }
-    StylePropRow element6 {
+    StylePropRow element6(text1: "cursor", text2: "pointer") {
       override {
         variant isVariant (enabled: [true])
       }
-      override text1 "cursor"
-      override text2 "pointer"
     }
-    StylePropRow element7 {
+    StylePropRow element7(text1: "background", text2: "linear-gradient(#F60, #000)") {
       override {
         variant alt (enabled: [true])
       }
-      override text1 "background"
-      override text2 "linear-gradient(#F60, #000)"
     }
   }
 }
@@ -133,8 +121,7 @@ public component StyleInspector {
       box-sizing: border-box
       display: block
     }
-    imp2.Pane pane {
-      override text "Inspector"
+    imp2.Pane pane(text: "Inspector") {
       override content {
         style {
           padding-right: 0
@@ -168,9 +155,7 @@ public component StyleInspector {
         }
       }
       insert content2 {
-        StyleProps styleProps {
-          override element4.text1 "width"
-        }
+        StyleProps styleProps
       }
     }
   }

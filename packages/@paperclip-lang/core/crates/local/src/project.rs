@@ -56,7 +56,7 @@ async fn load_project(directory: &str, file_name: Option<String>) -> Result<Proj
     Ok(Project {
         config,
         graph,
-        directory: String::from(directory)
+        directory: String::from(directory),
     })
 }
 

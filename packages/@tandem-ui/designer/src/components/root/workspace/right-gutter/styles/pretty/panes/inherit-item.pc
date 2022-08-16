@@ -52,7 +52,7 @@ public component InheritItem {
         }
       }
     }
-    imp2.Dropdown dropdown {
+    imp2.Dropdown dropdown (label2: "Some item") {
       style {
         box-shadow: unset
       }
@@ -72,7 +72,7 @@ public component InheritItem {
           display: block
         }
       }
-      override label2 "Some item" {
+      override label2 {
         style {
           margin-right: 8px
         }

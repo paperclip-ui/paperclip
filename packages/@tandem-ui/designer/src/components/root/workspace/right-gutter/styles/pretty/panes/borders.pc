@@ -16,17 +16,13 @@ import "../../../../../../../global.pc" as imp10
  */
 public component Border {
   script (src: "./borders-controller.tsx")
-  render imp0.Pane {
+  render imp0.Pane(text: "Borders") {
     style {
       display: flex
       flex-direction: column
     }
     override {
       variant right (enabled: [true])
-    }
-    override text "Borders" {
-      style {
-      }
     }
     override title {
       style {
@@ -42,14 +38,14 @@ public component Border {
           width: 100%
           box-sizing: border-box
         }
-        imp1.LabeledInput {
+        imp1.LabeledInput(text1: "BL") {
           style {
             width: 100%
             flex: 1
             margin-right: 8px
             text-align: center
           }
-          override text1 "BL" {
+          override text1 {
             style {
               margin-left: 0px
             }
@@ -66,14 +62,14 @@ public component Border {
             }
           }
         }
-        imp1.LabeledInput {
+        imp1.LabeledInput(text1: "BL") {
           style {
             width: 100%
             flex: 1
             margin-right: 8px
             text-align: center
           }
-          override text1 "BL" {
+          override text1 {
             style {
               margin-left: 0px
             }
@@ -90,14 +86,14 @@ public component Border {
             }
           }
         }
-        imp1.LabeledInput {
+        imp1.LabeledInput(text1: "BL") {
           style {
             width: 100%
             flex: 1
             margin-right: 8px
             text-align: center
           }
-          override text1 "BL" {
+          override text1 {
             style {
               margin-left: 0px
             }
@@ -114,13 +110,13 @@ public component Border {
             }
           }
         }
-        imp1.LabeledInput {
+        imp1.LabeledInput(text1: "BL") {
           style {
             width: 100%
             flex: 1
             text-align: center
           }
-          override text1 "BL" {
+          override text1 {
             style {
               margin-left: 0px
             }
@@ -265,11 +261,10 @@ public component BorderStyle {
         }
       }
     }
-    imp6.Dropdown styleInput {
+    imp6.Dropdown styleInput(label2: "solid") {
       style {
         margin-right: 6px
       }
-      override label2 "solid"
     }
     imp7.TextInput thicknessInput (placeholder: "0px") {
       style {
@@ -333,8 +328,6 @@ public component BorderStyles {
         }
         insert items {
           imp9.ButtonBarItem {
-            override {
-            }
             insert icon1 {
               imp3.EmptySquareIcon {
                 style {
@@ -398,11 +391,10 @@ public component Borders2 {
       display: block
       background: var(imp10.grey2)
     }
-    imp0.Pane pane {
+    imp0.Pane pane(text: "Borders") {
       override {
         variant right (enabled: [true])
       }
-      override text "Borders"
       override content {
         style {
           padding-bottom: 12px
@@ -410,7 +402,6 @@ public component Borders2 {
       }
       insert content2 {
         RadiusInput radiusInput {
-          override labeledInput.text1 "Radius"
           override element3 {
             style {
               padding-left: unset
@@ -424,7 +415,6 @@ public component Borders2 {
           }
         }
         ColorsInput colorInput2 {
-          override labeledInput.text1 "Color"
           override element3 {
             style {
               padding-left: unset
@@ -465,7 +455,6 @@ public component RadiusInput {
         margin-right: unset
       }
     }
-    override labeledInput.text1 "Radius"
     override element1 {
       style {
       }
@@ -654,7 +643,6 @@ public component ColorsInput {
         text-align: center
       }
     }
-    override labeledInput.text1 "Colors"
     insert firstIcon2 {
       imp3.TopLeftCornerIcon topLeftCornerIcon2 {
         style {

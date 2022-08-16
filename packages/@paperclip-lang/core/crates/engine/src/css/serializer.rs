@@ -9,7 +9,6 @@ pub fn serialize_declarations(declarations: &Vec<ast::StyleDeclaration>, depth: 
     context.add_buffer("{\n".to_string());
     context.start_block();
     for decl in declarations {
-        println!("{}", context.depth);
         serialize_declaration(decl, &mut context);
     }
     context.end_block();
@@ -23,7 +22,7 @@ fn serialize_declaration(style: &ast::StyleDeclaration, context: &mut Context) {
     context.add_buffer("\n".to_string());
 }
 
-fn serialize_decl_value(value: &ast::DeclarationValue, context: &mut Context) {
+pub fn serialize_decl_value(value: &ast::DeclarationValue, context: &mut Context) {
     match value {
         ast::DeclarationValue::Reference(reference) => {
             context.add_buffer(reference.path.join("."));
@@ -39,6 +38,9 @@ fn serialize_decl_value(value: &ast::DeclarationValue, context: &mut Context) {
             // context.add_buffer(format!("{}", call.name));
             serialize_decl_value(&call.arguments, context);
             context.add_buffer(")".to_string());
+        }
+        ast::DeclarationValue::String(value) => {
+            context.add_buffer(format!("\"{}\"", value.value));
         }
         ast::DeclarationValue::SpacedList(list) => {
             let mut it = list.items.iter().peekable();

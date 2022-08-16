@@ -6,7 +6,9 @@ use crate::core::id::IDGenerator;
 use crate::core::parser_context::{create_initial_context, Context};
 use crate::core::string_scanner::StringScanner;
 use crate::css::ast as css_ast;
-use crate::css::parser::{parse_style_declarations_with_string_scanner, parse_style_declaration_with_string_scanner};
+use crate::css::parser::{
+    parse_style_declaration_with_string_scanner, parse_style_declarations_with_string_scanner,
+};
 use crate::docco::ast as docco_ast;
 use crate::docco::parser::parse_with_string_scanner as parse_doc_comment;
 use std::str;
@@ -70,19 +72,19 @@ fn parse_document_child(
     };
 
     match context.curr_token {
-        Some(Token::DoccoStart) => Ok(ast::DocumentBodyItem::DocComment(parse_docco(
-            context, is_public,
-        )?)),
+        Some(Token::DoccoStart) => Ok(ast::DocumentBodyItem::DocComment(parse_docco(context)?)),
         Some(Token::KeywordComponent) => Ok(ast::DocumentBodyItem::Component(parse_component(
             context, is_public,
         )?)),
         Some(Token::KeywordImport) => Ok(ast::DocumentBodyItem::Import(parse_import(
             context, is_public,
         )?)),
-        Some(Token::KeywordStyle) => Ok(ast::DocumentBodyItem::Style(parse_style(
+        Some(Token::Word(b"style")) => Ok(ast::DocumentBodyItem::Style(parse_style(
             context, is_public,
         )?)),
-        Some(Token::Word(b"token")) => Ok(ast::DocumentBodyItem::Atom(parse_atom(context, is_public)?)),
+        Some(Token::Word(b"token")) => {
+            Ok(ast::DocumentBodyItem::Atom(parse_atom(context, is_public)?))
+        }
         Some(Token::Word(b"text")) => Ok(ast::DocumentBodyItem::Text(parse_text(context)?)),
         Some(Token::Word(_)) => Ok(ast::DocumentBodyItem::Element(parse_element(context)?)),
         _ => {
@@ -101,25 +103,20 @@ fn parse_atom(context: &mut PCContext, is_public: bool) -> Result<ast::Atom, err
         context.id_generator,
         &context.source_url,
     )?;
-    println!("{:?}", value);
     context.scanner.unshift(1);
     context.next_token()?;
     let end = context.curr_u16pos.clone();
-
 
     Ok(ast::Atom {
         id: context.next_id(),
         range: base_ast::Range::new(start, end),
         name,
         is_public,
-        value
+        value,
     })
 }
 
-fn parse_docco(
-    context: &mut PCContext,
-    is_public: bool,
-) -> Result<docco_ast::Comment, err::ParserError> {
+fn parse_docco(context: &mut PCContext) -> Result<docco_ast::Comment, err::ParserError> {
     context.scanner.unshift(3); // rewind /**
     let ret = parse_doc_comment(
         &mut context.scanner,
@@ -439,7 +436,7 @@ fn parse_text(context: &mut PCContext) -> Result<ast::TextNode, err::ParserError
         parse_body(
             context,
             |context: &mut PCContext| match context.curr_token {
-                Some(Token::KeywordStyle) => {
+                Some(Token::Word(b"style")) => {
                     Ok(ast::TextNodeBodyItem::Style(parse_style(context, false)?))
                 }
                 _ => Err(context.new_unexpected_token_error()),
@@ -507,7 +504,7 @@ fn parse_override(context: &mut PCContext) -> Result<ast::Override, err::ParserE
                 Some(Token::KeywordVariant) => {
                     Ok(ast::OverrideBodyItem::Variant(parse_variant(context)?))
                 }
-                Some(Token::KeywordStyle) => {
+                Some(Token::Word(b"style")) => {
                     Ok(ast::OverrideBodyItem::Style(parse_style(context, false)?))
                 }
                 _ => Err(context.new_unexpected_token_error()),
@@ -553,7 +550,7 @@ fn parse_element(context: &mut PCContext) -> Result<ast::Element, err::ParserErr
         parse_body(
             context,
             |context: &mut PCContext| match context.curr_token {
-                Some(Token::KeywordStyle) => {
+                Some(Token::Word(b"style")) => {
                     Ok(ast::ElementBodyItem::Style(parse_style(context, false)?))
                 }
                 Some(Token::Word(b"text")) => Ok(ast::ElementBodyItem::Text(parse_text(context)?)),

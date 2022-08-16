@@ -27,7 +27,7 @@ pub fn parse_style_declaration_with_string_scanner<'src, 'scanner, 'idgenerator>
     url: &String,
 ) -> Result<ast::DeclarationValue, ParserError> {
     let mut context = Context::new(source, url, &next_token, id_generator)?;
-    println!("{:?}", context.curr_token);
+    context.skip(is_superfluous);
     parse_decl_value(&mut context)
 }
 
@@ -182,7 +182,7 @@ fn parse_string(context: &mut ParserContext) -> Result<ast::DeclarationValue, er
         Ok(ast::DeclarationValue::String(base_ast::Str {
             id: context.next_id(),
             range: Range::new(start, end),
-            value: trim_string(str::from_utf8(value).unwrap())
+            value: trim_string(str::from_utf8(value).unwrap()),
         }))
     } else {
         Err(context.new_unexpected_token_error())

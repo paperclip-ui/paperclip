@@ -2,7 +2,7 @@ use super::ast;
 use crate::base::ast as base_ast;
 use crate::core::serialize_context::Context;
 use crate::css::ast as css_ast;
-use crate::css::serializer::{serialize_declarations, serialize_decl_value};
+use crate::css::serializer::{serialize_decl_value, serialize_declarations};
 use crate::docco::ast as docco_ast;
 use crate::docco::serialize::serialize_comment as serialize_doc_comment;
 
@@ -34,7 +34,7 @@ fn serialize_atom(atom: &ast::Atom, context: &mut Context) {
     if atom.is_public {
         context.add_buffer("public ".to_string());
     }
-    context.add_buffer(format!("{}", atom.name));
+    context.add_buffer(format!("token {} ", atom.name));
     serialize_decl_value(&atom.value, context);
 }
 

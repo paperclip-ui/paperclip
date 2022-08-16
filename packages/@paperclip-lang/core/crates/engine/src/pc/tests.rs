@@ -389,7 +389,13 @@ fn can_parse_various_contents() {
                 public token blackTransparent rgba(1, 0, 0, 0.16)
             "#,
             Ok(()),
-        )
+        ),
+        (
+            r#"
+                div(aria-label: "abba", style: "color: red;")
+            "#,
+            Ok(()),
+        ),
     ];
 
     for (source, result) in tests {

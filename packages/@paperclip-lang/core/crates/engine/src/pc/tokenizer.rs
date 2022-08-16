@@ -28,7 +28,6 @@ pub enum Token<'src> {
     Word(&'src [u8]),
     KeywordExtends,
     KeywordPublic,
-    KeywordStyle,
     KeywordImport,
     KeywordComponent,
     KeywordVariant,
@@ -74,14 +73,15 @@ pub fn next_token<'src>(source: &mut StringScanner<'src>) -> Result<Token<'src>,
                 _ if is_space(b) => Token::Space(source.slice_until(s_pos.u8_pos, is_space)),
                 _ if is_newline(b) => Token::NewLine(source.slice_until(s_pos.u8_pos, is_newline)),
                 _ if is_az(b) => {
-                    let word = source.slice_until(s_pos.u8_pos, |b| is_az(b) || is_digit(b));
+                    let word = source.slice_until(s_pos.u8_pos, |b| {
+                        is_az(b) || is_digit(b) || matches!(b, b'-')
+                    });
                     match word {
                         b"extends" => Token::KeywordExtends,
                         b"public" => Token::KeywordPublic,
                         b"variant" => Token::KeywordVariant,
                         b"import" => Token::KeywordImport,
                         b"component" => Token::KeywordComponent,
-                        b"style" => Token::KeywordStyle,
                         _ => Token::Word(word),
                     }
                 }

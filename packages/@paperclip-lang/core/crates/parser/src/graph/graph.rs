@@ -13,9 +13,9 @@ pub trait IO: Sync + Send {
 
 #[derive(Debug)]
 pub struct Dependency {
-    path: String,
-    imports: HashMap<String, String>,
-    document: Document,
+    pub path: String,
+    pub imports: HashMap<String, String>,
+    pub document: Document,
 }
 
 #[derive(Debug)]
@@ -62,6 +62,8 @@ async fn load_dependencies<'io, TIO: IO>(
             return;
         }
 
+        println!("RUNN");
+
         if let Some(content) = io.read(&path).await {
             if let Ok(document) = parse_pc(content.as_str(), &path) {
                 for import in &document.get_imports() {
@@ -81,10 +83,11 @@ async fn load_dependencies<'io, TIO: IO>(
                     },
                 );
             } else {
-
                 // TODO: this needs to be bubbled
                 println!("Failed to parse {}", path);
             }
+        } else {
+            println!("file not found {}", path);
         }
     }
 

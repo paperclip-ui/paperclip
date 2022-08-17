@@ -1,5 +1,5 @@
 [package]
-name = "paperclip_engine"
+name = "paperclip_parser"
 version = "0.1.1"
 authors = ["Craig Condon <craig.j.condon@gmail.com>"]
 edition = "2021"
@@ -11,7 +11,7 @@ opt-level = 3
 lto = true
 
 [lib]
-name = "paperclip_engine"
+name = "paperclip_parser"
 
 [dependencies]
 serde = { version = "1.0.143", features = ["derive"] }

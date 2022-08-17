@@ -152,8 +152,8 @@ public component Dropdown {
 /**
  * @bounds(left: 357, top: 282, right: 558, bottom: 524)
  */
-Dropdown dropdown {
-}
+Dropdown dropdown(label2: "super long label that should ellipsis if it overflows")
+
 /**
  * @bounds(left: 132, top: 580, right: 333, bottom: 822)
  */

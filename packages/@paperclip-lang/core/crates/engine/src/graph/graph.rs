@@ -59,7 +59,6 @@ async fn load_dependencies<'io, TIO: IO>(
     {
         let mut deps = dependencies.lock().await;
         if deps.contains_key(&path) {
-            println!("SKIP");
             return;
         }
 
@@ -82,7 +81,9 @@ async fn load_dependencies<'io, TIO: IO>(
                     },
                 );
             } else {
-                println!("FAIL {}", path);
+
+                // TODO: this needs to be bubbled
+                println!("Failed to parse {}", path);
             }
         }
     }

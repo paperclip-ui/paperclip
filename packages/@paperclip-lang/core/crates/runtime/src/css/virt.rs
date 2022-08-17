@@ -3,18 +3,18 @@ use serde::Serialize;
 use std::fmt;
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
-pub struct Sheet {
+pub struct Document {
     pub id: String,
     pub rules: Vec<Rule>,
 }
 
-impl Sheet {
-    pub fn extend(&mut self, other: Sheet) {
+impl Document {
+    pub fn extend(&mut self, other: Document) {
         self.rules.extend(other.rules);
     }
 }
 
-impl fmt::Display for Sheet {
+impl fmt::Display for Document {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         for rule in &self.rules {
             write!(f, "{}", rule.to_string())?;

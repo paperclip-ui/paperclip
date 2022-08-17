@@ -1,12 +1,21 @@
 use paperclip_parser::graph::graph;
+use css::virt as css_virt;
+use html::virt as html_virt;
 
 pub struct EvaluatedDocument {
-    // Path to the dependency
+
+    // Path of the dependency that was evaluated
     path: String,
+
+    // CSS of the document created
+    sheet: css_virt::Document,
+
+    // Preview HTML of the document evaluated
+    body: html_virt::Document
 }
 
 pub struct Runtime {
-    graph: graph::Graph,
+    graph: graph::Graph
 }
 
 pub trait RuntimeIO: graph::IO {}
@@ -21,5 +30,7 @@ impl Runtime {
         // First need to load the graph
         let mut graph = graph::Graph::new();
         graph.load(path, io).await;
+
+        // Todo: return { document }
     }
 }

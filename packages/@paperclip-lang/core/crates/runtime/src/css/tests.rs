@@ -11,9 +11,9 @@ fn can_evaluate_a_simple_rule() {
         (
             "/entry.pc",
             r#"
-              div {
-                style {
-                  color: red
+              component AB {
+                render div {
+                  
                 }
               }
             "#,

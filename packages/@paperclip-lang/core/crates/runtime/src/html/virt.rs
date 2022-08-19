@@ -37,7 +37,7 @@ pub struct TextNode {
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
-pub struct Body {
+pub struct Document {
     children: Vec<DocumentChild>,
 }
 

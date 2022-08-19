@@ -1,6 +1,6 @@
 use paperclip_parser::graph::graph;
-use css::virt as css_virt;
-use html::virt as html_virt;
+use crate::css::virt as css_virt;
+use crate::html::virt as html_virt;
 
 pub struct EvaluatedDocument {
 

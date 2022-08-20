@@ -400,6 +400,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "paperclip_common"
+version = "0.1.1"
+
+[[package]]
 name = "paperclip_compiler_react"
 version = "0.1.1"
 
@@ -425,6 +429,7 @@ dependencies = [
  "crc",
  "futures",
  "glob",
+ "paperclip_common",
  "pretty_assertions",
  "serde",
  "serde_json",
@@ -438,6 +443,7 @@ version = "0.1.1"
 dependencies = [
  "anyhow",
  "futures",
+ "paperclip_common",
  "paperclip_parser",
  "serde",
  "serde_json",

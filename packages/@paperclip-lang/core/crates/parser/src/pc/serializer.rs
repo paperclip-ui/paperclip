@@ -1,6 +1,6 @@
 use super::ast;
 use crate::base::ast as base_ast;
-use crate::core::serialize_context::Context;
+use paperclip_common::serialize_context::Context;
 use crate::css::ast as css_ast;
 use crate::css::serializer::{serialize_decl_value, serialize_declarations};
 use crate::docco::ast as docco_ast;

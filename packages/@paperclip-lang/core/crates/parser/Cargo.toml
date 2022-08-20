@@ -17,6 +17,7 @@ name = "paperclip_parser"
 serde = { version = "1.0.143", features = ["derive"] }
 serde_json = { version = "1.0.83" }
 uuid = { version = "0.8", features = ["serde", "v4", "wasm-bindgen"] }
+paperclip_common = { path = "../common" }
 crc = "1.8.1"
 pretty_assertions = "1.2.1"
 textwrap = "0.15.0"

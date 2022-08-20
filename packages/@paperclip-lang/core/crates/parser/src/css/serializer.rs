@@ -1,6 +1,6 @@
 use super::ast;
 use crate::base::ast as base_ast;
-use crate::core::serialize_context::Context;
+use paperclip_common::serialize_context::Context;
 use crate::docco::ast as docco_ast;
 use crate::docco::serialize::serialize_comment as serialize_doc_comment;
 

@@ -81,5 +81,4 @@ fn evaluate_render_node(node: &ast::RenderNode, context: &mut DocumentContext) {
 }
 
 fn evaluate_element(element: &ast::Element, context: &mut DocumentContext) {
-
 }

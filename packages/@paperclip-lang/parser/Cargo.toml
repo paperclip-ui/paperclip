@@ -1,5 +1,5 @@
 [package]
-name = "paperclip_runtime"
+name = "paperclip_parser"
 version = "0.1.1"
 authors = ["Craig Condon <craig.j.condon@gmail.com>"]
 edition = "2021"
@@ -11,12 +11,16 @@ opt-level = 3
 lto = true
 
 [lib]
-name = "paperclip_runtime"
+name = "paperclip_parser"
 
 [dependencies]
-paperclip_parser = { path = "../parser" }
 serde = { version = "1.0.143", features = ["derive"] }
-paperclip_common = { path = "../common" }
 serde_json = { version = "1.0.83" }
-anyhow = "1.0.61"
+uuid = { version = "0.8", features = ["serde", "v4", "wasm-bindgen"] }
+paperclip_common = { path = "../rs-common" }
+crc = "1.8.1"
+pretty_assertions = "1.2.1"
+textwrap = "0.15.0"
+glob = "0.3.0"
 futures = "0.3.21"
+

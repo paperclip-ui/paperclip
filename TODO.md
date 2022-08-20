@@ -10,8 +10,11 @@
 #### Milestone 2: evaluator
 
 - CSS evaluator
+
   - walk AST and emit CSS
     - use names if present
+
+- Symbol table?
 
 #### Milestone 3: compiler
 

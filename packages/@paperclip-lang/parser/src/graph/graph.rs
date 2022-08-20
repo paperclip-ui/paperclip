@@ -1,4 +1,4 @@
-use crate::pc::ast::Document;
+use crate::pc::ast;
 use crate::pc::parser::parse as parse_pc;
 use futures::future::{select_all, BoxFuture, Future, FutureExt};
 use futures::lock::Mutex;
@@ -15,7 +15,7 @@ pub trait IO: Sync + Send {
 pub struct Dependency {
     pub path: String,
     pub imports: HashMap<String, String>,
-    pub document: Document,
+    pub document: ast::Document,
 }
 
 #[derive(Debug)]
@@ -32,6 +32,11 @@ impl Graph {
     pub async fn load<TIO: IO>(&mut self, path: &str, io: &TIO) {
         load_dependencies::<TIO>(String::from(path), Arc::new(&io), self.dependencies.clone())
             .await;
+    }
+    pub fn get_style(name: &str, import_name: Option<&str>, dep_path: &str) {
+        
+        if let Some(import_name) = import_name {
+        }
     }
     pub async fn load_files<TIO: IO>(&mut self, paths: Vec<String>, io: &TIO) {
         for path in paths {
@@ -55,7 +60,6 @@ async fn load_dependencies<'io, TIO: IO>(
     dependencies: Arc<Mutex<HashMap<String, Dependency>>>,
 ) {
     let mut imports: HashMap<String, String> = HashMap::new();
-
     {
         let mut deps = dependencies.lock().await;
         if deps.contains_key(&path) {
@@ -107,18 +111,4 @@ fn load_dependencies_wrapper<'io, TIO: IO>(
     dependencies: Arc<Mutex<HashMap<String, Dependency>>>,
 ) -> BoxFuture<'io, ()> {
     Box::pin(load_dependencies(path, io, dependencies))
-}
-
-fn test(i: u32, map: Arc<Mutex<HashMap<String, String>>>) -> BoxFuture<'static, ()> {
-    async move {
-        let nested = map.clone();
-
-        let mut map2 = map.lock().await;
-        map2.insert("a".to_string(), i.to_string());
-
-        if i > 0 {
-            test(i - 1, nested).await;
-        }
-    }
-    .boxed()
 }

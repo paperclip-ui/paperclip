@@ -43,6 +43,30 @@ fn can_evaluate_various_sources() {
               }
               "#,
         ),
+
+        // style extends
+        (
+            HashMap::from([(
+                "/entry.pc",
+                r#"
+                  style fontRegular {
+                    font-family: Helvetica;
+                    font-weight: 600;
+                  }
+
+                  div {
+                    style extends fontRegular {
+                      font-weight: 300;
+                    }
+                  }
+                "#,
+            )]),
+            r#"
+              .abba-80f4925f {
+                  color: orange;
+              }
+              "#,
+        ),        
         (
             HashMap::from([(
                 "/entry.pc",

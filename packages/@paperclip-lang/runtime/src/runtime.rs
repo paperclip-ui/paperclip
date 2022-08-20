@@ -1,9 +1,8 @@
-use paperclip_parser::graph::graph;
 use crate::css::virt as css_virt;
 use crate::html::virt as html_virt;
+use paperclip_parser::graph::graph;
 
 pub struct EvaluatedDocument {
-
     // Path of the dependency that was evaluated
     path: String,
 
@@ -11,11 +10,11 @@ pub struct EvaluatedDocument {
     sheet: css_virt::Document,
 
     // Preview HTML of the document evaluated
-    body: html_virt::Document
+    body: html_virt::Document,
 }
 
 pub struct Runtime {
-    graph: graph::Graph
+    graph: graph::Graph,
 }
 
 pub trait RuntimeIO: graph::IO {}

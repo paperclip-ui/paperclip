@@ -86,7 +86,7 @@ impl fmt::Display for CharsetRule {
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct FontFaceRule {
     pub id: String,
-    pub style: Vec<StyleProperty>,
+    pub style: Vec<StyleDeclaration>,
 }
 
 impl fmt::Display for FontFaceRule {
@@ -167,7 +167,7 @@ impl fmt::Display for KeyframesRule {
 pub struct KeyframeRule {
     pub id: String,
     pub key: String,
-    pub style: Vec<StyleProperty>,
+    pub style: Vec<StyleDeclaration>,
 }
 
 impl fmt::Display for KeyframeRule {
@@ -185,21 +185,18 @@ impl fmt::Display for KeyframeRule {
 #[derive(Debug, Serialize, Hash, Clone)]
 pub struct StyleRule {
     pub id: String,
-    pub exported: bool,
 
     #[serde(rename = "sourceId")]
     pub source_id: String,
 
     #[serde(rename = "selectorText")]
     pub selector_text: String,
-    pub style: Vec<StyleProperty>,
+    pub style: Vec<StyleDeclaration>,
 }
 
 impl PartialEq for StyleRule {
     fn eq(&self, other: &Self) -> bool {
-        self.exported == other.exported
-            && self.selector_text == other.selector_text
-            && self.style == other.style
+        self.selector_text == other.selector_text && self.style == other.style
     }
 }
 
@@ -217,7 +214,7 @@ impl fmt::Display for StyleRule {
 }
 
 #[derive(Debug, Serialize, Hash, Clone)]
-pub struct StyleProperty {
+pub struct StyleDeclaration {
     pub id: String,
     pub name: String,
     pub value: String,
@@ -226,10 +223,10 @@ pub struct StyleProperty {
     pub source_id: String,
 }
 
-impl PartialEq for StyleProperty {
+impl PartialEq for StyleDeclaration {
     fn eq(&self, other: &Self) -> bool {
         self.name == other.name && self.value == other.value
     }
 }
 
-impl Eq for StyleProperty {}
+impl Eq for StyleDeclaration {}

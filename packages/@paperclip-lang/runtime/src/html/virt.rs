@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use serde::Serialize;
+use std::collections::HashMap;
 use std::fmt;
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -7,19 +7,19 @@ pub struct Bounds {
     left: f32,
     right: f32,
     width: f32,
-    height: f32
+    height: f32,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct NodeMetadata {
-    bounds: Option<Bounds>
+    bounds: Option<Bounds>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Element {
     source_id: String,
     attributes: Vec<Attribute>,
-    metadata: Option<NodeMetadata>
+    metadata: Option<NodeMetadata>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -33,7 +33,7 @@ pub struct Attribute {
 pub struct TextNode {
     source_id: String,
     value: String,
-    metadata: Option<NodeMetadata>
+    metadata: Option<NodeMetadata>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

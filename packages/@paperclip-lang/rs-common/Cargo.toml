@@ -12,3 +12,7 @@ lto = true
 
 [lib]
 name = "paperclip_common"
+
+[dependencies]
+crc = "1.8.1"
+uuid = { version = "0.8", features = ["serde", "v4", "wasm-bindgen"] }

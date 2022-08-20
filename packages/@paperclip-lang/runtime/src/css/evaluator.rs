@@ -1,10 +1,11 @@
 use super::errors;
 use super::virt;
+use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph::graph;
 use paperclip_parser::pc::ast;
-use paperclip_parser::css::ast as css_ast;
 use std::cell::RefCell;
 use std::rc::Rc;
+use paperclip_common::id::{get_document_id};
 
 struct DocumentContext<'graph, 'expr> {
     graph: &'graph graph::Graph,
@@ -38,7 +39,7 @@ pub async fn evaluate(
 ) -> Result<virt::Document, errors::RuntimeError> {
     if let Some(dep) = graph.dependencies.lock().await.get(path) {
         let document = virt::Document {
-            id: "aa".to_string(),
+            id: get_document_id(path),
             rules: vec![],
         };
 
@@ -108,7 +109,7 @@ fn evaluate_element(element: &ast::Element, context: &mut DocumentContext) {
 }
 
 fn evaluate_style(style: &ast::Style, context: &mut DocumentContext) {
-    if let Some(ns) = get_style_namespace(style, context) {
+    if let Some(ns) = get_style_namespace(context) {
         context
             .document
             .borrow_mut()
@@ -122,13 +123,20 @@ fn evaluate_style(style: &ast::Style, context: &mut DocumentContext) {
     }
 }
 
-fn get_style_namespace(style: &ast::Style, context: &DocumentContext) -> Option<String> {
+fn get_style_namespace(context: &DocumentContext) -> Option<String> {
     if let Some(element) = &context.current_element {
-        let mut ns = format!("{}", element.id);
-        if let Some(component) = &context.current_component {
-            ns = format!("{}__{}", component.id, ns);
+        if let Some(name) = &element.name {
+
+            let ns = if let Some(component) = &context.current_component {
+                format!("{}-{}", component.name, name)
+            } else {
+                name.to_string()
+            };
+
+            Some(format!("{}-{}", ns, context.document.borrow().id))
+        } else {
+            Some(format!("{}", element.id))
         }
-        Some(ns)
     } else {
         None
     }
@@ -138,16 +146,70 @@ fn evaluate_style_declarations(
     style: &ast::Style,
     context: &DocumentContext,
 ) -> Vec<virt::StyleDeclaration> {
-    let decls = vec![];
+    let mut decls = vec![];
     for decl in &style.declarations {
-        evaluate_style_declaration(&decl.value, context);
+        decls.push(evaluate_style_declaration(&decl, context));
     }
     decls
 }
 
 fn evaluate_style_declaration(
+    decl: &css_ast::StyleDeclaration,
+    context: &DocumentContext,
+) -> virt::StyleDeclaration {
+    virt::StyleDeclaration {
+        id: "dec".to_string(),
+        source_id: decl.id.to_string(),
+        name: decl.name.to_string(),
+        value: stringify_style_decl_value(&decl.value, context),
+    }
+}
+
+fn stringify_style_decl_value(
     decl: &css_ast::DeclarationValue,
     context: &DocumentContext,
-) {
-
+) -> String {
+    match decl {
+        css_ast::DeclarationValue::SpacedList(expr) => expr
+            .items
+            .iter()
+            .map(|item| stringify_style_decl_value(item, context))
+            .collect::<Vec<String>>()
+            .join(" "),
+        css_ast::DeclarationValue::CommaList(expr) => expr
+            .items
+            .iter()
+            .map(|item| stringify_style_decl_value(item, context))
+            .collect::<Vec<String>>()
+            .join(", "),
+        css_ast::DeclarationValue::Arithmetic(expr) => {
+            format!(
+                "{} {} {}",
+                stringify_style_decl_value(&expr.left, context),
+                expr.operator,
+                stringify_style_decl_value(&expr.right, context)
+            )
+        }
+        css_ast::DeclarationValue::FunctionCall(expr) => {
+            // TODO - check for var
+            format!(
+                "{}({})",
+                expr.name,
+                stringify_style_decl_value(&expr.arguments, context)
+            )
+        }
+        css_ast::DeclarationValue::HexColor(expr) => {
+            format!("#{}", expr.value)
+        }
+        css_ast::DeclarationValue::Reference(expr) => expr.path.join("."),
+        css_ast::DeclarationValue::Measurement(expr) => {
+            format!("{}{}", expr.value, expr.unit)
+        }
+        css_ast::DeclarationValue::Number(expr) => {
+            format!("{}", expr.value)
+        }
+        css_ast::DeclarationValue::String(expr) => {
+            format!("\"{}\"", expr.value)
+        }
+    }
 }

@@ -2,7 +2,7 @@ use super::errors::{ErrorKind, ParserError};
 use crate::base::ast;
 use crate::base::ast::Range;
 use crate::base::ast::U16Position;
-use crate::core::id::{get_document_id, IDGenerator};
+use paperclip_common::id::{get_document_id, IDGenerator};
 use crate::core::string_scanner::StringScanner;
 use std::collections::VecDeque;
 

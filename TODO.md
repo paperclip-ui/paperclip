@@ -11,6 +11,7 @@
 
 - CSS evaluator
   - walk AST and emit CSS
+    - use names if present
 
 #### Milestone 3: compiler
 

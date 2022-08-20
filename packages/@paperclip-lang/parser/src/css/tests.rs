@@ -2,7 +2,7 @@ use super::ast;
 use super::parser::parse_style_declarations_with_string_scanner;
 use super::serializer::serialize_declarations;
 use crate::core::errors as err;
-use crate::core::id::IDGenerator;
+use paperclip_common::id::{IDGenerator};
 use crate::core::string_scanner::StringScanner;
 
 use crate::base::ast::{Range, U16Position};

@@ -68,7 +68,7 @@ pub fn serialize_decl_value(value: &ast::DeclarationValue, context: &mut Context
         ast::DeclarationValue::HexColor(color) => {
             context.add_buffer(format!("#{}", color.value).as_str());
         }
-        ast::DeclarationValue::Keyword(keyword) => {
+        ast::DeclarationValue::Reference(keyword) => {
             context.add_buffer(format!("{}", keyword.path.join(".")).as_str());
         }
     }

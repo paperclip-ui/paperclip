@@ -1,29 +1,75 @@
 use super::evaluator::evaluate;
+use super::serialize::serialize;
 use futures::executor::block_on;
 use paperclip_parser::graph::graph;
 use paperclip_parser::graph::test_utils;
 use std::collections::HashMap;
+use textwrap::dedent;
 
 #[test]
 fn can_evaluate_various_sources() {
-    let cases: Vec<HashMap<&str, &str>> = vec![HashMap::from([(
-        "/entry.pc",
-        r#"
-            div {
-              style {
-                color: red
+    let cases: Vec<(HashMap<&str, &str>, &str)> = vec![
+        (
+            HashMap::from([(
+                "/entry.pc",
+                r#"
+                  div {
+                    style {
+                      color: red
+                    }
+                  }
+                "#,
+            )]),
+            r#"
+              .80f4925f-4 {
+                  color: red;
               }
-            }
-          "#,
-    )])];
+              "#,
+        ),
+        (
+            HashMap::from([(
+                "/entry.pc",
+                r#"
+                  span abba {
+                    style {
+                      color: orange
+                    }
+                  }
+                "#,
+            )]),
+            r#"
+              .abba-80f4925f {
+                  color: orange;
+              }
+              "#,
+        ),
+        (
+            HashMap::from([(
+                "/entry.pc",
+                r#"
+                  component A {
+                    render div blarg {
+                      style {
+                        color: blue
+                      }
+                    }
+                  }
+                "#,
+            )]),
+            r#"
+              .A-blarg-80f4925f {
+                  color: blue;
+              }
+              "#,
+        ),
+    ];
 
-    for mock_files in cases {
+    for (mock_files, expected_sheet) in cases {
         let mock_fs = test_utils::MockFS::new(mock_files);
         let mut graph = graph::Graph::new();
         block_on(graph.load("/entry.pc", &mock_fs));
         let doc = block_on(evaluate("/entry.pc", &graph)).unwrap();
-        println!("{:?}", doc);
-        panic!("fdfds");
+        assert_eq!(serialize(&doc).trim(), dedent(expected_sheet).trim());
     }
 
     // let mut graph = graph::Graph::new();

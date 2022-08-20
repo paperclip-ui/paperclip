@@ -12,7 +12,6 @@ pub struct StyleDeclaration {
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub enum DeclarationValue {
-    Keyword(Reference),
     Number(Number),
     Reference(Reference),
     String(Str),

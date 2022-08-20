@@ -16,9 +16,7 @@ name = "paperclip_parser"
 [dependencies]
 serde = { version = "1.0.143", features = ["derive"] }
 serde_json = { version = "1.0.83" }
-uuid = { version = "0.8", features = ["serde", "v4", "wasm-bindgen"] }
 paperclip_common = { path = "../rs-common" }
-crc = "1.8.1"
 pretty_assertions = "1.2.1"
 textwrap = "0.15.0"
 glob = "0.3.0"

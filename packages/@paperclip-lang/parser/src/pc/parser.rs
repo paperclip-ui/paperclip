@@ -2,7 +2,7 @@ use super::ast;
 use super::tokenizer::{is_superfluous, is_superfluous_or_newline, next_token, Token};
 use crate::base::ast as base_ast;
 use crate::core::errors as err;
-use crate::core::id::IDGenerator;
+use paperclip_common::id::{IDGenerator};
 use crate::core::parser_context::{create_initial_context, Context};
 use crate::core::string_scanner::StringScanner;
 use crate::css::ast as css_ast;

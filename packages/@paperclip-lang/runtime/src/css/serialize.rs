@@ -21,11 +21,11 @@ fn serialize_rule(rule: &virt::Rule, context: &mut Context) {
 }
 
 fn serialize_style_rule(rule: &virt::StyleRule, context: &mut Context) {
-    context.add_buffer(format!("{} {{", rule.selector_text).as_str());
+    context.add_buffer(format!("{} {{\n", rule.selector_text).as_str());
     context.start_block();
     for decl in &rule.style {
-        context.add_buffer(format!("{}: {};", decl.name, decl.value).as_str());
+        context.add_buffer(format!("{}: {};\n", decl.name, decl.value).as_str());
     }
     context.end_block();
-    context.add_buffer("}}");
+    context.add_buffer("}\n\n");
 }

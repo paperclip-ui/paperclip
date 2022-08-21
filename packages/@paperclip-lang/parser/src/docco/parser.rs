@@ -4,9 +4,9 @@ use crate::base::ast as base_ast;
 use crate::base::ast::Range;
 use crate::core::errors as err;
 use crate::core::errors::ParserError;
-use paperclip_common::id::{IDGenerator, get_document_id};
 use crate::core::parser_context::Context;
 use crate::core::string_scanner::StringScanner;
+use paperclip_common::id::{get_document_id, IDGenerator};
 use std::str;
 
 type ParserContext<'tokenizer, 'scanner, 'idgenerator, 'src> =

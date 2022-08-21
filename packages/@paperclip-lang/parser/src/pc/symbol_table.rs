@@ -1,20 +1,35 @@
-use crate::graph::graph::{Dependency, Graph};
+use crate::graph::graph::Graph;
 use crate::pc::ast as pc_ast;
 use std::collections::HashMap;
+use std::rc::{Rc, Weak};
 
-pub struct Import<'dependency> {
-  path: String
+#[derive(Debug)]
+pub struct Import {
+    path: String,
 }
 
-pub struct Style<'style> {
-  reference: &'style pc_ast::Style
+#[derive(Debug)]
+pub struct Style {
+    reference: Rc<pc_ast::Style>,
 }
 
-pub enum SymbolTableEntry<'dependency, 'style> {
-  Import(Import<'dependency>),
-  Style(Style<'style>)
+#[derive(Debug)]
+pub enum SymbolTableItem {
+    Import(Import),
+    Style(Weak<Style>),
 }
 
-pub fn get_symbol_table(graph: Graph) -> HashMap<String, SymbolTableEntry> {
+struct GraphSymbolTable {
+    records: HashMap<String, SymbolTableItem>
+}
 
+pub async fn get_symbol_table<'expr>(
+    path: &str,
+    graph: Graph,
+) -> Option<&HashMap<String, SymbolTableItem>> {
+  None
+    // if let Some(dep) = graph.dependencies.lock().await.get(path) {
+    // } else {
+    //     None
+    // }
 }

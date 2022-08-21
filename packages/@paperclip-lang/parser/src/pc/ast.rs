@@ -9,7 +9,7 @@ pub struct Component {
     pub is_public: bool,
     pub range: Range,
     pub name: String,
-    pub body: Vec<ComponentBodyItem>,
+    pub body: Vec<ComponentBodyItem>
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

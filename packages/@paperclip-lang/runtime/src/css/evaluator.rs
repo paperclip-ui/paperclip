@@ -1,11 +1,11 @@
 use super::errors;
 use super::virt;
+use paperclip_common::id::get_document_id;
 use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph::graph;
 use paperclip_parser::pc::ast;
 use std::cell::RefCell;
 use std::rc::Rc;
-use paperclip_common::id::{get_document_id};
 
 struct DocumentContext<'graph, 'expr> {
     graph: &'graph graph::Graph,
@@ -126,7 +126,6 @@ fn evaluate_style(style: &ast::Style, context: &mut DocumentContext) {
 fn get_style_namespace(context: &DocumentContext) -> Option<String> {
     if let Some(element) = &context.current_element {
         if let Some(name) = &element.name {
-
             let ns = if let Some(component) = &context.current_component {
                 format!("{}-{}", component.name, name)
             } else {

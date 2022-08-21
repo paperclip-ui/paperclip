@@ -430,8 +430,10 @@ dependencies = [
 name = "paperclip_parser"
 version = "0.1.1"
 dependencies = [
+ "crc",
  "futures",
  "glob",
+ "lazy_static",
  "paperclip_common",
  "pretty_assertions",
  "serde",

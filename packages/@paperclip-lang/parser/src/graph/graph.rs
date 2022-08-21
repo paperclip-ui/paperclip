@@ -1,5 +1,7 @@
 use crate::pc::ast;
 use crate::pc::parser::parse as parse_pc;
+use crate::pc::symbol_table::{get_symbol_table, SymbolTableItem};
+use crc::crc32;
 use futures::future::{select_all, BoxFuture, Future, FutureExt};
 use futures::lock::Mutex;
 use std::collections::HashMap;
@@ -13,6 +15,7 @@ pub trait IO: Sync + Send {
 
 #[derive(Debug)]
 pub struct Dependency {
+    pub hash: String,
     pub path: String,
     pub imports: HashMap<String, String>,
     pub document: ast::Document,
@@ -32,11 +35,6 @@ impl Graph {
     pub async fn load<TIO: IO>(&mut self, path: &str, io: &TIO) {
         load_dependencies::<TIO>(String::from(path), Arc::new(&io), self.dependencies.clone())
             .await;
-    }
-    pub fn get_style(name: &str, import_name: Option<&str>, dep_path: &str) {
-        
-        if let Some(import_name) = import_name {
-        }
     }
     pub async fn load_files<TIO: IO>(&mut self, paths: Vec<String>, io: &TIO) {
         for path in paths {
@@ -66,8 +64,6 @@ async fn load_dependencies<'io, TIO: IO>(
             return;
         }
 
-        println!("RUNN");
-
         if let Some(content) = io.read(&path).await {
             if let Ok(document) = parse_pc(content.as_str(), &path) {
                 for import in &document.get_imports() {
@@ -81,6 +77,7 @@ async fn load_dependencies<'io, TIO: IO>(
                 deps.insert(
                     path.to_string(),
                     Dependency {
+                        hash: format!("{:x}", crc32::checksum_ieee(content.as_bytes())).to_string(),
                         path: path.to_string(),
                         imports: imports.clone(),
                         document,

@@ -2,7 +2,6 @@ import { FileCache } from "fsbox";
 import { mapValues } from "lodash";
 import { memoize } from "tandem-common";
 import { createPCModule } from "./dsl";
-import { serializeModule } from "./serialize";
 import { parseDocument } from "./parser/dsl/parser";
 import { deserializeModule } from "./deserialize/deserialize";
 

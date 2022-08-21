@@ -2,8 +2,8 @@ use super::errors::{ErrorKind, ParserError};
 use crate::base::ast;
 use crate::base::ast::Range;
 use crate::base::ast::U16Position;
-use paperclip_common::id::{get_document_id, IDGenerator};
 use crate::core::string_scanner::StringScanner;
+use paperclip_common::id::{get_document_id, IDGenerator};
 use std::collections::VecDeque;
 
 struct Error {}

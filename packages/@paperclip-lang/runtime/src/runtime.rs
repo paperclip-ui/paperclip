@@ -28,7 +28,7 @@ impl Runtime {
     pub async fn load<TRuntimeIO: RuntimeIO>(&mut self, path: &str, io: &TRuntimeIO) {
         // First need to load the graph
         let mut graph = graph::Graph::new();
-        graph.load(path, io).await;
+        graph.load(path, io);
 
         // Todo: return { document }
     }

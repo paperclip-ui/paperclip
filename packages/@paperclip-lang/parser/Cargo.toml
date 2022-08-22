@@ -14,7 +14,7 @@ lto = true
 name = "paperclip_parser"
 
 [dependencies]
-serde = { version = "1.0.143", features = ["derive"] }
+serde = { version = "1.0.143", features = ["derive", "rc"] }
 serde_json = { version = "1.0.83" }
 crc = "1.8.1"
 lazy_static = "1.4.0"

@@ -88,5 +88,5 @@ async fn load_project_pc_files<'io>(
         }
     }
 
-    graph.load_files(all_files, &io).await;
+    graph.load_files(all_files, &io);
 }

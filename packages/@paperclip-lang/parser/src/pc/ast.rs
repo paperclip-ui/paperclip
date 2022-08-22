@@ -9,7 +9,7 @@ pub struct Component {
     pub is_public: bool,
     pub range: Range,
     pub name: String,
-    pub body: Vec<ComponentBodyItem>
+    pub body: Vec<ComponentBodyItem>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -228,5 +228,17 @@ impl Document {
             }
         }
         imports
+    }
+    pub fn get_style(&self, name: &String) -> Option<&Style> {
+        for item in &self.body {
+            if let DocumentBodyItem::Style(style) = item {
+                if let Some(style_name) = &style.name {
+                    if style_name == name {
+                        return Some(style);
+                    }
+                }
+            }
+        }
+        None
     }
 }

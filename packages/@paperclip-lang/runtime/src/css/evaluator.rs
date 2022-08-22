@@ -1,31 +1,36 @@
 use super::errors;
 use super::virt;
+use futures::lock::MutexGuard;
 use paperclip_common::id::get_document_id;
 use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph::graph;
 use paperclip_parser::pc::ast;
 use std::cell::RefCell;
+use std::collections::HashMap;
 use std::rc::Rc;
 
-struct DocumentContext<'graph, 'expr> {
+struct DocumentContext<'path, 'graph, 'expr> {
     graph: &'graph graph::Graph,
+    path: &'path str,
     current_element: Option<&'expr ast::Element>,
     current_component: Option<&'expr ast::Component>,
     document: Rc<RefCell<virt::Document>>,
 }
 
-impl<'graph, 'component> DocumentContext<'graph, 'component> {
-    pub fn within_component(&self, component: &'component ast::Component) -> Self {
+impl<'path, 'graph, 'expr> DocumentContext<'path, 'graph, 'expr> {
+    pub fn within_component(&self, component: &'expr ast::Component) -> Self {
         DocumentContext {
             graph: self.graph,
+            path: self.path,
             current_element: self.current_element,
             current_component: Some(component),
             document: self.document.clone(),
         }
     }
-    pub fn within_element(&self, element: &'component ast::Element) -> Self {
+    pub fn within_element(&self, element: &'expr ast::Element) -> Self {
         DocumentContext {
             graph: self.graph,
+            path: self.path,
             current_element: Some(element),
             current_component: self.current_component,
             document: self.document.clone(),
@@ -37,7 +42,9 @@ pub async fn evaluate(
     path: &str,
     graph: &graph::Graph,
 ) -> Result<virt::Document, errors::RuntimeError> {
-    if let Some(dep) = graph.dependencies.lock().await.get(path) {
+    let dependencies = &graph.dependencies.lock().await;
+
+    if let Some(dependency) = dependencies.get(path) {
         let document = virt::Document {
             id: get_document_id(path),
             rules: vec![],
@@ -45,12 +52,13 @@ pub async fn evaluate(
 
         let mut context = DocumentContext {
             graph,
+            path,
             current_element: None,
             current_component: None,
             document: Rc::new(RefCell::new(document)),
         };
 
-        evaluate_document(&dep.document, &mut context);
+        evaluate_document(&dependency.document, &mut context);
 
         Ok(Rc::try_unwrap(context.document).unwrap().into_inner())
     } else {
@@ -125,15 +133,22 @@ fn evaluate_style(style: &ast::Style, context: &mut DocumentContext) {
 
 fn get_style_namespace(context: &DocumentContext) -> Option<String> {
     if let Some(element) = &context.current_element {
+        // Here we're taking the _prefered_ name for style rules to make
+        // them more readable
         if let Some(name) = &element.name {
+            // element names are scoped to either the document, or components. If a
+            // component is present, then use that
             let ns = if let Some(component) = &context.current_component {
                 format!("{}-{}", component.name, name)
             } else {
                 name.to_string()
             };
 
+            // Keep the CSS scoped to this document.
             Some(format!("{}-{}", ns, context.document.borrow().id))
         } else {
+            // No element name? Use the ID. We don't need the document ID
+            // here since the element ID is unique.
             Some(format!("{}", element.id))
         }
     } else {
@@ -146,6 +161,13 @@ fn evaluate_style_declarations(
     context: &DocumentContext,
 ) -> Vec<virt::StyleDeclaration> {
     let mut decls = vec![];
+
+    if let Some(extends) = &style.extends {
+        for reference in extends {
+            // context.graph.dependencies
+        }
+    }
+
     for decl in &style.declarations {
         decls.push(evaluate_style_declaration(&decl, context));
     }

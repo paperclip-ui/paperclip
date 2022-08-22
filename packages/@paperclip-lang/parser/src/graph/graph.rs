@@ -23,18 +23,17 @@ pub struct Dependency {
 
 #[derive(Debug)]
 pub struct Graph {
-    pub dependencies: Arc<Mutex<HashMap<String, Dependency>>>,
+    pub dependencies: HashMap<String, Dependency>,
 }
 
 impl Graph {
     pub fn new() -> Self {
         Graph {
-            dependencies: Arc::new(Mutex::new(HashMap::new())),
+            dependencies: HashMap::new(),
         }
     }
     pub async fn load<TIO: IO>(&mut self, path: &str, io: &TIO) {
-        let mut deps = self.dependencies.lock().await;
-        deps.extend(
+        self.dependencies.extend(
             load_dependencies::<TIO>(
                 String::from(path),
                 Arc::new(&io),
@@ -44,9 +43,8 @@ impl Graph {
         );
     }
     pub async fn load_files<TIO: IO>(&mut self, paths: Vec<String>, io: &TIO) {
-        let mut deps = self.dependencies.lock().await;
         for path in paths {
-            deps.extend(
+            self.dependencies.extend(
                 load_dependencies_wrapper::<TIO>(
                     path.clone(),
                     Arc::new(&io),

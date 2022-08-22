@@ -42,7 +42,7 @@ pub async fn evaluate(
     path: &str,
     graph: &graph::Graph,
 ) -> Result<virt::Document, errors::RuntimeError> {
-    let dependencies = &graph.dependencies.lock().await;
+    let dependencies = &graph.dependencies;
 
     if let Some(dependency) = dependencies.get(path) {
         let document = virt::Document {

@@ -4,6 +4,7 @@ use futures::lock::MutexGuard;
 use paperclip_common::id::get_document_id;
 use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph::graph;
+use paperclip_parser::graph::graph_ref;
 use paperclip_parser::pc::ast;
 use std::cell::RefCell;
 use std::collections::HashMap;

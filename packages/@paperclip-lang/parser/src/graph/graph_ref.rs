@@ -1,27 +1,70 @@
 use super::graph::Graph;
 use crate::pc::ast;
 
-
-enum Ref<'expr> {
-  Style(&'expr ast::Style)
+pub enum Ref<'expr> {
+  Document(&'expr ast::Document),
+  Import(&'expr ast::Import),
+  Atom(&'expr ast::Atom),
+  Style(&'expr ast::Style),
+  Component(&'expr ast::Component)
 }
 
 impl Graph {
-  pub fn get_ref(&self, ref_path: &Vec<&str>, dep_path: &str) -> Option<String> {
+  pub fn get_ref(&self, ref_path: &Vec<&str>, dep_path: &str) -> Option<Ref<'_>> {
 
-    let curr_path = dep_path;
+    let mut curr_dep = if let Some(dep) = self.dependencies.get(dep_path) {
+      dep
+    } else {
+      return None;
+    };
 
-    for i in [0..ref_path.len()] {
-      let part = ref_path.get(i).unwrap();
+    let mut curr = Ref::Document(&curr_dep.document);
 
-        let dep = if let Some(dep) = self.dependencies.get(curr_path) {
-            dep
-        } else {
-            return None;
-        };
 
-        
+    for part in ref_path {
+      match curr {
+        Ref::Document(doc) => {
+          for child in &doc.body {
+
+            // any way to make this more DRY? Macros???
+            match child {
+              ast::DocumentBodyItem::Import(import) => {
+                if part == &import.namespace {
+                  println!("OK");
+                  curr = Ref::Import(import);
+                  break;
+                }
+              }
+              ast::DocumentBodyItem::Atom(atom) => {
+                if part == &atom.name {
+                  curr = Ref::Atom(atom);
+                  break;
+                }
+              }
+              ast::DocumentBodyItem::Component(component) => {
+                if part == &component.name {
+                  curr = Ref::Component(component);
+                  break;
+                }
+              }
+              ast::DocumentBodyItem::Style(style) => {
+                if let Some(name) = &style.name {
+                  if name == part {
+                    curr = Ref::Style(style);
+                    break;
+                  }
+                }
+              },
+              _ => {}
+            }
+          }
+        },
+        _ => {
+
+        }
+      }
     }
-    None
+
+    Some(curr)
   }
 }

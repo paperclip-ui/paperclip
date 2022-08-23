@@ -164,7 +164,6 @@ fn evaluate_style_declarations(
 
     if let Some(extends) = &style.extends {
         for reference in extends {
-            // context.graph.dependencies
         }
     }
 

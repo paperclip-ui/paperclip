@@ -86,6 +86,9 @@ fn parse_document_child(
         Some(Token::Word(b"token")) => {
             Ok(ast::DocumentBodyItem::Atom(parse_atom(context, is_public)?))
         }
+        Some(Token::Word(b"trigger")) => {
+            Ok(ast::DocumentBodyItem::Trigger(parse_trigger(context, is_public)?))
+        }
         Some(Token::Word(b"text")) => Ok(ast::DocumentBodyItem::Text(parse_text(context)?)),
         Some(Token::Word(_)) => Ok(ast::DocumentBodyItem::Element(parse_element(context)?)),
         _ => {
@@ -116,6 +119,47 @@ fn parse_atom(context: &mut PCContext, is_public: bool) -> Result<ast::Atom, err
         value,
     })
 }
+
+fn parse_trigger(context: &mut PCContext, is_public: bool) -> Result<ast::Trigger, err::ParserError> {
+    let start = context.curr_u16pos.clone();
+    context.next_token()?; // eat trigger
+    context.skip(is_superfluous);
+    let name = extract_word_value(context)?;
+    context.next_token()?;
+    context.skip(is_superfluous);
+    let mut body: Vec<ast::TriggerBodyItem> = vec![];
+    context.next_token()?; // eat {
+    context.skip(is_superfluous_or_newline);
+
+    while context.curr_token != Some(Token::CurlyClose) {
+        body.push(parse_trigger_body_item(context)?);
+    }
+    context.next_token()?; // eat }
+    let end = context.curr_u16pos.clone();
+
+
+    Ok(ast::Trigger {
+        id: context.next_id(),
+        name,
+        range: base_ast::Range::new(start, end),
+        is_public,
+        body
+    })
+}
+
+fn parse_trigger_body_item(context: &mut PCContext) -> Result<ast::TriggerBodyItem, err::ParserError> {
+    let start = context.curr_u16pos.clone();
+    let value = extract_string_value(context)?;
+    context.next_token()?;
+    let end = context.curr_u16pos.clone();
+    context.skip(is_superfluous_or_newline);
+    Ok(ast::TriggerBodyItem {
+        id: context.next_id(),
+        range: base_ast::Range::new(start, end),
+        value
+    })
+}
+
 
 fn parse_docco(context: &mut PCContext) -> Result<docco_ast::Comment, err::ParserError> {
     context.scanner.unshift(3); // rewind /**

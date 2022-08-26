@@ -21,6 +21,7 @@ fn serialize_document(document: &ast::Document, context: &mut Context) {
             ast::DocumentBodyItem::Component(comp) => serialize_component(comp, context),
             ast::DocumentBodyItem::Style(style) => serialize_style(style, context),
             ast::DocumentBodyItem::Element(element) => serialize_element(element, context),
+            ast::DocumentBodyItem::Trigger(element) => serialize_trigger(element, context),
             ast::DocumentBodyItem::Text(text) => serialize_text(text, context),
         }
     }
@@ -30,6 +31,15 @@ fn serialize_import(imp: &ast::Import, context: &mut Context) {
     context.add_buffer(format!("import \"{}\" as {}\n", imp.path, imp.namespace).as_str());
 }
 
+fn serialize_trigger(trigger: &ast::Trigger, context: &mut Context) {
+    context.add_buffer(format!("trigger {} {{\n", trigger.name).as_str());
+    context.start_block();
+    for item in &trigger.body {
+        context.add_buffer(format!("\"{}\"\n", item.value).as_str());
+    }
+    context.end_block();
+    context.add_buffer("}");
+}
 fn serialize_atom(atom: &ast::Atom, context: &mut Context) {
     if atom.is_public {
         context.add_buffer("public ");

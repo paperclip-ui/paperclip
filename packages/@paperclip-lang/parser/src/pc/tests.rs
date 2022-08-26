@@ -181,8 +181,26 @@ fn can_parse_various_contents() {
         ),
         (
             r#"
+            trigger mobile {
+                "media screen and (max-width: 320px)"
+            }
+        "#,
+            Ok(()),
+        ),
+        (
+            r#"
+            trigger everyOther {
+                ":nth-child(2n)"
+            }
             component A {
-                variant a (enabled: [])
+                variant a trigger {
+                    everyOther
+                }
+                div {
+                    style variant a {
+                        color: blue
+                    }
+                }
             }
         "#,
             Ok(()),

@@ -197,6 +197,7 @@ pub enum DocumentBodyItem {
     DocComment(docco_ast::Comment),
     Text(TextNode),
     Atom(Atom),
+    Trigger(Trigger),
     Element(Element),
 }
 
@@ -206,18 +207,6 @@ pub struct Document {
     pub range: Range,
     pub body: Vec<DocumentBodyItem>,
 }
-
-#[derive(Debug, PartialEq, Serialize, Clone)]
-pub struct Atom {
-    pub id: String,
-    pub is_public: bool,
-    pub name: String,
-    pub range: Range,
-    pub value: css_ast::DeclarationValue,
-}
-
-#[derive(Debug, PartialEq, Serialize, Clone)]
-pub enum Expression {}
 
 impl Document {
     pub fn get_imports(&self) -> Vec<&Import> {
@@ -242,3 +231,36 @@ impl Document {
         None
     }
 }
+
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
+pub struct Atom {
+    pub id: String,
+    pub is_public: bool,
+    pub name: String,
+    pub range: Range,
+    pub value: css_ast::DeclarationValue,
+}
+
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
+pub struct Trigger {
+    pub id: String,
+    pub range: Range,
+    pub name: String,
+    pub is_public: bool,
+    pub body: Vec<TriggerBodyItem>,
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
+pub struct TriggerBodyItem {
+    pub id: String,
+    pub range: Range,
+
+    // For now we're just dealing with raw values
+    pub value: String
+}
+
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
+pub enum Expression {}

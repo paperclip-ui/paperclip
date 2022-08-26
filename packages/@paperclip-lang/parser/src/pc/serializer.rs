@@ -98,7 +98,7 @@ fn serialize_style(style: &ast::Style, context: &mut Context) {
         context.add_buffer(format!(" {}", name).as_str());
     }
 
-    if let Some(variants) = &style.variant {
+    if let Some(variants) = &style.variant_combo {
         context.add_buffer(" variant ");
         serialize_items(variants, context, serialize_reference, " + ");
     }

@@ -16,6 +16,12 @@ struct DocumentContext<'path, 'graph, 'expr> {
     document: Rc<RefCell<virt::Document>>,
 }
 
+#[derive(Debug)]
+enum VariantTrigger {
+    Boolean(bool),
+    Selector(String)
+}
+
 impl<'path, 'graph, 'expr> DocumentContext<'path, 'graph, 'expr> {
     pub fn within_component(&self, component: &'expr ast::Component) -> Self {
         DocumentContext {
@@ -108,12 +114,55 @@ fn evaluate_element(element: &ast::Element, context: &mut DocumentContext) {
     for item in &element.body {
         match item {
             ast::ElementBodyItem::Style(style) => {
-                evaluate_style(style, &mut el_context);
+                evaluate_style_variant(style, &mut el_context);
             }
             _ => {}
         }
     }
 }
+
+fn evaluate_style_variant(style: &ast::Style, context: &mut DocumentContext) {
+    if let Some(variants) = &style.variant_combo {
+        if let Some(component) = context.current_component {
+            for variant_ref in variants {
+                if variant_ref.path.len() == 1 {
+                    let variant = component.get_variant(variant_ref.path.get(0).unwrap());
+                    if let Some(variant) = variant  {
+                        let mut triggers = vec![];
+                        collect_triggers(&variant.triggers, &mut triggers, context);
+                    }
+                }
+            }
+        }
+
+    } else {
+        evaluate_style(style, context)
+    }
+}
+
+fn collect_triggers(triggers: &Vec<ast::TriggerBodyItem>, into: &mut Vec<VariantTrigger>, context: &mut DocumentContext) {
+    for trigger in triggers {
+        match trigger {
+            ast::TriggerBodyItem::Boolean(expr) => {
+                into.push(VariantTrigger::Boolean(expr.value));
+            },
+            ast::TriggerBodyItem::String(expr) => {
+                into.push(VariantTrigger::Selector(expr.value.to_string()));
+            },
+            ast::TriggerBodyItem::Reference(expr) => {
+                if let Some(info) = context.graph.get_ref(&expr.path, context.path) {
+                    if let graph_ref::Expr::Trigger(trigger) = &info.expr {
+                        collect_triggers(&trigger.body, into, context);
+                    }
+                }
+            }
+        }
+    }
+    // triggers.iter().map(|trigger| {
+    //     get_trigger_ref(trigger, context)
+    // }).collect::<Vec<Option<VariantTrigger>>>()
+}
+
 
 fn evaluate_style(style: &ast::Style, context: &mut DocumentContext) {
     if let Some(ns) = get_style_namespace(context) {
@@ -161,6 +210,10 @@ fn evaluate_style_declarations(
 ) -> Vec<virt::StyleDeclaration> {
     let mut decls = vec![];
 
+    // insert extended styles _before_ the declarations in the body since
+    // these declarations should be overwritten. Also note that we're
+    // including the entire body of extended styles to to cover !important statements.
+    // This could be smarter at some point.
     if let Some(extends) = &style.extends {
         for reference in extends {
             if let Some(reference) = context.graph.get_ref(&reference.path, context.path) {

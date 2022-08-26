@@ -12,6 +12,20 @@ pub struct Component {
     pub body: Vec<ComponentBodyItem>,
 }
 
+impl Component {
+    pub fn get_variant(&self, name: &str) -> Option<&Variant> {
+        for item in &self.body {
+            if let ComponentBodyItem::Variant(variant) = item {
+                if variant.name == name {
+                    return Some(variant);
+                }
+            }
+        }
+
+        None
+    }
+}
+
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Variant {
     pub id: String,
@@ -32,7 +46,7 @@ pub struct Style {
     pub id: String,
     pub is_public: bool,
     pub name: Option<String>,
-    pub variant: Option<Vec<Reference>>,
+    pub variant_combo: Option<Vec<Reference>>,
     pub extends: Option<Vec<Reference>>,
     pub range: Range,
     pub declarations: Vec<css_ast::StyleDeclaration>,

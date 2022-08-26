@@ -224,7 +224,7 @@ fn parse_style(context: &mut PCContext, is_public: bool) -> Result<ast::Style, e
         None
     };
 
-    let variant = if context.curr_token == Some(Token::KeywordVariant) {
+    let variant_combo = if context.curr_token == Some(Token::KeywordVariant) {
         context.next_token()?; // eat keyword
         context.skip(is_superfluous);
         Some(parse_list(context, parse_ref, Token::Byte(b'+'))?)
@@ -266,7 +266,7 @@ fn parse_style(context: &mut PCContext, is_public: bool) -> Result<ast::Style, e
     Ok(ast::Style {
         id: context.next_id(),
         is_public,
-        variant,
+        variant_combo,
         name,
         extends,
         declarations,
@@ -358,7 +358,6 @@ fn parse_variant(context: &mut PCContext) -> Result<ast::Variant, err::ParserErr
     let triggers = if context.curr_token == Some(Token::Word(b"trigger")) {
         context.next_token()?;
         context.skip(is_superfluous);
-        println!("{:?}", context.curr_token);
 
         parse_trigger_body(context)?
     } else {

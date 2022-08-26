@@ -14,6 +14,7 @@ pub enum Expr<'expr> {
     Atom(&'expr ast::Atom),
     Style(&'expr ast::Style),
     Component(&'expr ast::Component),
+    Trigger(&'expr ast::Trigger),
 }
 
 impl Graph {
@@ -76,6 +77,11 @@ fn get_doc_body_expr<'expr>(part: &String, doc: &'expr ast::Document) -> Option<
             ast::DocumentBodyItem::Component(component) => {
                 if part == &component.name {
                     return Some(Expr::Component(component));
+                }
+            }
+            ast::DocumentBodyItem::Trigger(trigger) => {
+                if part == &trigger.name {
+                    return Some(Expr::Trigger(trigger));
                 }
             }
             ast::DocumentBodyItem::Style(style) => {

@@ -129,7 +129,7 @@ fn can_evaluate_various_sources() {
                 "/entry.pc",
                 r#"
                       trigger mobile {
-                        "media screen and (max-width: 100px)"
+                        "@media screen and (max-width: 100px)"
                       }
 
                       component A {

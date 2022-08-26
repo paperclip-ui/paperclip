@@ -123,25 +123,32 @@ fn evaluate_element(element: &ast::Element, context: &mut DocumentContext) {
 
 fn evaluate_style_variant(style: &ast::Style, context: &mut DocumentContext) {
     if let Some(variants) = &style.variant_combo {
-        let mut triggers = vec![];
-        collect_style_variant_triggers(variants, &mut triggers, context);
+        let combo_triggers = collect_style_variant_triggers(variants, context);
+        println!("{:?}", combo_triggers);
     } else {
         evaluate_style(style, context)
     }
 }
 
 
-fn collect_style_variant_triggers(variant_refs: &Vec<ast::Reference>, into: &mut Vec<VariantTrigger>, context: &mut DocumentContext) {
+fn collect_style_variant_triggers(variant_refs: &Vec<ast::Reference>, context: &mut DocumentContext) -> Vec<Vec<VariantTrigger>> {
+
+    let mut combo_triggers = vec![];
+    
     if let Some(component) = context.current_component {
         for variant_ref in variant_refs {
             if variant_ref.path.len() == 1 {
                 let variant = component.get_variant(variant_ref.path.get(0).unwrap());
                 if let Some(variant) = variant  {
-                    collect_triggers(&variant.triggers, into, context);
+                    let mut triggers = vec![];
+                    collect_triggers(&variant.triggers, &mut triggers, context);
+                    combo_triggers.push(triggers);
                 }
             }
         }
     }
+
+    combo_triggers
 }
 
 fn collect_triggers(triggers: &Vec<ast::TriggerBodyItem>, into: &mut Vec<VariantTrigger>, context: &mut DocumentContext) {

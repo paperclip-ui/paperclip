@@ -13,6 +13,7 @@
 
   - walk AST and emit CSS
     - use names if present
+  - ensure that tokens are evaluated
 
 - HTML evaluator
 

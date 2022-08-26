@@ -43,6 +43,7 @@ impl<'path, 'graph, 'expr> DocumentContext<'path, 'graph, 'expr> {
     }
 }
 
+// TODO - scan for all tokens and shove in root
 pub async fn evaluate(
     path: &str,
     graph: &graph::Graph,
@@ -123,8 +124,14 @@ fn evaluate_element(element: &ast::Element, context: &mut DocumentContext) {
 
 fn evaluate_style_variant(style: &ast::Style, context: &mut DocumentContext) {
     if let Some(variants) = &style.variant_combo {
-        let combo_triggers = collect_style_variant_triggers(variants, context);
-        println!("{:?}", combo_triggers);
+        let variant_combo_triggers = collect_style_variant_triggers(variants, context);
+
+        for variant_triggers_a in &variant_combo_triggers {
+            for vairant_triggers_b in &variant_combo_triggers {
+                
+            }
+        }
+        
     } else {
         evaluate_style(style, context)
     }

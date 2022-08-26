@@ -188,6 +188,28 @@ fn can_evaluate_various_sources() {
               }
         "#,
         ),
+
+        // Tokens
+        (
+          HashMap::from([(
+              "/entry.pc",
+              r#"
+                token snowWhite rgba(255, 255, 255, 0)
+
+                div {
+                  style {
+                    color: var(snowWhite)
+                  }
+                }
+
+              "#,
+          )]),
+          r#"
+            .A-blarg-80f4925f {
+                color: blue;
+            }
+            "#,
+      ),
         (
             HashMap::from([(
                 "/entry.pc",

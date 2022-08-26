@@ -17,7 +17,7 @@ pub struct Variant {
     pub id: String,
     pub range: Range,
     pub name: String,
-    pub triggers: Vec<Reference>,
+    pub triggers: Vec<TriggerBodyItem>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -232,7 +232,6 @@ impl Document {
     }
 }
 
-
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Atom {
     pub id: String,
@@ -241,7 +240,6 @@ pub struct Atom {
     pub range: Range,
     pub value: css_ast::DeclarationValue,
 }
-
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Trigger {
@@ -253,14 +251,10 @@ pub struct Trigger {
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
-pub struct TriggerBodyItem {
-    pub id: String,
-    pub range: Range,
-
-    // For now we're just dealing with raw values
-    pub value: String
+pub enum TriggerBodyItem {
+    String(Str),
+    Reference(Reference),
 }
-
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub enum Expression {}

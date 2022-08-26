@@ -190,12 +190,11 @@ fn can_parse_various_contents() {
         ),
         (
             r#"
-            trigger everyOther {
-                ":nth-child(2n)"
-            }
 
             component A {
-                variant a trigger everyOther
+                variant a trigger {
+                    everyOther
+                }
                 render div {
                     style {
                         color: blue
@@ -216,7 +215,9 @@ fn can_parse_various_contents() {
         (
             r#"
             component A {
-                variant a trigger some.ref
+                variant a trigger {
+                    some.ref
+                }
             }
         "#,
             Ok(()),

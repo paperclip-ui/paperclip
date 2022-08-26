@@ -86,9 +86,9 @@ fn parse_document_child(
         Some(Token::Word(b"token")) => {
             Ok(ast::DocumentBodyItem::Atom(parse_atom(context, is_public)?))
         }
-        Some(Token::Word(b"trigger")) => {
-            Ok(ast::DocumentBodyItem::Trigger(parse_trigger(context, is_public)?))
-        }
+        Some(Token::Word(b"trigger")) => Ok(ast::DocumentBodyItem::Trigger(parse_trigger(
+            context, is_public,
+        )?)),
         Some(Token::Word(b"text")) => Ok(ast::DocumentBodyItem::Text(parse_text(context)?)),
         Some(Token::Word(_)) => Ok(ast::DocumentBodyItem::Element(parse_element(context)?)),
         _ => {
@@ -120,46 +120,51 @@ fn parse_atom(context: &mut PCContext, is_public: bool) -> Result<ast::Atom, err
     })
 }
 
-fn parse_trigger(context: &mut PCContext, is_public: bool) -> Result<ast::Trigger, err::ParserError> {
+fn parse_trigger(
+    context: &mut PCContext,
+    is_public: bool,
+) -> Result<ast::Trigger, err::ParserError> {
     let start = context.curr_u16pos.clone();
     context.next_token()?; // eat trigger
     context.skip(is_superfluous);
     let name = extract_word_value(context)?;
     context.next_token()?;
     context.skip(is_superfluous);
-    let mut body: Vec<ast::TriggerBodyItem> = vec![];
-    context.next_token()?; // eat {
-    context.skip(is_superfluous_or_newline);
-
-    while context.curr_token != Some(Token::CurlyClose) {
-        body.push(parse_trigger_body_item(context)?);
-    }
-    context.next_token()?; // eat }
+    let body = parse_trigger_body(context)?;
     let end = context.curr_u16pos.clone();
-
 
     Ok(ast::Trigger {
         id: context.next_id(),
         name,
         range: base_ast::Range::new(start, end),
         is_public,
-        body
+        body,
     })
 }
 
-fn parse_trigger_body_item(context: &mut PCContext) -> Result<ast::TriggerBodyItem, err::ParserError> {
-    let start = context.curr_u16pos.clone();
-    let value = extract_string_value(context)?;
-    context.next_token()?;
-    let end = context.curr_u16pos.clone();
+fn parse_trigger_body(
+    context: &mut PCContext,
+) -> Result<Vec<ast::TriggerBodyItem>, err::ParserError> {
+    let mut body: Vec<ast::TriggerBodyItem> = vec![];
+    context.next_token()?; // eat {
     context.skip(is_superfluous_or_newline);
-    Ok(ast::TriggerBodyItem {
-        id: context.next_id(),
-        range: base_ast::Range::new(start, end),
-        value
-    })
+    while context.curr_token != Some(Token::CurlyClose) {
+        body.push(parse_trigger_body_item(context)?);
+        context.skip(is_superfluous_or_newline);
+    }
+    context.next_token()?; // eat }
+    Ok(body)
 }
 
+fn parse_trigger_body_item(
+    context: &mut PCContext,
+) -> Result<ast::TriggerBodyItem, err::ParserError> {
+    match &context.curr_token {
+        Some(Token::String(value)) => Ok(ast::TriggerBodyItem::String(parse_string(context)?)),
+        Some(Token::Word(_)) => Ok(ast::TriggerBodyItem::Reference(parse_ref(context)?)),
+        _ => Err(context.new_unexpected_token_error())
+    }
+}
 
 fn parse_docco(context: &mut PCContext) -> Result<docco_ast::Comment, err::ParserError> {
     context.scanner.unshift(3); // rewind /**
@@ -350,7 +355,11 @@ fn parse_variant(context: &mut PCContext) -> Result<ast::Variant, err::ParserErr
     context.next_token()?; // eat tag name
     context.skip(is_superfluous_or_newline);
     let triggers = if context.curr_token == Some(Token::Word(b"trigger")) {
-        parse_variant_triggers(context)?
+        context.next_token()?;
+        context.skip(is_superfluous);
+        println!("{:?}", context.curr_token);
+
+        parse_trigger_body(context)?
     } else {
         vec![]
     };
@@ -364,12 +373,6 @@ fn parse_variant(context: &mut PCContext) -> Result<ast::Variant, err::ParserErr
         name,
         triggers,
     })
-}
-
-fn parse_variant_triggers(context: &mut PCContext) -> Result<Vec<ast::Reference>, err::ParserError> {
-    context.next_token()?; // eat trigger
-    context.skip(is_superfluous);
-    parse_list(context, parse_ref, Token::Comma)
 }
 
 fn parse_script(context: &mut PCContext) -> Result<ast::Script, err::ParserError> {

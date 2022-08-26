@@ -124,38 +124,70 @@ fn can_evaluate_various_sources() {
               }
         "#,
         ),
-        // (
-        //     HashMap::from([
-        //         (
-        //             "/entry.pc",
-        //             r#"
-        //               trigger mobile {
-        //                 media screen and (max-width: 100px)
-        //               }
+        (
+            HashMap::from([(
+                "/entry.pc",
+                r#"
+                      trigger mobile {
+                        "media screen and (max-width: 100px)"
+                      }
 
-        //               trigger everyOther {
-        //                 :nth-child(2n)
-        //               }
+                      component A {
+                        variant mobile trigger {
+                          mobile
+                        }
+                        render div {
+                          style variant mobile {
 
-        //               component Test {
-        //                 variant a on trigger mobile
-        //                 variant b on trigger everyOther
-        //                 div {
-        //                   style variant a, b {
-        //                     color
-        //                   }
-        //                 }
-        //               }
-        //             "#,
-        //         ),
-        //     ]),
-        //     r#"
-        //       .80f4925f-6 {
-        //           font-family: Helvetica;
-        //           color: blue;
-        //       }
-        // "#,
-        // ),
+                          }
+                        }
+                      }
+                    "#,
+            )]),
+            r#"
+              @media screen and (max-width: 100px) {
+                .80f4925f-6 {
+                    font-family: Helvetica;
+                    color: blue;
+                }
+              }
+        "#,
+        ),
+        (
+            HashMap::from([(
+                "/entry.pc",
+                r#"
+                      trigger mobile {
+                        "@media screen and (max-width: 100px)"
+                      }
+                      trigger everyOther {
+                        ":nth-child(2n)"
+                      }
+
+                      component A {
+                        variant mobile trigger {
+                          mobile
+                        }
+                        variant everyOther trigger {
+                          everyOther
+                        }
+                        render div {
+                          style variant mobile {
+
+                          }
+                        }
+                      }
+                    "#,
+            )]),
+            r#"
+              @media screen and (max-width: 100px) {
+                .80f4925f-6 {
+                    font-family: Helvetica;
+                    color: blue;
+                }
+              }
+        "#,
+        ),
         (
             HashMap::from([(
                 "/entry.pc",

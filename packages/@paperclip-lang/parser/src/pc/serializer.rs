@@ -32,14 +32,29 @@ fn serialize_import(imp: &ast::Import, context: &mut Context) {
 }
 
 fn serialize_trigger(trigger: &ast::Trigger, context: &mut Context) {
-    context.add_buffer(format!("trigger {} {{\n", trigger.name).as_str());
+    context.add_buffer(format!("trigger {} ", trigger.name).as_str());
+    serialize_trigger_body(&trigger.body, context);
+    context.add_buffer("\n\n");
+}
+
+fn serialize_trigger_body(body: &Vec<ast::TriggerBodyItem>, context: &mut Context) {
+    context.add_buffer("{\n");
     context.start_block();
-    for item in &trigger.body {
-        context.add_buffer(format!("\"{}\"\n", item.value).as_str());
+    for item in body {
+        match item {
+            ast::TriggerBodyItem::String(value) => {
+                context.add_buffer(format!("\"{}\"", value.value).as_str());
+            }
+            ast::TriggerBodyItem::Reference(reference) => {
+                serialize_reference(reference, context);
+            }
+        }
+        context.add_buffer("\n");
     }
     context.end_block();
-    context.add_buffer("}\n\n");
+    context.add_buffer("}");
 }
+
 fn serialize_atom(atom: &ast::Atom, context: &mut Context) {
     if atom.is_public {
         context.add_buffer("public ");
@@ -267,7 +282,7 @@ fn serialize_items<TItem, TSerializeFun>(
     items: &Vec<TItem>,
     context: &mut Context,
     serialize_item: TSerializeFun,
-    delim: &str
+    delim: &str,
 ) where
     TSerializeFun: Fn(&TItem, &mut Context),
 {
@@ -284,11 +299,11 @@ fn serialize_boolean(node: &ast::Boolean, context: &mut Context) {
     context.add_buffer(if node.value { "true" } else { "false" });
 }
 
-fn serialize_variant(imp: &ast::Variant, context: &mut Context) {
-    context.add_buffer(format!("variant {}", imp.name).as_str());
-    if imp.triggers.len() > 0 {
+fn serialize_variant(variant: &ast::Variant, context: &mut Context) {
+    context.add_buffer(format!("variant {}", variant.name).as_str());
+    if variant.triggers.len() > 0 {
         context.add_buffer(" trigger ");
-        serialize_items(&imp.triggers, context, serialize_reference, ", ");
+        serialize_trigger_body(&variant.triggers, context);
     }
     context.add_buffer("\n");
 }

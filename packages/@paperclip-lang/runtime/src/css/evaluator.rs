@@ -1,13 +1,11 @@
 use super::errors;
 use super::virt;
-use futures::lock::MutexGuard;
 use paperclip_common::id::get_document_id;
 use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph::graph;
 use paperclip_parser::graph::graph_ref;
 use paperclip_parser::pc::ast;
 use std::cell::RefCell;
-use std::collections::HashMap;
 use std::rc::Rc;
 
 struct DocumentContext<'path, 'graph, 'expr> {
@@ -165,6 +163,11 @@ fn evaluate_style_declarations(
 
     if let Some(extends) = &style.extends {
         for reference in extends {
+            if let Some(reference) = context.graph.get_ref(&reference.path, context.path) {
+                if let graph_ref::Expr::Style(style) = &reference.expr {
+                    decls.extend(evaluate_style_declarations(style, context));
+                }
+            }
         }
     }
 

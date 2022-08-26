@@ -43,7 +43,8 @@ fn can_evaluate_various_sources() {
               }
               "#,
         ),
-        // style extends
+        // style extends. Note that we want to keep previous props
+        // just in case any value is !important
         (
             HashMap::from([(
                 "/entry.pc",
@@ -61,8 +62,10 @@ fn can_evaluate_various_sources() {
                 "#,
             )]),
             r#"
-              .abba-80f4925f {
-                  color: orange;
+              .80f4925f-10 {
+                  font-family: Helvetica;
+                  font-weight: 600;
+                  font-weight: 300;
               }
               "#,
         ),

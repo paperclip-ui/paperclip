@@ -1,7 +1,14 @@
 use super::graph::Graph;
 use crate::pc::ast;
 
-pub enum Ref<'expr> {
+#[derive(Debug)]
+pub struct RefInfo<'expr> {
+  pub path: &'expr str,
+  pub expr: Expr<'expr>
+}
+
+#[derive(Debug)]
+pub enum Expr<'expr> {
   Document(&'expr ast::Document),
   Import(&'expr ast::Import),
   Atom(&'expr ast::Atom),
@@ -10,7 +17,7 @@ pub enum Ref<'expr> {
 }
 
 impl Graph {
-  pub fn get_ref(&self, ref_path: &Vec<&str>, dep_path: &str) -> Option<Ref<'_>> {
+  pub fn get_ref(&self, ref_path: &Vec<String>, dep_path: &str) -> Option<RefInfo<'_>> {
 
     let mut curr_dep = if let Some(dep) = self.dependencies.get(dep_path) {
       dep
@@ -18,39 +25,38 @@ impl Graph {
       return None;
     };
 
-    let mut curr = Ref::Document(&curr_dep.document);
+    let mut expr = Expr::Document(&curr_dep.document);
 
 
     for part in ref_path {
-      match curr {
-        Ref::Document(doc) => {
+      match expr {
+        Expr::Document(doc) => {
           for child in &doc.body {
 
             // any way to make this more DRY? Macros???
             match child {
               ast::DocumentBodyItem::Import(import) => {
                 if part == &import.namespace {
-                  println!("OK");
-                  curr = Ref::Import(import);
+                  expr = Expr::Import(import);
                   break;
                 }
               }
               ast::DocumentBodyItem::Atom(atom) => {
                 if part == &atom.name {
-                  curr = Ref::Atom(atom);
+                  expr = Expr::Atom(atom);
                   break;
                 }
               }
               ast::DocumentBodyItem::Component(component) => {
                 if part == &component.name {
-                  curr = Ref::Component(component);
+                  expr = Expr::Component(component);
                   break;
                 }
               }
               ast::DocumentBodyItem::Style(style) => {
                 if let Some(name) = &style.name {
                   if name == part {
-                    curr = Ref::Style(style);
+                    expr = Expr::Style(style);
                     break;
                   }
                 }
@@ -65,6 +71,9 @@ impl Graph {
       }
     }
 
-    Some(curr)
+    Some(RefInfo {
+      path: &curr_dep.path,
+      expr
+    })
   }
 }

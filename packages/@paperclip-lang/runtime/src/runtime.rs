@@ -1,6 +1,7 @@
 use crate::css::virt as css_virt;
 use crate::html::virt as html_virt;
 use paperclip_parser::graph::graph;
+use paperclip_parser::graph::io as graph_io;
 
 pub struct EvaluatedDocument {
     // Path of the dependency that was evaluated
@@ -17,7 +18,7 @@ pub struct Runtime {
     graph: graph::Graph,
 }
 
-pub trait RuntimeIO: graph::IO {}
+pub trait RuntimeIO: graph_io::IO {}
 
 impl Runtime {
     pub fn new() -> Self {

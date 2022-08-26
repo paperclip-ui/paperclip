@@ -1,4 +1,4 @@
-use super::graph::IO;
+use super::io::IO;
 use futures::future::{BoxFuture, FutureExt};
 use std::collections::HashMap;
 use std::sync::Arc;

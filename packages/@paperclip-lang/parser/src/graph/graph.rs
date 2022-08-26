@@ -1,3 +1,4 @@
+use super::io::IO;
 use crate::pc::ast;
 use crate::pc::parser::parse as parse_pc;
 use crate::pc::symbol_table::{get_symbol_table, SymbolTableItem};
@@ -7,11 +8,6 @@ use futures::lock::Mutex;
 use std::collections::{HashMap, HashSet};
 use std::marker::Sync;
 use std::sync::Arc;
-
-pub trait IO: Sync + Send {
-    fn resolve(&self, from_path: &String, to_path: &String) -> BoxFuture<'static, Option<String>>;
-    fn read(&self, path: &String) -> BoxFuture<'static, Option<String>>;
-}
 
 #[derive(Debug)]
 pub struct Dependency {

@@ -1,8 +1,9 @@
 use super::config::Config;
 use anyhow::Result;
-use futures::future::{select_all, BoxFuture, Future, FutureExt};
+use futures::future::{BoxFuture, FutureExt};
 use glob::glob;
-use paperclip_parser::graph::graph::{Graph, IO as GraphIO};
+use paperclip_parser::graph::graph::Graph;
+use paperclip_parser::graph::io::IO as GraphIO;
 use path_absolutize::*;
 use std::fs;
 use std::path::Path;

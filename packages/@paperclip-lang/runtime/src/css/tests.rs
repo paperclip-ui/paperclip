@@ -49,25 +49,80 @@ fn can_evaluate_various_sources() {
             HashMap::from([(
                 "/entry.pc",
                 r#"
-                  style fontRegular {
-                    font-family: Helvetica
-                    font-weight: 600
+                style fontRegular {
+                  font-family: Helvetica
+                  font-weight: 600
+                }
+
+                div {
+                  style extends fontRegular {
+                    font-weight: 300
+                  }
+                }
+              "#,
+            )]),
+            r#"
+            .80f4925f-10 {
+                font-family: Helvetica;
+                font-weight: 600;
+                font-weight: 300;
+            }
+            "#,
+        ),
+        (
+            HashMap::from([(
+                "/entry.pc",
+                r#"
+                  style a {
+                    color: red
+                  }
+                  style b {
+                    color: orange
                   }
 
                   div {
-                    style extends fontRegular {
-                      font-weight: 300
+                    style extends a, b {
+                      color: blue
                     }
                   }
                 "#,
             )]),
             r#"
-              .80f4925f-10 {
-                  font-family: Helvetica;
-                  font-weight: 600;
-                  font-weight: 300;
-              }
-              "#,
+          .80f4925f-12 {
+              color: red;
+              color: orange;
+              color: blue;
+          }
+          "#,
+        ),
+        (
+            HashMap::from([
+                (
+                    "/styles.pc",
+                    r#"
+                      public style fontRegular {
+                        font-family: Helvetica
+                      }
+                    "#,
+                ),
+                (
+                    "/entry.pc",
+                    r#"
+                      import "/styles.pc" as styles
+                      div {
+                        style extends styles.fontRegular {
+                          color: blue
+                        }
+                      }
+                    "#,
+                ),
+            ]),
+            r#"
+        .80f4925f-6 {
+            font-family: Helvetica;
+            color: blue;
+        }
+        "#,
         ),
         (
             HashMap::from([(

@@ -1,6 +1,6 @@
-use super::graph::{Graph, IO};
+use super::graph::Graph;
+use super::io::IO;
 use super::test_utils::MockFS;
-use crate::pc::serializer::serialize;
 use futures::executor::block_on;
 use futures::future::{BoxFuture, Future, FutureExt};
 use std::collections::HashMap;

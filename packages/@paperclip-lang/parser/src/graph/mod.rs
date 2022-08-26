@@ -1,5 +1,6 @@
 pub mod graph;
-pub mod graph_ref;
+pub mod io;
+pub mod reference;
 
 #[cfg(test)]
 pub mod tests;

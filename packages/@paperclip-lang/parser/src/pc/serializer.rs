@@ -38,7 +38,7 @@ fn serialize_trigger(trigger: &ast::Trigger, context: &mut Context) {
         context.add_buffer(format!("\"{}\"\n", item.value).as_str());
     }
     context.end_block();
-    context.add_buffer("}");
+    context.add_buffer("}\n\n");
 }
 fn serialize_atom(atom: &ast::Atom, context: &mut Context) {
     if atom.is_public {
@@ -68,7 +68,7 @@ fn serialize_component(component: &ast::Component, context: &mut Context) {
         }
     }
     context.end_block();
-    context.add_buffer("}\n");
+    context.add_buffer("}\n\n");
 }
 
 fn serialize_style(style: &ast::Style, context: &mut Context) {
@@ -80,8 +80,9 @@ fn serialize_style(style: &ast::Style, context: &mut Context) {
         context.add_buffer(format!(" {}", name).as_str());
     }
 
-    if let Some(variant_name) = &style.variant_name {
-        context.add_buffer(format!(" variant {}", variant_name).as_str());
+    if let Some(variants) = &style.variant {
+        context.add_buffer(" variant ");
+        serialize_items(variants, context, serialize_reference, " + ");
     }
 
     if let Some(extends) = &style.extends {
@@ -258,7 +259,7 @@ fn serialize_reference(node: &ast::Reference, context: &mut Context) {
 
 fn serialize_array(node: &ast::Array, context: &mut Context) {
     context.add_buffer("[");
-    serialize_items(&node.items, context, serialize_simple_expression);
+    serialize_items(&node.items, context, serialize_simple_expression, ", ");
     context.add_buffer("]");
 }
 
@@ -266,6 +267,7 @@ fn serialize_items<TItem, TSerializeFun>(
     items: &Vec<TItem>,
     context: &mut Context,
     serialize_item: TSerializeFun,
+    delim: &str
 ) where
     TSerializeFun: Fn(&TItem, &mut Context),
 {
@@ -273,7 +275,7 @@ fn serialize_items<TItem, TSerializeFun>(
     while let Some(item) = it.next() {
         serialize_item(&item, context);
         if it.peek().is_some() {
-            context.add_buffer(", ");
+            context.add_buffer(delim);
         }
     }
 }
@@ -283,8 +285,11 @@ fn serialize_boolean(node: &ast::Boolean, context: &mut Context) {
 }
 
 fn serialize_variant(imp: &ast::Variant, context: &mut Context) {
-    context.add_buffer(format!("variant {} ", imp.name).as_str());
-    serialize_parameters(&imp.parameters, context);
+    context.add_buffer(format!("variant {}", imp.name).as_str());
+    if imp.triggers.len() > 0 {
+        context.add_buffer(" trigger ");
+        serialize_items(&imp.triggers, context, serialize_reference, ", ");
+    }
     context.add_buffer("\n");
 }
 

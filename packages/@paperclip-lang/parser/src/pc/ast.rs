@@ -17,7 +17,7 @@ pub struct Variant {
     pub id: String,
     pub range: Range,
     pub name: String,
-    pub parameters: Vec<Parameter>,
+    pub triggers: Vec<Reference>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -32,7 +32,7 @@ pub struct Style {
     pub id: String,
     pub is_public: bool,
     pub name: Option<String>,
-    pub variant_name: Option<String>,
+    pub variant: Option<Vec<Reference>>,
     pub extends: Option<Vec<Reference>>,
     pub range: Range,
     pub declarations: Vec<css_ast::StyleDeclaration>,

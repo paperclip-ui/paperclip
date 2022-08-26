@@ -218,16 +218,15 @@ fn parse_style(context: &mut PCContext, is_public: bool) -> Result<ast::Style, e
         None
     };
 
-    let variant_name = if context.curr_token == Some(Token::KeywordVariant) {
+    let variant = if context.curr_token == Some(Token::KeywordVariant) {
         context.next_token()?; // eat keyword
-        context.skip(is_superfluous_or_newline);
-        let name = extract_word_value(context)?;
-        context.next_token()?; // eat name
-        context.skip(is_superfluous_or_newline);
-        Some(name)
+        context.skip(is_superfluous);
+        Some(parse_list(context, parse_ref, Token::Byte(b'+'))?)
     } else {
         None
     };
+
+    context.skip(is_superfluous);
 
     let extends = if context.curr_token == Some(Token::KeywordExtends) {
         Some(parse_style_extends(context)?)
@@ -261,7 +260,7 @@ fn parse_style(context: &mut PCContext, is_public: bool) -> Result<ast::Style, e
     Ok(ast::Style {
         id: context.next_id(),
         is_public,
-        variant_name,
+        variant,
         name,
         extends,
         declarations,
@@ -350,19 +349,27 @@ fn parse_variant(context: &mut PCContext) -> Result<ast::Variant, err::ParserErr
     let name = extract_word_value(context)?;
     context.next_token()?; // eat tag name
     context.skip(is_superfluous_or_newline);
-    let parameters = if context.curr_token == Some(Token::ParenOpen) {
-        parse_parameters(context)?
+    let triggers = if context.curr_token == Some(Token::Word(b"trigger")) {
+        parse_variant_triggers(context)?
     } else {
         vec![]
     };
+
     let end = context.curr_u16pos.clone();
+    context.skip(is_superfluous_or_newline);
 
     Ok(ast::Variant {
         id: context.next_id(),
         range: base_ast::Range::new(start, end),
         name,
-        parameters,
+        triggers,
     })
+}
+
+fn parse_variant_triggers(context: &mut PCContext) -> Result<Vec<ast::Reference>, err::ParserError> {
+    context.next_token()?; // eat trigger
+    context.skip(is_superfluous);
+    parse_list(context, parse_ref, Token::Comma)
 }
 
 fn parse_script(context: &mut PCContext) -> Result<ast::Script, err::ParserError> {
@@ -389,6 +396,7 @@ where
     let mut items = vec![];
     loop {
         items.push(parse_item(context)?);
+        context.skip(is_superfluous);
         if context.curr_token == Some(delim) {
             context.next_token()?; // eat ,
             context.skip(is_superfluous_or_newline);

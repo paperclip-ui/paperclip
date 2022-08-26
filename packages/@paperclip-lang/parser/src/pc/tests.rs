@@ -119,6 +119,7 @@ fn can_parse_various_contents() {
             r#"
             component A {
             }
+
             component B {
             }
         "#,
@@ -192,12 +193,11 @@ fn can_parse_various_contents() {
             trigger everyOther {
                 ":nth-child(2n)"
             }
+
             component A {
-                variant a trigger {
-                    everyOther
-                }
-                div {
-                    style variant a {
+                variant a trigger everyOther
+                render div {
+                    style {
                         color: blue
                     }
                 }
@@ -208,7 +208,7 @@ fn can_parse_various_contents() {
         (
             r#"
             component A {
-                variant a (enabled: [true])
+                variant a
             }
         "#,
             Ok(()),
@@ -216,23 +216,7 @@ fn can_parse_various_contents() {
         (
             r#"
             component A {
-                variant a (enabled: [some.ref])
-            }
-        "#,
-            Ok(()),
-        ),
-        (
-            r#"
-            component A {
-                variant a (enabled: ["blarg"])
-            }
-        "#,
-            Ok(()),
-        ),
-        (
-            r#"
-            component A {
-                variant a (enabled: [a, b])
+                variant a trigger some.ref
             }
         "#,
             Ok(()),
@@ -250,7 +234,7 @@ fn can_parse_various_contents() {
             component A {
                 render div {
                     override a.b.c {
-                        variant a (enabled: true)
+                        variant a
                         style {
                             color: blue
                         }
@@ -329,10 +313,10 @@ fn can_parse_various_contents() {
         (
             r#"
             public component A {
-                variant ab (enabled: [])
-                variant abc (enabled: [])
+                variant ab
+                variant abc
                 render div test {
-                    style variant test {
+                    style variant ab + abc {
                     }
                 }
             }

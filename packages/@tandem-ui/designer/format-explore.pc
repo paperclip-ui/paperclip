@@ -2,8 +2,12 @@
  * @bounds(left: 610, top: 0, right: 789, bottom: 121)
  */
 public component Component {
-  variant a (enabled: [true])
-  variant b (enabled: [true])
+  variant a trigger {
+    true
+  }
+  variant b trigger {
+    true
+  }
   render div {
     text labelText "Double click to edit" {
       style {
@@ -23,7 +27,9 @@ public component Component {
  */
 Component instance {
   override {
-    variant b (enabled: [true])
+    variant b trigger {
+      true
+    }
   }
   override labelText {
     style {

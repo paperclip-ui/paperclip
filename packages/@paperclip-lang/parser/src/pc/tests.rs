@@ -194,6 +194,7 @@ fn can_parse_various_contents() {
             component A {
                 variant a trigger {
                     everyOther
+                    true
                 }
                 render div {
                     style {

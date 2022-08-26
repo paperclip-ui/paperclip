@@ -48,6 +48,9 @@ fn serialize_trigger_body(body: &Vec<ast::TriggerBodyItem>, context: &mut Contex
             ast::TriggerBodyItem::Reference(reference) => {
                 serialize_reference(reference, context);
             }
+            ast::TriggerBodyItem::Boolean(reference) => {
+                serialize_boolean(reference, context);
+            }
         }
         context.add_buffer("\n");
     }

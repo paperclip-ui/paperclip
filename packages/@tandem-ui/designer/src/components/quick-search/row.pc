@@ -8,8 +8,10 @@ import "../../icons/view.pc" as imp2
  */
 public component SearchResult {
   script (src: "./search-result-controller.tsx")
-  variant hovering (enabled: [PseudoElement.Hover])
-  variant preselected (enabled: [])
+  variant hovering trigger {
+    PseudoElement.Hover
+  }
+  variant preselected
   render div {
     style {
       width: 100%
@@ -94,6 +96,8 @@ SearchResult searchResult {
     padding-left: 12px
   }
   override {
-    variant hovering (enabled: [true])
+    variant hovering trigger {
+      true
+    }
   }
 }

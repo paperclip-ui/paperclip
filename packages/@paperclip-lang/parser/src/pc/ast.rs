@@ -254,6 +254,7 @@ pub struct Trigger {
 pub enum TriggerBodyItem {
     String(Str),
     Reference(Reference),
+    Boolean(Boolean),
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

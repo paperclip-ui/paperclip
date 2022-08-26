@@ -160,7 +160,8 @@ fn parse_trigger_body_item(
     context: &mut PCContext,
 ) -> Result<ast::TriggerBodyItem, err::ParserError> {
     match &context.curr_token {
-        Some(Token::String(value)) => Ok(ast::TriggerBodyItem::String(parse_string(context)?)),
+        Some(Token::String(_)) => Ok(ast::TriggerBodyItem::String(parse_string(context)?)),
+        Some(Token::Word(b"true")) | Some(Token::Word(b"false")) => Ok(ast::TriggerBodyItem::Boolean(parse_boolean(context)?)),
         Some(Token::Word(_)) => Ok(ast::TriggerBodyItem::Reference(parse_ref(context)?)),
         _ => Err(context.new_unexpected_token_error())
     }

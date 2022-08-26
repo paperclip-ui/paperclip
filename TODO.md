@@ -14,7 +14,10 @@
   - walk AST and emit CSS
     - use names if present
 
-- Symbol table?
+- HTML evaluator
+
+- Preview
+  - trpc?
 
 #### Milestone 3: compiler
 

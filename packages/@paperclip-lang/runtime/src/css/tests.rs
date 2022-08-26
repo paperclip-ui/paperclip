@@ -128,16 +128,30 @@ fn can_evaluate_various_sources() {
             HashMap::from([(
                 "/entry.pc",
                 r#"
-                      trigger mobile {
+                      trigger a {
                         "@media screen and (max-width: 100px)"
                       }
-
+                      trigger b {
+                        "@media screen and (max-width: 300px)"
+                        "@media screen and (max-width: 400px)"
+                        ":nth-child(2n)"
+                      }
+                      trigger c {
+                        "@supports mobile"
+                        "@supports desktop"
+                      }
                       component A {
-                        variant mobile trigger {
-                          mobile
+                        variant a trigger {
+                          a
+                        }
+                        variant b trigger {
+                          b
+                        }
+                        variant c trigger {
+                          c
                         }
                         render div {
-                          style variant mobile {
+                          style variant a + b + c {
 
                           }
                         }
@@ -153,47 +167,11 @@ fn can_evaluate_various_sources() {
               }
         "#,
         ),
+        // Tokens
         (
             HashMap::from([(
                 "/entry.pc",
                 r#"
-                      trigger mobile {
-                        "@media screen and (max-width: 100px)"
-                      }
-                      trigger everyOther {
-                        ":nth-child(2n)"
-                      }
-
-                      component A {
-                        variant mobile trigger {
-                          mobile
-                        }
-                        variant everyOther trigger {
-                          everyOther
-                        }
-                        render div {
-                          style variant mobile {
-
-                          }
-                        }
-                      }
-                    "#,
-            )]),
-            r#"
-              @media screen and (max-width: 100px) {
-                .80f4925f-6 {
-                    font-family: Helvetica;
-                    color: blue;
-                }
-              }
-        "#,
-        ),
-
-        // Tokens
-        (
-          HashMap::from([(
-              "/entry.pc",
-              r#"
                 token snowWhite rgba(255, 255, 255, 0)
 
                 div {
@@ -203,13 +181,13 @@ fn can_evaluate_various_sources() {
                 }
 
               "#,
-          )]),
-          r#"
+            )]),
+            r#"
             .A-blarg-80f4925f {
                 color: blue;
             }
             "#,
-      ),
+        ),
         (
             HashMap::from([(
                 "/entry.pc",

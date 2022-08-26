@@ -19,8 +19,11 @@ struct DocumentContext<'path, 'graph, 'expr> {
 #[derive(Debug)]
 enum VariantTrigger {
     Boolean(bool),
-    Selector(String)
+    Selector(String),
 }
+
+type SelectorCombo = Vec<String>;
+type SelectorCombos = Vec<SelectorCombo>;
 
 impl<'path, 'graph, 'expr> DocumentContext<'path, 'graph, 'expr> {
     pub fn within_component(&self, component: &'expr ast::Component) -> Self {
@@ -115,38 +118,153 @@ fn evaluate_element(element: &ast::Element, context: &mut DocumentContext) {
     for item in &element.body {
         match item {
             ast::ElementBodyItem::Style(style) => {
-                evaluate_style_variant(style, &mut el_context);
+                evaluate_style(style, &mut el_context);
             }
             _ => {}
         }
     }
 }
 
-fn evaluate_style_variant(style: &ast::Style, context: &mut DocumentContext) {
+fn evaluate_style(style: &ast::Style, context: &mut DocumentContext) {
     if let Some(variants) = &style.variant_combo {
-        let variant_combo_triggers = collect_style_variant_triggers(variants, context);
-
-        for variant_triggers_a in &variant_combo_triggers {
-            for vairant_triggers_b in &variant_combo_triggers {
-                
-            }
-        }
-        
+        let style_combo_triggers = collect_style_variant_triggers(variants, context);
+        evaluate_triggered_styles(&style, &style_combo_triggers, context);
     } else {
-        evaluate_style(style, context)
+        evaluate_vanilla_style(style, context)
     }
 }
 
 
-fn collect_style_variant_triggers(variant_refs: &Vec<ast::Reference>, context: &mut DocumentContext) -> Vec<Vec<VariantTrigger>> {
 
+fn evaluate_triggered_styles(
+    style: &ast::Style,
+    style_combo_triggers: &Vec<Vec<VariantTrigger>>,
+    context: &mut DocumentContext,
+) {
+    let (combo_container_queries, combo_selectors) = get_combo_selectors(style_combo_triggers);
+
+    for container_query_combo in combo_container_queries {
+
+    }
+}
+
+
+fn evalute_container(container_combo: &SelectorCombo, selector_combos: &SelectorCombos) {
+    for query in container_combo {
+
+    }
+}
+
+fn create_container_query(container_combo: &SelectorCombo, selector_combos: &SelectorCombos) {
+    // container_combo.red
+
+}
+/*
+
+[
+    ["@a", "@b", "@c"],
+    [".selector", "@e", "@f", "@g", ".something"],
+    [":nth-child(2n)", "@supports mobile", "@h", "@i"]
+]
+
+["@a"]
+["@b"]
+["@c"]
+
+["@a", "@e"]
+["@a", "@f"]
+
+["@a", "@e", "@h"]
+["@a", "@e", "@i"]
+["@a", "@g"]
+["@a", "@g"]
+
+
+@media screen and (max-width: 100px) {
+    @media screen and (min-width: 30px) {
+
+    }
+}
+
+*/
+
+fn get_combo_selectors(
+    style_combo_triggers: &Vec<Vec<VariantTrigger>>,
+) -> (SelectorCombos, SelectorCombos) {
+    let mut combo_container_queries: SelectorCombos = vec![];
+    let mut combo_selectors: SelectorCombos = vec![];
+
+    for group in style_combo_triggers {
+        let mut container_queries = vec![];
+        let mut selectors = vec![];
+
+        for selector in group {
+            if let VariantTrigger::Selector(selector) = selector {
+                if selector.starts_with("@") {
+                    container_queries.push(selector);
+                } else {
+                    selectors.push(selector);
+                }
+            }
+        }
+
+        combo_container_queries = merge_combos(&combo_container_queries, &container_queries);
+        combo_selectors = merge_combos(&combo_selectors, &selectors);
+    }
+
+    (combo_container_queries, combo_selectors)
+}
+
+fn merge_combos(existing_combos: &SelectorCombos, new_items: &Vec<&String>) -> SelectorCombos {
+    let mut new_combos: SelectorCombos = vec![];
+    for item in new_items {
+        for combo in existing_combos {
+            let mut new_combo = combo.clone();
+            new_combo.push(item.to_string());
+            new_combos.push(new_combo);
+        }
+
+        if existing_combos.len() == 0 {
+            new_combos.push(vec![item.to_string()]);
+        }
+    }
+
+    new_combos
+}
+
+// fn get_queries(style_combo_triggers: &Vec<Vec<VariantTrigger>>) -> (Vec<&str>, Vec<&str>> {
+
+//     let mut container_queries: Vec<&str> = vec![];
+//     let mut style_queries: Vec<&str> = vec![];
+
+//     for a in style_combo_triggers {
+//         for b in a {
+//             if let VariantTrigger::Selector(selector) = b {
+//                 if selector.starts_with("@") {
+//                     container_queries.push(selector);
+//                 } else {
+//                     style_queries.push(selector);
+//                 }
+//             }
+//         }
+//     }
+
+//     (container_queries, style_queries)
+// }
+
+fn collect_style_variant_triggers(
+    variant_refs: &Vec<ast::Reference>,
+    context: &mut DocumentContext,
+) -> Vec<Vec<VariantTrigger>> {
     let mut combo_triggers = vec![];
-    
+
+    // TODO - need to also include variant _class_
+
     if let Some(component) = context.current_component {
         for variant_ref in variant_refs {
             if variant_ref.path.len() == 1 {
                 let variant = component.get_variant(variant_ref.path.get(0).unwrap());
-                if let Some(variant) = variant  {
+                if let Some(variant) = variant {
                     let mut triggers = vec![];
                     collect_triggers(&variant.triggers, &mut triggers, context);
                     combo_triggers.push(triggers);
@@ -158,15 +276,19 @@ fn collect_style_variant_triggers(variant_refs: &Vec<ast::Reference>, context: &
     combo_triggers
 }
 
-fn collect_triggers(triggers: &Vec<ast::TriggerBodyItem>, into: &mut Vec<VariantTrigger>, context: &mut DocumentContext) {
+fn collect_triggers(
+    triggers: &Vec<ast::TriggerBodyItem>,
+    into: &mut Vec<VariantTrigger>,
+    context: &mut DocumentContext,
+) {
     for trigger in triggers {
         match trigger {
             ast::TriggerBodyItem::Boolean(expr) => {
                 into.push(VariantTrigger::Boolean(expr.value));
-            },
+            }
             ast::TriggerBodyItem::String(expr) => {
                 into.push(VariantTrigger::Selector(expr.value.to_string()));
-            },
+            }
             ast::TriggerBodyItem::Reference(expr) => {
                 if let Some(info) = context.graph.get_ref(&expr.path, context.path) {
                     if let graph_ref::Expr::Trigger(trigger) = &info.expr {
@@ -178,20 +300,25 @@ fn collect_triggers(triggers: &Vec<ast::TriggerBodyItem>, into: &mut Vec<Variant
     }
 }
 
-
-fn evaluate_style(style: &ast::Style, context: &mut DocumentContext) {
-    if let Some(ns) = get_style_namespace(context) {
+fn evaluate_vanilla_style(style: &ast::Style, context: &mut DocumentContext) {
+    if let Some(style) = create_virt_style(style, context) {
         context
             .document
             .borrow_mut()
             .rules
-            .push(virt::Rule::Style(virt::StyleRule {
-                id: "rule".to_string(),
-                source_id: style.id.to_string(),
-                selector_text: format!(".{}", ns),
-                style: evaluate_style_declarations(style, context),
-            }))
+            .push(virt::Rule::Style(style));
     }
+}
+
+fn create_virt_style(style: &ast::Style, context: &mut DocumentContext) -> Option<virt::StyleRule> {
+    get_style_namespace(context).and_then(|ns| {
+        Some(virt::StyleRule {
+            id: "rule".to_string(),
+            source_id: style.id.to_string(),
+            selector_text: format!(".{}", ns),
+            style: create_style_declarations(style, context),
+        })
+    })
 }
 
 fn get_style_namespace(context: &DocumentContext) -> Option<String> {
@@ -219,7 +346,7 @@ fn get_style_namespace(context: &DocumentContext) -> Option<String> {
     }
 }
 
-fn evaluate_style_declarations(
+fn create_style_declarations(
     style: &ast::Style,
     context: &DocumentContext,
 ) -> Vec<virt::StyleDeclaration> {
@@ -233,7 +360,7 @@ fn evaluate_style_declarations(
         for reference in extends {
             if let Some(reference) = context.graph.get_ref(&reference.path, context.path) {
                 if let graph_ref::Expr::Style(style) = &reference.expr {
-                    decls.extend(evaluate_style_declarations(style, context));
+                    decls.extend(create_style_declarations(style, context));
                 }
             }
         }

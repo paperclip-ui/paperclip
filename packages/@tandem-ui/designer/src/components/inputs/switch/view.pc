@@ -6,7 +6,7 @@ import "../../../global.pc" as imp0
  */
 public component Switch {
   script (src: "./controller.tsx")
-  variant on (enabled: [true])
+  variant on trigger { true }
   render div {
     style {
       box-sizing: border-box
@@ -52,6 +52,6 @@ public component Switch {
  */
 Switch onPreview {
   override {
-    variant on (enabled: [true])
+    variant on trigger { true }
   }
 }

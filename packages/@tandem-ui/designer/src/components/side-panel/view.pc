@@ -7,8 +7,8 @@ import "../popover/view.pc" as imp2
  * @bounds(left: 0, top: 0, right: 600, bottom: 402)
  */
 public component SidePanel {
-  variant left (enabled: [])
-  variant right (enabled: [true])
+  variant left
+  variant right trigger { true }
   render div {
     style {
       min-width: 300px
@@ -136,12 +136,12 @@ div preview {
       margin-bottom: 10px
     }
     override {
-      variant right (enabled: [true])
+      variant right trigger { true }
     }
   }
   SidePanel sidePanel2 {
     override {
-      variant left (enabled: [true])
+      variant left trigger { true }
     }
   }
 }

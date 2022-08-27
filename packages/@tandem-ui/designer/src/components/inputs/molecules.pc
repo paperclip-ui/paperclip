@@ -43,7 +43,7 @@ public component LabeledInput {
  * @bounds(left: 58, top: 295, right: 393, bottom: 508)
  */
 public component Tooltip {
-  variant right (enabled: [true])
+  variant right trigger { true }
   render div {
     style extends imp0.defaultShadowStyle {
       box-sizing: border-box
@@ -136,7 +136,7 @@ div element2 {
         position: absolute
       }
       override {
-        variant right (enabled: [true])
+        variant right trigger { true }
       }
     }
   }

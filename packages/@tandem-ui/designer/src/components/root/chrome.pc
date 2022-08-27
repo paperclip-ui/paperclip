@@ -11,11 +11,11 @@ import "../component-picker/picker.pc" as imp5
  */
 public component Chrome {
   script (src: "./chrome-controller.tsx")
-  variant unsaved (enabled: [])
-  variant minimal (enabled: [])
-  variant hasSelectedProject (enabled: [])
-  variant macos (enabled: [])
-  variant windows (enabled: [true])
+  variant unsaved
+  variant minimal
+  variant hasSelectedProject
+  variant macos
+  variant windows trigger { true }
   render div {
     style {
       box-sizing: border-box
@@ -228,7 +228,7 @@ Chrome welcomePreview {
  */
 Chrome windowsPreview {
   override {
-    variant windows (enabled: [true])
+    variant windows trigger { true }
   }
   override header {
     style {
@@ -246,7 +246,7 @@ Chrome windowsPreview {
         }
       }
       override rightGutter.tab1 {
-        variant selected (enabled: [true])
+        variant selected trigger { true }
       }
     }
   }
@@ -256,7 +256,7 @@ Chrome windowsPreview {
  */
 Chrome macOsPreview {
   override {
-    variant macos (enabled: [true])
+    variant macos trigger { true }
   }
   override header {
     style {
@@ -274,7 +274,7 @@ Chrome macOsPreview {
         }
       }
       override rightGutter.tab1 {
-        variant selected (enabled: [true])
+        variant selected trigger { true }
       }
     }
   }

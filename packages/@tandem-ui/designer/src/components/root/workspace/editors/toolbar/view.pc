@@ -11,7 +11,7 @@ import "../paperclip/stage/canvas/tools-layer/frames-view.pc" as imp5
  */
 public component Toolbar {
   script (src: "./controller.tsx")
-  variant active (enabled: [true])
+  variant active trigger { true }
   render div {
     style {
       display: flex
@@ -147,7 +147,7 @@ public component EditorTabs {
         height: 100%
       }
       override {
-        variant selected (enabled: [true])
+        variant selected trigger { true }
       }
       override xButton {
         style {
@@ -157,7 +157,7 @@ public component EditorTabs {
     }
     imp4.EditorTab inst2 (label: "component.pc", xButton: "x") {
       override {
-        variant hovering (enabled: [true])
+        variant hovering trigger { true }
       }
     }
     imp4.EditorTab(label: "component.pc") {
@@ -181,7 +181,7 @@ public component EditorTabs {
  * @bounds(left: 468, top: 168, right: 568, bottom: 268)
  */
 public component ToolbarButton {
-  variant selected (enabled: [true])
+  variant selected trigger { true }
   render div {
     style {
       box-sizing: border-box

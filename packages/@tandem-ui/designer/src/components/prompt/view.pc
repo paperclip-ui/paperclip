@@ -62,7 +62,7 @@ public component Prompt {
             margin-right: 8px
           }
           override {
-            variant secondary (enabled: [true])
+            variant secondary trigger { true }
           }
         }
         imp3.Button okButton {

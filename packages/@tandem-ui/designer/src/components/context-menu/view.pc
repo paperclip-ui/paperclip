@@ -26,7 +26,7 @@ public component ContextMenu {
     }
     ContextMenuItem {
       override {
-        variant selected (enabled: [true])
+        variant selected trigger { true }
       }
     }
     ContextMenuItem
@@ -46,7 +46,7 @@ public component ContextMenu {
  * @bounds(left: 2479, top: 77, right: 2617, bottom: 115)
  */
 public component ContextMenuItem {
-  variant selected (enabled: [true])
+  variant selected trigger { true }
   render div {
     style {
       padding: 8px

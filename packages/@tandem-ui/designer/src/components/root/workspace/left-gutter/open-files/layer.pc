@@ -27,25 +27,25 @@ public component NodeLayer {
  * @bounds(left: 411, top: 232, right: 751, bottom: 257)
  */
 public component BaseLayer {
-  variant component2 (enabled: [])
-  variant shadow (enabled: [])
-  variant slot (enabled: [])
-  variant element (enabled: [])
-  variant instance (enabled: [])
-  variant expanded (enabled: [])
-  variant alt (enabled: [])
-  variant file (enabled: [])
-  variant selected (enabled: [])
-  variant editingLabel (enabled: [])
-  variant hover (enabled: [])
-  variant inShadow (enabled: [true])
-  variant plug (enabled: [])
-  variant header (enabled: [])
-  variant folder (enabled: [])
-  variant unlabeled (enabled: [])
-  variant styleMixin (enabled: [])
-  variant text (enabled: [])
-  variant pcLayer (enabled: [])
+  variant component2
+  variant shadow
+  variant slot
+  variant element
+  variant instance
+  variant expanded
+  variant alt
+  variant file
+  variant selected
+  variant editingLabel
+  variant hover
+  variant inShadow trigger { true }
+  variant plug
+  variant header
+  variant folder
+  variant unlabeled
+  variant styleMixin
+  variant text
+  variant pcLayer
   render div {
     style {
       box-sizing: border-box
@@ -314,6 +314,6 @@ BaseLayer preview(label1: "Layer layer layer layer") {
     padding-left: 200px
   }
   override {
-    variant selected (enabled: [true])
+    variant selected trigger { true }
   }
 }

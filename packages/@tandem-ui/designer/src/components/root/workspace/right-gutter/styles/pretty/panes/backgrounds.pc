@@ -11,7 +11,7 @@ import "../../../../../../inputs/dropdown/view.pc" as imp5
  */
 public component BackgroundItem {
   script (src: "./background-item-controller.tsx")
-  variant hover (enabled: [true, PseudoElement.Hover])
+  variant hover trigger { PseudoElement.Hover }
   render div {
     style {
       display: flex
@@ -70,7 +70,7 @@ public component BackgroundItem {
  */
 public component Backgrounds {
   script (src: "./backgrounds-controller.tsx")
-  variant hasBackground (enabled: [true])
+  variant hasBackground trigger { true }
   render imp3.Pane(text: "backgrounds") {
     style {
       display: flex
@@ -80,7 +80,7 @@ public component Backgrounds {
       padding-bottom: 6px
     }
     override {
-      variant right (enabled: [true])
+      variant right trigger { true }
     }
     override content {
       style {
@@ -97,7 +97,7 @@ public component Backgrounds {
       BackgroundItem
       BackgroundItem {
         override {
-          variant hover (enabled: [true])
+          variant hover trigger { true }
         }
       }
       BackgroundItem

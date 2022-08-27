@@ -15,7 +15,7 @@ public component Layout {
       display: flex
     }
     override {
-      variant right (enabled: [true])
+      variant right trigger { true }
     }
     override title {
       style {

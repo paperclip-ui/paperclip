@@ -84,7 +84,9 @@ public component Filter {
  */
 public component ComponentPopdownPicker {
   script (src: "./picker2-controller.tsx")
-  variant noComponents (enabled: [true])
+  variant noComponents trigger {
+    true
+  }
   render div {
     style extends imp3.defaultShadowStyle {
       box-sizing: border-box
@@ -137,7 +139,7 @@ public component ComponentPopdownPicker {
               ComponentPickerPopdownItem item2
               ComponentPickerPopdownItem item3 {
                 override {
-                  variant hover (enabled: [true])
+                  variant hover trigger { true }
                 }
               }
               ComponentPickerPopdownItem item4
@@ -154,7 +156,7 @@ public component ComponentPopdownPicker {
               }
               ComponentPickerPopdownItem item10 {
                 override {
-                  variant alt (enabled: [true])
+                  variant alt trigger { true }
                 }
               }
               ComponentPickerPopdownItem item11 {
@@ -163,7 +165,7 @@ public component ComponentPopdownPicker {
               }
               ComponentPickerPopdownItem item12 {
                 override {
-                  variant alt (enabled: [true])
+                  variant alt trigger { true }
                 }
               }
               ComponentPickerPopdownItem item13
@@ -219,9 +221,9 @@ public component ComponentPopdownPicker {
  * @bounds(left: 2519, top: 644, right: 3298, bottom: 694)
  */
 public component ComponentPickerPopdownItem {
-  variant alt (enabled: [true])
-  variant hover (enabled: [true, PseudoElement.Hover])
-  variant preselected (enabled: [true])
+  variant alt trigger { true }
+  variant hover trigger { PseudoElement.Hover }
+  variant preselected trigger { true }
   render div {
     style {
       box-sizing: border-box

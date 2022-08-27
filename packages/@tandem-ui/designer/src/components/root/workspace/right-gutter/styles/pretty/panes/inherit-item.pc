@@ -8,8 +8,8 @@ import "../../../../../../inputs/dropdown/view.pc" as imp2
  */
 public component InheritItem {
   script (src: "./inherit-item-controller.tsx")
-  variant selected (enabled: [true])
-  variant alt (enabled: [])
+  variant selected trigger { true }
+  variant alt
   render div {
     style {
       display: flex
@@ -24,7 +24,7 @@ public component InheritItem {
       color: rgba(255, 255, 255, 1)
     }
     override {
-      variant filterable (enabled: [true])
+      variant filterable trigger { true }
     }
     div element1 {
       style {

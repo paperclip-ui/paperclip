@@ -52,7 +52,7 @@ public component ButtonBar {
           position: relative
         }
         override {
-          variant selected (enabled: [true])
+          variant selected trigger { true }
         }
         imp1.TextCenterIcon {
           style {
@@ -69,7 +69,7 @@ public component ButtonBar {
           position: relative
         }
         override {
-          variant selected (enabled: [true])
+          variant selected trigger { true }
         }
         imp1.TextCenterIcon {
           style {
@@ -87,8 +87,8 @@ public component ButtonBar {
           height: 22px
         }
         override {
-          variant last (enabled: [true])
-          variant last (enabled: [true])
+          variant last trigger { true }
+          variant last trigger { true }
         }
         imp1.TextRightIcon {
           style {

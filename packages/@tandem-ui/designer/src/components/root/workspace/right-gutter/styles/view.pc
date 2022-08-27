@@ -11,9 +11,9 @@ import "./pretty/view.pc" as imp5
  */
 public component Styles {
   script (src: "./controller.tsx")
-  variant propertiesTab (enabled: [])
-  variant triggersTab (enabled: [])
-  variant showPropertiesTab (enabled: [])
+  variant propertiesTab
+  variant triggersTab
+  variant showPropertiesTab
   render div {
     style {
       box-sizing: border-box

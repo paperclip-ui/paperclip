@@ -10,7 +10,7 @@ public component Code {
   script (src: "./code.tsx")
   render imp0.Pane(text: "custom CSS") {
     override {
-      variant right (enabled: [true])
+      variant right trigger { true }
     }
     override content {
       style {

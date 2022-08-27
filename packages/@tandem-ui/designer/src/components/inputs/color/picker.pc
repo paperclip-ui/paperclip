@@ -9,9 +9,9 @@ import "../dropdown/view.pc" as imp3
  */
 public component ColorPicker {
   script (src: "./picker-controller.tsx")
-  variant noSwatches (enabled: [])
-  variant gradient (enabled: [true])
-  variant noTabs (enabled: [])
+  variant noSwatches
+  variant gradient trigger { true }
+  variant noTabs
   render div {
     style extends imp1.defaultShadowStyle {
       box-sizing: border-box
@@ -369,7 +369,7 @@ public component Picker {
  */
 public component ColorSwatches {
   script (src: "./color-swatch-controller.tsx")
-  variant hasMultipleGroups (enabled: [true])
+  variant hasMultipleGroups trigger { true }
   render div {
     style {
       box-sizing: border-box
@@ -386,7 +386,7 @@ public component ColorSwatches {
       padding-left: 12px
     }
     override {
-      variant selected (enabled: [true])
+      variant selected trigger { true }
     }
     imp3.Dropdown swatchSourceInput {
       style {
@@ -438,7 +438,7 @@ public component ColorSwatches {
         }
         ColorSwatchItem instance322 {
           override {
-            variant selected (enabled: [true])
+            variant selected trigger { true }
           }
           override pill {
             style {
@@ -476,7 +476,7 @@ public component ColorSwatches {
  * @bounds(left: -587, top: 1324, right: -487, bottom: 1424)
  */
 public component ColorSwatchItem {
-  variant selected (enabled: [true])
+  variant selected trigger { true }
   render div {
     style {
       box-sizing: border-box
@@ -534,8 +534,8 @@ div preview {
       left: 100px
     }
     override {
-      variant gradient (enabled: [true])
-      variant noTabs (enabled: [true])
+      variant gradient trigger { true }
+      variant noTabs trigger { true }
     }
     override hsl {
       style {

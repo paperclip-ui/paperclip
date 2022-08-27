@@ -10,7 +10,7 @@ import "../../../../../../../icons/view.pc" as imp4
  */
 public component InstancePane {
   script (src: "./instance-pane-controller.tsx")
-  variant hasOverrides (enabled: [true])
+  variant hasOverrides trigger { true }
   render div {
     style {
       box-sizing: border-box
@@ -18,7 +18,7 @@ public component InstancePane {
     }
     imp0.Pane(text: "Instance") {
       override {
-        variant right (enabled: [true])
+        variant right trigger { true }
       }
       override content {
         style {
@@ -33,14 +33,14 @@ public component InstancePane {
           imp1.VariantOption variantOption(label: "Variant 1")
           imp1.VariantOption variantOption2(label: "Variant 2") {
             override {
-              variant alt (enabled: [true])
-              variant triggered (enabled: [true])
+              variant alt trigger { true }
+              variant triggered trigger { true }
             }
           }
           imp1.VariantOption variantOption3(label: "Variant 3")
           imp1.VariantOption variantOption4(label: "Variant 4") {
             override {
-              variant alt (enabled: [true])
+              variant alt trigger { true }
             }
           }
         }

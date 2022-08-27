@@ -15,7 +15,7 @@ public component Menu {
       slot items1 {
         MenuBarItem menuButton1 {
           override {
-            variant active (enabled: [true])
+            variant active trigger { true }
           }
         }
         MenuBarItem menuButton2
@@ -29,14 +29,14 @@ public component Menu {
  * @bounds(left: 675, top: -15, right: 775, bottom: 85)
  */
 public component MenuBarItem {
-  variant active (enabled: [true])
+  variant active trigger { true }
   render div {
     style {
       display: inline-block
       position: relative
     }
     override button {
-      variant active (enabled: [active])
+      variant active trigger { active }
     }
     MenuBarItemOption button {
       style {
@@ -89,7 +89,7 @@ public component MenuBarItem {
               display: block
             }
             override {
-              variant hasCommand (enabled: [true])
+              variant hasCommand trigger { true }
             }
           }
           MenuBarItemOption option4 {
@@ -108,8 +108,8 @@ public component MenuBarItem {
  * @bounds(left: 674, top: 141, right: 774, bottom: 241)
  */
 public component MenuBarItemOption {
-  variant active (enabled: [PseudoElement.Hover])
-  variant hasCommand (enabled: [true])
+  variant active trigger { PseudoElement.Hover }
+  variant hasCommand trigger { true }
   render div {
     style {
       box-sizing: border-box

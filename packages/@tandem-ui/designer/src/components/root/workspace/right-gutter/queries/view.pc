@@ -185,8 +185,8 @@ public component VariableQueryOptions {
  */
 public component QueryOptions {
   script (src: "./query-options-controller.tsx")
-  variant media (enabled: [])
-  variant variable (enabled: [true])
+  variant media
+  variant variable trigger { true }
   render div {
     style {
       box-sizing: border-box

@@ -8,9 +8,9 @@ import "../../../../../global.pc" as imp2
  */
 public component ControllerItem {
   script (src: "./controller-item-controller.tsx")
-  variant selected (enabled: [true])
-  variant alt (enabled: [])
-  variant hovering (enabled: [PseudoElement.Hover])
+  variant selected trigger { true }
+  variant alt
+  variant hovering trigger { PseudoElement.Hover }
   render div {
     style {
       box-sizing: border-box
@@ -55,7 +55,7 @@ public component ControllerItem {
  */
 ControllerItem controllerItem {
   override {
-    variant selected (enabled: [true])
-    variant hovering (enabled: [true])
+    variant selected trigger { true }
+    variant hovering trigger { true }
   }
 }

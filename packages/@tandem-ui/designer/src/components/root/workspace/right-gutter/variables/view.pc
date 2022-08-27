@@ -21,7 +21,7 @@ public component VariablesInput {
     }
     imp0.Pane pane(text: "Variables") {
       override {
-        variant right (enabled: [true])
+        variant right trigger { true }
       }
       override content {
         style {
@@ -84,29 +84,29 @@ public component VariablesInput {
           insert content {
             VariableRow {
               override {
-                variant header (enabled: [true])
+                variant header trigger { true }
               }
             }
             slot items {
               VariableRowItem {
                 override {
-                  variant limited (enabled: [true])
+                  variant limited trigger { true }
                 }
               }
               VariableRowItem {
                 override {
-                  variant alt (enabled: [true])
+                  variant alt trigger { true }
                 }
               }
               VariableRowItem {
                 override {
-                  variant limited (enabled: [true])
+                  variant limited trigger { true }
                 }
               }
               VariableRowItem {
                 override {
-                  variant alt (enabled: [true])
-                  variant color (enabled: [true])
+                  variant alt trigger { true }
+                  variant color trigger { true }
                 }
               }
             }
@@ -122,17 +122,17 @@ public component VariablesInput {
  */
 public component VariableRowItem {
   script (src: "./row-item-controller.tsx")
-  variant alt (enabled: [])
-  variant limited (enabled: [])
-  variant color (enabled: [true])
+  variant alt
+  variant limited
+  variant color trigger { true }
   render VariableRow {
     style extends imp1.baseFont {
     }
     override {
-      variant alt (enabled: [alt])
+      variant alt trigger { alt }
     }
     override node12331 {
-      variant last (enabled: [color])
+      variant last trigger { color }
       style {
         padding-left: 0px
         padding-top: 0px
@@ -245,8 +245,8 @@ public component VariableRowItem {
  * @bounds(left: 733, top: 226, right: 1212, bottom: 252)
  */
 public component VariableRow {
-  variant header (enabled: [])
-  variant alt (enabled: [])
+  variant header
+  variant alt
   render div {
     style extends imp1.baseFont {
       box-sizing: border-box
@@ -258,8 +258,8 @@ public component VariableRow {
         border: 0px  rgba(196, 196, 196, 1)
       }
       override {
-        variant header (enabled: [header])
-        variant alt (enabled: [alt])
+        variant header trigger { header }
+        variant alt trigger { alt }
       }
       insert content1 {
         imp5.TableCell el111 {
@@ -274,7 +274,7 @@ public component VariableRow {
         }
         imp5.TableCell node12331 {
           override {
-            variant last (enabled: [true])
+            variant last trigger { true }
           }
           insert content2 {
             slot value {
@@ -292,7 +292,7 @@ public component VariableRow {
  */
 public component VariablesTab {
   script (src: "./tab-controller.tsx")
-  variant noGlobalFile (enabled: [])
+  variant noGlobalFile
   render div {
     style {
       box-sizing: border-box

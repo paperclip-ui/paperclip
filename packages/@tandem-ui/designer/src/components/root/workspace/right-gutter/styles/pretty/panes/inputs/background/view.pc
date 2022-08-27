@@ -12,9 +12,9 @@ import "../../../../../../../../inputs/text/view.pc" as imp6
  */
 public component BackgroundPicker {
   script (src: "./controller.tsx")
-  variant solid (enabled: [])
-  variant linearGradient (enabled: [])
-  variant image (enabled: [true])
+  variant solid
+  variant linearGradient
+  variant image trigger { true }
   render div {
     style extends imp1.defaultBorder {
       box-sizing: border-box
@@ -24,13 +24,13 @@ public component BackgroundPicker {
       box-shadow: inset 0px 0px 0px 1px var(imp0.blackTransparent2),0px 2px 10px 0px var(imp0.blackTransparent2)
     }
     override solidToggleButton {
-      variant selected (enabled: [solid])
+      variant selected trigger { solid }
     }
     override linearGradientButton {
-      variant selected (enabled: [linearGradient])
+      variant selected trigger { linearGradient }
     }
     override imageToggleButton {
-      variant selected (enabled: [image])
+      variant selected trigger { image }
     }
     div tabs {
       style {
@@ -315,7 +315,7 @@ public component BackgroundImagePicker {
  * @bounds(left: -187, top: 1, right: -87, bottom: 101)
  */
 public component BackgroundTypeButton {
-  variant selected (enabled: [true])
+  variant selected trigger { true }
   render div {
     style {
       box-sizing: border-box
@@ -374,7 +374,7 @@ public component BackgroundTypeButton {
  */
 BackgroundPicker backgroundPickerPreview {
   override {
-    variant linearGradient (enabled: [true])
+    variant linearGradient trigger { true }
   }
 }
 /**
@@ -382,7 +382,7 @@ BackgroundPicker backgroundPickerPreview {
  */
 BackgroundPicker backgroundPickerPreview2 {
   override {
-    variant image (enabled: [true])
+    variant image trigger { true }
   }
 }
 /**
@@ -393,7 +393,7 @@ BackgroundPicker backgroundPickerPreview3 {
     background: var(imp0.grey2)
   }
   override {
-    variant solid (enabled: [true])
+    variant solid trigger { true }
   }
 }
 /**
@@ -412,7 +412,7 @@ div preview {
       top: 100px
     }
     override {
-      variant solid (enabled: [true])
+      variant solid trigger { true }
     }
   }
 }

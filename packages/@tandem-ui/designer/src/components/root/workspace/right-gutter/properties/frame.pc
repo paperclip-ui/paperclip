@@ -16,7 +16,7 @@ public component FramePane {
     }
     imp0.Pane(text: "Frame") {
       override {
-        variant right (enabled: [true])
+        variant right trigger { true }
         style {
           font-weight: unset user-select
         }

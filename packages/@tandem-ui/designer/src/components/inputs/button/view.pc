@@ -6,8 +6,8 @@ import "../../../global.pc" as imp1
  * @bounds(left: 300, top: 120, right: 400, bottom: 220)
  */
 public component Button {
-  variant secondary (enabled: [])
-  variant disabled (enabled: [true])
+  variant secondary
+  variant disabled trigger { true }
   render div {
     style {
       box-sizing: border-box

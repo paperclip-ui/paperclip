@@ -22,7 +22,7 @@ public component Border {
       flex-direction: column
     }
     override {
-      variant right (enabled: [true])
+      variant right trigger { true }
     }
     override title {
       style {
@@ -293,8 +293,8 @@ public component BorderStyle {
  */
 public component BorderStyles {
   script (src: "./border-styles-controller.tsx")
-  variant all (enabled: [])
-  variant individual (enabled: [true])
+  variant all
+  variant individual trigger { true }
   render div {
     style {
       box-sizing: border-box
@@ -323,8 +323,8 @@ public component BorderStyles {
           }
         }
         override node622 {
-          variant selected (enabled: [true])
-          variant last (enabled: [true])
+          variant selected trigger { true }
+          variant last trigger { true }
         }
         insert items {
           imp9.ButtonBarItem {
@@ -339,8 +339,8 @@ public component BorderStyles {
           }
           imp9.ButtonBarItem {
             override {
-              variant last (enabled: [true])
-              variant selected (enabled: [true])
+              variant last trigger { true }
+              variant selected trigger { true }
             }
             insert icon1 {
               imp3.BordersIcon {
@@ -393,7 +393,7 @@ public component Borders2 {
     }
     imp0.Pane pane(text: "Borders") {
       override {
-        variant right (enabled: [true])
+        variant right trigger { true }
       }
       override content {
         style {

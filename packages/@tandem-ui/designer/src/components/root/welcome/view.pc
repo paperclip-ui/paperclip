@@ -11,9 +11,9 @@ import "../../dev/comments.pc" as imp5
  */
 public component Welcome {
   script (src: "./controller.tsx")
-  variant start (enabled: [true])
-  variant createProject (enabled: [])
-  variant newProjectOptions1 (enabled: [])
+  variant start trigger { true }
+  variant createProject
+  variant newProjectOptions1
   render div {
     style {
       box-sizing: border-box
@@ -58,7 +58,7 @@ public component Welcome {
       }
       imp0.Button createProjectButton {
         override {
-          variant secondary (enabled: [true])
+          variant secondary trigger { true }
         }
       }
     }

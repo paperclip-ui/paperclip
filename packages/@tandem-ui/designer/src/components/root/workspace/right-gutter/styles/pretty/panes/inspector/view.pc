@@ -15,34 +15,34 @@ public component StyleProps {
     }
     StylePropRow element2(text1: "display", text2: "inline-block") {
       override {
-        variant isOverride (enabled: [true])
+        variant isOverride trigger { true }
       }
     }
     StylePropRow element3(text1: "font-family", text2: "Helvetica, Arial") {
       override {
-        variant alt (enabled: [true])
-        variant isOverride (enabled: [true])
+        variant alt trigger { true }
+        variant isOverride trigger { true }
       }
     }
     StylePropRow element4(text1: "width", text2: "calc(100% - 10px)") {
       override {
-        variant isInherited (enabled: [true])
+        variant isInherited trigger { true }
       }
     }
     StylePropRow element5(text1: "whitespace", text2: "nowrap") {
       override {
-        variant alt (enabled: [true])
-        variant isVariant (enabled: [true])
+        variant alt trigger { true }
+        variant isVariant trigger { true }
       }
     }
     StylePropRow element6(text1: "cursor", text2: "pointer") {
       override {
-        variant isVariant (enabled: [true])
+        variant isVariant trigger { true }
       }
     }
     StylePropRow element7(text1: "background", text2: "linear-gradient(#F60, #000)") {
       override {
-        variant alt (enabled: [true])
+        variant alt trigger { true }
       }
     }
   }
@@ -52,10 +52,10 @@ public component StyleProps {
  * @bounds(left: 614, top: 144, right: 969, bottom: 194)
  */
 public component StylePropRow {
-  variant alt (enabled: [])
-  variant isOverride (enabled: [])
-  variant isVariant (enabled: [])
-  variant isInherited (enabled: [true])
+  variant alt
+  variant isOverride
+  variant isVariant
+  variant isInherited trigger { true }
   render div {
     style {
       box-sizing: border-box

@@ -10,8 +10,8 @@ import "./menu.pc" as imp4
  */
 public component Dropdown {
   script (src: "./controller.tsx")
-  variant filterable (enabled: [])
-  variant special (enabled: [true])
+  variant filterable
+  variant special trigger { true }
   render div {
     style {
       width: 100%
@@ -103,43 +103,43 @@ public component Dropdown {
             imp4.DropdownMenuItem inst66
             imp4.DropdownMenuItem insttt {
               override {
-                variant alt (enabled: [true])
+                variant alt trigger { true }
               }
             }
             imp4.DropdownMenuItem
             imp4.DropdownMenuItem inst11 {
               override {
-                variant alt (enabled: [true])
+                variant alt trigger { true }
               }
             }
             imp4.DropdownMenuItem
             imp4.DropdownMenuItem inst22 {
               override {
-                variant alt (enabled: [true])
+                variant alt trigger { true }
               }
             }
             imp4.DropdownMenuItem
             imp4.DropdownMenuItem inst33 {
               override {
-                variant alt (enabled: [true])
+                variant alt trigger { true }
               }
             }
             imp4.DropdownMenuItem inst44
             imp4.DropdownMenuItem inst55 {
               override {
-                variant alt (enabled: [true])
+                variant alt trigger { true }
               }
             }
             imp4.DropdownMenuItem
             imp4.DropdownMenuItem {
               override {
-                variant alt (enabled: [true])
+                variant alt trigger { true }
               }
             }
             imp4.DropdownMenuItem
             imp4.DropdownMenuItem {
               override {
-                variant alt (enabled: [true])
+                variant alt trigger { true }
               }
             }
           }
@@ -159,7 +159,7 @@ Dropdown dropdown(label2: "super long label that should ellipsis if it overflows
  */
 Dropdown filtering {
   override {
-    variant filterable (enabled: [true])
+    variant filterable trigger { true }
   }
 }
 /**
@@ -181,25 +181,25 @@ Dropdown dropdownOpen {
     }
   }
   override insttt {
-    variant alt (enabled: [true])
-    variant special (enabled: [true])
+    variant alt trigger { true }
+    variant special trigger { true }
   }
   override inst11 {
-    variant alt (enabled: [true])
+    variant alt trigger { true }
   }
   override inst22 {
-    variant alt (enabled: [true])
+    variant alt trigger { true }
   }
   override inst33 {
-    variant alt (enabled: [true])
+    variant alt trigger { true }
   }
   override inst44 {
-    variant alt (enabled: [true])
+    variant alt trigger { true }
   }
   override inst55 {
   }
   override inst66 {
-    variant special (enabled: [true])
+    variant special trigger { true }
   }
 }
 /**
@@ -214,7 +214,7 @@ div element1 {
     override {
     }
     override popover {
-      variant open (enabled: [true])
+      variant open trigger { true }
     }
     override popover.content1 {
       style {

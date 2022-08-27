@@ -8,7 +8,7 @@ import "./footer/view.pc" as imp2
  */
 public component Editor {
   script (src: "./editor-controller.tsx")
-  variant active (enabled: [true])
+  variant active trigger { true }
   render div {
     style {
       box-sizing: border-box
@@ -19,7 +19,7 @@ public component Editor {
       border-bottom: 1px solid var(imp0.grey6)
     }
     override toolbar {
-      variant active (enabled: [active])
+      variant active trigger { active }
     }
     imp1.Toolbar toolbar {
       style {
@@ -30,7 +30,7 @@ public component Editor {
         flex-shrink: 0
       }
       override tabs.inst {
-        variant selected (enabled: [true])
+        variant selected trigger { true }
         style {
           align-items: cente color
         }

@@ -10,8 +10,8 @@ import "../../inputs/molecules.pc" as imp4
  */
 public component BuildButton {
   script (src: "./build-button-controller.tsx")
-  variant building (enabled: [true])
-  variant paused (enabled: [])
+  variant building trigger { true }
+  variant paused
   render div {
     style {
       box-sizing: border-box
@@ -96,7 +96,7 @@ public component BuildButton {
  * @bounds(left: 679, top: 33, right: 779, bottom: 133)
  */
 public component BuildButtonMenu {
-  variant hover (enabled: [true])
+  variant hover trigger { true }
   render div {
     style {
       box-sizing: border-box
@@ -115,7 +115,7 @@ public component BuildButtonMenu {
           display: block
         }
         override {
-          variant hover (enabled: [true])
+          variant hover trigger { true }
         }
       }
       BuildButtonOption element3 {
@@ -132,7 +132,7 @@ public component BuildButtonMenu {
  * @bounds(left: 789, top: 33, right: 889, bottom: 59)
  */
 public component BuildButtonOption {
-  variant hover (enabled: [true, PseudoElement.Hover])
+  variant hover trigger { PseudoElement.Hover }
   render div {
     style extends imp1.baseFont {
       padding-left: 12px

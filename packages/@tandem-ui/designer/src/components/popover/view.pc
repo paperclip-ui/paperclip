@@ -6,7 +6,7 @@ import "../dev/comments.pc" as imp0
  */
 public component Popover {
   script (src: "./controller.tsx")
-  variant open (enabled: [true])
+  variant open trigger { true }
   render div {
     div anchor1 {
       slot anchor {
@@ -58,7 +58,7 @@ public component Content {
  */
 Popover {
   override {
-    variant open (enabled: [true])
+    variant open trigger { true }
   }
   insert anchor {
   }

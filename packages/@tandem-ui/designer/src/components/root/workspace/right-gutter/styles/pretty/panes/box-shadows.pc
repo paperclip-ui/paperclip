@@ -25,8 +25,8 @@ public component InnerShadows {
  */
 public component BoxShadows {
   script (src: "./box-shadows-controller.tsx")
-  variant hasSelectedShadow (enabled: [])
-  variant hasItems (enabled: [true])
+  variant hasSelectedShadow
+  variant hasItems trigger { true }
   render imp1.Pane(text: "Box Shadows", inner: "") {
     style {
       display: flex
@@ -34,7 +34,7 @@ public component BoxShadows {
       font-size: 10px
     }
     override {
-      variant right (enabled: [true])
+      variant right trigger { true }
     }
     override title {
       style {

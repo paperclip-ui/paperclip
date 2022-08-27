@@ -19,7 +19,7 @@ import "../../../../../dev/comments.pc" as imp13
  */
 public component ElementStyler {
   script (src: "./index.tsx")
-  variant inspector (enabled: [true])
+  variant inspector trigger { true }
   render div {
     style {
       flex-direction: column

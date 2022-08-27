@@ -17,7 +17,7 @@ public component Typograph {
       flex-direction: column
     }
     override {
-      variant right (enabled: [true])
+      variant right trigger { true }
     }
     override content {
       style {
@@ -108,7 +108,7 @@ public component Typograph {
                 box-sizing: border-box
               }
               override node6 {
-                variant last (enabled: [true])
+                variant last trigger { true }
                 style {
                 }
               }

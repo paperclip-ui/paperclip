@@ -6,7 +6,7 @@ import "../../atoms/view.pc" as imp1
  * @bounds(left: 401, top: 292, right: 501, bottom: 392)
  */
 public component TableCell {
-  variant last (enabled: [])
+  variant last
   render div {
     style {
       box-sizing: border-box
@@ -46,8 +46,8 @@ public component TableCell {
  * @bounds(left: 647, top: 145, right: 937, bottom: 263)
  */
 public component TableRow {
-  variant header (enabled: [true])
-  variant alt (enabled: [])
+  variant header trigger { true }
+  variant alt
   render div {
     style {
       box-sizing: border-box
@@ -75,8 +75,8 @@ public component TableRow {
           flex-shrink: 1
         }
         override {
-          variant last (enabled: [true])
-          variant last (enabled: [true])
+          variant last trigger { true }
+          variant last trigger { true }
         }
       }
     }
@@ -87,7 +87,7 @@ public component TableRow {
  * @bounds(left: -21, top: 94, right: 309, bottom: 419)
  */
 public component Table {
-  variant noHeader (enabled: [true])
+  variant noHeader trigger { true }
   render div {
     style {
       box-sizing: border-box
@@ -104,8 +104,8 @@ public component Table {
           display: none
         }
         override {
-          variant header (enabled: [true])
-          variant alt (enabled: [true])
+          variant header trigger { true }
+          variant alt trigger { true }
         }
       }
       TableRow {
@@ -117,8 +117,8 @@ public component Table {
           display: flex
         }
         override {
-          variant alt (enabled: [true])
-          variant alt (enabled: [true])
+          variant alt trigger { true }
+          variant alt trigger { true }
         }
       }
       TableRow {
@@ -126,7 +126,7 @@ public component Table {
           display: flex
         }
         override {
-          variant alt (enabled: [true])
+          variant alt trigger { true }
         }
       }
       TableRow {
@@ -134,8 +134,8 @@ public component Table {
           display: flex
         }
         override {
-          variant alt (enabled: [true])
-          variant alt (enabled: [true])
+          variant alt trigger { true }
+          variant alt trigger { true }
         }
       }
       TableRow {
@@ -143,12 +143,12 @@ public component Table {
           display: flex
         }
         override {
-          variant alt (enabled: [true])
+          variant alt trigger { true }
         }
       }
       TableRow {
         override {
-          variant alt (enabled: [true])
+          variant alt trigger { true }
         }
       }
     }

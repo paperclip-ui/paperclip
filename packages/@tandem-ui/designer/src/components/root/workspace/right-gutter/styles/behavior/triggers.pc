@@ -10,11 +10,11 @@ import "../../../../../../global.pc" as imp4
  */
 public component TriggersPane {
   script (src: "./triggers-controller.tsx")
-  variant hasTriggers (enabled: [])
-  variant hasItemSelected (enabled: [true])
+  variant hasTriggers
+  variant hasItemSelected trigger { true }
   render imp0.Pane {
     override {
-      variant right (enabled: [true])
+      variant right trigger { true }
     }
     override content {
       style {
@@ -75,7 +75,7 @@ public component TriggersPane {
         slot items2 {
           TriggerItem item {
             override {
-              variant selected (enabled: [hasItemSelected])
+              variant selected trigger { hasItemSelected }
             }
           }
           TriggerItem item2
@@ -124,7 +124,7 @@ public component TriggersPane {
  */
 public component TriggerItem {
   script (src: "./trigger-item-controller.tsx")
-  variant selected (enabled: [])
+  variant selected
   render div {
     style {
       box-sizing: border-box

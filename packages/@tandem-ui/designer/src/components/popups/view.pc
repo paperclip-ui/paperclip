@@ -5,7 +5,7 @@ import "../atoms/view.pc" as imp0
  * @bounds(left: 24, top: 195, right: 420, bottom: 295)
  */
 public component Banner {
-  variant warning (enabled: [true])
+  variant warning trigger { true }
   render div {
     style extends imp0.baseFont {
       box-sizing: border-box

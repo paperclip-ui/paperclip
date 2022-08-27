@@ -31,9 +31,9 @@ public component OpenModule {
           justify-content: space-between
         }
         override {
-          variant header (enabled: [true])
-          variant pcLayer (enabled: [true])
-          variant file (enabled: [true])
+          variant header trigger { true }
+          variant pcLayer trigger { true }
+          variant file trigger { true }
         }
         override circleIcon {
           style {
@@ -52,9 +52,9 @@ public component OpenModule {
           justify-content: space-between
         }
         override {
-          variant component2 (enabled: [true])
-          variant expanded (enabled: [true])
-          variant component2 (enabled: [true])
+          variant component2 trigger { true }
+          variant expanded trigger { true }
+          variant component2 trigger { true }
         }
         override circleIcon {
           style {
@@ -66,8 +66,8 @@ public component OpenModule {
           padding-left: 50px
         }
         override {
-          variant alt (enabled: [true])
-          variant alt (enabled: [true])
+          variant alt trigger { true }
+          variant alt trigger { true }
         }
         override textIcon {
           style {
@@ -81,9 +81,9 @@ public component OpenModule {
           padding-left: 50px
         }
         override {
-          variant element (enabled: [true])
-          variant selected (enabled: [true])
-          variant element (enabled: [true])
+          variant element trigger { true }
+          variant selected trigger { true }
+          variant element trigger { true }
         }
         override textIcon {
           style {
@@ -104,10 +104,10 @@ public component OpenModule {
           justify-content: space-between
         }
         override {
-          variant instance (enabled: [true])
-          variant expanded (enabled: [true])
-          variant instance (enabled: [true])
-          variant alt (enabled: [true])
+          variant instance trigger { true }
+          variant expanded trigger { true }
+          variant instance trigger { true }
+          variant alt trigger { true }
         }
       }
       imp1.BaseLayer inst123(label1: "Shadow") {
@@ -115,9 +115,9 @@ public component OpenModule {
           padding-left: 50px
         }
         override {
-          variant shadow (enabled: [true])
-          variant alt (enabled: [true])
-          variant shadow (enabled: [true])
+          variant shadow trigger { true }
+          variant alt trigger { true }
+          variant shadow trigger { true }
         }
       }
       imp1.BaseLayer inst144(label1: "Text") {
@@ -125,8 +125,8 @@ public component OpenModule {
           padding-left: 50px
         }
         override {
-          variant alt (enabled: [true])
-          variant plug (enabled: [true])
+          variant alt trigger { true }
+          variant plug trigger { true }
         }
       }
     }

@@ -7,7 +7,7 @@ import "../../../dev/comments.pc" as imp2
  * @bounds(left: 454, top: 294, right: 570, bottom: 330)
  */
 public component RightGutterTab {
-  variant selected (enabled: [true])
+  variant selected trigger { true }
   render div {
     style {
       text-transform: uppercase

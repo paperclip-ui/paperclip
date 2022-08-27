@@ -7,7 +7,7 @@ import "../../../../../../../../icons/view.pc" as imp1
  */
 public component Frame {
   script (src: "./frame-controller.tsx")
-  variant hasController (enabled: [])
+  variant hasController
   render div {
     style {
       position: absolute

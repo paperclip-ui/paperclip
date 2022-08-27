@@ -9,8 +9,8 @@ import "../dropdown/menu.pc" as imp3
  */
 public component TextInput {
   script (src: "./controller.tsx")
-  variant focus (enabled: [PseudoElement.Focus])
-  variant disabled (enabled: [true])
+  variant focus trigger { PseudoElement.Focus }
+  variant disabled trigger { true }
   render input {
     style extends imp0.defaultBorder, imp0.baseFont {
       width: 100%
@@ -67,7 +67,7 @@ public component AutoComleteTextInput {
             }
             imp3.DropdownMenuItem {
               override {
-                variant alt (enabled: [true])
+                variant alt trigger { true }
               }
             }
             imp3.DropdownMenuItem {
@@ -76,7 +76,7 @@ public component AutoComleteTextInput {
             }
             imp3.DropdownMenuItem inst77 {
               override {
-                variant alt (enabled: [true])
+                variant alt trigger { true }
               }
             }
             imp3.DropdownMenuItem {

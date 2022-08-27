@@ -63,29 +63,29 @@ public component Breadcrumbs {
     slot items {
       Breadcrumb {
         override {
-          variant slot (enabled: [true])
+          variant slot trigger { true }
         }
       }
       Breadcrumb {
         override {
-          variant plug (enabled: [true])
-          variant hovering (enabled: [true])
+          variant plug trigger { true }
+          variant hovering trigger { true }
         }
       }
       Breadcrumb {
         override {
-          variant shadow (enabled: [true])
+          variant shadow trigger { true }
         }
       }
       Breadcrumb {
         override {
-          variant component2 (enabled: [true])
+          variant component2 trigger { true }
         }
       }
       Breadcrumb {
         override {
-          variant text (enabled: [true])
-          variant selected (enabled: [true])
+          variant text trigger { true }
+          variant selected trigger { true }
         }
       }
     }
@@ -96,14 +96,14 @@ public component Breadcrumbs {
  * @bounds(left: 440, top: 2365, right: 806, bottom: 2397)
  */
 public component Breadcrumb {
-  variant component2 (enabled: [])
-  variant shadow (enabled: [])
-  variant text (enabled: [])
-  variant element2 (enabled: [])
-  variant plug (enabled: [])
-  variant slot (enabled: [])
-  variant hovering (enabled: [PseudoElement.Hover])
-  variant selected (enabled: [true])
+  variant component2
+  variant shadow
+  variant text
+  variant element2
+  variant plug
+  variant slot
+  variant hovering trigger { PseudoElement.Hover }
+  variant selected trigger { true }
   render div {
     style extends imp1.baseFont {
       display: flex

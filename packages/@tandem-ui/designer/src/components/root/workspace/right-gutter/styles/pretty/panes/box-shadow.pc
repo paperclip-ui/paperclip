@@ -9,8 +9,8 @@ import "../../../../../../inputs/text/view.pc" as imp3
  */
 public component BoxShadowItem {
   script (src: "./box-shadow-item-controller.tsx")
-  variant selected (enabled: [])
-  variant hovering (enabled: [PseudoElement.Hover])
+  variant selected
+  variant hovering trigger { PseudoElement.Hover }
   render div {
     style {
       box-sizing: border-box

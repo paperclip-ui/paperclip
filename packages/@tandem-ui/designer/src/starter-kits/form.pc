@@ -10,7 +10,7 @@ import "../components/inputs/button/view.pc" as imp4
  */
 public component StarterKitFormOptions {
   script (src: "./form-controller.tsx")
-  variant react (enabled: [])
+  variant react
   render div {
     style {
       padding-left: 12px

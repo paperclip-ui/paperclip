@@ -9,7 +9,7 @@ import "../../../../../../../icons/view.pc" as imp2
 public component Filters {
   render imp0.Pane(text: "Filters", inner: "") {
     override {
-      variant right (enabled: [true])
+      variant right trigger { true }
     }
     override content {
       style {

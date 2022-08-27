@@ -11,13 +11,13 @@ import "../../../../../../../icons/view.pc" as imp5
  */
 public component Inherit {
   script (src: "./inherit-controller.tsx")
-  variant hasItemSelected (enabled: [true])
+  variant hasItemSelected trigger { true }
   render imp0.Pane(text: "Inherit") {
     style {
       background: var(imp1.grey2)
     }
     override {
-      variant right (enabled: [true])
+      variant right trigger { true }
     }
     override content {
       style {
@@ -51,8 +51,8 @@ public component Inherit {
         }
         imp3.InheritItem {
           override {
-            variant alt (enabled: [true])
-            variant selected (enabled: [true])
+            variant alt trigger { true }
+            variant selected trigger { true }
           }
         }
         imp3.InheritItem {

@@ -9,7 +9,7 @@ import "./row.pc" as imp3
  */
 public component QuickSearch {
   script (src: "./quick-search-controller.tsx")
-  variant noItems (enabled: [true])
+  variant noItems trigger { true }
   render div {
     style extends imp1.defaultShadowStyle {
       border: 1px solid var(imp0.grey1)
@@ -61,7 +61,7 @@ public component QuickSearch {
               bottom: 300
             }
             override {
-              variant preselected (enabled: [true])
+              variant preselected trigger { true }
             }
             override descriptionContainer {
               style {
@@ -98,7 +98,7 @@ public component QuickSearch {
               bottom: 300
             }
             override {
-              variant hovering (enabled: [true])
+              variant hovering trigger { true }
             }
           }
           imp3.SearchResult {

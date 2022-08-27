@@ -45,7 +45,7 @@ public component BottomGutter {
  */
 public component Console {
   script (src: "./console-controller.tsx")
-  variant noProcesses (enabled: [])
+  variant noProcesses
   render div {
     style {
       box-sizing: border-box
@@ -67,7 +67,7 @@ public component Console {
       slot tabs {
         ConsoleTab tab1 {
           override {
-            variant selected (enabled: [true])
+            variant selected trigger { true }
           }
         }
         ConsoleTab tab
@@ -104,7 +104,7 @@ public component Console {
  * @bounds(left: 1893, top: 7, right: 1965, bottom: 33)
  */
 public component ConsoleTab {
-  variant selected (enabled: [true])
+  variant selected trigger { true }
   render div {
     style {
       box-sizing: border-box
@@ -144,12 +144,12 @@ public component ConsoleLogs {
       ConsoleLog7 consoleLog3
       ConsoleLog7 consoleLog4 {
         override {
-          variant error (enabled: [true])
+          variant error trigger { true }
         }
       }
       ConsoleLog7 consoleLog5 {
         override {
-          variant error (enabled: [true])
+          variant error trigger { true }
         }
       }
       ConsoleLog7 consoleLog6
@@ -161,7 +161,7 @@ public component ConsoleLogs {
  * @bounds(left: 2200, top: 469, right: 3327, bottom: 951)
  */
 public component ConsoleLog7 {
-  variant error (enabled: [true])
+  variant error trigger { true }
   render div {
     style {
       box-sizing: border-box

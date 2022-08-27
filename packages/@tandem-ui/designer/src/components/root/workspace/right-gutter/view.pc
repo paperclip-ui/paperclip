@@ -14,12 +14,12 @@ import "./queries/view.pc" as imp8
  */
 public component RightGutter {
   script (src: "./controller.tsx")
-  variant propertiesTab (enabled: [])
-  variant variablesTab (enabled: [])
-  variant stylesTab (enabled: [])
-  variant codeTab (enabled: [])
-  variant globalsTab (enabled: [])
-  variant unselectedNodes (enabled: [])
+  variant propertiesTab
+  variant variablesTab
+  variant stylesTab
+  variant codeTab
+  variant globalsTab
+  variant unselectedNodes
   render div {
     style {
       width: 250px
@@ -48,8 +48,8 @@ public component RightGutter {
           cursor: pointer
         }
         override {
-          variant selected (enabled: [stylesTab])
-          variant selected (enabled: [stylesTab])
+          variant selected trigger { stylesTab }
+          variant selected trigger { stylesTab }
         }
         div element1 {
           style {
@@ -97,7 +97,7 @@ public component RightGutter {
           cursor: pointer
         }
         override {
-          variant selected (enabled: [propertiesTab])
+          variant selected trigger { propertiesTab }
         }
       }
     }
@@ -203,11 +203,11 @@ public component GlobalProperties {
  */
 RightGutter variablesPreview {
   override {
-    variant globalsTab (enabled: [true])
-    variant unselectedNodes (enabled: [true])
+    variant globalsTab trigger { true }
+    variant unselectedNodes trigger { true }
   }
   override properties {
-    variant element2 (enabled: [true])
+    variant element2 trigger { true }
   }
 }
 /**
@@ -215,10 +215,10 @@ RightGutter variablesPreview {
  */
 RightGutter propertiesPreview {
   override {
-    variant propertiesTab (enabled: [true])
+    variant propertiesTab trigger { true }
   }
   override properties {
-    variant element2 (enabled: [true])
+    variant element2 trigger { true }
   }
 }
 /**
@@ -229,10 +229,10 @@ RightGutter stylesTabPreview {
     border-left: 1px solid var(imp0.grey1)
   }
   override {
-    variant stylesTab (enabled: [true])
+    variant stylesTab trigger { true }
   }
   override styles.properties.typographyPane.alignmentInput.node6 {
-    variant last (enabled: [true])
+    variant last trigger { true }
   }
 }
 /**

@@ -6,8 +6,8 @@ import "../atoms/view.pc" as imp1
  * @bounds(left: 321, top: 189, right: 525, bottom: 287)
  */
 public component Pane {
-  variant left (enabled: [true])
-  variant right (enabled: [])
+  variant left trigger { true }
+  variant right
   render div {
     style {
       display: flex

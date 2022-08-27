@@ -7,9 +7,9 @@ import "../../../icons/view.pc" as imp2
  * @bounds(left: 454, top: 415, right: 554, bottom: 441)
  */
 public component ButtonBarItem {
-  variant last (enabled: [true])
-  variant selected (enabled: [])
-  variant first (enabled: [])
+  variant last trigger { true }
+  variant selected
+  variant first
   render div {
     style extends imp1.baseFont {
       background: var(imp0.grey0)

@@ -17,7 +17,7 @@ public component SpacingPane {
     }
     imp1.Pane pane(text: "Spacing") {
       override {
-        variant right (enabled: [true])
+        variant right trigger { true }
       }
       override content {
         style {

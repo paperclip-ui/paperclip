@@ -6,8 +6,8 @@ import "../../../../atoms/view.pc" as imp1
  * @bounds(left: 409, top: 207, right: 1270, bottom: 487)
  */
 public component EditorTab {
-  variant selected (enabled: [])
-  variant hovering (enabled: [true])
+  variant selected
+  variant hovering trigger { true }
   render div {
     style {
       box-sizing: border-box

@@ -28,7 +28,7 @@ public component TextProperties {
         flex-direction: column
       }
       override {
-        variant right (enabled: [true])
+        variant right trigger { true }
       }
       insert content2 {
         imp1.LabeledInput(text1: "Text") {
@@ -58,7 +58,7 @@ public component TextProperties {
  */
 public component ElementProperties {
   script (src: "./element-controller.tsx")
-  variant allowTitle (enabled: [])
+  variant allowTitle
   render div {
     imp0.Pane pane(text: "Properties") {
       style {
@@ -66,7 +66,7 @@ public component ElementProperties {
         flex-direction: column
       }
       override {
-        variant right (enabled: [true])
+        variant right trigger { true }
       }
       override content {
         style {
@@ -118,11 +118,11 @@ public component ElementProperties {
  */
 public component Properties {
   script (src: "./properties-controller.tsx")
-  variant element2 (enabled: [])
-  variant component2 (enabled: [])
-  variant text2 (enabled: [])
-  variant slot (enabled: [])
-  variant contentNode (enabled: [])
+  variant element2
+  variant component2
+  variant text2
+  variant slot
+  variant contentNode
   render div {
     style {
       background: var(imp7.grey2)
@@ -199,20 +199,20 @@ public component BehaviorPane {
  */
 public component ControllersPane {
   script (src: "./component-controller.tsx")
-  variant hasControllerSelected (enabled: [true])
-  variant hasController (enabled: [])
+  variant hasControllerSelected trigger { true }
+  variant hasController
   render div {
     style {
       box-sizing: border-box
       display: block
     }
     override {
-      variant alt (enabled: [true])
-      variant selected (enabled: [true])
+      variant alt trigger { true }
+      variant selected trigger { true }
     }
     imp0.Pane(text: "Controllers") {
       override {
-        variant right (enabled: [true])
+        variant right trigger { true }
       }
       override content {
         style {
@@ -277,14 +277,14 @@ public component ControllersPane {
           imp10.ControllerItem(label: "./controller.rb")
           imp10.ControllerItem(label: "./controller.view.tsx") {
             override {
-              variant selected (enabled: [true])
-              variant hovering (enabled: [true])
+              variant selected trigger { true }
+              variant hovering trigger { true }
             }
           }
           imp10.ControllerItem (label: "./controller.php")
           imp10.ControllerItem (label: "./controller.react.tsx") {
             override {
-              variant hovering (enabled: [true])
+              variant hovering trigger { true }
             }
           }
         }
@@ -318,7 +318,7 @@ public component ExportsPane {
  */
 public component ExportNameInput {
   script (src: "./exports-name-input-controller.tsx")
-  variant invalid (enabled: [true])
+  variant invalid trigger { true }
   render div {
     style {
       box-sizing: border-box
@@ -565,7 +565,7 @@ div element9 {
     insert content2 {
       imp12.Table table2 {
         override {
-          variant noHeader (enabled: [true])
+          variant noHeader trigger { true }
         }
       }
     }

@@ -430,15 +430,21 @@ fn parse_slot(context: &mut PCContext) -> Result<ast::Slot, err::ParserError> {
     context.next_token()?; // eat value
     context.skip(is_superfluous_or_newline);
     let end = context.curr_u16pos.clone();
-    let body = parse_body(
-        context,
-        |context: &mut PCContext| match context.curr_token {
-            Some(Token::Word(b"text")) => Ok(ast::SlotBodyItem::Text(parse_text(context)?)),
-            Some(Token::Word(_)) => Ok(ast::SlotBodyItem::Element(parse_element(context)?)),
-            _ => Err(context.new_unexpected_token_error()),
-        },
-        Some((Token::CurlyOpen, Token::CurlyClose)),
-    )?;
+
+    let body = if context.curr_token == Some(Token::CurlyOpen) {
+        parse_body(
+            context,
+            |context: &mut PCContext| match context.curr_token {
+                Some(Token::Word(b"text")) => Ok(ast::SlotBodyItem::Text(parse_text(context)?)),
+                Some(Token::Word(_)) => Ok(ast::SlotBodyItem::Element(parse_element(context)?)),
+                _ => Err(context.new_unexpected_token_error()),
+            },
+            Some((Token::CurlyOpen, Token::CurlyClose)),
+        )?
+    } else {
+        vec![]
+    };
+
     context.skip(is_superfluous_or_newline);
 
     Ok(ast::Slot {
@@ -504,6 +510,7 @@ fn parse_text(context: &mut PCContext) -> Result<ast::TextNode, err::ParserError
     } else {
         vec![]
     };
+    context.skip(is_superfluous_or_newline);
 
     let end = context.curr_u16pos.clone();
 
@@ -615,6 +622,7 @@ fn parse_element(context: &mut PCContext) -> Result<ast::Element, err::ParserErr
                 Some(Token::Word(b"insert")) => {
                     Ok(ast::ElementBodyItem::Insert(parse_insert(context)?))
                 }
+                Some(Token::Word(b"slot")) => Ok(ast::ElementBodyItem::Slot(parse_slot(context)?)),
                 Some(Token::Word(b"override")) => {
                     Ok(ast::ElementBodyItem::Override(parse_override(context)?))
                 }

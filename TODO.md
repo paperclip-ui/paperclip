@@ -19,6 +19,10 @@
 
 - save HTML to disc
 - IO watcher - HMR?
+- ability to inject components
+
+  - react hooks?
+    - can create adapter
 
 - Preview
   - trpc?

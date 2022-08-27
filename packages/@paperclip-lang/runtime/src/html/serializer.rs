@@ -1,5 +1,5 @@
+use super::utils::is_void_tag;
 use super::virt;
-use super::utils::{is_void_tag};
 use paperclip_common::serialize_context::Context;
 
 // TODO - properly render void tags
@@ -10,13 +10,13 @@ pub fn serialize(document: &virt::Document) -> String {
     context.buffer
 }
 
-fn serialize_children(children: &Vec<virt::NodeChild>, context: &mut Context) {
+fn serialize_children(children: &Vec<virt::Node>, context: &mut Context) {
     for child in children {
         match child {
-            virt::NodeChild::Element(element) => {
+            virt::Node::Element(element) => {
                 serialize_element(element, context);
             }
-            virt::NodeChild::TextNode(element) => {
+            virt::Node::TextNode(element) => {
                 serialize_text_node(element, context);
             }
         }

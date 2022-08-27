@@ -231,29 +231,40 @@ fn serialize_parameter(param: &ast::Parameter, context: &mut Context) {
 }
 
 fn serialize_slot(slot: &ast::Slot, context: &mut Context) {
-    context.add_buffer(format!("slot {} {{\n", slot.name).as_str());
-    context.start_block();
-    for item in &slot.body {
-        match item {
-            ast::SlotBodyItem::Element(element) => serialize_element(element, context),
-            ast::SlotBodyItem::Text(text) => serialize_text(text, context),
+    context.add_buffer(format!("slot {}", slot.name).as_str());
+
+    if slot.body.len() > 0 {
+        context.add_buffer(" {\n");
+        context.start_block();
+        for item in &slot.body {
+            match item {
+                ast::SlotBodyItem::Element(element) => serialize_element(element, context),
+                ast::SlotBodyItem::Text(text) => serialize_text(text, context),
+            }
         }
+        context.end_block();
+        context.add_buffer("}\n");
+    } else {
+        context.add_buffer("\n");
     }
-    context.end_block();
-    context.add_buffer("}\n");
 }
 
 fn serialize_insert(insert: &ast::Insert, context: &mut Context) {
-    context.add_buffer(format!("insert {} {{\n", insert.name).as_str());
-    context.start_block();
-    for item in &insert.body {
-        match item {
-            ast::InsertBody::Element(element) => serialize_element(element, context),
-            ast::InsertBody::Text(text) => serialize_text(text, context),
+    context.add_buffer(format!("insert {}", insert.name).as_str());
+    if insert.body.len() > 0 {
+        context.add_buffer(" {\n");
+        context.start_block();
+        for item in &insert.body {
+            match item {
+                ast::InsertBody::Element(element) => serialize_element(element, context),
+                ast::InsertBody::Text(text) => serialize_text(text, context),
+            }
         }
+        context.end_block();
+        context.add_buffer("}\n");
+    } else {
+        context.add_buffer("\n");
     }
-    context.end_block();
-    context.add_buffer("}\n");
 }
 
 fn serialize_simple_expression(node: &ast::SimpleExpression, context: &mut Context) {

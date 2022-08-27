@@ -160,6 +160,29 @@ fn can_parse_various_contents() {
         ),
         (
             r#"
+            
+            component A {
+                render span {
+                    h1 {
+                        slot title {
+                            text "some title"
+                        }
+                    }
+                    p {
+                        slot children
+                    }
+                }
+            }
+
+            A {
+                text "hello world"
+                insert another
+            }
+            "#,
+            Ok(()),
+        ),
+        (
+            r#"
             component B {
                 render slot test {
                     text "default child"
@@ -403,8 +426,8 @@ fn can_parse_various_contents() {
     ];
 
     for (source, result) in tests {
-        let parse_result = parse(source, &"".to_string());
         println!("Try parsing {}", source);
+        let parse_result = parse(source, &"".to_string());
 
         if let Ok(ast) = parse_result {
             let output = serialize(&ast);

@@ -1,6 +1,7 @@
 use serde::Serialize;
 use std::collections::HashMap;
 use std::fmt;
+use std::string::ToString;
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Bounds {
@@ -21,7 +22,7 @@ pub struct Element {
     pub source_id: Option<String>,
     pub attributes: Vec<Attribute>,
     pub metadata: Option<NodeMetadata>,
-    pub children: Vec<NodeChild>,
+    pub children: Vec<Node>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -41,12 +42,18 @@ pub struct TextNode {
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Document {
     pub source_id: Option<String>,
-    pub children: Vec<NodeChild>,
+    pub children: Vec<Node>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 #[serde(tag = "kind")]
-pub enum NodeChild {
+pub enum Node {
     Element(Element),
     TextNode(TextNode),
+}
+
+impl ToString for Node {
+    fn to_string(&self) -> String {
+        "[Node]".to_string()
+    }
 }

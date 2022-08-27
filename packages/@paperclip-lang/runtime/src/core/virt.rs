@@ -31,7 +31,7 @@ impl Object {
             self.properties.push(property);
         }
     }
-    fn to_map(&mut self) -> BTreeMap<String, ObjectProperty>{
+    fn to_map(&mut self) -> BTreeMap<String, ObjectProperty> {
         let mut map = BTreeMap::new();
         for item in self.properties.drain(..) {
             map.insert(item.name.to_string(), item);

@@ -7,7 +7,7 @@ use std::rc::Rc;
 pub struct DocumentContext<'path, 'graph> {
     pub graph: &'graph graph::Graph,
     pub path: &'path str,
-    pub data: Option<RefCell<core_virt::Object>>
+    pub data: Option<RefCell<core_virt::Object>>,
 }
 
 impl<'path, 'graph> DocumentContext<'path, 'graph> {
@@ -15,14 +15,14 @@ impl<'path, 'graph> DocumentContext<'path, 'graph> {
         Self {
             graph,
             path,
-            data: None
+            data: None,
         }
     }
     pub fn with_data(&self, data: core_virt::Object) -> Self {
         Self {
             data: Some(RefCell::new(data)),
             graph: self.graph,
-            path: self.path
+            path: self.path,
         }
     }
 }

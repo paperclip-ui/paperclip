@@ -55,7 +55,7 @@ fn evaluate_document(document: &ast::Document, context: &mut DocumentContext) ->
 
     virt::Document {
         source_id: Some(document.id.to_string()),
-        children
+        children,
     }
 }
 
@@ -106,10 +106,8 @@ fn evaluate_slot(
                     match item {
                         core_virt::Value::Node(node) => {
                             fragment.push(node.clone());
-                        },
-                        _ => {
-
                         }
+                        _ => {}
                     }
                 }
             }

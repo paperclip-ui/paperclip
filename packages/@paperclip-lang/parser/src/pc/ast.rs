@@ -91,7 +91,7 @@ pub struct Insert {
 pub enum InsertBody {
     Element(Element),
     Text(TextNode),
-    Slot(Slot)
+    Slot(Slot),
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

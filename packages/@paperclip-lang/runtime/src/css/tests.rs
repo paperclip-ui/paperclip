@@ -1,5 +1,5 @@
 use super::evaluator::evaluate;
-use super::serialize::serialize;
+use super::serializer::serialize;
 use futures::executor::block_on;
 use paperclip_parser::graph::graph;
 use paperclip_parser::graph::test_utils;
@@ -236,51 +236,7 @@ fn can_evaluate_various_sources() {
                   color: var(--80f4925f-7);
               }
             "#,
-        ),
-        // Tokens
-        (
-            HashMap::from([(
-                "/entry.pc",
-                r#"
-
-                trigger everyOther {
-                  ":nth-child(2n)"
-                }
-
-                component A {
-                  variant something
-                  render div a2 {
-                    style variant something {
-                      color: blue
-                    }
-                  }
-                }
-
-                component B {
-                  render A a
-                }
-
-                component C {
-                  variant something2 trigger { everyOther }
-                  render B {
-                    override a.a2 {
-                      variant something trigger { something2 }
-                    }
-                  }
-                }
-
-              "#,
-            )]),
-            r#"
-              :root {
-                  --80f4925f-7: rgba(255, 255, 255, 0);
-              }
-
-              .80f4925f-12 {
-                  color: var(--80f4925f-7);
-              }
-            "#,
-        ),
+        )
     ];
 
     for (mock_files, expected_sheet) in cases {

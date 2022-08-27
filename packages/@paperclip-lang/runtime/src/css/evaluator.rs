@@ -1,5 +1,5 @@
 use super::context::DocumentContext;
-use super::errors;
+use crate::core::errors;
 use super::virt;
 use paperclip_common::id::get_document_id;
 use paperclip_parser::css::ast as css_ast;

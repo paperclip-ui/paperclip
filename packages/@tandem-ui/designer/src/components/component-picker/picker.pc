@@ -143,26 +143,17 @@ public component ComponentPopdownPicker {
                 }
               }
               ComponentPickerPopdownItem item4
-              ComponentPickerPopdownItem item5 {
-              }
+              ComponentPickerPopdownItem item5
               ComponentPickerPopdownItem item6
-              ComponentPickerPopdownItem item7 {
-              }
-              ComponentPickerPopdownItem item8 {
-              }
-              ComponentPickerPopdownItem item9 {
-                override {
-                }
-              }
+              ComponentPickerPopdownItem item7
+              ComponentPickerPopdownItem item8
+              ComponentPickerPopdownItem item9
               ComponentPickerPopdownItem item10 {
                 override {
                   variant alt trigger { true }
                 }
               }
-              ComponentPickerPopdownItem item11 {
-                override {
-                }
-              }
+              ComponentPickerPopdownItem item11
               ComponentPickerPopdownItem item12 {
                 override {
                   variant alt trigger { true }

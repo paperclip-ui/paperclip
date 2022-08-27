@@ -35,8 +35,6 @@ public component ButtonBar {
           border-top-left-radius: 2px
           border-bottom-left-radius: 2px
         }
-        override {
-        }
         imp1.TextLeftIcon node1111 {
           style {
             height: 100%

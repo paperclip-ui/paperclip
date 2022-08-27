@@ -1,7 +1,6 @@
-pub mod context;
-pub mod errors;
+mod context;
 pub mod evaluator;
-pub mod serialize;
+pub mod serializer;
 pub mod virt;
 
 #[cfg(test)]

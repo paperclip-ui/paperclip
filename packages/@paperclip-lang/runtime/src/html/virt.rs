@@ -4,46 +4,49 @@ use std::fmt;
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Bounds {
-    left: f32,
-    right: f32,
-    width: f32,
-    height: f32,
+    pub left: f32,
+    pub right: f32,
+    pub width: f32,
+    pub height: f32,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct NodeMetadata {
-    bounds: Option<Bounds>,
+    pub bounds: Option<Bounds>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Element {
-    source_id: String,
-    attributes: Vec<Attribute>,
-    metadata: Option<NodeMetadata>,
+    pub tag_name: String,
+    pub source_id: Option<String>,
+    pub attributes: Vec<Attribute>,
+    pub metadata: Option<NodeMetadata>,
+    pub children: Vec<NodeChild>
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Attribute {
-    source_id: String,
-    name: String,
-    value: String,
+    pub source_id: Option<String>,
+    pub name: String,
+    pub value: String,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct TextNode {
-    source_id: String,
-    value: String,
-    metadata: Option<NodeMetadata>,
+    pub source_id: Option<String>,
+    pub value: String,
+    pub metadata: Option<NodeMetadata>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Document {
-    children: Vec<DocumentChild>,
+    pub source_id: Option<String>,
+    pub children: Vec<NodeChild>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
 #[serde(tag = "kind")]
-pub enum DocumentChild {
+pub enum NodeChild {
     Element(Element),
     TextNode(TextNode),
 }

@@ -38,7 +38,7 @@ fn can_evaluate_various_sources() {
                 "#,
             )]),
             r#"
-              .abba-80f4925f {
+              .abba-80f4925f-1 {
                   color: orange;
               }
               "#,
@@ -152,18 +152,51 @@ fn can_evaluate_various_sources() {
                         }
                         render div {
                           style variant a + b + c {
-
+                            color: blue
                           }
                         }
                       }
                     "#,
             )]),
             r#"
-              @media screen and (max-width: 100px) {
-                .80f4925f-6 {
-                    font-family: Helvetica;
-                    color: blue;
-                }
+                @supports mobile {
+                  @media screen and (max-width: 300px) {
+                      @media screen and (max-width: 100px) {
+                          .80f4925f-22:nth-child(2n) {
+                              color: blue;
+                          }
+                      }
+                  }
+              }
+              
+              @supports mobile {
+                  @media screen and (max-width: 400px) {
+                      @media screen and (max-width: 100px) {
+                          .80f4925f-22:nth-child(2n) {
+                              color: blue;
+                          }
+                      }
+                  }
+              }
+              
+              @supports desktop {
+                  @media screen and (max-width: 300px) {
+                      @media screen and (max-width: 100px) {
+                          .80f4925f-22:nth-child(2n) {
+                              color: blue;
+                          }
+                      }
+                  }
+              }
+              
+              @supports desktop {
+                  @media screen and (max-width: 400px) {
+                      @media screen and (max-width: 100px) {
+                          .80f4925f-22:nth-child(2n) {
+                              color: blue;
+                          }
+                      }
+                  }
               }
         "#,
         ),
@@ -183,29 +216,14 @@ fn can_evaluate_various_sources() {
               "#,
             )]),
             r#"
-            .A-blarg-80f4925f {
-                color: blue;
-            }
-            "#,
-        ),
-        (
-            HashMap::from([(
-                "/entry.pc",
-                r#"
-                  component A {
-                    render div blarg {
-                      style {
-                        color: blue
-                      }
-                    }
-                  }
-                "#,
-            )]),
-            r#"
-              .A-blarg-80f4925f {
-                  color: blue;
+              :root {
+                  --80f4925f-7: rgba(255, 255, 255, 0);
               }
-              "#,
+
+              .80f4925f-12 {
+                  color: var(--80f4925f-7);
+              }
+            "#,
         ),
     ];
 
@@ -214,6 +232,7 @@ fn can_evaluate_various_sources() {
         let mut graph = graph::Graph::new();
         block_on(graph.load("/entry.pc", &mock_fs));
         let doc = block_on(evaluate("/entry.pc", &graph)).unwrap();
+        println!("{}", serialize(&doc).trim());
         assert_eq!(serialize(&doc).trim(), dedent(expected_sheet).trim());
     }
 

@@ -232,6 +232,17 @@ impl Document {
         }
         imports
     }
+    pub fn get_atoms(&self) -> Vec<&Atom> {
+        let mut atoms: Vec<&Atom> = vec![];
+
+        for item in &self.body {
+            if let DocumentBodyItem::Atom(atom) = item {
+                atoms.push(atom);
+            }
+        }
+
+        atoms
+    }
     pub fn get_style(&self, name: &String) -> Option<&Style> {
         for item in &self.body {
             if let DocumentBodyItem::Style(style) = item {

@@ -187,7 +187,7 @@ pub struct StyleRule {
     pub id: String,
 
     #[serde(rename = "sourceId")]
-    pub source_id: String,
+    pub source_id: Option<String>,
 
     #[serde(rename = "selectorText")]
     pub selector_text: String,

@@ -9,13 +9,16 @@ pub fn serialize(document: &virt::Document) -> String {
 
 fn serialize_rules(rules: &Vec<virt::Rule>, context: &mut Context) {
     for rule in rules {
-        serialize_rule(rule, context)
+        serialize_rule(rule, context);
+        context.add_buffer("\n");
     }
 }
 
 fn serialize_rule(rule: &virt::Rule, context: &mut Context) {
     match rule {
-        virt::Rule::Style(charset) => serialize_style_rule(charset, context),
+        virt::Rule::Style(rule) => serialize_style_rule(rule, context),
+        virt::Rule::Media(rule) => serialize_condition_rule(rule, context),
+        virt::Rule::Supports(rule) => serialize_condition_rule(rule, context),
         _ => {}
     }
 }
@@ -27,5 +30,15 @@ fn serialize_style_rule(rule: &virt::StyleRule, context: &mut Context) {
         context.add_buffer(format!("{}: {};\n", decl.name, decl.value).as_str());
     }
     context.end_block();
-    context.add_buffer("}\n\n");
+    context.add_buffer("}\n");
+}
+
+fn serialize_condition_rule(rule: &virt::ConditionRule, context: &mut Context) {
+    context.add_buffer(format!("@{} {} {{\n", rule.name, rule.condition_text).as_str());
+    context.start_block();
+    for rule in &rule.rules {
+        serialize_rule(rule, context);
+    }
+    context.end_block();
+    context.add_buffer("}\n");
 }

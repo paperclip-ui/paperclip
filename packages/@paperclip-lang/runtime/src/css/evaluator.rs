@@ -1,6 +1,6 @@
 use super::context::DocumentContext;
-use crate::core::errors;
 use super::virt;
+use crate::core::errors;
 use paperclip_common::id::get_document_id;
 use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph::graph;
@@ -134,7 +134,6 @@ fn evaluate_variant_styles(
     expanded_combo_selectors: &Vec<Vec<VariantTrigger>>,
     context: &mut DocumentContext,
 ) {
-
     let current_component = if let Some(component) = context.current_component {
         component
     } else {
@@ -171,17 +170,20 @@ fn evaluate_variant_styles(
         context.document.borrow_mut().rules.push(virt_style);
     }
 
-    
-    // first up, 
-
+    // first up,
 
     let (combo_queries, combo_selectors) = get_combo_selectors(expanded_combo_selectors);
-    
+
     for group_selectors in combo_selectors {
         let virt_style = virt::Rule::Style(virt::StyleRule {
             id: context.next_id(),
             source_id: Some(style.id.to_string()),
-            selector_text: format!(".{}{} .{}", current_component.id, group_selectors.join(""), ns),
+            selector_text: format!(
+                ".{}{} .{}",
+                current_component.id,
+                group_selectors.join(""),
+                ns
+            ),
             style: evaluated_style.clone(),
         });
 

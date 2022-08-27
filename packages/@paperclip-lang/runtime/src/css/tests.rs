@@ -236,7 +236,7 @@ fn can_evaluate_various_sources() {
                   color: var(--80f4925f-7);
               }
             "#,
-        )
+        ),
     ];
 
     for (mock_files, expected_sheet) in cases {

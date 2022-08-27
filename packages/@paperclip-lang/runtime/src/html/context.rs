@@ -11,7 +11,7 @@ pub struct DocumentContext<'path, 'graph, 'expr> {
     pub path: &'path str,
     pub current_element: Option<&'expr ast::Element>,
     pub current_component: Option<&'expr ast::Component>,
-    pub document: Rc<RefCell<virt::Document>>
+    pub document: Rc<RefCell<virt::Document>>,
 }
 
 impl<'path, 'graph, 'expr> DocumentContext<'path, 'graph, 'expr> {
@@ -26,11 +26,12 @@ impl<'path, 'graph, 'expr> DocumentContext<'path, 'graph, 'expr> {
             current_component: None,
             current_element: None,
             document: Rc::new(RefCell::new(virt::Document {
-              source_id: graph.dependencies.get(path).and_then(|dep| {
-                Some(dep.document.id.to_string())
-              }),
-              children: vec![]
-            }))
+                source_id: graph
+                    .dependencies
+                    .get(path)
+                    .and_then(|dep| Some(dep.document.id.to_string())),
+                children: vec![],
+            })),
         }
     }
 
@@ -52,7 +53,7 @@ impl<'path, 'graph, 'expr> DocumentContext<'path, 'graph, 'expr> {
             path: self.path,
             current_element: self.current_element,
             current_component: Some(component),
-            document: self.document.clone()
+            document: self.document.clone(),
         }
     }
     pub fn within_element(&self, element: &'expr ast::Element) -> Self {
@@ -62,7 +63,7 @@ impl<'path, 'graph, 'expr> DocumentContext<'path, 'graph, 'expr> {
             path: self.path,
             current_element: Some(element),
             current_component: self.current_component,
-            document: self.document.clone()
+            document: self.document.clone(),
         }
     }
 

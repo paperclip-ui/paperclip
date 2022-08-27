@@ -21,7 +21,7 @@ pub struct Element {
     pub source_id: Option<String>,
     pub attributes: Vec<Attribute>,
     pub metadata: Option<NodeMetadata>,
-    pub children: Vec<NodeChild>
+    pub children: Vec<NodeChild>,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

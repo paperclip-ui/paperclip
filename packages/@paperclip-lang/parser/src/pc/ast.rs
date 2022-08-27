@@ -24,6 +24,15 @@ impl Component {
 
         None
     }
+    pub fn get_render_expr(&self) -> Option<&Render> {
+        for item in &self.body {
+            if let ComponentBodyItem::Render(expr) = item {
+                return Some(expr);
+            }
+        }
+
+        None
+    }
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

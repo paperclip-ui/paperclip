@@ -8,30 +8,118 @@ use textwrap::dedent;
 
 #[test]
 fn can_evaluate_various_sources() {
-    let cases: Vec<(HashMap<&str, &str>, &str)> = vec![
+    let cases: Vec<(&str, &str)> = vec![
+        // text
         (
-            HashMap::from([(
-                "/entry.pc",
-                r#"
-                  div {
-
-                  }
-                "#,
-            )]),
+            r#"
+              div
+            "#,
             r#"
               <div>
               </div>
-              "#,
-        )
+            "#,
+        ),
+        (
+            r#"
+              text "hello"
+            "#,
+            r#"
+              hello
+            "#,
+        ),
+        (
+            r#"
+              div (a: "b", c: "d")
+            "#,
+            r#"
+              <div a="b" c="d">
+              </div>
+            "#,
+        ),
+
+        // component
+        (
+            r#"
+              component A {
+                render div {
+                  text "Hello world"
+                }
+              }
+            "#,
+            r#"
+              <div>
+                  Hello world
+              </div>
+            "#,
+        ),
+
+        // void tags
+        (
+            r#"
+              br
+              hr
+            "#,
+            r#"
+              <br>
+              <hr>
+            "#,
+        ),
+
+        // render instances
+        (
+          r#"
+            component A {
+              render span 
+            }
+
+            A
+          "#,
+          r#"
+            <span>
+            </span>
+            <span>
+            </span>
+          "#,
+      ),
+
+      // render slots
+      (
+        r#"
+          component A {
+            render span {
+              h1 {
+                slot title {
+                  text "some title"
+                }
+              }
+              p {
+                slot children
+              }
+            }
+          }
+
+          A {
+            text "hello world"
+            insert another 
+          }
+        "#,
+        r#"
+          <span>
+          </span>
+          <span>
+            hello world
+          </span>
+        "#,
+    ),
     ];
 
-    for (mock_files, expected_sheet) in cases {
-        let mock_fs = test_utils::MockFS::new(mock_files);
+    for (input, output) in cases {
+        let mock_fs = test_utils::MockFS::new(HashMap::from([("/entry.pc", input)]));
         let mut graph = graph::Graph::new();
         block_on(graph.load("/entry.pc", &mock_fs));
         let doc = block_on(evaluate("/entry.pc", &graph)).unwrap();
         println!("{}", serialize(&doc).trim());
-        assert_eq!(serialize(&doc).trim(), dedent(expected_sheet).trim());
+        assert_eq!(serialize(&doc).trim(), dedent(output).trim());
     }
 
     // let mut graph = graph::Graph::new();

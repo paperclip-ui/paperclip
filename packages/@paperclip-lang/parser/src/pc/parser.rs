@@ -467,6 +467,7 @@ fn parse_insert(context: &mut PCContext) -> Result<ast::Insert, err::ParserError
         context,
         |context: &mut PCContext| match context.curr_token {
             Some(Token::Word(b"text")) => Ok(ast::InsertBody::Text(parse_text(context)?)),
+            Some(Token::Word(b"slot")) => Ok(ast::InsertBody::Slot(parse_slot(context)?)),
             Some(Token::Word(_)) => Ok(ast::InsertBody::Element(parse_element(context)?)),
             _ => Err(context.new_unexpected_token_error()),
         },

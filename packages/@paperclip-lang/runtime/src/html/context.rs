@@ -1,5 +1,5 @@
 use super::virt;
-use crate::core::virt::Value;
+use crate::core::virt as core_virt;
 use paperclip_parser::graph::graph;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -7,8 +7,7 @@ use std::rc::Rc;
 pub struct DocumentContext<'path, 'graph> {
     pub graph: &'graph graph::Graph,
     pub path: &'path str,
-    pub data: Option<Value>,
-    pub document: Rc<RefCell<virt::Document>>,
+    pub data: Option<RefCell<core_virt::Object>>
 }
 
 impl<'path, 'graph> DocumentContext<'path, 'graph> {
@@ -16,22 +15,14 @@ impl<'path, 'graph> DocumentContext<'path, 'graph> {
         Self {
             graph,
             path,
-            data: None,
-            document: Rc::new(RefCell::new(virt::Document {
-                source_id: graph
-                    .dependencies
-                    .get(path)
-                    .and_then(|dep| Some(dep.document.id.to_string())),
-                children: vec![],
-            })),
+            data: None
         }
     }
-    pub fn with_data(&self, data: Value) -> Self {
+    pub fn with_data(&self, data: core_virt::Object) -> Self {
         Self {
-            data: Some(data),
+            data: Some(RefCell::new(data)),
             graph: self.graph,
-            path: self.path,
-            document: self.document.clone(),
+            path: self.path
         }
     }
 }

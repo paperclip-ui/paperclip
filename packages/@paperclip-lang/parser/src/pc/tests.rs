@@ -423,6 +423,20 @@ fn can_parse_various_contents() {
             "#,
             Ok(()),
         ),
+        (
+            r#"
+                component A {
+                    render slot ab
+                }
+                
+                A {
+                    insert ab {
+                        slot bc
+                    }
+                }
+            "#,
+            Ok(()),
+        ),
     ];
 
     for (source, result) in tests {

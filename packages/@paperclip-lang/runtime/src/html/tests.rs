@@ -9,6 +9,7 @@ use textwrap::dedent;
 // TODO: ensure no infinite loop
 // TODO: check imported instances
 // TODO: slots & inserts
+// TODO: evaluate slot in insert
 
 #[test]
 fn can_evaluate_various_sources() {
@@ -89,25 +90,44 @@ fn can_evaluate_various_sources() {
           component A {
             render span {
               h1 {
-                
+                slot title {
+                  text "default title"
+                }
               }
               p {
-                slot children
+                slot children {
+                  text "default child"
+                }
               }
             }
           }
 
           A {
-            text "hello world"
-            insert another 
+            text "a"
+            insert title {
+              text "hello"
+            }
+            text "b"
           }
         "#,
             r#"
-          <span>
-          </span>
-          <span>
-            hello world
-          </span>
+            <span>
+                <h1>
+                    default title
+                </h1>
+                <p>
+                    default child
+                </p>
+            </span>
+            <span>
+                <h1>
+                    hello
+                </h1>
+                <p>
+                    a
+                    b
+                </p>
+            </span>
         "#,
         ),
     ];
@@ -117,8 +137,9 @@ fn can_evaluate_various_sources() {
         let mut graph = graph::Graph::new();
         block_on(graph.load("/entry.pc", &mock_fs));
         let doc = block_on(evaluate("/entry.pc", &graph)).unwrap();
+        println!("Try evaluating");
         println!("{}", serialize(&doc).trim());
-        // assert_eq!(serialize(&doc).trim(), dedent(output).trim());
+        assert_eq!(serialize(&doc).trim(), dedent(output).trim());
     }
 
     // let mut graph = graph::Graph::new();

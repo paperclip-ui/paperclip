@@ -258,6 +258,7 @@ fn serialize_insert(insert: &ast::Insert, context: &mut Context) {
             match item {
                 ast::InsertBody::Element(element) => serialize_element(element, context),
                 ast::InsertBody::Text(text) => serialize_text(text, context),
+                ast::InsertBody::Slot(text) => serialize_slot(text, context),
             }
         }
         context.end_block();

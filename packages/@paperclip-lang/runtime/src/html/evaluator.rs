@@ -9,6 +9,8 @@ use paperclip_parser::pc::ast;
 use std::collections::HashMap;
 use std::rc::Rc;
 
+type InsertsMap<'expr> = HashMap<String, (String, Vec<virt::Node>)>;
+
 pub async fn evaluate(
     path: &str,
     graph: &graph::Graph,
@@ -17,10 +19,8 @@ pub async fn evaluate(
 
     if let Some(dependency) = dependencies.get(path) {
         let mut context = DocumentContext::new(path, graph);
-
-        evaluate_document(&dependency.document, &mut context);
-
-        Ok(Rc::try_unwrap(context.document).unwrap().into_inner())
+        let document = evaluate_document(&dependency.document, &mut context);
+        Ok(document)
     } else {
         Err(errors::RuntimeError {
             message: "not found".to_string(),
@@ -28,7 +28,7 @@ pub async fn evaluate(
     }
 }
 
-fn evaluate_document(document: &ast::Document, context: &mut DocumentContext) {
+fn evaluate_document(document: &ast::Document, context: &mut DocumentContext) -> virt::Document {
     let mut current_doc_comment: Option<&docco_ast::Comment> = None;
 
     let mut children = vec![];
@@ -53,7 +53,10 @@ fn evaluate_document(document: &ast::Document, context: &mut DocumentContext) {
         current_doc_comment = None;
     }
 
-    context.document.borrow_mut().children = children;
+    virt::Document {
+        source_id: Some(document.id.to_string()),
+        children
+    }
 }
 
 fn evaluate_component(
@@ -90,6 +93,39 @@ fn evaluate_element(
     }
 }
 
+fn evaluate_slot(
+    slot: &ast::Slot,
+    doc_comment: &Option<&docco_ast::Comment>,
+    fragment: &mut Vec<virt::Node>,
+    context: &mut DocumentContext,
+) {
+    if let Some(data) = &context.data {
+        if let Some(reference) = data.borrow_mut().get(&slot.name) {
+            if let core_virt::Value::Array(children) = reference {
+                for item in &children.items {
+                    match item {
+                        core_virt::Value::Node(node) => {
+                            fragment.push(node.clone());
+                        },
+                        _ => {
+
+                        }
+                    }
+                }
+            }
+            return;
+        }
+    }
+
+    // render default children
+    for child in &slot.body {
+        match child {
+            ast::SlotBodyItem::Element(child) => evaluate_element(child, &None, fragment, context),
+            ast::SlotBodyItem::Text(child) => evaluate_text_node(child, &None, fragment, context),
+        }
+    }
+}
+
 fn evaluate_instance(
     element: &ast::Element,
     instance_of: &ast::Component,
@@ -103,38 +139,51 @@ fn evaluate_instance(
         return;
     };
 
-    let data = create_raw_object_from_params(element, context);
+    let mut data = create_raw_object_from_params(element, context);
+    add_inserts_to_data(&mut create_inserts(element, context), &mut data);
 
-    println!("{:?}", data);
-
-    evaluate_render(&render, doc_comment, fragment, context);
+    evaluate_render(&render, doc_comment, fragment, &mut context.with_data(data));
 }
 
-fn evaluate_instance_children(
-    element: &ast::Element,
+fn add_inserts_to_data(inserts: &mut InsertsMap, data: &mut core_virt::Object) {
+    for (name, (source_id, children)) in inserts.drain() {
+        data.properties.push(core_virt::ObjectProperty {
+            source_id: Some(source_id.to_string()),
+            name: name.to_string(),
+            value: core_virt::Value::Array(core_virt::Array {
+                source_id: Some(source_id.to_string()),
+                items: children
+                    .iter()
+                    .map(|child| core_virt::Value::Node(child.clone()))
+                    .collect(),
+            }),
+        })
+    }
+}
+
+fn create_inserts<'expr>(
+    element: &'expr ast::Element,
     context: &mut DocumentContext,
-) -> HashMap<String, Vec<virt::Node>> {
+) -> InsertsMap<'expr> {
     let mut inserts = HashMap::new();
+    inserts.insert("children".to_string(), (element.id.to_string(), vec![]));
     for child in &element.body {
         evaluate_instance_child(child, &mut inserts, context);
     }
     inserts
 }
 
-fn evaluate_instance_child(
-    child: &ast::ElementBodyItem,
-    inserts: &mut HashMap<String, Vec<virt::Node>>,
+fn evaluate_instance_child<'expr>(
+    child: &'expr ast::ElementBodyItem,
+    inserts: &mut InsertsMap<'expr>,
     context: &mut DocumentContext,
 ) {
-    inserts.insert("children".to_string(), vec![]);
-
     match child {
         ast::ElementBodyItem::Insert(insert) => {
-            let fragment = if let Some(fragment) = inserts.get_mut(&insert.name) {
+            let (source_id, fragment) = if let Some(fragment) = inserts.get_mut(&insert.name) {
                 fragment
             } else {
-                let fragment = vec![];
-                inserts.insert(insert.name.to_string(), fragment);
+                inserts.insert(insert.name.to_string(), (insert.id.to_string(), vec![]));
                 inserts.get_mut(&insert.name).unwrap()
             };
 
@@ -143,7 +192,7 @@ fn evaluate_instance_child(
             }
         }
         _ => {
-            evaluate_element_child(child, inserts.get_mut("children").unwrap(), context);
+            evaluate_element_child(child, &mut inserts.get_mut("children").unwrap().1, context);
         }
     }
 }
@@ -158,7 +207,9 @@ fn evaluate_render(
         ast::RenderNode::Element(element) => {
             evaluate_element(&element, doc_comment, fragment, context);
         }
-        ast::RenderNode::Slot(slot) => {}
+        ast::RenderNode::Slot(slot) => {
+            evaluate_slot(&slot, doc_comment, fragment, context);
+        }
         ast::RenderNode::Text(text) => evaluate_text_node(&text, doc_comment, fragment, context),
     }
 }
@@ -191,6 +242,9 @@ fn evaluate_element_child(
 ) {
     match child {
         ast::ElementBodyItem::Element(child) => evaluate_element(child, &None, fragment, context),
+        ast::ElementBodyItem::Slot(slot) => {
+            evaluate_slot(&slot, &None, fragment, context);
+        }
         ast::ElementBodyItem::Text(child) => evaluate_text_node(child, &None, fragment, context),
         _ => {}
     }

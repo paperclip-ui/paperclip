@@ -1,7 +1,6 @@
 use super::io::IO;
 use crate::pc::ast;
 use crate::pc::parser::parse as parse_pc;
-use crate::pc::symbol_table::{get_symbol_table, SymbolTableItem};
 use crc::crc32;
 use futures::future::{select_all, BoxFuture, Future, FutureExt};
 use futures::lock::Mutex;

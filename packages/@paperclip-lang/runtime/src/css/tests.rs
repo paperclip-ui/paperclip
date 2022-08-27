@@ -128,76 +128,88 @@ fn can_evaluate_various_sources() {
             HashMap::from([(
                 "/entry.pc",
                 r#"
-                      trigger a {
-                        "@media screen and (max-width: 100px)"
+                  trigger a {
+                    "@media screen and (max-width: 100px)"
+                  }
+                  trigger b {
+                    "@media screen and (max-width: 300px)"
+                    "@media screen and (max-width: 400px)"
+                    ":nth-child(2n)"
+                  }
+                  trigger c {
+                    "@supports mobile"
+                    "@supports desktop"
+                  }
+                  component A {
+                    variant a trigger {
+                      a
+                    }
+                    variant b trigger {
+                      b
+                    }
+                    variant c trigger {
+                      c
+                    }
+                    render div {
+                      style variant a + b + c {
+                        color: blue
                       }
-                      trigger b {
-                        "@media screen and (max-width: 300px)"
-                        "@media screen and (max-width: 400px)"
-                        ":nth-child(2n)"
-                      }
-                      trigger c {
-                        "@supports mobile"
-                        "@supports desktop"
-                      }
-                      component A {
-                        variant a trigger {
-                          a
-                        }
-                        variant b trigger {
-                          b
-                        }
-                        variant c trigger {
-                          c
-                        }
-                        render div {
-                          style variant a + b + c {
-                            color: blue
-                          }
-                        }
-                      }
-                    "#,
+                    }
+                  }
+                "#,
             )]),
             r#"
-                @supports mobile {
-                  @media screen and (max-width: 300px) {
-                      @media screen and (max-width: 100px) {
-                          .80f4925f-22:nth-child(2n) {
-                              color: blue;
-                          }
-                      }
-                  }
-              }
-              
-              @supports mobile {
-                  @media screen and (max-width: 400px) {
-                      @media screen and (max-width: 100px) {
-                          .80f4925f-22:nth-child(2n) {
-                              color: blue;
-                          }
-                      }
-                  }
-              }
-              
-              @supports desktop {
-                  @media screen and (max-width: 300px) {
-                      @media screen and (max-width: 100px) {
-                          .80f4925f-22:nth-child(2n) {
-                              color: blue;
-                          }
-                      }
-                  }
-              }
-              
-              @supports desktop {
-                  @media screen and (max-width: 400px) {
-                      @media screen and (max-width: 100px) {
-                          .80f4925f-22:nth-child(2n) {
-                              color: blue;
-                          }
-                      }
-                  }
-              }
+            .80f4925f-11 .80f4925f-22 {
+                color: blue;
+            }
+            
+            .80f4925f-13 .80f4925f-22 {
+                color: blue;
+            }
+            
+            .80f4925f-15 .80f4925f-22 {
+                color: blue;
+            }
+            
+            @supports mobile {
+                @media screen and (max-width: 300px) {
+                    @media screen and (max-width: 100px) {
+                        .80f4925f-24:nth-child(2n) .80f4925f-22 {
+                            color: blue;
+                        }
+                    }
+                }
+            }
+            
+            @supports mobile {
+                @media screen and (max-width: 400px) {
+                    @media screen and (max-width: 100px) {
+                        .80f4925f-24:nth-child(2n) .80f4925f-22 {
+                            color: blue;
+                        }
+                    }
+                }
+            }
+            
+            @supports desktop {
+                @media screen and (max-width: 300px) {
+                    @media screen and (max-width: 100px) {
+                        .80f4925f-24:nth-child(2n) .80f4925f-22 {
+                            color: blue;
+                        }
+                    }
+                }
+            }
+            
+            @supports desktop {
+                @media screen and (max-width: 400px) {
+                    @media screen and (max-width: 100px) {
+                        .80f4925f-24:nth-child(2n) .80f4925f-22 {
+                            color: blue;
+                        }
+                    }
+                }
+            }
         "#,
         ),
         // Tokens
@@ -210,6 +222,50 @@ fn can_evaluate_various_sources() {
                 div {
                   style {
                     color: var(snowWhite)
+                  }
+                }
+
+              "#,
+            )]),
+            r#"
+              :root {
+                  --80f4925f-7: rgba(255, 255, 255, 0);
+              }
+
+              .80f4925f-12 {
+                  color: var(--80f4925f-7);
+              }
+            "#,
+        ),
+        // Tokens
+        (
+            HashMap::from([(
+                "/entry.pc",
+                r#"
+
+                trigger everyOther {
+                  ":nth-child(2n)"
+                }
+
+                component A {
+                  variant something
+                  render div a2 {
+                    style variant something {
+                      color: blue
+                    }
+                  }
+                }
+
+                component B {
+                  render A a
+                }
+
+                component C {
+                  variant something2 trigger { everyOther }
+                  render B {
+                    override a.a2 {
+                      variant something trigger { something2 }
+                    }
                   }
                 }
 

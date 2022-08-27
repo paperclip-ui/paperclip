@@ -17,7 +17,7 @@ pub struct DocumentContext<'path, 'graph, 'expr> {
 impl<'path, 'graph, 'expr> DocumentContext<'path, 'graph, 'expr> {
     pub fn new(path: &'path str, graph: &'graph graph::Graph) -> Self {
         let document_id = get_document_id(path);
-        let mut id_generator = Rc::new(RefCell::new(IDGenerator::new(document_id)));
+        let id_generator = Rc::new(RefCell::new(IDGenerator::new(document_id)));
 
         let document_id = id_generator.borrow_mut().new_id();
 

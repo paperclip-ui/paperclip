@@ -121,32 +121,68 @@ fn evaluate_element(element: &ast::Element, context: &mut DocumentContext) {
 
 fn evaluate_style(style: &ast::Style, context: &mut DocumentContext) {
     if let Some(variants) = &style.variant_combo {
-        let style_combo_triggers = collect_style_variant_triggers(variants, context);
-        evaluate_triggered_styles(&style, &style_combo_triggers, context);
+        let expanded_combo_selectors = collect_style_variant_selectors(variants, context);
+        evaluate_variant_styles(&style, variants, &expanded_combo_selectors, context);
     } else {
         evaluate_vanilla_style(style, context)
     }
 }
 
-fn evaluate_triggered_styles(
+fn evaluate_variant_styles(
     style: &ast::Style,
-    style_combo_triggers: &Vec<Vec<VariantTrigger>>,
+    variants: &Vec<ast::Reference>,
+    expanded_combo_selectors: &Vec<Vec<VariantTrigger>>,
     context: &mut DocumentContext,
 ) {
+
+    let current_component = if let Some(component) = context.current_component {
+        component
+    } else {
+        return;
+    };
+
     let ns = if let Some(ns) = get_style_namespace(context) {
         ns
     } else {
         return;
     };
 
-    let (combo_queries, combo_selectors) = get_combo_selectors(style_combo_triggers);
+    let evaluated_style = create_style_declarations(style, context);
 
+    let mut assoc_variants = vec![];
+
+    for variant in variants {
+        for item in &current_component.body {
+            if let ast::ComponentBodyItem::Variant(variant2) = item {
+                if variant.path.get(0) == Some(&variant2.name) {
+                    assoc_variants.push(variant2);
+                }
+            }
+        }
+    }
+
+    for assoc_variant in assoc_variants {
+        let virt_style = virt::Rule::Style(virt::StyleRule {
+            id: context.next_id(),
+            source_id: Some(style.id.to_string()),
+            selector_text: format!(".{} .{}", assoc_variant.id, ns),
+            style: evaluated_style.clone(),
+        });
+        context.document.borrow_mut().rules.push(virt_style);
+    }
+
+    
+    // first up, 
+
+
+    let (combo_queries, combo_selectors) = get_combo_selectors(expanded_combo_selectors);
+    
     for group_selectors in combo_selectors {
         let virt_style = virt::Rule::Style(virt::StyleRule {
             id: context.next_id(),
             source_id: Some(style.id.to_string()),
-            selector_text: format!(".{}{}", ns, group_selectors.join("")),
-            style: create_style_declarations(style, context),
+            selector_text: format!(".{}{} .{}", current_component.id, group_selectors.join(""), ns),
+            style: evaluated_style.clone(),
         });
 
         for container_queries in &combo_queries {
@@ -196,13 +232,6 @@ fn substr(start: usize, value: &str) -> String {
     value.chars().skip(start).take(value.len()).collect()
 }
 
-fn evalute_container(container_combo: &SelectorCombo, selector_combos: &SelectorCombos) {
-    for query in container_combo {}
-}
-
-fn create_container_query(container_combo: &SelectorCombo, selector_combos: &SelectorCombos) {
-    // container_combo.red
-}
 /*
 
 [
@@ -233,12 +262,12 @@ fn create_container_query(container_combo: &SelectorCombo, selector_combos: &Sel
 */
 
 fn get_combo_selectors(
-    style_combo_triggers: &Vec<Vec<VariantTrigger>>,
+    expanded_combo_selectors: &Vec<Vec<VariantTrigger>>,
 ) -> (SelectorCombos, SelectorCombos) {
     let mut combo_container_queries: SelectorCombos = vec![];
     let mut combo_selectors: SelectorCombos = vec![];
 
-    for group in style_combo_triggers {
+    for group in expanded_combo_selectors {
         let mut container_queries = vec![];
         let mut selectors = vec![];
 
@@ -280,27 +309,7 @@ fn merge_combos(existing_combos: &SelectorCombos, new_items: &Vec<&String>) -> S
     new_combos
 }
 
-// fn get_queries(style_combo_triggers: &Vec<Vec<VariantTrigger>>) -> (Vec<&str>, Vec<&str>> {
-
-//     let mut container_queries: Vec<&str> = vec![];
-//     let mut style_queries: Vec<&str> = vec![];
-
-//     for a in style_combo_triggers {
-//         for b in a {
-//             if let VariantTrigger::Selector(selector) = b {
-//                 if selector.starts_with("@") {
-//                     container_queries.push(selector);
-//                 } else {
-//                     style_queries.push(selector);
-//                 }
-//             }
-//         }
-//     }
-
-//     (container_queries, style_queries)
-// }
-
-fn collect_style_variant_triggers(
+fn collect_style_variant_selectors(
     variant_refs: &Vec<ast::Reference>,
     context: &mut DocumentContext,
 ) -> Vec<Vec<VariantTrigger>> {

@@ -2,6 +2,7 @@ use super::config::Config;
 use super::project::Project;
 use futures::executor::block_on;
 use std::path::Path;
+use std::rc::Rc;
 
 #[test]
 fn can_load_a_simple_project() {
@@ -9,12 +10,12 @@ fn can_load_a_simple_project() {
     let project = block_on(Project::load(&directory, None)).unwrap();
     assert_eq!(
         project.config,
-        Config {
+        Rc::new(Config {
             src_dir: Some(".".to_string()),
             global_css: None,
             module_dirs: Some(vec!["node_modules".to_string()]),
             compiler_options: None
-        }
+        })
     );
 }
 

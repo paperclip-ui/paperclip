@@ -1,63 +1,54 @@
 use super::config::Config;
 use anyhow::Result;
-use futures::future::{BoxFuture, FutureExt};
+use super::project_compiler::ProjectCompiler;
 use glob::glob;
-use paperclip_parser::graph::graph::Graph;
-use paperclip_parser::graph::io::IO as GraphIO;
+use paperclip_parser::graph::graph::{Graph};
 use path_absolutize::*;
-use std::fs;
 use std::path::Path;
+use std::rc::Rc;
+use super::project_io::ProjectGraphIO;
 
 #[derive(Debug)]
 pub struct Project {
-    pub config: Config,
-    pub graph: Graph,
+
+    /// The project config that specifies source information
+    /// and how to compile the project
+    pub config: Rc<Config>,
+
+    /// The dependency graph of all PC files 
+    pub graph: Rc<Graph>,
+
+    /// The current project directory
     pub directory: String,
+
+    pub compiler: ProjectCompiler
 }
 
 impl Project {
+
+    /// Loads the project + dependency graph
     pub async fn load(directory: &str, file_name: Option<String>) -> Result<Self> {
         load_project(directory, file_name).await
     }
-}
 
-struct ProjectGraphIO {}
-
-impl GraphIO for ProjectGraphIO {
-    fn resolve(&self, from_path: &String, to_path: &String) -> BoxFuture<'static, Option<String>> {
-        let ret: Option<String> = Some(String::from(
-            Path::new(from_path)
-                .join(to_path)
-                .absolutize()
-                .unwrap()
-                .to_str()
-                .unwrap(),
-        ));
-
-        async { ret }.boxed()
-    }
-    fn read(&self, path: &String) -> BoxFuture<'static, Option<String>> {
-        let ret = if let Ok(content) = fs::read_to_string(path) {
-            Some(content.to_string())
-        } else {
-            None
-        };
-
-        async { ret }.boxed()
+    /// Compiles the project given the config
+    pub async fn compile(&self) {
     }
 }
 
 async fn load_project(directory: &str, file_name: Option<String>) -> Result<Project> {
-    let config = Config::load(directory, file_name)?;
+    let config = Rc::new(Config::load(directory, file_name)?);
 
     let graph_io = ProjectGraphIO {};
     let mut graph = Graph::new();
     load_project_pc_files(&mut graph, graph_io, &config, directory).await;
+    let graph = Rc::new(graph);
 
     Ok(Project {
-        config,
-        graph,
+        config: config.clone(),
+        graph: graph.clone(),
         directory: String::from(directory),
+        compiler: ProjectCompiler::load(config.clone(), graph.clone())
     })
 }
 

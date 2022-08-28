@@ -423,6 +423,7 @@ dependencies = [
  "futures",
  "glob",
  "paperclip_parser",
+ "paperclip_runtime",
  "path-absolutize",
  "serde",
  "serde_json",

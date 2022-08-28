@@ -1,6 +1,5 @@
 use anyhow::Result;
 use clap::Args;
-use futures::executor::block_on;
 use paperclip_local::config::DEFAULT_CONFIG_NAME;
 use paperclip_local::project::Project;
 use std::env;
@@ -20,11 +19,15 @@ pub struct BuildArgs {
     config: String,
 }
 
-pub fn build(args: BuildArgs) -> Result<()> {
-    let project = block_on(Project::load(
+pub async fn build(args: BuildArgs) -> Result<()> {
+    let project = Project::load(
         &String::from(env::current_dir()?.to_str().unwrap()),
         Some(args.config),
-    ))?;
+    ).await;
+
+
+    // project.compile
+    
 
     // println!("BUILD IT {:?}", args);
     Ok(())

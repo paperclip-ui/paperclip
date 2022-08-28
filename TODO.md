@@ -15,9 +15,10 @@
   - load in all associated CSS
   - ability to set path?
 - IO watcher
-- A\* patching
+- JS Rendering + server
+- A\* patching. Look into https://github.com/automerge/automerge-rs/tree/main/automerge
   - for AST
-- ability to inject components
+- ability to inject HTML?
 
   - react hooks?
     - can create adapter

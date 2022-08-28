@@ -132,7 +132,7 @@ public component BuildButtonMenu {
  * @bounds(left: 789, top: 33, right: 889, bottom: 59)
  */
 public component BuildButtonOption {
-  variant hover trigger { PseudoElement.Hover }
+  variant hover trigger { ":hover" }
   render div {
     style extends imp1.baseFont {
       padding-left: 12px

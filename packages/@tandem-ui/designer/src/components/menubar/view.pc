@@ -108,7 +108,7 @@ public component MenuBarItem {
  * @bounds(left: 674, top: 141, right: 774, bottom: 241)
  */
 public component MenuBarItemOption {
-  variant active trigger { PseudoElement.Hover }
+  variant active trigger { ":hover" }
   variant hasCommand trigger { true }
   render div {
     style {

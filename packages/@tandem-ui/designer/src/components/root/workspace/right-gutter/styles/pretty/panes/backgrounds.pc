@@ -11,7 +11,7 @@ import "../../../../../../inputs/dropdown/view.pc" as imp5
  */
 public component BackgroundItem {
   script (src: "./background-item-controller.tsx")
-  variant hover trigger { PseudoElement.Hover }
+  variant hover trigger { ":hover" }
   render div {
     style {
       display: flex

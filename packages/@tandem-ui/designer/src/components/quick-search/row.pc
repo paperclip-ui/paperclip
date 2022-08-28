@@ -9,7 +9,7 @@ import "../../icons/view.pc" as imp2
 public component SearchResult {
   script (src: "./search-result-controller.tsx")
   variant hovering trigger {
-    PseudoElement.Hover
+    ":hover"
   }
   variant preselected
   render div {

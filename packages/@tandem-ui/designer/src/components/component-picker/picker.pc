@@ -213,7 +213,7 @@ public component ComponentPopdownPicker {
  */
 public component ComponentPickerPopdownItem {
   variant alt trigger { true }
-  variant hover trigger { PseudoElement.Hover }
+  variant hover trigger { ":hover" }
   variant preselected trigger { true }
   render div {
     style {

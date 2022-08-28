@@ -102,7 +102,7 @@ public component Breadcrumb {
   variant element2
   variant plug
   variant slot
-  variant hovering trigger { PseudoElement.Hover }
+  variant hovering trigger { ":hover" }
   variant selected trigger { true }
   render div {
     style extends imp1.baseFont {

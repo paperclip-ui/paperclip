@@ -9,7 +9,7 @@ import "../dropdown/menu.pc" as imp3
  */
 public component TextInput {
   script (src: "./controller.tsx")
-  variant focus trigger { PseudoElement.Focus }
+  variant focus trigger { ":focus" }
   variant disabled trigger { true }
   render input {
     style extends imp0.defaultBorder, imp0.baseFont {

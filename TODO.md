@@ -9,16 +9,14 @@
 
 #### Milestone 2: evaluator
 
-- CSS evaluator
-
-  - walk AST and emit CSS
-    - use names if present
-  - ensure that tokens are evaluated
-
 - HTML evaluator
 
 - save HTML to disc
-- IO watcher - HMR?
+  - load in all associated CSS
+  - ability to set path?
+- IO watcher
+- A\* patching
+  - for AST
 - ability to inject components
 
   - react hooks?

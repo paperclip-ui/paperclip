@@ -10,7 +10,7 @@ public component ControllerItem {
   script (src: "./controller-item-controller.tsx")
   variant selected trigger { true }
   variant alt
-  variant hovering trigger { PseudoElement.Hover }
+  variant hovering trigger { ":hover" }
   render div {
     style {
       box-sizing: border-box

@@ -404,6 +404,8 @@ name = "paperclip_common"
 version = "0.1.1"
 dependencies = [
  "crc",
+ "lazy_static",
+ "regex",
  "uuid",
 ]
 

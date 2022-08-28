@@ -10,7 +10,7 @@ macro_rules! add_case {
     ($name: ident, $mock_files: expr, $output: expr) => {
         #[test]
         fn $name() {
-            let mock_fs = test_utils::MockFS::new($mock_files);
+            let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
             let mut graph = graph::Graph::new();
             block_on(graph.load("/entry.pc", &mock_fs));
             let doc = block_on(evaluate("/entry.pc", &graph)).unwrap();
@@ -25,7 +25,7 @@ macro_rules! add_case {
 
 add_case! {
   can_eval_a_basic_style,
-  HashMap::from([(
+  [(
       "/entry.pc",
       r#"
         div {
@@ -34,7 +34,7 @@ add_case! {
           }
         }
       "#,
-  )]),
+  )],
   r#"
   .80f4925f-4 {
       color: red;
@@ -44,7 +44,7 @@ add_case! {
 
 add_case! {
   can_eval_a_basic_style_with_a_name,
-  HashMap::from([(
+  [(
       "/entry.pc",
       r#"
         span abba {
@@ -53,7 +53,7 @@ add_case! {
           }
         }
       "#,
-  )]),
+  )],
   r#"
     .abba-80f4925f-1 {
         color: orange;
@@ -63,7 +63,7 @@ add_case! {
 
 add_case! {
   can_extend_a_style,
-  HashMap::from([(
+  [(
     "/entry.pc",
       r#"
       style fontRegular {
@@ -77,7 +77,7 @@ add_case! {
         }
       }
     "#,
-  )]),
+  )],
   r#"
   .80f4925f-10 {
       font-family: Helvetica;
@@ -89,7 +89,7 @@ add_case! {
 
 add_case! {
   can_extend_multiple_styles,
-  HashMap::from([(
+  [(
     "/entry.pc",
     r#"
       style a {
@@ -105,7 +105,7 @@ add_case! {
         }
       }
     "#,
-  )]),
+  )],
   r#"
     .80f4925f-12 {
     color: red;
@@ -117,7 +117,7 @@ add_case! {
 
 add_case! {
   can_extend_an_imported_style,
-  HashMap::from([
+  [
       (
           "/styles.pc",
           r#"
@@ -137,7 +137,7 @@ add_case! {
             }
           "#,
       ),
-  ]),
+  ],
   r#"
     .80f4925f-6 {
         font-family: Helvetica;
@@ -148,7 +148,7 @@ add_case! {
 
 add_case! {
   can_evaluate_a_style_with_multiple_variant_triggers,
-  HashMap::from([(
+  [(
       "/entry.pc",
       r#"
         trigger a {
@@ -180,7 +180,7 @@ add_case! {
           }
         }
       "#,
-  )]),
+  )],
   r#"
   .80f4925f-11 .80f4925f-22 {
       color: blue;
@@ -238,7 +238,7 @@ add_case! {
 
 add_case! {
   can_evaluate_a_style_token,
-  HashMap::from([(
+  [(
       "/entry.pc",
       r#"
       token snowWhite rgba(255, 255, 255, 0)
@@ -250,7 +250,7 @@ add_case! {
       }
 
     "#,
-  )]),
+  )],
   r#"
     :root {
         --80f4925f-7: rgba(255, 255, 255, 0);

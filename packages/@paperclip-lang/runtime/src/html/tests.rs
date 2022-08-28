@@ -15,7 +15,7 @@ macro_rules! add_case {
     ($name: ident, $input: expr, $output: expr) => {
         #[test]
         fn $name() {
-            let mock_fs = test_utils::MockFS::new(HashMap::from([("/entry.pc", $input)]));
+            let mock_fs = test_utils::MockFS::new(HashMap::from($input));
             let mut graph = graph::Graph::new();
             block_on(graph.load("/entry.pc", &mock_fs));
             let doc = block_on(evaluate("/entry.pc", &graph)).unwrap();
@@ -31,7 +31,7 @@ macro_rules! add_case {
 
 add_case! {
     can_evaluate_a_div,
-    "div",
+    [("/entry.pc", "div")],
     r#"
 			<div>
 			</div>
@@ -40,7 +40,7 @@ add_case! {
 
 add_case! {
     can_evaluate_text,
-    "text \"hello\"",
+    [("/entry.pc", "text \"hello\"")],
     r#"
 			hello
 		"#
@@ -48,7 +48,7 @@ add_case! {
 
 add_case! {
     can_evaluate_attributes,
-    "div (a: \"b\", c: \"d\")",
+    [("/entry.pc", "div (a: \"b\", c: \"d\")")],
     r#"
 			<div a="b" c="d">
 			</div>
@@ -57,28 +57,28 @@ add_case! {
 
 add_case! {
     can_evaluate_a_component,
-    r#"
+    [("/entry.pc", r#"
 			component A {
 				render div {
 					text "Hello world"
 				}
 			}
-		"#,
+		"#)],
     "<div> Hello world </div>"
 }
 
 add_case! {
     properly_evaluates_void_tags,
-    r#"
+    [("/entry.pc", r#"
 			hr
 			br
-		"#,
+		"#)],
     "<hr> <br>"
 }
 
 add_case! {
     can_evaluate_inserts_and_slots,
-    r#"
+    [("/entry.pc", r#"
 		component A {
 			render span {
 				h1 {
@@ -101,7 +101,7 @@ add_case! {
 			}
 			text "b"
 		}
-	"#,
+	"#)],
             r#"
 			<span>
 					<h1>
@@ -122,4 +122,79 @@ add_case! {
 					</p>
 			</span>
 	"#
+}
+
+add_case! {
+    can_evaluate_a_nested_insert,
+    [("/entry.pc",r#"
+		component A {
+			render slot a1 {
+				text "a"
+			}
+		}
+
+		component B {
+			render A {
+				insert a1 {
+					slot a2 {
+						text "b"
+					}
+				}
+			}
+		}
+
+		B {
+			insert a2 {
+				text "c"
+			}
+		}
+	"#)],
+    "a b c"
+}
+
+add_case! {
+    can_evaluate_an_instance_from_another_file,
+    [
+        ("/comp.pc", r#"
+			public component Test {
+				render span {
+					slot children
+				}
+			}
+		"#),
+        ("/entry.pc", r#"
+			import "/comp.pc" as comp
+
+			comp.Test {
+				text "Hello world"
+			}
+		"#),
+
+    ],
+    "<span> Hello world </span>"
+}
+
+add_case! {
+    combines_explicit_classnames_with_ns,
+    [
+        ("/entry.pc", r#"
+			div (class: "p-10 bg-red") {
+				style {
+					color: blue
+				}
+				text "Hello"
+			}
+		"#)
+    ],
+    "<div class=\"80f4925f-7 p-10 bg-red\"> Hello </div>"
+}
+
+add_case! {
+    elements_with_ids_have_scope_classes,
+    [
+            ("/entry.pc", r#"
+		div ab
+	"#)
+    ],
+    "<div class=\"ab-80f4925f\"> </div>"
 }

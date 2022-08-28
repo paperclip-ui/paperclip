@@ -16,3 +16,5 @@ name = "paperclip_common"
 [dependencies]
 crc = "1.8.1"
 uuid = { version = "0.8", features = ["serde", "v4", "wasm-bindgen"] }
+regex = "1.6.0"
+lazy_static = "1.4.0"

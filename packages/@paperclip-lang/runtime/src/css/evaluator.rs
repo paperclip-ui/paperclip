@@ -1,6 +1,7 @@
 use super::context::DocumentContext;
 use super::virt;
 use crate::core::errors;
+use crate::core::utils::get_style_namespace;
 use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph::graph;
 use paperclip_parser::graph::reference as graph_ref;
@@ -138,7 +139,13 @@ fn evaluate_variant_styles(
         return;
     };
 
-    let ns = if let Some(ns) = get_style_namespace(context) {
+    let ns = if let Some(ns) = context.current_element.and_then(|element| {
+        Some(get_style_namespace(
+            element,
+            &context.document.borrow().id,
+            context.current_component,
+        ))
+    }) {
         ns
     } else {
         return;
@@ -372,39 +379,23 @@ fn evaluate_vanilla_style(style: &ast::Style, context: &mut DocumentContext) {
 }
 
 fn create_virt_style(style: &ast::Style, context: &mut DocumentContext) -> Option<virt::StyleRule> {
-    get_style_namespace(context).and_then(|ns| {
-        Some(virt::StyleRule {
-            id: "rule".to_string(),
-            source_id: Some(style.id.to_string()),
-            selector_text: format!(".{}", ns),
-            style: create_style_declarations(style, context),
+    context
+        .current_element
+        .and_then(|element| {
+            Some(get_style_namespace(
+                element,
+                &context.document.borrow().id,
+                context.current_component,
+            ))
         })
-    })
-}
-
-fn get_style_namespace(context: &DocumentContext) -> Option<String> {
-    if let Some(element) = &context.current_element {
-        // Here we're taking the _prefered_ name for style rules to make
-        // them more readable
-        if let Some(name) = &element.name {
-            // element names are scoped to either the document, or components. If a
-            // component is present, then use that
-            let ns = if let Some(component) = &context.current_component {
-                format!("{}-{}", component.name, name)
-            } else {
-                name.to_string()
-            };
-
-            // Keep the CSS scoped to this document.
-            Some(format!("{}-{}", ns, context.document.borrow().id))
-        } else {
-            // No element name? Use the ID. We don't need the document ID
-            // here since the element ID is unique.
-            Some(format!("{}", element.id))
-        }
-    } else {
-        None
-    }
+        .and_then(|ns| {
+            Some(virt::StyleRule {
+                id: "rule".to_string(),
+                source_id: Some(style.id.to_string()),
+                selector_text: format!(".{}", ns),
+                style: create_style_declarations(style, context),
+            })
+        })
 }
 
 fn create_style_declarations(

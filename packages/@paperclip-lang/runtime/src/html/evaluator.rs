@@ -1,13 +1,15 @@
 use super::context::DocumentContext;
 use super::virt;
 use crate::core::errors;
+use crate::core::utils::get_style_namespace;
 use crate::core::virt as core_virt;
+use paperclip_common::id::get_document_id;
 use paperclip_parser::docco::ast as docco_ast;
 use paperclip_parser::graph::graph;
 use paperclip_parser::graph::reference as graph_ref;
 use paperclip_parser::pc::ast;
+use std::collections::BTreeMap;
 use std::collections::HashMap;
-use std::rc::Rc;
 
 type InsertsMap<'expr> = HashMap<String, (String, Vec<virt::Node>)>;
 
@@ -80,13 +82,25 @@ fn evaluate_element(
     fragment: &mut Vec<virt::Node>,
     context: &mut DocumentContext,
 ) {
-    let mut ref_path = vec![element.tag_name.to_string()];
+    let mut ref_path = vec![];
+
+    if let Some(ns) = &element.namespace {
+        ref_path.push(ns.to_string());
+    }
+
+    ref_path.push(element.tag_name.to_string());
 
     let reference = context.graph.get_ref(&ref_path, &context.path);
 
     if let Some(reference) = reference {
         if let graph_ref::Expr::Component(component) = &reference.expr {
-            evaluate_instance(element, component, doc_comment, fragment, context);
+            evaluate_instance(
+                element,
+                component,
+                doc_comment,
+                fragment,
+                &mut context.within_component(component),
+            );
         }
     } else {
         evaluate_native_element(element, doc_comment, fragment, context);
@@ -139,6 +153,8 @@ fn evaluate_instance(
 
     let mut data = create_raw_object_from_params(element, context);
     add_inserts_to_data(&mut create_inserts(element, context), &mut data);
+
+    println!("{:?}", data);
 
     evaluate_render(&render, doc_comment, fragment, &mut context.with_data(data));
 }
@@ -256,30 +272,71 @@ fn evaluate_insert_child(
     match child {
         ast::InsertBody::Element(child) => evaluate_element(child, &None, fragment, context),
         ast::InsertBody::Text(child) => evaluate_text_node(child, &None, fragment, context),
-        _ => {}
+        ast::InsertBody::Slot(child) => evaluate_slot(child, &None, fragment, context),
     }
 }
 
 fn create_attributes(element: &ast::Element, context: &DocumentContext) -> Vec<virt::Attribute> {
-    let mut attributes = vec![];
+    let mut attributes = BTreeMap::new();
 
     for param in &element.parameters {
         evaluate_attribute(param, &mut attributes, context);
     }
 
-    attributes
+    add_static_attribute_values(element, &mut attributes, context);
+
+    attributes.values().cloned().collect()
 }
 
 fn evaluate_attribute(
     param: &ast::Parameter,
-    attributes: &mut Vec<virt::Attribute>,
+    attributes: &mut BTreeMap<String, virt::Attribute>,
     context: &DocumentContext,
 ) {
-    attributes.push(virt::Attribute {
-        source_id: Some(param.id.to_string()),
-        name: param.name.to_string(),
-        value: create_attribute_value(&param.value, context).to_string(),
-    })
+    attributes.insert(
+        param.name.to_string(),
+        virt::Attribute {
+            source_id: Some(param.id.to_string()),
+            name: param.name.to_string(),
+            value: create_attribute_value(&param.value, context).to_string(),
+        },
+    );
+}
+
+fn add_static_attribute_values(
+    element: &ast::Element,
+    attributes: &mut BTreeMap<String, virt::Attribute>,
+    context: &DocumentContext,
+) {
+    if is_stylable(element) {
+        let class_name = get_style_namespace(
+            element,
+            &get_document_id(context.path),
+            context.current_component,
+        );
+
+        if let Some(class) = attributes.get_mut("class") {
+            class.value = format!("{} {}", class_name, class.value);
+        } else {
+            attributes.insert(
+                "class".to_string(),
+                virt::Attribute {
+                    source_id: None,
+                    name: "class".to_string(),
+                    value: class_name,
+                },
+            );
+        }
+    }
+}
+
+fn is_stylable(element: &ast::Element) -> bool {
+    element.name != None
+        || element
+            .body
+            .iter()
+            .find(|child| matches!(child, ast::ElementBodyItem::Style(_)))
+            != None
 }
 
 fn create_raw_object_from_params(

@@ -29,6 +29,7 @@ impl<'options> TargetCompiler {
     let mut data = HashMap::new();
 
 
+
     if options.can_emit("css") {
       data.insert("css".to_string(), translate_css(path, graph).await?);
     }
@@ -37,12 +38,14 @@ impl<'options> TargetCompiler {
       data.insert("html".to_string(), translate_html(path, graph).await?);
     }
 
+
     Ok(data)
   }
 }
 
 
 async fn translate_css(path: &str, graph: &Graph) -> Result<String> {
+
   Ok(serialize_css(&evaluate_css(path, graph).await?))
 }
 
@@ -61,6 +64,9 @@ async fn translate_html(path: &str, graph: &Graph) -> Result<String> {
       </body>
     </html>
   "#, body);
+
+
+  // println!("{}", html);
 
   Ok(html)
 }

@@ -9,9 +9,15 @@
 
 #### Milestone 2: evaluator
 
-- HTML evaluator
-- consider interim for compiler
+- compiler
 
+  - html
+  - css
+  - need to embed assets
+  - need to write files
+  - watch mode
+
+- web components
 - save HTML to disc
   - load in all associated CSS
   - ability to set path?

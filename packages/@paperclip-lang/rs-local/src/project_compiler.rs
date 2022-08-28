@@ -1,6 +1,7 @@
 use super::config::{Config, CompilerOptions};
 use paperclip_parser::graph::graph::{Graph, Dependency};
 use std::rc::Rc;
+use anyhow::Result;
 use super::target_compiler::TargetCompiler;
 
 #[derive(Debug)]
@@ -24,14 +25,15 @@ impl ProjectCompiler {
       graph
     }
   }
-  pub async fn compile_all(&self) {
-
+  pub async fn compile_all(&self) -> Result<()> {
     // TODO - return iterable
     for (path, dependency) in &self.graph.dependencies {
       for target in &self.targets {
-        let compiled = target.compile_dependency(path, &self.graph).await;
+        let compiled = target.compile_dependency(path, &self.graph).await?;
         // TODO - emit stream
       }
     }
+    Ok(())
   }
+
 }

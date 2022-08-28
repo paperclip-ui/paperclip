@@ -20,10 +20,15 @@ pub struct BuildArgs {
 }
 
 pub async fn build(args: BuildArgs) -> Result<()> {
+
     let project = Project::load(
         &String::from(env::current_dir()?.to_str().unwrap()),
         Some(args.config),
-    ).await;
+    ).await?;
+
+    project.compile().await?;
+
+    println!("RUN");
 
 
     // project.compile

@@ -32,7 +32,9 @@ impl Project {
     }
 
     /// Compiles the project given the config
-    pub async fn compile(&self) {
+    pub async fn compile(&self) -> Result<()> {
+        self.compiler.compile_all().await?;
+        Ok(())
     }
 }
 
@@ -80,5 +82,5 @@ async fn load_project_pc_files<'io>(
         }
     }
 
-    graph.load_files(all_files, &io);
+    graph.load_files(all_files, &io).await;
 }

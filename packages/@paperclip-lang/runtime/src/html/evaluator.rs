@@ -154,8 +154,6 @@ fn evaluate_instance(
     let mut data = create_raw_object_from_params(element, context);
     add_inserts_to_data(&mut create_inserts(element, context), &mut data);
 
-    println!("{:?}", data);
-
     evaluate_render(&render, doc_comment, fragment, &mut context.with_data(data));
 }
 

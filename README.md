@@ -8,7 +8,7 @@
 <!-- [![Backers on Open Collective](https://opencollective.com/tandem/backers/badge.svg)](#backers)
 [![Sponsors on Open Collective](https://opencollective.com/tandem/sponsors/badge.svg)](#sponsors) -->
 
-Tandem is a UI builder for that aims to make it easier for anyone to build web applications. It compiles down to plain code, and plugs into existing frameworks, so you can use Tandem with your existing codebase. Here's what it looks like:
+Tandem is an **experimental** UI builder for that aims to make it easier for anyone to build web applications. It compiles down to plain code, and plugs into existing frameworks, so you can use Tandem with your existing codebase. Here's what it looks like:
 
 ![Split view](./assets/screenshots/v10.1.7.png)
 

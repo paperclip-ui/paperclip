@@ -13,49 +13,37 @@ public component StyleProps {
       box-sizing: border-box
       display: block
     }
-    StylePropRow element2 {
+    StylePropRow element2(text1: "display", text2: "inline-block") {
       override {
-        variant isOverride (enabled: [true])
+        variant isOverride trigger { true }
       }
-      override text1 "display"
-      override text2 "inline-block"
     }
-    StylePropRow element3 {
+    StylePropRow element3(text1: "font-family", text2: "Helvetica, Arial") {
       override {
-        variant alt (enabled: [true])
-        variant isOverride (enabled: [true])
+        variant alt trigger { true }
+        variant isOverride trigger { true }
       }
-      override text1 "font-family"
-      override text2 "Helvetica, Arial"
     }
-    StylePropRow element4 {
+    StylePropRow element4(text1: "width", text2: "calc(100% - 10px)") {
       override {
-        variant isInherited (enabled: [true])
+        variant isInherited trigger { true }
       }
-      override text1 "width"
-      override text2 "calc(100% - 10px)"
     }
-    StylePropRow element5 {
+    StylePropRow element5(text1: "whitespace", text2: "nowrap") {
       override {
-        variant alt (enabled: [true])
-        variant isVariant (enabled: [true])
+        variant alt trigger { true }
+        variant isVariant trigger { true }
       }
-      override text1 "whitespace"
-      override text2 "nowrap"
     }
-    StylePropRow element6 {
+    StylePropRow element6(text1: "cursor", text2: "pointer") {
       override {
-        variant isVariant (enabled: [true])
+        variant isVariant trigger { true }
       }
-      override text1 "cursor"
-      override text2 "pointer"
     }
-    StylePropRow element7 {
+    StylePropRow element7(text1: "background", text2: "linear-gradient(#F60, #000)") {
       override {
-        variant alt (enabled: [true])
+        variant alt trigger { true }
       }
-      override text1 "background"
-      override text2 "linear-gradient(#F60, #000)"
     }
   }
 }
@@ -64,10 +52,10 @@ public component StyleProps {
  * @bounds(left: 614, top: 144, right: 969, bottom: 194)
  */
 public component StylePropRow {
-  variant alt (enabled: [])
-  variant isOverride (enabled: [])
-  variant isVariant (enabled: [])
-  variant isInherited (enabled: [true])
+  variant alt
+  variant isOverride
+  variant isVariant
+  variant isInherited trigger { true }
   render div {
     style {
       box-sizing: border-box
@@ -78,7 +66,7 @@ public component StylePropRow {
       padding-bottom: 6px
     }
     style variant alt {
-      background-image: linear-gradient(#{imp1.grey2}, #{imp1.grey2})
+      background-image: linear-gradient(var(imp1.grey2), var(imp1.grey2))
     }
     style variant isVariant {
       color: rgba(65, 111, 243, 1)
@@ -92,8 +80,7 @@ public component StylePropRow {
         width: 100%
       }
       text text1 "property" {
-        style {
-          include imp0.baseFont
+        style extends imp0.baseFont {
         }
         style variant isOverride {
           color: rgba(48, 243, 94, 1)
@@ -118,8 +105,7 @@ public component StylePropRow {
         text-overflow: ellipsis
       }
       text text2 "value" {
-        style {
-          include imp0.baseFont
+        style extends imp0.baseFont {
         }
       }
     }
@@ -135,8 +121,7 @@ public component StyleInspector {
       box-sizing: border-box
       display: block
     }
-    imp2.Pane pane {
-      override text "Inspector"
+    imp2.Pane pane(text: "Inspector") {
       override content {
         style {
           padding-right: 0
@@ -152,8 +137,7 @@ public component StyleInspector {
             justify-content: space-between
           }
           text text3 "Inspector" {
-            style {
-              include imp0.headerFontStyle
+            style extends imp0.headerFontStyle {
             }
           }
           div element9 {
@@ -171,9 +155,7 @@ public component StyleInspector {
         }
       }
       insert content2 {
-        StyleProps styleProps {
-          override element4.text1 "width"
-        }
+        StyleProps styleProps
       }
     }
   }

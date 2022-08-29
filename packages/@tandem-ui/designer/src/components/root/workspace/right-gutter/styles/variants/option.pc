@@ -9,10 +9,10 @@ import "../../../../../../global.pc" as imp3
  */
 public component VariantOption {
   script (src: "./option-controller.tsx")
-  variant on (enabled: [])
-  variant alt (enabled: [])
-  variant hasTrigger (enabled: [true])
-  variant triggered (enabled: [])
+  variant on
+  variant alt
+  variant hasTrigger trigger { true }
+  variant triggered
   render div {
     style {
       box-sizing: border-box
@@ -21,11 +21,9 @@ public component VariantOption {
       padding-right: 8px
       padding-bottom: 6px
     }
-    style variant alt {
-    }
     override switch {
-      variant on (enabled: [on])
-      variant on (enabled: [alt])
+      variant on trigger { on }
+      variant on trigger { alt }
     }
     div element1 {
       style {
@@ -55,8 +53,7 @@ public component VariantOption {
         }
         slot input2 {
           text label "Variant" {
-            style {
-              include imp1.baseFont
+            style extends imp1.baseFont {
             }
           }
         }
@@ -64,17 +61,17 @@ public component VariantOption {
       imp2.BoltIcon boltIcon {
         style {
           display: none
-          color: #{imp3.blue1}
+          color: var(imp3.blue1)
         }
         style variant hasTrigger {
           display: block
           height: 12px
-          color: #{imp3.blackTransparent}
+          color: var(imp3.blackTransparent)
         }
         style variant triggered {
           display: block
           height: 12px
-          color: #{imp3.blue1}
+          color: var(imp3.blue1)
         }
       }
       imp2.ResetIcon resetButton {
@@ -95,6 +92,6 @@ public component VariantOption {
  */
 VariantOption variantOption {
   override {
-    variant triggered (enabled: [true])
+    variant triggered trigger { true }
   }
 }

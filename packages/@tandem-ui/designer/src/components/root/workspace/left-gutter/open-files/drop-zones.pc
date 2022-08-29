@@ -21,7 +21,7 @@ public component AfterDropZone {
  * @bounds(left: 156, top: 111, right: 256, bottom: 211)
  */
 public component DropZone {
-  variant hover (enabled: [true])
+  variant hover trigger { true }
   render div {
     style {
       box-sizing: content-box
@@ -51,7 +51,7 @@ public component DropZone {
         height: 8px
         position: absolute
         display: block
-        background-image: linear-gradient(#{imp0.blue1}, #{imp0.blue1})
+        background-image: linear-gradient(var(imp0.blue1), var(imp0.blue1))
         left: -1px
         top: 50%
         transform: translateY(-50%)
@@ -78,7 +78,7 @@ div preview {
       top: 20px
     }
     override {
-      variant hover (enabled: [true])
+      variant hover trigger { true }
     }
   }
 }

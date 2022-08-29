@@ -6,19 +6,18 @@ import "../../atoms/view.pc" as imp1
  * @bounds(left: 395, top: 346, right: 596, bottom: 380)
  */
 public component DropdownMenuItem {
-  variant alt (enabled: [])
-  variant special (enabled: [])
+  variant alt
+  variant special
   render div {
-    style {
-      include imp1.baseFont
+    style extends imp1.baseFont {
       padding: 4px
       border-bottom: 1px  rgba(0,0,0,0.05)
       user-select: none
       cursor: default
-      background: #{imp0.grey2}
+      background: var(imp0.grey2)
     }
     style variant alt {
-      background: #{imp0.grey0}
+      background: var(imp0.grey0)
       border-bottom: 0px  rgba(0,0,0,0.05)
     }
     style variant special {

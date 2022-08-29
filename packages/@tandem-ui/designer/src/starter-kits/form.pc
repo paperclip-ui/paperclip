@@ -10,7 +10,7 @@ import "../components/inputs/button/view.pc" as imp4
  */
 public component StarterKitFormOptions {
   script (src: "./form-controller.tsx")
-  variant react (enabled: [])
+  variant react
   render div {
     style {
       padding-left: 12px
@@ -29,8 +29,7 @@ public component StarterKitFormOptions {
         display: block
       }
       text title "New TYPE Project" {
-        style {
-          include imp0.baseFont
+        style extends imp0.baseFont {
           padding-bottom: 12px
           display: inline-block
           font-size: 18px
@@ -43,8 +42,7 @@ public component StarterKitFormOptions {
         display: none
       }
     }
-    imp2.LabeledInput labeledInput {
-      override text1 "Project Directory"
+    imp2.LabeledInput labeledInput(text1: "Project Directory") {
       insert input {
         div element2 {
           style {
@@ -56,9 +54,7 @@ public component StarterKitFormOptions {
               margin-right: 12px
             }
           }
-          imp4.Button browseButton {
-            override text1 "browse"
-          }
+          imp4.Button browseButton(text1: "browse")
         }
       }
     }
@@ -69,11 +65,7 @@ public component StarterKitFormOptions {
         justify-content: flex-end
         padding-top: 6px
       }
-      imp4.Button createProjectButton {
-        override {
-        }
-        override text1 "Create Project"
-      }
+      imp4.Button createProjectButton(text1: "Create Project")
     }
   }
 }

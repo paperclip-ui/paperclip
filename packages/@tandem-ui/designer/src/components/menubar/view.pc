@@ -15,7 +15,7 @@ public component Menu {
       slot items1 {
         MenuBarItem menuButton1 {
           override {
-            variant active (enabled: [true])
+            variant active trigger { true }
           }
         }
         MenuBarItem menuButton2
@@ -29,16 +29,14 @@ public component Menu {
  * @bounds(left: 675, top: -15, right: 775, bottom: 85)
  */
 public component MenuBarItem {
-  variant active (enabled: [true])
+  variant active trigger { true }
   render div {
     style {
       display: inline-block
       position: relative
     }
-    style variant active {
-    }
     override button {
-      variant active (enabled: [active])
+      variant active trigger { active }
     }
     MenuBarItemOption button {
       style {
@@ -49,10 +47,6 @@ public component MenuBarItem {
         padding-bottom: 8px
         padding-left: 12px
         height: 33px
-      }
-      style variant active {
-      }
-      override {
       }
       override label {
         style {
@@ -76,22 +70,18 @@ public component MenuBarItem {
           display: block
           position: absolute
         }
-        style variant active {
-        }
         slot items {
           MenuBarItemOption option2 {
             style {
               box-sizing: border-box
               display: block
             }
-            override label "Option 1"
           }
           MenuBarItemOption option {
             style {
               box-sizing: border-box
               display: block
             }
-            override label "Option 1"
           }
           MenuBarItemOption option3 {
             style {
@@ -99,16 +89,14 @@ public component MenuBarItem {
               display: block
             }
             override {
-              variant hasCommand (enabled: [true])
+              variant hasCommand trigger { true }
             }
-            override label "Option 1"
           }
           MenuBarItemOption option4 {
             style {
               box-sizing: border-box
               display: block
             }
-            override label "Option 1"
           }
         }
       }
@@ -120,38 +108,35 @@ public component MenuBarItem {
  * @bounds(left: 674, top: 141, right: 774, bottom: 241)
  */
 public component MenuBarItemOption {
-  variant active (enabled: [PseudoElement.Hover])
-  variant hasCommand (enabled: [true])
+  variant active trigger { ":hover" }
+  variant hasCommand trigger { true }
   render div {
     style {
       box-sizing: border-box
       display: inline-block
-      background-image: linear-gradient(#{imp0.grey6}, #{imp0.grey6})
+      background-image: linear-gradient(var(imp0.grey6), var(imp0.grey6))
       padding-top: 8px
       padding-right: 12px
       padding-bottom: 8px
       padding-left: 12px
     }
     style variant active {
-      background-image: linear-gradient(#{imp0.blue1}, #{imp0.blue1})
+      background-image: linear-gradient(var(imp0.blue1), var(imp0.blue1))
     }
     text label "Item" {
-      style {
-        include imp1.baseFont
-        include imp1.nowrapEllipsis
+      style extends imp1.baseFont, imp1.nowrapEllipsis {
       }
       style variant active {
-        color: #{imp0.grey0}
+        color: var(imp0.grey0)
       }
     }
     text command "⌘T" {
-      style {
-        include imp1.baseFontNobreak
+      style extends imp1.baseFontNobreak {
         display: none
         margin-left: 8px
       }
       style variant active {
-        color: #{imp0.grey0}
+        color: var(imp0.grey0)
       }
       style variant hasCommand {
         display: inline-block

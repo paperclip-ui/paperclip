@@ -16,7 +16,7 @@ public component Slider {
       style {
         width: calc(100% - 8px)
         height: 4px
-        background: #{imp0.grey1}
+        background: var(imp0.grey1)
         position: absolute
         transform: translateY(-50%)
         top: 50%
@@ -32,7 +32,7 @@ public component Slider {
         width: 8px
         height: 8px
         border-radius: 8px
-        background: #{imp0.grey3}
+        background: var(imp0.grey3)
         position: absolute
         transform: translate(-50%, -50%)
         left: 50%

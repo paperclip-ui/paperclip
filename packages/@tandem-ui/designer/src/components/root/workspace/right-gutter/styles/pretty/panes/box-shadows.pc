@@ -8,11 +8,7 @@ import "../../../../../../../icons/view.pc" as imp3
  * @bounds(left: 1029, top: 489, right: 1429, bottom: 789)
  */
 public component OuterShadows {
-  render BoxShadows {
-    override {
-    }
-    override text1 "outer
- shadows"
+  render BoxShadows(text1: "outer shadows") {
   }
 }
 
@@ -21,11 +17,7 @@ public component OuterShadows {
  */
 public component InnerShadows {
   script (src: "./box-shadows-inner-controller.tsx")
-  render BoxShadows {
-    override {
-    }
-    override text1 "Inner shadows"
-  }
+  render BoxShadows(text1: "Inner shadows")
 }
 
 /**
@@ -33,19 +25,17 @@ public component InnerShadows {
  */
 public component BoxShadows {
   script (src: "./box-shadows-controller.tsx")
-  variant hasSelectedShadow (enabled: [])
-  variant hasItems (enabled: [true])
-  render imp1.Pane {
+  variant hasSelectedShadow
+  variant hasItems trigger { true }
+  render imp1.Pane(text: "Box Shadows", inner: "") {
     style {
       display: flex
       flex-direction: column
       font-size: 10px
     }
     override {
-      variant right (enabled: [true])
+      variant right trigger { true }
     }
-    override text "Box Shadows"
-    override inner ""
     override title {
       style {
       }
@@ -87,29 +77,25 @@ public component BoxShadows {
           padding-top: 6px
         }
         text x "x" {
-          style {
-            include imp0.labelFont
+          style extends imp0.labelFont {
             display: block
             width: 100%
           }
         }
         text y "y" {
-          style {
-            include imp0.labelFont
+          style extends imp0.labelFont {
             display: block
             width: 100%
           }
         }
         text blur "Blur" {
-          style {
-            include imp0.labelFont
+          style extends imp0.labelFont {
             display: block
             width: 100%
           }
         }
         text spread "Spread" {
-          style {
-            include imp0.labelFont
+          style extends imp0.labelFont {
             display: block
             width: 100%
           }
@@ -125,8 +111,7 @@ public component BoxShadows {
           align-items: center
         }
         text text1 "box shadows" {
-          style {
-            include imp0.headerFontStyle
+          style extends imp0.headerFontStyle {
           }
         }
         div element2 {

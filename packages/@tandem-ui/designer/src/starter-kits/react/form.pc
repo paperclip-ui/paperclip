@@ -11,9 +11,7 @@ public component ReactStartKitOptionsForm {
       box-sizing: border-box
       display: block
     }
-    imp0.LabeledInput labeledInput {
-      override text1 "Package Name"
-    }
+    imp0.LabeledInput labeledInput(text1: "Package Name")
   }
 }
 

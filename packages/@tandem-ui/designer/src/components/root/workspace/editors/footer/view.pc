@@ -10,10 +10,10 @@ public component EditorFooter {
   script (src: "./controller.tsx")
   render div {
     style {
-      background-image: linear-gradient(#{imp0.grey2}, #{imp0.grey2})
+      background-image: linear-gradient(var(imp0.grey2), var(imp0.grey2))
       display: flex
       align-items: center
-      border-top: 1px solid #{imp0.grey1}
+      border-top: 1px solid var(imp0.grey1)
       flex-shrink: 0
     }
     div zoom1 {
@@ -27,15 +27,13 @@ public component EditorFooter {
         user-select: none
       }
       text zoom "Zoom:" {
-        style {
-          include imp1.baseFont
+        style extends imp1.baseFont {
           margin-right: 4px
           font-weight: 600
         }
       }
       text zoomPercentage "100%" {
-        style {
-          include imp1.baseFont
+        style extends imp1.baseFont {
         }
       }
     }
@@ -65,32 +63,29 @@ public component Breadcrumbs {
     slot items {
       Breadcrumb {
         override {
-          variant slot (enabled: [true])
+          variant slot trigger { true }
         }
       }
       Breadcrumb {
         override {
-          variant plug (enabled: [true])
-          variant hovering (enabled: [true])
+          variant plug trigger { true }
+          variant hovering trigger { true }
         }
-        override label "plug"
       }
       Breadcrumb {
         override {
-          variant shadow (enabled: [true])
+          variant shadow trigger { true }
         }
-        override label "Element"
       }
       Breadcrumb {
         override {
-          variant component (enabled: [true])
+          variant component2 trigger { true }
         }
-        override label "bready"
       }
       Breadcrumb {
         override {
-          variant text (enabled: [true])
-          variant selected (enabled: [true])
+          variant text trigger { true }
+          variant selected trigger { true }
         }
       }
     }
@@ -101,24 +96,23 @@ public component Breadcrumbs {
  * @bounds(left: 440, top: 2365, right: 806, bottom: 2397)
  */
 public component Breadcrumb {
-  variant component (enabled: [])
-  variant shadow (enabled: [])
-  variant text (enabled: [])
-  variant element2 (enabled: [])
-  variant plug (enabled: [])
-  variant slot (enabled: [])
-  variant hovering (enabled: [PseudoElement.Hover])
-  variant selected (enabled: [true])
+  variant component2
+  variant shadow
+  variant text
+  variant element2
+  variant plug
+  variant slot
+  variant hovering trigger { ":hover" }
+  variant selected trigger { true }
   render div {
-    style {
-      include imp1.baseFont
+    style extends imp1.baseFont {
       display: flex
       align-items: center
       cursor: pointer
     }
     div labelContainer {
       style {
-        background-image: linear-gradient(#{imp0.grey2}, #{imp0.grey2})
+        background-image: linear-gradient(var(imp0.grey2), var(imp0.grey2))
         display: flex
         height: 100%
         align-items: center
@@ -130,20 +124,18 @@ public component Breadcrumb {
         padding-left: 36px
       }
       style variant selected {
-        background-image: linear-gradient(#{imp0.blue1}, #{imp0.blue1})
+        background-image: linear-gradient(var(imp0.blue1), var(imp0.blue1))
         padding-right: 24px
       }
       div icon {
         style {
           margin-right: 6px
         }
-        style variant component {
-        }
         style variant hovering {
-          color: #{imp0.blue1}
+          color: var(imp0.blue1)
         }
         style variant selected {
-          color: #{imp0.grey0}
+          color: var(imp0.grey0)
         }
         imp2.ReplaceIcon replaceIcon {
           style {
@@ -167,7 +159,7 @@ public component Breadcrumb {
           style {
             display: none
           }
-          style variant component {
+          style variant component2 {
             display: block
             height: 1em
           }
@@ -208,10 +200,10 @@ public component Breadcrumb {
           white-space: nowrap
         }
         style variant hovering {
-          color: #{imp0.blue1}
+          color: var(imp0.blue1)
         }
         style variant selected {
-          color: #{imp0.grey0}
+          color: var(imp0.grey0)
         }
       }
     }
@@ -232,13 +224,13 @@ public component Breadcrumb {
           border-top: 50px solid rgba(255, 0, 0, 0)
           border-right: 0px solid rgba(230, 230, 230, 0)
           border-bottom: 50px solid rgba(255, 0, 0, 0)
-          border-left: 25px solid #{imp0.grey2}
+          border-left: 25px solid var(imp0.grey2)
           position: absolute
           transform: translateY(-50%)
-          filter: drop-shadow(1px 0px 0px #{imp0.grey1})
+          filter: drop-shadow(1px 0px 0px var(imp0.grey1))
         }
         style variant hovering {
-          filter: drop-shadow(1px 0px 0px #{imp0.blue1})
+          filter: drop-shadow(1px 0px 0px var(imp0.blue1))
         }
         style variant selected {
           display: none

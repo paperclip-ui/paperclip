@@ -18,8 +18,7 @@ public component QueriesPane {
       box-sizing: border-box
       display: block
     }
-    imp0.Pane pane {
-      override text "Media Queries"
+    imp0.Pane pane(text: "Media Queries") {
       override content {
         style {
           padding-top: 6px
@@ -42,8 +41,7 @@ public component QueriesPane {
             align-items: center
           }
           text label "Queries" {
-            style {
-              include imp1.headerFontStyle
+            style extends imp1.headerFontStyle {
             }
           }
           div controls {
@@ -103,7 +101,7 @@ public component QueryItem {
     imp4.SidePanelButton editButton {
       style {
         display: block
-        color: #{imp5.grey3}
+        color: var(imp5.grey3)
         height: 16px
         margin-right: 12px
       }
@@ -137,14 +135,12 @@ public component MediaQueryOptions {
       padding-right: 0px
       padding-bottom: 0px
     }
-    imp7.LabeledInput labeledInput2 {
-      override text1 "Min Width"
+    imp7.LabeledInput labeledInput2(text1: "Min Width") {
       insert input {
         imp6.TextInput minWidthInput
       }
     }
-    imp7.LabeledInput labeledInput3 {
-      override text1 "Max Width"
+    imp7.LabeledInput labeledInput3(text1: "Max Width") {
       insert input {
         imp6.TextInput maxWidthInput
       }
@@ -166,22 +162,17 @@ public component VariableQueryOptions {
       padding-right: 0px
       padding-bottom: 0px
     }
-    imp7.LabeledInput labeledInput4 {
-      override text1 "Variable"
+    imp7.LabeledInput labeledInput4(text1: "Variable") {
       insert input {
-        imp2.Dropdown variableInput {
-          override label2 "Some var"
-        }
+        imp2.Dropdown variableInput(label2: "Some var")
       }
     }
-    imp7.LabeledInput labeledInput5 {
-      override text1 "Equals"
+    imp7.LabeledInput labeledInput5(text1: "Equals") {
       insert input {
         imp6.TextInput equalsInput
       }
     }
-    imp7.LabeledInput labeledInput6 {
-      override text1 "Doesn't Equal"
+    imp7.LabeledInput labeledInput6(text1: "Doesn't Equal") {
       insert input {
         imp6.TextInput notEqualsInput
       }
@@ -194,8 +185,8 @@ public component VariableQueryOptions {
  */
 public component QueryOptions {
   script (src: "./query-options-controller.tsx")
-  variant media (enabled: [])
-  variant variable (enabled: [true])
+  variant media
+  variant variable trigger { true }
   render div {
     style {
       box-sizing: border-box
@@ -205,12 +196,9 @@ public component QueryOptions {
       padding-right: 12px
       padding-bottom: 12px
     }
-    imp7.LabeledInput labeledInput7 {
-      override text1 "Type"
+    imp7.LabeledInput labeledInput7(text1: "Type") {
       insert input {
-        imp2.Dropdown typeInput {
-          override label2 "Type"
-        }
+        imp2.Dropdown typeInput(label2: "Type")
       }
     }
     MediaQueryOptions mediaQueryOptions {

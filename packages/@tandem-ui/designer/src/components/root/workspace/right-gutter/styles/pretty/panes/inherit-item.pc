@@ -8,8 +8,8 @@ import "../../../../../../inputs/dropdown/view.pc" as imp2
  */
 public component InheritItem {
   script (src: "./inherit-item-controller.tsx")
-  variant selected (enabled: [true])
-  variant alt (enabled: [])
+  variant selected trigger { true }
+  variant alt
   render div {
     style {
       display: flex
@@ -20,13 +20,11 @@ public component InheritItem {
       padding-bottom: 6px
     }
     style variant selected {
-      background: #{imp1.blue1}
+      background: var(imp1.blue1)
       color: rgba(255, 255, 255, 1)
     }
-    style variant alt {
-    }
     override {
-      variant filterable (enabled: [true])
+      variant filterable trigger { true }
     }
     div element1 {
       style {
@@ -38,39 +36,35 @@ public component InheritItem {
         display: flex
         align-items: center
       }
-      style variant alt {
-      }
       imp0.ColorPaletteIcon colorPaletteIcon {
         style {
           display: block
           height: 10px
-          color: #{imp1.grey4}
-        }
-        style variant selected {
+          color: var(imp1.grey4)
         }
         override ndoe99 {
           style {
             background: currentColor
           }
           style variant selected {
-            background: #{imp1.grey0}
+            background: var(imp1.grey0)
           }
         }
       }
     }
-    imp2.Dropdown dropdown {
+    imp2.Dropdown dropdown (label2: "Some item") {
       style {
         box-shadow: unset
       }
       style variant selected {
-        color: #{imp1.grey0}
+        color: var(imp1.grey0)
       }
       override button22 {
         style {
           padding: 0px
           border: none
           background: transparent
-          box-shadow:  0px 0px 0px 0px #{imp1.blackTransparent2}
+          box-shadow:  0px 0px 0px 0px var(imp1.blackTransparent2)
         }
       }
       override popover {
@@ -78,7 +72,7 @@ public component InheritItem {
           display: block
         }
       }
-      override label2 "Some item" {
+      override label2 {
         style {
           margin-right: 8px
         }

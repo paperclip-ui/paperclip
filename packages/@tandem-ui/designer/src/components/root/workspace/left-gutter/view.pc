@@ -10,14 +10,14 @@ public component LeftGutter {
   script (src: "./controller.tsx")
   render div {
     style {
-      border-right: 1px solid #{imp0.grey6}
+      border-right: 1px solid var(imp0.grey6)
       flex-direction: column
       height: 100%
       align-items: stretch
       justify-content: flex-start
       position: relative
       display: flex
-      background: #{imp0.grey2}
+      background: var(imp0.grey2)
       overflow: hidden
     }
     imp1.LayersPane openModulesPane {

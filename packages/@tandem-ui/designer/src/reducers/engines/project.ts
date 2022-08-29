@@ -1,4 +1,8 @@
-import { addPCFileUris, createRootInspectorNode } from "@paperclip-lang/core";
+import {
+  addPCFileUris,
+  createRootInspectorNode,
+  serializeModule,
+} from "@paperclip-lang/core";
 import { Action } from "redux";
 import {
   getFileFromUri,
@@ -24,7 +28,7 @@ import {
   setRootStateFileNodeExpanded,
   updateRootState,
 } from "../../state";
-import { saveDirtyFiles } from "fsbox";
+import { saveDirtyFiles, updateFileCacheItem } from "fsbox";
 
 export const projectReducer = (state: RootState, action: Action): RootState => {
   switch (action.type) {
@@ -108,6 +112,19 @@ export const projectReducer = (state: RootState, action: Action): RootState => {
     }
 
     case SHORTCUT_SAVE_KEY_DOWN: {
+      // Save entire graph
+      for (const uri in state.graph) {
+        state = updateFileCacheItem(
+          {
+            content: Buffer.from(
+              serializeModule(state.graph[uri].content, uri, state.graph)
+            ),
+          },
+          uri,
+          state
+        );
+      }
+
       return saveDirtyFiles(state);
     }
     case FILE_REMOVED: {

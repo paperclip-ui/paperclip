@@ -22,31 +22,25 @@ public component TextProperties {
     style {
       font-size: 10px
     }
-    imp0.Pane pane1 {
+    imp0.Pane pane1(text: "Properties") {
       style {
         display: flex
         flex-direction: column
       }
       override {
-        variant right (enabled: [true])
+        variant right trigger { true }
       }
-      override text "Properties"
       insert content2 {
-        imp1.LabeledInput {
-          override text1 "Text" {
+        imp1.LabeledInput(text1: "Text") {
+          override {
             style {
               color: black
               opacity: 0.4
             }
           }
-          override projectNameInput {
-            style {
-            }
-          }
           insert input {
             imp2.Textarea textInput3 {
-              style {
-                include imp3.baseFont
+              style extends imp3.baseFont {
                 display: block
                 height: 100px
                 resize: none
@@ -64,19 +58,15 @@ public component TextProperties {
  */
 public component ElementProperties {
   script (src: "./element-controller.tsx")
-  variant allowTitle (enabled: [])
+  variant allowTitle
   render div {
-    imp0.Pane pane {
+    imp0.Pane pane(text: "Properties") {
       style {
         display: flex
         flex-direction: column
       }
       override {
-        variant right (enabled: [true])
-      }
-      override text "Properties" {
-        style {
-        }
+        variant right trigger { true }
       }
       override content {
         style {
@@ -89,33 +79,28 @@ public component ElementProperties {
         }
       }
       insert content2 {
-        imp1.LabeledInput {
+        imp1.LabeledInput(text1: "Label") {
           style {
             display: none
           }
-          override text1 "Label"
           insert input {
             imp4.TextInput labelInput
           }
         }
         div fields {
-          imp1.LabeledInput typeSection {
-            override text1 "Element Type"
+          imp1.LabeledInput typeSection (text1: "Element Type") {
             insert input {
-              imp5.Dropdown elementTypeInput {
-                override label2 "Input"
-              }
+              imp5.Dropdown elementTypeInput (label2: "Input")
             }
           }
           ImgProperties imgTagProperties
-          imp1.LabeledInput labeledInput {
+          imp1.LabeledInput labeledInput (text1: "title") {
             style {
               display: none
             }
             style variant allowTitle {
               display: block
             }
-            override text1 "title"
             insert input {
               imp4.TextInput titleInput
             }
@@ -133,14 +118,14 @@ public component ElementProperties {
  */
 public component Properties {
   script (src: "./properties-controller.tsx")
-  variant element2 (enabled: [])
-  variant component (enabled: [])
-  variant text2 (enabled: [])
-  variant slot (enabled: [])
-  variant contentNode (enabled: [])
+  variant element2
+  variant component2
+  variant text2
+  variant slot
+  variant contentNode
   render div {
     style {
-      background: #{imp7.grey2}
+      background: var(imp7.grey2)
     }
     ElementProperties element1 {
       style {
@@ -170,7 +155,7 @@ public component Properties {
       style {
         display: none
       }
-      style variant component {
+      style variant component2 {
         display: block
       }
     }
@@ -197,15 +182,11 @@ public component BehaviorPane {
     style {
       box-sizing: border-box
     }
-    imp0.Pane {
-      override text "behavior"
+    imp0.Pane (text: "behavior") {
       insert content2 {
-        imp1.LabeledInput {
-          override text1 "Repeat"
+        imp1.LabeledInput (text1: "Repeat") {
           insert input {
-            imp5.Dropdown {
-              override label2 "someRepeatableProp"
-            }
+            imp5.Dropdown (label2: "someRepeatableProp")
           }
         }
       }
@@ -218,22 +199,21 @@ public component BehaviorPane {
  */
 public component ControllersPane {
   script (src: "./component-controller.tsx")
-  variant hasControllerSelected (enabled: [true])
-  variant hasController (enabled: [])
+  variant hasControllerSelected trigger { true }
+  variant hasController
   render div {
     style {
       box-sizing: border-box
       display: block
     }
     override {
-      variant alt (enabled: [true])
-      variant selected (enabled: [true])
+      variant alt trigger { true }
+      variant selected trigger { true }
     }
-    imp0.Pane {
+    imp0.Pane(text: "Controllers") {
       override {
-        variant right (enabled: [true])
+        variant right trigger { true }
       }
-      override text "Controllers"
       override content {
         style {
           padding: 0px
@@ -249,8 +229,7 @@ public component ControllersPane {
             align-items: center
           }
           text text3 "Controllers" {
-            style {
-              include imp3.headerFontStyle
+            style extends imp3.headerFontStyle {
             }
           }
           div element4 {
@@ -295,24 +274,18 @@ public component ControllersPane {
       }
       insert content2 {
         slot content {
-          imp10.ControllerItem {
-            override label "./controller.rb"
-          }
-          imp10.ControllerItem {
+          imp10.ControllerItem(label: "./controller.rb")
+          imp10.ControllerItem(label: "./controller.view.tsx") {
             override {
-              variant selected (enabled: [true])
-              variant hovering (enabled: [true])
+              variant selected trigger { true }
+              variant hovering trigger { true }
             }
-            override label "./controller.view.tsx"
           }
-          imp10.ControllerItem {
-            override label "./controller.php"
-          }
-          imp10.ControllerItem {
+          imp10.ControllerItem (label: "./controller.php")
+          imp10.ControllerItem (label: "./controller.react.tsx") {
             override {
-              variant hovering (enabled: [true])
+              variant hovering trigger { true }
             }
-            override label "./controller.react.tsx"
           }
         }
       }
@@ -325,17 +298,13 @@ public component ControllersPane {
  */
 public component ExportsPane {
   script (src: "./exports-controller.tsx")
-  render imp0.Pane {
-    override text "export"
+  render imp0.Pane(text: "export") {
     insert content2 {
-      imp1.LabeledInput {
-        override text1 "Name"
+      imp1.LabeledInput(text1: "Name") {
         insert input {
           ExportNameInput exportsNameInput {
             style {
               display: block
-            }
-            override {
             }
           }
         }
@@ -349,7 +318,7 @@ public component ExportsPane {
  */
 public component ExportNameInput {
   script (src: "./exports-name-input-controller.tsx")
-  variant invalid (enabled: [true])
+  variant invalid trigger { true }
   render div {
     style {
       box-sizing: border-box
@@ -367,9 +336,9 @@ public component ExportNameInput {
         box-sizing: border-box
         z-index: 3
         position: relative
-        color: #{imp7.grey3}
+        color: var(imp7.grey3)
         font-size: unset
-        border: 1px solid #{imp7.grey1}
+        border: 1px solid var(imp7.grey1)
       }
       style variant invalid {
         border: 1px solid rgba(221, 0, 0, 0.5)
@@ -432,8 +401,7 @@ public component ImgProperties {
       box-sizing: border-box
       display: block
     }
-    imp1.LabeledInput labeledInput2 {
-      override text1 "src"
+    imp1.LabeledInput labeledInput2(text1: "src") {
       insert input {
         div element7 {
           style {
@@ -445,9 +413,7 @@ public component ImgProperties {
               margin-right: 8px
             }
           }
-          imp11.Button uploadButton {
-            override text1 "Browse"
-          }
+          imp11.Button uploadButton(text1: "Browse")          
         }
       }
     }
@@ -464,8 +430,7 @@ public component AProperties {
       box-sizing: border-box
       display: block
     }
-    imp1.LabeledInput labeledInput4 {
-      override text1 "href"
+    imp1.LabeledInput labeledInput4(text1: "href") {
       insert input {
         imp4.TextInput hrefInput (placeholder: "http://website.com/")
       }
@@ -490,8 +455,7 @@ public component AttributeField {
       }
       insert label {
         text text4 "label" {
-          style {
-            include imp3.labelFont
+          style extends imp3.labelFont {
           }
         }
       }
@@ -518,9 +482,7 @@ public component BrowseAttributeInput {
           margin-right: 8px
         }
       }
-      imp11.Button uploadButton2 {
-        override text1 "Browse"
-      }
+      imp11.Button uploadButton2(text1: "Browse")
     }
   }
 }
@@ -572,10 +534,7 @@ div element9 {
     box-sizing: border-box
     display: block
   }
-  imp0.Pane pane2 {
-    override {
-    }
-    override text "Attributes"
+  imp0.Pane pane2(text: "Attributes") {
     override content {
       style {
         padding-right: 0px
@@ -591,8 +550,7 @@ div element9 {
           justify-content: space-between
         }
         text text5 "custom attributes" {
-          style {
-            include imp3.headerFontStyle
+          style extends imp3.headerFontStyle {
           }
         }
         imp9.AddIcon element11 {
@@ -607,7 +565,7 @@ div element9 {
     insert content2 {
       imp12.Table table2 {
         override {
-          variant noHeader (enabled: [true])
+          variant noHeader trigger { true }
         }
       }
     }

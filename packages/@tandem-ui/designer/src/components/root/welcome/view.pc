@@ -11,9 +11,9 @@ import "../../dev/comments.pc" as imp5
  */
 public component Welcome {
   script (src: "./controller.tsx")
-  variant start (enabled: [true])
-  variant createProject (enabled: [])
-  variant newProjectOptions1 (enabled: [])
+  variant start trigger { true }
+  variant createProject
+  variant newProjectOptions1
   render div {
     style {
       box-sizing: border-box
@@ -43,9 +43,9 @@ public component Welcome {
           margin-right: 8px
         }
         style variant start {
-          background-image: linear-gradient(#{imp3.blue1}, #{imp3.blue1})
+          background-image: linear-gradient(var(imp3.blue1), var(imp3.blue1))
         }
-        override text1 "Tutorials" {
+        override text1 {
           style variant start {
             color: rgba(255, 255, 255, 1)
           }
@@ -55,13 +55,11 @@ public component Welcome {
         style {
           margin-right: 8px
         }
-        override text1 "Open project"
       }
       imp0.Button createProjectButton {
         override {
-          variant secondary (enabled: [true])
+          variant secondary trigger { true }
         }
-        override text1 "Create project"
       }
     }
     div createProject {
@@ -78,8 +76,7 @@ public component Welcome {
         text-align: center
       }
       text text1 "New project type" {
-        style {
-          include imp1.baseFont
+        style extends imp1.baseFont {
         }
         style variant createProject {
           font-weight: 400
@@ -96,16 +93,13 @@ public component Welcome {
         }
         slot options {
           ProjectPill createReactProjectButton {
-            override label "React"
             override iconOuter {
               style variant createProject {
                 cursor: pointer
               }
             }
           }
-          ProjectPill createBlankProjectButton {
-            override label "Blank"
-          }
+          ProjectPill createBlankProjectButton
         }
         div element2 {
           style {
@@ -122,8 +116,7 @@ public component Welcome {
             position: absolute
           }
           text projectDescription "Project description" {
-            style {
-              include imp1.baseFont
+            style extends imp1.baseFont {
             }
             style variant createProject {
               letter-spacing: 0.05em
@@ -171,7 +164,7 @@ public component ProjectPill {
         display: block
         margin-bottom: 8px
         width: 100%
-        border: 1px solid #{imp3.grey4}
+        border: 1px solid var(imp3.grey4)
         padding-top: 8px
         padding-bottom: 8px
         border-bottom-left-radius: 4px
@@ -191,7 +184,7 @@ public component ProjectPill {
           imp4.FileIcon fileIcon {
             override element11 {
               style {
-                background: #{imp3.grey4}
+                background: var(imp3.grey4)
               }
             }
           }
@@ -199,8 +192,7 @@ public component ProjectPill {
       }
     }
     text label "something" {
-      style {
-        include imp1.baseFont
+      style extends imp1.baseFont {
         text-align: center
         display: inline-block
         width: 100%
@@ -222,7 +214,6 @@ div element3 {
  * @bounds(left: 907, top: 115, right: 1290, bottom: 315)
  */
 imp5.Comment comment {
-  override text2 "TODO:"
   insert slot11 {
     div element4 {
       style {
@@ -309,8 +300,7 @@ div element5 {
           padding-bottom: 6px
         }
         text text10 "New..." {
-          style {
-            include imp1.baseFont
+          style extends imp1.baseFont {
           }
         }
       }
@@ -326,8 +316,7 @@ div element5 {
           padding-bottom: 6px
         }
         text text11 "Open" {
-          style {
-            include imp1.baseFont
+          style extends imp1.baseFont {
           }
         }
       }

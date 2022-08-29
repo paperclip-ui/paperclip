@@ -1,90 +1,39 @@
-Milestone (Bridge):
+#### Milestone 1: parser
 
-Get new DSL to run in designer
+- CLI tool
+- scan entire dependency graph
+- use threads for parser
+- crates/cli
+  - load GLOB
+  - start on compiler
 
-- variant triggers
-- #{} templates
+#### Milestone 2: evaluator
 
-Milestone (Convert):
+- compiler
 
-Milestone (DSL Upgrades):
+  - html
+  - css
+  - need to embed assets
+  - need to write files
+  - watch mode
 
-**DSL Upgrades**
+- web components
+- save HTML to disc
+  - load in all associated CSS
+  - ability to set path?
+- IO watcher
+- JS Rendering + server
+- A\* patching. Look into https://github.com/automerge/automerge-rs/tree/main/automerge
+  - for AST
+- ability to inject HTML?
 
-Milestone (Online editing):
+  - react hooks?
+    - can create adapter
 
-Milestone (eject):
+- Preview
+  - trpc?
 
-- PC bridge
+#### Milestone 3: compiler
 
-  - DSL -> PC 2.0
-    - variables
-    - variant triggers
-  - PC 2.0 -> DSL
-  - Update Tandem for changes
-  - Wedge Parser in visual editor for smoke testing
-  - Tandem updates
-    - combo variants
-  - Tandem 2.0
-    - Dark mode (like spline.design)
-
-- start on translator
-
-- create parser for existing Tandem format
-- convert all PC files to new format
-- Update Tandem + legacy Paperclip to git c
-
-TODO:
-
-- get Tandem to work in the browser
-  - Litmus test -
--
-
-TODOs:
-
-- get to work on CLI
-- convert JSON to readable PC
-
-- PC <> JSON converter
-  - load PC to JSON
-  - english readable IDs
-  - CSS declarations need to be parsed
-
-Milestone 1:
-
-Get working
-
-- update dependencies
-- get running again
-- start on new features
-  - combo variants
-  - parse CSS attributes
-  - Trigger syntax
-  - target syntax
-- JSON -> Paperclip converter
-- New Paperclip syntax
-- Get designer to work entirely in browser
-
-Milestone 2:
-
-Make user-friendly w/ designers
-
-- CLI tool for loading server
-- GIT integration, ability to check out branches
-
-MVP:
-
-- GIT integration + online editor
-- file format needs to be readable
-- variant combos
-- trigger architecture re-do
-  - needs to be part of the paint panel
-- CRDTs
-
-Milestone X:
-
-- Plugin for Figma (copy to clipboard)
-
-Milestone Y:
-
-- Browser extension for spot-editing UI
+- React-based compiler
+- vanilla compiler for CSS

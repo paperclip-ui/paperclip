@@ -10,15 +10,11 @@ import "../../../../../../global.pc" as imp4
  */
 public component TriggersPane {
   script (src: "./triggers-controller.tsx")
-  variant hasTriggers (enabled: [])
-  variant hasItemSelected (enabled: [true])
+  variant hasTriggers
+  variant hasItemSelected trigger { true }
   render imp0.Pane {
-    style {
-    }
-    style variant hasItemSelected {
-    }
     override {
-      variant right (enabled: [true])
+      variant right trigger { true }
     }
     override content {
       style {
@@ -40,8 +36,7 @@ public component TriggersPane {
           flex-shrink: 0
         }
         text text1 "Triggers" {
-          style {
-            include imp1.headerFontStyle
+          style extends imp1.headerFontStyle {
           }
         }
         div element2 {
@@ -79,20 +74,12 @@ public component TriggersPane {
       div items {
         slot items2 {
           TriggerItem item {
-            override sourceInput.label2 "hover"
             override {
-              variant selected (enabled: [hasItemSelected])
+              variant selected trigger { hasItemSelected }
             }
-            override targetInput.label2 "hovering"
           }
-          TriggerItem item2 {
-            override targetInput.label2 "focusing"
-            override sourceInput.label2 "active"
-          }
-          TriggerItem item3 {
-            override targetInput.label2 "focusing"
-            override sourceInput.label2 "variable"
-          }
+          TriggerItem item2
+          TriggerItem item3
         }
       }
       div footer {
@@ -106,8 +93,7 @@ public component TriggersPane {
           display: flex
         }
         text text2 "Action" {
-          style {
-            include imp1.labelFont
+          style extends imp1.labelFont {
             width: 100%
             text-align: center
           }
@@ -123,8 +109,7 @@ public component TriggersPane {
           }
         }
         text text3 "Variant" {
-          style {
-            include imp1.labelFont
+          style extends imp1.labelFont {
             text-align: center
             width: 100%
           }
@@ -139,7 +124,7 @@ public component TriggersPane {
  */
 public component TriggerItem {
   script (src: "./trigger-item-controller.tsx")
-  variant selected (enabled: [])
+  variant selected
   render div {
     style {
       box-sizing: border-box
@@ -152,7 +137,7 @@ public component TriggerItem {
       position: relative
     }
     style variant selected {
-      background: #{imp4.blue1}
+      background: var(imp4.blue1)
     }
     div background {
       style {
@@ -165,28 +150,20 @@ public component TriggerItem {
         left: 0px
       }
     }
-    imp3.Dropdown sourceInput {
-      override label2 "action"
-      override button22 {
-        style {
-        }
-      }
-    }
+    imp3.Dropdown sourceInput(label2: "action")
     text text4 "►" {
       style {
         display: inline-block
         margin-right: 6px
         margin-left: 6px
         font-size: 9px
-        color: #{imp4.grey3}
+        color: var(imp4.grey3)
       }
       style variant selected {
-        color: #{imp4.grey0}
+        color: var(imp4.grey0)
       }
     }
-    imp3.Dropdown targetInput {
-      override label2 "variant"
-    }
+    imp3.Dropdown targetInput(label2: "variant")
   }
 }
 

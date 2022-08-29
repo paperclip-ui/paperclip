@@ -11,28 +11,49 @@ import "../../../../../../../icons/view.pc" as imp5
  */
 public component Typograph {
   script (src: "./typography-controller.tsx")
-  render imp0.Pane {
+  render imp0.Pane (text: "Typography") {
     style {
       display: flex
       flex-direction: column
     }
     override {
-      variant right (enabled: [true])
+      variant right trigger { true }
     }
-    override text "Typography"
     override content {
       style {
         padding-bottom: 8px
       }
     }
     insert content2 {
-      imp1.LabeledCssInput fontFamilyInputContainer {
-        override {
-        }
-        override label "Font Family"
+      imp1.LabeledCssInput fontFamilyInputContainer (label: "Font Family") {
         insert input {
-          imp1.CssDropdownInput familyInput {
-            override label2 "Roboto"
+          imp1.CssDropdownInput familyInput(label2: "Roboto")
+        }
+      }
+      div {
+        style {
+          display: flex
+          align-items: center
+          width: 100%
+          box-sizing: border-box
+        }
+        imp1.LabeledCssInput weightInputContainer(label: "Weight") {
+          style {
+            width: 100%
+            flex: 1
+            margin-right: 6px
+          }
+          insert input {
+            imp1.CssDropdownInput weightInput(label2: "600")
+          }
+        }
+        imp1.LabeledCssInput decorationInputContainer(label: "Decoration") {
+          style {
+            width: 100%
+            flex: 1
+          }
+          insert input {
+            imp1.CssDropdownInput decorationInput(label2: "none")
           }
         }
       }
@@ -43,58 +64,21 @@ public component Typograph {
           width: 100%
           box-sizing: border-box
         }
-        imp1.LabeledCssInput weightInputContainer {
+        imp1.LabeledCssInput lineInputContainer(label: "Line") {
           style {
             width: 100%
             flex: 1
             margin-right: 6px
           }
-          override {
-          }
-          override label "Weight"
-          insert input {
-            imp1.CssDropdownInput weightInput {
-              override label2 "600"
-            }
-          }
-        }
-        imp1.LabeledCssInput decorationInputContainer {
-          style {
-            width: 100%
-            flex: 1
-          }
-          override label "Decoration"
-          insert input {
-            imp1.CssDropdownInput decorationInput {
-              override label2 "none"
-            }
-          }
-        }
-      }
-      div {
-        style {
-          display: flex
-          align-items: center
-          width: 100%
-          box-sizing: border-box
-        }
-        imp1.LabeledCssInput lineInputContainer {
-          style {
-            width: 100%
-            flex: 1
-            margin-right: 6px
-          }
-          override label "Line"
           insert input {
             imp1.CssMeasurementInput lineInput (placeholder: "auto")
           }
         }
-        imp1.LabeledCssInput spacingInputContainer {
+        imp1.LabeledCssInput spacingInputContainer(label: "Spacing") {
           style {
             width: 100%
             flex: 1
           }
-          override label "Spacing"
           insert input {
             imp1.CssMeasurementInput spacingInput (placeholder: "auto")
           }
@@ -108,13 +92,12 @@ public component Typograph {
           width: 100%
           box-sizing: border-box
         }
-        imp1.LabeledCssInput alignmentInputContainer {
+        imp1.LabeledCssInput alignmentInputContainer(label: "Alignment") {
           style {
             width: 100%
             flex: 1
             margin-right: 6px
           }
-          override label "Alignment"
           insert input {
             imp2.ButtonBar alignmentInput {
               style {
@@ -124,16 +107,8 @@ public component Typograph {
                 padding-bottom: 1px
                 box-sizing: border-box
               }
-              override node3222 {
-                style {
-                }
-              }
-              override node1111 {
-                style {
-                }
-              }
               override node6 {
-                variant last (enabled: [true])
+                variant last trigger { true }
                 style {
                 }
               }
@@ -146,25 +121,21 @@ public component Typograph {
             width: 50%
             flex: 1
           }
-          imp1.LabeledCssInput sizeInputContainer {
+          imp1.LabeledCssInput sizeInputContainer(label: "Size") {
             style {
               width: 100%
               flex: 1
               margin-right: 6px
             }
-            override label "Size"
             insert input {
               imp1.CssMeasurementInput sizeInput (placeholder: "auto")
             }
           }
-          imp1.LabeledCssInput colorInputContainer {
+          imp1.LabeledCssInput colorInputContainer(label: "Color") {
             style {
               width: 100%
               flex: 1
             }
-            override {
-            }
-            override label "Color"
             insert input {
               imp3.ColorInput colorInput {
                 override button {
@@ -192,8 +163,7 @@ public component Typograph {
             justify-content: space-between
           }
           text text1 "Typography" {
-            style {
-              include imp4.headerFontStyle
+            style extends imp4.headerFontStyle {
             }
           }
           imp5.MoreIcon {

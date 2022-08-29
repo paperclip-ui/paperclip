@@ -7,12 +7,10 @@ import "../../../../../../../icons/view.pc" as imp2
  * @bounds(left: 656, top: 479, right: 1056, bottom: 779)
  */
 public component Filters {
-  render imp0.Pane {
+  render imp0.Pane(text: "Filters", inner: "") {
     override {
-      variant right (enabled: [true])
+      variant right trigger { true }
     }
-    override text "Filters"
-    override inner ""
     override content {
       style {
         padding-bottom: 0px
@@ -27,8 +25,7 @@ public component Filters {
           justify-content: space-between
         }
         text text1 "Filters" {
-          style {
-            include imp1.headerFontStyle
+          style extends imp1.headerFontStyle {
           }
         }
         div element2 {

@@ -15,24 +15,19 @@ public component StylePane {
       box-sizing: border-box
       display: block
     }
-    imp0.Pane {
-      override text "Styles"
+    imp0.Pane (text: "Styles") {
       override title {
         style {
           display: none
         }
       }
       insert content2 {
-        imp1.LabeledInput {
-          override text1 "Style"
+        imp1.LabeledInput (text1: "Style") {
           insert input {
-            imp2.Dropdown {
-              override label2 "light"
-            }
+            imp2.Dropdown (label2: "light")
           }
         }
-        imp1.LabeledInput {
-          override text1 "Inherit"
+        imp1.LabeledInput (text1: "Inherit") {
           insert input {
             div element1 {
               style {
@@ -59,11 +54,8 @@ public component StylePane {
                     background: rgba(246, 245, 245, 1)
                     padding-bottom: 2px
                   }
-                  override node3331.label2 "default"
                 }
-                InheritItem {
-                  override node3331.label2 "button atom: light"
-                }
+                InheritItem
                 InheritItem {
                   style {
                     box-sizing: border-box
@@ -76,14 +68,12 @@ public component StylePane {
                     padding-bottom: 2px
                     background: rgba(246, 245, 245, 1)
                   }
-                  override node3331.label2 "typography: default"
                 }
                 InheritItem {
                   style {
                     padding-top: 2px
                     margin-bottom: 0px
                   }
-                  override node3331.label2 "background: default"
                 }
               }
             }
@@ -97,8 +87,7 @@ public component StylePane {
                 align-items: center
               }
               text text1 "Inherit" {
-                style {
-                  include imp3.baseFont
+                style extends imp3.baseFont {
                   margin-bottom: 4px
                   display: inline-block
                   margin-left: 2px
@@ -177,6 +166,4 @@ public component InheritItem {
 /**
  * @bounds(left: 75, top: 129, right: 239, bottom: 238)
  */
-imp5.Comment {
-  override text2 "Need to consider how this works with nested children."
-}
+imp5.Comment (text2: "Need to consider how this works with nested children.")

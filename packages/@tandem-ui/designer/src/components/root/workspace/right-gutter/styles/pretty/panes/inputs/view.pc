@@ -23,7 +23,7 @@ public component CssMeasurementInput {
  */
 public component CssDropdownInput {
   script (src: "./dropdown-controller.tsx")
-  render imp1.Dropdown {
+  render imp1.Dropdown(label2: "Label") {
     override button22 {
       style {
         border-left: 0px none rgba(1, 0, 1, 0)
@@ -32,7 +32,6 @@ public component CssDropdownInput {
         border-bottom: 0px none rgba(1, 0, 1, 0)
       }
     }
-    override label2 "Label"
   }
 }
 
@@ -41,7 +40,7 @@ public component CssDropdownInput {
  */
 public component LabeledCssInput {
   script (src: "./labeled-input-controller.tsx")
-  variant inherited (enabled: [true])
+  variant inherited trigger { true }
   render imp2.LabeledInput {
     override text1 {
       style variant inherited {
@@ -52,7 +51,7 @@ public component LabeledCssInput {
       style variant inherited {
         text-decoration: unset
         margin-bottom: unset
-        color: #{imp4.blue1}
+        color: var(imp4.blue1)
         cursor: pointer
         font-weight: 500
       }
@@ -68,15 +67,14 @@ public component LabeledCssInput {
     }
     insert label {
       text label "label" {
-        style {
-          include imp3.labelFont
+        style extends imp3.labelFont {
           margin-bottom: 0px
           margin-left: 2px
         }
         style variant inherited {
           text-decoration: unset
           margin-bottom: unset
-          color: #{imp4.blue1}
+          color: var(imp4.blue1)
           cursor: pointer
           font-weight: 500
         }
@@ -107,8 +105,7 @@ public component CssInputRow {
       }
       slot label222 {
         text text1 "css-property" {
-          style {
-            include imp3.baseFontNobreak
+          style extends imp3.baseFontNobreak {
           }
         }
       }
@@ -131,25 +128,25 @@ public component CssInputRow {
  */
 public component TblrInput {
   script (src: "./tblr-input-controller.tsx")
-  variant connected (enabled: [])
-  variant disconnected (enabled: [true])
+  variant connected
+  variant disconnected trigger { true }
   render div {
     style {
       box-sizing: border-box
       display: block
     }
     style variant disconnected {
-      background: #{imp4.grey2}
+      background: var(imp4.grey2)
     }
     override buttonBarItem {
-      variant selected (enabled: [connected])
+      variant selected trigger { connected }
     }
     override buttonBarItem2 {
-      variant selected (enabled: [connected])
-      variant selected (enabled: [disconnected])
+      variant selected trigger { connected }
+      variant selected trigger { disconnected }
     }
     override primaryInput {
-      variant disabled (enabled: [disconnected])
+      variant disabled trigger { disconnected }
     }
     div element1 {
       style {
@@ -195,12 +192,10 @@ public component TblrInput {
                   style {
                     padding-right: 6px
                   }
-                  override {
-                  }
                   override bordersIcon6.el123 {
                     style variant disconnected {
-                      color: #{imp4.grey1}
-                      background: #{imp4.grey1}
+                      color: var(imp4.grey1)
+                      background: var(imp4.grey1)
                     }
                   }
                   insert icon {
@@ -225,7 +220,7 @@ public component TblrInput {
                   top: 0px
                 }
                 style variant disconnected {
-                  background: #{imp4.grey2}
+                  background: var(imp4.grey2)
                   opacity: 0.662
                   display: block
                 }
@@ -239,7 +234,7 @@ public component TblrInput {
               insert items {
                 imp7.ButtonBarItem buttonBarItem {
                   override {
-                    variant first (enabled: [true])
+                    variant first trigger { true }
                   }
                   insert icon1 {
                     slot connectedIcon {
@@ -254,7 +249,7 @@ public component TblrInput {
                 }
                 imp7.ButtonBarItem buttonBarItem2 {
                   override {
-                    variant last (enabled: [true])
+                    variant last trigger { true }
                   }
                   insert icon1 {
                     slot disconnectedIcon {
@@ -305,8 +300,8 @@ public component TblrInput {
             }
             override bordersIcon6.el123 {
               style variant disconnected {
-                color: #{imp4.grey1}
-                background: #{imp4.grey1}
+                color: var(imp4.grey1)
+                background: var(imp4.grey1)
               }
             }
             insert icon {
@@ -379,8 +374,6 @@ public component TblrInput {
             style variant disconnected {
               padding-right: 6px
             }
-            style variant connected {
-            }
             insert icon {
               slot thirdIcon {
                 imp5.BordersIcon bordersIcon4 {
@@ -412,8 +405,6 @@ public component TblrInput {
             style variant disconnected {
               padding-right: unset
             }
-            style variant connected {
-            }
             insert icon {
               slot fourthIcon {
                 imp5.BordersIcon bordersIcon5 {
@@ -439,19 +430,18 @@ public component TblrInput {
  */
 public component InlineLabeledInput {
   script (src: "./inline-labeled-input-controller.tsx")
-  variant focus (enabled: [])
-  variant disabled (enabled: [])
+  variant focus
+  variant disabled
   render div {
     style {
       box-sizing: border-box
       display: block
     }
     override textInput3 {
-      variant disabled (enabled: [disabled])
+      variant disabled trigger { disabled }
     }
     div element4 {
-      style {
-        include imp3.defaultBorder
+      style extends imp3.defaultBorder {
         box-sizing: border-box
         display: flex
         flex-direction: row
@@ -460,11 +450,11 @@ public component InlineLabeledInput {
         border-top-left-radius: 2px
         border-top-right-radius: 2px
         border-bottom-right-radius: 2px
-        background: #{imp4.grey0}
+        background: var(imp4.grey0)
         position: relative
       }
       style variant focus {
-        box-shadow: inset  0px 0px 0px 1px #{imp4.blue1}
+        box-shadow: inset  0px 0px 0px 1px var(imp4.blue1)
       }
       slot input3 {
         imp0.TextInput textInput3 {
@@ -477,10 +467,6 @@ public component InlineLabeledInput {
           }
           style variant focus {
             box-shadow: none
-          }
-          style variant disabled {
-          }
-          override {
           }
         }
       }
@@ -497,7 +483,7 @@ public component InlineLabeledInput {
             style {
               display: block
               height: 0.6em
-              color: #{imp4.grey3}
+              color: var(imp4.grey3)
               position: relative
               top: 2px
             }

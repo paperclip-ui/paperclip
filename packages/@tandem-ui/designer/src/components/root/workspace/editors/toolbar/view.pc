@@ -11,11 +11,11 @@ import "../paperclip/stage/canvas/tools-layer/frames-view.pc" as imp5
  */
 public component Toolbar {
   script (src: "./controller.tsx")
-  variant active (enabled: [true])
+  variant active trigger { true }
   render div {
     style {
       display: flex
-      background: #{imp0.grey6}
+      background: var(imp0.grey6)
       position: relative
       flex-grow: 0
       height: 38px
@@ -26,7 +26,7 @@ public component Toolbar {
         display: flex
         align-items: center
         padding: 8px 16px
-        color: #{imp0.grey3}
+        color: var(imp0.grey3)
         opacity: 0
       }
       style variant active {
@@ -74,8 +74,6 @@ public component Toolbar {
           margin-right: 16px
           cursor: pointer
         }
-        override {
-        }
         insert icon {
           imp1.RectangleIcon rectangleIcon {
             style {
@@ -87,7 +85,7 @@ public component Toolbar {
           }
         }
       }
-      imp2.Popover component {
+      imp2.Popover component2 {
         insert anchor {
           ToolbarButton componentIcon (title: "insert component tool") {
             style {
@@ -130,15 +128,14 @@ public component EditorTabs {
       flex: 1
       width: 0px
     }
-    imp4.EditorTab {
-      override label "index.pc"
+    imp4.EditorTab (label: "index.pc") {
       override xButton {
         style {
           visibility: hidden
         }
       }
     }
-    imp4.EditorTab inst {
+    imp4.EditorTab inst (label: "view.pc") {
       style {
         box-sizing: border-box
         font-family: Avenir Next
@@ -150,35 +147,27 @@ public component EditorTabs {
         height: 100%
       }
       override {
-        variant selected (enabled: [true])
+        variant selected trigger { true }
       }
-      override label "view.pc"
       override xButton {
         style {
           visibility: hidden
         }
       }
     }
-    imp4.EditorTab inst2 {
+    imp4.EditorTab inst2 (label: "component.pc", xButton: "x") {
       override {
-        variant hovering (enabled: [true])
-      }
-      override label "component.pc"
-      override xButton "×" {
-        style {
-        }
+        variant hovering trigger { true }
       }
     }
-    imp4.EditorTab {
-      override label "component.pc"
+    imp4.EditorTab(label: "component.pc") {
       override xButton {
         style {
           visibility: hidden
         }
       }
     }
-    imp4.EditorTab {
-      override label "pills.pc"
+    imp4.EditorTab(label: "pills.pc") {
       override xButton {
         style {
           visibility: hidden
@@ -192,14 +181,14 @@ public component EditorTabs {
  * @bounds(left: 468, top: 168, right: 568, bottom: 268)
  */
 public component ToolbarButton {
-  variant selected (enabled: [true])
+  variant selected trigger { true }
   render div {
     style {
       box-sizing: border-box
       display: block
     }
     style variant selected {
-      color: #{imp0.blue1}
+      color: var(imp0.blue1)
     }
     slot icon {
       imp1.PointerIcon pointerIcon {
@@ -211,7 +200,7 @@ public component ToolbarButton {
           font-size: unset
           display: block
           height: 1em
-          color: #{imp0.blue1}
+          color: var(imp0.blue1)
         }
         override element12 {
           style variant selected {
@@ -243,7 +232,7 @@ div preview {
   }
   imp5.Frames framesPreview {
     style {
-      background: #{imp0.grey2}
+      background: var(imp0.grey2)
       height: 100%
       position: relative
     }

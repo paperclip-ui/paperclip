@@ -243,7 +243,6 @@ mod tests {
 
     for case in cases.iter() {
       let expr = parse(case, "").unwrap();
-      // println!("{:?}", expr);
     }
     // panic!("blah");
   }

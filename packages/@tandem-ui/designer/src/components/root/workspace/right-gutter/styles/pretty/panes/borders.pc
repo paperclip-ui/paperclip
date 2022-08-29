@@ -16,17 +16,13 @@ import "../../../../../../../global.pc" as imp10
  */
 public component Border {
   script (src: "./borders-controller.tsx")
-  render imp0.Pane {
+  render imp0.Pane(text: "Borders") {
     style {
       display: flex
       flex-direction: column
     }
     override {
-      variant right (enabled: [true])
-    }
-    override text "Borders" {
-      style {
-      }
+      variant right trigger { true }
     }
     override title {
       style {
@@ -42,14 +38,14 @@ public component Border {
           width: 100%
           box-sizing: border-box
         }
-        imp1.LabeledInput {
+        imp1.LabeledInput(text1: "BL") {
           style {
             width: 100%
             flex: 1
             margin-right: 8px
             text-align: center
           }
-          override text1 "BL" {
+          override text1 {
             style {
               margin-left: 0px
             }
@@ -66,14 +62,14 @@ public component Border {
             }
           }
         }
-        imp1.LabeledInput {
+        imp1.LabeledInput(text1: "BL") {
           style {
             width: 100%
             flex: 1
             margin-right: 8px
             text-align: center
           }
-          override text1 "BL" {
+          override text1 {
             style {
               margin-left: 0px
             }
@@ -90,14 +86,14 @@ public component Border {
             }
           }
         }
-        imp1.LabeledInput {
+        imp1.LabeledInput(text1: "BL") {
           style {
             width: 100%
             flex: 1
             margin-right: 8px
             text-align: center
           }
-          override text1 "BL" {
+          override text1 {
             style {
               margin-left: 0px
             }
@@ -114,13 +110,13 @@ public component Border {
             }
           }
         }
-        imp1.LabeledInput {
+        imp1.LabeledInput(text1: "BL") {
           style {
             width: 100%
             flex: 1
             text-align: center
           }
-          override text1 "BL" {
+          override text1 {
             style {
               margin-left: 0px
             }
@@ -219,8 +215,7 @@ public component Border {
           justify-content: space-between
         }
         text text1 "borders" {
-          style {
-            include imp4.headerFontStyle
+          style extends imp4.headerFontStyle {
           }
         }
       }
@@ -266,11 +261,10 @@ public component BorderStyle {
         }
       }
     }
-    imp6.Dropdown styleInput {
+    imp6.Dropdown styleInput(label2: "solid") {
       style {
         margin-right: 6px
       }
-      override label2 "solid"
     }
     imp7.TextInput thicknessInput (placeholder: "0px") {
       style {
@@ -299,8 +293,8 @@ public component BorderStyle {
  */
 public component BorderStyles {
   script (src: "./border-styles-controller.tsx")
-  variant all (enabled: [])
-  variant individual (enabled: [true])
+  variant all
+  variant individual trigger { true }
   render div {
     style {
       box-sizing: border-box
@@ -311,8 +305,6 @@ public component BorderStyles {
         box-sizing: border-box
         display: block
         margin-top: 8px
-      }
-      style variant all {
       }
       imp8.ButtonBar toggler {
         style {
@@ -331,13 +323,11 @@ public component BorderStyles {
           }
         }
         override node622 {
-          variant selected (enabled: [true])
-          variant last (enabled: [true])
+          variant selected trigger { true }
+          variant last trigger { true }
         }
         insert items {
           imp9.ButtonBarItem {
-            override {
-            }
             insert icon1 {
               imp3.EmptySquareIcon {
                 style {
@@ -349,8 +339,8 @@ public component BorderStyles {
           }
           imp9.ButtonBarItem {
             override {
-              variant last (enabled: [true])
-              variant selected (enabled: [true])
+              variant last trigger { true }
+              variant selected trigger { true }
             }
             insert icon1 {
               imp3.BordersIcon {
@@ -399,13 +389,12 @@ public component Borders2 {
     style {
       box-sizing: border-box
       display: block
-      background: #{imp10.grey2}
+      background: var(imp10.grey2)
     }
-    imp0.Pane pane {
+    imp0.Pane pane(text: "Borders") {
       override {
-        variant right (enabled: [true])
+        variant right trigger { true }
       }
-      override text "Borders"
       override content {
         style {
           padding-bottom: 12px
@@ -413,7 +402,6 @@ public component Borders2 {
       }
       insert content2 {
         RadiusInput radiusInput {
-          override labeledInput.text1 "Radius"
           override element3 {
             style {
               padding-left: unset
@@ -427,7 +415,6 @@ public component Borders2 {
           }
         }
         ColorsInput colorInput2 {
-          override labeledInput.text1 "Color"
           override element3 {
             style {
               padding-left: unset
@@ -468,7 +455,6 @@ public component RadiusInput {
         margin-right: unset
       }
     }
-    override labeledInput.text1 "Radius"
     override element1 {
       style {
       }
@@ -535,14 +521,14 @@ public component RadiusInput {
           imp3.CornersIcon corners2 {
             style {
               display: block
-              color: #{imp10.grey1}
+              color: var(imp10.grey1)
               height: 1em
               position: relative
               top: 2px
             }
             override node66 {
               style {
-                color: #{imp10.grey3}
+                color: var(imp10.grey3)
               }
             }
           }
@@ -559,13 +545,13 @@ public component RadiusInput {
             style {
               display: block
               height: 1em
-              color: #{imp10.grey1}
+              color: var(imp10.grey1)
               position: relative
               top: 2px
             }
             override ndoe77 {
               style {
-                color: #{imp10.grey3}
+                color: var(imp10.grey3)
               }
             }
           }
@@ -582,13 +568,13 @@ public component RadiusInput {
             style {
               display: block
               height: 1em
-              color: #{imp10.grey1}
+              color: var(imp10.grey1)
               position: relative
               top: 2px
             }
             override node55 {
               style {
-                color: #{imp10.grey3}
+                color: var(imp10.grey3)
               }
             }
           }
@@ -602,13 +588,13 @@ public component RadiusInput {
             style {
               display: block
               height: 1em
-              color: #{imp10.grey1}
+              color: var(imp10.grey1)
               position: relative
               top: 2px
             }
             override node88 {
               style {
-                color: #{imp10.grey3}
+                color: var(imp10.grey3)
               }
             }
           }
@@ -657,7 +643,6 @@ public component ColorsInput {
         text-align: center
       }
     }
-    override labeledInput.text1 "Colors"
     insert firstIcon2 {
       imp3.TopLeftCornerIcon topLeftCornerIcon2 {
         style {
@@ -694,17 +679,17 @@ public component ColorsInput {
       BorderStyle topInput {
         override elll.node1 {
           style {
-            color: #{imp10.grey3}
+            color: var(imp10.grey3)
           }
         }
         override elll.node5 {
           style {
-            color: #{imp10.grey1}
+            color: var(imp10.grey1)
           }
         }
         override elll {
           style {
-            color: #{imp10.grey1}
+            color: var(imp10.grey1)
           }
         }
       }
@@ -713,12 +698,12 @@ public component ColorsInput {
       BorderStyle rightInput {
         override elll.node5 {
           style {
-            color: #{imp10.grey3}
+            color: var(imp10.grey3)
           }
         }
         override elll {
           style {
-            color: #{imp10.grey1}
+            color: var(imp10.grey1)
           }
         }
       }
@@ -732,7 +717,7 @@ public component ColorsInput {
         }
         override elll {
           style {
-            color: #{imp10.grey1}
+            color: var(imp10.grey1)
           }
         }
       }
@@ -750,7 +735,7 @@ public component ColorsInput {
         }
         override elll {
           style {
-            color: #{imp10.grey1}
+            color: var(imp10.grey1)
           }
         }
       }
@@ -763,7 +748,7 @@ public component ColorsInput {
         }
         override elll {
           style {
-            color: #{imp10.grey3}
+            color: var(imp10.grey3)
             display: none
           }
         }

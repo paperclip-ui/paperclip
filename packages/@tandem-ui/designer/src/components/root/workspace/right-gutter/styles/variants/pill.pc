@@ -2,7 +2,7 @@
  * @bounds(left: 308, top: 268, right: 599, bottom: 299)
  */
 public component VariantPill {
-  variant empty (enabled: [])
+  variant empty
   render div {
     style {
       background: rgba(237, 236, 236, 1)

@@ -8,13 +8,9 @@ import "../../../../../../atoms/view.pc" as imp2
  */
 public component Code {
   script (src: "./code.tsx")
-  render imp0.Pane {
+  render imp0.Pane(text: "custom CSS") {
     override {
-      variant right (enabled: [true])
-    }
-    override text "custom CSS" {
-      style {
-      }
+      variant right trigger { true }
     }
     override content {
       style {
@@ -23,8 +19,7 @@ public component Code {
     }
     insert content2 {
       imp1.Textarea textarea {
-        style {
-          include imp2.baseFont
+        style extends imp2.baseFont {
           width: 100%
           height: 150px
           border-radius: 2px
@@ -35,14 +30,11 @@ public component Code {
           border-right: 0px none
           border-bottom: 0px none
         }
-        override {
-        }
       }
     }
     insert header {
       text text1 "Custom CSS" {
-        style {
-          include imp2.headerFontStyle
+        style extends imp2.headerFontStyle {
         }
       }
     }

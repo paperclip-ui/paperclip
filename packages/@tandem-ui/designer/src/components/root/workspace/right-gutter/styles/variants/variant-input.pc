@@ -17,71 +17,64 @@ public component ComponentInstanceVariant {
     div options {
       style {
         box-sizing: border-box
-        background: #{imp0.grey2}
+        background: var(imp0.grey2)
       }
       slot options2 {
-        imp1.VariantOption {
+        imp1.VariantOption(label: "Variant 1") {
           style {
             padding-left: 4px
           }
           override {
           }
-          override label "Variant 1"
           override switch {
-            variant on (enabled: [true])
+            variant on trigger { true }
           }
         }
-        imp1.VariantOption {
+        imp1.VariantOption(label: "Variant 2") {
           style {
             padding-left: 4px
             padding-top: 2px
           }
           override {
-            variant alt (enabled: [true])
+            variant alt trigger { true }
           }
-          override label "Variant 2"
           override switch {
-            variant on (enabled: [true])
+            variant on trigger { true }
           }
         }
-        imp1.VariantOption {
+        imp1.VariantOption(label: "Variant 3") {
           style {
             padding-left: 4px
             padding-top: 2px
           }
-          override label "Variant 3"
         }
-        imp1.VariantOption {
+        imp1.VariantOption(label: "Variant 4") {
           style {
             padding-left: 4px
           }
           override {
-            variant alt (enabled: [true])
+            variant alt trigger { true }
           }
-          override label "Variant 4"
         }
-        imp1.VariantOption {
+        imp1.VariantOption(label: "Variant 5") {
           style {
             padding-left: 4px
           }
-          override label "Variant 5"
         }
-        imp1.VariantOption {
+        imp1.VariantOption(label: "Variant 6") {
           style {
             padding-left: 4px
           }
           override {
-            variant alt (enabled: [true])
+            variant alt trigger { true }
           }
-          override label "Variant 6"
         }
-        imp1.VariantOption {
+        imp1.VariantOption(label: "Variant 1") {
           style {
             padding-left: 4px
           }
-          override label "Variant 1"
           override switch {
-            variant on (enabled: [true])
+            variant on trigger { true }
           }
         }
       }

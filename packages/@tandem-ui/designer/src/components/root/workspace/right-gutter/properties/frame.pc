@@ -14,11 +14,9 @@ public component FramePane {
       box-sizing: border-box
       display: block
     }
-    imp0.Pane {
+    imp0.Pane(text: "Frame") {
       override {
-        variant right (enabled: [true])
-      }
-      override text "Frame" {
+        variant right trigger { true }
         style {
           font-weight: unset user-select
         }
@@ -29,12 +27,9 @@ public component FramePane {
             box-sizing: border-box
             display: block
           }
-          imp1.LabeledInput {
-            override text1 "Preset"
+          imp1.LabeledInput (text1: "Preset") {
             insert input {
-              imp2.Dropdown presetInput {
-                override label2 "iPhone 8+"
-              }
+              imp2.Dropdown presetInput (label2: "iPhone 8+")
             }
           }
         }
@@ -43,17 +38,15 @@ public component FramePane {
             box-sizing: border-box
             display: flex
           }
-          imp1.LabeledInput {
+          imp1.LabeledInput(text1: "x") {
             style {
               margin-right: 8px
             }
-            override text1 "x"
             insert input {
               imp3.TextInput xInput
             }
           }
-          imp1.LabeledInput {
-            override text1 "y"
+          imp1.LabeledInput(text1: "y") {
             insert input {
               imp3.TextInput yInput
             }
@@ -64,17 +57,15 @@ public component FramePane {
             box-sizing: border-box
             display: flex
           }
-          imp1.LabeledInput {
+          imp1.LabeledInput(text1: "Width") {
             style {
               margin-right: 8px
             }
-            override text1 "Width"
             insert input {
               imp3.TextInput widthInput
             }
           }
-          imp1.LabeledInput {
-            override text1 "Height"
+          imp1.LabeledInput(text1: "Height") {
             insert input {
               imp3.TextInput heightInput
             }

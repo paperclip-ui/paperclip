@@ -35,8 +35,6 @@ public component ButtonBar {
           border-top-left-radius: 2px
           border-bottom-left-radius: 2px
         }
-        override {
-        }
         imp1.TextLeftIcon node1111 {
           style {
             height: 100%
@@ -52,7 +50,7 @@ public component ButtonBar {
           position: relative
         }
         override {
-          variant selected (enabled: [true])
+          variant selected trigger { true }
         }
         imp1.TextCenterIcon {
           style {
@@ -69,7 +67,7 @@ public component ButtonBar {
           position: relative
         }
         override {
-          variant selected (enabled: [true])
+          variant selected trigger { true }
         }
         imp1.TextCenterIcon {
           style {
@@ -87,8 +85,8 @@ public component ButtonBar {
           height: 22px
         }
         override {
-          variant last (enabled: [true])
-          variant last (enabled: [true])
+          variant last trigger { true }
+          variant last trigger { true }
         }
         imp1.TextRightIcon {
           style {
@@ -98,8 +96,7 @@ public component ButtonBar {
       }
     }
     div border {
-      style {
-        include imp2.defaultBorder
+      style extends imp2.defaultBorder {
         box-sizing: border-box
         display: block
         pointer-events: none

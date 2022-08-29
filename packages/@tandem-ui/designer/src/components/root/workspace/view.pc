@@ -67,10 +67,10 @@ public component Workspace {
         flex-direction: column
       }
       override {
-        variant stylesTab (enabled: [true])
+        variant stylesTab trigger { true }
       }
       override styles.properties {
-        variant inspector (enabled: [true])
+        variant inspector trigger { true }
       }
     }
   }
@@ -113,7 +113,7 @@ Workspace {
     }
   }
   override rightGutter {
-    variant stylesTab (enabled: [true])
+    variant stylesTab trigger { true }
     style {
       display: block
     }

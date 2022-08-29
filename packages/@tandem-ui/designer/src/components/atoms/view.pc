@@ -1,8 +1,7 @@
 import "../../global.pc" as imp0
 
 
-public style labelFont {
-  include baseFont
+public style labelFont extends baseFont {
   color: rgba(136, 136, 136, 1)
   font-size: 9px
   display: inline-block
@@ -22,11 +21,10 @@ public style baseFont {
   font-weight: 400
 }
 
-public style headerFontStyle {
-  include baseFont
+public style headerFontStyle extends baseFont {
   text-transform: uppercase
   font-size: 10px
-  color: #{imp0.grey3}
+  color: var(imp0.grey3)
   font-weight: 600
   user-select: none
   cursor: default
@@ -41,7 +39,7 @@ public style defaultBorder {
   border-top: 1px none rgba(1, 0, 1, 0)
   border-right: 1px none rgba(1, 0, 1, 0)
   border-bottom: 1px none rgba(1, 0, 1, 0)
-  box-shadow: inset 0px 0px 0px 1px #{imp0.blackTransparent2}
+  box-shadow: inset 0px 0px 0px 1px var(imp0.blackTransparent2)
 }
 
 public style nowrapEllipsis {
@@ -60,8 +58,7 @@ public style inputBackground {
   background: rgba(250, 250, 250, 1)
 }
 
-public style baseFontNobreak {
-  include baseFont
+public style baseFontNobreak extends baseFont {
   white-space: nowrap
 }
 

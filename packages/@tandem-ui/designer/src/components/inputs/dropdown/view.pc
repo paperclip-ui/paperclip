@@ -10,8 +10,8 @@ import "./menu.pc" as imp4
  */
 public component Dropdown {
   script (src: "./controller.tsx")
-  variant filterable (enabled: [])
-  variant special (enabled: [true])
+  variant filterable
+  variant special trigger { true }
   render div {
     style {
       width: 100%
@@ -19,14 +19,11 @@ public component Dropdown {
       outline: none
       font-size: 11px
     }
-    style variant special {
-    }
     imp0.Popover popover {
       insert anchor {
         slot button {
           div button22 {
-            style {
-              include imp1.defaultBorder
+            style extends imp1.defaultBorder {
               box-sizing: border-box
               display: flex
               align-items: center
@@ -62,9 +59,7 @@ public component Dropdown {
               }
             }
             text label2 "Label" {
-              style {
-                include imp1.baseFont
-                include imp1.nowrapEllipsis
+              style extends imp1.baseFont, imp1.nowrapEllipsis {
                 display: inline-block
                 width: 100%
               }
@@ -92,8 +87,7 @@ public component Dropdown {
       }
       insert content {
         div menu {
-          style {
-            include imp1.defaultShadowStyle
+          style extends imp1.defaultShadowStyle {
             box-sizing: border-box
             display: block
             max-height: 200px
@@ -109,43 +103,43 @@ public component Dropdown {
             imp4.DropdownMenuItem inst66
             imp4.DropdownMenuItem insttt {
               override {
-                variant alt (enabled: [true])
+                variant alt trigger { true }
               }
             }
             imp4.DropdownMenuItem
             imp4.DropdownMenuItem inst11 {
               override {
-                variant alt (enabled: [true])
+                variant alt trigger { true }
               }
             }
             imp4.DropdownMenuItem
             imp4.DropdownMenuItem inst22 {
               override {
-                variant alt (enabled: [true])
+                variant alt trigger { true }
               }
             }
             imp4.DropdownMenuItem
             imp4.DropdownMenuItem inst33 {
               override {
-                variant alt (enabled: [true])
+                variant alt trigger { true }
               }
             }
             imp4.DropdownMenuItem inst44
             imp4.DropdownMenuItem inst55 {
               override {
-                variant alt (enabled: [true])
+                variant alt trigger { true }
               }
             }
             imp4.DropdownMenuItem
             imp4.DropdownMenuItem {
               override {
-                variant alt (enabled: [true])
+                variant alt trigger { true }
               }
             }
             imp4.DropdownMenuItem
             imp4.DropdownMenuItem {
               override {
-                variant alt (enabled: [true])
+                variant alt trigger { true }
               }
             }
           }
@@ -158,15 +152,14 @@ public component Dropdown {
 /**
  * @bounds(left: 357, top: 282, right: 558, bottom: 524)
  */
-Dropdown dropdown {
-  override label2 "super long label that should ellipsis if it overflows"
-}
+Dropdown dropdown(label2: "super long label that should ellipsis if it overflows")
+
 /**
  * @bounds(left: 132, top: 580, right: 333, bottom: 822)
  */
 Dropdown filtering {
   override {
-    variant filterable (enabled: [true])
+    variant filterable trigger { true }
   }
 }
 /**
@@ -188,28 +181,26 @@ Dropdown dropdownOpen {
     }
   }
   override insttt {
-    variant alt (enabled: [true])
-    variant special (enabled: [true])
+    variant alt trigger { true }
+    variant special trigger { true }
   }
   override inst11 {
-    variant alt (enabled: [true])
+    variant alt trigger { true }
   }
   override inst22 {
-    variant alt (enabled: [true])
+    variant alt trigger { true }
   }
   override inst33 {
-    variant alt (enabled: [true])
+    variant alt trigger { true }
   }
   override inst44 {
-    variant alt (enabled: [true])
+    variant alt trigger { true }
   }
   override inst55 {
   }
   override inst66 {
-    variant special (enabled: [true])
+    variant special trigger { true }
   }
-  override inst66.text1 "variable 1"
-  override insttt.text1 "variable 2"
 }
 /**
  * @bounds(left: 1119, top: 291, right: 1643, bottom: 622)
@@ -223,7 +214,7 @@ div element1 {
     override {
     }
     override popover {
-      variant open (enabled: [true])
+      variant open trigger { true }
     }
     override popover.content1 {
       style {

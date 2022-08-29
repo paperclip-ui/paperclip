@@ -10,14 +10,13 @@ import "./inputs/view.pc" as imp4
  */
 public component Layout {
   script (src: "./layout-controller.tsx")
-  render imp0.Pane {
+  render imp0.Pane(text: "Layout") {
     style {
       display: flex
     }
     override {
-      variant right (enabled: [true])
+      variant right trigger { true }
     }
-    override text "Layout"
     override title {
       style {
         border-to: 1px solid rgba(0,0,0,0.05)
@@ -33,8 +32,7 @@ public component Layout {
           position: relative
         }
         text text1 "layout" {
-          style {
-            include imp1.headerFontStyle
+          style extends imp1.headerFontStyle {
           }
         }
         imp2.MoreIcon node22131 {
@@ -50,13 +48,9 @@ public component Layout {
       }
     }
     insert content2 {
-      imp3.LabeledInput {
-        override text1 "Display"
-        override element1 "Display"
+      imp3.LabeledInput(text1: "Display", element1: "Display") {
         insert input {
-          imp4.CssDropdownInput displayInput {
-            override label2 "Flex"
-          }
+          imp4.CssDropdownInput displayInput (label2: "Flex")
         }
       }
       div parentFlexboxControls {
@@ -67,14 +61,31 @@ public component Layout {
           box-sizing: border-box
           flex-direction: column
         }
-        imp3.LabeledInput {
-          override text1 "Direction" {
-            style {
-            }
-          }
+        imp3.LabeledInput(text1: "Direction") {
           insert input {
-            imp4.CssDropdownInput flexDirectionInput {
-              override label2 "row"
+            imp4.CssDropdownInput flexDirectionInput (label2: "row")
+          }
+        }
+        div {
+          style {
+            display: flex
+            align-items: center
+            width: 100%
+            box-sizing: border-box
+          }
+          imp3.LabeledInput(text1: "Wrap") {
+            style {
+              width: 100%
+              flex: 1
+              margin-right: 6px
+            }
+            insert input {
+              imp4.CssDropdownInput flexWrapInput(label2: "nowrap")
+            }
+          }
+          imp3.LabeledInput(text1: "Justify Content") {
+            insert input {
+              imp4.CssDropdownInput justifyContentInput(label2: "flex-start")
             }
           }
         }
@@ -85,66 +96,19 @@ public component Layout {
             width: 100%
             box-sizing: border-box
           }
-          imp3.LabeledInput {
+          imp3.LabeledInput(text1: "Align Items") {
             style {
               width: 100%
               flex: 1
               margin-right: 6px
             }
-            override text1 "Wrap" {
-              style {
-              }
-            }
             insert input {
-              imp4.CssDropdownInput flexWrapInput {
-                override label2 "nowrap"
-              }
+              imp4.CssDropdownInput alignItemsInput(label2: "flex-end")
             }
           }
-          imp3.LabeledInput {
-            override text1 "Justify Content" {
-              style {
-              }
-            }
+          imp3.LabeledInput(text1: "Align Content") {
             insert input {
-              imp4.CssDropdownInput justifyContentInput {
-                override label2 "flex-start"
-              }
-            }
-          }
-        }
-        div {
-          style {
-            display: flex
-            align-items: center
-            width: 100%
-            box-sizing: border-box
-          }
-          imp3.LabeledInput {
-            style {
-              width: 100%
-              flex: 1
-              margin-right: 6px
-            }
-            override text1 "Align Items" {
-              style {
-              }
-            }
-            insert input {
-              imp4.CssDropdownInput alignItemsInput {
-                override label2 "flex-end"
-              }
-            }
-          }
-          imp3.LabeledInput {
-            override text1 "Align Content" {
-              style {
-              }
-            }
-            insert input {
-              imp4.CssDropdownInput alignContentInput {
-                override label2 "center"
-              }
+              imp4.CssDropdownInput alignContentInput (label2: "center")
             }
           }
         }
@@ -164,13 +128,13 @@ public component Layout {
             width: 100%
             box-sizing: border-box
           }
-          imp3.LabeledInput {
+          imp3.LabeledInput(text1: "Basis") {
             style {
               width: 100%
               flex: 1
               margin-right: 6px
             }
-            override text1 "Basis" {
+            override text1 {
               style {
                 left: opacity
               }
@@ -179,67 +143,47 @@ public component Layout {
               imp4.CssMeasurementInput flexBasisInput (placeholder: "0")
             }
           }
-          imp3.LabeledInput {
+          imp3.LabeledInput(text1: "Grow") {
             style {
               width: 100%
               flex: 1
               margin-right: 6px
             }
-            override text1 "Grow" {
-              style {
-              }
-            }
-            override projectNameInput
             insert input {
               imp4.CssMeasurementInput flexGrowInput (placeholder: "0")
             }
           }
-          imp3.LabeledInput {
+          imp3.LabeledInput(text1: "Shrink") {
             style {
               width: 100%
               flex: 1
             }
-            override text1 "Shrink" {
-              style {
-              }
-            }
-            override projectNameInput
             insert input {
               imp4.CssMeasurementInput flexShrinkInput (placeholder: "0")
             }
           }
         }
-        imp3.LabeledInput {
-          override text1 "Align self" {
-            style {
-            }
-          }
+        imp3.LabeledInput(text1: "Align self") {
           insert input {
-            imp4.CssDropdownInput alignSelfInput {
+            imp4.CssDropdownInput alignSelfInput(label2: "auto") {
               style {
                 display: inline-block
                 width: 100%
               }
-              override label2 "auto"
             }
           }
         }
       }
-      imp3.LabeledInput position {
+      imp3.LabeledInput position(text1: "Position") {
         style {
           display: block
         }
-        override text1 "Position" {
-          style {
-          }
-        }
         insert input {
-          imp4.CssDropdownInput positionInput {
+          imp4.CssDropdownInput positionInput(label2: "relative") {
             style {
               display: block
               width: 100%
             }
-            override label2 "relative"
           }
         }
       }
@@ -250,13 +194,13 @@ public component Layout {
           width: 100%
           box-sizing: border-box
         }
-        imp3.LabeledInput {
+        imp3.LabeledInput(text1: "Left") {
           style {
             width: 100%
             flex: 1
             margin-right: 6px
           }
-          override text1 "Left" {
+          override text1 {
             style {
               left: opacity
             }
@@ -265,16 +209,11 @@ public component Layout {
             imp4.CssMeasurementInput leftInput (placeholder: "0px")
           }
         }
-        imp3.LabeledInput {
+        imp3.LabeledInput(text1: "Top") {
           style {
             width: 100%
             flex: 1
           }
-          override text1 "Top" {
-            style {
-            }
-          }
-          override projectNameInput
           insert input {
             imp4.CssMeasurementInput topInput (placeholder: "0px")
           }
@@ -287,13 +226,13 @@ public component Layout {
           width: 100%
           box-sizing: border-box
         }
-        imp3.LabeledInput {
+        imp3.LabeledInput(text1: "Width") {
           style {
             width: 100%
             flex: 1
             margin-right: 6px
           }
-          override text1 "Width" {
+          override text1 {
             style {
               left: opacity
             }
@@ -302,36 +241,26 @@ public component Layout {
             imp4.CssMeasurementInput widthInput (placeholder: "auto")
           }
         }
-        imp3.LabeledInput node1122 {
+        imp3.LabeledInput node1122(text1: "Height") {
           style {
             width: 100%
             flex: 1
           }
-          override text1 "Height" {
-            style {
-            }
-          }
-          override projectNameInput
           insert input {
             imp4.CssMeasurementInput heightInput (placeholder: "auto")
           }
         }
       }
-      imp3.LabeledInput whiteSpace {
+      imp3.LabeledInput whiteSpace(text1: "White Space") {
         style {
           display: block
         }
-        override text1 "White Space" {
-          style {
-          }
-        }
         insert input {
-          imp4.CssDropdownInput whiteSpaceInput {
+          imp4.CssDropdownInput whiteSpaceInput(label2: "nowrap") {
             style {
               display: block
               width: 100%
             }
-            override label2 "nowrap"
           }
         }
       }

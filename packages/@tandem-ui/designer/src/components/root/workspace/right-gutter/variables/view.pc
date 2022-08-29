@@ -19,11 +19,10 @@ public component VariablesInput {
       display: block
       width: 100%
     }
-    imp0.Pane pane {
+    imp0.Pane pane(text: "Variables") {
       override {
-        variant right (enabled: [true])
+        variant right trigger { true }
       }
-      override text "Variables"
       override content {
         style {
           padding-bottom: 12px
@@ -38,8 +37,7 @@ public component VariablesInput {
             align-items: center
           }
           text text1 "Colors" {
-            style {
-              include imp1.headerFontStyle
+            style extends imp1.headerFontStyle {
             }
           }
           div element2 {
@@ -61,7 +59,7 @@ public component VariablesInput {
                   style {
                     display: block
                     height: 9px
-                    color: #{imp4.grey3}
+                    color: var(imp4.grey3)
                     cursor: pointer
                   }
                 }
@@ -77,7 +75,7 @@ public component VariablesInput {
             display: flex
             flex-direction: column
             font-size: 10px
-            border: 1px solid #{imp4.grey1}
+            border: 1px solid var(imp4.grey1)
             border-bottom-left-radius: 2px
             border-top-left-radius: 2px
             border-top-right-radius: 2px
@@ -86,34 +84,30 @@ public component VariablesInput {
           insert content {
             VariableRow {
               override {
-                variant header (enabled: [true])
+                variant header trigger { true }
               }
-              override el111.text1 "Name"
-              override node12331.text1 "Value"
             }
             slot items {
               VariableRowItem {
                 override {
-                  variant limited (enabled: [true])
+                  variant limited trigger { true }
                 }
               }
               VariableRowItem {
                 override {
-                  variant alt (enabled: [true])
+                  variant alt trigger { true }
                 }
               }
               VariableRowItem {
                 override {
-                  variant limited (enabled: [true])
+                  variant limited trigger { true }
                 }
-                override limitedInput.label2 "block"
               }
               VariableRowItem {
                 override {
-                  variant alt (enabled: [true])
-                  variant color (enabled: [true])
+                  variant alt trigger { true }
+                  variant color trigger { true }
                 }
-                override limitedInput.label2 "block"
               }
             }
           }
@@ -128,18 +122,17 @@ public component VariablesInput {
  */
 public component VariableRowItem {
   script (src: "./row-item-controller.tsx")
-  variant alt (enabled: [])
-  variant limited (enabled: [])
-  variant color (enabled: [true])
+  variant alt
+  variant limited
+  variant color trigger { true }
   render VariableRow {
-    style {
-      include imp1.baseFont
+    style extends imp1.baseFont {
     }
     override {
-      variant alt (enabled: [alt])
+      variant alt trigger { alt }
     }
     override node12331 {
-      variant last (enabled: [color])
+      variant last trigger { color }
       style {
         padding-left: 0px
         padding-top: 0px
@@ -191,7 +184,7 @@ public component VariableRowItem {
             border-top-right-radius: 0px
             border-bottom-right-radius: 0px
             box-sizing: border-box
-            box-shadow: 0px 0px 0px 0px #{imp4.blackTransparent2}
+            box-shadow: 0px 0px 0px 0px var(imp4.blackTransparent2)
             border-radius: 0px
           }
           style {
@@ -252,27 +245,26 @@ public component VariableRowItem {
  * @bounds(left: 733, top: 226, right: 1212, bottom: 252)
  */
 public component VariableRow {
-  variant header (enabled: [])
-  variant alt (enabled: [])
+  variant header
+  variant alt
   render div {
-    style {
-      include imp1.baseFont
+    style extends imp1.baseFont {
       box-sizing: border-box
       display: block
-      color: #{imp4.grey3}
+      color: var(imp4.grey3)
     }
     imp5.TableRow el112211 {
       style {
         border: 0px  rgba(196, 196, 196, 1)
       }
       override {
-        variant header (enabled: [header])
-        variant alt (enabled: [alt])
+        variant header trigger { header }
+        variant alt trigger { alt }
       }
       insert content1 {
         imp5.TableCell el111 {
           style {
-            border-right: 1px solid #{imp4.grey1}
+            border-right: 1px solid var(imp4.grey1)
           }
           insert content2 {
             slot name {
@@ -282,7 +274,7 @@ public component VariableRow {
         }
         imp5.TableCell node12331 {
           override {
-            variant last (enabled: [true])
+            variant last trigger { true }
           }
           insert content2 {
             slot value {
@@ -300,7 +292,7 @@ public component VariableRow {
  */
 public component VariablesTab {
   script (src: "./tab-controller.tsx")
-  variant noGlobalFile (enabled: [])
+  variant noGlobalFile
   render div {
     style {
       box-sizing: border-box
@@ -308,7 +300,7 @@ public component VariablesTab {
       padding-top: 0px
       padding-left: 0px
       padding-right: 0px
-      background: #{imp4.grey2}
+      background: var(imp4.grey2)
     }
     VariablesInput variablesInput {
       style {
@@ -318,7 +310,6 @@ public component VariablesTab {
       style variant noGlobalFile {
         display: none
       }
-      override text1 "Variables"
     }
     text text4 "You must define a global file in your project config before using variables." {
       style {

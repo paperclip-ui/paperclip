@@ -19,26 +19,18 @@ import "../../../../../dev/comments.pc" as imp13
  */
 public component ElementStyler {
   script (src: "./index.tsx")
-  variant inspector (enabled: [true])
+  variant inspector trigger { true }
   render div {
     style {
       flex-direction: column
       color: #666
-      background: #{imp0.grey2}
+      background: var(imp0.grey2)
     }
     imp1.InstancePane instancePane {
       override {
       }
     }
-    imp2.Inherit inheritPane {
-      override content {
-        style {
-        }
-        style {
-        }
-      }
-      override text1 "mixins"
-    }
+    imp2.Inherit inheritPane(text1: "mixins")
     imp3.StyleInspector styleInspector {
       style {
         display: none
@@ -56,7 +48,6 @@ public component ElementStyler {
       style variant inspector {
         display: none
       }
-      override sizeControls.node1122.text1 "Height!!!"
       override content {
         style {
           flex-shrink: 0
@@ -157,6 +148,4 @@ public component ElementStyler {
 /**
  * @bounds(left: 646, top: 1518, right: 864, bottom: 1719)
  */
-imp13.Comment comment {
-  override text2 "additive sections here (anything with + button)"
-}
+imp13.Comment comment(text2: "additive sections here (anything with + button)")

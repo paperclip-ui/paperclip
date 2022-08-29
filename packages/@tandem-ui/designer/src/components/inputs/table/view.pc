@@ -6,13 +6,13 @@ import "../../atoms/view.pc" as imp1
  * @bounds(left: 401, top: 292, right: 501, bottom: 392)
  */
 public component TableCell {
-  variant last (enabled: [])
+  variant last
   render div {
     style {
       box-sizing: border-box
       flex-grow: 1
       text-align: center
-      border-right: 1px solid #{imp0.grey1}
+      border-right: 1px solid var(imp0.grey1)
       padding-top: 4px
       padding-bottom: 4px
       display: block
@@ -28,8 +28,7 @@ public component TableCell {
     }
     slot content2 {
       text text1 "Cell" {
-        style {
-          include imp1.baseFont
+        style extends imp1.baseFont {
           padding-left: 8
           padding-top: 6
           padding-right: 8
@@ -37,8 +36,6 @@ public component TableCell {
           box-sizing: border-box
           display: block
           text-align: left
-        }
-        style variant alt {
         }
       }
     }
@@ -49,8 +46,8 @@ public component TableCell {
  * @bounds(left: 647, top: 145, right: 937, bottom: 263)
  */
 public component TableRow {
-  variant header (enabled: [true])
-  variant alt (enabled: [])
+  variant header trigger { true }
+  variant alt
   render div {
     style {
       box-sizing: border-box
@@ -58,8 +55,8 @@ public component TableRow {
     }
     style variant header {
       font-weight: 600
-      background: #{imp0.grey1}
-      color: #{imp0.grey3}
+      background: var(imp0.grey1)
+      color: var(imp0.grey3)
     }
     style variant alt {
       background: rgba(250, 250, 250, 1)
@@ -78,8 +75,8 @@ public component TableRow {
           flex-shrink: 1
         }
         override {
-          variant last (enabled: [true])
-          variant last (enabled: [true])
+          variant last trigger { true }
+          variant last trigger { true }
         }
       }
     }
@@ -90,14 +87,14 @@ public component TableRow {
  * @bounds(left: -21, top: 94, right: 309, bottom: 419)
  */
 public component Table {
-  variant noHeader (enabled: [true])
+  variant noHeader trigger { true }
   render div {
     style {
       box-sizing: border-box
       display: flex
       flex-direction: column
       font-size: 10px
-      color: #{imp0.grey3}
+      color: var(imp0.grey3)
     }
     slot content {
       TableRow header {
@@ -107,8 +104,8 @@ public component Table {
           display: none
         }
         override {
-          variant header (enabled: [true])
-          variant alt (enabled: [true])
+          variant header trigger { true }
+          variant alt trigger { true }
         }
       }
       TableRow {
@@ -120,8 +117,8 @@ public component Table {
           display: flex
         }
         override {
-          variant alt (enabled: [true])
-          variant alt (enabled: [true])
+          variant alt trigger { true }
+          variant alt trigger { true }
         }
       }
       TableRow {
@@ -129,7 +126,7 @@ public component Table {
           display: flex
         }
         override {
-          variant alt (enabled: [true])
+          variant alt trigger { true }
         }
       }
       TableRow {
@@ -137,8 +134,8 @@ public component Table {
           display: flex
         }
         override {
-          variant alt (enabled: [true])
-          variant alt (enabled: [true])
+          variant alt trigger { true }
+          variant alt trigger { true }
         }
       }
       TableRow {
@@ -146,12 +143,12 @@ public component Table {
           display: flex
         }
         override {
-          variant alt (enabled: [true])
+          variant alt trigger { true }
         }
       }
       TableRow {
         override {
-          variant alt (enabled: [true])
+          variant alt trigger { true }
         }
       }
     }

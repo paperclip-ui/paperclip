@@ -16,7 +16,7 @@ public component Picker {
       box-sizing: border-box
       width: 400px
       height: 300px
-      background: #{imp0.grey2}
+      background: var(imp0.grey2)
       padding: 8px
       border-radius: 2px
       display: flex
@@ -39,7 +39,6 @@ public component Picker {
       imp1.ComponentOption
       imp1.ComponentOption
       imp1.ComponentOption {
-        override text2 "Box"
       }
       imp1.ComponentOption
       imp1.ComponentOption
@@ -85,10 +84,11 @@ public component Filter {
  */
 public component ComponentPopdownPicker {
   script (src: "./picker2-controller.tsx")
-  variant noComponents (enabled: [true])
+  variant noComponents trigger {
+    true
+  }
   render div {
-    style {
-      include imp3.defaultShadowStyle
+    style extends imp3.defaultShadowStyle {
       box-sizing: border-box
       display: block
       width: 200px
@@ -135,45 +135,28 @@ public component ComponentPopdownPicker {
             }
             slot items {
               ComponentPickerPopdownItem item1 {
-                override {
-                }
               }
               ComponentPickerPopdownItem item2
               ComponentPickerPopdownItem item3 {
                 override {
-                  variant hover (enabled: [true])
+                  variant hover trigger { true }
                 }
               }
               ComponentPickerPopdownItem item4
-              ComponentPickerPopdownItem item5 {
-                override {
-                }
-              }
+              ComponentPickerPopdownItem item5
               ComponentPickerPopdownItem item6
-              ComponentPickerPopdownItem item7 {
-                override {
-                }
-              }
-              ComponentPickerPopdownItem item8 {
-                override {
-                }
-              }
-              ComponentPickerPopdownItem item9 {
-                override {
-                }
-              }
+              ComponentPickerPopdownItem item7
+              ComponentPickerPopdownItem item8
+              ComponentPickerPopdownItem item9
               ComponentPickerPopdownItem item10 {
                 override {
-                  variant alt (enabled: [true])
+                  variant alt trigger { true }
                 }
               }
-              ComponentPickerPopdownItem item11 {
-                override {
-                }
-              }
+              ComponentPickerPopdownItem item11
               ComponentPickerPopdownItem item12 {
                 override {
-                  variant alt (enabled: [true])
+                  variant alt trigger { true }
                 }
               }
               ComponentPickerPopdownItem item13
@@ -192,8 +175,7 @@ public component ComponentPopdownPicker {
               padding-bottom: 12px
             }
             text noneFound "No components found." {
-              style {
-                include imp3.baseFont
+              style extends imp3.baseFont {
                 text-align: left
                 display: block
                 font-weight: 600
@@ -201,23 +183,20 @@ public component ComponentPopdownPicker {
               }
             }
             text desc "To create one, right click a layer and click" {
-              style {
-                include imp3.baseFont
+              style extends imp3.baseFont {
                 text-align: left
                 display: inline
               }
             }
             text ctra "\"Convert to Component\"" {
-              style {
-                include imp3.baseFont
+              style extends im3.baseFont {
                 text-align: left
                 display: inline
                 font-weight: 600
               }
             }
             text period "." {
-              style {
-                include imp3.baseFont
+              style extends imp3.baseFont {
                 text-align: left
                 display: inline-block
               }
@@ -233,9 +212,9 @@ public component ComponentPopdownPicker {
  * @bounds(left: 2519, top: 644, right: 3298, bottom: 694)
  */
 public component ComponentPickerPopdownItem {
-  variant alt (enabled: [true])
-  variant hover (enabled: [true, PseudoElement.Hover])
-  variant preselected (enabled: [true])
+  variant alt trigger { true }
+  variant hover trigger { ":hover" }
+  variant preselected trigger { true }
   render div {
     style {
       box-sizing: border-box
@@ -248,36 +227,32 @@ public component ComponentPickerPopdownItem {
       cursor: pointer
     }
     style variant alt {
-      background-image: linear-gradient(#{imp0.grey7}, #{imp0.grey7})
+      background-image: linear-gradient(var(imp0.grey7), var(imp0.grey7))
       display: flex
       align-items: center
     }
     style variant hover {
-      background-image: linear-gradient(#{imp0.grey7}, #{imp0.grey7})
+      background-image: linear-gradient(var(imp0.grey7), var(imp0.grey7))
     }
     style variant preselected {
-      background-image: linear-gradient(#{imp0.blue3}, #{imp0.blue3})
+      background-image: linear-gradient(var(imp0.blue3), var(imp0.blue3))
     }
     imp5.ComponentIcon componentIcon {
       style {
-        color: #{imp0.grey3}
+        color: var(imp0.grey3)
         display: block
         height: 12px
       }
       style variant alt {
-        color: #{imp0.grey3}
+        color: var(imp0.grey3)
       }
     }
     text componentName "Item14" {
-      style {
-        include imp3.baseFont
-        include imp3.nowrapEllipsis
+      style extends imp3.baseFont, imp3.nowrapEllipsis {
         margin-left: 6px
         display: block
         width: 100%
         cursor: inherit
-      }
-      style variant alt {
       }
     }
   }

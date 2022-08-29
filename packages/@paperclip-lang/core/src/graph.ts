@@ -2,7 +2,6 @@ import { FileCache } from "fsbox";
 import { mapValues } from "lodash";
 import { memoize } from "tandem-common";
 import { createPCModule } from "./dsl";
-import { serializeModule } from "./serialize";
 import { parseDocument } from "./parser/dsl/parser";
 import { deserializeModule } from "./deserialize/deserialize";
 
@@ -93,24 +92,6 @@ export const addFileCacheItemToDependencyGraph = (
 export const deserializeDependencyGraph = (
   cache: FileCache
 ): DependencyGraph => {
-  // The logic here is all temporary until the serializer + deserializer stabilizes. Once that happens,
-  // the only thing that should be here is the deserializer.
-
-  // TODO: delete me after things stabilize
-  // const dslGraph = mapValues(cache, (fileItem) => {
-  //   try {
-  //     return {
-  //       uri: fileItem.uri,
-  //       content: JSON.parse(new TextDecoder("utf-8").decode(fileItem.content)),
-  //     };
-  //   } catch (e) {
-  //     return {
-  //       uri: fileItem.uri,
-  //       content: createPCModule(),
-  //     };
-  //   }
-  // });
-
   const astGraph = mapValues(cache, (fileItem) => {
     const ast = parseDocument(
       new TextDecoder("utf-8").decode(fileItem.content)

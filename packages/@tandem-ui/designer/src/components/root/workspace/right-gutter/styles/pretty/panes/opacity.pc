@@ -14,7 +14,7 @@ public component OpacityPane {
       flex-direction: column
     }
     override {
-      variant right (enabled: [true])
+      variant right trigger { true }
     }
     override title {
       style {
@@ -27,14 +27,10 @@ public component OpacityPane {
       }
     }
     insert content2 {
-      imp1.LabeledInput {
+      imp1.LabeledInput (text1: "Opacity") {
         style {
           width: 100%
           flex: 1
-        }
-        override text1 "Opacity" {
-          style {
-          }
         }
         insert input {
           imp2.Slider sliderInput {

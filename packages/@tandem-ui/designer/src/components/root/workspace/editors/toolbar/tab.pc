@@ -6,14 +6,14 @@ import "../../../../atoms/view.pc" as imp1
  * @bounds(left: 409, top: 207, right: 1270, bottom: 487)
  */
 public component EditorTab {
-  variant selected (enabled: [])
-  variant hovering (enabled: [true])
+  variant selected
+  variant hovering trigger { true }
   render div {
     style {
       box-sizing: border-box
       padding: 8px 16px
       align-items: center
-      background: #{imp0.grey6}
+      background: var(imp0.grey6)
       color: rgba(112, 112, 112, 1)
       cursor: pointer
       padding-left: 20px
@@ -24,17 +24,15 @@ public component EditorTab {
       white-space: nowrap
     }
     style variant selected {
-      background: #{imp0.grey7}
+      background: var(imp0.grey7)
       user-select: none
     }
-    text label "tab" {
-      style {
-        include imp1.baseFont
+    text label {
+      style extends imp1.baseFont {
       }
     }
-    text xButton "×" {
-      style {
-        include imp1.baseFont
+    text xButton {
+      style extends imp1.baseFont {
         margin-left: 8px
         visibility: hidden
         cursor: pointer
@@ -68,7 +66,7 @@ div element2 {
       padding-top: unset
       position: relative
     }
-    override label "123456789rwewrwrrwe" {
+    override label {
       style {
         width: 100%
         display: inline-block

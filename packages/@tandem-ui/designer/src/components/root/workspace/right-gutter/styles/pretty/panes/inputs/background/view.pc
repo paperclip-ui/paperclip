@@ -12,26 +12,25 @@ import "../../../../../../../../inputs/text/view.pc" as imp6
  */
 public component BackgroundPicker {
   script (src: "./controller.tsx")
-  variant solid (enabled: [])
-  variant linearGradient (enabled: [])
-  variant image (enabled: [true])
+  variant solid
+  variant linearGradient
+  variant image trigger { true }
   render div {
-    style {
-      include imp1.defaultBorder
+    style extends imp1.defaultBorder {
       box-sizing: border-box
       display: block
-      background: #{imp0.grey2}
+      background: var(imp0.grey2)
       width: 250px
-      box-shadow: inset 0px 0px 0px 1px #{imp0.blackTransparent2},0px 2px 10px 0px #{imp0.blackTransparent2}
+      box-shadow: inset 0px 0px 0px 1px var(imp0.blackTransparent2),0px 2px 10px 0px var(imp0.blackTransparent2)
     }
     override solidToggleButton {
-      variant selected (enabled: [solid])
+      variant selected trigger { solid }
     }
     override linearGradientButton {
-      variant selected (enabled: [linearGradient])
+      variant selected trigger { linearGradient }
     }
     override imageToggleButton {
-      variant selected (enabled: [image])
+      variant selected trigger { image }
     }
     div tabs {
       style {
@@ -40,7 +39,7 @@ public component BackgroundPicker {
         padding-top: 6px
         padding-right: 12px
         padding-bottom: 6px
-        border-bottom: 1px solid #{imp0.grey1}
+        border-bottom: 1px solid var(imp0.grey1)
       }
       style variant image {
         display: flex
@@ -75,7 +74,7 @@ public component BackgroundPicker {
               left: 0px
               top: 4px
               width: 100%
-              background: #{imp0.grey2}
+              background: var(imp0.grey2)
               height: calc(100% - 8px)
             }
           }
@@ -95,7 +94,7 @@ public component BackgroundPicker {
             }
             override node32 {
               style {
-                background: #{imp0.grey4}
+                background: var(imp0.grey4)
               }
             }
             override element32111 {
@@ -177,15 +176,14 @@ public component LinearGradientPicker {
       style {
         box-sizing: border-box
         display: block
-        border-bottom: 1px solid #{imp0.grey1}
+        border-bottom: 1px solid var(imp0.grey1)
         padding-left: 12px
         padding-top: 12px
         padding-right: 12px
         padding-bottom: 12px
       }
       div slider {
-        style {
-          include imp1.defaultBorder
+        style extends imp1.defaultBorder {
           box-sizing: border-box
           display: block
           width: 100%
@@ -203,8 +201,7 @@ public component LinearGradientPicker {
           }
         }
         ColorStop3 colorStop2 {
-          style {
-            include imp1.defaultBorder
+          style extends imp1.defaultBorder {
             box-sizing: border-box
             display: block
             width: 12px
@@ -218,16 +215,16 @@ public component LinearGradientPicker {
     imp3.ColorPicker colorPicker {
       style {
         width: 100%
-        border-left: 1px none #{imp0.grey1}
-        border-top: 1px none #{imp0.grey1}
-        border-right: 1px none #{imp0.grey1}
-        border-bottom: 1px none #{imp0.grey1}
+        border-left: 1px none var(imp0.grey1)
+        border-top: 1px none var(imp0.grey1)
+        border-right: 1px none var(imp0.grey1)
+        border-bottom: 1px none var(imp0.grey1)
         border-top-left-radius: 0px
         border-top-right-radius: 0px
         border-bottom-left-radius: 0px
         border-bottom-right-radius: 0px
         background: transparent
-        box-shadow: 0px 0px 0px 0px #{imp0.grey4}
+        box-shadow: 0px 0px 0px 0px var(imp0.grey4)
         filter: unset
       }
     }
@@ -239,8 +236,7 @@ public component LinearGradientPicker {
  */
 public component ColorStop3 {
   render div {
-    style {
-      include imp1.defaultBorder
+    style extends imp1.defaultBorder {
       box-sizing: border-box
       display: block
       width: 12px
@@ -287,8 +283,7 @@ public component BackgroundImagePicker {
       padding-right: 12px
       padding-bottom: 12px
     }
-    imp4.LabeledInput labeledInput {
-      override text1 "Image"
+    imp4.LabeledInput labeledInput(text1: "Image") {
       insert input {
         imp5.FileInput fileUriPicker {
           style {
@@ -298,20 +293,17 @@ public component BackgroundImagePicker {
         }
       }
     }
-    imp4.LabeledInput labeledInput2 {
-      override text1 "Repeat"
+    imp4.LabeledInput labeledInput2(text1: "Repeat") {
       insert input {
         imp6.TextInput repeatInput (placeholder: "repeat")
       }
     }
-    imp4.LabeledInput labeledInput3 {
-      override text1 "Position"
+    imp4.LabeledInput labeledInput3(text1: "Position") {
       insert input {
         imp6.TextInput positionInput (placeholder: "top left")
       }
     }
-    imp4.LabeledInput labeledInput4 {
-      override text1 "Size"
+    imp4.LabeledInput labeledInput4(text1: "Size") {
       insert input {
         imp6.TextInput sizeInput (placeholder: "auto")
       }
@@ -323,7 +315,7 @@ public component BackgroundImagePicker {
  * @bounds(left: -187, top: 1, right: -87, bottom: 101)
  */
 public component BackgroundTypeButton {
-  variant selected (enabled: [true])
+  variant selected trigger { true }
   render div {
     style {
       box-sizing: border-box
@@ -339,17 +331,17 @@ public component BackgroundTypeButton {
       position: relative
       background: rgba(184, 184, 184, 1)
       cursor: pointer
-      box-shadow: 0px 0px 0px 1px #{imp0.grey1}
+      box-shadow: 0px 0px 0px 1px var(imp0.grey1)
     }
     style variant selected {
-      box-shadow:  0px 0px 0px 3px #{imp0.blue1}
+      box-shadow:  0px 0px 0px 3px var(imp0.blue1)
     }
     slot icon {
       div solid {
         style {
           box-sizing: border-box
           display: inline-block
-          background: #{imp0.grey4}
+          background: var(imp0.grey4)
           height: 100%
           padding-right: 12px
           z-index: 1px
@@ -371,7 +363,7 @@ public component BackgroundTypeButton {
         border-top-right-radius: 99px
         border-bottom-left-radius: 99px
         border-bottom-right-radius: 99px
-        box-shadow: inset  0px 0px 0px 1px #{imp0.grey2}
+        box-shadow: inset  0px 0px 0px 1px var(imp0.grey2)
       }
     }
   }
@@ -382,7 +374,7 @@ public component BackgroundTypeButton {
  */
 BackgroundPicker backgroundPickerPreview {
   override {
-    variant linearGradient (enabled: [true])
+    variant linearGradient trigger { true }
   }
 }
 /**
@@ -390,7 +382,7 @@ BackgroundPicker backgroundPickerPreview {
  */
 BackgroundPicker backgroundPickerPreview2 {
   override {
-    variant image (enabled: [true])
+    variant image trigger { true }
   }
 }
 /**
@@ -398,10 +390,10 @@ BackgroundPicker backgroundPickerPreview2 {
  */
 BackgroundPicker backgroundPickerPreview3 {
   style {
-    background: #{imp0.grey2}
+    background: var(imp0.grey2)
   }
   override {
-    variant solid (enabled: [true])
+    variant solid trigger { true }
   }
 }
 /**
@@ -414,13 +406,13 @@ div preview {
   }
   BackgroundPicker backgroundPicker {
     style {
-      box-shadow: 0px 2px 10px 0px #{imp0.grey4}
+      box-shadow: 0px 2px 10px 0px var(imp0.grey4)
       position: relative
       left: 100px
       top: 100px
     }
     override {
-      variant solid (enabled: [true])
+      variant solid trigger { true }
     }
   }
 }

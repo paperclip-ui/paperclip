@@ -12,8 +12,7 @@ public component NodeOverlay {
       box-shadow: inset  0px 0px 0px 1px rgba(88, 185, 255, 1)
     }
     div labelContainer {
-      style {
-        include imp0.defaultBorder
+      style extends imp0.defaultBorder {
         box-sizing: border-box
         display: block
         position: absolute
@@ -28,8 +27,7 @@ public component NodeOverlay {
         right: 0px
       }
       text label "100 x 400" {
-        style {
-          include imp0.baseFont
+        style extends imp0.baseFont {
           color: rgba(255, 255, 255, 1)
           font-size: 10px
           display: inline-block

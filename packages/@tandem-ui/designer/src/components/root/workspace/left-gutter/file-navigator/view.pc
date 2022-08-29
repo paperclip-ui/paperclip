@@ -23,7 +23,7 @@ public component FileNavigator {
         height: 100%
       }
       override {
-        variant left (enabled: [true])
+        variant left trigger { true }
       }
       override content {
         style {
@@ -43,8 +43,7 @@ public component FileNavigator {
             justify-content: space-between
           }
           text text1 "files" {
-            style {
-              include imp1.headerFontStyle
+            style extends imp1.headerFontStyle {
             }
           }
           div control {
@@ -95,75 +94,67 @@ public component FileNavigator {
                 box-sizing: border-box
                 display: block
               }
-              FileNavigatorLayer {
+              FileNavigatorLayer (label1: "src") {
                 override {
-                  variant folder (enabled: [true])
-                  variant expanded (enabled: [true])
+                  variant folder trigger { true }
+                  variant expanded trigger { true }
                 }
-                override label1 "src"
               }
-              FileNavigatorLayer {
+              FileNavigatorLayer(label1: "entry.ts") {
                 style {
                   padding-left: 30px
                 }
                 override {
-                  variant file (enabled: [true])
-                  variant alt (enabled: [true])
+                  variant file trigger { true }
+                  variant alt trigger { true }
                 }
-                override label1 "entry.ts"
               }
-              FileNavigatorLayer {
+              FileNavigatorLayer(label1: "components") {
                 style {
                   padding-left: 30px
                 }
                 override {
-                  variant folder (enabled: [true])
-                  variant expanded (enabled: [true])
+                  variant folder trigger { true }
+                  variant expanded trigger { true }
                 }
-                override label1 "components"
               }
-              FileNavigatorLayer {
+              FileNavigatorLayer(label1: "main") {
                 style {
                   padding-left: 45px
                 }
                 override {
-                  variant folder (enabled: [true])
-                  variant expanded (enabled: [true])
-                  variant alt (enabled: [true])
+                  variant folder trigger { true }
+                  variant expanded trigger { true }
+                  variant alt trigger { true }
                 }
-                override label1 "main"
               }
-              FileNavigatorLayer {
+              FileNavigatorLayer(label1: "index.tsx") {
                 style {
                   padding-left: 60px
                 }
                 override {
-                  variant file (enabled: [true])
+                  variant file trigger { true }
                 }
-                override label1 "index
-.tsx"
               }
-              FileNavigatorLayer {
+              FileNavigatorLayer(label1: "welcome.tsx") {
                 style {
                   padding-left: 60px
                 }
                 override {
-                  variant expanded (enabled: [true])
-                  variant file (enabled: [true])
-                  variant alt (enabled: [true])
-                  variant active (enabled: [true])
+                  variant expanded trigger { true }
+                  variant file trigger { true }
+                  variant alt trigger { true }
+                  variant active trigger { true }
                 }
-                override label1 "welcome.tsx"
               }
-              FileNavigatorLayer {
+              FileNavigatorLayer(label1: "about.tsx") {
                 style {
                   padding-left: 60px
                 }
                 override {
-                  variant expanded (enabled: [true])
-                  variant file (enabled: [true])
+                  variant expanded trigger { true }
+                  variant file trigger { true }
                 }
-                override label1 "about.tsx"
               }
             }
           }
@@ -178,33 +169,32 @@ public component FileNavigator {
  */
 public component FileNavigatorLayer {
   script (src: "./layer-controller.tsx")
-  variant folder (enabled: [])
-  variant file (enabled: [])
-  variant selected (enabled: [])
-  variant hover (enabled: [])
-  variant alt (enabled: [])
-  variant expanded (enabled: [])
-  variant editing (enabled: [])
-  variant blur (enabled: [])
-  variant active (enabled: [true])
+  variant folder
+  variant file
+  variant selected
+  variant hover
+  variant alt
+  variant expanded
+  variant editing
+  variant blur
+  variant active trigger { true }
   render imp4.BaseLayer {
-    style {
-      include imp1.baseFontNobreak
+    style extends imp1.baseFontNobreak {
     }
     style variant blur {
       opacity: 0.419
     }
     style variant active {
-      background: #{imp5.blue3}
+      background: var(imp5.blue3)
     }
     override {
-      variant file (enabled: [file])
-      variant folder (enabled: [folder])
-      variant selected (enabled: [selected])
-      variant hover (enabled: [hover])
-      variant alt (enabled: [alt])
-      variant expanded (enabled: [expanded])
-      variant editingLabel (enabled: [editing])
+      variant file trigger { file }
+      variant folder trigger { folder }
+      variant selected trigger { selected }
+      variant hover trigger { hover }
+      variant alt trigger { alt }
+      variant expanded trigger { expanded }
+      variant editingLabel trigger { editing }
     }
     override arrow {
       style variant file {
@@ -228,7 +218,7 @@ public component NewFileInput {
   script (src: "./new-file-controller.tsx")
   render imp4.BaseLayer {
     override {
-      variant editingLabel (enabled: [true])
+      variant editingLabel trigger { true }
     }
     override arrow {
       style {
@@ -242,14 +232,14 @@ public component NewFileInput {
  * @bounds(left: 984, top: 351, right: 1084, bottom: 451)
  */
 public component FileNavigatorLayerContainer {
-  variant hovering (enabled: [true])
+  variant hovering trigger { true }
   render div {
     style {
       box-sizing: border-box
       display: block
     }
     style variant hovering {
-      background: #{imp5.blue2}
+      background: var(imp5.blue2)
     }
   }
 }
@@ -257,6 +247,5 @@ public component FileNavigatorLayerContainer {
 /**
  * @bounds(left: 1435, top: 153, right: 1818, bottom: 354)
  */
-imp6.Comment {
-  override text2 "Error UI for existing file (like vscode), ability to move files, ability to delete files"
+imp6.Comment(text2: "Error UI for existing file (like vscode), ability to move files, ability to delete files") {
 }

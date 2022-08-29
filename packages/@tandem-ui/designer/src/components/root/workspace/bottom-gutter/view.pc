@@ -29,8 +29,7 @@ public component BottomGutter {
         top: 2px
       }
       text closeButton "×" {
-        style {
-          include imp0.baseFont
+        style extends imp0.baseFont {
           cursor: pointer
           display: inline-block
           font-size: 14px
@@ -46,7 +45,7 @@ public component BottomGutter {
  */
 public component Console {
   script (src: "./console-controller.tsx")
-  variant noProcesses (enabled: [])
+  variant noProcesses
   render div {
     style {
       box-sizing: border-box
@@ -59,7 +58,7 @@ public component Console {
       style {
         box-sizing: border-box
         display: block
-        background-image: linear-gradient(#{imp1.grey6}, #{imp1.grey6})
+        background-image: linear-gradient(var(imp1.grey6), var(imp1.grey6))
         flex-shrink: 0px
       }
       style variant noProcesses {
@@ -68,7 +67,7 @@ public component Console {
       slot tabs {
         ConsoleTab tab1 {
           override {
-            variant selected (enabled: [true])
+            variant selected trigger { true }
           }
         }
         ConsoleTab tab
@@ -79,12 +78,11 @@ public component Console {
         box-sizing: border-box
         display: flex
         height: 100%
-        background-image: linear-gradient(#{imp1.grey2}, #{imp1.grey2})
+        background-image: linear-gradient(var(imp1.grey2), var(imp1.grey2))
         position: relative
       }
       text noProcessesLabel "No running processes" {
-        style {
-          include imp0.baseFont
+        style extends imp0.baseFont {
           display: none
         }
         style variant noProcesses {
@@ -106,7 +104,7 @@ public component Console {
  * @bounds(left: 1893, top: 7, right: 1965, bottom: 33)
  */
 public component ConsoleTab {
-  variant selected (enabled: [true])
+  variant selected trigger { true }
   render div {
     style {
       box-sizing: border-box
@@ -115,14 +113,13 @@ public component ConsoleTab {
       padding-top: 6px
       padding-right: 12px
       padding-bottom: 6px
-      background-image: linear-gradient(#{imp1.grey6}, #{imp1.grey6})
+      background-image: linear-gradient(var(imp1.grey6), var(imp1.grey6))
     }
     style variant selected {
-      background-image: linear-gradient(#{imp1.grey2}, #{imp1.grey2})
+      background-image: linear-gradient(var(imp1.grey2), var(imp1.grey2))
     }
     text label "Console" {
-      style {
-        include imp0.baseFont
+      style extends imp0.baseFont {
       }
     }
   }
@@ -147,12 +144,12 @@ public component ConsoleLogs {
       ConsoleLog7 consoleLog3
       ConsoleLog7 consoleLog4 {
         override {
-          variant error (enabled: [true])
+          variant error trigger { true }
         }
       }
       ConsoleLog7 consoleLog5 {
         override {
-          variant error (enabled: [true])
+          variant error trigger { true }
         }
       }
       ConsoleLog7 consoleLog6
@@ -164,7 +161,7 @@ public component ConsoleLogs {
  * @bounds(left: 2200, top: 469, right: 3327, bottom: 951)
  */
 public component ConsoleLog7 {
-  variant error (enabled: [true])
+  variant error trigger { true }
   render div {
     style {
       box-sizing: border-box
@@ -175,12 +172,11 @@ public component ConsoleLog7 {
       padding-bottom: 6px
     }
     text label1 "log 1" {
-      style {
-        include imp0.baseFont
+      style extends imp0.baseFont {
         word-break: break-word
       }
       style variant error {
-        color: #{imp1.red1}
+        color: var(imp1.red1)
       }
     }
   }

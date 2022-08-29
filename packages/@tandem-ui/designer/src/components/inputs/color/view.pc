@@ -23,8 +23,7 @@ public component ColorInput {
       }
       insert anchor {
         div button {
-          style {
-            include imp1.defaultBorder
+          style extends imp1.defaultBorder {
             padding: 4px 8px
             border-radius: 2px
             box-sizing: border-box

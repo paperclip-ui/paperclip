@@ -27,25 +27,25 @@ public component NodeLayer {
  * @bounds(left: 411, top: 232, right: 751, bottom: 257)
  */
 public component BaseLayer {
-  variant component (enabled: [])
-  variant shadow (enabled: [])
-  variant slot (enabled: [])
-  variant element (enabled: [])
-  variant instance (enabled: [])
-  variant expanded (enabled: [])
-  variant alt (enabled: [])
-  variant file (enabled: [])
-  variant selected (enabled: [])
-  variant editingLabel (enabled: [])
-  variant hover (enabled: [])
-  variant inShadow (enabled: [true])
-  variant plug (enabled: [])
-  variant header (enabled: [])
-  variant folder (enabled: [])
-  variant unlabeled (enabled: [])
-  variant styleMixin (enabled: [])
-  variant text (enabled: [])
-  variant pcLayer (enabled: [])
+  variant component2
+  variant shadow
+  variant slot
+  variant element
+  variant instance
+  variant expanded
+  variant alt
+  variant file
+  variant selected
+  variant editingLabel
+  variant hover
+  variant inShadow trigger { true }
+  variant plug
+  variant header
+  variant folder
+  variant unlabeled
+  variant styleMixin
+  variant text
+  variant pcLayer
   render div {
     style {
       box-sizing: border-box
@@ -59,13 +59,7 @@ public component BaseLayer {
       justify-content: space-between
       position: relative
       font-size: 12px
-      color: #{imp0.grey3}
-    }
-    style variant component {
-    }
-    style variant alt {
-    }
-    style variant file {
+      color: var(imp0.grey3)
     }
     style variant selected {
       background: #00B5FF
@@ -75,7 +69,7 @@ public component BaseLayer {
       box-shadow: inset  0px 0px 0px 2px #00B5FF
     }
     style variant inShadow {
-      color: #{imp0.purple1}
+      color: var(imp0.purple1)
     }
     imp1.ArrowDownIcon arrow {
       style {
@@ -237,7 +231,7 @@ public component BaseLayer {
             height: 1.1em
             left: 2px
           }
-          style variant component {
+          style variant component2 {
             display: block
           }
         }
@@ -270,8 +264,7 @@ public component BaseLayer {
       }
       slot label2 {
         text label1 "Layer" {
-          style {
-            include imp2.baseFont
+          style extends imp2.baseFont {
             user-select: none
             cursor: default
             white-space: nowrap
@@ -279,18 +272,14 @@ public component BaseLayer {
           style variant editingLabel {
             display: none
           }
-          style variant file {
-          }
           style variant unlabeled {
             display: none
           }
           style variant selected {
             color: rgba(255, 255, 255, 1)
           }
-          style variant header {
-          }
           style variant inShadow {
-            color: #{imp0.purple1}
+            color: var(imp0.purple1)
           }
         }
       }
@@ -320,15 +309,11 @@ public component BaseLayer {
 /**
  * @bounds(left: 627, top: 434, right: 1160, bottom: 476)
  */
-BaseLayer preview {
+BaseLayer preview(label1: "Layer layer layer layer") {
   style {
     padding-left: 200px
   }
   override {
-    variant selected (enabled: [true])
-  }
-  override label1 "Layer layer layer layer" {
-    style {
-    }
+    variant selected trigger { true }
   }
 }

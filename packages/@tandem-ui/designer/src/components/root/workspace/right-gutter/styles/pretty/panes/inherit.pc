@@ -11,19 +11,18 @@ import "../../../../../../../icons/view.pc" as imp5
  */
 public component Inherit {
   script (src: "./inherit-controller.tsx")
-  variant hasItemSelected (enabled: [true])
-  render imp0.Pane {
+  variant hasItemSelected trigger { true }
+  render imp0.Pane(text: "Inherit") {
     style {
-      background: #{imp1.grey2}
+      background: var(imp1.grey2)
     }
     override {
-      variant right (enabled: [true])
+      variant right trigger { true }
     }
-    override text "Inherit"
     override content {
       style {
         padding-top: 0px
-        color: #{imp1.grey3}
+        color: var(imp1.grey3)
         padding-left: 0px
         padding-right: 0px
         padding-bottom: 6px
@@ -49,20 +48,17 @@ public component Inherit {
             margin-bottom: unset
             padding-top: 4px
           }
-          override dropdown.label2 "Atom 1"
         }
         imp3.InheritItem {
           override {
-            variant alt (enabled: [true])
-            variant selected (enabled: [true])
+            variant alt trigger { true }
+            variant selected trigger { true }
           }
-          override dropdown.label2 "Primary background"
         }
         imp3.InheritItem {
           style {
             margin-bottom: unset
           }
-          override dropdown.label2 "Primary Typography"
         }
       }
     }
@@ -74,8 +70,7 @@ public component Inherit {
           justify-content: space-between
         }
         text text1 "Mixins" {
-          style {
-            include imp4.headerFontStyle
+          style extends imp4.headerFontStyle {
           }
         }
         div element2 {

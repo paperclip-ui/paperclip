@@ -8,9 +8,9 @@ import "../../../../../global.pc" as imp2
  */
 public component ControllerItem {
   script (src: "./controller-item-controller.tsx")
-  variant selected (enabled: [true])
-  variant alt (enabled: [])
-  variant hovering (enabled: [PseudoElement.Hover])
+  variant selected trigger { true }
+  variant alt
+  variant hovering trigger { ":hover" }
   render div {
     style {
       box-sizing: border-box
@@ -24,18 +24,17 @@ public component ControllerItem {
       align-items: center
     }
     style variant selected {
-      background: #{imp2.blue1}
-      color: #{imp2.grey0}
+      background: var(imp2.blue1)
+      color: var(imp2.grey0)
     }
     style variant alt {
       background: rgba(247, 247, 247, 1)
     }
     text label "./controller.tsx" {
-      style {
-        include imp0.baseFont
+      style extends imp0.baseFont {
       }
       style variant selected {
-        color: #{imp2.grey0}
+        color: var(imp2.grey0)
       }
     }
     imp1.OpenIcon2 openButton {
@@ -56,7 +55,7 @@ public component ControllerItem {
  */
 ControllerItem controllerItem {
   override {
-    variant selected (enabled: [true])
-    variant hovering (enabled: [true])
+    variant selected trigger { true }
+    variant hovering trigger { true }
   }
 }

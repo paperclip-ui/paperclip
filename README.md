@@ -8,9 +8,27 @@
 <!-- [![Backers on Open Collective](https://opencollective.com/tandem/backers/badge.svg)](#backers)
 [![Sponsors on Open Collective](https://opencollective.com/tandem/sponsors/badge.svg)](#sponsors) -->
 
-Tandem is an **experimental** UI builder for that aims to make it easier for anyone to build web applications. It compiles down to plain code, and plugs into existing frameworks, so you can use Tandem with your existing codebase. Here's what it looks like:
+Tandem is an **experimental** UI builder that aims to provide a universal way of visually creating web applications across just about any language or framework. 
 
 ![Split view](./assets/screenshots/v10.1.7.png)
+
+### Why?
+
+Translating designs to code is one of the more tedious processes around product development, and it isn't perfect. In my experience, there's typically a discrepancy the design, and what's available or capable in code (e.g: colors and spacing that aren't part of the design system). As a result, I've found that there's typically a lot of back-and-forth between 
+
+### One source of truth for design systems
+
+Tandem aims to have a similar user experience as Figma, 
+
+### Why not just use an existing design system like MUI?
+
+
+
+### A common language for designers and developers
+
+TODO: paperclip
+
+
 
 ### Installation
 

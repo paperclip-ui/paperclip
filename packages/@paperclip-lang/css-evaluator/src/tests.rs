@@ -1,7 +1,7 @@
 use super::evaluator::evaluate;
 use super::serializer::serialize;
-use crate::base::utils::strip_extra_ws;
 use futures::executor::block_on;
+use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::graph::graph;
 use paperclip_parser::graph::test_utils;
 use std::collections::HashMap;

@@ -1,7 +1,7 @@
-use super::context::DocumentContext;
-use super::virt;
-use crate::core::errors;
-use crate::core::utils::get_style_namespace;
+use super::utils::get_style_namespace;
+use crate::context::DocumentContext;
+use crate::errors;
+use crate::virt;
 use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph::graph;
 use paperclip_parser::graph::reference as graph_ref;

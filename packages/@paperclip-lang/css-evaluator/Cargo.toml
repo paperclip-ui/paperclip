@@ -1,5 +1,5 @@
 [package]
-name = "paperclip_interim"
+name = "paperclip_css_evaluator"
 version = "0.1.1"
 authors = ["Craig Condon <craig.j.condon@gmail.com>"]
 edition = "2021"
@@ -11,18 +11,15 @@ opt-level = 3
 lto = true
 
 [lib]
-name = "paperclip_interim"
+name = "paperclip_css_evaluator"
 
 [dependencies]
-clap = { version = "3.2.17", features = ["derive"] }
 paperclip_parser = { path = "../parser" }
-paperclip_runtime = { path = "../runtime" }
-glob = "0.3.0"
 serde = { version = "1.0.143", features = ["derive"] }
+paperclip_common = { path = "../rs-common" }
 serde_json = { version = "1.0.83" }
 anyhow = "1.0.61"
+textwrap = "0.15.0"
 futures = "0.3.21"
-path-absolutize = "3.0.13"
-
-[dev-dependencies]
-assert_cmd = "2.0.4"
+regex = "1.6.0"
+lazy_static = "1.4.0"

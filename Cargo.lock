@@ -436,6 +436,7 @@ dependencies = [
  "assert_cmd",
  "clap",
  "futures",
+ "paperclip_css_evaluator",
  "paperclip_parser",
  "path-absolutize",
  "serde",

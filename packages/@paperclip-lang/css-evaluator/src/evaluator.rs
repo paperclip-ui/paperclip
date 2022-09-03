@@ -1,11 +1,12 @@
 use super::utils::get_style_namespace;
-use crate::context::DocumentContext;
+use crate::context::{AssetResolver, DocumentContext};
 use crate::errors;
 use crate::virt;
 use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph::graph;
 use paperclip_parser::graph::reference as graph_ref;
 use paperclip_parser::pc::ast;
+use std::pin::Pin;
 use std::rc::Rc;
 
 #[derive(Debug)]
@@ -18,23 +19,29 @@ type SelectorCombo = Vec<String>;
 type SelectorCombos = Vec<SelectorCombo>;
 
 // TODO - scan for all tokens and shove in root
-pub async fn evaluate(
+pub async fn evaluate<'asset_resolver, ResolveAssetFn>(
     path: &str,
     graph: &graph::Graph,
-) -> Result<virt::Document, errors::RuntimeError> {
+    resolve_asset: Box<ResolveAssetFn>,
+) -> Result<virt::Document, errors::RuntimeError>
+where
+    ResolveAssetFn: Fn(&str) -> String + 'static,
+{
     let dependencies = &graph.dependencies;
 
-    if let Some(dependency) = dependencies.get(path) {
-        let mut context = DocumentContext::new(path, graph);
-
-        evaluate_document(&dependency.document, &mut context);
-
-        Ok(Rc::try_unwrap(context.document).unwrap().into_inner())
+    let dependency = if let Some(dependency) = dependencies.get(path) {
+        dependency
     } else {
-        Err(errors::RuntimeError {
+        return Err(errors::RuntimeError {
             message: "not found".to_string(),
-        })
-    }
+        });
+    };
+
+    let mut context = DocumentContext::new(path, graph, resolve_asset);
+
+    evaluate_document(&dependency.document, &mut context);
+
+    Ok(Rc::try_unwrap(context.document).unwrap().into_inner())
 }
 
 fn evaluate_document(document: &ast::Document, context: &mut DocumentContext) {

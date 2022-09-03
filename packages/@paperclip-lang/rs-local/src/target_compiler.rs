@@ -40,7 +40,9 @@ impl<'options> TargetCompiler {
 }
 
 async fn translate_css(path: &str, graph: &Graph) -> Result<String> {
-    Ok(serialize_css(&evaluate_css(path, graph).await?))
+    Ok(serialize_css(&evaluate_css(path, graph, Box::new(|v:&str| {
+      v.to_string()
+    })).await?))
 }
 
 async fn translate_html(path: &str, graph: &Graph) -> Result<String> {

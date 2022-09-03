@@ -16,6 +16,7 @@ name = "paperclip_html_interim"
 [dependencies]
 clap = { version = "3.2.17", features = ["derive"] }
 paperclip_parser = { path = "../parser" }
+paperclip_css_evaluator = { path = "../css-evaluator" }
 serde = { version = "1.0.143", features = ["derive"] }
 serde_json = { version = "1.0.83" }
 anyhow = "1.0.61"

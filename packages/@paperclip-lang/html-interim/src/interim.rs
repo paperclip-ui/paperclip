@@ -1,10 +1,10 @@
-// use crate::paperclip_parser::pc::ast::Document;
-// use crate::anyhow::Result;
+use paperclip_parser::pc::ast::Document;
+use anyhow::Result;
+use super::state::Module;
 
-// pub trait AssetResolver {
-//   fn resolve_asset(path: &str) -> String;
-// }
 
-// pub fn translate_interim(document: &Document) -> Result<InterimModule> {
+type AssetResolver = dyn Fn(&str) -> String;
 
-// }
+pub fn translate_interim(document: &Document, resolve_asset: Box<AssetResolver>) -> Result<Module> {
+
+}

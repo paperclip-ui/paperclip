@@ -1,11 +1,10 @@
 use super::virt;
+use crate::base::types::AssetResolver;
 use paperclip_common::id::{get_document_id, IDGenerator};
 use paperclip_parser::graph::graph;
 use paperclip_parser::pc::ast;
 use std::cell::RefCell;
 use std::rc::Rc;
-use crate::base::types::AssetResolver;
-
 
 pub struct DocumentContext<'path, 'graph, 'expr> {
     id_generator: Rc<RefCell<IDGenerator>>,

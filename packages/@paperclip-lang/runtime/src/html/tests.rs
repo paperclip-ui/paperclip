@@ -18,9 +18,12 @@ macro_rules! add_case {
             let mock_fs = test_utils::MockFS::new(HashMap::from($input));
             let mut graph = graph::Graph::new();
             block_on(graph.load("/entry.pc", &mock_fs));
-            let doc = block_on(evaluate("/entry.pc", &graph, Box::new(|v: &str| {
-							v.to_string()
-						}))).unwrap();
+            let doc = block_on(evaluate(
+                "/entry.pc",
+                &graph,
+                Box::new(|v: &str| v.to_string()),
+            ))
+            .unwrap();
             println!("Try evaluating");
             println!("{}", serialize(&doc).trim());
             assert_eq!(

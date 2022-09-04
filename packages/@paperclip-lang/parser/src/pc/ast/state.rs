@@ -291,6 +291,3 @@ pub enum TriggerBodyItem {
     Reference(Reference),
     Boolean(Boolean),
 }
-
-#[derive(Debug, PartialEq, Serialize, Clone)]
-pub enum Expression {}

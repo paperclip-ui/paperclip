@@ -1,5 +1,5 @@
-use crate::html::virt as html_virt;
 use crate::css::virt as css_virt;
+use crate::html::virt as html_virt;
 use paperclip_parser::graph::graph;
 use paperclip_parser::graph::io as graph_io;
 

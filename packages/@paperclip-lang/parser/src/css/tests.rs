@@ -1,14 +1,10 @@
-use super::ast;
 use super::parser::parse_style_declarations_with_string_scanner;
 use super::serializer::serialize_declarations;
-use crate::core::errors as err;
 use crate::core::string_scanner::StringScanner;
 use paperclip_common::id::IDGenerator;
 use paperclip_common::str_utils::strip_extra_ws;
 
 use crate::base::ast::{Range, U16Position};
-use pretty_assertions;
-use textwrap::dedent;
 
 macro_rules! add_case {
     ($name: ident, $source: expr) => {
@@ -28,7 +24,7 @@ macro_rules! add_case {
             if let Ok(ast) = parse_result {
                 let output = serialize_declarations(&ast, 0);
                 assert_eq!(strip_extra_ws($source), strip_extra_ws(output.as_str()));
-            } else if let Err(err) = parse_result {
+            } else if let Err(_) = parse_result {
                 panic!("error parsing");
             }
         }

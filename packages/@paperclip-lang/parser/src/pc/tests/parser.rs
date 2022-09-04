@@ -1,4 +1,3 @@
-use super::super::ast;
 use super::super::parser::parse;
 use super::super::serializer::serialize;
 use crate::core::errors as err;
@@ -6,7 +5,6 @@ use paperclip_common::str_utils::strip_extra_ws;
 
 use crate::base::ast::{Range, U16Position};
 use pretty_assertions;
-use textwrap::dedent;
 
 macro_rules! add_case {
     ($name: ident, $source: expr) => {
@@ -17,7 +15,7 @@ macro_rules! add_case {
             if let Ok(ast) = parse_result {
                 let output = serialize(&ast);
                 assert_eq!(strip_extra_ws($source), strip_extra_ws(output.as_str()));
-            } else if let Err(err) = parse_result {
+            } else if let Err(_) = parse_result {
                 panic!("assertion failed - error returned");
             }
         }

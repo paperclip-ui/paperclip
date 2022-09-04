@@ -1,8 +1,8 @@
-use super::utils::get_style_namespace;
-use super::context::{DocumentContext};
-use crate::base::types::AssetResolver;
+use super::context::DocumentContext;
 use super::errors;
+use super::utils::get_style_namespace;
 use super::virt;
+use crate::base::types::AssetResolver;
 use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph::graph;
 use paperclip_parser::graph::reference as graph_ref;
@@ -24,8 +24,7 @@ pub async fn evaluate<'asset_resolver>(
     path: &str,
     graph: &graph::Graph,
     resolve_asset: Box<AssetResolver>,
-) -> Result<virt::Document, errors::RuntimeError>
-{
+) -> Result<virt::Document, errors::RuntimeError> {
     let dependencies = &graph.dependencies;
 
     let dependency = if let Some(dependency) = dependencies.get(path) {

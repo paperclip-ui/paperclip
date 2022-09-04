@@ -1,7 +1,7 @@
 mod state;
-mod traverse;
 mod visit;
+mod walk;
 
 pub use self::state::*;
-pub use self::traverse::*;
 pub use self::visit::*;
+pub use self::walk::*;

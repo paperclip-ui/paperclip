@@ -1,9 +1,9 @@
 use super::context::DocumentContext;
 use super::virt;
+use crate::base::types::AssetResolver;
 use crate::core::errors;
 use crate::core::utils::get_style_namespace;
 use crate::core::virt as core_virt;
-use crate::base::types::AssetResolver;
 use paperclip_common::id::get_document_id;
 use paperclip_parser::docco::ast as docco_ast;
 use paperclip_parser::graph::graph;
@@ -17,7 +17,7 @@ type InsertsMap<'expr> = HashMap<String, (String, Vec<virt::Node>)>;
 pub async fn evaluate(
     path: &str,
     graph: &graph::Graph,
-    resolve_asset: Box<AssetResolver>
+    resolve_asset: Box<AssetResolver>,
 ) -> Result<virt::Document, errors::RuntimeError> {
     let dependencies = &graph.dependencies;
 

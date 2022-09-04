@@ -1,6 +1,6 @@
-use crate::base::ast::{Range, Str};
+pub use crate::base::ast::{Range, Str};
 use crate::css::ast as css_ast;
-use crate::docco::ast as docco_ast;
+pub use crate::docco::ast::*;
 use serde::Serialize;
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -218,7 +218,7 @@ pub enum DocumentBodyItem {
     Import(Import),
     Style(Style),
     Component(Component),
-    DocComment(docco_ast::Comment),
+    DocComment(Comment),
     Text(TextNode),
     Atom(Atom),
     Trigger(Trigger),

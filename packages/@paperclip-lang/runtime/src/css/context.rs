@@ -4,8 +4,8 @@ use paperclip_parser::graph::graph;
 use paperclip_parser::pc::ast;
 use std::cell::RefCell;
 use std::rc::Rc;
+use crate::base::types::AssetResolver;
 
-pub type AssetResolver = dyn Fn(&str) -> String;
 
 pub struct DocumentContext<'path, 'graph, 'expr> {
     id_generator: Rc<RefCell<IDGenerator>>,

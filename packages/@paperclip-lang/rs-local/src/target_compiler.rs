@@ -40,13 +40,18 @@ impl<'options> TargetCompiler {
 }
 
 async fn translate_css(path: &str, graph: &Graph) -> Result<String> {
-    Ok(serialize_css(&evaluate_css(path, graph, Box::new(|v:&str| {
-      v.to_string()
+
+    let map: HashMap<String, String> = HashMap::new();
+
+    Ok(serialize_css(&evaluate_css(path, graph, Box::new(move |v:&str| {
+      map.get(v).unwrap().to_string()
     })).await?))
 }
 
 async fn translate_html(path: &str, graph: &Graph) -> Result<String> {
-    let body = serialize_html(&evaluate_html(path, graph).await?);
+    let body = serialize_html(&evaluate_html(path, graph, Box::new(|v:&str| {
+      v.to_string()
+    })).await?);
 
     let html = format!(
         r#"

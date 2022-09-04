@@ -1,5 +1,6 @@
 use super::utils::get_style_namespace;
-use super::context::{AssetResolver, DocumentContext};
+use super::context::{DocumentContext};
+use crate::base::types::AssetResolver;
 use super::errors;
 use super::virt;
 use paperclip_parser::css::ast as css_ast;
@@ -19,13 +20,11 @@ type SelectorCombo = Vec<String>;
 type SelectorCombos = Vec<SelectorCombo>;
 
 // TODO - scan for all tokens and shove in root
-pub async fn evaluate<'asset_resolver, ResolveAssetFn>(
+pub async fn evaluate<'asset_resolver>(
     path: &str,
     graph: &graph::Graph,
-    resolve_asset: Box<ResolveAssetFn>,
+    resolve_asset: Box<AssetResolver>,
 ) -> Result<virt::Document, errors::RuntimeError>
-where
-    ResolveAssetFn: Fn(&str) -> String + 'static,
 {
     let dependencies = &graph.dependencies;
 

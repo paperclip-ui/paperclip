@@ -4,7 +4,5 @@ members = [
   "packages/@paperclip-lang/cli",
   "packages/@paperclip-lang/rs-common",
   "packages/@paperclip-lang/rs-local",
-  "packages/@paperclip-lang/runtime",
-  "packages/@paperclip-lang/html-interim",
-  "packages/@paperclip-lang/css-evaluator"
+  "packages/@paperclip-lang/runtime"
 ]

@@ -17,7 +17,6 @@ name = "paperclip_runtime"
 paperclip_parser = { path = "../parser" }
 serde = { version = "1.0.143", features = ["derive"] }
 paperclip_common = { path = "../rs-common" }
-paperclip_css_evaluator = { path = "../css-evaluator" }
 serde_json = { version = "1.0.83" }
 anyhow = "1.0.61"
 textwrap = "0.15.0"

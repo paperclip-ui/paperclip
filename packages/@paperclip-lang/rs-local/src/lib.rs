@@ -1,7 +1,7 @@
 pub mod config;
 pub mod project;
-mod project_io;
 mod project_compiler;
+mod project_io;
 mod target_compiler;
 
 #[cfg(test)]

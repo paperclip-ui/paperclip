@@ -1,10 +1,11 @@
 use super::evaluator::evaluate;
 use super::serializer::serialize;
-use crate::base::utils::strip_extra_ws;
 use futures::executor::block_on;
+use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::graph::graph;
 use paperclip_parser::graph::test_utils;
 use std::collections::HashMap;
+use std::pin::Pin;
 
 macro_rules! add_case {
     ($name: ident, $mock_files: expr, $output: expr) => {
@@ -13,7 +14,12 @@ macro_rules! add_case {
             let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
             let mut graph = graph::Graph::new();
             block_on(graph.load("/entry.pc", &mock_fs));
-            let doc = block_on(evaluate("/entry.pc", &graph)).unwrap();
+            let doc = block_on(evaluate(
+                "/entry.pc",
+                &graph,
+                Box::new(|v: &str| v.to_string()),
+            ))
+            .unwrap();
             // println!("{}", serialize(&doc).trim());
             assert_eq!(
                 strip_extra_ws(serialize(&doc).as_str()),

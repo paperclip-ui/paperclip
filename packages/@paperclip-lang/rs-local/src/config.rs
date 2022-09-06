@@ -90,9 +90,7 @@ impl Config {
 impl CompilerOptions {
     pub fn can_emit(&self, extension: &str) -> bool {
         if let Some(exts) = &self.emit {
-            exts.iter().find(|ext| {
-                ext.as_str() == extension
-            }) != None
+            exts.iter().find(|ext| ext.as_str() == extension) != None
         } else {
             false
         }

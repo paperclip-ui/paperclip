@@ -23,7 +23,7 @@
   - ability to set path?
 - IO watcher
 - JS Rendering + server
-- A\* patching. Look into https://github.com/automerge/automerge-rs/tree/main/automerge
+- primitive
   - for AST
 - ability to inject HTML?
 
@@ -37,3 +37,7 @@
 
 - React-based compiler
 - vanilla compiler for CSS
+
+#### Milestone 4: Editor
+
+This needs to come soon to ensure that the DSL shapes-up correctly

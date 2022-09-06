@@ -12,10 +12,10 @@ pub struct ProjectGraphIO {}
 
 impl GraphIO for ProjectGraphIO {
     fn resolve(&self, from_path: &String, to_path: &String) -> BoxFuture<'static, Option<String>> {
-        
         let ret: Option<String> = Some(String::from(
             Path::new(from_path)
-                .parent().unwrap()
+                .parent()
+                .unwrap()
                 .join(to_path)
                 .absolutize()
                 .unwrap()

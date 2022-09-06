@@ -56,6 +56,18 @@ impl Visitor for Walker {
             Expression::Document(expr) => {
                 accept_each!(self, &expr.body);
             }
+            Expression::Render(expr) => {
+              expr.node.accept(self);
+            }
+            Expression::RenderNode(expr) => {
+              accept_enum!(
+                self,
+                expr,
+                ast::RenderNode::Element,
+                ast::RenderNode::Slot,
+                ast::RenderNode::Text
+              );
+            }
             Expression::DocumentBodyItem(expr) => {
                 accept_enum!(
                     self,
@@ -85,6 +97,32 @@ impl Visitor for Walker {
             Expression::Element(expr) => {
                 accept_each!(self, &expr.body);
             }
+            Expression::Trigger(expr) => {
+              accept_each!(self, &expr.body);
+            }
+            Expression::Override(expr) => {
+              accept_each!(self, &expr.body);
+            }
+            Expression::Override(expr) => {
+              accept_each!(self, &expr.body);
+            }
+            Expression::OverrideBodyItem(expr) => {
+              accept_enum!(
+                self,
+                expr,
+                ast::OverrideBodyItem::Style,
+                ast::OverrideBodyItem::Variant
+              );
+            }
+            Expression::TriggerBodyItem(expr) => {
+              accept_enum!(
+                self,
+                expr,
+                ast::TriggerBodyItem::Boolean,
+                ast::TriggerBodyItem::Reference,
+                ast::TriggerBodyItem::String
+              );
+            }
             Expression::ElementBodyItem(expr) => {
                 accept_enum!(
                     self,
@@ -97,7 +135,7 @@ impl Visitor for Walker {
                     ast::ElementBodyItem::Text
                 );
             }
-            Expression::Atom(_) => {}
+            Expression::Atom(_) | Expression::Import(_) | Expression::Str(_) | Expression::Script(_) | Expression::Boolean(_) | Expression::Comment(_) => {}
         }
     }
 }

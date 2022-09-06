@@ -1,6 +1,6 @@
 pub use crate::base::ast::{Range, Str};
 use crate::css::ast as css_ast;
-pub use crate::docco::ast::*;
+pub use crate::docco::ast::{Comment};
 use serde::Serialize;
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

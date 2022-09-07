@@ -3,35 +3,36 @@
   <h1 align="center">Tandem (Preview)</h1>
 </p>
 
-> Tandem is still new, so expect bugs. If you'd like to contribute, feel free to reach out!
 
-<!-- [![Backers on Open Collective](https://opencollective.com/tandem/backers/badge.svg)](#backers)
-[![Sponsors on Open Collective](https://opencollective.com/tandem/sponsors/badge.svg)](#sponsors) -->
-
-Tandem is an **experimental** UI builder for that aims to make it easier for anyone to build web applications. It compiles down to plain code, and plugs into existing frameworks, so you can use Tandem with your existing codebase. Here's what it looks like:
+Tandem is an **experimental** UI builder for that aims to make it easier for anyone to build web applications. It compiles down to plain code, and works with existing codebases. Here's what it looks like:
 
 ![Split view](./assets/screenshots/v10.1.7.png)
 
-### Installation
+### Why?
 
-Tandem works in Windows & MacOS. There are a few ways you can install it:
+Current "no-code" solutions are hard to scale as projects and teams get larger. Tandem aimed to solve this by providing additional features to help make it to be a viable replacement for hand-written HTML and CSS. Here's how:
 
-b. Install the command line tools:
+- Tandem doesn't aim to replace handwritten code, but compliment it. 
+- Tandem uses [code](#file-format) as a data format.
+- Tandem is designed to work well with your existing development process (works with GIT, CI-CD, code review).
+- Tandem files are compiled down to strongly typed code.
+- Tandem gives you control over how much complexity to give to your team. E.g: you can give your team just building blocks to work with, or give your team fine-grained control and allow them to write HTML and CSS.
+- CSS in Tandem is locally scoped, meaning that you don't really need to worry about them leaking into other parts of your app.
 
-```bash
-npm install tandem-cli --save-dev
-cd path/to/app
+### State of development
 
-# Create a new project
-./node_modules/.bin/tandem init
+Tandem's on the backburner right now so that I can focus on other endeavors. If you're interested in the project though, feel free to reach out! I'm always interested in jamming on this space.
 
-# Open project
-./node_modules/.bin/tandem open
-```
+### History
 
-The command line tools can manage multiple versions of Tandem, which is helpful for multiple projects that use different UI file (`*pc`) versions.
+The current state of Tandem is the result of some years in the no-code space, including some learnings working at [Webflow](https://webflow.com/). There have been prior iterations of this version which include:
 
-More info can be found in the [installation docs](./docs/installation.md)
+- [v1](https://github.com/crcn/tandem-old/tree/old)
+- [v2](https://github.com/crcn/tandem-old/tree/0.1.1) which aimed to allow for _any_ web application to be editable
+- [v3](https://github.com/crcn/tandem-old/tree/10.0.0) which primarily focused on the presentational layer
+- [Paperclip v1](https://github.com/paperclip-ui/paperclip) which focused on the data model
+- v4 - this version which combines v3 and Paperclip v1
+
 
 ### File format
 

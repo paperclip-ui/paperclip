@@ -57,16 +57,16 @@ impl Visitor for Walker {
                 accept_each!(self, &expr.body);
             }
             Expression::Render(expr) => {
-              expr.node.accept(self);
+                expr.node.accept(self);
             }
             Expression::RenderNode(expr) => {
-              accept_enum!(
-                self,
-                expr,
-                ast::RenderNode::Element,
-                ast::RenderNode::Slot,
-                ast::RenderNode::Text
-              );
+                accept_enum!(
+                    self,
+                    expr,
+                    ast::RenderNode::Element,
+                    ast::RenderNode::Slot,
+                    ast::RenderNode::Text
+                );
             }
             Expression::DocumentBodyItem(expr) => {
                 accept_enum!(
@@ -98,30 +98,65 @@ impl Visitor for Walker {
                 accept_each!(self, &expr.body);
             }
             Expression::Trigger(expr) => {
-              accept_each!(self, &expr.body);
+                accept_each!(self, &expr.body);
             }
             Expression::Override(expr) => {
-              accept_each!(self, &expr.body);
+                accept_each!(self, &expr.body);
             }
             Expression::Override(expr) => {
-              accept_each!(self, &expr.body);
+                accept_each!(self, &expr.body);
+            }
+            Expression::Slot(expr) => {
+                accept_each!(self, &expr.body);
+            }
+            Expression::TextNode(expr) => {
+                accept_each!(self, &expr.body);
+            }
+            Expression::TextNodeBodyItem(expr) => {
+                accept_enum!(self, expr, ast::TextNodeBodyItem::Style);
+            }
+            Expression::Variant(expr) => {
+                accept_each!(self, &expr.triggers);
+            }
+            Expression::Style(expr) => {
+                // TODO
+            }
+            Expression::SlotBodyItem(expr) => {
+                accept_enum!(
+                    self,
+                    expr,
+                    ast::SlotBodyItem::Element,
+                    ast::SlotBodyItem::Text
+                );
+            }
+            Expression::Insert(expr) => {
+                accept_each!(self, &expr.body);
+            }
+            Expression::InsertBody(expr) => {
+                accept_enum!(
+                    self,
+                    expr,
+                    ast::InsertBody::Element,
+                    ast::InsertBody::Slot,
+                    ast::InsertBody::Text
+                );
             }
             Expression::OverrideBodyItem(expr) => {
-              accept_enum!(
-                self,
-                expr,
-                ast::OverrideBodyItem::Style,
-                ast::OverrideBodyItem::Variant
-              );
+                accept_enum!(
+                    self,
+                    expr,
+                    ast::OverrideBodyItem::Style,
+                    ast::OverrideBodyItem::Variant
+                );
             }
             Expression::TriggerBodyItem(expr) => {
-              accept_enum!(
-                self,
-                expr,
-                ast::TriggerBodyItem::Boolean,
-                ast::TriggerBodyItem::Reference,
-                ast::TriggerBodyItem::String
-              );
+                accept_enum!(
+                    self,
+                    expr,
+                    ast::TriggerBodyItem::Boolean,
+                    ast::TriggerBodyItem::Reference,
+                    ast::TriggerBodyItem::String
+                );
             }
             Expression::ElementBodyItem(expr) => {
                 accept_enum!(
@@ -135,7 +170,13 @@ impl Visitor for Walker {
                     ast::ElementBodyItem::Text
                 );
             }
-            Expression::Atom(_) | Expression::Import(_) | Expression::Str(_) | Expression::Script(_) | Expression::Boolean(_) | Expression::Comment(_) => {}
+            Expression::Atom(_)
+            | Expression::Import(_)
+            | Expression::Str(_)
+            | Expression::Reference(_)
+            | Expression::Script(_)
+            | Expression::Boolean(_)
+            | Expression::Comment(_) => {}
         }
     }
 }

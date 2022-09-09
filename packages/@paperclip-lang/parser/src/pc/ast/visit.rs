@@ -48,14 +48,17 @@ visitable_expr! {
     Str,
     Script,
     Insert,
+    InsertBody,
     Override,
     OverrideBodyItem,
     Slot,
+    SlotBodyItem,
     Component,
     ComponentBodyItem,
     Element,
     ElementBodyItem,
     TextNode,
+    TextNodeBodyItem,
     Variant,
     Style
 }

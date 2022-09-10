@@ -18,33 +18,6 @@ impl Walker {
     }
 }
 
-macro_rules! each {
-    ($self:ident, $expr: expr) => {{
-        $self.should_continue = $self.should_continue && ($self.each)($expr);
-        $self.should_continue
-    }};
-}
-
-macro_rules! accept_enum {
-  ($self: ident, $item: ident, $($member: path),*) => {
-    match $item {
-      $(
-        $member(expr) => {
-          expr.accept($self);
-        }
-      )*
-    }
-  };
-}
-
-macro_rules! accept_each {
-    ($self: ident, $items: expr) => {
-        for item in $items {
-            item.accept($self);
-        }
-    };
-}
-
 impl Visitor for Walker {
     fn visit<V: Visitable>(&mut self, visitable: &V) {
         let expr = visitable.wrap();
@@ -54,13 +27,13 @@ impl Visitor for Walker {
 
         match expr {
             Expression::Document(expr) => {
-                accept_each!(self, &expr.body);
+                visit_each!(self, &expr.body);
             }
             Expression::Render(expr) => {
-                expr.node.accept(self);
+                self.visit(&expr.node);
             }
             Expression::RenderNode(expr) => {
-                accept_enum!(
+                visit_enum!(
                     self,
                     expr,
                     ast::RenderNode::Element,
@@ -69,7 +42,7 @@ impl Visitor for Walker {
                 );
             }
             Expression::DocumentBodyItem(expr) => {
-                accept_enum!(
+                visit_enum!(
                     self,
                     expr,
                     ast::DocumentBodyItem::Atom,
@@ -83,10 +56,10 @@ impl Visitor for Walker {
                 );
             }
             Expression::Component(expr) => {
-                accept_each!(self, &expr.body);
+                visit_each!(self, &expr.body);
             }
             Expression::ComponentBodyItem(expr) => {
-                accept_enum!(
+                visit_enum!(
                     self,
                     expr,
                     ast::ComponentBodyItem::Render,
@@ -95,31 +68,31 @@ impl Visitor for Walker {
                 )
             }
             Expression::Element(expr) => {
-                accept_each!(self, &expr.body);
+                visit_each!(self, &expr.body);
             }
             Expression::Trigger(expr) => {
-                accept_each!(self, &expr.body);
+                visit_each!(self, &expr.body);
             }
             Expression::Override(expr) => {
-                accept_each!(self, &expr.body);
+                visit_each!(self, &expr.body);
             }
             Expression::Slot(expr) => {
-                accept_each!(self, &expr.body);
+                visit_each!(self, &expr.body);
             }
             Expression::TextNode(expr) => {
-                accept_each!(self, &expr.body);
+                visit_each!(self, &expr.body);
             }
             Expression::TextNodeBodyItem(expr) => {
-                accept_enum!(self, expr, ast::TextNodeBodyItem::Style);
+                visit_enum!(self, expr, ast::TextNodeBodyItem::Style);
             }
             Expression::Variant(expr) => {
-                accept_each!(self, &expr.triggers);
+                visit_each!(self, &expr.triggers);
             }
             Expression::Style(expr) => {
                 // TODO
             }
             Expression::SlotBodyItem(expr) => {
-                accept_enum!(
+                visit_enum!(
                     self,
                     expr,
                     ast::SlotBodyItem::Element,
@@ -127,10 +100,10 @@ impl Visitor for Walker {
                 );
             }
             Expression::Insert(expr) => {
-                accept_each!(self, &expr.body);
+                visit_each!(self, &expr.body);
             }
             Expression::InsertBody(expr) => {
-                accept_enum!(
+                visit_enum!(
                     self,
                     expr,
                     ast::InsertBody::Element,
@@ -139,7 +112,7 @@ impl Visitor for Walker {
                 );
             }
             Expression::OverrideBodyItem(expr) => {
-                accept_enum!(
+                visit_enum!(
                     self,
                     expr,
                     ast::OverrideBodyItem::Style,
@@ -147,7 +120,7 @@ impl Visitor for Walker {
                 );
             }
             Expression::TriggerBodyItem(expr) => {
-                accept_enum!(
+                visit_enum!(
                     self,
                     expr,
                     ast::TriggerBodyItem::Boolean,
@@ -156,7 +129,7 @@ impl Visitor for Walker {
                 );
             }
             Expression::ElementBodyItem(expr) => {
-                accept_enum!(
+                visit_enum!(
                     self,
                     expr,
                     ast::ElementBodyItem::Element,

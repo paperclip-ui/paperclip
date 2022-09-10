@@ -9,7 +9,6 @@ macro_rules! visitable_expr {
       }
 
       pub trait Visitable {
-        fn accept<V: Visitor>(&self, visitor: &mut V);
         fn wrap<'expr>(&'expr self) -> Expression<'expr>;
       }
 
@@ -21,9 +20,6 @@ macro_rules! visitable_expr {
 
       $(
           impl Visitable for $expr {
-              fn accept<V: Visitor>(&self, visitor: &mut V) {
-                  visitor.visit(self);
-              }
               fn wrap<'expr>(&'expr self) -> Expression<'expr> {
                   Expression::$expr(self)
               }

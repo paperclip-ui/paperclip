@@ -1,6 +1,6 @@
 // inspired by https://github.com/swc-project/swc/discussions/3044
 
-use super::state as ast;
+use super::state::*;
 use crate::base::ast::visit::*;
 
 

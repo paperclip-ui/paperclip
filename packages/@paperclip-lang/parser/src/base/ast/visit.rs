@@ -15,12 +15,12 @@ macro_rules! visitable_expr {
 
       pub enum Expression<'expr> {
           $(
-              $expr(&'expr ast::$expr),
+              $expr(&'expr $expr),
           )*
       }
 
       $(
-          impl Visitable for ast::$expr {
+          impl Visitable for $expr {
               fn accept<V: Visitor>(&self, visitor: &mut V) {
                   visitor.visit(self);
               }

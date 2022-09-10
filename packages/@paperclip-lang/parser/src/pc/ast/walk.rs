@@ -103,9 +103,6 @@ impl Visitor for Walker {
             Expression::Override(expr) => {
                 accept_each!(self, &expr.body);
             }
-            Expression::Override(expr) => {
-                accept_each!(self, &expr.body);
-            }
             Expression::Slot(expr) => {
                 accept_each!(self, &expr.body);
             }

@@ -1,4 +1,4 @@
-use super::context::DocumentContext;
+pub use super::context::{DocumentContext, Options};
 use super::virt;
 use crate::base::types::AssetResolver;
 use crate::core::errors;
@@ -12,17 +12,20 @@ use paperclip_parser::pc::ast;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 
+
 type InsertsMap<'expr> = HashMap<String, (String, Vec<virt::Node>)>;
+
 
 pub async fn evaluate(
     path: &str,
     graph: &graph::Graph,
     resolve_asset: Box<AssetResolver>,
+    options: Options
 ) -> Result<virt::Document, errors::RuntimeError> {
     let dependencies = &graph.dependencies;
 
     if let Some(dependency) = dependencies.get(path) {
-        let mut context = DocumentContext::new(path, graph, resolve_asset);
+        let mut context = DocumentContext::new(path, graph, resolve_asset, options);
         let document = evaluate_document(&dependency.document, &mut context);
         Ok(document)
     } else {
@@ -40,7 +43,9 @@ fn evaluate_document(document: &ast::Document, context: &mut DocumentContext) ->
     for item in &document.body {
         match item {
             ast::DocumentBodyItem::Component(component) => {
-                evaluate_component(component, &current_doc_comment, &mut children, context);
+                if context.options.include_components {
+                    evaluate_component(component, &current_doc_comment, &mut children, context);
+                }
             }
             ast::DocumentBodyItem::Element(element) => {
                 evaluate_element(element, &current_doc_comment, &mut children, context);

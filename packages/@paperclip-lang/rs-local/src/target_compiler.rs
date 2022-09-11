@@ -3,7 +3,7 @@ use anyhow::Result;
 use paperclip_parser::graph::graph::{Dependency, Graph};
 use paperclip_evaluator::css::evaluator::evaluate as evaluate_css;
 use paperclip_evaluator::css::serializer::serialize as serialize_css;
-use paperclip_evaluator::html::evaluator::evaluate as evaluate_html;
+use paperclip_evaluator::html::evaluator::{evaluate as evaluate_html, Options as HTMLOptions };
 use paperclip_evaluator::html::serializer::serialize as serialize_html;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -54,7 +54,7 @@ async fn translate_css(path: &str, graph: &Graph) -> Result<String> {
 
 async fn translate_html(path: &str, graph: &Graph) -> Result<String> {
     let body =
-        serialize_html(&evaluate_html(path, graph, Box::new(|v: &str| v.to_string())).await?);
+        serialize_html(&evaluate_html(path, graph, Box::new(|v: &str| v.to_string()), HTMLOptions { include_components: false }).await?);
 
     let html = format!(
         r#"

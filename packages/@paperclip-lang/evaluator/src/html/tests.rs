@@ -1,4 +1,4 @@
-use super::evaluator::evaluate;
+use super::evaluator::{evaluate, Options};
 use super::serializer::serialize;
 use crate::base::utils::strip_extra_ws;
 use futures::executor::block_on;
@@ -22,6 +22,7 @@ macro_rules! add_case {
                 "/entry.pc",
                 &graph,
                 Box::new(|v: &str| v.to_string()),
+								Options { include_components: true }
             ))
             .unwrap();
             println!("Try evaluating");

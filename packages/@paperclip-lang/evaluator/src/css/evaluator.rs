@@ -7,7 +7,6 @@ use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph::graph;
 use paperclip_parser::graph::reference as graph_ref;
 use paperclip_parser::pc::ast;
-use std::pin::Pin;
 use std::rc::Rc;
 
 #[derive(Debug)]

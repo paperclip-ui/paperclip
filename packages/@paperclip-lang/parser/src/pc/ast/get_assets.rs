@@ -4,7 +4,7 @@ use super::state::*;
 use crate::css::ast::*;
 
 struct AssetFinder {
-  found: Vec<String>
+  pub found: Vec<String>
 }
 
 visitor! {
@@ -18,12 +18,9 @@ visitor! {
       expr,
       DocumentBodyItem::Atom,
       DocumentBodyItem::Component,
-      DocumentBodyItem::DocComment,
       DocumentBodyItem::Element,
-      DocumentBodyItem::Import,
       DocumentBodyItem::Style,
-      DocumentBodyItem::Text,
-      DocumentBodyItem::Trigger
+      DocumentBodyItem::Text
     )
   },
   Str(self, expr) {
@@ -53,22 +50,29 @@ visitor! {
   Component(self, expr) {
 
   },
-  Comment(self, expr) {},
   Element(self, expr) {
-
+    visit_each!(self, &expr.parameters);
   },
-  Import(self, expr) {
-
+  Parameter(self, expr) {
+    self.visit(&expr.value);
+  },
+  SimpleExpression(self, expr) {
+    visit_enum!(
+      self,
+      expr,
+      SimpleExpression::Array,
+      SimpleExpression::String
+    )
+  },
+  Array(self, expr) {
+    visit_each!(self, &expr.items);
   },
   Style(self, expr) {
     visit_each!(self, &expr.declarations);
 
   },
   TextNode(self, expr) {
-
-  },
-  Trigger(self, expr) {
-
+    
   }
 }
 

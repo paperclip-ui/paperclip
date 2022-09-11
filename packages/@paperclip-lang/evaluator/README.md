@@ -1,5 +1,5 @@
 ```rust
-use paperclip_runtime::runtime::{Runtime, LoadedData};
+use paperclip_evaluator::evaluator::{Evaluator, LoadedData};
 
 let mut runtime = Runtime::new();
 let result: Result<LoadResult> = let runtime.load("/path/to/file.pc").await;

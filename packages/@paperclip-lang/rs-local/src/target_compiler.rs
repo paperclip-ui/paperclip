@@ -1,10 +1,10 @@
 use super::config::{CompilerOptions, Config};
 use anyhow::Result;
 use paperclip_parser::graph::graph::{Dependency, Graph};
-use paperclip_runtime::css::evaluator::evaluate as evaluate_css;
-use paperclip_runtime::css::serializer::serialize as serialize_css;
-use paperclip_runtime::html::evaluator::evaluate as evaluate_html;
-use paperclip_runtime::html::serializer::serialize as serialize_html;
+use paperclip_evaluator::css::evaluator::evaluate as evaluate_css;
+use paperclip_evaluator::css::serializer::serialize as serialize_css;
+use paperclip_evaluator::html::evaluator::evaluate as evaluate_html;
+use paperclip_evaluator::html::serializer::serialize as serialize_html;
 use std::collections::HashMap;
 use std::rc::Rc;
 

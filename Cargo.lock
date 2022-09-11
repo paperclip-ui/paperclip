@@ -414,6 +414,21 @@ name = "paperclip_compiler_react"
 version = "0.1.1"
 
 [[package]]
+name = "paperclip_evaluator"
+version = "0.1.1"
+dependencies = [
+ "anyhow",
+ "futures",
+ "lazy_static",
+ "paperclip_common",
+ "paperclip_parser",
+ "regex",
+ "serde",
+ "serde_json",
+ "textwrap",
+]
+
+[[package]]
 name = "paperclip_local"
 version = "0.1.1"
 dependencies = [
@@ -422,8 +437,8 @@ dependencies = [
  "clap",
  "futures",
  "glob",
+ "paperclip_evaluator",
  "paperclip_parser",
- "paperclip_runtime",
  "path-absolutize",
  "serde",
  "serde_json",
@@ -439,21 +454,6 @@ dependencies = [
  "lazy_static",
  "paperclip_common",
  "pretty_assertions",
- "serde",
- "serde_json",
- "textwrap",
-]
-
-[[package]]
-name = "paperclip_runtime"
-version = "0.1.1"
-dependencies = [
- "anyhow",
- "futures",
- "lazy_static",
- "paperclip_common",
- "paperclip_parser",
- "regex",
  "serde",
  "serde_json",
  "textwrap",

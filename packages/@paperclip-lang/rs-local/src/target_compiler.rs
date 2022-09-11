@@ -13,6 +13,7 @@ pub struct TargetCompiler {
     options: Rc<CompilerOptions>,
 }
 
+type AssetResolver = dyn Fn(&str) -> String;
 impl<'options> TargetCompiler {
     // TODO: load bin
     pub fn load(options: Rc<CompilerOptions>) -> Self {
@@ -27,9 +28,11 @@ impl<'options> TargetCompiler {
 
         let mut data = HashMap::new();
 
+        let resolve_asset = Rc::new(Box::new(|v: &str| v.to_string()));
+
         if let Some(emit) = &options.emit {
             for ext in emit {
-                if let Some(code) = translate(ext, path, graph).await? {
+                if let Some(code) = translate(ext, path, graph, resolve_asset.clone()).await? {
                     data.insert(ext.to_string(), code);
                 }
             }
@@ -39,36 +42,53 @@ impl<'options> TargetCompiler {
     }
 }
 
-async fn translate(into: &str, path: &str, graph: &Graph) -> Result<Option<String>> {
+async fn translate<AssetResolver>(
+    into: &str,
+    path: &str,
+    graph: &Graph,
+    resolve_asset: Rc<Box<AssetResolver>>,
+) -> Result<Option<String>>
+where
+    AssetResolver: Fn(&str) -> String + 'static,
+{
     Ok(match into {
-        "css" => Some(translate_css(path, graph).await?),
-        "html" => Some(translate_html(path, graph).await?),
-
-        // TODO
-        // "tsx" => Some(translate_html(path, graph).await?),
+        "css" => Some(translate_css(path, graph, resolve_asset).await?),
+        "html" => Some(translate_html(path, graph, resolve_asset).await?),
         _ => None,
     })
 }
 
-async fn translate_css(path: &str, graph: &Graph) -> Result<String> {
-    let map: HashMap<String, String> = HashMap::new();
-
+async fn translate_css<AssetResolver>(
+    path: &str,
+    graph: &Graph,
+    resolve_asset: Rc<Box<AssetResolver>>,
+) -> Result<String>
+where
+    AssetResolver: Fn(&str) -> String + 'static,
+{
     Ok(serialize_css(
         &evaluate_css(
             path,
             graph,
-            Box::new(move |v: &str| map.get(v).unwrap().to_string()),
+            Rc::new(Box::new(move |v: &str| resolve_asset(v))),
         )
         .await?,
     ))
 }
 
-async fn translate_html(path: &str, graph: &Graph) -> Result<String> {
+async fn translate_html<AssetResolver>(
+    path: &str,
+    graph: &Graph,
+    resolve_asset: Rc<Box<AssetResolver>>,
+) -> Result<String>
+where
+    AssetResolver: Fn(&str) -> String + 'static,
+{
     let body = serialize_html(
         &evaluate_html(
             path,
             graph,
-            Box::new(|v: &str| v.to_string()),
+            Rc::new(Box::new(move |v: &str| resolve_asset(v))),
             HTMLOptions {
                 include_components: false,
             },

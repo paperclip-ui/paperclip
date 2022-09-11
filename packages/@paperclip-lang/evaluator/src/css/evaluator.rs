@@ -22,7 +22,7 @@ type SelectorCombos = Vec<SelectorCombo>;
 pub async fn evaluate<'asset_resolver>(
     path: &str,
     graph: &graph::Graph,
-    resolve_asset: Box<AssetResolver>,
+    resolve_asset: Rc<Box<AssetResolver>>,
 ) -> Result<virt::Document, errors::RuntimeError> {
     let dependencies = &graph.dependencies;
 

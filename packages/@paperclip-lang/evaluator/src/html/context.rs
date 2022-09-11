@@ -25,14 +25,14 @@ impl<'path, 'graph, 'expr> DocumentContext<'path, 'graph, 'expr> {
     pub fn new(
         path: &'path str,
         graph: &'graph graph::Graph,
-        resolve_asset: Box<AssetResolver>,
+        resolve_asset: Rc<Box<AssetResolver>>,
         options: Options,
     ) -> Self {
         Self {
             graph,
             path,
             data: None,
-            resolve_asset: Rc::new(resolve_asset),
+            resolve_asset,
             options,
             current_component: None,
         }

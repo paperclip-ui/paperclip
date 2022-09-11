@@ -5,7 +5,7 @@ use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::graph::graph;
 use paperclip_parser::graph::test_utils;
 use std::collections::HashMap;
-use std::pin::Pin;
+use std::rc::Rc;
 
 macro_rules! add_case {
     ($name: ident, $mock_files: expr, $output: expr) => {
@@ -17,10 +17,9 @@ macro_rules! add_case {
             let doc = block_on(evaluate(
                 "/entry.pc",
                 &graph,
-                Box::new(|v: &str| v.to_string()),
+                Rc::new(Box::new(|v: &str| v.to_string())),
             ))
             .unwrap();
-            // println!("{}", serialize(&doc).trim());
             assert_eq!(
                 strip_extra_ws(serialize(&doc).as_str()),
                 strip_extra_ws($output)

@@ -20,7 +20,7 @@ impl<'path, 'graph, 'expr, 'resolve_asset> DocumentContext<'path, 'graph, 'expr>
     pub fn new(
         path: &'path str,
         graph: &'graph graph::Graph,
-        resolve_asset: Box<AssetResolver>,
+        resolve_asset: Rc<Box<AssetResolver>>,
     ) -> Self {
         let document_id = get_document_id(path);
         let id_generator = Rc::new(RefCell::new(IDGenerator::new(document_id)));
@@ -29,7 +29,7 @@ impl<'path, 'graph, 'expr, 'resolve_asset> DocumentContext<'path, 'graph, 'expr>
 
         Self {
             id_generator: id_generator.clone(),
-            resolve_asset: Rc::new(resolve_asset),
+            resolve_asset,
             graph,
             path,
             current_component: None,

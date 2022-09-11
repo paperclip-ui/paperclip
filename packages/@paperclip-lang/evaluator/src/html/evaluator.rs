@@ -12,15 +12,13 @@ use paperclip_parser::pc::ast;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 
-
 type InsertsMap<'expr> = HashMap<String, (String, Vec<virt::Node>)>;
-
 
 pub async fn evaluate(
     path: &str,
     graph: &graph::Graph,
     resolve_asset: Box<AssetResolver>,
-    options: Options
+    options: Options,
 ) -> Result<virt::Document, errors::RuntimeError> {
     let dependencies = &graph.dependencies;
 

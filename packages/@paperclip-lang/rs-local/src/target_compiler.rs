@@ -1,14 +1,14 @@
 use super::config::{CompilerOptions, Config};
 use anyhow::Result;
-use paperclip_parser::graph::graph::{Dependency, Graph};
+use futures::Future;
 use paperclip_evaluator::css::evaluator::evaluate as evaluate_css;
 use paperclip_evaluator::css::serializer::serialize as serialize_css;
-use paperclip_evaluator::html::evaluator::{evaluate as evaluate_html, Options as HTMLOptions };
+use paperclip_evaluator::html::evaluator::{evaluate as evaluate_html, Options as HTMLOptions};
 use paperclip_evaluator::html::serializer::serialize as serialize_html;
+use paperclip_parser::graph::graph::{Dependency, Graph};
 use std::collections::HashMap;
 use std::rc::Rc;
 
-#[derive(Debug)]
 pub struct TargetCompiler {
     options: Rc<CompilerOptions>,
 }
@@ -27,16 +27,27 @@ impl<'options> TargetCompiler {
 
         let mut data = HashMap::new();
 
-        if options.can_emit("css") {
-            data.insert("css".to_string(), translate_css(path, graph).await?);
-        }
-
-        if options.can_emit("html") {
-            data.insert("html".to_string(), translate_html(path, graph).await?);
+        if let Some(emit) = &options.emit {
+            for ext in emit {
+                if let Some(code) = translate(ext, path, graph).await? {
+                    data.insert(ext.to_string(), code);
+                }
+            }
         }
 
         Ok(data)
     }
+}
+
+async fn translate(into: &str, path: &str, graph: &Graph) -> Result<Option<String>> {
+    Ok(match into {
+        "css" => Some(translate_css(path, graph).await?),
+        "html" => Some(translate_html(path, graph).await?),
+
+        // TODO
+        // "tsx" => Some(translate_html(path, graph).await?),
+        _ => None,
+    })
 }
 
 async fn translate_css(path: &str, graph: &Graph) -> Result<String> {
@@ -53,8 +64,17 @@ async fn translate_css(path: &str, graph: &Graph) -> Result<String> {
 }
 
 async fn translate_html(path: &str, graph: &Graph) -> Result<String> {
-    let body =
-        serialize_html(&evaluate_html(path, graph, Box::new(|v: &str| v.to_string()), HTMLOptions { include_components: false }).await?);
+    let body = serialize_html(
+        &evaluate_html(
+            path,
+            graph,
+            Box::new(|v: &str| v.to_string()),
+            HTMLOptions {
+                include_components: false,
+            },
+        )
+        .await?,
+    );
 
     let html = format!(
         r#"
@@ -69,8 +89,6 @@ async fn translate_html(path: &str, graph: &Graph) -> Result<String> {
   "#,
         body
     );
-
-    // println!("{}", html);
 
     Ok(html)
 }

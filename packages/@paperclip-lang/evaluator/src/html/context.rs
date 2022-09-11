@@ -9,9 +9,8 @@ use std::rc::Rc;
 
 #[derive(Clone)]
 pub struct Options {
-    pub include_components: bool
+    pub include_components: bool,
 }
-
 
 pub struct DocumentContext<'path, 'graph, 'expr> {
     pub resolve_asset: Rc<Box<AssetResolver>>,
@@ -19,7 +18,7 @@ pub struct DocumentContext<'path, 'graph, 'expr> {
     pub path: &'path str,
     pub data: Option<RefCell<core_virt::Object>>,
     pub current_component: Option<&'expr ast::Component>,
-    pub options: Options
+    pub options: Options,
 }
 
 impl<'path, 'graph, 'expr> DocumentContext<'path, 'graph, 'expr> {
@@ -27,7 +26,7 @@ impl<'path, 'graph, 'expr> DocumentContext<'path, 'graph, 'expr> {
         path: &'path str,
         graph: &'graph graph::Graph,
         resolve_asset: Box<AssetResolver>,
-        options: Options
+        options: Options,
     ) -> Self {
         Self {
             graph,
@@ -45,7 +44,7 @@ impl<'path, 'graph, 'expr> DocumentContext<'path, 'graph, 'expr> {
             graph: self.graph,
             path: self.path,
             current_component: self.current_component,
-            options: self.options.clone()
+            options: self.options.clone(),
         }
     }
     pub fn within_component(&self, component: &'expr ast::Component) -> Self {
@@ -55,7 +54,7 @@ impl<'path, 'graph, 'expr> DocumentContext<'path, 'graph, 'expr> {
             graph: self.graph,
             path: self.path,
             current_component: Some(component),
-            options: self.options.clone()
+            options: self.options.clone(),
         }
     }
 }

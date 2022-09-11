@@ -1,10 +1,10 @@
-use crate::base::ast::{Str};
-use crate::base::ast::visit::*;
 use super::state::*;
+use crate::base::ast::visit::*;
+use crate::base::ast::Str;
 use crate::css::ast::*;
 
 struct AssetFinder {
-  pub found: Vec<String>
+    pub found: Vec<String>,
 }
 
 visitor! {
@@ -14,7 +14,7 @@ visitor! {
   },
   DocumentBodyItem(self, expr) {
     visit_enum!(
-      self, 
+      self,
       expr,
       DocumentBodyItem::Atom,
       DocumentBodyItem::Component,
@@ -72,14 +72,14 @@ visitor! {
 
   },
   TextNode(self, expr) {
-    
+
   }
 }
 
 impl Document {
-  fn get_assets(&self) -> Vec<String> {
-    let mut finder = AssetFinder { found: vec![] };
-    finder.visit(self);
-    finder.found
-  }
+    fn get_assets(&self) -> Vec<String> {
+        let mut finder = AssetFinder { found: vec![] };
+        finder.visit(self);
+        finder.found
+    }
 }

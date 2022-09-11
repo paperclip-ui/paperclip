@@ -4,7 +4,6 @@ use anyhow::Result;
 use paperclip_parser::graph::graph::{Dependency, Graph};
 use std::rc::Rc;
 
-#[derive(Debug)]
 pub struct ProjectCompiler {
     targets: Vec<TargetCompiler>,
     config: Rc<Config>,

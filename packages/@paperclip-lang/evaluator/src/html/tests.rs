@@ -22,7 +22,9 @@ macro_rules! add_case {
                 "/entry.pc",
                 &graph,
                 Box::new(|v: &str| v.to_string()),
-								Options { include_components: true }
+                Options {
+                    include_components: true,
+                },
             ))
             .unwrap();
             println!("Try evaluating");

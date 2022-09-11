@@ -8,7 +8,6 @@ use path_absolutize::*;
 use std::path::Path;
 use std::rc::Rc;
 
-#[derive(Debug)]
 pub struct Project {
     /// The project config that specifies source information
     /// and how to compile the project

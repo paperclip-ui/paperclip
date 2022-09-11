@@ -1,7 +1,3 @@
 mod state;
-mod visit;
-mod walk;
-
+mod get_assets;
 pub use self::state::*;
-pub use self::visit::*;
-pub use self::walk::*;

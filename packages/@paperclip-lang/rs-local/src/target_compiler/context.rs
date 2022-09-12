@@ -49,4 +49,23 @@ impl TargetCompilerContext {
         )
         .to_string()
     }
+
+    pub fn get_asset_out_dir_path(&self) -> String {
+      if let Some(part) = &self.options.asset_out_dir {
+        join_path!(
+          &self.get_out_dir_path(),
+          part
+        )
+      } else {
+        self.get_out_dir_path()
+      }
+    }
+
+    pub fn resolve_asset_out_file(&self, path: &str) -> String {
+      path.replace(
+          self.get_src_dir_path().as_str(),
+          self.get_asset_out_dir_path().as_str(),
+      )
+      .to_string()
+    }
 }

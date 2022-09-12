@@ -377,7 +377,7 @@ test_case! {
       import "/project/src/imp.pc" as imp0
       div {
         style {
-          background: url("../image.png")
+          background: url("./image.png")
         }
         text "A"
       }

@@ -2,13 +2,14 @@ use super::config::{CompilerOptions, Config};
 use super::target_compiler::TargetCompiler;
 use anyhow::Result;
 use paperclip_parser::graph::graph::{Dependency, Graph};
+use std::collections::HashMap;
 use std::rc::Rc;
 
 pub struct ProjectCompiler {
     targets: Vec<TargetCompiler>,
     config: Config,
     graph: Rc<Graph>,
-    project_dir: String
+    project_dir: String,
 }
 
 impl ProjectCompiler {
@@ -27,12 +28,12 @@ impl ProjectCompiler {
             graph,
         }
     }
-    pub async fn compile(&self) -> Result<()> {
-        // TODO - return iterable
+    pub async fn compile(&self) -> Result<HashMap<String, String>> {
+        let mut all_files = HashMap::new();
         for target in &self.targets {
-            target.compile_graph(&self.graph, &self.project_dir).await?;
+            all_files.extend(target.compile_graph(&self.graph, &self.project_dir).await?);
         }
-        
-        Ok(())
+
+        Ok(all_files)
     }
 }

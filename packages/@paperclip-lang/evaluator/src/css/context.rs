@@ -6,12 +6,33 @@ use paperclip_parser::pc::ast;
 use std::cell::RefCell;
 use std::rc::Rc;
 
+#[derive(Clone, Copy)]
+pub enum CurrentNode<'expr> {
+    Element(&'expr ast::Element),
+    TextNode(&'expr ast::TextNode)
+}
+
+impl<'expr> CurrentNode<'expr> {
+    pub fn get_name(&self) -> &Option<String>{
+        match self {
+            CurrentNode::Element(expr) => &expr.name,
+            CurrentNode::TextNode(expr) => &expr.name,
+        }
+    }
+    pub fn get_id(&self) -> &String {
+        match self {
+            CurrentNode::Element(expr) => &expr.id,
+            CurrentNode::TextNode(expr) => &expr.id,
+        }
+    }
+}
+
 pub struct DocumentContext<'path, 'graph, 'expr> {
     id_generator: Rc<RefCell<IDGenerator>>,
     pub resolve_asset: Rc<Box<AssetResolver>>,
     pub graph: &'graph graph::Graph,
     pub path: &'path str,
-    pub current_element: Option<&'expr ast::Element>,
+    pub current_node: Option<CurrentNode<'expr>>,
     pub current_component: Option<&'expr ast::Component>,
     pub document: Rc<RefCell<virt::Document>>,
 }
@@ -33,7 +54,7 @@ impl<'path, 'graph, 'expr, 'resolve_asset> DocumentContext<'path, 'graph, 'expr>
             graph,
             path,
             current_component: None,
-            current_element: None,
+            current_node: None,
             document: Rc::new(RefCell::new(virt::Document {
                 id: document_id,
                 rules: vec![],
@@ -47,7 +68,7 @@ impl<'path, 'graph, 'expr, 'resolve_asset> DocumentContext<'path, 'graph, 'expr>
             resolve_asset: self.resolve_asset.clone(),
             path: document_path,
             graph: self.graph,
-            current_element: self.current_element,
+            current_node: self.current_node,
             current_component: self.current_component,
             document: self.document.clone(),
         }
@@ -59,18 +80,18 @@ impl<'path, 'graph, 'expr, 'resolve_asset> DocumentContext<'path, 'graph, 'expr>
             resolve_asset: self.resolve_asset.clone(),
             graph: self.graph,
             path: self.path,
-            current_element: self.current_element,
+            current_node: self.current_node,
             current_component: Some(component),
             document: self.document.clone(),
         }
     }
-    pub fn within_element(&self, element: &'expr ast::Element) -> Self {
+    pub fn within_node(&self, node: CurrentNode<'expr>) -> Self {
         Self {
             id_generator: self.id_generator.clone(),
             resolve_asset: self.resolve_asset.clone(),
             graph: self.graph,
             path: self.path,
-            current_element: Some(element),
+            current_node: Some(node),
             current_component: self.current_component,
             document: self.document.clone(),
         }

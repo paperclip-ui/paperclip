@@ -1,2 +1,2 @@
-mod project;
 mod local;
+mod project;

@@ -15,6 +15,16 @@ use std::rc::Rc;
 
 type InsertsMap<'expr> = HashMap<String, (String, Vec<virt::Node>)>;
 
+macro_rules! body_contains {
+    ($expr: expr, $pat: pat) => {
+        $expr
+        .iter()
+        .find(|child| matches!(child, $pat))
+        != None
+    };
+}
+
+
 pub async fn evaluate(
     path: &str,
     graph: &graph::Graph,
@@ -312,9 +322,10 @@ fn add_static_attribute_values(
     attributes: &mut BTreeMap<String, virt::Attribute>,
     context: &DocumentContext,
 ) {
-    if is_stylable(element) {
+    if is_stylable_element(element) {
         let class_name = get_style_namespace(
-            element,
+            &element.name,
+            &element.id,
             &get_document_id(context.path),
             context.current_component,
         );
@@ -334,13 +345,14 @@ fn add_static_attribute_values(
     }
 }
 
-fn is_stylable(element: &ast::Element) -> bool {
+fn is_stylable_element(element: &ast::Element) -> bool {
     element.name != None
-        || element
-            .body
-            .iter()
-            .find(|child| matches!(child, ast::ElementBodyItem::Style(_)))
-            != None
+        || body_contains!(&element.body, ast::ElementBodyItem::Style(_))
+}
+
+fn is_stylable_text(text: &ast::TextNode) -> bool {
+    text.name != None
+        || body_contains!(&text.body, ast::TextNodeBodyItem::Style(_))
 }
 
 fn create_raw_object_from_params(
@@ -407,10 +419,44 @@ fn evaluate_text_node(
     context: &mut DocumentContext,
 ) {
     if let Some(value) = &text_node.value {
-        fragment.push(virt::Node::TextNode(virt::TextNode {
-            source_id: Some(text_node.id.to_string()),
-            value: value.to_string(),
-            metadata: None,
-        }))
+
+
+        let metadata = None;
+
+        let node = if is_stylable_text(text_node) {
+
+            let class_name = get_style_namespace(
+                &text_node.name,
+                &text_node.id,
+                &get_document_id(context.path),
+                context.current_component,
+            );
+
+
+            virt::Node::Element(virt::Element {
+                tag_name: "span".to_string(),
+                source_id: Some(text_node.id.to_string()),
+                attributes: vec![virt::Attribute {
+                    source_id: None,
+                    name: "class".to_string(),
+                    value: class_name.to_string()
+                }],
+                metadata,
+                children: vec![virt::Node::TextNode(virt::TextNode {
+                    source_id: Some(text_node.id.to_string()),
+                    value: value.to_string(),
+                    metadata: None,
+                })]
+            })
+        } else {
+            virt::Node::TextNode(virt::TextNode {
+                source_id: Some(text_node.id.to_string()),
+                value: value.to_string(),
+                metadata,
+            })
+        };
+
+
+        fragment.push(node);
     }
 }

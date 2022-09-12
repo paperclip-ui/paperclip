@@ -1,10 +1,11 @@
-use super::context::DocumentContext;
+use super::context::{DocumentContext, CurrentNode};
 use super::errors;
-use super::utils::get_style_namespace;
+use crate::core::utils::get_style_namespace;
 use super::virt;
 use crate::base::types::AssetResolver;
 use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph::graph;
+use paperclip_common::id::get_document_id;
 use paperclip_parser::graph::reference as graph_ref;
 use paperclip_parser::pc::ast;
 use std::rc::Rc;
@@ -88,6 +89,9 @@ fn evaluate_body_rule(item: &ast::DocumentBodyItem, context: &mut DocumentContex
         ast::DocumentBodyItem::Element(component) => {
             evaluate_element(component, context);
         }
+        ast::DocumentBodyItem::Text(text) => {
+            evaluate_text(text, context);
+        }
         _ => {}
     }
 }
@@ -110,11 +114,23 @@ fn evaluate_render_node(node: &ast::RenderNode, context: &mut DocumentContext) {
 }
 
 fn evaluate_element(element: &ast::Element, context: &mut DocumentContext) {
-    let mut el_context = context.within_element(element);
+    let mut el_context = context.within_node(CurrentNode::Element(element));
 
     for item in &element.body {
         match item {
             ast::ElementBodyItem::Style(style) => {
+                evaluate_style(style, &mut el_context);
+            }
+            _ => {}
+        }
+    }
+}
+fn evaluate_text(element: &ast::TextNode, context: &mut DocumentContext) {
+    let mut el_context = context.within_node(CurrentNode::TextNode(element));
+
+    for item in &element.body {
+        match item {
+            ast::TextNodeBodyItem::Style(style) => {
                 evaluate_style(style, &mut el_context);
             }
             _ => {}
@@ -143,10 +159,11 @@ fn evaluate_variant_styles(
         return;
     };
 
-    let ns = if let Some(ns) = context.current_element.and_then(|element| {
+    let ns = if let Some(ns) = context.current_node.and_then(|node| {
         Some(get_style_namespace(
-            element,
-            &context.document.borrow().id,
+            node.get_name(),
+            node.get_id(),
+            &get_document_id(context.path),
             context.current_component,
         ))
     }) {
@@ -383,12 +400,17 @@ fn evaluate_vanilla_style(style: &ast::Style, context: &mut DocumentContext) {
 }
 
 fn create_virt_style(style: &ast::Style, context: &mut DocumentContext) -> Option<virt::StyleRule> {
+
+
     context
-        .current_element
-        .and_then(|element| {
+        .current_node
+        .clone()
+        .as_ref()
+        .and_then(|node| {
             Some(get_style_namespace(
-                element,
-                &context.document.borrow().id,
+                node.get_name(),
+                node.get_id(),
+                &get_document_id(context.path),
                 context.current_component,
             ))
         })

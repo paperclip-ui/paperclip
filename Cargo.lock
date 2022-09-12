@@ -437,6 +437,7 @@ dependencies = [
  "clap",
  "futures",
  "glob",
+ "paperclip_common",
  "paperclip_evaluator",
  "paperclip_parser",
  "path-absolutize",

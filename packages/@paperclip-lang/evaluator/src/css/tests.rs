@@ -60,7 +60,7 @@ add_case! {
       "#,
   )],
   r#"
-    .abba-80f4925f-1 {
+    .abba-80f4925f {
         color: orange;
     }
   "#
@@ -264,5 +264,24 @@ add_case! {
     .80f4925f-12 {
         color: var(--80f4925f-7);
     }
+  "#
+}
+
+
+add_case! {
+  adds_styles_for_text_nodes,
+  [(
+      "/entry.pc",
+      r#"
+      text abba "hello" {
+        style {
+          color: blue
+        }
+      }
+
+    "#,
+  )],
+  r#"
+  .abba-80f4925f { color: blue; }
   "#
 }

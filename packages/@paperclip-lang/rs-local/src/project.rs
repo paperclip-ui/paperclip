@@ -5,6 +5,7 @@ use anyhow::Result;
 use glob::glob;
 use paperclip_parser::graph::graph::Graph;
 use path_absolutize::*;
+use std::collections::HashMap;
 use std::path::Path;
 use std::rc::Rc;
 
@@ -29,9 +30,8 @@ impl Project {
     }
 
     /// Compiles the project given the config
-    pub async fn compile(&self) -> Result<()> {
-        self.compiler.compile().await?;
-        Ok(())
+    pub async fn compile(&self) -> Result<HashMap<String, String>> {
+        self.compiler.compile().await
     }
 }
 
@@ -43,12 +43,15 @@ async fn load_project(directory: &str, file_name: Option<String>) -> Result<Proj
     load_project_pc_files(&mut graph, graph_io, &config, directory).await;
     let graph = Rc::new(graph);
 
-
     Ok(Project {
         config: config.clone(),
         graph: graph.clone(),
         directory: String::from(directory),
-        compiler: ProjectCompiler::load(config.as_ref().clone(), graph.clone(), directory.to_string()),
+        compiler: ProjectCompiler::load(
+            config.as_ref().clone(),
+            graph.clone(),
+            directory.to_string(),
+        ),
     })
 }
 

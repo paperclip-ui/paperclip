@@ -167,3 +167,43 @@ test_case! {
   "#)
   ]
 }
+
+
+test_case! {
+  wraps_html_and_css_classes_with_component_names,
+  default_config_with_compiler_options(vec![
+    default_compiler_options_with_emit(vec!["css".to_string(), "html".to_string()])
+  ]),
+  [
+    ("/entry.pc", r#"
+      component A {
+        render div b {
+          style {
+            color: blue
+          }
+          slot children
+        }
+      }
+
+      A {
+        text "Hello world"
+      }
+    "#)
+  ],
+  [
+    ("/entry.pc.html", r#"
+      <!doctype html>
+      <html> 
+        <head>
+          <link rel="stylesheet" src="/entry.pc.css">
+        </head>
+        <body>
+          <div class="A-b-80f4925f"> Hello world </div>
+        </body>
+      </html>
+    "#),
+    ("/entry.pc.css", r#"
+      .A-b-80f4925f { color: blue; }
+    "#)
+  ]
+}

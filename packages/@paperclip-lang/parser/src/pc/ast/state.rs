@@ -199,6 +199,16 @@ pub enum RenderNode {
     Text(TextNode),
 }
 
+impl RenderNode {
+    pub fn get_id(&self) -> &String {
+        match self {
+            RenderNode::Element(expr) => &expr.id,
+            RenderNode::Slot(expr) => &expr.id,
+            RenderNode::Text(expr) => &expr.id,
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub enum ComponentBodyItem {
     Render(Render),

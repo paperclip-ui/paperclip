@@ -168,18 +168,37 @@ fn evaluate_variant_styles(
         return;
     };
 
-    let ns = if let Some(ns) = context.current_node.and_then(|node| {
-        Some(get_style_namespace(
-            node.get_name(),
-            node.get_id(),
-            &get_document_id(context.path),
-            context.current_component,
-        ))
-    }) {
-        ns
+    let render_node = if let Some(render) = current_component.get_render_expr() {
+        &render.node
     } else {
         return;
     };
+
+    let current_node = if let Some(node) = &context.current_node {
+        node
+    } else {
+        return;
+    };
+
+    let ns = get_style_namespace(
+        current_node.get_name(),
+        current_node.get_id(),
+        &get_document_id(context.path),
+        context.current_component,
+    );
+
+    let render_node_ns = get_style_namespace(
+        match render_node {
+            ast::RenderNode::Element(expr) => &expr.name,
+            ast::RenderNode::Text(expr) => &expr.name,
+            _ => &None,
+        },
+        &render_node.get_id(),
+        &get_document_id(context.path),
+        context.current_component,
+    );
+
+    let is_render_node = render_node_ns == ns;
 
     let evaluated_style = create_style_declarations(style, context);
 
@@ -199,46 +218,64 @@ fn evaluate_variant_styles(
         let virt_style = virt::Rule::Style(virt::StyleRule {
             id: context.next_id(),
             source_id: Some(style.id.to_string()),
-            selector_text: format!(".{} .{}", assoc_variant.id, ns),
+            selector_text: format!(
+                ".{}.{}{}",
+                render_node_ns,
+                assoc_variant.id,
+                if is_render_node {
+                    "".to_string()
+                } else {
+                    format!(" .{}", ns)
+                }
+            ),
             style: evaluated_style.clone(),
         });
         context.document.borrow_mut().rules.push(virt_style);
     }
-    println!("{:?}", expanded_combo_selectors);
 
     // first up,
 
     let (combo_queries, combo_selectors) = get_combo_selectors(expanded_combo_selectors);
 
     let virt_styles = if combo_selectors.len() > 0 {
-        combo_selectors.iter().map(|group_selectors| {
-            virt::Rule::Style(virt::StyleRule {
-                id: context.next_id(),
-                source_id: Some(style.id.to_string()),
-                selector_text: format!(
-                    ".{}{} .{}",
-                    current_component.id,
-                    group_selectors.join(""),
-                    ns
-                ),
-                style: evaluated_style.clone(),
+        combo_selectors
+            .iter()
+            .map(|group_selectors| {
+                virt::Rule::Style(virt::StyleRule {
+                    id: context.next_id(),
+                    source_id: Some(style.id.to_string()),
+                    selector_text: format!(
+                        ".{}{}{}",
+                        render_node_ns,
+                        group_selectors.join(""),
+                        if is_render_node {
+                            "".to_string()
+                        } else {
+                            format!(" .{}", ns)
+                        }
+                    ),
+                    style: evaluated_style.clone(),
+                })
             })
-        }).collect::<Vec<virt::Rule>>()
+            .collect::<Vec<virt::Rule>>()
     } else {
         vec![virt::Rule::Style(virt::StyleRule {
             id: context.next_id(),
             source_id: Some(style.id.to_string()),
             selector_text: format!(
-                ".{} .{}",
-                current_component.id,
-                ns
+                ".{}{}",
+                render_node_ns,
+                if is_render_node {
+                    "".to_string()
+                } else {
+                    format!(" .{}", ns)
+                }
             ),
             style: evaluated_style.clone(),
         })]
     };
 
     for virt_style in virt_styles {
-
         for container_queries in &combo_queries {
             let container_rule =
                 container_queries

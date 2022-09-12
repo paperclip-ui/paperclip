@@ -187,22 +187,22 @@ add_case! {
       "#,
   )],
   r#"
-  .80f4925f-11 .80f4925f-22 {
+  .80f4925f-22.80f4925f-11 {
       color: blue;
   }
 
-  .80f4925f-13 .80f4925f-22 {
+  .80f4925f-22.80f4925f-13 {
       color: blue;
   }
 
-  .80f4925f-15 .80f4925f-22 {
+  .80f4925f-22.80f4925f-15 {
       color: blue;
   }
 
   @supports mobile {
       @media screen and (max-width: 300px) {
           @media screen and (max-width: 100px) {
-              .80f4925f-24:nth-child(2n) .80f4925f-22 {
+              .80f4925f-22:nth-child(2n) {
                   color: blue;
               }
           }
@@ -212,7 +212,7 @@ add_case! {
   @supports mobile {
       @media screen and (max-width: 400px) {
           @media screen and (max-width: 100px) {
-              .80f4925f-24:nth-child(2n) .80f4925f-22 {
+              .80f4925f-22:nth-child(2n) {
                   color: blue;
               }
           }
@@ -222,7 +222,7 @@ add_case! {
   @supports desktop {
       @media screen and (max-width: 300px) {
           @media screen and (max-width: 100px) {
-              .80f4925f-24:nth-child(2n) .80f4925f-22 {
+              .80f4925f-22:nth-child(2n) {
                   color: blue;
               }
           }
@@ -232,7 +232,7 @@ add_case! {
   @supports desktop {
       @media screen and (max-width: 400px) {
           @media screen and (max-width: 100px) {
-              .80f4925f-24:nth-child(2n) .80f4925f-22 {
+              .80f4925f-22:nth-child(2n) {
                   color: blue;
               }
           }
@@ -305,7 +305,6 @@ add_case! {
   "#
 }
 
-
 add_case! {
   adds_styles_for_text_nodes_within_elements2,
   [(
@@ -329,12 +328,50 @@ add_case! {
     "#,
   )],
   r#"
-    .80f4925f-9 { 
+  .80f4925f-9.80f4925f-4 { 
       gap: 14px; 
     } 
     @media screen and (max-width: 100px) { 
       .80f4925f-9 { 
         gap: 14px; 
+      } 
+    }
+  "#
+}
+
+
+
+add_case! {
+  add_variant_info_for_nested_elements,
+  [(
+      "/entry.pc",
+      r#"
+      trigger mobile {
+        "@media screen and (max-width: 100px)"
+      }
+
+      component Message {
+        variant mobile trigger {
+          mobile
+        }
+        render div {
+          span {
+            style variant mobile {
+              color: orange
+            }
+          }
+        }
+      }
+
+    "#,
+  )],
+  r#"
+  .80f4925f-10.80f4925f-4 .80f4925f-9 { 
+    color: orange;
+    } 
+    @media screen and (max-width: 100px) { 
+      .80f4925f-10 .80f4925f-9 { 
+        color: orange;
       } 
     }
   "#

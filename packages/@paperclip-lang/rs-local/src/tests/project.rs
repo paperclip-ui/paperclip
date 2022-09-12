@@ -9,7 +9,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 macro_rules! test_case {
-    ($name:ident, $config: expr, $input_files: expr, $output_files: expr) => {
+    ($name:ident, $config: expr, $dir: expr, $main: expr, $input_files: expr, $output_files: expr) => {
         #[test]
         fn $name() {
             let config = $config;
@@ -17,14 +17,14 @@ macro_rules! test_case {
             let mut graph = Graph::new();
             let files = MockFS::new(HashMap::from($input_files));
 
-            block_on(graph.load("/entry.pc", &files));
+            block_on(graph.load($main, &files));
             let graph = Rc::new(graph);
 
             let project = Project {
                 config: Rc::new(config.clone()),
                 graph: graph.clone(),
-                directory: "/".to_string(),
-                compiler: ProjectCompiler::load(config, graph.clone(), "/".to_string()),
+                directory: $dir.to_string(),
+                compiler: ProjectCompiler::load(config, graph.clone(), $dir.to_string()),
             };
 
             if let Ok(all_files) = block_on(project.compile()) {
@@ -35,6 +35,8 @@ macro_rules! test_case {
                             strip_extra_ws(content.as_str()),
                             strip_extra_ws(expected_content)
                         )
+                    } else {
+                        panic!("File {} not handled", key);
                     }
                 }
             } else {
@@ -46,9 +48,9 @@ macro_rules! test_case {
     };
 }
 
-fn default_config_with_compiler_options(options: Vec<CompilerOptions>) -> Config {
+fn default_config_with_compiler_options(src: &str, options: Vec<CompilerOptions>) -> Config {
     Config {
-        src_dir: Some(".".to_string()),
+        src_dir: Some(src.to_string()),
         global_css: None,
         module_dirs: None,
         compiler_options: Some(options),
@@ -71,9 +73,11 @@ fn default_compiler_options_with_emit(emit: Vec<String>) -> CompilerOptions {
 
 test_case! {
   can_compile_basic_css,
-  default_config_with_compiler_options(vec![
+  default_config_with_compiler_options(".", vec![
     default_compiler_options_with_emit(vec!["css".to_string()])
   ]),
+  "/",
+  "/entry.pc",
   [
     ("/entry.pc", r#"
       div {
@@ -92,9 +96,11 @@ test_case! {
 
 test_case! {
   can_compile_basic_html,
-  default_config_with_compiler_options(vec![
+  default_config_with_compiler_options(".", vec![
     default_compiler_options_with_emit(vec!["html".to_string()])
   ]),
+  "/",
+  "/entry.pc",
   [
     ("/entry.pc", r#"
       div {
@@ -119,9 +125,11 @@ test_case! {
 
 test_case! {
   includes_css_from_other_imported_files,
-  default_config_with_compiler_options(vec![
+  default_config_with_compiler_options(".", vec![
     default_compiler_options_with_emit(vec!["css".to_string(), "html".to_string()])
   ]),
+  "/",
+  "/entry.pc",
   [
     ("/entry.pc", r#"
       import "/imp.pc" as imp0
@@ -163,15 +171,19 @@ test_case! {
     "#),
     ("/imp.pc.css", r#"
     .abba-f7127f1d { color: blue; }
-  "#)
+  "#),
+  ("/entry.pc.css", r#"
+"#)
   ]
 }
 
 test_case! {
   wraps_html_and_css_classes_with_component_names,
-  default_config_with_compiler_options(vec![
+  default_config_with_compiler_options("src", vec![
     default_compiler_options_with_emit(vec!["css".to_string(), "html".to_string()])
   ]),
+  "/",
+  "/entry.pc",
   [
     ("/entry.pc", r#"
       component A {
@@ -197,6 +209,59 @@ test_case! {
         </head>
         <body>
           <div class="A-b-80f4925f"> Hello world </div>
+        </body>
+      </html>
+    "#),
+    ("/entry.pc.css", r#"
+      .A-b-80f4925f { color: blue; }
+    "#)
+  ]
+}
+
+test_case! {
+  can_emit_one_global_css_file,
+  default_config_with_compiler_options("src", vec![
+    CompilerOptions {
+      target: None,
+      emit: Some(vec!["css".to_string(), "html".to_string()]),
+      out_dir: Some("out/".to_string()),
+      import_assets_as_modules: None,
+      main_css_file_name: Some("main.css".to_string()),
+      embed_asset_max_size: None,
+      asset_out_dir: Some("assets".to_string()),
+      asset_prefix: None,
+      use_asset_hash_names: None,
+  }
+  ]),
+  "/project",
+  "/project/src/entry.pc",
+  [
+    ("/project/src/entry.pc", r#"
+      div {
+        style {
+          color: blue
+        }
+        text "A"
+      }
+    "#),
+    ("/project/src/imp.pc", r#"
+      div {
+        style {
+          color: orange
+        }
+        text "B"
+      }
+  "#)
+  ],
+  [
+    ("/project/out/entry.pc.html", r#"
+      <!doctype html>
+      <html> 
+        <head>
+          <link rel="stylesheet" href="/project/out/assets/main.css">
+        </head>
+        <body>
+          <div class="856b6f45-5"> A </div>
         </body>
       </html>
     "#),

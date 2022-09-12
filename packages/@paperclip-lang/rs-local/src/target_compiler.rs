@@ -6,13 +6,40 @@ use paperclip_evaluator::html::evaluator::{evaluate as evaluate_html, Options as
 use paperclip_evaluator::html::serializer::serialize as serialize_html;
 use paperclip_parser::graph::graph::Graph;
 use path_absolutize::*;
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::path::Path;
 use std::rc::Rc;
 use textwrap::indent;
 
+macro_rules! get_or_short {
+    ($pat: expr, $short: expr) => {{
+        if let Some(value) = $pat {
+            value
+        } else {
+            return $short;
+        }
+    }};
+}
+
+macro_rules! join_path {
+    ($part: expr, $($rest: expr), +) => {{
+        Path::new($part)
+        $(
+            .join($rest)
+        )+
+        .absolutize()
+        .unwrap()
+        .to_str()
+        .unwrap()
+        .to_string()
+    }};
+}
+
 pub struct TargetCompiler {
     options: CompilerOptions,
+    project_dir: String,
+    all_compiled_css: RefCell<HashMap<String, String>>,
     config: Config,
 }
 
@@ -22,125 +49,149 @@ struct TranslateOptions {
 
 impl<'options> TargetCompiler {
     // TODO: load bin
-    pub fn load(options: CompilerOptions, config: Config) -> Self {
-        Self { options, config }
+    pub fn load(options: CompilerOptions, config: Config, project_dir: String) -> Self {
+        Self {
+            options,
+            config,
+            all_compiled_css: RefCell::new(HashMap::new()),
+            project_dir,
+        }
     }
 
-    pub async fn compile_graph(
-        &self,
-        graph: &Graph,
-        project_dir: &String,
-    ) -> Result<HashMap<String, String>> {
+    pub async fn compile_graph(&self, graph: &Graph) -> Result<HashMap<String, String>> {
         let mut all_files = HashMap::new();
         for (path, _) in &graph.dependencies {
-            let files = compile_dependency(path, &graph, &self.options, project_dir).await?;
-            all_files.extend(files);
+            let files = self.compile_dependency(path, &graph).await?;
+            for (file_path, content) in files {
+                if self.options.main_css_file_name != None && file_path.contains(".css") {
+                    self.all_compiled_css
+                        .borrow_mut()
+                        .insert(file_path.to_string(), content.to_string());
+                } else {
+                    all_files.insert(file_path.to_string(), content.to_string());
+                }
+            }
         }
 
         Ok(all_files)
     }
-}
 
-async fn compile_dependency(
-    path: &str,
-    graph: &Graph,
-    options: &CompilerOptions,
-    project_dir: &String,
-) -> Result<HashMap<String, String>> {
-    let data = translate_with_options(path, graph, &options).await?;
+    async fn compile_dependency(
+        &self,
+        path: &str,
+        graph: &Graph,
+    ) -> Result<HashMap<String, String>> {
+        let data = self.translate_with_options(path, graph).await?;
 
-    let mut files = HashMap::new();
-    let out_file = resolve_out_file(path, &options.out_dir, project_dir);
+        let mut files = HashMap::new();
+        let out_file = &self.resolve_out_file(path);
 
-    for (ext, content) in data {
-        let compiled_file = format!("{}.{}", out_file, ext);
-        files.insert(compiled_file, content);
+        for (ext, content) in data {
+            let compiled_file = format!("{}.{}", out_file, ext);
+            files.insert(compiled_file, content);
+        }
+
+        Ok(files)
     }
 
-    Ok(files)
-}
+    async fn translate_with_options(
+        &self,
+        path: &str,
+        graph: &Graph,
+    ) -> Result<HashMap<String, String>> {
+        let mut data = HashMap::new();
 
-async fn translate_with_options(
-    path: &str,
-    graph: &Graph,
-    options: &CompilerOptions,
-) -> Result<HashMap<String, String>> {
-    let mut data = HashMap::new();
+        let resolve_asset = Rc::new(Box::new(|v: &str| v.to_string()));
 
-    let resolve_asset = Rc::new(Box::new(|v: &str| v.to_string()));
-
-    if let Some(emit) = &options.emit {
-        for ext in emit {
-            if let Some(code) = translate(
-                ext,
-                path,
-                graph,
-                resolve_asset.clone(),
-                get_ext_translate_options(ext, path, graph, options),
-            )
-            .await?
-            {
-                data.insert(ext.to_string(), code);
+        if let Some(emit) = &self.options.emit {
+            for ext in emit {
+                if let Some(code) = translate(
+                    ext,
+                    path,
+                    graph,
+                    resolve_asset.clone(),
+                    self.get_ext_translate_options(ext, path, graph),
+                )
+                .await?
+                {
+                    data.insert(ext.to_string(), code);
+                }
             }
+        }
+
+        Ok(data)
+    }
+
+    fn get_ext_translate_options(&self, ext: &str, path: &str, graph: &Graph) -> TranslateOptions {
+        TranslateOptions {
+            global_imports: if ext == "css" {
+                vec![]
+            } else {
+                let mut imports = vec![];
+
+                if let Some(main_css_path) = &self.get_main_css_file_path() {
+                    imports.push(format!("{}", main_css_path));
+                } else {
+                    imports.push(format!("{}.css", path));
+
+                    imports.extend(
+                        graph
+                            .dependencies
+                            .get(path)
+                            .and_then(|dep| {
+                                Some(
+                                    dep.imports
+                                        .values()
+                                        .map(|import_path| format!("{}.css", import_path))
+                                        .collect::<Vec<String>>(),
+                                )
+                            })
+                            .unwrap_or(vec![]),
+                    )
+                };
+
+                imports
+            },
         }
     }
 
-    Ok(data)
-}
+    fn get_main_css_file_path(&self) -> Option<String> {
+        let main_css_file_name = get_or_short!(&self.options.main_css_file_name, None);
+        let asset_out_dir = get_or_short!(&self.options.asset_out_dir, None);
 
-fn get_ext_translate_options(
-    ext: &str,
-    path: &str,
-    graph: &Graph,
-    options: &CompilerOptions,
-) -> TranslateOptions {
-    TranslateOptions {
-        global_imports: if ext == "css" {
-            vec![]
-        } else {
-            let mut imports = vec![format!("{}.css", path)];
-
-            imports.extend(
-                graph
-                    .dependencies
-                    .get(path)
-                    .and_then(|dep| {
-                        Some(
-                            dep.imports
-                                .values()
-                                .map(|import_path| format!("{}.css", import_path))
-                                .collect::<Vec<String>>(),
-                        )
-                    })
-                    .unwrap_or(vec![]),
-            );
-
-            imports
-        },
+        Some(join_path!(
+            &self.get_out_dir_path(),
+            asset_out_dir.clone(),
+            main_css_file_name.clone()
+        ))
     }
-}
 
-fn resolve_out_file(path: &str, out_dir: &Option<String>, project_dir: &String) -> String {
-    let out_dir = if let Some(out_dir) = out_dir {
-        String::from(
-            Path::new(&project_dir)
-                .join(out_dir.clone())
-                .absolutize()
-                .unwrap()
-                .to_str()
-                .unwrap(),
-        )
-    } else {
-        String::from(
-            Path::new(project_dir.as_str())
-                .absolutize()
-                .unwrap()
-                .to_str()
-                .unwrap(),
-        )
-    };
+    fn get_out_dir_path(&self) -> String {
+        if let Some(out_dir) = &self.options.out_dir {
+            join_path!(&self.project_dir, out_dir.to_string())
+        } else {
+            self.get_src_dir_path()
+        }
+    }
 
-    path.replace(project_dir, out_dir.as_str()).to_string()
+    fn get_src_dir_path(&self) -> String {
+        join_path!(
+            &self.project_dir,
+            if let Some(src_dir) = &self.config.src_dir {
+                src_dir.to_string()
+            } else {
+                ".".to_string()
+            }
+        )
+    }
+
+    fn resolve_out_file(&self, path: &str) -> String {
+        path.replace(
+            self.get_src_dir_path().as_str(),
+            self.get_out_dir_path().as_str(),
+        )
+        .to_string()
+    }
 }
 
 async fn translate<AssetResolver>(

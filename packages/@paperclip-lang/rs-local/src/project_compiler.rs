@@ -18,7 +18,9 @@ impl ProjectCompiler {
             targets: if let Some(options) = &config.compiler_options {
                 options
                     .iter()
-                    .map(|options| TargetCompiler::load(options.clone(), config.clone()))
+                    .map(|options| {
+                        TargetCompiler::load(options.clone(), config.clone(), project_dir.clone())
+                    })
                     .collect()
             } else {
                 vec![]
@@ -31,7 +33,7 @@ impl ProjectCompiler {
     pub async fn compile(&self) -> Result<HashMap<String, String>> {
         let mut all_files = HashMap::new();
         for target in &self.targets {
-            all_files.extend(target.compile_graph(&self.graph, &self.project_dir).await?);
+            all_files.extend(target.compile_graph(&self.graph).await?);
         }
 
         Ok(all_files)

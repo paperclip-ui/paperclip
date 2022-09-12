@@ -339,8 +339,6 @@ add_case! {
   "#
 }
 
-
-
 add_case! {
   add_variant_info_for_nested_elements,
   [(

@@ -1,5 +1,5 @@
 trigger mobile {
-  "@media screen and (max-width: 100px)"
+  "@media screen and (max-width: 800px)"
 }
 
 component Message {

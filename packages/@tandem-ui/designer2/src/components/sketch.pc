@@ -1,25 +1,35 @@
-style defaultFont {
-  font-family: sans-serif
-  font-size: 16px
-  color: white
+trigger mobile {
+  "@media screen and (max-width: 100px)"
 }
 
-component App {
-  render div app {
-    style extends defaultFont {
-      background: black
+component Message {
+  variant testt trigger {
+    mobile
+  }
+  render div {
+    style variant testt {
       color: white
-      position: fixed
-      top: 0
-      padding: 14px
-      left: 0
-      width: 100vw
-      height: 100vh
+      background: black
+      font-family: sans-serif
+      display: flex
+      flex-direction: column
+      gap: 14px
     }
-    div {
-      text abba "Hello world"
+    slot children
+  }
+}
+
+Message {
+  text "Hello world!"
+  div {
+    text "color" {
+      style {
+        color: orange
+      }
     }
   }
 }
 
-App
+Message {
+  text "Something"
+}

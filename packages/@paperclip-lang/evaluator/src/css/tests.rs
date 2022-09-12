@@ -304,3 +304,38 @@ add_case! {
   .abba-80f4925f { color: blue; }
   "#
 }
+
+
+add_case! {
+  adds_styles_for_text_nodes_within_elements2,
+  [(
+      "/entry.pc",
+      r#"
+      trigger mobile {
+        "@media screen and (max-width: 100px)"
+      }
+
+      component Message {
+        variant mobile trigger {
+          mobile
+        }
+        render div {
+          style variant mobile {
+            gap: 14px
+          }
+        }
+      }
+
+    "#,
+  )],
+  r#"
+    .80f4925f-9 { 
+      gap: 14px; 
+    } 
+    @media screen and (max-width: 100px) { 
+      .80f4925f-9 { 
+        gap: 14px; 
+      } 
+    }
+  "#
+}

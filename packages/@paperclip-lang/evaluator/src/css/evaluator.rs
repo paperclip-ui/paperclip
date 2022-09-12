@@ -204,23 +204,40 @@ fn evaluate_variant_styles(
         });
         context.document.borrow_mut().rules.push(virt_style);
     }
+    println!("{:?}", expanded_combo_selectors);
 
     // first up,
 
     let (combo_queries, combo_selectors) = get_combo_selectors(expanded_combo_selectors);
 
-    for group_selectors in combo_selectors {
-        let virt_style = virt::Rule::Style(virt::StyleRule {
+    let virt_styles = if combo_selectors.len() > 0 {
+        combo_selectors.iter().map(|group_selectors| {
+            virt::Rule::Style(virt::StyleRule {
+                id: context.next_id(),
+                source_id: Some(style.id.to_string()),
+                selector_text: format!(
+                    ".{}{} .{}",
+                    current_component.id,
+                    group_selectors.join(""),
+                    ns
+                ),
+                style: evaluated_style.clone(),
+            })
+        }).collect::<Vec<virt::Rule>>()
+    } else {
+        vec![virt::Rule::Style(virt::StyleRule {
             id: context.next_id(),
             source_id: Some(style.id.to_string()),
             selector_text: format!(
-                ".{}{} .{}",
+                ".{} .{}",
                 current_component.id,
-                group_selectors.join(""),
                 ns
             ),
             style: evaluated_style.clone(),
-        });
+        })]
+    };
+
+    for virt_style in virt_styles {
 
         for container_queries in &combo_queries {
             let container_rule =

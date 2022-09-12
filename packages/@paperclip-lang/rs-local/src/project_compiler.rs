@@ -7,20 +7,15 @@ use paperclip_parser::graph::graph::{Dependency, Graph};
 use std::collections::HashMap;
 use std::rc::Rc;
 
-pub struct ProjectCompiler<FR: FileReader> {
-    targets: Vec<TargetCompiler<FR>>,
-    config: Config,
+pub struct ProjectCompiler<IO: FileReader + FileResolver> {
+    targets: Vec<TargetCompiler<IO>>,
+    config: Rc<Config>,
     graph: Rc<Graph>,
     project_dir: String,
 }
 
-impl<FR: FileReader> ProjectCompiler<FR> {
-    pub fn load(
-        config: Config,
-        graph: Rc<Graph>,
-        project_dir: String,
-        file_reader: Rc<FR>,
-    ) -> Self {
+impl<IO: FileReader + FileResolver> ProjectCompiler<IO> {
+    pub fn load(config: Rc<Config>, graph: Rc<Graph>, project_dir: String, io: Rc<IO>) -> Self {
         Self {
             targets: if let Some(options) = &config.compiler_options {
                 options
@@ -30,7 +25,7 @@ impl<FR: FileReader> ProjectCompiler<FR> {
                             options.clone(),
                             config.clone(),
                             project_dir.clone(),
-                            file_reader.clone(),
+                            io.clone(),
                         )
                     })
                     .collect()
@@ -38,7 +33,7 @@ impl<FR: FileReader> ProjectCompiler<FR> {
                 vec![]
             },
             project_dir,
-            config,
+            config: config.clone(),
             graph,
         }
     }

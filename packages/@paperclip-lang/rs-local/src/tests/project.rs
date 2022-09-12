@@ -6,13 +6,32 @@ use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::graph::graph::Graph;
 use paperclip_parser::graph::test_utils::MockFS;
+use path_absolutize::*;
 use std::collections::HashMap;
+use std::path::Path;
 use std::rc::Rc;
 
-struct MockReader;
-impl FileReader for MockReader {
+struct MockIO;
+impl FileReader for MockIO {
     fn read_file(&self, path: &str) -> Option<Box<[u8]>> {
         Some(path.to_string().as_bytes().to_vec().into_boxed_slice())
+    }
+}
+
+impl FileResolver for MockIO {
+    fn resolve_file(&self, from_path: &str, to_path: &str) -> Option<String> {
+        let resolved_path = String::from(
+            Path::new(from_path)
+                .parent()
+                .unwrap()
+                .join(to_path)
+                .absolutize()
+                .unwrap()
+                .to_str()
+                .unwrap(),
+        );
+
+        Some(resolved_path)
     }
 }
 
@@ -20,24 +39,24 @@ macro_rules! test_case {
     ($name:ident, $config: expr, $dir: expr, $main: expr, $input_files: expr, $output_files: expr) => {
         #[test]
         fn $name() {
-            let config = $config;
+            let config = Rc::new($config);
 
             let mut graph = Graph::new();
             let files = MockFS::new(HashMap::from($input_files));
 
             block_on(graph.load($main, &files));
             let graph = Rc::new(graph);
-            let mock_reader = MockReader {};
+            let mock_io = MockIO {};
 
             let project = Project {
-                config: Rc::new(config.clone()),
+                config: config.clone(),
                 graph: graph.clone(),
                 directory: $dir.to_string(),
                 compiler: ProjectCompiler::load(
-                    config,
+                    config.clone(),
                     graph.clone(),
                     $dir.to_string(),
-                    Rc::new(mock_reader),
+                    Rc::new(mock_io),
                 ),
             };
 
@@ -301,7 +320,43 @@ test_case! {
 }
 
 test_case! {
-  moves_assets_to_out_dir,
+  properly_resolves_css_assets,
+  default_config_with_compiler_options("src", vec![
+    CompilerOptions {
+      target: None,
+      emit: Some(vec!["css".to_string()]),
+      out_dir: Some("out/".to_string()),
+      import_assets_as_modules: None,
+      main_css_file_name: Some("main.css".to_string()),
+      embed_asset_max_size: None,
+      asset_out_dir: None,
+      asset_prefix: None,
+      use_asset_hash_names: None,
+  }
+  ]),
+  "/project",
+  "/project/src/entry.pc",
+  [
+    ("/project/src/entry.pc", r#"
+      import "/project/src/imp.pc" as imp0
+      div {
+        style {
+          background: url("../image.png")
+        }
+        text "A"
+      }
+    "#)
+  ],
+  [
+    ("/project/out/assets/main.css", r#"
+    /* /project/out/entry.pc.css */
+     .856b6f45-7 { background: url("/project/image.png"); }
+    "#)
+  ]
+}
+
+test_case! {
+  moves_assets_to_asset_out_dir_if_present,
   default_config_with_compiler_options("src", vec![
     CompilerOptions {
       target: None,
@@ -322,7 +377,7 @@ test_case! {
       import "/project/src/imp.pc" as imp0
       div {
         style {
-          background: url("./image.png")
+          background: url("../image.png")
         }
         text "A"
       }
@@ -330,12 +385,8 @@ test_case! {
   ],
   [
     ("/project/out/assets/main.css", r#"
-    /* /project/out/entry.pc.css */ 
-    .856b6f45-6 { color: blue; }
-    /* /project/out/imp.pc.css */ 
-    .e2ff1d5b-5 { color: orange; } 
+    /* /project/out/entry.pc.css */
+     .856b6f45-7 { background: url("/project/out/assets/image.png"); }
     "#)
   ]
-
-
 }

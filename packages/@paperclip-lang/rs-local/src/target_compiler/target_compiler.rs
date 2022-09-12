@@ -1,4 +1,4 @@
-use super::config::{CompilerOptions, Config};
+use crate::config::{CompilerOptions, Config};
 use anyhow::Result;
 use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_evaluator::css::evaluator::evaluate as evaluate_css;
@@ -10,47 +10,55 @@ use path_absolutize::*;
 use std::cell::RefCell;
 #[macro_use]
 use paperclip_common::{join_path, get_or_short};
+use super::context::TargetCompilerContext;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 use std::path::Path;
 use std::rc::Rc;
 use textwrap::indent;
 
-struct TargetCompilerResolver<FR: FileReader> {
-    file_reader: Rc<FR>,
+struct TargetCompilerResolver<IO: FileReader + FileResolver> {
+    io: Rc<IO>,
+    context: Rc<TargetCompilerContext>,
 }
-impl<FR: FileReader> FileResolver for TargetCompilerResolver<FR> {
+impl<IO: FileReader + FileResolver> FileResolver for TargetCompilerResolver<IO> {
     fn resolve_file(&self, from: &str, to: &str) -> Option<String> {
-        Some("".to_string())
+        let resolved_path = self.io.resolve_file(from, to);
+        resolved_path
     }
 }
 
-pub struct TargetCompiler<FR: FileReader> {
-    options: CompilerOptions,
-    project_dir: String,
+pub struct TargetCompiler<IO: FileReader + FileResolver> {
+    context: Rc<TargetCompilerContext>,
     all_compiled_css: RefCell<BTreeMap<String, String>>,
-    file_resolver: TargetCompilerResolver<FR>,
-    config: Config,
+    file_resolver: TargetCompilerResolver<IO>,
 }
 
 struct TranslateOptions {
     global_imports: Vec<String>,
 }
 
-impl<'options, FR: FileReader> TargetCompiler<FR> {
+impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
     // TODO: load bin
     pub fn load(
         options: CompilerOptions,
-        config: Config,
+        config: Rc<Config>,
         project_dir: String,
-        file_reader: Rc<FR>,
+        io: Rc<IO>,
     ) -> Self {
-        Self {
+        let context = Rc::new(TargetCompilerContext {
             options,
             config,
-            all_compiled_css: RefCell::new(BTreeMap::new()),
-            file_resolver: TargetCompilerResolver { file_reader },
             project_dir,
+        });
+
+        Self {
+            context: context.clone(),
+            all_compiled_css: RefCell::new(BTreeMap::new()),
+            file_resolver: TargetCompilerResolver {
+                io,
+                context: context.clone(),
+            },
         }
     }
 
@@ -61,7 +69,7 @@ impl<'options, FR: FileReader> TargetCompiler<FR> {
                 .compile_dependency(path, &graph, &self.file_resolver)
                 .await?;
             for (file_path, content) in files {
-                if self.options.main_css_file_name != None && file_path.contains(".css") {
+                if self.context.options.main_css_file_name != None && file_path.contains(".css") {
                     self.all_compiled_css
                         .borrow_mut()
                         .insert(file_path.to_string(), content.to_string());
@@ -71,7 +79,7 @@ impl<'options, FR: FileReader> TargetCompiler<FR> {
             }
         }
 
-        if let Some(main_css_file_path) = &self.get_main_css_file_path() {
+        if let Some(main_css_file_path) = &self.context.get_main_css_file_path() {
             all_files.insert(
                 main_css_file_path.to_string(),
                 self.all_compiled_css
@@ -97,7 +105,7 @@ impl<'options, FR: FileReader> TargetCompiler<FR> {
             .await?;
 
         let mut files = HashMap::new();
-        let out_file = &self.resolve_out_file(path);
+        let out_file = &self.context.resolve_out_file(path);
 
         for (ext, content) in data {
             let compiled_file = format!("{}.{}", out_file, ext);
@@ -115,7 +123,7 @@ impl<'options, FR: FileReader> TargetCompiler<FR> {
     ) -> Result<HashMap<String, String>> {
         let mut data = HashMap::new();
 
-        if let Some(emit) = &self.options.emit {
+        if let Some(emit) = &self.context.options.emit {
             for ext in emit {
                 if let Some(code) = translate(
                     ext,
@@ -141,7 +149,7 @@ impl<'options, FR: FileReader> TargetCompiler<FR> {
             } else {
                 let mut imports = vec![];
 
-                if let Some(main_css_path) = &self.get_main_css_file_path() {
+                if let Some(main_css_path) = &self.context.get_main_css_file_path() {
                     imports.push(format!("{}", main_css_path));
                 } else {
                     imports.push(format!("{}.css", path));
@@ -165,44 +173,6 @@ impl<'options, FR: FileReader> TargetCompiler<FR> {
                 imports
             },
         }
-    }
-
-    fn get_main_css_file_path(&self) -> Option<String> {
-        let main_css_file_name = get_or_short!(&self.options.main_css_file_name, None);
-        let asset_out_dir = get_or_short!(&self.options.asset_out_dir, None);
-
-        Some(join_path!(
-            &self.get_out_dir_path(),
-            asset_out_dir.clone(),
-            main_css_file_name.clone()
-        ))
-    }
-
-    fn get_out_dir_path(&self) -> String {
-        if let Some(out_dir) = &self.options.out_dir {
-            join_path!(&self.project_dir, out_dir.to_string())
-        } else {
-            self.get_src_dir_path()
-        }
-    }
-
-    fn get_src_dir_path(&self) -> String {
-        join_path!(
-            &self.project_dir,
-            if let Some(src_dir) = &self.config.src_dir {
-                src_dir.to_string()
-            } else {
-                ".".to_string()
-            }
-        )
-    }
-
-    fn resolve_out_file(&self, path: &str) -> String {
-        path.replace(
-            self.get_src_dir_path().as_str(),
-            self.get_out_dir_path().as_str(),
-        )
-        .to_string()
     }
 }
 

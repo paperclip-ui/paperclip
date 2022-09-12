@@ -64,6 +64,10 @@ impl<'path, 'graph, 'expr, 'resolve_asset, FR: FileResolver>
         }
     }
 
+    pub fn resolve_asset(&self, asset_path: &str) -> Option<String> {
+        self.file_resolver.resolve_file(&self.path, asset_path)
+    }
+
     pub fn within_document(&self, document_path: &'path str) -> Self {
         Self {
             id_generator: self.id_generator.clone(),

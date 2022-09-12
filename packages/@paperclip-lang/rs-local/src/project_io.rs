@@ -4,10 +4,13 @@ use path_absolutize::*;
 use std::fs;
 use std::path::Path;
 
-pub struct ProjectIO;
-impl GraphIO for ProjectIO {}
+pub trait ProjectIO: GraphIO {}
 
-impl FileReader for ProjectIO {
+pub struct LocalIO;
+impl GraphIO for LocalIO {}
+impl ProjectIO for LocalIO {}
+
+impl FileReader for LocalIO {
     fn read_file(&self, path: &str) -> Option<Box<[u8]>> {
         if let Ok(content) = fs::read_to_string(path) {
             Some(content.as_bytes().to_vec().into_boxed_slice())
@@ -17,7 +20,7 @@ impl FileReader for ProjectIO {
     }
 }
 
-impl FileResolver for ProjectIO {
+impl FileResolver for LocalIO {
     fn resolve_file(&self, from_path: &str, to_path: &str) -> Option<String> {
         Some(String::from(
             Path::new(from_path)

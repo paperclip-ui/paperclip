@@ -575,7 +575,10 @@ fn stringify_style_decl_value<F: FileResolver>(
             format!(
                 "{}({})",
                 expr.name,
-                stringify_style_decl_value(&expr.arguments, context)
+                match expr.name.as_str() {
+                    "url" => stringify_url_arg_value(&expr.arguments, context),
+                    _ => stringify_style_decl_value(&expr.arguments, context),
+                }
             )
         }
         css_ast::DeclarationValue::HexColor(expr) => {
@@ -591,5 +594,22 @@ fn stringify_style_decl_value<F: FileResolver>(
         css_ast::DeclarationValue::String(expr) => {
             format!("\"{}\"", expr.value)
         }
+    }
+}
+
+fn stringify_url_arg_value<F: FileResolver>(
+    decl: &css_ast::DeclarationValue,
+    context: &DocumentContext<F>,
+) -> String {
+    match decl {
+        css_ast::DeclarationValue::String(expr) => {
+            format!(
+                "\"{}\"",
+                context
+                    .resolve_asset(&expr.value)
+                    .unwrap_or(expr.value.to_string())
+            )
+        }
+        _ => stringify_style_decl_value(decl, context),
     }
 }

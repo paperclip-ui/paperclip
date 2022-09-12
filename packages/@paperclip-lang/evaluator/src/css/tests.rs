@@ -267,7 +267,6 @@ add_case! {
   "#
 }
 
-
 add_case! {
   adds_styles_for_text_nodes,
   [(
@@ -276,6 +275,26 @@ add_case! {
       text abba "hello" {
         style {
           color: blue
+        }
+      }
+
+    "#,
+  )],
+  r#"
+  .abba-80f4925f { color: blue; }
+  "#
+}
+
+add_case! {
+  adds_styles_for_text_nodes_within_elements,
+  [(
+      "/entry.pc",
+      r#"
+      div {
+        text abba "hello" {
+          style {
+            color: blue
+          }
         }
       }
 

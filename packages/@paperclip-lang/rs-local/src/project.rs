@@ -33,6 +33,10 @@ impl Project {
     pub async fn compile(&self) -> Result<HashMap<String, String>> {
         self.compiler.compile().await
     }
+
+    pub async fn watch(&self) {
+        // TODO
+    }
 }
 
 async fn load_project(directory: &str, file_name: Option<String>) -> Result<Project> {

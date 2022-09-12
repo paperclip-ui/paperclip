@@ -1,11 +1,11 @@
-use super::context::{DocumentContext, CurrentNode};
+use super::context::{CurrentNode, DocumentContext};
 use super::errors;
-use crate::core::utils::get_style_namespace;
 use super::virt;
 use crate::base::types::AssetResolver;
+use crate::core::utils::get_style_namespace;
+use paperclip_common::id::get_document_id;
 use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph::graph;
-use paperclip_common::id::get_document_id;
 use paperclip_parser::graph::reference as graph_ref;
 use paperclip_parser::pc::ast;
 use std::rc::Rc;
@@ -109,6 +109,9 @@ fn evaluate_render_node(node: &ast::RenderNode, context: &mut DocumentContext) {
         ast::RenderNode::Element(element) => {
             evaluate_element(element, context);
         }
+        ast::RenderNode::Text(element) => {
+            evaluate_text(element, context);
+        }
         _ => {}
     }
 }
@@ -120,6 +123,12 @@ fn evaluate_element(element: &ast::Element, context: &mut DocumentContext) {
         match item {
             ast::ElementBodyItem::Style(style) => {
                 evaluate_style(style, &mut el_context);
+            }
+            ast::ElementBodyItem::Element(expr) => {
+                evaluate_element(expr, &mut el_context);
+            }
+            ast::ElementBodyItem::Text(expr) => {
+                evaluate_text(expr, &mut el_context);
             }
             _ => {}
         }
@@ -400,8 +409,6 @@ fn evaluate_vanilla_style(style: &ast::Style, context: &mut DocumentContext) {
 }
 
 fn create_virt_style(style: &ast::Style, context: &mut DocumentContext) -> Option<virt::StyleRule> {
-
-
     context
         .current_node
         .clone()

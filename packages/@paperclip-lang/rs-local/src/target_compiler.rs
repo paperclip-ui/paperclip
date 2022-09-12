@@ -9,15 +9,15 @@ use path_absolutize::*;
 use std::collections::HashMap;
 use std::path::Path;
 use std::rc::Rc;
+use textwrap::indent;
 
 pub struct TargetCompiler {
     options: CompilerOptions,
     config: Config,
 }
 
-
 struct TranslateOptions {
-    global_imports: Vec<String>
+    global_imports: Vec<String>,
 }
 
 impl<'options> TargetCompiler {
@@ -71,7 +71,15 @@ async fn translate_with_options(
 
     if let Some(emit) = &options.emit {
         for ext in emit {
-            if let Some(code) = translate(ext, path, graph, resolve_asset.clone(), get_ext_translate_options(ext, path, graph, options)).await? {
+            if let Some(code) = translate(
+                ext,
+                path,
+                graph,
+                resolve_asset.clone(),
+                get_ext_translate_options(ext, path, graph, options),
+            )
+            .await?
+            {
                 data.insert(ext.to_string(), code);
             }
         }
@@ -80,22 +88,35 @@ async fn translate_with_options(
     Ok(data)
 }
 
-fn get_ext_translate_options(ext: &str, path: &str, graph: &Graph, options: &CompilerOptions) -> TranslateOptions {
+fn get_ext_translate_options(
+    ext: &str,
+    path: &str,
+    graph: &Graph,
+    options: &CompilerOptions,
+) -> TranslateOptions {
     TranslateOptions {
         global_imports: if ext == "css" {
             vec![]
         } else {
-
             let mut imports = vec![format!("{}.css", path)];
 
-            imports.extend(graph.dependencies.get(path).and_then(|dep| {
-                Some(dep.imports.values().map(|import_path| {
-                    format!("{}.css", import_path)
-                }).collect::<Vec<String>>())
-            }).unwrap_or(vec![]));
+            imports.extend(
+                graph
+                    .dependencies
+                    .get(path)
+                    .and_then(|dep| {
+                        Some(
+                            dep.imports
+                                .values()
+                                .map(|import_path| format!("{}.css", import_path))
+                                .collect::<Vec<String>>(),
+                        )
+                    })
+                    .unwrap_or(vec![]),
+            );
 
             imports
-        }
+        },
     }
 }
 
@@ -127,7 +148,7 @@ async fn translate<AssetResolver>(
     path: &str,
     graph: &Graph,
     resolve_asset: Rc<Box<AssetResolver>>,
-    options: TranslateOptions
+    options: TranslateOptions,
 ) -> Result<Option<String>>
 where
     AssetResolver: Fn(&str) -> String + 'static,
@@ -142,7 +163,7 @@ where
 async fn translate_css<AssetResolver>(
     path: &str,
     graph: &Graph,
-    resolve_asset: Rc<Box<AssetResolver>>
+    resolve_asset: Rc<Box<AssetResolver>>,
 ) -> Result<String>
 where
     AssetResolver: Fn(&str) -> String + 'static,
@@ -161,7 +182,7 @@ async fn translate_html<AssetResolver>(
     path: &str,
     graph: &Graph,
     resolve_asset: Rc<Box<AssetResolver>>,
-    options: TranslateOptions
+    options: TranslateOptions,
 ) -> Result<String>
 where
     AssetResolver: Fn(&str) -> String + 'static,
@@ -178,28 +199,34 @@ where
         .await?,
     );
 
-    let head = options.global_imports.iter().map(|imp: &String| {
-        if imp.contains(".css") {
-            format!("<link rel=\"stylesheet\" src=\"{}\">", imp)
-        } else {
-            "".to_string()
-        }
-    }).collect::<Vec<String>>().join("\n");
+    let head = options
+        .global_imports
+        .iter()
+        .map(|imp: &String| {
+            if imp.contains(".css") {
+                format!("<link rel=\"stylesheet\" href=\"{}\">", imp)
+            } else {
+                "".to_string()
+            }
+        })
+        .collect::<Vec<String>>()
+        .join("\n");
 
+    // format it property
     let html = format!(
         r#"
-    <!doctype html>
-    <html>
-      <head>
+<!doctype html>
+<html>
+    <head>
         {}
-      </head>
-      <body>
-        {}
-      </body>
-    </html>
+    </head>
+    <body>
+{}
+    </body>
+</html>
   "#,
         head,
-        body
+        indent(body.as_str().trim(), "        ")
     );
 
     Ok(html)

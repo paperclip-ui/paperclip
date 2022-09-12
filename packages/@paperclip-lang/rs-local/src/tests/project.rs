@@ -30,12 +30,12 @@ macro_rules! test_case {
             if let Ok(all_files) = block_on(project.compile()) {
                 let expected_files = HashMap::from($output_files);
                 for (key, content) in all_files {
-                  if let Some(expected_content) = expected_files.get(key.as_str()) {
-                    assert_eq!(
-                        strip_extra_ws(content.as_str()),
-                        strip_extra_ws(expected_content)
-                    )
-                  }
+                    if let Some(expected_content) = expected_files.get(key.as_str()) {
+                        assert_eq!(
+                            strip_extra_ws(content.as_str()),
+                            strip_extra_ws(expected_content)
+                        )
+                    }
                 }
             } else {
                 panic!("Parse error");
@@ -90,7 +90,6 @@ test_case! {
   ]
 }
 
-
 test_case! {
   can_compile_basic_html,
   default_config_with_compiler_options(vec![
@@ -108,7 +107,7 @@ test_case! {
       <!doctype html>
       <html> 
         <head>
-          <link rel="stylesheet" src="/entry.pc.css">
+          <link rel="stylesheet" href="/entry.pc.css">
         </head>
         <body>
           <div> Hello world </div>
@@ -143,8 +142,8 @@ test_case! {
       <!doctype html>
       <html> 
         <head>
-          <link rel="stylesheet" src="/entry.pc.css">
-          <link rel="stylesheet" src="/imp.pc.css">
+          <link rel="stylesheet" href="/entry.pc.css">
+          <link rel="stylesheet" href="/imp.pc.css">
         </head>
         <body>
           <div> Hello world </div>
@@ -155,7 +154,7 @@ test_case! {
       <!doctype html>
       <html> 
         <head>
-          <link rel="stylesheet" src="/imp.pc.css">
+          <link rel="stylesheet" href="/imp.pc.css">
         </head>
         <body>
           <span class="abba-f7127f1d"> hello </span>
@@ -167,7 +166,6 @@ test_case! {
   "#)
   ]
 }
-
 
 test_case! {
   wraps_html_and_css_classes_with_component_names,
@@ -195,7 +193,7 @@ test_case! {
       <!doctype html>
       <html> 
         <head>
-          <link rel="stylesheet" src="/entry.pc.css">
+          <link rel="stylesheet" href="/entry.pc.css">
         </head>
         <body>
           <div class="A-b-80f4925f"> Hello world </div>

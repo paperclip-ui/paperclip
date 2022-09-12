@@ -3,6 +3,8 @@ use clap::Args;
 use paperclip_local::config::DEFAULT_CONFIG_NAME;
 use paperclip_local::project::Project;
 use std::env;
+use std::fs::File;
+use std::io::prelude::*;
 
 #[derive(Debug, Args)]
 pub struct BuildArgs {
@@ -26,6 +28,17 @@ pub async fn build(args: BuildArgs) -> Result<()> {
     )
     .await?;
 
-    project.compile().await?;
+    let files = project.compile().await?;
+
+    for (path, content) in files {
+        println!("✍🏻  {}", path);
+        if args.print {
+            println!("{}", content);
+        } else {
+            let mut file = File::create(path)?;
+            file.write_all(content.as_str().as_bytes())?;
+        }
+    }
+
     Ok(())
 }

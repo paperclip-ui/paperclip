@@ -199,25 +199,25 @@ add_case! {
 }
 
 add_case! {
-	elements_with_ids_have_scope_classes,
-	[
-					("/entry.pc", r#"
+    elements_with_ids_have_scope_classes,
+    [
+                    ("/entry.pc", r#"
 	div ab
 "#)
-	],
-	"<div class=\"ab-80f4925f\"> </div>"
+    ],
+    "<div class=\"ab-80f4925f\"> </div>"
 }
 
 add_case! {
-	wraps_text_nodes_in_span_if_styles_exist,
-	[
-					("/entry.pc", r#"
+    wraps_text_nodes_in_span_if_styles_exist,
+    [
+                    ("/entry.pc", r#"
 	text "abba" {
 		style {
 			color: blue
 		}
 	}
 "#)
-	],
-	"<span class=\"80f4925f-4\"> abba </span>"
+    ],
+    "<span class=\"80f4925f-4\"> abba </span>"
 }

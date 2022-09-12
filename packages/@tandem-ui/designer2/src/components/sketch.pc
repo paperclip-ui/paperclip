@@ -1,11 +1,25 @@
-component Test {
-  render div {
-    style {
-      color: red
+style defaultFont {
+  font-family: sans-serif
+  font-size: 16px
+  color: white
+}
+
+component App {
+  render div app {
+    style extends defaultFont {
+      background: black
+      color: white
+      position: fixed
+      top: 0
+      padding: 14px
+      left: 0
+      width: 100vw
+      height: 100vh
     }
-    text "Hello world"
+    div {
+      text abba "Hello world"
+    }
   }
 }
 
-
-Test
+App

@@ -9,11 +9,11 @@ use std::rc::Rc;
 #[derive(Clone, Copy)]
 pub enum CurrentNode<'expr> {
     Element(&'expr ast::Element),
-    TextNode(&'expr ast::TextNode)
+    TextNode(&'expr ast::TextNode),
 }
 
 impl<'expr> CurrentNode<'expr> {
-    pub fn get_name(&self) -> &Option<String>{
+    pub fn get_name(&self) -> &Option<String> {
         match self {
             CurrentNode::Element(expr) => &expr.name,
             CurrentNode::TextNode(expr) => &expr.name,

@@ -17,13 +17,9 @@ type InsertsMap<'expr> = HashMap<String, (String, Vec<virt::Node>)>;
 
 macro_rules! body_contains {
     ($expr: expr, $pat: pat) => {
-        $expr
-        .iter()
-        .find(|child| matches!(child, $pat))
-        != None
+        $expr.iter().find(|child| matches!(child, $pat)) != None
     };
 }
-
 
 pub async fn evaluate(
     path: &str,
@@ -346,13 +342,11 @@ fn add_static_attribute_values(
 }
 
 fn is_stylable_element(element: &ast::Element) -> bool {
-    element.name != None
-        || body_contains!(&element.body, ast::ElementBodyItem::Style(_))
+    element.name != None || body_contains!(&element.body, ast::ElementBodyItem::Style(_))
 }
 
 fn is_stylable_text(text: &ast::TextNode) -> bool {
-    text.name != None
-        || body_contains!(&text.body, ast::TextNodeBodyItem::Style(_))
+    body_contains!(&text.body, ast::TextNodeBodyItem::Style(_))
 }
 
 fn create_raw_object_from_params(
@@ -419,12 +413,9 @@ fn evaluate_text_node(
     context: &mut DocumentContext,
 ) {
     if let Some(value) = &text_node.value {
-
-
         let metadata = None;
 
         let node = if is_stylable_text(text_node) {
-
             let class_name = get_style_namespace(
                 &text_node.name,
                 &text_node.id,
@@ -432,21 +423,20 @@ fn evaluate_text_node(
                 context.current_component,
             );
 
-
             virt::Node::Element(virt::Element {
                 tag_name: "span".to_string(),
                 source_id: Some(text_node.id.to_string()),
                 attributes: vec![virt::Attribute {
                     source_id: None,
                     name: "class".to_string(),
-                    value: class_name.to_string()
+                    value: class_name.to_string(),
                 }],
                 metadata,
                 children: vec![virt::Node::TextNode(virt::TextNode {
                     source_id: Some(text_node.id.to_string()),
                     value: value.to_string(),
                     metadata: None,
-                })]
+                })],
             })
         } else {
             virt::Node::TextNode(virt::TextNode {
@@ -455,7 +445,6 @@ fn evaluate_text_node(
                 metadata,
             })
         };
-
 
         fragment.push(node);
     }

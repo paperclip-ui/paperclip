@@ -6,6 +6,7 @@ use futures::future::{select_all, BoxFuture, Future, FutureExt};
 use futures::lock::Mutex;
 use std::collections::{HashMap, HashSet};
 use std::marker::Sync;
+use std::str;
 use std::sync::Arc;
 
 #[derive(Debug)]
@@ -71,8 +72,8 @@ async fn load_dependencies<'io, TIO: IO>(
         loaded.insert(path.to_string());
     }
 
-    let content = if let Some(content) = io.read(&path).await {
-        content
+    let content = if let Some(content) = io.read_file(&path) {
+        str::from_utf8(&*content).unwrap().to_string()
     } else {
         println!("file not found {}", path);
         return deps;
@@ -87,8 +88,7 @@ async fn load_dependencies<'io, TIO: IO>(
     };
 
     for import in &document.get_imports() {
-        io.resolve(&path, &import.path)
-            .await
+        io.resolve_file(&path, &import.path)
             .and_then(|import_path| imports.insert(import.path.to_string(), import_path));
     }
 

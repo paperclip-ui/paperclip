@@ -285,3 +285,51 @@ test_case! {
     "#)
   ]
 }
+
+test_case! {
+  moves_assets_to_out_dir,
+  default_config_with_compiler_options("src", vec![
+    CompilerOptions {
+      target: None,
+      emit: Some(vec!["css".to_string()]),
+      out_dir: Some("out/".to_string()),
+      import_assets_as_modules: None,
+      main_css_file_name: Some("main.css".to_string()),
+      embed_asset_max_size: None,
+      asset_out_dir: Some("assets".to_string()),
+      asset_prefix: None,
+      use_asset_hash_names: None,
+  }
+  ]),
+  "/project",
+  "/project/src/entry.pc",
+  [
+    ("/project/src/entry.pc", r#"
+      import "/project/src/imp.pc" as imp0
+      div {
+        style {
+          color: blue
+        }
+        text "A"
+      }
+    "#),
+    ("/project/src/imp.pc", r#"
+      div {
+        style {
+          color: orange
+        }
+        text "B"
+      }
+  "#)
+  ],
+  [
+    ("/project/out/assets/main.css", r#"
+    /* /project/out/entry.pc.css */ 
+    .856b6f45-6 { color: blue; }
+    /* /project/out/imp.pc.css */ 
+    .e2ff1d5b-5 { color: orange; } 
+    "#)
+  ]
+
+
+}

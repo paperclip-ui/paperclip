@@ -1,5 +1,6 @@
 use super::io::IO;
 use futures::future::{BoxFuture, FutureExt};
+use paperclip_common::fs::{FileReader, FileResolver};
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -15,19 +16,19 @@ impl<'kv> MockFS<'kv> {
     }
 }
 
-impl<'kv> IO for MockFS<'kv> {
-    fn resolve(&self, _from_path: &String, to_path: &String) -> BoxFuture<'static, Option<String>> {
-        let content = Some(to_path.to_string());
+impl<'kv> IO for MockFS<'kv> {}
 
-        async { content }.boxed()
-    }
-    fn read(&self, path: &String) -> BoxFuture<'static, Option<String>> {
-        let content = if let Some(content) = self.files.get(path.as_str()) {
-            Some(content.to_string())
+impl<'kv> FileReader for MockFS<'kv> {
+    fn read_file<'content>(&self, path: &str) -> Option<Box<[u8]>> {
+        if let Some(content) = self.files.get(path) {
+            Some(content.as_bytes().to_vec().into_boxed_slice())
         } else {
             None
-        };
-
-        async { content }.boxed()
+        }
+    }
+}
+impl<'kv> FileResolver for MockFS<'kv> {
+    fn resolve_file(&self, _from_path: &str, to_path: &str) -> Option<String> {
+        Some(to_path.to_string())
     }
 }

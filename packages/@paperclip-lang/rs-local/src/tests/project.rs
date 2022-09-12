@@ -2,11 +2,19 @@ use crate::config::{CompilerOptions, Config};
 use crate::project::Project;
 use crate::project_compiler::ProjectCompiler;
 use futures::executor::block_on;
+use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::graph::graph::Graph;
 use paperclip_parser::graph::test_utils::MockFS;
 use std::collections::HashMap;
 use std::rc::Rc;
+
+struct MockReader;
+impl FileReader for MockReader {
+    fn read_file(&self, path: &str) -> Option<Box<[u8]>> {
+        Some(path.to_string().as_bytes().to_vec().into_boxed_slice())
+    }
+}
 
 macro_rules! test_case {
     ($name:ident, $config: expr, $dir: expr, $main: expr, $input_files: expr, $output_files: expr) => {
@@ -19,12 +27,18 @@ macro_rules! test_case {
 
             block_on(graph.load($main, &files));
             let graph = Rc::new(graph);
+            let mock_reader = MockReader {};
 
             let project = Project {
                 config: Rc::new(config.clone()),
                 graph: graph.clone(),
                 directory: $dir.to_string(),
-                compiler: ProjectCompiler::load(config, graph.clone(), $dir.to_string()),
+                compiler: ProjectCompiler::load(
+                    config,
+                    graph.clone(),
+                    $dir.to_string(),
+                    Rc::new(mock_reader),
+                ),
             };
 
             if let Ok(all_files) = block_on(project.compile()) {
@@ -308,19 +322,11 @@ test_case! {
       import "/project/src/imp.pc" as imp0
       div {
         style {
-          color: blue
+          background: url("./image.png")
         }
         text "A"
       }
-    "#),
-    ("/project/src/imp.pc", r#"
-      div {
-        style {
-          color: orange
-        }
-        text "B"
-      }
-  "#)
+    "#)
   ],
   [
     ("/project/out/assets/main.css", r#"

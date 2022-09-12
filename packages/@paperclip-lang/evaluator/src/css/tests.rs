@@ -1,11 +1,19 @@
 use super::evaluator::evaluate;
 use super::serializer::serialize;
 use futures::executor::block_on;
+use paperclip_common::fs::FileResolver;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::graph::graph;
 use paperclip_parser::graph::test_utils;
 use std::collections::HashMap;
 use std::rc::Rc;
+
+struct MockResolver;
+impl FileResolver for MockResolver {
+    fn resolve_file(&self, _from: &str, _to: &str) -> Option<String> {
+        Some(_to.to_string())
+    }
+}
 
 macro_rules! add_case {
     ($name: ident, $mock_files: expr, $output: expr) => {
@@ -14,12 +22,8 @@ macro_rules! add_case {
             let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
             let mut graph = graph::Graph::new();
             block_on(graph.load("/entry.pc", &mock_fs));
-            let doc = block_on(evaluate(
-                "/entry.pc",
-                &graph,
-                Rc::new(Box::new(|v: &str| v.to_string())),
-            ))
-            .unwrap();
+            let resolver = MockResolver {};
+            let doc = block_on(evaluate("/entry.pc", &graph, &resolver)).unwrap();
             assert_eq!(
                 strip_extra_ws(serialize(&doc).as_str()),
                 strip_extra_ws($output)

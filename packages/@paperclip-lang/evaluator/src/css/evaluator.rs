@@ -1,8 +1,8 @@
 use super::context::{CurrentNode, DocumentContext};
 use super::errors;
 use super::virt;
-use crate::base::types::AssetResolver;
 use crate::core::utils::get_style_namespace;
+use paperclip_common::fs::FileResolver;
 use paperclip_common::id::get_document_id;
 use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph::graph;
@@ -20,10 +20,10 @@ type SelectorCombo = Vec<String>;
 type SelectorCombos = Vec<SelectorCombo>;
 
 // TODO - scan for all tokens and shove in root
-pub async fn evaluate<'asset_resolver>(
+pub async fn evaluate<'asset_resolver, FR: FileResolver>(
     path: &str,
     graph: &graph::Graph,
-    resolve_asset: Rc<Box<AssetResolver>>,
+    file_resolver: &'asset_resolver FR,
 ) -> Result<virt::Document, errors::RuntimeError> {
     let dependencies = &graph.dependencies;
 
@@ -35,19 +35,19 @@ pub async fn evaluate<'asset_resolver>(
         });
     };
 
-    let mut context = DocumentContext::new(path, graph, resolve_asset);
+    let mut context = DocumentContext::new(path, graph, file_resolver);
 
     evaluate_document(&dependency.document, &mut context);
 
     Ok(Rc::try_unwrap(context.document).unwrap().into_inner())
 }
 
-fn evaluate_document(document: &ast::Document, context: &mut DocumentContext) {
+fn evaluate_document<F: FileResolver>(document: &ast::Document, context: &mut DocumentContext<F>) {
     evaluate_tokens(document, context);
     evaluate_document_rules(document, context);
 }
 
-fn evaluate_tokens(document: &ast::Document, context: &mut DocumentContext) {
+fn evaluate_tokens<F: FileResolver>(document: &ast::Document, context: &mut DocumentContext<F>) {
     let atoms = document.get_atoms();
 
     if atoms.len() == 0 {
@@ -75,13 +75,19 @@ fn evaluate_tokens(document: &ast::Document, context: &mut DocumentContext) {
                 .collect(),
         }))
 }
-fn evaluate_document_rules(document: &ast::Document, context: &mut DocumentContext) {
+fn evaluate_document_rules<F: FileResolver>(
+    document: &ast::Document,
+    context: &mut DocumentContext<F>,
+) {
     for item in &document.body {
         evaluate_body_rule(item, context);
     }
 }
 
-fn evaluate_body_rule(item: &ast::DocumentBodyItem, context: &mut DocumentContext) {
+fn evaluate_body_rule<F: FileResolver>(
+    item: &ast::DocumentBodyItem,
+    context: &mut DocumentContext<F>,
+) {
     match item {
         ast::DocumentBodyItem::Component(component) => {
             evaluate_component(component, context);
@@ -96,7 +102,10 @@ fn evaluate_body_rule(item: &ast::DocumentBodyItem, context: &mut DocumentContex
     }
 }
 
-fn evaluate_component(component: &ast::Component, context: &mut DocumentContext) {
+fn evaluate_component<F: FileResolver>(
+    component: &ast::Component,
+    context: &mut DocumentContext<F>,
+) {
     for item in &component.body {
         if let ast::ComponentBodyItem::Render(render) = item {
             evaluate_render_node(&render.node, &mut context.within_component(component));
@@ -104,7 +113,7 @@ fn evaluate_component(component: &ast::Component, context: &mut DocumentContext)
     }
 }
 
-fn evaluate_render_node(node: &ast::RenderNode, context: &mut DocumentContext) {
+fn evaluate_render_node<F: FileResolver>(node: &ast::RenderNode, context: &mut DocumentContext<F>) {
     match node {
         ast::RenderNode::Element(element) => {
             evaluate_element(element, context);
@@ -116,7 +125,7 @@ fn evaluate_render_node(node: &ast::RenderNode, context: &mut DocumentContext) {
     }
 }
 
-fn evaluate_element(element: &ast::Element, context: &mut DocumentContext) {
+fn evaluate_element<F: FileResolver>(element: &ast::Element, context: &mut DocumentContext<F>) {
     let mut el_context = context.within_node(CurrentNode::Element(element));
 
     for item in &element.body {
@@ -134,7 +143,7 @@ fn evaluate_element(element: &ast::Element, context: &mut DocumentContext) {
         }
     }
 }
-fn evaluate_text(element: &ast::TextNode, context: &mut DocumentContext) {
+fn evaluate_text<F: FileResolver>(element: &ast::TextNode, context: &mut DocumentContext<F>) {
     let mut el_context = context.within_node(CurrentNode::TextNode(element));
 
     for item in &element.body {
@@ -147,7 +156,7 @@ fn evaluate_text(element: &ast::TextNode, context: &mut DocumentContext) {
     }
 }
 
-fn evaluate_style(style: &ast::Style, context: &mut DocumentContext) {
+fn evaluate_style<F: FileResolver>(style: &ast::Style, context: &mut DocumentContext<F>) {
     if let Some(variants) = &style.variant_combo {
         let expanded_combo_selectors = collect_style_variant_selectors(variants, context);
         evaluate_variant_styles(&style, variants, &expanded_combo_selectors, context);
@@ -156,11 +165,11 @@ fn evaluate_style(style: &ast::Style, context: &mut DocumentContext) {
     }
 }
 
-fn evaluate_variant_styles(
+fn evaluate_variant_styles<F: FileResolver>(
     style: &ast::Style,
     variants: &Vec<ast::Reference>,
     expanded_combo_selectors: &Vec<Vec<VariantTrigger>>,
-    context: &mut DocumentContext,
+    context: &mut DocumentContext<F>,
 ) {
     let current_component = if let Some(component) = context.current_component {
         component
@@ -305,11 +314,11 @@ fn evaluate_variant_styles(
     }
 }
 
-fn create_condition_rule(
+fn create_condition_rule<F: FileResolver>(
     name: &str,
     container_query: &str,
     rules: Vec<virt::Rule>,
-    context: &mut DocumentContext,
+    context: &mut DocumentContext<F>,
 ) -> virt::ConditionRule {
     virt::ConditionRule {
         id: context.next_id(),
@@ -400,9 +409,9 @@ fn merge_combos(existing_combos: &SelectorCombos, new_items: &Vec<&String>) -> S
     new_combos
 }
 
-fn collect_style_variant_selectors(
+fn collect_style_variant_selectors<F: FileResolver>(
     variant_refs: &Vec<ast::Reference>,
-    context: &mut DocumentContext,
+    context: &mut DocumentContext<F>,
 ) -> Vec<Vec<VariantTrigger>> {
     let mut combo_triggers = vec![];
 
@@ -424,10 +433,10 @@ fn collect_style_variant_selectors(
     combo_triggers
 }
 
-fn collect_triggers(
+fn collect_triggers<F: FileResolver>(
     triggers: &Vec<ast::TriggerBodyItem>,
     into: &mut Vec<VariantTrigger>,
-    context: &mut DocumentContext,
+    context: &mut DocumentContext<F>,
 ) {
     for trigger in triggers {
         match trigger {
@@ -448,11 +457,11 @@ fn collect_triggers(
     }
 }
 
-fn evaluate_atom(atom: &ast::Atom, context: &DocumentContext) -> String {
+fn evaluate_atom<F: FileResolver>(atom: &ast::Atom, context: &DocumentContext<F>) -> String {
     stringify_style_decl_value(&atom.value, context)
 }
 
-fn evaluate_vanilla_style(style: &ast::Style, context: &mut DocumentContext) {
+fn evaluate_vanilla_style<F: FileResolver>(style: &ast::Style, context: &mut DocumentContext<F>) {
     if let Some(style) = create_virt_style(style, context) {
         context
             .document
@@ -462,7 +471,10 @@ fn evaluate_vanilla_style(style: &ast::Style, context: &mut DocumentContext) {
     }
 }
 
-fn create_virt_style(style: &ast::Style, context: &mut DocumentContext) -> Option<virt::StyleRule> {
+fn create_virt_style<F: FileResolver>(
+    style: &ast::Style,
+    context: &mut DocumentContext<F>,
+) -> Option<virt::StyleRule> {
     context
         .current_node
         .clone()
@@ -485,9 +497,9 @@ fn create_virt_style(style: &ast::Style, context: &mut DocumentContext) -> Optio
         })
 }
 
-fn create_style_declarations(
+fn create_style_declarations<F: FileResolver>(
     style: &ast::Style,
-    context: &DocumentContext,
+    context: &DocumentContext<F>,
 ) -> Vec<virt::StyleDeclaration> {
     let mut decls = vec![];
 
@@ -511,9 +523,9 @@ fn create_style_declarations(
     decls
 }
 
-fn evaluate_style_declaration(
+fn evaluate_style_declaration<F: FileResolver>(
     decl: &css_ast::StyleDeclaration,
-    context: &DocumentContext,
+    context: &DocumentContext<F>,
 ) -> virt::StyleDeclaration {
     virt::StyleDeclaration {
         id: "dec".to_string(),
@@ -523,9 +535,9 @@ fn evaluate_style_declaration(
     }
 }
 
-fn stringify_style_decl_value(
+fn stringify_style_decl_value<F: FileResolver>(
     decl: &css_ast::DeclarationValue,
-    context: &DocumentContext,
+    context: &DocumentContext<F>,
 ) -> String {
     match decl {
         css_ast::DeclarationValue::SpacedList(expr) => expr

@@ -1,5 +1,5 @@
 use super::virt;
-use crate::base::types::AssetResolver;
+use paperclip_common::fs::FileResolver;
 use paperclip_common::id::{get_document_id, IDGenerator};
 use paperclip_parser::graph::graph;
 use paperclip_parser::pc::ast;
@@ -27,9 +27,9 @@ impl<'expr> CurrentNode<'expr> {
     }
 }
 
-pub struct DocumentContext<'path, 'graph, 'expr> {
+pub struct DocumentContext<'path, 'graph, 'expr, 'resolve_asset, FR: FileResolver> {
     id_generator: Rc<RefCell<IDGenerator>>,
-    pub resolve_asset: Rc<Box<AssetResolver>>,
+    pub file_resolver: &'resolve_asset FR,
     pub graph: &'graph graph::Graph,
     pub path: &'path str,
     pub current_node: Option<CurrentNode<'expr>>,
@@ -37,11 +37,13 @@ pub struct DocumentContext<'path, 'graph, 'expr> {
     pub document: Rc<RefCell<virt::Document>>,
 }
 
-impl<'path, 'graph, 'expr, 'resolve_asset> DocumentContext<'path, 'graph, 'expr> {
+impl<'path, 'graph, 'expr, 'resolve_asset, FR: FileResolver>
+    DocumentContext<'path, 'graph, 'expr, 'resolve_asset, FR>
+{
     pub fn new(
         path: &'path str,
         graph: &'graph graph::Graph,
-        resolve_asset: Rc<Box<AssetResolver>>,
+        file_resolver: &'resolve_asset FR,
     ) -> Self {
         let document_id = get_document_id(path);
         let id_generator = Rc::new(RefCell::new(IDGenerator::new(document_id)));
@@ -50,7 +52,7 @@ impl<'path, 'graph, 'expr, 'resolve_asset> DocumentContext<'path, 'graph, 'expr>
 
         Self {
             id_generator: id_generator.clone(),
-            resolve_asset,
+            file_resolver,
             graph,
             path,
             current_component: None,
@@ -65,7 +67,7 @@ impl<'path, 'graph, 'expr, 'resolve_asset> DocumentContext<'path, 'graph, 'expr>
     pub fn within_document(&self, document_path: &'path str) -> Self {
         Self {
             id_generator: self.id_generator.clone(),
-            resolve_asset: self.resolve_asset.clone(),
+            file_resolver: self.file_resolver,
             path: document_path,
             graph: self.graph,
             current_node: self.current_node,
@@ -77,7 +79,7 @@ impl<'path, 'graph, 'expr, 'resolve_asset> DocumentContext<'path, 'graph, 'expr>
     pub fn within_component(&self, component: &'expr ast::Component) -> Self {
         Self {
             id_generator: self.id_generator.clone(),
-            resolve_asset: self.resolve_asset.clone(),
+            file_resolver: self.file_resolver,
             graph: self.graph,
             path: self.path,
             current_node: self.current_node,
@@ -88,7 +90,7 @@ impl<'path, 'graph, 'expr, 'resolve_asset> DocumentContext<'path, 'graph, 'expr>
     pub fn within_node(&self, node: CurrentNode<'expr>) -> Self {
         Self {
             id_generator: self.id_generator.clone(),
-            resolve_asset: self.resolve_asset.clone(),
+            file_resolver: self.file_resolver,
             graph: self.graph,
             path: self.path,
             current_node: Some(node),

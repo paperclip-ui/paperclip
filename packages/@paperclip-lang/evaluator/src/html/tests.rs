@@ -2,6 +2,7 @@ use super::evaluator::{evaluate, Options};
 use super::serializer::serialize;
 use crate::base::utils::strip_extra_ws;
 use futures::executor::block_on;
+use paperclip_common::fs::FileResolver;
 use paperclip_parser::graph::graph;
 use paperclip_parser::graph::test_utils;
 use std::collections::HashMap;
@@ -12,6 +13,13 @@ use std::rc::Rc;
 // TODO: slots & inserts
 // TODO: evaluate slot in insert
 
+struct MockResolver;
+impl FileResolver for MockResolver {
+    fn resolve_file(&self, _from: &str, to: &str) -> Option<String> {
+        Some(to.to_string())
+    }
+}
+
 macro_rules! add_case {
     ($name: ident, $input: expr, $output: expr) => {
         #[test]
@@ -19,10 +27,11 @@ macro_rules! add_case {
             let mock_fs = test_utils::MockFS::new(HashMap::from($input));
             let mut graph = graph::Graph::new();
             block_on(graph.load("/entry.pc", &mock_fs));
+            let resolver = MockResolver {};
             let doc = block_on(evaluate(
                 "/entry.pc",
                 &graph,
-                Rc::new(Box::new(|v: &str| v.to_string())),
+                &resolver,
                 Options {
                     include_components: true,
                 },

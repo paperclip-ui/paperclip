@@ -1,5 +1,6 @@
 use super::config::{CompilerOptions, Config};
 use anyhow::Result;
+use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_evaluator::css::evaluator::evaluate as evaluate_css;
 use paperclip_evaluator::css::serializer::serialize as serialize_css;
 use paperclip_evaluator::html::evaluator::{evaluate as evaluate_html, Options as HTMLOptions};
@@ -15,10 +16,20 @@ use std::path::Path;
 use std::rc::Rc;
 use textwrap::indent;
 
-pub struct TargetCompiler {
+struct TargetCompilerResolver<FR: FileReader> {
+    file_reader: Rc<FR>,
+}
+impl<FR: FileReader> FileResolver for TargetCompilerResolver<FR> {
+    fn resolve_file(&self, from: &str, to: &str) -> Option<String> {
+        Some("".to_string())
+    }
+}
+
+pub struct TargetCompiler<FR: FileReader> {
     options: CompilerOptions,
     project_dir: String,
     all_compiled_css: RefCell<BTreeMap<String, String>>,
+    file_resolver: TargetCompilerResolver<FR>,
     config: Config,
 }
 
@@ -26,13 +37,19 @@ struct TranslateOptions {
     global_imports: Vec<String>,
 }
 
-impl<'options> TargetCompiler {
+impl<'options, FR: FileReader> TargetCompiler<FR> {
     // TODO: load bin
-    pub fn load(options: CompilerOptions, config: Config, project_dir: String) -> Self {
+    pub fn load(
+        options: CompilerOptions,
+        config: Config,
+        project_dir: String,
+        file_reader: Rc<FR>,
+    ) -> Self {
         Self {
             options,
             config,
             all_compiled_css: RefCell::new(BTreeMap::new()),
+            file_resolver: TargetCompilerResolver { file_reader },
             project_dir,
         }
     }
@@ -40,7 +57,9 @@ impl<'options> TargetCompiler {
     pub async fn compile_graph(&self, graph: &Graph) -> Result<BTreeMap<String, String>> {
         let mut all_files: BTreeMap<String, String> = BTreeMap::new();
         for (path, _) in &graph.dependencies {
-            let files = self.compile_dependency(path, &graph).await?;
+            let files = self
+                .compile_dependency(path, &graph, &self.file_resolver)
+                .await?;
             for (file_path, content) in files {
                 if self.options.main_css_file_name != None && file_path.contains(".css") {
                     self.all_compiled_css
@@ -67,12 +86,15 @@ impl<'options> TargetCompiler {
         Ok(all_files)
     }
 
-    async fn compile_dependency(
+    async fn compile_dependency<F: FileResolver>(
         &self,
         path: &str,
         graph: &Graph,
+        file_resolver: &F,
     ) -> Result<HashMap<String, String>> {
-        let data = self.translate_with_options(path, graph).await?;
+        let data = self
+            .translate_with_options(path, graph, file_resolver)
+            .await?;
 
         let mut files = HashMap::new();
         let out_file = &self.resolve_out_file(path);
@@ -85,14 +107,13 @@ impl<'options> TargetCompiler {
         Ok(files)
     }
 
-    async fn translate_with_options(
+    async fn translate_with_options<F: FileResolver>(
         &self,
         path: &str,
         graph: &Graph,
+        file_resolver: &F,
     ) -> Result<HashMap<String, String>> {
         let mut data = HashMap::new();
-
-        let resolve_asset = Rc::new(Box::new(|v: &str| v.to_string()));
 
         if let Some(emit) = &self.options.emit {
             for ext in emit {
@@ -100,7 +121,7 @@ impl<'options> TargetCompiler {
                     ext,
                     path,
                     graph,
-                    resolve_asset.clone(),
+                    file_resolver,
                     self.get_ext_translate_options(ext, path, graph),
                 )
                 .await?
@@ -185,55 +206,41 @@ impl<'options> TargetCompiler {
     }
 }
 
-async fn translate<AssetResolver>(
+async fn translate<F: FileResolver>(
     into: &str,
     path: &str,
     graph: &Graph,
-    resolve_asset: Rc<Box<AssetResolver>>,
+    file_resolver: &F,
     options: TranslateOptions,
-) -> Result<Option<String>>
-where
-    AssetResolver: Fn(&str) -> String + 'static,
-{
+) -> Result<Option<String>> {
     Ok(match into {
-        "css" => Some(translate_css(path, graph, resolve_asset).await?),
-        "html" => Some(translate_html(path, graph, resolve_asset, options).await?),
+        "css" => Some(translate_css(path, graph, file_resolver).await?),
+        "html" => Some(translate_html(path, graph, file_resolver, options).await?),
         _ => None,
     })
 }
 
-async fn translate_css<AssetResolver>(
+async fn translate_css<F: FileResolver>(
     path: &str,
     graph: &Graph,
-    resolve_asset: Rc<Box<AssetResolver>>,
-) -> Result<String>
-where
-    AssetResolver: Fn(&str) -> String + 'static,
-{
+    file_resolver: &F,
+) -> Result<String> {
     Ok(serialize_css(
-        &evaluate_css(
-            path,
-            graph,
-            Rc::new(Box::new(move |v: &str| resolve_asset(v))),
-        )
-        .await?,
+        &evaluate_css(path, graph, file_resolver).await?,
     ))
 }
 
-async fn translate_html<AssetResolver>(
+async fn translate_html<F: FileResolver>(
     path: &str,
     graph: &Graph,
-    resolve_asset: Rc<Box<AssetResolver>>,
+    file_resolver: &F,
     options: TranslateOptions,
-) -> Result<String>
-where
-    AssetResolver: Fn(&str) -> String + 'static,
-{
+) -> Result<String> {
     let body = serialize_html(
         &evaluate_html(
             path,
             graph,
-            Rc::new(Box::new(move |v: &str| resolve_asset(v))),
+            file_resolver,
             HTMLOptions {
                 include_components: false,
             },

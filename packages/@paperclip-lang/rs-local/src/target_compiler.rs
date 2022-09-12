@@ -7,6 +7,7 @@ use paperclip_evaluator::html::serializer::serialize as serialize_html;
 use paperclip_parser::graph::graph::Graph;
 use path_absolutize::*;
 use std::cell::RefCell;
+use std::collections::BTreeMap;
 use std::collections::HashMap;
 use std::path::Path;
 use std::rc::Rc;
@@ -39,7 +40,7 @@ macro_rules! join_path {
 pub struct TargetCompiler {
     options: CompilerOptions,
     project_dir: String,
-    all_compiled_css: RefCell<HashMap<String, String>>,
+    all_compiled_css: RefCell<BTreeMap<String, String>>,
     config: Config,
 }
 
@@ -53,13 +54,13 @@ impl<'options> TargetCompiler {
         Self {
             options,
             config,
-            all_compiled_css: RefCell::new(HashMap::new()),
+            all_compiled_css: RefCell::new(BTreeMap::new()),
             project_dir,
         }
     }
 
-    pub async fn compile_graph(&self, graph: &Graph) -> Result<HashMap<String, String>> {
-        let mut all_files = HashMap::new();
+    pub async fn compile_graph(&self, graph: &Graph) -> Result<BTreeMap<String, String>> {
+        let mut all_files: BTreeMap<String, String> = BTreeMap::new();
         for (path, _) in &graph.dependencies {
             let files = self.compile_dependency(path, &graph).await?;
             for (file_path, content) in files {
@@ -71,6 +72,18 @@ impl<'options> TargetCompiler {
                     all_files.insert(file_path.to_string(), content.to_string());
                 }
             }
+        }
+
+        if let Some(main_css_file_path) = &self.get_main_css_file_path() {
+            all_files.insert(
+                main_css_file_path.to_string(),
+                self.all_compiled_css
+                    .borrow()
+                    .iter()
+                    .map(|(key, content)| format!("/* {} */\n{}", key, content))
+                    .collect::<Vec<String>>()
+                    .join("\n\n"),
+            );
         }
 
         Ok(all_files)

@@ -237,6 +237,7 @@ test_case! {
   "/project/src/entry.pc",
   [
     ("/project/src/entry.pc", r#"
+      import "/project/src/imp.pc" as imp0
       div {
         style {
           color: blue
@@ -261,12 +262,26 @@ test_case! {
           <link rel="stylesheet" href="/project/out/assets/main.css">
         </head>
         <body>
-          <div class="856b6f45-5"> A </div>
+          <div class="856b6f45-6"> A </div>
         </body>
       </html>
     "#),
-    ("/entry.pc.css", r#"
-      .A-b-80f4925f { color: blue; }
+    ("/project/out/imp.pc.html", r#"
+      <!doctype html>
+      <html> 
+        <head>
+          <link rel="stylesheet" href="/project/out/assets/main.css">
+        </head>
+        <body>
+          <div class="e2ff1d5b-5"> B </div>
+        </body>
+      </html>
+    "#),
+    ("/project/out/assets/main.css", r#"
+    /* /project/out/entry.pc.css */ 
+    .856b6f45-6 { color: blue; }
+    /* /project/out/imp.pc.css */ 
+    .e2ff1d5b-5 { color: orange; } 
     "#)
   ]
 }

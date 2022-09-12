@@ -1,10 +1,12 @@
 use crate::config::{CompilerOptions, Config};
-use crate::project::Project;
+use crate::project::{CompileOptions, Project};
 use crate::project_compiler::ProjectCompiler;
+use crate::project_io::ProjectIO;
 use futures::executor::block_on;
 use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::graph::graph::Graph;
+use paperclip_parser::graph::io::IO as GraphIO;
 use paperclip_parser::graph::test_utils::MockFS;
 use path_absolutize::*;
 use std::collections::HashMap;
@@ -12,6 +14,9 @@ use std::path::Path;
 use std::rc::Rc;
 
 struct MockIO;
+impl GraphIO for MockIO {}
+impl ProjectIO for MockIO {}
+
 impl FileReader for MockIO {
     fn read_file(&self, path: &str) -> Option<Box<[u8]>> {
         Some(path.to_string().as_bytes().to_vec().into_boxed_slice())
@@ -46,21 +51,17 @@ macro_rules! test_case {
 
             block_on(graph.load($main, &files));
             let graph = Rc::new(graph);
-            let mock_io = MockIO {};
+            let io = Rc::new(MockIO {});
 
             let project = Project {
+                io: io.clone(),
                 config: config.clone(),
                 graph: graph.clone(),
                 directory: $dir.to_string(),
-                compiler: ProjectCompiler::load(
-                    config.clone(),
-                    graph.clone(),
-                    $dir.to_string(),
-                    Rc::new(mock_io),
-                ),
+                compiler: ProjectCompiler::load(config.clone(), $dir.to_string(), io.clone()),
             };
 
-            if let Ok(all_files) = block_on(project.compile()) {
+            if let Ok(all_files) = block_on(project.compile(CompileOptions { watch: false })) {
                 let expected_files = HashMap::from($output_files);
                 for (key, content) in all_files {
                     if let Some(expected_content) = expected_files.get(key.as_str()) {

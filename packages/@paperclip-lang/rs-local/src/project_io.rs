@@ -3,6 +3,7 @@ use paperclip_parser::graph::io::IO as GraphIO;
 use path_absolutize::*;
 use std::fs;
 use std::path::Path;
+use wax::Glob;
 
 pub trait ProjectIO: GraphIO {}
 

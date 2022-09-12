@@ -1,21 +1,20 @@
-use super::config::{CompilerOptions, Config};
+use super::config::Config;
+use super::project_io::ProjectIO;
 use super::target_compiler::TargetCompiler;
 use anyhow::Result;
-use paperclip_common::fs::FileReader;
-use paperclip_common::fs::FileResolver;
-use paperclip_parser::graph::graph::{Dependency, Graph};
+use paperclip_parser::graph::graph::Graph;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-pub struct ProjectCompiler<IO: FileReader + FileResolver> {
+pub struct ProjectCompiler<IO: ProjectIO> {
     targets: Vec<TargetCompiler<IO>>,
     config: Rc<Config>,
-    graph: Rc<Graph>,
     project_dir: String,
+    io: Rc<IO>,
 }
 
-impl<IO: FileReader + FileResolver> ProjectCompiler<IO> {
-    pub fn load(config: Rc<Config>, graph: Rc<Graph>, project_dir: String, io: Rc<IO>) -> Self {
+impl<IO: ProjectIO> ProjectCompiler<IO> {
+    pub fn load(config: Rc<Config>, project_dir: String, io: Rc<IO>) -> Self {
         Self {
             targets: if let Some(options) = &config.compiler_options {
                 options
@@ -32,15 +31,15 @@ impl<IO: FileReader + FileResolver> ProjectCompiler<IO> {
             } else {
                 vec![]
             },
+            io: io.clone(),
             project_dir,
             config: config.clone(),
-            graph,
         }
     }
-    pub async fn compile(&self) -> Result<HashMap<String, String>> {
+    pub async fn compile_graph(&self, graph: &Graph) -> Result<HashMap<String, String>> {
         let mut all_files = HashMap::new();
         for target in &self.targets {
-            all_files.extend(target.compile_graph(&self.graph).await?);
+            all_files.extend(target.compile_graph(graph).await?);
         }
 
         Ok(all_files)

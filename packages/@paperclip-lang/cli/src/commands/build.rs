@@ -1,7 +1,7 @@
 use anyhow::Result;
 use clap::Args;
 use paperclip_local::config::DEFAULT_CONFIG_NAME;
-use paperclip_local::project::Project;
+use paperclip_local::project::{CompileOptions, Project};
 use std::env;
 use std::fs::File;
 use std::io::prelude::*;
@@ -28,7 +28,9 @@ pub async fn build(args: BuildArgs) -> Result<()> {
     )
     .await?;
 
-    let files = project.compile().await?;
+    let files = project
+        .compile(CompileOptions { watch: args.watch })
+        .await?;
 
     for (path, content) in files {
         println!("✍🏻  {}", path);

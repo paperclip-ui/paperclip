@@ -30,7 +30,7 @@ impl Project {
 
     /// Compiles the project given the config
     pub async fn compile(&self) -> Result<()> {
-        self.compiler.compile_all().await?;
+        self.compiler.compile().await?;
         Ok(())
     }
 }
@@ -43,11 +43,12 @@ async fn load_project(directory: &str, file_name: Option<String>) -> Result<Proj
     load_project_pc_files(&mut graph, graph_io, &config, directory).await;
     let graph = Rc::new(graph);
 
+
     Ok(Project {
         config: config.clone(),
         graph: graph.clone(),
         directory: String::from(directory),
-        compiler: ProjectCompiler::load(config.clone(), graph.clone()),
+        compiler: ProjectCompiler::load(config.as_ref().clone(), graph.clone(), directory.to_string()),
     })
 }
 

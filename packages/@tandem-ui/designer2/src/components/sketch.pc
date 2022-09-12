@@ -1,0 +1,11 @@
+component Test {
+  render div {
+    style {
+      color: red
+    }
+    text "Hello world"
+  }
+}
+
+
+Test

@@ -3,11 +3,10 @@ use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
-use std::rc::Rc;
 
 pub const DEFAULT_CONFIG_NAME: &str = "paperclip.config.json";
 
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct Config {
     /// source directory where *.pc files live
     #[serde(rename = "srcDir")]
@@ -23,10 +22,10 @@ pub struct Config {
 
     /// options for the output settings
     #[serde(rename = "compilerOptions")]
-    pub compiler_options: Option<Vec<Rc<CompilerOptions>>>,
+    pub compiler_options: Option<Vec<CompilerOptions>>,
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct CompilerOptions {
     /// target compiler to use. Default is all of the ones installed.
     pub target: Option<String>,

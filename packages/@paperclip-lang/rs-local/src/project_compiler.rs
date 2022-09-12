@@ -6,33 +6,33 @@ use std::rc::Rc;
 
 pub struct ProjectCompiler {
     targets: Vec<TargetCompiler>,
-    config: Rc<Config>,
+    config: Config,
     graph: Rc<Graph>,
+    project_dir: String
 }
 
 impl ProjectCompiler {
-    pub fn load(config: Rc<Config>, graph: Rc<Graph>) -> Self {
+    pub fn load(config: Config, graph: Rc<Graph>, project_dir: String) -> Self {
         Self {
             targets: if let Some(options) = &config.compiler_options {
                 options
                     .iter()
-                    .map(|options| TargetCompiler::load(options.clone()))
+                    .map(|options| TargetCompiler::load(options.clone(), config.clone()))
                     .collect()
             } else {
                 vec![]
             },
+            project_dir,
             config,
             graph,
         }
     }
-    pub async fn compile_all(&self) -> Result<()> {
+    pub async fn compile(&self) -> Result<()> {
         // TODO - return iterable
-        for (path, dependency) in &self.graph.dependencies {
-            for target in &self.targets {
-                let compiled = target.compile_dependency(path, &self.graph).await?;
-                // TODO - emit stream
-            }
+        for target in &self.targets {
+            target.compile_graph(&self.graph, &self.project_dir).await?;
         }
+        
         Ok(())
     }
 }

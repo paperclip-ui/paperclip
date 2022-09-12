@@ -1,5 +1,5 @@
-use super::config::Config;
-use super::project::Project;
+use crate::config::Config;
+use crate::project::Project;
 use futures::executor::block_on;
 use std::path::Path;
 use std::rc::Rc;

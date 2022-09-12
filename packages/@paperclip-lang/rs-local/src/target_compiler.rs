@@ -1,45 +1,88 @@
 use super::config::{CompilerOptions, Config};
 use anyhow::Result;
-use futures::Future;
 use paperclip_evaluator::css::evaluator::evaluate as evaluate_css;
 use paperclip_evaluator::css::serializer::serialize as serialize_css;
 use paperclip_evaluator::html::evaluator::{evaluate as evaluate_html, Options as HTMLOptions};
 use paperclip_evaluator::html::serializer::serialize as serialize_html;
-use paperclip_parser::graph::graph::{Dependency, Graph};
+use paperclip_parser::graph::graph::{Graph};
 use std::collections::HashMap;
 use std::rc::Rc;
+use std::path::Path;
+use path_absolutize::*;
 
 pub struct TargetCompiler {
-    options: Rc<CompilerOptions>,
+    options: CompilerOptions,
+    config: Config
 }
-
-type AssetResolver = dyn Fn(&str) -> String;
 impl<'options> TargetCompiler {
     // TODO: load bin
-    pub fn load(options: Rc<CompilerOptions>) -> Self {
-        Self { options }
+    pub fn load(options: CompilerOptions, config: Config) -> Self {
+        Self { options, config }
     }
-    pub async fn compile_dependency(
-        &self,
-        path: &str,
-        graph: &Graph,
-    ) -> Result<HashMap<String, String>> {
-        let options = self.options.as_ref();
 
-        let mut data = HashMap::new();
+    pub async fn compile_graph(&self, graph: &Graph, project_dir: &String) -> Result<HashMap<String, String>> {
 
-        let resolve_asset = Rc::new(Box::new(|v: &str| v.to_string()));
-
-        if let Some(emit) = &options.emit {
-            for ext in emit {
-                if let Some(code) = translate(ext, path, graph, resolve_asset.clone()).await? {
-                    data.insert(ext.to_string(), code);
-                }
-            }
+        let mut all_files = HashMap::new();
+        for (path, _) in &graph.dependencies {
+            let files = compile_dependency(path, &graph, &self.options, project_dir).await?;
+            all_files.extend(files);
         }
 
-        Ok(data)
+        Ok(all_files)
     }
+}
+
+async fn compile_dependency(path: &str, graph: &Graph, options: &CompilerOptions, project_dir: &String) -> Result<HashMap<String, String>> {
+    let data = translate_with_options(path, graph, &options).await?;
+
+        let mut files = HashMap::new();
+        let out_file = resolve_out_file(path, &options.out_dir, project_dir);
+
+        for (ext, content) in data {
+            let compiled_file = format!("{}.{}", out_file, ext);
+            files.insert(compiled_file, content);
+        }
+
+
+        Ok(files)
+}
+
+async fn translate_with_options(path: &str, graph: &Graph, options: &CompilerOptions) -> Result<HashMap<String, String>> {
+
+    let mut data = HashMap::new();
+
+    let resolve_asset = Rc::new(Box::new(|v: &str| v.to_string()));
+
+    if let Some(emit) = &options.emit {
+        for ext in emit {
+            if let Some(code) = translate(ext, path, graph, resolve_asset.clone()).await? {
+                data.insert(ext.to_string(), code);
+            }
+        }
+    }
+
+    Ok(data)
+}
+
+
+fn resolve_out_file(path: &str, out_dir: &Option<String>, project_dir: &String) -> String {
+
+    let out_dir = if let Some(out_dir) = out_dir {
+        String::from(Path::new(&project_dir)
+        .join(out_dir.clone())
+        .absolutize()
+        .unwrap()
+        .to_str()
+        .unwrap())
+    } else {
+        String::from(Path::new(project_dir.as_str())
+        .absolutize()
+        .unwrap()
+        .to_str()
+        .unwrap())
+    };
+
+    path.replace(project_dir, out_dir.as_str()).to_string()
 }
 
 async fn translate<AssetResolver>(

@@ -27,11 +27,5 @@ pub async fn build(args: BuildArgs) -> Result<()> {
     .await?;
 
     project.compile().await?;
-
-    println!("RUN");
-
-    // project.compile
-
-    // println!("BUILD IT {:?}", args);
     Ok(())
 }

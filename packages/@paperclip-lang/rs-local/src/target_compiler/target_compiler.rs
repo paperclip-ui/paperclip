@@ -64,25 +64,25 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
         }
     }
 
-    pub async fn compile_graph(&self, graph: &Graph) -> Result<BTreeMap<String, String>> {
-        let mut all_files: BTreeMap<String, String> = BTreeMap::new();
-        for (path, _) in &graph.dependencies {
-            let files = self
-                .compile_dependency(path, &graph, &self.file_resolver)
+    pub async fn compile_files(&self, file_paths: &Vec<String>, graph: &Graph) -> Result<BTreeMap<String, String>> {
+        let mut all_compiled_files: BTreeMap<String, String> = BTreeMap::new();
+        for dep_file_path in file_paths {
+            let compiled_files = self
+                .compile_dependency(dep_file_path, &graph, &self.file_resolver)
                 .await?;
-            for (file_path, content) in files {
+            for (file_path, content) in compiled_files {
                 if self.context.options.main_css_file_name != None && file_path.contains(".css") {
                     self.all_compiled_css
                         .borrow_mut()
                         .insert(file_path.to_string(), content.to_string());
                 } else {
-                    all_files.insert(file_path.to_string(), content.to_string());
+                    all_compiled_files.insert(file_path.to_string(), content.to_string());
                 }
             }
         }
 
         if let Some(main_css_file_path) = &self.context.get_main_css_file_path() {
-            all_files.insert(
+            all_compiled_files.insert(
                 main_css_file_path.to_string(),
                 self.all_compiled_css
                     .borrow()
@@ -93,7 +93,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
             );
         }
 
-        Ok(all_files)
+        Ok(all_compiled_files)
     }
 
     async fn compile_dependency<F: FileResolver>(

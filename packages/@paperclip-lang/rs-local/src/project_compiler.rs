@@ -37,11 +37,16 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
         }
     }
     pub async fn compile_graph(&self, graph: &Graph) -> Result<HashMap<String, String>> {
-        let mut all_files = HashMap::new();
+        self.compile_files(&graph.dependencies.keys().map(|key| {
+            key.to_string()
+        }).collect::<Vec<String>>(), graph).await
+    }
+    pub async fn compile_files(&self, files: &Vec<String>, graph: &Graph) -> Result<HashMap<String, String>> {
+        let mut compiled_files = HashMap::new();
         for target in &self.targets {
-            all_files.extend(target.compile_graph(graph).await?);
+            compiled_files.extend(target.compile_files(files, graph).await?);
         }
 
-        Ok(all_files)
+        Ok(compiled_files)
     }
 }

@@ -1,0 +1,21 @@
+div {
+  text "Hello world"
+}
+
+public style defaultFont {
+  font-family: Helvetica
+}
+
+public style spacing {
+  padding: 12px
+}
+
+public component Container {
+  render div root {
+    slot children
+  }
+}
+
+public trigger mobile {
+  "@media screen and (max-width: 600px)"
+}

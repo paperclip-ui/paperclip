@@ -14,10 +14,25 @@ use std::pin::Pin;
 use wax::Glob;
 
 #[derive(Debug)]
-pub enum WatchEvent {
-    Create(String),
-    Remove(String),
-    Change(String),
+pub enum WatchEventKind {
+    Create,
+    Remove,
+    Change
+}
+
+#[derive(Debug)]
+pub struct WatchEvent {
+    pub kind: WatchEventKind,
+    pub path: String
+}
+
+impl WatchEvent {
+    pub fn new(kind: WatchEventKind, path: &str) -> Self {
+        Self {
+            kind,
+            path: path.to_string()
+        }
+    }
 }
 
 pub trait ProjectIO: GraphIO {
@@ -38,16 +53,16 @@ impl ProjectIO for LocalIO {
             pin_mut!(s);
             while let Some(Ok(event)) = s.next().await {
                 for path in &event.paths {
-                    let part = path.clone().into_os_string().into_string().unwrap();
+                    let path = path.clone().into_os_string().into_string().unwrap();
                     match &event.kind {
                         notify::EventKind::Modify(notify::event::ModifyKind::Data(_)) => {
-                            yield WatchEvent::Change(part.to_string())
+                            yield WatchEvent::new(WatchEventKind::Change, &path);
                         }
                         notify::EventKind::Create(_) => {
-                            yield WatchEvent::Create(part.to_string())
+                            yield WatchEvent::new(WatchEventKind::Create, &path);
                         }
                         notify::EventKind::Remove(_) => {
-                            yield WatchEvent::Remove(part.to_string())
+                            yield WatchEvent::new(WatchEventKind::Remove, &path);
                         },
                         _ => {}
                     }

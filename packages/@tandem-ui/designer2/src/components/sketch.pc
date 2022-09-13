@@ -1,13 +1,12 @@
-trigger mobile {
-  "@media screen and (max-width: 800px)"
-}
+import "./test.pc" as test
+
 
 component Message {
   variant testt trigger {
-    mobile
+    test.mobile
   }
   render div {
-    style variant testt {
+    style extends test.defaultFound, test.spacing {
       color: white
       background: black
       font-family: sans-serif
@@ -15,6 +14,9 @@ component Message {
       flex-direction: column
       gap: 14px
     }
+    style variant testt {
+      font-size: 32px
+    } 
     slot children
   }
 }

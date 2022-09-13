@@ -39,19 +39,66 @@ impl Graph {
         );
     }
     pub async fn load_files<TIO: IO>(&mut self, paths: Vec<String>, io: &TIO) {
+        let loaded = Arc::new(Mutex::new(HashSet::new()));
         for path in paths {
-            self.load_file(path, io).await;
+            self.load_file2(&path, io, loaded.clone()).await;
         }
     }
-    pub async fn load_file<TIO: IO>(&mut self, path: String, io: &TIO) {
+    pub fn get_immediate_dependents(&self, path: &str) -> Vec<&Dependency> {
+        let mut dependents = vec![];
+        for (file_path, dep) in &self.dependencies {
+            if dep.imports.values().any(|resolved_path| {
+                resolved_path == path
+            }) {
+                dependents.push(dep);
+            }
+        }
+        dependents
+    }
+    pub fn get_all_dependents(&self, path: &str) -> Vec<&Dependency> {
+        let mut all_dependents: Vec<&Dependency> = vec![];
+        let mut used: HashSet<&str> = HashSet::new();
+        let mut pool: Vec<&str> = vec![path];
+
+        while let Some(path) = pool.pop() {
+            let immediate_dependents = self.get_immediate_dependents(path);
+            for dep in immediate_dependents {
+                if !used.contains(&path) {
+                    all_dependents.push(dep);
+                    pool.push(&dep.path);
+                }
+            }
+        }
+
+        all_dependents
+    }
+    pub async fn load_file<TIO: IO>(&mut self, path: &str, io: &TIO) -> HashMap<String, &Dependency> {
+        self.load_file2(path, io, Arc::new(Mutex::new(HashSet::new()))).await
+    }
+    async fn load_file2<TIO: IO>(&mut self, path: &str, io: &TIO, loaded: Arc<Mutex<HashSet<String>>>) -> HashMap<String, &Dependency> {
+        let new_dependencies = load_dependencies_wrapper::<TIO>(
+            path.to_string(),
+            Arc::new(&io),
+            loaded
+        )
+        .await;
+
+        let new_dep_keys = new_dependencies.keys().map(|key| {
+            key.to_string()
+        }).collect::<Vec<String>>();
+
         self.dependencies.extend(
-            load_dependencies_wrapper::<TIO>(
-                path.clone(),
-                Arc::new(&io),
-                Arc::new(Mutex::new(HashSet::new())),
-            )
-            .await,
+            new_dependencies
         );
+        
+
+        let mut ret = HashMap::new();
+
+        for file_path in new_dep_keys {
+            ret.insert(file_path.to_string(), self.dependencies.get(&file_path).unwrap());
+        }
+
+        ret
     }
 }
 

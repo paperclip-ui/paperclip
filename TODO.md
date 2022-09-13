@@ -1,18 +1,11 @@
-#### Milestone: Compiled assets
+#### On-deck
 
-- Compile HTML & CSS
-- File watcher
-  - debounce
-  - compile on change
-
-Done?
-
-Ensure that that all compiler flags are implemented
-
-#### Milestone: React compiler
-
-- async imports
-- do without webpack
+- Monaco colors
+- React compiler (needed to start on designer)
+- Realtime previews
+  - Rust server for this
+    - need to figure out RPC
+  - FE should take OTs
 
 #### Milestone: Editor start
 

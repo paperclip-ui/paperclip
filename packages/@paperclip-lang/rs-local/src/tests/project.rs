@@ -1,7 +1,7 @@
 use crate::config::{CompilerOptions, Config};
 use crate::project::{CompileOptions, Project};
 use crate::project_compiler::ProjectCompiler;
-use crate::project_io::{ProjectIO, WatchEvent};
+use crate::project_io::{ProjectIO, WatchEvent, WatchEventKind};
 use async_trait::async_trait;
 use futures::executor::block_on;
 use futures_util::pin_mut;
@@ -18,6 +18,7 @@ use std::rc::Rc;
 use async_stream::stream;
 use futures_core::stream::Stream;
 use futures_util::stream::StreamExt;
+use std::cell::RefCell;
 
 
 struct MockIO;
@@ -28,7 +29,7 @@ impl ProjectIO for MockIO {
   type Str = impl Stream<Item = WatchEvent>;
     fn watch(&self, dir: &str) -> Self::Str {
       stream! {
-        yield WatchEvent::Create("nada".to_string());
+        yield WatchEvent::new(WatchEventKind::Create, &"nada".to_string());
       }
     }
 }
@@ -66,7 +67,7 @@ macro_rules! test_case {
             let files = MockFS::new(HashMap::from($input_files));
 
             block_on(graph.load($main, &files));
-            let graph = Rc::new(graph);
+            let graph = Rc::new(RefCell::new(graph));
             let io = Rc::new(MockIO {});
 
             let project = Project {

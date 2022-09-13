@@ -1,15 +1,61 @@
+use super::watch_local::async_watch;
+use async_stream::stream;
+use async_trait::async_trait;
+use futures_core::stream::Stream;
+use futures_util::pin_mut;
+use futures_util::stream::StreamExt;
+use notify;
 use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_parser::graph::io::IO as GraphIO;
 use path_absolutize::*;
 use std::fs;
 use std::path::Path;
+use std::pin::Pin;
 use wax::Glob;
 
-pub trait ProjectIO: GraphIO {}
+#[derive(Debug)]
+pub enum WatchEvent {
+    Create(String),
+    Remove(String),
+    Change(String),
+}
+
+pub trait ProjectIO: GraphIO {
+    type Str: Stream<Item = WatchEvent>;
+    fn watch(&self, dir: &str) -> Self::Str;
+}
 
 pub struct LocalIO;
 impl GraphIO for LocalIO {}
-impl ProjectIO for LocalIO {}
+
+impl ProjectIO for LocalIO {
+    type Str = impl Stream<Item = WatchEvent>;
+    fn watch(&self, directory: &str) -> Self::Str {
+        let dir = directory.to_string();
+        stream! {
+
+            let mut s = async_watch(dir);
+            pin_mut!(s);
+            while let Some(Ok(event)) = s.next().await {
+                for path in &event.paths {
+                    let part = path.clone().into_os_string().into_string().unwrap();
+                    match &event.kind {
+                        notify::EventKind::Modify(notify::event::ModifyKind::Data(_)) => {
+                            yield WatchEvent::Change(part.to_string())
+                        }
+                        notify::EventKind::Create(_) => {
+                            yield WatchEvent::Create(part.to_string())
+                        }
+                        notify::EventKind::Remove(_) => {
+                            yield WatchEvent::Remove(part.to_string())
+                        },
+                        _ => {}
+                    }
+                }
+            }
+        }
+    }
+}
 
 impl FileReader for LocalIO {
     fn read_file(&self, path: &str) -> Option<Box<[u8]>> {

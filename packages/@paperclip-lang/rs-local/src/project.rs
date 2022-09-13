@@ -2,6 +2,10 @@ use super::config::Config;
 pub use super::project_compiler::ProjectCompiler;
 use super::project_io::{LocalIO, ProjectIO};
 use anyhow::Result;
+use async_stream::try_stream;
+use futures_core::stream::Stream;
+use futures_util::pin_mut;
+use futures_util::stream::StreamExt;
 use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_parser::graph::graph::Graph;
 use std::collections::HashMap;
@@ -30,12 +34,26 @@ pub struct Project<IO: ProjectIO> {
 }
 
 impl<IO: ProjectIO> Project<IO> {
+    // type Str = impl Stream<Item = Result<(String, String)>>;
     /// Compiles the project given the config
-    pub async fn compile(&self, options: CompileOptions) -> Result<HashMap<String, String>> {
-        let files = self.compiler.compile_graph(&self.graph).await?;
-        if options.watch {}
+    pub fn compile(
+        &self,
+        options: CompileOptions,
+    ) -> impl Stream<Item = Result<(String, String), anyhow::Error>> + '_ {
+        try_stream! {
+            let files = self.compiler.compile_graph(&self.graph).await?;
 
-        Ok(files)
+            for (key, value) in files {
+                yield (key.to_string(), value.to_string());
+            }
+            if options.watch {
+                let s = self.io.watch(&self.directory);
+                pin_mut!(s);
+                while let Some(value) = s.next().await {
+                    println!("{:?}", value);
+                }
+            }
+        }
     }
 }
 

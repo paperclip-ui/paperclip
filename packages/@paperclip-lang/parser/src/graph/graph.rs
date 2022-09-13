@@ -40,15 +40,18 @@ impl Graph {
     }
     pub async fn load_files<TIO: IO>(&mut self, paths: Vec<String>, io: &TIO) {
         for path in paths {
-            self.dependencies.extend(
-                load_dependencies_wrapper::<TIO>(
-                    path.clone(),
-                    Arc::new(&io),
-                    Arc::new(Mutex::new(HashSet::new())),
-                )
-                .await,
-            );
+            self.load_file(path, io).await;
         }
+    }
+    pub async fn load_file<TIO: IO>(&mut self, path: String, io: &TIO) {
+        self.dependencies.extend(
+            load_dependencies_wrapper::<TIO>(
+                path.clone(),
+                Arc::new(&io),
+                Arc::new(Mutex::new(HashSet::new())),
+            )
+            .await,
+        );
     }
 }
 

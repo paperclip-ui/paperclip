@@ -1,5 +1,8 @@
 use anyhow::Result;
 use clap::Args;
+use futures_core::stream::Stream;
+use futures_util::pin_mut;
+use futures_util::stream::StreamExt;
 use paperclip_local::config::DEFAULT_CONFIG_NAME;
 use paperclip_local::project::{CompileOptions, Project};
 use std::env;
@@ -28,11 +31,9 @@ pub async fn build(args: BuildArgs) -> Result<()> {
     )
     .await?;
 
-    let files = project
-        .compile(CompileOptions { watch: args.watch })
-        .await?;
-
-    for (path, content) in files {
+    let s = project.compile(CompileOptions { watch: args.watch });
+    pin_mut!(s);
+    while let Some(Ok((path, content))) = s.next().await {
         println!("✍🏻  {}", path);
         if args.print {
             println!("{}", content);

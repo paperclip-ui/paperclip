@@ -2,6 +2,8 @@
 
 - Compile HTML & CSS
 - File watcher
+  - debounce
+  - compile on change
 
 Done?
 

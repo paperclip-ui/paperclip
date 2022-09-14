@@ -26,7 +26,7 @@ enum Command {
 
     /// Starts the visual development tooling
     #[clap(arg_required_else_help = false)]
-    Dev {},
+    Designer {},
 }
 
 fn main() {
@@ -39,7 +39,7 @@ fn main() {
             }
         }
         Command::Init {} => {}
-        Command::Dev {} => {}
+        Command::Designer {} => {}
     };
 }
 

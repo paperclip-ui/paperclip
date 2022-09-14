@@ -2,15 +2,21 @@
   <img src="./assets/logo-outline-5.png" width="400px">
 </p>
 
-Paperclip is a UI builder for web applications that aims to safely enable your entire team to build anything at scale. 
+Paperclip is a UI builder for web applications that aims to safely enable your entire team to build anything at scale. This is all still a work in progress, so come back soon!
 
 ![Split view](./assets/screenshots/v10.1.7.png)
 
-## Who is this intended for?
+### Getting started
+
+```
+paperclip designer
+```
+
+<!-- ## Who is this intended for?
 
 
 
-## What can you 
+## What can you
 
 ### 🖌️ Import directly from Figma
 
@@ -42,5 +48,4 @@ The current state of Tandem is the result of some years in the no-code space, in
 - [v3](https://github.com/crcn/tandem-old/tree/10.0.0) which primarily focused on the presentational layer
 - [Paperclip v1](https://github.com/paperclip-ui/paperclip) which focused on the data model
 - v4 - this version which combines v3 and Paperclip v1
-
-
+-->

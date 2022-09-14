@@ -615,8 +615,8 @@ dependencies = [
  "futures-core",
  "futures-util",
  "glob",
- "paperclip_local",
  "paperclip_parser",
+ "paperclip_project",
  "serde",
 ]
 
@@ -650,7 +650,22 @@ dependencies = [
 ]
 
 [[package]]
-name = "paperclip_local"
+name = "paperclip_parser"
+version = "0.1.1"
+dependencies = [
+ "crc",
+ "futures",
+ "glob",
+ "lazy_static",
+ "paperclip_common",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "textwrap",
+]
+
+[[package]]
+name = "paperclip_project"
 version = "0.1.1"
 dependencies = [
  "anyhow",
@@ -670,21 +685,6 @@ dependencies = [
  "serde_json",
  "textwrap",
  "wax",
-]
-
-[[package]]
-name = "paperclip_parser"
-version = "0.1.1"
-dependencies = [
- "crc",
- "futures",
- "glob",
- "lazy_static",
- "paperclip_common",
- "pretty_assertions",
- "serde",
- "serde_json",
- "textwrap",
 ]
 
 [[package]]

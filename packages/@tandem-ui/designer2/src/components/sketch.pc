@@ -1,6 +1,5 @@
 import "./test.pc" as test
 
-
 component Message {
   variant testt trigger {
     test.mobile

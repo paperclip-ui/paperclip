@@ -1,5 +1,5 @@
 [package]
-name = "paperclip_local"
+name = "paperclip_project"
 version = "0.1.1"
 authors = ["Craig Condon <craig.j.condon@gmail.com>"]
 edition = "2021"
@@ -11,7 +11,7 @@ opt-level = 3
 lto = true
 
 [lib]
-name = "paperclip_local"
+name = "paperclip_project"
 
 [dependencies]
 clap = { version = "3.2.17", features = ["derive"] }

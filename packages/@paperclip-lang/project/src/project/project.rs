@@ -1,6 +1,6 @@
-use super::config::Config;
-pub use super::project_compiler::ProjectCompiler;
-use super::project_io::{LocalIO, ProjectIO};
+use crate::config::Config;
+use crate::project_compiler::ProjectCompiler;
+use crate::io::{LocalIO, ProjectIO};
 use anyhow::Result;
 use async_stream::try_stream;
 use futures_core::stream::Stream;
@@ -18,6 +18,8 @@ use std::cell::RefCell;
 pub struct CompileOptions {
     pub watch: bool,
 }
+
+/// Main entry point for handling a paperclip-based project
 
 pub struct Project<IO: ProjectIO> {
     /// The project config that specifies source information
@@ -37,8 +39,7 @@ pub struct Project<IO: ProjectIO> {
 }
 
 impl<IO: ProjectIO> Project<IO> {
-    // type Str = impl Stream<Item = Result<(String, String)>>;
-    /// Compiles the project given the config
+    
     pub fn compile(
         &self,
         options: CompileOptions,
@@ -55,7 +56,6 @@ impl<IO: ProjectIO> Project<IO> {
                 let s = self.io.watch(&self.directory);
                 pin_mut!(s);
                 while let Some(value) = s.next().await {
-
                     if Path::new(&value.path).extension() == Some(OsStr::new("pc")) {
                         for (file_path, content) in self.reload_file(&value.path).await? {
                             yield (file_path.to_string(), content.to_string());

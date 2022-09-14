@@ -3,6 +3,6 @@ members = [
   "packages/@paperclip-lang/compiler-react",
   "packages/@paperclip-lang/cli",
   "packages/@paperclip-lang/rs-common",
-  "packages/@paperclip-lang/rs-local",
+  "packages/@paperclip-lang/project",
   "packages/@paperclip-lang/evaluator"
 ]

@@ -1,7 +1,7 @@
 use crate::config::{CompilerOptions, Config};
 use crate::project::{CompileOptions, Project};
 use crate::project_compiler::ProjectCompiler;
-use crate::project_io::{ProjectIO, WatchEvent, WatchEventKind};
+use crate::io::{ProjectIO, WatchEvent, WatchEventKind};
 use async_trait::async_trait;
 use futures::executor::block_on;
 use futures_util::pin_mut;

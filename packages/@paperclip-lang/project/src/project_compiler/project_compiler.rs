@@ -1,6 +1,6 @@
-use super::config::Config;
-use super::project_io::ProjectIO;
-use super::target_compiler::TargetCompiler;
+use crate::config::Config;
+use crate::io::ProjectIO;
+use crate::target_compiler::TargetCompiler;
 use anyhow::Result;
 use paperclip_parser::graph::graph::Graph;
 use std::collections::HashMap;

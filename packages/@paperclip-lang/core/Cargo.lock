@@ -394,7 +394,7 @@ dependencies = [
  "clap",
  "futures",
  "glob",
- "paperclip_local",
+ "paperclip_project",
  "paperclip_parser",
  "serde",
 ]
@@ -408,7 +408,7 @@ name = "paperclip_compiler_react"
 version = "0.1.1"
 
 [[package]]
-name = "paperclip_local"
+name = "paperclip_project"
 version = "0.1.1"
 dependencies = [
  "anyhow",

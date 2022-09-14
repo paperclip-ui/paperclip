@@ -3,9 +3,9 @@
 pub mod config;
 pub mod project;
 mod project_compiler;
-pub mod project_io;
 mod target_compiler;
-mod watch_local;
+mod utils;
+pub mod io;
 
 #[cfg(test)]
 pub mod tests;

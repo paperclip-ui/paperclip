@@ -21,3 +21,11 @@
 #### Considerations
 
 - loading PC files from other packages
+  - resolve path of compiled output
+    - this only works if compile targets are the same, so we'll need to check
+- possibly use grid view for components instead of file system?
+
+#### Milestone: online editing
+
+- should be able to navigate to designer online
+- pick any PC file

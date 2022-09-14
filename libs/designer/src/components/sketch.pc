@@ -1,5 +1,6 @@
 import "./test.pc" as test
 
+
 component Message {
   variant testt trigger {
     test.mobile
@@ -22,7 +23,7 @@ component Message {
 }
 
 Message {
-  text "Blarggggg"
+  text "Blarg"
   div {
     text "color" {
       style {
@@ -30,12 +31,4 @@ Message {
       }
     }
   }
-}
-
-Message {
-  text "A"
-}
-
-Message {
-  text "B"
 }

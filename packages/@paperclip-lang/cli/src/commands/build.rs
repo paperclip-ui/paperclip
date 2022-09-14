@@ -24,8 +24,10 @@ pub struct BuildArgs {
 }
 
 pub async fn build(args: BuildArgs) -> Result<()> {
+    let current_dir = String::from(env::current_dir()?.to_str().unwrap());
+
     let project = Project::load(
-        &String::from(env::current_dir()?.to_str().unwrap()),
+        &current_dir,
         Some(args.config),
     )
     .await?;
@@ -33,7 +35,9 @@ pub async fn build(args: BuildArgs) -> Result<()> {
     let s = project.compile(CompileOptions { watch: args.watch });
     pin_mut!(s);
     while let Some(Ok((path, content))) = s.next().await {
-        println!("✍🏻  {}", path);
+
+        // replace cd with relative since it's a prettier output
+        println!("✍🏻  {}", path.replace(&format!("{}/", current_dir), ""));
         if args.print {
             println!("{}", content);
         } else {

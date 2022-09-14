@@ -4,7 +4,6 @@ use crate::core::string_scanner::StringScanner;
 use paperclip_common::id::IDGenerator;
 use paperclip_common::str_utils::strip_extra_ws;
 
-use crate::base::ast::{Range, U16Position};
 
 macro_rules! add_case {
     ($name: ident, $source: expr) => {

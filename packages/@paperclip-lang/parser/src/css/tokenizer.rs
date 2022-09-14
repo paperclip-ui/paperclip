@@ -1,8 +1,7 @@
 use crate::base::tokenizer::next_scanner_char;
 use crate::core::errors as err;
 use crate::core::string_scanner::{
-    is_az, is_digit, is_newline, is_space, scan_number, scan_string, Char, StringScanner,
-    StringScannerError,
+    is_az, is_digit, is_newline, is_space, scan_number, scan_string, Char, StringScanner
 };
 use std::str;
 
@@ -105,7 +104,6 @@ pub fn is_superfluous_or_newline(token: &Token) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
 
     #[test]
     fn can_tokenize_style_declaration() {

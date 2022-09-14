@@ -1,4 +1,3 @@
-use std::collections::HashSet;
 
 pub fn is_void_tag(tag_name: &str) -> bool {
     match tag_name {

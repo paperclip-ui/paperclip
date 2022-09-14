@@ -1,10 +1,8 @@
-use super::graph::Graph;
-use super::io::IO;
+use super::core::Graph;
 use super::test_utils::MockFS;
 use futures::executor::block_on;
-use futures::future::{BoxFuture, Future, FutureExt};
 use std::collections::HashMap;
-use std::sync::Arc;
+
 
 #[test]
 fn can_load_a_simple_graph() {

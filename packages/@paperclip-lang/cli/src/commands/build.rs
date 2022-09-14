@@ -1,6 +1,5 @@
 use anyhow::Result;
 use clap::Args;
-use futures_core::stream::Stream;
 use futures_util::pin_mut;
 use futures_util::stream::StreamExt;
 use paperclip_project::config::DEFAULT_CONFIG_NAME;

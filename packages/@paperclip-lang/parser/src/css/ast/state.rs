@@ -1,5 +1,4 @@
 use crate::base::ast::{Number, Range, Str};
-use crate::docco::ast as docco_ast;
 use serde::Serialize;
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

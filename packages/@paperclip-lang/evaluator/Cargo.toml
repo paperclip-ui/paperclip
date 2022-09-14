@@ -5,11 +5,6 @@ authors = ["Craig Condon <craig.j.condon@gmail.com>"]
 edition = "2021"
 exclude = []
 
-[profile.release]
-debug = false
-opt-level = 3
-lto = true
-
 [lib]
 name = "paperclip_evaluator"
 
@@ -22,4 +17,3 @@ anyhow = "1.0.61"
 textwrap = "0.15.0"
 futures = "0.3.21"
 regex = "1.6.0"
-lazy_static = "1.4.0"

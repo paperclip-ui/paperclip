@@ -1,18 +1,16 @@
 use crate::config::Config;
 use crate::project_compiler::ProjectCompiler;
-use crate::io::{LocalIO, ProjectIO};
+use crate::io::{ProjectIO};
 use anyhow::Result;
 use async_stream::try_stream;
 use futures_core::stream::Stream;
 use futures_util::pin_mut;
 use futures_util::stream::StreamExt;
-use paperclip_common::fs::{FileReader, FileResolver};
-use paperclip_parser::graph::graph::Graph;
+use paperclip_parser::graph::Graph;
 use std::collections::HashMap;
 use std::rc::Rc;
 use std::path::Path;
 use std::ffi::OsStr;
-use wax::Glob;
 use std::cell::RefCell;
 
 pub struct CompileOptions {
@@ -39,7 +37,11 @@ pub struct Project<IO: ProjectIO> {
 }
 
 impl<IO: ProjectIO> Project<IO> {
-    
+
+    /// 
+    /// Compiles the _entire_ project and returns a stream of files.
+    /// 
+
     pub fn compile(
         &self,
         options: CompileOptions,
@@ -66,6 +68,10 @@ impl<IO: ProjectIO> Project<IO> {
         }
     }
 
+    ///
+    /// Recompiles just one file and its _dependents_
+    /// 
+
     async fn reload_file(&self, path: &str) -> Result<HashMap<String, String>> {
         let mut graph = self.graph.borrow_mut();
         graph.load_file::<IO>(path, &self.io).await;
@@ -81,34 +87,4 @@ impl<IO: ProjectIO> Project<IO> {
 
         Ok(compiled_files)
     }
-}
-
-impl Project<LocalIO> {
-    pub async fn load(directory: &str, config_file_name: Option<String>) -> Result<Self> {
-        let io = Rc::new(LocalIO {});
-        let config = Rc::new(Config::load(directory, config_file_name)?);
-        Ok(Self {
-            config: config.clone(),
-            io: io.clone(),
-            graph: Rc::new(RefCell::new(load_graph::<LocalIO>(directory, &config, &io).await)),
-            directory: directory.to_string(),
-            compiler: ProjectCompiler::load(config.clone(), directory.to_string(), io.clone()),
-        })
-    }
-}
-
-async fn load_graph<'io, IO: ProjectIO>(directory: &str, config: &Config, io: &IO) -> Graph {
-    let pattern = config.get_relative_source_files_glob_pattern();
-
-    let glob = Glob::new(pattern.as_str()).unwrap();
-    let mut all_files: Vec<String> = vec![];
-
-    for entry in glob.walk(directory) {
-        let entry = entry.unwrap();
-        all_files.push(String::from(entry.path().to_str().unwrap()));
-    }
-
-    let mut graph = Graph::new();
-    graph.load_files(all_files, io).await;
-    graph
 }

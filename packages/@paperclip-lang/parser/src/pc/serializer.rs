@@ -1,6 +1,5 @@
 use super::ast;
 use crate::base::ast as base_ast;
-use crate::css::ast as css_ast;
 use crate::css::serializer::{serialize_decl_value, serialize_declarations};
 use crate::docco::ast as docco_ast;
 use crate::docco::serialize::serialize_comment as serialize_doc_comment;
@@ -282,7 +281,7 @@ fn serialize_string(node: &base_ast::Str, context: &mut Context) {
     context.add_buffer(format!("\"{}\"", node.value).as_str());
 }
 
-fn serialize_number(node: &ast::Number, context: &mut Context) {}
+fn serialize_number(_node: &ast::Number, _context: &mut Context) {}
 fn serialize_reference(node: &ast::Reference, context: &mut Context) {
     context.add_buffer(node.path.join(".").as_str());
 }

@@ -1,12 +1,10 @@
 use super::errors::{ErrorKind, ParserError};
-use crate::base::ast;
 use crate::base::ast::Range;
 use crate::base::ast::U16Position;
 use crate::core::string_scanner::StringScanner;
 use paperclip_common::id::{get_document_id, IDGenerator};
 use std::collections::VecDeque;
 
-struct Error {}
 
 type NextToken<'src, Token> = dyn Fn(&mut StringScanner<'src>) -> Result<Token, ParserError>;
 
@@ -56,8 +54,6 @@ impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone>
             }
         }
 
-        let actual_step = step + i;
-
         self.peek(step + i)
     }
 
@@ -75,16 +71,16 @@ impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone>
             }
         }
 
-        if let Some((tokenOption, pos)) = self.token_pool.get(step - 1) {
-            tokenOption
+        if let Some((token_option, _pos)) = self.token_pool.get(step - 1) {
+            token_option
         } else {
             &None
         }
     }
 
     pub fn next_token(&mut self) -> Result<(), ParserError> {
-        if let Some((tokenOption, pos)) = self.token_pool.pop_front() {
-            self.curr_token = tokenOption;
+        if let Some((token_option, pos)) = self.token_pool.pop_front() {
+            self.curr_token = token_option;
             self.curr_u16pos = pos;
         } else {
             let (token, pos) = self.next_token2()?;
@@ -105,19 +101,19 @@ impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone>
             self.scanner.get_u16pos(),
         ))
     }
-    pub fn skip<TTest>(&mut self, test: TTest)
+    pub fn skip<TTest>(&mut self, test: TTest) -> Result<(), ParserError>
     where
         TTest: Fn(&TToken) -> bool,
     {
         loop {
             if let Some(token) = &self.curr_token {
                 if test(token) {
-                    self.next_token();
+                    self.next_token()?;
                 } else {
-                    break;
+                    return Ok(());
                 }
             } else {
-                break;
+                return Ok(());
             }
         }
     }

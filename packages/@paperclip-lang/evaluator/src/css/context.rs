@@ -1,7 +1,7 @@
 use super::virt;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::id::{get_document_id, IDGenerator};
-use paperclip_parser::graph::graph;
+use paperclip_parser::graph;
 use paperclip_parser::pc::ast;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -66,18 +66,6 @@ impl<'path, 'graph, 'expr, 'resolve_asset, FR: FileResolver>
 
     pub fn resolve_asset(&self, asset_path: &str) -> Option<String> {
         self.file_resolver.resolve_file(&self.path, asset_path)
-    }
-
-    pub fn within_document(&self, document_path: &'path str) -> Self {
-        Self {
-            id_generator: self.id_generator.clone(),
-            file_resolver: self.file_resolver,
-            path: document_path,
-            graph: self.graph,
-            current_node: self.current_node,
-            current_component: self.current_component,
-            document: self.document.clone(),
-        }
     }
 
     pub fn within_component(&self, component: &'expr ast::Component) -> Self {

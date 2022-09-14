@@ -46,7 +46,7 @@ fn parse_document(context: &mut PCContext) -> Result<ast::Document, err::ParserE
     let mut body: Vec<ast::DocumentBodyItem> = vec![];
     let start = context.curr_u16pos.clone();
     loop {
-        context.skip(is_superfluous_or_newline);
+        context.skip(is_superfluous_or_newline)?;
         if context.curr_token == None {
             break;
         }
@@ -66,7 +66,7 @@ fn parse_document_child(
 ) -> Result<ast::DocumentBodyItem, err::ParserError> {
     let is_public = if context.curr_token == Some(Token::KeywordPublic) {
         context.next_token()?; // eat
-        context.skip(is_superfluous_or_newline);
+        context.skip(is_superfluous_or_newline)?;
         true
     } else {
         false
@@ -78,7 +78,7 @@ fn parse_document_child(
             context, is_public,
         )?)),
         Some(Token::KeywordImport) => Ok(ast::DocumentBodyItem::Import(parse_import(
-            context, is_public,
+            context
         )?)),
         Some(Token::Word(b"style")) => Ok(ast::DocumentBodyItem::Style(parse_style(
             context, is_public,
@@ -100,7 +100,7 @@ fn parse_document_child(
 fn parse_atom(context: &mut PCContext, is_public: bool) -> Result<ast::Atom, err::ParserError> {
     let start = context.curr_u16pos.clone();
     context.next_token()?; // eat atom
-    context.skip(is_superfluous);
+    context.skip(is_superfluous)?;
     let name = extract_word_value(context)?;
     let value = parse_style_declaration_with_string_scanner(
         context.scanner,
@@ -126,10 +126,10 @@ fn parse_trigger(
 ) -> Result<ast::Trigger, err::ParserError> {
     let start = context.curr_u16pos.clone();
     context.next_token()?; // eat trigger
-    context.skip(is_superfluous);
+    context.skip(is_superfluous)?;
     let name = extract_word_value(context)?;
     context.next_token()?;
-    context.skip(is_superfluous);
+    context.skip(is_superfluous)?;
     let body = parse_trigger_body(context)?;
     let end = context.curr_u16pos.clone();
 
@@ -147,10 +147,10 @@ fn parse_trigger_body(
 ) -> Result<Vec<ast::TriggerBodyItem>, err::ParserError> {
     let mut body: Vec<ast::TriggerBodyItem> = vec![];
     context.next_token()?; // eat {
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
     while context.curr_token != Some(Token::CurlyClose) {
         body.push(parse_trigger_body_item(context)?);
-        context.skip(is_superfluous_or_newline);
+        context.skip(is_superfluous_or_newline)?;
     }
     context.next_token()?; // eat }
     Ok(body)
@@ -181,27 +181,27 @@ fn parse_docco(context: &mut PCContext) -> Result<docco_ast::Comment, err::Parse
     ret
 }
 
-fn parse_import(context: &mut PCContext, is_public: bool) -> Result<ast::Import, err::ParserError> {
+fn parse_import(context: &mut PCContext) -> Result<ast::Import, err::ParserError> {
     let start = context.curr_u16pos.clone();
 
     // eat statement
     context.next_token()?;
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
 
     let path = extract_string_value(context)?;
 
     // eat string
     context.next_token()?;
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
 
     // eat "as"
     context.next_token()?;
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
     let namespace = extract_word_value(context)?;
 
     // eat namespace
     context.next_token()?;
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
 
     let end = context.curr_u16pos.clone();
 
@@ -216,11 +216,11 @@ fn parse_import(context: &mut PCContext, is_public: bool) -> Result<ast::Import,
 fn parse_style(context: &mut PCContext, is_public: bool) -> Result<ast::Style, err::ParserError> {
     let start = context.curr_u16pos.clone();
     context.next_token()?; // eat style
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
 
     let name = if let Some(Token::Word(name)) = context.curr_token {
         context.next_token()?;
-        context.skip(is_superfluous_or_newline);
+        context.skip(is_superfluous_or_newline)?;
         Some(str::from_utf8(name).unwrap().to_string())
     } else {
         None
@@ -228,13 +228,13 @@ fn parse_style(context: &mut PCContext, is_public: bool) -> Result<ast::Style, e
 
     let variant_combo = if context.curr_token == Some(Token::KeywordVariant) {
         context.next_token()?; // eat keyword
-        context.skip(is_superfluous);
+        context.skip(is_superfluous)?;
         Some(parse_list(context, parse_ref, Token::Byte(b'+'))?)
     } else {
         None
     };
 
-    context.skip(is_superfluous);
+    context.skip(is_superfluous)?;
 
     let extends = if context.curr_token == Some(Token::KeywordExtends) {
         Some(parse_style_extends(context)?)
@@ -242,7 +242,7 @@ fn parse_style(context: &mut PCContext, is_public: bool) -> Result<ast::Style, e
         None
     };
 
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
     let declarations: Vec<css_ast::StyleDeclaration> =
         if context.curr_token == Some(Token::CurlyOpen) {
             // set position to {
@@ -261,7 +261,7 @@ fn parse_style(context: &mut PCContext, is_public: bool) -> Result<ast::Style, e
             vec![]
         };
 
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
 
     let end = context.curr_u16pos.clone();
 
@@ -278,17 +278,17 @@ fn parse_style(context: &mut PCContext, is_public: bool) -> Result<ast::Style, e
 
 fn parse_style_extends(context: &mut PCContext) -> Result<Vec<ast::Reference>, err::ParserError> {
     context.next_token()?; // eat
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
 
     let mut extends: Vec<ast::Reference> = vec![];
     loop {
         extends.push(parse_ref(context)?);
-        context.skip(is_superfluous_or_newline);
+        context.skip(is_superfluous_or_newline)?;
         if context.curr_token != Some(Token::Comma) {
             break;
         }
         context.next_token()?;
-        context.skip(is_superfluous_or_newline);
+        context.skip(is_superfluous_or_newline)?;
     }
 
     Ok(extends)
@@ -302,11 +302,11 @@ fn parse_component(
 
     // eat component
     context.next_token()?;
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
     let name = extract_word_value(context)?;
     // eat name
     context.next_token()?;
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
 
     let body = parse_body(
         context,
@@ -339,7 +339,7 @@ fn parse_component(
 fn parse_render(context: &mut PCContext) -> Result<ast::Render, err::ParserError> {
     let start = context.curr_u16pos.clone();
     context.next_token()?; // eat render
-    context.skip(is_superfluous);
+    context.skip(is_superfluous)?;
     let node = parse_render_node(context)?;
     let end = context.curr_u16pos.clone();
 
@@ -353,13 +353,13 @@ fn parse_render(context: &mut PCContext) -> Result<ast::Render, err::ParserError
 fn parse_variant(context: &mut PCContext) -> Result<ast::Variant, err::ParserError> {
     let start = context.curr_u16pos.clone();
     context.next_token()?;
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
     let name = extract_word_value(context)?;
     context.next_token()?; // eat tag name
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
     let triggers = if context.curr_token == Some(Token::Word(b"trigger")) {
         context.next_token()?;
-        context.skip(is_superfluous);
+        context.skip(is_superfluous)?;
 
         parse_trigger_body(context)?
     } else {
@@ -367,7 +367,7 @@ fn parse_variant(context: &mut PCContext) -> Result<ast::Variant, err::ParserErr
     };
 
     let end = context.curr_u16pos.clone();
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
 
     Ok(ast::Variant {
         id: context.next_id(),
@@ -379,7 +379,7 @@ fn parse_variant(context: &mut PCContext) -> Result<ast::Variant, err::ParserErr
 
 fn parse_script(context: &mut PCContext) -> Result<ast::Script, err::ParserError> {
     context.next_token()?; // eat script
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
     let start = context.curr_u16pos.clone();
     let parameters = parse_parameters(context)?;
     let end = context.curr_u16pos.clone();
@@ -401,10 +401,10 @@ where
     let mut items = vec![];
     loop {
         items.push(parse_item(context)?);
-        context.skip(is_superfluous);
+        context.skip(is_superfluous)?;
         if context.curr_token == Some(delim) {
             context.next_token()?; // eat ,
-            context.skip(is_superfluous_or_newline);
+            context.skip(is_superfluous_or_newline)?;
         } else {
             break;
         }
@@ -425,10 +425,10 @@ fn parse_render_node(context: &mut PCContext) -> Result<ast::RenderNode, err::Pa
 fn parse_slot(context: &mut PCContext) -> Result<ast::Slot, err::ParserError> {
     let start = context.curr_u16pos.clone();
     context.next_token()?; // eat keyword
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
     let name = extract_word_value(context)?;
     context.next_token()?; // eat value
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
     let end = context.curr_u16pos.clone();
 
     let body = if context.curr_token == Some(Token::CurlyOpen) {
@@ -445,7 +445,7 @@ fn parse_slot(context: &mut PCContext) -> Result<ast::Slot, err::ParserError> {
         vec![]
     };
 
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
 
     Ok(ast::Slot {
         id: context.next_id(),
@@ -458,10 +458,10 @@ fn parse_slot(context: &mut PCContext) -> Result<ast::Slot, err::ParserError> {
 fn parse_insert(context: &mut PCContext) -> Result<ast::Insert, err::ParserError> {
     let start = context.curr_u16pos.clone();
     context.next_token()?; // eat keyword
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
     let name = extract_word_value(context)?;
     context.next_token()?; // eat value
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
     let end = context.curr_u16pos.clone();
     let body = parse_body(
         context,
@@ -473,7 +473,7 @@ fn parse_insert(context: &mut PCContext) -> Result<ast::Insert, err::ParserError
         },
         Some((Token::CurlyOpen, Token::CurlyClose)),
     )?;
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
 
     Ok(ast::Insert {
         id: context.next_id(),
@@ -486,16 +486,16 @@ fn parse_insert(context: &mut PCContext) -> Result<ast::Insert, err::ParserError
 fn parse_text(context: &mut PCContext) -> Result<ast::TextNode, err::ParserError> {
     let start = context.curr_u16pos.clone();
     context.next_token()?; // eat render
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
     let ref_name = parse_optional_ref_name(context)?;
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
     let value = if let Some(Token::String(value)) = context.curr_token {
         context.next_token()?; // eat value
         Some(trim_string(str::from_utf8(value).unwrap()))
     } else {
         None
     };
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
 
     let body = if context.curr_token == Some(Token::CurlyOpen) {
         parse_body(
@@ -511,7 +511,7 @@ fn parse_text(context: &mut PCContext) -> Result<ast::TextNode, err::ParserError
     } else {
         vec![]
     };
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
 
     let end = context.curr_u16pos.clone();
 
@@ -544,7 +544,7 @@ fn parse_optional_ref_name(context: &mut PCContext) -> Result<Option<String>, er
     if let Some(Token::Word(_)) = context.curr_token {
         let ref_name = extract_word_value(context)?;
         context.next_token()?;
-        context.skip(is_superfluous_or_newline);
+        context.skip(is_superfluous_or_newline)?;
         Ok(Some(ref_name))
     } else {
         Ok(None)
@@ -554,14 +554,14 @@ fn parse_optional_ref_name(context: &mut PCContext) -> Result<Option<String>, er
 fn parse_override(context: &mut PCContext) -> Result<ast::Override, err::ParserError> {
     let start = context.curr_u16pos.clone();
     context.next_token()?; // eat override
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
     let path = if matches!(context.curr_token, Some(Token::Word(_))) {
         parse_path(context)?
     } else {
         vec![]
     };
 
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
 
     let body = if context.curr_token == Some(Token::CurlyOpen) {
         parse_body(
@@ -602,7 +602,7 @@ fn parse_element(context: &mut PCContext) -> Result<ast::Element, err::ParserErr
 
     let tag_name: String = tag_parts.last().unwrap().clone();
 
-    context.skip(is_superfluous);
+    context.skip(is_superfluous)?;
 
     let ref_name = parse_optional_ref_name(context)?;
 
@@ -636,7 +636,7 @@ fn parse_element(context: &mut PCContext) -> Result<ast::Element, err::ParserErr
         vec![]
     };
 
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
 
     let end = context.curr_u16pos.clone();
 
@@ -653,7 +653,7 @@ fn parse_element(context: &mut PCContext) -> Result<ast::Element, err::ParserErr
 
 fn parse_parameters(context: &mut PCContext) -> Result<Vec<ast::Parameter>, err::ParserError> {
     context.next_token()?; // eat (
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
     let mut parameters: Vec<ast::Parameter> = vec![];
 
     while context.curr_token != Some(Token::ParenClose) {
@@ -661,7 +661,7 @@ fn parse_parameters(context: &mut PCContext) -> Result<Vec<ast::Parameter>, err:
     }
 
     context.next_token()?; // eat )
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
 
     Ok(parameters)
 }
@@ -670,17 +670,17 @@ fn parse_parameter(context: &mut PCContext) -> Result<ast::Parameter, err::Parse
     let start = context.curr_u16pos.clone();
     let name = extract_word_value(context)?;
     context.next_token()?; // eat name
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
     context.next_token()?; // eat :
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
     let value = parse_simple_expression(context)?;
     let end = context.curr_u16pos.clone();
 
     // Since this isn't used anywhere else, we can include comma logic here
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
     if context.curr_token == Some(Token::Comma) {
         context.next_token()?; // eat
-        context.skip(is_superfluous_or_newline);
+        context.skip(is_superfluous_or_newline)?;
     }
 
     Ok(ast::Parameter {
@@ -695,7 +695,7 @@ fn parse_simple_expression(
     context: &mut PCContext,
 ) -> Result<ast::SimpleExpression, err::ParserError> {
     match context.curr_token {
-        Some(Token::String(value)) => Ok(ast::SimpleExpression::String(parse_string(context)?)),
+        Some(Token::String(_)) => Ok(ast::SimpleExpression::String(parse_string(context)?)),
         Some(Token::Word(b"true" | b"false")) => {
             Ok(ast::SimpleExpression::Boolean(parse_boolean(context)?))
         }
@@ -708,7 +708,7 @@ fn parse_simple_expression(
 fn parse_array(context: &mut PCContext) -> Result<ast::Array, err::ParserError> {
     let start = context.curr_u16pos.clone();
     context.next_token()?; // eat [
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
 
     let items = if context.curr_token != Some(Token::SquareClose) {
         parse_list(context, parse_simple_expression, Token::Comma)?
@@ -784,7 +784,7 @@ where
 {
     if ends != None {
         context.next_token()?;
-        context.skip(is_superfluous_or_newline);
+        context.skip(is_superfluous_or_newline)?;
     }
 
     let mut body: Vec<TItem> = vec![];
@@ -794,7 +794,7 @@ where
             if let Some(curr) = &context.curr_token {
                 if curr == end {
                     context.next_token()?;
-                    context.skip(is_superfluous_or_newline);
+                    context.skip(is_superfluous_or_newline)?;
                     break;
                 }
             }

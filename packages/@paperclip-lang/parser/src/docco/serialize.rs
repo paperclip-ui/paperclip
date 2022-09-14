@@ -33,7 +33,6 @@ fn serialize_property(prop: &ast::Property, context: &mut Context) {
         ast::PropertyValue::Parameters(value) => {
             serialize_parameters(value, context);
         }
-        _ => {}
     }
 }
 

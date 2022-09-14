@@ -5,11 +5,6 @@ authors = ["Craig Condon <craig.j.condon@gmail.com>"]
 edition = "2021"
 exclude = []
 
-[profile.release]
-debug = false
-opt-level = 3
-lto = true
-
 [lib]
 name = "paperclip_common"
 

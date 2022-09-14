@@ -2,7 +2,7 @@ use crate::base::tokenizer::next_scanner_char;
 use crate::core::errors as err;
 use crate::core::string_scanner::{
     is_az, is_digit, is_newline, is_space, is_whitespace, scan_number, scan_string, Char,
-    StringScanner, StringScannerError,
+    StringScanner,
 };
 use std::str;
 

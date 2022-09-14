@@ -1,12 +1,11 @@
 use super::evaluator::{evaluate, Options};
 use super::serializer::serialize;
-use crate::base::utils::strip_extra_ws;
+use paperclip_common::str_utils::strip_extra_ws;
 use futures::executor::block_on;
 use paperclip_common::fs::FileResolver;
-use paperclip_parser::graph::graph;
+use paperclip_parser::graph;
 use paperclip_parser::graph::test_utils;
 use std::collections::HashMap;
-use std::rc::Rc;
 
 // TODO: ensure no infinite loop
 // TODO: check imported instances

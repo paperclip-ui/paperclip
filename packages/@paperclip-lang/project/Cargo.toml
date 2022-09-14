@@ -5,11 +5,6 @@ authors = ["Craig Condon <craig.j.condon@gmail.com>"]
 edition = "2021"
 exclude = []
 
-[profile.release]
-debug = false
-opt-level = 3
-lto = true
-
 [lib]
 name = "paperclip_project"
 
@@ -28,7 +23,6 @@ futures-util = "0.3.24"
 path-absolutize = "3.0.13"
 notify = "5.0.0"
 wax = "0.5.0"
-async-trait = "0.1.57"
 async-stream = "0.3.3"
 
 [dev-dependencies]

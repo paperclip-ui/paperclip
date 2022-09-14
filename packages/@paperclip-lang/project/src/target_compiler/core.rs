@@ -5,11 +5,8 @@ use paperclip_evaluator::css::evaluator::evaluate as evaluate_css;
 use paperclip_evaluator::css::serializer::serialize as serialize_css;
 use paperclip_evaluator::html::evaluator::{evaluate as evaluate_html, Options as HTMLOptions};
 use paperclip_evaluator::html::serializer::serialize as serialize_html;
-use paperclip_parser::graph::graph::Graph;
-use path_absolutize::*;
+use paperclip_parser::graph::Graph;
 use std::cell::RefCell;
-#[macro_use]
-use paperclip_common::{join_path, get_or_short};
 use super::context::TargetCompilerContext;
 use std::collections::BTreeMap;
 use std::collections::HashMap;

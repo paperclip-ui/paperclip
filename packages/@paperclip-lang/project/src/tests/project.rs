@@ -2,17 +2,15 @@ use crate::config::{CompilerOptions, Config};
 use crate::project::{CompileOptions, Project};
 use crate::project_compiler::ProjectCompiler;
 use crate::io::{ProjectIO, WatchEvent, WatchEventKind};
-use async_trait::async_trait;
 use futures::executor::block_on;
 use futures_util::pin_mut;
 use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_common::str_utils::strip_extra_ws;
-use paperclip_parser::graph::graph::Graph;
+use paperclip_parser::graph::Graph;
 use paperclip_parser::graph::io::IO as GraphIO;
 use paperclip_parser::graph::test_utils::MockFS;
 use path_absolutize::*;
 use std::collections::HashMap;
-use std::future;
 use std::path::Path;
 use std::rc::Rc;
 use async_stream::stream;
@@ -27,7 +25,7 @@ impl GraphIO for MockIO {}
 
 impl ProjectIO for MockIO {
   type Str = impl Stream<Item = WatchEvent>;
-    fn watch(&self, dir: &str) -> Self::Str {
+    fn watch(&self, _dir: &str) -> Self::Str {
       stream! {
         yield WatchEvent::new(WatchEventKind::Create, &"nada".to_string());
       }

@@ -1,8 +1,3 @@
-use crate::config::Config;
-use crate::project::Project;
-use futures::executor::block_on;
-use std::path::Path;
-use std::rc::Rc;
 
 // #[test]
 // fn can_load_a_simple_project() {

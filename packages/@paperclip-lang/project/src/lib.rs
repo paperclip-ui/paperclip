@@ -6,6 +6,7 @@ mod project_compiler;
 mod target_compiler;
 mod utils;
 pub mod io;
+pub use project::*;
 
 #[cfg(test)]
 pub mod tests;

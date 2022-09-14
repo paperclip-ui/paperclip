@@ -3,9 +3,7 @@ use crate::base::ast::visit::*;
 use crate::base::ast::Str;
 use crate::css::ast::*;
 
-struct AssetFinder {
-    pub found: Vec<String>,
-}
+struct AssetFinder;
 
 visitor! {
   AssetFinder,
@@ -23,11 +21,9 @@ visitor! {
       DocumentBodyItem::Text
     )
   },
-  Str(self, expr) {
-    println!("STRRR");
+  Str(self, _expr) {
   },
-  Atom(self, expr) {
-    self.visit(expr);
+  Atom(self, _expr) {
   },
   StyleDeclaration(self, expr) {
     self.visit(&expr.value);
@@ -47,7 +43,7 @@ visitor! {
   SpacedList(self, expr) {
     visit_each!(self, expr.items.iter());
   },
-  Component(self, expr) {
+  Component(self, _expr) {
 
   },
   Element(self, expr) {
@@ -71,15 +67,7 @@ visitor! {
     visit_each!(self, &expr.declarations);
 
   },
-  TextNode(self, expr) {
+  TextNode(self, _expr) {
 
   }
-}
-
-impl Document {
-    fn get_assets(&self) -> Vec<String> {
-        let mut finder = AssetFinder { found: vec![] };
-        finder.visit(self);
-        finder.found
-    }
 }

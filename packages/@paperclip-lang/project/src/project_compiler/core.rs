@@ -2,15 +2,12 @@ use crate::config::Config;
 use crate::io::ProjectIO;
 use crate::target_compiler::TargetCompiler;
 use anyhow::Result;
-use paperclip_parser::graph::graph::Graph;
+use paperclip_parser::graph::Graph;
 use std::collections::HashMap;
 use std::rc::Rc;
 
 pub struct ProjectCompiler<IO: ProjectIO> {
-    targets: Vec<TargetCompiler<IO>>,
-    config: Rc<Config>,
-    project_dir: String,
-    io: Rc<IO>,
+    targets: Vec<TargetCompiler<IO>>
 }
 
 impl<IO: ProjectIO> ProjectCompiler<IO> {
@@ -30,10 +27,7 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
                     .collect()
             } else {
                 vec![]
-            },
-            io: io.clone(),
-            project_dir,
-            config: config.clone(),
+            }
         }
     }
     pub async fn compile_graph(&self, graph: &Graph) -> Result<HashMap<String, String>> {

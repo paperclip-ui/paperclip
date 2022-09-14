@@ -1,3 +1,3 @@
 mod context;
-pub mod target_compiler;
-pub use target_compiler::*;
+pub mod core;
+pub use self::core::*;

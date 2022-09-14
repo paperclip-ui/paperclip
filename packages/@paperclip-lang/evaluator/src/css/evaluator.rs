@@ -5,7 +5,7 @@ use crate::core::utils::get_style_namespace;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::id::get_document_id;
 use paperclip_parser::css::ast as css_ast;
-use paperclip_parser::graph::graph;
+use paperclip_parser::graph;
 use paperclip_parser::graph::reference as graph_ref;
 use paperclip_parser::pc::ast;
 use std::rc::Rc;
@@ -151,7 +151,6 @@ fn evaluate_text<F: FileResolver>(element: &ast::TextNode, context: &mut Documen
             ast::TextNodeBodyItem::Style(style) => {
                 evaluate_style(style, &mut el_context);
             }
-            _ => {}
         }
     }
 }

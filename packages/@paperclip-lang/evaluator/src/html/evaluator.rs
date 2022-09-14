@@ -5,8 +5,7 @@ use crate::core::utils::get_style_namespace;
 use crate::core::virt as core_virt;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::id::get_document_id;
-use paperclip_parser::docco::ast as docco_ast;
-use paperclip_parser::graph::graph;
+use paperclip_parser::graph;
 use paperclip_parser::graph::reference as graph_ref;
 use paperclip_parser::pc::ast;
 use std::collections::BTreeMap;
@@ -43,7 +42,6 @@ fn evaluate_document<F: FileResolver>(
     document: &ast::Document,
     context: &mut DocumentContext<F>,
 ) -> virt::Document {
-    let mut current_doc_comment: Option<&docco_ast::Comment> = None;
 
     let mut children = vec![];
 
@@ -53,25 +51,23 @@ fn evaluate_document<F: FileResolver>(
                 if context.options.include_components {
                     evaluate_component::<F>(
                         component,
-                        &current_doc_comment,
                         &mut children,
                         context,
                     );
                 }
             }
             ast::DocumentBodyItem::Element(element) => {
-                evaluate_element::<F>(element, &current_doc_comment, &mut children, context);
+                evaluate_element::<F>(element, &mut children, context);
             }
-            ast::DocumentBodyItem::DocComment(doc_comment) => {
-                current_doc_comment = Some(doc_comment);
+            ast::DocumentBodyItem::DocComment(_doc_comment) => {
+                // TODO
             }
             ast::DocumentBodyItem::Text(text_node) => {
-                evaluate_text_node(text_node, &current_doc_comment, &mut children, context);
+                evaluate_text_node(text_node, &mut children, context);
             }
             _ => {}
         }
 
-        current_doc_comment = None;
     }
 
     virt::Document {
@@ -82,7 +78,7 @@ fn evaluate_document<F: FileResolver>(
 
 fn evaluate_component<F: FileResolver>(
     component: &ast::Component,
-    doc_comment: &Option<&docco_ast::Comment>,
+
     fragment: &mut Vec<virt::Node>,
     context: &mut DocumentContext<F>,
 ) {
@@ -92,12 +88,11 @@ fn evaluate_component<F: FileResolver>(
         return;
     };
 
-    evaluate_render(&render, doc_comment, fragment, context);
+    evaluate_render(&render, fragment, context);
 }
 
 fn evaluate_element<F: FileResolver>(
     element: &ast::Element,
-    doc_comment: &Option<&docco_ast::Comment>,
     fragment: &mut Vec<virt::Node>,
     context: &mut DocumentContext<F>,
 ) {
@@ -116,19 +111,17 @@ fn evaluate_element<F: FileResolver>(
             evaluate_instance(
                 element,
                 component,
-                doc_comment,
                 fragment,
                 &mut context.within_component(component),
             );
         }
     } else {
-        evaluate_native_element(element, doc_comment, fragment, context);
+        evaluate_native_element(element, fragment, context);
     }
 }
 
 fn evaluate_slot<F: FileResolver>(
     slot: &ast::Slot,
-    doc_comment: &Option<&docco_ast::Comment>,
     fragment: &mut Vec<virt::Node>,
     context: &mut DocumentContext<F>,
 ) {
@@ -151,8 +144,8 @@ fn evaluate_slot<F: FileResolver>(
     // render default children
     for child in &slot.body {
         match child {
-            ast::SlotBodyItem::Element(child) => evaluate_element(child, &None, fragment, context),
-            ast::SlotBodyItem::Text(child) => evaluate_text_node(child, &None, fragment, context),
+            ast::SlotBodyItem::Element(child) => evaluate_element(child,  fragment, context),
+            ast::SlotBodyItem::Text(child) => evaluate_text_node(child,  fragment, context),
         }
     }
 }
@@ -160,7 +153,6 @@ fn evaluate_slot<F: FileResolver>(
 fn evaluate_instance<F: FileResolver>(
     element: &ast::Element,
     instance_of: &ast::Component,
-    doc_comment: &Option<&docco_ast::Comment>,
     fragment: &mut Vec<virt::Node>,
     context: &mut DocumentContext<F>,
 ) {
@@ -173,7 +165,7 @@ fn evaluate_instance<F: FileResolver>(
     let mut data = create_raw_object_from_params(element, context);
     add_inserts_to_data(&mut create_inserts(element, context), &mut data);
 
-    evaluate_render(&render, doc_comment, fragment, &mut context.with_data(data));
+    evaluate_render(&render, fragment, &mut context.with_data(data));
 }
 
 fn add_inserts_to_data(inserts: &mut InsertsMap, data: &mut core_virt::Object) {
@@ -211,7 +203,7 @@ fn evaluate_instance_child<'expr, F: FileResolver>(
 ) {
     match child {
         ast::ElementBodyItem::Insert(insert) => {
-            let (source_id, fragment) = if let Some(fragment) = inserts.get_mut(&insert.name) {
+            let (_source_id, fragment) = if let Some(fragment) = inserts.get_mut(&insert.name) {
                 fragment
             } else {
                 inserts.insert(insert.name.to_string(), (insert.id.to_string(), vec![]));
@@ -230,24 +222,23 @@ fn evaluate_instance_child<'expr, F: FileResolver>(
 
 fn evaluate_render<F: FileResolver>(
     render: &ast::Render,
-    doc_comment: &Option<&docco_ast::Comment>,
+
     fragment: &mut Vec<virt::Node>,
     context: &mut DocumentContext<F>,
 ) {
     match &render.node {
         ast::RenderNode::Element(element) => {
-            evaluate_element(&element, doc_comment, fragment, context);
+            evaluate_element(&element, fragment, context);
         }
         ast::RenderNode::Slot(slot) => {
-            evaluate_slot(&slot, doc_comment, fragment, context);
+            evaluate_slot(&slot, fragment, context);
         }
-        ast::RenderNode::Text(text) => evaluate_text_node(&text, doc_comment, fragment, context),
+        ast::RenderNode::Text(text) => evaluate_text_node(&text, fragment, context),
     }
 }
 
 fn evaluate_native_element<F: FileResolver>(
     element: &ast::Element,
-    doc_comment: &Option<&docco_ast::Comment>,
     fragment: &mut Vec<virt::Node>,
     context: &mut DocumentContext<F>,
 ) {
@@ -272,11 +263,11 @@ fn evaluate_element_child<F: FileResolver>(
     context: &mut DocumentContext<F>,
 ) {
     match child {
-        ast::ElementBodyItem::Element(child) => evaluate_element(child, &None, fragment, context),
+        ast::ElementBodyItem::Element(child) => evaluate_element(child,  fragment, context),
         ast::ElementBodyItem::Slot(slot) => {
-            evaluate_slot(&slot, &None, fragment, context);
+            evaluate_slot(&slot,  fragment, context);
         }
-        ast::ElementBodyItem::Text(child) => evaluate_text_node(child, &None, fragment, context),
+        ast::ElementBodyItem::Text(child) => evaluate_text_node(child,  fragment, context),
         _ => {}
     }
 }
@@ -287,9 +278,9 @@ fn evaluate_insert_child<F: FileResolver>(
     context: &mut DocumentContext<F>,
 ) {
     match child {
-        ast::InsertBody::Element(child) => evaluate_element(child, &None, fragment, context),
-        ast::InsertBody::Text(child) => evaluate_text_node(child, &None, fragment, context),
-        ast::InsertBody::Slot(child) => evaluate_slot(child, &None, fragment, context),
+        ast::InsertBody::Element(child) => evaluate_element(child,  fragment, context),
+        ast::InsertBody::Text(child) => evaluate_text_node(child,  fragment, context),
+        ast::InsertBody::Slot(child) => evaluate_slot(child,  fragment, context),
     }
 }
 
@@ -389,7 +380,7 @@ fn evaluate_object_property<F: FileResolver>(
 
 fn create_attribute_value<F: FileResolver>(
     value: &ast::SimpleExpression,
-    context: &DocumentContext<F>,
+    _context: &DocumentContext<F>,
 ) -> core_virt::Value {
     match value {
         ast::SimpleExpression::String(value) => core_virt::Value::String(core_virt::Str {
@@ -418,7 +409,7 @@ fn create_attribute_value<F: FileResolver>(
 
 fn evaluate_text_node<F: FileResolver>(
     text_node: &ast::TextNode,
-    doc_comment: &Option<&docco_ast::Comment>,
+
     fragment: &mut Vec<virt::Node>,
     context: &mut DocumentContext<F>,
 ) {

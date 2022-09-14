@@ -1,7 +1,4 @@
 use super::ast;
-use crate::base::ast as base_ast;
-use crate::docco::ast as docco_ast;
-use crate::docco::serialize::serialize_comment as serialize_doc_comment;
 use paperclip_common::serialize_context::Context;
 
 pub fn serialize_declarations(declarations: &Vec<ast::StyleDeclaration>, depth: u8) -> String {
@@ -67,9 +64,6 @@ pub fn serialize_decl_value(value: &ast::DeclarationValue, context: &mut Context
         }
         ast::DeclarationValue::HexColor(color) => {
             context.add_buffer(format!("#{}", color.value).as_str());
-        }
-        ast::DeclarationValue::Reference(keyword) => {
-            context.add_buffer(format!("{}", keyword.path.join(".")).as_str());
         }
     }
 }

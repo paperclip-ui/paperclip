@@ -1,4 +1,4 @@
-pub mod graph;
+pub mod core;
 pub mod io;
 pub mod reference;
 
@@ -6,3 +6,4 @@ pub mod reference;
 pub mod tests;
 
 pub mod test_utils;
+pub use self::core::*;

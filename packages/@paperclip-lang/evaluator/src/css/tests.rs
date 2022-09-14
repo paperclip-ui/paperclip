@@ -3,10 +3,9 @@ use super::serializer::serialize;
 use futures::executor::block_on;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::str_utils::strip_extra_ws;
-use paperclip_parser::graph::graph;
+use paperclip_parser::graph;
 use paperclip_parser::graph::test_utils;
 use std::collections::HashMap;
-use std::rc::Rc;
 
 struct MockResolver;
 impl FileResolver for MockResolver {

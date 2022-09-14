@@ -1,2 +1,2 @@
-mod project_compiler;
-pub use project_compiler::*;
+mod core;
+pub use self::core::*;

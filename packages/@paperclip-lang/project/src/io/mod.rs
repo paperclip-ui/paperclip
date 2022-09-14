@@ -1,4 +1,4 @@
-mod traits;
+mod core;
 mod local;
-pub use traits::*;
-pub use local::*;
+pub use self::core::*;
+pub use self::local::*;

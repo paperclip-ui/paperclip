@@ -2,10 +2,9 @@ use super::io::IO;
 use crate::pc::ast;
 use crate::pc::parser::parse as parse_pc;
 use crc::crc32;
-use futures::future::{select_all, BoxFuture, Future, FutureExt};
+use futures::future::{BoxFuture};
 use futures::lock::Mutex;
 use std::collections::{HashMap, HashSet};
-use std::marker::Sync;
 use std::str;
 use std::sync::Arc;
 
@@ -46,7 +45,7 @@ impl Graph {
     }
     pub fn get_immediate_dependents(&self, path: &str) -> Vec<&Dependency> {
         let mut dependents = vec![];
-        for (file_path, dep) in &self.dependencies {
+        for (_file_path, dep) in &self.dependencies {
             if dep.imports.values().any(|resolved_path| {
                 resolved_path == path
             }) {
@@ -64,6 +63,7 @@ impl Graph {
             let immediate_dependents = self.get_immediate_dependents(path);
             for dep in immediate_dependents {
                 if !used.contains(&path) {
+                    used.insert(path);
                     all_dependents.push(dep);
                     pool.push(&dep.path);
                 }

@@ -1,11 +1,8 @@
-use super::virt;
 use crate::core::virt as core_virt;
-// use paperclip_common::id::{IDGenerator, get_document_id};
 use paperclip_common::fs::FileResolver;
-use paperclip_parser::graph::graph;
+use paperclip_parser::graph;
 use paperclip_parser::pc::ast;
 use std::cell::RefCell;
-use std::rc::Rc;
 
 #[derive(Clone)]
 pub struct Options {

@@ -5,7 +5,6 @@ mod commands;
 use clap::{Parser, Subcommand};
 use commands::build::{build, BuildArgs};
 use futures::executor::block_on;
-use std::env::current_dir;
 
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
@@ -35,15 +34,13 @@ fn main() {
 
     match args.command {
         Command::Build(args) => {
-            block_on(build(args));
+            if let Err(_) = block_on(build(args)) {
+                println!("build error!")
+            }
         }
         Command::Init {} => {}
         Command::Dev {} => {}
     };
-
-    // for _ in 0..args.count {
-    //     println!("Hello {}!", args.name)
-    // }
 }
 
 #[cfg(test)]

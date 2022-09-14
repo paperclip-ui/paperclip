@@ -1,4 +1,4 @@
-use super::graph::Graph;
+use super::core::Graph;
 use crate::pc::ast;
 
 #[derive(Debug)]
@@ -19,7 +19,7 @@ pub enum Expr<'expr> {
 
 impl Graph {
     pub fn get_ref(&self, ref_path: &Vec<String>, dep_path: &str) -> Option<RefInfo<'_>> {
-        let mut curr_dep = if let Some(dep) = self.dependencies.get(dep_path) {
+        let curr_dep = if let Some(dep) = self.dependencies.get(dep_path) {
             dep
         } else {
             return None;

@@ -27,20 +27,20 @@ pub fn parse_style_declaration_with_string_scanner<'src, 'scanner, 'idgenerator>
     url: &String,
 ) -> Result<ast::DeclarationValue, ParserError> {
     let mut context = Context::new(source, url, &next_token, id_generator)?;
-    context.skip(is_superfluous);
+    context.skip(is_superfluous)?;
     parse_decl_value(&mut context)
 }
 
 fn parse_style_declarations(
     context: &mut ParserContext,
 ) -> Result<Vec<ast::StyleDeclaration>, err::ParserError> {
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
     context.next_token()?;
-    context.skip(is_superfluous_or_newline);
+    context.skip(is_superfluous_or_newline)?;
     let mut decls: Vec<ast::StyleDeclaration> = vec![];
     while context.curr_token != Some(Token::CurlyClose) {
         decls.push(parse_style_declaration(context)?);
-        context.skip(is_superfluous_or_newline);
+        context.skip(is_superfluous_or_newline)?;
     }
     context.next_token()?; // eat }
 
@@ -59,9 +59,9 @@ fn parse_style_declaration(
     };
     context.next_token()?; // eat name
 
-    context.skip(is_superfluous);
+    context.skip(is_superfluous)?;
     context.next_token()?; // eat :
-    context.skip(is_superfluous);
+    context.skip(is_superfluous)?;
 
     let value = parse_comma_list(context)?;
 
@@ -80,12 +80,12 @@ fn parse_comma_list(
 ) -> Result<ast::DeclarationValue, err::ParserError> {
     let start = context.curr_u16pos.clone();
     let first = parse_spaced_list(context)?;
-    context.skip(is_superfluous);
+    context.skip(is_superfluous)?;
     Ok(if matches!(context.curr_token, Some(Token::Comma)) {
         let mut items = vec![first];
         while matches!(context.curr_token, Some(Token::Comma)) {
             context.next_token()?;
-            context.skip(is_superfluous);
+            context.skip(is_superfluous)?;
             items.push(parse_spaced_list(context)?);
         }
         let end = context.curr_u16pos.clone();
@@ -135,9 +135,9 @@ fn parse_arithmetic(
     };
 
     Ok(if let Some(operator) = operator_option {
-        context.skip(is_superfluous);
+        context.skip(is_superfluous)?;
         context.next_token()?; // eat operator
-        context.skip(is_superfluous);
+        context.skip(is_superfluous)?;
         let right = parse_decl_value(context)?;
         let end = context.curr_u16pos.clone();
         ast::DeclarationValue::Arithmetic(ast::Arithmetic {

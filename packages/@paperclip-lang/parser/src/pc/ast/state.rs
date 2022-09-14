@@ -1,4 +1,3 @@
-use super::get_assets;
 pub use crate::base::ast::{Range, Str};
 use crate::css::ast as css_ast;
 pub use crate::docco::ast::Comment;

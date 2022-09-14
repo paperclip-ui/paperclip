@@ -56,7 +56,7 @@ pub fn parse_property(context: &mut ParserContext) -> Result<ast::Property, Pars
     context.next_token()?; // eat @
     let name = extract_word_value(context)?;
     context.next_token()?;
-    context.skip(is_superfluous);
+    context.skip(is_superfluous)?;
     let value = match context.curr_token {
         Some(Token::ParenOpen) => ast::PropertyValue::Parameters(parse_parameters(context)?),
         Some(Token::String(_)) => ast::PropertyValue::String(parse_string(context)?),
@@ -163,7 +163,7 @@ fn extract_word_value(context: &mut ParserContext) -> Result<String, err::Parser
 fn parse_parameters(context: &mut ParserContext) -> Result<ast::Parameters, err::ParserError> {
     let start = context.curr_u16pos.clone();
 
-    context.next_token(); // eat (
+    context.next_token()?; // eat (
 
     let mut items: Vec<ast::Parameter> = vec![];
     while context.curr_token != None {
@@ -173,10 +173,10 @@ fn parse_parameters(context: &mut ParserContext) -> Result<ast::Parameters, err:
         }
         if context.curr_token == Some(Token::Comma) {
             context.next_token()?; // eat ,
-            context.skip(is_superfluous);
+            context.skip(is_superfluous)?;
         }
     }
-    context.next_token(); // eat )
+    context.next_token()?; // eat )
 
     let end = context.curr_u16pos.clone();
 
@@ -191,9 +191,9 @@ fn parse_parameter(context: &mut ParserContext) -> Result<ast::Parameter, err::P
     let start = context.curr_u16pos.clone();
     let name = extract_word_value(context)?;
     context.next_token()?; // eat name
-    context.skip(is_superfluous);
+    context.skip(is_superfluous)?;
     context.next_token()?; // eat :
-    context.skip(is_superfluous);
+    context.skip(is_superfluous)?;
     let value = parse_parameter_value(context)?;
     let end = context.curr_u16pos.clone();
 

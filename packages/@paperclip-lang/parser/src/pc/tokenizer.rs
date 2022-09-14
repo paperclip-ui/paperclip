@@ -1,5 +1,4 @@
 // Inspired by https://github.com/servo/rust-cssparser/blob/master/src/tokenizer.rs
-use crate::base::ast::{Range, U16Position};
 use crate::base::tokenizer::next_scanner_char;
 use crate::core::errors as err;
 use crate::core::string_scanner::{
@@ -9,7 +8,6 @@ use serde::Serialize;
 
 #[derive(Debug, PartialEq, Serialize, Clone, Copy)]
 pub enum Token<'src> {
-    None,
     CurlyOpen,
     CurlyClose,
     ParenOpen,
@@ -24,7 +22,6 @@ pub enum Token<'src> {
     MultiLineComment(&'src [u8]),
     DoccoStart,
     Space(&'src [u8]),
-    Number(&'src [u8]),
     Word(&'src [u8]),
     KeywordExtends,
     KeywordPublic,
@@ -89,12 +86,7 @@ pub fn next_token<'src>(source: &mut StringScanner<'src>) -> Result<Token<'src>,
                 b => Token::Byte(b),
             })
         }
-        Char::Cluster(value) => Ok(Token::Cluster(value)),
-        _ => Err(err::ParserError::new(
-            "Unexpected token".to_string(),
-            Range::new(s_pos.to_u16(), source.get_u16pos()),
-            err::ErrorKind::UnexpectedToken,
-        )),
+        Char::Cluster(value) => Ok(Token::Cluster(value))
     }
 }
 

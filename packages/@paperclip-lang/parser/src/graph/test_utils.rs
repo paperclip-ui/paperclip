@@ -1,5 +1,4 @@
 use super::io::IO;
-use futures::future::{BoxFuture, FutureExt};
 use paperclip_common::fs::{FileReader, FileResolver};
 use std::collections::HashMap;
 use std::sync::Arc;

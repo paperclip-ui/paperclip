@@ -3,7 +3,6 @@ use super::test_utils::MockFS;
 use futures::executor::block_on;
 use std::collections::HashMap;
 
-
 #[test]
 fn can_load_a_simple_graph() {
     let mock_fs = MockFS::new(HashMap::from([

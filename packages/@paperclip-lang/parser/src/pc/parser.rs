@@ -77,9 +77,7 @@ fn parse_document_child(
         Some(Token::KeywordComponent) => Ok(ast::DocumentBodyItem::Component(parse_component(
             context, is_public,
         )?)),
-        Some(Token::KeywordImport) => Ok(ast::DocumentBodyItem::Import(parse_import(
-            context
-        )?)),
+        Some(Token::KeywordImport) => Ok(ast::DocumentBodyItem::Import(parse_import(context)?)),
         Some(Token::Word(b"style")) => Ok(ast::DocumentBodyItem::Style(parse_style(
             context, is_public,
         )?)),

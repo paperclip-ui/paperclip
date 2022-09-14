@@ -42,18 +42,13 @@ fn evaluate_document<F: FileResolver>(
     document: &ast::Document,
     context: &mut DocumentContext<F>,
 ) -> virt::Document {
-
     let mut children = vec![];
 
     for item in &document.body {
         match item {
             ast::DocumentBodyItem::Component(component) => {
                 if context.options.include_components {
-                    evaluate_component::<F>(
-                        component,
-                        &mut children,
-                        context,
-                    );
+                    evaluate_component::<F>(component, &mut children, context);
                 }
             }
             ast::DocumentBodyItem::Element(element) => {
@@ -67,7 +62,6 @@ fn evaluate_document<F: FileResolver>(
             }
             _ => {}
         }
-
     }
 
     virt::Document {
@@ -144,8 +138,8 @@ fn evaluate_slot<F: FileResolver>(
     // render default children
     for child in &slot.body {
         match child {
-            ast::SlotBodyItem::Element(child) => evaluate_element(child,  fragment, context),
-            ast::SlotBodyItem::Text(child) => evaluate_text_node(child,  fragment, context),
+            ast::SlotBodyItem::Element(child) => evaluate_element(child, fragment, context),
+            ast::SlotBodyItem::Text(child) => evaluate_text_node(child, fragment, context),
         }
     }
 }
@@ -263,11 +257,11 @@ fn evaluate_element_child<F: FileResolver>(
     context: &mut DocumentContext<F>,
 ) {
     match child {
-        ast::ElementBodyItem::Element(child) => evaluate_element(child,  fragment, context),
+        ast::ElementBodyItem::Element(child) => evaluate_element(child, fragment, context),
         ast::ElementBodyItem::Slot(slot) => {
-            evaluate_slot(&slot,  fragment, context);
+            evaluate_slot(&slot, fragment, context);
         }
-        ast::ElementBodyItem::Text(child) => evaluate_text_node(child,  fragment, context),
+        ast::ElementBodyItem::Text(child) => evaluate_text_node(child, fragment, context),
         _ => {}
     }
 }
@@ -278,9 +272,9 @@ fn evaluate_insert_child<F: FileResolver>(
     context: &mut DocumentContext<F>,
 ) {
     match child {
-        ast::InsertBody::Element(child) => evaluate_element(child,  fragment, context),
-        ast::InsertBody::Text(child) => evaluate_text_node(child,  fragment, context),
-        ast::InsertBody::Slot(child) => evaluate_slot(child,  fragment, context),
+        ast::InsertBody::Element(child) => evaluate_element(child, fragment, context),
+        ast::InsertBody::Text(child) => evaluate_text_node(child, fragment, context),
+        ast::InsertBody::Slot(child) => evaluate_slot(child, fragment, context),
     }
 }
 

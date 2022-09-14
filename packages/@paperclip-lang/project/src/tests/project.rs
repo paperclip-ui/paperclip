@@ -1,34 +1,33 @@
 use crate::config::{CompilerOptions, Config};
+use crate::io::{ProjectIO, WatchEvent, WatchEventKind};
 use crate::project::{CompileOptions, Project};
 use crate::project_compiler::ProjectCompiler;
-use crate::io::{ProjectIO, WatchEvent, WatchEventKind};
+use async_stream::stream;
 use futures::executor::block_on;
+use futures_core::stream::Stream;
 use futures_util::pin_mut;
+use futures_util::stream::StreamExt;
 use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_common::str_utils::strip_extra_ws;
-use paperclip_parser::graph::Graph;
 use paperclip_parser::graph::io::IO as GraphIO;
 use paperclip_parser::graph::test_utils::MockFS;
+use paperclip_parser::graph::Graph;
 use path_absolutize::*;
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::path::Path;
 use std::rc::Rc;
-use async_stream::stream;
-use futures_core::stream::Stream;
-use futures_util::stream::StreamExt;
-use std::cell::RefCell;
-
 
 struct MockIO;
 
 impl GraphIO for MockIO {}
 
 impl ProjectIO for MockIO {
-  type Str = impl Stream<Item = WatchEvent>;
+    type Str = impl Stream<Item = WatchEvent>;
     fn watch(&self, _dir: &str) -> Self::Str {
-      stream! {
-        yield WatchEvent::new(WatchEventKind::Create, &"nada".to_string());
-      }
+        stream! {
+          yield WatchEvent::new(WatchEventKind::Create, &"nada".to_string());
+        }
     }
 }
 
@@ -78,30 +77,28 @@ macro_rules! test_case {
 
             let output = project.compile(CompileOptions { watch: false });
 
-
             pin_mut!(output);
             let expected_files = HashMap::from($output_files);
 
             while let Some(result) = block_on(output.next()) {
-              if let Ok((key, content)) = result {
-                  if let Some(expected_content) = expected_files.get(key.as_str()) {
-                    assert_eq!(
-                        strip_extra_ws(content.as_str()),
-                        strip_extra_ws(expected_content)
-                    )
+                if let Ok((key, content)) = result {
+                    if let Some(expected_content) = expected_files.get(key.as_str()) {
+                        assert_eq!(
+                            strip_extra_ws(content.as_str()),
+                            strip_extra_ws(expected_content)
+                        )
+                    } else {
+                        panic!("File {} not handled", key);
+                    }
                 } else {
-                    panic!("File {} not handled", key);
+                    panic!("Parse error");
                 }
-              } else {
-                panic!("Parse error");
-              }
             }
-
 
             // if let Ok(all_files) = block_on() {
             //     let expected_files = HashMap::from($output_files);
             //     for (key, content) in all_files {
-                    
+
             //     }
             // } else {
             //     panic!("Parse error");

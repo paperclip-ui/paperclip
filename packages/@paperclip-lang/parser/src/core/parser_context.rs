@@ -5,7 +5,6 @@ use crate::core::string_scanner::StringScanner;
 use paperclip_common::id::{get_document_id, IDGenerator};
 use std::collections::VecDeque;
 
-
 type NextToken<'src, Token> = dyn Fn(&mut StringScanner<'src>) -> Result<Token, ParserError>;
 
 pub struct Context<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone> {

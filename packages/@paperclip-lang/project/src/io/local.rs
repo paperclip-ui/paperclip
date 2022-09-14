@@ -1,19 +1,17 @@
+use super::core::{ProjectIO, WatchEvent, WatchEventKind};
 use crate::utils::watch_local::async_watch;
 use async_stream::stream;
 use futures_core::stream::Stream;
 use futures_util::pin_mut;
 use futures_util::stream::StreamExt;
-use paperclip_parser::graph::io::IO as GraphIO;
-use std::path::Path;
-use std::fs;
 use paperclip_common::fs::{FileReader, FileResolver};
-use super::core::{ProjectIO, WatchEvent, WatchEventKind};
+use paperclip_parser::graph::io::IO as GraphIO;
 use path_absolutize::*;
-
+use std::fs;
+use std::path::Path;
 
 pub struct LocalIO;
 impl GraphIO for LocalIO {}
-
 
 impl ProjectIO for LocalIO {
     type Str = impl Stream<Item = WatchEvent>;

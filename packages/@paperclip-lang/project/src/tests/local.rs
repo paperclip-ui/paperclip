@@ -1,4 +1,3 @@
-
 // #[test]
 // fn can_load_a_simple_project() {
 //     let directory = get_fixtures_dir("simple");

@@ -1,24 +1,24 @@
-use paperclip_parser::graph::io::IO as GraphIO;
 use futures_core::stream::Stream;
+use paperclip_parser::graph::io::IO as GraphIO;
 
 #[derive(Debug)]
 pub enum WatchEventKind {
     Create,
     Remove,
-    Change
+    Change,
 }
 
 #[derive(Debug)]
 pub struct WatchEvent {
     pub kind: WatchEventKind,
-    pub path: String
+    pub path: String,
 }
 
 impl WatchEvent {
     pub fn new(kind: WatchEventKind, path: &str) -> Self {
         Self {
             kind,
-            path: path.to_string()
+            path: path.to_string(),
         }
     }
 }

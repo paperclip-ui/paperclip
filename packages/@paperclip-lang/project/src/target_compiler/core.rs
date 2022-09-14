@@ -1,3 +1,4 @@
+use super::context::TargetCompilerContext;
 use crate::config::{CompilerOptions, Config};
 use anyhow::Result;
 use paperclip_common::fs::{FileReader, FileResolver};
@@ -7,7 +8,6 @@ use paperclip_evaluator::html::evaluator::{evaluate as evaluate_html, Options as
 use paperclip_evaluator::html::serializer::serialize as serialize_html;
 use paperclip_parser::graph::Graph;
 use std::cell::RefCell;
-use super::context::TargetCompilerContext;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -61,7 +61,11 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
         }
     }
 
-    pub async fn compile_files(&self, file_paths: &Vec<String>, graph: &Graph) -> Result<BTreeMap<String, String>> {
+    pub async fn compile_files(
+        &self,
+        file_paths: &Vec<String>,
+        graph: &Graph,
+    ) -> Result<BTreeMap<String, String>> {
         let mut all_compiled_files: BTreeMap<String, String> = BTreeMap::new();
         for dep_file_path in file_paths {
             let compiled_files = self

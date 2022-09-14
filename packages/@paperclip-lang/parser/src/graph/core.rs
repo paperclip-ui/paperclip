@@ -2,7 +2,7 @@ use super::io::IO;
 use crate::pc::ast;
 use crate::pc::parser::parse as parse_pc;
 use crc::crc32;
-use futures::future::{BoxFuture};
+use futures::future::BoxFuture;
 use futures::lock::Mutex;
 use std::collections::{HashMap, HashSet};
 use std::str;
@@ -46,9 +46,11 @@ impl Graph {
     pub fn get_immediate_dependents(&self, path: &str) -> Vec<&Dependency> {
         let mut dependents = vec![];
         for (_file_path, dep) in &self.dependencies {
-            if dep.imports.values().any(|resolved_path| {
-                resolved_path == path
-            }) {
+            if dep
+                .imports
+                .values()
+                .any(|resolved_path| resolved_path == path)
+            {
                 dependents.push(dep);
             }
         }
@@ -72,30 +74,37 @@ impl Graph {
 
         all_dependents
     }
-    pub async fn load_file<TIO: IO>(&mut self, path: &str, io: &TIO) -> HashMap<String, &Dependency> {
-        self.load_file2(path, io, Arc::new(Mutex::new(HashSet::new()))).await
+    pub async fn load_file<TIO: IO>(
+        &mut self,
+        path: &str,
+        io: &TIO,
+    ) -> HashMap<String, &Dependency> {
+        self.load_file2(path, io, Arc::new(Mutex::new(HashSet::new())))
+            .await
     }
-    async fn load_file2<TIO: IO>(&mut self, path: &str, io: &TIO, loaded: Arc<Mutex<HashSet<String>>>) -> HashMap<String, &Dependency> {
-        let new_dependencies = load_dependencies_wrapper::<TIO>(
-            path.to_string(),
-            Arc::new(&io),
-            loaded
-        )
-        .await;
+    async fn load_file2<TIO: IO>(
+        &mut self,
+        path: &str,
+        io: &TIO,
+        loaded: Arc<Mutex<HashSet<String>>>,
+    ) -> HashMap<String, &Dependency> {
+        let new_dependencies =
+            load_dependencies_wrapper::<TIO>(path.to_string(), Arc::new(&io), loaded).await;
 
-        let new_dep_keys = new_dependencies.keys().map(|key| {
-            key.to_string()
-        }).collect::<Vec<String>>();
+        let new_dep_keys = new_dependencies
+            .keys()
+            .map(|key| key.to_string())
+            .collect::<Vec<String>>();
 
-        self.dependencies.extend(
-            new_dependencies
-        );
-        
+        self.dependencies.extend(new_dependencies);
 
         let mut ret = HashMap::new();
 
         for file_path in new_dep_keys {
-            ret.insert(file_path.to_string(), self.dependencies.get(&file_path).unwrap());
+            ret.insert(
+                file_path.to_string(),
+                self.dependencies.get(&file_path).unwrap(),
+            );
         }
 
         ret

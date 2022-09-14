@@ -2,7 +2,6 @@ use super::parser::parse;
 use super::serialize::serialize;
 use crate::core::errors::ParserError;
 
-
 #[test]
 fn can_parse_various_comments() {
     let tests: Vec<(&str, Result<(), ParserError>)> = vec![

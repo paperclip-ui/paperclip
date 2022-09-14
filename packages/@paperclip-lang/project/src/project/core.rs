@@ -1,17 +1,17 @@
 use crate::config::Config;
+use crate::io::ProjectIO;
 use crate::project_compiler::ProjectCompiler;
-use crate::io::{ProjectIO};
 use anyhow::Result;
 use async_stream::try_stream;
 use futures_core::stream::Stream;
 use futures_util::pin_mut;
 use futures_util::stream::StreamExt;
 use paperclip_parser::graph::Graph;
-use std::collections::HashMap;
-use std::rc::Rc;
-use std::path::Path;
-use std::ffi::OsStr;
 use std::cell::RefCell;
+use std::collections::HashMap;
+use std::ffi::OsStr;
+use std::path::Path;
+use std::rc::Rc;
 
 pub struct CompileOptions {
     pub watch: bool,
@@ -37,10 +37,9 @@ pub struct Project<IO: ProjectIO> {
 }
 
 impl<IO: ProjectIO> Project<IO> {
-
-    /// 
+    ///
     /// Compiles the _entire_ project and returns a stream of files.
-    /// 
+    ///
 
     pub fn compile(
         &self,
@@ -70,20 +69,24 @@ impl<IO: ProjectIO> Project<IO> {
 
     ///
     /// Recompiles just one file and its _dependents_
-    /// 
+    ///
 
     async fn reload_file(&self, path: &str) -> Result<HashMap<String, String>> {
         let mut graph = self.graph.borrow_mut();
         graph.load_file::<IO>(path, &self.io).await;
         let all_dependents = graph.get_all_dependents(path);
 
-        let mut files_to_compile: Vec<String> = all_dependents.iter().map(|dep| {
-            dep.path.to_string()
-        }).collect();
+        let mut files_to_compile: Vec<String> = all_dependents
+            .iter()
+            .map(|dep| dep.path.to_string())
+            .collect();
 
         files_to_compile.push(path.to_string());
-        
-        let compiled_files = self.compiler.compile_files(&files_to_compile, &graph).await?;
+
+        let compiled_files = self
+            .compiler
+            .compile_files(&files_to_compile, &graph)
+            .await?;
 
         Ok(compiled_files)
     }

@@ -86,7 +86,7 @@ pub fn next_token<'src>(source: &mut StringScanner<'src>) -> Result<Token<'src>,
                 b => Token::Byte(b),
             })
         }
-        Char::Cluster(value) => Ok(Token::Cluster(value))
+        Char::Cluster(value) => Ok(Token::Cluster(value)),
     }
 }
 

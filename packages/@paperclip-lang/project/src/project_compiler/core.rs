@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 pub struct ProjectCompiler<IO: ProjectIO> {
-    targets: Vec<TargetCompiler<IO>>
+    targets: Vec<TargetCompiler<IO>>,
 }
 
 impl<IO: ProjectIO> ProjectCompiler<IO> {
@@ -27,15 +27,25 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
                     .collect()
             } else {
                 vec![]
-            }
+            },
         }
     }
     pub async fn compile_graph(&self, graph: &Graph) -> Result<HashMap<String, String>> {
-        self.compile_files(&graph.dependencies.keys().map(|key| {
-            key.to_string()
-        }).collect::<Vec<String>>(), graph).await
+        self.compile_files(
+            &graph
+                .dependencies
+                .keys()
+                .map(|key| key.to_string())
+                .collect::<Vec<String>>(),
+            graph,
+        )
+        .await
     }
-    pub async fn compile_files(&self, files: &Vec<String>, graph: &Graph) -> Result<HashMap<String, String>> {
+    pub async fn compile_files(
+        &self,
+        files: &Vec<String>,
+        graph: &Graph,
+    ) -> Result<HashMap<String, String>> {
         let mut compiled_files = HashMap::new();
         for target in &self.targets {
             compiled_files.extend(target.compile_files(files, graph).await?);

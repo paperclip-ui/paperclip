@@ -1,8 +1,8 @@
 use super::evaluator::{evaluate, Options};
 use super::serializer::serialize;
-use paperclip_common::str_utils::strip_extra_ws;
 use futures::executor::block_on;
 use paperclip_common::fs::FileResolver;
+use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::graph;
 use paperclip_parser::graph::test_utils;
 use std::collections::HashMap;

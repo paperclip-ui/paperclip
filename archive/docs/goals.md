@@ -19,6 +19,5 @@ The ideas behind Tandem are continuing to evolve based on real-world usage, so t
 - Sketch-like user experience. Tandem will only provide functionality & tooling that is compatible with how the web works.
 - Runtimes or any other non-native functionality. Tandem files will always be compilable down to static HTML & CSS.
 - Cover _all_ front-end user interface development cases. Tandem will target _simple_ use cases. Complex use cases will be deferred to other software and hand written code where it makes sense.
-- To cover the entire development process between `mock-up -> design -> prototype -> development -> deploy`. Tandem may provide tooling to make each step more efficient, but will always focus on the `development` process. 
-- Abstractions around HTML & CSS. Tandem will always try to aim to provide transparent tooling that _augment_ HTML & CSS creation. 
-
+- To cover the entire development process between `mock-up -> design -> prototype -> development -> deploy`. Tandem may provide tooling to make each step more efficient, but will always focus on the `development` process.
+- Abstractions around HTML & CSS. Tandem will always try to aim to provide transparent tooling that _augment_ HTML & CSS creation.

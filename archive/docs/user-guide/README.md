@@ -269,7 +269,7 @@ module.exports = {
     rules: [
       {
         loader: "ts-loader",
-        test: /\.tsx?$/
+        test: /\.tsx?$/,
       },
       {
         // Compiles Paperclip components to React
@@ -277,11 +277,11 @@ module.exports = {
         options: {
           config: JSON.parse(
             fs.readFileSync(path.resolve(__dirname, "app.tdproject"), "utf8")
-          )
+          ),
         },
-        test: /\.pc$/
-      }
-    ]
+        test: /\.pc$/,
+      },
+    ],
   },
 
   entry: "./src/entry.ts",
@@ -290,13 +290,13 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: "App name",
       // Load a custom template (lodash by default see the FAQ for details)
-      template: "src/index.html"
-    })
+      template: "src/index.html",
+    }),
   ],
 
   output: {
     filename: "[name].bundle.js",
-    path: path.resolve(__dirname, "dist")
+    path: path.resolve(__dirname, "dist"),
   },
 
   mode: "development",
@@ -306,16 +306,16 @@ module.exports = {
       cacheGroups: {
         vendors: {
           priority: -10,
-          test: /[\\/]node_modules[\\/]/
-        }
+          test: /[\\/]node_modules[\\/]/,
+        },
       },
 
       chunks: "async",
       minChunks: 1,
       minSize: 30000,
-      name: true
-    }
-  }
+      name: true,
+    },
+  },
 };
 ```
 
@@ -444,7 +444,7 @@ export default (Base: React.ComponentClass<BaseApplicationProps>) =>
       const items = [
         <ListItem key="item-1" />,
         <ListItem key="item-2" />,
-        <ListItem key="item-3" />
+        <ListItem key="item-3" />,
       ];
 
       return <Base {...rest} items={items} />;
@@ -478,7 +478,7 @@ export default (Base: React.ComponentClass<BaseApplicationProps>) =>
       const items = [
         <ListItem key="item-1" labelProps={{ text: "Eat wood" }} />,
         <ListItem key="item-2" labelProps={{ text: "Chop wood" }} />,
-        <ListItem key="item-3" labelProps={{ text: "Smell wood" }} />
+        <ListItem key="item-3" labelProps={{ text: "Smell wood" }} />,
       ];
 
       return <Base {...rest} items={items} />;
@@ -517,7 +517,7 @@ export default (Base: React.ComponentClass<BaseApplicationProps>) =>
       const items = [
         <ListItem key="item-1" labelProps={{ text: "Eat wood" }} />,
         <ListItem key="item-2" labelProps={{ text: "Chop wood" }} />,
-        <ListItem key="item-3" labelProps={{ text: "Smell wood" }} />
+        <ListItem key="item-3" labelProps={{ text: "Smell wood" }} />,
       ];
 
       return <Base {...rest} items={items} />;

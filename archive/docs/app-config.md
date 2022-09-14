@@ -24,9 +24,9 @@ The app config (`*.tdproject`) files contain information about your application.
   // (optional) Directory where global properties are stored such as colors. If this file
   // is omitted, then globals will be stored in mainFilePath if that's present.
   "globalFilePath" : "./src/global.pc",
-  
+
   "options": {
-  
+
     // if false, then typography options will appear for text
     "allowCascadeFonts": true // default value
   }

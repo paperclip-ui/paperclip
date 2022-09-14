@@ -1,34 +1,14 @@
 import "./test.pc" as test
 
-
 component Message {
-  variant testt trigger {
-    test.mobile
-  }
-
-  render div {
-    style extends test.defaultFont, test.spacing {
-      color: white
-      background: black
-      font-family: sans-serif
-      display: flex
-      flex-direction: column
-      gap: 14px
-    }
-    style variant testt {
-      font-size: 32px
-    } 
-    slot children
-  }
-}
-
-Message {
-  text "Blarg"
-  div {
-    text "color" {
-      style {
-        color: orange
+  render div "hello world" {
+    style {}
+    slot ab {
+      div "hello" {
+        
       }
     }
   }
 }
+
+Message

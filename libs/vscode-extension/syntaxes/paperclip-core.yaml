@@ -1,0 +1,88 @@
+# [PackageDev] target_format: json, ext: tmLanguage.json
+# https://github.com/microsoft/vscode/tree/main/extensions/javascript/syntaxes/JavaScriptReact.tmLanguage.json
+# https://github.com/microsoft/vscode/blob/master/extensions/html/syntaxes/html.tmLanguage.json
+# https://github.com/microsoft/TypeScript-TmLanguage/blob/master/TypeScriptReact.YAML-tmLanguage
+# https://macromates.com/manual/en/language_grammars
+# TODOS
+# HTML entities (&quote;)
+
+name: Paperclip Template
+scopeName: text.core.paperclip-core
+fileTypes: []
+uuid: 3e3ce414-c385-42ea-a2ba-451a37ca6fd1
+patterns:
+  - include: "#document"
+variables:
+  string: (\".*?\")
+repository:
+  document:
+    patterns:
+      - include: "#import"
+      - include: "#component"
+      - include: "#node"
+  import:
+    patterns:
+      - match: (import)\s+{{string}}\s(as)\s(\w+)
+        captures:
+          "1": { name: keyword.control.import }
+          "2": { name: string.double }
+          "3": { name: storage.type.variable }
+          "4": { name: support.variable }
+  component:
+    patterns:
+      - begin: (component)\s(\w+)\s*(\{)
+        end: (\})
+        beginCaptures:
+          "1": { name: storage.type.class }
+          "2": { name: support.class }
+        patterns:
+          - include: "#render"
+  render:
+    patterns:
+      - begin: (render)(?=.*?\{)
+        end: (?=})
+        beginCaptures:
+          "1": { name: keyword.control }
+        patterns:
+          - include: "#node"
+  node:
+    patterns:
+      - include: "#slot"
+      - include: "#insert"
+      - include: "#instance"
+  slot:
+    patterns:
+      - begin: (slot)\s+(\w+)\s*{
+        end: "}"
+        beginCaptures:
+          "1": { name: keyword.control }
+          "2": { name: support.variable }
+        patterns:
+          - include: "#node-child"
+      - match: (slot)\s+(\w+)
+        captures:
+          "1": { name: keyword.control }
+          "2": { name: support.variable }
+
+  instance:
+    patterns:
+      - begin: (\w+(\.\w+)?)(\s+{{string}})?\s*(\{)
+        end: (\})
+        beginCaptures:
+          "1": { name: support.variable }
+          "3": { name: string.double }
+        patterns:
+          - include: "#style"
+      - match: (\w+)
+        captures:
+          "1": { name: support.variable }
+  style:
+    patterns:
+      - begin: (style)\s*(?=\{)
+        end: (?=\})
+        beginCaptures:
+          "1": { name: keyword.control }
+  node-child:
+    patterns:
+      - include: "#style"
+      - include: "#node"

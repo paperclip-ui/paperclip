@@ -24,7 +24,7 @@ import { FSReadResult } from "fsbox/src/base";
 import * as mime from "mime-types";
 import execa from "execa";
 import { walkPCRootDirectory } from "@paperclip-lang/core";
-import { QuickSearchUriResult } from "@tandem-ui/designer/lib/state";
+import { QuickSearchUriResult } from "../../../designer/lib/state";
 
 // TODO - this needs to be moved to project RPC
 export class RPC {

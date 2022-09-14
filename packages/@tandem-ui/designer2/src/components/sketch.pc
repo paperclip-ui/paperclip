@@ -4,7 +4,7 @@ component Message {
   variant testt trigger {
     test.mobile
   }
-  
+
   render div {
     style extends test.defaultFont, test.spacing {
       color: white
@@ -22,7 +22,7 @@ component Message {
 }
 
 Message {
-  text "Hello world!"
+  text "Blarggggg"
   div {
     text "color" {
       style {
@@ -33,5 +33,9 @@ Message {
 }
 
 Message {
-  text "Something"
+  text "A"
+}
+
+Message {
+  text "B"
 }

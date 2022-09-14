@@ -1,6 +1,6 @@
 import { FSItem } from "tandem-common";
-import { FrontEndEngineOptions } from "@tandem-ui/designer/lib/engines";
-import { ProjectInfo, QuickSearchResult } from "@tandem-ui/designer/lib/state";
+import { FrontEndEngineOptions } from "../../../../designer/lib/engines";
+import { ProjectInfo, QuickSearchResult } from "../../../../designer/lib/state";
 import { setReaderMimetypes } from "fsbox";
 import { PAPERCLIP_MIME_TYPE } from "@paperclip-lang/core";
 import { WorkspaceClient } from "@tandem-ui/workspace-client";

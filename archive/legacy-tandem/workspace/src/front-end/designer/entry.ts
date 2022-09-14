@@ -1,5 +1,5 @@
 import { createDesignerEngine } from "./engine-adapter";
-import { init } from "@tandem-ui/designer";
+import { init } from "../../../../designer";
 
 const qs = new URLSearchParams(location.search);
 

@@ -6,11 +6,11 @@ Paperclip is a UI builder for web applications that aims to safely enable your e
 
 ![Split view](./assets/screenshots/v10.1.7.png)
 
-### Getting started
+<!-- ### Getting started
 
 ```
 paperclip designer
-```
+```-->
 
 <!-- ## Who is this intended for?
 

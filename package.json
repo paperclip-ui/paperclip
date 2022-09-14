@@ -8,7 +8,7 @@
     "url": "git+https://github.com/crcn/tandem-preview.git"
   },
   "workspaces": [
-    "./packages/@paperclip-ui/*"
+    "./libs/*"
   ],
   "main": "index.js",
   "author": "",

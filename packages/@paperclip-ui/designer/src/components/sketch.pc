@@ -1,0 +1,41 @@
+import "./test.pc" as test
+
+component Message {
+  variant testt trigger {
+    test.mobile
+  }
+
+  render div {
+    style extends test.defaultFont, test.spacing {
+      color: white
+      background: black
+      font-family: sans-serif
+      display: flex
+      flex-direction: column
+      gap: 14px
+    }
+    style variant testt {
+      font-size: 32px
+    } 
+    slot children
+  }
+}
+
+Message {
+  text "Blarggggg"
+  div {
+    text "color" {
+      style {
+        color: orange
+      }
+    }
+  }
+}
+
+Message {
+  text "A"
+}
+
+Message {
+  text "B"
+}

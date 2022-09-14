@@ -7,6 +7,7 @@ target
 *.pc.mjs
 *.pc.mjs.*
 *.pc.d.ts
+*.pc.html
 *.pc.js
 *.pc.js.map
 *.vsix

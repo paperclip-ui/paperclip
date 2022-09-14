@@ -1,0 +1,5 @@
+{
+  "srcDir": "src",
+  "moduleDirs": ["node_module"],
+  "compilerOptions": [{ "emit": ["css", "html"] }]
+}

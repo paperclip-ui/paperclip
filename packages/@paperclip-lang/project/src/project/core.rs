@@ -6,6 +6,7 @@ use async_stream::try_stream;
 use futures_core::stream::Stream;
 use futures_util::pin_mut;
 use futures_util::stream::StreamExt;
+use paperclip_common::get_or_short;
 use paperclip_parser::graph::Graph;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -32,11 +33,30 @@ pub struct Project<IO: ProjectIO> {
 
     pub compiler: ProjectCompiler<IO>,
 
+    compile_cache: RefCell<HashMap<String, String>>,
+
     /// IO for the project
     pub io: Rc<IO>,
 }
 
 impl<IO: ProjectIO> Project<IO> {
+    ///
+    pub fn new(
+        config: Rc<Config>,
+        graph: Rc<RefCell<Graph>>,
+        directory: String,
+        compiler: ProjectCompiler<IO>,
+        io: Rc<IO>,
+    ) -> Self {
+        Self {
+            config,
+            graph,
+            directory,
+            compiler,
+            compile_cache: RefCell::new(HashMap::new()),
+            io,
+        }
+    }
     ///
     /// Compiles the _entire_ project and returns a stream of files.
     ///
@@ -74,14 +94,28 @@ impl<IO: ProjectIO> Project<IO> {
     async fn reload_file(&self, path: &str) -> Result<HashMap<String, String>> {
         let mut graph = self.graph.borrow_mut();
         graph.load_file::<IO>(path, &self.io).await;
-        let all_dependents = graph.get_all_dependents(path);
 
-        let mut files_to_compile: Vec<String> = all_dependents
+        let dep = get_or_short!(graph.dependencies.get(path), Ok(HashMap::new()));
+
+        // If the file being reloaded contains the same hash as a previously compiled file,
+        // then don't emit
+        if self.compile_cache.borrow().get(&dep.path) == Some(&dep.hash) {
+            return Ok(HashMap::new());
+        }
+
+        let mut deps_to_compile = graph.get_all_dependents(path);
+        deps_to_compile.push(dep);
+
+        for dep in &deps_to_compile {
+            self.compile_cache
+                .borrow_mut()
+                .insert(dep.path.to_string(), dep.hash.to_string());
+        }
+
+        let files_to_compile: Vec<String> = deps_to_compile
             .iter()
             .map(|dep| dep.path.to_string())
             .collect();
-
-        files_to_compile.push(path.to_string());
 
         let compiled_files = self
             .compiler

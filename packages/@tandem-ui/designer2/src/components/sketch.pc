@@ -4,6 +4,7 @@ component Message {
   variant testt trigger {
     test.mobile
   }
+
   render div {
     style extends test.defaultFound, test.spacing {
       color: white

@@ -12,15 +12,15 @@ impl Project<LocalIO> {
     pub async fn load(directory: &str, config_file_name: Option<String>) -> Result<Self> {
         let io = Rc::new(LocalIO {});
         let config = Rc::new(Config::load(directory, config_file_name)?);
-        Ok(Self {
-            config: config.clone(),
-            io: io.clone(),
-            graph: Rc::new(RefCell::new(
+        Ok(Self::new(
+            config.clone(),
+            Rc::new(RefCell::new(
                 load_graph::<LocalIO>(directory, &config, &io).await,
             )),
-            directory: directory.to_string(),
-            compiler: ProjectCompiler::load(config.clone(), directory.to_string(), io.clone()),
-        })
+            directory.to_string(),
+            ProjectCompiler::load(config.clone(), directory.to_string(), io.clone()),
+            io.clone(),
+        ))
     }
 }
 

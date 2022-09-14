@@ -67,13 +67,13 @@ macro_rules! test_case {
             let graph = Rc::new(RefCell::new(graph));
             let io = Rc::new(MockIO {});
 
-            let project = Project {
-                io: io.clone(),
-                config: config.clone(),
-                graph: graph.clone(),
-                directory: $dir.to_string(),
-                compiler: ProjectCompiler::load(config.clone(), $dir.to_string(), io.clone()),
-            };
+            let project = Project::new(
+                config.clone(),
+                graph.clone(),
+                $dir.to_string(),
+                ProjectCompiler::load(config.clone(), $dir.to_string(), io.clone()),
+                io.clone(),
+            );
 
             let output = project.compile(CompileOptions { watch: false });
 

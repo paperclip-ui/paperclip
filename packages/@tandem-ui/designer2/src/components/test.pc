@@ -19,3 +19,4 @@ public component Container {
 public trigger mobile {
   "@media screen and (max-width: 600px)"
 }
+

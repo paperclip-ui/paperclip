@@ -8,7 +8,6 @@
     "url": "git+https://github.com/crcn/tandem-preview.git"
   },
   "workspaces": [
-    "./packages/legacy-tandem/*",
     "./packages/@tandem-ui/*",
     "./packages/@paperclip-lang/*"
   ],

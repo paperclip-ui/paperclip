@@ -14,8 +14,6 @@ paperclip designer
 
 <!-- ## Who is this intended for?
 
-
-
 ## What can you
 
 ### 🖌️ Import directly from Figma

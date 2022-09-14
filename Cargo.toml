@@ -1,10 +1,10 @@
 [workspace]
 members = [
-  "packages/@paperclip-ui/compiler-react",
-  "packages/@paperclip-ui/cli",
-  "packages/@paperclip-ui/rs-common",
-  "packages/@paperclip-ui/project",
-  "packages/@paperclip-ui/evaluator"
+  "@paperclip-ui/compiler-react",
+  "@paperclip-ui/cli",
+  "@paperclip-ui/rs-common",
+  "@paperclip-ui/project",
+  "@paperclip-ui/evaluator"
 ]
 
 [profile.release]

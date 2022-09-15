@@ -18,10 +18,10 @@ pub fn get_style_namespace(
         };
 
         // Keep the CSS scoped to this document.
-        format!("{}-{}", ns, document_id)
+        format!("_{}-{}", ns, document_id)
     } else {
         // No element name? Use the ID. We don't need the document ID
         // here since the element ID is unique.
-        format!("{}", id)
+        format!("_{}", id)
     }
 }

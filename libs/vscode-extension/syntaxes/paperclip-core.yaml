@@ -21,6 +21,7 @@ repository:
       - include: "#public"
       - include: "#trigger"
       - include: "#component"
+      - include: "#style"
       - include: "#node"
   import:
     patterns:
@@ -35,7 +36,7 @@ repository:
       - begin: (trigger)\s+(\w+)\s*\{
         end: (\})
         beginCaptures:
-          "1": { name: storage.modifier }
+          "1": { name: storage.type.var }
           "2": { name: variable.other }
           "3": { name: string.double }
         patterns:
@@ -131,7 +132,7 @@ repository:
       - begin: (style)
         end: (?=\{)
         beginCaptures:
-          "1": { name: support.type }
+          "1": { name: storage.type.var }
         patterns:
           - match: (variant)\s+(\w+)(\s*\+\s*(\w+))?
             captures:

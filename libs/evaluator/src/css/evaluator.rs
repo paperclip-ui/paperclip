@@ -227,7 +227,7 @@ fn evaluate_variant_styles<F: FileResolver>(
             id: context.next_id(),
             source_id: Some(style.id.to_string()),
             selector_text: format!(
-                ".{}.{}{}",
+                ".{}._{}{}",
                 render_node_ns,
                 assoc_variant.id,
                 if is_render_node {

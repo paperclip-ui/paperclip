@@ -20,3 +20,8 @@ public trigger mobile {
   "@media screen and (max-width: 600px)"
 }
 
+
+div {
+  style extends defaultFont, spacing {
+  }
+}

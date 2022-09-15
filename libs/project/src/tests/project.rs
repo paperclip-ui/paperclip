@@ -150,7 +150,7 @@ test_case! {
   ],
   [
     ("/entry.pc.css", r#"
-    .80f4925f-4 { color: red; }
+    ._80f4925f-4 { color: red; }
     "#)
   ]
 }
@@ -226,12 +226,12 @@ test_case! {
           <link rel="stylesheet" href="/imp.pc.css">
         </head>
         <body>
-          <span class="abba-f7127f1d"> hello </span>
+          <span class="_abba-f7127f1d"> hello </span>
         </body>
       </html>
     "#),
     ("/imp.pc.css", r#"
-    .abba-f7127f1d { color: blue; }
+    ._abba-f7127f1d { color: blue; }
   "#),
   ("/entry.pc.css", r#"
 "#)
@@ -269,12 +269,12 @@ test_case! {
           <link rel="stylesheet" href="/entry.pc.css">
         </head>
         <body>
-          <div class="A-b-80f4925f"> Hello world </div>
+          <div class="_A-b-80f4925f"> Hello world </div>
         </body>
       </html>
     "#),
     ("/entry.pc.css", r#"
-      .A-b-80f4925f { color: blue; }
+      ._A-b-80f4925f { color: blue; }
     "#)
   ]
 }
@@ -323,7 +323,7 @@ test_case! {
           <link rel="stylesheet" href="/project/out/assets/main.css">
         </head>
         <body>
-          <div class="856b6f45-6"> A </div>
+          <div class="_856b6f45-6"> A </div>
         </body>
       </html>
     "#),
@@ -334,15 +334,15 @@ test_case! {
           <link rel="stylesheet" href="/project/out/assets/main.css">
         </head>
         <body>
-          <div class="e2ff1d5b-5"> B </div>
+          <div class="_e2ff1d5b-5"> B </div>
         </body>
       </html>
     "#),
     ("/project/out/assets/main.css", r#"
     /* /project/out/entry.pc.css */ 
-    .856b6f45-6 { color: blue; }
+    ._856b6f45-6 { color: blue; }
     /* /project/out/imp.pc.css */ 
-    .e2ff1d5b-5 { color: orange; } 
+    ._e2ff1d5b-5 { color: orange; } 
     "#)
   ]
 }
@@ -378,7 +378,7 @@ test_case! {
   [
     ("/project/out/assets/main.css", r#"
     /* /project/out/entry.pc.css */
-     .856b6f45-7 { background: url("/project/image.png"); }
+     ._856b6f45-7 { background: url("/project/image.png"); }
     "#)
   ]
 }
@@ -414,7 +414,7 @@ test_case! {
   [
     ("/project/out/assets/main.css", r#"
     /* /project/out/entry.pc.css */
-     .856b6f45-7 { background: url("/project/out/assets/image.png"); }
+     ._856b6f45-7 { background: url("/project/out/assets/image.png"); }
     "#)
   ]
 }

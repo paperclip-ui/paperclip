@@ -9,7 +9,8 @@ public trigger b {
   "@media screen and (max-width: 400px)"
 }
 
-public style test {
+style ab {
+  
 }
 
 public token ab "something"

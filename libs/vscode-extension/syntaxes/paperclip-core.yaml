@@ -13,11 +13,13 @@ uuid: 3e3ce414-c385-42ea-a2ba-451a37ca6fd1
 patterns:
   - include: "#document"
 variables:
-  string: (\".*?\")
+  string: (\".*?\"|\'.*?\')
 repository:
   document:
     patterns:
       - include: "#import"
+      - include: "#public"
+      - include: "#trigger"
       - include: "#component"
       - include: "#node"
   import:
@@ -26,30 +28,49 @@ repository:
         captures:
           "1": { name: keyword.control.import }
           "2": { name: string.double }
-          "3": { name: storage.type.variable }
-          "4": { name: support.variable }
+          "3": { name: storage.modifier }
+          "4": { name: variable.other }
+  trigger:
+    patterns:
+      - begin: (trigger)\s+(\w+)\s*\{
+        end: (\})
+        beginCaptures:
+          "1": { name: storage.modifier }
+          "2": { name: support.type }
+          "3": { name: string.double }
+        patterns:
+          - include: "#string"
+  public:
+    patterns:
+      - match: (public)
+        captures:
+          "1": { name: storage.modifier }
   component:
     patterns:
       - begin: (component)\s(\w+)\s*(\{)
         end: (\})
         beginCaptures:
           "1": { name: storage.type.class }
-          "2": { name: support.class }
+          "2": { name: support.type }
         patterns:
+          - include: "#variant"
           - include: "#render"
   render:
     patterns:
-      - begin: (render)(?=.*?\{)
-        end: (?=})
-        beginCaptures:
-          "1": { name: keyword.control }
-        patterns:
-          - include: "#node"
+      - match: (render)
+        captures:
+          "0": { name: storage.modifier }
+      - include: "#node"
   node:
     patterns:
       - include: "#slot"
       - include: "#insert"
       - include: "#instance"
+  string:
+    patterns:
+      - match: ({{string}})
+        captures:
+          "0": { name: string.double }
   slot:
     patterns:
       - begin: (slot)\s+(\w+)\s*{
@@ -63,25 +84,69 @@ repository:
         captures:
           "1": { name: keyword.control }
           "2": { name: support.variable }
+  insert:
+    patterns:
+      - begin: (insert)\s+(\w+)\s*\{
+        end: (})
+        beginCaptures:
+          "1": { name: keyword.control }
+          "2": { name: support.variable }
+        patterns:
+          - include: "#node"
 
+  variant:
+    patterns:
+      - begin: (variant)\s+(\w+)\s+(trigger)\s+(\{)
+        end: (})
+        beginCaptures:
+          "1": { name: storage.type.var }
+          "2": { name: variable.other }
+          "3": { name: storage.modifier }
+        patterns:
+          - include: "#reference"
+      - match: (variant)\s+(\w+)
+        captures:
+          "1": { name: keyword.control }
+          "2": { name: support.variable }
+  reference:
+    patterns:
+      - match: (\w+)
+        captures:
+          "0": { name: support.type }
   instance:
     patterns:
-      - begin: (\w+(\.\w+)?)(\s+{{string}})?\s*(\{)
+      - begin: (\w+(\.\w+)?)(\s*\w+)?(\s+{{string}})?\s*(\{)
         end: (\})
         beginCaptures:
-          "1": { name: support.variable }
-          "3": { name: string.double }
+          "1": { name: support.type }
+          "3": { name: support.variable }
+          "4": { name: string.double }
         patterns:
-          - include: "#style"
+          - include: "#node-child"
       - match: (\w+)
         captures:
           "1": { name: support.variable }
   style:
     patterns:
-      - begin: (style)\s*(?=\{)
-        end: (?=\})
+      - begin: (style)
+        end: (?=\{)
         beginCaptures:
-          "1": { name: keyword.control }
+          "1": { name: support.type }
+        patterns:
+          - match: (variant)\s+(\w+)(\s*\+\s*(\w+))?
+            captures:
+              "1": { name: storage.modifier }
+              "2": { name: support.variable }
+              "4": { name: support.variable }
+          - match: (extends)\s+(\w+)(\s*\,\s*(\w+))?
+            captures:
+              "1": { name: storage.modifier }
+              "2": { name: support.variable }
+              "4": { name: support.variable }
+      - begin: "{"
+        end: "}"
+        patterns:
+          - include: "#style-declaration"
   node-child:
     patterns:
       - include: "#style"

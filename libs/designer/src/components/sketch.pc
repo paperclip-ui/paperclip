@@ -1,14 +1,39 @@
-import "./test.pc" as test
+import "a" as test
 
-component Message {
-  render div "hello world" {
-    style {}
-    slot ab {
-      div "hello" {
-        
+public trigger mobile {
+  "@media screen and (max-width: 100px)"
+  "@supports web"
+}
+
+public trigger b {
+  "@media screen and (max-width: 400px)"
+}
+
+public style test {
+}
+
+public token ab "something"
+
+public component Message {
+  variant mobile trigger { mobile }
+  variant secondary trigger { b }
+  render div {
+    style variant mobile + secondary extends a, b, c {
+      color: orange
+    }
+    slot child {
+      text test "default child" {
+        style variant mobile {
+          color: red
+        }
       }
     }
   }
 }
 
 Message
+Message {
+  insert child {
+    text "blarg"
+  }
+}

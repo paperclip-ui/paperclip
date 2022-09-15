@@ -36,7 +36,7 @@ repository:
         end: (\})
         beginCaptures:
           "1": { name: storage.modifier }
-          "2": { name: support.type }
+          "2": { name: variable.other }
           "3": { name: string.double }
         patterns:
           - include: "#string"
@@ -112,7 +112,7 @@ repository:
     patterns:
       - match: (\w+)
         captures:
-          "0": { name: support.type }
+          "0": { name: variable.other }
   instance:
     patterns:
       - begin: (\w+(\.\w+)?)(\s*\w+)?(\s+{{string}})?\s*(\{)

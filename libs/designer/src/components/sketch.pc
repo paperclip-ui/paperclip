@@ -21,6 +21,13 @@ public component Message {
     style variant mobile + secondary extends a, b, c {
       color: orange
     }
+    div something (a: 1) {
+    }
+    override a.b.c.d {
+      style {
+        color: red
+      }
+    }
     slot child {
       text test "default child" {
         style variant mobile {
@@ -31,9 +38,10 @@ public component Message {
   }
 }
 
-Message
+
 Message {
   insert child {
-    text "blarg"
+    text "blarg" {
+    }
   }
 }

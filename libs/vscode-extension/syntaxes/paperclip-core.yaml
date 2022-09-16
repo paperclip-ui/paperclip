@@ -41,31 +41,28 @@ repository:
 
   slot:
     patterns:
-      - begin: ({{slotInterior}})(?={)
-        end: (?=})
+      - begin: ({{slotInterior}})({)
+        end: "}"
+        endCaptures:
+          "0": { name: punctuation }
         beginCaptures:
           "2":
             patterns:
               - include: "#slot-interior"
-        patterns:
-          - include: "#node-body"
-
-  node-body:
-    patterns:
-      - begin: "{"
-        beginCaptures:
-          "0": { name: punctuation }
-        end: "}"
-        endCaptures:
-          "0": { name: punctuation }
+          "6": { name: punctuation }
         patterns:
           - include: "#node"
+      - match: ({{slotInterior}})(\n)
+        captures:
+          "0":
+            patterns:
+              - include: "#slot-interior"
 
   slot-interior:
     patterns:
       - match: ({{slotInterior}})
         captures:
-          "3": { name: storage.modifier }
+          "3": { name: keyword.control }
           "4": { name: variable.readonly }
 
   public:
@@ -155,7 +152,10 @@ repository:
           "15":
             patterns:
               - include: "#reference"
+          "21": { name: "punctuation" }
         end: "}"
+        endCaptures:
+          "0": { name: punctuation }
 
   style-declaration:
     patterns:
@@ -193,25 +193,29 @@ repository:
   instance-open-interior:
     patterns:
       - match: ({{reference}}(\s+{{id}})?(\s+{{instanceInitArg}})?)
-        name: string
         captures:
           "2": { name: entity.name.type.class }
           "4": { name: variable.other }
           "6":
             patterns:
-              - include: "#instance-init-arg"
-
-  instance-init-arg:
-    patterns:
-      - include: "#parameters"
-      - include: "#string"
+              - include: "#parameters"
+              - include: "#string"
 
   parameters:
     patterns:
       - begin: (\()
+        beginCaptures:
+          "0": { name: punctuation }
         end: (\))
-        name: support
+        endCaptures:
+          "0": { name: punctuation }
+        patterns:
+          - include: "#parameter"
 
+  parameter:
+    - match: ((\w+)\s*:\s*(\w+))
+      captures:
+        - "0": { name: entity.name.type.class }
   string:
     patterns:
       - include: "#string-double"

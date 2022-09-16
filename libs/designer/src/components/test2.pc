@@ -14,7 +14,9 @@ public trigger test {
 }
 
 
-slot abcde
+slot abcde {
+}
+
 public token abcde "fsdfs"
 
 public style test {

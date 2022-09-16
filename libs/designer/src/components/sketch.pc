@@ -2,6 +2,10 @@ public trigger mobile {
   "@media screen and (max-width: 100px)"
 }
 
+public style testStyle {
+  color: red
+}
+
 div (ab:"fdfs") {
 }
 
@@ -9,14 +13,18 @@ public component Page {
   variant isMobile trigger {
     mobile
   }
-  render Page {
-    insert children {
-      
-    }
-  }
+
   render div (class: "fdsfs", fsdfsd: "fss") {
     slot children {
       text "Hello world"
+    }
+    span test {
+      style variant isMobile + isDark extends testStyle {
+
+      }
+      override a.b.c.d.e {
+        
+      }
     }
   }
 }

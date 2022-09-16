@@ -81,7 +81,7 @@ repository:
       - match: ({{slotInterior}})
         captures:
           "3": { name: keyword.control }
-          "4": { name: variable.readonly }
+          "4": { name: support.variable }
 
   public:
     patterns:
@@ -135,7 +135,7 @@ repository:
       - match: ((variant)\s+(\w+))
         captures:
           "2": { name: storage.modifier }
-          "3": { name: variable }
+          "3": { name: entity.name.function.member }
 
   variant-trigger:
     patterns:
@@ -160,7 +160,7 @@ repository:
           "6": { name: storage.modifier }
           "7":
             patterns:
-              - include: "#reference"
+              - include: "#variant-name"
               - include: "#punctuation"
           "14": { name: storage.modifier }
           "15":
@@ -172,11 +172,16 @@ repository:
         endCaptures:
           "0": { name: punctuation }
 
+  variant-name:
+    patterns:
+      - match: ({{reference}})
+        name: entity.name.function.member
+
   reference:
     patterns:
       - match: ({{reference}})
-        captures:
-          "1": { name: support.type }
+        name: variable
+
   punctuation:
     patterns:
       - match: (\,|\+)

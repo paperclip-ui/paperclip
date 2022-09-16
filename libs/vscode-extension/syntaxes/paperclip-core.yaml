@@ -3,152 +3,228 @@
 # https://github.com/microsoft/vscode/blob/master/extensions/html/syntaxes/html.tmLanguage.json
 # https://github.com/microsoft/TypeScript-TmLanguage/blob/master/TypeScriptReact.YAML-tmLanguage
 # https://macromates.com/manual/en/language_grammars
-# TODOS
-# HTML entities (&quote;)
+# https://code.visualstudio.com/api/language-extensions/semantic-highlight-guide#theming
 
-name: Paperclip Template
+name: Paperclip Lang
 scopeName: text.core.paperclip-core
 fileTypes: []
 uuid: 3e3ce414-c385-42ea-a2ba-451a37ca6fd1
 patterns:
   - include: "#document"
 variables:
+  untilOpenBraces: ([^\{]*)
+  reference: (\w+(\.\w+)*)
+  id: (\w+)
   string: (\".*?\"|\'.*?\')
+  variantCombo: ({{reference}}(\s*\+\s*{{reference}})*)
+  extends: ({{reference}}(\s*\,\s*{{reference}})*)
+  slotInterior: ((slot)\s+({{id}})\s*)
+  instanceOpenInterior: ({{reference}}{{untilOpenBraces}})
+  variantBase: (variant\s+{{id}}\s+)
+  instanceOpen: ({{instanceOpenInterior}}(\{))
+  parameters: (\(.*?\))
+  instanceInitArg: ({{untilOpenBraces}})
 repository:
   document:
     patterns:
-      - include: "#import"
       - include: "#public"
-      - include: "#trigger"
-      - include: "#component"
       - include: "#style"
+      - include: "#token"
+      - include: "#component"
+      - include: "#trigger"
       - include: "#node"
-  import:
-    patterns:
-      - match: (import)\s+{{string}}\s(as)\s(\w+)
-        captures:
-          "1": { name: keyword.control.import }
-          "2": { name: string.double }
-          "3": { name: storage.modifier }
-          "4": { name: variable.other }
-  trigger:
-    patterns:
-      - begin: (trigger)\s+(\w+)\s*\{
-        end: (\})
-        beginCaptures:
-          "1": { name: storage.type.var }
-          "2": { name: variable.other }
-          "3": { name: string.double }
-        patterns:
-          - include: "#string"
-  public:
-    patterns:
-      - match: (public)
-        captures:
-          "1": { name: storage.modifier }
-  component:
-    patterns:
-      - begin: (component)\s(\w+)\s*(\{)
-        end: (\})
-        beginCaptures:
-          "1": { name: storage.type.class }
-          "2": { name: support.type }
-        patterns:
-          - include: "#variant"
-          - include: "#render"
-  render:
-    patterns:
-      - match: (render)
-        captures:
-          "0": { name: storage.modifier }
-      - include: "#node"
+
   node:
     patterns:
       - include: "#slot"
-      - include: "#insert"
       - include: "#instance"
-  string:
-    patterns:
-      - match: ({{string}})
-        captures:
-          "0": { name: string.double }
+
   slot:
     patterns:
-      - begin: (slot)\s+(\w+)\s*{
-        end: "}"
+      - begin: ({{slotInterior}})(?={)
+        end: (?=})
         beginCaptures:
-          "1": { name: keyword.control }
-          "2": { name: support.variable }
+          "2":
+            patterns:
+              - include: "#slot-interior"
         patterns:
-          - include: "#node-child"
-      - match: (slot)\s+(\w+)
-        captures:
-          "1": { name: keyword.control }
-          "2": { name: support.variable }
-  insert:
+          - include: "#node-body"
+
+  node-body:
     patterns:
-      - begin: (insert)\s+(\w+)\s*\{
-        end: (})
+      - begin: "{"
         beginCaptures:
-          "1": { name: keyword.control }
-          "2": { name: support.variable }
+          "0": { name: punctuation }
+        end: "}"
+        endCaptures:
+          "0": { name: punctuation }
         patterns:
           - include: "#node"
 
-  variant:
+  slot-interior:
     patterns:
-      - begin: (variant)\s+(\w+)\s+(trigger)\s+(\{)
-        end: (})
-        beginCaptures:
-          "1": { name: storage.type.var }
-          "2": { name: variable.other }
+      - match: ({{slotInterior}})
+        captures:
           "3": { name: storage.modifier }
-        patterns:
-          - include: "#reference"
-      - match: (variant)\s+(\w+)
-        captures:
-          "1": { name: keyword.control }
-          "2": { name: support.variable }
-  reference:
+          "4": { name: variable.readonly }
+
+  public:
     patterns:
-      - match: (\w+)
-        captures:
-          "0": { name: variable.other }
-  instance:
-    patterns:
-      - begin: (\w+(\.\w+)?)(\s*\w+)?(\s+{{string}})?\s*(\{)
-        end: (\})
-        beginCaptures:
-          "1": { name: support.type }
-          "3": { name: support.variable }
-          "4": { name: string.double }
-        patterns:
-          - include: "#node-child"
-      - match: (\w+)
-        captures:
-          "1": { name: support.variable }
-  style:
-    patterns:
-      - begin: (style)
-        end: (?=\{)
-        beginCaptures:
-          "1": { name: storage.type.var }
-        patterns:
-          - match: (variant)\s+(\w+)(\s*\+\s*(\w+))?
-            captures:
-              "1": { name: storage.modifier }
-              "2": { name: support.variable }
-              "4": { name: support.variable }
-          - match: (extends)\s+(\w+)(\s*\,\s*(\w+))?
-            captures:
-              "1": { name: storage.modifier }
-              "2": { name: support.variable }
-              "4": { name: support.variable }
-      - begin: "{"
-        end: "}"
-        patterns:
-          - include: "#style-declaration"
+      - match: "public"
+        name: storage.modifier
+
   node-child:
     patterns:
       - include: "#style"
       - include: "#node"
+
+  trigger:
+    patterns:
+      - begin: ((trigger)\s+({{id}})\s(\{))
+        end: "}"
+        endCaptures:
+          "0": { name: punctuation }
+        beginCaptures:
+          "2": { name: storage.modifier }
+          "3": { name: variable.readonly }
+          "5": { name: punctuation }
+        patterns:
+          - include: "#trigger-body-interior"
+
+  token:
+    patterns:
+      - match: ((token)\s+({{id}})\s+([^\n]+)\n)
+        captures:
+          "2": { name: storage.modifier }
+          "3": { name: variable.readonly }
+          "5":
+            patterns:
+              - include: "#style-declaration"
+
+  component:
+    patterns:
+      - begin: ((component)\s+(\w+)\s*\{)
+        end: "}"
+        beginCaptures:
+          "2": { name: storage.modifier }
+          "3": { name: entity.name.type.class }
+        patterns:
+          - include: "#render"
+          - include: "#variant"
+          - include: "#variant-trigger"
+          - include: "#node"
+
+  render:
+    patterns:
+      - match: "render"
+        captures:
+          "0": { name: storage.modifier }
+
+  variant:
+    patterns:
+      - match: ((variant)\s+(\w+))
+        captures:
+          "2": { name: storage.modifier }
+          "3": { name: property }
+
+  variant-trigger:
+    patterns:
+      - begin: ((trigger)\s*\{)
+        end: "}"
+        beginCaptures:
+          "2": { name: storage.modifier }
+          "3": { name: property }
+        patterns:
+          - include: "#trigger-body-interior"
+
+  trigger-body-interior:
+    patterns:
+      - include: "#reference"
+      - include: "#string"
+  style:
+    patterns:
+      - begin: ((style)(\s+{{id}})?(\s+(variant)\s+{{variantCombo}}+)?(\s+(extends)\s+{{extends}}+)?(\s*\{))
+        beginCaptures:
+          "2": { name: storage.modifier }
+          "3": { name: variable.readonly }
+          "6": { name: storage.modifier }
+          "7":
+            patterns:
+              - include: "#reference"
+          "14": { name: storage.modifier }
+          "15":
+            patterns:
+              - include: "#reference"
+        end: "}"
+
+  style-declaration:
+    patterns:
+      - include: "#string"
+
+  reference:
+    patterns:
+      - match: ({{reference}})
+        captures:
+          "1": { name: support.type }
+
+  instance:
+    patterns:
+      # div (a: b) {}
+      - begin: (({{instanceOpenInterior}})\s*({))
+        beginCaptures:
+          "2":
+            patterns:
+              - include: "#instance-open-interior"
+          "7": { name: punctuation }
+        end: "}"
+        endCaptures:
+          "0": { name: punctuation }
+        patterns:
+          - include: "#node-child"
+
+      # div (a: b)
+      - match: ({{instanceOpenInterior}})(\n)
+        captures:
+          "1":
+            patterns:
+              - include: "#instance-open-interior"
+
+  # div ab (a: 1)
+  instance-open-interior:
+    patterns:
+      - match: ({{reference}}(\s+{{id}})?(\s+{{instanceInitArg}})?)
+        name: string
+        captures:
+          "2": { name: entity.name.type.class }
+          "4": { name: variable.other }
+          "6":
+            patterns:
+              - include: "#instance-init-arg"
+
+  instance-init-arg:
+    patterns:
+      - include: "#parameters"
+      - include: "#string"
+
+  parameters:
+    patterns:
+      - begin: (\()
+        end: (\))
+        name: support
+
+  string:
+    patterns:
+      - include: "#string-double"
+      - include: "#string-single"
+
+  string-double:
+    patterns:
+      - begin: '"'
+        end: '"'
+        name: string.double
+
+  string-single:
+    patterns:
+      - begin: "'"
+        end: "'"
+        name: string.single

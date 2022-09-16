@@ -10,10 +10,9 @@ public trigger b {
 }
 
 style ab {
-  
 }
 
-public token ab "something"
+div ab {}
 
 public component Message {
   variant mobile trigger { mobile }
@@ -22,7 +21,7 @@ public component Message {
     style variant mobile + secondary extends a, b, c {
       color: orange
     }
-    div something (a: 1) {
+    div something {
     }
     override a.b.c.d {
       style {
@@ -30,6 +29,8 @@ public component Message {
       }
     }
     slot child {
+      text bb {
+      }
       text test "default child" {
         style variant mobile {
           color: red

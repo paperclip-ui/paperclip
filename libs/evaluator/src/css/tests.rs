@@ -63,7 +63,7 @@ add_case! {
       "#,
   )],
   r#"
-    ._abba-80f4925f {
+    ._abba-80f4925f-4 {
         color: orange;
     }
   "#
@@ -190,22 +190,22 @@ add_case! {
       "#,
   )],
   r#"
-  .A-80f4925f-22.a-80f4925f-11 {
+  ._A-80f4925f-22._a-80f4925f-11 {
       color: blue;
   }
 
-  .A-80f4925f-22.b-80f4925f-13 {
+  ._A-80f4925f-22._b-80f4925f-13 {
       color: blue;
   }
 
-  .A-80f4925f-22.c-80f4925f-15 {
+  ._A-80f4925f-22._c-80f4925f-15 {
       color: blue;
   }
 
   @supports mobile {
       @media screen and (max-width: 300px) {
           @media screen and (max-width: 100px) {
-              .A-80f4925f-22:nth-child(2n) {
+              ._A-80f4925f-22:nth-child(2n) {
                   color: blue;
               }
           }
@@ -215,7 +215,7 @@ add_case! {
   @supports mobile {
       @media screen and (max-width: 400px) {
           @media screen and (max-width: 100px) {
-              .A-80f4925f-22:nth-child(2n) {
+              ._A-80f4925f-22:nth-child(2n) {
                   color: blue;
               }
           }
@@ -225,7 +225,7 @@ add_case! {
   @supports desktop {
       @media screen and (max-width: 300px) {
           @media screen and (max-width: 100px) {
-              .A-80f4925f-22:nth-child(2n) {
+              ._A-80f4925f-22:nth-child(2n) {
                   color: blue;
               }
           }
@@ -235,7 +235,7 @@ add_case! {
   @supports desktop {
       @media screen and (max-width: 400px) {
           @media screen and (max-width: 100px) {
-              .A-80f4925f-22:nth-child(2n) {
+              ._A-80f4925f-22:nth-child(2n) {
                   color: blue;
               }
           }
@@ -284,7 +284,7 @@ add_case! {
     "#,
   )],
   r#"
-  ._abba-80f4925f { color: blue; }
+  ._abba-80f4925f-4 { color: blue; }
   "#
 }
 
@@ -304,7 +304,7 @@ add_case! {
     "#,
   )],
   r#"
-  ._abba-80f4925f { color: blue; }
+  ._abba-80f4925f-4 { color: blue; }
   "#
 }
 
@@ -327,15 +327,14 @@ add_case! {
           }
         }
       }
-
     "#,
   )],
   r#"
-  .Message-80f4925f-9.mobile-80f4925f-4 { 
+  ._Message-80f4925f-9._mobile-80f4925f-4 { 
       gap: 14px; 
     } 
     @media screen and (max-width: 100px) { 
-      .Message-80f4925f-9 { 
+      ._Message-80f4925f-9 { 
         gap: 14px; 
       } 
     }
@@ -367,11 +366,11 @@ add_case! {
     "#,
   )],
   r#"
-  .Message-80f4925f-10.mobile-80f4925f-4 .Message-80f4925f-9 { 
+  ._Message-80f4925f-10._mobile-80f4925f-4 ._Message-80f4925f-9 { 
     color: orange;
     } 
     @media screen and (max-width: 100px) { 
-      .Message-80f4925f-10 .Message-80f4925f-9 { 
+      ._Message-80f4925f-10 ._Message-80f4925f-9 { 
         color: orange;
       } 
     }

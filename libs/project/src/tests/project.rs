@@ -226,12 +226,12 @@ test_case! {
           <link rel="stylesheet" href="/imp.pc.css">
         </head>
         <body>
-          <span class="_abba-f7127f1d"> hello </span>
+          <span class="_abba-f7127f1d-4"> hello </span>
         </body>
       </html>
     "#),
     ("/imp.pc.css", r#"
-    ._abba-f7127f1d { color: blue; }
+    ._abba-f7127f1d-4 { color: blue; }
   "#),
   ("/entry.pc.css", r#"
 "#)
@@ -269,12 +269,12 @@ test_case! {
           <link rel="stylesheet" href="/entry.pc.css">
         </head>
         <body>
-          <div class="_A-b-80f4925f"> Hello world </div>
+          <div class="_A-b-80f4925f-5"> Hello world </div>
         </body>
       </html>
     "#),
     ("/entry.pc.css", r#"
-      ._A-b-80f4925f { color: blue; }
+      ._A-b-80f4925f-5 { color: blue; }
     "#)
   ]
 }

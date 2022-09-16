@@ -213,7 +213,7 @@ add_case! {
 	div ab
 "#)
     ],
-    "<div class=\"_ab-80f4925f\"> </div>"
+    "<div class=\"_ab-80f4925f-1\"> </div>"
 }
 
 add_case! {

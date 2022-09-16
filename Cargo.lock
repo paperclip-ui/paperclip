@@ -622,6 +622,9 @@ dependencies = [
 [[package]]
 name = "paperclip_compiler_react"
 version = "0.1.1"
+dependencies = [
+ "paperclip_parser",
+]
 
 [[package]]
 name = "paperclip_evaluator"

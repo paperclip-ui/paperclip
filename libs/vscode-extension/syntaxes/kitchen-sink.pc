@@ -1,20 +1,36 @@
+
+/*
+somrthing
+*/
+
+
 public trigger mobile {
   "@media screen and (max-width: 100px)"
 }
 
 public style testStyle {
-  color: red
+  color: 10px solid calc(10px - 3px)
+  background: url("10px")
 }
 
-div (ab:"fdfs") {
-}
+/**
+ */
+
+public token someToken url("something")
+
+/**
+ * This is a page component
+ */
 
 public component Page {
+
+  
   variant isMobile trigger {
     mobile
   }
-
+  
   render div (class: "fdsfs", fsdfsd: "fss") {
+
     slot children {
       text "Hello world"
     }
@@ -23,6 +39,7 @@ public component Page {
 
       }
       override a.b.c.d.e {
+        /* something */
         variant ab trigger { mobile }
         style {
           color: orange

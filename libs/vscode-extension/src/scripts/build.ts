@@ -7,11 +7,16 @@ import plist = require("plist");
 
 enum Language {
   Paperclip = "paperclip-core",
+  PaperclipSyle = "paperclip-style",
 }
 
 enum Extension {
   YamlTmLanguage = "yaml",
   JsonTmLanguage = "tmLanguage.json",
+}
+
+class Test {
+  private _ab: String;
 }
 
 function file(language: Language, extension: Extension) {
@@ -114,11 +119,11 @@ function transformGrammarRepository(
 // }
 
 function getTsGrammar(
+  filePath: string,
   getVariables: (tsGrammarVariables: MapLike<string>) => MapLike<string>
 ) {
-  const tsGrammarBeforeTransformation = readYaml(
-    file(Language.Paperclip, Extension.YamlTmLanguage)
-  ) as TmGrammar;
+  const tsGrammarBeforeTransformation = readYaml(filePath) as TmGrammar;
+
   return updateGrammarVariables(
     tsGrammarBeforeTransformation,
     getVariables(tsGrammarBeforeTransformation.variables as MapLike<string>)
@@ -158,15 +163,22 @@ function updateGrammarVariables(
 }
 
 function buildGrammar() {
-  const pcGrammar = getTsGrammar((grammarVariables) => grammarVariables);
+  const langs = [Language.Paperclip, Language.PaperclipSyle];
 
-  // Write TypeScript.tmLanguage
-  // writePlistFile(pcGrammar, file(Language.Paperclip, Extension.YamlTmLanguage));
-  writeJSONFile(pcGrammar, file(Language.Paperclip, Extension.JsonTmLanguage));
+  for (const lang of langs) {
+    const pcGrammar = getTsGrammar(
+      file(lang, Extension.YamlTmLanguage),
+      (grammarVariables) => grammarVariables
+    );
 
-  // Write TypeScriptReact.tmLangauge
-  // const tsxGrammar = getTsxGrammar();
-  // writePlistFile(tsxGrammar, file(Language.TypeScriptReact, Extension.TmLanguage));
+    // Write TypeScript.tmLanguage
+    // writePlistFile(pcGrammar, file(Language.Paperclip, Extension.YamlTmLanguage));
+    writeJSONFile(pcGrammar, file(lang, Extension.JsonTmLanguage));
+
+    // Write TypeScriptReact.tmLangauge
+    // const tsxGrammar = getTsxGrammar();
+    // writePlistFile(tsxGrammar, file(Language.TypeScriptReact, Extension.TmLanguage));
+  }
 }
 
 // function changeTsToTsxTheme(theme: TmTheme) {

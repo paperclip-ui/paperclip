@@ -1,10 +1,5 @@
 #### On-deck
 
-- Monaco colors
-  - override
-  - punctation
-  - insert
-  - comment
 - React compiler (needed to start on designer)
   - Vanilla for now
   - Look into targeting radix

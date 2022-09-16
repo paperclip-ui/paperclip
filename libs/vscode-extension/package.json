@@ -9,16 +9,12 @@
     "access": "public"
   },
   "keywords": [
-    "React",
-    "CSS",
-    "HTML",
-    "visual",
-    "preview",
-    "realtime",
-    "live",
-    "template"
+    "UI Builder",
+    "Designer",
+    "no-code",
+    "low-code"
   ],
-  "description": "IDE extension for Paperclip",
+  "description": "UI Builder for web applications",
   "homepage": "http://paperclip.dev",
   "icon": "assets/logo.png",
   "repository": {
@@ -55,10 +51,9 @@
         "configuration": "./languages/paperclip-html-language-configuration.json"
       },
       {
-        "id": "pcss",
+        "id": "paperclip-style",
         "aliases": [
-          "paperclip-css",
-          "paperclip-css"
+          "paperclip-style"
         ],
         "extensions": [
           ".pcss"
@@ -69,24 +64,23 @@
     "grammars": [
       {
         "language": "paperclip",
-        "scopeName": "text.core.paperclip-core",
+        "scopeName": "text.core.paperclip",
         "path": "./syntaxes/paperclip-core.tmLanguage.json",
         "embeddedLanguages": {
-          "source.pcss": "pcss",
-          "source.js": "javascript"
+          "source.style": "paperclip-style"
         }
       },
       {
-        "language": "pcss",
-        "scopeName": "source.pcss",
-        "path": "./syntaxes/paperclip-css.json"
+        "language": "paperclip-style",
+        "scopeName": "text.style.paperclip",
+        "path": "./syntaxes/paperclip-style.json"
       }
     ]
   },
   "scripts": {
     "build": "tsc && npm run build:syntaxes",
     "build:syntaxes": "node lib/scripts/build",
-    "build:syntaxes:watch": "nodemon --exec \"node lib/scripts/build\" --watch ./syntaxes/paperclip-core.yaml",
+    "build:syntaxes:watch": "yarn nodemon --watch syntaxes/paperclip-core.yaml --exec \"node lib/scripts/build\"",
     "lint": "eslint src",
     "build:watch": "concurrently \"tsc --watch --preserveWatchOutput\" \"npm run build:syntaxes:watch\"",
     "prepublishOnly": "npm run build",
@@ -97,6 +91,6 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^18.7.18",
-    "nodemon": "^2.0.19"
+    "nodemon": "^2.0.20"
   }
 }

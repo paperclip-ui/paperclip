@@ -1,0 +1,290 @@
+# [PackageDev] target_format: json, ext: tmLanguage.json
+# https://github.com/microsoft/vscode/tree/main/extensions/javascript/syntaxes/JavaScriptReact.tmLanguage.json
+# https://github.com/microsoft/vscode/blob/master/extensions/html/syntaxes/html.tmLanguage.json
+# https://github.com/microsoft/TypeScript-TmLanguage/blob/master/TypeScriptReact.YAML-tmLanguage
+# https://macromates.com/manual/en/language_grammars
+# https://code.visualstudio.com/api/language-extensions/semantic-highlight-guide#theming
+
+name: Paperclip Lang
+scopeName: text.core.paperclip
+fileTypes: []
+uuid: 3e3ce414-c385-42ea-a2ba-451a37ca6fd1
+patterns:
+  - include: "#document"
+variables:
+  untilOpenBraces: ([^\{]*)
+  reference: (\w+(\.\w+)*)
+  id: (\w+)
+  string: (\".*?\"|\'.*?\')
+  variantCombo: ({{reference}}(\s*\+\s*{{reference}})*)
+  extends: ({{reference}}(\s*\,\s*{{reference}})*)
+  slotInterior: ((slot)\s+({{id}})\s*)
+  instanceOpenInterior: ({{reference}}{{untilOpenBraces}})
+  variantBase: (variant\s+{{id}}\s+)
+  instanceOpen: ({{instanceOpenInterior}}(\{))
+  parameters: (\(.*?\))
+  parameterValue: ({{string}})
+  instanceInitArg: ({{untilOpenBraces}})
+repository:
+  document:
+    patterns:
+      - include: "#comment"
+      - include: "#public"
+      - include: "#style"
+      - include: "#token"
+      - include: "#component"
+      - include: "#trigger"
+      - include: "#node"
+
+  node:
+    patterns:
+      - include: "#slot"
+      - include: "#instance"
+      - include: "#comment"
+
+  slot:
+    patterns:
+      - begin: ({{slotInterior}})({)
+        end: "}"
+        endCaptures:
+          "0": { name: punctuation }
+        beginCaptures:
+          "2":
+            patterns:
+              - include: "#slot-interior"
+          "6": { name: punctuation }
+        patterns:
+          - include: "#node"
+      - match: ({{slotInterior}})(\n)
+        captures:
+          "0":
+            patterns:
+              - include: "#slot-interior"
+
+  insert:
+    patterns:
+      - begin: ((insert)\s+(\w+)(\s*{))
+        end: "}"
+        beginCaptures:
+          "2": { name: keyword.control }
+          "3": { name: variable }
+        endCaptures:
+          "6": { name: punctuation }
+        patterns:
+          - include: "#node"
+      - match: ({{slotInterior}})(\n)
+        captures:
+          "0":
+            patterns:
+              - include: "#slot-interior"
+
+  slot-interior:
+    patterns:
+      - match: ({{slotInterior}})
+        captures:
+          "3": { name: keyword.control }
+          "4": { name: support.variable }
+
+  comment:
+    patterns:
+      - begin: (\/\*)
+        end: (\*\/)
+        name: comment.block
+
+  public:
+    patterns:
+      - match: "public"
+        name: storage.modifier
+
+  trigger:
+    patterns:
+      - begin: ((trigger)\s+({{id}})\s(\{))
+        end: "}"
+        endCaptures:
+          "0": { name: punctuation }
+        beginCaptures:
+          "2": { name: storage.modifier }
+          "3": { name: variable.readonly }
+          "5": { name: punctuation }
+        patterns:
+          - include: "#trigger-body-interior"
+
+  token:
+    patterns:
+      - match: ((token)\s+({{id}})\s+([^\n]+)\n)
+        captures:
+          "2": { name: storage.modifier }
+          "4": { name: variable.readonly }
+          "5":
+            patterns:
+              - include: "text.style.paperclip"
+
+  component:
+    patterns:
+      - begin: ((component)\s+(\w+)\s*\{)
+        end: "}"
+        beginCaptures:
+          "2": { name: storage.modifier }
+          "3": { name: entity.name.type.class }
+        patterns:
+          - include: "#render"
+          - include: "#variant"
+          - include: "#variant-trigger"
+          - include: "#node"
+
+  render:
+    patterns:
+      - match: "render"
+        captures:
+          "0": { name: storage.modifier }
+
+  variant:
+    patterns:
+      - match: ((variant)\s+(\w+))
+        captures:
+          "2": { name: storage.modifier }
+          "3": { name: entity.name.function.member }
+
+  variant-trigger:
+    patterns:
+      - begin: ((trigger)\s*(\{))
+        end: "}"
+        beginCaptures:
+          "2": { name: storage.modifier }
+          "3": { name: property }
+        patterns:
+          - include: "#trigger-body-interior"
+
+  trigger-body-interior:
+    patterns:
+      - include: "#reference"
+      - include: "#string"
+  style:
+    patterns:
+      - begin: ((style)(\s+{{id}})?(\s+(variant)\s+{{variantCombo}}+)?(\s+(extends)\s+{{extends}}+)?(\s*\{))
+        beginCaptures:
+          "2": { name: storage.modifier }
+          "3": { name: variable.readonly }
+          "6": { name: storage.modifier }
+          "7":
+            patterns:
+              - include: "#variant-name"
+              - include: "#punctuation"
+          "14": { name: storage.modifier }
+          "15":
+            patterns:
+              - include: "#reference"
+              - include: "#punctuation"
+          "21": { name: "punctuation" }
+        end: "}"
+        endCaptures:
+          "0": { name: punctuation }
+        patterns:
+          - include: "text.style.paperclip"
+
+  variant-name:
+    patterns:
+      - match: ({{reference}})
+        name: entity.name.function.member
+
+  reference:
+    patterns:
+      - match: ({{reference}})
+        name: variable
+
+  punctuation:
+    patterns:
+      - match: (\,|\+)
+        captures:
+          "0": { name: punctuation }
+
+  instance:
+    patterns:
+      # div (a: b) {}
+      - begin: (({{instanceOpenInterior}})\s*({))
+        beginCaptures:
+          "2":
+            patterns:
+              - include: "#instance-open-interior"
+          "7": { name: punctuation }
+        end: "}"
+        endCaptures:
+          "0": { name: punctuation }
+        patterns:
+          - include: "#override"
+          - include: "#style"
+          - include: "#insert"
+          - include: "#node"
+
+      # div (a: b)
+      - match: ({{instanceOpenInterior}})(\n)
+        captures:
+          "1":
+            patterns:
+              - include: "#instance-open-interior"
+
+  # div ab (a: 1)
+  instance-open-interior:
+    patterns:
+      - match: ({{reference}}(\s+{{id}})?(\s+{{instanceInitArg}})?)
+        captures:
+          "2": { name: entity.name.type.class }
+          "4": { name: variable.other }
+          "6":
+            patterns:
+              - include: "#parameters"
+              - include: "#string"
+  override:
+    patterns:
+      - begin: ((override)\s+({{reference}})\s*({))
+        end: "}"
+        beginCaptures:
+          "2": { name: storage.modifier }
+          "3": { name: variable }
+        patterns:
+          - include: "#comment"
+          - include: "#variant"
+          - include: "#variant-trigger"
+          - include: "#style"
+
+  parameters:
+    patterns:
+      - begin: (\()
+        beginCaptures:
+          "0": { name: punctuation }
+        end: (\))
+        endCaptures:
+          "0": { name: punctuation }
+        patterns:
+          - include: "#parameter"
+
+  parameter:
+    patterns:
+      - match: ((\w+)\s*(:)\s*{{parameterValue}})
+        captures:
+          "2": { name: storage.modifier }
+          "3": { name: punctuation }
+          "4":
+            patterns:
+              # TODO: may want to include additional property types
+              # if attribute bindings become explicit
+              - include: "#string"
+      - match: ","
+        name: punctuation
+
+  string:
+    patterns:
+      - include: "#string-double"
+      - include: "#string-single"
+
+  string-double:
+    patterns:
+      - begin: '"'
+        end: '"'
+        name: string.double
+
+  string-single:
+    patterns:
+      - begin: "'"
+        end: "'"
+        name: string.single

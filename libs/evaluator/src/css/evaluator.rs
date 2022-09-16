@@ -1,7 +1,7 @@
 use super::context::{CurrentNode, DocumentContext};
 use super::errors;
 use super::virt;
-use crate::core::utils::get_style_namespace;
+use crate::core::utils::{get_style_namespace, get_variant_namespace};
 use paperclip_common::fs::FileResolver;
 use paperclip_common::id::get_document_id;
 use paperclip_parser::css::ast as css_ast;
@@ -229,7 +229,7 @@ fn evaluate_variant_styles<F: FileResolver>(
             selector_text: format!(
                 ".{}.{}{}",
                 render_node_ns,
-                assoc_variant.id,
+                get_variant_namespace(assoc_variant),
                 if is_render_node {
                     "".to_string()
                 } else {

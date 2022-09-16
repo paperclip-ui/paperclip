@@ -44,7 +44,7 @@ add_case! {
       "#,
   )],
   r#"
-  .80f4925f-4 {
+  ._80f4925f-4 {
       color: red;
   }
   "#
@@ -63,7 +63,7 @@ add_case! {
       "#,
   )],
   r#"
-    .abba-80f4925f {
+    ._abba-80f4925f-4 {
         color: orange;
     }
   "#
@@ -87,7 +87,7 @@ add_case! {
     "#,
   )],
   r#"
-  .80f4925f-10 {
+  ._80f4925f-10 {
       font-family: Helvetica;
       font-weight: 600;
       font-weight: 300;
@@ -115,7 +115,7 @@ add_case! {
     "#,
   )],
   r#"
-    .80f4925f-12 {
+    ._80f4925f-12 {
     color: red;
     color: orange;
     color: blue;
@@ -147,7 +147,7 @@ add_case! {
       ),
   ],
   r#"
-    .80f4925f-6 {
+    ._80f4925f-6 {
         font-family: Helvetica;
         color: blue;
     }
@@ -190,22 +190,22 @@ add_case! {
       "#,
   )],
   r#"
-  .80f4925f-22.80f4925f-11 {
+  ._A-80f4925f-22._a-80f4925f-11 {
       color: blue;
   }
 
-  .80f4925f-22.80f4925f-13 {
+  ._A-80f4925f-22._b-80f4925f-13 {
       color: blue;
   }
 
-  .80f4925f-22.80f4925f-15 {
+  ._A-80f4925f-22._c-80f4925f-15 {
       color: blue;
   }
 
   @supports mobile {
       @media screen and (max-width: 300px) {
           @media screen and (max-width: 100px) {
-              .80f4925f-22:nth-child(2n) {
+              ._A-80f4925f-22:nth-child(2n) {
                   color: blue;
               }
           }
@@ -215,7 +215,7 @@ add_case! {
   @supports mobile {
       @media screen and (max-width: 400px) {
           @media screen and (max-width: 100px) {
-              .80f4925f-22:nth-child(2n) {
+              ._A-80f4925f-22:nth-child(2n) {
                   color: blue;
               }
           }
@@ -225,7 +225,7 @@ add_case! {
   @supports desktop {
       @media screen and (max-width: 300px) {
           @media screen and (max-width: 100px) {
-              .80f4925f-22:nth-child(2n) {
+              ._A-80f4925f-22:nth-child(2n) {
                   color: blue;
               }
           }
@@ -235,7 +235,7 @@ add_case! {
   @supports desktop {
       @media screen and (max-width: 400px) {
           @media screen and (max-width: 100px) {
-              .80f4925f-22:nth-child(2n) {
+              ._A-80f4925f-22:nth-child(2n) {
                   color: blue;
               }
           }
@@ -264,7 +264,7 @@ add_case! {
         --80f4925f-7: rgba(255, 255, 255, 0);
     }
 
-    .80f4925f-12 {
+    ._80f4925f-12 {
         color: var(--80f4925f-7);
     }
   "#
@@ -284,7 +284,7 @@ add_case! {
     "#,
   )],
   r#"
-  .abba-80f4925f { color: blue; }
+  ._abba-80f4925f-4 { color: blue; }
   "#
 }
 
@@ -304,7 +304,7 @@ add_case! {
     "#,
   )],
   r#"
-  .abba-80f4925f { color: blue; }
+  ._abba-80f4925f-4 { color: blue; }
   "#
 }
 
@@ -327,15 +327,14 @@ add_case! {
           }
         }
       }
-
     "#,
   )],
   r#"
-  .80f4925f-9.80f4925f-4 { 
+  ._Message-80f4925f-9._mobile-80f4925f-4 { 
       gap: 14px; 
     } 
     @media screen and (max-width: 100px) { 
-      .80f4925f-9 { 
+      ._Message-80f4925f-9 { 
         gap: 14px; 
       } 
     }
@@ -367,13 +366,14 @@ add_case! {
     "#,
   )],
   r#"
-  .80f4925f-10.80f4925f-4 .80f4925f-9 { 
+  ._Message-80f4925f-10._mobile-80f4925f-4 ._Message-80f4925f-9 { 
     color: orange;
     } 
     @media screen and (max-width: 100px) { 
-      .80f4925f-10 .80f4925f-9 { 
+      ._Message-80f4925f-10 ._Message-80f4925f-9 { 
         color: orange;
       } 
     }
   "#
 }
+

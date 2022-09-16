@@ -18,10 +18,21 @@ pub fn get_style_namespace(
         };
 
         // Keep the CSS scoped to this document.
-        format!("{}-{}", ns, document_id)
+        format!("_{}-{}", ns, id)
     } else {
-        // No element name? Use the ID. We don't need the document ID
-        // here since the element ID is unique.
-        format!("{}", id)
+        if let Some(component) = &current_component {
+            format!("_{}-{}", component.name, id)
+        } else {
+            // No element name? Use the ID. We don't need the document ID
+            // here since the element ID is unique.
+            format!("_{}", id)
+        }
     }
+}
+
+
+pub fn get_variant_namespace(
+    variant: &ast::Variant
+) -> String {
+    format!("_{}-{}", variant.name, variant.id)
 }

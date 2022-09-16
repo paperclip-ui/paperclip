@@ -1,10 +1,10 @@
 {
-  "name": "@tandem-ui/designer2",
+  "name": "@paperclip-ui/designer",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:pc": "../../../target/debug/paperclip_cli build",
+    "build:pc": "../../target/debug/paperclip_cli build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

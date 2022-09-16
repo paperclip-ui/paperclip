@@ -1,0 +1,96 @@
+{
+  "name": "paperclip-vscode",
+  "displayName": "Paperclip",
+  "version": "19.0.0",
+  "publisher": "crcn",
+  "preview": true,
+  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "UI Builder",
+    "Designer",
+    "no-code",
+    "low-code"
+  ],
+  "description": "UI Builder for web applications",
+  "homepage": "http://paperclip.dev",
+  "icon": "assets/logo.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/paperclip-ui/paperclip.git"
+  },
+  "main": "lib/extension/index.js",
+  "engines": {
+    "vscode": "^1.71.0"
+  },
+  "activationEvents": [
+    "onLanguage:paperclip"
+  ],
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "paperclip.giveFeedback",
+        "title": "Paperclip: Give Feedback"
+      }
+    ],
+    "languages": [
+      {
+        "id": "paperclip",
+        "aliases": [
+          "paperclip",
+          "paperclip"
+        ],
+        "extensions": [
+          ".pc"
+        ],
+        "configuration": "./languages/paperclip-html-language-configuration.json"
+      },
+      {
+        "id": "paperclip-style",
+        "aliases": [
+          "paperclip-style"
+        ],
+        "extensions": [
+          ".pcss"
+        ],
+        "configuration": "./languages/paperclip-css-language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "paperclip",
+        "scopeName": "text.core.paperclip",
+        "path": "./syntaxes/paperclip-core.tmLanguage.json",
+        "embeddedLanguages": {
+          "source.style": "paperclip-style"
+        }
+      },
+      {
+        "language": "paperclip-style",
+        "scopeName": "text.style.paperclip",
+        "path": "./syntaxes/paperclip-style.json"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "tsc && npm run build:syntaxes",
+    "build:syntaxes": "node lib/scripts/build",
+    "build:syntaxes:watch": "yarn nodemon --watch syntaxes/paperclip-core.yaml --exec \"node lib/scripts/build\"",
+    "lint": "eslint src",
+    "build:watch": "concurrently \"tsc --watch --preserveWatchOutput\" \"npm run build:syntaxes:watch\"",
+    "prepublishOnly": "npm run build",
+    "publish:local": "rm -rf node_modules && npm install && vsce package && vsce publish",
+    "publish:marketplace": "rm -rf node_modules && npm install && vsce package && vsce publish -p $VSCE_TOKEN"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^18.7.18",
+    "nodemon": "^2.0.20"
+  }
+}

@@ -203,7 +203,7 @@ add_case! {
 			}
 		"#)
     ],
-    "<div class=\"80f4925f-7 p-10 bg-red\"> Hello </div>"
+    "<div class=\"_80f4925f-7 p-10 bg-red\"> Hello </div>"
 }
 
 add_case! {
@@ -213,7 +213,7 @@ add_case! {
 	div ab
 "#)
     ],
-    "<div class=\"ab-80f4925f\"> </div>"
+    "<div class=\"_ab-80f4925f-1\"> </div>"
 }
 
 add_case! {
@@ -227,5 +227,5 @@ add_case! {
 	}
 "#)
     ],
-    "<span class=\"80f4925f-4\"> abba </span>"
+    "<span class=\"_80f4925f-4\"> abba </span>"
 }

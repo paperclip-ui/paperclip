@@ -131,7 +131,7 @@
   "scripts": {
     "build": "tsc && npm run build:syntaxes",
     "build:syntaxes": "node lib/scripts/build",
-    "build:syntaxes:watch": "nodemon --exec \"node lib/scripts/build\" --watch ./syntaxes/paperclip-html.yaml",
+    "build:syntaxes:watch": "nodemon --exec \"node lib/scripts/build\" --watch ./syntaxes/*.yaml",
     "xtest": "node lib/test/run",
     "lint": "eslint src",
     "build:watch": "concurrently \"tsc --watch --preserveWatchOutput\" \"npm run build:syntaxes:watch\"",

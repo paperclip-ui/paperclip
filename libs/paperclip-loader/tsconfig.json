@@ -1,0 +1,21 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "target": "esnext",
+    "sourceMap": true,
+    "lib": ["es2015.promise", "dom", "es5", "esnext"],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "moduleResolution": "node",
+    "module": "esnext",
+    "outDir": "lib",
+    "jsx": "react",
+    "paths": {
+      "@tandem-ui/designer/src/*": ["./src/*"]
+    }
+  },
+  "exclude": ["node_modules", "*-test", "lib", "index.d.ts"],
+  "filesGlob": ["./src/**/*.ts"]
+}

@@ -7,7 +7,7 @@ import plist = require("plist");
 
 enum Language {
   Paperclip = "paperclip-core",
-  PaperclipSyle = "paperclip-style",
+  // PaperclipSyle = "paperclip-style",
 }
 
 enum Extension {
@@ -163,7 +163,7 @@ function updateGrammarVariables(
 }
 
 function buildGrammar() {
-  const langs = [Language.Paperclip, Language.PaperclipSyle];
+  const langs = [Language.Paperclip];
 
   for (const lang of langs) {
     const pcGrammar = getTsGrammar(

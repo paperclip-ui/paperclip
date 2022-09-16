@@ -23,6 +23,7 @@ variables:
   variantBase: (variant\s+{{id}}\s+)
   instanceOpen: ({{instanceOpenInterior}}(\{))
   parameters: (\(.*?\))
+  parameterValue: ({{string}})
   instanceInitArg: ({{untilOpenBraces}})
 repository:
   document:
@@ -58,6 +59,23 @@ repository:
             patterns:
               - include: "#slot-interior"
 
+  insert:
+    patterns:
+      - begin: ((insert)\s+(\w+)(\s*{))
+        end: "}"
+        beginCaptures:
+          "2": { name: keyword.control }
+          "3": { name: variable }
+        endCaptures:
+          "6": { name: punctuation }
+        patterns:
+          - include: "#node"
+      - match: ({{slotInterior}})(\n)
+        captures:
+          "0":
+            patterns:
+              - include: "#slot-interior"
+
   slot-interior:
     patterns:
       - match: ({{slotInterior}})
@@ -69,11 +87,6 @@ repository:
     patterns:
       - match: "public"
         name: storage.modifier
-
-  node-child:
-    patterns:
-      - include: "#style"
-      - include: "#node"
 
   trigger:
     patterns:
@@ -122,11 +135,11 @@ repository:
       - match: ((variant)\s+(\w+))
         captures:
           "2": { name: storage.modifier }
-          "3": { name: property }
+          "3": { name: variable }
 
   variant-trigger:
     patterns:
-      - begin: ((trigger)\s*\{)
+      - begin: ((trigger)\s*(\{))
         end: "}"
         beginCaptures:
           "2": { name: storage.modifier }
@@ -148,24 +161,27 @@ repository:
           "7":
             patterns:
               - include: "#reference"
+              - include: "#punctuation"
           "14": { name: storage.modifier }
           "15":
             patterns:
               - include: "#reference"
+              - include: "#punctuation"
           "21": { name: "punctuation" }
         end: "}"
         endCaptures:
           "0": { name: punctuation }
-
-  style-declaration:
-    patterns:
-      - include: "#string"
 
   reference:
     patterns:
       - match: ({{reference}})
         captures:
           "1": { name: support.type }
+  punctuation:
+    patterns:
+      - match: (\,|\+)
+        captures:
+          "0": { name: punctuation }
 
   instance:
     patterns:
@@ -180,7 +196,10 @@ repository:
         endCaptures:
           "0": { name: punctuation }
         patterns:
-          - include: "#node-child"
+          - include: "#override"
+          - include: "#style"
+          - include: "#insert"
+          - include: "#node"
 
       # div (a: b)
       - match: ({{instanceOpenInterior}})(\n)
@@ -200,6 +219,13 @@ repository:
             patterns:
               - include: "#parameters"
               - include: "#string"
+  override:
+    patterns:
+      - begin: ((override)\s+({{reference}})\s*({))
+        end: ")"
+        beginCaptures:
+          "2": { name: storage.modifier }
+          "3": { name: variable }
 
   parameters:
     patterns:
@@ -213,9 +239,17 @@ repository:
           - include: "#parameter"
 
   parameter:
-    - match: ((\w+)\s*:\s*(\w+))
-      captures:
-        - "0": { name: entity.name.type.class }
+    patterns:
+      - match: ((\w+)\s*(:)\s*{{parameterValue}})
+        captures:
+          "2": { name: storage.modifier }
+          "3": { name: punctuation }
+          "4":
+            patterns:
+              - include: "#string"
+      - match: ","
+        name: punctuation
+
   string:
     patterns:
       - include: "#string-double"

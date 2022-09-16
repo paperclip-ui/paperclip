@@ -1,49 +1,23 @@
-import "a" as test
-
 public trigger mobile {
   "@media screen and (max-width: 100px)"
-  "@supports web"
 }
 
-public trigger b {
-  "@media screen and (max-width: 400px)"
+div (ab:"fdfs") {
 }
 
-style ab {
-}
-
-div ab {}
-
-public component Message {
-  variant mobile trigger { mobile }
-  variant secondary trigger { b }
-  render div {
-    style variant mobile + secondary extends a, b, c {
-      color: orange
-    }
-    div something {
-    }
-    override a.b.c.d {
-      style {
-        color: red
-      }
-    }
-    slot child {
-      text bb {
-      }
-      text test "default child" {
-        style variant mobile {
-          color: red
-        }
-      }
+public component Page {
+  variant isMobile trigger {
+    mobile
+  }
+  render div (class: "fdsfs", fsdfsd: "fss") {
+    slot children {
+      text "Hello world"
     }
   }
 }
 
-
-Message {
-  insert child {
-    text "blarg" {
-    }
+Page {
+  div {
+    text "Hello world"
   }
 }

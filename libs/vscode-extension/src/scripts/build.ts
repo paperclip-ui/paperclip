@@ -170,46 +170,8 @@ function buildGrammar() {
       file(lang, Extension.YamlTmLanguage),
       (grammarVariables) => grammarVariables
     );
-
-    // Write TypeScript.tmLanguage
-    // writePlistFile(pcGrammar, file(Language.Paperclip, Extension.YamlTmLanguage));
     writeJSONFile(pcGrammar, file(lang, Extension.JsonTmLanguage));
-
-    // Write TypeScriptReact.tmLangauge
-    // const tsxGrammar = getTsxGrammar();
-    // writePlistFile(tsxGrammar, file(Language.TypeScriptReact, Extension.TmLanguage));
   }
 }
 
-// function changeTsToTsxTheme(theme: TmTheme) {
-//     const tsxUpdates = readYaml(file(Language.TypeScriptReact, Extension.YamlTmTheme)) as TmTheme;
-
-//     // Update name, uuid
-//     theme.name = tsxUpdates.name;
-//     theme.uuid = tsxUpdates.uuid;
-
-//     // Update scope names to .tsx
-//     const settings = theme.settings;
-//     for (let i = 0; i < settings.length; i++) {
-//         settings[i].scope = changeTsToTsx(settings[i].scope);
-//     }
-
-//     // Add additional setting items
-//     theme.settings = theme.settings.concat(tsxUpdates.settings);
-
-//     return theme;
-// }
-
-// function buildTheme() {
-//     const tsTheme = readYaml(file(Language.TypeScript, Extension.YamlTmTheme)) as TmTheme;
-
-//     // Write TypeScript.tmTheme
-//     writePlistFile(tsTheme, file(Language.TypeScript, Extension.TmTheme));
-
-//     // Write TypeScriptReact.thTheme
-//     const tsxTheme = changeTsToTsxTheme(tsTheme);
-//     writePlistFile(tsxTheme, file(Language.TypeScriptReact, Extension.TmTheme));
-// }
-
 buildGrammar();
-// buildTheme();

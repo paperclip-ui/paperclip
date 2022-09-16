@@ -9,6 +9,11 @@ public component Page {
   variant isMobile trigger {
     mobile
   }
+  render Page {
+    insert children {
+      
+    }
+  }
   render div (class: "fdsfs", fsdfsd: "fss") {
     slot children {
       text "Hello world"

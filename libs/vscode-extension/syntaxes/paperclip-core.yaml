@@ -246,6 +246,8 @@ repository:
           "3": { name: punctuation }
           "4":
             patterns:
+              # TODO: may want to include additional property types
+              # if attribute bindings become explicit
               - include: "#string"
       - match: ","
         name: punctuation

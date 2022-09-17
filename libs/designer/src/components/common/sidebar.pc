@@ -1,9 +1,19 @@
 import "./theme.pc" as theme
 
 public component Root {
+  variant left trigger { true }
+  variant right trigger { true }
   render div {
     style {
       background: var(theme.colorWhite)
+      padding: 12px
+      min-width: 200px
+    }
+    style variant left {
+      border-right: 20px red solid
+    }
+    style variant right {
+      border-right: 20px red solid
     }
     slot children
   }

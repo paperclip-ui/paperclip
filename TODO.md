@@ -1,5 +1,7 @@
 #### On-deck
 
+- publish VS Code extension for new name
+- paperclip-loader
 - React compiler (needed to start on designer)
   - emit jsx
   - Vanilla for now

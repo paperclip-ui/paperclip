@@ -1,1 +1,20 @@
+/*
+ * Inspiration:
+ * 
+ * Carbon: "https://carbondesignsystem.com/"
+ */
+
+
+/**
+ * Colors
+ */
+
 public token colorWhite #FFF
+
+
+/**
+ * Spacing
+ */
+
+public token space1 2px
+

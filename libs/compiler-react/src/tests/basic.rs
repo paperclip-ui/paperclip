@@ -261,3 +261,28 @@ add_case! {
     };
   "#
 }
+
+
+add_case! {
+  can_render_imported_components,
+  r#"
+    import "./test.pc" as test
+
+    component A {
+      render test.b
+    }
+  "#,
+  r#"
+    const A = (props) => {
+      return props.abba;
+    };
+
+    const B = (props) => {
+      return React.createElement(A, {
+        "abba": [
+          "Hello"
+        ]
+      });
+    };
+  "#
+}

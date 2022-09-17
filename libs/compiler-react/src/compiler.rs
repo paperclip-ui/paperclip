@@ -13,6 +13,7 @@ pub fn compile(dependency: &Dependency) -> Result<String> {
 }
 
 fn compile_document(document: &ast::Document, context: &mut Context) {
+    context.add_buffer("import {React} from \"react\";\n\n");
     for item in &document.body {
         match item {
             ast::DocumentBodyItem::Component(component) => compile_component(component, context),
@@ -24,6 +25,7 @@ fn compile_document(document: &ast::Document, context: &mut Context) {
 macro_rules! compile_children {
     ($expr: expr, $cb: expr, $context: expr) => {{
         $context.add_buffer("[\n");
+        $context.start_block();
 
         let mut children = $expr.into_iter().peekable();
         while let Some(child) = children.next() {
@@ -44,13 +46,13 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
         context.add_buffer("export ");
     }
 
-    context.add_buffer(format!("const {} = (props) => {{\n", &component.name).as_str());
+    context.add_buffer(format!("const {} = React.memo((props) => {{\n", &component.name).as_str());
 
     context.start_block();
     compile_component_render(component, context);
     context.end_block();
 
-    context.add_buffer("};\n\n");
+    context.add_buffer("});\n\n");
 }
 
 fn compile_component_render(component: &ast::Component, context: &mut Context) {

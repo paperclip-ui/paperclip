@@ -10,6 +10,7 @@ target
 *.pc.html
 *.pc.js
 *.pc.js.map
+*.react.js
 *.vsix
 *.artifacts
 *.node

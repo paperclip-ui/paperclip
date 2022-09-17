@@ -670,6 +670,7 @@ dependencies = [
  "futures-util",
  "notify",
  "paperclip_common",
+ "paperclip_compiler_react",
  "paperclip_evaluator",
  "paperclip_parser",
  "path-absolutize",

@@ -6,6 +6,7 @@ use paperclip_evaluator::css::evaluator::evaluate as evaluate_css;
 use paperclip_evaluator::css::serializer::serialize as serialize_css;
 use paperclip_evaluator::html::evaluator::{evaluate as evaluate_html, Options as HTMLOptions};
 use paperclip_evaluator::html::serializer::serialize as serialize_html;
+use paperclip_compiler_react::compiler::compile as compile_react;
 use paperclip_parser::graph::Graph;
 use std::cell::RefCell;
 use std::collections::BTreeMap;
@@ -189,6 +190,7 @@ async fn translate<F: FileResolver>(
     Ok(match into {
         "css" => Some(translate_css(path, graph, file_resolver).await?),
         "html" => Some(translate_html(path, graph, file_resolver, options).await?),
+        "react.js" => Some(compile_react(graph.dependencies.get(path).unwrap())?),
         _ => None,
     })
 }

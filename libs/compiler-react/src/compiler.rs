@@ -40,8 +40,9 @@ fn compile_component_render(component: &ast::Component, context: &mut Context) {
 
     context.add_buffer("return ");
     match &render.node {
-        ast::RenderNode::Element(element) => compile_element(element, context),
-        _ => {}
+        ast::RenderNode::Element(expr) => compile_element(expr, context),
+        ast::RenderNode::Text(expr) => compile_text_node(expr, context),
+        ast::RenderNode::Slot(expr) => compile_slot(expr, context),
     }
     context.add_buffer(";\n");
 }
@@ -52,6 +53,24 @@ fn compile_text_node(node: &ast::TextNode, context: &mut Context) {
 
 fn compile_slot(node: &ast::Slot, context: &mut Context) {
     context.add_buffer(format!("props.{}", node.name).as_str());
+
+    if node.body.len() > 0 {
+        context.add_buffer(" || [\n");
+        context.start_block();
+        let mut body = node.body.iter().peekable();
+        while let Some(item) = body.next() {
+            match item {
+                ast::SlotBodyItem::Element(expr) => compile_element(expr, context),
+                ast::SlotBodyItem::Text(expr) => compile_text_node(expr, context),
+            }
+            if !body.peek().is_none() {
+                context.add_buffer(", ");
+            }
+            context.add_buffer("\n");
+        }
+        context.end_block();
+        context.add_buffer("]");
+    }
 }
 fn compile_element(element: &ast::Element, context: &mut Context) {
     context.add_buffer(format!("React.createElement(\"{}\", ", element.tag_name).as_str());
@@ -61,37 +80,33 @@ fn compile_element(element: &ast::Element, context: &mut Context) {
 }
 
 fn compile_element_children(element: &ast::Element, context: &mut Context) {
-  let visible_children = element.get_visible_children();
-  
-  if visible_children.len() == 0 {
-    return;
-  }
+    let visible_children = element.get_visible_children();
 
-  context.add_buffer(", [\n");
-  context.start_block();
-
-  let mut children = visible_children.into_iter().peekable();
-  
-
-
-  while let Some(child) = children.next() {
-    match child {
-      ast::ElementBodyItem::Text(expr) => compile_text_node(&expr, context),
-      ast::ElementBodyItem::Element(expr) => compile_element(&expr, context),
-      ast::ElementBodyItem::Slot(expr) => compile_slot(&expr, context),
-      _ => {
-        
-      }
-    };
-
-    if !children.peek().is_none() {
-      context.add_buffer(", ");
+    if visible_children.len() == 0 {
+        return;
     }
-    context.add_buffer("\n");
-  }
 
-  context.end_block();
-  context.add_buffer("]");
+    context.add_buffer(", [\n");
+    context.start_block();
+
+    let mut children = visible_children.into_iter().peekable();
+
+    while let Some(child) = children.next() {
+        match child {
+            ast::ElementBodyItem::Text(expr) => compile_text_node(&expr, context),
+            ast::ElementBodyItem::Element(expr) => compile_element(&expr, context),
+            ast::ElementBodyItem::Slot(expr) => compile_slot(&expr, context),
+            _ => {}
+        };
+
+        if !children.peek().is_none() {
+            context.add_buffer(", ");
+        }
+        context.add_buffer("\n");
+    }
+
+    context.end_block();
+    context.add_buffer("]");
 }
 
 fn compile_element_parameters(element: &ast::Element, context: &mut Context) {
@@ -165,36 +180,42 @@ fn attr_alias(name: &str) -> String {
 }
 
 fn compile_simple_expression(expr: &ast::SimpleExpression, context: &mut Context) {
-  match expr {
-    ast::SimpleExpression::String(expr) => context.add_buffer(format!("\"{}\"", expr.value).as_str()),
-    ast::SimpleExpression::Number(expr) => context.add_buffer(format!("{}", expr.value).as_str()),
-    ast::SimpleExpression::Boolean(expr) => context.add_buffer(format!("{}", expr.value).as_str()),
-    ast::SimpleExpression::Array(expr) => compile_array(expr, context),
-    ast::SimpleExpression::Reference(expr) => compile_reference(expr, context)
-  }
+    match expr {
+        ast::SimpleExpression::String(expr) => {
+            context.add_buffer(format!("\"{}\"", expr.value).as_str())
+        }
+        ast::SimpleExpression::Number(expr) => {
+            context.add_buffer(format!("{}", expr.value).as_str())
+        }
+        ast::SimpleExpression::Boolean(expr) => {
+            context.add_buffer(format!("{}", expr.value).as_str())
+        }
+        ast::SimpleExpression::Array(expr) => compile_array(expr, context),
+        ast::SimpleExpression::Reference(expr) => compile_reference(expr, context),
+    }
 }
 
 fn compile_reference(expr: &ast::Reference, context: &mut Context) {
-  let mut parts = expr.path.iter().peekable();
+    let mut parts = expr.path.iter().peekable();
 
-  while let Some(part) = parts.next() {
-    context.add_buffer(format!("props.{}", part).as_str());
-    if !parts.peek().is_none() {
-      context.add_buffer(", ");
+    while let Some(part) = parts.next() {
+        context.add_buffer(format!("props.{}", part).as_str());
+        if !parts.peek().is_none() {
+            context.add_buffer(", ");
+        }
     }
-  }
 }
 
 fn compile_array(expr: &ast::Array, context: &mut Context) {
-  context.add_buffer("[");
-  context.start_block();
-  let mut items = expr.items.iter().peekable();
-  while let Some(item) = items.next() {
-    compile_simple_expression(item, context);
-    if !items.peek().is_none() {
-      context.add_buffer(", ");
+    context.add_buffer("[");
+    context.start_block();
+    let mut items = expr.items.iter().peekable();
+    while let Some(item) = items.next() {
+        compile_simple_expression(item, context);
+        if !items.peek().is_none() {
+            context.add_buffer(", ");
+        }
     }
-  }
-  context.end_block();
-  context.add_buffer("]");
+    context.end_block();
+    context.add_buffer("]");
 }

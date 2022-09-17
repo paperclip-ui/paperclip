@@ -116,7 +116,6 @@ add_case! {
   "#
 }
 
-
 add_case! {
   class_names_are_combined,
   r#"public component A {
@@ -130,3 +129,111 @@ add_case! {
     };
   "#
 }
+
+add_case! {
+  can_render_nested_elements,
+  r#"public component A {
+    render span {
+      div {
+
+      }
+    }
+  }"#,
+  r#"
+    export const A = (props) => {
+      return React.createElement("span", null, [
+        React.createElement("div", null)
+      ]);
+    };
+  "#
+}
+
+add_case! {
+  text_nodes_can_be_used_in_render,
+  r#"public component A {
+    render text "ab"
+  }"#,
+  r#"
+    export const A = (props) => {
+      return "ab";
+    };
+  "#
+}
+
+add_case! {
+  slots_are_pulled_from_props,
+  r#"public component A {
+    render div {
+      slot abba
+    }
+  }"#,
+  r#"
+    export const A = (props) => {
+      return React.createElement("div", null, [
+        props.abba
+      ]);
+    };
+  "#
+}
+
+add_case! {
+  slots_can_be_used_as_render_node,
+  r#"public component A {
+    render slot abba
+  }"#,
+  r#"
+    export const A = (props) => {
+      return props.abba;
+    };
+  "#
+}
+
+add_case! {
+  default_slots_can_be_rendered,
+  r#"public component A {
+    render slot abba {
+      text "a"
+      div {
+        text "b"
+      }
+    }
+  }"#,
+  r#"
+    export const A = (props) => {
+      return props.abba || [
+        "a",
+        React.createElement("div", null, [
+          "b"
+        ])
+      ];
+    };
+  "#
+}
+
+// add_case! {
+//   instances_can_be_rendered,
+//   r#"
+//   component A {
+//     render slot abba
+//   }
+//   component B {
+//     render A
+//   }
+//   "#,
+//   r#"
+//     export const A = (props) => {
+//       return props.abba;
+//     };
+//   "#
+// }
+// add_case! {
+//   components_are_inspected,
+//   r#"public component A {
+//     render slot abba
+//   }"#,
+//   r#"
+//     export const A = (props) => {
+//       return props.abba;
+//     };
+//   "#
+// }

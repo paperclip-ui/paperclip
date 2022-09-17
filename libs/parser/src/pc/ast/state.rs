@@ -90,9 +90,17 @@ impl Element {
         self.name != None || body_contains!(&self.body, ElementBodyItem::Style(_))
     }
     pub fn get_visible_children(&self) -> Vec<&ElementBodyItem> {
-        self.body.iter().filter(|child| {
-            matches!(child, ElementBodyItem::Text(_) | ElementBodyItem::Element(_) | ElementBodyItem::Slot(_))
-        }).collect()
+        self.body
+            .iter()
+            .filter(|child| {
+                matches!(
+                    child,
+                    ElementBodyItem::Text(_)
+                        | ElementBodyItem::Element(_)
+                        | ElementBodyItem::Slot(_)
+                )
+            })
+            .collect()
     }
 }
 

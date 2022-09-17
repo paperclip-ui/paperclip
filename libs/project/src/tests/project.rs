@@ -418,3 +418,77 @@ test_case! {
     "#)
   ]
 }
+
+
+test_case! {
+  all_css_imports_are_included,
+  default_config_with_compiler_options("src", vec![
+    default_compiler_options_with_emit(vec!["css".to_string(), "html".to_string()])
+  ]),
+  "/",
+  "/entry.pc",
+  [
+    ("/entry.pc", r#"
+      import "/test.pc" as test
+      
+      test.Component
+    "#),
+    
+    ("/test.pc", r#"
+      import "/colors.pc" as colors
+      
+      public component Component {
+        render div {
+          style {
+            background: var(colors.white0)
+          }
+        }
+      }
+    "#),
+    
+    ("/colors.pc", r#"
+      public token white0 #FFF
+    "#),
+    
+  ],
+  [
+    ("/entry.pc.css", ""),
+    ("/entry.pc.html", r#"
+      <!doctype html> 
+      <html>
+        <head> 
+          <link rel="stylesheet" href="/entry.pc.css"> 
+          <link rel="stylesheet" href="/test.pc.css">
+          <link rel="stylesheet" href="/colors.pc.css">
+        </head> 
+        <body> 
+          <div class="_Component-6bcf0994-6">
+          </div> 
+        </body> 
+      </html>
+    "#),
+    ("/colors.pc.css", ":root { --e05e7926-2: #FFF; }"),
+    ("/colors.pc.html", r#"
+      <!doctype html> 
+      <html> 
+        <head> 
+          <link rel="stylesheet" href="/colors.pc.css">
+        </head> 
+        <body>
+        </body>
+      </html>
+    "#),
+    ("/test.pc.css", "._Component-6bcf0994-6 { background: var(--e05e7926-2); }"),
+    ("/test.pc.html", r#"
+      <!doctype html> 
+      <html> 
+        <head> 
+          <link rel="stylesheet" href="/test.pc.css">
+          <link rel="stylesheet" href="/colors.pc.css">
+        </head> 
+        <body>
+        </body> 
+      </html>
+    "#)
+  ]
+}

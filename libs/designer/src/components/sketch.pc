@@ -1,39 +1,48 @@
-public trigger mobile {
-  "@media screen and (max-width: 100px)"
+style fontDefault {
+  font-family: Inter, Helvetica
+  font-size: 16px
 }
 
-public style testStyle {
-  color: red
-}
 
-div (ab:"fdfs") {
-}
-
-public component Page {
-  variant isMobile trigger {
-    mobile
-  }
-
-  render div (class: "fdsfs", fsdfsd: "fss") {
-    slot children {
-      text "Hello world"
+component Sidebar {
+  render div {
+    style {
+      background: white
     }
-    span test {
-      style variant isMobile + isDark extends testStyle {
+    slot children
+  }
+}
 
-      }
-      override a.b.c.d.e {
-        variant ab trigger { mobile }
-        style {
-          color: orange
-        }
-      }
+
+component Center {
+  render div {
+    style {
+      width: 100%
+    }
+    text "Hello"
+  }
+}
+
+component App {
+  render div {
+    style extends fontDefault {
+      display: flex
+      background: grey
+      width: 100vw
+      height: 100vh
+      position: absolute
+      top: 0
+      left: 0
+    }
+
+    Sidebar {
+      text "Hello"
+    }
+    Center
+    Sidebar {
+      text "Something else"
     }
   }
 }
 
-Page {
-  div {
-    text "Hello world"
-  }
-}
+App

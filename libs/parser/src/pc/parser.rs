@@ -5,6 +5,7 @@ use crate::core::errors as err;
 use crate::core::parser_context::{create_initial_context, Context};
 use crate::core::string_scanner::StringScanner;
 use crate::css::ast as css_ast;
+use std::cell::RefCell;
 
 use crate::css::parser::{
     parse_style_declaration_with_string_scanner, parse_style_declarations_with_string_scanner,
@@ -35,6 +36,7 @@ pub fn parse_with_context<'src>(
             id: id_generator.new_id(),
             range: base_ast::Range::new(source.get_u16pos(), source.get_u16pos()),
             body: vec![],
+            cache: RefCell::new(ast::DocumentCache::new()),
         });
     }
 
@@ -58,6 +60,7 @@ fn parse_document(context: &mut PCContext) -> Result<ast::Document, err::ParserE
         id: context.id_generator.new_id(),
         range: base_ast::Range::new(start, end),
         body,
+        cache: RefCell::new(ast::DocumentCache::new()),
     })
 }
 

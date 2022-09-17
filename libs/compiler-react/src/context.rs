@@ -1,16 +1,16 @@
-use paperclip_common::id::get_document_id;
 use paperclip_common::serialize_context::Context as SerializeContext;
+use paperclip_parser::graph::Dependency;
 
-pub struct Context {
+pub struct Context<'dependency> {
     pub content: SerializeContext,
-    pub document_id: String,
+    pub dependency: &'dependency Dependency,
 }
 
-impl Context {
-    pub fn new(path: &str) -> Self {
+impl<'dependency> Context<'dependency> {
+    pub fn new(dependency: &'dependency Dependency) -> Self {
         Self {
             content: SerializeContext::new(0),
-            document_id: get_document_id(path),
+            dependency,
         }
     }
     pub fn add_buffer(&mut self, buffer: &str) {
@@ -28,7 +28,7 @@ impl Context {
     pub fn with_new_content(&self) -> Self {
         Self {
             content: SerializeContext::new(self.content.depth),
-            document_id: self.document_id.to_string(),
+            dependency: self.dependency,
         }
     }
 }

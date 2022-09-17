@@ -7,7 +7,7 @@ use paperclip_parser::pc::ast;
 use std::collections::BTreeMap;
 
 pub fn compile(dependency: &Dependency) -> Result<String> {
-    let mut context = Context::new(&dependency.path);
+    let mut context = Context::new(&dependency);
     compile_document(&dependency.document, &mut context);
     Ok(context.get_buffer())
 }
@@ -19,6 +19,24 @@ fn compile_document(document: &ast::Document, context: &mut Context) {
             _ => {}
         }
     }
+}
+
+macro_rules! compile_children {
+    ($expr: expr, $cb: expr, $context: expr) => {{
+        $context.add_buffer("[\n");
+
+        let mut children = $expr.into_iter().peekable();
+        while let Some(child) = children.next() {
+            ($cb)(child);
+
+            if !children.peek().is_none() {
+                $context.add_buffer(", ");
+            }
+            $context.add_buffer("\n");
+        }
+        $context.end_block();
+        $context.add_buffer("]");
+    }};
 }
 
 fn compile_component(component: &ast::Component, context: &mut Context) {
@@ -55,25 +73,31 @@ fn compile_slot(node: &ast::Slot, context: &mut Context) {
     context.add_buffer(format!("props.{}", node.name).as_str());
 
     if node.body.len() > 0 {
-        context.add_buffer(" || [\n");
-        context.start_block();
-        let mut body = node.body.iter().peekable();
-        while let Some(item) = body.next() {
-            match item {
-                ast::SlotBodyItem::Element(expr) => compile_element(expr, context),
-                ast::SlotBodyItem::Text(expr) => compile_text_node(expr, context),
+        context.add_buffer(" || ");
+        compile_children! {
+          &node.body,
+          |child: &ast::SlotBodyItem| {
+            match child {
+              ast::SlotBodyItem::Element(expr) => compile_element(expr, context),
+              ast::SlotBodyItem::Text(expr) => compile_text_node(expr, context),
             }
-            if !body.peek().is_none() {
-                context.add_buffer(", ");
-            }
-            context.add_buffer("\n");
+          },
+          context
         }
-        context.end_block();
-        context.add_buffer("]");
     }
 }
 fn compile_element(element: &ast::Element, context: &mut Context) {
-    context.add_buffer(format!("React.createElement(\"{}\", ", element.tag_name).as_str());
+    let tag_name = if context
+        .dependency
+        .document
+        .contains_component_name(&element.tag_name)
+    {
+        element.tag_name.to_string()
+    } else {
+        format!("\"{}\"", element.tag_name)
+    };
+
+    context.add_buffer(format!("React.createElement({}, ", tag_name).as_str());
     compile_element_parameters(element, context);
     compile_element_children(element, context);
     context.add_buffer(")")
@@ -86,27 +110,20 @@ fn compile_element_children(element: &ast::Element, context: &mut Context) {
         return;
     }
 
-    context.add_buffer(", [\n");
-    context.start_block();
+    context.add_buffer(", ");
 
-    let mut children = visible_children.into_iter().peekable();
-
-    while let Some(child) = children.next() {
+    compile_children! {
+      &visible_children,
+      |child: &ast::ElementBodyItem| {
         match child {
-            ast::ElementBodyItem::Text(expr) => compile_text_node(&expr, context),
-            ast::ElementBodyItem::Element(expr) => compile_element(&expr, context),
-            ast::ElementBodyItem::Slot(expr) => compile_slot(&expr, context),
-            _ => {}
+          ast::ElementBodyItem::Text(expr) => compile_text_node(&expr, context),
+          ast::ElementBodyItem::Element(expr) => compile_element(&expr, context),
+          ast::ElementBodyItem::Slot(expr) => compile_slot(&expr, context),
+          _ => {}
         };
-
-        if !children.peek().is_none() {
-            context.add_buffer(", ");
-        }
-        context.add_buffer("\n");
+      },
+      context
     }
-
-    context.end_block();
-    context.add_buffer("]");
 }
 
 fn compile_element_parameters(element: &ast::Element, context: &mut Context) {
@@ -133,11 +150,11 @@ fn compile_element_parameters(element: &ast::Element, context: &mut Context) {
     context.add_buffer("}");
 }
 
-fn get_raw_element_attrs(
+fn get_raw_element_attrs<'dependency>(
     element: &ast::Element,
-    context: &mut Context,
-) -> BTreeMap<String, Context> {
-    let mut attrs: BTreeMap<String, Context> = BTreeMap::new();
+    context: &mut Context<'dependency>,
+) -> BTreeMap<String, Context<'dependency>> {
+    let mut attrs: BTreeMap<String, Context<'dependency>> = BTreeMap::new();
 
     for parameter in &element.parameters {
         let mut param_context = context.with_new_content();
@@ -162,8 +179,29 @@ fn get_raw_element_attrs(
         }
     }
 
+    for insert in &element.get_inserts() {
+        let mut sub = context.with_new_content();
+        compile_insert(insert, &mut sub);
+        attrs.insert(insert.name.to_string(), sub);
+    }
+
     attrs
 }
+
+fn compile_insert(insert: &ast::Insert, context: &mut Context) {
+    compile_children! {
+      &insert.body,
+      |child: &ast::InsertBody| {
+        match child {
+          ast::InsertBody::Element(expr) => compile_element(&expr, context),
+          ast::InsertBody::Text(expr) => compile_text_node(&expr, context),
+          ast::InsertBody::Slot(expr) => compile_slot(&expr, context)
+        }
+      },
+      context
+    }
+}
+
 fn rename_attrs_for_react(attrs: BTreeMap<String, Context>) -> BTreeMap<String, Context> {
     attrs
         .into_iter()

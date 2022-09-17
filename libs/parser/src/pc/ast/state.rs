@@ -2,11 +2,27 @@ pub use crate::base::ast::{Range, Str};
 use crate::css::ast as css_ast;
 pub use crate::docco::ast::Comment;
 use serde::Serialize;
+use std::cell::RefCell;
+use std::collections::HashSet;
 
 macro_rules! body_contains {
     ($expr: expr, $pat: pat) => {
         $expr.iter().find(|child| matches!(child, $pat)) != None
     };
+}
+
+macro_rules! get_body_items {
+    ($collection: expr, $enum: path, $type: ident) => {{
+        let mut found: Vec<&$type> = vec![];
+
+        for potential in $collection {
+            if let $enum(item) = potential {
+                found.push(item);
+            }
+        }
+
+        found
+    }};
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -101,6 +117,9 @@ impl Element {
                 )
             })
             .collect()
+    }
+    pub fn get_inserts(&self) -> Vec<&Insert> {
+        get_body_items!(&self.body, ElementBodyItem::Insert, Insert)
     }
 }
 
@@ -267,32 +286,35 @@ pub enum DocumentBodyItem {
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
+pub struct DocumentCache {
+    component_names: Option<HashSet<String>>,
+}
+
+impl DocumentCache {
+    pub fn new() -> Self {
+        Self {
+            component_names: None,
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Document {
     pub id: String,
     pub range: Range,
     pub body: Vec<DocumentBodyItem>,
+    pub(crate) cache: RefCell<DocumentCache>,
 }
 
 impl Document {
     pub fn get_imports(&self) -> Vec<&Import> {
-        let mut imports = vec![];
-        for item in &self.body {
-            if let DocumentBodyItem::Import(import) = item {
-                imports.push(import);
-            }
-        }
-        imports
+        get_body_items!(&self.body, DocumentBodyItem::Import, Import)
     }
     pub fn get_atoms(&self) -> Vec<&Atom> {
-        let mut atoms: Vec<&Atom> = vec![];
-
-        for item in &self.body {
-            if let DocumentBodyItem::Atom(atom) = item {
-                atoms.push(atom);
-            }
-        }
-
-        atoms
+        get_body_items!(&self.body, DocumentBodyItem::Atom, Atom)
+    }
+    pub fn get_components(&self) -> Vec<&Component> {
+        get_body_items!(&self.body, DocumentBodyItem::Component, Component)
     }
     pub fn get_style(&self, name: &String) -> Option<&Style> {
         for item in &self.body {
@@ -305,6 +327,25 @@ impl Document {
             }
         }
         None
+    }
+    pub fn contains_component_name(&self, name: &str) -> bool {
+        let mut cache = self.cache.borrow_mut();
+
+        if cache.component_names == None {
+            let component_names: HashSet<String> = self
+                .get_components()
+                .iter()
+                .map(|component| component.name.to_string())
+                .collect();
+
+            cache.component_names = Some(component_names);
+        }
+
+        if let Some(component_names) = &cache.component_names {
+            component_names.contains(name)
+        } else {
+            false
+        }
     }
 }
 

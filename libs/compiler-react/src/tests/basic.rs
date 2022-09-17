@@ -4,6 +4,8 @@ use paperclip_parser::graph::Dependency;
 use paperclip_parser::pc::parser::parse;
 use std::collections::HashMap;
 
+// TODO: insert test
+
 macro_rules! add_case {
     ($name: ident, $mock_content: expr, $expected_output: expr) => {
         #[test]
@@ -210,30 +212,52 @@ add_case! {
   "#
 }
 
-// add_case! {
-//   instances_can_be_rendered,
-//   r#"
-//   component A {
-//     render slot abba
-//   }
-//   component B {
-//     render A
-//   }
-//   "#,
-//   r#"
-//     export const A = (props) => {
-//       return props.abba;
-//     };
-//   "#
-// }
-// add_case! {
-//   components_are_inspected,
-//   r#"public component A {
-//     render slot abba
-//   }"#,
-//   r#"
-//     export const A = (props) => {
-//       return props.abba;
-//     };
-//   "#
-// }
+add_case! {
+  instances_can_be_rendered,
+  r#"
+  component A {
+    render slot abba
+  }
+  component B {
+    render A
+  }
+  "#,
+  r#"
+    const A = (props) => {
+      return props.abba;
+    };
+
+    const B = (props) => {
+      return React.createElement(A, null);
+    };
+  "#
+}
+
+add_case! {
+  inserts_can_be_rendered,
+  r#"
+  component A {
+    render slot abba
+  }
+  component B {
+    render A {
+      insert abba {
+        text "Hello"
+      }
+    }
+  }
+  "#,
+  r#"
+    const A = (props) => {
+      return props.abba;
+    };
+
+    const B = (props) => {
+      return React.createElement(A, {
+        "abba": [
+          "Hello"
+        ]
+      });
+    };
+  "#
+}

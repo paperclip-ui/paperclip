@@ -1,6 +1,7 @@
 #### On-deck
 
 - React compiler (needed to start on designer)
+  - emit jsx
   - Vanilla for now
   - Look into targeting radix
 - `paperclip designer` command

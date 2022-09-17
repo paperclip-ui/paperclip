@@ -159,9 +159,9 @@ fn serialize_render_node(node: &ast::RenderNode, context: &mut Context) {
 fn serialize_text(node: &ast::TextNode, context: &mut Context) {
     context.add_buffer("text");
     maybe_serialize_ref_name(&node.name, context);
-    if let Some(value) = &node.value {
-        context.add_buffer(format!(" \"{}\"", value).as_str());
-    }
+
+    context.add_buffer(format!(" \"{}\"", node.value).as_str());
+
     if node.body.len() > 0 {
         context.add_buffer(" {\n");
         context.start_block();

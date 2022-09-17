@@ -3,7 +3,6 @@ use super::errors;
 use super::virt;
 use crate::core::utils::{get_style_namespace, get_variant_namespace};
 use paperclip_common::fs::FileResolver;
-use paperclip_common::id::get_document_id;
 use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph;
 use paperclip_parser::graph::reference as graph_ref;
@@ -191,7 +190,6 @@ fn evaluate_variant_styles<F: FileResolver>(
     let ns = get_style_namespace(
         current_node.get_name(),
         current_node.get_id(),
-        &get_document_id(context.path),
         context.current_component,
     );
 
@@ -202,7 +200,6 @@ fn evaluate_variant_styles<F: FileResolver>(
             _ => &None,
         },
         &render_node.get_id(),
-        &get_document_id(context.path),
         context.current_component,
     );
 
@@ -482,7 +479,6 @@ fn create_virt_style<F: FileResolver>(
             Some(get_style_namespace(
                 node.get_name(),
                 node.get_id(),
-                &get_document_id(context.path),
                 context.current_component,
             ))
         })

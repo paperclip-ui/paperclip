@@ -3,6 +3,12 @@ use crate::css::ast as css_ast;
 pub use crate::docco::ast::Comment;
 use serde::Serialize;
 
+macro_rules! body_contains {
+    ($expr: expr, $pat: pat) => {
+        $expr.iter().find(|child| matches!(child, $pat)) != None
+    };
+}
+
 #[derive(Debug, PartialEq, Serialize, Clone)]
 pub struct Component {
     pub id: String,
@@ -77,6 +83,17 @@ pub struct Element {
     pub id: String,
     pub range: Range,
     pub body: Vec<ElementBodyItem>,
+}
+
+impl Element {
+    pub fn is_stylable(&self) -> bool {
+        self.name != None || body_contains!(&self.body, ElementBodyItem::Style(_))
+    }
+    pub fn get_visible_children(&self) -> Vec<&ElementBodyItem> {
+        self.body.iter().filter(|child| {
+            matches!(child, ElementBodyItem::Text(_) | ElementBodyItem::Element(_) | ElementBodyItem::Slot(_))
+        }).collect()
+    }
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]
@@ -167,9 +184,15 @@ pub enum ElementBodyItem {
 pub struct TextNode {
     pub id: String,
     pub name: Option<String>,
-    pub value: Option<String>,
+    pub value: String,
     pub range: Range,
     pub body: Vec<TextNodeBodyItem>,
+}
+
+impl TextNode {
+    pub fn is_stylable(&self) -> bool {
+        body_contains!(&self.body, TextNodeBodyItem::Style(_))
+    }
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone)]

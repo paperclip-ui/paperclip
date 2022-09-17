@@ -489,9 +489,9 @@ fn parse_text(context: &mut PCContext) -> Result<ast::TextNode, err::ParserError
     context.skip(is_superfluous_or_newline)?;
     let value = if let Some(Token::String(value)) = context.curr_token {
         context.next_token()?; // eat value
-        Some(trim_string(str::from_utf8(value).unwrap()))
+        trim_string(str::from_utf8(value).unwrap())
     } else {
-        None
+        return Err(context.new_unexpected_token_error());
     };
     context.skip(is_superfluous_or_newline)?;
 

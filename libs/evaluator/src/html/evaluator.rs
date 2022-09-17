@@ -4,7 +4,6 @@ use crate::core::errors;
 use crate::core::utils::get_style_namespace;
 use crate::core::virt as core_virt;
 use paperclip_common::fs::FileResolver;
-use paperclip_common::id::get_document_id;
 use paperclip_parser::graph;
 use paperclip_parser::graph::reference as graph_ref;
 use paperclip_parser::pc::ast;
@@ -12,12 +11,6 @@ use std::collections::BTreeMap;
 use std::collections::HashMap;
 
 type InsertsMap<'expr> = HashMap<String, (String, Vec<virt::Node>)>;
-
-macro_rules! body_contains {
-    ($expr: expr, $pat: pat) => {
-        $expr.iter().find(|child| matches!(child, $pat)) != None
-    };
-}
 
 pub async fn evaluate<F: FileResolver>(
     path: &str,
@@ -313,13 +306,8 @@ fn add_static_attribute_values<F: FileResolver>(
     attributes: &mut BTreeMap<String, virt::Attribute>,
     context: &DocumentContext<F>,
 ) {
-    if is_stylable_element(element) {
-        let class_name = get_style_namespace(
-            &element.name,
-            &element.id,
-            &get_document_id(context.path),
-            context.current_component,
-        );
+    if element.is_stylable() {
+        let class_name = get_style_namespace(&element.name, &element.id, context.current_component);
 
         if let Some(class) = attributes.get_mut("class") {
             class.value = format!("{} {}", class_name, class.value);
@@ -334,14 +322,6 @@ fn add_static_attribute_values<F: FileResolver>(
             );
         }
     }
-}
-
-fn is_stylable_element(element: &ast::Element) -> bool {
-    element.name != None || body_contains!(&element.body, ast::ElementBodyItem::Style(_))
-}
-
-fn is_stylable_text(text: &ast::TextNode) -> bool {
-    body_contains!(&text.body, ast::TextNodeBodyItem::Style(_))
 }
 
 fn create_raw_object_from_params<F: FileResolver>(
@@ -407,40 +387,34 @@ fn evaluate_text_node<F: FileResolver>(
     fragment: &mut Vec<virt::Node>,
     context: &mut DocumentContext<F>,
 ) {
-    if let Some(value) = &text_node.value {
-        let metadata = None;
+    let metadata = None;
 
-        let node = if is_stylable_text(text_node) {
-            let class_name = get_style_namespace(
-                &text_node.name,
-                &text_node.id,
-                &get_document_id(context.path),
-                context.current_component,
-            );
+    let node = if text_node.is_stylable() {
+        let class_name =
+            get_style_namespace(&text_node.name, &text_node.id, context.current_component);
 
-            virt::Node::Element(virt::Element {
-                tag_name: "span".to_string(),
+        virt::Node::Element(virt::Element {
+            tag_name: "span".to_string(),
+            source_id: Some(text_node.id.to_string()),
+            attributes: vec![virt::Attribute {
+                source_id: None,
+                name: "class".to_string(),
+                value: class_name.to_string(),
+            }],
+            metadata,
+            children: vec![virt::Node::TextNode(virt::TextNode {
                 source_id: Some(text_node.id.to_string()),
-                attributes: vec![virt::Attribute {
-                    source_id: None,
-                    name: "class".to_string(),
-                    value: class_name.to_string(),
-                }],
-                metadata,
-                children: vec![virt::Node::TextNode(virt::TextNode {
-                    source_id: Some(text_node.id.to_string()),
-                    value: value.to_string(),
-                    metadata: None,
-                })],
-            })
-        } else {
-            virt::Node::TextNode(virt::TextNode {
-                source_id: Some(text_node.id.to_string()),
-                value: value.to_string(),
-                metadata,
-            })
-        };
+                value: text_node.value.to_string(),
+                metadata: None,
+            })],
+        })
+    } else {
+        virt::Node::TextNode(virt::TextNode {
+            source_id: Some(text_node.id.to_string()),
+            value: text_node.value.to_string(),
+            metadata,
+        })
+    };
 
-        fragment.push(node);
-    }
+    fragment.push(node);
 }

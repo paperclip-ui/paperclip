@@ -625,6 +625,7 @@ version = "0.1.1"
 dependencies = [
  "anyhow",
  "paperclip_common",
+ "paperclip_evaluator",
  "paperclip_parser",
 ]
 

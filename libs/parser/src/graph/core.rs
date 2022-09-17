@@ -74,6 +74,29 @@ impl Graph {
 
         all_dependents
     }
+    pub fn get_all_dependencies(&self, path: &str) -> Vec<&Dependency> {
+        let mut all_dependencies: Vec<&Dependency> = vec![];
+        let mut used: HashSet<&str> = HashSet::new();
+        let mut pool: Vec<&str> = vec![path];
+
+        while let Some(path) = pool.pop() {
+            if let Some(dep) = self.dependencies.get(path) {
+                for (_, imp_path) in &dep.imports {
+                    if let Some(imp) = self.dependencies.get(imp_path) {
+                        if !used.contains(imp_path.as_str()) {
+                            used.insert(imp_path);
+                            all_dependencies.push(imp);
+                            pool.push(&imp_path);
+                        }
+                    }
+                }
+            } else {
+                break;
+            }
+        }
+
+        all_dependencies
+    }
     fn dep_hashes(&self) -> Arc<Mutex<HashMap<String, String>>> {
         Arc::new(Mutex::new(HashMap::from_iter(
             self.dependencies

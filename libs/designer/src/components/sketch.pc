@@ -1,17 +1,10 @@
+import "./common/sidebar.pc" as Sidebar
+
 style fontDefault {
   font-family: Inter, Helvetica
   font-size: 16px
 }
 
-
-component Sidebar {
-  render div {
-    style {
-      background: white
-    }
-    slot children
-  }
-}
 
 
 component Center {
@@ -35,11 +28,11 @@ component App {
       left: 0
     }
 
-    Sidebar {
+    Sidebar.Root {
       text "Hello"
     }
     Center
-    Sidebar {
+    Sidebar.Root {
       text "Something else"
     }
   }

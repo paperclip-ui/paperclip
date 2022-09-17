@@ -13,7 +13,7 @@ pub fn compile(dependency: &Dependency) -> Result<String> {
 }
 
 fn compile_document(document: &ast::Document, context: &mut Context) {
-    context.add_buffer("import {React} from \"react\";\n\n");
+    context.add_buffer("import { React } from \"react\";\n\n");
     for item in &document.body {
         match item {
             ast::DocumentBodyItem::Component(component) => compile_component(component, context),

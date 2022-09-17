@@ -35,9 +35,11 @@ add_case! {
     }
   }"#,
   r#"
-    const A = (props) => {
+    import { React } from "react";
+
+    const A = React.memo((props) => {
       return React.createElement("div", null);
-    };
+    });
   "#
 }
 
@@ -49,9 +51,11 @@ add_case! {
     }
   }"#,
   r#"
-    export const A = (props) => {
+    import { React } from "react";
+
+    export const A = React.memo((props) => {
       return React.createElement("div", null);
-    };
+    });
   "#
 }
 
@@ -65,11 +69,13 @@ add_case! {
     }
   }"#,
   r#"
-    export const A = (props) => {
+    import { React } from "react";
+
+    export const A = React.memo((props) => {
       return React.createElement("div", {
         "className": "_80f4925f-4"
       });
-    };
+    });
   "#
 }
 
@@ -80,11 +86,13 @@ add_case! {
     }
   }"#,
   r#"
-    export const A = (props) => {
+    import { React } from "react";
+
+    export const A = React.memo((props) => {
       return React.createElement("div", {
         "className": "_ab-80f4925f-1"
       });
-    };
+    });
   "#
 }
 
@@ -96,11 +104,13 @@ add_case! {
     }
   }"#,
   r#"
-    export const A = (props) => {
+    import { React } from "react";
+
+    export const A = React.memo((props) => {
       return React.createElement("span", null, [
         "Hello"
       ]);
-    };
+    });
   "#
 }
 
@@ -110,11 +120,13 @@ add_case! {
     render span(aria-label: "something")
   }"#,
   r#"
-    export const A = (props) => {
+    import { React } from "react";
+
+    export const A = React.memo((props) => {
       return React.createElement("span", {
         "aria-label": "something"
       });
-    };
+    });
   "#
 }
 
@@ -124,11 +136,13 @@ add_case! {
     render span ab (class: "cd")
   }"#,
   r#"
-    export const A = (props) => {
+    import { React } from "react";
+
+    export const A = React.memo((props) => {
       return React.createElement("span", {
         "className": "cd" + " " + "_ab-80f4925f-3"
       });
-    };
+    });
   "#
 }
 
@@ -142,11 +156,13 @@ add_case! {
     }
   }"#,
   r#"
-    export const A = (props) => {
+    import { React } from "react";
+
+    export const A = React.memo((props) => {
       return React.createElement("span", null, [
         React.createElement("div", null)
       ]);
-    };
+    });
   "#
 }
 
@@ -156,9 +172,11 @@ add_case! {
     render text "ab"
   }"#,
   r#"
-    export const A = (props) => {
+    import { React } from "react";
+
+    export const A = React.memo((props) => {
       return "ab";
-    };
+    });
   "#
 }
 
@@ -170,11 +188,13 @@ add_case! {
     }
   }"#,
   r#"
-    export const A = (props) => {
+    import { React } from "react";
+
+    export const A = React.memo((props) => {
       return React.createElement("div", null, [
         props.abba
       ]);
-    };
+    });
   "#
 }
 
@@ -184,9 +204,11 @@ add_case! {
     render slot abba
   }"#,
   r#"
-    export const A = (props) => {
+    import { React } from "react";
+
+    export const A = React.memo((props) => {
       return props.abba;
-    };
+    });
   "#
 }
 
@@ -201,14 +223,16 @@ add_case! {
     }
   }"#,
   r#"
-    export const A = (props) => {
+    import { React } from "react";
+
+    export const A = React.memo((props) => {
       return props.abba || [
         "a",
         React.createElement("div", null, [
           "b"
         ])
       ];
-    };
+    });
   "#
 }
 
@@ -223,13 +247,15 @@ add_case! {
   }
   "#,
   r#"
-    const A = (props) => {
-      return props.abba;
-    };
+    import { React } from "react";
 
-    const B = (props) => {
+    const A = React.memo((props) => {
+      return props.abba;
+    });
+
+    const B = React.memo((props) => {
       return React.createElement(A, null);
-    };
+    });
   "#
 }
 
@@ -248,41 +274,45 @@ add_case! {
   }
   "#,
   r#"
-    const A = (props) => {
-      return props.abba;
-    };
+    import { React } from "react";
 
-    const B = (props) => {
+    const A = React.memo((props) => {
+      return props.abba;
+    });
+
+    const B = React.memo((props) => {
       return React.createElement(A, {
         "abba": [
           "Hello"
         ]
       });
-    };
+    });
   "#
 }
 
 
-add_case! {
-  can_render_imported_components,
-  r#"
-    import "./test.pc" as test
+// add_case! {
+//   can_render_imported_components,
+//   r#"
+//     import "./test.pc" as test
 
-    component A {
-      render test.b
-    }
-  "#,
-  r#"
-    const A = (props) => {
-      return props.abba;
-    };
+//     component A {
+//       render test.b
+//     }
+//   "#,
+//   r#"
+//     import { React } from "react";
+  
+//     const A = React.memo((props) => {
+//       return props.abba;
+//     });
 
-    const B = (props) => {
-      return React.createElement(A, {
-        "abba": [
-          "Hello"
-        ]
-      });
-    };
-  "#
-}
+//     const B = React.memo((props) => {
+//       return React.createElement(A, {
+//         "abba": [
+//           "Hello"
+//         ]
+//       });
+//     });
+//   "#
+// }

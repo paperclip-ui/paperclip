@@ -1,0 +1,10 @@
+import "./theme.pc" as theme
+
+public component Root {
+  render div {
+    style {
+      background: var(theme.colorWhite)
+    }
+    slot children
+  }
+}

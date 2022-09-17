@@ -155,22 +155,15 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
 
                 if let Some(main_css_path) = &self.context.get_main_css_file_path() {
                     imports.push(format!("{}", main_css_path));
-                } else {
+                } else {                    
                     imports.push(format!("{}.css", path));
 
                     imports.extend(
-                        graph
-                            .dependencies
-                            .get(path)
-                            .and_then(|dep| {
-                                Some(
-                                    dep.imports
-                                        .values()
-                                        .map(|import_path| format!("{}.css", import_path))
-                                        .collect::<Vec<String>>(),
-                                )
-                            })
-                            .unwrap_or(vec![]),
+                        graph.get_all_dependencies(path)
+                        .iter()
+                        .map(|dep| {
+                            format!("{}.css", dep.path)
+                        })
                     )
                 };
 

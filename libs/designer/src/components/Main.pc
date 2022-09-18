@@ -1,0 +1,39 @@
+component Sidebar {
+  render div {
+    slot children
+  }
+}
+
+component LeftSidebar {
+  render Sidebar {
+    text "Child"
+  }
+}
+
+component RightSidebar {
+  render Sidebar {
+    text "Child"
+  }
+}
+
+component Center {
+  render div {
+    style {
+      width: 100%
+    }
+    text "Center"
+  }
+}
+public component App {
+  render div {
+    style {
+      display: flex
+      font-family: sans-serif
+    }
+    LeftSidebar
+    Center
+    RightSidebar
+  }
+}
+
+App 

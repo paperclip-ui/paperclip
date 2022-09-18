@@ -7,8 +7,8 @@
     "build:watch": "concurrently \"yarn build:tsc --watch\" \"yarn build:rs --watch\"",
     "build:tsc": "tsc",
     "build:rs": "cargo-cp-artifact -nc lib/index.node -- cargo build --message-format=json-render-diagnostics",
-    "build:rs:debug": "yarn build --",
-    "build:rs:release": "yarn build -- --release",
+    "build:rs:debug": "yarn build:rs --",
+    "build:rs:release": "yarn build:rs -- --release",
     "test": "cargo test"
   },
   "author": "",

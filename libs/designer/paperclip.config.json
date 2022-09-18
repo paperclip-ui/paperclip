@@ -1,5 +1,5 @@
 {
   "srcDir": "src",
   "moduleDirs": ["node_module"],
-  "compilerOptions": [{ "emit": ["css", "html", "react.js"] }]
+  "compilerOptions": [{ "emit": ["react.d.ts:d.ts"] }]
 }

@@ -3,6 +3,7 @@ node_modules
 lib
 dist
 target
+*.d.ts
 *.pc.css
 *.pc.mjs
 *.pc.mjs.*

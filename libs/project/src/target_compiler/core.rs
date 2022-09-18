@@ -20,6 +20,13 @@ struct TargetCompilerResolver<IO: FileReader + FileResolver> {
     io: Rc<IO>,
     context: Rc<TargetCompilerContext>,
 }
+
+struct EmitInfo {
+    compiler_name: String,
+    extension_name: String
+}
+
+
 impl<IO: FileReader + FileResolver> FileResolver for TargetCompilerResolver<IO> {
     fn resolve_file(&self, from: &str, to: &str) -> Option<String> {
         let resolved_path = self.io.resolve_file(from, to).and_then(|resolved_path| {
@@ -131,8 +138,10 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
 
         if let Some(emit) = &self.context.options.emit {
             for ext in emit {
+                let info = extract_emit_info(ext);
+
                 if let Some(code) = translate(
-                    ext,
+                    &info.compiler_name,
                     path,
                     graph,
                     file_resolver,
@@ -140,7 +149,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
                 )
                 .await?
                 {
-                    data.insert(ext.to_string(), code);
+                    data.insert(info.extension_name.to_string(), code);
                 }
             }
         }
@@ -190,6 +199,21 @@ async fn translate<F: FileResolver>(
         )?),
         _ => None,
     })
+}
+
+fn extract_emit_info(value: &str) -> EmitInfo {
+    let info = value.split(":").collect::<Vec<&str>>();
+    let compiler_name = info.get(0).unwrap().to_string();
+    let extension_name = if let Some(part) = info.get(1) {
+        part.to_string()
+    } else {
+        compiler_name.to_string()
+    };
+
+    EmitInfo {
+        compiler_name,
+        extension_name
+    }
 }
 
 async fn translate_css<F: FileResolver>(

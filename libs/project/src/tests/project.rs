@@ -491,3 +491,33 @@ test_case! {
     "#)
   ]
 }
+
+
+test_case! {
+  can_emit_a_custom_extension,
+  default_config_with_compiler_options(".", vec![
+    default_compiler_options_with_emit(vec!["html:html2".to_string()])
+  ]),
+  "/",
+  "/entry.pc",
+  [
+    ("/entry.pc", r#"
+      div {
+        text "Hello world"
+      }
+    "#)
+  ],
+  [
+    ("/entry.pc.html2", r#"
+      <!doctype html>
+      <html> 
+        <head>
+          <link rel="stylesheet" href="/entry.pc.css">
+        </head>
+        <body>
+          <div> Hello world </div>
+        </body>
+      </html>
+    "#)
+  ]
+}

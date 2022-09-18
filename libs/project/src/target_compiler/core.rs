@@ -2,11 +2,13 @@ use super::context::TargetCompilerContext;
 use crate::config::{CompilerOptions, Config};
 use anyhow::Result;
 use paperclip_common::fs::{FileReader, FileResolver};
+use paperclip_compiler_react::{
+    compile_code as compile_react_code, compile_typed_definition as compile_react_typed_definition,
+};
 use paperclip_evaluator::css::evaluator::evaluate as evaluate_css;
 use paperclip_evaluator::css::serializer::serialize as serialize_css;
 use paperclip_evaluator::html::evaluator::{evaluate as evaluate_html, Options as HTMLOptions};
 use paperclip_evaluator::html::serializer::serialize as serialize_html;
-use paperclip_compiler_react::compiler::compile as compile_react;
 use paperclip_parser::graph::Graph;
 use std::cell::RefCell;
 use std::collections::BTreeMap;
@@ -155,15 +157,14 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
 
                 if let Some(main_css_path) = &self.context.get_main_css_file_path() {
                     imports.push(format!("{}", main_css_path));
-                } else {                    
+                } else {
                     imports.push(format!("{}.css", path));
 
                     imports.extend(
-                        graph.get_all_dependencies(path)
-                        .iter()
-                        .map(|dep| {
-                            format!("{}.css", dep.path)
-                        })
+                        graph
+                            .get_all_dependencies(path)
+                            .iter()
+                            .map(|dep| format!("{}.css", dep.path)),
                     )
                 };
 
@@ -183,7 +184,10 @@ async fn translate<F: FileResolver>(
     Ok(match into {
         "css" => Some(translate_css(path, graph, file_resolver).await?),
         "html" => Some(translate_html(path, graph, file_resolver, options).await?),
-        "react.js" => Some(compile_react(graph.dependencies.get(path).unwrap())?),
+        "react.js" => Some(compile_react_code(graph.dependencies.get(path).unwrap())?),
+        "react.d.ts" => Some(compile_react_typed_definition(
+            graph.dependencies.get(path).unwrap(),
+        )?),
         _ => None,
     })
 }

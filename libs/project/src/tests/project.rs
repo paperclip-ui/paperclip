@@ -419,7 +419,6 @@ test_case! {
   ]
 }
 
-
 test_case! {
   all_css_imports_are_included,
   default_config_with_compiler_options("src", vec![
@@ -433,7 +432,7 @@ test_case! {
       
       test.Component
     "#),
-    
+
     ("/test.pc", r#"
       import "/colors.pc" as colors
       
@@ -445,11 +444,11 @@ test_case! {
         }
       }
     "#),
-    
+
     ("/colors.pc", r#"
       public token white0 #FFF
     "#),
-    
+
   ],
   [
     ("/entry.pc.css", ""),

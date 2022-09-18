@@ -1,4 +1,4 @@
-use crate::compiler::compile;
+use crate::compile_code;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::graph::Dependency;
 use paperclip_parser::pc::parser::parse;
@@ -18,7 +18,7 @@ macro_rules! add_case {
                 imports: HashMap::new(),
                 document: ast,
             };
-            let output = compile(&dep).unwrap();
+            let output = compile_code(&dep).unwrap();
             assert_eq!(
                 strip_extra_ws(output.as_str()),
                 strip_extra_ws($expected_output)
@@ -290,7 +290,6 @@ add_case! {
   "#
 }
 
-
 // add_case! {
 //   can_render_imported_components,
 //   r#"
@@ -302,7 +301,7 @@ add_case! {
 //   "#,
 //   r#"
 //     import { React } from "react";
-  
+
 //     const A = React.memo((props) => {
 //       return props.abba;
 //     });

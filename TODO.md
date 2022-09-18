@@ -1,5 +1,6 @@
 #### On-deck
 
+- definition compiler
 - publish VS Code extension for new name
 - paperclip-loader
 - React compiler (needed to start on designer)

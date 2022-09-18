@@ -16,6 +16,7 @@ module.exports = function (source: string) {
   const configFilePath = path.join(process.cwd(), configFile);
 
   let config: any;
+  console.log("LOAD");
 
   try {
     config = require(configFilePath);

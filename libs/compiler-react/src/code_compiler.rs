@@ -6,7 +6,7 @@ use paperclip_parser::graph::Dependency;
 use paperclip_parser::pc::ast;
 use std::collections::BTreeMap;
 
-pub fn compile(dependency: &Dependency) -> Result<String> {
+pub fn compile_code(dependency: &Dependency) -> Result<String> {
     let mut context = Context::new(&dependency);
     compile_document(&dependency.document, &mut context);
     Ok(context.get_buffer())

@@ -126,6 +126,7 @@ __metadata:
     css-minimizer-webpack-plugin: ^4.1.0
     html-webpack-plugin: ^5.5.0
     mini-css-extract-plugin: ^2.6.1
+    paperclip-loader: "workspace:^"
     process: ^0.11.10
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -3908,7 +3909,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"paperclip-loader@workspace:libs/paperclip-loader":
+"paperclip-loader@workspace:^, paperclip-loader@workspace:libs/paperclip-loader":
   version: 0.0.0-use.local
   resolution: "paperclip-loader@workspace:libs/paperclip-loader"
   dependencies:

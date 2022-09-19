@@ -1,10 +1,10 @@
 import * as path from "path";
-console.log("OK");
-const { start } = require("./index.node");
-console.log("OK");
+const { startEngine, compileFile } = require("./main.node");
 
-const engine = start();
-console.log(engine);
+const engine = startEngine();
+compileFile(engine);
+const c = compileFile(engine);
+console.log(c);
 
 type Options = {
   configFile: string;
@@ -17,7 +17,7 @@ let _engine: any;
 
 const getEngine = () => {
   if (!_engine) {
-    _engine = start();
+    _engine = startEngine();
   }
   return _engine;
 };

@@ -62,6 +62,7 @@ impl<IO: ProjectIO> Project<IO> {
             io,
         }
     }
+
     ///
     /// Compiles the _entire_ project and returns a stream of files.
     ///

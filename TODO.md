@@ -15,7 +15,16 @@
       - need to include IO for GRPC
       - watcher needs to emit changes
 
-#### Milestone: Flesh out entire UI
+#### Milestone: MVP UI
+
+Minimum number of things to get to polished state of entire UI
+
+- right panel
+- left panel
+  - file navigator
+  -
+- canvas
+  - just preview
 
 #### Milestone: UI Feedback
 

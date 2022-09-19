@@ -648,7 +648,10 @@ dependencies = [
 name = "paperclip-loader"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "neon",
+ "paperclip_common",
+ "paperclip_project",
 ]
 
 [[package]]

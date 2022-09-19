@@ -26,7 +26,7 @@ pub struct BuildArgs {
 pub async fn build(args: BuildArgs) -> Result<()> {
     let current_dir = String::from(env::current_dir()?.to_str().unwrap());
 
-    let project = Project::load(&current_dir, Some(args.config)).await?;
+    let project = Project::load_local(&current_dir, Some(args.config)).await?;
 
     let s = project.compile(CompileOptions { watch: args.watch });
     pin_mut!(s);

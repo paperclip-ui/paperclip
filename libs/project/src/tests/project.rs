@@ -2,6 +2,7 @@ use crate::config::{CompilerOptions, Config};
 use crate::io::{ProjectIO, WatchEvent, WatchEventKind};
 use crate::project::{CompileOptions, Project};
 use crate::project_compiler::ProjectCompiler;
+use anyhow::{Error, Result};
 use async_stream::stream;
 use futures::executor::block_on;
 use futures_core::stream::Stream;
@@ -32,8 +33,8 @@ impl ProjectIO for MockIO {
 }
 
 impl FileReader for MockIO {
-    fn read_file(&self, path: &str) -> Option<Box<[u8]>> {
-        Some(path.to_string().as_bytes().to_vec().into_boxed_slice())
+    fn read_file(&self, path: &str) -> Result<Box<[u8]>> {
+        Ok(path.to_string().as_bytes().to_vec().into_boxed_slice())
     }
 }
 
@@ -63,7 +64,10 @@ macro_rules! test_case {
             let mut graph = Graph::new();
             let files = MockFS::new(HashMap::from($input_files));
 
-            block_on(graph.load($main, &files));
+            let result = block_on(graph.load($main, &files));
+            if let Err(error) = result {
+                panic!("{:?}", error);
+            }
             let graph = Rc::new(RefCell::new(graph));
             let io = Rc::new(MockIO {});
 
@@ -366,7 +370,6 @@ test_case! {
   "/project/src/entry.pc",
   [
     ("/project/src/entry.pc", r#"
-      import "/project/src/imp.pc" as imp0
       div {
         style {
           background: url("../image.png")
@@ -402,7 +405,6 @@ test_case! {
   "/project/src/entry.pc",
   [
     ("/project/src/entry.pc", r#"
-      import "/project/src/imp.pc" as imp0
       div {
         style {
           background: url("./image.png")
@@ -414,7 +416,7 @@ test_case! {
   [
     ("/project/out/assets/main.css", r#"
     /* /project/out/entry.pc.css */
-     ._856b6f45-7 { background: url("/project/out/assets/image.png"); }
+     ._856b6f45-6 { background: url("/project/out/assets/image.png"); }
     "#)
   ]
 }
@@ -491,7 +493,6 @@ test_case! {
     "#)
   ]
 }
-
 
 test_case! {
   can_emit_a_custom_extension,

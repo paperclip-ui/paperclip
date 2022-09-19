@@ -1,4 +1,5 @@
 use super::io::IO;
+use anyhow::{Error, Result};
 use paperclip_common::fs::{FileReader, FileResolver};
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -18,11 +19,11 @@ impl<'kv> MockFS<'kv> {
 impl<'kv> IO for MockFS<'kv> {}
 
 impl<'kv> FileReader for MockFS<'kv> {
-    fn read_file<'content>(&self, path: &str) -> Option<Box<[u8]>> {
+    fn read_file<'content>(&self, path: &str) -> Result<Box<[u8]>> {
         if let Some(content) = self.files.get(path) {
-            Some(content.as_bytes().to_vec().into_boxed_slice())
+            Ok(content.as_bytes().to_vec().into_boxed_slice())
         } else {
-            None
+            Err(Error::msg("file not found"))
         }
     }
 }

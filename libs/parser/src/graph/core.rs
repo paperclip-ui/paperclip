@@ -1,6 +1,7 @@
 use super::io::IO;
 use crate::pc::ast;
 use crate::pc::parser::parse as parse_pc;
+use anyhow::Result;
 use crc::crc32;
 use futures::future::BoxFuture;
 use futures::lock::Mutex;
@@ -27,15 +28,16 @@ impl Graph {
             dependencies: HashMap::new(),
         }
     }
-    pub async fn load<TIO: IO>(&mut self, path: &str, io: &TIO) {
+    pub async fn load<TIO: IO>(&mut self, path: &str, io: &TIO) -> Result<()> {
         self.dependencies.extend(
             load_dependencies::<TIO>(
                 String::from(path),
                 Arc::new(&io),
                 Arc::new(Mutex::new(HashMap::new())),
             )
-            .await,
+            .await?,
         );
+        Ok(())
     }
     pub async fn load_files<TIO: IO>(&mut self, paths: Vec<String>, io: &TIO) {
         let loaded = self.dep_hashes();
@@ -108,7 +110,7 @@ impl Graph {
         &mut self,
         path: &str,
         io: &TIO,
-    ) -> HashMap<String, &Dependency> {
+    ) -> Result<HashMap<String, &Dependency>> {
         self.load_file2(path, io, self.dep_hashes()).await
     }
 
@@ -117,9 +119,9 @@ impl Graph {
         path: &str,
         io: &TIO,
         loaded: Arc<Mutex<HashMap<String, String>>>,
-    ) -> HashMap<String, &Dependency> {
+    ) -> Result<HashMap<String, &Dependency>> {
         let new_dependencies =
-            load_dependencies_wrapper::<TIO>(path.to_string(), Arc::new(&io), loaded).await;
+            load_dependencies_wrapper::<TIO>(path.to_string(), Arc::new(&io), loaded).await?;
 
         let new_dep_keys = new_dependencies
             .keys()
@@ -137,7 +139,7 @@ impl Graph {
             );
         }
 
-        ret
+        Ok(ret)
     }
 }
 
@@ -149,20 +151,15 @@ async fn load_dependencies<'io, TIO: IO>(
     path: String,
     io: Arc<&'io TIO>,
     loaded: Arc<Mutex<HashMap<String, String>>>,
-) -> HashMap<String, Dependency> {
+) -> Result<HashMap<String, Dependency>> {
     let mut deps = HashMap::new();
     let mut imports: HashMap<String, String> = HashMap::new();
 
-    let content = if let Some(content) = io.read_file(&path) {
-        str::from_utf8(&*content).unwrap().to_string()
-    } else {
-        println!("file not found {}", path);
-        return deps;
-    };
+    let content = str::from_utf8(&*io.read_file(&path)?).unwrap().to_string();
     let hash = format!("{:x}", crc32::checksum_ieee(content.as_bytes())).to_string();
 
     if loaded.lock().await.get(&path) == Some(&hash) {
-        return deps;
+        return Ok(deps);
     }
 
     loaded
@@ -175,7 +172,7 @@ async fn load_dependencies<'io, TIO: IO>(
     } else {
         // TODO: this needs to be bubbled
         println!("Failed to parse {}", path);
-        return deps;
+        return Ok(deps);
     };
 
     for import in &document.get_imports() {
@@ -195,17 +192,17 @@ async fn load_dependencies<'io, TIO: IO>(
 
     if imports.len() > 0 {
         for path in imports.values() {
-            deps.extend(load_dependencies_wrapper(path.clone(), io.clone(), loaded.clone()).await);
+            deps.extend(load_dependencies_wrapper(path.clone(), io.clone(), loaded.clone()).await?);
         }
     }
 
-    return deps;
+    return Ok(deps);
 }
 
 fn load_dependencies_wrapper<'io, TIO: IO>(
     path: String,
     io: Arc<&'io TIO>,
     loaded: Arc<Mutex<HashMap<String, String>>>,
-) -> BoxFuture<'io, HashMap<String, Dependency>> {
+) -> BoxFuture<'io, Result<HashMap<String, Dependency>>> {
     Box::pin(load_dependencies(path, io, loaded))
 }

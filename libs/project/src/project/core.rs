@@ -63,6 +63,22 @@ impl<IO: ProjectIO> Project<IO> {
         }
     }
 
+    pub async fn load(
+        directory: &str,
+        config_file_name: Option<String>,
+        io: Rc<IO>,
+    ) -> Result<Self> {
+        let config = Rc::new(Config::load::<IO>(directory, config_file_name, io.clone())?);
+
+        Ok(Self::new(
+            config.clone(),
+            Rc::new(RefCell::new(Graph::new())),
+            directory.to_string(),
+            ProjectCompiler::load(config.clone(), directory.to_string(), io.clone()),
+            io.clone(),
+        ))
+    }
+
     ///
     /// Compiles the _entire_ project and returns a stream of files.
     ///

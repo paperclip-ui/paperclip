@@ -23,9 +23,8 @@ struct TargetCompilerResolver<IO: FileReader + FileResolver> {
 
 struct EmitInfo {
     compiler_name: String,
-    extension_name: String
+    extension_name: String,
 }
-
 
 impl<IO: FileReader + FileResolver> FileResolver for TargetCompilerResolver<IO> {
     fn resolve_file(&self, from: &str, to: &str) -> Option<String> {
@@ -77,6 +76,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
         graph: &Graph,
     ) -> Result<BTreeMap<String, String>> {
         let mut all_compiled_files: BTreeMap<String, String> = BTreeMap::new();
+
         for dep_file_path in file_paths {
             let compiled_files = self
                 .compile_dependency(dep_file_path, &graph, &self.file_resolver)
@@ -212,7 +212,7 @@ fn extract_emit_info(value: &str) -> EmitInfo {
 
     EmitInfo {
         compiler_name,
-        extension_name
+        extension_name,
     }
 }
 

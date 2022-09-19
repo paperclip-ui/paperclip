@@ -1,5 +1,6 @@
 use super::core::{ProjectIO, WatchEvent, WatchEventKind};
 use crate::utils::watch_local::async_watch;
+use anyhow::{Error, Result};
 use async_stream::stream;
 use futures_core::stream::Stream;
 use futures_util::pin_mut;
@@ -42,11 +43,11 @@ impl ProjectIO for LocalIO {
 }
 
 impl FileReader for LocalIO {
-    fn read_file(&self, path: &str) -> Option<Box<[u8]>> {
+    fn read_file(&self, path: &str) -> Result<Box<[u8]>> {
         if let Ok(content) = fs::read_to_string(path) {
-            Some(content.as_bytes().to_vec().into_boxed_slice())
+            Ok(content.as_bytes().to_vec().into_boxed_slice())
         } else {
-            None
+            Err(Error::msg("file not fond"))
         }
     }
 }

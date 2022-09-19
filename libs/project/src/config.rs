@@ -1,8 +1,11 @@
 // From https://paperclip.dev/docs/configure-paperclip
 use anyhow::Result;
+use paperclip_common::fs::FileReader;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
+use std::rc::Rc;
+use std::str;
 
 pub const DEFAULT_CONFIG_NAME: &str = "paperclip.config.json";
 
@@ -65,8 +68,12 @@ pub struct CompilerOptions {
 }
 
 impl Config {
-    pub fn load(cwd: &str, file_name: Option<String>) -> Result<Config> {
-        load_config(cwd, file_name)
+    pub fn load<IO: FileReader>(
+        cwd: &str,
+        file_name: Option<String>,
+        io: Rc<IO>,
+    ) -> Result<Config> {
+        load_config(cwd, file_name, io)
     }
     pub fn get_src_dir(&self) -> String {
         if let Some(src_dir) = &self.src_dir {
@@ -96,7 +103,7 @@ impl CompilerOptions {
     }
 }
 
-fn load_config(cwd: &str, file_name: Option<String>) -> Result<Config> {
+fn load_config<IO: FileReader>(cwd: &str, file_name: Option<String>, io: Rc<IO>) -> Result<Config> {
     let file_name = if let Some(value) = file_name {
         value
     } else {
@@ -104,8 +111,9 @@ fn load_config(cwd: &str, file_name: Option<String>) -> Result<Config> {
     };
 
     let file_path = Path::new(cwd).join(file_name);
+    let content = io.read_file(file_path.to_str().unwrap())?;
 
-    let content = fs::read_to_string(file_path)?;
+    let content = str::from_utf8(&*content).unwrap().to_string();
     let config = serde_json::from_str::<Config>(content.as_str())?;
     Ok(config)
 }

@@ -1,19 +1,20 @@
 use anyhow::Result;
-use paperclip_common::fs::FileReader;
-use paperclip_project::io::LocalIO;
+use neon::prelude::*;
+use paperclip_project::io::{LocalIO, ProjectIO};
 use paperclip_project::Project;
+use std::rc::Rc;
 
-struct Loader {
-    project: Project<LocalIO>,
+pub struct Loader<TIO: ProjectIO> {
+    project: Project<TIO>,
 }
 
-impl Loader {
-    // async fn init(directory: &str, config_name: &str) -> Result<Self> {
-    //     Ok(Self {
-    //         project: Project::load(directory, Some(config_name.to_string())).await?,
-    //     })
-    // }
-    fn compile(content: &str, file_path: &str) {
-        // TODO - return all emitted files
+impl<TIO: ProjectIO> Loader<TIO> {
+    pub async fn start(directory: &str, config_name: &str, io: Rc<TIO>) -> Result<Self> {
+        Ok(Self {
+            project: Project::load(directory, Some(config_name.to_string()), io).await?,
+        })
     }
+    
 }
+
+impl Finalize for Loader<LocalIO> {}

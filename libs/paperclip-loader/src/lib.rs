@@ -1,42 +1,38 @@
+use futures::executor::block_on;
+use loader::Loader;
 use neon::prelude::*;
+use paperclip_project::io::LocalIO;
 use std::cell::RefCell;
+use std::rc::Rc;
 mod loader;
 
 #[cfg(test)]
 mod tests;
 
-type BoxedEngine = JsBox<RefCell<Engine>>;
+type BoxedLoader = JsBox<RefCell<Loader<LocalIO>>>;
 
-pub struct Engine {
-    count2: i32,
+fn loader_new(mut cx: FunctionContext) -> JsResult<BoxedLoader> {
+    let directory = cx.argument::<JsString>(0)?;
+    let config_name = cx.argument::<JsString>(1)?;
+
+    let loader = RefCell::new(block_on(Loader::<LocalIO>::start(
+        directory.value(&mut cx).as_str(),
+        config_name.value(&mut cx).as_str(),
+        Rc::new(LocalIO {}),
+    )).unwrap());
+
+    Ok(cx.boxed(loader))
 }
 
-impl Finalize for Engine {}
-
-impl Engine {
-    fn new() -> Self {
-        Self { count2: 0 }
-    }
-    fn inc(&mut self) {
-        self.count2 += 1;
-    }
-}
-
-fn engine_new(mut cx: FunctionContext) -> JsResult<BoxedEngine> {
-    let engine = RefCell::new(Engine::new());
-    Ok(cx.boxed(engine))
-}
-
-fn compile_file(mut cx: FunctionContext) -> JsResult<JsNumber> {
-    let engine = cx.argument::<BoxedEngine>(0)?;
-    let mut engine = engine.borrow_mut();
-    engine.inc();
-    Ok(cx.number(engine.count2))
-}
+// fn compile_file(mut cx: FunctionContext) -> JsResult<JsNumber> {
+//     let engine = cx.argument::<BoxedLoader>(0)?;
+//     let mut engine = engine.borrow_mut();
+//     engine.inc();
+//     Ok(cx.number(engine.count2))
+// }
 
 #[neon::main]
 fn main(mut cx: ModuleContext) -> NeonResult<()> {
-    cx.export_function("startEngine", engine_new)?;
-    cx.export_function("compileFile", compile_file)?;
+    cx.export_function("startLoader", loader_new)?;
     Ok(())
 }

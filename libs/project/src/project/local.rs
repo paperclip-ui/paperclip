@@ -1,10 +1,6 @@
 use super::core::Project;
-use crate::config::Config;
-use crate::io::{LocalIO, ProjectIO};
-use crate::project_compiler::ProjectCompiler;
+use crate::io::{LocalIO};
 use anyhow::Result;
-use paperclip_parser::graph::Graph;
-use std::cell::RefCell;
 use std::rc::Rc;
 use wax::Glob;
 
@@ -20,8 +16,10 @@ impl Project<LocalIO> {
             all_files.push(String::from(entry.path().to_str().unwrap()));
         }
 
-        project.load_files(&all_files);
+        project.load_files(&all_files).await?;
 
         Ok(project)
     }
 }
+
+unsafe impl Send for Project<LocalIO> {}

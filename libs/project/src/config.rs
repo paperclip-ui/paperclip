@@ -2,7 +2,6 @@
 use anyhow::Result;
 use paperclip_common::fs::FileReader;
 use serde::{Deserialize, Serialize};
-use std::fs;
 use std::path::Path;
 use std::rc::Rc;
 use std::str;
@@ -27,6 +26,8 @@ pub struct Config {
     #[serde(rename = "compilerOptions")]
     pub compiler_options: Option<Vec<CompilerOptions>>,
 }
+
+unsafe impl Send for Config {}
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct CompilerOptions {

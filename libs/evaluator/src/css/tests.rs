@@ -14,13 +14,17 @@ impl FileResolver for MockResolver {
     }
 }
 
+
 macro_rules! add_case {
     ($name: ident, $mock_files: expr, $output: expr) => {
         #[test]
         fn $name() {
             let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
             let mut graph = graph::Graph::new();
-            block_on(graph.load("/entry.pc", &mock_fs));
+
+            if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
+							panic!("Unable to load");
+						}
             let resolver = MockResolver {};
             let doc = block_on(evaluate("/entry.pc", &graph, &resolver)).unwrap();
             assert_eq!(

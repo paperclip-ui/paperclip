@@ -133,7 +133,7 @@ impl<IO: ProjectIO> Project<IO> {
 
     async fn reload_file(&self, path: &str) -> Result<HashMap<String, String>> {
         let mut graph = self.graph.borrow_mut();
-        graph.load_file::<IO>(path, &self.io).await;
+        graph.load_file::<IO>(path, &self.io).await?;
 
         let dep = get_or_short!(graph.dependencies.get(path), Ok(HashMap::new()));
 

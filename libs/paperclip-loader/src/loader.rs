@@ -14,7 +14,6 @@ impl<TIO: ProjectIO> Loader<TIO> {
             project: Project::load(directory, Some(config_name.to_string()), io).await?,
         })
     }
-    
 }
 
 impl Finalize for Loader<LocalIO> {}

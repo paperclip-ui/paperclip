@@ -1,8 +1,5 @@
 #### On-deck
 
-- webpack loader
-  - embed assets
-  - emit CSS
 - realtime editing w/ VS Code
   - https://crates.io/crates/tonic
   - vscode WASM w/ hooks into

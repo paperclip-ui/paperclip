@@ -1,4 +1,4 @@
-const { startLoader, compileFile } = require("./main11.node");
+const { startLoader, compileFile } = require("./main.node");
 
 type Options = {
   configFile: string;

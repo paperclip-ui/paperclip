@@ -19,23 +19,9 @@ impl Project<LocalIO> {
             let entry = entry.unwrap();
             all_files.push(String::from(entry.path().to_str().unwrap()));
         }
-        let mut graph = Graph::new();
-        graph.load_files(all_files, io).await;
+
+        project.load_files(&all_files);
 
         Ok(project)
     }
-}
-
-async fn load_graph<'io, IO: ProjectIO>(directory: &str, config: &Config, io: &IO) -> Graph {
-    let glob = Glob::new(pattern.as_str()).unwrap();
-    let mut all_files: Vec<String> = vec![];
-
-    for entry in glob.walk(directory) {
-        let entry = entry.unwrap();
-        all_files.push(String::from(entry.path().to_str().unwrap()));
-    }
-
-    let mut graph = Graph::new();
-    graph.load_files(all_files, io).await;
-    graph
 }

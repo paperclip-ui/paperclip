@@ -39,11 +39,13 @@ impl Graph {
         );
         Ok(())
     }
-    pub async fn load_files<TIO: IO>(&mut self, paths: Vec<String>, io: &TIO) {
+
+    pub async fn load_files<TIO: IO>(&mut self, paths: &Vec<String>, io: &TIO) -> Result<()> {
         let loaded = self.dep_hashes();
         for path in paths {
-            self.load_file2(&path, io, loaded.clone()).await;
+            self.load_file2(&path, io, loaded.clone()).await?;
         }
+        Ok(())
     }
     pub fn get_immediate_dependents(&self, path: &str) -> Vec<&Dependency> {
         let mut dependents = vec![];

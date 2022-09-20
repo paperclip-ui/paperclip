@@ -47,20 +47,32 @@ impl<IO: ProjectIO> Project<IO> {
     ///
     pub fn new(
         config: Rc<Config>,
-        graph: Rc<RefCell<Graph>>,
         directory: String,
         compiler: ProjectCompiler<IO>,
         io: Rc<IO>,
     ) -> Self {
         Self {
             config,
-            graph,
+            graph: Rc::new(RefCell::new(Graph::new())),
             directory,
             compiler,
             compile_cache: RefCell::new(HashMap::new()),
             dep_cache: RefCell::new(HashMap::new()),
             io,
         }
+    }
+
+    pub async fn load_files(&mut self, files: &Vec<String>) -> Result<()> {
+        self.graph
+            .borrow_mut()
+            .load_files::<IO>(files, &self.io)
+            .await?;
+        Ok(())
+    }
+
+    pub async fn load_file(&mut self, file: &str) -> Result<()> {
+        self.graph.borrow_mut().load::<IO>(file, &self.io).await?;
+        Ok(())
     }
 
     pub async fn load(
@@ -72,7 +84,6 @@ impl<IO: ProjectIO> Project<IO> {
 
         Ok(Self::new(
             config.clone(),
-            Rc::new(RefCell::new(Graph::new())),
             directory.to_string(),
             ProjectCompiler::load(config.clone(), directory.to_string(), io.clone()),
             io.clone(),

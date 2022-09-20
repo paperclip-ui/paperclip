@@ -19,7 +19,7 @@ use std::collections::HashMap;
 use std::path::Path;
 use std::rc::Rc;
 
-struct MockIO;
+struct MockIO(MockFS<'static>);
 
 impl GraphIO for MockIO {}
 
@@ -34,7 +34,7 @@ impl ProjectIO for MockIO {
 
 impl FileReader for MockIO {
     fn read_file(&self, path: &str) -> Result<Box<[u8]>> {
-        Ok(path.to_string().as_bytes().to_vec().into_boxed_slice())
+        self.0.read_file(path)
     }
 }
 
@@ -61,23 +61,19 @@ macro_rules! test_case {
         fn $name() {
             let config = Rc::new($config);
 
-            let mut graph = Graph::new();
-            let files = MockFS::new(HashMap::from($input_files));
+            let io = Rc::new(MockIO(MockFS::new(HashMap::from($input_files))));
 
-            let result = block_on(graph.load($main, &files));
-            if let Err(error) = result {
-                panic!("{:?}", error);
-            }
-            let graph = Rc::new(RefCell::new(graph));
-            let io = Rc::new(MockIO {});
-
-            let project = Project::new(
+            let mut project = Project::new(
                 config.clone(),
-                graph.clone(),
                 $dir.to_string(),
                 ProjectCompiler::load(config.clone(), $dir.to_string(), io.clone()),
                 io.clone(),
             );
+
+            let result = block_on(project.load_file($main));
+            if let Err(error) = result {
+                panic!("{:?}", error);
+            }
 
             let output = project.compile(CompileOptions { watch: false });
 

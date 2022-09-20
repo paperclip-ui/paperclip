@@ -14,7 +14,6 @@ impl FileResolver for MockResolver {
     }
 }
 
-
 macro_rules! add_case {
     ($name: ident, $mock_files: expr, $output: expr) => {
         #[test]
@@ -23,8 +22,8 @@ macro_rules! add_case {
             let mut graph = graph::Graph::new();
 
             if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
-							panic!("Unable to load");
-						}
+                panic!("Unable to load");
+            }
             let resolver = MockResolver {};
             let doc = block_on(evaluate("/entry.pc", &graph, &resolver)).unwrap();
             assert_eq!(

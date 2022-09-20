@@ -1,8 +1,7 @@
-use crate::config::{CompilerOptions, Config};
+use crate::config::{CompilerOptions, Config, ConfigContext};
 use crate::io::{ProjectIO, WatchEvent, WatchEventKind};
 use crate::project::{CompileOptions, Project};
-use crate::project_compiler::ProjectCompiler;
-use anyhow::{Result};
+use anyhow::Result;
 use async_stream::stream;
 use futures::executor::block_on;
 use futures_core::stream::Stream;
@@ -13,7 +12,6 @@ use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::graph::io::IO as GraphIO;
 use paperclip_parser::graph::test_utils::MockFS;
 use path_absolutize::*;
-use std::cell::RefCell;
 use std::collections::HashMap;
 use std::path::Path;
 use std::rc::Rc;
@@ -58,23 +56,22 @@ macro_rules! test_case {
     ($name:ident, $config: expr, $dir: expr, $main: expr, $input_files: expr, $output_files: expr) => {
         #[test]
         fn $name() {
-            let config = Rc::new($config);
+            let config_context = Rc::new(ConfigContext {
+                directory: $dir.to_string(),
+                file_name: "paperclip.config.json".to_string(),
+                config: $config,
+            });
 
             let io = Rc::new(MockIO(MockFS::new(HashMap::from($input_files))));
 
-            let mut project = Project::new(
-                config.clone(),
-                $dir.to_string(),
-                ProjectCompiler::load(config.clone(), $dir.to_string(), io.clone()),
-                io.clone(),
-            );
+            let mut project = Project::new(config_context.clone(), io.clone());
 
             let result = block_on(project.load_file($main));
             if let Err(error) = result {
                 panic!("{:?}", error);
             }
 
-            let output = project.compile(CompileOptions { watch: false });
+            let output = project.compile_all(CompileOptions { watch: false });
 
             pin_mut!(output);
             let expected_files = HashMap::from($output_files);

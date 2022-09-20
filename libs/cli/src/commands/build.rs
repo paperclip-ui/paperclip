@@ -28,7 +28,7 @@ pub async fn build(args: BuildArgs) -> Result<()> {
 
     let project = Project::load_local(&current_dir, Some(args.config)).await?;
 
-    let s = project.compile(CompileOptions { watch: args.watch });
+    let s = project.compile_all(CompileOptions { watch: args.watch });
     pin_mut!(s);
     while let Some(Ok((path, content))) = s.next().await {
         // replace cd with relative since it's a prettier output

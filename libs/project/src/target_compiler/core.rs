@@ -1,5 +1,5 @@
 use super::context::TargetCompilerContext;
-use crate::config::{CompilerOptions, Config};
+use crate::config::{CompilerOptions, ConfigContext};
 use anyhow::Result;
 use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_compiler_react::{
@@ -48,16 +48,10 @@ struct TranslateOptions {
 
 impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
     // TODO: load bin
-    pub fn load(
-        options: CompilerOptions,
-        config: Rc<Config>,
-        project_dir: String,
-        io: Rc<IO>,
-    ) -> Self {
+    pub fn load(options: CompilerOptions, config_context: Rc<ConfigContext>, io: Rc<IO>) -> Self {
         let context = Rc::new(TargetCompilerContext {
             options,
-            config,
-            project_dir,
+            config_context,
         });
 
         Self {

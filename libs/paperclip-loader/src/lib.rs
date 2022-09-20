@@ -6,7 +6,6 @@ use std::cell::RefCell;
 use std::rc::Rc;
 mod loader;
 
-
 #[cfg(test)]
 mod tests;
 
@@ -17,11 +16,11 @@ fn loader_new(mut cx: FunctionContext) -> JsResult<BoxedLoader> {
     let config_name = cx.argument::<JsString>(1)?;
 
     let loader = RefCell::new(
-        block_on(Loader::<LocalIO>::start(
+        Loader::<LocalIO>::start(
             directory.value(&mut cx).as_str(),
             config_name.value(&mut cx).as_str(),
             Rc::new(LocalIO {}),
-        ))
+        )
         .unwrap(),
     );
 
@@ -30,13 +29,14 @@ fn loader_new(mut cx: FunctionContext) -> JsResult<BoxedLoader> {
 
 fn compile_file(mut cx: FunctionContext) -> JsResult<JsObject> {
     let loader = cx.argument::<BoxedLoader>(0)?;
-    let content = cx.argument::<JsString>(1)?;
-    let file_path = cx.argument::<JsString>(2)?;
-    
-    let files = block_on(loader.borrow().compile_file(
-        content.value(&mut cx).as_str(),
-        file_path.value(&mut cx).as_str()
-    )).unwrap();
+    let file_path = cx.argument::<JsString>(1)?;
+
+    let files = block_on(
+        loader
+            .borrow()
+            .compile_file(file_path.value(&mut cx).as_str()),
+    )
+    .unwrap();
 
     let ret: Handle<JsObject> = cx.empty_object();
 

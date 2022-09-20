@@ -1,19 +1,11 @@
 #### On-deck
 
-- definition compiler
-- publish VS Code extension for new name
-- paperclip-loader
-- React compiler (needed to start on designer)
-  - emit jsx
-  - Vanilla for now
-  - Look into targeting radix
-- `paperclip designer` command
-  - open preview
-  - possibly using GRPC for syncing data
-    - add socket file locally based on paperclip.config.json?
-    - VS Code listen on socket + realtime updates?
-      - need to include IO for GRPC
-      - watcher needs to emit changes
+- webpack loader
+  - embed assets
+  - emit CSS
+- realtime editing w/ VS Code
+  - https://crates.io/crates/tonic
+  - vscode WASM w/ hooks into
 
 #### Milestone: MVP UI
 

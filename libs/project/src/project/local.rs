@@ -1,13 +1,23 @@
 use super::core::Project;
-use crate::io::{LocalIO};
+use crate::config::ConfigContext;
+use crate::io::LocalIO;
 use anyhow::Result;
 use std::rc::Rc;
 use wax::Glob;
 
 impl Project<LocalIO> {
     pub async fn load_local(directory: &str, config_file_name: Option<String>) -> Result<Self> {
-        let mut project = Project::load(directory, config_file_name, Rc::new(LocalIO {})).await?;
-        let pattern = project.config.get_relative_source_files_glob_pattern();
+        let io = Rc::new(LocalIO {});
+
+        // first load the config in the CWD
+        let config_context = ConfigContext::load(directory, config_file_name, io.clone())?;
+
+        // next initialize the project which controls compilation and everything in between
+        let mut project = Project::new(Rc::new(config_context), io.clone());
+
+        let pattern = project
+            .get_config()
+            .get_relative_source_files_glob_pattern();
         let glob = Glob::new(pattern.as_str()).unwrap();
         let mut all_files: Vec<String> = vec![];
 

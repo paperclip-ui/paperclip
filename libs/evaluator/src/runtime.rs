@@ -1,6 +1,6 @@
+use anyhow::Result;
 use paperclip_parser::graph;
 use paperclip_parser::graph::io as graph_io;
-use anyhow::Result;
 
 pub struct Runtime {}
 

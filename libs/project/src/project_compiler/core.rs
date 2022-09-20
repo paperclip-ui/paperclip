@@ -1,4 +1,4 @@
-use crate::config::Config;
+use crate::config::ConfigContext;
 use crate::io::ProjectIO;
 use crate::target_compiler::TargetCompiler;
 use anyhow::Result;
@@ -11,18 +11,13 @@ pub struct ProjectCompiler<IO: ProjectIO> {
 }
 
 impl<IO: ProjectIO> ProjectCompiler<IO> {
-    pub fn load(config: Rc<Config>, project_dir: String, io: Rc<IO>) -> Self {
+    pub fn load(config_context: Rc<ConfigContext>, io: Rc<IO>) -> Self {
         Self {
-            targets: if let Some(options) = &config.compiler_options {
+            targets: if let Some(options) = &config_context.config.compiler_options {
                 options
                     .iter()
                     .map(|options| {
-                        TargetCompiler::load(
-                            options.clone(),
-                            config.clone(),
-                            project_dir.clone(),
-                            io.clone(),
-                        )
+                        TargetCompiler::load(options.clone(), config_context.clone(), io.clone())
                     })
                     .collect()
             } else {

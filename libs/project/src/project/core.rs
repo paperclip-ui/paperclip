@@ -1,4 +1,4 @@
-use crate::config::Config;
+use crate::config::{Config, ConfigContext};
 use crate::io::ProjectIO;
 use crate::project_compiler::ProjectCompiler;
 use anyhow::Result;
@@ -23,13 +23,10 @@ pub struct CompileOptions {
 pub struct Project<IO: ProjectIO> {
     /// The project config that specifies source information
     /// and how to compile the project
-    pub config: Rc<Config>,
+    pub config_context: Rc<ConfigContext>,
 
     /// The dependency graph of all PC files
     pub graph: Rc<RefCell<Graph>>,
-
-    /// The current project directory
-    pub directory: String,
 
     pub compiler: ProjectCompiler<IO>,
 
@@ -44,22 +41,19 @@ pub struct Project<IO: ProjectIO> {
 }
 
 impl<IO: ProjectIO> Project<IO> {
-    ///
-    pub fn new(
-        config: Rc<Config>,
-        directory: String,
-        compiler: ProjectCompiler<IO>,
-        io: Rc<IO>,
-    ) -> Self {
+    pub fn new(config_context: Rc<ConfigContext>, io: Rc<IO>) -> Self {
         Self {
-            config,
+            config_context: config_context.clone(),
             graph: Rc::new(RefCell::new(Graph::new())),
-            directory,
-            compiler,
+            compiler: ProjectCompiler::load(config_context.clone(), io.clone()),
             compile_cache: RefCell::new(HashMap::new()),
             dep_cache: RefCell::new(HashMap::new()),
             io,
         }
+    }
+
+    pub fn get_config(&self) -> &Config {
+        &self.config_context.config
     }
 
     pub async fn load_files(&mut self, files: &Vec<String>) -> Result<()> {
@@ -75,26 +69,11 @@ impl<IO: ProjectIO> Project<IO> {
         Ok(())
     }
 
-    pub async fn load(
-        directory: &str,
-        config_file_name: Option<String>,
-        io: Rc<IO>,
-    ) -> Result<Self> {
-        let config = Rc::new(Config::load::<IO>(directory, config_file_name, io.clone())?);
-
-        Ok(Self::new(
-            config.clone(),
-            directory.to_string(),
-            ProjectCompiler::load(config.clone(), directory.to_string(), io.clone()),
-            io.clone(),
-        ))
-    }
-
     ///
     /// Compiles the _entire_ project and returns a stream of files.
     ///
 
-    pub fn compile(
+    pub fn compile_all(
         &self,
         options: CompileOptions,
     ) -> impl Stream<Item = Result<(String, String), anyhow::Error>> + '_ {
@@ -112,7 +91,7 @@ impl<IO: ProjectIO> Project<IO> {
             }
 
             if options.watch {
-                let s = self.io.watch(&self.directory);
+                let s = self.io.watch(&self.config_context.directory);
                 pin_mut!(s);
                 while let Some(value) = s.next().await {
 
@@ -126,6 +105,9 @@ impl<IO: ProjectIO> Project<IO> {
             }
         }
     }
+
+    ///
+    /// Explicitly compiles files that are part of this project
 
     pub async fn compile_files(&self, files: &Vec<String>) -> Result<HashMap<String, String>> {
         let mut graph = self.graph.borrow_mut();

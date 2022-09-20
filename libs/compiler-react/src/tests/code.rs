@@ -35,7 +35,7 @@ add_case! {
     }
   }"#,
   r#"
-    import { React } from "react";
+    import * as React from "react";
 
     const A = React.memo((props) => {
       return React.createElement("div", null);
@@ -51,7 +51,7 @@ add_case! {
     }
   }"#,
   r#"
-    import { React } from "react";
+    import * as React from "react";
 
     export const A = React.memo((props) => {
       return React.createElement("div", null);
@@ -69,7 +69,7 @@ add_case! {
     }
   }"#,
   r#"
-    import { React } from "react";
+    import * as React from "react";
 
     export const A = React.memo((props) => {
       return React.createElement("div", {
@@ -86,7 +86,7 @@ add_case! {
     }
   }"#,
   r#"
-    import { React } from "react";
+    import * as React from "react";
 
     export const A = React.memo((props) => {
       return React.createElement("div", {
@@ -104,7 +104,7 @@ add_case! {
     }
   }"#,
   r#"
-    import { React } from "react";
+    import * as React from "react";
 
     export const A = React.memo((props) => {
       return React.createElement("span", null, [
@@ -120,7 +120,7 @@ add_case! {
     render span(aria-label: "something")
   }"#,
   r#"
-    import { React } from "react";
+    import * as React from "react";
 
     export const A = React.memo((props) => {
       return React.createElement("span", {
@@ -136,7 +136,7 @@ add_case! {
     render span ab (class: "cd")
   }"#,
   r#"
-    import { React } from "react";
+    import * as React from "react";
 
     export const A = React.memo((props) => {
       return React.createElement("span", {
@@ -156,7 +156,7 @@ add_case! {
     }
   }"#,
   r#"
-    import { React } from "react";
+    import * as React from "react";
 
     export const A = React.memo((props) => {
       return React.createElement("span", null, [
@@ -172,7 +172,7 @@ add_case! {
     render text "ab"
   }"#,
   r#"
-    import { React } from "react";
+    import * as React from "react";
 
     export const A = React.memo((props) => {
       return "ab";
@@ -188,7 +188,7 @@ add_case! {
     }
   }"#,
   r#"
-    import { React } from "react";
+    import * as React from "react";
 
     export const A = React.memo((props) => {
       return React.createElement("div", null, [
@@ -204,7 +204,7 @@ add_case! {
     render slot abba
   }"#,
   r#"
-    import { React } from "react";
+    import * as React from "react";
 
     export const A = React.memo((props) => {
       return props.abba;
@@ -223,7 +223,7 @@ add_case! {
     }
   }"#,
   r#"
-    import { React } from "react";
+    import * as React from "react";
 
     export const A = React.memo((props) => {
       return props.abba || [
@@ -247,7 +247,7 @@ add_case! {
   }
   "#,
   r#"
-    import { React } from "react";
+    import * as React from "react";
 
     const A = React.memo((props) => {
       return props.abba;
@@ -274,7 +274,7 @@ add_case! {
   }
   "#,
   r#"
-    import { React } from "react";
+    import * as React from "react";
 
     const A = React.memo((props) => {
       return props.abba;
@@ -300,7 +300,7 @@ add_case! {
 //     }
 //   "#,
 //   r#"
-//     import { React } from "react";
+//     import * as React from "react";
 
 //     const A = React.memo((props) => {
 //       return props.abba;

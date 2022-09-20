@@ -5,7 +5,8 @@ members = [
   "libs/rs-common",
   "libs/project",
   "libs/evaluator",
-  "libs/paperclip-loader"
+  "libs/paperclip-loader",
+  "libs/design-server"
 ]
 
 [profile.release]

@@ -1,0 +1,15 @@
+[package]
+name = "paperclip_design_server"
+version = "0.1.1"
+authors = ["Craig Condon <craig.j.condon@gmail.com>"]
+edition = "2021"
+exclude = []
+
+[lib]
+name = "paperclip_project"
+
+[dependencies]
+paperclip_project = { path = "../project" }
+
+[dev-dependencies]
+assert_cmd = "2.0.4"

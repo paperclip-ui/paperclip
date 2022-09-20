@@ -48,7 +48,7 @@ struct TranslateOptions {
 
 impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
     // TODO: load bin
-    pub fn load(options: CompilerOptions, config_context: Rc<ConfigContext>, io: Rc<IO>) -> Self {
+    pub fn new(options: CompilerOptions, config_context: Rc<ConfigContext>, io: Rc<IO>) -> Self {
         let context = Rc::new(TargetCompilerContext {
             options,
             config_context,
@@ -184,7 +184,6 @@ async fn translate<F: FileResolver>(
     file_resolver: &F,
     options: TranslateOptions,
 ) -> Result<Option<String>> {
-    println!("TargetCompiler::translate()");
     Ok(match into {
         "css" => Some(translate_css(path, graph, file_resolver).await?),
         "html" => Some(translate_html(path, graph, file_resolver, options).await?),

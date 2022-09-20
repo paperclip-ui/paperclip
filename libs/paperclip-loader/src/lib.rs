@@ -1,7 +1,7 @@
 use futures::executor::block_on;
 use loader::Loader;
 use neon::prelude::*;
-use paperclip_project::io::LocalIO;
+use paperclip_project::LocalIO;
 use std::cell::RefCell;
 use std::rc::Rc;
 mod loader;

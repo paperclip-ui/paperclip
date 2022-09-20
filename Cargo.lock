@@ -693,6 +693,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "paperclip_design_server"
+version = "0.1.1"
+dependencies = [
+ "assert_cmd",
+ "paperclip_project",
+]
+
+[[package]]
 name = "paperclip_evaluator"
 version = "0.1.1"
 dependencies = [

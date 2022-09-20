@@ -1,8 +1,6 @@
 use anyhow::Result;
 use neon::prelude::*;
-use paperclip_project::config::ConfigContext;
-use paperclip_project::io::{LocalIO, ProjectIO};
-use paperclip_project::Project;
+use paperclip_project::{ConfigContext, LocalIO, Project, ProjectIO};
 use std::collections::HashMap;
 use std::rc::Rc;
 

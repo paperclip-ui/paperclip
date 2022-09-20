@@ -6,7 +6,7 @@
   "scripts": {
     "build:watch": "concurrently \"yarn build:tsc --watch\" \"yarn build:rs --watch\"",
     "build:tsc": "tsc",
-    "build:rs": "cargo-cp-artifact -nc lib/main.node -- cargo build --message-format=json-render-diagnostics",
+    "build:rs": "cargo-cp-artifact -nc lib/main11.node -- cargo build --message-format=json-render-diagnostics",
     "build:rs:debug": "yarn build:rs",
     "build:rs:release": "yarn build:rs --release",
     "test": "cargo test"
@@ -14,7 +14,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "cargo-cp-artifact": "^0.1"
+    "cargo-cp-artifact": "^0.1",
+    "lodash": "^4.17.21"
   },
   "dependencies": {
     "loader-utils": "^3.2.0"

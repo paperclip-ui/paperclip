@@ -190,6 +190,7 @@ async fn translate<F: FileResolver>(
     file_resolver: &F,
     options: TranslateOptions,
 ) -> Result<Option<String>> {
+    println!("TargetCompiler::translate()");
     Ok(match into {
         "css" => Some(translate_css(path, graph, file_resolver).await?),
         "html" => Some(translate_html(path, graph, file_resolver, options).await?),

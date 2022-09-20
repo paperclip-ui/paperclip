@@ -1,10 +1,4 @@
-import * as path from "path";
-const { startEngine, compileFile } = require("./main.node");
-
-const engine = startEngine();
-compileFile(engine);
-const c = compileFile(engine);
-console.log(c);
+const { startLoader, compileFile } = require("./main11.node");
 
 type Options = {
   configFile: string;
@@ -13,13 +7,13 @@ type Options = {
 
 const DEFAULT_CONFIG_FILE_NAME = "paperclip.config.json";
 
-let _engine: any;
+let _loader: any;
 
-const getEngine = () => {
-  if (!_engine) {
-    _engine = startEngine();
+const getLoader = (directory: string, configFileName: string) => {
+  if (!_loader) {
+    _loader = startLoader(directory, configFileName);
   }
-  return _engine;
+  return _loader;
 };
 
 module.exports = function (source: string) {
@@ -27,17 +21,14 @@ module.exports = function (source: string) {
   const callback = this.async();
   const options: Options = { ...this.getOptions() };
   const { configFile = DEFAULT_CONFIG_FILE_NAME } = options;
-  const configFilePath = path.join(process.cwd(), configFile);
+  const loader = getLoader(process.cwd(), configFile);
+  const compiledFiles = compileFile(loader, source, this.resourcePath);
+  let mainContent: string;
+  for (const compiledFilePath in compiledFiles) {
+    if (/\.js$/.test(compiledFilePath)) {
+      mainContent = compiledFiles[compiledFilePath];
+    }
+  }
 
-  const engine = getEngine();
-  // engine.compile(source, this.path);
-  // })
-
-  // try {
-  //   config = require(configFilePath);
-  // } catch (e) {
-  //   throw new Error(`Config file could not be loaded: ${configFilePath}`);
-  // }
-
-  return source;
+  callback(null, mainContent);
 };

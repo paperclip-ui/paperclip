@@ -105,6 +105,7 @@ impl CompilerOptions {
 }
 
 fn load_config<IO: FileReader>(cwd: &str, file_name: Option<String>, io: Rc<IO>) -> Result<Config> {
+
     let file_name = if let Some(value) = file_name {
         value
     } else {
@@ -115,6 +116,7 @@ fn load_config<IO: FileReader>(cwd: &str, file_name: Option<String>, io: Rc<IO>)
     let content = io.read_file(file_path.to_str().unwrap())?;
 
     let content = str::from_utf8(&*content).unwrap().to_string();
+
     let config = serde_json::from_str::<Config>(content.as_str())?;
     Ok(config)
 }

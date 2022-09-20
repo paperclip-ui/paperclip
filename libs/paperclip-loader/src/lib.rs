@@ -6,6 +6,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 mod loader;
 
+
 #[cfg(test)]
 mod tests;
 
@@ -27,15 +28,29 @@ fn loader_new(mut cx: FunctionContext) -> JsResult<BoxedLoader> {
     Ok(cx.boxed(loader))
 }
 
-// fn compile_file(mut cx: FunctionContext) -> JsResult<JsNumber> {
-//     let engine = cx.argument::<BoxedLoader>(0)?;
-//     let mut engine = engine.borrow_mut();
-//     engine.inc();
-//     Ok(cx.number(engine.count2))
-// }
+fn compile_file(mut cx: FunctionContext) -> JsResult<JsObject> {
+    let loader = cx.argument::<BoxedLoader>(0)?;
+    let content = cx.argument::<JsString>(1)?;
+    let file_path = cx.argument::<JsString>(2)?;
+    
+    let files = block_on(loader.borrow().compile_file(
+        content.value(&mut cx).as_str(),
+        file_path.value(&mut cx).as_str()
+    )).unwrap();
+
+    let ret: Handle<JsObject> = cx.empty_object();
+
+    for (key, content) in files {
+        let value = cx.string(content.to_string());
+        ret.set(&mut cx, key.as_str(), value)?;
+    }
+
+    Ok(ret)
+}
 
 #[neon::main]
 fn main(mut cx: ModuleContext) -> NeonResult<()> {
     cx.export_function("startLoader", loader_new)?;
+    cx.export_function("compileFile", compile_file)?;
     Ok(())
 }

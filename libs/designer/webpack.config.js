@@ -68,7 +68,7 @@ module.exports = {
           path.resolve(__dirname, ".."),
         ],
         options: {
-          config: require("./paperclip.config.json"),
+          configFile: "paperclip.webpack.config.json",
         },
       },
       {

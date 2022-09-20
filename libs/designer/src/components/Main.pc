@@ -1,5 +1,5 @@
 component Sidebar {
-  render div {  
+  render div test {  
     style {
       min-width: 200px
     }
@@ -9,13 +9,7 @@ component Sidebar {
 
 component LeftSidebar {
   render Sidebar {
-    text "
-
-      TODO:
-        - components
-          - ability to create new
-        - assets?
-    "
+    text "TODO!"
   }
 }
 
@@ -26,7 +20,7 @@ component RightSidebar {
 }
 
 component Center {
-  render div {
+  render div something {
     style {
       width: 100%
       background: grey

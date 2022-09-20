@@ -127,6 +127,12 @@ impl<IO: ProjectIO> Project<IO> {
         }
     }
 
+    pub async fn compile_files(&self, files: &Vec<String>) -> Result<HashMap<String, String>> {
+        let mut graph = self.graph.borrow_mut();
+        graph.load_files::<IO>(files, &self.io).await?;
+        self.compiler.compile_files(files, &graph).await
+    }
+
     ///
     /// Recompiles just one file and its _dependents_
     ///

@@ -5,12 +5,18 @@ authors = ["Craig Condon <craig.j.condon@gmail.com>"]
 edition = "2021"
 exclude = []
 
-[lib]
+[[bin]]
 name = "paperclip_design_server"
+path = "src/main.rs"
 
 [dependencies]
 paperclip_project = { path = "../project" }
 tonic = "0.8.1"
+prost = "0.11.0"
+tokio = { version = "1.0", features = [ "rt-multi-thread", "time", "fs", "macros", "net"] }
 
 [dev-dependencies]
 assert_cmd = "2.0.4"
+
+[build-dependencies]
+tonic-build = "0.8.0"

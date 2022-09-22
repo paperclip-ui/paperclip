@@ -1,37 +1,25 @@
+// Inspiration:
+// https://www.farishuskovic.dev/blog/server-streaming/
+// https://stackoverflow.com/questions/70955064/grpc-multiple-returns-types
+
+
 syntax = "proto3";
 
 package designer;
 
+// The greeting service definition.
 service Designer {
-
-  // Opens a file, and returns either:
-  // 
-  // - The raw file content
-  // - If PC file, the raw file content and the virtual element
-  // 
-  // Returned is a stream of the file including all updates. For 
-  // PC files, these updates are patches
-  rpc OpenFile(OpenFileRequest) returns (stream OpenedFile) {}
-
-  // Edit file request, this can:
-  // 
-  // - Edit the source content directly (from IDEs)
-  // - Edit the AST directly (from designer)
-  rpc EditFile(EditFileRequest) returns (EditFileResponse);
-
-  // Sends a "save" request to the design server signalling save
-  // to disc
-  rpc SaveRequest();
-
-  // Reads a directory of the project, this is for the file navigator.
-  rpc ReadDirectory(ReadDirectoryRequest);
-
-  // Deletes file, this simply moves the file into the trash. 
-  rpc DeleteFile(DeleteFileRequest);
-
-  // Undo the previous edit
-  rpc Undo();
-
-  // Redo the previous edit
-  rpc Redo();
+  rpc OpenFile(FileRequest) returns (stream FileResponse) {}
+  // rpc WatchFile(FileRequest) returns (stream WatchResponse) {}
 }
+
+// The request message containing the user's name.
+message FileRequest {
+  string path = 1;
+}
+
+// The response message containing the greetings
+message FileResponse {
+  bytes data = 1;
+}
+

@@ -20,7 +20,7 @@ const devMode = !prodMode;
 
 module.exports = {
   mode: "development",
-  entry: "./src/entry.tsx",
+  entry: "./src/editor/entry.tsx",
 
   output: {
     filename: "[name]-[contenthash].js",

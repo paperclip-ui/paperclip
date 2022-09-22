@@ -139,6 +139,7 @@ __metadata:
     react-dom: ^18.2.0
     terser-webpack-plugin: ^5.3.6
     ts-loader: ^9.3.1
+    ts-protoc-gen: ^0.15.0
     webpack: ^5.74.0
     webpack-cli: ^4.10.0
     webpack-dev-server: ^4.11.1
@@ -2805,6 +2806,13 @@ __metadata:
   version: 11.12.0
   resolution: "globals@npm:11.12.0"
   checksum: 67051a45eca3db904aee189dfc7cd53c20c7d881679c93f6146ddd4c9f4ab2268e68a919df740d39c71f4445d2b38ee360fc234428baea1dbdfe68bbcb46979e
+  languageName: node
+  linkType: hard
+
+"google-protobuf@npm:^3.15.5":
+  version: 3.21.0
+  resolution: "google-protobuf@npm:3.21.0"
+  checksum: 612a91b8175ab3608ad20be043d41bf757623ca3dce83b6e8b27fed79e9cecba823e6709055ab439e0d59699f48a65416300b41a36ffb5ac98144a940898fea0
   languageName: node
   linkType: hard
 
@@ -6593,6 +6601,17 @@ __metadata:
     typescript: "*"
     webpack: ^5.0.0
   checksum: 462a8ac315017cf4961dafd2be29d5abe7c3af63c4515e325269f79b9d0212b35c59184d7fd01fc378749c88454752e1599301d2190eb6844ea5fe332de5f695
+  languageName: node
+  linkType: hard
+
+"ts-protoc-gen@npm:^0.15.0":
+  version: 0.15.0
+  resolution: "ts-protoc-gen@npm:0.15.0"
+  dependencies:
+    google-protobuf: ^3.15.5
+  bin:
+    protoc-gen-ts: bin/protoc-gen-ts
+  checksum: 612799180832786ee28dfb3510015f840ff8acd480ec1159599535878cc77a4f6ad4d6993d1fa546bbb4523de5fb60f4987e1ea810c2e56d91be0448d30f29ad
   languageName: node
   linkType: hard
 

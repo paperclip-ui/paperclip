@@ -60,7 +60,7 @@ pub async fn start(options: StartOptions) -> Result<(), Box<dyn std::error::Erro
 
     Server::bind(&addr)
         .serve(make_service_fn(move |_| {
-            let mut warp = warp::service(warp::path("hello").and(warp::fs::dir(get_designer_path())));
+            let mut warp = warp::service(warp::fs::dir(get_designer_path()));
             let mut tonic = tonic.clone();
             future::ok::<_, Infallible>(tower::service_fn(
                 move |req: hyper::Request<hyper::Body>| match req.version() {

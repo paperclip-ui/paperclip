@@ -16,6 +16,9 @@ use std::{
 use tonic::{Request, Response, Status};
 use tower::Service;
 use warp::Filter;
+// use include_dir::{include_dir, Dir};
+
+// static PROJECT_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/dist");
 
 use hello_world::greeter_server::{Greeter, GreeterServer};
 use hello_world::{HelloReply, HelloRequest};
@@ -54,6 +57,8 @@ pub struct StartOptions {
 #[tokio::main]
 pub async fn start(options: StartOptions) -> Result<(), Box<dyn std::error::Error>> {
     let addr = "[::1]:50051".parse().unwrap();
+    // println!("{:?}", PROJECT_DIR.get_file("index.html").unwrap().contents());
+    println!("{:?}", get_designer_path());
 
     let greeter = MyGreeter::default();
     let tonic = GreeterServer::new(greeter);
@@ -85,20 +90,7 @@ pub async fn start(options: StartOptions) -> Result<(), Box<dyn std::error::Erro
 }
 
 fn get_designer_path() -> String {
-
-    // blahh, this needs to be cleaner
-    join_path!(
-        env::current_exe().unwrap()
-            .parent()
-            .unwrap()
-            .parent()
-            .unwrap()
-            .parent()
-            .unwrap()
-            .parent()
-            .unwrap(),
-        Path::new("designer/dist")
-    )
+    format!("{}/dist", env!("CARGO_MANIFEST_DIR"))
 }
 
 impl<A, B> http_body::Body for EitherBody<A, B>

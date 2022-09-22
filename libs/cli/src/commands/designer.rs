@@ -1,6 +1,6 @@
 use anyhow::{Error, Result};
 use clap::Args;
-use paperclip_design_server::{start, StartOptions};
+use paperclip_designer::server::server::{start, StartOptions};
 
 #[derive(Debug, Args)]
 pub struct StartDesignServerArgs {

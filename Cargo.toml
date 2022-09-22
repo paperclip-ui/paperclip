@@ -6,7 +6,7 @@ members = [
   "libs/project",
   "libs/evaluator",
   "libs/paperclip-loader",
-  "libs/design-server"
+  "libs/designer"
 ]
 
 [profile.release]

@@ -1,4 +1,4 @@
-mod server;
+pub mod server;
 pub use server::*;
 // use tonic::{transport::Server, Request, Response, Status};
 

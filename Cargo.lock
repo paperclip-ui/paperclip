@@ -711,6 +711,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "include_dir"
+version = "0.7.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "482a2e29200b7eed25d7fdbd14423326760b7f6658d21a4cf12d55a50713c69f"
+dependencies = [
+ "include_dir_macros",
+]
+
+[[package]]
+name = "include_dir_macros"
+version = "0.7.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5e074c19deab2501407c91ba1860fa3d6820bfde307db6d8cb851b55a10be89b"
+dependencies = [
+ "proc-macro2",
+ "quote",
+]
+
+[[package]]
 name = "indent_write"
 version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1047,7 +1066,7 @@ dependencies = [
  "futures-core",
  "futures-util",
  "glob",
- "paperclip_design_server",
+ "paperclip_designer",
  "paperclip_parser",
  "paperclip_project",
  "serde",
@@ -1075,7 +1094,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "paperclip_design_server"
+name = "paperclip_designer"
 version = "0.1.1"
 dependencies = [
  "assert_cmd",
@@ -1083,6 +1102,7 @@ dependencies = [
  "http",
  "http-body",
  "hyper",
+ "include_dir",
  "paperclip_common",
  "paperclip_project",
  "path-absolutize",

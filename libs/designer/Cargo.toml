@@ -1,12 +1,12 @@
 [package]
-name = "paperclip_design_server"
+name = "paperclip_designer"
 version = "0.1.1"
 authors = ["Craig Condon <craig.j.condon@gmail.com>"]
 edition = "2021"
 exclude = []
 
 [lib]
-name = "paperclip_design_server"
+name = "paperclip_designer"
 
 [dependencies]
 paperclip_project = { path = "../project" }
@@ -21,6 +21,7 @@ futures = "0.3.21"
 tower = "0.4.13"
 http = "0.2.8"
 http-body = "0.4.5"
+include_dir = "0.7.2"
 path-absolutize = "3.0.13"
 
 [dev-dependencies]

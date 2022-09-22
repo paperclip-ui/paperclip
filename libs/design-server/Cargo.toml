@@ -13,6 +13,7 @@ paperclip_project = { path = "../project" }
 tonic = "0.8.1"
 prost = "0.11.0"
 tokio = { version = "1.0", features = [ "rt-multi-thread", "time", "fs", "macros", "net"] }
+paperclip_common = { path = "../rs-common" }
 hyper = "0.14.20"
 portpicker = "0.1.1"
 warp = "0.3.2"
@@ -20,6 +21,7 @@ futures = "0.3.21"
 tower = "0.4.13"
 http = "0.2.8"
 http-body = "0.4.5"
+path-absolutize = "3.0.13"
 
 [dev-dependencies]
 assert_cmd = "2.0.4"

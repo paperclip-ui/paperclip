@@ -2,8 +2,12 @@
 use futures::future::{self, Either, TryFutureExt};
 use http::version::Version;
 use hyper::{service::make_service_fn, Server};
+use paperclip_common::join_path;
 use paperclip_project::{ConfigContext, LocalIO, Project};
+use path_absolutize::*;
 use std::convert::Infallible;
+use std::env;
+use std::path::Path;
 use std::rc::Rc;
 use std::{
     pin::Pin,
@@ -50,13 +54,13 @@ pub struct StartOptions {
 #[tokio::main]
 pub async fn start(options: StartOptions) -> Result<(), Box<dyn std::error::Error>> {
     let addr = "[::1]:50051".parse().unwrap();
-    let mut warp = warp::service(warp::path("hello").map(|| "hello, world!"));
 
     let greeter = MyGreeter::default();
     let tonic = GreeterServer::new(greeter);
 
     Server::bind(&addr)
         .serve(make_service_fn(move |_| {
+            let mut warp = warp::service(warp::path("hello").and(warp::fs::dir(get_designer_path())));
             let mut tonic = tonic.clone();
             future::ok::<_, Infallible>(tower::service_fn(
                 move |req: hyper::Request<hyper::Body>| match req.version() {
@@ -78,6 +82,23 @@ pub async fn start(options: StartOptions) -> Result<(), Box<dyn std::error::Erro
         .await?;
 
     Ok(())
+}
+
+fn get_designer_path() -> String {
+
+    // blahh, this needs to be cleaner
+    join_path!(
+        env::current_exe().unwrap()
+            .parent()
+            .unwrap()
+            .parent()
+            .unwrap()
+            .parent()
+            .unwrap()
+            .parent()
+            .unwrap(),
+        Path::new("designer/dist")
+    )
 }
 
 impl<A, B> http_body::Body for EitherBody<A, B>

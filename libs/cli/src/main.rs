@@ -4,7 +4,9 @@
 mod commands;
 use clap::{Parser, Subcommand};
 use commands::build::{build, BuildArgs};
+use commands::designer::{start_design_server, StartDesignServerArgs};
 use futures::executor::block_on;
+
 
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
@@ -26,7 +28,7 @@ enum Command {
 
     /// Starts the visual development tooling
     #[clap(arg_required_else_help = false)]
-    Designer {},
+    Designer(StartDesignServerArgs),
 }
 
 fn main() {
@@ -39,7 +41,11 @@ fn main() {
             }
         }
         Command::Init {} => {}
-        Command::Designer {} => {}
+        Command::Designer(args) => {
+            if let Err(_) = block_on(start_design_server(args)) {
+                println!("Can't start the design server");
+            }
+        }
     };
 }
 

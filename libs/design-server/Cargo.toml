@@ -5,9 +5,8 @@ authors = ["Craig Condon <craig.j.condon@gmail.com>"]
 edition = "2021"
 exclude = []
 
-[[bin]]
+[lib]
 name = "paperclip_design_server"
-path = "src/main.rs"
 
 [dependencies]
 paperclip_project = { path = "../project" }

@@ -6,7 +6,8 @@
   "scripts": {
     "build:watch": "yarn build:pc && concurrently \"yarn build:pc --watch\" \"webpack --watch\"",
     "build:pc": "../../target/debug/paperclip_cli build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "../../target/debug/paperclip_cli designer --open --port=8000"
   },
   "author": "",
   "license": "ISC",

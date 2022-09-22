@@ -7,7 +7,6 @@ use commands::build::{build, BuildArgs};
 use commands::designer::{start_design_server, StartDesignServerArgs};
 use futures::executor::block_on;
 
-
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]

@@ -6,7 +6,7 @@
   "scripts": {
     "build:watch": "yarn build:pc && concurrently \"yarn build:pc --watch\" \"webpack --watch\"",
     "build:pc": "../../target/debug/paperclip_cli build",
-    "build:proto": "protoc --plugin=\"protoc-gen-ts=../../node_modules/.bin/protoc-gen-ts\" --js_out=\"import_style=commonjs,binary:./lib\" --ts_out=\"./src/editor\" proto/designer.proto",
+    "build:proto": "protoc --plugin=\"protoc-gen-grpc-web=../../node_modules/.bin/protoc-gen-grpc-web\" --grpc-web_out=\"import_style=commonjs,mode=grpcwebtext:./lib\" --grpc-web_out=\"import_style=commonjs+dts,mode=grpcwebtext:./src/editor\" proto/designer.proto",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "../../target/debug/paperclip_cli designer --open --port=8000"
   },
@@ -18,11 +18,11 @@
     "html-webpack-plugin": "^5.5.0",
     "mini-css-extract-plugin": "^2.6.1",
     "process": "^0.11.10",
+    "protoc-gen-grpc-web": "^1.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "terser-webpack-plugin": "^5.3.6",
     "ts-loader": "^9.3.1",
-    "ts-protoc-gen": "^0.15.0",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.11.1"

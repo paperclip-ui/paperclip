@@ -2,52 +2,17 @@
 use futures::future::{self, Either, TryFutureExt};
 use http::version::Version;
 use hyper::{service::make_service_fn, Server};
-use paperclip_common::join_path;
-use paperclip_project::{ConfigContext, LocalIO, Project};
-use path_absolutize::*;
 use std::convert::Infallible;
 use std::env;
-use std::path::Path;
-use std::rc::Rc;
-use std::{
-    pin::Pin,
-    task::{Context, Poll},
-};
-use tonic::{Request, Response, Status};
+use super::proto as designer;
+use super::service::DesignerService;
 use tower::Service;
-use warp::Filter;
-// use include_dir::{include_dir, Dir};
 
-// static PROJECT_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/dist");
-
-use hello_world::greeter_server::{Greeter, GreeterServer};
-use hello_world::{HelloReply, HelloRequest};
+use designer::designer_server::{DesignerServer};
+use super::res_body::{EitherBody};
 type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
 
-pub mod hello_world {
-    tonic::include_proto!("designer");
-}
 
-#[derive(Default)]
-pub struct MyGreeter {}
-
-#[tonic::async_trait]
-impl Greeter for MyGreeter {
-    async fn say_hello(
-        &self,
-        request: Request<HelloRequest>,
-    ) -> Result<Response<HelloReply>, Status> {
-        let reply = hello_world::HelloReply {
-            message: format!("Hello {}!", request.into_inner().name),
-        };
-        Ok(Response::new(reply))
-    }
-}
-
-enum EitherBody<A, B> {
-    Left(A),
-    Right(B),
-}
 
 pub struct StartOptions {
     pub open: bool,
@@ -55,13 +20,12 @@ pub struct StartOptions {
 }
 
 #[tokio::main]
-pub async fn start(options: StartOptions) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn start(_options: StartOptions) -> Result<(), Box<dyn std::error::Error>> {
     let addr = "[::1]:50051".parse().unwrap();
-    // println!("{:?}", PROJECT_DIR.get_file("index.html").unwrap().contents());
     println!("{:?}", get_designer_path());
 
-    let greeter = MyGreeter::default();
-    let tonic = GreeterServer::new(greeter);
+    let designer = DesignerService {};
+    let tonic = DesignerServer::new(designer);
 
     Server::bind(&addr)
         .serve(make_service_fn(move |_| {
@@ -91,46 +55,4 @@ pub async fn start(options: StartOptions) -> Result<(), Box<dyn std::error::Erro
 
 fn get_designer_path() -> String {
     format!("{}/dist", env!("CARGO_MANIFEST_DIR"))
-}
-
-impl<A, B> http_body::Body for EitherBody<A, B>
-where
-    A: http_body::Body + Send + Unpin,
-    B: http_body::Body<Data = A::Data> + Send + Unpin,
-    A::Error: Into<Error>,
-    B::Error: Into<Error>,
-{
-    type Data = A::Data;
-    type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
-
-    fn is_end_stream(&self) -> bool {
-        match self {
-            EitherBody::Left(b) => b.is_end_stream(),
-            EitherBody::Right(b) => b.is_end_stream(),
-        }
-    }
-
-    fn poll_data(
-        self: Pin<&mut Self>,
-        cx: &mut Context<'_>,
-    ) -> Poll<Option<Result<Self::Data, Self::Error>>> {
-        match self.get_mut() {
-            EitherBody::Left(b) => Pin::new(b).poll_data(cx).map(map_option_err),
-            EitherBody::Right(b) => Pin::new(b).poll_data(cx).map(map_option_err),
-        }
-    }
-
-    fn poll_trailers(
-        self: Pin<&mut Self>,
-        cx: &mut Context<'_>,
-    ) -> Poll<Result<Option<http::HeaderMap>, Self::Error>> {
-        match self.get_mut() {
-            EitherBody::Left(b) => Pin::new(b).poll_trailers(cx).map_err(Into::into),
-            EitherBody::Right(b) => Pin::new(b).poll_trailers(cx).map_err(Into::into),
-        }
-    }
-}
-
-fn map_option_err<T, U: Into<Error>>(err: Option<Result<T, U>>) -> Option<Result<T, Error>> {
-    err.map(|e| e.map_err(Into::into))
 }

@@ -1,6 +1,6 @@
 use crate::config::{CompilerOptions, Config, ConfigContext};
 use crate::io::{ProjectIO, WatchEvent, WatchEventKind};
-use crate::project::{CompileOptions, Project};
+use crate::{CompileOptions, Project};
 use anyhow::Result;
 use async_stream::stream;
 use futures::executor::block_on;
@@ -14,8 +14,8 @@ use paperclip_parser::graph::test_utils::MockFS;
 use path_absolutize::*;
 use std::collections::HashMap;
 use std::path::Path;
-use std::rc::Rc;
 
+#[derive(Clone)]
 struct MockIO(MockFS<'static>);
 
 impl GraphIO for MockIO {}
@@ -26,6 +26,9 @@ impl ProjectIO for MockIO {
         stream! {
           yield WatchEvent::new(WatchEventKind::Create, &"nada".to_string());
         }
+    }
+    fn get_all_designer_files(&self, _context: &ConfigContext) -> Vec<String> {
+      vec![]
     }
 }
 
@@ -56,15 +59,15 @@ macro_rules! test_case {
     ($name:ident, $config: expr, $dir: expr, $main: expr, $input_files: expr, $output_files: expr) => {
         #[test]
         fn $name() {
-            let config_context = Rc::new(ConfigContext {
+            let config_context = ConfigContext {
                 directory: $dir.to_string(),
                 file_name: "paperclip.config.json".to_string(),
                 config: $config,
-            });
+            };
 
-            let io = Rc::new(MockIO(MockFS::new(HashMap::from($input_files))));
+            let io = MockIO(MockFS::new(HashMap::from($input_files)));
 
-            let mut project = Project::new(config_context.clone(), io.clone());
+            let mut project = Project::new(config_context, io.clone());
 
             let result = block_on(project.load_file($main));
             if let Err(error) = result {

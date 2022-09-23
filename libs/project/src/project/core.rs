@@ -40,6 +40,10 @@ impl<IO: ProjectIO> Project<IO> {
         }
     }
 
+    pub async fn load_all_files(&mut self) -> Result<()> {
+        self.load_files(&self.io.get_all_designer_files(&self.config_context)).await
+    }
+
     ///
     /// Returns the directory of the project
     ///

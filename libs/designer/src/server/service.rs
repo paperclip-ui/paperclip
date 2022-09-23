@@ -21,7 +21,7 @@ pub struct DesignerService<IO: ProjectIO> {
 impl<IO: ProjectIO> DesignerService<IO> {
     pub fn new(config_context: ConfigContext, io: IO) -> Self {
         Self {
-            project: Arc::new(Mutex::new(Project::new(config_context, io))),
+          project: Arc::new(Mutex::new(Project::new(config_context, io)))
         }
     }
 }
@@ -33,6 +33,7 @@ impl<IO: ProjectIO + 'static> Designer for DesignerService<IO> {
         &self,
         _request: Request<FileRequest>,
     ) -> OpenFileResult<Self::OpenFileStream> {
+        let project = self.project.lock().unwrap();
         Err(Status::unimplemented("not implemented"))
     }
 }

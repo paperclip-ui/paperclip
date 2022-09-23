@@ -4,6 +4,7 @@ use paperclip_common::fs::{FileReader, FileResolver};
 use std::collections::HashMap;
 use std::sync::Arc;
 
+#[derive(Clone)]
 pub struct MockFS<'kv> {
     pub files: Arc<HashMap<&'kv str, &'kv str>>,
 }

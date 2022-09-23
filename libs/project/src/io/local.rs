@@ -10,6 +10,8 @@ use paperclip_parser::graph::io::IO as GraphIO;
 use path_absolutize::*;
 use std::fs;
 use std::path::Path;
+use wax::Glob;
+use crate::config::{ConfigContext};
 
 #[derive(Clone, Default)]
 pub struct LocalIO;
@@ -40,6 +42,21 @@ impl ProjectIO for LocalIO {
                 }
             }
         }
+    }
+    fn get_all_designer_files(&self, config_context: &ConfigContext) -> Vec<String> {
+
+        let pattern = config_context
+            .config
+            .get_relative_source_files_glob_pattern();
+        let glob = Glob::new(pattern.as_str()).unwrap();
+        let mut all_files: Vec<String> = vec![];
+
+        for entry in glob.walk(&config_context.directory) {
+            let entry = entry.unwrap();
+            all_files.push(String::from(entry.path().to_str().unwrap()));
+        }
+
+        all_files
     }
 }
 

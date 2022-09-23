@@ -8,11 +8,10 @@ use futures_util::pin_mut;
 use futures_util::stream::StreamExt;
 use paperclip_common::get_or_short;
 use paperclip_parser::graph::Graph;
-use std::cell::RefCell;
 use std::collections::HashMap;
 use std::ffi::OsStr;
 use std::path::Path;
-use std::rc::Rc;
+use std::sync::{Arc, Mutex};
 
 pub struct CompileOptions {
     pub watch: bool,
@@ -26,15 +25,15 @@ pub struct ProjectCompiler<IO: ProjectIO> {
     targets: Vec<TargetCompiler<IO>>,
 
     /// used to flag before compiler
-    dep_cache: RefCell<HashMap<String, String>>,
+    dep_cache: Mutex<HashMap<String, String>>,
 
-    config_context: Rc<ConfigContext>,
+    config_context: ConfigContext,
 
     /// compile output cache - prevents things from being emitted that already have been
-    compile_cache: RefCell<HashMap<String, String>>,
+    compile_cache: Mutex<HashMap<String, String>>,
 
     /// IO for the project,
-    pub io: Rc<IO>,
+    pub io: IO,
 }
 
 impl<IO: ProjectIO> ProjectCompiler<IO> {
@@ -42,7 +41,7 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
     /// Constructor for ProjectCompiler
     ///
 
-    pub fn new(config_context: Rc<ConfigContext>, io: Rc<IO>) -> Self {
+    pub fn new(config_context: ConfigContext, io: IO) -> Self {
         Self {
             targets: if let Some(options) = &config_context.config.compiler_options {
                 options
@@ -54,10 +53,10 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
             } else {
                 vec![]
             },
-            config_context: config_context.clone(),
-            compile_cache: RefCell::new(HashMap::new()),
-            dep_cache: RefCell::new(HashMap::new()),
-            io: io.clone(),
+            config_context,
+            compile_cache: Mutex::new(HashMap::new()),
+            dep_cache: Mutex::new(HashMap::new()),
+            io
         }
     }
 
@@ -67,11 +66,12 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
 
     pub fn compile_graph<'a>(
         &'a self,
-        graph: Rc<RefCell<Graph>>,
+        graph: Arc<Mutex<Graph>>,
         options: CompileOptions,
     ) -> impl Stream<Item = Result<(String, String), anyhow::Error>> + '_ {
         try_stream! {
-            let graph = graph.borrow();
+            let graph = graph.lock().unwrap();
+            let mut compile_cache = self.compile_cache.lock().unwrap();
             {
 
                 let graph_files = graph
@@ -86,7 +86,7 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
 
                     // keep tabs on immediately compiled files so that we prevent them from being emitted later if
                     // in watch mode and they haven't changed.
-                    self.compile_cache.borrow_mut().insert(file_path.to_string(), content.to_string());
+                    compile_cache.insert(file_path.to_string(), content.to_string());
                     yield (file_path.to_string(), content.to_string());
                 }
             }
@@ -135,10 +135,13 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
     ) -> Result<HashMap<String, String>> {
         let dep = get_or_short!(graph.dependencies.get(path), Ok(HashMap::new()));
 
+        let mut compile_cache = self.compile_cache.lock().unwrap();
+        let mut dep_cache = self.dep_cache.lock().unwrap();
+
         // If the file being reloaded contains the same hash as a previously compiled file,
         // then don't emit anything - this even goes for related dependents since there
         // are no cascading changes
-        if self.dep_cache.borrow().get(&dep.path) == Some(&dep.hash) {
+        if dep_cache.get(&dep.path) == Some(&dep.hash) {
             return Ok(HashMap::new());
         }
 
@@ -148,8 +151,7 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
 
         // store the hash of the dep so that we can shortcircuit early
         for dep in &deps_to_compile {
-            self.dep_cache
-                .borrow_mut()
+            dep_cache
                 .insert(dep.path.to_string(), dep.hash.to_string());
         }
 
@@ -162,11 +164,10 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
             .compile_files(&files_to_compile, &graph)
             .await?
             .into_iter()
-            .filter(|(path, content)| self.compile_cache.borrow().get(path) != Some(content))
+            .filter(|(path, content)| compile_cache.get(path) != Some(content))
             .collect();
 
-        self.compile_cache
-            .borrow_mut()
+        compile_cache
             .extend(compiled_files.clone());
 
         Ok(compiled_files)

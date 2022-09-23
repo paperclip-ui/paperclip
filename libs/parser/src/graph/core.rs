@@ -9,7 +9,7 @@ use std::collections::{HashMap, HashSet};
 use std::str;
 use std::sync::Arc;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Dependency {
     pub hash: String,
     pub path: String,
@@ -17,7 +17,7 @@ pub struct Dependency {
     pub document: ast::Document,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Graph {
     pub dependencies: HashMap<String, Dependency>,
 }

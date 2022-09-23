@@ -3,7 +3,6 @@ use loader::Loader;
 use neon::prelude::*;
 use paperclip_project::LocalIO;
 use std::cell::RefCell;
-use std::rc::Rc;
 mod loader;
 
 #[cfg(test)]
@@ -19,7 +18,7 @@ fn loader_new(mut cx: FunctionContext) -> JsResult<BoxedLoader> {
         Loader::<LocalIO>::start(
             directory.value(&mut cx).as_str(),
             config_name.value(&mut cx).as_str(),
-            Rc::new(LocalIO {}),
+            LocalIO::default(),
         )
         .unwrap(),
     );

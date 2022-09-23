@@ -2,22 +2,21 @@ use anyhow::Result;
 use neon::prelude::*;
 use paperclip_project::{ConfigContext, LocalIO, Project, ProjectIO};
 use std::collections::HashMap;
-use std::rc::Rc;
 
 pub struct Loader<TIO: ProjectIO> {
     pub(crate) project: Project<TIO>,
 }
 
 impl<TIO: ProjectIO> Loader<TIO> {
-    pub fn start(directory: &str, config_name: &str, io: Rc<TIO>) -> Result<Self> {
-        let config_context = Rc::new(ConfigContext::load(
+    pub fn start(directory: &str, config_name: &str, io: TIO) -> Result<Self> {
+        let config_context = ConfigContext::load(
             directory,
             Some(config_name.to_string()),
-            io.clone(),
-        )?);
+            &io
+        )?;
 
         Ok(Self {
-            project: Project::new(config_context.clone(), io),
+            project: Project::new(config_context, io),
         })
     }
     pub async fn compile_file(&self, file_path: &str) -> Result<HashMap<String, String>> {
@@ -28,3 +27,5 @@ impl<TIO: ProjectIO> Loader<TIO> {
 }
 
 impl Finalize for Loader<LocalIO> {}
+
+

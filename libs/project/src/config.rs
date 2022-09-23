@@ -3,7 +3,6 @@ use anyhow::Result;
 use paperclip_common::fs::FileReader;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
-use std::rc::Rc;
 use std::str;
 
 pub const DEFAULT_CONFIG_NAME: &str = "paperclip.config.json";
@@ -12,6 +11,7 @@ pub const DEFAULT_CONFIG_NAME: &str = "paperclip.config.json";
 /// Contains additional information about the config such as directory and file name
 ///
 
+#[derive(Clone)]
 pub struct ConfigContext {
     pub directory: String,
     pub file_name: String,
@@ -19,7 +19,7 @@ pub struct ConfigContext {
 }
 
 impl ConfigContext {
-    pub fn load<FR: FileReader>(cwd: &str, file_name: Option<String>, io: Rc<FR>) -> Result<Self> {
+    pub fn load<FR: FileReader>(cwd: &str, file_name: Option<String>, io: &FR) -> Result<Self> {
         let file_name = if let Some(value) = file_name {
             value
         } else {
@@ -60,7 +60,6 @@ pub struct Config {
     pub compiler_options: Option<Vec<CompilerOptions>>,
 }
 
-unsafe impl Send for Config {}
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct CompilerOptions {

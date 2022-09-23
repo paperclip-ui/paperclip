@@ -7,21 +7,32 @@ use tonic::{Request, Response, Status};
 use super::proto as designer;
 use designer::designer_server::Designer;
 use designer::{FileRequest, FileResponse};
+use paperclip_project::{ConfigContext, Project, ProjectIO};
+use std::sync::{Arc, Mutex};
 
 type OpenFileResult<T> = Result<Response<T>, Status>;
 type ResponseStream = Pin<Box<dyn Stream<Item = Result<FileResponse, Status>> + Send>>;
 
-#[derive(Default, Copy, Clone)]
-pub struct DesignerService;
+#[derive(Clone)]
+pub struct DesignerService<IO: ProjectIO> {
+    project: Arc<Mutex<Project<IO>>>,
+}
+
+impl<IO: ProjectIO> DesignerService<IO> {
+    pub fn new(config_context: ConfigContext, io: IO) -> Self {
+        Self {
+            project: Arc::new(Mutex::new(Project::new(config_context, io))),
+        }
+    }
+}
 
 #[tonic::async_trait]
-impl Designer for DesignerService {
+impl<IO: ProjectIO + 'static> Designer for DesignerService<IO> {
     type OpenFileStream = ResponseStream;
     async fn open_file(
         &self,
         _request: Request<FileRequest>,
     ) -> OpenFileResult<Self::OpenFileStream> {
-        println!("DO IT?");
         Err(Status::unimplemented("not implemented"))
     }
 }

@@ -10,15 +10,14 @@ use paperclip_evaluator::css::serializer::serialize as serialize_css;
 use paperclip_evaluator::html::evaluator::{evaluate as evaluate_html, Options as HTMLOptions};
 use paperclip_evaluator::html::serializer::serialize as serialize_html;
 use paperclip_parser::graph::Graph;
-use std::cell::RefCell;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
-use std::rc::Rc;
 use textwrap::indent;
+use std::sync::Mutex;
 
 struct TargetCompilerResolver<IO: FileReader + FileResolver> {
-    io: Rc<IO>,
-    context: Rc<TargetCompilerContext>,
+    io: IO,
+    context: TargetCompilerContext,
 }
 
 struct EmitInfo {
@@ -37,8 +36,8 @@ impl<IO: FileReader + FileResolver> FileResolver for TargetCompilerResolver<IO> 
 }
 
 pub struct TargetCompiler<IO: FileReader + FileResolver> {
-    context: Rc<TargetCompilerContext>,
-    all_compiled_css: RefCell<BTreeMap<String, String>>,
+    context: TargetCompilerContext,
+    all_compiled_css: Mutex<BTreeMap<String, String>>,
     file_resolver: TargetCompilerResolver<IO>,
 }
 
@@ -48,18 +47,18 @@ struct TranslateOptions {
 
 impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
     // TODO: load bin
-    pub fn new(options: CompilerOptions, config_context: Rc<ConfigContext>, io: Rc<IO>) -> Self {
-        let context = Rc::new(TargetCompilerContext {
+    pub fn new(options: CompilerOptions, config_context: ConfigContext, io: IO) -> Self {
+        let context = TargetCompilerContext {
             options,
             config_context,
-        });
+        };
 
         Self {
             context: context.clone(),
-            all_compiled_css: RefCell::new(BTreeMap::new()),
+            all_compiled_css: Mutex::new(BTreeMap::new()),
             file_resolver: TargetCompilerResolver {
                 io,
-                context: context.clone(),
+                context
             },
         }
     }
@@ -70,6 +69,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
         graph: &Graph,
     ) -> Result<BTreeMap<String, String>> {
         let mut all_compiled_files: BTreeMap<String, String> = BTreeMap::new();
+        let mut all_compiled_css = self.all_compiled_css.lock().unwrap();
 
         for dep_file_path in file_paths {
             let compiled_files = self
@@ -77,8 +77,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
                 .await?;
             for (file_path, content) in compiled_files {
                 if self.context.options.main_css_file_name != None && file_path.contains(".css") {
-                    self.all_compiled_css
-                        .borrow_mut()
+                    all_compiled_css
                         .insert(file_path.to_string(), content.to_string());
                 } else {
                     all_compiled_files.insert(file_path.to_string(), content.to_string());
@@ -89,8 +88,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
         if let Some(main_css_file_path) = &self.context.get_main_css_file_path() {
             all_compiled_files.insert(
                 main_css_file_path.to_string(),
-                self.all_compiled_css
-                    .borrow()
+                all_compiled_css
                     .iter()
                     .map(|(key, content)| format!("/* {} */\n{}", key, content))
                     .collect::<Vec<String>>()

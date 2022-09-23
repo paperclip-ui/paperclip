@@ -2,11 +2,11 @@ use crate::config::{CompilerOptions, ConfigContext};
 use paperclip_common::{get_or_short, join_path};
 use path_absolutize::*;
 use std::path::Path;
-use std::rc::Rc;
 
+#[derive(Clone)]
 pub struct TargetCompilerContext {
     pub options: CompilerOptions,
-    pub config_context: Rc<ConfigContext>,
+    pub config_context: ConfigContext,
 }
 
 impl TargetCompilerContext {

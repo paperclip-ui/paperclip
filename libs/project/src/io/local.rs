@@ -11,6 +11,7 @@ use path_absolutize::*;
 use std::fs;
 use std::path::Path;
 
+#[derive(Clone, Default)]
 pub struct LocalIO;
 impl GraphIO for LocalIO {}
 

@@ -4,23 +4,27 @@ use super::service::DesignerService;
 use super::utils::content_types;
 use futures::future::{self, Either, TryFutureExt};
 use hyper::{service::make_service_fn, Server};
+use open;
+use paperclip_project::{ConfigContext, ProjectIO};
 use std::convert::Infallible;
 use std::env;
 use tower::Service;
-use open;
 
 use super::res_body::EitherBody;
 use designer::designer_server::DesignerServer;
 type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
 
-pub struct StartOptions {
+pub struct StartOptions<IO: ProjectIO> {
+    pub config_context: ConfigContext,
+    pub project_io: IO,
     pub open: bool,
     pub port: Option<u16>,
 }
 
 #[tokio::main]
-pub async fn start(options: StartOptions) -> Result<(), Box<dyn std::error::Error>> {
-
+pub async fn start<IO: ProjectIO + 'static>(
+    options: StartOptions<IO>,
+) -> Result<(), Box<dyn std::error::Error>> {
     let port = if let Some(port) = options.port {
         port
     } else {
@@ -31,33 +35,32 @@ pub async fn start(options: StartOptions) -> Result<(), Box<dyn std::error::Erro
 
     println!("🎨 Starting design server on port {}", port);
 
-    let designer = DesignerService {};
+    let designer = DesignerService::new(options.config_context.clone(), options.project_io.clone());
     let designer_server = DesignerServer::new(designer);
     let designer_server = tonic_web::config().enable(designer_server);
 
-    let server = Server::bind(&addr)
-        .serve(make_service_fn(move |_| {
-            let mut warp = warp::service(warp::fs::dir(get_designer_path()));
-            let mut designer_server = designer_server.clone();
-            future::ok::<_, Infallible>(tower::service_fn(
-                move |req: hyper::Request<hyper::Body>| {
-                    if content_types::is_grpc_web(req.headers()) {
-                        Either::Left(
-                            designer_server
-                                .call(req)
-                                .map_ok(|res| res.map(EitherBody::Left))
-                                .map_err(Error::from),
-                        )
-                    } else {
-                        Either::Right(
-                            warp.call(req)
-                                .map_ok(|res| res.map(EitherBody::Right))
-                                .map_err(Error::from),
-                        )
-                    }
-                },
-            ))
-        }));
+    let server = Server::bind(&addr).serve(make_service_fn(move |_| {
+        let mut warp = warp::service(warp::fs::dir(get_designer_path()));
+        let mut designer_server = designer_server.clone();
+        future::ok::<_, Infallible>(tower::service_fn(
+            move |req: hyper::Request<hyper::Body>| {
+                if content_types::is_grpc_web(req.headers()) {
+                    Either::Left(
+                        designer_server
+                            .call(req)
+                            .map_ok(|res| res.map(EitherBody::Left))
+                            .map_err(Error::from),
+                    )
+                } else {
+                    Either::Right(
+                        warp.call(req)
+                            .map_ok(|res| res.map(EitherBody::Right))
+                            .map_err(Error::from),
+                    )
+                }
+            },
+        ))
+    }));
 
     if options.open {
         open::that(format!("http://localhost:{}", port)).unwrap();

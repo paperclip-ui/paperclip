@@ -23,7 +23,7 @@ impl WatchEvent {
     }
 }
 
-pub trait ProjectIO: GraphIO {
+pub trait ProjectIO: GraphIO + Clone + Send + Sync {
     type Str: Stream<Item = WatchEvent>;
     fn watch(&self, dir: &str) -> Self::Str;
 }

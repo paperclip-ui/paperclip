@@ -39,7 +39,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       publicPath: "/",
       title: "Paperclip",
-      template: path.resolve(__dirname, "src", "index.html"),
+      template: path.resolve(__dirname, "src", "editor", "index.html"),
     }),
     new webpack.ProvidePlugin({
       process: "process/browser.js",

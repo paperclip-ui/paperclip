@@ -5,8 +5,8 @@ use std::pin::Pin;
 use tonic::{Request, Response, Status};
 
 use super::proto as designer;
-use designer::designer_server::{Designer};
-use designer::{FileResponse, FileRequest};
+use designer::designer_server::Designer;
+use designer::{FileRequest, FileResponse};
 
 type OpenFileResult<T> = Result<Response<T>, Status>;
 type ResponseStream = Pin<Box<dyn Stream<Item = Result<FileResponse, Status>> + Send>>;
@@ -21,7 +21,7 @@ impl Designer for DesignerService {
         &self,
         _request: Request<FileRequest>,
     ) -> OpenFileResult<Self::OpenFileStream> {
-
-      Err(Status::unimplemented("not implemented"))
+        println!("DO IT?");
+        Err(Status::unimplemented("not implemented"))
     }
 }

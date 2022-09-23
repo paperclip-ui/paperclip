@@ -2,7 +2,7 @@ import { BaseEvent, Dispatch } from "../events";
 import { Engine, EngineCreator } from "./base";
 
 export const combineEngineCreators =
-  <TState = unknown, TEvent = BaseEvent>(
+  <TState extends any, TEvent extends BaseEvent<any, any>>(
     ...engineCreators: EngineCreator<TState, TEvent>[]
   ) =>
   (dispatch: Dispatch<TEvent>): Engine<TState, TEvent> => {

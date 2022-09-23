@@ -1,18 +1,17 @@
 // https://github.com/hyperium/tonic/blob/master/examples/src/hyper_warp/server.rs
+use super::proto as designer;
+use super::service::DesignerService;
+use super::utils::content_types;
 use futures::future::{self, Either, TryFutureExt};
-use http::version::Version;
 use hyper::{service::make_service_fn, Server};
 use std::convert::Infallible;
 use std::env;
-use super::proto as designer;
-use super::service::DesignerService;
 use tower::Service;
+use open;
 
-use designer::designer_server::{DesignerServer};
-use super::res_body::{EitherBody};
+use super::res_body::EitherBody;
+use designer::designer_server::DesignerServer;
 type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
-
-
 
 pub struct StartOptions {
     pub open: bool,
@@ -20,35 +19,51 @@ pub struct StartOptions {
 }
 
 #[tokio::main]
-pub async fn start(_options: StartOptions) -> Result<(), Box<dyn std::error::Error>> {
-    let addr = "[::1]:50051".parse().unwrap();
-    println!("{:?}", get_designer_path());
+pub async fn start(options: StartOptions) -> Result<(), Box<dyn std::error::Error>> {
+
+    let port = if let Some(port) = options.port {
+        port
+    } else {
+        portpicker::pick_unused_port().expect("No ports free")
+    };
+
+    let addr = format!("[::1]:{}", port).parse().unwrap();
+
+    println!("🎨 Starting design server on port {}", port);
 
     let designer = DesignerService {};
-    let tonic = DesignerServer::new(designer);
+    let designer_server = DesignerServer::new(designer);
+    let designer_server = tonic_web::config().enable(designer_server);
 
-    Server::bind(&addr)
+    let server = Server::bind(&addr)
         .serve(make_service_fn(move |_| {
             let mut warp = warp::service(warp::fs::dir(get_designer_path()));
-            let mut tonic = tonic.clone();
+            let mut designer_server = designer_server.clone();
             future::ok::<_, Infallible>(tower::service_fn(
-                move |req: hyper::Request<hyper::Body>| match req.version() {
-                    Version::HTTP_11 | Version::HTTP_10 => Either::Left(
-                        warp.call(req)
-                            .map_ok(|res| res.map(EitherBody::Left))
-                            .map_err(Error::from),
-                    ),
-                    Version::HTTP_2 => Either::Right(
-                        tonic
-                            .call(req)
-                            .map_ok(|res| res.map(EitherBody::Right))
-                            .map_err(Error::from),
-                    ),
-                    _ => unimplemented!(),
+                move |req: hyper::Request<hyper::Body>| {
+                    if content_types::is_grpc_web(req.headers()) {
+                        Either::Left(
+                            designer_server
+                                .call(req)
+                                .map_ok(|res| res.map(EitherBody::Left))
+                                .map_err(Error::from),
+                        )
+                    } else {
+                        Either::Right(
+                            warp.call(req)
+                                .map_ok(|res| res.map(EitherBody::Right))
+                                .map_err(Error::from),
+                        )
+                    }
                 },
             ))
-        }))
-        .await?;
+        }));
+
+    if options.open {
+        open::that(format!("http://localhost:{}", port)).unwrap();
+    }
+
+    server.await?;
 
     Ok(())
 }

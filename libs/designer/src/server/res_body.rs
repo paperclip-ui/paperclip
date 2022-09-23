@@ -6,12 +6,10 @@ use std::{
 
 type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
 
-
 pub enum EitherBody<A, B> {
     Left(A),
     Right(B),
 }
-
 
 impl<A, B> http_body::Body for EitherBody<A, B>
 where

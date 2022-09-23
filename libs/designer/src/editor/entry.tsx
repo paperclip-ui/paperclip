@@ -1,5 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { App } from "./components/Main.pc";
+import { createEditorMachine } from "./machine";
 
-ReactDOM.render(<App />, document.querySelector("#app"));
+const machine = createEditorMachine({});

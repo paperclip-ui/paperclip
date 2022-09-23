@@ -131,6 +131,8 @@ __metadata:
   dependencies:
     css-loader: ^6.7.1
     css-minimizer-webpack-plugin: ^4.1.0
+    google-protobuf: ^3.21.0
+    grpc-web: ^1.3.1
     html-webpack-plugin: ^5.5.0
     mini-css-extract-plugin: ^2.6.1
     paperclip-loader: "workspace:^"
@@ -3159,6 +3161,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"google-protobuf@npm:^3.21.0":
+  version: 3.21.0
+  resolution: "google-protobuf@npm:3.21.0"
+  checksum: 612a91b8175ab3608ad20be043d41bf757623ca3dce83b6e8b27fed79e9cecba823e6709055ab439e0d59699f48a65416300b41a36ffb5ac98144a940898fea0
+  languageName: node
+  linkType: hard
+
 "got@npm:^8.3.1":
   version: 8.3.2
   resolution: "got@npm:8.3.2"
@@ -3188,6 +3197,13 @@ __metadata:
   version: 4.2.10
   resolution: "graceful-fs@npm:4.2.10"
   checksum: 3f109d70ae123951905d85032ebeae3c2a5a7a997430df00ea30df0e3a6c60cf6689b109654d6fdacd28810a053348c4d14642da1d075049e6be1ba5216218da
+  languageName: node
+  linkType: hard
+
+"grpc-web@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "grpc-web@npm:1.3.1"
+  checksum: 4a423f467f8b8dce7eceae898411b94a28e179e875fddb4bbda8e7be5ffc0c6a61180131751f22e8a38ab5229dc4788aa84bbfe91f44ef4505b01c0928142589
   languageName: node
   linkType: hard
 

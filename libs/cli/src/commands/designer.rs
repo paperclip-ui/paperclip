@@ -14,7 +14,6 @@ pub struct StartDesignServerArgs {
 }
 
 pub async fn start_design_server(args: StartDesignServerArgs) -> Result<()> {
-    println!("{:?}", args);
     if let Err(_) = start(StartOptions {
         port: args.port,
         open: args.open,

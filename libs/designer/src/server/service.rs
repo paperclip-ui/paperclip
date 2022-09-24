@@ -9,6 +9,10 @@ use designer::designer_server::Designer;
 use designer::{FileRequest, FileResponse};
 use paperclip_project::{ConfigContext, Project, ProjectIO};
 use std::sync::{Arc, Mutex};
+use tokio::sync::mpsc;
+
+use tokio_stream::{wrappers::ReceiverStream, StreamExt};
+// use tonic::{transport::Server, Request, Response, Status, Streaming};
 
 type OpenFileResult<T> = Result<Response<T>, Status>;
 type ResponseStream = Pin<Box<dyn Stream<Item = Result<FileResponse, Status>> + Send>>;
@@ -31,9 +35,18 @@ impl<IO: ProjectIO + 'static> Designer for DesignerService<IO> {
     type OpenFileStream = ResponseStream;
     async fn open_file(
         &self,
-        _request: Request<FileRequest>,
+        request: Request<FileRequest>,
     ) -> OpenFileResult<Self::OpenFileStream> {
-        let project = self.project.lock().unwrap();
-        Err(Status::unimplemented("not implemented"))
+        let (mut tx, rx) = mpsc::channel(4);
+
+        tokio::spawn(async move {
+            println!("OK");
+            tx.send(Ok(FileResponse {
+                data: vec![]
+            })).await.unwrap();
+        });
+
+
+        Ok(Response::new(Box::pin(ReceiverStream::new(rx))))
     }
 }

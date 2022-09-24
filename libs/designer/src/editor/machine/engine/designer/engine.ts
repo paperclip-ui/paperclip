@@ -4,6 +4,7 @@ import { Engine } from "../../../modules/machine/engine";
 import { Dispatch } from "../../../modules/machine/events";
 import { DesignerEngineEvent } from "./events";
 import { DesignerEngineState } from "./state";
+import * as qs from "querystring";
 
 export const createDesignerEngine = (
   dispatch: Dispatch<DesignerEngineEvent>
@@ -11,9 +12,21 @@ export const createDesignerEngine = (
   const client = new DesignerClient(
     window.location.protocol + "//" + window.location.host
   );
-  const fileRequest = new FileRequest();
-  fileRequest.setPath("something.pc");
-  client.openFile(fileRequest);
+
+  const openFile = async (filePath: string) => {
+    const fileRequest = new FileRequest();
+    fileRequest.setPath(filePath);
+    client
+      .openFile(fileRequest)
+      .on("data", (data) => {
+        console.log(data);
+      })
+      .on("end", () => {
+        console.log("END");
+      });
+  };
+
+  openFile(new URLSearchParams(window.location.search).get("file"));
 
   const handleEvent = () => {};
 

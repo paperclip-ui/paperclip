@@ -9,6 +9,7 @@ package designer;
 
 // The greeting service definition.
 service Designer {
+  
   // rpc GetProjectFiles(FileRequest) returns (stream FileResponse) {}
   rpc OpenFile(FileRequest) returns (stream FileResponse) {}
   // rpc WatchFile(FileRequest) returns (stream WatchResponse) {}

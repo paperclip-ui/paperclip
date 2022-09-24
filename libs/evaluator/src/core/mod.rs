@@ -1,3 +1,3 @@
 pub mod errors;
 pub mod utils;
-pub mod virt;
+pub use paperclip_proto::virt::core as virt;

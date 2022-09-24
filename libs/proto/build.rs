@@ -6,6 +6,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "src/ast/base.proto",
             "src/ast/pc.proto",
             "src/ast/docco.proto",
+            "src/virt/css.proto",
+            "src/virt/html.proto",
+            "src/virt/core.proto",
         ],
         &["src/"],
     )?;

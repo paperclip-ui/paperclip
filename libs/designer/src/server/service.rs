@@ -6,7 +6,7 @@ use tonic::{Request, Response, Status};
 
 use paperclip_project::{ConfigContext, Project, ProjectIO};
 use paperclip_proto::service::designer::designer_server::Designer;
-use paperclip_proto::service::designer::{FileRequest, FileResponse};
+use paperclip_proto::service::designer::{FileRequest, FileResponse, file_response};
 use std::sync::{Arc, Mutex};
 use tokio::sync::mpsc;
 
@@ -40,7 +40,7 @@ impl<IO: ProjectIO + 'static> Designer for DesignerService<IO> {
 
         tokio::spawn(async move {
             println!("OK");
-            tx.send(Ok(FileResponse { data: vec![] })).await.unwrap();
+            tx.send(Ok(FileResponse { raw_content: vec![], data: None })).await.unwrap();
         });
 
         Ok(Response::new(Box::pin(ReceiverStream::new(rx))))

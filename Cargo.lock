@@ -1136,6 +1136,7 @@ dependencies = [
  "futures",
  "paperclip_common",
  "paperclip_parser",
+ "paperclip_proto",
  "regex",
  "serde",
  "serde_json",

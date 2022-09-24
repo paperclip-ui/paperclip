@@ -1,3 +1,5 @@
+use crate::add_wrapper;
+
 include!(concat!(env!("OUT_DIR"), "/ast.pc.rs"));
 
 macro_rules! body_contains {
@@ -18,15 +20,6 @@ macro_rules! get_body_items {
 
         found
     }};
-}
-macro_rules! add_wrapper {
-    ($path: path, $type: ident) => {
-        impl $path {
-            pub fn wrap(self) -> $type {
-                $type { value: Some(self) }
-            }
-        }
-    };
 }
 
 add_wrapper!(simple_expression::Value, SimpleExpression);

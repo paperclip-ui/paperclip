@@ -114,10 +114,10 @@ fn evaluate_slot<F: FileResolver>(
 ) {
     if let Some(data) = &context.data {
         if let Some(reference) = data.borrow_mut().get(&slot.name) {
-            if let core_virt::Value::Array(children) = reference {
+            if let core_virt::value::Inner::Array(children) = reference.get_inner() {
                 for item in &children.items {
-                    match item {
-                        core_virt::Value::Node(node) => {
+                    match item.get_inner() {
+                        core_virt::value::Inner::Node(node) => {
                             fragment.push(node.clone());
                         }
                         _ => {}
@@ -162,13 +162,13 @@ fn add_inserts_to_data(inserts: &mut InsertsMap, data: &mut core_virt::Object) {
         data.properties.push(core_virt::ObjectProperty {
             source_id: Some(source_id.to_string()),
             name: name.to_string(),
-            value: core_virt::Value::Array(core_virt::Array {
+            value: Some(core_virt::value::Inner::Array(core_virt::Array {
                 source_id: Some(source_id.to_string()),
                 items: children
                     .iter()
-                    .map(|child| core_virt::Value::Node(child.clone()))
+                    .map(|child| core_virt::value::Inner::Node(child.clone()).wrap())
                     .collect(),
-            }),
+            }).wrap()),
         })
     }
 }
@@ -244,13 +244,13 @@ fn evaluate_native_element<F: FileResolver>(
         evaluate_element_child(child, &mut children, context);
     }
 
-    fragment.push(virt::Node::Element(virt::Element {
+    fragment.push(virt::node::Value::Element(virt::Element {
         tag_name: element.tag_name.to_string(),
         source_id: Some(element.id.to_string()),
         attributes: create_attributes(element, context),
         children,
         metadata: None,
-    }));
+    }).wrap());
 }
 
 fn evaluate_element_child<F: FileResolver>(
@@ -358,7 +358,7 @@ fn evaluate_object_property<F: FileResolver>(
     properties.push(core_virt::ObjectProperty {
         source_id: Some(param.id.to_string()),
         name: param.name.to_string(),
-        value: create_attribute_value(param.value.as_ref().expect("Value must exist"), context),
+        value: Some(create_attribute_value(param.value.as_ref().expect("Value must exist"), context)),
     });
 }
 
@@ -367,31 +367,25 @@ fn create_attribute_value<F: FileResolver>(
     _context: &DocumentContext<F>,
 ) -> core_virt::Value {
     match value.value.as_ref().expect("Value must exist") {
-        ast::simple_expression::Value::Str(value) => core_virt::Value::String(core_virt::Str {
+        ast::simple_expression::Value::Str(value) => core_virt::value::Inner::Str(core_virt::Str {
             value: value.value.to_string(),
             source_id: Some(value.id.to_string()),
-        }),
-        ast::simple_expression::Value::Boolean(value) => {
-            core_virt::Value::Boolean(core_virt::Boolean {
-                value: value.value,
-                source_id: Some(value.id.to_string()),
-            })
-        }
-        ast::simple_expression::Value::Number(value) => {
-            core_virt::Value::Number(core_virt::Number {
-                value: value.value,
-                source_id: Some(value.id.to_string()),
-            })
-        }
-        ast::simple_expression::Value::Reference(value) => {
-            core_virt::Value::Undefined(core_virt::Undefined {
-                source_id: Some(value.id.to_string()),
-            })
-        }
-        ast::simple_expression::Value::Array(value) => core_virt::Value::Array(core_virt::Array {
+        }).wrap(),
+        ast::simple_expression::Value::Boolean(value) => core_virt::value::Inner::Boolean(core_virt::Boolean {
+            value: value.value,
+            source_id: Some(value.id.to_string()),
+        }).wrap(),
+        ast::simple_expression::Value::Number(value) => core_virt::value::Inner::Number(core_virt::Number {
+            value: value.value,
+            source_id: Some(value.id.to_string()),
+        }).wrap(),
+        ast::simple_expression::Value::Reference(value) => core_virt::value::Inner::Undef(core_virt::Undefined {
+            source_id: Some(value.id.to_string()),
+        }).wrap(),
+        ast::simple_expression::Value::Array(value) => core_virt::value::Inner::Array(core_virt::Array {
             items: vec![],
             source_id: Some(value.id.to_string()),
-        }),
+        }).wrap(),
     }
 }
 
@@ -407,7 +401,7 @@ fn evaluate_text_node<F: FileResolver>(
         let class_name =
             get_style_namespace(&text_node.name, &text_node.id, context.current_component);
 
-        virt::Node::Element(virt::Element {
+        virt::node::Value::Element(virt::Element {
             tag_name: "span".to_string(),
             source_id: Some(text_node.id.to_string()),
             attributes: vec![virt::Attribute {
@@ -416,18 +410,18 @@ fn evaluate_text_node<F: FileResolver>(
                 value: class_name.to_string(),
             }],
             metadata,
-            children: vec![virt::Node::TextNode(virt::TextNode {
+            children: vec![virt::node::Value::TextNode(virt::TextNode {
                 source_id: Some(text_node.id.to_string()),
                 value: text_node.value.to_string(),
                 metadata: None,
-            })],
-        })
+            }).wrap()],
+        }).wrap()
     } else {
-        virt::Node::TextNode(virt::TextNode {
+        virt::node::Value::TextNode(virt::TextNode {
             source_id: Some(text_node.id.to_string()),
             value: text_node.value.to_string(),
             metadata,
-        })
+        }).wrap()
     };
 
     fragment.push(node);

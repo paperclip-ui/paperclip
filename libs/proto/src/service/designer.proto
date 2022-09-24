@@ -1,4 +1,5 @@
 syntax = "proto3";
+import "ast/pc.proto";
 
 package service.designer;
 
@@ -10,6 +11,13 @@ message FileRequest {
   string path = 1;
 }
 
+
 message FileResponse {
-  bytes data = 1;
+
+  // Raw data
+  bytes raw_content = 1;
+
+  oneof data {
+    ast.pc.Document paperclip = 2;
+  }
 }

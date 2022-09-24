@@ -77,29 +77,29 @@ fn parse_document_child(
 
     match context.curr_token {
         Some(Token::DoccoStart) => {
-            Ok(ast::document_body_item::Inner::DocComment(parse_docco(context)?).wrap())
+            Ok(ast::document_body_item::Inner::DocComment(parse_docco(context)?).get_outer())
         }
         Some(Token::KeywordComponent) => Ok(ast::document_body_item::Inner::Component(
             parse_component(context, is_public)?,
         )
-        .wrap()),
+        .get_outer()),
         Some(Token::KeywordImport) => {
-            Ok(ast::document_body_item::Inner::Import(parse_import(context)?).wrap())
+            Ok(ast::document_body_item::Inner::Import(parse_import(context)?).get_outer())
         }
         Some(Token::Word(b"style")) => {
-            Ok(ast::document_body_item::Inner::Style(parse_style(context, is_public)?).wrap())
+            Ok(ast::document_body_item::Inner::Style(parse_style(context, is_public)?).get_outer())
         }
         Some(Token::Word(b"token")) => {
-            Ok(ast::document_body_item::Inner::Atom(parse_atom(context, is_public)?).wrap())
+            Ok(ast::document_body_item::Inner::Atom(parse_atom(context, is_public)?).get_outer())
         }
         Some(Token::Word(b"trigger")) => {
-            Ok(ast::document_body_item::Inner::Trigger(parse_trigger(context, is_public)?).wrap())
+            Ok(ast::document_body_item::Inner::Trigger(parse_trigger(context, is_public)?).get_outer())
         }
         Some(Token::Word(b"text")) => {
-            Ok(ast::document_body_item::Inner::Text(parse_text(context)?).wrap())
+            Ok(ast::document_body_item::Inner::Text(parse_text(context)?).get_outer())
         }
         Some(Token::Word(_)) => {
-            Ok(ast::document_body_item::Inner::Element(parse_element(context)?).wrap())
+            Ok(ast::document_body_item::Inner::Element(parse_element(context)?).get_outer())
         }
         _ => {
             return Err(context.new_unexpected_token_error());
@@ -171,13 +171,13 @@ fn parse_trigger_body_item(
 ) -> Result<ast::TriggerBodyItem, err::ParserError> {
     match &context.curr_token {
         Some(Token::String(_)) => {
-            Ok(ast::trigger_body_item::Inner::Str(parse_string(context)?).wrap())
+            Ok(ast::trigger_body_item::Inner::Str(parse_string(context)?).get_outer())
         }
         Some(Token::Word(b"true")) | Some(Token::Word(b"false")) => {
-            Ok(ast::trigger_body_item::Inner::Boolean(parse_boolean(context)?).wrap())
+            Ok(ast::trigger_body_item::Inner::Boolean(parse_boolean(context)?).get_outer())
         }
         Some(Token::Word(_)) => {
-            Ok(ast::trigger_body_item::Inner::Reference(parse_ref(context)?).wrap())
+            Ok(ast::trigger_body_item::Inner::Reference(parse_ref(context)?).get_outer())
         }
         _ => Err(context.new_unexpected_token_error()),
     }
@@ -326,13 +326,13 @@ fn parse_component(
         context,
         |context: &mut PCContext| match context.curr_token {
             Some(Token::Word(b"render")) => {
-                Ok(ast::component_body_item::Inner::Render(parse_render(context)?).wrap())
+                Ok(ast::component_body_item::Inner::Render(parse_render(context)?).get_outer())
             }
             Some(Token::KeywordVariant) => {
-                Ok(ast::component_body_item::Inner::Variant(parse_variant(context)?).wrap())
+                Ok(ast::component_body_item::Inner::Variant(parse_variant(context)?).get_outer())
             }
             Some(Token::Word(b"script")) => {
-                Ok(ast::component_body_item::Inner::Script(parse_script(context)?).wrap())
+                Ok(ast::component_body_item::Inner::Script(parse_script(context)?).get_outer())
             }
             _ => Err(context.new_unexpected_token_error()),
         },
@@ -430,13 +430,13 @@ where
 fn parse_render_node(context: &mut PCContext) -> Result<ast::RenderNode, err::ParserError> {
     match context.curr_token {
         Some(Token::Word(b"text")) => {
-            Ok(ast::render_node::Inner::Text(parse_text(context)?).wrap())
+            Ok(ast::render_node::Inner::Text(parse_text(context)?).get_outer())
         }
         Some(Token::Word(b"slot")) => {
-            Ok(ast::render_node::Inner::Slot(parse_slot(context)?).wrap())
+            Ok(ast::render_node::Inner::Slot(parse_slot(context)?).get_outer())
         }
         Some(Token::Word(_)) => {
-            Ok(ast::render_node::Inner::Element(parse_element(context)?).wrap())
+            Ok(ast::render_node::Inner::Element(parse_element(context)?).get_outer())
         }
         _ => Err(context.new_unexpected_token_error()),
     }
@@ -456,10 +456,10 @@ fn parse_slot(context: &mut PCContext) -> Result<ast::Slot, err::ParserError> {
             context,
             |context: &mut PCContext| match context.curr_token {
                 Some(Token::Word(b"text")) => {
-                    Ok(ast::slot_body_item::Inner::Text(parse_text(context)?).wrap())
+                    Ok(ast::slot_body_item::Inner::Text(parse_text(context)?).get_outer())
                 }
                 Some(Token::Word(_)) => {
-                    Ok(ast::slot_body_item::Inner::Element(parse_element(context)?).wrap())
+                    Ok(ast::slot_body_item::Inner::Element(parse_element(context)?).get_outer())
                 }
                 _ => Err(context.new_unexpected_token_error()),
             },
@@ -491,13 +491,13 @@ fn parse_insert(context: &mut PCContext) -> Result<ast::Insert, err::ParserError
         context,
         |context: &mut PCContext| match context.curr_token {
             Some(Token::Word(b"text")) => {
-                Ok(ast::insert_body::Inner::Text(parse_text(context)?).wrap())
+                Ok(ast::insert_body::Inner::Text(parse_text(context)?).get_outer())
             }
             Some(Token::Word(b"slot")) => {
-                Ok(ast::insert_body::Inner::Slot(parse_slot(context)?).wrap())
+                Ok(ast::insert_body::Inner::Slot(parse_slot(context)?).get_outer())
             }
             Some(Token::Word(_)) => {
-                Ok(ast::insert_body::Inner::Element(parse_element(context)?).wrap())
+                Ok(ast::insert_body::Inner::Element(parse_element(context)?).get_outer())
             }
             _ => Err(context.new_unexpected_token_error()),
         },
@@ -532,7 +532,7 @@ fn parse_text(context: &mut PCContext) -> Result<ast::TextNode, err::ParserError
             context,
             |context: &mut PCContext| match context.curr_token {
                 Some(Token::Word(b"style")) => {
-                    Ok(ast::text_node_body_item::Inner::Style(parse_style(context, false)?).wrap())
+                    Ok(ast::text_node_body_item::Inner::Style(parse_style(context, false)?).get_outer())
                 }
                 _ => Err(context.new_unexpected_token_error()),
             },
@@ -598,10 +598,10 @@ fn parse_override(context: &mut PCContext) -> Result<ast::Override, err::ParserE
             context,
             |context: &mut PCContext| match context.curr_token {
                 Some(Token::KeywordVariant) => {
-                    Ok(ast::override_body_item::Inner::Variant(parse_variant(context)?).wrap())
+                    Ok(ast::override_body_item::Inner::Variant(parse_variant(context)?).get_outer())
                 }
                 Some(Token::Word(b"style")) => {
-                    Ok(ast::override_body_item::Inner::Style(parse_style(context, false)?).wrap())
+                    Ok(ast::override_body_item::Inner::Style(parse_style(context, false)?).get_outer())
                 }
                 _ => Err(context.new_unexpected_token_error()),
             },
@@ -647,22 +647,22 @@ fn parse_element(context: &mut PCContext) -> Result<ast::Element, err::ParserErr
             context,
             |context: &mut PCContext| match context.curr_token {
                 Some(Token::Word(b"style")) => {
-                    Ok(ast::element_body_item::Inner::Style(parse_style(context, false)?).wrap())
+                    Ok(ast::element_body_item::Inner::Style(parse_style(context, false)?).get_outer())
                 }
                 Some(Token::Word(b"text")) => {
-                    Ok(ast::element_body_item::Inner::Text(parse_text(context)?).wrap())
+                    Ok(ast::element_body_item::Inner::Text(parse_text(context)?).get_outer())
                 }
                 Some(Token::Word(b"insert")) => {
-                    Ok(ast::element_body_item::Inner::Insert(parse_insert(context)?).wrap())
+                    Ok(ast::element_body_item::Inner::Insert(parse_insert(context)?).get_outer())
                 }
                 Some(Token::Word(b"slot")) => {
-                    Ok(ast::element_body_item::Inner::Slot(parse_slot(context)?).wrap())
+                    Ok(ast::element_body_item::Inner::Slot(parse_slot(context)?).get_outer())
                 }
                 Some(Token::Word(b"override")) => {
-                    Ok(ast::element_body_item::Inner::Override(parse_override(context)?).wrap())
+                    Ok(ast::element_body_item::Inner::Override(parse_override(context)?).get_outer())
                 }
                 Some(Token::Word(_)) => {
-                    Ok(ast::element_body_item::Inner::Element(parse_element(context)?).wrap())
+                    Ok(ast::element_body_item::Inner::Element(parse_element(context)?).get_outer())
                 }
                 _ => Err(context.new_unexpected_token_error()),
             },
@@ -732,16 +732,16 @@ fn parse_simple_expression(
 ) -> Result<ast::SimpleExpression, err::ParserError> {
     match context.curr_token {
         Some(Token::String(_)) => {
-            Ok(ast::simple_expression::Inner::Str(parse_string(context)?).wrap())
+            Ok(ast::simple_expression::Inner::Str(parse_string(context)?).get_outer())
         }
         Some(Token::Word(b"true" | b"false")) => {
-            Ok(ast::simple_expression::Inner::Boolean(parse_boolean(context)?).wrap())
+            Ok(ast::simple_expression::Inner::Boolean(parse_boolean(context)?).get_outer())
         }
         Some(Token::Word(_)) => {
-            Ok(ast::simple_expression::Inner::Reference(parse_ref(context)?).wrap())
+            Ok(ast::simple_expression::Inner::Reference(parse_ref(context)?).get_outer())
         }
         Some(Token::SquareOpen) => {
-            Ok(ast::simple_expression::Inner::Array(parse_array(context)?).wrap())
+            Ok(ast::simple_expression::Inner::Array(parse_array(context)?).get_outer())
         }
         _ => return Err(context.new_unexpected_token_error()),
     }

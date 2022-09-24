@@ -167,10 +167,10 @@ fn add_inserts_to_data(inserts: &mut InsertsMap, data: &mut core_virt::Object) {
                     source_id: Some(source_id.to_string()),
                     items: children
                         .iter()
-                        .map(|child| core_virt::value::Inner::Node(child.clone()).wrap())
+                        .map(|child| core_virt::value::Inner::Node(child.clone()).get_outer())
                         .collect(),
                 })
-                .wrap(),
+                .get_outer(),
             ),
         })
     }
@@ -248,7 +248,7 @@ fn evaluate_native_element<F: FileResolver>(
             children,
             metadata: None,
         })
-        .wrap(),
+        .get_outer(),
     );
 }
 
@@ -373,33 +373,33 @@ fn create_attribute_value<F: FileResolver>(
             value: value.value.to_string(),
             source_id: Some(value.id.to_string()),
         })
-        .wrap(),
+        .get_outer(),
         ast::simple_expression::Inner::Boolean(value) => {
             core_virt::value::Inner::Boolean(core_virt::Boolean {
                 value: value.value,
                 source_id: Some(value.id.to_string()),
             })
-            .wrap()
+            .get_outer()
         }
         ast::simple_expression::Inner::Number(value) => {
             core_virt::value::Inner::Number(core_virt::Number {
                 value: value.value,
                 source_id: Some(value.id.to_string()),
             })
-            .wrap()
+            .get_outer()
         }
         ast::simple_expression::Inner::Reference(value) => {
             core_virt::value::Inner::Undef(core_virt::Undefined {
                 source_id: Some(value.id.to_string()),
             })
-            .wrap()
+            .get_outer()
         }
         ast::simple_expression::Inner::Array(value) => {
             core_virt::value::Inner::Array(core_virt::Array {
                 items: vec![],
                 source_id: Some(value.id.to_string()),
             })
-            .wrap()
+            .get_outer()
         }
     }
 }
@@ -430,16 +430,16 @@ fn evaluate_text_node<F: FileResolver>(
                 value: text_node.value.to_string(),
                 metadata: None,
             })
-            .wrap()],
+            .get_outer()],
         })
-        .wrap()
+        .get_outer()
     } else {
         virt::node::Inner::TextNode(virt::TextNode {
             source_id: Some(text_node.id.to_string()),
             value: text_node.value.to_string(),
             metadata,
         })
-        .wrap()
+        .get_outer()
     };
 
     fragment.push(node);

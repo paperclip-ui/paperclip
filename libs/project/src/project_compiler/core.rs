@@ -10,8 +10,6 @@ use paperclip_common::get_or_short;
 use paperclip_common::pc::is_paperclip_file;
 use paperclip_parser::graph::Graph;
 use std::collections::HashMap;
-use std::ffi::OsStr;
-use std::path::Path;
 use std::sync::{Arc, Mutex};
 
 pub struct CompileOptions {

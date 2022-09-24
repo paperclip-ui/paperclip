@@ -13,7 +13,7 @@ macro_rules! add_wrapper {
 macro_rules! add_inner_wrapper {
     ($path: path, $type: ident) => {
         impl $path {
-            pub fn wrap(self) -> $type {
+            pub fn get_outer(self) -> $type {
                 $type { inner: Some(self) }
             }
         }

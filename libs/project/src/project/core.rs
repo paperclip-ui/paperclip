@@ -76,6 +76,7 @@ impl<IO: ProjectIO> Project<IO> {
             .unwrap()
             .load::<IO>(file, &self.io)
             .await?;
+            
         Ok(())
     }
 

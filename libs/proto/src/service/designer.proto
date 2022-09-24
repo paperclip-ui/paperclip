@@ -1,5 +1,7 @@
 syntax = "proto3";
 import "ast/pc.proto";
+import "virt/html.proto";
+import "virt/css.proto";
 
 package service.designer;
 
@@ -11,13 +13,17 @@ message FileRequest {
   string path = 1;
 }
 
-
 message FileResponse {
 
   // Raw data
   bytes raw_content = 1;
 
   oneof data {
-    ast.pc.Document paperclip = 2;
+    PaperclipData paperclip = 2;
   }
+}
+
+message PaperclipData {
+  virt.css.Document css = 1;
+  virt.html.Document html = 2;
 }

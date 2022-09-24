@@ -59,7 +59,7 @@ fn evaluate_tokens<F: FileResolver>(document: &ast::Document, context: &mut Docu
         .document
         .borrow_mut()
         .rules
-        .push(virt::Rule::Style(virt::StyleRule {
+        .push(virt::rule::Inner::Style(virt::StyleRule {
             id,
             source_id: None,
             selector_text: ":root".to_string(),
@@ -72,7 +72,7 @@ fn evaluate_tokens<F: FileResolver>(document: &ast::Document, context: &mut Docu
                     value: evaluate_atom(atom, context),
                 })
                 .collect(),
-        }))
+        }).get_outer())
 }
 fn evaluate_document_rules<F: FileResolver>(
     document: &ast::Document,
@@ -229,7 +229,7 @@ fn evaluate_variant_styles<F: FileResolver>(
     }
 
     for assoc_variant in assoc_variants {
-        let virt_style = virt::Rule::Style(virt::StyleRule {
+        let virt_style = virt::rule::Inner::Style(virt::StyleRule {
             id: context.next_id(),
             source_id: Some(style.id.to_string()),
             selector_text: format!(
@@ -243,7 +243,7 @@ fn evaluate_variant_styles<F: FileResolver>(
                 }
             ),
             style: evaluated_style.clone(),
-        });
+        }).get_outer();
         context.document.borrow_mut().rules.push(virt_style);
     }
 
@@ -255,7 +255,7 @@ fn evaluate_variant_styles<F: FileResolver>(
         combo_selectors
             .iter()
             .map(|group_selectors| {
-                virt::Rule::Style(virt::StyleRule {
+                virt::rule::Inner::Style(virt::StyleRule {
                     id: context.next_id(),
                     source_id: Some(style.id.to_string()),
                     selector_text: format!(
@@ -269,11 +269,11 @@ fn evaluate_variant_styles<F: FileResolver>(
                         }
                     ),
                     style: evaluated_style.clone(),
-                })
+                }).get_outer()
             })
             .collect::<Vec<virt::Rule>>()
     } else {
-        vec![virt::Rule::Style(virt::StyleRule {
+        vec![virt::rule::Inner::Style(virt::StyleRule {
             id: context.next_id(),
             source_id: Some(style.id.to_string()),
             selector_text: format!(
@@ -286,7 +286,7 @@ fn evaluate_variant_styles<F: FileResolver>(
                 }
             ),
             style: evaluated_style.clone(),
-        })]
+        }).get_outer()]
     };
 
     for virt_style in virt_styles {
@@ -296,19 +296,19 @@ fn evaluate_variant_styles<F: FileResolver>(
                     .iter()
                     .fold(virt_style.clone(), |rule, container_query| {
                         if container_query.starts_with("@media") {
-                            virt::Rule::Media(create_condition_rule(
+                            virt::rule::Inner::Media(create_condition_rule(
                                 "media",
                                 container_query,
                                 vec![rule],
                                 context,
-                            ))
+                            )).get_outer()
                         } else if container_query.starts_with("@supports") {
-                            virt::Rule::Supports(create_condition_rule(
+                            virt::rule::Inner::Supports(create_condition_rule(
                                 "supports",
                                 container_query,
                                 vec![rule],
                                 context,
-                            ))
+                            )).get_outer()
                         } else {
                             rule
                         }
@@ -472,7 +472,7 @@ fn evaluate_vanilla_style<F: FileResolver>(style: &ast::Style, context: &mut Doc
             .document
             .borrow_mut()
             .rules
-            .push(virt::Rule::Style(style));
+            .push(virt::rule::Inner::Style(style).get_outer());
     }
 }
 

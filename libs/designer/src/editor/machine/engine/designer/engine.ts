@@ -37,7 +37,10 @@ const createActions = (client: DesignerClient, dispatch: Dispatch<any>) => {
       client
         .openFile(fileRequest)
         .on("data", (data) => {
-          console.log(data);
+          console.log(
+            "DATA",
+            data.getPaperclip().toObject().html.childrenList[0].element
+          );
         })
         .on("end", () => {
           console.log("END");

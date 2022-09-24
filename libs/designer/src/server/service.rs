@@ -1,17 +1,19 @@
 // https://github.com/hyperium/tonic/blob/master/examples/src/hyper_warp/server.rs
 
 use futures::Stream;
+use futures::executor::block_on;
 use std::pin::Pin;
 use tonic::{Request, Response, Status};
 
 use paperclip_project::{ConfigContext, Project, ProjectIO};
 use paperclip_proto::service::designer::designer_server::Designer;
-use paperclip_proto::service::designer::{FileRequest, FileResponse, file_response};
+use paperclip_proto::service::designer::{FileRequest, FileResponse, file_response, PaperclipData};
 use paperclip_common::pc::is_paperclip_file;
+use paperclip_evaluator::runtime::Runtime;
 use std::sync::{Arc, Mutex};
 use tokio::sync::mpsc;
 
-use tokio_stream::{wrappers::ReceiverStream, StreamExt};
+use tokio_stream::{wrappers::ReceiverStream};
 
 type OpenFileResult<T> = Result<Response<T>, Status>;
 type ResponseStream = Pin<Box<dyn Stream<Item = Result<FileResponse, Status>> + Send>>;
@@ -36,23 +38,30 @@ impl<IO: ProjectIO + 'static> Designer for DesignerService<IO> {
         &self,
         request: Request<FileRequest>,
     ) -> OpenFileResult<Self::OpenFileStream> {
-        let (mut tx, rx) = mpsc::channel(4);
+        let (tx, rx) = mpsc::channel(4);
 
-        println!("OK");
+        let project = self.project.clone();
 
         tokio::spawn(async move {
-
             let path = &request.into_inner().path;
-            
 
-            println!("FILE {}", path);
+            let mut data = None;
 
             if is_paperclip_file(&path) {
-                println!("OK");
+                let mut project = project.lock().unwrap();
+                let mut runtime = Runtime::new();
+                block_on(project.load_file(path));
+                let graph = project.graph.lock().unwrap();
+                let (css, html) = block_on(runtime.evaluate(path, &graph, &project.io)).unwrap();
+
+                data = Some(file_response::Data::Paperclip(PaperclipData {
+                    css: Some(css),
+                    html: Some(html)
+                }))
             }
 
 
-            tx.send(Ok(FileResponse { raw_content: vec![], data: None })).await.unwrap();
+            tx.send(Ok(FileResponse { raw_content: vec![], data })).await.unwrap();
         });
 
         Ok(Response::new(Box::pin(ReceiverStream::new(rx))))

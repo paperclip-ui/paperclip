@@ -39,7 +39,7 @@ pub fn parse_comment(context: &mut ParserContext) -> Result<ast::Comment, Parser
                 }
                 _ => ast::comment_body_item::Inner::Text(parse_text(context)?),
             })
-            .wrap(),
+            .get_outer(),
         );
     }
     context.next_token()?; // eat CommentEnd
@@ -70,7 +70,7 @@ pub fn parse_property(context: &mut ParserContext) -> Result<ast::Property, Pars
             Some(Token::String(_)) => ast::property_value::Inner::Str(parse_string(context)?),
             _ => return Err(context.new_unexpected_token_error()),
         })
-        .wrap(),
+        .get_outer(),
     );
     let end = context.curr_u16pos.clone();
 
@@ -204,7 +204,7 @@ fn parse_parameter(context: &mut ParserContext) -> Result<ast::Parameter, err::P
     context.skip(is_superfluous)?;
     context.next_token()?; // eat :
     context.skip(is_superfluous)?;
-    let value = Some(parse_parameter_value(context)?.wrap());
+    let value = Some(parse_parameter_value(context)?.get_outer());
     let end = context.curr_u16pos.clone();
 
     Ok(ast::Parameter {

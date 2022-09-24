@@ -28,7 +28,7 @@ pub fn parse_style_declaration_with_string_scanner<'src, 'scanner, 'idgenerator>
 ) -> Result<ast::DeclarationValue, ParserError> {
     let mut context = Context::new(source, url, &next_token, id_generator)?;
     context.skip(is_superfluous)?;
-    Ok(parse_decl_value(&mut context)?.wrap())
+    Ok(parse_decl_value(&mut context)?.get_outer())
 }
 
 fn parse_style_declarations(
@@ -63,7 +63,7 @@ fn parse_style_declaration(
     context.next_token()?; // eat :
     context.skip(is_superfluous)?;
 
-    let value = parse_comma_list(context)?.wrap();
+    let value = parse_comma_list(context)?.get_outer();
 
     let end = context.curr_u16pos.clone();
 
@@ -82,11 +82,11 @@ fn parse_comma_list(
     let first = parse_spaced_list(context)?;
     context.skip(is_superfluous)?;
     Ok(if matches!(context.curr_token, Some(Token::Comma)) {
-        let mut items = vec![first.wrap()];
+        let mut items = vec![first.get_outer()];
         while matches!(context.curr_token, Some(Token::Comma)) {
             context.next_token()?;
             context.skip(is_superfluous)?;
-            items.push(parse_spaced_list(context)?.wrap());
+            items.push(parse_spaced_list(context)?.get_outer());
         }
         let end = context.curr_u16pos.clone();
         ast::declaration_value::Inner::CommaList(ast::CommaList {
@@ -105,10 +105,10 @@ fn parse_spaced_list(
     let start = context.curr_u16pos.clone();
     let first = parse_arithmetic(context)?;
     Ok(if matches!(context.curr_token, Some(Token::Space(_))) {
-        let mut items = vec![first.wrap()];
+        let mut items = vec![first.get_outer()];
         while matches!(context.curr_token, Some(Token::Space(_))) {
             context.next_token()?;
-            items.push(parse_arithmetic(context)?.wrap());
+            items.push(parse_arithmetic(context)?.get_outer());
         }
         let end = context.curr_u16pos.clone();
         ast::declaration_value::Inner::SpacedList(ast::SpacedList {
@@ -143,8 +143,8 @@ fn parse_arithmetic(
         ast::declaration_value::Inner::Arithmetic(Box::new(ast::Arithmetic {
             id: context.next_id(),
             range: Some(Range::new(start, end)),
-            left: Some(Box::new(left.wrap())),
-            right: Some(Box::new(right.wrap())),
+            left: Some(Box::new(left.get_outer())),
+            right: Some(Box::new(right.get_outer())),
             operator,
         }))
     } else {
@@ -226,7 +226,7 @@ fn parse_call(context: &mut ParserContext) -> Result<ast::FunctionCall, err::Par
 
     context.next_token()?;
     context.next_token()?; // eat (
-    let arguments = parse_comma_list(context)?.wrap();
+    let arguments = parse_comma_list(context)?.get_outer();
     context.next_token()?;
     let end = context.curr_u16pos.clone();
     Ok(ast::FunctionCall {

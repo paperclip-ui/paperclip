@@ -15,10 +15,10 @@ fn serialize_rules(rules: &Vec<virt::Rule>, context: &mut Context) {
 }
 
 fn serialize_rule(rule: &virt::Rule, context: &mut Context) {
-    match rule {
-        virt::Rule::Style(rule) => serialize_style_rule(rule, context),
-        virt::Rule::Media(rule) => serialize_condition_rule(rule, context),
-        virt::Rule::Supports(rule) => serialize_condition_rule(rule, context),
+    match rule.get_inner() {
+        virt::rule::Inner::Style(rule) => serialize_style_rule(&rule, context),
+        virt::rule::Inner::Media(rule) => serialize_condition_rule(&rule, context),
+        virt::rule::Inner::Supports(rule) => serialize_condition_rule(&rule, context),
         _ => {}
     }
 }

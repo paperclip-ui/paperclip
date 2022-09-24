@@ -1,4 +1,4 @@
-mod context;
+pub mod context;
 pub mod evaluator;
 pub mod serializer;
 mod utils;

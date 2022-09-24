@@ -1115,6 +1115,7 @@ dependencies = [
  "include_dir",
  "open",
  "paperclip_common",
+ "paperclip_evaluator",
  "paperclip_project",
  "paperclip_proto",
  "path-absolutize",

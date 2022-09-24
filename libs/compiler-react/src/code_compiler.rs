@@ -15,8 +15,10 @@ pub fn compile_code(dependency: &Dependency) -> Result<String> {
 fn compile_document(document: &ast::Document, context: &mut Context) {
     context.add_buffer("import * as React from \"react\";\n\n");
     for item in &document.body {
-        match item {
-            ast::DocumentBodyItem::Component(component) => compile_component(component, context),
+        match item.value.as_ref().expect("Value must exist") {
+            ast::document_body_item::Value::Component(component) => {
+                compile_component(&component, context)
+            }
             _ => {}
         }
     }
@@ -59,10 +61,17 @@ fn compile_component_render(component: &ast::Component, context: &mut Context) {
     let render = get_or_short!(component.get_render_expr(), ());
 
     context.add_buffer("return ");
-    match &render.node {
-        ast::RenderNode::Element(expr) => compile_element(expr, context),
-        ast::RenderNode::Text(expr) => compile_text_node(expr, context),
-        ast::RenderNode::Slot(expr) => compile_slot(expr, context),
+    match render
+        .node
+        .as_ref()
+        .expect("Node must exist")
+        .value
+        .as_ref()
+        .expect("Value must exist")
+    {
+        ast::render_node::Value::Element(expr) => compile_element(&expr, context),
+        ast::render_node::Value::Text(expr) => compile_text_node(&expr, context),
+        ast::render_node::Value::Slot(expr) => compile_slot(&expr, context),
     }
     context.add_buffer(";\n");
 }
@@ -79,9 +88,9 @@ fn compile_slot(node: &ast::Slot, context: &mut Context) {
         compile_children! {
           &node.body,
           |child: &ast::SlotBodyItem| {
-            match child {
-              ast::SlotBodyItem::Element(expr) => compile_element(expr, context),
-              ast::SlotBodyItem::Text(expr) => compile_text_node(expr, context),
+            match child.value.as_ref().expect("Value must exist") {
+              ast::slot_body_item::Value::Element(expr) => compile_element(&expr, context),
+              ast::slot_body_item::Value::Text(expr) => compile_text_node(&expr, context),
             }
           },
           context
@@ -117,10 +126,10 @@ fn compile_element_children(element: &ast::Element, context: &mut Context) {
     compile_children! {
       &visible_children,
       |child: &ast::ElementBodyItem| {
-        match child {
-          ast::ElementBodyItem::Text(expr) => compile_text_node(&expr, context),
-          ast::ElementBodyItem::Element(expr) => compile_element(&expr, context),
-          ast::ElementBodyItem::Slot(expr) => compile_slot(&expr, context),
+        match child.value.as_ref().expect("Value must exist") {
+          ast::element_body_item::Value::Text(expr) => compile_text_node(&expr, context),
+          ast::element_body_item::Value::Element(expr) => compile_element(&expr, context),
+          ast::element_body_item::Value::Slot(expr) => compile_slot(&expr, context),
           _ => {}
         };
       },
@@ -160,7 +169,10 @@ fn get_raw_element_attrs<'dependency>(
 
     for parameter in &element.parameters {
         let mut param_context = context.with_new_content();
-        compile_simple_expression(&parameter.value, &mut param_context);
+        compile_simple_expression(
+            &parameter.value.as_ref().expect("Value must exist"),
+            &mut param_context,
+        );
         attrs.insert(parameter.name.to_string(), param_context);
     }
 
@@ -194,10 +206,10 @@ fn compile_insert(insert: &ast::Insert, context: &mut Context) {
     compile_children! {
       &insert.body,
       |child: &ast::InsertBody| {
-        match child {
-          ast::InsertBody::Element(expr) => compile_element(&expr, context),
-          ast::InsertBody::Text(expr) => compile_text_node(&expr, context),
-          ast::InsertBody::Slot(expr) => compile_slot(&expr, context)
+        match child.value.as_ref().expect("Value must exist") {
+          ast::insert_body::Value::Element(expr) => compile_element(&expr, context),
+          ast::insert_body::Value::Text(expr) => compile_text_node(&expr, context),
+          ast::insert_body::Value::Slot(expr) => compile_slot(&expr, context)
         }
       },
       context
@@ -220,18 +232,18 @@ fn attr_alias(name: &str) -> String {
 }
 
 fn compile_simple_expression(expr: &ast::SimpleExpression, context: &mut Context) {
-    match expr {
-        ast::SimpleExpression::String(expr) => {
+    match expr.value.as_ref().expect("Value must exist") {
+        ast::simple_expression::Value::Str(expr) => {
             context.add_buffer(format!("\"{}\"", expr.value).as_str())
         }
-        ast::SimpleExpression::Number(expr) => {
+        ast::simple_expression::Value::Number(expr) => {
             context.add_buffer(format!("{}", expr.value).as_str())
         }
-        ast::SimpleExpression::Boolean(expr) => {
+        ast::simple_expression::Value::Boolean(expr) => {
             context.add_buffer(format!("{}", expr.value).as_str())
         }
-        ast::SimpleExpression::Array(expr) => compile_array(expr, context),
-        ast::SimpleExpression::Reference(expr) => compile_reference(expr, context),
+        ast::simple_expression::Value::Array(expr) => compile_array(expr, context),
+        ast::simple_expression::Value::Reference(expr) => compile_reference(expr, context),
     }
 }
 

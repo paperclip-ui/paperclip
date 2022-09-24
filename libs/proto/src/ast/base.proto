@@ -18,6 +18,12 @@ message Number {
   Range range = 3;
 }
 
+message Boolean {
+  string id = 1;
+  bool value = 2;
+  Range range = 3;
+}
+
 message Str {
   string id = 1;
   string value = 2;

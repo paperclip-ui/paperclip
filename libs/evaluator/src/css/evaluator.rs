@@ -87,14 +87,14 @@ fn evaluate_body_rule<F: FileResolver>(
     item: &ast::DocumentBodyItem,
     context: &mut DocumentContext<F>,
 ) {
-    match item {
-        ast::DocumentBodyItem::Component(component) => {
+    match item.value.as_ref().expect("Item value must exist") {
+        ast::document_body_item::Value::Component(component) => {
             evaluate_component(component, context);
         }
-        ast::DocumentBodyItem::Element(component) => {
+        ast::document_body_item::Value::Element(component) => {
             evaluate_element(component, context);
         }
-        ast::DocumentBodyItem::Text(text) => {
+        ast::document_body_item::Value::Text(text) => {
             evaluate_text(text, context);
         }
         _ => {}
@@ -106,18 +106,23 @@ fn evaluate_component<F: FileResolver>(
     context: &mut DocumentContext<F>,
 ) {
     for item in &component.body {
-        if let ast::ComponentBodyItem::Render(render) = item {
-            evaluate_render_node(&render.node, &mut context.within_component(component));
+        if let ast::component_body_item::Value::Render(render) =
+            item.value.as_ref().expect("Item value must exist")
+        {
+            evaluate_render_node(
+                render.node.as_ref().expect("Render node value must exist"),
+                &mut context.within_component(component),
+            );
         }
     }
 }
 
 fn evaluate_render_node<F: FileResolver>(node: &ast::RenderNode, context: &mut DocumentContext<F>) {
-    match node {
-        ast::RenderNode::Element(element) => {
+    match node.value.as_ref().expect("Render node value must exist") {
+        ast::render_node::Value::Element(element) => {
             evaluate_element(element, context);
         }
-        ast::RenderNode::Text(element) => {
+        ast::render_node::Value::Text(element) => {
             evaluate_text(element, context);
         }
         _ => {}
@@ -128,26 +133,30 @@ fn evaluate_element<F: FileResolver>(element: &ast::Element, context: &mut Docum
     let mut el_context = context.within_node(CurrentNode::Element(element));
 
     for item in &element.body {
-        match item {
-            ast::ElementBodyItem::Style(style) => {
+        match item
+            .value
+            .as_ref()
+            .expect("Element body item value must exist")
+        {
+            ast::element_body_item::Value::Style(style) => {
                 evaluate_style(style, &mut el_context);
             }
-            ast::ElementBodyItem::Element(expr) => {
+            ast::element_body_item::Value::Element(expr) => {
                 evaluate_element(expr, &mut el_context);
             }
-            ast::ElementBodyItem::Text(expr) => {
+            ast::element_body_item::Value::Text(expr) => {
                 evaluate_text(expr, &mut el_context);
             }
             _ => {}
         }
     }
 }
-fn evaluate_text<F: FileResolver>(element: &ast::TextNode, context: &mut DocumentContext<F>) {
-    let mut el_context = context.within_node(CurrentNode::TextNode(element));
+fn evaluate_text<F: FileResolver>(expr: &ast::TextNode, context: &mut DocumentContext<F>) {
+    let mut el_context = context.within_node(CurrentNode::TextNode(expr));
 
-    for item in &element.body {
-        match item {
-            ast::TextNodeBodyItem::Style(style) => {
+    for item in &expr.body {
+        match item.value.as_ref().expect("Text node value must exist") {
+            ast::text_node_body_item::Value::Style(style) => {
                 evaluate_style(style, &mut el_context);
             }
         }
@@ -155,9 +164,15 @@ fn evaluate_text<F: FileResolver>(element: &ast::TextNode, context: &mut Documen
 }
 
 fn evaluate_style<F: FileResolver>(style: &ast::Style, context: &mut DocumentContext<F>) {
-    if let Some(variants) = &style.variant_combo {
-        let expanded_combo_selectors = collect_style_variant_selectors(variants, context);
-        evaluate_variant_styles(&style, variants, &expanded_combo_selectors, context);
+    if style.variant_combo.len() > 0 {
+        let expanded_combo_selectors =
+            collect_style_variant_selectors(&style.variant_combo, context);
+        evaluate_variant_styles(
+            &style,
+            &style.variant_combo,
+            &expanded_combo_selectors,
+            context,
+        );
     } else {
         evaluate_vanilla_style(style, context)
     }
@@ -176,7 +191,7 @@ fn evaluate_variant_styles<F: FileResolver>(
     };
 
     let render_node = if let Some(render) = current_component.get_render_expr() {
-        &render.node
+        render.node.as_ref().expect("Node must exist")
     } else {
         return;
     };
@@ -194,9 +209,9 @@ fn evaluate_variant_styles<F: FileResolver>(
     );
 
     let render_node_ns = get_style_namespace(
-        match render_node {
-            ast::RenderNode::Element(expr) => &expr.name,
-            ast::RenderNode::Text(expr) => &expr.name,
+        match render_node.value.as_ref().expect("Value must exist") {
+            ast::render_node::Value::Element(expr) => &expr.name,
+            ast::render_node::Value::Text(expr) => &expr.name,
             _ => &None,
         },
         &render_node.get_id(),
@@ -211,7 +226,9 @@ fn evaluate_variant_styles<F: FileResolver>(
 
     for variant in variants {
         for item in &current_component.body {
-            if let ast::ComponentBodyItem::Variant(variant2) = item {
+            if let ast::component_body_item::Value::Variant(variant2) =
+                item.value.as_ref().expect("Value must exist")
+            {
                 if variant.path.get(0) == Some(&variant2.name) {
                     assoc_variants.push(variant2);
                 }
@@ -435,14 +452,14 @@ fn collect_triggers<F: FileResolver>(
     context: &mut DocumentContext<F>,
 ) {
     for trigger in triggers {
-        match trigger {
-            ast::TriggerBodyItem::Boolean(expr) => {
+        match trigger.value.as_ref().expect("Trigger value must exist") {
+            ast::trigger_body_item::Value::Boolean(expr) => {
                 into.push(VariantTrigger::Boolean(expr.value));
             }
-            ast::TriggerBodyItem::String(expr) => {
+            ast::trigger_body_item::Value::Str(expr) => {
                 into.push(VariantTrigger::Selector(expr.value.to_string()));
             }
-            ast::TriggerBodyItem::Reference(expr) => {
+            ast::trigger_body_item::Value::Reference(expr) => {
                 if let Some(info) = context.graph.get_ref(&expr.path, context.path) {
                     if let graph_ref::Expr::Trigger(trigger) = &info.expr {
                         collect_triggers(&trigger.body, into, context);
@@ -454,7 +471,7 @@ fn collect_triggers<F: FileResolver>(
 }
 
 fn evaluate_atom<F: FileResolver>(atom: &ast::Atom, context: &DocumentContext<F>) -> String {
-    stringify_style_decl_value(&atom.value, context)
+    stringify_style_decl_value(atom.value.as_ref().expect("Value must exist"), context)
 }
 
 fn evaluate_vanilla_style<F: FileResolver>(style: &ast::Style, context: &mut DocumentContext<F>) {
@@ -502,12 +519,10 @@ fn create_style_declarations<F: FileResolver>(
     // these declarations should be overwritten. Also note that we're
     // including the entire body of extended styles to to cover !important statements.
     // This could be smarter at some point.
-    if let Some(extends) = &style.extends {
-        for reference in extends {
-            if let Some(reference) = context.graph.get_ref(&reference.path, context.path) {
-                if let graph_ref::Expr::Style(style) = &reference.expr {
-                    decls.extend(create_style_declarations(style, context));
-                }
+    for reference in &style.extends {
+        if let Some(reference) = context.graph.get_ref(&reference.path, context.path) {
+            if let graph_ref::Expr::Style(style) = &reference.expr {
+                decls.extend(create_style_declarations(style, context));
             }
         }
     }
@@ -557,7 +572,14 @@ fn stringify_style_decl_value<F: FileResolver>(
         }
         css_ast::declaration_value::Value::FunctionCall(expr) => {
             if expr.name == "var" && !expr.name.starts_with("--") {
-                if let css_ast::declaration_value::Value::Reference(reference) = &expr.arguments.as_ref().expect("arguments missing").value.as_ref().expect("arguments value missing") {
+                if let css_ast::declaration_value::Value::Reference(reference) = &expr
+                    .arguments
+                    .as_ref()
+                    .expect("arguments missing")
+                    .value
+                    .as_ref()
+                    .expect("arguments value missing")
+                {
                     if let Some(reference) = context.graph.get_ref(&reference.path, context.path) {
                         if let graph_ref::Expr::Atom(atom) = reference.expr {
                             return format!("var(--{})", atom.id);
@@ -571,8 +593,14 @@ fn stringify_style_decl_value<F: FileResolver>(
                 "{}({})",
                 expr.name,
                 match expr.name.as_str() {
-                    "url" => stringify_url_arg_value(&expr.arguments.as_ref().expect("arguments missing"), context),
-                    _ => stringify_style_decl_value(&expr.arguments.as_ref().expect("arguments missing"), context),
+                    "url" => stringify_url_arg_value(
+                        &expr.arguments.as_ref().expect("arguments missing"),
+                        context
+                    ),
+                    _ => stringify_style_decl_value(
+                        &expr.arguments.as_ref().expect("arguments missing"),
+                        context
+                    ),
                 }
             )
         }

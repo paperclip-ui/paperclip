@@ -13,15 +13,19 @@ pub fn serialize(document: &ast::Document) -> String {
 
 fn serialize_document(document: &ast::Document, context: &mut Context) {
     for item in &document.body {
-        match item {
-            ast::DocumentBodyItem::DocComment(docco) => serialize_doc_comment2(docco, context),
-            ast::DocumentBodyItem::Import(imp) => serialize_import(imp, context),
-            ast::DocumentBodyItem::Atom(imp) => serialize_atom(imp, context),
-            ast::DocumentBodyItem::Component(comp) => serialize_component(comp, context),
-            ast::DocumentBodyItem::Style(style) => serialize_style(style, context),
-            ast::DocumentBodyItem::Element(element) => serialize_element(element, context),
-            ast::DocumentBodyItem::Trigger(element) => serialize_trigger(element, context),
-            ast::DocumentBodyItem::Text(text) => serialize_text(text, context),
+        match item.value.as_ref().expect("Value must exist") {
+            ast::document_body_item::Value::DocComment(docco) => {
+                serialize_doc_comment2(&docco, context)
+            }
+            ast::document_body_item::Value::Import(imp) => serialize_import(&imp, context),
+            ast::document_body_item::Value::Atom(imp) => serialize_atom(&imp, context),
+            ast::document_body_item::Value::Component(comp) => serialize_component(&comp, context),
+            ast::document_body_item::Value::Style(style) => serialize_style(&style, context),
+            ast::document_body_item::Value::Element(element) => {
+                serialize_element(&element, context)
+            }
+            ast::document_body_item::Value::Trigger(expr) => serialize_trigger(&expr, context),
+            ast::document_body_item::Value::Text(text) => serialize_text(&text, context),
         }
     }
 }
@@ -40,15 +44,15 @@ fn serialize_trigger_body(body: &Vec<ast::TriggerBodyItem>, context: &mut Contex
     context.add_buffer("{\n");
     context.start_block();
     for item in body {
-        match item {
-            ast::TriggerBodyItem::String(value) => {
+        match item.value.as_ref().expect("Value must exist") {
+            ast::trigger_body_item::Value::Str(value) => {
                 context.add_buffer(format!("\"{}\"", value.value).as_str());
             }
-            ast::TriggerBodyItem::Reference(reference) => {
-                serialize_reference(reference, context);
+            ast::trigger_body_item::Value::Reference(expr) => {
+                serialize_reference(&expr, context);
             }
-            ast::TriggerBodyItem::Boolean(reference) => {
-                serialize_boolean(reference, context);
+            ast::trigger_body_item::Value::Boolean(expr) => {
+                serialize_boolean(&expr, context);
             }
         }
         context.add_buffer("\n");
@@ -62,7 +66,7 @@ fn serialize_atom(atom: &ast::Atom, context: &mut Context) {
         context.add_buffer("public ");
     }
     context.add_buffer(format!("token {} ", atom.name).as_str());
-    serialize_decl_value(&atom.value, context);
+    serialize_decl_value(&atom.value.as_ref().expect("Value must exist"), context);
 }
 
 fn serialize_doc_comment2(docco: &docco_ast::Comment, context: &mut Context) {
@@ -78,10 +82,12 @@ fn serialize_component(component: &ast::Component, context: &mut Context) {
     context.start_block();
 
     for item in &component.body {
-        match item {
-            ast::ComponentBodyItem::Render(render) => serialize_render(render, context),
-            ast::ComponentBodyItem::Variant(variant) => serialize_variant(variant, context),
-            ast::ComponentBodyItem::Script(script) => serialize_script(script, context),
+        match item.value.as_ref().expect("Value must exist") {
+            ast::component_body_item::Value::Render(render) => serialize_render(&render, context),
+            ast::component_body_item::Value::Variant(variant) => {
+                serialize_variant(&variant, context)
+            }
+            ast::component_body_item::Value::Script(script) => serialize_script(&script, context),
         }
     }
     context.end_block();
@@ -97,17 +103,18 @@ fn serialize_style(style: &ast::Style, context: &mut Context) {
         context.add_buffer(format!(" {}", name).as_str());
     }
 
-    if let Some(variants) = &style.variant_combo {
+    if style.variant_combo.len() > 0 {
         context.add_buffer(" variant ");
-        serialize_items(variants, context, serialize_reference, " + ");
+        serialize_items(&style.variant_combo, context, serialize_reference, " + ");
     }
 
-    if let Some(extends) = &style.extends {
+    if style.extends.len() > 0 {
         context.add_buffer(
             format!(
                 " extends {}",
-                extends
-                    .into_iter()
+                style
+                    .extends
+                    .iter()
                     .map(|reference| { reference.path.join(".") })
                     .collect::<Vec<String>>()
                     .join(", ")
@@ -134,9 +141,11 @@ fn serialize_override(over: &ast::Override, context: &mut Context) {
 
     context.start_block();
     for item in &over.body {
-        match item {
-            ast::OverrideBodyItem::Style(style) => serialize_style(style, context),
-            ast::OverrideBodyItem::Variant(variant) => serialize_variant(variant, context),
+        match item.value.as_ref().expect("Value must exist") {
+            ast::override_body_item::Value::Style(style) => serialize_style(&style, context),
+            ast::override_body_item::Value::Variant(variant) => {
+                serialize_variant(&variant, context)
+            }
         }
     }
     context.end_block();
@@ -145,14 +154,14 @@ fn serialize_override(over: &ast::Override, context: &mut Context) {
 
 fn serialize_render(imp: &ast::Render, context: &mut Context) {
     context.add_buffer("render ");
-    serialize_render_node(&imp.node, context);
+    serialize_render_node(&imp.node.as_ref().expect("node must exist"), context);
 }
 
 fn serialize_render_node(node: &ast::RenderNode, context: &mut Context) {
-    match node {
-        ast::RenderNode::Text(text) => serialize_text(text, context),
-        ast::RenderNode::Slot(slot) => serialize_slot(slot, context),
-        ast::RenderNode::Element(text) => serialize_element(text, context),
+    match node.value.as_ref().expect("Value must exist") {
+        ast::render_node::Value::Text(text) => serialize_text(&text, context),
+        ast::render_node::Value::Slot(slot) => serialize_slot(&slot, context),
+        ast::render_node::Value::Element(elemnt) => serialize_element(&elemnt, context),
     }
 }
 
@@ -166,8 +175,8 @@ fn serialize_text(node: &ast::TextNode, context: &mut Context) {
         context.add_buffer(" {\n");
         context.start_block();
         for item in &node.body {
-            match item {
-                ast::TextNodeBodyItem::Style(style) => serialize_style(style, context),
+            match item.value.as_ref().expect("Value must exist") {
+                ast::text_node_body_item::Value::Style(style) => serialize_style(style, context),
             }
         }
         context.end_block();
@@ -190,13 +199,15 @@ fn serialize_element(node: &ast::Element, context: &mut Context) {
         context.add_buffer(" {\n");
         context.start_block();
         for item in &node.body {
-            match item {
-                ast::ElementBodyItem::Element(element) => serialize_element(element, context),
-                ast::ElementBodyItem::Slot(slot) => serialize_slot(slot, context),
-                ast::ElementBodyItem::Insert(insert) => serialize_insert(insert, context),
-                ast::ElementBodyItem::Style(style) => serialize_style(style, context),
-                ast::ElementBodyItem::Override(over) => serialize_override(over, context),
-                ast::ElementBodyItem::Text(text) => serialize_text(text, context),
+            match item.value.as_ref().expect("Value must exist") {
+                ast::element_body_item::Value::Element(element) => {
+                    serialize_element(element, context)
+                }
+                ast::element_body_item::Value::Slot(slot) => serialize_slot(slot, context),
+                ast::element_body_item::Value::Insert(insert) => serialize_insert(insert, context),
+                ast::element_body_item::Value::Style(style) => serialize_style(style, context),
+                ast::element_body_item::Value::Override(over) => serialize_override(over, context),
+                ast::element_body_item::Value::Text(text) => serialize_text(text, context),
             }
         }
         context.end_block();
@@ -226,7 +237,7 @@ fn serialize_parameters(parameters: &Vec<ast::Parameter>, context: &mut Context)
 
 fn serialize_parameter(param: &ast::Parameter, context: &mut Context) {
     context.add_buffer(format!("{}: ", param.name).as_str());
-    serialize_simple_expression(&param.value, context);
+    serialize_simple_expression(&param.value.as_ref().expect("Value must exist"), context);
 }
 
 fn serialize_slot(slot: &ast::Slot, context: &mut Context) {
@@ -236,9 +247,9 @@ fn serialize_slot(slot: &ast::Slot, context: &mut Context) {
         context.add_buffer(" {\n");
         context.start_block();
         for item in &slot.body {
-            match item {
-                ast::SlotBodyItem::Element(element) => serialize_element(element, context),
-                ast::SlotBodyItem::Text(text) => serialize_text(text, context),
+            match item.value.as_ref().expect("Value must exist") {
+                ast::slot_body_item::Value::Element(element) => serialize_element(element, context),
+                ast::slot_body_item::Value::Text(text) => serialize_text(text, context),
             }
         }
         context.end_block();
@@ -254,10 +265,10 @@ fn serialize_insert(insert: &ast::Insert, context: &mut Context) {
         context.add_buffer(" {\n");
         context.start_block();
         for item in &insert.body {
-            match item {
-                ast::InsertBody::Element(element) => serialize_element(element, context),
-                ast::InsertBody::Text(text) => serialize_text(text, context),
-                ast::InsertBody::Slot(text) => serialize_slot(text, context),
+            match &item.value.as_ref().expect("Value must exist") {
+                ast::insert_body::Value::Element(element) => serialize_element(element, context),
+                ast::insert_body::Value::Text(text) => serialize_text(text, context),
+                ast::insert_body::Value::Slot(text) => serialize_slot(text, context),
             }
         }
         context.end_block();
@@ -268,12 +279,12 @@ fn serialize_insert(insert: &ast::Insert, context: &mut Context) {
 }
 
 fn serialize_simple_expression(node: &ast::SimpleExpression, context: &mut Context) {
-    match node {
-        ast::SimpleExpression::String(value) => serialize_string(value, context),
-        ast::SimpleExpression::Number(value) => serialize_number(value, context),
-        ast::SimpleExpression::Reference(value) => serialize_reference(value, context),
-        ast::SimpleExpression::Boolean(value) => serialize_boolean(value, context),
-        ast::SimpleExpression::Array(value) => serialize_array(value, context),
+    match node.value.as_ref().expect("Value must exist") {
+        ast::simple_expression::Value::Str(value) => serialize_string(value, context),
+        ast::simple_expression::Value::Number(value) => serialize_number(value, context),
+        ast::simple_expression::Value::Reference(value) => serialize_reference(value, context),
+        ast::simple_expression::Value::Boolean(value) => serialize_boolean(value, context),
+        ast::simple_expression::Value::Array(value) => serialize_array(value, context),
     }
 }
 
@@ -281,7 +292,7 @@ fn serialize_string(node: &base_ast::Str, context: &mut Context) {
     context.add_buffer(format!("\"{}\"", node.value).as_str());
 }
 
-fn serialize_number(_node: &ast::Number, _context: &mut Context) {}
+fn serialize_number(_node: &base_ast::Number, _context: &mut Context) {}
 fn serialize_reference(node: &ast::Reference, context: &mut Context) {
     context.add_buffer(node.path.join(".").as_str());
 }
@@ -309,7 +320,7 @@ fn serialize_items<TItem, TSerializeFun>(
     }
 }
 
-fn serialize_boolean(node: &ast::Boolean, context: &mut Context) {
+fn serialize_boolean(node: &base_ast::Boolean, context: &mut Context) {
     context.add_buffer(if node.value { "true" } else { "false" });
 }
 

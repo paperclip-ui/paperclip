@@ -18,29 +18,30 @@ impl Position {
     }
 }
 
-
 impl U16Position {
-  pub fn new(pos: usize, line: usize, column: usize) -> U16Position {
-      U16Position {
-          pos: pos as u32,
-          line: line as u32,
-          column: column as u32,
-      }
-  }
-  pub fn range_from(&self, pos: U16Position) -> Range {
-      Range::new(self.clone(), pos)
-  }
-  pub fn range_to(&self, pos: U16Position) -> Range {
-      Range::new(pos, self.clone())
-  }
+    pub fn new(pos: usize, line: usize, column: usize) -> U16Position {
+        U16Position {
+            pos: pos as u32,
+            line: line as u32,
+            column: column as u32,
+        }
+    }
+    pub fn range_from(&self, pos: U16Position) -> Range {
+        Range::new(self.clone(), pos)
+    }
+    pub fn range_to(&self, pos: U16Position) -> Range {
+        Range::new(pos, self.clone())
+    }
 }
 
-
 impl Range {
-  pub fn new(start: U16Position, end: U16Position) -> Range {
-      Range { start: Some(start), end: Some(end) }
-  }
-  pub fn nil() -> Range {
-      Range::new(U16Position::new(0, 0, 0), U16Position::new(0, 0, 0))
-  }
+    pub fn new(start: U16Position, end: U16Position) -> Range {
+        Range {
+            start: Some(start),
+            end: Some(end),
+        }
+    }
+    pub fn nil() -> Range {
+        Range::new(U16Position::new(0, 0, 0), U16Position::new(0, 0, 0))
+    }
 }

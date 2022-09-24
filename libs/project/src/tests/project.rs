@@ -28,7 +28,7 @@ impl ProjectIO for MockIO {
         }
     }
     fn get_all_designer_files(&self, _context: &ConfigContext) -> Vec<String> {
-      vec![]
+        vec![]
     }
 }
 

@@ -12,8 +12,8 @@ use paperclip_evaluator::html::serializer::serialize as serialize_html;
 use paperclip_parser::graph::Graph;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
-use textwrap::indent;
 use std::sync::Mutex;
+use textwrap::indent;
 
 struct TargetCompilerResolver<IO: FileReader + FileResolver> {
     io: IO,
@@ -56,10 +56,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
         Self {
             context: context.clone(),
             all_compiled_css: Mutex::new(BTreeMap::new()),
-            file_resolver: TargetCompilerResolver {
-                io,
-                context
-            },
+            file_resolver: TargetCompilerResolver { io, context },
         }
     }
 
@@ -77,8 +74,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
                 .await?;
             for (file_path, content) in compiled_files {
                 if self.context.options.main_css_file_name != None && file_path.contains(".css") {
-                    all_compiled_css
-                        .insert(file_path.to_string(), content.to_string());
+                    all_compiled_css.insert(file_path.to_string(), content.to_string());
                 } else {
                     all_compiled_files.insert(file_path.to_string(), content.to_string());
                 }

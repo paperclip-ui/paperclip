@@ -9,11 +9,7 @@ pub struct Loader<TIO: ProjectIO> {
 
 impl<TIO: ProjectIO> Loader<TIO> {
     pub fn start(directory: &str, config_name: &str, io: TIO) -> Result<Self> {
-        let config_context = ConfigContext::load(
-            directory,
-            Some(config_name.to_string()),
-            &io
-        )?;
+        let config_context = ConfigContext::load(directory, Some(config_name.to_string()), &io)?;
 
         Ok(Self {
             project: Project::new(config_context, io),
@@ -27,5 +23,3 @@ impl<TIO: ProjectIO> Loader<TIO> {
 }
 
 impl Finalize for Loader<LocalIO> {}
-
-

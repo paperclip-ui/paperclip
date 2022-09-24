@@ -101,27 +101,6 @@ pub struct Element {
     pub body: Vec<ElementBodyItem>,
 }
 
-impl Element {
-    pub fn is_stylable(&self) -> bool {
-        self.name != None || body_contains!(&self.body, ElementBodyItem::Style(_))
-    }
-    pub fn get_visible_children(&self) -> Vec<&ElementBodyItem> {
-        self.body
-            .iter()
-            .filter(|child| {
-                matches!(
-                    child,
-                    ElementBodyItem::Text(_)
-                        | ElementBodyItem::Element(_)
-                        | ElementBodyItem::Slot(_)
-                )
-            })
-            .collect()
-    }
-    pub fn get_inserts(&self) -> Vec<&Insert> {
-        get_body_items!(&self.body, ElementBodyItem::Insert, Insert)
-    }
-}
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Insert {
@@ -248,15 +227,6 @@ pub enum RenderNode {
     Text(TextNode),
 }
 
-impl RenderNode {
-    pub fn get_id(&self) -> &String {
-        match self {
-            RenderNode::Element(expr) => &expr.id,
-            RenderNode::Slot(expr) => &expr.id,
-            RenderNode::Text(expr) => &expr.id,
-        }
-    }
-}
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum ComponentBodyItem {

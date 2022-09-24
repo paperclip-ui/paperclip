@@ -1,6 +1,6 @@
+use crate::config::ConfigContext;
 use futures_core::stream::Stream;
 use paperclip_parser::graph::io::IO as GraphIO;
-use crate::config::ConfigContext;
 
 #[derive(Debug)]
 pub enum WatchEventKind {

@@ -1,0 +1,51 @@
+syntax = "proto3";
+import "ast/base.proto";
+package ast.docco;
+
+
+message Comment {
+  string id = 1;
+  ast.base.Range range = 2;
+  repeated CommentBodyItem body = 3;
+}
+
+message CommentBodyItem {
+  oneof value {
+    ast.base.Str text = 1;
+    Property property = 2;
+  }
+}
+
+message Property {
+  string id = 1;
+  ast.base.Range range = 2;
+  string name = 3;
+  PropertyValue value = 4;
+}
+
+message PropertyValue {
+  oneof value {
+    ast.base.Str str = 1;
+    Parameters parameters = 2;
+  }
+}
+
+message Parameters {
+  string id = 1;
+  ast.base.Range range = 2;
+  repeated Parameter items = 3;
+}
+
+message Parameter {
+  string id = 1;
+  ast.base.Range range = 2;
+  string name = 3;
+  ParameterValue value = 4;
+}
+
+message ParameterValue {
+  oneof value {
+    ast.base.Str str = 1;
+    ast.base.Number number = 2;
+  }
+}

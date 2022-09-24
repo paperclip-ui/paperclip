@@ -3,7 +3,7 @@ use clap::Args;
 use futures_util::pin_mut;
 use futures_util::stream::StreamExt;
 use paperclip_project::config::DEFAULT_CONFIG_NAME;
-use paperclip_project::{CompileOptions, Project, LocalIO, ConfigContext};
+use paperclip_project::{CompileOptions, ConfigContext, LocalIO, Project};
 use std::env;
 use std::fs::File;
 use std::io::prelude::*;
@@ -30,7 +30,6 @@ pub async fn build(args: BuildArgs) -> Result<()> {
 
     let mut project = Project::new(config_context, io);
     project.load_all_files().await?;
-    
 
     let s = project.compile_all(CompileOptions { watch: args.watch });
     pin_mut!(s);

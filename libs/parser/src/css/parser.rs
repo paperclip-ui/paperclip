@@ -166,7 +166,9 @@ fn parse_decl_value(
     }
 }
 
-fn parse_keyword(context: &mut ParserContext) -> Result<ast::declaration_value::Value, err::ParserError> {
+fn parse_keyword(
+    context: &mut ParserContext,
+) -> Result<ast::declaration_value::Value, err::ParserError> {
     Ok(if context.peek(1) == &Some(Token::ParenOpen) {
         ast::declaration_value::Value::FunctionCall(Box::new(parse_call(context)?))
     } else {
@@ -174,7 +176,9 @@ fn parse_keyword(context: &mut ParserContext) -> Result<ast::declaration_value::
     })
 }
 
-fn parse_string(context: &mut ParserContext) -> Result<ast::declaration_value::Value, err::ParserError> {
+fn parse_string(
+    context: &mut ParserContext,
+) -> Result<ast::declaration_value::Value, err::ParserError> {
     if let Some(Token::String(value)) = context.curr_token {
         let start = context.curr_u16pos.clone();
         context.next_token()?;
@@ -193,7 +197,9 @@ fn trim_string(value: &str) -> String {
     value[1..value.len() - 1].to_string()
 }
 
-fn parse_hex_color(context: &mut ParserContext) -> Result<ast::declaration_value::Value, err::ParserError> {
+fn parse_hex_color(
+    context: &mut ParserContext,
+) -> Result<ast::declaration_value::Value, err::ParserError> {
     let start = context.curr_u16pos.clone();
     let value = if let Some(Token::HexColor(value)) = context.curr_token {
         str::from_utf8(value).unwrap().to_string()

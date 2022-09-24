@@ -1,2 +1,1 @@
-mod state;
-pub use self::state::*;
+pub use paperclip_proto::ast::docco::*;

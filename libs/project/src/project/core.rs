@@ -5,8 +5,8 @@ use crate::project_compiler::ProjectCompiler;
 use anyhow::Result;
 use futures_core::stream::Stream;
 use paperclip_parser::graph::Graph;
-use std::sync::{Arc, Mutex};
 use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
 
 ///
 /// The main entry point for managing a Paperclip project
@@ -41,7 +41,8 @@ impl<IO: ProjectIO> Project<IO> {
     }
 
     pub async fn load_all_files(&mut self) -> Result<()> {
-        self.load_files(&self.io.get_all_designer_files(&self.config_context)).await
+        self.load_files(&self.io.get_all_designer_files(&self.config_context))
+            .await
     }
 
     ///
@@ -70,7 +71,11 @@ impl<IO: ProjectIO> Project<IO> {
     }
 
     pub async fn load_file(&mut self, file: &str) -> Result<()> {
-        self.graph.lock().unwrap().load::<IO>(file, &self.io).await?;
+        self.graph
+            .lock()
+            .unwrap()
+            .load::<IO>(file, &self.io)
+            .await?;
         Ok(())
     }
 

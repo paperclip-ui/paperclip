@@ -60,7 +60,6 @@ pub struct Config {
     pub compiler_options: Option<Vec<CompilerOptions>>,
 }
 
-
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct CompilerOptions {
     /// target compiler to use. Default is all of the ones installed.

@@ -1,4 +1,5 @@
 use super::core::{ProjectIO, WatchEvent, WatchEventKind};
+use crate::config::ConfigContext;
 use crate::utils::watch_local::async_watch;
 use anyhow::{Error, Result};
 use async_stream::stream;
@@ -11,7 +12,6 @@ use path_absolutize::*;
 use std::fs;
 use std::path::Path;
 use wax::Glob;
-use crate::config::{ConfigContext};
 
 #[derive(Clone, Default)]
 pub struct LocalIO;
@@ -44,7 +44,6 @@ impl ProjectIO for LocalIO {
         }
     }
     fn get_all_designer_files(&self, config_context: &ConfigContext) -> Vec<String> {
-
         let pattern = config_context
             .config
             .get_relative_source_files_glob_pattern();

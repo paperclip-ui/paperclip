@@ -56,7 +56,7 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
             config_context,
             compile_cache: Mutex::new(HashMap::new()),
             dep_cache: Mutex::new(HashMap::new()),
-            io
+            io,
         }
     }
 
@@ -151,8 +151,7 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
 
         // store the hash of the dep so that we can shortcircuit early
         for dep in &deps_to_compile {
-            dep_cache
-                .insert(dep.path.to_string(), dep.hash.to_string());
+            dep_cache.insert(dep.path.to_string(), dep.hash.to_string());
         }
 
         let files_to_compile: Vec<String> = deps_to_compile
@@ -167,8 +166,7 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
             .filter(|(path, content)| compile_cache.get(path) != Some(content))
             .collect();
 
-        compile_cache
-            .extend(compiled_files.clone());
+        compile_cache.extend(compiled_files.clone());
 
         Ok(compiled_files)
     }

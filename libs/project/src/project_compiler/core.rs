@@ -7,6 +7,7 @@ use futures_core::stream::Stream;
 use futures_util::pin_mut;
 use futures_util::stream::StreamExt;
 use paperclip_common::get_or_short;
+use paperclip_common::pc::is_paperclip_file;
 use paperclip_parser::graph::Graph;
 use std::collections::HashMap;
 use std::ffi::OsStr;
@@ -97,7 +98,7 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
                 while let Some(value) = s.next().await {
 
                     // Only touch PC files since it's the only thing that we can compile
-                    if Path::new(&value.path).extension() == Some(OsStr::new("pc")) {
+                    if is_paperclip_file(&value.path) {
                         for (file_path, content) in self.maybe_recompile_file(&value.path, &graph).await? {
                             yield (file_path.to_string(), content.to_string());
                         }

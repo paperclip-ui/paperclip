@@ -1,5 +1,5 @@
-import { DesignerClient } from "../../../proto/designer_grpc_web_pb";
-import { FileRequest } from "../../../proto/designer_pb";
+import { DesignerClient } from "@paperclip-ui/proto/lib/service/designer_grpc_web_pb";
+import { FileRequest } from "@paperclip-ui/proto/lib/service/designer_pb";
 import { Engine } from "../../../modules/machine/engine";
 import { Dispatch } from "../../../modules/machine/events";
 import { DesignerEngineEvent } from "./events";

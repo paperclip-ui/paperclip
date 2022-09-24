@@ -6,12 +6,12 @@ use tonic::{Request, Response, Status};
 
 use paperclip_project::{ConfigContext, Project, ProjectIO};
 use paperclip_proto::service::designer::designer_server::Designer;
-use paperclip_proto::service::designer::{file_response, FileRequest, FileResponse};
+use paperclip_proto::service::designer::{FileRequest, FileResponse, file_response};
+use paperclip_common::pc::is_paperclip_file;
 use std::sync::{Arc, Mutex};
 use tokio::sync::mpsc;
 
 use tokio_stream::{wrappers::ReceiverStream, StreamExt};
-// use tonic::{transport::Server, Request, Response, Status, Streaming};
 
 type OpenFileResult<T> = Result<Response<T>, Status>;
 type ResponseStream = Pin<Box<dyn Stream<Item = Result<FileResponse, Status>> + Send>>;
@@ -38,14 +38,21 @@ impl<IO: ProjectIO + 'static> Designer for DesignerService<IO> {
     ) -> OpenFileResult<Self::OpenFileStream> {
         let (mut tx, rx) = mpsc::channel(4);
 
+        println!("OK");
+
         tokio::spawn(async move {
-            println!("OK");
-            tx.send(Ok(FileResponse {
-                raw_content: vec![],
-                data: None,
-            }))
-            .await
-            .unwrap();
+
+            let path = &request.into_inner().path;
+            
+
+            println!("FILE {}", path);
+
+            if is_paperclip_file(&path) {
+                println!("OK");
+            }
+
+
+            tx.send(Ok(FileResponse { raw_content: vec![], data: None })).await.unwrap();
         });
 
         Ok(Response::new(Box::pin(ReceiverStream::new(rx))))

@@ -129,6 +129,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/designer@workspace:libs/designer"
   dependencies:
+    "@paperclip-ui/proto": "workspace:^"
     css-loader: ^6.7.1
     css-minimizer-webpack-plugin: ^4.1.0
     google-protobuf: ^3.21.0
@@ -145,6 +146,15 @@ __metadata:
     webpack: ^5.74.0
     webpack-cli: ^4.10.0
     webpack-dev-server: ^4.11.1
+  languageName: unknown
+  linkType: soft
+
+"@paperclip-ui/proto@workspace:^, @paperclip-ui/proto@workspace:libs/proto":
+  version: 0.0.0-use.local
+  resolution: "@paperclip-ui/proto@workspace:libs/proto"
+  dependencies:
+    google-protobuf: ^3.21.0
+    protoc-gen-grpc-web: ^1.4.0
   languageName: unknown
   linkType: soft
 

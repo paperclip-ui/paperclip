@@ -3,13 +3,13 @@ use serde::Serialize;
 use std::error::Error;
 use std::fmt;
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum ErrorKind {
     UnexpectedToken,
     EOF,
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct ParserError {
     kind: ErrorKind,
     range: Range,

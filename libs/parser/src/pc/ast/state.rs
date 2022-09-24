@@ -25,7 +25,7 @@ macro_rules! get_body_items {
     }};
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Component {
     pub id: String,
     pub is_public: bool,
@@ -57,7 +57,7 @@ impl Component {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Variant {
     pub id: String,
     pub range: Range,
@@ -65,14 +65,14 @@ pub struct Variant {
     pub triggers: Vec<TriggerBodyItem>,
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Script {
     pub id: String,
     pub range: Range,
     pub parameters: Vec<Parameter>,
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Style {
     pub id: String,
     pub is_public: bool,
@@ -83,14 +83,14 @@ pub struct Style {
     pub declarations: Vec<css_ast::StyleDeclaration>,
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Render {
     pub id: String,
     pub range: Range,
     pub node: RenderNode,
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Element {
     pub namespace: Option<String>,
     pub tag_name: String,
@@ -123,7 +123,7 @@ impl Element {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Insert {
     pub name: String,
     pub id: String,
@@ -131,21 +131,21 @@ pub struct Insert {
     pub body: Vec<InsertBody>,
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum InsertBody {
     Element(Element),
     Text(TextNode),
     Slot(Slot),
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Array {
     pub items: Vec<SimpleExpression>,
     pub id: String,
     pub range: Range,
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Slot {
     pub id: String,
     pub range: Range,
@@ -153,13 +153,13 @@ pub struct Slot {
     pub body: Vec<SlotBodyItem>,
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum SlotBodyItem {
     Element(Element),
     Text(TextNode),
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Parameter {
     pub id: String,
     pub range: Range,
@@ -167,28 +167,28 @@ pub struct Parameter {
     pub value: SimpleExpression,
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Number {
     pub id: String,
     pub range: Range,
     pub value: String,
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Boolean {
     pub id: String,
     pub range: Range,
     pub value: bool,
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Reference {
     pub id: String,
     pub range: Range,
     pub path: Vec<String>,
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum SimpleExpression {
     String(Str),
     Number(Number),
@@ -197,7 +197,7 @@ pub enum SimpleExpression {
     Array(Array),
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum ElementBodyItem {
     Slot(Slot),
     Insert(Insert),
@@ -207,7 +207,7 @@ pub enum ElementBodyItem {
     Override(Override),
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct TextNode {
     pub id: String,
     pub name: Option<String>,
@@ -222,7 +222,7 @@ impl TextNode {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Override {
     pub id: String,
     pub path: Vec<String>,
@@ -230,18 +230,18 @@ pub struct Override {
     pub body: Vec<OverrideBodyItem>,
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum OverrideBodyItem {
     Style(Style),
     Variant(Variant),
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum TextNodeBodyItem {
     Style(Style),
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum RenderNode {
     Slot(Slot),
     Element(Element),
@@ -258,14 +258,14 @@ impl RenderNode {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum ComponentBodyItem {
     Render(Render),
     Variant(Variant),
     Script(Script),
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Import {
     pub id: String,
     pub range: Range,
@@ -273,7 +273,7 @@ pub struct Import {
     pub path: String,
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum DocumentBodyItem {
     Import(Import),
     Style(Style),
@@ -285,7 +285,7 @@ pub enum DocumentBodyItem {
     Element(Element),
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct DocumentCache {
     component_names: Option<HashSet<String>>,
 }
@@ -298,7 +298,7 @@ impl DocumentCache {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Document {
     pub id: String,
     pub range: Range,
@@ -349,7 +349,7 @@ impl Document {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Atom {
     pub id: String,
     pub is_public: bool,
@@ -358,7 +358,7 @@ pub struct Atom {
     pub value: css_ast::DeclarationValue,
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Trigger {
     pub id: String,
     pub range: Range,
@@ -367,7 +367,7 @@ pub struct Trigger {
     pub body: Vec<TriggerBodyItem>,
 }
 
-#[derive(Debug, PartialEq, Serialize, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum TriggerBodyItem {
     String(Str),
     Reference(Reference),

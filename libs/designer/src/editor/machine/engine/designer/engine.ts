@@ -14,7 +14,7 @@ export const createDesignerEngine = (
 
   const actions = createActions(client, dispatch);
   const handleEvent = createEventHandler(actions);
-  init(actions);
+  bootstrap(actions);
   const dispose = () => {};
 
   return {
@@ -59,9 +59,9 @@ const createEventHandler = (actions: Actions) => {
 };
 
 /**
- * Boostrap
+ * Bootstrap script that initializes things based on initial state
  */
 
-const init = ({ openFile }: Actions) => {
+const bootstrap = ({ openFile }: Actions) => {
   openFile(new URLSearchParams(window.location.search).get("file"));
 };

@@ -735,7 +735,7 @@ fn parse_string(context: &mut PCContext) -> Result<base_ast::Str, err::ParserErr
 
     Ok(base_ast::Str {
         id: context.next_id(),
-        range: base_ast::Range::new(start, end),
+        range: Some(base_ast::Range::new(start, end)),
         value,
     })
 }

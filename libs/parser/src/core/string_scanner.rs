@@ -36,9 +36,9 @@ impl<'src> StringScanner<'src> {
     }
     pub fn get_u16pos(&self) -> U16Position {
         U16Position {
-            pos: self.u16_pos,
-            line: self.u16_line,
-            column: self.u16_column,
+            pos: self.u16_pos as u32,
+            line: self.u16_line as u32,
+            column: self.u16_column as u32,
         }
     }
     pub fn slice_until<FF>(&mut self, from: usize, until: FF) -> &'src [u8]

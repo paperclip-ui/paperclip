@@ -1152,6 +1152,8 @@ dependencies = [
  "glob",
  "paperclip_common",
  "pretty_assertions",
+ "prost",
+ "prost-build",
  "serde",
  "serde_json",
  "textwrap",

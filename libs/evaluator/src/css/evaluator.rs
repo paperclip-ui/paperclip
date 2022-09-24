@@ -526,7 +526,7 @@ fn evaluate_style_declaration<F: FileResolver>(
         id: "dec".to_string(),
         source_id: decl.id.to_string(),
         name: decl.name.to_string(),
-        value: stringify_style_decl_value(&decl.value, context),
+        value: stringify_style_decl_value(&decl.value.as_ref().expect("value missing"), context),
     }
 }
 
@@ -534,30 +534,30 @@ fn stringify_style_decl_value<F: FileResolver>(
     decl: &css_ast::DeclarationValue,
     context: &DocumentContext<F>,
 ) -> String {
-    match decl {
-        css_ast::DeclarationValue::SpacedList(expr) => expr
+    match &decl.value.as_ref().unwrap() {
+        css_ast::declaration_value::Value::SpacedList(expr) => expr
             .items
             .iter()
             .map(|item| stringify_style_decl_value(item, context))
             .collect::<Vec<String>>()
             .join(" "),
-        css_ast::DeclarationValue::CommaList(expr) => expr
+        css_ast::declaration_value::Value::CommaList(expr) => expr
             .items
             .iter()
             .map(|item| stringify_style_decl_value(item, context))
             .collect::<Vec<String>>()
             .join(", "),
-        css_ast::DeclarationValue::Arithmetic(expr) => {
+        css_ast::declaration_value::Value::Arithmetic(expr) => {
             format!(
                 "{} {} {}",
-                stringify_style_decl_value(&expr.left, context),
+                stringify_style_decl_value(&expr.left.as_ref().expect("Left missing"), context),
                 expr.operator,
-                stringify_style_decl_value(&expr.right, context)
+                stringify_style_decl_value(&expr.right.as_ref().expect("Right missing"), context)
             )
         }
-        css_ast::DeclarationValue::FunctionCall(expr) => {
+        css_ast::declaration_value::Value::FunctionCall(expr) => {
             if expr.name == "var" && !expr.name.starts_with("--") {
-                if let css_ast::DeclarationValue::Reference(reference) = &expr.arguments.as_ref() {
+                if let css_ast::declaration_value::Value::Reference(reference) = &expr.arguments.as_ref().expect("arguments missing").value.as_ref().expect("arguments value missing") {
                     if let Some(reference) = context.graph.get_ref(&reference.path, context.path) {
                         if let graph_ref::Expr::Atom(atom) = reference.expr {
                             return format!("var(--{})", atom.id);
@@ -571,22 +571,22 @@ fn stringify_style_decl_value<F: FileResolver>(
                 "{}({})",
                 expr.name,
                 match expr.name.as_str() {
-                    "url" => stringify_url_arg_value(&expr.arguments, context),
-                    _ => stringify_style_decl_value(&expr.arguments, context),
+                    "url" => stringify_url_arg_value(&expr.arguments.as_ref().expect("arguments missing"), context),
+                    _ => stringify_style_decl_value(&expr.arguments.as_ref().expect("arguments missing"), context),
                 }
             )
         }
-        css_ast::DeclarationValue::HexColor(expr) => {
+        css_ast::declaration_value::Value::HexColor(expr) => {
             format!("#{}", expr.value)
         }
-        css_ast::DeclarationValue::Reference(expr) => expr.path.join("."),
-        css_ast::DeclarationValue::Measurement(expr) => {
+        css_ast::declaration_value::Value::Reference(expr) => expr.path.join("."),
+        css_ast::declaration_value::Value::Measurement(expr) => {
             format!("{}{}", expr.value, expr.unit)
         }
-        css_ast::DeclarationValue::Number(expr) => {
+        css_ast::declaration_value::Value::Number(expr) => {
             format!("{}", expr.value)
         }
-        css_ast::DeclarationValue::String(expr) => {
+        css_ast::declaration_value::Value::Str(expr) => {
             format!("\"{}\"", expr.value)
         }
     }
@@ -596,8 +596,8 @@ fn stringify_url_arg_value<F: FileResolver>(
     decl: &css_ast::DeclarationValue,
     context: &DocumentContext<F>,
 ) -> String {
-    match decl {
-        css_ast::DeclarationValue::String(expr) => {
+    match &decl.value.as_ref().expect("value missing") {
+        css_ast::declaration_value::Value::Str(expr) => {
             format!(
                 "\"{}\"",
                 context

@@ -78,7 +78,7 @@ pub fn parse_string(context: &mut ParserContext) -> Result<base_ast::Str, Parser
     let end = context.curr_u16pos.clone();
     Ok(base_ast::Str {
         id: context.next_id(),
-        range: Range::new(start, end),
+        range: Some(Range::new(start, end)),
         value,
     })
 }
@@ -119,7 +119,7 @@ pub fn parse_text(context: &mut ParserContext) -> Result<base_ast::Str, ParserEr
     let end = context.curr_u16pos.clone();
     Ok(base_ast::Str {
         id: context.next_id(),
-        range: Range::new(start, end),
+        range: Some(Range::new(start, end)),
         value: buffer.join(""),
     })
 }
@@ -131,7 +131,7 @@ pub fn parse_number(context: &mut ParserContext) -> Result<base_ast::Number, Par
     let end = context.curr_u16pos.clone();
     Ok(base_ast::Number {
         id: context.next_id(),
-        range: Range::new(start, end),
+        range: Some(Range::new(start, end)),
         value,
     })
 }

@@ -12,7 +12,7 @@ message StyleDeclaration {
 }
 
 message DeclarationValue {
-  oneof value {
+  oneof inner {
     ast.base.Number number = 1;
     Reference reference = 2;
     ast.base.Str str = 3;

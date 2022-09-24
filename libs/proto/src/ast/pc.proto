@@ -13,7 +13,7 @@ message Document {
 }
 
 message DocumentBodyItem {
-  oneof value {
+  oneof inner {
     Import import = 1;
     Style style = 2;
     Component component = 3;
@@ -51,7 +51,7 @@ message Component {
 }
 
 message ComponentBodyItem {
-  oneof value {
+  oneof inner {
     Render render = 1;
     Variant variant = 2;
     Script script = 3;
@@ -78,7 +78,7 @@ message Render {
 }
 
 message RenderNode {
-  oneof value {
+  oneof inner {
     Slot slot = 1;
     Element element = 2;
     TextNode text = 3;
@@ -102,7 +102,7 @@ message Trigger {
 }
 
 message TriggerBodyItem {
-  oneof value {
+  oneof inner {
     ast.base.Str str = 1;
     Reference reference = 2;
     ast.base.Boolean boolean = 3;
@@ -118,7 +118,7 @@ message TextNode {
 }
 
 message TextNodeBodyItem {
-  oneof value {
+  oneof inner {
     Style style = 1;
   }
 }
@@ -131,7 +131,7 @@ message Parameter {
 }
 
 message SimpleExpression {
-  oneof value {
+  oneof inner {
     ast.base.Str str = 1;
     ast.base.Number number = 2;
     ast.base.Boolean boolean = 3;
@@ -163,7 +163,7 @@ message Element {
 }
 
 message ElementBodyItem {
-  oneof value {
+  oneof inner {
     Slot slot = 1;
     Insert insert = 2;
     Style style = 3;
@@ -181,7 +181,7 @@ message Slot {
 }
 
 message SlotBodyItem {
-  oneof value {
+  oneof inner {
     Element element = 1;
     TextNode text = 2;
   }
@@ -195,7 +195,7 @@ message Insert {
 }
 
 message InsertBody {
-  oneof value {
+  oneof inner {
     Element element = 1;
     TextNode text = 2;
     Slot slot = 3;
@@ -210,7 +210,7 @@ message Override {
 }
 
 message OverrideBodyItem {
-  oneof value {
+  oneof inner {
     Style style = 1;
     Variant variant = 2;
   }

@@ -10,7 +10,7 @@ message Comment {
 }
 
 message CommentBodyItem {
-  oneof value {
+  oneof inner {
     ast.base.Str text = 1;
     Property property = 2;
   }
@@ -24,7 +24,7 @@ message Property {
 }
 
 message PropertyValue {
-  oneof value {
+  oneof inner {
     ast.base.Str str = 1;
     Parameters parameters = 2;
   }
@@ -44,7 +44,7 @@ message Parameter {
 }
 
 message ParameterValue {
-  oneof value {
+  oneof inner {
     ast.base.Str str = 1;
     ast.base.Number number = 2;
   }

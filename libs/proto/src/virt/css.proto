@@ -7,7 +7,7 @@ message Document {
 }
 
 message Rule {
-  oneof value {
+  oneof inner {
     StyleRule style = 1;
     FontFaceRule fontFace = 2;
     ConditionRule media = 3;

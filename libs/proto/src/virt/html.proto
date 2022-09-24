@@ -38,7 +38,7 @@ message Document {
 }
 
 message Node {
-  oneof value {
+  oneof inner {
     Element element = 1;
     TextNode text_node = 2;
   }

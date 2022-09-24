@@ -87,14 +87,14 @@ fn evaluate_body_rule<F: FileResolver>(
     item: &ast::DocumentBodyItem,
     context: &mut DocumentContext<F>,
 ) {
-    match item.value.as_ref().expect("Item value must exist") {
-        ast::document_body_item::Value::Component(component) => {
+    match item.get_inner() {
+        ast::document_body_item::Inner::Component(component) => {
             evaluate_component(component, context);
         }
-        ast::document_body_item::Value::Element(component) => {
+        ast::document_body_item::Inner::Element(component) => {
             evaluate_element(component, context);
         }
-        ast::document_body_item::Value::Text(text) => {
+        ast::document_body_item::Inner::Text(text) => {
             evaluate_text(text, context);
         }
         _ => {}
@@ -106,9 +106,7 @@ fn evaluate_component<F: FileResolver>(
     context: &mut DocumentContext<F>,
 ) {
     for item in &component.body {
-        if let ast::component_body_item::Value::Render(render) =
-            item.value.as_ref().expect("Item value must exist")
-        {
+        if let ast::component_body_item::Inner::Render(render) = item.get_inner() {
             evaluate_render_node(
                 render.node.as_ref().expect("Render node value must exist"),
                 &mut context.within_component(component),
@@ -118,11 +116,11 @@ fn evaluate_component<F: FileResolver>(
 }
 
 fn evaluate_render_node<F: FileResolver>(node: &ast::RenderNode, context: &mut DocumentContext<F>) {
-    match node.value.as_ref().expect("Render node value must exist") {
-        ast::render_node::Value::Element(element) => {
+    match node.get_inner() {
+        ast::render_node::Inner::Element(element) => {
             evaluate_element(element, context);
         }
-        ast::render_node::Value::Text(element) => {
+        ast::render_node::Inner::Text(element) => {
             evaluate_text(element, context);
         }
         _ => {}
@@ -133,18 +131,14 @@ fn evaluate_element<F: FileResolver>(element: &ast::Element, context: &mut Docum
     let mut el_context = context.within_node(CurrentNode::Element(element));
 
     for item in &element.body {
-        match item
-            .value
-            .as_ref()
-            .expect("Element body item value must exist")
-        {
-            ast::element_body_item::Value::Style(style) => {
+        match item.get_inner() {
+            ast::element_body_item::Inner::Style(style) => {
                 evaluate_style(style, &mut el_context);
             }
-            ast::element_body_item::Value::Element(expr) => {
+            ast::element_body_item::Inner::Element(expr) => {
                 evaluate_element(expr, &mut el_context);
             }
-            ast::element_body_item::Value::Text(expr) => {
+            ast::element_body_item::Inner::Text(expr) => {
                 evaluate_text(expr, &mut el_context);
             }
             _ => {}
@@ -155,8 +149,8 @@ fn evaluate_text<F: FileResolver>(expr: &ast::TextNode, context: &mut DocumentCo
     let mut el_context = context.within_node(CurrentNode::TextNode(expr));
 
     for item in &expr.body {
-        match item.value.as_ref().expect("Text node value must exist") {
-            ast::text_node_body_item::Value::Style(style) => {
+        match item.get_inner() {
+            ast::text_node_body_item::Inner::Style(style) => {
                 evaluate_style(style, &mut el_context);
             }
         }
@@ -209,9 +203,9 @@ fn evaluate_variant_styles<F: FileResolver>(
     );
 
     let render_node_ns = get_style_namespace(
-        match render_node.value.as_ref().expect("Value must exist") {
-            ast::render_node::Value::Element(expr) => &expr.name,
-            ast::render_node::Value::Text(expr) => &expr.name,
+        match render_node.get_inner() {
+            ast::render_node::Inner::Element(expr) => &expr.name,
+            ast::render_node::Inner::Text(expr) => &expr.name,
             _ => &None,
         },
         &render_node.get_id(),
@@ -226,9 +220,7 @@ fn evaluate_variant_styles<F: FileResolver>(
 
     for variant in variants {
         for item in &current_component.body {
-            if let ast::component_body_item::Value::Variant(variant2) =
-                item.value.as_ref().expect("Value must exist")
-            {
+            if let ast::component_body_item::Inner::Variant(variant2) = item.get_inner() {
                 if variant.path.get(0) == Some(&variant2.name) {
                     assoc_variants.push(variant2);
                 }
@@ -452,14 +444,14 @@ fn collect_triggers<F: FileResolver>(
     context: &mut DocumentContext<F>,
 ) {
     for trigger in triggers {
-        match trigger.value.as_ref().expect("Trigger value must exist") {
-            ast::trigger_body_item::Value::Boolean(expr) => {
+        match trigger.get_inner() {
+            ast::trigger_body_item::Inner::Boolean(expr) => {
                 into.push(VariantTrigger::Boolean(expr.value));
             }
-            ast::trigger_body_item::Value::Str(expr) => {
+            ast::trigger_body_item::Inner::Str(expr) => {
                 into.push(VariantTrigger::Selector(expr.value.to_string()));
             }
-            ast::trigger_body_item::Value::Reference(expr) => {
+            ast::trigger_body_item::Inner::Reference(expr) => {
                 if let Some(info) = context.graph.get_ref(&expr.path, context.path) {
                     if let graph_ref::Expr::Trigger(trigger) = &info.expr {
                         collect_triggers(&trigger.body, into, context);
@@ -549,20 +541,20 @@ fn stringify_style_decl_value<F: FileResolver>(
     decl: &css_ast::DeclarationValue,
     context: &DocumentContext<F>,
 ) -> String {
-    match &decl.value.as_ref().unwrap() {
-        css_ast::declaration_value::Value::SpacedList(expr) => expr
+    match &decl.get_inner() {
+        css_ast::declaration_value::Inner::SpacedList(expr) => expr
             .items
             .iter()
             .map(|item| stringify_style_decl_value(item, context))
             .collect::<Vec<String>>()
             .join(" "),
-        css_ast::declaration_value::Value::CommaList(expr) => expr
+        css_ast::declaration_value::Inner::CommaList(expr) => expr
             .items
             .iter()
             .map(|item| stringify_style_decl_value(item, context))
             .collect::<Vec<String>>()
             .join(", "),
-        css_ast::declaration_value::Value::Arithmetic(expr) => {
+        css_ast::declaration_value::Inner::Arithmetic(expr) => {
             format!(
                 "{} {} {}",
                 stringify_style_decl_value(&expr.left.as_ref().expect("Left missing"), context),
@@ -570,15 +562,13 @@ fn stringify_style_decl_value<F: FileResolver>(
                 stringify_style_decl_value(&expr.right.as_ref().expect("Right missing"), context)
             )
         }
-        css_ast::declaration_value::Value::FunctionCall(expr) => {
+        css_ast::declaration_value::Inner::FunctionCall(expr) => {
             if expr.name == "var" && !expr.name.starts_with("--") {
-                if let css_ast::declaration_value::Value::Reference(reference) = &expr
+                if let css_ast::declaration_value::Inner::Reference(reference) = &expr
                     .arguments
                     .as_ref()
                     .expect("arguments missing")
-                    .value
-                    .as_ref()
-                    .expect("arguments value missing")
+                    .get_inner()
                 {
                     if let Some(reference) = context.graph.get_ref(&reference.path, context.path) {
                         if let graph_ref::Expr::Atom(atom) = reference.expr {
@@ -604,17 +594,17 @@ fn stringify_style_decl_value<F: FileResolver>(
                 }
             )
         }
-        css_ast::declaration_value::Value::HexColor(expr) => {
+        css_ast::declaration_value::Inner::HexColor(expr) => {
             format!("#{}", expr.value)
         }
-        css_ast::declaration_value::Value::Reference(expr) => expr.path.join("."),
-        css_ast::declaration_value::Value::Measurement(expr) => {
+        css_ast::declaration_value::Inner::Reference(expr) => expr.path.join("."),
+        css_ast::declaration_value::Inner::Measurement(expr) => {
             format!("{}{}", expr.value, expr.unit)
         }
-        css_ast::declaration_value::Value::Number(expr) => {
+        css_ast::declaration_value::Inner::Number(expr) => {
             format!("{}", expr.value)
         }
-        css_ast::declaration_value::Value::Str(expr) => {
+        css_ast::declaration_value::Inner::Str(expr) => {
             format!("\"{}\"", expr.value)
         }
     }
@@ -624,8 +614,8 @@ fn stringify_url_arg_value<F: FileResolver>(
     decl: &css_ast::DeclarationValue,
     context: &DocumentContext<F>,
 ) -> String {
-    match &decl.value.as_ref().expect("value missing") {
-        css_ast::declaration_value::Value::Str(expr) => {
+    match &decl.get_inner() {
+        css_ast::declaration_value::Inner::Str(expr) => {
             format!(
                 "\"{}\"",
                 context

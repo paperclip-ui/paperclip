@@ -1,19 +1,7 @@
+use crate::add_inner_wrapper;
+
 include!(concat!(env!("OUT_DIR"), "/ast.docco.rs"));
 
-impl property_value::Value {
-    pub fn wrap(self) -> PropertyValue {
-        PropertyValue { value: Some(self) }
-    }
-}
-
-impl parameter_value::Value {
-    pub fn wrap(self) -> ParameterValue {
-        ParameterValue { value: Some(self) }
-    }
-}
-
-impl comment_body_item::Value {
-    pub fn wrap(self) -> CommentBodyItem {
-        CommentBodyItem { value: Some(self) }
-    }
-}
+add_inner_wrapper!(property_value::Inner, PropertyValue);
+add_inner_wrapper!(parameter_value::Inner, ParameterValue);
+add_inner_wrapper!(comment_body_item::Inner, CommentBodyItem);

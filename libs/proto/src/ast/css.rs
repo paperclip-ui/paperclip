@@ -1,7 +1,4 @@
+use crate::add_inner_wrapper;
 include!(concat!(env!("OUT_DIR"), "/ast.css.rs"));
 
-impl declaration_value::Value {
-    pub fn wrap(self) -> DeclarationValue {
-        DeclarationValue { value: Some(self) }
-    }
-}
+add_inner_wrapper!(declaration_value::Inner, DeclarationValue);

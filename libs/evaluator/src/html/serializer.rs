@@ -12,11 +12,11 @@ pub fn serialize(document: &virt::Document) -> String {
 
 fn serialize_children(children: &Vec<virt::Node>, context: &mut Context) {
     for child in children {
-        match child.value.as_ref().expect("Value must exist") {
-            virt::node::Value::Element(node) => {
+        match child.get_inner() {
+            virt::node::Inner::Element(node) => {
                 serialize_element(&node, context);
             }
-            virt::node::Value::TextNode(node) => {
+            virt::node::Inner::TextNode(node) => {
                 serialize_text_node(&node, context);
             }
         }

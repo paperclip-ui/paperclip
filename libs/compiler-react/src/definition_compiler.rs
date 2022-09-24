@@ -16,9 +16,7 @@ fn compile_document(context: &mut Context) {
 
 fn compile_components(context: &mut Context) {
     for item in &context.dependency.document.body {
-        if let ast::document_body_item::Value::Component(component) =
-            item.value.as_ref().expect("Value must exist")
-        {
+        if let ast::document_body_item::Inner::Component(component) = item.get_inner() {
             if component.is_public {
                 compile_component(component, context);
             }

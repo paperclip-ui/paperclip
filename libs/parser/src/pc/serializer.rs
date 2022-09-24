@@ -13,19 +13,19 @@ pub fn serialize(document: &ast::Document) -> String {
 
 fn serialize_document(document: &ast::Document, context: &mut Context) {
     for item in &document.body {
-        match item.value.as_ref().expect("Value must exist") {
-            ast::document_body_item::Value::DocComment(docco) => {
+        match item.get_inner() {
+            ast::document_body_item::Inner::DocComment(docco) => {
                 serialize_doc_comment2(&docco, context)
             }
-            ast::document_body_item::Value::Import(imp) => serialize_import(&imp, context),
-            ast::document_body_item::Value::Atom(imp) => serialize_atom(&imp, context),
-            ast::document_body_item::Value::Component(comp) => serialize_component(&comp, context),
-            ast::document_body_item::Value::Style(style) => serialize_style(&style, context),
-            ast::document_body_item::Value::Element(element) => {
+            ast::document_body_item::Inner::Import(imp) => serialize_import(&imp, context),
+            ast::document_body_item::Inner::Atom(imp) => serialize_atom(&imp, context),
+            ast::document_body_item::Inner::Component(comp) => serialize_component(&comp, context),
+            ast::document_body_item::Inner::Style(style) => serialize_style(&style, context),
+            ast::document_body_item::Inner::Element(element) => {
                 serialize_element(&element, context)
             }
-            ast::document_body_item::Value::Trigger(expr) => serialize_trigger(&expr, context),
-            ast::document_body_item::Value::Text(text) => serialize_text(&text, context),
+            ast::document_body_item::Inner::Trigger(expr) => serialize_trigger(&expr, context),
+            ast::document_body_item::Inner::Text(text) => serialize_text(&text, context),
         }
     }
 }
@@ -44,14 +44,14 @@ fn serialize_trigger_body(body: &Vec<ast::TriggerBodyItem>, context: &mut Contex
     context.add_buffer("{\n");
     context.start_block();
     for item in body {
-        match item.value.as_ref().expect("Value must exist") {
-            ast::trigger_body_item::Value::Str(value) => {
+        match item.get_inner() {
+            ast::trigger_body_item::Inner::Str(value) => {
                 context.add_buffer(format!("\"{}\"", value.value).as_str());
             }
-            ast::trigger_body_item::Value::Reference(expr) => {
+            ast::trigger_body_item::Inner::Reference(expr) => {
                 serialize_reference(&expr, context);
             }
-            ast::trigger_body_item::Value::Boolean(expr) => {
+            ast::trigger_body_item::Inner::Boolean(expr) => {
                 serialize_boolean(&expr, context);
             }
         }
@@ -66,7 +66,7 @@ fn serialize_atom(atom: &ast::Atom, context: &mut Context) {
         context.add_buffer("public ");
     }
     context.add_buffer(format!("token {} ", atom.name).as_str());
-    serialize_decl_value(&atom.value.as_ref().expect("Value must exist"), context);
+    serialize_decl_value(atom.value.as_ref().expect("Value needs to exist"), context);
 }
 
 fn serialize_doc_comment2(docco: &docco_ast::Comment, context: &mut Context) {
@@ -82,12 +82,12 @@ fn serialize_component(component: &ast::Component, context: &mut Context) {
     context.start_block();
 
     for item in &component.body {
-        match item.value.as_ref().expect("Value must exist") {
-            ast::component_body_item::Value::Render(render) => serialize_render(&render, context),
-            ast::component_body_item::Value::Variant(variant) => {
+        match item.get_inner() {
+            ast::component_body_item::Inner::Render(render) => serialize_render(&render, context),
+            ast::component_body_item::Inner::Variant(variant) => {
                 serialize_variant(&variant, context)
             }
-            ast::component_body_item::Value::Script(script) => serialize_script(&script, context),
+            ast::component_body_item::Inner::Script(script) => serialize_script(&script, context),
         }
     }
     context.end_block();
@@ -141,9 +141,9 @@ fn serialize_override(over: &ast::Override, context: &mut Context) {
 
     context.start_block();
     for item in &over.body {
-        match item.value.as_ref().expect("Value must exist") {
-            ast::override_body_item::Value::Style(style) => serialize_style(&style, context),
-            ast::override_body_item::Value::Variant(variant) => {
+        match item.get_inner() {
+            ast::override_body_item::Inner::Style(style) => serialize_style(&style, context),
+            ast::override_body_item::Inner::Variant(variant) => {
                 serialize_variant(&variant, context)
             }
         }
@@ -158,10 +158,10 @@ fn serialize_render(imp: &ast::Render, context: &mut Context) {
 }
 
 fn serialize_render_node(node: &ast::RenderNode, context: &mut Context) {
-    match node.value.as_ref().expect("Value must exist") {
-        ast::render_node::Value::Text(text) => serialize_text(&text, context),
-        ast::render_node::Value::Slot(slot) => serialize_slot(&slot, context),
-        ast::render_node::Value::Element(elemnt) => serialize_element(&elemnt, context),
+    match node.get_inner() {
+        ast::render_node::Inner::Text(text) => serialize_text(&text, context),
+        ast::render_node::Inner::Slot(slot) => serialize_slot(&slot, context),
+        ast::render_node::Inner::Element(elemnt) => serialize_element(&elemnt, context),
     }
 }
 
@@ -175,8 +175,8 @@ fn serialize_text(node: &ast::TextNode, context: &mut Context) {
         context.add_buffer(" {\n");
         context.start_block();
         for item in &node.body {
-            match item.value.as_ref().expect("Value must exist") {
-                ast::text_node_body_item::Value::Style(style) => serialize_style(style, context),
+            match item.get_inner() {
+                ast::text_node_body_item::Inner::Style(style) => serialize_style(style, context),
             }
         }
         context.end_block();
@@ -199,15 +199,15 @@ fn serialize_element(node: &ast::Element, context: &mut Context) {
         context.add_buffer(" {\n");
         context.start_block();
         for item in &node.body {
-            match item.value.as_ref().expect("Value must exist") {
-                ast::element_body_item::Value::Element(element) => {
+            match item.get_inner() {
+                ast::element_body_item::Inner::Element(element) => {
                     serialize_element(element, context)
                 }
-                ast::element_body_item::Value::Slot(slot) => serialize_slot(slot, context),
-                ast::element_body_item::Value::Insert(insert) => serialize_insert(insert, context),
-                ast::element_body_item::Value::Style(style) => serialize_style(style, context),
-                ast::element_body_item::Value::Override(over) => serialize_override(over, context),
-                ast::element_body_item::Value::Text(text) => serialize_text(text, context),
+                ast::element_body_item::Inner::Slot(slot) => serialize_slot(slot, context),
+                ast::element_body_item::Inner::Insert(insert) => serialize_insert(insert, context),
+                ast::element_body_item::Inner::Style(style) => serialize_style(style, context),
+                ast::element_body_item::Inner::Override(over) => serialize_override(over, context),
+                ast::element_body_item::Inner::Text(text) => serialize_text(text, context),
             }
         }
         context.end_block();
@@ -237,7 +237,10 @@ fn serialize_parameters(parameters: &Vec<ast::Parameter>, context: &mut Context)
 
 fn serialize_parameter(param: &ast::Parameter, context: &mut Context) {
     context.add_buffer(format!("{}: ", param.name).as_str());
-    serialize_simple_expression(&param.value.as_ref().expect("Value must exist"), context);
+    serialize_simple_expression(
+        &param.value.as_ref().expect("Value needs to exist"),
+        context,
+    );
 }
 
 fn serialize_slot(slot: &ast::Slot, context: &mut Context) {
@@ -247,9 +250,9 @@ fn serialize_slot(slot: &ast::Slot, context: &mut Context) {
         context.add_buffer(" {\n");
         context.start_block();
         for item in &slot.body {
-            match item.value.as_ref().expect("Value must exist") {
-                ast::slot_body_item::Value::Element(element) => serialize_element(element, context),
-                ast::slot_body_item::Value::Text(text) => serialize_text(text, context),
+            match item.get_inner() {
+                ast::slot_body_item::Inner::Element(element) => serialize_element(element, context),
+                ast::slot_body_item::Inner::Text(text) => serialize_text(text, context),
             }
         }
         context.end_block();
@@ -265,10 +268,10 @@ fn serialize_insert(insert: &ast::Insert, context: &mut Context) {
         context.add_buffer(" {\n");
         context.start_block();
         for item in &insert.body {
-            match &item.value.as_ref().expect("Value must exist") {
-                ast::insert_body::Value::Element(element) => serialize_element(element, context),
-                ast::insert_body::Value::Text(text) => serialize_text(text, context),
-                ast::insert_body::Value::Slot(text) => serialize_slot(text, context),
+            match &item.get_inner() {
+                ast::insert_body::Inner::Element(element) => serialize_element(element, context),
+                ast::insert_body::Inner::Text(text) => serialize_text(text, context),
+                ast::insert_body::Inner::Slot(text) => serialize_slot(text, context),
             }
         }
         context.end_block();
@@ -279,12 +282,12 @@ fn serialize_insert(insert: &ast::Insert, context: &mut Context) {
 }
 
 fn serialize_simple_expression(node: &ast::SimpleExpression, context: &mut Context) {
-    match node.value.as_ref().expect("Value must exist") {
-        ast::simple_expression::Value::Str(value) => serialize_string(value, context),
-        ast::simple_expression::Value::Number(value) => serialize_number(value, context),
-        ast::simple_expression::Value::Reference(value) => serialize_reference(value, context),
-        ast::simple_expression::Value::Boolean(value) => serialize_boolean(value, context),
-        ast::simple_expression::Value::Array(value) => serialize_array(value, context),
+    match node.get_inner() {
+        ast::simple_expression::Inner::Str(value) => serialize_string(value, context),
+        ast::simple_expression::Inner::Number(value) => serialize_number(value, context),
+        ast::simple_expression::Inner::Reference(value) => serialize_reference(value, context),
+        ast::simple_expression::Inner::Boolean(value) => serialize_boolean(value, context),
+        ast::simple_expression::Inner::Array(value) => serialize_array(value, context),
     }
 }
 

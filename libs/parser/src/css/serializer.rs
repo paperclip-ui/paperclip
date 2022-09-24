@@ -22,18 +22,18 @@ fn serialize_declaration(style: &ast::StyleDeclaration, context: &mut Context) {
 }
 
 pub fn serialize_decl_value(value: &ast::DeclarationValue, context: &mut Context) {
-    if let Some(value) = &value.value {
+    if let Some(value) = &value.inner {
         match &value {
-            ast::declaration_value::Value::Reference(reference) => {
+            ast::declaration_value::Inner::Reference(reference) => {
                 context.add_buffer(reference.path.join(".").as_str());
             }
-            ast::declaration_value::Value::Measurement(measurement) => {
+            ast::declaration_value::Inner::Measurement(measurement) => {
                 context.add_buffer(format!("{}{}", measurement.value, measurement.unit).as_str())
             }
-            ast::declaration_value::Value::Number(number) => {
+            ast::declaration_value::Inner::Number(number) => {
                 context.add_buffer(format!("{}", number.value).as_str());
             }
-            ast::declaration_value::Value::FunctionCall(call) => {
+            ast::declaration_value::Inner::FunctionCall(call) => {
                 context.add_buffer(format!("{}(", call.name).as_str());
                 // context.add_buffer(format!("{}", call.name));
                 if let Some(arguments) = &call.arguments {
@@ -41,10 +41,10 @@ pub fn serialize_decl_value(value: &ast::DeclarationValue, context: &mut Context
                 }
                 context.add_buffer(")");
             }
-            ast::declaration_value::Value::Str(value) => {
+            ast::declaration_value::Inner::Str(value) => {
                 context.add_buffer(format!("\"{}\"", value.value).as_str());
             }
-            ast::declaration_value::Value::SpacedList(list) => {
+            ast::declaration_value::Inner::SpacedList(list) => {
                 let mut it = list.items.iter().peekable();
                 while let Some(item) = it.next() {
                     serialize_decl_value(&item, context);
@@ -53,7 +53,7 @@ pub fn serialize_decl_value(value: &ast::DeclarationValue, context: &mut Context
                     }
                 }
             }
-            ast::declaration_value::Value::CommaList(list) => {
+            ast::declaration_value::Inner::CommaList(list) => {
                 let mut it = list.items.iter().peekable();
                 while let Some(item) = it.next() {
                     serialize_decl_value(&item, context);
@@ -62,7 +62,7 @@ pub fn serialize_decl_value(value: &ast::DeclarationValue, context: &mut Context
                     }
                 }
             }
-            ast::declaration_value::Value::Arithmetic(arithmetic) => {
+            ast::declaration_value::Inner::Arithmetic(arithmetic) => {
                 if let Some(left) = &arithmetic.left {
                     serialize_decl_value(left, context);
                 }
@@ -71,7 +71,7 @@ pub fn serialize_decl_value(value: &ast::DeclarationValue, context: &mut Context
                     serialize_decl_value(right.as_ref(), context);
                 }
             }
-            ast::declaration_value::Value::HexColor(color) => {
+            ast::declaration_value::Inner::HexColor(color) => {
                 context.add_buffer(format!("#{}", color.value).as_str());
             }
         }

@@ -35,9 +35,9 @@ pub fn parse_comment(context: &mut ParserContext) -> Result<ast::Comment, Parser
         body.push(
             (match &context.curr_token {
                 Some(Token::At) => {
-                    ast::comment_body_item::Value::Property(parse_property(context)?)
+                    ast::comment_body_item::Inner::Property(parse_property(context)?)
                 }
-                _ => ast::comment_body_item::Value::Text(parse_text(context)?),
+                _ => ast::comment_body_item::Inner::Text(parse_text(context)?),
             })
             .wrap(),
         );
@@ -65,9 +65,9 @@ pub fn parse_property(context: &mut ParserContext) -> Result<ast::Property, Pars
     let value = Some(
         (match context.curr_token {
             Some(Token::ParenOpen) => {
-                ast::property_value::Value::Parameters(parse_parameters(context)?)
+                ast::property_value::Inner::Parameters(parse_parameters(context)?)
             }
-            Some(Token::String(_)) => ast::property_value::Value::Str(parse_string(context)?),
+            Some(Token::String(_)) => ast::property_value::Inner::Str(parse_string(context)?),
             _ => return Err(context.new_unexpected_token_error()),
         })
         .wrap(),
@@ -217,10 +217,10 @@ fn parse_parameter(context: &mut ParserContext) -> Result<ast::Parameter, err::P
 
 fn parse_parameter_value(
     context: &mut ParserContext,
-) -> Result<ast::parameter_value::Value, err::ParserError> {
+) -> Result<ast::parameter_value::Inner, err::ParserError> {
     match context.curr_token {
-        Some(Token::String(_)) => Ok(ast::parameter_value::Value::Str(parse_string(context)?)),
-        Some(Token::Number(_)) => Ok(ast::parameter_value::Value::Number(parse_number(context)?)),
+        Some(Token::String(_)) => Ok(ast::parameter_value::Inner::Str(parse_string(context)?)),
+        Some(Token::Number(_)) => Ok(ast::parameter_value::Inner::Number(parse_number(context)?)),
         _ => Err(context.new_unexpected_token_error()),
     }
 }

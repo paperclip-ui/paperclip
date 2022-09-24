@@ -1,5 +1,5 @@
 syntax = "proto3";
-package base.ast;
+package ast.base;
 
 message U16Position {
   uint32 pos = 1;

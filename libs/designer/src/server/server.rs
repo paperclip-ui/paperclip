@@ -1,5 +1,4 @@
 // https://github.com/hyperium/tonic/blob/master/examples/src/hyper_warp/server.rs
-use super::proto as designer;
 use super::service::DesignerService;
 use super::utils::content_types;
 use futures::future::{self, Either, TryFutureExt};
@@ -11,7 +10,7 @@ use std::env;
 use tower::Service;
 
 use super::res_body::EitherBody;
-use designer::designer_server::DesignerServer;
+use paperclip_proto::service::designer::designer_server::DesignerServer;
 type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
 
 pub struct StartOptions<IO: ProjectIO> {

@@ -1,0 +1,27 @@
+syntax = "proto3";
+import "ast/base.proto";
+
+package ast.pc;
+
+message Component {
+  string id = 1;
+  bool is_public = 2;
+  ast.base.Range range = 3;
+  string name = 4;
+  repeated ComponentBoyItem body = 5;
+}
+
+message ComponentBoyItem {
+  oneof value {
+    Render render = 1;
+    Variant variant = 2;
+    Script script = 3;
+  }
+}
+
+message Import {
+  string id = 1;
+  Range range = 2;
+  string namespace = 3;
+  string path = 4;
+}

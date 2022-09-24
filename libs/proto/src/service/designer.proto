@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package service.designer;
+
+service Designer {
+  rpc OpenFile(FileRequest) returns (stream FileResponse);
+}
+
+message FileRequest {
+  string path = 1;
+}
+
+message FileResponse {
+  bytes data = 1;
+}

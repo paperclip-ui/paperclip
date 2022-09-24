@@ -4,9 +4,8 @@ use futures::Stream;
 use std::pin::Pin;
 use tonic::{Request, Response, Status};
 
-use super::proto as designer;
-use designer::designer_server::Designer;
-use designer::{FileRequest, FileResponse};
+use paperclip_proto::service::designer::designer_server::Designer;
+use paperclip_proto::service::designer::{FileRequest, FileResponse};
 use paperclip_project::{ConfigContext, Project, ProjectIO};
 use std::sync::{Arc, Mutex};
 use tokio::sync::mpsc;

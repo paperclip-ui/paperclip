@@ -1,4 +1,3 @@
-mod proto;
 mod res_body;
 pub mod server;
 mod service;

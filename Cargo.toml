@@ -6,8 +6,10 @@ members = [
   "libs/project",
   "libs/evaluator",
   "libs/paperclip-loader",
-  "libs/designer"
+  "libs/designer",
+  "libs/proto"
 ]
+
 
 [profile.release]
 debug = false
@@ -17,3 +19,4 @@ lto = true
 [profile.dev]
 opt-level = 1              
 overflow-checks = false    
+

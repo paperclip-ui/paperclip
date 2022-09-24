@@ -1,4 +1,4 @@
-use super::{U16Position, Range};
+include!(concat!(env!("OUT_DIR"), "/ast.base.rs"));
 
 #[derive(Debug)]
 pub struct Position {

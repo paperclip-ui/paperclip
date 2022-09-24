@@ -1,21 +1,21 @@
 syntax = "proto3";
-import "base.proto";
+import "ast/base.proto";
 
-package css.ast;
+package ast.css;
 
 
 message StyleDeclaration {
   string id = 1;
-  base.ast.Range range = 2;
+  ast.base.Range range = 2;
   string name = 3;
   DeclarationValue value = 4;
 }
 
 message DeclarationValue {
   oneof value {
-    base.ast.Number number = 1;
+    ast.base.Number number = 1;
     Reference reference = 2;
-    base.ast.Str str = 3;
+    ast.base.Str str = 3;
     Measurement measurement = 4;
     FunctionCall function_call = 5;
     Arithmetic arithmetic = 6;
@@ -27,13 +27,13 @@ message DeclarationValue {
 
 message Reference {
   string id = 1;
-  base.ast.Range range = 2;
+  ast.base.Range range = 2;
   repeated string path = 3;
 }
 
 message Arithmetic {
   string id = 1;
-  base.ast.Range range = 2;
+  ast.base.Range range = 2;
   DeclarationValue left = 3;
   DeclarationValue right = 4;
   string operator = 5;
@@ -41,32 +41,32 @@ message Arithmetic {
 
 message Measurement {
   string id = 1;
-  base.ast.Range range = 2;
+  ast.base.Range range = 2;
   float value = 3;
   string unit = 4;
 }
 
 message FunctionCall {
   string id = 1;
-  base.ast.Range range = 2;
+  ast.base.Range range = 2;
   string name = 3;
   DeclarationValue arguments = 4;
 }
 
 message HexColor {
   string id = 1;
-  base.ast.Range range = 2;
+  ast.base.Range range = 2;
   string value = 3;
 }
 
 message SpacedList {
   string id = 1;
-  base.ast.Range range = 2;
+  ast.base.Range range = 2;
   repeated DeclarationValue items = 3;
 }
 
 message CommaList {
   string id = 1;
-  base.ast.Range range = 2;
+  ast.base.Range range = 2;
   repeated DeclarationValue items = 3;
 }

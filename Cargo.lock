@@ -1116,13 +1116,13 @@ dependencies = [
  "open",
  "paperclip_common",
  "paperclip_project",
+ "paperclip_proto",
  "path-absolutize",
  "portpicker",
  "prost",
  "tokio",
  "tokio-stream",
  "tonic",
- "tonic-build",
  "tonic-web",
  "tower",
  "warp",
@@ -1151,9 +1151,8 @@ dependencies = [
  "futures",
  "glob",
  "paperclip_common",
+ "paperclip_proto",
  "pretty_assertions",
- "prost",
- "prost-build",
  "serde",
  "serde_json",
  "textwrap",
@@ -1180,6 +1179,25 @@ dependencies = [
  "serde_json",
  "textwrap",
  "wax",
+]
+
+[[package]]
+name = "paperclip_proto"
+version = "0.1.1"
+dependencies = [
+ "anyhow",
+ "crc",
+ "futures",
+ "glob",
+ "paperclip_common",
+ "prost",
+ "prost-build",
+ "serde",
+ "serde_json",
+ "textwrap",
+ "tonic",
+ "tonic-build",
+ "tonic-web",
 ]
 
 [[package]]

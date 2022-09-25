@@ -23,11 +23,14 @@ export class Store<TState extends Object, TEvent extends BaseEvent<any, any>> {
   }
 
   dispatch(event: TEvent) {
+    const prevState = this._state;
     this._state = this._reduceState(this._state, event);
 
     // traverse backwards in case a listener is disposed in interation
-    for (let i = this._changeListeners.length; i--; ) {
-      this._changeListeners[i](this._state);
+    if (prevState !== this._state) {
+      for (let i = this._changeListeners.length; i--; ) {
+        this._changeListeners[i](this._state);
+      }
     }
   }
 

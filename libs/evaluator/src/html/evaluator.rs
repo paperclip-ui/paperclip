@@ -75,7 +75,7 @@ fn evaluate_component<F: FileResolver>(
         return;
     };
 
-    evaluate_render(&render, fragment, context);
+    evaluate_render(&render, fragment, &mut context.within_component(component));
 }
 
 fn evaluate_element<F: FileResolver>(

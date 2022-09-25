@@ -1,0 +1,17 @@
+{
+  "name": "@paperclip-ui/common",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lru-cache": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/lru-cache": "^7.10.10"
+  }
+}

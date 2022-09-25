@@ -231,3 +231,22 @@ add_case! {
     ],
     "<span class=\"_80f4925f-4\"> abba </span>"
 }
+
+
+
+add_case! {
+	adds_component_namespace_to_classes,
+	[
+("/entry.pc", r#"
+public component Ab {
+	render div {
+		style {
+			color: red
+		}
+		text "abba"
+	}
+}
+"#)
+	],
+	"<div class=\"_Ab-80f4925f-5\"> abba </div>"
+}

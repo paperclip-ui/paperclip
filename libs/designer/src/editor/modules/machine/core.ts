@@ -29,12 +29,12 @@ export class Machine<TState extends any, TEvent extends BaseEvent<any, any>>
     return this._store.getState();
   }
 
-  dispatch(event: TEvent) {
+  dispatch = (event: TEvent) => {
     const prevState = this._store.getState();
     this._store.dispatch(event);
     const currState = this._store.getState();
     this._engine.handleEvent(event, currState, prevState);
-  }
+  };
 
   onStateChange(listener: (TState) => void) {
     return this._store.onStateChange(listener);

@@ -2,7 +2,7 @@ import { DesignerClient } from "@paperclip-ui/proto/lib/service/designer_grpc_we
 import { FileRequest } from "@paperclip-ui/proto/lib/service/designer_pb";
 import { Engine } from "../../../modules/machine/engine";
 import { Dispatch } from "../../../modules/machine/events";
-import { DesignerEngineEvent } from "./events";
+import { DesignerEngineEvent, designerEngineEvents } from "./events";
 import { DesignerEngineState } from "./state";
 
 export const createDesignerEngine = (
@@ -37,10 +37,7 @@ const createActions = (client: DesignerClient, dispatch: Dispatch<any>) => {
       client
         .openFile(fileRequest)
         .on("data", (data) => {
-          console.log(
-            "DATA",
-            data.getPaperclip().toObject().html.childrenList[0].element
-          );
+          dispatch(designerEngineEvents.documentOpened(data));
         })
         .on("end", () => {
           console.log("END");

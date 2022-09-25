@@ -1,19 +1,19 @@
 // https://github.com/hyperium/tonic/blob/master/examples/src/hyper_warp/server.rs
 
-use futures::Stream;
 use futures::executor::block_on;
+use futures::Stream;
 use std::pin::Pin;
 use tonic::{Request, Response, Status};
 
-use paperclip_project::{ConfigContext, Project, ProjectIO};
-use paperclip_proto::service::designer::designer_server::Designer;
-use paperclip_proto::service::designer::{FileRequest, FileResponse, file_response, PaperclipData};
 use paperclip_common::pc::is_paperclip_file;
 use paperclip_evaluator::runtime::Runtime;
+use paperclip_project::{ConfigContext, Project, ProjectIO};
+use paperclip_proto::service::designer::designer_server::Designer;
+use paperclip_proto::service::designer::{file_response, FileRequest, FileResponse, PaperclipData};
 use std::sync::{Arc, Mutex};
 use tokio::sync::mpsc;
 
-use tokio_stream::{wrappers::ReceiverStream};
+use tokio_stream::wrappers::ReceiverStream;
 
 type OpenFileResult<T> = Result<Response<T>, Status>;
 type ResponseStream = Pin<Box<dyn Stream<Item = Result<FileResponse, Status>> + Send>>;
@@ -56,12 +56,16 @@ impl<IO: ProjectIO + 'static> Designer for DesignerService<IO> {
 
                 data = Some(file_response::Data::Paperclip(PaperclipData {
                     css: Some(css),
-                    html: Some(html)
+                    html: Some(html),
                 }))
             }
 
-
-            tx.send(Ok(FileResponse { raw_content: vec![], data })).await.unwrap();
+            tx.send(Ok(FileResponse {
+                raw_content: vec![],
+                data,
+            }))
+            .await
+            .unwrap();
         });
 
         Ok(Response::new(Box::pin(ReceiverStream::new(rx))))

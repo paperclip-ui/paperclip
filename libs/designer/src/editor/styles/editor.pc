@@ -1,0 +1,10 @@
+public component Editor {
+  render div {
+    text "Hello world!!!" {
+
+      style {
+        color: blue
+      }
+    }
+  }
+}

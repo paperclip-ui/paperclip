@@ -40,13 +40,10 @@ pub async fn start<IO: ProjectIO + 'static>(
     let designer_server = tonic_web::config().enable(designer_server);
 
     let server = Server::bind(&addr).serve(make_service_fn(move |_| {
-
         println!("REQ");
-        let cors = warp::cors()
-            .allow_any_origin();
+        let cors = warp::cors().allow_any_origin();
 
         let route = warp::fs::dir(get_designer_path()).with(cors);
-        
 
         let mut warp = warp::service(route);
         let mut designer_server = designer_server.clone();

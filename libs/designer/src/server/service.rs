@@ -3,20 +3,19 @@
 use async_stream::try_stream;
 use futures::executor::block_on;
 use futures::Stream;
-use futures_util::pin_mut;
 use futures::{
     channel::mpsc::{channel, Receiver},
     SinkExt,
 };
 use futures_util::stream::StreamExt;
-use std::path::Path;
+use notify::{Config, Event, RecommendedWatcher, RecursiveMode, Watcher};
 use paperclip_common::pc::is_paperclip_file;
 use paperclip_evaluator::runtime::Runtime;
 use paperclip_project::{ConfigContext, Project, ProjectIO};
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{file_response, FileRequest, FileResponse, PaperclipData};
+use std::path::Path;
 use std::pin::Pin;
-use notify::{Config, Event, RecommendedWatcher, RecursiveMode, Watcher};
 use std::sync::{Arc, Mutex};
 use tonic::{Request, Response, Status};
 
@@ -43,16 +42,11 @@ impl<IO: ProjectIO + 'static> Designer for DesignerService<IO> {
         &self,
         request: Request<FileRequest>,
     ) -> OpenFileResult<Self::OpenFileStream> {
-
-        println!("RUN?");
-
         let project = self.project.clone();
         let (mut watcher, mut rx) = async_watcher().unwrap();
         let output = try_stream! {
             let path = request.into_inner().path;
             watcher.watch(Path::new(&path), RecursiveMode::Recursive).unwrap();
-
-            println!("OK");
 
             loop {
                 let data = if is_paperclip_file(&path) {
@@ -77,7 +71,6 @@ impl<IO: ProjectIO + 'static> Designer for DesignerService<IO> {
     }
 }
 
-
 pub fn async_watcher() -> notify::Result<(RecommendedWatcher, Receiver<notify::Result<Event>>)> {
     let (mut tx, rx) = channel(1);
 
@@ -95,12 +88,16 @@ pub fn async_watcher() -> notify::Result<(RecommendedWatcher, Receiver<notify::R
     Ok((watcher, rx))
 }
 
-fn evaluate_pc_data<IO: ProjectIO + 'static>(path: &str, project: Arc<Mutex<Project<IO>>>) -> file_response::Data {
+fn evaluate_pc_data<IO: ProjectIO + 'static>(
+    path: &str,
+    project: Arc<Mutex<Project<IO>>>,
+) -> file_response::Data {
     let mut project = project.lock().unwrap();
 
     let mut runtime = Runtime::new();
 
-    block_on(project.load_file(path));
+    block_on(project.load_file(path)).expect("Coudn't load file");
+
     let graph = project.graph.lock().unwrap();
     let (css, html) = block_on(runtime.evaluate(path, &graph, &project.io)).unwrap();
     file_response::Data::Paperclip(PaperclipData {

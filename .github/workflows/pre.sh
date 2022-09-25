@@ -1,3 +1,5 @@
 #!/bin/bash
 
-PB_REL="https://github.com/protocolbuffers/protobuf/releases"
+# https://grpc.io/docs/protoc-installation/
+echo "::info PRE BUILD RAN"
+apt install -y protobuf-compiler

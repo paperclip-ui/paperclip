@@ -10,9 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        target: [x86_64-pc-windows-gnu, x86_64-unknown-linux-musl]
+        target:
+          [
+            x86_64-pc-windows-gnu,
+            x86_64-unknown-linux-musl,
+            x86_64-apple-darwin,
+          ]
         package: [libs/cli]
     steps:
+      - uses: arduino/setup-protoc@v1
+        with:
+          version: "3.x"
       - uses: actions/checkout@master
       - name: Compile
         id: compile

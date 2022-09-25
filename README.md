@@ -2,7 +2,7 @@
   <img src="./assets/logo-outline-5.png" width="400px">
 </p>
 
-Paperclip is a design tool that enables you to design and build just about any kind of web application end-to-end. It can be used directly within [Codespaces](https://github.com/features/codespaces), enabling anyone easy access to make changes to web applications.
+Paperclip enables you to design and build just about any kind of web application end-to-end. It can be used directly within [Codespaces](https://github.com/features/codespaces), enabling anyone easy access to make changes to web applications.
 
 You can dial up or down how much of Paperclip you want to use depending on your team's workflow.
 

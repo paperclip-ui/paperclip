@@ -27,6 +27,7 @@ jobs:
           SRC_DIR: ${{ matrix.package }}
           RUSTTARGET: ${{ matrix.target }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TOOLCHAIN_VERSION: nightly
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:

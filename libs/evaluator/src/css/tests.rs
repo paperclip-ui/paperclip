@@ -264,11 +264,11 @@ add_case! {
   )],
   r#"
     :root {
-        --80f4925f-7: rgba(255, 255, 255, 0);
+        --snowWhite-80f4925f-7: rgba(255, 255, 255, 0);
     }
 
     ._80f4925f-12 {
-        color: var(--80f4925f-7);
+        color: var(--snowWhite-80f4925f-7);
     }
   "#
 }

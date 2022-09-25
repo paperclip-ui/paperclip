@@ -68,7 +68,7 @@ fn evaluate_tokens<F: FileResolver>(document: &ast::Document, context: &mut Docu
                 .map(|atom| virt::StyleDeclaration {
                     id: atom.id.to_string(),
                     source_id: atom.id.to_string(),
-                    name: format!("--{}", atom.id),
+                    name: atom.get_var_name(),
                     value: evaluate_atom(atom, context),
                 })
                 .collect(),
@@ -572,7 +572,7 @@ fn stringify_style_decl_value<F: FileResolver>(
                 {
                     if let Some(reference) = context.graph.get_ref(&reference.path, context.path) {
                         if let graph_ref::Expr::Atom(atom) = reference.expr {
-                            return format!("var(--{})", atom.id);
+                            return format!("var({})", atom.get_var_name());
                         }
                     }
                 }

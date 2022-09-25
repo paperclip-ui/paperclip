@@ -463,7 +463,7 @@ test_case! {
         </body> 
       </html>
     "#),
-    ("/colors.pc.css", ":root { --e05e7926-2: #FFF; }"),
+    ("/colors.pc.css", ":root { --white0-e05e7926-2: #FFF; }"),
     ("/colors.pc.html", r#"
       <!doctype html> 
       <html> 
@@ -474,7 +474,7 @@ test_case! {
         </body>
       </html>
     "#),
-    ("/test.pc.css", "._Component-6bcf0994-6 { background: var(--e05e7926-2); }"),
+    ("/test.pc.css", "._Component-6bcf0994-6 { background: var(--white0-e05e7926-2); }"),
     ("/test.pc.html", r#"
       <!doctype html> 
       <html> 

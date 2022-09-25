@@ -143,3 +143,11 @@ impl render_node::Inner {
         }
     }
 }
+
+
+
+impl Atom {
+    pub fn get_var_name(&self) -> String {
+      format!("--{}-{}", self.name, self.id)
+    }
+  }

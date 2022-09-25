@@ -1,9 +1,18 @@
+public token fontRegular Helvetica
+
 public component Editor {
   render div {
-    text "Hello world!!!" {
+    text "Hello world!!" {
 
       style {
         color: blue
+        width: 100vw
+        height: 100vh
+        background: white
+        position: absolute
+        font-family: var(fontRegular)
+        font-size: 32px
+        padding: 16px
       }
     }
   }

@@ -4,8 +4,6 @@
 
 Paperclip enables you to design and build just about any kind of web application end-to-end. It can be used directly within [Codespaces](https://github.com/features/codespaces), enabling anyone easy access to make changes to web applications.
 
-You can dial up or down how much of Paperclip you want to use depending on your team's workflow.
-
 ![Split view](./assets/screenshots/v10.1.7.png)
 
 <!-- ### Motivation
@@ -17,15 +15,11 @@ Paperclip is designed for product teams and enable anyone on that team to make c
 
 ## Designer setup
 
----
-
 To get started with the designer, just create a new codespace and install the Paperclip extension. After that, you'll see a new toolbar icon that you can click in order to open the designer whenever you want.
 
 After the designer is open, you're free to edit any Paperclip file (`*.pc`) and save directly to the codebase (probably through a pull-request).
 
 ## Development setup
-
----
 
 The develeopment tooling enables you to compile design files into application code (currently supporting vanilla React, HTML, and vanilla CSS). To get started, run the following command:
 
@@ -37,8 +31,6 @@ npx @paperclip-ui/cli init
 This will run through the installation process for your project. After that, you can start using Paperclip locally with your existing codebase.
 
 ## CLI Usage
-
----
 
 You can use the CLI tool to compile and edit design files locally. Here are some example commands:
 
@@ -52,11 +44,9 @@ paperclip designer
 
 ## Design files
 
----
+Paperclip's design files are in plain text and can be written by hand. Here's a kitchen sink example:
 
-Paperclip's design files are in plain text that can be written by hand. Here's a kitchen sink example:
-
-```c#
+```javascript
 
 // You can define "variant" styles that contain behavior like media queries
 // and other CSS selectors
@@ -68,8 +58,6 @@ variant isMobile {
 // throughout your app
 public token gray0 #333
 public token gray1 #CCC
-
-### Build once, use anywhere
 
 
 // Tokens can be responsive to media queries, too

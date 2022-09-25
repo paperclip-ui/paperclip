@@ -1,9 +1,9 @@
 import { FileResponse } from "@paperclip-ui/proto/lib/service/designer_pb";
 import {
   eventCreators,
-  ExtractEventFromCreators,
   identity,
-} from "../../../modules/machine";
+  ExtractEventFromCreators,
+} from "@paperclip-ui/common";
 
 export const designerEngineEvents = eventCreators(
   {

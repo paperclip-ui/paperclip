@@ -7,6 +7,7 @@ package service.designer;
 
 service Designer {
   rpc OpenFile(FileRequest) returns (stream FileResponse);
+  // rpc UpdateFile(FileRequest) returns (stream FileResponse);
 }
 
 message FileRequest {

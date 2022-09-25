@@ -9,7 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "lru-cache": "^6.0.0"
+    "lru-cache": "^6.0.0",
+    "react": "^18.2.0"
   },
   "devDependencies": {
     "@types/lru-cache": "^7.10.10"

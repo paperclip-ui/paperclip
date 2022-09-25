@@ -17,13 +17,8 @@ use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{file_response, FileRequest, FileResponse, PaperclipData};
 use std::pin::Pin;
 use notify::{Config, Event, RecommendedWatcher, RecursiveMode, Watcher};
-use std::sync::{Arc, Mutex, MutexGuard};
-use std::time::Duration;
-use tokio::sync::mpsc;
-use tokio::time::timeout;
+use std::sync::{Arc, Mutex};
 use tonic::{Request, Response, Status};
-
-use tokio_stream::wrappers::ReceiverStream;
 
 type OpenFileResult<T> = Result<Response<T>, Status>;
 type ResponseStream = Pin<Box<dyn Stream<Item = Result<FileResponse, Status>> + Send>>;
@@ -49,11 +44,15 @@ impl<IO: ProjectIO + 'static> Designer for DesignerService<IO> {
         request: Request<FileRequest>,
     ) -> OpenFileResult<Self::OpenFileStream> {
 
+        println!("RUN?");
+
         let project = self.project.clone();
         let (mut watcher, mut rx) = async_watcher().unwrap();
         let output = try_stream! {
             let path = request.into_inner().path;
             watcher.watch(Path::new(&path), RecursiveMode::Recursive).unwrap();
+
+            println!("OK");
 
             loop {
                 let data = if is_paperclip_file(&path) {

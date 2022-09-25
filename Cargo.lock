@@ -1108,7 +1108,10 @@ name = "paperclip_designer"
 version = "0.1.1"
 dependencies = [
  "assert_cmd",
+ "async-stream",
  "futures",
+ "futures-core",
+ "futures-util",
  "http",
  "http-body",
  "hyper",

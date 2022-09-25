@@ -13,11 +13,12 @@ export class DocumentManager {
   updateDocument(uri: string, document: TextDocument) {
     const exists = this._documents[uri] != null;
     this._documents[uri] = document;
+    this._designerClient.updateVirtualFileContent(uri, document.getText());
   }
-  appleDocumentEdits(uri: string, edits: TextEdit[]) {
-    const text = TextDocument.applyEdits(this._documents[uri], edits);
-    this._designerClient.updateVirtualFileContent(uri, text);
-  }
+  // appleDocumentEdits(uri: string, edits: TextEdit[]) {
+  // const text = TextDocument.applyEdits(this._documents[uri], edits);
+  // this._designerClient.updateVirtualFileContent(uri, text);
+  // }
   removeDocument(uri: string) {
     delete this._documents[uri];
   }

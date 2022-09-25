@@ -1,4 +1,4 @@
-import { machineCreator } from "../modules/machine";
+import { machineCreator } from "@paperclip-ui/common";
 import { createEngine } from "./engine";
 import { rootReducer } from "./reducer";
 

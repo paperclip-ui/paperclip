@@ -12,6 +12,7 @@ export class PaperclipLanguageServer {
     const documents = new DocumentManager(designerClient);
 
     const connectionManager = new PaperclipLanguageServerConnectionManager(
+      designerClient,
       connection,
       documents,
       {}
@@ -26,6 +27,5 @@ export class PaperclipLanguageServer {
     // });
   }
 }
-console.log("DO");
 
 const server = new PaperclipLanguageServer();

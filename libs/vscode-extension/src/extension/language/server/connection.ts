@@ -11,6 +11,8 @@ import { TextDocument } from "vscode-languageserver-textdocument";
 import { DocumentManager } from "./documents";
 import { EventEmitter } from "stream";
 import { DesignerClient } from "./designer-client";
+import { EVENTS_NOTIFICATION_NAME } from "../constants";
+import { ServerEvent, serverEvents } from "./events";
 
 // TODO - need better SRP here, this class is doing too much
 export class PaperclipLanguageServerConnectionManager {
@@ -18,6 +20,7 @@ export class PaperclipLanguageServerConnectionManager {
   private _em: EventEmitter;
 
   constructor(
+    private _designerClient: DesignerClient,
     private _connection: Connection,
     private _documents: DocumentManager,
     readonly config: any
@@ -31,12 +34,22 @@ export class PaperclipLanguageServerConnectionManager {
     this._connection.onDidCloseTextDocument(this._onDidCloseTextDocument);
     this._connection.onDidChangeTextDocument(this._onDidChangeTextDocument);
     this._connection.listen();
+    this._designerClient.ready().then(this._onDesignerConnected);
   }
 
   onInitialize(listener: (details: { workspaceFolders: string[] }) => void) {
     return this._em.once("init", listener);
   }
 
+  private _onDesignerConnected = () => {
+    this._dispatch(
+      serverEvents.started({ port: this._designerClient.getPort() })
+    );
+  };
+
+  private _dispatch(event: ServerEvent) {
+    this._connection.sendNotification(EVENTS_NOTIFICATION_NAME, event);
+  }
   private _onDidOpenTextDocument = ({
     textDocument,
   }: DidOpenTextDocumentParams) => {
@@ -82,15 +95,15 @@ export class PaperclipLanguageServerConnectionManager {
     return {
       capabilities: {
         textDocumentSync: TextDocumentSyncKind.Incremental as any,
-        completionProvider: {
-          resolveProvider: true,
-          triggerCharacters: [".", "<", '"', "'", "{", ":", " ", "(", ">", "$"],
-        },
-        documentLinkProvider: {
-          resolveProvider: true,
-        },
-        colorProvider: true,
-        definitionProvider: true,
+        // completionProvider: {
+        //   resolveProvider: true,
+        //   triggerCharacters: [".", "<", '"', "'", "{", ":", " ", "(", ">", "$"],
+        // },
+        // documentLinkProvider: {
+        //   resolveProvider: true,
+        // },
+        // colorProvider: true,
+        // definitionProvider: true,
       },
     };
   };

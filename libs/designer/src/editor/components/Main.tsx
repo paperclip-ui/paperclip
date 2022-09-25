@@ -1,7 +1,7 @@
 import React from "react";
 import { useMemo } from "react";
 import { createEditorMachine } from "../machine";
-import { MachineContext } from "../modules/machine/hooks";
+import { MachineContext } from "@paperclip-ui/common";
 import { Frames } from "./Canvas/Frames";
 
 export const Main = () => {

@@ -1,16 +1,16 @@
 import { DesignerClient } from "@paperclip-ui/proto/lib/service/designer_grpc_web_pb";
 import { FileRequest } from "@paperclip-ui/proto/lib/service/designer_pb";
-import { Engine } from "../../../modules/machine/engine";
-import { Dispatch } from "../../../modules/machine/events";
+import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent, designerEngineEvents } from "./events";
 import { DesignerEngineState } from "./state";
+import { env } from "../../../env";
 
 export const createDesignerEngine = (
   dispatch: Dispatch<DesignerEngineEvent>
 ): Engine<DesignerEngineState, DesignerEngineEvent> => {
-  const client = new DesignerClient(
-    window.location.protocol + "//" + window.location.host
-  );
+  const client = new DesignerClient(env.protocol + "//" + env.host);
+
+  console.log(env);
 
   const actions = createActions(client, dispatch);
   const handleEvent = createEventHandler(actions);
@@ -32,9 +32,9 @@ type Actions = ReturnType<typeof createActions>;
 const createActions = (client: DesignerClient, dispatch: Dispatch<any>) => {
   return {
     openFile(filePath: string) {
-      console.log("OKEN");
       const fileRequest = new FileRequest();
       fileRequest.setPath(filePath);
+      console.log("OP FILE", filePath);
       client
         .openFile(fileRequest)
         .on("data", (data) => {
@@ -65,5 +65,5 @@ const createEventHandler = (actions: Actions) => {
  */
 
 const bootstrap = ({ openFile }: Actions) => {
-  openFile(new URLSearchParams(window.location.search).get("file"));
+  setTimeout(openFile, 1000, env.initialFile);
 };

@@ -8,6 +8,7 @@ use paperclip_project::{ConfigContext, ProjectIO};
 use std::convert::Infallible;
 use std::env;
 use tower::Service;
+use warp::Filter;
 
 use super::res_body::EitherBody;
 use paperclip_proto::service::designer::designer_server::DesignerServer;
@@ -39,11 +40,20 @@ pub async fn start<IO: ProjectIO + 'static>(
     let designer_server = tonic_web::config().enable(designer_server);
 
     let server = Server::bind(&addr).serve(make_service_fn(move |_| {
-        let mut warp = warp::service(warp::fs::dir(get_designer_path()));
+
+        println!("REQ");
+        let cors = warp::cors()
+            .allow_any_origin();
+
+        let route = warp::fs::dir(get_designer_path()).with(cors);
+        
+
+        let mut warp = warp::service(route);
         let mut designer_server = designer_server.clone();
         future::ok::<_, Infallible>(tower::service_fn(
             move |req: hyper::Request<hyper::Body>| {
                 if content_types::is_grpc_web(req.headers()) {
+                    println!("GRPC??");
                     Either::Left(
                         designer_server
                             .call(req)

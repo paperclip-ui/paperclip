@@ -1,4 +1,4 @@
-import { combineEngineCreators } from "../../modules/machine/engine";
+import { combineEngineCreators } from "@paperclip-ui/common";
 import { EditorState } from "../state";
 import { createDesignerEngine } from "./designer/engine";
 

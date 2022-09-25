@@ -19,6 +19,6 @@ component Page {
     style variant isMobile extends mobileFont {
       color: var(gray0)
     }
-    text "Hello worldfsdfsdmfdsddmfsfksd"
+    text "Something like this "
   }
 }

@@ -1,7 +1,7 @@
 import { renderFrames } from "@paperclip-ui/web-renderer";
 import React, { useEffect, useRef } from "react";
 import { EditorState } from "../../../machine/state";
-import { useSelector } from "../../../modules/machine/hooks";
+import { useSelector } from "@paperclip-ui/common";
 
 export const Frames = () => {
   const ref = useRef<HTMLDivElement>();

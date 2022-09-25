@@ -8,9 +8,14 @@ import {
 } from "vscode-languageclient/node";
 import * as path from "path";
 import { EventEmitter } from "events";
+import { eventListener } from "@paperclip-ui/common";
+import { EVENTS_NOTIFICATION_NAME } from "./constants";
+import { ServerEvent, serverEvents } from "./server/events";
 /**
  * Spins up language server
  */
+
+export type ReadyInfo = ReturnType<typeof serverEvents.started>["payload"];
 
 export class PaperclipLanguageClient {
   private _em: EventEmitter;
@@ -50,7 +55,20 @@ export class PaperclipLanguageClient {
       serverOptions,
       clientOptions
     );
+
+    this._client.onNotification(EVENTS_NOTIFICATION_NAME, this._onServerEvent);
   }
+
+  private _onServerEvent = (event: ServerEvent) => {
+    switch (event.type) {
+      case serverEvents.started.type:
+        return this._em.emit("ready", event.payload);
+    }
+  };
+
+  onReady = (listener: (info: ReadyInfo) => void) => {
+    return eventListener(this._em, "ready", listener);
+  };
 
   async activate() {
     this._client.start();

@@ -1,4 +1,4 @@
-import { eventCreators, ExtractEventFromCreators } from "../../modules/machine";
+import { eventCreators, ExtractEventFromCreators } from "@paperclip-ui/common";
 import { DesignerEngineEvent } from "../engine/designer/events";
 
 const editorEvents = eventCreators({}, "editor");

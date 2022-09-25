@@ -44,11 +44,15 @@ impl<IO: ProjectIO + 'static> Designer for DesignerService<IO> {
         request: Request<FileRequest>,
     ) -> OpenFileResult<Self::OpenFileStream> {
 
+        println!("RUN?");
+
         let project = self.project.clone();
         let (mut watcher, mut rx) = async_watcher().unwrap();
         let output = try_stream! {
             let path = request.into_inner().path;
             watcher.watch(Path::new(&path), RecursiveMode::Recursive).unwrap();
+
+            println!("OK");
 
             loop {
                 let data = if is_paperclip_file(&path) {

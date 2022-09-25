@@ -19,18 +19,15 @@ jobs:
         package: [libs/cli]
     steps:
       - uses: actions/checkout@master
-      - uses: arduino/setup-protoc@v1
-        with:
-          version: "3.x"
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Compile
         id: compile
         uses: rust-build/rust-build.action@v1.3.2
-        env:
-          PRE_BUILD: ./pre.sh
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RUSTTARGET: ${{ matrix.target }}
+        with:
+          PRE_BUILD: pre.sh
           SRC_DIR: ${{ matrix.package }}
+          RUSTTARGET: ${{ matrix.target }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:

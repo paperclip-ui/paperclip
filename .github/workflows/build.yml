@@ -30,9 +30,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RUSTTARGET: ${{ matrix.target }}
           SRC_DIR: ${{ matrix.package }}
-        with:
-          RUSTTARGET: x86_64-unknown-linux-musl
-          UPLOAD_MODE: none
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:

@@ -22,11 +22,10 @@ jobs:
       - name: Compile
         id: compile
         uses: rust-build/rust-build.action@v1.3.2
-        with:
-          PRE_BUILD: pre.sh
+        env:
+          PRE_BUILD: .github/workflows/pre.sh
           SRC_DIR: ${{ matrix.package }}
           RUSTTARGET: ${{ matrix.target }}
-        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload artifact
         uses: actions/upload-artifact@v3

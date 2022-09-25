@@ -1,0 +1,11 @@
+token fontColor #333
+
+token fontFamily sans-serif
+
+token fontSizeLg 32px
+
+style defaultFont {
+  font-family: var(fontFamily)
+  font-size: var(fontSizeLg)
+  color: var(fontColor)
+}

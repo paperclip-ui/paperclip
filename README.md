@@ -140,6 +140,7 @@ Ideally design files live in the same repository as your existing code. This wil
 There are a number of things on the horizon for Paperclip, not in order:
 
 - Visual regression coverage of all UI
+- Import directly from Figma
 - More compiler targets
   - Various frameworks: Svelte, Vue
   - Various design systems: MaterialUI, Radix, Chakra, etc.

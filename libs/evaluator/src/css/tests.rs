@@ -399,3 +399,31 @@ div {
   ._80f4925f-7 { font-family: Helvetica; }
   "#
 }
+
+
+add_case! {
+  can_evaluate_styles_without_bodies,
+  [(
+      "/entry.pc",
+      r#"
+      
+style a {
+  font-family: Helvetica   
+}
+
+style b {
+  color: red
+}
+
+style c extends a, b
+
+
+div {
+  style extends c
+}
+    "#,
+  )],
+  r#"
+  ._80f4925f-13 { font-family: Helvetica; color: red; }
+  "#
+}

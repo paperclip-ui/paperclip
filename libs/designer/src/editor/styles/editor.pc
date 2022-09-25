@@ -15,12 +15,10 @@ component Page {
     "@media screen and (max-width: 700px)"
   }
   render div {
-    style extends defaultFont {
-      background: blue
-    }
+    style extends defaultFont
     style variant isMobile extends mobileFont {
       color: var(gray0)
     }
-    text "Hello worldfsdfsdmfdsmfsfksd"
+    text "Hello worldfsdfsdmfdsddmfsfksd"
   }
 }

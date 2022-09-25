@@ -258,6 +258,8 @@ fn parse_style(context: &mut PCContext, is_public: bool) -> Result<ast::Style, e
     };
 
     context.skip(is_superfluous_or_newline)?;
+
+    // enable styles to be created without bodies
     let declarations: Vec<css_ast::StyleDeclaration> =
         if context.curr_token == Some(Token::CurlyOpen) {
             // set position to {

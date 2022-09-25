@@ -123,13 +123,17 @@ fn serialize_style(style: &ast::Style, context: &mut Context) {
         );
     }
 
-    context.add_buffer(
-        format!(
-            " {}",
-            serialize_declarations(&style.declarations, context.depth)
-        )
-        .as_str(),
-    );
+    if style.declarations.len() > 0 {
+        context.add_buffer(
+            format!(
+                " {}",
+                serialize_declarations(&style.declarations, context.depth)
+            )
+            .as_str(),
+        );
+    } else {
+        context.add_buffer("\n");
+    }
 }
 
 fn serialize_override(over: &ast::Override, context: &mut Context) {

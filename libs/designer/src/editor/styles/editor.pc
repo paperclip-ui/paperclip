@@ -1,19 +1,26 @@
-public token fontRegular Helvetica
+token gray0 #CCC
 
-public component Editor {
+style defaultFont {
+    font-family: Helvetica
+    font-size: 16px
+  }
+
+
+style mobileFont {
+  font-size: 32px
+}
+
+component Page {
+  variant isMobile trigger {
+    "@media screen and (max-width: 700px)"
+  }
   render div {
-    text "Hello world!!" {
-
-      style {
-        color: blue
-        width: 100vw
-        height: 100vh
-        background: white
-        position: absolute
-        font-family: var(fontRegular)
-        font-size: 32px
-        padding: 16px
-      }
+    style extends defaultFont {
+      background: blue
     }
+    style variant isMobile extends mobileFont {
+      color: var(gray0)
+    }
+    text "Hello worldfsdfsdmfdsmfsfksd"
   }
 }

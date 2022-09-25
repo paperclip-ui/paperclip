@@ -92,9 +92,10 @@ fn parse_document_child(
         Some(Token::Word(b"token")) => {
             Ok(ast::document_body_item::Inner::Atom(parse_atom(context, is_public)?).get_outer())
         }
-        Some(Token::Word(b"trigger")) => {
-            Ok(ast::document_body_item::Inner::Trigger(parse_trigger(context, is_public)?).get_outer())
-        }
+        Some(Token::Word(b"trigger")) => Ok(ast::document_body_item::Inner::Trigger(
+            parse_trigger(context, is_public)?,
+        )
+        .get_outer()),
         Some(Token::Word(b"text")) => {
             Ok(ast::document_body_item::Inner::Text(parse_text(context)?).get_outer())
         }
@@ -531,9 +532,10 @@ fn parse_text(context: &mut PCContext) -> Result<ast::TextNode, err::ParserError
         parse_body(
             context,
             |context: &mut PCContext| match context.curr_token {
-                Some(Token::Word(b"style")) => {
-                    Ok(ast::text_node_body_item::Inner::Style(parse_style(context, false)?).get_outer())
-                }
+                Some(Token::Word(b"style")) => Ok(ast::text_node_body_item::Inner::Style(
+                    parse_style(context, false)?,
+                )
+                .get_outer()),
                 _ => Err(context.new_unexpected_token_error()),
             },
             Some((Token::CurlyOpen, Token::CurlyClose)),
@@ -597,12 +599,14 @@ fn parse_override(context: &mut PCContext) -> Result<ast::Override, err::ParserE
         parse_body(
             context,
             |context: &mut PCContext| match context.curr_token {
-                Some(Token::KeywordVariant) => {
-                    Ok(ast::override_body_item::Inner::Variant(parse_variant(context)?).get_outer())
-                }
-                Some(Token::Word(b"style")) => {
-                    Ok(ast::override_body_item::Inner::Style(parse_style(context, false)?).get_outer())
-                }
+                Some(Token::KeywordVariant) => Ok(ast::override_body_item::Inner::Variant(
+                    parse_variant(context)?,
+                )
+                .get_outer()),
+                Some(Token::Word(b"style")) => Ok(ast::override_body_item::Inner::Style(
+                    parse_style(context, false)?,
+                )
+                .get_outer()),
                 _ => Err(context.new_unexpected_token_error()),
             },
             Some((Token::CurlyOpen, Token::CurlyClose)),
@@ -646,9 +650,10 @@ fn parse_element(context: &mut PCContext) -> Result<ast::Element, err::ParserErr
         parse_body(
             context,
             |context: &mut PCContext| match context.curr_token {
-                Some(Token::Word(b"style")) => {
-                    Ok(ast::element_body_item::Inner::Style(parse_style(context, false)?).get_outer())
-                }
+                Some(Token::Word(b"style")) => Ok(ast::element_body_item::Inner::Style(
+                    parse_style(context, false)?,
+                )
+                .get_outer()),
                 Some(Token::Word(b"text")) => {
                     Ok(ast::element_body_item::Inner::Text(parse_text(context)?).get_outer())
                 }
@@ -658,9 +663,10 @@ fn parse_element(context: &mut PCContext) -> Result<ast::Element, err::ParserErr
                 Some(Token::Word(b"slot")) => {
                     Ok(ast::element_body_item::Inner::Slot(parse_slot(context)?).get_outer())
                 }
-                Some(Token::Word(b"override")) => {
-                    Ok(ast::element_body_item::Inner::Override(parse_override(context)?).get_outer())
-                }
+                Some(Token::Word(b"override")) => Ok(ast::element_body_item::Inner::Override(
+                    parse_override(context)?,
+                )
+                .get_outer()),
                 Some(Token::Word(_)) => {
                     Ok(ast::element_body_item::Inner::Element(parse_element(context)?).get_outer())
                 }

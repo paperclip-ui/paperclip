@@ -1116,6 +1116,7 @@ dependencies = [
  "http-body",
  "hyper",
  "include_dir",
+ "notify",
  "open",
  "paperclip_common",
  "paperclip_evaluator",

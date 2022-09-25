@@ -108,6 +108,11 @@ fn parse_spaced_list(
         let mut items = vec![first.get_outer()];
         while matches!(context.curr_token, Some(Token::Space(_))) {
             context.next_token()?;
+
+            // just some extra space at the end. Ignore
+            if matches!(context.curr_token, Some(Token::Newline(_))) {
+                break;
+            }
             items.push(parse_arithmetic(context)?.get_outer());
         }
         let end = context.curr_u16pos.clone();

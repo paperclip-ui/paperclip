@@ -232,11 +232,9 @@ add_case! {
     "<span class=\"_80f4925f-4\"> abba </span>"
 }
 
-
-
 add_case! {
-	adds_component_namespace_to_classes,
-	[
+    adds_component_namespace_to_classes,
+    [
 ("/entry.pc", r#"
 public component Ab {
 	render div {
@@ -247,6 +245,6 @@ public component Ab {
 	}
 }
 "#)
-	],
-	"<div class=\"_Ab-80f4925f-5\"> abba </div>"
+    ],
+    "<div class=\"_Ab-80f4925f-5\"> abba </div>"
 }

@@ -379,3 +379,23 @@ add_case! {
     }
   "#
 }
+
+add_case! {
+  can_add_space_after_declarations,
+  [(
+      "/entry.pc",
+      r#"
+      
+style fontRegular {
+  font-family: Helvetica   
+}
+
+div {
+  style extends fontRegular {}
+}
+    "#,
+  )],
+  r#"
+  ._80f4925f-7 { font-family: Helvetica; }
+  "#
+}

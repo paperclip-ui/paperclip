@@ -1,21 +1,27 @@
 // https://github.com/hyperium/tonic/blob/master/examples/src/hyper_warp/server.rs
 
+use async_stream::try_stream;
 use futures::executor::block_on;
 use futures::Stream;
-use std::pin::Pin;
-use tonic::{Request, Response, Status};
-
+use futures_util::pin_mut;
+use futures::{
+    channel::mpsc::{channel, Receiver},
+    SinkExt,
+};
+use futures_util::stream::StreamExt;
+use std::path::Path;
 use paperclip_common::pc::is_paperclip_file;
 use paperclip_evaluator::runtime::Runtime;
-use futures_util::pin_mut;
-use futures_util::stream::StreamExt;
 use paperclip_project::{ConfigContext, Project, ProjectIO};
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{file_response, FileRequest, FileResponse, PaperclipData};
+use std::pin::Pin;
+use notify::{Config, Event, RecommendedWatcher, RecursiveMode, Watcher};
 use std::sync::{Arc, Mutex, MutexGuard};
+use std::time::Duration;
 use tokio::sync::mpsc;
-use async_stream::try_stream;
-
+use tokio::time::timeout;
+use tonic::{Request, Response, Status};
 
 use tokio_stream::wrappers::ReceiverStream;
 
@@ -42,71 +48,64 @@ impl<IO: ProjectIO + 'static> Designer for DesignerService<IO> {
         &self,
         request: Request<FileRequest>,
     ) -> OpenFileResult<Self::OpenFileStream> {
-        let (tx, rx) = mpsc::channel(4);
 
         let project = self.project.clone();
-        let path = &request.into_inner().path;
-        let mut s = Box::pin(project.lock().unwrap().io.watch(path));
+        let (mut watcher, mut rx) = async_watcher().unwrap();
+        let output = try_stream! {
+            let path = request.into_inner().path;
+            watcher.watch(Path::new(&path), RecursiveMode::Recursive).unwrap();
 
+            loop {
+                let data = if is_paperclip_file(&path) {
+                    Some(evaluate_pc_data(&path, project.clone()))
+                } else {
+                    None
+                };
 
-        tokio::spawn(async move {
+                yield FileResponse {
+                    raw_content: vec![],
+                    data
+                };
 
-            while let Some(result) = s.next().await {
+                rx.next().await;
+
             }
+        };
 
-            
-            // let s = project.lock().unwrap().io.watch(path);
+        // pin_mut!(output);
 
-            // loop {
-            //     s.next().await;
-            // }
-            // while let Some(ev) = s.next().await {
-
-            // }
-
-            // let send = |data: file_response::Data| async {
-
-            //     tx.send(Ok(FileResponse {
-            //         raw_content: vec![],
-            //         data: Some(data),
-            //     }))
-            //     .await
-            //     .unwrap();
-            // };
-
-            // if is_paperclip_file(&path) {
-                
-            //     let eval = || async {
-
-            //         let mut project = project.lock().unwrap();
-            //         let mut runtime = Runtime::new();
-
-            //         block_on(project.load_file(path));
-            //         let graph = project.graph.lock().unwrap();
-            //         let (css, html) = block_on(runtime.evaluate(path, &graph, &project.io)).unwrap();
-
-            //         // let s = project.io.watch(path)
-            //         send(file_response::Data::Paperclip(PaperclipData {
-            //             css: Some(css),
-            //             html: Some(html),
-            //         }));
-            //     };
-
-            //     eval().await;
-
-            //     let mut project = project.lock().unwrap();
-            //     let s = project.io.watch(path);
-            //     pin_mut!(s);
-            //     try_stream! {
-            //         while let Some(value) = s.next().await {
-            //             println!("CHANGE {:?}", value);
-            //         }
-            //     }
-
-            // }
-
-        });
-
-        Ok(Response::new(Box::pin(ReceiverStream::new(rx))))
+        Ok(Response::new(Box::pin(output)))
     }
+}
+
+
+pub fn async_watcher() -> notify::Result<(RecommendedWatcher, Receiver<notify::Result<Event>>)> {
+    let (mut tx, rx) = channel(1);
+
+    // Automatically select the best implementation for your platform.
+    // You can also access each implementation directly e.g. INotifyWatcher.
+    let watcher = RecommendedWatcher::new(
+        move |res| {
+            futures::executor::block_on(async {
+                tx.send(res).await.unwrap();
+            })
+        },
+        Config::default(),
+    )?;
+
+    Ok((watcher, rx))
+}
+
+fn evaluate_pc_data<IO: ProjectIO + 'static>(path: &str, project: Arc<Mutex<Project<IO>>>) -> file_response::Data {
+    let mut project = project.lock().unwrap();
+
+    let mut runtime = Runtime::new();
+
+    block_on(project.load_file(path));
+    let graph = project.graph.lock().unwrap();
+    let (css, html) = block_on(runtime.evaluate(path, &graph, &project.io)).unwrap();
+    file_response::Data::Paperclip(PaperclipData {
+        css: Some(css),
+        html: Some(html),
+    })
 }

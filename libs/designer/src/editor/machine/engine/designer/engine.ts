@@ -32,11 +32,13 @@ type Actions = ReturnType<typeof createActions>;
 const createActions = (client: DesignerClient, dispatch: Dispatch<any>) => {
   return {
     openFile(filePath: string) {
+      console.log("OKEN");
       const fileRequest = new FileRequest();
       fileRequest.setPath(filePath);
       client
         .openFile(fileRequest)
         .on("data", (data) => {
+          console.log(data);
           dispatch(designerEngineEvents.documentOpened(data));
         })
         .on("end", () => {

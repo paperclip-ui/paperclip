@@ -55,11 +55,8 @@ fn evaluate_tokens<F: FileResolver>(document: &ast::Document, context: &mut Docu
 
     let id = context.next_id();
 
-    context
-        .document
-        .borrow_mut()
-        .rules
-        .push(virt::rule::Inner::Style(virt::StyleRule {
+    context.document.borrow_mut().rules.push(
+        virt::rule::Inner::Style(virt::StyleRule {
             id,
             source_id: None,
             selector_text: ":root".to_string(),
@@ -72,7 +69,9 @@ fn evaluate_tokens<F: FileResolver>(document: &ast::Document, context: &mut Docu
                     value: evaluate_atom(atom, context),
                 })
                 .collect(),
-        }).get_outer())
+        })
+        .get_outer(),
+    )
 }
 fn evaluate_document_rules<F: FileResolver>(
     document: &ast::Document,
@@ -243,7 +242,8 @@ fn evaluate_variant_styles<F: FileResolver>(
                 }
             ),
             style: evaluated_style.clone(),
-        }).get_outer();
+        })
+        .get_outer();
         context.document.borrow_mut().rules.push(virt_style);
     }
 
@@ -269,7 +269,8 @@ fn evaluate_variant_styles<F: FileResolver>(
                         }
                     ),
                     style: evaluated_style.clone(),
-                }).get_outer()
+                })
+                .get_outer()
             })
             .collect::<Vec<virt::Rule>>()
     } else {
@@ -286,7 +287,8 @@ fn evaluate_variant_styles<F: FileResolver>(
                 }
             ),
             style: evaluated_style.clone(),
-        }).get_outer()]
+        })
+        .get_outer()]
     };
 
     for virt_style in virt_styles {
@@ -301,14 +303,16 @@ fn evaluate_variant_styles<F: FileResolver>(
                                 container_query,
                                 vec![rule],
                                 context,
-                            )).get_outer()
+                            ))
+                            .get_outer()
                         } else if container_query.starts_with("@supports") {
                             virt::rule::Inner::Supports(create_condition_rule(
                                 "supports",
                                 container_query,
                                 vec![rule],
                                 context,
-                            )).get_outer()
+                            ))
+                            .get_outer()
                         } else {
                             rule
                         }

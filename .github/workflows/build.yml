@@ -18,15 +18,16 @@ jobs:
           ]
         package: [libs/cli]
     steps:
+      - uses: actions/checkout@master
       - uses: arduino/setup-protoc@v1
         with:
           version: "3.x"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/checkout@master
       - name: Compile
         id: compile
         uses: rust-build/rust-build.action@v1.3.2
         env:
+          PRE_BUILD: ./pre.sh
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RUSTTARGET: ${{ matrix.target }}
           SRC_DIR: ${{ matrix.package }}

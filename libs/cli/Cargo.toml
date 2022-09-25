@@ -18,6 +18,8 @@ futures = "0.3.21"
 futures-core = "0.3.24"
 futures-util = "0.3.24"
 anyhow = "1.0.61"
+textwrap = "0.15.0"
+console = "0.15.1"
 
 [dev-dependencies]
 assert_cmd = "2.0.4"

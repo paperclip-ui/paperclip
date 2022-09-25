@@ -1,3 +1,4 @@
+use crate::config::ConfigContext;
 use futures_core::stream::Stream;
 use paperclip_parser::graph::io::IO as GraphIO;
 
@@ -23,7 +24,8 @@ impl WatchEvent {
     }
 }
 
-pub trait ProjectIO: GraphIO {
+pub trait ProjectIO: GraphIO + Clone + Send + Sync {
     type Str: Stream<Item = WatchEvent>;
     fn watch(&self, dir: &str) -> Self::Str;
+    fn get_all_designer_files(&self, config: &ConfigContext) -> Vec<String>;
 }

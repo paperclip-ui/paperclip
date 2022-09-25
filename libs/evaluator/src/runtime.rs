@@ -1,17 +1,39 @@
+use crate::css;
+use crate::html;
+use anyhow::Result;
+use paperclip_common::fs::FileResolver;
 use paperclip_parser::graph;
-use paperclip_parser::graph::io as graph_io;
 
-pub struct Runtime {}
+// #[derive(Debug)]
+// pub struct EvalInfo(css::virt::Document, html::virt::Document);
 
-pub trait RuntimeIO: graph_io::IO {}
+pub struct Runtime {
+    // cache: HashMap<String, EvalInfo>,
+}
 
 impl Runtime {
     pub fn new() -> Self {
-        Runtime {}
+        Runtime {
+            // cache: HashMap::new(),
+        }
     }
-    pub async fn load<TRuntimeIO: RuntimeIO>(&mut self, path: &str, io: &TRuntimeIO) {
-        // First need to load the graph
-        let mut graph = graph::Graph::new();
-        graph.load(path, io).await;
+    pub async fn evaluate<FR: FileResolver>(
+        &mut self,
+        path: &str,
+        graph: &graph::Graph,
+        file_resolver: &FR,
+    ) -> Result<(css::virt::Document, html::virt::Document)> {
+        Ok((
+            css::evaluator::evaluate(&path, graph, file_resolver).await?,
+            html::evaluator::evaluate(
+                &path,
+                graph,
+                file_resolver,
+                html::context::Options {
+                    include_components: true,
+                },
+            )
+            .await?,
+        ))
     }
 }

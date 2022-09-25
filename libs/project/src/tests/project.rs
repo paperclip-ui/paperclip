@@ -1,7 +1,7 @@
-use crate::config::{CompilerOptions, Config};
+use crate::config::{CompilerOptions, Config, ConfigContext};
 use crate::io::{ProjectIO, WatchEvent, WatchEventKind};
-use crate::project::{CompileOptions, Project};
-use crate::project_compiler::ProjectCompiler;
+use crate::{CompileOptions, Project};
+use anyhow::Result;
 use async_stream::stream;
 use futures::executor::block_on;
 use futures_core::stream::Stream;
@@ -11,14 +11,12 @@ use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::graph::io::IO as GraphIO;
 use paperclip_parser::graph::test_utils::MockFS;
-use paperclip_parser::graph::Graph;
 use path_absolutize::*;
-use std::cell::RefCell;
 use std::collections::HashMap;
 use std::path::Path;
-use std::rc::Rc;
 
-struct MockIO;
+#[derive(Clone)]
+struct MockIO(MockFS<'static>);
 
 impl GraphIO for MockIO {}
 
@@ -29,11 +27,14 @@ impl ProjectIO for MockIO {
           yield WatchEvent::new(WatchEventKind::Create, &"nada".to_string());
         }
     }
+    fn get_all_designer_files(&self, _context: &ConfigContext) -> Vec<String> {
+        vec![]
+    }
 }
 
 impl FileReader for MockIO {
-    fn read_file(&self, path: &str) -> Option<Box<[u8]>> {
-        Some(path.to_string().as_bytes().to_vec().into_boxed_slice())
+    fn read_file(&self, path: &str) -> Result<Box<[u8]>> {
+        self.0.read_file(path)
     }
 }
 
@@ -58,24 +59,22 @@ macro_rules! test_case {
     ($name:ident, $config: expr, $dir: expr, $main: expr, $input_files: expr, $output_files: expr) => {
         #[test]
         fn $name() {
-            let config = Rc::new($config);
+            let config_context = ConfigContext {
+                directory: $dir.to_string(),
+                file_name: "paperclip.config.json".to_string(),
+                config: $config,
+            };
 
-            let mut graph = Graph::new();
-            let files = MockFS::new(HashMap::from($input_files));
+            let io = MockIO(MockFS::new(HashMap::from($input_files)));
 
-            block_on(graph.load($main, &files));
-            let graph = Rc::new(RefCell::new(graph));
-            let io = Rc::new(MockIO {});
+            let mut project = Project::new(config_context, io.clone());
 
-            let project = Project::new(
-                config.clone(),
-                graph.clone(),
-                $dir.to_string(),
-                ProjectCompiler::load(config.clone(), $dir.to_string(), io.clone()),
-                io.clone(),
-            );
+            let result = block_on(project.load_file($main));
+            if let Err(error) = result {
+                panic!("{:?}", error);
+            }
 
-            let output = project.compile(CompileOptions { watch: false });
+            let output = project.compile_all(CompileOptions { watch: false });
 
             pin_mut!(output);
             let expected_files = HashMap::from($output_files);
@@ -366,7 +365,6 @@ test_case! {
   "/project/src/entry.pc",
   [
     ("/project/src/entry.pc", r#"
-      import "/project/src/imp.pc" as imp0
       div {
         style {
           background: url("../image.png")
@@ -402,7 +400,6 @@ test_case! {
   "/project/src/entry.pc",
   [
     ("/project/src/entry.pc", r#"
-      import "/project/src/imp.pc" as imp0
       div {
         style {
           background: url("./image.png")
@@ -414,7 +411,109 @@ test_case! {
   [
     ("/project/out/assets/main.css", r#"
     /* /project/out/entry.pc.css */
-     ._856b6f45-7 { background: url("/project/out/assets/image.png"); }
+     ._856b6f45-6 { background: url("/project/out/assets/image.png"); }
+    "#)
+  ]
+}
+
+test_case! {
+  all_css_imports_are_included,
+  default_config_with_compiler_options("src", vec![
+    default_compiler_options_with_emit(vec!["css".to_string(), "html".to_string()])
+  ]),
+  "/",
+  "/entry.pc",
+  [
+    ("/entry.pc", r#"
+      import "/test.pc" as test
+      
+      test.Component
+    "#),
+
+    ("/test.pc", r#"
+      import "/colors.pc" as colors
+      
+      public component Component {
+        render div {
+          style {
+            background: var(colors.white0)
+          }
+        }
+      }
+    "#),
+
+    ("/colors.pc", r#"
+      public token white0 #FFF
+    "#),
+
+  ],
+  [
+    ("/entry.pc.css", ""),
+    ("/entry.pc.html", r#"
+      <!doctype html> 
+      <html>
+        <head> 
+          <link rel="stylesheet" href="/entry.pc.css"> 
+          <link rel="stylesheet" href="/test.pc.css">
+          <link rel="stylesheet" href="/colors.pc.css">
+        </head> 
+        <body> 
+          <div class="_Component-6bcf0994-6">
+          </div> 
+        </body> 
+      </html>
+    "#),
+    ("/colors.pc.css", ":root { --white0-e05e7926-2: #FFF; }"),
+    ("/colors.pc.html", r#"
+      <!doctype html> 
+      <html> 
+        <head> 
+          <link rel="stylesheet" href="/colors.pc.css">
+        </head> 
+        <body>
+        </body>
+      </html>
+    "#),
+    ("/test.pc.css", "._Component-6bcf0994-6 { background: var(--white0-e05e7926-2); }"),
+    ("/test.pc.html", r#"
+      <!doctype html> 
+      <html> 
+        <head> 
+          <link rel="stylesheet" href="/test.pc.css">
+          <link rel="stylesheet" href="/colors.pc.css">
+        </head> 
+        <body>
+        </body> 
+      </html>
+    "#)
+  ]
+}
+
+test_case! {
+  can_emit_a_custom_extension,
+  default_config_with_compiler_options(".", vec![
+    default_compiler_options_with_emit(vec!["html:html2".to_string()])
+  ]),
+  "/",
+  "/entry.pc",
+  [
+    ("/entry.pc", r#"
+      div {
+        text "Hello world"
+      }
+    "#)
+  ],
+  [
+    ("/entry.pc.html2", r#"
+      <!doctype html>
+      <html> 
+        <head>
+          <link rel="stylesheet" href="/entry.pc.css">
+        </head>
+        <body>
+          <div> Hello world </div>
+        </body>
+      </html>
     "#)
   ]
 }

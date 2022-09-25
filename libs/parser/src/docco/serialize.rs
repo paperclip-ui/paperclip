@@ -11,9 +11,11 @@ pub fn serialize(comment: &ast::Comment) -> String {
 pub fn serialize_comment(comment: &ast::Comment, context: &mut Context) {
     context.add_buffer("/**");
     for item in &comment.body {
-        match item {
-            ast::CommentBodyItem::Text(text) => serialize_text(text, context),
-            ast::CommentBodyItem::Property(property) => serialize_property(property, context),
+        match &item.get_inner() {
+            ast::comment_body_item::Inner::Text(text) => serialize_text(text, context),
+            ast::comment_body_item::Inner::Property(property) => {
+                serialize_property(property, context)
+            }
         }
     }
     context.add_buffer("*/");
@@ -25,12 +27,12 @@ fn serialize_text(text: &base_ast::Str, context: &mut Context) {
 
 fn serialize_property(prop: &ast::Property, context: &mut Context) {
     context.add_buffer(format!("@{}", prop.name).as_str());
-    match &prop.value {
-        ast::PropertyValue::String(value) => {
+    match &prop.value.as_ref().expect("value must exist").get_inner() {
+        ast::property_value::Inner::Str(value) => {
             context.add_buffer(" ");
             serialize_string(value, context);
         }
-        ast::PropertyValue::Parameters(value) => {
+        ast::property_value::Inner::Parameters(value) => {
             serialize_parameters(value, context);
         }
     }
@@ -55,11 +57,11 @@ fn serialize_parameters(value: &ast::Parameters, context: &mut Context) {
 
 fn serialize_parameter(value: &ast::Parameter, context: &mut Context) {
     context.add_buffer(format!("{}: ", value.name).as_str());
-    match &value.value {
-        ast::ParameterValue::Number(value) => {
+    match &value.value.as_ref().expect("Value must exist").get_inner() {
+        ast::parameter_value::Inner::Number(value) => {
             context.add_buffer(format!("{}", value.value).as_str())
         }
-        ast::ParameterValue::String(value) => {
+        ast::parameter_value::Inner::Str(value) => {
             serialize_string(&value, context);
         }
     }

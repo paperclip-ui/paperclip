@@ -25,7 +25,9 @@ macro_rules! add_case {
         fn $name() {
             let mock_fs = test_utils::MockFS::new(HashMap::from($input));
             let mut graph = graph::Graph::new();
-            block_on(graph.load("/entry.pc", &mock_fs));
+            if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
+                panic!("Unable to load");
+            }
             let resolver = MockResolver {};
             let doc = block_on(evaluate(
                 "/entry.pc",
@@ -228,4 +230,21 @@ add_case! {
 "#)
     ],
     "<span class=\"_80f4925f-4\"> abba </span>"
+}
+
+add_case! {
+    adds_component_namespace_to_classes,
+    [
+("/entry.pc", r#"
+public component Ab {
+	render div {
+		style {
+			color: red
+		}
+		text "abba"
+	}
+}
+"#)
+    ],
+    "<div class=\"_Ab-80f4925f-5\"> abba </div>"
 }

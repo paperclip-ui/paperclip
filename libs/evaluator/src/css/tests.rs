@@ -20,7 +20,10 @@ macro_rules! add_case {
         fn $name() {
             let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
             let mut graph = graph::Graph::new();
-            block_on(graph.load("/entry.pc", &mock_fs));
+
+            if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
+                panic!("Unable to load");
+            }
             let resolver = MockResolver {};
             let doc = block_on(evaluate("/entry.pc", &graph, &resolver)).unwrap();
             assert_eq!(
@@ -261,11 +264,11 @@ add_case! {
   )],
   r#"
     :root {
-        --80f4925f-7: rgba(255, 255, 255, 0);
+        --snowWhite-80f4925f-7: rgba(255, 255, 255, 0);
     }
 
     ._80f4925f-12 {
-        color: var(--80f4925f-7);
+        color: var(--snowWhite-80f4925f-7);
     }
   "#
 }
@@ -377,3 +380,50 @@ add_case! {
   "#
 }
 
+add_case! {
+  can_add_space_after_declarations,
+  [(
+      "/entry.pc",
+      r#"
+      
+style fontRegular {
+  font-family: Helvetica   
+}
+
+div {
+  style extends fontRegular {}
+}
+    "#,
+  )],
+  r#"
+  ._80f4925f-7 { font-family: Helvetica; }
+  "#
+}
+
+
+add_case! {
+  can_evaluate_styles_without_bodies,
+  [(
+      "/entry.pc",
+      r#"
+      
+style a {
+  font-family: Helvetica   
+}
+
+style b {
+  color: red
+}
+
+style c extends a, b
+
+
+div {
+  style extends c
+}
+    "#,
+  )],
+  r#"
+  ._80f4925f-13 { font-family: Helvetica; color: red; }
+  "#
+}

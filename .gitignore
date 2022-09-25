@@ -3,6 +3,7 @@ node_modules
 lib
 dist
 target
+*.pc.react.d.ts
 *.pc.css
 *.pc.mjs
 *.pc.mjs.*
@@ -10,6 +11,7 @@ target
 *.pc.html
 *.pc.js
 *.pc.js.map
+*.react.js
 *.vsix
 *.artifacts
 *.node
@@ -21,6 +23,7 @@ paperclip-html.tmLanguage.json
 
 .yarn/*
 .yarn/cache
+.yarn/install-state.gz
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases

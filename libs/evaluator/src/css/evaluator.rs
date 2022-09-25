@@ -3,7 +3,6 @@ use super::errors;
 use super::virt;
 use crate::core::utils::{get_style_namespace, get_variant_namespace};
 use paperclip_common::fs::FileResolver;
-use paperclip_common::id::get_document_id;
 use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph;
 use paperclip_parser::graph::reference as graph_ref;
@@ -56,11 +55,8 @@ fn evaluate_tokens<F: FileResolver>(document: &ast::Document, context: &mut Docu
 
     let id = context.next_id();
 
-    context
-        .document
-        .borrow_mut()
-        .rules
-        .push(virt::Rule::Style(virt::StyleRule {
+    context.document.borrow_mut().rules.push(
+        virt::rule::Inner::Style(virt::StyleRule {
             id,
             source_id: None,
             selector_text: ":root".to_string(),
@@ -69,11 +65,13 @@ fn evaluate_tokens<F: FileResolver>(document: &ast::Document, context: &mut Docu
                 .map(|atom| virt::StyleDeclaration {
                     id: atom.id.to_string(),
                     source_id: atom.id.to_string(),
-                    name: format!("--{}", atom.id),
+                    name: atom.get_var_name(),
                     value: evaluate_atom(atom, context),
                 })
                 .collect(),
-        }))
+        })
+        .get_outer(),
+    )
 }
 fn evaluate_document_rules<F: FileResolver>(
     document: &ast::Document,
@@ -88,14 +86,14 @@ fn evaluate_body_rule<F: FileResolver>(
     item: &ast::DocumentBodyItem,
     context: &mut DocumentContext<F>,
 ) {
-    match item {
-        ast::DocumentBodyItem::Component(component) => {
+    match item.get_inner() {
+        ast::document_body_item::Inner::Component(component) => {
             evaluate_component(component, context);
         }
-        ast::DocumentBodyItem::Element(component) => {
+        ast::document_body_item::Inner::Element(component) => {
             evaluate_element(component, context);
         }
-        ast::DocumentBodyItem::Text(text) => {
+        ast::document_body_item::Inner::Text(text) => {
             evaluate_text(text, context);
         }
         _ => {}
@@ -107,18 +105,21 @@ fn evaluate_component<F: FileResolver>(
     context: &mut DocumentContext<F>,
 ) {
     for item in &component.body {
-        if let ast::ComponentBodyItem::Render(render) = item {
-            evaluate_render_node(&render.node, &mut context.within_component(component));
+        if let ast::component_body_item::Inner::Render(render) = item.get_inner() {
+            evaluate_render_node(
+                render.node.as_ref().expect("Render node value must exist"),
+                &mut context.within_component(component),
+            );
         }
     }
 }
 
 fn evaluate_render_node<F: FileResolver>(node: &ast::RenderNode, context: &mut DocumentContext<F>) {
-    match node {
-        ast::RenderNode::Element(element) => {
+    match node.get_inner() {
+        ast::render_node::Inner::Element(element) => {
             evaluate_element(element, context);
         }
-        ast::RenderNode::Text(element) => {
+        ast::render_node::Inner::Text(element) => {
             evaluate_text(element, context);
         }
         _ => {}
@@ -129,26 +130,26 @@ fn evaluate_element<F: FileResolver>(element: &ast::Element, context: &mut Docum
     let mut el_context = context.within_node(CurrentNode::Element(element));
 
     for item in &element.body {
-        match item {
-            ast::ElementBodyItem::Style(style) => {
+        match item.get_inner() {
+            ast::element_body_item::Inner::Style(style) => {
                 evaluate_style(style, &mut el_context);
             }
-            ast::ElementBodyItem::Element(expr) => {
+            ast::element_body_item::Inner::Element(expr) => {
                 evaluate_element(expr, &mut el_context);
             }
-            ast::ElementBodyItem::Text(expr) => {
+            ast::element_body_item::Inner::Text(expr) => {
                 evaluate_text(expr, &mut el_context);
             }
             _ => {}
         }
     }
 }
-fn evaluate_text<F: FileResolver>(element: &ast::TextNode, context: &mut DocumentContext<F>) {
-    let mut el_context = context.within_node(CurrentNode::TextNode(element));
+fn evaluate_text<F: FileResolver>(expr: &ast::TextNode, context: &mut DocumentContext<F>) {
+    let mut el_context = context.within_node(CurrentNode::TextNode(expr));
 
-    for item in &element.body {
-        match item {
-            ast::TextNodeBodyItem::Style(style) => {
+    for item in &expr.body {
+        match item.get_inner() {
+            ast::text_node_body_item::Inner::Style(style) => {
                 evaluate_style(style, &mut el_context);
             }
         }
@@ -156,9 +157,15 @@ fn evaluate_text<F: FileResolver>(element: &ast::TextNode, context: &mut Documen
 }
 
 fn evaluate_style<F: FileResolver>(style: &ast::Style, context: &mut DocumentContext<F>) {
-    if let Some(variants) = &style.variant_combo {
-        let expanded_combo_selectors = collect_style_variant_selectors(variants, context);
-        evaluate_variant_styles(&style, variants, &expanded_combo_selectors, context);
+    if style.variant_combo.len() > 0 {
+        let expanded_combo_selectors =
+            collect_style_variant_selectors(&style.variant_combo, context);
+        evaluate_variant_styles(
+            &style,
+            &style.variant_combo,
+            &expanded_combo_selectors,
+            context,
+        );
     } else {
         evaluate_vanilla_style(style, context)
     }
@@ -177,7 +184,7 @@ fn evaluate_variant_styles<F: FileResolver>(
     };
 
     let render_node = if let Some(render) = current_component.get_render_expr() {
-        &render.node
+        render.node.as_ref().expect("Node must exist")
     } else {
         return;
     };
@@ -191,18 +198,16 @@ fn evaluate_variant_styles<F: FileResolver>(
     let ns = get_style_namespace(
         current_node.get_name(),
         current_node.get_id(),
-        &get_document_id(context.path),
         context.current_component,
     );
 
     let render_node_ns = get_style_namespace(
-        match render_node {
-            ast::RenderNode::Element(expr) => &expr.name,
-            ast::RenderNode::Text(expr) => &expr.name,
+        match render_node.get_inner() {
+            ast::render_node::Inner::Element(expr) => &expr.name,
+            ast::render_node::Inner::Text(expr) => &expr.name,
             _ => &None,
         },
         &render_node.get_id(),
-        &get_document_id(context.path),
         context.current_component,
     );
 
@@ -214,7 +219,7 @@ fn evaluate_variant_styles<F: FileResolver>(
 
     for variant in variants {
         for item in &current_component.body {
-            if let ast::ComponentBodyItem::Variant(variant2) = item {
+            if let ast::component_body_item::Inner::Variant(variant2) = item.get_inner() {
                 if variant.path.get(0) == Some(&variant2.name) {
                     assoc_variants.push(variant2);
                 }
@@ -223,7 +228,7 @@ fn evaluate_variant_styles<F: FileResolver>(
     }
 
     for assoc_variant in assoc_variants {
-        let virt_style = virt::Rule::Style(virt::StyleRule {
+        let virt_style = virt::rule::Inner::Style(virt::StyleRule {
             id: context.next_id(),
             source_id: Some(style.id.to_string()),
             selector_text: format!(
@@ -237,7 +242,8 @@ fn evaluate_variant_styles<F: FileResolver>(
                 }
             ),
             style: evaluated_style.clone(),
-        });
+        })
+        .get_outer();
         context.document.borrow_mut().rules.push(virt_style);
     }
 
@@ -249,7 +255,7 @@ fn evaluate_variant_styles<F: FileResolver>(
         combo_selectors
             .iter()
             .map(|group_selectors| {
-                virt::Rule::Style(virt::StyleRule {
+                virt::rule::Inner::Style(virt::StyleRule {
                     id: context.next_id(),
                     source_id: Some(style.id.to_string()),
                     selector_text: format!(
@@ -264,10 +270,11 @@ fn evaluate_variant_styles<F: FileResolver>(
                     ),
                     style: evaluated_style.clone(),
                 })
+                .get_outer()
             })
             .collect::<Vec<virt::Rule>>()
     } else {
-        vec![virt::Rule::Style(virt::StyleRule {
+        vec![virt::rule::Inner::Style(virt::StyleRule {
             id: context.next_id(),
             source_id: Some(style.id.to_string()),
             selector_text: format!(
@@ -280,7 +287,8 @@ fn evaluate_variant_styles<F: FileResolver>(
                 }
             ),
             style: evaluated_style.clone(),
-        })]
+        })
+        .get_outer()]
     };
 
     for virt_style in virt_styles {
@@ -290,19 +298,21 @@ fn evaluate_variant_styles<F: FileResolver>(
                     .iter()
                     .fold(virt_style.clone(), |rule, container_query| {
                         if container_query.starts_with("@media") {
-                            virt::Rule::Media(create_condition_rule(
+                            virt::rule::Inner::Media(create_condition_rule(
                                 "media",
                                 container_query,
                                 vec![rule],
                                 context,
                             ))
+                            .get_outer()
                         } else if container_query.starts_with("@supports") {
-                            virt::Rule::Supports(create_condition_rule(
+                            virt::rule::Inner::Supports(create_condition_rule(
                                 "supports",
                                 container_query,
                                 vec![rule],
                                 context,
                             ))
+                            .get_outer()
                         } else {
                             rule
                         }
@@ -438,14 +448,14 @@ fn collect_triggers<F: FileResolver>(
     context: &mut DocumentContext<F>,
 ) {
     for trigger in triggers {
-        match trigger {
-            ast::TriggerBodyItem::Boolean(expr) => {
+        match trigger.get_inner() {
+            ast::trigger_body_item::Inner::Boolean(expr) => {
                 into.push(VariantTrigger::Boolean(expr.value));
             }
-            ast::TriggerBodyItem::String(expr) => {
+            ast::trigger_body_item::Inner::Str(expr) => {
                 into.push(VariantTrigger::Selector(expr.value.to_string()));
             }
-            ast::TriggerBodyItem::Reference(expr) => {
+            ast::trigger_body_item::Inner::Reference(expr) => {
                 if let Some(info) = context.graph.get_ref(&expr.path, context.path) {
                     if let graph_ref::Expr::Trigger(trigger) = &info.expr {
                         collect_triggers(&trigger.body, into, context);
@@ -457,7 +467,7 @@ fn collect_triggers<F: FileResolver>(
 }
 
 fn evaluate_atom<F: FileResolver>(atom: &ast::Atom, context: &DocumentContext<F>) -> String {
-    stringify_style_decl_value(&atom.value, context)
+    stringify_style_decl_value(atom.value.as_ref().expect("Value must exist"), context)
 }
 
 fn evaluate_vanilla_style<F: FileResolver>(style: &ast::Style, context: &mut DocumentContext<F>) {
@@ -466,7 +476,7 @@ fn evaluate_vanilla_style<F: FileResolver>(style: &ast::Style, context: &mut Doc
             .document
             .borrow_mut()
             .rules
-            .push(virt::Rule::Style(style));
+            .push(virt::rule::Inner::Style(style).get_outer());
     }
 }
 
@@ -482,7 +492,6 @@ fn create_virt_style<F: FileResolver>(
             Some(get_style_namespace(
                 node.get_name(),
                 node.get_id(),
-                &get_document_id(context.path),
                 context.current_component,
             ))
         })
@@ -506,12 +515,10 @@ fn create_style_declarations<F: FileResolver>(
     // these declarations should be overwritten. Also note that we're
     // including the entire body of extended styles to to cover !important statements.
     // This could be smarter at some point.
-    if let Some(extends) = &style.extends {
-        for reference in extends {
-            if let Some(reference) = context.graph.get_ref(&reference.path, context.path) {
-                if let graph_ref::Expr::Style(style) = &reference.expr {
-                    decls.extend(create_style_declarations(style, context));
-                }
+    for reference in &style.extends {
+        if let Some(reference) = context.graph.get_ref(&reference.path, context.path) {
+            if let graph_ref::Expr::Style(style) = &reference.expr {
+                decls.extend(create_style_declarations(style, context));
             }
         }
     }
@@ -530,7 +537,7 @@ fn evaluate_style_declaration<F: FileResolver>(
         id: "dec".to_string(),
         source_id: decl.id.to_string(),
         name: decl.name.to_string(),
-        value: stringify_style_decl_value(&decl.value, context),
+        value: stringify_style_decl_value(&decl.value.as_ref().expect("value missing"), context),
     }
 }
 
@@ -538,33 +545,38 @@ fn stringify_style_decl_value<F: FileResolver>(
     decl: &css_ast::DeclarationValue,
     context: &DocumentContext<F>,
 ) -> String {
-    match decl {
-        css_ast::DeclarationValue::SpacedList(expr) => expr
+    match &decl.get_inner() {
+        css_ast::declaration_value::Inner::SpacedList(expr) => expr
             .items
             .iter()
             .map(|item| stringify_style_decl_value(item, context))
             .collect::<Vec<String>>()
             .join(" "),
-        css_ast::DeclarationValue::CommaList(expr) => expr
+        css_ast::declaration_value::Inner::CommaList(expr) => expr
             .items
             .iter()
             .map(|item| stringify_style_decl_value(item, context))
             .collect::<Vec<String>>()
             .join(", "),
-        css_ast::DeclarationValue::Arithmetic(expr) => {
+        css_ast::declaration_value::Inner::Arithmetic(expr) => {
             format!(
                 "{} {} {}",
-                stringify_style_decl_value(&expr.left, context),
+                stringify_style_decl_value(&expr.left.as_ref().expect("Left missing"), context),
                 expr.operator,
-                stringify_style_decl_value(&expr.right, context)
+                stringify_style_decl_value(&expr.right.as_ref().expect("Right missing"), context)
             )
         }
-        css_ast::DeclarationValue::FunctionCall(expr) => {
+        css_ast::declaration_value::Inner::FunctionCall(expr) => {
             if expr.name == "var" && !expr.name.starts_with("--") {
-                if let css_ast::DeclarationValue::Reference(reference) = &expr.arguments.as_ref() {
+                if let css_ast::declaration_value::Inner::Reference(reference) = &expr
+                    .arguments
+                    .as_ref()
+                    .expect("arguments missing")
+                    .get_inner()
+                {
                     if let Some(reference) = context.graph.get_ref(&reference.path, context.path) {
                         if let graph_ref::Expr::Atom(atom) = reference.expr {
-                            return format!("var(--{})", atom.id);
+                            return format!("var({})", atom.get_var_name());
                         }
                     }
                 }
@@ -575,22 +587,28 @@ fn stringify_style_decl_value<F: FileResolver>(
                 "{}({})",
                 expr.name,
                 match expr.name.as_str() {
-                    "url" => stringify_url_arg_value(&expr.arguments, context),
-                    _ => stringify_style_decl_value(&expr.arguments, context),
+                    "url" => stringify_url_arg_value(
+                        &expr.arguments.as_ref().expect("arguments missing"),
+                        context
+                    ),
+                    _ => stringify_style_decl_value(
+                        &expr.arguments.as_ref().expect("arguments missing"),
+                        context
+                    ),
                 }
             )
         }
-        css_ast::DeclarationValue::HexColor(expr) => {
+        css_ast::declaration_value::Inner::HexColor(expr) => {
             format!("#{}", expr.value)
         }
-        css_ast::DeclarationValue::Reference(expr) => expr.path.join("."),
-        css_ast::DeclarationValue::Measurement(expr) => {
+        css_ast::declaration_value::Inner::Reference(expr) => expr.path.join("."),
+        css_ast::declaration_value::Inner::Measurement(expr) => {
             format!("{}{}", expr.value, expr.unit)
         }
-        css_ast::DeclarationValue::Number(expr) => {
+        css_ast::declaration_value::Inner::Number(expr) => {
             format!("{}", expr.value)
         }
-        css_ast::DeclarationValue::String(expr) => {
+        css_ast::declaration_value::Inner::Str(expr) => {
             format!("\"{}\"", expr.value)
         }
     }
@@ -600,8 +618,8 @@ fn stringify_url_arg_value<F: FileResolver>(
     decl: &css_ast::DeclarationValue,
     context: &DocumentContext<F>,
 ) -> String {
-    match decl {
-        css_ast::DeclarationValue::String(expr) => {
+    match &decl.get_inner() {
+        css_ast::declaration_value::Inner::Str(expr) => {
             format!(
                 "\"{}\"",
                 context

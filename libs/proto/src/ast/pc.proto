@@ -1,0 +1,217 @@
+syntax = "proto3";
+import "ast/base.proto";
+import "ast/css.proto";
+import "ast/docco.proto";
+
+package ast.pc;
+
+
+message Document {
+  string id = 1;
+  ast.base.Range range = 2;
+  repeated DocumentBodyItem body = 3;
+}
+
+message DocumentBodyItem {
+  oneof inner {
+    Import import = 1;
+    Style style = 2;
+    Component component = 3;
+    ast.docco.Comment doc_comment = 4;
+    TextNode text = 5;
+    Atom atom = 6;
+    Trigger trigger = 7;
+    Element element = 8;
+  }
+}
+
+message Import {
+  string id = 1;
+  ast.base.Range range = 2;
+  string namespace = 3;
+  string path = 4;
+}
+
+message Style {
+  string id = 1;
+  bool is_public = 2;
+  optional string name = 3;
+  repeated Reference variant_combo = 4;
+  repeated Reference extends = 5;
+  ast.base.Range range = 6;
+  repeated ast.css.StyleDeclaration declarations = 7;
+}
+
+message Component {
+  string id = 1;
+  bool is_public = 2;
+  ast.base.Range range = 3;
+  string name = 4;
+  repeated ComponentBodyItem body = 5;
+}
+
+message ComponentBodyItem {
+  oneof inner {
+    Render render = 1;
+    Variant variant = 2;
+    Script script = 3;
+  }
+}
+
+message Script {
+  string id = 1;
+  ast.base.Range range = 2;
+  repeated Parameter parameters = 3;
+}
+
+message Variant {
+  string id = 1;
+  ast.base.Range range = 2;
+  string name = 3;
+  repeated TriggerBodyItem triggers = 4;
+}
+
+message Render {
+  string id = 1;
+  ast.base.Range range = 2;
+  RenderNode node = 3;
+}
+
+message RenderNode {
+  oneof inner {
+    Slot slot = 1;
+    Element element = 2;
+    TextNode text = 3;
+  }
+}
+
+message Atom {
+  string id = 1;
+  bool is_public = 2;
+  string name = 3;
+  ast.base.Range range = 4;
+  ast.css.DeclarationValue value = 5;
+}
+
+message Trigger {
+  string id = 1;
+  ast.base.Range range = 2;
+  string name = 3;
+  bool is_public = 4;
+  repeated TriggerBodyItem body = 5;
+}
+
+message TriggerBodyItem {
+  oneof inner {
+    ast.base.Str str = 1;
+    Reference reference = 2;
+    ast.base.Boolean boolean = 3;
+  }
+}
+
+message TextNode {
+  string id = 1;
+  optional string name = 2;
+  string value = 3;
+  ast.base.Range range = 4;
+  repeated TextNodeBodyItem body = 5;
+}
+
+message TextNodeBodyItem {
+  oneof inner {
+    Style style = 1;
+  }
+}
+
+message Parameter {
+  string id = 1;
+  ast.base.Range range = 2;
+  string name = 3;
+  SimpleExpression value = 4;
+}
+
+message SimpleExpression {
+  oneof inner {
+    ast.base.Str str = 1;
+    ast.base.Number number = 2;
+    ast.base.Boolean boolean = 3;
+    Reference reference = 4;
+    Array array = 5;
+  }
+}
+
+message Reference {
+  string id = 1;
+  ast.base.Range range = 2;
+  repeated string path = 3;
+}
+
+message Array {
+  string id = 1;
+  ast.base.Range range = 2;
+  repeated SimpleExpression items = 3;
+}
+
+message Element {
+  optional string namespace = 1;
+  string tag_name = 2;
+  optional string name = 3;
+  repeated Parameter parameters = 4;
+  string id = 5;
+  ast.base.Range range = 6;
+  repeated ElementBodyItem body = 7;
+}
+
+message ElementBodyItem {
+  oneof inner {
+    Slot slot = 1;
+    Insert insert = 2;
+    Style style = 3;
+    Element element = 4;
+    TextNode text = 5;
+    Override override = 6;
+  }
+}
+
+message Slot {
+  string id = 1;
+  ast.base.Range range = 2;
+  string name = 3;
+  repeated SlotBodyItem body = 4;
+}
+
+message SlotBodyItem {
+  oneof inner {
+    Element element = 1;
+    TextNode text = 2;
+  }
+}
+
+message Insert {
+  string name = 1;
+  string id = 2;
+  ast.base.Range range = 3;
+  repeated InsertBody body = 4;
+}
+
+message InsertBody {
+  oneof inner {
+    Element element = 1;
+    TextNode text = 2;
+    Slot slot = 3;
+  }
+}
+
+message Override {
+  string id = 1;
+  repeated string path = 2;
+  ast.base.Range range = 3;
+  repeated OverrideBodyItem body = 4;
+}
+
+message OverrideBodyItem {
+  oneof inner {
+    Style style = 1;
+    Variant variant = 2;
+  }
+}

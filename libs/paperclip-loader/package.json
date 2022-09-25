@@ -1,0 +1,23 @@
+{
+  "name": "paperclip-loader",
+  "version": "0.1.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "build:watch": "concurrently \"yarn build:tsc --watch\" \"yarn build:rs --watch\"",
+    "build:tsc": "tsc",
+    "build:rs": "cargo-cp-artifact -nc lib/main.node -- cargo build --message-format=json-render-diagnostics && codesign --verbose -s - lib/main.node",
+    "build:rs:debug": "yarn build:rs",
+    "build:rs:release": "yarn build:rs --release",
+    "test": "cargo test"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cargo-cp-artifact": "^0.1",
+    "lodash": "^4.17.21"
+  },
+  "dependencies": {
+    "loader-utils": "^3.2.0"
+  }
+}

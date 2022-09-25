@@ -63,31 +63,31 @@ impl Graph {
 fn get_doc_body_expr<'expr>(part: &String, doc: &'expr ast::Document) -> Option<Expr<'expr>> {
     for child in &doc.body {
         // any way to make this more DRY? Macros???
-        match child {
-            ast::DocumentBodyItem::Import(import) => {
+        match child.get_inner() {
+            ast::document_body_item::Inner::Import(import) => {
                 if part == &import.namespace {
-                    return Some(Expr::Import(import));
+                    return Some(Expr::Import(&import));
                 }
             }
-            ast::DocumentBodyItem::Atom(atom) => {
+            ast::document_body_item::Inner::Atom(atom) => {
                 if part == &atom.name {
-                    return Some(Expr::Atom(atom));
+                    return Some(Expr::Atom(&atom));
                 }
             }
-            ast::DocumentBodyItem::Component(component) => {
+            ast::document_body_item::Inner::Component(component) => {
                 if part == &component.name {
-                    return Some(Expr::Component(component));
+                    return Some(Expr::Component(&component));
                 }
             }
-            ast::DocumentBodyItem::Trigger(trigger) => {
+            ast::document_body_item::Inner::Trigger(trigger) => {
                 if part == &trigger.name {
-                    return Some(Expr::Trigger(trigger));
+                    return Some(Expr::Trigger(&trigger));
                 }
             }
-            ast::DocumentBodyItem::Style(style) => {
+            ast::document_body_item::Inner::Style(style) => {
                 if let Some(name) = &style.name {
                     if name == part {
-                        return Some(Expr::Style(style));
+                        return Some(Expr::Style(&style));
                     }
                 }
             }

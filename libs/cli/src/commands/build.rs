@@ -3,7 +3,7 @@ use clap::Args;
 use futures_util::pin_mut;
 use futures_util::stream::StreamExt;
 use paperclip_project::config::DEFAULT_CONFIG_NAME;
-use paperclip_project::project::{CompileOptions, Project};
+use paperclip_project::{CompileOptions, ConfigContext, LocalIO, Project};
 use std::env;
 use std::fs::File;
 use std::io::prelude::*;
@@ -25,17 +25,15 @@ pub struct BuildArgs {
 
 pub async fn build(args: BuildArgs) -> Result<()> {
     let current_dir = String::from(env::current_dir()?.to_str().unwrap());
+    let io = LocalIO::default();
+    let config_context = ConfigContext::load(&current_dir, Some(args.config), &io)?;
 
-    let project = Project::load(
-        &current_dir,
-        Some(args.config),
-    )
-    .await?;
+    let mut project = Project::new(config_context, io);
+    project.load_all_files().await?;
 
-    let s = project.compile(CompileOptions { watch: args.watch });
+    let s = project.compile_all(CompileOptions { watch: args.watch });
     pin_mut!(s);
     while let Some(Ok((path, content))) = s.next().await {
-
         // replace cd with relative since it's a prettier output
         println!("✍🏻  {}", path.replace(&format!("{}/", current_dir), ""));
         if args.print {

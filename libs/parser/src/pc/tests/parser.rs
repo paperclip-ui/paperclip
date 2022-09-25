@@ -57,7 +57,7 @@ add_case! {
 
 add_case! {
     can_parse_style,
-    "style {\n}"
+    "style"
 }
 
 add_case! {
@@ -345,8 +345,7 @@ add_case! {
 add_case! {
     can_parse_an_empty_style,
     r#"
-    style a {
-    }
+    style a
     "#
 }
 
@@ -363,8 +362,7 @@ add_case! {
 add_case! {
     can_parse_a_style_with_variant_and_extends,
     r#"
-    style variant test extends a, b.d.e {
-    }
+    style variant test extends a, b.d.e
     "#
 }
 
@@ -380,8 +378,7 @@ add_case! {
 add_case! {
     can_parse_various_public_exprs,
     r#"
-    public style {
-    }
+    public style
     public component A {
     }
     "#
@@ -394,8 +391,7 @@ add_case! {
         variant ab
         variant abc
         render div test {
-            style variant ab + abc {
-            }
+            style variant ab + abc
         }
     }
     "#

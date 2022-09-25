@@ -32,17 +32,22 @@ pub fn parse_comment(context: &mut ParserContext) -> Result<ast::Comment, Parser
     let start = context.curr_u16pos.clone();
     let mut body: Vec<ast::CommentBodyItem> = vec![];
     while context.curr_token != Some(Token::CommentEnd) {
-        body.push(match &context.curr_token {
-            Some(Token::At) => ast::CommentBodyItem::Property(parse_property(context)?),
-            _ => ast::CommentBodyItem::Text(parse_text(context)?),
-        });
+        body.push(
+            (match &context.curr_token {
+                Some(Token::At) => {
+                    ast::comment_body_item::Inner::Property(parse_property(context)?)
+                }
+                _ => ast::comment_body_item::Inner::Text(parse_text(context)?),
+            })
+            .get_outer(),
+        );
     }
     context.next_token()?; // eat CommentEnd
     let end = context.curr_u16pos.clone();
 
     Ok(ast::Comment {
         id: context.next_id(),
-        range: Range::new(start, end),
+        range: Some(Range::new(start, end)),
         body,
     })
 }
@@ -57,16 +62,21 @@ pub fn parse_property(context: &mut ParserContext) -> Result<ast::Property, Pars
     let name = extract_word_value(context)?;
     context.next_token()?;
     context.skip(is_superfluous)?;
-    let value = match context.curr_token {
-        Some(Token::ParenOpen) => ast::PropertyValue::Parameters(parse_parameters(context)?),
-        Some(Token::String(_)) => ast::PropertyValue::String(parse_string(context)?),
-        _ => return Err(context.new_unexpected_token_error()),
-    };
+    let value = Some(
+        (match context.curr_token {
+            Some(Token::ParenOpen) => {
+                ast::property_value::Inner::Parameters(parse_parameters(context)?)
+            }
+            Some(Token::String(_)) => ast::property_value::Inner::Str(parse_string(context)?),
+            _ => return Err(context.new_unexpected_token_error()),
+        })
+        .get_outer(),
+    );
     let end = context.curr_u16pos.clone();
 
     Ok(ast::Property {
         id: context.next_id(),
-        range: Range::new(start, end),
+        range: Some(Range::new(start, end)),
         name,
         value,
     })
@@ -78,7 +88,7 @@ pub fn parse_string(context: &mut ParserContext) -> Result<base_ast::Str, Parser
     let end = context.curr_u16pos.clone();
     Ok(base_ast::Str {
         id: context.next_id(),
-        range: Range::new(start, end),
+        range: Some(Range::new(start, end)),
         value,
     })
 }
@@ -94,7 +104,7 @@ pub fn parse_text(context: &mut ParserContext) -> Result<base_ast::Str, ParserEr
             break;
         }
 
-        // is prop
+        // is prop©
         if context.curr_token == Some(Token::At) && matches!(context.peek(1), &Some(Token::Word(_)))
         {
             break;
@@ -119,7 +129,7 @@ pub fn parse_text(context: &mut ParserContext) -> Result<base_ast::Str, ParserEr
     let end = context.curr_u16pos.clone();
     Ok(base_ast::Str {
         id: context.next_id(),
-        range: Range::new(start, end),
+        range: Some(Range::new(start, end)),
         value: buffer.join(""),
     })
 }
@@ -131,7 +141,7 @@ pub fn parse_number(context: &mut ParserContext) -> Result<base_ast::Number, Par
     let end = context.curr_u16pos.clone();
     Ok(base_ast::Number {
         id: context.next_id(),
-        range: Range::new(start, end),
+        range: Some(Range::new(start, end)),
         value,
     })
 }
@@ -182,7 +192,7 @@ fn parse_parameters(context: &mut ParserContext) -> Result<ast::Parameters, err:
 
     Ok(ast::Parameters {
         id: context.next_id(),
-        range: Range::new(start, end),
+        range: Some(Range::new(start, end)),
         items,
     })
 }
@@ -194,12 +204,12 @@ fn parse_parameter(context: &mut ParserContext) -> Result<ast::Parameter, err::P
     context.skip(is_superfluous)?;
     context.next_token()?; // eat :
     context.skip(is_superfluous)?;
-    let value = parse_parameter_value(context)?;
+    let value = Some(parse_parameter_value(context)?.get_outer());
     let end = context.curr_u16pos.clone();
 
     Ok(ast::Parameter {
         id: context.next_id(),
-        range: Range::new(start, end),
+        range: Some(Range::new(start, end)),
         name,
         value,
     })
@@ -207,10 +217,10 @@ fn parse_parameter(context: &mut ParserContext) -> Result<ast::Parameter, err::P
 
 fn parse_parameter_value(
     context: &mut ParserContext,
-) -> Result<ast::ParameterValue, err::ParserError> {
+) -> Result<ast::parameter_value::Inner, err::ParserError> {
     match context.curr_token {
-        Some(Token::String(_)) => Ok(ast::ParameterValue::String(parse_string(context)?)),
-        Some(Token::Number(_)) => Ok(ast::ParameterValue::Number(parse_number(context)?)),
+        Some(Token::String(_)) => Ok(ast::parameter_value::Inner::Str(parse_string(context)?)),
+        Some(Token::Number(_)) => Ok(ast::parameter_value::Inner::Number(parse_number(context)?)),
         _ => Err(context.new_unexpected_token_error()),
     }
 }

@@ -1,13 +1,12 @@
-use crate::config::{CompilerOptions, Config};
+use crate::config::{CompilerOptions, ConfigContext};
 use paperclip_common::{get_or_short, join_path};
 use path_absolutize::*;
 use std::path::Path;
-use std::rc::Rc;
 
+#[derive(Clone)]
 pub struct TargetCompilerContext {
     pub options: CompilerOptions,
-    pub project_dir: String,
-    pub config: Rc<Config>,
+    pub config_context: ConfigContext,
 }
 
 impl TargetCompilerContext {
@@ -24,7 +23,7 @@ impl TargetCompilerContext {
 
     pub fn get_out_dir_path(&self) -> String {
         if let Some(out_dir) = &self.options.out_dir {
-            join_path!(&self.project_dir, out_dir.to_string())
+            join_path!(&self.config_context.directory, out_dir.to_string())
         } else {
             self.get_src_dir_path()
         }
@@ -32,8 +31,8 @@ impl TargetCompilerContext {
 
     pub fn get_src_dir_path(&self) -> String {
         join_path!(
-            &self.project_dir,
-            if let Some(src_dir) = &self.config.src_dir {
+            &self.config_context.directory,
+            if let Some(src_dir) = &self.config_context.config.src_dir {
                 src_dir.to_string()
             } else {
                 ".".to_string()

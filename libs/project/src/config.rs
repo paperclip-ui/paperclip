@@ -1,10 +1,45 @@
 // From https://paperclip.dev/docs/configure-paperclip
 use anyhow::Result;
+use paperclip_common::fs::FileReader;
 use serde::{Deserialize, Serialize};
-use std::fs;
 use std::path::Path;
+use std::str;
 
 pub const DEFAULT_CONFIG_NAME: &str = "paperclip.config.json";
+
+///
+/// Contains additional information about the config such as directory and file name
+///
+
+#[derive(Clone)]
+pub struct ConfigContext {
+    pub directory: String,
+    pub file_name: String,
+    pub config: Config,
+}
+
+impl ConfigContext {
+    pub fn load<FR: FileReader>(cwd: &str, file_name: Option<String>, io: &FR) -> Result<Self> {
+        let file_name = if let Some(value) = file_name {
+            value
+        } else {
+            DEFAULT_CONFIG_NAME.to_string()
+        };
+
+        let file_path = Path::new(cwd).join(file_name.to_string());
+        let content = io.read_file(file_path.to_str().unwrap())?;
+
+        let content = str::from_utf8(&*content).unwrap().to_string();
+
+        let config = serde_json::from_str::<Config>(content.as_str())?;
+
+        Ok(ConfigContext {
+            directory: cwd.to_string(),
+            file_name: file_name.to_string(),
+            config,
+        })
+    }
+}
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct Config {
@@ -65,9 +100,6 @@ pub struct CompilerOptions {
 }
 
 impl Config {
-    pub fn load(cwd: &str, file_name: Option<String>) -> Result<Config> {
-        load_config(cwd, file_name)
-    }
     pub fn get_src_dir(&self) -> String {
         if let Some(src_dir) = &self.src_dir {
             src_dir.to_string()
@@ -94,18 +126,4 @@ impl CompilerOptions {
             false
         }
     }
-}
-
-fn load_config(cwd: &str, file_name: Option<String>) -> Result<Config> {
-    let file_name = if let Some(value) = file_name {
-        value
-    } else {
-        DEFAULT_CONFIG_NAME.to_string()
-    };
-
-    let file_path = Path::new(cwd).join(file_name);
-
-    let content = fs::read_to_string(file_path)?;
-    let config = serde_json::from_str::<Config>(content.as_str())?;
-    Ok(config)
 }

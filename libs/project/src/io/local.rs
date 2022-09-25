@@ -1,5 +1,7 @@
 use super::core::{ProjectIO, WatchEvent, WatchEventKind};
+use crate::config::ConfigContext;
 use crate::utils::watch_local::async_watch;
+use anyhow::{Error, Result};
 use async_stream::stream;
 use futures_core::stream::Stream;
 use futures_util::pin_mut;
@@ -9,7 +11,9 @@ use paperclip_parser::graph::io::IO as GraphIO;
 use path_absolutize::*;
 use std::fs;
 use std::path::Path;
+use wax::Glob;
 
+#[derive(Clone, Default)]
 pub struct LocalIO;
 impl GraphIO for LocalIO {}
 
@@ -39,14 +43,28 @@ impl ProjectIO for LocalIO {
             }
         }
     }
+    fn get_all_designer_files(&self, config_context: &ConfigContext) -> Vec<String> {
+        let pattern = config_context
+            .config
+            .get_relative_source_files_glob_pattern();
+        let glob = Glob::new(pattern.as_str()).unwrap();
+        let mut all_files: Vec<String> = vec![];
+
+        for entry in glob.walk(&config_context.directory) {
+            let entry = entry.unwrap();
+            all_files.push(String::from(entry.path().to_str().unwrap()));
+        }
+
+        all_files
+    }
 }
 
 impl FileReader for LocalIO {
-    fn read_file(&self, path: &str) -> Option<Box<[u8]>> {
+    fn read_file(&self, path: &str) -> Result<Box<[u8]>> {
         if let Ok(content) = fs::read_to_string(path) {
-            Some(content.as_bytes().to_vec().into_boxed_slice())
+            Ok(content.as_bytes().to_vec().into_boxed_slice())
         } else {
-            None
+            Err(Error::msg("file not fond"))
         }
     }
 }

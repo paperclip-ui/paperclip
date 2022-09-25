@@ -1,17 +1,25 @@
 #### On-deck
 
-- React compiler (needed to start on designer)
-  - Vanilla for now
-  - Look into targeting radix
-- `paperclip designer` command
-  - open preview
-  - possibly using GRPC for syncing data
-    - add socket file locally based on paperclip.config.json?
-    - VS Code listen on socket + realtime updates?
-      - need to include IO for GRPC
-      - watcher needs to emit changes
+- design server
 
-#### Milestone: Flesh out entire UI
+  - serve HTML front-end
+  - emit FS changes to FE
+    - diff / patch AST
+
+- realtime editing w/ VS Code
+  - https://crates.io/crates/tonic
+  - vscode WASM w/ hooks into
+
+#### Milestone: MVP UI
+
+Minimum number of things to get to polished state of entire UI
+
+- right panel
+- left panel
+  - file navigator
+  -
+- canvas
+  - just preview
 
 #### Milestone: UI Feedback
 

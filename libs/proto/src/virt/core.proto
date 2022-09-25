@@ -1,0 +1,51 @@
+syntax = "proto3";
+import "virt/html.proto";
+
+package virt.core;
+
+message Array {
+  optional string source_id = 1;
+  repeated Value items = 2;
+}
+
+message Object {
+  optional string source_id = 1;
+  repeated ObjectProperty properties = 2;
+}
+
+message ObjectProperty {
+  optional string source_id = 1;
+  string name = 2;
+  Value value = 3;
+}
+
+message Str {
+  optional string source_id = 1;
+  string value = 2;
+}
+
+message Number {
+  optional string source_id = 1;
+  float value = 2;
+}
+
+message Boolean {
+  optional string source_id = 1;
+  bool value = 2;
+}
+
+message Undefined {
+  optional string source_id = 1;
+}
+
+message Value {
+  oneof inner {
+    Array array = 1;
+    Object object = 2;
+    Str str = 3;
+    Number number = 4;
+    Boolean boolean = 5;
+    Undefined undef = 6;
+    html.Node node = 7;
+  }
+}

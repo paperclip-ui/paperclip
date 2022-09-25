@@ -1,0 +1,60 @@
+syntax = "proto3";
+package virt.css;
+
+message Document {
+  string id = 1;
+  repeated Rule rules = 2;
+}
+
+message Rule {
+  oneof inner {
+    StyleRule style = 1;
+    FontFaceRule fontFace = 2;
+    ConditionRule media = 3;
+    ConditionRule supports = 4;
+    ConditionRule page = 5;
+    ConditionRule document = 6;
+    KeyframesRule keyframesRule = 7;
+  }
+}
+
+
+message FontFaceRule {
+  string id = 1;
+  repeated StyleDeclaration style = 2;
+}
+
+message ConditionRule {
+  string id = 1;
+  string name = 2;
+  string condition_text = 3;
+  repeated Rule rules = 4;
+}
+
+message KeyframesRule {
+  string id = 1;
+  string name = 2;
+  repeated KeyframeRule rules = 3;
+}
+
+message KeyframeRule {
+  string id = 1;
+  string key = 2;
+  repeated StyleDeclaration style = 3;
+}
+
+message StyleRule {
+  string id = 1;
+  optional string source_id = 2;
+  string selector_text = 3;
+  repeated StyleDeclaration style = 4;
+}
+
+
+message StyleDeclaration {
+  string id = 1;
+  string name = 2;
+  string value = 3;
+  string source_id = 4;
+
+}

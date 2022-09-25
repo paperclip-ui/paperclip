@@ -1,0 +1,16 @@
+{
+  "name": "@paperclip-ui/web-renderer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@paperclip-ui/common": "workspace:^",
+    "@paperclip-ui/proto": "workspace:^",
+    "html-entities": "^1.2.1"
+  }
+}

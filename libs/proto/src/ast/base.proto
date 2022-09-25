@@ -1,0 +1,31 @@
+syntax = "proto3";
+package ast.base;
+
+message U16Position {
+  uint32 pos = 1;
+  uint32 line = 2;
+  uint32 column = 3;
+}
+
+message Range {
+  U16Position start = 1;
+  U16Position end = 2;
+}
+
+message Number {
+  string id = 1;
+  float value = 2;
+  Range range = 3;
+}
+
+message Boolean {
+  string id = 1;
+  bool value = 2;
+  Range range = 3;
+}
+
+message Str {
+  string id = 1;
+  string value = 2;
+  Range range = 3;
+}

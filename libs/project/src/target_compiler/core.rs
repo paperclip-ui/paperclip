@@ -1,22 +1,30 @@
 use super::context::TargetCompilerContext;
-use crate::config::{CompilerOptions, Config};
+use crate::config::{CompilerOptions, ConfigContext};
 use anyhow::Result;
 use paperclip_common::fs::{FileReader, FileResolver};
+use paperclip_compiler_react::{
+    compile_code as compile_react_code, compile_typed_definition as compile_react_typed_definition,
+};
 use paperclip_evaluator::css::evaluator::evaluate as evaluate_css;
 use paperclip_evaluator::css::serializer::serialize as serialize_css;
 use paperclip_evaluator::html::evaluator::{evaluate as evaluate_html, Options as HTMLOptions};
 use paperclip_evaluator::html::serializer::serialize as serialize_html;
 use paperclip_parser::graph::Graph;
-use std::cell::RefCell;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
-use std::rc::Rc;
+use std::sync::Mutex;
 use textwrap::indent;
 
 struct TargetCompilerResolver<IO: FileReader + FileResolver> {
-    io: Rc<IO>,
-    context: Rc<TargetCompilerContext>,
+    io: IO,
+    context: TargetCompilerContext,
 }
+
+struct EmitInfo {
+    compiler_name: String,
+    extension_name: String,
+}
+
 impl<IO: FileReader + FileResolver> FileResolver for TargetCompilerResolver<IO> {
     fn resolve_file(&self, from: &str, to: &str) -> Option<String> {
         let resolved_path = self.io.resolve_file(from, to).and_then(|resolved_path| {
@@ -28,8 +36,8 @@ impl<IO: FileReader + FileResolver> FileResolver for TargetCompilerResolver<IO> 
 }
 
 pub struct TargetCompiler<IO: FileReader + FileResolver> {
-    context: Rc<TargetCompilerContext>,
-    all_compiled_css: RefCell<BTreeMap<String, String>>,
+    context: TargetCompilerContext,
+    all_compiled_css: Mutex<BTreeMap<String, String>>,
     file_resolver: TargetCompilerResolver<IO>,
 }
 
@@ -39,25 +47,16 @@ struct TranslateOptions {
 
 impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
     // TODO: load bin
-    pub fn load(
-        options: CompilerOptions,
-        config: Rc<Config>,
-        project_dir: String,
-        io: Rc<IO>,
-    ) -> Self {
-        let context = Rc::new(TargetCompilerContext {
+    pub fn new(options: CompilerOptions, config_context: ConfigContext, io: IO) -> Self {
+        let context = TargetCompilerContext {
             options,
-            config,
-            project_dir,
-        });
+            config_context,
+        };
 
         Self {
             context: context.clone(),
-            all_compiled_css: RefCell::new(BTreeMap::new()),
-            file_resolver: TargetCompilerResolver {
-                io,
-                context: context.clone(),
-            },
+            all_compiled_css: Mutex::new(BTreeMap::new()),
+            file_resolver: TargetCompilerResolver { io, context },
         }
     }
 
@@ -67,15 +66,15 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
         graph: &Graph,
     ) -> Result<BTreeMap<String, String>> {
         let mut all_compiled_files: BTreeMap<String, String> = BTreeMap::new();
+        let mut all_compiled_css = self.all_compiled_css.lock().unwrap();
+
         for dep_file_path in file_paths {
             let compiled_files = self
                 .compile_dependency(dep_file_path, &graph, &self.file_resolver)
                 .await?;
             for (file_path, content) in compiled_files {
                 if self.context.options.main_css_file_name != None && file_path.contains(".css") {
-                    self.all_compiled_css
-                        .borrow_mut()
-                        .insert(file_path.to_string(), content.to_string());
+                    all_compiled_css.insert(file_path.to_string(), content.to_string());
                 } else {
                     all_compiled_files.insert(file_path.to_string(), content.to_string());
                 }
@@ -85,8 +84,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
         if let Some(main_css_file_path) = &self.context.get_main_css_file_path() {
             all_compiled_files.insert(
                 main_css_file_path.to_string(),
-                self.all_compiled_css
-                    .borrow()
+                all_compiled_css
                     .iter()
                     .map(|(key, content)| format!("/* {} */\n{}", key, content))
                     .collect::<Vec<String>>()
@@ -128,8 +126,10 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
 
         if let Some(emit) = &self.context.options.emit {
             for ext in emit {
+                let info = extract_emit_info(ext);
+
                 if let Some(code) = translate(
-                    ext,
+                    &info.compiler_name,
                     path,
                     graph,
                     file_resolver,
@@ -137,7 +137,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
                 )
                 .await?
                 {
-                    data.insert(ext.to_string(), code);
+                    data.insert(info.extension_name.to_string(), code);
                 }
             }
         }
@@ -159,17 +159,9 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
 
                     imports.extend(
                         graph
-                            .dependencies
-                            .get(path)
-                            .and_then(|dep| {
-                                Some(
-                                    dep.imports
-                                        .values()
-                                        .map(|import_path| format!("{}.css", import_path))
-                                        .collect::<Vec<String>>(),
-                                )
-                            })
-                            .unwrap_or(vec![]),
+                            .get_all_dependencies(path)
+                            .iter()
+                            .map(|dep| format!("{}.css", dep.path)),
                     )
                 };
 
@@ -189,8 +181,27 @@ async fn translate<F: FileResolver>(
     Ok(match into {
         "css" => Some(translate_css(path, graph, file_resolver).await?),
         "html" => Some(translate_html(path, graph, file_resolver, options).await?),
+        "react.js" => Some(compile_react_code(graph.dependencies.get(path).unwrap())?),
+        "react.d.ts" => Some(compile_react_typed_definition(
+            graph.dependencies.get(path).unwrap(),
+        )?),
         _ => None,
     })
+}
+
+fn extract_emit_info(value: &str) -> EmitInfo {
+    let info = value.split(":").collect::<Vec<&str>>();
+    let compiler_name = info.get(0).unwrap().to_string();
+    let extension_name = if let Some(part) = info.get(1) {
+        part.to_string()
+    } else {
+        compiler_name.to_string()
+    };
+
+    EmitInfo {
+        compiler_name,
+        extension_name,
+    }
 }
 
 async fn translate_css<F: FileResolver>(

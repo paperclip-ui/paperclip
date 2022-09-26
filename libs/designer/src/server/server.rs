@@ -33,9 +33,9 @@ pub async fn start<IO: ProjectIO + 'static>(
     };
 
     let addr = ([127, 0, 0, 1], port).into();
-    
 
-    println!("🎨 Starting design server on port {}", port);
+
+    println!("🎨 Starting design server on port {}!!!", port);
 
     let designer = DesignerService::new(options.config_context.clone(), options.project_io.clone());
     let designer_server = DesignerServer::new(designer);

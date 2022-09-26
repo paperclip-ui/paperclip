@@ -23,6 +23,9 @@ jobs:
           ]
         package: [libs/cli]
     steps:
+      - uses: arduino/setup-protoc@v1
+        with:
+          version: "3.x"
       - uses: actions/checkout@master
       - uses: borales/actions-yarn@v3.0.0
         with:

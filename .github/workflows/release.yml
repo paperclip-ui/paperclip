@@ -23,9 +23,8 @@ jobs:
           ]
         package: [libs/cli]
     steps:
-      - uses: arduino/setup-protoc@v1
-        with:
-          version: "3.x"
+      - name: Install protoc
+        run: apt install -y protobuf-compiler
       - uses: actions/checkout@master
       - uses: borales/actions-yarn@v3.0.0
         with:

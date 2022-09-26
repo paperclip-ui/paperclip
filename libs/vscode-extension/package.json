@@ -1,7 +1,7 @@
 {
   "name": "paperclip-vscode",
   "displayName": "Paperclip",
-  "version": "19.0.0",
+  "version": "19.0.1",
   "publisher": "crcn",
   "preview": true,
   "private": true,
@@ -97,7 +97,7 @@
     "nodemon": "^2.0.20"
   },
   "dependencies": {
-    "@paperclip-ui/common": "workspace:^",
+    "@paperclip-ui/common": "19.0.1",
     "@paperclip-ui/proto": "workspace:^",
     "@paperclip-ui/releases": "workspace:^",
     "execa": "^5.1.1",

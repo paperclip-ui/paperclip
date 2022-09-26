@@ -27,6 +27,9 @@ jobs:
       - uses: arduino/setup-protoc@v1
         with:
           version: "3.x"
+
+      # necessary to build the designer, there's a circular dependency, however
+      # (designer is used in the CLI)
       - uses: actions-rs/cargo@v1
         with:
           command: build

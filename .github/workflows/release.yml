@@ -33,6 +33,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
+          override: true
       - run: cargo build
       - name: Set up Node
         uses: actions/setup-node@v3

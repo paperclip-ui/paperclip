@@ -172,7 +172,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@paperclip-ui/releases@workspace:libs/releases":
+"@paperclip-ui/releases@workspace:^, @paperclip-ui/releases@workspace:libs/releases":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/releases@workspace:libs/releases"
   dependencies:
@@ -180,6 +180,7 @@ __metadata:
     fs-extra: ^10.1.0
     got: 11.8.5
     node-fetch: ^2.6.7
+    tar: ^6.1.11
   languageName: unknown
   linkType: soft
 
@@ -5628,6 +5629,7 @@ __metadata:
   dependencies:
     "@paperclip-ui/common": "workspace:^"
     "@paperclip-ui/proto": "workspace:^"
+    "@paperclip-ui/releases": "workspace:^"
     "@types/get-port": ^4.2.0
     "@types/node": ^18.7.21
     "@types/vscode": ^1.71.0

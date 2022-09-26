@@ -2,10 +2,14 @@ import got from "got";
 import fs from "fs";
 import fsa from "fs-extra";
 import * as os from "node:os";
-const pkg = require("../package.json");
-import path from "path";
+import tar from "tar";
+import stream from "node:stream";
+import { promisify } from "node:util";
+const pipeline = promisify(stream.pipeline);
 
-// paperclip_test2_x86_64-pc-windows-gnu.zip
+const pkg = require("../package.json");
+const BIN_NAME = "paperclip_cli";
+import path from "path";
 
 const OS_VENDOR = {
   win32: "windows",
@@ -13,8 +17,10 @@ const OS_VENDOR = {
   linux: "linux",
 }[os.platform as any];
 
-export const downloadRelease = async (releaseDir: string) => {
-  const currentVersion = extractVersionParts(pkg.version);
+const downloadRelease = async (versionDir: string) => {
+  const version = path.basename(versionDir);
+  const currentVersion = extractVersionParts(version);
+
   const releases = (await got
     .get(`https://api.github.com/repos/paperclip-ui/paperclip/releases`)
     .json()) as any[];
@@ -50,23 +56,29 @@ export const downloadRelease = async (releaseDir: string) => {
   }
 
   try {
-    fsa.mkdirSync(releaseDir);
+    fsa.mkdirpSync(versionDir);
   } catch (e) {}
-  const zipPath = path.join(
-    releaseDir,
-    path.basename(asset.browser_download_url)
+
+  await pipeline(
+    got.stream(asset.browser_download_url),
+    tar.x({
+      C: versionDir,
+    })
   );
 
-  (await got.get(asset.browser_download_url)).pipe(
-    fs.createWriteStream(zipPath)
-  );
+  return;
+};
 
-  console.log(zipPath);
+export const loadCLIBinPath = async (cwd: string) => {
+  const versionDir = path.join(cwd, pkg.version);
+  const binPath = path.join(versionDir, BIN_NAME);
+  if (!fs.existsSync(binPath)) {
+    await downloadRelease(versionDir);
+  }
+  return binPath;
 };
 
 const extractVersionParts = (version: string) => {
   const [major, minor, patch] = version.split(".");
   return { major, minor, patch };
 };
-
-downloadRelease("/tmp/releases");

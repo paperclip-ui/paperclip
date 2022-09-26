@@ -12,7 +12,8 @@
   "dependencies": {
     "fs-extra": "^10.1.0",
     "got": "11.8.5",
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^2.6.7",
+    "tar": "^6.1.11"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13"

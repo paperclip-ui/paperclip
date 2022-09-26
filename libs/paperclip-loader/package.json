@@ -1,6 +1,6 @@
 {
   "name": "paperclip-loader",
-  "version": "19.0.3",
+  "version": "19.0.4",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -19,5 +19,6 @@
   },
   "dependencies": {
     "loader-utils": "^3.2.0"
-  }
+  },
+  "gitHead": "ccc3f420a1b144a4679e6b13922110d778d0cc38"
 }

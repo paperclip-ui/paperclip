@@ -24,7 +24,7 @@ jobs:
         package: [libs/cli]
     steps:
       - name: Install protoc
-        run: apt-get install -y protobuf-compiler
+        run: sudo apt-get install -y protobuf-compiler
       - uses: actions/checkout@master
       - uses: borales/actions-yarn@v3.0.0
         with:

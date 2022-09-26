@@ -1,4 +1,3 @@
-use dialoguer::{theme::ColorfulTheme, Input};
 use paperclip_project::config::{CompilerOptions, Config};
 use std::fs::File;
 use std::path::Path;
@@ -11,35 +10,31 @@ use console::style;
 #[derive(Debug, Args)]
 pub struct InitArgs {}
 
-pub async fn init(args: InitArgs) -> Result<()> {
+pub async fn init(_args: InitArgs) -> Result<()> {
     let current_dir = String::from(env::current_dir()?.to_str().unwrap());
-    let CONFIG_NAME = "paperclip.config2.json";
+    let config_name = "paperclip.config.json";
 
     let info = format!(
         "
       Creating a new {} file.
     ",
-        style(CONFIG_NAME).bold()
+        style(config_name).bold()
     );
 
     println!("{}", textwrap::dedent(&info));
 
-    let src_name: String = Input::with_theme(&ColorfulTheme::default())
-        .with_prompt("Where should Paperclip files go?")
-        .default("src".into())
-        .interact_text()
-        .unwrap();
-
     let new_config = Config {
-        src_dir: Some(src_name),
+        src_dir: Some("src".to_string()),
         global_css: None,
         module_dirs: None,
         compiler_options: Some(vec![CompilerOptions {
-            emit: Some(vec!["css".to_string()]),
-            out_dir: None,
+            emit: Some(vec!["css".to_string(), "react.js:js".to_string()]),
+            out_dir: Some("lib".to_string()),
             import_assets_as_modules: None,
+            // main_css_file_name: Some("main.css".to_string()),
             main_css_file_name: None,
             embed_asset_max_size: None,
+            // asset_out_dir: Some("assets".to_string()),
             asset_out_dir: None,
             asset_prefix: None,
             use_asset_hash_names: None,
@@ -49,7 +44,7 @@ pub async fn init(args: InitArgs) -> Result<()> {
     let config_content =
         serde_json::to_string_pretty(&new_config).expect("Couldn't serialize JSON");
 
-    let config_path = Path::new(&current_dir).join(CONFIG_NAME);
+    let config_path = Path::new(&current_dir).join(config_name);
 
     File::create(config_path)
         .expect("Coudn't create JSON file")

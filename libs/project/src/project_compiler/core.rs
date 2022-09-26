@@ -114,7 +114,6 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
         files: &Vec<String>,
         graph: &Graph,
     ) -> Result<HashMap<String, String>> {
-        println!("ProjectCompiler::compile_files()");
         let mut compiled_files = HashMap::new();
         for target in &self.targets {
             compiled_files.extend(target.compile_files(files, graph).await?);

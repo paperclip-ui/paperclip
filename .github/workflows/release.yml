@@ -1,4 +1,4 @@
-name: Build
+name: Release
 
 on:
   release:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   release:
-    name: Build
+    name: Release CLI
     runs-on: ubuntu-latest
     strategy:
       matrix:

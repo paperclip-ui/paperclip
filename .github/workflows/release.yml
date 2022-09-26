@@ -1,11 +1,11 @@
 name: Build
 
 on:
-  push:
-    branches: [master]
+  release:
+    types: [created]
 
 jobs:
-  build:
+  release:
     name: Build
     runs-on: ubuntu-latest
     strategy:
@@ -28,11 +28,11 @@ jobs:
           RUSTTARGET: ${{ matrix.target }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TOOLCHAIN_VERSION: nightly
-          UPLOAD_MODE: none
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: Binary
-          path: |
-            ${{ steps.compile.outputs.BUILT_ARCHIVE }}
-            ${{ steps.compile.outputs.BUILT_CHECKSUM }}
+          # UPLOAD_MODE: none
+      # - name: Upload artifact
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: Binary
+      #     path: |
+      #       ${{ steps.compile.outputs.BUILT_ARCHIVE }}
+      #       ${{ steps.compile.outputs.BUILT_CHECKSUM }}

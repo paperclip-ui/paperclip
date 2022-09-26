@@ -28,14 +28,12 @@ jobs:
         with:
           version: "3.x"
 
+      # necessary to build the designer, there's a circular dependency, however
+      # (designer is used in the CLI)
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
-      # necessary to build the designer, there's a circular dependency, however
-      # (designer is used in the CLI)
-      - uses: actions-rs/cargo@v1
-        with:
-          command: build
+      - run: cargo build
       - name: Set up Node
         uses: actions/setup-node@v3
         with:

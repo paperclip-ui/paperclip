@@ -41,7 +41,6 @@ pub async fn start<IO: ProjectIO + 'static>(
 
     let server = Server::bind(&addr).serve(make_service_fn(move |_| {
 
-        println!("REQ");
         let cors = warp::cors()
             .allow_any_origin();
 
@@ -53,7 +52,6 @@ pub async fn start<IO: ProjectIO + 'static>(
         future::ok::<_, Infallible>(tower::service_fn(
             move |req: hyper::Request<hyper::Body>| {
                 if content_types::is_grpc_web(req.headers()) {
-                    println!("GRPC??");
                     Either::Left(
                         designer_server
                             .call(req)

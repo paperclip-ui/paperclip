@@ -1284,8 +1284,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/designer@workspace:libs/designer"
   dependencies:
-    "@paperclip-ui/proto": ^19.0.6
-    "@paperclip-ui/web-renderer": ^19.0.6
+    "@paperclip-ui/proto": ^19.0.9
+    "@paperclip-ui/web-renderer": ^19.0.9
     "@types/react": ^18.0.21
     "@types/react-dom": ^18.0.6
     css-loader: ^6.7.1
@@ -1295,7 +1295,7 @@ __metadata:
     html-webpack-plugin: ^5.5.0
     immer: ^9.0.15
     mini-css-extract-plugin: ^2.6.1
-    paperclip-loader: ^19.0.6
+    paperclip-loader: ^19.0.9
     process: ^0.11.10
     protoc-gen-grpc-web: ^1.4.0
     react: ^18.2.0
@@ -1308,7 +1308,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@paperclip-ui/proto@^19.0.6, @paperclip-ui/proto@workspace:libs/proto":
+"@paperclip-ui/proto@^19.0.9, @paperclip-ui/proto@workspace:libs/proto":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/proto@workspace:libs/proto"
   dependencies:
@@ -1330,12 +1330,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@paperclip-ui/web-renderer@^19.0.6, @paperclip-ui/web-renderer@workspace:libs/web-renderer":
+"@paperclip-ui/web-renderer@^19.0.9, @paperclip-ui/web-renderer@workspace:libs/web-renderer":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/web-renderer@workspace:libs/web-renderer"
   dependencies:
     "@paperclip-ui/common": ^19.0.6
-    "@paperclip-ui/proto": ^19.0.6
+    "@paperclip-ui/proto": ^19.0.9
     html-entities: ^1.2.1
   languageName: unknown
   linkType: soft
@@ -8249,7 +8249,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"paperclip-loader@^19.0.6, paperclip-loader@workspace:libs/paperclip-loader":
+"paperclip-loader@^19.0.9, paperclip-loader@workspace:libs/paperclip-loader":
   version: 0.0.0-use.local
   resolution: "paperclip-loader@workspace:libs/paperclip-loader"
   dependencies:

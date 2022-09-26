@@ -19,6 +19,12 @@ jobs:
         package: [libs/cli]
     steps:
       - uses: actions/checkout@master
+      - uses: borales/actions-yarn@v3.0
+        with:
+          cmd: install
+      - uses: borales/actions-yarn@v3.0
+        with:
+          cmd: build
       - name: Compile
         id: compile
         uses: rust-build/rust-build.action@v1.3.2

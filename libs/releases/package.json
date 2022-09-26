@@ -1,11 +1,14 @@
 {
   "name": "@paperclip-ui/releases",
-  "version": "19.0.5",
+  "version": "19.0.6",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "author": "",
   "license": "ISC",
@@ -18,5 +21,5 @@
   "devDependencies": {
     "@types/fs-extra": "^9.0.13"
   },
-  "gitHead": "3a0ffdc498509395c3cc18fd8fd8249c555bf161"
+  "gitHead": "e21804d0f4839ad1506435a86ad5e1ff2d53ee9f"
 }

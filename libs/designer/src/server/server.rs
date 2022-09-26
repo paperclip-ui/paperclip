@@ -32,7 +32,8 @@ pub async fn start<IO: ProjectIO + 'static>(
         portpicker::pick_unused_port().expect("No ports free")
     };
 
-    let addr = format!("[::1]:{}", port).parse().unwrap();
+    let addr = ([127, 0, 0, 1], port).into();
+    
 
     println!("🎨 Starting design server on port {}", port);
 

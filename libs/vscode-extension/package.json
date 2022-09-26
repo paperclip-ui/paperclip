@@ -98,8 +98,8 @@
   },
   "dependencies": {
     "@paperclip-ui/common": "19.0.1",
-    "@paperclip-ui/proto": "workspace:^",
-    "@paperclip-ui/releases": "workspace:^",
+    "@paperclip-ui/proto": "19.0.1",
+    "@paperclip-ui/releases": "19.0.1",
     "execa": "^5.1.1",
     "get-port": "^3.2.0",
     "immer": "^9.0.15",

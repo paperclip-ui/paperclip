@@ -36,7 +36,7 @@
     "yargs": "^17.1.1"
   },
   "dependencies": {
-    "@paperclip-lang/common": "workspace:^",
+    "@paperclip-lang/common": "19.0.1",
     "@paperclip-ui/core": "^18.5.6",
     "@paperclip-ui/language-service": "^18.5.6",
     "@tandem-ui/common": "^18.5.6",

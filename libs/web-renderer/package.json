@@ -10,8 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@paperclip-ui/common": "workspace:^",
-    "@paperclip-ui/proto": "workspace:^",
+    "@paperclip-ui/common": "19.0.1",
+    "@paperclip-ui/proto": "19.0.1",
     "html-entities": "^1.2.1"
   }
 }

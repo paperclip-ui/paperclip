@@ -1,26 +1,12 @@
-0 silly input [ 'npm', 'run', 'build' ]
-1 silly flags {
-1 silly flags   _: [ 'exec' ],
-1 silly flags   'reject-cycles': false,
-1 silly flags   rejectCycles: false,
-1 silly flags   parallel: true,
-1 silly flags   command: 'npm',
-1 silly flags   args: [ 'run', 'build' ]
-1 silly flags }
-2 verbose rootPath /Users/crcn/Developer/private/tandem3
-3 info version 2.11.0
-4 silly existsSync /Users/crcn/Developer/private/tandem3/VERSION
-5 silly initialize attempt
-6 silly initialize success
-7 silly execute attempt
-8 info exec in 18 package(s): npm run build
-9 error execute callback with error
-10 error Error: Command failed: npm run build
-10 error sh: webpack: command not found
-10 error
-10 error
-10 error > paperclip-dom-recorder@10.1.33 build
-10 error > webpack
-10 error
-10 error
-10 error     at /Users/crcn/Developer/private/tandem3/node_modules/execa/index.js:236:11
+0 silly argv { _: [ 'list' ], lernaVersion: '4.0.0', '$0': '/usr/local/bin/lerna' }
+1 notice cli v4.0.0
+2 verbose rootPath /Users/crcn/Developer/private/tandem
+3 error Error: Unsupported URL Type "workspace:": workspace:^
+3 error     at unsupportedURLType (/usr/local/lib/node_modules/lerna/node_modules/npm-package-arg/npa.js:203:15)
+3 error     at fromURL (/usr/local/lib/node_modules/lerna/node_modules/npm-package-arg/npa.js:261:13)
+3 error     at Function.resolve (/usr/local/lib/node_modules/lerna/node_modules/npm-package-arg/npa.js:80:12)
+3 error     at /usr/local/lib/node_modules/lerna/node_modules/@lerna/package-graph/index.js:66:30
+3 error     at Array.forEach (<anonymous>)
+3 error     at /usr/local/lib/node_modules/lerna/node_modules/@lerna/package-graph/index.js:60:38
+3 error     at Map.forEach (<anonymous>)
+3 error     at new PackageGraph (/usr/local/lib/node_modules/lerna/node_modules/@lerna/package-graph/index.js:49:10)

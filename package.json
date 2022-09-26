@@ -1,6 +1,6 @@
 {
   "name": "paperclip",
-  "version": "10.0.0",
+  "version": "19.0.0",
   "private": true,
   "description": "Aerial is a virtual browser for visually creating web applications.",
   "repository": {
@@ -16,6 +16,7 @@
   "scripts": {
     "test": "yarn workspaces foreach run test",
     "lint": "eslint packages/*/src/**/*.ts",
+    "sync-versions": "node scripts/sync-version.js",
     "precommit": "lint-staged",
     "clean": "yarn workspaces foreach run clean",
     "build": "yarn workspaces foreach --topological-dev -i run build",

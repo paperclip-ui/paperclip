@@ -5472,6 +5472,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"paperclip@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "paperclip@workspace:."
+  dependencies:
+    "@typescript-eslint/eslint-plugin": ^1.3.0
+    "@typescript-eslint/parser": ^1.3.0
+    eslint: ^5.13.0
+    husky: ^7.0.0
+    lint-staged: ^7.2.0
+    prettier: 2.6.2
+    pretty-quick: ^3.1.3
+    typescript: ^4.7.2
+  languageName: unknown
+  linkType: soft
+
 "param-case@npm:^3.0.4":
   version: 3.0.4
   resolution: "param-case@npm:3.0.4"
@@ -7310,21 +7325,6 @@ __metadata:
   checksum: 9e35d3efa788edc17237eef8852f8e4b9178efd65a7d115141777b2ee77df4b7796c05f4ed3712d858f98894ac5935a481ceeb6dcb9895e2f67a61cce0e63b6c
   languageName: node
   linkType: hard
-
-"tandem@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "tandem@workspace:."
-  dependencies:
-    "@typescript-eslint/eslint-plugin": ^1.3.0
-    "@typescript-eslint/parser": ^1.3.0
-    eslint: ^5.13.0
-    husky: ^7.0.0
-    lint-staged: ^7.2.0
-    prettier: 2.6.2
-    pretty-quick: ^3.1.3
-    typescript: ^4.7.2
-  languageName: unknown
-  linkType: soft
 
 "tapable@npm:^2.0.0, tapable@npm:^2.1.1, tapable@npm:^2.2.0":
   version: 2.2.1

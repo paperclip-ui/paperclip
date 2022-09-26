@@ -18,7 +18,7 @@ for (const libPath of libPaths) {
   const baseName = path.basename(libPath);
 
   if (baseName === "Cargo.toml") {
-    content = content.replace(/version\s*=\s*".*?"/g, `version = "${version}"`);
+    // content = content.replace(/version\s*=\s*".*?"/g, `version = "${version}"`);
   } else if (baseName === "package.json") {
     content = content.replace(/"version": ".*?"/g, `"version": "${version}"`);
   }

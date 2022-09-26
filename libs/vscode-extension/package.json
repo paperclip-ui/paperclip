@@ -1,7 +1,7 @@
 {
   "name": "paperclip-vscode",
   "displayName": "Paperclip",
-  "version": "19.0.1",
+  "version": "19.0.2",
   "publisher": "crcn",
   "preview": true,
   "private": true,
@@ -97,9 +97,9 @@
     "nodemon": "^2.0.20"
   },
   "dependencies": {
-    "@paperclip-ui/common": "19.0.1",
-    "@paperclip-ui/proto": "19.0.1",
-    "@paperclip-ui/releases": "19.0.1",
+    "@paperclip-ui/common": "^19.0.2",
+    "@paperclip-ui/proto": "^19.0.2",
+    "@paperclip-ui/releases": "^19.0.2",
     "execa": "^5.1.1",
     "get-port": "^3.2.0",
     "immer": "^9.0.15",

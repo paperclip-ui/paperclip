@@ -23,6 +23,9 @@ jobs:
           ]
         package: [libs/cli]
     steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: mymaster
       - uses: arduino/setup-protoc@v1
         with:
           version: "3.x"
@@ -30,8 +33,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "16.x"
-      - name: Install Dependencies
-        run: ls
       - name: Install Dependencies
         run: yarn install
       - name: Build Packages

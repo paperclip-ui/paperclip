@@ -10,12 +10,15 @@ clap = { version = "3.2.17", features = ["derive"] }
 paperclip_parser = { path = "../parser" }
 paperclip_project = { path = "../project" }
 paperclip_designer = { path = "../designer" }
+serde_json = { version = "1.0.83" }
 glob = "0.3.0"
 serde = "1.0.143"
 futures = "0.3.21"
 futures-core = "0.3.24"
 futures-util = "0.3.24"
 anyhow = "1.0.61"
+textwrap = "0.15.0"
+console = "0.15.1"
 
 [dev-dependencies]
 assert_cmd = "2.0.4"

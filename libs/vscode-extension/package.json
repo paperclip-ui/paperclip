@@ -99,6 +99,7 @@
   "dependencies": {
     "@paperclip-ui/common": "workspace:^",
     "@paperclip-ui/proto": "workspace:^",
+    "@paperclip-ui/releases": "workspace:^",
     "execa": "^5.1.1",
     "get-port": "^3.2.0",
     "immer": "^9.0.15",

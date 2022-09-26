@@ -400,7 +400,6 @@ div {
   "#
 }
 
-
 add_case! {
   can_evaluate_styles_without_bodies,
   [(

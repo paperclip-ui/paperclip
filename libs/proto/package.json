@@ -1,14 +1,11 @@
 {
   "name": "@paperclip-ui/proto",
-  "version": "1.0.0",
+  "version": "19.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:watch": "yarn build:pc && concurrently \"yarn build:pc --watch\" \"webpack --watch\"",
-    "build:pc": "../../target/debug/paperclip_cli build",
-    "build:proto": "mkdir -p lib && protoc --proto_path=src --plugin=\"protoc-gen-grpc-web=../../node_modules/.bin/protoc-gen-grpc-web\" --grpc-web_out=\"import_style=commonjs+dts,mode=grpcwebtext:./lib\" --js_out=\"import_style=commonjs:./lib\" src/service/designer.proto src/ast/pc.proto src/ast/css.proto  src/virt/core.proto   src/virt/html.proto  src/ast/base.proto  src/virt/css.proto src/ast/docco.proto",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "../../target/debug/paperclip_cli designer --open --port=8000"
+    "build": "yarn build:proto",
+    "build:proto": "mkdir -p lib && protoc --proto_path=src --plugin=\"protoc-gen-grpc-web=../../node_modules/.bin/protoc-gen-grpc-web\" --grpc-web_out=\"import_style=commonjs+dts,mode=grpcwebtext:./lib\" --js_out=\"import_style=commonjs:./lib\" src/service/designer.proto src/ast/pc.proto src/ast/css.proto  src/virt/core.proto   src/virt/html.proto  src/ast/base.proto  src/virt/css.proto src/ast/docco.proto"
   },
   "author": "",
   "license": "ISC",

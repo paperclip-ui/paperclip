@@ -5,6 +5,7 @@ mod commands;
 use clap::{Parser, Subcommand};
 use commands::build::{build, BuildArgs};
 use commands::designer::{start_design_server, StartDesignServerArgs};
+use commands::init::{init, InitArgs};
 use futures::executor::block_on;
 
 /// Simple program to greet a person
@@ -23,7 +24,7 @@ enum Command {
 
     /// Configures Paperclip with your current project & installs compilers.
     #[clap(arg_required_else_help = false)]
-    Init {},
+    Init(InitArgs),
 
     /// Starts the visual development tooling
     #[clap(arg_required_else_help = false)]
@@ -34,16 +35,10 @@ fn main() {
     let args = Args::parse();
 
     match args.command {
-        Command::Build(args) => {
-            if let Err(_) = block_on(build(args)) {
-                println!("build error!")
-            }
-        }
-        Command::Init {} => {}
+        Command::Build(args) => block_on(build(args)).expect("Build error"),
+        Command::Init(args) => block_on(init(args)).expect("Build error"),
         Command::Designer(args) => {
-            if let Err(_) = block_on(start_design_server(args)) {
-                println!("Can't start the design server");
-            }
+            block_on(start_design_server(args)).expect("Can't start the design server")
         }
     };
 }

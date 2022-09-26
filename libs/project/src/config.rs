@@ -44,58 +44,59 @@ impl ConfigContext {
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct Config {
     /// source directory where *.pc files live
-    #[serde(rename = "srcDir")]
+    #[serde(rename = "srcDir", skip_serializing_if = "Option::is_none")]
     pub src_dir: Option<String>,
 
     /// CSS globally injected into the page
-    #[serde(rename = "globalCss")]
+    #[serde(rename = "globalCss", skip_serializing_if = "Option::is_none")]
     pub global_css: Option<Vec<String>>,
 
     /// directories where modules are stored
-    #[serde(rename = "moduleDirs")]
+    #[serde(rename = "moduleDirs", skip_serializing_if = "Option::is_none")]
     pub module_dirs: Option<Vec<String>>,
 
     /// options for the output settings
-    #[serde(rename = "compilerOptions")]
+    #[serde(rename = "compilerOptions", skip_serializing_if = "Option::is_none")]
     pub compiler_options: Option<Vec<CompilerOptions>>,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct CompilerOptions {
-    /// target compiler to use. Default is all of the ones installed.
-    pub target: Option<String>,
-
     /// Files for the target compiler to emit. E.g: [d.ts, js, css]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub emit: Option<Vec<String>>,
 
     /// where PC files should be compiled to. If undefined, then
     /// srcDir is used.
-    #[serde(rename = "outDir")]
+    #[serde(rename = "outDir", skip_serializing_if = "Option::is_none")]
     pub out_dir: Option<String>,
 
     /// treat assets as modules. This is particularly useful for bundlers.
-    #[serde(rename = "importAssetsAsModule")]
+    #[serde(
+        rename = "importAssetsAsModule",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub import_assets_as_modules: Option<bool>,
 
     /// Combine all CSS into this one file. If unspecified, then CSS files are generated
     /// for each PC file
-    #[serde(rename = "mainCssFileName")]
+    #[serde(rename = "mainCssFileName", skip_serializing_if = "Option::is_none")]
     pub main_css_file_name: Option<String>,
 
     /// embed assets until this size. If -1, then there is no limit
-    #[serde(rename = "embedAssetMaxSize")]
+    #[serde(rename = "embedAssetMaxSize", skip_serializing_if = "Option::is_none")]
     pub embed_asset_max_size: Option<i32>,
 
     /// output directory for non-PC files. If not specified, then srcDir
     /// will be used
-    #[serde(rename = "assetOutDir")]
+    #[serde(rename = "assetOutDir", skip_serializing_if = "Option::is_none")]
     pub asset_out_dir: Option<String>,
 
     /// prefix for assets,
-    #[serde(rename = "assetPrefix")]
+    #[serde(rename = "assetPrefix", skip_serializing_if = "Option::is_none")]
     pub asset_prefix: Option<String>,
 
-    #[serde(rename = "useAssetHashNames")]
+    #[serde(rename = "useAssetHashNames", skip_serializing_if = "Option::is_none")]
     pub use_asset_hash_names: Option<String>,
 }
 

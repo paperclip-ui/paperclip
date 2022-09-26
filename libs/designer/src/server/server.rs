@@ -2,12 +2,11 @@
 use super::service::DesignerService;
 use super::utils::content_types;
 use futures::future::{self, Either, TryFutureExt};
-use include_dir::{include_dir, Dir};
+use crate::server::routes::routes;
 use hyper::{service::make_service_fn, Server};
 use open;
 use paperclip_project::{ConfigContext, ProjectIO};
 use std::convert::Infallible;
-use std::env;
 use tower::Service;
 use warp::Filter;
 
@@ -22,15 +21,11 @@ pub struct StartOptions<IO: ProjectIO> {
     pub port: Option<u16>,
 }
 
-static DESIGNER_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/dist");
-
-
 #[tokio::main]
 pub async fn start<IO: ProjectIO + 'static>(
     options: StartOptions<IO>,
 ) -> Result<(), Box<dyn std::error::Error>> {
 
-    println!("{:?}", DESIGNER_DIR);
     let port = if let Some(port) = options.port {
         port
     } else {
@@ -47,11 +42,10 @@ pub async fn start<IO: ProjectIO + 'static>(
 
     let server = Server::bind(&addr).serve(make_service_fn(move |_| {
 
-        let cors = warp::cors()
-            .allow_any_origin();
+        let cors = warp::cors().allow_any_origin();
 
-        let route = warp::fs::dir(get_designer_path()).with(cors);
-        
+        // let route = warp::fs::dir(get_designer_path()).with(cors);
+        let route = routes().with(cors);
 
         let mut warp = warp::service(route);
         let mut designer_server = designer_server.clone();
@@ -82,8 +76,4 @@ pub async fn start<IO: ProjectIO + 'static>(
     server.await?;
 
     Ok(())
-}
-
-fn get_designer_path() -> String {
-    format!("{}/dist", env!("CARGO_MANIFEST_DIR"))
 }

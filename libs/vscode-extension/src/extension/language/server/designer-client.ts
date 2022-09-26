@@ -3,8 +3,8 @@ import { Deferred } from "@paperclip-ui/common";
 import * as getPort from "get-port";
 import * as execa from "execa";
 import * as waitPort from "wait-port";
-import * as EventEmitter from "events";
 import { DesignerClient as GRPCDesignerClient } from "@paperclip-ui/proto/lib/service/designer_grpc_web_pb";
+import { loadCLIBinPath } from "@paperclip-ui/releases";
 
 export class DesignerClient {
   private _client: Deferred<GRPCDesignerClient>;
@@ -28,19 +28,6 @@ export class DesignerClient {
   }
 }
 
-const binPath = path.join(
-  __dirname,
-  "..",
-  "..",
-  "..",
-  "..",
-  "..",
-  "..",
-  "target",
-  "debug",
-  "paperclip_cli"
-);
-
 const startDesignServer = async () => {
   // 1. look for open designer
   // 2. if no open designer, then look for VS Code binary
@@ -48,6 +35,8 @@ const startDesignServer = async () => {
   // 3. Connect to local GRPC server
 
   const port = await getPort();
+  const binPath = await loadCLIBinPath("/tmp/paperclip");
+  console.log(binPath);
 
   execa(binPath, [`designer`, `--port`, port], {
     stdio: "inherit",

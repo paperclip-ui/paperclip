@@ -2,6 +2,7 @@
 use super::service::DesignerService;
 use super::utils::content_types;
 use futures::future::{self, Either, TryFutureExt};
+use include_dir::{include_dir, Dir};
 use hyper::{service::make_service_fn, Server};
 use open;
 use paperclip_project::{ConfigContext, ProjectIO};
@@ -21,10 +22,15 @@ pub struct StartOptions<IO: ProjectIO> {
     pub port: Option<u16>,
 }
 
+static DESIGNER_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/dist");
+
+
 #[tokio::main]
 pub async fn start<IO: ProjectIO + 'static>(
     options: StartOptions<IO>,
 ) -> Result<(), Box<dyn std::error::Error>> {
+
+    println!("{:?}", DESIGNER_DIR);
     let port = if let Some(port) = options.port {
         port
     } else {

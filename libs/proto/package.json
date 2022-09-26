@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/proto",
-  "version": "19.0.6",
+  "version": "19.0.7",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,11 +10,17 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "lib"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "google-protobuf": "^3.21.0",
     "protoc-gen-grpc-web": "^1.4.0"
   },
-  "gitHead": "e21804d0f4839ad1506435a86ad5e1ff2d53ee9f"
+  "gitHead": "e21804d0f4839ad1506435a86ad5e1ff2d53ee9f",
+  "dependencies": {
+    "grpc-web": "^1.4.0"
+  }
 }

@@ -7,9 +7,14 @@
     "type": "git",
     "url": "git+https://github.com/paperclip-ui/paperclip.git"
   },
-  "workspaces": [
-    "./libs/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "libs/*"
+    ],
+    "installConfig": {
+      "hoistingLimits": true
+    }
+  },
   "main": "index.js",
   "author": "",
   "license": "ISC",

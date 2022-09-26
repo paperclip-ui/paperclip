@@ -19,7 +19,7 @@ component Message {
     style extends fontDefault
     style variant isMobile extends mobileFont
 
-    text "Something like that" {
+    text "Something like fsdfshat" {
 
     }
   }

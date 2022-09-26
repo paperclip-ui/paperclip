@@ -1,14 +1,7 @@
 #### On-deck
 
-- design server
-
-  - serve HTML front-end
-  - emit FS changes to FE
-    - diff / patch AST
-
-- realtime editing w/ VS Code
-  - https://crates.io/crates/tonic
-  - vscode WASM w/ hooks into
+- Extension should work without paperclip config
+- keep track of gitignore files when searching for files
 
 #### Milestone: MVP UI
 

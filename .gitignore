@@ -2,6 +2,7 @@
 node_modules
 lib
 dist
+!dist/README.md
 target
 *.pc.react.d.ts
 *.pc.css

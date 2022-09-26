@@ -31,7 +31,9 @@ jobs:
         with:
           node-version: "16.x"
       - name: Install Dependencies
-        run: ls && yarn install
+        run: ls
+      - name: Install Dependencies
+        run: yarn install
       - name: Build Packages
         run: yarn build
       - name: Compile

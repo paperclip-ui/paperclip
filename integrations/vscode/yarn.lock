@@ -10,11 +10,12 @@
     "lru-cache" "^6.0.0"
     "react" "^18.2.0"
 
-"@paperclip-ui/proto@^19.0.9":
-  "integrity" "sha512-vD1dHgkOcJJGFsH/gxPZXWwOL/mtNaYccYlUsHE+2+ck3Bb7j2K4qE5G4GqQT0qLt3ko++0stkaglDK7nsYRWQ=="
-  "resolved" "https://registry.npmjs.org/@paperclip-ui/proto/-/proto-19.0.9.tgz"
-  "version" "19.0.9"
+"@paperclip-ui/proto@^19.0.10":
+  "integrity" "sha512-+bow0x7jxYSnkFna7FXFECGv2IXZZrIkgFj2nFw+WAGReVwfUSuEEYVjuWEgCoEuXxj86NScndxIOQWltT1oPQ=="
+  "resolved" "https://registry.npmjs.org/@paperclip-ui/proto/-/proto-19.0.10.tgz"
+  "version" "19.0.10"
   dependencies:
+    "google-protobuf" "^3.21.0"
     "grpc-web" "^1.4.0"
 
 "@paperclip-ui/releases@^19.0.6":
@@ -313,6 +314,11 @@
   "version" "5.1.2"
   dependencies:
     "is-glob" "^4.0.1"
+
+"google-protobuf@^3.21.0":
+  "integrity" "sha512-byR7MBTK4tZ5PZEb+u5ZTzpt4SfrTxv5682MjPlHN16XeqgZE2/8HOIWeiXe8JKnT9OVbtBGhbq8mtvkK8cd5g=="
+  "resolved" "https://registry.npmjs.org/google-protobuf/-/google-protobuf-3.21.0.tgz"
+  "version" "3.21.0"
 
 "got@11.8.5":
   "integrity" "sha512-o0Je4NvQObAuZPHLFoRSkdG2lTgtcynqymzg2Vupdx6PorhaT5MCbIyXG6d4D94kk8ZG57QeosgdiqfJWhEhlQ=="

@@ -1,4 +1,4 @@
-import { window, WebviewPanel, ViewColumn } from "vscode";
+import { window, WebviewPanel, ViewColumn, env, Uri } from "vscode";
 import * as path from "path";
 import { ObservableMap, Store } from "@paperclip-ui/common";
 import { EventEmitter } from "events";
@@ -95,7 +95,7 @@ export class LiveWindow {
     }
   };
 
-  private _render() {
+  private async _render() {
     const state = this.getState();
 
     this._panel.title = `⚡️ ${
@@ -105,11 +105,18 @@ export class LiveWindow {
     }`;
 
     this._panel.webview.html = "";
-    this._panel.webview.html = this._getHTML();
+    this._panel.webview.html = await this._getHTML();
   }
 
-  private _getHTML() {
+  private async _getHTML() {
     const state = this.getState();
+
+    // For Codespace
+    const designerHost = await env.asExternalUri(
+      Uri.parse(`http://localhost:${this._devServerPort}`)
+    );
+
+    console.log(`Opening preview: ${designerHost}`);
 
     return `<!DOCTYPE html>
     <html lang="en">
@@ -167,12 +174,6 @@ export class LiveWindow {
         const vscode = acquireVsCodeApi();
         const initialState = ${JSON.stringify(state)};
         vscode.setState(initialState);
-        
-        const designServerHost = "localhost:${this._devServerPort}";
-        const protocol = "http:";
-        const designServerUrl = protocol + "//" + designServerHost;
-
-        
 
       </script>
     </head>
@@ -181,7 +182,7 @@ export class LiveWindow {
     </body>
     <script>
       const iframe = document.createElement("iframe");
-      iframe.src = designServerUrl + "?${qs.stringify(state.location.query)}";
+      iframe.src = "${designerHost}?${qs.stringify(state.location.query)}";
       Object.assign(iframe.style, {
         width: "100vw",
         height: "100wh",

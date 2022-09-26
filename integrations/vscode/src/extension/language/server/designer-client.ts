@@ -38,7 +38,7 @@ const startDesignServer = async () => {
   const binPath = await loadCLIBinPath("/tmp/paperclip");
   console.log(binPath);
 
-  execa(binPath, [`designer`, `--port`, port], {
+  execa(binPath, [`designer`, `--port`, String(port)], {
     stdio: "inherit",
   });
 

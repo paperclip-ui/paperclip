@@ -32,6 +32,7 @@ pub fn routes() -> impl Filter<Extract = (StaticFile,), Error = Rejection> + Clo
 
 fn path_from_tail() -> impl Filter<Extract = (String,), Error = Rejection> + Clone  {
   tail().and_then(move |tail: Tail| {
+    println!("tailing from file");
     future::ready::<Result<String, Rejection>>(Ok(tail.as_str().to_string()))
   })
 }
@@ -51,6 +52,7 @@ pub async fn static_file_reply(
   if let Some(file) = file {
     return Ok(StaticFile(&file));
   } else {
+    println!("File {} not found", path);
   }
   Err(warp::reject::not_found())
 }

@@ -85,8 +85,8 @@
     "lint": "eslint src",
     "build:watch": "concurrently \"tsc --watch --preserveWatchOutput\" \"npm run build:syntaxes:watch\"",
     "prepublishOnly": "npm run build",
-    "publish:local": "rm -rf node_modules && npm install && vsce package && vsce publish",
-    "publish:marketplace": "rm -rf node_modules && npm install && vsce package && vsce publish -p $VSCE_TOKEN"
+    "publish:local": "rm -rf node_modules && npm install && vsce package --no-yarn && vsce publish",
+    "publish:marketplace": "rm -rf node_modules && npm install && vsce package --no-yarn && vsce publish -p $VSCE_TOKEN"
   },
   "author": "",
   "license": "MIT",

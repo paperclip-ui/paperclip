@@ -42,9 +42,9 @@ pub async fn start<IO: ProjectIO + 'static>(
 
     let server = Server::bind(&addr).serve(make_service_fn(move |_| {
 
-        let cors = warp::cors().allow_any_origin();
+        println!("request made");
 
-        // let route = warp::fs::dir(get_designer_path()).with(cors);
+        let cors = warp::cors().allow_any_origin();
         let route = routes().with(cors);
 
         let mut warp = warp::service(route);

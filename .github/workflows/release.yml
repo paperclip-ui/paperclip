@@ -23,9 +23,7 @@ jobs:
           ]
         package: [libs/cli]
     steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: mymaster
+      - uses: actions/checkout@master
       - uses: arduino/setup-protoc@v1
         with:
           version: "3.x"

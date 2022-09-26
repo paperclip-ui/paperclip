@@ -23,15 +23,17 @@ jobs:
           ]
         package: [libs/cli]
     steps:
-      - name: Install protoc
-        run: sudo apt-get install -y protobuf-compiler
-      - uses: actions/checkout@master
-      - uses: borales/actions-yarn@v3.0.0
+      - uses: arduino/setup-protoc@v1
         with:
-          cmd: install
-      - uses: borales/actions-yarn@v3.0.0
+          version: "3.x"
+      - name: Set up Node
+        uses: actions/setup-node@v1.1.0
         with:
-          cmd: build
+          node-version: "16.x"
+      - name: Install Dependencies
+        run: yarn install
+      - name: Build Packages
+        run: yarn build
       - name: Compile
         id: compile
         uses: rust-build/rust-build.action@v1.3.2

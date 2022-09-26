@@ -27,7 +27,7 @@ jobs:
         with:
           version: "3.x"
       - name: Set up Node
-        uses: actions/setup-node@v1.1.0
+        uses: actions/setup-node@v3
         with:
           node-version: "16.x"
       - name: Install Dependencies

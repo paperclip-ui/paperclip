@@ -1,5 +1,5 @@
 use super::context::TargetCompilerContext;
-use crate::config::{CompilerOptions, ConfigContext};
+use paperclip_config::{CompilerOptions, ConfigContext};
 use anyhow::Result;
 use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_compiler_react::{

@@ -1082,6 +1082,7 @@ dependencies = [
  "futures",
  "neon",
  "paperclip_common",
+ "paperclip_config",
  "paperclip_project",
 ]
 
@@ -1097,6 +1098,7 @@ dependencies = [
  "futures-core",
  "futures-util",
  "glob",
+ "paperclip_config",
  "paperclip_designer",
  "paperclip_parser",
  "paperclip_project",
@@ -1111,6 +1113,9 @@ version = "0.1.1"
 dependencies = [
  "anyhow",
  "crc",
+ "futures",
+ "futures-core",
+ "futures-util",
  "lazy_static",
  "regex",
  "uuid",
@@ -1124,6 +1129,21 @@ dependencies = [
  "paperclip_common",
  "paperclip_evaluator",
  "paperclip_parser",
+]
+
+[[package]]
+name = "paperclip_config"
+version = "0.1.1"
+dependencies = [
+ "anyhow",
+ "futures",
+ "notify",
+ "paperclip_common",
+ "paperclip_parser",
+ "path-absolutize",
+ "serde",
+ "serde_json",
+ "wax",
 ]
 
 [[package]]
@@ -1144,6 +1164,7 @@ dependencies = [
  "notify",
  "open",
  "paperclip_common",
+ "paperclip_config",
  "paperclip_evaluator",
  "paperclip_project",
  "paperclip_proto",
@@ -1203,6 +1224,7 @@ dependencies = [
  "notify",
  "paperclip_common",
  "paperclip_compiler_react",
+ "paperclip_config",
  "paperclip_evaluator",
  "paperclip_parser",
  "path-absolutize",

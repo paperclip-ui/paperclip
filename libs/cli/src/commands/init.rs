@@ -1,4 +1,4 @@
-use paperclip_project::config::{CompilerOptions, Config};
+use paperclip_config::{CompilerOptions, Config};
 use std::fs::File;
 use std::path::Path;
 use std::{env, io::Write};

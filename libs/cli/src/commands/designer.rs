@@ -1,7 +1,10 @@
 use anyhow::{Error, Result};
 use clap::Args;
 use paperclip_designer::server::server::{start, StartOptions};
-use paperclip_project::{ConfigContext, LocalIO, ProjectIO};
+use paperclip_project::{LocalIO};
+use paperclip_config::ConfigIO;
+use paperclip_config::ConfigContext;
+
 use std::env;
 
 #[derive(Debug, Args)]

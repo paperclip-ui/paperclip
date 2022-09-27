@@ -11,7 +11,8 @@ use futures_util::stream::StreamExt;
 use notify::{Config, Event, RecommendedWatcher, RecursiveMode, Watcher};
 use paperclip_common::pc::is_paperclip_file;
 use paperclip_evaluator::runtime::Runtime;
-use paperclip_project::{ConfigContext, Project, ProjectIO};
+use paperclip_project::{Project, ProjectIO};
+use paperclip_config::ConfigContext;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{file_response, FileRequest, FileResponse, PaperclipData};
 use std::path::Path;
@@ -64,8 +65,6 @@ impl<IO: ProjectIO + 'static> Designer for DesignerService<IO> {
 
             }
         };
-
-        // pin_mut!(output);
 
         Ok(Response::new(Box::pin(output)))
     }

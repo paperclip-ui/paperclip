@@ -7,7 +7,8 @@ members = [
   "libs/evaluator",
   "libs/paperclip-loader",
   "libs/designer",
-  "libs/proto"
+  "libs/proto",
+  "libs/config"
 ]
 
 

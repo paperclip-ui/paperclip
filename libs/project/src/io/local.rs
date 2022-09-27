@@ -1,12 +1,14 @@
-use super::core::{ProjectIO, WatchEvent, WatchEventKind};
-use crate::config::ConfigContext;
+use super::core::ProjectIO;
+use paperclip_config::{ConfigContext, ConfigIO};
 use crate::utils::watch_local::async_watch;
 use anyhow::{Error, Result};
 use async_stream::stream;
 use futures_core::stream::Stream;
 use futures_util::pin_mut;
 use futures_util::stream::StreamExt;
-use paperclip_common::fs::{FileReader, FileResolver};
+use paperclip_common::fs::{
+    FileReader, FileResolver, FileWatchEvent, FileWatchEventKind, FileWatcher,
+};
 use paperclip_parser::graph::io::IO as GraphIO;
 use path_absolutize::*;
 use std::fs;
@@ -16,9 +18,10 @@ use wax::Glob;
 #[derive(Clone, Default)]
 pub struct LocalIO;
 impl GraphIO for LocalIO {}
+impl ProjectIO for LocalIO { }
 
-impl ProjectIO for LocalIO {
-    type Str = impl Stream<Item = WatchEvent>;
+impl FileWatcher for LocalIO {
+    type Str = impl Stream<Item = FileWatchEvent>;
     fn watch(&self, directory: &str) -> Self::Str {
         let dir = directory.to_string();
         stream! {
@@ -29,13 +32,13 @@ impl ProjectIO for LocalIO {
                     let path = path.clone().into_os_string().into_string().unwrap();
                     match &event.kind {
                         notify::EventKind::Modify(notify::event::ModifyKind::Data(_)) => {
-                            yield WatchEvent::new(WatchEventKind::Change, &path);
+                            yield FileWatchEvent::new(FileWatchEventKind::Change, &path);
                         }
                         notify::EventKind::Create(_) => {
-                            yield WatchEvent::new(WatchEventKind::Create, &path);
+                            yield FileWatchEvent::new(FileWatchEventKind::Create, &path);
                         }
                         notify::EventKind::Remove(_) => {
-                            yield WatchEvent::new(WatchEventKind::Remove, &path);
+                            yield FileWatchEvent::new(FileWatchEventKind::Remove, &path);
                         },
                         _ => {}
                     }
@@ -43,6 +46,8 @@ impl ProjectIO for LocalIO {
             }
         }
     }
+}
+impl ConfigIO for LocalIO {
     fn get_all_designer_files(&self, config_context: &ConfigContext) -> Vec<String> {
         let pattern = config_context
             .config

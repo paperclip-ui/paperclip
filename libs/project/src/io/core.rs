@@ -1,31 +1,7 @@
-use crate::config::ConfigContext;
-use futures_core::stream::Stream;
+use paperclip_config::{ConfigIO};
+use paperclip_common::fs::FileWatcher;
 use paperclip_parser::graph::io::IO as GraphIO;
 
-#[derive(Debug)]
-pub enum WatchEventKind {
-    Create,
-    Remove,
-    Change,
-}
+pub trait ProjectIO: ConfigIO + FileWatcher + GraphIO + Clone + Send + Sync {
 
-#[derive(Debug)]
-pub struct WatchEvent {
-    pub kind: WatchEventKind,
-    pub path: String,
-}
-
-impl WatchEvent {
-    pub fn new(kind: WatchEventKind, path: &str) -> Self {
-        Self {
-            kind,
-            path: path.to_string(),
-        }
-    }
-}
-
-pub trait ProjectIO: GraphIO + Clone + Send + Sync {
-    type Str: Stream<Item = WatchEvent>;
-    fn watch(&self, dir: &str) -> Self::Str;
-    fn get_all_designer_files(&self, config: &ConfigContext) -> Vec<String>;
 }

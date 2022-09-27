@@ -1,4 +1,4 @@
-use crate::config::ConfigContext;
+use paperclip_config::ConfigContext;
 use crate::io::ProjectIO;
 use crate::target_compiler::TargetCompiler;
 use anyhow::Result;

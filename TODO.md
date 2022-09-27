@@ -1,7 +1,10 @@
 #### On-deck
 
 - realtime changes between VS Code and preview
-- VLS colors
+  - need to store contents in a "virtual" palce
+  - look into how this can be done collaboratively
+- VLS
+  - color picker
 - TD UI
 
 #### Milestone: MVP UI

@@ -1,8 +1,8 @@
 // https://github.com/hyperium/tonic/blob/master/examples/src/hyper_warp/server.rs
 use super::service::DesignerService;
 use super::utils::content_types;
-use futures::future::{self, Either, TryFutureExt};
 use crate::server::routes::routes;
+use futures::future::{self, Either, TryFutureExt};
 use hyper::{service::make_service_fn, Server};
 use open;
 use paperclip_project::{ConfigContext, ProjectIO};
@@ -25,7 +25,6 @@ pub struct StartOptions<IO: ProjectIO> {
 pub async fn start<IO: ProjectIO + 'static>(
     options: StartOptions<IO>,
 ) -> Result<(), Box<dyn std::error::Error>> {
-
     let port = if let Some(port) = options.port {
         port
     } else {
@@ -34,15 +33,13 @@ pub async fn start<IO: ProjectIO + 'static>(
 
     let addr = ([127, 0, 0, 1], port).into();
 
-
-    println!("🎨 Starting design server on port {}!!!", port);
+    println!("🎨 Starting design server on port {}!", port);
 
     let designer = DesignerService::new(options.config_context.clone(), options.project_io.clone());
     let designer_server = DesignerServer::new(designer);
     let designer_server = tonic_web::config().enable(designer_server);
 
     let server = Server::bind(&addr).serve(make_service_fn(move |_| {
-
         println!("request made");
 
         let cors = warp::cors().allow_any_origin();

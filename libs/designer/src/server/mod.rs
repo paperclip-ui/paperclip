@@ -1,6 +1,6 @@
 mod res_body;
+mod routes;
 pub mod server;
 mod service;
 mod utils;
-mod routes;
 pub use server::*;

@@ -1,7 +1,8 @@
 #### On-deck
 
-- Extension should work without paperclip config
-- keep track of gitignore files when searching for files
+- realtime changes between VS Code and preview
+- VLS colors
+- TD UI
 
 #### Milestone: MVP UI
 

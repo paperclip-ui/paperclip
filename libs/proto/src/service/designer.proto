@@ -6,8 +6,14 @@ import "virt/css.proto";
 package service.designer;
 
 service Designer {
+
   rpc OpenFile(FileRequest) returns (stream FileResponse);
-  // rpc UpdateFile(FileRequest) returns (stream FileResponse);
+  rpc UpdateFile(FileRequest) returns (Empty);
+
+}
+
+message Empty {
+
 }
 
 message FileRequest {

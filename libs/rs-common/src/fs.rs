@@ -9,14 +9,14 @@ pub trait FileResolver {
     fn resolve_file(&self, from: &str, to: &str) -> Option<String>;
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum FileWatchEventKind {
     Create,
     Remove,
     Change,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct FileWatchEvent {
     pub kind: FileWatchEventKind,
     pub path: String,

@@ -8,7 +8,7 @@ package service.designer;
 service Designer {
 
   rpc OpenFile(FileRequest) returns (stream FileResponse);
-  rpc UpdateFile(FileRequest) returns (Empty);
+  rpc UpdateFile(UpdateFileRequest) returns (Empty);
 
 }
 
@@ -18,6 +18,10 @@ message Empty {
 
 message FileRequest {
   string path = 1;
+}
+message UpdateFileRequest {
+  string path = 1;
+  bytes content = 2;
 }
 
 message FileResponse {

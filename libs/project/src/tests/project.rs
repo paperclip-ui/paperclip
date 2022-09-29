@@ -1,13 +1,15 @@
-use paperclip_config::{CompilerOptions, Config, ConfigContext, ConfigIO};
 use crate::{CompileOptions, Project, ProjectIO};
 use anyhow::Result;
 use async_stream::stream;
 use futures::executor::block_on;
 use futures_core::stream::Stream;
-use futures_util::StreamExt;
 use futures_util::pin_mut;
-use paperclip_common::fs::{FileReader, FileResolver, FileWatchEvent, FileWatchEventKind, FileWatcher};
+use futures_util::StreamExt;
+use paperclip_common::fs::{
+    FileReader, FileResolver, FileWatchEvent, FileWatchEventKind, FileWatcher,
+};
 use paperclip_common::str_utils::strip_extra_ws;
+use paperclip_config::{CompilerOptions, Config, ConfigContext, ConfigIO};
 use paperclip_parser::graph::io::IO as GraphIO;
 use paperclip_parser::graph::test_utils::MockFS;
 use path_absolutize::*;

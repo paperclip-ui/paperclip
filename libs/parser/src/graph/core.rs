@@ -29,7 +29,6 @@ impl Graph {
         }
     }
     pub async fn load<TIO: IO>(&mut self, path: &str, io: &TIO) -> Result<()> {
-        println!("load {}", path);
         self.dependencies.extend(
             load_dependencies::<TIO>(
                 String::from(path),

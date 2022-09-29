@@ -1,9 +1,8 @@
 use anyhow::{Error, Result};
 use clap::Args;
-use paperclip_designer::server::server::{start, StartOptions};
-use paperclip_project::{LocalIO};
-use paperclip_config::ConfigIO;
 use paperclip_config::ConfigContext;
+use paperclip_designer::server::server::{start, StartOptions};
+use paperclip_project::LocalIO;
 
 use std::env;
 
@@ -31,12 +30,8 @@ pub async fn start_design_server(args: StartDesignServerArgs) -> Result<()> {
         &project_io,
     )?;
 
-    let all_files = project_io.get_all_designer_files(&config_context);
-    println!("{:?}", all_files);
-
     if let Err(_) = start(StartOptions {
         config_context,
-        project_io,
         port: args.port,
         open: args.open,
     }) {

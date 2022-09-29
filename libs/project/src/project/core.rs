@@ -1,9 +1,9 @@
-use paperclip_config::{Config, ConfigContext};
 use crate::io::ProjectIO;
 pub use crate::project_compiler::CompileOptions;
 use crate::project_compiler::ProjectCompiler;
 use anyhow::Result;
 use futures_core::stream::Stream;
+use paperclip_config::{Config, ConfigContext};
 use paperclip_parser::graph::Graph;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};

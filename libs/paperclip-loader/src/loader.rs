@@ -1,7 +1,7 @@
 use anyhow::Result;
 use neon::prelude::*;
-use paperclip_project::{LocalIO, Project, ProjectIO};
 use paperclip_config::ConfigContext;
+use paperclip_project::{LocalIO, Project, ProjectIO};
 use std::collections::HashMap;
 
 pub struct Loader<TIO: ProjectIO> {

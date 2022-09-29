@@ -1,5 +1,4 @@
 use super::core::ProjectIO;
-use paperclip_config::{ConfigContext, ConfigIO};
 use crate::utils::watch_local::async_watch;
 use anyhow::{Error, Result};
 use async_stream::stream;
@@ -9,6 +8,7 @@ use futures_util::stream::StreamExt;
 use paperclip_common::fs::{
     FileReader, FileResolver, FileWatchEvent, FileWatchEventKind, FileWatcher,
 };
+use paperclip_config::{ConfigContext, ConfigIO};
 use paperclip_parser::graph::io::IO as GraphIO;
 use path_absolutize::*;
 use std::fs;
@@ -18,7 +18,7 @@ use wax::Glob;
 #[derive(Clone, Default)]
 pub struct LocalIO;
 impl GraphIO for LocalIO {}
-impl ProjectIO for LocalIO { }
+impl ProjectIO for LocalIO {}
 
 impl FileWatcher for LocalIO {
     type Str = impl Stream<Item = FileWatchEvent>;

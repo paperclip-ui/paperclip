@@ -1,10 +1,12 @@
 use anyhow::Result;
 use paperclip_common::fs::{FileReader, LocalFileReader};
+use paperclip_common::fs::{FileResolver, LocalFileResolver};
 use paperclip_config::ConfigContext;
 use paperclip_config::ConfigIO;
 use paperclip_config::LocalIO as LocalConfigIO;
+use paperclip_parser::graph::io::IO as GraphIO;
 
-pub trait ServerIO: ConfigIO + 'static {}
+pub trait ServerIO: GraphIO + ConfigIO + 'static {}
 
 #[derive(Clone, Default)]
 pub struct LocalServerIO {}
@@ -21,4 +23,11 @@ impl ConfigIO for LocalServerIO {
     }
 }
 
+impl FileResolver for LocalServerIO {
+    fn resolve_file(&self, from: &str, to: &str) -> Option<String> {
+        LocalFileResolver::default().resolve_file(from, to)
+    }
+}
+
 impl ServerIO for LocalServerIO {}
+impl GraphIO for LocalServerIO {}

@@ -6,7 +6,7 @@ use futures_core::stream::Stream;
 use futures_util::pin_mut;
 use futures_util::stream::StreamExt;
 use paperclip_common::fs::{
-    FileReader, FileResolver, FileWatchEvent, FileWatchEventKind, FileWatcher,
+    FileReader, FileResolver, FileWatchEvent, FileWatchEventKind, FileWatcher, LocalFileReader,
 };
 use paperclip_config::{ConfigContext, ConfigIO};
 use paperclip_parser::graph::io::IO as GraphIO;
@@ -66,11 +66,7 @@ impl ConfigIO for LocalIO {
 
 impl FileReader for LocalIO {
     fn read_file(&self, path: &str) -> Result<Box<[u8]>> {
-        if let Ok(content) = fs::read_to_string(path) {
-            Ok(content.as_bytes().to_vec().into_boxed_slice())
-        } else {
-            Err(Error::msg("file not fond"))
-        }
+        LocalFileReader::default().read_file(path)
     }
 }
 

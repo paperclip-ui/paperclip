@@ -852,6 +852,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "lock_api"
+version = "0.4.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "435011366fe56583b16cf956f9df0095b405b82d76425bc8981c0e22e60ec4df"
+dependencies = [
+ "autocfg",
+ "scopeguard",
+]
+
+[[package]]
 name = "log"
 version = "0.4.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1103,6 +1113,7 @@ dependencies = [
  "futures-core",
  "futures-util",
  "lazy_static",
+ "path-absolutize",
  "regex",
  "uuid",
 ]
@@ -1139,6 +1150,7 @@ dependencies = [
  "assert_cmd",
  "async-stream",
  "async-trait",
+ "crossbeam-channel",
  "futures",
  "futures-core",
  "futures-util",
@@ -1156,6 +1168,7 @@ dependencies = [
  "paperclip_parser",
  "paperclip_project",
  "paperclip_proto",
+ "parking_lot",
  "path-absolutize",
  "portpicker",
  "prost",
@@ -1225,6 +1238,29 @@ dependencies = [
  "serde",
  "tonic",
  "tonic-build",
+]
+
+[[package]]
+name = "parking_lot"
+version = "0.12.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3742b2c103b9f06bc9fff0a37ff4912935851bee6d36f3c02bcc755bcfec228f"
+dependencies = [
+ "lock_api",
+ "parking_lot_core",
+]
+
+[[package]]
+name = "parking_lot_core"
+version = "0.9.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "09a279cbf25cb0757810394fbc1e359949b59e348145c643a939a525692e6929"
+dependencies = [
+ "cfg-if",
+ "libc",
+ "redox_syscall",
+ "smallvec",
+ "windows-sys",
 ]
 
 [[package]]
@@ -1570,6 +1606,12 @@ name = "scoped-tls"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ea6a9290e3c9cf0f18145ef7ffa62d68ee0bf5fcd651017e586dc7fd5da448c2"
+
+[[package]]
+name = "scopeguard"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d29ab0c6d3fc0ee92fe66e2d99f700eab17a8d57d1c1d3b748380fb20baa78cd"
 
 [[package]]
 name = "semver"

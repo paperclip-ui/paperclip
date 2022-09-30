@@ -20,6 +20,7 @@ paperclip_evaluator = { path = "../evaluator" }
 paperclip_config = { path = "../config" }
 paperclip_parser = { path = "../parser" }
 async-trait = "0.1.57"
+parking_lot = "0.12.1"
 hyper = "0.14.20"
 headers = "0.3.8"
 portpicker = "0.1.1"
@@ -38,6 +39,7 @@ open = "3.0.3"
 tokio-stream = "0.1.10"
 async-stream = "0.3.3"
 anyhow = "1.0.65"
+crossbeam-channel = "0.5.6"
 
 [dev-dependencies]
 assert_cmd = "2.0.4"

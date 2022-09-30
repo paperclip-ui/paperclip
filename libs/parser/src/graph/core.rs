@@ -29,6 +29,7 @@ impl Graph {
         }
     }
 
+
     pub async fn load<TIO: IO>(&mut self, path: &str, io: &TIO) -> Result<()> {
         self.dependencies.extend(
             load_dependencies::<TIO>(
@@ -41,37 +42,24 @@ impl Graph {
         Ok(())
     }
 
-
-    pub async fn load_files2<TIO: IO>(paths: &Vec<String>, io: &TIO) -> Result<Graph> {
-
+    pub async fn load_files<TIO: IO>(&mut self, paths: &Vec<String>, io: &TIO) -> Result<()> {
         let loaded = self.dep_hashes();
         for path in paths {
             self.load_file2(&path, io, loaded.clone()).await?;
         }
-
-        let mut dependencies = HashMap::new();
-        dependencies.extend(
-            load_dependencies::<TIO>(
-                String::from(path),
-                Arc::new(&io),
-                Arc::new(Mutex::new(HashMap::new())),
-            )
-            .await?,
-        );
-
-
-        Ok(Graph {
-            dependencies
-        })
-    }
-
-    pub async fn load_files<TIO: IO>(&mut self, paths: &Vec<String>, io: &TIO) -> Result<()> {
-        let loaded = self.dep_hashes();
-        for path in paths {
-            self._load_file(&path, io, loaded.clone()).await?;
-        }
         Ok(())
     }
+
+
+    pub async fn load_files3<TIO: IO>(paths: &Vec<String>, io: &TIO) -> Result<Graph> {
+        let mut graph = Graph::new();
+        let loaded = Arc::new(Mutex::new(HashMap::new()));
+        for path in paths {
+            graph.load_file2(&path, io, loaded.clone()).await?;
+        }
+        Ok(graph)
+    }
+
     pub fn get_immediate_dependents(&self, path: &str) -> Vec<&Dependency> {
         let mut dependents = vec![];
         for (_file_path, dep) in &self.dependencies {

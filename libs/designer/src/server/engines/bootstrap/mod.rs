@@ -1,5 +1,6 @@
+use crate::handle_store_events;
 use anyhow::Result;
-use futures::{executor::block_on, lock::Mutex};
+use parking_lot::Mutex;
 use std::sync::Arc;
 
 use crate::server::{core::ServerEvent, ServerStore};
@@ -14,21 +15,11 @@ impl BootstrapEngine {
     }
     pub async fn prepare(&mut self) -> Result<()> {
         let store = self.store.clone();
-        let chan = store.lock().await.events.subscribe();
-
-        tokio::spawn(async move {
-            while let Ok(event) = chan.recv() {
-                match event {
-                    ServerEvent::APIServerStarted { port } => {
-                        if store.lock().await.state.options.open {
-                            open::that(format!("http://localhost:{}", port)).unwrap();
-                        }
-                    }
-                    _ => {}
-                }
+        handle_store_events!(store, ServerEvent::APIServerStarted { port } => {
+            if store.lock().state.options.open {
+                open::that(format!("http://localhost:{}", port)).unwrap();
             }
         });
-
         Ok(())
     }
 }

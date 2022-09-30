@@ -13,6 +13,7 @@ pub enum ServerEvent {
     DependencyChanged { path: String },
     APIServerStarted { port: u16 },
     PaperclipFilesLoaded { files: Vec<String> },
+    DependencyGraphLoaded { graph: Graph },
 }
 
 pub struct ServerState {
@@ -21,7 +22,7 @@ pub struct ServerState {
 }
 
 pub struct ServerStore {
-    pub events: EventBus<ServerEvent>,
+    events: EventBus<ServerEvent>,
     pub state: ServerState,
 }
 
@@ -34,5 +35,11 @@ impl ServerStore {
                 options,
             },
         }
+    }
+    pub fn emit(&self, event: ServerEvent) {
+        self.events.emit(event)
+    }
+    pub fn subscribe(&mut self) -> crossbeam_channel::Receiver<ServerEvent> {
+        self.events.subscribe()
     }
 }

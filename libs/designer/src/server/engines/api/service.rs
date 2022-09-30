@@ -2,7 +2,6 @@
 
 use crate::server::core::ServerStore;
 use futures::executor::block_on;
-use futures::lock::Mutex;
 use futures::Stream;
 use headers::Server;
 use paperclip_evaluator::runtime::Runtime;
@@ -12,6 +11,7 @@ use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
     file_response, Empty, FileRequest, FileResponse, PaperclipData, UpdateFileRequest,
 };
+use parking_lot::Mutex;
 use std::pin::Pin;
 use std::sync::Arc;
 use tonic::{Request, Response, Status};

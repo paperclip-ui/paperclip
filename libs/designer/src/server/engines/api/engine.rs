@@ -5,12 +5,10 @@ use super::service::DesignerService;
 use super::utils::content_types;
 use crate::server::core::{ServerEvent, ServerStore};
 use anyhow::Result;
-use futures::{
-    future::{self, Either, TryFutureExt},
-    lock::{Mutex, MutexGuard},
-};
+use futures::future::{self, Either, TryFutureExt};
 use hyper::{service::make_service_fn, Server};
 use paperclip_proto::service::designer::designer_server::DesignerServer;
+use parking_lot::{Mutex, MutexGuard};
 use std::{convert::Infallible, sync::Arc};
 use tower::Service;
 use warp::Filter;
@@ -33,7 +31,7 @@ impl APIEngine {
     async fn start_server(&mut self) -> Result<()> {
         let store = self.store.clone();
 
-        let port = if let Some(port) = store.lock().await.state.options.port {
+        let port = if let Some(port) = store.lock().state.options.port {
             port
         } else {
             portpicker::pick_unused_port().expect("No ports free")
@@ -82,9 +80,9 @@ impl APIEngine {
     }
 
     async fn get_store(&self) -> MutexGuard<'_, ServerStore> {
-        self.store.lock().await
+        self.store.lock()
     }
     async fn emit(&self, event: ServerEvent) {
-        self.get_store().await.events.emit(event)
+        self.get_store().await.emit(event)
     }
 }

@@ -1,6 +1,7 @@
 use anyhow::{Error, Result};
 use clap::Args;
 use paperclip_config::ConfigContext;
+use paperclip_designer::server::io::LocalServerIO;
 use paperclip_designer::server::server::{start, StartOptions};
 use paperclip_project::LocalIO;
 
@@ -30,11 +31,14 @@ pub async fn start_design_server(args: StartDesignServerArgs) -> Result<()> {
         &project_io,
     )?;
 
-    if let Err(_) = start(StartOptions {
-        config_context,
-        port: args.port,
-        open: args.open,
-    }) {
+    if let Err(_) = start(
+        StartOptions {
+            config_context,
+            port: args.port,
+            open: args.open,
+        },
+        LocalServerIO::default(),
+    ) {
         Err(Error::msg("Can't start design server"))
     } else {
         Ok(())

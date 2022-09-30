@@ -1,10 +1,9 @@
 use super::io::ConfigIO;
 use crate::config::ConfigContext;
 use anyhow::{Error, Result};
-use paperclip_common::fs::{FileReader, FileResolver};
+use paperclip_common::fs::{FileReader, FileResolver, LocalFileReader};
 use paperclip_parser::graph::io::IO as GraphIO;
 use path_absolutize::*;
-use std::fs;
 use std::path::Path;
 use wax::Glob;
 
@@ -30,11 +29,7 @@ impl ConfigIO for LocalIO {
 
 impl FileReader for LocalIO {
     fn read_file(&self, path: &str) -> Result<Box<[u8]>> {
-        if let Ok(content) = fs::read_to_string(path) {
-            Ok(content.as_bytes().to_vec().into_boxed_slice())
-        } else {
-            Err(Error::msg("file not fond"))
-        }
+        LocalFileReader::default().read_file(path)
     }
 }
 

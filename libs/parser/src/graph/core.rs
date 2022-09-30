@@ -28,6 +28,7 @@ impl Graph {
             dependencies: HashMap::new(),
         }
     }
+
     pub async fn load<TIO: IO>(&mut self, path: &str, io: &TIO) -> Result<()> {
         self.dependencies.extend(
             load_dependencies::<TIO>(
@@ -40,10 +41,34 @@ impl Graph {
         Ok(())
     }
 
-    pub async fn load_files<TIO: IO>(&mut self, paths: &Vec<String>, io: &TIO) -> Result<()> {
+
+    pub async fn load_files2<TIO: IO>(paths: &Vec<String>, io: &TIO) -> Result<Graph> {
+
         let loaded = self.dep_hashes();
         for path in paths {
             self.load_file2(&path, io, loaded.clone()).await?;
+        }
+
+        let mut dependencies = HashMap::new();
+        dependencies.extend(
+            load_dependencies::<TIO>(
+                String::from(path),
+                Arc::new(&io),
+                Arc::new(Mutex::new(HashMap::new())),
+            )
+            .await?,
+        );
+
+
+        Ok(Graph {
+            dependencies
+        })
+    }
+
+    pub async fn load_files<TIO: IO>(&mut self, paths: &Vec<String>, io: &TIO) -> Result<()> {
+        let loaded = self.dep_hashes();
+        for path in paths {
+            self._load_file(&path, io, loaded.clone()).await?;
         }
         Ok(())
     }

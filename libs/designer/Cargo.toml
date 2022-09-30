@@ -19,6 +19,7 @@ paperclip_common = { path = "../rs-common" }
 paperclip_evaluator = { path = "../evaluator" }
 paperclip_config = { path = "../config" }
 paperclip_parser = { path = "../parser" }
+async-trait = "0.1.57"
 hyper = "0.14.20"
 headers = "0.3.8"
 portpicker = "0.1.1"

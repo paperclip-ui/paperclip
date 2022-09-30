@@ -1,8 +1,23 @@
+use anyhow::Error;
 use anyhow::Result;
 use futures_core::stream::Stream;
+use std::fs;
 
 pub trait FileReader {
     fn read_file<'content>(&self, path: &str) -> Result<Box<[u8]>>;
+}
+
+#[derive(Default)]
+pub struct LocalFileReader;
+
+impl FileReader for LocalFileReader {
+    fn read_file(&self, path: &str) -> Result<Box<[u8]>> {
+        if let Ok(content) = fs::read_to_string(path) {
+            Ok(content.as_bytes().to_vec().into_boxed_slice())
+        } else {
+            Err(Error::msg("file not found"))
+        }
+    }
 }
 
 pub trait FileResolver {

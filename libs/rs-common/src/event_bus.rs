@@ -8,11 +8,10 @@ impl<T: Clone + Send + Sync> EventBus<T> {
         self.channels.push(tx);
         rx
     }
-    pub fn emit(&self, message: T) -> Result<(), crossbeam_channel::SendError<T>> {
+    pub fn emit(&self, message: T) {
         for c in &self.channels {
-            c.send(message.clone())?;
+            c.send(message.clone());
         }
-        Ok(())
     }
 
     pub fn new() -> Self {

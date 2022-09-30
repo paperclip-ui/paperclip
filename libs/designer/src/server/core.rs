@@ -8,34 +8,31 @@ pub struct StartOptions {
     pub port: Option<u16>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum ServerEvent {
-    DependencyChanged(DependencyChanged),
-    APIServerStarted(APIServerStarted),
-}
-
-#[derive(Clone)]
-pub struct DependencyChanged {
-    path: String,
-}
-
-#[derive(Clone)]
-pub struct APIServerStarted {
-    port: u16,
+    DependencyChanged { path: String },
+    APIServerStarted { port: u16 },
+    PaperclipFilesLoaded { files: Vec<String> },
 }
 
 pub struct ServerState {
     pub options: StartOptions,
-    pub events: EventBus<ServerEvent>,
     pub graph: Graph,
 }
 
-impl ServerState {
+pub struct ServerStore {
+    pub events: EventBus<ServerEvent>,
+    pub state: ServerState,
+}
+
+impl ServerStore {
     pub fn new(options: StartOptions) -> Self {
         Self {
-            options,
             events: EventBus::new(),
-            graph: Graph::new(),
+            state: ServerState {
+                graph: Graph::new(),
+                options,
+            },
         }
     }
 }

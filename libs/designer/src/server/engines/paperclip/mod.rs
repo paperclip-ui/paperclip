@@ -1,4 +1,8 @@
+use std::collections::HashMap;
+
 use anyhow::Result;
+use paperclip_evaluator::css;
+use paperclip_evaluator::html;
 use paperclip_parser::graph::Graph;
 use tokio::join;
 
@@ -17,11 +21,11 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
     handle_store_events!(
         &ctx.store,
         ServerEvent::PaperclipFilesLoaded { files } => {
-            load_dependency_graph(next.clone(), files).await;
+            load_dependency_graph(next.clone(), &files).await;
         },
 
         ServerEvent::DependencyGraphLoaded { graph } => {
-            // evaluate_dependency_graph(next.clone(), graph).await;
+            evaluate_dependency_graph(next.clone(), &graph).await;
         }
     );
 }
@@ -39,9 +43,32 @@ async fn load_dependency_graph<TIO: ServerIO>(
 }
 
 async fn load_files<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
-    println!("Loading Paperclip files");
     let state = ctx.lock_store().state.options.config_context.clone();
     let files = ctx.io.get_all_designer_files(&state);
     ctx.emit(ServerEvent::PaperclipFilesLoaded { files });
+    Ok(())
+}
+
+async fn evaluate_dependency_graph<TIO: ServerIO>(
+    ctx: ServerEngineContext<TIO>,
+    graph: &Graph,
+) -> Result<()> {
+    let mut output: HashMap<String, (css::virt::Document, html::virt::Document)> = HashMap::new();
+
+    for (path, dep) in &graph.dependencies {
+        let css = css::evaluator::evaluate(path, graph, &ctx.io).await?;
+        let html = html::evaluator::evaluate(
+            path,
+            graph,
+            &ctx.io,
+            html::evaluator::Options {
+                include_components: true,
+            },
+        )
+        .await?;
+        output.insert(path.to_string(), (css, html));
+    }
+
+    ctx.emit(ServerEvent::ModulesEvaluated(output));
     Ok(())
 }

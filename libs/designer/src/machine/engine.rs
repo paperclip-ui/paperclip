@@ -1,19 +1,26 @@
 use parking_lot::{Mutex, MutexGuard};
 
-use super::store::Store;
+use super::store::{EventHandler, Store};
 use std::sync::Arc;
 
-pub struct EngineContext<TState, TEvent, TIO: Sized> {
-    pub store: Arc<Mutex<Store<TState, TEvent>>>,
+pub struct EngineContext<
+    TState,
+    TEvent: Clone,
+    TIO: Sized,
+    TEventHandler: EventHandler<TState, TEvent>,
+> {
+    pub store: Arc<Mutex<Store<TState, TEvent, TEventHandler>>>,
     pub io: TIO,
 }
 
-impl<TState, TEvent, TIO: Sized> EngineContext<TState, TEvent, TIO> {
-    pub fn new(store: Arc<Mutex<Store<TState, TEvent>>>, io: TIO) -> Self {
+impl<TState, TEvent: Clone, TIO: Sized, TEventHandler: EventHandler<TState, TEvent>>
+    EngineContext<TState, TEvent, TIO, TEventHandler>
+{
+    pub fn new(store: Arc<Mutex<Store<TState, TEvent, TEventHandler>>>, io: TIO) -> Self {
         Self { store, io }
     }
 
-    pub fn lock_store(&self) -> MutexGuard<'_, Store<TState, TEvent>> {
+    pub fn lock_store(&self) -> MutexGuard<'_, Store<TState, TEvent, TEventHandler>> {
         self.store.lock()
     }
 

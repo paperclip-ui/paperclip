@@ -1,86 +1,47 @@
 use anyhow::Result;
-use paperclip_evaluator::css;
-use paperclip_evaluator::html;
 use paperclip_parser::graph::Graph;
-use parking_lot::{Mutex, MutexGuard};
-use std::sync::Arc;
 use tokio::join;
 
 use crate::handle_store_events;
+use crate::server::core::{ServerEngineContext, ServerEvent};
+use crate::server::io::ServerIO;
 
-use crate::server::{
-    core::{ServerEvent, ServerState},
-    io::ServerIO,
-    ServerStore,
-};
-
-#[derive(Clone)]
-pub struct PaperclipEngine<TIO: ServerIO> {
-    store: Arc<Mutex<ServerStore>>,
-    io: TIO,
+pub async fn start<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
+    join!(handle_events(ctx.clone()));
+    join!(load_files(ctx.clone()));
+    Ok(())
 }
 
-impl<TIO: ServerIO> PaperclipEngine<TIO> {
-    pub fn new(store: Arc<Mutex<ServerStore>>, io: TIO) -> Self {
-        Self { store, io }
-    }
-    pub async fn start(self: Arc<Self>) -> Result<()> {
-        // handlers
-        join!(self.clone().handle_loaded_designer_files());
+async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
+    let next = ctx.clone();
+    handle_store_events!(
+        &ctx.store,
+        ServerEvent::PaperclipFilesLoaded { files } => {
+            load_dependency_graph(next.clone(), files).await;
+        },
 
-        // init
-        join!(self.clone().load_files());
-        Ok(())
-    }
+        ServerEvent::DependencyGraphLoaded { graph } => {
+            // evaluate_dependency_graph(next.clone(), graph).await;
+        }
+    );
+}
 
-    pub async fn handle_loaded_designer_files(self: Arc<Self>) {
-        let next = self.clone();
-        println!("HANDLE STOR");
-        handle_store_events!(&self.store, ServerEvent::PaperclipFilesLoaded { files } => {
-          println!("NEXT");
-          next.clone().load_dependency_graph(files).await;
-        });
-    }
+async fn load_dependency_graph<TIO: ServerIO>(
+    ctx: ServerEngineContext<TIO>,
+    files: &Vec<String>,
+) -> Result<()> {
+    // let store = self.store.lock().await;
+    let graph = Graph::load_files3(files, &ctx.io).await?;
 
-    async fn load_dependency_graph(self: Arc<Self>, files: Vec<String>) -> Result<()> {
-        // let store = self.store.lock().await;
-        let graph = Graph::load_files3(&files, &self.io).await?;
+    ctx.emit(ServerEvent::DependencyGraphLoaded { graph });
 
-        println!("{:?}", graph);
+    Ok(())
+}
 
-        self.store
-            .lock()
-            .emit(ServerEvent::DependencyGraphLoaded { graph });
-
-        // self.store.lock().state.graph.load_files(&files, &self.io).await;
-
-        Ok(())
-    }
-
-    // async fn evaluate_files(&self, files: Vec<String>) -> Result<()> {
-    //     for file in files {
-    //       let css_virt = css::evaluator::evaluate(&path, graph, file_resolver)
-    //     }
-    //     Ok(())
-    // }
-
-    async fn load_files(self: Arc<Self>) -> Result<()> {
-        println!("Loading Paperclip files");
-        let state = self.get_store().await.state.options.config_context.clone();
-        let files = self.io.get_all_designer_files(&state);
-        println!("LOADD");
-        self.emit(ServerEvent::PaperclipFilesLoaded { files }).await;
-        Ok(())
-    }
-
-    async fn get_store(&self) -> MutexGuard<'_, ServerStore> {
-        self.store.lock()
-    }
-
-    // async fn get_state<'a>(&self) -> &'a ServerState {
-    //   self.store.lock().await.state.as_ref()
-    // }
-    async fn emit(&self, event: ServerEvent) {
-        self.get_store().await.emit(event)
-    }
+async fn load_files<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
+    println!("Loading Paperclip files");
+    let state = ctx.lock_store().state.options.config_context.clone();
+    let files = ctx.io.get_all_designer_files(&state);
+    ctx.emit(ServerEvent::PaperclipFilesLoaded { files });
+    Ok(())
 }

@@ -3,86 +3,69 @@ use super::res_body::EitherBody;
 use super::routes::routes;
 use super::service::DesignerService;
 use super::utils::content_types;
-use crate::server::core::{ServerEvent, ServerStore};
+use crate::machine::engine::EngineContext;
+use crate::server::core::{ServerEngineContext, ServerEvent, ServerState};
+use crate::server::io::ServerIO;
 use anyhow::Result;
 use futures::future::{self, Either, TryFutureExt};
 use hyper::{service::make_service_fn, Server};
 use paperclip_proto::service::designer::designer_server::DesignerServer;
-use parking_lot::{Mutex, MutexGuard};
-use std::{convert::Infallible, sync::Arc};
+use std::convert::Infallible;
 use tower::Service;
 use warp::Filter;
+
 type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
 
-pub struct APIEngine {
-    store: Arc<Mutex<ServerStore>>,
+pub async fn start<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
+    start_server(ctx.clone()).await?;
+    Ok(())
 }
 
-impl APIEngine {
-    pub fn new(store: Arc<Mutex<ServerStore>>) -> Self {
-        Self { store }
-    }
+async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
+    let port = if let Some(port) = ctx.lock_store().state.options.port {
+        port
+    } else {
+        portpicker::pick_unused_port().expect("No ports free")
+    };
+    println!("🎨 Starting design server on port {}", port);
 
-    pub async fn start(&mut self) -> Result<()> {
-        self.start_server().await?;
-        Ok(())
-    }
+    let addr = ([127, 0, 0, 1], port).into();
 
-    async fn start_server(&mut self) -> Result<()> {
-        let store = self.store.clone();
+    let designer = DesignerService::new(ctx.store.clone());
+    let designer_server = DesignerServer::new(designer);
+    let designer_server = tonic_web::config().enable(designer_server);
 
-        let port = if let Some(port) = store.lock().state.options.port {
-            port
-        } else {
-            portpicker::pick_unused_port().expect("No ports free")
-        };
-        println!("🎨 Starting design server on port {}", port);
+    let server = Server::bind(&addr).serve(make_service_fn(move |_| {
+        println!("request made");
 
-        let addr = ([127, 0, 0, 1], port).into();
+        let cors = warp::cors().allow_any_origin();
+        let route = routes().with(cors);
 
-        let designer = DesignerService::new(store.clone());
-        let designer_server = DesignerServer::new(designer);
-        let designer_server = tonic_web::config().enable(designer_server);
+        let mut warp = warp::service(route);
+        let mut designer_server = designer_server.clone();
+        future::ok::<_, Infallible>(tower::service_fn(
+            move |req: hyper::Request<hyper::Body>| {
+                if content_types::is_grpc_web(req.headers()) {
+                    Either::Left(
+                        designer_server
+                            .call(req)
+                            .map_ok(|res| res.map(EitherBody::Left))
+                            .map_err(Error::from),
+                    )
+                } else {
+                    Either::Right(
+                        warp.call(req)
+                            .map_ok(|res| res.map(EitherBody::Right))
+                            .map_err(Error::from),
+                    )
+                }
+            },
+        ))
+    }));
 
-        let server = Server::bind(&addr).serve(make_service_fn(move |_| {
-            println!("request made");
+    ctx.emit(ServerEvent::APIServerStarted { port });
 
-            let cors = warp::cors().allow_any_origin();
-            let route = routes().with(cors);
+    server.await?;
 
-            let mut warp = warp::service(route);
-            let mut designer_server = designer_server.clone();
-            future::ok::<_, Infallible>(tower::service_fn(
-                move |req: hyper::Request<hyper::Body>| {
-                    if content_types::is_grpc_web(req.headers()) {
-                        Either::Left(
-                            designer_server
-                                .call(req)
-                                .map_ok(|res| res.map(EitherBody::Left))
-                                .map_err(Error::from),
-                        )
-                    } else {
-                        Either::Right(
-                            warp.call(req)
-                                .map_ok(|res| res.map(EitherBody::Right))
-                                .map_err(Error::from),
-                        )
-                    }
-                },
-            ))
-        }));
-
-        self.emit(ServerEvent::APIServerStarted { port }).await;
-
-        server.await?;
-
-        Ok(())
-    }
-
-    async fn get_store(&self) -> MutexGuard<'_, ServerStore> {
-        self.store.lock()
-    }
-    async fn emit(&self, event: ServerEvent) {
-        self.get_store().await.emit(event)
-    }
+    Ok(())
 }

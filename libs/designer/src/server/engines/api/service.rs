@@ -1,12 +1,8 @@
 // https://github.com/hyperium/tonic/blob/master/examples/src/hyper_warp/server.rs
 
-use crate::server::core::ServerStore;
-use futures::executor::block_on;
+use crate::machine::store::Store;
+use crate::server::core::{ServerEvent, ServerState};
 use futures::Stream;
-use headers::Server;
-use paperclip_evaluator::runtime::Runtime;
-use paperclip_parser::graph::Graph;
-use paperclip_project::{Project, ProjectIO};
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
     file_response, Empty, FileRequest, FileResponse, PaperclipData, UpdateFileRequest,
@@ -21,11 +17,11 @@ type ResponseStream = Pin<Box<dyn Stream<Item = Result<FileResponse, Status>> + 
 
 #[derive(Clone)]
 pub struct DesignerService {
-    state: Arc<Mutex<ServerStore>>,
+    state: Arc<Mutex<Store<ServerState, ServerEvent>>>,
 }
 
 impl DesignerService {
-    pub fn new(state: Arc<Mutex<ServerStore>>) -> Self {
+    pub fn new(state: Arc<Mutex<Store<ServerState, ServerEvent>>>) -> Self {
         Self { state }
     }
 }

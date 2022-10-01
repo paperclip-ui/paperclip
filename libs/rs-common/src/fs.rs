@@ -1,9 +1,9 @@
 use anyhow::Error;
 use anyhow::Result;
-use std::path::Path;
 use futures_core::stream::Stream;
-use std::fs;
 use path_absolutize::*;
+use std::fs;
+use std::path::Path;
 
 pub trait FileReader {
     fn read_file<'content>(&self, path: &str) -> Result<Box<[u8]>>;
@@ -29,7 +29,6 @@ pub trait FileResolver {
 #[derive(Default)]
 pub struct LocalFileResolver;
 
-
 impl FileResolver for LocalFileResolver {
     fn resolve_file(&self, from_path: &str, to_path: &str) -> Option<String> {
         Some(String::from(
@@ -44,7 +43,6 @@ impl FileResolver for LocalFileResolver {
         ))
     }
 }
-
 
 #[derive(Debug, Clone)]
 pub enum FileWatchEventKind {

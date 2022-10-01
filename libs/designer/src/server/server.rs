@@ -1,8 +1,13 @@
 // https://github.com/hyperium/tonic/blob/master/examples/src/hyper_warp/server.rs
-pub use super::core::{ServerStore, StartOptions};
-use super::{engines, io::ServerIO};
+pub use super::core::{ServerState, StartOptions};
+use super::{
+    engines::{self},
+    io::ServerIO,
+};
+use crate::machine::engine::EngineContext;
+use crate::machine::store::Store;
 use anyhow::Result;
-use parking_lot::{Mutex, MutexGuard};
+use parking_lot::Mutex;
 use std::sync::Arc;
 
 #[tokio::main]
@@ -10,18 +15,19 @@ pub async fn start<IO: ServerIO>(
     options: StartOptions,
     io: IO,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let state = Arc::new(Mutex::new(ServerStore::new(options)));
+    let store = Arc::new(Mutex::new(Store::new(ServerState::new(options))));
 
-    let mut bootstrap = engines::bootstrap::BootstrapEngine::new(state.clone());
-    let mut api = engines::api::APIEngine::new(state.clone());
-    let mut paperclip = Arc::new(engines::paperclip::PaperclipEngine::new(
-        state.clone(),
-        io.clone(),
-    ));
+    let engine_ctx = Arc::new(EngineContext::new(store, io));
 
-    bootstrap.prepare().await?;
-    paperclip.start().await?;
-    api.start().await?;
+    let mut bootstrap = engines::bootstrap::start(engine_ctx.clone());
+    let mut api = engines::api::start(engine_ctx.clone());
+    let paperclip = engines::paperclip::start(engine_ctx.clone());
+    let state = engines::state::start(engine_ctx.clone());
+
+    bootstrap.await?;
+    state.await?;
+    paperclip.await?;
+    api.await?;
 
     Ok(())
 }

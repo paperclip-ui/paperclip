@@ -4,7 +4,7 @@ macro_rules! handle_store_events {
         let chan = $store.lock().subscribe();
         tokio::spawn(async move {
             while let Ok(event) = chan.recv() {
-                match event {
+                match &*event {
                     $(
                         $event => $body
                     ),*

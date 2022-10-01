@@ -1,4 +1,8 @@
-use paperclip_common::event_bus::EventBus;
+use std::sync::Arc;
+
+use crate::machine::engine::EngineContext;
+use crate::machine::store::Store;
+use crate::server::io::ServerIO;
 use paperclip_config::ConfigContext;
 use paperclip_parser::graph::Graph;
 
@@ -8,7 +12,7 @@ pub struct StartOptions {
     pub port: Option<u16>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub enum ServerEvent {
     DependencyChanged { path: String },
     APIServerStarted { port: u16 },
@@ -21,25 +25,14 @@ pub struct ServerState {
     pub graph: Graph,
 }
 
-pub struct ServerStore {
-    events: EventBus<ServerEvent>,
-    pub state: ServerState,
-}
-
-impl ServerStore {
+impl ServerState {
     pub fn new(options: StartOptions) -> Self {
         Self {
-            events: EventBus::new(),
-            state: ServerState {
-                graph: Graph::new(),
-                options,
-            },
+            options,
+            graph: Graph::new(),
         }
     }
-    pub fn emit(&self, event: ServerEvent) {
-        self.events.emit(event)
-    }
-    pub fn subscribe(&mut self) -> crossbeam_channel::Receiver<ServerEvent> {
-        self.events.subscribe()
-    }
 }
+
+pub type ServerEngineContext<TIO> = Arc<EngineContext<ServerState, ServerEvent, TIO>>;
+pub type ServerStore = Store<ServerState, ServerEvent>;

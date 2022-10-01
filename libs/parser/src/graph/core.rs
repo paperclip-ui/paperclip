@@ -29,7 +29,6 @@ impl Graph {
         }
     }
 
-
     pub async fn load<TIO: IO>(&mut self, path: &str, io: &TIO) -> Result<()> {
         self.dependencies.extend(
             load_dependencies::<TIO>(
@@ -49,7 +48,6 @@ impl Graph {
         }
         Ok(())
     }
-
 
     pub async fn load_files3<TIO: IO>(paths: &Vec<String>, io: &TIO) -> Result<Graph> {
         let mut graph = Graph::new();

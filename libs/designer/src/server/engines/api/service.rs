@@ -67,10 +67,7 @@ impl Designer for DesignerService {
                 .expect("Can't send");
 
             handle_store_events!(store.clone(), ServerEvent::ModulesEvaluated(_) => {
-
-                    tx.send(emit(path.clone(), store.clone())).await.expect("Failed to send stream, must be closed");
-                    println!("SENTT AGAIN");
-
+                tx.send(emit(path.clone(), store.clone())).await.expect("Failed to send stream, must be closed");
             });
         });
 
@@ -78,10 +75,15 @@ impl Designer for DesignerService {
 
         Ok(Response::new(Box::pin(output) as Self::OpenFileStream))
     }
+
     async fn update_file(
         &self,
-        _request: Request<UpdateFileRequest>,
+        request: Request<UpdateFileRequest>,
     ) -> Result<Response<Empty>, Status> {
-        Err(Status::unimplemented("not implemented"))
+        let inner = request.into_inner();
+        let path = inner.path;
+        let content = inner.content;
+        self.store.lock().unwrap().emit(ServerEvent::UpdateFileRequested { path, content });
+        Ok(Response::new(Empty {  }))
     }
 }

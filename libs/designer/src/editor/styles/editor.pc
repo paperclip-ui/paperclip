@@ -19,7 +19,7 @@ component Message {
     style extends fontDefault
     style variant isMobile extends mobileFont
 
-    text "someting" {
+    text "sometinddddg" {
       style {
         color: red
         font-size: 32px

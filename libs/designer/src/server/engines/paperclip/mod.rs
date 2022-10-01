@@ -5,6 +5,8 @@ use paperclip_evaluator::css;
 
 use paperclip_evaluator::html;
 use paperclip_parser::graph::Graph;
+use paperclip_parser::graph::io::IO as GraphIO;
+use paperclip_common::fs::{FileReader, FileResolver};
 
 use crate::handle_store_events;
 use crate::server::core::{ServerEngineContext, ServerEvent};
@@ -30,12 +32,40 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
         ServerEvent::DependencyGraphLoaded { graph } => {
             evaluate_dependency_graph(next.clone(), &graph).await.expect("Unable to evaluate Dependency graph");
         },
+        ServerEvent::UpdateFileRequested { path, content } => {
+            load_dependency_graph(next.clone(), &vec![path.to_string()]).await.expect("Unable to load dependency");
+        },
         ServerEvent::FileWatchEvent(event) => {
             if paperclip_common::pc::is_paperclip_file(&event.path) {
                 load_pc_file(next.clone(), &event.path).await.expect(format!("Unable to evaluate file {}", event.path).as_str());
             }
         }
     );
+}
+
+
+struct VirtGraphIO<TIO: ServerIO> {
+    ctx: ServerEngineContext<TIO>
+}
+
+impl<TIO: ServerIO> GraphIO for VirtGraphIO<TIO> {
+
+}
+
+impl<TIO: ServerIO> FileReader for VirtGraphIO<TIO> {
+    fn read_file(&self, path: &str) -> Result<Box<[u8]>> {
+        if let Some(content) = self.ctx.store.lock().unwrap().state.file_cache.get(path) {
+            Ok(content.clone().into_boxed_slice())
+        } else {
+            self.ctx.io.read_file(path)
+        }
+    }
+}
+
+impl<TIO: ServerIO> FileResolver for VirtGraphIO<TIO> {
+    fn resolve_file(&self, from: &str, to: &str) -> Option<String> {
+        self.ctx.io.resolve_file(from, to)
+    }
 }
 
 async fn load_dependency_graph<TIO: ServerIO>(
@@ -45,7 +75,9 @@ async fn load_dependency_graph<TIO: ServerIO>(
     let graph = ctx.store.lock().unwrap().state.graph.clone();
 
     // let store = self.store.lock().await;
-    let graph = graph.load_into_partial(files, &ctx.io).await?;
+    let graph = graph.load_into_partial(files, &VirtGraphIO {
+        ctx: ctx.clone()
+    }).await?;
 
     ctx.emit(ServerEvent::DependencyGraphLoaded { graph });
 

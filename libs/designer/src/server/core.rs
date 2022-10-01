@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::hash::Hash;
 use std::sync::Arc;
 
 use crate::machine::engine::EngineContext;
@@ -22,12 +23,14 @@ pub enum ServerEvent {
     FileWatchEvent(FileWatchEvent),
     DependencyChanged { path: String },
     APIServerStarted { port: u16 },
+    UpdateFileRequested { path: String, content: Vec<u8> },
     PaperclipFilesLoaded { files: Vec<String> },
     DependencyGraphLoaded { graph: Graph },
     ModulesEvaluated(HashMap<String, (css::virt::Document, html::virt::Document)>),
 }
 
 pub struct ServerState {
+    pub file_cache: HashMap<String, Vec<u8>>,
     pub options: StartOptions,
     pub graph: Graph,
     pub evaluated_modules: Option<HashMap<String, (css::virt::Document, html::virt::Document)>>,
@@ -37,6 +40,7 @@ impl ServerState {
     pub fn new(options: StartOptions) -> Self {
         Self {
             options,
+            file_cache: HashMap::new(),
             graph: Graph::new(),
             evaluated_modules: None,
         }
@@ -52,6 +56,13 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
             ServerEvent::DependencyGraphLoaded { graph } => {
                 state.graph =
                     std::mem::replace(&mut state.graph, Graph::new()).merge(graph.clone());
+            }
+            ServerEvent::UpdateFileRequested { path, content } => {
+                println!("UPDAT FILE CACHE");
+                state.file_cache.insert(path.to_string(), content.clone());
+            }
+            ServerEvent::FileWatchEvent(event) => {
+                state.file_cache.remove(&event.path);
             }
             ServerEvent::ModulesEvaluated(modules) => {
                 state.evaluated_modules = Some(modules.clone());

@@ -5,6 +5,7 @@ import * as execa from "execa";
 import * as waitPort from "wait-port";
 import { DesignerClient as GRPCDesignerClient } from "@paperclip-ui/proto/lib/service/designer_grpc_web_pb";
 import { loadCLIBinPath } from "@paperclip-ui/releases";
+import { UpdateFileRequest } from "@paperclip-ui/proto/lib/service/designer_pb";
 
 export class DesignerClient {
   private _client: Deferred<GRPCDesignerClient>;
@@ -25,6 +26,10 @@ export class DesignerClient {
   }
   async updateVirtualFileContent(filePath: string, text: string) {
     const client = await this._client.promise;
+    const request = new UpdateFileRequest();
+    const content = new TextEncoder();
+    request.setPath(filePath).setContent(content.encode(text));
+    client.updateFile(request, {}, () => {});
   }
 }
 

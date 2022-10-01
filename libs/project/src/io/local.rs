@@ -1,6 +1,6 @@
 use super::core::ProjectIO;
 use crate::utils::watch_local::async_watch;
-use anyhow::{Error, Result};
+use anyhow::{Result};
 use async_stream::stream;
 use futures_core::stream::Stream;
 use futures_util::pin_mut;
@@ -11,7 +11,6 @@ use paperclip_common::fs::{
 use paperclip_config::{ConfigContext, ConfigIO};
 use paperclip_parser::graph::io::IO as GraphIO;
 use path_absolutize::*;
-use std::fs;
 use std::path::Path;
 use wax::Glob;
 

@@ -4,6 +4,7 @@ use std::sync::Arc;
 use crate::machine::engine::EngineContext;
 use crate::machine::store::EventHandler;
 use crate::machine::store::Store;
+use paperclip_common::fs::FileWatchEvent;
 use paperclip_config::ConfigContext;
 use paperclip_evaluator::css;
 use paperclip_evaluator::html;
@@ -17,6 +18,8 @@ pub struct StartOptions {
 
 #[derive(Debug, Clone)]
 pub enum ServerEvent {
+    Initialized,
+    FileWatchEvent(FileWatchEvent),
     DependencyChanged { path: String },
     APIServerStarted { port: u16 },
     PaperclipFilesLoaded { files: Vec<String> },
@@ -26,7 +29,7 @@ pub enum ServerEvent {
 
 pub struct ServerState {
     pub options: StartOptions,
-    pub graph: Option<Graph>,
+    pub graph: Graph,
     pub evaluated_modules: Option<HashMap<String, (css::virt::Document, html::virt::Document)>>,
 }
 
@@ -34,7 +37,7 @@ impl ServerState {
     pub fn new(options: StartOptions) -> Self {
         Self {
             options,
-            graph: None,
+            graph: Graph::new(),
             evaluated_modules: None,
         }
     }
@@ -47,11 +50,15 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
     fn handle_event(&self, state: &mut ServerState, event: &ServerEvent) {
         match event {
             ServerEvent::DependencyGraphLoaded { graph } => {
-                state.graph = Some(graph.clone());
+                state.graph =
+                    std::mem::replace(&mut state.graph, Graph::new()).merge(graph.clone());
             }
             ServerEvent::ModulesEvaluated(modules) => {
                 state.evaluated_modules = Some(modules.clone());
-                println!("EVALED");
+                println!(
+                    "Evaluated {:?}",
+                    state.evaluated_modules.as_ref().unwrap().keys()
+                );
             }
             _ => {}
         }

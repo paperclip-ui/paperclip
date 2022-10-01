@@ -1,6 +1,6 @@
 use super::io::ConfigIO;
 use crate::config::ConfigContext;
-use anyhow::{Error, Result};
+use anyhow::{Result};
 use paperclip_common::fs::{FileReader, FileResolver, LocalFileReader};
 use paperclip_parser::graph::io::IO as GraphIO;
 use path_absolutize::*;

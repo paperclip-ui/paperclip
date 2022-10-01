@@ -3,8 +3,7 @@ use super::res_body::EitherBody;
 use super::routes::routes;
 use super::service::DesignerService;
 use super::utils::content_types;
-use crate::machine::engine::EngineContext;
-use crate::server::core::{ServerEngineContext, ServerEvent, ServerState};
+use crate::server::core::{ServerEngineContext, ServerEvent};
 use crate::server::io::ServerIO;
 use anyhow::Result;
 use futures::future::{self, Either, TryFutureExt};
@@ -16,13 +15,17 @@ use warp::Filter;
 
 type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
 
+pub async fn prepare<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
+    Ok(())
+}
+
 pub async fn start<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
-    start_server(ctx.clone()).await?;
+    start_server(ctx.clone()).await;
     Ok(())
 }
 
 async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
-    let port = if let Some(port) = ctx.lock_store().state.options.port {
+    let port = if let Some(port) = ctx.store.lock().unwrap().state.options.port {
         port
     } else {
         portpicker::pick_unused_port().expect("No ports free")

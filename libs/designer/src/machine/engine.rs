@@ -1,7 +1,6 @@
-use parking_lot::{Mutex, MutexGuard};
-
 use super::store::{EventHandler, Store};
 use std::sync::Arc;
+use std::sync::Mutex;
 
 pub struct EngineContext<
     TState,
@@ -20,11 +19,8 @@ impl<TState, TEvent: Clone, TIO: Sized, TEventHandler: EventHandler<TState, TEve
         Self { store, io }
     }
 
-    pub fn lock_store(&self) -> MutexGuard<'_, Store<TState, TEvent, TEventHandler>> {
-        self.store.lock()
-    }
-
     pub fn emit(&self, event: TEvent) {
-        self.store.lock().emit(event);
+        let mut store = self.store.lock().unwrap();
+        store.emit(event);
     }
 }

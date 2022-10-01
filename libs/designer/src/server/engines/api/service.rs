@@ -1,15 +1,16 @@
 // https://github.com/hyperium/tonic/blob/master/examples/src/hyper_warp/server.rs
 
-use crate::machine::store::Store;
-use crate::server::core::{ServerEvent, ServerState, ServerStore};
+use crate::server::core::{ServerEvent, ServerStore};
 use futures::Stream;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
     file_response, Empty, FileRequest, FileResponse, PaperclipData, UpdateFileRequest,
 };
-use parking_lot::Mutex;
 use std::pin::Pin;
 use std::sync::Arc;
+use tokio::sync::mpsc;
+use std::sync::Mutex;
+use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
 
 type OpenFileResult<T> = Result<Response<T>, Status>;
@@ -17,12 +18,12 @@ type ResponseStream = Pin<Box<dyn Stream<Item = Result<FileResponse, Status>> + 
 
 #[derive(Clone)]
 pub struct DesignerService {
-    state: Arc<Mutex<ServerStore>>,
+    store: Arc<Mutex<ServerStore>>,
 }
 
 impl DesignerService {
-    pub fn new(state: Arc<Mutex<ServerStore>>) -> Self {
-        Self { state }
+    pub fn new(store: Arc<Mutex<ServerStore>>) -> Self {
+        Self { store }
     }
 }
 
@@ -33,29 +34,54 @@ impl Designer for DesignerService {
         &self,
         request: Request<FileRequest>,
     ) -> OpenFileResult<Self::OpenFileStream> {
-        Err(Status::unimplemented("not implemented"))
+        let store = self.store.clone();
+
+        let (tx, rx) = mpsc::channel(128);
+
+        tokio::spawn(async move {
+            let path = request.into_inner().path;
+
+            let emit = |path: String, store: Arc<Mutex<ServerStore>>| {
+                let data = if let Some(modules) = &store.lock().unwrap().state.evaluated_modules {
+                    if let Some((css, html)) = modules.get(&path) {
+                        Some(file_response::Data::Paperclip(PaperclipData {
+                            css: Some(css.clone()),
+                            html: Some(html.clone()),
+                        }))
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                };
+
+                Ok(FileResponse {
+                    raw_content: vec![],
+                    data,
+                })
+            };
+
+
+            tx.send(emit(path.clone(), store.clone()))
+                .await
+                .expect("Can't send");
+
+            handle_store_events!(store.clone(), ServerEvent::ModulesEvaluated(_) => {
+
+                    tx.send(emit(path.clone(), store.clone())).await.expect("Failed to send stream, must be closed");
+                    println!("SENTT AGAIN");
+
+            });
+        });
+
+        let output = ReceiverStream::new(rx);
+
+        Ok(Response::new(Box::pin(output) as Self::OpenFileStream))
     }
     async fn update_file(
         &self,
-        request: Request<UpdateFileRequest>,
+        _request: Request<UpdateFileRequest>,
     ) -> Result<Response<Empty>, Status> {
         Err(Status::unimplemented("not implemented"))
     }
 }
-
-// fn evaluate_pc_data(
-//     path: &str,
-//     state: Arc<Mutex<ServerState>>,
-// ) -> file_response::Data {
-
-//     let mut runtime = Runtime::new();
-
-//     // block_on(project.load_file(path)).expect("Coudn't load file");
-
-//     let graph = state.graph.lock().unwrap();
-//     let (css, html) = block_on(runtime.evaluate(path, &graph, &project.io)).unwrap();
-//     file_response::Data::Paperclip(PaperclipData {
-//         css: Some(css),
-//         html: Some(html),
-//     })
-// }

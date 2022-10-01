@@ -29,6 +29,14 @@ impl Graph {
         }
     }
 
+    pub fn merge(self, graph: Graph) -> Graph {
+        let mut dependencies = self.dependencies;
+        dependencies.extend(graph.dependencies);
+        Graph {
+            dependencies
+        }
+    }
+
     pub async fn load<TIO: IO>(&mut self, path: &str, io: &TIO) -> Result<()> {
         self.dependencies.extend(
             load_dependencies::<TIO>(
@@ -42,20 +50,20 @@ impl Graph {
     }
 
     pub async fn load_files<TIO: IO>(&mut self, paths: &Vec<String>, io: &TIO) -> Result<()> {
-        let loaded = self.dep_hashes();
+        let loaded = self.dep_hashes(paths);
         for path in paths {
             self.load_file2(&path, io, loaded.clone()).await?;
         }
         Ok(())
     }
 
-    pub async fn load_files3<TIO: IO>(paths: &Vec<String>, io: &TIO) -> Result<Graph> {
-        let mut graph = Graph::new();
-        let loaded = Arc::new(Mutex::new(HashMap::new()));
+    pub async fn load_into_partial<TIO: IO>(&self, paths: &Vec<String>, io: &TIO) -> Result<Graph> {
+        let mut other = Graph::new();
+        let loaded = self.dep_hashes(paths);
         for path in paths {
-            graph.load_file2(&path, io, loaded.clone()).await?;
+            other.load_file2(&path, io, loaded.clone()).await?;
         }
-        Ok(graph)
+        Ok(other)
     }
 
     pub fn get_immediate_dependents(&self, path: &str) -> Vec<&Dependency> {
@@ -112,10 +120,13 @@ impl Graph {
 
         all_dependencies
     }
-    fn dep_hashes(&self) -> Arc<Mutex<HashMap<String, String>>> {
+    fn dep_hashes(&self, omit: &Vec<String>) -> Arc<Mutex<HashMap<String, String>>> {
         Arc::new(Mutex::new(HashMap::from_iter(
             self.dependencies
                 .iter()
+                .filter(|(path, _)| {
+                    !omit.contains(path)
+                })
                 .map(|(path, dep)| (path.to_string(), dep.hash.to_string())),
         )))
     }
@@ -124,7 +135,7 @@ impl Graph {
         path: &str,
         io: &TIO,
     ) -> Result<HashMap<String, &Dependency>> {
-        self.load_file2(path, io, self.dep_hashes()).await
+        self.load_file2(path, io, self.dep_hashes(&vec![])).await
     }
 
     async fn load_file2<TIO: IO>(
@@ -170,6 +181,7 @@ async fn load_dependencies<'io, TIO: IO>(
 
     let content = str::from_utf8(&*io.read_file(&path)?).unwrap().to_string();
     let hash = format!("{:x}", crc32::checksum_ieee(content.as_bytes())).to_string();
+
 
     if loaded.lock().await.get(&path) == Some(&hash) {
         return Ok(deps);

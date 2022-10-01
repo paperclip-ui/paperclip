@@ -11,7 +11,7 @@ pub const DEFAULT_CONFIG_NAME: &str = "paperclip.config.json";
 /// Contains additional information about the config such as directory and file name
 ///
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ConfigContext {
     pub directory: String,
     pub file_name: String,

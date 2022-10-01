@@ -41,6 +41,7 @@ const createActions = (client: DesignerClient, dispatch: Dispatch<any>) => {
           console.log(data);
           dispatch(designerEngineEvents.documentOpened(data));
         })
+        .on("error", () => {})
         .on("end", () => {
           console.log("END");
         });

@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use paperclip_common::event_bus::EventBus;
+use paperclip_common::event_bus::{EventBus, Receiver};
 
 pub trait EventHandler<TState, TEvent: Clone>: Clone {
     fn handle_event(&self, state: &mut TState, event: &TEvent);
@@ -26,9 +26,9 @@ impl<TState, TEvent: Clone, TEventHandler: EventHandler<TState, TEvent>>
         self.event_handler
             .clone()
             .handle_event(&mut self.state, &event);
-        self.events.emit(event)
+        self.events.emit(event);
     }
-    pub fn subscribe(&mut self) -> crossbeam_channel::Receiver<Arc<TEvent>> {
+    pub fn subscribe(&mut self) -> Receiver<Arc<TEvent>> {
         self.events.subscribe()
     }
 }

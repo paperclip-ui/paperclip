@@ -11,13 +11,17 @@ name = "paperclip_common"
 [dependencies]
 crc = "1.8.1"
 uuid = { version = "0.8", features = ["serde", "v4", "wasm-bindgen"] }
+tokio = { version = "1.0", features = [ "rt-multi-thread", "time", "fs", "macros", "net"] }
 regex = "1.6.0"
 lazy_static = "1.4.0"
+async-channel = "1.7.1"
 path-absolutize = "3.0.13"
+event-listener = "2.5.3"
+crossbeam-channel = "0.5"
 anyhow = "1.0.61"
 futures-core = "0.3.24"
 futures = "0.3.24"
 async-stream = "0.3.3"
 futures-util = "0.3.24"
-crossbeam-channel = "0.5.6"
+flume = "0.10.14"
 

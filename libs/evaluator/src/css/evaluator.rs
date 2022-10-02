@@ -456,7 +456,7 @@ fn collect_triggers<F: FileResolver>(
                 into.push(VariantTrigger::Selector(expr.value.to_string()));
             }
             ast::trigger_body_item::Inner::Reference(expr) => {
-                if let Some(info) = context.graph.get_ref(&expr.path, context.path) {
+                if let Some(info) = context.graph.get_ref(&expr.path, &context.path) {
                     if let graph_ref::Expr::Trigger(trigger) = &info.expr {
                         collect_triggers(&trigger.body, into, context);
                     }
@@ -516,9 +516,9 @@ fn create_style_declarations<F: FileResolver>(
     // including the entire body of extended styles to to cover !important statements.
     // This could be smarter at some point.
     for reference in &style.extends {
-        if let Some(reference) = context.graph.get_ref(&reference.path, context.path) {
+        if let Some(reference) = context.graph.get_ref(&reference.path, &context.path) {
             if let graph_ref::Expr::Style(style) = &reference.expr {
-                decls.extend(create_style_declarations(style, context));
+                decls.extend(create_style_declarations(style, &mut context.within_path(&reference.path)));
             }
         }
     }
@@ -568,7 +568,7 @@ fn stringify_style_decl_value<F: FileResolver>(
         }
         css_ast::declaration_value::Inner::FunctionCall(expr) => {
             if expr.name == "var" && !expr.name.starts_with("--") {
-                if let Some(atom) = context.graph.get_var_reference(expr, context.path) {
+                if let Some(atom) = context.graph.get_var_reference(expr, &context.path) {
                     return format!("var({})", atom.get_var_name());
                 }
             }

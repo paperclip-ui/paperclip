@@ -467,3 +467,29 @@ add_case! {
   ],
   r#"._80f4925f-5 { background: url("data:image/svg+xml;base64,c29tZXRoaW5n"); }"#
 }
+
+
+add_case! {
+  can_include_style_from_another_file_that_also_extends,
+  [
+      ("/entry.pc", r#"
+        import "/test.pc" as test
+        div {
+          style extends test.icon {
+            mask-url: abba
+          }
+        }
+      "#),
+      ("/test.pc", r#"
+        style mask {
+          mask-size: 100%
+        }
+        public style icon extends mask {
+          --size: 20px
+          width: var(--size)
+          height: var(--size)
+        }
+      "#),
+  ],
+  r#"._80f4925f-6 { mask-size: 100%; --size: 20px; width: var(--size); height: var(--size); mask-url: abba; }"#
+}

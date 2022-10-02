@@ -28,21 +28,21 @@ impl<'expr> CurrentNode<'expr> {
     }
 }
 
-pub struct DocumentContext<'path, 'graph, 'expr, 'resolve_asset, FR: FileResolver> {
+pub struct DocumentContext<'graph, 'expr, 'resolve_asset, FR: FileResolver> {
     id_generator: Rc<RefCell<IDGenerator>>,
     pub file_resolver: &'resolve_asset FR,
     pub graph: &'graph graph::Graph,
-    pub path: &'path str,
+    pub path: String,
     pub current_node: Option<CurrentNode<'expr>>,
     pub current_component: Option<&'expr ast::Component>,
     pub document: Rc<RefCell<virt::Document>>,
 }
 
-impl<'path, 'graph, 'expr, 'resolve_asset, FR: FileResolver>
-    DocumentContext<'path, 'graph, 'expr, 'resolve_asset, FR>
+impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
+    DocumentContext<'graph, 'expr, 'resolve_asset, FR>
 {
     pub fn new(
-        path: &'path str,
+        path: &str,
         graph: &'graph graph::Graph,
         file_resolver: &'resolve_asset FR,
     ) -> Self {
@@ -55,7 +55,7 @@ impl<'path, 'graph, 'expr, 'resolve_asset, FR: FileResolver>
             id_generator: id_generator.clone(),
             file_resolver,
             graph,
-            path,
+            path: path.to_string(),
             current_component: None,
             current_node: None,
             document: Rc::new(RefCell::new(virt::Document {
@@ -74,9 +74,20 @@ impl<'path, 'graph, 'expr, 'resolve_asset, FR: FileResolver>
             id_generator: self.id_generator.clone(),
             file_resolver: self.file_resolver,
             graph: self.graph,
-            path: self.path,
+            path: self.path.clone(),
             current_node: self.current_node,
             current_component: Some(component),
+            document: self.document.clone(),
+        }
+    }
+    pub fn within_path(&self, path: &str) -> Self {
+        Self {
+            path: path.to_string(),
+            id_generator: self.id_generator.clone(),
+            file_resolver: self.file_resolver,
+            graph: self.graph,
+            current_node: self.current_node,
+            current_component: self.current_component.clone(),
             document: self.document.clone(),
         }
     }
@@ -85,7 +96,7 @@ impl<'path, 'graph, 'expr, 'resolve_asset, FR: FileResolver>
             id_generator: self.id_generator.clone(),
             file_resolver: self.file_resolver,
             graph: self.graph,
-            path: self.path,
+            path: self.path.clone(),
             current_node: Some(node),
             current_component: self.current_component,
             document: self.document.clone(),

@@ -1,19 +1,8 @@
 import "./theme.pc" as theme
 
 
-style mask {
-  background-color: currentColor
-  -webkit-mask-size:100%
-  -webkit-mask-repeat: no-repeat
-}
-
 token iconSize var(theme.fontSize03)
 
-style icon extends mask {
-  width: var(--size)
-  height: var(--size)
-  display: inline-block
-}
 
 style fontDefault {
   font-family: sans-serif
@@ -63,14 +52,14 @@ component TreeNavigation {
           }
         }
         div {
-          style extends icon {
+          style extends theme.icon {
             -webkit-mask-image: url("./chevron.svg")
             transform: rotate(-90deg)
             --size: 12px
           }
         }
         div {
-          style extends icon {
+          style extends theme.icon {
             -webkit-mask-image: url("./folder2.svg")
             --size: var(theme.fontSize03)
           }

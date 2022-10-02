@@ -11,7 +11,7 @@ public component Test {
 
 
 public token gray0 rgb(210, 210, 210)
-
+e
 public token space01 2px
 public token space02 4px
 public token space03 8px
@@ -35,3 +35,17 @@ public token fontSize04 1.5rem
 public token fontSize05 1.75rem
 public token fontSize06 2rem
 public token fontSize07 2.25rem
+
+
+public style mask {
+  background-color: currentColor
+  -webkit-mask-size:100%
+  -webkit-mask-repeat: no-repeat
+}
+
+
+public style icon extends mask {
+  width: var(--size)
+  height: var(--size)
+  display: inline-block
+}

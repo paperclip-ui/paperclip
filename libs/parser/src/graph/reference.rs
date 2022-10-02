@@ -24,7 +24,7 @@ impl Graph {
     pub fn get_ref(&self, ref_path: &Vec<String>, dep_path: &str) -> Option<RefInfo<'_>> {
 
 
-        let curr_dep = if let Some(dep) = self.dependencies.get(dep_path) {
+        let mut curr_dep = if let Some(dep) = self.dependencies.get(dep_path) {
             dep
         } else {
             return None;
@@ -42,16 +42,20 @@ impl Graph {
                     }
                 }
                 Expr::Import(import) => {
-                    let body_expr = curr_dep
-                        .imports
-                        .get(&import.path)
-                        .and_then(|actual_path| self.dependencies.get(actual_path))
-                        .and_then(|imported_dep| get_doc_body_expr(part, &imported_dep.document));
-                    expr = if let Some(inner_expr) = body_expr {
-                        inner_expr
-                    } else {
-                        return None;
-                    };
+
+                    let imp_dep =  curr_dep
+                    .imports
+                    .get(&import.path)
+                    .and_then(|actual_path| self.dependencies.get(actual_path));
+
+                    if let Some(dep) = imp_dep {
+                        curr_dep = dep;
+                        expr = if let Some(inner_expr) = get_doc_body_expr(part, &curr_dep.document) {
+                            inner_expr
+                        } else {
+                            return None;
+                        };
+                    }
                 }
                 _ => {}
             }

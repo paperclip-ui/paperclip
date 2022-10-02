@@ -81,8 +81,11 @@ impl Designer for DesignerService {
         request: Request<UpdateFileRequest>,
     ) -> Result<Response<Empty>, Status> {
         let inner = request.into_inner();
+
+        
         let path = inner.path;
         let content = inner.content;
+
         self.store.lock().unwrap().emit(ServerEvent::UpdateFileRequested { path, content });
         Ok(Response::new(Empty {  }))
     }

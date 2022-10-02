@@ -58,7 +58,6 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                     std::mem::replace(&mut state.graph, Graph::new()).merge(graph.clone());
             }
             ServerEvent::UpdateFileRequested { path, content } => {
-                println!("UPDAT FILE CACHE");
                 state.file_cache.insert(path.to_string(), content.clone());
             }
             ServerEvent::FileWatchEvent(event) => {

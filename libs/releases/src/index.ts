@@ -70,6 +70,7 @@ const downloadRelease = async (versionDir: string) => {
 };
 
 export const loadCLIBinPath = async (cwd: string) => {
+  return path.resolve(__dirname, "../../../target/debug/paperclip_cli");
   const versionDir = path.join(cwd, pkg.version);
   const binPath = path.join(versionDir, BIN_NAME);
   if (!fs.existsSync(binPath)) {

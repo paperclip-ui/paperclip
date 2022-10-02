@@ -23,7 +23,6 @@ pub async fn start<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
 
 async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
     let next = ctx.clone();
-
     handle_store_events!(
         &ctx.store,
         ServerEvent::PaperclipFilesLoaded { files } => {
@@ -72,6 +71,7 @@ async fn load_dependency_graph<TIO: ServerIO>(
     ctx: ServerEngineContext<TIO>,
     files: &Vec<String>,
 ) -> Result<()> {
+    println!("RELOAD");
     let graph = ctx.store.lock().unwrap().state.graph.clone();
 
     // let store = self.store.lock().await;

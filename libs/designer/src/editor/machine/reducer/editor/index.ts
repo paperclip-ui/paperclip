@@ -7,7 +7,7 @@ export const editorReducer = (state: EditorState, event: EditorEvent) => {
   switch (event.type) {
     case designerEngineEvents.documentOpened.type:
       return produce(state, (newState) => {
-        newState.curentDocument = event.payload;
+        newState.curentDocument = event.payload.toObject();
       });
   }
   return event;

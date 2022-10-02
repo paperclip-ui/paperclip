@@ -40,6 +40,9 @@ impl FileReader for MockIO {
     fn read_file(&self, path: &str) -> Result<Box<[u8]>> {
         self.0.read_file(path)
     }
+    fn get_file_size(&self, path: &str) -> Result<u64> {
+        self.0.get_file_size(path)
+    }
 }
 
 impl FileResolver for MockIO {

@@ -27,6 +27,13 @@ impl<'kv> FileReader for MockFS<'kv> {
             Err(Error::msg("file not found"))
         }
     }
+    fn get_file_size<'content>(&self, path: &str) -> Result<u64> {
+        if let Some(content) = self.files.get(path) {
+            Ok(content.as_bytes().len() as u64)
+        } else {
+            Err(Error::msg("file not found"))
+        }
+    }
 }
 impl<'kv> FileResolver for MockFS<'kv> {
     fn resolve_file(&self, _from_path: &str, to_path: &str) -> Option<String> {

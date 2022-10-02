@@ -56,6 +56,13 @@ impl<TIO: ServerIO> FileReader for VirtGraphIO<TIO> {
             self.ctx.io.read_file(path)
         }
     }
+    fn get_file_size(&self, path: &str) -> Result<u64> {
+        if let Some(content) = self.ctx.store.lock().unwrap().state.file_cache.get(path) {
+            Ok(content.len() as u64)
+        } else {
+            self.ctx.io.get_file_size(path)
+        }
+    }
 }
 
 impl<TIO: ServerIO> FileResolver for VirtGraphIO<TIO> {

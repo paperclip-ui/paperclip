@@ -271,3 +271,12 @@ add_case! {
     ],
     "<div> </div> <div> <div class=\"_80f4925f-9\"> Hello </div> </div>"
 }
+
+add_case! {
+    resolves_img_assets,
+    [
+        ("/entry.pc", "img(src: '/test.svg')"),
+        ("/test.svg", "something"),
+    ],
+    "<div> </div> <div> <div class=\"_80f4925f-9\"> Hello </div> </div>"
+}

@@ -31,7 +31,7 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
         ServerEvent::DependencyGraphLoaded { graph } => {
             evaluate_dependency_graph(next.clone(), &graph).await.expect("Unable to evaluate Dependency graph");
         },
-        ServerEvent::UpdateFileRequested { path, content } => {
+        ServerEvent::UpdateFileRequested { path, content: _content } => {
             load_dependency_graph(next.clone(), &vec![path.to_string()]).await.expect("Unable to load dependency");
         },
         ServerEvent::FileWatchEvent(event) => {
@@ -121,7 +121,7 @@ async fn evaluate_dependency_graph<TIO: ServerIO>(
             graph,
             &ctx.io,
             html::evaluator::Options {
-                include_components: true,
+                include_components: false,
             },
         )
         .await?;

@@ -629,11 +629,6 @@ pub fn evaluate_node<'a>(
       return evaluate_style_element(&el, context);
     }
     ast::Node::Text(text) => {
-      // skip pure whitespace (this should only happen with new lines). This is necessary
-      // particularly for annotations
-      // if text.value.trim() == "" {
-      //   return Ok(None);
-      // }
 
       return Ok(Some(virt::Node::Text(virt::Text {
         id: context.id_generator.new_id(),

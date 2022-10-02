@@ -1,22 +1,38 @@
-component Button {
-  render div {
-    style {
-      font-size: 32px
-      font-family: sans-serif
-      background: rgb(191, 158, 158)
-      color: rgb(104, 104, 104)
-      padding: 32px
-
-    }
-
-    slot children {
-      text "Default child"
-    }
-  }
+style defaults {
+  box-sizing: border-box
 }
 
+style sidebarStyle {
+  width: 200px
+    background: rgba(198, 198, 198, 0.754)
+}
 
+div {
+  style extends defaults {
+    background: rgb(235, 235, 235)
+    width: 100vw
+    height: 100vh
+    font-size: 16px
+    color: rgb(96, 96, 96)
+    font-family: sans-serif
+    display: flex
+  }
+  div leftSidebar {
+    style extends sidebarStyle {
 
-Button {
-  text "Hello"
+    }
+    text "Left"
+  }
+  div center {
+    style {
+      flex: 1
+    }
+    text "center"
+  }
+  div rightSidebar {
+    style extends sidebarStyle {
+
+    }
+    text "right"
+  }
 }

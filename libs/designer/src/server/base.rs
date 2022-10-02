@@ -1,5 +1,3 @@
-
-
 #[macro_export]
 macro_rules! handle_store_events {
     ($store: expr, $($event: pat => $body: expr),*) => {
@@ -16,6 +14,6 @@ macro_rules! handle_store_events {
                 }
             }
         });
-        
+
     };
 }

@@ -3,9 +3,9 @@ use anyhow::Result;
 use notify::{Config, Event, RecommendedWatcher, RecursiveMode, Watcher};
 use paperclip_common::fs::{FileWatchEvent, FileWatchEventKind};
 
-use tokio::sync::mpsc::{channel, Receiver};
 use crate::server::core::ServerEngineContext;
 use crate::server::io::ServerIO;
+use tokio::sync::mpsc::{channel, Receiver};
 
 pub async fn prepare<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
     file_watcher(ctx.clone()).await?;
@@ -17,7 +17,14 @@ pub async fn start<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
 
 async fn file_watcher<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
     tokio::spawn(async move {
-        let config_context = ctx.store.lock().unwrap().state.options.config_context.clone();
+        let config_context = ctx
+            .store
+            .lock()
+            .unwrap()
+            .state
+            .options
+            .config_context
+            .clone();
 
         // let (tx, rx) = std::sync::mpsc::channel();
 
@@ -28,11 +35,12 @@ async fn file_watcher<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
                 tx.blocking_send(res).unwrap();
             },
             Config::default(),
-        ).unwrap();
+        )
+        .unwrap();
 
-        watcher.watch(config_context.directory.as_ref(), RecursiveMode::Recursive).unwrap();
-
-
+        watcher
+            .watch(config_context.directory.as_ref(), RecursiveMode::Recursive)
+            .unwrap();
 
         while let Some(e) = rx.recv().await {
             if let Ok(event) = e {
@@ -66,4 +74,3 @@ async fn file_watcher<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
 
     Ok(())
 }
-

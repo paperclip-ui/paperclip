@@ -3,10 +3,10 @@ use std::collections::HashMap;
 use anyhow::Result;
 use paperclip_evaluator::css;
 
-use paperclip_evaluator::html;
-use paperclip_parser::graph::Graph;
-use paperclip_parser::graph::io::IO as GraphIO;
 use paperclip_common::fs::{FileReader, FileResolver};
+use paperclip_evaluator::html;
+use paperclip_parser::graph::io::IO as GraphIO;
+use paperclip_parser::graph::Graph;
 
 use crate::handle_store_events;
 use crate::server::core::{ServerEngineContext, ServerEvent};
@@ -42,14 +42,11 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
     );
 }
 
-
 struct VirtGraphIO<TIO: ServerIO> {
-    ctx: ServerEngineContext<TIO>
+    ctx: ServerEngineContext<TIO>,
 }
 
-impl<TIO: ServerIO> GraphIO for VirtGraphIO<TIO> {
-
-}
+impl<TIO: ServerIO> GraphIO for VirtGraphIO<TIO> {}
 
 impl<TIO: ServerIO> FileReader for VirtGraphIO<TIO> {
     fn read_file(&self, path: &str) -> Result<Box<[u8]>> {
@@ -75,9 +72,9 @@ async fn load_dependency_graph<TIO: ServerIO>(
     let graph = ctx.store.lock().unwrap().state.graph.clone();
 
     // let store = self.store.lock().await;
-    let graph = graph.load_into_partial(files, &VirtGraphIO {
-        ctx: ctx.clone()
-    }).await?;
+    let graph = graph
+        .load_into_partial(files, &VirtGraphIO { ctx: ctx.clone() })
+        .await?;
 
     ctx.emit(ServerEvent::DependencyGraphLoaded { graph });
 
@@ -98,7 +95,14 @@ async fn load_pc_file<TIO: ServerIO>(ctx: ServerEngineContext<TIO>, file: &str) 
 }
 
 async fn load_files<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
-    let state = ctx.store.lock().unwrap().state.options.config_context.clone();
+    let state = ctx
+        .store
+        .lock()
+        .unwrap()
+        .state
+        .options
+        .config_context
+        .clone();
     let files = ctx.io.get_all_designer_files(&state);
     ctx.emit(ServerEvent::PaperclipFilesLoaded { files });
     Ok(())

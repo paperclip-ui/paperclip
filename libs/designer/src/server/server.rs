@@ -10,8 +10,8 @@ use crate::machine::engine::EngineContext;
 use crate::machine::store::Store;
 use anyhow::Result;
 use std::sync::Arc;
-use tokio::join;
 use std::sync::Mutex;
+use tokio::join;
 
 macro_rules! start_engines {
     ($ctx: expr, $($engine: path), *) => {

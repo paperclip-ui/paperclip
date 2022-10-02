@@ -8,8 +8,8 @@ use paperclip_proto::service::designer::{
 };
 use std::pin::Pin;
 use std::sync::Arc;
-use tokio::sync::mpsc;
 use std::sync::Mutex;
+use tokio::sync::mpsc;
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
 
@@ -61,7 +61,6 @@ impl Designer for DesignerService {
                 })
             };
 
-
             tx.send(emit(path.clone(), store.clone()))
                 .await
                 .expect("Can't send");
@@ -82,11 +81,13 @@ impl Designer for DesignerService {
     ) -> Result<Response<Empty>, Status> {
         let inner = request.into_inner();
 
-        
         let path = inner.path;
         let content = inner.content;
 
-        self.store.lock().unwrap().emit(ServerEvent::UpdateFileRequested { path, content });
-        Ok(Response::new(Empty {  }))
+        self.store
+            .lock()
+            .unwrap()
+            .emit(ServerEvent::UpdateFileRequested { path, content });
+        Ok(Response::new(Empty {}))
     }
 }

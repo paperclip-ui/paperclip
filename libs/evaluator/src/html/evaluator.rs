@@ -288,7 +288,7 @@ fn create_attributes<F: FileResolver>(
         evaluate_attribute(param, &mut attributes, context);
     }
 
-    add_static_attribute_values(element, &mut attributes, context);
+    resolve_element_attributes(element, &mut attributes, context);
 
     attributes.values().cloned().collect()
 }
@@ -309,11 +309,13 @@ fn evaluate_attribute<F: FileResolver>(
     );
 }
 
-fn add_static_attribute_values<F: FileResolver>(
+fn resolve_element_attributes<F: FileResolver>(
     element: &ast::Element,
     attributes: &mut BTreeMap<String, virt::Attribute>,
     context: &DocumentContext<F>,
-) {
+) { 
+
+    // add styling hooks
     if element.is_stylable() {
         let class_name = get_style_namespace(&element.name, &element.id, context.current_component);
 
@@ -328,6 +330,15 @@ fn add_static_attribute_values<F: FileResolver>(
                     value: class_name,
                 },
             );
+        }
+    }
+
+    // resolve assets
+    if element.namespace == None {
+        if element.tag_name.as_str() == "img" {
+            if let Some(src) = attributes.get_mut("src") {
+                src.value = context.file_resolver.resolve_file(&context.path, &src.value).unwrap()
+            }
         }
     }
 }

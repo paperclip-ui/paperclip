@@ -37,8 +37,8 @@ impl FileReader for LocalIO {
 }
 
 impl FileResolver for LocalIO {
-    fn resolve_file(&self, from_path: &str, to_path: &str) -> Option<String> {
-        Some(String::from(
+    fn resolve_file(&self, from_path: &str, to_path: &str) -> Result<String> {
+        Ok(String::from(
             Path::new(from_path)
                 .parent()
                 .unwrap()

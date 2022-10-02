@@ -24,6 +24,19 @@ token fontSize05 1.75rem
 token fontSize06 2rem
 token fontSize07 2.25rem
 
+style mask {
+  background-color: currentColor
+  -webkit-mask-size:100%
+  -webkit-mask-repeat: no-repeat
+}
+
+token iconSize 24px
+
+style icon extends mask {
+  width: var(iconSize)
+  height: var(iconSize)
+  display: inline-block
+}
 
 style fontDefault {
   font-family: sans-serif
@@ -67,7 +80,12 @@ component TreeNavigation {
   render div {
     TreeNavigationItem {
       TreeNavigationItemHeader {
-        img(src:"./folder.svg")
+
+        div {
+          style extends icon {
+            -webkit-mask-image: url("./folder.svg")
+          }
+        }
         text "leaf"
       }
       TreeNavigationItemContent {

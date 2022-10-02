@@ -1,16 +1,18 @@
 use super::evaluator::evaluate;
 use super::serializer::serialize;
+use crate::core::io::PCFileResolver;
 use futures::executor::block_on;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::graph;
 use paperclip_parser::graph::test_utils;
 use std::collections::HashMap;
+use anyhow::Result;
 
 struct MockResolver;
 impl FileResolver for MockResolver {
-    fn resolve_file(&self, _from: &str, _to: &str) -> Option<String> {
-        Some(_to.to_string())
+    fn resolve_file(&self, _from: &str, _to: &str) -> Result<String> {
+        Ok(_to.to_string())
     }
 }
 
@@ -24,7 +26,8 @@ macro_rules! add_case {
             if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
                 panic!("Unable to load");
             }
-            let resolver = MockResolver {};
+            let resolver = PCFileResolver::new(mock_fs.clone(), MockResolver {}, None);
+
             let doc = block_on(evaluate("/entry.pc", &graph, &resolver)).unwrap();
             assert_eq!(
                 strip_extra_ws(serialize(&doc).as_str()),
@@ -448,4 +451,20 @@ add_case! {
 "#)
     ],
     "._80f4925f-9 { background: blue; }"
+}
+
+
+add_case! {
+  resolves_url_assets,
+  [
+      ("/entry.pc", r#"
+        div {
+          style {
+            background: url("/test.svg")
+          }
+        }
+      "#),
+      ("/test.svg", "something"),
+  ],
+  r#"._80f4925f-5 { background: url("data:image/svg+xml;base64,c29tZXRoaW5n"); }"#
 }

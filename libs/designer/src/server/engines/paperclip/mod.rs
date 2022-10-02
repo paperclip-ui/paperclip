@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use anyhow::Result;
 use paperclip_evaluator::css;
+use paperclip_evaluator::core::io::PCFileResolver;
 
 use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_evaluator::html;
@@ -66,7 +67,7 @@ impl<TIO: ServerIO> FileReader for VirtGraphIO<TIO> {
 }
 
 impl<TIO: ServerIO> FileResolver for VirtGraphIO<TIO> {
-    fn resolve_file(&self, from: &str, to: &str) -> Option<String> {
+    fn resolve_file(&self, from: &str, to: &str) -> Result<String> {
         self.ctx.io.resolve_file(from, to)
     }
 }
@@ -75,7 +76,6 @@ async fn load_dependency_graph<TIO: ServerIO>(
     ctx: ServerEngineContext<TIO>,
     files: &Vec<String>,
 ) -> Result<()> {
-    println!("RELOAD");
     let graph = ctx.store.lock().unwrap().state.graph.clone();
 
     // let store = self.store.lock().await;
@@ -121,12 +121,15 @@ async fn evaluate_dependency_graph<TIO: ServerIO>(
 ) -> Result<()> {
     let mut output: HashMap<String, (css::virt::Document, html::virt::Document)> = HashMap::new();
 
+    // file resolver for embedding assets
+    let resolver = PCFileResolver::new(ctx.io.clone(), ctx.io.clone(), None);
+
     for (path, _dep) in &graph.dependencies {
-        let css = css::evaluator::evaluate(path, graph, &ctx.io).await?;
+        let css = css::evaluator::evaluate(path, graph, &resolver).await?;
         let html = html::evaluator::evaluate(
             path,
             graph,
-            &ctx.io,
+            &resolver,
             html::evaluator::Options {
                 include_components: false,
             },

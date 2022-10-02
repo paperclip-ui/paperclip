@@ -13,7 +13,7 @@ pub struct DocumentContext<'path, 'graph, 'expr, 'file_resolver, FR: FileResolve
     pub graph: &'graph graph::Graph,
     pub path: &'path str,
     pub data: Option<RefCell<core_virt::Object>>,
-    file_resolver: &'file_resolver FR,
+    pub file_resolver: &'file_resolver FR,
     pub current_component: Option<&'expr ast::Component>,
     pub options: Options,
 }

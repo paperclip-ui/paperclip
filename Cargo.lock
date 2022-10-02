@@ -1273,7 +1273,9 @@ name = "paperclip_evaluator"
 version = "0.1.1"
 dependencies = [
  "anyhow",
+ "base64",
  "futures",
+ "mime_guess",
  "paperclip_common",
  "paperclip_parser",
  "paperclip_proto",

@@ -5,6 +5,7 @@ use paperclip_parser::graph;
 use paperclip_parser::pc::ast;
 use std::cell::RefCell;
 use std::rc::Rc;
+use anyhow::Result;
 
 #[derive(Clone, Copy)]
 pub enum CurrentNode<'expr> {
@@ -64,7 +65,7 @@ impl<'path, 'graph, 'expr, 'resolve_asset, FR: FileResolver>
         }
     }
 
-    pub fn resolve_asset(&self, asset_path: &str) -> Option<String> {
+    pub fn resolve_asset(&self, asset_path: &str) -> Result<String> {
         self.file_resolver.resolve_file(&self.path, asset_path)
     }
 

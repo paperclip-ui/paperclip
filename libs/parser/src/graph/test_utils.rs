@@ -36,7 +36,7 @@ impl<'kv> FileReader for MockFS<'kv> {
     }
 }
 impl<'kv> FileResolver for MockFS<'kv> {
-    fn resolve_file(&self, _from_path: &str, to_path: &str) -> Option<String> {
-        Some(to_path.to_string())
+    fn resolve_file(&self, _from_path: &str, to_path: &str) -> Result<String> {
+        Ok(to_path.to_string())
     }
 }

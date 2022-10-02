@@ -8,7 +8,8 @@ members = [
   "libs/paperclip-loader",
   "libs/designer",
   "libs/proto",
-  "libs/config"
+  "libs/config",
+  "libs/language-services"
 ]
 
 

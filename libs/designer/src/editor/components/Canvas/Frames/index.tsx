@@ -8,12 +8,9 @@ export const Frames = () => {
   const doc = useSelector(selectInfo);
 
   useEffect(() => {
-    if (doc) {
+    if (doc?.paperclip) {
       while (ref.current.childNodes.length) {
         ref.current.removeChild(ref.current.childNodes[0]);
-      }
-      if (!doc.paperclip) {
-        return;
       }
       const { html, css } = doc.paperclip;
       const els = renderFrames(

@@ -1254,6 +1254,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "paperclip_language_services"
+version = "0.1.1"
+dependencies = [
+ "paperclip_parser",
+]
+
+[[package]]
 name = "paperclip_parser"
 version = "0.1.1"
 dependencies = [

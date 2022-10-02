@@ -1,0 +1,13 @@
+[package]
+name = "paperclip_language_services"
+version = "0.1.1"
+authors = ["Craig Condon <craig.j.condon@gmail.com>"]
+edition = "2021"
+exclude = []
+
+[lib]
+name = "paperclip_language_services"
+
+[dependencies]
+paperclip_parser = { path = "../parser" }
+

@@ -1,0 +1,13 @@
+div {
+  style {
+    background: blue
+    width: 100vw
+    height: 100vh
+    color: white
+    font-family: sans-serif
+    font-size: 16px
+  }
+  div {
+    text "Hello"
+  }
+}

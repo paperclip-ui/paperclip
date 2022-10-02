@@ -1,10 +1,233 @@
-token red0 rgb(205, 0, 0)
+token gray0 rgb(210, 210, 210)
 
-div {
-  text "Hello world" {
+token space01 2px
+token space02 4px
+token space03 8px
+token space04 12px
+token space05 16px
+token space06 24px
+token space07 32px
+token space08 40px
+token space09 48px
+token space10 64px
+token space11 80px
+token space12 96px
+token space13 160px
+
+token fontSize01 0.75rem
+token fontSize02 0.875rem
+token fontSize03 1.125rem
+token fontSize03 1.125rem
+token fontSize03 1.25rem
+token fontSize04 1.5rem
+token fontSize05 1.75rem
+token fontSize06 2rem
+token fontSize07 2.25rem
+
+
+style fontDefault {
+  font-family: sans-serif
+  color: #333
+  font-size: var(fontSize02)
+}
+
+component Sidebar {
+  render div {
     style {
-      color: var(red0)
-      font-family: sans-serif
+      width: 250px
+      background: var(gray0)
+    }
+    slot children
+  }
+}
+
+component SidebarPanel {
+  variant lastChild trigger {
+    ":last-child"
+  }
+  render div {
+    style variant lastChild {
+      border-bottom: 1px solid red
+    }
+    slot children
+  }
+}
+
+component SidebarPanelContent {
+  render div {
+    style {
+      padding: var(space05)
+    }
+    slot children
+  }
+}
+
+
+component TreeNavigation {
+  render div {
+    TreeNavigationItem {
+      TreeNavigationItemHeader {
+        img(src:"./folder.svg")
+        text "leaf"
+      }
+      TreeNavigationItemContent {
+        TreeNavigationItem {
+          TreeNavigationItemHeader {
+            text "Leaf"
+          }
+        }
+      }
     }
   }
 }
+
+component TreeNavigationItem {
+  render div {
+    style {
+      font-size: var(fontSize02)
+      background: rgb(179, 179, 179)
+      border-radius: 3px
+    }
+    slot children
+  }
+}
+component TreeNavigationItemHeader {
+  render div {
+    style {
+
+      padding: var(space03) var(space05)
+      padding-left: calc(var(space05) * calc(var(depth)))
+    }
+    slot children
+  }
+}
+component TreeNavigationItemContent {
+  render div {
+    slot children
+  }
+}
+
+component SidebarHeader {
+  render div {
+    style {
+      display: flex
+    }
+    slot children
+  }
+}
+
+component SidebarHeaderButton {
+  render div {
+    style {
+      padding: var(space03) var(space05)
+      font-size: var(fontSize01)
+      text-align: center
+      width: 100%
+    }
+    slot children
+  }
+}
+
+component Artboard {
+  render div {
+    style {
+      width: 400px
+      height: 300px
+
+      position: absolute
+      left: 50%
+      top: 50%
+      transform: translate(-50%, -50%)
+    }
+    div {
+      style {
+        color: rgb(160, 160, 160)
+        position: absolute
+        transform: translateY(calc(-100% - 0.5em))
+      }
+      slot title
+    }
+    ArtboardPreview 
+  }
+}
+
+component ArtboardPreview {
+  render div {
+    style {
+      width: 400px
+      height: 300px
+      background: white
+    }
+  }
+}
+
+component Canvas {
+  render div {
+    style {
+      flex: 1
+      padding: var(space04)
+      background: rgb(57, 57, 57)
+      position: relative
+    }
+    Artboard {
+      insert title {
+        text "Some canvas"
+      }
+    }
+  }
+}
+
+component Editor {
+  render div {
+    style extends fontDefault {
+      display: flex
+      width: 100vw
+      height: 100vh
+      
+    }
+    Sidebar {
+      SidebarHeader {
+        SidebarHeaderButton {
+          text "Files"
+        }
+        SidebarHeaderButton {
+          text "Layers"
+        }
+        SidebarHeaderButton {
+          text "Assets"
+        }
+      }
+      SidebarPanel {
+        SidebarPanelContent {
+          TreeNavigation
+        }
+      }
+    }
+    Canvas
+    Sidebar {
+      SidebarHeader {
+        SidebarHeaderButton {
+          text "Styles"
+        }
+        SidebarHeaderButton {
+          text "Properties"
+        }
+      }
+      SidebarPanel {
+        h4 {
+          text "TODO"
+        }
+        ol {
+          li {
+            text "tokens"
+          }
+          li {
+            text "element styler"
+          }
+        }
+      }
+    }
+  }
+}
+
+Editor

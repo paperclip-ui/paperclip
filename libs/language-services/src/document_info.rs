@@ -1,8 +1,8 @@
+use super::context::Context;
 use anyhow::{Error, Result};
 use css_color::Srgb;
 use paperclip_common::get_or_short;
 use paperclip_common::serialize_context::Context as SerializeContext;
-use super::context::Context;
 
 use paperclip_parser::{
     css,
@@ -13,14 +13,12 @@ use paperclip_parser::{
 use paperclip_proto::ast::base;
 use paperclip_proto::language_service::pc::{ColorInfo, ColorValue, DocumentInfo, Position};
 
-
 pub fn get_document_info(path: &str, graph: &Graph) -> Result<DocumentInfo> {
-
     let mut ctx = Context {
         path: path.to_string(),
         graph,
         info: DocumentInfo { colors: vec![] },
-        source_position: None
+        source_position: None,
     };
 
     let dep = get_or_short!(
@@ -117,7 +115,6 @@ fn scan_slot(expr: &Slot, ctx: &mut Context) {
             slot_body_item::Inner::Text(expr) => {
                 scan_text(expr, ctx);
             }
-            _ => {}
         }
     }
 }
@@ -142,7 +139,6 @@ fn scan_text(element: &TextNode, ctx: &mut Context) {
             text_node_body_item::Inner::Style(expr) => {
                 scan_style(expr, ctx);
             }
-            _ => {}
         }
     }
 }

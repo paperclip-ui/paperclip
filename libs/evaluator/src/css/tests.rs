@@ -426,3 +426,26 @@ div {
   ._80f4925f-13 { font-family: Helvetica; color: red; }
   "#
 }
+
+add_case! {
+    can_define_styles_on_inserted_elements,
+    [
+("/entry.pc", r#"
+	public component A {
+		render div {
+			slot children
+		}
+	}
+
+	A {
+		div {
+			style {
+				background: blue
+			}
+			text "Hello"
+		}
+	}
+"#)
+    ],
+    "._80f4925f-9 { background: blue; }"
+}

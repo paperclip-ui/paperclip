@@ -248,3 +248,26 @@ public component Ab {
     ],
     "<div class=\"_Ab-80f4925f-5\"> abba </div>"
 }
+
+add_case! {
+    can_define_styles_on_inserted_elements,
+    [
+("/entry.pc", r#"
+	public component A {
+		render div {
+			slot children
+		}
+	}
+
+	A {
+		div {
+			style {
+				background: blue
+			}
+			text "Hello"
+		}
+	}
+"#)
+    ],
+    "<div> </div> <div> <div class=\"_80f4925f-9\"> Hello </div> </div>"
+}

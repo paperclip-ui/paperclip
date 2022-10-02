@@ -1,7 +1,7 @@
 use crate::{get_document_info, ColorInfo, ColorValue, DocumentInfo, Position};
 use ::futures::executor::block_on;
 use paperclip_parser::graph::test_utils::MockFS;
-use paperclip_parser::graph::{Graph};
+use paperclip_parser::graph::Graph;
 use std::collections::HashMap;
 
 macro_rules! test_case {
@@ -337,7 +337,6 @@ test_case! {
   }
 }
 
-
 test_case! {
   skips_vars_that_dont_have_references,
   r#"
@@ -348,7 +347,7 @@ test_case! {
     }
   "#,
   DocumentInfo {
-    colors: vec![      
+    colors: vec![
     ]
   }
 }

@@ -15,12 +15,12 @@ use warp::Filter;
 
 type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
 
-pub async fn prepare<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
+pub async fn prepare<TIO: ServerIO>(_ctx: ServerEngineContext<TIO>) -> Result<()> {
     Ok(())
 }
 
 pub async fn start<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
-    start_server(ctx.clone()).await;
+    start_server(ctx.clone()).await?;
     Ok(())
 }
 

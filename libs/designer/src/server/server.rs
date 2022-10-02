@@ -1,7 +1,6 @@
 // https://github.com/hyperium/tonic/blob/master/examples/src/hyper_warp/server.rs
 pub use super::core::{ServerState, StartOptions};
 use super::{
-    core::ServerEvent,
     core::ServerStateEventHandler,
     engines::{self},
     io::ServerIO,
@@ -11,25 +10,26 @@ use crate::machine::store::Store;
 use anyhow::Result;
 use std::sync::Arc;
 use std::sync::Mutex;
-use tokio::join;
+use tokio::try_join;
 
+#[allow(unused_must_use)]
 macro_rules! start_engines {
     ($ctx: expr, $($engine: path), *) => {
 
-        join!($(
+        try_join!($(
             {
                 use $engine as engine;
                 engine::prepare($ctx.clone())
             }
-        ), *);
+        ), *).expect("Unable to prepare");
 
 
-        join!($(
+        try_join!($(
             {
                 use $engine as base;
                 base::start($ctx.clone())
             }
-        ), *)
+        ), *).expect("Unable to start");
     };
 }
 

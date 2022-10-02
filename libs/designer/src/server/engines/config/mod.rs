@@ -1,17 +1,17 @@
 use crate::server::core::ServerEvent;
 use anyhow::Result;
-use notify::{Config, Event, RecommendedWatcher, RecursiveMode, Watcher};
+use notify::{Config, RecommendedWatcher, RecursiveMode, Watcher};
 use paperclip_common::fs::{FileWatchEvent, FileWatchEventKind};
 
 use crate::server::core::ServerEngineContext;
 use crate::server::io::ServerIO;
-use tokio::sync::mpsc::{channel, Receiver};
+use tokio::sync::mpsc::channel;
 
 pub async fn prepare<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
     file_watcher(ctx.clone()).await?;
     Ok(())
 }
-pub async fn start<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
+pub async fn start<TIO: ServerIO>(_ctx: ServerEngineContext<TIO>) -> Result<()> {
     Ok(())
 }
 

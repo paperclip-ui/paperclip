@@ -568,17 +568,8 @@ fn stringify_style_decl_value<F: FileResolver>(
         }
         css_ast::declaration_value::Inner::FunctionCall(expr) => {
             if expr.name == "var" && !expr.name.starts_with("--") {
-                if let css_ast::declaration_value::Inner::Reference(reference) = &expr
-                    .arguments
-                    .as_ref()
-                    .expect("arguments missing")
-                    .get_inner()
-                {
-                    if let Some(reference) = context.graph.get_ref(&reference.path, context.path) {
-                        if let graph_ref::Expr::Atom(atom) = reference.expr {
-                            return format!("var({})", atom.get_var_name());
-                        }
-                    }
+                if let Some(atom) = context.graph.get_var_reference(expr, context.path) {
+                    return format!("var({})", atom.get_var_name());
                 }
             }
 

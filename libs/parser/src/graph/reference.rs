@@ -1,4 +1,7 @@
+use paperclip_proto::ast::css::FunctionCall;
+
 use super::core::Graph;
+use crate::css::ast as css_ast;
 use crate::pc::ast;
 
 #[derive(Debug)]
@@ -57,6 +60,24 @@ impl Graph {
             path: &curr_dep.path,
             expr,
         })
+    }
+
+    pub fn get_var_reference(&self, expr: &FunctionCall, dep_path: &str) -> Option<&ast::Atom> {
+        if expr.name == "var" {
+            if let css_ast::declaration_value::Inner::Reference(reference) = &expr
+                .arguments
+                .as_ref()
+                .expect("arguments missing")
+                .get_inner()
+            {
+                if let Some(reference) = self.get_ref(&reference.path, dep_path) {
+                    if let Expr::Atom(atom) = reference.expr {
+                        return Some(atom);
+                    }
+                }
+            }
+        }
+        return None;
     }
 }
 

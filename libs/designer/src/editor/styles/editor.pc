@@ -1,38 +1,10 @@
-style defaults {
-  box-sizing: border-box
-}
-
-style sidebarStyle {
-  width: 200px
-    background: rgba(198, 198, 198, 0.754)
-}
+token red0 rgb(205, 0, 0)
 
 div {
-  style extends defaults {
-    background: rgb(235, 235, 235)
-    width: 100vw
-    height: 100vh
-    font-size: 16px
-    color: rgb(96, 96, 96)
-    font-family: sans-serif
-    display: flex
-  }
-  div leftSidebar {
-    style extends sidebarStyle {
-
-    }
-    text "Left"
-  }
-  div center {
+  text "Hello world" {
     style {
-      flex: 1
+      color: var(red0)
+      font-family: sans-serif
     }
-    text "center"
-  }
-  div rightSidebar {
-    style extends sidebarStyle {
-
-    }
-    text "right"
   }
 }

@@ -1,161 +1,180 @@
+use anyhow::{Error, Result};
 use css_color::Srgb;
+use paperclip_common::get_or_short;
 use paperclip_common::serialize_context::Context as SerializeContext;
+use super::context::Context;
+
 use paperclip_parser::{
     css,
     css::ast::{declaration_value, StyleDeclaration},
+    graph::Graph,
     pc::ast::*,
 };
 use paperclip_proto::ast::base;
 use paperclip_proto::language_service::pc::{ColorInfo, ColorValue, DocumentInfo, Position};
 
-pub fn get_document_info(ast: &Document) -> DocumentInfo {
-    let mut info = DocumentInfo { colors: vec![] };
+
+pub fn get_document_info(path: &str, graph: &Graph) -> Result<DocumentInfo> {
+
+    let mut ctx = Context {
+        path: path.to_string(),
+        graph,
+        info: DocumentInfo { colors: vec![] },
+        source_position: None
+    };
+
+    let dep = get_or_short!(
+        ctx.graph.dependencies.get(path),
+        Err(Error::msg("path does not exist"))
+    );
+    let ast = &dep.document;
 
     for item in &ast.body {
         match item.get_inner() {
-            document_body_item::Inner::Atom(atom) => {
-                scan_atom(atom, &mut info);
+            document_body_item::Inner::Atom(expr) => {
+                scan_atom(expr, &mut ctx);
             }
-            document_body_item::Inner::Style(atom) => {
-                scan_style(atom, &mut info);
+            document_body_item::Inner::Style(expr) => {
+                scan_style(expr, &mut ctx);
             }
-            document_body_item::Inner::Component(atom) => {
-                scan_component(atom, &mut info);
+            document_body_item::Inner::Component(expr) => {
+                scan_component(expr, &mut ctx);
             }
-            document_body_item::Inner::Element(atom) => {
-                scan_element(atom, &mut info);
+            document_body_item::Inner::Element(expr) => {
+                scan_element(expr, &mut ctx);
             }
-            document_body_item::Inner::Text(atom) => {
-                scan_text(atom, &mut info);
+            document_body_item::Inner::Text(expr) => {
+                scan_text(expr, &mut ctx);
             }
             _ => {}
         }
     }
 
-    info
+    Ok(ctx.info)
 }
 
-fn scan_atom(atom: &Atom, info: &mut DocumentInfo) {
+fn scan_atom(atom: &Atom, ctx: &mut Context) {
     scan_declaration_value(
         atom.value.as_ref().expect("Value must exist").get_inner(),
-        info,
+        ctx,
     );
 }
 
-fn scan_style(style: &Style, info: &mut DocumentInfo) {
+fn scan_style(style: &Style, ctx: &mut Context) {
     for decl in &style.declarations {
-        scan_declaration(decl, info);
+        scan_declaration(decl, ctx);
     }
 }
 
-fn scan_component(component: &Component, info: &mut DocumentInfo) {
+fn scan_component(component: &Component, ctx: &mut Context) {
     for item in &component.body {
         match item.get_inner() {
             component_body_item::Inner::Render(render) => {
-                scan_render_node(render.node.as_ref().unwrap().get_inner(), info);
+                scan_render_node(render.node.as_ref().unwrap().get_inner(), ctx);
             }
             _ => {}
         }
     }
 }
 
-fn scan_render_node(node: &render_node::Inner, info: &mut DocumentInfo) {
+fn scan_render_node(node: &render_node::Inner, ctx: &mut Context) {
     match node {
         render_node::Inner::Element(element) => {
-            scan_element(element, info);
+            scan_element(element, ctx);
         }
         render_node::Inner::Slot(element) => {
-            scan_slot(element, info);
+            scan_slot(element, ctx);
         }
         _ => {}
     }
 }
 
-fn scan_element(element: &Element, info: &mut DocumentInfo) {
+fn scan_element(element: &Element, ctx: &mut Context) {
     for item in &element.body {
         match item.get_inner() {
             element_body_item::Inner::Element(element) => {
-                scan_element(element, info);
+                scan_element(element, ctx);
             }
             element_body_item::Inner::Text(expr) => {
-                scan_text(expr, info);
+                scan_text(expr, ctx);
             }
             element_body_item::Inner::Insert(expr) => {
-                scan_insert(expr, info);
+                scan_insert(expr, ctx);
             }
             element_body_item::Inner::Style(element) => {
-                scan_style(element, info);
+                scan_style(element, ctx);
             }
             _ => {}
         }
     }
 }
-fn scan_slot(expr: &Slot, info: &mut DocumentInfo) {
+fn scan_slot(expr: &Slot, ctx: &mut Context) {
     for item in &expr.body {
         match item.get_inner() {
             slot_body_item::Inner::Element(expr) => {
-                scan_element(expr, info);
+                scan_element(expr, ctx);
             }
             slot_body_item::Inner::Text(expr) => {
-                scan_text(expr, info);
+                scan_text(expr, ctx);
             }
             _ => {}
         }
     }
 }
 
-fn scan_insert(expr: &Insert, info: &mut DocumentInfo) {
+fn scan_insert(expr: &Insert, ctx: &mut Context) {
     for item in &expr.body {
         match item.get_inner() {
             insert_body::Inner::Element(expr) => {
-                scan_element(expr, info);
+                scan_element(expr, ctx);
             }
             insert_body::Inner::Text(expr) => {
-                scan_text(expr, info);
+                scan_text(expr, ctx);
             }
             _ => {}
         }
     }
 }
 
-
-fn scan_text(element: &TextNode, info: &mut DocumentInfo) {
+fn scan_text(element: &TextNode, ctx: &mut Context) {
     for item in &element.body {
         match item.get_inner() {
             text_node_body_item::Inner::Style(expr) => {
-                scan_style(expr, info);
+                scan_style(expr, ctx);
             }
             _ => {}
         }
     }
 }
 
-fn scan_declaration(decl: &StyleDeclaration, info: &mut DocumentInfo) {
+fn scan_declaration(decl: &StyleDeclaration, ctx: &mut Context) {
     scan_declaration_value(
         decl.value.as_ref().expect("Value must exist").get_inner(),
-        info,
+        ctx,
     );
 }
 
-fn scan_declaration_value(value: &declaration_value::Inner, info: &mut DocumentInfo) {
+fn scan_declaration_value(value: &declaration_value::Inner, ctx: &mut Context) {
     match value {
         declaration_value::Inner::SpacedList(list) => {
             for item in &list.items {
-                scan_declaration_value(item.get_inner(), info);
+                scan_declaration_value(item.get_inner(), ctx);
             }
         }
         declaration_value::Inner::CommaList(list) => {
             for item in &list.items {
-                scan_declaration_value(item.get_inner(), info);
+                scan_declaration_value(item.get_inner(), ctx);
             }
         }
         declaration_value::Inner::FunctionCall(call) => {
             // TODO: check for rgb, rgba
-            scan_declaration_value(call.arguments.as_ref().unwrap().get_inner(), info);
+            scan_declaration_value(call.arguments.as_ref().unwrap().get_inner(), ctx);
 
             if matches!(&call.name.as_str(), &("rgba" | "rgb" | "hsl" | "hsla")) {
                 let mut context = SerializeContext::new(0);
-                let color_str = css::serializer::serialize_decl_value(
+
+                // a bit crude, but whatever...
+                css::serializer::serialize_decl_value(
                     &css::ast::DeclarationValue {
                         inner: Some(declaration_value::Inner::FunctionCall(call.clone())),
                     },
@@ -163,7 +182,16 @@ fn scan_declaration_value(value: &declaration_value::Inner, info: &mut DocumentI
                 );
 
                 if let Ok(rgba) = context.buffer.parse::<Srgb>() {
-                    add_color(rgba, call.range.as_ref().unwrap(), info);
+                    add_color(rgba, call.range.as_ref().unwrap(), ctx);
+                }
+            } else if call.name == "var" {
+                if let Some(atom) = ctx.graph.get_var_reference(call, &ctx.path) {
+                    let mut sub = ctx.clone().with_source_position(Position {
+                        start: call.range.as_ref().unwrap().start.as_ref().unwrap().pos,
+                        end: call.range.as_ref().unwrap().end.as_ref().unwrap().pos,
+                    });
+                    scan_atom(atom, &mut sub);
+                    ctx.extend(sub);
                 }
             }
         }
@@ -171,31 +199,30 @@ fn scan_declaration_value(value: &declaration_value::Inner, info: &mut DocumentI
             if reference.path.len() == 1 {
                 if let Some(part) = reference.path.get(0).as_ref() {
                     if let Ok(rgba) = format!("{}", part).parse::<Srgb>() {
-                        add_color(rgba, reference.range.as_ref().unwrap(), info);
+                        add_color(rgba, reference.range.as_ref().unwrap(), ctx);
                     }
                 }
             }
         }
         declaration_value::Inner::HexColor(color) => {
             let rgba: Srgb = format!("#{}", color.value).parse().unwrap();
-            println!("{:?}", color.range);
-            add_color(rgba, color.range.as_ref().unwrap(), info);
+            add_color(rgba, color.range.as_ref().unwrap(), ctx);
         }
         _ => {}
     }
 }
 
-fn add_color(rgba: Srgb, range: &base::Range, info: &mut DocumentInfo) {
-    info.colors.push(ColorInfo {
+fn add_color(rgba: Srgb, range: &base::Range, ctx: &mut Context) {
+    ctx.info.colors.push(ColorInfo {
         value: Some(ColorValue {
             red: rgba.red * 255.0,
             green: rgba.green * 255.0,
             blue: rgba.blue * 255.0,
             alpha: rgba.alpha,
         }),
-        position: Some(Position {
+        position: Some(ctx.source_position.clone().unwrap_or(Position {
             start: range.start.as_ref().unwrap().pos,
             end: range.end.as_ref().unwrap().pos,
-        }),
+        })),
     });
 }

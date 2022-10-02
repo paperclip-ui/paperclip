@@ -1,12 +1,19 @@
 use crate::{get_document_info, ColorInfo, ColorValue, DocumentInfo, Position};
-use paperclip_parser::pc::parser::parse;
+use ::futures::executor::block_on;
+use paperclip_parser::graph::test_utils::MockFS;
+use paperclip_parser::graph::{Graph};
+use std::collections::HashMap;
 
 macro_rules! test_case {
     ($name: ident, $source: expr, $expected: expr) => {
         #[test]
         fn $name() {
-            let ast = parse($source, &"entry.pc".to_string()).unwrap();
-            let info = get_document_info(&ast);
+            let mock_fs = MockFS::new(HashMap::from([("/entry.pc", $source)]));
+            let mut graph = Graph::new();
+            if let Err(_err) = block_on(graph.load(&"/entry.pc".to_string(), &mock_fs)) {
+                panic!("unable to load");
+            }
+            let info = get_document_info(&"/entry.pc", &graph).unwrap();
             assert_eq!(info, $expected);
         }
     };
@@ -238,7 +245,6 @@ test_case! {
   }
 }
 
-
 test_case! {
   can_pull_colors_out_of_inserted_elements,
   r#"
@@ -266,7 +272,7 @@ test_case! {
           blue: 0.0,
           alpha: 1.0
         }),
-  
+
         position: Some(Position {
           start: 80,
           end: 83
@@ -279,12 +285,70 @@ test_case! {
           blue: 255.0,
           alpha: 1.0
         }),
-  
+
         position: Some(Position {
           start: 163,
           end: 167
         })
       }
+    ]
+  }
+}
+
+test_case! {
+  can_pull_colors_from_vars_defined_within_same_document,
+  r#"
+    token white0 #CCC
+    text "Hello" {
+      style {
+        color: var(white0)
+      }
+    }
+  "#,
+  DocumentInfo {
+    colors: vec![
+      ColorInfo {
+        value: Some(ColorValue {
+          red: 204.0,
+          green: 204.0,
+          blue: 204.0,
+          alpha: 1.0
+        }),
+
+        position: Some(Position {
+          start: 18,
+          end: 22
+        })
+      },
+      ColorInfo {
+        value: Some(ColorValue {
+          red: 204.0,
+          green: 204.0,
+          blue: 204.0,
+          alpha: 1.0
+        }),
+
+        position: Some(Position {
+          start: 71,
+          end: 82
+        })
+      }
+    ]
+  }
+}
+
+
+test_case! {
+  skips_vars_that_dont_have_references,
+  r#"
+    text "Hello" {
+      style {
+        color: var(white0)
+      }
+    }
+  "#,
+  DocumentInfo {
+    colors: vec![      
     ]
   }
 }

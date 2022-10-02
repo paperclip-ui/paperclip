@@ -14,4 +14,6 @@ paperclip_proto = { path = "../proto" }
 paperclip_common = { path = "../rs-common" }
 colors-transform = "0.2.11"
 css-color = "0.2.4"
+anyhow = "1.0.65"
+futures = "0.3.24"
 

@@ -98,8 +98,13 @@ impl Designer for DesignerService {
     ) -> Result<Response<DocumentInfo>, Status> {
         let inner = request.into_inner();
 
-        if let Some(dep) = self.store.lock().unwrap().state.graph.dependencies.get(&inner.path) {
-            return Ok(Response::new(paperclip_language_services::get_document_info(&dep.document)));
+        let state = &self.store.lock().unwrap().state;
+
+        if let Some(dep) = state.graph.dependencies.get(&inner.path) {
+            return Ok(Response::new(
+                paperclip_language_services::get_document_info(&dep.path, &state.graph)
+                    .expect("Unable to get document info"),
+            ));
         }
 
         Err(Status::invalid_argument("File does not exist"))

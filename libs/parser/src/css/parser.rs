@@ -205,12 +205,14 @@ fn trim_string(value: &str) -> String {
 fn parse_hex_color(
     context: &mut ParserContext,
 ) -> Result<ast::declaration_value::Inner, err::ParserError> {
+
     let start = context.curr_u16pos.clone();
     let value = if let Some(Token::HexColor(value)) = context.curr_token {
         str::from_utf8(value).unwrap().to_string()
     } else {
         return Err(context.new_unexpected_token_error());
     };
+    println!("{:?}", value);
     context.next_token()?; // eat #
     let end = context.curr_u16pos.clone();
 

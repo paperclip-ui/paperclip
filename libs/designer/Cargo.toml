@@ -19,6 +19,7 @@ paperclip_common = { path = "../rs-common" }
 paperclip_evaluator = { path = "../evaluator" }
 paperclip_config = { path = "../config" }
 paperclip_parser = { path = "../parser" }
+paperclip_language_services = { path = "../language-services" }
 async-trait = "0.1.57"
 async-channel = "1.7.1"
 parking_lot = "0.12.1"

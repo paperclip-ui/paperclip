@@ -278,6 +278,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "colors-transform"
+version = "0.2.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9226dbc05df4fb986f48d730b001532580883c4c06c5d1c213f4b34c1c157178"
+
+[[package]]
 name = "concurrent-queue"
 version = "1.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -367,6 +373,12 @@ dependencies = [
  "generic-array",
  "typenum",
 ]
+
+[[package]]
+name = "css-color"
+version = "0.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5b0dd6aab3061be00b739299a1d8b10da43848f0d857b30f30ab83226680cd06"
 
 [[package]]
 name = "ctor"
@@ -1225,6 +1237,7 @@ dependencies = [
  "paperclip_common",
  "paperclip_config",
  "paperclip_evaluator",
+ "paperclip_language_services",
  "paperclip_parser",
  "paperclip_project",
  "paperclip_proto",
@@ -1257,7 +1270,11 @@ dependencies = [
 name = "paperclip_language_services"
 version = "0.1.1"
 dependencies = [
+ "colors-transform",
+ "css-color",
+ "paperclip_common",
  "paperclip_parser",
+ "paperclip_proto",
 ]
 
 [[package]]

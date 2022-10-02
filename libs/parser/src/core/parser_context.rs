@@ -91,13 +91,17 @@ impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone>
     }
 
     fn next_token2(&mut self) -> Result<(Option<TToken>, U16Position), ParserError> {
+        let pos = self.scanner.get_u16pos();
+
+        let token = if self.is_eof() {
+            None
+        } else {
+            Some((self._next_token)(self.scanner)?)
+        };
+
         Ok((
-            if self.is_eof() {
-                None
-            } else {
-                Some((self._next_token)(self.scanner)?)
-            },
-            self.scanner.get_u16pos(),
+            token,
+            pos,
         ))
     }
     pub fn skip<TTest>(&mut self, test: TTest) -> Result<(), ParserError>

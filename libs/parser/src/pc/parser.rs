@@ -118,7 +118,10 @@ fn parse_atom(context: &mut PCContext, is_public: bool) -> Result<ast::Atom, err
         context.id_generator,
         &context.source_url,
     )?);
-    context.scanner.unshift(1);
+    
+    if !context.is_eof() {
+        context.scanner.unshift(1);
+    }
     context.next_token()?;
     let end = context.curr_u16pos.clone();
 

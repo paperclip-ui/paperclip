@@ -1,11 +1,11 @@
 use super::virt;
+use anyhow::Result;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::id::{get_document_id, IDGenerator};
 use paperclip_parser::graph;
 use paperclip_parser::pc::ast;
 use std::cell::RefCell;
 use std::rc::Rc;
-use anyhow::Result;
 
 #[derive(Clone, Copy)]
 pub enum CurrentNode<'expr> {

@@ -7,7 +7,7 @@ use paperclip_evaluator::core::io::PCFileResolver;
 use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_evaluator::html;
 use paperclip_parser::graph::io::IO as GraphIO;
-use paperclip_parser::graph::Graph;
+use futures::executor::block_on;
 
 use crate::handle_store_events;
 use crate::server::core::{ServerEngineContext, ServerEvent};
@@ -29,8 +29,8 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
         ServerEvent::PaperclipFilesLoaded { files } => {
             load_dependency_graph(next.clone(), &files).await.expect("Unable to load dependency graph");
         },
-        ServerEvent::DependencyGraphLoaded { graph } => {
-            evaluate_dependency_graph(next.clone(), &graph).await.expect("Unable to evaluate Dependency graph");
+        ServerEvent::DependencyGraphLoaded { graph: _graph } => {
+            evaluate_dependency_graph(next.clone()).expect("Unable to evaluate Dependency graph");
         },
         ServerEvent::UpdateFileRequested { path, content: _content } => {
             load_dependency_graph(next.clone(), &vec![path.to_string()]).await.expect("Unable to load dependency");
@@ -115,27 +115,30 @@ async fn load_files<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> 
     Ok(())
 }
 
-async fn evaluate_dependency_graph<TIO: ServerIO>(
-    ctx: ServerEngineContext<TIO>,
-    graph: &Graph,
+fn evaluate_dependency_graph<TIO: ServerIO>(
+    ctx: ServerEngineContext<TIO>
 ) -> Result<()> {
     let mut output: HashMap<String, (css::virt::Document, html::virt::Document)> = HashMap::new();
+    
+    // file resolver for embedding
+    
+    {
+        let resolver = PCFileResolver::new(ctx.io.clone(), ctx.io.clone(), None);
+        let graph = &ctx.store.lock().unwrap().state.graph;
 
-    // file resolver for embedding assets
-    let resolver = PCFileResolver::new(ctx.io.clone(), ctx.io.clone(), None);
+        for (path, _) in &graph.dependencies {
+            let css = block_on(css::evaluator::evaluate(path, &graph, &resolver))?;
+            let html = block_on(html::evaluator::evaluate(
+                path,
+                &graph,
+                &resolver,
+                html::evaluator::Options {
+                    include_components: false,
+                },
+            ))?;
 
-    for (path, _dep) in &graph.dependencies {
-        let css = css::evaluator::evaluate(path, graph, &resolver).await?;
-        let html = html::evaluator::evaluate(
-            path,
-            graph,
-            &resolver,
-            html::evaluator::Options {
-                include_components: false,
-            },
-        )
-        .await?;
-        output.insert(path.to_string(), (css, html));
+            output.insert(path.to_string(), (css, html));
+        }
     }
 
     ctx.emit(ServerEvent::ModulesEvaluated(output));

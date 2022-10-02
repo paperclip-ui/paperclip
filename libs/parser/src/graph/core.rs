@@ -196,7 +196,10 @@ async fn load_dependencies<'io, TIO: IO>(
     };
 
     for import in &document.get_imports() {
-        imports.insert(import.path.to_string(), io.resolve_file(&path, &import.path)?);
+        imports.insert(
+            import.path.to_string(),
+            io.resolve_file(&path, &import.path)?,
+        );
     }
 
     deps.insert(

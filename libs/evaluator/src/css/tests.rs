@@ -1,13 +1,13 @@
 use super::evaluator::evaluate;
 use super::serializer::serialize;
 use crate::core::io::PCFileResolver;
+use anyhow::Result;
 use futures::executor::block_on;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::graph;
 use paperclip_parser::graph::test_utils;
 use std::collections::HashMap;
-use anyhow::Result;
 
 struct MockResolver;
 impl FileResolver for MockResolver {
@@ -452,7 +452,6 @@ add_case! {
     ],
     "._80f4925f-9 { background: blue; }"
 }
-
 
 add_case! {
   resolves_url_assets,

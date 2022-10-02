@@ -208,7 +208,6 @@ fn parse_hex_color(
     } else {
         return Err(context.new_unexpected_token_error());
     };
-    println!("{:?}", value);
     context.next_token()?; // eat #
     let end = context.curr_u16pos.clone();
 

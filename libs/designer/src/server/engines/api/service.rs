@@ -5,7 +5,7 @@ use futures::Stream;
 use paperclip_language_services::DocumentInfo;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
-    file_response, Empty, FileRequest, FileResponse, PaperclipData, UpdateFileRequest,
+    file_response, Empty, FileRequest, FileResponse, UpdateFileRequest,
 };
 use std::pin::Pin;
 use std::sync::Arc;
@@ -43,15 +43,8 @@ impl Designer for DesignerService {
             let path = request.into_inner().path;
 
             let emit = |path: String, store: Arc<Mutex<ServerStore>>| {
-                let data = if let Some(modules) = &store.lock().unwrap().state.evaluated_modules {
-                    if let Some((css, html)) = modules.get(&path) {
-                        Some(file_response::Data::Paperclip(PaperclipData {
-                            css: Some(css.clone()),
-                            html: Some(html.clone()),
-                        }))
-                    } else {
-                        None
-                    }
+                let data = if let Ok(module) = store.lock().unwrap().state.bundle_evaluated_module(&path) {
+                    Some(file_response::Data::Paperclip(module))
                 } else {
                     None
                 };

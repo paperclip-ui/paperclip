@@ -1,11 +1,37 @@
-token fontColor #333
-
-token fontFamily sans-serif
-
-token fontSizeLg 32px
-
-style defaultFont {
-  font-family: var(fontFamily)
-  font-size: var(fontSizeLg)
-  color: var(fontColor)
+public component Test {
+  render div {
+    style {
+      color: rgb(113, 153, 121)
+    }
+    div {
+      slot children
+    }
+  }
 }
+
+
+public token gray0 rgb(210, 210, 210)
+
+public token space01 2px
+public token space02 4px
+public token space03 8px
+public token space04 12px
+public token space05 16px
+public token space06 24px
+public token space07 32px
+public token space08 40px
+public token space09 48px
+public token space10 64px
+public token space11 80px
+public token space12 96px
+public token space13 160px
+
+public token fontSize01 0.75rem
+public token fontSize02 0.875rem
+public token fontSize03 1.125rem
+public token fontSize03 1.125rem
+public token fontSize03 1.25rem
+public token fontSize04 1.5rem
+public token fontSize05 1.75rem
+public token fontSize06 2rem
+public token fontSize07 2.25rem

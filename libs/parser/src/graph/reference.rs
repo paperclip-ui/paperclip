@@ -22,6 +22,8 @@ pub enum Expr<'expr> {
 
 impl Graph {
     pub fn get_ref(&self, ref_path: &Vec<String>, dep_path: &str) -> Option<RefInfo<'_>> {
+
+
         let curr_dep = if let Some(dep) = self.dependencies.get(dep_path) {
             dep
         } else {
@@ -45,7 +47,6 @@ impl Graph {
                         .get(&import.path)
                         .and_then(|actual_path| self.dependencies.get(actual_path))
                         .and_then(|imported_dep| get_doc_body_expr(part, &imported_dep.document));
-
                     expr = if let Some(inner_expr) = body_expr {
                         inner_expr
                     } else {
@@ -82,6 +83,7 @@ impl Graph {
 }
 
 fn get_doc_body_expr<'expr>(part: &String, doc: &'expr ast::Document) -> Option<Expr<'expr>> {
+
     for child in &doc.body {
         // any way to make this more DRY? Macros???
         match child.get_inner() {

@@ -3,6 +3,7 @@ import "ast/pc.proto";
 import "virt/html.proto";
 import "virt/css.proto";
 import "language_service/pc.proto";
+import "virt/module.proto";
 
 package service.designer;
 
@@ -29,11 +30,6 @@ message FileResponse {
   bytes raw_content = 1;
 
   oneof data {
-    PaperclipData paperclip = 2;
+    virt.module.PCModule paperclip = 2;
   }
-}
-
-message PaperclipData {
-  virt.css.Document css = 1;
-  virt.html.Document html = 2;
 }

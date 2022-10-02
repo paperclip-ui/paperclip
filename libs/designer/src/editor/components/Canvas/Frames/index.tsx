@@ -12,11 +12,7 @@ export const Frames = () => {
       while (ref.current.childNodes.length) {
         ref.current.removeChild(ref.current.childNodes[0]);
       }
-      const { html, css } = doc.paperclip;
-      const els = renderFrames(
-        { html, css, imports: [] },
-        { domFactory: document }
-      );
+      const els = renderFrames(doc.paperclip, { domFactory: document });
       console.log(els);
       for (const child of els) {
         ref.current.appendChild(child);

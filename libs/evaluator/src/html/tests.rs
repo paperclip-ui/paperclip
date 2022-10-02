@@ -1,13 +1,13 @@
 use super::evaluator::{evaluate, Options};
 use super::serializer::serialize;
+use crate::core::io::PCFileResolver;
+use anyhow::Result;
 use futures::executor::block_on;
 use paperclip_common::fs::FileResolver;
-use crate::core::io::PCFileResolver;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::graph;
 use paperclip_parser::graph::test_utils;
 use std::collections::HashMap;
-use anyhow::Result;
 
 // TODO: ensure no infinite loop
 // TODO: check imported instances
@@ -32,7 +32,7 @@ macro_rules! add_case {
                 panic!("Unable to load");
             }
             let resolver = MockResolver {};
-						let pc_resolver = PCFileResolver::new(mock_fs.clone(), resolver.clone(), None);
+            let pc_resolver = PCFileResolver::new(mock_fs.clone(), resolver.clone(), None);
             let doc = block_on(evaluate(
                 "/entry.pc",
                 &graph,

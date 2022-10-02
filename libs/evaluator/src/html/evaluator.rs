@@ -313,8 +313,7 @@ fn resolve_element_attributes<F: FileResolver>(
     element: &ast::Element,
     attributes: &mut BTreeMap<String, virt::Attribute>,
     context: &DocumentContext<F>,
-) { 
-
+) {
     // add styling hooks
     if element.is_stylable() {
         let class_name = get_style_namespace(&element.name, &element.id, context.current_component);
@@ -337,7 +336,10 @@ fn resolve_element_attributes<F: FileResolver>(
     if element.namespace == None {
         if element.tag_name.as_str() == "img" {
             if let Some(src) = attributes.get_mut("src") {
-                src.value = context.file_resolver.resolve_file(&context.path, &src.value).unwrap()
+                src.value = context
+                    .file_resolver
+                    .resolve_file(&context.path, &src.value)
+                    .unwrap()
             }
         }
     }

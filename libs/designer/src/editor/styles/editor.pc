@@ -1,28 +1,5 @@
-token gray0 rgb(210, 210, 210)
+import "./theme.pc" as theme
 
-token space01 2px
-token space02 4px
-token space03 8px
-token space04 12px
-token space05 16px
-token space06 24px
-token space07 32px
-token space08 40px
-token space09 48px
-token space10 64px
-token space11 80px
-token space12 96px
-token space13 160px
-
-token fontSize01 0.75rem
-token fontSize02 0.875rem
-token fontSize03 1.125rem
-token fontSize03 1.125rem
-token fontSize03 1.25rem
-token fontSize04 1.5rem
-token fontSize05 1.75rem
-token fontSize06 2rem
-token fontSize07 2.25rem
 
 style mask {
   background-color: currentColor
@@ -30,7 +7,7 @@ style mask {
   -webkit-mask-repeat: no-repeat
 }
 
-token iconSize var(fontSize03)
+token iconSize var(theme.fontSize03)
 
 style icon extends mask {
   width: var(--size)
@@ -41,14 +18,14 @@ style icon extends mask {
 style fontDefault {
   font-family: sans-serif
   color: #333
-  font-size: var(fontSize02)
+  font-size: var(theme.fontSize02)
 }
 
 component Sidebar {
   render div {
     style {
       width: 250px
-      background: var(gray0)
+      background: var(theme.gray0)
     }
     slot children
   }
@@ -69,7 +46,7 @@ component SidebarPanel {
 component SidebarPanelContent {
   render div {
     style {
-      padding: var(space05)
+      padding: var(theme.space05)
     }
     slot children
   }
@@ -95,7 +72,7 @@ component TreeNavigation {
         div {
           style extends icon {
             -webkit-mask-image: url("./folder2.svg")
-            --size: var(fontSize03)
+            --size: var(theme.fontSize03)
           }
         }
         text "leaf"
@@ -114,7 +91,7 @@ component TreeNavigation {
 component TreeNavigationItem {
   render div {
     style {
-      font-size: var(fontSize02)
+      font-size: var(theme.fontSize02)
       background: rgb(179, 179, 179)
       border-radius: 3px
     }
@@ -127,9 +104,9 @@ component TreeNavigationItemHeader {
       --depth: 1
       display: flex
       align-items: center
-      gap: var(space02)
-      padding: var(space03) var(space05)
-      padding-left: calc(var(space05) * var(--depth))
+      gap: var(theme.space02)
+      padding: var(theme.space03) var(theme.space05)
+      padding-left: calc(var(theme.space05) * var(--depth))
     }
     slot children
   }
@@ -152,8 +129,8 @@ component SidebarHeader {
 component SidebarHeaderButton {
   render div {
     style {
-      padding: var(space03) var(space05)
-      font-size: var(fontSize01)
+      padding: var(theme.space03) var(theme.space05)
+      font-size: var(theme.fontSize01)
       text-align: center
       width: 100%
     }
@@ -198,7 +175,7 @@ component Canvas {
   render div {
     style {
       flex: 1
-      padding: var(space04)
+      padding: var(theme.space04)
       background: rgb(57, 57, 57)
       position: relative
     }
@@ -247,15 +224,9 @@ component Editor {
         }
       }
       SidebarPanel {
-        h4 {
-          text "TODO"
-        }
-        ol {
-          li {
-            text "tokens"
-          }
-          li {
-            text "element styler"
+        SidebarPanelContent {
+          theme.Test {
+            text "fsdfsdddd"
           }
         }
       }

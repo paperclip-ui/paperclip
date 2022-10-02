@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "yarn build:proto",
-    "build:proto": "mkdir -p lib && protoc --proto_path=src --plugin=\"protoc-gen-grpc-web=../../node_modules/.bin/protoc-gen-grpc-web\" --grpc-web_out=\"import_style=commonjs+dts,mode=grpcwebtext:./lib\" --js_out=\"import_style=commonjs:./lib\" src/service/designer.proto src/ast/pc.proto src/ast/css.proto  src/virt/core.proto   src/virt/html.proto  src/ast/base.proto  src/virt/css.proto src/ast/docco.proto"
+    "build:proto": "mkdir -p lib && protoc --proto_path=src --plugin=\"protoc-gen-grpc-node=../../node_modules/.bin/protoc-gen-grpc-js\" --plugin=\"protoc-gen-grpc-web=../../node_modules/.bin/protoc-gen-grpc-web\" --grpc-node_out=\"./lib\" --grpc-web_out=\"import_style=commonjs+dts,mode=grpcwebtext:./lib\" --js_out=\"import_style=commonjs:./lib\" src/service/designer.proto src/ast/pc.proto src/ast/css.proto  src/virt/core.proto   src/virt/html.proto  src/ast/base.proto  src/virt/css.proto src/ast/docco.proto"
   },
   "publishConfig": {
     "access": "public"
@@ -16,11 +16,14 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "protoc-gen-grpc-web": "^1.4.0"
+    "protoc-gen-grpc-js": "^0.4.0",
+    "protoc-gen-grpc-web": "^1.4.0",
+    "protoc-gen-ts": "^0.8.5"
   },
   "gitHead": "e21804d0f4839ad1506435a86ad5e1ff2d53ee9f",
   "dependencies": {
     "google-protobuf": "^3.21.0",
+    "grpc": "^1.24.11",
     "grpc-web": "^1.4.0"
   }
 }

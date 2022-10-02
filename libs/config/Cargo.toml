@@ -1,0 +1,19 @@
+[package]
+name = "paperclip_config"
+version = "0.1.1"
+authors = ["Craig Condon <craig.j.condon@gmail.com>"]
+edition = "2021"
+exclude = []
+
+[lib]
+name = "paperclip_config"
+
+[dependencies]
+paperclip_common = { path = "../rs-common" }
+paperclip_parser = { path = "../parser" }
+serde = { version = "1.0.143", features = ["derive"] }
+path-absolutize = "3.0.13"
+wax = "0.5.0"
+futures = "0.3.21"
+serde_json = { version = "1.0.83" }
+anyhow = "1.0.61"

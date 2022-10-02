@@ -38,9 +38,10 @@ const createActions = (client: DesignerClient, dispatch: Dispatch<any>) => {
       client
         .openFile(fileRequest)
         .on("data", (data) => {
-          console.log(data);
+          console.log("incoming");
           dispatch(designerEngineEvents.documentOpened(data));
         })
+        .on("error", () => {})
         .on("end", () => {
           console.log("END");
         });

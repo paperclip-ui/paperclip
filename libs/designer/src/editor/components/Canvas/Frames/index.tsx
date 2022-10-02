@@ -12,7 +12,10 @@ export const Frames = () => {
       while (ref.current.childNodes.length) {
         ref.current.removeChild(ref.current.childNodes[0]);
       }
-      const { html, css } = doc.toObject().paperclip;
+      if (!doc.paperclip) {
+        return;
+      }
+      const { html, css } = doc.paperclip;
       const els = renderFrames(
         { html, css, imports: [] },
         { domFactory: document }

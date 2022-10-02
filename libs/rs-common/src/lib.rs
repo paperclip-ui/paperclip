@@ -1,3 +1,7 @@
+#![feature(type_alias_impl_trait)]
+#![feature(trait_alias)]
+
+pub mod event_bus;
 pub mod fs;
 pub mod fun;
 pub mod id;

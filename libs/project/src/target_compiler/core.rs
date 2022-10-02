@@ -1,10 +1,10 @@
 use super::context::TargetCompilerContext;
-use crate::config::{CompilerOptions, ConfigContext};
 use anyhow::Result;
 use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_compiler_react::{
     compile_code as compile_react_code, compile_typed_definition as compile_react_typed_definition,
 };
+use paperclip_config::{CompilerOptions, ConfigContext};
 use paperclip_evaluator::css::evaluator::evaluate as evaluate_css;
 use paperclip_evaluator::css::serializer::serialize as serialize_css;
 use paperclip_evaluator::html::evaluator::{evaluate as evaluate_html, Options as HTMLOptions};

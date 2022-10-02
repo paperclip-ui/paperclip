@@ -9,10 +9,10 @@ exclude = []
 name = "paperclip_project"
 
 [dependencies]
-clap = { version = "3.2.17", features = ["derive"] }
 paperclip_parser = { path = "../parser" }
 paperclip_evaluator = { path = "../evaluator" }
 paperclip_compiler_react = { path = "../compiler-react" }
+paperclip_config = { path = "../config" }
 paperclip_common = { path = "../rs-common" }
 textwrap = "0.15.0"
 serde = { version = "1.0.143", features = ["derive"] }

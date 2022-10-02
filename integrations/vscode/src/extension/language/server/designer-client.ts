@@ -3,8 +3,11 @@ import { Deferred } from "@paperclip-ui/common";
 import * as getPort from "get-port";
 import * as execa from "execa";
 import * as waitPort from "wait-port";
+import * as URL from "url";
+global.XMLHttpRequest = require("xhr2");
 import { DesignerClient as GRPCDesignerClient } from "@paperclip-ui/proto/lib/service/designer_grpc_web_pb";
 import { loadCLIBinPath } from "@paperclip-ui/releases";
+import { UpdateFileRequest } from "@paperclip-ui/proto/lib/service/designer_pb";
 
 export class DesignerClient {
   private _client: Deferred<GRPCDesignerClient>;
@@ -18,13 +21,21 @@ export class DesignerClient {
   }
   private async _start() {
     this._port = await startDesignServer();
-    this._client.resolve(new GRPCDesignerClient(`::${this._port}`));
+    this._client.resolve(
+      new GRPCDesignerClient(`http://localhost:${this._port}`)
+    );
   }
   async ready() {
     await this._client.promise;
   }
-  async updateVirtualFileContent(filePath: string, text: string) {
+  async updateVirtualFileContent(url: string, text: string) {
     const client = await this._client.promise;
+    const request = new UpdateFileRequest();
+    const content = new TextEncoder();
+    request.setPath(URL.fileURLToPath(url)).setContent(content.encode(text));
+    client.updateFile(request, {}, (err, response) => {
+      console.log(err, response);
+    });
   }
 }
 

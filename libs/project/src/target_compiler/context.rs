@@ -1,5 +1,5 @@
-use crate::config::{CompilerOptions, ConfigContext};
 use paperclip_common::{get_or_short, join_path};
+use paperclip_config::{CompilerOptions, ConfigContext};
 use path_absolutize::*;
 use std::path::Path;
 

@@ -1,4 +1,3 @@
-use crate::config::ConfigContext;
 use crate::io::ProjectIO;
 use crate::target_compiler::TargetCompiler;
 use anyhow::Result;
@@ -8,6 +7,7 @@ use futures_util::pin_mut;
 use futures_util::stream::StreamExt;
 use paperclip_common::get_or_short;
 use paperclip_common::pc::is_paperclip_file;
+use paperclip_config::ConfigContext;
 use paperclip_parser::graph::Graph;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};

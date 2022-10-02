@@ -1,14 +1,15 @@
-use crate::config::{CompilerOptions, Config, ConfigContext};
-use crate::io::{ProjectIO, WatchEvent, WatchEventKind};
-use crate::{CompileOptions, Project};
+use crate::{CompileOptions, Project, ProjectIO};
 use anyhow::Result;
 use async_stream::stream;
 use futures::executor::block_on;
 use futures_core::stream::Stream;
 use futures_util::pin_mut;
-use futures_util::stream::StreamExt;
-use paperclip_common::fs::{FileReader, FileResolver};
+use futures_util::StreamExt;
+use paperclip_common::fs::{
+    FileReader, FileResolver, FileWatchEvent, FileWatchEventKind, FileWatcher,
+};
 use paperclip_common::str_utils::strip_extra_ws;
+use paperclip_config::{CompilerOptions, Config, ConfigContext, ConfigIO};
 use paperclip_parser::graph::io::IO as GraphIO;
 use paperclip_parser::graph::test_utils::MockFS;
 use path_absolutize::*;
@@ -19,14 +20,17 @@ use std::path::Path;
 struct MockIO(MockFS<'static>);
 
 impl GraphIO for MockIO {}
+impl ProjectIO for MockIO {}
 
-impl ProjectIO for MockIO {
-    type Str = impl Stream<Item = WatchEvent>;
+impl FileWatcher for MockIO {
+    type Str = impl Stream<Item = FileWatchEvent>;
     fn watch(&self, _dir: &str) -> Self::Str {
         stream! {
-          yield WatchEvent::new(WatchEventKind::Create, &"nada".to_string());
+          yield FileWatchEvent::new(FileWatchEventKind::Create, &"nada".to_string());
         }
     }
+}
+impl ConfigIO for MockIO {
     fn get_all_designer_files(&self, _context: &ConfigContext) -> Vec<String> {
         vec![]
     }
@@ -119,7 +123,6 @@ fn default_config_with_compiler_options(src: &str, options: Vec<CompilerOptions>
 
 fn default_compiler_options_with_emit(emit: Vec<String>) -> CompilerOptions {
     CompilerOptions {
-        target: None,
         emit: Some(emit),
         out_dir: None,
         import_assets_as_modules: None,
@@ -282,7 +285,6 @@ test_case! {
   can_emit_one_global_css_file,
   default_config_with_compiler_options("src", vec![
     CompilerOptions {
-      target: None,
       emit: Some(vec!["css".to_string(), "html".to_string()]),
       out_dir: Some("out/".to_string()),
       import_assets_as_modules: None,
@@ -350,7 +352,6 @@ test_case! {
   properly_resolves_css_assets,
   default_config_with_compiler_options("src", vec![
     CompilerOptions {
-      target: None,
       emit: Some(vec!["css".to_string()]),
       out_dir: Some("out/".to_string()),
       import_assets_as_modules: None,
@@ -385,7 +386,6 @@ test_case! {
   moves_assets_to_asset_out_dir_if_present,
   default_config_with_compiler_options("src", vec![
     CompilerOptions {
-      target: None,
       emit: Some(vec!["css".to_string()]),
       out_dir: Some("out/".to_string()),
       import_assets_as_modules: None,

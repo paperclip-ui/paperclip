@@ -30,11 +30,11 @@ style mask {
   -webkit-mask-repeat: no-repeat
 }
 
-token iconSize 24px
+token iconSize var(fontSize03)
 
 style icon extends mask {
-  width: var(iconSize)
-  height: var(iconSize)
+  width: var(--size)
+  height: var(--size)
   display: inline-block
 }
 
@@ -80,10 +80,22 @@ component TreeNavigation {
   render div {
     TreeNavigationItem {
       TreeNavigationItemHeader {
-
+        override root {
+          style {
+            --depth: 2
+          }
+        }
         div {
           style extends icon {
-            -webkit-mask-image: url("./folder.svg")
+            -webkit-mask-image: url("./chevron.svg")
+            transform: rotate(-90deg)
+            --size: 12px
+          }
+        }
+        div {
+          style extends icon {
+            -webkit-mask-image: url("./folder2.svg")
+            --size: var(fontSize03)
           }
         }
         text "leaf"
@@ -110,11 +122,14 @@ component TreeNavigationItem {
   }
 }
 component TreeNavigationItemHeader {
-  render div {
+  render div container {
     style {
-
+      --depth: 1
+      display: flex
+      align-items: center
+      gap: var(space02)
       padding: var(space03) var(space05)
-      padding-left: calc(var(space05) * calc(var(depth)))
+      padding-left: calc(var(space05) * var(--depth))
     }
     slot children
   }

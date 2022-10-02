@@ -46,7 +46,6 @@ struct VirtGraphIO<TIO: ServerIO> {
     ctx: ServerEngineContext<TIO>,
 }
 
-
 impl<TIO: ServerIO> GraphIO for VirtGraphIO<TIO> {}
 
 impl<TIO: ServerIO> FileReader for VirtGraphIO<TIO> {

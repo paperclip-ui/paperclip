@@ -2,16 +2,17 @@ syntax = "proto3";
 import "ast/pc.proto";
 import "virt/html.proto";
 import "virt/css.proto";
+import "language_service/pc.proto";
 
 package service.designer;
 
 service Designer {
   rpc OpenFile(FileRequest) returns (stream FileResponse);
   rpc UpdateFile(UpdateFileRequest) returns (Empty);
+  rpc getDocumentInfo(FileRequest) returns (language_service.pc.DocumentInfo);
 }
 
 message Empty {
-
 }
 
 message FileRequest {

@@ -102,7 +102,7 @@ export class PaperclipLanguageServerConnectionManager {
         // documentLinkProvider: {
         //   resolveProvider: true,
         // },
-        // colorProvider: true,
+        colorProvider: true,
         // definitionProvider: true,
       },
     };

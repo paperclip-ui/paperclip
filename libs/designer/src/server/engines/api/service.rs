@@ -2,6 +2,7 @@
 
 use crate::server::core::{ServerEvent, ServerStore};
 use futures::Stream;
+use paperclip_language_services::DocumentInfo;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
     file_response, Empty, FileRequest, FileResponse, PaperclipData, UpdateFileRequest,
@@ -89,5 +90,18 @@ impl Designer for DesignerService {
             .unwrap()
             .emit(ServerEvent::UpdateFileRequested { path, content });
         Ok(Response::new(Empty {}))
+    }
+
+    async fn get_document_info(
+        &self,
+        request: Request<FileRequest>,
+    ) -> Result<Response<DocumentInfo>, Status> {
+        let inner = request.into_inner();
+
+        if let Some(dep) = self.store.lock().unwrap().state.graph.dependencies.get(&inner.path) {
+            return Ok(Response::new(paperclip_language_services::get_document_info(&dep.document)));
+        }
+
+        Err(Status::invalid_argument("File does not exist"))
     }
 }

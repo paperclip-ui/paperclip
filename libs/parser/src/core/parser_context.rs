@@ -99,10 +99,7 @@ impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone>
             Some((self._next_token)(self.scanner)?)
         };
 
-        Ok((
-            token,
-            pos,
-        ))
+        Ok((token, pos))
     }
     pub fn skip<TTest>(&mut self, test: TTest) -> Result<(), ParserError>
     where

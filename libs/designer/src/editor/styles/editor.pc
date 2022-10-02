@@ -1,13 +1,22 @@
-div {
-  style {
-    background: blue
-    width: 100vw
-    height: 100vh
-    color: white
-    font-family: sans-serif
-    font-size: 16px
+component Button {
+  render div {
+    style {
+      font-size: 32px
+      font-family: sans-serif
+      background: rgb(191, 158, 158)
+      color: rgb(104, 104, 104)
+      padding: 32px
+
+    }
+
+    slot children {
+      text "Default child"
+    }
   }
-  div {
-    text "Hello"
-  }
+}
+
+
+
+Button {
+  text "Hello"
 }

@@ -10,8 +10,6 @@ export const createDesignerEngine = (
 ): Engine<DesignerEngineState, DesignerEngineEvent> => {
   const client = new DesignerClient(env.protocol + "//" + env.host);
 
-  console.log(env);
-
   const actions = createActions(client, dispatch);
   const handleEvent = createEventHandler(actions);
   bootstrap(actions);

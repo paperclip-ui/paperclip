@@ -35,14 +35,11 @@ fn parse_style_declarations(
     context: &mut ParserContext,
 ) -> Result<Vec<ast::StyleDeclaration>, err::ParserError> {
     context.skip(is_superfluous_or_newline)?;
-    context.next_token()?;
-    context.skip(is_superfluous_or_newline)?;
     let mut decls: Vec<ast::StyleDeclaration> = vec![];
-    while context.curr_token != Some(Token::CurlyClose) {
+    while !context.is_eof() && context.curr_token != Some(Token::CurlyClose) {
         decls.push(parse_style_declaration(context)?);
         context.skip(is_superfluous_or_newline)?;
     }
-    context.next_token()?; // eat }
 
     Ok(decls)
 }
@@ -205,7 +202,6 @@ fn trim_string(value: &str) -> String {
 fn parse_hex_color(
     context: &mut ParserContext,
 ) -> Result<ast::declaration_value::Inner, err::ParserError> {
-
     let start = context.curr_u16pos.clone();
     let value = if let Some(Token::HexColor(value)) = context.curr_token {
         str::from_utf8(value).unwrap().to_string()

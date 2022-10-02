@@ -78,9 +78,6 @@ impl<'src> StringScanner<'src> {
             None
         }
     }
-    pub fn shift(&mut self, steps: usize) {
-        self.pos = self.pos + steps;
-    }
     pub fn unshift(&mut self, steps: usize) {
         self.pos = self.pos - steps;
     }

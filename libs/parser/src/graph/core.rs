@@ -32,9 +32,7 @@ impl Graph {
     pub fn merge(self, graph: Graph) -> Graph {
         let mut dependencies = self.dependencies;
         dependencies.extend(graph.dependencies);
-        Graph {
-            dependencies
-        }
+        Graph { dependencies }
     }
 
     pub async fn load<TIO: IO>(&mut self, path: &str, io: &TIO) -> Result<()> {
@@ -124,9 +122,7 @@ impl Graph {
         Arc::new(Mutex::new(HashMap::from_iter(
             self.dependencies
                 .iter()
-                .filter(|(path, _)| {
-                    !omit.contains(path)
-                })
+                .filter(|(path, _)| !omit.contains(path))
                 .map(|(path, dep)| (path.to_string(), dep.hash.to_string())),
         )))
     }
@@ -181,7 +177,6 @@ async fn load_dependencies<'io, TIO: IO>(
 
     let content = str::from_utf8(&*io.read_file(&path)?).unwrap().to_string();
     let hash = format!("{:x}", crc32::checksum_ieee(content.as_bytes())).to_string();
-
 
     if loaded.lock().await.get(&path) == Some(&hash) {
         return Ok(deps);

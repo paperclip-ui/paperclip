@@ -1,6 +1,6 @@
 use super::core::ProjectIO;
 use crate::utils::watch_local::async_watch;
-use anyhow::{Result};
+use anyhow::Result;
 use async_stream::stream;
 use futures_core::stream::Stream;
 use futures_util::pin_mut;

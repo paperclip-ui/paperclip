@@ -124,13 +124,15 @@ fn serialize_style(style: &ast::Style, context: &mut Context) {
     }
 
     if style.declarations.len() > 0 {
+        context.add_buffer(" {\n");
+        context.start_block();
         context.add_buffer(
-            format!(
-                " {}",
-                serialize_declarations(&style.declarations, context.depth)
-            )
+            serialize_declarations(&style.declarations, context.depth)
             .as_str(),
         );
+
+        context.end_block();
+        context.add_buffer("}\n");
     } else {
         context.add_buffer("\n");
     }

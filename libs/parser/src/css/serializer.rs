@@ -3,13 +3,9 @@ use paperclip_common::serialize_context::Context;
 
 pub fn serialize_declarations(declarations: &Vec<ast::StyleDeclaration>, depth: u8) -> String {
     let mut context = Context::new(depth);
-    context.add_buffer("{\n");
-    context.start_block();
     for decl in declarations {
         serialize_declaration(decl, &mut context);
     }
-    context.end_block();
-    context.add_buffer("}\n");
     context.buffer
 }
 

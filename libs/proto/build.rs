@@ -9,6 +9,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "src/virt/css.proto",
             "src/virt/html.proto",
             "src/virt/core.proto",
+            "src/language_service/pc.proto",
         ],
         &["src/"],
     )?;

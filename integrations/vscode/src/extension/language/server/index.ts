@@ -4,6 +4,7 @@ import { createConnection, ProposedFeatures } from "vscode-languageserver/node";
 import { DesignerClient } from "./designer-client";
 import { DocumentManager } from "./documents";
 import { PaperclipLanguageServerConnectionManager } from "./connection";
+import { LanguageRequestResolver } from "./resolver";
 
 export class PaperclipLanguageServer {
   constructor() {
@@ -18,7 +19,7 @@ export class PaperclipLanguageServer {
       {}
     );
 
-    // new LanguageRequestResolver(designServer, connection, documents);
+    new LanguageRequestResolver(designerClient, connection, documents);
 
     connectionManager.activate();
 

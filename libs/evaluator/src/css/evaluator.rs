@@ -122,7 +122,9 @@ fn evaluate_render_node<F: FileResolver>(node: &ast::RenderNode, context: &mut D
         ast::render_node::Inner::Text(element) => {
             evaluate_text(element, context);
         }
-        _ => {}
+        ast::render_node::Inner::Slot(expr) => {
+            evaluate_slot(expr, context);
+        }
     }
 }
 
@@ -137,13 +139,49 @@ fn evaluate_element<F: FileResolver>(element: &ast::Element, context: &mut Docum
             ast::element_body_item::Inner::Element(expr) => {
                 evaluate_element(expr, &mut el_context);
             }
+            ast::element_body_item::Inner::Insert(expr) => {
+                evaluate_insert(expr, &mut el_context);
+            }
+            ast::element_body_item::Inner::Slot(expr) => {
+                evaluate_slot(expr, &mut el_context);
+            }
             ast::element_body_item::Inner::Text(expr) => {
                 evaluate_text(expr, &mut el_context);
-            }
+            },
             _ => {}
         }
     }
 }
+
+fn evaluate_insert<F: FileResolver>(insert: &ast::Insert, context: &mut DocumentContext<F>) {
+    for item in &insert.body {
+        match item.get_inner() {
+            ast::insert_body::Inner::Element(expr) => {
+                evaluate_element(expr, context);
+            }
+            ast::insert_body::Inner::Text(expr) => {
+                evaluate_text(expr, context);
+            },
+            ast::insert_body::Inner::Slot(expr) => {
+                evaluate_slot(expr, context);
+            }
+        }
+    }
+}
+
+fn evaluate_slot<F: FileResolver>(slot: &ast::Slot, context: &mut DocumentContext<F>) {
+    for item in &slot.body {
+        match item.get_inner() {
+            ast::slot_body_item::Inner::Element(expr) => {
+                evaluate_element(expr, context);
+            }
+            ast::slot_body_item::Inner::Text(expr) => {
+                evaluate_text(expr, context);
+            }
+        }
+    }
+}
+
 fn evaluate_text<F: FileResolver>(expr: &ast::TextNode, context: &mut DocumentContext<F>) {
     let mut el_context = context.within_node(CurrentNode::TextNode(expr));
 

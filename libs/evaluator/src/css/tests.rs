@@ -493,3 +493,102 @@ add_case! {
   ],
   r#"._80f4925f-6 { mask-size: 100%; --size: 20px; width: var(--size); height: var(--size); mask-url: abba; }"#
 }
+
+add_case! {
+  can_define_styles_within_inserts,
+  [
+      ("/entry.pc", r#"
+        div {
+          insert test {
+            div {
+              style {
+                color: red
+              }
+            }    
+          }
+        }
+      "#)
+  ],
+  r#"._80f4925f-4 { color: red; }"#
+}
+
+add_case! {
+  can_define_styles_within_an_element_slot,
+  [
+      ("/entry.pc", r#"
+        div {
+          slot test {
+            div blarg {
+              style {
+                color: blue
+              }
+            }
+          }
+        }
+      "#)
+  ],
+  r#"._blarg-80f4925f-4 { color: blue; }"#
+}
+
+add_case! {
+  can_define_styles_within_text_in_a_slot,
+  [
+      ("/entry.pc", r#"
+        div {
+          slot test {
+            text blarg "blahh" {
+              style {
+                color: blue
+              }
+            }
+          }
+        }
+      "#)
+  ],
+  r#"._blarg-80f4925f-4 { color: blue; }"#
+}
+
+
+
+add_case! {
+  can_evaluate_a_slot_within_an_insert,
+  [
+      ("/entry.pc", r#"
+        div {
+          insert a {
+            slot b {
+              text "c" {
+                style {
+                  color: orange
+                }
+              }
+            }
+          }
+        }
+      "#)
+  ],
+  r#"._80f4925f-4 { color: orange; }"#
+}
+
+
+
+
+add_case! {
+  can_evaluate_a_render_slot,
+  [
+      ("/entry.pc", r#"
+       component A {
+        render slot children {
+          div {
+            style {
+              color: purple
+            }
+          }
+        }
+       }
+      "#)
+  ],
+  r#"._A-80f4925f-4 { color: purple; }"#
+}
+
+

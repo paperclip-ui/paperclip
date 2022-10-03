@@ -1,0 +1,32 @@
+import "./theme.pc" as theme
+
+public component TreeNavigationItem {
+  render div {
+    style {
+      font-size: var(theme.fontSize02)
+      background: rgb(179, 179, 179)
+      border-radius: 3px
+    }
+    slot children
+  }
+}
+public component TreeNavigationItemHeader {
+  render div container {
+    style {
+      --depth: 1
+      display: flex
+      align-items: center
+      gap: var(theme.space02)
+      padding: var(theme.space03) var(theme.space05)
+      padding-left: calc(var(theme.space05) * var(--depth))
+    }
+    slot children
+  }
+}
+
+public component TreeNavigationItemContent {
+  render div {
+    slot children
+  }
+}
+

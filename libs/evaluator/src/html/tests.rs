@@ -1,5 +1,7 @@
 use super::evaluator::{evaluate, Options};
 use super::serializer::serialize;
+use crate::core::io::PCFileResolver;
+use anyhow::Result;
 use futures::executor::block_on;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::str_utils::strip_extra_ws;
@@ -12,10 +14,11 @@ use std::collections::HashMap;
 // TODO: slots & inserts
 // TODO: evaluate slot in insert
 
+#[derive(Clone)]
 struct MockResolver;
 impl FileResolver for MockResolver {
-    fn resolve_file(&self, _from: &str, to: &str) -> Option<String> {
-        Some(to.to_string())
+    fn resolve_file(&self, _from: &str, to: &str) -> Result<String> {
+        Ok(to.to_string())
     }
 }
 
@@ -29,10 +32,11 @@ macro_rules! add_case {
                 panic!("Unable to load");
             }
             let resolver = MockResolver {};
+            let pc_resolver = PCFileResolver::new(mock_fs.clone(), resolver.clone(), None);
             let doc = block_on(evaluate(
                 "/entry.pc",
                 &graph,
-                &resolver,
+                &pc_resolver,
                 Options {
                     include_components: true,
                 },
@@ -247,4 +251,36 @@ public component Ab {
 "#)
     ],
     "<div class=\"_Ab-80f4925f-5\"> abba </div>"
+}
+
+add_case! {
+    can_define_styles_on_inserted_elements,
+    [
+("/entry.pc", r#"
+	public component A {
+		render div {
+			slot children
+		}
+	}
+
+	A {
+		div {
+			style {
+				background: blue
+			}
+			text "Hello"
+		}
+	}
+"#)
+    ],
+    "<div> </div> <div> <div class=\"_80f4925f-9\"> Hello </div> </div>"
+}
+
+add_case! {
+    resolves_img_assets,
+    [
+        ("/entry.pc", "img(src: '/test.svg')"),
+        ("/test.svg", "something"),
+    ],
+    r#"<img src="data:image/svg+xml;base64,c29tZXRoaW5n">"#
 }

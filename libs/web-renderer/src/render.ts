@@ -1,9 +1,9 @@
 // FYI this code is super dumb and can definitely be made faster
 import * as html from "@paperclip-ui/proto/lib/virt/html_pb";
 import * as css from "@paperclip-ui/proto/lib/virt/css_pb";
+import { PCModule } from "@paperclip-ui/proto/lib/virt/module_pb";
 import { NodeFactory } from "./node-factory";
 import {
-  addInsert,
   createNativeNode,
   createNativeStyleFromSheet,
   renderSheetText,
@@ -23,18 +23,6 @@ export type FrameInfo = {
   container: HTMLElement;
 };
 
-type RenderImport = {
-  path: string;
-  index: number;
-  css: css.Document.AsObject;
-};
-
-type RenderInfo = {
-  html: html.Document.AsObject;
-  css: css.Document.AsObject;
-  imports: RenderImport[];
-};
-
 export type RenderFrameOptions = {
   showSlotPlaceholders?: boolean;
   domFactory: NodeFactory;
@@ -42,7 +30,7 @@ export type RenderFrameOptions = {
 };
 
 export const renderFrames = (
-  info: RenderInfo,
+  info: PCModule.AsObject,
   options: RenderFrameOptions
 ): HTMLElement[] => {
   return getFragmentChildren(info.html).map((frame, index) => {
@@ -51,7 +39,7 @@ export const renderFrames = (
 };
 
 export const renderFrame = (
-  info: RenderInfo,
+  info: PCModule.AsObject,
   index: number,
   options: RenderFrameOptions
 ) => {
@@ -66,7 +54,7 @@ export const renderFrame = (
 };
 
 const createStyles = memoize(
-  (info: RenderInfo, options: RenderFrameOptions) => {
+  (info: PCModule.AsObject, options: RenderFrameOptions) => {
     const documentStyles = renderDocumentStyles(info, options);
     const importedStyles = renderImportedStyles(info, options);
     return { documentStyles, importedStyles };
@@ -97,7 +85,7 @@ const renderFrame2 = (
 };
 
 const renderDocumentStyles = (
-  info: RenderInfo,
+  info: PCModule.AsObject,
   { domFactory, resolveUrl }: RenderFrameOptions
 ) => {
   const container = domFactory.createElement("div");
@@ -108,14 +96,14 @@ const renderDocumentStyles = (
 };
 
 const renderImportedStyles = (
-  info: RenderInfo,
+  info: PCModule.AsObject,
   { domFactory, resolveUrl }: RenderFrameOptions
 ) => {
   const container = domFactory.createElement("div");
-  for (const imp of info.imports) {
-    const sheet = createNativeStyleFromSheet(info.css, domFactory, resolveUrl);
+  for (const imp of info.importsList) {
+    const sheet = createNativeStyleFromSheet(imp.css, domFactory, resolveUrl);
     sheet.setAttribute(`data-source`, imp.path);
-    sheet.setAttribute(`data-index`, String(imp.index));
+    // sheet.setAttribute(`data-index`, String(imp.index));
     container.appendChild(sheet);
   }
   return container;
@@ -123,8 +111,8 @@ const renderImportedStyles = (
 
 export const patchFrames = (
   frames: HTMLElement[],
-  prev: RenderInfo,
-  curr: RenderInfo,
+  prev: PCModule.AsObject,
+  curr: PCModule.AsObject,
   options: RenderFrameOptions
 ) => {
   if (curr === prev) {
@@ -157,8 +145,8 @@ export const patchFrames = (
 export const patchFrame = (
   frame: HTMLElement,
   index: number,
-  prev: RenderInfo,
-  curr: RenderInfo,
+  prev: PCModule.AsObject,
+  curr: PCModule.AsObject,
   options: RenderFrameOptions
 ) => {
   const prevVirtFrames = getFragmentChildren(prev.html);
@@ -175,7 +163,7 @@ export const patchFrame = (
 
 export const getFrameRects = (
   mount: HTMLElement,
-  info: RenderInfo,
+  info: PCModule.AsObject,
   index: number
 ) => {
   const rects: Record<string, any> = {};
@@ -205,8 +193,6 @@ export const getFrameRects = (
           height: clientRect.height,
           x: clientRect.left,
           y: clientRect.top,
-          // x: clientRect.left + bounds.x,
-          // y: clientRect.top + bounds.y,
         };
       }
     }
@@ -220,8 +206,8 @@ export const getFrameRects = (
 
 const patchRoot = (
   frame: HTMLElement,
-  prevInfo: RenderInfo,
-  newInfo: RenderInfo,
+  prevInfo: PCModule.AsObject,
+  newInfo: PCModule.AsObject,
   prevVirtNode: html.Node.AsObject,
   currVirtNode: html.Node.AsObject,
   options: RenderFrameOptions
@@ -230,7 +216,7 @@ const patchRoot = (
     patchDocumentSheet(frame, prevInfo, newInfo, options);
   }
 
-  if (prevInfo.imports !== newInfo.imports) {
+  if (prevInfo.importsList !== newInfo.importsList) {
     patchImportedSheets(frame, prevInfo, newInfo, options);
   }
 
@@ -247,8 +233,8 @@ const patchRoot = (
 
 const patchDocumentSheet = (
   frame: HTMLElement,
-  prev: RenderInfo,
-  curr: RenderInfo,
+  prev: PCModule.AsObject,
+  curr: PCModule.AsObject,
   options: RenderFrameOptions
 ) => {
   const styleContainer = frame.childNodes[DOC_STYLE_INDEX] as HTMLDivElement;
@@ -283,15 +269,15 @@ const calcAryPatch = <TItem>(oldItems: TItem[], newItems: TItem[]) => {
 
 const patchImportedSheets = (
   frame: HTMLElement,
-  prev: RenderInfo,
-  curr: RenderInfo,
+  prev: PCModule.AsObject,
+  curr: PCModule.AsObject,
   options: RenderFrameOptions
 ) => {
   const styleContainer = frame.childNodes[IMP_STYLE_INDEX] as HTMLDivElement;
 
   const { update, insert, removeCount } = calcAryPatch(
-    prev.imports,
-    curr.imports
+    prev.importsList,
+    curr.importsList
   );
 
   for (let i = 0; i < update.length; i++) {

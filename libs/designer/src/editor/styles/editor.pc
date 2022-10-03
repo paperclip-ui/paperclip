@@ -1,0 +1,465 @@
+import "./theme.pc" as theme
+
+token iconSize var(theme.fontSize03)
+
+
+component Sidebar {
+  render div {
+    style {
+      width: 270px
+      background: var(theme.gray0)
+    }
+    slot children
+  }
+}
+
+component SidebarPanel {
+  render div {
+    slot children
+  }
+}
+
+component SidebarPanelHeader {
+  render div {
+    style extends theme.fontHeader {
+      border-top: 1px solid rgb(198, 198, 198)
+      padding: var(theme.space05)
+      padding-bottom: 0px
+
+    }
+    slot children
+  }
+}
+
+component SidebarPanelContent {
+  render div {
+    style {
+      padding: var(theme.space05)
+    }
+    slot children
+  }
+}
+
+
+component TreeNavigation {
+  render div {
+    TreeNavigationItem {
+      TreeNavigationItemHeader {
+        override root {
+          style {
+            --depth: 2
+          }
+        }
+        div {
+          style extends theme.icon {
+            -webkit-mask-image: url("./chevron.svg")
+            transform: rotate(-90deg)
+            --size: 12px
+          }
+        }
+        div {
+          style extends theme.icon {
+            -webkit-mask-image: url("./folder2.svg")
+            --size: var(theme.fontSize03)
+          }
+        }
+        text "leaf"
+      }
+      TreeNavigationItemContent {
+        TreeNavigationItem {
+          TreeNavigationItemHeader {
+            text "Leaf"
+          }
+        }
+      }
+    }
+  }
+}
+
+component TreeNavigationItem {
+  render div {
+    style {
+      font-size: var(theme.fontSize02)
+      background: rgb(179, 179, 179)
+      border-radius: 3px
+    }
+    slot children
+  }
+}
+component TreeNavigationItemHeader {
+  render div container {
+    style {
+      --depth: 1
+      display: flex
+      align-items: center
+      gap: var(theme.space02)
+      padding: var(theme.space03) var(theme.space05)
+      padding-left: calc(var(theme.space05) * var(--depth))
+    }
+    slot children
+  }
+}
+component TreeNavigationItemContent {
+  render div {
+    slot children
+  }
+}
+
+component SidebarHeader {
+  render div {
+    style {
+      display: flex
+    }
+    slot children
+  }
+}
+
+component SidebarHeaderButton {
+  render div {
+    style {
+      padding: var(theme.space03) var(theme.space05)
+      font-size: var(theme.fontSize01)
+      text-align: center
+      width: 100%
+    }
+    slot children
+  }
+}
+
+component Artboard {
+  render div {
+    style {
+      width: 400px
+      height: 300px
+
+      position: absolute
+      left: 50%
+      top: 50%
+      transform: translate(-50%, -50%)
+    }
+    div {
+      style {
+        color: rgb(160, 160, 160)
+        position: absolute
+        transform: translateY(calc(-100% - 0.5em))
+      }
+      slot title
+    }
+    ArtboardPreview 
+  }
+}
+
+component ArtboardPreview {
+  render div {
+    style {
+      width: 400px
+      height: 300px
+      background: white
+    }
+  }
+}
+
+component Canvas {
+  render div {
+    style {
+      flex: 1
+      padding: var(theme.space04)
+      background: rgb(57, 57, 57)
+      position: relative
+      overflow: hidden
+    }
+    Artboard {
+      insert title {
+        text "Some title"
+      }
+    }
+  }
+}
+
+component Field {
+  render div {
+    style {
+      display: flex
+      gap: var(theme.space03)
+      
+    }
+    div {
+      style {
+        top: calc(calc(var(theme.space06) / 2) - calc(1em / 2))
+        position: relative
+        width: 90px
+        flex-shrink: 0
+        font-size: var(theme.fontSize01)
+      }
+      slot name {
+        
+      }
+    }
+    div {
+      style {
+        display: flex
+        flex-direction: column
+        gap: var(theme.space03)
+        flex: 1
+      }
+      slot input
+    }
+  }
+}
+
+component Fields {
+  render div {
+    style {
+      display: flex
+      flex-direction: column
+      gap: var(theme.space04)
+
+    }
+    slot children
+  }
+}
+
+component MultiSelect {
+  render div {
+    style extends theme.input {
+      display: flex
+      gap: var(theme.space02)
+      padding: var(theme.space02)
+
+    }
+    slot children
+  }
+}
+
+component MultiSelectItem {
+  render div {
+    style {
+      display: inline-block
+      background: rgb(219, 219, 219)
+      border-radius: var(theme.roundedSM)
+      padding: 0px var(theme.space03)
+      display: flex
+      align-items: center
+    }
+    slot children
+  }
+}
+
+component Select {
+  render div {
+    style extends theme.input {
+    }
+    div {
+      slot children
+    }
+  }
+}
+
+component ColorInput {
+  render div {
+    style extends theme.input {
+      gap: var(theme.space03)
+    }
+    div {
+      style {
+        width: 1em
+        height: 1em
+        background: rgb(134, 86, 86)
+        border-radius: var(theme.rounded)
+      }
+    }
+    slot children
+  }
+}
+
+component Editor {
+  render div {
+    style extends theme.fontDefault {
+      display: flex
+      width: 100vw
+      height: 100vh
+      
+    }
+    Sidebar {
+      SidebarHeader {
+        SidebarHeaderButton {
+          text "Files"
+        }
+        SidebarHeaderButton {
+          text "Layers"
+        }
+        SidebarHeaderButton {
+          text "Assets"
+        }
+      }
+      SidebarPanel {
+        SidebarPanelContent {
+          TreeNavigation
+        }
+      }
+    }
+    Canvas
+    Sidebar {
+      SidebarPanel {
+        SidebarPanelContent {
+          Field {
+            insert name {
+              text "Variant"
+            }
+            insert input {
+              MultiSelect {
+                MultiSelectItem {
+                  text "mobile"
+                }
+                MultiSelectItem {
+                  text "dark"
+                }
+              }
+            }
+          }
+        }
+      }
+      SidebarPanel {
+        SidebarPanelHeader {
+          text "Layout"
+        }
+        SidebarPanelContent {
+          Fields {
+            Field {
+              insert name {
+                text "display"
+              }
+              insert input {
+                Select {
+                  text "flex"
+                }
+              }
+            }
+            Field {
+              insert name {
+                text "Padding"
+              }
+              insert input {
+                Select {
+                  text "flex"
+                }
+              }
+            }
+            Field {
+              insert name {
+                text "Margin"
+              }
+              insert input {
+                Select {
+                  text "12px"
+                }
+              }
+            }
+            Field {
+              insert name {
+                text "Position"
+              }
+              insert input {
+                Select {
+                  text "relative"
+                }
+              }
+            }
+            Field {
+              insert name {
+                text "Box Sizing"
+              }
+              insert input {
+                Select {
+                  text "border-box"
+                }
+              }
+            }
+          }
+        }
+      }
+      SidebarPanel {
+        SidebarPanelHeader {
+          text "Appearance"
+        }
+        SidebarPanelContent {
+          Fields {
+            Field {
+              insert name {
+                text "Background"
+              }
+              insert input {
+                ColorInput {
+                  text "flex"
+                }
+                Select {
+                  text "flex"
+                }
+              }
+            }
+            Field {
+              insert name {
+                text "Shadows"
+              }
+              insert input {
+                Select {
+                  text "flex"
+                }
+              }
+            }
+            Field {
+              insert name {
+                text "Border"
+              }
+              insert input {
+                div {
+                  style {
+                    display: flex
+                    flex-direction: column
+                    gap: var(theme.space05)
+                    opacity: 0.5
+                  }
+                  Select {
+                    text "1px"
+                  }
+                  Select {
+                    text "solid"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      SidebarPanel {
+        SidebarPanelHeader {
+
+        }
+        SidebarPanelContent {
+          Fields {
+            Field {
+              insert name {
+                text "Mixins"
+              }
+              insert input {
+                Select {
+                  text "input"
+                }
+                Select {
+                  text "fontDefault"
+                }
+                Select {
+                  text "add "
+                }
+              }
+            }
+          }
+        }
+      }
+      
+    }
+  }
+}
+
+Editor

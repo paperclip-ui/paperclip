@@ -1,0 +1,17 @@
+syntax = "proto3";
+package virt.module;
+import "virt/html.proto";
+import "virt/css.proto";
+
+message PCModule {
+  virt.html.Document html = 1;
+  virt.css.Document css = 2;
+  repeated PCModuleImport imports = 3;
+}
+
+message PCModuleImport {
+  string path = 1;
+  virt.css.Document css = 2;
+}
+
+

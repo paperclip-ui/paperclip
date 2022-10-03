@@ -45,83 +45,83 @@ macro_rules! add_case {
 
 add_case! {
     can_parse_color,
-    r#"{
+    r#"
         color: red
-    }"#
+    "#
 }
 
 add_case! {
     can_parse_unit,
-    r#"{
+    r#"
         width: 100px
-    }"#
+    "#
 }
 
 add_case! {
     can_parse_spaced_list,
-    r#"{
+    r#"
         padding: 10px 10px
-    }"#
+    "#
 }
 
 add_case! {
     can_parse_comma_list,
-    r#"{
+    r#"
         background: red, blue
-    }"#
+    "#
 }
 
 add_case! {
     can_parse_function_call,
-    r#"{
+    r#"
         background: var(red)
-    }"#
+    "#
 }
 
 add_case! {
     can_parse_func_call_with_params,
-    r#"{
+    r#"
         background: var(a, b, c)
-    }"#
+    "#
 }
 
 add_case! {
     can_parse_var_call,
-    r#"{
+    r#"
         background: var(--abc)
-    }"#
+    "#
 }
 
 add_case! {
     can_parse_negative_value,
-    r#"{
+    r#"
         background: calc(-50%)
-    }"#
+    "#
 }
 
 add_case! {
     can_parse_addition,
-    r#"{
+    r#"
         transform: translate(10px + 10px)
-    }"#
+    "#
 }
 add_case! {
     can_parse_complex_addition,
-    r#"{
+    r#"
         transform: translate(-50%, calc(-50% + 1px))
-    }"#
+    "#
 }
 add_case! {
     can_parse_various_styles,
-    r#"{
+    r#"
         filter: drop-shadow(4px 4px 2px rgba(0, 0, 0, 0.1))
         background-image: linear-gradient(rgba(241, 240, 240, 1), rgba(241, 240, 240, 1))
-    }"#
+    "#
 }
 
 add_case! {
     can_parse_various_styles_2,
-    r#"{
+    r#"
         width: 100%
         boxSizing: border-box
         marginTop: 1px
@@ -139,19 +139,19 @@ add_case! {
         position: relative
         height: 18
         vertical-align: center
-    }"#
+    "#
 }
 
 add_case! {
     can_parse_refs,
-    r#"{
+    r#"
         color: #444
         box-shadow: inset -1px var(imp0.grey0), inset 2px var(imp0.grey0)
-    }"#
+    "#
 }
 add_case! {
     can_parse_string,
-    r#"{
+    r#"
         text-content: "abba"
-    }"#
+    "#
 }

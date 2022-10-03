@@ -26,12 +26,10 @@ struct EmitInfo {
 }
 
 impl<IO: FileReader + FileResolver> FileResolver for TargetCompilerResolver<IO> {
-    fn resolve_file(&self, from: &str, to: &str) -> Option<String> {
-        let resolved_path = self.io.resolve_file(from, to).and_then(|resolved_path| {
-            Some(self.context.resolve_asset_out_file(resolved_path.as_str()))
-        });
-
-        resolved_path
+    fn resolve_file(&self, from: &str, to: &str) -> Result<String> {
+        self.io.resolve_file(from, to).and_then(|resolved_path| {
+            Ok(self.context.resolve_asset_out_file(resolved_path.as_str()))
+        })
     }
 }
 

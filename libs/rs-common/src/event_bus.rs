@@ -1,8 +1,8 @@
 // Inspired by https://github.com/smol-rs/async-channel/blob/master/src/lib.rs
 
-use std::{sync::Arc};
+use anyhow::{Error, Result};
 use std::ops::Drop;
-use anyhow::{Result, Error};
+use std::sync::Arc;
 
 pub struct EventBus<T> {
     count: usize,
@@ -15,38 +15,42 @@ impl<T> EventBus<T> {
     pub fn subscribe<'listener>(&mut self) -> Receiver<Arc<T>> {
         let (tx, rx) = flume::unbounded();
         self.count += 1;
-        self.channels.push(Sender { sender: tx, id: self.count });
-        Receiver { receiver: rx, fin: false }
+        self.channels.push(Sender {
+            sender: tx,
+            id: self.count,
+        });
+        Receiver {
+            receiver: rx,
+            fin: false,
+        }
     }
 
     pub fn emit(&mut self, message: T) {
-
         // TODO - may want to throw messages in a queue in case of recursive emit
         let message = Arc::new(message);
         let mut failed = vec![];
 
-        for c  in self.channels.iter() {
+        for c in self.channels.iter() {
             if let Err(_err) = c.send(message.clone()) {
                 failed.push(c.id);
             }
         }
 
-        self.channels.retain_mut(|sender| {
-            !failed.contains(&sender.id)
-        });
-
+        self.channels
+            .retain_mut(|sender| !failed.contains(&sender.id));
     }
 
     pub fn new() -> Self {
-        Self { count: 0, channels: vec![] }
+        Self {
+            count: 0,
+            channels: vec![],
+        }
     }
 }
 
-
-
 pub struct Sender<T> {
     id: usize,
-    sender: flume::Sender<T>
+    sender: flume::Sender<T>,
 }
 
 impl<T> Sender<T> {
@@ -55,10 +59,9 @@ impl<T> Sender<T> {
     }
 }
 
-
 pub struct Receiver<T> {
     fin: bool,
-    receiver: flume::Receiver<T>
+    receiver: flume::Receiver<T>,
 }
 
 impl<T> Receiver<T> {

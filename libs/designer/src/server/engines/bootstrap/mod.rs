@@ -12,6 +12,6 @@ pub async fn prepare<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()>
     Ok(())
 }
 
-pub async fn start<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
+pub async fn start<TIO: ServerIO>(_ctx: ServerEngineContext<TIO>) -> Result<()> {
     Ok(())
 }

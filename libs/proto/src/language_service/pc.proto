@@ -1,0 +1,23 @@
+syntax = "proto3";
+package language_service.pc;
+
+message DocumentInfo {
+  repeated ColorInfo colors = 1;
+}
+
+message ColorInfo {
+  ColorValue value = 1;
+  Position position = 2;
+}
+
+message ColorValue {
+  float red = 1;
+  float green = 2;
+  float blue = 3;
+  float alpha = 4;
+}
+
+message Position {
+  uint32 start = 1;
+  uint32 end = 2;
+};

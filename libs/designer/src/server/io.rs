@@ -15,6 +15,9 @@ impl FileReader for LocalServerIO {
     fn read_file(&self, path: &str) -> Result<Box<[u8]>> {
         LocalFileReader::default().read_file(path)
     }
+    fn get_file_size(&self, path: &str) -> Result<u64> {
+        LocalFileReader::default().get_file_size(path)
+    }
 }
 
 impl ConfigIO for LocalServerIO {
@@ -24,7 +27,7 @@ impl ConfigIO for LocalServerIO {
 }
 
 impl FileResolver for LocalServerIO {
-    fn resolve_file(&self, from: &str, to: &str) -> Option<String> {
+    fn resolve_file(&self, from: &str, to: &str) -> Result<String> {
         LocalFileResolver::default().resolve_file(from, to)
     }
 }

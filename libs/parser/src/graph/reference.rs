@@ -1,4 +1,7 @@
+use paperclip_proto::ast::css::FunctionCall;
+
 use super::core::Graph;
+use crate::css::ast as css_ast;
 use crate::pc::ast;
 
 #[derive(Debug)]
@@ -19,7 +22,9 @@ pub enum Expr<'expr> {
 
 impl Graph {
     pub fn get_ref(&self, ref_path: &Vec<String>, dep_path: &str) -> Option<RefInfo<'_>> {
-        let curr_dep = if let Some(dep) = self.dependencies.get(dep_path) {
+
+
+        let mut curr_dep = if let Some(dep) = self.dependencies.get(dep_path) {
             dep
         } else {
             return None;
@@ -37,17 +42,20 @@ impl Graph {
                     }
                 }
                 Expr::Import(import) => {
-                    let body_expr = curr_dep
-                        .imports
-                        .get(&import.path)
-                        .and_then(|actual_path| self.dependencies.get(actual_path))
-                        .and_then(|imported_dep| get_doc_body_expr(part, &imported_dep.document));
 
-                    expr = if let Some(inner_expr) = body_expr {
-                        inner_expr
-                    } else {
-                        return None;
-                    };
+                    let imp_dep =  curr_dep
+                    .imports
+                    .get(&import.path)
+                    .and_then(|actual_path| self.dependencies.get(actual_path));
+
+                    if let Some(dep) = imp_dep {
+                        curr_dep = dep;
+                        expr = if let Some(inner_expr) = get_doc_body_expr(part, &curr_dep.document) {
+                            inner_expr
+                        } else {
+                            return None;
+                        };
+                    }
                 }
                 _ => {}
             }
@@ -58,9 +66,28 @@ impl Graph {
             expr,
         })
     }
+
+    pub fn get_var_reference(&self, expr: &FunctionCall, dep_path: &str) -> Option<&ast::Atom> {
+        if expr.name == "var" {
+            if let css_ast::declaration_value::Inner::Reference(reference) = &expr
+                .arguments
+                .as_ref()
+                .expect("arguments missing")
+                .get_inner()
+            {
+                if let Some(reference) = self.get_ref(&reference.path, dep_path) {
+                    if let Expr::Atom(atom) = reference.expr {
+                        return Some(atom);
+                    }
+                }
+            }
+        }
+        return None;
+    }
 }
 
 fn get_doc_body_expr<'expr>(part: &String, doc: &'expr ast::Document) -> Option<Expr<'expr>> {
+
     for child in &doc.body {
         // any way to make this more DRY? Macros???
         match child.get_inner() {

@@ -40,10 +40,13 @@ impl FileReader for MockIO {
     fn read_file(&self, path: &str) -> Result<Box<[u8]>> {
         self.0.read_file(path)
     }
+    fn get_file_size(&self, path: &str) -> Result<u64> {
+        self.0.get_file_size(path)
+    }
 }
 
 impl FileResolver for MockIO {
-    fn resolve_file(&self, from_path: &str, to_path: &str) -> Option<String> {
+    fn resolve_file(&self, from_path: &str, to_path: &str) -> Result<String> {
         let resolved_path = String::from(
             Path::new(from_path)
                 .parent()
@@ -55,7 +58,7 @@ impl FileResolver for MockIO {
                 .unwrap(),
         );
 
-        Some(resolved_path)
+        Ok(resolved_path)
     }
 }
 

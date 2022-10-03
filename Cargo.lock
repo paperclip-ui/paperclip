@@ -278,6 +278,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "colors-transform"
+version = "0.2.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9226dbc05df4fb986f48d730b001532580883c4c06c5d1c213f4b34c1c157178"
+
+[[package]]
 name = "concurrent-queue"
 version = "1.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -339,6 +345,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "crc"
+version = "3.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "53757d12b596c16c78b83458d732a5d1a17ab3f53f2f7412f6fb57cc8a140ab3"
+dependencies = [
+ "crc-catalog",
+]
+
+[[package]]
+name = "crc-catalog"
+version = "2.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2d0165d2900ae6778e36e80bbc4da3b5eefccee9ba939761f9c2882a5d9af3ff"
+
+[[package]]
 name = "crossbeam-channel"
 version = "0.5.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -367,6 +388,12 @@ dependencies = [
  "generic-array",
  "typenum",
 ]
+
+[[package]]
+name = "css-color"
+version = "0.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5b0dd6aab3061be00b739299a1d8b10da43848f0d857b30f30ab83226680cd06"
 
 [[package]]
 name = "ctor"
@@ -1162,7 +1189,7 @@ dependencies = [
  "anyhow",
  "async-channel",
  "async-stream",
- "crc",
+ "crc 1.8.1",
  "crossbeam-channel",
  "event-listener",
  "flume",
@@ -1225,6 +1252,7 @@ dependencies = [
  "paperclip_common",
  "paperclip_config",
  "paperclip_evaluator",
+ "paperclip_language_services",
  "paperclip_parser",
  "paperclip_project",
  "paperclip_proto",
@@ -1245,7 +1273,9 @@ name = "paperclip_evaluator"
 version = "0.1.1"
 dependencies = [
  "anyhow",
+ "base64",
  "futures",
+ "mime_guess",
  "paperclip_common",
  "paperclip_parser",
  "paperclip_proto",
@@ -1254,11 +1284,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "paperclip_language_services"
+version = "0.1.1"
+dependencies = [
+ "anyhow",
+ "colors-transform",
+ "css-color",
+ "futures",
+ "paperclip_common",
+ "paperclip_parser",
+ "paperclip_proto",
+]
+
+[[package]]
 name = "paperclip_parser"
 version = "0.1.1"
 dependencies = [
  "anyhow",
- "crc",
+ "crc 1.8.1",
  "futures",
  "paperclip_common",
  "paperclip_proto",
@@ -1293,6 +1336,9 @@ dependencies = [
 name = "paperclip_proto"
 version = "0.1.1"
 dependencies = [
+ "anyhow",
+ "crc 3.0.0",
+ "futures",
  "prost",
  "prost-build",
  "serde",

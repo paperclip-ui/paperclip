@@ -1,3 +1,121 @@
+import {
+  ColorPresentationRequest,
+  Connection,
+  DocumentColorParams,
+  DocumentColorRequest,
+  TextEdit,
+  Range,
+  Color,
+  ColorPresentation,
+  ColorPresentationParams,
+  ColorInformation,
+} from "vscode-languageserver";
+import * as parseColor from "color";
+import { DocumentManager } from "./documents";
+import { DesignerClient } from "./designer-client";
+import { fixFileUrlCasing } from "../../utils";
+
+export class LanguageRequestResolver {
+  private _listening: boolean;
+  private _settingColor: boolean;
+  private _latestColor: [string, ColorPresentation];
+  private _colorPresentationPromise: Promise<any>;
+
+  constructor(
+    private _designerClient: DesignerClient,
+    private _connection: Connection,
+    private _documents: DocumentManager
+  ) {
+    this._listen();
+  }
+
+  private _listen() {
+    if (this._listening) {
+      return;
+    }
+
+    this._listening = true;
+
+    this._connection.onRequest(
+      DocumentColorRequest.type,
+      this._onDocumentColorRequest
+    );
+    this._connection.onRequest(
+      ColorPresentationRequest.type,
+      this._onColorPresentationRequest
+    );
+  }
+
+  private _onColorPresentationRequest = async (
+    params: ColorPresentationParams
+  ) => {
+    const presentation = getColorPresentation(params.color, params.range);
+    const uri = fixFileUrlCasing(params.textDocument.uri);
+    this._applyColorPreview(uri, presentation);
+    return [presentation];
+  };
+
+  private _applyColorPreview = (
+    uri: string,
+    presentation: ColorPresentation
+  ) => {
+    if (this._colorPresentationPromise) {
+      this._latestColor = [uri, presentation];
+      return false;
+    }
+    this._settingColor = true;
+    this._colorPresentationPromise = this._documents.appleDocumentEdits(uri, [
+      presentation.textEdit,
+    ]);
+    this._colorPresentationPromise.then(() => {
+      this._colorPresentationPromise = null;
+      if (this._latestColor) {
+        const [uri, presentation] = this._latestColor;
+        this._latestColor = null;
+        this._applyColorPreview(uri, presentation);
+      }
+    });
+  };
+
+  private _onDocumentColorRequest = async (
+    params: DocumentColorParams
+  ): Promise<ColorInformation[]> => {
+    const uri = fixFileUrlCasing(params.textDocument.uri);
+    const document = this._documents.getDocument(uri);
+    return this._designerClient.getDocumentInfo(uri).then(({ colorsList }) => {
+      return colorsList.map(({ position, value }) => {
+        return {
+          range: {
+            start: document.positionAt(position.start),
+            end: document.positionAt(position.end),
+          },
+          color: {
+            red: value.red / 255,
+            green: value.green / 255,
+            blue: value.blue / 255,
+            alpha: value.alpha,
+          },
+        };
+      });
+    });
+  };
+}
+
+// from https://github.com/microsoft/vscode-css-languageservice/blob/a652e5da7ebb86677bff750c9ca0cf4740adacee/src/services/cssNavigation.ts#L196
+const getColorPresentation = (
+  { red, green, blue, alpha }: Color,
+  range: Range
+): ColorPresentation => {
+  const info = parseColor.rgb(
+    Math.round(red * 255),
+    Math.round(green * 255),
+    Math.round(blue * 255),
+    alpha
+  );
+  const label = info.toString();
+  return { label, textEdit: TextEdit.replace(range, label) };
+};
+
 // import {
 //   ColorPresentationRequest,
 //   CompletionRequest,

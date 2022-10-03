@@ -15,10 +15,10 @@ export class DocumentManager {
     this._documents[uri] = document;
     this._designerClient.updateVirtualFileContent(uri, document.getText());
   }
-  // appleDocumentEdits(uri: string, edits: TextEdit[]) {
-  // const text = TextDocument.applyEdits(this._documents[uri], edits);
-  // this._designerClient.updateVirtualFileContent(uri, text);
-  // }
+  async appleDocumentEdits(uri: string, edits: TextEdit[]) {
+    const text = TextDocument.applyEdits(this._documents[uri], edits);
+    await this._designerClient.updateVirtualFileContent(uri, text);
+  }
   removeDocument(uri: string) {
     delete this._documents[uri];
   }

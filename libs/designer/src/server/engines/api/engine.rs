@@ -15,12 +15,12 @@ use warp::Filter;
 
 type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
 
-pub async fn prepare<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
+pub async fn prepare<TIO: ServerIO>(_ctx: ServerEngineContext<TIO>) -> Result<()> {
     Ok(())
 }
 
 pub async fn start<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
-    start_server(ctx.clone()).await;
+    start_server(ctx.clone()).await?;
     Ok(())
 }
 
@@ -39,7 +39,6 @@ async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
     let designer_server = tonic_web::config().enable(designer_server);
 
     let server = Server::bind(&addr).serve(make_service_fn(move |_| {
-        println!("request made!");
 
         let cors = warp::cors().allow_any_origin();
         let route = routes().with(cors);

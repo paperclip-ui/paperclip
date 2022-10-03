@@ -13,6 +13,8 @@ paperclip_parser = { path = "../parser" }
 serde = { version = "1.0.143", features = ["derive"] }
 paperclip_common = { path = "../rs-common" }
 paperclip_proto = { path = "../proto" }
+mime_guess = "2.0.4"
 anyhow = "1.0.61"
 futures = "0.3.21"
 regex = "1.6.0"
+base64 = "0.13.0"

@@ -2,9 +2,10 @@
 
 use crate::server::core::{ServerEvent, ServerStore};
 use futures::Stream;
+use paperclip_language_services::DocumentInfo;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
-    file_response, Empty, FileRequest, FileResponse, PaperclipData, UpdateFileRequest,
+    file_response, Empty, FileRequest, FileResponse, UpdateFileRequest,
 };
 use std::pin::Pin;
 use std::sync::Arc;
@@ -42,15 +43,8 @@ impl Designer for DesignerService {
             let path = request.into_inner().path;
 
             let emit = |path: String, store: Arc<Mutex<ServerStore>>| {
-                let data = if let Some(modules) = &store.lock().unwrap().state.evaluated_modules {
-                    if let Some((css, html)) = modules.get(&path) {
-                        Some(file_response::Data::Paperclip(PaperclipData {
-                            css: Some(css.clone()),
-                            html: Some(html.clone()),
-                        }))
-                    } else {
-                        None
-                    }
+                let data = if let Ok(module) = store.lock().unwrap().state.bundle_evaluated_module(&path) {
+                    Some(file_response::Data::Paperclip(module))
                 } else {
                     None
                 };
@@ -89,5 +83,23 @@ impl Designer for DesignerService {
             .unwrap()
             .emit(ServerEvent::UpdateFileRequested { path, content });
         Ok(Response::new(Empty {}))
+    }
+
+    async fn get_document_info(
+        &self,
+        request: Request<FileRequest>,
+    ) -> Result<Response<DocumentInfo>, Status> {
+        let inner = request.into_inner();
+
+        let state = &self.store.lock().unwrap().state;
+
+        if let Some(dep) = state.graph.dependencies.get(&inner.path) {
+            return Ok(Response::new(
+                paperclip_language_services::get_document_info(&dep.path, &state.graph)
+                    .expect("Unable to get document info"),
+            ));
+        }
+
+        Err(Status::invalid_argument("File does not exist"))
     }
 }

@@ -118,7 +118,7 @@ fn parse_atom(context: &mut PCContext, is_public: bool) -> Result<ast::Atom, err
         context.id_generator,
         &context.source_url,
     )?);
-    context.scanner.unshift(1);
+
     context.next_token()?;
     let end = context.curr_u16pos.clone();
 
@@ -263,15 +263,13 @@ fn parse_style(context: &mut PCContext, is_public: bool) -> Result<ast::Style, e
     let declarations: Vec<css_ast::StyleDeclaration> =
         if context.curr_token == Some(Token::CurlyOpen) {
             // set position to {
-            context.scanner.unshift(1);
             let ret = parse_style_declarations_with_string_scanner(
                 context.scanner,
                 context.id_generator,
                 &context.source_url,
             )?;
 
-            // context.scanner.unshift(1);
-            context.next_token()?; // prime
+            context.next_token()?; // eat }
 
             ret
         } else {

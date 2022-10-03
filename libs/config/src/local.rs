@@ -1,6 +1,6 @@
 use super::io::ConfigIO;
 use crate::config::ConfigContext;
-use anyhow::{Result};
+use anyhow::Result;
 use paperclip_common::fs::{FileReader, FileResolver, LocalFileReader};
 use paperclip_parser::graph::io::IO as GraphIO;
 use path_absolutize::*;
@@ -31,11 +31,14 @@ impl FileReader for LocalIO {
     fn read_file(&self, path: &str) -> Result<Box<[u8]>> {
         LocalFileReader::default().read_file(path)
     }
+    fn get_file_size(&self, path: &str) -> Result<u64> {
+        LocalFileReader::default().get_file_size(path)
+    }
 }
 
 impl FileResolver for LocalIO {
-    fn resolve_file(&self, from_path: &str, to_path: &str) -> Option<String> {
-        Some(String::from(
+    fn resolve_file(&self, from_path: &str, to_path: &str) -> Result<String> {
+        Ok(String::from(
             Path::new(from_path)
                 .parent()
                 .unwrap()

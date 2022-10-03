@@ -424,6 +424,11 @@ add_case! {
 }
 
 add_case! {
+    can_parse_a_token_with_hex_value,
+    r#"token test #F60"#
+}
+
+add_case! {
     can_parse_attrs_with_dashes,
     r#"
         div(aria-label: "abba", style: "color: red;")

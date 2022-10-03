@@ -12,6 +12,9 @@ name = "paperclip_proto"
 serde = { version = "1.0.143", features = ["derive", "rc"] }
 tonic = "0.8.1"
 prost = "0.11.0"
+anyhow = "1.0.65"
+crc = "3.0.0"
+futures = "0.3.24"
 
 [build-dependencies]
 prost-build = "0.11.1"

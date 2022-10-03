@@ -7,6 +7,7 @@ use std::path::Path;
 
 pub trait FileReader {
     fn read_file<'content>(&self, path: &str) -> Result<Box<[u8]>>;
+    fn get_file_size(&self, path: &str) -> Result<u64>;
 }
 
 #[derive(Default)]
@@ -20,18 +21,25 @@ impl FileReader for LocalFileReader {
             Err(Error::msg("file not found"))
         }
     }
+    fn get_file_size(&self, path: &str) -> Result<u64> {
+        if let Ok(metadata) = fs::metadata(path) {
+            Ok(metadata.len())
+        } else {
+            Err(Error::msg("file not found"))
+        }
+    }
 }
 
 pub trait FileResolver {
-    fn resolve_file(&self, from: &str, to: &str) -> Option<String>;
+    fn resolve_file(&self, from: &str, to: &str) -> Result<String>;
 }
 
 #[derive(Default)]
 pub struct LocalFileResolver;
 
 impl FileResolver for LocalFileResolver {
-    fn resolve_file(&self, from_path: &str, to_path: &str) -> Option<String> {
-        Some(String::from(
+    fn resolve_file(&self, from_path: &str, to_path: &str) -> Result<String> {
+        Ok(String::from(
             Path::new(from_path)
                 .parent()
                 .unwrap()

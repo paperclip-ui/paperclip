@@ -95,12 +95,7 @@ fn evaluate_element<F: FileResolver>(
 
     if let Some(reference) = reference {
         if let graph_ref::Expr::Component(component) = &reference.expr {
-            evaluate_instance(
-                element,
-                component,
-                fragment,
-                &mut context.within_component(component),
-            );
+            evaluate_instance(element, component, fragment, context);
         }
     } else {
         evaluate_native_element(element, fragment, context);
@@ -154,7 +149,11 @@ fn evaluate_instance<F: FileResolver>(
     let mut data = create_raw_object_from_params(element, context);
     add_inserts_to_data(&mut create_inserts(element, context), &mut data);
 
-    evaluate_render(&render, fragment, &mut context.with_data(data));
+    evaluate_render(
+        &render,
+        fragment,
+        &mut context.with_data(data).within_component(instance_of),
+    );
 }
 
 fn add_inserts_to_data(inserts: &mut InsertsMap, data: &mut core_virt::Object) {
@@ -289,7 +288,7 @@ fn create_attributes<F: FileResolver>(
         evaluate_attribute(param, &mut attributes, context);
     }
 
-    add_static_attribute_values(element, &mut attributes, context);
+    resolve_element_attributes(element, &mut attributes, context);
 
     attributes.values().cloned().collect()
 }
@@ -310,11 +309,12 @@ fn evaluate_attribute<F: FileResolver>(
     );
 }
 
-fn add_static_attribute_values<F: FileResolver>(
+fn resolve_element_attributes<F: FileResolver>(
     element: &ast::Element,
     attributes: &mut BTreeMap<String, virt::Attribute>,
     context: &DocumentContext<F>,
 ) {
+    // add styling hooks
     if element.is_stylable() {
         let class_name = get_style_namespace(&element.name, &element.id, context.current_component);
 
@@ -329,6 +329,18 @@ fn add_static_attribute_values<F: FileResolver>(
                     value: class_name,
                 },
             );
+        }
+    }
+
+    // resolve assets
+    if element.namespace == None {
+        if element.tag_name.as_str() == "img" {
+            if let Some(src) = attributes.get_mut("src") {
+                src.value = context
+                    .file_resolver
+                    .resolve_file(&context.path, &src.value)
+                    .unwrap()
+            }
         }
     }
 }

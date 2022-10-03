@@ -2,11 +2,12 @@ use std::collections::HashMap;
 
 use anyhow::Result;
 use paperclip_evaluator::css;
+use paperclip_evaluator::core::io::PCFileResolver;
 
 use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_evaluator::html;
 use paperclip_parser::graph::io::IO as GraphIO;
-use paperclip_parser::graph::Graph;
+use futures::executor::block_on;
 
 use crate::handle_store_events;
 use crate::server::core::{ServerEngineContext, ServerEvent};
@@ -28,10 +29,10 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
         ServerEvent::PaperclipFilesLoaded { files } => {
             load_dependency_graph(next.clone(), &files).await.expect("Unable to load dependency graph");
         },
-        ServerEvent::DependencyGraphLoaded { graph } => {
-            evaluate_dependency_graph(next.clone(), &graph).await.expect("Unable to evaluate Dependency graph");
+        ServerEvent::DependencyGraphLoaded { graph: _graph } => {
+            evaluate_dependency_graph(next.clone()).expect("Unable to evaluate Dependency graph");
         },
-        ServerEvent::UpdateFileRequested { path, content } => {
+        ServerEvent::UpdateFileRequested { path, content: _content } => {
             load_dependency_graph(next.clone(), &vec![path.to_string()]).await.expect("Unable to load dependency");
         },
         ServerEvent::FileWatchEvent(event) => {
@@ -56,10 +57,17 @@ impl<TIO: ServerIO> FileReader for VirtGraphIO<TIO> {
             self.ctx.io.read_file(path)
         }
     }
+    fn get_file_size(&self, path: &str) -> Result<u64> {
+        if let Some(content) = self.ctx.store.lock().unwrap().state.file_cache.get(path) {
+            Ok(content.len() as u64)
+        } else {
+            self.ctx.io.get_file_size(path)
+        }
+    }
 }
 
 impl<TIO: ServerIO> FileResolver for VirtGraphIO<TIO> {
-    fn resolve_file(&self, from: &str, to: &str) -> Option<String> {
+    fn resolve_file(&self, from: &str, to: &str) -> Result<String> {
         self.ctx.io.resolve_file(from, to)
     }
 }
@@ -68,7 +76,6 @@ async fn load_dependency_graph<TIO: ServerIO>(
     ctx: ServerEngineContext<TIO>,
     files: &Vec<String>,
 ) -> Result<()> {
-    println!("RELOAD");
     let graph = ctx.store.lock().unwrap().state.graph.clone();
 
     // let store = self.store.lock().await;
@@ -108,24 +115,30 @@ async fn load_files<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> 
     Ok(())
 }
 
-async fn evaluate_dependency_graph<TIO: ServerIO>(
-    ctx: ServerEngineContext<TIO>,
-    graph: &Graph,
+fn evaluate_dependency_graph<TIO: ServerIO>(
+    ctx: ServerEngineContext<TIO>
 ) -> Result<()> {
     let mut output: HashMap<String, (css::virt::Document, html::virt::Document)> = HashMap::new();
+    
+    // file resolver for embedding
+    
+    {
+        let resolver = PCFileResolver::new(ctx.io.clone(), ctx.io.clone(), None);
+        let graph = &ctx.store.lock().unwrap().state.graph;
 
-    for (path, _dep) in &graph.dependencies {
-        let css = css::evaluator::evaluate(path, graph, &ctx.io).await?;
-        let html = html::evaluator::evaluate(
-            path,
-            graph,
-            &ctx.io,
-            html::evaluator::Options {
-                include_components: true,
-            },
-        )
-        .await?;
-        output.insert(path.to_string(), (css, html));
+        for (path, _) in &graph.dependencies {
+            let css = block_on(css::evaluator::evaluate(path, &graph, &resolver))?;
+            let html = block_on(html::evaluator::evaluate(
+                path,
+                &graph,
+                &resolver,
+                html::evaluator::Options {
+                    include_components: false,
+                },
+            ))?;
+
+            output.insert(path.to_string(), (css, html));
+        }
     }
 
     ctx.emit(ServerEvent::ModulesEvaluated(output));

@@ -122,7 +122,9 @@ fn evaluate_render_node<F: FileResolver>(node: &ast::RenderNode, context: &mut D
         ast::render_node::Inner::Text(element) => {
             evaluate_text(element, context);
         }
-        _ => {}
+        ast::render_node::Inner::Slot(expr) => {
+            evaluate_slot(expr, context);
+        }
     }
 }
 
@@ -137,13 +139,49 @@ fn evaluate_element<F: FileResolver>(element: &ast::Element, context: &mut Docum
             ast::element_body_item::Inner::Element(expr) => {
                 evaluate_element(expr, &mut el_context);
             }
+            ast::element_body_item::Inner::Insert(expr) => {
+                evaluate_insert(expr, &mut el_context);
+            }
+            ast::element_body_item::Inner::Slot(expr) => {
+                evaluate_slot(expr, &mut el_context);
+            }
             ast::element_body_item::Inner::Text(expr) => {
                 evaluate_text(expr, &mut el_context);
-            }
+            },
             _ => {}
         }
     }
 }
+
+fn evaluate_insert<F: FileResolver>(insert: &ast::Insert, context: &mut DocumentContext<F>) {
+    for item in &insert.body {
+        match item.get_inner() {
+            ast::insert_body::Inner::Element(expr) => {
+                evaluate_element(expr, context);
+            }
+            ast::insert_body::Inner::Text(expr) => {
+                evaluate_text(expr, context);
+            },
+            ast::insert_body::Inner::Slot(expr) => {
+                evaluate_slot(expr, context);
+            }
+        }
+    }
+}
+
+fn evaluate_slot<F: FileResolver>(slot: &ast::Slot, context: &mut DocumentContext<F>) {
+    for item in &slot.body {
+        match item.get_inner() {
+            ast::slot_body_item::Inner::Element(expr) => {
+                evaluate_element(expr, context);
+            }
+            ast::slot_body_item::Inner::Text(expr) => {
+                evaluate_text(expr, context);
+            }
+        }
+    }
+}
+
 fn evaluate_text<F: FileResolver>(expr: &ast::TextNode, context: &mut DocumentContext<F>) {
     let mut el_context = context.within_node(CurrentNode::TextNode(expr));
 
@@ -456,7 +494,7 @@ fn collect_triggers<F: FileResolver>(
                 into.push(VariantTrigger::Selector(expr.value.to_string()));
             }
             ast::trigger_body_item::Inner::Reference(expr) => {
-                if let Some(info) = context.graph.get_ref(&expr.path, context.path) {
+                if let Some(info) = context.graph.get_ref(&expr.path, &context.path) {
                     if let graph_ref::Expr::Trigger(trigger) = &info.expr {
                         collect_triggers(&trigger.body, into, context);
                     }
@@ -516,9 +554,9 @@ fn create_style_declarations<F: FileResolver>(
     // including the entire body of extended styles to to cover !important statements.
     // This could be smarter at some point.
     for reference in &style.extends {
-        if let Some(reference) = context.graph.get_ref(&reference.path, context.path) {
+        if let Some(reference) = context.graph.get_ref(&reference.path, &context.path) {
             if let graph_ref::Expr::Style(style) = &reference.expr {
-                decls.extend(create_style_declarations(style, context));
+                decls.extend(create_style_declarations(style, &mut context.within_path(&reference.path)));
             }
         }
     }
@@ -568,17 +606,8 @@ fn stringify_style_decl_value<F: FileResolver>(
         }
         css_ast::declaration_value::Inner::FunctionCall(expr) => {
             if expr.name == "var" && !expr.name.starts_with("--") {
-                if let css_ast::declaration_value::Inner::Reference(reference) = &expr
-                    .arguments
-                    .as_ref()
-                    .expect("arguments missing")
-                    .get_inner()
-                {
-                    if let Some(reference) = context.graph.get_ref(&reference.path, context.path) {
-                        if let graph_ref::Expr::Atom(atom) = reference.expr {
-                            return format!("var({})", atom.get_var_name());
-                        }
-                    }
+                if let Some(atom) = context.graph.get_var_reference(expr, &context.path) {
+                    return format!("var({})", atom.get_var_name());
                 }
             }
 

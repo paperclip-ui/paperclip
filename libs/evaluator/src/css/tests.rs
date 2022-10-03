@@ -1,5 +1,7 @@
 use super::evaluator::evaluate;
 use super::serializer::serialize;
+use crate::core::io::PCFileResolver;
+use anyhow::Result;
 use futures::executor::block_on;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::str_utils::strip_extra_ws;
@@ -9,8 +11,8 @@ use std::collections::HashMap;
 
 struct MockResolver;
 impl FileResolver for MockResolver {
-    fn resolve_file(&self, _from: &str, _to: &str) -> Option<String> {
-        Some(_to.to_string())
+    fn resolve_file(&self, _from: &str, _to: &str) -> Result<String> {
+        Ok(_to.to_string())
     }
 }
 
@@ -24,7 +26,8 @@ macro_rules! add_case {
             if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
                 panic!("Unable to load");
             }
-            let resolver = MockResolver {};
+            let resolver = PCFileResolver::new(mock_fs.clone(), MockResolver {}, None);
+
             let doc = block_on(evaluate("/entry.pc", &graph, &resolver)).unwrap();
             assert_eq!(
                 strip_extra_ws(serialize(&doc).as_str()),
@@ -426,3 +429,166 @@ div {
   ._80f4925f-13 { font-family: Helvetica; color: red; }
   "#
 }
+
+add_case! {
+    can_define_styles_on_inserted_elements,
+    [
+("/entry.pc", r#"
+	public component A {
+		render div {
+			slot children
+		}
+	}
+
+	A {
+		div {
+			style {
+				background: blue
+			}
+			text "Hello"
+		}
+	}
+"#)
+    ],
+    "._80f4925f-9 { background: blue; }"
+}
+
+add_case! {
+  resolves_url_assets,
+  [
+      ("/entry.pc", r#"
+        div {
+          style {
+            background: url("/test.svg")
+          }
+        }
+      "#),
+      ("/test.svg", "something"),
+  ],
+  r#"._80f4925f-5 { background: url("data:image/svg+xml;base64,c29tZXRoaW5n"); }"#
+}
+
+
+add_case! {
+  can_include_style_from_another_file_that_also_extends,
+  [
+      ("/entry.pc", r#"
+        import "/test.pc" as test
+        div {
+          style extends test.icon {
+            mask-url: abba
+          }
+        }
+      "#),
+      ("/test.pc", r#"
+        style mask {
+          mask-size: 100%
+        }
+        public style icon extends mask {
+          --size: 20px
+          width: var(--size)
+          height: var(--size)
+        }
+      "#),
+  ],
+  r#"._80f4925f-6 { mask-size: 100%; --size: 20px; width: var(--size); height: var(--size); mask-url: abba; }"#
+}
+
+add_case! {
+  can_define_styles_within_inserts,
+  [
+      ("/entry.pc", r#"
+        div {
+          insert test {
+            div {
+              style {
+                color: red
+              }
+            }    
+          }
+        }
+      "#)
+  ],
+  r#"._80f4925f-4 { color: red; }"#
+}
+
+add_case! {
+  can_define_styles_within_an_element_slot,
+  [
+      ("/entry.pc", r#"
+        div {
+          slot test {
+            div blarg {
+              style {
+                color: blue
+              }
+            }
+          }
+        }
+      "#)
+  ],
+  r#"._blarg-80f4925f-4 { color: blue; }"#
+}
+
+add_case! {
+  can_define_styles_within_text_in_a_slot,
+  [
+      ("/entry.pc", r#"
+        div {
+          slot test {
+            text blarg "blahh" {
+              style {
+                color: blue
+              }
+            }
+          }
+        }
+      "#)
+  ],
+  r#"._blarg-80f4925f-4 { color: blue; }"#
+}
+
+
+
+add_case! {
+  can_evaluate_a_slot_within_an_insert,
+  [
+      ("/entry.pc", r#"
+        div {
+          insert a {
+            slot b {
+              text "c" {
+                style {
+                  color: orange
+                }
+              }
+            }
+          }
+        }
+      "#)
+  ],
+  r#"._80f4925f-4 { color: orange; }"#
+}
+
+
+
+
+add_case! {
+  can_evaluate_a_render_slot,
+  [
+      ("/entry.pc", r#"
+       component A {
+        render slot children {
+          div {
+            style {
+              color: purple
+            }
+          }
+        }
+       }
+      "#)
+  ],
+  r#"._A-80f4925f-4 { color: purple; }"#
+}
+
+

@@ -25,7 +25,7 @@ pub async fn init(_args: InitArgs) -> Result<()> {
 
     let new_config = Config {
         src_dir: Some("src".to_string()),
-        global_css: None,
+        global_scripts: None,
         module_dirs: None,
         compiler_options: Some(vec![CompilerOptions {
             emit: Some(vec!["css".to_string(), "react.js:js".to_string()]),

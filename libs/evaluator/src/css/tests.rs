@@ -592,3 +592,128 @@ add_case! {
 }
 
 
+
+
+add_case! {
+  can_override_a_simple_style,
+  [
+      ("/entry.pc", r#"
+       component A {
+         render div something {
+          style {
+            color: blue
+          }
+         }
+       }
+
+       A {
+        override something {
+          style {
+            color: orange
+          }
+        }
+       }
+      "#)
+  ],
+  r#"._A-80f4925f-4 { color: purple; }"#
+}
+
+
+
+// add_case! {
+//   can_override_a_nested_instance,
+//   [
+//       ("/entry.pc", r#"
+
+//        component A {
+//          render div c {
+//            style {
+//               color: blue
+//            }
+//          }
+//        }
+//        component B {
+//          render A a1
+//        }
+
+//        A {
+//         override a1.c {
+//           style {
+//             color: orange
+//           }
+//         }
+//        }
+//       "#)
+//   ],
+//   r#"._A-80f4925f-4 { color: purple; }"#
+// }
+
+
+
+
+// add_case! {
+//   can_create_a_style_override_within_a_variant,
+//   [
+//       ("/entry.pc", r#"
+
+//        component A {
+//          render div root {
+//            style {
+//               color: blue
+//            }
+//          }
+//        }
+//        component B {
+//          variant test trigger {
+//             "@supports mobile"
+//          }
+
+//          render A {
+//            override root {
+//              style variant test {
+//                color: purple
+//              }
+//            }
+//          }
+//        }
+
+
+//       "#)
+//   ],
+//   r#"._A-80f4925f-4 { color: purple; }"#
+// }
+
+
+
+
+
+// add_case! {
+//   can_turn_on_an_instance_variant,
+//   [
+//       ("/entry.pc", r#"
+
+//        component A {
+//          variant something
+//          render div root {
+//            style {
+//              color: red
+//            }
+//            style variant other {
+//               color: blue
+//            }
+//          }
+//        }
+
+//        A {
+//          override {
+//            variant something trigger {
+//              true
+//            }
+//          }
+//        }
+//       "#)
+//   ],
+//   r#"._A-80f4925f-4 { color: purple; }"#
+// }
+
+

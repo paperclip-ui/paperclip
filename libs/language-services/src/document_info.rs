@@ -181,7 +181,7 @@ fn scan_declaration_value(value: &declaration_value::Inner, ctx: &mut Context) {
                     add_color(rgba, call.range.as_ref().unwrap(), ctx);
                 }
             } else if call.name == "var" {
-                if let Some(atom) = ctx.graph.get_var_reference(call, &ctx.path) {
+                if let Some(atom) = ctx.graph.get_var_ref(call, &ctx.path) {
                     let mut sub = ctx.clone().with_source_position(Position {
                         start: call.range.as_ref().unwrap().start.as_ref().unwrap().pos,
                         end: call.range.as_ref().unwrap().end.as_ref().unwrap().pos,

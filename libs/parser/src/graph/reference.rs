@@ -1,16 +1,37 @@
 use paperclip_proto::ast::css::FunctionCall;
+use paperclip_proto::ast::pc::Component;
 
 use super::core::Graph;
 use crate::css::ast as css_ast;
 use crate::pc::ast;
 
-#[derive(Debug)]
+macro_rules! expr_info {
+    ($name: ident, $expr: ident) => {
+        
+        #[derive(Debug, Clone)]
+        pub struct $name<'expr> {
+            pub path: &'expr str,
+            pub expr: &'expr ast::$expr,
+        }
+
+        impl<'expr> $name<'expr> {
+            pub fn wrap(&self) -> RefInfo<'expr> {
+                RefInfo {
+                    path: self.path,
+                    expr: Expr::$expr(self.expr)
+                }
+            }
+        }
+    };
+}
+
+#[derive(Debug, Clone)]
 pub struct RefInfo<'expr> {
     pub path: &'expr str,
     pub expr: Expr<'expr>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Expr<'expr> {
     Document(&'expr ast::Document),
     Import(&'expr ast::Import),
@@ -20,17 +41,23 @@ pub enum Expr<'expr> {
     Trigger(&'expr ast::Trigger),
 }
 
-impl Graph {
-    pub fn get_ref(&self, ref_path: &Vec<String>, dep_path: &str) -> Option<RefInfo<'_>> {
+expr_info!(ComponentRefInfo, Component);
 
+impl Graph {
+    pub fn get_ref<'expr>(&'expr self, ref_path: &Vec<String>, dep_path: &str, scope: Option<Expr<'expr>>) -> Option<RefInfo<'expr>> {
 
         let mut curr_dep = if let Some(dep) = self.dependencies.get(dep_path) {
             dep
         } else {
             return None;
         };
+        
 
-        let mut expr = Expr::Document(&curr_dep.document);
+        let mut expr = if let Some(expr) = scope {
+            expr.clone()
+        } else {
+            Expr::Document(&curr_dep.document)
+        };
 
         for part in ref_path {
             match expr {
@@ -57,6 +84,9 @@ impl Graph {
                         };
                     }
                 }
+                Expr::Component(element) => {
+                    // TODO - traverse
+                }
                 _ => {}
             }
         }
@@ -67,7 +97,7 @@ impl Graph {
         })
     }
 
-    pub fn get_var_reference(&self, expr: &FunctionCall, dep_path: &str) -> Option<&ast::Atom> {
+    pub fn get_var_ref(&self, expr: &FunctionCall, dep_path: &str) -> Option<&ast::Atom> {
         if expr.name == "var" {
             if let css_ast::declaration_value::Inner::Reference(reference) = &expr
                 .arguments
@@ -75,11 +105,29 @@ impl Graph {
                 .expect("arguments missing")
                 .get_inner()
             {
-                if let Some(reference) = self.get_ref(&reference.path, dep_path) {
+                if let Some(reference) = self.get_ref(&reference.path, dep_path, None) {
                     if let Expr::Atom(atom) = reference.expr {
                         return Some(atom);
                     }
                 }
+            }
+        }
+        return None;
+    }
+
+    pub fn get_instance_component_ref(&self, element: &ast::Element, path: &str) -> Option<ComponentRefInfo<'_>> {
+       
+        let mut ref_path = vec![];
+
+        if let Some(ns) = &element.namespace {
+            ref_path.push(ns.to_string());
+        }
+
+        ref_path.push(element.tag_name.to_string());
+
+        if let Some(reference) = self.get_ref(&ref_path, path, None) {
+            if let Expr::Component(component) = reference.expr {
+                return Some(ComponentRefInfo { expr: component, path: reference.path });
             }
         }
         return None;

@@ -118,7 +118,7 @@ macro_rules! test_case {
 fn default_config_with_compiler_options(src: &str, options: Vec<CompilerOptions>) -> Config {
     Config {
         src_dir: Some(src.to_string()),
-        global_css: None,
+        global_scripts: None,
         module_dirs: None,
         compiler_options: Some(options),
     }

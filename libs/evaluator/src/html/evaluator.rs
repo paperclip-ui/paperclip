@@ -83,20 +83,11 @@ fn evaluate_element<F: FileResolver>(
     fragment: &mut Vec<virt::Node>,
     context: &mut DocumentContext<F>,
 ) {
-    let mut ref_path = vec![];
 
-    if let Some(ns) = &element.namespace {
-        ref_path.push(ns.to_string());
-    }
+    let reference = context.graph.get_instance_component_ref(element, &context.path);
 
-    ref_path.push(element.tag_name.to_string());
-
-    let reference = context.graph.get_ref(&ref_path, &context.path);
-
-    if let Some(reference) = reference {
-        if let graph_ref::Expr::Component(component) = &reference.expr {
-            evaluate_instance(element, component, fragment, context);
-        }
+    if let Some(component_info) = reference {
+        evaluate_instance(element, component_info.expr, fragment, context);
     } else {
         evaluate_native_element(element, fragment, context);
     }

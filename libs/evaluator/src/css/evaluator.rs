@@ -5,6 +5,7 @@ use crate::core::utils::{get_style_namespace, get_variant_namespace};
 use paperclip_common::fs::FileResolver;
 use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph;
+use paperclip_common::get_or_short;
 use paperclip_parser::graph::reference as graph_ref;
 use paperclip_parser::pc::ast;
 use std::rc::Rc;
@@ -147,8 +148,10 @@ fn evaluate_element<F: FileResolver>(element: &ast::Element, context: &mut Docum
             }
             ast::element_body_item::Inner::Text(expr) => {
                 evaluate_text(expr, &mut el_context);
-            },
-            _ => {}
+            }
+            ast::element_body_item::Inner::Override(expr) => {
+                evaluate_override(expr, element, &mut el_context);
+            }
         }
     }
 }
@@ -167,6 +170,19 @@ fn evaluate_insert<F: FileResolver>(insert: &ast::Insert, context: &mut Document
             }
         }
     }
+}
+
+
+fn evaluate_override<F: FileResolver>(expr: &ast::Override, parent: &ast::Element, context: &mut DocumentContext<F>) {
+    let component_info = get_or_short!(context.graph.get_instance_component_ref(parent, &context.path), ());
+
+    let target_element = context.graph.get_ref(&expr.path, component_info.path, Some(component_info.wrap().expr));
+
+    println!("EXPR {:?} {:?}", expr.path, target_element);
+
+
+    // let override_path = expr.path
+    // context.graph.get_ref(ref_path, dep_path)
 }
 
 fn evaluate_slot<F: FileResolver>(slot: &ast::Slot, context: &mut DocumentContext<F>) {
@@ -493,7 +509,7 @@ fn collect_triggers<F: FileResolver>(
                 into.push(VariantTrigger::Selector(expr.value.to_string()));
             }
             ast::trigger_body_item::Inner::Reference(expr) => {
-                if let Some(info) = context.graph.get_ref(&expr.path, &context.path) {
+                if let Some(info) = context.graph.get_ref(&expr.path, &context.path, None) {
                     if let graph_ref::Expr::Trigger(trigger) = &info.expr {
                         collect_triggers(&trigger.body, into, context);
                     }
@@ -553,7 +569,7 @@ fn create_style_declarations<F: FileResolver>(
     // including the entire body of extended styles to to cover !important statements.
     // This could be smarter at some point.
     for reference in &style.extends {
-        if let Some(reference) = context.graph.get_ref(&reference.path, &context.path) {
+        if let Some(reference) = context.graph.get_ref(&reference.path, &context.path, None) {
             if let graph_ref::Expr::Style(style) = &reference.expr {
                 decls.extend(create_style_declarations(style, &mut context.within_path(&reference.path)));
             }
@@ -605,7 +621,7 @@ fn stringify_style_decl_value<F: FileResolver>(
         }
         css_ast::declaration_value::Inner::FunctionCall(expr) => {
             if expr.name == "var" && !expr.name.starts_with("--") {
-                if let Some(atom) = context.graph.get_var_reference(expr, &context.path) {
+                if let Some(atom) = context.graph.get_var_ref(expr, &context.path) {
                     return format!("var({})", atom.get_var_name());
                 }
             }

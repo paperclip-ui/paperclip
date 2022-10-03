@@ -405,7 +405,6 @@ fn substr(start: usize, value: &str) -> String {
 
     }
 }
-
 */
 
 fn get_combo_selectors(

@@ -170,7 +170,7 @@ component Canvas {
     }
     Artboard {
       insert title {
-        text "Some canvas"
+        text "Some title"
       }
     }
   }

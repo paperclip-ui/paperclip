@@ -6,8 +6,8 @@ use paperclip_common::fs::FileResolver;
 use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph;
 use paperclip_common::get_or_short;
-use paperclip_parser::graph::reference as graph_ref;
-use paperclip_parser::pc::ast;
+use paperclip_parser::graph::reference::{self as graph_ref, RefInfo, Expr};
+use paperclip_parser::pc::ast::{self, element_body_item, override_body_item};
 use std::rc::Rc;
 
 #[derive(Debug)]
@@ -176,9 +176,26 @@ fn evaluate_insert<F: FileResolver>(insert: &ast::Insert, context: &mut Document
 fn evaluate_override<F: FileResolver>(expr: &ast::Override, parent: &ast::Element, context: &mut DocumentContext<F>) {
     let component_info = get_or_short!(context.graph.get_instance_component_ref(parent, &context.path), ());
 
-    let target_element = context.graph.get_ref(&expr.path, component_info.path, Some(component_info.wrap().expr));
+    let target_node = context.graph.get_ref(&expr.path, component_info.path, Some(component_info.wrap().expr));
 
-    println!("EXPR {:?} {:?}", expr.path, target_element);
+    let target_node = if let Some(element) = target_node {
+        element
+    } else {
+        println!("Override not found!");
+        return;
+    };
+
+
+    // for item in expr.body {
+    //     match item.get_inner() {
+    //         override_body_item::Inner::Style(style) => {
+    //             evaluate_style(style, context.within_path(&target_node.path))
+    //         },
+    //         _ => {
+
+    //         }
+    //     }
+    // }
 
 
     // let override_path = expr.path
@@ -252,6 +269,8 @@ fn evaluate_variant_styles<F: FileResolver>(
     let ns = get_style_namespace(
         current_node.get_name(),
         current_node.get_id(),
+
+        // TODO - this may be different with varint overrides
         context.current_component,
     );
 

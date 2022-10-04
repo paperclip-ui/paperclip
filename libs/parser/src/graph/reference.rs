@@ -1,5 +1,5 @@
 use paperclip_proto::ast::css::FunctionCall;
-use paperclip_proto::ast::pc::Component;
+use paperclip_proto::ast::pc::{Component, component_body_item, render_node};
 
 use super::core::Graph;
 use crate::css::ast as css_ast;
@@ -38,6 +38,8 @@ pub enum Expr<'expr> {
     Atom(&'expr ast::Atom),
     Style(&'expr ast::Style),
     Component(&'expr ast::Component),
+    Element(&'expr ast::Element),
+    Text(&'expr ast::TextNode),
     Trigger(&'expr ast::Trigger),
 }
 
@@ -84,10 +86,11 @@ impl Graph {
                         };
                     }
                 }
-                Expr::Component(element) => {
-                    // TODO - traverse
+                _ => {
+                    if let Some(nested) = find_within(part, &expr) {
+                        expr = nested
+                    }
                 }
-                _ => {}
             }
         }
 
@@ -131,6 +134,48 @@ impl Graph {
             }
         }
         return None;
+    }
+}
+
+fn find_reference<'expr>(name: &str, expr: Expr<'expr>) -> Option<Expr<'expr>> {
+    match expr {
+        Expr::Component(component) => {
+            return if component.name == name {
+                return Some(expr)
+            } else {
+                find_within(name, &expr)
+            }
+        },
+        Expr::Element(element) => {
+            return if element.name == Some(name.to_string()) {
+                return Some(expr)
+            } else {
+                find_within(name, &expr)
+            }
+        },
+        _ => {}
+    }
+    None
+}
+
+fn find_within<'expr>(name: &str, scope: &Expr<'expr>) -> Option<Expr<'expr>> {
+    match scope {
+        Expr::Component(component) => {
+            component.body.iter().find_map(|item| {
+                match item.get_inner() {
+                    component_body_item::Inner::Render(render) => {
+                        match render.node.as_ref().expect("Node must exist").get_inner() {
+                            render_node::Inner::Element(element) => {
+                                find_reference(name, Expr::Element(element))
+                            },
+                            _ => None
+                        }
+                    },
+                    _ => None
+                }
+            })
+        },
+        _ => None
     }
 }
 

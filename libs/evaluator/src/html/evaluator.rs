@@ -5,7 +5,6 @@ use crate::core::utils::get_style_namespace;
 use crate::core::virt as core_virt;
 use paperclip_common::fs::FileResolver;
 use paperclip_parser::graph;
-use paperclip_parser::graph::reference as graph_ref;
 use paperclip_parser::pc::ast;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
@@ -83,8 +82,9 @@ fn evaluate_element<F: FileResolver>(
     fragment: &mut Vec<virt::Node>,
     context: &mut DocumentContext<F>,
 ) {
-
-    let reference = context.graph.get_instance_component_ref(element, &context.path);
+    let reference = context
+        .graph
+        .get_instance_component_ref(element, &context.path);
 
     if let Some(component_info) = reference {
         evaluate_instance(element, component_info.expr, fragment, context);

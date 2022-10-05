@@ -1,5 +1,5 @@
 use paperclip_proto::ast::css::FunctionCall;
-use paperclip_proto::ast::pc::{Component, component_body_item, render_node};
+use paperclip_proto::ast::pc::{component_body_item, render_node};
 
 use super::core::Graph;
 use crate::css::ast as css_ast;

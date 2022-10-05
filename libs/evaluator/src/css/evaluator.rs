@@ -1,14 +1,14 @@
-use super::context::{CurrentNode, DocumentContext};
+use super::context::{CurrentNode, DocumentContext, PrioritizedRule};
 use super::errors;
 use super::virt;
 use crate::core::utils::{get_style_namespace, get_variant_namespace};
 use paperclip_common::fs::FileResolver;
+use paperclip_common::get_or_short;
 use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph;
-use paperclip_common::get_or_short;
-use paperclip_parser::graph::reference::{self as graph_ref, RefInfo, Expr};
-use paperclip_parser::pc::ast::{self, element_body_item, override_body_item};
-use std::rc::Rc;
+use paperclip_parser::graph::reference::{self as graph_ref, Expr};
+use paperclip_parser::pc::ast::{self, override_body_item};
+use paperclip_proto::virt::css::Rule;
 
 #[derive(Debug)]
 enum VariantTrigger {
@@ -39,7 +39,28 @@ pub async fn evaluate<'asset_resolver, FR: FileResolver>(
 
     evaluate_document(&dependency.document, &mut context);
 
-    Ok(Rc::try_unwrap(context.document).unwrap().into_inner())
+    Ok(virt::Document {
+        id: dependency.document.id.to_string(),
+        rules: collect_sorted_rules(&mut context)
+    })
+}
+
+fn collect_sorted_rules<F: FileResolver>(context: &mut DocumentContext<F>) -> Vec<Rule> {
+    let mut rules = context
+    .rules
+    .borrow_mut()
+    .drain(0..)
+    .collect::<Vec<PrioritizedRule>>();
+
+    
+    rules.sort_by(|a, b| {
+        b.partial_cmp(a).unwrap()
+    });
+
+    rules
+    .into_iter()
+    .map(|rule| rule.rule)
+    .collect()
 }
 
 fn evaluate_document<F: FileResolver>(document: &ast::Document, context: &mut DocumentContext<F>) {
@@ -56,8 +77,9 @@ fn evaluate_tokens<F: FileResolver>(document: &ast::Document, context: &mut Docu
 
     let id = context.next_id();
 
-    context.document.borrow_mut().rules.push(
-        virt::rule::Inner::Style(virt::StyleRule {
+    context.rules.borrow_mut().push(PrioritizedRule {
+        priority: context.priority,
+        rule: virt::rule::Inner::Style(virt::StyleRule {
             id,
             source_id: None,
             selector_text: ":root".to_string(),
@@ -72,32 +94,34 @@ fn evaluate_tokens<F: FileResolver>(document: &ast::Document, context: &mut Docu
                 .collect(),
         })
         .get_outer(),
-    )
+    })
 }
 fn evaluate_document_rules<F: FileResolver>(
     document: &ast::Document,
     context: &mut DocumentContext<F>,
 ) {
-    for item in &document.body {
-        evaluate_body_rule(item, context);
-    }
-}
+    // components first
 
-fn evaluate_body_rule<F: FileResolver>(
-    item: &ast::DocumentBodyItem,
-    context: &mut DocumentContext<F>,
-) {
-    match item.get_inner() {
-        ast::document_body_item::Inner::Component(component) => {
-            evaluate_component(component, context);
+    for item in &document.body {
+        match item.get_inner() {
+            ast::document_body_item::Inner::Component(component) => {
+                evaluate_component(component, context);
+            }
+            _ => {}
         }
-        ast::document_body_item::Inner::Element(component) => {
-            evaluate_element(component, context);
+    }
+
+    for item in &document.body {
+        // everything else
+        match item.get_inner() {
+            ast::document_body_item::Inner::Element(component) => {
+                evaluate_element(component, context);
+            }
+            ast::document_body_item::Inner::Text(text) => {
+                evaluate_text(text, context);
+            }
+            _ => {}
         }
-        ast::document_body_item::Inner::Text(text) => {
-            evaluate_text(text, context);
-        }
-        _ => {}
     }
 }
 
@@ -164,7 +188,7 @@ fn evaluate_insert<F: FileResolver>(insert: &ast::Insert, context: &mut Document
             }
             ast::insert_body::Inner::Text(expr) => {
                 evaluate_text(expr, context);
-            },
+            }
             ast::insert_body::Inner::Slot(expr) => {
                 evaluate_slot(expr, context);
             }
@@ -172,31 +196,49 @@ fn evaluate_insert<F: FileResolver>(insert: &ast::Insert, context: &mut Document
     }
 }
 
+fn evaluate_override<F: FileResolver>(
+    expr: &ast::Override,
+    parent: &ast::Element,
+    context: &mut DocumentContext<F>,
+) {
+    let component_info = get_or_short!(
+        context
+            .graph
+            .get_instance_component_ref(parent, &context.path),
+        ()
+    );
 
-fn evaluate_override<F: FileResolver>(expr: &ast::Override, parent: &ast::Element, context: &mut DocumentContext<F>) {
-    let component_info = get_or_short!(context.graph.get_instance_component_ref(parent, &context.path), ());
+    let target_node = context.graph.get_ref(
+        &expr.path,
+        component_info.path,
+        Some(component_info.wrap().expr),
+    );
 
-    let target_node = context.graph.get_ref(&expr.path, component_info.path, Some(component_info.wrap().expr));
-
-    let target_node = if let Some(element) = target_node {
-        element
+    let target_node = if let Some(node) = target_node {
+        match node.expr {
+            Expr::Element(element) => CurrentNode::Element(element),
+            _ => {
+                println!("Can only override elements and text");
+                return;
+            }
+        }
     } else {
         println!("Override not found!");
         return;
     };
 
-
-    // for item in expr.body {
-    //     match item.get_inner() {
-    //         override_body_item::Inner::Style(style) => {
-    //             evaluate_style(style, context.within_path(&target_node.path))
-    //         },
-    //         _ => {
-
-    //         }
-    //     }
-    // }
-
+    for item in &expr.body {
+        match item.get_inner() {
+            override_body_item::Inner::Style(style) => evaluate_style(
+                style,
+                &mut context
+                    .within_node(target_node)
+                    .within_component(&component_info.expr)
+                    .with_priority(expr.path.len() as u8),
+            ),
+            _ => {}
+        }
+    }
 
     // let override_path = expr.path
     // context.graph.get_ref(ref_path, dep_path)
@@ -269,7 +311,6 @@ fn evaluate_variant_styles<F: FileResolver>(
     let ns = get_style_namespace(
         current_node.get_name(),
         current_node.get_id(),
-
         // TODO - this may be different with varint overrides
         context.current_component,
     );
@@ -317,7 +358,10 @@ fn evaluate_variant_styles<F: FileResolver>(
             style: evaluated_style.clone(),
         })
         .get_outer();
-        context.document.borrow_mut().rules.push(virt_style);
+        context.rules.borrow_mut().push(PrioritizedRule {
+            priority: context.priority,
+            rule: virt_style,
+        });
     }
 
     // first up,
@@ -391,7 +435,10 @@ fn evaluate_variant_styles<F: FileResolver>(
                         }
                     });
 
-            context.document.borrow_mut().rules.push(container_rule);
+            context.rules.borrow_mut().push(PrioritizedRule {
+                priority: context.priority,
+                rule: container_rule,
+            });
         }
     }
 }
@@ -544,11 +591,10 @@ fn evaluate_atom<F: FileResolver>(atom: &ast::Atom, context: &DocumentContext<F>
 
 fn evaluate_vanilla_style<F: FileResolver>(style: &ast::Style, context: &mut DocumentContext<F>) {
     if let Some(style) = create_virt_style(style, context) {
-        context
-            .document
-            .borrow_mut()
-            .rules
-            .push(virt::rule::Inner::Style(style).get_outer());
+        context.rules.borrow_mut().push(PrioritizedRule {
+            priority: context.priority,
+            rule: virt::rule::Inner::Style(style).get_outer(),
+        });
     }
 }
 
@@ -590,7 +636,10 @@ fn create_style_declarations<F: FileResolver>(
     for reference in &style.extends {
         if let Some(reference) = context.graph.get_ref(&reference.path, &context.path, None) {
             if let graph_ref::Expr::Style(style) = &reference.expr {
-                decls.extend(create_style_declarations(style, &mut context.within_path(&reference.path)));
+                decls.extend(create_style_declarations(
+                    style,
+                    &mut context.within_path(&reference.path),
+                ));
             }
         }
     }

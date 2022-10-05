@@ -18,7 +18,6 @@ message Rule {
   }
 }
 
-
 message FontFaceRule {
   string id = 1;
   repeated StyleDeclaration style = 2;
@@ -56,5 +55,4 @@ message StyleDeclaration {
   string name = 2;
   string value = 3;
   string source_id = 4;
-
 }

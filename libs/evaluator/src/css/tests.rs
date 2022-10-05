@@ -468,7 +468,6 @@ add_case! {
   r#"._80f4925f-5 { background: url("data:image/svg+xml;base64,c29tZXRoaW5n"); }"#
 }
 
-
 add_case! {
   can_include_style_from_another_file_that_also_extends,
   [
@@ -548,8 +547,6 @@ add_case! {
   r#"._blarg-80f4925f-4 { color: blue; }"#
 }
 
-
-
 add_case! {
   can_evaluate_a_slot_within_an_insert,
   [
@@ -570,9 +567,6 @@ add_case! {
   r#"._80f4925f-4 { color: orange; }"#
 }
 
-
-
-
 add_case! {
   can_evaluate_a_render_slot,
   [
@@ -590,9 +584,6 @@ add_case! {
   ],
   r#"._A-80f4925f-4 { color: purple; }"#
 }
-
-
-
 
 add_case! {
   can_override_a_simple_style,
@@ -615,10 +606,60 @@ add_case! {
        }
       "#)
   ],
-  r#"._A-80f4925f-4 { color: purple; }"#
+  r#"._A-something-80f4925f-4 { color: blue; } ._A-something-80f4925f-4 { color: orange; }"#
 }
 
+add_case! {
+  properly_sorts_style_declaration,
+  [
+      ("/entry.pc", r#"
 
+      A {
+       override something {
+         style {
+           color: orange
+         }
+       }
+      }
+      
+       component A {
+         render div something {
+          style {
+            color: blue
+          }
+         }
+       }
+      "#)
+  ],
+  r#"._A-something-80f4925f-9 { color: blue; } ._A-something-80f4925f-9 { color: orange; }"#
+}
+
+add_case! {
+  sorts_declarations_even_within_components,
+  [
+      ("/entry.pc", r#"
+
+      component B {
+        render A {
+          override something {
+            style {
+              color: orange
+            }
+          }
+        }
+      }
+      
+       component A {
+         render div something {
+          style {
+            color: blue
+          }
+         }
+       }
+      "#)
+  ],
+  r#"._A-something-80f4925f-11 { color: blue; } ._A-something-80f4925f-11 { color: orange; }"#
+}
 
 // add_case! {
 //   can_override_a_nested_instance,
@@ -648,9 +689,6 @@ add_case! {
 //   r#"._A-80f4925f-4 { color: purple; }"#
 // }
 
-
-
-
 // add_case! {
 //   can_create_a_style_override_within_a_variant,
 //   [
@@ -677,15 +715,10 @@ add_case! {
 //          }
 //        }
 
-
 //       "#)
 //   ],
 //   r#"._A-80f4925f-4 { color: purple; }"#
 // }
-
-
-
-
 
 // add_case! {
 //   can_turn_on_an_instance_variant,
@@ -715,5 +748,3 @@ add_case! {
 //   ],
 //   r#"._A-80f4925f-4 { color: purple; }"#
 // }
-
-

@@ -233,7 +233,7 @@ fn evaluate_override<F: FileResolver>(
                 style,
                 &mut context
                     .within_node(target_node)
-                    .within_component(&component_info.expr)
+                    .within_instance_of_component(&component_info.expr)
                     .with_priority(expr.path.len() as u8),
             ),
             _ => {}
@@ -295,6 +295,7 @@ fn evaluate_variant_styles<F: FileResolver>(
     } else {
         return;
     };
+    
 
     let render_node = if let Some(render) = current_component.get_render_expr() {
         render.node.as_ref().expect("Node must exist")
@@ -308,11 +309,13 @@ fn evaluate_variant_styles<F: FileResolver>(
         return;
     };
 
+    let current_instance_of_component = context.instance_of_component.or(context.current_component);
+
     let ns = get_style_namespace(
         current_node.get_name(),
         current_node.get_id(),
         // TODO - this may be different with varint overrides
-        context.current_component,
+        current_instance_of_component,
     );
 
     let render_node_ns = get_style_namespace(
@@ -322,10 +325,12 @@ fn evaluate_variant_styles<F: FileResolver>(
             _ => &None,
         },
         &render_node.get_id(),
-        context.current_component,
+        current_instance_of_component,
     );
 
     let is_render_node = render_node_ns == ns;
+
+    println!("{} {}", render_node_ns, ns);
 
     let evaluated_style = create_style_declarations(style, context);
 
@@ -610,7 +615,7 @@ fn create_virt_style<F: FileResolver>(
             Some(get_style_namespace(
                 node.get_name(),
                 node.get_id(),
-                context.current_component,
+                context.instance_of_component.or(context.current_component),
             ))
         })
         .and_then(|ns| {

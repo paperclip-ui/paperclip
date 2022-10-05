@@ -718,8 +718,23 @@ add_case! {
 
       "#)
   ],
-  r#"._A-80f4925f-4 { color: purple; }"#
+  r#"
+    ._A-root-80f4925f-4 { 
+      color: blue; 
+    } 
+    
+    ._A-80f4925f-14._test-80f4925f-8._A-root-80f4925f-4 { 
+      color: purple; 
+    } 
+    
+    @supports mobile { 
+      ._A-80f4925f-14._A-root-80f4925f-4 { 
+        color: purple; 
+      } 
+    }
+  "#
 }
+
 
 // add_case! {
 //   can_turn_on_an_instance_variant,

@@ -462,4 +462,22 @@ component Editor {
   }
 }
 
-Editor
+component AA {
+  render div blah {
+    style {
+        color: rgb(154, 232, 19)
+        font-size: 32px
+      }
+    text blah2 "Hello" {
+      
+    }
+  }
+}
+
+AA {
+  override blah {
+    style {
+      color: orange
+    }
+  }
+}

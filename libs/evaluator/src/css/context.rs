@@ -40,6 +40,7 @@ impl PartialOrd for PrioritizedRule {
     }
 }
 
+#[derive(Clone)]
 pub struct DocumentContext<'graph, 'expr, 'resolve_asset, FR: FileResolver> {
     id_generator: Rc<RefCell<IDGenerator>>,
     pub file_resolver: &'resolve_asset FR,
@@ -78,52 +79,27 @@ impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
     }
 
     pub fn within_component(&self, component: &'expr ast::Component) -> Self {
-        Self {
-            id_generator: self.id_generator.clone(),
-            file_resolver: self.file_resolver,
-            graph: self.graph,
-            path: self.path.clone(),
-            current_node: self.current_node,
-            current_component: Some(component),
-            priority: self.priority,
-            rules: self.rules.clone(),
-        }
+        let mut clone: DocumentContext<FR> = self.clone();
+        clone.current_component = Some(component);
+        clone
     }
+
     pub fn with_priority(&self, priority: u8) -> Self {
-        Self {
-            id_generator: self.id_generator.clone(),
-            file_resolver: self.file_resolver,
-            graph: self.graph,
-            path: self.path.clone(),
-            current_node: self.current_node,
-            current_component: self.current_component.clone(),
-            rules: self.rules.clone(),
-            priority: priority,
-        }
+        let mut clone = self.clone();
+        clone.priority = priority;
+        clone
     }
+
     pub fn within_path(&self, path: &str) -> Self {
-        Self {
-            path: path.to_string(),
-            id_generator: self.id_generator.clone(),
-            file_resolver: self.file_resolver,
-            graph: self.graph,
-            current_node: self.current_node,
-            current_component: self.current_component.clone(),
-            rules: self.rules.clone(),
-            priority: self.priority,
-        }
+        let mut clone = self.clone();
+        clone.path = path.to_string();
+        clone
     }
+
     pub fn within_node(&self, node: CurrentNode<'expr>) -> Self {
-        Self {
-            id_generator: self.id_generator.clone(),
-            file_resolver: self.file_resolver,
-            graph: self.graph,
-            path: self.path.clone(),
-            current_node: Some(node),
-            current_component: self.current_component,
-            rules: self.rules.clone(),
-            priority: self.priority,
-        }
+        let mut clone = self.clone();
+        clone.current_node = Some(node);
+        clone
     }
 
     pub fn next_id(&mut self) -> String {

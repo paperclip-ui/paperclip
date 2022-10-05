@@ -9,6 +9,7 @@ use paperclip_parser::graph;
 use paperclip_parser::graph::test_utils;
 use std::collections::HashMap;
 
+#[derive(Clone)]
 struct MockResolver;
 impl FileResolver for MockResolver {
     fn resolve_file(&self, _from: &str, _to: &str) -> Result<String> {
@@ -661,64 +662,64 @@ add_case! {
   r#"._A-something-80f4925f-11 { color: blue; } ._A-something-80f4925f-11 { color: orange; }"#
 }
 
-// add_case! {
-//   can_override_a_nested_instance,
-//   [
-//       ("/entry.pc", r#"
+add_case! {
+  can_override_a_nested_instance,
+  [
+      ("/entry.pc", r#"
 
-//        component A {
-//          render div c {
-//            style {
-//               color: blue
-//            }
-//          }
-//        }
-//        component B {
-//          render A a1
-//        }
+       component A {
+         render div acdc {
+           style {
+              color: blue
+           }
+         }
+       }
+       component B {
+         render A a1
+       }
 
-//        A {
-//         override a1.c {
-//           style {
-//             color: orange
-//           }
-//         }
-//        }
-//       "#)
-//   ],
-//   r#"._A-80f4925f-4 { color: purple; }"#
-// }
+       A {
+        override a1.acdc {
+          style {
+            color: orange
+          }
+        }
+       }
+      "#)
+  ],
+  r#"._A-acdc-80f4925f-4 { color: blue; } ._A-acdc-80f4925f-4 { color: orange; }"#
+}
 
-// add_case! {
-//   can_create_a_style_override_within_a_variant,
-//   [
-//       ("/entry.pc", r#"
+add_case! {
+  can_create_a_style_override_within_a_variant,
+  [
+      ("/entry.pc", r#"
 
-//        component A {
-//          render div root {
-//            style {
-//               color: blue
-//            }
-//          }
-//        }
-//        component B {
-//          variant test trigger {
-//             "@supports mobile"
-//          }
+       component A {
+         render div root {
+           style {
+              color: blue
+           }
+         }
+       }
+       component B {
+         variant test trigger {
+            "@supports mobile"
+         }
 
-//          render A {
-//            override root {
-//              style variant test {
-//                color: purple
-//              }
-//            }
-//          }
-//        }
+         render A {
+           override root {
+             style variant test {
+               color: purple
+             }
+           }
+         }
+       }
 
-//       "#)
-//   ],
-//   r#"._A-80f4925f-4 { color: purple; }"#
-// }
+      "#)
+  ],
+  r#"._A-80f4925f-4 { color: purple; }"#
+}
 
 // add_case! {
 //   can_turn_on_an_instance_variant,

@@ -5,12 +5,12 @@ use path_absolutize::*;
 use std::fs;
 use std::path::Path;
 
-pub trait FileReader {
+pub trait FileReader: Clone {
     fn read_file<'content>(&self, path: &str) -> Result<Box<[u8]>>;
     fn get_file_size(&self, path: &str) -> Result<u64>;
 }
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct LocalFileReader;
 
 impl FileReader for LocalFileReader {
@@ -30,11 +30,12 @@ impl FileReader for LocalFileReader {
     }
 }
 
-pub trait FileResolver {
+
+pub trait FileResolver: Clone {
     fn resolve_file(&self, from: &str, to: &str) -> Result<String>;
 }
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct LocalFileResolver;
 
 impl FileResolver for LocalFileResolver {

@@ -56,7 +56,7 @@ component TreeNavigation {
       TreeNavigationItemHeader {
         override root {
           style {
-            --depth: 2
+            --depth: 1
           }
         }
         div {
@@ -77,6 +77,11 @@ component TreeNavigation {
       TreeNavigationItemContent {
         TreeNavigationItem {
           TreeNavigationItemHeader {
+            override root {
+              style {
+                --depth: 2
+              }
+            }
             text "Leaf"
           }
         }
@@ -96,7 +101,7 @@ component TreeNavigationItem {
   }
 }
 component TreeNavigationItemHeader {
-  render div container {
+  render div root {
     style {
       --depth: 1
       display: flex

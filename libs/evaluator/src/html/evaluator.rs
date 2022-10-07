@@ -6,8 +6,6 @@ use crate::core::virt as core_virt;
 use paperclip_common::fs::FileResolver;
 use paperclip_parser::graph;
 use paperclip_parser::pc::ast;
-use paperclip_proto::virt::core::Object;
-use paperclip_proto::virt::core::ObjectProperty;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 
@@ -90,7 +88,7 @@ fn evaluate_element<F: FileResolver>(
         .get_instance_component_ref(element, &context.path);
 
     if let Some(component_info) = reference {
-        evaluate_instance(element, component_info.expr, fragment, context, is_root);
+        evaluate_instance(element, component_info.expr, fragment, context);
     } else {
         evaluate_native_element(element, fragment, context, is_root);
     }
@@ -133,7 +131,6 @@ fn evaluate_instance<F: FileResolver>(
     instance_of: &ast::Component,
     fragment: &mut Vec<virt::Node>,
     context: &mut DocumentContext<F>,
-    is_root: bool,
 ) {
     let render = if let Some(render) = instance_of.get_render_expr() {
         render
@@ -144,23 +141,20 @@ fn evaluate_instance<F: FileResolver>(
     let mut data = create_instance_params(element, context);
     add_inserts_to_data(&mut create_inserts(element, context), &mut data);
 
+    let mut scope = context.render_scopes.clone();
+    scope.push(get_style_namespace(
+        &element.name,
+        &element.id,
+        context.current_component,
+    ));
+
     evaluate_render(
         &render,
         fragment,
         &mut context
             .with_data(data)
             .within_component(instance_of)
-            .set_render_scope(if is_root {
-                let mut scope = context.render_scopes.clone();
-                scope.push(get_style_namespace(
-                    &element.name,
-                    &element.id,
-                    context.current_component,
-                ));
-                scope
-            } else {
-                vec![]
-            }),
+            .set_render_scope(scope),
     );
 }
 

@@ -135,7 +135,7 @@ add_case! {
 					</p>
 			</span>
 
-			<span class="_A-80f4925f-7">
+			<span class="_A-80f4925f-7 _80f4925f-14">
 					<h1>
 							hello
 					</h1>
@@ -194,7 +194,7 @@ add_case! {
 		"#),
 
     ],
-    "<span class=\"_Test-389f3606-2\"> Hello world </span>"
+    "<span class=\"_Test-389f3606-2 _80f4925f-3\"> Hello world </span>"
 }
 
 add_case! {
@@ -273,7 +273,7 @@ add_case! {
 	}
 "#)
     ],
-    "<div class=\"_A-80f4925f-2\"> </div> <div class=\"_A-80f4925f-2\"> <div class=\"_80f4925f-9\"> Hello </div> </div>"
+    "<div class=\"_A-80f4925f-2\"> </div> <div class=\"_A-80f4925f-2 _80f4925f-10\"> <div class=\"_80f4925f-9\"> Hello </div> </div>"
 }
 
 add_case! {
@@ -330,22 +330,29 @@ add_case! {
 	"<div class=\"_C-80f4925f-1\"> </div> <div class=\"_C-80f4925f-1 _B-80f4925f-4\"> </div> <div class=\"_C-80f4925f-1 _A-80f4925f-7 _B-80f4925f-4\"> </div>"
 }
 
-// add_case! {
-// 	classes_are_not_added_to_instances_without_root_name,
-// 	[
-// 			("/entry.pc", r#"
-// 				component B {
-// 					render div {
-
-// 					}
-// 				}
-
-// 				component A {
-// 					render B {
-
-// 					}
-// 				}
-// 			"#)
-// 	],
-// 	r#"<img src="data:image/svg+xml;base64,c29tZXRoaW5n">"#
-// }
+add_case! {
+	can_override_style_of_instance,
+	[
+		("/entry.pc", r#"
+		component Header {
+			render div root {
+				style {
+					color: orange
+				}
+			}
+		}
+		component Container {
+			render div {
+				Header {
+					override root {
+						style {
+							color: blue
+						}
+					}
+				}
+			}
+		}
+"#)
+	],
+	"<div class=\"_Header-root-80f4925f-4\"> </div> <div class=\"_Container-80f4925f-12\"> <div class=\"_Header-root-80f4925f-4 _Container-80f4925f-11\"> </div> </div>"
+}

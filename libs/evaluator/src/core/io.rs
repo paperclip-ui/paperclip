@@ -6,7 +6,6 @@ use std::sync::Mutex;
 
 use paperclip_common::fs::{FileReader, FileResolver};
 
-
 #[derive(Clone)]
 pub struct PCFileResolverOptions {
     pub embed_max_size: Option<u64>,

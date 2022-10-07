@@ -30,7 +30,6 @@ impl FileReader for LocalFileReader {
     }
 }
 
-
 pub trait FileResolver: Clone {
     fn resolve_file(&self, from: &str, to: &str) -> Result<String>;
 }

@@ -50,7 +50,6 @@ impl ServerState {
 
     // TODO - this needs to be moved to PC runtime instead
     pub fn bundle_evaluated_module(&self, path: &str) -> Result<PcModule> {
-        
         let (css, html) = get_or_short!(
             self.evaluated_modules.get(path),
             Err(Error::msg(format!("File not evaluated yet {}", path)))
@@ -64,7 +63,7 @@ impl ServerState {
             if let Some((css, _)) = self.evaluated_modules.get(path) {
                 imports.push(PcModuleImport {
                     path: path.to_string(),
-                    css: Some(css.clone())
+                    css: Some(css.clone()),
                 })
             }
         }
@@ -84,7 +83,8 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
     fn handle_event(&self, state: &mut ServerState, event: &ServerEvent) {
         match event {
             ServerEvent::DependencyGraphLoaded { graph } => {
-                state.graph = std::mem::replace(&mut state.graph, Graph::new()).merge(graph.clone());
+                state.graph =
+                    std::mem::replace(&mut state.graph, Graph::new()).merge(graph.clone());
             }
             ServerEvent::UpdateFileRequested { path, content } => {
                 state.file_cache.insert(path.to_string(), content.clone());

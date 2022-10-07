@@ -7,9 +7,18 @@ component Sidebar {
   render div {
     style {
       width: 270px
-      background: var(theme.gray0)
+      background: var(theme.gray03)
+      padding: var(theme.space05)
     }
-    slot children
+    div {
+      style {
+        background: var(theme.gray0)
+        border: 1px solid var(theme.gray04)
+        border-radius: var(theme.rounded)
+        height: 100%
+      }    
+      slot children
+    }
   }
 }
 
@@ -164,7 +173,7 @@ component Canvas {
     style {
       flex: 1
       padding: var(theme.space04)
-      background: rgb(57, 57, 57)
+      background: var(theme.gray03)
       position: relative
       overflow: hidden
     }
@@ -462,22 +471,4 @@ component Editor {
   }
 }
 
-component AA {
-  render div blah {
-    style {
-        color: rgb(154, 232, 19)
-        font-size: 32px
-      }
-    text blah2 "Hello" {
-      
-    }
-  }
-}
-
-AA {
-  override blah {
-    style {
-      color: orange
-    }
-  }
-}
+Editor

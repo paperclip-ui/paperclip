@@ -87,7 +87,7 @@ add_case! {
 				}
 			}
 		"#)],
-    "<div> Hello world </div>"
+    "<div class=\"_A-80f4925f-2\"> Hello world </div>"
 }
 
 add_case! {
@@ -126,7 +126,7 @@ add_case! {
 		}
 	"#)],
             r#"
-			<span>
+			<span class="_A-80f4925f-7">
 					<h1>
 							default title
 					</h1>
@@ -135,7 +135,7 @@ add_case! {
 					</p>
 			</span>
 
-			<span>
+			<span class="_A-80f4925f-7">
 					<h1>
 							hello
 					</h1>
@@ -194,7 +194,7 @@ add_case! {
 		"#),
 
     ],
-    "<span> Hello world </span>"
+    "<span class=\"_Test-389f3606-2\"> Hello world </span>"
 }
 
 add_case! {
@@ -273,14 +273,79 @@ add_case! {
 	}
 "#)
     ],
-    "<div> </div> <div> <div class=\"_80f4925f-9\"> Hello </div> </div>"
+    "<div class=\"_A-80f4925f-2\"> </div> <div class=\"_A-80f4925f-2\"> <div class=\"_80f4925f-9\"> Hello </div> </div>"
 }
 
 add_case! {
     resolves_img_assets,
     [
-        ("/entry.pc", "img(src: '/test.svg')"),
-        ("/test.svg", "something"),
+            ("/entry.pc", "img(src: '/test.svg')"),
+            ("/test.svg", "something"),
     ],
     r#"<img src="data:image/svg+xml;base64,c29tZXRoaW5n">"#
 }
+
+add_case! {
+	classes_are_added_to_instances_that_are_render_nodes,
+	[
+					("/entry.pc", r#"
+			component B {
+				render div bba {
+
+				}
+			}
+
+			component A {
+				render B {
+					override bba {
+						style {
+							color: orange
+						}
+					}
+				}
+			}
+		"#)
+	],
+	"<div class=\"_B-bba-80f4925f-1\"> </div> <div class=\"_B-bba-80f4925f-1 _A-80f4925f-8\"> </div>"
+}
+add_case! {
+	classes_are_added_to_nested_instances_that_are_render_nodes,
+	[
+					("/entry.pc", r#"
+					component C {
+						render div {
+		
+						}
+					}
+
+					component B {
+						render C
+					}
+
+			component A {
+				render B
+			}
+		"#)
+	],
+	"<div class=\"_C-80f4925f-1\"> </div> <div class=\"_C-80f4925f-1 _B-80f4925f-4\"> </div> <div class=\"_C-80f4925f-1 _A-80f4925f-7 _B-80f4925f-4\"> </div>"
+}
+
+// add_case! {
+// 	classes_are_not_added_to_instances_without_root_name,
+// 	[
+// 			("/entry.pc", r#"
+// 				component B {
+// 					render div {
+
+// 					}
+// 				}
+
+// 				component A {
+// 					render B {
+
+// 					}
+// 				}
+// 			"#)
+// 	],
+// 	r#"<img src="data:image/svg+xml;base64,c29tZXRoaW5n">"#
+// }

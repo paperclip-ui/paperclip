@@ -3,7 +3,7 @@ use paperclip_common::fs::FileResolver;
 use paperclip_common::id::{get_document_id, IDGenerator};
 use paperclip_parser::graph;
 use paperclip_parser::pc::ast;
-use paperclip_proto::virt::css::{Rule};
+use paperclip_proto::virt::css::Rule;
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -36,7 +36,7 @@ pub struct PrioritizedRule {
 
 impl PartialOrd for PrioritizedRule {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-       Some(self.priority.cmp(&other.priority))
+        Some(self.priority.cmp(&other.priority))
     }
 }
 
@@ -47,8 +47,9 @@ pub struct DocumentContext<'graph, 'expr, 'resolve_asset, FR: FileResolver> {
     pub graph: &'graph graph::Graph,
     pub path: String,
     pub current_node: Option<CurrentNode<'expr>>,
+    pub current_instance: Option<&'expr ast::Element>,
     pub current_component: Option<&'expr ast::Component>,
-    pub instance_of_component: Option<&'expr ast::Component>,
+    pub current_shadow: Option<&'expr ast::Component>,
     // pub document: Rc<RefCell<virt::Document>>,
 
     // for overrides
@@ -70,7 +71,8 @@ impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
             path: path.to_string(),
             current_component: None,
             current_node: None,
-            instance_of_component: None,
+            current_shadow: None,
+            current_instance: None,
             rules: Rc::new(RefCell::new(vec![])),
             priority: 8,
         }
@@ -79,11 +81,17 @@ impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
     pub fn resolve_asset(&self, asset_path: &str) -> Result<String> {
         self.file_resolver.resolve_file(&self.path, asset_path)
     }
+    
 
-
-    pub fn within_instance_of_component(&self, component: &'expr ast::Component) -> Self {
+    pub fn within_shadow(&self, component: &'expr ast::Component) -> Self {
         let mut clone: DocumentContext<FR> = self.clone();
-        clone.instance_of_component = Some(component);
+        clone.current_shadow = Some(component);
+        clone
+    }
+
+    pub fn within_instance(&self, instance: &'expr ast::Element) -> Self {
+        let mut clone: DocumentContext<FR> = self.clone();
+        clone.current_instance = Some(instance);
         clone
     }
 
@@ -113,5 +121,24 @@ impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
 
     pub fn next_id(&mut self) -> String {
         self.id_generator.borrow_mut().new_id()
+    }
+
+    pub fn get_target_style_component(&self) -> Option<&'expr ast::Component> {
+        self.current_shadow.or(self.current_component)
+    }
+
+    pub fn get_target_root_node(&self) -> Option<&'expr ast::Render> {
+        self.get_target_style_component().and_then(|component| {
+            component.get_render_expr()
+        })
+    }    
+
+    pub fn is_target_node_root(&self) -> bool {
+        if let Some(root) = self.get_target_root_node() {
+            if let Some(current_node) = self.current_node {
+                return root.node.as_ref().expect("Node must exist").get_id() == current_node.get_id()
+            }
+        }
+        return false;
     }
 }

@@ -9,12 +9,14 @@ pub struct Options {
     pub include_components: bool,
 }
 
+#[derive(Clone)]
 pub struct DocumentContext<'path, 'graph, 'expr, 'file_resolver, FR: FileResolver> {
     pub graph: &'graph graph::Graph,
     pub path: &'path str,
     pub data: Option<RefCell<core_virt::Object>>,
     pub file_resolver: &'file_resolver FR,
     pub current_component: Option<&'expr ast::Component>,
+    pub render_scopes: Vec<String>,
     pub options: Options,
 }
 
@@ -34,26 +36,22 @@ impl<'path, 'graph, 'expr, 'file_resolver, FR: FileResolver>
             file_resolver,
             options,
             current_component: None,
+            render_scopes: vec![],
         }
     }
     pub fn with_data(&self, data: core_virt::Object) -> Self {
-        Self {
-            data: Some(RefCell::new(data)),
-            graph: self.graph,
-            path: self.path,
-            file_resolver: self.file_resolver,
-            current_component: self.current_component,
-            options: self.options.clone(),
-        }
+        let mut clone = self.clone();
+        clone.data = Some(RefCell::new(data));
+        clone
     }
     pub fn within_component(&self, component: &'expr ast::Component) -> Self {
-        Self {
-            data: self.data.clone(),
-            graph: self.graph,
-            path: self.path,
-            file_resolver: self.file_resolver,
-            current_component: Some(component),
-            options: self.options.clone(),
-        }
+        let mut clone = self.clone();
+        clone.current_component = Some(component);
+        clone
+    }
+    pub fn set_render_scope(&self, scope: Vec<String>) -> Self {
+        let mut clone = self.clone();
+        clone.render_scopes = scope;
+        clone
     }
 }

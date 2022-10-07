@@ -15,6 +15,7 @@ use std::collections::HashMap;
 use std::sync::Mutex;
 use textwrap::indent;
 
+#[derive(Clone)]
 struct TargetCompilerResolver<IO: FileReader + FileResolver> {
     io: IO,
     context: TargetCompilerContext,

@@ -2,6 +2,8 @@
 
 
 public token gray0 rgb(210, 210, 210)
+public token gray03 rgb(59, 59, 59)
+public token gray04 rgb(0, 0, 0)
 e
 public token space01 2px
 public token space02 4px

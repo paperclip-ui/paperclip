@@ -607,7 +607,7 @@ add_case! {
        }
       "#)
   ],
-  r#"._A-something-80f4925f-4 { color: blue; } ._A-something-80f4925f-4 { color: orange; }"#
+  r#"._A-something-80f4925f-4 { color: blue; } ._80f4925f-11._A-something-80f4925f-4 { color: orange; }"#
 }
 
 add_case! {
@@ -632,7 +632,7 @@ add_case! {
        }
       "#)
   ],
-  r#"._A-something-80f4925f-9 { color: blue; } ._A-something-80f4925f-9 { color: orange; }"#
+  r#"._A-something-80f4925f-9 { color: blue; } ._80f4925f-5._A-something-80f4925f-9 { color: orange; }"#
 }
 
 add_case! {
@@ -659,7 +659,7 @@ add_case! {
        }
       "#)
   ],
-  r#"._A-something-80f4925f-11 { color: blue; } ._A-something-80f4925f-11 { color: orange; }"#
+  r#"._A-something-80f4925f-11 { color: blue; } ._B-80f4925f-5._A-something-80f4925f-11 { color: orange; }"#
 }
 
 add_case! {
@@ -687,7 +687,7 @@ add_case! {
        }
       "#)
   ],
-  r#"._A-acdc-80f4925f-4 { color: blue; } ._A-acdc-80f4925f-4 { color: orange; }"#
+  r#"._A-acdc-80f4925f-4 { color: blue; } ._80f4925f-14._A-acdc-80f4925f-4 { color: orange; }"#
 }
 
 add_case! {
@@ -723,12 +723,12 @@ add_case! {
       color: blue; 
     } 
     
-    ._A-80f4925f-14._test-80f4925f-8._A-root-80f4925f-4 { 
+    ._B-80f4925f-14._A-root-80f4925f-4._test-80f4925f-8 { 
       color: purple; 
     } 
     
     @supports mobile { 
-      ._A-80f4925f-14._A-root-80f4925f-4 { 
+      ._B-80f4925f-14._A-root-80f4925f-4 { 
         color: purple; 
       } 
     }
@@ -736,31 +736,33 @@ add_case! {
 }
 
 
-// add_case! {
-//   can_turn_on_an_instance_variant,
-//   [
-//       ("/entry.pc", r#"
+add_case! {
+  can_create_a_style_override_for_nested_element,
+  [
+      ("/entry.pc", r#"
 
-//        component A {
-//          variant something
-//          render div root {
-//            style {
-//              color: red
-//            }
-//            style variant other {
-//               color: blue
-//            }
-//          }
-//        }
+       component A {
+         render div {
+            div hello {
+              style {
+                color: orange
+              }
+            }
+         }
+       }
+       component B {
+         render A {
+           override hello {
+             style {
+               color: purple
+             }
+           }
+         }
+       }
 
-//        A {
-//          override {
-//            variant something trigger {
-//              true
-//            }
-//          }
-//        }
-//       "#)
-//   ],
-//   r#"._A-80f4925f-4 { color: purple; }"#
-// }
+      "#)
+  ],
+  r#"
+  ._A-hello-80f4925f-4 { color: orange; } ._B-80f4925f-12._A-hello-80f4925f-4 { color: purple; }
+  "#
+}

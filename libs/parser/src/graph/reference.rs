@@ -1,5 +1,5 @@
 use paperclip_proto::ast::css::FunctionCall;
-use paperclip_proto::ast::pc::{component_body_item, render_node};
+use paperclip_proto::ast::pc::{component_body_item, render_node, element_body_item};
 
 use super::core::Graph;
 use crate::css::ast as css_ast;
@@ -7,7 +7,6 @@ use crate::pc::ast;
 
 macro_rules! expr_info {
     ($name: ident, $expr: ident) => {
-        
         #[derive(Debug, Clone)]
         pub struct $name<'expr> {
             pub path: &'expr str,
@@ -18,7 +17,7 @@ macro_rules! expr_info {
             pub fn wrap(&self) -> RefInfo<'expr> {
                 RefInfo {
                     path: self.path,
-                    expr: Expr::$expr(self.expr)
+                    expr: Expr::$expr(self.expr),
                 }
             }
         }
@@ -46,14 +45,17 @@ pub enum Expr<'expr> {
 expr_info!(ComponentRefInfo, Component);
 
 impl Graph {
-    pub fn get_ref<'expr>(&'expr self, ref_path: &Vec<String>, dep_path: &str, scope: Option<Expr<'expr>>) -> Option<RefInfo<'expr>> {
-
+    pub fn get_ref<'expr>(
+        &'expr self,
+        ref_path: &Vec<String>,
+        dep_path: &str,
+        scope: Option<Expr<'expr>>,
+    ) -> Option<RefInfo<'expr>> {
         let mut curr_dep = if let Some(dep) = self.dependencies.get(dep_path) {
             dep
         } else {
             return None;
         };
-        
 
         let mut expr = if let Some(expr) = scope {
             expr.clone()
@@ -71,15 +73,15 @@ impl Graph {
                     }
                 }
                 Expr::Import(import) => {
-
-                    let imp_dep =  curr_dep
-                    .imports
-                    .get(&import.path)
-                    .and_then(|actual_path| self.dependencies.get(actual_path));
+                    let imp_dep = curr_dep
+                        .imports
+                        .get(&import.path)
+                        .and_then(|actual_path| self.dependencies.get(actual_path));
 
                     if let Some(dep) = imp_dep {
                         curr_dep = dep;
-                        expr = if let Some(inner_expr) = get_doc_body_expr(part, &curr_dep.document) {
+                        expr = if let Some(inner_expr) = get_doc_body_expr(part, &curr_dep.document)
+                        {
                             inner_expr
                         } else {
                             return None;
@@ -118,8 +120,11 @@ impl Graph {
         return None;
     }
 
-    pub fn get_instance_component_ref(&self, element: &ast::Element, path: &str) -> Option<ComponentRefInfo<'_>> {
-       
+    pub fn get_instance_component_ref(
+        &self,
+        element: &ast::Element,
+        path: &str,
+    ) -> Option<ComponentRefInfo<'_>> {
         let mut ref_path = vec![];
 
         if let Some(ns) = &element.namespace {
@@ -130,7 +135,10 @@ impl Graph {
 
         if let Some(reference) = self.get_ref(&ref_path, path, None) {
             if let Expr::Component(component) = reference.expr {
-                return Some(ComponentRefInfo { expr: component, path: reference.path });
+                return Some(ComponentRefInfo {
+                    expr: component,
+                    path: reference.path,
+                });
             }
         }
         return None;
@@ -141,18 +149,18 @@ fn find_reference<'expr>(name: &str, expr: Expr<'expr>) -> Option<Expr<'expr>> {
     match expr {
         Expr::Component(component) => {
             return if component.name == name {
-                return Some(expr)
+                return Some(expr);
             } else {
                 find_within(name, &expr)
             }
-        },
+        }
         Expr::Element(element) => {
             return if element.name == Some(name.to_string()) {
-                return Some(expr)
+                return Some(expr);
             } else {
                 find_within(name, &expr)
             }
-        },
+        }
         _ => {}
     }
     None
@@ -161,26 +169,37 @@ fn find_reference<'expr>(name: &str, expr: Expr<'expr>) -> Option<Expr<'expr>> {
 fn find_within<'expr>(name: &str, scope: &Expr<'expr>) -> Option<Expr<'expr>> {
     match scope {
         Expr::Component(component) => {
-            component.body.iter().find_map(|item| {
-                match item.get_inner() {
+            component
+                .body
+                .iter()
+                .find_map(|item| match item.get_inner() {
                     component_body_item::Inner::Render(render) => {
                         match render.node.as_ref().expect("Node must exist").get_inner() {
                             render_node::Inner::Element(element) => {
                                 find_reference(name, Expr::Element(element))
-                            },
-                            _ => None
+                            }
+                            _ => None,
                         }
-                    },
-                    _ => None
-                }
-            })
+                    }
+                    _ => None,
+                })
         },
-        _ => None
+        Expr::Element(element) => {
+            element
+                .body
+                .iter()
+                .find_map(|item| match item.get_inner() {
+                    element_body_item::Inner::Element(element) => {
+                        find_reference(name, Expr::Element(element))
+                    }
+                    _ => None,
+                })
+        }
+        _ => None,
     }
 }
 
 fn get_doc_body_expr<'expr>(part: &String, doc: &'expr ast::Document) -> Option<Expr<'expr>> {
-
     for child in &doc.body {
         // any way to make this more DRY? Macros???
         match child.get_inner() {

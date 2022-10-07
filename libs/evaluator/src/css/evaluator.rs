@@ -41,26 +41,20 @@ pub async fn evaluate<'asset_resolver, FR: FileResolver>(
 
     Ok(virt::Document {
         id: dependency.document.id.to_string(),
-        rules: collect_sorted_rules(&mut context)
+        rules: collect_sorted_rules(&mut context),
     })
 }
 
 fn collect_sorted_rules<F: FileResolver>(context: &mut DocumentContext<F>) -> Vec<Rule> {
     let mut rules = context
-    .rules
-    .borrow_mut()
-    .drain(0..)
-    .collect::<Vec<PrioritizedRule>>();
+        .rules
+        .borrow_mut()
+        .drain(0..)
+        .collect::<Vec<PrioritizedRule>>();
 
-    
-    rules.sort_by(|a, b| {
-        b.partial_cmp(a).unwrap()
-    });
+    rules.sort_by(|a, b| b.partial_cmp(a).unwrap());
 
-    rules
-    .into_iter()
-    .map(|rule| rule.rule)
-    .collect()
+    rules.into_iter().map(|rule| rule.rule).collect()
 }
 
 fn evaluate_document<F: FileResolver>(document: &ast::Document, context: &mut DocumentContext<F>) {
@@ -201,6 +195,7 @@ fn evaluate_override<F: FileResolver>(
     parent: &ast::Element,
     context: &mut DocumentContext<F>,
 ) {
+
     let component_info = get_or_short!(
         context
             .graph
@@ -213,6 +208,7 @@ fn evaluate_override<F: FileResolver>(
         component_info.path,
         Some(component_info.wrap().expr),
     );
+
 
     let target_node = if let Some(node) = target_node {
         match node.expr {
@@ -233,7 +229,8 @@ fn evaluate_override<F: FileResolver>(
                 style,
                 &mut context
                     .within_node(target_node)
-                    .within_instance_of_component(&component_info.expr)
+                    .within_instance(parent)
+                    .within_shadow(&component_info.expr)
                     .with_priority(expr.path.len() as u8),
             ),
             _ => {}
@@ -284,6 +281,28 @@ fn evaluate_style<F: FileResolver>(style: &ast::Style, context: &mut DocumentCon
     }
 }
 
+fn get_current_instance_scope_selector<F: FileResolver>(context: &DocumentContext<F>) -> String {
+
+    let is_root_node = context.is_target_node_root();
+
+    if let Some(instance) = context.current_instance {
+        format!(".{}{}", get_style_namespace(
+            &instance.name,
+            &instance.id,
+            // TODO - this may be different with varint overrides
+            context.current_component,
+        ), if is_root_node {
+            ""
+        } else {
+            ""
+        })
+    } else {
+        format!("")
+    }
+}
+
+
+
 fn evaluate_variant_styles<F: FileResolver>(
     style: &ast::Style,
     variants: &Vec<ast::Reference>,
@@ -295,13 +314,6 @@ fn evaluate_variant_styles<F: FileResolver>(
     } else {
         return;
     };
-    
-
-    let render_node = if let Some(render) = current_component.get_render_expr() {
-        render.node.as_ref().expect("Node must exist")
-    } else {
-        return;
-    };
 
     let current_node = if let Some(node) = &context.current_node {
         node
@@ -309,28 +321,35 @@ fn evaluate_variant_styles<F: FileResolver>(
         return;
     };
 
-    let current_instance_of_component = context.instance_of_component.or(context.current_component);
+    let target_component = context.current_shadow.or(context.current_component);
 
-    let ns = get_style_namespace(
+    let root_node = if let Some(render) = target_component.unwrap().get_render_expr() {
+        render.node.as_ref().expect("Node must exist")
+    } else {
+        return;
+    };
+    let is_root_node = root_node.get_id() == current_node.get_id();
+
+    let scope_selector = get_current_instance_scope_selector(context);
+
+    let node_ns = get_style_namespace(
         current_node.get_name(),
         current_node.get_id(),
         // TODO - this may be different with varint overrides
-        current_instance_of_component,
+        target_component,
     );
 
-    let render_node_ns = get_style_namespace(
-        match render_node.get_inner() {
+    let root_node_ns = get_style_namespace(
+        match root_node.get_inner() {
             ast::render_node::Inner::Element(expr) => &expr.name,
             ast::render_node::Inner::Text(expr) => &expr.name,
             _ => &None,
         },
-        &render_node.get_id(),
-        current_instance_of_component,
+        &root_node.get_id(),
+        target_component,
     );
 
-    let is_render_node = render_node_ns == ns;
 
-    println!("{} {}", render_node_ns, ns);
 
     let evaluated_style = create_style_declarations(style, context);
 
@@ -351,13 +370,14 @@ fn evaluate_variant_styles<F: FileResolver>(
             id: context.next_id(),
             source_id: Some(style.id.to_string()),
             selector_text: format!(
-                ".{}.{}{}",
-                render_node_ns,
+                "{}.{}.{}{}",
+                scope_selector,
+                root_node_ns,
                 get_variant_namespace(assoc_variant),
-                if is_render_node {
+                if is_root_node {
                     "".to_string()
                 } else {
-                    format!(" .{}", ns)
+                    format!(" .{}", node_ns)
                 }
             ),
             style: evaluated_style.clone(),
@@ -381,13 +401,14 @@ fn evaluate_variant_styles<F: FileResolver>(
                     id: context.next_id(),
                     source_id: Some(style.id.to_string()),
                     selector_text: format!(
-                        ".{}{}{}",
-                        render_node_ns,
+                        "{}.{}{}{}",
+                        scope_selector,
+                        root_node_ns,
                         group_selectors.join(""),
-                        if is_render_node {
+                        if is_root_node {
                             "".to_string()
                         } else {
-                            format!(" .{}", ns)
+                            format!(" .{}", node_ns)
                         }
                     ),
                     style: evaluated_style.clone(),
@@ -400,12 +421,13 @@ fn evaluate_variant_styles<F: FileResolver>(
             id: context.next_id(),
             source_id: Some(style.id.to_string()),
             selector_text: format!(
-                ".{}{}",
-                render_node_ns,
-                if is_render_node {
+                "{}.{}{}",
+                scope_selector,
+                root_node_ns,
+                if is_root_node {
                     "".to_string()
                 } else {
-                    format!(" .{}", ns)
+                    format!(" .{}", node_ns)
                 }
             ),
             style: evaluated_style.clone(),
@@ -607,6 +629,8 @@ fn create_virt_style<F: FileResolver>(
     style: &ast::Style,
     context: &mut DocumentContext<F>,
 ) -> Option<virt::StyleRule> {
+    let scope_selector = get_current_instance_scope_selector(context);
+    
     context
         .current_node
         .clone()
@@ -615,14 +639,14 @@ fn create_virt_style<F: FileResolver>(
             Some(get_style_namespace(
                 node.get_name(),
                 node.get_id(),
-                context.instance_of_component.or(context.current_component),
+                context.current_shadow.or(context.current_component),
             ))
         })
         .and_then(|ns| {
             Some(virt::StyleRule {
                 id: "rule".to_string(),
                 source_id: Some(style.id.to_string()),
-                selector_text: format!(".{}", ns),
+                selector_text: format!("{}.{}", scope_selector, ns),
                 style: create_style_declarations(style, context),
             })
         })

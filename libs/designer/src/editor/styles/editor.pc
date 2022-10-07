@@ -7,13 +7,13 @@ component Sidebar {
   render div {
     style {
       width: 270px
-      background: var(theme.gray03)
+      background: var(theme.canvasColor)
       padding: var(theme.space05)
     }
     div {
       style {
-        background: var(theme.gray0)
-        border: 1px solid var(theme.gray04)
+        background: var(theme.sidebarColor)
+        border: 1px solid var(theme.borderColor)
         border-radius: var(theme.rounded)
         height: 100%
       }    
@@ -31,7 +31,7 @@ component SidebarPanel {
 component SidebarPanelHeader {
   render div {
     style extends theme.fontHeader {
-      border-top: 1px solid rgb(198, 198, 198)
+      border-top: 1px solid var(theme.borderColor)
       padding: var(theme.space05)
       padding-bottom: 0px
 
@@ -94,7 +94,7 @@ component TreeNavigationItem {
   render div {
     style {
       font-size: var(theme.fontSize02)
-      background: rgb(179, 179, 179)
+      background: var(theme.backgroundSelectedLight)
       border-radius: 3px
     }
     slot children
@@ -153,7 +153,7 @@ component Artboard {
     }
     div {
       style {
-        color: rgb(160, 160, 160)
+        color: var(theme.fontColor01)
         position: absolute
         transform: translateY(calc(-100% - 0.5em))
       }
@@ -218,7 +218,7 @@ component Field {
       }
       slot input
     }
-  }
+  }w
 }
 
 component Fields {
@@ -249,10 +249,12 @@ component MultiSelectItem {
   render div {
     style {
       display: inline-block
-      background: rgb(219, 219, 219)
+      color: var(theme.backgroundSelectedText)
+      background: var(theme.backgroundSelected)
       border-radius: var(theme.roundedSM)
       padding: 0px var(theme.space03)
       display: flex
+      height: 100%
       align-items: center
     }
     slot children

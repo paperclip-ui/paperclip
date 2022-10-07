@@ -195,7 +195,6 @@ fn evaluate_override<F: FileResolver>(
     parent: &ast::Element,
     context: &mut DocumentContext<F>,
 ) {
-
     let component_info = get_or_short!(
         context
             .graph
@@ -203,25 +202,24 @@ fn evaluate_override<F: FileResolver>(
         ()
     );
 
-    let target_node = context.graph.get_ref(
-        &expr.path,
-        component_info.path,
-        Some(component_info.wrap().expr),
+    let target_node = get_or_short!(
+        if expr.path.len() > 0 {
+            context
+                .graph
+                .get_ref(
+                    &expr.path,
+                    component_info.path,
+                    Some(component_info.wrap().expr),
+                )
+                .and_then(|node| match node.expr {
+                    Expr::Element(element) => Some(CurrentNode::Element(element)),
+                    _ => None,
+                })
+        } else {
+            Some(CurrentNode::Element(parent))
+        },
+        ()
     );
-
-
-    let target_node = if let Some(node) = target_node {
-        match node.expr {
-            Expr::Element(element) => CurrentNode::Element(element),
-            _ => {
-                println!("Can only override elements and text");
-                return;
-            }
-        }
-    } else {
-        println!("Override not found!");
-        return;
-    };
 
     for item in &expr.body {
         match item.get_inner() {
@@ -233,7 +231,9 @@ fn evaluate_override<F: FileResolver>(
                     .within_shadow(&component_info.expr)
                     .with_priority(expr.path.len() as u8),
             ),
-            _ => {}
+            override_body_item::Inner::Variant(style) => {
+                evaluate_variant_override(style, parent, context)
+            }
         }
     }
 
@@ -265,6 +265,29 @@ fn evaluate_text<F: FileResolver>(expr: &ast::TextNode, context: &mut DocumentCo
         }
     }
 }
+fn evaluate_variant_override<F: FileResolver>(
+    variant_override: &ast::Variant,
+    instance: &ast::Element,
+    context: &mut DocumentContext<F>,
+) {
+    let instance_component = get_or_short!(
+        context
+            .graph
+            .get_instance_component_ref(instance, &context.path),
+        ()
+    );
+    let target_variant = get_or_short!(
+        instance_component.expr.get_variant(&variant_override.name),
+        ()
+    );
+
+    evaluate_component(
+        &instance_component.expr,
+        &mut context
+            .with_variant_override(variant_override)
+            .within_path(&instance_component.path),
+    )
+}
 
 fn evaluate_style<F: FileResolver>(style: &ast::Style, context: &mut DocumentContext<F>) {
     if style.variant_combo.len() > 0 {
@@ -282,26 +305,23 @@ fn evaluate_style<F: FileResolver>(style: &ast::Style, context: &mut DocumentCon
 }
 
 fn get_current_instance_scope_selector<F: FileResolver>(context: &DocumentContext<F>) -> String {
-
     let is_root_node = context.is_target_node_root();
 
     if let Some(instance) = context.current_instance {
-        format!(".{}{}", get_style_namespace(
-            &instance.name,
-            &instance.id,
-            // TODO - this may be different with varint overrides
-            context.current_component,
-        ), if is_root_node {
-            ""
-        } else {
-            ""
-        })
+        format!(
+            ".{}{}",
+            get_style_namespace(
+                &instance.name,
+                &instance.id,
+                // TODO - this may be different with varint overrides
+                context.current_component,
+            ),
+            if is_root_node { "" } else { "" }
+        )
     } else {
         format!("")
     }
 }
-
-
 
 fn evaluate_variant_styles<F: FileResolver>(
     style: &ast::Style,
@@ -349,21 +369,23 @@ fn evaluate_variant_styles<F: FileResolver>(
         target_component,
     );
 
-
-
     let evaluated_style = create_style_declarations(style, context);
 
     let mut assoc_variants = vec![];
 
-    for variant in variants {
-        for item in &current_component.body {
-            if let ast::component_body_item::Inner::Variant(variant2) = item.get_inner() {
-                if variant.path.get(0) == Some(&variant2.name) {
-                    assoc_variants.push(variant2);
-                }
+    if let Some(variant) = context.variant_override {
+        assoc_variants.push(variant);
+    } else {
+        for variant_ref in variants {
+            let assoc_variant = variant_ref.path.get(0).and_then(|name| {
+                current_component.get_variant(name)
+            });
+
+            if let Some(variant) = assoc_variant {
+                assoc_variants.push(variant);
             }
         }
-    }
+    } 
 
     for assoc_variant in assoc_variants {
         let virt_style = virt::rule::Inner::Style(virt::StyleRule {
@@ -630,7 +652,7 @@ fn create_virt_style<F: FileResolver>(
     context: &mut DocumentContext<F>,
 ) -> Option<virt::StyleRule> {
     let scope_selector = get_current_instance_scope_selector(context);
-    
+
     context
         .current_node
         .clone()

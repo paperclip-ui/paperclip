@@ -6,7 +6,7 @@ token iconSize var(theme.fontSize03)
 component Sidebar {
   render div {
     style {
-      width: 270px
+      width: 250px
       background: var(theme.canvasColor)
       padding: var(theme.space05)
     }
@@ -14,7 +14,7 @@ component Sidebar {
       style {
         background: var(theme.sidebarColor)
         border: 1px solid var(theme.borderColor)
-        border-radius: var(theme.rounded)
+        border-radius: var(theme.roundedMD)
         height: 100%
       }    
       slot children
@@ -95,7 +95,7 @@ component TreeNavigationItem {
     style {
       font-size: var(theme.fontSize02)
       background: var(theme.backgroundSelectedLight)
-      border-radius: 3px
+      
     }
     slot children
   }
@@ -309,9 +309,7 @@ component Editor {
         }
       }
       SidebarPanel {
-        SidebarPanelContent {
           TreeNavigation
-        }
       }
     }
     Canvas

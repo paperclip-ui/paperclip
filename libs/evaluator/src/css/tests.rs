@@ -251,6 +251,28 @@ add_case! {
   "#
 }
 
+
+add_case! {
+  can_trigger_a_variant_style,
+  [
+      ("/entry.pc", r#"
+
+       component A {
+         variant isMobile trigger { true }
+         render div {
+            style variant isMobile {
+              color: blue
+            }
+         }
+       }
+      "#)
+  ],
+  r#"
+  ._A-80f4925f-7 { color: blue }
+  "#
+}
+
+
 add_case! {
   can_evaluate_a_style_token,
   [(
@@ -735,7 +757,6 @@ add_case! {
   "#
 }
 
-
 add_case! {
   can_create_a_style_override_for_nested_element,
   [
@@ -756,6 +777,35 @@ add_case! {
              style {
                color: purple
              }
+           }
+         }
+       }
+
+      "#)
+  ],
+  r#"
+  ._A-hello-80f4925f-4 { color: orange; } ._B-80f4925f-12._A-hello-80f4925f-4 { color: purple; }
+  "#
+}
+
+
+add_case! {
+  can_enable_trigger_for_instance,
+  [
+      ("/entry.pc", r#"
+
+       component A {
+         variant isMobile
+         render div {
+            style variant isMobile {
+              color: blue
+            }
+         }
+       }
+       component B {
+         render A {
+           override {
+             variant isMobile trigger { true }
            }
          }
        }

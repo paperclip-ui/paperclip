@@ -233,7 +233,7 @@ fn evaluate_native_element<F: FileResolver>(
     element: &ast::Element,
     fragment: &mut Vec<virt::Node>,
     context: &mut DocumentContext<F>,
-    is_root: bool
+    is_root: bool,
 ) {
     let mut children = vec![];
 
@@ -287,7 +287,7 @@ fn evaluate_insert_child<F: FileResolver>(
 fn create_native_attributes<F: FileResolver>(
     element: &ast::Element,
     context: &DocumentContext<F>,
-    is_root: bool
+    is_root: bool,
 ) -> Vec<virt::Attribute> {
     let mut attributes = BTreeMap::new();
 
@@ -320,12 +320,13 @@ fn resolve_element_attributes<F: FileResolver>(
     element: &ast::Element,
     attributes: &mut BTreeMap<String, virt::Attribute>,
     context: &DocumentContext<F>,
-    is_root: bool
+    is_root: bool,
 ) {
     // add styling hooks. If the element is root, then we need to add a special
-    // ID so that child styles can be overridable 
+    // ID so that child styles can be overridable
     if element.is_stylable() || is_root {
-        let mut class_name = get_style_namespace(&element.name, &element.id, context.current_component);
+        let mut class_name =
+            get_style_namespace(&element.name, &element.id, context.current_component);
         if is_root && !context.render_scopes.is_empty() {
             class_name = format!("{} {}", class_name, context.render_scopes.join(" "));
         }

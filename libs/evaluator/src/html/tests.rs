@@ -286,9 +286,9 @@ add_case! {
 }
 
 add_case! {
-	classes_are_added_to_instances_that_are_render_nodes,
-	[
-					("/entry.pc", r#"
+    classes_are_added_to_instances_that_are_render_nodes,
+    [
+                    ("/entry.pc", r#"
 			component B {
 				render div bba {
 
@@ -305,13 +305,13 @@ add_case! {
 				}
 			}
 		"#)
-	],
-	"<div class=\"_B-bba-80f4925f-1\"> </div> <div class=\"_B-bba-80f4925f-1 _A-80f4925f-8\"> </div>"
+    ],
+    "<div class=\"_B-bba-80f4925f-1\"> </div> <div class=\"_B-bba-80f4925f-1 _A-80f4925f-8\"> </div>"
 }
 add_case! {
-	classes_are_added_to_nested_instances_that_are_render_nodes,
-	[
-					("/entry.pc", r#"
+    classes_are_added_to_nested_instances_that_are_render_nodes,
+    [
+                    ("/entry.pc", r#"
 					component C {
 						render div {
 		
@@ -326,14 +326,14 @@ add_case! {
 				render B
 			}
 		"#)
-	],
-	"<div class=\"_C-80f4925f-1\"> </div> <div class=\"_C-80f4925f-1 _B-80f4925f-4\"> </div> <div class=\"_C-80f4925f-1 _A-80f4925f-7 _B-80f4925f-4\"> </div>"
+    ],
+    "<div class=\"_C-80f4925f-1\"> </div> <div class=\"_C-80f4925f-1 _B-80f4925f-4\"> </div> <div class=\"_C-80f4925f-1 _A-80f4925f-7 _B-80f4925f-4\"> </div>"
 }
 
 add_case! {
-	can_override_style_of_instance,
-	[
-		("/entry.pc", r#"
+    can_override_style_of_instance,
+    [
+        ("/entry.pc", r#"
 		component Header {
 			render div root {
 				style {
@@ -353,6 +353,6 @@ add_case! {
 			}
 		}
 "#)
-	],
-	"<div class=\"_Header-root-80f4925f-4\"> </div> <div class=\"_Container-80f4925f-12\"> <div class=\"_Header-root-80f4925f-4 _Container-80f4925f-11\"> </div> </div>"
+    ],
+    "<div class=\"_Header-root-80f4925f-4\"> </div> <div class=\"_Container-80f4925f-12\"> <div class=\"_Header-root-80f4925f-4 _Container-80f4925f-11\"> </div> </div>"
 }

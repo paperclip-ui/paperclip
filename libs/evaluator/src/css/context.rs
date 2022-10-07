@@ -55,6 +55,7 @@ pub struct DocumentContext<'graph, 'expr, 'resolve_asset, FR: FileResolver> {
     // for overrides
     pub priority: u8,
     pub rules: Rc<RefCell<Vec<PrioritizedRule>>>,
+    pub variant_override: Option<&'expr ast::Variant>,
 }
 
 impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
@@ -70,6 +71,7 @@ impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
             graph,
             path: path.to_string(),
             current_component: None,
+            variant_override: None,
             current_node: None,
             current_shadow: None,
             current_instance: None,
@@ -81,7 +83,6 @@ impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
     pub fn resolve_asset(&self, asset_path: &str) -> Result<String> {
         self.file_resolver.resolve_file(&self.path, asset_path)
     }
-    
 
     pub fn within_shadow(&self, component: &'expr ast::Component) -> Self {
         let mut clone: DocumentContext<FR> = self.clone();
@@ -107,6 +108,12 @@ impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
         clone
     }
 
+    pub fn with_variant_override(&self, variant_override: &'expr ast::Variant) -> Self {
+        let mut clone = self.clone();
+        clone.variant_override = Some(variant_override);
+        clone
+    }
+
     pub fn within_path(&self, path: &str) -> Self {
         let mut clone = self.clone();
         clone.path = path.to_string();
@@ -128,15 +135,15 @@ impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
     }
 
     pub fn get_target_root_node(&self) -> Option<&'expr ast::Render> {
-        self.get_target_style_component().and_then(|component| {
-            component.get_render_expr()
-        })
-    }    
+        self.get_target_style_component()
+            .and_then(|component| component.get_render_expr())
+    }
 
     pub fn is_target_node_root(&self) -> bool {
         if let Some(root) = self.get_target_root_node() {
             if let Some(current_node) = self.current_node {
-                return root.node.as_ref().expect("Node must exist").get_id() == current_node.get_id()
+                return root.node.as_ref().expect("Node must exist").get_id()
+                    == current_node.get_id();
             }
         }
         return false;

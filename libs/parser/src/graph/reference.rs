@@ -89,7 +89,7 @@ impl Graph {
                     }
                 }
                 _ => {
-                    if let Some(nested) = find_within(part, &expr) {
+                    if let Some(nested) = find_within(part, &expr, &curr_dep.path, self) {
                         expr = nested
                     }
                 }
@@ -145,20 +145,20 @@ impl Graph {
     }
 }
 
-fn find_reference<'expr>(name: &str, expr: Expr<'expr>) -> Option<Expr<'expr>> {
+fn find_reference<'expr>(name: &str, expr: Expr<'expr>, path: &str, graph: &'expr Graph) -> Option<Expr<'expr>> {
     match expr {
         Expr::Component(component) => {
             return if component.name == name {
                 return Some(expr);
             } else {
-                find_within(name, &expr)
+                find_within(name, &expr, path, graph)
             }
         }
         Expr::Element(element) => {
             return if element.name == Some(name.to_string()) {
                 return Some(expr);
             } else {
-                find_within(name, &expr)
+                find_within(name, &expr, path, graph)
             }
         }
         _ => {}
@@ -166,7 +166,7 @@ fn find_reference<'expr>(name: &str, expr: Expr<'expr>) -> Option<Expr<'expr>> {
     None
 }
 
-fn find_within<'expr>(name: &str, scope: &Expr<'expr>) -> Option<Expr<'expr>> {
+fn find_within<'expr>(name: &str, scope: &Expr<'expr>, path: &str, graph: &'expr Graph) -> Option<Expr<'expr>> {
     match scope {
         Expr::Component(component) => {
             component
@@ -176,7 +176,7 @@ fn find_within<'expr>(name: &str, scope: &Expr<'expr>) -> Option<Expr<'expr>> {
                     component_body_item::Inner::Render(render) => {
                         match render.node.as_ref().expect("Node must exist").get_inner() {
                             render_node::Inner::Element(element) => {
-                                find_reference(name, Expr::Element(element))
+                                find_reference(name, Expr::Element(element), path, graph)
                             }
                             _ => None,
                         }
@@ -184,12 +184,25 @@ fn find_within<'expr>(name: &str, scope: &Expr<'expr>) -> Option<Expr<'expr>> {
                     _ => None,
                 })
         }
-        Expr::Element(element) => element.body.iter().find_map(|item| match item.get_inner() {
-            element_body_item::Inner::Element(element) => {
-                find_reference(name, Expr::Element(element))
-            }
-            _ => None,
-        }),
+        Expr::Element(element) => {
+
+            // let instance_component = graph.get_instance_component_ref(element, path);
+
+
+            graph.get_instance_component_ref(element, path)
+            .and_then(|component_ref| {
+                find_within(name, &component_ref.wrap().expr, path, graph)
+            }).or_else(|| {
+                element.body.iter().find_map(|item| match item.get_inner() {
+                    element_body_item::Inner::Element(element) => {
+                        find_reference(name, Expr::Element(element), path, graph)
+                    }
+                    _ => None,
+                })
+            })
+
+           
+        }
         _ => None,
     }
 }

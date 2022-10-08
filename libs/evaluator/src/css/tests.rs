@@ -251,6 +251,32 @@ add_case! {
   "#
 }
 
+add_case! {
+  can_define_an_element_trigger,
+  [
+      ("/entry.pc", r#"
+
+       component A {
+         variant everyOther trigger { ":nth-child(2n)" }
+         render div {
+            style variant everyOther {
+              color: blue
+            }
+         }
+       }
+      "#)
+  ],
+  r#"
+  
+  ._A-80f4925f-7._everyOther-80f4925f-2 { 
+    color: blue; 
+  } 
+  
+  ._A-80f4925f-7:nth-child(2n) { 
+    color: blue; 
+  }
+  "#
+}
 
 add_case! {
   can_trigger_a_variant_style,
@@ -268,10 +294,10 @@ add_case! {
       "#)
   ],
   r#"
-  ._A-80f4925f-7 { color: blue }
+  ._A-80f4925f-7._isMobile-80f4925f-2 { color: blue; }
+  ._A-80f4925f-7 { color: blue; }
   "#
 }
-
 
 add_case! {
   can_evaluate_a_style_token,
@@ -788,31 +814,158 @@ add_case! {
   "#
 }
 
-
 add_case! {
   can_enable_trigger_for_instance,
   [
       ("/entry.pc", r#"
 
-       component A {
-         variant isMobile
-         render div {
-            style variant isMobile {
-              color: blue
-            }
-         }
-       }
-       component B {
-         render A {
-           override {
-             variant isMobile trigger { true }
+      component A {
+        variant isMobile
+        render div {
+           style variant isMobile {
+             color: blue
            }
-         }
-       }
+        }
+      }
+
+      component B {
+        render A {
+          override {
+            variant isMobile trigger { true }
+          }
+        }
+      }
 
       "#)
   ],
   r#"
-  ._A-hello-80f4925f-4 { color: orange; } ._B-80f4925f-12._A-hello-80f4925f-4 { color: purple; }
+    ._A-80f4925f-6._isMobile-80f4925f-1 { 
+      color: blue; 
+    } 
+    
+    ._A-80f4925f-6._isMobile-80f4925f-10 { 
+      color: blue; 
+    } 
+    ._A-80f4925f-6 { 
+      color: blue; 
+    }
+  "#
+}
+
+add_case! {
+  can_assign_an_instance_variant_to_more_triggers,
+  [
+      ("/entry.pc", r#"
+
+      component A {
+        variant isMobile
+        render div {
+           style variant isMobile {
+             color: blue
+           }
+        }
+      }
+
+      component B {
+        render A {
+          override {
+            variant isMobile trigger { 
+              "@media screen and (max-width: 1024px)"
+            }
+          }
+        }
+      }
+
+      "#)
+  ],
+  r#"
+  ._A-80f4925f-6._isMobile-80f4925f-1 { color: blue; } 
+  ._A-80f4925f-6._isMobile-80f4925f-10 { color: blue; } 
+  @media screen and (max-width: 1024px) { ._A-80f4925f-6 { color: blue; } }
+  "#
+}
+
+add_case! {
+  can_override_variant_combo_trigger,
+  [
+      ("/entry.pc", r#"
+
+      component A {
+        variant a1 trigger {
+          ":nth-child(2n)"
+        }
+        variant b1 trigger {
+          "@media screen and (max-width: 200px)"
+        }
+        render div {
+           style variant a1 + b1 {
+             color: blue
+           }
+        }
+      }
+
+      component B {
+        render A {
+          override {
+            variant a1 trigger { 
+              true
+            }
+          }
+        }
+      }
+
+      "#)
+  ],
+  r#"
+  ._A-80f4925f-10._a1-80f4925f-2 { color: blue; } 
+  ._A-80f4925f-10._b1-80f4925f-4 { color: blue; } 
+  @media screen and (max-width: 200px) { ._A-80f4925f-10:nth-child(2n) { color: blue; } } 
+  ._A-80f4925f-10._a1-80f4925f-14 { color: blue; } 
+  ._A-80f4925f-10._b1-80f4925f-4 { color: blue; } 
+  @media screen and (max-width: 200px) { ._A-80f4925f-10 { color: blue; } }
+  "#
+}
+
+
+add_case! {
+  can_override_a_nested_variant,
+  [
+      ("/entry.pc", r#"
+
+      component D {
+        variant isMobile trigger {
+          "@media screen and (max-width: 10px)"
+        }
+        render div {
+          style variant isMobile {
+            color: blue
+          }
+        }
+      }
+      component C {
+        render D d
+      }
+
+      component A {
+        render C c
+      }
+
+      component B {
+        render A {
+          override c.d {
+            variant isMobile trigger { 
+              true
+            }
+          }
+        }
+      }
+
+      "#)
+  ],
+  r#"
+  ._D-80f4925f-7._isMobile-80f4925f-2 { color: blue; } 
+  @media screen and (max-width: 10px) { ._D-80f4925f-7 { color: blue; } } 
+  ._D-80f4925f-7._isMobile-80f4925f-17 { color: blue; } 
+  ._D-80f4925f-7 { color: blue; }
   "#
 }

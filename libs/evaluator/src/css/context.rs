@@ -148,4 +148,15 @@ impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
         }
         return false;
     }
+
+    pub fn get_scoped_variant(&self, name: &str) -> Option<&'expr ast::Variant> {
+        if let Some(variant_override) = self.variant_override {
+            if variant_override.name == name {
+                return Some(variant_override);
+            }
+        }
+        return self
+            .current_component
+            .and_then(|component| component.get_variant(name));
+    }
 }

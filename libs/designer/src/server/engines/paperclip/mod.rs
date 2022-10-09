@@ -1,13 +1,13 @@
 use std::collections::HashMap;
 
 use anyhow::Result;
-use paperclip_evaluator::css;
 use paperclip_evaluator::core::io::PCFileResolver;
+use paperclip_evaluator::css;
 
+use futures::executor::block_on;
 use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_evaluator::html;
 use paperclip_parser::graph::io::IO as GraphIO;
-use futures::executor::block_on;
 
 use crate::handle_store_events;
 use crate::server::core::{ServerEngineContext, ServerEvent};
@@ -43,6 +43,7 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
     );
 }
 
+#[derive(Clone)]
 struct VirtGraphIO<TIO: ServerIO> {
     ctx: ServerEngineContext<TIO>,
 }
@@ -115,13 +116,11 @@ async fn load_files<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> 
     Ok(())
 }
 
-fn evaluate_dependency_graph<TIO: ServerIO>(
-    ctx: ServerEngineContext<TIO>
-) -> Result<()> {
+fn evaluate_dependency_graph<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
     let mut output: HashMap<String, (css::virt::Document, html::virt::Document)> = HashMap::new();
-    
+
     // file resolver for embedding
-    
+
     {
         let resolver = PCFileResolver::new(ctx.io.clone(), ctx.io.clone(), None);
         let graph = &ctx.store.lock().unwrap().state.graph;

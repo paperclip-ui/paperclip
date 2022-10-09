@@ -43,7 +43,9 @@ impl Designer for DesignerService {
             let path = request.into_inner().path;
 
             let emit = |path: String, store: Arc<Mutex<ServerStore>>| {
-                let data = if let Ok(module) = store.lock().unwrap().state.bundle_evaluated_module(&path) {
+                let data = if let Ok(module) =
+                    store.lock().unwrap().state.bundle_evaluated_module(&path)
+                {
                     Some(file_response::Data::Paperclip(module))
                 } else {
                     None

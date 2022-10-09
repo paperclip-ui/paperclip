@@ -6,12 +6,14 @@ use std::sync::Mutex;
 
 use paperclip_common::fs::{FileReader, FileResolver};
 
+#[derive(Clone)]
 pub struct PCFileResolverOptions {
     pub embed_max_size: Option<u64>,
     pub asset_out_dir: Option<String>,
     pub asset_prefix: Option<String>,
 }
 
+#[derive(Clone)]
 pub struct PCFileResolver<TReader: FileReader, TResolver: FileResolver> {
     pub resolved_paths: Arc<Mutex<HashMap<String, String>>>,
     pub reader: TReader,

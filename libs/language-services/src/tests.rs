@@ -351,3 +351,33 @@ test_case! {
     ]
   }
 }
+
+test_case! {
+  collects_colors_from_overrides,
+  r#"
+    div test {
+      override {
+        style {
+          color: blue
+        }
+      }
+    }
+  "#,
+  DocumentInfo {
+    colors: vec![
+      ColorInfo {
+        value: Some(ColorValue {
+          red: 0.0,
+          green: 0.0,
+          blue: 255.0,
+          alpha: 1.0
+        }),
+
+        position: Some(Position {
+          start: 66,
+          end: 70
+        })
+      }
+    ]
+  }
+}

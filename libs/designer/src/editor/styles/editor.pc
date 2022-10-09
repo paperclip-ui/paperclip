@@ -2,14 +2,23 @@ import "./theme.pc" as theme
 
 token iconSize var(theme.fontSize03)
 
+style panel {
+  background: var(theme.sidebarColor)
+  border: 1px solid var(theme.borderColor)
+}
 
 component Sidebar {
   render div {
     style {
-      width: 270px
-      background: var(theme.gray0)
+      width: 250px
     }
-    slot children
+    div {
+      style extends panel {
+        border-radius: var(theme.roundedMD)
+        height: 100%
+      }    
+      slot children
+    }
   }
 }
 
@@ -22,7 +31,7 @@ component SidebarPanel {
 component SidebarPanelHeader {
   render div {
     style extends theme.fontHeader {
-      border-top: 1px solid rgb(198, 198, 198)
+      border-top: 1px solid var(theme.borderColor)
       padding: var(theme.space05)
       padding-bottom: 0px
 
@@ -47,7 +56,7 @@ component TreeNavigation {
       TreeNavigationItemHeader {
         override root {
           style {
-            --depth: 2
+            --depth: 1
           }
         }
         div {
@@ -68,6 +77,11 @@ component TreeNavigation {
       TreeNavigationItemContent {
         TreeNavigationItem {
           TreeNavigationItemHeader {
+            override root {
+              style {
+                --depth: 2
+              }
+            }
             text "Leaf"
           }
         }
@@ -80,14 +94,14 @@ component TreeNavigationItem {
   render div {
     style {
       font-size: var(theme.fontSize02)
-      background: rgb(179, 179, 179)
-      border-radius: 3px
+      background: var(theme.backgroundSelectedLight)
+      
     }
     slot children
   }
 }
 component TreeNavigationItemHeader {
-  render div container {
+  render div root {
     style {
       --depth: 1
       display: flex
@@ -115,12 +129,17 @@ component SidebarHeader {
 }
 
 component SidebarHeaderButton {
-  render div {
-    style {
+  variant selected
+  render div root {
+    style extends theme.easeIn {
       padding: var(theme.space03) var(theme.space05)
       font-size: var(theme.fontSize01)
       text-align: center
       width: 100%
+      border-bottom: 2px solid transparent
+    }
+    style variant selected {
+      border-color: var(theme.selectedColor)
     }
     slot children
   }
@@ -139,7 +158,7 @@ component Artboard {
     }
     div {
       style {
-        color: rgb(160, 160, 160)
+        color: var(theme.fontColor01)
         position: absolute
         transform: translateY(calc(-100% - 0.5em))
       }
@@ -164,9 +183,14 @@ component Canvas {
     style {
       flex: 1
       padding: var(theme.space04)
-      background: rgb(57, 57, 57)
+      background: var(theme.gray03)
       position: relative
       overflow: hidden
+      position: absolute
+      top: 0px
+      left: 0px
+      width: 100%
+      height: 100%
     }
     Artboard {
       insert title {
@@ -235,10 +259,12 @@ component MultiSelectItem {
   render div {
     style {
       display: inline-block
-      background: rgb(219, 219, 219)
+      color: var(theme.backgroundSelectedText)
+      background: var(theme.backgroundSelected)
       border-radius: var(theme.roundedSM)
       padding: 0px var(theme.space03)
       display: flex
+      height: 100%
       align-items: center
     }
     slot children
@@ -272,158 +298,235 @@ component ColorInput {
   }
 }
 
+component EditorPanels {
+  render div {
+    style {
+      display: flex
+      flex: 1
+      z-index: 3
+      padding: var(theme.space05)
+      gap: var(theme.space05)
+      position: relative
+      height: 100%
+      justify-content: space-between
+    }
+    slot children
+  }
+}
+
+component CenterPanels {
+  render div {
+    style {
+      display: flex
+      flex: 1
+      flex-direction: column
+      justify-content: space-between
+    }
+    Toolbar
+    FooterBar
+  }
+}
+
+component Toolbar {
+  render div {
+    style extends panel {
+      width: 100%
+      height: 30px
+    }
+  }
+}
+
+component FooterBar {
+  render div {
+    style extends panel {
+      width: 100%
+      height: 30px
+    }
+  }
+}
+
 component Editor {
   render div {
     style extends theme.fontDefault {
-      display: flex
+
       width: 100vw
       height: 100vh
-      
+      background: var(theme.canvasColor)
     }
-    Sidebar {
-      SidebarHeader {
-        SidebarHeaderButton {
-          text "Files"
-        }
-        SidebarHeaderButton {
-          text "Layers"
-        }
-        SidebarHeaderButton {
-          text "Assets"
-        }
-      }
-      SidebarPanel {
-        SidebarPanelContent {
-          TreeNavigation
-        }
-      }
-    }
-    Canvas
-    Sidebar {
-      SidebarPanel {
-        SidebarPanelContent {
-          Field {
-            insert name {
-              text "Variant"
+    Canvas 
+    EditorPanels {
+      Sidebar {
+        SidebarHeader {
+          SidebarHeaderButton {
+            text "Files"
+          }
+          SidebarHeaderButton layersTab {
+            override {
+              variant selected trigger { true }
             }
-            insert input {
-              MultiSelect {
-                MultiSelectItem {
-                  text "mobile"
-                }
-                MultiSelectItem {
-                  text "dark"
+            text "Layers"
+          }
+          SidebarHeaderButton {
+            text "Assets"
+          }
+        }
+        SidebarPanel {
+            TreeNavigation
+        }
+      }
+      CenterPanels
+      Sidebar {
+        SidebarPanel {
+          SidebarPanelContent {
+            Field {
+              insert name {
+                text "Variant"
+              }
+              insert input {
+                MultiSelect {
+                  MultiSelectItem {
+                    text "mobile"
+                  }
+                  MultiSelectItem {
+                    text "dark"
+                  }
                 }
               }
             }
           }
         }
-      }
-      SidebarPanel {
-        SidebarPanelHeader {
-          text "Layout"
-        }
-        SidebarPanelContent {
-          Fields {
-            Field {
-              insert name {
-                text "display"
-              }
-              insert input {
-                Select {
-                  text "flex"
+        SidebarPanel {
+          SidebarPanelHeader {
+            text "Layout"
+          }
+          SidebarPanelContent {
+            Fields {
+              Field {
+                insert name {
+                  text "display"
+                }
+                insert input {
+                  Select {
+                    text "flex"
+                  }
                 }
               }
-            }
-            Field {
-              insert name {
-                text "Padding"
-              }
-              insert input {
-                Select {
-                  text "flex"
+              Field {
+                insert name {
+                  text "Padding"
+                }
+                insert input {
+                  Select {
+                    text "flex"
+                  }
                 }
               }
-            }
-            Field {
-              insert name {
-                text "Margin"
-              }
-              insert input {
-                Select {
-                  text "12px"
+              Field {
+                insert name {
+                  text "Margin"
+                }
+                insert input {
+                  Select {
+                    text "12px"
+                  }
                 }
               }
-            }
-            Field {
-              insert name {
-                text "Position"
-              }
-              insert input {
-                Select {
-                  text "relative"
+              Field {
+                insert name {
+                  text "Position"
+                }
+                insert input {
+                  Select {
+                    text "relative"
+                  }
                 }
               }
-            }
-            Field {
-              insert name {
-                text "Box Sizing"
-              }
-              insert input {
-                Select {
-                  text "border-box"
+              Field {
+                insert name {
+                  text "Box Sizing"
+                }
+                insert input {
+                  Select {
+                    text "border-box"
+                  }
                 }
               }
             }
           }
         }
-      }
-      SidebarPanel {
-        SidebarPanelHeader {
-          text "Appearance"
-        }
-        SidebarPanelContent {
-          Fields {
-            Field {
-              insert name {
-                text "Background"
-              }
-              insert input {
-                ColorInput {
-                  text "flex"
+        SidebarPanel {
+          SidebarPanelHeader {
+            text "Appearance"
+          }
+          SidebarPanelContent {
+            Fields {
+              Field {
+                insert name {
+                  text "Background"
                 }
-                Select {
-                  text "flex"
-                }
-              }
-            }
-            Field {
-              insert name {
-                text "Shadows"
-              }
-              insert input {
-                Select {
-                  text "flex"
-                }
-              }
-            }
-            Field {
-              insert name {
-                text "Border"
-              }
-              insert input {
-                div {
-                  style {
-                    display: flex
-                    flex-direction: column
-                    gap: var(theme.space05)
-                    opacity: 0.5
+                insert input {
+                  ColorInput {
+                    text "flex"
                   }
                   Select {
-                    text "1px"
+                    text "flex"
+                  }
+                }
+              }
+              Field {
+                insert name {
+                  text "Shadows"
+                }
+                insert input {
+                  Select {
+                    text "flex"
+                  }
+                }
+              }
+              Field {
+                insert name {
+                  text "Border"
+                }
+                insert input {
+                  div {
+                    style {
+                      display: flex
+                      flex-direction: column
+                      gap: var(theme.space05)
+                      opacity: 0.5
+                    }
+                    Select {
+                      text "1px"
+                    }
+                    Select {
+                      text "solid"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        SidebarPanel {
+          SidebarPanelHeader {
+
+          }
+          SidebarPanelContent {
+            Fields {
+              Field {
+                insert name {
+                  text "Mixins"
+                }
+                insert input {
+                  Select {
+                    text "input"
                   }
                   Select {
-                    text "solid"
+                    text "fontDefault"
+                  }
+                  Select {
+                    text "add "
                   }
                 }
               }
@@ -431,33 +534,6 @@ component Editor {
           }
         }
       }
-
-      SidebarPanel {
-        SidebarPanelHeader {
-
-        }
-        SidebarPanelContent {
-          Fields {
-            Field {
-              insert name {
-                text "Mixins"
-              }
-              insert input {
-                Select {
-                  text "input"
-                }
-                Select {
-                  text "fontDefault"
-                }
-                Select {
-                  text "add "
-                }
-              }
-            }
-          }
-        }
-      }
-      
     }
   }
 }

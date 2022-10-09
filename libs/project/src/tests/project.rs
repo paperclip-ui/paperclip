@@ -118,7 +118,7 @@ macro_rules! test_case {
 fn default_config_with_compiler_options(src: &str, options: Vec<CompilerOptions>) -> Config {
     Config {
         src_dir: Some(src.to_string()),
-        global_css: None,
+        global_scripts: None,
         module_dirs: None,
         compiler_options: Some(options),
     }
@@ -274,7 +274,7 @@ test_case! {
           <link rel="stylesheet" href="/entry.pc.css">
         </head>
         <body>
-          <div class="_A-b-80f4925f-5"> Hello world </div>
+          <div class="_A-b-80f4925f-5 _80f4925f-9"> Hello world </div>
         </body>
       </html>
     "#),
@@ -461,7 +461,7 @@ test_case! {
           <link rel="stylesheet" href="/colors.pc.css">
         </head> 
         <body> 
-          <div class="_Component-6bcf0994-6">
+          <div class="_Component-6bcf0994-6 _80f4925f-2">
           </div> 
         </body> 
       </html>

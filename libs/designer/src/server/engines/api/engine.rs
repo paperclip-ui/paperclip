@@ -39,7 +39,6 @@ async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
     let designer_server = tonic_web::config().enable(designer_server);
 
     let server = Server::bind(&addr).serve(make_service_fn(move |_| {
-
         let cors = warp::cors().allow_any_origin();
         let route = routes().with(cors);
 

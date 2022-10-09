@@ -93,6 +93,9 @@ fn scan_element(element: &Element, ctx: &mut Context) {
             element_body_item::Inner::Element(element) => {
                 scan_element(element, ctx);
             }
+            element_body_item::Inner::Override(element) => {
+                scan_override(element, ctx);
+            }
             element_body_item::Inner::Text(expr) => {
                 scan_text(expr, ctx);
             }
@@ -106,6 +109,7 @@ fn scan_element(element: &Element, ctx: &mut Context) {
         }
     }
 }
+
 fn scan_slot(expr: &Slot, ctx: &mut Context) {
     for item in &expr.body {
         match item.get_inner() {
@@ -115,6 +119,17 @@ fn scan_slot(expr: &Slot, ctx: &mut Context) {
             slot_body_item::Inner::Text(expr) => {
                 scan_text(expr, ctx);
             }
+        }
+    }
+}
+
+fn scan_override(expr: &Override, ctx: &mut Context) {
+    for item in &expr.body {
+        match item.get_inner() {
+            override_body_item::Inner::Style(expr) => {
+                scan_style(expr, ctx);
+            },
+            _ => {}
         }
     }
 }

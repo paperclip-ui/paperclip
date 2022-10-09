@@ -273,7 +273,7 @@ fn evaluate_variant_override<F: FileResolver>(
     context: &mut DocumentContext<F>,
 ) {
 
-    let mut instance_context = context.within_instance(instance);
+    let instance_context = context.within_instance(instance);
 
     let instance_component = get_or_short!(
         context
@@ -284,6 +284,7 @@ fn evaluate_variant_override<F: FileResolver>(
 
     let mut target_component = Some(instance_component.clone());
 
+    // !! WIP!!!
     for (index, _) in oride.path.iter().enumerate() {
         let next_instance_path = oride.path[0..index + 1].to_vec();
         let element = context.graph.get_ref(&next_instance_path, &instance_component.path, Some(instance_component.wrap().expr));
@@ -326,7 +327,7 @@ fn evaluate_style<F: FileResolver>(style: &ast::Style, context: &mut DocumentCon
 
 
 fn get_current_instance_scope_selector<F: FileResolver>(context: &DocumentContext<F>) -> String {
-    let is_root_node = context.is_target_node_root();
+    // let is_root_node = context.is_target_node_root();
 
     if context.instance_of.len() > 0 {
         return context.instance_of.iter().map(|(instance, owner_component, path)| {

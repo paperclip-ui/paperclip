@@ -11,7 +11,8 @@ use paperclip_config::ConfigContext;
 use paperclip_evaluator::css;
 use paperclip_evaluator::html;
 use paperclip_parser::graph::Graph;
-use paperclip_proto::virt::module::{PcModule, PcModuleImport};
+use paperclip_proto::virt::module::pc_module_import;
+use paperclip_proto::virt::module::{PcModule, PcModuleImport, PccssImport, GlobalScript};
 
 pub struct StartOptions {
     pub config_context: ConfigContext,
@@ -25,6 +26,7 @@ pub enum ServerEvent {
     FileWatchEvent(FileWatchEvent),
     DependencyChanged { path: String },
     APIServerStarted { port: u16 },
+    GlobalScriptsLoaded(Vec<(String, Vec<u8>)>),
     UpdateFileRequested { path: String, content: Vec<u8> },
     PaperclipFilesLoaded { files: Vec<String> },
     DependencyGraphLoaded { graph: Graph },
@@ -62,11 +64,25 @@ impl ServerState {
         for (_rel, path) in &dep.imports {
             if let Some((css, _)) = self.evaluated_modules.get(path) {
                 imports.push(PcModuleImport {
-                    path: path.to_string(),
-                    css: Some(css.clone()),
+                    inner: Some(pc_module_import::Inner::Css(PccssImport {
+                        path: path.to_string(),
+                        css: Some(css.clone()),
+                    })),
                 })
             }
         }
+
+        imports.extend(self.options.config_context.get_global_script_paths().iter().filter_map(|path| {
+            self.file_cache.get(path).and_then(|content| {
+                Some(PcModuleImport {
+                    inner: Some(pc_module_import::Inner::GlobalScript(GlobalScript {
+                        path: path.to_string(),
+                        content: std::str::from_utf8(content).unwrap().to_string()
+                    }))
+                })
+            })
+        }).collect::<Vec<PcModuleImport>>());
+
 
         Ok(PcModule {
             html: Some(html.clone()),
@@ -75,6 +91,7 @@ impl ServerState {
         })
     }
 }
+
 
 #[derive(Default, Clone)]
 pub struct ServerStateEventHandler;
@@ -94,6 +111,11 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
             }
             ServerEvent::ModulesEvaluated(modules) => {
                 state.evaluated_modules.extend(modules.clone());
+            }
+            ServerEvent::GlobalScriptsLoaded(global_scripts) => {
+                for (path, content) in global_scripts {
+                    state.file_cache.insert(path.to_string(), content.clone());
+                }
             }
             _ => {}
         }

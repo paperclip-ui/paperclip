@@ -117,6 +117,20 @@ export const createNativeStyleFromSheet = (
   return nativeElement as HTMLStyleElement;
 };
 
+export const createNativeGlobalScript = (
+  content: string,
+  path: string,
+  factory: NodeFactory
+) => {
+  if (/\.css$/.test(path)) {
+    const css = factory.createElement("style") as HTMLStyleElement;
+    css.textContent = content;
+    return css;
+  }
+  // other things not supported yet
+  return document.createDocumentFragment();
+};
+
 export const renderSheetText = (
   sheet: css.Document.AsObject,
   resolveUrl: UrlResolver

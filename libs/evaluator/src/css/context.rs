@@ -92,7 +92,9 @@ impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
 
     pub fn within_instance(&self, instance: &'expr ast::Element) -> Self {
         let mut clone: DocumentContext<FR> = self.clone();
-        clone.instance_of.push((instance, self.current_component, self.path.to_string()));
+        clone
+            .instance_of
+            .push((instance, self.current_component, self.path.to_string()));
         clone
     }
 
@@ -130,24 +132,24 @@ impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
         self.id_generator.borrow_mut().new_id()
     }
 
-    pub fn get_target_style_component(&self) -> Option<&'expr ast::Component> {
-        self.current_shadow.or(self.current_component)
-    }
+    // pub fn get_target_style_component(&self) -> Option<&'expr ast::Component> {
+    //     self.current_shadow.or(self.current_component)
+    // }
 
-    pub fn get_target_root_node(&self) -> Option<&'expr ast::Render> {
-        self.get_target_style_component()
-            .and_then(|component| component.get_render_expr())
-    }
+    // pub fn get_target_root_node(&self) -> Option<&'expr ast::Render> {
+    //     self.get_target_style_component()
+    //         .and_then(|component| component.get_render_expr())
+    // }
 
-    pub fn is_target_node_root(&self) -> bool {
-        if let Some(root) = self.get_target_root_node() {
-            if let Some(current_node) = self.current_node {
-                return root.node.as_ref().expect("Node must exist").get_id()
-                    == current_node.get_id();
-            }
-        }
-        return false;
-    }
+    // pub fn is_target_node_root(&self) -> bool {
+    //     if let Some(root) = self.get_target_root_node() {
+    //         if let Some(current_node) = self.current_node {
+    //             return root.node.as_ref().expect("Node must exist").get_id()
+    //                 == current_node.get_id();
+    //         }
+    //     }
+    //     return false;
+    // }
 
     pub fn get_scoped_variant(&self, name: &str) -> Option<&'expr ast::Variant> {
         if let Some(variant_override) = self.variant_override {

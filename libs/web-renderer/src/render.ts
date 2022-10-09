@@ -4,6 +4,7 @@ import * as css from "@paperclip-ui/proto/lib/virt/css_pb";
 import { PCModule } from "@paperclip-ui/proto/lib/virt/module_pb";
 import { NodeFactory } from "./node-factory";
 import {
+  createNativeGlobalScript,
   createNativeNode,
   createNativeStyleFromSheet,
   renderSheetText,
@@ -101,10 +102,24 @@ const renderImportedStyles = (
 ) => {
   const container = domFactory.createElement("div");
   for (const imp of info.importsList) {
-    const sheet = createNativeStyleFromSheet(imp.css, domFactory, resolveUrl);
-    sheet.setAttribute(`data-source`, imp.path);
-    // sheet.setAttribute(`data-index`, String(imp.index));
-    container.appendChild(sheet);
+    if (imp.css) {
+      const sheet = createNativeStyleFromSheet(
+        imp.css.css,
+        domFactory,
+        resolveUrl
+      );
+      sheet.setAttribute(`data-source`, imp.css.path);
+      // sheet.setAttribute(`data-index`, String(imp.index));
+      container.appendChild(sheet);
+    } else if (imp.globalScript) {
+      container.appendChild(
+        createNativeGlobalScript(
+          imp.globalScript.content,
+          imp.globalScript.path,
+          domFactory
+        )
+      );
+    }
   }
   return container;
 };
@@ -283,23 +298,27 @@ const patchImportedSheets = (
   for (let i = 0; i < update.length; i++) {
     const [oldItem, newItem] = update[i];
     if (oldItem !== newItem) {
-      patchStyleElement(
-        styleContainer.childNodes[i] as HTMLStyleElement,
-        oldItem.css,
-        newItem.css,
-        options
-      );
+      if (oldItem.css) {
+        patchStyleElement(
+          styleContainer.childNodes[i] as HTMLStyleElement,
+          oldItem.css.css,
+          newItem.css.css,
+          options
+        );
+      }
     }
   }
 
   for (const item of insert) {
-    styleContainer.appendChild(
-      createNativeStyleFromSheet(
-        item.css,
-        options.domFactory,
-        options.resolveUrl
-      )
-    );
+    if (item.css) {
+      styleContainer.appendChild(
+        createNativeStyleFromSheet(
+          item.css.css,
+          options.domFactory,
+          options.resolveUrl
+        )
+      );
+    }
   }
 
   for (let i = removeCount; i--; ) {

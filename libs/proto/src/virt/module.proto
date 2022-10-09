@@ -10,8 +10,18 @@ message PCModule {
 }
 
 message PCModuleImport {
+  oneof inner {
+    PCCSSImport css = 1;
+    GlobalScript global_script = 2;
+  }
+}
+
+message PCCSSImport {
   string path = 1;
   virt.css.Document css = 2;
 }
 
-
+message GlobalScript {
+  string path = 1;
+  string content = 2;
+}

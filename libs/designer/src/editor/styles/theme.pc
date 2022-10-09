@@ -56,6 +56,7 @@ public style mask {
 
 
 public style icon extends mask {
+  --size: 1em
   width: var(--size)
   height: var(--size)
   display: inline-block
@@ -77,6 +78,13 @@ public style fontDefault {
   font-size: var(fontSize02)
 }
 
+public style reset {
+  border: none
+  background: transparent
+  color: currentColor
+  padding: 0
+  margin: 0
+}
 
 public style fontHeader {
   font-size: var(fontSize01)
@@ -84,5 +92,5 @@ public style fontHeader {
 }
 
 public style easeIn {
-  transition: 0.5s
+  transition: 0.2s
 }

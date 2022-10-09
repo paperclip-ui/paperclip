@@ -919,7 +919,6 @@ add_case! {
   "#
 }
 
-
 // add_case! {
 //   can_override_a_nested_variant,
 //   [
@@ -946,7 +945,7 @@ add_case! {
 //       component B {
 //         render A {
 //           override c.d {
-//             variant isMobile trigger { 
+//             variant isMobile trigger {
 //               true
 //             }
 //           }
@@ -956,9 +955,9 @@ add_case! {
 //       "#)
 //   ],
 //   r#"
-//   ._D-80f4925f-7._isMobile-80f4925f-2 { color: blue; } 
-//   @media screen and (max-width: 10px) { ._D-80f4925f-7 { color: blue; } } 
-//   ._D-80f4925f-7._isMobile-80f4925f-17 { color: blue; } 
+//   ._D-80f4925f-7._isMobile-80f4925f-2 { color: blue; }
+//   @media screen and (max-width: 10px) { ._D-80f4925f-7 { color: blue; } }
+//   ._D-80f4925f-7._isMobile-80f4925f-17 { color: blue; }
 //   ._D-80f4925f-7 { color: blue; }
 //   "#
 // }

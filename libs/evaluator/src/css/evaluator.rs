@@ -272,7 +272,6 @@ fn evaluate_variant_override<F: FileResolver>(
     instance: &ast::Element,
     context: &mut DocumentContext<F>,
 ) {
-
     let instance_context = context.within_instance(instance);
 
     let instance_component = get_or_short!(
@@ -287,21 +286,23 @@ fn evaluate_variant_override<F: FileResolver>(
     // !! WIP!!!
     for (index, _) in oride.path.iter().enumerate() {
         let next_instance_path = oride.path[0..index + 1].to_vec();
-        let element = context.graph.get_ref(&next_instance_path, &instance_component.path, Some(instance_component.wrap().expr));
+        let element = context.graph.get_ref(
+            &next_instance_path,
+            &instance_component.path,
+            Some(instance_component.wrap().expr),
+        );
 
         if let Some(element) = element {
             if let Expr::Element(element) = &element.expr {
                 // instance_context = instance_context.within_shadow(target_component).within_instance(element);
-                target_component = context.graph.get_instance_component_ref(element, &context.path)
+                target_component = context
+                    .graph
+                    .get_instance_component_ref(element, &context.path)
             }
         }
     }
 
-    let target_component = get_or_short!(
-        target_component,
-        ()
-    );
-
+    let target_component = get_or_short!(target_component, ());
 
     evaluate_component(
         &target_component.expr,
@@ -313,7 +314,8 @@ fn evaluate_variant_override<F: FileResolver>(
 
 fn evaluate_style<F: FileResolver>(style: &ast::Style, context: &mut DocumentContext<F>) {
     if style.variant_combo.len() > 0 {
-        let expanded_combo_selectors = collect_style_variant_selectors(&style.variant_combo, context);
+        let expanded_combo_selectors =
+            collect_style_variant_selectors(&style.variant_combo, context);
         evaluate_variant_styles(
             &style,
             &style.variant_combo,
@@ -325,21 +327,21 @@ fn evaluate_style<F: FileResolver>(style: &ast::Style, context: &mut DocumentCon
     }
 }
 
-
 fn get_current_instance_scope_selector<F: FileResolver>(context: &DocumentContext<F>) -> String {
     // let is_root_node = context.is_target_node_root();
 
     if context.instance_of.len() > 0 {
-        return context.instance_of.iter().map(|(instance, owner_component, path)| {
-            format!(
-                ".{}",
-                get_style_namespace(
-                    &instance.name,
-                    &instance.id,
-                    owner_component.clone()
+        return context
+            .instance_of
+            .iter()
+            .map(|(instance, owner_component, _path)| {
+                format!(
+                    ".{}",
+                    get_style_namespace(&instance.name, &instance.id, owner_component.clone())
                 )
-            )
-        }).collect::<Vec<String>>().join(" ")
+            })
+            .collect::<Vec<String>>()
+            .join(" ");
     }
     format!("")
 
@@ -440,7 +442,6 @@ fn evaluate_variant_styles<F: FileResolver>(
 
     let (combo_queries, combo_selectors) = get_combo_selectors(expanded_combo_selectors);
 
-    
     let virt_styles = if combo_selectors.len() > 0 {
         combo_selectors
             .iter()
@@ -591,7 +592,6 @@ fn get_combo_selectors(
                     selectors.push(selector.to_string());
                 }
             } else if let VariantTrigger::Boolean(_value) = selector {
-
                 // trick to enable selector
                 selectors.push("".to_string());
             }

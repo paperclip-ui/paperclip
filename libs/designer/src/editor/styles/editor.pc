@@ -5,6 +5,7 @@ token iconSize var(theme.fontSize03)
 style panel {
   background: var(theme.sidebarColor)
   border: 1px solid var(theme.borderColor)
+  border-radius: var(theme.roundedMD)
 }
 
 component Sidebar {
@@ -14,7 +15,6 @@ component Sidebar {
     }
     div {
       style extends panel {
-        border-radius: var(theme.roundedMD)
         height: 100%
       }    
       slot children
@@ -49,40 +49,65 @@ component SidebarPanelContent {
   }
 }
 
+component NodeIcon {
+  render div
+}
+
+component FileNavigatorIcon {
+  variant isDirectory
+  variant isPCFile
+  render div {
+    style {
+      --size: var(theme.fontSize03)
+    }
+    style variant isDirectory extends theme.icon {
+      -webkit-mask-image: url("./folder2.svg")
+    }
+  }
+}
+
+component FileNavigatorItemHeader {
+  variant isContainer
+  variant isOpen
+  render TreeNavigationItemHeader root {
+    override {
+      variant isContainer trigger { true }
+      variant isOpen trigger { true }
+    }
+    override root {
+      style {
+        --depth: var(--depth)
+      }
+    }
+    FileNavigatorIcon {
+      override {
+        variant isDirectory trigger { true }
+      }
+    }
+    slot children
+  }
+}
 
 component TreeNavigation {
   render div {
     TreeNavigationItem {
-      TreeNavigationItemHeader {
+      FileNavigatorItemHeader {
         override root {
           style {
             --depth: 1
           }
         }
-        div {
-          style extends theme.icon {
-            -webkit-mask-image: url("./chevron.svg")
-            transform: rotate(-90deg)
-            --size: 12px
-          }
-        }
-        div {
-          style extends theme.icon {
-            -webkit-mask-image: url("./folder2.svg")
-            --size: var(theme.fontSize03)
-          }
-        }
-        text "leaf"
+        text "src"
       }
       TreeNavigationItemContent {
         TreeNavigationItem {
-          TreeNavigationItemHeader {
+          FileNavigatorItemHeader {
             override root {
               style {
                 --depth: 2
               }
             }
-            text "Leaf"
+            text "components"
           }
         }
       }
@@ -101,6 +126,8 @@ component TreeNavigationItem {
   }
 }
 component TreeNavigationItemHeader {
+  variant isContainer
+  variant isOpen
   render div root {
     style {
       --depth: 1
@@ -110,6 +137,16 @@ component TreeNavigationItemHeader {
       padding: var(theme.space03) var(theme.space05)
       padding-left: calc(var(theme.space05) * var(--depth))
     }
+    div {
+      style variant isContainer extends theme.icon {
+        -webkit-mask-image: url("./chevron2.svg")
+        --size: 12px
+      }
+      style variant isOpen {
+        transform: rotate(90deg)
+      }
+    }
+    
     slot children
   }
 }
@@ -323,15 +360,92 @@ component CenterPanels {
       justify-content: space-between
     }
     Toolbar
-    FooterBar
+  }
+}
+
+component ToolbarDivider {
+  render div {
+    style {
+      width: var(theme.space02)
+      border-radius: var(theme.roundedMD)
+      height: 100%
+      background: var(theme.borderColor)
+    }
+  }
+}
+
+component ToolbarButton {
+  variant hovering trigger { ":hover" }
+  variant wide trigger { ".wide" }
+  render button {
+    style extends theme.reset, theme.easeIn {
+      padding: 0px
+      cursor: pointer
+      border-radius: var(theme.roundedMD)
+      min-width: var(theme.space07)
+      height: var(theme.space07)
+    }
+    style variant hovering {
+      background: var(theme.selectedColor)
+    }
+    style variant wide {
+      width: 200px
+    }
+    slot children
+  }
+}
+
+component Zoom {
+  render div {
+    
+    slot children
   }
 }
 
 component Toolbar {
   render div {
-    style extends panel {
-      width: 100%
-      height: 30px
+    style {
+      display: flex
+      justify-content: center
+    }
+    div {
+      style extends panel {
+        display: inline-flex
+        align-items: center
+        padding: var(theme.space03)
+        gap: var(theme.space03)
+      }
+      ToolbarButton {
+        div {
+          style extends theme.icon {
+            -webkit-mask-image: url("./text.svg")
+          }
+        }
+      }
+      ToolbarButton {
+        div {
+          style extends theme.icon {
+            -webkit-mask-image: url("./instance3.svg")
+            transform: rotate(45deg)
+            --size: 1.5em
+          }
+        }
+      }
+      ToolbarDivider
+
+      ToolbarButton {
+        div {
+          style extends theme.icon {
+            -webkit-mask-image: url("./component2.svg")
+            transform: rotate(45deg)
+            --size: 1.5em
+          }
+        }
+      }
+      ToolbarDivider
+      ToolbarButton(class: "wide") {
+        text "100%"
+      }
     }
   }
 }

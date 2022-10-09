@@ -129,12 +129,17 @@ component SidebarHeader {
 }
 
 component SidebarHeaderButton {
-  render div {
-    style {
+  variant selected
+  render div root {
+    style extends theme.easeIn {
       padding: var(theme.space03) var(theme.space05)
       font-size: var(theme.fontSize01)
       text-align: center
       width: 100%
+      border-bottom: 2px solid transparent
+    }
+    style variant selected {
+      border-color: var(theme.selectedColor)
     }
     slot children
   }
@@ -301,7 +306,10 @@ component Editor {
         SidebarHeaderButton {
           text "Files"
         }
-        SidebarHeaderButton {
+        SidebarHeaderButton layersTab {
+          override {
+            variant selected trigger { true }
+          }
           text "Layers"
         }
         SidebarHeaderButton {

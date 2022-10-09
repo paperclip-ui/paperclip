@@ -273,6 +273,8 @@ fn evaluate_variant_override<F: FileResolver>(
     context: &mut DocumentContext<F>,
 ) {
 
+    let mut instance_context = context.within_instance(instance);
+
     let instance_component = get_or_short!(
         context
             .graph
@@ -280,29 +282,29 @@ fn evaluate_variant_override<F: FileResolver>(
         ()
     );
 
-    let target_component = if oride.path.len() > 0 {
-        context.graph
-        .get_ref(&oride.path, &instance_component.path, Some(instance_component.wrap().expr))
-        .and_then(|element| {
-            if let Expr::Element(element) = &element.expr {
-                context.graph.get_instance_component_ref(element, &context.path)
-            } else {
-                None
-            }
-        })
-    } else {
-        Some(instance_component)
-    };
+    let mut target_component = Some(instance_component.clone());
 
+    for (index, _) in oride.path.iter().enumerate() {
+        let next_instance_path = oride.path[0..index + 1].to_vec();
+        let element = context.graph.get_ref(&next_instance_path, &instance_component.path, Some(instance_component.wrap().expr));
+
+        if let Some(element) = element {
+            if let Expr::Element(element) = &element.expr {
+                // instance_context = instance_context.within_shadow(target_component).within_instance(element);
+                target_component = context.graph.get_instance_component_ref(element, &context.path)
+            }
+        }
+    }
 
     let target_component = get_or_short!(
         target_component,
         ()
     );
 
+
     evaluate_component(
         &target_component.expr,
-        &mut context
+        &mut instance_context
             .with_variant_override(variant_override)
             .within_path(&target_component.path),
     )
@@ -322,31 +324,38 @@ fn evaluate_style<F: FileResolver>(style: &ast::Style, context: &mut DocumentCon
     }
 }
 
-fn filter_out_auto_triggered(combo_selectors: Vec<Vec<VariantTrigger>>) -> Vec<Vec<VariantTrigger>> {
-    combo_selectors.into_iter().filter(|combo| -> bool {
-        matches!(combo.into_iter().find(|combo| {
-            matches!(combo, VariantTrigger::Boolean(true))
-        }), None)
-    }).collect::<Vec<Vec<VariantTrigger>>>()
-}
 
 fn get_current_instance_scope_selector<F: FileResolver>(context: &DocumentContext<F>) -> String {
     let is_root_node = context.is_target_node_root();
 
-    if let Some(instance) = context.current_instance {
-        format!(
-            ".{}{}",
-            get_style_namespace(
-                &instance.name,
-                &instance.id,
-                // TODO - this may be different with varint overrides
-                context.current_component,
-            ),
-            if is_root_node { "" } else { "" }
-        )
-    } else {
-        format!("")
+    if context.instance_of.len() > 0 {
+        return context.instance_of.iter().map(|(instance, owner_component, path)| {
+            format!(
+                ".{}",
+                get_style_namespace(
+                    &instance.name,
+                    &instance.id,
+                    owner_component.clone()
+                )
+            )
+        }).collect::<Vec<String>>().join(" ")
     }
+    format!("")
+
+    // if let Some(instance) = context.current_instance {
+    //     format!(
+    //         ".{}{}",
+    //         get_style_namespace(
+    //             &instance.name,
+    //             &instance.id,
+    //             // TODO - this may be different with varint overrides
+    //             context.current_component,
+    //         ),
+    //         if is_root_node { "" } else { "" }
+    //     )
+    // } else {
+    //     format!("")
+    // }
 }
 
 fn evaluate_variant_styles<F: FileResolver>(
@@ -580,8 +589,9 @@ fn get_combo_selectors(
                 } else {
                     selectors.push(selector.to_string());
                 }
-            } else if let VariantTrigger::Boolean(value) = selector {
-                // is_enabled = is_enabled || *value;
+            } else if let VariantTrigger::Boolean(_value) = selector {
+
+                // trick to enable selector
                 selectors.push("".to_string());
             }
         }

@@ -4,12 +4,14 @@
 public token gray0 rgb(210, 210, 210)
 public token gray03 rgb(59, 59, 59)
 public token gray04 rgb(0, 0, 0)
+public token blue01 rgb(43, 114, 255)
 
+public token selectedColor var(blue01)
 public token background01 rgb(0, 0, 0)
 public token canvasColor rgb(59, 59, 59)
 public token sidebarColor rgb(37, 37, 37)
 public token inputBackground rgb(42, 42, 42)
-public token backgroundSelected rgb(43, 114, 255)
+public token backgroundSelected var(selectedColor)
 public token backgroundSelectedLight rgb(59, 59, 59)
 public token backgroundSelectedText rgb(229, 236, 255)
 public token borderColor rgb(65, 65, 65)
@@ -77,7 +79,10 @@ public style fontDefault {
 
 
 public style fontHeader {
-
   font-size: var(fontSize01)
   font-weight: 600
+}
+
+public style easeIn {
+  transition: 0.5s
 }

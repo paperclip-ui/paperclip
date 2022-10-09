@@ -821,7 +821,7 @@ add_case! {
 
       component A {
         variant isMobile
-        render div {
+        render div aElement {
            style variant isMobile {
              color: blue
            }
@@ -829,7 +829,7 @@ add_case! {
       }
 
       component B {
-        render A {
+        render A aInstance {
           override {
             variant isMobile trigger { true }
           }
@@ -839,16 +839,9 @@ add_case! {
       "#)
   ],
   r#"
-    ._A-80f4925f-6._isMobile-80f4925f-1 { 
-      color: blue; 
-    } 
-    
-    ._A-80f4925f-6._isMobile-80f4925f-10 { 
-      color: blue; 
-    } 
-    ._A-80f4925f-6 { 
-      color: blue; 
-    }
+  ._A-aElement-80f4925f-6._isMobile-80f4925f-1 { color: blue; } 
+  ._B-aInstance-80f4925f-12._A-aElement-80f4925f-6._isMobile-80f4925f-10 { color: blue; } 
+  ._B-aInstance-80f4925f-12._A-aElement-80f4925f-6 { color: blue; }
   "#
 }
 
@@ -859,7 +852,7 @@ add_case! {
 
       component A {
         variant isMobile
-        render div {
+        render div aaa {
            style variant isMobile {
              color: blue
            }
@@ -879,9 +872,9 @@ add_case! {
       "#)
   ],
   r#"
-  ._A-80f4925f-6._isMobile-80f4925f-1 { color: blue; } 
-  ._A-80f4925f-6._isMobile-80f4925f-10 { color: blue; } 
-  @media screen and (max-width: 1024px) { ._A-80f4925f-6 { color: blue; } }
+  ._A-aaa-80f4925f-6._isMobile-80f4925f-1 { color: blue; } 
+  ._B-80f4925f-12._A-aaa-80f4925f-6._isMobile-80f4925f-10 { color: blue; } 
+  @media screen and (max-width: 1024px) { ._B-80f4925f-12._A-aaa-80f4925f-6 { color: blue; } }
   "#
 }
 
@@ -920,9 +913,9 @@ add_case! {
   ._A-80f4925f-10._a1-80f4925f-2 { color: blue; } 
   ._A-80f4925f-10._b1-80f4925f-4 { color: blue; } 
   @media screen and (max-width: 200px) { ._A-80f4925f-10:nth-child(2n) { color: blue; } } 
-  ._A-80f4925f-10._a1-80f4925f-14 { color: blue; } 
-  ._A-80f4925f-10._b1-80f4925f-4 { color: blue; } 
-  @media screen and (max-width: 200px) { ._A-80f4925f-10 { color: blue; } }
+  ._B-80f4925f-16._A-80f4925f-10._a1-80f4925f-14 { color: blue; } 
+  ._B-80f4925f-16._A-80f4925f-10._b1-80f4925f-4 { color: blue; } 
+  @media screen and (max-width: 200px) { ._B-80f4925f-16._A-80f4925f-10 { color: blue; } }
   "#
 }
 

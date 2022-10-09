@@ -47,7 +47,7 @@ pub struct DocumentContext<'graph, 'expr, 'resolve_asset, FR: FileResolver> {
     pub graph: &'graph graph::Graph,
     pub path: String,
     pub current_node: Option<CurrentNode<'expr>>,
-    pub current_instance: Option<&'expr ast::Element>,
+    pub instance_of: Vec<(&'expr ast::Element, Option<&'expr ast::Component>, String)>,
     pub current_component: Option<&'expr ast::Component>,
     pub current_shadow: Option<&'expr ast::Component>,
     // pub document: Rc<RefCell<virt::Document>>,
@@ -74,7 +74,7 @@ impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
             variant_override: None,
             current_node: None,
             current_shadow: None,
-            current_instance: None,
+            instance_of: vec![],
             rules: Rc::new(RefCell::new(vec![])),
             priority: 8,
         }
@@ -92,7 +92,7 @@ impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
 
     pub fn within_instance(&self, instance: &'expr ast::Element) -> Self {
         let mut clone: DocumentContext<FR> = self.clone();
-        clone.current_instance = Some(instance);
+        clone.instance_of.push((instance, self.current_component, self.path.to_string()));
         clone
     }
 

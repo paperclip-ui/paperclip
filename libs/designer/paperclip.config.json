@@ -1,6 +1,7 @@
 {
   "srcDir": "src",
   "moduleDirs": ["node_module"],
+  "globalScripts": ["./src/editor/styles/globals.css"],
   "compilerOptions": [
     { "emit": ["react.js:js", "react.d.ts:d.ts", "html", "css"] }
   ]

@@ -44,7 +44,7 @@ impl ConfigContext {
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct Config {
     /// Global scripts that are injected into the page (JS, and CSS)
-    #[serde(rename = "srcDir", skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "globalScripts", skip_serializing_if = "Option::is_none")]
     pub global_scripts: Option<String>,
 
     /// source directory where *.pc files live

@@ -2,17 +2,18 @@ import "./theme.pc" as theme
 
 token iconSize var(theme.fontSize03)
 
+style panel {
+  background: var(theme.sidebarColor)
+  border: 1px solid var(theme.borderColor)
+}
 
 component Sidebar {
   render div {
     style {
       width: 250px
-      padding: var(theme.space05)
     }
     div {
-      style {
-        background: var(theme.sidebarColor)
-        border: 1px solid var(theme.borderColor)
+      style extends panel {
         border-radius: var(theme.roundedMD)
         height: 100%
       }    
@@ -303,11 +304,44 @@ component EditorPanels {
       display: flex
       flex: 1
       z-index: 3
+      padding: var(theme.space05)
+      gap: var(theme.space05)
       position: relative
       height: 100%
       justify-content: space-between
     }
     slot children
+  }
+}
+
+component CenterPanels {
+  render div {
+    style {
+      display: flex
+      flex: 1
+      flex-direction: column
+      justify-content: space-between
+    }
+    Toolbar
+    FooterBar
+  }
+}
+
+component Toolbar {
+  render div {
+    style extends panel {
+      width: 100%
+      height: 30px
+    }
+  }
+}
+
+component FooterBar {
+  render div {
+    style extends panel {
+      width: 100%
+      height: 30px
+    }
   }
 }
 
@@ -340,6 +374,7 @@ component Editor {
             TreeNavigation
         }
       }
+      CenterPanels
       Sidebar {
         SidebarPanel {
           SidebarPanelContent {

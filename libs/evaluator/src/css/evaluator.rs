@@ -272,7 +272,8 @@ fn evaluate_variant_override<F: FileResolver>(
     instance: &ast::Element,
     context: &mut DocumentContext<F>,
 ) {
-    let instance_context = context.within_instance(instance);
+    
+    let mut instance_context = context.with_variant_override(variant_override).within_instance(instance);
 
     let instance_component = get_or_short!(
         context
@@ -281,9 +282,8 @@ fn evaluate_variant_override<F: FileResolver>(
         ()
     );
 
-    let mut target_component = Some(instance_component.clone());
+    let mut target_component = instance_component.clone();
 
-    // !! WIP!!!
     for (index, _) in oride.path.iter().enumerate() {
         let next_instance_path = oride.path[0..index + 1].to_vec();
         let element = context.graph.get_ref(
@@ -294,20 +294,18 @@ fn evaluate_variant_override<F: FileResolver>(
 
         if let Some(element) = element {
             if let Expr::Element(element) = &element.expr {
-                // instance_context = instance_context.within_shadow(target_component).within_instance(element);
-                target_component = context
+                instance_context = instance_context.within_shadow(&target_component.expr).within_instance(element);
+                target_component = get_or_short!(context
                     .graph
-                    .get_instance_component_ref(element, &context.path)
+                    .get_instance_component_ref(element, &context.path), ());
             }
         }
     }
-
-    let target_component = get_or_short!(target_component, ());
+    
 
     evaluate_component(
         &target_component.expr,
         &mut instance_context
-            .with_variant_override(variant_override)
             .within_path(&target_component.path),
     )
 }
@@ -345,20 +343,6 @@ fn get_current_instance_scope_selector<F: FileResolver>(context: &DocumentContex
     }
     format!("")
 
-    // if let Some(instance) = context.current_instance {
-    //     format!(
-    //         ".{}{}",
-    //         get_style_namespace(
-    //             &instance.name,
-    //             &instance.id,
-    //             // TODO - this may be different with varint overrides
-    //             context.current_component,
-    //         ),
-    //         if is_root_node { "" } else { "" }
-    //     )
-    // } else {
-    //     format!("")
-    // }
 }
 
 fn evaluate_variant_styles<F: FileResolver>(

@@ -2,7 +2,7 @@ use anyhow::Result;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::id::{get_document_id, IDGenerator};
 use paperclip_parser::graph;
-use paperclip_parser::pc::ast;
+use paperclip_parser::pc::ast::{self};
 use paperclip_proto::virt::css::Rule;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -47,15 +47,16 @@ pub struct DocumentContext<'graph, 'expr, 'resolve_asset, FR: FileResolver> {
     pub graph: &'graph graph::Graph,
     pub path: String,
     pub current_node: Option<CurrentNode<'expr>>,
-    pub instance_of: Vec<(&'expr ast::Element, Option<&'expr ast::Component>, String)>,
+    pub current_instance: Option<&'expr ast::Element>,
     pub current_component: Option<&'expr ast::Component>,
     pub current_shadow: Option<&'expr ast::Component>,
-    // pub document: Rc<RefCell<virt::Document>>,
 
     // for overrides
     pub priority: u8,
     pub rules: Rc<RefCell<Vec<PrioritizedRule>>>,
     pub variant_override: Option<&'expr ast::Variant>,
+
+    pub shadow_of: Option<Box<DocumentContext<'graph, 'expr, 'resolve_asset, FR>>>
 }
 
 impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
@@ -72,9 +73,10 @@ impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
             path: path.to_string(),
             current_component: None,
             variant_override: None,
+            current_instance: None,
             current_node: None,
             current_shadow: None,
-            instance_of: vec![],
+            shadow_of: None,
             rules: Rc::new(RefCell::new(vec![])),
             priority: 8,
         }
@@ -87,14 +89,6 @@ impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
     pub fn within_shadow(&self, component: &'expr ast::Component) -> Self {
         let mut clone: DocumentContext<FR> = self.clone();
         clone.current_shadow = Some(component);
-        clone
-    }
-
-    pub fn within_instance(&self, instance: &'expr ast::Element) -> Self {
-        let mut clone: DocumentContext<FR> = self.clone();
-        clone
-            .instance_of
-            .push((instance, self.current_component, self.path.to_string()));
         clone
     }
 
@@ -125,6 +119,12 @@ impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
     pub fn within_node(&self, node: CurrentNode<'expr>) -> Self {
         let mut clone = self.clone();
         clone.current_node = Some(node);
+        clone
+    }
+
+    pub fn shadow(&self) -> Self {
+        let mut clone = self.clone();
+        clone.shadow_of = Some(Box::new(self.clone()));
         clone
     }
 

@@ -73,9 +73,10 @@ public style input {
 }
 
 public style fontDefault {
-  font-family: sans-serif
+  font-family: Inter
   color: var(fontColor01)
   font-size: var(fontSize02)
+  letter-spacing: 0.05em
 }
 
 public style reset {

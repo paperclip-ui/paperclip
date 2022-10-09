@@ -12,6 +12,7 @@ component Sidebar {
   render div {
     style {
       width: 250px
+      flex-shrink: 0
     }
     div {
       style extends panel {
@@ -231,7 +232,7 @@ component Canvas {
     }
     Artboard {
       insert title {
-        text "Some title"
+        text "Some title like this"
       }
     }
   }
@@ -366,7 +367,7 @@ component CenterPanels {
 component ToolbarDivider {
   render div {
     style {
-      width: var(theme.space02)
+      width: 1px
       border-radius: var(theme.roundedMD)
       height: 100%
       background: var(theme.borderColor)
@@ -470,20 +471,7 @@ component Editor {
     Canvas 
     EditorPanels {
       Sidebar {
-        SidebarHeader {
-          SidebarHeaderButton {
-            text "Files"
-          }
-          SidebarHeaderButton layersTab {
-            override {
-              variant selected trigger { true }
-            }
-            text "Layers"
-          }
-          SidebarHeaderButton {
-            text "Assets"
-          }
-        }
+        
         SidebarPanel {
             TreeNavigation
         }
@@ -570,7 +558,7 @@ component Editor {
         }
         SidebarPanel {
           SidebarPanelHeader {
-            text "Appearance"
+            text "Style"
           }
           SidebarPanelContent {
             Fields {

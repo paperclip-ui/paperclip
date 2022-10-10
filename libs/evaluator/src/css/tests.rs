@@ -919,7 +919,6 @@ add_case! {
   "#
 }
 
-
 add_case! {
   can_override_variant_with_variant_toggle,
   [
@@ -960,6 +959,11 @@ add_case! {
           style variant isMobile {
             color: blue
           }
+          text something "blahh" {
+            style variant isMobile {
+              font-size: 32px
+            }
+          }
         }
       }
       component C {
@@ -967,11 +971,13 @@ add_case! {
       }
 
       component A {
-        render C c
+        render div {
+          C c
+        }
       }
 
       component B {
-        render A {
+        render A blarg {
           override c.d {
             variant isMobile trigger {
               true
@@ -983,9 +989,13 @@ add_case! {
       "#)
   ],
   r#"
-  ._D-80f4925f-7._isMobile-80f4925f-2 { color: blue; }
-  @media screen and (max-width: 10px) { ._D-80f4925f-7 { color: blue; } }
-  ._D-80f4925f-7._isMobile-80f4925f-17 { color: blue; }
-  ._D-80f4925f-7 { color: blue; }
+  ._D-80f4925f-12._isMobile-80f4925f-2 { color: blue; } 
+  @media screen and (max-width: 10px) { ._D-80f4925f-12 { color: blue; } } 
+  ._D-80f4925f-12._isMobile-80f4925f-2 ._D-something-80f4925f-11 { font-size: 32px; } 
+  @media screen and (max-width: 10px) { ._D-80f4925f-12 ._D-something-80f4925f-11 { font-size: 32px; } } 
+  ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12._isMobile-80f4925f-23 { color: blue; } 
+  ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12 { color: blue; } 
+  ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12._isMobile-80f4925f-23 ._D-something-80f4925f-11 { font-size: 32px; } 
+  ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12 ._D-something-80f4925f-11 { font-size: 32px; }
   "#
 }

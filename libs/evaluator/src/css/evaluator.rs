@@ -149,7 +149,7 @@ fn evaluate_render_node<F: FileResolver>(node: &ast::RenderNode, context: &mut D
 }
 
 fn evaluate_element<F: FileResolver>(element: &ast::Element, context: &mut DocumentContext<F>) {
-    let mut el_context = context.within_node(CurrentNode::Element(element));
+    let mut el_context = context.with_target_node(CurrentNode::Element(element));
 
     for item in &element.body {
         match item.get_inner() {
@@ -196,21 +196,50 @@ fn evaluate_override<F: FileResolver>(
     parent: &ast::Element,
     context: &mut DocumentContext<F>,
 ) {
-    let component_info = get_or_short!(
+    let instance_component_info = get_or_short!(
         context
             .graph
             .get_instance_component_ref(parent, &context.path),
         ()
     );
 
+    let instance_context = context.within_instance(parent);
+
+    let mut shadow = instance_context.shadow(&instance_component_info);
+
+    // looking for a.b. "a" is an instance
+    // ignore single targets. E.g: just "a" since this is the target
+    if expr.path.len() > 1 {
+        for i in 0..expr.path.len() {
+            let shadow_instance = context.graph.get_ref(
+                &expr.path[0..i + 1].to_vec(),
+                &context.path,
+                Some(instance_component_info.wrap().expr),
+            );
+
+            if let Some(info) = shadow_instance {
+                if let Expr::Element(element) = &info.expr {
+                    if let Some(instance_component_info) = context
+                        .graph
+                        .get_instance_component_ref(element, &info.path)
+                    {
+                        shadow = shadow
+                            .within_instance(element)
+                            .shadow(&instance_component_info)
+                    }
+                }
+            }
+        }
+    }
+
     let target_node = get_or_short!(
         if expr.path.len() > 0 {
-            context
+            shadow
                 .graph
                 .get_ref(
                     &expr.path,
-                    component_info.path,
-                    Some(component_info.wrap().expr),
+                    instance_component_info.path,
+                    Some(instance_component_info.wrap().expr),
                 )
                 .and_then(|node| match node.expr {
                     Expr::Element(element) => Some(CurrentNode::Element(element)),
@@ -222,24 +251,22 @@ fn evaluate_override<F: FileResolver>(
         ()
     );
 
+    shadow = shadow.with_priority(expr.path.len() as u8);
+
     for item in &expr.body {
         match item.get_inner() {
-            override_body_item::Inner::Style(style) => evaluate_style(
-                style,
-                &mut context
-                    .within_node(target_node)
-                    .within_instance(parent)
-                    .within_shadow(&component_info.expr)
-                    .with_priority(expr.path.len() as u8),
+            override_body_item::Inner::Style(expr) => evaluate_style(
+                expr,
+                &mut shadow
+                    .with_ref_context(context)
+                    .with_target_node(target_node),
             ),
-            override_body_item::Inner::Variant(style) => {
-                evaluate_variant_override(style, expr, parent, context)
-            }
+            override_body_item::Inner::Variant(expr) => evaluate_variant_override(
+                expr,
+                &mut shadow.with_variant_override(expr, &instance_context),
+            ),
         }
     }
-
-    // let override_path = expr.path
-    // context.graph.get_ref(ref_path, dep_path)
 }
 
 fn evaluate_slot<F: FileResolver>(slot: &ast::Slot, context: &mut DocumentContext<F>) {
@@ -256,7 +283,7 @@ fn evaluate_slot<F: FileResolver>(slot: &ast::Slot, context: &mut DocumentContex
 }
 
 fn evaluate_text<F: FileResolver>(expr: &ast::TextNode, context: &mut DocumentContext<F>) {
-    let mut el_context = context.within_node(CurrentNode::TextNode(expr));
+    let mut el_context = context.with_target_node(CurrentNode::TextNode(expr));
 
     for item in &expr.body {
         match item.get_inner() {
@@ -267,46 +294,12 @@ fn evaluate_text<F: FileResolver>(expr: &ast::TextNode, context: &mut DocumentCo
     }
 }
 fn evaluate_variant_override<F: FileResolver>(
-    variant_override: &ast::Variant,
-    oride: &ast::Override,
-    instance: &ast::Element,
+    _variant_override: &ast::Variant,
     context: &mut DocumentContext<F>,
 ) {
-    
-    let mut instance_context = context.with_variant_override(variant_override).within_instance(instance);
-
-    let instance_component = get_or_short!(
-        context
-            .graph
-            .get_instance_component_ref(instance, &context.path),
-        ()
-    );
-
-    let mut target_component = instance_component.clone();
-
-    for (index, _) in oride.path.iter().enumerate() {
-        let next_instance_path = oride.path[0..index + 1].to_vec();
-        let element = context.graph.get_ref(
-            &next_instance_path,
-            &instance_component.path,
-            Some(instance_component.wrap().expr),
-        );
-
-        if let Some(element) = element {
-            if let Expr::Element(element) = &element.expr {
-                instance_context = instance_context.within_shadow(&target_component.expr).within_instance(element);
-                target_component = get_or_short!(context
-                    .graph
-                    .get_instance_component_ref(element, &context.path), ());
-            }
-        }
-    }
-    
-
     evaluate_component(
-        &target_component.expr,
-        &mut instance_context
-            .within_path(&target_component.path),
+        context.current_component.expect("Component must be set"),
+        context,
     )
 }
 
@@ -314,6 +307,7 @@ fn evaluate_style<F: FileResolver>(style: &ast::Style, context: &mut DocumentCon
     if style.variant_combo.len() > 0 {
         let expanded_combo_selectors =
             collect_style_variant_selectors(&style.variant_combo, context);
+
         evaluate_variant_styles(
             &style,
             &style.variant_combo,
@@ -328,21 +322,29 @@ fn evaluate_style<F: FileResolver>(style: &ast::Style, context: &mut DocumentCon
 fn get_current_instance_scope_selector<F: FileResolver>(context: &DocumentContext<F>) -> String {
     // let is_root_node = context.is_target_node_root();
 
-    if context.instance_of.len() > 0 {
-        return context
-            .instance_of
-            .iter()
-            .map(|(instance, owner_component, _path)| {
-                format!(
-                    ".{}",
-                    get_style_namespace(&instance.name, &instance.id, owner_component.clone())
-                )
-            })
-            .collect::<Vec<String>>()
-            .join(" ");
-    }
-    format!("")
+    let mut curr = context;
 
+    let mut buffer: Vec<String> = vec![];
+
+    while let Some(shadow_of) = &curr.shadow_of {
+        curr = shadow_of.as_ref();
+        if let Some(instance) = shadow_of.current_instance {
+            buffer.push(format!(
+                "{}.{}",
+                if shadow_of.is_current_instance_render_node() {
+                    ""
+                } else {
+                    " "
+                },
+                get_style_namespace(&instance.name, &instance.id, shadow_of.current_component)
+            ));
+        } else {
+            println!("Instance not defined!")
+        }
+    }
+    buffer.reverse();
+
+    buffer.join("")
 }
 
 fn evaluate_variant_styles<F: FileResolver>(
@@ -351,15 +353,15 @@ fn evaluate_variant_styles<F: FileResolver>(
     expanded_combo_selectors: &Vec<Vec<VariantTrigger>>,
     context: &mut DocumentContext<F>,
 ) {
-    let current_node = if let Some(node) = &context.current_node {
+    let current_node = if let Some(node) = &context.target_node {
         node
     } else {
         return;
     };
 
-    let target_component = context.current_shadow.or(context.current_component);
+    let target_component = get_or_short!(context.current_component, {});
 
-    let root_node = if let Some(render) = target_component.unwrap().get_render_expr() {
+    let root_node = if let Some(render) = target_component.get_render_expr() {
         render.node.as_ref().expect("Node must exist")
     } else {
         return;
@@ -373,7 +375,7 @@ fn evaluate_variant_styles<F: FileResolver>(
         current_node.get_name(),
         current_node.get_id(),
         // TODO - this may be different with varint overrides
-        target_component,
+        Some(target_component),
     );
 
     let root_node_ns = get_style_namespace(
@@ -383,7 +385,7 @@ fn evaluate_variant_styles<F: FileResolver>(
             _ => &None,
         },
         &root_node.get_id(),
-        target_component,
+        Some(target_component),
     );
 
     let evaluated_style = create_style_declarations(style, context);
@@ -423,7 +425,7 @@ fn evaluate_variant_styles<F: FileResolver>(
             rule: virt_style,
         });
     }
-
+    
     let (combo_queries, combo_selectors) = get_combo_selectors(expanded_combo_selectors);
 
     let virt_styles = if combo_selectors.len() > 0 {
@@ -619,6 +621,7 @@ fn collect_style_variant_selectors<F: FileResolver>(
     for variant_ref in variant_refs {
         if variant_ref.path.len() == 1 {
             let variant = context.get_scoped_variant(variant_ref.path.get(0).unwrap());
+
             if let Some(variant) = variant {
                 let mut triggers = vec![];
                 collect_triggers(&variant.triggers, &mut triggers, context);
@@ -674,14 +677,14 @@ fn create_virt_style<F: FileResolver>(
     let scope_selector = get_current_instance_scope_selector(context);
 
     context
-        .current_node
+        .target_node
         .clone()
         .as_ref()
         .and_then(|node| {
             Some(get_style_namespace(
                 node.get_name(),
                 node.get_id(),
-                context.current_shadow.or(context.current_component),
+                context.current_component,
             ))
         })
         .and_then(|ns| {

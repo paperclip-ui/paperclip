@@ -21,11 +21,18 @@ pub struct ConfigContext {
 
 impl ConfigContext {
     pub fn get_global_script_paths(&self) -> Vec<String> {
-        self.config.global_scripts.as_ref().and_then(|rel_paths| {
-           Some(rel_paths.iter().map(|rel_path| {
-            join_path!(&self.directory, rel_path)
-           }).collect::<Vec<String>>())
-        }).unwrap_or(vec![])
+        self.config
+            .global_scripts
+            .as_ref()
+            .and_then(|rel_paths| {
+                Some(
+                    rel_paths
+                        .iter()
+                        .map(|rel_path| join_path!(&self.directory, rel_path))
+                        .collect::<Vec<String>>(),
+                )
+            })
+            .unwrap_or(vec![])
     }
 
     pub fn load<FR: FileReader>(cwd: &str, file_name: Option<String>, io: &FR) -> Result<Self> {
@@ -49,7 +56,6 @@ impl ConfigContext {
         })
     }
 }
-
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct Config {

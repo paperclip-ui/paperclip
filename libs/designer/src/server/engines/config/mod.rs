@@ -73,14 +73,23 @@ async fn file_watcher<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
     Ok(())
 }
 
-
 async fn handle_global_scripts<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
-    let global_script_paths = ctx.store.lock().unwrap().state.options.config_context.get_global_script_paths();
+    let global_script_paths = ctx
+        .store
+        .lock()
+        .unwrap()
+        .state
+        .options
+        .config_context
+        .get_global_script_paths();
 
     let mut loaded_scripts: Vec<(String, Vec<u8>)> = vec![];
 
     for script_path in global_script_paths {
-        loaded_scripts.push((script_path.to_string(), ctx.io.read_file(&script_path)?.into_vec()));
+        loaded_scripts.push((
+            script_path.to_string(),
+            ctx.io.read_file(&script_path)?.into_vec(),
+        ));
     }
 
     ctx.emit(ServerEvent::GlobalScriptsLoaded(loaded_scripts));

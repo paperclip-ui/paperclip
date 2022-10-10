@@ -12,7 +12,7 @@ use paperclip_evaluator::css;
 use paperclip_evaluator::html;
 use paperclip_parser::graph::Graph;
 use paperclip_proto::virt::module::pc_module_import;
-use paperclip_proto::virt::module::{PcModule, PcModuleImport, PccssImport, GlobalScript};
+use paperclip_proto::virt::module::{GlobalScript, PcModule, PcModuleImport, PccssImport};
 
 pub struct StartOptions {
     pub config_context: ConfigContext,
@@ -72,17 +72,23 @@ impl ServerState {
             }
         }
 
-        imports.extend(self.options.config_context.get_global_script_paths().iter().filter_map(|path| {
-            self.file_cache.get(path).and_then(|content| {
-                Some(PcModuleImport {
-                    inner: Some(pc_module_import::Inner::GlobalScript(GlobalScript {
-                        path: path.to_string(),
-                        content: std::str::from_utf8(content).unwrap().to_string()
-                    }))
+        imports.extend(
+            self.options
+                .config_context
+                .get_global_script_paths()
+                .iter()
+                .filter_map(|path| {
+                    self.file_cache.get(path).and_then(|content| {
+                        Some(PcModuleImport {
+                            inner: Some(pc_module_import::Inner::GlobalScript(GlobalScript {
+                                path: path.to_string(),
+                                content: std::str::from_utf8(content).unwrap().to_string(),
+                            })),
+                        })
+                    })
                 })
-            })
-        }).collect::<Vec<PcModuleImport>>());
-
+                .collect::<Vec<PcModuleImport>>(),
+        );
 
         Ok(PcModule {
             html: Some(html.clone()),
@@ -91,7 +97,6 @@ impl ServerState {
         })
     }
 }
-
 
 #[derive(Default, Clone)]
 pub struct ServerStateEventHandler;

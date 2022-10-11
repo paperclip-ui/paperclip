@@ -69,33 +69,37 @@ component FileNavigatorIcon {
 
 component FileNavigatorItemHeader {
   variant isContainer
+  variant isDirectory
   variant isOpen
-  render TreeNavigationItemHeader root {
+  render TreeNavigationItemHeader container {
     override {
       variant isContainer trigger { true }
       variant isOpen trigger { true }
     }
     override root {
       style {
-        --depth: var(--depth)
+        --depth: 4
       }
     }
     FileNavigatorIcon {
       override {
-        variant isDirectory trigger { true }
+        variant isDirectory trigger { isDirectory }
       }
     }
     slot children
   }
 }
 
-component TreeNavigation {
+component FileNavigation {
   render div {
     TreeNavigationItem {
       FileNavigatorItemHeader {
+        override {
+          variant isDirectory trigger { true }
+        }
         override root {
           style {
-            --depth: 1
+            --depth: 4
           }
         }
         text "src"
@@ -105,7 +109,7 @@ component TreeNavigation {
           FileNavigatorItemHeader {
             override root {
               style {
-                --depth: 2
+                --depth: 1
               }
             }
             text "components"
@@ -473,7 +477,7 @@ component Editor {
       Sidebar {
         
         SidebarPanel {
-            TreeNavigation
+            FileNavigation
         }
       }
       CenterPanels

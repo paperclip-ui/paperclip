@@ -196,26 +196,53 @@ fn evaluate_override<F: FileResolver>(
     parent: &ast::Element,
     context: &mut DocumentContext<F>,
 ) {
+    for item in &expr.body {
+        match item.get_inner() {
+            override_body_item::Inner::Style(style) => evaluate_style(
+                style,
+                &mut into_shadow(&expr.path, parent, &mut context.clone()).with_ref_context(context),
+            ),
+            override_body_item::Inner::Variant(variant_override) => evaluate_variant_override(
+                variant_override,
+                &mut into_shadow(
+                    &expr.path,
+                    parent,
+                    &mut context.with_variant(variant_override),
+                ),
+            ),
+        }
+    }
+}
+
+fn into_shadow<'a, F: FileResolver>(
+    path: &Vec<String>,
+    instance: &'a ast::Element,
+    context: &'a mut DocumentContext<F>,
+) -> DocumentContext<'a, 'a, F> {
     let instance_component_info = get_or_short!(
         context
             .graph
-            .get_instance_component_ref(parent, &context.path),
-        ()
+            .get_instance_component_ref(instance, &context.path),
+        context.clone()
     );
+    
 
-    let instance_context = context.within_instance(parent);
+    let mut curr_instance = instance;
+    let instance_context = context.within_instance(curr_instance);
+
 
     let mut shadow = instance_context.shadow(&instance_component_info);
 
     // looking for a.b. "a" is an instance
     // ignore single targets. E.g: just "a" since this is the target
-    if expr.path.len() > 1 {
-        for i in 0..expr.path.len() {
+    if path.len() > 1 {
+        for i in 0..path.len() {
             let shadow_instance = context.graph.get_ref(
-                &expr.path[0..i + 1].to_vec(),
+                &path[0..i + 1].to_vec(),
                 &context.path,
-                Some(instance_component_info.wrap().expr),
+                Some(instance_component_info.wrap().expr)
             );
+
 
             if let Some(info) = shadow_instance {
                 if let Expr::Element(element) = &info.expr {
@@ -226,47 +253,41 @@ fn evaluate_override<F: FileResolver>(
                         shadow = shadow
                             .within_instance(element)
                             .shadow(&instance_component_info)
+                            // .with_target_node(node)
                     }
                 }
             }
         }
     }
 
+    // target node at the end of the path
     let target_node = get_or_short!(
-        if expr.path.len() > 0 {
+        if path.len() > 0 {
             shadow
                 .graph
                 .get_ref(
-                    &expr.path,
+                    path,
                     instance_component_info.path,
-                    Some(instance_component_info.wrap().expr),
+                    Some(instance_component_info.wrap().expr)
                 )
-                .and_then(|node| match node.expr {
-                    Expr::Element(element) => Some(CurrentNode::Element(element)),
-                    _ => None,
+                .and_then(|node| {
+                    match node.expr {
+                        Expr::Element(element) => Some(CurrentNode::Element(element)),
+                        _ => None,
+                    }
                 })
         } else {
-            Some(CurrentNode::Element(parent))
+            Some(CurrentNode::Element(instance))
         },
-        ()
+        context.clone()
     );
 
-    shadow = shadow.with_priority(expr.path.len() as u8);
 
-    for item in &expr.body {
-        match item.get_inner() {
-            override_body_item::Inner::Style(expr) => evaluate_style(
-                expr,
-                &mut shadow
-                    .with_ref_context(context)
-                    .with_target_node(target_node),
-            ),
-            override_body_item::Inner::Variant(expr) => evaluate_variant_override(
-                expr,
-                &mut shadow.with_variant_override(expr, &instance_context),
-            ),
-        }
-    }
+    shadow = shadow
+        .with_target_node(target_node)
+        .with_priority(path.len() as u8);
+
+    return shadow;
 }
 
 fn evaluate_slot<F: FileResolver>(slot: &ast::Slot, context: &mut DocumentContext<F>) {
@@ -331,7 +352,7 @@ fn get_current_instance_scope_selector<F: FileResolver>(context: &DocumentContex
         if let Some(instance) = shadow_of.current_instance {
             buffer.push(format!(
                 "{}.{}",
-                if shadow_of.is_current_instance_render_node() {
+                if shadow_of.is_target_node_render_node() {
                     ""
                 } else {
                     " "
@@ -343,6 +364,7 @@ fn get_current_instance_scope_selector<F: FileResolver>(context: &DocumentContex
         }
     }
     buffer.reverse();
+    
 
     buffer.join("")
 }
@@ -367,9 +389,13 @@ fn evaluate_variant_styles<F: FileResolver>(
         return;
     };
 
+
+    let mut scope_selector = get_current_instance_scope_selector(context);
     let is_root_node = root_node.get_id() == current_node.get_id();
 
-    let scope_selector = get_current_instance_scope_selector(context);
+    // if !context.is_target_node_render_node() {
+    //     scope_selector = format!("{}!!!!!", scope_selector);
+    // }
 
     let node_ns = get_style_namespace(
         current_node.get_name(),
@@ -402,7 +428,7 @@ fn evaluate_variant_styles<F: FileResolver>(
         }
     }
 
-    for assoc_variant in assoc_variants {
+    for (assoc_variant, _variant_context) in assoc_variants {
         let virt_style = virt::rule::Inner::Style(virt::StyleRule {
             id: context.next_id(),
             source_id: Some(style.id.to_string()),
@@ -425,7 +451,7 @@ fn evaluate_variant_styles<F: FileResolver>(
             rule: virt_style,
         });
     }
-    
+
     let (combo_queries, combo_selectors) = get_combo_selectors(expanded_combo_selectors);
 
     let virt_styles = if combo_selectors.len() > 0 {
@@ -622,9 +648,9 @@ fn collect_style_variant_selectors<F: FileResolver>(
         if variant_ref.path.len() == 1 {
             let variant = context.get_scoped_variant(variant_ref.path.get(0).unwrap());
 
-            if let Some(variant) = variant {
+            if let Some((variant, ctx)) = variant {
                 let mut triggers = vec![];
-                collect_triggers(&variant.triggers, &mut triggers, context);
+                collect_triggers(&variant.triggers, &mut triggers, &mut ctx.with_variant(variant));
                 combo_triggers.push(triggers);
             }
         }
@@ -636,7 +662,7 @@ fn collect_style_variant_selectors<F: FileResolver>(
 fn collect_triggers<F: FileResolver>(
     triggers: &Vec<ast::TriggerBodyItem>,
     into: &mut Vec<VariantTrigger>,
-    context: &mut DocumentContext<F>,
+    context: &DocumentContext<F>,
 ) {
     for trigger in triggers {
         match trigger.get_inner() {
@@ -647,9 +673,23 @@ fn collect_triggers<F: FileResolver>(
                 into.push(VariantTrigger::Selector(expr.value.to_string()));
             }
             ast::trigger_body_item::Inner::Reference(expr) => {
-                if let Some(info) = context.graph.get_ref(&expr.path, &context.path, None) {
+                let ref_info = context.graph.get_ref(&expr.path, &context.path, context.current_component.and_then(|component| {
+                    Some(Expr::Component(component))
+                })).or_else(|| {
+                    context.graph.get_ref(&expr.path, &context.path, None)
+                });
+
+                if let Some(info) = ref_info {
                     if let graph_ref::Expr::Trigger(trigger) = &info.expr {
                         collect_triggers(&trigger.body, into, context);
+                    } else if let graph_ref::Expr::Variant(variant) = &info.expr {
+
+                        // avoid recursion
+                        if Some(variant) != context.current_variant.as_ref() {
+                            collect_triggers(&variant.triggers, into, context);
+                        } else {
+                            println!("Recursive variants are not allowed!");
+                        }
                     }
                 }
             }
@@ -674,7 +714,10 @@ fn create_virt_style<F: FileResolver>(
     style: &ast::Style,
     context: &mut DocumentContext<F>,
 ) -> Option<virt::StyleRule> {
-    let scope_selector = get_current_instance_scope_selector(context);
+    let mut scope_selector = get_current_instance_scope_selector(context);
+    if !context.is_target_node_render_node() {
+        scope_selector = format!("{} ", scope_selector);
+    }
 
     context
         .target_node
@@ -708,7 +751,7 @@ fn create_style_declarations<F: FileResolver>(
     // including the entire body of extended styles to to cover !important statements.
     // This could be smarter at some point.
     for reference in &style.extends {
-        if let Some(reference) = context.graph.get_ref(&reference.path, &context.path, None) {
+        if let Some(reference) = context.graph.get_ref(&reference.path, &context.get_ref_context().path, None) {
             if let graph_ref::Expr::Style(style) = &reference.expr {
                 decls.extend(create_style_declarations(
                     style,

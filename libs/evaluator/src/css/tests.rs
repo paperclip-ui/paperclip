@@ -166,27 +166,27 @@ add_case! {
   [(
       "/entry.pc",
       r#"
-        trigger a {
+        trigger a1 {
           "@media screen and (max-width: 100px)"
         }
-        trigger b {
+        trigger b1 {
           "@media screen and (max-width: 300px)"
           "@media screen and (max-width: 400px)"
           ":nth-child(2n)"
         }
-        trigger c {
+        trigger c1 {
           "@supports mobile"
           "@supports desktop"
         }
         component A {
           variant a trigger {
-            a
+            a1
           }
           variant b trigger {
-            b
+            b1
           }
           variant c trigger {
-            c
+            c1
           }
           render div {
             style variant a + b + c {
@@ -368,13 +368,13 @@ add_case! {
   [(
       "/entry.pc",
       r#"
-      trigger mobile {
+      trigger mobile2 {
         "@media screen and (max-width: 100px)"
       }
 
       component Message {
         variant mobile trigger {
-          mobile
+          mobile2
         }
         render div {
           style variant mobile {
@@ -401,13 +401,13 @@ add_case! {
   [(
       "/entry.pc",
       r#"
-      trigger mobile {
+      trigger mobile2 {
         "@media screen and (max-width: 100px)"
       }
 
       component Message {
         variant mobile trigger {
-          mobile
+          mobile2
         }
         render div {
           span {
@@ -726,7 +726,7 @@ add_case! {
          render A a1
        }
 
-       A {
+       B {
         override a1.acdc {
           style {
             color: orange
@@ -735,7 +735,10 @@ add_case! {
        }
       "#)
   ],
-  r#"._A-acdc-80f4925f-4 { color: blue; } ._80f4925f-14._A-acdc-80f4925f-4 { color: orange; }"#
+  r#"
+  ._A-acdc-80f4925f-4 { color: blue; } 
+  ._80f4925f-14._B-a1-80f4925f-7._A-acdc-80f4925f-4 { color: orange; }
+  "#
 }
 
 add_case! {
@@ -810,7 +813,7 @@ add_case! {
       "#)
   ],
   r#"
-  ._A-hello-80f4925f-4 { color: orange; } ._B-80f4925f-12._A-hello-80f4925f-4 { color: purple; }
+  ._A-hello-80f4925f-4 { color: orange; } ._B-80f4925f-12 ._A-hello-80f4925f-4 { color: purple; }
   "#
 }
 
@@ -937,14 +940,49 @@ add_case! {
           ":nth-child(2n)"
         }
         render D {
-          override isMobile trigger { isMobile2 }
+          override {
+            variant isMobile trigger { isMobile2 }
+          }
         }
       }
     "#)
   ],
   r#"
+  ._D-80f4925f-6._isMobile-80f4925f-1 { color: blue; } 
+  ._C-80f4925f-14._D-80f4925f-6._isMobile-80f4925f-12 { color: blue; } 
+  ._C-80f4925f-14._D-80f4925f-6:nth-child(2n) { color: blue; }
   "#
 }
+
+// add_case! {
+//   nested_instances_with_overrides_are_captured_when_trigger_is_overridden,
+//   [
+//     ("/entry.pc", r#"
+//     component D {
+//       variant test trigger {
+//         ":nth-child(2n)"
+//       }
+//       render div {
+//         style variant test {
+//           color: blue
+//         }
+//       }
+//     }
+//     component C {
+//       variant test trigger {
+//         ".something"
+//       }
+//       render D {
+//         override {
+//           variant test trigger { test }
+//         }
+//       }
+//     }
+//     "#)
+//   ],
+//   r#"
+//   "#
+// }
 
 add_case! {
   can_override_a_nested_variant,
@@ -989,6 +1027,16 @@ add_case! {
       "#)
   ],
   r#"
+
+  ._D-80f4925f-12._isMobile-80f4925f-2 { color: blue; } 
+  @media screen and (max-width: 10px) { ._D-80f4925f-12 { color: blue; } } 
+  ._D-80f4925f-12._isMobile-80f4925f-2 ._D-something-80f4925f-11 { font-size: 32px; } 
+  @media screen and (max-width: 10px) { ._D-80f4925f-12 ._D-something-80f4925f-11 { font-size: 32px; } } 
+  ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12._isMobile-80f4925f-23 { color: blue; } 
+  ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12 { color: blue; } 
+  ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15 ._D-80f4925f-12._isMobile-80f4925f-23 ._D-something-80f4925f-11 { font-size: 32px; } 
+  ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15 ._D-80f4925f-12 ._D-something-80f4925f-11 { font-size: 32px; }
+
   ._D-80f4925f-12._isMobile-80f4925f-2 { color: blue; } 
   @media screen and (max-width: 10px) { ._D-80f4925f-12 { color: blue; } } 
   ._D-80f4925f-12._isMobile-80f4925f-2 ._D-something-80f4925f-11 { font-size: 32px; } 
@@ -997,5 +1045,93 @@ add_case! {
   ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12 { color: blue; } 
   ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12._isMobile-80f4925f-23 ._D-something-80f4925f-11 { font-size: 32px; } 
   ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12 ._D-something-80f4925f-11 { font-size: 32px; }
+  "#
+}
+
+
+add_case! {
+  can_override_with_extended_style,
+  [
+    ("/entry.pc", r#"
+      import "/module.pc" as module
+
+      style something {
+        background: orange
+      }
+
+      public component A {
+        render div {
+          module.B {
+            override root {
+              style extends something
+            }
+          }
+        }
+      }
+    "#),
+    ("/module.pc", r#"
+      style something {
+        color: blue
+      }
+      public component B {
+        render div {
+          div root {
+            style extends something
+          }
+        }
+      }
+    "#)
+  ],
+  r#"
+  ._A-80f4925f-8 ._B-root-139cec8e-6 { background: orange; }
+  "#
+}
+
+
+add_case! {
+  nested_override_styles_are_properly_sorted,
+  [
+    ("/entry.pc", r#"
+      component Tree {
+        render div root {
+          style {
+            --depth: 1
+          }
+          slot children
+        }
+      }
+
+      component Folder {
+        render Tree container {
+          override root {
+            style {
+              --depth: var(--depth)
+            }
+          }
+          slot children
+        }
+      }
+
+      Folder abba {
+        override root {
+          style {
+            --depth: 2
+          }
+        }
+        Folder barb {
+          override root {
+            style {
+              --depth: 3
+            }
+          }
+        }
+      }
+    "#)
+  ],
+  r#"
+  ._Tree-root-80f4925f-5 { --depth: 1; } 
+  ._Folder-container-80f4925f-14._Tree-root-80f4925f-5 { --depth: var(--depth); } 
+  ._abba-80f4925f-26._Folder-root-80f4925f-5 { --depth: 2; } 
+  ._barb-80f4925f-25._Folder-root-80f4925f-5 { --depth: 3; }
   "#
 }

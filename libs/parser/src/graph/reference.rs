@@ -38,6 +38,7 @@ pub enum Expr<'expr> {
     Style(&'expr ast::Style),
     Component(&'expr ast::Component),
     Element(&'expr ast::Element),
+    Variant(&'expr ast::Variant),
     Text(&'expr ast::TextNode),
     Trigger(&'expr ast::Trigger),
 }
@@ -49,7 +50,7 @@ impl Graph {
         &'expr self,
         ref_path: &Vec<String>,
         dep_path: &str,
-        scope: Option<Expr<'expr>>,
+        scope: Option<Expr<'expr>>
     ) -> Option<RefInfo<'expr>> {
         let mut curr_dep = if let Some(dep) = self.dependencies.get(dep_path) {
             dep
@@ -91,6 +92,8 @@ impl Graph {
                 _ => {
                     if let Some(nested) = find_within(part, &expr, &curr_dep.path, self) {
                         expr = nested
+                    } else {
+                        return None;
                     }
                 }
             }
@@ -166,6 +169,13 @@ fn find_reference<'expr>(
                 find_within(name, &expr, path, graph)
             }
         }
+        Expr::Variant(variant) => {
+            return if variant.name == name.to_string() {
+                return Some(expr);
+            } else {
+                find_within(name, &expr, path, graph)
+            }
+        }
         _ => {}
     }
     None
@@ -191,12 +201,13 @@ fn find_within<'expr>(
                             _ => None,
                         }
                     }
+                    component_body_item::Inner::Variant(variant) => {
+                        find_reference(name, Expr::Variant(variant), path, graph)
+                    }
                     _ => None,
                 })
         }
         Expr::Element(element) => {
-            // let instance_component = graph.get_instance_component_ref(element, path);
-
             graph
                 .get_instance_component_ref(element, path)
                 .and_then(|component_ref| {

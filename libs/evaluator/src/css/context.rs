@@ -64,10 +64,7 @@ pub struct DocumentContext<'expr, 'resolve_asset, FR: FileResolver> {
     pub rules: Rc<RefCell<Vec<PrioritizedRule>>>,
 
     // The variant override that's in focus
-    pub variant_override: Option<(
-        &'expr ast::Variant,
-        Box<DocumentContext<'expr, 'resolve_asset, FR>>,
-    )>,
+    pub current_variant: Option<&'expr ast::Variant>,
 
     // The variant override that's in focus
     pub current_ref_context: Option<Box<DocumentContext<'expr, 'resolve_asset, FR>>>,
@@ -88,7 +85,7 @@ impl<'expr, 'resolve_asset, FR: FileResolver> DocumentContext<'expr, 'resolve_as
             path: path.to_string(),
             current_component: None,
             current_ref_context: None,
-            variant_override: None,
+            current_variant: None,
             current_instance: None,
             target_node: None,
             shadow_of: None,
@@ -99,6 +96,13 @@ impl<'expr, 'resolve_asset, FR: FileResolver> DocumentContext<'expr, 'resolve_as
 
     pub fn resolve_asset(&self, asset_path: &str) -> Result<String> {
         self.file_resolver.resolve_file(&self.path, asset_path)
+    }
+    pub fn get_ref_context(&self) -> &Self {
+        if let Some(ref_context) = &self.current_ref_context {
+            ref_context.as_ref()
+        } else {
+            self
+        }
     }
 
     pub fn within_component(&self, component: &'expr ast::Component) -> Self {
@@ -116,7 +120,18 @@ impl<'expr, 'resolve_asset, FR: FileResolver> DocumentContext<'expr, 'resolve_as
         if let Some(instance) = self.current_instance {
             if let Some(component) = self.current_component {
                 if let Some(render) = component.get_render_expr() {
-                    return render.node.as_ref().expect("Node must exist").get_id() == &instance.id
+                    return render.node.as_ref().expect("Node must exist").get_id() == &instance.id;
+                }
+            }
+        }
+        return false;
+    }
+
+    pub fn is_target_node_render_node(&self) -> bool {
+        if let Some(node) = self.target_node {
+            if let Some(component) = self.current_component {
+                if let Some(render) = component.get_render_expr() {
+                    return render.node.as_ref().expect("Node must exist").get_id() == node.get_id();
                 }
             }
         }
@@ -135,13 +150,9 @@ impl<'expr, 'resolve_asset, FR: FileResolver> DocumentContext<'expr, 'resolve_as
         clone
     }
 
-    pub fn with_variant_override(
-        &self,
-        variant_override: &'expr ast::Variant,
-        context: &DocumentContext<'expr, 'resolve_asset, FR>,
-    ) -> Self {
+    pub fn with_variant(&self, current_variant: &'expr ast::Variant) -> Self {
         let mut clone = self.clone();
-        clone.variant_override = Some((variant_override, Box::new(context.clone())));
+        clone.current_variant = Some(current_variant);
         clone
     }
 
@@ -165,39 +176,30 @@ impl<'expr, 'resolve_asset, FR: FileResolver> DocumentContext<'expr, 'resolve_as
         shadow
     }
 
-    pub fn next_id(&mut self) -> String {
+    pub fn top(&self) -> &Self {
+        let mut curr = self;
+        while let Some(shadow_of) = &curr.shadow_of {
+            curr = shadow_of.as_ref();
+        }
+        curr
+    }
+
+    pub fn next_id(&self) -> String {
         self.id_generator.borrow_mut().new_id()
     }
 
-    pub fn get_variant_context(&self, name: &str) -> &DocumentContext<'expr, 'resolve_asset, FR> {
-        if let Some((variant_override, ctx)) = &self.variant_override {
-            println!("VARIANT {}", name);
-            if variant_override.name == name {
-                return ctx.as_ref();
+    pub fn get_scoped_variant(&self, name: &str) -> Option<(&'expr ast::Variant, &Self)> {
+        if let Some(variant) = &self.top().current_variant {
+            if variant.name == name {
+                return Some((variant, self.top()));
             }
         }
 
-        if let Some(ref_context) = &self.current_ref_context {
-            return ref_context.as_ref();
-        }
-
-        return self;
-    }
-
-    pub fn get_scoped_variant(&self, name: &str) -> Option<&'expr ast::Variant> {
-        println!("NAME {}", name);
-        if let Some((variant_override, _ctx)) = &self.variant_override {
-            if variant_override.name == name {
-                return Some(variant_override);
-            }
-        }
-
-        (if let Some(ref_context) = &self.current_ref_context {
-            ref_context.as_ref()
-        } else {
-            self
-        })
-        .current_component
+        
+        self.get_ref_context().current_component
         .and_then(|component| component.get_variant(name))
+        .and_then(|variant| {
+            Some((variant, self.get_ref_context()))
+        })
     }
 }

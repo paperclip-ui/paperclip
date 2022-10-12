@@ -24,7 +24,6 @@ public component SidebarPanel {
   render div {
     style extends panel {
       flex: 1
-
     }
     slot children
   }

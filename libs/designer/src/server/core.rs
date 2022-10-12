@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::collections::HashSet;
 use std::sync::Arc;
 
 use crate::machine::engine::EngineContext;
@@ -57,20 +58,33 @@ impl ServerState {
             Err(Error::msg(format!("File not evaluated yet {}", path)))
         );
 
+        let mut imported: HashSet<String> = HashSet::new();
+        let mut to_import: Vec<String> = vec![path.to_string()];
         let mut imports = vec![];
 
-        let dep = self.graph.dependencies.get(path).unwrap();
+        while let Some(path) = to_import.pop() {
+            let dep = self.graph.dependencies.get(&path).unwrap();
 
-        for (_rel, path) in &dep.imports {
-            if let Some((css, _)) = self.evaluated_modules.get(path) {
-                imports.push(PcModuleImport {
-                    inner: Some(pc_module_import::Inner::Css(PccssImport {
-                        path: path.to_string(),
-                        css: Some(css.clone()),
-                    })),
-                })
+            for (_rel, path) in &dep.imports {
+                if !imported.contains(path) {
+                    imported.insert(path.to_string());
+                    to_import.push(path.to_string());
+                }
+
+                if let Some((css, _)) = self.evaluated_modules.get(path) {
+                    imports.push(PcModuleImport {
+                        inner: Some(pc_module_import::Inner::Css(PccssImport {
+                            path: path.to_string(),
+                            css: Some(css.clone()),
+                        })),
+                    })
+                }
             }
         }
+
+        
+
+       
 
         imports.extend(
             self.options

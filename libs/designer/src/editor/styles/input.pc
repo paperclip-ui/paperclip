@@ -1,0 +1,101 @@
+import "./theme.pc" as theme
+import "./common.pc" as common
+
+public component MultiSelectItem {
+  render div {
+    style {
+      display: inline-block
+      color: var(theme.backgroundSelectedText)
+      background: var(theme.backgroundSelected)
+      border-radius: var(theme.roundedSM)
+      padding: 0px var(theme.space02)
+      font-weight: 500
+      display: flex
+      height: 100%
+      align-items: center
+    }
+    slot children
+  }
+}
+
+public component Select {
+  render div {
+    style extends theme.input
+    div {
+      slot children
+    }
+  }
+}
+
+public component ColorInput {
+  render div {
+    style extends theme.input {
+      gap: var(theme.space03)
+    }
+    div {
+      style {
+        width: 1em
+        height: 1em
+        background: rgb(134, 86, 86)
+        border-radius: var(theme.rounded)
+      }
+    }
+    slot children
+  }
+}
+
+component Fields {
+  render div {
+    style {
+      display: flex
+      flex-direction: column
+      gap: var(theme.space04)
+
+    }
+    slot children
+  }
+}
+
+component MultiSelect {
+  render div {
+    style extends theme.input {
+      display: flex
+      gap: var(theme.space02)
+      padding: var(theme.space02)
+
+    }
+    slot children
+  }
+}
+
+
+component Field {
+  render div {
+    style {
+      display: flex
+      gap: var(theme.space03)
+      
+    }
+    div {
+      style {
+        top: calc(calc(var(theme.space06) / 2) - calc(1em / 2))
+        position: relative
+        width: 90px
+        flex-shrink: 0
+        font-size: var(theme.fontSize01)
+      }
+      slot name {
+        
+      }
+    }
+    div {
+      style {
+        display: flex
+        flex-direction: column
+        gap: var(theme.space03)
+        flex: 1
+      }
+      slot input
+    }
+  }
+}

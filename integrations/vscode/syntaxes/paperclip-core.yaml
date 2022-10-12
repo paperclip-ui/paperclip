@@ -18,6 +18,7 @@ variables:
   string: (\".*?\"|\'.*?\')
   variantCombo: ({{reference}}(\s*\+\s*{{reference}})*)
   extends: ({{reference}}(\s*\,\s*{{reference}})*)
+  styleInterior: ((style)\s+((variant)\s+{{variantCombo}}+\s+)?((extends)\s+{{extends}}+)?)
   slotInterior: ((slot)\s+({{id}})\s*)
   instanceOpenInterior: ({{reference}}{{untilOpenBraces}})
   variantBase: (variant\s+{{id}}\s+)
@@ -171,26 +172,33 @@ repository:
       - include: "#string"
   style:
     patterns:
-      - begin: ((style)(\s+{{id}})?(\s+(variant)\s+{{variantCombo}}+)?(\s+(extends)\s+{{extends}}+)?(\s*\{))
+      - begin: ({{styleInterior}}(\s*\{))
         beginCaptures:
-          "2": { name: storage.modifier }
-          "3": { name: variable.readonly }
-          "6": { name: storage.modifier }
-          "7":
+          "0":
             patterns:
-              - include: "#variant-name"
-              - include: "#punctuation"
-          "14": { name: storage.modifier }
-          "15":
-            patterns:
-              - include: "#reference"
-              - include: "#punctuation"
+              - include: "#style-interior"
           "21": { name: "punctuation" }
         end: "}"
         endCaptures:
           "0": { name: punctuation }
         patterns:
           - include: "text.style.paperclip"
+      - include: "#style-interior"
+  style-interior:
+    patterns:
+      - match: "{{styleInterior}}"
+        captures:
+          "2": { name: storage.modifier }
+          "3": { name: storage.modifier }
+          "5":
+            patterns:
+              - include: "#variant-name"
+              - include: "#punctuation"
+          "12": { name: storage.modifier }
+          "13":
+            patterns:
+              - include: "#reference"
+              - include: "#punctuation"
 
   variant-name:
     patterns:
@@ -206,7 +214,7 @@ repository:
     patterns:
       - match: (\,|\+)
         captures:
-          "0": { name: punctuation }
+          "0": { name: storage.modifier }
 
   instance:
     patterns:

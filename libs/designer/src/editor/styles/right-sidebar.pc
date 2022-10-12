@@ -8,7 +8,11 @@ public component RightSidebar {
   render common.Sidebar {
     stylesPanel.StylesPanel
     common.SidebarPanel {
-      text "Blarg"
+      common.SidebarSection {
+        common.SidebarPanelHeader {
+          text "Properties"
+        }
+      }
     }
   }
 }

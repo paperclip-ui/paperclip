@@ -1,121 +1,22 @@
 import "./common.pc" as common
 import "./theme.pc" as theme
-
-
-component MultiSelectItem {
-  render div {
-    style {
-      display: inline-block
-      color: var(theme.backgroundSelectedText)
-      background: var(theme.backgroundSelected)
-      border-radius: var(theme.roundedSM)
-      padding: 0px var(theme.space02)
-      font-weight: 500
-      display: flex
-      height: 100%
-      align-items: center
-    }
-    slot children
-  }
-}
-
-component Select {
-  render div {
-    style extends theme.input {
-    }
-    div {
-      slot children
-    }
-  }
-}
-
-component ColorInput {
-  render div {
-    style extends theme.input {
-      gap: var(theme.space03)
-    }
-    div {
-      style {
-        width: 1em
-        height: 1em
-        background: rgb(134, 86, 86)
-        border-radius: var(theme.rounded)
-      }
-    }
-    slot children
-  }
-}
-
-component Fields {
-  render div {
-    style {
-      display: flex
-      flex-direction: column
-      gap: var(theme.space04)
-
-    }
-    slot children
-  }
-}
-
-component MultiSelect {
-  render div {
-    style extends theme.input {
-      display: flex
-      gap: var(theme.space02)
-      padding: var(theme.space02)
-
-    }
-    slot children
-  }
-}
-
-
-component Field {
-  render div {
-    style {
-      display: flex
-      gap: var(theme.space03)
-      
-    }
-    div {
-      style {
-        top: calc(calc(var(theme.space06) / 2) - calc(1em / 2))
-        position: relative
-        width: 90px
-        flex-shrink: 0
-        font-size: var(theme.fontSize01)
-      }
-      slot name {
-        
-      }
-    }
-    div {
-      style {
-        display: flex
-        flex-direction: column
-        gap: var(theme.space03)
-        flex: 1
-      }
-      slot input
-    }
-  }
-}
+import "./input.pc" as input
 
 public component StylesPanel {
   render common.SidebarPanel {
       common.SidebarSection {
         common.SidebarPanelContent {
-          Field {
+          input.Field {
+            style extends test
             insert name {
               text "Variant"
             }
             insert input {
-              MultiSelect {
-                MultiSelectItem {
+              input.MultiSelect {
+                input.MultiSelectItem {
                   text "mobile"
                 }
-                MultiSelectItem {
+                input.MultiSelectItem {
                   text "dark"
                 }
               }
@@ -127,59 +28,59 @@ public component StylesPanel {
         common.SidebarPanelHeader {
           text "Layout"
           div {
-            style extends theme.icon {
+            style variant test extends test, a, a {
               -webkit-mask-image: url("./plus.svg")
             }
           }
         }
         common.SidebarPanelContent {
-          Fields {
-            Field {
+          input.Fields {
+            input.Field {
               insert name {
                 text "display"
               }
               insert input {
-                Select {
+                input.Select {
                   text "flex"
                 }
               }
             }
-            Field {
+            input.Field {
               insert name {
                 text "Padding"
               }
               insert input {
-                Select {
+                input.Select {
                   text "flex"
                 }
               }
             }
-            Field {
+            input.Field {
               insert name {
                 text "Margin"
               }
               insert input {
-                Select {
+                input.Select {
                   text "12px"
                 }
               }
             }
-            Field {
+            input.Field {
               insert name {
                 text "Position"
               }
               insert input {
-                Select {
+                input.Select {
                   text "relative"
                 }
               }
             }
-            Field {
+            input.Field {
               insert name {
                 text "Box Sizing"
               }
               insert input {
-                Select {
+                input.Select {
                   text "border-box"
                 }
               }
@@ -197,31 +98,31 @@ public component StylesPanel {
           }
         }
         common.SidebarPanelContent {
-          Fields {
-            Field {
+          input.Fields {
+            input.Field {
               insert name {
                 text "Background"
               }
               insert input {
-                ColorInput {
+                input.ColorInput {
                   text "flex"
                 }
-                Select {
+                input.Select {
                   text "flex"
                 }
               }
             }
-            Field {
+            input.Field {
               insert name {
                 text "Shadows"
               }
               insert input {
-                Select {
+                input.Select {
                   text "flex"
                 }
               }
             }
-            Field {
+            input.Field {
               insert name {
                 text "Border"
               }
@@ -230,13 +131,12 @@ public component StylesPanel {
                   style {
                     display: flex
                     flex-direction: column
-                    gap: var(theme.space05)
-                    opacity: 0.5
+                    gap: var(theme.space04)
                   }
-                  Select {
+                  input.Select {
                     text "1px"
                   }
-                  Select {
+                  input.Select {
                     text "solid"
                   }
                 }
@@ -249,19 +149,19 @@ public component StylesPanel {
         common.SidebarPanelHeader {
         }
         common.SidebarPanelContent {
-          Fields {
-            Field {
+          input.Fields {
+            input.Field {
               insert name {
                 text "Mixins"
               }
               insert input {
-                Select {
+                input.Select {
                   text "input"
                 }
-                Select {
+                input.Select {
                   text "fontDefault"
                 }
-                Select {
+                input.Select {
                   text "add "
                 }
               }

@@ -31,6 +31,7 @@ public component SidebarPanel {
 
 
 
+
 component SidebarPanelHeader {
   render div {
     style extends theme.fontHeader {

@@ -19,15 +19,29 @@ public component RightSidebar {
           }
         }
         common.SidebarPanelContent {
-          input.Field {
-            insert name {
-              input.Select {
-                text "onClick"
+          input.Fields {
+            input.Field {
+              insert name {
+                input.Select {
+                  text "onClick"
+                }
+              }
+              insert input {
+                input.Select {
+                  text "onButtonClick"
+                }
               }
             }
-            insert input {
-              input.Select {
-                text "onButtonClick"
+            input.Field {
+              insert name {
+                input.Select {
+                  text "onClick"
+                }
+              }
+              insert input {
+                input.Select {
+                  text "onButtonClick"
+                }
               }
             }
           }
@@ -45,6 +59,7 @@ public component RightSidebar {
               }
             }
           }
+          
         }
       }
     }

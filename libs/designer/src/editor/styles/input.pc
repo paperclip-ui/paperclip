@@ -20,9 +20,18 @@ public component MultiSelectItem {
 
 public component Select {
   render div {
-    style extends theme.input
+    style extends theme.input {
+      display: flex
+      justify-content: space-between
+    }
     div {
       slot children
+    }
+    div {
+      style extends theme.icon {
+        -webkit-mask-image: url("./chevron2.svg")
+        transform: rotate(90deg)
+      }
     }
   }
 }

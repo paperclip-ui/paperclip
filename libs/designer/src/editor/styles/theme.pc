@@ -67,7 +67,6 @@ public style icon extends mask {
 
 public style input {
   background: var(inputBackground)
-
   display: flex
   align-items: center
   flex: 1

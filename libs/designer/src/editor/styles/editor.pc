@@ -58,7 +58,7 @@ component Canvas {
     }
     Artboard {
       insert title {
-        text "Or not somddddddddis"
+        text "Some frame"
       }
     }
   }
@@ -126,7 +126,8 @@ component MultiSelectItem {
       color: var(theme.backgroundSelectedText)
       background: var(theme.backgroundSelected)
       border-radius: var(theme.roundedSM)
-      padding: 0px var(theme.space03)
+      padding: 0px var(theme.space02)
+      font-weight: 500
       display: flex
       height: 100%
       align-items: center
@@ -265,7 +266,7 @@ component Toolbar {
         div {
           style extends theme.icon {
             -webkit-mask-image: url("./component2.svg")
-            transform: rotate(45deg)
+
             --size: 1.5em
           }
         }
@@ -322,6 +323,11 @@ component Editor {
         common.SidebarPanel {
           common.SidebarPanelHeader {
             text "Layout"
+            div {
+              style extends theme.icon {
+                -webkit-mask-image: url("./plus.svg")
+              }
+            }
           }
           common.SidebarPanelContent {
             Fields {
@@ -381,6 +387,11 @@ component Editor {
         common.SidebarPanel {
           common.SidebarPanelHeader {
             text "Style"
+            div {
+              style extends theme.icon {
+                -webkit-mask-image: url("./plus.svg")
+              }
+            }
           }
           common.SidebarPanelContent {
             Fields {

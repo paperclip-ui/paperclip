@@ -7,9 +7,7 @@ public component LeftSidebar {
 
     }
     common.SidebarPanel {
-      common.SidebarPanelContent {
         FileNavigation
-      }
     }
   }
 }
@@ -18,14 +16,33 @@ component LeftSidebarHeader {
   render div {
     style {
       display: flex
-      padding: var(theme.space05)
-      padding-bottom: 0px
+      padding: var(theme.space05) var(theme.space05)
+      justify-content: space-between
       font-size: var(theme.fontSize01)
-    }
-    span {
-      text "TodoList.pc"
+      align-items: center
+      border-bottom: 1px solid var(theme.borderColor)
     }
     div {
+      style {
+        display: flex
+        gap: var(theme.space02)
+      }
+      div {
+        style extends theme.icon {
+          -webkit-mask-image: url("./back.svg")
+          --size: 1.2em
+        }
+      }
+      span {
+        text "TodoList.pc"
+      }
+    }
+    div {
+      style extends theme.icon {
+        cursor: pointer
+        -webkit-mask-image: url("./hamburger.svg")
+        --size: 1.2em
+      }
     }
   }
 }
@@ -34,17 +51,21 @@ component LeftSidebarHeader {
 component LayerIcon {
   variant isComponent
   variant isSlot
+  variant isText
   render div {
     style {
-      --size: 1.4em
+      --size: 1.2em
+      width: 14px
     }
     style variant isComponent extends theme.icon {
-      --size: 1.2em
       -webkit-mask-image: url("./component2.svg")
     }
     style variant isSlot extends theme.icon {
       -webkit-mask-image: url("./slot2.svg")
-      --size: 1.5em
+    }
+    style variant isText extends theme.icon {
+      --size: 0.6em
+      -webkit-mask-image: url("./text.svg")
     }
   }
 }
@@ -56,11 +77,10 @@ component TreeNavigationItemContent {
 }
 
 component TreeNavigationItem {
+  variant isSelected
   render div {
-    style {
+    style variant isSelected {
       background: var(theme.backgroundSelectedLight)
-      border-radius: var(theme.roundedMD)
-      
     }
     slot children
   }
@@ -74,23 +94,38 @@ component TreeNavigationItemHeader {
     style {
       --depth: 1
       display: flex
-      align-items: center
       gap: var(theme.space02)
-      padding: var(theme.space03) var(theme.space05)
-      padding-left: calc(var(theme.space04) * var(--depth))
+      padding: var(theme.space03) var(theme.space02)
+      padding-left: calc(22px * var(--depth))
+
     }
     div {
-      style variant isContainer extends theme.icon {
-        -webkit-mask-image: url("./chevron2.svg")
-        opacity: 0.3
-        --size: 12px
+      style {
+        position: relative
+        display: flex
+        gap: var(theme.space03)
+        align-items: center
       }
-      style variant isOpen {
-        transform: rotate(90deg)
+      div {
+        style extends theme.icon {
+          -webkit-mask-image: url("./chevron2.svg")
+          opacity: 0
+          color: white
+          --size: 14px
+          position: absolute
+          left: -18px
+
+        }
+        style variant isContainer {
+          opacity: 0.3
+        }
+        style variant isOpen {
+          transform: rotate(90deg)
+        }
       }
+      
+      slot children
     }
-    
-    slot children
   }
 }
 
@@ -101,8 +136,8 @@ component FileNavigatorItemHeader {
   variant isOpen
   render TreeNavigationItemHeader container {
     override {
-      variant isContainer trigger { true }
-      variant isOpen trigger { true }
+      variant isContainer trigger { isContainer }
+      variant isOpen trigger { isContainer }
     }
     override root {
       style {
@@ -127,10 +162,15 @@ component FileNavigatorItemHeader {
 
 component FileNavigation {
   render div {
+    style {
+      padding: var(theme.space02) 0px
+    }
     TreeNavigationItem {
       FileNavigatorItemHeader {
         override {
           variant isComponent trigger { true }
+          variant isContainer trigger { true }
+          variant isOpen trigger { true }
         }
         override container.root {
           style {
@@ -144,6 +184,8 @@ component FileNavigation {
           FileNavigatorItemHeader {
             override {
               variant isSlot trigger { true }
+              variant isContainer trigger { true }
+              variant isOpen trigger { true }
             }
             override container.root {
               style {
@@ -155,19 +197,27 @@ component FileNavigation {
           TreeNavigationItemContent {
             TreeNavigationItem {
               FileNavigatorItemHeader {
+                override {
+                  variant isText trigger { true }
+                }
                 override container.root {
                   style {
                     --depth: 3
                   }
                 }
-                text "some long description"
+                text "some label"
               }
             }
         }
         TreeNavigationItem {
+          override {
+            variant isSelected trigger { true }
+          }
           FileNavigatorItemHeader {
             override {
               variant isSlot trigger { true }
+              variant isContainer trigger { true }
+              variant isOpen trigger { true }
             }
             override container.root {
               style {
@@ -179,6 +229,9 @@ component FileNavigation {
           TreeNavigationItemContent {
             TreeNavigationItem {
               FileNavigatorItemHeader {
+                override {
+                  variant isText trigger { true }
+                }
                 override container.root {
                   style {
                     --depth: 3

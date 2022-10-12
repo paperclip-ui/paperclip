@@ -39,7 +39,15 @@ component SidebarPanelHeader {
       padding-bottom: 0px
 
     }
-    slot children
+    div {
+      style {
+        display: flex
+        justify-content: space-between
+
+      }
+
+      slot children
+    }
   }
 }
 

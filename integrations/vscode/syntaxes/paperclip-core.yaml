@@ -24,7 +24,7 @@ variables:
   variantBase: (variant\s+{{id}}\s+)
   instanceOpen: ({{instanceOpenInterior}}(\{))
   parameters: (\(.*?\))
-  parameterValue: ({{string}})
+  parameterValue: ({{string}}|{{reference}})
   instanceInitArg: ({{untilOpenBraces}})
 repository:
   document:
@@ -245,7 +245,7 @@ repository:
   # div ab (a: 1)
   instance-open-interior:
     patterns:
-      - match: ({{reference}}(\s+{{id}})?(\s+{{instanceInitArg}})?)
+      - match: ({{reference}}(\s+{{id}})?(\s*{{instanceInitArg}})?)
         captures:
           "2": { name: entity.name.type.class }
           "4": { name: variable.other }
@@ -281,12 +281,12 @@ repository:
     patterns:
       - match: ((\w+)\s*(:)\s*{{parameterValue}})
         captures:
+          "0": { name: storage.modifier }
           "2": { name: storage.modifier }
           "3": { name: punctuation }
           "4":
             patterns:
-              # TODO: may want to include additional property types
-              # if attribute bindings become explicit
+              - include: "#reference"
               - include: "#string"
       - match: ","
         name: punctuation

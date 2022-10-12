@@ -2,7 +2,7 @@ use anyhow::Result;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::id::{get_document_id, IDGenerator};
 use paperclip_parser::graph;
-use paperclip_parser::graph::reference::{ComponentRefInfo};
+use paperclip_parser::graph::reference::ComponentRefInfo;
 use paperclip_parser::pc::ast::{self};
 use paperclip_proto::virt::css::Rule;
 use std::cell::RefCell;

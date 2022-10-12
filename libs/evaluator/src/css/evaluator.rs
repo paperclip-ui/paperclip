@@ -53,11 +53,7 @@ fn collect_sorted_rules<F: FileResolver>(context: &mut DocumentContext<F>) -> Ve
         .drain(0..)
         .collect::<Vec<PrioritizedRule>>();
 
-    
-
-    rules.sort_by(|a, b| {
-        a.partial_cmp(b).unwrap()
-    });
+    rules.sort_by(|a, b| a.partial_cmp(b).unwrap());
 
     rules.into_iter().map(|rule| rule.rule).collect()
 }
@@ -231,7 +227,6 @@ fn into_shadow<'a, F: FileResolver>(
         context.clone()
     );
 
-
     let mut shadow = context
         .with_target_node(CurrentNode::Element(instance))
         .shadow(&instance_component_info);
@@ -260,15 +255,12 @@ fn into_shadow<'a, F: FileResolver>(
                         .graph
                         .get_instance_component_ref(element, &info.path)
                     {
-                        shadow = shadow
-                            .shadow(&instance_component_info)
+                        shadow = shadow.shadow(&instance_component_info)
                     }
                 }
             }
         }
     }
-
-    println!("{:?}", path.len());
 
     shadow = shadow.with_priority(path.len() as u8);
 

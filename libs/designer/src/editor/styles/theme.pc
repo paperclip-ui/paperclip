@@ -12,11 +12,14 @@ public token canvasColor rgb(59, 59, 59)
 public token sidebarColor rgb(37, 37, 37)
 public token inputBackground rgb(42, 42, 42)
 public token backgroundSelected var(selectedColor)
-public token backgroundSelectedLight rgb(59, 59, 59)
+public token backgroundSelectedLight rgb(46, 46, 46)
 public token backgroundSelectedText rgb(229, 236, 255)
-public token borderColor rgb(65, 65, 65)
+public token borderColor rgb(21, 21, 21)
 
-public token fontColor01 rgb(255, 255, 255)
+public token componentColor rgb(219, 161, 255)
+public token slotColor rgb(161, 255, 203)
+
+public token fontColor01 rgb(236, 236, 236)
 e
 public token space01 2px
 public token space02 4px
@@ -56,6 +59,7 @@ public style mask {
 
 
 public style icon extends mask {
+  --size: 1em
   width: var(--size)
   height: var(--size)
   display: inline-block
@@ -63,6 +67,7 @@ public style icon extends mask {
 
 public style input {
   background: var(inputBackground)
+
   display: flex
   align-items: center
   flex: 1
@@ -72,11 +77,20 @@ public style input {
 }
 
 public style fontDefault {
-  font-family: sans-serif
+  font-family: Inter
   color: var(fontColor01)
   font-size: var(fontSize02)
+  font-weight: 300
+
 }
 
+public style reset {
+  border: none
+  background: transparent
+  color: currentColor
+  padding: 0
+  margin: 0
+}
 
 public style fontHeader {
   font-size: var(fontSize01)
@@ -84,5 +98,5 @@ public style fontHeader {
 }
 
 public style easeIn {
-  transition: 0.5s
+  transition: 0.2s
 }

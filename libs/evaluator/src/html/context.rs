@@ -10,9 +10,9 @@ pub struct Options {
 }
 
 #[derive(Clone)]
-pub struct DocumentContext<'path, 'graph, 'expr, 'file_resolver, FR: FileResolver> {
+pub struct DocumentContext<'graph, 'expr, 'file_resolver, FR: FileResolver> {
     pub graph: &'graph graph::Graph,
-    pub path: &'path str,
+    pub path: String,
     pub data: Option<RefCell<core_virt::Object>>,
     pub file_resolver: &'file_resolver FR,
     pub current_component: Option<&'expr ast::Component>,
@@ -20,18 +20,18 @@ pub struct DocumentContext<'path, 'graph, 'expr, 'file_resolver, FR: FileResolve
     pub options: Options,
 }
 
-impl<'path, 'graph, 'expr, 'file_resolver, FR: FileResolver>
-    DocumentContext<'path, 'graph, 'expr, 'file_resolver, FR>
+impl<'graph, 'expr, 'file_resolver, FR: FileResolver>
+    DocumentContext<'graph, 'expr, 'file_resolver, FR>
 {
     pub fn new(
-        path: &'path str,
+        path: &str,
         graph: &'graph graph::Graph,
         file_resolver: &'file_resolver FR,
         options: Options,
     ) -> Self {
         Self {
             graph,
-            path,
+            path: path.to_string(),
             data: None,
             file_resolver,
             options,
@@ -47,6 +47,11 @@ impl<'path, 'graph, 'expr, 'file_resolver, FR: FileResolver>
     pub fn within_component(&self, component: &'expr ast::Component) -> Self {
         let mut clone = self.clone();
         clone.current_component = Some(component);
+        clone
+    }
+    pub fn within_path(&self, path: &str) -> Self {
+        let mut clone = self.clone();
+        clone.path = path.to_string();
         clone
     }
     pub fn set_render_scope(&self, scope: Vec<String>) -> Self {

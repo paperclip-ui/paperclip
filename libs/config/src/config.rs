@@ -1,6 +1,7 @@
 // From https://paperclip.dev/docs/configure-paperclip
 use anyhow::Result;
 use paperclip_common::fs::FileReader;
+use paperclip_common::join_path;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 use std::str;
@@ -19,6 +20,21 @@ pub struct ConfigContext {
 }
 
 impl ConfigContext {
+    pub fn get_global_script_paths(&self) -> Vec<String> {
+        self.config
+            .global_scripts
+            .as_ref()
+            .and_then(|rel_paths| {
+                Some(
+                    rel_paths
+                        .iter()
+                        .map(|rel_path| join_path!(&self.directory, rel_path))
+                        .collect::<Vec<String>>(),
+                )
+            })
+            .unwrap_or(vec![])
+    }
+
     pub fn load<FR: FileReader>(cwd: &str, file_name: Option<String>, io: &FR) -> Result<Self> {
         let file_name = if let Some(value) = file_name {
             value
@@ -45,7 +61,7 @@ impl ConfigContext {
 pub struct Config {
     /// Global scripts that are injected into the page (JS, and CSS)
     #[serde(rename = "globalScripts", skip_serializing_if = "Option::is_none")]
-    pub global_scripts: Option<String>,
+    pub global_scripts: Option<Vec<String>>,
 
     /// source directory where *.pc files live
     #[serde(rename = "srcDir", skip_serializing_if = "Option::is_none")]

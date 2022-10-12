@@ -1,149 +1,13 @@
 import "./theme.pc" as theme
+import "./left-sidebar.pc" as leftSidebar
+import "./common.pc" as common
 
 token iconSize var(theme.fontSize03)
 
-style panel {
-  background: var(theme.sidebarColor)
-  border: 1px solid var(theme.borderColor)
+component NodeIcon {
+  render div
 }
 
-component Sidebar {
-  render div {
-    style {
-      width: 250px
-    }
-    div {
-      style extends panel {
-        border-radius: var(theme.roundedMD)
-        height: 100%
-      }    
-      slot children
-    }
-  }
-}
-
-component SidebarPanel {
-  render div {
-    slot children
-  }
-}
-
-component SidebarPanelHeader {
-  render div {
-    style extends theme.fontHeader {
-      border-top: 1px solid var(theme.borderColor)
-      padding: var(theme.space05)
-      padding-bottom: 0px
-
-    }
-    slot children
-  }
-}
-
-component SidebarPanelContent {
-  render div {
-    style {
-      padding: var(theme.space05)
-    }
-    slot children
-  }
-}
-
-
-component TreeNavigation {
-  render div {
-    TreeNavigationItem {
-      TreeNavigationItemHeader {
-        override root {
-          style {
-            --depth: 1
-          }
-        }
-        div {
-          style extends theme.icon {
-            -webkit-mask-image: url("./chevron.svg")
-            transform: rotate(-90deg)
-            --size: 12px
-          }
-        }
-        div {
-          style extends theme.icon {
-            -webkit-mask-image: url("./folder2.svg")
-            --size: var(theme.fontSize03)
-          }
-        }
-        text "leaf"
-      }
-      TreeNavigationItemContent {
-        TreeNavigationItem {
-          TreeNavigationItemHeader {
-            override root {
-              style {
-                --depth: 2
-              }
-            }
-            text "Leaf"
-          }
-        }
-      }
-    }
-  }
-}
-
-component TreeNavigationItem {
-  render div {
-    style {
-      font-size: var(theme.fontSize02)
-      background: var(theme.backgroundSelectedLight)
-      
-    }
-    slot children
-  }
-}
-component TreeNavigationItemHeader {
-  render div root {
-    style {
-      --depth: 1
-      display: flex
-      align-items: center
-      gap: var(theme.space02)
-      padding: var(theme.space03) var(theme.space05)
-      padding-left: calc(var(theme.space05) * var(--depth))
-    }
-    slot children
-  }
-}
-component TreeNavigationItemContent {
-  render div {
-    slot children
-  }
-}
-
-component SidebarHeader {
-  render div {
-    style {
-      display: flex
-    }
-    slot children
-  }
-}
-
-component SidebarHeaderButton {
-  variant selected
-  render div root {
-    style extends theme.easeIn {
-      padding: var(theme.space03) var(theme.space05)
-      font-size: var(theme.fontSize01)
-      text-align: center
-      width: 100%
-      border-bottom: 2px solid transparent
-    }
-    style variant selected {
-      border-color: var(theme.selectedColor)
-    }
-    slot children
-  }
-}
 
 component Artboard {
   render div {
@@ -194,7 +58,7 @@ component Canvas {
     }
     Artboard {
       insert title {
-        text "Some title"
+        text "Some frame"
       }
     }
   }
@@ -262,7 +126,8 @@ component MultiSelectItem {
       color: var(theme.backgroundSelectedText)
       background: var(theme.backgroundSelected)
       border-radius: var(theme.roundedSM)
-      padding: 0px var(theme.space03)
+      padding: 0px var(theme.space02)
+      font-weight: 500
       display: flex
       height: 100%
       align-items: center
@@ -304,6 +169,7 @@ component EditorPanels {
       display: flex
       flex: 1
       z-index: 3
+      font-size: var(theme.fontSize01)
       padding: var(theme.space05)
       gap: var(theme.space05)
       position: relative
@@ -323,15 +189,92 @@ component CenterPanels {
       justify-content: space-between
     }
     Toolbar
-    FooterBar
+  }
+}
+
+component ToolbarDivider {
+  render div {
+    style {
+      width: 1px
+      border-radius: var(theme.roundedMD)
+      height: 100%
+      background: var(theme.borderColor)
+    }
+  }
+}
+
+component ToolbarButton {
+  variant hovering trigger { ":hover" }
+  variant wide trigger { ".wide" }
+  render button {
+    style extends theme.reset, theme.easeIn {
+      padding: 0px
+      cursor: pointer
+      border-radius: var(theme.roundedMD)
+      min-width: var(theme.space07)
+      height: var(theme.space07)
+    }
+    style variant hovering {
+      background: var(theme.selectedColor)
+    }
+    style variant wide {
+      width: 200px
+    }
+    slot children
+  }
+}
+
+component Zoom {
+  render div {
+    
+    slot children
   }
 }
 
 component Toolbar {
   render div {
-    style extends panel {
-      width: 100%
-      height: 30px
+    style {
+      display: flex
+      justify-content: center
+    }
+    div {
+      style extends common.panel {
+        display: inline-flex
+        align-items: center
+        padding: var(theme.space03)
+        gap: var(theme.space03)
+      }
+      ToolbarButton {
+        div {
+          style extends theme.icon {
+            -webkit-mask-image: url("./text.svg")
+          }
+        }
+      }
+      ToolbarButton {
+        div {
+          style extends theme.icon {
+            -webkit-mask-image: url("./instance3.svg")
+            transform: rotate(45deg)
+            --size: 1.5em
+          }
+        }
+      }
+      ToolbarDivider
+
+      ToolbarButton {
+        div {
+          style extends theme.icon {
+            -webkit-mask-image: url("./component2.svg")
+
+            --size: 1.5em
+          }
+        }
+      }
+      ToolbarDivider
+      ToolbarButton(class: "wide") {
+        text "100%"
+      }
     }
   }
 }
@@ -355,29 +298,11 @@ component Editor {
     }
     Canvas 
     EditorPanels {
-      Sidebar {
-        SidebarHeader {
-          SidebarHeaderButton {
-            text "Files"
-          }
-          SidebarHeaderButton layersTab {
-            override {
-              variant selected trigger { true }
-            }
-            text "Layers"
-          }
-          SidebarHeaderButton {
-            text "Assets"
-          }
-        }
-        SidebarPanel {
-            TreeNavigation
-        }
-      }
+      leftSidebar.LeftSidebar
       CenterPanels
-      Sidebar {
-        SidebarPanel {
-          SidebarPanelContent {
+      common.Sidebar {
+        common.SidebarPanel {
+          common.SidebarPanelContent {
             Field {
               insert name {
                 text "Variant"
@@ -395,11 +320,16 @@ component Editor {
             }
           }
         }
-        SidebarPanel {
-          SidebarPanelHeader {
+        common.SidebarPanel {
+          common.SidebarPanelHeader {
             text "Layout"
+            div {
+              style extends theme.icon {
+                -webkit-mask-image: url("./plus.svg")
+              }
+            }
           }
-          SidebarPanelContent {
+          common.SidebarPanelContent {
             Fields {
               Field {
                 insert name {
@@ -454,11 +384,16 @@ component Editor {
             }
           }
         }
-        SidebarPanel {
-          SidebarPanelHeader {
-            text "Appearance"
+        common.SidebarPanel {
+          common.SidebarPanelHeader {
+            text "Style"
+            div {
+              style extends theme.icon {
+                -webkit-mask-image: url("./plus.svg")
+              }
+            }
           }
-          SidebarPanelContent {
+          common.SidebarPanelContent {
             Fields {
               Field {
                 insert name {
@@ -508,11 +443,10 @@ component Editor {
           }
         }
 
-        SidebarPanel {
-          SidebarPanelHeader {
-
+        common.SidebarPanel {
+          common.SidebarPanelHeader {
           }
-          SidebarPanelContent {
+          common.SidebarPanelContent {
             Fields {
               Field {
                 insert name {

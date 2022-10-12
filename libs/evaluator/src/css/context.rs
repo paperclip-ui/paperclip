@@ -2,12 +2,13 @@ use anyhow::Result;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::id::{get_document_id, IDGenerator};
 use paperclip_parser::graph;
-use paperclip_parser::pc::ast;
+use paperclip_parser::graph::reference::ComponentRefInfo;
+use paperclip_parser::pc::ast::{self};
 use paperclip_proto::virt::css::Rule;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub enum CurrentNode<'expr> {
     Element(&'expr ast::Element),
     TextNode(&'expr ast::TextNode),
@@ -28,7 +29,7 @@ impl<'expr> CurrentNode<'expr> {
     }
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 pub struct PrioritizedRule {
     pub priority: u8,
     pub rule: Rule,
@@ -41,27 +42,39 @@ impl PartialOrd for PrioritizedRule {
 }
 
 #[derive(Clone)]
-pub struct DocumentContext<'graph, 'expr, 'resolve_asset, FR: FileResolver> {
+pub struct DocumentContext<'expr, 'resolve_asset, FR: FileResolver> {
     id_generator: Rc<RefCell<IDGenerator>>,
     pub file_resolver: &'resolve_asset FR,
-    pub graph: &'graph graph::Graph,
+    pub graph: &'expr graph::Graph,
     pub path: String,
-    pub current_node: Option<CurrentNode<'expr>>,
-    pub instance_of: Vec<(&'expr ast::Element, Option<&'expr ast::Component>, String)>,
-    pub current_component: Option<&'expr ast::Component>,
-    pub current_shadow: Option<&'expr ast::Component>,
-    // pub document: Rc<RefCell<virt::Document>>,
 
-    // for overrides
+    // the current element in focus, used when style child is on deck
+    pub target_node: Option<CurrentNode<'expr>>,
+
+    // current instance, this is necessary in case of overriding deeply nested node
+    // pub current_instance: Option<&'expr ast::Element>,
+
+    // Current component that this document is in
+    pub current_component: Option<&'expr ast::Component>,
+
+    // for sorting styles (needed for overrides)
     pub priority: u8,
+
+    // all of the styles that are evaluated
     pub rules: Rc<RefCell<Vec<PrioritizedRule>>>,
-    pub variant_override: Option<&'expr ast::Variant>,
+
+    // The variant override that's in focus
+    pub current_variant: Option<&'expr ast::Variant>,
+
+    // The variant override that's in focus
+    pub current_ref_context: Option<Box<DocumentContext<'expr, 'resolve_asset, FR>>>,
+
+    // __parent__ context. This gets assigned when we drill into instances
+    pub shadow_of: Option<Box<DocumentContext<'expr, 'resolve_asset, FR>>>,
 }
 
-impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
-    DocumentContext<'graph, 'expr, 'resolve_asset, FR>
-{
-    pub fn new(path: &str, graph: &'graph graph::Graph, file_resolver: &'resolve_asset FR) -> Self {
+impl<'expr, 'resolve_asset, FR: FileResolver> DocumentContext<'expr, 'resolve_asset, FR> {
+    pub fn new(path: &str, graph: &'expr graph::Graph, file_resolver: &'resolve_asset FR) -> Self {
         let document_id = get_document_id(path);
         let id_generator = Rc::new(RefCell::new(IDGenerator::new(document_id)));
 
@@ -71,34 +84,48 @@ impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
             graph,
             path: path.to_string(),
             current_component: None,
-            variant_override: None,
-            current_node: None,
-            current_shadow: None,
-            instance_of: vec![],
+            current_ref_context: None,
+            current_variant: None,
+            // current_instance: None,
+            target_node: None,
+            shadow_of: None,
             rules: Rc::new(RefCell::new(vec![])),
-            priority: 8,
+            priority: 0,
         }
     }
 
     pub fn resolve_asset(&self, asset_path: &str) -> Result<String> {
         self.file_resolver.resolve_file(&self.path, asset_path)
     }
-
-    pub fn within_shadow(&self, component: &'expr ast::Component) -> Self {
-        let mut clone: DocumentContext<FR> = self.clone();
-        clone.current_shadow = Some(component);
-        clone
-    }
-
-    pub fn within_instance(&self, instance: &'expr ast::Element) -> Self {
-        let mut clone: DocumentContext<FR> = self.clone();
-        clone.instance_of.push((instance, self.current_component, self.path.to_string()));
-        clone
+    pub fn get_ref_context(&self) -> &Self {
+        if let Some(ref_context) = &self.current_ref_context {
+            ref_context.as_ref()
+        } else {
+            self
+        }
     }
 
     pub fn within_component(&self, component: &'expr ast::Component) -> Self {
         let mut clone: DocumentContext<FR> = self.clone();
         clone.current_component = Some(component);
+        clone
+    }
+
+    pub fn is_target_node_render_node(&self) -> bool {
+        if let Some(node) = self.target_node {
+            if let Some(component) = self.current_component {
+                if let Some(render) = component.get_render_expr() {
+                    return render.node.as_ref().expect("Node must exist").get_id()
+                        == node.get_id();
+                }
+            }
+        }
+        return false;
+    }
+
+    pub fn with_ref_context(&self, context: &DocumentContext<'expr, 'resolve_asset, FR>) -> Self {
+        let mut clone = self.clone();
+        clone.current_ref_context = Some(Box::new(context.clone()));
         clone
     }
 
@@ -108,9 +135,9 @@ impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
         clone
     }
 
-    pub fn with_variant_override(&self, variant_override: &'expr ast::Variant) -> Self {
+    pub fn with_variant(&self, current_variant: &'expr ast::Variant) -> Self {
         let mut clone = self.clone();
-        clone.variant_override = Some(variant_override);
+        clone.current_variant = Some(current_variant);
         clone
     }
 
@@ -120,43 +147,42 @@ impl<'graph, 'expr, 'resolve_asset, FR: FileResolver>
         clone
     }
 
-    pub fn within_node(&self, node: CurrentNode<'expr>) -> Self {
+    pub fn with_target_node(&self, node: CurrentNode<'expr>) -> Self {
         let mut clone = self.clone();
-        clone.current_node = Some(node);
+        clone.target_node = Some(node);
         clone
     }
 
-    pub fn next_id(&mut self) -> String {
+    pub fn shadow(&self, component_info: &ComponentRefInfo<'expr>) -> Self {
+        let mut shadow = Self::new(&component_info.path, self.graph, self.file_resolver);
+        shadow.shadow_of = Some(Box::new(self.clone()));
+        shadow.current_component = Some(&component_info.expr);
+        shadow.rules = self.rules.clone();
+        shadow
+    }
+
+    pub fn top(&self) -> &Self {
+        let mut curr = self;
+        while let Some(shadow_of) = &curr.shadow_of {
+            curr = shadow_of.as_ref();
+        }
+        curr
+    }
+
+    pub fn next_id(&self) -> String {
         self.id_generator.borrow_mut().new_id()
     }
 
-    pub fn get_target_style_component(&self) -> Option<&'expr ast::Component> {
-        self.current_shadow.or(self.current_component)
-    }
-
-    pub fn get_target_root_node(&self) -> Option<&'expr ast::Render> {
-        self.get_target_style_component()
-            .and_then(|component| component.get_render_expr())
-    }
-
-    pub fn is_target_node_root(&self) -> bool {
-        if let Some(root) = self.get_target_root_node() {
-            if let Some(current_node) = self.current_node {
-                return root.node.as_ref().expect("Node must exist").get_id()
-                    == current_node.get_id();
+    pub fn get_scoped_variant(&self, name: &str) -> Option<(&'expr ast::Variant, &Self)> {
+        if let Some(variant) = &self.top().current_variant {
+            if variant.name == name {
+                return Some((variant, self.top()));
             }
         }
-        return false;
-    }
 
-    pub fn get_scoped_variant(&self, name: &str) -> Option<&'expr ast::Variant> {
-        if let Some(variant_override) = self.variant_override {
-            if variant_override.name == name {
-                return Some(variant_override);
-            }
-        }
-        return self
+        self.get_ref_context()
             .current_component
-            .and_then(|component| component.get_variant(name));
+            .and_then(|component| component.get_variant(name))
+            .and_then(|variant| Some((variant, self.get_ref_context())))
     }
 }

@@ -128,7 +128,7 @@ fn scan_override(expr: &Override, ctx: &mut Context) {
         match item.get_inner() {
             override_body_item::Inner::Style(expr) => {
                 scan_style(expr, ctx);
-            },
+            }
             _ => {}
         }
     }

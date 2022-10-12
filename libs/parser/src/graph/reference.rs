@@ -38,6 +38,7 @@ pub enum Expr<'expr> {
     Style(&'expr ast::Style),
     Component(&'expr ast::Component),
     Element(&'expr ast::Element),
+    Variant(&'expr ast::Variant),
     Text(&'expr ast::TextNode),
     Trigger(&'expr ast::Trigger),
 }
@@ -91,6 +92,8 @@ impl Graph {
                 _ => {
                     if let Some(nested) = find_within(part, &expr, &curr_dep.path, self) {
                         expr = nested
+                    } else {
+                        return None;
                     }
                 }
             }
@@ -145,7 +148,12 @@ impl Graph {
     }
 }
 
-fn find_reference<'expr>(name: &str, expr: Expr<'expr>, path: &str, graph: &'expr Graph) -> Option<Expr<'expr>> {
+fn find_reference<'expr>(
+    name: &str,
+    expr: Expr<'expr>,
+    path: &str,
+    graph: &'expr Graph,
+) -> Option<Expr<'expr>> {
     match expr {
         Expr::Component(component) => {
             return if component.name == name {
@@ -161,12 +169,24 @@ fn find_reference<'expr>(name: &str, expr: Expr<'expr>, path: &str, graph: &'exp
                 find_within(name, &expr, path, graph)
             }
         }
+        Expr::Variant(variant) => {
+            return if variant.name == name.to_string() {
+                return Some(expr);
+            } else {
+                find_within(name, &expr, path, graph)
+            }
+        }
         _ => {}
     }
     None
 }
 
-fn find_within<'expr>(name: &str, scope: &Expr<'expr>, path: &str, graph: &'expr Graph) -> Option<Expr<'expr>> {
+fn find_within<'expr>(
+    name: &str,
+    scope: &Expr<'expr>,
+    path: &str,
+    graph: &'expr Graph,
+) -> Option<Expr<'expr>> {
     match scope {
         Expr::Component(component) => {
             component
@@ -181,28 +201,23 @@ fn find_within<'expr>(name: &str, scope: &Expr<'expr>, path: &str, graph: &'expr
                             _ => None,
                         }
                     }
+                    component_body_item::Inner::Variant(variant) => {
+                        find_reference(name, Expr::Variant(variant), path, graph)
+                    }
                     _ => None,
                 })
         }
-        Expr::Element(element) => {
-
-            // let instance_component = graph.get_instance_component_ref(element, path);
-
-
-            graph.get_instance_component_ref(element, path)
-            .and_then(|component_ref| {
-                find_within(name, &component_ref.wrap().expr, path, graph)
-            }).or_else(|| {
+        Expr::Element(element) => graph
+            .get_instance_component_ref(element, path)
+            .and_then(|component_ref| find_within(name, &component_ref.wrap().expr, path, graph))
+            .or_else(|| {
                 element.body.iter().find_map(|item| match item.get_inner() {
                     element_body_item::Inner::Element(element) => {
                         find_reference(name, Expr::Element(element), path, graph)
                     }
                     _ => None,
                 })
-            })
-
-           
-        }
+            }),
         _ => None,
     }
 }

@@ -28,6 +28,7 @@ variables:
 repository:
   document:
     patterns:
+      - include: "#import"
       - include: "#comment"
       - include: "#public"
       - include: "#style"
@@ -84,6 +85,15 @@ repository:
         captures:
           "3": { name: keyword.control }
           "4": { name: support.variable }
+
+  import:
+    patterns:
+      - match: ((import)\s+({{string}})\s+(as)\s+(\w+))
+        captures:
+          "1": { name: storage.modifier }
+          "3": { name: string }
+          "5": { name: keyword.control }
+          "6": { name: support.variable }
 
   comment:
     patterns:

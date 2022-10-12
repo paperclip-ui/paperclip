@@ -78,7 +78,7 @@ component FileNavigatorItemHeader {
     }
     override root {
       style {
-        --depth: 4
+        --depth: 1
       }
     }
     FileNavigatorIcon {
@@ -97,9 +97,9 @@ component FileNavigation {
         override {
           variant isDirectory trigger { true }
         }
-        override root {
+        override container.root {
           style {
-            --depth: 4
+            --depth: 1
           }
         }
         text "src"
@@ -107,9 +107,9 @@ component FileNavigation {
       TreeNavigationItemContent {
         TreeNavigationItem {
           FileNavigatorItemHeader {
-            override root {
+            override container.root {
               style {
-                --depth: 1
+                --depth: 2
               }
             }
             text "components"

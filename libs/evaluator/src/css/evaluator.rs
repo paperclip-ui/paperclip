@@ -53,7 +53,11 @@ fn collect_sorted_rules<F: FileResolver>(context: &mut DocumentContext<F>) -> Ve
         .drain(0..)
         .collect::<Vec<PrioritizedRule>>();
 
-    rules.sort_by(|a, b| b.partial_cmp(a).unwrap());
+    
+
+    rules.sort_by(|a, b| {
+        a.partial_cmp(b).unwrap()
+    });
 
     rules.into_iter().map(|rule| rule.rule).collect()
 }
@@ -200,7 +204,8 @@ fn evaluate_override<F: FileResolver>(
         match item.get_inner() {
             override_body_item::Inner::Style(style) => evaluate_style(
                 style,
-                &mut into_shadow(&expr.path, parent, &mut context.clone()).with_ref_context(context),
+                &mut into_shadow(&expr.path, parent, &mut context.clone())
+                    .with_ref_context(context),
             ),
             override_body_item::Inner::Variant(variant_override) => evaluate_variant_override(
                 variant_override,
@@ -225,67 +230,47 @@ fn into_shadow<'a, F: FileResolver>(
             .get_instance_component_ref(instance, &context.path),
         context.clone()
     );
-    
-
-    let mut curr_instance = instance;
-    let instance_context = context.within_instance(curr_instance);
 
 
-    let mut shadow = instance_context.shadow(&instance_component_info);
+    let mut shadow = context
+        .with_target_node(CurrentNode::Element(instance))
+        .shadow(&instance_component_info);
 
     // looking for a.b. "a" is an instance
     // ignore single targets. E.g: just "a" since this is the target
-    if path.len() > 1 {
+    if path.len() > 0 {
         for i in 0..path.len() {
             let shadow_instance = context.graph.get_ref(
                 &path[0..i + 1].to_vec(),
                 &context.path,
-                Some(instance_component_info.wrap().expr)
+                Some(instance_component_info.wrap().expr),
             );
 
-
             if let Some(info) = shadow_instance {
+                shadow = match info.expr {
+                    Expr::Element(element) => {
+                        shadow.with_target_node(CurrentNode::Element(element))
+                    }
+                    Expr::Text(text) => shadow.with_target_node(CurrentNode::TextNode(text)),
+                    _ => shadow,
+                };
+
                 if let Expr::Element(element) = &info.expr {
                     if let Some(instance_component_info) = context
                         .graph
                         .get_instance_component_ref(element, &info.path)
                     {
                         shadow = shadow
-                            .within_instance(element)
                             .shadow(&instance_component_info)
-                            // .with_target_node(node)
                     }
                 }
             }
         }
     }
 
-    // target node at the end of the path
-    let target_node = get_or_short!(
-        if path.len() > 0 {
-            shadow
-                .graph
-                .get_ref(
-                    path,
-                    instance_component_info.path,
-                    Some(instance_component_info.wrap().expr)
-                )
-                .and_then(|node| {
-                    match node.expr {
-                        Expr::Element(element) => Some(CurrentNode::Element(element)),
-                        _ => None,
-                    }
-                })
-        } else {
-            Some(CurrentNode::Element(instance))
-        },
-        context.clone()
-    );
+    println!("{:?}", path.len());
 
-
-    shadow = shadow
-        .with_target_node(target_node)
-        .with_priority(path.len() as u8);
+    shadow = shadow.with_priority(path.len() as u8);
 
     return shadow;
 }
@@ -348,8 +333,7 @@ fn get_current_instance_scope_selector<F: FileResolver>(context: &DocumentContex
     let mut buffer: Vec<String> = vec![];
 
     while let Some(shadow_of) = &curr.shadow_of {
-        curr = shadow_of.as_ref();
-        if let Some(instance) = shadow_of.current_instance {
+        if let Some(CurrentNode::Element(instance)) = shadow_of.target_node {
             buffer.push(format!(
                 "{}.{}",
                 if shadow_of.is_target_node_render_node() {
@@ -362,9 +346,9 @@ fn get_current_instance_scope_selector<F: FileResolver>(context: &DocumentContex
         } else {
             println!("Instance not defined!")
         }
+        curr = shadow_of.as_ref();
     }
     buffer.reverse();
-    
 
     buffer.join("")
 }
@@ -389,13 +373,8 @@ fn evaluate_variant_styles<F: FileResolver>(
         return;
     };
 
-
-    let mut scope_selector = get_current_instance_scope_selector(context);
+    let scope_selector = get_current_instance_scope_selector(context);
     let is_root_node = root_node.get_id() == current_node.get_id();
-
-    // if !context.is_target_node_render_node() {
-    //     scope_selector = format!("{}!!!!!", scope_selector);
-    // }
 
     let node_ns = get_style_namespace(
         current_node.get_name(),
@@ -650,7 +629,11 @@ fn collect_style_variant_selectors<F: FileResolver>(
 
             if let Some((variant, ctx)) = variant {
                 let mut triggers = vec![];
-                collect_triggers(&variant.triggers, &mut triggers, &mut ctx.with_variant(variant));
+                collect_triggers(
+                    &variant.triggers,
+                    &mut triggers,
+                    &mut ctx.with_variant(variant),
+                );
                 combo_triggers.push(triggers);
             }
         }
@@ -673,17 +656,21 @@ fn collect_triggers<F: FileResolver>(
                 into.push(VariantTrigger::Selector(expr.value.to_string()));
             }
             ast::trigger_body_item::Inner::Reference(expr) => {
-                let ref_info = context.graph.get_ref(&expr.path, &context.path, context.current_component.and_then(|component| {
-                    Some(Expr::Component(component))
-                })).or_else(|| {
-                    context.graph.get_ref(&expr.path, &context.path, None)
-                });
+                let ref_info = context
+                    .graph
+                    .get_ref(
+                        &expr.path,
+                        &context.path,
+                        context
+                            .current_component
+                            .and_then(|component| Some(Expr::Component(component))),
+                    )
+                    .or_else(|| context.graph.get_ref(&expr.path, &context.path, None));
 
                 if let Some(info) = ref_info {
                     if let graph_ref::Expr::Trigger(trigger) = &info.expr {
                         collect_triggers(&trigger.body, into, context);
                     } else if let graph_ref::Expr::Variant(variant) = &info.expr {
-
                         // avoid recursion
                         if Some(variant) != context.current_variant.as_ref() {
                             collect_triggers(&variant.triggers, into, context);
@@ -751,7 +738,11 @@ fn create_style_declarations<F: FileResolver>(
     // including the entire body of extended styles to to cover !important statements.
     // This could be smarter at some point.
     for reference in &style.extends {
-        if let Some(reference) = context.graph.get_ref(&reference.path, &context.get_ref_context().path, None) {
+        if let Some(reference) =
+            context
+                .graph
+                .get_ref(&reference.path, &context.get_ref_context().path, None)
+        {
             if let graph_ref::Expr::Style(style) = &reference.expr {
                 decls.extend(create_style_declarations(
                     style,

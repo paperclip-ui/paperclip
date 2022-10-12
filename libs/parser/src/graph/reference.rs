@@ -50,7 +50,7 @@ impl Graph {
         &'expr self,
         ref_path: &Vec<String>,
         dep_path: &str,
-        scope: Option<Expr<'expr>>
+        scope: Option<Expr<'expr>>,
     ) -> Option<RefInfo<'expr>> {
         let mut curr_dep = if let Some(dep) = self.dependencies.get(dep_path) {
             dep
@@ -207,21 +207,17 @@ fn find_within<'expr>(
                     _ => None,
                 })
         }
-        Expr::Element(element) => {
-            graph
-                .get_instance_component_ref(element, path)
-                .and_then(|component_ref| {
-                    find_within(name, &component_ref.wrap().expr, path, graph)
+        Expr::Element(element) => graph
+            .get_instance_component_ref(element, path)
+            .and_then(|component_ref| find_within(name, &component_ref.wrap().expr, path, graph))
+            .or_else(|| {
+                element.body.iter().find_map(|item| match item.get_inner() {
+                    element_body_item::Inner::Element(element) => {
+                        find_reference(name, Expr::Element(element), path, graph)
+                    }
+                    _ => None,
                 })
-                .or_else(|| {
-                    element.body.iter().find_map(|item| match item.get_inner() {
-                        element_body_item::Inner::Element(element) => {
-                            find_reference(name, Expr::Element(element), path, graph)
-                        }
-                        _ => None,
-                    })
-                })
-        }
+            }),
         _ => None,
     }
 }

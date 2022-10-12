@@ -1034,20 +1034,10 @@ add_case! {
   @media screen and (max-width: 10px) { ._D-80f4925f-12 ._D-something-80f4925f-11 { font-size: 32px; } } 
   ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12._isMobile-80f4925f-23 { color: blue; } 
   ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12 { color: blue; } 
-  ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15 ._D-80f4925f-12._isMobile-80f4925f-23 ._D-something-80f4925f-11 { font-size: 32px; } 
-  ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15 ._D-80f4925f-12 ._D-something-80f4925f-11 { font-size: 32px; }
-
-  ._D-80f4925f-12._isMobile-80f4925f-2 { color: blue; } 
-  @media screen and (max-width: 10px) { ._D-80f4925f-12 { color: blue; } } 
-  ._D-80f4925f-12._isMobile-80f4925f-2 ._D-something-80f4925f-11 { font-size: 32px; } 
-  @media screen and (max-width: 10px) { ._D-80f4925f-12 ._D-something-80f4925f-11 { font-size: 32px; } } 
-  ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12._isMobile-80f4925f-23 { color: blue; } 
-  ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12 { color: blue; } 
   ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12._isMobile-80f4925f-23 ._D-something-80f4925f-11 { font-size: 32px; } 
   ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12 ._D-something-80f4925f-11 { font-size: 32px; }
   "#
 }
-
 
 add_case! {
   can_override_with_extended_style,
@@ -1087,13 +1077,12 @@ add_case! {
   "#
 }
 
-
 add_case! {
   nested_override_styles_are_properly_sorted,
   [
     ("/entry.pc", r#"
       component Tree {
-        render div root {
+        render span root {
           style {
             --depth: 1
           }
@@ -1112,16 +1101,12 @@ add_case! {
         }
       }
 
-      Folder abba {
-        override root {
-          style {
-            --depth: 2
-          }
-        }
-        Folder barb {
-          override root {
+      component BBA {
+      render span {
+        Folder abba {
+          override container.root {
             style {
-              --depth: 3
+              --depth: 2
             }
           }
         }
@@ -1129,9 +1114,9 @@ add_case! {
     "#)
   ],
   r#"
+
   ._Tree-root-80f4925f-5 { --depth: 1; } 
-  ._Folder-container-80f4925f-14._Tree-root-80f4925f-5 { --depth: var(--depth); } 
-  ._abba-80f4925f-26._Folder-root-80f4925f-5 { --depth: 2; } 
-  ._barb-80f4925f-25._Folder-root-80f4925f-5 { --depth: 3; }
+  ._Folder-container-80f4925f-14._Tree-root-80f4925f-5 { --depth: var(--depth); }
+  ._BBA-abba-80f4925f-21._Folder-container-80f4925f-14._Tree-root-80f4925f-5 { --depth: 2; } 
   "#
 }

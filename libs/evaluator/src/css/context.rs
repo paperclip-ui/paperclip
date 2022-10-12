@@ -2,8 +2,8 @@ use anyhow::Result;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::id::{get_document_id, IDGenerator};
 use paperclip_parser::graph;
-use paperclip_parser::graph::reference::{ComponentRefInfo, Expr};
-use paperclip_parser::pc::ast::{self, Document};
+use paperclip_parser::graph::reference::{ComponentRefInfo};
+use paperclip_parser::pc::ast::{self};
 use paperclip_proto::virt::css::Rule;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -52,7 +52,7 @@ pub struct DocumentContext<'expr, 'resolve_asset, FR: FileResolver> {
     pub target_node: Option<CurrentNode<'expr>>,
 
     // current instance, this is necessary in case of overriding deeply nested node
-    pub current_instance: Option<&'expr ast::Element>,
+    // pub current_instance: Option<&'expr ast::Element>,
 
     // Current component that this document is in
     pub current_component: Option<&'expr ast::Component>,
@@ -86,11 +86,11 @@ impl<'expr, 'resolve_asset, FR: FileResolver> DocumentContext<'expr, 'resolve_as
             current_component: None,
             current_ref_context: None,
             current_variant: None,
-            current_instance: None,
+            // current_instance: None,
             target_node: None,
             shadow_of: None,
             rules: Rc::new(RefCell::new(vec![])),
-            priority: 8,
+            priority: 0,
         }
     }
 
@@ -110,28 +110,13 @@ impl<'expr, 'resolve_asset, FR: FileResolver> DocumentContext<'expr, 'resolve_as
         clone.current_component = Some(component);
         clone
     }
-    pub fn within_instance(&self, instance: &'expr ast::Element) -> Self {
-        let mut clone: DocumentContext<FR> = self.clone();
-        clone.current_instance = Some(instance);
-        clone
-    }
-
-    pub fn is_current_instance_render_node(&self) -> bool {
-        if let Some(instance) = self.current_instance {
-            if let Some(component) = self.current_component {
-                if let Some(render) = component.get_render_expr() {
-                    return render.node.as_ref().expect("Node must exist").get_id() == &instance.id;
-                }
-            }
-        }
-        return false;
-    }
 
     pub fn is_target_node_render_node(&self) -> bool {
         if let Some(node) = self.target_node {
             if let Some(component) = self.current_component {
                 if let Some(render) = component.get_render_expr() {
-                    return render.node.as_ref().expect("Node must exist").get_id() == node.get_id();
+                    return render.node.as_ref().expect("Node must exist").get_id()
+                        == node.get_id();
                 }
             }
         }
@@ -195,11 +180,9 @@ impl<'expr, 'resolve_asset, FR: FileResolver> DocumentContext<'expr, 'resolve_as
             }
         }
 
-        
-        self.get_ref_context().current_component
-        .and_then(|component| component.get_variant(name))
-        .and_then(|variant| {
-            Some((variant, self.get_ref_context()))
-        })
+        self.get_ref_context()
+            .current_component
+            .and_then(|component| component.get_variant(name))
+            .and_then(|variant| Some((variant, self.get_ref_context())))
     }
 }

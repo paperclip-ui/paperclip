@@ -68,6 +68,25 @@ component MultiSelect {
   }
 }
 
+component TokenInput {
+  render span {
+    style variant isFunction {
+      color: rgb(0, 162, 255)
+    }
+    slot children
+  }
+}
+
+component Token {
+  variant isFunction trigger { ".call" }
+  render span(class: props.class) {
+    style variant isFunction {
+      color: rgb(0, 162, 255)
+    }
+    slot children
+  }
+}
+
 
 component Field {
   render div {

@@ -61,7 +61,32 @@ public component StylesPanel {
               }
               insert input {
                 input.Select {
-                  text "12px"
+                  input.Token(class:"call") {
+                    text "calc"
+                  }
+                  input.Token(class:"punc") {
+                    text "("
+                  }
+                  input.Token(class:"number") {
+                    text "100"
+                  }
+                  input.Token(class:"unit") {
+                    text "%"
+                  }
+                  text " "
+                  input.Token(class:"arith") {
+                    text "-"
+                  }
+                  text " "
+                  input.Token(class:"number") {
+                    text "12"
+                  }
+                  input.Token(class:"unit") {
+                    text "px"
+                  }
+                  input.Token(class:"punc") {
+                    text ")"
+                  }
                 }
               }
             }

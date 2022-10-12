@@ -1,0 +1,90 @@
+import "./theme.pc" as theme
+import "./common.pc" as common
+
+
+component ToolbarButton {
+  variant hovering trigger { ":hover" }
+  variant wide trigger { ".wide" }
+  render button {
+    style extends theme.reset, theme.easeIn {
+      padding: 0px
+      cursor: pointer
+      border-radius: var(theme.roundedMD)
+      min-width: var(theme.space07)
+      height: var(theme.space07)
+    }
+    style variant hovering {
+      background: var(theme.selectedColor)
+    }
+    style variant wide {
+      width: 200px
+    }
+    slot children
+  }
+}
+
+component Zoom {
+  render div {
+    slot children
+  }
+}
+
+component ToolbarDivider {
+  render div {
+    style {
+      width: 1px
+      border-radius: var(theme.roundedMD)
+      height: 100%
+      background: var(theme.borderColor)
+    }
+  }
+}
+
+
+public component Toolbar {
+  render div {
+    style {
+      display: flex
+      justify-content: center
+    }
+    div {
+      style extends common.panel {
+        display: inline-flex
+        align-items: center
+        padding: var(theme.space03)
+        gap: var(theme.space03)
+      }
+      ToolbarButton {
+        div {
+          style extends theme.icon {
+            -webkit-mask-image: url("./text.svg")
+          }
+        }
+      }
+      ToolbarButton {
+        div {
+          style extends theme.icon {
+            -webkit-mask-image: url("./instance3.svg")
+            transform: rotate(45deg)
+            --size: 1.5em
+          }
+        }
+      }
+      ToolbarDivider
+
+      ToolbarButton {
+        div {
+          style extends theme.icon {
+            -webkit-mask-image: url("./component2.svg")
+
+            --size: 1.5em
+          }
+        }
+      }
+      ToolbarDivider
+      ToolbarButton(class: "wide") {
+        text "100%"
+      }
+    }
+  }
+}

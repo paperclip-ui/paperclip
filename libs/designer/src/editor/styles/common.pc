@@ -22,15 +22,11 @@ public component Sidebar {
   }
 }
 
-
 public component SidebarPanel {
   render div {
     slot children
   }
 }
-
-
-
 
 component SidebarPanelHeader {
   render div {

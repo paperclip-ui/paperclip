@@ -12,11 +12,14 @@ public token canvasColor rgb(59, 59, 59)
 public token sidebarColor rgb(37, 37, 37)
 public token inputBackground rgb(42, 42, 42)
 public token backgroundSelected var(selectedColor)
-public token backgroundSelectedLight rgb(59, 59, 59)
+public token backgroundSelectedLight rgb(46, 46, 46)
 public token backgroundSelectedText rgb(229, 236, 255)
 public token borderColor rgb(65, 65, 65)
 
-public token fontColor01 rgb(255, 255, 255)
+public token componentColor rgb(219, 161, 255)
+public token slotColor rgb(161, 255, 203)
+
+public token fontColor01 rgb(236, 236, 236)
 e
 public token space01 2px
 public token space02 4px
@@ -76,6 +79,7 @@ public style fontDefault {
   font-family: Inter
   color: var(fontColor01)
   font-size: var(fontSize02)
+  font-weight: 300
   letter-spacing: 0.05em
 }
 

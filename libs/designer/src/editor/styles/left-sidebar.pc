@@ -3,22 +3,48 @@ import "./theme.pc" as theme
 
 public component LeftSidebar {
   render common.Sidebar {    
+    LeftSidebarHeader {
+
+    }
     common.SidebarPanel {
+      common.SidebarPanelContent {
         FileNavigation
+      }
+    }
+  }
+}
+
+component LeftSidebarHeader {
+  render div {
+    style {
+      display: flex
+      padding: var(theme.space05)
+      padding-bottom: 0px
+      font-size: var(theme.fontSize01)
+    }
+    span {
+      text "TodoList.pc"
+    }
+    div {
     }
   }
 }
 
 
-component FileNavigatorIcon {
-  variant isDirectory
-  variant isPCFile
+component LayerIcon {
+  variant isComponent
+  variant isSlot
   render div {
     style {
-      --size: var(theme.fontSize03)
+      --size: 1.4em
     }
-    style variant isDirectory extends theme.icon {
-      -webkit-mask-image: url("./folder2.svg")
+    style variant isComponent extends theme.icon {
+      --size: 1.2em
+      -webkit-mask-image: url("./component2.svg")
+    }
+    style variant isSlot extends theme.icon {
+      -webkit-mask-image: url("./slot2.svg")
+      --size: 1.5em
     }
   }
 }
@@ -32,8 +58,8 @@ component TreeNavigationItemContent {
 component TreeNavigationItem {
   render div {
     style {
-      font-size: var(theme.fontSize02)
       background: var(theme.backgroundSelectedLight)
+      border-radius: var(theme.roundedMD)
       
     }
     slot children
@@ -51,11 +77,12 @@ component TreeNavigationItemHeader {
       align-items: center
       gap: var(theme.space02)
       padding: var(theme.space03) var(theme.space05)
-      padding-left: calc(var(theme.space05) * var(--depth))
+      padding-left: calc(var(theme.space04) * var(--depth))
     }
     div {
       style variant isContainer extends theme.icon {
         -webkit-mask-image: url("./chevron2.svg")
+        opacity: 0.3
         --size: 12px
       }
       style variant isOpen {
@@ -69,7 +96,8 @@ component TreeNavigationItemHeader {
 
 component FileNavigatorItemHeader {
   variant isContainer
-  variant isDirectory
+  variant isComponent
+  variant isSlot
   variant isOpen
   render TreeNavigationItemHeader container {
     override {
@@ -80,10 +108,17 @@ component FileNavigatorItemHeader {
       style {
         --depth: 1
       }
+      style variant isComponent {
+        color: var(theme.componentColor)
+      }
+      style variant isSlot {
+        color: var(theme.slotColor)
+      }
     }
-    FileNavigatorIcon {
+    LayerIcon {
       override {
-        variant isDirectory trigger { isDirectory }
+        variant isComponent trigger { isComponent }
+        variant isSlot trigger { isSlot }
       }
     }
     slot children
@@ -95,24 +130,63 @@ component FileNavigation {
     TreeNavigationItem {
       FileNavigatorItemHeader {
         override {
-          variant isDirectory trigger { true }
+          variant isComponent trigger { true }
         }
         override container.root {
           style {
             --depth: 1
           }
         }
-        text "src"
+        text "Item"
       }
       TreeNavigationItemContent {
         TreeNavigationItem {
           FileNavigatorItemHeader {
+            override {
+              variant isSlot trigger { true }
+            }
             override container.root {
               style {
                 --depth: 2
               }
             }
-            text "components"
+            text "label"
+          }
+          TreeNavigationItemContent {
+            TreeNavigationItem {
+              FileNavigatorItemHeader {
+                override container.root {
+                  style {
+                    --depth: 3
+                  }
+                }
+                text "some long description"
+              }
+            }
+        }
+        TreeNavigationItem {
+          FileNavigatorItemHeader {
+            override {
+              variant isSlot trigger { true }
+            }
+            override container.root {
+              style {
+                --depth: 2
+              }
+            }
+            text "description"
+          }
+          TreeNavigationItemContent {
+            TreeNavigationItem {
+              FileNavigatorItemHeader {
+                override container.root {
+                  style {
+                    --depth: 3
+                  }
+                }
+                text "some long description"
+              }
+            }
           }
         }
       }

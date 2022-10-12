@@ -168,6 +168,7 @@ component EditorPanels {
       display: flex
       flex: 1
       z-index: 3
+      font-size: var(theme.fontSize01)
       padding: var(theme.space05)
       gap: var(theme.space05)
       position: relative

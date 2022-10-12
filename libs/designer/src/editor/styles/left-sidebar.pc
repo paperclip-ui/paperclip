@@ -3,11 +3,13 @@ import "./theme.pc" as theme
 
 public component LeftSidebar {
   render common.Sidebar {    
-    LeftSidebarHeader {
-
-    }
     common.SidebarPanel {
-        FileNavigation
+      LeftSidebarHeader {
+
+      }
+      common.SidebarSection {
+          FileNavigation
+      }
     }
   }
 }

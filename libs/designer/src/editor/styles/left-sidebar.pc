@@ -1,0 +1,121 @@
+import "./common.pc" as common
+import "./theme.pc" as theme
+
+public component LeftSidebar {
+  render common.Sidebar {    
+    common.SidebarPanel {
+        FileNavigation
+    }
+  }
+}
+
+
+component FileNavigatorIcon {
+  variant isDirectory
+  variant isPCFile
+  render div {
+    style {
+      --size: var(theme.fontSize03)
+    }
+    style variant isDirectory extends theme.icon {
+      -webkit-mask-image: url("./folder2.svg")
+    }
+  }
+}
+
+component TreeNavigationItemContent {
+  render div {
+    slot children
+  }
+}
+
+component TreeNavigationItem {
+  render div {
+    style {
+      font-size: var(theme.fontSize02)
+      background: var(theme.backgroundSelectedLight)
+      
+    }
+    slot children
+  }
+}
+
+
+component TreeNavigationItemHeader {
+  variant isContainer
+  variant isOpen
+  render div root {
+    style {
+      --depth: 1
+      display: flex
+      align-items: center
+      gap: var(theme.space02)
+      padding: var(theme.space03) var(theme.space05)
+      padding-left: calc(var(theme.space05) * var(--depth))
+    }
+    div {
+      style variant isContainer extends theme.icon {
+        -webkit-mask-image: url("./chevron2.svg")
+        --size: 12px
+      }
+      style variant isOpen {
+        transform: rotate(90deg)
+      }
+    }
+    
+    slot children
+  }
+}
+
+component FileNavigatorItemHeader {
+  variant isContainer
+  variant isDirectory
+  variant isOpen
+  render TreeNavigationItemHeader container {
+    override {
+      variant isContainer trigger { true }
+      variant isOpen trigger { true }
+    }
+    override root {
+      style {
+        --depth: 1
+      }
+    }
+    FileNavigatorIcon {
+      override {
+        variant isDirectory trigger { isDirectory }
+      }
+    }
+    slot children
+  }
+}
+
+component FileNavigation {
+  render div {
+    TreeNavigationItem {
+      FileNavigatorItemHeader {
+        override {
+          variant isDirectory trigger { true }
+        }
+        override container.root {
+          style {
+            --depth: 1
+          }
+        }
+        text "src"
+      }
+      TreeNavigationItemContent {
+        TreeNavigationItem {
+          FileNavigatorItemHeader {
+            override container.root {
+              style {
+                --depth: 2
+              }
+            }
+            text "components"
+          }
+        }
+      }
+    }
+  }
+}

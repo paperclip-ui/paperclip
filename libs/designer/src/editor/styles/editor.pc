@@ -1,191 +1,13 @@
 import "./theme.pc" as theme
+import "./left-sidebar.pc" as leftSidebar
+import "./common.pc" as common
 
 token iconSize var(theme.fontSize03)
-
-style panel {
-  background: var(theme.sidebarColor)
-  border: 1px solid var(theme.borderColor)
-  border-radius: var(theme.roundedMD)
-}
-
-component Sidebar {
-  render div {
-    style {
-      width: 250px
-      flex-shrink: 0
-    }
-    div {
-      style extends panel {
-        height: 100%
-      }    
-      slot children
-    }
-  }
-}
-
-component SidebarPanel {
-  render div {
-    slot children
-  }
-}
-
-component SidebarPanelHeader {
-  render div {
-    style extends theme.fontHeader {
-      border-top: 1px solid var(theme.borderColor)
-      padding: var(theme.space05)
-      padding-bottom: 0px
-
-    }
-    slot children
-  }
-}
-
-component SidebarPanelContent {
-  render div {
-    style {
-      padding: var(theme.space05)
-    }
-    slot children
-  }
-}
 
 component NodeIcon {
   render div
 }
 
-component FileNavigatorIcon {
-  variant isDirectory
-  variant isPCFile
-  render div {
-    style {
-      --size: var(theme.fontSize03)
-    }
-    style variant isDirectory extends theme.icon {
-      -webkit-mask-image: url("./folder2.svg")
-    }
-  }
-}
-
-component FileNavigatorItemHeader {
-  variant isContainer
-  variant isDirectory
-  variant isOpen
-  render TreeNavigationItemHeader container {
-    override {
-      variant isContainer trigger { true }
-      variant isOpen trigger { true }
-    }
-    override root {
-      style {
-        --depth: 1
-      }
-    }
-    FileNavigatorIcon {
-      override {
-        variant isDirectory trigger { isDirectory }
-      }
-    }
-    slot children
-  }
-}
-
-component FileNavigation {
-  render div {
-    TreeNavigationItem {
-      FileNavigatorItemHeader {
-        override {
-          variant isDirectory trigger { true }
-        }
-        override container.root {
-          style {
-            --depth: 1
-          }
-        }
-        text "src"
-      }
-      TreeNavigationItemContent {
-        TreeNavigationItem {
-          FileNavigatorItemHeader {
-            override container.root {
-              style {
-                --depth: 2
-              }
-            }
-            text "components"
-          }
-        }
-      }
-    }
-  }
-}
-
-component TreeNavigationItem {
-  render div {
-    style {
-      font-size: var(theme.fontSize02)
-      background: var(theme.backgroundSelectedLight)
-      
-    }
-    slot children
-  }
-}
-component TreeNavigationItemHeader {
-  variant isContainer
-  variant isOpen
-  render div root {
-    style {
-      --depth: 1
-      display: flex
-      align-items: center
-      gap: var(theme.space02)
-      padding: var(theme.space03) var(theme.space05)
-      padding-left: calc(var(theme.space05) * var(--depth))
-    }
-    div {
-      style variant isContainer extends theme.icon {
-        -webkit-mask-image: url("./chevron2.svg")
-        --size: 12px
-      }
-      style variant isOpen {
-        transform: rotate(90deg)
-      }
-    }
-    
-    slot children
-  }
-}
-component TreeNavigationItemContent {
-  render div {
-    slot children
-  }
-}
-
-component SidebarHeader {
-  render div {
-    style {
-      display: flex
-    }
-    slot children
-  }
-}
-
-component SidebarHeaderButton {
-  variant selected
-  render div root {
-    style extends theme.easeIn {
-      padding: var(theme.space03) var(theme.space05)
-      font-size: var(theme.fontSize01)
-      text-align: center
-      width: 100%
-      border-bottom: 2px solid transparent
-    }
-    style variant selected {
-      border-color: var(theme.selectedColor)
-    }
-    slot children
-  }
-}
 
 component Artboard {
   render div {
@@ -236,7 +58,7 @@ component Canvas {
     }
     Artboard {
       insert title {
-        text "Some title like this"
+        text "Or not somddddddddis"
       }
     }
   }
@@ -414,7 +236,7 @@ component Toolbar {
       justify-content: center
     }
     div {
-      style extends panel {
+      style extends common.panel {
         display: inline-flex
         align-items: center
         padding: var(theme.space03)
@@ -474,16 +296,11 @@ component Editor {
     }
     Canvas 
     EditorPanels {
-      Sidebar {
-        
-        SidebarPanel {
-            FileNavigation
-        }
-      }
+      leftSidebar.LeftSidebar
       CenterPanels
-      Sidebar {
-        SidebarPanel {
-          SidebarPanelContent {
+      common.Sidebar {
+        common.SidebarPanel {
+          common.SidebarPanelContent {
             Field {
               insert name {
                 text "Variant"
@@ -501,11 +318,11 @@ component Editor {
             }
           }
         }
-        SidebarPanel {
-          SidebarPanelHeader {
+        common.SidebarPanel {
+          common.SidebarPanelHeader {
             text "Layout"
           }
-          SidebarPanelContent {
+          common.SidebarPanelContent {
             Fields {
               Field {
                 insert name {
@@ -560,11 +377,11 @@ component Editor {
             }
           }
         }
-        SidebarPanel {
-          SidebarPanelHeader {
+        common.SidebarPanel {
+          common.SidebarPanelHeader {
             text "Style"
           }
-          SidebarPanelContent {
+          common.SidebarPanelContent {
             Fields {
               Field {
                 insert name {
@@ -614,11 +431,10 @@ component Editor {
           }
         }
 
-        SidebarPanel {
-          SidebarPanelHeader {
-
+        common.SidebarPanel {
+          common.SidebarPanelHeader {
           }
-          SidebarPanelContent {
+          common.SidebarPanelContent {
             Fields {
               Field {
                 insert name {

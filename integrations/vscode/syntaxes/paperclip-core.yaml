@@ -236,7 +236,7 @@ repository:
               - include: "#string"
   override:
     patterns:
-      - begin: ((override)\s+({{reference}})\s*({))
+      - begin: ((override)(\s+{{reference}})?\s*({))
         end: "}"
         beginCaptures:
           "2": { name: storage.modifier }

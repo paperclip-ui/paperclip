@@ -1,0 +1,80 @@
+
+import "./theme.pc" as theme
+
+public style panel {
+  background: var(theme.sidebarColor)
+  border: 1px solid var(theme.borderColor)
+  border-radius: var(theme.roundedMD)
+}
+
+public component Sidebar {
+  render div {
+    style {
+      width: 250px
+      flex-shrink: 0
+    }
+    div {
+      style extends panel {
+        height: 100%
+      }    
+      slot children
+    }
+  }
+}
+
+
+public component SidebarPanel {
+  render div {
+    slot children
+  }
+}
+
+
+
+component SidebarPanelHeader {
+  render div {
+    style extends theme.fontHeader {
+      border-top: 1px solid var(theme.borderColor)
+      padding: var(theme.space05)
+      padding-bottom: 0px
+
+    }
+    slot children
+  }
+}
+
+component SidebarPanelContent {
+  render div {
+    style {
+      padding: var(theme.space05)
+    }
+    slot children
+  }
+}
+
+
+component SidebarHeader {
+  render div {
+    style {
+      display: flex
+    }
+    slot children
+  }
+}
+
+component SidebarHeaderButton {
+  variant selected
+  render div root {
+    style extends theme.easeIn {
+      padding: var(theme.space03) var(theme.space05)
+      font-size: var(theme.fontSize01)
+      text-align: center
+      width: 100%
+      border-bottom: 2px solid transparent
+    }
+    style variant selected {
+      border-color: var(theme.selectedColor)
+    }
+    slot children
+  }
+}

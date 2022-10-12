@@ -22,7 +22,6 @@ component LeftSidebarHeader {
       justify-content: space-between
       font-size: var(theme.fontSize01)
       align-items: center
-      border-bottom: 1px solid var(theme.borderColor)
     }
     div {
       style {

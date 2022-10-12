@@ -31,7 +31,16 @@ public component SidebarPanel {
 
 
 public component SidebarSection {
+  variant first trigger {
+    ":first-child"
+  }
   render div {
+    style {
+      border-top: 1px solid var(theme.borderColor)
+    }
+    style variant first {
+      border-top: none
+    }
     slot children
   }
 }
@@ -39,7 +48,6 @@ public component SidebarSection {
 component SidebarPanelHeader {
   render div {
     style extends theme.fontHeader {
-      border-top: 1px solid var(theme.borderColor)
       padding: var(theme.space05)
       padding-bottom: 0px
 

@@ -74,19 +74,17 @@ component Field {
     style {
       display: flex
       gap: var(theme.space03)
+      align-items: center
       
     }
     div {
       style {
-        top: calc(calc(var(theme.space06) / 2) - calc(1em / 2))
         position: relative
         width: 90px
         flex-shrink: 0
         font-size: var(theme.fontSize01)
       }
-      slot name {
-        
-      }
+      slot name
     }
     div {
       style {

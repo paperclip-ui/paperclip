@@ -28,7 +28,7 @@ public component StylesPanel {
         common.SidebarPanelHeader {
           text "Layout"
           div {
-            style variant test extends test, a, a {
+            style extends theme.icon {
               -webkit-mask-image: url("./plus.svg")
             }
           }
@@ -107,6 +107,10 @@ public component StylesPanel {
                 input.ColorInput {
                   text "flex"
                 }
+              }
+            }
+            input.Field {
+              insert input {
                 input.Select {
                   text "flex"
                 }
@@ -127,18 +131,15 @@ public component StylesPanel {
                 text "Border"
               }
               insert input {
-                div {
-                  style {
-                    display: flex
-                    flex-direction: column
-                    gap: var(theme.space04)
-                  }
-                  input.Select {
-                    text "1px"
-                  }
-                  input.Select {
-                    text "solid"
-                  }
+                input.Select {
+                  text "1px"
+                }
+              }
+            }
+            input.Field {
+              insert input {
+                input.Select {
+                  text "solid"
                 }
               }
             }
@@ -146,8 +147,6 @@ public component StylesPanel {
         }
       }
       common.SidebarSection {
-        common.SidebarPanelHeader {
-        }
         common.SidebarPanelContent {
           input.Fields {
             input.Field {
@@ -158,9 +157,17 @@ public component StylesPanel {
                 input.Select {
                   text "input"
                 }
+              }
+            }
+            input.Field {
+              insert input {
                 input.Select {
                   text "fontDefault"
                 }
+              }
+            }
+            input.Field {
+              insert input {
                 input.Select {
                   text "add "
                 }

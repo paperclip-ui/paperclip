@@ -5,6 +5,7 @@ use crate::core::utils::get_style_namespace;
 use crate::core::virt as core_virt;
 use paperclip_common::fs::FileResolver;
 use paperclip_parser::graph;
+use paperclip_parser::graph::reference::ComponentRefInfo;
 use paperclip_parser::pc::ast;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
@@ -88,7 +89,7 @@ fn evaluate_element<F: FileResolver>(
         .get_instance_component_ref(element, &context.path);
 
     if let Some(component_info) = reference {
-        evaluate_instance(element, component_info.expr, fragment, context);
+        evaluate_instance(element, &component_info, fragment, context);
     } else {
         evaluate_native_element(element, fragment, context, is_root);
     }
@@ -128,11 +129,11 @@ fn evaluate_slot<F: FileResolver>(
 
 fn evaluate_instance<F: FileResolver>(
     element: &ast::Element,
-    instance_of: &ast::Component,
+    instance_of: &ComponentRefInfo,
     fragment: &mut Vec<virt::Node>,
     context: &mut DocumentContext<F>,
 ) {
-    let render = if let Some(render) = instance_of.get_render_expr() {
+    let render = if let Some(render) = instance_of.expr.get_render_expr() {
         render
     } else {
         return;
@@ -153,7 +154,8 @@ fn evaluate_instance<F: FileResolver>(
         fragment,
         &mut context
             .with_data(data)
-            .within_component(instance_of)
+            .within_path(&instance_of.path)
+            .within_component(&instance_of.expr)
             .set_render_scope(scope),
     );
 }
@@ -375,33 +377,6 @@ fn create_instance_params<F: FileResolver>(
         properties,
     }
 }
-
-// fn resolve_instance_params<F: FileResolver>(
-//     element: &ast::Element,
-//     params: &mut Vec<ObjectProperty>,
-//     context: &DocumentContext<F>,
-// ) {
-//     let class_name = get_style_namespace(&element.name, &element.id, context.current_component);
-
-//     if let Some(class) = params.iter_mut().find(|prop| {
-//         prop.name == "class"
-//     }) {
-//         class.value = Some(core_virt::value::Inner::Str(core_virt::Str {
-//             value: class_name.to_string(),
-//             source_id: class.source_id.clone()
-//         }).get_outer());
-
-//     } else {
-//         params.push(core_virt::ObjectProperty {
-//             source_id: None,
-//             name: "class".to_string(),
-//             value: Some(core_virt::value::Inner::Str(core_virt::Str {
-//                 value: class_name.to_string(),
-//                 source_id: None
-//             }).get_outer())
-//         });
-//     }
-// }
 
 fn evaluate_instance_param<F: FileResolver>(
     param: &ast::Parameter,

@@ -356,3 +356,41 @@ add_case! {
     ],
     "<div class=\"_Header-root-80f4925f-4\"> </div> <div class=\"_Container-80f4925f-12\"> <div class=\"_Header-root-80f4925f-4 _Container-80f4925f-11\"> </div> </div>"
 }
+
+
+add_case! {
+	can_render_instances_within_different_docs,
+	[
+		("/entry.pc", r#"
+			import "/module.pc" as mod
+			component A {
+				render mod.B {
+
+				}
+			}
+		"#),
+		
+		("/module.pc", r#"
+			public component B {
+				render div {
+					C {
+						text "Hello"
+					}
+				}
+			}
+			component C {
+				render span {
+					slot children
+				}
+			}
+		"#)
+		
+	],
+	r#"
+	<div class="_B-139cec8e-3 _A-80f4925f-2">
+		<span class="_C-139cec8e-7 _A-80f4925f-2 _B-139cec8e-2">
+				Hello
+		</span>
+	</div>
+	"#
+}

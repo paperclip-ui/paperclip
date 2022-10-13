@@ -4,7 +4,7 @@
 
 Paperclip enables you to design and build just about any kind of web application end-to-end. It can be used directly within [Codespaces](https://github.com/features/codespaces), enabling anyone easy access to make changes to web applications.
 
-![Split view](./assets/screenshots/v10.1.7.png)
+![Split view](https://user-images.githubusercontent.com/757408/195644902-441364e0-cb44-41cf-90a3-348bb3a0eefb.png)
 
 <!-- ### Motivation
 

@@ -215,7 +215,7 @@ public component StylesPanel {
           input.Fields {
             input.Field {
               insert name {
-                text "Mixins"
+                text "Tokens"
               }
               insert input {
                 input.Select {

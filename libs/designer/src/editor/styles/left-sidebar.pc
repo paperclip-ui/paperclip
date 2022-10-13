@@ -36,6 +36,17 @@ public component LeftSidebar {
       common.SidebarSection {
         Layers
       }
+      common.SidebarSection {
+        common.SidebarPanelHeader {
+          text "Design Tokens"
+          div {
+            style extends theme.icon {
+              -webkit-mask-image: url("./plus.svg")
+            }
+          }
+        }
+        Tokens
+      }
     }
      
   }
@@ -79,20 +90,33 @@ component LeftSidebarHeader {
 
 component LayerIcon {
   variant isComponent trigger { ".component" }
+  variant isCompositeToken trigger { ".composite-token" }
+  variant isAtomToken trigger { ".atom-token" }
   variant isSlot trigger { ".slot" }
   variant isText trigger { ".text" }
+  variant isTrigger trigger { ".trigger" }
   render div(class:class) {
-    style {
+    style  extends theme.icon {
       --size: 1.2em
       width: 14px
     }
-    style variant isComponent extends theme.icon {
+    style variant isComponent {
       -webkit-mask-image: url("./component2.svg")
     }
-    style variant isSlot extends theme.icon {
+    style variant isSlot {
       -webkit-mask-image: url("./slot2.svg")
     }
-    style variant isText extends theme.icon {
+    style variant isCompositeToken {
+      -webkit-mask-image: url("./group.svg")
+    }
+    style variant isAtomToken {
+      --size: 1em
+      -webkit-mask-image: url("./dot4.svg")
+    }
+    style variant isTrigger {
+      -webkit-mask-image: url("./lightning.svg")
+    }
+    style variant isText {
       --size: 0.6em
       -webkit-mask-image: url("./text.svg")
     }
@@ -161,6 +185,9 @@ component TreeNavigationItemHeader {
 component FileNavigatorItemHeader {
   variant isSlot trigger { ".slot" }
   variant isComponent trigger { ".component" }
+  variant isCompositeToken trigger { ".composite-token" }
+  variant isAtomToken trigger { ".atom-token" }
+  variant isTrigger trigger { ".trigger" }
   render TreeNavigationItemHeader container(class: class) {
     override root {
       style {
@@ -168,6 +195,15 @@ component FileNavigatorItemHeader {
       }
       style variant isComponent {
         color: var(theme.componentColor)
+      }
+      style variant isCompositeToken {
+        color: rgb(247, 176, 114)
+      }
+      style variant isAtomToken {
+        color: rgb(114, 209, 247)
+      }
+      style variant isTrigger {
+        color: rgb(114, 209, 247)
       }
       style variant isSlot {
         color: var(theme.slotColor)
@@ -213,6 +249,7 @@ component Layers {
                 text "some label"
               }
             }
+          }
         }
         TreeNavigationItem(class: "selected") {
           FileNavigatorItemHeader(class: "slot container open") {
@@ -240,3 +277,47 @@ component Layers {
     }
   }
 }
+
+
+component Tokens {
+  render div {
+    style {
+      padding: var(theme.space02) 0px
+    }
+    TreeNavigationItem {
+      FileNavigatorItemHeader(class: "composite-token open") {       
+        override container.root {
+          style {
+            --depth: 1
+          }
+        }
+        text "Font Regular"
+      }
+      FileNavigatorItemHeader(class: "atom-token open") {       
+        override container.root {
+          style {
+            --depth: 1
+          }
+        }
+        text "red01"
+      }
+      FileNavigatorItemHeader(class: "atom-token open") {       
+        override container.root {
+          style {
+            --depth: 1
+          }
+        }
+        text "red02"
+      }
+      FileNavigatorItemHeader(class: "trigger open") {       
+        override container.root {
+          style {
+            --depth: 1
+          }
+        }
+        text "mobile"
+      }
+    }
+  }
+}
+

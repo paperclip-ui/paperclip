@@ -281,8 +281,7 @@ repository:
     patterns:
       - match: ((\w+)\s*(:)\s*{{parameterValue}})
         captures:
-          "0": { name: storage.modifier }
-          "2": { name: storage.modifier }
+          "2": { name: variable.other }
           "3": { name: punctuation }
           "4":
             patterns:

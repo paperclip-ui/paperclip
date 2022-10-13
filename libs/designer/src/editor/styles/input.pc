@@ -27,12 +27,12 @@ public component Select {
     div {
       slot children
     }
-    div {
-      style extends theme.icon {
-        -webkit-mask-image: url("./chevron2.svg")
-        transform: rotate(90deg)
-      }
-    }
+  }
+}
+
+public component TextInput {
+  render input(value: value) {
+    style extends theme.input
   }
 }
 

@@ -41,6 +41,8 @@ public component ColorInput {
     style extends theme.input {
       gap: var(theme.space03)
       overflow: hidden
+      flex: 1
+      width: 100%
     }
     div {
       style {
@@ -48,6 +50,7 @@ public component ColorInput {
         height: 1em
         background: rgb(134, 86, 86)
         border-radius: var(theme.rounded)
+        flex-shrink: 0
       }
     }
     slot children
@@ -96,19 +99,19 @@ component Token {
   variant isKeyword trigger { ".keyword" }
   render span(class: class) {
     style variant isFunction {
-      color: rgb(153, 218, 255)
+      color: rgb(166, 201, 222)
     }
     style variant isKeyword {
-      color: rgb(255, 254, 168)
+      color: rgb(255, 254, 197)
     }
     style variant isPunc {
       color: var(theme.puncColor)
     }
     style variant isNumber {
-      color: rgb(197, 255, 185)
+      color: rgb(221, 255, 214)
     }
     style variant isUnit {
-      color: rgb(255, 159, 204)
+      color: rgb(254, 192, 221)
     }
     style variant isArithmetic {
       color: var(theme.puncColor)
@@ -140,6 +143,8 @@ component Field {
         flex-direction: column
         gap: var(theme.space03)
         flex: 1
+        overflow: hidden
+
 
       }
       slot input

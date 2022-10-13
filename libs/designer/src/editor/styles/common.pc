@@ -65,9 +65,13 @@ component SidebarPanelHeader {
 }
 
 component SidebarPanelContent {
-  render div {
+  variant flush trigger { ".flush" }
+  render div(class:class) {
     style {
       padding: var(theme.space05)
+    }
+    style variant flush {
+      padding: var(theme.space05) 0px
     }
     slot children
   }

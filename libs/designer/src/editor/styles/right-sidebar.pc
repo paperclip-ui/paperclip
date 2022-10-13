@@ -27,7 +27,7 @@ public component RightSidebar {
                 }
               }
               insert input {
-                input.Select {
+                input.Select(class:"error") {
                   text "onButtonClick"
                 }
               }

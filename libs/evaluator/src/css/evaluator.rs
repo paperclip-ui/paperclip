@@ -226,6 +226,7 @@ fn into_shadow<'a, F: FileResolver>(
             .get_instance_component_ref(instance, &context.path),
         context.clone()
     );
+    
 
     let mut shadow = context
         .with_target_node(CurrentNode::Element(instance))

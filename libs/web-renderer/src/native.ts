@@ -52,25 +52,6 @@ export const createNativeNode = (
       const text = createNativeTextNode(node.textNode, factory);
       return text;
     }
-    // switch () {
-    // case VirtualNodeKind.Text: {
-    // }
-    // case VirtualNodeKind.Element:
-
-    // case VirtualNodeKind.StyleElement:
-    //   return createNativeStyleFromSheet(node.sheet, factory, resolveUrl);
-    // case VirtualNodeKind.Fragment:
-    //   return createNativeFragment(
-    //     node,
-    //     factory,
-    //     resolveUrl,
-    //     showSlotPlaceholders,
-    //     inInstance
-    //   );
-    // case VirtualNodeKind.Slot: {
-    //   return createSlot(node, factory, showSlotPlaceholders, inInstance);
-    // }
-    // }
   } catch (e) {
     return factory.createTextNode(String(e.stack));
   }
@@ -126,9 +107,17 @@ export const createNativeGlobalScript = (
     const css = factory.createElement("style") as HTMLStyleElement;
     css.textContent = content;
     return css;
+  } else if (/\.js/.test(path)) {
+    const script = factory.createElement("script") as HTMLScriptElement;
+    script.type = "text/javascript";
+    script.textContent = content;
+
+    // execute immmediately in case of custom elements
+    document.body.appendChild(script);
+    // return script;
   }
   // other things not supported yet
-  return document.createDocumentFragment();
+  return factory.createDocumentFragment();
 };
 
 export const renderSheetText = (
@@ -164,9 +153,12 @@ const createNativeElement = (
   showSlotPlaceholders?: boolean,
   inInstance?: boolean
 ) => {
+  if (element.tagName == "color-picker") {
+    console.log("PICKER", element);
+  }
   const nativeElement = (
     element.tagName === "svg"
-      ? document.createElementNS(XMLNS_NAMESPACE, "svg")
+      ? factory.createElementNS(XMLNS_NAMESPACE, "svg")
       : namespaceUri
       ? factory.createElementNS(namespaceUri, element.tagName)
       : factory.createElement(element.tagName)

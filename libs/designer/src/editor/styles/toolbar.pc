@@ -46,6 +46,7 @@ public component Toolbar {
     style {
       display: flex
       justify-content: center
+      padding: var(theme.space05)
     }
     div {
       style extends common.panel {

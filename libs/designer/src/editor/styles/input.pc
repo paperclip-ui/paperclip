@@ -6,9 +6,9 @@ public component MultiSelectItem {
     style {
       display: inline-block
       color: var(theme.backgroundSelectedText)
-      background: var(theme.backgroundSelected)
+      background: var(theme.blue02)
       border-radius: var(theme.roundedSM)
-      padding: 0px var(theme.space02)
+      padding: 0px 6px
       font-weight: 500
       display: flex
       height: 100%
@@ -37,7 +37,7 @@ public component TextInput {
 }
 
 public component ColorInput {
-  render div {
+  render div root {
     style extends theme.input {
       gap: var(theme.space03)
       overflow: hidden
@@ -48,7 +48,7 @@ public component ColorInput {
       style {
         width: 1em
         height: 1em
-        background: rgb(134, 86, 86)
+        background: var(--color)
         border-radius: var(theme.rounded)
         flex-shrink: 0
       }
@@ -99,22 +99,22 @@ component Token {
   variant isKeyword trigger { ".keyword" }
   render span(class: class) {
     style variant isFunction {
-      color: rgb(166, 201, 222)
+      color: rgb(255, 255, 255)
     }
     style variant isKeyword {
-      color: rgb(255, 254, 197)
+      color: rgb(255, 255, 255)
     }
     style variant isPunc {
-      color: var(theme.puncColor)
+      color: rgb(255, 255, 255)
     }
     style variant isNumber {
-      color: rgb(221, 255, 214)
+      color: white
     }
     style variant isUnit {
-      color: rgb(254, 192, 221)
+      color: white
     }
     style variant isArithmetic {
-      color: var(theme.puncColor)
+      color: rgb(255, 255, 255)
     }
     slot children
   }
@@ -127,6 +127,7 @@ component Field {
       display: flex
       gap: var(theme.space03)
       align-items: center
+      position: relative
     }
     div {
       style {

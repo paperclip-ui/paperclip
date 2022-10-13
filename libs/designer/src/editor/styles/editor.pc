@@ -10,7 +10,6 @@ component NodeIcon {
   render div
 }
 
-
 component Artboard {
   render div {
     style {
@@ -74,7 +73,6 @@ component EditorPanels {
       flex: 1
       z-index: 3
       font-size: var(theme.fontSize01)
-      padding: var(theme.space05)
       gap: var(theme.space05)
       position: relative
       height: 100%

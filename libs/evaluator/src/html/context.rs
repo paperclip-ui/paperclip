@@ -2,7 +2,6 @@ use crate::core::virt as core_virt;
 use paperclip_common::fs::FileResolver;
 use paperclip_parser::graph;
 use paperclip_parser::pc::ast;
-use std::cell::RefCell;
 
 #[derive(Clone)]
 pub struct Options {

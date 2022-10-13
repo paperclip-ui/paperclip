@@ -2,6 +2,69 @@ import "./common.pc" as common
 import "./theme.pc" as theme
 import "./input.pc" as input
 
+component ColorPickerPopup {
+  render div {
+    style extends common.panel {
+      position: fixed
+      flex-shrink:0
+      transform: translate(calc(-100% - var(theme.space07)))
+      z-index: 1024
+
+    }
+    div header {
+      style {
+      padding: var(theme.space04)
+        display: flex
+        justify-content: space-between
+        font-weight: 600
+        padding-bottom: var(theme.space04)
+      }
+      div {
+        text "Color"
+      }
+      div {
+        text "&times"
+      }
+    }
+    div {
+      style {
+      padding: var(theme.space04)
+        display: flex
+        flex-direction: column
+        gap: var(theme.space04)
+      }
+      color-picker(width: "220", height: "130")
+      div {
+        text "Hue"
+      }
+      div {
+        text "Opacity"
+      }
+      div {
+        text "value"
+      }
+    }
+    div {
+      style {
+        border-top: 1px solid var(theme.borderColor)
+        padding: var(theme.space04)
+        display: flex
+        flex-direction: column
+        gap: var(theme.space03)
+      }
+      div {
+        text "color var"
+      }
+      div {
+        text "color var"
+      }
+      div {
+        text "color var"
+      }
+    }
+  }
+}
+
 public component StylesPanel {
   render common.SidebarPanel {
       common.SidebarSection {
@@ -141,9 +204,15 @@ public component StylesPanel {
             input.Field {
               insert name {
                 text "Background"
+                ColorPickerPopup
               }
               insert input {
                 input.ColorInput {
+                  override root {
+                    style {
+                      --color: rgb(255, 81, 119)
+                    }
+                  }
                   span {
                     input.Token(class:"call") {
                       text "rgb"
@@ -175,8 +244,17 @@ public component StylesPanel {
             }
             input.Field {
               insert input {
-                input.Select {
-                  text "flex"
+                input.ColorInput {
+                  override root {
+                    style {
+                      --color: magenta
+                    }
+                  }
+                  span {
+                    input.Token(class:"keyword") {
+                      text "magenta"
+                    }
+                  }
                 }
               }
             }
@@ -215,7 +293,20 @@ public component StylesPanel {
           input.Fields {
             input.Field {
               insert name {
-                text "Tokens"
+                div {
+                  style {
+                    display: flex
+                    align-items: center
+                    gap: var(theme.space02)
+                  }
+                  div {
+                    style extends theme.icon {
+                      --size: 0.8em
+                      -webkit-mask-image: url("./group.svg")
+                    }
+                  }
+                  text "Tokens"
+                }
               }
               insert input {
                 input.Select {
@@ -224,6 +315,47 @@ public component StylesPanel {
               }
             }
             input.Field {
+              insert input {
+                input.Select {
+                  text "fontDefault"
+                }
+              }
+            }
+            input.Field {
+              insert input {
+                input.Select {
+                  text "add "
+                }
+              }
+            }
+          }
+        }
+      }
+      common.SidebarSection {
+        common.SidebarPanelHeader {
+          text "Atoms"
+          div {
+            style extends theme.icon {
+              -webkit-mask-image: url("./plus.svg")
+            }
+          }
+        }
+        common.SidebarPanelContent {
+          input.Fields {
+            input.Field {
+              insert name {
+                text "--iconColor"
+              }
+              insert input {
+                input.TextInput(value:"smth") {
+                  text "input"
+                }
+              }
+            }
+            input.Field {
+              insert name {
+                text "--iconColor"
+              }
               insert input {
                 input.Select {
                   text "fontDefault"

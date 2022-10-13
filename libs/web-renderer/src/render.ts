@@ -68,6 +68,7 @@ const renderFrame2 = (
   documentStyles: HTMLElement,
   options: RenderFrameOptions
 ) => {
+  console.log("render frame");
   const frame = options.domFactory.createElement("div");
   frame.appendChild(importedStyles.cloneNode(true));
   frame.appendChild(documentStyles.cloneNode(true));

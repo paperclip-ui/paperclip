@@ -10,11 +10,13 @@ public style panel {
 public component Sidebar {
   render div {
     style {
-      width: 250px
+      width: 300px
       flex-shrink: 0
       display: flex
       flex-direction: column
       gap: var(theme.space05)
+      padding: var(theme.space05)
+      overflow: scroll 
     }
       slot children
   }

@@ -40,6 +40,7 @@ public component ColorInput {
   render div {
     style extends theme.input {
       gap: var(theme.space03)
+      overflow: hidden
     }
     div {
       style {
@@ -123,7 +124,6 @@ component Field {
       display: flex
       gap: var(theme.space03)
       align-items: center
-      
     }
     div {
       style {
@@ -140,6 +140,7 @@ component Field {
         flex-direction: column
         gap: var(theme.space03)
         flex: 1
+
       }
       slot input
     }

@@ -71,6 +71,9 @@ public style input {
   background: var(inputBackground)
   display: flex
   align-items: center
+  text-overflow: ellipsis
+  white-space: nowrap
+  overflow: hidden
   flex: 1
   padding: var(space01) var(space03)
   border-radius: var(rounded)

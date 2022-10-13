@@ -103,7 +103,12 @@ public component StylesPanel {
               }
               insert input {
                 input.Select {
-                  text "relative"
+                  input.Token(class:"number") {
+                    text "12"
+                  }
+                  input.Token(class:"unit") {
+                    text "px"
+                  }
                 }
               }
             }
@@ -113,7 +118,9 @@ public component StylesPanel {
               }
               insert input {
                 input.Select {
-                  text "border-box"
+                  input.Token(class:"keyword") {
+                    text "border-box"
+                  }
                 }
               }
             }
@@ -137,7 +144,32 @@ public component StylesPanel {
               }
               insert input {
                 input.ColorInput {
-                  text "flex"
+                  span {
+                    input.Token(class:"call") {
+                      text "rgb"
+                    }
+                    input.Token(class:"punc") {
+                      text "("
+                    }
+                    input.Token(class:"number") {
+                      text "255"
+                    }
+                    input.Token(class:"punc") {
+                      text ", "
+                    }
+                    input.Token(class:"number") {
+                      text "255"
+                    }
+                    input.Token(class:"punc") {
+                      text ", "
+                    }
+                    input.Token(class:"number") {
+                      text "255"
+                    }
+                    input.Token(class:"punc") {
+                      text ")"
+                    }
+                  }
                 }
               }
             }

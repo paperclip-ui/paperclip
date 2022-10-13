@@ -41,7 +41,9 @@ public component StylesPanel {
               }
               insert input {
                 input.Select {
-                  text "flex"
+                  input.Token(class:"keyword") {
+                    text "flex"
+                  }
                 }
               }
             }
@@ -51,7 +53,12 @@ public component StylesPanel {
               }
               insert input {
                 input.Select {
-                  text "flex"
+                  input.Token(class:"number") {
+                    text "10"
+                  }
+                  input.Token(class:"unit") {
+                    text "px"
+                  }
                 }
               }
             }

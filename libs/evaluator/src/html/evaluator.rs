@@ -101,7 +101,7 @@ fn evaluate_slot<F: FileResolver>(
     context: &mut DocumentContext<F>,
 ) {
     if let Some(data) = &context.data {
-        if let Some(reference) = data.borrow_mut().get(&slot.name) {
+        if let Some(reference) = data.get(&slot.name) {
             if let core_virt::value::Inner::Array(children) = reference.get_inner() {
                 for item in &children.items {
                     match item.get_inner() {
@@ -395,7 +395,7 @@ fn evaluate_instance_param<F: FileResolver>(
 
 fn create_attribute_value<F: FileResolver>(
     value: &ast::SimpleExpression,
-    _context: &DocumentContext<F>,
+    context: &DocumentContext<F>,
 ) -> core_virt::Value {
     match value.get_inner() {
         ast::simple_expression::Inner::Str(value) => core_virt::value::Inner::Str(core_virt::Str {
@@ -418,6 +418,12 @@ fn create_attribute_value<F: FileResolver>(
             .get_outer()
         }
         ast::simple_expression::Inner::Reference(value) => {
+            if let Some(data) = &context.data {
+                if let Some(value) = data.get_deep(&value.path) {
+                   return value.clone();
+                }
+            }
+            
             core_virt::value::Inner::Undef(core_virt::Undefined {
                 source_id: Some(value.id.to_string()),
             })

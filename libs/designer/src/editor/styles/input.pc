@@ -88,9 +88,29 @@ component TokenInput {
 
 component Token {
   variant isFunction trigger { ".call" }
-  render span(class: props.class) {
+  variant isPunc trigger { ".punc" }
+  variant isNumber trigger { ".number" }
+  variant isUnit trigger { ".unit" }
+  variant isArithmetic trigger { ".arith" }
+  variant isKeyword trigger { ".keyword" }
+  render span(class: class) {
     style variant isFunction {
-      color: rgb(0, 162, 255)
+      color: rgb(153, 218, 255)
+    }
+    style variant isKeyword {
+      color: rgb(255, 254, 168)
+    }
+    style variant isPunc {
+      color: var(theme.puncColor)
+    }
+    style variant isNumber {
+      color: rgb(197, 255, 185)
+    }
+    style variant isUnit {
+      color: rgb(255, 159, 204)
+    }
+    style variant isArithmetic {
+      color: var(theme.puncColor)
     }
     slot children
   }

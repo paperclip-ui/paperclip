@@ -22,12 +22,34 @@ impl Object {
         }
         map
     }
-    pub fn get(&mut self, name: &str) -> Option<&Value> {
+    pub fn get(&self, name: &str) -> Option<&Value> {
         if let Some(property) = self.properties.iter().find(|prop| prop.name == name) {
             Some(&property.value.as_ref().expect("Value must exist"))
         } else {
             None
         }
+    }
+    pub fn get_deep(&self, path: &Vec<String>) -> Option<&Value> {
+        let mut ret: Option<&Value> = None;
+        let mut ctx = self;
+        let mut parts = path.iter().peekable();
+        while let Some(part) = parts.next() {
+
+            if let Some(next) = ctx.get(part) {
+                ret = Some(next);
+
+                if !parts.peek().is_none() {
+                    if let value::Inner::Object(next_ctx) = next.get_inner() {
+                        ctx = &next_ctx;
+                    } else {
+                        return None;
+                    }
+                }
+            } else {
+                return None;
+            }
+        }
+        return ret;
     }
 }
 

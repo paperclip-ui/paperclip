@@ -13,7 +13,7 @@ pub struct Options {
 pub struct DocumentContext<'graph, 'expr, 'file_resolver, FR: FileResolver> {
     pub graph: &'graph graph::Graph,
     pub path: String,
-    pub data: Option<RefCell<core_virt::Object>>,
+    pub data: Option<core_virt::Object>,
     pub file_resolver: &'file_resolver FR,
     pub current_component: Option<&'expr ast::Component>,
     pub render_scopes: Vec<String>,
@@ -41,7 +41,7 @@ impl<'graph, 'expr, 'file_resolver, FR: FileResolver>
     }
     pub fn with_data(&self, data: core_virt::Object) -> Self {
         let mut clone = self.clone();
-        clone.data = Some(RefCell::new(data));
+        clone.data = Some(data);
         clone
     }
     pub fn within_component(&self, component: &'expr ast::Component) -> Self {

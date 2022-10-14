@@ -1,0 +1,154 @@
+import "./theme.pc" as theme
+import "./common.pc" as common
+
+public component MultiSelectItem {
+  render div {
+    style {
+      display: inline-block
+      color: var(theme.backgroundSelectedText)
+      background: var(theme.blue02)
+      border-radius: var(theme.roundedSM)
+      padding: 0px 6px
+      font-weight: 500
+      display: flex
+      height: 100%
+      align-items: center
+    }
+    slot children
+  }
+}
+
+public component Select {
+  render div {
+    style extends theme.input {
+      display: flex
+      justify-content: space-between
+    }
+    div {
+      slot children
+    }
+  }
+}
+
+public component TextInput {
+  render input(value: value) {
+    style extends theme.input
+  }
+}
+
+public component ColorInput {
+  render div root {
+    style extends theme.input {
+      gap: var(theme.space03)
+      overflow: hidden
+      flex: 1
+      width: 100%
+    }
+    div {
+      style {
+        width: 1em
+        height: 1em
+        background: var(--color)
+        border-radius: var(theme.rounded)
+        flex-shrink: 0
+      }
+    }
+    slot children
+  }
+}
+
+component Fields {
+  render div {
+    style {
+      display: flex
+      flex-direction: column
+      gap: var(theme.space04)
+
+    }
+    slot children
+  }
+}
+
+component MultiSelect {
+  render div {
+    style extends theme.input {
+      display: flex
+      gap: var(theme.space02)
+      padding: var(theme.space02)
+
+    }
+    slot children
+  }
+}
+
+component TokenInput {
+  render span {
+    style variant isFunction {
+      color: rgb(0, 162, 255)
+    }
+    slot children
+  }
+}
+
+component Token {
+  variant isFunction trigger { ".call" }
+  variant isPunc trigger { ".punc" }
+  variant isNumber trigger { ".number" }
+  variant isUnit trigger { ".unit" }
+  variant isArithmetic trigger { ".arith" }
+  variant isKeyword trigger { ".keyword" }
+  render span(class: class) {
+    style variant isFunction {
+      color: rgb(255, 255, 255)
+    }
+    style variant isKeyword {
+      color: rgb(255, 255, 255)
+    }
+    style variant isPunc {
+      color: rgb(255, 255, 255)
+    }
+    style variant isNumber {
+      color: white
+    }
+    style variant isUnit {
+      color: white
+    }
+    style variant isArithmetic {
+      color: rgb(255, 255, 255)
+    }
+    slot children
+  }
+}
+
+
+component Field {
+  render div {
+    style {
+      display: flex
+      gap: var(theme.space03)
+      align-items: center
+      position: relative
+    }
+    div {
+      style {
+        position: relative
+        width: 90px
+        flex-shrink: 0
+        font-size: var(theme.fontSize01)
+      }
+      slot name
+    }
+    div {
+      style {
+        display: flex
+        flex-direction: column
+        gap: var(theme.space03)
+        flex: 1
+        overflow: hidden
+
+
+      }
+      slot input
+    }
+  }
+}

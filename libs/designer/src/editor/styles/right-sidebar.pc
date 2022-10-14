@@ -1,0 +1,66 @@
+import "./common.pc" as common
+import "./theme.pc" as theme
+import "./input.pc" as input
+import "./styles-panel.pc" as stylesPanel
+
+
+
+public component RightSidebar {
+  render common.Sidebar {
+    stylesPanel.StylesPanel
+    common.SidebarPanel {
+      common.SidebarSection {
+        common.SidebarPanelHeader {
+          text "Attributes"
+          div {
+            style extends theme.icon {
+              -webkit-mask-image: url("./plus.svg")
+            }
+          }
+        }
+        common.SidebarPanelContent {
+          input.Fields {
+            input.Field {
+              insert name {
+                input.Select {
+                  text "onClick"
+                }
+              }
+              insert input {
+                input.Select(class:"error") {
+                  text "onButtonClick"
+                }
+              }
+            }
+            input.Field {
+              insert name {
+                input.Select {
+                  text "onClick"
+                }
+              }
+              insert input {
+                input.Select {
+                  text "onButtonClick"
+                }
+              }
+            }
+          }
+        }
+      }
+      common.SidebarSection {
+        common.SidebarPanelContent {
+          input.Field {
+            insert name {
+                text "Logic"
+            }
+            insert input {
+              input.MultiSelect {
+                text "./button.tsx"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

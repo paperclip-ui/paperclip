@@ -4,6 +4,7 @@ export interface NodeFactory {
   createElement(tagName: string): HTMLElement;
   createElementNS(ns: string, tagName: string): Element;
   createTextNode(value: string): Text;
+  createDocumentFragment(): DocumentFragment;
 }
 
 export class NativeDOMFactory implements NodeFactory {
@@ -15,5 +16,8 @@ export class NativeDOMFactory implements NodeFactory {
   }
   createTextNode(value: string) {
     return document.createTextNode(value);
+  }
+  createDocumentFragment() {
+    return document.createDocumentFragment();
   }
 }

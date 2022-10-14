@@ -10,32 +10,46 @@ public style panel {
 public component Sidebar {
   render div {
     style {
-      width: 250px
+      width: 300px
       flex-shrink: 0
+      display: flex
+      flex-direction: column
+      gap: var(theme.space05)
+      padding: var(theme.space05)
+      overflow: scroll 
     }
-    div {
-      style extends panel {
-        height: 100%
-      }    
       slot children
-    }
   }
 }
 
-
 public component SidebarPanel {
   render div {
+    style extends panel {
+      flex: 1
+    }
     slot children
   }
 }
 
 
-
+public component SidebarSection {
+  variant first trigger {
+    ":first-child"
+  }
+  render div {
+    style {
+      border-top: 1px solid var(theme.borderColor)
+    }
+    style variant first {
+      border-top: none
+    }
+    slot children
+  }
+}
 
 component SidebarPanelHeader {
   render div {
     style extends theme.fontHeader {
-      border-top: 1px solid var(theme.borderColor)
       padding: var(theme.space05)
       padding-bottom: 0px
 
@@ -53,9 +67,13 @@ component SidebarPanelHeader {
 }
 
 component SidebarPanelContent {
-  render div {
+  variant flush trigger { ".flush" }
+  render div(class:class) {
     style {
       padding: var(theme.space05)
+    }
+    style variant flush {
+      padding: var(theme.space05) 0px
     }
     slot children
   }

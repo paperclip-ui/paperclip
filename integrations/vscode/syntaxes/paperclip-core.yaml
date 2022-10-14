@@ -18,16 +18,18 @@ variables:
   string: (\".*?\"|\'.*?\')
   variantCombo: ({{reference}}(\s*\+\s*{{reference}})*)
   extends: ({{reference}}(\s*\,\s*{{reference}})*)
+  styleInterior: ((style)\s+((?!variant|extends){{id}}\s+)?((variant)\s+{{variantCombo}}+\s+)?((extends)\s+{{extends}}+)?)
   slotInterior: ((slot)\s+({{id}})\s*)
   instanceOpenInterior: ({{reference}}{{untilOpenBraces}})
   variantBase: (variant\s+{{id}}\s+)
   instanceOpen: ({{instanceOpenInterior}}(\{))
   parameters: (\(.*?\))
-  parameterValue: ({{string}})
+  parameterValue: ({{string}}|{{reference}})
   instanceInitArg: ({{untilOpenBraces}})
 repository:
   document:
     patterns:
+      - include: "#import"
       - include: "#comment"
       - include: "#public"
       - include: "#style"
@@ -84,6 +86,15 @@ repository:
         captures:
           "3": { name: keyword.control }
           "4": { name: support.variable }
+
+  import:
+    patterns:
+      - match: ((import)\s+({{string}})\s+(as)\s+(\w+))
+        captures:
+          "1": { name: storage.modifier }
+          "3": { name: string }
+          "5": { name: keyword.control }
+          "6": { name: support.variable }
 
   comment:
     patterns:
@@ -161,10 +172,24 @@ repository:
       - include: "#string"
   style:
     patterns:
-      - begin: ((style)(\s+{{id}})?(\s+(variant)\s+{{variantCombo}}+)?(\s+(extends)\s+{{extends}}+)?(\s*\{))
+      - begin: ({{styleInterior}}(\s*\{))
         beginCaptures:
+          "0":
+            patterns:
+              - include: "#style-interior"
+          "21": { name: "punctuation" }
+        end: "}"
+        endCaptures:
+          "0": { name: punctuation }
+        patterns:
+          - include: "text.style.paperclip"
+      - include: "#style-interior"
+  style-interior:
+    patterns:
+      - match: "{{styleInterior}}"
+        captures:
           "2": { name: storage.modifier }
-          "3": { name: variable.readonly }
+          "3": { name: variable }
           "6": { name: storage.modifier }
           "7":
             patterns:
@@ -175,12 +200,6 @@ repository:
             patterns:
               - include: "#reference"
               - include: "#punctuation"
-          "21": { name: "punctuation" }
-        end: "}"
-        endCaptures:
-          "0": { name: punctuation }
-        patterns:
-          - include: "text.style.paperclip"
 
   variant-name:
     patterns:
@@ -196,7 +215,7 @@ repository:
     patterns:
       - match: (\,|\+)
         captures:
-          "0": { name: punctuation }
+          "0": { name: storage.modifier }
 
   instance:
     patterns:
@@ -226,7 +245,7 @@ repository:
   # div ab (a: 1)
   instance-open-interior:
     patterns:
-      - match: ({{reference}}(\s+{{id}})?(\s+{{instanceInitArg}})?)
+      - match: ({{reference}}(\s+{{id}})?(\s*{{instanceInitArg}})?)
         captures:
           "2": { name: entity.name.type.class }
           "4": { name: variable.other }
@@ -262,12 +281,11 @@ repository:
     patterns:
       - match: ((\w+)\s*(:)\s*{{parameterValue}})
         captures:
-          "2": { name: storage.modifier }
+          "2": { name: variable.other }
           "3": { name: punctuation }
           "4":
             patterns:
-              # TODO: may want to include additional property types
-              # if attribute bindings become explicit
+              - include: "#reference"
               - include: "#string"
       - match: ","
         name: punctuation

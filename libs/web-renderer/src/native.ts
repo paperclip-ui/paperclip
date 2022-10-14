@@ -52,25 +52,6 @@ export const createNativeNode = (
       const text = createNativeTextNode(node.textNode, factory);
       return text;
     }
-    // switch () {
-    // case VirtualNodeKind.Text: {
-    // }
-    // case VirtualNodeKind.Element:
-
-    // case VirtualNodeKind.StyleElement:
-    //   return createNativeStyleFromSheet(node.sheet, factory, resolveUrl);
-    // case VirtualNodeKind.Fragment:
-    //   return createNativeFragment(
-    //     node,
-    //     factory,
-    //     resolveUrl,
-    //     showSlotPlaceholders,
-    //     inInstance
-    //   );
-    // case VirtualNodeKind.Slot: {
-    //   return createSlot(node, factory, showSlotPlaceholders, inInstance);
-    // }
-    // }
   } catch (e) {
     return factory.createTextNode(String(e.stack));
   }
@@ -123,12 +104,28 @@ export const createNativeGlobalScript = (
   factory: NodeFactory
 ) => {
   if (/\.css$/.test(path)) {
-    const css = factory.createElement("style") as HTMLStyleElement;
-    css.textContent = content;
-    return css;
+    if (content) {
+      const css = factory.createElement("style") as HTMLStyleElement;
+      css.textContent = content;
+      return css;
+    } else {
+      const link = factory.createElement("link") as HTMLLinkElement;
+      link.rel = "stylesheet";
+      link.href = path;
+      console.log("LINK REL");
+      return link;
+    }
+  } else if (/\.js/.test(path)) {
+    const script = factory.createElement("script") as HTMLScriptElement;
+    script.type = "text/javascript";
+    script.textContent = content;
+
+    // execute immmediately in case of custom elements
+    document.body.appendChild(script);
+    // return script;
   }
   // other things not supported yet
-  return document.createDocumentFragment();
+  return factory.createDocumentFragment();
 };
 
 export const renderSheetText = (
@@ -141,9 +138,6 @@ export const renderSheetText = (
       // OOF! This is expensive! This should be done in the rust engine instead. Not here!
       const isValid = ruleIsValid(text);
 
-      // if (!isValid) {
-      //   console.error(`invalid CSS rule: ${text}`);
-      // }
       return isValid ? text : ".invalid-rule { }";
     })
     .join("\n");
@@ -166,7 +160,7 @@ const createNativeElement = (
 ) => {
   const nativeElement = (
     element.tagName === "svg"
-      ? document.createElementNS(XMLNS_NAMESPACE, "svg")
+      ? factory.createElementNS(XMLNS_NAMESPACE, "svg")
       : namespaceUri
       ? factory.createElementNS(namespaceUri, element.tagName)
       : factory.createElement(element.tagName)

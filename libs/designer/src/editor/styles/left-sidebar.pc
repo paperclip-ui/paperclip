@@ -53,24 +53,27 @@ public component LeftSidebar {
 }
 
 component LeftSidebarHeader {
-  render div {
+  render common.SidebarPanelContent {
     style {
       display: flex
-      padding: var(theme.space05) var(theme.space05)
       justify-content: space-between
-      font-size: var(theme.fontSize01)
       align-items: center
+      height: 56px
       font-weight: 600
     }
     div {
       style {
         display: flex
         gap: var(theme.space02)
+        padding-left: 3px
+        align-items: center
       }
       div {
         style extends theme.icon {
           -webkit-mask-image: url("./back.svg")
-          --size: 1.2em
+          --size: 1.6em
+          width: 12px
+          height: 1em
         }
       }
       span {
@@ -204,7 +207,7 @@ component TreeNavigationItemHeader {
     }
     div {
       style extends theme.easeIn {
-        opacity: 1
+        opacity: 0
       }
       style variant isHovering {
         opacity: 1
@@ -300,7 +303,7 @@ component Tooltip {
           style extends theme.icon {
             --size: 1.5em
             color: var(theme.borderColor)
-            position: absolute
+            position: fixed
             top: calc(-50% + 2px)
             transform: rotate(-90deg) translateY(-50%) translateX(50%)
             left: 50%

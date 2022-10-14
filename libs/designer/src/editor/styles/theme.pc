@@ -72,6 +72,8 @@ public style input {
   display: flex
   align-items: center
   text-overflow: ellipsis
+  font-size: inherit
+  font-family: inherit
   white-space: nowrap
   overflow: hidden
   flex: 1
@@ -85,8 +87,7 @@ public style input {
 public style fontDefault {
   font-family: Inter
   color: var(fontColor01)
-  font-size: var(fontSize02)
-  font-weight: 300
+  font-size: var(fontSize01)
 }
 
 public style reset {

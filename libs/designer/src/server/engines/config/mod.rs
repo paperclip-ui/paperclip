@@ -86,6 +86,11 @@ async fn handle_global_scripts<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> 
     let mut loaded_scripts: Vec<(String, Vec<u8>)> = vec![];
 
     for script_path in global_script_paths {
+        // no remote resources
+        if script_path.contains("://") {
+            continue;
+        }
+        println!("{:?}", script_path);
         loaded_scripts.push((
             script_path.to_string(),
             ctx.io.read_file(&script_path)?.into_vec(),

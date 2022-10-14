@@ -358,9 +358,9 @@ add_case! {
 }
 
 add_case! {
-	can_render_instances_within_different_docs,
-	[
-			("/entry.pc", r#"
+    can_render_instances_within_different_docs,
+    [
+            ("/entry.pc", r#"
 		import "/module.pc" as mod
 		component A {
 			render mod.B {
@@ -369,7 +369,7 @@ add_case! {
 		}
 	"#),
 
-			("/module.pc", r#"
+            ("/module.pc", r#"
 		public component B {
 			render div {
 				C {
@@ -384,8 +384,8 @@ add_case! {
 		}
 	"#)
 
-	],
-	r#"
+    ],
+    r#"
 <div class="_B-139cec8e-3 _A-80f4925f-2">
 	<span class="_C-139cec8e-7 _A-80f4925f-2 _B-139cec8e-2">
 			Hello
@@ -394,11 +394,10 @@ add_case! {
 "#
 }
 
-
 add_case! {
-	can_bind_an_attribute,
-	[
-	("/entry.pc", r#"
+    can_bind_an_attribute,
+    [
+    ("/entry.pc", r#"
 		component A {
 			render div(data-test: a) {
 
@@ -406,19 +405,18 @@ add_case! {
 		}
 		A(a: "b")
 	"#)
-	],
-	r#"
+    ],
+    r#"
 	<div class="_A-80f4925f-3" data-test="undefined">
 	</div> 
 	<div class="_A-80f4925f-3 _80f4925f-8" data-test="b"> </div>
 "#
 }
 
-
 add_case! {
-	can_bind_to_class_and_still_maintain_scope,
-	[
-	("/entry.pc", r#"
+    can_bind_to_class_and_still_maintain_scope,
+    [
+    ("/entry.pc", r#"
 		component A {
 			render div(class:class) {
 
@@ -426,8 +424,8 @@ add_case! {
 		}
 		A(class: "b c d e")
 	"#)
-	],
-	r#"
+    ],
+    r#"
 	<div class="_A-80f4925f-3 undefined"> </div> 
 	<div class="_A-80f4925f-3 _80f4925f-8 b c d e"> </div>
 "#

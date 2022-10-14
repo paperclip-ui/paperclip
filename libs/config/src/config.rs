@@ -19,6 +19,7 @@ pub struct ConfigContext {
     pub config: Config,
 }
 
+
 impl ConfigContext {
     pub fn get_global_script_paths(&self) -> Vec<String> {
         self.config
@@ -28,7 +29,13 @@ impl ConfigContext {
                 Some(
                     rel_paths
                         .iter()
-                        .map(|rel_path| join_path!(&self.directory, rel_path))
+                        .map(|rel_path| {
+                            if rel_path.contains("://") {
+                                rel_path.to_string()
+                            } else {
+                                join_path!(&self.directory, rel_path)
+                            }
+                        })
                         .collect::<Vec<String>>(),
                 )
             })

@@ -59,7 +59,7 @@ component Canvas {
     }
     Artboard {
       insert title {
-        text "Frame"
+        text "Some frame"
       }
     }
   }
@@ -72,7 +72,6 @@ component EditorPanels {
       display: flex
       flex: 1
       z-index: 3
-      font-size: var(theme.fontSize01)
       gap: var(theme.space05)
       position: relative
       height: 100%

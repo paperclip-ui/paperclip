@@ -70,7 +70,6 @@ public component StylesPanel {
       common.SidebarSection {
         common.SidebarPanelContent {
           input.Field {
-            style extends test
             insert name {
               text "Variant"
             }
@@ -344,31 +343,28 @@ public component StylesPanel {
           input.Fields {
             input.Field {
               insert name {
-                text "--iconColor"
+                text "iconColor"
               }
               insert input {
-                input.TextInput(value:"smth") {
-                  text "input"
+                input.ColorInput {
+                  override root {
+                    style {
+                      --color: rgb(255, 81, 119)
+                    }
+                  }
+                  text "red"
                 }
               }
             }
             input.Field {
               insert name {
-                text "--iconColor"
+                text "iconSize"
               }
               insert input {
-                input.Select {
-                  text "fontDefault"
-                }
+                input.TextInput(value: "12px")
               }
             }
-            input.Field {
-              insert input {
-                input.Select {
-                  text "add "
-                }
-              }
-            }
+            
           }
         }
       }

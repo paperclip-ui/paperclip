@@ -420,10 +420,10 @@ fn create_attribute_value<F: FileResolver>(
         ast::simple_expression::Inner::Reference(value) => {
             if let Some(data) = &context.data {
                 if let Some(value) = data.get_deep(&value.path) {
-                   return value.clone();
+                    return value.clone();
                 }
             }
-            
+
             core_virt::value::Inner::Undef(core_virt::Undefined {
                 source_id: Some(value.id.to_string()),
             })

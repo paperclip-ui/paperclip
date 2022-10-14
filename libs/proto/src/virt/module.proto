@@ -23,5 +23,5 @@ message PCCSSImport {
 
 message GlobalScript {
   string path = 1;
-  string content = 2;
+  optional string content = 2;
 }

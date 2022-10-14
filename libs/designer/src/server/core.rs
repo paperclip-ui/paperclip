@@ -82,23 +82,19 @@ impl ServerState {
             }
         }
 
-        
-
-       
-
         imports.extend(
             self.options
                 .config_context
                 .get_global_script_paths()
                 .iter()
                 .filter_map(|path| {
-                    self.file_cache.get(path).and_then(|content| {
-                        Some(PcModuleImport {
-                            inner: Some(pc_module_import::Inner::GlobalScript(GlobalScript {
-                                path: path.to_string(),
-                                content: std::str::from_utf8(content).unwrap().to_string(),
-                            })),
-                        })
+                    Some(PcModuleImport {
+                        inner: Some(pc_module_import::Inner::GlobalScript(GlobalScript {
+                            path: path.to_string(),
+                            content: self.file_cache.get(path).and_then(|content| {
+                                Some(std::str::from_utf8(content).unwrap().to_string())
+                            }),
+                        })),
                     })
                 })
                 .collect::<Vec<PcModuleImport>>(),

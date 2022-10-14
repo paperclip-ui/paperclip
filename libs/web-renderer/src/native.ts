@@ -104,9 +104,17 @@ export const createNativeGlobalScript = (
   factory: NodeFactory
 ) => {
   if (/\.css$/.test(path)) {
-    const css = factory.createElement("style") as HTMLStyleElement;
-    css.textContent = content;
-    return css;
+    if (content) {
+      const css = factory.createElement("style") as HTMLStyleElement;
+      css.textContent = content;
+      return css;
+    } else {
+      const link = factory.createElement("link") as HTMLLinkElement;
+      link.rel = "stylesheet";
+      link.href = path;
+      console.log("LINK REL");
+      return link;
+    }
   } else if (/\.js/.test(path)) {
     const script = factory.createElement("script") as HTMLScriptElement;
     script.type = "text/javascript";
@@ -130,9 +138,6 @@ export const renderSheetText = (
       // OOF! This is expensive! This should be done in the rust engine instead. Not here!
       const isValid = ruleIsValid(text);
 
-      // if (!isValid) {
-      //   console.error(`invalid CSS rule: ${text}`);
-      // }
       return isValid ? text : ".invalid-rule { }";
     })
     .join("\n");
@@ -153,9 +158,6 @@ const createNativeElement = (
   showSlotPlaceholders?: boolean,
   inInstance?: boolean
 ) => {
-  if (element.tagName == "color-picker") {
-    console.log("PICKER", element);
-  }
   const nativeElement = (
     element.tagName === "svg"
       ? factory.createElementNS(XMLNS_NAMESPACE, "svg")

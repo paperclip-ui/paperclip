@@ -34,7 +34,6 @@ impl Object {
         let mut ctx = self;
         let mut parts = path.iter().peekable();
         while let Some(part) = parts.next() {
-
             if let Some(next) = ctx.get(part) {
                 ret = Some(next);
 

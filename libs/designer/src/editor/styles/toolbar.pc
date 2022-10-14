@@ -5,19 +5,20 @@ import "./common.pc" as common
 component ToolbarButton {
   variant hovering trigger { ":hover" }
   variant wide trigger { ".wide" }
-  render button {
+  render button(class:class) {
     style extends theme.reset, theme.easeIn {
       padding: 0px
       cursor: pointer
       border-radius: var(theme.roundedMD)
-      min-width: var(theme.space07)
-      height: var(theme.space07)
+      min-width: var(theme.space06)
+      height: var(theme.space06)
     }
     style variant hovering {
       background: var(theme.selectedColor)
     }
     style variant wide {
-      width: 200px
+      padding-left: var(theme.space03)
+      padding-right:var(theme.space03)
     }
     slot children
   }
@@ -52,13 +53,14 @@ public component Toolbar {
       style extends common.panel {
         display: inline-flex
         align-items: center
-        padding: var(theme.space03)
+        padding: var(theme.space02)
         gap: var(theme.space03)
       }
       ToolbarButton {
         div {
           style extends theme.icon {
             -webkit-mask-image: url("./text.svg")
+            --size: 0.9em
           }
         }
       }
@@ -67,18 +69,24 @@ public component Toolbar {
           style extends theme.icon {
             -webkit-mask-image: url("./instance3.svg")
             transform: rotate(45deg)
-            --size: 1.5em
+            --size: 1.2em
           }
         }
       }
       ToolbarDivider
-
       ToolbarButton {
         div {
           style extends theme.icon {
             -webkit-mask-image: url("./component2.svg")
 
-            --size: 1.5em
+            --size: 1.2em
+          }
+        }
+      }ToolbarButton {
+        div {
+          style extends theme.icon {
+            -webkit-mask-image: url("./image3.svg")
+            --size: 1.2em
           }
         }
       }

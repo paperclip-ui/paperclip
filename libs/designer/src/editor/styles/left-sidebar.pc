@@ -34,6 +34,14 @@ public component LeftSidebar {
     common.SidebarPanel {
       LeftSidebarHeader
       common.SidebarSection {
+        common.SidebarPanelHeader {
+          text "Layers"
+          div {
+            style extends theme.icon {
+              -webkit-mask-image: url("./plus.svg")
+            }
+          }
+        }
         Layers
       }
       common.SidebarSection {
@@ -64,12 +72,12 @@ component LeftSidebarHeader {
     div {
       style {
         display: flex
-        gap: var(theme.space02)
-        padding-left: 3px
+        gap: 8px
         align-items: center
       }
       div {
         style extends theme.icon {
+          display: none
           -webkit-mask-image: url("./back.svg")
           --size: 1.6em
           width: 12px
@@ -81,10 +89,16 @@ component LeftSidebarHeader {
       }
     }
     div {
-      style extends theme.icon {
-        cursor: pointer
-        -webkit-mask-image: url("./hamburger.svg")
-        --size: 1.2em
+      style {
+        display: flex
+        gap: 4px
+      }
+      div {
+        style extends theme.icon {
+          cursor: pointer
+          -webkit-mask-image: url("./hamburger.svg")
+          --size: 1.2em
+        }
       }
     }
   }
@@ -319,7 +333,7 @@ component Tooltip {
 component Layers {
   render div {
     style {
-      padding: var(theme.space02) 0px
+      padding: var(theme.space03) 0px
     }
     TreeNavigationItem {
       FileNavigatorItemHeader(class: "component container open") {  
@@ -413,13 +427,13 @@ component Layers {
 component Tokens {
   render div {
     style {
-      padding: var(theme.space02) 0px
+      padding: var(theme.space04) 0px
     }
     TreeNavigationItem {
       FileNavigatorItemHeader(class: "composite-token open") {   
         override container.root {
           style {
-            --depth: 2
+            --depth: 1
           }
         }
         text "Font Regular"
@@ -427,7 +441,7 @@ component Tokens {
       FileNavigatorItemHeader(class: "atom-token open") {   
         override container.root {
           style {
-            --depth: 2
+            --depth: 1
           }
         }
         text "red01"
@@ -435,7 +449,7 @@ component Tokens {
       FileNavigatorItemHeader(class: "atom-token open") {   
         override container.root {
           style {
-            --depth: 2
+            --depth: 1
           }
         }
         text "red02"
@@ -443,7 +457,7 @@ component Tokens {
       FileNavigatorItemHeader(class: "trigger open") {    
         override container.root {
           style {
-            --depth: 2
+            --depth: 1
           }
         }    
         text "mobile"

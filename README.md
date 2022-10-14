@@ -2,7 +2,7 @@
   <img src="./assets/logo-outline-5.png" width="400px">
 </p>
 
-> Join the [Discord channel](https://discord.gg/gHPTh9Rt) for the latest updates! 
+> Join the [Discord channel](https://discord.gg/gHPTh9Rt) for the latest updates!
 
 Paperclip enables you to design and build just about any kind of web application end-to-end. It can be used directly within [Codespaces](https://github.com/features/codespaces), enabling anyone easy access to make changes to web applications.
 
@@ -136,6 +136,21 @@ Page {
 <!-- ## Ideal project setup
 
 Ideally design files live in the same repository as your existing code. This will enabl -->
+
+<!-- ## Contributing
+
+Looking to help out? Awesome! This is a massive project with many different rabbit holes - it's going to take a lot of people to get this right. So, all help is appreciated. Here are a few things that you can do:
+
+- Designers - 
+
+- Feedback on user experience. Are you a developer? Designer? Are you using Paperclip with your team? What sort of problems are you trying to solve?
+- Building out editor features. Things like canvas tooling and support for additional CSS properties are helpful. This is just a _lot_ of work.
+- Help figure out the data model for Paperclip + helping think through edge cases so that Paperclip can be 
+
+
+If you're looking to submit a change that's big enough, please be sure to submit a ticket outlining your proposal including 
+
+You're welcome to submit -->
 
 ## Roadmap
 

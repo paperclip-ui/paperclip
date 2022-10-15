@@ -73,7 +73,7 @@ add_case! {
 
     export const A = React.memo((props) => {
       return React.createElement("div", {
-        "className": "_80f4925f-4"
+        "className": "_80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "")
       });
     });
   "#
@@ -90,7 +90,7 @@ add_case! {
 
     export const A = React.memo((props) => {
       return React.createElement("div", {
-        "className": "_ab-80f4925f-1"
+        "className": "_ab-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "")
       });
     });
   "#
@@ -140,7 +140,7 @@ add_case! {
 
     export const A = React.memo((props) => {
       return React.createElement("span", {
-        "className": "cd" + " " + "_ab-80f4925f-3"
+        "className": "cd" + " " + "_ab-80f4925f-3" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "")
       });
     });
   "#
@@ -290,28 +290,66 @@ add_case! {
   "#
 }
 
-// add_case! {
-//   can_render_imported_components,
-//   r#"
-//     import "./test.pc" as test
+add_case! {
+  can_compile_components_with_props,
+  r#"
+  component A {
+    render div(onClick: onClick)
+  }
+  "#,
+  r#"
+    import * as React from "react";
 
-//     component A {
-//       render test.b
-//     }
-//   "#,
-//   r#"
-//     import * as React from "react";
+    const A = React.memo((props) => {
+      return React.createElement("div", {
+        "onClick": props.onClick
+      });
+    });
+  "#
+}
 
-//     const A = React.memo((props) => {
-//       return props.abba;
-//     });
+add_case! {
+  class_name_is_included_in_instance_if_root,
+  r#"
+  component B {
+    render div root
+  }
+  component A {
+    render B root
+  }
+  "#,
+  r#"
+    import * as React from "react";
 
-//     const B = React.memo((props) => {
-//       return React.createElement(A, {
-//         "abba": [
-//           "Hello"
-//         ]
-//       });
-//     });
-//   "#
-// }
+    const B = React.memo((props) => {
+      return React.createElement("div", {
+        "className": "_root-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "")
+      });
+    });
+
+    const A = React.memo((props) => {
+      return React.createElement(B, {
+        "$$scopeClassName": "_root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "")
+      });
+    });
+  "#
+}
+
+add_case! {
+  can_import_files,
+  r#"
+  import "/test.pc" as test
+
+  component A {
+    render test.B
+  }
+  "#,
+  r#"
+    import * as React from "react";
+    import * as test from "/test.pc";
+
+    const A = React.memo((props) => {
+      return React.createElement(test.B, null);
+    });
+  "#
+}

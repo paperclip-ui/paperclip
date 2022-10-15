@@ -7,6 +7,7 @@ use paperclip_common::fs::FileResolver;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::graph;
 use paperclip_parser::graph::test_utils;
+use paperclip_proto::virt;
 use std::collections::HashMap;
 
 // TODO: ensure no infinite loop
@@ -22,26 +23,30 @@ impl FileResolver for MockResolver {
     }
 }
 
+fn evaluate_doc(sources: HashMap<&str, &str>) -> virt::html::Document {
+    let mock_fs = test_utils::MockFS::new(sources);
+    let mut graph = graph::Graph::new();
+    if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
+        panic!("Unable to load");
+    }
+    let resolver = MockResolver {};
+    let pc_resolver = PCFileResolver::new(mock_fs.clone(), resolver.clone(), None);
+    block_on(evaluate(
+        "/entry.pc",
+        &graph,
+        &pc_resolver,
+        Options {
+            include_components: true,
+        },
+    ))
+    .unwrap()
+}
+
 macro_rules! add_case {
     ($name: ident, $input: expr, $output: expr) => {
         #[test]
         fn $name() {
-            let mock_fs = test_utils::MockFS::new(HashMap::from($input));
-            let mut graph = graph::Graph::new();
-            if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
-                panic!("Unable to load");
-            }
-            let resolver = MockResolver {};
-            let pc_resolver = PCFileResolver::new(mock_fs.clone(), resolver.clone(), None);
-            let doc = block_on(evaluate(
-                "/entry.pc",
-                &graph,
-                &pc_resolver,
-                Options {
-                    include_components: true,
-                },
-            ))
-            .unwrap();
+            let doc = evaluate_doc(HashMap::from($input));
             println!("Try evaluating");
             println!("{}", serialize(&doc).trim());
             assert_eq!(
@@ -429,4 +434,150 @@ add_case! {
 	<div class="_A-80f4925f-3 undefined"> </div> 
 	<div class="_A-80f4925f-3 _80f4925f-8 b c d e"> </div>
 "#
+}
+
+#[test]
+fn bounds_are_attached_to_root_elements() {
+    let doc = evaluate_doc(HashMap::from([(
+        "/entry.pc",
+        r#"
+				/**
+				 * @bounds(width: 100, height: 100, x: 100, y: 100)
+				 */
+				div {
+					text "Hello world"
+				}
+			"#,
+    )]));
+
+    let element = doc.children.get(0).expect("Node must exist").get_inner();
+
+    assert_eq!(
+        element,
+        &virt::html::node::Inner::Element(virt::html::Element {
+            tag_name: "div".to_string(),
+            source_id: Some("80f4925f-15".to_string()),
+            attributes: vec![],
+            metadata: Some(virt::html::NodeMedata {
+                bounds: Some(virt::html::Bounds {
+                    x: 100.0,
+                    y: 100.0,
+                    width: 100.0,
+                    height: 100.0
+                })
+            }),
+            children: vec![virt::html::Node {
+                inner: Some(virt::html::node::Inner::TextNode(virt::html::TextNode {
+                    source_id: Some("80f4925f-14".to_string()),
+                    value: "Hello world".to_string(),
+                    metadata: None
+                }))
+            }]
+        })
+    );
+}
+
+
+#[test]
+fn bounds_are_attached_to_root_components() {
+    let doc = evaluate_doc(HashMap::from([(
+        "/entry.pc",
+        r#"
+				/**
+				 * @bounds(width: 100, height: 100, x: 100, y: 100)
+				 */
+				component A {
+					render div
+				}
+			"#,
+    )]));
+
+    let element = doc.children.get(0).expect("Node must exist").get_inner();
+
+    assert_eq!(
+        element,
+        &virt::html::node::Inner::Element(virt::html::Element {
+            tag_name: "div".to_string(),
+            source_id: Some("80f4925f-14".to_string()),
+            attributes: vec![virt::html::Attribute { source_id: None, name: "class".to_string(), value: "_A-80f4925f-14".to_string() }],
+            metadata: Some(virt::html::NodeMedata {
+                bounds: Some(virt::html::Bounds {
+                    x: 100.0,
+                    y: 100.0,
+                    width: 100.0,
+                    height: 100.0
+                })
+            }),
+            children: vec![]
+        })
+    );
+}
+
+#[test]
+fn bounds_are_attached_to_root_text_nodes() {
+    let doc = evaluate_doc(HashMap::from([(
+        "/entry.pc",
+        r#"
+				/**
+				 * @bounds(width: 100, height: 100, x: 100, y: 100)
+				 */
+				text "abba"
+			"#,
+    )]));
+
+    let element = doc.children.get(0).expect("Node must exist").get_inner();
+
+    assert_eq!(
+        element,
+        &virt::html::node::Inner::TextNode(virt::html::TextNode {
+						value: "abba".to_string(),
+            source_id: Some("80f4925f-14".to_string()),
+            metadata: Some(virt::html::NodeMedata {
+                bounds: Some(virt::html::Bounds {
+                    x: 100.0,
+                    y: 100.0,
+                    width: 100.0,
+                    height: 100.0
+                })
+            })
+        })
+    );
+}
+
+#[test]
+fn bounds_are_attached_to_root_instances() {
+    let doc = evaluate_doc(HashMap::from([(
+        "/entry.pc",
+        r#"
+
+				component A {
+					render div
+				}
+				/**
+				 * @bounds(width: 100, height: 100, x: 100, y: 100)
+				 */
+				A
+			"#,
+    )]));
+
+    let element = doc.children.get(1).expect("Node must exist").get_inner();
+
+   
+    assert_eq!(
+			element,
+			&virt::html::node::Inner::Element(virt::html::Element {
+					tag_name: "div".to_string(),
+					source_id: Some("80f4925f-1".to_string()),
+					attributes: vec![virt::html::Attribute { source_id: None, name: "class".to_string(), value: "_A-80f4925f-1 _80f4925f-17".to_string() }],
+					metadata: Some(virt::html::NodeMedata {
+							bounds: Some(virt::html::Bounds {
+									x: 100.0,
+									y: 100.0,
+									width: 100.0,
+									height: 100.0
+							})
+					}),
+					children: vec![]
+			})
+	);
 }

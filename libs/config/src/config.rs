@@ -19,7 +19,6 @@ pub struct ConfigContext {
     pub config: Config,
 }
 
-
 impl ConfigContext {
     pub fn get_global_script_paths(&self) -> Vec<String> {
         self.config

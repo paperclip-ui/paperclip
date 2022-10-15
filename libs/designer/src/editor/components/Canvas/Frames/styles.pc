@@ -1,0 +1,17 @@
+public component B {
+  render div root {
+    style {
+      color: orange
+    }
+  }
+}
+
+public component Test {
+  render B {
+    override root {
+      style {
+        color: blue
+      }
+    }
+  }
+}

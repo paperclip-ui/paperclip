@@ -131,7 +131,7 @@ pub fn evaluate_comment_metadata(expr: &docco_ast::Comment) -> virt::NodeMedata 
         }
     }
 
-    virt::NodeMedata { bounds }
+    virt::NodeMedata { bounds, visible: Some(true) }
 }
 
 fn evaluate_component<F: FileResolver>(

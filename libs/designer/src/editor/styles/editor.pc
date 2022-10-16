@@ -59,7 +59,7 @@ component Canvas {
     }
     Artboard {
       insert title {
-        text "Some ddddd frame"
+        text "Some frame"
       }
     }
   }
@@ -121,6 +121,6 @@ component Editor {
 
 
 /**
- * @bounds(width: 800, height: 800, x: 0, y: 0)
+ * @bounds(width: 1000, height: 800, x: 0, y: 0)
  */
 Editor

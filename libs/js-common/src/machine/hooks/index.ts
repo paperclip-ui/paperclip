@@ -14,8 +14,10 @@ export const useSelector = <TSelector extends (...args: any) => any>(
   const machine = useMachine();
   const [state, setState] = useState(selector(machine.getState()));
   useEffect(() => {
-    machine.onStateChange((state) => setState(selector(state)));
     setState(selector(machine.getState()));
+    return machine.onStateChange((state) => {
+      setState(selector(state));
+    });
   }, [machine, selector]);
   return state;
 };

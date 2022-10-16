@@ -36,7 +36,6 @@ export const Canvas = React.memo(() => {
 const useCanvas = () => {
   const canvas = useSelector(selectCanvas);
   const currentDocument = useSelector(selectCurrentDocument);
-  console.log(canvas);
   const dispatch = useDispatch();
   const expanded = canvas.isExpanded;
 
@@ -65,6 +64,7 @@ const useCanvas = () => {
 
   const onWheel = useCallback(
     (event: WheelEvent) => {
+      console.log("WHEEEL:");
       event.preventDefault();
       clearTimeout(canvasPanTimer);
 
@@ -77,6 +77,7 @@ const useCanvas = () => {
       }
       const rect = canvasRef.current.getBoundingClientRect();
 
+      console.log("DIM");
       // ignore jerky scroll - happens in VM for some reason.
       if (Math.abs(pixelX) > 100) {
         pixelX = pixelX / 100;
@@ -114,6 +115,7 @@ const useCanvas = () => {
 
   useEffect(() => {
     const ref = canvasRef.current;
+    console.log("FSDFSDFDS", ref);
     if (!ref) {
       return;
     }

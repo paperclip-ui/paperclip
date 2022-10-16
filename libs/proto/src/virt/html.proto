@@ -10,6 +10,7 @@ message Bounds {
 
 message NodeMedata {
   optional Bounds bounds = 1;
+  optional bool visible = 2;
 }
 
 message Element {

@@ -35,6 +35,7 @@ add_case! {
     }
   }"#,
   r#"
+    require("./entry.pc.css");
     import * as React from "react";
 
     const A = React.memo((props) => {
@@ -51,6 +52,7 @@ add_case! {
     }
   }"#,
   r#"
+    require("./entry.pc.css");
     import * as React from "react";
 
     export const A = React.memo((props) => {
@@ -69,11 +71,12 @@ add_case! {
     }
   }"#,
   r#"
+    require("./entry.pc.css");
     import * as React from "react";
 
     export const A = React.memo((props) => {
       return React.createElement("div", {
-        "className": "_80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "")
+        "className": "_A-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "")
       });
     });
   "#
@@ -81,16 +84,17 @@ add_case! {
 
 add_case! {
   element_names_are_included_as_classes,
-  r#"public component A {
+  r#"public component A { 
     render div ab {
     }
   }"#,
   r#"
+    require("./entry.pc.css");
     import * as React from "react";
 
     export const A = React.memo((props) => {
       return React.createElement("div", {
-        "className": "_ab-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "")
+        "className": "_A-ab-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "")
       });
     });
   "#
@@ -104,6 +108,7 @@ add_case! {
     }
   }"#,
   r#"
+    require("./entry.pc.css");
     import * as React from "react";
 
     export const A = React.memo((props) => {
@@ -120,6 +125,7 @@ add_case! {
     render span(aria-label: "something")
   }"#,
   r#"
+    require("./entry.pc.css");
     import * as React from "react";
 
     export const A = React.memo((props) => {
@@ -136,11 +142,12 @@ add_case! {
     render span ab (class: "cd")
   }"#,
   r#"
+    require("./entry.pc.css");
     import * as React from "react";
 
     export const A = React.memo((props) => {
       return React.createElement("span", {
-        "className": "cd" + " " + "_ab-80f4925f-3" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "")
+        "className": "cd" + " " + "_A-ab-80f4925f-3" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "")
       });
     });
   "#
@@ -156,6 +163,7 @@ add_case! {
     }
   }"#,
   r#"
+    require("./entry.pc.css");
     import * as React from "react";
 
     export const A = React.memo((props) => {
@@ -172,6 +180,7 @@ add_case! {
     render text "ab"
   }"#,
   r#"
+    require("./entry.pc.css");
     import * as React from "react";
 
     export const A = React.memo((props) => {
@@ -188,6 +197,7 @@ add_case! {
     }
   }"#,
   r#"
+    require("./entry.pc.css");
     import * as React from "react";
 
     export const A = React.memo((props) => {
@@ -204,6 +214,7 @@ add_case! {
     render slot abba
   }"#,
   r#"
+    require("./entry.pc.css");
     import * as React from "react";
 
     export const A = React.memo((props) => {
@@ -223,6 +234,7 @@ add_case! {
     }
   }"#,
   r#"
+    require("./entry.pc.css");
     import * as React from "react";
 
     export const A = React.memo((props) => {
@@ -247,6 +259,7 @@ add_case! {
   }
   "#,
   r#"
+    require("./entry.pc.css");
     import * as React from "react";
 
     const A = React.memo((props) => {
@@ -274,6 +287,7 @@ add_case! {
   }
   "#,
   r#"
+    require("./entry.pc.css");
     import * as React from "react";
 
     const A = React.memo((props) => {
@@ -298,6 +312,7 @@ add_case! {
   }
   "#,
   r#"
+    require("./entry.pc.css");
     import * as React from "react";
 
     const A = React.memo((props) => {
@@ -319,17 +334,18 @@ add_case! {
   }
   "#,
   r#"
+    require("./entry.pc.css");
     import * as React from "react";
 
     const B = React.memo((props) => {
       return React.createElement("div", {
-        "className": "_root-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "")
+        "className": "_B-root-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "")
       });
     });
 
     const A = React.memo((props) => {
       return React.createElement(B, {
-        "$$scopeClassName": "_root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "")
+        "$$scopeClassName": "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "")
       });
     });
   "#
@@ -345,6 +361,7 @@ add_case! {
   }
   "#,
   r#"
+    require("./entry.pc.css");
     import * as React from "react";
     import * as test from "/test.pc";
 

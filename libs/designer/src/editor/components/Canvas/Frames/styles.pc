@@ -1,17 +1,5 @@
-public component B {
-  render div root {
-    style {
-      color: orange
-    }
-  }
-}
-
-public component Test {
-  render B {
-    override root {
-      style {
-        color: blue
-      }
-    }
+public component Frame {
+  render div(style:style) {
+    slot children
   }
 }

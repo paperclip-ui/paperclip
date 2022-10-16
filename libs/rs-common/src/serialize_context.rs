@@ -1,3 +1,4 @@
+
 pub struct Context {
     pub is_new_line: bool,
     pub buffer: String,

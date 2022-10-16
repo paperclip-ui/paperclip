@@ -26,6 +26,8 @@ fn loader_new(mut cx: FunctionContext) -> JsResult<BoxedLoader> {
     Ok(cx.boxed(loader))
 }
 
+
+
 fn compile_file(mut cx: FunctionContext) -> JsResult<JsObject> {
     let loader = cx.argument::<BoxedLoader>(0)?;
     let file_path = cx.argument::<JsString>(1)?;

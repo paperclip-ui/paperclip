@@ -1211,6 +1211,7 @@ dependencies = [
  "paperclip_common",
  "paperclip_evaluator",
  "paperclip_parser",
+ "paperclip_proto",
 ]
 
 [[package]]

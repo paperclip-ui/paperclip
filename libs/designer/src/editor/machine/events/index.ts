@@ -1,7 +1,26 @@
-import { eventCreators, ExtractEventFromCreators } from "@paperclip-ui/common";
+import {
+  eventCreators,
+  ExtractEventFromCreators,
+  identity,
+} from "@paperclip-ui/common";
 import { DesignerEngineEvent } from "../engine/designer/events";
+import { Point, Size } from "../state/geom";
 
-const editorEvents = eventCreators({}, "editor");
+export const editorEvents = eventCreators(
+  {
+    canvasPanEnd: null,
+    canvasPanned: identity<{
+      delta: Point;
+      mousePosition: Point;
+      metaKey: boolean;
+      ctrlKey: boolean;
+      size: Size;
+    }>(),
+    canvasPanStart: null,
+    canvasResized: identity<Size>(),
+  },
+  "editor"
+);
 
 export type EditorEvent =
   | ExtractEventFromCreators<typeof editorEvents>

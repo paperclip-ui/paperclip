@@ -34,7 +34,7 @@ export const renderFrames = (
   info: PCModule.AsObject,
   options: RenderFrameOptions
 ): HTMLElement[] => {
-  return getFragmentChildren(info.html).map((frame, index) => {
+  return info.html.childrenList.map((frame, index) => {
     return renderFrame(info, index, options);
   });
 };
@@ -45,7 +45,7 @@ export const renderFrame = (
   options: RenderFrameOptions
 ) => {
   const { documentStyles, importedStyles } = createStyles(info, options);
-  const dataFrames = getFragmentChildren(info.html);
+  const dataFrames = info.html.childrenList;
   return renderFrame2(
     dataFrames[index],
     importedStyles,
@@ -68,7 +68,6 @@ const renderFrame2 = (
   documentStyles: HTMLElement,
   options: RenderFrameOptions
 ) => {
-  console.log("render frame");
   const frame = options.domFactory.createElement("div");
   frame.appendChild(importedStyles.cloneNode(true));
   frame.appendChild(documentStyles.cloneNode(true));
@@ -134,8 +133,8 @@ export const patchFrames = (
   if (curr === prev) {
     return frames;
   }
-  const prevVirtFrames = getFragmentChildren(prev.html);
-  const newVirtFrames = getFragmentChildren(curr.html);
+  const prevVirtFrames = prev.html.childrenList;
+  const newVirtFrames = curr.html.childrenList;
   const { insert, update } = calcAryPatch(prevVirtFrames, newVirtFrames);
   const newFrames: HTMLElement[] = [];
 
@@ -165,8 +164,8 @@ export const patchFrame = (
   curr: PCModule.AsObject,
   options: RenderFrameOptions
 ) => {
-  const prevVirtFrames = getFragmentChildren(prev.html);
-  const newVirtFrames = getFragmentChildren(curr.html);
+  const prevVirtFrames = prev.html.childrenList;
+  const newVirtFrames = curr.html.childrenList;
   return patchRoot(
     frame,
     prev,
@@ -236,8 +235,10 @@ const patchRoot = (
     patchImportedSheets(frame, prevInfo, newInfo, options);
   }
 
-  const prevChildren = getFragmentChildren(prevVirtNode);
-  const currChildren = getFragmentChildren(currVirtNode);
+  const prevChildren = [prevVirtNode];
+  const currChildren = [currVirtNode];
+
+  // patchNode(frame, prevVirtNode, currVirtNode, options);
 
   patchChildren(
     frame.childNodes[STAGE_INDEX] as HTMLElement,
@@ -478,5 +479,4 @@ const patchChildren = (
   }
 };
 
-const getFragmentChildren = (node: any): html.Node.AsObject[] =>
-  node.childrenList || node.element?.childrenList;
+const getFragmentChildren = (node) => [node];

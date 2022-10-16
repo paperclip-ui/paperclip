@@ -25,6 +25,9 @@ fn compile_document(document: &ast::Document, context: &mut Context) {
 }
 
 fn compile_imports(document: &ast::Document, context: &mut Context) {
+
+    // Temporary until things stabilize - primarily for development of the editor
+    context.add_buffer(format!("require(\"./{}.css\");\n", std::path::Path::new(&context.dependency.path).file_name().unwrap().to_str().unwrap()).as_str());
     context.add_buffer("import * as React from \"react\";\n");
     for item in &document.body {
         match item.get_inner() {
@@ -70,7 +73,7 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
     context.add_buffer(format!("const {} = React.memo((props) => {{\n", &component.name).as_str());
 
     context.start_block();
-    compile_component_render(component, context);
+    compile_component_render(component, &mut context.within_component(component));
     context.end_block();
 
     context.add_buffer("});\n\n");
@@ -179,6 +182,7 @@ fn compile_element_parameters(element: &ast::Element, is_instance: bool, is_root
     context.add_buffer("}");
 }
 
+
 fn get_raw_element_attrs<'dependency>(
     element: &ast::Element,
     is_instance: bool,
@@ -196,12 +200,13 @@ fn get_raw_element_attrs<'dependency>(
         attrs.insert(parameter.name.to_string(), param_context);
     }
 
+
     if element.is_stylable() {
-        let mut sub = context.with_new_content();
+        let sub = context.with_new_content();
         sub.add_buffer(
             format!(
                 "\"{}\"",
-                get_style_namespace(&element.name, &element.id, None)
+                get_style_namespace(&element.name, &element.id, context.current_component)
             )
             .as_str(),
         );

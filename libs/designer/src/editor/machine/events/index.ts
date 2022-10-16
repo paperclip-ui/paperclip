@@ -4,7 +4,7 @@ import {
   identity,
 } from "@paperclip-ui/common";
 import { DesignerEngineEvent } from "../engine/designer/events";
-import { Point, Size } from "../state/geom";
+import { Box, Point, Size } from "../state/geom";
 
 export const editorEvents = eventCreators(
   {
@@ -18,6 +18,10 @@ export const editorEvents = eventCreators(
     }>(),
     canvasPanStart: null,
     canvasResized: identity<Size>(),
+    rectsCaptured: identity<{
+      frameIndex: number;
+      rects: Record<string, Box>;
+    }>(),
   },
   "editor"
 );

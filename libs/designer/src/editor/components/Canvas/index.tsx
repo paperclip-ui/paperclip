@@ -36,6 +36,7 @@ export const Canvas = React.memo(() => {
 const useCanvas = () => {
   const canvas = useSelector(selectCanvas);
   const currentDocument = useSelector(selectCurrentDocument);
+  console.log(canvas);
   const dispatch = useDispatch();
   const expanded = canvas.isExpanded;
 

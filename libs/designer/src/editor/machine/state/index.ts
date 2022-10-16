@@ -1,6 +1,6 @@
 import { FileResponse } from "@paperclip-ui/proto/lib/service/designer_pb";
 import { DesignerEngineState } from "../engine/designer/state";
-import { Transform } from "./geom";
+import { Box, Transform } from "./geom";
 
 export type Canvas = {
   transform: Transform;
@@ -10,6 +10,7 @@ export type Canvas = {
 
 export type EditorState = {
   curentDocument?: FileResponse.AsObject;
+  rects: Record<number, Record<string, Box>>;
   canvas: Canvas;
 } & DesignerEngineState;
 
@@ -17,8 +18,11 @@ export const DEFAULT_STATE: EditorState = {
   canvas: {
     transform: { x: 0, y: 0, z: 1 },
   },
+  rects: {},
 };
 
 export const selectCurrentDocument = (state: EditorState) =>
   state.curentDocument;
-export const selectCanvas = (state: EditorState) => state.canvas;
+export const selectCanvas = (state: EditorState) => {
+  return state.canvas;
+};

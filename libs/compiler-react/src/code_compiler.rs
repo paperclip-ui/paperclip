@@ -70,13 +70,13 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
         context.add_buffer("export ");
     }
 
-    context.add_buffer(format!("const {} = React.memo((props) => {{\n", &component.name).as_str());
+    context.add_buffer(format!("const {} = React.memo(React.forwardRef((props, ref) => {{\n", &component.name).as_str());
 
     context.start_block();
     compile_component_render(component, &mut context.within_component(component));
     context.end_block();
 
-    context.add_buffer("});\n\n");
+    context.add_buffer("}));\n\n");
 }
 
 fn compile_component_render(component: &ast::Component, context: &mut Context) {
@@ -230,6 +230,12 @@ fn get_raw_element_attrs<'dependency>(
         let mut sub = context.with_new_content();
         compile_insert(insert, &mut sub);
         attrs.insert(insert.name.to_string(), sub);
+    }
+
+    if is_root {
+        let sub = context.with_new_content();
+        sub.add_buffer("ref");
+        attrs.insert("ref".to_string(), sub);
     }
 
     attrs

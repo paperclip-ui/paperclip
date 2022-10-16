@@ -5,6 +5,7 @@ import { Frame } from "./Frame";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { selectCurrentDocument } from "../../../machine/state";
 import { PCModule } from "@paperclip-ui/proto/lib/virt/module_pb";
+import { editorEvents } from "../../../machine/events";
 
 type FramesProps = {
   expandedFrameIndex?: number;
@@ -50,9 +51,10 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
         return false;
       }
 
-      const boxes = getFrameRects(mount, data, frameIndex);
+      const rects = getFrameRects(mount, data, frameIndex);
+      console.log(rects);
 
-      // dispatch(rectsCaptured({ frameIndex, boxes }));
+      dispatch(editorEvents.rectsCaptured({ frameIndex, rects }));
     },
     [dispatch, shouldCollectRects]
   );

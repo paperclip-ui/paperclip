@@ -9,7 +9,8 @@
   },
   "workspaces": {
     "packages": [
-      "libs/*"
+      "libs/*",
+      "integrations/*"
     ],
     "installConfig": {
       "hoistingLimits": true

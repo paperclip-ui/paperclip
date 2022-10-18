@@ -1,38 +1,29 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  BoxNodeInfo,
-  Transform,
-  Point,
-  Box,
-  roundBox,
-  getScaledPoint,
-} from "../../../../../../state";
 import * as styles from "./index.pc";
-import { Dispatch } from "redux";
-import {
-  Action,
-  resizerMoved,
-  resizerPathMoved,
-  resizerPathStoppedMoving,
-  resizerStoppedMoving,
-} from "../../../../../../actions";
-import { startDOMDrag } from "../../../../../../utils";
 import { isEqual } from "lodash";
+import {
+  Box,
+  Point,
+  roundBox,
+  Transform,
+} from "@paperclip-ui/designer/src/editor/machine/state/geom";
+import { useDispatch } from "@paperclip-ui/common";
+import { startDOMDrag } from "../../../utils/dnd";
 
 type Props = {
   canvasScroll: Point;
   box: Box;
   canvasTransform: Transform;
-  dispatch: Dispatch<Action>;
   showKnobs?: boolean;
 };
 
 // https://github.com/crcn/tandem/blob/10.0.0/packages/dashboard/src/components/root/workspace/editors/paperclip/stage/canvas/tools-layer/selection/resizer.tsx
 
 export const Selectable = React.memo(
-  ({ box, canvasTransform, canvasScroll, showKnobs, dispatch }: Props) => {
+  ({ box, canvasTransform, canvasScroll, showKnobs }: Props) => {
     const [currentBox, setCurrentBox] = useState(box);
     const [initialBox, setInitialBox] = useState(box);
+    const dispatch = useDispatch();
 
     useEffect(() => {
       if (!isEqual(initialBox, box)) {
@@ -134,12 +125,12 @@ export const Selectable = React.memo(
         );
       };
 
-      startDOMDrag(
-        event,
-        null,
-        wrapActionCreator(resizerPathMoved),
-        wrapActionCreator(resizerPathStoppedMoving)
-      );
+      // startDOMDrag(
+      //   event,
+      //   null,
+      //   wrapActionCreator(resizerPathMoved),
+      //   wrapActionCreator(resizerPathStoppedMoving)
+      // );
     };
 
     const onMouseDown = (event) => {
@@ -168,12 +159,12 @@ export const Selectable = React.memo(
           );
         };
 
-        startDOMDrag(
-          event,
-          null,
-          wrapActionCreator(resizerMoved),
-          wrapActionCreator(resizerStoppedMoving)
-        );
+        // startDOMDrag(
+        //   event,
+        //   null,
+        //   wrapActionCreator(resizerMoved),
+        //   wrapActionCreator(resizerStoppedMoving)
+        // );
       }
     };
 

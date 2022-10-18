@@ -1,8 +1,9 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import * as styles from "./index.pc";
-import * as qs from "querystring";
-import { Node, NodeMedata } from "@paperclip-ui/proto/lib/virt/html_pb";
+import { Node } from "@paperclip-ui/proto/lib/virt/html_pb";
 import { Transform } from "@paperclip-ui/designer/src/editor/machine/state/geom";
+import { useDispatch } from "@paperclip-ui/common";
+import { editorEvents } from "@paperclip-ui/designer/src/editor/machine/events";
 
 export type FramesProps = {
   frames: Node.AsObject[];
@@ -11,7 +12,7 @@ export type FramesProps = {
 };
 
 export const Frames = memo(
-  ({ frames, canvasTransform, ui, readonly }: FramesProps) => {
+  ({ frames, canvasTransform, readonly }: FramesProps) => {
     return (
       <>
         {frames.map((frame, i) => {
@@ -19,7 +20,6 @@ export const Frames = memo(
             <Frame
               key={i}
               frameIndex={i}
-              ui={ui}
               frame={frame}
               canvasTransform={canvasTransform}
               readonly={readonly}
@@ -40,28 +40,23 @@ type FrameProps = {
 
 const Frame = memo(
   ({ frame, frameIndex, canvasTransform, readonly }: FrameProps) => {
-    const metadata: NodeMedata =
-      (frame.annotations && computeVirtScriptObject(frame.annotations)) || {};
-    if (annotations.frame?.visible === false) {
-      return null;
-    }
-    const frameBounds = getFrameBounds(frame as any);
+    const dispatch = useDispatch();
+
+    const metadata = (frame.element || frame.textNode).metadata;
+    const frameBounds = metadata?.bounds;
     const [editing, setEditing] = useState(false);
 
-    const onClick = useCallback(
-      (event: React.MouseEvent<any>) => {
-        dispatch(
-          frameTitleClicked({
-            frameIndex: frameIndex,
-            shiftKey: event.shiftKey,
-          })
-        );
+    const onClick = useCallback((event: React.MouseEvent<any>) => {
+      // dispatch(
+      //   editorEvents.frameTitleClicked({
+      //     frameIndex: frameIndex,
+      //     shiftKey: event.shiftKey,
+      //   })
+      // );
 
-        // prevent canvas click event
-        event.stopPropagation();
-      },
-      [dispatch]
-    );
+      // prevent canvas click event
+      event.stopPropagation();
+    }, []);
     const inputRef = useRef<HTMLInputElement>();
 
     const onDoubleClick = useCallback(() => {
@@ -80,14 +75,14 @@ const Frame = memo(
       }
 
       setEditing(false);
-      dispatch(
-        frameTitleChanged({ frameIndex, value: inputRef.current.value })
-      );
+      // dispatch(
+      //   editorEvents.frameTitleChanged({ frameIndex, value: inputRef.current.value })
+      // );
     }, [editing, inputRef, frameIndex, setEditing]);
     const onBlur = onChanged;
-    useEffect(() => {
-      inputRef.current.value = annotations.frame?.title || "";
-    }, [inputRef, annotations.frame?.title]);
+    // useEffect(() => {
+    //   inputRef.current.value = annotations.frame?.title || "";
+    // }, [inputRef, annotations.frame?.title]);
 
     const onKeyPress = useCallback(
       (event: React.KeyboardEvent<any>) => {
@@ -119,7 +114,7 @@ const Frame = memo(
           onDoubleClick={onDoubleClick}
           inputRef={inputRef}
           onMouseUp={onClick}
-          value={annotations.frame?.title || "Untitled"}
+          // value={annotations.frame?.title || "Untitled"}
         />
       </styles.Frame>
     );

@@ -1,4 +1,4 @@
-public compoenent Knob {
+public component Knob {
   render svg(onMouseDown: onMouseDown, class: class) {
     style {
       width: var(--knob-size)

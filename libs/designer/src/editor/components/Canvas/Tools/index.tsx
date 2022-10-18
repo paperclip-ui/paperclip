@@ -77,8 +77,6 @@ export const Tools = () => {
       ) : null} */}
       <Frames
         frames={frames}
-        dispatch={dispatch}
-        ui={state.designer.ui}
         canvasTransform={canvas.transform}
         readonly={readonly}
       />

@@ -1,6 +1,6 @@
+import { Canvas } from "@paperclip-ui/designer/src/editor/machine/state";
 import React from "react";
 import * as styles from "./index.pc";
-import { Canvas } from "../../../../../../state";
 
 type Props = {
   canvas: Canvas;

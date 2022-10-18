@@ -104,7 +104,7 @@ const useTools = () => {
     rects: frameBoxes,
     currentDocument,
   } = useSelector(getEditorState);
-  const toolsLayerEnabled = canvas.isExpanded;
+  const toolsLayerEnabled = !canvas.isExpanded;
 
   const getMousePoint = (event) => {
     const rect: ClientRect = (

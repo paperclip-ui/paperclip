@@ -4,7 +4,14 @@ import {
   Document as HTMLDocument,
 } from "@paperclip-ui/proto/lib/virt/html_pb";
 import { DesignerEngineState } from "../engine/designer/state";
-import { Box, centerTransformZoom, mergeBoxes, Size, Transform } from "./geom";
+import {
+  Box,
+  centerTransformZoom,
+  mergeBoxes,
+  Point,
+  Size,
+  Transform,
+} from "./geom";
 import { memoize } from "@paperclip-ui/common";
 export const IS_WINDOWS = false;
 
@@ -13,6 +20,7 @@ export type Canvas = {
   transform: Transform;
   isExpanded?: boolean;
   activeFrame?: number;
+  scrollPosition: Point;
 };
 
 export const DEFAULT_FRAME_BOX = {
@@ -24,25 +32,31 @@ export const DEFAULT_FRAME_BOX = {
 const INITIAL_ZOOM_PADDING = 50;
 
 export type EditorState = {
+  readonly: boolean;
+  selectedNodePaths: string[];
+  highlightNodePath?: string;
+  resizerMoving: boolean;
+  optionKeyDown: boolean;
   centeredInitial: boolean;
-  curentDocument?: FileResponse.AsObject;
+  currentDocument?: FileResponse.AsObject;
   rects: Record<number, Record<string, Box>>;
   canvas: Canvas;
 } & DesignerEngineState;
 
 export const DEFAULT_STATE: EditorState = {
+  readonly: false,
+  resizerMoving: false,
+  optionKeyDown: false,
   centeredInitial: false,
+  selectedNodePaths: [],
   canvas: {
     transform: { x: 0, y: 0, z: 1 },
+    scrollPosition: { x: 0, y: 0 },
   },
   rects: {},
 };
 
-export const selectCurrentDocument = (state: EditorState) =>
-  state.curentDocument;
-export const selectCanvas = (state: EditorState) => {
-  return state.canvas;
-};
+export const getCurrentDocument = (state: EditorState) => state.currentDocument;
 
 export const maybeCenterCanvas = (editor: EditorState, force?: boolean) => {
   if (
@@ -58,7 +72,7 @@ export const maybeCenterCanvas = (editor: EditorState, force?: boolean) => {
 
     if (currentFrameIndex != null) {
       const frameBoxes = getPreviewFrameBoxes(
-        editor.curentDocument?.paperclip?.html
+        editor.currentDocument?.paperclip?.html
       );
       targetBounds = frameBoxes[currentFrameIndex];
     }
@@ -131,17 +145,23 @@ export const centerEditorCanvas = (
     },
   };
 
-  console.log(editor.canvas);
-
   return editor;
 };
 
 const getAllFrameBounds = (designer: EditorState) => {
   return mergeBoxes(getCurrentPreviewFrameBoxes(designer));
 };
+export const getSelectedNodePaths = (designer: EditorState) =>
+  designer.selectedNodePaths;
+export const getHighlightedNodePath = (designer: EditorState) =>
+  designer.highlightNodePath;
+export const getFrameBoxes = (designer: EditorState) => designer.rects;
+export const getResizerMoving = (designer: EditorState) =>
+  designer.resizerMoving;
+export const getEditorState = (designer: EditorState) => designer;
 
 export const getCurrentPreviewFrameBoxes = (editor: EditorState) => {
-  const preview = editor.curentDocument?.paperclip?.html;
+  const preview = editor.currentDocument?.paperclip?.html;
 
   return preview ? getPreviewFrameBoxes(preview).filter(Boolean) : [];
 };
@@ -163,6 +183,8 @@ const getPreviewFrameBoxes = (preview: HTMLDocument.AsObject) => {
 };
 
 const getInnerNode = (node: Node.AsObject) => node.element || node.textNode;
+
+export const getCanvas = (editor: EditorState) => editor.canvas;
 
 export const getPreviewChildren = (frame: HTMLDocument.AsObject) => {
   // return frame.kind === VirtualNodeKind.Fragment ? frame.children : [frame];

@@ -12,7 +12,8 @@ import { normalizeWheel } from "./normalize-wheel";
 import { editorEvents } from "../../machine/events";
 
 import { useDispatch, useSelector } from "@paperclip-ui/common";
-import { selectCanvas, selectCurrentDocument } from "../../machine/state";
+import { getCanvas, getCurrentDocument } from "../../machine/state";
+import { Tools } from "./Tools";
 
 export const Canvas = React.memo(() => {
   const { canvasRef, actualTransform, expanded, activeFrameIndex } =
@@ -28,14 +29,14 @@ export const Canvas = React.memo(() => {
       >
         <Frames expandedFrameIndex={expanded ? activeFrameIndex : null} />
       </styles.Inner>
-      {/* <Tools /> */}
+      <Tools />
     </styles.Canvas>
   );
 });
 
 const useCanvas = () => {
-  const canvas = useSelector(selectCanvas);
-  const currentDocument = useSelector(selectCurrentDocument);
+  const canvas = useSelector(getCanvas);
+  const currentDocument = useSelector(getCurrentDocument);
   const dispatch = useDispatch();
   const expanded = canvas.isExpanded;
 
@@ -64,7 +65,6 @@ const useCanvas = () => {
 
   const onWheel = useCallback(
     (event: WheelEvent) => {
-      console.log("WHEEEL:");
       event.preventDefault();
       clearTimeout(canvasPanTimer);
 
@@ -77,7 +77,6 @@ const useCanvas = () => {
       }
       const rect = canvasRef.current.getBoundingClientRect();
 
-      console.log("DIM");
       // ignore jerky scroll - happens in VM for some reason.
       if (Math.abs(pixelX) > 100) {
         pixelX = pixelX / 100;
@@ -115,7 +114,6 @@ const useCanvas = () => {
 
   useEffect(() => {
     const ref = canvasRef.current;
-    console.log("FSDFSDFDS", ref);
     if (!ref) {
       return;
     }

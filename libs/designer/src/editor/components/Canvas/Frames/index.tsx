@@ -3,7 +3,7 @@ import { getFrameRects } from "@paperclip-ui/web-renderer";
 import { memo } from "react";
 import { Frame } from "./Frame";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
-import { selectCurrentDocument } from "../../../machine/state";
+import { getCurrentDocument } from "../../../machine/state";
 import { PCModule } from "@paperclip-ui/proto/lib/virt/module_pb";
 import { editorEvents } from "../../../machine/events";
 
@@ -12,7 +12,7 @@ type FramesProps = {
 };
 
 export const Frames = memo(({ expandedFrameIndex }: FramesProps) => {
-  const doc = useSelector(selectCurrentDocument);
+  const doc = useSelector(getCurrentDocument);
 
   const { frames, onFrameLoaded, onFrameUpdated } = useFrames({
     shouldCollectRects: true,
@@ -42,7 +42,7 @@ type UseFramesProps = {
 };
 
 const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
-  const doc = useSelector(selectCurrentDocument);
+  const doc = useSelector(getCurrentDocument);
   const dispatch = useDispatch();
 
   const emitFrameRects = useCallback(

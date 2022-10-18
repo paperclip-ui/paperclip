@@ -9,6 +9,14 @@ import { Box, Point, Size } from "../state/geom";
 export const editorEvents = eventCreators(
   {
     canvasPanEnd: null,
+    canvasMouseMoved: identity<Point>(),
+    canvasMouseLeave: null,
+    canvasMouseDown: identity<{
+      metaKey: boolean;
+      ctrlKey: boolean;
+      shiftKey: boolean;
+      timestamp: number;
+    }>(),
     canvasPanned: identity<{
       delta: Point;
       mousePosition: Point;

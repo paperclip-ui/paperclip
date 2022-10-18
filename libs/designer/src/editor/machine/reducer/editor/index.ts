@@ -25,7 +25,7 @@ export const editorReducer = (
   switch (event.type) {
     case designerEngineEvents.documentOpened.type:
       state = produce(state, (newState) => {
-        newState.curentDocument = event.payload.toObject();
+        newState.currentDocument = event.payload.toObject();
       });
       state = maybeCenterCanvas(state);
       return state;

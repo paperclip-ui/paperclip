@@ -1,36 +1,17 @@
-import {
-  NodeAnnotations,
-  VirtualFrame,
-  computeVirtScriptObject,
-  VirtualElement,
-  VirtualNode,
-  VirtualText,
-} from "@paperclip-ui/utils";
-import { getFrameBounds } from "@paperclip-ui/web-renderer";
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
-import { useHistory } from "react-router";
-import { Dispatch } from "redux";
-import {
-  Action,
-  expandFrameButtonClicked,
-  frameTitleChanged,
-  frameTitleClicked,
-  redirectRequest,
-} from "../../../../../../actions";
-import { Transform, UIState } from "../../../../../../state";
 import * as styles from "./index.pc";
 import * as qs from "querystring";
+import { Node, NodeMedata } from "@paperclip-ui/proto/lib/virt/html_pb";
+import { Transform } from "@paperclip-ui/designer/src/editor/machine/state/geom";
 
 export type FramesProps = {
-  frames: VirtualFrame[];
-  dispatch: Dispatch<any>;
+  frames: Node.AsObject[];
   canvasTransform: Transform;
   readonly: boolean;
-  ui: UIState;
 };
 
 export const Frames = memo(
-  ({ frames, dispatch, canvasTransform, ui, readonly }: FramesProps) => {
+  ({ frames, canvasTransform, ui, readonly }: FramesProps) => {
     return (
       <>
         {frames.map((frame, i) => {
@@ -39,7 +20,6 @@ export const Frames = memo(
               key={i}
               frameIndex={i}
               ui={ui}
-              dispatch={dispatch}
               frame={frame}
               canvasTransform={canvasTransform}
               readonly={readonly}
@@ -52,24 +32,15 @@ export const Frames = memo(
 );
 
 type FrameProps = {
-  frame: VirtualFrame;
+  frame: Node.AsObject;
   frameIndex: number;
   canvasTransform: Transform;
-  dispatch: Dispatch<any>;
   readonly: boolean;
-  ui: UIState;
 };
 
 const Frame = memo(
-  ({
-    frame,
-    frameIndex,
-    canvasTransform,
-    readonly,
-    ui,
-    dispatch,
-  }: FrameProps) => {
-    const annotations: NodeAnnotations =
+  ({ frame, frameIndex, canvasTransform, readonly }: FrameProps) => {
+    const metadata: NodeMedata =
       (frame.annotations && computeVirtScriptObject(frame.annotations)) || {};
     if (annotations.frame?.visible === false) {
       return null;
@@ -126,19 +97,6 @@ const Frame = memo(
       },
       [onChanged]
     );
-
-    const onExpandButtonClick = useCallback(() => {
-      dispatch(
-        redirectRequest({
-          query: {
-            ...ui.query,
-            frame: frameIndex,
-            expanded: true,
-          },
-        })
-      );
-    }, [dispatch, frameIndex, ui.query]);
-
     return (
       <styles.Frame
         style={{
@@ -159,7 +117,6 @@ const Frame = memo(
           onBlur={onBlur}
           onKeyPress={onKeyPress}
           onDoubleClick={onDoubleClick}
-          onExpandButtonClick={onExpandButtonClick}
           inputRef={inputRef}
           onMouseUp={onClick}
           value={annotations.frame?.title || "Untitled"}

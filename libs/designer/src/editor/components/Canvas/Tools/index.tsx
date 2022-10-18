@@ -1,11 +1,8 @@
 import React, { useRef, useCallback, useEffect } from "react";
 
 import * as styles from "./index.pc";
-import { Selectable } from "./Selectable";
-import { Pixels } from "./Pixels";
-import { Distance } from "./Distance";
+// import { Selectable } from "./Selectable";
 import { Frames } from "./Frames";
-import { Empty } from "./Empty";
 import { useDrop } from "react-dnd";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
@@ -53,11 +50,11 @@ export const Tools = () => {
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
     >
-      <Empty show={showEmpty} />
+      {/* <Empty show={showEmpty} />
 
-      <Pixels canvas={canvas} />
+      <Pixels canvas={canvas} /> */}
 
-      {!resizerMoving && (
+      {/* {!resizerMoving && (
         <Selectable
           dispatch={dispatch}
           canvasScroll={canvas.scrollPosition}
@@ -77,7 +74,7 @@ export const Tools = () => {
             !readonly
           }
         />
-      ) : null}
+      ) : null} */}
       <Frames
         frames={frames}
         dispatch={dispatch}
@@ -85,14 +82,14 @@ export const Tools = () => {
         canvasTransform={canvas.transform}
         readonly={readonly}
       />
-      {optionKeyDown && selectedBox && hoveringBox ? (
+      {/* {optionKeyDown && selectedBox && hoveringBox ? (
         <Distance
           canvasScroll={canvas.scrollPosition}
           canvasTransform={canvas.transform}
           from={selectedBox}
           to={hoveringBox}
         />
-      ) : null}
+      ) : null} */}
     </styles.Tools>
   );
 };

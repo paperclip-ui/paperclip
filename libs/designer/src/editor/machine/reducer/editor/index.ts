@@ -20,6 +20,7 @@ import {
   getNodePath,
   isInstance,
   isNodeParent,
+  getInnerNode,
 } from "@paperclip-ui/proto/lib/virt/html";
 
 const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
@@ -91,6 +92,9 @@ export const editorReducer = (
           )
         );
       });
+    }
+    case editorEvents.canvasMouseMoved.type: {
+      return highlightNode(state, event.payload);
     }
     case editorEvents.rectsCaptured.type:
       state = produce(state, (newState) => {
@@ -183,7 +187,7 @@ const addHoverableChildren = (
 
   if (isNodeParent(node)) {
     for (const child of node.childrenList) {
-      addHoverableChildren(child, false, hoverable);
+      addHoverableChildren(getInnerNode(child), false, hoverable);
     }
   }
 };

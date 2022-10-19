@@ -13,7 +13,7 @@ component ColorPickerPopup {
     }
     div header {
       style {
-      padding: var(theme.space04)
+        padding: var(theme.space04)
         display: flex
         justify-content: space-between
         font-weight: 600
@@ -28,7 +28,7 @@ component ColorPickerPopup {
     }
     div {
       style {
-      padding: var(theme.space04)
+        padding: var(theme.space04)
         display: flex
         flex-direction: column
         gap: var(theme.space04)

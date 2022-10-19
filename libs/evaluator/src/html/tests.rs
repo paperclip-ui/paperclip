@@ -477,7 +477,6 @@ fn bounds_are_attached_to_root_elements() {
     );
 }
 
-
 #[test]
 fn bounds_are_attached_to_root_components() {
     let doc = evaluate_doc(HashMap::from([(
@@ -499,7 +498,11 @@ fn bounds_are_attached_to_root_components() {
         &virt::html::node::Inner::Element(virt::html::Element {
             tag_name: "div".to_string(),
             source_id: Some("80f4925f-14".to_string()),
-            attributes: vec![virt::html::Attribute { source_id: None, name: "class".to_string(), value: "_A-80f4925f-14".to_string() }],
+            attributes: vec![virt::html::Attribute {
+                source_id: None,
+                name: "class".to_string(),
+                value: "_A-80f4925f-14".to_string()
+            }],
             metadata: Some(virt::html::NodeMedata {
                 bounds: Some(virt::html::Bounds {
                     x: 100.0,
@@ -530,7 +533,7 @@ fn bounds_are_attached_to_root_text_nodes() {
     assert_eq!(
         element,
         &virt::html::node::Inner::TextNode(virt::html::TextNode {
-						value: "abba".to_string(),
+            value: "abba".to_string(),
             source_id: Some("80f4925f-14".to_string()),
             metadata: Some(virt::html::NodeMedata {
                 bounds: Some(virt::html::Bounds {
@@ -562,22 +565,25 @@ fn bounds_are_attached_to_root_instances() {
 
     let element = doc.children.get(1).expect("Node must exist").get_inner();
 
-   
     assert_eq!(
-			element,
-			&virt::html::node::Inner::Element(virt::html::Element {
-					tag_name: "div".to_string(),
-					source_id: Some("80f4925f-1".to_string()),
-					attributes: vec![virt::html::Attribute { source_id: None, name: "class".to_string(), value: "_A-80f4925f-1 _80f4925f-17".to_string() }],
-					metadata: Some(virt::html::NodeMedata {
-							bounds: Some(virt::html::Bounds {
-									x: 100.0,
-									y: 100.0,
-									width: 100.0,
-									height: 100.0
-							})
-					}),
-					children: vec![]
-			})
-	);
+        element,
+        &virt::html::node::Inner::Element(virt::html::Element {
+            tag_name: "div".to_string(),
+            source_id: Some("80f4925f-1".to_string()),
+            attributes: vec![virt::html::Attribute {
+                source_id: None,
+                name: "class".to_string(),
+                value: "_A-80f4925f-1 _80f4925f-17".to_string()
+            }],
+            metadata: Some(virt::html::NodeMedata {
+                bounds: Some(virt::html::Bounds {
+                    x: 100.0,
+                    y: 100.0,
+                    width: 100.0,
+                    height: 100.0
+                })
+            }),
+            children: vec![]
+        })
+    );
 }

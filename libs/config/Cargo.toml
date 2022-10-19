@@ -9,6 +9,7 @@ exclude = []
 name = "paperclip_config"
 
 [dependencies]
+ts-rs = "6.1"
 paperclip_common = { path = "../rs-common" }
 paperclip_parser = { path = "../parser" }
 serde = { version = "1.0.143", features = ["derive"] }

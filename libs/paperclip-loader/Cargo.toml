@@ -16,6 +16,7 @@ paperclip_project = { path = "../project" }
 paperclip_config = { path = "../config" }
 futures = "0.3.21"
 anyhow = "1.0.61"
+neon-serde3 = "0.10.0"
 
 [dependencies.neon]
 version = "0.10"

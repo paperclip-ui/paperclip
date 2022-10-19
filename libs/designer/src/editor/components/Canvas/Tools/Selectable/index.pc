@@ -1,3 +1,5 @@
+import "../../../../styles/theme.pc" as theme
+
 public component Knob {
   render svg(onMouseDown: onMouseDown, class: class) {
     style {
@@ -18,7 +20,7 @@ public component Knob {
 
 public component Overlay {
   render div(onMouseDown: onMouseDown, style: style, onClick: onClick) {
-    style {
+    style extends theme.fontDefault {
       --background: var(--vscode-button-hoverBackground, rgb(0, 132, 255))
       --foreground: var(--vscode-button-foreground, white)
       --knob-size: 7px
@@ -42,6 +44,7 @@ public component Overlay {
         padding: 4px 8px
         left: 0px
       }
+      slot size
     }
   }
 }

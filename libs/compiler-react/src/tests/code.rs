@@ -85,7 +85,7 @@ add_case! {
 
 add_case! {
   element_names_are_included_as_classes,
-  r#"public component A { 
+  r#"public component A {
     render div ab {
     }
   }"#,

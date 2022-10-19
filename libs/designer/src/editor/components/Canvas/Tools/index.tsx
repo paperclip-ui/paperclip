@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { flattenFrameBoxes, getEditorState } from "../../../machine/state";
 import { editorEvents } from "../../../machine/events";
 import { mergeBoxes } from "../../../machine/state/geom";
+import { Selectable } from "./Selectable";
 
 export const Tools = () => {
   const {
@@ -44,16 +45,15 @@ export const Tools = () => {
 
       <Pixels canvas={canvas} /> */}
 
-      {/* {!resizerMoving && (
+      {!resizerMoving && (
         <Selectable
-          dispatch={dispatch}
           canvasScroll={canvas.scrollPosition}
           canvasTransform={canvas.transform}
           box={hoveringBox}
         />
       )}
 
-      {selectedBox ? (
+      {/*selectedBox ? (
         <Selectable
           dispatch={dispatch}
           canvasScroll={canvas.scrollPosition}

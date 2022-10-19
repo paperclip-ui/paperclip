@@ -131,7 +131,10 @@ pub fn evaluate_comment_metadata(expr: &docco_ast::Comment) -> virt::NodeMedata 
         }
     }
 
-    virt::NodeMedata { bounds, visible: Some(true) }
+    virt::NodeMedata {
+        bounds,
+        visible: Some(true),
+    }
 }
 
 fn evaluate_component<F: FileResolver>(
@@ -542,7 +545,6 @@ fn evaluate_text_node<F: FileResolver>(
     metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
 ) {
-
     let node = if text_node.is_stylable() {
         let class_name =
             get_style_namespace(&text_node.name, &text_node.id, context.current_component);

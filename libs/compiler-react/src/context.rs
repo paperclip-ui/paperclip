@@ -1,14 +1,14 @@
 use paperclip_common::serialize_context::Context as SerializeContext;
 use paperclip_parser::graph::Dependency;
 use paperclip_proto::ast;
-use std::rc::Rc;
 use std::cell::RefCell;
+use std::rc::Rc;
 
 #[derive(Clone)]
 pub struct Context<'dependency> {
     pub content: Rc<RefCell<SerializeContext>>,
     pub dependency: &'dependency Dependency,
-    pub current_component: Option<&'dependency ast::pc::Component>
+    pub current_component: Option<&'dependency ast::pc::Component>,
 }
 
 impl<'dependency> Context<'dependency> {
@@ -38,7 +38,9 @@ impl<'dependency> Context<'dependency> {
     }
     pub fn with_new_content(&self) -> Self {
         let mut clone = self.clone();
-        clone.content = Rc::new(RefCell::new(SerializeContext::new(self.content.borrow().depth)));
+        clone.content = Rc::new(RefCell::new(SerializeContext::new(
+            self.content.borrow().depth,
+        )));
         clone
     }
 }

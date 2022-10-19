@@ -1,0 +1,12 @@
+{
+  "name": "@paperclip-ui/config",
+  "version": "1.0.0",
+  "description": "Crate for managing paperclip config files + utils for things like:",
+  "main": "index.js",
+  "scripts": {
+    "build": "cargo test"
+  },
+  "author": "",
+  "license": "ISC",
+  "types": "./index.d.ts"
+}

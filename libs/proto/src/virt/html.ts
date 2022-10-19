@@ -12,16 +12,25 @@ type VirtText = {};
 
 export type OuterNode = {
   element?: VirtElement;
-  text?: VirtText;
+  textNode?: VirtText;
 };
 
-export const getInnerNode = (node: OuterNode) => node.element || node.text;
+export const getInnerNode = (node: OuterNode) => {
+  let ret = node.element || node.textNode;
+  if (!ret) {
+    console.warn(node);
+    throw new Error(
+      `Inner node value doesn't exist - protobufs were probably updated.`
+    );
+  }
+  return ret;
+};
 
 // eslint-disable-next-line
 export type BaseTreeNode = {} & InnerVirtNode;
 
 export type BaseParentNode = {
-  childrenList: BaseTreeNode[];
+  childrenList: OuterNode[];
 } & BaseTreeNode;
 
 export const isNodeParent = (node: BaseTreeNode): node is BaseParentNode =>

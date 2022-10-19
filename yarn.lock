@@ -1346,6 +1346,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@paperclip-ui/config@workspace:^, @paperclip-ui/config@workspace:libs/config":
+  version: 0.0.0-use.local
+  resolution: "@paperclip-ui/config@workspace:libs/config"
+  languageName: unknown
+  linkType: soft
+
 "@paperclip-ui/designer@workspace:libs/designer":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/designer@workspace:libs/designer"
@@ -8872,9 +8878,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "paperclip-loader@workspace:libs/paperclip-loader"
   dependencies:
+    "@paperclip-ui/config": "workspace:^"
     cargo-cp-artifact: ^0.1
     loader-utils: ^3.2.0
     lodash: ^4.17.21
+    webpack-virtual-modules: ^0.4.5
   languageName: unknown
   linkType: soft
 
@@ -12135,6 +12143,13 @@ __metadata:
   version: 3.2.3
   resolution: "webpack-sources@npm:3.2.3"
   checksum: 989e401b9fe3536529e2a99dac8c1bdc50e3a0a2c8669cbafad31271eadd994bc9405f88a3039cd2e29db5e6d9d0926ceb7a1a4e7409ece021fe79c37d9c4607
+  languageName: node
+  linkType: hard
+
+"webpack-virtual-modules@npm:^0.4.5":
+  version: 0.4.5
+  resolution: "webpack-virtual-modules@npm:0.4.5"
+  checksum: 0ae9a8b50d0cb1e43da5ff8acaa7b99c34a42f0d6cc83a82908fb6e131e574a949d19948df4fdd3de0dbfdbadb2b93ceb4a740c55727a4236eb3b2bbc8f785a6
   languageName: node
   linkType: hard
 

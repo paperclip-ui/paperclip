@@ -25,9 +25,18 @@ fn compile_document(document: &ast::Document, context: &mut Context) {
 }
 
 fn compile_imports(document: &ast::Document, context: &mut Context) {
-
     // Temporary until things stabilize - primarily for development of the editor
-    context.add_buffer(format!("require(\"./{}.css\");\n", std::path::Path::new(&context.dependency.path).file_name().unwrap().to_str().unwrap()).as_str());
+    context.add_buffer(
+        format!(
+            "require(\"./{}.css\");\n",
+            std::path::Path::new(&context.dependency.path)
+                .file_name()
+                .unwrap()
+                .to_str()
+                .unwrap()
+        )
+        .as_str(),
+    );
     context.add_buffer("import * as React from \"react\";\n");
     for item in &document.body {
         match item.get_inner() {
@@ -38,12 +47,11 @@ fn compile_imports(document: &ast::Document, context: &mut Context) {
         }
     }
     context.add_buffer("\n");
-    
 }
 
 fn compile_import(import: &ast::Import, context: &mut Context) {
-    context.add_buffer(format!("import * as {} from \"{}\";", import.namespace, import.path).as_str());
-    
+    context
+        .add_buffer(format!("import * as {} from \"{}\";", import.namespace, import.path).as_str());
 }
 
 macro_rules! compile_children {
@@ -70,7 +78,13 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
         context.add_buffer("export ");
     }
 
-    context.add_buffer(format!("const {} = React.memo(React.forwardRef((props, ref) => {{\n", &component.name).as_str());
+    context.add_buffer(
+        format!(
+            "const {} = React.memo(React.forwardRef((props, ref) => {{\n",
+            &component.name
+        )
+        .as_str(),
+    );
 
     context.start_block();
     compile_component_render(component, &mut context.within_component(component));
@@ -113,11 +127,11 @@ fn compile_slot(node: &ast::Slot, context: &mut Context) {
     }
 }
 fn compile_element(element: &ast::Element, is_root: bool, context: &mut Context) {
-
     let is_instance = context
-    .dependency
-    .document
-    .contains_component_name(&element.tag_name) || element.namespace != None;
+        .dependency
+        .document
+        .contains_component_name(&element.tag_name)
+        || element.namespace != None;
 
     let tag_name = if is_instance {
         let mut buffer = format!("{}", element.tag_name);
@@ -158,8 +172,18 @@ fn compile_element_children(element: &ast::Element, context: &mut Context) {
     }
 }
 
-fn compile_element_parameters(element: &ast::Element, is_instance: bool, is_root: bool, context: &mut Context) {
-    let raw_attrs = rename_attrs_for_react(get_raw_element_attrs(element, is_instance,is_root, context));
+fn compile_element_parameters(
+    element: &ast::Element,
+    is_instance: bool,
+    is_root: bool,
+    context: &mut Context,
+) {
+    let raw_attrs = rename_attrs_for_react(get_raw_element_attrs(
+        element,
+        is_instance,
+        is_root,
+        context,
+    ));
 
     if raw_attrs.len() == 0 {
         context.add_buffer("null");
@@ -182,7 +206,6 @@ fn compile_element_parameters(element: &ast::Element, is_instance: bool, is_root
     context.add_buffer("}");
 }
 
-
 fn get_raw_element_attrs<'dependency>(
     element: &ast::Element,
     is_instance: bool,
@@ -200,7 +223,6 @@ fn get_raw_element_attrs<'dependency>(
         attrs.insert(parameter.name.to_string(), param_context);
     }
 
-
     if element.is_stylable() {
         let sub = context.with_new_content();
         sub.add_buffer(
@@ -212,7 +234,10 @@ fn get_raw_element_attrs<'dependency>(
         );
 
         if is_root {
-            sub.add_buffer(format!(" + (props.$$scopeClassName ? \" \" + props.$$scopeClassName : \"\")").as_str());
+            sub.add_buffer(
+                format!(" + (props.$$scopeClassName ? \" \" + props.$$scopeClassName : \"\")")
+                    .as_str(),
+            );
         }
 
         if is_instance {

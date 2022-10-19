@@ -3,18 +3,8 @@ import React, { useRef, useCallback, useEffect } from "react";
 import * as styles from "./index.pc";
 // import { Selectable } from "./Selectable";
 import { Frames } from "./Frames";
-import { useDrop } from "react-dnd";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
-import {
-  flattenFrameBoxes,
-  getCanvas,
-  getCurrentDocument,
-  getEditorState,
-  getFrameBoxes,
-  getHighlightedNodePath,
-  getResizerMoving,
-  getSelectedNodePaths,
-} from "../../../machine/state";
+import { flattenFrameBoxes, getEditorState } from "../../../machine/state";
 import { editorEvents } from "../../../machine/events";
 import { mergeBoxes } from "../../../machine/state/geom";
 

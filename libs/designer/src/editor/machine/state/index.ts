@@ -1,4 +1,5 @@
 import { FileResponse } from "@paperclip-ui/proto/lib/service/designer_pb";
+import { pickBy } from "lodash";
 import {
   Node,
   Document as HTMLDocument,
@@ -6,7 +7,9 @@ import {
 import { DesignerEngineState } from "../engine/designer/state";
 import {
   Box,
+  boxIntersectsPoint,
   centerTransformZoom,
+  getScaledPoint,
   mergeBoxes,
   Point,
   Size,
@@ -21,6 +24,12 @@ export type Canvas = {
   isExpanded?: boolean;
   activeFrame?: number;
   scrollPosition: Point;
+  mousePosition?: Point;
+};
+
+export type BoxNodeInfo = {
+  nodePath: string;
+  box: Box;
 };
 
 export const DEFAULT_FRAME_BOX = {
@@ -33,6 +42,7 @@ const INITIAL_ZOOM_PADDING = 50;
 
 export type EditorState = {
   readonly: boolean;
+  scopedElementPath?: string;
   selectedNodePaths: string[];
   highlightNodePath?: string;
   resizerMoving: boolean;
@@ -47,6 +57,7 @@ export const DEFAULT_STATE: EditorState = {
   readonly: false,
   resizerMoving: false,
   optionKeyDown: false,
+  scopedElementPath: null,
   centeredInitial: false,
   selectedNodePaths: [],
   canvas: {
@@ -155,7 +166,6 @@ export const getSelectedNodePaths = (designer: EditorState) =>
   designer.selectedNodePaths;
 export const getHighlightedNodePath = (designer: EditorState) =>
   designer.highlightNodePath;
-export const getFrameBoxes = (designer: EditorState) => designer.rects;
 export const getResizerMoving = (designer: EditorState) =>
   designer.resizerMoving;
 export const getEditorState = (designer: EditorState) => designer;
@@ -198,5 +208,54 @@ export const flattenFrameBoxes = memoize(
       Object.assign(all, frameBoxes[id]);
     }
     return all;
+  }
+);
+
+export const getNodeInfoAtPoint = (
+  point: Point,
+  transform: Transform,
+  boxes: Record<string, Box>,
+  expandedFrameIndex?: number
+) => {
+  return findBoxNodeInfo(
+    getScaledPoint(point, transform),
+    expandedFrameIndex ? getFrameBoxes(boxes, expandedFrameIndex) : boxes
+  );
+};
+
+export const findBoxNodeInfo = memoize(
+  (point: Point, boxes: Record<string, Box>): BoxNodeInfo | null => {
+    let bestIntersetingBox;
+    let bestIntersetingNodePath;
+    for (const nodePath in boxes) {
+      const box = boxes[nodePath];
+      if (boxIntersectsPoint(box, point)) {
+        if (
+          !bestIntersetingBox ||
+          nodePath.length > bestIntersetingNodePath.length
+        ) {
+          bestIntersetingBox = box;
+          bestIntersetingNodePath = nodePath;
+        }
+      }
+    }
+
+    if (!bestIntersetingBox) {
+      return null;
+    }
+
+    return {
+      nodePath: bestIntersetingNodePath,
+      box: bestIntersetingBox,
+    };
+  }
+);
+
+export const getFrameBoxes = memoize(
+  (boxes: Record<string, Box>, frameIndex: number) => {
+    const v = pickBy(boxes, (value: Box, key: string) => {
+      return key.indexOf(String(frameIndex)) === 0;
+    });
+    return v;
   }
 );

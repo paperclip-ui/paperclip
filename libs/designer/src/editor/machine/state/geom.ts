@@ -114,3 +114,23 @@ export const mapBox = (
 });
 
 export const roundBox = (bounds: Box) => mapBox(bounds, (v) => Math.round(v));
+
+export const getScaledPoint = (
+  point: Point,
+  transform: Transform,
+  scroll: Point = { x: 0, y: 0 }
+) => {
+  return {
+    x: (point.x - transform.x) / transform.z + scroll.x,
+    y: (point.y - transform.y) / transform.z + scroll.y,
+  };
+};
+
+export const boxIntersectsPoint = (box: Box, point: Point) => {
+  return (
+    box.x <= point.x &&
+    box.y <= point.y &&
+    box.x + box.width >= point.x &&
+    box.y + box.height >= point.y
+  );
+};

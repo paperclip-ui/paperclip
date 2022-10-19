@@ -4,12 +4,15 @@ import {
   Canvas,
   EditorState,
   flattenFrameBoxes,
+  getNodeInfoAtPoint,
   IS_WINDOWS,
   maybeCenterCanvas,
 } from "../../state";
 import produce from "immer";
-import { clamp } from "lodash";
-import { Box, centerTransformZoom } from "../../state/geom";
+import { clamp, pick } from "lodash";
+import { Box, centerTransformZoom, Point } from "../../state/geom";
+import { PCModule } from "@paperclip-ui/proto/lib/virt/module_pb";
+import { memoize } from "@paperclip-ui/common";
 
 const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
 const PAN_X_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;
@@ -103,3 +106,54 @@ const clampCanvasTransform = (canvas: Canvas, rects: Record<string, Box>) => {
     newCanvas.transform.y = clamp(newCanvas.transform.y, -h, w);
   });
 };
+
+const highlightNode = (designer: EditorState, mousePosition: Point) => {
+  return produce(designer, (newDesigner) => {
+    newDesigner.canvas.mousePosition = mousePosition;
+    const canvas = newDesigner.canvas;
+    const info = getNodeInfoAtPoint(
+      mousePosition,
+      canvas.transform,
+      getScopedBoxes(
+        flattenFrameBoxes(designer.rects),
+        designer.scopedElementPath,
+        designer.currentDocument!.paperclip
+      ),
+      newDesigner.canvas.isExpanded ? newDesigner.canvas.activeFrame : null
+    );
+    newDesigner.highlightNodePath = info?.nodePath;
+  });
+};
+
+export const getScopedBoxes = memoize(
+  (
+    boxes: Record<string, Box>,
+    scopedElementPath: string,
+    root: PCModule.AsObject
+  ) => {
+    const hoverableNodePaths = getHoverableNodePaths(scopedElementPath, root);
+
+    return pick(boxes, hoverableNodePaths);
+  }
+);
+
+const getHoverableNodePaths = memoize(
+  (scopedNodePath: string | undefined, root: PCModule.AsObject) => {
+    const scopedNode = scopedNodePath
+      ? getNodeByPath(scopedNodePath, root)
+      : root;
+    const ancestors = scopedNodePath
+      ? getNodeAncestors(scopedNodePath, root)
+      : [];
+
+    const hoverable: VirtualNode[] = [];
+
+    const scopes = [scopedNode, ...ancestors];
+
+    for (const scope of scopes) {
+      addHoverableChildren(scope, true, hoverable);
+    }
+
+    return hoverable.map((node) => getNodePath(node, root));
+  }
+);

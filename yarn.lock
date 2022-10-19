@@ -1336,7 +1336,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@paperclip-ui/common@^19.0.6, @paperclip-ui/common@workspace:libs/js-common":
+"@paperclip-ui/common@^19.0.6, @paperclip-ui/common@workspace:^, @paperclip-ui/common@workspace:libs/js-common":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/common@workspace:libs/js-common"
   dependencies:
@@ -1381,6 +1381,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/proto@workspace:libs/proto"
   dependencies:
+    "@paperclip-ui/common": "workspace:^"
     google-protobuf: ^3.21.0
     grpc: ^1.24.11
     grpc-web: ^1.4.0

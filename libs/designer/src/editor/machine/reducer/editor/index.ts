@@ -13,13 +13,20 @@ import { clamp, pick } from "lodash";
 import { Box, centerTransformZoom, Point } from "../../state/geom";
 import { PCModule } from "@paperclip-ui/proto/lib/virt/module_pb";
 import { memoize } from "@paperclip-ui/common";
+import {
+  InnerVirtNode,
+  getNodeAncestors,
+  getNodeByPath,
+  getNodePath,
+  isInstance,
+  isNodeParent,
+} from "@paperclip-ui/proto/lib/virt/html";
 
 const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
 const PAN_X_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;
 const PAN_Y_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;
 const MIN_ZOOM = 0.01;
 const MAX_ZOOM = 6400 / 100;
-const DOUBLE_CLICK_MS = 250;
 
 export const editorReducer = (
   state: EditorState,
@@ -131,14 +138,17 @@ export const getScopedBoxes = memoize(
     scopedElementPath: string,
     root: PCModule.AsObject
   ) => {
-    const hoverableNodePaths = getHoverableNodePaths(scopedElementPath, root);
+    const hoverableNodePaths = getHoverableNodePaths(
+      scopedElementPath,
+      root.html
+    );
 
     return pick(boxes, hoverableNodePaths);
   }
 );
 
 const getHoverableNodePaths = memoize(
-  (scopedNodePath: string | undefined, root: PCModule.AsObject) => {
+  (scopedNodePath: string | undefined, root: InnerVirtNode) => {
     const scopedNode = scopedNodePath
       ? getNodeByPath(scopedNodePath, root)
       : root;
@@ -146,7 +156,7 @@ const getHoverableNodePaths = memoize(
       ? getNodeAncestors(scopedNodePath, root)
       : [];
 
-    const hoverable: VirtualNode[] = [];
+    const hoverable: InnerVirtNode[] = [];
 
     const scopes = [scopedNode, ...ancestors];
 
@@ -157,3 +167,23 @@ const getHoverableNodePaths = memoize(
     return hoverable.map((node) => getNodePath(node, root));
   }
 );
+
+const addHoverableChildren = (
+  node: InnerVirtNode,
+  isScope: boolean,
+  hoverable: InnerVirtNode[]
+) => {
+  if (!hoverable.includes(node)) {
+    hoverable.push(node);
+  }
+
+  if (isInstance(node) && !isScope) {
+    return;
+  }
+
+  if (isNodeParent(node)) {
+    for (const child of node.childrenList) {
+      addHoverableChildren(child, false, hoverable);
+    }
+  }
+};

@@ -13,7 +13,8 @@ patterns:
   - include: "#document"
 variables:
   untilOpenBraces: ([^\{]*)
-  reference: (\w+(\.\w+)*)
+  referencePart: '[\w\-_]+'
+  reference: ({{referencePart}}(\.{{referencePart}})*)
   id: (\w+)
   string: (\".*?\"|\'.*?\')
   variantCombo: ({{reference}}(\s*\+\s*{{reference}})*)

@@ -1,4 +1,3 @@
-import * as path from "path";
 import { Deferred } from "@paperclip-ui/common";
 import * as getPort from "get-port";
 import * as execa from "execa";

@@ -40,11 +40,17 @@ export const DEFAULT_FRAME_BOX = {
 };
 const INITIAL_ZOOM_PADDING = 50;
 
+export type StyleOverrides = Record<string, Record<string, string | number>>;
+
 export type EditorState = {
   readonly: boolean;
   scopedElementPath?: string;
   selectedNodePaths: string[];
   highlightNodePath?: string;
+
+  // temporary style overrides of canvas elements when elements are manipulated
+  // such as resizing
+  styleOverrides: StyleOverrides;
   // selectedNodeStyleInspections: any[];
   // selectedNodeSources: any[];
   canvasClickTimestamp?: number;
@@ -60,6 +66,7 @@ export type EditorState = {
 
 export const DEFAULT_STATE: EditorState = {
   readonly: false,
+  styleOverrides: {},
   resizerMoving: false,
   optionKeyDown: false,
   scopedElementPath: null,

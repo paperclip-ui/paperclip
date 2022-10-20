@@ -61,6 +61,7 @@ fn evaluate_document<F: FileResolver>(
     }
 
     virt::Document {
+        id: context.next_id(),
         source_id: Some(document.id.to_string()),
         children,
     }
@@ -339,6 +340,7 @@ fn evaluate_native_element<F: FileResolver>(
 
     fragment.push(
         virt::node::Inner::Element(virt::Element {
+            id: context.next_id(),
             tag_name: element.tag_name.to_string(),
             source_id: Some(element.id.to_string()),
             attributes: create_native_attributes(element, context, is_root),
@@ -550,6 +552,7 @@ fn evaluate_text_node<F: FileResolver>(
             get_style_namespace(&text_node.name, &text_node.id, context.current_component);
 
         virt::node::Inner::Element(virt::Element {
+            id: context.next_id(),
             tag_name: "span".to_string(),
             source_id: Some(text_node.id.to_string()),
             attributes: vec![virt::Attribute {
@@ -559,6 +562,7 @@ fn evaluate_text_node<F: FileResolver>(
             }],
             metadata: metadata.clone(),
             children: vec![virt::node::Inner::TextNode(virt::TextNode {
+                id: context.next_id(),
                 source_id: Some(text_node.id.to_string()),
                 value: text_node.value.to_string(),
                 metadata: None,
@@ -568,6 +572,7 @@ fn evaluate_text_node<F: FileResolver>(
         .get_outer()
     } else {
         virt::node::Inner::TextNode(virt::TextNode {
+            id: context.next_id(),
             source_id: Some(text_node.id.to_string()),
             value: text_node.value.to_string(),
             metadata: metadata.clone(),

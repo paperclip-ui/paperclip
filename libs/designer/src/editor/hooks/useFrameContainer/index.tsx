@@ -1,19 +1,28 @@
 import { noop } from "lodash";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export type UseFrameContainerProps = {
   mount: HTMLElement;
   onLoad?: () => void;
   fullscreen?: boolean;
+  extraHTML?: string;
 };
 
 export const useFrameContainer = ({
   mount,
   onLoad = noop,
   fullscreen,
+  extraHTML,
 }: UseFrameContainerProps) => {
   const frameRef = useRef<HTMLDivElement>();
   const [internalMount, setInternalMount] = useState<HTMLElement>(null);
+  const extraHTMLContainer = useMemo(() => {
+    return document.createElement("div");
+  }, []);
+
+  useEffect(() => {
+    extraHTMLContainer.innerHTML = extraHTML || "";
+  }, [extraHTMLContainer, extraHTML]);
 
   useEffect(() => {
     setInternalMount(mount);
@@ -31,6 +40,7 @@ export const useFrameContainer = ({
     const onIframeLoad = (ev: Event) => {
       const iframe = ev.target as HTMLIFrameElement;
       iframe.contentDocument.body.appendChild(mount);
+      iframe.contentDocument.body.appendChild(extraHTMLContainer);
 
       // wait for the fonts to be loaded - will affect bounding rects
       (iframe.contentDocument as any).fonts.ready.then(() => {

@@ -11,7 +11,8 @@ type FrameProps = {
   frameIndex: number;
   expanded: boolean;
   preview: VirtNode.AsObject;
-  pcData: PCModule.AsObject;
+  document: PCModule.AsObject;
+  extraHTML?: string;
   onLoad: (
     mount: HTMLElement,
     data: PCModule.AsObject,
@@ -25,23 +26,31 @@ type FrameProps = {
 };
 
 export const Frame = memo(
-  ({ frameIndex, preview, expanded, pcData, onLoad, onUpdate }: FrameProps) => {
+  ({
+    frameIndex,
+    preview,
+    expanded,
+    extraHTML,
+    document,
+    onLoad,
+    onUpdate,
+  }: FrameProps) => {
     if (!preview) {
       return null;
     }
 
     const onLoad2 = useCallback(
       (mount: HTMLElement) => {
-        onLoad(mount, pcData, frameIndex);
+        onLoad(mount, document, frameIndex);
       },
-      [frameIndex, pcData, onLoad]
+      [frameIndex, document, onLoad]
     );
 
     const onUpdate2 = useCallback(
       (mount: HTMLElement) => {
-        onUpdate(mount, pcData, frameIndex);
+        onUpdate(mount, document, frameIndex);
       },
-      [frameIndex, pcData, onUpdate]
+      [frameIndex, document, onUpdate]
     );
 
     const frameStyle = useMemo(() => {
@@ -75,8 +84,9 @@ export const Frame = memo(
     return (
       <styles.Frame style={frameStyle}>
         <FrameContainer
+          extraHTML={extraHTML}
           frameIndex={frameIndex}
-          pcData={pcData}
+          document={document}
           fullscreen={expanded}
           onLoad={onLoad2}
           onUpdate={onUpdate2}

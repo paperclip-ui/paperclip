@@ -3,7 +3,11 @@ import { getFrameRects } from "@paperclip-ui/web-renderer";
 import { memo } from "react";
 import { Frame } from "./Frame";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
-import { getCurrentDocument } from "../../../machine/state";
+import {
+  getCurrentDocument,
+  getEditorState,
+  StyleOverrides,
+} from "../../../machine/state";
 import { PCModule } from "@paperclip-ui/proto/lib/virt/module_pb";
 import { editorEvents } from "../../../machine/events";
 
@@ -12,7 +16,9 @@ type FramesProps = {
 };
 
 export const Frames = memo(({ expandedFrameIndex }: FramesProps) => {
-  const doc = useSelector(getCurrentDocument);
+  const { currentDocument: doc, styleOverrides } = useSelector(getEditorState);
+
+  const extraHTML = generateStyleOverrideHTML(styleOverrides);
 
   const { frames, onFrameLoaded, onFrameUpdated } = useFrames({
     shouldCollectRects: true,
@@ -24,9 +30,10 @@ export const Frames = memo(({ expandedFrameIndex }: FramesProps) => {
         return (
           <Frame
             key={i}
-            pcData={doc.paperclip}
+            document={doc.paperclip}
             onLoad={onFrameLoaded}
             onUpdate={onFrameUpdated}
+            extraHTML={extraHTML}
             expanded={expandedFrameIndex === i}
             frameIndex={i}
             preview={frame}
@@ -36,6 +43,34 @@ export const Frames = memo(({ expandedFrameIndex }: FramesProps) => {
     </>
   );
 });
+
+const generateStyleOverrideHTML = (styleOverrides: StyleOverrides) => {
+  if (!styleOverrides) {
+    return "";
+  }
+
+  let html = "";
+
+  html += "<style>\n";
+
+  for (const id in styleOverrides) {
+    const decls = styleOverrides[id];
+
+    html += `  #_${id} {\n`;
+
+    for (const key in decls) {
+      html += `    ${key}: ${castDeclValue(decls[key])} !important;\n`;
+    }
+    html += "  }\n\n";
+  }
+
+  html += "</style>";
+
+  return html;
+};
+
+const castDeclValue = (value: string | number) =>
+  typeof value === "number" ? value + "px" : value;
 
 type UseFramesProps = {
   shouldCollectRects: boolean;
@@ -52,7 +87,6 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
       }
 
       const rects = getFrameRects(mount, data, frameIndex);
-      console.log(rects);
 
       dispatch(editorEvents.rectsCaptured({ frameIndex, rects }));
     },

@@ -14,11 +14,12 @@ message NodeMedata {
 }
 
 message Element {
-  string tag_name = 1;
-  optional string source_id = 2;
-  repeated Attribute attributes = 3;
-  optional NodeMedata metadata = 4;
-  repeated Node children = 5;
+  string id = 1;
+  string tag_name = 2;
+  optional string source_id = 3;
+  repeated Attribute attributes = 4;
+  optional NodeMedata metadata = 5;
+  repeated Node children = 6;
 }
 
 message Attribute {
@@ -28,14 +29,16 @@ message Attribute {
 }
 
 message TextNode {
-  optional string source_id = 1;
-  string value = 2;
-  optional NodeMedata metadata = 3;
+  string id = 1;
+  optional string source_id = 2;
+  string value = 3;
+  optional NodeMedata metadata = 4;
 }
 
 message Document {
-  optional string source_id = 1;
-  repeated Node children = 2;
+  string id = 1;
+  optional string source_id = 2;
+  repeated Node children = 3;
 }
 
 message Node {

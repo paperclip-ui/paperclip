@@ -3,12 +3,17 @@
 import { memoize } from "@paperclip-ui/common";
 
 export type InnerVirtNode = {
+  id: string;
   childrenList?: OuterNode[];
 };
 
-type VirtElement = {};
+type VirtElement = {
+  id: string;
+  sourceId: string;
+};
 
 type VirtText = {
+  id: string;
   sourceId: string;
   value: string;
   metadata?: any;

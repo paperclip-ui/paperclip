@@ -455,6 +455,7 @@ fn bounds_are_attached_to_root_elements() {
     assert_eq!(
         element,
         &virt::html::node::Inner::Element(virt::html::Element {
+						id: "80f4925f-2".to_string(),
             tag_name: "div".to_string(),
             source_id: Some("80f4925f-15".to_string()),
             attributes: vec![],
@@ -469,6 +470,7 @@ fn bounds_are_attached_to_root_elements() {
             }),
             children: vec![virt::html::Node {
                 inner: Some(virt::html::node::Inner::TextNode(virt::html::TextNode {
+										id: "80f4925f-1".to_string(),
                     source_id: Some("80f4925f-14".to_string()),
                     value: "Hello world".to_string(),
                     metadata: None
@@ -497,6 +499,7 @@ fn bounds_are_attached_to_root_components() {
     assert_eq!(
         element,
         &virt::html::node::Inner::Element(virt::html::Element {
+						id: "80f4925f-1".to_string(),
             tag_name: "div".to_string(),
             source_id: Some("80f4925f-14".to_string()),
             attributes: vec![virt::html::Attribute {
@@ -535,6 +538,7 @@ fn bounds_are_attached_to_root_text_nodes() {
     assert_eq!(
         element,
         &virt::html::node::Inner::TextNode(virt::html::TextNode {
+						id: "80f4925f-1".to_string(),
             value: "abba".to_string(),
             source_id: Some("80f4925f-14".to_string()),
             metadata: Some(virt::html::NodeMedata {
@@ -571,6 +575,7 @@ fn bounds_are_attached_to_root_instances() {
     assert_eq!(
         element,
         &virt::html::node::Inner::Element(virt::html::Element {
+						id: "80f4925f-2".to_string(),
             tag_name: "div".to_string(),
             source_id: Some("80f4925f-1".to_string()),
             attributes: vec![virt::html::Attribute {

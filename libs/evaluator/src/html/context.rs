@@ -1,5 +1,9 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use crate::core::virt as core_virt;
 use paperclip_common::fs::FileResolver;
+use paperclip_common::id::{IDGenerator, get_document_id};
 use paperclip_parser::graph;
 use paperclip_parser::pc::ast;
 
@@ -17,6 +21,7 @@ pub struct DocumentContext<'graph, 'expr, 'file_resolver, FR: FileResolver> {
     pub current_component: Option<&'expr ast::Component>,
     pub render_scopes: Vec<String>,
     pub options: Options,
+    pub id_generator: Rc<RefCell<IDGenerator>>
 }
 
 impl<'graph, 'expr, 'file_resolver, FR: FileResolver>
@@ -34,9 +39,13 @@ impl<'graph, 'expr, 'file_resolver, FR: FileResolver>
             data: None,
             file_resolver,
             options,
+            id_generator: Rc::new(RefCell::new(IDGenerator::new(get_document_id(path)))),
             current_component: None,
             render_scopes: vec![],
         }
+    }
+    pub fn next_id(&self) -> String {
+        self.id_generator.borrow_mut().new_id()
     }
     pub fn with_data(&self, data: core_virt::Object) -> Self {
         let mut clone = self.clone();

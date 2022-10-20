@@ -133,9 +133,10 @@ export const editorReducer = (
             mousePosition
           );
         } else {
-          newState.canvas.transform.x = transform.x - delta2X; // clamp(transform.x - delta2X, 0, size.width * transform.z - size.width);
-          newState.canvas.transform.y = transform.y - delta2Y; // clamp(transform.y - delta2Y, 0, size.height * transform.z - size.height);
+          newState.canvas.transform.x = transform.x - delta2X;
+          newState.canvas.transform.y = transform.y - delta2Y;
         }
+
         Object.assign(
           newState.canvas,
           clampCanvasTransform(
@@ -144,6 +145,30 @@ export const editorReducer = (
           )
         );
       });
+    }
+    case editorEvents.resizerPathStoppedMoving.type:
+    case editorEvents.resizerPathMoved.type: {
+      state = produce(state, (newState) => {
+        const flattenedRects = flattenFrameBoxes(state.rects);
+
+        const node = getNodeByPath(
+          newState.selectedNodePaths[0],
+          newState.currentDocument.paperclip.html
+        );
+        newState.styleOverrides = {};
+
+        newState.styleOverrides[node.id] = {
+          // TODO: need to take delta of computed CSS instead
+          left: event.payload.newBounds.x - event.payload.originalBounds.x,
+          top: event.payload.newBounds.y - event.payload.originalBounds.y,
+
+          // TODO - check position here to make sure we're not overriding something like "absolute"
+          position: "relative",
+          width: event.payload.newBounds.width,
+          height: event.payload.newBounds.height,
+        };
+      });
+      return state;
     }
     case editorEvents.canvasMouseMoved.type: {
       return highlightNode(state, event.payload);

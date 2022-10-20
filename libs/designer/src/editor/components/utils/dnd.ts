@@ -21,7 +21,7 @@ export const startDOMDrag = (
   const drag = throttle((event) => {
     if (!_started) {
       _started = true;
-      onStart(event);
+      onStart && onStart(event);
     }
     event.preventDefault();
     update(event, {

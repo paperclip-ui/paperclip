@@ -3,6 +3,7 @@ import {
   ExtractEventFromCreators,
   identity,
 } from "@paperclip-ui/common";
+import { InnerVirtNode } from "@paperclip-ui/proto/lib/virt/html";
 import { DesignerEngineEvent } from "../engine/designer/events";
 import { Box, Point, Size } from "../state/geom";
 
@@ -30,6 +31,8 @@ export const editorEvents = eventCreators(
       frameIndex: number;
       rects: Record<string, Box>;
     }>(),
+
+    tmpBreadcrumbClicked: identity<InnerVirtNode>(),
   },
   "editor"
 );

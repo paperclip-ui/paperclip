@@ -148,6 +148,17 @@ export const editorReducer = (
     case editorEvents.canvasMouseMoved.type: {
       return highlightNode(state, event.payload);
     }
+    case editorEvents.tmpBreadcrumbClicked.type: {
+      return produce(state, (newState) => {
+        console.log(
+          event.payload,
+          getNodePath(event.payload, state.currentDocument.paperclip.html)
+        );
+        newState.selectedNodePaths = [
+          getNodePath(event.payload, state.currentDocument.paperclip.html),
+        ];
+      });
+    }
     case editorEvents.rectsCaptured.type:
       state = produce(state, (newState) => {
         newState.rects[event.payload.frameIndex] = event.payload.rects;

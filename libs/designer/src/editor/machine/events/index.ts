@@ -18,6 +18,14 @@ export const editorEvents = eventCreators(
       shiftKey: boolean;
       timestamp: number;
     }>(),
+    resizerPathMoved: identity<{
+      originalBounds: Box;
+      newBounds: Box;
+    }>(),
+    resizerPathStoppedMoving: identity<{
+      originalBounds: Box;
+      newBounds: Box;
+    }>(),
     canvasPanned: identity<{
       delta: Point;
       mousePosition: Point;

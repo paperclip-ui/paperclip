@@ -9,6 +9,7 @@ import {
 } from "@paperclip-ui/designer/src/editor/machine/state/geom";
 import { useDispatch } from "@paperclip-ui/common";
 import { startDOMDrag } from "../../../utils/dnd";
+import { editorEvents } from "@paperclip-ui/designer/src/editor/machine/events";
 
 type Props = {
   canvasScroll: Point;
@@ -121,12 +122,12 @@ export const Selectable = React.memo(
         );
       };
 
-      // startDOMDrag(
-      //   event,
-      //   null,
-      //   wrapActionCreator(resizerPathMoved),
-      //   wrapActionCreator(resizerPathStoppedMoving)
-      // );
+      startDOMDrag(
+        event,
+        null,
+        wrapActionCreator(editorEvents.resizerPathMoved),
+        wrapActionCreator(editorEvents.resizerPathMoved)
+      );
     };
 
     const onMouseDown = (event) => {
@@ -155,12 +156,12 @@ export const Selectable = React.memo(
           );
         };
 
-        // startDOMDrag(
-        //   event,
-        //   null,
-        //   wrapActionCreator(resizerMoved),
-        //   wrapActionCreator(resizerStoppedMoving)
-        // );
+        startDOMDrag(
+          event,
+          null,
+          wrapActionCreator(editorEvents.resizerPathMoved),
+          wrapActionCreator(editorEvents.resizerPathMoved)
+        );
       }
     };
 

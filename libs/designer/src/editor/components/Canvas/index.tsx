@@ -14,6 +14,7 @@ import { editorEvents } from "../../machine/events";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { getCanvas, getCurrentDocument } from "../../machine/state";
 import { Tools } from "./Tools";
+import { Footer } from "./tmp-footer";
 
 export const Canvas = React.memo(() => {
   const { canvasRef, actualTransform, expanded, activeFrameIndex } =
@@ -30,6 +31,7 @@ export const Canvas = React.memo(() => {
         <Frames expandedFrameIndex={expanded ? activeFrameIndex : null} />
       </styles.Inner>
       <Tools />
+      <Footer />
     </styles.Canvas>
   );
 });

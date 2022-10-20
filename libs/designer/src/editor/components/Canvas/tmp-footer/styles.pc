@@ -1,0 +1,10 @@
+
+public component TmpFooter {
+  render div {
+    style {
+      position: absolute
+      bottom: 0
+    }
+    slot children
+  }
+}

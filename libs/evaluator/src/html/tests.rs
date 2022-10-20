@@ -459,6 +459,7 @@ fn bounds_are_attached_to_root_elements() {
             source_id: Some("80f4925f-15".to_string()),
             attributes: vec![],
             metadata: Some(virt::html::NodeMedata {
+								visible: Some(true),
                 bounds: Some(virt::html::Bounds {
                     x: 100.0,
                     y: 100.0,
@@ -504,6 +505,7 @@ fn bounds_are_attached_to_root_components() {
                 value: "_A-80f4925f-14".to_string()
             }],
             metadata: Some(virt::html::NodeMedata {
+								visible: Some(true),
                 bounds: Some(virt::html::Bounds {
                     x: 100.0,
                     y: 100.0,
@@ -536,6 +538,7 @@ fn bounds_are_attached_to_root_text_nodes() {
             value: "abba".to_string(),
             source_id: Some("80f4925f-14".to_string()),
             metadata: Some(virt::html::NodeMedata {
+								visible: Some(true),
                 bounds: Some(virt::html::Bounds {
                     x: 100.0,
                     y: 100.0,
@@ -576,6 +579,7 @@ fn bounds_are_attached_to_root_instances() {
                 value: "_A-80f4925f-1 _80f4925f-17".to_string()
             }],
             metadata: Some(virt::html::NodeMedata {
+								visible: Some(true),
                 bounds: Some(virt::html::Bounds {
                     x: 100.0,
                     y: 100.0,

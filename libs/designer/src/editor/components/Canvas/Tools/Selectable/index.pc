@@ -5,6 +5,8 @@ public component Knob {
     style {
       width: var(--knob-size)
       height: var(--knob-size)
+      left: calc(100% * var(--x)/100)
+      top: calc(100% * var(--y)/100)
       position: absolute
       transform: translateY(-50%) translateX(-50%)
     }

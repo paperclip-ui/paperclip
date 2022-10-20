@@ -58,10 +58,7 @@ export const Tools = () => {
           canvasScroll={canvas.scrollPosition}
           canvasTransform={canvas.transform}
           box={selectedBox}
-          showKnobs={
-            selectedNodePaths.every((nodePath) => !nodePath.includes(".")) &&
-            !readonly
-          }
+          showKnobs
         />
       ) : null}
       <Frames

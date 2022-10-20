@@ -150,10 +150,6 @@ export const editorReducer = (
     }
     case editorEvents.tmpBreadcrumbClicked.type: {
       return produce(state, (newState) => {
-        console.log(
-          event.payload,
-          getNodePath(event.payload, state.currentDocument.paperclip.html)
-        );
         newState.selectedNodePaths = [
           getNodePath(event.payload, state.currentDocument.paperclip.html),
         ];

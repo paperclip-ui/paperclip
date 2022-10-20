@@ -128,6 +128,7 @@ fn parse_arithmetic(
 ) -> Result<ast::declaration_value::Inner, err::ParserError> {
     let start = context.curr_u16pos.clone();
     let left = parse_decl_value(context)?;
+    println!("PK{:?}", context.peek(1));
     let operator_option = match context.peek_skip(0, is_superfluous) {
         Some(Token::Plus) => Some("+".to_string()),
         Some(Token::Minus) => Some("-".to_string()),

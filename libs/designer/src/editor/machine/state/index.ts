@@ -45,7 +45,12 @@ export type EditorState = {
   scopedElementPath?: string;
   selectedNodePaths: string[];
   highlightNodePath?: string;
+  // selectedNodeStyleInspections: any[];
+  // selectedNodeSources: any[];
+  canvasClickTimestamp?: number;
+  showTextEditor?: boolean;
   resizerMoving: boolean;
+  expandedNodePaths: string[];
   optionKeyDown: boolean;
   centeredInitial: boolean;
   currentDocument?: FileResponse.AsObject;
@@ -58,6 +63,7 @@ export const DEFAULT_STATE: EditorState = {
   resizerMoving: false,
   optionKeyDown: false,
   scopedElementPath: null,
+  expandedNodePaths: [],
   centeredInitial: false,
   selectedNodePaths: [],
   canvas: {

@@ -8,7 +8,11 @@ export type InnerVirtNode = {
 
 type VirtElement = {};
 
-type VirtText = {};
+type VirtText = {
+  sourceId: string;
+  value: string;
+  metadata?: any;
+};
 
 export type OuterNode = {
   element?: VirtElement;
@@ -100,4 +104,9 @@ export const nodePathToAry = memoize((path: string) =>
   path.split(".").map(Number)
 );
 
+export const getInstanceAncestor = (node: InnerVirtNode, root: InnerVirtNode) =>
+  getNodeAncestors(getNodePath(node, root), root).find(isInstance);
+
 export const isInstance = (_node: InnerVirtNode) => false;
+export const isTextNode = (node: any): node is VirtText =>
+  (node as any).value != null;

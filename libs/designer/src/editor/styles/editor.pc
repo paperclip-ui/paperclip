@@ -59,7 +59,7 @@ component Canvas {
     }
     Artboard {
       insert title {
-        text "Some frame"
+        text "this should work"
       }
     }
   }

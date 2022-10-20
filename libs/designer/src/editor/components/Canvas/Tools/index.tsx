@@ -53,9 +53,8 @@ export const Tools = () => {
         />
       )}
 
-      {/*selectedBox ? (
+      {selectedBox ? (
         <Selectable
-          dispatch={dispatch}
           canvasScroll={canvas.scrollPosition}
           canvasTransform={canvas.transform}
           box={selectedBox}
@@ -64,7 +63,7 @@ export const Tools = () => {
             !readonly
           }
         />
-      ) : null} */}
+      ) : null}
       <Frames
         frames={frames}
         canvasTransform={canvas.transform}

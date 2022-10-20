@@ -1132,16 +1132,13 @@ add_case! {
       component Something {
         render span root {
           style {
-            left: calc(10*10/10)
+            left: calc(10* var(--x) /8)
           }
         }
       }
     "#)
   ],
   r#"
-
-  ._Tree-root-80f4925f-5 { --depth: 1; } 
-  ._Folder-container-80f4925f-14._Tree-root-80f4925f-5 { --depth: var(--depth); }
-  ._BBA-abba-80f4925f-21._Folder-container-80f4925f-14._Tree-root-80f4925f-5 { --depth: 2; } 
+  ._Something-root-80f4925f-10 { left: calc(10 * var(--x) / 8); }
   "#
 }

@@ -46,13 +46,9 @@ export const Selectable = React.memo(
     if (showKnobs && currentBox) {
       knobs = [
         { x: 0, y: 0 },
-        { x: 50, y: 0 },
         { x: 100, y: 0 },
-        { x: 100, y: 50 },
         { x: 100, y: 100 },
-        { x: 50, y: 100 },
         { x: 0, y: 100 },
-        { x: 0, y: 50 },
       ];
     }
 
@@ -185,8 +181,7 @@ export const Selectable = React.memo(
                         onKnobMouseDown(event, { x, y });
                       }}
                       key={`${x}-${y}`}
-                      x={x}
-                      y={y}
+                      style={{ "--x": x, "--y": y }}
                     />
                   );
                 })}

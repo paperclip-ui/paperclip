@@ -1,7 +1,7 @@
 import "../../../../styles/theme.pc" as theme
 
 public component Knob {
-  render svg(onMouseDown: onMouseDown, class: class) {
+  render svg(onMouseDown: onMouseDown, class: class, style: style) {
     style {
       width: var(--knob-size)
       height: var(--knob-size)
@@ -9,12 +9,15 @@ public component Knob {
       top: calc(100% * var(--y)/100)
       position: absolute
       transform: translateY(-50%) translateX(-50%)
+      border-radius: 1px
     }
     rect {
       style {
         width: var(--knob-size)
         height: var(--knob-size)
-        fill: var(--background)
+        fill: white
+        stroke: var(--background)
+        stroke-width: 1px
       }
     }
   }
@@ -23,7 +26,7 @@ public component Knob {
 public component Overlay {
   render div(onMouseDown: onMouseDown, style: style, onClick: onClick) {
     style extends theme.fontDefault {
-      --background: var(--vscode-button-hoverBackground, rgb(0, 132, 255))
+      --background: var(--vscode-button-hoverBackground, var(theme.blue01))
       --foreground: var(--vscode-button-foreground, white)
       --knob-size: 7px
       --zoom: 1
@@ -47,6 +50,35 @@ public component Overlay {
         left: 0px
       }
       slot size
+    }
+  }
+}
+
+/**
+ * @bounds(width: 500, height: 500, x: 0, y: 0)
+ */
+div {
+  div {
+    style extends theme.centered {
+      width: 200px
+      height: 200px
+      background: rgb(86, 86, 194) 
+
+    }
+    Overlay {
+      insert knobs {
+        Knob(style: "--x: 0; --y: 0")
+
+        Knob(style: "--x: 100; --y: 0")
+        Knob(style: "--x: 100; --y: 100")
+
+
+        Knob(style: "--x: 0; --y: 100")
+
+      }
+      insert size {
+        text "200 x 200"
+      }
     }
   }
 }

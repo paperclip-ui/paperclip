@@ -5,6 +5,7 @@ import {
   EditorState,
   flattenFrameBoxes,
   getNodeInfoAtPoint,
+  InsertMode,
   IS_WINDOWS,
   maybeCenterCanvas,
 } from "../../state";
@@ -48,6 +49,15 @@ export const editorReducer = (
       return produce(state, (newState) => {
         newState.canvas.size = event.payload;
       });
+    case editorEvents.eHotkeyPressed.type:
+      return produce(state, (newState) => {
+        newState.insertMode = InsertMode.Element;
+      });
+    case editorEvents.canvasMouseDown.type: {
+      return produce(state, (newState) => {
+        newState.insertMode = null;
+      });
+    }
     case editorEvents.canvasMouseDown.type: {
       if (state.resizerMoving) {
         return state;

@@ -10,8 +10,10 @@ import { Box, Point, Size } from "../state/geom";
 export const editorEvents = eventCreators(
   {
     canvasPanEnd: null,
+    eHotkeyPressed: null,
     canvasMouseMoved: identity<Point>(),
     canvasMouseLeave: null,
+    canvasMouseUp: null,
     canvasMouseDown: identity<{
       metaKey: boolean;
       ctrlKey: boolean;

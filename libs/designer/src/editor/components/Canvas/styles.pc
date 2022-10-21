@@ -3,7 +3,7 @@ style canvas {
 }
 
 public component Canvas {
-  render div(style: style, onMouseMove: onMouseMove, onScroll: onScroll, onWheelCapture: onWheelCapture) {
+  render div(style: style, onMouseMove: onMouseMove, onScroll: onScroll, onWheelCapture: onWheelCapture, tabIndex: "0") {
     style extends canvas {
       width: 100vw
       height: 100vh

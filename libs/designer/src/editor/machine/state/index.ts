@@ -18,6 +18,11 @@ import {
 import { memoize } from "@paperclip-ui/common";
 export const IS_WINDOWS = false;
 
+export enum InsertMode {
+  Element,
+  Text,
+}
+
 export type Canvas = {
   size?: Size;
   transform: Transform;
@@ -46,6 +51,7 @@ export type EditorState = {
   readonly: boolean;
   scopedElementPath?: string;
   selectedNodePaths: string[];
+  insertMode?: InsertMode;
   highlightNodePath?: string;
 
   // temporary style overrides of canvas elements when elements are manipulated

@@ -4,9 +4,9 @@ import React, {
   useEffect,
   useMemo,
   useCallback,
+  MutableRefObject,
 } from "react";
 import * as styles from "./styles.pc";
-// import { Tools } from "./Tools";
 import { Frames } from "./Frames";
 import { normalizeWheel } from "./normalize-wheel";
 import { editorEvents } from "../../machine/events";
@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { getCanvas, getCurrentDocument } from "../../machine/state";
 import { Tools } from "./Tools";
 import { Footer } from "./tmp-footer";
+import { useHotkeys } from "../../hooks/useHotkeys";
 
 export const Canvas = React.memo(() => {
   const { canvasRef, actualTransform, expanded, activeFrameIndex } =
@@ -64,6 +65,7 @@ const useCanvas = () => {
   const [canvasPanTimer, setCanvasPanTimer] = useState<any>(0);
 
   const canvasRef = useRef<HTMLElement>();
+  useCanvasHotkeys(canvasRef);
 
   const onWheel = useCallback(
     (event: WheelEvent) => {
@@ -150,4 +152,14 @@ const useCanvas = () => {
     expanded,
     activeFrameIndex: canvas.activeFrame,
   };
+};
+
+const useCanvasHotkeys = (ref: MutableRefObject<HTMLElement>) => {
+  const dispatch = useDispatch();
+  useHotkeys(
+    {
+      e: () => dispatch(editorEvents.eHotkeyPressed()),
+    },
+    ref
+  );
 };

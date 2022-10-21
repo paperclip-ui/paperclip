@@ -17,7 +17,8 @@ public component Tools {
       onDoubleClick: onDoubleClick,
       onMouseMove: onMouseMove,
       onMouseLeave: onMouseLeave,
-      onWheel: onWheel
+      onWheel: onWheel,
+      style: style
     ) {
       style {
         position: absolute

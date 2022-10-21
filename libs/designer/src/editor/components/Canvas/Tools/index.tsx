@@ -16,7 +16,9 @@ export const Tools = () => {
     onMouseMove,
     onMouseLeave,
     toolsRef,
+    onMouseUp,
     showEmpty,
+    insertMode,
     resizerMoving,
     currentDocument,
     canvas,
@@ -33,13 +35,19 @@ export const Tools = () => {
     return null;
   }
 
+  const style = {
+    cursor: insertMode != null ? "crosshair" : null,
+  };
+
   return (
     <styles.Tools
       ref={toolsRef}
       hover={!hoveringBox}
       onMouseDown={onMouswDown}
+      onMouseUp={onMouseUp}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
+      style={style}
     >
       {/* <Empty show={showEmpty} />
 
@@ -87,6 +95,7 @@ const useTools = () => {
     optionKeyDown,
     resizerMoving,
     readonly,
+    insertMode,
     rects: frameBoxes,
     currentDocument,
   } = useSelector(getEditorState);
@@ -124,6 +133,12 @@ const useTools = () => {
     },
     [dispatch]
   );
+  const onMouseUp = useCallback(
+    (event: React.MouseEvent<any>) => {
+      dispatch(editorEvents.canvasMouseUp());
+    },
+    [dispatch]
+  );
 
   const onMouseLeave = () => {
     dispatch(editorEvents.canvasMouseLeave(null));
@@ -147,6 +162,8 @@ const useTools = () => {
     onMouswDown,
     onMouseMove,
     onMouseLeave,
+    onMouseUp,
+    insertMode,
     showEmpty,
     currentDocument,
     toolsLayerEnabled,

@@ -1375,6 +1375,7 @@ __metadata:
     react-dnd: ^16.0.1
     react-dnd-html5-backend: ^16.0.1
     react-dom: ^18.2.0
+    react-hotkeys-hook: ^3.4.7
     terser-webpack-plugin: ^5.3.6
     ts-loader: ^9.3.1
     webpack: ^5.74.0
@@ -5941,6 +5942,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hotkeys-js@npm:3.9.4":
+  version: 3.9.4
+  resolution: "hotkeys-js@npm:3.9.4"
+  checksum: 98c3121d458f960c8804f5d8d6be02c4187aaeee5a0b7df28c8d99705e5f65f67b1140658d8128401892bb07b19d18c5e9ea9e84fe170fb06206b639ad53438b
+  languageName: node
+  linkType: hard
+
 "hpack.js@npm:^2.1.6":
   version: 2.1.6
   resolution: "hpack.js@npm:2.1.6"
@@ -8882,7 +8890,6 @@ __metadata:
     cargo-cp-artifact: ^0.1
     loader-utils: ^3.2.0
     lodash: ^4.17.21
-    webpack-virtual-modules: ^0.4.5
   languageName: unknown
   linkType: soft
 
@@ -9897,6 +9904,18 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
   checksum: 7d323310bea3a91be2965f9468d552f201b1c27891e45ddc2d6b8f717680c95a75ae0bc1e3f5cf41472446a2589a75aed4483aee8169287909fcd59ad149e8cc
+  languageName: node
+  linkType: hard
+
+"react-hotkeys-hook@npm:^3.4.7":
+  version: 3.4.7
+  resolution: "react-hotkeys-hook@npm:3.4.7"
+  dependencies:
+    hotkeys-js: 3.9.4
+  peerDependencies:
+    react: ">=16.8.1"
+    react-dom: ">=16.8.1"
+  checksum: 1ec5d197377713168454d0c4c3f8d609cf8302afd276b267a219beb956de6df5c9a5baf06c244c45368c64538e0881d65eb844bd56c45823752fc8deeaf41031
   languageName: node
   linkType: hard
 
@@ -12143,13 +12162,6 @@ __metadata:
   version: 3.2.3
   resolution: "webpack-sources@npm:3.2.3"
   checksum: 989e401b9fe3536529e2a99dac8c1bdc50e3a0a2c8669cbafad31271eadd994bc9405f88a3039cd2e29db5e6d9d0926ceb7a1a4e7409ece021fe79c37d9c4607
-  languageName: node
-  linkType: hard
-
-"webpack-virtual-modules@npm:^0.4.5":
-  version: 0.4.5
-  resolution: "webpack-virtual-modules@npm:0.4.5"
-  checksum: 0ae9a8b50d0cb1e43da5ff8acaa7b99c34a42f0d6cc83a82908fb6e131e574a949d19948df4fdd3de0dbfdbadb2b93ceb4a740c55727a4236eb3b2bbc8f785a6
   languageName: node
   linkType: hard
 

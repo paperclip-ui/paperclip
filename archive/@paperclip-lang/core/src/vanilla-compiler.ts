@@ -466,8 +466,6 @@ const translateStaticVariants = (
   for (const variant of variants) {
     buffer += `_${variant.id}: {`;
 
-    // console.log("DO", variant.id, variantNodes);
-
     // we want to start with the _last_ items first, then work our way to the front
     // so that we have proper order of operations
     for (let i = variantNodes.length; i--; ) {
@@ -478,9 +476,6 @@ const translateStaticVariants = (
         node.name === PCSourceTagNames.COMPONENT_INSTANCE ||
           node.name === PCSourceTagNames.COMPONENT
       );
-      // if (sourceUri.includes("inherit-item.pc")) {
-      //   console.log("OMAP", overrideMap);
-      // }
       if (!overrideMap[variant.id]) {
         continue;
       }

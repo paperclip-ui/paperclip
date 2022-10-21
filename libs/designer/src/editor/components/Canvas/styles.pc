@@ -1,0 +1,37 @@
+style canvas {
+  background: rgb(231, 231, 231)
+}
+
+public component Canvas {
+  render div(style: style, onMouseMove: onMouseMove, onScroll: onScroll, onWheelCapture: onWheelCapture, tabIndex: "0") {
+    style extends canvas {
+      width: 100vw
+      height: 100vh
+      position: relative
+      overflow: hidden
+    }
+    slot children
+  }
+}
+
+public component Inner {
+  render div(style: style, class: class) {
+    style extends canvas {
+      width: 100%
+      height: 100%
+    }
+    slot children
+  }
+}
+
+
+/**
+ * @bounds(width: 1000, height: 1000, x: 0, y: 0)
+ */
+Canvas {
+  Inner {
+    TmpFooter {
+      text "somethingfdsfsfsff"
+    }
+  }
+}

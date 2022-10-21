@@ -1,0 +1,56 @@
+
+/**
+ * @bounds(width: 1024, height: 768, x: 1457, y: -176)
+ */
+public component FramesContainer {
+  render div(style: style, data-label: "Frames container", class: class) {
+    style {
+      width: 100%
+      height: 100%
+      position: relative
+    }
+    slot children
+  }
+}
+
+/**
+ * @bounds(width: 1024, height: 768, x: 668, y: 1081)
+ */
+public component Frame {
+  render div(style: style, class: class) {
+    style {
+      position: relative
+    }
+    slot children
+  }
+}
+
+/**
+ * @bounds(width: 1024, height: 768, x: 91, y: -1397)
+ */
+public component FrameTitle {
+  render div(onDoubleClick: onDoubleClick, style: style, onClick: onClick, onMouseUp: onMouseUp) {
+    style {
+      transform: translateY(calc(-100% - 6px))
+      position: absolute
+      user-select: none
+      top: 0px
+      left: 0px
+      text-shadow: 1px 1px white
+      color: grey
+      width: 100%
+      display: flex
+      justify-content: space-between
+    }
+    span title {
+      style {
+        cursor: default
+        white-space: nowrap
+        overflow: hidden
+        font-size: 12px
+        text-overflow: ellipsis
+      }
+      slot value
+    }
+  }
+}

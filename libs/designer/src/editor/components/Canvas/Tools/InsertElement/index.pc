@@ -1,0 +1,13 @@
+import "../../../../styles/theme.pc" as theme
+
+component Selectable {
+  render div {
+    style extends theme.fontDefault
+    text "something"
+  }
+}
+
+/**
+ * @bounds(width: 100, height: 100, x: 100, y: 100)
+ */
+ Selectable

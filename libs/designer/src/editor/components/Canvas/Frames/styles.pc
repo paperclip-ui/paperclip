@@ -1,0 +1,6 @@
+public component Frame {
+  render div(style:style) {
+    slot children
+  }
+}
+

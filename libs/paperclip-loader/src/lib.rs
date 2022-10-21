@@ -4,6 +4,7 @@ use neon::prelude::*;
 use paperclip_project::LocalIO;
 use std::cell::RefCell;
 mod loader;
+extern crate neon_serde3;
 
 #[cfg(test)]
 mod tests;
@@ -24,6 +25,14 @@ fn loader_new(mut cx: FunctionContext) -> JsResult<BoxedLoader> {
     );
 
     Ok(cx.boxed(loader))
+}
+
+fn get_config_context(mut cx: FunctionContext) -> JsResult<JsValue> {
+    let loader = cx.argument::<BoxedLoader>(0)?;
+
+    let config = loader.borrow().get_config_context().clone();
+
+    neon_serde3::to_value(&mut cx, &config).or_else(|e| cx.throw_error(e.to_string()))
 }
 
 fn compile_file(mut cx: FunctionContext) -> JsResult<JsObject> {
@@ -50,6 +59,7 @@ fn compile_file(mut cx: FunctionContext) -> JsResult<JsObject> {
 #[neon::main]
 fn main(mut cx: ModuleContext) -> NeonResult<()> {
     cx.export_function("startLoader", loader_new)?;
+    cx.export_function("getConfigContext", get_config_context)?;
     cx.export_function("compileFile", compile_file)?;
     Ok(())
 }

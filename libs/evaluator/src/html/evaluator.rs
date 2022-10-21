@@ -7,6 +7,8 @@ use paperclip_common::fs::FileResolver;
 use paperclip_parser::graph;
 use paperclip_parser::graph::reference::ComponentRefInfo;
 use paperclip_parser::pc::ast;
+use paperclip_proto::ast::docco as docco_ast;
+use paperclip_proto::virt::html::Bounds;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 
@@ -36,37 +38,110 @@ fn evaluate_document<F: FileResolver>(
     context: &mut DocumentContext<F>,
 ) -> virt::Document {
     let mut children = vec![];
+    let mut metadata: Option<virt::NodeMedata> = None;
 
     for item in &document.body {
         match item.get_inner() {
             ast::document_body_item::Inner::Component(component) => {
                 if context.options.include_components {
-                    evaluate_component::<F>(component, &mut children, context);
+                    evaluate_component::<F>(component, &mut children, &metadata, context);
                 }
             }
             ast::document_body_item::Inner::Element(element) => {
-                evaluate_element::<F>(element, &mut children, context, false);
+                evaluate_element::<F>(element, &mut children, &metadata, context, false);
             }
-            ast::document_body_item::Inner::DocComment(_doc_comment) => {
-                // TODO
+            ast::document_body_item::Inner::DocComment(doc_comment) => {
+                metadata = Some(evaluate_comment_metadata(doc_comment));
             }
             ast::document_body_item::Inner::Text(text_node) => {
-                evaluate_text_node(text_node, &mut children, context);
+                evaluate_text_node(text_node, &mut children, &metadata, context);
             }
             _ => {}
         }
     }
 
     virt::Document {
+        id: context.next_id(),
         source_id: Some(document.id.to_string()),
         children,
     }
 }
 
+pub fn evaluate_comment_metadata(expr: &docco_ast::Comment) -> virt::NodeMedata {
+    let mut bounds = None;
+
+    // lazy af code. Clean me
+    for item in &expr.body {
+        match item.get_inner() {
+            docco_ast::comment_body_item::Inner::Property(property) => {
+                match property.name.as_str() {
+                    "bounds" => {
+                        match property
+                            .value
+                            .as_ref()
+                            .expect("Value must exist")
+                            .get_inner()
+                        {
+                            docco_ast::property_value::Inner::Parameters(parameters) => {
+                                let mut bounds2 = Bounds::default();
+
+                                for item in &parameters.items {
+                                    let value =
+                                        item.value.as_ref().expect("Value must exist").get_inner();
+                                    let num_value = match value {
+                                        docco_ast::parameter_value::Inner::Number(number) => {
+                                            Some(number.value)
+                                        }
+                                        _ => None,
+                                    };
+
+                                    match item.name.as_str() {
+                                        "width" => {
+                                            if let Some(value) = num_value {
+                                                bounds2.width = value;
+                                            }
+                                        }
+                                        "height" => {
+                                            if let Some(value) = num_value {
+                                                bounds2.height = value;
+                                            }
+                                        }
+                                        "x" => {
+                                            if let Some(value) = num_value {
+                                                bounds2.x = value;
+                                            }
+                                        }
+                                        "y" => {
+                                            if let Some(value) = num_value {
+                                                bounds2.y = value;
+                                            }
+                                        }
+                                        _ => {}
+                                    }
+                                }
+
+                                bounds = Some(bounds2);
+                            }
+                            _ => {}
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            _ => {}
+        }
+    }
+
+    virt::NodeMedata {
+        bounds,
+        visible: Some(true),
+    }
+}
+
 fn evaluate_component<F: FileResolver>(
     component: &ast::Component,
-
     fragment: &mut Vec<virt::Node>,
+    metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
 ) {
     let render = if let Some(render) = component.get_render_expr() {
@@ -75,12 +150,18 @@ fn evaluate_component<F: FileResolver>(
         return;
     };
 
-    evaluate_render(&render, fragment, &mut context.within_component(component));
+    evaluate_render(
+        &render,
+        fragment,
+        metadata,
+        &mut context.within_component(component),
+    );
 }
 
 fn evaluate_element<F: FileResolver>(
     element: &ast::Element,
     fragment: &mut Vec<virt::Node>,
+    metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
     is_root: bool,
 ) {
@@ -89,9 +170,9 @@ fn evaluate_element<F: FileResolver>(
         .get_instance_component_ref(element, &context.path);
 
     if let Some(component_info) = reference {
-        evaluate_instance(element, &component_info, fragment, context);
+        evaluate_instance(element, &component_info, fragment, metadata, context);
     } else {
-        evaluate_native_element(element, fragment, context, is_root);
+        evaluate_native_element(element, fragment, metadata, context, is_root);
     }
 }
 
@@ -120,9 +201,11 @@ fn evaluate_slot<F: FileResolver>(
     for child in &slot.body {
         match child.get_inner() {
             ast::slot_body_item::Inner::Element(child) => {
-                evaluate_element(child, fragment, context, false)
+                evaluate_element(child, fragment, &None, context, false)
             }
-            ast::slot_body_item::Inner::Text(child) => evaluate_text_node(child, fragment, context),
+            ast::slot_body_item::Inner::Text(child) => {
+                evaluate_text_node(child, fragment, &None, context)
+            }
         }
     }
 }
@@ -131,6 +214,7 @@ fn evaluate_instance<F: FileResolver>(
     element: &ast::Element,
     instance_of: &ComponentRefInfo,
     fragment: &mut Vec<virt::Node>,
+    metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
 ) {
     let render = if let Some(render) = instance_of.expr.get_render_expr() {
@@ -152,6 +236,7 @@ fn evaluate_instance<F: FileResolver>(
     evaluate_render(
         &render,
         fragment,
+        metadata,
         &mut context
             .with_data(data)
             .within_path(&instance_of.path)
@@ -186,7 +271,7 @@ fn create_inserts<'expr, F: FileResolver>(
     let mut inserts = HashMap::new();
     inserts.insert("children".to_string(), (element.id.to_string(), vec![]));
     for child in &element.body {
-        evaluate_instance_child(child, &mut inserts, context);
+        evaluate_instance_child(child, &mut inserts, &None, context);
     }
     inserts
 }
@@ -194,6 +279,7 @@ fn create_inserts<'expr, F: FileResolver>(
 fn evaluate_instance_child<'expr, F: FileResolver>(
     child: &'expr ast::ElementBodyItem,
     inserts: &mut InsertsMap<'expr>,
+    metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
 ) {
     match child.get_inner() {
@@ -206,11 +292,16 @@ fn evaluate_instance_child<'expr, F: FileResolver>(
             };
 
             for child in &insert.body {
-                evaluate_insert_child(child, fragment, context);
+                evaluate_insert_child(child, fragment, metadata, context);
             }
         }
         _ => {
-            evaluate_element_child(child, &mut inserts.get_mut("children").unwrap().1, context);
+            evaluate_element_child(
+                child,
+                &mut inserts.get_mut("children").unwrap().1,
+                metadata,
+                context,
+            );
         }
     }
 }
@@ -218,38 +309,43 @@ fn evaluate_instance_child<'expr, F: FileResolver>(
 fn evaluate_render<F: FileResolver>(
     render: &ast::Render,
     fragment: &mut Vec<virt::Node>,
+    metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
 ) {
     match render.node.as_ref().expect("Node must exist").get_inner() {
         ast::render_node::Inner::Element(element) => {
-            evaluate_element(&element, fragment, context, true);
+            evaluate_element(&element, fragment, metadata, context, true);
         }
         ast::render_node::Inner::Slot(slot) => {
             evaluate_slot(&slot, fragment, context);
         }
-        ast::render_node::Inner::Text(text) => evaluate_text_node(&text, fragment, context),
+        ast::render_node::Inner::Text(text) => {
+            evaluate_text_node(&text, fragment, metadata, context)
+        }
     }
 }
 
 fn evaluate_native_element<F: FileResolver>(
     element: &ast::Element,
     fragment: &mut Vec<virt::Node>,
+    metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
     is_root: bool,
 ) {
     let mut children = vec![];
 
     for child in &element.body {
-        evaluate_element_child(child, &mut children, context);
+        evaluate_element_child(child, &mut children, &None, context);
     }
 
     fragment.push(
         virt::node::Inner::Element(virt::Element {
+            id: context.next_id(),
             tag_name: element.tag_name.to_string(),
             source_id: Some(element.id.to_string()),
             attributes: create_native_attributes(element, context, is_root),
             children,
-            metadata: None,
+            metadata: metadata.clone(),
         })
         .get_outer(),
     );
@@ -258,16 +354,19 @@ fn evaluate_native_element<F: FileResolver>(
 fn evaluate_element_child<F: FileResolver>(
     child: &ast::ElementBodyItem,
     fragment: &mut Vec<virt::Node>,
+    metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
 ) {
     match child.get_inner() {
         ast::element_body_item::Inner::Element(child) => {
-            evaluate_element(child, fragment, context, false)
+            evaluate_element(child, fragment, &None, context, false)
         }
         ast::element_body_item::Inner::Slot(slot) => {
             evaluate_slot(&slot, fragment, context);
         }
-        ast::element_body_item::Inner::Text(child) => evaluate_text_node(child, fragment, context),
+        ast::element_body_item::Inner::Text(child) => {
+            evaluate_text_node(child, fragment, metadata, context)
+        }
         _ => {}
     }
 }
@@ -275,13 +374,16 @@ fn evaluate_element_child<F: FileResolver>(
 fn evaluate_insert_child<F: FileResolver>(
     child: &ast::InsertBody,
     fragment: &mut Vec<virt::Node>,
+    metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
 ) {
     match child.get_inner() {
         ast::insert_body::Inner::Element(child) => {
-            evaluate_element(child, fragment, context, false)
+            evaluate_element(child, fragment, metadata, context, false)
         }
-        ast::insert_body::Inner::Text(child) => evaluate_text_node(child, fragment, context),
+        ast::insert_body::Inner::Text(child) => {
+            evaluate_text_node(child, fragment, metadata, context)
+        }
         ast::insert_body::Inner::Slot(child) => evaluate_slot(child, fragment, context),
     }
 }
@@ -441,17 +543,16 @@ fn create_attribute_value<F: FileResolver>(
 
 fn evaluate_text_node<F: FileResolver>(
     text_node: &ast::TextNode,
-
     fragment: &mut Vec<virt::Node>,
+    metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
 ) {
-    let metadata = None;
-
     let node = if text_node.is_stylable() {
         let class_name =
             get_style_namespace(&text_node.name, &text_node.id, context.current_component);
 
         virt::node::Inner::Element(virt::Element {
+            id: context.next_id(),
             tag_name: "span".to_string(),
             source_id: Some(text_node.id.to_string()),
             attributes: vec![virt::Attribute {
@@ -459,8 +560,9 @@ fn evaluate_text_node<F: FileResolver>(
                 name: "class".to_string(),
                 value: class_name.to_string(),
             }],
-            metadata,
+            metadata: metadata.clone(),
             children: vec![virt::node::Inner::TextNode(virt::TextNode {
+                id: context.next_id(),
                 source_id: Some(text_node.id.to_string()),
                 value: text_node.value.to_string(),
                 metadata: None,
@@ -470,9 +572,10 @@ fn evaluate_text_node<F: FileResolver>(
         .get_outer()
     } else {
         virt::node::Inner::TextNode(virt::TextNode {
+            id: context.next_id(),
             source_id: Some(text_node.id.to_string()),
             value: text_node.value.to_string(),
-            metadata,
+            metadata: metadata.clone(),
         })
         .get_outer()
     };

@@ -140,7 +140,7 @@ fn parse_arithmetic(
         context.skip(is_superfluous)?;
         context.next_token()?; // eat operator
         context.skip(is_superfluous)?;
-        let right = parse_decl_value(context)?;
+        let right = parse_arithmetic(context)?;
         let end = context.curr_u16pos.clone();
         ast::declaration_value::Inner::Arithmetic(Box::new(ast::Arithmetic {
             id: context.next_id(),

@@ -16,6 +16,9 @@ impl<TIO: ProjectIO> Loader<TIO> {
             project: Project::new(config_context, io),
         })
     }
+    pub fn get_config_context(&self) -> &ConfigContext {
+        &self.project.config_context
+    }
     pub async fn compile_file(&self, file_path: &str) -> Result<HashMap<String, String>> {
         self.project
             .compile_files(&vec![file_path.to_string()])

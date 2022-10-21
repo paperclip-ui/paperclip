@@ -5,6 +5,7 @@ use paperclip_common::join_path;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 use std::str;
+use ts_rs::TS;
 
 pub const DEFAULT_CONFIG_NAME: &str = "paperclip.config.json";
 
@@ -12,13 +13,14 @@ pub const DEFAULT_CONFIG_NAME: &str = "paperclip.config.json";
 /// Contains additional information about the config such as directory and file name
 ///
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, TS)]
+#[ts(export)]
 pub struct ConfigContext {
     pub directory: String,
+    #[serde(rename = "fileName")]
     pub file_name: String,
     pub config: Config,
 }
-
 
 impl ConfigContext {
     pub fn get_global_script_paths(&self) -> Vec<String> {
@@ -64,7 +66,8 @@ impl ConfigContext {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone, TS)]
+#[ts(export)]
 pub struct Config {
     /// Global scripts that are injected into the page (JS, and CSS)
     #[serde(rename = "globalScripts", skip_serializing_if = "Option::is_none")]
@@ -83,7 +86,8 @@ pub struct Config {
     pub compiler_options: Option<Vec<CompilerOptions>>,
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone, TS)]
+#[ts(export)]
 pub struct CompilerOptions {
     /// Files for the target compiler to emit. E.g: [d.ts, js, css]
     #[serde(skip_serializing_if = "Option::is_none")]

@@ -1,11 +1,18 @@
 #### On-deck
 
-- realtime changes between VS Code and preview
-  - need to store contents in a "virtual" palce
-  - look into how this can be done collaboratively
-- VLS
-  - color picker
-- TD UI
+- ability to insert elements
+  - show drag bounds
+  - on mouse up, insert into active element
+    - if start + end in element, then insert into that element
+    - if start outside of element, then create frame
+- ability to edit styles of elements
+- ability to create components
+
+...
+
+- hotkey for inserting nodes
+  - "e" for element
+  - "t" for text
 
 #### Milestone: MVP UI
 

@@ -69,9 +69,9 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
         options: CompileOptions,
     ) -> impl Stream<Item = Result<(String, String), anyhow::Error>> + '_ {
         try_stream! {
-            let graph = graph.lock().unwrap();
-            let mut compile_cache = self.compile_cache.lock().unwrap();
+            let mut graph = graph.lock().unwrap();
             {
+                let mut compile_cache = self.compile_cache.lock().unwrap();
 
                 let graph_files = graph
                 .dependencies
@@ -94,9 +94,11 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
                 let s = self.io.watch(&self.config_context.directory);
                 pin_mut!(s);
                 while let Some(value) = s.next().await {
-
                     // Only touch PC files since it's the only thing that we can compile
                     if is_paperclip_file(&value.path) {
+
+                        // blah, this shouldn't be happening.....
+                        graph.load(&value.path, &self.io).await?;
                         for (file_path, content) in self.maybe_recompile_file(&value.path, &graph).await? {
                             yield (file_path.to_string(), content.to_string());
                         }

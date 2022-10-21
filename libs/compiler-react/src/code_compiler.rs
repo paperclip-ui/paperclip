@@ -13,7 +13,7 @@ pub fn compile_code(dependency: &Dependency) -> Result<String> {
 }
 
 fn compile_document(document: &ast::Document, context: &mut Context) {
-    context.add_buffer("import * as React from \"react\";\n\n");
+    compile_imports(document, context);
     for item in &document.body {
         match item.get_inner() {
             ast::document_body_item::Inner::Component(component) => {
@@ -22,6 +22,36 @@ fn compile_document(document: &ast::Document, context: &mut Context) {
             _ => {}
         }
     }
+}
+
+fn compile_imports(document: &ast::Document, context: &mut Context) {
+    // Temporary until things stabilize - primarily for development of the editor
+    context.add_buffer(
+        format!(
+            "require(\"./{}.css\");\n",
+            std::path::Path::new(&context.dependency.path)
+                .file_name()
+                .unwrap()
+                .to_str()
+                .unwrap()
+        )
+        .as_str(),
+    );
+    context.add_buffer("import * as React from \"react\";\n");
+    for item in &document.body {
+        match item.get_inner() {
+            ast::document_body_item::Inner::Import(import) => {
+                compile_import(import, context);
+            }
+            _ => {}
+        }
+    }
+    context.add_buffer("\n");
+}
+
+fn compile_import(import: &ast::Import, context: &mut Context) {
+    context
+        .add_buffer(format!("import * as {} from \"{}\";", import.namespace, import.path).as_str());
 }
 
 macro_rules! compile_children {
@@ -48,13 +78,19 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
         context.add_buffer("export ");
     }
 
-    context.add_buffer(format!("const {} = React.memo((props) => {{\n", &component.name).as_str());
+    context.add_buffer(
+        format!(
+            "const {} = React.memo(React.forwardRef((props, ref) => {{\n",
+            &component.name
+        )
+        .as_str(),
+    );
 
     context.start_block();
-    compile_component_render(component, context);
+    compile_component_render(component, &mut context.within_component(component));
     context.end_block();
 
-    context.add_buffer("});\n\n");
+    context.add_buffer("}));\n\n");
 }
 
 fn compile_component_render(component: &ast::Component, context: &mut Context) {
@@ -62,7 +98,7 @@ fn compile_component_render(component: &ast::Component, context: &mut Context) {
 
     context.add_buffer("return ");
     match render.node.as_ref().expect("Node must exist").get_inner() {
-        ast::render_node::Inner::Element(expr) => compile_element(&expr, context),
+        ast::render_node::Inner::Element(expr) => compile_element(&expr, true, context),
         ast::render_node::Inner::Text(expr) => compile_text_node(&expr, context),
         ast::render_node::Inner::Slot(expr) => compile_slot(&expr, context),
     }
@@ -82,7 +118,7 @@ fn compile_slot(node: &ast::Slot, context: &mut Context) {
           &node.body,
           |child: &ast::SlotBodyItem| {
             match child.get_inner() {
-              ast::slot_body_item::Inner::Element(expr) => compile_element(&expr, context),
+              ast::slot_body_item::Inner::Element(expr) => compile_element(&expr, false, context),
               ast::slot_body_item::Inner::Text(expr) => compile_text_node(&expr, context),
             }
           },
@@ -90,19 +126,25 @@ fn compile_slot(node: &ast::Slot, context: &mut Context) {
         }
     }
 }
-fn compile_element(element: &ast::Element, context: &mut Context) {
-    let tag_name = if context
+fn compile_element(element: &ast::Element, is_root: bool, context: &mut Context) {
+    let is_instance = context
         .dependency
         .document
         .contains_component_name(&element.tag_name)
-    {
-        element.tag_name.to_string()
+        || element.namespace != None;
+
+    let tag_name = if is_instance {
+        let mut buffer = format!("{}", element.tag_name);
+        if let Some(namespace) = &element.namespace {
+            buffer = format!("{}.{}", namespace, buffer);
+        }
+        buffer
     } else {
         format!("\"{}\"", element.tag_name)
     };
 
     context.add_buffer(format!("React.createElement({}, ", tag_name).as_str());
-    compile_element_parameters(element, context);
+    compile_element_parameters(element, is_instance, is_root, context);
     compile_element_children(element, context);
     context.add_buffer(")")
 }
@@ -121,7 +163,7 @@ fn compile_element_children(element: &ast::Element, context: &mut Context) {
       |child: &ast::ElementBodyItem| {
         match child.get_inner() {
           ast::element_body_item::Inner::Text(expr) => compile_text_node(&expr, context),
-          ast::element_body_item::Inner::Element(expr) => compile_element(&expr, context),
+          ast::element_body_item::Inner::Element(expr) => compile_element(&expr, false, context),
           ast::element_body_item::Inner::Slot(expr) => compile_slot(&expr, context),
           _ => {}
         };
@@ -130,8 +172,18 @@ fn compile_element_children(element: &ast::Element, context: &mut Context) {
     }
 }
 
-fn compile_element_parameters(element: &ast::Element, context: &mut Context) {
-    let raw_attrs = rename_attrs_for_react(get_raw_element_attrs(element, context));
+fn compile_element_parameters(
+    element: &ast::Element,
+    is_instance: bool,
+    is_root: bool,
+    context: &mut Context,
+) {
+    let raw_attrs = rename_attrs_for_react(get_raw_element_attrs(
+        element,
+        is_instance,
+        is_root,
+        context,
+    ));
 
     if raw_attrs.len() == 0 {
         context.add_buffer("null");
@@ -156,6 +208,8 @@ fn compile_element_parameters(element: &ast::Element, context: &mut Context) {
 
 fn get_raw_element_attrs<'dependency>(
     element: &ast::Element,
+    is_instance: bool,
+    is_root: bool,
     context: &mut Context<'dependency>,
 ) -> BTreeMap<String, Context<'dependency>> {
     let mut attrs: BTreeMap<String, Context<'dependency>> = BTreeMap::new();
@@ -170,19 +224,30 @@ fn get_raw_element_attrs<'dependency>(
     }
 
     if element.is_stylable() {
-        let mut sub = context.with_new_content();
+        let sub = context.with_new_content();
         sub.add_buffer(
             format!(
                 "\"{}\"",
-                get_style_namespace(&element.name, &element.id, None)
+                get_style_namespace(&element.name, &element.id, context.current_component)
             )
             .as_str(),
         );
 
-        if let Some(class) = attrs.get_mut("class") {
-            class.add_buffer(format!(" + \" \" + {}", sub.get_buffer()).as_str());
+        if is_root {
+            sub.add_buffer(
+                format!(" + (props.$$scopeClassName ? \" \" + props.$$scopeClassName : \"\")")
+                    .as_str(),
+            );
+        }
+
+        if is_instance {
+            attrs.insert("$$scopeClassName".to_string(), sub);
         } else {
-            attrs.insert("class".to_string(), sub);
+            if let Some(class) = attrs.get_mut("class") {
+                class.add_buffer(format!(" + \" \" + {}", sub.get_buffer()).as_str());
+            } else {
+                attrs.insert("class".to_string(), sub);
+            }
         }
     }
 
@@ -190,6 +255,12 @@ fn get_raw_element_attrs<'dependency>(
         let mut sub = context.with_new_content();
         compile_insert(insert, &mut sub);
         attrs.insert(insert.name.to_string(), sub);
+    }
+
+    if is_root {
+        let sub = context.with_new_content();
+        sub.add_buffer("ref");
+        attrs.insert("ref".to_string(), sub);
     }
 
     attrs
@@ -200,7 +271,7 @@ fn compile_insert(insert: &ast::Insert, context: &mut Context) {
       &insert.body,
       |child: &ast::InsertBody| {
         match child.get_inner() {
-          ast::insert_body::Inner::Element(expr) => compile_element(&expr, context),
+          ast::insert_body::Inner::Element(expr) => compile_element(&expr,false, context),
           ast::insert_body::Inner::Text(expr) => compile_text_node(&expr, context),
           ast::insert_body::Inner::Slot(expr) => compile_slot(&expr, context)
         }

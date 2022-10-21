@@ -192,7 +192,7 @@ export class LiveWindow {
         top: 0,
         left: 0
       });
-      iframe.onload = () => document.getElementById("loader").remove();
+      // iframe.onload = () => document.getElementById("loader").remove();
       document.body.appendChild(iframe);
     </script>
     </html>`;

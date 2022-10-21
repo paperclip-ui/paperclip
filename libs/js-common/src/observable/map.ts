@@ -37,7 +37,9 @@ export class ObservableMap<TState> {
     };
 
     this._em.on("change", onChange);
-    return () => this._em.off("change", onChange);
+    return () => {
+      this._em.off("change", onChange);
+    };
   }
   update(updater: (state: TState) => TState) {
     const newState = Object.freeze(updater(this._state));

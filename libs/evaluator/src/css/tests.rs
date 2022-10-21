@@ -1120,3 +1120,25 @@ add_case! {
   ._BBA-abba-80f4925f-21._Folder-container-80f4925f-14._Tree-root-80f4925f-5 { --depth: 2; } 
   "#
 }
+
+
+
+
+
+add_case! {
+  can_define_var_within_calc,
+  [
+    ("/entry.pc", r#"
+      component Something {
+        render span root {
+          style {
+            left: calc(10* var(--x) /8)
+          }
+        }
+      }
+    "#)
+  ],
+  r#"
+  ._Something-root-80f4925f-10 { left: calc(10 * var(--x) / 8); }
+  "#
+}

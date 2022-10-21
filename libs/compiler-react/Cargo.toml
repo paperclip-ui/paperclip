@@ -12,5 +12,6 @@ name = "paperclip_compiler_react"
 [dependencies]
 paperclip_parser = { path = "../parser" }
 paperclip_common = { path = "../rs-common" }
+paperclip_proto = { path = "../proto" }
 paperclip_evaluator = { path = "../evaluator" }
 anyhow = "1.0.61"

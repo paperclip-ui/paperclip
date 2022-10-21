@@ -106,3 +106,10 @@ public style fontHeader {
 public style easeIn {
   transition: 0.2s
 }
+
+public style centered {
+  left: 50%
+  top: 50%
+  position: absolute
+  transform: translate(-50%, -50%)
+}

@@ -155,3 +155,11 @@ add_case! {
         text-content: "abba"
     "#
 }
+
+
+add_case! {
+    can_parse_var_in_calc,
+    r#"
+        left: calc(100% * var(--x) / 100)
+    "#
+}

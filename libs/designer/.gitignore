@@ -1,2 +1,2 @@
-*.js
-!dist/README.md
+public/package.json
+public/paperclip_

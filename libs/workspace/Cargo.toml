@@ -1,0 +1,48 @@
+[package]
+name = "paperclip_workspace"
+version = "0.1.1"
+authors = ["Craig Condon <craig.j.condon@gmail.com>"]
+edition = "2021"
+exclude = []
+
+[lib]
+name = "paperclip_workspace"
+
+[dependencies]
+paperclip_project = { path = "../project" }
+paperclip_proto = { path = "../proto" }
+tonic = "0.8.1"
+tonic-web = "0.4.0"
+prost = "0.11.0"
+tokio = { version = "1.0", features = [ "rt-multi-thread", "time", "fs", "macros", "net"] }
+paperclip_common = { path = "../rs-common" }
+paperclip_evaluator = { path = "../evaluator" }
+paperclip_config = { path = "../config" }
+paperclip_parser = { path = "../parser" }
+paperclip_language_services = { path = "../language-services" }
+async-trait = "0.1.57"
+async-channel = "1.7.1"
+parking_lot = "0.12.1"
+hyper = "0.14.20"
+headers = "0.3.8"
+portpicker = "0.1.1"
+mime_guess = "2.0.4"
+warp = "0.3.2"
+futures = "0.3.21"
+futures-core = "0.3.24"
+futures-util = "0.3.24"
+notify = "5.0.0"
+tower = "0.4.13"
+http = "0.2.8"
+http-body = "0.4.5"
+include_dir = "0.7.3"
+path-absolutize = "3.0.13"
+open = "3.0.3"
+tokio-stream = "0.1.10"
+async-stream = "0.3.3"
+anyhow = "1.0.65"
+crossbeam-channel = "0.5.6"
+flume = "0.10.14"
+
+[dev-dependencies]
+assert_cmd = "2.0.4"

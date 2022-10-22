@@ -6,6 +6,7 @@ members = [
   "libs/project",
   "libs/evaluator",
   "libs/paperclip-loader",
+  "libs/workspace",
   "libs/designer",
   "libs/proto",
   "libs/config",

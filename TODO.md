@@ -1,5 +1,7 @@
 #### On-deck
 
+- build designer in WASM
+
 - ability to insert elements
   - show drag bounds
   - on mouse up, insert into active element

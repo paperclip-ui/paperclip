@@ -1355,6 +1355,8 @@ __metadata:
 "@paperclip-ui/designer@workspace:libs/designer":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/designer@workspace:libs/designer"
+  dependencies:
+    yew: ^0.0.1
   languageName: unknown
   linkType: soft
 
@@ -12567,5 +12569,12 @@ __metadata:
     buffer-crc32: ~0.2.3
     fd-slicer: ~1.1.0
   checksum: 7f21fe0bbad6e2cb130044a5d1d0d5a0e5bf3d8d4f8c4e6ee12163ce798fee3de7388d22a7a0907f563ac5f9d40f8699a223d3d5c1718da90b0156da6904022b
+  languageName: node
+  linkType: hard
+
+"yew@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "yew@npm:0.0.1"
+  checksum: 10227488842aa4b964d4c023c2a2a7229eda503aae9dcf663baefe6c6d86f38deb32d283b5088625c3f16222a78f07d6db21b7076bdcba4eeb357873d8c80012
   languageName: node
   linkType: hard

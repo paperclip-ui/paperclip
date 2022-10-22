@@ -5,9 +5,9 @@ authors = ["Craig Condon <craig.j.condon@gmail.com>"]
 edition = "2021"
 exclude = []
 
-[lib]
-name = "paperclip_designer"
-crate-type = ["cdylib", "rlib"]
+# [lib]
+# name = "paperclip_designer"
+# crate-type = ["cdylib", "rlib"]
 
 # [dependencies]
 
@@ -22,21 +22,7 @@ crate-type = ["cdylib", "rlib"]
 # anyhow = "1.0.61"
 # textwrap = "0.15.0"
 
-[dev-dependencies]
-assert_cmd = "2.0.4"
-
 
 [dependencies]
-js-sys = "0.3.60"
-wasm-bindgen = "0.2.83"
+yew = { git = "https://github.com/yewstack/yew/", features = ["csr"] }
 
-[dependencies.web-sys]
-version = "0.3.6"
-features = [
-  "Window",
-  "Document",
-  "Element",
-  "HtmlElement",
-  "Node",
-  "Window"
-]

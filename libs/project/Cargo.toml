@@ -12,6 +12,7 @@ name = "paperclip_project"
 paperclip_parser = { path = "../parser" }
 paperclip_evaluator = { path = "../evaluator" }
 paperclip_compiler_react = { path = "../compiler-react" }
+paperclip_compiler_yew = { path = "../compiler-yew" }
 paperclip_config = { path = "../config" }
 paperclip_common = { path = "../rs-common" }
 textwrap = "0.15.0"

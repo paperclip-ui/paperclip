@@ -1,6 +1,7 @@
 [workspace]
 members = [
   "libs/compiler-react",
+  "libs/compiler-yew",
   "libs/cli",
   "libs/rs-common",
   "libs/project",

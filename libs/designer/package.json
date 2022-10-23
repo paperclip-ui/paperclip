@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "wasm-pack build --release --target web --out-dir dist"
+    "build": "wasm-pack build --release --target web --out-dir dist",
+    "test": "wasm-pack test --node",
+    "test:watch": "cargo watch -s \"wasm-pack test --node\""
   },
   "author": "",
   "license": "ISC",

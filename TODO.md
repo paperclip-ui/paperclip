@@ -2,6 +2,9 @@
 
 - build designer in WASM
 
+  - get state machine to work
+  - build PC compiler in rust
+
 - ability to insert elements
   - show drag bounds
   - on mouse up, insert into active element

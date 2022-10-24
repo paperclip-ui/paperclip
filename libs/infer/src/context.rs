@@ -1,9 +1,6 @@
+use paperclip_parser::graph::{Dependency, Graph};
 
-
-use paperclip_parser::graph::{Graph, Dependency};
-
-use crate::{types, infer::Inferencer};
-
+use crate::{infer::Inferencer, types};
 
 pub struct Scope {
     pub root_type: types::Type,
@@ -65,16 +62,23 @@ pub struct InferContext<'graph, 'infer> {
     pub scope: Scope,
     pub dependency: &'graph Dependency,
     graph: &'graph Graph,
-    inferencer: &'infer Inferencer
+    inferencer: &'infer Inferencer,
 }
 
 impl<'graph, 'infer> InferContext<'graph, 'infer> {
-    pub fn new(dependency: &'graph Dependency, graph: &'graph Graph, inferencer: &'infer Inferencer) -> Self {
+    pub fn new(
+        dependency: &'graph Dependency,
+        graph: &'graph Graph,
+        inferencer: &'infer Inferencer,
+    ) -> Self {
         Self {
-            scope: Scope { root_type: types::Type::Unknown, path: vec![] },
+            scope: Scope {
+                root_type: types::Type::Unknown,
+                path: vec![],
+            },
             graph,
             dependency,
-            inferencer
+            inferencer,
         }
     }
 }

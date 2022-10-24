@@ -1,14 +1,14 @@
-use paperclip_parser::pc::parser;
 use anyhow::Result;
 use futures::executor::block_on;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::graph;
 use paperclip_parser::graph::test_utils;
+use paperclip_parser::pc::parser;
 use std::collections::HashMap;
 
-use crate::types;
 use crate::infer::Inferencer;
+use crate::types;
 
 macro_rules! add_case {
     ($name: ident, $mock_files: expr, $output: expr) => {
@@ -18,7 +18,7 @@ macro_rules! add_case {
             let mut graph = graph::Graph::new();
 
             if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
-              panic!("Unable to load");
+                panic!("Unable to load");
             }
 
             let inferencer = Inferencer::new();

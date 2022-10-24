@@ -7,8 +7,8 @@ mod styles;
 #[function_component]
 pub fn Main() -> Html {
     html! {
-        <div>
-          <span>{"Hello"}</span>
-        </div>
+        <styles::Test>
+          <span class={1}>{"Hello"}</span>
+        </styles::Test>
     }
 }

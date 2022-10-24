@@ -149,6 +149,7 @@ fn compile_element(element: &ast::Element, is_root: bool, context: &mut Context)
     context.add_buffer(")")
 }
 
+
 fn compile_element_children(element: &ast::Element, context: &mut Context) {
     let visible_children = element.get_visible_children();
 

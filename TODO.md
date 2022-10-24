@@ -1,5 +1,9 @@
 #### On-deck
 
+- inference engine
+
+  - follow instance props
+
 - build designer in WASM
 
   - get state machine to work

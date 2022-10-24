@@ -1699,6 +1699,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "paperclip_infer"
+version = "0.1.1"
+dependencies = [
+ "anyhow",
+ "paperclip_parser",
+ "paperclip_proto",
+]
+
+[[package]]
 name = "paperclip_language_services"
 version = "0.1.1"
 dependencies = [

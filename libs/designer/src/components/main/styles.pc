@@ -1,7 +1,19 @@
 public component Test {
   render div {
     style {
-      color: red
+      color: blue
     }
+    Outer {
+      slot children
+    }
+  }
+}
+
+pub component Outer {
+  render div {
+    style {
+      font-family: sans-serif
+    }
+    slot children
   }
 }

@@ -38,5 +38,10 @@ add_case! {
     use yew::prelude::*;
 
     #[function_component]
+    fn A() -> Html {
+      html! {
+        <div></div>
+      }
+    }
   "#
 }

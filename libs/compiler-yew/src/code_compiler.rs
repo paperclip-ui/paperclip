@@ -96,7 +96,7 @@ fn compile_element(element: &ast::Element, is_root: bool, context: &mut Context)
     context.add_buffer(format!("<{}", element.tag_name).as_str());
     context.add_buffer(">");
     context.add_buffer(format!("</{}", element.tag_name).as_str());
-    context.add_buffer(">");
+    context.add_buffer(">\n");
 }
 
 fn compile_text_node(text: &ast::TextNode, context: &mut Context) {

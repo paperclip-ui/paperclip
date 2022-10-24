@@ -1,5 +1,7 @@
 public component Test {
   render div {
-    
+    style {
+      color: red
+    }
   }
 }

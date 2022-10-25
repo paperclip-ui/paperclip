@@ -294,7 +294,7 @@ fn compile_insert(insert: &ast::Insert, context: &mut Context) {
 
 fn compile_text_node(_text: &ast::TextNode, _context: &mut Context) {}
 fn compile_slot(expr: &ast::Slot, context: &mut Context) {
-    context.add_buffer(format!("{{ for props.{}.iter() }}\n", expr.name).as_str());
+    context.add_buffer(format!("{{ for props.{}.iter() }}", expr.name).as_str());
 }
 
 fn compile_simple_expression(expr: &ast::SimpleExpression, context: &mut Context) {

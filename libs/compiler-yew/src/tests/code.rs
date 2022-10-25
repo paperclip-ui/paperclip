@@ -183,3 +183,35 @@ add_case! {
   "#
 }
 
+
+
+add_case! {
+  can_define_another_slot,
+  [
+    ("/entry.pc", r#"component A {
+      render div {
+        slot something
+      }
+    }"#)
+  ],
+  r#"
+    use yew::prelude::*;
+    use yew::{function_component, Children, html, Properties, Callback, MouseEvent};
+
+    #[derive(Properties, PartialEq)]
+    struct AProps {
+      pub __scope_class_name: Option<String>,
+      pub something: Children,
+    }
+
+    #[function_component]
+    fn A(props: &AProps) -> Html {
+      html! {
+        <div>
+            { for props.something.iter() }
+        </div>
+      }
+    }
+  "#
+}
+

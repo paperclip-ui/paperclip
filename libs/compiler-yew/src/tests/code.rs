@@ -1,24 +1,32 @@
 use crate::compile_code;
 use paperclip_common::str_utils::strip_extra_ws;
-use paperclip_parser::graph::Dependency;
-use paperclip_parser::pc::parser::parse;
 use std::collections::HashMap;
+use futures::executor::block_on;
+use paperclip_parser::graph::{test_utils, Graph};
+
 
 // TODO: insert test
 
 macro_rules! add_case {
-    ($name: ident, $mock_content: expr, $expected_output: expr) => {
+    ($name: ident, $mock_files: expr, $expected_output: expr) => {
         #[test]
         fn $name() {
             let path = "/entry.pc".to_string();
-            let ast = parse($mock_content, &path).unwrap();
-            let dep = Dependency {
-                hash: "a".to_string(),
-                path: path.to_string(),
-                imports: HashMap::new(),
-                document: ast,
-            };
-            let output = compile_code(&dep).unwrap();
+
+            let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
+            let mut graph = Graph::new();
+
+            if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
+                panic!("Unable to load");
+            }
+
+            let dep = graph.dependencies.get("/entry.pc").unwrap();
+
+            
+            let output = compile_code(&dep, &graph).unwrap();
+
+            println!("{}", output);
+            
             assert_eq!(
                 strip_extra_ws(output.as_str()),
                 strip_extra_ws($expected_output)
@@ -29,49 +37,47 @@ macro_rules! add_case {
 
 add_case! {
   can_compile_a_simple_component,
-  r#"component A {
-    render div {
-      
-    }
-  }"#,
-  r#"
-    use yew::prelude::*;
-    use yew::{function_component, Children, html, Properties};
-
-    #[derive(Properties, PartialEq)]
-    struct AProps {
-      pub __scope_class_name: Option<String>,
-      #[prop_or_default]
-      pub children: Children
-    }
-
-    #[function_component]
-    fn A(props: &AProps) -> Html {
-      html! {
-        <div></div>
+  [
+    ("/entry.pc", r#"component A {
+      render div
+    }"#)
+  ],
+    r#"
+      use yew::prelude::*;
+      use yew::{function_component, Children, html, Properties, Callback, MouseEvent};
+  
+      #[derive(Properties, PartialEq)]
+      struct AProps {
+        pub __scope_class_name: Option<String>,
       }
-    }
-  "#
+  
+      #[function_component]
+      fn A(props: &AProps) -> Html {
+        html! {
+          <div></div>
+        }
+      }
+    "#
 }
 
 add_case! {
   can_compile_a_simple_component_with_style,
-  r#"component A {
-    render div {
-      style {
-        color: red
+  [
+    ("/entry.pc", r#"component A {
+      render div {
+        style {
+          color: red
+        }
       }
-    }
-  }"#,
+    }"#)
+  ],
   r#"
     use yew::prelude::*;
-    use yew::{function_component, Children, html, Properties};
+    use yew::{function_component, Children, html, Properties, Callback, MouseEvent};
 
     #[derive(Properties, PartialEq)]
     struct AProps {
       pub __scope_class_name: Option<String>,
-      #[prop_or_default]
-      pub children: Children
     }
 
     #[function_component]
@@ -89,23 +95,25 @@ add_case! {
 
 add_case! {
   can_compile_a_slot,
-  r#"component A {
-    render div {
-      style {
-        color: red
+  [
+    ("/entry.pc", r#"component A {
+      render div {
+        style {
+          color: red
+        }
+        slot children
       }
-      slot children
-    }
-  }"#,
+    }"#)
+  ],
   r#"
     use yew::prelude::*;
-    use yew::{function_component, Children, html, Properties};
+    use yew::{function_component, Children, html, Properties, Callback, MouseEvent};
 
     #[derive(Properties, PartialEq)]
     struct AProps {
       pub __scope_class_name: Option<String>,
       #[prop_or_default]
-      pub children: Children
+      pub children: Children,
     }
 
     #[function_component]
@@ -122,3 +130,56 @@ add_case! {
     }
   "#
 }
+
+add_case! {
+  attributes_are_included_in_type,
+  [
+    ("/entry.pc", r#"component A {
+      render div(class: class)
+    }"#)
+  ],
+  r#"
+    use yew::prelude::*;
+    use yew::{function_component, Children, html, Properties, Callback, MouseEvent};
+
+    #[derive(Properties, PartialEq)]
+    struct AProps {
+      pub __scope_class_name: Option<String>,
+      pub class: String,
+    }
+
+    #[function_component]
+    fn A(props: &AProps) -> Html {
+      html! {
+        <div class={props.class}></div>
+      }
+    }
+  "#
+}
+
+add_case! {
+  callbacks_are_infered,
+  [
+    ("/entry.pc", r#"component A {
+      render div(onclick: on_click)
+    }"#)
+  ],
+  r#"
+    use yew::prelude::*;
+    use yew::{function_component, Children, html, Properties, Callback, MouseEvent};
+
+    #[derive(Properties, PartialEq)]
+    struct AProps {
+      pub __scope_class_name: Option<String>,
+      pub on_click: Callback<MouseEvent>,
+    }
+
+    #[function_component]
+    fn A(props: &AProps) -> Html {
+      html! {
+        <div onclick={props.on_click}></div>
+      }
+    }
+  "#
+}
+

@@ -1648,8 +1648,10 @@ name = "paperclip_compiler_yew"
 version = "0.1.1"
 dependencies = [
  "anyhow",
+ "futures",
  "paperclip_common",
  "paperclip_evaluator",
+ "paperclip_infer",
  "paperclip_parser",
  "paperclip_proto",
 ]

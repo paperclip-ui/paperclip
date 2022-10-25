@@ -1,31 +1,34 @@
 use super::context::Context;
 use anyhow::Result;
 use paperclip_evaluator::core::utils::get_style_namespace;
-use paperclip_parser::graph::Dependency;
+use paperclip_parser::graph::{Dependency, Graph};
 use paperclip_parser::pc::ast;
 use std::collections::BTreeMap;
+use paperclip_infer::infer::{Inferencer};
+use paperclip_infer::types as infer_types;
 
-pub fn compile_code(dependency: &Dependency) -> Result<String> {
-    let mut context = Context::new(&dependency);
-    compile_document(&dependency.document, &mut context);
+pub fn compile_code(dependency: &Dependency, graph: &Graph) -> Result<String> {
+    let mut context = Context::new(&dependency, graph);
+    compile_document(&dependency.document, &mut context)?;
     Ok(context.get_buffer())
 }
 
-fn compile_document(document: &ast::Document, context: &mut Context) {
+fn compile_document(document: &ast::Document, context: &mut Context) -> Result<()> {
     compile_imports(document, context);
     for item in &document.body {
         match item.get_inner() {
             ast::document_body_item::Inner::Component(component) => {
-                compile_component(&component, context)
+                compile_component(&component, context)?;
             }
             _ => {}
         }
     }
+    Ok(())
 }
 
 fn compile_imports(document: &ast::Document, context: &mut Context) {
     context.add_buffer("use yew::prelude::*;\n");
-    context.add_buffer("use yew::{function_component, Children, html, Properties};\n");
+    context.add_buffer("use yew::{function_component, Children, html, Properties, Callback, MouseEvent};\n");
     for item in &document.body {
         match item.get_inner() {
             ast::document_body_item::Inner::Import(import) => {
@@ -56,8 +59,8 @@ macro_rules! compile_children {
     }};
 }
 
-fn compile_component(component: &ast::Component, context: &mut Context) {
-    compile_component_props(component, context);
+fn compile_component(component: &ast::Component, context: &mut Context) -> Result<()> {
+    compile_component_props(component, context)?;
 
     context.add_buffer("#[function_component]\n");
 
@@ -81,9 +84,13 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
     );
     context.end_block();
     context.add_buffer("}\n\n");
+    Ok(())
 }
 
-fn compile_component_props(component: &ast::Component, context: &mut Context) {
+fn compile_component_props(component: &ast::Component, context: &mut Context) -> Result<()> {
+
+    let component_inference = Inferencer::new().infer_component(component, &context.dependency.path, context.graph)?;
+
     context.add_buffer("#[derive(Properties, PartialEq)]\n");
     if component.is_public {
         context.add_buffer("pub ");
@@ -91,10 +98,53 @@ fn compile_component_props(component: &ast::Component, context: &mut Context) {
     context.add_buffer(format!("struct {}Props {{\n", component.name).as_str());
     context.start_block();
     context.add_buffer("pub __scope_class_name: Option<String>,\n");
-    context.add_buffer("#[prop_or_default]\n");
-    context.add_buffer("pub children: Children\n");
+
+    for (name, prop_type) in &component_inference.properties {
+
+        if name == "children" && matches!(prop_type, infer_types::Type::Slot) {
+            context.add_buffer("#[prop_or_default]\n");
+        }
+
+        context.add_buffer(format!("pub {}: ", name).as_str());
+        compile_inference(prop_type, context);
+        context.add_buffer(",\n");
+    }
+
+
     context.end_block();
-    context.add_buffer("}\n");
+    context.add_buffer("}\n\n");
+
+    Ok(())
+}
+
+fn compile_inference(inference: &infer_types::Type, context: &mut Context) {
+    match inference {
+        infer_types::Type::Slot => {
+            context.add_buffer("Children");
+        },
+        infer_types::Type::String => {
+            context.add_buffer("String");
+        },
+        infer_types::Type::Number => {
+            context.add_buffer("f32");
+        },
+        infer_types::Type::Reference(reference) => {
+            context.add_buffer(reference.path.join("::").as_str());
+        },
+        infer_types::Type::Callback(cb) => {
+            context.add_buffer("Callback<");
+            let mut peekable = cb.arguments.iter().peekable();
+
+            while let Some(arg) = peekable.next() {
+                compile_inference(arg, context);
+                if !matches!(peekable.peek(), None) {
+                    context.add_buffer(",")
+                }
+            }
+            context.add_buffer(">");
+        },
+        _ => {}
+    }
 }
 
 fn compile_render(render: &ast::Render, context: &mut Context) {
@@ -187,7 +237,7 @@ fn get_raw_element_attrs<'dependency>(
         );
 
         if is_root {
-            let mut subsub = sub.with_new_content();
+            let subsub = sub.with_new_content();
 
             subsub.add_buffer("if let Some(scope_class_name) = &props.__scope_class_name {\n");
             subsub.start_block();
@@ -242,7 +292,7 @@ fn compile_insert(insert: &ast::Insert, context: &mut Context) {
     }
 }
 
-fn compile_text_node(text: &ast::TextNode, context: &mut Context) {}
+fn compile_text_node(_text: &ast::TextNode, _context: &mut Context) {}
 fn compile_slot(expr: &ast::Slot, context: &mut Context) {
     context.add_buffer(format!("{{ for props.{}.iter() }}\n", expr.name).as_str());
 }
@@ -257,6 +307,9 @@ fn compile_simple_expression(expr: &ast::SimpleExpression, context: &mut Context
         }
         ast::simple_expression::Inner::Boolean(expr) => {
             context.add_buffer(format!("\"{}\"", expr.value).as_str())
+        }
+        ast::simple_expression::Inner::Reference(expr) => {
+            context.add_buffer(format!("props.{}", expr.path.get(0).expect("Path missing")).as_str())
         }
         _ => {}
     }

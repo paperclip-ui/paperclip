@@ -226,3 +226,55 @@ add_case! {
     )
   ])
 }
+
+
+add_case! {
+  can_infer_nested_elements,
+  [
+    (
+    "/entry.pc", r#"
+      public component A {
+        render div {
+          span(class: class) {
+
+          }
+        }
+      }
+    "#
+    )
+  ],
+  types::Map::from([
+    (
+      "A".to_string(), types::Type::Component(types::Component {
+        properties: types::Map::from([
+          ("class".to_string(), types::Type::String),
+        ])
+      }),
+    )
+  ])
+}
+
+
+add_case! {
+  can_infer_slots,
+  [
+    (
+    "/entry.pc", r#"
+      public component A {
+        render div {
+          slot something
+        }
+      }
+    "#
+    )
+  ],
+  types::Map::from([
+    (
+      "A".to_string(), types::Type::Component(types::Component {
+        properties: types::Map::from([
+          ("something".to_string(), types::Type::Slot),
+        ])
+      }),
+    )
+  ])
+}

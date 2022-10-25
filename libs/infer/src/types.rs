@@ -5,6 +5,7 @@ use std::collections::BTreeMap;
 pub enum Type {
     Unknown,
     String,
+    Slot,
     Number,
     Boolean,
     Optional(Box<Type>),

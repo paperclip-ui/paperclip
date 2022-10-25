@@ -105,7 +105,26 @@ fn infer_render_node(node: &ast::pc::render_node::Inner, context: &mut InferCont
 }
 
 fn infer_element(expr: &ast::pc::Element, context: &mut InferContext) -> Result<()> {
-    infer_attributes(expr, context)
+    infer_attributes(expr, context)?;
+    for child in &expr.body {
+        match child.get_inner() {
+            ast::pc::element_body_item::Inner::Element(child) => {
+                infer_element(child, context)?;
+            },
+            ast::pc::element_body_item::Inner::Slot(child) => {
+                infer_slot(child, context)?;
+            },
+            _ => {}
+        }
+    }
+    Ok(())
+}
+
+fn infer_slot(expr: &ast::pc::Slot, context: &mut InferContext) -> Result<()> {
+   context.step_in(&expr.name);
+   context.set_scope_type(types::Type::Slot);
+   context.step_out();
+    Ok(())
 }
 
 fn infer_attributes(expr: &ast::pc::Element, context: &mut InferContext) -> Result<()> {

@@ -1,8 +1,3 @@
 // use crate::machine::core::Reducer;
 
-
-
-pub struct Designer {
-
-}
-
+pub struct Designer {}

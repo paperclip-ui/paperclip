@@ -113,7 +113,7 @@ add_case! {
     (
       "A".to_string(), types::Type::Component(types::Component {
         properties: types::Map::from([
-          ("class".to_string(), types::Type::Unknown)        
+          ("class".to_string(), types::Type::Unknown)
         ])
       }),
     ),
@@ -143,20 +143,19 @@ add_case! {
     (
       "A".to_string(), types::Type::Component(types::Component {
         properties: types::Map::from([
-          ("class".to_string(), types::Type::String)        
+          ("class".to_string(), types::Type::String)
         ])
       }),
     ),
     (
       "B".to_string(), types::Type::Component(types::Component {
         properties: types::Map::from([
-          ("cd".to_string(), types::Type::String)        
+          ("cd".to_string(), types::Type::String)
         ])
       })
     )
   ])
 }
-
 
 add_case! {
   prop_is_string_if_linked_to_callback,

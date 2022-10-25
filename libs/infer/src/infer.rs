@@ -60,14 +60,14 @@ fn infer_component(component: &ast::pc::Component, context: &mut InferContext) {
             context,
         );
     }
-    let properties = if let types::Type::Map(properties) = &context.scope.borrow_mut().get_scope_type() {
-        properties.clone()
-    } else {
-        types::Map::new()
-    };
+    let properties =
+        if let types::Type::Map(properties) = &context.scope.borrow_mut().get_scope_type() {
+            properties.clone()
+        } else {
+            types::Map::new()
+        };
 
-    context
-        .set_scope_type(types::Type::Component(types::Component { properties }));
+    context.set_scope_type(types::Type::Component(types::Component { properties }));
     context.step_out();
 }
 
@@ -89,18 +89,25 @@ fn infer_attributes(expr: &ast::pc::Element, context: &mut InferContext) {
     let mut context = context.with_instance_inference(instance_props);
 
     for attr in &expr.parameters {
-        infer_simple_expression(attr.value.as_ref().expect("Value must exist").get_inner(), &mut context.within_parameter(attr));
+        infer_simple_expression(
+            attr.value.as_ref().expect("Value must exist").get_inner(),
+            &mut context.within_parameter(attr),
+        );
     }
 }
 
 fn infer_simple_expression(value: &ast::pc::simple_expression::Inner, context: &mut InferContext) {
-    
     let current_parameter = get_or_short!(context.current_parameter, ());
     let instance_inference = get_or_short!(&context.current_instance_inference, ());
-    let prop_inference = instance_inference.get(&current_parameter.name).unwrap_or(&types::Type::Unknown);
+    let prop_inference = instance_inference
+        .get(&current_parameter.name)
+        .unwrap_or(&types::Type::Unknown);
 
-    println!("PROP INFF {:?} {:?}", current_parameter.name, instance_inference);
-    
+    println!(
+        "PROP INFF {:?} {:?}",
+        current_parameter.name, instance_inference
+    );
+
     // if !instance_inference.contains_key(&current_parameter.name) {
     //     return;
     // }
@@ -114,10 +121,8 @@ fn infer_simple_expression(value: &ast::pc::simple_expression::Inner, context: &
                     context.step_out();
                 }
             }
-        },
-        _ => {
-
         }
+        _ => {}
     }
 }
 
@@ -139,7 +144,7 @@ lazy_static! {
 
         HashMap::from([
             ("div", base_el_type.clone()),
-            ("span", base_el_type.clone())
+            ("span", base_el_type.clone()),
         ])
     };
 }
@@ -155,7 +160,6 @@ fn infer_instance(expr: &ast::pc::Element, context: &InferContext) -> types::Map
     println!("INFFFF");
 
     if let Some(namespace) = &expr.namespace {
-        
     } else {
         for component in context.dependency.document.get_components() {
             if component.name == expr.tag_name {

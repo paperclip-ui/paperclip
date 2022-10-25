@@ -59,21 +59,29 @@ macro_rules! compile_children {
 fn compile_component(component: &ast::Component, context: &mut Context) {
     compile_component_props(component, context);
 
-
     context.add_buffer("#[function_component]\n");
-
 
     if component.is_public {
         context.add_buffer("pub ");
     }
 
-    context.add_buffer(format!("fn {}(props: &{}Props) -> Html {{\n", component.name, component.name).as_str());
+    context.add_buffer(
+        format!(
+            "fn {}(props: &{}Props) -> Html {{\n",
+            component.name, component.name
+        )
+        .as_str(),
+    );
     context.start_block();
-    compile_render(&component.get_render_expr().expect("render function must exist"), &mut context.within_component(component));
+    compile_render(
+        &component
+            .get_render_expr()
+            .expect("render function must exist"),
+        &mut context.within_component(component),
+    );
     context.end_block();
     context.add_buffer("}\n\n");
 }
-
 
 fn compile_component_props(component: &ast::Component, context: &mut Context) {
     context.add_buffer("#[derive(Properties, PartialEq)]\n");
@@ -91,7 +99,7 @@ fn compile_component_props(component: &ast::Component, context: &mut Context) {
 
 fn compile_render(render: &ast::Render, context: &mut Context) {
     context.add_buffer("html! {\n");
-    context.start_block();    
+    context.start_block();
     match render.node.as_ref().expect("Node must exist").get_inner() {
         ast::render_node::Inner::Element(expr) => compile_element(&expr, true, context),
         ast::render_node::Inner::Text(expr) => compile_text_node(&expr, context),
@@ -101,19 +109,17 @@ fn compile_render(render: &ast::Render, context: &mut Context) {
     context.add_buffer("}\n");
 }
 
-
-
 fn compile_element(element: &ast::Element, is_root: bool, context: &mut Context) {
     let is_instance = context
-    .dependency
-    .document
-    .contains_component_name(&element.tag_name)
-    || element.namespace != None;
+        .dependency
+        .document
+        .contains_component_name(&element.tag_name)
+        || element.namespace != None;
 
     context.add_buffer(format!("<{}", element.tag_name).as_str());
     compile_attributes(element, is_instance, is_root, context);
 
-    context.add_buffer(">");  
+    context.add_buffer(">");
     compile_element_children(element, context);
     context.add_buffer(format!("</{}", element.tag_name).as_str());
     context.add_buffer(">\n");
@@ -140,27 +146,18 @@ fn compile_element_children(element: &ast::Element, context: &mut Context) {
     }
 }
 
-
 fn compile_attributes(
     element: &ast::Element,
     is_instance: bool,
     is_root: bool,
     context: &mut Context,
 ) {
-
-    let raw_attrs = get_raw_element_attrs(
-        element,
-        is_instance,
-        is_root,
-        context,
-    );
+    let raw_attrs = get_raw_element_attrs(element, is_instance, is_root, context);
 
     for (name, value) in &raw_attrs {
         context.add_buffer(format!(" {}={{{}}}", name, value.get_buffer()).as_str())
     }
 }
-
-
 
 fn get_raw_element_attrs<'dependency>(
     element: &ast::Element,
@@ -190,12 +187,17 @@ fn get_raw_element_attrs<'dependency>(
         );
 
         if is_root {
-
             let mut subsub = sub.with_new_content();
 
             subsub.add_buffer("if let Some(scope_class_name) = &props.__scope_class_name {\n");
             subsub.start_block();
-            subsub.add_buffer(format!("format!(\"{{}} {{}}\", {}, scope_class_name)\n", sub.get_buffer()).as_str());
+            subsub.add_buffer(
+                format!(
+                    "format!(\"{{}} {{}}\", {}, scope_class_name)\n",
+                    sub.get_buffer()
+                )
+                .as_str(),
+            );
             subsub.end_block();
             subsub.add_buffer("} else {\n");
             subsub.start_block();
@@ -223,12 +225,8 @@ fn get_raw_element_attrs<'dependency>(
         attrs.insert(insert.name.to_string(), sub);
     }
 
-
     attrs
-    
 }
-
-
 
 fn compile_insert(insert: &ast::Insert, context: &mut Context) {
     compile_children! {
@@ -244,13 +242,10 @@ fn compile_insert(insert: &ast::Insert, context: &mut Context) {
     }
 }
 
-fn compile_text_node(text: &ast::TextNode, context: &mut Context) {
-
-}
+fn compile_text_node(text: &ast::TextNode, context: &mut Context) {}
 fn compile_slot(expr: &ast::Slot, context: &mut Context) {
     context.add_buffer(format!("{{ for props.{}.iter() }}\n", expr.name).as_str());
 }
-
 
 fn compile_simple_expression(expr: &ast::SimpleExpression, context: &mut Context) {
     match expr.get_inner() {

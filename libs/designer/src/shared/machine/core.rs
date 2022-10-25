@@ -1,4 +1,8 @@
-use std::{cell::RefCell, rc::Rc, sync::{Arc, Mutex}};
+use std::{
+    cell::RefCell,
+    rc::Rc,
+    sync::{Arc, Mutex},
+};
 
 use gloo::console::console;
 use wasm_bindgen_futures::spawn_local;
@@ -15,27 +19,36 @@ pub trait Engine<Event, State> {
     fn on_event(&self, event: &Event, new_state: &State, old_state: &State);
 }
 
-pub struct Machine<Event, State, TEngine> where TEngine: Engine<Event, State>, State: Reducer<Event> {
+pub struct Machine<Event, State, TEngine>
+where
+    TEngine: Engine<Event, State>,
+    State: Reducer<Event>,
+{
     pub state: Arc<Mutex<State>>,
     engine_rx: flume::Receiver<Event>,
     engine: TEngine,
 }
 
-impl<Event: 'static, State, TEngine> Machine<Event, State, TEngine> where TEngine: Engine<Event, State> + 'static, State: Reducer<Event> + 'static  {
-    pub fn new<EngineCtor>(state: State, engine_ctor: EngineCtor) -> Arc<Self> where EngineCtor: Fn(flume::Sender<Event>) -> TEngine {
-
+impl<Event: 'static, State, TEngine> Machine<Event, State, TEngine>
+where
+    TEngine: Engine<Event, State> + 'static,
+    State: Reducer<Event> + 'static,
+{
+    pub fn new<EngineCtor>(state: State, engine_ctor: EngineCtor) -> Arc<Self>
+    where
+        EngineCtor: Fn(flume::Sender<Event>) -> TEngine,
+    {
         let (engine_tx, engine_rx) = flume::unbounded();
 
         let engine = engine_ctor(engine_tx);
 
-
         Arc::new(Self {
             engine_rx,
             state: Arc::new(Mutex::new(state)),
-            engine
+            engine,
         })
     }
-    pub async fn start(self:&Arc<Self>) {
+    pub async fn start(self: &Arc<Self>) {
         let clone = self.clone();
         spawn_local(async move {
             while let Ok(event) = clone.engine_rx.recv_async().await {
@@ -51,17 +64,17 @@ impl<Event: 'static, State, TEngine> Machine<Event, State, TEngine> where TEngin
     }
 }
 
-impl<Event, State: Reducer<Event>, TEngine: Engine<Event, State>> Dispatcher<Event> for Machine<Event, State, TEngine> {
+impl<Event, State: Reducer<Event>, TEngine: Engine<Event, State>> Dispatcher<Event>
+    for Machine<Event, State, TEngine>
+{
     fn dispatch(&self, event: Event) {
         let (new_state, old_state) = {
-                                
             let mut curr_state = self.state.lock().unwrap();
             let new_state = curr_state.reduce(&event);
             let old_state = std::mem::replace(&mut *curr_state, new_state.clone());
             (new_state, old_state)
         };
-        
+
         self.engine.on_event(&event, &new_state, &old_state);
     }
 }
-

@@ -324,7 +324,7 @@ test_case! {
       <!doctype html>
       <html> 
         <head>
-          <link rel="stylesheet" href="/project/out/assets/main.css">
+          <link rel="stylesheet" href="/project/assets/main.css">
         </head>
         <body>
           <div class="_856b6f45-6"> A </div>
@@ -335,14 +335,14 @@ test_case! {
       <!doctype html>
       <html> 
         <head>
-          <link rel="stylesheet" href="/project/out/assets/main.css">
+          <link rel="stylesheet" href="/project/assets/main.css">
         </head>
         <body>
           <div class="_e2ff1d5b-5"> B </div>
         </body>
       </html>
     "#),
-    ("/project/out/assets/main.css", r#"
+    ("/project/assets/main.css", r#"
     /* /project/out/entry.pc.css */ 
     ._856b6f45-6 { color: blue; }
     /* /project/out/imp.pc.css */ 
@@ -412,7 +412,7 @@ test_case! {
     "#)
   ],
   [
-    ("/project/out/assets/main.css", r#"
+    ("/project/assets/main.css", r#"
     /* /project/out/entry.pc.css */
      ._856b6f45-6 { background: url("/project/out/assets/image.png"); }
     "#)

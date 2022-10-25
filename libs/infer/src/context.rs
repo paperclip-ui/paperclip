@@ -1,6 +1,6 @@
-use std::{rc::Rc, borrow::BorrowMut, cell::RefCell};
-use paperclip_proto::ast;
 use paperclip_parser::graph::{Dependency, Graph};
+use paperclip_proto::ast;
+use std::{borrow::BorrowMut, cell::RefCell, rc::Rc};
 
 use crate::{infer::Inferencer, types};
 
@@ -69,7 +69,7 @@ pub struct InferContext<'graph, 'infer> {
     inferencer: &'infer Inferencer,
     pub current_instance_inference: Option<types::Map>,
     // pub current_element: Option<&'graph ast::pc::Element>,
-    pub current_parameter: Option<&'graph ast::pc::Parameter>
+    pub current_parameter: Option<&'graph ast::pc::Parameter>,
 }
 
 impl<'graph, 'infer> InferContext<'graph, 'infer> {
@@ -87,7 +87,7 @@ impl<'graph, 'infer> InferContext<'graph, 'infer> {
             dependency,
             inferencer,
             current_instance_inference: None,
-            current_parameter: None
+            current_parameter: None,
         }
     }
     pub fn step_in(&self, path: &str) {
@@ -98,7 +98,7 @@ impl<'graph, 'infer> InferContext<'graph, 'infer> {
     }
     pub fn fork(&self) -> Self {
         let mut clone = self.clone();
-        clone.scope =  Rc::new(RefCell::new(Scope {
+        clone.scope = Rc::new(RefCell::new(Scope {
             root_type: types::Type::Unknown,
             path: vec![],
         }));

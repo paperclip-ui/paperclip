@@ -1,9 +1,9 @@
 use anyhow::{Error, Result};
 use clap::Args;
 use paperclip_config::ConfigContext;
+use paperclip_project::LocalIO;
 use paperclip_workspace::server::io::LocalServerIO;
 use paperclip_workspace::server::server::{start, StartOptions};
-use paperclip_project::LocalIO;
 
 use std::env;
 

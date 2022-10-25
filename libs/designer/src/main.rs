@@ -1,5 +1,3 @@
-
-
 use gloo::console::console;
 use yew::prelude::*;
 mod components;

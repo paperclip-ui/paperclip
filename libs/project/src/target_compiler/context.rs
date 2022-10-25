@@ -19,7 +19,6 @@ impl TargetCompilerContext {
         ))
     }
 
-
     pub fn get_out_dir_path(&self) -> String {
         if let Some(out_dir) = &self.options.out_dir {
             join_path!(&self.config_context.directory, out_dir.to_string())

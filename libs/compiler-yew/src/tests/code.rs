@@ -87,7 +87,6 @@ add_case! {
   "#
 }
 
-
 add_case! {
   can_compile_a_slot,
   r#"component A {

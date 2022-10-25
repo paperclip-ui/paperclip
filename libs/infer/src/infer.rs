@@ -1,6 +1,5 @@
 use anyhow::{Error, Result};
 use lazy_static::lazy_static;
-use paperclip_common::id::get_document_id;
 use paperclip_proto::ast;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -12,53 +11,77 @@ use paperclip_common::get_or_short;
 use paperclip_parser::graph::{Dependency, Graph};
 
 pub struct Inferencer {
-    dep_cache: Rc<RefCell<BTreeMap<String, types::Map>>>,
+    component_cache: Rc<RefCell<BTreeMap<String, types::Component>>>,
 }
 
 impl Inferencer {
     pub fn new() -> Self {
         Self {
-            dep_cache: Rc::new(RefCell::new(BTreeMap::new())),
+            component_cache: Rc::new(RefCell::new(BTreeMap::new())),
         }
     }
-    pub fn infer_dependency<'a>(&'a self, path: &str, graph: &Graph) -> Result<types::Map> {
+    pub fn infer_dependency(&self, path: &str, graph: &Graph) -> Result<types::Map> {
         let dep = get_or_short!(
             graph.dependencies.get(path),
             Err(Error::msg("Dependency doesn't exist"))
         );
-        if let Some(inference) = self.dep_cache.borrow().get(&dep.hash) {
+        let mut context = InferContext::new(dep, graph, &self);
+
+        infer_dep(dep, &mut context)?;
+
+        let ret = context.scope.borrow().root_type.into_map();
+        ret
+    }
+    pub fn infer_component(
+        &self,
+        component: &ast::pc::Component,
+        path: &str,
+        graph: &Graph,
+    ) -> Result<types::Component> {
+        let dep = get_or_short!(
+            graph.dependencies.get(path),
+            Err(Error::msg("Dependency doesn't exist"))
+        );
+
+        let cache_key = format!("{}-{}", dep.hash, component.name);
+
+        if let Some(inference) = self.component_cache.borrow().get(&cache_key) {
             return Ok(inference.clone());
         }
 
-        let dep_inference = infer_dep(dep, &mut InferContext::new(dep, graph, &self));
+        let mut context = InferContext::new(dep, graph, &self);
 
-        self.dep_cache
-            .borrow_mut()
-            .insert(dep.hash.to_string(), dep_inference.clone());
+        infer_component(component, &mut context)?;
 
-        Ok(self.dep_cache.borrow().get(&dep.hash).unwrap().clone())
+        self.component_cache.borrow_mut().insert(
+            cache_key.to_string(),
+            context.scope.borrow().root_type.into_component()?,
+        );
+
+        Ok(self
+            .component_cache
+            .borrow()
+            .get(&cache_key)
+            .unwrap()
+            .clone())
     }
 }
 
-fn infer_dep(dep: &Dependency, context: &mut InferContext) -> types::Map {
+fn infer_dep(dep: &Dependency, context: &mut InferContext) -> Result<()> {
     for component in &dep.document.get_components() {
-        infer_component(component, context);
+        context.step_in(&component.name);
+        infer_component(component, context)?;
+        context.step_out();
     }
-
-    if let types::Type::Map(map) = &context.scope.borrow().root_type {
-        map.clone()
-    } else {
-        types::Map::new()
-    }
+    Ok(())
 }
 
-fn infer_component(component: &ast::pc::Component, context: &mut InferContext) {
-    context.step_in(&component.name);
+fn infer_component(component: &ast::pc::Component, context: &mut InferContext) -> Result<()> {
     if let Some(render) = component.get_render_expr() {
         infer_render_node(
             render.node.as_ref().expect("Node must exist").get_inner(),
             context,
-        );
+        )?;
     }
     let properties =
         if let types::Type::Map(properties) = &context.scope.borrow_mut().get_scope_type() {
@@ -68,25 +91,26 @@ fn infer_component(component: &ast::pc::Component, context: &mut InferContext) {
         };
 
     context.set_scope_type(types::Type::Component(types::Component { properties }));
-    context.step_out();
+    Ok(())
 }
 
-fn infer_render_node(node: &ast::pc::render_node::Inner, context: &mut InferContext) {
+fn infer_render_node(node: &ast::pc::render_node::Inner, context: &mut InferContext) -> Result<()> {
     match node {
         ast::pc::render_node::Inner::Element(expr) => {
-            infer_element(expr, context);
+            infer_element(expr, context)?;
         }
         _ => {}
     }
+    Ok(())
 }
 
-fn infer_element(expr: &ast::pc::Element, context: &mut InferContext) {
-    infer_attributes(expr, context);
+fn infer_element(expr: &ast::pc::Element, context: &mut InferContext) -> Result<()> {
+    infer_attributes(expr, context)
 }
 
-fn infer_attributes(expr: &ast::pc::Element, context: &mut InferContext) {
-    let instance_props = infer_instance(expr, context);
-    let mut context = context.with_instance_inference(instance_props);
+fn infer_attributes(expr: &ast::pc::Element, context: &mut InferContext) -> Result<()> {
+    let instance_props = infer_instance(expr, context)?;
+    let context = context.with_instance_inference(instance_props);
 
     for attr in &expr.parameters {
         infer_simple_expression(
@@ -94,6 +118,7 @@ fn infer_attributes(expr: &ast::pc::Element, context: &mut InferContext) {
             &mut context.within_parameter(attr),
         );
     }
+    Ok(())
 }
 
 fn infer_simple_expression(value: &ast::pc::simple_expression::Inner, context: &mut InferContext) {
@@ -102,15 +127,6 @@ fn infer_simple_expression(value: &ast::pc::simple_expression::Inner, context: &
     let prop_inference = instance_inference
         .get(&current_parameter.name)
         .unwrap_or(&types::Type::Unknown);
-
-    println!(
-        "PROP INFF {:?} {:?}",
-        current_parameter.name, instance_inference
-    );
-
-    // if !instance_inference.contains_key(&current_parameter.name) {
-    //     return;
-    // }
 
     match value {
         ast::pc::simple_expression::Inner::Reference(expr) => {
@@ -149,33 +165,33 @@ lazy_static! {
     };
 }
 
-fn infer_instance(expr: &ast::pc::Element, context: &InferContext) -> types::Map {
+fn infer_instance(expr: &ast::pc::Element, context: &InferContext) -> Result<types::Map> {
     // TODO: decouple this from inference engine
     let native_element_props = NATIVE_ELEMENT_TYPES.get(expr.tag_name.as_str());
 
     if let Some(props) = native_element_props {
-        return props.clone();
+        return Ok(props.clone());
     }
 
-    println!("INFFFF");
+    let instance_dep = if let Some(namespace) = &expr.namespace {
+        let imports = context.dependency.document.get_imports();
+        let import = imports.iter().find(|import| &import.namespace == namespace);
 
-    if let Some(namespace) = &expr.namespace {
+        import
+            .and_then(|import| context.dependency.imports.get(&import.path))
+            .and_then(|imp_dep| context.graph.dependencies.get(imp_dep))
     } else {
-        for component in context.dependency.document.get_components() {
-            if component.name == expr.tag_name {
-                let mut comp_inference = context.fork();
-                infer_component(component, &mut comp_inference);
+        Some(context.dependency)
+    };
 
-                // yuck
-                let root = comp_inference.scope.as_ref().borrow_mut().root_type.clone();
-                if let types::Type::Map(map) = root {
-                    if let Some(inference) = map.get(&component.name) {
-                        println!("DD {:?} {:?}", inference, component.name);
-                        if let types::Type::Component(map) = inference {
-                            return map.properties.clone();
-                        }
-                    }
-                }
+    if let Some(instance_dep) = instance_dep {
+        for component in instance_dep.document.get_components() {
+            if component.name == expr.tag_name {
+                return Ok(context
+                    .inferencer
+                    .infer_component(component, &context.dependency.path, context.graph)?
+                    .properties
+                    .clone());
             }
         }
     }
@@ -183,12 +199,12 @@ fn infer_instance(expr: &ast::pc::Element, context: &InferContext) -> types::Map
     infer_unknown_element(expr, context)
 }
 
-fn infer_unknown_element(expr: &ast::pc::Element, context: &InferContext) -> types::Map {
+fn infer_unknown_element(expr: &ast::pc::Element, context: &InferContext) -> Result<types::Map> {
     let mut map = types::Map::new();
 
     for param in &expr.parameters {
         map.insert(param.name.to_string(), types::Type::Unknown);
     }
 
-    map
+    Ok(map)
 }

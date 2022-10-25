@@ -1,6 +1,6 @@
 use paperclip_parser::graph::{Dependency, Graph};
 use paperclip_proto::ast;
-use std::{borrow::BorrowMut, cell::RefCell, rc::Rc};
+use std::{cell::RefCell, rc::Rc};
 
 use crate::{infer::Inferencer, types};
 
@@ -65,10 +65,9 @@ fn set_scope_type(
 pub struct InferContext<'graph, 'infer> {
     pub scope: Rc<RefCell<Scope>>,
     pub dependency: &'graph Dependency,
-    graph: &'graph Graph,
-    inferencer: &'infer Inferencer,
+    pub graph: &'graph Graph,
+    pub inferencer: &'infer Inferencer,
     pub current_instance_inference: Option<types::Map>,
-    // pub current_element: Option<&'graph ast::pc::Element>,
     pub current_parameter: Option<&'graph ast::pc::Parameter>,
 }
 

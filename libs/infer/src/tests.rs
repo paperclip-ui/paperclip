@@ -1,10 +1,6 @@
-use anyhow::Result;
 use futures::executor::block_on;
-use paperclip_common::fs::FileResolver;
-use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::graph;
 use paperclip_parser::graph::test_utils;
-use paperclip_parser::pc::parser;
 use std::collections::HashMap;
 
 use crate::infer::Inferencer;
@@ -193,6 +189,40 @@ add_case! {
           })),
         ])
       })
+    )
+  ])
+}
+
+add_case! {
+  can_infer_props_from_an_imported_module,
+  [
+    (
+    "/entry.pc", r#"
+      import "/module.pc" as mod
+      public component A {
+        render mod.B(cd: blarg)
+      }
+    "#
+    ),
+    (
+      "/module.pc", r#"
+        public component B {
+          render span(onclick: cd)
+        }
+      "#
+      )
+  ],
+  types::Map::from([
+    (
+      "A".to_string(), types::Type::Component(types::Component {
+        properties: types::Map::from([
+          ("blarg".to_string(), types::Type::Callback(types::Callback {
+            arguments: vec![types::Type::Reference(types::Reference {
+              path: vec!["MouseEvent".to_string()]
+            })]
+          })),
+        ])
+      }),
     )
   ])
 }

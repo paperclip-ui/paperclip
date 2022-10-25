@@ -1,5 +1,6 @@
 use anyhow::{Error, Result};
 use lazy_static::lazy_static;
+use paperclip_common::id::get_document_id;
 use paperclip_proto::ast;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -44,7 +45,7 @@ fn infer_dep(dep: &Dependency, context: &mut InferContext) -> types::Map {
         infer_component(component, context);
     }
 
-    if let types::Type::Map(map) = &context.scope.root_type {
+    if let types::Type::Map(map) = &context.scope.borrow().root_type {
         map.clone()
     } else {
         types::Map::new()
@@ -52,23 +53,22 @@ fn infer_dep(dep: &Dependency, context: &mut InferContext) -> types::Map {
 }
 
 fn infer_component(component: &ast::pc::Component, context: &mut InferContext) {
-    context.scope.step_in(&component.name);
+    context.step_in(&component.name);
     if let Some(render) = component.get_render_expr() {
         infer_render_node(
             render.node.as_ref().expect("Node must exist").get_inner(),
             context,
         );
     }
-    let properties = if let types::Type::Map(properties) = &context.scope.get_scope_type() {
+    let properties = if let types::Type::Map(properties) = &context.scope.borrow_mut().get_scope_type() {
         properties.clone()
     } else {
         types::Map::new()
     };
 
     context
-        .scope
         .set_scope_type(types::Type::Component(types::Component { properties }));
-    context.scope.step_out();
+    context.step_out();
 }
 
 fn infer_render_node(node: &ast::pc::render_node::Inner, context: &mut InferContext) {
@@ -86,16 +86,38 @@ fn infer_element(expr: &ast::pc::Element, context: &mut InferContext) {
 
 fn infer_attributes(expr: &ast::pc::Element, context: &mut InferContext) {
     let instance_props = infer_instance(expr, context);
+    let mut context = context.with_instance_inference(instance_props);
 
     for attr in &expr.parameters {
-        context.scope.step_in(&attr.name);
-        context.scope.set_scope_type(
-            instance_props
-                .get(&attr.name)
-                .unwrap_or(&types::Type::Unknown)
-                .clone(),
-        );
-        context.scope.step_out();
+        infer_simple_expression(attr.value.as_ref().expect("Value must exist").get_inner(), &mut context.within_parameter(attr));
+    }
+}
+
+fn infer_simple_expression(value: &ast::pc::simple_expression::Inner, context: &mut InferContext) {
+    
+    let current_parameter = get_or_short!(context.current_parameter, ());
+    let instance_inference = get_or_short!(&context.current_instance_inference, ());
+    let prop_inference = instance_inference.get(&current_parameter.name).unwrap_or(&types::Type::Unknown);
+
+    println!("PROP INFF {:?} {:?}", current_parameter.name, instance_inference);
+    
+    // if !instance_inference.contains_key(&current_parameter.name) {
+    //     return;
+    // }
+
+    match value {
+        ast::pc::simple_expression::Inner::Reference(expr) => {
+            if expr.path.len() == 1 {
+                if let Some(part) = expr.path.get(0) {
+                    context.step_in(part);
+                    context.set_scope_type(prop_inference.clone());
+                    context.step_out();
+                }
+            }
+        },
+        _ => {
+
+        }
     }
 }
 
@@ -115,7 +137,10 @@ lazy_static! {
             ("class".to_string(), types::Type::String),
         ]);
 
-        HashMap::from([("div", base_el_type)])
+        HashMap::from([
+            ("div", base_el_type.clone()),
+            ("span", base_el_type.clone())
+        ])
     };
 }
 
@@ -125,6 +150,30 @@ fn infer_instance(expr: &ast::pc::Element, context: &InferContext) -> types::Map
 
     if let Some(props) = native_element_props {
         return props.clone();
+    }
+
+    println!("INFFFF");
+
+    if let Some(namespace) = &expr.namespace {
+        
+    } else {
+        for component in context.dependency.document.get_components() {
+            if component.name == expr.tag_name {
+                let mut comp_inference = context.fork();
+                infer_component(component, &mut comp_inference);
+
+                // yuck
+                let root = comp_inference.scope.as_ref().borrow_mut().root_type.clone();
+                if let types::Type::Map(map) = root {
+                    if let Some(inference) = map.get(&component.name) {
+                        println!("DD {:?} {:?}", inference, component.name);
+                        if let types::Type::Component(map) = inference {
+                            return map.properties.clone();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     infer_unknown_element(expr, context)

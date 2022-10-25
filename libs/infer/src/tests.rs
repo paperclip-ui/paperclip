@@ -94,3 +94,106 @@ add_case! {
     )
   ])
 }
+
+add_case! {
+  prop_is_undefined_if_no_link,
+  [
+    (
+    "/entry.pc", r#"
+      public component B {
+        render span
+      }
+      public component A {
+        render B(cd: class)
+      }
+    "#
+    )
+  ],
+  types::Map::from([
+    (
+      "A".to_string(), types::Type::Component(types::Component {
+        properties: types::Map::from([
+          ("class".to_string(), types::Type::Unknown)        
+        ])
+      }),
+    ),
+    (
+      "B".to_string(), types::Type::Component(types::Component {
+        properties: types::Map::from([])
+      })
+    )
+  ])
+}
+
+add_case! {
+  prop_is_string_if_linked_to_class,
+  [
+    (
+    "/entry.pc", r#"
+      public component B {
+        render span(class: cd)
+      }
+      public component A {
+        render B(cd: class)
+      }
+    "#
+    )
+  ],
+  types::Map::from([
+    (
+      "A".to_string(), types::Type::Component(types::Component {
+        properties: types::Map::from([
+          ("class".to_string(), types::Type::String)        
+        ])
+      }),
+    ),
+    (
+      "B".to_string(), types::Type::Component(types::Component {
+        properties: types::Map::from([
+          ("cd".to_string(), types::Type::String)        
+        ])
+      })
+    )
+  ])
+}
+
+
+add_case! {
+  prop_is_string_if_linked_to_callback,
+  [
+    (
+    "/entry.pc", r#"
+      public component B {
+        render span(onclick: cd)
+      }
+      public component A {
+        render B(cd: blarg)
+      }
+    "#
+    )
+  ],
+  types::Map::from([
+    (
+      "A".to_string(), types::Type::Component(types::Component {
+        properties: types::Map::from([
+          ("blarg".to_string(), types::Type::Callback(types::Callback {
+            arguments: vec![types::Type::Reference(types::Reference {
+              path: vec!["MouseEvent".to_string()]
+            })]
+          })),
+        ])
+      }),
+    ),
+    (
+      "B".to_string(), types::Type::Component(types::Component {
+        properties: types::Map::from([
+          ("cd".to_string(), types::Type::Callback(types::Callback {
+            arguments: vec![types::Type::Reference(types::Reference {
+              path: vec!["MouseEvent".to_string()]
+            })]
+          })),
+        ])
+      })
+    )
+  ])
+}

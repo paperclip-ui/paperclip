@@ -1,10 +1,13 @@
+use std::{rc::Rc, borrow::BorrowMut, cell::RefCell};
+use paperclip_proto::ast;
 use paperclip_parser::graph::{Dependency, Graph};
 
 use crate::{infer::Inferencer, types};
 
+#[derive(Clone)]
 pub struct Scope {
     pub root_type: types::Type,
-    path: Vec<String>,
+    pub path: Vec<String>,
 }
 
 impl Scope {
@@ -58,11 +61,15 @@ fn set_scope_type(
     }
 }
 
+#[derive(Clone)]
 pub struct InferContext<'graph, 'infer> {
-    pub scope: Scope,
+    pub scope: Rc<RefCell<Scope>>,
     pub dependency: &'graph Dependency,
     graph: &'graph Graph,
     inferencer: &'infer Inferencer,
+    pub current_instance_inference: Option<types::Map>,
+    // pub current_element: Option<&'graph ast::pc::Element>,
+    pub current_parameter: Option<&'graph ast::pc::Parameter>
 }
 
 impl<'graph, 'infer> InferContext<'graph, 'infer> {
@@ -72,13 +79,44 @@ impl<'graph, 'infer> InferContext<'graph, 'infer> {
         inferencer: &'infer Inferencer,
     ) -> Self {
         Self {
-            scope: Scope {
+            scope: Rc::new(RefCell::new(Scope {
                 root_type: types::Type::Unknown,
                 path: vec![],
-            },
+            })),
             graph,
             dependency,
             inferencer,
+            current_instance_inference: None,
+            current_parameter: None
+        }
+    }
+    pub fn step_in(&self, path: &str) {
+        self.scope.as_ref().borrow_mut().step_in(path);
+    }
+    pub fn step_out(&self) {
+        self.scope.as_ref().borrow_mut().step_out();
+    }
+    pub fn fork(&self) -> Self {
+        let mut clone = self.clone();
+        clone.scope =  Rc::new(RefCell::new(Scope {
+            root_type: types::Type::Unknown,
+            path: vec![],
+        }));
+        clone
+    }
+    pub fn set_scope_type(&self, scope_type: types::Type) {
+        self.scope.as_ref().borrow_mut().set_scope_type(scope_type);
+    }
+    pub fn with_instance_inference(&self, inference: types::Map) -> Self {
+        InferContext {
+            current_instance_inference: Some(inference),
+            ..self.clone()
+        }
+    }
+    pub fn within_parameter(&self, param: &'graph ast::pc::Parameter) -> Self {
+        InferContext {
+            current_parameter: Some(param),
+            ..self.clone()
         }
     }
 }

@@ -1,10 +1,7 @@
 use std::{
-    cell::RefCell,
-    rc::Rc,
     sync::{Arc, Mutex},
 };
 
-use gloo::console::console;
 use wasm_bindgen_futures::spawn_local;
 
 pub trait Reducer<Event>: Clone {

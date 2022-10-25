@@ -1,3 +1,5 @@
+import "./test.pc" as test2
+
 public component Test {
   render div {
     style {
@@ -10,7 +12,7 @@ public component Test {
 }
 
 pub component Outer {
-  render div {
+  render test.AB {
     style {
       font-family: sans-serif
     }

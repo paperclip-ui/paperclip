@@ -1,6 +1,4 @@
-use async_std::task;
-use gloo::console::console;
-use std::time::Duration;
+
 use wasm_bindgen_test::*;
 
 use super::core::{Dispatcher, Engine, Machine, Reducer};

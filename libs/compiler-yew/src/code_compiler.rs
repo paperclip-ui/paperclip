@@ -1,11 +1,14 @@
 use super::context::Context;
 use anyhow::Result;
+use paperclip_common::get_or_short;
 use paperclip_evaluator::core::utils::get_style_namespace;
 use paperclip_parser::graph::{Dependency, Graph};
 use paperclip_parser::pc::ast;
 use std::collections::BTreeMap;
 use paperclip_infer::infer::{Inferencer};
 use paperclip_infer::types as infer_types;
+use std::path::Path;
+use pathdiff::diff_paths;
 
 pub fn compile_code(dependency: &Dependency, graph: &Graph) -> Result<String> {
     let mut context = Context::new(&dependency, graph);
@@ -41,8 +44,17 @@ fn compile_imports(document: &ast::Document, context: &mut Context) {
 }
 
 fn compile_import(import: &ast::Import, context: &mut Context) {
-    context
-        .add_buffer(format!("import * as {} from \"{}\";", import.namespace, import.path).as_str());
+    let resolved_path = get_or_short!(context.dependency.imports.get(&import.path), ());
+    let relative_path = get_or_short!(diff_paths(resolved_path, Path::new(&context.dependency.path).parent().unwrap()), ());
+    context.add_buffer(format!("\n#[path = \"{}.rs\"]\n", relative_path.to_str().unwrap()).as_str());
+    context.add_buffer(format!("mod {};\n", import.namespace).as_str());
+    context.add_buffer(format!("use {};\n", import.namespace).as_str());
+
+
+    // if let Some(relative_path) = diff_paths(context)
+    // Path::new(&context.dependency.path).reso
+    // context
+    //     .add_buffer(format!("import * as {} from \"{}\";", import.namespace, import.path).as_str());
 }
 
 macro_rules! compile_children {
@@ -166,12 +178,19 @@ fn compile_element(element: &ast::Element, is_root: bool, context: &mut Context)
         .contains_component_name(&element.tag_name)
         || element.namespace != None;
 
-    context.add_buffer(format!("<{}", element.tag_name).as_str());
+    let mut tag = element.tag_name.to_string();
+    
+
+    if let Some(namespace) = &element.namespace {
+        tag = format!("{}::{}", namespace, tag);
+    }
+
+    context.add_buffer(format!("<{}", tag).as_str());
     compile_attributes(element, is_instance, is_root, context);
 
     context.add_buffer(">");
     compile_element_children(element, context);
-    context.add_buffer(format!("</{}", element.tag_name).as_str());
+    context.add_buffer(format!("</{}", tag).as_str());
     context.add_buffer(">\n");
 }
 
@@ -259,7 +278,7 @@ fn get_raw_element_attrs<'dependency>(
         }
 
         if is_instance {
-            attrs.insert("__scopeClassName".to_string(), sub);
+            attrs.insert("__scope_class_name".to_string(), sub);
         } else {
             if let Some(class) = attrs.get_mut("class") {
                 class.add_buffer(format!(" + \" \" + {}", sub.get_buffer()).as_str());

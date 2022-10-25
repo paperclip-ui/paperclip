@@ -218,7 +218,7 @@ fn infer_instance(expr: &ast::pc::Element, context: &InferContext) -> Result<typ
     infer_unknown_element(expr, context)
 }
 
-fn infer_unknown_element(expr: &ast::pc::Element, context: &InferContext) -> Result<types::Map> {
+fn infer_unknown_element(expr: &ast::pc::Element, _context: &InferContext) -> Result<types::Map> {
     let mut map = types::Map::new();
 
     for param in &expr.parameters {

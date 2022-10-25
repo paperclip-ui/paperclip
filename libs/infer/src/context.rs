@@ -95,14 +95,6 @@ impl<'graph, 'infer> InferContext<'graph, 'infer> {
     pub fn step_out(&self) {
         self.scope.as_ref().borrow_mut().step_out();
     }
-    pub fn fork(&self) -> Self {
-        let mut clone = self.clone();
-        clone.scope = Rc::new(RefCell::new(Scope {
-            root_type: types::Type::Unknown,
-            path: vec![],
-        }));
-        clone
-    }
     pub fn set_scope_type(&self, scope_type: types::Type) {
         self.scope.as_ref().borrow_mut().set_scope_type(scope_type);
     }

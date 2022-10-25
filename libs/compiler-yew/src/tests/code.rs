@@ -6,13 +6,10 @@ use paperclip_parser::graph::{test_utils, Graph};
 
 
 // TODO: insert test
-
 macro_rules! add_case {
     ($name: ident, $mock_files: expr, $expected_output: expr) => {
         #[test]
         fn $name() {
-            let path = "/entry.pc".to_string();
-
             let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
             let mut graph = Graph::new();
 
@@ -192,6 +189,76 @@ add_case! {
       render div {
         slot something
       }
+    }"#)
+  ],
+  r#"
+    use yew::prelude::*;
+    use yew::{function_component, Children, html, Properties, Callback, MouseEvent};
+
+    #[derive(Properties, PartialEq)]
+    struct AProps {
+      pub __scope_class_name: Option<String>,
+      pub something: Children,
+    }
+
+    #[function_component]
+    fn A(props: &AProps) -> Html {
+      html! {
+        <div>
+            { for props.something.iter() }
+        </div>
+      }
+    }
+  "#
+}
+
+
+add_case! {
+  can_import_another_module,
+  [
+    ("/entry.pc", r#"
+      import "/a/b/c/module.pc" as mod
+      component A {
+        render mod.B(cls: cls)
+      }
+    "#),
+    ("/a/b/c/module.pc", r#"public component B {
+      render div(class: cls)
+    }"#)
+  ],
+  r#"
+    use yew::prelude::*;
+    use yew::{function_component, Children, html, Properties, Callback, MouseEvent};
+
+    #[derive(Properties, PartialEq)]
+    struct AProps {
+      pub __scope_class_name: Option<String>,
+      pub something: Children,
+    }
+
+    #[function_component]
+    fn A(props: &AProps) -> Html {
+      html! {
+        <div>
+            { for props.something.iter() }
+        </div>
+      }
+    }
+  "#
+}
+
+
+add_case! {
+  can_import_another_module,
+  [
+    ("/entry.pc", r#"
+      import "/a/b/c/module.pc" as mod
+      component A {
+        render mod.B(cls: cls)
+      }
+    "#),
+    ("/a/b/c/module.pc", r#"public component B {
+      render div(class: cls)
     }"#)
   ],
   r#"

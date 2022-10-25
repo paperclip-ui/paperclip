@@ -1,12 +1,12 @@
 use yew::prelude::*;
-#[path = "styles.pc.rs"]
-mod styles;
+// #[path = "styles.pc.rs"]
+// mod styles;
 
 #[function_component]
 pub fn Main() -> Html {
     html! {
-        <styles::Test>
+        <div>
           <span class={1}>{"Hello"}</span>
-        </styles::Test>
+        </div>
     }
 }

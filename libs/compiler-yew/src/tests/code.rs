@@ -229,56 +229,22 @@ add_case! {
   r#"
     use yew::prelude::*;
     use yew::{function_component, Children, html, Properties, Callback, MouseEvent};
-
+    
+    #[path = "a/b/c/module.pc.rs"]
+    mod mod;
+    use mod;
+    
     #[derive(Properties, PartialEq)]
     struct AProps {
-      pub __scope_class_name: Option<String>,
-      pub something: Children,
+        pub __scope_class_name: Option<String>,
+        pub cls: String,
     }
-
+    
     #[function_component]
     fn A(props: &AProps) -> Html {
-      html! {
-        <div>
-            { for props.something.iter() }
-        </div>
-      }
+        html! {
+            <mod::B cls={props.cls}></mod::B>
+        }
     }
   "#
 }
-
-
-add_case! {
-  can_import_another_module,
-  [
-    ("/entry.pc", r#"
-      import "/a/b/c/module.pc" as mod
-      component A {
-        render mod.B(cls: cls)
-      }
-    "#),
-    ("/a/b/c/module.pc", r#"public component B {
-      render div(class: cls)
-    }"#)
-  ],
-  r#"
-    use yew::prelude::*;
-    use yew::{function_component, Children, html, Properties, Callback, MouseEvent};
-
-    #[derive(Properties, PartialEq)]
-    struct AProps {
-      pub __scope_class_name: Option<String>,
-      pub something: Children,
-    }
-
-    #[function_component]
-    fn A(props: &AProps) -> Html {
-      html! {
-        <div>
-            { for props.something.iter() }
-        </div>
-      }
-    }
-  "#
-}
-

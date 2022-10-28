@@ -1,8 +1,6 @@
 #### On-deck
 
-- inference engine
-
-  - follow instance props
+- Display live preview in designer
 
 - build designer in WASM
 

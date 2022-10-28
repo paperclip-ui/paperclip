@@ -1,6 +1,9 @@
 import "./test.pc" as test2
 
 public component Test {
+  variant hover trigger {
+    ":hover"
+  }
   render div(onclick: on_click) {
     style {
       color: white
@@ -9,6 +12,10 @@ public component Test {
       cursor: pointer
       font-family: sans-serif
       padding: 16px
+      transition: 1s
+    }
+    style variant hover {
+      background: blue
     }
     Outer(class: "something") {
       slot children

@@ -48,13 +48,6 @@ fn compile_import(import: &ast::Import, context: &mut Context) {
     let relative_path = get_or_short!(diff_paths(resolved_path, Path::new(&context.dependency.path).parent().unwrap()), ());
     context.add_buffer(format!("\n#[path = \"{}.rs\"]\n", relative_path.to_str().unwrap()).as_str());
     context.add_buffer(format!("mod {};\n", import.namespace).as_str());
-    context.add_buffer(format!("use {};\n", import.namespace).as_str());
-
-
-    // if let Some(relative_path) = diff_paths(context)
-    // Path::new(&context.dependency.path).reso
-    // context
-    //     .add_buffer(format!("import * as {} from \"{}\";", import.namespace, import.path).as_str());
 }
 
 macro_rules! compile_children {
@@ -280,11 +273,20 @@ fn get_raw_element_attrs<'dependency>(
         if is_instance {
             attrs.insert("__scope_class_name".to_string(), sub);
         } else {
-            if let Some(class) = attrs.get_mut("class") {
-                class.add_buffer(format!(" + \" \" + {}", sub.get_buffer()).as_str());
-            } else {
-                attrs.insert("class".to_string(), sub);
+            if let Some(class) = attrs.get("class") {
+
+                let subsub = sub.with_new_content();
+                subsub.add_buffer("format!(\"{} {}\", ");
+                subsub.add_buffer(&class.get_buffer());
+                subsub.add_buffer(", ");
+                subsub.add_buffer(&sub.get_buffer());
+                subsub.add_buffer(")");
+
+                sub = subsub;
             }
+
+
+            attrs.insert("class".to_string(), sub);
         }
     }
 
@@ -328,7 +330,7 @@ fn compile_simple_expression(expr: &ast::SimpleExpression, context: &mut Context
             context.add_buffer(format!("\"{}\"", expr.value).as_str())
         }
         ast::simple_expression::Inner::Reference(expr) => {
-            context.add_buffer(format!("props.{}", expr.path.get(0).expect("Path missing")).as_str())
+            context.add_buffer(format!("props.{}.clone()", expr.path.get(0).expect("Path missing")).as_str())
         }
         _ => {}
     }

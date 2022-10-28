@@ -1,18 +1,23 @@
 import "./test.pc" as test2
 
 public component Test {
-  render div {
+  render div(onclick: on_click) {
     style {
-      color: blue
+      color: white
+      background: red
+      display: inline-block
+      cursor: pointer
+      font-family: sans-serif
+      padding: 16px
     }
-    Outer {
+    Outer(class: "something") {
       slot children
     }
   }
 }
 
 pub component Outer {
-  render test.AB {
+  render test2.AB(class: class) {
     style {
       font-family: sans-serif
     }

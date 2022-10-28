@@ -148,7 +148,7 @@ add_case! {
     #[function_component]
     fn A(props: &AProps) -> Html {
       html! {
-        <div class={props.class}></div>
+        <div class={props.class.clone()}></div>
       }
     }
   "#
@@ -174,7 +174,7 @@ add_case! {
     #[function_component]
     fn A(props: &AProps) -> Html {
       html! {
-        <div onclick={props.on_click}></div>
+        <div onclick={props.on_click.clone()}></div>
       }
     }
   "#
@@ -232,7 +232,6 @@ add_case! {
     
     #[path = "a/b/c/module.pc.rs"]
     mod mod;
-    use mod;
     
     #[derive(Properties, PartialEq)]
     struct AProps {
@@ -243,8 +242,46 @@ add_case! {
     #[function_component]
     fn A(props: &AProps) -> Html {
         html! {
-            <mod::B cls={props.cls}></mod::B>
+            <mod::B cls={props.cls.clone()}></mod::B>
         }
     }
   "#
 }
+
+add_case! {
+  classes_are_properly_concattenated_when_defined_at_root,
+  [
+    ("/entry.pc", r#"
+      component A {
+        render div(class: class) {
+          style {
+            color: orange
+          }
+        }
+      }
+    "#)
+  ],
+  r#"
+  use yew::prelude::*;
+  use yew::{function_component, Children, html, Properties, Callback, MouseEvent};
+  
+  #[derive(Properties, PartialEq)]
+  struct AProps {
+      pub __scope_class_name: Option<String>,
+      pub class: String,
+  }
+  
+  #[function_component]
+  fn A(props: &AProps) -> Html {
+      html! {
+          <div class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
+              format!("{} {}", "_A-80f4925f-6", scope_class_name)
+          } else {
+              "_A-80f4925f-6".to_string()
+          })}></div>
+      }
+  }
+  "#
+}
+
+

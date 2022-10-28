@@ -1,7 +1,5 @@
 public component AB {
   render div(class: class) {
-    style {
-      color: blue
-    }
+    slot children
   }
 }

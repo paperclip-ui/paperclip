@@ -5,23 +5,6 @@ authors = ["Craig Condon <craig.j.condon@gmail.com>"]
 edition = "2021"
 exclude = []
 
-# [lib]
-# name = "paperclip_designer"
-# crate-type = ["cdylib", "rlib"]
-
-# [dependencies]
-
-
-# paperclip_project = { path = "../project" }
-# paperclip_config = { path = "../config" }
-# serde_json = { version = "1.0.83" }
-# serde = "1.0.143"
-# futures = "0.3.21"
-# futures-core = "0.3.24"
-# futures-util = "0.3.24"
-# anyhow = "1.0.61"
-# textwrap = "0.15.0"
-
 
 
 [dependencies]
@@ -34,6 +17,6 @@ flume = "0.10.14"
 wasm-bindgen-futures = "0.4.33"
 wasm-bindgen-test = "0.3.33"
 async-std = "1.12.0"
-
+# tonic-web-wasm-client = "0.2.2"
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 tonic-web-wasm-client = "0.2.2"

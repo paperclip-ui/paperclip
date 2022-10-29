@@ -9,7 +9,7 @@ exclude = []
 name = "paperclip_proto"
 
 [features]
-transport = ["tonic/transport"]
+transport = ["tonic/transport", "tonic-build/transport"]
 
 [dependencies]
 serde = { version = "1.0.143", features = ["derive", "rc"] }

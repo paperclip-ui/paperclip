@@ -1,7 +1,7 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     tonic_build::configure()
     .build_client(true)
-    .build_server(false)
+    .build_server(cfg!(feature = "transport"))
     .compile(
         &[
             "src/service/designer.proto",

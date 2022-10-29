@@ -24,6 +24,18 @@ where
     engine: TEngine,
 }
 
+
+pub struct EngineDispatcher<Event> {
+    tx: flume::Sender<Event>
+}
+
+impl<Event> Dispatcher<Event> for EngineDispatcher<Event> {
+    fn dispatch(&self, event: Event) {
+        self.tx.send(event).unwrap();
+    }
+}
+
+
 impl<Event: 'static, State, TEngine> Machine<Event, State, TEngine>
 where
     TEngine: Engine<Event, State> + 'static,
@@ -31,11 +43,11 @@ where
 {
     pub fn new<EngineCtor>(state: State, engine_ctor: EngineCtor) -> Arc<Self>
     where
-        EngineCtor: Fn(flume::Sender<Event>) -> TEngine,
+        EngineCtor: Fn(EngineDispatcher<Event>) -> TEngine,
     {
         let (engine_tx, engine_rx) = flume::unbounded();
 
-        let engine = engine_ctor(engine_tx);
+        let engine = engine_ctor(EngineDispatcher { tx: engine_tx });
 
         Arc::new(Self {
             engine_rx,

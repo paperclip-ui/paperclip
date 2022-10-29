@@ -1,6 +1,6 @@
 use wasm_bindgen_test::*;
 
-use super::core::{Dispatcher, Engine, Machine, Reducer};
+use super::core::{Dispatcher, Engine, Machine, Reducer, EngineDispatcher};
 
 enum Event {
     Inc(i32),
@@ -29,22 +29,21 @@ impl Reducer<Event> for State {
 }
 
 struct AppEngine<Event> {
-    tx: flume::Sender<Event>,
+    dispatcher: EngineDispatcher<Event>,
 }
 
 impl Engine<Event, State> for AppEngine<Event> {
     fn on_event(&self, event: &Event, state: &State, prev_state: &State) {
         if matches!(event, Event::Inc(_)) {
-            self.tx
-                .send(Event::SomeSideEffect(state.count + prev_state.count))
-                .unwrap();
+            self.dispatcher
+                .dispatch(Event::SomeSideEffect(state.count + prev_state.count));
         }
     }
 }
 
 #[wasm_bindgen_test]
 pub async fn can_create_a_simple_machine() {
-    let machine = Machine::new(State { count: 0, sum: 0 }, |tx| AppEngine { tx });
+    let machine = Machine::new(State { count: 0, sum: 0 }, |dispatcher| AppEngine { dispatcher });
     machine.start().await;
     machine.dispatch(Event::Inc(1));
 

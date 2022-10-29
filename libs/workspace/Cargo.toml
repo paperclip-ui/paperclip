@@ -10,7 +10,7 @@ name = "paperclip_workspace"
 
 [dependencies]
 paperclip_project = { path = "../project" }
-paperclip_proto = { path = "../proto" }
+paperclip_proto = { path = "../proto", features = ["transport"] }
 tonic = "0.8.1"
 tonic-web = "0.4.0"
 prost = "0.11.0"

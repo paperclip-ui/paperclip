@@ -8,6 +8,9 @@ exclude = []
 [lib]
 name = "paperclip_proto"
 
+[features]
+transport = ["tonic/transport"]
+
 [dependencies]
 serde = { version = "1.0.143", features = ["derive", "rc"] }
 tonic = { version = "0.8.2", default-features = false, features = ["codegen", "prost"] }

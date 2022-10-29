@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "wasm-pack build --release --target web --out-dir dist",
+    "build": "yarn build:pc; yarn build:dist",
+    "build:dist": "trunk build",
     "build:pc": "../../target/debug/paperclip_cli build",
     "test": "wasm-pack test --node",
     "test:watch": "cargo watch -s \"wasm-pack test --node\""

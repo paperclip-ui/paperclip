@@ -7,7 +7,7 @@ pub fn Main() -> Html {
         <div onclick={|_| {
           console!("IT WORKS!".to_string());
         }}>
-          <span class={1}>{"something"}</span>
+          <span class={1}>{"something!!dd"}</span>
         </div>
     }
 }

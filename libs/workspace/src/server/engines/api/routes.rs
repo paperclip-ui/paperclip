@@ -11,7 +11,7 @@ use warp::Filter;
 
 use futures_util::future;
 
-static DESIGNER_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/dist");
+static DESIGNER_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/../designer/dist");
 
 pub struct StaticFile(String, &'static File<'static>);
 
@@ -48,6 +48,8 @@ pub async fn static_file_reply(path: String) -> Result<StaticFile, Rejection> {
     } else {
         path.to_string()
     };
+
+    println!("{}", env!("CARGO_MANIFEST_DIR"));
 
     let file = DESIGNER_DIR.get_file(&resolved_path);
 

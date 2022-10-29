@@ -1,4 +1,3 @@
-
 use wasm_bindgen_test::*;
 
 use super::core::{Dispatcher, Engine, Machine, Reducer};

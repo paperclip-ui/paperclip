@@ -28,6 +28,7 @@ exclude = []
 gloo = "0.8"
 js-sys = "0.3"
 yew = { git = "https://github.com/yewstack/yew/", features = ["csr"] }
+paperclip_proto = { path = "../proto"  }
 wasm-bindgen = "0.2"
 flume = "0.10.14"
 wasm-bindgen-futures = "0.4.33"

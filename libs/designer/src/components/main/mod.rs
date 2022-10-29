@@ -11,5 +11,3 @@ pub fn Main() -> Html {
         </div>
     }
 }
-
-

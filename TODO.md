@@ -1,6 +1,7 @@
 #### On-deck
 
 - Display live preview in designer
+- look into libp2p instead
 
 - build designer in WASM
 

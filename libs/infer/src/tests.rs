@@ -227,7 +227,6 @@ add_case! {
   ])
 }
 
-
 add_case! {
   can_infer_nested_elements,
   [
@@ -253,7 +252,6 @@ add_case! {
     )
   ])
 }
-
 
 add_case! {
   can_infer_slots,

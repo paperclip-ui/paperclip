@@ -179,7 +179,10 @@ async fn translate<F: FileResolver>(
     Ok(match into {
         "css" => Some(translate_css(path, graph, file_resolver).await?),
         "html" => Some(translate_html(path, graph, file_resolver, options).await?),
-        "yew.rs" => Some(yew::compile_code(graph.dependencies.get(path).unwrap(), graph)?),
+        "yew.rs" => Some(yew::compile_code(
+            graph.dependencies.get(path).unwrap(),
+            graph,
+        )?),
         "react.js" => Some(react::compile_code(graph.dependencies.get(path).unwrap())?),
         "react.d.ts" => Some(react::compile_typed_definition(
             graph.dependencies.get(path).unwrap(),

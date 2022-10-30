@@ -13,7 +13,8 @@ members = [
   "libs/designer",
   "libs/proto",
   "libs/config",
-  "libs/language-services"
+  "libs/language-services",
+  "libs/grpc-web-client"
 ]
 
 

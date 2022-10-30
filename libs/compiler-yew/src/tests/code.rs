@@ -1,9 +1,8 @@
 use crate::compile_code;
-use paperclip_common::str_utils::strip_extra_ws;
-use std::collections::HashMap;
 use futures::executor::block_on;
+use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::graph::{test_utils, Graph};
-
+use std::collections::HashMap;
 
 // TODO: insert test
 macro_rules! add_case {
@@ -19,11 +18,10 @@ macro_rules! add_case {
 
             let dep = graph.dependencies.get("/entry.pc").unwrap();
 
-            
             let output = compile_code(&dep, &graph).unwrap();
 
             println!("{}", output);
-            
+
             assert_eq!(
                 strip_extra_ws(output.as_str()),
                 strip_extra_ws($expected_output)
@@ -200,8 +198,6 @@ add_case! {
   "#
 }
 
-
-
 add_case! {
   can_define_another_slot,
   [
@@ -235,7 +231,6 @@ add_case! {
     }
   "#
 }
-
 
 add_case! {
   can_import_another_module,
@@ -315,5 +310,3 @@ add_case! {
   }
   "#
 }
-
-

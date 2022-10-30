@@ -57,8 +57,6 @@ impl Designer for DesignerService {
                 })
             };
 
-            println!("SENDD {:?}", path);
-
             tx.send(emit(path.clone(), store.clone()))
                 .await
                 .expect("Can't send");

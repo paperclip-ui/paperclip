@@ -17,8 +17,9 @@ public component Test {
     style variant hover {
       background: blue
     }
-    Outer(class: "something") {
+    Outer(class: "sometddhing") {
       slot children
+      text "Hellodddsss"
     }
   }
 }

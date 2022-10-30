@@ -1,9 +1,8 @@
-
 mod components;
 mod engines;
+mod events;
 mod shared;
 mod state;
-mod events;
 
 use yew::prelude::*;
 
@@ -15,16 +14,14 @@ fn App() -> Html {
 }
 
 #[cfg(not(target_arch = "wasm32"))]
-fn main() {
-    
-}
+fn main() {}
 
 #[cfg(target_arch = "wasm32")]
 fn main() {
+    use engines::api::APIEngine;
     use gloo::console::console;
     use shared::machine::core::Machine;
     use state::AppState;
-    use engines::api::APIEngine;
 
     let state = AppState::default();
     let machine = Machine::new(state, APIEngine::new);

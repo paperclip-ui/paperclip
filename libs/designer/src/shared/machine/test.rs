@@ -1,6 +1,6 @@
 use wasm_bindgen_test::*;
 
-use super::core::{Dispatcher, Engine, Machine, Reducer, EngineDispatcher};
+use super::core::{Dispatcher, Engine, EngineDispatcher, Machine, Reducer};
 
 enum Event {
     Inc(i32),
@@ -43,7 +43,9 @@ impl Engine<Event, State> for AppEngine<Event> {
 
 #[wasm_bindgen_test]
 pub async fn can_create_a_simple_machine() {
-    let machine = Machine::new(State { count: 0, sum: 0 }, |dispatcher| AppEngine { dispatcher });
+    let machine = Machine::new(State { count: 0, sum: 0 }, |dispatcher| AppEngine {
+        dispatcher,
+    });
     machine.start().await;
     machine.dispatch(Event::Inc(1));
 

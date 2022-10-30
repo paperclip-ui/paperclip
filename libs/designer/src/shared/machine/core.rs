@@ -24,9 +24,8 @@ where
     engine: TEngine,
 }
 
-
 pub struct EngineDispatcher<Event> {
-    tx: flume::Sender<Event>
+    tx: flume::Sender<Event>,
 }
 
 impl<Event> Dispatcher<Event> for EngineDispatcher<Event> {
@@ -34,7 +33,6 @@ impl<Event> Dispatcher<Event> for EngineDispatcher<Event> {
         self.tx.send(event).unwrap();
     }
 }
-
 
 impl<Event: 'static, State, TEngine> Machine<Event, State, TEngine>
 where

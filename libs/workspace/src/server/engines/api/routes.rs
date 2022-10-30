@@ -49,8 +49,6 @@ pub async fn static_file_reply(path: String) -> Result<StaticFile, Rejection> {
         path.to_string()
     };
 
-    println!("{}", env!("CARGO_MANIFEST_DIR"));
-
     let file = DESIGNER_DIR.get_file(&resolved_path);
 
     if let Some(file) = file {

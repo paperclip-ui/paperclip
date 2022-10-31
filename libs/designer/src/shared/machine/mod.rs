@@ -1,4 +1,2 @@
 pub mod core;
-
-#[cfg(test)]
-pub mod test;
+pub mod observable;

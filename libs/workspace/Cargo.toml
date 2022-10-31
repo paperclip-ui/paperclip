@@ -11,7 +11,7 @@ name = "paperclip_workspace"
 [dependencies]
 paperclip_project = { path = "../project" }
 paperclip_proto = { path = "../proto", features = ["transport"] }
-tonic = { version = "0.8.1", features = ["tls"] }
+tonic = { version = "0.8.2", features = ["tls"] }
 tonic-web = "0.4.0"
 prost = "0.11.0"
 tokio-native-tls = { version = "0.3.0" }

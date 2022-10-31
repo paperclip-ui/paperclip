@@ -19,7 +19,7 @@ public component Test {
     }
     Outer(class: "sometddhing") {
       slot children
-      text "Hellodddsss"
+      text "Helloddddddddggddddfdsfdfsfssss"
     }
   }
 }

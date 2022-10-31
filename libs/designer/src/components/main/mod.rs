@@ -1,5 +1,6 @@
 use gloo::console::console;
 use yew::prelude::*;
+mod canvas;
 
 #[function_component]
 pub fn Main() -> Html {
@@ -7,7 +8,7 @@ pub fn Main() -> Html {
         <div onclick={|_| {
           console!("IT WORKS!".to_string());
         }}>
-          <span class={1}>{"something!!!!"}</span>
+          <canvas::Canvas />
         </div>
     }
 }

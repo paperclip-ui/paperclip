@@ -2,28 +2,45 @@ mod components;
 mod engines;
 mod events;
 mod shared;
+mod types;
 mod state;
+use std::sync::Arc;
+
+use engines::{api::APIEngine, history::HistoryEngine, logger::LoggerEngine};
+use events::AppEvent;
+use shared::machine::core::{Dispatcher, GroupEngine, Machine};
+use state::AppState;
+use types::AppMachine;
 
 use yew::prelude::*;
+use yew::{use_state};
 
 #[function_component]
 fn App() -> Html {
+    let machine = use_state(|| {
+        let machine = Machine::new(AppState::default(), |dispatcher| {
+            Arc::new(GroupEngine::new(
+                dispatcher,
+                vec![
+                    Box::new(|dispatcher| Arc::new(APIEngine::new(dispatcher))),
+                    Box::new(|dispatcher| Arc::new(HistoryEngine::new(dispatcher))),
+                    Box::new(|_dispatcher| Arc::new(LoggerEngine {})),
+                ],
+            ))
+        });
+
+        machine.start();
+        machine
+    });
     html! {
-        <components::main::Main />
+        <yew::ContextProvider<AppMachine> context={(*machine).clone()}>
+            <components::main::Main />
+        </yew::ContextProvider<AppMachine>>
     }
 }
 
-#[cfg(not(target_arch = "wasm32"))]
-fn main() {}
-
-#[cfg(target_arch = "wasm32")]
 fn main() {
-    use engines::api::APIEngine;
-    use gloo::console::console;
-    use shared::machine::core::Machine;
-    use state::AppState;
 
-    let state = AppState::default();
-    let machine = Machine::new(state, APIEngine::new);
+
     yew::Renderer::<App>::new().render();
 }

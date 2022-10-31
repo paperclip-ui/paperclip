@@ -1,6 +1,5 @@
 // This file is based on https://github.com/alce/tonic/blob/86bbb1d5a4844882dec81bef7c1a554bd9464adf/tonic-web/tonic-web/src/call.rs
 
-use gloo::console::console;
 use std::mem;
 use std::pin::Pin;
 use std::task::{Context, Poll};
@@ -106,7 +105,6 @@ where
         poll_trailers: bool,
         decode_trailers: bool,
     ) -> Self {
-        console!("GrpcWebCall::new()".to_string());
 
         GrpcWebCall {
             inner,
@@ -130,7 +128,6 @@ where
     }
 
     fn decode_chunk(&mut self) -> Result<Option<Bytes>, Status> {
-        console!("GrpcWebCall::decode_chunk()".to_string());
         // not enough bytes to decode
         if self.buf.is_empty() || self.buf.len() < 4 {
             return Ok(None);
@@ -145,7 +142,6 @@ where
 
     // Key-value pairs encoded as a HTTP/1 headers block (without the terminating newline)
     fn encode_trailers(&self, trailers: HeaderMap) -> Vec<u8> {
-        console!("GrpcWebCall::encode_trailers()".to_string());
         trailers.iter().fold(Vec::new(), |mut acc, (key, value)| {
             acc.put_slice(key.as_ref());
             acc.push(b':');
@@ -278,7 +274,6 @@ where
         mut self: Pin<&mut Self>,
         cx: &mut Context<'_>,
     ) -> Poll<Option<Result<B::Data, Status>>> {
-        console!("GrpcWebCall::poll_decode()".to_string());
 
         match self.encoding {
             Encoding::Base64 => loop {
@@ -313,7 +308,6 @@ where
         mut self: Pin<&mut Self>,
         cx: &mut Context<'_>,
     ) -> Poll<Option<Result<B::Data, Status>>> {
-        console!("GrpcWebCall::poll_encode()".to_string());
         if let Some(mut res) = ready!(Pin::new(&mut self.inner).poll_data(cx)) {
             if self.encoding == Encoding::Base64 {
                 res = res.map(|b| base64::encode(b).into())
@@ -357,7 +351,6 @@ where
         self: Pin<&mut Self>,
         cx: &mut Context<'_>,
     ) -> Poll<Option<Result<Self::Data, Self::Error>>> {
-        console!("GrpcWebCall::poll_data()".to_string());
         match self.mode {
             Mode::Decode => self.poll_decode(cx),
             Mode::Encode => self.poll_encode(cx),
@@ -368,7 +361,6 @@ where
         mut self: Pin<&mut Self>,
         cx: &mut Context<'_>,
     ) -> Poll<Result<Option<HeaderMap<HeaderValue>>, Self::Error>> {
-        console!("GrpcWebCall::poll_trailers()".to_string());
         if !self.decode_trailers {
             return Poll::Ready(Ok(None));
         }
@@ -400,7 +392,6 @@ where
     type Item = Result<Bytes, Status>;
 
     fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        console!("GrpcWebCall::poll_next()".to_string());
         Body::poll_data(self, cx)
     }
 }

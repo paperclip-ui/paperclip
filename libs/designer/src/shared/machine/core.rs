@@ -1,5 +1,10 @@
-use std::sync::{Arc, Mutex};
+use std::{
+    rc::Rc,
+    sync::{Arc, Mutex}, fmt::Debug,
+};
 
+use futures_signals::signal::Mutable;
+use gloo::console::console;
 use wasm_bindgen_futures::spawn_local;
 
 pub trait Reducer<Event>: Clone {
@@ -11,17 +16,27 @@ pub trait Dispatcher<Event> {
 }
 
 pub trait Engine<Event, State> {
-    fn on_event(&self, event: &Event, new_state: &State, old_state: &State);
+    fn on_event(&self, event: &Event, new_state: &State, old_state: &State) {}
+    fn start(self: Arc<Self>) {}
 }
 
+#[derive(Debug)]
 pub struct Machine<Event, State, TEngine>
 where
     TEngine: Engine<Event, State>,
     State: Reducer<Event>,
 {
-    pub state: Arc<Mutex<State>>,
+    pub state: Arc<Mutable<State>>,
     engine_rx: flume::Receiver<Event>,
-    engine: TEngine,
+    engine: Arc<TEngine>,
+}
+
+impl<Event, State, TEngine> PartialEq for Machine<Event, State, TEngine>  where
+TEngine: Engine<Event, State>,
+State: Reducer<Event> {
+ fn eq(&self, other: &Self) -> bool {
+     false
+ }
 }
 
 pub struct EngineDispatcher<Event> {
@@ -34,26 +49,26 @@ impl<Event> Dispatcher<Event> for EngineDispatcher<Event> {
     }
 }
 
-impl<Event: 'static, State, TEngine> Machine<Event, State, TEngine>
+impl<Event: 'static, State: Debug, TEngine> Machine<Event, State, TEngine>
 where
     TEngine: Engine<Event, State> + 'static,
     State: Reducer<Event> + 'static,
 {
     pub fn new<EngineCtor>(state: State, engine_ctor: EngineCtor) -> Arc<Self>
     where
-        EngineCtor: Fn(EngineDispatcher<Event>) -> TEngine,
+        EngineCtor: Fn(Rc<EngineDispatcher<Event>>) -> Arc<TEngine>,
     {
         let (engine_tx, engine_rx) = flume::unbounded();
 
-        let engine = engine_ctor(EngineDispatcher { tx: engine_tx });
+        let engine = engine_ctor(Rc::new(EngineDispatcher { tx: engine_tx }));
 
         Arc::new(Self {
             engine_rx,
-            state: Arc::new(Mutex::new(state)),
+            state: Arc::new(Mutable::new(state)),
             engine,
         })
     }
-    pub async fn start(self: &Arc<Self>) {
+    pub fn start(self: &Arc<Self>) {
         let clone = self.clone();
         spawn_local(async move {
             while let Ok(event) = clone.engine_rx.recv_async().await {
@@ -63,23 +78,65 @@ where
                 });
             }
         });
+
+        self.engine.clone().start();
     }
-    pub fn get_state(&self) -> Arc<Mutex<State>> {
+    pub fn get_state(&self) -> Arc<Mutable<State>> {
         self.state.clone()
     }
 }
 
-impl<Event, State: Reducer<Event>, TEngine: Engine<Event, State>> Dispatcher<Event>
+impl<Event, State: Reducer<Event> + Debug, TEngine: Engine<Event, State>> Dispatcher<Event>
     for Machine<Event, State, TEngine>
 {
     fn dispatch(&self, event: Event) {
         let (new_state, old_state) = {
-            let mut curr_state = self.state.lock().unwrap();
-            let new_state = curr_state.reduce(&event);
-            let old_state = std::mem::replace(&mut *curr_state, new_state.clone());
+            let old_state = self.state.replace_with(|state| {
+                state.reduce(&event)
+            });
+
+            console!(format!("{:?}", self.state.get_cloned()));
+            // let new_state = curr_state.reduce(&event);
+            // let old_state = self.state.replace_with(new_state);
+            // let old_state = std::mem::replace(&mut *curr_state, new_state.clone());
+            let new_state: State = self.state.get_cloned();
             (new_state, old_state)
         };
 
         self.engine.on_event(&event, &new_state, &old_state);
+    }
+}
+
+pub struct GroupEngine<Event, State> {
+    engines: Vec<Arc<dyn Engine<Event, State>>>,
+}
+
+type EngineCtor<Event, State> =
+    Box<dyn Fn(Rc<EngineDispatcher<Event>>) -> Arc<dyn Engine<Event, State>>>;
+
+impl<Event, State> GroupEngine<Event, State> {
+    pub fn new(
+        dispatcher: Rc<EngineDispatcher<Event>>,
+        engine_ctors: Vec<EngineCtor<Event, State>>,
+    ) -> Self {
+        Self {
+            engines: engine_ctors
+                .iter()
+                .map(|ctor| (ctor)(dispatcher.clone()))
+                .collect(),
+        }
+    }
+}
+
+impl<Event, State> Engine<Event, State> for GroupEngine<Event, State> {
+    fn on_event(&self, event: &Event, new_state: &State, old_state: &State) {
+        for engine in &self.engines {
+            engine.on_event(event, new_state, old_state);
+        }
+    }
+    fn start(self: Arc<Self>) {
+        for engine in &self.engines {
+            engine.clone().start();
+        }
     }
 }

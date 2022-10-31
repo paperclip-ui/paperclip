@@ -599,6 +599,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "discard"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "212d0f5754cb6769937f4501cc0e67f4f4483c8d2c3e1e922ee9edbe4ab4c7c0"
+
+[[package]]
 name = "doc-comment"
 version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -782,6 +788,21 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "futures-signals"
+version = "0.3.31"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a3acc659ba666cff13fdf65242d16428f2f11935b688f82e4024ad39667a5132"
+dependencies = [
+ "discard",
+ "futures-channel",
+ "futures-core",
+ "futures-util",
+ "log",
+ "pin-project",
+ "serde",
 ]
 
 [[package]]
@@ -1798,16 +1819,22 @@ dependencies = [
 name = "paperclip_designer"
 version = "0.1.1"
 dependencies = [
+ "anyhow",
  "async-std",
  "flume",
+ "futures",
+ "futures-signals",
  "gloo",
  "grpc-web-client",
  "js-sys",
  "paperclip_proto",
+ "tonic",
  "tonic-web-wasm-client",
+ "url",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "wasm-bindgen-test",
+ "web-sys",
  "yew",
 ]
 

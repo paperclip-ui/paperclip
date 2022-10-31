@@ -7,7 +7,6 @@ use core::{
     task::{Context, Poll},
 };
 use futures::{Future, Stream, TryStreamExt};
-use gloo::console::console;
 use http::{header::HeaderName, request::Request, response::Response, HeaderMap, HeaderValue};
 use http_body::Body;
 use js_sys::{Array, Uint8Array};
@@ -16,7 +15,7 @@ use tonic::{body::BoxBody, client::GrpcService, Status};
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen_futures::JsFuture;
 use wasm_streams::ReadableStream;
-use web_sys::{console, Headers, RequestInit};
+use web_sys::{Headers, RequestInit};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum ClientError {
@@ -54,7 +53,6 @@ impl Client {
     }
 
     async fn request(self, rpc: Request<BoxBody>) -> Result<Response<BoxBody>, ClientError> {
-        console!("Client::request()".to_string());
         let mut uri = rpc.uri().to_string();
         uri.insert_str(0, &self.base_uri);
 
@@ -118,12 +116,10 @@ impl GrpcService<BoxBody> for Client {
     type Future = Pin<Box<dyn Future<Output = Result<Response<BoxBody>, ClientError>>>>;
 
     fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        console!("impl GrpcService for Client::poll_ready()".to_string());
         Poll::Ready(Ok(()))
     }
 
     fn call(&mut self, rpc: Request<BoxBody>) -> Self::Future {
-        console!("impl GrpcService for Client::call()".to_string());
         Box::pin(self.clone().request(rpc))
     }
 }
@@ -134,20 +130,20 @@ struct ReadableStreamBody {
 
 impl ReadableStreamBody {
     fn new(inner: ReadableStream) -> Self {
-        console!("ReadableStreamBody::new()".to_string());
         ReadableStreamBody {
             stream: Box::pin(
                 inner
                     .into_stream()
                     .map_ok(|buf_js| {
-                        console!("[ReadableStreamBody] inner.into_stream().map_ok()".to_string());
                         let buffer = Uint8Array::new(&buf_js);
                         let mut bytes_vec = vec![0; buffer.length() as usize];
                         buffer.copy_to(&mut bytes_vec);
                         let bytes: Bytes = bytes_vec.into();
                         bytes
                     })
-                    .map_err(|_| Status::unknown("readablestream error")),
+                    .map_err(|_| {
+                        Status::unknown("readablestream error")
+                    }),
             ),
         }
     }
@@ -161,7 +157,6 @@ impl Body for ReadableStreamBody {
         mut self: Pin<&mut Self>,
         cx: &mut Context<'_>,
     ) -> Poll<Option<Result<Self::Data, Self::Error>>> {
-        console!("impl Body for eadableStreamBody::poll_data()".to_string());
         self.stream.as_mut().poll_next(cx)
     }
 
@@ -173,7 +168,6 @@ impl Body for ReadableStreamBody {
     }
 
     fn is_end_stream(&self) -> bool {
-        console!("ReadableStreamBody::is_end_stream()".to_string());
         false
     }
 }

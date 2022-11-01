@@ -6,15 +6,11 @@ mod state;
 mod types;
 use std::sync::Arc;
 
-use dominator::{append_dom, events as dom_events, get_id, html, Dom};
+use dominator::{append_dom, get_id, html, Dom};
 use engines::{api::APIEngine, history::HistoryEngine, logger::LoggerEngine};
-use futures_signals::signal::Mutable;
-use futures_signals::signal::SignalExt;
 use shared::machine::core::{GroupEngine, Machine};
 use state::AppState;
 use types::AppMachine;
-use wasm_bindgen_futures::spawn_local;
-use web_sys::HtmlIFrameElement;
 
 struct App {
     machine: AppMachine,
@@ -34,7 +30,7 @@ impl App {
                 }
             }))
             .children([
-                iframe_portal(move || {
+                components::common::iframe_portal(move || {
                     vec![
                     html!("div", {
                         .text_signal(machine.state.signal_ref(|state| {
@@ -50,47 +46,6 @@ impl App {
             ])
         })
     }
-}
-
-#[derive(Clone)]
-struct NodeRef<T> {
-    value: Arc<T>,
-}
-
-fn iframe_portal<TChildren>(children: TChildren) -> Dom
-where
-    TChildren: Fn() -> Vec<Dom> + 'static,
-{
-    let iframe: Arc<Mutable<Option<NodeRef<HtmlIFrameElement>>>> = Arc::new(Mutable::new(None));
-
-    let iframe2 = iframe.clone();
-
-    spawn_local(async move {
-        iframe2
-            .signal_cloned()
-            .for_each(move |iframe| {
-                if let Some(iframe) = iframe {
-                    let body = iframe.value.content_document().unwrap().body().unwrap();
-                    append_dom(
-                        &body,
-                        html!("div", {
-                            .children((children)())
-                        }),
-                    );
-                }
-                async {}
-            })
-            .await;
-    });
-
-    html!("iframe", {
-        .attr("style", "width: 100%; height: 100%; border: none;")
-        .event(move |event: dom_events::Load| {
-            iframe.set(Some(NodeRef {
-                value: Arc::new(wasm_bindgen::JsCast::dyn_into::<web_sys::HtmlIFrameElement>(event.target().unwrap()).unwrap())
-            }));
-        })
-    })
 }
 
 fn main() {

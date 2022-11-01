@@ -1,6 +1,8 @@
 #### On-deck
 
-- Display live preview in designer
+- Ditch signals
+
+- Display live preview in designer using dominator
 - look into libp2p instead
 
 - build designer in WASM

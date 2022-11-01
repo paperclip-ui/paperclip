@@ -1,44 +1,53 @@
-use anyhow::Result;
+type Selector<T, V> = dyn Fn(T) -> V;
 
-#[derive(Default)]
-pub struct Observable<T: Clone> {
-    pub value: T,
-    txs: Vec<flume::Sender<T>>,
+
+pub struct Observable<T> {
+  value: T,
+  listeners: Vec<Box<dyn Observer<T>>>
 }
 
-impl<T: Clone> Observable<T> {
-    pub fn new(value: T) -> Self {
-        Self { value, txs: vec![] }
+impl<T: PartialEq> Observable<T> {
+  pub fn bind<Callback>(callback: Callback) -> SelectObserver<T, T> where Callback: Fn(T) -> () {
+    SelectObserver {
+      select: Box::new(|v| {
+        v
+      }),
+      callback: Box::new(callback)
     }
-    pub fn update<TUpdater>(&mut self, update: TUpdater)
-    where
-        TUpdater: Fn(&T) -> T,
-    {
-        let new_value = (update)(&self.value);
-        self.value = new_value.clone();
-        for tx in &self.txs {
-            tx.send(new_value.clone());
-        }
+  }
+  pub fn bind_select<Callback, V>(callback: Callback, select: Selector<T, V>) {
+    SelectObserver {
+      select: Box::new(|v| {
+        v
+      }),
+      callback: Box::new(callback)
     }
-    pub fn watch<V, TSelector>(&mut self, selector: TSelector) -> Observer<T, V, TSelector>
-    where
-        TSelector: Fn(T) -> V,
-    {
-        let (tx, rx) = flume::unbounded();
-        tx.send(self.value.clone());
-        self.txs.push(tx);
-        Observer { rx, selector }
-    }
+
+  }
+  pub fn update(&mut self) {
+
+  }
 }
 
-pub struct Observer<T, V, TSelector: Fn(T) -> V> {
-    rx: flume::Receiver<T>,
-    selector: TSelector,
+trait Observer<T> {
+  fn handle_change(&self, curr: T, prev: T);
 }
 
-impl<T, V, TSelector: Fn(T) -> V> Observer<T, V, TSelector> {
-    pub async fn value(&self) -> Result<V> {
-        let state = self.rx.recv_async().await?;
-        Ok((self.selector)(state))
+pub struct SelectObserver<T: PartialEq, V: PartialEq> {
+  select: Box<dyn Fn(T) -> V>,
+  callback: Box<dyn Fn(V) -> ()>
+}
+impl<T: PartialEq, V: PartialEq> SelectObserver<T, V> {
+  pub fn on_change()
+}
+
+impl<T: PartialEq, V: PartialEq> Observer<T> for SelectObserver<T, V> {
+  fn handle_change(&self, value: T, prev: T) {
+    let curr_selected = (self.select)(value);
+    let prev_selected = (self.select)(prev);
+    if (curr_selected == prev_selected) {
+      return;
     }
+    (self.callback)(curr_selected);
+  }
 }

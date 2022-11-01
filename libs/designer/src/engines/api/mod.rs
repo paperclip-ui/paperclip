@@ -46,6 +46,14 @@ impl APIEngine {
         let mut url = self.state.signal_ref(|state| state.url.clone()).to_stream();
 
         let this = self.clone();
+
+        // this.state.select(|state| {
+        //     state.url.clone()
+        // }).on_change(move || {
+
+        // });
+
+
         spawn_local(async move {
             while let Some(option) = url.next().await {
                 if let Some(path) = option {

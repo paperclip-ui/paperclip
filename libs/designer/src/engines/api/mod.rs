@@ -1,7 +1,7 @@
 use crate::events::AppEvent;
-use crate::shared::machine::core::{Engine, EngineDispatcher, Dispatcher};
+use crate::shared::machine::core::{Dispatcher, Engine, EngineDispatcher};
 use crate::state::AppState;
-use futures::stream::{StreamExt};
+use futures::stream::StreamExt;
 use futures_signals::signal::Mutable;
 use futures_signals::signal::SignalExt;
 use grpc_web_client::Client;
@@ -84,7 +84,7 @@ impl Engine<AppEvent, AppState> for APIEngine {
             AppEvent::LocationChanged(_) => {
                 let mut state = self.state.lock_mut();
                 state.url = new_state.current_file.clone();
-            },
+            }
             _ => {}
         }
     }

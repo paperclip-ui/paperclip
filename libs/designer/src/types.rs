@@ -1,6 +1,9 @@
 use std::sync::Arc;
 
-use crate::{shared::machine::core::{Machine, GroupEngine}, events::AppEvent, state::AppState};
-
+use crate::{
+    events::AppEvent,
+    shared::machine::core::{GroupEngine, Machine},
+    state::AppState,
+};
 
 pub type AppMachine = Arc<Machine<AppEvent, AppState, GroupEngine<AppEvent, AppState>>>;

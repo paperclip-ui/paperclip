@@ -4,7 +4,7 @@ use yew::prelude::*;
 pub fn Frame() -> Html {
     html! {
         <div>
-          
+
         </div>
     }
 }

@@ -1,14 +1,14 @@
-use std::{default::Default};
+use std::default::Default;
 
-use crate::{events::AppEvent, shared::machine::core::{Reducer}};
+use crate::{events::AppEvent, shared::machine::core::Reducer};
 use paperclip_proto::{service::designer::file_response::Data::Paperclip, virt::module::PcModule};
-use std::{collections::HashMap};
+use std::collections::HashMap;
 use url::Url;
 
 #[derive(Default, Clone, Debug)]
 pub struct AppState {
     pub current_file: Option<String>,
-    pub current_module: Option<PcModule>
+    pub current_module: Option<PcModule>,
 }
 
 impl Reducer<AppEvent> for AppState {
@@ -24,7 +24,7 @@ impl Reducer<AppEvent> for AppState {
                 } else {
                     None
                 };
-            },
+            }
             AppEvent::FileLoaded(item) => {
                 if let Some(data) = &item.data {
                     match data {
@@ -38,8 +38,3 @@ impl Reducer<AppEvent> for AppState {
         clone
     }
 }
-
-
-
-
-

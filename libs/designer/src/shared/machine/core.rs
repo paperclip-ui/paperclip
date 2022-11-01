@@ -1,6 +1,7 @@
 use std::{
+    fmt::Debug,
     rc::Rc,
-    sync::{Arc, Mutex}, fmt::Debug,
+    sync::{Arc, Mutex},
 };
 
 use futures_signals::signal::Mutable;
@@ -31,12 +32,14 @@ where
     engine: Arc<TEngine>,
 }
 
-impl<Event, State, TEngine> PartialEq for Machine<Event, State, TEngine>  where
-TEngine: Engine<Event, State>,
-State: Reducer<Event> {
- fn eq(&self, other: &Self) -> bool {
-     false
- }
+impl<Event, State, TEngine> PartialEq for Machine<Event, State, TEngine>
+where
+    TEngine: Engine<Event, State>,
+    State: Reducer<Event>,
+{
+    fn eq(&self, other: &Self) -> bool {
+        false
+    }
 }
 
 pub struct EngineDispatcher<Event> {
@@ -91,9 +94,7 @@ impl<Event, State: Reducer<Event> + Debug, TEngine: Engine<Event, State>> Dispat
 {
     fn dispatch(&self, event: Event) {
         let (new_state, old_state) = {
-            let old_state = self.state.replace_with(|state| {
-                state.reduce(&event)
-            });
+            let old_state = self.state.replace_with(|state| state.reduce(&event));
 
             console!(format!("{:?}", self.state.get_cloned()));
             // let new_state = curr_state.reduce(&event);

@@ -20,10 +20,11 @@ tonic = { version = "0.8.1", default-features = false }
 wasm-bindgen-test = "0.3.33"
 grpc-web-client = { path = "../grpc-web-client" }
 async-std = "1.12.0"
-web-sys = "0.3.60"
+web-sys = { version = "0.3.60", features = ["HtmlIFrameElement"] }
 url = "2.3.1"
 anyhow = "1.0.66"
 futures = "0.3.25"
+dominator = "0.5.31"
 # tonic-web-wasm-client = "0.2.2"
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 tonic-web-wasm-client = "0.2.2"

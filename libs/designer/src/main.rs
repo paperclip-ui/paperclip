@@ -6,21 +6,15 @@ mod state;
 mod types;
 use std::sync::Arc;
 
-use dominator::{append_dom, clone, events as dom_events, fragment, get_id, html, Dom};
+use dominator::{append_dom, events as dom_events, get_id, html, Dom};
 use engines::{api::APIEngine, history::HistoryEngine, logger::LoggerEngine};
-use events::AppEvent;
 use futures_signals::signal::Mutable;
 use futures_signals::signal::SignalExt;
-use gloo::console::console;
-use shared::machine::core::{Dispatcher, GroupEngine, Machine};
+use shared::machine::core::{GroupEngine, Machine};
 use state::AppState;
 use types::AppMachine;
 use wasm_bindgen_futures::spawn_local;
-use web_sys::window;
 use web_sys::HtmlIFrameElement;
-
-use yew::prelude::*;
-use yew::use_state;
 
 struct App {
     machine: AppMachine,
@@ -90,6 +84,7 @@ where
     });
 
     html!("iframe", {
+        .attr("style", "width: 100%; height: 100%; border: none;")
         .event(move |event: dom_events::Load| {
             iframe.set(Some(NodeRef {
                 value: Arc::new(wasm_bindgen::JsCast::dyn_into::<web_sys::HtmlIFrameElement>(event.target().unwrap()).unwrap())

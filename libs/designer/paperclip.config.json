@@ -1,12 +1,15 @@
 {
   "srcDir": "src",
-  "moduleDirs": ["node_module"],
+  "moduleDirs": [],
   "globalScripts": [
-    "./src/editor/styles/globals.css",
     "https://rsms.me/inter/inter.css",
-    "./src/editor/styles/elements.js"
+    "src/styles/globals.css"
   ],
   "compilerOptions": [
-    { "emit": ["react.js:js", "react.d.ts:d.ts", "html", "css"] }
+    {
+      "emit": ["yew.rs:rs", "css"],
+      "mainCssFileName": "main.css",
+      "assetOutDir": "assets"
+    }
   ]
 }

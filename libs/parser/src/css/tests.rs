@@ -156,7 +156,6 @@ add_case! {
     "#
 }
 
-
 add_case! {
     can_parse_var_in_calc,
     r#"

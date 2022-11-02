@@ -13,7 +13,7 @@ impl TargetCompilerContext {
         let asset_out_dir = get_or_short!(&self.options.asset_out_dir, None);
 
         Some(join_path!(
-            &self.get_out_dir_path(),
+            &self.config_context.directory,
             asset_out_dir.clone(),
             main_css_file_name.clone()
         ))

@@ -71,7 +71,7 @@ pub fn next_token<'src>(source: &mut StringScanner<'src>) -> Result<Token<'src>,
                 _ if is_newline(b) => Token::NewLine(source.slice_until(s_pos.u8_pos, is_newline)),
                 _ if is_az(b) => {
                     let word = source.slice_until(s_pos.u8_pos, |b| {
-                        is_az(b) || is_digit(b) || matches!(b, b'-')
+                        is_az(b) || is_digit(b) || matches!(b, b'-') || matches!(b, b'_')
                     });
                     match word {
                         b"extends" => Token::KeywordExtends,

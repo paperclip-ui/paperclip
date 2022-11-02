@@ -1,0 +1,20 @@
+[package]
+name = "paperclip_compiler_yew"
+version = "0.1.1"
+authors = ["Craig Condon <craig.j.condon@gmail.com>"]
+edition = "2021"
+exclude = []
+
+
+[lib]
+name = "paperclip_compiler_yew"
+
+[dependencies]
+paperclip_parser = { path = "../parser" }
+paperclip_common = { path = "../rs-common" }
+paperclip_proto = { path = "../proto" }
+paperclip_evaluator = { path = "../evaluator" }
+paperclip_infer = { path = "../infer" }
+anyhow = "1.0.61"
+futures = "0.3.25"
+pathdiff = "0.2.1"

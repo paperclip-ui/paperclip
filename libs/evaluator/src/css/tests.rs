@@ -1121,10 +1121,6 @@ add_case! {
   "#
 }
 
-
-
-
-
 add_case! {
   can_define_var_within_calc,
   [

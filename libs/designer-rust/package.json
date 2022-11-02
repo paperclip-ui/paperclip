@@ -1,0 +1,17 @@
+{
+  "name": "@paperclip-ui/designer-rust",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "../../target/debug/paperclip_cli designer --port=8000 --open",
+    "build:pc": "../../target/debug/paperclip_cli build",
+    "test": "wasm-pack test --node",
+    "test:watch": "cargo watch -s \"wasm-pack test --node\""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "yew": "^0.0.1"
+  }
+}

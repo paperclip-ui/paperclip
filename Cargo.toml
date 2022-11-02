@@ -1,12 +1,15 @@
 [workspace]
+resolver = "2"
 members = [
   "libs/compiler-react",
+  "libs/compiler-yew",
   "libs/cli",
   "libs/rs-common",
   "libs/project",
   "libs/evaluator",
   "libs/paperclip-loader",
-  "libs/designer",
+  "libs/workspace",
+  "libs/infer",
   "libs/proto",
   "libs/config",
   "libs/language-services"
@@ -21,4 +24,3 @@ lto = true
 [profile.dev]
 opt-level = 1              
 overflow-checks = false    
-

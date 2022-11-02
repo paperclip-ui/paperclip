@@ -9,7 +9,7 @@ exclude = []
 clap = { version = "3.2.17", features = ["derive"] }
 paperclip_parser = { path = "../parser" }
 paperclip_project = { path = "../project" }
-paperclip_designer = { path = "../designer" }
+paperclip_workspace = { path = "../workspace" }
 paperclip_config = { path = "../config" }
 serde_json = { version = "1.0.83" }
 serde = "1.0.143"

@@ -10,7 +10,7 @@
   "scripts": {
     "test": "mocha lib/**/*-test.js",
     "build": "tsc",
-    "build:watch": "tsc --watch",
+    "build:watch": "tsc --watch --preserveWatchOutput",
     "clean": "rm -rf lib && rm -rf node_modules",
     "prepare": "npm run build"
   },

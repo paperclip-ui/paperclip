@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "yarn build:pc && yarn webpack && cargo build",
-    "build:watch": "yarn build:pc && concurrently \"yarn build:pc --watch\" \"webpack --watch\" \"nodemon --watch dist --exec 'touch src/lib.rs'\"",
+    "build": "yarn build:pc && yarn webpack",
+    "build:watch": "yarn build:pc && concurrently \"yarn build:pc --watch\" \"webpack --watch\"",
     "build:pc": "../../target/debug/paperclip_cli build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "../../target/debug/paperclip_cli designer --open --port=8000"

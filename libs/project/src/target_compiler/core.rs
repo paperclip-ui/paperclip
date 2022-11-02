@@ -1,9 +1,8 @@
 use super::context::TargetCompilerContext;
 use anyhow::Result;
 use paperclip_common::fs::{FileReader, FileResolver};
-use paperclip_compiler_react::{
-    compile_code as compile_react_code, compile_typed_definition as compile_react_typed_definition,
-};
+use paperclip_compiler_react as react;
+use paperclip_compiler_yew as yew;
 use paperclip_config::{CompilerOptions, ConfigContext};
 use paperclip_evaluator::css::evaluator::evaluate as evaluate_css;
 use paperclip_evaluator::css::serializer::serialize as serialize_css;
@@ -180,8 +179,12 @@ async fn translate<F: FileResolver>(
     Ok(match into {
         "css" => Some(translate_css(path, graph, file_resolver).await?),
         "html" => Some(translate_html(path, graph, file_resolver, options).await?),
-        "react.js" => Some(compile_react_code(graph.dependencies.get(path).unwrap())?),
-        "react.d.ts" => Some(compile_react_typed_definition(
+        "yew.rs" => Some(yew::compile_code(
+            graph.dependencies.get(path).unwrap(),
+            graph,
+        )?),
+        "react.js" => Some(react::compile_code(graph.dependencies.get(path).unwrap())?),
+        "react.d.ts" => Some(react::compile_typed_definition(
             graph.dependencies.get(path).unwrap(),
         )?),
         _ => None,

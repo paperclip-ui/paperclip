@@ -20,8 +20,7 @@ const devMode = !prodMode;
 
 module.exports = {
   mode: "development",
-  entry: "./src/editor/entry.tsx",
-
+  entry: "./src/entry.tsx",
   output: {
     filename: "[name]-[contenthash].js",
     path: path.resolve(__dirname, "dist"),
@@ -39,7 +38,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       publicPath: "/",
       title: "Paperclip",
-      template: path.resolve(__dirname, "src", "editor", "index.html"),
+      template: path.resolve(__dirname, "src", "index.html"),
     }),
     new webpack.ProvidePlugin({
       process: "process/browser.js",

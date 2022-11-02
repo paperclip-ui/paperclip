@@ -1,0 +1,5 @@
+public component AB {
+  render div(class: class) {
+    slot children
+  }
+}

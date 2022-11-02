@@ -1,0 +1,34 @@
+import "./test.pc" as test2
+
+public component Test {
+  variant hover trigger {
+    ":hover"
+  }
+  render div(onclick: on_click) {
+    style {
+      color: white
+      background: red
+      display: inline-block
+      cursor: pointer
+      font-family: sans-serif
+      padding: 16px
+      transition: 1s
+    }
+    style variant hover {
+      background: blue
+    }
+    Outer(class: "sometddhing") {
+      slot children
+      text "Helloddddddddggddddfdsfdfsfssss"
+    }
+  }
+}
+
+pub component Outer {
+  render test2.AB(class: class) {
+    style {
+      font-family: sans-serif
+    }
+    slot children
+  }
+}

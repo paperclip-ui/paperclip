@@ -1,0 +1,10 @@
+{
+  "srcDir": "src",
+  "moduleDirs": ["node_module"],
+  "globalScripts": [
+    "./src/styles/globals.css",
+    "https://rsms.me/inter/inter.css",
+    "./src/editor/styles/elements.js"
+  ],
+  "compilerOptions": [{ "emit": ["react.js:js"] }]
+}

@@ -10,3 +10,16 @@ impl ToString for Node {
         "[Node]".to_string()
     }
 }
+
+impl Node {
+    pub fn get_metadata(&self) -> &Option<NodeMedata> {
+        match self.get_inner() {
+            node::Inner::Element(element) => {
+                &element.metadata
+            }
+            node::Inner::TextNode(text) => {
+                &text.metadata
+            }
+        }
+    }
+}

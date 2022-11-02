@@ -31,7 +31,7 @@ public component Inner {
 Canvas {
   Inner {
     TmpFooter {
-      text "somethingfdsfsfsff"
+      text "somethingfddddsfsfsff"
     }
   }
 }

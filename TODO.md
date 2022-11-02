@@ -1,21 +1,16 @@
 #### On-deck
 
-- Back to Yew
-- figure out reactive way of updating UI
+- insert elements
 
-- Display live preview in designer using dominator
-- look into libp2p instead
-
-- build designer in WASM
-
-  - get state machine to work
-  - build PC compiler in rust
+  - "e" key to insert element
 
 - ability to insert elements
+
   - show drag bounds
   - on mouse up, insert into active element
     - if start + end in element, then insert into that element
     - if start outside of element, then create frame
+
 - ability to edit styles of elements
 - ability to create components
 

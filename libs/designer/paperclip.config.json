@@ -8,7 +8,6 @@
   "compilerOptions": [
     {
       "emit": ["yew.rs:rs", "css"],
-      "mainCssFileName": "main.css",
       "assetOutDir": "assets"
     }
   ]

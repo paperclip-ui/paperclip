@@ -1,6 +1,7 @@
 #### On-deck
 
-- Ditch signals
+- Back to Yew
+- figure out reactive way of updating UI
 
 - Display live preview in designer using dominator
 - look into libp2p instead

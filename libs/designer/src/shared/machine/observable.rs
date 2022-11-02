@@ -1,53 +1,77 @@
-type Selector<T, V> = dyn Fn(T) -> V;
+use std::{rc::{Weak, Rc}, cell::RefCell, borrow::Borrow};
 
-
-pub struct Observable<T> {
-  value: T,
-  listeners: Vec<Box<dyn Observer<T>>>
+pub struct Observable<T: PartialEq> {
+  value: Rc<T>,
+  observers: Vec<Weak<dyn Observer<T>>>
 }
 
-impl<T: PartialEq> Observable<T> {
-  pub fn bind<Callback>(callback: Callback) -> SelectObserver<T, T> where Callback: Fn(T) -> () {
-    SelectObserver {
-      select: Box::new(|v| {
-        v
-      }),
-      callback: Box::new(callback)
+type Disposable = dyn Fn() + 'static;
+type Select<T, V> = dyn Fn(&T, &T) -> V;
+
+impl<T: PartialEq + Clone> Observable<T> {
+  pub fn new(value: T) -> Self {
+    Self {
+      value: Rc::new(value),
+      observers: vec![]
     }
   }
-  pub fn bind_select<Callback, V>(callback: Callback, select: Selector<T, V>) {
-    SelectObserver {
-      select: Box::new(|v| {
-        v
-      }),
-      callback: Box::new(callback)
-    }
-
+  pub fn select<V, TSelect>(&mut self, select: TSelect) -> Rc<Selector<T, V>> where TSelect: Fn(&T) -> V + 'static {
+    let selector = Selector::new(select, self.value.clone());
+    selector.into()
   }
-  pub fn update(&mut self) {
 
+  pub fn update<TUpdate>(&mut self, update: TUpdate) where TUpdate: Fn(&mut T) {
+
+    let mut new_value = (*self.value).clone();
+    update(&mut new_value);
+
+
+    let prev = std::mem::replace(&mut self.value, new_value.into());
+    
+    for observer in &self.observers {
+      if let Some(observer) = observer.upgrade() {
+        observer.handle_change(&self.value);
+      }
+    }
   }
 }
 
 trait Observer<T> {
-  fn handle_change(&self, curr: T, prev: T);
+  fn handle_change(&self, curr: &T);
 }
 
-pub struct SelectObserver<T: PartialEq, V: PartialEq> {
-  select: Box<dyn Fn(T) -> V>,
-  callback: Box<dyn Fn(V) -> ()>
-}
-impl<T: PartialEq, V: PartialEq> SelectObserver<T, V> {
-  pub fn on_change()
+pub struct Selector<T, V> {
+  value: Rc<RefCell<V>>,
+  select: Box<dyn Fn(&T) -> V>,
+  binding: RefCell<Option<Box<dyn Fn(&V)>>>
 }
 
-impl<T: PartialEq, V: PartialEq> Observer<T> for SelectObserver<T, V> {
-  fn handle_change(&self, value: T, prev: T) {
-    let curr_selected = (self.select)(value);
-    let prev_selected = (self.select)(prev);
-    if (curr_selected == prev_selected) {
+impl<T, V: PartialEq> Observer<T> for Selector<T, V> {
+  fn handle_change(&self, curr: &T) {
+    let new_value = (self.select)(curr);
+    let old_value: &V = &self.value.borrow();
+    if &new_value == old_value {
       return;
     }
-    (self.callback)(curr_selected);
+    self.value.replace(new_value);
+    let binding = &self.binding.borrow();
+
+    if let Some(binding) = &binding {
+      
+    }
+  }
+}
+
+impl<T, V> Selector<T, V> {
+  pub fn new<TSelect>(select: TSelect, state: Rc<T>) -> Self where TSelect: Fn(&T) -> V + 'static {
+    Self {
+      value: Rc::new(RefCell::new((select)(&state))),
+      select: Box::new(select),
+      binding: RefCell::new(None)
+    }
+  }
+  pub fn bind<Callback>(&self, callback: Callback) where Callback: Fn(&V) + 'static {
+    (callback)(&self.value.borrow());
+    self.binding.borrow_mut().replace(Box::new(callback));
   }
 }

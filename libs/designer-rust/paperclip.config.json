@@ -1,10 +1,7 @@
 {
   "srcDir": "src",
   "moduleDirs": [],
-  "globalScripts": [
-    "https://rsms.me/inter/inter.css",
-    "src/scripts/global.css"
-  ],
+  "globalScripts": ["https://rsms.me/inter/inter.css"],
   "compilerOptions": [
     {
       "emit": ["yew.rs:rs", "css"],

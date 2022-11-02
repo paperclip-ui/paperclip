@@ -56,7 +56,7 @@ impl<T, V: PartialEq> Observer<T> for Selector<T, V> {
     self.value.replace(new_value);
     let binding = &self.binding.borrow();
 
-    if let Some(binding) = &binding {
+    if let Some(binding) = binding {
       
     }
   }

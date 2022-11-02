@@ -1,4 +1,4 @@
-import { Point } from "@paperclip-ui/designer/src/editor/machine/state/geom";
+import { Point } from "@paperclip-ui/designer/src/machine/state/geom";
 import React from "react";
 
 export type InsertElementProps = {

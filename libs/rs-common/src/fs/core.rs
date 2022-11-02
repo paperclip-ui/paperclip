@@ -18,14 +18,14 @@ impl FileReader for LocalFileReader {
         if let Ok(content) = fs::read_to_string(path) {
             Ok(content.as_bytes().to_vec().into_boxed_slice())
         } else {
-            Err(Error::msg("file not found"))
+            Err(Error::msg(format!("file \"{}\" not found", path)))
         }
     }
     fn get_file_size(&self, path: &str) -> Result<u64> {
         if let Ok(metadata) = fs::metadata(path) {
             Ok(metadata.len())
         } else {
-            Err(Error::msg("file not found"))
+            Err(Error::msg(format!("file \"{}\" not found", path)))
         }
     }
 }

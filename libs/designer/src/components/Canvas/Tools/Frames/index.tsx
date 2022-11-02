@@ -1,9 +1,10 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import * as styles from "./index.pc";
 import { Node } from "@paperclip-ui/proto/lib/virt/html_pb";
-import { Transform } from "@paperclip-ui/designer/src/editor/machine/state/geom";
+import { Transform } from "@paperclip-ui/designer/src/machine/state/geom";
 import { useDispatch } from "@paperclip-ui/common";
-import { editorEvents } from "@paperclip-ui/designer/src/editor/machine/events";
+import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
+import { DEFAULT_FRAME_BOX } from "@paperclip-ui/designer/src/machine/state";
 
 export type FramesProps = {
   frames: Node.AsObject[];
@@ -43,17 +44,10 @@ const Frame = memo(
     const dispatch = useDispatch();
 
     const metadata = (frame.element || frame.textNode).metadata;
-    const frameBounds = metadata?.bounds;
+    const frameBounds = metadata?.bounds || DEFAULT_FRAME_BOX;
     const [editing, setEditing] = useState(false);
 
     const onClick = useCallback((event: React.MouseEvent<any>) => {
-      // dispatch(
-      //   editorEvents.frameTitleClicked({
-      //     frameIndex: frameIndex,
-      //     shiftKey: event.shiftKey,
-      //   })
-      // );
-
       // prevent canvas click event
       event.stopPropagation();
     }, []);

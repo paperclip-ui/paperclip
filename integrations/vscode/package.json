@@ -97,9 +97,9 @@
     "nodemon": "^2.0.20"
   },
   "dependencies": {
-    "@paperclip-ui/common": "^19.0.6",
-    "@paperclip-ui/proto": "^19.0.10",
-    "@paperclip-ui/releases": "^19.0.6",
+    "@paperclip-ui/common": "workspace:^",
+    "@paperclip-ui/proto": "workspace:^",
+    "@paperclip-ui/releases": "workspace:^",
     "color": "^4.2.3",
     "execa": "^5.1.1",
     "get-port": "^3.2.0",

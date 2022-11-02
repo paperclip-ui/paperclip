@@ -3,7 +3,7 @@
   "moduleDirs": [],
   "globalScripts": [
     "https://rsms.me/inter/inter.css",
-    "src/scripts/global.css"
+    "src/styles/globals.css"
   ],
   "compilerOptions": [
     {

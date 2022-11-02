@@ -33,3 +33,11 @@ public component Tools {
   }
 }
 
+div {
+  style {
+    color: orange
+    font-size: 32px
+    font-family: sans-serif
+  }
+  text "something like this"
+}

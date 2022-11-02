@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "cargo build",
-    "build:watch": "yarn build:pc && concurrently \"yarn build:pc --watch\" \"cargo watch -x build\" \"nodemon --watch \"../designer/dist\" --exec 'touch src/lib.rs'\"",
+    "build:watch": "concurrently \"cargo watch -x build\" \"nodemon --watch \"../designer/dist\" --exec 'touch src/lib.rs'\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "publishConfig": {

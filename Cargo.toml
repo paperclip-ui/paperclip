@@ -10,11 +10,9 @@ members = [
   "libs/paperclip-loader",
   "libs/workspace",
   "libs/infer",
-  "libs/designer",
   "libs/proto",
   "libs/config",
-  "libs/language-services",
-  "libs/grpc-web-client"
+  "libs/language-services"
 ]
 
 

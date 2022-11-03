@@ -56,6 +56,7 @@ export const editorReducer = (
     case editorEvents.canvasMouseDown.type: {
       return produce(state, (newState) => {
         newState.canvas.mouseDown = true;
+        newState.canvas.mousePosition = event.payload.position;
       });
     }
     case editorEvents.canvasMouseUp.type: {

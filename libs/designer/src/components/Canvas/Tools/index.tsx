@@ -4,10 +4,15 @@ import * as styles from "./index.pc";
 // import { Selectable } from "./Selectable";
 import { Frames } from "./Frames";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
-import { flattenFrameBoxes, getEditorState } from "../../../machine/state";
+import {
+  flattenFrameBoxes,
+  getEditorState,
+  InsertMode,
+} from "../../../machine/state";
 import { editorEvents } from "../../../machine/events";
 import { mergeBoxes } from "../../../machine/state/geom";
 import { Selectable } from "./Selectable";
+import { InsertElement } from "./InsertElement";
 
 export const Tools = () => {
   const {
@@ -49,9 +54,7 @@ export const Tools = () => {
       onMouseLeave={onMouseLeave}
       style={style}
     >
-      {/* <Empty show={showEmpty} />
-
-      <Pixels canvas={canvas} /> */}
+      {insertMode == InsertMode.Element && <InsertElement />}
 
       {!resizerMoving && (
         <Selectable
@@ -128,6 +131,7 @@ const useTools = () => {
           ctrlKey: event.ctrlKey,
           shiftKey: event.shiftKey,
           timestamp: Date.now(),
+          position: getMousePoint(event),
         })
       );
     },

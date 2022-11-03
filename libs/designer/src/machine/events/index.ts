@@ -19,6 +19,7 @@ export const editorEvents = eventCreators(
       ctrlKey: boolean;
       shiftKey: boolean;
       timestamp: number;
+      position: Point;
     }>(),
     resizerPathMoved: identity<{
       originalBounds: Box;

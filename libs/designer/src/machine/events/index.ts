@@ -11,6 +11,7 @@ export const editorEvents = eventCreators(
   {
     canvasPanEnd: null,
     eHotkeyPressed: null,
+    insertElementReleased: identity<Box>(),
     canvasMouseMoved: identity<Point>(),
     canvasMouseLeave: null,
     canvasMouseUp: null,

@@ -57,12 +57,14 @@ export const editorReducer = (
       return produce(state, (newState) => {
         newState.canvas.mouseDown = true;
         newState.canvas.mousePosition = event.payload.position;
+        newState.canvasMouseDownStartPoint = event.payload.position;
       });
     }
     case editorEvents.canvasMouseUp.type: {
       return produce(state, (newState) => {
         newState.insertMode = null;
         newState.canvas.mouseDown = false;
+        newState.canvasMouseDownStartPoint = undefined;
       });
     }
     case editorEvents.canvasMouseDown.type: {

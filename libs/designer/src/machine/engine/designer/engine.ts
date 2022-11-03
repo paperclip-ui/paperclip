@@ -4,6 +4,9 @@ import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent, designerEngineEvents } from "./events";
 import { DesignerEngineState } from "./state";
 import { env } from "../../../env";
+import { EditorEvent, editorEvents } from "../../events";
+import { Box, Point } from "../../state/geom";
+import { EditorState, getInsertBox, InsertMode } from "../../state";
 
 export const createDesignerEngine = (
   dispatch: Dispatch<DesignerEngineEvent>
@@ -43,6 +46,9 @@ const createActions = (client: DesignerClient, dispatch: Dispatch<any>) => {
           console.log("END");
         });
     },
+    insertElement(box: Box) {
+      console.log("insert", box);
+    },
   };
 };
 
@@ -51,11 +57,28 @@ const createActions = (client: DesignerClient, dispatch: Dispatch<any>) => {
  */
 
 const createEventHandler = (actions: Actions) => {
+  const handleInsert = (state: EditorState) => {
+    const box = getInsertBox(state);
+    console.log("INS", box);
+  };
+
+  const handleCanvasMouseUp = (state: EditorState, prevState: EditorState) => {
+    if (prevState.insertMode != null) {
+      return handleInsert(prevState);
+    }
+  };
+
   return (
-    event: DesignerEngineEvent,
-    newState: DesignerEngineState,
-    prevState: DesignerEngineState
-  ) => {};
+    event: EditorEvent,
+    newState: EditorState,
+    prevState: EditorState
+  ) => {
+    switch (event.type) {
+      case editorEvents.canvasMouseUp.type: {
+        return handleCanvasMouseUp(newState, prevState);
+      }
+    }
+  };
 };
 
 /**

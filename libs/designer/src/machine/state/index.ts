@@ -61,6 +61,7 @@ export type EditorState = {
   // selectedNodeStyleInspections: any[];
   // selectedNodeSources: any[];
   canvasClickTimestamp?: number;
+  canvasMouseDownStartPoint?: Point;
   showTextEditor?: boolean;
   resizerMoving: boolean;
   expandedNodePaths: string[];
@@ -279,3 +280,19 @@ export const getFrameBoxes = memoize(
     return v;
   }
 );
+
+export const getInsertBox = ({
+  canvasMouseDownStartPoint: start,
+  canvas: { mousePosition },
+}: EditorState): Box => {
+  if (!start) {
+    return null;
+  }
+
+  return {
+    width: Math.abs(start.x - mousePosition.x),
+    height: Math.abs(start.y - mousePosition.y),
+    x: Math.min(start.x, mousePosition.x),
+    y: Math.min(start.y, mousePosition.y),
+  };
+};

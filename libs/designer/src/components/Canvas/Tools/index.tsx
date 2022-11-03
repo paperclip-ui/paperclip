@@ -133,6 +133,7 @@ const useTools = () => {
     },
     [dispatch]
   );
+
   const onMouseUp = useCallback(
     (event: React.MouseEvent<any>) => {
       dispatch(editorEvents.canvasMouseUp());

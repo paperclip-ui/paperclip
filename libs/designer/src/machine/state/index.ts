@@ -30,6 +30,7 @@ export type Canvas = {
   activeFrame?: number;
   scrollPosition: Point;
   mousePosition?: Point;
+  mouseDown?: boolean;
 };
 
 export type BoxNodeInfo = {
@@ -200,8 +201,8 @@ const getPreviewFrameBoxes = (preview: HTMLDocument.AsObject) => {
   const frameBoxes = getPreviewChildren(currentPreview).map(
     (frame: Node.AsObject) => {
       const metadata = getInnerNode(frame).metadata;
-      const box = metadata.bounds || DEFAULT_FRAME_BOX;
-      if (metadata.visible === false) {
+      const box = metadata?.bounds || DEFAULT_FRAME_BOX;
+      if (metadata?.visible === false) {
         return null;
       }
       return { ...DEFAULT_FRAME_BOX, ...box };

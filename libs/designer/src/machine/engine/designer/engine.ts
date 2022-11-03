@@ -32,7 +32,6 @@ const createActions = (client: DesignerClient, dispatch: Dispatch<any>) => {
     openFile(filePath: string) {
       const fileRequest = new FileRequest();
       fileRequest.setPath(filePath);
-      console.log("OP FILE", filePath);
       client
         .openFile(fileRequest)
         .on("data", (data) => {

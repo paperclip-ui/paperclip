@@ -72,7 +72,7 @@ export class LiveWindow {
   setTargetUri(uri: string) {
     this._store.update((state) =>
       produce(state, (newState) => {
-        state.location.query.file = url.fileURLToPath(uri);
+        newState.location.query.file = url.fileURLToPath(uri);
       })
     );
   }
@@ -97,7 +97,6 @@ export class LiveWindow {
 
   private async _render() {
     const state = this.getState();
-
     this._panel.title = `⚡️ ${
       state.sticky
         ? "sticky preview"
@@ -182,7 +181,9 @@ export class LiveWindow {
     </body>
     <script>
       const iframe = document.createElement("iframe");
-      iframe.src = "${designerHost}?${qs.stringify(state.location.query)}";
+      iframe.src = "${designerHost}?${qs.stringify(
+      state.location?.query || {}
+    )}";
       Object.assign(iframe.style, {
         width: "100vw",
         height: "100wh",

@@ -55,7 +55,13 @@ export const editorReducer = (
       });
     case editorEvents.canvasMouseDown.type: {
       return produce(state, (newState) => {
+        newState.canvas.mouseDown = true;
+      });
+    }
+    case editorEvents.canvasMouseUp.type: {
+      return produce(state, (newState) => {
         newState.insertMode = null;
+        newState.canvas.mouseDown = false;
       });
     }
     case editorEvents.canvasMouseDown.type: {

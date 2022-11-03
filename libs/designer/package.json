@@ -8,7 +8,7 @@
     "build:watch": "yarn build:pc && concurrently \"yarn build:pc --watch\" \"webpack --watch\"",
     "build:pc": "../../target/debug/paperclip_cli build",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "../../target/debug/paperclip_cli designer --open --port=8000"
+    "start": "nodemon --watch \"../../target/debug/paperclip_cli\" --exec \"../../target/debug/paperclip_cli designer --port=8000\""
   },
   "publishConfig": {
     "access": "public"

@@ -85,7 +85,7 @@ public style input {
 }
 
 public style fontDefault {
-  font-family: Inter
+  font-family: sans-serif
   color: var(fontColor01)
   font-size: var(fontSize01)
 }

@@ -1414,6 +1414,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "paperclip_editor"
+version = "0.1.1"
+dependencies = [
+ "paperclip_proto",
+]
+
+[[package]]
 name = "paperclip_evaluator"
 version = "0.1.1"
 dependencies = [

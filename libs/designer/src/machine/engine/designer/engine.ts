@@ -1,5 +1,8 @@
 import { DesignerClient } from "@paperclip-ui/proto/lib/service/designer_grpc_web_pb";
-import { FileRequest } from "@paperclip-ui/proto/lib/service/designer_pb";
+import {
+  FileRequest,
+  InsertNodeRequest,
+} from "@paperclip-ui/proto/lib/service/designer_pb";
 import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent, designerEngineEvents } from "./events";
 import { DesignerEngineState } from "./state";
@@ -7,6 +10,7 @@ import { env } from "../../../env";
 import { EditorEvent, editorEvents } from "../../events";
 import { Box, Point } from "../../state/geom";
 import { EditorState, getInsertBox, InsertMode } from "../../state";
+import { TextNode, Element } from "@paperclip-ui/proto/lib/ast/pc_pb";
 
 export const createDesignerEngine = (
   dispatch: Dispatch<DesignerEngineEvent>
@@ -46,8 +50,10 @@ const createActions = (client: DesignerClient, dispatch: Dispatch<any>) => {
           console.log("END");
         });
     },
-    insertElement(box: Box) {
-      console.log("insert", box);
+    insertNode(filePath: string, parentId: string) {
+      const insertNodeRequest = new InsertNodeRequest();
+      insertNodeRequest.setPath(filePath);
+      client.insertNode(insertNodeRequest, null, () => {});
     },
   };
 };

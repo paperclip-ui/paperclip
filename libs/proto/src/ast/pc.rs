@@ -1,5 +1,7 @@
 use crate::add_inner_wrapper;
 use std::borrow::BorrowMut;
+use std::borrow::Borrow;
+use std::convert::TryFrom;
 
 include!(concat!(env!("OUT_DIR"), "/ast.pc.rs"));
 
@@ -25,24 +27,47 @@ macro_rules! get_body_items {
 
 macro_rules! expressions {
     ($(($name:ident, $expr:ty, $this:ident => $id_ret:expr)),*) => {
+
         pub enum MutableExpressionRef<'a> {
+            $(
+                $name(&'a mut $expr),
+            )*
+        }
+
+        #[derive(Clone)]
+        pub enum ImmutableExpressionRef<'a> {
             $(
                 $name(&'a $expr),
             )*
         }
 
-        trait Outer {
+        pub trait Expression {
             fn outer_mut<'a>(&'a mut self) -> MutableExpressionRef<'a>;
+            fn outer<'a>(&'a self) -> ImmutableExpressionRef<'a>;
             fn get_id<'a>(&'a self) -> &'a str;
         }
 
         $(
-            impl Outer for $expr {
+            impl Expression for $expr {
                 fn outer_mut<'a>(&'a mut self) -> MutableExpressionRef<'a> {
                     MutableExpressionRef::$name(self.borrow_mut())
                 }
+                fn outer<'a>(&'a self) -> ImmutableExpressionRef<'a> {
+                    ImmutableExpressionRef::$name(self.borrow())
+                }
                 fn get_id<'a>(&'a $this) -> &'a str {
                     $id_ret
+                }
+            }
+
+
+            impl<'a> TryFrom<ImmutableExpressionRef<'a>> for &'a $expr {
+                type Error = ();
+                fn try_from(outer: ImmutableExpressionRef<'a>) -> Result<Self, Self::Error> {
+                    match outer {
+                        ImmutableExpressionRef::$name(inner) => Ok(&inner),
+                        _ => Err(())
+                    }
                 }
             }
         )*
@@ -58,6 +83,7 @@ macro_rules! match_each_expr_id {
         }
     };
 }
+
 
 
 trait Visitor<'a> {

@@ -94,9 +94,9 @@ fn infer_component(component: &ast::pc::Component, context: &mut InferContext) -
     Ok(())
 }
 
-fn infer_render_node(node: &ast::pc::render_node::Inner, context: &mut InferContext) -> Result<()> {
+fn infer_render_node(node: &ast::pc::node::Inner, context: &mut InferContext) -> Result<()> {
     match node {
-        ast::pc::render_node::Inner::Element(expr) => {
+        ast::pc::node::Inner::Element(expr) => {
             infer_element(expr, context)?;
         }
         _ => {}
@@ -108,10 +108,10 @@ fn infer_element(expr: &ast::pc::Element, context: &mut InferContext) -> Result<
     infer_attributes(expr, context)?;
     for child in &expr.body {
         match child.get_inner() {
-            ast::pc::element_body_item::Inner::Element(child) => {
+            ast::pc::node::Inner::Element(child) => {
                 infer_element(child, context)?;
             }
-            ast::pc::element_body_item::Inner::Slot(child) => {
+            ast::pc::node::Inner::Slot(child) => {
                 infer_slot(child, context)?;
             }
             _ => {}

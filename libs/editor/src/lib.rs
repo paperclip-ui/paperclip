@@ -6,6 +6,6 @@ enum NewNode {
 }
 
 
-pub fn insert_node(document: &mut ast::pc::Document, parent_id: &str, new_node: NewNode) {
+// pub fn insert_node(document: &mut ast::pc::Document, parent_id: &str, new_node: NewNode) {
 
-}
+// }

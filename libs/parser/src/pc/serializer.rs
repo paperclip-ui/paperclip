@@ -157,14 +157,19 @@ fn serialize_override(over: &ast::Override, context: &mut Context) {
 
 fn serialize_render(imp: &ast::Render, context: &mut Context) {
     context.add_buffer("render ");
-    serialize_render_node(&imp.node.as_ref().expect("node must exist"), context);
+    serialize_node(&imp.node.as_ref().expect("node must exist"), context);
 }
 
-fn serialize_render_node(node: &ast::RenderNode, context: &mut Context) {
+fn serialize_node(node: &ast::Node, context: &mut Context) {
     match node.get_inner() {
-        ast::render_node::Inner::Text(text) => serialize_text(&text, context),
-        ast::render_node::Inner::Slot(slot) => serialize_slot(&slot, context),
-        ast::render_node::Inner::Element(elemnt) => serialize_element(&elemnt, context),
+        ast::node::Inner::Element(element) => {
+            serialize_element(element, context)
+        }
+        ast::node::Inner::Slot(slot) => serialize_slot(slot, context),
+        ast::node::Inner::Insert(insert) => serialize_insert(insert, context),
+        ast::node::Inner::Style(style) => serialize_style(style, context),
+        ast::node::Inner::Override(over) => serialize_override(over, context),
+        ast::node::Inner::Text(text) => serialize_text(text, context),
     }
 }
 
@@ -178,9 +183,7 @@ fn serialize_text(node: &ast::TextNode, context: &mut Context) {
         context.add_buffer(" {\n");
         context.start_block();
         for item in &node.body {
-            match item.get_inner() {
-                ast::text_node_body_item::Inner::Style(style) => serialize_style(style, context),
-            }
+            serialize_node(item, context);
         }
         context.end_block();
         context.add_buffer("}");
@@ -202,16 +205,7 @@ fn serialize_element(node: &ast::Element, context: &mut Context) {
         context.add_buffer(" {\n");
         context.start_block();
         for item in &node.body {
-            match item.get_inner() {
-                ast::element_body_item::Inner::Element(element) => {
-                    serialize_element(element, context)
-                }
-                ast::element_body_item::Inner::Slot(slot) => serialize_slot(slot, context),
-                ast::element_body_item::Inner::Insert(insert) => serialize_insert(insert, context),
-                ast::element_body_item::Inner::Style(style) => serialize_style(style, context),
-                ast::element_body_item::Inner::Override(over) => serialize_override(over, context),
-                ast::element_body_item::Inner::Text(text) => serialize_text(text, context),
-            }
+            serialize_node(item, context);
         }
         context.end_block();
         context.add_buffer("}");
@@ -253,10 +247,7 @@ fn serialize_slot(slot: &ast::Slot, context: &mut Context) {
         context.add_buffer(" {\n");
         context.start_block();
         for item in &slot.body {
-            match item.get_inner() {
-                ast::slot_body_item::Inner::Element(element) => serialize_element(element, context),
-                ast::slot_body_item::Inner::Text(text) => serialize_text(text, context),
-            }
+            serialize_node(item, context);
         }
         context.end_block();
         context.add_buffer("}\n");
@@ -271,11 +262,7 @@ fn serialize_insert(insert: &ast::Insert, context: &mut Context) {
         context.add_buffer(" {\n");
         context.start_block();
         for item in &insert.body {
-            match &item.get_inner() {
-                ast::insert_body::Inner::Element(element) => serialize_element(element, context),
-                ast::insert_body::Inner::Text(text) => serialize_text(text, context),
-                ast::insert_body::Inner::Slot(text) => serialize_slot(text, context),
-            }
+            serialize_node(item, context);
         }
         context.end_block();
         context.add_buffer("}\n");

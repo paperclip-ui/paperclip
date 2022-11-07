@@ -98,9 +98,10 @@ fn compile_component_render(component: &ast::Component, context: &mut Context) {
 
     context.add_buffer("return ");
     match render.node.as_ref().expect("Node must exist").get_inner() {
-        ast::render_node::Inner::Element(expr) => compile_element(&expr, true, context),
-        ast::render_node::Inner::Text(expr) => compile_text_node(&expr, context),
-        ast::render_node::Inner::Slot(expr) => compile_slot(&expr, context),
+        ast::node::Inner::Element(expr) => compile_element(&expr, true, context),
+        ast::node::Inner::Text(expr) => compile_text_node(&expr, context),
+        ast::node::Inner::Slot(expr) => compile_slot(&expr, context),
+        _ => {}
     }
     context.add_buffer(";\n");
 }
@@ -116,10 +117,11 @@ fn compile_slot(node: &ast::Slot, context: &mut Context) {
         context.add_buffer(" || ");
         compile_children! {
           &node.body,
-          |child: &ast::SlotBodyItem| {
+          |child: &ast::Node| {
             match child.get_inner() {
-              ast::slot_body_item::Inner::Element(expr) => compile_element(&expr, false, context),
-              ast::slot_body_item::Inner::Text(expr) => compile_text_node(&expr, context),
+              ast::node::Inner::Element(expr) => compile_element(&expr, false, context),
+              ast::node::Inner::Text(expr) => compile_text_node(&expr, context),
+              _ => {}
             }
           },
           context
@@ -160,11 +162,11 @@ fn compile_element_children(element: &ast::Element, context: &mut Context) {
 
     compile_children! {
       &visible_children,
-      |child: &ast::ElementBodyItem| {
+      |child: &ast::Node| {
         match child.get_inner() {
-          ast::element_body_item::Inner::Text(expr) => compile_text_node(&expr, context),
-          ast::element_body_item::Inner::Element(expr) => compile_element(&expr, false, context),
-          ast::element_body_item::Inner::Slot(expr) => compile_slot(&expr, context),
+          ast::node::Inner::Text(expr) => compile_text_node(&expr, context),
+          ast::node::Inner::Element(expr) => compile_element(&expr, false, context),
+          ast::node::Inner::Slot(expr) => compile_slot(&expr, context),
           _ => {}
         };
       },
@@ -269,11 +271,12 @@ fn get_raw_element_attrs<'dependency>(
 fn compile_insert(insert: &ast::Insert, context: &mut Context) {
     compile_children! {
       &insert.body,
-      |child: &ast::InsertBody| {
+      |child: &ast::Node| {
         match child.get_inner() {
-          ast::insert_body::Inner::Element(expr) => compile_element(&expr,false, context),
-          ast::insert_body::Inner::Text(expr) => compile_text_node(&expr, context),
-          ast::insert_body::Inner::Slot(expr) => compile_slot(&expr, context)
+          ast::node::Inner::Element(expr) => compile_element(&expr,false, context),
+          ast::node::Inner::Text(expr) => compile_text_node(&expr, context),
+          ast::node::Inner::Slot(expr) => compile_slot(&expr, context),
+          _ => {}
         }
       },
       context

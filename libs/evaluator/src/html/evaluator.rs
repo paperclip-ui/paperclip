@@ -199,14 +199,7 @@ fn evaluate_slot<F: FileResolver>(
 
     // render default children
     for child in &slot.body {
-        match child.get_inner() {
-            ast::slot_body_item::Inner::Element(child) => {
-                evaluate_element(child, fragment, &None, context, false)
-            }
-            ast::slot_body_item::Inner::Text(child) => {
-                evaluate_text_node(child, fragment, &None, context)
-            }
-        }
+        evaluate_node(child, fragment, &None, context, false);
     }
 }
 
@@ -277,13 +270,13 @@ fn create_inserts<'expr, F: FileResolver>(
 }
 
 fn evaluate_instance_child<'expr, F: FileResolver>(
-    child: &'expr ast::ElementBodyItem,
+    child: &'expr ast::Node,
     inserts: &mut InsertsMap<'expr>,
     metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
 ) {
     match child.get_inner() {
-        ast::element_body_item::Inner::Insert(insert) => {
+        ast::node::Inner::Insert(insert) => {
             let (_source_id, fragment) = if let Some(fragment) = inserts.get_mut(&insert.name) {
                 fragment
             } else {
@@ -292,15 +285,16 @@ fn evaluate_instance_child<'expr, F: FileResolver>(
             };
 
             for child in &insert.body {
-                evaluate_insert_child(child, fragment, metadata, context);
+                evaluate_node(child, fragment, metadata, context, false);
             }
         }
         _ => {
-            evaluate_element_child(
+            evaluate_node(
                 child,
                 &mut inserts.get_mut("children").unwrap().1,
                 metadata,
                 context,
+                false
             );
         }
     }
@@ -312,17 +306,7 @@ fn evaluate_render<F: FileResolver>(
     metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
 ) {
-    match render.node.as_ref().expect("Node must exist").get_inner() {
-        ast::render_node::Inner::Element(element) => {
-            evaluate_element(&element, fragment, metadata, context, true);
-        }
-        ast::render_node::Inner::Slot(slot) => {
-            evaluate_slot(&slot, fragment, context);
-        }
-        ast::render_node::Inner::Text(text) => {
-            evaluate_text_node(&text, fragment, metadata, context)
-        }
-    }
+    evaluate_node(render.node.as_ref().expect("Node must exist"), fragment, metadata, context, true);
 }
 
 fn evaluate_native_element<F: FileResolver>(
@@ -335,7 +319,7 @@ fn evaluate_native_element<F: FileResolver>(
     let mut children = vec![];
 
     for child in &element.body {
-        evaluate_element_child(child, &mut children, &None, context);
+        evaluate_node(child, &mut children, &None, context, false);
     }
 
     fragment.push(
@@ -351,42 +335,27 @@ fn evaluate_native_element<F: FileResolver>(
     );
 }
 
-fn evaluate_element_child<F: FileResolver>(
-    child: &ast::ElementBodyItem,
+fn evaluate_node<F: FileResolver>(
+    child: &ast::Node,
     fragment: &mut Vec<virt::Node>,
     metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
+    is_root: bool
 ) {
     match child.get_inner() {
-        ast::element_body_item::Inner::Element(child) => {
-            evaluate_element(child, fragment, &None, context, false)
+        ast::node::Inner::Element(child) => {
+            evaluate_element(child, fragment, metadata, context, is_root)
         }
-        ast::element_body_item::Inner::Slot(slot) => {
+        ast::node::Inner::Slot(slot) => {
             evaluate_slot(&slot, fragment, context);
         }
-        ast::element_body_item::Inner::Text(child) => {
+        ast::node::Inner::Text(child) => {
             evaluate_text_node(child, fragment, metadata, context)
         }
         _ => {}
     }
 }
 
-fn evaluate_insert_child<F: FileResolver>(
-    child: &ast::InsertBody,
-    fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::NodeMedata>,
-    context: &mut DocumentContext<F>,
-) {
-    match child.get_inner() {
-        ast::insert_body::Inner::Element(child) => {
-            evaluate_element(child, fragment, metadata, context, false)
-        }
-        ast::insert_body::Inner::Text(child) => {
-            evaluate_text_node(child, fragment, metadata, context)
-        }
-        ast::insert_body::Inner::Slot(child) => evaluate_slot(child, fragment, context),
-    }
-}
 
 fn create_native_attributes<F: FileResolver>(
     element: &ast::Element,

@@ -162,9 +162,7 @@ fn serialize_render(imp: &ast::Render, context: &mut Context) {
 
 fn serialize_node(node: &ast::Node, context: &mut Context) {
     match node.get_inner() {
-        ast::node::Inner::Element(element) => {
-            serialize_element(element, context)
-        }
+        ast::node::Inner::Element(element) => serialize_element(element, context),
         ast::node::Inner::Slot(slot) => serialize_slot(slot, context),
         ast::node::Inner::Insert(insert) => serialize_insert(insert, context),
         ast::node::Inner::Style(style) => serialize_style(style, context),

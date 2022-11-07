@@ -294,7 +294,7 @@ fn evaluate_instance_child<'expr, F: FileResolver>(
                 &mut inserts.get_mut("children").unwrap().1,
                 metadata,
                 context,
-                false
+                false,
             );
         }
     }
@@ -306,7 +306,13 @@ fn evaluate_render<F: FileResolver>(
     metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
 ) {
-    evaluate_node(render.node.as_ref().expect("Node must exist"), fragment, metadata, context, true);
+    evaluate_node(
+        render.node.as_ref().expect("Node must exist"),
+        fragment,
+        metadata,
+        context,
+        true,
+    );
 }
 
 fn evaluate_native_element<F: FileResolver>(
@@ -340,7 +346,7 @@ fn evaluate_node<F: FileResolver>(
     fragment: &mut Vec<virt::Node>,
     metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
-    is_root: bool
+    is_root: bool,
 ) {
     match child.get_inner() {
         ast::node::Inner::Element(child) => {
@@ -349,13 +355,10 @@ fn evaluate_node<F: FileResolver>(
         ast::node::Inner::Slot(slot) => {
             evaluate_slot(&slot, fragment, context);
         }
-        ast::node::Inner::Text(child) => {
-            evaluate_text_node(child, fragment, metadata, context)
-        }
+        ast::node::Inner::Text(child) => evaluate_text_node(child, fragment, metadata, context),
         _ => {}
     }
 }
-
 
 fn create_native_attributes<F: FileResolver>(
     element: &ast::Element,

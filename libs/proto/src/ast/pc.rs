@@ -1,6 +1,6 @@
 use crate::add_inner_wrapper;
-use std::borrow::BorrowMut;
 use std::borrow::Borrow;
+use std::borrow::BorrowMut;
 use std::convert::TryFrom;
 
 include!(concat!(env!("OUT_DIR"), "/ast.pc.rs"));
@@ -84,8 +84,6 @@ macro_rules! match_each_expr_id {
     };
 }
 
-
-
 trait Visitor<'a> {
     fn visit_mut(&'a mut self, expr: &'a MutableExpressionRef<'a>);
     fn should_continue(&self) -> bool;
@@ -115,7 +113,7 @@ expressions! {
     (Style, Style, self => &self.id),
     (Component, Component, self => &self.id),
     (ComponentBodyItem, ComponentBodyItem, self => self.get_inner().get_id()),
-    (ComponentBodyItemInner, component_body_item::Inner, self => match_each_expr_id!(self, 
+    (ComponentBodyItemInner, component_body_item::Inner, self => match_each_expr_id!(self,
         component_body_item::Inner::Render,
         component_body_item::Inner::Variant,
         component_body_item::Inner::Script
@@ -126,7 +124,7 @@ expressions! {
     (Atom, Atom, self => &self.id),
     (Trigger, Trigger, self => &self.id),
     (TriggerBodyItem, TriggerBodyItem, self => self.get_inner().get_id()),
-    (TriggerBodyItemInner, trigger_body_item::Inner, self => match_each_expr_id!(self, 
+    (TriggerBodyItemInner, trigger_body_item::Inner, self => match_each_expr_id!(self,
         trigger_body_item::Inner::Str,
         trigger_body_item::Inner::Reference,
         trigger_body_item::Inner::Boolean
@@ -145,7 +143,7 @@ expressions! {
     (Array, Array, self => &self.id),
     (Element, Element, self => &self.id),
     (Node, Node, self => &self.get_inner().get_id()),
-    (NodeInner, node::Inner, self => match_each_expr_id!(self, 
+    (NodeInner, node::Inner, self => match_each_expr_id!(self,
         node::Inner::Slot,
         node::Inner::Insert,
         node::Inner::Style,
@@ -157,7 +155,7 @@ expressions! {
     (Insert, Insert, self => &self.id),
     (Override, Override, self => &self.id),
     (OverrideBodyItem, OverrideBodyItem, self => self.get_inner().get_id()),
-    (OverrideBodyItemInner, override_body_item::Inner, self => match_each_expr_id!(self, 
+    (OverrideBodyItemInner, override_body_item::Inner, self => match_each_expr_id!(self,
         override_body_item::Inner::Style,
         override_body_item::Inner::Variant
     ))
@@ -249,9 +247,7 @@ impl Element {
             .filter(|child| {
                 matches!(
                     child.get_inner(),
-                    node::Inner::Text(_)
-                        | node::Inner::Element(_)
-                        | node::Inner::Slot(_)
+                    node::Inner::Text(_) | node::Inner::Element(_) | node::Inner::Slot(_)
                 )
             })
             .collect()
@@ -269,7 +265,6 @@ impl TextNode {
         body_contains!(&self.body, node::Inner::Style(_))
     }
 }
-
 
 impl Atom {
     pub fn get_var_name(&self) -> String {

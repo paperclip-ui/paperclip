@@ -135,7 +135,11 @@ fn evaluate_component<F: FileResolver>(
     }
 }
 
-fn evaluate_node<'a, F: FileResolver>(node: &'a ast::Node, parent: Option<ast::ImmutableExpressionRef<'a>>, context: &mut DocumentContext<F>) {
+fn evaluate_node<'a, F: FileResolver>(
+    node: &'a ast::Node,
+    parent: Option<ast::ImmutableExpressionRef<'a>>,
+    context: &mut DocumentContext<F>,
+) {
     match node.get_inner() {
         ast::node::Inner::Style(style) => {
             evaluate_style(style, context);
@@ -144,7 +148,7 @@ fn evaluate_node<'a, F: FileResolver>(node: &'a ast::Node, parent: Option<ast::I
             evaluate_element(expr, context);
         }
         ast::node::Inner::Insert(expr) => {
-            evaluate_insert(expr,  context);
+            evaluate_insert(expr, context);
         }
         ast::node::Inner::Slot(expr) => {
             evaluate_slot(expr, context);
@@ -183,15 +187,18 @@ fn evaluate_override<'a, F: FileResolver>(
         return;
     };
 
-
     for item in &expr.body {
         match item.get_inner() {
             override_body_item::Inner::Style(style) => evaluate_style(
                 style,
-                &mut into_shadow(&expr.path, parent.clone().try_into().expect("Must be an element"), &mut context.clone())
-                    .with_ref_context(context),
+                &mut into_shadow(
+                    &expr.path,
+                    parent.clone().try_into().expect("Must be an element"),
+                    &mut context.clone(),
+                )
+                .with_ref_context(context),
             ),
-            
+
             override_body_item::Inner::Variant(variant_override) => evaluate_variant_override(
                 variant_override,
                 &mut into_shadow(
@@ -258,11 +265,11 @@ fn into_shadow<'a, F: FileResolver>(
 
 fn evaluate_slot<F: FileResolver>(slot: &ast::Slot, context: &mut DocumentContext<F>) {
     for item in &slot.body {
-       evaluate_node(item, Some(slot.outer()), context)
+        evaluate_node(item, Some(slot.outer()), context)
     }
 }
 
-fn evaluate_text<F: FileResolver>(expr: &ast::TextNode,  context: &mut DocumentContext<F>) {
+fn evaluate_text<F: FileResolver>(expr: &ast::TextNode, context: &mut DocumentContext<F>) {
     let mut el_context = context.with_target_node(CurrentNode::TextNode(expr));
 
     for item in &expr.body {

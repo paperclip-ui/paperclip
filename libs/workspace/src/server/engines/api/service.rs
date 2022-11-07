@@ -5,7 +5,7 @@ use futures::Stream;
 use paperclip_language_services::DocumentInfo;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
-    file_response, Empty, FileRequest, FileResponse, UpdateFileRequest, InsertNodeRequest,
+    file_response, Empty, FileRequest, FileResponse, InsertNodeRequest, UpdateFileRequest,
 };
 use std::pin::Pin;
 use std::sync::Arc;
@@ -89,12 +89,9 @@ impl Designer for DesignerService {
 
     async fn insert_node(
         &self,
-        request: Request<InsertNodeRequest>
+        request: Request<InsertNodeRequest>,
     ) -> Result<Response<Empty>, Status> {
-        let inner = request.into_inner();
-
         Ok(Response::new(Empty {}))
-
     }
 
     async fn get_document_info(

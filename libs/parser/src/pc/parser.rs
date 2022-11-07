@@ -430,15 +430,9 @@ where
 
 fn parse_render_node(context: &mut PCContext) -> Result<ast::Node, err::ParserError> {
     match context.curr_token {
-        Some(Token::Word(b"text")) => {
-            Ok(ast::node::Inner::Text(parse_text(context)?).get_outer())
-        }
-        Some(Token::Word(b"slot")) => {
-            Ok(ast::node::Inner::Slot(parse_slot(context)?).get_outer())
-        }
-        Some(Token::Word(_)) => {
-            Ok(ast::node::Inner::Element(parse_element(context)?).get_outer())
-        }
+        Some(Token::Word(b"text")) => Ok(ast::node::Inner::Text(parse_text(context)?).get_outer()),
+        Some(Token::Word(b"slot")) => Ok(ast::node::Inner::Slot(parse_slot(context)?).get_outer()),
+        Some(Token::Word(_)) => Ok(ast::node::Inner::Element(parse_element(context)?).get_outer()),
         _ => Err(context.new_unexpected_token_error()),
     }
 }
@@ -532,10 +526,9 @@ fn parse_text(context: &mut PCContext) -> Result<ast::TextNode, err::ParserError
         parse_body(
             context,
             |context: &mut PCContext| match context.curr_token {
-                Some(Token::Word(b"style")) => Ok(ast::node::Inner::Style(
-                    parse_style(context, false)?,
-                )
-                .get_outer()),
+                Some(Token::Word(b"style")) => {
+                    Ok(ast::node::Inner::Style(parse_style(context, false)?).get_outer())
+                }
                 _ => Err(context.new_unexpected_token_error()),
             },
             Some((Token::CurlyOpen, Token::CurlyClose)),
@@ -650,10 +643,9 @@ fn parse_element(context: &mut PCContext) -> Result<ast::Element, err::ParserErr
         parse_body(
             context,
             |context: &mut PCContext| match context.curr_token {
-                Some(Token::Word(b"style")) => Ok(ast::node::Inner::Style(
-                    parse_style(context, false)?,
-                )
-                .get_outer()),
+                Some(Token::Word(b"style")) => {
+                    Ok(ast::node::Inner::Style(parse_style(context, false)?).get_outer())
+                }
                 Some(Token::Word(b"text")) => {
                     Ok(ast::node::Inner::Text(parse_text(context)?).get_outer())
                 }
@@ -663,10 +655,9 @@ fn parse_element(context: &mut PCContext) -> Result<ast::Element, err::ParserErr
                 Some(Token::Word(b"slot")) => {
                     Ok(ast::node::Inner::Slot(parse_slot(context)?).get_outer())
                 }
-                Some(Token::Word(b"override")) => Ok(ast::node::Inner::Override(
-                    parse_override(context)?,
-                )
-                .get_outer()),
+                Some(Token::Word(b"override")) => {
+                    Ok(ast::node::Inner::Override(parse_override(context)?).get_outer())
+                }
                 Some(Token::Word(_)) => {
                     Ok(ast::node::Inner::Element(parse_element(context)?).get_outer())
                 }

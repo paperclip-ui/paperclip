@@ -186,13 +186,7 @@ macro_rules! visit_each {
 
 visitable!(<'a, ImmutableExpressionRef<'a>> {
     pc::Document => (self, visitor) {
-        if visitor.visit(self.outer()) {
-            for item in &self.body {
-                item.accept(visitor);
-            }
-        }
-        true
-
+        visitor.visit(self.outer()) && visit_each!(&self.body, visitor)
     },
     pc::DocumentBodyItem => (self, visitor) {
         visit_enum!(self.get_inner(), visitor,

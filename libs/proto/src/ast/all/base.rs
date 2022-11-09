@@ -1,7 +1,8 @@
-pub use super::base;
-pub use super::docco;
-pub use super::pc;
+pub use super::super::base;
+pub use super::super::docco;
+pub use super::super::pc;
 use std::borrow::Borrow;
+use std::borrow::BorrowMut;
 
 macro_rules! expressions {
   ($(($name:ident, $expr:ty, $this:ident => $id_ret:expr)),*) => {
@@ -26,8 +27,29 @@ macro_rules! expressions {
           }
       }
 
+
+      pub enum MutableExpressionRef<'a> {
+          $(
+              $name(&'a mut $expr),
+          )*
+      }
+
+
+      impl<'a> MutableExpressionRef<'a> {
+          pub fn get_id(&self) -> &str {
+              match self {
+                  $(
+                    MutableExpressionRef::$name(exp) => {
+                          exp.get_id()
+                      },
+                  )*
+              }
+          }
+      }
+
       pub trait Expression {
           fn outer<'a>(&'a self) -> ImmutableExpressionRef<'a>;
+          fn outer_mut<'a>(&'a mut self) -> MutableExpressionRef<'a>;
           fn get_id<'a>(&'a self) -> &'a str;
       }
 
@@ -35,6 +57,9 @@ macro_rules! expressions {
           impl Expression for $expr {
               fn outer<'a>(&'a self) -> ImmutableExpressionRef<'a> {
                   ImmutableExpressionRef::$name(self.borrow())
+              }
+              fn outer_mut<'a>(&'a mut self) -> MutableExpressionRef<'a> {
+                  MutableExpressionRef::$name(self.borrow_mut())
               }
               fn get_id<'a>(&'a $this) -> &'a str {
                   $id_ret
@@ -54,29 +79,6 @@ macro_rules! expressions {
   };
 }
 
-pub trait Visitable<'a, T> {
-    fn accept(&'a self, visitor: &mut dyn Visitor<T>) -> bool;
-}
-pub trait Visitor<T> {
-    fn visit(&mut self, item: T) -> bool;
-}
-
-macro_rules! visitable {
-  (
-      <$lt: lifetime, $type:ty> {
-          $(
-              $match:path => ($self:ident, $id:ident) $body:block
-          ),*
-      }
-
-  ) => {
-      $(
-            impl<$lt> Visitable<$lt, $type> for $match {
-                fn accept(&$lt $self, $id: &mut dyn Visitor<$type>) -> bool $body
-            }
-      )*
-  };
-}
 
 macro_rules! match_each_expr_id {
   ($this:ident, $($name:path),*) => {
@@ -157,137 +159,4 @@ expressions! {
   (Boolean, base::Boolean, self => &self.id),
   (Number, base::Number, self => &self.id)
 
-}
-
-macro_rules! visit_enum {
-    ($this: expr, $visitor:expr, $($name: path), *) => {
-        match $this {
-            $(
-                $name(expr) => {
-                    expr.accept($visitor)
-                }
-            )*
-        }
-    };
-  }
-
-macro_rules! visit_each {
-    ($items: expr, $visitor:expr) => {{
-        let mut accepted = true;
-        for item in $items {
-            if !item.accept($visitor) {
-                accepted = false;
-                break;
-            }
-        }
-        accepted
-    }};
-}
-
-visitable!(<'a, ImmutableExpressionRef<'a>> {
-    pc::Document => (self, visitor) {
-        visitor.visit(self.outer()) && visit_each!(&self.body, visitor)
-    },
-    pc::DocumentBodyItem => (self, visitor) {
-        visit_enum!(self.get_inner(), visitor,
-            pc::document_body_item::Inner::Import,
-            pc::document_body_item::Inner::Style,
-            pc::document_body_item::Inner::Component,
-            pc::document_body_item::Inner::DocComment,
-            pc::document_body_item::Inner::Text,
-            pc::document_body_item::Inner::Atom,
-            pc::document_body_item::Inner::Trigger,
-            pc::document_body_item::Inner::Element
-        )
-    },
-    pc::Import => (self, visitor) {
-        visitor.visit(self.outer())
-    },
-    pc::Style => (self, visitor) {
-        visitor.visit(self.outer())
-    },
-    pc::Component => (self, visitor) {
-        visitor.visit(self.outer())
-    },
-    docco::Comment => (self, visitor) {
-        visitor.visit(self.outer())
-    },
-    pc::TextNode => (self, visitor) {
-        visitor.visit(self.outer())
-    },
-    pc::Atom => (self, visitor) {
-        visitor.visit(self.outer())
-    },
-    pc::Trigger => (self, visitor) {
-        visitor.visit(self.outer())
-    },
-    pc::Parameter => (self, visitor) {
-        visitor.visit(self.outer())
-    },
-    pc::Node => (self, visitor) {
-        visitor.visit(self.outer())
-    },
-    pc::Element => (self, visitor) {
-        visitor.visit(self.outer()) && visit_each!(&self.parameters, visitor) && visit_each!(&self.body, visitor)
-    },
-    pc::Slot => (self, visitor) {
-        visitor.visit(self.outer()) && visit_each!(&self.body, visitor)
-    },
-    pc::Insert => (self, visitor) {
-        visitor.visit(self.outer()) && visit_each!(&self.body, visitor)
-    },
-    pc::Override => (self, visitor) {
-        visitor.visit(self.outer()) && visit_each!(&self.body, visitor)
-    },
-    pc::OverrideBodyItem => (self, visitor) {
-        visit_enum!(self.get_inner(), visitor, pc::override_body_item::Inner::Style, pc::override_body_item::Inner::Variant)
-    },
-    pc::Variant => (self, visitor) {
-        visitor.visit(self.outer()) && visit_each!(&self.triggers, visitor)
-    },
-    pc::TriggerBodyItem => (self, visitor) {
-        visit_enum!(self.get_inner(), visitor, pc::trigger_body_item::Inner::Str, pc::trigger_body_item::Inner::Reference, pc::trigger_body_item::Inner::Boolean)
-    },
-    pc::Reference => (self, visitor) {
-        visitor.visit(self.outer())
-    },
-    base::Str => (self, visitor) {
-        visitor.visit(self.outer())
-    },
-    base::Boolean => (self, visitor) {
-        visitor.visit(self.outer())
-    }
-});
-
-pub struct ExprFinder<'a> {
-    found: Option<ImmutableExpressionRef<'a>>,
-    filter: Box<dyn Fn(&ImmutableExpressionRef<'a>) -> bool>,
-}
-
-impl<'a> ExprFinder<'a> {
-    pub fn find<TFilter>(
-        expr: ImmutableExpressionRef<'a>,
-        filter: TFilter,
-    ) -> Option<ImmutableExpressionRef<'a>>
-    where
-        TFilter: Fn(&ImmutableExpressionRef<'a>) -> bool + 'static,
-    {
-        let mut finder = ExprFinder {
-            found: None,
-            filter: Box::new(filter),
-        };
-
-        finder.visit(expr);
-
-        finder.found
-    }
-}
-
-impl<'a> Visitor<ImmutableExpressionRef<'a>> for ExprFinder<'a> {
-    fn visit(&mut self, expr: ImmutableExpressionRef<'a>) -> bool {
-        if (self.filter)(&expr) {
-            self.found = Some(expr);
-        }
-        matches!(self.found, None)
-    }
 }

@@ -7,7 +7,8 @@ use paperclip_common::get_or_short;
 use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph;
 use paperclip_parser::graph::reference::{self as graph_ref, Expr};
-use paperclip_parser::pc::ast::{self, override_body_item, Expression};
+use paperclip_parser::pc::ast::{self, override_body_item};
+use paperclip_proto::ast::all::{Expression, ImmutableExpressionRef};
 use paperclip_proto::virt::css::Rule;
 use std::string::ToString;
 
@@ -137,7 +138,7 @@ fn evaluate_component<F: FileResolver>(
 
 fn evaluate_node<'a, F: FileResolver>(
     node: &'a ast::Node,
-    parent: Option<ast::ImmutableExpressionRef<'a>>,
+    parent: Option<ImmutableExpressionRef<'a>>,
     context: &mut DocumentContext<F>,
 ) {
     match node.get_inner() {
@@ -178,7 +179,7 @@ fn evaluate_insert<F: FileResolver>(insert: &ast::Insert, context: &mut Document
 
 fn evaluate_override<'a, F: FileResolver>(
     expr: &'a ast::Override,
-    parent: Option<ast::ImmutableExpressionRef<'a>>,
+    parent: Option<ImmutableExpressionRef<'a>>,
     context: &mut DocumentContext<F>,
 ) {
     let parent = if let Some(parent) = parent {

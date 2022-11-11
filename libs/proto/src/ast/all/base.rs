@@ -2,7 +2,6 @@ pub use super::super::base;
 pub use super::super::docco;
 pub use super::super::pc;
 use std::borrow::Borrow;
-use std::borrow::BorrowMut;
 
 macro_rules! expressions {
   ($(($name:ident, $expr:ty, $this:ident => $id_ret:expr)),*) => {
@@ -15,56 +14,55 @@ macro_rules! expressions {
       }
 
 
-      impl<'a> ImmutableExpressionRef<'a> {
-          pub fn get_id(&self) -> &str {
-              match self {
-                  $(
-                      ImmutableExpressionRef::$name(exp) => {
-                          exp.get_id()
-                      },
-                  )*
-              }
-          }
-      }
+    impl<'a> ImmutableExpressionRef<'a> {
+        pub fn get_id(&self) -> &str {
+            match self {
+                $(
+                    ImmutableExpressionRef::$name(exp) => {
+                        exp.get_id()
+                    },
+                )*
+            }
+        }
+    }
 
+    #[derive(Clone)]
+    pub enum ImmutableExpression {
+        $(
+            $name($expr),
+        )*
+    }
 
-      pub enum MutableExpressionRef<'a> {
-          $(
-              $name(&'a mut $expr),
-          )*
-      }
+    impl<'a> From<ImmutableExpressionRef<'a>> for ImmutableExpression {
+        fn from(outer: ImmutableExpressionRef<'a>) -> Self {
+            match outer {
+                $(
+                    ImmutableExpressionRef::$name(inner) => ImmutableExpression::$name(inner.clone()),
+                )*
+            }
+        }
+    }
 
-
-      impl<'a> MutableExpressionRef<'a> {
-          pub fn get_id(&self) -> &str {
-              match self {
-                  $(
-                    MutableExpressionRef::$name(exp) => {
-                          exp.get_id()
-                      },
-                  )*
-              }
-          }
-      }
 
       pub trait Expression {
-          fn outer<'a>(&'a self) -> ImmutableExpressionRef<'a>;
-          fn outer_mut<'a>(&'a mut self) -> MutableExpressionRef<'a>;
+          // fn outer<'a>(&'a self) -> ImmutableExpressionRef<'a>;
           fn get_id<'a>(&'a self) -> &'a str;
       }
 
       $(
           impl Expression for $expr {
-              fn outer<'a>(&'a self) -> ImmutableExpressionRef<'a> {
-                  ImmutableExpressionRef::$name(self.borrow())
-              }
-              fn outer_mut<'a>(&'a mut self) -> MutableExpressionRef<'a> {
-                  MutableExpressionRef::$name(self.borrow_mut())
-              }
+              // fn outer<'a>(&'a self) -> ImmutableExpressionRef<'a> {
+              //     ImmutableExpressionRef::$name(self.borrow())
+              // }
               fn get_id<'a>(&'a $this) -> &'a str {
                   $id_ret
               }
           }
+          impl<'a> From<&'a $expr> for ImmutableExpressionRef<'a> {
+            fn from(expr: &'a $expr) -> Self {
+                ImmutableExpressionRef::$name(expr)
+            }
+        }
 
           impl<'a> TryFrom<ImmutableExpressionRef<'a>> for &'a $expr {
               type Error = ();
@@ -78,7 +76,6 @@ macro_rules! expressions {
       )*
   };
 }
-
 
 macro_rules! match_each_expr_id {
   ($this:ident, $($name:path),*) => {

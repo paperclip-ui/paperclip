@@ -167,13 +167,13 @@ fn evaluate_element<F: FileResolver>(element: &ast::Element, context: &mut Docum
     let mut el_context = context.with_target_node(CurrentNode::Element(element));
 
     for item in &element.body {
-        evaluate_node(item, Some(element.outer()), &mut el_context)
+        evaluate_node(item, Some(element.into()), &mut el_context)
     }
 }
 
 fn evaluate_insert<F: FileResolver>(insert: &ast::Insert, context: &mut DocumentContext<F>) {
     for item in &insert.body {
-        evaluate_node(item, Some(insert.outer()), context);
+        evaluate_node(item, Some(insert.into()), context);
     }
 }
 
@@ -266,7 +266,7 @@ fn into_shadow<'a, F: FileResolver>(
 
 fn evaluate_slot<F: FileResolver>(slot: &ast::Slot, context: &mut DocumentContext<F>) {
     for item in &slot.body {
-        evaluate_node(item, Some(slot.outer()), context)
+        evaluate_node(item, Some(slot.into()), context)
     }
 }
 
@@ -274,7 +274,7 @@ fn evaluate_text<F: FileResolver>(expr: &ast::TextNode, context: &mut DocumentCo
     let mut el_context = context.with_target_node(CurrentNode::TextNode(expr));
 
     for item in &expr.body {
-        evaluate_node(item, Some(expr.outer()), &mut el_context);
+        evaluate_node(item, Some(expr.into()), &mut el_context);
     }
 }
 fn evaluate_variant_override<F: FileResolver>(

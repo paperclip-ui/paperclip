@@ -1,4 +1,4 @@
-use super::all::{ExprFinder, Expression, ImmutableExpressionRef, MutableExpressionRef};
+// use super::all::{Expression, ImmutableExpressionRef};
 use crate::add_inner_wrapper;
 
 include!(concat!(env!("OUT_DIR"), "/ast.pc.rs"));
@@ -34,10 +34,6 @@ add_inner_wrapper!(trigger_body_item::Inner, TriggerBodyItem);
  */
 
 impl Document {
-    pub fn get_expr_by_id<'a>(&'a mut self, id: &str) -> Option<MutableExpressionRef<'a>> {
-        let id = id.to_string();
-        ExprFinder::find(self.outer_mut(), move |expr| expr.get_id() == &id)
-    }
     pub fn get_imports(&self) -> Vec<&Import> {
         get_body_items!(&self.body, document_body_item::Inner::Import, Import)
     }

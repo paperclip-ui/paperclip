@@ -1,10 +1,9 @@
-use paperclip_proto::ast;
+use paperclip_proto::ast::{
+    self,
+    all::{Expression, ImmutableExpressionRef},
+};
 
-enum NewNode {
+pub enum NewNode {
     Element(ast::pc::Element),
     Text(ast::pc::TextNode),
 }
-
-// pub fn insert_node(document: &mut ast::pc::Document, parent_id: &str, new_node: NewNode) {
-
-// }

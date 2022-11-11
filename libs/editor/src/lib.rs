@@ -1,9 +1,6 @@
-use paperclip_proto::ast::{
-    self,
-    all::{Expression, ImmutableExpressionRef},
-};
 
-pub enum NewNode {
-    Element(ast::pc::Element),
-    Text(ast::pc::TextNode),
-}
+mod mutations;
+pub use mutations::*;
+
+#[cfg(test)]
+mod test;

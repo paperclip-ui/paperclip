@@ -20,13 +20,13 @@ macro_rules! visitable {
       )*
     }
 
-    pub trait Visitable<T> {
-      fn accept(&mut self, visitor: &mut dyn Visitor) -> bool;
+    pub trait Visitable {
+      fn accept<TVisitor: Visitor>(&mut self, visitor: &mut TVisitor) -> bool;
     }
 
     $(
-          impl Visitable<$match> for $match {
-              fn accept(&mut $self, $visitor: &mut dyn Visitor) -> bool {
+          impl Visitable for $match {
+              fn accept<TVisitor: Visitor>(&mut $self, $visitor: &mut TVisitor) -> bool {
                 $visitor.$visit_name($self) && $visit_children
               }
           }

@@ -1417,6 +1417,9 @@ dependencies = [
 name = "paperclip_editor"
 version = "0.1.1"
 dependencies = [
+ "futures",
+ "paperclip_common",
+ "paperclip_parser",
  "paperclip_proto",
 ]
 

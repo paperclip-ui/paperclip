@@ -9,9 +9,12 @@ use anyhow::{Error, Result};
 use paperclip_common::fs::FileWatchEvent;
 use paperclip_common::get_or_short;
 use paperclip_config::ConfigContext;
+use paperclip_editor::Mutation;
+use paperclip_editor::edit_graph;
 use paperclip_evaluator::css;
 use paperclip_evaluator::html;
 use paperclip_parser::graph::Graph;
+use paperclip_parser::pc::serializer::serialize;
 use paperclip_proto::virt::module::pc_module_import;
 use paperclip_proto::virt::module::{GlobalScript, PcModule, PcModuleImport, PccssImport};
 
@@ -29,6 +32,7 @@ pub enum ServerEvent {
     APIServerStarted { port: u16 },
     GlobalScriptsLoaded(Vec<(String, Vec<u8>)>),
     UpdateFileRequested { path: String, content: Vec<u8> },
+    ApplyMutationRequested { mutations: Vec<Mutation> },
     PaperclipFilesLoaded { files: Vec<String> },
     DependencyGraphLoaded { graph: Graph },
     ModulesEvaluated(HashMap<String, (css::virt::Document, html::virt::Document)>),
@@ -39,6 +43,7 @@ pub struct ServerState {
     pub options: StartOptions,
     pub graph: Graph,
     pub evaluated_modules: HashMap<String, (css::virt::Document, html::virt::Document)>,
+    pub files_to_save: Vec<String>
 }
 
 impl ServerState {
@@ -48,6 +53,7 @@ impl ServerState {
             file_cache: HashMap::new(),
             graph: Graph::new(),
             evaluated_modules: HashMap::new(),
+            files_to_save: vec![]
         }
     }
 
@@ -120,6 +126,14 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
             }
             ServerEvent::UpdateFileRequested { path, content } => {
                 state.file_cache.insert(path.to_string(), content.clone());
+            }
+            ServerEvent::ApplyMutationRequested { mutations } => {
+                let changed_files = edit_graph(&mut state.graph, mutations);
+                for path in &changed_files {
+                    let content = serialize(&state.graph.dependencies.get(path).unwrap().document);
+                    state.file_cache.insert(path.to_string(), content.as_bytes().to_vec());
+                }
+                state.files_to_save = changed_files;
             }
             ServerEvent::FileWatchEvent(event) => {
                 state.file_cache.remove(&event.path);

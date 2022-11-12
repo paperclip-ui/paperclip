@@ -11,6 +11,7 @@ name = "paperclip_workspace"
 [dependencies]
 paperclip_project = { path = "../project" }
 paperclip_proto = { path = "../proto", features = ["transport"] }
+paperclip_editor = { path = "../editor" }
 tonic = { version = "0.8.2", features = ["tls"] }
 tonic-web = "0.4.0"
 prost = "0.11.0"

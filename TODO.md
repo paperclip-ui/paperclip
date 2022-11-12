@@ -1,5 +1,10 @@
 #### On-deck
 
+- JavaScript API
+
+  - flesh out editing API for all scenarios
+  - perhaps include box model + styles for more enhanced functionality
+
 - insert elements
 
   - "e" key to insert element

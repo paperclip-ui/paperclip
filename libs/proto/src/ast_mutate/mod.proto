@@ -1,0 +1,61 @@
+syntax = "proto3";
+import "ast/base.proto";
+import "ast/css.proto";
+import "ast/docco.proto";
+import "ast/pc.proto";
+
+package ast_mutate;
+
+message Mutation {
+  oneof inner {
+
+    // Node specific
+    AppendChild append_child = 1;
+    DeleteChild delete_child = 2;
+    InsertChild insert_child = 3;
+
+    // Element
+    SetElementParameter set_element_parameter = 4;
+
+    // Text
+    SetTextNodeValue set_text_node_value = 5;
+
+    // Style
+    SetStyleDeclaration set_style_declaration = 6;
+    DeleteStyleDeclaration delete_style_declaration = 7;
+  }
+}
+
+message AppendChild {
+  string parent_id = 1;
+  ast.pc.Node child = 2;
+}
+
+message DeleteChild {
+  string node_id = 1;
+}
+
+message InsertChild {
+  string before_id = 1;
+  ast.pc.Node child = 2;
+}
+
+message SetElementParameter {
+  string element_id = 1;
+  string parameter_name = 2;
+  ast.pc.SimpleExpression parameter_value = 3;
+}
+
+message SetTextNodeValue {
+  string text_node_id = 1;
+  string value = 2;
+}
+
+message SetStyleDeclaration {
+  string declaration_id = 1;
+  ast.css.DeclarationValue value = 2;
+}
+
+message DeleteStyleDeclaration {
+  string declaration_id = 1;
+}

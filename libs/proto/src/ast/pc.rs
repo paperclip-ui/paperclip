@@ -1,6 +1,4 @@
-// use super::all::{Expression, ImmutableExpressionRef};
 use crate::add_inner_wrapper;
-
 include!(concat!(env!("OUT_DIR"), "/ast.pc.rs"));
 
 macro_rules! body_contains {
@@ -126,14 +124,17 @@ impl Atom {
     }
 }
 
-
 impl TryFrom<Node> for DocumentBodyItem {
     type Error = ();
     fn try_from(value: Node) -> Result<Self, Self::Error> {
         match value.get_inner() {
-            node::Inner::Element(element) => Ok(document_body_item::Inner::Element(element.clone()).get_outer()),
-            node::Inner::Text(text) => Ok(document_body_item::Inner::Text(text.clone()).get_outer()),
-            _ => Err(())
+            node::Inner::Element(element) => {
+                Ok(document_body_item::Inner::Element(element.clone()).get_outer())
+            }
+            node::Inner::Text(text) => {
+                Ok(document_body_item::Inner::Text(text.clone()).get_outer())
+            }
+            _ => Err(()),
         }
     }
 }

@@ -1538,6 +1538,7 @@ dependencies = [
  "open",
  "paperclip_common",
  "paperclip_config",
+ "paperclip_editor",
  "paperclip_evaluator",
  "paperclip_language_services",
  "paperclip_parser",

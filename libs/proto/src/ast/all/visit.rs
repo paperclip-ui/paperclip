@@ -4,7 +4,6 @@ pub use super::super::base;
 pub use super::super::docco;
 pub use super::super::pc;
 
-
 macro_rules! visitable {
 (
   $(
@@ -12,22 +11,32 @@ macro_rules! visitable {
   ),*
 
 ) => {
+
+    pub enum VisitorResult {
+      Stop,
+      Continue
+    }
+
     pub trait Visitor {
       $(
-        fn $visit_name(&mut self, _item: &mut $match) -> bool {
-          true
+        fn $visit_name(&mut self, _item: &mut $match) -> VisitorResult {
+          VisitorResult::Continue
         }
       )*
     }
 
     pub trait Visitable {
-      fn accept<TVisitor: Visitor>(&mut self, visitor: &mut TVisitor) -> bool;
+      fn accept<TVisitor: Visitor>(&mut self, visitor: &mut TVisitor) -> VisitorResult;
     }
 
     $(
           impl Visitable for $match {
-              fn accept<TVisitor: Visitor>(&mut $self, $visitor: &mut TVisitor) -> bool {
-                $visitor.$visit_name($self) && $visit_children
+              fn accept<TVisitor: Visitor>(&mut $self, $visitor: &mut TVisitor) -> VisitorResult {
+                if matches!($visitor.$visit_name($self), VisitorResult::Continue) && $visit_children {
+                  VisitorResult::Continue
+                } else {
+                  VisitorResult::Stop
+                }
               }
           }
     )*
@@ -36,27 +45,27 @@ macro_rules! visitable {
 
 macro_rules! visit_enum {
   ($this: expr, $visitor:ident, $($name: path), *) => {
-      match $this {
+      matches!(match $this {
           $(
               $name(expr) => {
                   expr.accept($visitor)
               }
           )*
-      }
+      }, VisitorResult::Continue)
   };
 }
 
 macro_rules! visit_each {
-  ($items: expr, $visitor:expr) => {{
-      let mut accepted = true;
-      for item in $items {
-          if !item.accept($visitor) {
-              accepted = false;
-              break;
-          }
-      }
-      accepted
-  }};
+    ($items: expr, $visitor:expr) => {{
+        let mut should_continue = true;
+        for item in $items {
+            if matches!(item.accept($visitor), VisitorResult::Stop) {
+                should_continue = false;
+                break;
+            }
+        }
+        should_continue
+    }};
 }
 
 visitable! {

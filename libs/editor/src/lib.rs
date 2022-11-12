@@ -1,6 +1,5 @@
-
-mod mutations;
-pub use mutations::*;
+mod edit;
+pub use edit::*;
 
 #[cfg(test)]
 mod test;

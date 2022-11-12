@@ -5,7 +5,6 @@ import "ast/docco.proto";
 
 package ast.pc;
 
-
 message Document {
   string id = 1;
   ast.base.Range range = 2;

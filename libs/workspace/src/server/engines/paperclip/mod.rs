@@ -1,3 +1,4 @@
+use std::borrow::Borrow;
 use std::collections::HashMap;
 
 use anyhow::Result;
@@ -24,6 +25,8 @@ pub async fn start<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
 
 async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
     let next = ctx.clone();
+    
+
     handle_store_events!(
         &ctx.store,
         ServerEvent::PaperclipFilesLoaded { files } => {
@@ -37,6 +40,10 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
         },
         ServerEvent::UpdateFileRequested { path, content: _content } => {
             load_dependency_graph(next.clone(), &vec![path.to_string()]).await.expect("Unable to load dependency");
+        },
+        ServerEvent::ApplyMutationRequested {mutations: _} => {
+            
+            load_dependency_graph_from_files_to_save(next.clone()).await.expect("Unable to load dependency");
         },
         ServerEvent::FileWatchEvent(event) => {
             if paperclip_common::pc::is_paperclip_file(&event.path) {
@@ -74,6 +81,13 @@ impl<TIO: ServerIO> FileResolver for VirtGraphIO<TIO> {
     fn resolve_file(&self, from: &str, to: &str) -> Result<String> {
         self.ctx.io.resolve_file(from, to)
     }
+}
+
+async fn load_dependency_graph_from_files_to_save<TIO: ServerIO>(
+    ctx: ServerEngineContext<TIO>
+) -> Result<()> {
+    let files_to_save = ctx.store.lock().unwrap().state.files_to_save.clone();
+    load_dependency_graph(ctx, &files_to_save).await
 }
 
 async fn load_dependency_graph<TIO: ServerIO>(

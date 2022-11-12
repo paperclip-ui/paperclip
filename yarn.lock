@@ -1403,6 +1403,7 @@ __metadata:
     protoc-gen-grpc-js: ^0.4.0
     protoc-gen-grpc-web: ^1.4.0
     protoc-gen-ts: ^0.8.5
+    typescript: ^4.8.4
   languageName: unknown
   linkType: soft
 
@@ -11774,7 +11775,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^3 || ^4, typescript@npm:^4.7.2":
+"typescript@npm:^3 || ^4, typescript@npm:^4.7.2, typescript@npm:^4.8.4":
   version: 4.8.4
   resolution: "typescript@npm:4.8.4"
   bin:
@@ -11784,7 +11785,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^3 || ^4#~builtin<compat/typescript>, typescript@patch:typescript@^4.7.2#~builtin<compat/typescript>":
+"typescript@patch:typescript@^3 || ^4#~builtin<compat/typescript>, typescript@patch:typescript@^4.7.2#~builtin<compat/typescript>, typescript@patch:typescript@^4.8.4#~builtin<compat/typescript>":
   version: 4.8.4
   resolution: "typescript@patch:typescript@npm%3A4.8.4#~builtin<compat/typescript>::version=4.8.4&hash=bda367"
   bin:

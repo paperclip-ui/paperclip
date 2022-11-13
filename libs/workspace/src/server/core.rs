@@ -43,7 +43,7 @@ pub struct ServerState {
     pub options: StartOptions,
     pub graph: Graph,
     pub evaluated_modules: HashMap<String, (css::virt::Document, html::virt::Document)>,
-    pub files_to_save: Vec<String>
+    pub updated_files: Vec<String>
 }
 
 impl ServerState {
@@ -53,7 +53,7 @@ impl ServerState {
             file_cache: HashMap::new(),
             graph: Graph::new(),
             evaluated_modules: HashMap::new(),
-            files_to_save: vec![]
+            updated_files: vec![]
         }
     }
 
@@ -133,7 +133,7 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                     let content = serialize(&state.graph.dependencies.get(path).unwrap().document);
                     state.file_cache.insert(path.to_string(), content.as_bytes().to_vec());
                 }
-                state.files_to_save = changed_files;
+                state.updated_files = changed_files;
             }
             ServerEvent::FileWatchEvent(event) => {
                 state.file_cache.remove(&event.path);

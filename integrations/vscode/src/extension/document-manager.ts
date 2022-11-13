@@ -45,10 +45,7 @@ export class DocumentManager {
     }
     const uri = fixFileUrlCasing(String(editor.document.uri));
 
-    if (
-      !this._windows.setStickyWindowUri(uri) &&
-      this._windows.getLength() === 0
-    ) {
+    if (!this._windows.hasOpenedWindow()) {
       this._askToDisplayLivePreview(uri);
     }
   };

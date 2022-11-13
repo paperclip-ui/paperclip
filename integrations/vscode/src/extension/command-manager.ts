@@ -26,10 +26,6 @@ export class CommandManager {
       this._openPreview(false)
     );
 
-    commands.registerCommand("paperclip.openStickyPreview", () =>
-      this._openPreview(true)
-    );
-
     commands.registerCommand("paperclip.giveFeedback", () => {
       env.openExternal(
         Uri.parse("https://github.com/paperclipui/paperclip/issues")

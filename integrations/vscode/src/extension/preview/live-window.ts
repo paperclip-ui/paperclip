@@ -5,6 +5,7 @@ import { EventEmitter } from "events";
 import * as qs from "querystring";
 import produce from "immer";
 import * as url from "url";
+import { spawn } from "child_process";
 
 interface LiveWindowLocation {
   pathname: string;
@@ -234,6 +235,18 @@ export class LiveWindow {
     return new LiveWindow(state, devServerPort, panel);
   }
 }
+
+export const openExternalWindow = async (
+  uri: string,
+  devServerPort: number
+) => {
+  const externalUrl = await env.asExternalUri(
+    Uri.parse(`http://localhost:${devServerPort}`)
+  );
+  const { query } = getLocationFromUri(uri);
+
+  spawn(`open`, [externalUrl + "?" + qs.stringify(query)]);
+};
 
 const getLocationFromUri = (uri: string): LiveWindowLocation => ({
   pathname: "/",

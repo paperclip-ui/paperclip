@@ -43,7 +43,7 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
         },
         ServerEvent::ApplyMutationRequested {mutations: _} => {
             
-            load_dependency_graph_from_files_to_save(next.clone()).await.expect("Unable to load dependency");
+            load_dependency_graph_from_updated_files(next.clone()).await.expect("Unable to load dependency");
         },
         ServerEvent::FileWatchEvent(event) => {
             if paperclip_common::pc::is_paperclip_file(&event.path) {
@@ -83,11 +83,11 @@ impl<TIO: ServerIO> FileResolver for VirtGraphIO<TIO> {
     }
 }
 
-async fn load_dependency_graph_from_files_to_save<TIO: ServerIO>(
+async fn load_dependency_graph_from_updated_files<TIO: ServerIO>(
     ctx: ServerEngineContext<TIO>
 ) -> Result<()> {
-    let files_to_save = ctx.store.lock().unwrap().state.files_to_save.clone();
-    load_dependency_graph(ctx, &files_to_save).await
+    let updated_files = ctx.store.lock().unwrap().state.updated_files.clone();
+    load_dependency_graph(ctx, &updated_files).await
 }
 
 async fn load_dependency_graph<TIO: ServerIO>(

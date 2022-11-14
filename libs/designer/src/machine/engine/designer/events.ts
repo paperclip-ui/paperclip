@@ -1,4 +1,4 @@
-import { FileResponse } from "@paperclip-ui/proto/lib/service/designer";
+import { FileResponse } from "@paperclip-ui/proto/lib/generated/service/designer";
 import {
   eventCreators,
   identity,

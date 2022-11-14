@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import * as styles from "./index.pc";
-import { Node as VirtNode } from "@paperclip-ui/proto/lib/virt/html";
+import { Node as VirtNode } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { Transform } from "@paperclip-ui/designer/src/machine/state/geom";
 import { useDispatch } from "@paperclip-ui/common";
 import { editorEvents } from "@paperclip-ui/designer/src/machine/events";

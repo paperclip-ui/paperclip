@@ -1,9 +1,9 @@
-import { FileResponse } from "@paperclip-ui/proto/lib/service/designer";
+import { FileResponse } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { pickBy } from "lodash";
 import {
   Node,
   Document as HTMLDocument,
-} from "@paperclip-ui/proto/lib/virt/html";
+} from "@paperclip-ui/proto/lib/generated/virt/html";
 import { DesignerEngineState } from "../engine/designer/state";
 import {
   Box,

@@ -2,7 +2,7 @@ import { noop } from "lodash";
 import { useCallback, useState } from "react";
 import { useFrameContainer } from "../useFrameContainer";
 import { useFrameMount } from "../useFrameMount";
-import { PCModule } from "@paperclip-ui/proto/lib/virt/module";
+import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 
 export type UseFrameProps = {
   frameIndex: number;

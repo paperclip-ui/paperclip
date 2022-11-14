@@ -1,7 +1,7 @@
 // FYI this code is super dumb and can definitely be made faster
-import * as html from "@paperclip-ui/proto/lib/virt/html";
-import * as css from "@paperclip-ui/proto/lib/virt/css";
-import { PCModule } from "@paperclip-ui/proto/lib/virt/module";
+import * as html from "@paperclip-ui/proto/lib/generated/virt/html";
+import * as css from "@paperclip-ui/proto/lib/generated/virt/css";
+import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 import { NodeFactory } from "./node-factory";
 import {
   createNativeGlobalScript,

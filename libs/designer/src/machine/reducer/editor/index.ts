@@ -12,7 +12,7 @@ import {
 import produce from "immer";
 import { clamp, pick } from "lodash";
 import { Box, centerTransformZoom, Point } from "../../state/geom";
-import { PCModule } from "@paperclip-ui/proto/lib/virt/module";
+import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 import { memoize } from "@paperclip-ui/common";
 import {
   InnerVirtNode,

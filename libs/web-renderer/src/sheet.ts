@@ -1,4 +1,4 @@
-import * as css from "@paperclip-ui/proto/lib/virt/css";
+import * as css from "@paperclip-ui/proto/lib/generated/virt/css";
 
 // import * as url from "url";
 

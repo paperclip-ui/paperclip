@@ -1406,7 +1406,6 @@ __metadata:
     "@types/react-dom": ^18.0.6
     css-loader: ^6.7.1
     css-minimizer-webpack-plugin: ^4.1.0
-    google-protobuf: ^3.21.2
     grpc-web: ^1.3.1
     html-webpack-plugin: ^5.5.0
     immer: ^9.0.15
@@ -1420,6 +1419,7 @@ __metadata:
     react-dnd-html5-backend: ^16.0.1
     react-dom: ^18.2.0
     react-hotkeys-hook: ^3.4.7
+    rxjs: ^7.5.7
     terser-webpack-plugin: ^5.3.6
     ts-loader: ^9.3.1
     webpack: ^5.74.0
@@ -1437,12 +1437,12 @@ __metadata:
     "@paperclip-ui/common": "workspace:^"
     "@types/node": ^18.11.9
     browser-headers: ^0.4.1
-    google-protobuf: ^3.21.0
     grpc: ^1.24.11
     grpc-web: ^1.4.0
     protoc-gen-grpc-js: ^0.4.0
     protoc-gen-grpc-web: ^1.4.0
     protoc-gen-ts: ^0.8.5
+    rxjs: ^7.5.7
     ts-proto: ^1.131.2
     typescript: 4.4
   languageName: unknown
@@ -1480,7 +1480,6 @@ __metadata:
     "@types/react-dom": ^18.0.6
     css-loader: ^6.7.1
     css-minimizer-webpack-plugin: ^4.1.0
-    google-protobuf: ^3.21.0
     grpc-web: ^1.3.1
     html-webpack-plugin: ^5.5.0
     immer: ^9.0.15
@@ -5910,13 +5909,6 @@ __metadata:
     merge2: ^1.4.1
     slash: ^3.0.0
   checksum: b4be8885e0cfa018fc783792942d53926c35c50b3aefd3fdcfb9d22c627639dc26bd2327a40a0b74b074100ce95bb7187bfeae2f236856aa3de183af7a02aea6
-  languageName: node
-  linkType: hard
-
-"google-protobuf@npm:^3.21.0, google-protobuf@npm:^3.21.2":
-  version: 3.21.2
-  resolution: "google-protobuf@npm:3.21.2"
-  checksum: 3caa2e1e2654714cc1a201ac5e5faabcaa48f5fba3d8ff9b64ca66fe19e4e0506b94053f32eddc77bf3a7a47ac1660315c6744185c1e2bb27654fd76fe91b988
   languageName: node
   linkType: hard
 
@@ -10655,7 +10647,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:^7.0.0, rxjs@npm:^7.5.5":
+"rxjs@npm:^7.0.0, rxjs@npm:^7.5.5, rxjs@npm:^7.5.7":
   version: 7.5.7
   resolution: "rxjs@npm:7.5.7"
   dependencies:

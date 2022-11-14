@@ -2,8 +2,8 @@ import React, { useCallback } from "react";
 import { memo, useMemo } from "react";
 import * as styles from "./styles.pc";
 import { FrameContainer } from "../../FrameContainer";
-import { Node as VirtNode } from "@paperclip-ui/proto/lib/virt/html";
-import { PCModule } from "@paperclip-ui/proto/lib/virt/module";
+import { Node as VirtNode } from "@paperclip-ui/proto/lib/generated/virt/html";
+import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 
 const DEFAULT_BOUNDS = { x: 0, y: 0, width: 1024, height: 768 };
 

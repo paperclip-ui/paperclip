@@ -7,13 +7,13 @@ global.XMLHttpRequest = require("xhr2");
 import {
   DesignerClientImpl,
   GrpcWebImpl,
-} from "@paperclip-ui/proto/lib/service/designer";
+} from "@paperclip-ui/proto/lib/generated/service/designer";
 import { loadCLIBinPath } from "@paperclip-ui/releases";
 import {
   FileRequest,
   UpdateFileRequest,
-} from "@paperclip-ui/proto/lib/service/designer";
-import { DocumentInfo } from "@paperclip-ui/proto/lib/language_service/pc";
+} from "@paperclip-ui/proto/lib/generated/service/designer";
+import { DocumentInfo } from "@paperclip-ui/proto/lib/generated/language_service/pc";
 export class DesignerClient {
   private _client: Deferred<DesignerClientImpl>;
   private _port: number;

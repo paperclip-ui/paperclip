@@ -41,7 +41,8 @@
     "paperclip-loader": "^19.0.9",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
-    "react-hotkeys-hook": "^3.4.7"
+    "react-hotkeys-hook": "^3.4.7",
+    "rxjs": "^7.5.7"
   },
   "gitHead": "e21804d0f4839ad1506435a86ad5e1ff2d53ee9f"
 }

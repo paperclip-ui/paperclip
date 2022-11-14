@@ -2,7 +2,7 @@ import React, { MutableRefObject, useEffect } from "react";
 import { memo } from "react";
 import { noop } from "lodash";
 import { useFrame } from "../../hooks/useFrame";
-import { PCModule } from "@paperclip-ui/proto/lib/virt/module";
+import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 
 type FrameContainerProps = {
   style?: any;

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "yarn build:proto; yarn build:tsc",
-    "build:proto": "mkdir -p lib src && protoc --proto_path=src --plugin=\"protoc-gen-ts=../../node_modules/.bin/protoc-gen-ts_proto\" --ts_opt=\"useAsyncIterable=true,useExactTypes=false,outputClientImpl=grpc-web\" --ts_out=\"./lib\" --js_out=\"import_style=commonjs:./lib\" src/service/designer.proto src/ast/pc.proto src/ast_mutate/mod.proto src/ast/css.proto  src/virt/core.proto   src/virt/html.proto  src/ast/base.proto src/virt/module.proto  src/virt/css.proto src/ast/docco.proto src/language_service/pc.proto",
+    "build:proto": "mkdir -p lib src/generated && protoc --proto_path=src --plugin=\"protoc-gen-ts=../../node_modules/.bin/protoc-gen-ts_proto\" --ts_opt=\"useExactTypes=false,outputClientImpl=grpc-web\" --ts_out=\"./src/generated\" --js_out=\"import_style=commonjs:./lib\" src/service/designer.proto src/ast/pc.proto src/ast_mutate/mod.proto src/ast/css.proto  src/virt/core.proto   src/virt/html.proto  src/ast/base.proto src/virt/module.proto  src/virt/css.proto src/ast/docco.proto src/language_service/pc.proto",
     "build:tsc": "tsc"
   },
   "publishConfig": {
@@ -31,6 +31,7 @@
     "browser-headers": "^0.4.1",
     "grpc": "^1.24.11",
     "grpc-web": "^1.4.0",
+    "rxjs": "^7.5.7",
     "typescript": "4.4"
   }
 }

@@ -1,5 +1,5 @@
-import * as html from "@paperclip-ui/proto/lib/virt/html";
-import * as css from "@paperclip-ui/proto/lib/virt/css";
+import * as html from "@paperclip-ui/proto/lib/generated/virt/html";
+import * as css from "@paperclip-ui/proto/lib/generated/virt/css";
 import { Html5Entities } from "html-entities";
 import { preventDefault, ATTR_ALIASES } from "./utils";
 import { NodeFactory } from "./node-factory";

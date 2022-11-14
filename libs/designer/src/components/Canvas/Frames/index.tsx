@@ -8,7 +8,7 @@ import {
   getEditorState,
   StyleOverrides,
 } from "../../../machine/state";
-import { PCModule } from "@paperclip-ui/proto/lib/virt/module";
+import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 import { editorEvents } from "../../../machine/events";
 
 type FramesProps = {

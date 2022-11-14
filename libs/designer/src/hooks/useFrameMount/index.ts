@@ -1,4 +1,4 @@
-import { PCModule } from "@paperclip-ui/proto/lib/virt/module";
+import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 import { patchFrame, renderFrame } from "@paperclip-ui/web-renderer";
 import { useEffect, useState } from "react";
 // import { useFrameUrlResolver } from "../useFrameUrlResolver";

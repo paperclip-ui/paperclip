@@ -1,9 +1,7 @@
 import {
-  ApplyMutationsRequest,
   DesignerClientImpl,
-  FileRequest,
   GrpcWebImpl,
-} from "@paperclip-ui/proto/lib/service/designer";
+} from "@paperclip-ui/proto/lib/generated/service/designer";
 import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent, designerEngineEvents } from "./events";
 import { DesignerEngineState } from "./state";
@@ -11,7 +9,10 @@ import { env } from "../../../env";
 import { EditorEvent, editorEvents } from "../../events";
 import { Box, Point } from "../../state/geom";
 import { EditorState, getInsertBox, InsertMode } from "../../state";
-import { AppendChild, Mutation } from "@paperclip-ui/proto/lib/ast_mutate/mod";
+import {
+  AppendChild,
+  Mutation,
+} from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
 
 export const createDesignerEngine = (
   dispatch: Dispatch<DesignerEngineEvent>
@@ -39,12 +40,14 @@ type Actions = ReturnType<typeof createActions>;
 
 const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
   return {
-    async openFile(filePath: string) {
-      for await (const data of client.OpenFile({ path: filePath })) {
-        dispatch(designerEngineEvents.documentOpened(data));
-      }
+    openFile(filePath: string) {
+      client.OpenFile({ path: filePath }).subscribe({
+        next(data) {
+          dispatch(designerEngineEvents.documentOpened(data));
+        },
+      });
     },
-    async applyChanges(mutations: Mutation[]) {
+    applyChanges(mutations: Mutation[]) {
       client.ApplyMutations({ mutations }, null);
     },
   };

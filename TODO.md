@@ -1,6 +1,8 @@
 #### On-deck
 
-- ability to move frames around
+- separate proto from impl
+  - proto_ext
+- use parser for mutations
 
 - JavaScript API
 

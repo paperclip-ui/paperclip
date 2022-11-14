@@ -175,7 +175,7 @@ fn parse_trigger_body_item(
             Ok(ast::trigger_body_item::Inner::Str(parse_string(context)?).get_outer())
         }
         Some(Token::Word(b"true")) | Some(Token::Word(b"false")) => {
-            Ok(ast::trigger_body_item::Inner::Boolean(parse_boolean(context)?).get_outer())
+            Ok(ast::trigger_body_item::Inner::Bool(parse_boolean(context)?).get_outer())
         }
         Some(Token::Word(_)) => {
             Ok(ast::trigger_body_item::Inner::Reference(parse_ref(context)?).get_outer())
@@ -732,19 +732,19 @@ fn parse_simple_expression(
             Ok(ast::simple_expression::Inner::Str(parse_string(context)?).get_outer())
         }
         Some(Token::Word(b"true" | b"false")) => {
-            Ok(ast::simple_expression::Inner::Boolean(parse_boolean(context)?).get_outer())
+            Ok(ast::simple_expression::Inner::Bool(parse_boolean(context)?).get_outer())
         }
         Some(Token::Word(_)) => {
             Ok(ast::simple_expression::Inner::Reference(parse_ref(context)?).get_outer())
         }
         Some(Token::SquareOpen) => {
-            Ok(ast::simple_expression::Inner::Array(parse_array(context)?).get_outer())
+            Ok(ast::simple_expression::Inner::Ary(parse_array(context)?).get_outer())
         }
         _ => return Err(context.new_unexpected_token_error()),
     }
 }
 
-fn parse_array(context: &mut PCContext) -> Result<ast::Array, err::ParserError> {
+fn parse_array(context: &mut PCContext) -> Result<ast::Ary, err::ParserError> {
     let start = context.curr_u16pos.clone();
     context.next_token()?; // eat [
     context.skip(is_superfluous_or_newline)?;
@@ -758,7 +758,7 @@ fn parse_array(context: &mut PCContext) -> Result<ast::Array, err::ParserError> 
     context.next_token()?; // eat ]
     let end = context.curr_u16pos.clone();
 
-    Ok(ast::Array {
+    Ok(ast::Ary {
         id: context.next_id(),
         range: Some(base_ast::Range::new(start, end)),
         items,
@@ -778,13 +778,13 @@ fn parse_string(context: &mut PCContext) -> Result<base_ast::Str, err::ParserErr
     })
 }
 
-fn parse_boolean(context: &mut PCContext) -> Result<base_ast::Boolean, err::ParserError> {
+fn parse_boolean(context: &mut PCContext) -> Result<base_ast::Bool, err::ParserError> {
     let start = context.curr_u16pos.clone();
     let value = context.curr_token == Some(Token::Word(b"true"));
     context.next_token()?;
     let end = context.curr_u16pos.clone();
 
-    Ok(base_ast::Boolean {
+    Ok(base_ast::Bool {
         id: context.next_id(),
         range: Some(base_ast::Range::new(start, end)),
         value,

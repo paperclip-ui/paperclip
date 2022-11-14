@@ -289,13 +289,13 @@ fn compile_simple_expression(expr: &ast::SimpleExpression, context: &mut Context
         ast::simple_expression::Inner::Str(expr) => {
             context.add_buffer(format!("\"{}\"", expr.value).as_str())
         }
-        ast::simple_expression::Inner::Number(expr) => {
+        ast::simple_expression::Inner::Num(expr) => {
             context.add_buffer(format!("{}", expr.value).as_str())
         }
-        ast::simple_expression::Inner::Boolean(expr) => {
+        ast::simple_expression::Inner::Bool(expr) => {
             context.add_buffer(format!("{}", expr.value).as_str())
         }
-        ast::simple_expression::Inner::Array(expr) => compile_array(expr, context),
+        ast::simple_expression::Inner::Ary(expr) => compile_array(expr, context),
         ast::simple_expression::Inner::Reference(expr) => compile_reference(expr, context),
     }
 }
@@ -311,7 +311,7 @@ fn compile_reference(expr: &ast::Reference, context: &mut Context) {
     }
 }
 
-fn compile_array(expr: &ast::Array, context: &mut Context) {
+fn compile_array(expr: &ast::Ary, context: &mut Context) {
     context.add_buffer("[");
     context.start_block();
     let mut items = expr.items.iter().peekable();

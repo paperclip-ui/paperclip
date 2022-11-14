@@ -16,7 +16,7 @@ pub struct Options {
 pub struct DocumentContext<'graph, 'expr, 'file_resolver, FR: FileResolver> {
     pub graph: &'graph graph::Graph,
     pub path: String,
-    pub data: Option<core_virt::Object>,
+    pub data: Option<core_virt::Obj>,
     pub file_resolver: &'file_resolver FR,
     pub current_component: Option<&'expr ast::Component>,
     pub render_scopes: Vec<String>,
@@ -47,7 +47,7 @@ impl<'graph, 'expr, 'file_resolver, FR: FileResolver>
     pub fn next_id(&self) -> String {
         self.id_generator.borrow_mut().new_id()
     }
-    pub fn with_data(&self, data: core_virt::Object) -> Self {
+    pub fn with_data(&self, data: core_virt::Obj) -> Self {
         let mut clone = self.clone();
         clone.data = Some(data);
         clone

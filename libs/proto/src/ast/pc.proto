@@ -107,7 +107,7 @@ message TriggerBodyItem {
   oneof inner {
     ast.base.Str str = 1;
     Reference reference = 2;
-    ast.base.Boolean boolean = 3;
+    ast.base.Bool bool = 3;
   }
 }
 
@@ -129,10 +129,10 @@ message Parameter {
 message SimpleExpression {
   oneof inner {
     ast.base.Str str = 1;
-    ast.base.Number number = 2;
-    ast.base.Boolean boolean = 3;
+    ast.base.Num num = 2;
+    ast.base.Bool bool = 3;
     Reference reference = 4;
-    Array array = 5;
+    Ary ary = 5;
   }
 }
 
@@ -142,7 +142,7 @@ message Reference {
   repeated string path = 3;
 }
 
-message Array {
+message Ary {
   string id = 1;
   ast.base.Range range = 2;
   repeated SimpleExpression items = 3;

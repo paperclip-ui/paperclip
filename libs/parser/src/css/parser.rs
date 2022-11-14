@@ -283,7 +283,7 @@ fn parse_decl_number(
                 unit,
             })
         } else {
-            ast::declaration_value::Inner::Number(base_ast::Number {
+            ast::declaration_value::Inner::Number(base_ast::Num {
                 id: context.next_id(),
                 range: Some(Range::new(start, context.curr_u16pos.clone())),
                 value,

@@ -627,7 +627,7 @@ fn collect_triggers<F: FileResolver>(
 ) {
     for trigger in triggers {
         match trigger.get_inner() {
-            ast::trigger_body_item::Inner::Boolean(expr) => {
+            ast::trigger_body_item::Inner::Bool(expr) => {
                 into.push(VariantTrigger::Boolean(expr.value));
             }
             ast::trigger_body_item::Inner::Str(expr) => {

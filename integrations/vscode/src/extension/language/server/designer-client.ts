@@ -4,7 +4,7 @@ import * as execa from "execa";
 import * as waitPort from "wait-port";
 import * as URL from "url";
 global.XMLHttpRequest = require("xhr2");
-import { DesignerClient as GRPCDesignerClient } from "@paperclip-ui/proto/lib/service/designer_grpc_web_pb";
+import { service } from "@paperclip-ui/proto/lib/service/designer";
 import { loadCLIBinPath } from "@paperclip-ui/releases";
 import {
   FileRequest,
@@ -13,7 +13,7 @@ import {
 import { DocumentInfo } from "@paperclip-ui/proto/lib/language_service/pc_pb";
 
 export class DesignerClient {
-  private _client: Deferred<GRPCDesignerClient>;
+  private _client: Deferred<service.designer.DesignerClient>;
   private _port: number;
   constructor() {
     this._client = new Deferred();
@@ -25,7 +25,10 @@ export class DesignerClient {
   private async _start() {
     this._port = await startDesignServer();
     this._client.resolve(
-      new GRPCDesignerClient(`http://localhost:${this._port}`)
+      new service.designer.DesignerClient(
+        `http://localhost:${this._port}`,
+        null
+      )
     );
   }
   async ready() {
@@ -37,7 +40,7 @@ export class DesignerClient {
     const content = new TextEncoder();
     request.setPath(URL.fileURLToPath(url)).setContent(content.encode(text));
     return new Promise((resolve, reject) => {
-      client.updateFile(request, {}, (err, response) => {
+      client.UpdateFile(request, {}, (err, response) => {
         if (err) return reject(err);
         resolve(response);
       });
@@ -49,7 +52,7 @@ export class DesignerClient {
     const request = new FileRequest();
     request.setPath(URL.fileURLToPath(url));
     return new Promise((resolve, reject) => {
-      client.getDocumentInfo(request, {}, (err, response) => {
+      client.GetDocumentInfo(request, {}, (err, response) => {
         if (err) return reject(err);
         resolve(response.toObject());
       });

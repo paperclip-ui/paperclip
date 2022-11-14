@@ -134,12 +134,12 @@ pub fn parse_text(context: &mut ParserContext) -> Result<base_ast::Str, ParserEr
     })
 }
 
-pub fn parse_number(context: &mut ParserContext) -> Result<base_ast::Number, ParserError> {
+pub fn parse_number(context: &mut ParserContext) -> Result<base_ast::Num, ParserError> {
     let start = context.curr_u16pos.clone();
     let value = extract_number_value(context)?;
     context.next_token()?; // eat
     let end = context.curr_u16pos.clone();
-    Ok(base_ast::Number {
+    Ok(base_ast::Num {
         id: context.next_id(),
         range: Some(Range::new(start, end)),
         value,
@@ -220,7 +220,7 @@ fn parse_parameter_value(
 ) -> Result<ast::parameter_value::Inner, err::ParserError> {
     match context.curr_token {
         Some(Token::String(_)) => Ok(ast::parameter_value::Inner::Str(parse_string(context)?)),
-        Some(Token::Number(_)) => Ok(ast::parameter_value::Inner::Number(parse_number(context)?)),
+        Some(Token::Number(_)) => Ok(ast::parameter_value::Inner::Num(parse_number(context)?)),
         _ => Err(context.new_unexpected_token_error()),
     }
 }

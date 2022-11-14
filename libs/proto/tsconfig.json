@@ -3,13 +3,13 @@
   "compilerOptions": {
     "target": "esnext",
     "sourceMap": true,
-    "lib": ["es2015.promise", "dom", "es5", "esnext"],
+    "lib": ["es6", "esnext"],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "declaration": true,
     "moduleResolution": "node",
-    "module": "CommonJS",
+    "module": "commonjs",
     "outDir": "lib",
     "jsx": "react",
     "paths": {

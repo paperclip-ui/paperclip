@@ -130,7 +130,7 @@ visitable! {
       visit_each!(&mut self.triggers, visitor)
   }),
   (pc::TriggerBodyItem, visit_trigger_body_item, (self, visitor) {
-      visit_enum!(self.get_inner_mut(), visitor, pc::trigger_body_item::Inner::Str, pc::trigger_body_item::Inner::Reference, pc::trigger_body_item::Inner::Boolean)
+      visit_enum!(self.get_inner_mut(), visitor, pc::trigger_body_item::Inner::Str, pc::trigger_body_item::Inner::Reference, pc::trigger_body_item::Inner::Bool)
   }),
   (pc::Reference, visit_reference, (self, visitor) {
       true
@@ -138,7 +138,7 @@ visitable! {
   (base::Str, visit_str, (self, visitor) {
     true
   }),
-  (base::Boolean, visit_boolean, (self, visitor) {
+  (base::Bool, visit_boolean, (self, visitor) {
     true
   })
 }

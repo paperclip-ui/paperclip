@@ -89,7 +89,7 @@ pub fn evaluate_comment_metadata(expr: &docco_ast::Comment) -> virt::NodeMedata 
                                     let value =
                                         item.value.as_ref().expect("Value must exist").get_inner();
                                     let num_value = match value {
-                                        docco_ast::parameter_value::Inner::Number(number) => {
+                                        docco_ast::parameter_value::Inner::Num(number) => {
                                             Some(number.value)
                                         }
                                         _ => None,
@@ -183,7 +183,7 @@ fn evaluate_slot<F: FileResolver>(
 ) {
     if let Some(data) = &context.data {
         if let Some(reference) = data.get(&slot.name) {
-            if let core_virt::value::Inner::Array(children) = reference.get_inner() {
+            if let core_virt::value::Inner::Ary(children) = reference.get_inner() {
                 for item in &children.items {
                     match item.get_inner() {
                         core_virt::value::Inner::Node(node) => {
@@ -238,13 +238,13 @@ fn evaluate_instance<F: FileResolver>(
     );
 }
 
-fn add_inserts_to_data(inserts: &mut InsertsMap, data: &mut core_virt::Object) {
+fn add_inserts_to_data(inserts: &mut InsertsMap, data: &mut core_virt::Obj) {
     for (name, (source_id, children)) in inserts.drain() {
         data.properties.push(core_virt::ObjectProperty {
             source_id: Some(source_id.to_string()),
             name: name.to_string(),
             value: Some(
-                core_virt::value::Inner::Array(core_virt::Array {
+                core_virt::value::Inner::Ary(core_virt::Ary {
                     source_id: Some(source_id.to_string()),
                     items: children
                         .iter()
@@ -437,7 +437,7 @@ fn resolve_element_attributes<F: FileResolver>(
 fn create_instance_params<F: FileResolver>(
     element: &ast::Element,
     context: &DocumentContext<F>,
-) -> core_virt::Object {
+) -> core_virt::Obj {
     let mut properties = vec![];
 
     for param in &element.parameters {
@@ -446,7 +446,7 @@ fn create_instance_params<F: FileResolver>(
 
     // resolve_instance_params(element, &mut properties, context);
 
-    core_virt::Object {
+    core_virt::Obj {
         source_id: Some(element.id.to_string()),
         properties,
     }
@@ -477,15 +477,15 @@ fn create_attribute_value<F: FileResolver>(
             source_id: Some(value.id.to_string()),
         })
         .get_outer(),
-        ast::simple_expression::Inner::Boolean(value) => {
-            core_virt::value::Inner::Boolean(core_virt::Boolean {
+        ast::simple_expression::Inner::Bool(value) => {
+            core_virt::value::Inner::Bool(core_virt::Bool {
                 value: value.value,
                 source_id: Some(value.id.to_string()),
             })
             .get_outer()
         }
-        ast::simple_expression::Inner::Number(value) => {
-            core_virt::value::Inner::Number(core_virt::Number {
+        ast::simple_expression::Inner::Num(value) => {
+            core_virt::value::Inner::Num(core_virt::Num {
                 value: value.value,
                 source_id: Some(value.id.to_string()),
             })
@@ -503,8 +503,8 @@ fn create_attribute_value<F: FileResolver>(
             })
             .get_outer()
         }
-        ast::simple_expression::Inner::Array(value) => {
-            core_virt::value::Inner::Array(core_virt::Array {
+        ast::simple_expression::Inner::Ary(value) => {
+            core_virt::value::Inner::Ary(core_virt::Ary {
                 items: vec![],
                 source_id: Some(value.id.to_string()),
             })

@@ -1,5 +1,7 @@
-import { DesignerClient } from "@paperclip-ui/proto/lib/service/designer_grpc_web_pb";
+import { service } from "@paperclip-ui/proto/lib/service/designer";
+import pb from "google-protobuf";
 import {
+  ApplyMutationsRequest,
   FileRequest,
   InsertNodeRequest,
 } from "@paperclip-ui/proto/lib/service/designer_pb";
@@ -10,18 +12,24 @@ import { env } from "../../../env";
 import { EditorEvent, editorEvents } from "../../events";
 import { Box, Point } from "../../state/geom";
 import { EditorState, getInsertBox, InsertMode } from "../../state";
-import { TextNode, Element } from "@paperclip-ui/proto/lib/ast/pc_pb";
+import {
+  AppendChild,
+  Mutation,
+} from "@paperclip-ui/proto/lib/ast_mutate/mod_pb";
 
 export const createDesignerEngine = (
   dispatch: Dispatch<DesignerEngineEvent>
 ): Engine<DesignerEngineState, DesignerEngineEvent> => {
-  const client = new DesignerClient(env.protocol + "//" + env.host);
+  const client = new service.designer.DesignerClient(
+    env.protocol + "//" + env.host,
+    null
+  );
 
   const actions = createActions(client, dispatch);
   const handleEvent = createEventHandler(actions);
   bootstrap(actions);
-  const dispose = () => {};
 
+  const dispose = () => {};
   return {
     handleEvent,
     dispose,
@@ -34,7 +42,10 @@ type Actions = ReturnType<typeof createActions>;
  * All of the imperative actions that can be invoked in the engine
  */
 
-const createActions = (client: DesignerClient, dispatch: Dispatch<any>) => {
+const createActions = (
+  client: service.designer.DesignerClient,
+  dispatch: Dispatch<any>
+) => {
   return {
     openFile(filePath: string) {
       const fileRequest = new FileRequest();
@@ -50,10 +61,10 @@ const createActions = (client: DesignerClient, dispatch: Dispatch<any>) => {
           console.log("END");
         });
     },
-    insertNode(filePath: string, parentId: string) {
-      const insertNodeRequest = new InsertNodeRequest();
-      insertNodeRequest.setPath(filePath);
-      client.insertNode(insertNodeRequest, null, () => {});
+    applyChanges(mutations: Mutation[]) {
+      const request = new ApplyMutationsRequest();
+      request.setMutationsList(mutations);
+      client.applyMutations(request, null, () => {});
     },
   };
 };
@@ -65,7 +76,19 @@ const createActions = (client: DesignerClient, dispatch: Dispatch<any>) => {
 const createEventHandler = (actions: Actions) => {
   const handleInsert = (state: EditorState) => {
     const box = getInsertBox(state);
-    console.log("INS", box);
+
+    // const mutation = new Mutation();
+    // const appendChild = new AppendChild();
+    // appendChild.setParentId(state.currentDocument.paperclip.html.sourceId);
+    // const newNode = new Node();
+    // const element = new Element();
+    // element.setId(`${Math.random()}`);
+    // newNode.setElement(element);
+    // appendChild.setChild(newNode);
+    // mutation.setAppendChild(appendChild);
+    // actions.applyChanges([
+    //   mutation
+    // ])
   };
 
   const handleCanvasMouseUp = (state: EditorState, prevState: EditorState) => {

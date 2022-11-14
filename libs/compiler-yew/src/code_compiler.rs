@@ -336,10 +336,10 @@ fn compile_simple_expression(expr: &ast::SimpleExpression, context: &mut Context
         ast::simple_expression::Inner::Str(expr) => {
             context.add_buffer(format!("\"{}\"", expr.value).as_str())
         }
-        ast::simple_expression::Inner::Number(expr) => {
+        ast::simple_expression::Inner::Num(expr) => {
             context.add_buffer(format!("\"{}\"", expr.value).as_str())
         }
-        ast::simple_expression::Inner::Boolean(expr) => {
+        ast::simple_expression::Inner::Bool(expr) => {
             context.add_buffer(format!("\"{}\"", expr.value).as_str())
         }
         ast::simple_expression::Inner::Reference(expr) => context.add_buffer(

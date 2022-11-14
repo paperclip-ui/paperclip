@@ -12,10 +12,7 @@ service Designer {
   rpc OpenFile(FileRequest) returns (stream FileResponse);
   rpc UpdateFile(UpdateFileRequest) returns (Empty);
   rpc ApplyMutations(ApplyMutationsRequest) returns (Empty);
-  rpc getDocumentInfo(FileRequest) returns (language_service.pc.DocumentInfo);
-
-  // edit requests
-  rpc InsertNode(InsertNodeRequest) returns (Empty);
+  rpc GetDocumentInfo(FileRequest) returns (language_service.pc.DocumentInfo);
 }
 
 message Empty {
@@ -41,14 +38,5 @@ message FileResponse {
 
   oneof data {
     virt.module.PCModule paperclip = 2;
-  }
-}
-
-message InsertNodeRequest { 
-  string path = 1;
-  string id = 2;
-  oneof node {
-    ast.pc.Element element = 3;
-    ast.pc.TextNode text = 4;
   }
 }

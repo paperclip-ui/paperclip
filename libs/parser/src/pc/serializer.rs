@@ -51,7 +51,7 @@ fn serialize_trigger_body(body: &Vec<ast::TriggerBodyItem>, context: &mut Contex
             ast::trigger_body_item::Inner::Reference(expr) => {
                 serialize_reference(&expr, context);
             }
-            ast::trigger_body_item::Inner::Boolean(expr) => {
+            ast::trigger_body_item::Inner::Bool(expr) => {
                 serialize_boolean(&expr, context);
             }
         }
@@ -272,10 +272,10 @@ fn serialize_insert(insert: &ast::Insert, context: &mut Context) {
 fn serialize_simple_expression(node: &ast::SimpleExpression, context: &mut Context) {
     match node.get_inner() {
         ast::simple_expression::Inner::Str(value) => serialize_string(value, context),
-        ast::simple_expression::Inner::Number(value) => serialize_number(value, context),
+        ast::simple_expression::Inner::Num(value) => serialize_number(value, context),
         ast::simple_expression::Inner::Reference(value) => serialize_reference(value, context),
-        ast::simple_expression::Inner::Boolean(value) => serialize_boolean(value, context),
-        ast::simple_expression::Inner::Array(value) => serialize_array(value, context),
+        ast::simple_expression::Inner::Bool(value) => serialize_boolean(value, context),
+        ast::simple_expression::Inner::Ary(value) => serialize_array(value, context),
     }
 }
 
@@ -283,12 +283,12 @@ fn serialize_string(node: &base_ast::Str, context: &mut Context) {
     context.add_buffer(format!("\"{}\"", node.value).as_str());
 }
 
-fn serialize_number(_node: &base_ast::Number, _context: &mut Context) {}
+fn serialize_number(_node: &base_ast::Num, _context: &mut Context) {}
 fn serialize_reference(node: &ast::Reference, context: &mut Context) {
     context.add_buffer(node.path.join(".").as_str());
 }
 
-fn serialize_array(node: &ast::Array, context: &mut Context) {
+fn serialize_array(node: &ast::Ary, context: &mut Context) {
     context.add_buffer("[");
     serialize_items(&node.items, context, serialize_simple_expression, ", ");
     context.add_buffer("]");
@@ -311,7 +311,7 @@ fn serialize_items<TItem, TSerializeFun>(
     }
 }
 
-fn serialize_boolean(node: &base_ast::Boolean, context: &mut Context) {
+fn serialize_boolean(node: &base_ast::Bool, context: &mut Context) {
     context.add_buffer(if node.value { "true" } else { "false" });
 }
 

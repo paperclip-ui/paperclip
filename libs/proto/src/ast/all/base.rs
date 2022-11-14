@@ -1,7 +1,7 @@
 pub use super::super::base;
 pub use super::super::docco;
 pub use super::super::pc;
-use std::borrow::Borrow;
+
 
 macro_rules! expressions {
   ($(($name:ident, $expr:ty, $this:ident => $id_ret:expr)),*) => {
@@ -118,20 +118,20 @@ expressions! {
   (TriggerBodyItemInner, pc::trigger_body_item::Inner, self => match_each_expr_id!(self,
     pc::trigger_body_item::Inner::Str,
     pc::trigger_body_item::Inner::Reference,
-    pc::trigger_body_item::Inner::Boolean
+    pc::trigger_body_item::Inner::Bool
   )),
   (TextNode, pc::TextNode, self => &self.id),
   (Parameter, pc::Parameter, self => &self.id),
   (SimpleExpression,pc::SimpleExpression, self => &self.get_inner().get_id()),
   (SimpleExpressionInner, pc::simple_expression::Inner, self => match_each_expr_id!(self,
     pc::simple_expression::Inner::Str,
-    pc::simple_expression::Inner::Number,
-    pc::simple_expression::Inner::Boolean,
+    pc::simple_expression::Inner::Num,
+    pc::simple_expression::Inner::Bool,
     pc::simple_expression::Inner::Reference,
-    pc::simple_expression::Inner::Array
+    pc::simple_expression::Inner::Ary
   )),
   (Reference, pc::Reference, self => &self.id),
-  (Array, pc::Array, self => &self.id),
+  (Ary, pc::Ary, self => &self.id),
   (Element, pc::Element, self => &self.id),
   (Node, pc::Node, self => &self.get_inner().get_id()),
   (NodeInner, pc::node::Inner, self => match_each_expr_id!(self,
@@ -153,7 +153,7 @@ expressions! {
 
   (Comment, docco::Comment, self => &self.id),
   (Str, base::Str, self => &self.id),
-  (Boolean, base::Boolean, self => &self.id),
-  (Number, base::Number, self => &self.id)
+  (Boolean, base::Bool, self => &self.id),
+  (Number, base::Num, self => &self.id)
 
 }

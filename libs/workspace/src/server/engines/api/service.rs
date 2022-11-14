@@ -2,11 +2,10 @@
 
 use crate::server::core::{ServerEvent, ServerStore};
 use futures::Stream;
-use paperclip_editor::Mutation;
 use paperclip_language_services::DocumentInfo;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
-    file_response, Empty, FileRequest, FileResponse, InsertNodeRequest, UpdateFileRequest, ApplyMutationsRequest,
+    file_response, Empty, FileRequest, FileResponse, UpdateFileRequest, ApplyMutationsRequest,
 };
 use std::pin::Pin;
 use std::sync::Arc;
@@ -95,13 +94,6 @@ impl Designer for DesignerService {
             .lock()
             .unwrap()
             .emit(ServerEvent::ApplyMutationRequested { mutations: request.mutations });
-        Ok(Response::new(Empty {}))
-    }
-
-    async fn insert_node(
-        &self,
-        request: Request<InsertNodeRequest>,
-    ) -> Result<Response<Empty>, Status> {
         Ok(Response::new(Empty {}))
     }
 

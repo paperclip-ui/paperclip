@@ -1424,7 +1424,6 @@ __metadata:
     "@grpc/grpc-js": ^1.7.3
     "@paperclip-ui/common": "workspace:^"
     "@types/node": ^18.11.9
-    "@types/web": ^0.0.79
     google-protobuf: ^3.21.0
     grpc: ^1.24.11
     grpc-web: ^1.4.0
@@ -2043,13 +2042,6 @@ __metadata:
   version: 1.73.0
   resolution: "@types/vscode@npm:1.73.0"
   checksum: a9c778b738dfa15aebc15947ac87f734031a0de7d3f61973f3be3cd5927511dc8aeee4e751f73eb45dac35e01d8ad64a3e48407af413a040b2780fd17713b91e
-  languageName: node
-  linkType: hard
-
-"@types/web@npm:^0.0.79":
-  version: 0.0.79
-  resolution: "@types/web@npm:0.0.79"
-  checksum: 09e49d46041f3fc1725892392789f71ab7cc83d129d85c9c45ff946e8ae96292a7a1fdb56fab5f4070e6fbb7006a9597e23efc645f70c2d0f88734ea594286b1
   languageName: node
   linkType: hard
 

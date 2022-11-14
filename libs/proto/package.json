@@ -17,7 +17,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/web": "^0.0.79",
     "protoc-gen-grpc-js": "^0.4.0",
     "protoc-gen-grpc-web": "^1.4.0",
     "protoc-gen-ts": "^0.8.5"

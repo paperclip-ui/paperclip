@@ -97,7 +97,7 @@ export const maybeCenterCanvas = (editor: EditorState, force?: boolean) => {
       editor.canvas.size?.width &&
       editor.canvas.size?.height)
   ) {
-    editor = { ...editor, centeredInitial: false };
+    editor = { ...editor, centeredInitial: true };
 
     let targetBounds: Box;
     const currentFrameIndex = editor.canvas.activeFrame;

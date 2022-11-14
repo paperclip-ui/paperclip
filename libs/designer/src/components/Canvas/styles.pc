@@ -28,10 +28,8 @@ public component Inner {
 /**
  * @bounds(width: 1000, height: 1000, x: 0, y: 0)
  */
-Canvas {
-  Inner {
-    TmpFooter {
-      text "Hello wold"
-    }
+Canvas canv {
+  TmpFooter {
+    text "Hello wold"
   }
 }

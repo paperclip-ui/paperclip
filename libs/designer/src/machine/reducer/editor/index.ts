@@ -13,6 +13,10 @@ import produce from "immer";
 import { clamp, pick } from "lodash";
 import { Box, centerTransformZoom, Point } from "../../state/geom";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
+import {
+  Element as VirtElement,
+  TextNode as VirtText,
+} from "@paperclip-ui/proto/lib/generated/virt/html";
 import { memoize } from "@paperclip-ui/common";
 import {
   InnerVirtNode,
@@ -53,13 +57,6 @@ export const editorReducer = (
       return produce(state, (newState) => {
         newState.insertMode = InsertMode.Element;
       });
-    case editorEvents.canvasMouseDown.type: {
-      return produce(state, (newState) => {
-        newState.canvas.mouseDown = true;
-        newState.canvas.mousePosition = event.payload.position;
-        newState.canvasMouseDownStartPoint = event.payload.position;
-      });
-    }
     case editorEvents.canvasMouseUp.type: {
       return produce(state, (newState) => {
         newState.insertMode = null;
@@ -68,6 +65,12 @@ export const editorReducer = (
       });
     }
     case editorEvents.canvasMouseDown.type: {
+      state = produce(state, (newState) => {
+        newState.canvas.mouseDown = true;
+        newState.canvas.mousePosition = event.payload.position;
+        newState.canvasMouseDownStartPoint = event.payload.position;
+      });
+
       if (state.resizerMoving) {
         return state;
       }
@@ -107,6 +110,8 @@ export const editorReducer = (
         ),
         state.canvas.isExpanded ? state.canvas.activeFrame : null
       )?.nodePath;
+
+      console.log("NODE AT POIINT", nodePath);
 
       return selectNode(
         nodePath,
@@ -168,24 +173,39 @@ export const editorReducer = (
     case editorEvents.resizerPathStoppedMoving.type:
     case editorEvents.resizerPathMoved.type: {
       state = produce(state, (newState) => {
-        const flattenedRects = flattenFrameBoxes(state.rects);
-
         const node = getNodeByPath(
           newState.selectedNodePaths[0],
           newState.currentDocument.paperclip.html
-        );
-        newState.styleOverrides = {};
+        ) as any as VirtElement | VirtText;
 
-        newState.styleOverrides[node.id] = {
-          // TODO: need to take delta of computed CSS instead
-          left: event.payload.newBounds.x - event.payload.originalBounds.x,
-          top: event.payload.newBounds.y - event.payload.originalBounds.y,
+        // within a frame
+        if (newState.selectedNodePaths[0].includes(".")) {
+          newState.styleOverrides = {};
 
-          // TODO - check position here to make sure we're not overriding something like "absolute"
-          position: "relative",
-          width: event.payload.newBounds.width,
-          height: event.payload.newBounds.height,
-        };
+          newState.styleOverrides[node.id] = {
+            // TODO: need to take delta of computed CSS instead
+            left: event.payload.newBounds.x - event.payload.originalBounds.x,
+            top: event.payload.newBounds.y - event.payload.originalBounds.y,
+
+            // TODO - check position here to make sure we're not overriding something like "absolute"
+            position: "relative",
+            width: event.payload.newBounds.width,
+            height: event.payload.newBounds.height,
+          };
+
+          // is a frame
+        } else {
+          if (!node.metadata) {
+            node.metadata = {};
+          }
+          if (!node.metadata.bounds) {
+            node.metadata.bounds = { x: 0, y: 0, width: 0, height: 0 };
+          }
+
+          node.metadata.bounds = {
+            ...event.payload.newBounds,
+          };
+        }
       });
       return state;
     }
@@ -203,7 +223,6 @@ export const editorReducer = (
       state = produce(state, (newState) => {
         newState.rects[event.payload.frameIndex] = event.payload.rects;
       });
-
       state = maybeCenterCanvas(state);
       return state;
   }

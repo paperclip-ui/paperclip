@@ -181,9 +181,9 @@ export const getFrameRects = (
 ) => {
   const rects: Record<string, any> = {};
 
-  const frame = getFragmentChildren(info.html)[index] as html.Node;
+  const frame = info.html.children[index] as html.Node;
 
-  // const bounds = getFrameBounds(frame);
+  const bounds = getFrameBounds(frame) || { x: 0, y: 0, width: 0, height: 0 };
 
   // mount child node _is_ the frame -- can only ever be one child
   traverseNativeNode(
@@ -204,8 +204,8 @@ export const getFrameRects = (
         rects[pathStr] = {
           width: clientRect.width,
           height: clientRect.height,
-          x: clientRect.left,
-          y: clientRect.top,
+          x: bounds.x + clientRect.left,
+          y: bounds.y + clientRect.top,
         };
       }
     }
@@ -473,3 +473,7 @@ const patchChildren = (
 };
 
 const getFragmentChildren = (node) => [node];
+
+export const getFrameBounds = (node: html.Node) => {
+  return node.element?.metadata?.bounds || node.textNode?.metadata?.bounds;
+};

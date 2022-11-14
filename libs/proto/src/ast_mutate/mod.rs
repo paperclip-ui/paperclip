@@ -1,10 +1,12 @@
 mod append_child;
+mod set_frame_bounds;
 mod base;
 use crate::add_inner_wrapper;
 use crate::ast;
 use crate::ast::all::{Visitable, Visitor, VisitorResult};
 pub use append_child::*;
 pub use base::*;
+pub use set_frame_bounds::*;
 
 macro_rules! mutations {
     ($($name:ident), *) => {

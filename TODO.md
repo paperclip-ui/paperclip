@@ -1,5 +1,7 @@
 #### On-deck
 
+- ability to move frames around
+
 - JavaScript API
 
   - flesh out editing API for all scenarios

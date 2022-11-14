@@ -16,13 +16,14 @@ message Mutation {
 
     // Element
     SetElementParameter set_element_parameter = 4;
+    SetFrameBounds set_frame_bounds = 5;
 
     // Text
-    SetTextNodeValue set_text_node_value = 5;
+    SetTextNodeValue set_text_node_value = 6;
 
     // Style
-    SetStyleDeclaration set_style_declaration = 6;
-    DeleteStyleDeclaration delete_style_declaration = 7;
+    SetStyleDeclaration set_style_declaration = 7;
+    DeleteStyleDeclaration delete_style_declaration = 8;
   }
 }
 
@@ -33,6 +34,18 @@ message AppendChild {
 
 message DeleteChild {
   string node_id = 1;
+}
+
+message SetFrameBounds {
+  string frame_id = 1;
+  Bounds bounds = 2;
+}
+
+message Bounds {
+  float x = 1;
+  float y = 2;
+  float width = 3;
+  float height = 4;
 }
 
 message InsertChild {

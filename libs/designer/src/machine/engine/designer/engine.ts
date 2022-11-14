@@ -13,6 +13,14 @@ import {
   AppendChild,
   Mutation,
 } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
+import {
+  getNodeByPath,
+  InnerVirtNode,
+} from "@paperclip-ui/proto/lib/virt/html-utils";
+import {
+  Element as VirtElement,
+  TextNode as VirtTextNode,
+} from "@paperclip-ui/proto/lib/generated/virt/html";
 
 export const createDesignerEngine = (
   dispatch: Dispatch<DesignerEngineEvent>
@@ -81,6 +89,7 @@ const createEventHandler = (actions: Actions) => {
           override: null,
         },
       },
+      setFrameBounds: null,
       deleteChild: null,
       setElementParameter: null,
       insertChild: null,
@@ -98,6 +107,38 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
+  const handleResizerStoppedMoving = (
+    event: ReturnType<typeof editorEvents.resizerPathStoppedMoving>,
+    state: EditorState,
+    prevState: EditorState
+  ) => {
+    const node = getNodeByPath(
+      prevState.selectedNodePaths[0],
+      prevState.currentDocument.paperclip.html
+    ) as VirtTextNode | VirtElement;
+
+    if (prevState.selectedNodePaths[0].includes(".")) {
+      console.warn("Not implemented yet");
+    } else {
+      const newBounds = node.metadata.bounds;
+
+      const mutation: Mutation = {
+        setFrameBounds: {
+          frameId: node.sourceId,
+          bounds: newBounds,
+        },
+        appendChild: null,
+        deleteChild: null,
+        setElementParameter: null,
+        insertChild: null,
+        deleteStyleDeclaration: null,
+        setTextNodeValue: null,
+        setStyleDeclaration: null,
+      };
+      actions.applyChanges([]);
+    }
+  };
+
   return (
     event: EditorEvent,
     newState: EditorState,
@@ -106,6 +147,9 @@ const createEventHandler = (actions: Actions) => {
     switch (event.type) {
       case editorEvents.canvasMouseUp.type: {
         return handleCanvasMouseUp(newState, prevState);
+      }
+      case editorEvents.resizerPathStoppedMoving.type: {
+        return handleResizerStoppedMoving(event, newState, prevState);
       }
     }
   };

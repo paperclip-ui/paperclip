@@ -126,7 +126,7 @@ export const Selectable = React.memo(
         event,
         null,
         wrapActionCreator(editorEvents.resizerPathMoved),
-        wrapActionCreator(editorEvents.resizerPathMoved)
+        wrapActionCreator(editorEvents.resizerPathStoppedMoving)
       );
     };
 
@@ -160,7 +160,7 @@ export const Selectable = React.memo(
           event,
           null,
           wrapActionCreator(editorEvents.resizerPathMoved),
-          wrapActionCreator(editorEvents.resizerPathMoved)
+          wrapActionCreator(editorEvents.resizerPathStoppedMoving)
         );
       }
     };

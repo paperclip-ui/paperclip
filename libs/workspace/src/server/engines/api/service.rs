@@ -5,7 +5,7 @@ use futures::Stream;
 use paperclip_language_services::DocumentInfo;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
-    file_response, Empty, FileRequest, FileResponse, UpdateFileRequest, ApplyMutationsRequest,
+    file_response, ApplyMutationsRequest, Empty, FileRequest, FileResponse, UpdateFileRequest,
 };
 use std::pin::Pin;
 use std::sync::Arc;
@@ -87,13 +87,18 @@ impl Designer for DesignerService {
         Ok(Response::new(Empty {}))
     }
 
-    async fn apply_mutations(&self, request: Request<ApplyMutationsRequest>) -> Result<Response<Empty>, Status> {
+    async fn apply_mutations(
+        &self,
+        request: Request<ApplyMutationsRequest>,
+    ) -> Result<Response<Empty>, Status> {
         let request = request.into_inner();
 
         self.store
             .lock()
             .unwrap()
-            .emit(ServerEvent::ApplyMutationRequested { mutations: request.mutations });
+            .emit(ServerEvent::ApplyMutationRequested {
+                mutations: request.mutations,
+            });
         Ok(Response::new(Empty {}))
     }
 

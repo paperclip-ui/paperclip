@@ -2,7 +2,6 @@ pub use super::super::base;
 pub use super::super::docco;
 pub use super::super::pc;
 
-
 macro_rules! expressions {
   ($(($name:ident, $expr:ty, $this:ident => $id_ret:expr)),*) => {
 

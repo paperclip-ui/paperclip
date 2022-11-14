@@ -1,6 +1,6 @@
 mod append_child;
-mod set_frame_bounds;
 mod base;
+mod set_frame_bounds;
 use crate::add_inner_wrapper;
 use crate::ast;
 use crate::ast::all::{Visitable, Visitor, VisitorResult};
@@ -32,5 +32,6 @@ macro_rules! mutations {
 add_inner_wrapper!(mutation::Inner, Mutation);
 
 mutations! {
-  AppendChild
+  AppendChild,
+  SetFrameBounds
 }

@@ -9,7 +9,7 @@ pub fn serialize(comment: &ast::Comment) -> String {
 }
 
 pub fn serialize_comment(comment: &ast::Comment, context: &mut Context) {
-    context.add_buffer("/**");
+    context.add_buffer("/**\n");
     for item in &comment.body {
         match &item.get_inner() {
             ast::comment_body_item::Inner::Text(text) => serialize_text(text, context),
@@ -18,7 +18,7 @@ pub fn serialize_comment(comment: &ast::Comment, context: &mut Context) {
             }
         }
     }
-    context.add_buffer("*/");
+    context.add_buffer(" */");
 }
 
 fn serialize_text(text: &base_ast::Str, context: &mut Context) {
@@ -26,7 +26,7 @@ fn serialize_text(text: &base_ast::Str, context: &mut Context) {
 }
 
 fn serialize_property(prop: &ast::Property, context: &mut Context) {
-    context.add_buffer(format!("@{}", prop.name).as_str());
+    context.add_buffer(format!(" * @{}", prop.name).as_str());
     match &prop.value.as_ref().expect("value must exist").get_inner() {
         ast::property_value::Inner::Str(value) => {
             context.add_buffer(" ");
@@ -36,6 +36,7 @@ fn serialize_property(prop: &ast::Property, context: &mut Context) {
             serialize_parameters(value, context);
         }
     }
+    context.add_buffer("\n");
 }
 
 fn serialize_string(value: &base_ast::Str, context: &mut Context) {

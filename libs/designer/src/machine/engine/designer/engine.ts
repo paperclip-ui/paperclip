@@ -124,7 +124,9 @@ const createEventHandler = (actions: Actions) => {
 
       const mutation: Mutation = {
         setFrameBounds: {
-          frameId: node.sourceId,
+          frameId: node.sourceInstanceIds.length
+            ? node.sourceInstanceIds[0]
+            : node.sourceId,
           bounds: newBounds,
         },
         appendChild: null,
@@ -135,7 +137,7 @@ const createEventHandler = (actions: Actions) => {
         setTextNodeValue: null,
         setStyleDeclaration: null,
       };
-      actions.applyChanges([]);
+      actions.applyChanges([mutation]);
     }
   };
 

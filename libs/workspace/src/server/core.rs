@@ -9,8 +9,8 @@ use anyhow::{Error, Result};
 use paperclip_common::fs::FileWatchEvent;
 use paperclip_common::get_or_short;
 use paperclip_config::ConfigContext;
-use paperclip_editor::Mutation;
 use paperclip_editor::edit_graph;
+use paperclip_editor::Mutation;
 use paperclip_evaluator::css;
 use paperclip_evaluator::html;
 use paperclip_parser::graph::Graph;
@@ -43,7 +43,7 @@ pub struct ServerState {
     pub options: StartOptions,
     pub graph: Graph,
     pub evaluated_modules: HashMap<String, (css::virt::Document, html::virt::Document)>,
-    pub updated_files: Vec<String>
+    pub updated_files: Vec<String>,
 }
 
 impl ServerState {
@@ -53,7 +53,7 @@ impl ServerState {
             file_cache: HashMap::new(),
             graph: Graph::new(),
             evaluated_modules: HashMap::new(),
-            updated_files: vec![]
+            updated_files: vec![],
         }
     }
 
@@ -129,10 +129,13 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
             }
             ServerEvent::ApplyMutationRequested { mutations } => {
                 let changed_files = edit_graph(&mut state.graph, mutations);
+                println!("Applying {:?}", mutations);
                 for path in &changed_files {
                     let content = serialize(&state.graph.dependencies.get(path).unwrap().document);
                     println!("Edited AST {} {}", path, content);
-                    state.file_cache.insert(path.to_string(), content.as_bytes().to_vec());
+                    state
+                        .file_cache
+                        .insert(path.to_string(), content.as_bytes().to_vec());
                 }
                 state.updated_files = changed_files;
             }

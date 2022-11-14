@@ -232,6 +232,7 @@ fn evaluate_instance<F: FileResolver>(
         metadata,
         &mut context
             .with_data(data)
+            .within_instance(element)
             .within_path(&instance_of.path)
             .within_component(&instance_of.expr)
             .set_render_scope(scope),
@@ -333,6 +334,7 @@ fn evaluate_native_element<F: FileResolver>(
             id: context.next_id(),
             tag_name: element.tag_name.to_string(),
             source_id: Some(element.id.to_string()),
+            source_instance_ids: context.instance_ids.clone(),
             attributes: create_native_attributes(element, context, is_root),
             children,
             metadata: metadata.clone(),
@@ -484,13 +486,11 @@ fn create_attribute_value<F: FileResolver>(
             })
             .get_outer()
         }
-        ast::simple_expression::Inner::Num(value) => {
-            core_virt::value::Inner::Num(core_virt::Num {
-                value: value.value,
-                source_id: Some(value.id.to_string()),
-            })
-            .get_outer()
-        }
+        ast::simple_expression::Inner::Num(value) => core_virt::value::Inner::Num(core_virt::Num {
+            value: value.value,
+            source_id: Some(value.id.to_string()),
+        })
+        .get_outer(),
         ast::simple_expression::Inner::Reference(value) => {
             if let Some(data) = &context.data {
                 if let Some(value) = data.get_deep(&value.path) {
@@ -503,13 +503,11 @@ fn create_attribute_value<F: FileResolver>(
             })
             .get_outer()
         }
-        ast::simple_expression::Inner::Ary(value) => {
-            core_virt::value::Inner::Ary(core_virt::Ary {
-                items: vec![],
-                source_id: Some(value.id.to_string()),
-            })
-            .get_outer()
-        }
+        ast::simple_expression::Inner::Ary(value) => core_virt::value::Inner::Ary(core_virt::Ary {
+            items: vec![],
+            source_id: Some(value.id.to_string()),
+        })
+        .get_outer(),
     }
 }
 
@@ -527,6 +525,7 @@ fn evaluate_text_node<F: FileResolver>(
             id: context.next_id(),
             tag_name: "span".to_string(),
             source_id: Some(text_node.id.to_string()),
+            source_instance_ids: context.instance_ids.clone(),
             attributes: vec![virt::Attribute {
                 source_id: None,
                 name: "class".to_string(),
@@ -536,6 +535,7 @@ fn evaluate_text_node<F: FileResolver>(
             children: vec![virt::node::Inner::TextNode(virt::TextNode {
                 id: context.next_id(),
                 source_id: Some(text_node.id.to_string()),
+                source_instance_ids: context.instance_ids.clone(),
                 value: text_node.value.to_string(),
                 metadata: None,
             })
@@ -546,6 +546,7 @@ fn evaluate_text_node<F: FileResolver>(
         virt::node::Inner::TextNode(virt::TextNode {
             id: context.next_id(),
             source_id: Some(text_node.id.to_string()),
+            source_instance_ids: context.instance_ids.clone(),
             value: text_node.value.to_string(),
             metadata: metadata.clone(),
         })

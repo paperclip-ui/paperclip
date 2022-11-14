@@ -25,7 +25,6 @@ pub async fn start<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
 
 async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
     let next = ctx.clone();
-    
 
     handle_store_events!(
         &ctx.store,
@@ -83,7 +82,7 @@ impl<TIO: ServerIO> FileResolver for VirtGraphIO<TIO> {
 }
 
 async fn load_dependency_graph_from_updated_files<TIO: ServerIO>(
-    ctx: ServerEngineContext<TIO>
+    ctx: ServerEngineContext<TIO>,
 ) -> Result<()> {
     let updated_files = ctx.store.lock().unwrap().state.updated_files.clone();
     load_dependency_graph(ctx, &updated_files).await

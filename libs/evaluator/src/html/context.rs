@@ -19,6 +19,7 @@ pub struct DocumentContext<'graph, 'expr, 'file_resolver, FR: FileResolver> {
     pub data: Option<core_virt::Obj>,
     pub file_resolver: &'file_resolver FR,
     pub current_component: Option<&'expr ast::Component>,
+    pub instance_ids: Vec<String>,
     pub render_scopes: Vec<String>,
     pub options: Options,
     pub id_generator: Rc<RefCell<IDGenerator>>,
@@ -42,6 +43,7 @@ impl<'graph, 'expr, 'file_resolver, FR: FileResolver>
             id_generator: Rc::new(RefCell::new(IDGenerator::new(get_document_id(path)))),
             current_component: None,
             render_scopes: vec![],
+            instance_ids: vec![],
         }
     }
     pub fn next_id(&self) -> String {
@@ -55,6 +57,11 @@ impl<'graph, 'expr, 'file_resolver, FR: FileResolver>
     pub fn within_component(&self, component: &'expr ast::Component) -> Self {
         let mut clone = self.clone();
         clone.current_component = Some(component);
+        clone
+    }
+    pub fn within_instance(&self, instance: &'expr ast::Element) -> Self {
+        let mut clone = self.clone();
+        clone.instance_ids.push(instance.id.clone());
         clone
     }
     pub fn within_path(&self, path: &str) -> Self {

@@ -1,13 +1,13 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import * as styles from "./index.pc";
-import { Node } from "@paperclip-ui/proto/lib/virt/html_pb";
+import { Node as VirtNode } from "@paperclip-ui/proto/lib/virt/html";
 import { Transform } from "@paperclip-ui/designer/src/machine/state/geom";
 import { useDispatch } from "@paperclip-ui/common";
 import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
 import { DEFAULT_FRAME_BOX } from "@paperclip-ui/designer/src/machine/state";
 
 export type FramesProps = {
-  frames: Node.AsObject[];
+  frames: VirtNode[];
   canvasTransform: Transform;
   readonly: boolean;
 };
@@ -33,7 +33,7 @@ export const Frames = memo(
 );
 
 type FrameProps = {
-  frame: Node.AsObject;
+  frame: VirtNode;
   frameIndex: number;
   canvasTransform: Transform;
   readonly: boolean;

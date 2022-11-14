@@ -12,7 +12,7 @@ import {
 import produce from "immer";
 import { clamp, pick } from "lodash";
 import { Box, centerTransformZoom, Point } from "../../state/geom";
-import { PCModule } from "@paperclip-ui/proto/lib/virt/module_pb";
+import { PCModule } from "@paperclip-ui/proto/lib/virt/module";
 import { memoize } from "@paperclip-ui/common";
 import {
   InnerVirtNode,
@@ -25,7 +25,7 @@ import {
   getInnerNode,
   isTextNode,
   nodePathToAry,
-} from "@paperclip-ui/proto/lib/virt/html";
+} from "@paperclip-ui/proto/lib/virt/html-utils";
 
 const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
 const PAN_X_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;
@@ -41,7 +41,7 @@ export const editorReducer = (
   switch (event.type) {
     case designerEngineEvents.documentOpened.type:
       state = produce(state, (newState) => {
-        newState.currentDocument = event.payload.toObject();
+        newState.currentDocument = event.payload;
       });
       state = maybeCenterCanvas(state);
       return state;
@@ -240,11 +240,7 @@ const highlightNode = (designer: EditorState, mousePosition: Point) => {
 };
 
 export const getScopedBoxes = memoize(
-  (
-    boxes: Record<string, Box>,
-    scopedElementPath: string,
-    root: PCModule.AsObject
-  ) => {
+  (boxes: Record<string, Box>, scopedElementPath: string, root: PCModule) => {
     const hoverableNodePaths = getHoverableNodePaths(
       scopedElementPath,
       root.html
@@ -289,7 +285,7 @@ const addHoverableChildren = (
   }
 
   if (isNodeParent(node)) {
-    for (const child of node.childrenList) {
+    for (const child of node.children) {
       addHoverableChildren(getInnerNode(child), false, hoverable);
     }
   }

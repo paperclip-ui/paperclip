@@ -1,16 +1,16 @@
-import { PCModule } from "@paperclip-ui/proto/lib/virt/module_pb";
+import { PCModule } from "@paperclip-ui/proto/lib/virt/module";
 import { patchFrame, renderFrame } from "@paperclip-ui/web-renderer";
 import { useEffect, useState } from "react";
 // import { useFrameUrlResolver } from "../useFrameUrlResolver";
 
 type UseFrameStageOuterProps = {
-  onUpdate: (mount: HTMLElement, data: PCModule.AsObject) => void;
+  onUpdate: (mount: HTMLElement, data: PCModule) => void;
 } & UseFrameStageInnerProps;
 
 type UseFrameStageInnerProps = {
   frameIndex: number;
   showSlotPlaceholders?: boolean;
-  pcData: PCModule.AsObject;
+  pcData: PCModule;
 };
 
 export const useFrameMount = ({
@@ -21,7 +21,7 @@ export const useFrameMount = ({
 }: UseFrameStageOuterProps) => {
   const [state, setState] = useState<
     UseFrameStageInnerProps & {
-      pcData: PCModule.AsObject;
+      pcData: PCModule;
       mount: HTMLElement;
     }
   >();

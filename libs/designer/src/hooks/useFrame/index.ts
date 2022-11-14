@@ -2,14 +2,14 @@ import { noop } from "lodash";
 import { useCallback, useState } from "react";
 import { useFrameContainer } from "../useFrameContainer";
 import { useFrameMount } from "../useFrameMount";
-import { PCModule } from "@paperclip-ui/proto/lib/virt/module_pb";
+import { PCModule } from "@paperclip-ui/proto/lib/virt/module";
 
 export type UseFrameProps = {
   frameIndex: number;
-  pcData: PCModule.AsObject;
+  pcData: PCModule;
   style?: Record<string, any>;
-  onLoad?: (mount: HTMLElement, data: PCModule.AsObject) => void;
-  onUpdate?: (mount: HTMLElement, data: PCModule.AsObject) => void;
+  onLoad?: (mount: HTMLElement, data: PCModule) => void;
+  onUpdate?: (mount: HTMLElement, data: PCModule) => void;
   fullscreen?: boolean;
   showSlotPlaceholders?: boolean;
   extraHTML?: string;
@@ -29,7 +29,7 @@ export const useFrame = ({
   // update may be triggered before the frame mount is appended to the document body,
   // so we need to prohibit updates from being emitted _until_ the container iframe is ready
   const onUpdate2 = useCallback(
-    (mount: HTMLElement, data: PCModule.AsObject) => {
+    (mount: HTMLElement, data: PCModule) => {
       if (!loaded) {
         return;
       }

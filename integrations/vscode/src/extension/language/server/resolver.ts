@@ -82,8 +82,8 @@ export class LanguageRequestResolver {
   ): Promise<ColorInformation[]> => {
     const uri = fixFileUrlCasing(params.textDocument.uri);
     const document = this._documents.getDocument(uri);
-    return this._designerClient.getDocumentInfo(uri).then(({ colorsList }) => {
-      return colorsList.map(({ position, value }) => {
+    return this._designerClient.getDocumentInfo(uri).then(({ colors }) => {
+      return colors.map(({ position, value }) => {
         return {
           range: {
             start: document.positionAt(position.start),

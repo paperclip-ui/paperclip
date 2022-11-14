@@ -8,7 +8,7 @@ import {
   getEditorState,
   StyleOverrides,
 } from "../../../machine/state";
-import { PCModule } from "@paperclip-ui/proto/lib/virt/module_pb";
+import { PCModule } from "@paperclip-ui/proto/lib/virt/module";
 import { editorEvents } from "../../../machine/events";
 
 type FramesProps = {
@@ -81,7 +81,7 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
   const dispatch = useDispatch();
 
   const emitFrameRects = useCallback(
-    (mount: HTMLElement, data: PCModule.AsObject, frameIndex: number) => {
+    (mount: HTMLElement, data: PCModule, frameIndex: number) => {
       if (!shouldCollectRects) {
         return false;
       }
@@ -95,17 +95,13 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
 
   const onFrameUpdated = (
     mount: HTMLElement,
-    data: PCModule.AsObject,
+    data: PCModule,
     index: number
   ) => {
     emitFrameRects(mount, data, index);
   };
 
-  const onFrameLoaded = (
-    mount: HTMLElement,
-    data: PCModule.AsObject,
-    index: number
-  ) => {
+  const onFrameLoaded = (mount: HTMLElement, data: PCModule, index: number) => {
     emitFrameRects(mount, data, index);
   };
 
@@ -113,7 +109,7 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
     return { frames: [], onFrameLoaded };
   }
 
-  const frames = doc.paperclip.html.childrenList;
+  const frames = doc.paperclip.html.children;
 
   return { frames, onFrameLoaded, onFrameUpdated };
 };

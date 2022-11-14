@@ -4,17 +4,17 @@ import { memoize } from "@paperclip-ui/common";
 
 export type InnerVirtNode = {
   id: string;
-  childrenList?: OuterNode[];
+  children?: OuterNode[];
 };
 
 type VirtElement = {
   id: string;
-  sourceId: string;
+  sourceId?: string;
 };
 
 type VirtText = {
   id: string;
-  sourceId: string;
+  sourceId?: string;
   value: string;
   metadata?: any;
 };
@@ -39,11 +39,11 @@ export const getInnerNode = (node: OuterNode) => {
 export type BaseTreeNode = {} & InnerVirtNode;
 
 export type BaseParentNode = {
-  childrenList: OuterNode[];
+  children: OuterNode[];
 } & BaseTreeNode;
 
 export const isNodeParent = (node: BaseTreeNode): node is BaseParentNode =>
-  (node as any).childrenList != null;
+  (node as any).children != null;
 
 export const flattenTreeNode = memoize(
   <TNode extends BaseTreeNode>(current: TNode): TNode[] => {
@@ -96,7 +96,7 @@ export const getTreeNodeMap = memoize(
     if (isNodeParent(current)) {
       Object.assign(
         map,
-        ...current.childrenList.map((child, i) =>
+        ...current.children.map((child, i) =>
           getTreeNodeMap(getInnerNode(child), path ? path + "." + i : String(i))
         )
       );

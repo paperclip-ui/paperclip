@@ -1,7 +1,7 @@
 // FYI this code is super dumb and can definitely be made faster
-import * as html from "@paperclip-ui/proto/lib/virt/html_pb";
-import * as css from "@paperclip-ui/proto/lib/virt/css_pb";
-import { PCModule } from "@paperclip-ui/proto/lib/virt/module_pb";
+import * as html from "@paperclip-ui/proto/lib/virt/html";
+import * as css from "@paperclip-ui/proto/lib/virt/css";
+import { PCModule } from "@paperclip-ui/proto/lib/virt/module";
 import { NodeFactory } from "./node-factory";
 import {
   createNativeGlobalScript,
@@ -31,21 +31,21 @@ export type RenderFrameOptions = {
 };
 
 export const renderFrames = (
-  info: PCModule.AsObject,
+  info: PCModule,
   options: RenderFrameOptions
 ): HTMLElement[] => {
-  return info.html.childrenList.map((frame, index) => {
+  return info.html.children.map((frame, index) => {
     return renderFrame(info, index, options);
   });
 };
 
 export const renderFrame = (
-  info: PCModule.AsObject,
+  info: PCModule,
   index: number,
   options: RenderFrameOptions
 ) => {
   const { documentStyles, importedStyles } = createStyles(info, options);
-  const dataFrames = info.html.childrenList;
+  const dataFrames = info.html.children;
   return renderFrame2(
     dataFrames[index],
     importedStyles,
@@ -54,16 +54,14 @@ export const renderFrame = (
   );
 };
 
-const createStyles = memoize(
-  (info: PCModule.AsObject, options: RenderFrameOptions) => {
-    const documentStyles = renderDocumentStyles(info, options);
-    const importedStyles = renderImportedStyles(info, options);
-    return { documentStyles, importedStyles };
-  }
-);
+const createStyles = memoize((info: PCModule, options: RenderFrameOptions) => {
+  const documentStyles = renderDocumentStyles(info, options);
+  const importedStyles = renderImportedStyles(info, options);
+  return { documentStyles, importedStyles };
+});
 
 const renderFrame2 = (
-  node: html.Node.AsObject,
+  node: html.Node,
   importedStyles: HTMLElement,
   documentStyles: HTMLElement,
   options: RenderFrameOptions
@@ -86,7 +84,7 @@ const renderFrame2 = (
 };
 
 const renderDocumentStyles = (
-  info: PCModule.AsObject,
+  info: PCModule,
   { domFactory, resolveUrl }: RenderFrameOptions
 ) => {
   const container = domFactory.createElement("div");
@@ -97,11 +95,11 @@ const renderDocumentStyles = (
 };
 
 const renderImportedStyles = (
-  info: PCModule.AsObject,
+  info: PCModule,
   { domFactory, resolveUrl }: RenderFrameOptions
 ) => {
   const container = domFactory.createElement("div");
-  for (const imp of info.importsList) {
+  for (const imp of info.imports) {
     if (imp.css) {
       const sheet = createNativeStyleFromSheet(
         imp.css.css,
@@ -126,15 +124,15 @@ const renderImportedStyles = (
 
 export const patchFrames = (
   frames: HTMLElement[],
-  prev: PCModule.AsObject,
-  curr: PCModule.AsObject,
+  prev: PCModule,
+  curr: PCModule,
   options: RenderFrameOptions
 ) => {
   if (curr === prev) {
     return frames;
   }
-  const prevVirtFrames = prev.html.childrenList;
-  const newVirtFrames = curr.html.childrenList;
+  const prevVirtFrames = prev.html.children;
+  const newVirtFrames = curr.html.children;
   const { insert, update } = calcAryPatch(prevVirtFrames, newVirtFrames);
   const newFrames: HTMLElement[] = [];
 
@@ -160,12 +158,12 @@ export const patchFrames = (
 export const patchFrame = (
   frame: HTMLElement,
   index: number,
-  prev: PCModule.AsObject,
-  curr: PCModule.AsObject,
+  prev: PCModule,
+  curr: PCModule,
   options: RenderFrameOptions
 ) => {
-  const prevVirtFrames = prev.html.childrenList;
-  const newVirtFrames = curr.html.childrenList;
+  const prevVirtFrames = prev.html.children;
+  const newVirtFrames = curr.html.children;
   return patchRoot(
     frame,
     prev,
@@ -178,12 +176,12 @@ export const patchFrame = (
 
 export const getFrameRects = (
   mount: HTMLElement,
-  info: PCModule.AsObject,
+  info: PCModule,
   index: number
 ) => {
   const rects: Record<string, any> = {};
 
-  const frame = getFragmentChildren(info.html)[index] as html.Node.AsObject;
+  const frame = getFragmentChildren(info.html)[index] as html.Node;
 
   // const bounds = getFrameBounds(frame);
 
@@ -221,17 +219,17 @@ export const getFrameRects = (
 
 const patchRoot = (
   frame: HTMLElement,
-  prevInfo: PCModule.AsObject,
-  newInfo: PCModule.AsObject,
-  prevVirtNode: html.Node.AsObject,
-  currVirtNode: html.Node.AsObject,
+  prevInfo: PCModule,
+  newInfo: PCModule,
+  prevVirtNode: html.Node,
+  currVirtNode: html.Node,
   options: RenderFrameOptions
 ) => {
   if (prevInfo.css !== newInfo.css) {
     patchDocumentSheet(frame, prevInfo, newInfo, options);
   }
 
-  if (prevInfo.importsList !== newInfo.importsList) {
+  if (prevInfo.imports !== newInfo.imports) {
     patchImportedSheets(frame, prevInfo, newInfo, options);
   }
 
@@ -250,8 +248,8 @@ const patchRoot = (
 
 const patchDocumentSheet = (
   frame: HTMLElement,
-  prev: PCModule.AsObject,
-  curr: PCModule.AsObject,
+  prev: PCModule,
+  curr: PCModule,
   options: RenderFrameOptions
 ) => {
   const styleContainer = frame.childNodes[DOC_STYLE_INDEX] as HTMLDivElement;
@@ -261,8 +259,8 @@ const patchDocumentSheet = (
 
 const patchStyleElement = (
   styleElement: HTMLStyleElement,
-  prevSheet: css.Document.AsObject,
-  newSheet: css.Document.AsObject,
+  prevSheet: css.Document,
+  newSheet: css.Document,
   options: RenderFrameOptions
 ) => {
   if (styleElement.sheet) {
@@ -286,15 +284,15 @@ const calcAryPatch = <TItem>(oldItems: TItem[], newItems: TItem[]) => {
 
 const patchImportedSheets = (
   frame: HTMLElement,
-  prev: PCModule.AsObject,
-  curr: PCModule.AsObject,
+  prev: PCModule,
+  curr: PCModule,
   options: RenderFrameOptions
 ) => {
   const styleContainer = frame.childNodes[IMP_STYLE_INDEX] as HTMLDivElement;
 
   const { update, insert, removeCount } = calcAryPatch(
-    prev.importsList,
-    curr.importsList
+    prev.imports,
+    curr.imports
   );
 
   for (let i = 0; i < update.length; i++) {
@@ -330,13 +328,13 @@ const patchImportedSheets = (
 
 const patchCSSStyleSheet = (
   sheet: CSSStyleSheet,
-  prevSheet: css.Document.AsObject,
-  newSheet: css.Document.AsObject,
+  prevSheet: css.Document,
+  newSheet: css.Document,
   options: RenderFrameOptions
 ) => {
   const { update, insert, removeCount } = calcAryPatch(
-    prevSheet.rulesList,
-    newSheet.rulesList
+    prevSheet.rules,
+    newSheet.rules
   );
 
   for (let i = 0; i < update.length; i++) {
@@ -367,14 +365,14 @@ const insertRule = (sheet: CSSStyleSheet, rule: string, index?: number) => {
   }
 };
 
-const isNodeKindSame = (a: html.Node.AsObject, b: html.Node.AsObject) => {
+const isNodeKindSame = (a: html.Node, b: html.Node) => {
   return (a.element && b.element) || (a.textNode && b.textNode);
 };
 
 const patchNode = (
   node: HTMLElement | Text,
-  prevVirtNode: html.Node.AsObject,
-  currVirtNode: html.Node.AsObject,
+  prevVirtNode: html.Node,
+  currVirtNode: html.Node,
   options: RenderFrameOptions
 ) => {
   if (prevVirtNode === currVirtNode) {
@@ -415,33 +413,28 @@ const patchNode = (
 
 const patchElement = (
   node: HTMLElement,
-  prev: html.Element.AsObject,
-  curr: html.Element.AsObject,
+  prev: html.Element,
+  curr: html.Element,
   options: RenderFrameOptions
 ) => {
   patchAttributes(node, prev, curr, options);
-  patchChildren(
-    node as HTMLElement,
-    prev.childrenList,
-    curr.childrenList,
-    options
-  );
+  patchChildren(node as HTMLElement, prev.children, curr.children, options);
 };
 
 const patchAttributes = (
   node: HTMLElement,
-  prev: html.Element.AsObject,
-  curr: html.Element.AsObject,
+  prev: html.Element,
+  curr: html.Element,
   options: RenderFrameOptions
 ) => {
-  for (let { name: key, value } of curr.attributesList) {
+  for (let { name: key, value } of curr.attributes) {
     if (key === "src" && options.resolveUrl) {
       value = options.resolveUrl(value);
     }
     node.setAttribute(key, value);
   }
-  for (const { name: key } of prev.attributesList) {
-    if (!curr.attributesList.some((b) => b.name === key)) {
+  for (const { name: key } of prev.attributes) {
+    if (!curr.attributes.some((b) => b.name === key)) {
       node.removeAttribute(key);
     }
   }
@@ -449,8 +442,8 @@ const patchAttributes = (
 
 const patchChildren = (
   parent: HTMLElement,
-  prev: html.Node.AsObject[],
-  curr: html.Node.AsObject[],
+  prev: html.Node[],
+  curr: html.Node[],
   options: RenderFrameOptions
 ) => {
   const low = Math.min(prev.length, curr.length);

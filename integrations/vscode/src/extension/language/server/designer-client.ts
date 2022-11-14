@@ -4,16 +4,18 @@ import * as execa from "execa";
 import * as waitPort from "wait-port";
 import * as URL from "url";
 global.XMLHttpRequest = require("xhr2");
-import { service } from "@paperclip-ui/proto/lib/service/designer";
+import {
+  DesignerClientImpl,
+  GrpcWebImpl,
+} from "@paperclip-ui/proto/lib/service/designer";
 import { loadCLIBinPath } from "@paperclip-ui/releases";
 import {
   FileRequest,
   UpdateFileRequest,
-} from "@paperclip-ui/proto/lib/service/designer_pb";
-import { DocumentInfo } from "@paperclip-ui/proto/lib/language_service/pc_pb";
-
+} from "@paperclip-ui/proto/lib/service/designer";
+import { DocumentInfo } from "@paperclip-ui/proto/lib/language_service/pc";
 export class DesignerClient {
-  private _client: Deferred<service.designer.DesignerClient>;
+  private _client: Deferred<DesignerClientImpl>;
   private _port: number;
   constructor() {
     this._client = new Deferred();
@@ -25,9 +27,8 @@ export class DesignerClient {
   private async _start() {
     this._port = await startDesignServer();
     this._client.resolve(
-      new service.designer.DesignerClient(
-        `http://localhost:${this._port}`,
-        null
+      new DesignerClientImpl(
+        new GrpcWebImpl(`http://localhost:${this._port}`, {})
       )
     );
   }
@@ -36,26 +37,23 @@ export class DesignerClient {
   }
   async updateVirtualFileContent(url: string, text: string) {
     const client = await this._client.promise;
-    const request = new UpdateFileRequest();
-    const content = new TextEncoder();
-    request.setPath(URL.fileURLToPath(url)).setContent(content.encode(text));
     return new Promise((resolve, reject) => {
-      client.UpdateFile(request, {}, (err, response) => {
-        if (err) return reject(err);
-        resolve(response);
-      });
+      const content = new TextEncoder();
+      client
+        .UpdateFile({
+          path: URL.fileURLToPath(url),
+          content: content.encode(text),
+        })
+        .then(resolve, reject);
     });
   }
 
-  async getDocumentInfo(url: string): Promise<DocumentInfo.AsObject> {
+  async getDocumentInfo(url: string): Promise<DocumentInfo> {
     const client = await this._client.promise;
-    const request = new FileRequest();
-    request.setPath(URL.fileURLToPath(url));
     return new Promise((resolve, reject) => {
-      client.GetDocumentInfo(request, {}, (err, response) => {
-        if (err) return reject(err);
-        resolve(response.toObject());
-      });
+      client
+        .GetDocumentInfo({ path: URL.fileURLToPath(url) })
+        .then(resolve, reject);
     });
   }
 }

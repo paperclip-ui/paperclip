@@ -1,5 +1,3 @@
-import * as proto from "@paperclip-ui/proto/lib/virt/html_pb";
-
 export interface NodeFactory {
   createElement(tagName: string): HTMLElement;
   createElementNS(ns: string, tagName: string): Element;

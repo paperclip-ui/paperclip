@@ -1,9 +1,9 @@
-import { FileResponse } from "@paperclip-ui/proto/lib/service/designer_pb";
+import { FileResponse } from "@paperclip-ui/proto/lib/service/designer";
 import { pickBy } from "lodash";
 import {
   Node,
   Document as HTMLDocument,
-} from "@paperclip-ui/proto/lib/virt/html_pb";
+} from "@paperclip-ui/proto/lib/virt/html";
 import { DesignerEngineState } from "../engine/designer/state";
 import {
   Box,
@@ -67,7 +67,7 @@ export type EditorState = {
   expandedNodePaths: string[];
   optionKeyDown: boolean;
   centeredInitial: boolean;
-  currentDocument?: FileResponse.AsObject;
+  currentDocument?: FileResponse;
   rects: Record<number, Record<string, Box>>;
   canvas: Canvas;
 } & DesignerEngineState;
@@ -197,29 +197,27 @@ export const getCurrentPreviewFrameBoxes = (editor: EditorState) => {
   return preview ? getPreviewFrameBoxes(preview).filter(Boolean) : [];
 };
 
-const getPreviewFrameBoxes = (preview: HTMLDocument.AsObject) => {
+const getPreviewFrameBoxes = (preview: HTMLDocument) => {
   const currentPreview = preview;
-  const frameBoxes = getPreviewChildren(currentPreview).map(
-    (frame: Node.AsObject) => {
-      const metadata = getInnerNode(frame).metadata;
-      const box = metadata?.bounds || DEFAULT_FRAME_BOX;
-      if (metadata?.visible === false) {
-        return null;
-      }
-      return { ...DEFAULT_FRAME_BOX, ...box };
+  const frameBoxes = getPreviewChildren(currentPreview).map((frame: Node) => {
+    const metadata = getInnerNode(frame).metadata;
+    const box = metadata?.bounds || DEFAULT_FRAME_BOX;
+    if (metadata?.visible === false) {
+      return null;
     }
-  );
+    return { ...DEFAULT_FRAME_BOX, ...box };
+  });
 
   return frameBoxes;
 };
 
-const getInnerNode = (node: Node.AsObject) => node.element || node.textNode;
+const getInnerNode = (node: Node) => node.element || node.textNode;
 
 export const getCanvas = (editor: EditorState) => editor.canvas;
 
-export const getPreviewChildren = (frame: HTMLDocument.AsObject) => {
+export const getPreviewChildren = (frame: HTMLDocument) => {
   // return frame.kind === VirtualNodeKind.Fragment ? frame.children : [frame];
-  return frame.childrenList;
+  return frame.children;
 };
 
 export const flattenFrameBoxes = memoize(

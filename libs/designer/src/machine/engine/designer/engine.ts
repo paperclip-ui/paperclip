@@ -1,10 +1,9 @@
-import { service } from "@paperclip-ui/proto/lib/service/designer";
-import pb from "google-protobuf";
 import {
   ApplyMutationsRequest,
+  DesignerClientImpl,
   FileRequest,
-  InsertNodeRequest,
-} from "@paperclip-ui/proto/lib/service/designer_pb";
+  GrpcWebImpl,
+} from "@paperclip-ui/proto/lib/service/designer";
 import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent, designerEngineEvents } from "./events";
 import { DesignerEngineState } from "./state";
@@ -12,17 +11,13 @@ import { env } from "../../../env";
 import { EditorEvent, editorEvents } from "../../events";
 import { Box, Point } from "../../state/geom";
 import { EditorState, getInsertBox, InsertMode } from "../../state";
-import {
-  AppendChild,
-  Mutation,
-} from "@paperclip-ui/proto/lib/ast_mutate/mod_pb";
+import { AppendChild, Mutation } from "@paperclip-ui/proto/lib/ast_mutate/mod";
 
 export const createDesignerEngine = (
   dispatch: Dispatch<DesignerEngineEvent>
 ): Engine<DesignerEngineState, DesignerEngineEvent> => {
-  const client = new service.designer.DesignerClient(
-    env.protocol + "//" + env.host,
-    null
+  const client = new DesignerClientImpl(
+    new GrpcWebImpl(env.protocol + "//" + env.host, {})
   );
 
   const actions = createActions(client, dispatch);
@@ -42,29 +37,15 @@ type Actions = ReturnType<typeof createActions>;
  * All of the imperative actions that can be invoked in the engine
  */
 
-const createActions = (
-  client: service.designer.DesignerClient,
-  dispatch: Dispatch<any>
-) => {
+const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
   return {
-    openFile(filePath: string) {
-      const fileRequest = new FileRequest();
-      fileRequest.setPath(filePath);
-      client
-        .openFile(fileRequest)
-        .on("data", (data) => {
-          console.log("incoming");
-          dispatch(designerEngineEvents.documentOpened(data));
-        })
-        .on("error", () => {})
-        .on("end", () => {
-          console.log("END");
-        });
+    async openFile(filePath: string) {
+      for await (const data of client.OpenFile({ path: filePath })) {
+        dispatch(designerEngineEvents.documentOpened(data));
+      }
     },
-    applyChanges(mutations: Mutation[]) {
-      const request = new ApplyMutationsRequest();
-      request.setMutationsList(mutations);
-      client.applyMutations(request, null, () => {});
+    async applyChanges(mutations: Mutation[]) {
+      client.ApplyMutations({ mutations }, null);
     },
   };
 };

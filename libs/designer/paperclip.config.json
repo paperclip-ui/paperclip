@@ -4,7 +4,7 @@
   "globalScripts": ["src/styles/globals.css"],
   "compilerOptions": [
     {
-      "emit": ["yew.rs:rs", "css"],
+      "emit": ["yew.rs:rs", "css", "react.js:js", "react.d.ts:d.ts"],
       "assetOutDir": "assets"
     }
   ]

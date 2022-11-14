@@ -157,7 +157,7 @@ const useTools = () => {
 
   const hoveringBox = highlightNodePath && boxes[highlightNodePath];
 
-  const frames = currentDocument?.paperclip?.html?.childrenList || [];
+  const frames = currentDocument?.paperclip?.html?.children || [];
   const showEmpty = frames.length === 0;
 
   return {

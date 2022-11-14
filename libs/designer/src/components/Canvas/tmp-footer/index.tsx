@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   getNodeAncestors,
   getNodePath,
-} from "@paperclip-ui/proto/lib/virt/html";
+} from "@paperclip-ui/proto/lib/virt/html-utils";
 import React from "react";
 import { editorEvents } from "../../../machine/events";
 import { getEditorState } from "../../../machine/state";

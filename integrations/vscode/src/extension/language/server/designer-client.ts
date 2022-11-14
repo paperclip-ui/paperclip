@@ -9,11 +9,9 @@ import {
   GrpcWebImpl,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { loadCLIBinPath } from "@paperclip-ui/releases";
-import {
-  FileRequest,
-  UpdateFileRequest,
-} from "@paperclip-ui/proto/lib/generated/service/designer";
 import { DocumentInfo } from "@paperclip-ui/proto/lib/generated/language_service/pc";
+import { NodeHttpTransport } from "@improbable-eng/grpc-web-node-http-transport";
+
 export class DesignerClient {
   private _client: Deferred<DesignerClientImpl>;
   private _port: number;
@@ -28,7 +26,9 @@ export class DesignerClient {
     this._port = await startDesignServer();
     this._client.resolve(
       new DesignerClientImpl(
-        new GrpcWebImpl(`http://localhost:${this._port}`, {})
+        new GrpcWebImpl(`http://localhost:${this._port}`, {
+          transport: NodeHttpTransport(),
+        })
       )
     );
   }

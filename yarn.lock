@@ -87,6 +87,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@improbable-eng/grpc-web-node-http-transport@npm:^0.15.0":
+  version: 0.15.0
+  resolution: "@improbable-eng/grpc-web-node-http-transport@npm:0.15.0"
+  peerDependencies:
+    "@improbable-eng/grpc-web": ">=0.13.0"
+  checksum: 03040326dc41a613c0439a57786480d186897ef332e615909b64df6586218d0b7f191fbacaa9a4b280d093292f641321c4e89da43ba790c34c0d05a7ce7f405d
+  languageName: node
+  linkType: hard
+
 "@improbable-eng/grpc-web@npm:^0.15.0":
   version: 0.15.0
   resolution: "@improbable-eng/grpc-web@npm:0.15.0"
@@ -12350,6 +12359,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "vscode-paperclip@workspace:integrations/vscode"
   dependencies:
+    "@improbable-eng/grpc-web-node-http-transport": ^0.15.0
     "@paperclip-ui/common": "workspace:^"
     "@paperclip-ui/proto": "workspace:^"
     "@paperclip-ui/releases": "workspace:^"

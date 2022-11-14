@@ -45,6 +45,8 @@ const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
         next(data) {
           dispatch(designerEngineEvents.documentOpened(data));
         },
+        complete() {},
+        error() {},
       });
     },
     applyChanges(mutations: Mutation[]) {

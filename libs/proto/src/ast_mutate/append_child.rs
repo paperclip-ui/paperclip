@@ -15,6 +15,7 @@ impl Visitor for AppendChild {
                     .try_into()
                     .unwrap(),
             );
+            return VisitorResult::Stop
         }
         VisitorResult::Continue
     }

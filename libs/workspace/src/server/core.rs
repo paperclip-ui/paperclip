@@ -131,6 +131,7 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 let changed_files = edit_graph(&mut state.graph, mutations);
                 for path in &changed_files {
                     let content = serialize(&state.graph.dependencies.get(path).unwrap().document);
+                    println!("Edited AST {} {}", path, content);
                     state.file_cache.insert(path.to_string(), content.as_bytes().to_vec());
                 }
                 state.updated_files = changed_files;

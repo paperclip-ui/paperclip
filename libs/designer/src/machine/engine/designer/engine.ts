@@ -63,18 +63,33 @@ const createEventHandler = (actions: Actions) => {
   const handleInsert = (state: EditorState) => {
     const box = getInsertBox(state);
 
-    // const mutation = new Mutation();
-    // const appendChild = new AppendChild();
-    // appendChild.setParentId(state.currentDocument.paperclip.html.sourceId);
-    // const newNode = new Node();
-    // const element = new Element();
-    // element.setId(`${Math.random()}`);
-    // newNode.setElement(element);
-    // appendChild.setChild(newNode);
-    // mutation.setAppendChild(appendChild);
-    // actions.applyChanges([
-    //   mutation
-    // ])
+    const mutation: Mutation = {
+      appendChild: {
+        parentId: state.currentDocument.paperclip.html.sourceId,
+        child: {
+          element: {
+            tagName: "div",
+            id: `${Math.random()}`,
+            parameters: [],
+            range: null,
+            body: [],
+          },
+          text: null,
+          slot: null,
+          insert: null,
+          style: null,
+          override: null,
+        },
+      },
+      deleteChild: null,
+      setElementParameter: null,
+      insertChild: null,
+      deleteStyleDeclaration: null,
+      setTextNodeValue: null,
+      setStyleDeclaration: null,
+    };
+
+    actions.applyChanges([mutation]);
   };
 
   const handleCanvasMouseUp = (state: EditorState, prevState: EditorState) => {

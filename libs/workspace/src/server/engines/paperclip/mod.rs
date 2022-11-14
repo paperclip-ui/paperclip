@@ -42,7 +42,6 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
             load_dependency_graph(next.clone(), &vec![path.to_string()]).await.expect("Unable to load dependency");
         },
         ServerEvent::ApplyMutationRequested {mutations: _} => {
-            
             load_dependency_graph_from_updated_files(next.clone()).await.expect("Unable to load dependency");
         },
         ServerEvent::FileWatchEvent(event) => {

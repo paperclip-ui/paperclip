@@ -10,6 +10,7 @@ name = "paperclip_editor"
 
 [dependencies]
 paperclip_proto = { path = "../proto" }
+paperclip_proto_ext = { path = "../proto_ext" }
 paperclip_parser = { path = "../parser" }
 paperclip_common = { path = "../rs-common" }
 futures = "0.3.25"

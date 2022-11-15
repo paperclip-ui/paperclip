@@ -1,8 +1,10 @@
-use super::base::*;
+use paperclip_proto::ast::all::{Expression};
+use paperclip_proto::ast;
+use paperclip_proto::ast_mutate::AppendChild;
+
 use crate::ast::{
-    self,
     all::Visitor,
-    all::{Expression, VisitorResult},
+    all::{VisitorResult},
 };
 
 impl Visitor for AppendChild {

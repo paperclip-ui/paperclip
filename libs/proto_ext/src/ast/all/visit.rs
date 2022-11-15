@@ -1,8 +1,6 @@
-// use super::MutableExpressionRef;
-// use super::{Expression};
-pub use super::super::base;
-pub use super::super::docco;
-pub use super::super::pc;
+pub use paperclip_proto::ast::base;
+pub use paperclip_proto::ast::docco;
+pub use paperclip_proto::ast::pc;
 
 macro_rules! visitable {
 (

@@ -1,5 +1,5 @@
 pub use paperclip_parser::graph;
-pub use paperclip_proto::ast::all::{Visitable, VisitorResult};
+pub use paperclip_proto_ext::ast::all::{Visitable, VisitorResult};
 pub use paperclip_proto::ast_mutate::Mutation;
 
 pub fn edit_graph(graph: &mut graph::Graph, mutations: &Vec<Mutation>) -> Vec<String> {

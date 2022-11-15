@@ -12,6 +12,7 @@ members = [
   "libs/workspace",
   "libs/infer",
   "libs/proto",
+  "libs/proto_ext",
   "libs/config",
   "libs/language-services"
 ]

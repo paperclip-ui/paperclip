@@ -26,7 +26,7 @@ fn serialize_text(text: &base_ast::Str, context: &mut Context) {
 }
 
 fn serialize_property(prop: &ast::Property, context: &mut Context) {
-    context.add_buffer(format!(" * @{}", prop.name).as_str());
+    context.add_buffer(format!("@{}", prop.name).as_str());
     match &prop.value.as_ref().expect("value must exist").get_inner() {
         ast::property_value::Inner::Str(value) => {
             context.add_buffer(" ");

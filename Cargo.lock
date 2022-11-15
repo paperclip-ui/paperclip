@@ -1421,6 +1421,7 @@ dependencies = [
  "paperclip_common",
  "paperclip_parser",
  "paperclip_proto",
+ "paperclip_proto_ext",
 ]
 
 [[package]]
@@ -1512,6 +1513,13 @@ dependencies = [
  "serde",
  "tonic",
  "tonic-build",
+]
+
+[[package]]
+name = "paperclip_proto_ext"
+version = "0.1.1"
+dependencies = [
+ "paperclip_proto",
 ]
 
 [[package]]

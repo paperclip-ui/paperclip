@@ -79,23 +79,10 @@ const createEventHandler = (actions: Actions) => {
             tagName: "div",
             id: `${Math.random()}`,
             parameters: [],
-            range: null,
             body: [],
           },
-          text: null,
-          slot: null,
-          insert: null,
-          style: null,
-          override: null,
         },
       },
-      setFrameBounds: null,
-      deleteChild: null,
-      setElementParameter: null,
-      insertChild: null,
-      deleteStyleDeclaration: null,
-      setTextNodeValue: null,
-      setStyleDeclaration: null,
     };
 
     actions.applyChanges([mutation]);
@@ -129,13 +116,6 @@ const createEventHandler = (actions: Actions) => {
             : node.sourceId,
           bounds: newBounds,
         },
-        appendChild: null,
-        deleteChild: null,
-        setElementParameter: null,
-        insertChild: null,
-        deleteStyleDeclaration: null,
-        setTextNodeValue: null,
-        setStyleDeclaration: null,
       };
       actions.applyChanges([mutation]);
     }

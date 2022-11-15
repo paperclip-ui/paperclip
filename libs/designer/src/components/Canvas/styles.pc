@@ -26,10 +26,13 @@ public component Inner {
 
 
 /**
- * @bounds(width: 1000, height: 1000, x: 0, y: 0)
+ * @bounds(x: 1186, y: -153, width: 1000, height: 1000)
  */
 Canvas canv {
   TmpFooter {
     text "Hello wold"
   }
+}
+div {
+  text "Hello"
 }

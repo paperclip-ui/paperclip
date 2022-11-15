@@ -46,17 +46,21 @@ fn evaluate_document<F: FileResolver>(
                 if context.options.include_components {
                     evaluate_component::<F>(component, &mut children, &metadata, context);
                 }
+                metadata = None;
             }
             ast::document_body_item::Inner::Element(element) => {
                 evaluate_element::<F>(element, &mut children, &metadata, context, false);
+                metadata = None;
             }
             ast::document_body_item::Inner::DocComment(doc_comment) => {
                 metadata = Some(evaluate_comment_metadata(doc_comment));
             }
             ast::document_body_item::Inner::Text(text_node) => {
                 evaluate_text_node(text_node, &mut children, &metadata, context);
+                metadata = None;
             }
-            _ => {}
+            _ => {
+            }
         }
     }
 

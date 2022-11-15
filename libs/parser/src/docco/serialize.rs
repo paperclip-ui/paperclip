@@ -18,7 +18,7 @@ pub fn serialize_comment(comment: &ast::Comment, context: &mut Context) {
             }
         }
     }
-    context.add_buffer(" */");
+    context.add_buffer("*/");
 }
 
 fn serialize_text(text: &base_ast::Str, context: &mut Context) {

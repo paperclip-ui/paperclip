@@ -12,7 +12,7 @@ use std::str;
 type ParserContext<'tokenizer, 'scanner, 'idgenerator, 'src> =
     Context<'tokenizer, 'scanner, 'idgenerator, 'src, Token<'src>>;
 
-pub fn parse<'src>(source: &'src str, url: &String) -> Result<ast::Comment, ParserError> {
+pub fn parse<'src>(source: &'src str, url: &str) -> Result<ast::Comment, ParserError> {
     let mut scanner = StringScanner::new(source);
     let mut id_generator = IDGenerator::new(get_document_id(url));
     parse_with_string_scanner(&mut scanner, &mut id_generator, url)
@@ -21,7 +21,7 @@ pub fn parse<'src>(source: &'src str, url: &String) -> Result<ast::Comment, Pars
 pub fn parse_with_string_scanner<'src, 'scanner, 'idgenerator>(
     source: &'scanner mut StringScanner<'src>,
     id_generator: &'idgenerator mut IDGenerator,
-    url: &String,
+    url: &str,
 ) -> Result<ast::Comment, ParserError> {
     let mut context = Context::new(source, url, &next_token, id_generator)?;
     parse_comment(&mut context)

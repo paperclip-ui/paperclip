@@ -1,11 +1,8 @@
-use paperclip_proto::ast::all::{Expression};
 use paperclip_proto::ast;
+use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast_mutate::AppendChild;
 
-use crate::ast::{
-    all::Visitor,
-    all::{VisitorResult},
-};
+use crate::ast::{all::Visitor, all::VisitorResult};
 
 impl Visitor for AppendChild {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult {

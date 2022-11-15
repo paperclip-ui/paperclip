@@ -22,7 +22,7 @@ impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone>
 {
     pub fn new(
         scanner: &'scanner mut StringScanner<'src>,
-        source_url: &String,
+        source_url: &str,
         _next_token: &'tokenizer NextToken<'src, TToken>,
         id_generator: &'idgenerator mut IDGenerator,
     ) -> Result<Context<'tokenizer, 'scanner, 'idgenerator, 'src, TToken>, ParserError> {

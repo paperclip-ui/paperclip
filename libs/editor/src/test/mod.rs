@@ -3,7 +3,7 @@ use futures::executor::block_on;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::{graph, pc};
 use paperclip_proto::ast;
-use paperclip_proto::ast_mutate::{mutation, AppendChild};
+use paperclip_proto::ast_mutate::{mutation, AppendChild, Bounds, SetFrameBounds};
 use std::collections::HashMap;
 
 macro_rules! case {
@@ -114,6 +114,32 @@ case! {
       div {
         text "something"
       }
+    "#
+  )]
+}
+
+case! {
+  can_change_the_frame_bounds_of_a_document_element,
+  [(
+    "/entry.pc", r#"
+      div
+    "#
+  )],
+  mutation::Inner::SetFrameBounds(SetFrameBounds {
+    frame_id: "80f4925f-1".to_string(),
+    bounds: Some(Bounds {
+      x: 100.0,
+      y: 200.0,
+      width: 300.0,
+      height: 400.0
+    })
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      /**
+       * @bounds(x: 100, y: 200, width: 300, height: 400)
+       */
+      div
     "#
   )]
 }

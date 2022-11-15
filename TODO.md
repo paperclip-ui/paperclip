@@ -1,8 +1,6 @@
 #### On-deck
 
-- separate proto from impl
-  - proto_ext
-- use parser for mutations
+- ability to create a frame
 
 - JavaScript API
 

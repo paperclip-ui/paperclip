@@ -16,11 +16,7 @@ impl Visitor for SetFrameBounds {
 
             let new_comment = parse_comment(
                 format!(
-                    r#"
-                /**
-                 * @bounds(x: {}, y: {}, width: {}, height: {})
-                 */
-            "#,
+                    "/**\n * @bounds(x: {}, y: {}, width: {}, height: {})\n*/",
                     bounds.x, bounds.y, bounds.width, bounds.height
                 )
                 .trim(),

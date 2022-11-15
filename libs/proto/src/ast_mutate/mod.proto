@@ -17,13 +17,14 @@ message Mutation {
     // Element
     SetElementParameter set_element_parameter = 4;
     SetFrameBounds set_frame_bounds = 5;
+    InsertFrame insert_frame = 6;
 
     // Text
-    SetTextNodeValue set_text_node_value = 6;
+    SetTextNodeValue set_text_node_value = 7;
 
     // Style
-    SetStyleDeclaration set_style_declaration = 7;
-    DeleteStyleDeclaration delete_style_declaration = 8;
+    SetStyleDeclaration set_style_declaration = 8;
+    DeleteStyleDeclaration delete_style_declaration = 9;
   }
 }
 
@@ -57,6 +58,11 @@ message SetElementParameter {
   string element_id = 1;
   string parameter_name = 2;
   ast.pc.SimpleExpression parameter_value = 3;
+}
+
+message InsertFrame {
+  ast.pc.Node node = 1;
+  Bounds bounds = 2;
 }
 
 message SetTextNodeValue {

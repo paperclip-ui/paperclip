@@ -9,7 +9,7 @@ pub fn serialize(comment: &ast::Comment) -> String {
 }
 
 pub fn serialize_comment(comment: &ast::Comment, context: &mut Context) {
-    context.add_buffer("/**\n");
+    context.add_buffer("/**");
     for item in &comment.body {
         match &item.get_inner() {
             ast::comment_body_item::Inner::Text(text) => serialize_text(text, context),
@@ -36,7 +36,6 @@ fn serialize_property(prop: &ast::Property, context: &mut Context) {
             serialize_parameters(value, context);
         }
     }
-    context.add_buffer("\n");
 }
 
 fn serialize_string(value: &base_ast::Str, context: &mut Context) {

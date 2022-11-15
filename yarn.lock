@@ -1437,6 +1437,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@paperclip-ui/proto-ext@workspace:libs/proto_ext":
+  version: 0.0.0-use.local
+  resolution: "@paperclip-ui/proto-ext@workspace:libs/proto_ext"
+  languageName: unknown
+  linkType: soft
+
 "@paperclip-ui/proto@^19.0.10, @paperclip-ui/proto@workspace:^, @paperclip-ui/proto@workspace:libs/proto":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/proto@workspace:libs/proto"

@@ -1,12 +1,9 @@
 #### On-deck
 
-- ability to create a frame
-- integration tests for workspace!!!
+- integration tests for workspace
 
-- JavaScript API
-
-  - flesh out editing API for all scenarios
-  - perhaps include box model + styles for more enhanced functionality
+- ability to delete frames
+- start on style panel
 
 - insert elements
 

@@ -30,6 +30,11 @@ impl Visitor for SetFrameBounds {
                         item.get_inner_mut()
                     {
                         std::mem::replace(comment, new_comment);
+                    } else {
+                        expr.body.insert(
+                            frame_index,
+                            ast::pc::document_body_item::Inner::DocComment(new_comment).get_outer(),
+                        );
                     }
                 }
             } else {

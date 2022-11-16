@@ -497,7 +497,7 @@ export const getUniqueNodeName = (node: Node, document: Document) => {
   return getCleanedName(node.name) + "-" + kebabCase(node.id);
 };
 
-export const getNodePath = memoize((node: Node, root: Node) => {
+export const getNodePath = memoize((node: Node, root: Node | Document) => {
   const childParentMap = getChildParentMap(root);
   const idMap = getTreeNodeIdMap(root);
   let current = idMap[node.id];

@@ -1,27 +1,16 @@
 // core tree utils
 
 import { memoize } from "@paperclip-ui/common";
+import * as virt from "../generated/virt/html";
 
 export type InnerVirtNode = {
-  id: string;
+  id?: string;
   children?: OuterNode[];
 };
 
-type VirtElement = {
-  id: string;
-  sourceId?: string;
-};
-
-type VirtText = {
-  id: string;
-  sourceId?: string;
-  value: string;
-  metadata?: any;
-};
-
 export type OuterNode = {
-  element?: VirtElement;
-  textNode?: VirtText;
+  element?: virt.Element | undefined;
+  textNode?: virt.TextNode | undefined;
 };
 
 export const getInnerNode = (node: OuterNode) => {
@@ -113,5 +102,5 @@ export const getInstanceAncestor = (node: InnerVirtNode, root: InnerVirtNode) =>
   getNodeAncestors(getNodePath(node, root), root).find(isInstance);
 
 export const isInstance = (_node: InnerVirtNode) => false;
-export const isTextNode = (node: any): node is VirtText =>
+export const isTextNode = (node: any): node is virt.TextNode =>
   (node as any).value != null;

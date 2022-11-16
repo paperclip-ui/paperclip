@@ -1,4 +1,5 @@
 mod append_child;
+mod insert_frame;
 mod set_frame_bounds;
 use crate::ast::all::{Visitable, Visitor, VisitorResult};
 pub use append_child::*;
@@ -28,6 +29,7 @@ macro_rules! mutations {
 }
 
 mutations! {
+  InsertFrame,
   AppendChild,
   SetFrameBounds
 }

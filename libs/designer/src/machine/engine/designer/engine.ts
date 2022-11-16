@@ -7,20 +7,14 @@ import { DesignerEngineEvent, designerEngineEvents } from "./events";
 import { DesignerEngineState } from "./state";
 import { env } from "../../../env";
 import { EditorEvent, editorEvents } from "../../events";
-import { Box, Point } from "../../state/geom";
-import { EditorState, getInsertBox, InsertMode } from "../../state";
-import {
-  AppendChild,
-  Mutation,
-} from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
-import {
-  getNodeByPath,
-  InnerVirtNode,
-} from "@paperclip-ui/proto/lib/virt/html-utils";
+import { EditorState, getInsertBox } from "../../state";
+import { Mutation } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
+import { getNodeByPath } from "@paperclip-ui/proto/lib/virt/html-utils";
 import {
   Element as VirtElement,
   TextNode as VirtTextNode,
 } from "@paperclip-ui/proto/lib/generated/virt/html";
+import { getScaledBox } from "../../state/geom";
 
 export const createDesignerEngine = (
   dispatch: Dispatch<DesignerEngineEvent>
@@ -69,12 +63,13 @@ const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
 
 const createEventHandler = (actions: Actions) => {
   const handleInsert = (state: EditorState) => {
-    const box = getInsertBox(state);
+    const bounds = getScaledBox(getInsertBox(state), state.canvas.transform);
 
     const mutation: Mutation = {
-      appendChild: {
-        parentId: state.currentDocument.paperclip.html.sourceId,
-        child: {
+      insertFrame: {
+        documentId: state.currentDocument.paperclip.html.sourceId,
+        bounds,
+        node: {
           element: {
             tagName: "div",
             id: `${Math.random()}`,

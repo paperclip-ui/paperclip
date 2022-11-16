@@ -1,6 +1,7 @@
 #### On-deck
 
 - ability to create a frame
+- integration tests for workspace!!!
 
 - JavaScript API
 

@@ -59,8 +59,7 @@ fn evaluate_document<F: FileResolver>(
                 evaluate_text_node(text_node, &mut children, &metadata, context);
                 metadata = None;
             }
-            _ => {
-            }
+            _ => {}
         }
     }
 

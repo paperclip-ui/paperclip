@@ -183,7 +183,12 @@ export const getFrameRects = (
 
   const frame = info.html.children[index] as html.Node;
 
-  const bounds = getFrameBounds(frame) || { x: 0, y: 0, width: 0, height: 0 };
+  const bounds = getFrameBounds(frame) || {
+    x: 0,
+    y: 0,
+    width: 1024,
+    height: 768,
+  };
 
   // mount child node _is_ the frame -- can only ever be one child
   traverseNativeNode(
@@ -212,7 +217,7 @@ export const getFrameRects = (
   );
 
   // include frame sizes too
-  // rects[index] = bounds;
+  rects[index] = bounds;
 
   return rects;
 };

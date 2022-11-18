@@ -1,5 +1,6 @@
 #### On-deck
 
+- select node IDs instead of paths
 - integration tests for workspace
 
 - select frame when inserted

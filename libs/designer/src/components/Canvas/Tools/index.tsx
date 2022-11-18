@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   flattenFrameBoxes,
   getEditorState,
+  getSelectedNodePaths,
   InsertMode,
 } from "../../../machine/state";
 import { editorEvents } from "../../../machine/events";
@@ -93,7 +94,7 @@ const useTools = () => {
   const dispatch = useDispatch();
   const {
     canvas,
-    selectedNodePaths,
+    selectedVirtNodeIds,
     highlightNodePath,
     optionKeyDown,
     resizerMoving,
@@ -103,6 +104,8 @@ const useTools = () => {
     currentDocument,
   } = useSelector(getEditorState);
   const toolsLayerEnabled = !canvas.isExpanded;
+
+  const selectedNodePaths = useSelector(getSelectedNodePaths);
 
   const getMousePoint = (event) => {
     const rect: ClientRect = (

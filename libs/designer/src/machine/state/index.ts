@@ -16,6 +16,10 @@ import {
   Transform,
 } from "./geom";
 import { memoize } from "@paperclip-ui/common";
+import {
+  getNodeById,
+  getNodePath,
+} from "@paperclip-ui/proto/lib/virt/html-utils";
 export const IS_WINDOWS = false;
 
 export enum InsertMode {
@@ -51,7 +55,7 @@ export type StyleOverrides = Record<string, Record<string, string | number>>;
 export type EditorState = {
   readonly: boolean;
   scopedElementPath?: string;
-  selectedNodePaths: string[];
+  selectedVirtNodeIds: string[];
   insertMode?: InsertMode;
   highlightNodePath?: string;
 
@@ -80,7 +84,7 @@ export const DEFAULT_STATE: EditorState = {
   scopedElementPath: null,
   expandedNodePaths: [],
   centeredInitial: false,
-  selectedNodePaths: [],
+  selectedVirtNodeIds: [],
   canvas: {
     transform: { x: 0, y: 0, z: 1 },
     scrollPosition: { x: 0, y: 0 },
@@ -183,8 +187,12 @@ export const centerEditorCanvas = (
 const getAllFrameBounds = (designer: EditorState) => {
   return mergeBoxes(getCurrentPreviewFrameBoxes(designer));
 };
-export const getSelectedNodePaths = (designer: EditorState) =>
-  designer.selectedNodePaths;
+export const getSelectedNodePaths = (designer: EditorState) => {
+  return designer.selectedVirtNodeIds.map((id) => {
+    const node = getNodeById(id, designer.currentDocument.paperclip.html);
+    return getNodePath(node, designer.currentDocument.paperclip.html);
+  });
+};
 export const getHighlightedNodePath = (designer: EditorState) =>
   designer.highlightNodePath;
 export const getResizerMoving = (designer: EditorState) =>

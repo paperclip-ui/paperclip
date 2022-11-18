@@ -56,6 +56,16 @@ export const getNodeByPath = memoize(
     return getTreeNodeMap(root)[nodePath];
   }
 );
+export const getNodeById = memoize(
+  <TNode extends BaseTreeNode>(id: string, root: TNode) => {
+    const map = getTreeNodeMap(root);
+    for (const path in map) {
+      if (map[path].id === id) {
+        return map[path];
+      }
+    }
+  }
+);
 
 export const getNodeAncestors = memoize(
   <TNode extends BaseTreeNode>(nodePath: string, root: TNode) => {

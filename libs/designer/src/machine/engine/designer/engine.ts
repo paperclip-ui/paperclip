@@ -9,7 +9,10 @@ import { env } from "../../../env";
 import { EditorEvent, editorEvents } from "../../events";
 import { EditorState, getInsertBox } from "../../state";
 import { Mutation } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
-import { getNodeByPath } from "@paperclip-ui/proto/lib/virt/html-utils";
+import {
+  getNodeById,
+  getNodePath,
+} from "@paperclip-ui/proto/lib/virt/html-utils";
 import {
   Element as VirtElement,
   TextNode as VirtTextNode,
@@ -93,8 +96,8 @@ const createEventHandler = (actions: Actions) => {
     state: EditorState,
     prevState: EditorState
   ) => {
-    const node = getNodeByPath(
-      prevState.selectedNodePaths[0],
+    const node = getNodeById(
+      prevState.selectedVirtNodeIds[0],
       prevState.currentDocument.paperclip.html
     ) as VirtTextNode | VirtElement;
     const mutation: Mutation = {
@@ -110,12 +113,14 @@ const createEventHandler = (actions: Actions) => {
     state: EditorState,
     prevState: EditorState
   ) => {
-    const node = getNodeByPath(
-      prevState.selectedNodePaths[0],
+    const node = getNodeById(
+      prevState.selectedVirtNodeIds[0],
       prevState.currentDocument.paperclip.html
     ) as VirtTextNode | VirtElement;
 
-    if (prevState.selectedNodePaths[0].includes(".")) {
+    const path = getNodePath(node, prevState.currentDocument.paperclip.html);
+
+    if (path.includes(".")) {
       console.warn("Not implemented yet");
     } else {
       const newBounds = node.metadata.bounds;

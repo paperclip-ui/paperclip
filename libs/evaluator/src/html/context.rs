@@ -46,9 +46,6 @@ impl<'graph, 'expr, 'file_resolver, FR: FileResolver>
             instance_ids: vec![],
         }
     }
-    pub fn next_id(&self) -> String {
-        self.id_generator.borrow_mut().new_id()
-    }
     pub fn with_data(&self, data: core_virt::Obj) -> Self {
         let mut clone = self.clone();
         clone.data = Some(data);

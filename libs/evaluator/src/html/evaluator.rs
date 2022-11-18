@@ -7,6 +7,7 @@ use paperclip_common::fs::FileResolver;
 use paperclip_parser::graph;
 use paperclip_parser::graph::reference::ComponentRefInfo;
 use paperclip_parser::pc::ast;
+use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::docco as docco_ast;
 use paperclip_proto::virt::html::Bounds;
 use std::collections::BTreeMap;
@@ -64,7 +65,7 @@ fn evaluate_document<F: FileResolver>(
     }
 
     virt::Document {
-        id: context.next_id(),
+        id: get_virt_id(document.get_id(), &context.instance_ids),
         source_id: Some(document.id.to_string()),
         children,
     }
@@ -319,6 +320,14 @@ fn evaluate_render<F: FileResolver>(
     );
 }
 
+fn get_virt_id(expr_id: &str, instance_path: &Vec<String>) -> String {
+    if instance_path.len() == 0 {
+        expr_id.to_string()
+    } else {
+        format!("{}.{}", expr_id, instance_path.join("."))
+    }
+}
+
 fn evaluate_native_element<F: FileResolver>(
     element: &ast::Element,
     fragment: &mut Vec<virt::Node>,
@@ -334,7 +343,7 @@ fn evaluate_native_element<F: FileResolver>(
 
     fragment.push(
         virt::node::Inner::Element(virt::Element {
-            id: context.next_id(),
+            id: get_virt_id(element.get_id(), &context.instance_ids),
             tag_name: element.tag_name.to_string(),
             source_id: Some(element.id.to_string()),
             source_instance_ids: context.instance_ids.clone(),
@@ -525,7 +534,7 @@ fn evaluate_text_node<F: FileResolver>(
             get_style_namespace(&text_node.name, &text_node.id, context.current_component);
 
         virt::node::Inner::Element(virt::Element {
-            id: context.next_id(),
+            id: format!("outer-{}", get_virt_id(text_node.get_id(), &context.instance_ids)),
             tag_name: "span".to_string(),
             source_id: Some(text_node.id.to_string()),
             source_instance_ids: context.instance_ids.clone(),
@@ -536,7 +545,7 @@ fn evaluate_text_node<F: FileResolver>(
             }],
             metadata: metadata.clone(),
             children: vec![virt::node::Inner::TextNode(virt::TextNode {
-                id: context.next_id(),
+                id: format!("inner-{}", get_virt_id(text_node.get_id(), &context.instance_ids)),
                 source_id: Some(text_node.id.to_string()),
                 source_instance_ids: context.instance_ids.clone(),
                 value: text_node.value.to_string(),
@@ -547,7 +556,7 @@ fn evaluate_text_node<F: FileResolver>(
         .get_outer()
     } else {
         virt::node::Inner::TextNode(virt::TextNode {
-            id: context.next_id(),
+            id: format!("inner-{}", get_virt_id(text_node.get_id(), &context.instance_ids)),
             source_id: Some(text_node.id.to_string()),
             source_instance_ids: context.instance_ids.clone(),
             value: text_node.value.to_string(),

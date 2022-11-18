@@ -115,8 +115,6 @@ export const editorReducer = (
         state.canvas.isExpanded ? state.canvas.activeFrame : null
       )?.nodePath;
 
-      console.log("NODE AT POIINT", nodePath);
-
       return selectNode(
         nodePath,
         event.payload.shiftKey,

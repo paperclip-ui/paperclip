@@ -110,6 +110,7 @@ const createEventHandler = (actions: Actions) => {
       prevState.selectedVirtNodeIds[0],
       prevState.currentDocument.paperclip.html
     ) as VirtTextNode | VirtElement;
+
     const mutation: Mutation = {
       deleteExpression: {
         expressionId: node.sourceId,

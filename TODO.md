@@ -3,6 +3,7 @@
 - integration tests for workspace
 
 - ability to delete frames
+- select frame when inserted
 - start on style panel
 
 - insert elements

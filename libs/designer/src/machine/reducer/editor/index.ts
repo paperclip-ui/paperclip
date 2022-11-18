@@ -57,6 +57,10 @@ export const editorReducer = (
       return produce(state, (newState) => {
         newState.insertMode = InsertMode.Element;
       });
+    case editorEvents.deleteHokeyPressed.type:
+      return produce(state, (newState) => {
+        newState.selectedNodePaths = [];
+      });
     case editorEvents.canvasMouseUp.type: {
       return produce(state, (newState) => {
         newState.insertMode = null;

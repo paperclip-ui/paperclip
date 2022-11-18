@@ -3,7 +3,7 @@ use futures::executor::block_on;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::{graph, pc};
 use paperclip_proto::ast;
-use paperclip_proto::ast_mutate::{mutation, AppendChild, Bounds, SetFrameBounds};
+use paperclip_proto::ast_mutate::{mutation, AppendChild, Bounds, SetFrameBounds, DeleteExpression};
 use std::collections::HashMap;
 
 macro_rules! case {
@@ -140,6 +140,65 @@ case! {
        * @bounds(x: 100, y: 200, width: 300, height: 400)
        */
       div
+    "#
+  )]
+}
+
+
+case! {
+  can_remove_a_document_body_item,
+  [(
+    "/entry.pc", r#"
+      div
+      text "hello world"
+    "#
+  )],
+  mutation::Inner::DeleteExpression(DeleteExpression {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      text "hello world"
+    "#
+  )]
+}
+
+case! {
+  can_remove_an_element_child,
+  [(
+    "/entry.pc", r#"
+      div {
+        text "hello world"
+      }
+    "#
+  )],
+  mutation::Inner::DeleteExpression(DeleteExpression {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      div
+    "#
+  )]
+}
+
+case! {
+  can_remove_a_child_from_a_text_node,
+  [(
+    "/entry.pc", r#"
+      text "hello" {
+        style {
+
+        }
+      }
+    "#
+  )],
+  mutation::Inner::DeleteExpression(DeleteExpression {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      text "hello"
     "#
   )]
 }

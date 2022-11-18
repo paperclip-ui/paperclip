@@ -25,12 +25,20 @@ message Mutation {
     // Style
     SetStyleDeclaration set_style_declaration = 8;
     DeleteStyleDeclaration delete_style_declaration = 9;
+
+    // General
+    DeleteExpression delete_expression = 10;
   }
 }
 
 message AppendChild {
   string parent_id = 1;
   ast.pc.Node child = 2;
+}
+
+
+message DeleteExpression {
+  string expression_id = 1;
 }
 
 message DeleteChild {

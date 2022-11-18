@@ -6,7 +6,7 @@
   "scripts": {
     "build": "cargo build; tsc",
     "build:watch": "concurrently \"cargo watch -x build\" \"nodemon --watch \"../designer/dist\" --exec 'touch src/lib.rs'\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha ./lib/**/*-test.js"
   },
   "publishConfig": {
     "access": "public"

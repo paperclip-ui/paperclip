@@ -89,6 +89,22 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
+  const handleDeleteKeyPressed = (
+    state: EditorState,
+    prevState: EditorState
+  ) => {
+    const node = getNodeByPath(
+      prevState.selectedNodePaths[0],
+      prevState.currentDocument.paperclip.html
+    ) as VirtTextNode | VirtElement;
+    const mutation: Mutation = {
+      deleteExpression: {
+        expressionId: node.sourceId,
+      },
+    };
+    actions.applyChanges([mutation]);
+  };
+
   const handleResizerStoppedMoving = (
     event: ReturnType<typeof editorEvents.resizerPathStoppedMoving>,
     state: EditorState,
@@ -124,6 +140,12 @@ const createEventHandler = (actions: Actions) => {
     switch (event.type) {
       case editorEvents.canvasMouseUp.type: {
         return handleCanvasMouseUp(newState, prevState);
+      }
+      case editorEvents.eHotkeyPressed.type: {
+        return handleCanvasMouseUp(newState, prevState);
+      }
+      case editorEvents.deleteHokeyPressed.type: {
+        return handleDeleteKeyPressed(newState, prevState);
       }
       case editorEvents.resizerPathStoppedMoving.type: {
         return handleResizerStoppedMoving(event, newState, prevState);

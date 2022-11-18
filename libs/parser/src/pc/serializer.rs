@@ -27,6 +27,9 @@ fn serialize_document(document: &ast::Document, context: &mut Context) {
             ast::document_body_item::Inner::Trigger(expr) => serialize_trigger(&expr, context),
             ast::document_body_item::Inner::Text(text) => serialize_text(&text, context),
         }
+
+        // extra space for document body items
+        context.add_buffer("\n");
     }
 }
 
@@ -91,7 +94,7 @@ fn serialize_component(component: &ast::Component, context: &mut Context) {
         }
     }
     context.end_block();
-    context.add_buffer("}\n\n");
+    context.add_buffer("}\n");
 }
 
 fn serialize_style(style: &ast::Style, context: &mut Context) {

@@ -202,3 +202,33 @@ case! {
     "#
   )]
 }
+
+
+case! {
+  when_deleting_a_frame_the_bounds_are_removed_too,
+  [(
+    "/entry.pc", r#"
+      div {
+        style {
+          color: orange
+        }
+      }
+      /**
+       * @bounds(x:100,y:200,width:300,height:400)
+       */
+      text "Hello"
+    "#
+  )],
+  mutation::Inner::DeleteExpression(DeleteExpression {
+    expression_id: "80f4925f-18".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      div {
+        style {
+          color: orange
+        }
+      }
+    "#
+  )]
+}

@@ -16,9 +16,9 @@ macro_rules! try_remove_child {
 
             if let Some(i) = found_i {
               $children.remove(i);
-              true
+              Some(i)
             } else {
-              false
+              None
             }
         }
     };
@@ -26,21 +26,30 @@ macro_rules! try_remove_child {
 
 impl Visitor for DeleteExpression {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult {
-      if try_remove_child!(expr.body, &self.expression_id) {
+      if let Some(i) = try_remove_child!(expr.body, &self.expression_id) {
+        let prev_index = i - 1;
+        if prev_index >= 0 {
+          if let Some(child) = expr.body.get(prev_index) {
+            if matches!(child.get_inner(), ast::pc::document_body_item::Inner::DocComment(_)) {
+              expr.body.remove(prev_index);
+            }
+          }
+        }
+        
         VisitorResult::Stop
       } else {
         VisitorResult::Continue
       }
     }
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult {
-      if try_remove_child!(expr.body, &self.expression_id) {
+      if matches!(try_remove_child!(expr.body, &self.expression_id), Some(_)) {
         VisitorResult::Stop
       } else {
         VisitorResult::Continue
       }
     }
     fn visit_text_node(&mut self, expr: &mut ast::pc::TextNode) -> VisitorResult {
-      if try_remove_child!(expr.body, &self.expression_id) {
+      if matches!(try_remove_child!(expr.body, &self.expression_id), Some(_)) {
         VisitorResult::Stop
       } else {
         VisitorResult::Continue

@@ -41,6 +41,7 @@ impl Designer for DesignerService {
 
         tokio::spawn(async move {
             let path = request.into_inner().path;
+            println!("Opening file: {}", path);
 
             let emit = |path: String, store: Arc<Mutex<ServerStore>>| {
                 let data = if let Ok(module) =
@@ -65,6 +66,7 @@ impl Designer for DesignerService {
                 tx.send(emit(path.clone(), store.clone())).await.expect("Failed to send stream, must be closed");
             });
         });
+
 
         let output = ReceiverStream::new(rx);
 

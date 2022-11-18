@@ -136,6 +136,11 @@ impl Config {
         }
     }
     pub fn get_relative_source_files_glob_pattern(&self) -> String {
+
+        if &self.get_src_dir() == "." {
+            return "**/*.pc".to_string()
+        }
+
         String::from(
             Path::new(&self.get_src_dir())
                 .join("**")

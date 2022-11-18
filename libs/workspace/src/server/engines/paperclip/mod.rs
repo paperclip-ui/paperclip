@@ -1,4 +1,3 @@
-use std::borrow::Borrow;
 use std::collections::HashMap;
 
 use anyhow::Result;
@@ -127,6 +126,9 @@ async fn load_files<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> 
         .config_context
         .clone();
     let files = ctx.io.get_all_designer_files(&state);
+
+    println!("Loaded designer files: {:?}", files);
+
     ctx.emit(ServerEvent::PaperclipFilesLoaded { files });
     Ok(())
 }

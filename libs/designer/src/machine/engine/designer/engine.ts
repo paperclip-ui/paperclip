@@ -22,15 +22,18 @@ import { getScaledBox } from "../../state/geom";
 export type DesignerEngineOptions = {
   protocol?: string;
   host: string;
+  transport?: any;
 };
 
 export const createDesignerEngine =
-  ({ protocol, host }: DesignerEngineOptions) =>
+  ({ protocol, host, transport }: DesignerEngineOptions) =>
   (
     dispatch: Dispatch<DesignerEngineEvent>
   ): Engine<DesignerEngineState, DesignerEngineEvent> => {
     const client = new DesignerClientImpl(
-      new GrpcWebImpl((protocol || "http:") + "//" + host, {})
+      new GrpcWebImpl((protocol || "http:") + "//" + host, {
+        transport,
+      })
     );
 
     const actions = createActions(client, dispatch);

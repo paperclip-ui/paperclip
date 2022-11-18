@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { startWorkspace } from "./utils";
 
 describe(__filename + "#", () => {

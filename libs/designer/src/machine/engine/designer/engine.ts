@@ -19,23 +19,30 @@ import {
 } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { getScaledBox } from "../../state/geom";
 
-export const createDesignerEngine = (
-  dispatch: Dispatch<DesignerEngineEvent>
-): Engine<DesignerEngineState, DesignerEngineEvent> => {
-  const client = new DesignerClientImpl(
-    new GrpcWebImpl(env.protocol + "//" + env.host, {})
-  );
-
-  const actions = createActions(client, dispatch);
-  const handleEvent = createEventHandler(actions);
-  bootstrap(actions);
-
-  const dispose = () => {};
-  return {
-    handleEvent,
-    dispose,
-  };
+export type DesignerEngineOptions = {
+  protocol?: string;
+  host: string;
 };
+
+export const createDesignerEngine =
+  ({ protocol, host }: DesignerEngineOptions) =>
+  (
+    dispatch: Dispatch<DesignerEngineEvent>
+  ): Engine<DesignerEngineState, DesignerEngineEvent> => {
+    const client = new DesignerClientImpl(
+      new GrpcWebImpl((protocol || "http:") + "//" + host, {})
+    );
+
+    const actions = createActions(client, dispatch);
+    const handleEvent = createEventHandler(actions);
+    bootstrap(actions);
+
+    const dispose = () => {};
+    return {
+      handleEvent,
+      dispose,
+    };
+  };
 
 type Actions = ReturnType<typeof createActions>;
 
@@ -164,5 +171,6 @@ const createEventHandler = (actions: Actions) => {
  */
 
 const bootstrap = ({ openFile }: Actions) => {
-  setTimeout(openFile, 1000, env.initialFile);
+  const urlParams = new URLSearchParams(window.location.search);
+  setTimeout(openFile, 1000, urlParams.get("file"));
 };

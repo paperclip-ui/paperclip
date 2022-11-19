@@ -1,6 +1,5 @@
 #### On-deck
 
-- auto-delete element when one is deleted
 - ability to insert frames into each other
 - ability to change frame styles (do style pane)
 

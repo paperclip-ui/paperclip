@@ -177,5 +177,5 @@ const createEventHandler = (actions: Actions) => {
 
 const bootstrap = ({ openFile }: Actions) => {
   const urlParams = new URLSearchParams(window.location.search);
-  setTimeout(openFile, 1000, urlParams.get("file"));
+  setTimeout(openFile, 100, urlParams.get("file"));
 };

@@ -66,6 +66,13 @@ export const getNodeById = memoize(
     }
   }
 );
+export const getNodeParent = memoize(
+  <TNode extends BaseTreeNode>(node: TNode, root: TNode) => {
+    const path = getNodePath(node, root).split(".");
+    path.pop();
+    return getNodeByPath(path.join("."), root);
+  }
+);
 
 export const getNodeAncestors = memoize(
   <TNode extends BaseTreeNode>(nodePath: string, root: TNode) => {

@@ -3,31 +3,32 @@
  */
 
 import { designerEngineEvents } from "@paperclip-ui/designer/src/machine/engine/designer/events";
-import { startWorkspace, waitForEvent, stringifyFrames } from "./utils";
+import {
+  insertCanvasElement,
+  startDesigner,
+  stringifyDesignerFrames,
+  waitForEvent,
+} from "../controls";
 import { renderFrames } from "@paperclip-ui/web-renderer";
 import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
 
 describe(__filename + "#", () => {
   it(`Can evaluate a simple document`, async () => {
-    const workspace = await startWorkspace({
+    const designer = await startDesigner({
       "entry.pc": `
         text "hello"
       `,
     });
 
-    await waitForEvent(designerEngineEvents.documentOpened.type, workspace);
+    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
 
-    const frames = stringifyFrames(
-      renderFrames(workspace.designer.getState().currentDocument.paperclip, {
-        domFactory: document,
-      })
-    );
+    const frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual('<span id="_4f0e8e93-1">hello</span>');
   });
 
   it(`Can insert a new frame`, async () => {
-    const workspace = await startWorkspace(
+    const designer = await startDesigner(
       {
         "entry.pc": `
         text "hello"
@@ -39,47 +40,22 @@ describe(__filename + "#", () => {
       }
     );
 
-    await waitForEvent(designerEngineEvents.documentOpened.type, workspace);
+    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    await insertCanvasElement(designer);
 
-    workspace.designer.dispatch(editorEvents.eHotkeyPressed());
-    workspace.designer.dispatch(
-      editorEvents.canvasMouseDown({
-        position: { x: 0, y: 0 },
-        metaKey: false,
-        ctrlKey: false,
-        shiftKey: false,
-        timestamp: 0,
-      })
-    );
-    workspace.designer.dispatch(
-      editorEvents.canvasMouseUp({
-        position: { x: 100, y: 100 },
-        metaKey: false,
-        ctrlKey: false,
-        shiftKey: false,
-        timestamp: 0,
-      })
-    );
-
-    await waitForEvent(designerEngineEvents.documentOpened.type, workspace);
-
-    const frames = stringifyFrames(
-      renderFrames(workspace.designer.getState().currentDocument.paperclip, {
-        domFactory: document,
-      })
-    );
+    const frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual(
       '<span id="_4f0e8e93-1">hello</span><div id="_edcb8fb4-1"></div>'
     );
 
-    expect(workspace.designer.getState().selectedVirtNodeIds).toEqual([
+    expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
       "edcb8fb4-1",
     ]);
   });
 
   it(`Can delete a frame`, async () => {
-    const workspace = await startWorkspace(
+    const designer = await startDesigner(
       {
         "entry.pc": `
         text "hello"
@@ -96,82 +72,47 @@ describe(__filename + "#", () => {
       }
     );
 
-    await waitForEvent(designerEngineEvents.documentOpened.type, workspace);
+    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
 
-    let frames = stringifyFrames(
-      renderFrames(workspace.designer.getState().currentDocument.paperclip, {
-        domFactory: document,
-      })
-    );
+    let frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual(
       '<span id="_4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div>'
     );
 
-    workspace.designer.dispatch(editorEvents.deleteHokeyPressed());
-    await waitForEvent(designerEngineEvents.documentOpened.type, workspace);
+    designer.machine.dispatch(editorEvents.deleteHokeyPressed());
+    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
 
-    frames = stringifyFrames(
-      renderFrames(workspace.designer.getState().currentDocument.paperclip, {
-        domFactory: document,
-      })
-    );
+    frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual('<div id="_4f0e8e93-2"></div>');
   });
 
   it(`Frames are automatically selected when inserted`, async () => {
-    const workspace = await startWorkspace({
+    const designer = await startDesigner({
       "entry.pc": `
         text "hello"
         div
       `,
     });
 
-    await waitForEvent(designerEngineEvents.documentOpened.type, workspace);
-    workspace.designer.dispatch(editorEvents.eHotkeyPressed());
-    workspace.designer.dispatch(
-      editorEvents.canvasMouseDown({
-        position: { x: 0, y: 0 },
-        metaKey: false,
-        ctrlKey: false,
-        shiftKey: false,
-        timestamp: 0,
-      })
-    );
-    workspace.designer.dispatch(
-      editorEvents.canvasMouseUp({
-        position: { x: 100, y: 100 },
-        metaKey: false,
-        ctrlKey: false,
-        shiftKey: false,
-        timestamp: 0,
-      })
-    );
-    await waitForEvent(designerEngineEvents.documentOpened.type, workspace);
+    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    await insertCanvasElement(designer);
 
-    let frames = stringifyFrames(
-      renderFrames(workspace.designer.getState().currentDocument.paperclip, {
-        domFactory: document,
-      })
-    );
+    let frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual(
       '<span id="_4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div><div id="_8bc00fda-1"></div>'
     );
 
-    expect(workspace.designer.getState().selectedVirtNodeIds).toEqual([
+    expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
       "8bc00fda-1",
     ]);
 
-    workspace.designer.dispatch(editorEvents.deleteHokeyPressed());
-    await waitForEvent(designerEngineEvents.documentOpened.type, workspace);
+    designer.machine.dispatch(editorEvents.deleteHokeyPressed());
+    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
 
-    frames = stringifyFrames(
-      renderFrames(workspace.designer.getState().currentDocument.paperclip, {
-        domFactory: document,
-      })
-    );
+    frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual(
       '<span id="_4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div>'
@@ -179,7 +120,7 @@ describe(__filename + "#", () => {
   });
 
   it(`Can delete an instance`, async () => {
-    const workspace = await startWorkspace(
+    const designer = await startDesigner(
       {
         "entry.pc": `
         component A {
@@ -196,32 +137,66 @@ describe(__filename + "#", () => {
       }
     );
 
-    await waitForEvent(designerEngineEvents.documentOpened.type, workspace);
-    let frames = stringifyFrames(
-      renderFrames(workspace.designer.getState().currentDocument.paperclip, {
-        domFactory: document,
-      })
-    );
+    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    let frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual(
       '<div id="_4f0e8e93-5" class="_A-4f0e8e93-2 _4f0e8e93-5"><span id="_4f0e8e93-5.4f0e8e93-1">hello</span></div><span id="_4f0e8e93-6">Hello</span>'
     );
 
-    expect(workspace.designer.getState().selectedVirtNodeIds).toEqual([
+    expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
       "4f0e8e93-5",
     ]);
 
-    workspace.designer.dispatch(editorEvents.deleteHokeyPressed());
+    designer.machine.dispatch(editorEvents.deleteHokeyPressed());
 
-    await waitForEvent(designerEngineEvents.documentOpened.type, workspace);
-    frames = stringifyFrames(
-      renderFrames(workspace.designer.getState().currentDocument.paperclip, {
-        domFactory: document,
-      })
-    );
+    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual('<span id="_4f0e8e93-6">Hello</span>');
 
-    expect(workspace.designer.getState().selectedVirtNodeIds).toEqual([]);
+    expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
+      "4f0e8e93-6",
+    ]);
+  });
+
+  it(`After an instance is deleted, another one is selected`, async () => {
+    const designer = await startDesigner(
+      {
+        "entry.pc": `
+          span
+          div
+      `,
+      },
+      {
+        selectedVirtNodeIds: ["4f0e8e93-1"],
+      }
+    );
+
+    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    let frames = stringifyDesignerFrames(designer);
+
+    expect(frames).toEqual(
+      '<span id="_4f0e8e93-1"></span><div id="_4f0e8e93-2"></div>'
+    );
+
+    expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
+      "4f0e8e93-1",
+    ]);
+
+    designer.machine.dispatch(editorEvents.deleteHokeyPressed());
+
+    expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
+      "4f0e8e93-2",
+    ]);
+
+    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    frames = stringifyDesignerFrames(designer);
+
+    expect(frames).toEqual('<div id="_4f0e8e93-2"></div>');
+
+    expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
+      "4f0e8e93-2",
+    ]);
   });
 });

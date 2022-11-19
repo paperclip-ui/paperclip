@@ -8,18 +8,17 @@ import { EditorEvent } from "../../src/machine/events";
 import { EventEmitter } from "events";
 import { NodeHttpTransport } from "@improbable-eng/grpc-web-node-http-transport";
 import { Machine } from "@paperclip-ui/common";
-import { designerEngineEvents } from "@paperclip-ui/designer/src/machine/engine/designer/events";
 
-type Workspace = {
+export type Designer = {
   onEvent(listener: (event: EditorEvent) => void): () => void;
-  designer: Machine<EditorState, EditorEvent>;
+  machine: Machine<EditorState, EditorEvent>;
 };
 
-export const startWorkspace = async (
+export const startDesigner = async (
   files: Record<string, string>,
   initialState: Partial<EditorState> = {},
   namespace: string = "tmp-workspace"
-): Promise<Workspace> => {
+): Promise<Designer> => {
   files["paperclip.config.json"] = JSON.stringify(
     {
       srcDir: ".",
@@ -53,7 +52,7 @@ export const startWorkspace = async (
   history.pushState({}, "", "/?file=" + savedPaths["entry.pc"]);
 
   const port = await getPort();
-  const designer = createEditorMachine(
+  const machine = createEditorMachine(
     {
       host: `localhost:${port}`,
       transport: NodeHttpTransport(),
@@ -84,16 +83,5 @@ export const startWorkspace = async (
     };
   };
 
-  return { designer, onEvent };
-};
-
-export const waitForEvent = (eventType: string, workspace: Workspace) => {
-  return new Promise((resolve) => {
-    const dispose = workspace.onEvent((event) => {
-      if (event.type === eventType) {
-        dispose();
-        resolve(null);
-      }
-    });
-  });
+  return { machine, onEvent };
 };

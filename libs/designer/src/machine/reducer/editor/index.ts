@@ -22,6 +22,7 @@ import {
   InnerVirtNode,
   getNodeAncestors,
   getInstanceAncestor,
+  getNodeParent,
   getNodeByPath,
   getNodePath,
   isInstance,
@@ -48,7 +49,6 @@ export const editorReducer = (
       state = produce(state, (newState) => {
         newState.currentDocument = event.payload;
 
-        // prune virt nodes that exist
         newState.selectedVirtNodeIds = newState.selectedVirtNodeIds.filter(
           (nodeId) => getNodeById(nodeId, event.payload.paperclip.html)
         );
@@ -61,24 +61,45 @@ export const editorReducer = (
       });
     case designerEngineEvents.changesApplied.type: {
       return produce(state, (newState) => {
-        newState.selectedVirtNodeIds = event.payload.changes
+        const insertedIds = event.payload.changes
           .map((change) => {
-            return (
-              change.expressionInserted?.id || change.expressionUpdated?.id
-            );
+            return change.expressionInserted?.id;
           })
           .filter(Boolean);
+
+        if (insertedIds.length) {
+          newState.selectedVirtNodeIds = insertedIds;
+        }
       });
     }
     case editorEvents.eHotkeyPressed.type:
       return produce(state, (newState) => {
         newState.insertMode = InsertMode.Element;
         newState.selectedVirtNodeIds = [];
-        console.log("EKE");
       });
     case editorEvents.deleteHokeyPressed.type:
       return produce(state, (newState) => {
-        newState.selectedVirtNodeIds = [];
+        if (newState.selectedVirtNodeIds.length) {
+          const node = getNodeById(
+            newState.selectedVirtNodeIds[0],
+            state.currentDocument.paperclip.html
+          );
+          const parent = getNodeParent(
+            node,
+            state.currentDocument.paperclip.html
+          );
+          // const index = parent.children.findIndex(child => (child.element === node || child.textNode === node));
+          const nextChild = parent.children.find((child) => {
+            const inner = getInnerNode(child);
+            return !newState.selectedVirtNodeIds.includes(inner.id);
+          });
+
+          if (nextChild) {
+            newState.selectedVirtNodeIds = [getInnerNode(nextChild).id];
+          }
+        } else {
+          newState.selectedVirtNodeIds = [];
+        }
       });
     case editorEvents.canvasMouseUp.type: {
       return produce(state, (newState) => {

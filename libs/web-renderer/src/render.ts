@@ -222,6 +222,20 @@ export const getFrameRects = (
   return rects;
 };
 
+export const computeAllStyles = (mount: HTMLElement, index: number) => {
+  const styles: Record<string, any> = {};
+
+  traverseNativeNode(
+    mount.childNodes[STAGE_INDEX].childNodes[0],
+    (node, path) => {
+      const pathStr = path.length ? index + "." + path.join(".") : index;
+      styles[pathStr] = window.getComputedStyle(mount);
+    }
+  );
+
+  return styles;
+};
+
 const patchRoot = (
   frame: HTMLElement,
   prevInfo: PCModule,

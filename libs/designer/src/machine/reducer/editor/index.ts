@@ -266,6 +266,10 @@ export const editorReducer = (
         newState.selectedVirtNodeIds = [event.payload.id];
       });
     }
+    case editorEvents.allStylesCaptured.type:
+      return produce(state, (newState) => {
+        Object.assign(newState.allStyles, event.payload.allStyles);
+      });
     case editorEvents.rectsCaptured.type:
       state = produce(state, (newState) => {
         newState.rects[event.payload.frameIndex] = event.payload.rects;

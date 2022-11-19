@@ -15,16 +15,6 @@ macro_rules! visitable {
       Continue
     }
 
-    impl<TRet> VisitorResult<TRet> {
-      fn or(self, other: Self) -> Self {
-        if matches!(self, VisitorResult::Return(_)) {
-          self
-        } else {
-          other
-        }
-      }
-    }
-
     pub trait Visitor<TRet> {
       $(
         fn $visit_name(&mut self, _item: &mut $match) -> VisitorResult<TRet> {
@@ -119,10 +109,21 @@ visitable! {
     VisitorResult::Continue
   }),
   (pc::Node, visit_node, (self, visitor) {
-    VisitorResult::Continue
+    visit_enum!(self.get_inner_mut(), visitor,
+    pc::node::Inner::Element,
+    pc::node::Inner::Insert,
+    pc::node::Inner::Style,
+    pc::node::Inner::Text,
+    pc::node::Inner::Override,
+    pc::node::Inner::Slot
+      )
   }),
   (pc::Element, visit_element, (self, visitor) {
-      visit_each!(&mut self.parameters, visitor).or(visit_each!(&mut self.body, visitor))
+    if let VisitorResult::Return(ret) = visit_each!(&mut self.parameters, visitor) {
+      VisitorResult::Return(ret)
+    } else {
+      visit_each!(&mut self.body, visitor)
+    }
   }),
   (pc::Slot, visit_slot, (self, visitor) {
       visit_each!(&mut self.body, visitor)

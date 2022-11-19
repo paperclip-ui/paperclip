@@ -16,6 +16,9 @@ export const editorEvents = eventCreators(
     canvasMouseMoved: identity<Point>(),
     canvasMouseLeave: null,
     canvasMouseUp: null,
+    allStylesCaptured: identity<{
+      allStyles: Record<string, any>;
+    }>(),
     canvasMouseDown: identity<{
       metaKey: boolean;
       ctrlKey: boolean;

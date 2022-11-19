@@ -5,7 +5,8 @@ use futures::Stream;
 use paperclip_language_services::DocumentInfo;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
-    file_response, ApplyMutationsRequest, Empty, FileRequest, FileResponse, UpdateFileRequest, ApplyMutationsResult,
+    file_response, ApplyMutationsRequest, ApplyMutationsResult, Empty, FileRequest, FileResponse,
+    UpdateFileRequest,
 };
 use std::pin::Pin;
 use std::sync::Arc;
@@ -102,7 +103,7 @@ impl Designer for DesignerService {
             });
 
         Ok(Response::new(ApplyMutationsResult {
-            changes: self.store.lock().unwrap().state.latest_ast_changes.clone()
+            changes: self.store.lock().unwrap().state.latest_ast_changes.clone(),
         }))
     }
 

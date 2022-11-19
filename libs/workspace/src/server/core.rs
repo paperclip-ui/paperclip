@@ -137,6 +137,7 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 for (path, changes) in &changed_files {
                     latest_ast_changes.extend(changes.clone());
                     let content = serialize(&state.graph.dependencies.get(path).unwrap().document);
+                    println!("Edited AST {} {}", path, content);
                     state
                         .file_cache
                         .insert(path.to_string(), content.as_bytes().to_vec());

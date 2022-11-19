@@ -84,7 +84,7 @@ const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
 
 const createEventHandler = (actions: Actions) => {
   const handleInsert = async (state: EditorState) => {
-    const bounds = getScaledBox(getInsertBox(state), state.canvas.transform);
+    let bounds = getScaledBox(getInsertBox(state), state.canvas.transform);
 
     const intersectingNode = getNodeInfoAtPoint(
       state.canvas.mousePosition,
@@ -97,25 +97,42 @@ const createEventHandler = (actions: Actions) => {
         insertFrame: {
           documentId: state.currentDocument.paperclip.html.sourceId,
           bounds,
-          nodeSource: `div`,
+          nodeSource: `div {
+            style {
+              position: relative
+            }
+          }`,
         },
       };
 
       actions.applyChanges([mutation]);
     } else {
-      console.log("INTER");
-
-      const node = getNodeByPath(
+      const parent = getNodeByPath(
         intersectingNode.nodePath,
         state.currentDocument.paperclip.html
       );
+
+      // const style = state.allStyles[intersectingNode.nodePath];
+      const frameIndex = intersectingNode.nodePath.split(".").shift();
+      const frameRect = state.rects[frameIndex][frameIndex];
+
+      const parentBox = flattenFrameBoxes(state.rects)[
+        intersectingNode.nodePath
+      ];
+
+      bounds = {
+        ...bounds,
+        x: bounds.x - parentBox.x,
+        y: bounds.y - parentBox.y,
+      };
+
       actions.applyChanges([
         {
           appendChild: {
-            parentId: node.sourceId,
+            parentId: parent.sourceId,
             childSource: `div {
               style {
-                background: blue
+                background: rgba(0,0,0,0.1)
                 width: ${Math.round(bounds.width)}px
                 height: ${Math.round(bounds.height)}px
               }

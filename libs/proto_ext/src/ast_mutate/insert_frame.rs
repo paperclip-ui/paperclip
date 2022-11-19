@@ -25,13 +25,11 @@ impl Visitor<Vec<MutationResult>> for InsertFrame {
                     bounds.x, bounds.y, bounds.width, bounds.height
                 )
                 .trim(),
-                
                 &checksum,
             )
             .unwrap();
 
             let to_insert = parse_pc(&self.node_source, &checksum).unwrap();
-
 
             mutations.push(
                 mutation_result::Inner::ExpressionInserted(ExpressionInserted {
@@ -50,8 +48,7 @@ impl Visitor<Vec<MutationResult>> for InsertFrame {
                     })
                     .get_outer(),
                 );
-                expr.body
-                    .push(node.clone());
+                expr.body.push(node.clone());
             }
 
             return VisitorResult::Return(mutations);

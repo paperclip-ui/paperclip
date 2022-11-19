@@ -158,8 +158,10 @@ fn evaluate_component<F: FileResolver>(
         &render,
         fragment,
         metadata,
-        &mut context.within_component(component).within_instance(&component.id),
-        true
+        &mut context
+            .within_component(component)
+            .within_instance(&component.id),
+        true,
     );
 }
 
@@ -169,14 +171,21 @@ fn evaluate_element<F: FileResolver>(
     metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
     is_root: bool,
-    is_instance: bool
+    is_instance: bool,
 ) {
     let reference = context
         .graph
         .get_instance_component_ref(element, &context.path);
 
     if let Some(component_info) = reference {
-        evaluate_instance(element, &component_info, fragment, metadata, context, is_root);
+        evaluate_instance(
+            element,
+            &component_info,
+            fragment,
+            metadata,
+            context,
+            is_root,
+        );
     } else {
         evaluate_native_element(element, fragment, metadata, context, is_root, is_instance);
     }
@@ -215,7 +224,7 @@ fn evaluate_instance<F: FileResolver>(
     fragment: &mut Vec<virt::Node>,
     metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
-    is_root: bool
+    is_root: bool,
 ) {
     let render = if let Some(render) = instance_of.expr.get_render_expr() {
         render
@@ -243,7 +252,7 @@ fn evaluate_instance<F: FileResolver>(
             .within_path(&instance_of.path)
             .within_component(&instance_of.expr)
             .set_render_scope(scope),
-        is_root
+        is_root,
     );
 }
 
@@ -315,7 +324,7 @@ fn evaluate_render<F: FileResolver>(
     fragment: &mut Vec<virt::Node>,
     metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
-    is_root: bool
+    is_root: bool,
 ) {
     evaluate_node(
         render.node.as_ref().expect("Node must exist"),
@@ -323,7 +332,7 @@ fn evaluate_render<F: FileResolver>(
         metadata,
         context,
         is_root,
-        true
+        true,
     );
 }
 
@@ -336,7 +345,6 @@ fn get_virt_id(expr_id: &str, instance_path: &Vec<String>, is_instance: bool) ->
         format!("{}.{}", instance_path.join("."), expr_id)
     }
 }
-
 
 fn get_source_id(expr_id: &str, instance_path: &Vec<String>, is_instance: bool) -> String {
     if is_instance {
@@ -352,7 +360,7 @@ fn evaluate_native_element<F: FileResolver>(
     metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
     _is_root: bool,
-    is_instance: bool
+    is_instance: bool,
 ) {
     let mut children = vec![];
 
@@ -364,7 +372,11 @@ fn evaluate_native_element<F: FileResolver>(
         virt::node::Inner::Element(virt::Element {
             id: get_virt_id(element.get_id(), &context.instance_ids, is_instance),
             tag_name: element.tag_name.to_string(),
-            source_id: Some(get_source_id(element.get_id(), &context.instance_ids, is_instance)),
+            source_id: Some(get_source_id(
+                element.get_id(),
+                &context.instance_ids,
+                is_instance,
+            )),
             source_instance_ids: context.instance_ids.clone(),
             attributes: create_native_attributes(element, context, is_instance),
             children,
@@ -380,7 +392,7 @@ fn evaluate_node<F: FileResolver>(
     metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
     is_root: bool,
-    is_instance: bool
+    is_instance: bool,
 ) {
     match child.get_inner() {
         ast::node::Inner::Element(child) => {

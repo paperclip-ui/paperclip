@@ -14,16 +14,11 @@ impl Visitor<Vec<MutationResult>> for AppendChild {
         expr: &mut ast::pc::Document,
     ) -> VisitorResult<Vec<MutationResult>> {
         if expr.get_id() == &self.parent_id {
-
-
-
-            let child = parse_pc(&self.child_source, &expr.checksum()).expect("Unable to parse child source for AppendChild");
+            let child = parse_pc(&self.child_source, &expr.checksum())
+                .expect("Unable to parse child source for AppendChild");
             let child = child.body.get(0).unwrap();
 
-
-            expr.body.push(
-                child.clone()
-            );
+            expr.body.push(child.clone());
             return VisitorResult::Return(vec![mutation_result::Inner::ExpressionInserted(
                 ExpressionInserted {
                     id: child.get_id().to_string(),
@@ -35,12 +30,18 @@ impl Visitor<Vec<MutationResult>> for AppendChild {
     }
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<Vec<MutationResult>> {
         if expr.get_id() == &self.parent_id {
-
-            let child = parse_pc(&self.child_source, &expr.checksum()).expect("Unable to parse child source for AppendChild");
+            let child = parse_pc(&self.child_source, &expr.checksum())
+                .expect("Unable to parse child source for AppendChild");
             let child: Node = child.body.get(0).unwrap().clone().try_into().unwrap();
-            
-            expr.body
-                .push(child.clone());
+
+            expr.body.push(child.clone());
+
+            return VisitorResult::Return(vec![mutation_result::Inner::ExpressionInserted(
+                ExpressionInserted {
+                    id: child.get_id().to_string(),
+                },
+            )
+            .get_outer()]);
         }
         VisitorResult::Continue
     }

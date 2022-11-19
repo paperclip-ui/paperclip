@@ -3,7 +3,10 @@ pub use paperclip_proto::ast_mutate::Mutation;
 use paperclip_proto::ast_mutate::MutationResult;
 pub use paperclip_proto_ext::ast::all::{Visitable, VisitorResult};
 
-pub fn edit_graph(graph: &mut graph::Graph, mutations: &Vec<Mutation>) -> Vec<(String, Vec<MutationResult>)> {
+pub fn edit_graph(
+    graph: &mut graph::Graph,
+    mutations: &Vec<Mutation>,
+) -> Vec<(String, Vec<MutationResult>)> {
     let mut changed: Vec<(String, Vec<MutationResult>)> = vec![];
 
     for mutation in mutations {

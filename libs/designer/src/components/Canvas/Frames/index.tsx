@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { getFrameRects } from "@paperclip-ui/web-renderer";
+import { computeAllStyles, getFrameRects } from "@paperclip-ui/web-renderer";
 import { memo } from "react";
 import { Frame } from "./Frame";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
@@ -87,8 +87,10 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
       }
 
       const rects = getFrameRects(mount, data, frameIndex);
+      const allStyles = computeAllStyles(mount, frameIndex);
 
       dispatch(editorEvents.rectsCaptured({ frameIndex, rects }));
+      dispatch(editorEvents.allStylesCaptured({ allStyles }));
     },
     [dispatch, shouldCollectRects]
   );

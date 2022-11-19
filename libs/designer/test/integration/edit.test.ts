@@ -23,7 +23,7 @@ describe(__filename + "#", () => {
       })
     );
 
-    expect(frames).toEqual('<span id="_inner-4f0e8e93-1">hello</span>');
+    expect(frames).toEqual('<span id="_4f0e8e93-1">hello</span>');
   });
 
   it(`Can insert a new frame`, async () => {
@@ -70,7 +70,7 @@ describe(__filename + "#", () => {
     );
 
     expect(frames).toEqual(
-      '<span id="_inner-4f0e8e93-1">hello</span><div id="_edcb8fb4-1"></div>'
+      '<span id="_4f0e8e93-1">hello</span><div id="_edcb8fb4-1"></div>'
     );
 
     expect(workspace.designer.getState().selectedVirtNodeIds).toEqual([
@@ -87,7 +87,7 @@ describe(__filename + "#", () => {
       `,
       },
       {
-        selectedVirtNodeIds: ["inner-4f0e8e93-1"],
+        selectedVirtNodeIds: ["4f0e8e93-1"],
         rects: {
           "0": {
             "0": { x: 0, y: 0, width: 100, height: 10 },
@@ -105,7 +105,7 @@ describe(__filename + "#", () => {
     );
 
     expect(frames).toEqual(
-      '<span id="_inner-4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div>'
+      '<span id="_4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div>'
     );
 
     workspace.designer.dispatch(editorEvents.deleteHokeyPressed());
@@ -157,7 +157,7 @@ describe(__filename + "#", () => {
     );
 
     expect(frames).toEqual(
-      '<span id="_inner-4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div><div id="_8bc00fda-1"></div>'
+      '<span id="_4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div><div id="_8bc00fda-1"></div>'
     );
 
     expect(workspace.designer.getState().selectedVirtNodeIds).toEqual([
@@ -174,21 +174,27 @@ describe(__filename + "#", () => {
     );
 
     expect(frames).toEqual(
-      '<span id="_inner-4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div>'
+      '<span id="_4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div>'
     );
   });
 
   it(`Can delete an instance`, async () => {
-    const workspace = await startWorkspace({
-      "entry.pc": `
+    const workspace = await startWorkspace(
+      {
+        "entry.pc": `
         component A {
           render div {
             text "hello"
           }
         }
         A
+        text "Hello"
       `,
-    });
+      },
+      {
+        selectedVirtNodeIds: ["4f0e8e93-5"],
+      }
+    );
 
     await waitForEvent(designerEngineEvents.documentOpened.type, workspace);
     let frames = stringifyFrames(
@@ -198,24 +204,24 @@ describe(__filename + "#", () => {
     );
 
     expect(frames).toEqual(
-      '<span id="_inner-4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div><div id="_8bc00fda-1"></div>'
+      '<div id="_4f0e8e93-5" class="_A-4f0e8e93-2 _4f0e8e93-5"><span id="_4f0e8e93-5.4f0e8e93-1">hello</span></div><span id="_4f0e8e93-6">Hello</span>'
     );
 
     expect(workspace.designer.getState().selectedVirtNodeIds).toEqual([
-      "8bc00fda-1",
+      "4f0e8e93-5",
     ]);
 
     workspace.designer.dispatch(editorEvents.deleteHokeyPressed());
-    await waitForEvent(designerEngineEvents.documentOpened.type, workspace);
 
+    await waitForEvent(designerEngineEvents.documentOpened.type, workspace);
     frames = stringifyFrames(
       renderFrames(workspace.designer.getState().currentDocument.paperclip, {
         domFactory: document,
       })
     );
 
-    expect(frames).toEqual(
-      '<span id="_inner-4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div>'
-    );
+    expect(frames).toEqual('<span id="_4f0e8e93-6">Hello</span>');
+
+    expect(workspace.designer.getState().selectedVirtNodeIds).toEqual([]);
   });
 });

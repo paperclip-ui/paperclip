@@ -56,9 +56,9 @@ impl<'graph, 'expr, 'file_resolver, FR: FileResolver>
         clone.current_component = Some(component);
         clone
     }
-    pub fn within_instance(&self, instance: &'expr ast::Element) -> Self {
+    pub fn within_instance(&self, instance_id: &str) -> Self {
         let mut clone = self.clone();
-        clone.instance_ids.push(instance.id.clone());
+        clone.instance_ids.push(instance_id.to_string());
         clone
     }
     pub fn within_path(&self, path: &str) -> Self {

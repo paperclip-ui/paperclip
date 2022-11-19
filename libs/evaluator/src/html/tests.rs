@@ -471,7 +471,7 @@ fn bounds_are_attached_to_root_elements() {
             }),
             children: vec![virt::html::Node {
                 inner: Some(virt::html::node::Inner::TextNode(virt::html::TextNode {
-                    id: "inner-80f4925f-14".to_string(),
+                    id: "80f4925f-14".to_string(),
                     source_id: Some("80f4925f-14".to_string()),
                     source_instance_ids: vec![],
                     value: "Hello world".to_string(),
@@ -501,10 +501,10 @@ fn bounds_are_attached_to_root_components() {
     assert_eq!(
         element,
         &virt::html::node::Inner::Element(virt::html::Element {
-            id: "80f4925f-14".to_string(),
+            id: "80f4925f-16".to_string(),
             tag_name: "div".to_string(),
-            source_id: Some("80f4925f-14".to_string()),
-            source_instance_ids: vec![],
+            source_id: Some("80f4925f-16".to_string()),
+            source_instance_ids: vec!["80f4925f-16".to_string()],
             attributes: vec![virt::html::Attribute {
                 source_id: None,
                 name: "class".to_string(),
@@ -541,7 +541,7 @@ fn bounds_are_attached_to_root_text_nodes() {
     assert_eq!(
         element,
         &virt::html::node::Inner::TextNode(virt::html::TextNode {
-            id: "inner-80f4925f-14".to_string(),
+            id: "80f4925f-14".to_string(),
             value: "abba".to_string(),
             source_id: Some("80f4925f-14".to_string()),
             source_instance_ids: vec![],
@@ -579,9 +579,9 @@ fn bounds_are_attached_to_root_instances() {
     assert_eq!(
         element,
         &virt::html::node::Inner::Element(virt::html::Element {
-            id: "80f4925f-1.80f4925f-17".to_string(),
+            id: "80f4925f-17".to_string(),
             tag_name: "div".to_string(),
-            source_id: Some("80f4925f-1".to_string()),
+            source_id: Some("80f4925f-17".to_string()),
             source_instance_ids: vec!["80f4925f-17".to_string()],
             attributes: vec![virt::html::Attribute {
                 source_id: None,

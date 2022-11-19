@@ -73,6 +73,8 @@ export const editorReducer = (
     case editorEvents.eHotkeyPressed.type:
       return produce(state, (newState) => {
         newState.insertMode = InsertMode.Element;
+        newState.selectedVirtNodeIds = [];
+        console.log("EKE");
       });
     case editorEvents.deleteHokeyPressed.type:
       return produce(state, (newState) => {

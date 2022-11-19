@@ -47,15 +47,7 @@ case! {
   )],
   mutation::Inner::AppendChild(AppendChild {
     parent_id: "80f4925f-2".to_string(),
-    child: Some(ast::pc::node::Inner::Element(ast::pc::Element {
-      id: "something".to_string(),
-      name: None,
-      namespace: None,
-      tag_name: "div".to_string(),
-      parameters: vec![],
-      body: vec![],
-      range: None
-    }).get_outer())
+    child_source: "div".to_string(),
   }).get_outer(),
   [(
     "/entry.pc", r#"
@@ -76,13 +68,7 @@ case! {
   )],
   mutation::Inner::AppendChild(AppendChild {
     parent_id: "80f4925f-2".to_string(),
-    child: Some(ast::pc::node::Inner::Text(ast::pc::TextNode {
-      id: "something".to_string(),
-      name: None,
-      value: "something".to_string(),
-      body: vec![],
-      range: None
-    }).get_outer())
+    child_source: "text \"something\"".to_string(),
   }).get_outer(),
   [(
     "/entry.pc", r#"
@@ -103,13 +89,7 @@ case! {
   )],
   mutation::Inner::AppendChild(AppendChild {
     parent_id: "80f4925f-1".to_string(),
-    child: Some(ast::pc::node::Inner::Text(ast::pc::TextNode {
-      id: "something".to_string(),
-      name: None,
-      value: "something".to_string(),
-      body: vec![],
-      range: None
-    }).get_outer())
+    child_source: "text 'something'".to_string(),
   }).get_outer(),
   [(
     "/entry.pc", r#"

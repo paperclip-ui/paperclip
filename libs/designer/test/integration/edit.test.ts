@@ -177,4 +177,45 @@ describe(__filename + "#", () => {
       '<span id="_inner-4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div>'
     );
   });
+
+  it(`Can delete an instance`, async () => {
+    const workspace = await startWorkspace({
+      "entry.pc": `
+        component A {
+          render div {
+            text "hello"
+          }
+        }
+        A
+      `,
+    });
+
+    await waitForEvent(designerEngineEvents.documentOpened.type, workspace);
+    let frames = stringifyFrames(
+      renderFrames(workspace.designer.getState().currentDocument.paperclip, {
+        domFactory: document,
+      })
+    );
+
+    expect(frames).toEqual(
+      '<span id="_inner-4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div><div id="_8bc00fda-1"></div>'
+    );
+
+    expect(workspace.designer.getState().selectedVirtNodeIds).toEqual([
+      "8bc00fda-1",
+    ]);
+
+    workspace.designer.dispatch(editorEvents.deleteHokeyPressed());
+    await waitForEvent(designerEngineEvents.documentOpened.type, workspace);
+
+    frames = stringifyFrames(
+      renderFrames(workspace.designer.getState().currentDocument.paperclip, {
+        domFactory: document,
+      })
+    );
+
+    expect(frames).toEqual(
+      '<span id="_inner-4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div>'
+    );
+  });
 });

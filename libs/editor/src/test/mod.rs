@@ -4,7 +4,7 @@ use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::{graph, pc};
 use paperclip_proto::ast;
 use paperclip_proto::ast_mutate::{
-    mutation, AppendChild, Bounds, DeleteExpression, SetFrameBounds,
+    mutation, AppendChild, Bounds, DeleteExpression, SetFrameBounds, InsertChild,
 };
 use std::collections::HashMap;
 
@@ -207,6 +207,43 @@ case! {
       div {
         style {
           color: orange
+        }
+      }
+    "#
+  )]
+}
+
+
+case! {
+  can_insert_an_element_within_an_element,
+  [(
+    "/entry.pc", r#"
+      div {
+        span {
+
+        }
+      }
+    "#
+  )],
+  mutation::Inner::AppendChild(AppendChild {
+    parent_id: "80f4925f-1".to_string(),
+    child_source: r#"
+      div {
+        style {
+          color: orange
+        }
+      }
+    "#.to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      div {
+        span {
+          div {
+            style {
+              color: orange
+            }
+          }
         }
       }
     "#

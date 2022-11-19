@@ -1,18 +1,23 @@
 use paperclip_parser::docco::parser::parse as parse_comment;
-use paperclip_proto::ast;
 use paperclip_proto::ast::all::Expression;
-use paperclip_proto::ast_mutate::SetFrameBounds;
+use paperclip_proto::ast_mutate::{mutation_result, ExpressionUpdated, SetFrameBounds};
+use paperclip_proto::{ast, ast_mutate::MutationResult};
 
 use crate::ast::{all::Visitor, all::VisitorResult};
 
-impl Visitor for SetFrameBounds {
-    fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult {
+impl Visitor<Vec<MutationResult>> for SetFrameBounds {
+    fn visit_document(
+        &mut self,
+        expr: &mut ast::pc::Document,
+    ) -> VisitorResult<Vec<MutationResult>> {
         if let Some(frame_index) = expr
             .body
             .iter()
             .position(|expr| expr.get_inner().get_id() == &self.frame_id)
         {
             let bounds = self.bounds.as_ref().unwrap();
+
+            let mut results = vec![];
 
             let new_comment = parse_comment(
                 format!(
@@ -31,6 +36,12 @@ impl Visitor for SetFrameBounds {
                     {
                         std::mem::replace(comment, new_comment);
                     } else {
+                        results.push(
+                            mutation_result::Inner::ExpressionUpdated(ExpressionUpdated {
+                                id: new_comment.id.to_string(),
+                            })
+                            .get_outer(),
+                        );
                         expr.body.insert(
                             frame_index,
                             ast::pc::document_body_item::Inner::DocComment(new_comment).get_outer(),
@@ -44,7 +55,7 @@ impl Visitor for SetFrameBounds {
                 );
             }
 
-            return VisitorResult::Stop;
+            return VisitorResult::Return(results);
         }
 
         VisitorResult::Continue

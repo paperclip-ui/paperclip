@@ -10,30 +10,42 @@ macro_rules! visitable {
 
 ) => {
 
-    pub enum VisitorResult {
-      Stop,
+    pub enum VisitorResult<TRet> {
+      Return(TRet),
       Continue
     }
 
-    pub trait Visitor {
+    impl<TRet> VisitorResult<TRet> {
+      fn or(self, other: Self) -> Self {
+        if matches!(self, VisitorResult::Return(_)) {
+          self
+        } else {
+          other
+        }
+      }
+    }
+
+    pub trait Visitor<TRet> {
       $(
-        fn $visit_name(&mut self, _item: &mut $match) -> VisitorResult {
+        fn $visit_name(&mut self, _item: &mut $match) -> VisitorResult<TRet> {
           VisitorResult::Continue
         }
       )*
     }
 
     pub trait Visitable {
-      fn accept<TVisitor: Visitor>(&mut self, visitor: &mut TVisitor) -> VisitorResult;
+      fn accept<TRet, TVisitor: Visitor<TRet>>(&mut self, visitor: &mut TVisitor) -> VisitorResult<TRet>;
     }
 
     $(
           impl Visitable for $match {
-              fn accept<TVisitor: Visitor>(&mut $self, $visitor: &mut TVisitor) -> VisitorResult {
-                if matches!($visitor.$visit_name($self), VisitorResult::Continue) && $visit_children {
-                  VisitorResult::Continue
+              fn accept<TRet, TVisitor: Visitor<TRet>>(&mut $self, $visitor: &mut TVisitor) -> VisitorResult<TRet> {
+                let ret = $visitor.$visit_name($self);
+
+                if matches!(ret, VisitorResult::Return(_)) {
+                  ret
                 } else {
-                  VisitorResult::Stop
+                  $visit_children
                 }
               }
           }
@@ -43,26 +55,26 @@ macro_rules! visitable {
 
 macro_rules! visit_enum {
   ($this: expr, $visitor:ident, $($name: path), *) => {
-      matches!(match $this {
-          $(
-              $name(expr) => {
-                  expr.accept($visitor)
-              }
-          )*
-      }, VisitorResult::Continue)
+    match $this {
+      $(
+          $name(expr) => {
+              expr.accept($visitor)
+          }
+      )*
+    }
   };
 }
 
 macro_rules! visit_each {
     ($items: expr, $visitor:expr) => {{
-        let mut should_continue = true;
+        let mut ret = VisitorResult::Continue;
         for item in $items {
-            if matches!(item.accept($visitor), VisitorResult::Stop) {
-                should_continue = false;
+            ret = item.accept($visitor);
+            if matches!(ret, VisitorResult::Return(_)) {
                 break;
             }
         }
-        should_continue
+        ret
     }};
 }
 
@@ -83,34 +95,34 @@ visitable! {
       )
   }),
   (pc::Import, visit_import, (self, visitor) {
-    true
+    VisitorResult::Continue
   }),
   (pc::Style, visit_style, (self, visitor) {
-      true
+    VisitorResult::Continue
   }),
   (pc::Component, visit_component, (self, visitor) {
-    true
+    VisitorResult::Continue
   }),
   (docco::Comment, visit_comment, (self, visitor) {
-    true
+    VisitorResult::Continue
   }),
   (pc::TextNode, visit_text_node, (self, visitor) {
-    true
+    VisitorResult::Continue
   }),
   (pc::Atom, visit_atom, (self, visitor) {
-    true
+    VisitorResult::Continue
   }),
   (pc::Trigger, visit_trigger, (self, visitor) {
-    true
+    VisitorResult::Continue
   }),
   (pc::Parameter, visit_parameter, (self, visitor) {
-    true
+    VisitorResult::Continue
   }),
   (pc::Node, visit_node, (self, visitor) {
-    true
+    VisitorResult::Continue
   }),
   (pc::Element, visit_element, (self, visitor) {
-      visit_each!(&mut self.parameters, visitor) && visit_each!(&mut self.body, visitor)
+      visit_each!(&mut self.parameters, visitor).or(visit_each!(&mut self.body, visitor))
   }),
   (pc::Slot, visit_slot, (self, visitor) {
       visit_each!(&mut self.body, visitor)
@@ -131,12 +143,12 @@ visitable! {
       visit_enum!(self.get_inner_mut(), visitor, pc::trigger_body_item::Inner::Str, pc::trigger_body_item::Inner::Reference, pc::trigger_body_item::Inner::Bool)
   }),
   (pc::Reference, visit_reference, (self, visitor) {
-      true
+    VisitorResult::Continue
   }),
   (base::Str, visit_str, (self, visitor) {
-    true
+    VisitorResult::Continue
   }),
   (base::Bool, visit_boolean, (self, visitor) {
-    true
+    VisitorResult::Continue
   })
 }

@@ -534,7 +534,10 @@ fn evaluate_text_node<F: FileResolver>(
             get_style_namespace(&text_node.name, &text_node.id, context.current_component);
 
         virt::node::Inner::Element(virt::Element {
-            id: format!("outer-{}", get_virt_id(text_node.get_id(), &context.instance_ids)),
+            id: format!(
+                "outer-{}",
+                get_virt_id(text_node.get_id(), &context.instance_ids)
+            ),
             tag_name: "span".to_string(),
             source_id: Some(text_node.id.to_string()),
             source_instance_ids: context.instance_ids.clone(),
@@ -545,7 +548,10 @@ fn evaluate_text_node<F: FileResolver>(
             }],
             metadata: metadata.clone(),
             children: vec![virt::node::Inner::TextNode(virt::TextNode {
-                id: format!("inner-{}", get_virt_id(text_node.get_id(), &context.instance_ids)),
+                id: format!(
+                    "inner-{}",
+                    get_virt_id(text_node.get_id(), &context.instance_ids)
+                ),
                 source_id: Some(text_node.id.to_string()),
                 source_instance_ids: context.instance_ids.clone(),
                 value: text_node.value.to_string(),
@@ -556,7 +562,10 @@ fn evaluate_text_node<F: FileResolver>(
         .get_outer()
     } else {
         virt::node::Inner::TextNode(virt::TextNode {
-            id: format!("inner-{}", get_virt_id(text_node.get_id(), &context.instance_ids)),
+            id: format!(
+                "inner-{}",
+                get_virt_id(text_node.get_id(), &context.instance_ids)
+            ),
             source_id: Some(text_node.id.to_string()),
             source_instance_ids: context.instance_ids.clone(),
             value: text_node.value.to_string(),

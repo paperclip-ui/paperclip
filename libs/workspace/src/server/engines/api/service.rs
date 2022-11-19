@@ -67,7 +67,6 @@ impl Designer for DesignerService {
             });
         });
 
-
         let output = ReceiverStream::new(rx);
 
         Ok(Response::new(Box::pin(output) as Self::OpenFileStream))

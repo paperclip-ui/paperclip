@@ -3,7 +3,9 @@ use futures::executor::block_on;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::{graph, pc};
 use paperclip_proto::ast;
-use paperclip_proto::ast_mutate::{mutation, AppendChild, Bounds, SetFrameBounds, DeleteExpression};
+use paperclip_proto::ast_mutate::{
+    mutation, AppendChild, Bounds, DeleteExpression, SetFrameBounds,
+};
 use std::collections::HashMap;
 
 macro_rules! case {
@@ -144,7 +146,6 @@ case! {
   )]
 }
 
-
 case! {
   can_remove_a_document_body_item,
   [(
@@ -202,7 +203,6 @@ case! {
     "#
   )]
 }
-
 
 case! {
   when_deleting_a_frame_the_bounds_are_removed_too,

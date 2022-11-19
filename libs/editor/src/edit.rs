@@ -9,7 +9,7 @@ pub fn edit_graph(graph: &mut graph::Graph, mutations: &Vec<Mutation>) -> Vec<St
         for (path, dep) in &mut graph.dependencies {
             if matches!(
                 dep.document.accept(&mut mutation.clone()),
-                VisitorResult::Stop
+                VisitorResult::Return(_)
             ) {
                 changed.push(path.to_string());
             }

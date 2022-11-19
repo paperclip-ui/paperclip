@@ -31,6 +31,26 @@ message Mutation {
   }
 }
 
+// result after mutation 
+message MutationResult {
+  oneof inner {
+    ExpressionInserted expression_inserted = 1;
+    ExpressionUpdated expression_updated = 2;
+    ExpressionDeleted expression_deleted = 3;
+  }
+}
+
+message ExpressionInserted {
+  string id = 1;
+}
+
+message ExpressionDeleted {
+  string id = 1;
+}
+message ExpressionUpdated {
+  string id = 1;
+}
+
 message AppendChild {
   string parent_id = 1;
   ast.pc.Node child = 2;

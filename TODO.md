@@ -1,7 +1,5 @@
 #### On-deck
 
-- integration tests for workspace
-
 - select frame when inserted
 - start on style panel
 

@@ -46,11 +46,11 @@ describe(__filename + "#", () => {
     const frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual(
-      '<span id="_4f0e8e93-1">hello</span><div id="_edcb8fb4-1"></div>'
+      '<span id="_4f0e8e93-1">hello</span><div id="_edcb8fb4-4" class="_edcb8fb4-4"></div>'
     );
 
     expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
-      "edcb8fb4-1",
+      "edcb8fb4-4",
     ]);
   });
 
@@ -102,11 +102,11 @@ describe(__filename + "#", () => {
     let frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual(
-      '<span id="_4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div><div id="_8bc00fda-1"></div>'
+      '<span id="_4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div><div id="_8bc00fda-4" class="_8bc00fda-4"></div>'
     );
 
     expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
-      "8bc00fda-1",
+      "8bc00fda-4",
     ]);
 
     designer.machine.dispatch(editorEvents.deleteHokeyPressed());
@@ -195,6 +195,70 @@ describe(__filename + "#", () => {
 
     expect(frames).toEqual('<div id="_4f0e8e93-2"></div>');
 
+    expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
+      "4f0e8e93-2",
+    ]);
+  });
+
+  it(`A node is added to an element when the mouse point releases from an existing element`, async () => {
+    const designer = await startDesigner(
+      {
+        "entry.pc": `
+          /**
+           * @bounds(x:0, y: 0, width: 1024, height: 768)
+           */
+          div
+      `,
+      },
+      {
+        selectedVirtNodeIds: [],
+        rects: {
+          "0": {
+            "0": { x: 0, y: 0, width: 1024, height: 768 },
+          },
+        },
+      }
+    );
+
+    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    insertCanvasElement(designer, { x: 10, y: 10 });
+
+    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+
+    expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
+      "d2d62a62-19",
+    ]);
+    let frames = stringifyDesignerFrames(designer);
+
+    expect(frames).toEqual(
+      '<div id="_4f0e8e93-14"><div id="_d2d62a62-19" class="_d2d62a62-19"></div></div>'
+    );
+  });
+
+  it(`When deleting a child with no siblings, the parent is selected`, async () => {
+    const designer = await startDesigner(
+      {
+        "entry.pc": `
+          div {
+            span
+          }
+      `,
+      },
+      {
+        selectedVirtNodeIds: ["4f0e8e93-1"],
+      }
+    );
+
+    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    console.log(
+      JSON.stringify(
+        designer.machine.getState().currentDocument.paperclip.html,
+        null,
+        2
+      )
+    );
+    designer.machine.dispatch(editorEvents.deleteHokeyPressed());
+    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
     expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
       "4f0e8e93-2",
     ]);

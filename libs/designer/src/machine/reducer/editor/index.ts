@@ -96,6 +96,8 @@ export const editorReducer = (
 
           if (nextChild) {
             newState.selectedVirtNodeIds = [getInnerNode(nextChild).id];
+          } else {
+            newState.selectedVirtNodeIds = [parent.id];
           }
         } else {
           newState.selectedVirtNodeIds = [];
@@ -422,8 +424,6 @@ const selectNode = (
       newDesigner.selectedVirtNodeIds = [];
       return;
     }
-    // newDesigner.selectedNodeStyleInspections = [];
-    // newDesigner.selectedNodeSources = [];
 
     if (node.id == null) {
       newDesigner.selectedVirtNodeIds = [];

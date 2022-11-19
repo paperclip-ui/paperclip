@@ -133,6 +133,9 @@ const createEventHandler = (actions: Actions) => {
             childSource: `div {
               style {
                 background: rgba(0,0,0,0.1)
+                position: absolute
+                left: ${bounds.x}px
+                top: ${bounds.y}px
                 width: ${Math.round(bounds.width)}px
                 height: ${Math.round(bounds.height)}px
               }

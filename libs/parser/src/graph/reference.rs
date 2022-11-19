@@ -1,5 +1,5 @@
 use paperclip_proto::ast::css::FunctionCall;
-use paperclip_proto::ast::pc::{component_body_item, element_body_item, render_node};
+use paperclip_proto::ast::pc::{component_body_item, node};
 
 use super::core::Graph;
 use crate::css::ast as css_ast;
@@ -195,7 +195,7 @@ fn find_within<'expr>(
                 .find_map(|item| match item.get_inner() {
                     component_body_item::Inner::Render(render) => {
                         match render.node.as_ref().expect("Node must exist").get_inner() {
-                            render_node::Inner::Element(element) => {
+                            node::Inner::Element(element) => {
                                 find_reference(name, Expr::Element(element), path, graph)
                             }
                             _ => None,
@@ -212,7 +212,7 @@ fn find_within<'expr>(
             .and_then(|component_ref| find_within(name, &component_ref.wrap().expr, path, graph))
             .or_else(|| {
                 element.body.iter().find_map(|item| match item.get_inner() {
-                    element_body_item::Inner::Element(element) => {
+                    node::Inner::Element(element) => {
                         find_reference(name, Expr::Element(element), path, graph)
                     }
                     _ => None,

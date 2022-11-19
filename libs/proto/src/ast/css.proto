@@ -13,7 +13,7 @@ message StyleDeclaration {
 
 message DeclarationValue {
   oneof inner {
-    ast.base.Number number = 1;
+    ast.base.Num number = 1;
     Reference reference = 2;
     ast.base.Str str = 3;
     Measurement measurement = 4;

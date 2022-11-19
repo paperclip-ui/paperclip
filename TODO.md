@@ -1,28 +1,27 @@
 #### On-deck
 
-- Back to Yew
-- figure out reactive way of updating UI
+- ability to insert frames into each other
+- ability to change frame styles (do style pane)
 
-- Display live preview in designer using dominator
-- look into libp2p instead
+- start on style panel
 
-- build designer in WASM
+- insert elements
 
-  - get state machine to work
-  - build PC compiler in rust
+  - "e" key to insert element
 
 - ability to insert elements
+
   - show drag bounds
   - on mouse up, insert into active element
     - if start + end in element, then insert into that element
     - if start outside of element, then create frame
+
 - ability to edit styles of elements
 - ability to create components
 
 ...
 
 - hotkey for inserting nodes
-  - "e" for element
   - "t" for text
 
 #### Milestone: MVP UI

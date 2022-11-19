@@ -12,12 +12,17 @@ import {
 import produce from "immer";
 import { clamp, pick } from "lodash";
 import { Box, centerTransformZoom, Point } from "../../state/geom";
-import { PCModule } from "@paperclip-ui/proto/lib/virt/module_pb";
+import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
+import {
+  Element as VirtElement,
+  TextNode as VirtText,
+} from "@paperclip-ui/proto/lib/generated/virt/html";
 import { memoize } from "@paperclip-ui/common";
 import {
   InnerVirtNode,
   getNodeAncestors,
   getInstanceAncestor,
+  getNodeParent,
   getNodeByPath,
   getNodePath,
   isInstance,
@@ -25,7 +30,8 @@ import {
   getInnerNode,
   isTextNode,
   nodePathToAry,
-} from "@paperclip-ui/proto/lib/virt/html";
+  getNodeById,
+} from "@paperclip-ui/proto/lib/virt/html-utils";
 
 const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
 const PAN_X_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;
@@ -41,7 +47,11 @@ export const editorReducer = (
   switch (event.type) {
     case designerEngineEvents.documentOpened.type:
       state = produce(state, (newState) => {
-        newState.currentDocument = event.payload.toObject();
+        newState.currentDocument = event.payload;
+
+        newState.selectedVirtNodeIds = newState.selectedVirtNodeIds.filter(
+          (nodeId) => getNodeById(nodeId, event.payload.paperclip.html)
+        );
       });
       state = maybeCenterCanvas(state);
       return state;
@@ -49,16 +59,64 @@ export const editorReducer = (
       return produce(state, (newState) => {
         newState.canvas.size = event.payload;
       });
+    case designerEngineEvents.changesApplied.type: {
+      return produce(state, (newState) => {
+        const insertedIds = event.payload.changes
+          .map((change) => {
+            return change.expressionInserted?.id;
+          })
+          .filter(Boolean);
+
+        if (insertedIds.length) {
+          newState.selectedVirtNodeIds = insertedIds;
+        }
+      });
+    }
     case editorEvents.eHotkeyPressed.type:
       return produce(state, (newState) => {
         newState.insertMode = InsertMode.Element;
+        newState.selectedVirtNodeIds = [];
       });
-    case editorEvents.canvasMouseDown.type: {
+    case editorEvents.deleteHokeyPressed.type:
+      return produce(state, (newState) => {
+        if (newState.selectedVirtNodeIds.length) {
+          const node = getNodeById(
+            newState.selectedVirtNodeIds[0],
+            state.currentDocument.paperclip.html
+          );
+          const parent = getNodeParent(
+            node,
+            state.currentDocument.paperclip.html
+          );
+          // const index = parent.children.findIndex(child => (child.element === node || child.textNode === node));
+          const nextChild = parent.children.find((child) => {
+            const inner = getInnerNode(child);
+            return !newState.selectedVirtNodeIds.includes(inner.id);
+          });
+
+          if (nextChild) {
+            newState.selectedVirtNodeIds = [getInnerNode(nextChild).id];
+          } else {
+            newState.selectedVirtNodeIds = [parent.id];
+          }
+        } else {
+          newState.selectedVirtNodeIds = [];
+        }
+      });
+    case editorEvents.canvasMouseUp.type: {
       return produce(state, (newState) => {
         newState.insertMode = null;
+        newState.canvas.mouseDown = false;
+        newState.canvasMouseDownStartPoint = undefined;
       });
     }
     case editorEvents.canvasMouseDown.type: {
+      state = produce(state, (newState) => {
+        newState.canvas.mouseDown = true;
+        newState.canvas.mousePosition = event.payload.position;
+        newState.canvasMouseDownStartPoint = event.payload.position;
+      });
+
       if (state.resizerMoving) {
         return state;
       }
@@ -72,9 +130,9 @@ export const editorReducer = (
       [state, doubleClicked] = handleDoubleClick(state, event);
 
       if (doubleClicked) {
-        if (state.selectedNodePaths.length) {
-          const node = getNodeByPath(
-            state.selectedNodePaths[0],
+        if (state.selectedVirtNodeIds.length) {
+          const node = getNodeById(
+            state.selectedVirtNodeIds[0],
             state.currentDocument.paperclip.html
           );
 
@@ -99,8 +157,13 @@ export const editorReducer = (
         state.canvas.isExpanded ? state.canvas.activeFrame : null
       )?.nodePath;
 
-      return selectNode(
+      const node = getNodeByPath(
         nodePath,
+        state.currentDocument.paperclip.html
+      );
+
+      return selectNode(
+        node,
         event.payload.shiftKey,
         event.payload.metaKey,
         state
@@ -159,24 +222,41 @@ export const editorReducer = (
     case editorEvents.resizerPathStoppedMoving.type:
     case editorEvents.resizerPathMoved.type: {
       state = produce(state, (newState) => {
-        const flattenedRects = flattenFrameBoxes(state.rects);
-
-        const node = getNodeByPath(
-          newState.selectedNodePaths[0],
+        const node = getNodeById(
+          newState.selectedVirtNodeIds[0],
           newState.currentDocument.paperclip.html
-        );
-        newState.styleOverrides = {};
+        ) as any as VirtElement | VirtText;
 
-        newState.styleOverrides[node.id] = {
-          // TODO: need to take delta of computed CSS instead
-          left: event.payload.newBounds.x - event.payload.originalBounds.x,
-          top: event.payload.newBounds.y - event.payload.originalBounds.y,
+        const path = getNodePath(node, newState.currentDocument.paperclip.html);
 
-          // TODO - check position here to make sure we're not overriding something like "absolute"
-          position: "relative",
-          width: event.payload.newBounds.width,
-          height: event.payload.newBounds.height,
-        };
+        // within a frame
+        if (path.includes(".")) {
+          newState.styleOverrides = {};
+
+          newState.styleOverrides[node.id] = {
+            // TODO: need to take delta of computed CSS instead
+            left: event.payload.newBounds.x - event.payload.originalBounds.x,
+            top: event.payload.newBounds.y - event.payload.originalBounds.y,
+
+            // TODO - check position here to make sure we're not overriding something like "absolute"
+            position: "relative",
+            width: event.payload.newBounds.width,
+            height: event.payload.newBounds.height,
+          };
+
+          // is a frame
+        } else {
+          if (!node.metadata) {
+            node.metadata = {};
+          }
+          if (!node.metadata.bounds) {
+            node.metadata.bounds = { x: 0, y: 0, width: 0, height: 0 };
+          }
+
+          node.metadata.bounds = {
+            ...event.payload.newBounds,
+          };
+        }
       });
       return state;
     }
@@ -185,16 +265,28 @@ export const editorReducer = (
     }
     case editorEvents.tmpBreadcrumbClicked.type: {
       return produce(state, (newState) => {
-        newState.selectedNodePaths = [
-          getNodePath(event.payload, state.currentDocument.paperclip.html),
-        ];
+        newState.selectedVirtNodeIds = [event.payload.id];
       });
     }
+    case editorEvents.allStylesCaptured.type:
+      return produce(state, (newState) => {
+        Object.assign(newState.allStyles, event.payload.allStyles);
+      });
     case editorEvents.rectsCaptured.type:
       state = produce(state, (newState) => {
         newState.rects[event.payload.frameIndex] = event.payload.rects;
-      });
 
+        // prune frames that don't exist
+
+        for (const frameIndex in newState.rects) {
+          if (
+            Number(frameIndex) >=
+            state.currentDocument.paperclip.html.children.length
+          ) {
+            delete newState.rects[frameIndex];
+          }
+        }
+      });
       state = maybeCenterCanvas(state);
       return state;
   }
@@ -231,11 +323,7 @@ const highlightNode = (designer: EditorState, mousePosition: Point) => {
 };
 
 export const getScopedBoxes = memoize(
-  (
-    boxes: Record<string, Box>,
-    scopedElementPath: string,
-    root: PCModule.AsObject
-  ) => {
+  (boxes: Record<string, Box>, scopedElementPath: string, root: PCModule) => {
     const hoverableNodePaths = getHoverableNodePaths(
       scopedElementPath,
       root.html
@@ -280,7 +368,7 @@ const addHoverableChildren = (
   }
 
   if (isNodeParent(node)) {
-    for (const child of node.childrenList) {
+    for (const child of node.children) {
       addHoverableChildren(getInnerNode(child), false, hoverable);
     }
   }
@@ -326,55 +414,57 @@ const handleDoubleClick = (
 };
 
 const selectNode = (
-  nodePath: string,
+  node: VirtElement | VirtText | null,
   shiftKey: boolean,
   metaKey: boolean,
   designer: EditorState
 ) => {
   designer = produce(designer, (newDesigner) => {
-    // newDesigner.selectedNodeStyleInspections = [];
-    // newDesigner.selectedNodeSources = [];
+    if (!node) {
+      newDesigner.selectedVirtNodeIds = [];
+      return;
+    }
 
-    if (nodePath == null) {
-      newDesigner.selectedNodePaths = [];
+    if (node.id == null) {
+      newDesigner.selectedVirtNodeIds = [];
       newDesigner.scopedElementPath = null;
       return;
     }
     if (shiftKey) {
       // allow toggle selecting elements - necessary since escape key doesn't work.
-      newDesigner.selectedNodePaths.push(nodePath);
+      newDesigner.selectedVirtNodeIds.push(node.id);
     } else {
-      newDesigner.selectedNodePaths = [nodePath];
+      newDesigner.selectedVirtNodeIds = [node.id];
     }
 
-    if (
-      newDesigner.scopedElementPath &&
-      !nodePath.startsWith(newDesigner.scopedElementPath)
-    ) {
-      const preview = newDesigner.currentDocument.paperclip.html;
-      const node = getNodeByPath(nodePath, preview) as InnerVirtNode;
-      const instanceAncestor = getInstanceAncestor(node, preview);
-      newDesigner.scopedElementPath =
-        instanceAncestor && getNodePath(instanceAncestor, preview);
-    }
+    // if (
+    //   newDesigner.scopedElementPath &&
+    //   !node.id.startsWith(newDesigner.scopedElementPath)
+    // ) {
+    //   const preview = newDesigner.currentDocument.paperclip.html;
+    //   const node = getNodeByPath(nodePath, preview) as InnerVirtNode;
+    //   const instanceAncestor = getInstanceAncestor(node, preview);
+    //   newDesigner.scopedElementPath =
+    //     instanceAncestor && getNodePath(instanceAncestor, preview);
+    // }
   });
 
-  if (nodePath) {
-    designer = expandNode(nodePath, designer);
-  }
+  // designer = expandNode(node, designer);
+  // if (nodePath) {
+  // }
 
   return designer;
 };
 
-const expandNode = (nodePath: string, designer: EditorState) => {
-  const nodePathAry = nodePathToAry(nodePath);
-  return produce(designer, (newDesigner) => {
-    // can't be empty, so start at 1
-    for (let i = 1, { length } = nodePathAry; i <= length; i++) {
-      const ancestorPath = nodePathAry.slice(0, i).join(".");
-      if (!newDesigner.expandedNodePaths.includes(ancestorPath)) {
-        newDesigner.expandedNodePaths.push(ancestorPath);
-      }
-    }
-  });
-};
+// const expandNode = (nodePath: string, designer: EditorState) => {
+//   const nodePathAry = nodePathToAry(nodePath);
+//   return produce(designer, (newDesigner) => {
+//     // can't be empty, so start at 1
+//     for (let i = 1, { length } = nodePathAry; i <= length; i++) {
+//       const ancestorPath = nodePathAry.slice(0, i).join(".");
+//       if (!newDesigner.expandedNodePaths.includes(ancestorPath)) {
+//         newDesigner.expandedNodePaths.push(ancestorPath);
+//       }
+//     }
+//   });
+// };

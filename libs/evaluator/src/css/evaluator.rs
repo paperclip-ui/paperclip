@@ -8,6 +8,7 @@ use paperclip_parser::css::ast as css_ast;
 use paperclip_parser::graph;
 use paperclip_parser::graph::reference::{self as graph_ref, Expr};
 use paperclip_parser::pc::ast::{self, override_body_item};
+use paperclip_proto::ast::all::{Expression, ImmutableExpressionRef};
 use paperclip_proto::virt::css::Rule;
 use std::string::ToString;
 
@@ -126,24 +127,38 @@ fn evaluate_component<F: FileResolver>(
 ) {
     for item in &component.body {
         if let ast::component_body_item::Inner::Render(render) = item.get_inner() {
-            evaluate_render_node(
+            evaluate_node(
                 render.node.as_ref().expect("Render node value must exist"),
+                None,
                 &mut context.within_component(component),
             );
         }
     }
 }
 
-fn evaluate_render_node<F: FileResolver>(node: &ast::RenderNode, context: &mut DocumentContext<F>) {
+fn evaluate_node<'a, F: FileResolver>(
+    node: &'a ast::Node,
+    parent: Option<ImmutableExpressionRef<'a>>,
+    context: &mut DocumentContext<F>,
+) {
     match node.get_inner() {
-        ast::render_node::Inner::Element(element) => {
-            evaluate_element(element, context);
+        ast::node::Inner::Style(style) => {
+            evaluate_style(style, context);
         }
-        ast::render_node::Inner::Text(element) => {
-            evaluate_text(element, context);
+        ast::node::Inner::Element(expr) => {
+            evaluate_element(expr, context);
         }
-        ast::render_node::Inner::Slot(expr) => {
+        ast::node::Inner::Insert(expr) => {
+            evaluate_insert(expr, context);
+        }
+        ast::node::Inner::Slot(expr) => {
             evaluate_slot(expr, context);
+        }
+        ast::node::Inner::Text(expr) => {
+            evaluate_text(expr, context);
+        }
+        ast::node::Inner::Override(expr) => {
+            evaluate_override(expr, parent, context);
         }
     }
 }
@@ -152,62 +167,44 @@ fn evaluate_element<F: FileResolver>(element: &ast::Element, context: &mut Docum
     let mut el_context = context.with_target_node(CurrentNode::Element(element));
 
     for item in &element.body {
-        match item.get_inner() {
-            ast::element_body_item::Inner::Style(style) => {
-                evaluate_style(style, &mut el_context);
-            }
-            ast::element_body_item::Inner::Element(expr) => {
-                evaluate_element(expr, &mut el_context);
-            }
-            ast::element_body_item::Inner::Insert(expr) => {
-                evaluate_insert(expr, &mut el_context);
-            }
-            ast::element_body_item::Inner::Slot(expr) => {
-                evaluate_slot(expr, &mut el_context);
-            }
-            ast::element_body_item::Inner::Text(expr) => {
-                evaluate_text(expr, &mut el_context);
-            }
-            ast::element_body_item::Inner::Override(expr) => {
-                evaluate_override(expr, element, &mut el_context);
-            }
-        }
+        evaluate_node(item, Some(element.into()), &mut el_context)
     }
 }
 
 fn evaluate_insert<F: FileResolver>(insert: &ast::Insert, context: &mut DocumentContext<F>) {
     for item in &insert.body {
-        match item.get_inner() {
-            ast::insert_body::Inner::Element(expr) => {
-                evaluate_element(expr, context);
-            }
-            ast::insert_body::Inner::Text(expr) => {
-                evaluate_text(expr, context);
-            }
-            ast::insert_body::Inner::Slot(expr) => {
-                evaluate_slot(expr, context);
-            }
-        }
+        evaluate_node(item, Some(insert.into()), context);
     }
 }
 
-fn evaluate_override<F: FileResolver>(
-    expr: &ast::Override,
-    parent: &ast::Element,
+fn evaluate_override<'a, F: FileResolver>(
+    expr: &'a ast::Override,
+    parent: Option<ImmutableExpressionRef<'a>>,
     context: &mut DocumentContext<F>,
 ) {
+    let parent = if let Some(parent) = parent {
+        parent.clone()
+    } else {
+        return;
+    };
+
     for item in &expr.body {
         match item.get_inner() {
             override_body_item::Inner::Style(style) => evaluate_style(
                 style,
-                &mut into_shadow(&expr.path, parent, &mut context.clone())
-                    .with_ref_context(context),
+                &mut into_shadow(
+                    &expr.path,
+                    parent.clone().try_into().expect("Must be an element"),
+                    &mut context.clone(),
+                )
+                .with_ref_context(context),
             ),
+
             override_body_item::Inner::Variant(variant_override) => evaluate_variant_override(
                 variant_override,
                 &mut into_shadow(
                     &expr.path,
-                    parent,
+                    parent.clone().try_into().expect("Must be an element"),
                     &mut context.with_variant(variant_override),
                 ),
             ),
@@ -269,14 +266,7 @@ fn into_shadow<'a, F: FileResolver>(
 
 fn evaluate_slot<F: FileResolver>(slot: &ast::Slot, context: &mut DocumentContext<F>) {
     for item in &slot.body {
-        match item.get_inner() {
-            ast::slot_body_item::Inner::Element(expr) => {
-                evaluate_element(expr, context);
-            }
-            ast::slot_body_item::Inner::Text(expr) => {
-                evaluate_text(expr, context);
-            }
-        }
+        evaluate_node(item, Some(slot.into()), context)
     }
 }
 
@@ -284,11 +274,7 @@ fn evaluate_text<F: FileResolver>(expr: &ast::TextNode, context: &mut DocumentCo
     let mut el_context = context.with_target_node(CurrentNode::TextNode(expr));
 
     for item in &expr.body {
-        match item.get_inner() {
-            ast::text_node_body_item::Inner::Style(style) => {
-                evaluate_style(style, &mut el_context);
-            }
-        }
+        evaluate_node(item, Some(expr.into()), &mut el_context);
     }
 }
 fn evaluate_variant_override<F: FileResolver>(
@@ -377,11 +363,11 @@ fn evaluate_variant_styles<F: FileResolver>(
 
     let root_node_ns = get_style_namespace(
         match root_node.get_inner() {
-            ast::render_node::Inner::Element(expr) => &expr.name,
-            ast::render_node::Inner::Text(expr) => &expr.name,
+            ast::node::Inner::Element(expr) => &expr.name,
+            ast::node::Inner::Text(expr) => &expr.name,
             _ => &None,
         },
-        &root_node.get_id(),
+        root_node.get_id(),
         Some(target_component),
     );
 
@@ -641,7 +627,7 @@ fn collect_triggers<F: FileResolver>(
 ) {
     for trigger in triggers {
         match trigger.get_inner() {
-            ast::trigger_body_item::Inner::Boolean(expr) => {
+            ast::trigger_body_item::Inner::Bool(expr) => {
                 into.push(VariantTrigger::Boolean(expr.value));
             }
             ast::trigger_body_item::Inner::Str(expr) => {

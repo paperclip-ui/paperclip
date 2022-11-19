@@ -6,8 +6,8 @@ include!(concat!(env!("OUT_DIR"), "/virt.core.rs"));
 
 add_inner_wrapper!(value::Inner, Value);
 
-impl Object {
-    pub fn extend(&mut self, other: &mut Object) {
+impl Obj {
+    pub fn extend(&mut self, other: &mut Obj) {
         let mut combined = self.to_map();
         combined.extend(other.to_map());
         self.properties = vec![];
@@ -38,7 +38,7 @@ impl Object {
                 ret = Some(next);
 
                 if !parts.peek().is_none() {
-                    if let value::Inner::Object(next_ctx) = next.get_inner() {
+                    if let value::Inner::Obj(next_ctx) = next.get_inner() {
                         ctx = &next_ctx;
                     } else {
                         return None;
@@ -52,13 +52,13 @@ impl Object {
     }
 }
 
-impl ToString for Array {
+impl ToString for Ary {
     fn to_string(&self) -> String {
         "[Object object]".to_string()
     }
 }
 
-impl ToString for Object {
+impl ToString for Obj {
     fn to_string(&self) -> String {
         "[Object object]".to_string()
     }
@@ -70,13 +70,13 @@ impl ToString for Str {
     }
 }
 
-impl ToString for Number {
+impl ToString for Num {
     fn to_string(&self) -> String {
         self.value.to_string()
     }
 }
 
-impl ToString for Boolean {
+impl ToString for Bool {
     fn to_string(&self) -> String {
         self.value.to_string()
     }
@@ -97,11 +97,11 @@ impl ToString for Value {
 impl ToString for value::Inner {
     fn to_string(&self) -> String {
         match self {
-            Self::Array(value) => value.to_string(),
-            Self::Object(value) => value.to_string(),
+            Self::Ary(value) => value.to_string(),
+            Self::Obj(value) => value.to_string(),
             Self::Str(value) => value.to_string(),
-            Self::Boolean(value) => value.to_string(),
-            Self::Number(value) => value.to_string(),
+            Self::Bool(value) => value.to_string(),
+            Self::Num(value) => value.to_string(),
             Self::Undef(value) => value.to_string(),
             Self::Node(node) => node.to_string(),
         }

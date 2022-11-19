@@ -1,5 +1,5 @@
-import * as html from "@paperclip-ui/proto/lib/virt/html_pb";
-import * as css from "@paperclip-ui/proto/lib/virt/css_pb";
+import * as html from "@paperclip-ui/proto/lib/generated/virt/html";
+import * as css from "@paperclip-ui/proto/lib/generated/virt/css";
 import { Html5Entities } from "html-entities";
 import { preventDefault, ATTR_ALIASES } from "./utils";
 import { NodeFactory } from "./node-factory";
@@ -28,7 +28,7 @@ export const getNativeNodePath = (root: Node, node: Node) => {
 export type UrlResolver = (url: string) => string;
 
 export const createNativeNode = (
-  node: html.Node.AsObject,
+  node: html.Node,
   factory: NodeFactory,
   resolveUrl: UrlResolver,
   namespaceURI: string,
@@ -87,7 +87,7 @@ const ruleIsValid = (ruleText: string) => {
 };
 
 export const createNativeStyleFromSheet = (
-  sheet: css.Document.AsObject,
+  sheet: css.Document,
   factory: NodeFactory,
   resolveUrl: UrlResolver
 ) => {
@@ -128,10 +128,10 @@ export const createNativeGlobalScript = (
 };
 
 export const renderSheetText = (
-  sheet: css.Document.AsObject,
+  sheet: css.Document,
   resolveUrl: UrlResolver
 ) => {
-  return sheet.rulesList
+  return sheet.rules
     .map((rule) => stringifyCSSRule(rule, { resolveUrl }))
     .map((text) => {
       // OOF! This is expensive! This should be done in the rust engine instead. Not here!
@@ -142,10 +142,7 @@ export const renderSheetText = (
     .join("\n");
 };
 
-const createNativeTextNode = (
-  node: html.TextNode.AsObject,
-  factory: NodeFactory
-) => {
+const createNativeTextNode = (node: html.TextNode, factory: NodeFactory) => {
   // fixes https://github.com/paperclipui/paperclip/issues/609
   const wrapper = document.createElement("span");
 
@@ -158,7 +155,7 @@ const createNativeTextNode = (
 };
 
 const createNativeElement = (
-  element: html.Element.AsObject,
+  element: html.Element,
   factory: NodeFactory,
   resolveUrl: UrlResolver,
   namespaceUri?: string,
@@ -178,7 +175,7 @@ const createNativeElement = (
 
   nativeElement.id = "_" + element.id;
 
-  for (let { name, value } of element.attributesList) {
+  for (let { name, value } of element.attributes) {
     if (name === "src" && resolveUrl) {
       value = resolveUrl(value);
     }
@@ -188,7 +185,7 @@ const createNativeElement = (
     nativeElement.setAttribute(aliasName, value);
   }
 
-  for (const child of element.childrenList) {
+  for (const child of element.children) {
     nativeElement.appendChild(
       createNativeNode(
         child,

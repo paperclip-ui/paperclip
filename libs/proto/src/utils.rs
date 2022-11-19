@@ -22,6 +22,9 @@ macro_rules! add_inner_wrapper {
             pub fn get_inner(&self) -> &$path {
                 self.inner.as_ref().expect("Inner must exist")
             }
+            pub fn get_inner_mut(&mut self) -> &mut $path {
+                self.inner.as_mut().expect("Inner must exist")
+            }
         }
     };
 }

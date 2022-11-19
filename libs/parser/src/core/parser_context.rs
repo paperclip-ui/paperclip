@@ -11,7 +11,7 @@ pub struct Context<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone> {
     pub curr_u16pos: U16Position,
     pub curr_token: Option<TToken>,
     pub token_pool: VecDeque<(Option<TToken>, U16Position)>,
-    pub source_url: String,
+    pub id_seed: String,
     pub id_generator: &'idgenerator mut IDGenerator,
     _next_token: &'tokenizer NextToken<'src, TToken>,
     pub scanner: &'scanner mut StringScanner<'src>, // pub tokenizer: &'tokenizer mut TTokenizer,
@@ -22,7 +22,7 @@ impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone>
 {
     pub fn new(
         scanner: &'scanner mut StringScanner<'src>,
-        source_url: &String,
+        id_seed: &str,
         _next_token: &'tokenizer NextToken<'src, TToken>,
         id_generator: &'idgenerator mut IDGenerator,
     ) -> Result<Context<'tokenizer, 'scanner, 'idgenerator, 'src, TToken>, ParserError> {
@@ -31,7 +31,7 @@ impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone>
             token_pool: VecDeque::new(),
             curr_token: Some(_next_token(scanner)?),
             _next_token,
-            source_url: source_url.to_string(),
+            id_seed: id_seed.to_string(),
             id_generator,
             scanner,
         })

@@ -1,4 +1,4 @@
-import * as css from "@paperclip-ui/proto/lib/virt/css_pb";
+import * as css from "@paperclip-ui/proto/lib/generated/virt/css";
 
 // import * as url from "url";
 
@@ -17,14 +17,14 @@ export const stringifyCSSSheet = (
 };
 
 export const stringifyCSSRule = (
-  rule: css.Rule.AsObject,
+  rule: css.Rule,
   options: StringifySheetOptions = {}
 ) => {
-  if (rule.fontface) {
-    return stringifyFontFaceRule(rule.fontface, options);
+  if (rule.fontFace) {
+    return stringifyFontFaceRule(rule.fontFace, options);
   }
-  if (rule.keyframesrule) {
-    return stringifyKeyframesRule(rule.keyframesrule, options);
+  if (rule.keyframesRule) {
+    return stringifyKeyframesRule(rule.keyframesRule, options);
   }
   if (rule.media) {
     return stringifyConditionRule(rule.media, options);
@@ -42,52 +42,52 @@ export const stringifyCSSRule = (
 };
 
 const stringifyConditionRule = (
-  { name, conditionText, rulesList }: css.ConditionRule.AsObject,
+  { name, conditionText, rules }: css.ConditionRule,
   options: StringifySheetOptions
 ) => {
-  return `@${name} ${conditionText} {\n${rulesList
+  return `@${name} ${conditionText} {\n${rules
     .map((style) => stringifyCSSRule(style, options))
     .join("\n")}\n}`;
 };
 
 const stringifyKeyframesRule = (
-  { name, rulesList }: css.KeyframesRule.AsObject,
+  { name, rules }: css.KeyframesRule,
   options: StringifySheetOptions
 ) => {
-  return `@keyframes ${name} {\n${rulesList
+  return `@keyframes ${name} {\n${rules
     .map((style) => stringifyKeyframeRule(style, options))
     .join("\n")}\n}`;
 };
 
 const stringifyKeyframeRule = (
-  { key, styleList }: css.KeyframeRule.AsObject,
+  { key, style }: css.KeyframeRule,
   options: StringifySheetOptions
 ) => {
-  return `${key} {\n${styleList
+  return `${key} {\n${style
     .map((style) => stringifyStyle(style, options))
     .join("\n")}\n}`;
 };
 
 const stringifyFontFaceRule = (
-  { styleList }: css.FontFaceRule.AsObject,
+  { style }: css.FontFaceRule,
   options: StringifySheetOptions
 ) => {
-  return `@font-face {\n${styleList
+  return `@font-face {\n${style
     .map((style) => stringifyStyle(style, options))
     .join("\n")}\n}`;
 };
 
 const stringifyStyleRule = (
-  { selectorText, styleList, ...rest }: css.StyleRule.AsObject,
+  { selectorText, style, ...rest }: css.StyleRule,
   options: StringifySheetOptions
 ) => {
-  return `${selectorText} {\n${styleList
+  return `${selectorText} {\n${style
     .map((style) => stringifyStyle(style, options))
     .join("\n")}\n}`;
 };
 
 const stringifyStyle = (
-  { name, value }: css.StyleDeclaration.AsObject,
+  { name, value }: css.StyleDeclaration,
   { uri, resolveUrl }: StringifySheetOptions
 ) => {
   if (value) {

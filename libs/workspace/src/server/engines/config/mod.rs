@@ -90,7 +90,6 @@ async fn handle_global_scripts<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> 
         if script_path.contains("://") {
             continue;
         }
-        println!("{:?}", script_path);
         loaded_scripts.push((
             script_path.to_string(),
             ctx.io.read_file(&script_path)?.into_vec(),

@@ -1,5 +1,6 @@
-use crate::add_inner_wrapper;
+use std::fmt::format;
 
+use crate::add_inner_wrapper;
 include!(concat!(env!("OUT_DIR"), "/ast.pc.rs"));
 
 macro_rules! body_contains {
@@ -23,22 +24,11 @@ macro_rules! get_body_items {
 }
 
 add_inner_wrapper!(simple_expression::Inner, SimpleExpression);
-add_inner_wrapper!(insert_body::Inner, InsertBody);
-add_inner_wrapper!(render_node::Inner, RenderNode);
+add_inner_wrapper!(node::Inner, Node);
 add_inner_wrapper!(component_body_item::Inner, ComponentBodyItem);
 add_inner_wrapper!(document_body_item::Inner, DocumentBodyItem);
-add_inner_wrapper!(element_body_item::Inner, ElementBodyItem);
-add_inner_wrapper!(text_node_body_item::Inner, TextNodeBodyItem);
 add_inner_wrapper!(override_body_item::Inner, OverrideBodyItem);
-add_inner_wrapper!(slot_body_item::Inner, SlotBodyItem);
 add_inner_wrapper!(trigger_body_item::Inner, TriggerBodyItem);
-
-impl RenderNode {
-    pub fn get_id(&self) -> &String {
-        self.get_inner().get_id()
-    }
-}
-
 /**
  */
 
@@ -102,23 +92,21 @@ impl Component {
 
 impl Element {
     pub fn is_stylable(&self) -> bool {
-        self.name != None || body_contains!(&self.body, element_body_item::Inner::Style(_))
+        self.name != None || body_contains!(&self.body, node::Inner::Style(_))
     }
-    pub fn get_visible_children(&self) -> Vec<&ElementBodyItem> {
+    pub fn get_visible_children(&self) -> Vec<&Node> {
         self.body
             .iter()
             .filter(|child| {
                 matches!(
                     child.get_inner(),
-                    element_body_item::Inner::Text(_)
-                        | element_body_item::Inner::Element(_)
-                        | element_body_item::Inner::Slot(_)
+                    node::Inner::Text(_) | node::Inner::Element(_) | node::Inner::Slot(_)
                 )
             })
             .collect()
     }
     pub fn get_inserts(&self) -> Vec<&Insert> {
-        get_body_items!(&self.body, element_body_item::Inner::Insert, Insert)
+        get_body_items!(&self.body, node::Inner::Insert, Insert)
     }
 }
 
@@ -127,25 +115,42 @@ impl Element {
 
 impl TextNode {
     pub fn is_stylable(&self) -> bool {
-        body_contains!(&self.body, text_node_body_item::Inner::Style(_))
-    }
-}
-
-/**
- */
-
-impl render_node::Inner {
-    pub fn get_id(&self) -> &String {
-        match self {
-            render_node::Inner::Element(expr) => &expr.id,
-            render_node::Inner::Slot(expr) => &expr.id,
-            render_node::Inner::Text(expr) => &expr.id,
-        }
+        body_contains!(&self.body, node::Inner::Style(_))
     }
 }
 
 impl Atom {
     pub fn get_var_name(&self) -> String {
         format!("--{}-{}", self.name, self.id)
+    }
+}
+
+impl TryFrom<Node> for DocumentBodyItem {
+    type Error = ();
+    fn try_from(value: Node) -> Result<Self, Self::Error> {
+        match value.get_inner() {
+            node::Inner::Element(element) => {
+                Ok(document_body_item::Inner::Element(element.clone()).get_outer())
+            }
+            node::Inner::Text(text) => {
+                Ok(document_body_item::Inner::Text(text.clone()).get_outer())
+            }
+            _ => Err(()),
+        }
+    }
+}
+
+impl TryFrom<DocumentBodyItem> for Node {
+    type Error = ();
+    fn try_from(value: DocumentBodyItem) -> Result<Self, Self::Error> {
+        match value.get_inner() {
+            document_body_item::Inner::Element(element) => {
+                Ok(node::Inner::Element(element.clone()).get_outer())
+            }
+            document_body_item::Inner::Text(text) => {
+                Ok(node::Inner::Text(text.clone()).get_outer())
+            }
+            _ => Err(()),
+        }
     }
 }

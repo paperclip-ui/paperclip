@@ -76,48 +76,48 @@ export const DEFAULT_FRAME_BOX = {
   y: 0,
 };
 
-export type Canvas = {
+export interface Canvas {
   showTools: boolean;
   panning: boolean;
   transform: Transform;
   size: Size;
   scrollPosition: Point;
   mousePosition?: Point;
-};
+}
 
-export type BoxNodeInfo = {
+export interface BoxNodeInfo {
   nodePath: string;
   box: Box;
-};
+}
 
 export enum FSItemKind {
   FILE = "file",
   DIRECTORY = "directory",
 }
 
-export type File = {
+export interface File {
   kind: FSItemKind.FILE;
   absolutePath: string;
   url: string;
   name: string;
-};
+}
 
-export type Directory = {
+export interface Directory {
   name: string;
   kind: FSItemKind.DIRECTORY;
   absolutePath: string;
   url: string;
-  children: Array<FSItem>;
-};
+  children: FSItem[];
+}
 
 export type FSItem = File | Directory;
 
-type ExpandedFrameInfo = {
+interface ExpandedFrameInfo {
   frameIndex: number;
   previousCanvasTransform: Transform;
-};
+}
 
-export type UIStateQuery = {
+export interface UIStateQuery {
   showAll: boolean;
   canvasFile: string;
   projectId?: string;
@@ -125,27 +125,27 @@ export type UIStateQuery = {
   expanded: boolean;
   frame: number;
   embedded: boolean;
-};
+}
 
 export type EmbeddedState = {
   host: string;
 } & UIStateQuery;
 
-export type UIState = {
+export interface UIState {
   query: Partial<UIStateQuery>;
-};
+}
 
 // aut
 
-export type Project = {
+export interface Project {
   name: string;
   documents: Record<string, string>;
-};
+}
 
 // state that can be synchronized between documents
-export type SharedState = {
+export interface SharedState {
   documents: Record<string, string | Blob>;
-};
+}
 
 export enum SyncLocationMode {
   None = 0,
@@ -153,24 +153,24 @@ export enum SyncLocationMode {
   Location = 1 << 1,
 }
 
-export type BranchInfo = {
+export interface BranchInfo {
   currentBranch: string;
   branches: string[];
   branchable: boolean;
-};
+}
 
-export type WorkspaceState = {
+export interface WorkspaceState {
   canvasFile?: string;
   showFullEditor?: boolean;
   localResourceRoots: string[];
   branchInfo: BranchInfo;
-};
+}
 
-export type VirtualNodeSourceInfo = {
+export interface VirtualNodeSourceInfo {
   virtualNodePath: number[];
   source: ExprSource;
-};
-export type DesignerState = {
+}
+export interface DesignerState {
   syncLocationMode?: number;
   canvasClickTimestamp?: number;
   showCodeEditorOnStartup?: boolean;
@@ -208,7 +208,7 @@ export type DesignerState = {
   codeEditorWidth?: string;
   highlightNodePath: string;
   scopedElementPath?: string;
-  selectedNodePaths: string[];
+  selectedVirtNodeIds: string[];
   showTextEditor: boolean;
   expandedNodePaths: string[];
   expandedFilePaths: string[];
@@ -222,20 +222,20 @@ export type DesignerState = {
   frameSize?: Size;
   frameBoxes: Record<string, Record<string, Box>>;
   zoomLevel: number;
-};
+}
 
-export type HistState = {
+export interface HistState {
   shared: SharedState;
   history: {
     past: SharedState[];
     future: SharedState[];
   };
-};
+}
 
-type ActionShape = {
+interface ActionShape {
   type: string;
   payload: any;
-};
+}
 
 export type AppState = {
   // state that can be hooked up with CRDTs
@@ -251,18 +251,18 @@ export enum EnvOptionKind {
   Browserstack = "Browserstack",
 }
 
-export type EnvOption = {
+export interface EnvOption {
   kind: EnvOptionKind;
   launchOptions: any;
-};
+}
 
-export type AvailableBrowser = {
+export interface AvailableBrowser {
   os: string;
   osVersion: string;
   browser: string;
   device: string;
   browserVersion: string;
-};
+}
 
 const host =
   typeof DESIGNER_STATE === "undefined"
@@ -305,7 +305,7 @@ export const INITIAL_STATE: AppState = {
     allLoadedPCFileData: {},
     frameBoxes: {},
     zoomLevel: 1,
-    selectedNodePaths: [],
+    selectedVirtNodeIds: [],
     canvas: {
       panning: false,
       showTools: true,

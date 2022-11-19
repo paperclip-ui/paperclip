@@ -24,6 +24,7 @@ pub async fn start<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
 
 async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
     let next = ctx.clone();
+
     handle_store_events!(
         &ctx.store,
         ServerEvent::PaperclipFilesLoaded { files } => {
@@ -37,6 +38,9 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
         },
         ServerEvent::UpdateFileRequested { path, content: _content } => {
             load_dependency_graph(next.clone(), &vec![path.to_string()]).await.expect("Unable to load dependency");
+        },
+        ServerEvent::ApplyMutationRequested {mutations: _} => {
+            load_dependency_graph_from_updated_files(next.clone()).await.expect("Unable to load dependency");
         },
         ServerEvent::FileWatchEvent(event) => {
             if paperclip_common::pc::is_paperclip_file(&event.path) {
@@ -74,6 +78,13 @@ impl<TIO: ServerIO> FileResolver for VirtGraphIO<TIO> {
     fn resolve_file(&self, from: &str, to: &str) -> Result<String> {
         self.ctx.io.resolve_file(from, to)
     }
+}
+
+async fn load_dependency_graph_from_updated_files<TIO: ServerIO>(
+    ctx: ServerEngineContext<TIO>,
+) -> Result<()> {
+    let updated_files = ctx.store.lock().unwrap().state.updated_files.clone();
+    load_dependency_graph(ctx, &updated_files).await
 }
 
 async fn load_dependency_graph<TIO: ServerIO>(
@@ -115,6 +126,9 @@ async fn load_files<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> 
         .config_context
         .clone();
     let files = ctx.io.get_all_designer_files(&state);
+
+    println!("Loaded designer files: {:?}", files);
+
     ctx.emit(ServerEvent::PaperclipFilesLoaded { files });
     Ok(())
 }

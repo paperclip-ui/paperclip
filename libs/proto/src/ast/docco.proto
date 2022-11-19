@@ -46,6 +46,6 @@ message Parameter {
 message ParameterValue {
   oneof inner {
     ast.base.Str str = 1;
-    ast.base.Number number = 2;
+    ast.base.Num num = 2;
   }
 }

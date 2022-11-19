@@ -46,7 +46,7 @@ const useCanvas = () => {
   const actualTransform = useMemo(() => {
     if (expanded) {
       const frame =
-        currentDocument.paperclip?.html.childrenList[canvas.activeFrame];
+        currentDocument.paperclip?.html.children[canvas.activeFrame];
       if (!frame) {
         return canvas.transform;
       }
@@ -159,6 +159,8 @@ const useCanvasHotkeys = (ref: MutableRefObject<HTMLElement>) => {
   useHotkeys(
     {
       e: () => dispatch(editorEvents.eHotkeyPressed()),
+      backspace: () => dispatch(editorEvents.deleteHokeyPressed()),
+      delete: () => dispatch(editorEvents.deleteHokeyPressed()),
     },
     ref
   );

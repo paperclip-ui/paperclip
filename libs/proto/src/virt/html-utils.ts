@@ -1,27 +1,16 @@
 // core tree utils
 
 import { memoize } from "@paperclip-ui/common";
+import * as virt from "../generated/virt/html";
 
 export type InnerVirtNode = {
-  id: string;
-  childrenList?: OuterNode[];
-};
-
-type VirtElement = {
-  id: string;
-  sourceId: string;
-};
-
-type VirtText = {
-  id: string;
-  sourceId: string;
-  value: string;
-  metadata?: any;
+  id?: string;
+  children?: OuterNode[];
 };
 
 export type OuterNode = {
-  element?: VirtElement;
-  textNode?: VirtText;
+  element?: virt.Element | undefined;
+  textNode?: virt.TextNode | undefined;
 };
 
 export const getInnerNode = (node: OuterNode) => {
@@ -39,11 +28,11 @@ export const getInnerNode = (node: OuterNode) => {
 export type BaseTreeNode = {} & InnerVirtNode;
 
 export type BaseParentNode = {
-  childrenList: OuterNode[];
+  children: OuterNode[];
 } & BaseTreeNode;
 
 export const isNodeParent = (node: BaseTreeNode): node is BaseParentNode =>
-  (node as any).childrenList != null;
+  (node as any).children != null;
 
 export const flattenTreeNode = memoize(
   <TNode extends BaseTreeNode>(current: TNode): TNode[] => {
@@ -65,6 +54,23 @@ export const getNodePath = memoize(
 export const getNodeByPath = memoize(
   <TNode extends BaseTreeNode>(nodePath: string, root: TNode) => {
     return getTreeNodeMap(root)[nodePath];
+  }
+);
+export const getNodeById = memoize(
+  <TNode extends BaseTreeNode>(id: string, root: TNode) => {
+    const map = getTreeNodeMap(root);
+    for (const path in map) {
+      if (map[path].id === id) {
+        return map[path];
+      }
+    }
+  }
+);
+export const getNodeParent = memoize(
+  <TNode extends BaseTreeNode>(node: TNode, root: TNode) => {
+    const path = getNodePath(node, root).split(".");
+    path.pop();
+    return getNodeByPath(path.join("."), root);
   }
 );
 
@@ -96,7 +102,7 @@ export const getTreeNodeMap = memoize(
     if (isNodeParent(current)) {
       Object.assign(
         map,
-        ...current.childrenList.map((child, i) =>
+        ...current.children.map((child, i) =>
           getTreeNodeMap(getInnerNode(child), path ? path + "." + i : String(i))
         )
       );
@@ -113,5 +119,5 @@ export const getInstanceAncestor = (node: InnerVirtNode, root: InnerVirtNode) =>
   getNodeAncestors(getNodePath(node, root), root).find(isInstance);
 
 export const isInstance = (_node: InnerVirtNode) => false;
-export const isTextNode = (node: any): node is VirtText =>
+export const isTextNode = (node: any): node is virt.TextNode =>
   (node as any).value != null;

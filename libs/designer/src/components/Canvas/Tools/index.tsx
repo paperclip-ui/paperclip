@@ -4,10 +4,16 @@ import * as styles from "./index.pc";
 // import { Selectable } from "./Selectable";
 import { Frames } from "./Frames";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
-import { flattenFrameBoxes, getEditorState } from "../../../machine/state";
+import {
+  flattenFrameBoxes,
+  getEditorState,
+  getSelectedNodePaths,
+  InsertMode,
+} from "../../../machine/state";
 import { editorEvents } from "../../../machine/events";
 import { mergeBoxes } from "../../../machine/state/geom";
 import { Selectable } from "./Selectable";
+import { InsertElement } from "./InsertElement";
 
 export const Tools = () => {
   const {
@@ -35,8 +41,10 @@ export const Tools = () => {
     return null;
   }
 
+  const cursor = insertMode != null ? "crosshair" : null;
+
   const style = {
-    cursor: insertMode != null ? "crosshair" : null,
+    cursor,
   };
 
   return (
@@ -49,24 +57,24 @@ export const Tools = () => {
       onMouseLeave={onMouseLeave}
       style={style}
     >
-      {/* <Empty show={showEmpty} />
-
-      <Pixels canvas={canvas} /> */}
+      {insertMode == InsertMode.Element && <InsertElement />}
 
       {!resizerMoving && (
         <Selectable
           canvasScroll={canvas.scrollPosition}
           canvasTransform={canvas.transform}
           box={hoveringBox}
+          cursor={cursor}
         />
       )}
 
-      {selectedBox ? (
+      {selectedBox && selectedBox.width && selectedBox.height ? (
         <Selectable
           canvasScroll={canvas.scrollPosition}
           canvasTransform={canvas.transform}
           box={selectedBox}
           showKnobs
+          cursor={cursor}
         />
       ) : null}
       <Frames
@@ -90,7 +98,7 @@ const useTools = () => {
   const dispatch = useDispatch();
   const {
     canvas,
-    selectedNodePaths,
+    selectedVirtNodeIds,
     highlightNodePath,
     optionKeyDown,
     resizerMoving,
@@ -100,6 +108,8 @@ const useTools = () => {
     currentDocument,
   } = useSelector(getEditorState);
   const toolsLayerEnabled = !canvas.isExpanded;
+
+  const selectedNodePaths = useSelector(getSelectedNodePaths);
 
   const getMousePoint = (event) => {
     const rect: ClientRect = (
@@ -128,11 +138,13 @@ const useTools = () => {
           ctrlKey: event.ctrlKey,
           shiftKey: event.shiftKey,
           timestamp: Date.now(),
+          position: getMousePoint(event),
         })
       );
     },
     [dispatch]
   );
+
   const onMouseUp = useCallback(
     (event: React.MouseEvent<any>) => {
       dispatch(editorEvents.canvasMouseUp());
@@ -148,11 +160,11 @@ const useTools = () => {
 
   const selectedBox =
     selectedNodePaths.length &&
-    mergeBoxes(selectedNodePaths.map((path) => boxes[path]));
+    mergeBoxes(selectedNodePaths.map((path) => boxes[path]).filter(Boolean));
 
   const hoveringBox = highlightNodePath && boxes[highlightNodePath];
 
-  const frames = currentDocument?.paperclip?.html?.childrenList || [];
+  const frames = currentDocument?.paperclip?.html?.children || [];
   const showEmpty = frames.length === 0;
 
   return {

@@ -5,7 +5,8 @@ use futures::Stream;
 use paperclip_language_services::DocumentInfo;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
-    file_response, Empty, FileRequest, FileResponse, UpdateFileRequest,
+    file_response, ApplyMutationsRequest, ApplyMutationsResult, Empty, FileRequest, FileResponse,
+    UpdateFileRequest,
 };
 use std::pin::Pin;
 use std::sync::Arc;
@@ -41,6 +42,7 @@ impl Designer for DesignerService {
 
         tokio::spawn(async move {
             let path = request.into_inner().path;
+            println!("Opening file: {}", path);
 
             let emit = |path: String, store: Arc<Mutex<ServerStore>>| {
                 let data = if let Ok(module) =
@@ -85,6 +87,24 @@ impl Designer for DesignerService {
             .unwrap()
             .emit(ServerEvent::UpdateFileRequested { path, content });
         Ok(Response::new(Empty {}))
+    }
+
+    async fn apply_mutations(
+        &self,
+        request: Request<ApplyMutationsRequest>,
+    ) -> Result<Response<ApplyMutationsResult>, Status> {
+        let request = request.into_inner();
+
+        self.store
+            .lock()
+            .unwrap()
+            .emit(ServerEvent::ApplyMutationRequested {
+                mutations: request.mutations,
+            });
+
+        Ok(Response::new(ApplyMutationsResult {
+            changes: self.store.lock().unwrap().state.latest_ast_changes.clone(),
+        }))
     }
 
     async fn get_document_info(

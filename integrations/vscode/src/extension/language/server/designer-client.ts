@@ -4,16 +4,16 @@ import * as execa from "execa";
 import * as waitPort from "wait-port";
 import * as URL from "url";
 global.XMLHttpRequest = require("xhr2");
-import { DesignerClient as GRPCDesignerClient } from "@paperclip-ui/proto/lib/service/designer_grpc_web_pb";
-import { loadCLIBinPath } from "@paperclip-ui/releases";
 import {
-  FileRequest,
-  UpdateFileRequest,
-} from "@paperclip-ui/proto/lib/service/designer_pb";
-import { DocumentInfo } from "@paperclip-ui/proto/lib/language_service/pc_pb";
+  DesignerClientImpl,
+  GrpcWebImpl,
+} from "@paperclip-ui/proto/lib/generated/service/designer";
+import { loadCLIBinPath } from "@paperclip-ui/releases";
+import { DocumentInfo } from "@paperclip-ui/proto/lib/generated/language_service/pc";
+import { NodeHttpTransport } from "@improbable-eng/grpc-web-node-http-transport";
 
 export class DesignerClient {
-  private _client: Deferred<GRPCDesignerClient>;
+  private _client: Deferred<DesignerClientImpl>;
   private _port: number;
   constructor() {
     this._client = new Deferred();
@@ -25,7 +25,11 @@ export class DesignerClient {
   private async _start() {
     this._port = await startDesignServer();
     this._client.resolve(
-      new GRPCDesignerClient(`http://localhost:${this._port}`)
+      new DesignerClientImpl(
+        new GrpcWebImpl(`http://localhost:${this._port}`, {
+          transport: NodeHttpTransport(),
+        })
+      )
     );
   }
   async ready() {
@@ -33,26 +37,23 @@ export class DesignerClient {
   }
   async updateVirtualFileContent(url: string, text: string) {
     const client = await this._client.promise;
-    const request = new UpdateFileRequest();
-    const content = new TextEncoder();
-    request.setPath(URL.fileURLToPath(url)).setContent(content.encode(text));
     return new Promise((resolve, reject) => {
-      client.updateFile(request, {}, (err, response) => {
-        if (err) return reject(err);
-        resolve(response);
-      });
+      const content = new TextEncoder();
+      client
+        .UpdateFile({
+          path: URL.fileURLToPath(url),
+          content: content.encode(text),
+        })
+        .then(resolve, reject);
     });
   }
 
-  async getDocumentInfo(url: string): Promise<DocumentInfo.AsObject> {
+  async getDocumentInfo(url: string): Promise<DocumentInfo> {
     const client = await this._client.promise;
-    const request = new FileRequest();
-    request.setPath(URL.fileURLToPath(url));
     return new Promise((resolve, reject) => {
-      client.getDocumentInfo(request, {}, (err, response) => {
-        if (err) return reject(err);
-        resolve(response.toObject());
-      });
+      client
+        .GetDocumentInfo({ path: URL.fileURLToPath(url) })
+        .then(resolve, reject);
     });
   }
 }

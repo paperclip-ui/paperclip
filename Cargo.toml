@@ -5,12 +5,14 @@ members = [
   "libs/compiler-yew",
   "libs/cli",
   "libs/rs-common",
+  "libs/editor",
   "libs/project",
   "libs/evaluator",
   "libs/paperclip-loader",
   "libs/workspace",
   "libs/infer",
   "libs/proto",
+  "libs/proto_ext",
   "libs/config",
   "libs/language-services"
 ]

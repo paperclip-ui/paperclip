@@ -1,3 +1,5 @@
+use paperclip_common::str_utils::strip_extra_ws;
+
 use super::parser::parse;
 use super::serialize::serialize;
 use crate::core::errors::ParserError;
@@ -5,9 +7,9 @@ use crate::core::errors::ParserError;
 #[test]
 fn can_parse_various_comments() {
     let tests: Vec<(&str, Result<(), ParserError>)> = vec![
-        ("/***/", Ok(())),
+        ("/**\n*/", Ok(())),
         ("/** This is some text */", Ok(())),
-        ("/** This is some text @name \"value\" */", Ok(())),
+        ("/** This is some text \n * @name \"value\" */", Ok(())),
         (
             "/** This is some text @name \"value\" some other text */",
             Ok(()),
@@ -32,7 +34,7 @@ fn can_parse_various_comments() {
     for (source, expected_result) in tests {
         let result = parse(source, &"".to_string());
         if let Ok(ast) = result {
-            assert_eq!(source, serialize(&ast));
+            assert_eq!(strip_extra_ws(source), strip_extra_ws(&serialize(&ast)));
         } else if let Err(err) = result {
             assert_eq!(Err(err), expected_result);
         }

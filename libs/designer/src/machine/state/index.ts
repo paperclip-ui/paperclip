@@ -1,9 +1,12 @@
-import { FileResponse } from "@paperclip-ui/proto/lib/service/designer_pb";
+import {
+  ApplyMutationsResult,
+  FileResponse,
+} from "@paperclip-ui/proto/lib/generated/service/designer";
 import { pickBy } from "lodash";
 import {
   Node,
   Document as HTMLDocument,
-} from "@paperclip-ui/proto/lib/virt/html_pb";
+} from "@paperclip-ui/proto/lib/generated/virt/html";
 import { DesignerEngineState } from "../engine/designer/state";
 import {
   Box,
@@ -16,6 +19,10 @@ import {
   Transform,
 } from "./geom";
 import { memoize } from "@paperclip-ui/common";
+import {
+  getNodeById,
+  getNodePath,
+} from "@paperclip-ui/proto/lib/virt/html-utils";
 export const IS_WINDOWS = false;
 
 export enum InsertMode {
@@ -30,6 +37,7 @@ export type Canvas = {
   activeFrame?: number;
   scrollPosition: Point;
   mousePosition?: Point;
+  mouseDown?: boolean;
 };
 
 export type BoxNodeInfo = {
@@ -50,7 +58,7 @@ export type StyleOverrides = Record<string, Record<string, string | number>>;
 export type EditorState = {
   readonly: boolean;
   scopedElementPath?: string;
-  selectedNodePaths: string[];
+  selectedVirtNodeIds: string[];
   insertMode?: InsertMode;
   highlightNodePath?: string;
 
@@ -60,12 +68,14 @@ export type EditorState = {
   // selectedNodeStyleInspections: any[];
   // selectedNodeSources: any[];
   canvasClickTimestamp?: number;
+  canvasMouseDownStartPoint?: Point;
   showTextEditor?: boolean;
   resizerMoving: boolean;
   expandedNodePaths: string[];
+  allStyles: Record<string, CSSStyleDeclaration>;
   optionKeyDown: boolean;
   centeredInitial: boolean;
-  currentDocument?: FileResponse.AsObject;
+  currentDocument?: FileResponse;
   rects: Record<number, Record<string, Box>>;
   canvas: Canvas;
 } & DesignerEngineState;
@@ -73,12 +83,13 @@ export type EditorState = {
 export const DEFAULT_STATE: EditorState = {
   readonly: false,
   styleOverrides: {},
+  allStyles: {},
   resizerMoving: false,
   optionKeyDown: false,
   scopedElementPath: null,
   expandedNodePaths: [],
   centeredInitial: false,
-  selectedNodePaths: [],
+  selectedVirtNodeIds: [],
   canvas: {
     transform: { x: 0, y: 0, z: 1 },
     scrollPosition: { x: 0, y: 0 },
@@ -95,7 +106,7 @@ export const maybeCenterCanvas = (editor: EditorState, force?: boolean) => {
       editor.canvas.size?.width &&
       editor.canvas.size?.height)
   ) {
-    editor = { ...editor, centeredInitial: false };
+    editor = { ...editor, centeredInitial: true };
 
     let targetBounds: Box;
     const currentFrameIndex = editor.canvas.activeFrame;
@@ -181,8 +192,12 @@ export const centerEditorCanvas = (
 const getAllFrameBounds = (designer: EditorState) => {
   return mergeBoxes(getCurrentPreviewFrameBoxes(designer));
 };
-export const getSelectedNodePaths = (designer: EditorState) =>
-  designer.selectedNodePaths;
+export const getSelectedNodePaths = (designer: EditorState) => {
+  return designer.selectedVirtNodeIds.map((id) => {
+    const node = getNodeById(id, designer.currentDocument.paperclip.html);
+    return getNodePath(node, designer.currentDocument.paperclip.html);
+  });
+};
 export const getHighlightedNodePath = (designer: EditorState) =>
   designer.highlightNodePath;
 export const getResizerMoving = (designer: EditorState) =>
@@ -195,29 +210,27 @@ export const getCurrentPreviewFrameBoxes = (editor: EditorState) => {
   return preview ? getPreviewFrameBoxes(preview).filter(Boolean) : [];
 };
 
-const getPreviewFrameBoxes = (preview: HTMLDocument.AsObject) => {
+const getPreviewFrameBoxes = (preview: HTMLDocument) => {
   const currentPreview = preview;
-  const frameBoxes = getPreviewChildren(currentPreview).map(
-    (frame: Node.AsObject) => {
-      const metadata = getInnerNode(frame).metadata;
-      const box = metadata.bounds || DEFAULT_FRAME_BOX;
-      if (metadata.visible === false) {
-        return null;
-      }
-      return { ...DEFAULT_FRAME_BOX, ...box };
+  const frameBoxes = getPreviewChildren(currentPreview).map((frame: Node) => {
+    const metadata = getInnerNode(frame).metadata;
+    const box = metadata?.bounds || DEFAULT_FRAME_BOX;
+    if (metadata?.visible === false) {
+      return null;
     }
-  );
+    return { ...DEFAULT_FRAME_BOX, ...box };
+  });
 
   return frameBoxes;
 };
 
-const getInnerNode = (node: Node.AsObject) => node.element || node.textNode;
+const getInnerNode = (node: Node) => node.element || node.textNode;
 
 export const getCanvas = (editor: EditorState) => editor.canvas;
 
-export const getPreviewChildren = (frame: HTMLDocument.AsObject) => {
+export const getPreviewChildren = (frame: HTMLDocument) => {
   // return frame.kind === VirtualNodeKind.Fragment ? frame.children : [frame];
-  return frame.childrenList;
+  return frame.children;
 };
 
 export const flattenFrameBoxes = memoize(
@@ -278,3 +291,19 @@ export const getFrameBoxes = memoize(
     return v;
   }
 );
+
+export const getInsertBox = ({
+  canvasMouseDownStartPoint: start,
+  canvas: { mousePosition },
+}: EditorState): Box => {
+  if (!start) {
+    return null;
+  }
+
+  return {
+    width: Math.abs(start.x - mousePosition.x),
+    height: Math.abs(start.y - mousePosition.y),
+    x: Math.min(start.x, mousePosition.x),
+    y: Math.min(start.y, mousePosition.y),
+  };
+};

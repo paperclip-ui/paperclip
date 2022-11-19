@@ -1,0 +1,15 @@
+{
+  "name": "@paperclip-ui/proto-ext",
+  "version": "19.0.10",
+  "description": "",
+  "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "lib"
+  ],
+  "author": "",
+  "license": "ISC",
+  "gitHead": "e21804d0f4839ad1506435a86ad5e1ff2d53ee9f"
+}

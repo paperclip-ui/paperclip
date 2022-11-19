@@ -12,13 +12,13 @@ message Range {
   U16Position end = 2;
 }
 
-message Number {
+message Num {
   string id = 1;
   float value = 2;
   Range range = 3;
 }
 
-message Boolean {
+message Bool {
   string id = 1;
   bool value = 2;
   Range range = 3;

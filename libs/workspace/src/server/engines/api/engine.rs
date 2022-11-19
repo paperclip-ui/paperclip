@@ -8,7 +8,7 @@ use crate::server::core::{ServerEngineContext, ServerEvent};
 use crate::server::io::ServerIO;
 use anyhow::Result;
 use futures::future::{self, Either, TryFutureExt};
-use hyper::{service::make_service_fn, Server, service::service_fn};
+use hyper::{service::make_service_fn, service::service_fn, Server};
 use paperclip_proto::service::designer::designer_server::DesignerServer;
 use std::convert::Infallible;
 use tower::Service;
@@ -38,11 +38,9 @@ async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
 
     println!("🎨 Starting design server on port {}", port);
 
-
     let designer = DesignerService::new(ctx.store.clone());
     let designer_server = DesignerServer::new(designer);
     let designer_server = tonic_web::config().enable(designer_server);
-
 
     let server = Server::bind(&addr).serve(make_service_fn(move |_| {
         let cors = warp::cors().allow_any_origin();
@@ -50,24 +48,22 @@ async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
 
         let mut warp = warp::service(route);
         let mut designer_server = designer_server.clone();
-        future::ok::<_, Infallible>(service_fn(
-            move |req: hyper::Request<hyper::Body>| {
-                if content_types::is_grpc_web(req.headers()) {
-                    Either::Left(
-                        designer_server
-                            .call(req)
-                            .map_ok(|res| res.map(EitherBody::Left))
-                            .map_err(Error::from),
-                    )
-                } else {
-                    Either::Right(
-                        warp.call(req)
-                            .map_ok(|res| res.map(EitherBody::Right))
-                            .map_err(Error::from),
-                    )
-                }
-            },
-        ))
+        future::ok::<_, Infallible>(service_fn(move |req: hyper::Request<hyper::Body>| {
+            if content_types::is_grpc_web(req.headers()) {
+                Either::Left(
+                    designer_server
+                        .call(req)
+                        .map_ok(|res| res.map(EitherBody::Left))
+                        .map_err(Error::from),
+                )
+            } else {
+                Either::Right(
+                    warp.call(req)
+                        .map_ok(|res| res.map(EitherBody::Right))
+                        .map_err(Error::from),
+                )
+            }
+        }))
     }));
 
     ctx.emit(ServerEvent::APIServerStarted { port });
@@ -80,12 +76,10 @@ async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
 // const LOCAL_CERT: &'static [u8] = include_bytes!("../../../../localhost+2.pem");
 // const LOCAL_PKEY: &'static [u8] = include_bytes!("../../../../localhost+2-key.pem");
 
-
 // fn tls_acceptor() -> TlsAcceptor {
 
 //     let mut cert = BufReader::new(LOCAL_CERT);
 //     let mut key = BufReader::new(LOCAL_PKEY);
-
 
 //     let cert_chain = certs(&mut cert)
 //         .unwrap()
@@ -93,7 +87,7 @@ async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
 //         .map(|v| Certificate(v.clone()))
 //         .collect();
 
-//     let mut keys = rustls::PrivateKey(Vec::new()); 
+//     let mut keys = rustls::PrivateKey(Vec::new());
 //     loop {
 //             match rustls_pemfile::read_one(&mut key).expect("cannot parse private key .pem file") {
 //                 Some(rustls_pemfile::Item::RSAKey(key)) => keys = rustls::PrivateKey(key),
@@ -104,7 +98,6 @@ async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
 //             }
 //         }
 
-
 //     Arc::new(
 //         ServerConfig::builder()
 //             .with_safe_defaults()
@@ -114,7 +107,6 @@ async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
 //     )
 //     .into()
 // }
-
 
 // #[derive(Debug)]
 // struct ConnInfo {

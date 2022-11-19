@@ -75,12 +75,12 @@ fn scan_component(component: &Component, ctx: &mut Context) {
     }
 }
 
-fn scan_render_node(node: &render_node::Inner, ctx: &mut Context) {
+fn scan_render_node(node: &node::Inner, ctx: &mut Context) {
     match node {
-        render_node::Inner::Element(element) => {
+        node::Inner::Element(element) => {
             scan_element(element, ctx);
         }
-        render_node::Inner::Slot(element) => {
+        node::Inner::Slot(element) => {
             scan_slot(element, ctx);
         }
         _ => {}
@@ -90,19 +90,19 @@ fn scan_render_node(node: &render_node::Inner, ctx: &mut Context) {
 fn scan_element(element: &Element, ctx: &mut Context) {
     for item in &element.body {
         match item.get_inner() {
-            element_body_item::Inner::Element(element) => {
+            node::Inner::Element(element) => {
                 scan_element(element, ctx);
             }
-            element_body_item::Inner::Override(element) => {
+            node::Inner::Override(element) => {
                 scan_override(element, ctx);
             }
-            element_body_item::Inner::Text(expr) => {
+            node::Inner::Text(expr) => {
                 scan_text(expr, ctx);
             }
-            element_body_item::Inner::Insert(expr) => {
+            node::Inner::Insert(expr) => {
                 scan_insert(expr, ctx);
             }
-            element_body_item::Inner::Style(element) => {
+            node::Inner::Style(element) => {
                 scan_style(element, ctx);
             }
             _ => {}
@@ -113,12 +113,13 @@ fn scan_element(element: &Element, ctx: &mut Context) {
 fn scan_slot(expr: &Slot, ctx: &mut Context) {
     for item in &expr.body {
         match item.get_inner() {
-            slot_body_item::Inner::Element(expr) => {
+            node::Inner::Element(expr) => {
                 scan_element(expr, ctx);
             }
-            slot_body_item::Inner::Text(expr) => {
+            node::Inner::Text(expr) => {
                 scan_text(expr, ctx);
             }
+            _ => {}
         }
     }
 }
@@ -137,10 +138,10 @@ fn scan_override(expr: &Override, ctx: &mut Context) {
 fn scan_insert(expr: &Insert, ctx: &mut Context) {
     for item in &expr.body {
         match item.get_inner() {
-            insert_body::Inner::Element(expr) => {
+            node::Inner::Element(expr) => {
                 scan_element(expr, ctx);
             }
-            insert_body::Inner::Text(expr) => {
+            node::Inner::Text(expr) => {
                 scan_text(expr, ctx);
             }
             _ => {}
@@ -151,9 +152,10 @@ fn scan_insert(expr: &Insert, ctx: &mut Context) {
 fn scan_text(element: &TextNode, ctx: &mut Context) {
     for item in &element.body {
         match item.get_inner() {
-            text_node_body_item::Inner::Style(expr) => {
+            node::Inner::Style(expr) => {
                 scan_style(expr, ctx);
             }
+            _ => {}
         }
     }
 }

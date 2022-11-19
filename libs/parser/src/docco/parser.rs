@@ -12,7 +12,7 @@ use std::str;
 type ParserContext<'tokenizer, 'scanner, 'idgenerator, 'src> =
     Context<'tokenizer, 'scanner, 'idgenerator, 'src, Token<'src>>;
 
-pub fn parse<'src>(source: &'src str, url: &String) -> Result<ast::Comment, ParserError> {
+pub fn parse<'src>(source: &'src str, url: &str) -> Result<ast::Comment, ParserError> {
     let mut scanner = StringScanner::new(source);
     let mut id_generator = IDGenerator::new(get_document_id(url));
     parse_with_string_scanner(&mut scanner, &mut id_generator, url)
@@ -21,7 +21,7 @@ pub fn parse<'src>(source: &'src str, url: &String) -> Result<ast::Comment, Pars
 pub fn parse_with_string_scanner<'src, 'scanner, 'idgenerator>(
     source: &'scanner mut StringScanner<'src>,
     id_generator: &'idgenerator mut IDGenerator,
-    url: &String,
+    url: &str,
 ) -> Result<ast::Comment, ParserError> {
     let mut context = Context::new(source, url, &next_token, id_generator)?;
     parse_comment(&mut context)
@@ -134,12 +134,12 @@ pub fn parse_text(context: &mut ParserContext) -> Result<base_ast::Str, ParserEr
     })
 }
 
-pub fn parse_number(context: &mut ParserContext) -> Result<base_ast::Number, ParserError> {
+pub fn parse_number(context: &mut ParserContext) -> Result<base_ast::Num, ParserError> {
     let start = context.curr_u16pos.clone();
     let value = extract_number_value(context)?;
     context.next_token()?; // eat
     let end = context.curr_u16pos.clone();
-    Ok(base_ast::Number {
+    Ok(base_ast::Num {
         id: context.next_id(),
         range: Some(Range::new(start, end)),
         value,
@@ -220,7 +220,7 @@ fn parse_parameter_value(
 ) -> Result<ast::parameter_value::Inner, err::ParserError> {
     match context.curr_token {
         Some(Token::String(_)) => Ok(ast::parameter_value::Inner::Str(parse_string(context)?)),
-        Some(Token::Number(_)) => Ok(ast::parameter_value::Inner::Number(parse_number(context)?)),
+        Some(Token::Number(_)) => Ok(ast::parameter_value::Inner::Num(parse_number(context)?)),
         _ => Err(context.new_unexpected_token_error()),
     }
 }

@@ -2,27 +2,19 @@ import React, { useCallback } from "react";
 import { memo, useMemo } from "react";
 import * as styles from "./styles.pc";
 import { FrameContainer } from "../../FrameContainer";
-import { PCModule } from "@paperclip-ui/proto/lib/virt/module_pb";
-import { Node as VirtNode } from "@paperclip-ui/proto/lib/virt/html_pb";
+import { Node as VirtNode } from "@paperclip-ui/proto/lib/generated/virt/html";
+import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 
 const DEFAULT_BOUNDS = { x: 0, y: 0, width: 1024, height: 768 };
 
 type FrameProps = {
   frameIndex: number;
   expanded: boolean;
-  preview: VirtNode.AsObject;
-  document: PCModule.AsObject;
+  preview: VirtNode;
+  document: PCModule;
   extraHTML?: string;
-  onLoad: (
-    mount: HTMLElement,
-    data: PCModule.AsObject,
-    frameIndex: number
-  ) => void;
-  onUpdate: (
-    mount: HTMLElement,
-    data: PCModule.AsObject,
-    frameIndex: number
-  ) => void;
+  onLoad: (mount: HTMLElement, data: PCModule, frameIndex: number) => void;
+  onUpdate: (mount: HTMLElement, data: PCModule, frameIndex: number) => void;
 };
 
 export const Frame = memo(
@@ -96,6 +88,6 @@ export const Frame = memo(
   }
 );
 
-const getFrameBounds = (node: VirtNode.AsObject) => {
+const getFrameBounds = (node: VirtNode) => {
   return node.element?.metadata?.bounds || node.textNode?.metadata?.bounds;
 };

@@ -1,0 +1,110 @@
+syntax = "proto3";
+import "ast/base.proto";
+import "ast/css.proto";
+import "ast/docco.proto";
+import "ast/pc.proto";
+
+package ast_mutate;
+
+message Mutation {
+  oneof inner {
+
+    // Node specific
+    AppendChild append_child = 1;
+    DeleteChild delete_child = 2;
+    InsertChild insert_child = 3;
+
+    // Element
+    SetElementParameter set_element_parameter = 4;
+    SetFrameBounds set_frame_bounds = 5;
+    InsertFrame insert_frame = 6;
+
+    // Text
+    SetTextNodeValue set_text_node_value = 7;
+
+    // Style
+    SetStyleDeclaration set_style_declaration = 8;
+    DeleteStyleDeclaration delete_style_declaration = 9;
+
+    // General
+    DeleteExpression delete_expression = 10;
+  }
+}
+
+// result after mutation 
+message MutationResult {
+  oneof inner {
+    ExpressionInserted expression_inserted = 1;
+    ExpressionUpdated expression_updated = 2;
+    ExpressionDeleted expression_deleted = 3;
+  }
+}
+
+message ExpressionInserted {
+  string id = 1;
+}
+
+message ExpressionDeleted {
+  string id = 1;
+}
+
+message ExpressionUpdated {
+  string id = 1;
+}
+
+message AppendChild {
+  string parent_id = 1;
+  string child_source = 2;
+}
+
+
+message DeleteExpression {
+  string expression_id = 1;
+}
+
+message DeleteChild {
+  string node_id = 1;
+}
+
+message SetFrameBounds {
+  string frame_id = 1;
+  Bounds bounds = 2;
+}
+
+message Bounds {
+  float x = 1;
+  float y = 2;
+  float width = 3;
+  float height = 4;
+}
+
+message InsertChild {
+  string before_id = 1;
+  string child_source = 2;
+}
+
+message SetElementParameter {
+  string element_id = 1;
+  string parameter_name = 2;
+  ast.pc.SimpleExpression parameter_value = 3;
+}
+
+message InsertFrame {
+  string document_id = 1;
+  string node_source = 2;
+  Bounds bounds = 3;
+}
+
+message SetTextNodeValue {
+  string text_node_id = 1;
+  string value = 2;
+}
+
+message SetStyleDeclaration {
+  string declaration_id = 1;
+  ast.css.DeclarationValue value = 2;
+}
+
+message DeleteStyleDeclaration {
+  string declaration_id = 1;
+}

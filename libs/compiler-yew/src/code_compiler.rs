@@ -170,9 +170,10 @@ fn compile_render(render: &ast::Render, context: &mut Context) {
     context.add_buffer("html! {\n");
     context.start_block();
     match render.node.as_ref().expect("Node must exist").get_inner() {
-        ast::render_node::Inner::Element(expr) => compile_element(&expr, true, context),
-        ast::render_node::Inner::Text(expr) => compile_text_node(&expr, context),
-        ast::render_node::Inner::Slot(expr) => compile_slot(&expr, context),
+        ast::node::Inner::Element(expr) => compile_element(&expr, true, context),
+        ast::node::Inner::Text(expr) => compile_text_node(&expr, context),
+        ast::node::Inner::Slot(expr) => compile_slot(&expr, context),
+        _ => {}
     }
     context.end_block();
     context.add_buffer("}\n");
@@ -209,11 +210,11 @@ fn compile_element_children(element: &ast::Element, context: &mut Context) {
 
     compile_children! {
       &visible_children,
-      |child: &ast::ElementBodyItem| {
+      |child: &ast::Node| {
         match child.get_inner() {
-          ast::element_body_item::Inner::Text(expr) => compile_text_node(&expr, context),
-          ast::element_body_item::Inner::Element(expr) => compile_element(&expr, false, context),
-          ast::element_body_item::Inner::Slot(expr) => compile_slot(&expr, context),
+          ast::node::Inner::Text(expr) => compile_text_node(&expr, context),
+          ast::node::Inner::Element(expr) => compile_element(&expr, false, context),
+          ast::node::Inner::Slot(expr) => compile_slot(&expr, context),
           _ => {}
         };
       },
@@ -313,11 +314,12 @@ fn get_raw_element_attrs<'dependency>(
 fn compile_insert(insert: &ast::Insert, context: &mut Context) {
     compile_children! {
       &insert.body,
-      |child: &ast::InsertBody| {
+      |child: &ast::Node| {
         match child.get_inner() {
-          ast::insert_body::Inner::Element(expr) => compile_element(&expr,false, context),
-          ast::insert_body::Inner::Text(expr) => compile_text_node(&expr, context),
-          ast::insert_body::Inner::Slot(expr) => compile_slot(&expr, context)
+          ast::node::Inner::Element(expr) => compile_element(&expr,false, context),
+          ast::node::Inner::Text(expr) => compile_text_node(&expr, context),
+          ast::node::Inner::Slot(expr) => compile_slot(&expr, context),
+          _ => {}
         }
       },
       context
@@ -334,10 +336,10 @@ fn compile_simple_expression(expr: &ast::SimpleExpression, context: &mut Context
         ast::simple_expression::Inner::Str(expr) => {
             context.add_buffer(format!("\"{}\"", expr.value).as_str())
         }
-        ast::simple_expression::Inner::Number(expr) => {
+        ast::simple_expression::Inner::Num(expr) => {
             context.add_buffer(format!("\"{}\"", expr.value).as_str())
         }
-        ast::simple_expression::Inner::Boolean(expr) => {
+        ast::simple_expression::Inner::Bool(expr) => {
             context.add_buffer(format!("\"{}\"", expr.value).as_str())
         }
         ast::simple_expression::Inner::Reference(expr) => context.add_buffer(

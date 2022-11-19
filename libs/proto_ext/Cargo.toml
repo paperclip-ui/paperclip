@@ -1,0 +1,13 @@
+[package]
+name = "paperclip_proto_ext"
+version = "0.1.1"
+authors = ["Craig Condon <craig.j.condon@gmail.com>"]
+edition = "2021"
+exclude = []
+
+[lib]
+name = "paperclip_proto_ext"
+
+[dependencies]
+paperclip_proto = { path = "../proto" }
+paperclip_parser = { path = "../parser" }

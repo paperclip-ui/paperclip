@@ -58,7 +58,7 @@ fn serialize_parameters(value: &ast::Parameters, context: &mut Context) {
 fn serialize_parameter(value: &ast::Parameter, context: &mut Context) {
     context.add_buffer(format!("{}: ", value.name).as_str());
     match &value.value.as_ref().expect("Value must exist").get_inner() {
-        ast::parameter_value::Inner::Number(value) => {
+        ast::parameter_value::Inner::Num(value) => {
             context.add_buffer(format!("{}", value.value).as_str())
         }
         ast::parameter_value::Inner::Str(value) => {

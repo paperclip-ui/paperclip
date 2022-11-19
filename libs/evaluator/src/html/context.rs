@@ -16,9 +16,10 @@ pub struct Options {
 pub struct DocumentContext<'graph, 'expr, 'file_resolver, FR: FileResolver> {
     pub graph: &'graph graph::Graph,
     pub path: String,
-    pub data: Option<core_virt::Object>,
+    pub data: Option<core_virt::Obj>,
     pub file_resolver: &'file_resolver FR,
     pub current_component: Option<&'expr ast::Component>,
+    pub instance_ids: Vec<String>,
     pub render_scopes: Vec<String>,
     pub options: Options,
     pub id_generator: Rc<RefCell<IDGenerator>>,
@@ -42,12 +43,10 @@ impl<'graph, 'expr, 'file_resolver, FR: FileResolver>
             id_generator: Rc::new(RefCell::new(IDGenerator::new(get_document_id(path)))),
             current_component: None,
             render_scopes: vec![],
+            instance_ids: vec![],
         }
     }
-    pub fn next_id(&self) -> String {
-        self.id_generator.borrow_mut().new_id()
-    }
-    pub fn with_data(&self, data: core_virt::Object) -> Self {
+    pub fn with_data(&self, data: core_virt::Obj) -> Self {
         let mut clone = self.clone();
         clone.data = Some(data);
         clone
@@ -55,6 +54,11 @@ impl<'graph, 'expr, 'file_resolver, FR: FileResolver>
     pub fn within_component(&self, component: &'expr ast::Component) -> Self {
         let mut clone = self.clone();
         clone.current_component = Some(component);
+        clone
+    }
+    pub fn within_instance(&self, instance_id: &str) -> Self {
+        let mut clone = self.clone();
+        clone.instance_ids.push(instance_id.to_string());
         clone
     }
     pub fn within_path(&self, path: &str) -> Self {

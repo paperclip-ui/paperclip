@@ -97,11 +97,11 @@ fn compile_component_render(component: &ast::Component, context: &mut Context) {
     let render = get_or_short!(component.get_render_expr(), ());
 
     context.add_buffer("return ");
-    match render.node.as_ref().expect("Node must exist").get_inner() {
-        ast::render_node::Inner::Element(expr) => compile_element(&expr, true, context),
-        ast::render_node::Inner::Text(expr) => compile_text_node(&expr, context),
-        ast::render_node::Inner::Slot(expr) => compile_slot(&expr, context),
-    }
+    compile_node(
+        render.node.as_ref().expect("Node must exist"),
+        context,
+        true,
+    );
     context.add_buffer(";\n");
 }
 
@@ -114,16 +114,7 @@ fn compile_slot(node: &ast::Slot, context: &mut Context) {
 
     if node.body.len() > 0 {
         context.add_buffer(" || ");
-        compile_children! {
-          &node.body,
-          |child: &ast::SlotBodyItem| {
-            match child.get_inner() {
-              ast::slot_body_item::Inner::Element(expr) => compile_element(&expr, false, context),
-              ast::slot_body_item::Inner::Text(expr) => compile_text_node(&expr, context),
-            }
-          },
-          context
-        }
+        compile_node_children(&node.body, context);
     }
 }
 fn compile_element(element: &ast::Element, is_root: bool, context: &mut Context) {
@@ -158,18 +149,26 @@ fn compile_element_children(element: &ast::Element, context: &mut Context) {
 
     context.add_buffer(", ");
 
+    compile_node_children(&element.body, context);
+}
+
+fn compile_node_children(children: &Vec<ast::Node>, context: &mut Context) {
     compile_children! {
-      &visible_children,
-      |child: &ast::ElementBodyItem| {
-        match child.get_inner() {
-          ast::element_body_item::Inner::Text(expr) => compile_text_node(&expr, context),
-          ast::element_body_item::Inner::Element(expr) => compile_element(&expr, false, context),
-          ast::element_body_item::Inner::Slot(expr) => compile_slot(&expr, context),
-          _ => {}
-        };
+      &children,
+      |child: &ast::Node| {
+        compile_node(child, context, false);
       },
       context
     }
+}
+
+fn compile_node(node: &ast::Node, context: &mut Context, is_root: bool) {
+    match node.get_inner() {
+        ast::node::Inner::Text(expr) => compile_text_node(&expr, context),
+        ast::node::Inner::Element(expr) => compile_element(&expr, is_root, context),
+        ast::node::Inner::Slot(expr) => compile_slot(&expr, context),
+        _ => {}
+    };
 }
 
 fn compile_element_parameters(
@@ -267,17 +266,7 @@ fn get_raw_element_attrs<'dependency>(
 }
 
 fn compile_insert(insert: &ast::Insert, context: &mut Context) {
-    compile_children! {
-      &insert.body,
-      |child: &ast::InsertBody| {
-        match child.get_inner() {
-          ast::insert_body::Inner::Element(expr) => compile_element(&expr,false, context),
-          ast::insert_body::Inner::Text(expr) => compile_text_node(&expr, context),
-          ast::insert_body::Inner::Slot(expr) => compile_slot(&expr, context)
-        }
-      },
-      context
-    }
+    compile_node_children(&insert.body, context);
 }
 
 fn rename_attrs_for_react(attrs: BTreeMap<String, Context>) -> BTreeMap<String, Context> {
@@ -300,13 +289,13 @@ fn compile_simple_expression(expr: &ast::SimpleExpression, context: &mut Context
         ast::simple_expression::Inner::Str(expr) => {
             context.add_buffer(format!("\"{}\"", expr.value).as_str())
         }
-        ast::simple_expression::Inner::Number(expr) => {
+        ast::simple_expression::Inner::Num(expr) => {
             context.add_buffer(format!("{}", expr.value).as_str())
         }
-        ast::simple_expression::Inner::Boolean(expr) => {
+        ast::simple_expression::Inner::Bool(expr) => {
             context.add_buffer(format!("{}", expr.value).as_str())
         }
-        ast::simple_expression::Inner::Array(expr) => compile_array(expr, context),
+        ast::simple_expression::Inner::Ary(expr) => compile_array(expr, context),
         ast::simple_expression::Inner::Reference(expr) => compile_reference(expr, context),
     }
 }
@@ -322,7 +311,7 @@ fn compile_reference(expr: &ast::Reference, context: &mut Context) {
     }
 }
 
-fn compile_array(expr: &ast::Array, context: &mut Context) {
+fn compile_array(expr: &ast::Ary, context: &mut Context) {
     context.add_buffer("[");
     context.start_block();
     let mut items = expr.items.iter().peekable();

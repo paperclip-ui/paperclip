@@ -2,7 +2,7 @@ use paperclip_parser::pc::ast;
 
 pub fn get_style_namespace(
     name: &Option<String>,
-    id: &String,
+    id: &str,
     current_component: Option<&ast::Component>,
 ) -> String {
     // Here we're taking the _prefered_ name for style rules to make

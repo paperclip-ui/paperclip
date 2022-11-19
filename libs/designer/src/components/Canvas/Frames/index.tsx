@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { getFrameRects } from "@paperclip-ui/web-renderer";
+import { computeAllStyles, getFrameRects } from "@paperclip-ui/web-renderer";
 import { memo } from "react";
 import { Frame } from "./Frame";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
@@ -8,7 +8,7 @@ import {
   getEditorState,
   StyleOverrides,
 } from "../../../machine/state";
-import { PCModule } from "@paperclip-ui/proto/lib/virt/module_pb";
+import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 import { editorEvents } from "../../../machine/events";
 
 type FramesProps = {
@@ -81,31 +81,29 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
   const dispatch = useDispatch();
 
   const emitFrameRects = useCallback(
-    (mount: HTMLElement, data: PCModule.AsObject, frameIndex: number) => {
+    (mount: HTMLElement, data: PCModule, frameIndex: number) => {
       if (!shouldCollectRects) {
         return false;
       }
 
       const rects = getFrameRects(mount, data, frameIndex);
+      const allStyles = computeAllStyles(mount, frameIndex);
 
       dispatch(editorEvents.rectsCaptured({ frameIndex, rects }));
+      dispatch(editorEvents.allStylesCaptured({ allStyles }));
     },
     [dispatch, shouldCollectRects]
   );
 
   const onFrameUpdated = (
     mount: HTMLElement,
-    data: PCModule.AsObject,
+    data: PCModule,
     index: number
   ) => {
     emitFrameRects(mount, data, index);
   };
 
-  const onFrameLoaded = (
-    mount: HTMLElement,
-    data: PCModule.AsObject,
-    index: number
-  ) => {
+  const onFrameLoaded = (mount: HTMLElement, data: PCModule, index: number) => {
     emitFrameRects(mount, data, index);
   };
 
@@ -113,7 +111,7 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
     return { frames: [], onFrameLoaded };
   }
 
-  const frames = doc.paperclip.html.childrenList;
+  const frames = doc.paperclip.html.children;
 
   return { frames, onFrameLoaded, onFrameUpdated };
 };

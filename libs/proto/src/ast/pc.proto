@@ -5,7 +5,6 @@ import "ast/docco.proto";
 
 package ast.pc;
 
-
 message Document {
   string id = 1;
   ast.base.Range range = 2;
@@ -74,14 +73,17 @@ message Variant {
 message Render {
   string id = 1;
   ast.base.Range range = 2;
-  RenderNode node = 3;
+  Node node = 3;
 }
 
-message RenderNode {
+message Node {
   oneof inner {
     Slot slot = 1;
-    Element element = 2;
-    TextNode text = 3;
+    Insert insert = 2;
+    Style style = 3;
+    Element element = 4;
+    TextNode text = 5;
+    Override override = 6;
   }
 }
 
@@ -105,7 +107,7 @@ message TriggerBodyItem {
   oneof inner {
     ast.base.Str str = 1;
     Reference reference = 2;
-    ast.base.Boolean boolean = 3;
+    ast.base.Bool bool = 3;
   }
 }
 
@@ -114,13 +116,7 @@ message TextNode {
   optional string name = 2;
   string value = 3;
   ast.base.Range range = 4;
-  repeated TextNodeBodyItem body = 5;
-}
-
-message TextNodeBodyItem {
-  oneof inner {
-    Style style = 1;
-  }
+  repeated Node body = 5;
 }
 
 message Parameter {
@@ -133,10 +129,10 @@ message Parameter {
 message SimpleExpression {
   oneof inner {
     ast.base.Str str = 1;
-    ast.base.Number number = 2;
-    ast.base.Boolean boolean = 3;
+    ast.base.Num num = 2;
+    ast.base.Bool bool = 3;
     Reference reference = 4;
-    Array array = 5;
+    Ary ary = 5;
   }
 }
 
@@ -146,7 +142,7 @@ message Reference {
   repeated string path = 3;
 }
 
-message Array {
+message Ary {
   string id = 1;
   ast.base.Range range = 2;
   repeated SimpleExpression items = 3;
@@ -159,47 +155,21 @@ message Element {
   repeated Parameter parameters = 4;
   string id = 5;
   ast.base.Range range = 6;
-  repeated ElementBodyItem body = 7;
-}
-
-message ElementBodyItem {
-  oneof inner {
-    Slot slot = 1;
-    Insert insert = 2;
-    Style style = 3;
-    Element element = 4;
-    TextNode text = 5;
-    Override override = 6;
-  }
+  repeated Node body = 7;
 }
 
 message Slot {
   string id = 1;
   ast.base.Range range = 2;
   string name = 3;
-  repeated SlotBodyItem body = 4;
-}
-
-message SlotBodyItem {
-  oneof inner {
-    Element element = 1;
-    TextNode text = 2;
-  }
+  repeated Node body = 4;
 }
 
 message Insert {
   string name = 1;
   string id = 2;
   ast.base.Range range = 3;
-  repeated InsertBody body = 4;
-}
-
-message InsertBody {
-  oneof inner {
-    Element element = 1;
-    TextNode text = 2;
-    Slot slot = 3;
-  }
+  repeated Node body = 4;
 }
 
 message Override {

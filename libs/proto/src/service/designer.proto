@@ -10,7 +10,7 @@ package service.designer;
 
 service Designer {
   rpc OpenFile(FileRequest) returns (stream FileResponse);
-  rpc OnFileChange(Empty) returns (stream FileResponse);
+  rpc OnEvent(Empty) returns (stream DesignerEvent);
   rpc UpdateFile(UpdateFileRequest) returns (Empty);
   rpc ApplyMutations(ApplyMutationsRequest) returns (ApplyMutationsResult);
   rpc GetDocumentInfo(FileRequest) returns (language_service.pc.DocumentInfo);
@@ -45,9 +45,13 @@ message FileResponse {
   }
 }
 
-message FileChangeResponse {
-  string path = 1;
+message DesignerEvent {
+  oneof inner {
+    FileChanged file_changed = 1;
+  }
+}
 
-  // Raw data
-  bytes content = 1;
+message FileChanged {
+  string path = 1;
+  bytes content = 2;
 }

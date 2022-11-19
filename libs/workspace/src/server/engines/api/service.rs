@@ -6,8 +6,10 @@ use paperclip_language_services::DocumentInfo;
 use paperclip_parser::pc::serializer::serialize;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
+    designer_event,
+    FileChanged,
     file_response, ApplyMutationsRequest, ApplyMutationsResult, Empty, FileRequest, FileResponse,
-    UpdateFileRequest,
+    UpdateFileRequest, DesignerEvent,
 };
 use std::pin::Pin;
 use std::sync::Arc;
@@ -17,7 +19,9 @@ use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
 
 type OpenFileResult<T> = Result<Response<T>, Status>;
-type ResponseStream = Pin<Box<dyn Stream<Item = Result<FileResponse, Status>> + Send>>;
+type FileResponseStream = Pin<Box<dyn Stream<Item = Result<FileResponse, Status>> + Send>>;
+type DesignerEventStream = Pin<Box<dyn Stream<Item = Result<DesignerEvent, Status>> + Send>>;
+type OnEventResult<T> = Result<Response<T>, Status>;
 
 #[derive(Clone)]
 pub struct DesignerService {
@@ -32,7 +36,8 @@ impl DesignerService {
 
 #[tonic::async_trait]
 impl Designer for DesignerService {
-    type OpenFileStream = ResponseStream;
+    type OpenFileStream = FileResponseStream;
+    type OnEventStream = DesignerEventStream;
     async fn open_file(
         &self,
         request: Request<FileRequest>,
@@ -53,18 +58,6 @@ impl Designer for DesignerService {
                 } else {
                     None
                 };
-
-                println!("{}", serialize(
-                    &store
-                        .lock()
-                        .unwrap()
-                        .state
-                        .graph
-                        .dependencies
-                        .get(&path)
-                        .expect("Dependency doesn't exist!")
-                        .document,
-                ));
 
                 Ok(FileResponse {
                     raw_content: serialize(
@@ -96,6 +89,44 @@ impl Designer for DesignerService {
         let output = ReceiverStream::new(rx);
 
         Ok(Response::new(Box::pin(output) as Self::OpenFileStream))
+    }
+
+    async fn on_event(&self, _request: Request<Empty>) ->OnEventResult<Self::OnEventStream>  {
+        let store = self.store.clone();
+
+        let (tx, rx) = mpsc::channel(128);
+
+        tokio::spawn(async move {
+
+            let file_changed = |path: String, content: Vec<u8>| {
+                Result::Ok(designer_event::Inner::FileChanged(FileChanged {
+                    path: path.to_string(),
+                    content: content.clone()
+                }).get_outer())
+            };
+
+            handle_store_events!(store.clone(),
+                ServerEvent::UpdateFileRequested { path, content } => {
+                    tx.send((file_changed)(path.to_string(), content.clone())).await.expect("Can't send");
+                },
+
+                ServerEvent::ApplyMutationRequested { mutations: _mutations } => {
+                    let updated_files = store.lock().unwrap().state.updated_files.clone();
+                    let file_cache = store.lock().unwrap().state.file_cache.clone();
+
+                    for file_path in &updated_files {
+                        if let Some(content) = file_cache.get(file_path) {
+                            tx.send((file_changed)(file_path.to_string(), content.clone())).await.expect("Can't send");
+                        }
+                    }
+                }
+            );
+        });
+
+        let output = ReceiverStream::new(rx);
+
+        Ok(Response::new(Box::pin(output) as Self::OnEventStream))
+
     }
 
     async fn update_file(

@@ -143,7 +143,9 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                         .insert(path.to_string(), content.as_bytes().to_vec());
                 }
 
-                // state.updated_files = changed_files;
+                state.updated_files = changed_files.iter().map(|(path, changes)| {
+                    path.to_string()
+                }).collect::<Vec<String>>();
                 state.latest_ast_changes = latest_ast_changes;
             }
             ServerEvent::FileWatchEvent(event) => {

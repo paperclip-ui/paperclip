@@ -13,6 +13,7 @@ import { EventEmitter } from "stream";
 import { DesignerClient } from "./designer-client";
 import { EVENTS_NOTIFICATION_NAME } from "../constants";
 import { ServerEvent, serverEvents } from "./events";
+import { FileChanged } from "@paperclip-ui/proto/lib/generated/service/designer";
 
 // TODO - need better SRP here, this class is doing too much
 export class PaperclipLanguageServerConnectionManager {
@@ -35,6 +36,7 @@ export class PaperclipLanguageServerConnectionManager {
     this._connection.onDidChangeTextDocument(this._onDidChangeTextDocument);
     this._connection.listen();
     this._designerClient.ready().then(this._onDesignerConnected);
+    this._designerClient.onFileChange(this._onDesignerFileChanged);
   }
 
   onInitialize(listener: (details: { workspaceFolders: string[] }) => void) {
@@ -50,6 +52,14 @@ export class PaperclipLanguageServerConnectionManager {
   private _dispatch(event: ServerEvent) {
     this._connection.sendNotification(EVENTS_NOTIFICATION_NAME, event);
   }
+  private _onDesignerFileChanged = (data: FileChanged) => {
+    this._dispatch(
+      serverEvents.fileChanged({
+        path: data.path,
+        content: new TextDecoder().decode(data.content),
+      })
+    );
+  };
   private _onDidOpenTextDocument = ({
     textDocument,
   }: DidOpenTextDocumentParams) => {

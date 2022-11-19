@@ -47,6 +47,11 @@ export const editorReducer = (
     case designerEngineEvents.documentOpened.type:
       state = produce(state, (newState) => {
         newState.currentDocument = event.payload;
+
+        // prune virt nodes that exist
+        newState.selectedVirtNodeIds = newState.selectedVirtNodeIds.filter(
+          (nodeId) => getNodeById(nodeId, event.payload.paperclip.html)
+        );
       });
       state = maybeCenterCanvas(state);
       return state;
@@ -241,6 +246,17 @@ export const editorReducer = (
     case editorEvents.rectsCaptured.type:
       state = produce(state, (newState) => {
         newState.rects[event.payload.frameIndex] = event.payload.rects;
+
+        // prune frames that don't exist
+
+        for (const frameIndex in newState.rects) {
+          if (
+            Number(frameIndex) >=
+            state.currentDocument.paperclip.html.children.length
+          ) {
+            delete newState.rects[frameIndex];
+          }
+        }
       });
       state = maybeCenterCanvas(state);
       return state;

@@ -16,12 +16,13 @@ type Props = {
   box: Box;
   canvasTransform: Transform;
   showKnobs?: boolean;
+  cursor?: string;
 };
 
 // https://github.com/crcn/tandem/blob/10.0.0/packages/dashboard/src/components/root/workspace/editors/paperclip/stage/canvas/tools-layer/selection/resizer.tsx
 
 export const Selectable = React.memo(
-  ({ box, canvasTransform, canvasScroll, showKnobs }: Props) => {
+  ({ box, canvasTransform, canvasScroll, showKnobs, cursor }: Props) => {
     const [currentBox, setCurrentBox] = useState(box);
     const [initialBox, setInitialBox] = useState(box);
     const dispatch = useDispatch();
@@ -195,6 +196,7 @@ export const Selectable = React.memo(
             width: currentBox.width * canvasTransform.z,
             height: currentBox.height * canvasTransform.z,
             transformOrigin: `top left`,
+            cursor,
           }}
         />
       </>

@@ -1,6 +1,5 @@
 #### On-deck
 
-- select frame when inserted
 - start on style panel
 
 - insert elements

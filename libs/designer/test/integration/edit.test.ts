@@ -74,7 +74,6 @@ describe(__filename + "#", () => {
     );
 
     expect(workspace.designer.getState().selectedVirtNodeIds).toEqual([
-      "edcb8fb4-13",
       "edcb8fb4-1",
     ]);
   });
@@ -162,7 +161,6 @@ describe(__filename + "#", () => {
     );
 
     expect(workspace.designer.getState().selectedVirtNodeIds).toEqual([
-      "8bc00fda-13",
       "8bc00fda-1",
     ]);
 

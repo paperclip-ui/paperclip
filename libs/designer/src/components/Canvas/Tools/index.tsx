@@ -41,8 +41,10 @@ export const Tools = () => {
     return null;
   }
 
+  const cursor = insertMode != null ? "crosshair" : null;
+
   const style = {
-    cursor: insertMode != null ? "crosshair" : null,
+    cursor,
   };
 
   return (
@@ -62,15 +64,17 @@ export const Tools = () => {
           canvasScroll={canvas.scrollPosition}
           canvasTransform={canvas.transform}
           box={hoveringBox}
+          cursor={cursor}
         />
       )}
 
-      {selectedBox ? (
+      {selectedBox && selectedBox.width && selectedBox.height ? (
         <Selectable
           canvasScroll={canvas.scrollPosition}
           canvasTransform={canvas.transform}
           box={selectedBox}
           showKnobs
+          cursor={cursor}
         />
       ) : null}
       <Frames

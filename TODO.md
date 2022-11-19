@@ -1,5 +1,8 @@
 #### On-deck
 
+- vscode text syncing
+- style panel
+
 - ability to insert frames into each other
 - ability to change frame styles (do style pane)
 

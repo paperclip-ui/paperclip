@@ -3,6 +3,7 @@
 use crate::server::core::{ServerEvent, ServerStore};
 use futures::Stream;
 use paperclip_language_services::DocumentInfo;
+use paperclip_parser::pc::serializer::serialize;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
     file_response, ApplyMutationsRequest, ApplyMutationsResult, Empty, FileRequest, FileResponse,
@@ -53,8 +54,32 @@ impl Designer for DesignerService {
                     None
                 };
 
+                println!("{}", serialize(
+                    &store
+                        .lock()
+                        .unwrap()
+                        .state
+                        .graph
+                        .dependencies
+                        .get(&path)
+                        .expect("Dependency doesn't exist!")
+                        .document,
+                ));
+
                 Ok(FileResponse {
-                    raw_content: vec![],
+                    raw_content: serialize(
+                        &store
+                            .lock()
+                            .unwrap()
+                            .state
+                            .graph
+                            .dependencies
+                            .get(&path)
+                            .expect("Dependency doesn't exist!")
+                            .document,
+                    )
+                    .as_bytes()
+                    .to_vec(),
                     data,
                 })
             };

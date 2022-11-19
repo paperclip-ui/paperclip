@@ -30,7 +30,12 @@ public component Inner {
  */
 Canvas canv {
   TmpFooter {
-    text "Hello wold"
+    text "Hello old"
+    div {
+      style {
+        background: red
+    }
+    }
   }
 }
 div {

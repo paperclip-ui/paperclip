@@ -10,6 +10,7 @@ package service.designer;
 
 service Designer {
   rpc OpenFile(FileRequest) returns (stream FileResponse);
+  rpc OnFileChange(Empty) returns (stream FileResponse);
   rpc UpdateFile(UpdateFileRequest) returns (Empty);
   rpc ApplyMutations(ApplyMutationsRequest) returns (ApplyMutationsResult);
   rpc GetDocumentInfo(FileRequest) returns (language_service.pc.DocumentInfo);
@@ -42,4 +43,11 @@ message FileResponse {
   oneof data {
     virt.module.PCModule paperclip = 2;
   }
+}
+
+message FileChangeResponse {
+  string path = 1;
+
+  // Raw data
+  bytes content = 1;
 }

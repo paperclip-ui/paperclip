@@ -45,7 +45,7 @@ export class DocumentManager {
     }
     const uri = fixFileUrlCasing(String(editor.document.uri));
 
-    if (!this._windows.hasOpenedWindow()) {
+    if (!this._windows.hasOpenedWindow() && isPaperclipFile(uri)) {
       this._askToDisplayLivePreview(uri);
     }
   };

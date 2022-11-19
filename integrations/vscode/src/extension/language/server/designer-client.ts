@@ -6,11 +6,13 @@ import * as URL from "url";
 global.XMLHttpRequest = require("xhr2");
 import {
   DesignerClientImpl,
+  FileResponse,
   GrpcWebImpl,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { loadCLIBinPath } from "@paperclip-ui/releases";
 import { DocumentInfo } from "@paperclip-ui/proto/lib/generated/language_service/pc";
 import { NodeHttpTransport } from "@improbable-eng/grpc-web-node-http-transport";
+import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 
 export class DesignerClient {
   private _client: Deferred<DesignerClientImpl>;
@@ -35,6 +37,21 @@ export class DesignerClient {
   async ready() {
     await this._client.promise;
   }
+  async onFileChange(listener: (uri: string, content: string) => void) {}
+  // async open(url: string, onChange: (doc: FileResponse) => void) {
+  //   const client = await this._client.promise;
+  //   const sub = client.OpenFile({ path: URL.fileURLToPath(url) }).subscribe({
+  //     next: onChange
+  //   });
+
+  //   const dispose = () => {
+  //     sub.unsubscribe();
+  //   }
+
+  //   return {
+  //     dispose
+  //   }
+  // }
   async updateVirtualFileContent(url: string, text: string) {
     const client = await this._client.promise;
     return new Promise((resolve, reject) => {

@@ -22,7 +22,6 @@
 ...
 
 - hotkey for inserting nodes
-  - "e" for element
   - "t" for text
 
 #### Milestone: MVP UI

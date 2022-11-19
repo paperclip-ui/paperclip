@@ -7,17 +7,23 @@ import { DesignerEngineEvent, designerEngineEvents } from "./events";
 import { DesignerEngineState } from "./state";
 import { env } from "../../../env";
 import { EditorEvent, editorEvents } from "../../events";
-import { EditorState, getInsertBox } from "../../state";
+import {
+  EditorState,
+  flattenFrameBoxes,
+  getInsertBox,
+  getNodeInfoAtPoint,
+} from "../../state";
 import { Mutation } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
 import {
   getNodeById,
+  getNodeByPath,
   getNodePath,
 } from "@paperclip-ui/proto/lib/virt/html-utils";
 import {
   Element as VirtElement,
   TextNode as VirtTextNode,
 } from "@paperclip-ui/proto/lib/generated/virt/html";
-import { getScaledBox } from "../../state/geom";
+import { getScaledBox, mergeBoxes } from "../../state/geom";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -80,15 +86,44 @@ const createEventHandler = (actions: Actions) => {
   const handleInsert = async (state: EditorState) => {
     const bounds = getScaledBox(getInsertBox(state), state.canvas.transform);
 
-    const mutation: Mutation = {
-      insertFrame: {
-        documentId: state.currentDocument.paperclip.html.sourceId,
-        bounds,
-        nodeSource: `div`,
-      },
-    };
+    const intersectingNode = getNodeInfoAtPoint(
+      state.canvas.mousePosition,
+      state.canvas.transform,
+      flattenFrameBoxes(state.rects)
+    );
 
-    const changes = await actions.applyChanges([mutation]);
+    if (!intersectingNode) {
+      const mutation: Mutation = {
+        insertFrame: {
+          documentId: state.currentDocument.paperclip.html.sourceId,
+          bounds,
+          nodeSource: `div`,
+        },
+      };
+
+      actions.applyChanges([mutation]);
+    } else {
+      console.log("INTER");
+
+      const node = getNodeByPath(
+        intersectingNode.nodePath,
+        state.currentDocument.paperclip.html
+      );
+      actions.applyChanges([
+        {
+          appendChild: {
+            parentId: node.sourceId,
+            childSource: `div {
+              style {
+                background: blue
+                width: ${Math.round(bounds.width)}px
+                height: ${Math.round(bounds.height)}px
+              }
+            }`,
+          },
+        },
+      ]);
+    }
   };
 
   const handleCanvasMouseUp = (state: EditorState, prevState: EditorState) => {

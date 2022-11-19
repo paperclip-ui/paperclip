@@ -156,7 +156,7 @@ const useTools = () => {
 
   const selectedBox =
     selectedNodePaths.length &&
-    mergeBoxes(selectedNodePaths.map((path) => boxes[path]));
+    mergeBoxes(selectedNodePaths.map((path) => boxes[path]).filter(Boolean));
 
   const hoveringBox = highlightNodePath && boxes[highlightNodePath];
 

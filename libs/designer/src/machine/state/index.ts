@@ -1,4 +1,7 @@
-import { FileResponse } from "@paperclip-ui/proto/lib/generated/service/designer";
+import {
+  ApplyMutationsResult,
+  FileResponse,
+} from "@paperclip-ui/proto/lib/generated/service/designer";
 import { pickBy } from "lodash";
 import {
   Node,

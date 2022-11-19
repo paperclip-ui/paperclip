@@ -8,6 +8,7 @@ import { EditorEvent } from "../../src/machine/events";
 import { EventEmitter } from "events";
 import { NodeHttpTransport } from "@improbable-eng/grpc-web-node-http-transport";
 import { Machine } from "@paperclip-ui/common";
+import { designerEngineEvents } from "@paperclip-ui/designer/src/machine/engine/designer/events";
 
 type Workspace = {
   onEvent(listener: (event: EditorEvent) => void): () => void;

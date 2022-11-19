@@ -64,8 +64,10 @@ const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
         error() {},
       });
     },
-    applyChanges(mutations: Mutation[]) {
-      client.ApplyMutations({ mutations }, null);
+    async applyChanges(mutations: Mutation[]) {
+      const changes = await client.ApplyMutations({ mutations }, null);
+      dispatch(designerEngineEvents.changesApplied(changes));
+      return changes;
     },
   };
 };
@@ -75,25 +77,18 @@ const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
  */
 
 const createEventHandler = (actions: Actions) => {
-  const handleInsert = (state: EditorState) => {
+  const handleInsert = async (state: EditorState) => {
     const bounds = getScaledBox(getInsertBox(state), state.canvas.transform);
 
     const mutation: Mutation = {
       insertFrame: {
         documentId: state.currentDocument.paperclip.html.sourceId,
         bounds,
-        node: {
-          element: {
-            tagName: "div",
-            id: `${Math.random()}`,
-            parameters: [],
-            body: [],
-          },
-        },
+        nodeSource: `div`,
       },
     };
 
-    actions.applyChanges([mutation]);
+    const changes = await actions.applyChanges([mutation]);
   };
 
   const handleCanvasMouseUp = (state: EditorState, prevState: EditorState) => {
@@ -106,17 +101,23 @@ const createEventHandler = (actions: Actions) => {
     state: EditorState,
     prevState: EditorState
   ) => {
-    const node = getNodeById(
-      prevState.selectedVirtNodeIds[0],
-      prevState.currentDocument.paperclip.html
-    ) as VirtTextNode | VirtElement;
+    for (const id of prevState.selectedVirtNodeIds) {
+      const node = getNodeById(id, prevState.currentDocument.paperclip.html) as
+        | VirtTextNode
+        | VirtElement;
 
-    const mutation: Mutation = {
-      deleteExpression: {
-        expressionId: node.sourceId,
-      },
-    };
-    actions.applyChanges([mutation]);
+      if (!node) {
+        console.warn(`Node doesn't exist, skipping delete`);
+        continue;
+      }
+
+      const mutation: Mutation = {
+        deleteExpression: {
+          expressionId: node.sourceId,
+        },
+      };
+      actions.applyChanges([mutation]);
+    }
   };
 
   const handleResizerStoppedMoving = (

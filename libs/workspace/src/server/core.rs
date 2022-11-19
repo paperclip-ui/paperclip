@@ -15,6 +15,7 @@ use paperclip_evaluator::css;
 use paperclip_evaluator::html;
 use paperclip_parser::graph::Graph;
 use paperclip_parser::pc::serializer::serialize;
+use paperclip_proto::ast_mutate::MutationResult;
 use paperclip_proto::virt::module::pc_module_import;
 use paperclip_proto::virt::module::{GlobalScript, PcModule, PcModuleImport, PccssImport};
 
@@ -41,6 +42,7 @@ pub enum ServerEvent {
 pub struct ServerState {
     pub file_cache: HashMap<String, Vec<u8>>,
     pub options: StartOptions,
+    pub latest_ast_changes: Vec<MutationResult>,
     pub graph: Graph,
     pub evaluated_modules: HashMap<String, (css::virt::Document, html::virt::Document)>,
     pub updated_files: Vec<String>,
@@ -53,6 +55,7 @@ impl ServerState {
             file_cache: HashMap::new(),
             graph: Graph::new(),
             evaluated_modules: HashMap::new(),
+            latest_ast_changes: vec![],
             updated_files: vec![],
         }
     }
@@ -130,14 +133,17 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
             ServerEvent::ApplyMutationRequested { mutations } => {
                 let changed_files = edit_graph(&mut state.graph, mutations);
                 println!("Applying {:?}", mutations);
-                for path in &changed_files {
+                let mut latest_ast_changes = vec![];
+                for (path, changes) in &changed_files {
+                    latest_ast_changes.extend(changes.clone());
                     let content = serialize(&state.graph.dependencies.get(path).unwrap().document);
-                    println!("Edited AST {} {}", path, content);
                     state
                         .file_cache
                         .insert(path.to_string(), content.as_bytes().to_vec());
                 }
-                state.updated_files = changed_files;
+
+                // state.updated_files = changed_files;
+                state.latest_ast_changes = latest_ast_changes;
             }
             ServerEvent::FileWatchEvent(event) => {
                 state.file_cache.remove(&event.path);

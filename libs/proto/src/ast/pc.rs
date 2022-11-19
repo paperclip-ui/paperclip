@@ -1,3 +1,5 @@
+use std::fmt::format;
+
 use crate::add_inner_wrapper;
 include!(concat!(env!("OUT_DIR"), "/ast.pc.rs"));
 
@@ -27,7 +29,6 @@ add_inner_wrapper!(component_body_item::Inner, ComponentBodyItem);
 add_inner_wrapper!(document_body_item::Inner, DocumentBodyItem);
 add_inner_wrapper!(override_body_item::Inner, OverrideBodyItem);
 add_inner_wrapper!(trigger_body_item::Inner, TriggerBodyItem);
-
 /**
  */
 
@@ -133,6 +134,23 @@ impl TryFrom<Node> for DocumentBodyItem {
             }
             node::Inner::Text(text) => {
                 Ok(document_body_item::Inner::Text(text.clone()).get_outer())
+            }
+            _ => Err(()),
+        }
+    }
+}
+
+
+
+impl TryFrom<DocumentBodyItem> for Node {
+    type Error = ();
+    fn try_from(value: DocumentBodyItem) -> Result<Self, Self::Error> {
+        match value.get_inner() {
+            document_body_item::Inner::Element(element) => {
+                Ok(node::Inner::Element(element.clone()).get_outer())
+            }
+            document_body_item::Inner::Text(text) => {
+                Ok(node::Inner::Text(text.clone()).get_outer())
             }
             _ => Err(()),
         }

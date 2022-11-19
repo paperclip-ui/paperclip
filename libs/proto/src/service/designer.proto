@@ -11,7 +11,7 @@ package service.designer;
 service Designer {
   rpc OpenFile(FileRequest) returns (stream FileResponse);
   rpc UpdateFile(UpdateFileRequest) returns (Empty);
-  rpc ApplyMutations(ApplyMutationsRequest) returns (Empty);
+  rpc ApplyMutations(ApplyMutationsRequest) returns (ApplyMutationsResult);
   rpc GetDocumentInfo(FileRequest) returns (language_service.pc.DocumentInfo);
 }
 
@@ -20,6 +20,9 @@ message Empty {
 
 message ApplyMutationsRequest {
   repeated ast_mutate.Mutation mutations = 1;
+}
+message ApplyMutationsResult {
+  repeated ast_mutate.MutationResult changes = 1;
 }
 
 message FileRequest {

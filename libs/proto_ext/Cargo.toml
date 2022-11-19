@@ -11,4 +11,3 @@ name = "paperclip_proto_ext"
 [dependencies]
 paperclip_proto = { path = "../proto" }
 paperclip_parser = { path = "../parser" }
-time = "0.3.17"

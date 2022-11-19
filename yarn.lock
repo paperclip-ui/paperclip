@@ -3017,7 +3017,7 @@ __metadata:
     protoc-gen-ts: ^0.8.5
     rxjs: ^7.5.7
     ts-proto: ^1.131.2
-    typescript: 4.4
+    typescript: ^4.9.3
   languageName: unknown
   linkType: soft
 
@@ -3050,7 +3050,6 @@ __metadata:
     "@paperclip-ui/designer": "workspace:^"
     "@paperclip-ui/proto": ^19.0.10
     "@paperclip-ui/web-renderer": ^19.0.10
-    "@types/mocha": ^10.0.0
     "@types/react": ^18.0.21
     "@types/react-dom": ^18.0.6
     css-loader: ^6.7.1
@@ -3592,13 +3591,6 @@ __metadata:
   version: 1.2.2
   resolution: "@types/minimist@npm:1.2.2"
   checksum: b8da83c66eb4aac0440e64674b19564d9d86c80ae273144db9681e5eeff66f238ade9515f5006ffbfa955ceff8b89ad2bd8ec577d7caee74ba101431fb07045d
-  languageName: node
-  linkType: hard
-
-"@types/mocha@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "@types/mocha@npm:10.0.0"
-  checksum: 69e3896a63ec93374e22afd03fdea4c2f31d609d6ea111c8403508ede90da9dc0140c7bb2edff8404114d9d980308e104e4236324bf6afac1410b2cfe35f98c6
   languageName: node
   linkType: hard
 
@@ -15130,16 +15122,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:4.4":
-  version: 4.4.4
-  resolution: "typescript@npm:4.4.4"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 89ecb8436bb48ef5594d49289f5f89103071716b6e4844278f4fb3362856e31203e187a9c76d205c3f0b674d221a058fd28310dbcbcf5d95e9a57229bb5203f1
-  languageName: node
-  linkType: hard
-
 "typescript@npm:^3 || ^4, typescript@npm:^4.3.4":
   version: 4.8.4
   resolution: "typescript@npm:4.8.4"
@@ -15157,16 +15139,6 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 17b8f816050b412403e38d48eef0e893deb6be522d6dc7caf105e54a72e34daf6835c447735fd2b28b66784e72bfbf87f627abb4818a8e43d1fa8106396128dc
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@4.4#~builtin<compat/typescript>":
-  version: 4.4.4
-  resolution: "typescript@patch:typescript@npm%3A4.4.4#~builtin<compat/typescript>::version=4.4.4&hash=bda367"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 3d1b04449662193544b81d055479d03b4c5dca95f1a82f8922596f089d894c9fefbe16639d1d9dfe26a7054419645530cef44001bc17aed1fe1eb3c237e9b3c7
   languageName: node
   linkType: hard
 

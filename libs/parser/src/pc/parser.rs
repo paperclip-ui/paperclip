@@ -19,16 +19,16 @@ type PCContext<'tokenizer, 'scanner, 'idgenerator, 'scan, 'src> =
 
 pub fn parse<'src>(
     source: &'src str,
-    source_url: &String,
+    id_seed: &String,
 ) -> Result<ast::Document, err::ParserError> {
-    let (mut scanner, mut id_generator) = create_initial_context(source, source_url);
-    parse_with_context(&mut scanner, &mut id_generator, source_url)
+    let (mut scanner, mut id_generator) = create_initial_context(source, id_seed);
+    parse_with_context(&mut scanner, &mut id_generator, id_seed)
 }
 
 pub fn parse_with_context<'src>(
     source: &'src mut StringScanner<'src>,
     id_generator: &mut IDGenerator,
-    source_url: &String,
+    id_seed: &String,
 ) -> Result<ast::Document, err::ParserError> {
     if source.is_eof() {
         return Ok(ast::Document {
@@ -41,7 +41,7 @@ pub fn parse_with_context<'src>(
         });
     }
 
-    let mut context = Context::new(source, source_url, &next_token, id_generator)?;
+    let mut context = Context::new(source, id_seed, &next_token, id_generator)?;
     parse_document(&mut context)
 }
 
@@ -116,7 +116,7 @@ fn parse_atom(context: &mut PCContext, is_public: bool) -> Result<ast::Atom, err
     let value = Some(parse_style_declaration_with_string_scanner(
         context.scanner,
         context.id_generator,
-        &context.source_url,
+        &context.id_seed,
     )?);
 
     context.next_token()?;
@@ -189,7 +189,7 @@ fn parse_docco(context: &mut PCContext) -> Result<docco_ast::Comment, err::Parse
     let ret = parse_doc_comment(
         &mut context.scanner,
         &mut context.id_generator,
-        &context.source_url,
+        &context.id_seed,
     );
     context.scanner.unshift(1); // rewind /
     context.next_token()?;
@@ -266,7 +266,7 @@ fn parse_style(context: &mut PCContext, is_public: bool) -> Result<ast::Style, e
             let ret = parse_style_declarations_with_string_scanner(
                 context.scanner,
                 context.id_generator,
-                &context.source_url,
+                &context.id_seed,
             )?;
 
             context.next_token()?; // eat }

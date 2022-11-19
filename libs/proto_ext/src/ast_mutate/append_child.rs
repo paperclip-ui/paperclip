@@ -1,3 +1,5 @@
+use paperclip_parser::pc::ast::Node;
+use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast_mutate::{
@@ -12,16 +14,19 @@ impl Visitor<Vec<MutationResult>> for AppendChild {
         expr: &mut ast::pc::Document,
     ) -> VisitorResult<Vec<MutationResult>> {
         if expr.get_id() == &self.parent_id {
+
+
+
+            let child = parse_pc(&self.child_source, &expr.checksum()).expect("Unable to parse child source for AppendChild");
+            let child = child.body.get(0).unwrap();
+
+
             expr.body.push(
-                self.child
-                    .clone()
-                    .expect("Child must exist")
-                    .try_into()
-                    .unwrap(),
+                child.clone()
             );
             return VisitorResult::Return(vec![mutation_result::Inner::ExpressionInserted(
                 ExpressionInserted {
-                    id: self.child.clone().unwrap().get_id().to_string(),
+                    id: child.get_id().to_string(),
                 },
             )
             .get_outer()]);
@@ -30,8 +35,12 @@ impl Visitor<Vec<MutationResult>> for AppendChild {
     }
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<Vec<MutationResult>> {
         if expr.get_id() == &self.parent_id {
+
+            let child = parse_pc(&self.child_source, &expr.checksum()).expect("Unable to parse child source for AppendChild");
+            let child: Node = child.body.get(0).unwrap().clone().try_into().unwrap();
+            
             expr.body
-                .push(self.child.clone().expect("Child must exist"));
+                .push(child.clone());
         }
         VisitorResult::Continue
     }

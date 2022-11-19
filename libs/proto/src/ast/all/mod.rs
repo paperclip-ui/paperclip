@@ -1,6 +1,9 @@
 pub use super::base;
 pub use super::docco;
 pub use super::pc;
+use crc::{Crc, CRC_32_ISCSI};
+
+const CASTAGNOLI: Crc<u32> = Crc::<u32>::new(&CRC_32_ISCSI);
 
 macro_rules! expressions {
   ($(($name:ident, $expr:ty, $this:ident => $id_ret:expr)),*) => {
@@ -46,6 +49,7 @@ macro_rules! expressions {
       pub trait Expression {
           // fn outer<'a>(&'a self) -> ImmutableExpressionRef<'a>;
           fn get_id<'a>(&'a self) -> &'a str;
+          fn checksum(&self) -> String;
       }
 
       $(
@@ -55,6 +59,9 @@ macro_rules! expressions {
               // }
               fn get_id<'a>(&'a $this) -> &'a str {
                   $id_ret
+              }
+              fn checksum(&self) -> String {
+                  format!("{:x}", CASTAGNOLI.checksum(format!("{:?}", self).as_bytes())).to_string()
               }
           }
           impl<'a> From<&'a $expr> for ImmutableExpressionRef<'a> {

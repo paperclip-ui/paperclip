@@ -47,13 +47,14 @@ message ExpressionInserted {
 message ExpressionDeleted {
   string id = 1;
 }
+
 message ExpressionUpdated {
   string id = 1;
 }
 
 message AppendChild {
   string parent_id = 1;
-  ast.pc.Node child = 2;
+  string child_source = 2;
 }
 
 
@@ -79,7 +80,7 @@ message Bounds {
 
 message InsertChild {
   string before_id = 1;
-  ast.pc.Node child = 2;
+  string child_source = 2;
 }
 
 message SetElementParameter {
@@ -90,7 +91,7 @@ message SetElementParameter {
 
 message InsertFrame {
   string document_id = 1;
-  ast.pc.Node node = 2;
+  string node_source = 2;
   Bounds bounds = 3;
 }
 

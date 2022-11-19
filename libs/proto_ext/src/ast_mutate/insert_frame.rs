@@ -6,7 +6,7 @@ use paperclip_proto::{
 
 use crate::ast::{all::Visitor, all::VisitorResult};
 use paperclip_parser::docco::parser::parse as parse_comment;
-extern crate time;
+use paperclip_parser::pc::parser::parse as parse_pc;
 
 impl Visitor<Vec<MutationResult>> for InsertFrame {
     fn visit_document(
@@ -17,6 +17,7 @@ impl Visitor<Vec<MutationResult>> for InsertFrame {
             let bounds = self.bounds.as_ref().unwrap();
 
             let mut mutations = vec![];
+            let checksum = expr.checksum();
 
             let new_comment = parse_comment(
                 format!(
@@ -24,9 +25,13 @@ impl Visitor<Vec<MutationResult>> for InsertFrame {
                     bounds.x, bounds.y, bounds.width, bounds.height
                 )
                 .trim(),
-                format!("{}", time::OffsetDateTime::now_utc()).as_str(),
+                
+                &checksum,
             )
             .unwrap();
+
+            let to_insert = parse_pc(&self.node_source, &checksum).unwrap();
+
 
             mutations.push(
                 mutation_result::Inner::ExpressionInserted(ExpressionInserted {
@@ -38,14 +43,16 @@ impl Visitor<Vec<MutationResult>> for InsertFrame {
             expr.body
                 .push(ast::pc::document_body_item::Inner::DocComment(new_comment).get_outer());
 
-            mutations.push(
-                mutation_result::Inner::ExpressionInserted(ExpressionInserted {
-                    id: self.node.clone().unwrap().get_id().to_string(),
-                })
-                .get_outer(),
-            );
-            expr.body
-                .push(self.node.clone().unwrap().try_into().unwrap());
+            for node in to_insert.body {
+                mutations.push(
+                    mutation_result::Inner::ExpressionInserted(ExpressionInserted {
+                        id: node.clone().get_id().to_string(),
+                    })
+                    .get_outer(),
+                );
+                expr.body
+                    .push(node.clone());
+            }
 
             return VisitorResult::Return(mutations);
         }

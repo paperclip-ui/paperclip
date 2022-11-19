@@ -54,6 +54,17 @@ export const editorReducer = (
       return produce(state, (newState) => {
         newState.canvas.size = event.payload;
       });
+    case designerEngineEvents.changesApplied.type: {
+      return produce(state, (newState) => {
+        newState.selectedVirtNodeIds = event.payload.changes
+          .map((change) => {
+            return (
+              change.expressionInserted?.id || change.expressionUpdated?.id
+            );
+          })
+          .filter(Boolean);
+      });
+    }
     case editorEvents.eHotkeyPressed.type:
       return produce(state, (newState) => {
         newState.insertMode = InsertMode.Element;

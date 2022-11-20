@@ -1,7 +1,8 @@
 #### On-deck
 
-- style panel
+- ability to drag elements around according to parent pos
 
+- style panel
 - ability to insert frames into each other
 - ability to change frame styles (do style pane)
 

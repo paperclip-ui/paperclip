@@ -112,7 +112,7 @@ const createEventHandler = (actions: Actions) => {
         state.currentDocument.paperclip.html
       );
 
-      // const style = state.allStyles[intersectingNode.nodePath];
+      // const style = state.computedStyles[intersectingNode.nodePath];
       const frameIndex = intersectingNode.nodePath.split(".").shift();
 
       const parentBox = flattenFrameBoxes(state.rects)[

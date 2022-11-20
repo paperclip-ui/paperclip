@@ -72,7 +72,8 @@ export type EditorState = {
   showTextEditor?: boolean;
   resizerMoving: boolean;
   expandedNodePaths: string[];
-  allStyles: Record<string, CSSStyleDeclaration>;
+  preEditComputedStyles: Record<string, CSSStyleDeclaration>;
+  computedStyles: Record<string, CSSStyleDeclaration>;
   optionKeyDown: boolean;
   centeredInitial: boolean;
   currentDocument?: FileResponse;
@@ -83,7 +84,8 @@ export type EditorState = {
 export const DEFAULT_STATE: EditorState = {
   readonly: false,
   styleOverrides: {},
-  allStyles: {},
+  preEditComputedStyles: {},
+  computedStyles: {},
   resizerMoving: false,
   optionKeyDown: false,
   scopedElementPath: null,

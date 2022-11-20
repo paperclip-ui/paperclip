@@ -229,7 +229,12 @@ export const computeAllStyles = (mount: HTMLElement, index: number) => {
     mount.childNodes[STAGE_INDEX].childNodes[0],
     (node, path) => {
       const pathStr = path.length ? index + "." + path.join(".") : index;
-      styles[pathStr] = window.getComputedStyle(mount);
+      const style = window.getComputedStyle(node as HTMLElement);
+      const pojo = {};
+      for (const prop of style) {
+        pojo[prop] = style[prop];
+      }
+      styles[pathStr] = pojo;
     }
   );
 

@@ -87,10 +87,10 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
       }
 
       const rects = getFrameRects(mount, data, frameIndex);
-      const allStyles = computeAllStyles(mount, frameIndex);
+      const computedStyles = computeAllStyles(mount, frameIndex);
 
       dispatch(editorEvents.rectsCaptured({ frameIndex, rects }));
-      dispatch(editorEvents.allStylesCaptured({ allStyles }));
+      dispatch(editorEvents.computedStylesCaptured({ computedStyles }));
     },
     [dispatch, shouldCollectRects]
   );

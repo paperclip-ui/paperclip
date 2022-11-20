@@ -11,7 +11,7 @@ import {
 } from "../../state";
 import produce from "immer";
 import { clamp, pick } from "lodash";
-import { Box, centerTransformZoom, Point } from "../../state/geom";
+import { Box, centerTransformZoom, Point, roundBox } from "../../state/geom";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 import {
   Element as VirtElement,
@@ -115,6 +115,7 @@ export const editorReducer = (
         newState.canvas.mouseDown = true;
         newState.canvas.mousePosition = event.payload.position;
         newState.canvasMouseDownStartPoint = event.payload.position;
+        newState.preEditComputedStyles = newState.computedStyles;
       });
 
       if (state.resizerMoving) {
@@ -231,12 +232,22 @@ export const editorReducer = (
 
         // within a frame
         if (path.includes(".")) {
+          const parent = getNodeParent(
+            node,
+            newState.currentDocument.paperclip.html
+          );
+          const computedStyles = newState.preEditComputedStyles[path];
+
           newState.styleOverrides = {};
 
           newState.styleOverrides[node.id] = {
             // TODO: need to take delta of computed CSS instead
-            left: event.payload.newBounds.x - event.payload.originalBounds.x,
-            top: event.payload.newBounds.y - event.payload.originalBounds.y,
+            left: `calc(${computedStyles.left} + ${
+              event.payload.newBounds.x - event.payload.originalBounds.x
+            }px)`,
+            top: `calc(${computedStyles.top} + ${
+              event.payload.newBounds.y - event.payload.originalBounds.y
+            }px)`,
 
             // TODO - check position here to make sure we're not overriding something like "absolute"
             position: "relative",
@@ -268,9 +279,9 @@ export const editorReducer = (
         newState.selectedVirtNodeIds = [event.payload.id];
       });
     }
-    case editorEvents.allStylesCaptured.type:
+    case editorEvents.computedStylesCaptured.type:
       return produce(state, (newState) => {
-        Object.assign(newState.allStyles, event.payload.allStyles);
+        Object.assign(newState.computedStyles, event.payload.computedStyles);
       });
     case editorEvents.rectsCaptured.type:
       state = produce(state, (newState) => {

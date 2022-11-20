@@ -1,5 +1,5 @@
 import { noop } from "lodash";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useFrameContainer } from "../useFrameContainer";
 import { useFrameMount } from "../useFrameMount";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
@@ -35,7 +35,7 @@ export const useFrame = ({
       }
       onUpdate(mount, data);
     },
-    [frameIndex, onUpdate]
+    [frameIndex, onUpdate, loaded]
   );
 
   const { mount } = useFrameMount({
@@ -45,11 +45,23 @@ export const useFrame = ({
     onUpdate: onUpdate2,
   });
 
+  const onInjectedExtraHTML = useCallback(() => {
+    if (mount) {
+      onUpdate2(mount, pcData);
+    }
+  }, [onUpdate2, mount, pcData]);
+
   // once the container loads, _then_ we can fire subsequent updates
   const onLoad2 = useCallback(() => {
     onLoad(mount, pcData);
     setLoaded(true);
   }, [mount, pcData]);
 
-  return useFrameContainer({ mount, onLoad: onLoad2, fullscreen, extraHTML });
+  return useFrameContainer({
+    mount,
+    onLoad: onLoad2,
+    fullscreen,
+    onInjectedExtraHTML,
+    extraHTML,
+  });
 };

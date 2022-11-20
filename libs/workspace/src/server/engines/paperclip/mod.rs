@@ -31,16 +31,22 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
             load_dependency_graph(next.clone(), &files).await.expect("Unable to load dependency graph");
         },
         ServerEvent::DependencyGraphLoaded { graph: _graph } => {
-            evaluate_dependency_graph(next.clone()).expect("Unable to evaluate Dependency graph");
+            evaluate_dependency_graph(next.clone()).await.expect("Unable to evaluate Dependency graph");
         },
         ServerEvent::GlobalScriptsLoaded(_) => {
-            evaluate_dependency_graph(next.clone()).expect("Unable to evaluate Dependency graph");
+            evaluate_dependency_graph(next.clone()).await.expect("Unable to evaluate Dependency graph");
         },
-        ServerEvent::UpdateFileRequested { path, content: _content } => {
-            load_dependency_graph(next.clone(), &vec![path.to_string()]).await.expect("Unable to load dependency");
+        ServerEvent::UpdateFileRequested { path: _path, content: _content } => {
+            let updated_files = next.clone().store.lock().unwrap().state.updated_files.clone();
+
+            println!("Updated files {:?}", updated_files);
+
+            for update_file in updated_files {
+                load_dependency_graph(next.clone(), &vec![update_file]).await.expect("Unable to load dependency");
+            }
         },
         ServerEvent::ApplyMutationRequested {mutations: _} => {
-            load_dependency_graph_from_updated_files(next.clone()).await.expect("Unable to load dependency");
+            evaluate_dependency_graph(next.clone()).await.expect("Unable to evaluate Dependency graph");
         },
         ServerEvent::FileWatchEvent(event) => {
             if paperclip_common::pc::is_paperclip_file(&event.path) {
@@ -78,13 +84,6 @@ impl<TIO: ServerIO> FileResolver for VirtGraphIO<TIO> {
     fn resolve_file(&self, from: &str, to: &str) -> Result<String> {
         self.ctx.io.resolve_file(from, to)
     }
-}
-
-async fn load_dependency_graph_from_updated_files<TIO: ServerIO>(
-    ctx: ServerEngineContext<TIO>,
-) -> Result<()> {
-    let updated_files = ctx.store.lock().unwrap().state.updated_files.clone();
-    load_dependency_graph(ctx, &updated_files).await
 }
 
 async fn load_dependency_graph<TIO: ServerIO>(
@@ -133,10 +132,11 @@ async fn load_files<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> 
     Ok(())
 }
 
-fn evaluate_dependency_graph<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
+async fn evaluate_dependency_graph<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
     let mut output: HashMap<String, (css::virt::Document, html::virt::Document)> = HashMap::new();
 
     // file resolver for embedding
+    println!("EVAL DEP GRAPH");
 
     {
         let resolver = PCFileResolver::new(ctx.io.clone(), ctx.io.clone(), None);
@@ -158,5 +158,6 @@ fn evaluate_dependency_graph<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Re
     }
 
     ctx.emit(ServerEvent::ModulesEvaluated(output));
+
     Ok(())
 }

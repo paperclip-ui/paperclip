@@ -124,11 +124,23 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
     fn handle_event(&self, state: &mut ServerState, event: &ServerEvent) {
         match event {
             ServerEvent::DependencyGraphLoaded { graph } => {
+                println!("Dependency graph updated");
                 state.graph =
                     std::mem::replace(&mut state.graph, Graph::new()).merge(graph.clone());
             }
             ServerEvent::UpdateFileRequested { path, content } => {
+
+                // onyl flag as changed if content actually changed.
+                if let Some(existing_content) = state.file_cache.get(path) {
+                    if content != existing_content {
+                        println!("REPLACING!");
+                        state.updated_files.push(path.clone());
+                    }
+                }
+
                 state.file_cache.insert(path.to_string(), content.clone());
+
+
             }
             ServerEvent::ApplyMutationRequested { mutations } => {
                 let changed_files = edit_graph(&mut state.graph, mutations);
@@ -137,13 +149,15 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 for (path, changes) in &changed_files {
                     latest_ast_changes.extend(changes.clone());
                     let content = serialize(&state.graph.dependencies.get(path).unwrap().document);
-                    println!("Edited AST {} {}", path, content);
+                    // println!("Edited AST {} {}", path, content);
                     state
                         .file_cache
                         .insert(path.to_string(), content.as_bytes().to_vec());
                 }
 
-                state.updated_files = changed_files.iter().map(|(path, changes)| {
+                println!("{:?}", changed_files);
+
+                state.updated_files = changed_files.iter().map(|(path, _changes)| {
                     path.to_string()
                 }).collect::<Vec<String>>();
                 state.latest_ast_changes = latest_ast_changes;
@@ -153,6 +167,8 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
             }
             ServerEvent::ModulesEvaluated(modules) => {
                 state.evaluated_modules.extend(modules.clone());
+                println!("EVALUTED!");
+                state.updated_files = vec![];
             }
             ServerEvent::GlobalScriptsLoaded(global_scripts) => {
                 for (path, content) in global_scripts {

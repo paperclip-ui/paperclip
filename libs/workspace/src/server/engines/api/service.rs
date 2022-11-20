@@ -109,9 +109,10 @@ impl Designer for DesignerService {
                 ServerEvent::UpdateFileRequested { path, content } => {
                     tx.send((file_changed)(path.to_string(), content.clone())).await.expect("Can't send");
                 },
-
                 ServerEvent::ApplyMutationRequested { mutations: _mutations } => {
+                    println!("SENDING UPDATES!!");
                     let updated_files = store.lock().unwrap().state.updated_files.clone();
+                    println!("{:?}", updated_files);
                     let file_cache = store.lock().unwrap().state.file_cache.clone();
 
                     for file_path in &updated_files {

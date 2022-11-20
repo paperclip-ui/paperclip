@@ -17,7 +17,7 @@ use std::str;
 type PCContext<'tokenizer, 'scanner, 'idgenerator, 'scan, 'src> =
     Context<'tokenizer, 'scanner, 'idgenerator, 'src, Token<'src>>;
 
-pub fn parse<'src>(source: &'src str, id_seed: &String) -> Result<ast::Document, err::ParserError> {
+pub fn parse<'src>(source: &'src str, id_seed: &str) -> Result<ast::Document, err::ParserError> {
     let (mut scanner, mut id_generator) = create_initial_context(source, id_seed);
     parse_with_context(&mut scanner, &mut id_generator, id_seed)
 }
@@ -25,7 +25,7 @@ pub fn parse<'src>(source: &'src str, id_seed: &String) -> Result<ast::Document,
 pub fn parse_with_context<'src>(
     source: &'src mut StringScanner<'src>,
     id_generator: &mut IDGenerator,
-    id_seed: &String,
+    id_seed: &str,
 ) -> Result<ast::Document, err::ParserError> {
     if source.is_eof() {
         return Ok(ast::Document {

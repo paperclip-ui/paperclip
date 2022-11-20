@@ -44,6 +44,7 @@ export const Selectable = React.memo(
       (currentBox.y - canvasScroll.y) * canvasTransform.z + canvasTransform.y;
 
     let knobs: Point[] | null = null;
+    let edges: Record<string, Point> | null = null;
 
     if (showKnobs && currentBox) {
       knobs = [
@@ -52,6 +53,12 @@ export const Selectable = React.memo(
         { x: 100, y: 100 },
         { x: 0, y: 100 },
       ];
+      edges = {
+        left: { x: 0, y: 50 },
+        top: { x: 50, y: 0 },
+        right: { x: 100, y: 0 },
+        bottom: { x: 50, y: 100 },
+      };
     }
 
     const onKnobMouseDown = (event: React.MouseEvent<any>, point: Point) => {
@@ -173,6 +180,21 @@ export const Selectable = React.memo(
           size={`${Math.round(currentBox.width)} x ${Math.round(
             currentBox.height
           )}`}
+          edges={
+            edges && (
+              <>
+                {Object.keys(edges).map((edge) => (
+                  <styles.Edge
+                    key={edge}
+                    class="edge"
+                    onMouseDown={(event) => {
+                      onKnobMouseDown(event, edges[edge]);
+                    }}
+                  />
+                ))}
+              </>
+            )
+          }
           knobs={
             knobs && (
               <>

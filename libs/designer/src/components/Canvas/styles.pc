@@ -25,22 +25,12 @@ public component Inner {
 }
 
 /**
- * @bounds(x: 330, y: -408, width: 725, height: 451)
+ * @bounds(x: 208, y: 277, width: 167, height: 153)
 */
 
 div {
     style {
         position: relative
-    }
-    div {
-        style {
-            background: rgba(0, 0, 0, 0.1)
-            position: absolute
-            left: 136px
-            top: 68px
-            width: 132px
-            height: 72px
-        }
     }
 }
 

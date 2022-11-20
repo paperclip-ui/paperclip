@@ -12,6 +12,7 @@ use paperclip_parser::graph::Graph;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 use std::sync::Mutex;
+use std::path::Path;
 use textwrap::indent;
 
 #[derive(Clone)]
@@ -28,6 +29,19 @@ struct EmitInfo {
 impl<IO: FileReader + FileResolver> FileResolver for TargetCompilerResolver<IO> {
     fn resolve_file(&self, from: &str, to: &str) -> Result<String> {
         self.io.resolve_file(from, to).and_then(|resolved_path| {
+
+            if let Some(max_embed) = self.context.options.embed_asset_max_size {
+                let file_size = self.io.get_file_size(&resolved_path).unwrap();
+                if max_embed == -1 || file_size <= max_embed.try_into().unwrap() {
+
+                    let mime = mime_guess::from_path(Path::new(&resolved_path)).first_or_octet_stream();
+                    let content = base64::encode(self.io.read_file(&resolved_path)?);
+
+                    return Ok(format!("data:{};base64,{}", mime, content));
+                }
+            }
+
+
             Ok(self.context.resolve_asset_out_file(resolved_path.as_str()))
         })
     }

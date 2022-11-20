@@ -5,7 +5,8 @@
   "compilerOptions": [
     {
       "emit": ["yew.rs:rs", "css", "react.js:js", "react.d.ts:d.ts"],
-      "assetOutDir": "assets"
+      "assetOutDir": "assets",
+      "embedAssetMaxSize": -1
     }
   ]
 }

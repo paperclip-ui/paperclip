@@ -191,8 +191,8 @@ const createEventHandler = (actions: Actions) => {
             expressionId: node.sourceId,
             declarations: Object.entries(
               state.styleOverrides[prevState.selectedVirtNodeIds[0]]
-            ).map(([key, value]) => {
-              return { key, value: String(value) };
+            ).map(([name, value]) => {
+              return { name, value: String(value) };
             }),
           },
         },

@@ -2,7 +2,7 @@ use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast_mutate::{
-    mutation_result, ExpressionInserted, MutationResult, SetStyleDeclarations,
+    mutation_result, MutationResult, SetStyleDeclarations, ExpressionUpdated,
 };
 
 use crate::ast::{all::Visitor, all::VisitorResult};
@@ -17,7 +17,6 @@ impl Visitor<Vec<MutationResult>> for SetStyleDeclarations {
     }
 
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<Vec<MutationResult>> {
-        println!("{:?}", expr.get_id());
         if expr.get_id() == &self.expression_id {
             let new_style: ast::pc::Style = parse_style(&mutation_to_style(&self), &expr.checksum());
 
@@ -33,6 +32,11 @@ impl Visitor<Vec<MutationResult>> for SetStyleDeclarations {
             if !found {
                 expr.body.insert(0, ast::pc::node::Inner::Style(new_style).get_outer());
             }
+
+            return VisitorResult::Return(vec![mutation_result::Inner::ExpressionUpdated(ExpressionUpdated {
+
+                    id: expr.id.to_string()
+            }).get_outer()]);
         }
 
         VisitorResult::Continue

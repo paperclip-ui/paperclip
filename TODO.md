@@ -1,5 +1,8 @@
 #### On-deck
 
+- NESW resizers
+- make persisting boundary styles cleaner
+
 - ability to drag elements around according to parent pos
 - set style on instance roots
 

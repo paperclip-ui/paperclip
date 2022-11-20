@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { memo, useMemo } from "react";
 import * as styles from "./styles.pc";
-import { FrameContainer } from "../../FrameContainer";
+import { FrameContainer } from "@paperclip-ui/designer/src/components/FrameContainer";
 import { Node as VirtNode } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 

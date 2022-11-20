@@ -69,14 +69,14 @@ pub fn SidebarSection(props: &SidebarSectionProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-struct SidebarPanelHeaderProps {
+pub struct SidebarPanelHeaderProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
 }
 
 #[function_component]
-fn SidebarPanelHeader(props: &SidebarPanelHeaderProps) -> Html {
+pub fn SidebarPanelHeader(props: &SidebarPanelHeaderProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
             format!("{} {}", "_SidebarPanelHeader-2993b912-77", scope_class_name)
@@ -92,7 +92,7 @@ fn SidebarPanelHeader(props: &SidebarPanelHeaderProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-struct SidebarPanelContentProps {
+pub struct SidebarPanelContentProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
@@ -100,7 +100,7 @@ struct SidebarPanelContentProps {
 }
 
 #[function_component]
-fn SidebarPanelContent(props: &SidebarPanelContentProps) -> Html {
+pub fn SidebarPanelContent(props: &SidebarPanelContentProps) -> Html {
     html! {
         <div class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
             format!("{} {}", "_SidebarPanelContent-2993b912-96", scope_class_name)
@@ -113,14 +113,14 @@ fn SidebarPanelContent(props: &SidebarPanelContentProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-struct SidebarHeaderProps {
+pub struct SidebarHeaderProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
 }
 
 #[function_component]
-fn SidebarHeader(props: &SidebarHeaderProps) -> Html {
+pub fn SidebarHeader(props: &SidebarHeaderProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
             format!("{} {}", "_SidebarHeader-2993b912-103", scope_class_name)
@@ -133,14 +133,14 @@ fn SidebarHeader(props: &SidebarHeaderProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-struct SidebarHeaderButtonProps {
+pub struct SidebarHeaderButtonProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
 }
 
 #[function_component]
-fn SidebarHeaderButton(props: &SidebarHeaderButtonProps) -> Html {
+pub fn SidebarHeaderButton(props: &SidebarHeaderButtonProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
             format!("{} {}", "_SidebarHeaderButton-root-2993b912-133", scope_class_name)

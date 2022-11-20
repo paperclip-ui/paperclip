@@ -20,9 +20,9 @@ pub struct CanvasProps {
 pub fn Canvas(props: &CanvasProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Canvas-ca01e608-29", scope_class_name)
+            format!("{} {}", "_Canvas-7b6f72e4-29", scope_class_name)
         } else {
-            "_Canvas-ca01e608-29".to_string()
+            "_Canvas-7b6f72e4-29".to_string()
         }} onMouseMove={props.onMouseMove.clone()} onScroll={props.onScroll.clone()} onWheelCapture={props.onWheelCapture.clone()} style={props.style.clone()} tabIndex={"0"}>
             { for props.children.iter() }
         </div>
@@ -42,9 +42,9 @@ pub struct InnerProps {
 pub fn Inner(props: &InnerProps) -> Html {
     html! {
         <div class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Inner-ca01e608-43", scope_class_name)
+            format!("{} {}", "_Inner-7b6f72e4-43", scope_class_name)
         } else {
-            "_Inner-ca01e608-43".to_string()
+            "_Inner-7b6f72e4-43".to_string()
         })} style={props.style.clone()}>
             { for props.children.iter() }
         </div>

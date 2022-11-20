@@ -12,14 +12,14 @@ mod common;
 mod theme;
 
 #[derive(Properties, PartialEq)]
-struct TabsProps {
+pub struct TabsProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
 }
 
 #[function_component]
-fn Tabs(props: &TabsProps) -> Html {
+pub fn Tabs(props: &TabsProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
             format!("{} {}", "_Tabs-1e0c5ead-7", scope_class_name)
@@ -32,7 +32,7 @@ fn Tabs(props: &TabsProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-struct TabProps {
+pub struct TabProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
@@ -40,7 +40,7 @@ struct TabProps {
 }
 
 #[function_component]
-fn Tab(props: &TabProps) -> Html {
+pub fn Tab(props: &TabProps) -> Html {
     html! {
         <div class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
             format!("{} {}", "_Tab-1e0c5ead-38", scope_class_name)

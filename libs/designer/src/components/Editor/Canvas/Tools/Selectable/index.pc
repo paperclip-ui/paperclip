@@ -1,4 +1,4 @@
-import "../../../../styles/theme.pc" as theme
+import "../../../../../styles/theme.pc" as theme
 
 public component Knob {
     render svg(onMouseDown: onMouseDown, class: class, style: style) {

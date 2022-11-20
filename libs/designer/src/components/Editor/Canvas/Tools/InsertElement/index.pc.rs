@@ -5,22 +5,23 @@
 use yew::prelude::*;
 use yew::{function_component, Children, html, Properties, Callback, MouseEvent};
 
+#[path = "../../../../../styles/theme.pc.rs"]
+mod theme;
+
 #[derive(Properties, PartialEq)]
-pub struct TmpFooterProps {
+struct SelectableProps {
     pub __scope_class_name: Option<String>,
-    #[prop_or_default]
-    pub children: Children,
 }
 
 #[function_component]
-pub fn TmpFooter(props: &TmpFooterProps) -> Html {
+fn Selectable(props: &SelectableProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_TmpFooter-dc8bd3e8-7", scope_class_name)
+            format!("{} {}", "_Selectable-1f99a9f6-5", scope_class_name)
         } else {
-            "_TmpFooter-dc8bd3e8-7".to_string()
+            "_Selectable-1f99a9f6-5".to_string()
         }}>
-            { for props.children.iter() }
+            
         </div>
     }
 }

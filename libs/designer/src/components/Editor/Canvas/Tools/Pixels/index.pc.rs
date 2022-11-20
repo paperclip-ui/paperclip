@@ -15,9 +15,9 @@ pub struct PixelsProps {
 pub fn Pixels(props: &PixelsProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Pixels-66234ad6-25", scope_class_name)
+            format!("{} {}", "_Pixels-d2436674-25", scope_class_name)
         } else {
-            "_Pixels-66234ad6-25".to_string()
+            "_Pixels-d2436674-25".to_string()
         }} style={props.style.clone()}></div>
     }
 }

@@ -8,12 +8,12 @@ import {
   getCurrentDocument,
   getEditorState,
   StyleOverrides,
-} from "../../../machine/state";
+} from "@paperclip-ui/designer/src/machine/state";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
-import { editorEvents } from "../../../machine/events";
+import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
 
 type FramesProps = {
-  expandedFrameIndex?: number;
+  expandedFrameIndex?: number | null;
 };
 
 export const Frames = memo(({ expandedFrameIndex }: FramesProps) => {
@@ -31,7 +31,7 @@ export const Frames = memo(({ expandedFrameIndex }: FramesProps) => {
         return (
           <Frame
             key={i}
-            document={doc.paperclip}
+            document={doc!.paperclip!}
             onLoad={onFrameLoaded}
             onUpdate={onFrameUpdated}
             extraHTML={extraHTML}
@@ -112,7 +112,7 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
     return { frames: [], onFrameLoaded };
   }
 
-  const frames = doc.paperclip.html.children;
+  const frames = doc.paperclip?.html?.children || [];
 
   return { frames, onFrameLoaded, onFrameUpdated };
 };

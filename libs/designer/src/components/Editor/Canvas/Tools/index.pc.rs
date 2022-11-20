@@ -27,11 +27,11 @@ pub struct ToolsProps {
 pub fn Tools(props: &ToolsProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Tools-acb77914-49", scope_class_name)
+            format!("{} {}", "_Tools-cc265cea-49", scope_class_name)
         } else {
-            "_Tools-acb77914-49".to_string()
+            "_Tools-cc265cea-49".to_string()
         }}>
-            <div class={"_Tools-acb77914-48"} onClick={props.onClick.clone()} onDoubleClick={props.onDoubleClick.clone()} onDragEnter={props.onDragEnter.clone()} onDragOver={props.onDragOver.clone()} onDrop={props.onDrop.clone()} onMouseDown={props.onMouseDown.clone()} onMouseLeave={props.onMouseLeave.clone()} onMouseMove={props.onMouseMove.clone()} onMouseUp={props.onMouseUp.clone()} onWheel={props.onWheel.clone()} style={props.style.clone()}>
+            <div class={"_Tools-cc265cea-48"} onClick={props.onClick.clone()} onDoubleClick={props.onDoubleClick.clone()} onDragEnter={props.onDragEnter.clone()} onDragOver={props.onDragOver.clone()} onDrop={props.onDrop.clone()} onMouseDown={props.onMouseDown.clone()} onMouseLeave={props.onMouseLeave.clone()} onMouseMove={props.onMouseMove.clone()} onMouseUp={props.onMouseUp.clone()} onWheel={props.onWheel.clone()} style={props.style.clone()}>
                 { for props.children.iter() }
             </div>
             

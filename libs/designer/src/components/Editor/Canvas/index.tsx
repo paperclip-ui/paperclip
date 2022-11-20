@@ -9,13 +9,15 @@ import React, {
 import * as styles from "./styles.pc";
 import { Frames } from "./Frames";
 import { normalizeWheel } from "./normalize-wheel";
-import { editorEvents } from "../../machine/events";
+import { editorEvents } from "@paperclip-ui/designer/src//machine/events";
 
 import { useDispatch, useSelector } from "@paperclip-ui/common";
-import { getCanvas, getCurrentDocument } from "../../machine/state";
+import {
+  getCanvas,
+  getCurrentDocument,
+} from "@paperclip-ui/designer/src/machine/state";
 import { Tools } from "./Tools";
-import { Footer } from "./tmp-footer";
-import { useHotkeys } from "../../hooks/useHotkeys";
+import { useHotkeys } from "@paperclip-ui/designer/src/hooks/useHotkeys";
 
 export const Canvas = React.memo(() => {
   const { canvasRef, actualTransform, expanded, activeFrameIndex } =
@@ -32,7 +34,6 @@ export const Canvas = React.memo(() => {
         <Frames expandedFrameIndex={expanded ? activeFrameIndex : null} />
       </styles.Inner>
       <Tools />
-      <Footer />
     </styles.Canvas>
   );
 });
@@ -46,7 +47,7 @@ const useCanvas = () => {
   const actualTransform = useMemo(() => {
     if (expanded) {
       const frame =
-        currentDocument.paperclip?.html.children[canvas.activeFrame];
+        currentDocument!.paperclip!.html!.children[canvas!.activeFrame];
       if (!frame) {
         return canvas.transform;
       }
@@ -65,7 +66,7 @@ const useCanvas = () => {
   const [canvasPanTimer, setCanvasPanTimer] = useState<any>(0);
 
   const canvasRef = useRef<HTMLElement>();
-  useCanvasHotkeys(canvasRef);
+  useCanvasHotkeys(canvasRef as any);
 
   const onWheel = useCallback(
     (event: WheelEvent) => {

@@ -149,29 +149,21 @@ fn FooterBar(props: &FooterBarProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-struct EditorProps {
+pub struct EditorProps {
     pub __scope_class_name: Option<String>,
+    #[prop_or_default]
+    pub children: Children,
 }
 
 #[function_component]
-fn Editor(props: &EditorProps) -> Html {
+pub fn Editor(props: &EditorProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Editor-cdba43a9-141", scope_class_name)
+            format!("{} {}", "_Editor-cdba43a9-137", scope_class_name)
         } else {
-            "_Editor-cdba43a9-141".to_string()
+            "_Editor-cdba43a9-137".to_string()
         }}>
-            <Canvas></Canvas>
-            
-            <EditorPanels>
-                <leftSidebar::LeftSidebar></leftSidebar::LeftSidebar>
-                
-                <CenterPanels></CenterPanels>
-                
-                <rightSidebar::RightSidebar></rightSidebar::RightSidebar>
-                
-            </EditorPanels>
-            
+            { for props.children.iter() }
         </div>
     }
 }

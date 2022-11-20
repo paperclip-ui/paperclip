@@ -102,20 +102,14 @@ component FooterBar {
   }
 }
 
-component Editor {
+public component Editor {
   render div {
     style extends theme.fontDefault {
-
       width: 100vw
       height: 100vh
       background: var(theme.canvasColor)
     }
-    Canvas 
-    EditorPanels {
-      leftSidebar.LeftSidebar
-      CenterPanels
-      rightSidebar.RightSidebar
-    }
+    slot children
   }
 }
 
@@ -123,4 +117,11 @@ component Editor {
 /**
  * @bounds(width: 1000, height: 800, x: 0, y: 0)
  */
-Editor
+Editor {
+  Canvas 
+    EditorPanels {
+      leftSidebar.LeftSidebar
+      CenterPanels
+      rightSidebar.RightSidebar
+    }
+}

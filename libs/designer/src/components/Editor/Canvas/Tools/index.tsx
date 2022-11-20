@@ -9,9 +9,9 @@ import {
   getEditorState,
   getSelectedNodePaths,
   InsertMode,
-} from "../../../machine/state";
-import { editorEvents } from "../../../machine/events";
-import { mergeBoxes } from "../../../machine/state/geom";
+} from "@paperclip-ui/designer/src/machine/state";
+import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
+import { mergeBoxes } from "@paperclip-ui/designer/src/machine/state/geom";
 import { Selectable } from "./Selectable";
 import { InsertElement } from "./InsertElement";
 

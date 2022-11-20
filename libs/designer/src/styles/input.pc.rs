@@ -94,14 +94,14 @@ pub fn ColorInput(props: &ColorInputProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-struct FieldsProps {
+pub struct FieldsProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
 }
 
 #[function_component]
-fn Fields(props: &FieldsProps) -> Html {
+pub fn Fields(props: &FieldsProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
             format!("{} {}", "_Fields-ca714c1c-87", scope_class_name)
@@ -114,14 +114,14 @@ fn Fields(props: &FieldsProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-struct MultiSelectProps {
+pub struct MultiSelectProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
 }
 
 #[function_component]
-fn MultiSelect(props: &MultiSelectProps) -> Html {
+pub fn MultiSelect(props: &MultiSelectProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
             format!("{} {}", "_MultiSelect-ca714c1c-101", scope_class_name)
@@ -134,14 +134,14 @@ fn MultiSelect(props: &MultiSelectProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-struct TokenInputProps {
+pub struct TokenInputProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
 }
 
 #[function_component]
-fn TokenInput(props: &TokenInputProps) -> Html {
+pub fn TokenInput(props: &TokenInputProps) -> Html {
     html! {
         <span class={if let Some(scope_class_name) = &props.__scope_class_name {
             format!("{} {}", "_TokenInput-ca714c1c-113", scope_class_name)
@@ -154,7 +154,7 @@ fn TokenInput(props: &TokenInputProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-struct TokenProps {
+pub struct TokenProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
@@ -162,7 +162,7 @@ struct TokenProps {
 }
 
 #[function_component]
-fn Token(props: &TokenProps) -> Html {
+pub fn Token(props: &TokenProps) -> Html {
     html! {
         <span class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
             format!("{} {}", "_Token-ca714c1c-171", scope_class_name)
@@ -175,14 +175,14 @@ fn Token(props: &TokenProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-struct FieldProps {
+pub struct FieldProps {
     pub __scope_class_name: Option<String>,
     pub input: Children,
     pub name: Children,
 }
 
 #[function_component]
-fn Field(props: &FieldProps) -> Html {
+pub fn Field(props: &FieldProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
             format!("{} {}", "_Field-ca714c1c-210", scope_class_name)

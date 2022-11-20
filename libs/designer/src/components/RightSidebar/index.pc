@@ -1,8 +1,0 @@
-/**
- * @bounds(x: 244, y: -130, width: 425, height: 437)
-*/
-
-div {
-    text "Hello"
-}
-

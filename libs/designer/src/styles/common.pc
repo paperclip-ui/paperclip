@@ -47,7 +47,7 @@ public component SidebarSection {
   }
 }
 
-component SidebarPanelHeader {
+public component SidebarPanelHeader {
   render div {
     style extends theme.fontHeader {
       padding: var(theme.space05)
@@ -66,7 +66,7 @@ component SidebarPanelHeader {
   }
 }
 
-component SidebarPanelContent {
+public component SidebarPanelContent {
   variant flush trigger { ".flush" }
   render div(class:class) {
     style {
@@ -80,7 +80,7 @@ component SidebarPanelContent {
 }
 
 
-component SidebarHeader {
+public component SidebarHeader {
   render div {
     style {
       display: flex
@@ -89,7 +89,7 @@ component SidebarHeader {
   }
 }
 
-component SidebarHeaderButton {
+public component SidebarHeaderButton {
   variant selected
   render div root {
     style extends theme.easeIn {

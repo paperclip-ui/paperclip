@@ -1,7 +1,7 @@
 import "./common.pc" as common
 import "./theme.pc" as theme
 
-component Tabs {
+public component Tabs {
   render div {
     style {
       display: flex
@@ -10,7 +10,7 @@ component Tabs {
   }
 }
 
-component Tab {
+public component Tab {
   variant selected trigger { ".selected" }
   render div(class: class) {
     style {

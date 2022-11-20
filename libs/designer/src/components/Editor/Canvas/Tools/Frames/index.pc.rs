@@ -18,9 +18,9 @@ pub struct FramesContainerProps {
 pub fn FramesContainer(props: &FramesContainerProps) -> Html {
     html! {
         <div class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_FramesContainer-67e2e2a3-28", scope_class_name)
+            format!("{} {}", "_FramesContainer-d382ce01-28", scope_class_name)
         } else {
-            "_FramesContainer-67e2e2a3-28".to_string()
+            "_FramesContainer-d382ce01-28".to_string()
         })} data-label={"Frames container"} style={props.style.clone()}>
             { for props.children.iter() }
         </div>
@@ -40,9 +40,9 @@ pub struct FrameProps {
 pub fn Frame(props: &FrameProps) -> Html {
     html! {
         <div class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Frame-67e2e2a3-52", scope_class_name)
+            format!("{} {}", "_Frame-d382ce01-52", scope_class_name)
         } else {
-            "_Frame-67e2e2a3-52".to_string()
+            "_Frame-d382ce01-52".to_string()
         })} style={props.style.clone()}>
             { for props.children.iter() }
         </div>
@@ -63,11 +63,11 @@ pub struct FrameTitleProps {
 pub fn FrameTitle(props: &FrameTitleProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_FrameTitle-67e2e2a3-117", scope_class_name)
+            format!("{} {}", "_FrameTitle-d382ce01-117", scope_class_name)
         } else {
-            "_FrameTitle-67e2e2a3-117".to_string()
+            "_FrameTitle-d382ce01-117".to_string()
         }} onClick={props.onClick.clone()} onDoubleClick={props.onDoubleClick.clone()} onMouseUp={props.onMouseUp.clone()} style={props.style.clone()}>
-            <span class={"_FrameTitle-title-67e2e2a3-116"}>
+            <span class={"_FrameTitle-title-d382ce01-116"}>
                 { for props.value.iter() }
             </span>
             

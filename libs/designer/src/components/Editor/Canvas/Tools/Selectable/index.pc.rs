@@ -5,7 +5,7 @@
 use yew::prelude::*;
 use yew::{function_component, Children, html, Properties, Callback, MouseEvent};
 
-#[path = "../../../../styles/theme.pc.rs"]
+#[path = "../../../../../styles/theme.pc.rs"]
 mod theme;
 
 #[derive(Properties, PartialEq)]
@@ -20,11 +20,11 @@ pub struct KnobProps {
 pub fn Knob(props: &KnobProps) -> Html {
     html! {
         <svg class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Knob-e1979310-56", scope_class_name)
+            format!("{} {}", "_Knob-9e53e128-56", scope_class_name)
         } else {
-            "_Knob-e1979310-56".to_string()
+            "_Knob-9e53e128-56".to_string()
         })} onMouseDown={props.onMouseDown.clone()} style={props.style.clone()}>
-            <rect class={"_Knob-e1979310-55"}></rect>
+            <rect class={"_Knob-9e53e128-55"}></rect>
             
         </svg>
     }
@@ -41,9 +41,9 @@ pub struct EdgeProps {
 pub fn Edge(props: &EdgeProps) -> Html {
     html! {
         <div class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Edge-e1979310-124", scope_class_name)
+            format!("{} {}", "_Edge-9e53e128-124", scope_class_name)
         } else {
-            "_Edge-e1979310-124".to_string()
+            "_Edge-9e53e128-124".to_string()
         })} onMouseDown={props.onMouseDown.clone()}></div>
     }
 }
@@ -63,13 +63,13 @@ pub struct OverlayProps {
 pub fn Overlay(props: &OverlayProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Overlay-e1979310-204", scope_class_name)
+            format!("{} {}", "_Overlay-9e53e128-204", scope_class_name)
         } else {
-            "_Overlay-e1979310-204".to_string()
+            "_Overlay-9e53e128-204".to_string()
         }} onClick={props.onClick.clone()} onMouseDown={props.onMouseDown.clone()} style={props.style.clone()}>
             { for props.knobs.iter() }
             { for props.edges.iter() }
-            <div class={"_Overlay-footer-e1979310-203"}>
+            <div class={"_Overlay-footer-9e53e128-203"}>
                 { for props.size.iter() }
             </div>
             

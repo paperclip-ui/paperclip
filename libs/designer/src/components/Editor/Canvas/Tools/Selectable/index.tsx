@@ -8,7 +8,7 @@ import {
   Transform,
 } from "@paperclip-ui/designer/src/machine/state/geom";
 import { useDispatch } from "@paperclip-ui/common";
-import { startDOMDrag } from "../../../utils/dnd";
+import { startDOMDrag } from "@paperclip-ui/designer/src/components/utils/dnd";
 import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
 
 type Props = {

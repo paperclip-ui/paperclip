@@ -30,7 +30,7 @@ public component Tab {
 }
 
 public component LeftSidebar {
-  render common.Sidebar {    
+  render common.Sidebar { 
     common.SidebarPanel {
       LeftSidebarHeader
       common.SidebarSection {

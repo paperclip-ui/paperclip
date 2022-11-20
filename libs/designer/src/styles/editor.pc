@@ -1,127 +1,163 @@
 import "./theme.pc" as theme
 import "./left-sidebar.pc" as leftSidebar
 import "./common.pc" as common
-import "./toolbar.pc" as toolbar
 import "./right-sidebar.pc" as rightSidebar
+import "./center-panels.pc" as centerPanels
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 token iconSize var(theme.fontSize03)
-
 component NodeIcon {
-  render div
+    render div
 }
 
-component Artboard {
-  render div {
-    style {
-      width: 400px
-      height: 300px
-
-      position: absolute
-      left: 50%
-      top: 50%
-      transform: translate(-50%, -50%)
+public component Artboard {
+    render div(style: style) {
+        div {
+            style {
+                color: var(theme.fontColor01)
+                position: absolute
+                transform: translateY(calc(-100% - 0.5em))
+            }
+            slot title
+        }
+        slot children
     }
-    div {
-      style {
-        color: var(theme.fontColor01)
-        position: absolute
-        transform: translateY(calc(-100% - 0.5em))
-      }
-      slot title
-    }
-    ArtboardPreview 
-  }
 }
 
 component ArtboardPreview {
-  render div {
-    style {
-      width: 400px
-      height: 300px
-      background: white
+    render div {
+        style {
+            width: 400px
+            height: 300px
+            background: white
+        }
     }
-  }
 }
 
-component Canvas {
-  render div {
-    style {
-      flex: 1
-      padding: var(theme.space04)
-      background: var(theme.gray03)
-      position: relative
-      overflow: hidden
-      position: absolute
-      top: 0px
-      left: 0px
-      width: 100%
-      height: 100%
+public component Canvas {
+    render div(style: style, onMouseMove: onMouseMove, onScroll: onScroll, onWheelCapture: onWheelCapture, tabIndex: "0") {
+        style {
+            flex: 1
+            overflow: hidden
+            position: absolute
+            top: 0px
+            left: 0px
+            width: 100%
+            height: 100%
+        }
+        slot children
     }
-    Artboard {
-      insert title {
-        text "this should work"
-      }
-    }
-  }
 }
 
-
-component EditorPanels {
-  render div {
-    style {
-      display: flex
-      flex: 1
-      z-index: 3
-      gap: var(theme.space05)
-      position: relative
-      height: 100%
-      justify-content: space-between
+public component CanvasInner {
+    render div(style: style, class: class) {
+        style extends canvas {
+            width: 100%
+            height: 100%
+        }
+        slot children
     }
-    slot children
-  }
 }
 
-component CenterPanels {
-  render div {
-    style {
-      display: flex
-      flex: 1
-      flex-direction: column
-      justify-content: space-between
+public component EditorPanels {
+    render div {
+        style {
+            display: flex
+            flex: 1
+            z-index: 3
+            gap: var(theme.space05)
+            position: relative
+            height: 100%
+            justify-content: space-between
+            pointer-events: none
+        }
+        slot children
     }
-    toolbar.Toolbar
-  }
 }
 
 component FooterBar {
-  render div {
-    style extends panel {
-      width: 100%
-      height: 30px
+    render div {
+        style extends panel {
+            width: 100%
+            height: 30px
+        }
     }
-  }
 }
 
 public component Editor {
-  render div {
-    style extends theme.fontDefault {
-      width: 100vw
-      height: 100vh
-      background: var(theme.canvasColor)
+    render div {
+        style extends theme.fontDefault {
+            width: 100vw
+            height: 100vh
+            background: var(theme.canvasColor)
+        }
+        slot children
     }
-    slot children
-  }
 }
-
 
 /**
- * @bounds(width: 1000, height: 800, x: 0, y: 0)
+ * @bounds(width: 1500, height: 1200, x: 10, y: 0)
  */
+
 Editor {
-  Canvas 
+    Canvas {
+        CanvasInner {
+            Artboard(style: "left: 50%; top: 50%; position: absolute; transform: translate(-50%, -50%);") {
+                insert title {
+                    text "this should work!"
+                }
+                ArtboardPreview
+            }
+        }
+    }
     EditorPanels {
-      leftSidebar.LeftSidebar
-      CenterPanels
-      rightSidebar.RightSidebar
+        leftSidebar.LeftSidebar
+        centerPanels.CenterPanels
+        rightSidebar.RightSidebar
     }
 }
+
+/**
+ * @bounds(x: 2038, y: -251, width: 1031, height: 622)
+*/
+
+div {
+    style {
+        position: relative
+    }
+    div {
+        div {
+            style {
+                background: rgba(0, 0, 0, 0.1)
+                position: relative
+                left: 104px
+                top: 37px
+                width: 168
+                height: 88
+            }
+        }
+        div {
+            style {
+                background: rgba(0, 0, 0, 0.1)
+                position: absolute
+                left: 177px
+                top: 44px
+                width: 228px
+                height: 121px
+            }
+        }
+    }
+}
+

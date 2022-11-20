@@ -8,7 +8,7 @@ public style panel {
 }
 
 public component Sidebar {
-  render div {
+  render div root {
     style extends theme.fontDefault {
       width: 300px
       flex-shrink: 0
@@ -17,6 +17,7 @@ public component Sidebar {
       gap: var(theme.space05)
       padding: var(theme.space05)
       overflow: scroll 
+      pointer-events: all
     }
       slot children
   }

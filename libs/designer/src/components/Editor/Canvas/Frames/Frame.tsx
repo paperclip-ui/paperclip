@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { memo, useMemo } from "react";
-import * as styles from "./styles.pc";
+import * as styles from "@paperclip-ui/designer/src/styles/editor.pc";
 import { FrameContainer } from "@paperclip-ui/designer/src/components/FrameContainer";
 import { Node as VirtNode } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
@@ -74,7 +74,7 @@ export const Frame = memo(
     ]) as any;
 
     return (
-      <styles.Frame style={frameStyle}>
+      <styles.Artboard style={frameStyle}>
         <FrameContainer
           extraHTML={extraHTML}
           frameIndex={frameIndex}
@@ -83,7 +83,7 @@ export const Frame = memo(
           onLoad={onLoad2}
           onUpdate={onUpdate2}
         />
-      </styles.Frame>
+      </styles.Artboard>
     );
   }
 );

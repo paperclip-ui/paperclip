@@ -73,30 +73,30 @@ pub struct ToolbarProps {
 pub fn Toolbar(props: &ToolbarProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Toolbar-6cd1ddfb-126", scope_class_name)
+            format!("{} {}", "_Toolbar-6cd1ddfb-128", scope_class_name)
         } else {
-            "_Toolbar-6cd1ddfb-126".to_string()
+            "_Toolbar-6cd1ddfb-128".to_string()
         }}>
-            <div class={"_Toolbar-6cd1ddfb-125"}>
+            <div class={"_Toolbar-6cd1ddfb-127"}>
                 <ToolbarButton>
-                    <div class={"_Toolbar-6cd1ddfb-87"}></div>
+                    <div class={"_Toolbar-6cd1ddfb-89"}></div>
                     
                 </ToolbarButton>
                 
                 <ToolbarButton>
-                    <div class={"_Toolbar-6cd1ddfb-99"}></div>
+                    <div class={"_Toolbar-6cd1ddfb-101"}></div>
                     
                 </ToolbarButton>
                 
                 <ToolbarDivider></ToolbarDivider>
                 
                 <ToolbarButton>
-                    <div class={"_Toolbar-6cd1ddfb-109"}></div>
+                    <div class={"_Toolbar-6cd1ddfb-111"}></div>
                     
                 </ToolbarButton>
                 
                 <ToolbarButton>
-                    <div class={"_Toolbar-6cd1ddfb-118"}></div>
+                    <div class={"_Toolbar-6cd1ddfb-120"}></div>
                     
                 </ToolbarButton>
                 

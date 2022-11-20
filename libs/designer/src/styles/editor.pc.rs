@@ -14,11 +14,11 @@ mod leftSidebar;
 #[path = "common.pc.rs"]
 mod common;
 
-#[path = "toolbar.pc.rs"]
-mod toolbar;
-
 #[path = "right-sidebar.pc.rs"]
 mod rightSidebar;
+
+#[path = "center-panels.pc.rs"]
+mod centerPanels;
 
 #[derive(Properties, PartialEq)]
 struct NodeIconProps {
@@ -33,25 +33,23 @@ fn NodeIcon(props: &NodeIconProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-struct ArtboardProps {
+pub struct ArtboardProps {
     pub __scope_class_name: Option<String>,
+    #[prop_or_default]
+    pub children: Children,
+    pub style: ,
     pub title: Children,
 }
 
 #[function_component]
-fn Artboard(props: &ArtboardProps) -> Html {
+pub fn Artboard(props: &ArtboardProps) -> Html {
     html! {
-        <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Artboard-cdba43a9-43", scope_class_name)
-        } else {
-            "_Artboard-cdba43a9-43".to_string()
-        }}>
-            <div class={"_Artboard-cdba43a9-41"}>
+        <div style={props.style.clone()}>
+            <div class={"_Artboard-cdba43a9-27"}>
                 { for props.title.iter() }
             </div>
             
-            <ArtboardPreview></ArtboardPreview>
-            
+            { for props.children.iter() }
         </div>
     }
 }
@@ -65,69 +63,75 @@ struct ArtboardPreviewProps {
 fn ArtboardPreview(props: &ArtboardPreviewProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_ArtboardPreview-cdba43a9-53", scope_class_name)
+            format!("{} {}", "_ArtboardPreview-cdba43a9-39", scope_class_name)
         } else {
-            "_ArtboardPreview-cdba43a9-53".to_string()
+            "_ArtboardPreview-cdba43a9-39".to_string()
         }}></div>
     }
 }
 
 #[derive(Properties, PartialEq)]
-struct CanvasProps {
-    pub __scope_class_name: Option<String>,
-}
-
-#[function_component]
-fn Canvas(props: &CanvasProps) -> Html {
-    html! {
-        <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Canvas-cdba43a9-82", scope_class_name)
-        } else {
-            "_Canvas-cdba43a9-82".to_string()
-        }}>
-            <Artboard title={
-                
-}></Artboard>
-            
-        </div>
-    }
-}
-
-#[derive(Properties, PartialEq)]
-struct EditorPanelsProps {
+pub struct CanvasProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
+    pub onMouseMove: ,
+    pub onScroll: ,
+    pub onWheelCapture: ,
+    pub style: ,
 }
 
 #[function_component]
-fn EditorPanels(props: &EditorPanelsProps) -> Html {
+pub fn Canvas(props: &CanvasProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_EditorPanels-cdba43a9-102", scope_class_name)
+            format!("{} {}", "_Canvas-cdba43a9-68", scope_class_name)
         } else {
-            "_EditorPanels-cdba43a9-102".to_string()
-        }}>
+            "_Canvas-cdba43a9-68".to_string()
+        }} onMouseMove={props.onMouseMove.clone()} onScroll={props.onScroll.clone()} onWheelCapture={props.onWheelCapture.clone()} style={props.style.clone()} tabIndex={"0"}>
             { for props.children.iter() }
         </div>
     }
 }
 
 #[derive(Properties, PartialEq)]
-struct CenterPanelsProps {
+pub struct CanvasInnerProps {
     pub __scope_class_name: Option<String>,
+    #[prop_or_default]
+    pub children: Children,
+    pub class: String,
+    pub style: ,
 }
 
 #[function_component]
-fn CenterPanels(props: &CenterPanelsProps) -> Html {
+pub fn CanvasInner(props: &CanvasInnerProps) -> Html {
+    html! {
+        <div class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
+            format!("{} {}", "_CanvasInner-cdba43a9-82", scope_class_name)
+        } else {
+            "_CanvasInner-cdba43a9-82".to_string()
+        })} style={props.style.clone()}>
+            { for props.children.iter() }
+        </div>
+    }
+}
+
+#[derive(Properties, PartialEq)]
+pub struct EditorPanelsProps {
+    pub __scope_class_name: Option<String>,
+    #[prop_or_default]
+    pub children: Children,
+}
+
+#[function_component]
+pub fn EditorPanels(props: &EditorPanelsProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_CenterPanels-cdba43a9-115", scope_class_name)
+            format!("{} {}", "_EditorPanels-cdba43a9-104", scope_class_name)
         } else {
-            "_CenterPanels-cdba43a9-115".to_string()
+            "_EditorPanels-cdba43a9-104".to_string()
         }}>
-            <toolbar::Toolbar></toolbar::Toolbar>
-            
+            { for props.children.iter() }
         </div>
     }
 }
@@ -141,9 +145,9 @@ struct FooterBarProps {
 fn FooterBar(props: &FooterBarProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_FooterBar-cdba43a9-124", scope_class_name)
+            format!("{} {}", "_FooterBar-cdba43a9-113", scope_class_name)
         } else {
-            "_FooterBar-cdba43a9-124".to_string()
+            "_FooterBar-cdba43a9-113".to_string()
         }}></div>
     }
 }
@@ -159,9 +163,9 @@ pub struct EditorProps {
 pub fn Editor(props: &EditorProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Editor-cdba43a9-137", scope_class_name)
+            format!("{} {}", "_Editor-cdba43a9-126", scope_class_name)
         } else {
-            "_Editor-cdba43a9-137".to_string()
+            "_Editor-cdba43a9-126".to_string()
         }}>
             { for props.children.iter() }
         </div>

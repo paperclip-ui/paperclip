@@ -6,8 +6,8 @@ import React, {
   useCallback,
   MutableRefObject,
 } from "react";
-import * as styles from "./styles.pc";
 import { Frames } from "./Frames";
+import * as styles from "@paperclip-ui/designer/src/styles/editor.pc";
 import { normalizeWheel } from "./normalize-wheel";
 import { editorEvents } from "@paperclip-ui/designer/src//machine/events";
 
@@ -25,14 +25,14 @@ export const Canvas = React.memo(() => {
 
   return (
     <styles.Canvas ref={canvasRef}>
-      <styles.Inner
+      <styles.CanvasInner
         style={{
           transform: `translateX(${actualTransform.x}px) translateY(${actualTransform.y}px) scale(${actualTransform.z}) translateZ(0)`,
           transformOrigin: "top left",
         }}
       >
         <Frames expandedFrameIndex={expanded ? activeFrameIndex : null} />
-      </styles.Inner>
+      </styles.CanvasInner>
       <Tools />
     </styles.Canvas>
   );

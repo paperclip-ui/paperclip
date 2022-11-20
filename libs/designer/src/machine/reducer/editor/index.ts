@@ -241,13 +241,16 @@ export const editorReducer = (
           newState.styleOverrides = {};
 
           newState.styleOverrides[node.id] = {
-            // TODO: need to take delta of computed CSS instead
-            left: `calc(${computedStyles.left} + ${
-              event.payload.newBounds.x - event.payload.originalBounds.x
-            }px)`,
-            top: `calc(${computedStyles.top} + ${
-              event.payload.newBounds.y - event.payload.originalBounds.y
-            }px)`,
+            left: `${
+              pxToInt(computedStyles.left) +
+              event.payload.newBounds.x -
+              event.payload.originalBounds.x
+            }px`,
+            top: `${
+              pxToInt(computedStyles.top) +
+              event.payload.newBounds.y -
+              event.payload.originalBounds.y
+            }px`,
 
             // TODO - check position here to make sure we're not overriding something like "absolute"
             position: "relative",
@@ -343,6 +346,8 @@ export const getScopedBoxes = memoize(
     return pick(boxes, hoverableNodePaths);
   }
 );
+
+const pxToInt = (value: string) => Number(value.replace("px", ""));
 
 const getHoverableNodePaths = memoize(
   (scopedNodePath: string | undefined, root: InnerVirtNode) => {

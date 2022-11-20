@@ -186,7 +186,7 @@ export const Selectable = React.memo(
                 {Object.keys(edges).map((edge) => (
                   <styles.Edge
                     key={edge}
-                    class="edge"
+                    class={edge}
                     onMouseDown={(event) => {
                       onKnobMouseDown(event, edges[edge]);
                     }}

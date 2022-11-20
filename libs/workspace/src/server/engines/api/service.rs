@@ -6,10 +6,8 @@ use paperclip_language_services::DocumentInfo;
 use paperclip_parser::pc::serializer::serialize;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
-    designer_event,
-    FileChanged,
-    file_response, ApplyMutationsRequest, ApplyMutationsResult, Empty, FileRequest, FileResponse,
-    UpdateFileRequest, DesignerEvent,
+    designer_event, file_response, ApplyMutationsRequest, ApplyMutationsResult, DesignerEvent,
+    Empty, FileChanged, FileRequest, FileResponse, UpdateFileRequest,
 };
 use std::pin::Pin;
 use std::sync::Arc;
@@ -91,18 +89,20 @@ impl Designer for DesignerService {
         Ok(Response::new(Box::pin(output) as Self::OpenFileStream))
     }
 
-    async fn on_event(&self, _request: Request<Empty>) ->OnEventResult<Self::OnEventStream>  {
+    async fn on_event(&self, _request: Request<Empty>) -> OnEventResult<Self::OnEventStream> {
         let store = self.store.clone();
 
         let (tx, rx) = mpsc::channel(128);
 
         tokio::spawn(async move {
-
             let file_changed = |path: String, content: Vec<u8>| {
-                Result::Ok(designer_event::Inner::FileChanged(FileChanged {
-                    path: path.to_string(),
-                    content: content.clone()
-                }).get_outer())
+                Result::Ok(
+                    designer_event::Inner::FileChanged(FileChanged {
+                        path: path.to_string(),
+                        content: content.clone(),
+                    })
+                    .get_outer(),
+                )
             };
 
             handle_store_events!(store.clone(),
@@ -125,7 +125,6 @@ impl Designer for DesignerService {
         let output = ReceiverStream::new(rx);
 
         Ok(Response::new(Box::pin(output) as Self::OnEventStream))
-
     }
 
     async fn update_file(

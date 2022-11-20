@@ -136,7 +136,6 @@ async fn evaluate_dependency_graph<TIO: ServerIO>(ctx: ServerEngineContext<TIO>)
     let mut output: HashMap<String, (css::virt::Document, html::virt::Document)> = HashMap::new();
 
     // file resolver for embedding
-    println!("EVAL DEP GRAPH");
 
     {
         let resolver = PCFileResolver::new(ctx.io.clone(), ctx.io.clone(), None);

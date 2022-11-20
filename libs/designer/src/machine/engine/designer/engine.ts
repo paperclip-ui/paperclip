@@ -17,6 +17,7 @@ import { Mutation } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
 import {
   getNodeById,
   getNodeByPath,
+  getNodeParent,
   getNodePath,
 } from "@paperclip-ui/proto/lib/virt/html-utils";
 import {
@@ -112,9 +113,6 @@ const createEventHandler = (actions: Actions) => {
         state.currentDocument.paperclip.html
       );
 
-      // const style = state.computedStyles[intersectingNode.nodePath];
-      const frameIndex = intersectingNode.nodePath.split(".").shift();
-
       const parentBox = flattenFrameBoxes(state.rects)[
         intersectingNode.nodePath
       ];
@@ -187,7 +185,18 @@ const createEventHandler = (actions: Actions) => {
     const path = getNodePath(node, prevState.currentDocument.paperclip.html);
 
     if (path.includes(".")) {
-      console.warn("Not implemented yet");
+      actions.applyChanges([
+        {
+          setStyleDeclarations: {
+            expressionId: node.sourceId,
+            declarations: Object.entries(
+              state.styleOverrides[prevState.selectedVirtNodeIds[0]]
+            ).map(([key, value]) => {
+              return { key, value: String(value) };
+            }),
+          },
+        },
+      ]);
     } else {
       const newBounds = node.metadata.bounds;
 

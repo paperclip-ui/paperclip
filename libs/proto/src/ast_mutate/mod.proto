@@ -16,18 +16,19 @@ message Mutation {
 
     // Element
     SetElementParameter set_element_parameter = 4;
-    SetFrameBounds set_frame_bounds = 5;
-    InsertFrame insert_frame = 6;
+    SetFrameBounds set_frame_bounds = 6;
+    InsertFrame insert_frame = 7;
 
     // Text
-    SetTextNodeValue set_text_node_value = 7;
+    SetTextNodeValue set_text_node_value = 8;
 
     // Style
-    SetStyleDeclaration set_style_declaration = 8;
-    DeleteStyleDeclaration delete_style_declaration = 9;
+    SetStyleDeclaration set_style_declaration = 9;
+    SetStyleDeclarations set_style_declarations = 5;
+    DeleteStyleDeclaration delete_style_declaration = 10;
 
     // General
-    DeleteExpression delete_expression = 10;
+    DeleteExpression delete_expression = 11;
   }
 }
 
@@ -103,6 +104,16 @@ message SetTextNodeValue {
 message SetStyleDeclaration {
   string declaration_id = 1;
   ast.css.DeclarationValue value = 2;
+}
+
+message SetKeyValue {
+  string name = 1;
+  string value = 2;
+}
+
+message SetStyleDeclarations {
+  string expression_id = 1;
+  repeated SetKeyValue declarations = 2;
 }
 
 message DeleteStyleDeclaration {

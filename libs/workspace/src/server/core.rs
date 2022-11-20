@@ -129,7 +129,6 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                     std::mem::replace(&mut state.graph, Graph::new()).merge(graph.clone());
             }
             ServerEvent::UpdateFileRequested { path, content } => {
-
                 // onyl flag as changed if content actually changed.
                 if let Some(existing_content) = state.file_cache.get(path) {
                     if content != existing_content {
@@ -139,8 +138,6 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 }
 
                 state.file_cache.insert(path.to_string(), content.clone());
-
-
             }
             ServerEvent::ApplyMutationRequested { mutations } => {
                 let changed_files = edit_graph(&mut state.graph, mutations);
@@ -157,9 +154,10 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
 
                 println!("{:?}", changed_files);
 
-                state.updated_files = changed_files.iter().map(|(path, _changes)| {
-                    path.to_string()
-                }).collect::<Vec<String>>();
+                state.updated_files = changed_files
+                    .iter()
+                    .map(|(path, _changes)| path.to_string())
+                    .collect::<Vec<String>>();
                 state.latest_ast_changes = latest_ast_changes;
             }
             ServerEvent::FileWatchEvent(event) => {
@@ -167,7 +165,6 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
             }
             ServerEvent::ModulesEvaluated(modules) => {
                 state.evaluated_modules.extend(modules.clone());
-                println!("EVALUTED!");
                 state.updated_files = vec![];
             }
             ServerEvent::GlobalScriptsLoaded(global_scripts) => {

@@ -1,6 +1,7 @@
 #### On-deck
 
 - ability to drag elements around according to parent pos
+- set style on instance roots
 
 - style panel
 - ability to insert frames into each other

@@ -1,16 +1,11 @@
-
-
 /*
 document.merge(document);
 
 */
 
 pub trait Mergeable<Type> {
-  fn merge(&mut self, other: &Type);
+    fn merge(&mut self, other: &Type);
 }
-
-
-
 
 #[macro_export]
 macro_rules! mergeable {

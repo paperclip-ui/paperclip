@@ -154,3 +154,13 @@ impl TryFrom<DocumentBodyItem> for Node {
         }
     }
 }
+
+impl TryFrom<DocumentBodyItem> for Style {
+    type Error = ();
+    fn try_from(value: DocumentBodyItem) -> Result<Self, Self::Error> {
+        match value.get_inner() {
+            document_body_item::Inner::Style(style) => Ok(style.clone()),
+            _ => Err(()),
+        }
+    }
+}

@@ -1,7 +1,5 @@
 #### On-deck
 
-- vscode text syncing
-  - patch changes to AST
 - style panel
 
 - ability to insert frames into each other

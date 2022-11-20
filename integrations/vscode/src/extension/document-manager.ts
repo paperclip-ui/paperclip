@@ -56,7 +56,7 @@ export class DocumentManager {
     if (textDocument.getText() === content) {
       return;
     }
-    vscode.window.activeTextEditor.edit((builder) => {
+    const editor = await vscode.window.activeTextEditor.edit((builder) => {
       builder.replace(
         new vscode.Range(
           textDocument.positionAt(0),
@@ -65,6 +65,10 @@ export class DocumentManager {
         content
       );
     });
+    vscode.window.activeTextEditor.selection = new vscode.Selection(
+      vscode.window.activeTextEditor.selection.end,
+      vscode.window.activeTextEditor.selection.end
+    );
   };
 
   private _onActiveTextEditorChange = (editor: TextEditor) => {

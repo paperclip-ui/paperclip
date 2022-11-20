@@ -23,7 +23,7 @@ import {
   Element as VirtElement,
   TextNode as VirtTextNode,
 } from "@paperclip-ui/proto/lib/generated/virt/html";
-import { getScaledBox, mergeBoxes } from "../../state/geom";
+import { getScaledBox, mergeBoxes, roundBox } from "../../state/geom";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -96,7 +96,7 @@ const createEventHandler = (actions: Actions) => {
       const mutation: Mutation = {
         insertFrame: {
           documentId: state.currentDocument.paperclip.html.sourceId,
-          bounds,
+          bounds: roundBox(bounds),
           nodeSource: `div {
             style {
               position: relative
@@ -114,17 +114,16 @@ const createEventHandler = (actions: Actions) => {
 
       // const style = state.allStyles[intersectingNode.nodePath];
       const frameIndex = intersectingNode.nodePath.split(".").shift();
-      const frameRect = state.rects[frameIndex][frameIndex];
 
       const parentBox = flattenFrameBoxes(state.rects)[
         intersectingNode.nodePath
       ];
 
-      bounds = {
+      bounds = roundBox({
         ...bounds,
         x: bounds.x - parentBox.x,
         y: bounds.y - parentBox.y,
-      };
+      });
 
       actions.applyChanges([
         {
@@ -136,8 +135,8 @@ const createEventHandler = (actions: Actions) => {
                 position: absolute
                 left: ${bounds.x}px
                 top: ${bounds.y}px
-                width: ${Math.round(bounds.width)}px
-                height: ${Math.round(bounds.height)}px
+                width: ${bounds.width}px
+                height: ${bounds.height}px
               }
             }`,
           },

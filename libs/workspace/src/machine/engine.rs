@@ -1,6 +1,7 @@
 use super::store::{EventHandler, Store};
 use std::sync::Arc;
 use std::sync::Mutex;
+use tokio::time::{sleep, Duration};
 
 pub struct EngineContext<
     TState: Send + Sync + 'static,
@@ -22,6 +23,10 @@ impl<TState: Send + Sync, TEvent: Clone + Send + Sync, TIO: Sized + Send + Sync,
     pub fn emit(&self, event: TEvent) {
         let store = self.store.clone();
         tokio::spawn(async move {
+
+            // VERY dirty way of throttling emit so that we don't 
+            // deal wiht race conditions between events
+            sleep(Duration::from_millis(1)).await;
             let mut store = store.lock().unwrap();
             store.emit(event);
         });

@@ -23,14 +23,3 @@ public component Inner {
         slot children
     }
 }
-
-/**
- * @bounds(x: 208, y: 277, width: 167, height: 153)
-*/
-
-div {
-    style {
-        position: relative
-    }
-}
-

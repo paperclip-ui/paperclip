@@ -9,7 +9,7 @@ public style panel {
 
 public component Sidebar {
   render div {
-    style {
+    style extends theme.fontDefault {
       width: 300px
       flex-shrink: 0
       display: flex

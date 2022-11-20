@@ -56,7 +56,7 @@ export const Selectable = React.memo(
       edges = {
         left: { x: 0, y: 50 },
         top: { x: 50, y: 0 },
-        right: { x: 100, y: 0 },
+        right: { x: 100, y: 50 },
         bottom: { x: 50, y: 100 },
       };
     }

@@ -1,6 +1,7 @@
 #### On-deck
 
-- NESW resizers
+- style panel
+
 - make persisting boundary styles cleaner
 
 - ability to drag elements around according to parent pos

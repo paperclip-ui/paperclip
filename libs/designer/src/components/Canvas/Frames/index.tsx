@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import { computeAllStyles, getFrameRects } from "@paperclip-ui/web-renderer";
 import { memo } from "react";
 import { Frame } from "./Frame";
+import { throttle } from "lodash";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   getCurrentDocument,
@@ -81,7 +82,7 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
   const dispatch = useDispatch();
 
   const emitFrameRects = useCallback(
-    (mount: HTMLElement, data: PCModule, frameIndex: number) => {
+    throttle((mount: HTMLElement, data: PCModule, frameIndex: number) => {
       if (!shouldCollectRects) {
         return false;
       }
@@ -91,7 +92,7 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
 
       dispatch(editorEvents.rectsCaptured({ frameIndex, rects }));
       dispatch(editorEvents.computedStylesCaptured({ computedStyles }));
-    },
+    }, 500),
     [dispatch, shouldCollectRects]
   );
 

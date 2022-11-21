@@ -45,6 +45,11 @@ public component LeftSidebar {
         Layers
       }
       common.SidebarSection {
+        override root {
+          style {
+            display: none
+          }
+        }
         common.SidebarPanelHeader {
           text "Design Tokens"
           div {

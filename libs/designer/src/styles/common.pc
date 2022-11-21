@@ -37,7 +37,7 @@ public component SidebarSection {
   variant first trigger {
     ":first-child"
   }
-  render div {
+  render div root {
     style {
       border-top: 1px solid var(theme.borderColor)
     }

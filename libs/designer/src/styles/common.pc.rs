@@ -59,9 +59,9 @@ pub struct SidebarSectionProps {
 pub fn SidebarSection(props: &SidebarSectionProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_SidebarSection-2993b912-62", scope_class_name)
+            format!("{} {}", "_SidebarSection-root-2993b912-62", scope_class_name)
         } else {
-            "_SidebarSection-2993b912-62".to_string()
+            "_SidebarSection-root-2993b912-62".to_string()
         }}>
             { for props.children.iter() }
         </div>

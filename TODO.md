@@ -1,6 +1,9 @@
 #### On-deck
 
-- style panel
+- left sidebar
+
+  - layers
+    -
 
 - make persisting boundary styles cleaner
 

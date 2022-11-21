@@ -21,6 +21,7 @@ const getLoader = (directory: string, configFileName: string) => {
 };
 
 module.exports = function (source: string) {
+  console.log("OK");
   this.cacheable();
   const callback = this.async();
   const options: Options = { ...this.getOptions() };

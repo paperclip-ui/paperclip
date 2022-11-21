@@ -19,6 +19,7 @@ macro_rules! add_case {
                 document: ast,
             };
             let output = compile_code(&dep).unwrap();
+            println!("{}", output.as_str());
             assert_eq!(
                 strip_extra_ws(output.as_str()),
                 strip_extra_ws($expected_output)
@@ -272,7 +273,10 @@ add_case! {
     }));
 
     const B = React.memo(React.forwardRef((props, ref) => {
-      return React.createElement(A, { "ref": ref });
+      return React.createElement(A, { 
+        "$$scopeClassName": "_B-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+        "ref": ref 
+      });
     }));
   "#
 }
@@ -301,6 +305,7 @@ add_case! {
 
     const B = React.memo(React.forwardRef((props, ref) => {
       return React.createElement(A, {
+        "$$scopeClassName": "_B-80f4925f-6" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
         "abba": [
           "Hello"
         ],
@@ -375,7 +380,55 @@ add_case! {
     import * as test from "/test.pc";
 
     const A = React.memo(React.forwardRef((props, ref) => {
-      return React.createElement(test.B, { "ref": ref });
+      return React.createElement(test.B, { 
+        "$$scopeClassName": "_A-80f4925f-2" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+        "ref": ref 
+      });
+    }));
+  "#
+}
+
+
+add_case! {
+  scoped_class_name_is_defined_on_instance,
+  r#"
+  import "/test.pc" as test
+
+  component A {
+    render div root (class:class)
+  }
+
+  component B {
+    render div {
+      A {
+        override root {
+          style {
+            color: blue
+          }
+        }
+      }
+    }
+  }
+  "#,
+  r#"
+    require("./entry.pc.css");
+    import * as React from "react";
+    import * as test from "/test.pc";
+    const A = React.memo(React.forwardRef((props, ref) => {
+        return React.createElement("div", {
+            "className": props.class + " " + "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+            "ref": ref
+        });
+    }));
+    
+    const B = React.memo(React.forwardRef((props, ref) => {
+        return React.createElement("div", {
+            "ref": ref
+        }, [
+            React.createElement(A, {
+                "$$scopeClassName": "_B-80f4925f-11"
+            })
+        ]);
     }));
   "#
 }

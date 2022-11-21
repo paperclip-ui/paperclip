@@ -74,13 +74,9 @@ macro_rules! compile_children {
 }
 
 fn compile_component(component: &ast::Component, context: &mut Context) {
-    if component.is_public {
-        context.add_buffer("export ");
-    }
-
     context.add_buffer(
         format!(
-            "const {} = React.memo(React.forwardRef((props, ref) => {{\n",
+            "const _{} = (props, ref) => {{\n",
             &component.name
         )
         .as_str(),
@@ -90,7 +86,14 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
     compile_component_render(component, &mut context.within_component(component));
     context.end_block();
 
-    context.add_buffer("}));\n\n");
+    context.add_buffer("};\n");
+    context.add_buffer(format!("_{}.displayName = \"{}\";\n", component.name, component.name).as_str());
+
+    if component.is_public {
+        context.add_buffer("export ");
+    }
+
+    context.add_buffer(format!("const {} = React.memo(React.forwardRef(_{}));\n\n", component.name, component.name).as_str());
 }
 
 fn compile_component_render(component: &ast::Component, context: &mut Context) {
@@ -177,6 +180,7 @@ fn compile_element_parameters(
     is_root: bool,
     context: &mut Context,
 ) {
+    
     let raw_attrs = rename_attrs_for_react(get_raw_element_attrs(
         element,
         is_instance,
@@ -222,7 +226,7 @@ fn get_raw_element_attrs<'dependency>(
         attrs.insert(parameter.name.to_string(), param_context);
     }
 
-    if element.is_stylable() {
+    if is_instance || element.is_stylable() {
         let sub = context.with_new_content();
         sub.add_buffer(
             format!(

@@ -32,40 +32,13 @@ public component Tab {
 public component LeftSidebar {
   render common.Sidebar { 
     common.SidebarPanel {
-      LeftSidebarHeader
-      common.SidebarSection {
-        common.SidebarPanelHeader {
-          text "Layers"
-          div {
-            style extends theme.icon {
-              -webkit-mask-image: url("./plus.svg")
-            }
-          }
-        }
-        Layers
-      }
-      common.SidebarSection {
-        override root {
-          style {
-            display: none
-          }
-        }
-        common.SidebarPanelHeader {
-          text "Design Tokens"
-          div {
-            style extends theme.icon {
-              -webkit-mask-image: url("./plus.svg")
-            }
-          }
-        }
-        Tokens
-      }
+      slot children
     }
      
   }
 }
 
-component LeftSidebarHeader {
+public component LeftSidebarHeader {
   render common.SidebarPanelContent {
     style {
       display: flex
@@ -90,7 +63,7 @@ component LeftSidebarHeader {
         }
       }
       span {
-        text "TodoList.pc"
+        slot title
       }
     }
     div {
@@ -472,3 +445,41 @@ component Tokens {
   }
 }
 
+
+
+public component LeftSidebarPreview {
+  render LeftSidebar {
+      LeftSidebarHeader {
+        insert title {
+          text "TodoList.pc"
+        }
+      }
+      common.SidebarSection {
+        common.SidebarPanelHeader {
+          text "Layers"
+          div {
+            style extends theme.icon {
+              -webkit-mask-image: url("./plus.svg")
+            }
+          }
+        }
+        Layers
+      }
+      common.SidebarSection {
+        override root {
+          style {
+            display: none
+          }
+        }
+        common.SidebarPanelHeader {
+          text "Design Tokens"
+          div {
+            style extends theme.icon {
+              -webkit-mask-image: url("./plus.svg")
+            }
+          }
+        }
+        Tokens
+      }
+  }
+}

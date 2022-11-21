@@ -98,6 +98,7 @@ component LeftSidebarHeader {
           cursor: pointer
           -webkit-mask-image: url("./hamburger.svg")
           --size: 1.2em
+          display: none
         }
       }
     }

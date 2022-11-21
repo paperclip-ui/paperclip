@@ -186,7 +186,7 @@ fn compile_element_parameters(
         is_instance,
         is_root,
         context,
-    ));
+    ), is_instance);
 
     if raw_attrs.len() == 0 {
         context.add_buffer("null");
@@ -273,7 +273,10 @@ fn compile_insert(insert: &ast::Insert, context: &mut Context) {
     compile_node_children(&insert.body, context);
 }
 
-fn rename_attrs_for_react(attrs: BTreeMap<String, Context>) -> BTreeMap<String, Context> {
+fn rename_attrs_for_react(attrs: BTreeMap<String, Context>, is_instance: bool) -> BTreeMap<String, Context> {
+    if is_instance {
+        return attrs;
+    }
     attrs
         .into_iter()
         .map(|(key, context)| (attr_alias(key.as_str()), context))

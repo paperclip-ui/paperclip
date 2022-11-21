@@ -38,10 +38,14 @@ add_case! {
   r#"
     require("./entry.pc.css");
     import * as React from "react";
-
-    const A = React.memo(React.forwardRef((props, ref) => {
-      return React.createElement("div", { "ref": ref });
-    }));
+    
+    const _A = (props, ref) => {
+        return React.createElement("div", {
+            "ref": ref
+        });
+    };
+    _A.displayName = "A";
+    const A = React.memo(React.forwardRef(_A));
   "#
 }
 
@@ -55,10 +59,14 @@ add_case! {
   r#"
     require("./entry.pc.css");
     import * as React from "react";
-
-    export const A = React.memo(React.forwardRef((props, ref) => {
-      return React.createElement("div", { "ref": ref });
-    }));
+    
+    const _A = (props, ref) => {
+        return React.createElement("div", {
+            "ref": ref
+        });
+    };
+    _A.displayName = "A";
+    export const A = React.memo(React.forwardRef(_A));
   "#
 }
 
@@ -74,13 +82,15 @@ add_case! {
   r#"
     require("./entry.pc.css");
     import * as React from "react";
-
-    export const A = React.memo(React.forwardRef((props, ref) => {
-      return React.createElement("div", {
-        "className": "_A-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
-        "ref": ref
-      });
-    }));
+    
+    const _A = (props, ref) => {
+        return React.createElement("div", {
+            "className": "_A-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+            "ref": ref
+        });
+    };
+    _A.displayName = "A";
+    export const A = React.memo(React.forwardRef(_A));
   "#
 }
 
@@ -93,13 +103,15 @@ add_case! {
   r#"
     require("./entry.pc.css");
     import * as React from "react";
-
-    export const A = React.memo(React.forwardRef((props, ref) => {
-      return React.createElement("div", {
-        "className": "_A-ab-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
-        "ref": ref
-      });
-    }));
+    
+    const _A = (props, ref) => {
+        return React.createElement("div", {
+            "className": "_A-ab-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+            "ref": ref
+        });
+    };
+    _A.displayName = "A";
+    export const A = React.memo(React.forwardRef(_A));
   "#
 }
 
@@ -114,11 +126,15 @@ add_case! {
     require("./entry.pc.css");
     import * as React from "react";
 
-    export const A = React.memo(React.forwardRef((props, ref) => {
-      return React.createElement("span", { "ref": ref }, [
-        "Hello"
-      ]);
-    }));
+    const _A = (props, ref) => {
+        return React.createElement("span", {
+            "ref": ref
+        }, [
+            "Hello"
+        ]);
+    };
+    _A.displayName = "A";
+    export const A = React.memo(React.forwardRef(_A));
   "#
 }
 
@@ -130,13 +146,15 @@ add_case! {
   r#"
     require("./entry.pc.css");
     import * as React from "react";
-
-    export const A = React.memo(React.forwardRef((props, ref) => {
-      return React.createElement("span", {
-        "aria-label": "something",
-        "ref": ref
-      });
-    }));
+    
+    const _A = (props, ref) => {
+        return React.createElement("span", {
+            "aria-label": "something",
+            "ref": ref
+        });
+    };
+    _A.displayName = "A";
+    export const A = React.memo(React.forwardRef(_A));
   "#
 }
 
@@ -148,13 +166,15 @@ add_case! {
   r#"
     require("./entry.pc.css");
     import * as React from "react";
-
-    export const A = React.memo(React.forwardRef((props, ref) => {
-      return React.createElement("span", {
-        "className": "cd" + " " + "_A-ab-80f4925f-3" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
-        "ref": ref
-      });
-    }));
+    
+    const _A = (props, ref) => {
+        return React.createElement("span", {
+            "className": "cd" + " " + "_A-ab-80f4925f-3" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+            "ref": ref
+        });
+    };
+    _A.displayName = "A";
+    export const A = React.memo(React.forwardRef(_A));
   "#
 }
 
@@ -170,13 +190,16 @@ add_case! {
   r#"
     require("./entry.pc.css");
     import * as React from "react";
-
-    export const A = React.memo(React.forwardRef((props, ref) => {
-      return React.createElement("span", { "ref": ref }, [
-        React.createElement("div", null)
-      ]);
-
-    }));
+    
+    const _A = (props, ref) => {
+        return React.createElement("span", {
+            "ref": ref
+        }, [
+            React.createElement("div", null)
+        ]);
+    };
+    _A.displayName = "A";
+    export const A = React.memo(React.forwardRef(_A));
   "#
 }
 
@@ -189,9 +212,11 @@ add_case! {
     require("./entry.pc.css");
     import * as React from "react";
 
-    export const A = React.memo(React.forwardRef((props, ref) => {
-      return "ab";
-    }));
+    const _A = (props, ref) => {
+        return "ab";
+    };
+    _A.displayName = "A";
+    export const A = React.memo(React.forwardRef(_A));
   "#
 }
 
@@ -205,12 +230,16 @@ add_case! {
   r#"
     require("./entry.pc.css");
     import * as React from "react";
-
-    export const A = React.memo(React.forwardRef((props, ref) => {
-      return React.createElement("div", { "ref": ref }, [
-        props.abba
-      ]);
-    }));
+    
+    const _A = (props, ref) => {
+        return React.createElement("div", {
+            "ref": ref
+        }, [
+            props.abba
+        ]);
+    };
+    _A.displayName = "A";
+    export const A = React.memo(React.forwardRef(_A));
   "#
 }
 
@@ -222,10 +251,12 @@ add_case! {
   r#"
     require("./entry.pc.css");
     import * as React from "react";
-
-    export const A = React.memo(React.forwardRef((props, ref) => {
-      return props.abba;
-    }));
+    
+    const _A = (props, ref) => {
+        return props.abba;
+    };
+    _A.displayName = "A";
+    export const A = React.memo(React.forwardRef(_A));
   "#
 }
 
@@ -242,15 +273,17 @@ add_case! {
   r#"
     require("./entry.pc.css");
     import * as React from "react";
-
-    export const A = React.memo(React.forwardRef((props, ref) => {
-      return props.abba || [
-        "a",
-        React.createElement("div", null, [
-          "b"
-        ])
-      ];
-    }));
+    
+    const _A = (props, ref) => {
+        return props.abba || [
+            "a", 
+            React.createElement("div", null, [
+                "b"
+            ])
+        ];
+    };
+    _A.displayName = "A";
+    export const A = React.memo(React.forwardRef(_A));
   "#
 }
 
@@ -267,17 +300,21 @@ add_case! {
   r#"
     require("./entry.pc.css");
     import * as React from "react";
-
-    const A = React.memo(React.forwardRef((props, ref) => {
-      return props.abba;
-    }));
-
-    const B = React.memo(React.forwardRef((props, ref) => {
-      return React.createElement(A, { 
-        "$$scopeClassName": "_B-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
-        "ref": ref 
-      });
-    }));
+    
+    const _A = (props, ref) => {
+        return props.abba;
+    };
+    _A.displayName = "A";
+    const A = React.memo(React.forwardRef(_A));
+    
+    const _B = (props, ref) => {
+        return React.createElement(A, {
+            "$$scopeClassName": "_B-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+            "ref": ref
+        });
+    };
+    _B.displayName = "B";
+    const B = React.memo(React.forwardRef(_B));
   "#
 }
 
@@ -298,20 +335,24 @@ add_case! {
   r#"
     require("./entry.pc.css");
     import * as React from "react";
-
-    const A = React.memo(React.forwardRef((props, ref) => {
-      return props.abba;
-    }));
-
-    const B = React.memo(React.forwardRef((props, ref) => {
-      return React.createElement(A, {
-        "$$scopeClassName": "_B-80f4925f-6" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
-        "abba": [
-          "Hello"
+    
+    const _A = (props, ref) => {
+        return props.abba;
+    };
+    _A.displayName = "A";
+    const A = React.memo(React.forwardRef(_A));
+    
+    const _B = (props, ref) => {
+        return React.createElement(A, {
+            "$$scopeClassName": "_B-80f4925f-6" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+            "abba": [
+            "Hello"
         ],
-        "ref": ref
-      });
-    }));
+            "ref": ref
+        });
+    };
+    _B.displayName = "B";
+    const B = React.memo(React.forwardRef(_B));
   "#
 }
 
@@ -325,13 +366,15 @@ add_case! {
   r#"
     require("./entry.pc.css");
     import * as React from "react";
-
-    const A = React.memo(React.forwardRef((props, ref) => {
-      return React.createElement("div", {
-        "onClick": props.onClick,
-        "ref": ref
-      });
-    }));
+    
+    const _A = (props, ref) => {
+        return React.createElement("div", {
+            "onClick": props.onClick,
+            "ref": ref
+        });
+    };
+    _A.displayName = "A";
+    const A = React.memo(React.forwardRef(_A));
   "#
 }
 
@@ -348,20 +391,24 @@ add_case! {
   r#"
     require("./entry.pc.css");
     import * as React from "react";
-
-    const B = React.memo(React.forwardRef((props, ref) => {
-      return React.createElement("div", {
-        "className": "_B-root-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
-        "ref": ref
-      });
-    }));
-
-    const A = React.memo(React.forwardRef((props, ref) => {
-      return React.createElement(B, {
-        "$$scopeClassName": "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
-        "ref": ref
-      });
-    }));
+    
+    const _B = (props, ref) => {
+        return React.createElement("div", {
+            "className": "_B-root-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+            "ref": ref
+        });
+    };
+    _B.displayName = "B";
+    const B = React.memo(React.forwardRef(_B));
+    
+    const _A = (props, ref) => {
+        return React.createElement(B, {
+            "$$scopeClassName": "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+            "ref": ref
+        });
+    };
+    _A.displayName = "A";
+    const A = React.memo(React.forwardRef(_A));
   "#
 }
 
@@ -378,13 +425,14 @@ add_case! {
     require("./entry.pc.css");
     import * as React from "react";
     import * as test from "/test.pc";
-
-    const A = React.memo(React.forwardRef((props, ref) => {
-      return React.createElement(test.B, { 
-        "$$scopeClassName": "_A-80f4925f-2" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
-        "ref": ref 
-      });
-    }));
+    const _A = (props, ref) => {
+        return React.createElement(test.B, {
+            "$$scopeClassName": "_A-80f4925f-2" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+            "ref": ref
+        });
+    };
+    _A.displayName = "A";
+    const A = React.memo(React.forwardRef(_A));
   "#
 }
 
@@ -414,14 +462,16 @@ add_case! {
     require("./entry.pc.css");
     import * as React from "react";
     import * as test from "/test.pc";
-    const A = React.memo(React.forwardRef((props, ref) => {
+    const _A = (props, ref) => {
         return React.createElement("div", {
             "className": props.class + " " + "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
             "ref": ref
         });
-    }));
+    };
+    _A.displayName = "A";
+    const A = React.memo(React.forwardRef(_A));
     
-    const B = React.memo(React.forwardRef((props, ref) => {
+    const _B = (props, ref) => {
         return React.createElement("div", {
             "ref": ref
         }, [
@@ -429,6 +479,47 @@ add_case! {
                 "$$scopeClassName": "_B-80f4925f-11"
             })
         ]);
-    }));
+    };
+    _B.displayName = "B";
+    const B = React.memo(React.forwardRef(_B));
+  "#
+}
+
+
+add_case! {
+  class_names_arent_renamed_if_instance,
+  r#"
+  import "/test.pc" as test
+
+  component A {
+    render div root (class:class)
+  }
+
+  component B {
+    render A(class:"blarg")
+  }
+  "#,
+  r#"
+    require("./entry.pc.css");
+    import * as React from "react";
+    import * as test from "/test.pc";
+    const _A = (props, ref) => {
+        return React.createElement("div", {
+            "className": props.class + " " + "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+            "ref": ref
+        });
+    };
+    _A.displayName = "A";
+    const A = React.memo(React.forwardRef(_A));
+    
+    const _B = (props, ref) => {
+        return React.createElement(A, {
+            "$$scopeClassName": "_B-80f4925f-9" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+            "class": "blarg",
+            "ref": ref
+        });
+    };
+    _B.displayName = "B";
+    const B = React.memo(React.forwardRef(_B));
   "#
 }

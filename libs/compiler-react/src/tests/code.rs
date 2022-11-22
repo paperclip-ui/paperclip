@@ -27,6 +27,9 @@ macro_rules! add_case {
             let dep = graph.dependencies.get("/entry.pc").unwrap();
 
             let output = compile_code(&dep, &graph).unwrap();
+
+            println!("{}", output);
+            
             assert_eq!(
                 strip_extra_ws(output.as_str()),
                 strip_extra_ws($expected_output)
@@ -48,6 +51,7 @@ add_case! {
     
     const _A = (props, ref) => {
         return React.createElement("div", {
+            "key": "80f4925f-1",
             "ref": ref
         });
     };
@@ -69,6 +73,7 @@ add_case! {
     
     const _A = (props, ref) => {
         return React.createElement("div", {
+            "key": "80f4925f-1",
             "ref": ref
         });
     };
@@ -93,6 +98,7 @@ add_case! {
     const _A = (props, ref) => {
         return React.createElement("div", {
             "className": "_A-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+            "key": "80f4925f-4",    
             "ref": ref
         });
     };
@@ -114,6 +120,7 @@ add_case! {
     const _A = (props, ref) => {
         return React.createElement("div", {
             "className": "_A-ab-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+            "key": "80f4925f-1",
             "ref": ref
         });
     };
@@ -135,6 +142,7 @@ add_case! {
 
     const _A = (props, ref) => {
         return React.createElement("span", {
+            "key": "80f4925f-2",
             "ref": ref
         }, [
             "Hello"
@@ -157,6 +165,7 @@ add_case! {
     const _A = (props, ref) => {
         return React.createElement("span", {
             "aria-label": "something",
+            "key": "80f4925f-3",    
             "ref": ref
         });
     };
@@ -177,6 +186,7 @@ add_case! {
     const _A = (props, ref) => {
         return React.createElement("span", {
             "className": "cd" + " " + "_A-ab-80f4925f-3" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+            "key": "80f4925f-3",    
             "ref": ref
         });
     };
@@ -200,9 +210,12 @@ add_case! {
     
     const _A = (props, ref) => {
         return React.createElement("span", {
+            "key": "80f4925f-2",
             "ref": ref
         }, [
-            React.createElement("div", null)
+            React.createElement("div", {
+              "key": "80f4925f-1"
+            })
         ]);
     };
     _A.displayName = "A";
@@ -240,6 +253,7 @@ add_case! {
     
     const _A = (props, ref) => {
         return React.createElement("div", {
+            "key": "80f4925f-2",  
             "ref": ref
         }, [
             props.abba
@@ -284,7 +298,9 @@ add_case! {
     const _A = (props, ref) => {
         return props.abba || [
             "a", 
-            React.createElement("div", null, [
+            React.createElement("div", {
+              "key": "80f4925f-3"
+            }, [
                 "b"
             ])
         ];
@@ -317,6 +333,7 @@ add_case! {
     const _B = (props, ref) => {
         return React.createElement(A, {
             "$$scopeClassName": "_B-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+            "key": "80f4925f-4",    
             "ref": ref
         });
     };
@@ -355,6 +372,7 @@ add_case! {
             "abba": [
             "Hello"
         ],
+            "key": "80f4925f-6",
             "ref": ref
         });
     };
@@ -376,6 +394,7 @@ add_case! {
     
     const _A = (props, ref) => {
         return React.createElement("div", {
+            "key": "80f4925f-3",
             "onClick": props.onClick,
             "ref": ref
         });
@@ -402,6 +421,7 @@ add_case! {
     const _B = (props, ref) => {
         return React.createElement("div", {
             "className": "_B-root-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+            "key": "80f4925f-1",
             "ref": ref
         });
     };
@@ -411,6 +431,7 @@ add_case! {
     const _A = (props, ref) => {
         return React.createElement(B, {
             "$$scopeClassName": "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+            "key": "80f4925f-4",    
             "ref": ref
         });
     };
@@ -435,6 +456,7 @@ add_case! {
     const _A = (props, ref) => {
         return React.createElement(test.B, {
             "$$scopeClassName": "_A-80f4925f-2" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+            "key": "80f4925f-2",
             "ref": ref
         });
     };
@@ -466,29 +488,32 @@ add_case! {
   }
   "#,
   r#"
-    require("./entry.pc.css");
-    import * as React from "react";
-    import * as test from "/test.pc";
-    const _A = (props, ref) => {
-        return React.createElement("div", {
-            "className": props.class + " " + "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
-            "ref": ref
-        });
-    };
-    _A.displayName = "A";
-    const A = React.memo(React.forwardRef(_A));
-    
-    const _B = (props, ref) => {
-        return React.createElement("div", {
-            "ref": ref
-        }, [
-            React.createElement(A, {
-                "$$scopeClassName": "_B-80f4925f-11"
-            })
-        ]);
-    };
-    _B.displayName = "B";
-    const B = React.memo(React.forwardRef(_B));
+  require("./entry.pc.css");
+  import * as React from "react";
+  import * as test from "/test.pc";
+  const _A = (props, ref) => {
+      return React.createElement("div", {
+          "className": props.class + " " + "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+          "key": "80f4925f-4",
+          "ref": ref
+      });
+  };
+  _A.displayName = "A";
+  const A = React.memo(React.forwardRef(_A));
+  
+  const _B = (props, ref) => {
+      return React.createElement("div", {
+          "key": "80f4925f-12",
+          "ref": ref
+      }, [
+          React.createElement(A, {
+              "$$scopeClassName": "_B-80f4925f-11",
+              "key": "80f4925f-11"
+          })
+      ]);
+  };
+  _B.displayName = "B";
+  const B = React.memo(React.forwardRef(_B));
   "#
 }
 
@@ -513,6 +538,7 @@ add_case! {
     const _A = (props, ref) => {
         return React.createElement("div", {
             "className": props.class + " " + "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+            "key": "80f4925f-4",
             "ref": ref
         });
     };
@@ -523,10 +549,51 @@ add_case! {
         return React.createElement(A, {
             "$$scopeClassName": "_B-80f4925f-9" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
             "class": "blarg",
+            "key": "80f4925f-9",
             "ref": ref
         });
     };
     _B.displayName = "B";
     const B = React.memo(React.forwardRef(_B));
+  "#
+}
+
+
+add_case! {
+  styles_are_skipped_as_children,
+  r#"
+  import "/test.pc" as test
+
+  component A {
+    render div {
+      style {
+        color: red
+      }
+      span {
+        text "something"
+      }
+    }
+  }
+  "#,
+  r#"
+    require("./entry.pc.css");
+    import * as React from "react";
+    import * as test from "/test.pc";
+    const _A = (props, ref) => {
+        return React.createElement("div", {
+            "className": "_A-80f4925f-7" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
+            "key": "80f4925f-7",
+            "ref": ref
+        }, [
+            
+            React.createElement("span", {
+                "key": "80f4925f-6"
+            }, [
+                "something"
+            ])
+        ]);
+    };
+    _A.displayName = "A";
+    const A = React.memo(React.forwardRef(_A));
   "#
 }

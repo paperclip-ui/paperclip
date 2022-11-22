@@ -328,3 +328,7 @@ export const getInsertBox = ({
 export const getCurrentFilePath = (state: EditorState) => {
   return state.history?.query.file;
 };
+
+export const getCurrentDependency = (state: EditorState) => {
+  return state.graph.dependencies[getCurrentFilePath(state)];
+};

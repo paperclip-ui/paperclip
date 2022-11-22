@@ -60,12 +60,14 @@ macro_rules! compile_children {
 
         let mut children = $expr.into_iter().peekable();
         while let Some(child) = children.next() {
-            ($cb)(child);
+            let printed = ($cb)(child);
 
-            if !children.peek().is_none() {
-                $context.add_buffer(", ");
+            if printed {
+                if !children.peek().is_none() {
+                    $context.add_buffer(", ");
+                }
+                $context.add_buffer("\n");
             }
-            $context.add_buffer("\n");
         }
         $context.end_block();
         $context.add_buffer("]");
@@ -160,19 +162,22 @@ fn compile_node_children(children: &Vec<ast::Node>, context: &mut Context) {
     compile_children! {
       &children,
       |child: &ast::Node| {
-        compile_node(child, context, false);
+        compile_node(child, context, false)
       },
       context
     }
 }
 
-fn compile_node(node: &ast::Node, context: &mut Context, is_root: bool) {
+fn compile_node(node: &ast::Node, context: &mut Context, is_root: bool) -> bool {
     match node.get_inner() {
         ast::node::Inner::Text(expr) => compile_text_node(&expr, context),
         ast::node::Inner::Element(expr) => compile_element(&expr, is_root, context),
         ast::node::Inner::Slot(expr) => compile_slot(&expr, context),
-        _ => {}
+        _ => {
+            return false
+        }
     };
+    return true;
 }
 
 fn compile_element_parameters(
@@ -266,6 +271,10 @@ fn get_raw_element_attrs<'dependency>(
         sub.add_buffer("ref");
         attrs.insert("ref".to_string(), sub);
     }
+
+    let sub = context.with_new_content();
+    sub.add_buffer(format!("\"{}\"", element.id).as_str());
+    attrs.insert("key".to_string(), sub);
 
     attrs
 }

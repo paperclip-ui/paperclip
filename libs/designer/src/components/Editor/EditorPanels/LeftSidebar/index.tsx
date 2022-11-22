@@ -7,7 +7,6 @@ import {
   getCurrentDependency,
   getExpandedLayerIds,
   getSelectedNodeIds,
-  getSelectedNodePaths,
 } from "@paperclip-ui/designer/src/machine/state";
 import {
   Component,
@@ -107,7 +106,12 @@ const ElementLeaf = memo(({ expr: element, depth }: LeafProps<Element>) => {
     <Leaf
       id={element.id}
       className="element container"
-      text={element.name || "Untitled"}
+      text={
+        <>
+          {element.name || "Untitled"}
+          <styles.TagType>{element.tagName}</styles.TagType>
+        </>
+      }
       depth={depth}
     >
       {() =>
@@ -144,12 +148,14 @@ const Leaf = ({
   id,
   depth,
   text,
+  controls,
 }: {
   children?: () => any;
   className: string;
   id: string;
   depth: number;
-  text: string;
+  text: any;
+  controls?: any;
 }) => {
   const { selected, open, onClick } = useLeaf({ exprId: id });
   return (
@@ -158,6 +164,7 @@ const Leaf = ({
         class={cx(className, { open, selected })}
         style={{ "--depth": depth }}
         onClick={onClick}
+        controls={controls}
       >
         {text}
       </styles.LayerNavigationItemHeader>

@@ -101,6 +101,7 @@ export const editorReducer = (
         } else {
           newState.expandedLayerExprIds.push(event.payload.exprId);
         }
+        newState.selectedVirtNodeIds = [event.payload.exprId];
       });
     case editorEvents.deleteHokeyPressed.type:
       return produce(state, (newState) => {

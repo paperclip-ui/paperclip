@@ -106,12 +106,7 @@ const ElementLeaf = memo(({ expr: element, depth }: LeafProps<Element>) => {
     <Leaf
       id={element.id}
       className="element container"
-      text={
-        <>
-          {element.name || "Untitled"}
-          <styles.TagType>{element.tagName}</styles.TagType>
-        </>
-      }
+      text={<>{element.name || element.tagName}</>}
       depth={depth}
     >
       {() =>

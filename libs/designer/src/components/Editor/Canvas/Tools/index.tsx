@@ -1,7 +1,6 @@
 import React, { useRef, useCallback, useEffect } from "react";
 
 import * as styles from "./index.pc";
-// import { Selectable } from "./Selectable";
 import { Frames } from "./Frames";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {

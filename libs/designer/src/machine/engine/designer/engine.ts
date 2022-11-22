@@ -73,10 +73,8 @@ const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
       });
     },
     syncGraph() {
-      console.log("GET GTAPH");
       client.GetGraph({}).subscribe({
         next(data) {
-          console.log("NEX");
           dispatch(designerEngineEvents.graphLoaded(data));
         },
       });

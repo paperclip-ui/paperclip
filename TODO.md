@@ -1,6 +1,8 @@
 #### On-deck
 
-- expand / collapse tree
+- expand tree when nested element selected
+- identify instances
+- when hovering over layers, highlight canvas item
 - follow shadow
 - render slots
 - render inserted elements

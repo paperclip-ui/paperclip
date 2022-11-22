@@ -2,12 +2,12 @@ use super::context::Context;
 use anyhow::Result;
 use paperclip_common::get_or_short;
 use paperclip_evaluator::core::utils::get_style_namespace;
-use paperclip_parser::graph::Dependency;
+use paperclip_parser::graph::{Dependency, Graph};
 use paperclip_parser::pc::ast;
 use std::collections::BTreeMap;
 
-pub fn compile_code(dependency: &Dependency) -> Result<String> {
-    let mut context = Context::new(&dependency);
+pub fn compile_code(dependency: &Dependency, graph: &Graph) -> Result<String> {
+    let mut context = Context::new(&dependency, graph);
     compile_document(&dependency.document, &mut context);
     Ok(context.get_buffer())
 }

@@ -102,11 +102,10 @@ const Frame = memo(
         }}
       >
         <styles.FrameTitle
-          editing={editing}
-          onBlur={onBlur}
-          onKeyPress={onKeyPress}
+          // onBlur={onBlur}
+          // onKeyPress={onKeyPress}
           onDoubleClick={onDoubleClick}
-          inputRef={inputRef}
+          // inputRef={inputRef}
           onMouseUp={onClick}
           // value={annotations.frame?.title || "Untitled"}
         />

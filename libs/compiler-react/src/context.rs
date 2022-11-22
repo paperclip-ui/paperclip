@@ -1,5 +1,5 @@
 use paperclip_common::serialize_context::Context as SerializeContext;
-use paperclip_parser::graph::Dependency;
+use paperclip_parser::graph::{Dependency, Graph};
 use paperclip_proto::ast;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -8,14 +8,16 @@ use std::rc::Rc;
 pub struct Context<'dependency> {
     pub content: Rc<RefCell<SerializeContext>>,
     pub dependency: &'dependency Dependency,
+    pub graph: &'dependency Graph,
     pub current_component: Option<&'dependency ast::pc::Component>,
 }
 
 impl<'dependency> Context<'dependency> {
-    pub fn new(dependency: &'dependency Dependency) -> Self {
+    pub fn new(dependency: &'dependency Dependency, graph: &'dependency Graph) -> Self {
         Self {
             content: Rc::new(RefCell::new(SerializeContext::new(0))),
             current_component: None,
+            graph,
             dependency,
         }
     }

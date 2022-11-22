@@ -50,7 +50,6 @@ export const Tools = () => {
   return (
     <styles.Tools
       ref={toolsRef}
-      hover={!hoveringBox}
       onMouseDown={onMouswDown}
       onMouseUp={onMouseUp}
       onMouseMove={onMouseMove}

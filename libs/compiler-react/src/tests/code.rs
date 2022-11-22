@@ -1,8 +1,9 @@
 use crate::compile_code;
 use paperclip_common::str_utils::strip_extra_ws;
-use paperclip_parser::graph::Dependency;
-use paperclip_parser::pc::parser::parse;
 use std::collections::HashMap;
+use futures::executor::block_on;
+use paperclip_parser::graph::{test_utils, Graph};
+
 
 // TODO: insert test
 
@@ -10,16 +11,21 @@ macro_rules! add_case {
     ($name: ident, $mock_content: expr, $expected_output: expr) => {
         #[test]
         fn $name() {
-            let path = "/entry.pc".to_string();
-            let ast = parse($mock_content, &path).unwrap();
-            let dep = Dependency {
-                hash: "a".to_string(),
-                path: path.to_string(),
-                imports: HashMap::new(),
-                document: ast,
-            };
-            let output = compile_code(&dep).unwrap();
-            println!("{}", output.as_str());
+            
+            let mock_fs = test_utils::MockFS::new(HashMap::from([
+              ("/entry.pc", $mock_content),
+              ("/test.pc", r#""#)
+            ]));
+
+            let mut graph = Graph::new();
+
+            if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
+                panic!("Unable to load");
+            }
+
+            let dep = graph.dependencies.get("/entry.pc").unwrap();
+
+            let output = compile_code(&dep, &graph).unwrap();
             assert_eq!(
                 strip_extra_ws(output.as_str()),
                 strip_extra_ws($expected_output)

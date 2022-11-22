@@ -176,6 +176,7 @@ export const Selectable = React.memo(
     return (
       <>
         <styles.Overlay
+          onClick={null}
           onMouseDown={onMouseDown}
           size={`${Math.round(currentBox.width)} x ${Math.round(
             currentBox.height
@@ -201,6 +202,7 @@ export const Selectable = React.memo(
                 {knobs.map(({ x, y }) => {
                   return (
                     <styles.Knob
+                      class=""
                       onMouseDown={(event) => {
                         onKnobMouseDown(event, { x, y });
                       }}

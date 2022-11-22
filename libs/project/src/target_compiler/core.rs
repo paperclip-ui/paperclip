@@ -197,9 +197,10 @@ async fn translate<F: FileResolver>(
             graph.dependencies.get(path).unwrap(),
             graph,
         )?),
-        "react.js" => Some(react::compile_code(graph.dependencies.get(path).unwrap())?),
+        "react.js" => Some(react::compile_code(graph.dependencies.get(path).unwrap(), graph)?),
         "react.d.ts" => Some(react::compile_typed_definition(
             graph.dependencies.get(path).unwrap(),
+            graph
         )?),
         _ => None,
     })

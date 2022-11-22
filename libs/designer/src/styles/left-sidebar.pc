@@ -261,7 +261,7 @@ public component LayerNavigationItemHeader {
         --icon-color: var(theme.componentColor)
       }
     }
-    LayerIcon {
+    LayerIcon(class: class) {
       override root {
         style {
           color: var(--icon-color)

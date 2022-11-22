@@ -1,9 +1,12 @@
 #### On-deck
 
+- load AST into designer
+
+  - follow shadow instance
+
 - left sidebar
 
-  - layers
-    -
+  - ## layers
 
 - make persisting boundary styles cleaner
 

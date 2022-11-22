@@ -1,5 +1,3 @@
-use std::fmt::format;
-
 use crate::add_inner_wrapper;
 include!(concat!(env!("OUT_DIR"), "/ast.pc.rs"));
 

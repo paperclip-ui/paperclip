@@ -7,6 +7,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 "src/service/designer.proto",
                 "src/ast/css.proto",
                 "src/ast/base.proto",
+                "src/ast/graph.proto",
                 "src/ast/pc.proto",
                 "src/ast/docco.proto",
                 "src/ast_mutate/mod.proto",

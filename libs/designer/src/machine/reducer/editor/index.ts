@@ -76,6 +76,11 @@ export const editorReducer = (
         newState.history = event.payload;
       });
     }
+    case designerEngineEvents.graphLoaded.type: {
+      return produce(state, (newState) => {
+        Object.assign(newState.graph.dependencies, event.payload.dependencies);
+      });
+    }
     case editorEvents.eHotkeyPressed.type:
       return produce(state, (newState) => {
         newState.insertMode = InsertMode.Element;

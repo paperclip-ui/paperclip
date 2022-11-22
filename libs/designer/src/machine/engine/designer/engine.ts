@@ -5,7 +5,6 @@ import {
 import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent, designerEngineEvents } from "./events";
 import { DesignerEngineState } from "./state";
-import { env } from "../../../env";
 import { EditorEvent, editorEvents } from "../../events";
 import {
   EditorState,
@@ -14,6 +13,7 @@ import {
   getNodeInfoAtPoint,
 } from "../../state";
 import { Mutation } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
+import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import {
   getNodeById,
   getNodeByPath,
@@ -70,6 +70,14 @@ const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
         },
         complete() {},
         error() {},
+      });
+    },
+    syncGraph() {
+      console.log("GET GTAPH");
+      client.GetGraph({}).subscribe({
+        next(data) {
+          dispatch(designerEngineEvents.graphLoaded(data));
+        },
       });
     },
     async applyChanges(mutations: Mutation[]) {
@@ -240,10 +248,11 @@ const createEventHandler = (actions: Actions) => {
  */
 
 const bootstrap = (
-  { openFile }: Actions,
+  { openFile, syncGraph }: Actions,
   initialState: DesignerEngineState
 ) => {
   setTimeout(() => {
     openFile(initialState.history.query.file);
+    syncGraph();
   }, 100);
 };

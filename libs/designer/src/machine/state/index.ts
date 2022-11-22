@@ -27,6 +27,7 @@ import {
   HistoryEngineState,
   INITIAL_HISTORY_STATE,
 } from "../engine/history/state";
+import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 export const IS_WINDOWS = false;
 
 export enum InsertMode {
@@ -67,6 +68,7 @@ export type EditorState = {
   readonly: boolean;
   scopedElementPath?: string;
   selectedVirtNodeIds: string[];
+  graph: Graph;
   insertMode?: InsertMode;
   highlightNodePath?: string;
 
@@ -94,6 +96,9 @@ export const DEFAULT_STATE: EditorState = {
   readonly: false,
   styleOverrides: {},
   preEditComputedStyles: {},
+  graph: {
+    dependencies: {},
+  },
   computedStyles: {},
   resizerMoving: false,
   optionKeyDown: false,

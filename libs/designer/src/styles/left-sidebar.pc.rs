@@ -124,14 +124,14 @@ fn LayerIcon(props: &LayerIconProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-struct TreeNavigationItemContentProps {
+pub struct TreeNavigationItemContentProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
 }
 
 #[function_component]
-fn TreeNavigationItemContent(props: &TreeNavigationItemContentProps) -> Html {
+pub fn TreeNavigationItemContent(props: &TreeNavigationItemContentProps) -> Html {
     html! {
         <div>
             { for props.children.iter() }
@@ -140,14 +140,14 @@ fn TreeNavigationItemContent(props: &TreeNavigationItemContentProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-struct TreeNavigationItemProps {
+pub struct TreeNavigationItemProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
 }
 
 #[function_component]
-fn TreeNavigationItem(props: &TreeNavigationItemProps) -> Html {
+pub fn TreeNavigationItem(props: &TreeNavigationItemProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
             format!("{} {}", "_TreeNavigationItem-1e0c5ead-204", scope_class_name)
@@ -160,29 +160,30 @@ fn TreeNavigationItem(props: &TreeNavigationItemProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-struct TreeNavigationItemHeaderProps {
+pub struct TreeNavigationItemHeaderProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
     pub class: String,
     pub controls: Children,
+    pub style: ,
 }
 
 #[function_component]
-fn TreeNavigationItemHeader(props: &TreeNavigationItemHeaderProps) -> Html {
+pub fn TreeNavigationItemHeader(props: &TreeNavigationItemHeaderProps) -> Html {
     html! {
         <div class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_TreeNavigationItemHeader-root-1e0c5ead-284", scope_class_name)
+            format!("{} {}", "_TreeNavigationItemHeader-root-1e0c5ead-286", scope_class_name)
         } else {
-            "_TreeNavigationItemHeader-root-1e0c5ead-284".to_string()
-        })}>
-            <div class={"_TreeNavigationItemHeader-1e0c5ead-273"}>
-                <div class={"_TreeNavigationItemHeader-1e0c5ead-271"}></div>
+            "_TreeNavigationItemHeader-root-1e0c5ead-286".to_string()
+        })} style={props.style.clone()}>
+            <div class={"_TreeNavigationItemHeader-1e0c5ead-275"}>
+                <div class={"_TreeNavigationItemHeader-1e0c5ead-273"}></div>
                 
                 { for props.children.iter() }
             </div>
             
-            <div class={"_TreeNavigationItemHeader-1e0c5ead-283"}>
+            <div class={"_TreeNavigationItemHeader-1e0c5ead-285"}>
                 { for props.controls.iter() }
             </div>
             
@@ -191,23 +192,24 @@ fn TreeNavigationItemHeader(props: &TreeNavigationItemHeaderProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-struct FileNavigatorItemHeaderProps {
+pub struct LayerNavigationItemHeaderProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
     pub class: String,
+    pub style: ,
 }
 
 #[function_component]
-fn FileNavigatorItemHeader(props: &FileNavigatorItemHeaderProps) -> Html {
+pub fn LayerNavigationItemHeader(props: &LayerNavigationItemHeaderProps) -> Html {
     html! {
         <TreeNavigationItemHeader __scope_class_name={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_FileNavigatorItemHeader-container-1e0c5ead-372", scope_class_name)
+            format!("{} {}", "_LayerNavigationItemHeader-container-1e0c5ead-376", scope_class_name)
         } else {
-            "_FileNavigatorItemHeader-container-1e0c5ead-372".to_string()
+            "_LayerNavigationItemHeader-container-1e0c5ead-376".to_string()
         }} class={props.class.clone()} controls={
             { for props.controls.iter() }
-}>
+} style={props.style.clone()}>
             <LayerIcon class={props.class.clone()}></LayerIcon>
             
             { for props.children.iter() }
@@ -226,14 +228,14 @@ struct TooltipProps {
 fn Tooltip(props: &TooltipProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Tooltip-1e0c5ead-456", scope_class_name)
+            format!("{} {}", "_Tooltip-1e0c5ead-460", scope_class_name)
         } else {
-            "_Tooltip-1e0c5ead-456".to_string()
+            "_Tooltip-1e0c5ead-460".to_string()
         }}>
             { for props.children.iter() }
-            <div class={"_Tooltip-1e0c5ead-455"}>
-                <div class={"_Tooltip-1e0c5ead-454"}>
-                    <div class={"_Tooltip-1e0c5ead-452"}></div>
+            <div class={"_Tooltip-1e0c5ead-459"}>
+                <div class={"_Tooltip-1e0c5ead-458"}>
+                    <div class={"_Tooltip-1e0c5ead-456"}></div>
                     
                     
                 </div>
@@ -245,80 +247,21 @@ fn Tooltip(props: &TooltipProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-struct LayersProps {
+pub struct LayersProps {
     pub __scope_class_name: Option<String>,
+    #[prop_or_default]
+    pub children: Children,
 }
 
 #[function_component]
-fn Layers(props: &LayersProps) -> Html {
+pub fn Layers(props: &LayersProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Layers-1e0c5ead-546", scope_class_name)
+            format!("{} {}", "_Layers-1e0c5ead-470", scope_class_name)
         } else {
-            "_Layers-1e0c5ead-546".to_string()
+            "_Layers-1e0c5ead-470".to_string()
         }}>
-            <TreeNavigationItem>
-                <FileNavigatorItemHeader class={"component container open"} controls={
-                    <Tooltip title={"display shadow"}>
-                        <div class={"_Layers-1e0c5ead-479"}></div>
-                        
-                    </Tooltip>
-                    
-}>
-                    
-                </FileNavigatorItemHeader>
-                
-                <TreeNavigationItemContent>
-                    <TreeNavigationItem>
-                        <FileNavigatorItemHeader class={"shadow element container open"}>
-                            
-                        </FileNavigatorItemHeader>
-                        
-                    </TreeNavigationItem>
-                    
-                    <TreeNavigationItem>
-                        <FileNavigatorItemHeader class={"slot container open"}>
-                            
-                        </FileNavigatorItemHeader>
-                        
-                        <TreeNavigationItemContent>
-                            <TreeNavigationItem>
-                                <FileNavigatorItemHeader class={"text"}>
-                                    
-                                </FileNavigatorItemHeader>
-                                
-                                <FileNavigatorItemHeader class={"element"}>
-                                    
-                                    
-                                </FileNavigatorItemHeader>
-                                
-                            </TreeNavigationItem>
-                            
-                        </TreeNavigationItemContent>
-                        
-                    </TreeNavigationItem>
-                    
-                    <TreeNavigationItem class={"selected"}>
-                        <FileNavigatorItemHeader class={"slot container open"}>
-                            
-                        </FileNavigatorItemHeader>
-                        
-                        <TreeNavigationItemContent>
-                            <TreeNavigationItem>
-                                <FileNavigatorItemHeader class={"text"}>
-                                    
-                                </FileNavigatorItemHeader>
-                                
-                            </TreeNavigationItem>
-                            
-                        </TreeNavigationItemContent>
-                        
-                    </TreeNavigationItem>
-                    
-                </TreeNavigationItemContent>
-                
-            </TreeNavigationItem>
-            
+            { for props.children.iter() }
         </div>
     }
 }
@@ -332,26 +275,26 @@ struct TokensProps {
 fn Tokens(props: &TokensProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Tokens-1e0c5ead-588", scope_class_name)
+            format!("{} {}", "_Tokens-1e0c5ead-512", scope_class_name)
         } else {
-            "_Tokens-1e0c5ead-588".to_string()
+            "_Tokens-1e0c5ead-512".to_string()
         }}>
             <TreeNavigationItem>
-                <FileNavigatorItemHeader class={"composite-token open"}>
+                <LayerNavigationItemHeader class={"composite-token open"}>
                     
-                </FileNavigatorItemHeader>
+                </LayerNavigationItemHeader>
                 
-                <FileNavigatorItemHeader class={"atom-token open"}>
+                <LayerNavigationItemHeader class={"atom-token open"}>
                     
-                </FileNavigatorItemHeader>
+                </LayerNavigationItemHeader>
                 
-                <FileNavigatorItemHeader class={"atom-token open"}>
+                <LayerNavigationItemHeader class={"atom-token open"}>
                     
-                </FileNavigatorItemHeader>
+                </LayerNavigationItemHeader>
                 
-                <FileNavigatorItemHeader class={"trigger open"}>
+                <LayerNavigationItemHeader class={"trigger open"}>
                     
-                </FileNavigatorItemHeader>
+                </LayerNavigationItemHeader>
                 
             </TreeNavigationItem>
             
@@ -375,18 +318,81 @@ pub fn LeftSidebarPreview(props: &LeftSidebarPreviewProps) -> Html {
             <common::SidebarSection>
                 <common::SidebarPanelHeader>
                     
-                    <div class={"_LeftSidebarPreview-1e0c5ead-600"}></div>
+                    <div class={"_LeftSidebarPreview-1e0c5ead-524"}></div>
                     
                 </common::SidebarPanelHeader>
                 
-                <Layers></Layers>
+                <Layers>
+                    <TreeNavigationItem>
+                        <LayerNavigationItemHeader class={"component container open"} controls={
+                            <Tooltip title={"display shadow"}>
+                                <div class={"_LeftSidebarPreview-1e0c5ead-540"}></div>
+                                
+                            </Tooltip>
+                            
+}>
+                            
+                        </LayerNavigationItemHeader>
+                        
+                        <TreeNavigationItemContent>
+                            <TreeNavigationItem>
+                                <LayerNavigationItemHeader class={"shadow element container open"}>
+                                    
+                                </LayerNavigationItemHeader>
+                                
+                            </TreeNavigationItem>
+                            
+                            <TreeNavigationItem>
+                                <LayerNavigationItemHeader class={"slot container open"}>
+                                    
+                                </LayerNavigationItemHeader>
+                                
+                                <TreeNavigationItemContent>
+                                    <TreeNavigationItem>
+                                        <LayerNavigationItemHeader class={"text"}>
+                                            
+                                        </LayerNavigationItemHeader>
+                                        
+                                        <LayerNavigationItemHeader class={"element"}>
+                                            
+                                            
+                                        </LayerNavigationItemHeader>
+                                        
+                                    </TreeNavigationItem>
+                                    
+                                </TreeNavigationItemContent>
+                                
+                            </TreeNavigationItem>
+                            
+                            <TreeNavigationItem class={"selected"}>
+                                <LayerNavigationItemHeader class={"slot container open"}>
+                                    
+                                </LayerNavigationItemHeader>
+                                
+                                <TreeNavigationItemContent>
+                                    <TreeNavigationItem>
+                                        <LayerNavigationItemHeader class={"text"}>
+                                            
+                                        </LayerNavigationItemHeader>
+                                        
+                                    </TreeNavigationItem>
+                                    
+                                </TreeNavigationItemContent>
+                                
+                            </TreeNavigationItem>
+                            
+                        </TreeNavigationItemContent>
+                        
+                    </TreeNavigationItem>
+                    
+                </Layers>
                 
             </common::SidebarSection>
             
             <common::SidebarSection>
                 <common::SidebarPanelHeader>
                     
-                    <div class={"_LeftSidebarPreview-1e0c5ead-614"}></div>
+                    <div class={"_LeftSidebarPreview-1e0c5ead-619"}></div>
                     
                 </common::SidebarPanelHeader>
                 

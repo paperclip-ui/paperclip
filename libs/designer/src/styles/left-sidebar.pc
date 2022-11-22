@@ -141,13 +141,13 @@ component LayerIcon {
   }
 }
 
-component TreeNavigationItemContent {
+public component TreeNavigationItemContent {
   render div {
     slot children
   }
 }
 
-component TreeNavigationItem {
+public component TreeNavigationItem {
   variant isSelected
   render div {
     style variant isSelected {
@@ -158,11 +158,11 @@ component TreeNavigationItem {
 }
 
 
-component TreeNavigationItemHeader {
+public component TreeNavigationItemHeader {
   variant isContainer trigger { ".container" }
   variant isOpen trigger { ".open" }
   variant isHovering trigger { ":hover" }
-  render div root(class:class) {
+  render div root(class:class, style: style) {
     style {
       --depth: 1
       display: flex
@@ -210,7 +210,7 @@ component TreeNavigationItemHeader {
   }
 }
 
-component FileNavigatorItemHeader {
+public component LayerNavigationItemHeader {
   variant isSlot trigger { ".slot" }
   variant isComponent trigger { ".component" }
   variant isElement trigger { ".element" }
@@ -219,7 +219,7 @@ component FileNavigatorItemHeader {
   variant isAtomToken trigger { ".atom-token" }
   variant isTrigger trigger { ".trigger" }
   variant isText trigger { ".text" }
-  render TreeNavigationItemHeader container(class: class) {
+  render TreeNavigationItemHeader container(class: class, style: style) {
     override root {
       style {
         --depth: 1
@@ -309,96 +309,12 @@ component Tooltip {
   }
 }
 
-component Layers {
+public component Layers {
   render div {
     style {
       padding: var(theme.space03) 0px
     }
-    TreeNavigationItem {
-      FileNavigatorItemHeader(class: "component container open") {  
-        text "Some instance"
-        insert controls {
-          Tooltip(title: "display shadow") {
-            div {
-              style extends theme.icon {
-                cursor: pointer
-                opacity: 0.5
-                -webkit-mask-image: url("./shadow2.svg")
-              }
-            }
-          }
-        }
-      }
-      TreeNavigationItemContent {
-        TreeNavigationItem {
-          FileNavigatorItemHeader(class: "shadow element container open") {
-            override container.root {
-              style {
-                --depth: 2
-              }
-            }
-            text "container"
-          }
-        }
-        TreeNavigationItem {
-          FileNavigatorItemHeader(class: "slot container open") {
-            override container.root {
-              style {
-                --depth: 2
-              }
-            }
-            text "label"
-          }
-          TreeNavigationItemContent {
-            TreeNavigationItem {
-              FileNavigatorItemHeader(class: "text") {
-                override container.root {
-                  style {
-                    --depth: 3
-                  }
-                }
-                text "some label"
-              }
-              FileNavigatorItemHeader(class: "element") {
-                override container.root {
-                  style {
-                    --depth: 3
-                  }
-                }
-                text "some element"
-                text "div" {
-                  style {
-                    opacity: 0.3
-                  }
-                }
-              }
-            }
-          }
-        }
-        TreeNavigationItem(class: "selected") {
-          FileNavigatorItemHeader(class: "slot container open") {
-            override container.root {
-              style {
-                --depth: 2
-              }
-            }
-            text "description"
-          }
-          TreeNavigationItemContent {
-            TreeNavigationItem {
-              FileNavigatorItemHeader(class: "text") {
-                override container.root {
-                  style {
-                    --depth: 3
-                  }
-                }
-                text "some long description"
-              }
-            }
-          }
-        }
-      }
-    }
+    slot children
   }
 }
 
@@ -409,7 +325,7 @@ component Tokens {
       padding: var(theme.space04) 0px
     }
     TreeNavigationItem {
-      FileNavigatorItemHeader(class: "composite-token open") {   
+      LayerNavigationItemHeader(class: "composite-token open") {   
         override container.root {
           style {
             --depth: 1
@@ -417,7 +333,7 @@ component Tokens {
         }
         text "Font Regular"
       }
-      FileNavigatorItemHeader(class: "atom-token open") {   
+      LayerNavigationItemHeader(class: "atom-token open") {   
         override container.root {
           style {
             --depth: 1
@@ -425,7 +341,7 @@ component Tokens {
         }
         text "red01"
       }
-      FileNavigatorItemHeader(class: "atom-token open") {   
+      LayerNavigationItemHeader(class: "atom-token open") {   
         override container.root {
           style {
             --depth: 1
@@ -433,7 +349,7 @@ component Tokens {
         }
         text "red02"
       }
-      FileNavigatorItemHeader(class: "trigger open") {    
+      LayerNavigationItemHeader(class: "trigger open") {    
         override container.root {
           style {
             --depth: 1
@@ -463,7 +379,93 @@ public component LeftSidebarPreview {
             }
           }
         }
-        Layers
+        Layers {
+          TreeNavigationItem {
+            LayerNavigationItemHeader(class: "component container open") {  
+              text "Some instance"
+              insert controls {
+                Tooltip(title: "display shadow") {
+                  div {
+                    style extends theme.icon {
+                      cursor: pointer
+                      opacity: 0.5
+                      -webkit-mask-image: url("./shadow2.svg")
+                    }
+                  }
+                }
+              }
+            }
+            TreeNavigationItemContent {
+              TreeNavigationItem {
+                LayerNavigationItemHeader(class: "shadow element container open") {
+                  override container.root {
+                    style {
+                      --depth: 2
+                    }
+                  }
+                  text "container"
+                }
+              }
+              TreeNavigationItem {
+                LayerNavigationItemHeader(class: "slot container open") {
+                  override container.root {
+                    style {
+                      --depth: 2
+                    }
+                  }
+                  text "label"
+                }
+                TreeNavigationItemContent {
+                  TreeNavigationItem {
+                    LayerNavigationItemHeader(class: "text") {
+                      override container.root {
+                        style {
+                          --depth: 3
+                        }
+                      }
+                      text "some label"
+                    }
+                    LayerNavigationItemHeader(class: "element") {
+                      override container.root {
+                        style {
+                          --depth: 3
+                        }
+                      }
+                      text "some element"
+                      text "div" {
+                        style {
+                          opacity: 0.3
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              TreeNavigationItem(class: "selected") {
+                LayerNavigationItemHeader(class: "slot container open") {
+                  override container.root {
+                    style {
+                      --depth: 2
+                    }
+                  }
+                  text "description"
+                }
+                TreeNavigationItemContent {
+                  TreeNavigationItem {
+                    LayerNavigationItemHeader(class: "text") {
+                      override container.root {
+                        style {
+                          --depth: 3
+                        }
+                      }
+                      text "some long description"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
       common.SidebarSection {
         override root {

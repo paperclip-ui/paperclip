@@ -1,6 +1,8 @@
 #### On-deck
 
 - left sidebar
+- expand / collapse tree
+- ability to rename layers
 
   - ## layers
 

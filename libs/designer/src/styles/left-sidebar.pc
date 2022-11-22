@@ -157,6 +157,15 @@ public component TreeNavigationItem {
   }
 }
 
+public component TagType {
+  render span {
+    style {
+      opacity: 0.3
+    }
+    slot children
+  }
+}
+
 
 public component TreeNavigationItemHeader {
   variant isContainer trigger { ".container" }
@@ -435,10 +444,8 @@ public component LeftSidebarPreview {
                         }
                       }
                       text "some element"
-                      text "div" {
-                        style {
-                          opacity: 0.3
-                        }
+                      TagType {
+                        text "div"
                       }
                     }
                   }

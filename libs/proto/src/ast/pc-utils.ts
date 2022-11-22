@@ -1,4 +1,4 @@
-import { DocumentBodyItem } from "../generated/ast/pc";
+import { DocumentBodyItem, Node } from "../generated/ast/pc";
 
 export const getDocumentBodyInner = (item: DocumentBodyItem) => {
   return (
@@ -10,5 +10,16 @@ export const getDocumentBodyInner = (item: DocumentBodyItem) => {
     item.style ||
     item.text ||
     item.trigger
+  );
+};
+
+export const getNodeInner = (item: Node) => {
+  return (
+    item.element ||
+    item.insert ||
+    item.override ||
+    item.slot ||
+    item.style ||
+    item.text
   );
 };

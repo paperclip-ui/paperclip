@@ -110,9 +110,9 @@ Editor {
             }
         }
     }
-    EditorPanels {
-        leftSidebar.LeftSidebarPreview
-        centerPanels.CenterPanels
+    EditorPanels panels{ 
+        leftSidebar.LeftSidebarPreview leftSidebar
+        centerPanels.CenterPanels centerPanels
         rightSidebar.RightSidebar
     }
 }

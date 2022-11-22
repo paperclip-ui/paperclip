@@ -197,6 +197,7 @@ pub struct LayerNavigationItemHeaderProps {
     #[prop_or_default]
     pub children: Children,
     pub class: String,
+    pub controls: Children,
     pub style: ,
 }
 

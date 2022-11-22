@@ -19,6 +19,11 @@ export const LeftSidebar = () => {
         <styles.LayerNavigationItemHeader
           class="component container open"
           style={{ "--depth": 1 }}
+          controls={
+            <styles.Tooltip>
+              <styles.ShadowIcon />
+            </styles.Tooltip>
+          }
         >
           Some instance
         </styles.LayerNavigationItemHeader>

@@ -148,11 +148,7 @@ public component TreeNavigationItemContent {
 }
 
 public component TreeNavigationItem {
-  variant isSelected
-  render div {
-    style variant isSelected {
-      background: var(theme.backgroundSelectedLight)
-    }
+  render div(class: class) {
     slot children
   }
 }
@@ -171,7 +167,8 @@ public component TreeNavigationItemHeader {
   variant isContainer trigger { ".container" }
   variant isOpen trigger { ".open" }
   variant isHovering trigger { ":hover" }
-  render div root(class:class, style: style) {
+  variant isSelected trigger { ".selected" }
+  render div root(class:class, style: style, onClick: onClick) {
     style {
       --depth: 1
       display: flex
@@ -180,6 +177,9 @@ public component TreeNavigationItemHeader {
       padding-left: calc(22px * var(--depth))
       justify-content: space-between
 
+    }
+    style variant isSelected {
+      background: var(theme.backgroundSelectedLight)
     }
     div {
       style {
@@ -196,7 +196,8 @@ public component TreeNavigationItemHeader {
           --size: 14px
           position: absolute
           left: -18px
-
+          transition: 0.2s
+          outline: none
         }
         style variant isContainer {
           opacity: 0.3
@@ -228,7 +229,7 @@ public component LayerNavigationItemHeader {
   variant isAtomToken trigger { ".atom-token" }
   variant isTrigger trigger { ".trigger" }
   variant isText trigger { ".text" }
-  render TreeNavigationItemHeader container(class: class, style: style) {
+  render TreeNavigationItemHeader container(class: class, style: style, onClick: onClick) {
     override root {
       style {
         --depth: 1
@@ -260,7 +261,7 @@ public component LayerNavigationItemHeader {
         --icon-color: var(theme.componentColor)
       }
     }
-    LayerIcon(class:class) {
+    LayerIcon {
       override root {
         style {
           color: var(--icon-color)
@@ -451,8 +452,8 @@ public component LeftSidebarPreview {
                   }
                 }
               }
-              TreeNavigationItem(class: "selected") {
-                LayerNavigationItemHeader(class: "slot container open") {
+              TreeNavigationItem {
+                LayerNavigationItemHeader(class: "selected slot container open") {
                   override container.root {
                     style {
                       --depth: 2

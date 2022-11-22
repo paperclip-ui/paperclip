@@ -1,9 +1,14 @@
-import React, { memo } from "react";
+import React, { memo, useCallback } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/left-sidebar.pc";
 import * as commonStyles from "@paperclip-ui/designer/src/styles/common.pc";
-import { useSelector } from "@paperclip-ui/common";
+import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { getHistoryState } from "@paperclip-ui/designer/src/machine/engine/history/state";
-import { getCurrentDependency } from "@paperclip-ui/designer/src/machine/state";
+import {
+  getCurrentDependency,
+  getExpandedLayerIds,
+  getSelectedNodeIds,
+  getSelectedNodePaths,
+} from "@paperclip-ui/designer/src/machine/state";
 import {
   Component,
   DocumentBodyItem,
@@ -16,6 +21,8 @@ import {
   getDocumentBodyInner,
   getNodeInner,
 } from "@paperclip-ui/proto/lib/ast/pc-utils";
+import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
+import cx from "classnames";
 
 export const LeftSidebar = () => {
   const { title, document } = useLeftSidebar();
@@ -50,10 +57,6 @@ type LeafProps<Expr> = {
   depth: number;
 };
 
-type DocumentBodyItemProps = {
-  item: DocumentBodyItem;
-};
-
 const DocumentBodyItemLeaf = memo(
   ({ expr: item, depth }: LeafProps<DocumentBodyItem>) => {
     if (item.component) {
@@ -74,15 +77,14 @@ const ComponentLeaf = memo(
   ({ expr: component, depth }: LeafProps<Component>) => {
     const render = component.body.find((item) => item.render)?.render;
     return (
-      <styles.TreeNavigationItem>
-        <styles.LayerNavigationItemHeader
-          class="component container"
-          style={{ "--depth": depth }}
-        >
-          {component.name}
-        </styles.LayerNavigationItemHeader>
-        {render && <NodeLeaf expr={render.node} depth={depth + 1} />}
-      </styles.TreeNavigationItem>
+      <Leaf
+        id={component.id}
+        className="component container"
+        text={component.name}
+        depth={depth}
+      >
+        {() => render && <NodeLeaf expr={render.node} depth={depth + 1} />}
+      </Leaf>
     );
   }
 );
@@ -102,52 +104,67 @@ const NodeLeaf = memo(({ expr: node, depth }: LeafProps<Node>) => {
 
 const ElementLeaf = memo(({ expr: element, depth }: LeafProps<Element>) => {
   return (
-    <styles.TreeNavigationItem>
-      <styles.LayerNavigationItemHeader
-        class="element container"
-        style={{ "--depth": depth }}
-      >
-        {element.name || "Untitled"}
-        <styles.TagType>{element.tagName}</styles.TagType>
-      </styles.LayerNavigationItemHeader>
-      <styles.TreeNavigationItemContent>
-        {element.body.map((child) => (
+    <Leaf
+      id={element.id}
+      className="element container"
+      text={element.name || "Untitled"}
+      depth={depth}
+    >
+      {() =>
+        element.body.map((child) => (
           <NodeLeaf
             key={getNodeInner(child).id}
             expr={child}
             depth={depth + 1}
           />
-        ))}
-      </styles.TreeNavigationItemContent>
-    </styles.TreeNavigationItem>
+        ))
+      }
+    </Leaf>
   );
 });
 
 const TextLeaf = memo(({ expr: text, depth }: LeafProps<TextNode>) => {
-  return (
-    <styles.TreeNavigationItem>
-      <styles.LayerNavigationItemHeader
-        class="text"
-        style={{ "--depth": depth }}
-      >
-        {text.value}
-      </styles.LayerNavigationItemHeader>
-    </styles.TreeNavigationItem>
-  );
+  return <Leaf id={text.id} className="text" text={text.value} depth={depth} />;
 });
 
 const SlotLeaf = memo(({ expr: slot, depth }: LeafProps<Slot>) => {
   return (
-    <styles.TreeNavigationItem>
-      <styles.LayerNavigationItemHeader
-        class="slot container"
-        style={{ "--depth": depth }}
-      >
-        {slot.name || "Untitled"}
-      </styles.LayerNavigationItemHeader>
-    </styles.TreeNavigationItem>
+    <Leaf
+      id={slot.id}
+      className="slot container"
+      text={slot.name}
+      depth={depth}
+    />
   );
 });
+
+const Leaf = ({
+  children,
+  className,
+  id,
+  depth,
+  text,
+}: {
+  children?: () => any;
+  className: string;
+  id: string;
+  depth: number;
+  text: string;
+}) => {
+  const { selected, open, onClick } = useLeaf({ exprId: id });
+  return (
+    <styles.TreeNavigationItem>
+      <styles.LayerNavigationItemHeader
+        class={cx(className, { open, selected })}
+        style={{ "--depth": depth }}
+        onClick={onClick}
+      >
+        {text}
+      </styles.LayerNavigationItemHeader>
+      {open && children && children()}
+    </styles.TreeNavigationItem>
+  );
+};
 
 const useLeftSidebar = () => {
   const history = useSelector(getHistoryState);
@@ -156,5 +173,20 @@ const useLeftSidebar = () => {
   return {
     title: history.query.file.split("/").pop(),
     document: dependency?.document,
+  };
+};
+
+const useLeaf = ({ exprId }: { exprId: string }) => {
+  const open = useSelector(getExpandedLayerIds).includes(exprId);
+  const selected = useSelector(getSelectedNodeIds).includes(exprId);
+  const dispatch = useDispatch();
+  const onClick = useCallback(() => {
+    dispatch(editorEvents.layerLeafClicked({ exprId }));
+  }, []);
+
+  return {
+    onClick,
+    open,
+    selected,
   };
 };

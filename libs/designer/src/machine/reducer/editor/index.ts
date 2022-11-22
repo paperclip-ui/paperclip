@@ -91,6 +91,17 @@ export const editorReducer = (
         newState.insertMode = InsertMode.Element;
         newState.selectedVirtNodeIds = [];
       });
+    case editorEvents.layerLeafClicked.type:
+      return produce(state, (newState) => {
+        if (newState.expandedLayerExprIds.includes(event.payload.exprId)) {
+          // TODO - collapse children too.
+          newState.expandedLayerExprIds = newState.expandedLayerExprIds.filter(
+            (id) => id !== event.payload.exprId
+          );
+        } else {
+          newState.expandedLayerExprIds.push(event.payload.exprId);
+        }
+      });
     case editorEvents.deleteHokeyPressed.type:
       return produce(state, (newState) => {
         if (newState.selectedVirtNodeIds.length) {

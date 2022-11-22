@@ -79,6 +79,7 @@ export type EditorState = {
   // selectedNodeSources: any[];
   canvasClickTimestamp?: number;
   canvasMouseDownStartPoint?: Point;
+  expandedLayerExprIds: string[];
   showTextEditor?: boolean;
   resizerMoving: boolean;
   expandedNodePaths: string[];
@@ -99,6 +100,7 @@ export const DEFAULT_STATE: EditorState = {
   graph: {
     dependencies: {},
   },
+  expandedLayerExprIds: [],
   computedStyles: {},
   resizerMoving: false,
   optionKeyDown: false,
@@ -210,10 +212,13 @@ const getAllFrameBounds = (designer: EditorState) => {
   return mergeBoxes(getCurrentPreviewFrameBoxes(designer));
 };
 export const getSelectedNodePaths = (designer: EditorState) => {
-  return designer.selectedVirtNodeIds.map((id) => {
+  return getSelectedNodeIds(designer).map((id) => {
     const node = getNodeById(id, designer.currentDocument.paperclip.html);
     return getNodePath(node, designer.currentDocument.paperclip.html);
   });
+};
+export const getSelectedNodeIds = (designer: EditorState) => {
+  return designer.selectedVirtNodeIds;
 };
 export const getHighlightedNodePath = (designer: EditorState) =>
   designer.highlightNodePath;
@@ -332,3 +337,6 @@ export const getCurrentFilePath = (state: EditorState) => {
 export const getCurrentDependency = (state: EditorState) => {
   return state.graph.dependencies[getCurrentFilePath(state)];
 };
+
+export const getExpandedLayerIds = (state: EditorState) =>
+  state.expandedLayerExprIds;

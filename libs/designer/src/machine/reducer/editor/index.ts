@@ -1,5 +1,6 @@
 import { designerEngineEvents } from "../../engine/designer/events";
 import { EditorEvent, editorEvents } from "../../events";
+import jasonpatch, { JsonPatchError } from "fast-json-patch";
 import {
   Canvas,
   EditorState,
@@ -77,8 +78,12 @@ export const editorReducer = (
       });
     }
     case designerEngineEvents.graphLoaded.type: {
+      const diff = jasonpatch.compare(
+        state.graph.dependencies,
+        event.payload.dependencies
+      );
       return produce(state, (newState) => {
-        Object.assign(newState.graph.dependencies, event.payload.dependencies);
+        jasonpatch.applyPatch(newState.graph.dependencies, diff);
       });
     }
     case editorEvents.eHotkeyPressed.type:

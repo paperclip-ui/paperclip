@@ -1,10 +1,5 @@
 #### On-deck
 
-- JSON patch
-- load AST into designer
-
-  - follow shadow instance
-
 - left sidebar
 
   - ## layers

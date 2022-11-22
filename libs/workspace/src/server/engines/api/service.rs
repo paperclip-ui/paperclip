@@ -105,6 +105,14 @@ impl Designer for DesignerService {
                     tx.send(Result::Ok(
                         graph.clone()
                     )).await.expect("Can't send");
+                },
+                ServerEvent::ApplyMutationRequested {mutations: _mutations  } => {
+                    let graph = store.clone().lock().unwrap().state.graph.clone();
+
+                    // TODO - need to pick out files that have changed
+                    tx.send(Result::Ok(
+                        graph
+                    )).await.expect("Can't send");
                 }
             );
         });

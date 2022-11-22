@@ -1,9 +1,8 @@
 include!(concat!(env!("OUT_DIR"), "/ast.graph.rs"));
 
-use std::{collections::{HashMap, HashSet}, sync::{Arc}};
+use std::{collections::{HashMap, HashSet}};
 
 pub use super::graph_ext::*;
-use futures::lock::Mutex;
 
 
 impl Graph {

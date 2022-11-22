@@ -5,8 +5,8 @@ use anyhow::Result;
 use futures::executor::block_on;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::str_utils::strip_extra_ws;
-use paperclip_parser::graph;
-use paperclip_parser::graph::test_utils;
+use paperclip_proto_ext::graph::{test_utils, load::LoadableGraph};
+use paperclip_proto::ast::graph_ext::Graph;
 use std::collections::HashMap;
 
 #[derive(Clone)]
@@ -22,7 +22,7 @@ macro_rules! add_case {
         #[test]
         fn $name() {
             let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
-            let mut graph = graph::Graph::new();
+            let mut graph = Graph::new();
 
             if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
                 panic!("Unable to load");

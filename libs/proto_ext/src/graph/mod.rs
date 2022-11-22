@@ -1,9 +1,8 @@
-pub mod core;
+pub mod load;
 pub mod io;
-pub mod reference;
 
 #[cfg(test)]
 pub mod tests;
 
 pub mod test_utils;
-pub use self::core::*;
+pub use self::load::*;

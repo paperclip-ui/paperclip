@@ -59,7 +59,7 @@ impl Designer for DesignerService {
 
                 Ok(FileResponse {
                     raw_content: serialize(
-                        &store
+                        store
                             .lock()
                             .unwrap()
                             .state
@@ -67,7 +67,9 @@ impl Designer for DesignerService {
                             .dependencies
                             .get(&path)
                             .expect("Dependency doesn't exist!")
-                            .document,
+                            .document
+                            .as_ref()
+                            .expect("Document must exist"),
                     )
                     .as_bytes()
                     .to_vec(),

@@ -10,8 +10,7 @@ use paperclip_common::fs::{
 };
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_config::{CompilerOptions, Config, ConfigContext, ConfigIO};
-use paperclip_parser::graph::io::IO as GraphIO;
-use paperclip_parser::graph::test_utils::MockFS;
+use paperclip_proto_ext::graph::{test_utils::MockFS, io::IO as GraphIO};
 use path_absolutize::*;
 use std::collections::HashMap;
 use std::path::Path;

@@ -1,9 +1,8 @@
 use super::context::Context;
 use anyhow::Result;
-use paperclip_parser::graph::{Dependency, Graph};
+use paperclip_proto::ast::{pc as ast, graph_ext::{Dependency, Graph}};
 use paperclip_infer::infer::Inferencer;
 use paperclip_infer::types as infer_types;
-use paperclip_parser::pc::ast;
 
 pub fn compile_typed_definition(dep: &Dependency, graph: &Graph) -> Result<String> {
     let mut context = Context::new(dep, graph);
@@ -17,7 +16,7 @@ fn compile_document(context: &mut Context) {
 }
 
 fn compile_components(context: &mut Context) {
-    for item in &context.dependency.document.body {
+    for item in &context.dependency.document.as_ref().expect("Document must exist").body {
         if let ast::document_body_item::Inner::Component(component) = item.get_inner() {
             if component.is_public {
                 compile_component(component, context);

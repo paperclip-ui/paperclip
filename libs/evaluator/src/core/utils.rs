@@ -1,4 +1,4 @@
-use paperclip_parser::pc::ast;
+use paperclip_proto::ast::pc as ast;
 
 pub fn get_style_namespace(
     name: &Option<String>,

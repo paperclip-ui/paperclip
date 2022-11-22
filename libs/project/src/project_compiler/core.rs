@@ -8,9 +8,11 @@ use futures_util::stream::StreamExt;
 use paperclip_common::get_or_short;
 use paperclip_common::pc::is_paperclip_file;
 use paperclip_config::ConfigContext;
-use paperclip_parser::graph::Graph;
+use paperclip_proto::ast::graph_ext::Graph;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
+use paperclip_proto_ext::graph::load::LoadableGraph;
+
 
 pub struct CompileOptions {
     pub watch: bool,

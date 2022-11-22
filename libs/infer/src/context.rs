@@ -1,4 +1,4 @@
-use paperclip_parser::graph::{Dependency, Graph};
+use paperclip_proto::ast::graph_ext::{Dependency, Graph};
 use paperclip_proto::ast;
 use std::{cell::RefCell, rc::Rc};
 

@@ -13,7 +13,7 @@ use paperclip_editor::edit_graph;
 use paperclip_editor::Mutation;
 use paperclip_evaluator::css;
 use paperclip_evaluator::html;
-use paperclip_parser::graph::Graph;
+use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_parser::pc::serializer::serialize;
 use paperclip_proto::ast_mutate::MutationResult;
 use paperclip_proto::virt::module::pc_module_import;
@@ -145,7 +145,7 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 let mut latest_ast_changes = vec![];
                 for (path, changes) in &changed_files {
                     latest_ast_changes.extend(changes.clone());
-                    let content = serialize(&state.graph.dependencies.get(path).unwrap().document);
+                    let content = serialize(state.graph.dependencies.get(path).unwrap().document.as_ref().expect("Document must exist"));
                     // println!("Edited AST {} {}", path, content);
                     state
                         .file_cache

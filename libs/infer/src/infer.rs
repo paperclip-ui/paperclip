@@ -8,7 +8,7 @@ use std::{collections::BTreeMap, rc::Rc};
 use crate::context::InferContext;
 use crate::types;
 use paperclip_common::get_or_short;
-use paperclip_parser::graph::{Dependency, Graph};
+use paperclip_proto::ast::graph_ext::{Dependency, Graph};
 
 pub struct Inferencer {
     component_cache: Rc<RefCell<BTreeMap<String, types::Component>>>,
@@ -68,7 +68,7 @@ impl Inferencer {
 }
 
 fn infer_dep(dep: &Dependency, context: &mut InferContext) -> Result<()> {
-    for component in &dep.document.get_components() {
+    for component in dep.document.as_ref().expect("Document must exist").get_components() {
         context.step_in(&component.name);
         infer_component(component, context)?;
         context.step_out();
@@ -208,7 +208,7 @@ fn infer_instance(expr: &ast::pc::Element, context: &InferContext) -> Result<typ
     }
 
     let instance_dep = if let Some(namespace) = &expr.namespace {
-        let imports = context.dependency.document.get_imports();
+        let imports = context.dependency.document.as_ref().expect("Document must exist").get_imports();
         let import = imports.iter().find(|import| &import.namespace == namespace);
 
         import
@@ -219,7 +219,7 @@ fn infer_instance(expr: &ast::pc::Element, context: &InferContext) -> Result<typ
     };
 
     if let Some(instance_dep) = instance_dep {
-        for component in instance_dep.document.get_components() {
+        for component in instance_dep.document.as_ref().expect("Document must exist").get_components() {
             if component.name == expr.tag_name {
                 return Ok(context
                     .inferencer

@@ -7,7 +7,7 @@ use paperclip_evaluator::css;
 use futures::executor::block_on;
 use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_evaluator::html;
-use paperclip_parser::graph::io::IO as GraphIO;
+use paperclip_proto_ext::graph::{io::IO as GraphIO, load::LoadableGraph};
 
 use crate::handle_store_events;
 use crate::server::core::{ServerEngineContext, ServerEvent};

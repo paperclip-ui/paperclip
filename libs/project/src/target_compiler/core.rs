@@ -8,7 +8,7 @@ use paperclip_evaluator::css::evaluator::evaluate as evaluate_css;
 use paperclip_evaluator::css::serializer::serialize as serialize_css;
 use paperclip_evaluator::html::evaluator::{evaluate as evaluate_html, Options as HTMLOptions};
 use paperclip_evaluator::html::serializer::serialize as serialize_html;
-use paperclip_parser::graph::Graph;
+use paperclip_proto::ast::graph_ext::Graph;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 use std::sync::Mutex;

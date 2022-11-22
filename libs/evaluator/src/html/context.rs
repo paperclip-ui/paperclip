@@ -4,8 +4,8 @@ use std::rc::Rc;
 use crate::core::virt as core_virt;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::id::{get_document_id, IDGenerator};
-use paperclip_parser::graph;
-use paperclip_parser::pc::ast;
+use paperclip_proto::ast::graph_ext::Graph;
+use paperclip_proto::ast::pc as ast;
 
 #[derive(Clone)]
 pub struct Options {
@@ -14,7 +14,7 @@ pub struct Options {
 
 #[derive(Clone)]
 pub struct DocumentContext<'graph, 'expr, 'file_resolver, FR: FileResolver> {
-    pub graph: &'graph graph::Graph,
+    pub graph: &'graph Graph,
     pub path: String,
     pub data: Option<core_virt::Obj>,
     pub file_resolver: &'file_resolver FR,
@@ -30,7 +30,7 @@ impl<'graph, 'expr, 'file_resolver, FR: FileResolver>
 {
     pub fn new(
         path: &str,
-        graph: &'graph graph::Graph,
+        graph: &'graph Graph,
         file_resolver: &'file_resolver FR,
         options: Options,
     ) -> Self {

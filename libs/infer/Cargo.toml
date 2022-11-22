@@ -11,7 +11,8 @@ name = "paperclip_infer"
 [dependencies]
 paperclip_proto = { path = "../proto" }
 paperclip_parser = { path = "../parser" }
-paperclip_common = { path = "../rs-common" }
+paperclip_common = { path = "../rs_common" }
+paperclip_proto_ext = { path = "../proto_ext" }
 anyhow = "1.0.61"
 futures = "0.3.25"
 lazy_static = "1.4.0"

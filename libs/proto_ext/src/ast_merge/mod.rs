@@ -1,4 +1,3 @@
-use paperclip_proto::ast::pc;
 
 mod base;
 mod merge;

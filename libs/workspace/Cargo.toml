@@ -11,6 +11,7 @@ name = "paperclip_workspace"
 [dependencies]
 paperclip_project = { path = "../project" }
 paperclip_proto = { path = "../proto", features = ["transport"] }
+paperclip_proto_ext = { path = "../proto_ext" }
 paperclip_editor = { path = "../editor" }
 tonic = { version = "0.8.2", features = ["tls"] }
 tonic-web = "0.4.0"
@@ -18,11 +19,11 @@ prost = "0.11.0"
 tokio-native-tls = { version = "0.3.0" }
 tokio-rustls = { version = "0.23.0" }
 tokio = { version = "1.0", features = [ "rt-multi-thread", "time", "fs", "macros", "net", "signal"] }
-paperclip_common = { path = "../rs-common" }
+paperclip_common = { path = "../rs_common" }
 paperclip_evaluator = { path = "../evaluator" }
 paperclip_config = { path = "../config" }
 paperclip_parser = { path = "../parser" }
-paperclip_language_services = { path = "../language-services" }
+paperclip_language_services = { path = "../language_services" }
 async-trait = "0.1.57"
 async-channel = "1.7.1"
 parking_lot = "0.12.1"

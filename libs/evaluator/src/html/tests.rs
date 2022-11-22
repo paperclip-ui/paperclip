@@ -5,8 +5,9 @@ use anyhow::Result;
 use futures::executor::block_on;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::str_utils::strip_extra_ws;
-use paperclip_parser::graph;
-use paperclip_parser::graph::test_utils;
+use paperclip_proto::ast::graph;
+use paperclip_proto_ext::graph::test_utils;
+use paperclip_proto_ext::graph::load::LoadableGraph;
 use paperclip_proto::virt;
 use std::collections::HashMap;
 

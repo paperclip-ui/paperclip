@@ -4,12 +4,13 @@ use css_color::Srgb;
 use paperclip_common::get_or_short;
 use paperclip_common::serialize_context::Context as SerializeContext;
 
-use paperclip_parser::{
-    css,
-    css::ast::{declaration_value, StyleDeclaration},
-    graph::Graph,
-    pc::ast::*,
+use paperclip_proto::ast::{
+    css as css_ast,
+    css::{declaration_value, StyleDeclaration},
+    graph_ext::Graph,
+    pc::*
 };
+use paperclip_parser::css;
 use paperclip_proto::ast::base;
 use paperclip_proto::language_service::pc::{ColorInfo, ColorValue, DocumentInfo, Position};
 
@@ -25,7 +26,7 @@ pub fn get_document_info(path: &str, graph: &Graph) -> Result<DocumentInfo> {
         ctx.graph.dependencies.get(path),
         Err(Error::msg("path does not exist"))
     );
-    let ast = &dep.document;
+    let ast = dep.document.as_ref().expect("Document must exist");
 
     for item in &ast.body {
         match item.get_inner() {
@@ -188,7 +189,7 @@ fn scan_declaration_value(value: &declaration_value::Inner, ctx: &mut Context) {
 
                 // a bit crude, but whatever...
                 css::serializer::serialize_decl_value(
-                    &css::ast::DeclarationValue {
+                    &css_ast::DeclarationValue {
                         inner: Some(declaration_value::Inner::FunctionCall(call.clone())),
                     },
                     &mut context,

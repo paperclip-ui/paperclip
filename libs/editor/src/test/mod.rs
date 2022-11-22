@@ -1,10 +1,11 @@
 use crate::edit_graph;
 use futures::executor::block_on;
 use paperclip_common::str_utils::strip_extra_ws;
-use paperclip_parser::{graph, pc};
-use paperclip_proto::ast;
+use paperclip_parser::{pc};
+use paperclip_proto::ast::{graph_ext as graph};
+use paperclip_proto_ext::graph::{test_utils, load::LoadableGraph};
 use paperclip_proto::ast_mutate::{
-    mutation, AppendChild, Bounds, DeleteExpression, InsertChild, SetFrameBounds, SetKeyValue,
+    mutation, AppendChild, Bounds, DeleteExpression, SetFrameBounds, SetKeyValue,
     SetStyleDeclarations,
 };
 use std::collections::HashMap;
@@ -13,7 +14,7 @@ macro_rules! case {
     ($name: ident, $mock_files: expr, $edit: expr, $expected_mock_files: expr) => {
         #[test]
         pub fn $name() {
-            let mock_fs = graph::test_utils::MockFS::new(HashMap::from($mock_files));
+            let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
             let mut graph = graph::Graph::new();
 
             if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
@@ -25,7 +26,7 @@ macro_rules! case {
             let edited_docs = graph
                 .dependencies
                 .iter()
-                .map(|(path, dep)| (path.to_string(), pc::serializer::serialize(&dep.document)))
+                .map(|(path, dep)| (path.to_string(), pc::serializer::serialize(dep.document.as_ref().expect("Document must exist"))))
                 .collect::<HashMap<String, String>>();
 
             for (path, content) in $expected_mock_files {

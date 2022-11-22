@@ -1,15 +1,15 @@
-use super::ast;
 use super::tokenizer::{is_superfluous, is_superfluous_or_newline, next_token, Token};
 use crate::base::ast as base_ast;
 use crate::core::errors as err;
 use crate::core::parser_context::{create_initial_context, Context};
 use crate::core::string_scanner::StringScanner;
-use crate::css::ast as css_ast;
+use paperclip_proto::ast::pc as ast;
+use paperclip_proto::ast::docco as docco_ast;
+use paperclip_proto::ast::css as css_ast;
 
 use crate::css::parser::{
     parse_style_declaration_with_string_scanner, parse_style_declarations_with_string_scanner,
 };
-use crate::docco::ast as docco_ast;
 use crate::docco::parser::parse_with_string_scanner as parse_doc_comment;
 use paperclip_common::id::IDGenerator;
 use std::str;

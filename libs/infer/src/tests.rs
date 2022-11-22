@@ -1,6 +1,6 @@
 use futures::executor::block_on;
-use paperclip_parser::graph;
-use paperclip_parser::graph::test_utils;
+use paperclip_proto::ast::graph_ext as graph;
+use paperclip_proto_ext::graph::{test_utils, load::LoadableGraph};
 use std::collections::HashMap;
 
 use crate::infer::Inferencer;

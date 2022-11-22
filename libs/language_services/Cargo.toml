@@ -11,7 +11,8 @@ name = "paperclip_language_services"
 [dependencies]
 paperclip_parser = { path = "../parser" }
 paperclip_proto = { path = "../proto" }
-paperclip_common = { path = "../rs-common" }
+paperclip_proto_ext = { path = "../proto_ext" }
+paperclip_common = { path = "../rs_common" }
 colors-transform = "0.2.11"
 css-color = "0.2.4"
 anyhow = "1.0.65"

@@ -4,11 +4,11 @@ use crate::core::errors;
 use crate::core::utils::get_style_namespace;
 use crate::core::virt as core_virt;
 use paperclip_common::fs::FileResolver;
-use paperclip_parser::graph;
-use paperclip_parser::graph::reference::ComponentRefInfo;
-use paperclip_parser::pc::ast;
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::docco as docco_ast;
+use paperclip_proto::ast::graph_ext::ComponentRefInfo;
+use paperclip_proto::ast::graph_ext::Graph;
+use paperclip_proto::ast::pc as ast;
 use paperclip_proto::virt::html::Bounds;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
@@ -17,7 +17,7 @@ type InsertsMap<'expr> = HashMap<String, (String, Vec<virt::Node>)>;
 
 pub async fn evaluate<F: FileResolver>(
     path: &str,
-    graph: &graph::Graph,
+    graph: &Graph,
     file_resolver: &F,
     options: Options,
 ) -> Result<virt::Document, errors::RuntimeError> {
@@ -25,7 +25,7 @@ pub async fn evaluate<F: FileResolver>(
 
     if let Some(dependency) = dependencies.get(path) {
         let mut context = DocumentContext::new(path, graph, file_resolver, options);
-        let document = evaluate_document(&dependency.document, &mut context);
+        let document = evaluate_document(dependency.document.as_ref().expect("Document must exist"), &mut context);
         Ok(document)
     } else {
         Err(errors::RuntimeError {

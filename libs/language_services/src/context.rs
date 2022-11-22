@@ -1,4 +1,4 @@
-use paperclip_parser::graph::Graph;
+use paperclip_proto::ast::graph_ext::Graph;
 
 use paperclip_proto::language_service::pc::{DocumentInfo, Position};
 

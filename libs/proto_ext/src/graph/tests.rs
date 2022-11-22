@@ -1,5 +1,6 @@
-use super::core::Graph;
 use super::test_utils::MockFS;
+use paperclip_proto::ast::graph_ext::Graph;
+use super::load::LoadableGraph;
 use futures::executor::block_on;
 use std::collections::HashMap;
 

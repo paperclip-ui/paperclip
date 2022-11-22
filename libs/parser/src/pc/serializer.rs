@@ -1,9 +1,9 @@
-use super::ast;
 use crate::base::ast as base_ast;
 use crate::css::serializer::{serialize_decl_value, serialize_declarations};
-use crate::docco::ast as docco_ast;
 use crate::docco::serialize::serialize_comment as serialize_doc_comment;
 use paperclip_common::serialize_context::Context;
+use paperclip_proto::ast::docco as docco_ast;
+use paperclip_proto::ast::pc as ast;
 
 pub fn serialize(document: &ast::Document) -> String {
     let mut context = Context::new(0);

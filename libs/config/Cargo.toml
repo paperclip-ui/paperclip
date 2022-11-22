@@ -10,8 +10,10 @@ name = "paperclip_config"
 
 [dependencies]
 ts-rs = "6.1"
-paperclip_common = { path = "../rs-common" }
+paperclip_common = { path = "../rs_common" }
 paperclip_parser = { path = "../parser" }
+paperclip_proto_ext = { path = "../proto_ext" }
+paperclip_proto = { path = "../proto" }
 serde = { version = "1.0.143", features = ["derive"] }
 path-absolutize = "3.0.13"
 wax = "0.5.0"

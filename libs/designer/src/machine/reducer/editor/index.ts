@@ -21,7 +21,6 @@ import { memoize } from "@paperclip-ui/common";
 import {
   InnerVirtNode,
   getNodeAncestors,
-  getInstanceAncestor,
   getNodeParent,
   getNodeByPath,
   getNodePath,
@@ -29,9 +28,9 @@ import {
   isNodeParent,
   getInnerNode,
   isTextNode,
-  nodePathToAry,
   getNodeById,
 } from "@paperclip-ui/proto/lib/virt/html-utils";
+import { historyEngineEvents } from "../../engine/history/events";
 
 const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
 const PAN_X_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;
@@ -70,6 +69,11 @@ export const editorReducer = (
         if (insertedIds.length) {
           newState.selectedVirtNodeIds = insertedIds;
         }
+      });
+    }
+    case historyEngineEvents.historyChanged.type: {
+      return produce(state, (newState) => {
+        newState.history = event.payload;
       });
     }
     case editorEvents.eHotkeyPressed.type:

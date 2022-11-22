@@ -35,7 +35,8 @@ export type DesignerEngineOptions = {
 export const createDesignerEngine =
   ({ protocol, host, transport }: DesignerEngineOptions) =>
   (
-    dispatch: Dispatch<DesignerEngineEvent>
+    dispatch: Dispatch<DesignerEngineEvent>,
+    state: DesignerEngineState
   ): Engine<DesignerEngineState, DesignerEngineEvent> => {
     const client = new DesignerClientImpl(
       new GrpcWebImpl((protocol || "http:") + "//" + host, {
@@ -45,7 +46,7 @@ export const createDesignerEngine =
 
     const actions = createActions(client, dispatch);
     const handleEvent = createEventHandler(actions);
-    bootstrap(actions);
+    bootstrap(actions, state);
 
     const dispose = () => {};
     return {
@@ -238,7 +239,11 @@ const createEventHandler = (actions: Actions) => {
  * Bootstrap script that initializes things based on initial state
  */
 
-const bootstrap = ({ openFile }: Actions) => {
-  const urlParams = new URLSearchParams(window.location.search);
-  setTimeout(openFile, 100, urlParams.get("file"));
+const bootstrap = (
+  { openFile }: Actions,
+  initialState: DesignerEngineState
+) => {
+  setTimeout(() => {
+    openFile(initialState.history.query.file);
+  }, 100);
 };

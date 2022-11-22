@@ -49,8 +49,6 @@ export const startDesigner = async (
     savedPaths[relativePath] = filePath;
   }
 
-  history.pushState({}, "", "/?file=" + savedPaths["entry.pc"]);
-
   const port = await getPort();
   const machine = createEditorMachine(
     {
@@ -69,6 +67,12 @@ export const startDesigner = async (
   )({
     ...DEFAULT_STATE,
     ...initialState,
+    history: {
+      pathname: "/",
+      query: {
+        file: savedPaths["entry.pc"],
+      },
+    },
   });
 
   const ws = execa.command(

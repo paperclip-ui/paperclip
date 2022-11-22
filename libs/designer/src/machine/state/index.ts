@@ -23,6 +23,10 @@ import {
   getNodeById,
   getNodePath,
 } from "@paperclip-ui/proto/lib/virt/html-utils";
+import {
+  HistoryEngineState,
+  INITIAL_HISTORY_STATE,
+} from "../engine/history/state";
 export const IS_WINDOWS = false;
 
 export enum InsertMode {
@@ -55,6 +59,10 @@ const INITIAL_ZOOM_PADDING = 50;
 
 export type StyleOverrides = Record<string, Record<string, string | number>>;
 
+type Query = {
+  file?: string;
+};
+
 export type EditorState = {
   readonly: boolean;
   scopedElementPath?: string;
@@ -79,7 +87,8 @@ export type EditorState = {
   currentDocument?: FileResponse;
   rects: Record<number, Record<string, Box>>;
   canvas: Canvas;
-} & DesignerEngineState;
+} & DesignerEngineState &
+  HistoryEngineState;
 
 export const DEFAULT_STATE: EditorState = {
   readonly: false,
@@ -97,6 +106,7 @@ export const DEFAULT_STATE: EditorState = {
     scrollPosition: { x: 0, y: 0 },
   },
   rects: {},
+  ...INITIAL_HISTORY_STATE,
 };
 
 export const getCurrentDocument = (state: EditorState) => state.currentDocument;
@@ -308,4 +318,8 @@ export const getInsertBox = ({
     x: Math.min(start.x, mousePosition.x),
     y: Math.min(start.y, mousePosition.y),
   };
+};
+
+export const getCurrentFilePath = (state: EditorState) => {
+  return state.history?.query.file;
 };

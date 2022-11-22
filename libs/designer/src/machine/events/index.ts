@@ -5,6 +5,7 @@ import {
 } from "@paperclip-ui/common";
 import { InnerVirtNode } from "@paperclip-ui/proto/lib/virt/html-utils";
 import { DesignerEngineEvent } from "../engine/designer/events";
+import { HistoryEngineEvent } from "../engine/history/events";
 import { Box, Point, Size } from "../state/geom";
 
 export const editorEvents = eventCreators(
@@ -55,4 +56,5 @@ export const editorEvents = eventCreators(
 
 export type EditorEvent =
   | ExtractEventFromCreators<typeof editorEvents>
-  | DesignerEngineEvent;
+  | DesignerEngineEvent
+  | HistoryEngineEvent;

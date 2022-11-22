@@ -1,7 +1,9 @@
 #### On-deck
 
-- left sidebar
 - expand / collapse tree
+- follow shadow
+- render slots
+- render inserted elements
 - ability to rename layers
 
   - ## layers

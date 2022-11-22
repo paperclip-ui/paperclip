@@ -265,7 +265,7 @@ public component LayerNavigationItemHeader {
   }
 }
 
-component Tooltip {
+public component Tooltip {
   variant isHovering trigger { ":hover" }
   render div {
     style {
@@ -361,6 +361,15 @@ component Tokens {
   }
 }
 
+public component ShadowIcon {
+  render div {
+    style extends theme.icon {
+      cursor: pointer
+      opacity: 0.5
+      -webkit-mask-image: url("./shadow2.svg")
+    }
+  }
+}
 
 
 public component LeftSidebarPreview {
@@ -385,13 +394,7 @@ public component LeftSidebarPreview {
               text "Some instance"
               insert controls {
                 Tooltip(title: "display shadow") {
-                  div {
-                    style extends theme.icon {
-                      cursor: pointer
-                      opacity: 0.5
-                      -webkit-mask-image: url("./shadow2.svg")
-                    }
-                  }
+                  ShadowIcon
                 }
               }
             }

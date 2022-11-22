@@ -276,3 +276,31 @@ add_case! {
     )
   ])
 }
+
+
+
+add_case! {
+  can_infer_slot_in_insert,
+  [
+    (
+    "/entry.pc", r#"
+      public component A {
+        render div {
+          insert ab {
+            slot something
+          }
+        }
+      }
+    "#
+    )
+  ],
+  types::Map::from([
+    (
+      "A".to_string(), types::Type::Component(types::Component {
+        properties: types::Map::from([
+          ("something".to_string(), types::Type::Slot),
+        ])
+      }),
+    )
+  ])
+}

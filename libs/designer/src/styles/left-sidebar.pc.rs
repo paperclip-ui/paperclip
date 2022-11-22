@@ -218,14 +218,14 @@ pub fn LayerNavigationItemHeader(props: &LayerNavigationItemHeaderProps) -> Html
 }
 
 #[derive(Properties, PartialEq)]
-struct TooltipProps {
+pub struct TooltipProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
 }
 
 #[function_component]
-fn Tooltip(props: &TooltipProps) -> Html {
+pub fn Tooltip(props: &TooltipProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
             format!("{} {}", "_Tooltip-1e0c5ead-460", scope_class_name)
@@ -303,6 +303,22 @@ fn Tokens(props: &TokensProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
+pub struct ShadowIconProps {
+    pub __scope_class_name: Option<String>,
+}
+
+#[function_component]
+pub fn ShadowIcon(props: &ShadowIconProps) -> Html {
+    html! {
+        <div class={if let Some(scope_class_name) = &props.__scope_class_name {
+            format!("{} {}", "_ShadowIcon-1e0c5ead-524", scope_class_name)
+        } else {
+            "_ShadowIcon-1e0c5ead-524".to_string()
+        }}></div>
+    }
+}
+
+#[derive(Properties, PartialEq)]
 pub struct LeftSidebarPreviewProps {
     pub __scope_class_name: Option<String>,
 }
@@ -318,7 +334,7 @@ pub fn LeftSidebarPreview(props: &LeftSidebarPreviewProps) -> Html {
             <common::SidebarSection>
                 <common::SidebarPanelHeader>
                     
-                    <div class={"_LeftSidebarPreview-1e0c5ead-524"}></div>
+                    <div class={"_LeftSidebarPreview-1e0c5ead-536"}></div>
                     
                 </common::SidebarPanelHeader>
                 
@@ -326,7 +342,7 @@ pub fn LeftSidebarPreview(props: &LeftSidebarPreviewProps) -> Html {
                     <TreeNavigationItem>
                         <LayerNavigationItemHeader class={"component container open"} controls={
                             <Tooltip title={"display shadow"}>
-                                <div class={"_LeftSidebarPreview-1e0c5ead-540"}></div>
+                                <ShadowIcon></ShadowIcon>
                                 
                             </Tooltip>
                             
@@ -392,7 +408,7 @@ pub fn LeftSidebarPreview(props: &LeftSidebarPreviewProps) -> Html {
             <common::SidebarSection>
                 <common::SidebarPanelHeader>
                     
-                    <div class={"_LeftSidebarPreview-1e0c5ead-619"}></div>
+                    <div class={"_LeftSidebarPreview-1e0c5ead-622"}></div>
                     
                 </common::SidebarPanelHeader>
                 

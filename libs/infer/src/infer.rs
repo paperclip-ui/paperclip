@@ -107,15 +107,7 @@ fn infer_render_node(node: &ast::pc::node::Inner, context: &mut InferContext) ->
 fn infer_element(expr: &ast::pc::Element, context: &mut InferContext) -> Result<()> {
     infer_attributes(expr, context)?;
     for child in &expr.body {
-        match child.get_inner() {
-            ast::pc::node::Inner::Element(child) => {
-                infer_element(child, context)?;
-            }
-            ast::pc::node::Inner::Slot(child) => {
-                infer_slot(child, context)?;
-            }
-            _ => {}
-        }
+        infer_node(child, context)?;
     }
     Ok(())
 }
@@ -126,6 +118,29 @@ fn infer_slot(expr: &ast::pc::Slot, context: &mut InferContext) -> Result<()> {
     context.step_out();
     Ok(())
 }
+
+fn infer_insert(expr: &ast::pc::Insert, context: &mut InferContext) -> Result<()> {
+    for child in &expr.body {
+        infer_node(child, context)?;
+    }
+    Ok(())
+}
+
+fn infer_node(expr: &ast::pc::Node, context: &mut InferContext) -> Result<()> {
+    match expr.get_inner() {
+        ast::pc::node::Inner::Element(child) => {
+            infer_element(child, context)?;
+        }
+        ast::pc::node::Inner::Slot(child) => {
+            infer_slot(child, context)?;
+        }
+        ast::pc::node::Inner::Insert(child) => {
+            infer_insert(child, context)?;
+        }
+        _ => {}
+    }
+    Ok(())
+}   
 
 fn infer_attributes(expr: &ast::pc::Element, context: &mut InferContext) -> Result<()> {
     let instance_props = infer_instance(expr, context)?;

@@ -76,6 +76,7 @@ const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
       console.log("GET GTAPH");
       client.GetGraph({}).subscribe({
         next(data) {
+          console.log("NEX");
           dispatch(designerEngineEvents.graphLoaded(data));
         },
       });

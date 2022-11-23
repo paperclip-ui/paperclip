@@ -5,6 +5,8 @@ import {
   Canvas,
   EditorState,
   flattenFrameBoxes,
+  getCurrentDependency,
+  getCurrentDocument,
   getNodeInfoAtPoint,
   InsertMode,
   IS_WINDOWS,
@@ -31,6 +33,7 @@ import {
   isTextNode,
   getNodeById,
 } from "@paperclip-ui/proto/lib/virt/html-utils";
+import { ast } from "@paperclip-ui/proto/lib/ast/pc-utils";
 import { historyEngineEvents } from "../../engine/history/events";
 
 const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
@@ -91,18 +94,28 @@ export const editorReducer = (
         newState.insertMode = InsertMode.Element;
         newState.selectedVirtNodeIds = [];
       });
-    case editorEvents.layerLeafClicked.type:
-      return produce(state, (newState) => {
-        if (newState.expandedLayerExprIds.includes(event.payload.exprId)) {
-          // TODO - collapse children too.
+    case editorEvents.layerLeafClicked.type: {
+      const document = getCurrentDependency(state).document;
+
+      if (state.expandedLayerExprIds.includes(event.payload.exprId)) {
+        const flattened = ast.flattenUnknownInnerExpression(
+          ast.getExprById(event.payload.exprId, document)
+        );
+        state = produce(state, (newState) => {
           newState.expandedLayerExprIds = newState.expandedLayerExprIds.filter(
-            (id) => id !== event.payload.exprId
+            (id) => flattened[id] == null
           );
-        } else {
-          newState.expandedLayerExprIds.push(event.payload.exprId);
-        }
-        newState.selectedVirtNodeIds = [event.payload.exprId];
-      });
+        });
+      } else {
+        state = selectNode(
+          ast.getExprById(event.payload.exprId, document),
+          false,
+          false,
+          state
+        );
+      }
+      return state;
+    }
     case editorEvents.deleteHokeyPressed.type:
       return produce(state, (newState) => {
         if (newState.selectedVirtNodeIds.length) {
@@ -148,7 +161,7 @@ export const editorReducer = (
         return state;
       }
 
-      if (!state.canvas.transform.x || !state.canvas.mousePosition?.x) {
+      if (!state.canvas.transform || state.canvas.mousePosition?.x == null) {
         return state;
       }
 
@@ -303,11 +316,6 @@ export const editorReducer = (
     case editorEvents.canvasMouseMoved.type: {
       return highlightNode(state, event.payload);
     }
-    case editorEvents.tmpBreadcrumbClicked.type: {
-      return produce(state, (newState) => {
-        newState.selectedVirtNodeIds = [event.payload.id];
-      });
-    }
     case editorEvents.computedStylesCaptured.type:
       return produce(state, (newState) => {
         Object.assign(newState.computedStyles, event.payload.computedStyles);
@@ -461,6 +469,8 @@ const selectNode = (
   metaKey: boolean,
   designer: EditorState
 ) => {
+  const document = getCurrentDependency(designer).document;
+
   designer = produce(designer, (newDesigner) => {
     if (!node) {
       newDesigner.selectedVirtNodeIds = [];
@@ -476,6 +486,11 @@ const selectNode = (
       // allow toggle selecting elements - necessary since escape key doesn't work.
       newDesigner.selectedVirtNodeIds.push(node.id);
     } else {
+      const ancestors = ast.getAncestors(node.id, document);
+      newDesigner.expandedLayerExprIds.push(
+        node.id,
+        ...ancestors.map((ancestor) => ancestor.id)
+      );
       newDesigner.selectedVirtNodeIds = [node.id];
     }
 

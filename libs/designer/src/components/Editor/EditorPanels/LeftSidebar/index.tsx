@@ -16,10 +16,7 @@ import {
   Slot,
   TextNode,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
-import {
-  getDocumentBodyInner,
-  getNodeInner,
-} from "@paperclip-ui/proto/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/proto/lib/ast/pc-utils";
 import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
 import cx from "classnames";
 
@@ -41,7 +38,7 @@ export const LeftSidebar = () => {
       <styles.Layers>
         {document.body.map((item) => (
           <DocumentBodyItemLeaf
-            key={getDocumentBodyInner(item).id}
+            key={ast.getDocumentBodyInner(item).id}
             depth={1}
             expr={item}
           />
@@ -112,7 +109,7 @@ const ElementLeaf = memo(({ expr: element, depth }: LeafProps<Element>) => {
       {() =>
         element.body.map((child) => (
           <NodeLeaf
-            key={getNodeInner(child).id}
+            key={ast.getNodeInner(child).id}
             expr={child}
             depth={depth + 1}
           />

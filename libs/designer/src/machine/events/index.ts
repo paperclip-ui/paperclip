@@ -49,8 +49,6 @@ export const editorEvents = eventCreators(
       frameIndex: number;
       rects: Record<string, Box>;
     }>(),
-
-    tmpBreadcrumbClicked: identity<InnerVirtNode>(),
   },
   "editor"
 );

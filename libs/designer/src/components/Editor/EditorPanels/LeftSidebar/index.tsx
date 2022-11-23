@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { getHistoryState } from "@paperclip-ui/designer/src/machine/engine/history/state";
 import {
   getCurrentDependency,
-  getExpandedLayerIds,
+  getExpandedVirtIds,
   getGraph,
   getSelectedNodeIds,
 } from "@paperclip-ui/designer/src/machine/state";
@@ -254,7 +254,7 @@ const useLeftSidebar = () => {
 };
 
 const useLeaf = ({ exprId }: { exprId: string }) => {
-  const open = useSelector(getExpandedLayerIds).includes(exprId);
+  const open = useSelector(getExpandedVirtIds).includes(exprId);
   const selected = useSelector(getSelectedNodeIds).includes(exprId);
   const dispatch = useDispatch();
   const onClick = useCallback(() => {

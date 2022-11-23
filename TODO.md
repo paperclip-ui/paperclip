@@ -1,8 +1,8 @@
 #### On-deck
 
-- identify instances
-- when hovering over layers, highlight canvas item
 - follow shadow
+- expand / collapse shadows
+- when hovering over layers, highlight canvas item
 - render slots
 - render inserted elements
 - ability to rename layers

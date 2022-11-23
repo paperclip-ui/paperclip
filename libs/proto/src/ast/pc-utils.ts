@@ -61,23 +61,33 @@ export namespace ast {
     ((expr as Document | InnerNode).body as Array<DocumentBodyItem | Node>) ||
     EMPTY_ARRAY;
 
-  export const getAncestors = memoize((id: string, document: Document) => {
-    const exprsById = flattenDocument(document);
-    const childParentMap = getChildParentMap(exprsById);
-    const ancestors: InnerExpression[] = [];
+  export const getAncestorIds = memoize((id: string, graph: Graph) => {
+    const ancestorIds: string[] = [];
 
-    let curr = exprsById[id];
+    const instanceOfIdParts = id.split(".");
 
-    while (curr) {
-      const nextId = childParentMap[curr.id];
-      const next = exprsById[nextId];
-      if (next) {
-        ancestors.push(next);
+    for (let i = instanceOfIdParts.length; i--; ) {
+      const id = instanceOfIdParts[i];
+      const dep = getOwnerDependency(id, graph);
+      const exprsById = flattenDocument(dep.document);
+      const childParentMap = getChildParentMap(exprsById);
+
+      let curr = exprsById[id];
+
+      while (curr) {
+        const nextId = childParentMap[curr.id];
+        const next = exprsById[nextId];
+
+        if (next) {
+          ancestorIds.push(
+            [...instanceOfIdParts.slice(0, i), next.id].join(".")
+          );
+        }
+        curr = next;
       }
-      curr = next;
     }
 
-    return ancestors;
+    return ancestorIds;
   });
 
   export const getChildParentMap = memoize(
@@ -170,7 +180,6 @@ export namespace ast {
     exprId: string,
     ancestor: InnerExpression
   ) => {
-    console.log(flattenUnknownInnerExpression(ancestor), exprId);
     return flattenUnknownInnerExpression(ancestor)[exprId] != null;
   };
 

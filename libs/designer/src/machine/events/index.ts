@@ -3,7 +3,6 @@ import {
   ExtractEventFromCreators,
   identity,
 } from "@paperclip-ui/common";
-import { InnerVirtNode } from "@paperclip-ui/proto/lib/virt/html-utils";
 import { DesignerEngineEvent } from "../engine/designer/events";
 import { HistoryEngineEvent } from "../engine/history/events";
 import { Box, Point, Size } from "../state/geom";

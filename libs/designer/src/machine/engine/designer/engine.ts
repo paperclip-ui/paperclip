@@ -13,18 +13,12 @@ import {
   getNodeInfoAtPoint,
 } from "../../state";
 import { Mutation } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
-import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
-import {
-  getNodeById,
-  getNodeByPath,
-  getNodeParent,
-  getNodePath,
-} from "@paperclip-ui/proto/lib/virt/html-utils";
+import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
 import {
   Element as VirtElement,
   TextNode as VirtTextNode,
 } from "@paperclip-ui/proto/lib/generated/virt/html";
-import { getScaledBox, mergeBoxes, roundBox } from "../../state/geom";
+import { getScaledBox, roundBox } from "../../state/geom";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -116,7 +110,7 @@ const createEventHandler = (actions: Actions) => {
 
       actions.applyChanges([mutation]);
     } else {
-      const parent = getNodeByPath(
+      const parent = virtHTML.getNodeByPath(
         intersectingNode.nodePath,
         state.currentDocument.paperclip.html
       );
@@ -162,9 +156,10 @@ const createEventHandler = (actions: Actions) => {
     prevState: EditorState
   ) => {
     for (const id of prevState.selectedVirtNodeIds) {
-      const node = getNodeById(id, prevState.currentDocument.paperclip.html) as
-        | VirtTextNode
-        | VirtElement;
+      const node = virtHTML.getNodeById(
+        id,
+        prevState.currentDocument.paperclip.html
+      ) as VirtTextNode | VirtElement;
 
       if (!node) {
         console.warn(`Node doesn't exist, skipping delete`);
@@ -185,12 +180,15 @@ const createEventHandler = (actions: Actions) => {
     state: EditorState,
     prevState: EditorState
   ) => {
-    const node = getNodeById(
+    const node = virtHTML.getNodeById(
       prevState.selectedVirtNodeIds[0],
       prevState.currentDocument.paperclip.html
     ) as VirtTextNode | VirtElement;
 
-    const path = getNodePath(node, prevState.currentDocument.paperclip.html);
+    const path = virtHTML.getNodePath(
+      node,
+      prevState.currentDocument.paperclip.html
+    );
 
     if (path.includes(".")) {
       actions.applyChanges([

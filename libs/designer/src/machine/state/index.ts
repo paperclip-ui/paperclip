@@ -19,10 +19,7 @@ import {
   Transform,
 } from "./geom";
 import { memoize } from "@paperclip-ui/common";
-import {
-  getNodeById,
-  getNodePath,
-} from "@paperclip-ui/proto/lib/virt/html-utils";
+import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
 import {
   HistoryEngineState,
   INITIAL_HISTORY_STATE,
@@ -79,7 +76,7 @@ export type EditorState = {
   // selectedNodeSources: any[];
   canvasClickTimestamp?: number;
   canvasMouseDownStartPoint?: Point;
-  expandedLayerExprIds: string[];
+  expandedLayerVirtIds: string[];
   showTextEditor?: boolean;
   resizerMoving: boolean;
   expandedNodePaths: string[];
@@ -100,7 +97,7 @@ export const DEFAULT_STATE: EditorState = {
   graph: {
     dependencies: {},
   },
-  expandedLayerExprIds: [],
+  expandedLayerVirtIds: [],
   computedStyles: {},
   resizerMoving: false,
   optionKeyDown: false,
@@ -213,8 +210,11 @@ const getAllFrameBounds = (designer: EditorState) => {
 };
 export const getSelectedNodePaths = (designer: EditorState) => {
   return getSelectedNodeIds(designer).map((id) => {
-    const node = getNodeById(id, designer.currentDocument.paperclip.html);
-    return getNodePath(node, designer.currentDocument.paperclip.html);
+    const node = virtHTML.getNodeById(
+      id,
+      designer.currentDocument.paperclip.html
+    );
+    return virtHTML.getNodePath(node, designer.currentDocument.paperclip.html);
   });
 };
 export const getSelectedNodeIds = (designer: EditorState) => {
@@ -338,7 +338,7 @@ export const getCurrentDependency = (state: EditorState) => {
   return state.graph.dependencies[getCurrentFilePath(state)];
 };
 
-export const getExpandedLayerIds = (state: EditorState) =>
-  state.expandedLayerExprIds;
+export const getExpandedVirtIds = (state: EditorState) =>
+  state.expandedLayerVirtIds;
 
 export const getGraph = (state: EditorState) => state.graph;

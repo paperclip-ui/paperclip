@@ -6,10 +6,17 @@ type Env = {
 };
 
 const getDefaultEnv = () => {
-  return {
-    host: window.location.host,
-    protocol: window.location.protocol,
-  };
+  try {
+    return {
+      host: window.location.host,
+      protocol: window.location.protocol,
+    };
+  } catch (e) {
+    return {
+      host: null,
+      protocol: null,
+    };
+  }
 };
 
 export const env: Env =

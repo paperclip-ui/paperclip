@@ -84,20 +84,25 @@ export const editorReducer = (
         newState.selectedVirtNodeIds = [];
       });
     case editorEvents.layerLeafClicked.type: {
-      const document = getCurrentDependency(state).document;
-
+      state = selectNode(event.payload.exprId, false, false, state);
+      return state;
+    }
+    case editorEvents.layerArrowClicked.type: {
       if (state.expandedLayerVirtIds.includes(event.payload.exprId)) {
         const flattened = ast.flattenUnknownInnerExpression(
-          ast.getExprById(event.payload.exprId, document)
+          ast.getExprById(event.payload.exprId, state.graph)
         );
         state = produce(state, (newState) => {
           newState.expandedLayerVirtIds = newState.expandedLayerVirtIds.filter(
-            (id) => flattened[id] == null
+            (id) => flattened[id] == null && !event.payload.exprId.includes(id)
           );
         });
       } else {
-        state = selectNode(event.payload.exprId, false, false, state);
+        state = produce(state, (newState) => {
+          newState.expandedLayerVirtIds.push(event.payload.exprId);
+        });
       }
+
       return state;
     }
     case editorEvents.deleteHokeyPressed.type:

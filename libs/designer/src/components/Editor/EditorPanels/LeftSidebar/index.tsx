@@ -226,7 +226,10 @@ const Leaf = ({
   controls?: any;
   instanceOf: string[];
 }) => {
-  const { selected, open, onClick } = useLeaf({ exprId: id });
+  const { selected, open, onClick, onArrowClick } = useLeaf({
+    exprId: id,
+    instanceOf,
+  });
   const shadow = instanceOf != null;
   return (
     <styles.TreeNavigationItem>
@@ -234,6 +237,7 @@ const Leaf = ({
         class={cx(className, { open, selected, shadow })}
         style={{ "--depth": depth }}
         onClick={onClick}
+        onArrowClick={onArrowClick}
         controls={controls}
       >
         {text}
@@ -253,16 +257,33 @@ const useLeftSidebar = () => {
   };
 };
 
-const useLeaf = ({ exprId }: { exprId: string }) => {
-  const open = useSelector(getExpandedVirtIds).includes(exprId);
-  const selected = useSelector(getSelectedNodeIds).includes(exprId);
+const useLeaf = ({
+  exprId,
+  instanceOf,
+}: {
+  exprId: string;
+  instanceOf: string[];
+}) => {
+  const virtId = [...(instanceOf || []), exprId].join(".");
+  const open = useSelector(getExpandedVirtIds).includes(virtId);
+  const selected = useSelector(getSelectedNodeIds).includes(virtId);
+
   const dispatch = useDispatch();
   const onClick = useCallback(() => {
-    dispatch(editorEvents.layerLeafClicked({ exprId }));
-  }, []);
+    dispatch(editorEvents.layerLeafClicked({ exprId: virtId }));
+  }, [virtId]);
+
+  const onArrowClick = useCallback(
+    (event: React.MouseEvent<any>) => {
+      event.stopPropagation();
+      dispatch(editorEvents.layerArrowClicked({ exprId: virtId }));
+    },
+    [virtId]
+  );
 
   return {
     onClick,
+    onArrowClick,
     open,
     selected,
   };

@@ -183,8 +183,10 @@ export namespace ast {
     return flattenUnknownInnerExpression(ancestor)[exprId] != null;
   };
 
-  export const getExprById = (id: string, document: Document) =>
-    flattenDocument(document)[id];
+  export const getExprById = (id: string, graph: Graph) => {
+    const exprId = id.split(".").pop();
+    return flattenDocument(getOwnerDependency(exprId, graph).document)[exprId];
+  };
 
   export const flattenUnknownInnerExpression = memoize(
     (expr: Document | Node): Record<string, InnerExpression> =>

@@ -15,6 +15,7 @@ export const getHistoryState = (): History => {
       query: Object.fromEntries(new URLSearchParams(location?.search)),
     };
   } catch (e) {
+    console.log(e);
     return {
       pathname: "/",
       query: {},
@@ -23,8 +24,5 @@ export const getHistoryState = (): History => {
 };
 
 export const INITIAL_HISTORY_STATE: HistoryEngineState = {
-  history: {
-    pathname: "/",
-    query: {},
-  },
+  history: getHistoryState(),
 };

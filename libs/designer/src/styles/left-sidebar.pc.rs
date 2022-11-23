@@ -183,6 +183,7 @@ pub struct TreeNavigationItemHeaderProps {
     pub children: Children,
     pub class: String,
     pub controls: Children,
+    pub onArrowClick: ,
     pub onClick: ,
     pub style: ,
 }
@@ -191,17 +192,17 @@ pub struct TreeNavigationItemHeaderProps {
 pub fn TreeNavigationItemHeader(props: &TreeNavigationItemHeaderProps) -> Html {
     html! {
         <div class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_TreeNavigationItemHeader-root-1e0c5ead-319", scope_class_name)
+            format!("{} {}", "_TreeNavigationItemHeader-root-1e0c5ead-321", scope_class_name)
         } else {
-            "_TreeNavigationItemHeader-root-1e0c5ead-319".to_string()
+            "_TreeNavigationItemHeader-root-1e0c5ead-321".to_string()
         })} onClick={props.onClick.clone()} style={props.style.clone()}>
-            <div class={"_TreeNavigationItemHeader-1e0c5ead-308"}>
-                <div class={"_TreeNavigationItemHeader-1e0c5ead-306"}></div>
+            <div class={"_TreeNavigationItemHeader-1e0c5ead-310"}>
+                <div class={"_TreeNavigationItemHeader-1e0c5ead-308"} onClick={props.onArrowClick.clone()}></div>
                 
                 { for props.children.iter() }
             </div>
             
-            <div class={"_TreeNavigationItemHeader-1e0c5ead-318"}>
+            <div class={"_TreeNavigationItemHeader-1e0c5ead-320"}>
                 { for props.controls.iter() }
             </div>
             
@@ -216,6 +217,7 @@ pub struct LayerNavigationItemHeaderProps {
     pub children: Children,
     pub class: String,
     pub controls: Children,
+    pub onArrowClick: ,
     pub onClick: ,
     pub style: ,
 }
@@ -224,12 +226,12 @@ pub struct LayerNavigationItemHeaderProps {
 pub fn LayerNavigationItemHeader(props: &LayerNavigationItemHeaderProps) -> Html {
     html! {
         <TreeNavigationItemHeader __scope_class_name={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_LayerNavigationItemHeader-container-1e0c5ead-424", scope_class_name)
+            format!("{} {}", "_LayerNavigationItemHeader-container-1e0c5ead-428", scope_class_name)
         } else {
-            "_LayerNavigationItemHeader-container-1e0c5ead-424".to_string()
+            "_LayerNavigationItemHeader-container-1e0c5ead-428".to_string()
         }} class={props.class.clone()} controls={
             { for props.controls.iter() }
-} onClick={props.onClick.clone()} style={props.style.clone()}>
+} onArrowClick={props.onArrowClick.clone()} onClick={props.onClick.clone()} style={props.style.clone()}>
             <LayerIcon class={props.class.clone()}></LayerIcon>
             
             { for props.children.iter() }
@@ -248,14 +250,14 @@ pub struct TooltipProps {
 pub fn Tooltip(props: &TooltipProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Tooltip-1e0c5ead-508", scope_class_name)
+            format!("{} {}", "_Tooltip-1e0c5ead-512", scope_class_name)
         } else {
-            "_Tooltip-1e0c5ead-508".to_string()
+            "_Tooltip-1e0c5ead-512".to_string()
         }}>
             { for props.children.iter() }
-            <div class={"_Tooltip-1e0c5ead-507"}>
-                <div class={"_Tooltip-1e0c5ead-506"}>
-                    <div class={"_Tooltip-1e0c5ead-504"}></div>
+            <div class={"_Tooltip-1e0c5ead-511"}>
+                <div class={"_Tooltip-1e0c5ead-510"}>
+                    <div class={"_Tooltip-1e0c5ead-508"}></div>
                     
                     
                 </div>
@@ -277,9 +279,9 @@ pub struct LayersProps {
 pub fn Layers(props: &LayersProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Layers-1e0c5ead-518", scope_class_name)
+            format!("{} {}", "_Layers-1e0c5ead-522", scope_class_name)
         } else {
-            "_Layers-1e0c5ead-518".to_string()
+            "_Layers-1e0c5ead-522".to_string()
         }}>
             { for props.children.iter() }
         </div>
@@ -295,9 +297,9 @@ struct TokensProps {
 fn Tokens(props: &TokensProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Tokens-1e0c5ead-560", scope_class_name)
+            format!("{} {}", "_Tokens-1e0c5ead-564", scope_class_name)
         } else {
-            "_Tokens-1e0c5ead-560".to_string()
+            "_Tokens-1e0c5ead-564".to_string()
         }}>
             <TreeNavigationItem>
                 <LayerNavigationItemHeader class={"composite-token open"}>
@@ -331,9 +333,9 @@ pub struct ShadowIconProps {
 pub fn ShadowIcon(props: &ShadowIconProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_ShadowIcon-1e0c5ead-572", scope_class_name)
+            format!("{} {}", "_ShadowIcon-1e0c5ead-576", scope_class_name)
         } else {
-            "_ShadowIcon-1e0c5ead-572".to_string()
+            "_ShadowIcon-1e0c5ead-576".to_string()
         }}></div>
     }
 }
@@ -354,7 +356,7 @@ pub fn LeftSidebarPreview(props: &LeftSidebarPreviewProps) -> Html {
             <common::SidebarSection>
                 <common::SidebarPanelHeader>
                     
-                    <div class={"_LeftSidebarPreview-1e0c5ead-584"}></div>
+                    <div class={"_LeftSidebarPreview-1e0c5ead-588"}></div>
                     
                 </common::SidebarPanelHeader>
                 
@@ -441,7 +443,7 @@ pub fn LeftSidebarPreview(props: &LeftSidebarPreviewProps) -> Html {
             <common::SidebarSection>
                 <common::SidebarPanelHeader>
                     
-                    <div class={"_LeftSidebarPreview-1e0c5ead-675"}></div>
+                    <div class={"_LeftSidebarPreview-1e0c5ead-679"}></div>
                     
                 </common::SidebarPanelHeader>
                 

@@ -16,6 +16,7 @@ export const editorEvents = eventCreators(
     canvasMouseMoved: identity<Point>(),
     canvasMouseLeave: null,
     layerLeafClicked: identity<{ exprId: string }>(),
+    layerArrowClicked: identity<{ exprId: string }>(),
     canvasMouseUp: null,
     computedStylesCaptured: identity<{
       computedStyles: Record<string, any>;

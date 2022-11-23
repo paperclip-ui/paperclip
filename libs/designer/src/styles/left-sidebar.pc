@@ -194,7 +194,7 @@ public component TreeNavigationItemHeader {
         gap: var(theme.space03)
         align-items: center
       }
-      div {
+      div(onClick: onArrowClick) {
         style extends theme.icon {
           -webkit-mask-image: url("./chevron2.svg")
           opacity: 0
@@ -236,7 +236,7 @@ public component LayerNavigationItemHeader {
   variant isAtomToken trigger { ".atom-token" }
   variant isTrigger trigger { ".trigger" }
   variant isText trigger { ".text" }
-  render TreeNavigationItemHeader container(class: class, style: style, onClick: onClick) {
+  render TreeNavigationItemHeader container(class: class, style: style, onClick: onClick, onArrowClick: onArrowClick) {
     override root {
       style {
         --depth: 1

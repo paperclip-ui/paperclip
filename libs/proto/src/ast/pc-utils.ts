@@ -101,7 +101,7 @@ export namespace ast {
       return flattenElement(expr.element);
     }
     if (expr.text) {
-      return flattenTextNode(expr.element);
+      return flattenTextNode(expr.text);
     }
     return {};
   };

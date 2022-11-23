@@ -124,7 +124,6 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
     fn handle_event(&self, state: &mut ServerState, event: &ServerEvent) {
         match event {
             ServerEvent::DependencyGraphLoaded { graph } => {
-                println!("Dependency graph updated");
                 state.graph =
                     std::mem::replace(&mut state.graph, Graph::new()).merge(graph.clone());
             }

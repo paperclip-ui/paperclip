@@ -8,8 +8,8 @@ import {
   startDesigner,
   stringifyDesignerFrames,
   waitForEvent,
+  waitUntilDesignerReady,
 } from "../controls";
-import { renderFrames } from "@paperclip-ui/web-renderer";
 import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
 
 describe(__filename + "#", () => {
@@ -20,11 +20,12 @@ describe(__filename + "#", () => {
       `,
     });
 
-    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    await waitUntilDesignerReady(designer);
 
     const frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual('<span id="_4f0e8e93-1">hello</span>');
+    designer.dispose();
   });
 
   it(`Can insert a new frame`, async () => {
@@ -40,7 +41,7 @@ describe(__filename + "#", () => {
       }
     );
 
-    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    await waitUntilDesignerReady(designer);
     await insertCanvasElement(designer);
 
     const frames = stringifyDesignerFrames(designer);
@@ -52,6 +53,7 @@ describe(__filename + "#", () => {
     expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
       "edcb8fb4-4",
     ]);
+    designer.dispose();
   });
 
   it(`Can delete a frame`, async () => {
@@ -72,7 +74,7 @@ describe(__filename + "#", () => {
       }
     );
 
-    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    await waitUntilDesignerReady(designer);
 
     let frames = stringifyDesignerFrames(designer);
 
@@ -86,6 +88,7 @@ describe(__filename + "#", () => {
     frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual('<div id="_4f0e8e93-2"></div>');
+    designer.dispose();
   });
 
   it(`Frames are automatically selected when inserted`, async () => {
@@ -96,7 +99,7 @@ describe(__filename + "#", () => {
       `,
     });
 
-    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    await waitUntilDesignerReady(designer);
     await insertCanvasElement(designer);
 
     let frames = stringifyDesignerFrames(designer);
@@ -117,6 +120,7 @@ describe(__filename + "#", () => {
     expect(frames).toEqual(
       '<span id="_4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div>'
     );
+    designer.dispose();
   });
 
   it(`Can delete an instance`, async () => {
@@ -137,7 +141,7 @@ describe(__filename + "#", () => {
       }
     );
 
-    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    await waitUntilDesignerReady(designer);
     let frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual(
@@ -158,6 +162,7 @@ describe(__filename + "#", () => {
     expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
       "4f0e8e93-6",
     ]);
+    designer.dispose();
   });
 
   it(`After an instance is deleted, another one is selected`, async () => {
@@ -173,7 +178,7 @@ describe(__filename + "#", () => {
       }
     );
 
-    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    await waitUntilDesignerReady(designer);
     let frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual(
@@ -198,6 +203,7 @@ describe(__filename + "#", () => {
     expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
       "4f0e8e93-2",
     ]);
+    designer.dispose();
   });
 
   it(`A node is added to an element when the mouse point releases from an existing element`, async () => {
@@ -220,7 +226,7 @@ describe(__filename + "#", () => {
       }
     );
 
-    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    await waitUntilDesignerReady(designer);
     insertCanvasElement(designer, { x: 10, y: 10 });
 
     await waitForEvent(designerEngineEvents.documentOpened.type, designer);
@@ -233,6 +239,7 @@ describe(__filename + "#", () => {
     expect(frames).toEqual(
       '<div id="_4f0e8e93-14"><div id="_d2d62a62-19" class="_d2d62a62-19"></div></div>'
     );
+    designer.dispose();
   });
 
   it(`When deleting a child with no siblings, the parent is selected`, async () => {
@@ -249,18 +256,12 @@ describe(__filename + "#", () => {
       }
     );
 
-    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
-    console.log(
-      JSON.stringify(
-        designer.machine.getState().currentDocument.paperclip.html,
-        null,
-        2
-      )
-    );
+    await waitUntilDesignerReady(designer);
     designer.machine.dispatch(editorEvents.deleteHokeyPressed());
     await waitForEvent(designerEngineEvents.documentOpened.type, designer);
     expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
       "4f0e8e93-2",
     ]);
+    designer.dispose();
   });
 });

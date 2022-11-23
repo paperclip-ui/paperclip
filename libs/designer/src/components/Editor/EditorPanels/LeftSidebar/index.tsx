@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from "react";
+import React, { memo, useCallback, useState } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/left-sidebar.pc";
 import * as commonStyles from "@paperclip-ui/designer/src/styles/common.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
@@ -77,7 +77,7 @@ const ComponentLeaf = memo(
     return (
       <Leaf
         id={component.id}
-        className="component container"
+        className={cx("component", { container: component.body.length > 0 })}
         text={component.name}
         depth={depth}
         instanceOf={instanceOf}
@@ -132,23 +132,47 @@ const InstanceLeaf = ({
   const graph = useSelector(getGraph);
   const component = ast.getInstanceComponent(element, graph);
   const render = ast.getComponentRenderNode(component);
+  const [shadowVisible, setShadowVisible] = useState(false);
+  const onShadowIconClick = () => setShadowVisible(!shadowVisible);
 
   return (
     <Leaf
       id={element.id}
-      className="instance container"
+      className={cx("instance", {
+        container: shadowVisible || element.body.length > 0,
+      })}
       text={<>{element.name || element.tagName}</>}
       depth={depth}
       instanceOf={instanceOf}
+      controls={
+        <>
+          <styles.Tooltip>
+            <styles.ShadowIcon
+              class={cx({ visible: shadowVisible })}
+              onClick={onShadowIconClick}
+            />
+          </styles.Tooltip>
+        </>
+      }
     >
       {() => {
         return (
           <>
-            <NodeLeaf
-              expr={render.node}
-              depth={depth + 1}
-              instanceOf={[element.id, ...(instanceOf || [])]}
-            />
+            {shadowVisible && (
+              <NodeLeaf
+                expr={render.node}
+                depth={depth + 1}
+                instanceOf={[element.id, ...(instanceOf || [])]}
+              />
+            )}
+            {element.body.map((child) => (
+              <NodeLeaf
+                key={ast.getNodeInner(child).id}
+                expr={child}
+                depth={depth + 1}
+                instanceOf={instanceOf}
+              />
+            ))}
           </>
         );
       }}
@@ -164,7 +188,7 @@ const NativeElementLeaf = ({
   return (
     <Leaf
       id={element.id}
-      className="element container"
+      className={cx("element", { container: element.body.length > 0 })}
       text={<>{element.name || element.tagName}</>}
       depth={depth}
       instanceOf={instanceOf}
@@ -201,7 +225,7 @@ const SlotLeaf = memo(({ expr: slot, depth, instanceOf }: LeafProps<Slot>) => {
   return (
     <Leaf
       id={slot.id}
-      className="slot container"
+      className={cx("slot", { container: slot.body.length > 0 })}
       text={slot.name}
       depth={depth}
       instanceOf={instanceOf}
@@ -270,13 +294,13 @@ const useLeaf = ({
 
   const dispatch = useDispatch();
   const onClick = useCallback(() => {
-    dispatch(editorEvents.layerLeafClicked({ exprId: virtId }));
+    dispatch(editorEvents.layerLeafClicked({ virtId }));
   }, [virtId]);
 
   const onArrowClick = useCallback(
     (event: React.MouseEvent<any>) => {
       event.stopPropagation();
-      dispatch(editorEvents.layerArrowClicked({ exprId: virtId }));
+      dispatch(editorEvents.layerArrowClicked({ virtId }));
     },
     [virtId]
   );

@@ -15,7 +15,7 @@ describe(__filename + "#", () => {
     await waitUntilDesignerReady(designer);
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([]);
     designer.machine.dispatch(
-      editorEvents.layerLeafClicked({ exprId: "4f0e8e93-1" })
+      editorEvents.layerLeafClicked({ virtId: "4f0e8e93-1" })
     );
     expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
       "4f0e8e93-1",
@@ -44,7 +44,7 @@ describe(__filename + "#", () => {
     await waitUntilDesignerReady(designer);
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([]);
     designer.machine.dispatch(
-      editorEvents.layerLeafClicked({ exprId: "4f0e8e93-2" })
+      editorEvents.layerLeafClicked({ virtId: "4f0e8e93-2" })
     );
     expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
       "4f0e8e93-2",
@@ -77,7 +77,7 @@ describe(__filename + "#", () => {
     });
     await waitUntilDesignerReady(designer);
     designer.machine.dispatch(
-      editorEvents.layerLeafClicked({ exprId: "4f0e8e93-2" })
+      editorEvents.layerLeafClicked({ virtId: "4f0e8e93-2" })
     );
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([
       "4f0e8e93-2",
@@ -87,7 +87,7 @@ describe(__filename + "#", () => {
       "4f0e8e93-6",
     ]);
     designer.machine.dispatch(
-      editorEvents.layerLeafClicked({ exprId: "4f0e8e93-6" })
+      editorEvents.layerLeafClicked({ virtId: "4f0e8e93-6" })
     );
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([]);
 
@@ -110,7 +110,7 @@ describe(__filename + "#", () => {
     });
     await waitUntilDesignerReady(designer);
     designer.machine.dispatch(
-      editorEvents.layerLeafClicked({ exprId: "4f0e8e93-5.4f0e8e93-1" })
+      editorEvents.layerLeafClicked({ virtId: "4f0e8e93-5.4f0e8e93-1" })
     );
     console.log(
       JSON.stringify(
@@ -127,7 +127,7 @@ describe(__filename + "#", () => {
       "4f0e8e93-6",
     ]);
     designer.machine.dispatch(
-      editorEvents.layerLeafClicked({ exprId: "4f0e8e93-6" })
+      editorEvents.layerLeafClicked({ virtId: "4f0e8e93-6" })
     );
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([]);
 

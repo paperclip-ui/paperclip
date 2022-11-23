@@ -23,7 +23,6 @@ public component Tab {
     }
     style variant selected {
       border-color: var(theme.backgroundSelected)
-
     }
     slot children
   }
@@ -174,6 +173,7 @@ public component TreeNavigationItemHeader {
   variant isOpen trigger { ".open" }
   variant isHovering trigger { ":hover" }
   variant isSelected trigger { ".selected" }
+  variant isShadow trigger { ".shadow" }
   render div root(class:class, style: style, onClick: onClick) {
     style {
       --depth: 1
@@ -182,10 +182,12 @@ public component TreeNavigationItemHeader {
       padding: var(theme.space03) var(theme.space05)
       padding-left: calc(22px * var(--depth))
       justify-content: space-between
-
+    }
+    style variant isShadow {
+      background: rgb(31, 31, 31)
     }
     style variant isSelected {
-      background: var(theme.backgroundSelectedLight)
+      background: rgb(46, 46, 46)
     }
     div {
       style {
@@ -216,10 +218,11 @@ public component TreeNavigationItemHeader {
     }
     div {
       style extends theme.easeIn {
-        opacity: 0
+        opacity: 1
+        --controlOpacity: 0
       }
       style variant isHovering {
-        opacity: 1
+        --controlOpacity: 0.5
       }
       slot controls
     }
@@ -294,6 +297,7 @@ public component Tooltip {
     slot children
     div {
       style extends theme.easeIn {
+        pointer-events: none
         opacity: 0
         position: absolute
         left: 50%
@@ -382,11 +386,17 @@ component Tokens {
 }
 
 public component ShadowIcon {
-  render div {
+  variant active trigger { 
+    ".visible"
+  }
+  render div(onClick: onClick, class: class) {
     style extends theme.icon {
       cursor: pointer
-      opacity: 0.5
+      opacity: var(--controlOpacity)
       -webkit-mask-image: url("./shadow2.svg")
+    }
+    style variant active {
+      opacity: 0.5
     }
   }
 }
@@ -414,7 +424,7 @@ public component LeftSidebarPreview {
               text "Some instance"
               insert controls {
                 Tooltip(title: "display shadow") {
-                  ShadowIcon
+                  ShadowIcon(class: "visible")
                 }
               }
             }

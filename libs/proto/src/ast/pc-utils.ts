@@ -83,6 +83,22 @@ export namespace ast {
     return ancestorIds;
   });
 
+  export const getAncestorVirtIdsFromShadow = memoize(
+    (id: string, graph: Graph) => {
+      const instanceIds = id.split(".");
+      const ancestorIds = [];
+
+      for (let i = instanceIds.length; i--; ) {
+        const instanceAncestorIds = getAncestorIds(instanceIds[i], graph);
+        for (const id of instanceAncestorIds) {
+          ancestorIds.push([]);
+        }
+      }
+    }
+  );
+
+  export const getShadowExprId = (id: string) => id.split(".").pop();
+
   export const getChildParentMap = memoize(
     (exprs: Record<string, InnerExpression>) => {
       const map: Record<string, string> = {};

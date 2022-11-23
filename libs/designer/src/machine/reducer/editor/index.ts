@@ -1,12 +1,11 @@
 import { designerEngineEvents } from "../../engine/designer/events";
 import { EditorEvent, editorEvents } from "../../events";
-import jasonpatch, { JsonPatchError } from "fast-json-patch";
+import jasonpatch from "fast-json-patch";
 import {
   Canvas,
   EditorState,
   flattenFrameBoxes,
   getCurrentDependency,
-  getCurrentDocument,
   getNodeInfoAtPoint,
   InsertMode,
   IS_WINDOWS,
@@ -84,22 +83,22 @@ export const editorReducer = (
         newState.selectedVirtNodeIds = [];
       });
     case editorEvents.layerLeafClicked.type: {
-      state = selectNode(event.payload.exprId, false, false, state);
+      state = selectNode(event.payload.virtId, false, false, state);
       return state;
     }
     case editorEvents.layerArrowClicked.type: {
-      if (state.expandedLayerVirtIds.includes(event.payload.exprId)) {
+      if (state.expandedLayerVirtIds.includes(event.payload.virtId)) {
         const flattened = ast.flattenUnknownInnerExpression(
-          ast.getExprById(event.payload.exprId, state.graph)
+          ast.getExprById(event.payload.virtId, state.graph)
         );
         state = produce(state, (newState) => {
           newState.expandedLayerVirtIds = newState.expandedLayerVirtIds.filter(
-            (id) => flattened[id] == null && !event.payload.exprId.includes(id)
+            (id) => flattened[id] == null && !event.payload.virtId.includes(id)
           );
         });
       } else {
         state = produce(state, (newState) => {
-          newState.expandedLayerVirtIds.push(event.payload.exprId);
+          newState.expandedLayerVirtIds.push(event.payload.virtId);
         });
       }
 

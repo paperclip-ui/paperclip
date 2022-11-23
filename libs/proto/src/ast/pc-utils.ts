@@ -64,27 +64,20 @@ export namespace ast {
   export const getAncestorIds = memoize((id: string, graph: Graph) => {
     const ancestorIds: string[] = [];
 
-    const instanceOfIdParts = id.split(".");
+    const dep = getOwnerDependency(id, graph);
+    const exprsById = flattenDocument(dep.document);
+    const childParentMap = getChildParentMap(exprsById);
 
-    for (let i = instanceOfIdParts.length; i--; ) {
-      const id = instanceOfIdParts[i];
-      const dep = getOwnerDependency(id, graph);
-      const exprsById = flattenDocument(dep.document);
-      const childParentMap = getChildParentMap(exprsById);
+    let curr = exprsById[id];
 
-      let curr = exprsById[id];
+    while (curr) {
+      const nextId = childParentMap[curr.id];
+      const next = exprsById[nextId];
 
-      while (curr) {
-        const nextId = childParentMap[curr.id];
-        const next = exprsById[nextId];
-
-        if (next) {
-          ancestorIds.push(
-            [...instanceOfIdParts.slice(0, i), next.id].join(".")
-          );
-        }
-        curr = next;
+      if (next) {
+        ancestorIds.push(next.id);
       }
+      curr = next;
     }
 
     return ancestorIds;
@@ -184,8 +177,7 @@ export namespace ast {
   };
 
   export const getExprById = (id: string, graph: Graph) => {
-    const exprId = id.split(".").pop();
-    return flattenDocument(getOwnerDependency(exprId, graph).document)[exprId];
+    return flattenDocument(getOwnerDependency(id, graph).document)[id];
   };
 
   export const flattenUnknownInnerExpression = memoize(

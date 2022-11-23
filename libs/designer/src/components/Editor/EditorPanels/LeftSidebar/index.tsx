@@ -6,6 +6,7 @@ import { getHistoryState } from "@paperclip-ui/designer/src/machine/engine/histo
 import {
   getCurrentDependency,
   getExpandedLayerIds,
+  getGraph,
   getSelectedNodeIds,
 } from "@paperclip-ui/designer/src/machine/state";
 import {
@@ -51,6 +52,7 @@ export const LeftSidebar = () => {
 type LeafProps<Expr> = {
   expr: Expr;
   depth: number;
+  instanceOf?: string[];
 };
 
 const DocumentBodyItemLeaf = memo(
@@ -70,14 +72,15 @@ const DocumentBodyItemLeaf = memo(
 );
 
 const ComponentLeaf = memo(
-  ({ expr: component, depth }: LeafProps<Component>) => {
-    const render = component.body.find((item) => item.render)?.render;
+  ({ expr: component, depth, instanceOf }: LeafProps<Component>) => {
+    const render = ast.getComponentRenderNode(component);
     return (
       <Leaf
         id={component.id}
         className="component container"
         text={component.name}
         depth={depth}
+        instanceOf={instanceOf}
       >
         {() => render && <NodeLeaf expr={render.node} depth={depth + 1} />}
       </Leaf>
@@ -85,26 +88,86 @@ const ComponentLeaf = memo(
   }
 );
 
-const NodeLeaf = memo(({ expr: node, depth }: LeafProps<Node>) => {
+const NodeLeaf = memo(({ expr: node, depth, instanceOf }: LeafProps<Node>) => {
   if (node.element) {
-    return <ElementLeaf expr={node.element} depth={depth} />;
+    return (
+      <ElementLeaf expr={node.element} depth={depth} instanceOf={instanceOf} />
+    );
   }
   if (node.text) {
-    return <TextLeaf expr={node.text} depth={depth} />;
+    return <TextLeaf expr={node.text} depth={depth} instanceOf={instanceOf} />;
   }
   if (node.slot) {
-    return <SlotLeaf expr={node.slot} depth={depth} />;
+    return <SlotLeaf expr={node.slot} depth={depth} instanceOf={instanceOf} />;
   }
   return null;
 });
 
-const ElementLeaf = memo(({ expr: element, depth }: LeafProps<Element>) => {
+const ElementLeaf = memo(
+  ({ expr: element, depth, instanceOf }: LeafProps<Element>) => {
+    const graph = useSelector(getGraph);
+    const isInstance = ast.isInstance(element, graph);
+
+    if (isInstance) {
+      return (
+        <InstanceLeaf expr={element} depth={depth} instanceOf={instanceOf} />
+      );
+    } else {
+      return (
+        <NativeElementLeaf
+          expr={element}
+          depth={depth}
+          instanceOf={instanceOf}
+        />
+      );
+    }
+  }
+);
+
+const InstanceLeaf = ({
+  expr: element,
+  depth,
+  instanceOf,
+}: LeafProps<Element>) => {
+  const graph = useSelector(getGraph);
+  const component = ast.getInstanceComponent(element, graph);
+  const render = ast.getComponentRenderNode(component);
+
+  return (
+    <Leaf
+      id={element.id}
+      className="instance container"
+      text={<>{element.name || element.tagName}</>}
+      depth={depth}
+      instanceOf={instanceOf}
+    >
+      {() => {
+        return (
+          <>
+            <NodeLeaf
+              expr={render.node}
+              depth={depth + 1}
+              instanceOf={[element.id, ...(instanceOf || [])]}
+            />
+          </>
+        );
+      }}
+    </Leaf>
+  );
+};
+
+const NativeElementLeaf = ({
+  expr: element,
+  depth,
+  instanceOf,
+}: LeafProps<Element>) => {
   return (
     <Leaf
       id={element.id}
       className="element container"
       text={<>{element.name || element.tagName}</>}
       depth={depth}
+      instanceOf={instanceOf}
     >
       {() =>
         element.body.map((child) => (
@@ -112,24 +175,36 @@ const ElementLeaf = memo(({ expr: element, depth }: LeafProps<Element>) => {
             key={ast.getNodeInner(child).id}
             expr={child}
             depth={depth + 1}
+            instanceOf={instanceOf}
           />
         ))
       }
     </Leaf>
   );
-});
+};
 
-const TextLeaf = memo(({ expr: text, depth }: LeafProps<TextNode>) => {
-  return <Leaf id={text.id} className="text" text={text.value} depth={depth} />;
-});
+const TextLeaf = memo(
+  ({ expr: text, depth, instanceOf }: LeafProps<TextNode>) => {
+    return (
+      <Leaf
+        id={text.id}
+        className="text"
+        text={text.value}
+        depth={depth}
+        instanceOf={instanceOf}
+      />
+    );
+  }
+);
 
-const SlotLeaf = memo(({ expr: slot, depth }: LeafProps<Slot>) => {
+const SlotLeaf = memo(({ expr: slot, depth, instanceOf }: LeafProps<Slot>) => {
   return (
     <Leaf
       id={slot.id}
       className="slot container"
       text={slot.name}
       depth={depth}
+      instanceOf={instanceOf}
     />
   );
 });
@@ -141,6 +216,7 @@ const Leaf = ({
   depth,
   text,
   controls,
+  instanceOf,
 }: {
   children?: () => any;
   className: string;
@@ -148,12 +224,14 @@ const Leaf = ({
   depth: number;
   text: any;
   controls?: any;
+  instanceOf: string[];
 }) => {
   const { selected, open, onClick } = useLeaf({ exprId: id });
+  const shadow = instanceOf != null;
   return (
     <styles.TreeNavigationItem>
       <styles.LayerNavigationItemHeader
-        class={cx(className, { open, selected })}
+        class={cx(className, { open, selected, shadow })}
         style={{ "--depth": depth }}
         onClick={onClick}
         controls={controls}

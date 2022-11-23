@@ -86,6 +86,7 @@ public component LeftSidebarHeader {
 
 component LayerIcon {
   variant isComponent trigger { ".component" }
+  variant isInstance trigger { ".instance" }
   variant isElement trigger { ".element" }
   variant isCompositeToken trigger { ".composite-token" }
   variant isAtomToken trigger { ".atom-token" }
@@ -110,6 +111,11 @@ component LayerIcon {
       style variant isComponent {
         --size: 1.1em
         -webkit-mask-image: url("./component2.svg")
+      }
+      style variant isInstance {
+        --size: 0.9em
+        -webkit-mask-image: url("./box-outline.svg")
+        transform: translate(-50%, -50%) rotate(45deg)
       }
       style variant isSlot {
         --size: 1em
@@ -223,6 +229,7 @@ public component TreeNavigationItemHeader {
 public component LayerNavigationItemHeader {
   variant isSlot trigger { ".slot" }
   variant isComponent trigger { ".component" }
+  variant isInstance trigger { ".instance" }
   variant isElement trigger { ".element" }
   variant isCompositeToken trigger { ".composite-token" }
   variant isShadow trigger { ".shadow" }
@@ -233,11 +240,14 @@ public component LayerNavigationItemHeader {
     override root {
       style {
         --depth: 1
-        --regular-layer: var(theme.blue01)
+        --regular-layer: rgb(96, 149, 255)
 
       }
       style variant isComponent {
         --icon-color: var(theme.componentColor)
+      }
+      style variant isInstance {
+        --icon-color: rgb(219, 161, 255)
       }
       style variant isElement {
         --icon-color:  var(--regular-layer)
@@ -400,8 +410,16 @@ public component LeftSidebarPreview {
         }
         Layers {
           TreeNavigationItem {
-            LayerNavigationItemHeader(class: "component container open") {  
+            LayerNavigationItemHeader(class: "instance container open") {  
               text "Some instance"
+              insert controls {
+                Tooltip(title: "display shadow") {
+                  ShadowIcon
+                }
+              }
+            }
+            LayerNavigationItemHeader(class: "component container open") {  
+              text "Some component"
               insert controls {
                 Tooltip(title: "display shadow") {
                   ShadowIcon

@@ -340,3 +340,5 @@ export const getCurrentDependency = (state: EditorState) => {
 
 export const getExpandedLayerIds = (state: EditorState) =>
   state.expandedLayerExprIds;
+
+export const getGraph = (state: EditorState) => state.graph;

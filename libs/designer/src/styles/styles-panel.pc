@@ -65,7 +65,7 @@ component ColorPickerPopup {
   }
 }
 
-public component StylesPanel {
+public component Preview {
   render common.SidebarPanel {
       common.SidebarSection {
         common.SidebarPanelContent {

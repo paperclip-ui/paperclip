@@ -1,6 +1,16 @@
 #### On-deck
 
-- ## style panel
+- style panel
+
+  - display all styles
+  - ability to enter raw values
+  - wire variants
+  - wire mixins
+  - inputs
+    - color picker
+
+- triggers
+  -
 
 #### MVP
 

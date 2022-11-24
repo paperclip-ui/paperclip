@@ -20,19 +20,35 @@ mod stylesPanel;
 #[derive(Properties, PartialEq)]
 pub struct RightSidebarProps {
     pub __scope_class_name: Option<String>,
+    #[prop_or_default]
+    pub children: Children,
 }
 
 #[function_component]
 pub fn RightSidebar(props: &RightSidebarProps) -> Html {
     html! {
         <common::Sidebar>
-            <stylesPanel::StylesPanel></stylesPanel::StylesPanel>
+            { for props.children.iter() }
+        </common::Sidebar>
+    }
+}
+
+#[derive(Properties, PartialEq)]
+pub struct PreviewProps {
+    pub __scope_class_name: Option<String>,
+}
+
+#[function_component]
+pub fn Preview(props: &PreviewProps) -> Html {
+    html! {
+        <RightSidebar>
+            <stylesPanel::Preview></stylesPanel::Preview>
             
             <common::SidebarPanel>
                 <common::SidebarSection>
                     <common::SidebarPanelHeader>
                         
-                        <div class={"_RightSidebar-fa34a0f5-12"}></div>
+                        <div class={"_Preview-fa34a0f5-16"}></div>
                         
                     </common::SidebarPanelHeader>
                     
@@ -85,7 +101,7 @@ pub fn RightSidebar(props: &RightSidebarProps) -> Html {
                 
             </common::SidebarPanel>
             
-        </common::Sidebar>
+        </RightSidebar>
     }
 }
 

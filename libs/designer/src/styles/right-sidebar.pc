@@ -8,7 +8,13 @@ import "./styles-panel.pc" as stylesPanel
 
 public component RightSidebar {
     render common.Sidebar {
-        stylesPanel.StylesPanel
+        slot children
+    }
+}
+
+public component Preview {
+    render RightSidebar {
+        stylesPanel.Preview
         common.SidebarPanel {
             common.SidebarSection {
                 common.SidebarPanelHeader {
@@ -65,10 +71,3 @@ public component RightSidebar {
         }
     }
 }
-
-/**
- * @bounds(x: -350, y: 59, width: 298, height: 836)
-*/
-
-RightSidebar
-

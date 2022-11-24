@@ -75,12 +75,12 @@ fn ColorPickerPopup(props: &ColorPickerPopupProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-pub struct StylesPanelProps {
+pub struct PreviewProps {
     pub __scope_class_name: Option<String>,
 }
 
 #[function_component]
-pub fn StylesPanel(props: &StylesPanelProps) -> Html {
+pub fn Preview(props: &PreviewProps) -> Html {
     html! {
         <common::SidebarPanel>
             <common::SidebarSection>
@@ -108,7 +108,7 @@ pub fn StylesPanel(props: &StylesPanelProps) -> Html {
             <common::SidebarSection>
                 <common::SidebarPanelHeader>
                     
-                    <div class={"_StylesPanel-bdf7c0fc-104"}></div>
+                    <div class={"_Preview-bdf7c0fc-104"}></div>
                     
                 </common::SidebarPanelHeader>
                 
@@ -221,7 +221,7 @@ pub fn StylesPanel(props: &StylesPanelProps) -> Html {
             <common::SidebarSection>
                 <common::SidebarPanelHeader>
                     
-                    <div class={"_StylesPanel-bdf7c0fc-198"}></div>
+                    <div class={"_Preview-bdf7c0fc-198"}></div>
                     
                 </common::SidebarPanelHeader>
                 
@@ -322,8 +322,8 @@ pub fn StylesPanel(props: &StylesPanelProps) -> Html {
                             </input::Select>
                             
 } name={
-                            <div class={"_StylesPanel-bdf7c0fc-301"}>
-                                <div class={"_StylesPanel-bdf7c0fc-299"}></div>
+                            <div class={"_Preview-bdf7c0fc-301"}>
+                                <div class={"_Preview-bdf7c0fc-299"}></div>
                                 
                                 
                             </div>
@@ -350,11 +350,11 @@ pub fn StylesPanel(props: &StylesPanelProps) -> Html {
                 
             </common::SidebarSection>
             
-            <div class={"_StylesPanel-bdf7c0fc-355"}>
+            <div class={"_Preview-bdf7c0fc-355"}>
                 <common::SidebarSection>
                     <common::SidebarPanelHeader>
                         
-                        <div class={"_StylesPanel-bdf7c0fc-329"}></div>
+                        <div class={"_Preview-bdf7c0fc-329"}></div>
                         
                     </common::SidebarPanelHeader>
                     

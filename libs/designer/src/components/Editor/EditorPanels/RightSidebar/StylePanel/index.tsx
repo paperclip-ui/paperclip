@@ -2,6 +2,8 @@ import React from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/styles-panel.pc";
 import * as commonStyles from "@paperclip-ui/designer/src/styles/common.pc";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
+import { useSelector } from "@paperclip-ui/common";
+import { getSelectedNodeIds } from "@paperclip-ui/designer/src/machine/state";
 
 export const StylePanel = () => {
   return (
@@ -34,4 +36,8 @@ export const StylePanel = () => {
       </commonStyles.SidebarSection>
     </commonStyles.SidebarPanel>
   );
+};
+
+const useStylePanel = () => {
+  const selectedVirtIds = useSelector(getSelectedNodeIds);
 };

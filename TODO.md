@@ -1,9 +1,12 @@
 #### On-deck
 
-- style panel
-  -
+- ## style panel
 
 #### MVP
+
+- Litmus:
+
+  - can the entire AST be edited visually? What's the shortest path to get here?
 
 - ability to edit projects online
 

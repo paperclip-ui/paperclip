@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/left-sidebar.pc";
 import * as commonStyles from "@paperclip-ui/designer/src/styles/common.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
@@ -13,6 +13,7 @@ import {
   Component,
   DocumentBodyItem,
   Element,
+  Insert,
   Node,
   Slot,
   TextNode,
@@ -100,6 +101,12 @@ const NodeLeaf = memo(({ expr: node, depth, instanceOf }: LeafProps<Node>) => {
   if (node.slot) {
     return <SlotLeaf expr={node.slot} depth={depth} instanceOf={instanceOf} />;
   }
+  if (node.insert) {
+    return (
+      <InsertLeaf expr={node.insert} depth={depth} instanceOf={instanceOf} />
+    );
+  }
+  console.log("NONE", node);
   return null;
 });
 
@@ -134,6 +141,16 @@ const InstanceLeaf = ({
   const render = ast.getComponentRenderNode(component);
   const [shadowVisible, setShadowVisible] = useState(false);
   const onShadowIconClick = () => setShadowVisible(!shadowVisible);
+  const expandedVirtIds = useSelector(getExpandedVirtIds);
+  const shouldExpandShadow = expandedVirtIds.some((virtId) =>
+    virtId.includes(element.id)
+  );
+
+  useEffect(() => {
+    if (shouldExpandShadow) {
+      setShadowVisible(shouldExpandShadow);
+    }
+  }, [shouldExpandShadow]);
 
   return (
     <Leaf
@@ -162,7 +179,7 @@ const InstanceLeaf = ({
               <NodeLeaf
                 expr={render.node}
                 depth={depth + 1}
-                instanceOf={[element.id, ...(instanceOf || [])]}
+                instanceOf={[...(instanceOf || []), element.id]}
               />
             )}
             {element.body.map((child) => (
@@ -232,6 +249,32 @@ const SlotLeaf = memo(({ expr: slot, depth, instanceOf }: LeafProps<Slot>) => {
     />
   );
 });
+
+const InsertLeaf = memo(
+  ({ expr: insert, depth, instanceOf }: LeafProps<Insert>) => {
+    return (
+      <Leaf
+        id={insert.id}
+        className={cx("slot", { container: insert.body.length > 0 })}
+        text={insert.name}
+        depth={depth}
+        instanceOf={instanceOf}
+      >
+        {() => (
+          <>
+            {insert.body.map((child) => (
+              <NodeLeaf
+                expr={child}
+                depth={depth + 1}
+                instanceOf={instanceOf}
+              />
+            ))}
+          </>
+        )}
+      </Leaf>
+    );
+  }
+);
 
 const Leaf = ({
   children,

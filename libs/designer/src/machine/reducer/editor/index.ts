@@ -474,8 +474,13 @@ const selectNode = (
       // allow toggle selecting elements - necessary since escape key doesn't work.
       newDesigner.selectedVirtNodeIds.push(virtNodeId);
     } else {
-      const ancestorIds = ast.getAncestorIds(virtNodeId, designer.graph);
+      const ancestorIds = ast.getAncestorVirtIdsFromShadow(
+        virtNodeId,
+        designer.graph
+      );
       newDesigner.expandedLayerVirtIds.push(virtNodeId, ...ancestorIds);
+
+      const expr = ast.getExprById(virtNodeId.split(".").pop(), designer.graph);
 
       newDesigner.selectedVirtNodeIds = [virtNodeId];
     }

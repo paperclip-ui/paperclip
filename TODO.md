@@ -1,7 +1,5 @@
 #### On-deck
 
-- expand / collapse shadows
-- select virt canvas elements
 - horizontal scroll
 - when hovering over layers, highlight canvas item
 - render slots
@@ -10,7 +8,7 @@
 - ability to rename layers
 
 - ability to define components
-- ability to insert instances
+- ability to insert instancesx
 
   - ## layers
 

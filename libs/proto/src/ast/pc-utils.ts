@@ -89,11 +89,19 @@ export namespace ast {
       const ancestorIds = [];
 
       for (let i = instanceIds.length; i--; ) {
-        const instanceAncestorIds = getAncestorIds(instanceIds[i], graph);
-        for (const id of instanceAncestorIds) {
-          ancestorIds.push([]);
+        const targetId = instanceIds[i];
+        const targetAncestorIds = [...getAncestorIds(targetId, graph)];
+
+        if (i !== instanceIds.length - 1) {
+          targetAncestorIds.unshift(targetId);
+        }
+
+        for (const id of targetAncestorIds) {
+          ancestorIds.push([...instanceIds.slice(0, i), id].join("."));
         }
       }
+
+      return ancestorIds;
     }
   );
 
@@ -117,6 +125,13 @@ export namespace ast {
 
   export const isInstance = (element: Element, graph: Graph) => {
     return getInstanceComponent(element, graph) != null;
+  };
+
+  export const isComponent = (expr: InnerExpression): expr is Component => {
+    return (
+      (expr as Component).name != null &&
+      (expr as Component).body?.some((expr) => expr.render != null)
+    );
   };
 
   export const getInstanceComponent = (element: Element, graph: Graph) => {

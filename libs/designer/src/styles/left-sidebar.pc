@@ -244,7 +244,7 @@ public component LayerNavigationItemHeader {
       style {
         --depth: 1
         --regular-layer: rgb(96, 149, 255)
-
+        white-space: nowrap
       }
       style variant isComponent {
         --icon-color: var(theme.componentColor)
@@ -337,6 +337,8 @@ public component Layers {
   render div {
     style {
       padding: var(theme.space03) 0px
+      overflow: hidden
+      
     }
     slot children
   }
@@ -469,13 +471,25 @@ public component LeftSidebarPreview {
                     LayerNavigationItemHeader(class: "element") {
                       override container.root {
                         style {
-                          --depth: 3
+                          --depth: 4
                         }
                       }
                       text "some element"
                       TagType {
                         text "div"
                       }
+                    }
+                  }
+                }
+                TreeNavigationItemContent {
+                  TreeNavigationItem {
+                    LayerNavigationItemHeader(class: "text") {
+                      override container.root {
+                        style {
+                          --depth: 12
+                        }
+                      }
+                      text "some label"
                     }
                   }
                 }

@@ -1,14 +1,10 @@
 #### On-deck
 
-- horizontal scroll
-- when hovering over layers, highlight canvas item
-- render slots
-- ability to insert slots
-- render inserted elements
-- ability to rename layers
-
-- ability to define components
-- ability to insert instancesx
+- toolbar
+  - ability to insert text
+  - highlight tools
+  - wire up zoom
+- style panel
 
   - ## layers
 

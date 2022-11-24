@@ -226,9 +226,9 @@ pub struct LayerNavigationItemHeaderProps {
 pub fn LayerNavigationItemHeader(props: &LayerNavigationItemHeaderProps) -> Html {
     html! {
         <TreeNavigationItemHeader __scope_class_name={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_LayerNavigationItemHeader-container-1e0c5ead-443", scope_class_name)
+            format!("{} {}", "_LayerNavigationItemHeader-container-1e0c5ead-445", scope_class_name)
         } else {
-            "_LayerNavigationItemHeader-container-1e0c5ead-443".to_string()
+            "_LayerNavigationItemHeader-container-1e0c5ead-445".to_string()
         }} class={props.class.clone()} controls={
             { for props.controls.iter() }
 } onArrowClick={props.onArrowClick.clone()} onClick={props.onClick.clone()} style={props.style.clone()}>
@@ -250,14 +250,14 @@ pub struct TooltipProps {
 pub fn Tooltip(props: &TooltipProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Tooltip-1e0c5ead-529", scope_class_name)
+            format!("{} {}", "_Tooltip-1e0c5ead-531", scope_class_name)
         } else {
-            "_Tooltip-1e0c5ead-529".to_string()
+            "_Tooltip-1e0c5ead-531".to_string()
         }}>
             { for props.children.iter() }
-            <div class={"_Tooltip-1e0c5ead-528"}>
-                <div class={"_Tooltip-1e0c5ead-527"}>
-                    <div class={"_Tooltip-1e0c5ead-525"}></div>
+            <div class={"_Tooltip-1e0c5ead-530"}>
+                <div class={"_Tooltip-1e0c5ead-529"}>
+                    <div class={"_Tooltip-1e0c5ead-527"}></div>
                     
                     
                 </div>
@@ -279,9 +279,9 @@ pub struct LayersProps {
 pub fn Layers(props: &LayersProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Layers-1e0c5ead-539", scope_class_name)
+            format!("{} {}", "_Layers-1e0c5ead-543", scope_class_name)
         } else {
-            "_Layers-1e0c5ead-539".to_string()
+            "_Layers-1e0c5ead-543".to_string()
         }}>
             { for props.children.iter() }
         </div>
@@ -297,9 +297,9 @@ struct TokensProps {
 fn Tokens(props: &TokensProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Tokens-1e0c5ead-581", scope_class_name)
+            format!("{} {}", "_Tokens-1e0c5ead-585", scope_class_name)
         } else {
-            "_Tokens-1e0c5ead-581".to_string()
+            "_Tokens-1e0c5ead-585".to_string()
         }}>
             <TreeNavigationItem>
                 <LayerNavigationItemHeader class={"composite-token open"}>
@@ -335,9 +335,9 @@ pub struct ShadowIconProps {
 pub fn ShadowIcon(props: &ShadowIconProps) -> Html {
     html! {
         <div class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_ShadowIcon-1e0c5ead-604", scope_class_name)
+            format!("{} {}", "_ShadowIcon-1e0c5ead-608", scope_class_name)
         } else {
-            "_ShadowIcon-1e0c5ead-604".to_string()
+            "_ShadowIcon-1e0c5ead-608".to_string()
         })} onClick={props.onClick.clone()}></div>
     }
 }
@@ -358,7 +358,7 @@ pub fn LeftSidebarPreview(props: &LeftSidebarPreviewProps) -> Html {
             <common::SidebarSection>
                 <common::SidebarPanelHeader>
                     
-                    <div class={"_LeftSidebarPreview-1e0c5ead-616"}></div>
+                    <div class={"_LeftSidebarPreview-1e0c5ead-620"}></div>
                     
                 </common::SidebarPanelHeader>
                 
@@ -415,6 +415,16 @@ pub fn LeftSidebarPreview(props: &LeftSidebarPreviewProps) -> Html {
                                     
                                 </TreeNavigationItemContent>
                                 
+                                <TreeNavigationItemContent>
+                                    <TreeNavigationItem>
+                                        <LayerNavigationItemHeader class={"text"}>
+                                            
+                                        </LayerNavigationItemHeader>
+                                        
+                                    </TreeNavigationItem>
+                                    
+                                </TreeNavigationItemContent>
+                                
                             </TreeNavigationItem>
                             
                             <TreeNavigationItem>
@@ -445,7 +455,7 @@ pub fn LeftSidebarPreview(props: &LeftSidebarPreviewProps) -> Html {
             <common::SidebarSection>
                 <common::SidebarPanelHeader>
                     
-                    <div class={"_LeftSidebarPreview-1e0c5ead-709"}></div>
+                    <div class={"_LeftSidebarPreview-1e0c5ead-723"}></div>
                     
                 </common::SidebarPanelHeader>
                 

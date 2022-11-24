@@ -4,7 +4,6 @@ import "./common.pc" as common
 import "./right-sidebar.pc" as rightSidebar
 import "./center-panels.pc" as centerPanels
 
-
 token iconSize var(theme.fontSize03)
 component NodeIcon {
     render div
@@ -110,11 +109,10 @@ Editor {
             }
         }
     }
-    EditorPanels panels{ 
+    EditorPanels panels {
         leftSidebar.LeftSidebarPreview leftSidebar
         centerPanels.Preview centerPanels
         rightSidebar.RightSidebar
     }
 }
-
 

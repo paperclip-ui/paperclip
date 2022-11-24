@@ -1,8 +1,7 @@
 import { combineEngineCreators, EngineCreator } from "@paperclip-ui/common";
 import { EditorState } from "../state";
 import { createDesignerEngine, DesignerEngineOptions } from "./designer/engine";
-import { DesignerEngineEvent } from "./designer/events";
-import { DesignerEngineState } from "./designer/state";
+import { createHistoryEngine } from "./history/engine";
 
 export const createEngine = (
   options: DesignerEngineOptions,
@@ -10,5 +9,6 @@ export const createEngine = (
 ) =>
   combineEngineCreators<EditorState, any>(
     createDesignerEngine(options),
+    createHistoryEngine,
     ...otherEngineCreators
   );

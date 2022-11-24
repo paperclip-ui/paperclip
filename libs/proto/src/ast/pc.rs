@@ -1,5 +1,3 @@
-use std::fmt::format;
-
 use crate::add_inner_wrapper;
 include!(concat!(env!("OUT_DIR"), "/ast.pc.rs"));
 
@@ -150,6 +148,16 @@ impl TryFrom<DocumentBodyItem> for Node {
             document_body_item::Inner::Text(text) => {
                 Ok(node::Inner::Text(text.clone()).get_outer())
             }
+            _ => Err(()),
+        }
+    }
+}
+
+impl TryFrom<DocumentBodyItem> for Style {
+    type Error = ();
+    fn try_from(value: DocumentBodyItem) -> Result<Self, Self::Error> {
+        match value.get_inner() {
+            document_body_item::Inner::Style(style) => Ok(style.clone()),
             _ => Err(()),
         }
     }

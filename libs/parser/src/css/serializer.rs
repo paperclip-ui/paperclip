@@ -1,5 +1,5 @@
-use super::ast;
 use paperclip_common::serialize_context::Context;
+use paperclip_proto::ast::css as ast;
 
 pub fn serialize_declarations(declarations: &Vec<ast::StyleDeclaration>, depth: u8) -> String {
     let mut context = Context::new(depth);

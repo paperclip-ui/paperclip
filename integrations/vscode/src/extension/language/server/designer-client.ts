@@ -1,4 +1,4 @@
-import { Deferred } from "@paperclip-ui/common";
+import { Deferred, eventListener } from "@paperclip-ui/common";
 import * as getPort from "get-port";
 import * as execa from "execa";
 import * as waitPort from "wait-port";
@@ -6,35 +6,55 @@ import * as URL from "url";
 global.XMLHttpRequest = require("xhr2");
 import {
   DesignerClientImpl,
+  FileChanged,
+  FileResponse,
   GrpcWebImpl,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { loadCLIBinPath } from "@paperclip-ui/releases";
 import { DocumentInfo } from "@paperclip-ui/proto/lib/generated/language_service/pc";
 import { NodeHttpTransport } from "@improbable-eng/grpc-web-node-http-transport";
+import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
+import { EventEmitter } from "stream";
 
 export class DesignerClient {
   private _client: Deferred<DesignerClientImpl>;
   private _port: number;
+  private _em: EventEmitter;
+
   constructor() {
+    this._em = new EventEmitter();
     this._client = new Deferred();
     this._start();
+  }
+  onFileChange(listener: (data: FileChanged) => void) {
+    return eventListener(this._em, "fileChanged", listener);
   }
   getPort() {
     return this._port;
   }
   private async _start() {
     this._port = await startDesignServer();
-    this._client.resolve(
-      new DesignerClientImpl(
-        new GrpcWebImpl(`http://localhost:${this._port}`, {
-          transport: NodeHttpTransport(),
-        })
-      )
+    const client = new DesignerClientImpl(
+      new GrpcWebImpl(`http://localhost:${this._port}`, {
+        transport: NodeHttpTransport(),
+      })
     );
+    this._client.resolve(client);
+    this._watchForEvents();
   }
   async ready() {
     await this._client.promise;
   }
+  private _watchForEvents = async () => {
+    const client = await this._client.promise;
+    client.OnEvent({}).subscribe({
+      next: (data) => {
+        if (data.fileChanged) {
+          this._em.emit("fileChanged", data.fileChanged);
+        }
+      },
+    });
+  };
   async updateVirtualFileContent(url: string, text: string) {
     const client = await this._client.promise;
     return new Promise((resolve, reject) => {

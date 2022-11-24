@@ -2,10 +2,9 @@ import React from "react";
 import { useMemo } from "react";
 import { createEditorMachine } from "../machine";
 import { MachineContext } from "@paperclip-ui/common";
-import { Frames } from "./Canvas/Frames";
 import { DEFAULT_STATE } from "../machine/state";
-import { Canvas } from "./Canvas";
 import { env } from "../env";
+import { Editor } from "./Editor";
 
 export const Main = () => {
   const machine = useMemo(
@@ -18,7 +17,7 @@ export const Main = () => {
   );
   return (
     <MachineContext.Provider value={machine}>
-      <Canvas />
+      <Editor />
     </MachineContext.Provider>
   );
 };

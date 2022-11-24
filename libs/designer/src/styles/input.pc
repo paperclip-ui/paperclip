@@ -57,7 +57,7 @@ public component ColorInput {
   }
 }
 
-component Fields {
+public component Fields {
   render div {
     style {
       display: flex
@@ -69,7 +69,7 @@ component Fields {
   }
 }
 
-component MultiSelect {
+public component MultiSelect {
   render div {
     style extends theme.input {
       display: flex
@@ -81,7 +81,7 @@ component MultiSelect {
   }
 }
 
-component TokenInput {
+public component TokenInput {
   render span {
     style variant isFunction {
       color: rgb(0, 162, 255)
@@ -90,7 +90,7 @@ component TokenInput {
   }
 }
 
-component Token {
+public component Token {
   variant isFunction trigger { ".call" }
   variant isPunc trigger { ".punc" }
   variant isNumber trigger { ".number" }
@@ -121,7 +121,7 @@ component Token {
 }
 
 
-component Field {
+public component Field {
   render div {
     style {
       display: flex

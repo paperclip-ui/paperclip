@@ -4,7 +4,8 @@ use crate::project_compiler::ProjectCompiler;
 use anyhow::Result;
 use futures_core::stream::Stream;
 use paperclip_config::{Config, ConfigContext};
-use paperclip_parser::graph::Graph;
+use paperclip_proto::ast::graph_ext::Graph;
+use paperclip_proto_ext::graph::load::LoadableGraph;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 

@@ -1,10 +1,12 @@
 use crate::edit_graph;
 use futures::executor::block_on;
 use paperclip_common::str_utils::strip_extra_ws;
-use paperclip_parser::{graph, pc};
-use paperclip_proto::ast;
+use paperclip_parser::{pc};
+use paperclip_proto::ast::{graph_ext as graph};
+use paperclip_proto_ext::graph::{test_utils, load::LoadableGraph};
 use paperclip_proto::ast_mutate::{
-    mutation, AppendChild, Bounds, DeleteExpression, SetFrameBounds, InsertChild,
+    mutation, AppendChild, Bounds, DeleteExpression, SetFrameBounds, SetKeyValue,
+    SetStyleDeclarations,
 };
 use std::collections::HashMap;
 
@@ -12,7 +14,7 @@ macro_rules! case {
     ($name: ident, $mock_files: expr, $edit: expr, $expected_mock_files: expr) => {
         #[test]
         pub fn $name() {
-            let mock_fs = graph::test_utils::MockFS::new(HashMap::from($mock_files));
+            let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
             let mut graph = graph::Graph::new();
 
             if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
@@ -24,7 +26,7 @@ macro_rules! case {
             let edited_docs = graph
                 .dependencies
                 .iter()
-                .map(|(path, dep)| (path.to_string(), pc::serializer::serialize(&dep.document)))
+                .map(|(path, dep)| (path.to_string(), pc::serializer::serialize(dep.document.as_ref().expect("Document must exist"))))
                 .collect::<HashMap<String, String>>();
 
             for (path, content) in $expected_mock_files {
@@ -213,7 +215,6 @@ case! {
   )]
 }
 
-
 case! {
   can_insert_an_element_within_an_element,
   [(
@@ -244,6 +245,103 @@ case! {
               color: orange
             }
           }
+        }
+      }
+    "#
+  )]
+}
+
+case! {
+  can_set_the_styles_on_an_element,
+  [(
+    "/entry.pc", r#"
+      div {
+      }
+    "#
+  )],
+  mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
+    expression_id: "80f4925f-1".to_string(),
+    declarations: vec![
+      SetKeyValue {
+        name: "background".to_string(),
+        value: "red".to_string()
+      }
+    ]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      div {
+        style {
+          background: red
+        }
+      }
+    "#
+  )]
+}
+
+
+case! {
+  can_update_an_existing_style_on_an_element,
+  [(
+    "/entry.pc", r#"
+      div {
+        style {
+          background: blue
+        }
+      }
+    "#
+  )],
+  mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
+    expression_id: "80f4925f-4".to_string(),
+    declarations: vec![
+      SetKeyValue {
+        name: "background".to_string(),
+        value: "red".to_string()
+      }
+    ]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      div {
+        style {
+          background: red
+        }
+      }
+    "#
+  )]
+}
+
+case! {
+  appends_new_styles_to_existing_one,
+  [(
+    "/entry.pc", r#"
+      div {
+        style {
+          display: block
+        }
+      }
+    "#
+  )],
+  mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
+    expression_id: "80f4925f-4".to_string(),
+    declarations: vec![
+      SetKeyValue {
+        name: "background".to_string(),
+        value: "red".to_string()
+      },
+      SetKeyValue {
+        name: "opacity".to_string(),
+        value: "0.5".to_string()
+      }
+    ]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      div {
+        style {
+          display: block
+          background: red
+          opacity: 0.5
         }
       }
     "#

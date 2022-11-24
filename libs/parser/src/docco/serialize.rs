@@ -1,6 +1,6 @@
-use super::ast;
 use crate::base::ast as base_ast;
 use paperclip_common::serialize_context::Context;
+use paperclip_proto::ast::docco as ast;
 
 pub fn serialize(comment: &ast::Comment) -> String {
     let mut context = Context::new(0);

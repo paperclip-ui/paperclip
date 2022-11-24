@@ -1,11 +1,15 @@
 {
   "srcDir": "src",
   "moduleDirs": [],
-  "globalScripts": ["src/styles/globals.css"],
+  "globalScripts": [
+    "https://rsms.me/inter/inter.css",
+    "src/styles/globals.css"
+  ],
   "compilerOptions": [
     {
       "emit": ["yew.rs:rs", "css", "react.js:js", "react.d.ts:d.ts"],
-      "assetOutDir": "assets"
+      "assetOutDir": "assets",
+      "embedAssetMaxSize": -1
     }
   ]
 }

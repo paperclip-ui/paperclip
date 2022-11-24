@@ -1,4 +1,4 @@
-use paperclip_parser::pc::ast::Node;
+use paperclip_proto::ast::pc::Node;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::Expression;

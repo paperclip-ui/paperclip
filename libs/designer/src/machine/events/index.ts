@@ -3,21 +3,27 @@ import {
   ExtractEventFromCreators,
   identity,
 } from "@paperclip-ui/common";
-import { InnerVirtNode } from "@paperclip-ui/proto/lib/virt/html-utils";
 import { DesignerEngineEvent } from "../engine/designer/events";
+import { HistoryEngineEvent } from "../engine/history/events";
+import { InsertMode } from "../state";
 import { Box, Point, Size } from "../state/geom";
 
 export const editorEvents = eventCreators(
   {
     canvasPanEnd: null,
     eHotkeyPressed: null,
+    tHotkeyPressed: null,
     deleteHokeyPressed: null,
+
+    insertModeButtonClick: identity<{ mode: InsertMode }>(),
     insertElementReleased: identity<Box>(),
     canvasMouseMoved: identity<Point>(),
     canvasMouseLeave: null,
+    layerLeafClicked: identity<{ virtId: string }>(),
+    layerArrowClicked: identity<{ virtId: string }>(),
     canvasMouseUp: null,
-    allStylesCaptured: identity<{
-      allStyles: Record<string, any>;
+    computedStylesCaptured: identity<{
+      computedStyles: Record<string, any>;
     }>(),
     canvasMouseDown: identity<{
       metaKey: boolean;
@@ -47,12 +53,11 @@ export const editorEvents = eventCreators(
       frameIndex: number;
       rects: Record<string, Box>;
     }>(),
-
-    tmpBreadcrumbClicked: identity<InnerVirtNode>(),
   },
   "editor"
 );
 
 export type EditorEvent =
   | ExtractEventFromCreators<typeof editorEvents>
-  | DesignerEngineEvent;
+  | DesignerEngineEvent
+  | HistoryEngineEvent;

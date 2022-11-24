@@ -19,10 +19,12 @@ import {
   Transform,
 } from "./geom";
 import { memoize } from "@paperclip-ui/common";
+import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
 import {
-  getNodeById,
-  getNodePath,
-} from "@paperclip-ui/proto/lib/virt/html-utils";
+  HistoryEngineState,
+  INITIAL_HISTORY_STATE,
+} from "../engine/history/state";
+import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 export const IS_WINDOWS = false;
 
 export enum InsertMode {
@@ -55,10 +57,15 @@ const INITIAL_ZOOM_PADDING = 50;
 
 export type StyleOverrides = Record<string, Record<string, string | number>>;
 
+type Query = {
+  file?: string;
+};
+
 export type EditorState = {
   readonly: boolean;
   scopedElementPath?: string;
   selectedVirtNodeIds: string[];
+  graph: Graph;
   insertMode?: InsertMode;
   highlightNodePath?: string;
 
@@ -69,21 +76,29 @@ export type EditorState = {
   // selectedNodeSources: any[];
   canvasClickTimestamp?: number;
   canvasMouseDownStartPoint?: Point;
+  expandedLayerVirtIds: string[];
   showTextEditor?: boolean;
   resizerMoving: boolean;
   expandedNodePaths: string[];
-  allStyles: Record<string, CSSStyleDeclaration>;
+  preEditComputedStyles: Record<string, CSSStyleDeclaration>;
+  computedStyles: Record<string, CSSStyleDeclaration>;
   optionKeyDown: boolean;
   centeredInitial: boolean;
   currentDocument?: FileResponse;
   rects: Record<number, Record<string, Box>>;
   canvas: Canvas;
-} & DesignerEngineState;
+} & DesignerEngineState &
+  HistoryEngineState;
 
 export const DEFAULT_STATE: EditorState = {
   readonly: false,
   styleOverrides: {},
-  allStyles: {},
+  preEditComputedStyles: {},
+  graph: {
+    dependencies: {},
+  },
+  expandedLayerVirtIds: [],
+  computedStyles: {},
   resizerMoving: false,
   optionKeyDown: false,
   scopedElementPath: null,
@@ -95,6 +110,7 @@ export const DEFAULT_STATE: EditorState = {
     scrollPosition: { x: 0, y: 0 },
   },
   rects: {},
+  ...INITIAL_HISTORY_STATE,
 };
 
 export const getCurrentDocument = (state: EditorState) => state.currentDocument;
@@ -193,10 +209,16 @@ const getAllFrameBounds = (designer: EditorState) => {
   return mergeBoxes(getCurrentPreviewFrameBoxes(designer));
 };
 export const getSelectedNodePaths = (designer: EditorState) => {
-  return designer.selectedVirtNodeIds.map((id) => {
-    const node = getNodeById(id, designer.currentDocument.paperclip.html);
-    return getNodePath(node, designer.currentDocument.paperclip.html);
+  return getSelectedNodeIds(designer).map((id) => {
+    const node = virtHTML.getNodeById(
+      id,
+      designer.currentDocument.paperclip.html
+    );
+    return virtHTML.getNodePath(node, designer.currentDocument.paperclip.html);
   });
+};
+export const getSelectedNodeIds = (designer: EditorState) => {
+  return designer.selectedVirtNodeIds;
 };
 export const getHighlightedNodePath = (designer: EditorState) =>
   designer.highlightNodePath;
@@ -307,3 +329,18 @@ export const getInsertBox = ({
     y: Math.min(start.y, mousePosition.y),
   };
 };
+
+export const getCurrentFilePath = (state: EditorState) => {
+  return state.history?.query.file;
+};
+
+export const getCurrentDependency = (state: EditorState) => {
+  return state.graph.dependencies[getCurrentFilePath(state)];
+};
+
+export const getExpandedVirtIds = (state: EditorState) =>
+  state.expandedLayerVirtIds;
+
+export const getGraph = (state: EditorState) => state.graph;
+
+export const getInsertMode = (state: EditorState) => state.insertMode;

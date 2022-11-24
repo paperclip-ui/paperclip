@@ -2,13 +2,12 @@ use super::context::Context;
 use anyhow::Result;
 use paperclip_common::get_or_short;
 use paperclip_evaluator::core::utils::get_style_namespace;
-use paperclip_parser::graph::Dependency;
-use paperclip_parser::pc::ast;
+use paperclip_proto::ast::{pc as ast, graph_ext::{Dependency, Graph}};
 use std::collections::BTreeMap;
 
-pub fn compile_code(dependency: &Dependency) -> Result<String> {
-    let mut context = Context::new(&dependency);
-    compile_document(&dependency.document, &mut context);
+pub fn compile_code(dependency: &Dependency, graph: &Graph) -> Result<String> {
+    let mut context = Context::new(&dependency, graph);
+    compile_document(dependency.document.as_ref().expect("Document must exist"), &mut context);
     Ok(context.get_buffer())
 }
 
@@ -61,12 +60,14 @@ macro_rules! compile_children {
 
         let mut children = $expr.into_iter().peekable();
         while let Some(child) = children.next() {
-            ($cb)(child);
+            let printed = ($cb)(child);
 
-            if !children.peek().is_none() {
-                $context.add_buffer(", ");
+            if printed {
+                if !children.peek().is_none() {
+                    $context.add_buffer(", ");
+                }
+                $context.add_buffer("\n");
             }
-            $context.add_buffer("\n");
         }
         $context.end_block();
         $context.add_buffer("]");
@@ -74,13 +75,9 @@ macro_rules! compile_children {
 }
 
 fn compile_component(component: &ast::Component, context: &mut Context) {
-    if component.is_public {
-        context.add_buffer("export ");
-    }
-
     context.add_buffer(
         format!(
-            "const {} = React.memo(React.forwardRef((props, ref) => {{\n",
+            "const _{} = (props, ref) => {{\n",
             &component.name
         )
         .as_str(),
@@ -90,7 +87,14 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
     compile_component_render(component, &mut context.within_component(component));
     context.end_block();
 
-    context.add_buffer("}));\n\n");
+    context.add_buffer("};\n");
+    context.add_buffer(format!("_{}.displayName = \"{}\";\n", component.name, component.name).as_str());
+
+    if component.is_public {
+        context.add_buffer("export ");
+    }
+
+    context.add_buffer(format!("const {} = React.memo(React.forwardRef(_{}));\n\n", component.name, component.name).as_str());
 }
 
 fn compile_component_render(component: &ast::Component, context: &mut Context) {
@@ -121,6 +125,8 @@ fn compile_element(element: &ast::Element, is_root: bool, context: &mut Context)
     let is_instance = context
         .dependency
         .document
+        .as_ref()
+        .expect("Document must exist")
         .contains_component_name(&element.tag_name)
         || element.namespace != None;
 
@@ -156,19 +162,22 @@ fn compile_node_children(children: &Vec<ast::Node>, context: &mut Context) {
     compile_children! {
       &children,
       |child: &ast::Node| {
-        compile_node(child, context, false);
+        compile_node(child, context, false)
       },
       context
     }
 }
 
-fn compile_node(node: &ast::Node, context: &mut Context, is_root: bool) {
+fn compile_node(node: &ast::Node, context: &mut Context, is_root: bool) -> bool {
     match node.get_inner() {
         ast::node::Inner::Text(expr) => compile_text_node(&expr, context),
         ast::node::Inner::Element(expr) => compile_element(&expr, is_root, context),
         ast::node::Inner::Slot(expr) => compile_slot(&expr, context),
-        _ => {}
+        _ => {
+            return false
+        }
     };
+    return true;
 }
 
 fn compile_element_parameters(
@@ -177,12 +186,13 @@ fn compile_element_parameters(
     is_root: bool,
     context: &mut Context,
 ) {
+    
     let raw_attrs = rename_attrs_for_react(get_raw_element_attrs(
         element,
         is_instance,
         is_root,
         context,
-    ));
+    ), is_instance);
 
     if raw_attrs.len() == 0 {
         context.add_buffer("null");
@@ -222,7 +232,7 @@ fn get_raw_element_attrs<'dependency>(
         attrs.insert(parameter.name.to_string(), param_context);
     }
 
-    if element.is_stylable() {
+    if is_instance || element.is_stylable() {
         let sub = context.with_new_content();
         sub.add_buffer(
             format!(
@@ -262,6 +272,10 @@ fn get_raw_element_attrs<'dependency>(
         attrs.insert("ref".to_string(), sub);
     }
 
+    let sub = context.with_new_content();
+    sub.add_buffer(format!("\"{}\"", element.id).as_str());
+    attrs.insert("key".to_string(), sub);
+
     attrs
 }
 
@@ -269,7 +283,10 @@ fn compile_insert(insert: &ast::Insert, context: &mut Context) {
     compile_node_children(&insert.body, context);
 }
 
-fn rename_attrs_for_react(attrs: BTreeMap<String, Context>) -> BTreeMap<String, Context> {
+fn rename_attrs_for_react(attrs: BTreeMap<String, Context>, is_instance: bool) -> BTreeMap<String, Context> {
+    if is_instance {
+        return attrs;
+    }
     attrs
         .into_iter()
         .map(|(key, context)| (attr_alias(key.as_str()), context))

@@ -1,0 +1,14 @@
+syntax = "proto3";
+package ast.graph;
+import "ast/pc.proto";
+
+message Graph {
+  map<string, Dependency> dependencies = 1;
+}
+
+message Dependency {
+  string hash = 1;
+  string path = 2;
+  map<string, string> imports = 3;
+  ast.pc.Document document = 4;
+}

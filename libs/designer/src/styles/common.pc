@@ -8,8 +8,8 @@ public style panel {
 }
 
 public component Sidebar {
-  render div {
-    style {
+  render div root {
+    style extends theme.fontDefault {
       width: 300px
       flex-shrink: 0
       display: flex
@@ -17,6 +17,7 @@ public component Sidebar {
       gap: var(theme.space05)
       padding: var(theme.space05)
       overflow: scroll 
+      pointer-events: all
     }
       slot children
   }
@@ -36,7 +37,7 @@ public component SidebarSection {
   variant first trigger {
     ":first-child"
   }
-  render div {
+  render div root {
     style {
       border-top: 1px solid var(theme.borderColor)
     }
@@ -47,7 +48,7 @@ public component SidebarSection {
   }
 }
 
-component SidebarPanelHeader {
+public component SidebarPanelHeader {
   render div {
     style extends theme.fontHeader {
       padding: var(theme.space05)
@@ -66,7 +67,7 @@ component SidebarPanelHeader {
   }
 }
 
-component SidebarPanelContent {
+public component SidebarPanelContent {
   variant flush trigger { ".flush" }
   render div(class:class) {
     style {
@@ -80,7 +81,7 @@ component SidebarPanelContent {
 }
 
 
-component SidebarHeader {
+public component SidebarHeader {
   render div {
     style {
       display: flex
@@ -89,7 +90,7 @@ component SidebarHeader {
   }
 }
 
-component SidebarHeaderButton {
+public component SidebarHeaderButton {
   variant selected
   render div root {
     style extends theme.easeIn {

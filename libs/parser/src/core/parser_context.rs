@@ -134,7 +134,7 @@ impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone>
 
 pub fn create_initial_context<'src>(
     source: &'src str,
-    url: &String,
+    url: &str,
 ) -> (StringScanner<'src>, IDGenerator) {
     (
         StringScanner::new(source),

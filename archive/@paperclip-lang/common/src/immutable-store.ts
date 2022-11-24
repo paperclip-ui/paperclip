@@ -29,7 +29,7 @@ export class ImmutableStore<TState> {
     const onChange = (newState: TState, oldState: TState) => {
       const newValue = select(newState);
       const oldValue = select(oldState);
-      if (!isEqual(newValue, oldValue)) {
+      if (newValue !== oldValue) {
         listener(newValue, oldValue);
       }
     };

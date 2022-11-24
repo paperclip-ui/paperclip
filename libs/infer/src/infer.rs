@@ -8,7 +8,7 @@ use std::{collections::BTreeMap, rc::Rc};
 use crate::context::InferContext;
 use crate::types;
 use paperclip_common::get_or_short;
-use paperclip_parser::graph::{Dependency, Graph};
+use paperclip_proto::ast::graph_ext::{Dependency, Graph};
 
 pub struct Inferencer {
     component_cache: Rc<RefCell<BTreeMap<String, types::Component>>>,
@@ -68,7 +68,7 @@ impl Inferencer {
 }
 
 fn infer_dep(dep: &Dependency, context: &mut InferContext) -> Result<()> {
-    for component in &dep.document.get_components() {
+    for component in dep.document.as_ref().expect("Document must exist").get_components() {
         context.step_in(&component.name);
         infer_component(component, context)?;
         context.step_out();
@@ -107,15 +107,7 @@ fn infer_render_node(node: &ast::pc::node::Inner, context: &mut InferContext) ->
 fn infer_element(expr: &ast::pc::Element, context: &mut InferContext) -> Result<()> {
     infer_attributes(expr, context)?;
     for child in &expr.body {
-        match child.get_inner() {
-            ast::pc::node::Inner::Element(child) => {
-                infer_element(child, context)?;
-            }
-            ast::pc::node::Inner::Slot(child) => {
-                infer_slot(child, context)?;
-            }
-            _ => {}
-        }
+        infer_node(child, context)?;
     }
     Ok(())
 }
@@ -126,6 +118,29 @@ fn infer_slot(expr: &ast::pc::Slot, context: &mut InferContext) -> Result<()> {
     context.step_out();
     Ok(())
 }
+
+fn infer_insert(expr: &ast::pc::Insert, context: &mut InferContext) -> Result<()> {
+    for child in &expr.body {
+        infer_node(child, context)?;
+    }
+    Ok(())
+}
+
+fn infer_node(expr: &ast::pc::Node, context: &mut InferContext) -> Result<()> {
+    match expr.get_inner() {
+        ast::pc::node::Inner::Element(child) => {
+            infer_element(child, context)?;
+        }
+        ast::pc::node::Inner::Slot(child) => {
+            infer_slot(child, context)?;
+        }
+        ast::pc::node::Inner::Insert(child) => {
+            infer_insert(child, context)?;
+        }
+        _ => {}
+    }
+    Ok(())
+}   
 
 fn infer_attributes(expr: &ast::pc::Element, context: &mut InferContext) -> Result<()> {
     let instance_props = infer_instance(expr, context)?;
@@ -193,7 +208,7 @@ fn infer_instance(expr: &ast::pc::Element, context: &InferContext) -> Result<typ
     }
 
     let instance_dep = if let Some(namespace) = &expr.namespace {
-        let imports = context.dependency.document.get_imports();
+        let imports = context.dependency.document.as_ref().expect("Document must exist").get_imports();
         let import = imports.iter().find(|import| &import.namespace == namespace);
 
         import
@@ -204,7 +219,7 @@ fn infer_instance(expr: &ast::pc::Element, context: &InferContext) -> Result<typ
     };
 
     if let Some(instance_dep) = instance_dep {
-        for component in instance_dep.document.get_components() {
+        for component in instance_dep.document.as_ref().expect("Document must exist").get_components() {
             if component.name == expr.tag_name {
                 return Ok(context
                     .inferencer

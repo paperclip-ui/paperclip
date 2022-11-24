@@ -1,6 +1,6 @@
 use futures::executor::block_on;
-use paperclip_parser::graph;
-use paperclip_parser::graph::test_utils;
+use paperclip_proto::ast::graph_ext as graph;
+use paperclip_proto_ext::graph::{test_utils, load::LoadableGraph};
 use std::collections::HashMap;
 
 use crate::infer::Inferencer;
@@ -261,6 +261,34 @@ add_case! {
       public component A {
         render div {
           slot something
+        }
+      }
+    "#
+    )
+  ],
+  types::Map::from([
+    (
+      "A".to_string(), types::Type::Component(types::Component {
+        properties: types::Map::from([
+          ("something".to_string(), types::Type::Slot),
+        ])
+      }),
+    )
+  ])
+}
+
+
+
+add_case! {
+  can_infer_slot_in_insert,
+  [
+    (
+    "/entry.pc", r#"
+      public component A {
+        render div {
+          insert ab {
+            slot something
+          }
         }
       }
     "#

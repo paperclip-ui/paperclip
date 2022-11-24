@@ -15,6 +15,26 @@ export const waitForEvent = (eventType: string, designer: Designer) => {
   });
 };
 
+export const waitUntilDesignerReady = (designer: Designer) => {
+  return new Promise((resolve) => {
+    const dispose = designer.onEvent((event) => {
+      switch (event.type) {
+        case designerEngineEvents.documentOpened.type:
+        case designerEngineEvents.graphLoaded.type: {
+          const state = designer.machine.getState();
+          const isReady =
+            Object.keys(state.graph.dependencies).length > 0 &&
+            state.currentDocument != null;
+          if (isReady) {
+            dispose();
+            resolve(null);
+          }
+        }
+      }
+    });
+  });
+};
+
 const stringifyFrames = (frames: HTMLElement[]) =>
   frames
     .map((frame) => (frame.childNodes[2] as HTMLDivElement).innerHTML)

@@ -4,14 +4,16 @@ import { DEFAULT_STATE, EditorState } from "../../src/machine/state";
 import * as fsa from "fs-extra";
 import * as execa from "execa";
 import getPort from "get-port";
-import { EditorEvent } from "../../src/machine/events";
+import { EditorEvent, editorEvents } from "../../src/machine/events";
 import { EventEmitter } from "events";
 import { NodeHttpTransport } from "@improbable-eng/grpc-web-node-http-transport";
 import { Machine } from "@paperclip-ui/common";
+import { designerEngineEvents } from "@paperclip-ui/designer/src/machine/engine/designer/events";
 
 export type Designer = {
   onEvent(listener: (event: EditorEvent) => void): () => void;
   machine: Machine<EditorState, EditorEvent>;
+  dispose: () => void;
 };
 
 export const startDesigner = async (
@@ -49,8 +51,6 @@ export const startDesigner = async (
     savedPaths[relativePath] = filePath;
   }
 
-  history.pushState({}, "", "/?file=" + savedPaths["entry.pc"]);
-
   const port = await getPort();
   const machine = createEditorMachine(
     {
@@ -69,11 +69,17 @@ export const startDesigner = async (
   )({
     ...DEFAULT_STATE,
     ...initialState,
+    history: {
+      pathname: "/",
+      query: {
+        file: savedPaths["entry.pc"],
+      },
+    },
   });
 
   const ws = execa.command(
     `${__dirname}/../../../../target/debug/paperclip_cli designer --port=${port}`,
-    { cwd: tmpDirectory, stdio: "inherit" }
+    { cwd: tmpDirectory, stdio: "ignore" }
   );
 
   const onEvent = (listener: (event: EditorEvent) => void) => {
@@ -83,5 +89,9 @@ export const startDesigner = async (
     };
   };
 
-  return { machine, onEvent };
+  const dispose = () => {
+    ws.cancel();
+  };
+
+  return { machine, onEvent, dispose };
 };

@@ -13,7 +13,7 @@ serde = { version = "1.0.143", features = ["derive", "rc"] }
 anyhow = "1.0.61"
 paperclip_proto = { path = "../proto" }
 crc = "1.8.1"
-paperclip_common = { path = "../rs-common" }
+paperclip_common = { path = "../rs_common" }
 futures = "0.3.21"
 
 [dev-dependencies]

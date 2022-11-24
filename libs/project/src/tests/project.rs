@@ -10,8 +10,7 @@ use paperclip_common::fs::{
 };
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_config::{CompilerOptions, Config, ConfigContext, ConfigIO};
-use paperclip_parser::graph::io::IO as GraphIO;
-use paperclip_parser::graph::test_utils::MockFS;
+use paperclip_proto_ext::graph::{test_utils::MockFS, io::IO as GraphIO};
 use path_absolutize::*;
 use std::collections::HashMap;
 use std::path::Path;
@@ -159,6 +158,7 @@ test_case! {
     "#)
   ]
 }
+
 
 test_case! {
   can_compile_basic_html,
@@ -517,6 +517,47 @@ test_case! {
           <div> Hello world </div>
         </body>
       </html>
+    "#)
+  ]
+}
+
+
+
+test_case! {
+  can_embed_assets,
+  default_config_with_compiler_options(".", vec![
+
+      CompilerOptions {
+          emit: Some(vec!["css".to_string()]),
+          out_dir: None,
+          import_assets_as_modules: None,
+          main_css_file_name: None,
+          embed_asset_max_size: Some(-1),
+          asset_out_dir: None,
+          asset_prefix: None,
+          use_asset_hash_names: None,
+    }
+  ]),
+  "/",
+  "/entry.pc",
+  [
+    ("/entry.pc", r#"
+      div {
+        style {
+          color: url("/test.svg")
+        }
+      }
+    "#),
+
+    ("/test.svg", r#"
+      blarg
+    "#)
+  ],
+  [
+    ("/entry.pc.css", r#"
+    ._80f4925f-5 { 
+      color: url("data:image/svg+xml;base64,CiAgICAgIGJsYXJnCiAgICA=");
+    }
     "#)
   ]
 }

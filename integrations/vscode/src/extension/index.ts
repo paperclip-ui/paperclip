@@ -14,7 +14,10 @@ class PaperclipExtension {
     this._languageClient = new PaperclipLanguageClient(context);
     this._windowManager = new LiveWindowManager(this._languageClient);
     this._commandManager = new CommandManager(this._windowManager);
-    this._documentManager = new DocumentManager(this._windowManager);
+    this._documentManager = new DocumentManager(
+      this._windowManager,
+      this._languageClient
+    );
   }
   activate() {
     this._languageClient.activate();

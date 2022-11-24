@@ -1,4 +1,3 @@
-use super::ast;
 use super::tokenizer::{is_superfluous, next_token, Token};
 use crate::base::ast as base_ast;
 use crate::base::ast::Range;
@@ -7,6 +6,7 @@ use crate::core::errors::ParserError;
 use crate::core::parser_context::Context;
 use crate::core::string_scanner::StringScanner;
 use paperclip_common::id::{get_document_id, IDGenerator};
+use paperclip_proto::ast::docco as ast;
 use std::str;
 
 type ParserContext<'tokenizer, 'scanner, 'idgenerator, 'src> =

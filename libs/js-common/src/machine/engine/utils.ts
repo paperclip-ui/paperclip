@@ -5,9 +5,12 @@ export const combineEngineCreators =
   <TState extends any, TEvent extends BaseEvent<any, any>>(
     ...engineCreators: EngineCreator<TState, TEvent>[]
   ) =>
-  (dispatch: Dispatch<TEvent>): Engine<TState, TEvent> => {
+  (
+    dispatch: Dispatch<TEvent>,
+    initialState: TState
+  ): Engine<TState, TEvent> => {
     const engines = engineCreators.map((createEngine) =>
-      createEngine(dispatch)
+      createEngine(dispatch, initialState)
     );
 
     const handleEvent = (event: TEvent, currState: TState, prevState: TState) =>

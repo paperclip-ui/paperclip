@@ -11,6 +11,7 @@ import { EventEmitter } from "events";
 import { eventListener } from "@paperclip-ui/common";
 import { EVENTS_NOTIFICATION_NAME } from "./constants";
 import { ServerEvent, serverEvents } from "./server/events";
+import { FileChanged } from "@paperclip-ui/proto/lib/generated/service/designer";
 /**
  * Spins up language server
  */
@@ -63,7 +64,17 @@ export class PaperclipLanguageClient {
     switch (event.type) {
       case serverEvents.started.type:
         return this._em.emit("ready", event.payload);
+      case serverEvents.fileChanged.type:
+        return this._em.emit("fileChanged", event.payload);
     }
+  };
+
+  onFileChanged = (
+    listener: (
+      info: ReturnType<typeof serverEvents.fileChanged>["payload"]
+    ) => void
+  ) => {
+    return eventListener(this._em, "fileChanged", listener);
   };
 
   onReady = (listener: (info: ReadyInfo) => void) => {

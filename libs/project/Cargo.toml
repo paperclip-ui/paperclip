@@ -10,11 +10,13 @@ name = "paperclip_project"
 
 [dependencies]
 paperclip_parser = { path = "../parser" }
+paperclip_proto = { path = "../proto" }
+paperclip_proto_ext = { path = "../proto_ext" }
 paperclip_evaluator = { path = "../evaluator" }
 paperclip_compiler_react = { path = "../compiler-react" }
 paperclip_compiler_yew = { path = "../compiler-yew" }
 paperclip_config = { path = "../config" }
-paperclip_common = { path = "../rs-common" }
+paperclip_common = { path = "../rs_common" }
 textwrap = "0.15.0"
 serde = { version = "1.0.143", features = ["derive"] }
 serde_json = { version = "1.0.83" }
@@ -26,6 +28,8 @@ path-absolutize = "3.0.13"
 notify = "5.0.0"
 wax = "0.5.0"
 async-stream = "0.3.3"
+mime_guess = "2.0.4"
+base64 = "0.13.1"
 
 [dev-dependencies]
 assert_cmd = "2.0.4"

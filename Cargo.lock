@@ -1378,10 +1378,13 @@ name = "paperclip_compiler_react"
 version = "0.1.1"
 dependencies = [
  "anyhow",
+ "futures",
  "paperclip_common",
  "paperclip_evaluator",
+ "paperclip_infer",
  "paperclip_parser",
  "paperclip_proto",
+ "paperclip_proto_ext",
 ]
 
 [[package]]
@@ -1395,6 +1398,7 @@ dependencies = [
  "paperclip_infer",
  "paperclip_parser",
  "paperclip_proto",
+ "paperclip_proto_ext",
  "pathdiff",
 ]
 
@@ -1406,6 +1410,8 @@ dependencies = [
  "futures",
  "paperclip_common",
  "paperclip_parser",
+ "paperclip_proto",
+ "paperclip_proto_ext",
  "path-absolutize",
  "serde",
  "serde_json",
@@ -1435,6 +1441,7 @@ dependencies = [
  "paperclip_common",
  "paperclip_parser",
  "paperclip_proto",
+ "paperclip_proto_ext",
  "regex",
  "serde",
 ]
@@ -1449,6 +1456,7 @@ dependencies = [
  "paperclip_common",
  "paperclip_parser",
  "paperclip_proto",
+ "paperclip_proto_ext",
 ]
 
 [[package]]
@@ -1462,6 +1470,7 @@ dependencies = [
  "paperclip_common",
  "paperclip_parser",
  "paperclip_proto",
+ "paperclip_proto_ext",
 ]
 
 [[package]]
@@ -1484,9 +1493,11 @@ dependencies = [
  "anyhow",
  "assert_cmd",
  "async-stream",
+ "base64",
  "futures",
  "futures-core",
  "futures-util",
+ "mime_guess",
  "notify",
  "paperclip_common",
  "paperclip_compiler_react",
@@ -1494,6 +1505,8 @@ dependencies = [
  "paperclip_config",
  "paperclip_evaluator",
  "paperclip_parser",
+ "paperclip_proto",
+ "paperclip_proto_ext",
  "path-absolutize",
  "serde",
  "serde_json",
@@ -1519,6 +1532,11 @@ dependencies = [
 name = "paperclip_proto_ext"
 version = "0.1.1"
 dependencies = [
+ "anyhow",
+ "async-trait",
+ "crc 1.8.1",
+ "futures",
+ "paperclip_common",
  "paperclip_parser",
  "paperclip_proto",
 ]
@@ -1553,6 +1571,7 @@ dependencies = [
  "paperclip_parser",
  "paperclip_project",
  "paperclip_proto",
+ "paperclip_proto_ext",
  "parking_lot",
  "path-absolutize",
  "portpicker",

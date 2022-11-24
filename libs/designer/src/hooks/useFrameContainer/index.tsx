@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 export type UseFrameContainerProps = {
   mount: HTMLElement;
   onLoad?: () => void;
+  onInjectedExtraHTML?: () => void;
   fullscreen?: boolean;
   extraHTML?: string;
 };
@@ -11,6 +12,7 @@ export type UseFrameContainerProps = {
 export const useFrameContainer = ({
   mount,
   onLoad = noop,
+  onInjectedExtraHTML,
   fullscreen,
   extraHTML,
 }: UseFrameContainerProps) => {
@@ -22,6 +24,7 @@ export const useFrameContainer = ({
 
   useEffect(() => {
     extraHTMLContainer.innerHTML = extraHTML || "";
+    onInjectedExtraHTML && onInjectedExtraHTML();
   }, [extraHTMLContainer, extraHTML]);
 
   useEffect(() => {

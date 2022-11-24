@@ -3,10 +3,12 @@
 use crate::server::core::{ServerEvent, ServerStore};
 use futures::Stream;
 use paperclip_language_services::DocumentInfo;
+use paperclip_parser::pc::serializer::serialize;
 use paperclip_proto::service::designer::designer_server::Designer;
+use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::service::designer::{
-    file_response, ApplyMutationsRequest, ApplyMutationsResult, Empty, FileRequest, FileResponse,
-    UpdateFileRequest,
+    designer_event, file_response, ApplyMutationsRequest, ApplyMutationsResult, DesignerEvent,
+    Empty, FileChanged, FileRequest, FileResponse, UpdateFileRequest,
 };
 use std::pin::Pin;
 use std::sync::Arc;
@@ -15,8 +17,9 @@ use tokio::sync::mpsc;
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
 
-type OpenFileResult<T> = Result<Response<T>, Status>;
-type ResponseStream = Pin<Box<dyn Stream<Item = Result<FileResponse, Status>> + Send>>;
+type FileResponseStream = Pin<Box<dyn Stream<Item = Result<FileResponse, Status>> + Send>>;
+type DesignerEventStream = Pin<Box<dyn Stream<Item = Result<DesignerEvent, Status>> + Send>>;
+type GetGraphStream = Pin<Box<dyn Stream<Item = Result<Graph, Status>> + Send>>;
 
 #[derive(Clone)]
 pub struct DesignerService {
@@ -31,11 +34,13 @@ impl DesignerService {
 
 #[tonic::async_trait]
 impl Designer for DesignerService {
-    type OpenFileStream = ResponseStream;
+    type OpenFileStream = FileResponseStream;
+    type OnEventStream = DesignerEventStream;
+    type GetGraphStream = GetGraphStream;
     async fn open_file(
         &self,
         request: Request<FileRequest>,
-    ) -> OpenFileResult<Self::OpenFileStream> {
+    ) -> Result<Response<Self::OpenFileStream>, Status> {
         let store = self.store.clone();
 
         let (tx, rx) = mpsc::channel(128);
@@ -54,7 +59,21 @@ impl Designer for DesignerService {
                 };
 
                 Ok(FileResponse {
-                    raw_content: vec![],
+                    raw_content: serialize(
+                        store
+                            .lock()
+                            .unwrap()
+                            .state
+                            .graph
+                            .dependencies
+                            .get(&path)
+                            .expect("Dependency doesn't exist!")
+                            .document
+                            .as_ref()
+                            .expect("Document must exist"),
+                    )
+                    .as_bytes()
+                    .to_vec(),
                     data,
                 })
             };
@@ -71,6 +90,73 @@ impl Designer for DesignerService {
         let output = ReceiverStream::new(rx);
 
         Ok(Response::new(Box::pin(output) as Self::OpenFileStream))
+    }
+
+    async fn get_graph(&self, _request: Request<Empty>) -> Result<Response<Self::GetGraphStream>, Status> {
+        let store = self.store.clone();
+
+        let (tx, rx) = mpsc::channel(128);
+
+        tokio::spawn(async move {
+            let graph = store.lock().unwrap().state.graph.clone();
+            tx.send(Result::Ok(graph)).await.expect("Can't send");
+            handle_store_events!(store.clone(),
+                ServerEvent::DependencyGraphLoaded { graph } => {
+                    tx.send(Result::Ok(
+                        graph.clone()
+                    )).await.expect("Can't send");
+                },
+                ServerEvent::ApplyMutationRequested {mutations: _mutations  } => {
+                    let graph = store.clone().lock().unwrap().state.graph.clone();
+
+                    // TODO - need to pick out files that have changed
+                    tx.send(Result::Ok(
+                        graph
+                    )).await.expect("Can't send");
+                }
+            );
+        });
+
+        let output = ReceiverStream::new(rx);
+
+        Ok(Response::new(Box::pin(output) as Self::GetGraphStream))
+    }
+    async fn on_event(&self, _request: Request<Empty>) -> Result<Response<Self::OnEventStream>, Status> {
+        let store = self.store.clone();
+
+        let (tx, rx) = mpsc::channel(128);
+
+        tokio::spawn(async move {
+            let file_changed = |path: String, content: Vec<u8>| {
+                Result::Ok(
+                    designer_event::Inner::FileChanged(FileChanged {
+                        path: path.to_string(),
+                        content: content.clone(),
+                    })
+                    .get_outer(),
+                )
+            };
+
+            handle_store_events!(store.clone(),
+                ServerEvent::UpdateFileRequested { path, content } => {
+                    tx.send((file_changed)(path.to_string(), content.clone())).await.expect("Can't send");
+                },
+                ServerEvent::ApplyMutationRequested { mutations: _mutations } => {
+                    let updated_files = store.lock().unwrap().state.updated_files.clone();
+                    let file_cache = store.lock().unwrap().state.file_cache.clone();
+
+                    for file_path in &updated_files {
+                        if let Some(content) = file_cache.get(file_path) {
+                            tx.send((file_changed)(file_path.to_string(), content.clone())).await.expect("Can't send");
+                        }
+                    }
+                }
+            );
+        });
+
+        let output = ReceiverStream::new(rx);
+
+        Ok(Response::new(Box::pin(output) as Self::OnEventStream))
     }
 
     async fn update_file(

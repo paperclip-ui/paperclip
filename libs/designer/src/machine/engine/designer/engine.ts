@@ -5,25 +5,21 @@ import {
 import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent, designerEngineEvents } from "./events";
 import { DesignerEngineState } from "./state";
-import { env } from "../../../env";
 import { EditorEvent, editorEvents } from "../../events";
 import {
   EditorState,
   flattenFrameBoxes,
   getInsertBox,
   getNodeInfoAtPoint,
+  InsertMode,
 } from "../../state";
 import { Mutation } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
-import {
-  getNodeById,
-  getNodeByPath,
-  getNodePath,
-} from "@paperclip-ui/proto/lib/virt/html-utils";
+import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
 import {
   Element as VirtElement,
   TextNode as VirtTextNode,
 } from "@paperclip-ui/proto/lib/generated/virt/html";
-import { getScaledBox, mergeBoxes } from "../../state/geom";
+import { getScaledBox, roundBox } from "../../state/geom";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -34,7 +30,8 @@ export type DesignerEngineOptions = {
 export const createDesignerEngine =
   ({ protocol, host, transport }: DesignerEngineOptions) =>
   (
-    dispatch: Dispatch<DesignerEngineEvent>
+    dispatch: Dispatch<DesignerEngineEvent>,
+    state: DesignerEngineState
   ): Engine<DesignerEngineState, DesignerEngineEvent> => {
     const client = new DesignerClientImpl(
       new GrpcWebImpl((protocol || "http:") + "//" + host, {
@@ -44,7 +41,7 @@ export const createDesignerEngine =
 
     const actions = createActions(client, dispatch);
     const handleEvent = createEventHandler(actions);
-    bootstrap(actions);
+    bootstrap(actions, state);
 
     const dispose = () => {};
     return {
@@ -70,6 +67,13 @@ const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
         error() {},
       });
     },
+    syncGraph() {
+      client.GetGraph({}).subscribe({
+        next(data) {
+          dispatch(designerEngineEvents.graphLoaded(data));
+        },
+      });
+    },
     async applyChanges(mutations: Mutation[]) {
       const changes = await client.ApplyMutations({ mutations }, null);
       dispatch(designerEngineEvents.changesApplied(changes));
@@ -85,6 +89,7 @@ const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
 const createEventHandler = (actions: Actions) => {
   const handleInsert = async (state: EditorState) => {
     let bounds = getScaledBox(getInsertBox(state), state.canvas.transform);
+    const insertMode = state.insertMode;
 
     const intersectingNode = getNodeInfoAtPoint(
       state.canvas.mousePosition,
@@ -96,50 +101,52 @@ const createEventHandler = (actions: Actions) => {
       const mutation: Mutation = {
         insertFrame: {
           documentId: state.currentDocument.paperclip.html.sourceId,
-          bounds,
-          nodeSource: `div {
-            style {
-              position: relative
-            }
-          }`,
+          bounds: roundBox(bounds),
+          nodeSource: {
+            [InsertMode.Element]: `div {
+              style {
+                position: relative
+              }
+            }`,
+            [InsertMode.Text]: `text "Type something"`,
+          }[insertMode],
         },
       };
 
       actions.applyChanges([mutation]);
     } else {
-      const parent = getNodeByPath(
+      const parent = virtHTML.getNodeByPath(
         intersectingNode.nodePath,
         state.currentDocument.paperclip.html
       );
-
-      // const style = state.allStyles[intersectingNode.nodePath];
-      const frameIndex = intersectingNode.nodePath.split(".").shift();
-      const frameRect = state.rects[frameIndex][frameIndex];
 
       const parentBox = flattenFrameBoxes(state.rects)[
         intersectingNode.nodePath
       ];
 
-      bounds = {
+      bounds = roundBox({
         ...bounds,
         x: bounds.x - parentBox.x,
         y: bounds.y - parentBox.y,
-      };
+      });
 
       actions.applyChanges([
         {
           appendChild: {
             parentId: parent.sourceId,
-            childSource: `div {
-              style {
-                background: rgba(0,0,0,0.1)
-                position: absolute
-                left: ${bounds.x}px
-                top: ${bounds.y}px
-                width: ${Math.round(bounds.width)}px
-                height: ${Math.round(bounds.height)}px
-              }
-            }`,
+            childSource: {
+              [InsertMode.Element]: `div {
+                style {
+                  background: rgba(0,0,0,0.1)
+                  position: absolute
+                  left: ${bounds.x}px
+                  top: ${bounds.y}px
+                  width: ${bounds.width}px
+                  height: ${bounds.height}px
+                }
+              }`,
+              [InsertMode.Text]: `text "Type something"`,
+            }[insertMode],
           },
         },
       ]);
@@ -157,9 +164,10 @@ const createEventHandler = (actions: Actions) => {
     prevState: EditorState
   ) => {
     for (const id of prevState.selectedVirtNodeIds) {
-      const node = getNodeById(id, prevState.currentDocument.paperclip.html) as
-        | VirtTextNode
-        | VirtElement;
+      const node = virtHTML.getNodeById(
+        id,
+        prevState.currentDocument.paperclip.html
+      ) as VirtTextNode | VirtElement;
 
       if (!node) {
         console.warn(`Node doesn't exist, skipping delete`);
@@ -180,15 +188,29 @@ const createEventHandler = (actions: Actions) => {
     state: EditorState,
     prevState: EditorState
   ) => {
-    const node = getNodeById(
+    const node = virtHTML.getNodeById(
       prevState.selectedVirtNodeIds[0],
       prevState.currentDocument.paperclip.html
     ) as VirtTextNode | VirtElement;
 
-    const path = getNodePath(node, prevState.currentDocument.paperclip.html);
+    const path = virtHTML.getNodePath(
+      node,
+      prevState.currentDocument.paperclip.html
+    );
 
     if (path.includes(".")) {
-      console.warn("Not implemented yet");
+      actions.applyChanges([
+        {
+          setStyleDeclarations: {
+            expressionId: node.sourceId,
+            declarations: Object.entries(
+              state.styleOverrides[prevState.selectedVirtNodeIds[0]]
+            ).map(([name, value]) => {
+              return { name, value: String(value) };
+            }),
+          },
+        },
+      ]);
     } else {
       const newBounds = node.metadata.bounds;
 
@@ -230,7 +252,12 @@ const createEventHandler = (actions: Actions) => {
  * Bootstrap script that initializes things based on initial state
  */
 
-const bootstrap = ({ openFile }: Actions) => {
-  const urlParams = new URLSearchParams(window.location.search);
-  setTimeout(openFile, 100, urlParams.get("file"));
+const bootstrap = (
+  { openFile, syncGraph }: Actions,
+  initialState: DesignerEngineState
+) => {
+  setTimeout(() => {
+    openFile(initialState.history.query.file);
+    syncGraph();
+  }, 100);
 };

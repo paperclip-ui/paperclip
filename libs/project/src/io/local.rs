@@ -9,7 +9,7 @@ use paperclip_common::fs::{
     FileReader, FileResolver, FileWatchEvent, FileWatchEventKind, FileWatcher, LocalFileReader,
 };
 use paperclip_config::{ConfigContext, ConfigIO};
-use paperclip_parser::graph::io::IO as GraphIO;
+use paperclip_proto_ext::graph::io::IO as GraphIO;
 use path_absolutize::*;
 use std::path::Path;
 use wax::Glob;

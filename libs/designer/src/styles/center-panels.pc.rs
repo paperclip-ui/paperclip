@@ -11,6 +11,8 @@ mod toolbar;
 #[derive(Properties, PartialEq)]
 pub struct CenterPanelsProps {
     pub __scope_class_name: Option<String>,
+    #[prop_or_default]
+    pub children: Children,
 }
 
 #[function_component]
@@ -21,9 +23,23 @@ pub fn CenterPanels(props: &CenterPanelsProps) -> Html {
         } else {
             "_CenterPanels-bbee452d-12".to_string()
         }}>
-            <toolbar::Toolbar></toolbar::Toolbar>
-            
+            { for props.children.iter() }
         </div>
+    }
+}
+
+#[derive(Properties, PartialEq)]
+pub struct PreviewProps {
+    pub __scope_class_name: Option<String>,
+}
+
+#[function_component]
+pub fn Preview(props: &PreviewProps) -> Html {
+    html! {
+        <CenterPanels>
+            <toolbar::Preview></toolbar::Preview>
+            
+        </CenterPanels>
     }
 }
 

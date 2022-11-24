@@ -112,7 +112,7 @@ Editor {
     }
     EditorPanels panels{ 
         leftSidebar.LeftSidebarPreview leftSidebar
-        centerPanels.CenterPanels centerPanels
+        centerPanels.Preview centerPanels
         rightSidebar.RightSidebar
     }
 }

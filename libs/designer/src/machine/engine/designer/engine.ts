@@ -11,6 +11,7 @@ import {
   flattenFrameBoxes,
   getInsertBox,
   getNodeInfoAtPoint,
+  InsertMode,
 } from "../../state";
 import { Mutation } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
 import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
@@ -88,6 +89,7 @@ const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
 const createEventHandler = (actions: Actions) => {
   const handleInsert = async (state: EditorState) => {
     let bounds = getScaledBox(getInsertBox(state), state.canvas.transform);
+    const insertMode = state.insertMode;
 
     const intersectingNode = getNodeInfoAtPoint(
       state.canvas.mousePosition,
@@ -100,11 +102,14 @@ const createEventHandler = (actions: Actions) => {
         insertFrame: {
           documentId: state.currentDocument.paperclip.html.sourceId,
           bounds: roundBox(bounds),
-          nodeSource: `div {
-            style {
-              position: relative
-            }
-          }`,
+          nodeSource: {
+            [InsertMode.Element]: `div {
+              style {
+                position: relative
+              }
+            }`,
+            [InsertMode.Text]: `text "Type something"`,
+          }[insertMode],
         },
       };
 
@@ -129,16 +134,19 @@ const createEventHandler = (actions: Actions) => {
         {
           appendChild: {
             parentId: parent.sourceId,
-            childSource: `div {
-              style {
-                background: rgba(0,0,0,0.1)
-                position: absolute
-                left: ${bounds.x}px
-                top: ${bounds.y}px
-                width: ${bounds.width}px
-                height: ${bounds.height}px
-              }
-            }`,
+            childSource: {
+              [InsertMode.Element]: `div {
+                style {
+                  background: rgba(0,0,0,0.1)
+                  position: absolute
+                  left: ${bounds.x}px
+                  top: ${bounds.y}px
+                  width: ${bounds.width}px
+                  height: ${bounds.height}px
+                }
+              }`,
+              [InsertMode.Text]: `text "Type something"`,
+            }[insertMode],
           },
         },
       ]);

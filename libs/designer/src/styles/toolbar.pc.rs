@@ -12,23 +12,43 @@ mod theme;
 mod common;
 
 #[derive(Properties, PartialEq)]
-struct ToolbarButtonProps {
+pub struct ToolbarButtonProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
     pub class: ,
+    pub disabled: ,
+    pub onClick: ,
+    pub style: ,
 }
 
 #[function_component]
-fn ToolbarButton(props: &ToolbarButtonProps) -> Html {
+pub fn ToolbarButton(props: &ToolbarButtonProps) -> Html {
     html! {
         <button class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_ToolbarButton-6cd1ddfb-39", scope_class_name)
+            format!("{} {}", "_ToolbarButton-6cd1ddfb-57", scope_class_name)
         } else {
-            "_ToolbarButton-6cd1ddfb-39".to_string()
-        })}>
+            "_ToolbarButton-6cd1ddfb-57".to_string()
+        })} disabled={props.disabled.clone()} onClick={props.onClick.clone()} style={props.style.clone()}>
             { for props.children.iter() }
         </button>
+    }
+}
+
+#[derive(Properties, PartialEq)]
+pub struct ToolbarIconProps {
+    pub __scope_class_name: Option<String>,
+    pub class: String,
+}
+
+#[function_component]
+pub fn ToolbarIcon(props: &ToolbarIconProps) -> Html {
+    html! {
+        <div class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
+            format!("{} {}", "_ToolbarIcon-6cd1ddfb-103", scope_class_name)
+        } else {
+            "_ToolbarIcon-6cd1ddfb-103".to_string()
+        })}></div>
     }
 }
 
@@ -49,17 +69,17 @@ fn Zoom(props: &ZoomProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-struct ToolbarDividerProps {
+pub struct ToolbarDividerProps {
     pub __scope_class_name: Option<String>,
 }
 
 #[function_component]
-fn ToolbarDivider(props: &ToolbarDividerProps) -> Html {
+pub fn ToolbarDivider(props: &ToolbarDividerProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_ToolbarDivider-6cd1ddfb-57", scope_class_name)
+            format!("{} {}", "_ToolbarDivider-6cd1ddfb-121", scope_class_name)
         } else {
-            "_ToolbarDivider-6cd1ddfb-57".to_string()
+            "_ToolbarDivider-6cd1ddfb-121".to_string()
         }}></div>
     }
 }
@@ -67,48 +87,64 @@ fn ToolbarDivider(props: &ToolbarDividerProps) -> Html {
 #[derive(Properties, PartialEq)]
 pub struct ToolbarProps {
     pub __scope_class_name: Option<String>,
+    #[prop_or_default]
+    pub children: Children,
 }
 
 #[function_component]
 pub fn Toolbar(props: &ToolbarProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Toolbar-6cd1ddfb-128", scope_class_name)
+            format!("{} {}", "_Toolbar-6cd1ddfb-148", scope_class_name)
         } else {
-            "_Toolbar-6cd1ddfb-128".to_string()
+            "_Toolbar-6cd1ddfb-148".to_string()
         }}>
-            <div class={"_Toolbar-6cd1ddfb-127"}>
-                <ToolbarButton>
-                    <div class={"_Toolbar-6cd1ddfb-89"}></div>
-                    
-                </ToolbarButton>
-                
-                <ToolbarButton>
-                    <div class={"_Toolbar-6cd1ddfb-101"}></div>
-                    
-                </ToolbarButton>
-                
-                <ToolbarDivider></ToolbarDivider>
-                
-                <ToolbarButton>
-                    <div class={"_Toolbar-6cd1ddfb-111"}></div>
-                    
-                </ToolbarButton>
-                
-                <ToolbarButton>
-                    <div class={"_Toolbar-6cd1ddfb-120"}></div>
-                    
-                </ToolbarButton>
-                
-                <ToolbarDivider></ToolbarDivider>
-                
-                <ToolbarButton class={"wide"}>
-                    
-                </ToolbarButton>
-                
+            <div class={"_Toolbar-6cd1ddfb-147"}>
+                { for props.children.iter() }
             </div>
             
         </div>
+    }
+}
+
+#[derive(Properties, PartialEq)]
+pub struct PreviewProps {
+    pub __scope_class_name: Option<String>,
+}
+
+#[function_component]
+pub fn Preview(props: &PreviewProps) -> Html {
+    html! {
+        <Toolbar>
+            <ToolbarButton>
+                <ToolbarIcon class={"text"}></ToolbarIcon>
+                
+            </ToolbarButton>
+            
+            <ToolbarButton>
+                <ToolbarIcon class={"element"}></ToolbarIcon>
+                
+            </ToolbarButton>
+            
+            <ToolbarDivider></ToolbarDivider>
+            
+            <ToolbarButton>
+                <ToolbarIcon class={"component"}></ToolbarIcon>
+                
+            </ToolbarButton>
+            
+            <ToolbarButton>
+                <ToolbarIcon class={"asset"}></ToolbarIcon>
+                
+            </ToolbarButton>
+            
+            <ToolbarDivider></ToolbarDivider>
+            
+            <ToolbarButton class={"wide"}>
+                
+            </ToolbarButton>
+            
+        </Toolbar>
     }
 }
 

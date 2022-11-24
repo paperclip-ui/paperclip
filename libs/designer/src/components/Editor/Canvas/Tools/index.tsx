@@ -40,7 +40,13 @@ export const Tools = () => {
     return null;
   }
 
-  const cursor = insertMode != null ? "crosshair" : null;
+  const cursor =
+    insertMode != null
+      ? {
+          [InsertMode.Element]: "crosshair",
+          [InsertMode.Text]: "text",
+        }[insertMode]
+      : null;
 
   const style = {
     cursor,

@@ -342,3 +342,5 @@ export const getExpandedVirtIds = (state: EditorState) =>
   state.expandedLayerVirtIds;
 
 export const getGraph = (state: EditorState) => state.graph;
+
+export const getInsertMode = (state: EditorState) => state.insertMode;

@@ -9,6 +9,12 @@ public component CenterPanels {
             flex-direction: column
             justify-content: space-between
         }
-        toolbar.Toolbar 
+        slot children
+    }
+}
+
+public component Preview {
+    render CenterPanels {
+        toolbar.Preview
     }
 }

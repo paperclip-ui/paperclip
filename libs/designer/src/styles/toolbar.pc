@@ -2,10 +2,14 @@ import "./theme.pc" as theme
 import "./common.pc" as common
 
 
-component ToolbarButton {
-  variant hovering trigger { ":hover" }
+public component ToolbarButton {
+  variant hovering trigger { 
+    ":hover"
+    ".active"
+  }
   variant wide trigger { ".wide" }
-  render button(class:class) {
+  variant enabled trigger { ":not(:disabled)" }
+  render button(class:class, disabled: disabled, style: style, onClick: onClick) {
     style extends theme.reset, theme.easeIn {
       padding: 0px
       cursor: pointer
@@ -13,8 +17,12 @@ component ToolbarButton {
       min-width: var(theme.space06)
       height: var(theme.space06)
     }
-    style variant hovering {
+    style variant hovering + enabled {
       background: var(theme.selectedColor)
+    }
+    style variant wide {
+      padding-left: var(theme.space03)
+      padding-right:var(theme.space03)
     }
     style variant wide {
       padding-left: var(theme.space03)
@@ -24,13 +32,40 @@ component ToolbarButton {
   }
 }
 
+public component ToolbarIcon {
+  variant isText trigger { ".text" }
+  variant isElement trigger { ".element" }
+  variant isComponent trigger { ".component" }
+  variant isAsset trigger { ".asset" }
+  render div(class: class) {
+    style extends theme.icon
+    style variant isText {
+      -webkit-mask-image: url("./text.svg")
+      --size: 0.9em
+    }
+    style variant isElement {
+      -webkit-mask-image: url("./instance3.svg")
+      transform: rotate(45deg)
+      --size: 1.2em
+    }
+    style variant isComponent {
+       -webkit-mask-image: url("./component2.svg")
+       --size: 1.2em
+    }
+    style variant isAsset {
+      -webkit-mask-image: url("./image3.svg")
+      --size: 1.2em
+    }
+  }
+}
+
 component Zoom {
   render div {
     slot children
   }
 }
 
-component ToolbarDivider {
+public component ToolbarDivider {
   render div {
     style {
       width: 1px
@@ -57,44 +92,29 @@ public component Toolbar {
         padding: var(theme.space02)
         gap: var(theme.space03)
       }
+      slot children
+    }
+  }
+}
+
+public component Preview {
+  render Toolbar {
       ToolbarButton {
-        div {
-          style extends theme.icon {
-            -webkit-mask-image: url("./text.svg")
-            --size: 0.9em
-          }
-        }
+        ToolbarIcon(class: "text")
       }
       ToolbarButton {
-        div {
-          style extends theme.icon {
-            -webkit-mask-image: url("./instance3.svg")
-            transform: rotate(45deg)
-            --size: 1.2em
-          }
-        }
+        ToolbarIcon(class: "element")
       }
       ToolbarDivider
       ToolbarButton {
-        div {
-          style extends theme.icon {
-            -webkit-mask-image: url("./component2.svg")
-
-            --size: 1.2em
-          }
-        }
-      }ToolbarButton {
-        div {
-          style extends theme.icon {
-            -webkit-mask-image: url("./image3.svg")
-            --size: 1.2em
-          }
-        }
+        ToolbarIcon(class: "component")
+      }
+      ToolbarButton {
+        ToolbarIcon(class: "asset")
       }
       ToolbarDivider
       ToolbarButton(class: "wide") {
         text "100%"
       }
-    }
   }
 }

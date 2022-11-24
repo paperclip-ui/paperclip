@@ -5,13 +5,17 @@ import {
 } from "@paperclip-ui/common";
 import { DesignerEngineEvent } from "../engine/designer/events";
 import { HistoryEngineEvent } from "../engine/history/events";
+import { InsertMode } from "../state";
 import { Box, Point, Size } from "../state/geom";
 
 export const editorEvents = eventCreators(
   {
     canvasPanEnd: null,
     eHotkeyPressed: null,
+    tHotkeyPressed: null,
     deleteHokeyPressed: null,
+
+    insertModeButtonClick: identity<{ mode: InsertMode }>(),
     insertElementReleased: identity<Box>(),
     canvasMouseMoved: identity<Point>(),
     canvasMouseLeave: null,

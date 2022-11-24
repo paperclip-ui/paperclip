@@ -160,6 +160,7 @@ const useCanvasHotkeys = (ref: MutableRefObject<HTMLElement>) => {
   useHotkeys(
     {
       e: () => dispatch(editorEvents.eHotkeyPressed()),
+      t: () => dispatch(editorEvents.tHotkeyPressed()),
       backspace: () => dispatch(editorEvents.deleteHokeyPressed()),
       delete: () => dispatch(editorEvents.deleteHokeyPressed()),
     },

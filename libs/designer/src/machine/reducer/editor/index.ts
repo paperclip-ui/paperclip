@@ -82,9 +82,19 @@ export const editorReducer = (
         newState.insertMode = InsertMode.Element;
         newState.selectedVirtNodeIds = [];
       });
+    case editorEvents.tHotkeyPressed.type:
+      return produce(state, (newState) => {
+        newState.insertMode = InsertMode.Text;
+        newState.selectedVirtNodeIds = [];
+      });
     case editorEvents.layerLeafClicked.type: {
       state = selectNode(event.payload.virtId, false, false, state);
       return state;
+    }
+    case editorEvents.insertModeButtonClick.type: {
+      return produce(state, (newState) => {
+        newState.insertMode = event.payload.mode;
+      });
     }
     case editorEvents.layerArrowClicked.type: {
       if (state.expandedLayerVirtIds.includes(event.payload.virtId)) {

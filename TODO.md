@@ -1,14 +1,13 @@
 #### On-deck
 
-- ability to insert text as frame
-- edit text mode on insert
-- double click to edit text
-
-- toolbar
-  - ability to insert text
-  - highlight tools
-  - wire up zoom
 - style panel
+  -
+
+#### MVP
+
+- ability to edit projects online
+
+  -
 
   - ## layers
 

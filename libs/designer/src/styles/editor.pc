@@ -116,3 +116,10 @@ Editor {
     }
 }
 
+
+
+div {
+    style {
+        position: absolute
+    }
+}

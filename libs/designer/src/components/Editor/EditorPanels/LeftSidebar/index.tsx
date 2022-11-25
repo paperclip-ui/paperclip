@@ -106,7 +106,6 @@ const NodeLeaf = memo(({ expr: node, depth, instanceOf }: LeafProps<Node>) => {
       <InsertLeaf expr={node.insert} depth={depth} instanceOf={instanceOf} />
     );
   }
-  console.log("NONE", node);
   return null;
 });
 

@@ -145,6 +145,7 @@ export const renderSheetText = (
 const createNativeTextNode = (node: html.TextNode, factory: NodeFactory) => {
   // fixes https://github.com/paperclipui/paperclip/issues/609
   const wrapper = document.createElement("span");
+  wrapper.dataset.virtId = node.id;
 
   // needed for overriding styles
   wrapper.id = "_" + node.id;
@@ -169,6 +170,8 @@ const createNativeElement = (
       ? factory.createElementNS(namespaceUri, element.tagName)
       : factory.createElement(element.tagName)
   ) as HTMLElement;
+
+  nativeElement.dataset.virtId = element.id;
 
   const childNamespaceUri =
     element.tagName === "svg" ? XMLNS_NAMESPACE : namespaceUri;

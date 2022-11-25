@@ -274,11 +274,7 @@ export const editorReducer = (
 
         // within a frame
         if (path.includes(".")) {
-          const parent = virtHTML.getNodeParent(
-            node,
-            newState.currentDocument.paperclip.html
-          );
-          const computedStyles = newState.preEditComputedStyles[path];
+          const computedStyles = newState.preEditComputedStyles[node.id];
 
           newState.styleOverrides = {};
 

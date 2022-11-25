@@ -1,4 +1,5 @@
 import { memoize } from "@paperclip-ui/common";
+import { DeclarationValue, StyleDeclaration } from "../generated/ast/css";
 import { Graph } from "../generated/ast/graph";
 import {
   Component,
@@ -9,6 +10,7 @@ import {
   Import,
   Insert,
   Node,
+  Reference,
   Render,
   Slot,
   Style,
@@ -120,6 +122,86 @@ export namespace ast {
     }
   );
 
+  export const getRef = (ref: Reference, graph: Graph): Style | null => {
+    const dep = getOwnerDependency(ref.id, graph);
+    if (ref.path.length === 1) {
+      return getDocumentBodyStyleByName(ref.path[0], dep.document);
+    } else {
+      // const imp = graph.dependencies[dep.imports[]];
+      const imp = getDocumentImport(ref.path[0], dep.document);
+      const impDep = imp && graph.dependencies[imp.path];
+
+      // Broken references will happen all the time
+      if (impDep) {
+        return getDocumentBodyStyleByName(ref.path[1], impDep.document);
+      }
+    }
+    return null;
+  };
+
+  export const getDocumentBodyStyleByName = (
+    name: string,
+    document: Document
+  ) => {
+    return document.body.find((expr) => expr.style?.name === name) as Style;
+  };
+
+  export const computeElementStyle = memoize(
+    (
+      exprId: string,
+      graph: Graph,
+      variantIds?: string[]
+    ): Record<string, DeclarationValue> => {
+      // TODO
+      const node = getExprById(exprId.split(".").pop(), graph);
+      const map: Record<string, DeclarationValue> = {};
+      for (const item of node.body) {
+        const { style } = item;
+
+        if (style) {
+          Object.assign({}, computeStyle(style, graph, variantIds));
+        }
+      }
+
+      return map;
+    }
+  );
+
+  export const computeStyle = memoize(
+    (
+      style: Style,
+      graph: Graph,
+      variantIds?: string[]
+    ): Record<string, DeclarationValue> => {
+      let map: Record<string, DeclarationValue> = {};
+
+      if (style.variantCombo && style.variantCombo.length > 0) {
+        // TODO: do ehthis
+        // if (!style.variantCombo.every(ref => getRef))
+        return map;
+      }
+
+      for (const value of style.declarations) {
+        map[value.name] = value.value;
+      }
+
+      if (style.extends) {
+        for (const ref of style.extends) {
+          const extendsStyle = getRef(ref, graph);
+          if (extendsStyle) {
+            map = Object.assign(
+              {},
+              computeStyle(extendsStyle, graph, variantIds),
+              map
+            );
+          }
+        }
+      }
+
+      return map;
+    }
+  );
+
   export const getComponentRenderNode = (component: Component) =>
     component.body.find((body) => body.render).render;
 
@@ -206,6 +288,15 @@ export namespace ast {
   ) => {
     return flattenUnknownInnerExpression(ancestor)[exprId] != null;
   };
+
+  export const getExprByVirtId = (id: string, graph: Graph) =>
+    getExprById(id.split(".").pop(), graph);
+  export const getExprStyles = (
+    parent: Element | TextNode | Document
+  ): Style[] =>
+    (parent as Element).body
+      .filter((expr) => expr.style)
+      .map(getInnerExpression);
 
   export const getExprById = (id: string, graph: Graph) => {
     return flattenDocument(getOwnerDependency(id, graph).document)[id];
@@ -296,9 +387,31 @@ export namespace ast {
     );
   });
 
+  export const flattenStyle = memoize((expr: Style) => {
+    return Object.assign(
+      {
+        [expr.id]: expr,
+      },
+      ...expr.declarations.map(flattenDeclaration),
+      ...(expr.extends || []).map(flattenReference)
+    );
+  });
+
+  export const flattenDeclaration = memoize((expr: StyleDeclaration) => {
+    return Object.assign({
+      [expr.id]: expr,
+    });
+  });
+  export const flattenReference = memoize((expr: Reference) => ({
+    [expr.id]: expr,
+  }));
+
   export const flattenNode = (expr: Node) => {
     if (expr.element) {
       return flattenElement(expr.element);
+    }
+    if (expr.style) {
+      return flattenStyle(expr.style);
     }
 
     if (expr.text) {

@@ -1,5 +1,11 @@
 #### On-deck
 
+- tests for JS utils!
+
+  - WASM of JS parser
+  - move pc utils to proto_ext
+  - test PC utils
+
 - style panel
 
   - display all styles
@@ -9,8 +15,7 @@
   - inputs
     - color picker
 
-- triggers
-  -
+- ## triggers
 
 #### MVP
 

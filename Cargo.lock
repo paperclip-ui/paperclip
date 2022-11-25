@@ -1369,7 +1369,6 @@ dependencies = [
  "lazy_static",
  "path-absolutize",
  "regex",
- "tokio",
  "uuid",
 ]
 
@@ -1539,6 +1538,13 @@ dependencies = [
  "paperclip_common",
  "paperclip_parser",
  "paperclip_proto",
+]
+
+[[package]]
+name = "paperclip_web_parser"
+version = "0.1.1"
+dependencies = [
+ "paperclip_parser",
 ]
 
 [[package]]

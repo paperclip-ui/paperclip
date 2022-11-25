@@ -1,25 +1,48 @@
-import { StyleDeclaration } from "@paperclip-ui/proto/lib/generated/ast/css";
-import { Element } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import { ast } from "@paperclip-ui/proto/lib/ast/pc-utils";
 import { EditorState } from "./core";
 
-export type ComputedDeclarationValue = {
-  targetExpression: Element;
-  raw: string;
-  sourceExpression?: StyleDeclaration;
-  isInherited?: boolean;
+export const MIXED_VALUE = "mixed";
 
-  // default value via window.getComputedStyle?
-  isDefault?: boolean;
+export type ComputedDeclaration = {
+  value: string;
+  isExplicitlyDefined: boolean;
 };
 
-export type SumDeclarationValue = {
-  values: ComputedDeclarationValue;
-  mixed?: boolean;
-  raw: string;
+const COLLAPSED_PROPS = {
+  "border-left-width": ["border", "border-width"],
+  "border-top-width": ["border", "border-width"],
 };
 
 export const getSelectedExprStyles = (
   state: EditorState
-): Record<string, SumDeclarationValue> => {
-  return {};
+): Record<string, ComputedDeclaration> => {
+  const combinedStyles: Record<string, ComputedDeclaration> = {};
+
+  for (const virtId of state.selectedVirtNodeIds) {
+    const expr = ast.getExprByVirtId(virtId, state.graph);
+    const exprStyle = ast.computeElementStyle(virtId, state.graph);
+    console.log("EXP STYLE", exprStyle);
+    const computedStyle = state.computedStyles[virtId];
+    for (const name in computedStyle) {
+      const value = computedStyle[name];
+      if (
+        combinedStyles[name] != null &&
+        combinedStyles[name].value !== value
+      ) {
+        combinedStyles[name].value = MIXED_VALUE;
+      } else {
+        combinedStyles[name] = {
+          isExplicitlyDefined: Boolean(
+            exprStyle[name] != null ||
+              COLLAPSED_PROPS[name]?.some((alias) => {
+                return exprStyle[alias];
+              })
+          ),
+          value: computedStyle[name],
+        };
+      }
+    }
+  }
+
+  return combinedStyles;
 };

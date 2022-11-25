@@ -1,7 +1,7 @@
 import React from "react";
 import * as commonStyles from "@paperclip-ui/designer/src/styles/common.pc";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
-import { useSelector } from "@paperclip-ui/common";
+import { memoize, useSelector } from "@paperclip-ui/common";
 import {
   ComputedDeclaration,
   getSelectedExprStyles,
@@ -38,6 +38,8 @@ namespace schema {
     name: string;
     group?: string;
 
+    sticky?: boolean;
+
     // alias property to use instead
     alias?: string;
 
@@ -62,6 +64,7 @@ const cssSchema: schema.Map<css.Input> = [
   {
     name: "padding",
     group: "layout",
+    sticky: true,
     join: {
       padding: [
         "padding-left",
@@ -79,6 +82,7 @@ const cssSchema: schema.Map<css.Input> = [
   {
     name: "border",
     group: "style",
+    sticky: true,
     join: {
       "border-width": [
         "border-left-width",
@@ -114,31 +118,67 @@ const cssSchema: schema.Map<css.Input> = [
   },
 ];
 
+const layoutRegexp = /display|/;
+
+const GROUPS = {
+  layout: (name: string) => layoutRegexp.test(name),
+  style: (name: string) => !layoutRegexp.test(name),
+};
+
 export const StylePanel = () => {
   const { style } = useStylePanel();
-  console.log(style);
 
   return (
     <commonStyles.SidebarPanel>
-      <GroupSection name="layout" style={style} />
-      <GroupSection name="style" style={style} />
+      {Object.keys(GROUPS).map((name) => (
+        <GroupSection
+          key={name}
+          style={style.filter((style) => GROUPS[name](style.name))}
+          name={name}
+        />
+      ))}
     </commonStyles.SidebarPanel>
   );
 };
 
+const getPropSchema = memoize((name: string): schema.Property<css.Input> => {
+  const options = cssSchema.find((option) => option.name === name);
+  if (options.alias) {
+    return getPropSchema(options.alias);
+  }
+  return options;
+});
+
 type GroupSectionProps = {
   name: string;
-  style: Record<string, ComputedDeclaration>;
+  style: ComputedDeclaration[];
+  rest?: boolean;
 };
 
 const GroupSection = ({ name, style }: GroupSectionProps) => {
+  const used = {};
   return (
     <commonStyles.SidebarSection>
       <commonStyles.SidebarPanelHeader>
         {name.charAt(0).toUpperCase() + name.substring(1)}
       </commonStyles.SidebarPanelHeader>
       <commonStyles.SidebarPanelContent>
-        <inputStyles.Fields></inputStyles.Fields>
+        <inputStyles.Fields>
+          {style.map((style) => {
+            const options = getPropSchema(style.name);
+            if (used[options.name] || !options) {
+              return null;
+            }
+            used[options.name] = true;
+
+            return (
+              <inputStyles.Field
+                name={options.name}
+                input={inputStyles.TextInput}
+              />
+            );
+          })}
+        </inputStyles.Fields>
       </commonStyles.SidebarPanelContent>
     </commonStyles.SidebarSection>
   );

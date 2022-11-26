@@ -1,4 +1,4 @@
-import { ast } from "@paperclip-ui/proto/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { EditorState } from "./core";
 
 export const MIXED_VALUE = "mixed";
@@ -362,7 +362,7 @@ export const getSelectedExprStyles = (
 
   for (const virtId of state.selectedVirtNodeIds) {
     // const expr = ast.getExprByVirtId(virtId, state.graph);
-    // const exprStyle = ast.computeElementStyle(virtId, state.graph);
+    const exprStyle = ast.computeElementStyle(virtId, state.graph);
     const computedStyle = state.computedStyles[virtId];
     for (const name in computedStyle) {
       const value = computedStyle[name];
@@ -374,8 +374,8 @@ export const getSelectedExprStyles = (
       } else {
         combinedStyles[name] = {
           name,
-          isDefault: value === DEFAULT_STYLE[value],
-          isExplicitlyDefined: false,
+          isDefault: value === DEFAULT_STYLE[name],
+          isExplicitlyDefined: exprStyle[name] != null,
           value: computedStyle[name],
         };
       }

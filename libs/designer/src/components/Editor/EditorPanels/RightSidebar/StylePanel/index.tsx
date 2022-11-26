@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import * as commonStyles from "@paperclip-ui/designer/src/styles/common.pc";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { memoize, useSelector } from "@paperclip-ui/common";
@@ -10,33 +10,45 @@ import {
 namespace css {
   export enum InputType {
     Unit = "unit",
+    Enum = "enum",
     Color = "color",
     Asset = "asset",
+    Raw = "raw",
   }
 
-  export type BaseInput<type extends InputType> = {
-    type: InputType;
+  export type BaseInput<Type extends InputType> = {
+    name?: string;
+    type: Type;
   };
 
-  export type UnitInput = {
-    name: string;
-  } & BaseInput<InputType.Unit>;
+  export type UnitInput = BaseInput<InputType.Unit>;
+  export type AssetInput = BaseInput<InputType.Asset>;
+  export type RawInput = BaseInput<InputType.Raw>;
+  export type ColorInput = BaseInput<InputType.Color>;
+  export type EnumInput = {
+    options: string[];
+  } & BaseInput<InputType.Enum>;
 
-  export type AssetInput = {
-    name: string;
-  } & BaseInput<InputType.Asset>;
-
-  export type Input = UnitInput | AssetInput;
+  export type Input =
+    | UnitInput
+    | AssetInput
+    | RawInput
+    | ColorInput
+    | EnumInput;
 }
 
 namespace schema {
-  type BaseInput = {
+  type BaseInput = {};
+
+  export type DisplayWhen = {
     name: string;
+    value: string;
   };
 
-  export type Property<Input extends BaseInput> = {
-    name: string;
+  export type Field<Input extends BaseInput> = {
+    name?: string;
     group?: string;
+    displayWhen?: DisplayWhen;
 
     sticky?: boolean;
 
@@ -52,7 +64,7 @@ namespace schema {
     inputs?: Input[];
   };
 
-  export type Map<Input extends BaseInput> = Property<Input>[];
+  export type Map<Input extends BaseInput> = Field<Input>[];
 }
 
 const cssSchema: schema.Map<css.Input> = [
@@ -61,6 +73,10 @@ const cssSchema: schema.Map<css.Input> = [
   { name: "padding-top", alias: "padding" },
   { name: "padding-right", alias: "padding" },
   { name: "padding-bottom", alias: "padding" },
+  { name: "margin-left", alias: "margin" },
+  { name: "margin-right", alias: "margin" },
+  { name: "margin-top", alias: "margin" },
+  { name: "margin-bottom", alias: "margin" },
   {
     name: "padding",
     group: "layout",
@@ -74,6 +90,113 @@ const cssSchema: schema.Map<css.Input> = [
       ],
     },
     inputs: [{ name: "padding", type: css.InputType.Unit }],
+  },
+  {
+    name: "margin",
+    group: "layout",
+    sticky: true,
+    join: {
+      margin: ["margin-left", "margin-right", "margin-top", "margin-bottom"],
+    },
+    inputs: [{ name: "margin", type: css.InputType.Unit }],
+  },
+  {
+    name: "display",
+    group: "layout",
+    sticky: true,
+    inputs: [
+      // https://www.w3schools.com/cssref/pr_class_display.php
+      {
+        name: "display",
+        type: css.InputType.Enum,
+        options: [
+          "inline",
+          "block",
+          "contents",
+          "flex",
+          "grid",
+          "inline-block",
+          "inline-flex",
+          "inline-grid",
+          "inline-table",
+          "list-item",
+          "run-in",
+          "table",
+          "table-caption",
+          "table-column-group",
+          "table-header-group",
+          "table-footer-group",
+          "table-row-group",
+          "table-cell",
+          "table-column",
+          "table-row",
+          "none",
+          "initial",
+          "inherit",
+        ],
+      },
+    ],
+  },
+  {
+    name: "justify-content",
+    displayWhen: { name: "display", value: "flex" },
+    group: "layout",
+    sticky: true,
+    inputs: [
+      {
+        name: "display",
+        type: css.InputType.Enum,
+        options: [
+          "inline",
+          "block",
+          "contents",
+          "flex",
+          "grid",
+          "inline-block",
+          "inline-flex",
+          "inline-grid",
+          "inline-table",
+          "list-item",
+          "run-in",
+          "table",
+          "table-caption",
+          "table-column-group",
+          "table-header-group",
+          "table-footer-group",
+          "table-row-group",
+          "table-cell",
+          "table-column",
+          "table-row",
+          "none",
+          "initial",
+          "inherit",
+        ],
+      },
+    ],
+  },
+  {
+    name: "flex-direction",
+    displayWhen: { name: "display", value: "flex" },
+    group: "layout",
+    sticky: true,
+    inputs: [
+      {
+        name: "display",
+        type: css.InputType.Enum,
+        options: [
+          "start",
+          "end",
+          "flex-start",
+          "flex-end",
+          "center",
+          "left",
+          "normal",
+          "space-between",
+          "space-around",
+          "stretch",
+        ],
+      },
+    ],
   },
 
   // Border
@@ -118,11 +241,15 @@ const cssSchema: schema.Map<css.Input> = [
   },
 ];
 
-const layoutRegexp = /display|/;
+const defaultOptions: schema.Field<css.Input> = {
+  inputs: [{ type: css.InputType.Raw }],
+};
 
 const GROUPS = {
-  layout: (name: string) => layoutRegexp.test(name),
-  style: (name: string) => !layoutRegexp.test(name),
+  layout: (name: string) => getPropField(name).group === "layout",
+  style: (name: string) => {
+    return getPropField(name).group == null;
+  },
 };
 
 export const StylePanel = () => {
@@ -141,10 +268,11 @@ export const StylePanel = () => {
   );
 };
 
-const getPropSchema = memoize((name: string): schema.Property<css.Input> => {
-  const options = cssSchema.find((option) => option.name === name);
+const getPropField = memoize((name: string): schema.Field<css.Input> => {
+  const options =
+    cssSchema.find((option) => option.name === name) || defaultOptions;
   if (options.alias) {
-    return getPropSchema(options.alias);
+    return getPropField(options.alias);
   }
   return options;
 });
@@ -157,6 +285,7 @@ type GroupSectionProps = {
 
 const GroupSection = ({ name, style }: GroupSectionProps) => {
   const used = {};
+
   return (
     <commonStyles.SidebarSection>
       <commonStyles.SidebarPanelHeader>
@@ -164,17 +293,32 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
       </commonStyles.SidebarPanelHeader>
       <commonStyles.SidebarPanelContent>
         <inputStyles.Fields>
-          {style.map((style) => {
-            const options = getPropSchema(style.name);
-            if (used[options.name] || !options) {
+          {style.map((decl) => {
+            const options = getPropField(decl.name);
+            const fieldName = options.name || decl.name;
+            if (used[fieldName] || !options) {
               return null;
             }
-            used[options.name] = true;
+            used[fieldName] = true;
+
+            if (!options.sticky && !decl.isExplicitlyDefined) {
+              return null;
+            }
+
+            if (
+              options.displayWhen &&
+              style.find((decl2) => decl2.name === options.displayWhen?.name)
+                ?.value !== options.displayWhen.value
+            ) {
+              return null;
+            }
 
             return (
-              <inputStyles.Field
-                name={options.name}
-                input={inputStyles.TextInput}
+              <Field
+                name={fieldName}
+                key={fieldName}
+                style={decl}
+                options={options}
               />
             );
           })}
@@ -183,6 +327,19 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
     </commonStyles.SidebarSection>
   );
 };
+
+type FieldProps = {
+  name: string;
+  style: ComputedDeclaration;
+  options: schema.Field<css.Input>;
+};
+
+const Field = memo(({ name, style, options: { inputs } }: FieldProps) => {
+  const input = <inputStyles.TextInput value={style.value} />;
+
+  // default field input
+  return <inputStyles.Field name={name || style.name} input={input} />;
+});
 
 const useStylePanel = () => {
   const style = useSelector(getSelectedExprStyles);

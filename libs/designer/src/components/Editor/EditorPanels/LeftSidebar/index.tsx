@@ -18,7 +18,7 @@ import {
   Slot,
   TextNode,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
-import { ast } from "@paperclip-ui/proto/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
 import cx from "classnames";
 

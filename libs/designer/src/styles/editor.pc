@@ -4,6 +4,19 @@ import "./common.pc" as common
 import "./right-sidebar.pc" as rightSidebar
 import "./center-panels.pc" as centerPanels
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 token iconSize var(theme.fontSize03)
 component NodeIcon {
     render div
@@ -116,10 +129,14 @@ Editor {
     }
 }
 
-
+/**
+ * @bounds(x: 32, y: -859, width: 777, height: 495)
+*/
 
 div {
     style {
-        position: absolute
+        position: relative
+        display: flex
     }
 }
+

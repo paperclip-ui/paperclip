@@ -2998,6 +2998,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@paperclip-ui/parser@workspace:libs/parser_web":
+  version: 0.0.0-use.local
+  resolution: "@paperclip-ui/parser@workspace:libs/parser_web"
+  dependencies:
+    "@babel/core": ^7.20.2
+    "@babel/preset-env": ^7.20.2
+    babel-jest: ^29.3.1
+    jest: ^29.3.1
+  languageName: unknown
+  linkType: soft
+
 "@paperclip-ui/proto-ext@workspace:libs/proto_ext":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/proto-ext@workspace:libs/proto_ext"

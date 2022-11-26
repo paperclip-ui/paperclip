@@ -28,7 +28,7 @@ fn serialize_document(document: &ast::Document, context: &mut Context) {
             ast::document_body_item::Inner::DocComment(docco) => {
                 serialize_doc_comment2(&docco, context)
             }
-            ast::document_body_item::Inner::Import(imp) => {
+            ast::document_body_item::Inner::Import(_imp) => {
                 continue;
             },
             ast::document_body_item::Inner::Atom(imp) => serialize_atom(&imp, context),

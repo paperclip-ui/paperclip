@@ -11,7 +11,7 @@ name = "paperclip_proto_ext"
 [dependencies]
 paperclip_proto = { path = "../proto" }
 paperclip_parser = { path = "../parser" }
-paperclip_common = { path = "../rs_common" }
+paperclip_common = { path = "../rs_common", features = ["local"] }
 anyhow = "1.0.66"
 futures = "0.3.25"
 crc = "1.8.1"

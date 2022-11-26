@@ -137,6 +137,11 @@ div {
     style {
         position: relative
         display: flex
+        margin: 0px
+        padding: 10px
+        flex-direction: row
     }
+    text "Type something"
+    text "Type something"
 }
 

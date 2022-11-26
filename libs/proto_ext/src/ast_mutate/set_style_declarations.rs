@@ -1,4 +1,6 @@
+use paperclip_parser::css::serializer::serialize_decl_value;
 use paperclip_parser::pc::parser::parse as parse_pc;
+use paperclip_parser::pc::serializer::serialize;
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast_mutate::{
@@ -60,7 +62,7 @@ fn mutation_to_style(mutation: &SetStyleDeclarations) -> String {
     let mut buffer = "style {\n".to_string();
 
     for kv in &mutation.declarations {
-        buffer = format!("{}{}: {}\n", buffer, kv.name, kv.value);
+        buffer = format!("{}{}: {}\n", buffer, kv.name, kv.value)
     }
 
     buffer = format!("{}{}", buffer, "}");

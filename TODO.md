@@ -1,5 +1,7 @@
 #### On-deck
 
+- ability to delete style declaration
+
 - style panel
 
   - display all styles

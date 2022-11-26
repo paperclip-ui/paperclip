@@ -1,11 +1,12 @@
-import React, { memo } from "react";
+import React, { memo, useEffect, useRef } from "react";
 import * as commonStyles from "@paperclip-ui/designer/src/styles/common.pc";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
-import { memoize, useSelector } from "@paperclip-ui/common";
+import { memoize, useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   ComputedDeclaration,
   getSelectedExprStyles,
 } from "@paperclip-ui/designer/src/machine/state/pc";
+import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
 
 namespace css {
   export enum InputType {
@@ -198,6 +199,13 @@ const cssSchema: schema.Map<css.Input> = [
       },
     ],
   },
+  {
+    name: "gap",
+    displayWhen: { name: "display", value: "flex" },
+    group: "layout",
+    sticky: true,
+    inputs: [{ name: "display", type: css.InputType.Unit }],
+  },
 
   // Border
   { name: "border-left-width", alias: "border" },
@@ -335,11 +343,45 @@ type FieldProps = {
 };
 
 const Field = memo(({ name, style, options: { inputs } }: FieldProps) => {
-  const input = <inputStyles.TextInput value={style.value} />;
+  const dispatch = useDispatch();
+
+  const onChange = (value: string) => {
+    dispatch(editorEvents.styleDeclarationsChanged({ [name]: value }));
+  };
+
+  const input = <RawInput value={style.value} onChange={onChange} />;
 
   // default field input
-  return <inputStyles.Field name={name || style.name} input={input} />;
+  return <inputStyles.Field name={name} input={input} />;
 });
+
+type RawInputProps = {
+  value: string;
+  onChange: (value: string) => void;
+};
+
+const RawInput = ({ value, onChange }: RawInputProps) => {
+  const ref = useRef<HTMLInputElement>();
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.value = value;
+    }
+  }, [value]);
+
+  const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      onChange(event.currentTarget.value);
+    }
+  };
+
+  return (
+    <inputStyles.TextInput
+      ref={ref}
+      defaultValue={value}
+      onKeyPress={onKeyPress}
+    />
+  );
+};
 
 const useStylePanel = () => {
   const style = useSelector(getSelectedExprStyles);

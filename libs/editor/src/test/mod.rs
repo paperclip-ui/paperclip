@@ -29,6 +29,8 @@ macro_rules! case {
                 .map(|(path, dep)| (path.to_string(), pc::serializer::serialize(dep.document.as_ref().expect("Document must exist"))))
                 .collect::<HashMap<String, String>>();
 
+            // println!("{:#?}", graph);
+
             for (path, content) in $expected_mock_files {
                 if let Some(serialized_content) = edited_docs.get(path) {
                     assert_eq!(strip_extra_ws(serialized_content), strip_extra_ws(&content));
@@ -332,6 +334,41 @@ case! {
       SetKeyValue {
         name: "opacity".to_string(),
         value: "0.5".to_string()
+      }
+    ]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      div {
+        style {
+          display: block
+          background: red
+          opacity: 0.5
+        }
+      }
+    "#
+  )]
+}
+
+case! {
+  can_remove_declaration_values,
+  [(
+    "/entry.pc", r#"
+      div {
+        style {
+          display: block
+          padding: 10px
+          margin: 0px
+        }
+      }
+    "#
+  )],
+  mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
+    expression_id: "80f4925f-8".to_string(),
+    declarations: vec![
+      SetKeyValue {
+        name: "margin".to_string(),
+        value: "".to_string()
       }
     ]
   }).get_outer(),

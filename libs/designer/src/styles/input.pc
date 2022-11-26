@@ -31,7 +31,7 @@ public component Select {
 }
 
 public component TextInput {
-  render input(value: value) {
+  render input(value: value, defaultValue: defaultValue, onKeyPress: onKeyPress) {
     style extends theme.input
   }
 }
@@ -119,7 +119,6 @@ public component Token {
     slot children
   }
 }
-
 
 public component Field {
   render div {

@@ -226,6 +226,23 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
+  const handleStyleDeclarationChanged = (
+    event: ReturnType<typeof editorEvents.styleDeclarationsChanged>,
+    state: EditorState
+  ) => {
+    actions.applyChanges(
+      state.selectedVirtNodeIds.map((expressionId) => ({
+        setStyleDeclarations: {
+          expressionId,
+          declarations: Object.entries(event.payload).map(([name, value]) => ({
+            name,
+            value,
+          })),
+        },
+      }))
+    );
+  };
+
   return (
     event: EditorEvent,
     newState: EditorState,
@@ -240,6 +257,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case editorEvents.deleteHokeyPressed.type: {
         return handleDeleteKeyPressed(newState, prevState);
+      }
+      case editorEvents.styleDeclarationsChanged.type: {
+        return handleStyleDeclarationChanged(event, newState);
       }
       case editorEvents.resizerPathStoppedMoving.type: {
         return handleResizerStoppedMoving(event, newState, prevState);

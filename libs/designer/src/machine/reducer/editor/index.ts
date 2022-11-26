@@ -21,7 +21,7 @@ import {
 } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { memoize } from "@paperclip-ui/common";
 import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
-import { ast } from "@paperclip-ui/proto/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { historyEngineEvents } from "../../engine/history/events";
 
 const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;

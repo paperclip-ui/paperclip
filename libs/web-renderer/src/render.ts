@@ -238,7 +238,7 @@ export const computeAllStyles = (mount: HTMLElement, index: number) => {
         pojo[prop] = style[prop];
       }
 
-      styles[node.dataset.virtId] = pojo;
+      styles[node.id.substring(1)] = pojo;
     }
   );
 

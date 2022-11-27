@@ -3,9 +3,6 @@ import "./theme.pc" as theme
 import "./input.pc" as input
 import "./styles-panel.pc" as stylesPanel
 
-
-
-
 public component RightSidebar {
     render common.Sidebar {
         slot children

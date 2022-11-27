@@ -41,9 +41,7 @@ public component Select {
                 }
             }
         }
-        div menuContainer {
-            slot menu
-        }
+        slot menu
     }
 }
 

@@ -3,374 +3,343 @@ import "./theme.pc" as theme
 import "./input.pc" as input
 
 component ColorPickerPopup {
-  render div {
-    style extends common.panel {
-      position: fixed
-      flex-shrink:0
-      transform: translate(calc(-100% - var(theme.space07)))
-      z-index: 1024
-
+    render div {
+        style extends common.panel {
+            position: fixed
+            flex-shrink: 0
+            transform: translate(calc(-100% - var(theme.space07)))
+            z-index: 1024
+        }
+        div header {
+            style {
+                padding: var(theme.space04)
+                display: flex
+                justify-content: space-between
+                font-weight: 600
+                padding-bottom: var(theme.space04)
+            }
+            div {
+                text "Color"
+            }
+            div {
+                text "&times"
+            }
+        }
+        div {
+            style {
+                padding: var(theme.space04)
+                display: flex
+                flex-direction: column
+                gap: var(theme.space04)
+            }
+            color-picker(width: "220", height: "130")
+            div {
+                text "Hue"
+            }
+            div {
+                text "Opacity"
+            }
+            div {
+                text "value"
+            }
+        }
+        div {
+            style {
+                border-top: 1px solid var(theme.borderColor)
+                padding: var(theme.space04)
+                display: flex
+                flex-direction: column
+                gap: var(theme.space03)
+            }
+            div {
+                text "color var"
+            }
+            div {
+                text "color var"
+            }
+            div {
+                text "color var"
+            }
+        }
     }
-    div header {
-      style {
-        padding: var(theme.space04)
-        display: flex
-        justify-content: space-between
-        font-weight: 600
-        padding-bottom: var(theme.space04)
-      }
-      div {
-        text "Color"
-      }
-      div {
-        text "&times"
-      }
-    }
-    div {
-      style {
-        padding: var(theme.space04)
-        display: flex
-        flex-direction: column
-        gap: var(theme.space04)
-      }
-      color-picker(width: "220", height: "130")
-      div {
-        text "Hue"
-      }
-      div {
-        text "Opacity"
-      }
-      div {
-        text "value"
-      }
-    }
-    div {
-      style {
-        border-top: 1px solid var(theme.borderColor)
-        padding: var(theme.space04)
-        display: flex
-        flex-direction: column
-        gap: var(theme.space03)
-      }
-      div {
-        text "color var"
-      }
-      div {
-        text "color var"
-      }
-      div {
-        text "color var"
-      }
-    }
-  }
 }
 
 public component Preview {
-  render common.SidebarPanel {
-      common.SidebarSection {
-        common.SidebarPanelContent {
-          input.Field {
-            insert name {
-              text "Variant"
-            }
-            insert input {
-              input.MultiSelect {
-                input.MultiSelectItem {
-                  text "mobile"
-                }
-                input.MultiSelectItem {
-                  text "dark"
-                }
-              }
-            }
-          }
-        }
-      }
-      common.SidebarSection {
-        common.SidebarPanelHeader {
-          text "Layout"
-          div {
-            style extends theme.icon {
-              -webkit-mask-image: url("./plus.svg")
-            }
-          }
-        }
-        common.SidebarPanelContent {
-          input.Fields {
-            input.Field {
-              insert name {
-                text "display"
-              }
-              insert input {
-                input.Select {
-                  input.Token(class:"keyword") {
-                    text "flex"
-                  }
-                }
-              }
-            }
-            input.Field {
-              insert name {
-                text "Padding"
-              }
-              insert input {
-                input.Select {
-                  input.Token(class:"number") {
-                    text "10"
-                  }
-                  input.Token(class:"unit") {
-                    text "px"
-                  }
-                }
-              }
-            }
-            input.Field {
-              insert name {
-                text "Margin"
-              }
-              insert input {
-                input.Select {
-                  input.Token(class:"call") {
-                    text "calc"
-                  }
-                  input.Token(class:"punc") {
-                    text "("
-                  }
-                  input.Token(class:"number") {
-                    text "100"
-                  }
-                  input.Token(class:"unit") {
-                    text "%"
-                  }
-                  text " "
-                  input.Token(class:"arith") {
-                    text "-"
-                  }
-                  text " "
-                  input.Token(class:"number") {
-                    text "12"
-                  }
-                  input.Token(class:"unit") {
-                    text "px"
-                  }
-                  input.Token(class:"punc") {
-                    text ")"
-                  }
-                }
-              }
-            }
-            input.Field {
-              insert name {
-                text "Position"
-              }
-              insert input {
-                input.Select {
-                  input.Token(class:"number") {
-                    text "12"
-                  }
-                  input.Token(class:"unit") {
-                    text "px"
-                  }
-                }
-              }
-            }
-            input.Field {
-              insert name {
-                text "Box Sizing"
-              }
-              insert input {
-                input.Select {
-                  input.Token(class:"keyword") {
-                    text "border-box"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-      common.SidebarSection {
-        common.SidebarPanelHeader {
-          text "Style"
-          div {
-            style extends theme.icon {
-              -webkit-mask-image: url("./plus.svg")
-            }
-          }
-        }
-        common.SidebarPanelContent {
-          input.Fields {
-            input.Field {
-              insert name {
-                text "Background"
-                ColorPickerPopup
-              }
-              insert input {
-                input.ColorInput {
-                  override root {
-                    style {
-                      --color: rgb(255, 81, 119)
+    render common.SidebarPanel {
+        common.SidebarSection {
+            common.SidebarPanelContent {
+                input.Field {
+                    insert name {
+                        text "Variant"
                     }
-                  }
-                  span {
-                    input.Token(class:"call") {
-                      text "rgb"
+                    insert input {
+                        input.MultiSelect {
+                            input.MultiSelectItem {
+                                text "mobile"
+                            }
+                            input.MultiSelectItem {
+                                text "dark"
+                            }
+                        }
                     }
-                    input.Token(class:"punc") {
-                      text "("
-                    }
-                    input.Token(class:"number") {
-                      text "255"
-                    }
-                    input.Token(class:"punc") {
-                      text ", "
-                    }
-                    input.Token(class:"number") {
-                      text "255"
-                    }
-                    input.Token(class:"punc") {
-                      text ", "
-                    }
-                    input.Token(class:"number") {
-                      text "255"
-                    }
-                    input.Token(class:"punc") {
-                      text ")"
-                    }
-                  }
                 }
-              }
             }
-            input.Field {
-              insert input {
-                input.ColorInput {
-                  override root {
-                    style {
-                      --color: magenta
-                    }
-                  }
-                  span {
-                    input.Token(class:"keyword") {
-                      text "magenta"
-                    }
-                  }
-                }
-              }
-            }input.Field {
-              insert input {
-                input.ColorInput {
-                  override root {
-                    style {
-                      --color: rgb(69, 69, 69)
-                    }
-                  }
-                  span {
-                    input.Token(class:"keyword") {
-                      text "add..."
-                    }
-                  }
-                }
-              }
-            }
-            input.Field {
-              insert name {
-                text "Border"
-              }
-              insert input {
-                input.Select {
-                  text "solid"
-                }
-              }
-            }
-          }
-        }
-      }
-      common.SidebarSection {
-        common.SidebarPanelContent {
-          input.Fields {
-            input.Field {
-              insert name {
-                div {
-                  style {
-                    display: flex
-                    align-items: center
-                    gap: var(theme.space02)
-                  }
-                  div {
-                    style extends theme.icon {
-                      --size: 0.8em
-                      -webkit-mask-image: url("./group.svg")
-                    }
-                  }
-                  text "Tokens"
-                }
-              }
-              insert input {
-                input.Select {
-                  text "input"
-                }
-              }
-            }
-            input.Field {
-              insert input {
-                input.Select {
-                  text "fontDefault"
-                }
-              }
-            }
-            input.Field {
-              insert input {
-                input.Select {
-                  text "add..."
-                }
-              }
-            }
-          }
-        }
-      }
-      div {
-        style {
-          display: none
         }
         common.SidebarSection {
-          common.SidebarPanelHeader {
-            text "Atoms"
-            div {
-              style extends theme.icon {
-                display: none
-                -webkit-mask-image: url("./plus.svg")
-              }
-            }
-          }
-          common.SidebarPanelContent {
-            input.Fields {
-              input.Field {
-                insert name {
-                  text "iconColor"
-                }
-                insert input {
-                  input.ColorInput {
-                    override root {
-                      style {
-                        --color: rgb(255, 81, 119)
-                      }
+            common.SidebarPanelHeader {
+                text "Layout"
+                div {
+                    style extends theme.icon {
+                        -webkit-mask-image: url("./plus.svg")
                     }
-                    text "red"
-                  }
                 }
-              }
-              input.Field {
-                insert name {
-                  text "iconSize"
-                }
-                insert input {
-                  input.TextInput(value: "12px")
-                }
-              }
-              
             }
-          }
+            common.SidebarPanelContent {
+                input.Fields {
+                    input.Field {
+                        insert name {
+                            text "display"
+                        }
+                        insert input {
+                            input.Select {
+                                insert value {
+                                  input.Token(class: "keyword") {
+                                      text "flex"
+                                  }
+                                }
+                            }
+                        }
+                    }
+                    input.Field {
+                        insert name {
+                            text "Padding"
+                        }
+                        insert input {
+                            input.TextInput(value: "", placeholder: "0px")
+                        }
+                    }
+                    input.Field {
+                        insert name {
+                            text "Margin"
+                        }
+                        insert input {
+                            input.TextInput(value: "", placeholder: "0px")
+                        }
+                    }
+                    input.Field {
+                        insert name {
+                            text "Position"
+                        }
+                        insert input {
+                            input.Select {
+                                 insert value {
+                                  input.Token(class: "keyword") {
+                                      text "static"
+                                  }
+                                }
+                            }
+                        }
+                    }
+                    input.Field {
+                        insert name {
+                            text "Box Sizing"
+                        }
+                        insert input {
+                            input.Select {
+                              insert value {
+                                input.Token(class: "keyword") {
+                                    text "border-box"
+                                }
+                              }
+                            }
+                        }
+                    }
+                }
+            }
         }
-      }
+        common.SidebarSection {
+            common.SidebarPanelHeader {
+                text "Style"
+                div {
+                    style extends theme.icon {
+                        -webkit-mask-image: url("./plus.svg")
+                    }
+                }
+            }
+            common.SidebarPanelContent {
+                input.Fields {
+                    input.Field {
+                        insert name {
+                            text "Background"
+                            ColorPickerPopup
+                        }
+                        insert input {
+                            input.ColorInput {
+                                override root {
+                                    style {
+                                        --color: rgb(255, 81, 119)
+                                    }
+                                }
+                                span {
+                                    input.Token(class: "call") {
+                                        text "rgb"
+                                    }
+                                    input.Token(class: "punc") {
+                                        text "("
+                                    }
+                                    input.Token(class: "number") {
+                                        text "255"
+                                    }
+                                    input.Token(class: "punc") {
+                                        text ", "
+                                    }
+                                    input.Token(class: "number") {
+                                        text "255"
+                                    }
+                                    input.Token(class: "punc") {
+                                        text ", "
+                                    }
+                                    input.Token(class: "number") {
+                                        text "255"
+                                    }
+                                    input.Token(class: "punc") {
+                                        text ")"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    input.Field {
+                        insert input {
+                            input.ColorInput {
+                                override root {
+                                    style {
+                                        --color: magenta
+                                    }
+                                }
+                                span {
+                                    input.Token(class: "keyword") {
+                                        text "magenta"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    input.Field {
+                        insert input {
+                            input.ColorInput {
+                                override root {
+                                    style {
+                                        --color: rgb(69, 69, 69)
+                                    }
+                                }
+                                span {
+                                    input.Token(class: "keyword") {
+                                        text "add..."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    input.Field {
+                        insert name {
+                            text "Border"
+                        }
+                        insert input {
+                            input.TextInput(value: "", placeholder: "0px") {
+                                text "solid"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        common.SidebarSection {
+            common.SidebarPanelContent {
+                input.Fields {
+                    input.Field {
+                        insert name {
+                            div {
+                                style {
+                                    display: flex
+                                    align-items: center
+                                    gap: var(theme.space02)
+                                }
+                                div {
+                                    style extends theme.icon {
+                                        --size: 0.8em
+                                        -webkit-mask-image: url("./group.svg")
+                                    }
+                                }
+                                text "Tokens"
+                            }
+                        }
+                        insert input {
+                            input.Select {
+                                text "input"
+                            }
+                        }
+                    }
+                    input.Field {
+                        insert input {
+                            input.Select {
+                                text "fontDefault"
+                            }
+                        }
+                    }
+                    input.Field {
+                        insert input {
+                            input.Select {
+                                text "add..."
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        div {
+            style {
+                display: none
+            }
+            common.SidebarSection {
+                common.SidebarPanelHeader {
+                    text "Atoms"
+                    div {
+                        style extends theme.icon {
+                            display: none
+                            -webkit-mask-image: url("./plus.svg")
+                        }
+                    }
+                }
+                common.SidebarPanelContent {
+                    input.Fields {
+                        input.Field {
+                            insert name {
+                                text "iconColor"
+                            }
+                            insert input {
+                                input.ColorInput {
+                                    override root {
+                                        style {
+                                            --color: rgb(255, 81, 119)
+                                        }
+                                    }
+                                    text "red"
+                                }
+                            }
+                        }
+                        input.Field {
+                            insert name {
+                                text "iconSize"
+                            }
+                            insert input {
+                                input.TextInput(value: "12px")
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
+

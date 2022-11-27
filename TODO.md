@@ -1,5 +1,12 @@
 #### On-deck
 
+- fix text input styles
+
+- dropdown
+
+  - filter UI
+  - token UI
+
 - ability to style text elements
 
 - style panel

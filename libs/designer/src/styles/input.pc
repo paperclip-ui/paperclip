@@ -53,12 +53,21 @@ public component SelectMenu {
 
 public component SelectMenuHeader {
     render div {
+        style {
+            padding: var(theme.space03)
+        }
         slot children
     }
 }
 
 public component SelectMenuSearch {
-    render TextInput(placeholder: placeholder, value: value)
+    render TextInput(placeholder: placeholder, value: value) {
+        override root {
+            style {
+                background: var(theme.inputBackgroun2)
+            }
+        }
+    }
 }
 
 public component SelectMenuItem {
@@ -71,8 +80,10 @@ public component SelectMenuItem {
 }
 
 public component TextInput {
-    render input(value: value, placeholder: placeholder, defaultValue: defaultValue, onKeyPress: onKeyPress, onBlur: onBlur) {
-        style extends theme.input
+    render input root (value: value, placeholder: placeholder, defaultValue: defaultValue, onKeyPress: onKeyPress, onBlur: onBlur) {
+        style extends theme.input {
+            width: 100%
+        }
     }
 }
 
@@ -200,6 +211,60 @@ public component Field {
     }
 }
 
+public component TokenMenuContent {
+    render div(style:style) {
+        style {
+            display: flex
+            align-items: center
+            justify-content: space-between
+        }
+        div {
+            style {
+                display: flex
+                align-items: center
+                gap: var(theme.space03)
+            }
+            div {
+                style {
+                    width: 1em
+                    height: 1em
+                    background: var(--color)
+                    border-radius: var(theme.rounded)
+                }
+            }
+            slot children
+        }
+        div {
+            style {
+                opacity: 0.5
+            }
+            slot file
+        }
+    }
+}
+
+public component SelectMenuDivider {
+    render div {
+        style {
+            background: var(theme.gray04)
+            height: 2px
+            width: 100%
+        }
+    }
+}
+
+public component SelectMenuSection {
+    render div {
+        style {
+            background: var(theme.gray04)
+            width: 100%
+            padding: var(theme.space03) var(theme.space03)
+        }
+        slot children
+        
+    }
+}
+
 /**
  * @bounds(x: -190, y: 10, width: 298, height: 330)
 */
@@ -207,7 +272,7 @@ public component Field {
 div {
     style extends theme.fontDefault {
         padding: 20px
-        background: var(theme.gray04)
+        background: rgb(20, 20, 20)
         width: 100vw
         height: 100vh
         position: static
@@ -230,8 +295,32 @@ div {
                 SelectMenuItem {
                     text "something"
                 }
+                SelectMenuSection {
+                    text "tokens"
+                }
                 SelectMenuItem {
-                    text "something"
+                    TokenMenuContent(style: "--color: orange") {
+                        text "something"
+                        insert file {
+                            text "theme.pc"
+                        }
+                    }
+                }
+                SelectMenuItem {
+                    TokenMenuContent(style: "--color: orange") {
+                        text "something"
+                        insert file {
+                            text "theme.pc"
+                        }
+                    }
+                }
+                SelectMenuItem {
+                    TokenMenuContent(style: "--color: orange") {
+                        text "something"
+                        insert file {
+                            text "theme.pc"
+                        }
+                    }
                 }
             }
         }

@@ -33,6 +33,13 @@ public component Select {
             div {
                 slot value
             }
+            div {
+                style  extends theme.icon {
+                    --size: 1em
+                    -webkit-mask-image: url("./chevron2.svg")
+                    transform: rotate(90deg)
+                }
+            }
         }
         div menuContainer {
             slot menu
@@ -283,9 +290,6 @@ div {
         }
         insert menu {
             SelectMenu {
-                SelectMenuHeader {
-                    SelectMenuSearch(placeholder: "Filter...", value: "")
-                }
                 SelectMenuItem {
                     text "something"
                 }
@@ -300,22 +304,22 @@ div {
                 }
                 SelectMenuItem {
                     TokenMenuContent(style: "--color: orange") {
-                        text "something"
+                        text "orange05"
                         insert file {
                             text "theme.pc"
                         }
                     }
                 }
                 SelectMenuItem {
-                    TokenMenuContent(style: "--color: orange") {
-                        text "something"
+                    TokenMenuContent(style: "--color: yellow") {
+                        text "orange04"
                         insert file {
                             text "theme.pc"
                         }
                     }
                 }
                 SelectMenuItem {
-                    TokenMenuContent(style: "--color: orange") {
+                    TokenMenuContent(style: "--color: #F60") {
                         text "something"
                         insert file {
                             text "theme.pc"

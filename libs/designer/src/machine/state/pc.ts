@@ -362,14 +362,24 @@ export const getSelectedExprStyles = (
   const combinedStyles: Record<string, ComputedDeclaration> = {};
 
   for (const virtId of state.selectedVirtNodeIds) {
-    // const expr = ast.getExprByVirtId(virtId, state.graph);
     const exprStyle = ast.computeElementStyle(virtId, state.graph);
     const computedStyle = state.computedStyles[virtId];
+
+    if (!computedStyle) {
+      continue;
+    }
 
     // not all props are computed (like gap), so we pull from constant that contains ALL CSS props
     // instead.
     for (const name in AVAILABLE_STYLES) {
-      const value = computedStyle[name] || AVAILABLE_STYLES[name];
+      let value = computedStyle[name];
+      if (!value) {
+        if (exprStyle[name]) {
+          value = ast.serializeDeclaration(exprStyle[name]);
+        } else {
+          value = AVAILABLE_STYLES[name];
+        }
+      }
 
       if (
         combinedStyles[name] != null &&

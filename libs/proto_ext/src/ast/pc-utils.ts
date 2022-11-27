@@ -176,6 +176,9 @@ export namespace ast {
       // TODO
       const node = getExprById(exprId.split(".").pop(), graph);
       const map: Record<string, DeclarationValue> = {};
+      if (!node) {
+        return map;
+      }
       for (const item of node.body) {
         const { style } = item;
 
@@ -320,7 +323,8 @@ export namespace ast {
       .map(getInnerExpression);
 
   export const getExprById = (id: string, graph: Graph) => {
-    return flattenDocument(getOwnerDependency(id, graph).document)[id];
+    const dep = getOwnerDependency(id, graph);
+    return dep && flattenDocument(dep.document)[id];
   };
 
   export const flattenUnknownInnerExpression = memoize(

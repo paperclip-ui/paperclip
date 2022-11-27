@@ -68,6 +68,10 @@ namespace schema {
   export type Map<Input extends BaseInput> = Field<Input>[];
 }
 
+const defaultOptions: schema.Field<css.Input> = {
+  inputs: [{ type: css.InputType.Raw }],
+};
+
 const cssSchema: schema.Map<css.Input> = [
   {
     name: "position",
@@ -84,14 +88,14 @@ const cssSchema: schema.Map<css.Input> = [
   {
     name: "left",
     group: "layout",
-    displayWhen: { name: "position", value: /relative|absolute/ },
+    displayWhen: { name: "position", value: /relative|absolute|fixed/ },
     sticky: true,
     inputs: [{ name: "left", type: css.InputType.Unit }],
   },
   {
     name: "top",
     group: "layout",
-    displayWhen: { name: "position", value: /relative|absolute/ },
+    displayWhen: { name: "position", value: /relative|absolute|fixed/ },
     sticky: true,
     inputs: [{ name: "height", type: css.InputType.Unit }],
   },
@@ -291,11 +295,8 @@ const cssSchema: schema.Map<css.Input> = [
     list: true,
     inputs: [{ name: "background-image", type: css.InputType.Asset }],
   },
+  defaultOptions,
 ];
-
-const defaultOptions: schema.Field<css.Input> = {
-  inputs: [{ type: css.InputType.Raw }],
-};
 
 const GROUPS = {
   layout: (name: string) => getPropField(name).group === "layout",
@@ -338,6 +339,13 @@ type GroupSectionProps = {
 const GroupSection = ({ name, style }: GroupSectionProps) => {
   const used = {};
 
+  const sortedStyle = [...style].sort((a, b) => {
+    const ao = getPropField(a.name);
+    const ab = getPropField(b.name);
+
+    return cssSchema.indexOf(ao) > cssSchema.indexOf(ab) ? 1 : -1;
+  });
+
   return (
     <commonStyles.SidebarSection>
       <commonStyles.SidebarPanelHeader>
@@ -345,7 +353,7 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
       </commonStyles.SidebarPanelHeader>
       <commonStyles.SidebarPanelContent>
         <inputStyles.Fields>
-          {style.map((decl) => {
+          {sortedStyle.map((decl) => {
             const options = getPropField(decl.name);
             const fieldName = options.name || decl.name;
             if (used[fieldName] || !options) {
@@ -353,9 +361,6 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
             }
 
             used[fieldName] = true;
-            if (fieldName === "border") {
-              console.log(options);
-            }
 
             if (!options.sticky && !decl.isExplicitlyDefined) {
               return null;
@@ -363,7 +368,7 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
 
             if (
               options.displayWhen &&
-              options.displayWhen.value.test(
+              !options.displayWhen.value.test(
                 style.find((decl2) => decl2.name === options.displayWhen?.name)
                   ?.value || ""
               )

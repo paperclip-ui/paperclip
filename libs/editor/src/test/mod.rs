@@ -2,7 +2,7 @@ use crate::edit_graph;
 use futures::executor::block_on;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::{pc};
-use paperclip_proto::ast::{graph_ext as graph};
+use paperclip_proto::{ast::{graph_ext as graph}, ast_mutate::DeleteStyleDeclarations};
 use paperclip_proto_ext::graph::{test_utils, load::LoadableGraph};
 use paperclip_proto::ast_mutate::{
     mutation, AppendChild, Bounds, DeleteExpression, SetFrameBounds, SetKeyValue,
@@ -350,6 +350,7 @@ case! {
   )]
 }
 
+
 case! {
   can_remove_declaration_values,
   [(
@@ -363,22 +364,16 @@ case! {
       }
     "#
   )],
-  mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
+  mutation::Inner::DeleteStyleDeclarations(DeleteStyleDeclarations {
     expression_id: "80f4925f-8".to_string(),
-    declarations: vec![
-      SetKeyValue {
-        name: "margin".to_string(),
-        value: "".to_string()
-      }
-    ]
+    declaration_names: vec!["margin".to_string()]
   }).get_outer(),
   [(
     "/entry.pc", r#"
       div {
         style {
           display: block
-          background: red
-          opacity: 0.5
+          padding: 10px
         }
       }
     "#

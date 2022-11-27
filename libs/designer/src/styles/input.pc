@@ -31,7 +31,7 @@ public component Select {
 }
 
 public component TextInput {
-  render input(value: value, defaultValue: defaultValue, onKeyPress: onKeyPress) {
+  render input(value: value, defaultValue: defaultValue, onKeyPress: onKeyPress, onBlur: onBlur) {
     style extends theme.input
   }
 }

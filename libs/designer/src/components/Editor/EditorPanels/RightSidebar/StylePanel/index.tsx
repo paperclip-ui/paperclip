@@ -204,7 +204,7 @@ const cssSchema: schema.Map<css.Input> = [
     displayWhen: { name: "display", value: "flex" },
     group: "layout",
     sticky: true,
-    inputs: [{ name: "display", type: css.InputType.Unit }],
+    inputs: [{ name: "gap", type: css.InputType.Unit }],
   },
 
   // Border
@@ -307,6 +307,7 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
             if (used[fieldName] || !options) {
               return null;
             }
+
             used[fieldName] = true;
 
             if (!options.sticky && !decl.isExplicitlyDefined) {
@@ -374,11 +375,16 @@ const RawInput = ({ value, onChange }: RawInputProps) => {
     }
   };
 
+  const onBlur = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    onChange(event.currentTarget.value);
+  };
+
   return (
     <inputStyles.TextInput
       ref={ref}
       defaultValue={value}
       onKeyPress={onKeyPress}
+      onBlur={onBlur}
     />
   );
 };

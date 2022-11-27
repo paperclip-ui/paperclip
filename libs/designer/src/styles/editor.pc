@@ -130,18 +130,30 @@ Editor {
 }
 
 /**
- * @bounds(x: 32, y: -859, width: 777, height: 495)
+ * @bounds(x: 233, y: -723, width: 777, height: 495)
 */
 
 div {
     style {
-        position: relative
         display: flex
-        margin: 0px
-        padding: 10px
+        padding: 40px
         flex-direction: row
+        margin: 0px
     }
-    text "Type something"
-    text "Type something"
+    div {
+        style {
+            background: rgba(0, 0, 0, 0.1)
+            width: 146px
+            height: 200px
+        }
+    }
+    div {
+        style {
+            background: rgba(0, 0, 0, 0.1)
+            top: 63px
+            width: 289px
+            height: 215px
+        }
+    }
 }
 

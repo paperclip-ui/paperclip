@@ -25,7 +25,7 @@ message Mutation {
     // Style
     SetStyleDeclaration set_style_declaration = 9;
     SetStyleDeclarations set_style_declarations = 5;
-    DeleteStyleDeclaration delete_style_declaration = 10;
+    DeleteStyleDeclarations delete_style_declarations = 10;
 
     // General
     DeleteExpression delete_expression = 11;
@@ -116,6 +116,7 @@ message SetStyleDeclarations {
   repeated SetKeyValue declarations = 2;
 }
 
-message DeleteStyleDeclaration {
-  string declaration_id = 1;
+message DeleteStyleDeclarations {
+  string expression_id = 1;
+  repeated string declaration_names = 2;
 }

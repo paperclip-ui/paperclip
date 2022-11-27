@@ -17,7 +17,7 @@ export type ComputedDeclaration = {
   isExplicitlyDefined: boolean;
 };
 
-const DEFAULT_STYLE = {
+const AVAILABLE_STYLES = {
   "accent-color": "auto",
   "align-content": "normal",
   "align-items": "normal",
@@ -135,6 +135,7 @@ const DEFAULT_STYLE = {
   "flex-grow": "0",
   "flex-shrink": "1",
   "flex-wrap": "nowrap",
+  gap: "normal",
   float: "none",
   "flood-color": "rgb(0, 0, 0)",
   "flood-opacity": "1",
@@ -364,8 +365,12 @@ export const getSelectedExprStyles = (
     // const expr = ast.getExprByVirtId(virtId, state.graph);
     const exprStyle = ast.computeElementStyle(virtId, state.graph);
     const computedStyle = state.computedStyles[virtId];
-    for (const name in computedStyle) {
-      const value = computedStyle[name];
+
+    // not all props are computed (like gap), so we pull from constant that contains ALL CSS props
+    // instead.
+    for (const name in AVAILABLE_STYLES) {
+      const value = computedStyle[name] || AVAILABLE_STYLES[name];
+
       if (
         combinedStyles[name] != null &&
         combinedStyles[name].value !== value
@@ -374,9 +379,9 @@ export const getSelectedExprStyles = (
       } else {
         combinedStyles[name] = {
           name,
-          isDefault: value === DEFAULT_STYLE[name],
+          isDefault: value === AVAILABLE_STYLES[name],
           isExplicitlyDefined: exprStyle[name] != null,
-          value: computedStyle[name],
+          value,
         };
       }
     }

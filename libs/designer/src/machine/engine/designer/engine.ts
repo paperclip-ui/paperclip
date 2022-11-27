@@ -230,17 +230,31 @@ const createEventHandler = (actions: Actions) => {
     event: ReturnType<typeof editorEvents.styleDeclarationsChanged>,
     state: EditorState
   ) => {
-    actions.applyChanges(
-      state.selectedVirtNodeIds.map((expressionId) => ({
-        setStyleDeclarations: {
-          expressionId,
-          declarations: Object.entries(event.payload).map(([name, value]) => ({
-            name,
-            value,
-          })),
-        },
-      }))
-    );
+    const style = Object.entries(event.payload).map(([name, value]) => ({
+      name,
+      value,
+    }));
+
+    actions.applyChanges([
+      ...state.selectedVirtNodeIds.map((expressionId) => {
+        return {
+          setStyleDeclarations: {
+            expressionId,
+            declarations: style.filter((kv) => kv.value !== ""),
+          },
+        };
+      }),
+      ...state.selectedVirtNodeIds.map((expressionId) => {
+        return {
+          deleteStyleDeclarations: {
+            expressionId,
+            declarationNames: style
+              .filter((kv) => kv.value === "")
+              .map((kv) => kv.name),
+          },
+        };
+      }),
+    ]);
   };
 
   return (

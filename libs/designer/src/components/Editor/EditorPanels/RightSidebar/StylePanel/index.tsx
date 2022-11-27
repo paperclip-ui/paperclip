@@ -43,7 +43,7 @@ namespace schema {
 
   export type DisplayWhen = {
     name: string;
-    value: string;
+    value: RegExp;
   };
 
   export type Field<Input extends BaseInput> = {
@@ -69,15 +69,50 @@ namespace schema {
 }
 
 const cssSchema: schema.Map<css.Input> = [
+  {
+    name: "position",
+    group: "layout",
+    sticky: true,
+    inputs: [
+      {
+        name: "left",
+        type: css.InputType.Enum,
+        options: ["relative", "absolute", "static", "fixed"],
+      },
+    ],
+  },
+  {
+    name: "left",
+    group: "layout",
+    displayWhen: { name: "position", value: /relative|absolute/ },
+    sticky: true,
+    inputs: [{ name: "left", type: css.InputType.Unit }],
+  },
+  {
+    name: "top",
+    group: "layout",
+    displayWhen: { name: "position", value: /relative|absolute/ },
+    sticky: true,
+    inputs: [{ name: "height", type: css.InputType.Unit }],
+  },
+  {
+    name: "width",
+    group: "layout",
+    sticky: true,
+    inputs: [{ name: "width", type: css.InputType.Unit }],
+  },
+  {
+    name: "height",
+    group: "layout",
+    sticky: true,
+    inputs: [{ name: "height", type: css.InputType.Unit }],
+  },
+
   // Padding
   { name: "padding-left", alias: "padding" },
   { name: "padding-top", alias: "padding" },
   { name: "padding-right", alias: "padding" },
   { name: "padding-bottom", alias: "padding" },
-  { name: "margin-left", alias: "margin" },
-  { name: "margin-right", alias: "margin" },
-  { name: "margin-top", alias: "margin" },
-  { name: "margin-bottom", alias: "margin" },
   {
     name: "padding",
     group: "layout",
@@ -92,6 +127,11 @@ const cssSchema: schema.Map<css.Input> = [
     },
     inputs: [{ name: "padding", type: css.InputType.Unit }],
   },
+
+  { name: "margin-left", alias: "margin" },
+  { name: "margin-right", alias: "margin" },
+  { name: "margin-top", alias: "margin" },
+  { name: "margin-bottom", alias: "margin" },
   {
     name: "margin",
     group: "layout",
@@ -140,7 +180,7 @@ const cssSchema: schema.Map<css.Input> = [
   },
   {
     name: "justify-content",
-    displayWhen: { name: "display", value: "flex" },
+    displayWhen: { name: "display", value: /flex/ },
     group: "layout",
     sticky: true,
     inputs: [
@@ -177,7 +217,7 @@ const cssSchema: schema.Map<css.Input> = [
   },
   {
     name: "flex-direction",
-    displayWhen: { name: "display", value: "flex" },
+    displayWhen: { name: "display", value: /flex/ },
     group: "layout",
     sticky: true,
     inputs: [
@@ -201,7 +241,7 @@ const cssSchema: schema.Map<css.Input> = [
   },
   {
     name: "gap",
-    displayWhen: { name: "display", value: "flex" },
+    displayWhen: { name: "display", value: /flex/ },
     group: "layout",
     sticky: true,
     inputs: [{ name: "gap", type: css.InputType.Unit }],
@@ -212,7 +252,6 @@ const cssSchema: schema.Map<css.Input> = [
   { name: "border-left-color", alias: "border" },
   {
     name: "border",
-    group: "style",
     sticky: true,
     join: {
       "border-width": [
@@ -241,9 +280,14 @@ const cssSchema: schema.Map<css.Input> = [
     ],
   },
 
+  { name: "background-color", alias: "background" },
+  { name: "background-image", alias: "background" },
+  { name: "background-repeat", alias: "background" },
+
   // Background
   {
     name: "background",
+    sticky: true,
     list: true,
     inputs: [{ name: "background-image", type: css.InputType.Asset }],
   },
@@ -309,6 +353,9 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
             }
 
             used[fieldName] = true;
+            if (fieldName === "border") {
+              console.log(options);
+            }
 
             if (!options.sticky && !decl.isExplicitlyDefined) {
               return null;
@@ -316,8 +363,10 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
 
             if (
               options.displayWhen &&
-              style.find((decl2) => decl2.name === options.displayWhen?.name)
-                ?.value !== options.displayWhen.value
+              options.displayWhen.value.test(
+                style.find((decl2) => decl2.name === options.displayWhen?.name)
+                  ?.value || ""
+              )
             ) {
               return null;
             }

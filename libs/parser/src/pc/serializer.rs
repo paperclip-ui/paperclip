@@ -15,10 +15,12 @@ pub fn serialize(document: &ast::Document) -> String {
 fn serialize_imports(document: &ast::Document, context: &mut Context) {
     for item in &document.body {
         match item.get_inner() {
-            ast::document_body_item::Inner::Import(imp) => serialize_import(&imp, context),
+            ast::document_body_item::Inner::Import(imp) => {
+                serialize_import(&imp, context);
+                context.add_buffer("\n");
+            },
             _ => {}
         }
-        context.add_buffer("\n");
     }
     context.add_buffer("\n");
 }

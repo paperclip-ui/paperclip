@@ -146,6 +146,18 @@ const cssSchema: schema.Map<css.Input> = [
     inputs: [{ name: "margin", type: css.InputType.Unit }],
   },
   {
+    name: "box-sizing",
+    group: "layout",
+    sticky: true,
+    inputs: [
+      {
+        name: "box-sizing",
+        type: css.InputType.Enum,
+        options: ["border-box", "content-box"],
+      },
+    ],
+  },
+  {
     name: "display",
     group: "layout",
     sticky: true,
@@ -220,6 +232,19 @@ const cssSchema: schema.Map<css.Input> = [
     ],
   },
   {
+    name: "align-items",
+    displayWhen: { name: "display", value: /flex/ },
+    group: "layout",
+    sticky: true,
+    inputs: [
+      {
+        name: "display",
+        type: css.InputType.Enum,
+        options: ["center"],
+      },
+    ],
+  },
+  {
     name: "flex-direction",
     displayWhen: { name: "display", value: /flex/ },
     group: "layout",
@@ -249,6 +274,19 @@ const cssSchema: schema.Map<css.Input> = [
     group: "layout",
     sticky: true,
     inputs: [{ name: "gap", type: css.InputType.Unit }],
+  },
+
+  {
+    name: "font-family",
+    group: "typography",
+    sticky: true,
+    inputs: [{ name: "font-family", type: css.InputType.Enum, options: [] }],
+  },
+  {
+    name: "color",
+    group: "typography",
+    sticky: true,
+    inputs: [{ name: "color", type: css.InputType.Color }],
   },
 
   // Border
@@ -300,6 +338,7 @@ const cssSchema: schema.Map<css.Input> = [
 
 const GROUPS = {
   layout: (name: string) => getPropField(name).group === "layout",
+  typography: (name: string) => getPropField(name).group === "typography",
   style: (name: string) => {
     return getPropField(name).group == null;
   },

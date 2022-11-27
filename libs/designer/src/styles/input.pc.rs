@@ -34,20 +34,18 @@ pub fn MultiSelectItem(props: &MultiSelectItemProps) -> Html {
 #[derive(Properties, PartialEq)]
 pub struct SelectProps {
     pub __scope_class_name: Option<String>,
-    #[prop_or_default]
-    pub children: Children,
+    pub value: Children,
 }
 
 #[function_component]
 pub fn Select(props: &SelectProps) -> Html {
     html! {
-        <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Select-ca714c1c-39", scope_class_name)
-        } else {
-            "_Select-ca714c1c-39".to_string()
-        }}>
-            <div>
-                { for props.children.iter() }
+        <div>
+            <div class={"_Select-input-ca714c1c-39"}>
+                <div>
+                    { for props.value.iter() }
+                </div>
+                
             </div>
             
         </div>
@@ -67,9 +65,9 @@ pub struct TextInputProps {
 pub fn TextInput(props: &TextInputProps) -> Html {
     html! {
         <input class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_TextInput-ca714c1c-52", scope_class_name)
+            format!("{} {}", "_TextInput-ca714c1c-53", scope_class_name)
         } else {
-            "_TextInput-ca714c1c-52".to_string()
+            "_TextInput-ca714c1c-53".to_string()
         }} defaultValue={props.defaultValue.clone()} onBlur={props.onBlur.clone()} onKeyPress={props.onKeyPress.clone()} value={props.value.clone()}></input>
     }
 }
@@ -85,11 +83,11 @@ pub struct ColorInputProps {
 pub fn ColorInput(props: &ColorInputProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_ColorInput-root-ca714c1c-81", scope_class_name)
+            format!("{} {}", "_ColorInput-root-ca714c1c-82", scope_class_name)
         } else {
-            "_ColorInput-root-ca714c1c-81".to_string()
+            "_ColorInput-root-ca714c1c-82".to_string()
         }}>
-            <div class={"_ColorInput-ca714c1c-79"}></div>
+            <div class={"_ColorInput-ca714c1c-80"}></div>
             
             { for props.children.iter() }
         </div>
@@ -107,9 +105,9 @@ pub struct FieldsProps {
 pub fn Fields(props: &FieldsProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Fields-ca714c1c-93", scope_class_name)
+            format!("{} {}", "_Fields-ca714c1c-94", scope_class_name)
         } else {
-            "_Fields-ca714c1c-93".to_string()
+            "_Fields-ca714c1c-94".to_string()
         }}>
             { for props.children.iter() }
         </div>
@@ -127,9 +125,9 @@ pub struct MultiSelectProps {
 pub fn MultiSelect(props: &MultiSelectProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_MultiSelect-ca714c1c-107", scope_class_name)
+            format!("{} {}", "_MultiSelect-ca714c1c-108", scope_class_name)
         } else {
-            "_MultiSelect-ca714c1c-107".to_string()
+            "_MultiSelect-ca714c1c-108".to_string()
         }}>
             { for props.children.iter() }
         </div>
@@ -147,9 +145,9 @@ pub struct TokenInputProps {
 pub fn TokenInput(props: &TokenInputProps) -> Html {
     html! {
         <span class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_TokenInput-ca714c1c-119", scope_class_name)
+            format!("{} {}", "_TokenInput-ca714c1c-120", scope_class_name)
         } else {
-            "_TokenInput-ca714c1c-119".to_string()
+            "_TokenInput-ca714c1c-120".to_string()
         }}>
             { for props.children.iter() }
         </span>
@@ -168,9 +166,9 @@ pub struct TokenProps {
 pub fn Token(props: &TokenProps) -> Html {
     html! {
         <span class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Token-ca714c1c-177", scope_class_name)
+            format!("{} {}", "_Token-ca714c1c-178", scope_class_name)
         } else {
-            "_Token-ca714c1c-177".to_string()
+            "_Token-ca714c1c-178".to_string()
         })}>
             { for props.children.iter() }
         </span>
@@ -188,15 +186,15 @@ pub struct FieldProps {
 pub fn Field(props: &FieldProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Field-ca714c1c-216", scope_class_name)
+            format!("{} {}", "_Field-ca714c1c-217", scope_class_name)
         } else {
-            "_Field-ca714c1c-216".to_string()
+            "_Field-ca714c1c-217".to_string()
         }}>
-            <div class={"_Field-ca714c1c-201"}>
+            <div class={"_Field-ca714c1c-202"}>
                 { for props.name.iter() }
             </div>
             
-            <div class={"_Field-ca714c1c-215"}>
+            <div class={"_Field-ca714c1c-216"}>
                 { for props.input.iter() }
             </div>
             

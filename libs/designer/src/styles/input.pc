@@ -2,152 +2,239 @@ import "./theme.pc" as theme
 import "./common.pc" as common
 
 public component MultiSelectItem {
-  render div {
-    style {
-      display: inline-block
-      color: var(theme.backgroundSelectedText)
-      background: var(theme.blue02)
-      border-radius: var(theme.roundedSM)
-      padding: 0px 6px
-      font-weight: 500
-      display: flex
-      height: 100%
-      align-items: center
+    render div {
+        style {
+            display: inline-block
+            color: var(theme.backgroundSelectedText)
+            background: var(theme.blue02)
+            border-radius: var(theme.roundedSM)
+            padding: 0px 6px
+            font-weight: 500
+            display: flex
+            height: 100%
+            align-items: center
+        }
+        slot children
     }
-    slot children
-  }
 }
 
 public component Select {
-  render div {
-    style extends theme.input {
-      display: flex
-      justify-content: space-between
+    render div {
+        style {
+            display: flex
+            flex-direction: column
+            gap: var(theme.space03)
+        }
+        div input {
+            style extends theme.input {
+                display: flex
+                justify-content: space-between
+            }
+            div {
+                slot value
+            }
+        }
+        div menuContainer {
+            slot menu
+        }
     }
-    div {
-      slot children
+}
+
+public component SelectMenu {
+    render div {
+        style {
+            background: var(theme.inputBackground)
+            border-radius: var(theme.rounded)
+            width: 100%
+        }
+        slot children
     }
-  }
+}
+
+public component SelectMenuHeader {
+    render div {
+        slot children
+    }
+}
+
+public component SelectMenuSearch {
+    render TextInput(placeholder: placeholder, value: value)
+}
+
+public component SelectMenuItem {
+    render div {
+        style {
+            padding: var(theme.space03)
+        }
+        slot children
+    }
 }
 
 public component TextInput {
-  render input(value: value, defaultValue: defaultValue, onKeyPress: onKeyPress, onBlur: onBlur) {
-    style extends theme.input
-  }
+    render input(value: value, placeholder: placeholder, defaultValue: defaultValue, onKeyPress: onKeyPress, onBlur: onBlur) {
+        style extends theme.input
+    }
 }
 
 public component ColorInput {
-  render div root {
-    style extends theme.input {
-      gap: var(theme.space03)
-      overflow: hidden
-      flex: 1
-      width: 100%
+    render div root {
+        style extends theme.input {
+            gap: var(theme.space03)
+            overflow: hidden
+            flex: 1
+            width: 100%
+        }
+        div {
+            style {
+                width: 1em
+                height: 1em
+                background: var(--color)
+                border-radius: var(theme.rounded)
+                flex-shrink: 0
+            }
+        }
+        slot children
     }
-    div {
-      style {
-        width: 1em
-        height: 1em
-        background: var(--color)
-        border-radius: var(theme.rounded)
-        flex-shrink: 0
-      }
-    }
-    slot children
-  }
 }
 
 public component Fields {
-  render div {
-    style {
-      display: flex
-      flex-direction: column
-      gap: var(theme.space04)
-
+    render div {
+        style {
+            display: flex
+            flex-direction: column
+            gap: var(theme.space04)
+        }
+        slot children
     }
-    slot children
-  }
 }
 
 public component MultiSelect {
-  render div {
-    style extends theme.input {
-      display: flex
-      gap: var(theme.space02)
-      padding: var(theme.space02)
-
+    render div {
+        style extends theme.input {
+            display: flex
+            gap: var(theme.space02)
+            padding: var(theme.space02)
+        }
+        slot children
     }
-    slot children
-  }
 }
 
 public component TokenInput {
-  render span {
-    style variant isFunction {
-      color: rgb(0, 162, 255)
+    render span {
+        style variant isFunction {
+            color: rgb(0, 162, 255)
+        }
+        slot children
     }
-    slot children
-  }
 }
 
 public component Token {
-  variant isFunction trigger { ".call" }
-  variant isPunc trigger { ".punc" }
-  variant isNumber trigger { ".number" }
-  variant isUnit trigger { ".unit" }
-  variant isArithmetic trigger { ".arith" }
-  variant isKeyword trigger { ".keyword" }
-  render span(class: class) {
-    style variant isFunction {
-      color: rgb(255, 255, 255)
+    variant isFunction trigger {
+        ".call"
     }
-    style variant isKeyword {
-      color: rgb(255, 255, 255)
+    variant isPunc trigger {
+        ".punc"
     }
-    style variant isPunc {
-      color: rgb(255, 255, 255)
+    variant isNumber trigger {
+        ".number"
     }
-    style variant isNumber {
-      color: white
+    variant isUnit trigger {
+        ".unit"
     }
-    style variant isUnit {
-      color: white
+    variant isArithmetic trigger {
+        ".arith"
     }
-    style variant isArithmetic {
-      color: rgb(255, 255, 255)
+    variant isKeyword trigger {
+        ".keyword"
     }
-    slot children
-  }
+    render span(class: class) {
+        style variant isFunction {
+            color: rgb(255, 255, 255)
+        }
+        style variant isKeyword {
+            color: rgb(255, 255, 255)
+        }
+        style variant isPunc {
+            color: rgb(255, 255, 255)
+        }
+        style variant isNumber {
+            color: white
+        }
+        style variant isUnit {
+            color: white
+        }
+        style variant isArithmetic {
+            color: rgb(255, 255, 255)
+        }
+        slot children
+    }
 }
 
 public component Field {
-  render div {
-    style {
-      display: flex
-      gap: var(theme.space03)
-      align-items: center
-      position: relative
+    render div {
+        style {
+            display: flex
+            gap: var(theme.space03)
+            align-items: center
+            position: relative
+        }
+        div {
+            style {
+                position: relative
+                width: 90px
+                flex-shrink: 0
+                font-size: var(theme.fontSize01)
+            }
+            slot name
+        }
+        div {
+            style {
+                display: flex
+                flex-direction: column
+                gap: var(theme.space03)
+                flex: 1
+                overflow: hidden
+            }
+            slot input
+        }
     }
-    div {
-      style {
-        position: relative
-        width: 90px
-        flex-shrink: 0
-        font-size: var(theme.fontSize01)
-      }
-      slot name
-    }
-    div {
-      style {
-        display: flex
-        flex-direction: column
-        gap: var(theme.space03)
-        flex: 1
-        overflow: hidden
-
-
-      }
-      slot input
-    }
-  }
 }
+
+/**
+ * @bounds(x: -190, y: 10, width: 298, height: 330)
+*/
+
+div {
+    style extends theme.fontDefault {
+        padding: 20px
+        background: var(theme.gray04)
+        width: 100vw
+        height: 100vh
+        position: static
+    }
+    Select {
+        insert value {
+            text "Something"
+        }
+        insert menu {
+            SelectMenu {
+                SelectMenuHeader {
+                    SelectMenuSearch(placeholder: "Filter...", value: "")
+                }
+                SelectMenuItem {
+                    text "something"
+                }
+                SelectMenuItem {
+                    text "something"
+                }
+                SelectMenuItem {
+                    text "something"
+                }
+                SelectMenuItem {
+                    text "something"
+                }
+            }
+        }
+    }
+}
+

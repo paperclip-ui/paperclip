@@ -1,15 +1,14 @@
 #### On-deck
 
-- ability to delete style declaration
+- ability to style text elements
 
 - style panel
 
-  - display all styles
-  - ability to enter raw values
-  - wire variants
-  - wire mixins
-  - inputs
-    - color picker
+  - tokens (we should basically just be using these anyways)
+    - display options within dropdown
+  - ability to define mixins
+  - override styles
+  - variants
 
 - ## triggers
 

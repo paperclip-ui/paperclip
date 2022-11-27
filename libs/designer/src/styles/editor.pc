@@ -4,19 +4,6 @@ import "./common.pc" as common
 import "./right-sidebar.pc" as rightSidebar
 import "./center-panels.pc" as centerPanels
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 token iconSize var(theme.fontSize03)
 component NodeIcon {
     render div
@@ -126,34 +113,6 @@ Editor {
         leftSidebar.LeftSidebarPreview leftSidebar
         centerPanels.Preview centerPanels
         rightSidebar.Preview
-    }
-}
-
-/**
- * @bounds(x: 233, y: -723, width: 777, height: 495)
-*/
-
-div {
-    style {
-        display: flex
-        padding: 40px
-        flex-direction: row
-        margin: 0px
-    }
-    div {
-        style {
-            background: rgba(0, 0, 0, 0.1)
-            width: 146px
-            height: 200px
-        }
-    }
-    div {
-        style {
-            background: rgba(0, 0, 0, 0.1)
-            top: 63px
-            width: 289px
-            height: 215px
-        }
     }
 }
 

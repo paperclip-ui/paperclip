@@ -3,8 +3,9 @@ import {
   DeclarationValue,
   StyleDeclaration,
 } from "@paperclip-ui/proto/lib/generated/ast/css";
-import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
+import { Dependency, Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import {
+  Atom,
   Component,
   ComponentBodyItem,
   Document,
@@ -143,10 +144,13 @@ export namespace ast {
     }
   );
 
-  export const getStyleRef = (ref: Reference, graph: Graph): Style | null => {
+  export const getExprRef = (
+    ref: Reference,
+    graph: Graph
+  ): DocumentBodyItem | null => {
     const dep = getOwnerDependency(ref.id, graph);
     if (ref.path.length === 1) {
-      return getDocumentBodyStyleByName(ref.path[0], dep.document);
+      return getDocumentBodyExprByName(ref.path[0], dep.document);
     } else {
       // const imp = graph.dependencies[dep.imports[]];
       const imp = getDocumentImport(ref.path[0], dep.document);
@@ -154,17 +158,22 @@ export namespace ast {
 
       // Broken references will happen all the time
       if (impDep) {
-        return getDocumentBodyStyleByName(ref.path[1], impDep.document);
+        return getDocumentBodyExprByName(ref.path[1], impDep.document);
       }
     }
     return null;
   };
 
-  export const getDocumentBodyStyleByName = (
+  export const getDocumentBodyExprByName = (
     name: string,
     document: Document
   ) => {
-    return document.body.find((expr) => expr.style?.name === name).style;
+    return document.body.find(
+      (expr) =>
+        expr.style?.name === name ||
+        expr.atom?.name === name ||
+        expr.component?.name === name
+    );
   };
 
   export const computeElementStyle = memoize(
@@ -211,7 +220,7 @@ export namespace ast {
 
       if (style.extends) {
         for (const ref of style.extends) {
-          const extendsStyle = getStyleRef(ref, graph);
+          const extendsStyle = getExprRef(ref, graph)?.style;
           if (extendsStyle) {
             map = Object.assign(
               {},
@@ -221,10 +230,50 @@ export namespace ast {
           }
         }
       }
-
       return map;
     }
   );
+
+  export type GraphAtomInfo = {
+    dependency: Dependency;
+    atom: Atom;
+    value: string;
+    cssValue: string;
+  };
+
+  export const getGraphAtoms = memoize((graph: Graph): GraphAtomInfo[] => {
+    const atoms: GraphAtomInfo[] = [];
+    for (const path in graph.dependencies) {
+      const dependency = graph.dependencies[path];
+      for (const expr of dependency.document.body) {
+        if (expr.atom) {
+          atoms.push({
+            dependency,
+            atom: expr.atom,
+            value: serializeDeclaration(expr.atom.value),
+            cssValue: getAtomValue(expr.atom, graph),
+          });
+        }
+      }
+    }
+    return atoms;
+  });
+
+  const getAtomValue = (atom: Atom, graph: Graph) => {
+    const dep = getOwnerDependency(atom.id, graph);
+    if (atom.value.functionCall) {
+      if (atom.value.functionCall.arguments.reference) {
+        const ref = getExprRef(
+          atom.value.functionCall.arguments.reference,
+          graph
+        )?.atom;
+        if (ref) {
+          return getAtomValue(ref, graph);
+        }
+      }
+    }
+    return serializeDeclaration(atom.value);
+  };
 
   export const getComponentRenderNode = (component: Component) =>
     component.body.find((body) => body.render).render;
@@ -351,6 +400,9 @@ export namespace ast {
     if (expr.component) {
       return flattenComponent(expr.component);
     }
+    if (expr.atom) {
+      return flattenAtom(expr.atom);
+    }
     return {};
   };
 
@@ -369,6 +421,15 @@ export namespace ast {
         [expr.id]: expr,
       },
       ...expr.body.map(flattenComponentBodyItem)
+    );
+  });
+
+  export const flattenAtom = memoize((expr: Atom) => {
+    return Object.assign(
+      {
+        [expr.id]: expr,
+      },
+      flattenDeclarationValue(expr.value)
     );
   });
 
@@ -423,9 +484,39 @@ export namespace ast {
   });
 
   export const flattenDeclaration = memoize((expr: StyleDeclaration) => {
-    return Object.assign({
-      [expr.id]: expr,
-    });
+    return Object.assign(
+      {
+        [expr.id]: expr,
+      },
+      flattenDeclarationValue(expr.value!)
+    );
+  });
+
+  export const flattenDeclarationValue = memoize((expr: DeclarationValue) => {
+    if (expr.arithmetic) {
+      return Object.assign(
+        {
+          [expr.arithmetic.id]: expr.arithmetic,
+        },
+        flattenDeclarationValue(expr.arithmetic.left),
+        flattenDeclarationValue(expr.arithmetic.right)
+      );
+    }
+    if (expr.functionCall) {
+      return Object.assign(
+        {
+          [expr.functionCall.id]: expr.functionCall,
+        },
+        flattenDeclarationValue(expr.functionCall.arguments)
+      );
+    }
+    if (expr.reference) {
+      return {
+        [expr.reference.id]: expr.reference,
+      };
+    }
+
+    return {};
   });
   export const flattenReference = memoize((expr: Reference) => ({
     [expr.id]: expr,

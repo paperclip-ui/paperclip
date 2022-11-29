@@ -25,6 +25,7 @@ import {
   INITIAL_HISTORY_STATE,
 } from "../engine/history/state";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 export const IS_WINDOWS = false;
 
 export enum InsertMode {
@@ -344,3 +345,5 @@ export const getExpandedVirtIds = (state: EditorState) =>
 export const getGraph = (state: EditorState) => state.graph;
 
 export const getInsertMode = (state: EditorState) => state.insertMode;
+export const getAllPublicAtoms = (state: EditorState) =>
+  ast.getGraphAtoms(state.graph);

@@ -12,6 +12,7 @@ import {
   PopoverMenuItem,
   PopoverMenuSection,
 } from "@paperclip-ui/designer/src/components/Popover";
+import { getAllPublicAtoms } from "@paperclip-ui/designer/src/machine/state";
 
 namespace css {
   export enum InputType {
@@ -466,6 +467,7 @@ type FieldInputProps = {
 
 const FieldInput = ({ value, options, onChange }: FieldInputProps) => {
   const ref = useRef<HTMLInputElement>();
+  const tokens = useSelector(getAllPublicAtoms);
   useEffect(() => {
     if (ref.current) {
       ref.current.value = value;
@@ -490,8 +492,25 @@ const FieldInput = ({ value, options, onChange }: FieldInputProps) => {
         ]
       : [];
 
-    return [...ops, <PopoverMenuSection>Tokens</PopoverMenuSection>];
-  }, [options]);
+    if (tokens.length) {
+      ops.push(
+        <PopoverMenuSection>Tokens</PopoverMenuSection>,
+        ...tokens.map((token) => (
+          <PopoverMenuItem key={token.atom.id} value={token.value}>
+            <inputStyles.TokenMenuContent
+              style={{ "--color": token.cssValue }}
+              preview={token.value}
+              file={token.dependency.path.split("/").pop()}
+            >
+              {token.atom.name}
+            </inputStyles.TokenMenuContent>
+          </PopoverMenuItem>
+        ))
+      );
+    }
+
+    return ops;
+  }, [options, tokens]);
 
   return (
     <Popover onChange={onChange} value={value} menu={menu}>

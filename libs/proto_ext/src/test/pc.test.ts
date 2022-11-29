@@ -141,4 +141,72 @@ describe(__filename + "#", () => {
       background: "blue",
     });
   });
+  it(`Can return the atoms of a graph`, async () => {
+    const graph = await parseFiles(
+      {
+        "entry.pc": `
+        public token ab #333
+    `,
+        "theme.pc": `
+      public token cd #111
+    `,
+      },
+      "can_compute_atoms_of_graph"
+    );
+
+    expect(ast.getGraphAtoms(graph)).toMatchObject([
+      {
+        atom: { id: "d03743d5-2" },
+        dependency: {
+          path: "/private/tmp/pc-workspace/can_compute_atoms_of_graph/entry.pc",
+        },
+        value: "#333",
+        cssValue: "#333",
+      },
+
+      {
+        atom: { id: "33037e10-2" },
+        dependency: {
+          path: "/private/tmp/pc-workspace/can_compute_atoms_of_graph/theme.pc",
+        },
+        value: "#111",
+        cssValue: "#111",
+      },
+    ]);
+  });
+
+  it(`Follows atom values`, async () => {
+    const graph = await parseFiles(
+      {
+        "entry.pc": `
+        import "./theme.pc" as theme
+        public token ab var(theme.cd)
+    `,
+        "theme.pc": `
+      public token cd #111
+    `,
+      },
+      "can_compute_atoms_of_graph"
+    );
+
+    expect(ast.getGraphAtoms(graph)).toMatchObject([
+      {
+        atom: { id: "d03743d5-4" },
+        dependency: {
+          path: "/private/tmp/pc-workspace/can_compute_atoms_of_graph/entry.pc",
+        },
+        cssValue: "#111",
+        value: "var(theme.cd)",
+      },
+
+      {
+        atom: { id: "33037e10-2" },
+        dependency: {
+          path: "/private/tmp/pc-workspace/can_compute_atoms_of_graph/theme.pc",
+        },
+        value: "#111",
+        cssValue: "#111",
+      },
+    ]);
+  });
 });

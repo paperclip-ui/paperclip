@@ -1,5 +1,9 @@
 #### On-deck
 
+- auto-import selected tokens
+- scrollable menu
+- filter tokens based on input type
+
 - Popover
 
   - max-height + scroll

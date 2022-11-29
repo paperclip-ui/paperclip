@@ -5,6 +5,7 @@ import { useRef } from "react";
 export type PortalProps = {
   children: any;
 };
+const PADDING = 10;
 
 export const Portal = ({ children }: PortalProps) => {
   const portalRef = useRef<HTMLDivElement>();
@@ -29,9 +30,19 @@ export const Portal = ({ children }: PortalProps) => {
     Object.assign(container.style, {
       position: "fixed",
       zIndex: 9999,
-      left: bounds.left,
       top: bounds.top,
       minWidth: bounds.width,
+      display: "inline-blcok",
+    });
+
+    const containerBounds = container.getBoundingClientRect();
+    console.log(bounds.width, window.screen.width, containerBounds.width);
+
+    Object.assign(container.style, {
+      left: Math.min(
+        bounds.left,
+        window.screen.width - containerBounds.width - PADDING
+      ),
     });
   }, [container, portalRef.current]);
 

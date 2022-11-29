@@ -1,7 +1,6 @@
-import React, { ReactChild, useState } from "react";
+import React, { useState } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/input.pc";
 import { Portal } from "../Portal";
-import { getValueByPointer } from "fast-json-patch";
 import cx from "classnames";
 
 export type PopoverProps = {

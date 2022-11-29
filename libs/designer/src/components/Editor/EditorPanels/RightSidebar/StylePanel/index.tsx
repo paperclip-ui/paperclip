@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef } from "react";
+import React, { memo, useCallback, useEffect, useRef } from "react";
 import * as commonStyles from "@paperclip-ui/designer/src/styles/common.pc";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { memoize, useDispatch, useSelector } from "@paperclip-ui/common";
@@ -7,12 +7,18 @@ import {
   getSelectedExprStyles,
 } from "@paperclip-ui/designer/src/machine/state/pc";
 import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
+import {
+  Popover,
+  PopoverMenuItem,
+  PopoverMenuSection,
+} from "@paperclip-ui/designer/src/components/Popover";
 
 namespace css {
   export enum InputType {
     Unit = "unit",
     Enum = "enum",
     Color = "color",
+    Group = "group",
     Asset = "asset",
     Raw = "raw",
   }
@@ -26,6 +32,7 @@ namespace css {
   export type AssetInput = BaseInput<InputType.Asset>;
   export type RawInput = BaseInput<InputType.Raw>;
   export type ColorInput = BaseInput<InputType.Color>;
+  export type GroupInput = { inputs: Input[] } & BaseInput<InputType.Group>;
   export type EnumInput = {
     options: string[];
   } & BaseInput<InputType.Enum>;
@@ -35,7 +42,8 @@ namespace css {
     | AssetInput
     | RawInput
     | ColorInput
-    | EnumInput;
+    | EnumInput
+    | GroupInput;
 }
 
 namespace schema {
@@ -62,14 +70,14 @@ namespace schema {
     // Properties to join together
     join?: Record<string, string[]>;
 
-    inputs?: Input[];
+    input?: Input;
   };
 
   export type Map<Input extends BaseInput> = Field<Input>[];
 }
 
 const defaultOptions: schema.Field<css.Input> = {
-  inputs: [{ type: css.InputType.Raw }],
+  input: { type: css.InputType.Raw },
 };
 
 const cssSchema: schema.Map<css.Input> = [
@@ -77,39 +85,37 @@ const cssSchema: schema.Map<css.Input> = [
     name: "position",
     group: "layout",
     sticky: true,
-    inputs: [
-      {
-        name: "left",
-        type: css.InputType.Enum,
-        options: ["relative", "absolute", "static", "fixed"],
-      },
-    ],
+    input: {
+      name: "left",
+      type: css.InputType.Enum,
+      options: ["relative", "absolute", "static", "fixed"],
+    },
   },
   {
     name: "left",
     group: "layout",
     displayWhen: { name: "position", value: /relative|absolute|fixed/ },
     sticky: true,
-    inputs: [{ name: "left", type: css.InputType.Unit }],
+    input: { name: "left", type: css.InputType.Unit },
   },
   {
     name: "top",
     group: "layout",
     displayWhen: { name: "position", value: /relative|absolute|fixed/ },
     sticky: true,
-    inputs: [{ name: "height", type: css.InputType.Unit }],
+    input: { name: "height", type: css.InputType.Unit },
   },
   {
     name: "width",
     group: "layout",
     sticky: true,
-    inputs: [{ name: "width", type: css.InputType.Unit }],
+    input: { name: "width", type: css.InputType.Unit },
   },
   {
     name: "height",
     group: "layout",
     sticky: true,
-    inputs: [{ name: "height", type: css.InputType.Unit }],
+    input: { name: "height", type: css.InputType.Unit },
   },
 
   // Padding
@@ -129,7 +135,7 @@ const cssSchema: schema.Map<css.Input> = [
         "padding-bottom",
       ],
     },
-    inputs: [{ name: "padding", type: css.InputType.Unit }],
+    input: { name: "padding", type: css.InputType.Unit },
   },
 
   { name: "margin-left", alias: "margin" },
@@ -143,150 +149,140 @@ const cssSchema: schema.Map<css.Input> = [
     join: {
       margin: ["margin-left", "margin-right", "margin-top", "margin-bottom"],
     },
-    inputs: [{ name: "margin", type: css.InputType.Unit }],
+    input: { name: "margin", type: css.InputType.Unit },
   },
   {
     name: "box-sizing",
     group: "layout",
     sticky: true,
-    inputs: [
-      {
-        name: "box-sizing",
-        type: css.InputType.Enum,
-        options: ["border-box", "content-box"],
-      },
-    ],
+    input: {
+      name: "box-sizing",
+      type: css.InputType.Enum,
+      options: ["border-box", "content-box"],
+    },
   },
   {
     name: "display",
     group: "layout",
     sticky: true,
-    inputs: [
+    input: {
+      name: "display",
+      type: css.InputType.Enum,
       // https://www.w3schools.com/cssref/pr_class_display.php
-      {
-        name: "display",
-        type: css.InputType.Enum,
-        options: [
-          "inline",
-          "block",
-          "contents",
-          "flex",
-          "grid",
-          "inline-block",
-          "inline-flex",
-          "inline-grid",
-          "inline-table",
-          "list-item",
-          "run-in",
-          "table",
-          "table-caption",
-          "table-column-group",
-          "table-header-group",
-          "table-footer-group",
-          "table-row-group",
-          "table-cell",
-          "table-column",
-          "table-row",
-          "none",
-          "initial",
-          "inherit",
-        ],
-      },
-    ],
+      options: [
+        "inline",
+        "block",
+        "contents",
+        "flex",
+        "grid",
+        "inline-block",
+        "inline-flex",
+        "inline-grid",
+        "inline-table",
+        "list-item",
+        "run-in",
+        "table",
+        "table-caption",
+        "table-column-group",
+        "table-header-group",
+        "table-footer-group",
+        "table-row-group",
+        "table-cell",
+        "table-column",
+        "table-row",
+        "none",
+        "initial",
+        "inherit",
+      ],
+    },
   },
   {
     name: "justify-content",
     displayWhen: { name: "display", value: /flex/ },
     group: "layout",
     sticky: true,
-    inputs: [
-      {
-        name: "display",
-        type: css.InputType.Enum,
-        options: [
-          "inline",
-          "block",
-          "contents",
-          "flex",
-          "grid",
-          "inline-block",
-          "inline-flex",
-          "inline-grid",
-          "inline-table",
-          "list-item",
-          "run-in",
-          "table",
-          "table-caption",
-          "table-column-group",
-          "table-header-group",
-          "table-footer-group",
-          "table-row-group",
-          "table-cell",
-          "table-column",
-          "table-row",
-          "none",
-          "initial",
-          "inherit",
-        ],
-      },
-    ],
+    input: {
+      name: "display",
+      type: css.InputType.Enum,
+      options: [
+        "inline",
+        "block",
+        "contents",
+        "flex",
+        "grid",
+        "inline-block",
+        "inline-flex",
+        "inline-grid",
+        "inline-table",
+        "list-item",
+        "run-in",
+        "table",
+        "table-caption",
+        "table-column-group",
+        "table-header-group",
+        "table-footer-group",
+        "table-row-group",
+        "table-cell",
+        "table-column",
+        "table-row",
+        "none",
+        "initial",
+        "inherit",
+      ],
+    },
   },
   {
     name: "align-items",
     displayWhen: { name: "display", value: /flex/ },
     group: "layout",
     sticky: true,
-    inputs: [
-      {
-        name: "display",
-        type: css.InputType.Enum,
-        options: ["center"],
-      },
-    ],
+    input: {
+      name: "display",
+      type: css.InputType.Enum,
+      options: ["center"],
+    },
   },
   {
     name: "flex-direction",
     displayWhen: { name: "display", value: /flex/ },
     group: "layout",
     sticky: true,
-    inputs: [
-      {
-        name: "display",
-        type: css.InputType.Enum,
-        options: [
-          "start",
-          "end",
-          "flex-start",
-          "flex-end",
-          "center",
-          "left",
-          "normal",
-          "space-between",
-          "space-around",
-          "stretch",
-        ],
-      },
-    ],
+    input: {
+      name: "display",
+      type: css.InputType.Enum,
+      options: [
+        "start",
+        "end",
+        "flex-start",
+        "flex-end",
+        "center",
+        "left",
+        "normal",
+        "space-between",
+        "space-around",
+        "stretch",
+      ],
+    },
   },
   {
     name: "gap",
     displayWhen: { name: "display", value: /flex/ },
     group: "layout",
     sticky: true,
-    inputs: [{ name: "gap", type: css.InputType.Unit }],
+    input: { name: "gap", type: css.InputType.Unit },
   },
 
   {
     name: "font-family",
     group: "typography",
     sticky: true,
-    inputs: [{ name: "font-family", type: css.InputType.Enum, options: [] }],
+    input: { name: "font-family", type: css.InputType.Enum, options: [] },
   },
   {
     name: "color",
     group: "typography",
     sticky: true,
-    inputs: [{ name: "color", type: css.InputType.Color }],
+    input: { name: "color", type: css.InputType.Color },
   },
 
   // Border
@@ -315,11 +311,14 @@ const cssSchema: schema.Map<css.Input> = [
         "border-bottom-left-radius",
       ],
     },
-    inputs: [
-      { name: "border-color", type: css.InputType.Color },
-      { name: "border-width", type: css.InputType.Unit },
-      { name: "border-radius", type: css.InputType.Unit },
-    ],
+    input: {
+      type: css.InputType.Group,
+      inputs: [
+        { name: "border-color", type: css.InputType.Color },
+        { name: "border-width", type: css.InputType.Unit },
+        { name: "border-radius", type: css.InputType.Unit },
+      ],
+    },
   },
 
   { name: "background-color", alias: "background" },
@@ -331,7 +330,7 @@ const cssSchema: schema.Map<css.Input> = [
     name: "background",
     sticky: true,
     list: true,
-    inputs: [{ name: "background-image", type: css.InputType.Asset }],
+    input: { name: "background-image", type: css.InputType.Asset },
   },
   defaultOptions,
 ];
@@ -436,25 +435,36 @@ type FieldProps = {
   options: schema.Field<css.Input>;
 };
 
-const Field = memo(({ name, style, options: { inputs } }: FieldProps) => {
-  const dispatch = useDispatch();
+const Field = memo(
+  ({ name, style, options: { input: inputOptions } }: FieldProps) => {
+    const dispatch = useDispatch();
 
-  const onChange = (value: string) => {
-    dispatch(editorEvents.styleDeclarationsChanged({ [name]: value }));
-  };
+    const onChange = (value: string) => {
+      dispatch(editorEvents.styleDeclarationsChanged({ [name]: value }));
+    };
 
-  const input = <RawInput value={style.value} onChange={onChange} />;
+    const input = (
+      <FieldInput
+        value={style.value}
+        onChange={onChange}
+        options={
+          inputOptions.type === css.InputType.Enum ? inputOptions.options : []
+        }
+      />
+    );
 
-  // default field input
-  return <inputStyles.Field name={name} input={input} />;
-});
+    // default field input
+    return <inputStyles.Field name={name} input={input} />;
+  }
+);
 
-type RawInputProps = {
+type FieldInputProps = {
   value: string;
+  options?: string[];
   onChange: (value: string) => void;
 };
 
-const RawInput = ({ value, onChange }: RawInputProps) => {
+const FieldInput = ({ value, options, onChange }: FieldInputProps) => {
   const ref = useRef<HTMLInputElement>();
   useEffect(() => {
     if (ref.current) {
@@ -472,13 +482,26 @@ const RawInput = ({ value, onChange }: RawInputProps) => {
     onChange(event.currentTarget.value);
   };
 
+  const menu = useCallback(() => {
+    const ops = options?.length
+      ? [
+          <PopoverMenuSection>Options</PopoverMenuSection>,
+          ...options.map((option) => <PopoverMenuItem value={option} />),
+        ]
+      : [];
+
+    return [...ops, <PopoverMenuSection>Tokens</PopoverMenuSection>];
+  }, [options]);
+
   return (
-    <inputStyles.TextInput
-      ref={ref}
-      defaultValue={value}
-      onKeyPress={onKeyPress}
-      onBlur={onBlur}
-    />
+    <Popover onChange={onChange} value={value} menu={menu}>
+      <inputStyles.TextInput
+        ref={ref}
+        defaultValue={value}
+        onKeyPress={onKeyPress}
+        onBlur={onBlur}
+      />
+    </Popover>
   );
 };
 

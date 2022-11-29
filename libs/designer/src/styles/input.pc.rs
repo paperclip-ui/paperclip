@@ -35,6 +35,7 @@ pub fn MultiSelectItem(props: &MultiSelectItemProps) -> Html {
 pub struct SelectProps {
     pub __scope_class_name: Option<String>,
     pub menu: Children,
+    pub onClick: ,
     pub value: Children,
 }
 
@@ -42,18 +43,46 @@ pub struct SelectProps {
 pub fn Select(props: &SelectProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Select-ca714c1c-50", scope_class_name)
+            format!("{} {}", "_Select-ca714c1c-64", scope_class_name)
         } else {
-            "_Select-ca714c1c-50".to_string()
-        }}>
-            <div class={"_Select-input-ca714c1c-47"}>
+            "_Select-ca714c1c-64".to_string()
+        }} onClick={props.onClick.clone()} tabIndex={"-1"}>
+            <div class={"_Select-input-ca714c1c-62"}>
                 <div>
                     { for props.value.iter() }
                 </div>
                 
+                <div class={"_Select-ca714c1c-61"}></div>
+                
             </div>
             
-            <div class={"_Select-menuContainer-ca714c1c-49"}>
+            { for props.menu.iter() }
+        </div>
+    }
+}
+
+#[derive(Properties, PartialEq)]
+pub struct PopoverContainerProps {
+    pub __scope_class_name: Option<String>,
+    pub input: Children,
+    pub menu: Children,
+    pub onBlur: ,
+    pub onFocus: ,
+}
+
+#[function_component]
+pub fn PopoverContainer(props: &PopoverContainerProps) -> Html {
+    html! {
+        <div class={if let Some(scope_class_name) = &props.__scope_class_name {
+            format!("{} {}", "_PopoverContainer-ca714c1c-89", scope_class_name)
+        } else {
+            "_PopoverContainer-ca714c1c-89".to_string()
+        }} onBlur={props.onBlur.clone()} onFocus={props.onFocus.clone()}>
+            <div class={"_PopoverContainer-input-ca714c1c-75"}>
+                { for props.input.iter() }
+            </div>
+            
+            <div class={"_PopoverContainer-ca714c1c-88"}>
                 { for props.menu.iter() }
             </div>
             
@@ -62,19 +91,19 @@ pub fn Select(props: &SelectProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-pub struct SelectMenuProps {
+pub struct PopoverMenuProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
 }
 
 #[function_component]
-pub fn SelectMenu(props: &SelectMenuProps) -> Html {
+pub fn PopoverMenu(props: &PopoverMenuProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_SelectMenu-ca714c1c-63", scope_class_name)
+            format!("{} {}", "_PopoverMenu-ca714c1c-121", scope_class_name)
         } else {
-            "_SelectMenu-ca714c1c-63".to_string()
+            "_PopoverMenu-ca714c1c-121".to_string()
         }}>
             { for props.children.iter() }
         </div>
@@ -82,19 +111,19 @@ pub fn SelectMenu(props: &SelectMenuProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-pub struct SelectMenuHeaderProps {
+pub struct PopoverMenuHeaderProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
 }
 
 #[function_component]
-pub fn SelectMenuHeader(props: &SelectMenuHeaderProps) -> Html {
+pub fn PopoverMenuHeader(props: &PopoverMenuHeaderProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_SelectMenuHeader-ca714c1c-71", scope_class_name)
+            format!("{} {}", "_PopoverMenuHeader-ca714c1c-129", scope_class_name)
         } else {
-            "_SelectMenuHeader-ca714c1c-71".to_string()
+            "_PopoverMenuHeader-ca714c1c-129".to_string()
         }}>
             { for props.children.iter() }
         </div>
@@ -102,34 +131,36 @@ pub fn SelectMenuHeader(props: &SelectMenuHeaderProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-pub struct SelectMenuSearchProps {
+pub struct PopoverMenuSearchProps {
     pub __scope_class_name: Option<String>,
     pub placeholder: ,
     pub value: ,
 }
 
 #[function_component]
-pub fn SelectMenuSearch(props: &SelectMenuSearchProps) -> Html {
+pub fn PopoverMenuSearch(props: &PopoverMenuSearchProps) -> Html {
     html! {
         <TextInput placeholder={props.placeholder.clone()} value={props.value.clone()}></TextInput>
     }
 }
 
 #[derive(Properties, PartialEq)]
-pub struct SelectMenuItemProps {
+pub struct PopoverMenuItemProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
+    pub class: String,
+    pub onMouseDown: ,
 }
 
 #[function_component]
-pub fn SelectMenuItem(props: &SelectMenuItemProps) -> Html {
+pub fn PopoverMenuItem(props: &PopoverMenuItemProps) -> Html {
     html! {
-        <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_SelectMenuItem-ca714c1c-91", scope_class_name)
+        <div class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
+            format!("{} {}", "_PopoverMenuItem-ca714c1c-163", scope_class_name)
         } else {
-            "_SelectMenuItem-ca714c1c-91".to_string()
-        }}>
+            "_PopoverMenuItem-ca714c1c-163".to_string()
+        })} onMouseDown={props.onMouseDown.clone()}>
             { for props.children.iter() }
         </div>
     }
@@ -138,8 +169,11 @@ pub fn SelectMenuItem(props: &SelectMenuItemProps) -> Html {
 #[derive(Properties, PartialEq)]
 pub struct TextInputProps {
     pub __scope_class_name: Option<String>,
+    pub class: ,
     pub defaultValue: ,
     pub onBlur: ,
+    pub onChange: ,
+    pub onFocus: ,
     pub onKeyPress: ,
     pub placeholder: ,
     pub value: ,
@@ -148,11 +182,11 @@ pub struct TextInputProps {
 #[function_component]
 pub fn TextInput(props: &TextInputProps) -> Html {
     html! {
-        <input class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_TextInput-root-ca714c1c-108", scope_class_name)
+        <input class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
+            format!("{} {}", "_TextInput-root-ca714c1c-195", scope_class_name)
         } else {
-            "_TextInput-root-ca714c1c-108".to_string()
-        }} defaultValue={props.defaultValue.clone()} onBlur={props.onBlur.clone()} onKeyPress={props.onKeyPress.clone()} placeholder={props.placeholder.clone()} value={props.value.clone()}></input>
+            "_TextInput-root-ca714c1c-195".to_string()
+        })} defaultValue={props.defaultValue.clone()} onBlur={props.onBlur.clone()} onChange={props.onChange.clone()} onFocus={props.onFocus.clone()} onKeyPress={props.onKeyPress.clone()} placeholder={props.placeholder.clone()} value={props.value.clone()}></input>
     }
 }
 
@@ -167,11 +201,11 @@ pub struct ColorInputProps {
 pub fn ColorInput(props: &ColorInputProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_ColorInput-root-ca714c1c-137", scope_class_name)
+            format!("{} {}", "_ColorInput-root-ca714c1c-224", scope_class_name)
         } else {
-            "_ColorInput-root-ca714c1c-137".to_string()
+            "_ColorInput-root-ca714c1c-224".to_string()
         }}>
-            <div class={"_ColorInput-ca714c1c-135"}></div>
+            <div class={"_ColorInput-ca714c1c-222"}></div>
             
             { for props.children.iter() }
         </div>
@@ -189,9 +223,9 @@ pub struct FieldsProps {
 pub fn Fields(props: &FieldsProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Fields-ca714c1c-149", scope_class_name)
+            format!("{} {}", "_Fields-ca714c1c-236", scope_class_name)
         } else {
-            "_Fields-ca714c1c-149".to_string()
+            "_Fields-ca714c1c-236".to_string()
         }}>
             { for props.children.iter() }
         </div>
@@ -209,9 +243,9 @@ pub struct MultiSelectProps {
 pub fn MultiSelect(props: &MultiSelectProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_MultiSelect-ca714c1c-163", scope_class_name)
+            format!("{} {}", "_MultiSelect-ca714c1c-250", scope_class_name)
         } else {
-            "_MultiSelect-ca714c1c-163".to_string()
+            "_MultiSelect-ca714c1c-250".to_string()
         }}>
             { for props.children.iter() }
         </div>
@@ -229,9 +263,9 @@ pub struct TokenInputProps {
 pub fn TokenInput(props: &TokenInputProps) -> Html {
     html! {
         <span class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_TokenInput-ca714c1c-175", scope_class_name)
+            format!("{} {}", "_TokenInput-ca714c1c-262", scope_class_name)
         } else {
-            "_TokenInput-ca714c1c-175".to_string()
+            "_TokenInput-ca714c1c-262".to_string()
         }}>
             { for props.children.iter() }
         </span>
@@ -250,9 +284,9 @@ pub struct TokenProps {
 pub fn Token(props: &TokenProps) -> Html {
     html! {
         <span class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Token-ca714c1c-233", scope_class_name)
+            format!("{} {}", "_Token-ca714c1c-320", scope_class_name)
         } else {
-            "_Token-ca714c1c-233".to_string()
+            "_Token-ca714c1c-320".to_string()
         })}>
             { for props.children.iter() }
         </span>
@@ -270,15 +304,15 @@ pub struct FieldProps {
 pub fn Field(props: &FieldProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Field-ca714c1c-272", scope_class_name)
+            format!("{} {}", "_Field-ca714c1c-359", scope_class_name)
         } else {
-            "_Field-ca714c1c-272".to_string()
+            "_Field-ca714c1c-359".to_string()
         }}>
-            <div class={"_Field-ca714c1c-257"}>
+            <div class={"_Field-ca714c1c-344"}>
                 { for props.name.iter() }
             </div>
             
-            <div class={"_Field-ca714c1c-271"}>
+            <div class={"_Field-ca714c1c-358"}>
                 { for props.input.iter() }
             </div>
             
@@ -292,6 +326,7 @@ pub struct TokenMenuContentProps {
     #[prop_or_default]
     pub children: Children,
     pub file: Children,
+    pub preview: Children,
     pub style: ,
 }
 
@@ -299,17 +334,21 @@ pub struct TokenMenuContentProps {
 pub fn TokenMenuContent(props: &TokenMenuContentProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_TokenMenuContent-ca714c1c-311", scope_class_name)
+            format!("{} {}", "_TokenMenuContent-ca714c1c-403", scope_class_name)
         } else {
-            "_TokenMenuContent-ca714c1c-311".to_string()
+            "_TokenMenuContent-ca714c1c-403".to_string()
         }} style={props.style.clone()}>
-            <div class={"_TokenMenuContent-ca714c1c-305"}>
-                <div class={"_TokenMenuContent-ca714c1c-303"}></div>
+            <div class={"_TokenMenuContent-ca714c1c-397"}>
+                <div class={"_TokenMenuContent-ca714c1c-390"}></div>
                 
                 { for props.children.iter() }
+                <div class={"_TokenMenuContent-ca714c1c-396"}>
+                    { for props.preview.iter() }
+                </div>
+                
             </div>
             
-            <div class={"_TokenMenuContent-ca714c1c-310"}>
+            <div class={"_TokenMenuContent-ca714c1c-402"}>
                 { for props.file.iter() }
             </div>
             
@@ -318,38 +357,197 @@ pub fn TokenMenuContent(props: &TokenMenuContentProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-pub struct SelectMenuDividerProps {
+pub struct PopoverMenuDividerProps {
     pub __scope_class_name: Option<String>,
 }
 
 #[function_component]
-pub fn SelectMenuDivider(props: &SelectMenuDividerProps) -> Html {
+pub fn PopoverMenuDivider(props: &PopoverMenuDividerProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_SelectMenuDivider-ca714c1c-322", scope_class_name)
+            format!("{} {}", "_PopoverMenuDivider-ca714c1c-414", scope_class_name)
         } else {
-            "_SelectMenuDivider-ca714c1c-322".to_string()
+            "_PopoverMenuDivider-ca714c1c-414".to_string()
         }}></div>
     }
 }
 
 #[derive(Properties, PartialEq)]
-pub struct SelectMenuSectionProps {
+pub struct PopoverMenuSectionProps {
     pub __scope_class_name: Option<String>,
     #[prop_or_default]
     pub children: Children,
 }
 
 #[function_component]
-pub fn SelectMenuSection(props: &SelectMenuSectionProps) -> Html {
+pub fn PopoverMenuSection(props: &PopoverMenuSectionProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_SelectMenuSection-ca714c1c-338", scope_class_name)
+            format!("{} {}", "_PopoverMenuSection-ca714c1c-438", scope_class_name)
         } else {
-            "_SelectMenuSection-ca714c1c-338".to_string()
+            "_PopoverMenuSection-ca714c1c-438".to_string()
         }}>
             { for props.children.iter() }
         </div>
+    }
+}
+
+#[derive(Properties, PartialEq)]
+struct ComponentPreviewProps {
+    pub __scope_class_name: Option<String>,
+    #[prop_or_default]
+    pub children: Children,
+    pub title: Children,
+}
+
+#[function_component]
+fn ComponentPreview(props: &ComponentPreviewProps) -> Html {
+    html! {
+        <div class={if let Some(scope_class_name) = &props.__scope_class_name {
+            format!("{} {}", "_ComponentPreview-ca714c1c-456", scope_class_name)
+        } else {
+            "_ComponentPreview-ca714c1c-456".to_string()
+        }}>
+            <h1>
+                { for props.title.iter() }
+            </h1>
+            
+            <div>
+                { for props.children.iter() }
+            </div>
+            
+        </div>
+    }
+}
+
+#[derive(Properties, PartialEq)]
+struct SelectPreviewProps {
+    pub __scope_class_name: Option<String>,
+}
+
+#[function_component]
+fn SelectPreview(props: &SelectPreviewProps) -> Html {
+    html! {
+        <Select menu={
+            <PopoverMenu>
+                <PopoverMenuSection>
+                    
+                </PopoverMenuSection>
+                
+                <PopoverMenuItem>
+                    
+                </PopoverMenuItem>
+                
+                <PopoverMenuItem>
+                    
+                </PopoverMenuItem>
+                
+                <PopoverMenuItem>
+                    
+                </PopoverMenuItem>
+                
+                <PopoverMenuSection>
+                    
+                </PopoverMenuSection>
+                
+                <PopoverMenuItem>
+                    <TokenMenuContent file={
+                        
+} style={"--color: orange"}>
+                        
+                    </TokenMenuContent>
+                    
+                </PopoverMenuItem>
+                
+                <PopoverMenuItem>
+                    <TokenMenuContent file={
+                        
+} style={"--color: yellow"}>
+                        
+                    </TokenMenuContent>
+                    
+                </PopoverMenuItem>
+                
+                <PopoverMenuItem>
+                    <TokenMenuContent file={
+                        
+} style={"--color: #F60"}>
+                        
+                    </TokenMenuContent>
+                    
+                </PopoverMenuItem>
+                
+            </PopoverMenu>
+            
+} value={
+            
+}></Select>
+    }
+}
+
+#[derive(Properties, PartialEq)]
+struct TextInputAutoSuggestProps {
+    pub __scope_class_name: Option<String>,
+}
+
+#[function_component]
+fn TextInputAutoSuggest(props: &TextInputAutoSuggestProps) -> Html {
+    html! {
+        <PopoverContainer input={
+            <TextInput placeholder={"10px"} value={"10px"}></TextInput>
+            
+} menu={
+            <PopoverMenu>
+                <PopoverMenuSection>
+                    
+                </PopoverMenuSection>
+                
+                <PopoverMenuItem>
+                    
+                </PopoverMenuItem>
+                
+                <PopoverMenuItem class={"hover"}>
+                    
+                </PopoverMenuItem>
+                
+                <PopoverMenuSection>
+                    
+                </PopoverMenuSection>
+                
+                <PopoverMenuItem>
+                    <TokenMenuContent file={
+                        
+} preview={
+                        
+} style={"--color: orange"}>
+                        
+                    </TokenMenuContent>
+                    
+                </PopoverMenuItem>
+                
+                <PopoverMenuItem>
+                    <TokenMenuContent file={
+                        
+} preview={
+                        
+} style={"--color: yellow"}>
+                        
+                    </TokenMenuContent>
+                    
+                </PopoverMenuItem>
+                
+                <PopoverMenuItem>
+                    <TokenMenuContent file={
+                        
+} style={"--color: #F60"}>
+                        
+                    </TokenMenuContent>
+                    
+                </PopoverMenuItem>
+                
+            </PopoverMenu>
+            
+}></PopoverContainer>
     }
 }
 

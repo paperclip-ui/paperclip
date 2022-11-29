@@ -27,7 +27,7 @@ public token puncColor rgb(158, 158, 158)
 public token keywordColor rgb(158, 158, 158)
 
 public token fontColor01 rgb(236, 236, 236)
-e
+
 public token space01 2px
 public token space02 4px
 public token space03 8px
@@ -72,6 +72,7 @@ public style icon extends mask {
 public style input {
   background: var(inputBackground)                                  
   display: flex
+  outline: none
   align-items: center
   text-overflow: ellipsis
   font-size: inherit
@@ -84,6 +85,10 @@ public style input {
   border: none
   color: currentColor
   min-height: 24px
+}
+
+public style inputActive {
+  box-shadow: inset 0px 0px 0px 1px var(blue01)
 }
 
 public style fontDefault {

@@ -1,6 +1,16 @@
 #### On-deck
 
-- fix text input styles
+- wire up select input
+
+  - use enums
+  - ability to connect props to tokens
+
+- auto-complete text inputs
+
+- borders?
+- backgrounds?
+
+- mixins
 
 - dropdown
 

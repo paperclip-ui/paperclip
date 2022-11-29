@@ -115,7 +115,7 @@ public component Preview {
                             text "Padding"
                         }
                         insert input {
-                            input.TextInput(value: "", placeholder: "0px")
+                            input.TextInput(value: "", placeholder: "0px", class: "active")
                         }
                     }
                     input.Field {

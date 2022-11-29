@@ -19,7 +19,7 @@ public component MultiSelectItem {
 }
 
 public component Select {
-    render div {
+    render div(onClick: onClick, tabIndex: "-1") {
         style {
             display: flex
             flex-direction: column
@@ -34,7 +34,7 @@ public component Select {
                 slot value
             }
             div {
-                style  extends theme.icon {
+                style extends theme.icon {
                     --size: 1em
                     -webkit-mask-image: url("./chevron2.svg")
                     transform: rotate(90deg)
@@ -45,18 +45,39 @@ public component Select {
     }
 }
 
-public component SelectMenu {
-    render div {
+public component PopoverContainer {
+    render div(onFocus: onFocus, onBlur: onBlur) {
         style {
+            position: relative
+        }
+        div input {
+            slot input
+        }
+        div {
+            style {
+                position: absolute
+                width: 100%
+                top: calc(100% + var(theme.space03))
+            }
+            slot menu
+        }
+    }
+}
+
+public component PopoverMenu {
+    render div {
+        style extends theme.fontDefault {
             background: var(theme.inputBackground)
             border-radius: var(theme.rounded)
             width: 100%
+            filter: drop-shadow(3px 3px 5px rgba(0,0,0, 0.2))
+            border: 1px solid var(theme.gray04)
         }
         slot children
     }
 }
 
-public component SelectMenuHeader {
+public component PopoverMenuHeader {
     render div {
         style {
             padding: var(theme.space03)
@@ -65,7 +86,7 @@ public component SelectMenuHeader {
     }
 }
 
-public component SelectMenuSearch {
+public component PopoverMenuSearch {
     render TextInput(placeholder: placeholder, value: value) {
         override root {
             style {
@@ -75,20 +96,34 @@ public component SelectMenuSearch {
     }
 }
 
-public component SelectMenuItem {
-    render div {
+public component PopoverMenuItem {
+    variant hover trigger {
+        ":hover"
+        ".hover"
+    }
+    render div(onMouseDown: onMouseDown, class: class) {
         style {
             padding: var(theme.space03)
+            cursor: pointer
+        }
+        style variant hover {
+            background: var(theme.gray03)
         }
         slot children
     }
 }
 
 public component TextInput {
-    render input root (value: value, placeholder: placeholder, defaultValue: defaultValue, onKeyPress: onKeyPress, onBlur: onBlur) {
+    variant isActive trigger {
+        ":active"
+        ":focus"
+        ".active"
+    }
+    render input root(value: value, placeholder: placeholder, defaultValue: defaultValue, onKeyPress: onKeyPress, onBlur: onBlur, onChange: onChange, onFocus: onFocus, onBlur: onBlur, class: class) {
         style extends theme.input {
             width: 100%
         }
+        style variant isActive extends theme.inputActive
     }
 }
 
@@ -217,7 +252,7 @@ public component Field {
 }
 
 public component TokenMenuContent {
-    render div(style:style) {
+    render div(style: style) {
         style {
             display: flex
             align-items: center
@@ -238,17 +273,23 @@ public component TokenMenuContent {
                 }
             }
             slot children
+            div {
+                style {
+                    opacity: 0.3
+                }
+                slot preview
+            }
         }
         div {
             style {
-                opacity: 0.5
+                opacity: 0.3
             }
             slot file
         }
     }
 }
 
-public component SelectMenuDivider {
+public component PopoverMenuDivider {
     render div {
         style {
             background: var(theme.gray04)
@@ -258,49 +299,64 @@ public component SelectMenuDivider {
     }
 }
 
-public component SelectMenuSection {
+public component PopoverMenuSection {
+    variant isFirst trigger {
+        ":first-child"
+    }
     render div {
         style {
             background: var(theme.gray04)
             width: 100%
             padding: var(theme.space03) var(theme.space03)
         }
+        style variant isFirst {
+            border-top-left-radius: 2px
+            border-top-right-radius: 2px
+        }
         slot children
-        
     }
 }
 
-/**
- * @bounds(x: -190, y: 10, width: 298, height: 330)
-*/
-
-div {
-    style extends theme.fontDefault {
-        padding: 20px
-        background: rgb(20, 20, 20)
-        width: 100vw
-        height: 100vh
-        position: static
+component ComponentPreview {
+    render div {
+        style {
+            padding: var(theme.space05)
+            border-radius: var(theme.rounded)
+            background: #000
+            min-width: 400px
+        }
+        h1 {
+            slot title
+        }
+        div {
+            slot children
+        }
     }
-    Select {
+}
+
+component SelectPreview {
+    render Select {
         insert value {
-            text "Something"
+            text "flex"
         }
         insert menu {
-            SelectMenu {
-                SelectMenuItem {
-                    text "something"
+            PopoverMenu {
+                PopoverMenuSection {
+                    text "Options"
                 }
-                SelectMenuItem {
-                    text "something"
+                PopoverMenuItem {
+                    text "block"
                 }
-                SelectMenuItem {
-                    text "something"
+                PopoverMenuItem {
+                    text "inline-flex"
                 }
-                SelectMenuSection {
+                PopoverMenuItem {
+                    text "orange05"
+                }
+                PopoverMenuSection {
                     text "tokens"
                 }
-                SelectMenuItem {
+                PopoverMenuItem {
                     TokenMenuContent(style: "--color: orange") {
                         text "orange05"
                         insert file {
@@ -308,7 +364,7 @@ div {
                         }
                     }
                 }
-                SelectMenuItem {
+                PopoverMenuItem {
                     TokenMenuContent(style: "--color: yellow") {
                         text "orange04"
                         insert file {
@@ -316,7 +372,7 @@ div {
                         }
                     }
                 }
-                SelectMenuItem {
+                PopoverMenuItem {
                     TokenMenuContent(style: "--color: #F60") {
                         text "something"
                         insert file {
@@ -326,6 +382,89 @@ div {
                 }
             }
         }
+    }
+}
+
+component TextInputAutoSuggest {
+    render PopoverContainer {
+        insert input {
+            TextInput(placeholder: "10px", value: "10px")
+        }
+        insert menu {
+            PopoverMenu {
+                PopoverMenuSection {
+                    text "Convert"
+                }
+                PopoverMenuItem {
+                    text "12rem"
+                }
+                PopoverMenuItem(class: "hover") {
+                    text "0.7em"
+                }
+                PopoverMenuSection {
+                    text "Tokens"
+                }
+                PopoverMenuItem {
+                    TokenMenuContent(style: "--color: orange") {
+                        text "orange05"
+                        insert preview {
+                            text "#F60"
+                        }
+                        insert file {
+                            text "theme.pc"
+                        }
+                    }
+                }
+                PopoverMenuItem {
+                    TokenMenuContent(style: "--color: yellow") {
+                        text "orange04"
+                        insert preview {
+                            text "yellow"
+                        }
+                        insert file {
+                            text "theme.pc"
+                        }
+                    }
+                }
+                PopoverMenuItem {
+                    TokenMenuContent(style: "--color: #F60") {
+                        text "something"
+                        insert file {
+                            text "theme.pc"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: -190, y: 10, width: 915, height: 761)
+*/
+
+div {
+    style extends theme.fontDefault {
+        padding: 30px
+        background: rgb(20, 20, 20)
+        width: 915px
+        height: 761px
+        position: static
+        display: flex
+        gap: var(theme.space04)
+        align-items: flex-start
+    }
+    ComponentPreview {
+        insert title {
+            text "Select"
+        }
+        SelectPreview
+    }
+    ComponentPreview {
+        insert title {
+            text "Text"
+        }
+        TextInputAutoSuggest
     }
 }
 

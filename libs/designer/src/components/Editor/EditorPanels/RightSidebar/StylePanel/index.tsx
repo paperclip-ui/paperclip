@@ -239,7 +239,7 @@ const cssSchema: schema.Map<css.Input> = [
     input: {
       name: "display",
       type: css.InputType.Enum,
-      options: ["center"],
+      options: ["flex-start", "flex-end", "center", "baseline", "stretch"],
     },
   },
   {

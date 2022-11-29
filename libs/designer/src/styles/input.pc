@@ -97,17 +97,23 @@ public component PopoverMenuSearch {
 }
 
 public component PopoverMenuItem {
-    variant hover trigger {
+    variant preselect trigger {
         ":hover"
-        ".hover"
+        ".preselect"
+    }
+    variant selected trigger {
+        ".selected"
     }
     render div(onMouseDown: onMouseDown, class: class) {
         style {
             padding: var(theme.space03)
             cursor: pointer
         }
-        style variant hover {
-            background: var(theme.gray03)
+        style variant preselect {
+            background: var(theme.blue01)
+        }
+        style variant selected {
+            background: var(theme.blue02)
         }
         slot children
     }
@@ -398,7 +404,16 @@ component TextInputAutoSuggest {
                 PopoverMenuItem {
                     text "12rem"
                 }
-                PopoverMenuItem(class: "hover") {
+                PopoverMenuItem(class: "preselect") {
+                    text "0.7em"
+                }
+                PopoverMenuItem {
+                    text "0.7em"
+                }
+                PopoverMenuItem(class: "selected") {
+                    text "0.7em"
+                }
+                PopoverMenuItem {
                     text "0.7em"
                 }
                 PopoverMenuSection {

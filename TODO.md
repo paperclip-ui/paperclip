@@ -1,4 +1,12 @@
+### Considerations
+
+- Try not to hand-write any new UI unless it's necessary for self-creation
+
 #### On-deck
+
+- rename Popover to Suggestor or something similar
+- position top
+- preselect arrow
 
 - auto-import selected tokens
 - scrollable menu

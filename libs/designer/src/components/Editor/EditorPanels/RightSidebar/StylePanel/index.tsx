@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useRef } from "react";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import * as commonStyles from "@paperclip-ui/designer/src/styles/common.pc";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { memoize, useDispatch, useSelector } from "@paperclip-ui/common";
@@ -13,6 +13,7 @@ import {
   PopoverMenuSection,
 } from "@paperclip-ui/designer/src/components/Popover";
 import { getAllPublicAtoms } from "@paperclip-ui/designer/src/machine/state";
+import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
 
 namespace css {
   export enum InputType {
@@ -251,18 +252,7 @@ const cssSchema: schema.Map<css.Input> = [
     input: {
       name: "display",
       type: css.InputType.Enum,
-      options: [
-        "start",
-        "end",
-        "flex-start",
-        "flex-end",
-        "center",
-        "left",
-        "normal",
-        "space-between",
-        "space-around",
-        "stretch",
-      ],
+      options: ["row", "column"],
     },
   },
   {
@@ -440,14 +430,14 @@ const Field = memo(
   ({ name, style, options: { input: inputOptions } }: FieldProps) => {
     const dispatch = useDispatch();
 
-    const onChange = (value: string) => {
+    const onSave = (value: string) => {
       dispatch(editorEvents.styleDeclarationsChanged({ [name]: value }));
     };
 
     const input = (
       <FieldInput
         value={style.value}
-        onChange={onChange}
+        onSave={onSave}
         options={
           inputOptions.type === css.InputType.Enum ? inputOptions.options : []
         }
@@ -462,41 +452,58 @@ const Field = memo(
 type FieldInputProps = {
   value: string;
   options?: string[];
-  onChange: (value: string) => void;
+  onSave: (value: string) => void;
 };
 
-const FieldInput = ({ value, options, onChange }: FieldInputProps) => {
-  const ref = useRef<HTMLInputElement>();
+const FieldInput = ({ value, options, onSave }: FieldInputProps) => {
   const tokens = useSelector(getAllPublicAtoms);
-  useEffect(() => {
-    if (ref.current) {
-      ref.current.value = value;
+  const [internalValue, setInternalValue] = useState("");
+
+  const maybePersist = () => {
+    if (internalValue !== value) {
+      onSave(internalValue);
     }
-  }, [value]);
+  };
 
   const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      onChange(event.currentTarget.value);
+      maybePersist();
     }
   };
 
-  const onBlur = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    onChange(event.currentTarget.value);
-  };
+  const onBlur = () => maybePersist();
+
+  const onValueChange = (value: string) => setInternalValue(value);
+
+  useEffect(() => {
+    setInternalValue(value);
+  }, [value]);
 
   const menu = useCallback(() => {
     const ops = options?.length
       ? [
           <PopoverMenuSection>Options</PopoverMenuSection>,
-          ...options.map((option) => <PopoverMenuItem value={option} />),
+          ...options.map((option) => (
+            <PopoverMenuItem
+              value={option}
+              filterText={option}
+              onMouseDown={() => setInternalValue(option)}
+            />
+          )),
         ]
       : [];
 
-    if (tokens.length) {
+    // no enum options
+    if (tokens.length && !options?.length) {
       ops.push(
         <PopoverMenuSection>Tokens</PopoverMenuSection>,
         ...tokens.map((token) => (
-          <PopoverMenuItem key={token.atom.id} value={token.value}>
+          <PopoverMenuItem
+            key={token.atom.id}
+            value={token.value}
+            filterText={token.atom.name + token.cssValue + token.value}
+            onMouseDown={() => setInternalValue(token.cssValue)}
+          >
             <inputStyles.TokenMenuContent
               style={{ "--color": token.cssValue }}
               preview={token.value}
@@ -510,15 +517,16 @@ const FieldInput = ({ value, options, onChange }: FieldInputProps) => {
     }
 
     return ops;
-  }, [options, tokens]);
+  }, [options, tokens, onSave]);
 
   return (
-    <Popover onChange={onChange} value={value} menu={menu}>
-      <inputStyles.TextInput
-        ref={ref}
-        defaultValue={value}
-        onKeyPress={onKeyPress}
+    <Popover menu={menu} style={{ width: 300 }}>
+      <TextInput
+        value={value}
         onBlur={onBlur}
+        onChange={onValueChange}
+        onKeyPress={onKeyPress}
+        select
       />
     </Popover>
   );

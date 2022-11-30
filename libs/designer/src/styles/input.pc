@@ -65,7 +65,7 @@ public component PopoverContainer {
 }
 
 public component PopoverMenu {
-    render div {
+    render div(style: style) {
         style extends theme.fontDefault {
             background: var(theme.inputBackground)
             border-radius: var(theme.rounded)
@@ -73,6 +73,8 @@ public component PopoverMenu {
             min-width: 250px
             filter: drop-shadow(3px 3px 5px rgba(0,0,0, 0.2))
             border: 1px solid var(theme.gray04)
+            overflow: scroll
+            max-height: 300px
         }
         slot children
     }

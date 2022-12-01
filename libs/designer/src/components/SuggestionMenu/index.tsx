@@ -121,7 +121,8 @@ export const SuggestionMenu = ({
         onClick,
       })}
       menu={
-        isOpen && (
+        isOpen &&
+        menuOptions.length && (
           <div ref={anchorRef}>
             <Portal>
               <styles.SuggestionMenu ref={targetRef} style={style}>

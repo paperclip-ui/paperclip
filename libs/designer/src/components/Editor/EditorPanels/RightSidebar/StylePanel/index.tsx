@@ -444,6 +444,7 @@ const Field = memo(
         computedValue={style.computedValue}
         explicitValue={style.explicitValue}
         onSave={onSave}
+        type={inputOptions.type}
         options={
           inputOptions.type === css.InputType.Enum ? inputOptions.options : []
         }
@@ -460,6 +461,7 @@ type FieldInputProps = {
   explicitValue?: string;
   options?: string[];
   onSave: (value: NewDeclValue) => void;
+  type: css.InputType;
 };
 
 type NewDeclValue = {
@@ -471,6 +473,7 @@ const FieldInput = ({
   computedValue,
   explicitValue,
   options,
+  type,
   onSave,
 }: FieldInputProps) => {
   const tokens = useSelector(getAllPublicAtoms);
@@ -504,17 +507,31 @@ const FieldInput = ({
             <SuggestionMenuItem
               value={option}
               filterText={option}
-              onMouseDown={() => (internalValue.current = { value: option })}
+              onSelect={() => (internalValue.current = { value: option })}
             />
           )),
         ]
       : [];
 
     // no enum options
-    if (tokens.length && !options?.length) {
-      ops.push(
-        <SuggestionMenuSection>Tokens</SuggestionMenuSection>,
-        ...tokens.map((token) => {
+    if (tokens.length && type !== css.InputType.Enum) {
+      const availableTokens = tokens
+        .filter((token) => {
+          if (type === css.InputType.Unit) {
+            // https://www.w3schools.com/cssref/css_units.php
+            return /(cm|mm|in|px|pt|pc|em|ex|ch|rem|vw|vh|vmin|vmax|%)/.test(
+              token.cssValue
+            );
+          } else if (type === css.InputType.Color) {
+            // https://www.smashingmagazine.com/2021/11/guide-modern-css-colors/
+            return /(rgba?|hsla?|hwb|lab|lch|color|color-mix)\(/.test(
+              token.cssValue
+            );
+          } else if (type === css.InputType.Asset) {
+            return /url/.test(token.cssValue);
+          }
+        })
+        .map((token) => {
           const value = {
             value: `var($1.${token.atom.name})`,
             imports: {
@@ -538,8 +555,14 @@ const FieldInput = ({
               </inputStyles.TokenMenuContent>
             </SuggestionMenuItem>
           );
-        })
-      );
+        });
+
+      if (availableTokens.length) {
+        ops.push(
+          <SuggestionMenuSection>Tokens</SuggestionMenuSection>,
+          ...availableTokens
+        );
+      }
     }
 
     return ops;

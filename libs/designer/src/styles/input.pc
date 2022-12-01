@@ -45,7 +45,7 @@ public component Select {
     }
 }
 
-public component PopoverContainer {
+public component SuggestionContainer {
     render div(onFocus: onFocus, onBlur: onBlur) {
         style {
             position: relative
@@ -64,7 +64,7 @@ public component PopoverContainer {
     }
 }
 
-public component PopoverMenu {
+public component SuggestionMenu {
     render div(style: style) {
         style extends theme.fontDefault {
             background: var(theme.inputBackground)
@@ -73,14 +73,15 @@ public component PopoverMenu {
             min-width: 250px
             filter: drop-shadow(3px 3px 5px rgba(0,0,0, 0.2))
             border: 1px solid var(theme.gray04)
-            overflow: scroll
+            overflow-y: scroll
+            overflow-x: hidden
             max-height: 300px
         }
         slot children
     }
 }
 
-public component PopoverMenuHeader {
+public component SuggestionMenuHeader {
     render div {
         style {
             padding: var(theme.space03)
@@ -89,7 +90,7 @@ public component PopoverMenuHeader {
     }
 }
 
-public component PopoverMenuSearch {
+public component SuggestionMenuSearch {
     render TextInput(placeholder: placeholder, value: value) {
         override root {
             style {
@@ -99,10 +100,10 @@ public component PopoverMenuSearch {
     }
 }
 
-public component PopoverMenuItem {
-    variant preselect trigger {
+public component SuggestionMenuItem {
+    variant preselected trigger {
         ":hover"
-        ".preselect"
+        ".preselected"
     }
     variant selected trigger {
         ".selected"
@@ -112,7 +113,7 @@ public component PopoverMenuItem {
             padding: var(theme.space03)
             cursor: pointer
         }
-        style variant preselect {
+        style variant preselected {
             background: var(theme.blue01)
         }
         style variant selected {
@@ -128,7 +129,7 @@ public component TextInput {
         ":focus"
         ".active"
     }
-    render input root(value: value, placeholder: placeholder, defaultValue: defaultValue, onKeyPress: onKeyPress, onBlur: onBlur, onChange: onChange, onFocus: onFocus, onBlur: onBlur, class: class) {
+    render input root(value: value, placeholder: placeholder, defaultValue: defaultValue, onKeyDown: onKeyDown, onBlur: onBlur, onChange: onChange, onFocus: onFocus, onBlur: onBlur, class: class, onClick: onClick) {
         style extends theme.input {
             width: 100%
         }
@@ -298,7 +299,7 @@ public component TokenMenuContent {
     }
 }
 
-public component PopoverMenuDivider {
+public component SuggestionMenuDivider {
     render div {
         style {
             background: var(theme.gray04)
@@ -308,7 +309,7 @@ public component PopoverMenuDivider {
     }
 }
 
-public component PopoverMenuSection {
+public component SuggestionMenuSection {
     variant isFirst trigger {
         ":first-child"
     }
@@ -349,23 +350,23 @@ component SelectPreview {
             text "flex"
         }
         insert menu {
-            PopoverMenu {
-                PopoverMenuSection {
+            SuggestionMenu {
+                SuggestionMenuSection {
                     text "Options"
                 }
-                PopoverMenuItem {
+                SuggestionMenuItem {
                     text "block"
                 }
-                PopoverMenuItem {
+                SuggestionMenuItem {
                     text "inline-flex"
                 }
-                PopoverMenuItem {
+                SuggestionMenuItem {
                     text "orange05"
                 }
-                PopoverMenuSection {
+                SuggestionMenuSection {
                     text "tokens"
                 }
-                PopoverMenuItem {
+                SuggestionMenuItem {
                     TokenMenuContent(style: "--color: orange") {
                         text "orange05"
                         insert file {
@@ -373,7 +374,7 @@ component SelectPreview {
                         }
                     }
                 }
-                PopoverMenuItem {
+                SuggestionMenuItem {
                     TokenMenuContent(style: "--color: yellow") {
                         text "orange04"
                         insert file {
@@ -381,7 +382,18 @@ component SelectPreview {
                         }
                     }
                 }
-                PopoverMenuItem {
+                SuggestionMenuItem {
+                    TokenMenuContent(style: "--color: yellow") {
+                        text "superLongTokenName"
+                        insert preview {
+                            text "yellllowwwwwwwwwodddddooooooow"
+                        }
+                        insert file {
+                            text "theme.pc"
+                        }
+                    }
+                }
+                SuggestionMenuItem {
                     TokenMenuContent(style: "--color: #F60") {
                         text "something"
                         insert file {
@@ -395,34 +407,34 @@ component SelectPreview {
 }
 
 component TextInputAutoSuggest {
-    render PopoverContainer {
+    render SuggestionContainer {
         insert input {
             TextInput(placeholder: "10px", value: "10px")
         }
         insert menu {
-            PopoverMenu {
-                PopoverMenuSection {
+            SuggestionMenu {
+                SuggestionMenuSection {
                     text "Convert"
                 }
-                PopoverMenuItem {
+                SuggestionMenuItem {
                     text "12rem"
                 }
-                PopoverMenuItem(class: "preselect") {
+                SuggestionMenuItem(class: "preselected") {
                     text "0.7em"
                 }
-                PopoverMenuItem {
+                SuggestionMenuItem {
                     text "0.7em"
                 }
-                PopoverMenuItem(class: "selected") {
+                SuggestionMenuItem(class: "selected") {
                     text "0.7em"
                 }
-                PopoverMenuItem {
+                SuggestionMenuItem {
                     text "0.7em"
                 }
-                PopoverMenuSection {
+                SuggestionMenuSection {
                     text "Tokens"
                 }
-                PopoverMenuItem {
+                SuggestionMenuItem {
                     TokenMenuContent(style: "--color: orange") {
                         text "orange05"
                         insert preview {
@@ -433,7 +445,7 @@ component TextInputAutoSuggest {
                         }
                     }
                 }
-                PopoverMenuItem {
+                SuggestionMenuItem {
                     TokenMenuContent(style: "--color: yellow") {
                         text "orange04"
                         insert preview {
@@ -444,7 +456,7 @@ component TextInputAutoSuggest {
                         }
                     }
                 }
-                PopoverMenuItem {
+                SuggestionMenuItem {
                     TokenMenuContent(style: "--color: #F60") {
                         text "something"
                         insert file {

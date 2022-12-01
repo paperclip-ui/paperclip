@@ -10,7 +10,6 @@ export const TextInput = ({
   onValueChange,
   onBlur,
   placeholder,
-  onKeyDown,
   onEnterPressed,
   wide,
   autoFocus,
@@ -112,7 +111,10 @@ export const useTextInput = ({
     onBlur && onBlur();
   };
 
-  const onKeyPress = (event: any) => {
+  const onKeyDown2 = (event: any) => {
+    if (onKeyDown) {
+      onKeyDown(event);
+    }
     if (event.key === "Enter") {
       onEnterPressed(internalValue);
     } else if (event.key === "Escape") {
@@ -125,8 +127,7 @@ export const useTextInput = ({
     onChange,
     onFocus,
     onBlur: onBlur2,
-    onKeyPress,
-    onKeyDown,
+    onKeyDown: onKeyDown2,
     defaultValue: internalValue,
   };
 

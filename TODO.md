@@ -4,13 +4,8 @@
 
 #### On-deck
 
-- rename Popover to Suggestor or something similar
-- position top
-- preselect arrow
-
-- auto-import selected tokens
-- scrollable menu
-- filter tokens based on input type
+- ability to import token
+- filter options based on unit type
 
 - Popover
 

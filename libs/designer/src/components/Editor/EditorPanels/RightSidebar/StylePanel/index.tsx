@@ -8,10 +8,10 @@ import {
 } from "@paperclip-ui/designer/src/machine/state/pc";
 import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
 import {
-  Popover,
-  PopoverMenuItem,
-  PopoverMenuSection,
-} from "@paperclip-ui/designer/src/components/Popover";
+  SuggestionMenu,
+  SuggestionMenuItem,
+  SuggestionMenuSection,
+} from "@paperclip-ui/designer/src/components/SuggestionMenu";
 import { getAllPublicAtoms } from "@paperclip-ui/designer/src/machine/state";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
 
@@ -457,15 +457,15 @@ type FieldInputProps = {
 
 const FieldInput = ({ value, options, onSave }: FieldInputProps) => {
   const tokens = useSelector(getAllPublicAtoms);
-  const [internalValue, setInternalValue] = useState("");
+  const internalValue = useRef<string>();
 
   const maybePersist = () => {
-    if (internalValue !== value) {
-      onSave(internalValue);
+    if (internalValue.current !== value) {
+      onSave(internalValue.current);
     }
   };
 
-  const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       maybePersist();
     }
@@ -473,21 +473,21 @@ const FieldInput = ({ value, options, onSave }: FieldInputProps) => {
 
   const onBlur = () => maybePersist();
 
-  const onValueChange = (value: string) => setInternalValue(value);
+  const onValueChange = (value: string) => (internalValue.current = value);
 
   useEffect(() => {
-    setInternalValue(value);
+    internalValue.current = value;
   }, [value]);
 
   const menu = useCallback(() => {
     const ops = options?.length
       ? [
-          <PopoverMenuSection>Options</PopoverMenuSection>,
+          <SuggestionMenuSection>Options</SuggestionMenuSection>,
           ...options.map((option) => (
-            <PopoverMenuItem
+            <SuggestionMenuItem
               value={option}
               filterText={option}
-              onMouseDown={() => setInternalValue(option)}
+              onMouseDown={() => (internalValue.current = option)}
             />
           )),
         ]
@@ -496,13 +496,13 @@ const FieldInput = ({ value, options, onSave }: FieldInputProps) => {
     // no enum options
     if (tokens.length && !options?.length) {
       ops.push(
-        <PopoverMenuSection>Tokens</PopoverMenuSection>,
+        <SuggestionMenuSection>Tokens</SuggestionMenuSection>,
         ...tokens.map((token) => (
-          <PopoverMenuItem
+          <SuggestionMenuItem
             key={token.atom.id}
             value={token.value}
             filterText={token.atom.name + token.cssValue + token.value}
-            onMouseDown={() => setInternalValue(token.cssValue)}
+            onMouseDown={() => (internalValue.current = token.cssValue)}
           >
             <inputStyles.TokenMenuContent
               style={{ "--color": token.cssValue }}
@@ -511,7 +511,7 @@ const FieldInput = ({ value, options, onSave }: FieldInputProps) => {
             >
               {token.atom.name}
             </inputStyles.TokenMenuContent>
-          </PopoverMenuItem>
+          </SuggestionMenuItem>
         ))
       );
     }
@@ -520,15 +520,15 @@ const FieldInput = ({ value, options, onSave }: FieldInputProps) => {
   }, [options, tokens, onSave]);
 
   return (
-    <Popover menu={menu} style={{ width: 300 }}>
+    <SuggestionMenu value={value} menu={menu} style={{ width: 350 }}>
       <TextInput
         value={value}
         onBlur={onBlur}
         onChange={onValueChange}
-        onKeyPress={onKeyPress}
+        onKeyDown={onKeyDown}
         select
       />
-    </Popover>
+    </SuggestionMenu>
   );
 };
 

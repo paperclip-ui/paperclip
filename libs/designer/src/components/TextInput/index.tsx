@@ -4,7 +4,8 @@ import * as styles from "@paperclip-ui/designer/src/styles/input.pc";
 export type TextInputProps = {
   value?: string;
   onChange?: (value: string) => void;
-  onKeyPress: (event: React.KeyboardEvent<any>) => void;
+  onClick?: () => void;
+  onKeyDown: (event: React.KeyboardEvent<any>) => void;
   onFocus?: (event: React.FocusEvent<any>) => void;
   onBlur?: (event: React.FocusEvent<any>) => void;
   select?: boolean;
@@ -12,8 +13,9 @@ export type TextInputProps = {
 
 export const TextInput = ({
   value,
-  onKeyPress,
+  onKeyDown,
   onChange,
+  onClick,
   onFocus,
   onBlur,
   select,
@@ -22,12 +24,13 @@ export const TextInput = ({
   useEffect(() => {
     if (ref.current) {
       ref.current.value = value;
-      console.log("CHANGE", value);
     }
   }, [value]);
   const onFocus2 = (event: any) => {
     if (select) {
-      ref.current.select();
+      setTimeout(() => {
+        ref.current.select();
+      });
     }
     onFocus(event);
   };
@@ -43,7 +46,8 @@ export const TextInput = ({
       onFocus={onFocus2}
       onBlur={onBlur}
       onChange={onChange2}
-      onKeyPress={onKeyPress}
+      onClick={onClick}
+      onKeyDown={onKeyDown}
     />
   );
 };

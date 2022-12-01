@@ -1,11 +1,12 @@
-use paperclip_parser::css::serializer::serialize_decl_value;
+use std::collections::HashMap;
+
 use paperclip_parser::pc::parser::parse as parse_pc;
-use paperclip_parser::pc::serializer::serialize;
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast_mutate::{
     mutation_result, MutationResult, SetStyleDeclarations, ExpressionUpdated,
 };
+use pathdiff::diff_paths;
 
 use crate::ast::{all::Visitor, all::VisitorResult};
 
@@ -14,6 +15,40 @@ impl Visitor<Vec<MutationResult>> for SetStyleDeclarations {
         if expr.get_id() == self.expression_id {
             let new_style = parse_style(&mutation_to_style(&self), &expr.checksum());
             update_style(expr, &new_style);
+        }
+        VisitorResult::Continue
+    }
+
+    fn visit_document(&mut self, doc: &mut ast::pc::Document) -> VisitorResult<Vec<MutationResult>> {
+        for decl in &mut self.declarations {
+            let mut new_namespaces = HashMap::new();
+            for (path, key) in &decl.imports {
+                let imports = doc.get_imports();
+                let existing_import = imports.iter().find(|imp| {
+                    &imp.path == path
+                });
+                if let Some(import) = existing_import {
+                    new_namespaces.insert(path.to_string(), import.namespace.to_string());
+                } else {
+                    let mut ns = "imp".to_string();
+                    let mut inc = 1;
+                    loop {
+                        if matches!(imports.iter().find(|imp| imp.namespace == ns), None) {
+                            break;
+                        }
+                        ns = format!("imp{}", inc);
+                        inc += 1;
+                    }
+                    let new_imp_doc = parse_pc(format!("import \"{}\" as {}", path, ns).as_str(), doc.checksum().as_str()).unwrap();
+                    println!("{:#?}", new_imp_doc);
+                }
+            }
+
+            for (path, ns) in new_namespaces {
+                if let Some(old_ns) = decl.imports.insert(path.to_string(), ns.to_string()) {
+                    decl.value = decl.value.replace(&old_ns, &ns);
+                }
+            }
         }
         VisitorResult::Continue
     }

@@ -4,7 +4,6 @@
 
 #### On-deck
 
-- ability to import token
 - filter options based on unit type
 
 - Popover

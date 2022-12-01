@@ -5,6 +5,7 @@ export type TextInputProps = {
   value?: string;
   onChange?: (value: string) => void;
   onClick?: () => void;
+  placeholder?: string;
   onKeyDown: (event: React.KeyboardEvent<any>) => void;
   onFocus?: (event: React.FocusEvent<any>) => void;
   onBlur?: (event: React.FocusEvent<any>) => void;
@@ -15,6 +16,7 @@ export const TextInput = ({
   value,
   onKeyDown,
   onChange,
+  placeholder,
   onClick,
   onFocus,
   onBlur,
@@ -23,7 +25,7 @@ export const TextInput = ({
   const ref = useRef<HTMLInputElement>();
   useEffect(() => {
     if (ref.current) {
-      ref.current.value = value;
+      ref.current.value = value || "";
     }
   }, [value]);
   const onFocus2 = (event: any) => {
@@ -42,6 +44,7 @@ export const TextInput = ({
   return (
     <styles.TextInput
       ref={ref}
+      placeholder={placeholder}
       defaultValue={value}
       onFocus={onFocus2}
       onBlur={onBlur}

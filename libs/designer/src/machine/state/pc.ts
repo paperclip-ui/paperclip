@@ -7,7 +7,9 @@ export type ComputedDeclaration = {
   name: string;
 
   // The computed
+  computedValue: string;
   value: string;
+  explicitValue: string;
 
   // does the value match what the browser defines by default?
   isDefault: boolean;
@@ -372,26 +374,23 @@ export const getSelectedExprStyles = (
     // not all props are computed (like gap), so we pull from constant that contains ALL CSS props
     // instead.
     for (const name in AVAILABLE_STYLES) {
-      let value = computedStyle[name];
-      if (!value) {
-        if (exprStyle[name]) {
-          value = ast.serializeDeclaration(exprStyle[name]);
-        } else {
-          value = AVAILABLE_STYLES[name];
-        }
-      }
+      const computedValue = computedStyle[name];
+      const explicitValue =
+        exprStyle[name] && ast.serializeDeclaration(exprStyle[name]);
 
       if (
         combinedStyles[name] != null &&
-        combinedStyles[name].value !== value
+        combinedStyles[name].computedValue !== computedValue
       ) {
-        combinedStyles[name].value = MIXED_VALUE;
+        combinedStyles[name].computedValue = MIXED_VALUE;
       } else {
         combinedStyles[name] = {
           name,
-          isDefault: value === AVAILABLE_STYLES[name],
+          isDefault: computedValue === AVAILABLE_STYLES[name],
           isExplicitlyDefined: exprStyle[name] != null,
-          value,
+          computedValue,
+          value: computedValue || explicitValue,
+          explicitValue,
         };
       }
     }

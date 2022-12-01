@@ -85,10 +85,7 @@ export const SuggestionMenu = ({
       }
     }
     if (event.key === "Enter") {
-      const preselectedValue = menuOptions[preselectedIndex]?.props.value;
-      if (preselectedValue) {
-        onChange(preselectedValue);
-      }
+      menuOptions[preselectedIndex]?.props.onSelect();
       setIsOpen(false);
     }
     if (oldProps.onKeyDown) {
@@ -152,16 +149,16 @@ export type SuggestionMenuItemProps = {
   children?: any;
   selected?: boolean;
   preselected?: boolean;
-  value: string;
+  value: any;
   filterText?: string;
-  onMouseDown?: () => void;
+  onSelect: () => void;
 };
 export const SuggestionMenuItem = ({
   children,
   value,
   selected,
   preselected,
-  onMouseDown,
+  onSelect,
 }: SuggestionMenuItemProps) => {
   const ref = useRef<HTMLDivElement>();
 
@@ -179,7 +176,7 @@ export const SuggestionMenuItem = ({
     <styles.SuggestionMenuItem
       ref={ref}
       class={cx({ selected, preselected })}
-      onMouseDown={onMouseDown}
+      onMouseDown={onSelect}
     >
       {children || value}
     </styles.SuggestionMenuItem>

@@ -441,7 +441,8 @@ const Field = memo(
 
     const input = (
       <FieldInput
-        value={style.value}
+        computedValue={style.computedValue}
+        explicitValue={style.explicitValue}
         onSave={onSave}
         options={
           inputOptions.type === css.InputType.Enum ? inputOptions.options : []
@@ -455,7 +456,8 @@ const Field = memo(
 );
 
 type FieldInputProps = {
-  value: string;
+  computedValue: string;
+  explicitValue?: string;
   options?: string[];
   onSave: (value: NewDeclValue) => void;
 };
@@ -465,12 +467,17 @@ type NewDeclValue = {
   value: string;
 };
 
-const FieldInput = ({ value, options, onSave }: FieldInputProps) => {
+const FieldInput = ({
+  computedValue,
+  explicitValue,
+  options,
+  onSave,
+}: FieldInputProps) => {
   const tokens = useSelector(getAllPublicAtoms);
   const internalValue = useRef<NewDeclValue>();
 
   const maybePersist = () => {
-    if (internalValue.current?.value !== value) {
+    if (internalValue.current?.value !== explicitValue) {
       onSave(internalValue.current);
     }
   };
@@ -486,8 +493,8 @@ const FieldInput = ({ value, options, onSave }: FieldInputProps) => {
   const onValueChange = (value: string) => (internalValue.current = { value });
 
   useEffect(() => {
-    internalValue.current = { value };
-  }, [value]);
+    internalValue.current = { value: explicitValue };
+  }, [explicitValue]);
 
   const menu = useCallback(() => {
     const ops = options?.length
@@ -497,7 +504,7 @@ const FieldInput = ({ value, options, onSave }: FieldInputProps) => {
             <SuggestionMenuItem
               value={option}
               filterText={option}
-              onMouseDown={() => (internalValue.current = { value })}
+              onMouseDown={() => (internalValue.current = { value: option })}
             />
           )),
         ]
@@ -507,29 +514,31 @@ const FieldInput = ({ value, options, onSave }: FieldInputProps) => {
     if (tokens.length && !options?.length) {
       ops.push(
         <SuggestionMenuSection>Tokens</SuggestionMenuSection>,
-        ...tokens.map((token) => (
-          <SuggestionMenuItem
-            key={token.atom.id}
-            value={token.value}
-            filterText={token.atom.name + token.cssValue + token.value}
-            onMouseDown={() =>
-              (internalValue.current = {
-                value: `var($1.${token.atom.name})`,
-                imports: {
-                  $1: token.dependency.path,
-                },
-              })
-            }
-          >
-            <inputStyles.TokenMenuContent
-              style={{ "--color": token.cssValue }}
-              preview={token.value}
-              file={token.dependency.path.split("/").pop()}
+        ...tokens.map((token) => {
+          const value = {
+            value: `var($1.${token.atom.name})`,
+            imports: {
+              $1: token.dependency.path,
+            },
+          };
+
+          return (
+            <SuggestionMenuItem
+              key={token.atom.id}
+              value={token.value}
+              filterText={token.atom.name + token.cssValue + token.value}
+              onSelect={() => (internalValue.current = value)}
             >
-              {token.atom.name}
-            </inputStyles.TokenMenuContent>
-          </SuggestionMenuItem>
-        ))
+              <inputStyles.TokenMenuContent
+                style={{ "--color": token.cssValue }}
+                preview={token.value}
+                file={token.dependency.path.split("/").pop()}
+              >
+                {token.atom.name}
+              </inputStyles.TokenMenuContent>
+            </SuggestionMenuItem>
+          );
+        })
       );
     }
 
@@ -537,9 +546,10 @@ const FieldInput = ({ value, options, onSave }: FieldInputProps) => {
   }, [options, tokens, onSave]);
 
   return (
-    <SuggestionMenu value={value} menu={menu} style={{ width: 350 }}>
+    <SuggestionMenu value={computedValue} menu={menu} style={{ width: 350 }}>
       <TextInput
-        value={value}
+        value={explicitValue}
+        placeholder={computedValue}
         onBlur={onBlur}
         onChange={onValueChange}
         onKeyDown={onKeyDown}

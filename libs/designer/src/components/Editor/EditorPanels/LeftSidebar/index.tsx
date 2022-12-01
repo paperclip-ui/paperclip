@@ -174,7 +174,7 @@ const InstanceLeaf = ({
       {() => {
         return (
           <>
-            {shadowVisible && (
+            {shadowVisible && render && (
               <NodeLeaf
                 expr={render.node}
                 depth={depth + 1}

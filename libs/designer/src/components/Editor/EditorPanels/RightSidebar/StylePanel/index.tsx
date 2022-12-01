@@ -246,6 +246,12 @@ const cssSchema: schema.Map<css.Input> = [
     input: { name: "font-family", type: css.InputType.Enum, options: [] },
   },
   {
+    name: "font-size",
+    group: "typography",
+    sticky: true,
+    input: { name: "font-size", type: css.InputType.Unit },
+  },
+  {
     name: "color",
     group: "typography",
     sticky: true,

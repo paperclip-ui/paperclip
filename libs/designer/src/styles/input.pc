@@ -497,3 +497,25 @@ div {
         TextInputAutoSuggest
     }
 }
+
+/**
+ * @bounds(x: 939, y: 57, width: 376, height: 276)
+*/
+
+div {
+    style {
+        position: relative
+        padding: var(theme.space05)
+    }
+    div {
+        style {
+            background: rgba(0, 0, 0, 0.1)
+            position: static
+            left: 71px
+            top: 41px
+            width: 100%
+            height: 130px
+        }
+    }
+}
+

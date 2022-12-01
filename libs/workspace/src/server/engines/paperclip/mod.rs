@@ -148,7 +148,7 @@ async fn evaluate_dependency_graph<TIO: ServerIO>(ctx: ServerEngineContext<TIO>)
                 &graph,
                 &resolver,
                 html::evaluator::Options {
-                    include_components: false,
+                    include_components: true,
                 },
             ))?;
 

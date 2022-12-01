@@ -276,7 +276,7 @@ export namespace ast {
   };
 
   export const getComponentRenderNode = (component: Component) =>
-    component.body.find((body) => body.render).render;
+    component.body.find((body) => body.render)?.render;
 
   export const isInstance = (element: Element, graph: Graph) => {
     return getInstanceComponent(element, graph) != null;

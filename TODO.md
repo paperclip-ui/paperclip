@@ -1,9 +1,17 @@
 ### Considerations
 
 - Try not to hand-write any new UI unless it's necessary for self-creation
+- It's all important so do what makes sense immediately
 
 #### On-deck
 
+- render components
+
+- right-click -> convert to component
+
+- Create color picker visually
+  - copy + paste layers
+  - right click -> convert to component
 - filter options based on unit type
 
 - Popover

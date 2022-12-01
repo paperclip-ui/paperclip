@@ -1,26 +1,9 @@
 import { LiveWindowManager } from "./preview/live-window-manager";
-import {
-  Selection,
-  TextEdit,
-  TextEditor,
-  Range,
-  TextDocumentChangeEvent,
-  ViewColumn,
-  window,
-  workspace,
-  TextDocument,
-  WorkspaceEdit,
-  Uri,
-  TextDocumentChangeReason,
-} from "vscode";
+import { TextEditor, window } from "vscode";
 import * as vscode from "vscode";
 import { fixFileUrlCasing } from "./utils";
-import * as ws from "ws";
 import { PaperclipLanguageClient } from "./language/client";
 import { isPaperclipFile } from "@paperclip-ui/common";
-import { LanguageClient } from "vscode-languageclient/node";
-import { FileChanged } from "@paperclip-ui/proto/lib/generated/service/designer";
-import { pathToFileURL, URL } from "url";
 import { serverEvents } from "./language/server/events";
 
 enum OpenLivePreviewOptions {
@@ -56,6 +39,7 @@ export class DocumentManager {
     if (textDocument.getText() === content) {
       return;
     }
+    await vscode.window.showTextDocument(textDocument);
     const editor = await vscode.window.activeTextEditor.edit((builder) => {
       builder.replace(
         new vscode.Range(

@@ -9,6 +9,7 @@ component NodeIcon {
     render div
 }
 
+
 public component Artboard {
     render div(style: style) {
         div {

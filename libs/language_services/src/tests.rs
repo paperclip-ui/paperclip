@@ -381,3 +381,38 @@ test_case! {
     ]
   }
 }
+
+
+
+test_case! {
+  collects_colors_after_bounds,
+  r#"
+    /**
+     * @bounds(width: 100, height: 100, x: 100, y: 100)
+     */
+    div test {
+      override {
+        style {
+          color: blue
+        }
+      }
+    }
+  "#,
+  DocumentInfo {
+    colors: vec![
+      ColorInfo {
+        value: Some(ColorValue {
+          red: 0.0,
+          green: 0.0,
+          blue: 255.0,
+          alpha: 1.0
+        }),
+
+        position: Some(Position {
+          start: 138,
+          end: 142
+        })
+      }
+    ]
+  }
+}

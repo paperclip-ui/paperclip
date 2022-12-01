@@ -25,6 +25,7 @@ public token componentColor rgb(219, 161, 255)
 public token slotColor rgb(161, 255, 203)
 public token puncColor rgb(158, 158, 158)
 public token keywordColor rgb(158, 158, 158)
+public token ahahahahaaaaaa rgb(255, 0, 0)
 
 public token fontColor01 rgb(236, 236, 236)
 

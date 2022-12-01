@@ -182,13 +182,11 @@ fn parse_trigger_body_item(
 }
 
 fn parse_docco(context: &mut PCContext) -> Result<docco_ast::Comment, err::ParserError> {
-    context.scanner.unshift(3); // rewind /**
     let ret = parse_doc_comment(
         &mut context.scanner,
         &mut context.id_generator,
         &context.id_seed,
     );
-    context.scanner.unshift(1); // rewind /
     context.next_token()?;
     ret
 }

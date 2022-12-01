@@ -230,8 +230,9 @@ const createEventHandler = (actions: Actions) => {
     event: ReturnType<typeof editorEvents.styleDeclarationsChanged>,
     state: EditorState
   ) => {
-    const style = Object.entries(event.payload).map(([name, value]) => ({
+    const style = Object.entries(event.payload.values).map(([name, value]) => ({
       name,
+      imports: event.payload.imports,
       value,
     }));
 

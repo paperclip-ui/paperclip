@@ -71,7 +71,7 @@ public component SuggestionMenu {
             border-radius: var(theme.rounded)
             width: 100%
             min-width: 250px
-            filter: drop-shadow(3px 3px 5px rgba(0,0,0, 0.2))
+            filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.2))
             border: 1px solid var(theme.gray04)
             overflow-y: scroll
             overflow-x: hidden
@@ -497,4 +497,3 @@ div {
         TextInputAutoSuggest
     }
 }
-

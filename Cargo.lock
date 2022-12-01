@@ -1539,6 +1539,7 @@ dependencies = [
  "paperclip_common",
  "paperclip_parser",
  "paperclip_proto",
+ "pathdiff",
 ]
 
 [[package]]

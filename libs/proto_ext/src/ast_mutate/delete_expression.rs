@@ -1,4 +1,5 @@
 use paperclip_proto::ast::all::Expression;
+use super::base::EditContext;
 use paperclip_proto::ast_mutate::{mutation_result, DeleteExpression, ExpressionDeleted};
 use paperclip_proto::{ast, ast_mutate::MutationResult};
 
@@ -22,16 +23,16 @@ macro_rules! try_remove_child {
     }};
 }
 
-impl Visitor<Vec<MutationResult>> for DeleteExpression {
+impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, DeleteExpression> {
     fn visit_document(
         &mut self,
         expr: &mut ast::pc::Document,
     ) -> VisitorResult<Vec<MutationResult>> {
-        if let Some(i) = try_remove_child!(expr.body, &self.expression_id) {
+        if let Some(i) = try_remove_child!(expr.body, &self.mutation.expression_id) {
             let prev_index = i - 1;
             let mut results = vec![
                 mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
-                    id: self.expression_id.to_string(),
+                    id: self.mutation.expression_id.to_string(),
                 })
                 .get_outer(),
             ];
@@ -58,10 +59,10 @@ impl Visitor<Vec<MutationResult>> for DeleteExpression {
         }
     }
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<Vec<MutationResult>> {
-        if matches!(try_remove_child!(expr.body, &self.expression_id), Some(_)) {
+        if matches!(try_remove_child!(expr.body, &self.mutation.expression_id), Some(_)) {
             VisitorResult::Return(vec![mutation_result::Inner::ExpressionDeleted(
                 ExpressionDeleted {
-                    id: self.expression_id.to_string(),
+                    id: self.mutation.expression_id.to_string(),
                 },
             )
             .get_outer()])
@@ -73,10 +74,10 @@ impl Visitor<Vec<MutationResult>> for DeleteExpression {
         &mut self,
         expr: &mut ast::pc::TextNode,
     ) -> VisitorResult<Vec<MutationResult>> {
-        if matches!(try_remove_child!(expr.body, &self.expression_id), Some(_)) {
+        if matches!(try_remove_child!(expr.body, &self.mutation.expression_id), Some(_)) {
             VisitorResult::Return(vec![mutation_result::Inner::ExpressionDeleted(
                 ExpressionDeleted {
-                    id: self.expression_id.to_string(),
+                    id: self.mutation.expression_id.to_string(),
                 },
             )
             .get_outer()])

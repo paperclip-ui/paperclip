@@ -25,7 +25,10 @@ export const editorEvents = eventCreators(
     computedStylesCaptured: identity<{
       computedStyles: Record<string, any>;
     }>(),
-    styleDeclarationsChanged: identity<Record<string, string>>(),
+    styleDeclarationsChanged: identity<{
+      values: Record<string, string>;
+      imports: Record<string, string>;
+    }>(),
     canvasMouseDown: identity<{
       metaKey: boolean;
       ctrlKey: boolean;

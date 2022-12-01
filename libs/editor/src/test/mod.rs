@@ -405,7 +405,7 @@ case! {
     expression_id: "80f4925f-2".to_string(),
     declarations: vec![
       SetStyleDeclarationValue {
-        imports: HashMap::from([("/module.pc".to_string(), "$1".to_string())]),
+        imports: HashMap::from([("$1".to_string(), "/module.pc".to_string())]),
         name: "color".to_string(),
         value: "var($1.blue01)".to_string()
       }
@@ -413,11 +413,51 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-      div {
-        style {
-          display: block
-          padding: 10px
+      import "./module.pc" as imp 
+      div { 
+        style { 
+          color: var(imp.blue01) 
+        } 
+      }
+    "#
+  )]
+}
+
+case! {
+  uses_existing_import_when,
+  [
+    (
+      "/entry.pc", r#"
+        import "/module.pc" as mod
+        div {
+          style {
+          }
         }
+      "#
+    ),
+    (
+      "/module.pc", r#"
+        public token blue01 blue
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
+    expression_id: "80f4925f-2".to_string(),
+    declarations: vec![
+      SetStyleDeclarationValue {
+        imports: HashMap::from([("$1".to_string(), "/module.pc".to_string())]),
+        name: "color".to_string(),
+        value: "var($1.blue01)".to_string()
+      }
+    ]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      import "/module.pc" as mod 
+      div { 
+        style { 
+          color: var(mod.blue01) 
+        } 
       }
     "#
   )]

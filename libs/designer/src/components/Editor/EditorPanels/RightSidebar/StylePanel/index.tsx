@@ -430,8 +430,13 @@ const Field = memo(
   ({ name, style, options: { input: inputOptions } }: FieldProps) => {
     const dispatch = useDispatch();
 
-    const onSave = (value: string) => {
-      dispatch(editorEvents.styleDeclarationsChanged({ [name]: value }));
+    const onSave = ({ value, imports }: NewDeclValue) => {
+      dispatch(
+        editorEvents.styleDeclarationsChanged({
+          values: { [name]: value },
+          imports,
+        })
+      );
     };
 
     const input = (
@@ -452,15 +457,20 @@ const Field = memo(
 type FieldInputProps = {
   value: string;
   options?: string[];
-  onSave: (value: string) => void;
+  onSave: (value: NewDeclValue) => void;
+};
+
+type NewDeclValue = {
+  imports?: Record<string, string>;
+  value: string;
 };
 
 const FieldInput = ({ value, options, onSave }: FieldInputProps) => {
   const tokens = useSelector(getAllPublicAtoms);
-  const internalValue = useRef<string>();
+  const internalValue = useRef<NewDeclValue>();
 
   const maybePersist = () => {
-    if (internalValue.current !== value) {
+    if (internalValue.current?.value !== value) {
       onSave(internalValue.current);
     }
   };
@@ -473,10 +483,10 @@ const FieldInput = ({ value, options, onSave }: FieldInputProps) => {
 
   const onBlur = () => maybePersist();
 
-  const onValueChange = (value: string) => (internalValue.current = value);
+  const onValueChange = (value: string) => (internalValue.current = { value });
 
   useEffect(() => {
-    internalValue.current = value;
+    internalValue.current = { value };
   }, [value]);
 
   const menu = useCallback(() => {
@@ -487,7 +497,7 @@ const FieldInput = ({ value, options, onSave }: FieldInputProps) => {
             <SuggestionMenuItem
               value={option}
               filterText={option}
-              onMouseDown={() => (internalValue.current = option)}
+              onMouseDown={() => (internalValue.current = { value })}
             />
           )),
         ]
@@ -502,7 +512,14 @@ const FieldInput = ({ value, options, onSave }: FieldInputProps) => {
             key={token.atom.id}
             value={token.value}
             filterText={token.atom.name + token.cssValue + token.value}
-            onMouseDown={() => (internalValue.current = token.cssValue)}
+            onMouseDown={() =>
+              (internalValue.current = {
+                value: `var($1.${token.atom.name})`,
+                imports: {
+                  $1: token.dependency.path,
+                },
+              })
+            }
           >
             <inputStyles.TokenMenuContent
               style={{ "--color": token.cssValue }}

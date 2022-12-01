@@ -1,3 +1,4 @@
+mod base;
 mod append_child;
 mod delete_expression;
 mod insert_frame;
@@ -12,16 +13,21 @@ pub use paperclip_proto::ast_mutate::*;
 pub use set_frame_bounds::*;
 pub use set_style_declarations::*;
 pub use delete_style_declarations::*;
+pub use base::*;
 
 
 macro_rules! mutations {
     ($($name:ident), *) => {
-      impl Visitor<Vec<MutationResult>> for Mutation {
+      impl<'expr> Visitor<Vec<MutationResult>> for base::EditContext<'expr, Mutation> {
         fn visit_document(&mut self, document: &mut ast::pc::Document) -> VisitorResult<Vec<MutationResult>> {
-          match self.inner.as_mut().expect("Unner must exist") {
+          match self.mutation.inner.as_ref().expect("Inner must exist") {
             $(
               mutation::Inner::$name(mutation) => {
-                document.accept(mutation)
+                let mut sub: base::EditContext<$name> = base::EditContext {
+                  mutation,
+                  dependency: self.dependency.clone()
+                };
+                document.accept(&mut sub)
               }
             )*
             _ => {

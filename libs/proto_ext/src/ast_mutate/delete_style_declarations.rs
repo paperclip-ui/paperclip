@@ -1,5 +1,6 @@
 
 use paperclip_proto::ast;
+use super::base::EditContext;
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::css::StyleDeclaration;
 use paperclip_proto::ast_mutate::{
@@ -8,20 +9,20 @@ use paperclip_proto::ast_mutate::{
 
 use crate::ast::{all::Visitor, all::VisitorResult};
 
-impl Visitor<Vec<MutationResult>> for DeleteStyleDeclarations {
+impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, DeleteStyleDeclarations> {
     fn visit_style(&mut self, expr: &mut ast::pc::Style) -> VisitorResult<Vec<MutationResult>> {
-        if expr.get_id() == self.expression_id {
-            remove_declaration(expr, &self.declaration_names);
+        if expr.get_id() == self.mutation.expression_id {
+            remove_declaration(expr, &self.mutation.declaration_names);
         }
         VisitorResult::Continue
     }
 
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<Vec<MutationResult>> {
-        if expr.get_id() == &self.expression_id {
+        if expr.get_id() == &self.mutation.expression_id {
 
             for child in &mut expr.body {
                 if let ast::pc::node::Inner::Style(style) = child.get_inner_mut() {
-                    remove_declaration(style, &self.declaration_names);
+                    remove_declaration(style, &self.mutation.declaration_names);
                 }
             }
             

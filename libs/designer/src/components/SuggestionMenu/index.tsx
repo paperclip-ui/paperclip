@@ -170,7 +170,7 @@ export const SuggestionMenuItem = ({
     if (ref.current && (selected || preselected)) {
       // timeout so that the menu is correctly positioned
       setTimeout(() => {
-        ref.current.scrollIntoView(false);
+        ref.current?.scrollIntoView(false);
       });
     }
   }, [selected, preselected, ref.current]);

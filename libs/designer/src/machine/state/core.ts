@@ -345,5 +345,7 @@ export const getExpandedVirtIds = (state: EditorState) =>
 export const getGraph = (state: EditorState) => state.graph;
 
 export const getInsertMode = (state: EditorState) => state.insertMode;
-export const getAllPublicAtoms = (state: EditorState) =>
-  ast.getGraphAtoms(state.graph);
+export const getAllPublicAtoms = (state: EditorState) => {
+  console.log(state.graph);
+  return ast.getGraphAtoms(state.graph);
+};

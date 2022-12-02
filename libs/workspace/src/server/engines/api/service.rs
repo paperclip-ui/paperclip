@@ -169,30 +169,16 @@ impl Designer for DesignerService {
                 )
             };
 
-            // let send_file_changes =move |store: Arc<Mutex<ServerStore>>| {
-            //     tokio::spawn(async move {
-                    
-            //     });
-            // };
-
             handle_store_events!(store.clone(),
                 ServerEvent::UpdateFileRequested { path, content } => {
                     tx.send((file_changed)(path.to_string(), content.clone())).await.expect("Can't send");
                 },
-                ServerEvent::UndoRequested | ServerEvent::RedoRequested => {
+                ServerEvent::ApplyMutationRequested { mutations: _ } | ServerEvent::UndoRequested | ServerEvent::RedoRequested => {
+
                     let updated_files = store.lock().unwrap().state.updated_files.clone();
                     let file_cache = store.lock().unwrap().state.file_cache.clone();
-
-                    for file_path in &updated_files {
-                        if let Some(content) = file_cache.get(file_path) {
-                            tx.send((file_changed)(file_path.to_string(), content.clone())).await.expect("Can't send");
-                        }
-                    }
-                },
-                ServerEvent::ApplyMutationRequested { mutations: _mutations } => {
-                    let updated_files = store.lock().unwrap().state.updated_files.clone();
-                    let file_cache = store.lock().unwrap().state.file_cache.clone();
-
+                    
+                    println!("HANDLE EVENT {:?}", updated_files);
                     for file_path in &updated_files {
                         if let Some(content) = file_cache.get(file_path) {
                             tx.send((file_changed)(file_path.to_string(), content.clone())).await.expect("Can't send");

@@ -12,7 +12,31 @@ use paperclip_proto::ast_mutate::{
     mutation_result, ExpressionUpdated, MutationResult, SetStyleDeclarations,
 };
 
+use crate::ast::all::Visitable;
 use crate::ast::{all::Visitor, all::VisitorResult};
+
+struct ContainsExpr {
+    id: String,
+    contains: bool
+}
+
+impl Visitor<()> for ContainsExpr {
+    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
+        if expr.id == self.id {
+            self.contains = true;
+            return VisitorResult::Return(())
+        }
+        VisitorResult::Continue
+    }
+}
+
+impl ContainsExpr {
+    fn contains_expr(id: &str, doc: &mut ast::pc::Document) -> bool {
+        let mut imp = ContainsExpr { id: id.to_string(), contains: false };
+        doc.accept(&mut imp);
+        imp.contains
+    }
+}
 
 impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, SetStyleDeclarations> {
     fn visit_style(&mut self, expr: &mut ast::pc::Style) -> VisitorResult<Vec<MutationResult>> {
@@ -30,19 +54,13 @@ impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, SetStyleDeclarat
         &mut self,
         doc: &mut ast::pc::Document,
     ) -> VisitorResult<Vec<MutationResult>> {
-        println!("{:?}", self.mutation);
+
+        if !ContainsExpr::contains_expr(&self.mutation.expression_id, doc) {
+            return VisitorResult::Continue;
+        }
 
         for (ns, (_old_ns, path, is_new)) in get_dep_imports(&self.mutation, &self.dependency) {
             if is_new {
-                println!(
-                    "{} {}",
-                    path,
-                    Path::new(&self.dependency.path)
-                        .parent()
-                        .unwrap()
-                        .to_str()
-                        .unwrap()
-                );
                 let relative =
                     diff_paths(&path, Path::new(&self.dependency.path).parent().unwrap()).unwrap();
                 let mut relative = relative.to_str().unwrap().to_string();

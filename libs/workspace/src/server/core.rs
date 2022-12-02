@@ -14,6 +14,7 @@ use paperclip_editor::Mutation;
 use paperclip_evaluator::css;
 use paperclip_evaluator::html;
 use paperclip_parser::pc::serializer::serialize;
+use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::ast_mutate::MutationResult;
 use paperclip_proto::virt::module::pc_module_import;
@@ -23,6 +24,11 @@ pub struct StartOptions {
     pub config_context: ConfigContext,
     pub open: bool,
     pub port: Option<u16>,
+}
+
+enum HistoryStep {
+    Forward,
+    Back
 }
 
 #[derive(Debug, Clone)]
@@ -49,6 +55,7 @@ pub struct History {
 
 pub struct ServerState {
     pub history: History,
+    pub doc_checksums: HashMap<String, String>,
     pub file_cache: HashMap<String, Vec<u8>>,
     pub options: StartOptions,
     pub latest_ast_changes: Vec<MutationResult>,
@@ -65,6 +72,7 @@ impl ServerState {
                 position: 0,
             },
             options,
+            doc_checksums: HashMap::new(),
             file_cache: HashMap::new(),
             graph: Graph::new(),
             evaluated_modules: HashMap::new(),
@@ -139,6 +147,7 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
             ServerEvent::DependencyGraphLoaded { graph } => {
                 state.graph =
                     std::mem::replace(&mut state.graph, Graph::new()).merge(graph.clone());
+
                 store_history(state);
             }
             ServerEvent::UpdateFileRequested { path, content } => {
@@ -157,30 +166,12 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 let mut latest_ast_changes = vec![];
                 for (path, changes) in &changed_files {
                     latest_ast_changes.extend(changes.clone());
-                    let content = serialize(
-                        state
-                            .graph
-                            .dependencies
-                            .get(path)
-                            .unwrap()
-                            .document
-                            .as_ref()
-                            .expect("Document must exist"),
-                    );
-                    // println!("Edited AST {} {}", path, content);
-                    state
-                        .file_cache
-                        .insert(path.to_string(), content.as_bytes().to_vec());
+                    println!("CHANGED PATH {}", path);
                 }
 
                 // println!("{:?}", changed_files);
 
-                state.updated_files = changed_files
-                    .iter()
-                    .map(|(path, _changes)| path.to_string())
-                    .collect::<Vec<String>>();
-
-
+                update_changed_files(state);
                 store_history(state);
 
                 state.latest_ast_changes = latest_ast_changes;
@@ -189,22 +180,10 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 state.file_cache.remove(&event.path);
             }
             ServerEvent::UndoRequested => {
-                state.history.position = if state.history.position == 0 {
-                    0
-                } else {
-                    state.history.position - 1
-                };
-
-                load_history(state);
+                load_history(state, HistoryStep::Back);
             }
             ServerEvent::RedoRequested => {
-                state.history.position = if state.history.position < state.history.changes.len() - 1
-                {
-                    state.history.position + 1
-                } else {
-                    state.history.changes.len() - 1
-                };
-                load_history(state);
+                load_history(state, HistoryStep::Forward);
             }
             ServerEvent::ModulesEvaluated(modules) => {
                 state.evaluated_modules.extend(modules.clone());
@@ -223,6 +202,9 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
 fn store_history(state: &mut ServerState) {
     if state.history.changes.is_empty() {
         state.history.changes.push(state.graph.clone());
+        for (key, dep) in &state.graph.dependencies {
+            state.doc_checksums.insert(key.to_string(), dep.document.as_ref().unwrap().checksum());
+        }
         return;
     }
 
@@ -236,24 +218,34 @@ fn store_history(state: &mut ServerState) {
         println!("Storing {} in history", updated_file);
     }
     if !state.updated_files.is_empty() {
-        if state.history.position < state.history.changes.len() - 1 {
-            state.history.changes = state
-                .history
-                .changes
-                .splice(state.history.position..state.history.changes.len(), vec![])
-                .collect();
-        }
+        state.history.changes.truncate(state.history.position + 1);
         state.history.changes.push(updated_graph);
         state.history.position = state.history.changes.len() - 1;
     }
 }
 
-fn load_history(state: &mut ServerState) {
+fn load_history(state: &mut ServerState, step: HistoryStep) {
     println!(
         "Loading history pos: {}, len: {}",
         state.history.position,
         state.history.changes.len()
     );
+
+    state.updated_files = vec![];
+
+    match step {
+        HistoryStep::Forward => {
+            if state.history.position >= state.history.changes.len() - 1 {
+                return;
+            }
+        },
+        HistoryStep::Back => {
+            if state.history.position == 0 {
+                return;
+            }
+        }
+    }
+
 
     // if it doesn't exist, then we have a bug
     let current = state
@@ -262,31 +254,63 @@ fn load_history(state: &mut ServerState) {
         .get(state.history.position)
         .expect("History record must exist!");
 
-    let mut new_update_files = vec![];
 
-    for (path, dep) in &current.dependencies {
-        println!("Loading {} from history", path);
-        state
-            .graph
-            .dependencies
-            .insert(path.to_string(), dep.clone());
+    let new_pos =  match step {
+        HistoryStep::Forward => state.history.position + 1,
+        HistoryStep::Back => state.history.position - 1,
+    };
 
-        let content = serialize(
-            state
+    match step {
+        HistoryStep::Forward => {
+            let next = state.history.changes.get(new_pos).expect("Next history change doesn't exist!");
+            for (path, dep) in &next.dependencies {
+                state
                 .graph
                 .dependencies
-                .get(path)
-                .unwrap()
-                .document
-                .as_ref()
-                .expect("Document must exist"),
-        );
+                .insert(path.to_string(), dep.clone());
+            }
+        },
+        HistoryStep::Back => {
 
-        state
-            .file_cache
-            .insert(path.to_string(), content.as_bytes().to_vec());
+            // revert change to most recent
+            for (current_updated_path, _) in &current.dependencies {
+                for i in (0..new_pos + 1).rev() {
+                    let prev_change = state.history.changes.get(i).expect("Unable to fetch dep when looking back");
+                    if let Some(dep) = prev_change.dependencies.get(current_updated_path) {
+                        state
+                        .graph
+                        .dependencies
+                        .insert(current_updated_path.to_string(), dep.clone());
+                        break;
+                    }
+                }
+            }
+        }
+    }
 
-        new_update_files.push(path.to_string());
+    state.history.position = new_pos;
+
+    update_changed_files(state);
+
+}
+
+fn update_changed_files(state: &mut ServerState) {
+    for (path, dep) in &state.graph.dependencies {
+        let checksum = dep.document.as_ref().unwrap().checksum();
+
+        if !state.doc_checksums.get(path).eq(&Some(&checksum)) {
+            println!("Updating {}", path);
+            let content = serialize(
+                dep
+                    .document
+                    .as_ref()
+                    .expect("Document must exist"),
+            ).as_bytes().to_vec();
+            state.doc_checksums.insert(path.to_string(), checksum);
+            state.updated_files.push(path.to_string());
+            state.file_cache.insert(path.to_string(), content);
+
+        }
     }
 }
 

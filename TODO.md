@@ -5,7 +5,8 @@
 
 #### On-deck
 
-- render components
+- ability to override instance styles
+-
 
 - right-click -> convert to component
 

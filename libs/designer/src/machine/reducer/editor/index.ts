@@ -69,9 +69,17 @@ export const editorReducer = (
       });
     }
     case designerEngineEvents.graphLoaded.type: {
+      const next = {
+        ...state.graph,
+        dependencies: {
+          ...state.graph.dependencies,
+          ...event.payload.dependencies,
+        },
+      };
+
       const diff = jasonpatch.compare(
         state.graph.dependencies,
-        event.payload.dependencies
+        next.dependencies
       );
       return produce(state, (newState) => {
         jasonpatch.applyPatch(newState.graph.dependencies, diff);

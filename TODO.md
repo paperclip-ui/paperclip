@@ -6,8 +6,6 @@
 #### On-deck
 
 - render components
-- Undo
-- Redo
 
 - right-click -> convert to component
 
@@ -26,7 +24,7 @@
   - use enums
   - ability to connect props to tokens
 
-- auto-complete text inputs
+- auto-complete text inputspi
 
 - borders?
 - backgrounds?

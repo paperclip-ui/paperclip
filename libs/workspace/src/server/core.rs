@@ -139,10 +139,7 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
             ServerEvent::DependencyGraphLoaded { graph } => {
                 state.graph =
                     std::mem::replace(&mut state.graph, Graph::new()).merge(graph.clone());
-
-                if state.history.changes.is_empty() {
-                    state.history.changes.push(state.graph.clone())
-                }
+                store_history(state);
             }
             ServerEvent::UpdateFileRequested { path, content } => {
                 // onyl flag as changed if content actually changed.
@@ -182,6 +179,10 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                     .iter()
                     .map(|(path, _changes)| path.to_string())
                     .collect::<Vec<String>>();
+
+
+                store_history(state);
+
                 state.latest_ast_changes = latest_ast_changes;
             }
             ServerEvent::FileWatchEvent(event) => {
@@ -206,7 +207,6 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 load_history(state);
             }
             ServerEvent::ModulesEvaluated(modules) => {
-                store_history(state);
                 state.evaluated_modules.extend(modules.clone());
                 state.updated_files = vec![];
             }
@@ -221,6 +221,11 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
 }
 
 fn store_history(state: &mut ServerState) {
+    if state.history.changes.is_empty() {
+        state.history.changes.push(state.graph.clone());
+        return;
+    }
+
     // TODO - probably worth storing this _locally_ to avoid memory issues
     let mut updated_graph = Graph::new();
     for updated_file in &state.updated_files {
@@ -257,12 +262,31 @@ fn load_history(state: &mut ServerState) {
         .get(state.history.position)
         .expect("History record must exist!");
 
+    let mut new_update_files = vec![];
+
     for (path, dep) in &current.dependencies {
         println!("Loading {} from history", path);
         state
             .graph
             .dependencies
             .insert(path.to_string(), dep.clone());
+
+        let content = serialize(
+            state
+                .graph
+                .dependencies
+                .get(path)
+                .unwrap()
+                .document
+                .as_ref()
+                .expect("Document must exist"),
+        );
+
+        state
+            .file_cache
+            .insert(path.to_string(), content.as_bytes().to_vec());
+
+        new_update_files.push(path.to_string());
     }
 }
 

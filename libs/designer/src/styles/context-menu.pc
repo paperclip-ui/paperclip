@@ -13,13 +13,13 @@ public component ContextMenu {
 }
 
 /**
- * @bounds(x: -630, y: -960, width: 537, height: 100)
+ * @bounds(x: -429, y: -896, width: 537, height: 100)
 */
 
 public component ContextMenuItem {
     render div {
         slot children {
-            text "something"
+            text "sometdddddddhing"
         }
     }
 }

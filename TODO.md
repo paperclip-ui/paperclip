@@ -5,9 +5,7 @@
 
 #### On-deck
 
-- ability to override instance styles
--
-
+- instance style overrides (necessary for styling components)
 - right-click -> convert to component
 
 - Create color picker visually

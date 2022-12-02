@@ -1,19 +1,26 @@
 import "./theme.pc" as imp
 
 /**
- * @bounds(x: 349, y: -982, width: 1024, height: 768)
+ * @bounds(x: 70, y: -1223, width: 1024, height: 768)
 */
 
-div {
-    style {
-        background: black
-        width: 100vw
-        height: 100vh
-        color: rgb(210, 210, 210)
+public component ContextMenu {
+    render div {
+        slot children {
+            ContextMenuItem {
+                text "Something"
+            }
+        }
     }
-    ContextMenu {
-        ContextMenuItem {
-            text "An item"
+}
+
+public component ContextMenuItem {
+    render div {
+        style {
+            display: rgb(0, 0, 255)
+        }
+        slot children {
+            text "Context menu item"
         }
     }
 }

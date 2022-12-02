@@ -1,5 +1,5 @@
-use paperclip_proto::ast::all::Expression;
 use super::base::EditContext;
+use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast_mutate::{mutation_result, DeleteExpression, ExpressionDeleted};
 use paperclip_proto::{ast, ast_mutate::MutationResult};
 
@@ -59,7 +59,10 @@ impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, DeleteExpression
         }
     }
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<Vec<MutationResult>> {
-        if matches!(try_remove_child!(expr.body, &self.mutation.expression_id), Some(_)) {
+        if matches!(
+            try_remove_child!(expr.body, &self.mutation.expression_id),
+            Some(_)
+        ) {
             VisitorResult::Return(vec![mutation_result::Inner::ExpressionDeleted(
                 ExpressionDeleted {
                     id: self.mutation.expression_id.to_string(),
@@ -74,7 +77,10 @@ impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, DeleteExpression
         &mut self,
         expr: &mut ast::pc::TextNode,
     ) -> VisitorResult<Vec<MutationResult>> {
-        if matches!(try_remove_child!(expr.body, &self.mutation.expression_id), Some(_)) {
+        if matches!(
+            try_remove_child!(expr.body, &self.mutation.expression_id),
+            Some(_)
+        ) {
             VisitorResult::Return(vec![mutation_result::Inner::ExpressionDeleted(
                 ExpressionDeleted {
                     id: self.mutation.expression_id.to_string(),

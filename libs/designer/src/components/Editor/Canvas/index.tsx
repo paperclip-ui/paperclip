@@ -163,6 +163,9 @@ const useCanvasHotkeys = (ref: MutableRefObject<HTMLElement>) => {
       t: () => dispatch(editorEvents.tHotkeyPressed()),
       backspace: () => dispatch(editorEvents.deleteHokeyPressed()),
       delete: () => dispatch(editorEvents.deleteHokeyPressed()),
+      "meta+z": () => dispatch(editorEvents.undoKeyPressed()),
+      "meta+shift+z": () => dispatch(editorEvents.redoKeyPressed()),
+      "meta+s": () => dispatch(editorEvents.saveKeyComboPressed()),
     },
     ref
   );

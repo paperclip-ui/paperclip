@@ -82,18 +82,16 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
   const dispatch = useDispatch();
 
   const emitFrameRects = useCallback(
-    throttle((mount: HTMLElement, data: PCModule, frameIndex: number) => {
+    (mount: HTMLElement, data: PCModule, frameIndex: number) => {
       if (!shouldCollectRects) {
         return false;
       }
-
-      const now = Date.now();
 
       const rects = getFrameRects(mount, data, frameIndex);
       const computedStyles = computeAllStyles(mount, frameIndex);
       dispatch(editorEvents.rectsCaptured({ frameIndex, rects }));
       dispatch(editorEvents.computedStylesCaptured({ computedStyles }));
-    }, 100),
+    },
     [dispatch, shouldCollectRects]
   );
 
@@ -105,9 +103,12 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
     emitFrameRects(mount, data, index);
   };
 
-  const onFrameLoaded = (mount: HTMLElement, data: PCModule, index: number) => {
-    emitFrameRects(mount, data, index);
-  };
+  const onFrameLoaded = useCallback(
+    (mount: HTMLElement, data: PCModule, index: number) => {
+      emitFrameRects(mount, data, index);
+    },
+    [emitFrameRects]
+  );
 
   if (!doc?.paperclip) {
     return { frames: [], onFrameLoaded };

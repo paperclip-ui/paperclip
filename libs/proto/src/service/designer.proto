@@ -16,6 +16,9 @@ service Designer {
   rpc UpdateFile(UpdateFileRequest) returns (Empty);
   rpc ApplyMutations(ApplyMutationsRequest) returns (ApplyMutationsResult);
   rpc GetDocumentInfo(FileRequest) returns (language_service.pc.DocumentInfo);
+  rpc Undo(Empty) returns (Empty);
+  rpc Redo(Empty) returns (Empty);
+  rpc Save(Empty) returns (Empty);
 }
 
 message Empty {

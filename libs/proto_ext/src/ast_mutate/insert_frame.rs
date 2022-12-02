@@ -1,5 +1,5 @@
-use paperclip_proto::ast::all::Expression;
 use super::base::EditContext;
+use paperclip_proto::ast::all::Expression;
 use paperclip_proto::{
     ast,
     ast_mutate::{mutation_result, ExpressionInserted, InsertFrame, MutationResult},

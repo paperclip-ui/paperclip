@@ -1,8 +1,11 @@
 use super::context::Context;
 use anyhow::Result;
-use paperclip_proto::ast::{pc as ast, graph_ext::{Dependency, Graph}};
 use paperclip_infer::infer::Inferencer;
 use paperclip_infer::types as infer_types;
+use paperclip_proto::ast::{
+    graph_ext::{Dependency, Graph},
+    pc as ast,
+};
 
 pub fn compile_typed_definition(dep: &Dependency, graph: &Graph) -> Result<String> {
     let mut context = Context::new(dep, graph);
@@ -16,7 +19,13 @@ fn compile_document(context: &mut Context) {
 }
 
 fn compile_components(context: &mut Context) {
-    for item in &context.dependency.document.as_ref().expect("Document must exist").body {
+    for item in &context
+        .dependency
+        .document
+        .as_ref()
+        .expect("Document must exist")
+        .body
+    {
         if let ast::document_body_item::Inner::Component(component) = item.get_inner() {
             if component.is_public {
                 compile_component(component, context);
@@ -26,10 +35,10 @@ fn compile_components(context: &mut Context) {
 }
 
 fn compile_component(component: &ast::Component, context: &mut Context) {
-    let component_inference =
-        Inferencer::new().infer_component(component, &context.dependency.path, context.graph).unwrap();
+    let component_inference = Inferencer::new()
+        .infer_component(component, &context.dependency.path, context.graph)
+        .unwrap();
 
-    
     context.add_buffer(format!("export type {}Props = {{\n", component.name).as_str());
     context.start_block();
     context.add_buffer("\"ref\"?: any,\n");
@@ -43,7 +52,13 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
     context.end_block();
     context.add_buffer("};\n");
 
-    context.add_buffer(format!("export const {}: React.FC<{}Props>;\n", component.name, component.name).as_str());
+    context.add_buffer(
+        format!(
+            "export const {}: React.FC<{}Props>;\n",
+            component.name, component.name
+        )
+        .as_str(),
+    );
 }
 
 fn compile_inference(inference: &infer_types::Type, context: &mut Context) {
@@ -81,4 +96,3 @@ fn compile_inference(inference: &infer_types::Type, context: &mut Context) {
         _ => {}
     }
 }
-

@@ -25,7 +25,10 @@ pub async fn evaluate<F: FileResolver>(
 
     if let Some(dependency) = dependencies.get(path) {
         let mut context = DocumentContext::new(path, graph, file_resolver, options);
-        let document = evaluate_document(dependency.document.as_ref().expect("Document must exist"), &mut context);
+        let document = evaluate_document(
+            dependency.document.as_ref().expect("Document must exist"),
+            &mut context,
+        );
         Ok(document)
     } else {
         Err(errors::RuntimeError {

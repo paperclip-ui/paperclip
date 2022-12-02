@@ -14,7 +14,7 @@ export type Workspace = {
   dispose: () => void;
 };
 
-type StartWorkspaceOptions = {
+export type StartWorkspaceOptions = {
   files: Record<string, string>;
   namespace: string;
   port?: number;

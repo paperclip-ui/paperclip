@@ -85,7 +85,8 @@ export const SuggestionMenu = ({
       }
     }
     if (event.key === "Enter") {
-      menuOptions[preselectedIndex]?.props.onSelect();
+      menuOptions[preselectedIndex]?.props.onSelect &&
+        menuOptions[preselectedIndex]?.props.onSelect();
       setIsOpen(false);
     }
     if (oldProps.onKeyDown) {

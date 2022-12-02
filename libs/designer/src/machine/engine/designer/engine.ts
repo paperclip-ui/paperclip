@@ -67,6 +67,15 @@ const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
         error() {},
       });
     },
+    undo() {
+      client.Undo({});
+    },
+    redo() {
+      client.Redo({});
+    },
+    save() {
+      client.Save({});
+    },
     syncGraph() {
       client.GetGraph({}).subscribe({
         next(data) {
@@ -258,6 +267,10 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
+  const handleUndo = () => actions.undo();
+  const handleRedo = () => actions.redo();
+  const handleSave = () => actions.save();
+
   return (
     event: EditorEvent,
     newState: EditorState,
@@ -275,6 +288,15 @@ const createEventHandler = (actions: Actions) => {
       }
       case editorEvents.styleDeclarationsChanged.type: {
         return handleStyleDeclarationChanged(event, newState);
+      }
+      case editorEvents.undoKeyPressed.type: {
+        return handleUndo();
+      }
+      case editorEvents.redoKeyPressed.type: {
+        return handleRedo();
+      }
+      case editorEvents.saveKeyComboPressed.type: {
+        return handleSave();
       }
       case editorEvents.resizerPathStoppedMoving.type: {
         return handleResizerStoppedMoving(event, newState, prevState);

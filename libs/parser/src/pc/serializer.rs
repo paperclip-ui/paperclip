@@ -18,7 +18,7 @@ fn serialize_imports(document: &ast::Document, context: &mut Context) {
             ast::document_body_item::Inner::Import(imp) => {
                 serialize_import(&imp, context);
                 context.add_buffer("\n");
-            },
+            }
             _ => {}
         }
     }
@@ -32,7 +32,7 @@ fn serialize_document(document: &ast::Document, context: &mut Context) {
             }
             ast::document_body_item::Inner::Import(_imp) => {
                 continue;
-            },
+            }
             ast::document_body_item::Inner::Atom(imp) => serialize_atom(&imp, context),
             ast::document_body_item::Inner::Component(comp) => serialize_component(&comp, context),
             ast::document_body_item::Inner::Style(style) => serialize_style(&style, context),
@@ -48,7 +48,7 @@ fn serialize_document(document: &ast::Document, context: &mut Context) {
     }
 }
 
-fn serialize_import(imp: &ast::Import, context: &mut Context) {    
+fn serialize_import(imp: &ast::Import, context: &mut Context) {
     context.add_buffer(format!("import \"{}\" as {}", imp.path, imp.namespace).as_str());
 }
 

@@ -1,13 +1,13 @@
 use crate::edit_graph;
 use futures::executor::block_on;
 use paperclip_common::str_utils::strip_extra_ws;
-use paperclip_parser::{pc};
-use paperclip_proto::{ast::{graph_ext as graph}, ast_mutate::DeleteStyleDeclarations};
-use paperclip_proto_ext::graph::{test_utils, load::LoadableGraph};
+use paperclip_parser::pc;
 use paperclip_proto::ast_mutate::{
     mutation, AppendChild, Bounds, DeleteExpression, SetFrameBounds, SetStyleDeclarationValue,
     SetStyleDeclarations,
 };
+use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
+use paperclip_proto_ext::graph::{load::LoadableGraph, test_utils};
 use std::collections::HashMap;
 
 macro_rules! case {
@@ -26,10 +26,17 @@ macro_rules! case {
             let edited_docs = graph
                 .dependencies
                 .iter()
-                .map(|(path, dep)| (path.to_string(), pc::serializer::serialize(dep.document.as_ref().expect("Document must exist"))))
+                .map(|(path, dep)| {
+                    (
+                        path.to_string(),
+                        pc::serializer::serialize(
+                            dep.document.as_ref().expect("Document must exist"),
+                        ),
+                    )
+                })
                 .collect::<HashMap<String, String>>();
 
-              println!("{:#?}", graph.dependencies.get("/entry.pc"));
+            println!("{:#?}", graph.dependencies.get("/entry.pc"));
 
             for (path, content) in $expected_mock_files {
                 if let Some(serialized_content) = edited_docs.get(path) {
@@ -282,7 +289,6 @@ case! {
   )]
 }
 
-
 case! {
   can_update_an_existing_style_on_an_element,
   [(
@@ -353,7 +359,6 @@ case! {
     "#
   )]
 }
-
 
 case! {
   can_remove_declaration_values,

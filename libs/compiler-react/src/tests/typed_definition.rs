@@ -1,11 +1,10 @@
 use crate::compile_typed_definition;
 use paperclip_common::str_utils::strip_extra_ws;
 
-use std::collections::HashMap;
 use futures::executor::block_on;
-use paperclip_proto::ast::graph_ext::{Graph};
-use paperclip_proto_ext::graph::{test_utils, load::LoadableGraph};
-
+use paperclip_proto::ast::graph_ext::Graph;
+use paperclip_proto_ext::graph::{load::LoadableGraph, test_utils};
+use std::collections::HashMap;
 
 // TODO: insert test
 
@@ -13,10 +12,7 @@ macro_rules! add_case {
     ($name: ident, $mock_content: expr, $expected_output: expr) => {
         #[test]
         fn $name() {
-
-            let mock_fs = test_utils::MockFS::new(HashMap::from([
-              ("/entry.pc", $mock_content)
-            ]));
+            let mock_fs = test_utils::MockFS::new(HashMap::from([("/entry.pc", $mock_content)]));
             let mut graph = Graph::new();
 
             if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
@@ -61,8 +57,6 @@ add_case! {
     import * as React from "react";
   "#
 }
-
-
 
 add_case! {
   a_simple_prop_can_be_inferred,

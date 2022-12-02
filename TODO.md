@@ -6,6 +6,8 @@
 #### On-deck
 
 - render components
+- Undo
+- Redo
 
 - right-click -> convert to component
 

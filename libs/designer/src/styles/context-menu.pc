@@ -1,20 +1,26 @@
 import "./theme.pc" as imp
 
 /**
- * @bounds(x: 377, y: 933, width: 1024, height: 768)
+ * @bounds(x: -612, y: -716, width: 313, height: 67)
 */
 
 public component ContextMenu {
     render div {
         slot children {
-          text "A default child"
+            text "A default child"
         }
     }
 }
 
+/**
+ * @bounds(x: -630, y: -960, width: 537, height: 100)
+*/
+
 public component ContextMenuItem {
     render div {
-        slot children
+        slot children {
+            text "something"
+        }
     }
 }
 

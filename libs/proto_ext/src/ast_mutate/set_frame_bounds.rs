@@ -6,7 +6,6 @@ use paperclip_proto::{ast, ast_mutate::MutationResult};
 
 use crate::ast::{all::Visitor, all::VisitorResult};
 
-
 impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, SetFrameBounds> {
     fn visit_document(
         &mut self,

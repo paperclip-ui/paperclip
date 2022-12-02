@@ -1,18 +1,19 @@
 use super::io::IO;
-use paperclip_parser::pc::parser::parse as parse_pc;
-use paperclip_proto::ast::graph_ext::{Graph, Dependency};
 use anyhow::Result;
+use async_trait::async_trait;
 use crc::crc32;
 use futures::future::BoxFuture;
 use futures::lock::Mutex;
-use std::collections::{HashMap};
+use paperclip_parser::pc::parser::parse as parse_pc;
+use paperclip_proto::ast::graph_ext::{Dependency, Graph};
+use std::collections::HashMap;
 use std::str;
 use std::sync::Arc;
-use async_trait::async_trait;
 
 fn dep_hashes(graph: &Graph, omit: &Vec<String>) -> Arc<Mutex<HashMap<String, String>>> {
     Arc::new(Mutex::new(HashMap::from_iter(
-        graph.dependencies
+        graph
+            .dependencies
             .iter()
             .filter(|(path, _)| !omit.contains(path))
             .map(|(path, dep)| (path.to_string(), dep.hash.to_string())),
@@ -41,7 +42,6 @@ pub trait LoadableGraph {
 
 #[async_trait]
 impl LoadableGraph for Graph {
-
     async fn load<TIO: IO>(&mut self, path: &str, io: &TIO) -> Result<()> {
         self.dependencies.extend(
             load_dependencies::<TIO>(
@@ -71,7 +71,6 @@ impl LoadableGraph for Graph {
         Ok(other)
     }
 
-   
     async fn load_file<TIO: IO>(
         &mut self,
         path: &str,

@@ -1,7 +1,7 @@
 use crate::{get_document_info, ColorInfo, ColorValue, DocumentInfo, Position};
 use ::futures::executor::block_on;
 use paperclip_proto::ast::graph_ext::Graph;
-use paperclip_proto_ext::graph::{test_utils::MockFS, load::LoadableGraph};
+use paperclip_proto_ext::graph::{load::LoadableGraph, test_utils::MockFS};
 use std::collections::HashMap;
 
 macro_rules! test_case {
@@ -381,8 +381,6 @@ test_case! {
     ]
   }
 }
-
-
 
 test_case! {
   collects_colors_after_bounds,

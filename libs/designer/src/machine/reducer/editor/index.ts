@@ -13,7 +13,7 @@ import {
 } from "../../state";
 import produce from "immer";
 import { clamp, pick } from "lodash";
-import { Box, centerTransformZoom, Point, roundBox } from "../../state/geom";
+import { Box, centerTransformZoom, Point } from "../../state/geom";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 import {
   Element as VirtElement,

@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useEffect } from "react";
+import React from "react";
 import { memo } from "react";
 import { noop } from "lodash";
 import { useFrame } from "../../hooks/useFrame";

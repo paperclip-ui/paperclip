@@ -4,8 +4,8 @@ use crate::server::core::{ServerEvent, ServerStore};
 use futures::Stream;
 use paperclip_language_services::DocumentInfo;
 use paperclip_parser::pc::serializer::serialize;
-use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::ast::graph_ext::Graph;
+use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
     designer_event, file_response, ApplyMutationsRequest, ApplyMutationsResult, DesignerEvent,
     Empty, FileChanged, FileRequest, FileResponse, UpdateFileRequest,
@@ -92,7 +92,35 @@ impl Designer for DesignerService {
         Ok(Response::new(Box::pin(output) as Self::OpenFileStream))
     }
 
-    async fn get_graph(&self, _request: Request<Empty>) -> Result<Response<Self::GetGraphStream>, Status> {
+    async fn undo(&self, _request: Request<Empty>) -> Result<Response<Empty>, Status> {
+        self.store
+            .lock()
+            .unwrap()
+            .emit(ServerEvent::UndoRequested {});
+
+        Ok(Response::new(Empty {}))
+    }
+
+    async fn redo(&self, _request: Request<Empty>) -> Result<Response<Empty>, Status> {
+        self.store
+            .lock()
+            .unwrap()
+            .emit(ServerEvent::RedoRequested {});
+        Ok(Response::new(Empty {}))
+    }
+
+    async fn save(&self, _request: Request<Empty>) -> Result<Response<Empty>, Status> {
+        self.store
+            .lock()
+            .unwrap()
+            .emit(ServerEvent::SaveRequested {});
+        Ok(Response::new(Empty {}))
+    }
+
+    async fn get_graph(
+        &self,
+        _request: Request<Empty>,
+    ) -> Result<Response<Self::GetGraphStream>, Status> {
         let store = self.store.clone();
 
         let (tx, rx) = mpsc::channel(128);
@@ -121,7 +149,11 @@ impl Designer for DesignerService {
 
         Ok(Response::new(Box::pin(output) as Self::GetGraphStream))
     }
-    async fn on_event(&self, _request: Request<Empty>) -> Result<Response<Self::OnEventStream>, Status> {
+
+    async fn on_event(
+        &self,
+        _request: Request<Empty>,
+    ) -> Result<Response<Self::OnEventStream>, Status> {
         let store = self.store.clone();
 
         let (tx, rx) = mpsc::channel(128);

@@ -13,8 +13,8 @@ use paperclip_editor::edit_graph;
 use paperclip_editor::Mutation;
 use paperclip_evaluator::css;
 use paperclip_evaluator::html;
-use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_parser::pc::serializer::serialize;
+use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::ast_mutate::MutationResult;
 use paperclip_proto::virt::module::pc_module_import;
 use paperclip_proto::virt::module::{GlobalScript, PcModule, PcModuleImport, PccssImport};
@@ -33,13 +33,22 @@ pub enum ServerEvent {
     APIServerStarted { port: u16 },
     GlobalScriptsLoaded(Vec<(String, Vec<u8>)>),
     UpdateFileRequested { path: String, content: Vec<u8> },
+    UndoRequested,
+    RedoRequested,
+    SaveRequested,
     ApplyMutationRequested { mutations: Vec<Mutation> },
     PaperclipFilesLoaded { files: Vec<String> },
     DependencyGraphLoaded { graph: Graph },
     ModulesEvaluated(HashMap<String, (css::virt::Document, html::virt::Document)>),
 }
 
+pub struct History {
+    pub changes: Vec<Graph>,
+    position: usize,
+}
+
 pub struct ServerState {
+    pub history: History,
     pub file_cache: HashMap<String, Vec<u8>>,
     pub options: StartOptions,
     pub latest_ast_changes: Vec<MutationResult>,
@@ -51,6 +60,10 @@ pub struct ServerState {
 impl ServerState {
     pub fn new(options: StartOptions) -> Self {
         Self {
+            history: History {
+                changes: vec![],
+                position: 0,
+            },
             options,
             file_cache: HashMap::new(),
             graph: Graph::new(),
@@ -126,12 +139,15 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
             ServerEvent::DependencyGraphLoaded { graph } => {
                 state.graph =
                     std::mem::replace(&mut state.graph, Graph::new()).merge(graph.clone());
+
+                if state.history.changes.is_empty() {
+                    state.history.changes.push(state.graph.clone())
+                }
             }
             ServerEvent::UpdateFileRequested { path, content } => {
                 // onyl flag as changed if content actually changed.
                 if let Some(existing_content) = state.file_cache.get(path) {
                     if content != existing_content {
-                        println!("REPLACING!");
                         state.updated_files.push(path.clone());
                     }
                 }
@@ -144,14 +160,23 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 let mut latest_ast_changes = vec![];
                 for (path, changes) in &changed_files {
                     latest_ast_changes.extend(changes.clone());
-                    let content = serialize(state.graph.dependencies.get(path).unwrap().document.as_ref().expect("Document must exist"));
+                    let content = serialize(
+                        state
+                            .graph
+                            .dependencies
+                            .get(path)
+                            .unwrap()
+                            .document
+                            .as_ref()
+                            .expect("Document must exist"),
+                    );
                     // println!("Edited AST {} {}", path, content);
                     state
                         .file_cache
                         .insert(path.to_string(), content.as_bytes().to_vec());
                 }
 
-                println!("{:?}", changed_files);
+                // println!("{:?}", changed_files);
 
                 state.updated_files = changed_files
                     .iter()
@@ -162,7 +187,26 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
             ServerEvent::FileWatchEvent(event) => {
                 state.file_cache.remove(&event.path);
             }
+            ServerEvent::UndoRequested => {
+                state.history.position = if state.history.position == 0 {
+                    0
+                } else {
+                    state.history.position - 1
+                };
+
+                load_history(state);
+            }
+            ServerEvent::RedoRequested => {
+                state.history.position = if state.history.position < state.history.changes.len() - 1
+                {
+                    state.history.position + 1
+                } else {
+                    state.history.changes.len() - 1
+                };
+                load_history(state);
+            }
             ServerEvent::ModulesEvaluated(modules) => {
+                store_history(state);
                 state.evaluated_modules.extend(modules.clone());
                 state.updated_files = vec![];
             }
@@ -173,6 +217,52 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
             }
             _ => {}
         }
+    }
+}
+
+fn store_history(state: &mut ServerState) {
+    // TODO - probably worth storing this _locally_ to avoid memory issues
+    let mut updated_graph = Graph::new();
+    for updated_file in &state.updated_files {
+        updated_graph.dependencies.insert(
+            updated_file.to_string(),
+            state.graph.dependencies.get(updated_file).unwrap().clone(),
+        );
+        println!("Storing {} in history", updated_file);
+    }
+    if !state.updated_files.is_empty() {
+        if state.history.position < state.history.changes.len() - 1 {
+            state.history.changes = state
+                .history
+                .changes
+                .splice(state.history.position..state.history.changes.len(), vec![])
+                .collect();
+        }
+        state.history.changes.push(updated_graph);
+        state.history.position = state.history.changes.len() - 1;
+    }
+}
+
+fn load_history(state: &mut ServerState) {
+    println!(
+        "Loading history pos: {}, len: {}",
+        state.history.position,
+        state.history.changes.len()
+    );
+
+    // if it doesn't exist, then we have a bug
+    let current = state
+        .history
+        .changes
+        .get(state.history.position)
+        .expect("History record must exist!");
+
+    for (path, dep) in &current.dependencies {
+        println!("Loading {} from history", path);
+        state
+            .graph
+            .dependencies
+            .insert(path.to_string(), dep.clone());
     }
 }
 

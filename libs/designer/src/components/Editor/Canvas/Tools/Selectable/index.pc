@@ -1,6 +1,17 @@
 import "../../../../../styles/theme.pc" as theme
 
 public component Knob {
+
+    variant topLeftBottomRight trigger {
+        ".top-left"
+        ".bottom-right"
+    }
+
+    variant topRightBottomLeft trigger {
+        ".top-right"
+        ".bottom-left"
+    }
+
     render svg(onMouseDown: onMouseDown, class: class, style: style) {
         style {
             width: var(--knob-size)
@@ -10,6 +21,12 @@ public component Knob {
             position: absolute
             transform: translateY(-50%) translateX(-50%)
             border-radius: 1px
+        }
+        style variant topLeftBottomRight {
+            cursor: nwse-resize
+        }
+        style variant topRightBottomLeft {
+            cursor: nesw-resize
         }
         rect {
             style {

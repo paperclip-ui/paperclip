@@ -19,7 +19,6 @@
   "devDependencies": {
     "@babel/core": "^7.20.2",
     "@babel/preset-env": "^7.20.2",
-    "@paperclip-ui/parser": "workspace:^",
     "@paperclip-ui/workspace": "workspace:^",
     "babel-jest": "^29.3.1",
     "jest": "^29.3.1"

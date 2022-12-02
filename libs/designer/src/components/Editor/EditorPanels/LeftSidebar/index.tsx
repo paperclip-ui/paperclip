@@ -245,7 +245,17 @@ const SlotLeaf = memo(({ expr: slot, depth, instanceOf }: LeafProps<Slot>) => {
       text={slot.name}
       depth={depth}
       instanceOf={instanceOf}
-    />
+    >
+      {() =>
+        slot.body.map((child) => (
+          <NodeLeaf
+            key={ast.getInnerExpression(child).id}
+            expr={child}
+            depth={depth + 1}
+          />
+        ))
+      }
+    </Leaf>
   );
 });
 
@@ -263,6 +273,7 @@ const InsertLeaf = memo(
           <>
             {insert.body.map((child) => (
               <NodeLeaf
+                key={ast.getInnerExpression(child).id}
                 expr={child}
                 depth={depth + 1}
                 instanceOf={instanceOf}

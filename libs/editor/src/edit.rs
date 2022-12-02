@@ -14,10 +14,15 @@ pub fn edit_graph(
         for (path, dep) in &mut graph.dependencies {
             let mut ctx = EditContext {
                 mutation,
-                dependency: dep.clone()
+                dependency: dep.clone(),
             };
 
-            if let VisitorResult::Return(changes) = dep.document.as_mut().expect("Document must exist").accept(&mut ctx) {
+            if let VisitorResult::Return(changes) = dep
+                .document
+                .as_mut()
+                .expect("Document must exist")
+                .accept(&mut ctx)
+            {
                 changed.push((path.to_string(), changes));
             }
         }

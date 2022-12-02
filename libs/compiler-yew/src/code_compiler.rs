@@ -4,14 +4,20 @@ use paperclip_common::get_or_short;
 use paperclip_evaluator::core::utils::get_style_namespace;
 use paperclip_infer::infer::Inferencer;
 use paperclip_infer::types as infer_types;
-use paperclip_proto::ast::{pc as ast, graph_ext::{Dependency, Graph}};
+use paperclip_proto::ast::{
+    graph_ext::{Dependency, Graph},
+    pc as ast,
+};
 use pathdiff::diff_paths;
 use std::collections::BTreeMap;
 use std::path::Path;
 
 pub fn compile_code(dependency: &Dependency, graph: &Graph) -> Result<String> {
     let mut context = Context::new(&dependency, graph);
-    compile_document(dependency.document.as_ref().expect("Document must exist"), &mut context)?;
+    compile_document(
+        dependency.document.as_ref().expect("Document must exist"),
+        &mut context,
+    )?;
     Ok(context.get_buffer())
 }
 

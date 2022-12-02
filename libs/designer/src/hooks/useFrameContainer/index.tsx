@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 export type UseFrameContainerProps = {
   mount: HTMLElement;
+  frameIndex?: number;
   onLoad?: () => void;
   onInjectedExtraHTML?: () => void;
   fullscreen?: boolean;
@@ -11,6 +12,7 @@ export type UseFrameContainerProps = {
 
 export const useFrameContainer = ({
   mount,
+  frameIndex,
   onLoad = noop,
   onInjectedExtraHTML,
   fullscreen,
@@ -88,7 +90,7 @@ export const useFrameContainer = ({
     iframe.onload = onIframeLoad;
     frameRef.current.appendChild(iframe);
     setInternalMount(mount);
-  }, [frameRef, mount, onLoad]);
+  }, [frameRef, frameIndex, mount, onLoad]);
 
   const syncOverflow = () => {
     const doc = (frameRef.current.children[0] as HTMLIFrameElement)

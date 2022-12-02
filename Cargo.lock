@@ -1369,7 +1369,6 @@ dependencies = [
  "lazy_static",
  "path-absolutize",
  "regex",
- "tokio",
  "uuid",
 ]
 
@@ -1428,6 +1427,7 @@ dependencies = [
  "paperclip_parser",
  "paperclip_proto",
  "paperclip_proto_ext",
+ "pathdiff",
 ]
 
 [[package]]
@@ -1539,6 +1539,7 @@ dependencies = [
  "paperclip_common",
  "paperclip_parser",
  "paperclip_proto",
+ "pathdiff",
 ]
 
 [[package]]

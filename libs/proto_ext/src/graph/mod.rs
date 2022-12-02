@@ -1,5 +1,5 @@
-pub mod load;
 pub mod io;
+pub mod load;
 
 #[cfg(test)]
 pub mod tests;

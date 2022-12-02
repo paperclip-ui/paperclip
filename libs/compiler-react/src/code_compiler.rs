@@ -2,12 +2,18 @@ use super::context::Context;
 use anyhow::Result;
 use paperclip_common::get_or_short;
 use paperclip_evaluator::core::utils::get_style_namespace;
-use paperclip_proto::ast::{pc as ast, graph_ext::{Dependency, Graph}};
+use paperclip_proto::ast::{
+    graph_ext::{Dependency, Graph},
+    pc as ast,
+};
 use std::collections::BTreeMap;
 
 pub fn compile_code(dependency: &Dependency, graph: &Graph) -> Result<String> {
     let mut context = Context::new(&dependency, graph);
-    compile_document(dependency.document.as_ref().expect("Document must exist"), &mut context);
+    compile_document(
+        dependency.document.as_ref().expect("Document must exist"),
+        &mut context,
+    );
     Ok(context.get_buffer())
 }
 
@@ -75,26 +81,32 @@ macro_rules! compile_children {
 }
 
 fn compile_component(component: &ast::Component, context: &mut Context) {
-    context.add_buffer(
-        format!(
-            "const _{} = (props, ref) => {{\n",
-            &component.name
-        )
-        .as_str(),
-    );
+    context.add_buffer(format!("const _{} = (props, ref) => {{\n", &component.name).as_str());
 
     context.start_block();
     compile_component_render(component, &mut context.within_component(component));
     context.end_block();
 
     context.add_buffer("};\n");
-    context.add_buffer(format!("_{}.displayName = \"{}\";\n", component.name, component.name).as_str());
+    context.add_buffer(
+        format!(
+            "_{}.displayName = \"{}\";\n",
+            component.name, component.name
+        )
+        .as_str(),
+    );
 
     if component.is_public {
         context.add_buffer("export ");
     }
 
-    context.add_buffer(format!("const {} = React.memo(React.forwardRef(_{}));\n\n", component.name, component.name).as_str());
+    context.add_buffer(
+        format!(
+            "const {} = React.memo(React.forwardRef(_{}));\n\n",
+            component.name, component.name
+        )
+        .as_str(),
+    );
 }
 
 fn compile_component_render(component: &ast::Component, context: &mut Context) {
@@ -173,9 +185,7 @@ fn compile_node(node: &ast::Node, context: &mut Context, is_root: bool) -> bool 
         ast::node::Inner::Text(expr) => compile_text_node(&expr, context),
         ast::node::Inner::Element(expr) => compile_element(&expr, is_root, context),
         ast::node::Inner::Slot(expr) => compile_slot(&expr, context),
-        _ => {
-            return false
-        }
+        _ => return false,
     };
     return true;
 }
@@ -186,13 +196,10 @@ fn compile_element_parameters(
     is_root: bool,
     context: &mut Context,
 ) {
-    
-    let raw_attrs = rename_attrs_for_react(get_raw_element_attrs(
-        element,
+    let raw_attrs = rename_attrs_for_react(
+        get_raw_element_attrs(element, is_instance, is_root, context),
         is_instance,
-        is_root,
-        context,
-    ), is_instance);
+    );
 
     if raw_attrs.len() == 0 {
         context.add_buffer("null");
@@ -283,7 +290,10 @@ fn compile_insert(insert: &ast::Insert, context: &mut Context) {
     compile_node_children(&insert.body, context);
 }
 
-fn rename_attrs_for_react(attrs: BTreeMap<String, Context>, is_instance: bool) -> BTreeMap<String, Context> {
+fn rename_attrs_for_react(
+    attrs: BTreeMap<String, Context>,
+    is_instance: bool,
+) -> BTreeMap<String, Context> {
     if is_instance {
         return attrs;
     }

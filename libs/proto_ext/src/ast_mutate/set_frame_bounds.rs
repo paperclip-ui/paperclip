@@ -1,3 +1,4 @@
+use super::base::EditContext;
 use paperclip_parser::docco::parser::parse as parse_comment;
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast_mutate::{mutation_result, ExpressionUpdated, SetFrameBounds};
@@ -5,7 +6,7 @@ use paperclip_proto::{ast, ast_mutate::MutationResult};
 
 use crate::ast::{all::Visitor, all::VisitorResult};
 
-impl Visitor<Vec<MutationResult>> for SetFrameBounds {
+impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, SetFrameBounds> {
     fn visit_document(
         &mut self,
         expr: &mut ast::pc::Document,
@@ -13,9 +14,9 @@ impl Visitor<Vec<MutationResult>> for SetFrameBounds {
         if let Some(frame_index) = expr
             .body
             .iter()
-            .position(|expr| expr.get_inner().get_id() == &self.frame_id)
+            .position(|expr| expr.get_inner().get_id() == &self.mutation.frame_id)
         {
-            let bounds = self.bounds.as_ref().unwrap();
+            let bounds = self.mutation.bounds.as_ref().unwrap();
 
             let mut results = vec![];
 

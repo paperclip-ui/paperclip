@@ -20,11 +20,11 @@ pub struct KnobProps {
 pub fn Knob(props: &KnobProps) -> Html {
     html! {
         <svg class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Knob-9e53e128-56", scope_class_name)
+            format!("{} {}", "_Knob-9e53e128-70", scope_class_name)
         } else {
-            "_Knob-9e53e128-56".to_string()
+            "_Knob-9e53e128-70".to_string()
         })} onMouseDown={props.onMouseDown.clone()} style={props.style.clone()}>
-            <rect class={"_Knob-9e53e128-55"}></rect>
+            <rect class={"_Knob-9e53e128-69"}></rect>
             
         </svg>
     }
@@ -41,9 +41,9 @@ pub struct EdgeProps {
 pub fn Edge(props: &EdgeProps) -> Html {
     html! {
         <div class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Edge-9e53e128-124", scope_class_name)
+            format!("{} {}", "_Edge-9e53e128-138", scope_class_name)
         } else {
-            "_Edge-9e53e128-124".to_string()
+            "_Edge-9e53e128-138".to_string()
         })} onMouseDown={props.onMouseDown.clone()}></div>
     }
 }
@@ -63,13 +63,13 @@ pub struct OverlayProps {
 pub fn Overlay(props: &OverlayProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Overlay-9e53e128-204", scope_class_name)
+            format!("{} {}", "_Overlay-9e53e128-218", scope_class_name)
         } else {
-            "_Overlay-9e53e128-204".to_string()
+            "_Overlay-9e53e128-218".to_string()
         }} onClick={props.onClick.clone()} onMouseDown={props.onMouseDown.clone()} style={props.style.clone()}>
             { for props.knobs.iter() }
             { for props.edges.iter() }
-            <div class={"_Overlay-footer-9e53e128-203"}>
+            <div class={"_Overlay-footer-9e53e128-217"}>
                 { for props.size.iter() }
             </div>
             

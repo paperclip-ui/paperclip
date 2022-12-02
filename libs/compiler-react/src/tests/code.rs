@@ -1,10 +1,9 @@
 use crate::compile_code;
-use paperclip_common::str_utils::strip_extra_ws;
-use std::collections::HashMap;
 use futures::executor::block_on;
-use paperclip_proto::ast::graph_ext::{Graph};
-use paperclip_proto_ext::graph::{test_utils, load::LoadableGraph};
-
+use paperclip_common::str_utils::strip_extra_ws;
+use paperclip_proto::ast::graph_ext::Graph;
+use paperclip_proto_ext::graph::{load::LoadableGraph, test_utils};
+use std::collections::HashMap;
 
 // TODO: insert test
 
@@ -12,10 +11,9 @@ macro_rules! add_case {
     ($name: ident, $mock_content: expr, $expected_output: expr) => {
         #[test]
         fn $name() {
-            
             let mock_fs = test_utils::MockFS::new(HashMap::from([
-              ("/entry.pc", $mock_content),
-              ("/test.pc", r#""#)
+                ("/entry.pc", $mock_content),
+                ("/test.pc", r#""#),
             ]));
 
             let mut graph = Graph::new();
@@ -29,7 +27,7 @@ macro_rules! add_case {
             let output = compile_code(&dep, &graph).unwrap();
 
             println!("{}", output);
-            
+
             assert_eq!(
                 strip_extra_ws(output.as_str()),
                 strip_extra_ws($expected_output)
@@ -465,7 +463,6 @@ add_case! {
   "#
 }
 
-
 add_case! {
   scoped_class_name_is_defined_on_instance,
   r#"
@@ -517,7 +514,6 @@ add_case! {
   "#
 }
 
-
 add_case! {
   class_names_arent_renamed_if_instance,
   r#"
@@ -557,7 +553,6 @@ add_case! {
     const B = React.memo(React.forwardRef(_B));
   "#
 }
-
 
 add_case! {
   styles_are_skipped_as_children,

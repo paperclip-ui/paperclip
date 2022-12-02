@@ -28,7 +28,9 @@ pub fn parse_with_string_scanner<'src, 'scanner, 'idgenerator>(
 }
 
 pub fn parse_comment(context: &mut ParserContext) -> Result<ast::Comment, ParserError> {
-    context.next_token()?; // eat /**
+    if matches!(context.curr_token, Some(Token::CommentStart)) {
+        context.next_token()?; // eat /**
+    }
     let start = context.curr_u16pos.clone();
     let mut body: Vec<ast::CommentBodyItem> = vec![];
     while context.curr_token != Some(Token::CommentEnd) {

@@ -1,3 +1,4 @@
+use super::base::EditContext;
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::{
     ast,
@@ -8,13 +9,13 @@ use crate::ast::{all::Visitor, all::VisitorResult};
 use paperclip_parser::docco::parser::parse as parse_comment;
 use paperclip_parser::pc::parser::parse as parse_pc;
 
-impl Visitor<Vec<MutationResult>> for InsertFrame {
+impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, InsertFrame> {
     fn visit_document(
         &mut self,
         expr: &mut ast::pc::Document,
     ) -> VisitorResult<Vec<MutationResult>> {
-        if expr.id == self.document_id {
-            let bounds = self.bounds.as_ref().unwrap();
+        if expr.id == self.mutation.document_id {
+            let bounds = self.mutation.bounds.as_ref().unwrap();
 
             let mut mutations = vec![];
             let checksum = expr.checksum();
@@ -29,7 +30,7 @@ impl Visitor<Vec<MutationResult>> for InsertFrame {
             )
             .unwrap();
 
-            let to_insert = parse_pc(&self.node_source, &checksum).unwrap();
+            let to_insert = parse_pc(&self.mutation.node_source, &checksum).unwrap();
 
             mutations.push(
                 mutation_result::Inner::ExpressionInserted(ExpressionInserted {

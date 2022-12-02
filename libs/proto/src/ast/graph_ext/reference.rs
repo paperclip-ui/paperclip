@@ -1,5 +1,5 @@
-pub use super::super::graph::*;
 use super::super::css::{self, FunctionCall};
+pub use super::super::graph::*;
 use super::super::pc::{self, component_body_item, node};
 
 macro_rules! expr_info {
@@ -42,7 +42,6 @@ pub enum Expr<'expr> {
 
 expr_info!(ComponentRefInfo, Component);
 
-
 impl Graph {
     pub fn get_ref<'expr>(
         &'expr self,
@@ -79,8 +78,10 @@ impl Graph {
 
                     if let Some(dep) = imp_dep {
                         curr_dep = dep;
-                        expr = if let Some(inner_expr) = get_doc_body_expr(part, curr_dep.document.as_ref().expect("Document must exist"))
-                        {
+                        expr = if let Some(inner_expr) = get_doc_body_expr(
+                            part,
+                            curr_dep.document.as_ref().expect("Document must exist"),
+                        ) {
                             inner_expr
                         } else {
                             return None;

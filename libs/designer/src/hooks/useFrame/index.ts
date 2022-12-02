@@ -55,11 +55,12 @@ export const useFrame = ({
   const onLoad2 = useCallback(() => {
     onLoad(mount, pcData);
     setLoaded(true);
-  }, [mount, pcData]);
+  }, [mount, pcData, onLoad]);
 
   return useFrameContainer({
     mount,
     onLoad: onLoad2,
+    frameIndex,
     fullscreen,
     onInjectedExtraHTML,
     extraHTML,

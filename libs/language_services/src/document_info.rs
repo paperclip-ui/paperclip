@@ -4,14 +4,14 @@ use css_color::Srgb;
 use paperclip_common::get_or_short;
 use paperclip_common::serialize_context::Context as SerializeContext;
 
+use paperclip_parser::css;
+use paperclip_proto::ast::base;
 use paperclip_proto::ast::{
     css as css_ast,
     css::{declaration_value, StyleDeclaration},
     graph_ext::Graph,
-    pc::*
+    pc::*,
 };
-use paperclip_parser::css;
-use paperclip_proto::ast::base;
 use paperclip_proto::language_service::pc::{ColorInfo, ColorValue, DocumentInfo, Position};
 
 pub fn get_document_info(path: &str, graph: &Graph) -> Result<DocumentInfo> {

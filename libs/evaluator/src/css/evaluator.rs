@@ -4,12 +4,12 @@ use super::virt;
 use crate::core::utils::{get_style_namespace, get_variant_namespace};
 use paperclip_common::fs::FileResolver;
 use paperclip_common::get_or_short;
+use paperclip_proto::ast::all::{Expression, ImmutableExpressionRef};
 use paperclip_proto::ast::css as css_ast;
-use paperclip_proto::ast::pc as ast;
 use paperclip_proto::ast::graph_ext as graph;
 use paperclip_proto::ast::graph_ext::{self as graph_ref, Expr};
-use paperclip_proto::ast::pc::{override_body_item};
-use paperclip_proto::ast::all::{Expression, ImmutableExpressionRef};
+use paperclip_proto::ast::pc as ast;
+use paperclip_proto::ast::pc::override_body_item;
 use paperclip_proto::virt::css::Rule;
 use std::string::ToString;
 
@@ -40,10 +40,18 @@ pub async fn evaluate<'asset_resolver, FR: FileResolver>(
 
     let mut context = DocumentContext::new(path, graph, file_resolver);
 
-    evaluate_document(dependency.document.as_ref().expect("Document must exist"), &mut context);
+    evaluate_document(
+        dependency.document.as_ref().expect("Document must exist"),
+        &mut context,
+    );
 
     Ok(virt::Document {
-        id: dependency.document.as_ref().expect("Document must exist").id.to_string(),
+        id: dependency
+            .document
+            .as_ref()
+            .expect("Document must exist")
+            .id
+            .to_string(),
         rules: collect_sorted_rules(&mut context),
     })
 }

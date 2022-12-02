@@ -75,12 +75,12 @@ fn ColorPickerPopup(props: &ColorPickerPopupProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-pub struct StylesPanelProps {
+pub struct PreviewProps {
     pub __scope_class_name: Option<String>,
 }
 
 #[function_component]
-pub fn StylesPanel(props: &StylesPanelProps) -> Html {
+pub fn Preview(props: &PreviewProps) -> Html {
     html! {
         <common::SidebarPanel>
             <common::SidebarSection>
@@ -108,105 +108,57 @@ pub fn StylesPanel(props: &StylesPanelProps) -> Html {
             <common::SidebarSection>
                 <common::SidebarPanelHeader>
                     
-                    <div class={"_StylesPanel-bdf7c0fc-104"}></div>
+                    <div class={"_Preview-bdf7c0fc-104"}></div>
                     
                 </common::SidebarPanelHeader>
                 
                 <common::SidebarPanelContent>
                     <input::Fields>
                         <input::Field input={
-                            <input::Select>
+                            <input::Select value={
                                 <input::Token class={"keyword"}>
                                     
                                 </input::Token>
                                 
-                            </input::Select>
+}></input::Select>
                             
 } name={
                             
 }></input::Field>
                         
                         <input::Field input={
-                            <input::Select>
-                                <input::Token class={"number"}>
-                                    
-                                </input::Token>
-                                
-                                <input::Token class={"unit"}>
-                                    
-                                </input::Token>
-                                
-                            </input::Select>
+                            <input::TextInput class={"active"} placeholder={"0px"} value={""}></input::TextInput>
                             
 } name={
                             
 }></input::Field>
                         
                         <input::Field input={
-                            <input::Select>
-                                <input::Token class={"call"}>
-                                    
-                                </input::Token>
-                                
-                                <input::Token class={"punc"}>
-                                    
-                                </input::Token>
-                                
-                                <input::Token class={"number"}>
-                                    
-                                </input::Token>
-                                
-                                <input::Token class={"unit"}>
-                                    
-                                </input::Token>
-                                
-                                
-                                <input::Token class={"arith"}>
-                                    
-                                </input::Token>
-                                
-                                
-                                <input::Token class={"number"}>
-                                    
-                                </input::Token>
-                                
-                                <input::Token class={"unit"}>
-                                    
-                                </input::Token>
-                                
-                                <input::Token class={"punc"}>
-                                    
-                                </input::Token>
-                                
-                            </input::Select>
+                            <input::TextInput placeholder={"0px"} value={""}></input::TextInput>
                             
 } name={
                             
 }></input::Field>
                         
                         <input::Field input={
-                            <input::Select>
-                                <input::Token class={"number"}>
-                                    
-                                </input::Token>
-                                
-                                <input::Token class={"unit"}>
-                                    
-                                </input::Token>
-                                
-                            </input::Select>
-                            
-} name={
-                            
-}></input::Field>
-                        
-                        <input::Field input={
-                            <input::Select>
+                            <input::Select value={
                                 <input::Token class={"keyword"}>
                                     
                                 </input::Token>
                                 
-                            </input::Select>
+}></input::Select>
+                            
+} name={
+                            
+}></input::Field>
+                        
+                        <input::Field input={
+                            <input::Select value={
+                                <input::Token class={"keyword"}>
+                                    
+                                </input::Token>
+                                
+}></input::Select>
                             
 } name={
                             
@@ -221,7 +173,7 @@ pub fn StylesPanel(props: &StylesPanelProps) -> Html {
             <common::SidebarSection>
                 <common::SidebarPanelHeader>
                     
-                    <div class={"_StylesPanel-bdf7c0fc-198"}></div>
+                    <div class={"_Preview-bdf7c0fc-165"}></div>
                     
                 </common::SidebarPanelHeader>
                 
@@ -299,9 +251,9 @@ pub fn StylesPanel(props: &StylesPanelProps) -> Html {
 }></input::Field>
                         
                         <input::Field input={
-                            <input::Select>
+                            <input::TextInput placeholder={"0px"} value={""}>
                                 
-                            </input::Select>
+                            </input::TextInput>
                             
 } name={
                             
@@ -322,8 +274,8 @@ pub fn StylesPanel(props: &StylesPanelProps) -> Html {
                             </input::Select>
                             
 } name={
-                            <div class={"_StylesPanel-bdf7c0fc-301"}>
-                                <div class={"_StylesPanel-bdf7c0fc-299"}></div>
+                            <div class={"_Preview-bdf7c0fc-272"}>
+                                <div class={"_Preview-bdf7c0fc-270"}></div>
                                 
                                 
                             </div>
@@ -350,11 +302,11 @@ pub fn StylesPanel(props: &StylesPanelProps) -> Html {
                 
             </common::SidebarSection>
             
-            <div class={"_StylesPanel-bdf7c0fc-355"}>
+            <div class={"_Preview-bdf7c0fc-326"}>
                 <common::SidebarSection>
                     <common::SidebarPanelHeader>
                         
-                        <div class={"_StylesPanel-bdf7c0fc-329"}></div>
+                        <div class={"_Preview-bdf7c0fc-300"}></div>
                         
                     </common::SidebarPanelHeader>
                     

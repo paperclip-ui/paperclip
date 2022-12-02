@@ -19,6 +19,13 @@ type Props = {
   cursor?: string;
 };
 
+const KNOB_CLASS_MAP = {
+  "0-0": "top-left",
+  "100-0": "top-right",
+  "0-100": "bottom-left",
+  "100-100": "bottom-right",
+};
+
 // https://github.com/crcn/tandem/blob/10.0.0/packages/dashboard/src/components/root/workspace/editors/paperclip/stage/canvas/tools-layer/selection/resizer.tsx
 
 export const Selectable = React.memo(
@@ -200,13 +207,14 @@ export const Selectable = React.memo(
             knobs && (
               <>
                 {knobs.map(({ x, y }) => {
+                  const key = `${x}-${y}`;
                   return (
                     <styles.Knob
-                      class=""
                       onMouseDown={(event) => {
                         onKnobMouseDown(event, { x, y });
                       }}
-                      key={`${x}-${y}`}
+                      key={key}
+                      class={KNOB_CLASS_MAP[key]}
                       style={{ "--x": x, "--y": y }}
                     />
                   );

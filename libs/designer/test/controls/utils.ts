@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { designerEngineEvents } from "@paperclip-ui/designer/src/machine/engine/designer/events";
 import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
 import { Point } from "@paperclip-ui/designer/src/machine/state/geom";

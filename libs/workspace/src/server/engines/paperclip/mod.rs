@@ -45,7 +45,7 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
                 load_dependency_graph(next.clone(), &vec![update_file]).await.expect("Unable to load dependency");
             }
         },
-        ServerEvent::ApplyMutationRequested {mutations: _} => {
+        ServerEvent::ApplyMutationRequested {mutations: _} | ServerEvent::UndoRequested | ServerEvent::RedoRequested  => {
             evaluate_dependency_graph(next.clone()).await.expect("Unable to evaluate Dependency graph");
         },
         ServerEvent::FileWatchEvent(event) => {
@@ -148,7 +148,7 @@ async fn evaluate_dependency_graph<TIO: ServerIO>(ctx: ServerEngineContext<TIO>)
                 &graph,
                 &resolver,
                 html::evaluator::Options {
-                    include_components: false,
+                    include_components: true,
                 },
             ))?;
 

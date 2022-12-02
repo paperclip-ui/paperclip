@@ -1,0 +1,27 @@
+import "./theme.pc" as imp
+
+/**
+ * @bounds(x: 70, y: -1223, width: 1024, height: 768)
+*/
+
+public component ContextMenu {
+    render div {
+        slot children {
+            ContextMenuItem {
+                text "Something"
+            }
+        }
+    }
+}
+
+public component ContextMenuItem {
+    render div {
+        style {
+            display: rgb(0, 0, 255)
+        }
+        slot children {
+            text "Context menu item"
+        }
+    }
+}
+

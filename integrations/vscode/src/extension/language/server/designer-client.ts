@@ -7,13 +7,11 @@ global.XMLHttpRequest = require("xhr2");
 import {
   DesignerClientImpl,
   FileChanged,
-  FileResponse,
   GrpcWebImpl,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { loadCLIBinPath } from "@paperclip-ui/releases";
 import { DocumentInfo } from "@paperclip-ui/proto/lib/generated/language_service/pc";
 import { NodeHttpTransport } from "@improbable-eng/grpc-web-node-http-transport";
-import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 import { EventEmitter } from "stream";
 
 export class DesignerClient {
@@ -49,6 +47,7 @@ export class DesignerClient {
     const client = await this._client.promise;
     client.OnEvent({}).subscribe({
       next: (data) => {
+        console.log("EVENT", data);
         if (data.fileChanged) {
           this._em.emit("fileChanged", data.fileChanged);
         }

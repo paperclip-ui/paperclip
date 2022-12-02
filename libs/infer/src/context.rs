@@ -1,5 +1,5 @@
-use paperclip_proto::ast::graph_ext::{Dependency, Graph};
 use paperclip_proto::ast;
+use paperclip_proto::ast::graph_ext::{Dependency, Graph};
 use std::{cell::RefCell, rc::Rc};
 
 use crate::{infer::Inferencer, types};

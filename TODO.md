@@ -1,14 +1,61 @@
+### Considerations
+
+- Try not to hand-write any new UI unless it's necessary for self-creation
+- It's all important so do what makes sense immediately
+
 #### On-deck
 
-- ability to insert text as frame
-- edit text mode on insert
-- double click to edit text
+- instance style overrides (necessary for styling components)
+- right-click -> convert to component
 
-- toolbar
-  - ability to insert text
-  - highlight tools
-  - wire up zoom
+- Create color picker visually
+  - copy + paste layers
+  - right click -> convert to component
+- filter options based on unit type
+
+- Popover
+
+  - max-height + scroll
+  - scrollable component
+
+- wire up select input
+
+  - use enums
+  - ability to connect props to tokens
+
+- auto-complete text inputspi
+
+- borders?
+- backgrounds?
+
+- mixins
+
+- dropdown
+
+  - filter UI
+  - token UI
+
+- ability to style text elements
+
 - style panel
+
+  - tokens (we should basically just be using these anyways)
+    - display options within dropdown
+  - ability to define mixins
+  - override styles
+  - variants
+
+- ## triggers
+
+#### MVP
+
+- Litmus:
+
+  - can the entire AST be edited visually? What's the shortest path to get here?
+
+- ability to edit projects online
+
+  -
 
   - ## layers
 

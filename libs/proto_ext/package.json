@@ -6,10 +6,21 @@
   "publishConfig": {
     "access": "public"
   },
+  "scripts": {
+    "build": "tsc",
+    "test": "jest --runInBand --testTimeout=1000"
+  },
   "files": [
     "lib"
   ],
   "author": "",
   "license": "ISC",
-  "gitHead": "e21804d0f4839ad1506435a86ad5e1ff2d53ee9f"
+  "gitHead": "e21804d0f4839ad1506435a86ad5e1ff2d53ee9f",
+  "devDependencies": {
+    "@babel/core": "^7.20.2",
+    "@babel/preset-env": "^7.20.2",
+    "@paperclip-ui/workspace": "workspace:^",
+    "babel-jest": "^29.3.1",
+    "jest": "^29.3.1"
+  }
 }

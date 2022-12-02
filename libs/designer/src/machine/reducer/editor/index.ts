@@ -13,7 +13,7 @@ import {
 } from "../../state";
 import produce from "immer";
 import { clamp, pick } from "lodash";
-import { Box, centerTransformZoom, Point, roundBox } from "../../state/geom";
+import { Box, centerTransformZoom, Point } from "../../state/geom";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 import {
   Element as VirtElement,
@@ -21,7 +21,7 @@ import {
 } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { memoize } from "@paperclip-ui/common";
 import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
-import { ast } from "@paperclip-ui/proto/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { historyEngineEvents } from "../../engine/history/events";
 
 const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
@@ -69,9 +69,17 @@ export const editorReducer = (
       });
     }
     case designerEngineEvents.graphLoaded.type: {
+      const next = {
+        ...state.graph,
+        dependencies: {
+          ...state.graph.dependencies,
+          ...event.payload.dependencies,
+        },
+      };
+
       const diff = jasonpatch.compare(
         state.graph.dependencies,
-        event.payload.dependencies
+        next.dependencies
       );
       return produce(state, (newState) => {
         jasonpatch.applyPatch(newState.graph.dependencies, diff);
@@ -274,11 +282,7 @@ export const editorReducer = (
 
         // within a frame
         if (path.includes(".")) {
-          const parent = virtHTML.getNodeParent(
-            node,
-            newState.currentDocument.paperclip.html
-          );
-          const computedStyles = newState.preEditComputedStyles[path];
+          const computedStyles = newState.preEditComputedStyles[node.id];
 
           newState.styleOverrides = {};
 

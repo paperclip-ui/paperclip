@@ -14,5 +14,6 @@ paperclip_proto_ext = { path = "../proto_ext" }
 paperclip_parser = { path = "../parser" }
 paperclip_common = { path = "../rs_common" }
 futures = "0.3.25"
+pathdiff = "0.2.1"
 
 

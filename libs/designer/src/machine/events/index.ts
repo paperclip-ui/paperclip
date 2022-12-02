@@ -14,7 +14,9 @@ export const editorEvents = eventCreators(
     eHotkeyPressed: null,
     tHotkeyPressed: null,
     deleteHokeyPressed: null,
-
+    undoKeyPressed: null,
+    redoKeyPressed: null,
+    saveKeyComboPressed: null,
     insertModeButtonClick: identity<{ mode: InsertMode }>(),
     insertElementReleased: identity<Box>(),
     canvasMouseMoved: identity<Point>(),
@@ -24,6 +26,10 @@ export const editorEvents = eventCreators(
     canvasMouseUp: null,
     computedStylesCaptured: identity<{
       computedStyles: Record<string, any>;
+    }>(),
+    styleDeclarationsChanged: identity<{
+      values: Record<string, string>;
+      imports: Record<string, string>;
     }>(),
     canvasMouseDown: identity<{
       metaKey: boolean;

@@ -1,6 +1,6 @@
 use paperclip_common::serialize_context::Context as SerializeContext;
-use paperclip_proto::ast::graph_ext::{Dependency, Graph};
 use paperclip_proto::ast;
+use paperclip_proto::ast::graph_ext::{Dependency, Graph};
 use std::cell::RefCell;
 use std::rc::Rc;
 

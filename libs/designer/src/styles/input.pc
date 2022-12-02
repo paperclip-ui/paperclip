@@ -2,153 +2,520 @@ import "./theme.pc" as theme
 import "./common.pc" as common
 
 public component MultiSelectItem {
-  render div {
-    style {
-      display: inline-block
-      color: var(theme.backgroundSelectedText)
-      background: var(theme.blue02)
-      border-radius: var(theme.roundedSM)
-      padding: 0px 6px
-      font-weight: 500
-      display: flex
-      height: 100%
-      align-items: center
+    render div {
+        style {
+            display: inline-block
+            color: var(theme.backgroundSelectedText)
+            background: var(theme.blue02)
+            border-radius: var(theme.roundedSM)
+            padding: 0px 6px
+            font-weight: 500
+            display: flex
+            height: 100%
+            align-items: center
+        }
+        slot children
     }
-    slot children
-  }
 }
 
 public component Select {
-  render div {
-    style extends theme.input {
-      display: flex
-      justify-content: space-between
+    render div(onClick: onClick, tabIndex: "-1") {
+        style {
+            display: flex
+            flex-direction: column
+            gap: var(theme.space03)
+        }
+        div input {
+            style extends theme.input {
+                display: flex
+                justify-content: space-between
+            }
+            div {
+                slot value
+            }
+            div {
+                style extends theme.icon {
+                    --size: 1em
+                    -webkit-mask-image: url("./chevron2.svg")
+                    transform: rotate(90deg)
+                }
+            }
+        }
+        slot menu
     }
-    div {
-      slot children
+}
+
+public component SuggestionContainer {
+    render div(onFocus: onFocus, onBlur: onBlur) {
+        style {
+            position: relative
+        }
+        div input {
+            slot input
+        }
+        div {
+            style {
+                position: absolute
+                width: 100%
+                top: calc(100% + var(theme.space03))
+            }
+            slot menu
+        }
     }
-  }
+}
+
+public component SuggestionMenu {
+    render div(style: style) {
+        style extends theme.fontDefault {
+            background: var(theme.inputBackground)
+            border-radius: var(theme.rounded)
+            width: 100%
+            min-width: 250px
+            filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.2))
+            border: 1px solid var(theme.gray04)
+            overflow-y: scroll
+            overflow-x: hidden
+            max-height: 300px
+        }
+        slot children
+    }
+}
+
+public component SuggestionMenuHeader {
+    render div {
+        style {
+            padding: var(theme.space03)
+        }
+        slot children
+    }
+}
+
+public component SuggestionMenuSearch {
+    render TextInput(placeholder: placeholder, value: value) {
+        override root {
+            style {
+                background: var(theme.inputBackgroun2)
+            }
+        }
+    }
+}
+
+public component SuggestionMenuItem {
+    variant preselected trigger {
+        ":hover"
+        ".preselected"
+    }
+    variant selected trigger {
+        ".selected"
+    }
+    render div(onMouseDown: onMouseDown, class: class) {
+        style {
+            padding: var(theme.space03)
+            cursor: pointer
+        }
+        style variant preselected {
+            background: var(theme.blue01)
+        }
+        style variant selected {
+            background: var(theme.blue02)
+        }
+        slot children
+    }
 }
 
 public component TextInput {
-  render input(value: value) {
-    style extends theme.input
-  }
+    variant isActive trigger {
+        ":active"
+        ":focus"
+        ".active"
+    }
+    render input root(value: value, placeholder: placeholder, defaultValue: defaultValue, onKeyDown: onKeyDown, onBlur: onBlur, onChange: onChange, onFocus: onFocus, onBlur: onBlur, class: class, onClick: onClick) {
+        style extends theme.input {
+            width: 100%
+        }
+        style variant isActive extends theme.inputActive
+    }
 }
 
 public component ColorInput {
-  render div root {
-    style extends theme.input {
-      gap: var(theme.space03)
-      overflow: hidden
-      flex: 1
-      width: 100%
+    render div root {
+        style extends theme.input {
+            gap: var(theme.space03)
+            overflow: hidden
+            flex: 1
+            width: 100%
+        }
+        div {
+            style {
+                width: 1em
+                height: 1em
+                background: var(--color)
+                border-radius: var(theme.rounded)
+                flex-shrink: 0
+            }
+        }
+        slot children
     }
-    div {
-      style {
-        width: 1em
-        height: 1em
-        background: var(--color)
-        border-radius: var(theme.rounded)
-        flex-shrink: 0
-      }
-    }
-    slot children
-  }
 }
 
 public component Fields {
-  render div {
-    style {
-      display: flex
-      flex-direction: column
-      gap: var(theme.space04)
-
+    render div {
+        style {
+            display: flex
+            flex-direction: column
+            gap: var(theme.space04)
+        }
+        slot children
     }
-    slot children
-  }
 }
 
 public component MultiSelect {
-  render div {
-    style extends theme.input {
-      display: flex
-      gap: var(theme.space02)
-      padding: var(theme.space02)
-
+    render div {
+        style extends theme.input {
+            display: flex
+            gap: var(theme.space02)
+            padding: var(theme.space02)
+        }
+        slot children
     }
-    slot children
-  }
 }
 
 public component TokenInput {
-  render span {
-    style variant isFunction {
-      color: rgb(0, 162, 255)
+    render span {
+        style variant isFunction {
+            color: rgb(0, 162, 255)
+        }
+        slot children
     }
-    slot children
-  }
 }
 
 public component Token {
-  variant isFunction trigger { ".call" }
-  variant isPunc trigger { ".punc" }
-  variant isNumber trigger { ".number" }
-  variant isUnit trigger { ".unit" }
-  variant isArithmetic trigger { ".arith" }
-  variant isKeyword trigger { ".keyword" }
-  render span(class: class) {
-    style variant isFunction {
-      color: rgb(255, 255, 255)
+    variant isFunction trigger {
+        ".call"
     }
-    style variant isKeyword {
-      color: rgb(255, 255, 255)
+    variant isPunc trigger {
+        ".punc"
     }
-    style variant isPunc {
-      color: rgb(255, 255, 255)
+    variant isNumber trigger {
+        ".number"
     }
-    style variant isNumber {
-      color: white
+    variant isUnit trigger {
+        ".unit"
     }
-    style variant isUnit {
-      color: white
+    variant isArithmetic trigger {
+        ".arith"
     }
-    style variant isArithmetic {
-      color: rgb(255, 255, 255)
+    variant isKeyword trigger {
+        ".keyword"
     }
-    slot children
-  }
+    render span(class: class) {
+        style variant isFunction {
+            color: rgb(255, 255, 255)
+        }
+        style variant isKeyword {
+            color: rgb(255, 255, 255)
+        }
+        style variant isPunc {
+            color: rgb(255, 255, 255)
+        }
+        style variant isNumber {
+            color: white
+        }
+        style variant isUnit {
+            color: white
+        }
+        style variant isArithmetic {
+            color: rgb(255, 255, 255)
+        }
+        slot children
+    }
 }
-
 
 public component Field {
-  render div {
-    style {
-      display: flex
-      gap: var(theme.space03)
-      align-items: center
-      position: relative
+    render div {
+        style {
+            display: flex
+            gap: var(theme.space03)
+            align-items: center
+            position: relative
+        }
+        div {
+            style {
+                position: relative
+                width: 90px
+                flex-shrink: 0
+                font-size: var(theme.fontSize01)
+            }
+            slot name
+        }
+        div {
+            style {
+                display: flex
+                flex-direction: column
+                gap: var(theme.space03)
+                flex: 1
+                overflow: hidden
+            }
+            slot input
+        }
     }
-    div {
-      style {
-        position: relative
-        width: 90px
-        flex-shrink: 0
-        font-size: var(theme.fontSize01)
-      }
-      slot name
-    }
-    div {
-      style {
-        display: flex
-        flex-direction: column
-        gap: var(theme.space03)
-        flex: 1
-        overflow: hidden
-
-
-      }
-      slot input
-    }
-  }
 }
+
+public component TokenMenuContent {
+    render div(style: style) {
+        style {
+            display: flex
+            align-items: center
+            justify-content: space-between
+        }
+        div {
+            style {
+                display: flex
+                align-items: center
+                gap: var(theme.space03)
+            }
+            div {
+                style {
+                    width: 1em
+                    height: 1em
+                    background: var(--color)
+                    border-radius: var(theme.rounded)
+                }
+            }
+            slot children
+            div {
+                style {
+                    opacity: 0.3
+                }
+                slot preview
+            }
+        }
+        div {
+            style {
+                opacity: 0.3
+            }
+            slot file
+        }
+    }
+}
+
+public component SuggestionMenuDivider {
+    render div {
+        style {
+            background: var(theme.gray04)
+            height: 2px
+            width: 100%
+        }
+    }
+}
+
+public component SuggestionMenuSection {
+    variant isFirst trigger {
+        ":first-child"
+    }
+    render div {
+        style {
+            background: var(theme.gray04)
+            width: 100%
+            padding: var(theme.space03) var(theme.space03)
+        }
+        style variant isFirst {
+            border-top-left-radius: 2px
+            border-top-right-radius: 2px
+        }
+        slot children
+    }
+}
+
+component ComponentPreview {
+    render div {
+        style {
+            padding: var(theme.space05)
+            border-radius: var(theme.rounded)
+            background: #000
+            min-width: 400px
+        }
+        h1 {
+            slot title
+        }
+        div {
+            slot children
+        }
+    }
+}
+
+component SelectPreview {
+    render Select {
+        insert value {
+            text "flex"
+        }
+        insert menu {
+            SuggestionMenu {
+                SuggestionMenuSection {
+                    text "Options"
+                }
+                SuggestionMenuItem {
+                    text "block"
+                }
+                SuggestionMenuItem {
+                    text "inline-flex"
+                }
+                SuggestionMenuItem {
+                    text "orange05"
+                }
+                SuggestionMenuSection {
+                    text "tokens"
+                }
+                SuggestionMenuItem {
+                    TokenMenuContent(style: "--color: orange") {
+                        text "orange05"
+                        insert file {
+                            text "theme.pc"
+                        }
+                    }
+                }
+                SuggestionMenuItem {
+                    TokenMenuContent(style: "--color: yellow") {
+                        text "orange04"
+                        insert file {
+                            text "theme.pc"
+                        }
+                    }
+                }
+                SuggestionMenuItem {
+                    TokenMenuContent(style: "--color: yellow") {
+                        text "superLongTokenName"
+                        insert preview {
+                            text "yellllowwwwwwwwwodddddooooooow"
+                        }
+                        insert file {
+                            text "theme.pc"
+                        }
+                    }
+                }
+                SuggestionMenuItem {
+                    TokenMenuContent(style: "--color: #F60") {
+                        text "something"
+                        insert file {
+                            text "theme.pc"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+component TextInputAutoSuggest {
+    render SuggestionContainer {
+        insert input {
+            TextInput(placeholder: "10px", value: "10px")
+        }
+        insert menu {
+            SuggestionMenu {
+                SuggestionMenuSection {
+                    text "Convert"
+                }
+                SuggestionMenuItem {
+                    text "12rem"
+                }
+                SuggestionMenuItem(class: "preselected") {
+                    text "0.7em"
+                }
+                SuggestionMenuItem {
+                    text "0.7em"
+                }
+                SuggestionMenuItem(class: "selected") {
+                    text "0.7em"
+                }
+                SuggestionMenuItem {
+                    text "0.7em"
+                }
+                SuggestionMenuSection {
+                    text "Tokens"
+                }
+                SuggestionMenuItem {
+                    TokenMenuContent(style: "--color: orange") {
+                        text "orange05"
+                        insert preview {
+                            text "#F60"
+                        }
+                        insert file {
+                            text "theme.pc"
+                        }
+                    }
+                }
+                SuggestionMenuItem {
+                    TokenMenuContent(style: "--color: yellow") {
+                        text "orange04"
+                        insert preview {
+                            text "yellow"
+                        }
+                        insert file {
+                            text "theme.pc"
+                        }
+                    }
+                }
+                SuggestionMenuItem {
+                    TokenMenuContent(style: "--color: #F60") {
+                        text "something"
+                        insert file {
+                            text "theme.pc"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: -190, y: 10, width: 915, height: 761)
+*/
+
+div {
+    style extends theme.fontDefault {
+        padding: 30px
+        background: rgb(20, 20, 20)
+        width: 915px
+        height: 761px
+        position: static
+        display: flex
+        gap: var(theme.space04)
+        align-items: flex-start
+    }
+    ComponentPreview {
+        insert title {
+            text "Select"
+        }
+        SelectPreview
+    }
+    ComponentPreview {
+        insert title {
+            text "Text"
+        }
+        TextInputAutoSuggest
+    }
+}
+
+/**
+ * @bounds(x: 939, y: 57, width: 376, height: 276)
+*/
+
+div {
+    style {
+        position: relative
+        padding: var(theme.space05)
+    }
+    div {
+        style {
+            background: rgba(0, 0, 0, 0.1)
+            position: static
+            left: 71px
+            top: 41px
+            width: 100%
+            height: 130px
+        }
+    }
+}
+

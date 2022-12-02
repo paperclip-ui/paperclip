@@ -5,17 +5,7 @@ export const useHotkeys = (
   handlers: Record<string, (event: KeyboardEvent) => void>,
   ref: MutableRefObject<HTMLElement>
 ) => {
-  const [keysDown, setKeysDown] = useState<string[]>([]);
-
-  const handleKeyDown = (event: KeyboardEvent, keysDown: string[]) => {
-    const sortedKeysDown = [...keysDown].sort();
-    for (const combo in handlers) {
-      const comboParts = combo.toLowerCase().split("+").sort();
-      if (isEqual(sortedKeysDown, comboParts)) {
-        handlers[combo](event);
-      }
-    }
-  };
+  const handleKeyDown = (event: KeyboardEvent, keysDown: string[]) => {};
 
   useEffect(() => {
     if (!ref.current) {
@@ -23,25 +13,36 @@ export const useHotkeys = (
     }
 
     const onKeyDown = (event: KeyboardEvent) => {
-      setKeysDown((keysDown) => {
-        const newKeysDown = [...keysDown, event.key.toLowerCase()];
-        handleKeyDown(event, newKeysDown);
-        return newKeysDown;
-      });
-    };
+      const keysDown = [event.key.toLowerCase()];
 
-    const onKeyUp = (event: KeyboardEvent) => {
-      setKeysDown((keysDown) => {
-        return without(keysDown, event.key.toLowerCase());
-      });
+      if (event.shiftKey) {
+        keysDown.push("shift");
+      }
+      if (event.metaKey) {
+        keysDown.push("meta");
+      }
+      if (event.altKey) {
+        keysDown.push("alt");
+      }
+      if (event.ctrlKey) {
+        keysDown.push("ctrl");
+      }
+
+      const sortedKeysDown = [...keysDown].sort();
+
+      for (const combo in handlers) {
+        const comboParts = combo.toLowerCase().split("+").sort();
+        if (isEqual(sortedKeysDown, comboParts)) {
+          event.preventDefault();
+          handlers[combo](event);
+        }
+      }
     };
 
     ref.current.addEventListener("keydown", onKeyDown);
-    ref.current.addEventListener("keyup", onKeyUp);
 
     return () => {
       ref.current.removeEventListener("keydown", onKeyDown);
-      ref.current.removeEventListener("keyup", onKeyUp);
     };
   }, [ref.current]);
   return { ref };

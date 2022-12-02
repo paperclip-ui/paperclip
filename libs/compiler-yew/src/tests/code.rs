@@ -1,8 +1,8 @@
 use crate::compile_code;
 use futures::executor::block_on;
 use paperclip_common::str_utils::strip_extra_ws;
-use paperclip_proto::ast::graph_ext::{Graph};
-use paperclip_proto_ext::graph::{test_utils, load::LoadableGraph};
+use paperclip_proto::ast::graph_ext::Graph;
+use paperclip_proto_ext::graph::{load::LoadableGraph, test_utils};
 use std::collections::HashMap;
 
 // TODO: insert test

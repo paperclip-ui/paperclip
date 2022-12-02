@@ -9,6 +9,7 @@ component NodeIcon {
     render div
 }
 
+
 public component Artboard {
     render div(style: style) {
         div {
@@ -112,7 +113,8 @@ Editor {
     EditorPanels panels {
         leftSidebar.LeftSidebarPreview leftSidebar
         centerPanels.Preview centerPanels
-        rightSidebar.RightSidebar
+        rightSidebar.Preview
     }
 }
+
 

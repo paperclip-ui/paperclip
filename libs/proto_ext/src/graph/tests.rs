@@ -1,7 +1,7 @@
-use super::test_utils::MockFS;
-use paperclip_proto::ast::graph_ext::Graph;
 use super::load::LoadableGraph;
+use super::test_utils::MockFS;
 use futures::executor::block_on;
+use paperclip_proto::ast::graph_ext::Graph;
 use std::collections::HashMap;
 
 #[test]

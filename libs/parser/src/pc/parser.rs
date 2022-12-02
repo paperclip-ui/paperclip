@@ -3,9 +3,9 @@ use crate::base::ast as base_ast;
 use crate::core::errors as err;
 use crate::core::parser_context::{create_initial_context, Context};
 use crate::core::string_scanner::StringScanner;
-use paperclip_proto::ast::pc as ast;
-use paperclip_proto::ast::docco as docco_ast;
 use paperclip_proto::ast::css as css_ast;
+use paperclip_proto::ast::docco as docco_ast;
+use paperclip_proto::ast::pc as ast;
 
 use crate::css::parser::{
     parse_style_declaration_with_string_scanner, parse_style_declarations_with_string_scanner,
@@ -182,13 +182,11 @@ fn parse_trigger_body_item(
 }
 
 fn parse_docco(context: &mut PCContext) -> Result<docco_ast::Comment, err::ParserError> {
-    context.scanner.unshift(3); // rewind /**
     let ret = parse_doc_comment(
         &mut context.scanner,
         &mut context.id_generator,
         &context.id_seed,
     );
-    context.scanner.unshift(1); // rewind /
     context.next_token()?;
     ret
 }

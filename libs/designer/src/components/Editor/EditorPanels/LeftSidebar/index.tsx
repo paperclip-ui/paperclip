@@ -18,7 +18,7 @@ import {
   Slot,
   TextNode,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
-import { ast } from "@paperclip-ui/proto/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
 import cx from "classnames";
 
@@ -106,7 +106,6 @@ const NodeLeaf = memo(({ expr: node, depth, instanceOf }: LeafProps<Node>) => {
       <InsertLeaf expr={node.insert} depth={depth} instanceOf={instanceOf} />
     );
   }
-  console.log("NONE", node);
   return null;
 });
 
@@ -175,7 +174,7 @@ const InstanceLeaf = ({
       {() => {
         return (
           <>
-            {shadowVisible && (
+            {shadowVisible && render && (
               <NodeLeaf
                 expr={render.node}
                 depth={depth + 1}
@@ -246,7 +245,17 @@ const SlotLeaf = memo(({ expr: slot, depth, instanceOf }: LeafProps<Slot>) => {
       text={slot.name}
       depth={depth}
       instanceOf={instanceOf}
-    />
+    >
+      {() =>
+        slot.body.map((child) => (
+          <NodeLeaf
+            key={ast.getInnerExpression(child).id}
+            expr={child}
+            depth={depth + 1}
+          />
+        ))
+      }
+    </Leaf>
   );
 });
 
@@ -264,6 +273,7 @@ const InsertLeaf = memo(
           <>
             {insert.body.map((child) => (
               <NodeLeaf
+                key={ast.getInnerExpression(child).id}
                 expr={child}
                 depth={depth + 1}
                 instanceOf={instanceOf}

@@ -8,12 +8,15 @@ exclude = []
 [lib]
 name = "paperclip_parser"
 
+[features]
+local = ["paperclip_common/local"]
+
 [dependencies]
 serde = { version = "1.0.143", features = ["derive", "rc"] }
 anyhow = "1.0.61"
-paperclip_proto = { path = "../proto" }
+paperclip_proto = { path = "../proto"}
 crc = "1.8.1"
-paperclip_common = { path = "../rs_common" }
+paperclip_common = { path = "../rs_common", features = []  }
 futures = "0.3.21"
 
 [dev-dependencies]

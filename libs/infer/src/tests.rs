@@ -1,6 +1,6 @@
 use futures::executor::block_on;
 use paperclip_proto::ast::graph_ext as graph;
-use paperclip_proto_ext::graph::{test_utils, load::LoadableGraph};
+use paperclip_proto_ext::graph::{load::LoadableGraph, test_utils};
 use std::collections::HashMap;
 
 use crate::infer::Inferencer;
@@ -276,8 +276,6 @@ add_case! {
     )
   ])
 }
-
-
 
 add_case! {
   can_infer_slot_in_insert,

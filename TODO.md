@@ -31,13 +31,11 @@
       - ability to add / remove trigger (raw for now)
   - ability to select variant
 
-- instance style overrides (necessary for styling components)
 - right-click -> convert to component
+- slots
+- ability to insert element
 
-- Create color picker visually
-  - copy + paste layers
-  - right click -> convert to component
-- filter options based on unit type
+  - should wire up "insert instance" button - use Framer for inspiration
 
 - Popover
 

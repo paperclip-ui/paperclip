@@ -23,8 +23,13 @@
 - style variants
 
   - ability to define variants
-  - ability to define triggers - raw for now
-  -
+    - ability to add / remove
+    - ability to edit
+      - rename
+        - renaming should refactor tree that depends on this
+        - error if name exists
+      - ability to add / remove trigger (raw for now)
+  - ability to select variant
 
 - instance style overrides (necessary for styling components)
 - right-click -> convert to component

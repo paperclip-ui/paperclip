@@ -14,7 +14,9 @@ impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, SetFrameBounds> 
         if let Some(frame_index) = expr
             .body
             .iter()
-            .position(|expr| expr.get_inner().get_id() == &self.mutation.frame_id)
+            .position(|expr| {
+                expr.get_inner().get_id() == &self.mutation.frame_id || is_expr_render_node(&self.mutation.frame_id, expr)
+            })
         {
             let bounds = self.mutation.bounds.as_ref().unwrap();
 
@@ -61,4 +63,15 @@ impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, SetFrameBounds> 
 
         VisitorResult::Continue
     }
+}
+
+
+fn is_expr_render_node(id: &str, doc_body_item: &ast::pc::DocumentBodyItem) -> bool {
+    if let ast::pc::document_body_item::Inner::Component(component) = doc_body_item.get_inner() {
+        if let Some(render) = component.get_render_expr() {
+            return render.node.as_ref().expect("Node must exist").get_id() == id
+        }
+    }
+
+    false
 }

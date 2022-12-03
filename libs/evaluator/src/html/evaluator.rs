@@ -13,6 +13,7 @@ use paperclip_proto::virt::html::Bounds;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 
+
 type InsertsMap<'expr> = HashMap<String, (String, Vec<virt::Node>)>;
 
 pub async fn evaluate<F: FileResolver>(
@@ -53,7 +54,7 @@ fn evaluate_document<F: FileResolver>(
                 metadata = None;
             }
             ast::document_body_item::Inner::Element(element) => {
-                evaluate_element::<F>(element, &mut children, &metadata, context, true, false);
+                evaluate_element::<F>(element, &mut children, &metadata, context, false, false);
                 metadata = None;
             }
             ast::document_body_item::Inner::DocComment(doc_comment) => {
@@ -162,9 +163,9 @@ fn evaluate_component<F: FileResolver>(
         fragment,
         metadata,
         &mut context
-            .within_component(component)
-            .within_instance(&component.id),
+            .within_component(component),
         true,
+        false
     );
 }
 
@@ -173,7 +174,7 @@ fn evaluate_element<F: FileResolver>(
     fragment: &mut Vec<virt::Node>,
     metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
-    is_root: bool,
+    is_component_root: bool,
     is_instance: bool,
 ) {
     let reference = context
@@ -187,10 +188,10 @@ fn evaluate_element<F: FileResolver>(
             fragment,
             metadata,
             context,
-            is_root,
+            is_component_root,
         );
     } else {
-        evaluate_native_element(element, fragment, metadata, context, is_root, is_instance);
+        evaluate_native_element(element, fragment, metadata, context, is_component_root, is_instance);
     }
 }
 
@@ -227,7 +228,7 @@ fn evaluate_instance<F: FileResolver>(
     fragment: &mut Vec<virt::Node>,
     metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
-    is_root: bool,
+    is_component_root: bool,
 ) {
     let render = if let Some(render) = instance_of.expr.get_render_expr() {
         render
@@ -255,7 +256,8 @@ fn evaluate_instance<F: FileResolver>(
             .within_path(&instance_of.path)
             .within_component(&instance_of.expr)
             .set_render_scope(scope),
-        is_root,
+        is_component_root,
+        true
     );
 }
 
@@ -327,15 +329,16 @@ fn evaluate_render<F: FileResolver>(
     fragment: &mut Vec<virt::Node>,
     metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
-    is_root: bool,
+    is_component_root: bool,
+    is_instance: bool
 ) {
     evaluate_node(
         render.node.as_ref().expect("Node must exist"),
         fragment,
         metadata,
         context,
-        is_root,
-        true,
+        is_component_root,
+        is_instance,
     );
 }
 
@@ -362,7 +365,7 @@ fn evaluate_native_element<F: FileResolver>(
     fragment: &mut Vec<virt::Node>,
     metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
-    _is_root: bool,
+    is_component_root: bool,
     is_instance: bool,
 ) {
     let mut children = vec![];
@@ -381,7 +384,7 @@ fn evaluate_native_element<F: FileResolver>(
                 is_instance,
             )),
             source_instance_ids: context.instance_ids.clone(),
-            attributes: create_native_attributes(element, context, is_instance),
+            attributes: create_native_attributes(element, context, is_instance || is_component_root),
             children,
             metadata: metadata.clone(),
         })
@@ -394,12 +397,12 @@ fn evaluate_node<F: FileResolver>(
     fragment: &mut Vec<virt::Node>,
     metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
-    is_root: bool,
+    is_component_root: bool,
     is_instance: bool,
 ) {
     match child.get_inner() {
         ast::node::Inner::Element(child) => {
-            evaluate_element(child, fragment, metadata, context, is_root, is_instance)
+            evaluate_element(child, fragment, metadata, context, is_component_root, is_instance)
         }
         ast::node::Inner::Slot(slot) => {
             evaluate_slot(&slot, fragment, context);
@@ -412,7 +415,7 @@ fn evaluate_node<F: FileResolver>(
 fn create_native_attributes<F: FileResolver>(
     element: &ast::Element,
     context: &DocumentContext<F>,
-    is_instance: bool,
+    is_instance_or_root: bool,
 ) -> Vec<virt::Attribute> {
     let mut attributes = BTreeMap::new();
 
@@ -420,7 +423,7 @@ fn create_native_attributes<F: FileResolver>(
         evaluate_native_attribute(param, &mut attributes, context);
     }
 
-    resolve_element_attributes(element, &mut attributes, context, is_instance);
+    resolve_element_attributes(element, &mut attributes, context, is_instance_or_root);
 
     attributes.values().cloned().collect()
 }
@@ -445,14 +448,14 @@ fn resolve_element_attributes<F: FileResolver>(
     element: &ast::Element,
     attributes: &mut BTreeMap<String, virt::Attribute>,
     context: &DocumentContext<F>,
-    is_instance: bool,
+    is_instance_or_root: bool
 ) {
     // add styling hooks. If the element is root, then we need to add a special
     // ID so that child styles can be overridable
-    if element.is_stylable() || is_instance {
+    if element.is_stylable() || is_instance_or_root {
         let mut class_name =
             get_style_namespace(&element.name, &element.id, context.current_component);
-        if is_instance && !context.render_scopes.is_empty() {
+        if is_instance_or_root && !context.render_scopes.is_empty() {
             class_name = format!("{} {}", class_name, context.render_scopes.join(" "));
         }
 
@@ -492,8 +495,6 @@ fn create_instance_params<F: FileResolver>(
     for param in &element.parameters {
         evaluate_instance_param(param, &mut properties, context);
     }
-
-    // resolve_instance_params(element, &mut properties, context);
 
     core_virt::Obj {
         source_id: Some(element.id.to_string()),

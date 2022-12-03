@@ -1,7 +1,7 @@
 import "./theme.pc" as imp
 
 /**
- * @bounds(x: 70, y: -1223, width: 1024, height: 768)
+ * @bounds(x: 513, y: -909, width: 473, height: 225)
 */
 
 public component ContextMenu {

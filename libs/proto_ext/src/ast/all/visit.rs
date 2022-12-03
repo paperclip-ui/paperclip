@@ -91,6 +91,19 @@ visitable! {
     VisitorResult::Continue
   }),
   (pc::Component, visit_component, (self, visitor) {
+    visit_each!(&mut self.body, visitor)
+  }),
+  (pc::ComponentBodyItem, visit_component_body_item, (self, visitor) {
+    visit_enum!(self.get_inner_mut(), visitor,
+      pc::component_body_item::Inner::Render,
+      pc::component_body_item::Inner::Variant,
+      pc::component_body_item::Inner::Script
+    )
+  }),
+  (pc::Render, visit_render, (self, visitor) {
+    self.node.as_mut().expect("Node must exist").accept(visitor)
+  }),
+  (pc::Script, visit_script, (self, visitor) {
     VisitorResult::Continue
   }),
   (docco::Comment, visit_comment, (self, visitor) {

@@ -59,6 +59,7 @@ impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, SetStyleDeclarat
             return VisitorResult::Continue;
         }
 
+
         for (ns, (_old_ns, path, is_new)) in get_dep_imports(&self.mutation, &self.dependency) {
             if is_new {
                 let relative =
@@ -83,6 +84,7 @@ impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, SetStyleDeclarat
 
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<Vec<MutationResult>> {
         if expr.get_id() == &self.mutation.expression_id {
+            println!("Matches! {:?}", expr.get_id());
             let new_style: ast::pc::Style = parse_style(
                 &mutation_to_style(&self.mutation, &self.dependency),
                 &expr.checksum(),

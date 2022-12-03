@@ -429,7 +429,7 @@ case! {
 }
 
 case! {
-  uses_existing_import_when,
+  uses_existing_import_when_defining_var,
   [
     (
       "/entry.pc", r#"
@@ -467,3 +467,75 @@ case! {
     "#
   )]
 }
+
+
+case! {
+  can_define_styles_on_a_component,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render div
+        }
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
+    expression_id: "80f4925f-1".to_string(),
+    declarations: vec![
+      SetStyleDeclarationValue {
+        imports: HashMap::new(),
+        name: "color".to_string(),
+        value: "blue".to_string()
+      }
+    ]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+     component A {
+      render div {
+        style {
+          color: blue
+        }
+      }
+     }
+    "#
+  )]
+}
+
+
+
+case! {
+  can_set_frame_bounds_on_render_node,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render div
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetFrameBounds(SetFrameBounds {
+    frame_id: "80f4925f-1".to_string(),
+    bounds: Some(Bounds {
+      x: 100.0,
+      y: 200.0,
+      width: 300.0,
+      height: 400.0
+    })
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    /** 
+     * @bounds(x: 100, y: 200, width: 300, height: 400)
+     */
+    
+     component A {
+      render div
+     }
+    "#
+  )]
+}
+

@@ -1,7 +1,4 @@
-import {
-  ApplyMutationsResult,
-  FileResponse,
-} from "@paperclip-ui/proto/lib/generated/service/designer";
+import { FileResponse } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { pickBy } from "lodash";
 import {
   Node,
@@ -346,6 +343,5 @@ export const getGraph = (state: EditorState) => state.graph;
 
 export const getInsertMode = (state: EditorState) => state.insertMode;
 export const getAllPublicAtoms = (state: EditorState) => {
-  console.log(state.graph);
   return ast.getGraphAtoms(state.graph);
 };

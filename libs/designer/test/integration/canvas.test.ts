@@ -145,7 +145,7 @@ describe(__filename + "#", () => {
     let frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual(
-      '<div id="_4f0e8e93-4" class="_A-4f0e8e93-2"><span id="_4f0e8e93-4.4f0e8e93-1">hello</span></div><div id="_4f0e8e93-5" class="_A-4f0e8e93-2 _4f0e8e93-5"><span id="_4f0e8e93-5.4f0e8e93-1">hello</span></div><span id="_4f0e8e93-6">Hello</span>'
+      '<div id="_4f0e8e93-2" class="_A-4f0e8e93-2"><span id="_4f0e8e93-1">hello</span></div><div id="_4f0e8e93-5" class="_A-4f0e8e93-2 _4f0e8e93-5"><span id="_4f0e8e93-5.4f0e8e93-1">hello</span></div><span id="_4f0e8e93-6">Hello</span>'
     );
 
     expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
@@ -158,11 +158,11 @@ describe(__filename + "#", () => {
     frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual(
-      '<div id="_4f0e8e93-4" class="_A-4f0e8e93-2"><span id="_4f0e8e93-4.4f0e8e93-1">hello</span></div><span id="_4f0e8e93-6">Hello</span>'
+      '<div id="_4f0e8e93-2" class="_A-4f0e8e93-2"><span id="_4f0e8e93-1">hello</span></div><span id="_4f0e8e93-6">Hello</span>'
     );
 
     expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
-      "4f0e8e93-4",
+      "4f0e8e93-2",
     ]);
     designer.dispose();
   });

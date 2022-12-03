@@ -225,9 +225,7 @@ const createEventHandler = (actions: Actions) => {
 
       const mutation: Mutation = {
         setFrameBounds: {
-          frameId: node.sourceInstanceIds.length
-            ? node.sourceInstanceIds[0]
-            : node.sourceId,
+          frameId: node.sourceId,
           bounds: newBounds,
         },
       };

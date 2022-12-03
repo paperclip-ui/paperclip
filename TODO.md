@@ -15,8 +15,11 @@
   - ability to insert instances
 
 - 1+
+
   - ability to re-organize slots
   - style overrides
+
+- How does the designer incentivize the app structure?
 
 #### On-deck
 

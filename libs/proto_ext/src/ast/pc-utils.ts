@@ -19,6 +19,7 @@ import {
   Slot,
   Style,
   TextNode,
+  Variant,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
 
 const EMPTY_ARRAY = [];
@@ -187,6 +188,12 @@ export namespace ast {
         expr.component?.name === name
     );
   };
+
+  export const getComponentVariants = memoize((component: Component) => {
+    return component.body
+      .filter((expr) => expr.variant)
+      .map(getInnerExpression) as Variant[];
+  });
 
   export const computeElementStyle = memoize(
     (

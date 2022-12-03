@@ -343,7 +343,7 @@ const useLeaf = ({
 }) => {
   const virtId = [...(instanceOf || []), exprId].join(".");
   const open = useSelector(getExpandedVirtIds).includes(virtId);
-  const selected = useSelector(getSelectedNodeId).includes(virtId);
+  const selected = useSelector(getSelectedNodeId) === virtId;
 
   const dispatch = useDispatch();
   const onClick = useCallback(() => {

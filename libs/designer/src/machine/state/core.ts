@@ -209,6 +209,10 @@ const getAllFrameBounds = (designer: EditorState) => {
   return mergeBoxes(getCurrentPreviewFrameBoxes(designer));
 };
 export const getSelectedNodePath = (designer: EditorState) => {
+  const nodeId = getSelectedNodeId(designer);
+  if (!nodeId) {
+    return null;
+  }
   const node = virtHTML.getNodeById(
     getSelectedNodeId(designer),
     designer.currentDocument.paperclip.html

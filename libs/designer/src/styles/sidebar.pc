@@ -127,9 +127,12 @@ public component SidebarPopup {
       }
       slot header
 
-            div {
-                text "&times"
-            }
+      button(onClick: onCloseClick) {
+        style extends theme.reset {
+          cursor: pointer
+        }
+        text "×"
+      }
     }
     div {
       slot children

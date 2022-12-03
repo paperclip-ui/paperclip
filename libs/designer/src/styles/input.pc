@@ -129,7 +129,7 @@ public component TextInput {
         ":focus"
         ".active"
     }
-    render input root(value: value, placeholder: placeholder, defaultValue: defaultValue, onKeyDown: onKeyDown, onBlur: onBlur, onChange: onChange, onFocus: onFocus, onBlur: onBlur, class: class, onClick: onClick) {
+    render input root(value: value, placeholder: placeholder, autoFocus: autoFocus, defaultValue: defaultValue, onKeyDown: onKeyDown, onBlur: onBlur, onChange: onChange, onFocus: onFocus, onBlur: onBlur, class: class, onClick: onClick) {
         style extends theme.input {
             width: 100%
         }
@@ -523,13 +523,11 @@ div {
     }
 }
 
-
-
-
 public component AddListItemButton {
-    render button {
+    render button(onClick: onClick) {
         style extends theme.input {
-            color: var(theme.gray02)
+            color: rgb(115, 115, 115)
+            cursor: pointer
         }
         text "add..."
     }

@@ -5,8 +5,8 @@
 use yew::prelude::*;
 use yew::{function_component, Children, html, Properties, Callback, MouseEvent};
 
-#[path = "common.pc.rs"]
-mod common;
+#[path = "sidebar.pc.rs"]
+mod sidebar;
 
 #[path = "theme.pc.rs"]
 mod theme;
@@ -27,9 +27,9 @@ pub struct RightSidebarProps {
 #[function_component]
 pub fn RightSidebar(props: &RightSidebarProps) -> Html {
     html! {
-        <common::Sidebar>
+        <sidebar::Sidebar>
             { for props.children.iter() }
-        </common::Sidebar>
+        </sidebar::Sidebar>
     }
 }
 
@@ -41,10 +41,10 @@ pub struct VariantPopupProps {
 #[function_component]
 pub fn VariantPopup(props: &VariantPopupProps) -> Html {
     html! {
-        <common::SidebarPopup header={
+        <sidebar::SidebarPopup header={
             
 }>
-            <common::SidebarPanelContent>
+            <sidebar::SidebarPopupPanelContent>
                 <input::Fields>
                     <input::Field input={
                         <input::TextInput value={"something"}></input::TextInput>
@@ -72,9 +72,9 @@ pub fn VariantPopup(props: &VariantPopupProps) -> Html {
                     
                 </input::Fields>
                 
-            </common::SidebarPanelContent>
+            </sidebar::SidebarPopupPanelContent>
             
-        </common::SidebarPopup>
+        </sidebar::SidebarPopup>
     }
 }
 
@@ -89,15 +89,15 @@ pub fn Preview(props: &PreviewProps) -> Html {
         <RightSidebar>
             <stylesPanel::Preview></stylesPanel::Preview>
             
-            <common::SidebarPanel>
-                <common::SidebarSection>
-                    <common::SidebarPanelHeader>
+            <sidebar::SidebarPanel>
+                <sidebar::SidebarSection>
+                    <sidebar::SidebarPanelHeader>
                         
                         <div class={"_Preview-fa34a0f5-60"}></div>
                         
-                    </common::SidebarPanelHeader>
+                    </sidebar::SidebarPanelHeader>
                     
-                    <common::SidebarPanelContent>
+                    <sidebar::SidebarPopupPanelContent>
                         <input::Fields>
                             <input::Field input={
                                 <input::Select class={"error"} value={
@@ -125,12 +125,12 @@ pub fn Preview(props: &PreviewProps) -> Html {
                             
                         </input::Fields>
                         
-                    </common::SidebarPanelContent>
+                    </sidebar::SidebarPopupPanelContent>
                     
-                </common::SidebarSection>
+                </sidebar::SidebarSection>
                 
-                <common::SidebarSection>
-                    <common::SidebarPanelContent>
+                <sidebar::SidebarSection>
+                    <sidebar::SidebarPopupPanelContent>
                         <input::Fields>
                             <input::Field input={
                                 <input::MultiSelect>
@@ -157,11 +157,11 @@ pub fn Preview(props: &PreviewProps) -> Html {
                             
                         </input::Fields>
                         
-                    </common::SidebarPanelContent>
+                    </sidebar::SidebarPopupPanelContent>
                     
-                </common::SidebarSection>
+                </sidebar::SidebarSection>
                 
-            </common::SidebarPanel>
+            </sidebar::SidebarPanel>
             
         </RightSidebar>
     }

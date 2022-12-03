@@ -1,4 +1,4 @@
-import "./common.pc" as common
+import "./sidebar.pc" as sidebar
 import "./theme.pc" as theme
 
 public component Tabs {
@@ -29,8 +29,8 @@ public component Tab {
 }
 
 public component LeftSidebar {
-  render common.Sidebar { 
-    common.SidebarPanel {
+  render sidebar.Sidebar { 
+    sidebar.SidebarPanel {
       slot children
     }
      
@@ -38,7 +38,7 @@ public component LeftSidebar {
 }
 
 public component LeftSidebarHeader {
-  render common.SidebarPanelContent {
+  render sidebar.SidebarPanelContent {
     style {
       display: flex
       justify-content: space-between
@@ -411,8 +411,8 @@ public component LeftSidebarPreview {
           text "TodoList.pc"
         }
       }
-      common.SidebarSection {
-        common.SidebarPanelHeader {
+      sidebar.SidebarSection {
+        sidebar.SidebarPanelHeader {
           text "Layers"
           div {
             style extends theme.icon {
@@ -520,13 +520,13 @@ public component LeftSidebarPreview {
           }
         }
       }
-      common.SidebarSection {
+      sidebar.SidebarSection {
         override root {
           style {
             display: none
           }
         }
-        common.SidebarPanelHeader {
+        sidebar.SidebarPanelHeader {
           text "Design Tokens"
           div {
             style extends theme.icon {

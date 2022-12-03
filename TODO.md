@@ -22,7 +22,9 @@
 
 - style variants
 
-  - variant triggers
+  - ability to define variants
+  - ability to define triggers - raw for now
+  -
 
 - instance style overrides (necessary for styling components)
 - right-click -> convert to component

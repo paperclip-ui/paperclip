@@ -1,13 +1,13 @@
-import "./common.pc" as common
+import "./sidebar.pc" as sidebar
 import "./theme.pc" as theme
 import "./input.pc" as input
 
 component ColorPickerPopup {
-    render common.SidebarPopup {
+    render sidebar.SidebarPopup {
         insert header {
             text "Color"
         }
-        common.SidebarPanelContent {
+        sidebar.SidebarPanelContent {
             style {
                 display: flex
                 flex-direction: column
@@ -24,7 +24,7 @@ component ColorPickerPopup {
                 text "value"
             }
         }
-        common.SidebarPanelContent {
+        sidebar.SidebarPanelContent {
             style {
                 border-top: 1px solid rgb(21, 21, 21)
                 padding-top: var(theme.space04)
@@ -46,9 +46,9 @@ component ColorPickerPopup {
 }
 
 public component Preview {
-    render common.SidebarPanel {
-        common.SidebarSection {
-            common.SidebarPanelContent {
+    render sidebar.SidebarPanel {
+        sidebar.SidebarSection {
+            sidebar.SidebarPanelContent {
                 input.Field {
                     insert name {
                         text "Variant"
@@ -66,8 +66,8 @@ public component Preview {
                 }
             }
         }
-        common.SidebarSection {
-            common.SidebarPanelHeader {
+        sidebar.SidebarSection {
+            sidebar.SidebarPanelHeader {
                 text "Layout"
                 div {
                     style extends theme.icon {
@@ -75,7 +75,7 @@ public component Preview {
                     }
                 }
             }
-            common.SidebarPanelContent {
+            sidebar.SidebarPanelContent {
                 input.Fields {
                     input.Field {
                         insert name {
@@ -138,8 +138,8 @@ public component Preview {
                 }
             }
         }
-        common.SidebarSection {
-            common.SidebarPanelHeader {
+        sidebar.SidebarSection {
+            sidebar.SidebarPanelHeader {
                 text "Style"
                 div {
                     style extends theme.icon {
@@ -147,7 +147,7 @@ public component Preview {
                     }
                 }
             }
-            common.SidebarPanelContent {
+            sidebar.SidebarPanelContent {
                 input.Fields {
                     input.Field {
                         insert name {
@@ -235,8 +235,8 @@ public component Preview {
                 }
             }
         }
-        common.SidebarSection {
-            common.SidebarPanelContent {
+        sidebar.SidebarSection {
+            sidebar.SidebarPanelContent {
                 input.Fields {
                     input.Field {
                         insert name {
@@ -288,8 +288,8 @@ public component Preview {
             style {
                 display: none
             }
-            common.SidebarSection {
-                common.SidebarPanelHeader {
+            sidebar.SidebarSection {
+                sidebar.SidebarPanelHeader {
                     text "Atoms"
                     div {
                         style extends theme.icon {
@@ -298,7 +298,7 @@ public component Preview {
                         }
                     }
                 }
-                common.SidebarPanelContent {
+                sidebar.SidebarPanelContent {
                     input.Fields {
                         input.Field {
                             insert name {

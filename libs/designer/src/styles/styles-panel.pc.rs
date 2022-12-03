@@ -5,8 +5,8 @@
 use yew::prelude::*;
 use yew::{function_component, Children, html, Properties, Callback, MouseEvent};
 
-#[path = "common.pc.rs"]
-mod common;
+#[path = "sidebar.pc.rs"]
+mod sidebar;
 
 #[path = "theme.pc.rs"]
 mod theme;
@@ -22,10 +22,10 @@ struct ColorPickerPopupProps {
 #[function_component]
 fn ColorPickerPopup(props: &ColorPickerPopupProps) -> Html {
     html! {
-        <common::SidebarPopup header={
+        <sidebar::SidebarPopup header={
             
 }>
-            <common::SidebarPanelContent __scope_class_name={"_ColorPickerPopup-bdf7c0fc-25"}>
+            <sidebar::SidebarPanelContent __scope_class_name={"_ColorPickerPopup-bdf7c0fc-25"}>
                 <color-picker height={"130"} width={"220"}></color-picker>
                 
                 <div>
@@ -40,9 +40,9 @@ fn ColorPickerPopup(props: &ColorPickerPopupProps) -> Html {
                     
                 </div>
                 
-            </common::SidebarPanelContent>
+            </sidebar::SidebarPanelContent>
             
-            <common::SidebarPanelContent __scope_class_name={"_ColorPickerPopup-bdf7c0fc-52"}>
+            <sidebar::SidebarPanelContent __scope_class_name={"_ColorPickerPopup-bdf7c0fc-52"}>
                 <div>
                     
                 </div>
@@ -55,9 +55,9 @@ fn ColorPickerPopup(props: &ColorPickerPopupProps) -> Html {
                     
                 </div>
                 
-            </common::SidebarPanelContent>
+            </sidebar::SidebarPanelContent>
             
-        </common::SidebarPopup>
+        </sidebar::SidebarPopup>
     }
 }
 
@@ -69,9 +69,9 @@ pub struct PreviewProps {
 #[function_component]
 pub fn Preview(props: &PreviewProps) -> Html {
     html! {
-        <common::SidebarPanel>
-            <common::SidebarSection>
-                <common::SidebarPanelContent>
+        <sidebar::SidebarPanel>
+            <sidebar::SidebarSection>
+                <sidebar::SidebarPanelContent>
                     <input::Field input={
                         <input::MultiSelect>
                             <input::MultiSelectItem>
@@ -88,18 +88,18 @@ pub fn Preview(props: &PreviewProps) -> Html {
                         
 }></input::Field>
                     
-                </common::SidebarPanelContent>
+                </sidebar::SidebarPanelContent>
                 
-            </common::SidebarSection>
+            </sidebar::SidebarSection>
             
-            <common::SidebarSection>
-                <common::SidebarPanelHeader>
+            <sidebar::SidebarSection>
+                <sidebar::SidebarPanelHeader>
                     
                     <div class={"_Preview-bdf7c0fc-73"}></div>
                     
-                </common::SidebarPanelHeader>
+                </sidebar::SidebarPanelHeader>
                 
-                <common::SidebarPanelContent>
+                <sidebar::SidebarPanelContent>
                     <input::Fields>
                         <input::Field input={
                             <input::Select value={
@@ -153,18 +153,18 @@ pub fn Preview(props: &PreviewProps) -> Html {
                         
                     </input::Fields>
                     
-                </common::SidebarPanelContent>
+                </sidebar::SidebarPanelContent>
                 
-            </common::SidebarSection>
+            </sidebar::SidebarSection>
             
-            <common::SidebarSection>
-                <common::SidebarPanelHeader>
+            <sidebar::SidebarSection>
+                <sidebar::SidebarPanelHeader>
                     
                     <div class={"_Preview-bdf7c0fc-134"}></div>
                     
-                </common::SidebarPanelHeader>
+                </sidebar::SidebarPanelHeader>
                 
-                <common::SidebarPanelContent>
+                <sidebar::SidebarPanelContent>
                     <input::Fields>
                         <input::Field input={
                             <input::ColorInput>
@@ -248,12 +248,12 @@ pub fn Preview(props: &PreviewProps) -> Html {
                         
                     </input::Fields>
                     
-                </common::SidebarPanelContent>
+                </sidebar::SidebarPanelContent>
                 
-            </common::SidebarSection>
+            </sidebar::SidebarSection>
             
-            <common::SidebarSection>
-                <common::SidebarPanelContent>
+            <sidebar::SidebarSection>
+                <sidebar::SidebarPanelContent>
                     <input::Fields>
                         <input::Field input={
                             <input::Select value={
@@ -285,19 +285,19 @@ pub fn Preview(props: &PreviewProps) -> Html {
                         
                     </input::Fields>
                     
-                </common::SidebarPanelContent>
+                </sidebar::SidebarPanelContent>
                 
-            </common::SidebarSection>
+            </sidebar::SidebarSection>
             
             <div class={"_Preview-bdf7c0fc-298"}>
-                <common::SidebarSection>
-                    <common::SidebarPanelHeader>
+                <sidebar::SidebarSection>
+                    <sidebar::SidebarPanelHeader>
                         
                         <div class={"_Preview-bdf7c0fc-272"}></div>
                         
-                    </common::SidebarPanelHeader>
+                    </sidebar::SidebarPanelHeader>
                     
-                    <common::SidebarPanelContent>
+                    <sidebar::SidebarPanelContent>
                         <input::Fields>
                             <input::Field input={
                                 <input::ColorInput>
@@ -317,13 +317,13 @@ pub fn Preview(props: &PreviewProps) -> Html {
                             
                         </input::Fields>
                         
-                    </common::SidebarPanelContent>
+                    </sidebar::SidebarPanelContent>
                     
-                </common::SidebarSection>
+                </sidebar::SidebarSection>
                 
             </div>
             
-        </common::SidebarPanel>
+        </sidebar::SidebarPanel>
     }
 }
 

@@ -8,8 +8,8 @@ use yew::{function_component, Children, html, Properties, Callback, MouseEvent};
 #[path = "theme.pc.rs"]
 mod theme;
 
-#[path = "common.pc.rs"]
-mod common;
+#[path = "sidebar.pc.rs"]
+mod sidebar;
 
 #[derive(Properties, PartialEq)]
 pub struct MultiSelectItemProps {

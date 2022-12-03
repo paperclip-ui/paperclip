@@ -1,6 +1,5 @@
 import "./theme.pc" as theme
 import "./left-sidebar.pc" as leftSidebar
-import "./common.pc" as common
 import "./right-sidebar.pc" as rightSidebar
 import "./center-panels.pc" as centerPanels
 

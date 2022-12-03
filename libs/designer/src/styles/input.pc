@@ -1,5 +1,6 @@
 import "./theme.pc" as theme
-import "./common.pc" as common
+import "./sidebar.pc" as sidebar
+
 
 public component MultiSelectItem {
     render div {

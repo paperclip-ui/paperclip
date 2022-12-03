@@ -5,8 +5,8 @@
 use yew::prelude::*;
 use yew::{function_component, Children, html, Properties, Callback, MouseEvent};
 
-#[path = "common.pc.rs"]
-mod common;
+#[path = "sidebar.pc.rs"]
+mod sidebar;
 
 #[path = "theme.pc.rs"]
 mod theme;
@@ -62,12 +62,12 @@ pub struct LeftSidebarProps {
 #[function_component]
 pub fn LeftSidebar(props: &LeftSidebarProps) -> Html {
     html! {
-        <common::Sidebar>
-            <common::SidebarPanel>
+        <sidebar::Sidebar>
+            <sidebar::SidebarPanel>
                 { for props.children.iter() }
-            </common::SidebarPanel>
+            </sidebar::SidebarPanel>
             
-        </common::Sidebar>
+        </sidebar::Sidebar>
     }
 }
 
@@ -80,7 +80,7 @@ pub struct LeftSidebarHeaderProps {
 #[function_component]
 pub fn LeftSidebarHeader(props: &LeftSidebarHeaderProps) -> Html {
     html! {
-        <common::SidebarPanelContent __scope_class_name={if let Some(scope_class_name) = &props.__scope_class_name {
+        <sidebar::SidebarPanelContent __scope_class_name={if let Some(scope_class_name) = &props.__scope_class_name {
             format!("{} {}", "_LeftSidebarHeader-1e0c5ead-99", scope_class_name)
         } else {
             "_LeftSidebarHeader-1e0c5ead-99".to_string()
@@ -99,7 +99,7 @@ pub fn LeftSidebarHeader(props: &LeftSidebarHeaderProps) -> Html {
                 
             </div>
             
-        </common::SidebarPanelContent>
+        </sidebar::SidebarPanelContent>
     }
 }
 
@@ -355,12 +355,12 @@ pub fn LeftSidebarPreview(props: &LeftSidebarPreviewProps) -> Html {
                 
 }></LeftSidebarHeader>
             
-            <common::SidebarSection>
-                <common::SidebarPanelHeader>
+            <sidebar::SidebarSection>
+                <sidebar::SidebarPanelHeader>
                     
                     <div class={"_LeftSidebarPreview-1e0c5ead-620"}></div>
                     
-                </common::SidebarPanelHeader>
+                </sidebar::SidebarPanelHeader>
                 
                 <Layers>
                     <TreeNavigationItem>
@@ -450,18 +450,18 @@ pub fn LeftSidebarPreview(props: &LeftSidebarPreviewProps) -> Html {
                     
                 </Layers>
                 
-            </common::SidebarSection>
+            </sidebar::SidebarSection>
             
-            <common::SidebarSection>
-                <common::SidebarPanelHeader>
+            <sidebar::SidebarSection>
+                <sidebar::SidebarPanelHeader>
                     
                     <div class={"_LeftSidebarPreview-1e0c5ead-723"}></div>
                     
-                </common::SidebarPanelHeader>
+                </sidebar::SidebarPanelHeader>
                 
                 <Tokens></Tokens>
                 
-            </common::SidebarSection>
+            </sidebar::SidebarSection>
             
         </LeftSidebar>
     }

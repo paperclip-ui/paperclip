@@ -11,9 +11,6 @@ mod theme;
 #[path = "left-sidebar.pc.rs"]
 mod leftSidebar;
 
-#[path = "common.pc.rs"]
-mod common;
-
 #[path = "right-sidebar.pc.rs"]
 mod rightSidebar;
 
@@ -45,7 +42,7 @@ pub struct ArtboardProps {
 pub fn Artboard(props: &ArtboardProps) -> Html {
     html! {
         <div style={props.style.clone()}>
-            <div class={"_Artboard-cdba43a9-27"}>
+            <div class={"_Artboard-cdba43a9-26"}>
                 { for props.title.iter() }
             </div>
             
@@ -63,9 +60,9 @@ struct ArtboardPreviewProps {
 fn ArtboardPreview(props: &ArtboardPreviewProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_ArtboardPreview-cdba43a9-39", scope_class_name)
+            format!("{} {}", "_ArtboardPreview-cdba43a9-38", scope_class_name)
         } else {
-            "_ArtboardPreview-cdba43a9-39".to_string()
+            "_ArtboardPreview-cdba43a9-38".to_string()
         }}></div>
     }
 }
@@ -85,9 +82,9 @@ pub struct CanvasProps {
 pub fn Canvas(props: &CanvasProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Canvas-cdba43a9-68", scope_class_name)
+            format!("{} {}", "_Canvas-cdba43a9-67", scope_class_name)
         } else {
-            "_Canvas-cdba43a9-68".to_string()
+            "_Canvas-cdba43a9-67".to_string()
         }} onMouseMove={props.onMouseMove.clone()} onScroll={props.onScroll.clone()} onWheelCapture={props.onWheelCapture.clone()} style={props.style.clone()} tabIndex={"0"}>
             { for props.children.iter() }
         </div>
@@ -107,9 +104,9 @@ pub struct CanvasInnerProps {
 pub fn CanvasInner(props: &CanvasInnerProps) -> Html {
     html! {
         <div class={format!("{} {}", props.class.clone(), if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_CanvasInner-cdba43a9-82", scope_class_name)
+            format!("{} {}", "_CanvasInner-cdba43a9-81", scope_class_name)
         } else {
-            "_CanvasInner-cdba43a9-82".to_string()
+            "_CanvasInner-cdba43a9-81".to_string()
         })} style={props.style.clone()}>
             { for props.children.iter() }
         </div>
@@ -127,9 +124,9 @@ pub struct EditorPanelsProps {
 pub fn EditorPanels(props: &EditorPanelsProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_EditorPanels-cdba43a9-104", scope_class_name)
+            format!("{} {}", "_EditorPanels-cdba43a9-103", scope_class_name)
         } else {
-            "_EditorPanels-cdba43a9-104".to_string()
+            "_EditorPanels-cdba43a9-103".to_string()
         }}>
             { for props.children.iter() }
         </div>
@@ -145,9 +142,9 @@ struct FooterBarProps {
 fn FooterBar(props: &FooterBarProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_FooterBar-cdba43a9-113", scope_class_name)
+            format!("{} {}", "_FooterBar-cdba43a9-112", scope_class_name)
         } else {
-            "_FooterBar-cdba43a9-113".to_string()
+            "_FooterBar-cdba43a9-112".to_string()
         }}></div>
     }
 }
@@ -163,9 +160,9 @@ pub struct EditorProps {
 pub fn Editor(props: &EditorProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_Editor-cdba43a9-126", scope_class_name)
+            format!("{} {}", "_Editor-cdba43a9-125", scope_class_name)
         } else {
-            "_Editor-cdba43a9-126".to_string()
+            "_Editor-cdba43a9-125".to_string()
         }}>
             { for props.children.iter() }
         </div>

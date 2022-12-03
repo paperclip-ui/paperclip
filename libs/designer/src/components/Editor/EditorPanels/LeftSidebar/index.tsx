@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/left-sidebar.pc";
-import * as commonStyles from "@paperclip-ui/designer/src/styles/common.pc";
+import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { getHistoryState } from "@paperclip-ui/designer/src/machine/engine/history/state";
 import {
@@ -32,11 +32,11 @@ export const LeftSidebar = () => {
   return (
     <styles.LeftSidebar>
       <styles.LeftSidebarHeader title={title} />
-      <commonStyles.SidebarSection>
-        <commonStyles.SidebarPanelHeader>
+      <sidebarStyles.SidebarSection>
+        <sidebarStyles.SidebarPanelHeader>
           Layers
-        </commonStyles.SidebarPanelHeader>
-      </commonStyles.SidebarSection>
+        </sidebarStyles.SidebarPanelHeader>
+      </sidebarStyles.SidebarSection>
       <styles.Layers>
         {document.body.map((item) => (
           <DocumentBodyItemLeaf

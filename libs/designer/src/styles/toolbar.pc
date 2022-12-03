@@ -1,5 +1,5 @@
 import "./theme.pc" as theme
-import "./common.pc" as common
+import "./sidebar.pc" as sidebar
 
 
 public component ToolbarButton {
@@ -86,7 +86,7 @@ public component Toolbar {
       pointer-events: all
     }
     div {
-      style extends common.panel {
+      style extends sidebar.panel {
         display: inline-flex
         align-items: center
         padding: var(theme.space02)

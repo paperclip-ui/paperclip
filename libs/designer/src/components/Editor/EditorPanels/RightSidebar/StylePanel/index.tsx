@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
-import * as commonStyles from "@paperclip-ui/designer/src/styles/common.pc";
+import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { memoize, useDispatch, useSelector } from "@paperclip-ui/common";
 import {
@@ -320,7 +320,7 @@ export const StylePanel = () => {
   const { style } = useStylePanel();
 
   return (
-    <commonStyles.SidebarPanel>
+    <sidebarStyles.SidebarPanel>
       {Object.keys(GROUPS).map((name) => (
         <GroupSection
           key={name}
@@ -328,7 +328,7 @@ export const StylePanel = () => {
           name={name}
         />
       ))}
-    </commonStyles.SidebarPanel>
+    </sidebarStyles.SidebarPanel>
   );
 };
 
@@ -358,11 +358,11 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
   });
 
   return (
-    <commonStyles.SidebarSection>
-      <commonStyles.SidebarPanelHeader>
+    <sidebarStyles.SidebarSection>
+      <sidebarStyles.SidebarPanelHeader>
         {name.charAt(0).toUpperCase() + name.substring(1)}
-      </commonStyles.SidebarPanelHeader>
-      <commonStyles.SidebarPanelContent>
+      </sidebarStyles.SidebarPanelHeader>
+      <sidebarStyles.SidebarPanelContent>
         <inputStyles.Fields>
           {sortedStyle.map((decl) => {
             const options = getPropField(decl.name);
@@ -397,8 +397,8 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
             );
           })}
         </inputStyles.Fields>
-      </commonStyles.SidebarPanelContent>
-    </commonStyles.SidebarSection>
+      </sidebarStyles.SidebarPanelContent>
+    </sidebarStyles.SidebarSection>
   );
 };
 

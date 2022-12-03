@@ -1,4 +1,4 @@
-import "./common.pc" as common
+import "./sidebar.pc" as sidebar
 import "./theme.pc" as theme
 import "./input.pc" as input
 import "./styles-panel.pc" as stylesPanel
@@ -8,17 +8,17 @@ import "./styles-panel.pc" as stylesPanel
 */
 
 public component RightSidebar {
-    render common.Sidebar {
+    render sidebar.Sidebar {
         slot children
     }
 }
 
 public component VariantPopup {
-    render common.SidebarPopup {
+    render sidebar.SidebarPopup {
         insert header {
             text "header"
         }
-        common.SidebarPanelContent {
+        sidebar.SidebarPopupPanelContent {
             input.Fields {
                 input.Field {
                     insert name {
@@ -54,9 +54,9 @@ public component VariantPopup {
 public component Preview {
     render RightSidebar {
         stylesPanel.Preview
-        common.SidebarPanel {
-            common.SidebarSection {
-                common.SidebarPanelHeader {
+        sidebar.SidebarPanel {
+            sidebar.SidebarSection {
+                sidebar.SidebarPanelHeader {
                     text "Attributes"
                     div {
                         style extends theme.icon {
@@ -64,7 +64,7 @@ public component Preview {
                         }
                     }
                 }
-                common.SidebarPanelContent {
+                sidebar.SidebarPopupPanelContent {
                     input.Fields {
                         input.Field {
                             insert name {
@@ -101,8 +101,8 @@ public component Preview {
                     }
                 }
             }
-            common.SidebarSection {
-                common.SidebarPanelContent {
+            sidebar.SidebarSection {
+                sidebar.SidebarPopupPanelContent {
                     input.Fields {
                         input.Field {
                             insert name {

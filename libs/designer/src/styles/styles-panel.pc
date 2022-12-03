@@ -3,31 +3,12 @@ import "./theme.pc" as theme
 import "./input.pc" as input
 
 component ColorPickerPopup {
-    render div {
-        style extends common.panel {
-            position: fixed
-            flex-shrink: 0
-            transform: translate(calc(-100% - var(theme.space07)))
-            z-index: 1024
+    render common.SidebarPopup {
+        insert header {
+            text "Color"
         }
-        div header {
+        common.SidebarPanelContent {
             style {
-                padding: var(theme.space04)
-                display: flex
-                justify-content: space-between
-                font-weight: 600
-                padding-bottom: var(theme.space04)
-            }
-            div {
-                text "Color"
-            }
-            div {
-                text "&times"
-            }
-        }
-        div {
-            style {
-                padding: var(theme.space04)
                 display: flex
                 flex-direction: column
                 gap: var(theme.space04)
@@ -43,10 +24,10 @@ component ColorPickerPopup {
                 text "value"
             }
         }
-        div {
+        common.SidebarPanelContent {
             style {
-                border-top: 1px solid var(theme.borderColor)
-                padding: var(theme.space04)
+                border-top: 1px solid rgb(21, 21, 21)
+                padding-top: var(theme.space04)
                 display: flex
                 flex-direction: column
                 gap: var(theme.space03)
@@ -103,9 +84,9 @@ public component Preview {
                         insert input {
                             input.Select {
                                 insert value {
-                                  input.Token(class: "keyword") {
-                                      text "flex"
-                                  }
+                                    input.Token(class: "keyword") {
+                                        text "flex"
+                                    }
                                 }
                             }
                         }
@@ -132,10 +113,10 @@ public component Preview {
                         }
                         insert input {
                             input.Select {
-                                 insert value {
-                                  input.Token(class: "keyword") {
-                                      text "static"
-                                  }
+                                insert value {
+                                    input.Token(class: "keyword") {
+                                        text "static"
+                                    }
                                 }
                             }
                         }
@@ -146,11 +127,11 @@ public component Preview {
                         }
                         insert input {
                             input.Select {
-                              insert value {
-                                input.Token(class: "keyword") {
-                                    text "border-box"
+                                insert value {
+                                    input.Token(class: "keyword") {
+                                        text "border-box"
+                                    }
                                 }
-                              }
                             }
                         }
                     }

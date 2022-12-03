@@ -22,23 +22,10 @@ struct ColorPickerPopupProps {
 #[function_component]
 fn ColorPickerPopup(props: &ColorPickerPopupProps) -> Html {
     html! {
-        <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_ColorPickerPopup-bdf7c0fc-84", scope_class_name)
-        } else {
-            "_ColorPickerPopup-bdf7c0fc-84".to_string()
-        }}>
-            <div class={"_ColorPickerPopup-header-bdf7c0fc-36"}>
-                <div>
-                    
-                </div>
-                
-                <div>
-                    
-                </div>
-                
-            </div>
+        <common::SidebarPopup header={
             
-            <div class={"_ColorPickerPopup-bdf7c0fc-59"}>
+}>
+            <common::SidebarPanelContent __scope_class_name={"_ColorPickerPopup-bdf7c0fc-25"}>
                 <color-picker height={"130"} width={"220"}></color-picker>
                 
                 <div>
@@ -53,9 +40,9 @@ fn ColorPickerPopup(props: &ColorPickerPopupProps) -> Html {
                     
                 </div>
                 
-            </div>
+            </common::SidebarPanelContent>
             
-            <div class={"_ColorPickerPopup-bdf7c0fc-83"}>
+            <common::SidebarPanelContent __scope_class_name={"_ColorPickerPopup-bdf7c0fc-52"}>
                 <div>
                     
                 </div>
@@ -68,9 +55,9 @@ fn ColorPickerPopup(props: &ColorPickerPopupProps) -> Html {
                     
                 </div>
                 
-            </div>
+            </common::SidebarPanelContent>
             
-        </div>
+        </common::SidebarPopup>
     }
 }
 
@@ -108,7 +95,7 @@ pub fn Preview(props: &PreviewProps) -> Html {
             <common::SidebarSection>
                 <common::SidebarPanelHeader>
                     
-                    <div class={"_Preview-bdf7c0fc-104"}></div>
+                    <div class={"_Preview-bdf7c0fc-73"}></div>
                     
                 </common::SidebarPanelHeader>
                 
@@ -173,7 +160,7 @@ pub fn Preview(props: &PreviewProps) -> Html {
             <common::SidebarSection>
                 <common::SidebarPanelHeader>
                     
-                    <div class={"_Preview-bdf7c0fc-165"}></div>
+                    <div class={"_Preview-bdf7c0fc-134"}></div>
                     
                 </common::SidebarPanelHeader>
                 
@@ -274,8 +261,8 @@ pub fn Preview(props: &PreviewProps) -> Html {
 }></input::Select>
                             
 } name={
-                            <div class={"_Preview-bdf7c0fc-272"}>
-                                <div class={"_Preview-bdf7c0fc-270"}></div>
+                            <div class={"_Preview-bdf7c0fc-241"}>
+                                <div class={"_Preview-bdf7c0fc-239"}></div>
                                 
                                 
                             </div>
@@ -302,11 +289,11 @@ pub fn Preview(props: &PreviewProps) -> Html {
                 
             </common::SidebarSection>
             
-            <div class={"_Preview-bdf7c0fc-329"}>
+            <div class={"_Preview-bdf7c0fc-298"}>
                 <common::SidebarSection>
                     <common::SidebarPanelHeader>
                         
-                        <div class={"_Preview-bdf7c0fc-303"}></div>
+                        <div class={"_Preview-bdf7c0fc-272"}></div>
                         
                     </common::SidebarPanelHeader>
                     

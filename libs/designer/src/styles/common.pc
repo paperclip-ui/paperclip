@@ -106,3 +106,41 @@ public component SidebarHeaderButton {
     slot children
   }
 }
+
+public component SidebarPopup {
+  render div {
+    style extends panel {
+        position: fixed
+        flex-shrink: 0
+        transform: translate(calc(-100% - var(theme.space07)))
+        z-index: 1024
+        min-width: 200px
+    }
+    div {
+      style {
+          padding: var(theme.space04)
+          display: flex
+          justify-content: space-between
+          font-weight: 600
+          padding-bottom: var(theme.space04)
+      }
+      slot header
+
+            div {
+                text "&times"
+            }
+    }
+    div {
+      slot children
+    }
+  }
+}
+
+public component SidebarPanelContent {
+  render div {
+      style {
+        padding: var(theme.space04)
+      }
+      slot children
+  }
+}

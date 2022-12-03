@@ -34,6 +34,51 @@ pub fn RightSidebar(props: &RightSidebarProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
+pub struct VariantPopupProps {
+    pub __scope_class_name: Option<String>,
+}
+
+#[function_component]
+pub fn VariantPopup(props: &VariantPopupProps) -> Html {
+    html! {
+        <common::SidebarPopup header={
+            
+}>
+            <common::SidebarPanelContent>
+                <input::Fields>
+                    <input::Field input={
+                        <input::TextInput value={"something"}></input::TextInput>
+                        
+} name={
+                        
+}></input::Field>
+                    
+                    <input::Field input={
+                        <input::TextInput value={"'.alt'"}></input::TextInput>
+                        
+} name={
+                        
+}></input::Field>
+                    
+                    <input::Field input={
+                        <input::TextInput value={"':nth-child(2n)'"}></input::TextInput>
+                        
+}></input::Field>
+                    
+                    <input::Field input={
+                        <input::TextInput value={"add..."}></input::TextInput>
+                        
+}></input::Field>
+                    
+                </input::Fields>
+                
+            </common::SidebarPanelContent>
+            
+        </common::SidebarPopup>
+    }
+}
+
+#[derive(Properties, PartialEq)]
 pub struct PreviewProps {
     pub __scope_class_name: Option<String>,
 }
@@ -48,7 +93,7 @@ pub fn Preview(props: &PreviewProps) -> Html {
                 <common::SidebarSection>
                     <common::SidebarPanelHeader>
                         
-                        <div class={"_Preview-fa34a0f5-16"}></div>
+                        <div class={"_Preview-fa34a0f5-60"}></div>
                         
                     </common::SidebarPanelHeader>
                     
@@ -86,14 +131,31 @@ pub fn Preview(props: &PreviewProps) -> Html {
                 
                 <common::SidebarSection>
                     <common::SidebarPanelContent>
-                        <input::Field input={
-                            <input::MultiSelect>
+                        <input::Fields>
+                            <input::Field input={
+                                <input::MultiSelect>
+                                    
+                                </input::MultiSelect>
                                 
-                            </input::MultiSelect>
-                            
 } name={
-                            
+                                
 }></input::Field>
+                            
+                            <input::Field input={
+                                <input::TextInput value={"alt"}></input::TextInput>
+                                
+} name={
+                                
+                                <VariantPopup></VariantPopup>
+                                
+}></input::Field>
+                            
+                            <input::Field input={
+                                <input::TextInput value={"add..."}></input::TextInput>
+                                
+}></input::Field>
+                            
+                        </input::Fields>
                         
                     </common::SidebarPanelContent>
                     

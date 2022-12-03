@@ -152,3 +152,55 @@ pub fn SidebarHeaderButton(props: &SidebarHeaderButtonProps) -> Html {
     }
 }
 
+#[derive(Properties, PartialEq)]
+pub struct SidebarPopupProps {
+    pub __scope_class_name: Option<String>,
+    #[prop_or_default]
+    pub children: Children,
+    pub header: Children,
+}
+
+#[function_component]
+pub fn SidebarPopup(props: &SidebarPopupProps) -> Html {
+    html! {
+        <div class={if let Some(scope_class_name) = &props.__scope_class_name {
+            format!("{} {}", "_SidebarPopup-2993b912-174", scope_class_name)
+        } else {
+            "_SidebarPopup-2993b912-174".to_string()
+        }}>
+            <div class={"_SidebarPopup-2993b912-171"}>
+                { for props.header.iter() }
+                <div>
+                    
+                </div>
+                
+            </div>
+            
+            <div>
+                { for props.children.iter() }
+            </div>
+            
+        </div>
+    }
+}
+
+#[derive(Properties, PartialEq)]
+pub struct SidebarPanelContentProps {
+    pub __scope_class_name: Option<String>,
+    #[prop_or_default]
+    pub children: Children,
+}
+
+#[function_component]
+pub fn SidebarPanelContent(props: &SidebarPanelContentProps) -> Html {
+    html! {
+        <div class={if let Some(scope_class_name) = &props.__scope_class_name {
+            format!("{} {}", "_SidebarPanelContent-2993b912-182", scope_class_name)
+        } else {
+            "_SidebarPanelContent-2993b912-182".to_string()
+        }}>
+            { for props.children.iter() }
+        </div>
+    }
+}
+

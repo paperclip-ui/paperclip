@@ -3,9 +3,51 @@ import "./theme.pc" as theme
 import "./input.pc" as input
 import "./styles-panel.pc" as stylesPanel
 
+/**
+ * @bounds(x: 514, y: 24, width: 1024, height: 768)
+*/
+
 public component RightSidebar {
     render common.Sidebar {
         slot children
+    }
+}
+
+public component VariantPopup {
+    render common.SidebarPopup {
+        insert header {
+            text "header"
+        }
+        common.SidebarPanelContent {
+            input.Fields {
+                input.Field {
+                    insert name {
+                        text "name"
+                    }
+                    insert input {
+                        input.TextInput(value: "something")
+                    }
+                }
+                input.Field {
+                    insert name {
+                        text "triggers"
+                    }
+                    insert input {
+                        input.TextInput(value: "'.alt'")
+                    }
+                }
+                input.Field {
+                    insert input {
+                        input.TextInput(value: "':nth-child(2n)'")
+                    }
+                }
+                input.Field {
+                    insert input {
+                        input.TextInput(value: "add...")
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -61,13 +103,29 @@ public component Preview {
             }
             common.SidebarSection {
                 common.SidebarPanelContent {
-                    input.Field {
-                        insert name {
-                            text "Logic"
+                    input.Fields {
+                        input.Field {
+                            insert name {
+                                text "Logic"
+                            }
+                            insert input {
+                                input.MultiSelect {
+                                    text "./button.tsx"
+                                }
+                            }
                         }
-                        insert input {
-                            input.MultiSelect {
-                                text "./button.tsx"
+                        input.Field {
+                            insert name {
+                                text "Variants"
+                                VariantPopup
+                            }
+                            insert input {
+                                input.TextInput(value: "alt")
+                            }
+                        }
+                        input.Field {
+                            insert input {
+                                input.TextInput(value: "add...")
                             }
                         }
                     }
@@ -76,3 +134,4 @@ public component Preview {
         }
     }
 }
+

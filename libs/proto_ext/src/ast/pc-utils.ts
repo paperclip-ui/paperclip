@@ -81,9 +81,21 @@ export namespace ast {
     getNodeInner(item as DocumentBodyItem) ||
     getDocumentBodyInner(item as Node) ||
     getComponentBodyInner(item as ComponentBodyItem);
-  export const getChildren = (expr: InnerExpression) =>
-    ((expr as Document | InnerNode).body as Array<DocumentBodyItem | Node>) ||
-    EMPTY_ARRAY;
+  export const getChildren = memoize((expr: InnerExpression) => {
+    const body = (expr as Document | InnerNode | Component).body as Array<
+      DocumentBodyItem | ComponentBodyItem | Node
+    >;
+
+    if (body) {
+      return body;
+    }
+
+    if ((expr as Render).node) {
+      return [(expr as Render).node];
+    }
+
+    return EMPTY_ARRAY;
+  });
 
   export const getAncestorIds = memoize((id: string, graph: Graph) => {
     const ancestorIds: string[] = [];

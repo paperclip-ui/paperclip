@@ -35,9 +35,9 @@ pub struct ContextMenuItemProps {
 pub fn ContextMenuItem(props: &ContextMenuItemProps) -> Html {
     html! {
         <div class={if let Some(scope_class_name) = &props.__scope_class_name {
-            format!("{} {}", "_ContextMenuItem-ceb3acc-30", scope_class_name)
+            format!("{} {}", "_ContextMenuItem-ceb3acc-38", scope_class_name)
         } else {
-            "_ContextMenuItem-ceb3acc-30".to_string()
+            "_ContextMenuItem-ceb3acc-38".to_string()
         }}>
             { for props.children.iter() }
         </div>

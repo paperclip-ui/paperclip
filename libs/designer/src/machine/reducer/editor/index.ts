@@ -493,6 +493,9 @@ const selectNode = (
         designer.graph
       );
       newDesigner.expandedLayerVirtIds.push(virtNodeId, ...ancestorIds);
+      console.log(
+        JSON.stringify(ancestorIds, newDesigner.expandedLayerVirtIds)
+      );
 
       const expr = ast.getExprById(virtNodeId.split(".").pop(), designer.graph);
 

@@ -20,7 +20,12 @@ public component ContextMenuItem {
             display: rgb(0, 0, 255)
         }
         slot children {
-            text "Context menu item"
+            text "Context menu item" {
+                style {
+                    font-family: inter, sans-serif
+                    color: var(imp.blue00)
+                }
+            }
         }
     }
 }

@@ -53,6 +53,8 @@ public token fontSize05 1.75rem
 public token fontSize06 2rem
 public token fontSize07 2.25rem
 
+public token defaultFontFamily Inter, sans-serif
+
 public token roundedSM 0.125rem
 public token rounded 0.25rem
 public token roundedMD 0.375rem

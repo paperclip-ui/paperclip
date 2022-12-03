@@ -269,9 +269,9 @@ pub fn Preview(props: &PreviewProps) -> Html {
                 <common::SidebarPanelContent>
                     <input::Fields>
                         <input::Field input={
-                            <input::Select>
+                            <input::Select value={
                                 
-                            </input::Select>
+}></input::Select>
                             
 } name={
                             <div class={"_Preview-bdf7c0fc-272"}>
@@ -283,16 +283,16 @@ pub fn Preview(props: &PreviewProps) -> Html {
 }></input::Field>
                         
                         <input::Field input={
-                            <input::Select>
+                            <input::Select value={
                                 
-                            </input::Select>
+}></input::Select>
                             
 }></input::Field>
                         
                         <input::Field input={
-                            <input::Select>
+                            <input::Select value={
                                 
-                            </input::Select>
+}></input::Select>
                             
 }></input::Field>
                         
@@ -302,11 +302,11 @@ pub fn Preview(props: &PreviewProps) -> Html {
                 
             </common::SidebarSection>
             
-            <div class={"_Preview-bdf7c0fc-326"}>
+            <div class={"_Preview-bdf7c0fc-329"}>
                 <common::SidebarSection>
                     <common::SidebarPanelHeader>
                         
-                        <div class={"_Preview-bdf7c0fc-300"}></div>
+                        <div class={"_Preview-bdf7c0fc-303"}></div>
                         
                     </common::SidebarPanelHeader>
                     

@@ -27,24 +27,32 @@ public component Preview {
                         input.Field {
                             insert name {
                                 input.Select {
-                                    text "onClick"
+                                    insert value {
+                                        text "onClick"
+                                    }
                                 }
                             }
                             insert input {
                                 input.Select(class: "error") {
-                                    text "onButtonClick"
+                                    insert value {
+                                        text "onButtonClick"
+                                    }
                                 }
                             }
                         }
                         input.Field {
                             insert name {
                                 input.Select {
-                                    text "onClick"
+                                    insert value {
+                                        text "onClick"
+                                    }
                                 }
                             }
                             insert input {
                                 input.Select {
-                                    text "onButtonClick"
+                                    insert value {
+                                        text "onButtonClick"
+                                    }
                                 }
                             }
                         }

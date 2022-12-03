@@ -55,26 +55,26 @@ pub fn Preview(props: &PreviewProps) -> Html {
                     <common::SidebarPanelContent>
                         <input::Fields>
                             <input::Field input={
-                                <input::Select class={"error"}>
+                                <input::Select class={"error"} value={
                                     
-                                </input::Select>
+}></input::Select>
                                 
 } name={
-                                <input::Select>
+                                <input::Select value={
                                     
-                                </input::Select>
+}></input::Select>
                                 
 }></input::Field>
                             
                             <input::Field input={
-                                <input::Select>
+                                <input::Select value={
                                     
-                                </input::Select>
+}></input::Select>
                                 
 } name={
-                                <input::Select>
+                                <input::Select value={
                                     
-                                </input::Select>
+}></input::Select>
                                 
 }></input::Field>
                             

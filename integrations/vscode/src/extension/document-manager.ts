@@ -40,7 +40,7 @@ export class DocumentManager {
       return;
     }
     await vscode.window.showTextDocument(textDocument);
-    const editor = await vscode.window.activeTextEditor.edit((builder) => {
+    await vscode.window.activeTextEditor.edit((builder) => {
       builder.replace(
         new vscode.Range(
           textDocument.positionAt(0),

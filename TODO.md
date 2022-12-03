@@ -3,7 +3,26 @@
 - Try not to hand-write any new UI unless it's necessary for self-creation
 - It's all important so do what makes sense immediately
 
+- What's 0-1 look like?
+
+  - slots
+  - style panel
+    - mixins
+    - variants
+  - properties
+    - ability to define class
+  - ability to convert element to component
+  - ability to insert instances
+
+- 1+
+  - ability to re-organize slots
+  - style overrides
+
 #### On-deck
+
+- style variants
+
+  - variant triggers
 
 - instance style overrides (necessary for styling components)
 - right-click -> convert to component

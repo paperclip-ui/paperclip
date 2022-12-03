@@ -276,21 +276,27 @@ public component Preview {
                         }
                         insert input {
                             input.Select {
-                                text "input"
+                                insert value {
+                                    text "input"
+                                }
                             }
                         }
                     }
                     input.Field {
                         insert input {
                             input.Select {
-                                text "fontDefault"
+                                insert value {
+                                    text "fontDefault"
+                                }
                             }
                         }
                     }
                     input.Field {
                         insert input {
                             input.Select {
-                                text "add..."
+                                insert value {
+                                    text "add..."
+                                }
                             }
                         }
                     }

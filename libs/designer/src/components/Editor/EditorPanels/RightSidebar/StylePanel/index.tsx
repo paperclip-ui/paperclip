@@ -303,7 +303,7 @@ const cssSchema: schema.Map<css.Input> = [
     name: "background",
     sticky: true,
     list: true,
-    input: { name: "background-image", type: css.InputType.Asset },
+    input: { name: "background", type: css.InputType.Color },
   },
   defaultOptions,
 ];
@@ -496,55 +496,55 @@ const FieldInput = ({
       : [];
 
     // no enum options
-    if (tokens.length && type !== css.InputType.Enum) {
-      const availableTokens = tokens
-        .filter((token) => {
-          if (type === css.InputType.Unit) {
-            // https://www.w3schools.com/cssref/css_units.php
-            return /(cm|mm|in|px|pt|pc|em|ex|ch|rem|vw|vh|vmin|vmax|%)/.test(
-              token.cssValue
-            );
-          } else if (type === css.InputType.Color) {
-            // https://www.smashingmagazine.com/2021/11/guide-modern-css-colors/
-            return /(rgba?|hsla?|hwb|lab|lch|color|color-mix)\(/.test(
-              token.cssValue
-            );
-          } else if (type === css.InputType.Asset) {
-            return /url/.test(token.cssValue);
-          }
-        })
-        .map((token) => {
-          const value = {
-            value: `var($1.${token.atom.name})`,
-            imports: {
-              $1: token.dependency.path,
-            },
-          };
 
-          return (
-            <SuggestionMenuItem
-              key={token.atom.id}
-              value={token.value}
-              filterText={token.atom.name + token.cssValue + token.value}
-              onSelect={() => (internalValue.current = value)}
+    const availableTokens = tokens
+      .filter((token) => {
+        const isColor = isColorValue(token.cssValue);
+        const isUnit = isUnitValue(token.cssValue);
+
+        if (type === css.InputType.Unit) {
+          // https://www.w3schools.com/cssref/css_units.php
+          return isUnit;
+        } else if (type === css.InputType.Color) {
+          // https://www.smashingmagazine.com/2021/11/guide-modern-css-colors/
+          return isColor;
+        } else if (type === css.InputType.Enum) {
+          return !(isUnit || isColor);
+        } else if (type === css.InputType.Asset) {
+          return /url/.test(token.cssValue);
+        }
+      })
+      .map((token) => {
+        const value = {
+          value: `var($1.${token.atom.name})`,
+          imports: {
+            $1: token.dependency.path,
+          },
+        };
+
+        return (
+          <SuggestionMenuItem
+            key={token.atom.id}
+            value={token.value}
+            filterText={token.atom.name + token.cssValue + token.value}
+            onSelect={() => (internalValue.current = value)}
+          >
+            <inputStyles.TokenMenuContent
+              style={{ "--color": token.cssValue }}
+              preview={token.value}
+              file={token.dependency.path.split("/").pop()}
             >
-              <inputStyles.TokenMenuContent
-                style={{ "--color": token.cssValue }}
-                preview={token.value}
-                file={token.dependency.path.split("/").pop()}
-              >
-                {token.atom.name}
-              </inputStyles.TokenMenuContent>
-            </SuggestionMenuItem>
-          );
-        });
-
-      if (availableTokens.length) {
-        ops.push(
-          <SuggestionMenuSection>Tokens</SuggestionMenuSection>,
-          ...availableTokens
+              {token.atom.name}
+            </inputStyles.TokenMenuContent>
+          </SuggestionMenuItem>
         );
-      }
+      });
+
+    if (availableTokens.length) {
+      ops.push(
+        <SuggestionMenuSection>Tokens</SuggestionMenuSection>,
+        ...availableTokens
+      );
     }
 
     return ops;
@@ -563,6 +563,11 @@ const FieldInput = ({
     </SuggestionMenu>
   );
 };
+
+const isUnitValue = (value) =>
+  /(cm|mm|in|px|pt|pc|em|ex|ch|rem|vw|vh|vmin|vmax|%)/.test(value);
+const isColorValue = (value) =>
+  /(rgba?|hsla?|hwb|lab|lch|color|color-mix)\(/.test(value);
 
 const useStylePanel = () => {
   const style = useSelector(getSelectedExprStyles);

@@ -1,7 +1,7 @@
 import "./theme.pc" as imp
 
 /**
- * @bounds(x: 513, y: -909, width: 473, height: 225)
+ * @bounds(x: 513, y: -909, width: 473, height: 109)
 */
 
 public component ContextMenu {
@@ -10,22 +10,28 @@ public component ContextMenu {
             ContextMenuItem {
                 text "Something"
             }
+            ContextMenuItem {
+                text "Something"
+            }
         }
     }
 }
+
+/**
+ * @bounds(x: 202, y: -900, width: 263, height: 44)
+*/
 
 public component ContextMenuItem {
     render div {
         style {
             display: rgb(0, 0, 255)
+            padding: var(imp.space04)
+            font-family: var(imp.defaultFontFamily)
+            background: var(imp.gray03)
+            color: var(imp.gray0)
         }
         slot children {
-            text "Context menu item" {
-                style {
-                    font-family: inter, sans-serif
-                    color: var(imp.blue00)
-                }
-            }
+            text "Context menu item"
         }
     }
 }

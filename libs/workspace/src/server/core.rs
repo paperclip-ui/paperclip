@@ -28,7 +28,7 @@ pub struct StartOptions {
 
 enum HistoryStep {
     Forward,
-    Back
+    Back,
 }
 
 #[derive(Debug, Clone)]
@@ -203,7 +203,9 @@ fn store_history(state: &mut ServerState) {
     if state.history.changes.is_empty() {
         state.history.changes.push(state.graph.clone());
         for (key, dep) in &state.graph.dependencies {
-            state.doc_checksums.insert(key.to_string(), dep.document.as_ref().unwrap().checksum());
+            state
+                .doc_checksums
+                .insert(key.to_string(), dep.document.as_ref().unwrap().checksum());
         }
         return;
     }
@@ -238,14 +240,13 @@ fn load_history(state: &mut ServerState, step: HistoryStep) {
             if state.history.position >= state.history.changes.len() - 1 {
                 return;
             }
-        },
+        }
         HistoryStep::Back => {
             if state.history.position == 0 {
                 return;
             }
         }
     }
-
 
     // if it doesn't exist, then we have a bug
     let current = state
@@ -254,33 +255,39 @@ fn load_history(state: &mut ServerState, step: HistoryStep) {
         .get(state.history.position)
         .expect("History record must exist!");
 
-
-    let new_pos =  match step {
+    let new_pos = match step {
         HistoryStep::Forward => state.history.position + 1,
         HistoryStep::Back => state.history.position - 1,
     };
 
     match step {
         HistoryStep::Forward => {
-            let next = state.history.changes.get(new_pos).expect("Next history change doesn't exist!");
+            let next = state
+                .history
+                .changes
+                .get(new_pos)
+                .expect("Next history change doesn't exist!");
             for (path, dep) in &next.dependencies {
                 state
-                .graph
-                .dependencies
-                .insert(path.to_string(), dep.clone());
+                    .graph
+                    .dependencies
+                    .insert(path.to_string(), dep.clone());
             }
-        },
+        }
         HistoryStep::Back => {
-
             // revert change to most recent
             for (current_updated_path, _) in &current.dependencies {
                 for i in (0..new_pos + 1).rev() {
-                    let prev_change = state.history.changes.get(i).expect("Unable to fetch dep when looking back");
+                    let prev_change = state
+                        .history
+                        .changes
+                        .get(i)
+                        .expect("Unable to fetch dep when looking back");
                     if let Some(dep) = prev_change.dependencies.get(current_updated_path) {
                         state
-                        .graph
-                        .dependencies
-                        .insert(current_updated_path.to_string(), dep.clone());
+                            .graph
+                            .dependencies
+                            .insert(current_updated_path.to_string(), dep.clone());
                         break;
                     }
                 }
@@ -291,7 +298,6 @@ fn load_history(state: &mut ServerState, step: HistoryStep) {
     state.history.position = new_pos;
 
     update_changed_files(state);
-
 }
 
 fn update_changed_files(state: &mut ServerState) {
@@ -300,16 +306,12 @@ fn update_changed_files(state: &mut ServerState) {
 
         if !state.doc_checksums.get(path).eq(&Some(&checksum)) {
             println!("Updating {}", path);
-            let content = serialize(
-                dep
-                    .document
-                    .as_ref()
-                    .expect("Document must exist"),
-            ).as_bytes().to_vec();
+            let content = serialize(dep.document.as_ref().expect("Document must exist"))
+                .as_bytes()
+                .to_vec();
             state.doc_checksums.insert(path.to_string(), checksum);
             state.updated_files.push(path.to_string());
             state.file_cache.insert(path.to_string(), content);
-
         }
     }
 }

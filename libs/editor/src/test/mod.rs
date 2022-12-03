@@ -468,7 +468,6 @@ case! {
   )]
 }
 
-
 case! {
   can_define_styles_on_a_component,
   [
@@ -502,8 +501,6 @@ case! {
     "#
   )]
 }
-
-
 
 case! {
   can_set_frame_bounds_on_render_node,
@@ -539,3 +536,32 @@ case! {
   )]
 }
 
+case! {
+  can_add_styles_to_text_nodes,
+  [
+    (
+      "/entry.pc", r#"
+        text "hello"
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
+    expression_id: "80f4925f-1".to_string(),
+    declarations: vec![
+      SetStyleDeclarationValue {
+        imports: HashMap::new(),
+        name: "color".to_string(),
+        value: "blue".to_string()
+      }
+    ]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      text "hello" {
+        style {
+          color: blue
+        }
+      }
+    "#
+  )]
+}

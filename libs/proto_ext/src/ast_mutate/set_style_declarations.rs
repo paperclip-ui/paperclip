@@ -17,14 +17,14 @@ use crate::ast::{all::Visitor, all::VisitorResult};
 
 struct ContainsExpr {
     id: String,
-    contains: bool
+    contains: bool,
 }
 
 impl Visitor<()> for ContainsExpr {
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
         if expr.id == self.id {
             self.contains = true;
-            return VisitorResult::Return(())
+            return VisitorResult::Return(());
         }
         VisitorResult::Continue
     }
@@ -32,7 +32,10 @@ impl Visitor<()> for ContainsExpr {
 
 impl ContainsExpr {
     fn contains_expr(id: &str, doc: &mut ast::pc::Document) -> bool {
-        let mut imp = ContainsExpr { id: id.to_string(), contains: false };
+        let mut imp = ContainsExpr {
+            id: id.to_string(),
+            contains: false,
+        };
         doc.accept(&mut imp);
         imp.contains
     }
@@ -54,11 +57,9 @@ impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, SetStyleDeclarat
         &mut self,
         doc: &mut ast::pc::Document,
     ) -> VisitorResult<Vec<MutationResult>> {
-
         if !ContainsExpr::contains_expr(&self.mutation.expression_id, doc) {
             return VisitorResult::Continue;
         }
-
 
         for (ns, (_old_ns, path, is_new)) in get_dep_imports(&self.mutation, &self.dependency) {
             if is_new {
@@ -82,38 +83,66 @@ impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, SetStyleDeclarat
         VisitorResult::Continue
     }
 
+    fn visit_text_node(
+        &mut self,
+        expr: &mut ast::pc::TextNode,
+    ) -> VisitorResult<Vec<MutationResult>> {
+        if expr.get_id() != self.mutation.expression_id {
+            return VisitorResult::Continue;
+        }
+        let checksum = expr.checksum();
+        return add_child_style(
+            &mut expr.body,
+            &self.mutation.expression_id,
+            &checksum,
+            &self.mutation,
+            &self.dependency,
+        );
+    }
+
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<Vec<MutationResult>> {
         if expr.get_id() == &self.mutation.expression_id {
-            println!("Matches! {:?}", expr.get_id());
-            let new_style: ast::pc::Style = parse_style(
-                &mutation_to_style(&self.mutation, &self.dependency),
-                &expr.checksum(),
+            let checksum = expr.checksum();
+            return add_child_style(
+                &mut expr.body,
+                &self.mutation.expression_id,
+                &checksum,
+                &self.mutation,
+                &self.dependency,
             );
-
-            let mut found = false;
-
-            for child in &mut expr.body {
-                if let ast::pc::node::Inner::Style(style) = child.get_inner_mut() {
-                    update_style(style, &new_style);
-                    found = true;
-                }
-            }
-
-            if !found {
-                expr.body
-                    .insert(0, ast::pc::node::Inner::Style(new_style).get_outer());
-            }
-
-            return VisitorResult::Return(vec![mutation_result::Inner::ExpressionUpdated(
-                ExpressionUpdated {
-                    id: expr.id.to_string(),
-                },
-            )
-            .get_outer()]);
         }
 
         VisitorResult::Continue
     }
+}
+
+fn add_child_style(
+    children: &mut Vec<ast::pc::Node>,
+    parent_id: &str,
+    checksum: &str,
+    mutation: &SetStyleDeclarations,
+    dependency: &Dependency,
+) -> VisitorResult<Vec<MutationResult>> {
+    let new_style: ast::pc::Style = parse_style(&mutation_to_style(mutation, dependency), checksum);
+
+    let mut found = false;
+
+    for child in children.iter_mut() {
+        if let ast::pc::node::Inner::Style(style) = child.get_inner_mut() {
+            update_style(style, &new_style);
+            found = true;
+        }
+    }
+
+    if !found {
+        children.insert(0, ast::pc::node::Inner::Style(new_style).get_outer());
+    }
+    return VisitorResult::Return(vec![mutation_result::Inner::ExpressionUpdated(
+        ExpressionUpdated {
+            id: parent_id.to_string(),
+        },
+    )
+    .get_outer()]);
 }
 
 fn get_dep_imports(

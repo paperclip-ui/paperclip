@@ -177,7 +177,7 @@ impl Designer for DesignerService {
 
                     let updated_files = store.lock().unwrap().state.updated_files.clone();
                     let file_cache = store.lock().unwrap().state.file_cache.clone();
-                    
+
                     println!("HANDLE EVENT {:?}", updated_files);
                     for file_path in &updated_files {
                         if let Some(content) = file_cache.get(file_path) {

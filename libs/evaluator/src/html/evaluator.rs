@@ -13,7 +13,6 @@ use paperclip_proto::virt::html::Bounds;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 
-
 type InsertsMap<'expr> = HashMap<String, (String, Vec<virt::Node>)>;
 
 pub async fn evaluate<F: FileResolver>(
@@ -162,10 +161,9 @@ fn evaluate_component<F: FileResolver>(
         &render,
         fragment,
         metadata,
-        &mut context
-            .within_component(component),
+        &mut context.within_component(component),
         true,
-        false
+        false,
     );
 }
 
@@ -191,7 +189,14 @@ fn evaluate_element<F: FileResolver>(
             is_component_root,
         );
     } else {
-        evaluate_native_element(element, fragment, metadata, context, is_component_root, is_instance);
+        evaluate_native_element(
+            element,
+            fragment,
+            metadata,
+            context,
+            is_component_root,
+            is_instance,
+        );
     }
 }
 
@@ -257,7 +262,7 @@ fn evaluate_instance<F: FileResolver>(
             .within_component(&instance_of.expr)
             .set_render_scope(scope),
         is_component_root,
-        true
+        true,
     );
 }
 
@@ -330,7 +335,7 @@ fn evaluate_render<F: FileResolver>(
     metadata: &Option<virt::NodeMedata>,
     context: &mut DocumentContext<F>,
     is_component_root: bool,
-    is_instance: bool
+    is_instance: bool,
 ) {
     evaluate_node(
         render.node.as_ref().expect("Node must exist"),
@@ -384,7 +389,11 @@ fn evaluate_native_element<F: FileResolver>(
                 is_instance,
             )),
             source_instance_ids: context.instance_ids.clone(),
-            attributes: create_native_attributes(element, context, is_instance || is_component_root),
+            attributes: create_native_attributes(
+                element,
+                context,
+                is_instance || is_component_root,
+            ),
             children,
             metadata: metadata.clone(),
         })
@@ -401,9 +410,14 @@ fn evaluate_node<F: FileResolver>(
     is_instance: bool,
 ) {
     match child.get_inner() {
-        ast::node::Inner::Element(child) => {
-            evaluate_element(child, fragment, metadata, context, is_component_root, is_instance)
-        }
+        ast::node::Inner::Element(child) => evaluate_element(
+            child,
+            fragment,
+            metadata,
+            context,
+            is_component_root,
+            is_instance,
+        ),
         ast::node::Inner::Slot(slot) => {
             evaluate_slot(&slot, fragment, context);
         }
@@ -448,7 +462,7 @@ fn resolve_element_attributes<F: FileResolver>(
     element: &ast::Element,
     attributes: &mut BTreeMap<String, virt::Attribute>,
     context: &DocumentContext<F>,
-    is_instance_or_root: bool
+    is_instance_or_root: bool,
 ) {
     // add styling hooks. If the element is root, then we need to add a special
     // ID so that child styles can be overridable

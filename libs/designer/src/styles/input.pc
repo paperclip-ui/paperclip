@@ -537,10 +537,11 @@ public component ListItemInput {
     variant isRemovable trigger {
         ".removable"
     }
-    render div(class: class) {
+    render div(class: class, onClick: onClick) {
         style extends theme.input {
             display: flex
             justify-content: space-between
+            cursor: pointer
         }
         slot children {
             text "value"

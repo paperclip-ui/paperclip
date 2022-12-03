@@ -4,7 +4,7 @@ use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::pc;
 use paperclip_proto::ast_mutate::{
     mutation, AppendChild, Bounds, DeleteExpression, SetFrameBounds, SetStyleDeclarationValue,
-    SetStyleDeclarations,
+    SetStyleDeclarations, UpdateVariant, StringTrigger, update_variant_trigger
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use paperclip_proto_ext::graph::{load::LoadableGraph, test_utils};
@@ -565,3 +565,61 @@ case! {
     "#
   )]
 }
+
+case! {
+  can_add_a_variant,
+  [
+    (
+      "/entry.pc", r#"
+        component Test {
+          
+        }
+      "#
+    )
+  ],
+  mutation::Inner::UpdateVariant(UpdateVariant {
+    component_id: "80f4925f-1".to_string(),
+    variant_id: None,
+    name: "blah".to_string(),
+    triggers: vec![]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component Test {
+        variant blah
+      }
+    "#
+  )]
+}
+
+
+case! {
+  can_add_a_variant_with_string_triggers,
+  [
+    (
+      "/entry.pc", r#"
+        component Test {
+          
+        }
+      "#
+    )
+  ],
+  mutation::Inner::UpdateVariant(UpdateVariant {
+    component_id: "80f4925f-1".to_string(),
+    variant_id: None,
+    name: "blah".to_string(),
+    triggers: vec![update_variant_trigger::Inner::Str(StringTrigger {
+      value: ":nth-child(2n)".to_string()
+    }).get_outer()]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component Test {
+        variant blah trigger {
+          ":nth-child(2n)"
+        }
+      }
+    "#
+  )]
+}
+

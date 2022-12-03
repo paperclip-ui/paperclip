@@ -204,7 +204,7 @@ export namespace ast {
       // TODO
       const node = getExprById(exprId.split(".").pop(), graph);
       const map: Record<string, DeclarationValue> = {};
-      if (!node) {
+      if (!node || !node.body) {
         return map;
       }
       for (const item of node.body) {

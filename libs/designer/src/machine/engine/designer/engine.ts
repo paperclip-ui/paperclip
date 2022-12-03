@@ -13,7 +13,10 @@ import {
   getNodeInfoAtPoint,
   InsertMode,
 } from "../../state";
-import { Mutation } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
+import {
+  Mutation,
+  UpdateVariantTrigger,
+} from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
 import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
 import {
   Element as VirtElement,
@@ -262,6 +265,27 @@ const createEventHandler = (actions: Actions) => {
   const handleUndo = () => actions.undo();
   const handleRedo = () => actions.redo();
   const handleSave = () => actions.save();
+  const handleVariantEdited = ({
+    payload: { componentId, variantId, newName, triggers },
+  }: ReturnType<typeof editorEvents.variantEdited>) => {
+    actions.applyChanges([
+      {
+        updateVariant: {
+          componentId,
+          variantId,
+          name: newName,
+          triggers: triggers.map((trigger) => {
+            // TODO: look up ID
+            return {
+              str: {
+                value: trigger,
+              },
+            };
+          }),
+        },
+      },
+    ]);
+  };
 
   return (
     event: EditorEvent,
@@ -286,6 +310,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case editorEvents.redoKeyPressed.type: {
         return handleRedo();
+      }
+      case editorEvents.variantEdited.type: {
+        return handleVariantEdited(event);
       }
       case editorEvents.saveKeyComboPressed.type: {
         return handleSave();

@@ -28,6 +28,9 @@ message Mutation {
 
     // General
     DeleteExpression delete_expression = 11;
+
+    // Component
+    UpdateVariant update_variant = 12;
   }
 }
 
@@ -38,6 +41,29 @@ message MutationResult {
     ExpressionUpdated expression_updated = 2;
     ExpressionDeleted expression_deleted = 3;
   }
+}
+
+message UpdateVariant {
+  string component_id = 1;
+  optional string variant_id = 2;
+  string name = 3;
+  repeated UpdateVariantTrigger triggers = 4;
+}
+
+message UpdateVariantTrigger {
+  oneof inner {
+    StringTrigger str = 1;
+    TriggerReference reference = 2;
+  }
+}
+
+message StringTrigger {
+  string value = 1;
+}
+
+message TriggerReference {
+  string source_path = 1;
+  string name = 2;
 }
 
 message ExpressionInserted {

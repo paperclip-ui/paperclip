@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
@@ -25,14 +25,31 @@ export const EditVariantPopup = ({
     onSave({ name: event.currentTarget.value });
   };
 
+  const [showNewTriggerInput, setShowNewTriggerInput] = useState(false);
+
+  const onAddTriggerClick = () => {
+    setShowNewTriggerInput(true);
+  };
+
+  const triggerInputs = [
+    showNewTriggerInput ? (
+      <TextInput autoFocus placeholder="CSS Selector..." />
+    ) : null,
+    <inputStyles.AddListItemButton onClick={onAddTriggerClick} />,
+  ].filter(Boolean);
+
   return (
     <sidebarStyles.SidebarPopup header="Edit variant" onCloseClick={onClose}>
       <sidebarStyles.SidebarPopupPanelContent>
         <inputStyles.Fields>
           <inputStyles.Field
             name="name"
-            input={<TextInput autoFocus onEnter={onNameEnter} />}
+            input={<TextInput value={name} autoFocus onEnter={onNameEnter} />}
           />
+          <inputStyles.Field name="triggers" input={triggerInputs[0]} />
+          {triggerInputs.slice(1).map((input) => {
+            return <inputStyles.Field key={input.props.key} input={input} />;
+          })}
         </inputStyles.Fields>
       </sidebarStyles.SidebarPopupPanelContent>
     </sidebarStyles.SidebarPopup>

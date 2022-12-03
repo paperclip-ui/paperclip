@@ -23,7 +23,12 @@
 
 #### On-deck
 
-- style variants
+- style variants (nuanced)
+
+  - ability to delete
+  - ability to rename
+
+- style variants (overall)
 
   - ability to define variants
     - ability to add / remove

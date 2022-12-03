@@ -62,7 +62,8 @@ type Query = {
 export type EditorState = {
   readonly: boolean;
   scopedElementPath?: string;
-  selectedVirtNodeIds: string[];
+  selectedVirtNodeId: string;
+  insertedNodeIds: string[];
   graph: Graph;
   insertMode?: InsertMode;
   highlightNodePath?: string;
@@ -98,11 +99,12 @@ export const DEFAULT_STATE: EditorState = {
   expandedLayerVirtIds: [],
   computedStyles: {},
   resizerMoving: false,
+  insertedNodeIds: [],
   optionKeyDown: false,
   scopedElementPath: null,
   expandedNodePaths: [],
   centeredInitial: false,
-  selectedVirtNodeIds: [],
+  selectedVirtNodeId: null,
   canvas: {
     transform: { x: 0, y: 0, z: 1 },
     scrollPosition: { x: 0, y: 0 },
@@ -206,17 +208,15 @@ export const centerEditorCanvas = (
 const getAllFrameBounds = (designer: EditorState) => {
   return mergeBoxes(getCurrentPreviewFrameBoxes(designer));
 };
-export const getSelectedNodePaths = (designer: EditorState) => {
-  return getSelectedNodeIds(designer).map((id) => {
-    const node = virtHTML.getNodeById(
-      id,
-      designer.currentDocument.paperclip.html
-    );
-    return virtHTML.getNodePath(node, designer.currentDocument.paperclip.html);
-  });
+export const getSelectedNodePath = (designer: EditorState) => {
+  const node = virtHTML.getNodeById(
+    getSelectedNodeId(designer),
+    designer.currentDocument.paperclip.html
+  );
+  return virtHTML.getNodePath(node, designer.currentDocument.paperclip.html);
 };
-export const getSelectedNodeIds = (designer: EditorState) => {
-  return designer.selectedVirtNodeIds;
+export const getSelectedNodeId = (designer: EditorState) => {
+  return designer.selectedVirtNodeId;
 };
 export const getHighlightedNodePath = (designer: EditorState) =>
   designer.highlightNodePath;

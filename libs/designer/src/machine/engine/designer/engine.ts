@@ -172,24 +172,22 @@ const createEventHandler = (actions: Actions) => {
     state: EditorState,
     prevState: EditorState
   ) => {
-    for (const id of prevState.selectedVirtNodeIds) {
-      const node = virtHTML.getNodeById(
-        id,
-        prevState.currentDocument.paperclip.html
-      ) as VirtTextNode | VirtElement;
+    const node = virtHTML.getNodeById(
+      prevState.selectedVirtNodeId,
+      prevState.currentDocument.paperclip.html
+    ) as VirtTextNode | VirtElement;
 
-      if (!node) {
-        console.warn(`Node doesn't exist, skipping delete`);
-        continue;
-      }
-
-      const mutation: Mutation = {
-        deleteExpression: {
-          expressionId: node.sourceId,
-        },
-      };
-      actions.applyChanges([mutation]);
+    if (!node) {
+      console.warn(`Node doesn't exist, skipping delete`);
+      return;
     }
+
+    const mutation: Mutation = {
+      deleteExpression: {
+        expressionId: node.sourceId,
+      },
+    };
+    actions.applyChanges([mutation]);
   };
 
   const handleResizerStoppedMoving = (
@@ -198,7 +196,7 @@ const createEventHandler = (actions: Actions) => {
     prevState: EditorState
   ) => {
     const node = virtHTML.getNodeById(
-      prevState.selectedVirtNodeIds[0],
+      prevState.selectedVirtNodeId,
       prevState.currentDocument.paperclip.html
     ) as VirtTextNode | VirtElement;
 
@@ -213,7 +211,7 @@ const createEventHandler = (actions: Actions) => {
           setStyleDeclarations: {
             expressionId: node.sourceId,
             declarations: Object.entries(
-              state.styleOverrides[prevState.selectedVirtNodeIds[0]]
+              state.styleOverrides[prevState.selectedVirtNodeId]
             ).map(([name, value]) => {
               return { name, value: String(value) };
             }),
@@ -244,24 +242,20 @@ const createEventHandler = (actions: Actions) => {
     }));
 
     actions.applyChanges([
-      ...state.selectedVirtNodeIds.map((expressionId) => {
-        return {
-          setStyleDeclarations: {
-            expressionId,
-            declarations: style.filter((kv) => kv.value !== ""),
-          },
-        };
-      }),
-      ...state.selectedVirtNodeIds.map((expressionId) => {
-        return {
-          deleteStyleDeclarations: {
-            expressionId,
-            declarationNames: style
-              .filter((kv) => kv.value === "")
-              .map((kv) => kv.name),
-          },
-        };
-      }),
+      {
+        setStyleDeclarations: {
+          expressionId: state.selectedVirtNodeId,
+          declarations: style.filter((kv) => kv.value !== ""),
+        },
+      },
+      {
+        deleteStyleDeclarations: {
+          expressionId: state.selectedVirtNodeId,
+          declarationNames: style
+            .filter((kv) => kv.value === "")
+            .map((kv) => kv.name),
+        },
+      },
     ]);
   };
 

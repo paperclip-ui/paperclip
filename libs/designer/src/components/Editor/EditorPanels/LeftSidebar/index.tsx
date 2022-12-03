@@ -7,7 +7,7 @@ import {
   getCurrentDependency,
   getExpandedVirtIds,
   getGraph,
-  getSelectedNodeIds,
+  getSelectedNodeId,
 } from "@paperclip-ui/designer/src/machine/state";
 import {
   Component,
@@ -343,7 +343,7 @@ const useLeaf = ({
 }) => {
   const virtId = [...(instanceOf || []), exprId].join(".");
   const open = useSelector(getExpandedVirtIds).includes(virtId);
-  const selected = useSelector(getSelectedNodeIds).includes(virtId);
+  const selected = useSelector(getSelectedNodeId).includes(virtId);
 
   const dispatch = useDispatch();
   const onClick = useCallback(() => {

@@ -363,38 +363,44 @@ export const getSelectedExprStyles = (
 ): ComputedDeclaration[] => {
   const combinedStyles: Record<string, ComputedDeclaration> = {};
 
-  for (const virtId of state.selectedVirtNodeIds) {
-    const exprStyle = ast.computeElementStyle(virtId, state.graph);
-    const computedStyle = state.computedStyles[virtId];
+  const virtId = state.selectedVirtNodeId;
+  const exprStyle = ast.computeElementStyle(virtId, state.graph);
+  const computedStyle = state.computedStyles[virtId];
 
-    if (!computedStyle) {
-      continue;
-    }
+  if (!computedStyle) {
+    return Object.values(combinedStyles);
+  }
 
-    // not all props are computed (like gap), so we pull from constant that contains ALL CSS props
-    // instead.
-    for (const name in AVAILABLE_STYLES) {
-      const computedValue = computedStyle[name];
-      const explicitValue =
-        exprStyle[name] && ast.serializeDeclaration(exprStyle[name]);
+  // not all props are computed (like gap), so we pull from constant that contains ALL CSS props
+  // instead.
+  for (const name in AVAILABLE_STYLES) {
+    const computedValue = computedStyle[name];
+    const explicitValue =
+      exprStyle[name] && ast.serializeDeclaration(exprStyle[name]);
 
-      if (
-        combinedStyles[name] != null &&
-        combinedStyles[name].computedValue !== computedValue
-      ) {
-        combinedStyles[name].computedValue = MIXED_VALUE;
-      } else {
-        combinedStyles[name] = {
-          name,
-          isDefault: computedValue === AVAILABLE_STYLES[name],
-          isExplicitlyDefined: exprStyle[name] != null,
-          computedValue,
-          value: computedValue || explicitValue,
-          explicitValue,
-        };
-      }
+    if (
+      combinedStyles[name] != null &&
+      combinedStyles[name].computedValue !== computedValue
+    ) {
+      combinedStyles[name].computedValue = MIXED_VALUE;
+    } else {
+      combinedStyles[name] = {
+        name,
+        isDefault: computedValue === AVAILABLE_STYLES[name],
+        isExplicitlyDefined: exprStyle[name] != null,
+        computedValue,
+        value: computedValue || explicitValue,
+        explicitValue,
+      };
     }
   }
 
   return Object.values(combinedStyles);
+};
+
+export const getSelectedExpression = (state: EditorState) => {
+  return (
+    state.selectedVirtNodeId &&
+    ast.getExprByVirtId(state.selectedVirtNodeId, state.graph)
+  );
 };

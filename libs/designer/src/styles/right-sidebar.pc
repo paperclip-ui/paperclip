@@ -13,6 +13,10 @@ public component RightSidebar {
     }
 }
 
+/**
+ * @bounds(x: 0, y: 0, width: 1024, height: 1095)
+*/
+
 public component VariantPopup {
     render sidebar.SidebarPopup {
         insert header {
@@ -64,7 +68,7 @@ public component Preview {
                         }
                     }
                 }
-                sidebar.SidebarPopupPanelContent {
+                sidebar.SidebarPanelContent {
                     input.Fields {
                         input.Field {
                             insert name {
@@ -102,16 +106,14 @@ public component Preview {
                 }
             }
             sidebar.SidebarSection {
-                sidebar.SidebarPopupPanelContent {
+                sidebar.SidebarPanelContent {
                     input.Fields {
                         input.Field {
                             insert name {
                                 text "Logic"
                             }
                             insert input {
-                                input.MultiSelect {
-                                    text "./button.tsx"
-                                }
+                                input.TextInput(value: "./script.ts")
                             }
                         }
                         input.Field {
@@ -120,12 +122,14 @@ public component Preview {
                                 VariantPopup
                             }
                             insert input {
-                                input.TextInput(value: "alt")
+                                input.ListItemInput(class: "removable") {
+                                    text "isHover"
+                                }
                             }
                         }
                         input.Field {
                             insert input {
-                                input.TextInput(value: "add...")
+                                input.AddListItemButton
                             }
                         }
                     }
@@ -134,4 +138,3 @@ public component Preview {
         }
     }
 }
-

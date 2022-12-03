@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   flattenFrameBoxes,
   getEditorState,
-  getSelectedNodePaths,
+  getSelectedNodePath,
   InsertMode,
 } from "@paperclip-ui/designer/src/machine/state";
 import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
@@ -32,7 +32,7 @@ export const Tools = () => {
     readonly,
     hoveringBox,
     toolsLayerEnabled,
-    selectedNodePaths,
+    selectedNodePath,
     optionKeyDown,
   } = useTools();
 
@@ -102,7 +102,6 @@ const useTools = () => {
   const dispatch = useDispatch();
   const {
     canvas,
-    selectedVirtNodeIds,
     highlightNodePath,
     optionKeyDown,
     resizerMoving,
@@ -113,7 +112,7 @@ const useTools = () => {
   } = useSelector(getEditorState);
   const toolsLayerEnabled = !canvas.isExpanded;
 
-  const selectedNodePaths = useSelector(getSelectedNodePaths);
+  const selectedNodePath = useSelector(getSelectedNodePath);
 
   const getMousePoint = (event) => {
     const rect: ClientRect = (
@@ -162,9 +161,7 @@ const useTools = () => {
 
   const boxes = flattenFrameBoxes(frameBoxes);
 
-  const selectedBox =
-    selectedNodePaths.length &&
-    mergeBoxes(selectedNodePaths.map((path) => boxes[path]).filter(Boolean));
+  const selectedBox = boxes[selectedNodePath];
 
   const hoveringBox = highlightNodePath && boxes[highlightNodePath];
 
@@ -188,7 +185,7 @@ const useTools = () => {
     selectedBox,
     readonly,
     hoveringBox,
-    selectedNodePaths,
+    selectedNodePath,
     optionKeyDown,
   };
 };

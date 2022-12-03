@@ -2,6 +2,7 @@
 
 
 public token gray0 rgb(210, 210, 210)
+public token gray02 rgb(115, 115, 115)
 public token gray03 rgb(59, 59, 59)
 public token gray04 rgb(50, 50, 50)
 public token gray05 rgb(6, 5, 5)

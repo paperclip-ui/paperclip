@@ -262,20 +262,20 @@ const createEventHandler = (actions: Actions) => {
   const handleVariantEdited = ({
     payload: { componentId, variantId, newName, triggers },
   }: ReturnType<typeof editorEvents.variantEdited>) => {
+    console.log({
+      componentId,
+      variantId,
+      name: newName,
+      triggers,
+    });
+
     actions.applyChanges([
       {
         updateVariant: {
           componentId,
           variantId,
           name: newName,
-          triggers: triggers.map((trigger) => {
-            // TODO: look up ID
-            return {
-              str: {
-                value: trigger,
-              },
-            };
-          }),
+          triggers,
         },
       },
     ]);

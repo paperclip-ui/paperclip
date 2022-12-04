@@ -22,7 +22,10 @@ public component ContextMenu {
 */
 
 public component ContextMenuItem {
-    variant everyOther2
+    variant alt1 trigger {
+        ":nth-child(2n)"
+    }
+    variant alt
     render div {
         style {
             display: rgb(0, 0, 255)

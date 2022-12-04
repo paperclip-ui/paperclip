@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
-import { getSelectedExpression } from "@paperclip-ui/designer/src/machine/state/pc";
+import {
+  getActiveVariant,
+  getSelectedExpression,
+} from "@paperclip-ui/designer/src/machine/state/pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { EditVariantPopup, SaveOptions } from "./EditVariantPopup";
 import { Variant } from "@paperclip-ui/proto/lib/generated/ast/pc";
@@ -45,23 +48,23 @@ export const VariantsSection = () => {
           name={activeVariant?.name}
           onSave={onSaveCurrentVariant}
           onClose={onCloseEditVariantPopup}
+          triggers={activeVariant?.triggers}
         />
       )}
       <inputStyles.Field name="Variants" input={inputs[0]} />
       {...inputs
         .slice(1)
-        .map((input) => (
-          <inputStyles.Field key={input.props.key} input={input} />
-        ))}
+        .map((input, i) => <inputStyles.Field key={i} input={input} />)}
     </>
   );
 };
 
 const useVariantsSection = () => {
   const component = useSelector(getSelectedExpression);
+  const activeVariant = useSelector(getActiveVariant);
   const variants = ast.getComponentVariants(component);
-  const [activeVariant, setActiveVariant] = useState<Variant>();
   const [editVariantPopupOpen, setVariantPopupOpen] = useState(false);
+
   const dispatch = useDispatch();
   const onRemoveVariant = (variant: Variant) => {
     dispatch(
@@ -69,28 +72,33 @@ const useVariantsSection = () => {
     );
   };
   const onSelectVariant = (variant: Variant) => {
-    setActiveVariant(variant);
+    dispatch(editorEvents.editVariantClicked({ variantId: variant.id }));
     setVariantPopupOpen(true);
   };
+
+  useEffect(() => {
+    if (activeVariant) {
+      setVariantPopupOpen(true);
+    }
+  }, [activeVariant]);
 
   const onAddClick = () => {
     setVariantPopupOpen(true);
   };
 
   const onCloseEditVariantPopup = () => {
-    setVariantPopupOpen(false);
+    dispatch(editorEvents.editVariantPopupClosed());
   };
-  const onSaveCurrentVariant = ({ name }: SaveOptions) => {
+
+  const onSaveCurrentVariant = ({ name, triggers }: SaveOptions) => {
     dispatch(
       editorEvents.variantEdited({
         componentId: component.id,
         variantId: activeVariant?.id,
         newName: name,
-        triggers: [],
+        triggers,
       })
     );
-    setVariantPopupOpen(false);
-    setActiveVariant(null);
   };
 
   return {

@@ -1,4 +1,5 @@
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { Variant } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { EditorState } from "./core";
 
 export const MIXED_VALUE = "mixed";
@@ -405,5 +406,12 @@ export const getSelectedExpression = (state: EditorState) => {
   return (
     state.selectedVirtNodeId &&
     ast.getExprByVirtId(state.selectedVirtNodeId, state.graph)
+  );
+};
+
+export const getActiveVariant = (state: EditorState) => {
+  return (
+    state.activeVariantId &&
+    (ast.getExprByVirtId(state.activeVariantId, state.graph) as Variant)
   );
 };

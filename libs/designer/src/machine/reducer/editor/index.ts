@@ -41,9 +41,15 @@ export const editorReducer = (
         newState.currentDocument = event.payload;
 
         if (newState.insertedNodeIds.length) {
-          newState.selectedVirtNodeId = newState.insertedNodeIds.find((id) =>
-            virtHTML.getNodeById(id, event.payload.paperclip.html)
-          );
+          for (const id of newState.insertedNodeIds) {
+            if (virtHTML.getNodeById(id, event.payload.paperclip.html)) {
+              newState.selectedVirtNodeId = id;
+            }
+            const expr = ast.getExprById(id, state.graph);
+            if (ast.isVariant(expr, state.graph)) {
+              newState.activeVariantId = expr.id;
+            }
+          }
           newState.insertedNodeIds = [];
         }
       });
@@ -52,6 +58,14 @@ export const editorReducer = (
     case editorEvents.canvasResized.type:
       return produce(state, (newState) => {
         newState.canvas.size = event.payload;
+      });
+    case editorEvents.editVariantClicked.type:
+      return produce(state, (newState) => {
+        newState.activeVariantId = event.payload.variantId;
+      });
+    case editorEvents.editVariantPopupClosed.type:
+      return produce(state, (newState) => {
+        newState.activeVariantId = null;
       });
     case designerEngineEvents.changesApplied.type: {
       return produce(state, (newState) => {

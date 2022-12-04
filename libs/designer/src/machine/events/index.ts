@@ -3,6 +3,7 @@ import {
   ExtractEventFromCreators,
   identity,
 } from "@paperclip-ui/common";
+import { UpdateVariantTrigger } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
 import { DesignerEngineEvent } from "../engine/designer/events";
 import { HistoryEngineEvent } from "../engine/history/events";
 import { InsertMode } from "../state";
@@ -21,8 +22,10 @@ export const editorEvents = eventCreators(
       componentId: string;
       variantId?: string;
       newName: string;
-      triggers: string[];
+      triggers: UpdateVariantTrigger[];
     }>(),
+    editVariantClicked: identity<{ variantId: string }>(),
+    editVariantPopupClosed: null,
     removeVariantButtonClicked: identity<{ variantId: string }>(),
     insertModeButtonClick: identity<{ mode: InsertMode }>(),
     insertElementReleased: identity<Box>(),

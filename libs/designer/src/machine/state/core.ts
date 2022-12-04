@@ -63,6 +63,7 @@ export type EditorState = {
   readonly: boolean;
   scopedElementPath?: string;
   selectedVirtNodeId: string;
+  activeVariantId?: string;
   insertedNodeIds: string[];
   graph: Graph;
   insertMode?: InsertMode;

@@ -120,6 +120,15 @@ export namespace ast {
     return ancestorIds;
   });
 
+  export const getParent = memoize((id: string, graph: Graph) => {
+    const dep = getOwnerDependency(id, graph);
+    const exprsById = flattenDocument(dep.document);
+    const childParentMap = getChildParentMap(exprsById);
+    const parentId = childParentMap[id];
+
+    return parentId && getExprById(parentId, graph);
+  });
+
   export const getAncestorVirtIdsFromShadow = memoize(
     (id: string, graph: Graph) => {
       const instanceIds = id.split(".");
@@ -304,7 +313,19 @@ export namespace ast {
   export const isComponent = (expr: InnerExpression): expr is Component => {
     return (
       (expr as Component).name != null &&
+      // TODO: this is wrong.
       (expr as Component).body?.some((expr) => expr.render != null)
+    );
+  };
+
+  export const isVariant = (
+    expr: InnerExpression,
+    graph: Graph
+  ): expr is Variant => {
+    const parent = getParent(expr.id, graph);
+    console.log(parent);
+    return (parent as Component).body?.some(
+      (child) => child.variant?.id === expr.id
     );
   };
 
@@ -456,6 +477,9 @@ export namespace ast {
     if (expr.render) {
       return flattenRender(expr.render);
     }
+    if (expr.variant) {
+      return flattenVariant(expr.variant);
+    }
     return {};
   });
 
@@ -466,6 +490,12 @@ export namespace ast {
       },
       flattenNode(expr.node)
     );
+  });
+
+  export const flattenVariant = memoize((expr: Variant) => {
+    return Object.assign({
+      [expr.id]: expr,
+    });
   });
 
   export const flattenTextNode = memoize((expr: TextNode) => {

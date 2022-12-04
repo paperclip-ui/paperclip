@@ -722,7 +722,7 @@ case! {
     component_id: "80f4925f-1".to_string(),
     variant_id: None,
     name: "a".to_string(),
-    triggers: vec![update_variant_trigger::Inner::Boolean(true).get_outer()]
+    triggers: vec![update_variant_trigger::Inner::Bool(true).get_outer()]
   }).get_outer(),
   [(
     "/entry.pc", r#"

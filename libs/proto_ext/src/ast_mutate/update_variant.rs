@@ -1,6 +1,6 @@
 
 use paperclip_parser::{pc::parser::parse};
-use paperclip_proto::{ast_mutate::{UpdateVariant, MutationResult, update_variant_trigger, mutation_result, ExpressionUpdated}, ast::{all::Expression, pc::{ComponentBodyItem, Component, component_body_item}}};
+use paperclip_proto::{ast_mutate::{UpdateVariant, MutationResult, update_variant_trigger, mutation_result, ExpressionUpdated, ExpressionInserted}, ast::{all::Expression, pc::{ComponentBodyItem, Component, component_body_item}}};
 use convert_case::{Case, Casing};
 use regex::Regex;
 
@@ -34,7 +34,7 @@ impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, UpdateVariant> {
         update_variant_trigger::Inner::Str(value) => {        
           format!("\"{}\"", value)
         },
-        update_variant_trigger::Inner::Boolean(value) => {        
+        update_variant_trigger::Inner::Bool(value) => {        
           format!("{}", value)
         },
         _ => {
@@ -49,12 +49,16 @@ impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, UpdateVariant> {
     let new_variants = doc.get_components().get(0).unwrap().get_variants();
 
     let variant = new_variants.get(0).unwrap().clone().clone();
+    let variant_id = variant.id.to_string();
 
     expr.body.insert(0, paperclip_proto::ast::pc::component_body_item::Inner::Variant(variant).get_outer());
     
     return VisitorResult::Return(vec![
       mutation_result::Inner::ExpressionUpdated(ExpressionUpdated {
         id: self.mutation.component_id.to_string()
+      }).get_outer(),
+      mutation_result::Inner::ExpressionInserted(ExpressionInserted {
+        id: variant_id
       }).get_outer()
     ]);
   }

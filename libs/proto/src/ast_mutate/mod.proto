@@ -53,7 +53,7 @@ message UpdateVariant {
 message UpdateVariantTrigger {
   oneof inner {
     string str = 1;
-    bool boolean = 2;
+    bool bool = 2;
     TriggerReference reference = 3;
   }
 }

@@ -23,6 +23,7 @@ export const editorEvents = eventCreators(
       newName: string;
       triggers: string[];
     }>(),
+    removeVariantButtonClicked: identity<{ variantId: string }>(),
     insertModeButtonClick: identity<{ mode: InsertMode }>(),
     insertElementReleased: identity<Box>(),
     canvasMouseMoved: identity<Point>(),

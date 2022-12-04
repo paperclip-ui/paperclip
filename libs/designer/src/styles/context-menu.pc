@@ -22,9 +22,7 @@ public component ContextMenu {
 */
 
 public component ContextMenuItem {
-    variant everyOther
-    variant alt
-    variant fds
+    variant everyOther2
     render div {
         style {
             display: rgb(0, 0, 255)

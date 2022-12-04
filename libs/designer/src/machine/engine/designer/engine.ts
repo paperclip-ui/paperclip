@@ -184,13 +184,7 @@ const createEventHandler = (actions: Actions) => {
       console.warn(`Node doesn't exist, skipping delete`);
       return;
     }
-
-    const mutation: Mutation = {
-      deleteExpression: {
-        expressionId: node.sourceId,
-      },
-    };
-    actions.applyChanges([mutation]);
+    handleDeleteExpression(node.sourceId);
   };
 
   const handleResizerStoppedMoving = (
@@ -287,6 +281,16 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
+  const handleDeleteExpression = (expressionId: string) => {
+    actions.applyChanges([
+      {
+        deleteExpression: {
+          expressionId,
+        },
+      },
+    ]);
+  };
+
   return (
     event: EditorEvent,
     newState: EditorState,
@@ -310,6 +314,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case editorEvents.redoKeyPressed.type: {
         return handleRedo();
+      }
+      case editorEvents.removeVariantButtonClicked.type: {
+        return handleDeleteExpression(event.payload.variantId);
       }
       case editorEvents.variantEdited.type: {
         return handleVariantEdited(event);

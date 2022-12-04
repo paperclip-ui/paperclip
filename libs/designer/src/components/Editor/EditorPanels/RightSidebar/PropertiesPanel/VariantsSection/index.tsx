@@ -26,7 +26,10 @@ export const VariantsSection = () => {
           key={variant.id}
           onClick={() => onSelectVariant(variant)}
           class="removable"
-          onRemoveClick={() => onRemoveVariant(variant)}
+          onRemoveClick={(event: React.MouseEvent<any>) => {
+            event.stopPropagation();
+            onRemoveVariant(variant);
+          }}
         >
           {variant.name}
         </inputStyles.ListItemInput>
@@ -61,7 +64,9 @@ const useVariantsSection = () => {
   const [editVariantPopupOpen, setVariantPopupOpen] = useState(false);
   const dispatch = useDispatch();
   const onRemoveVariant = (variant: Variant) => {
-    // TODO
+    dispatch(
+      editorEvents.removeVariantButtonClicked({ variantId: variant.id })
+    );
   };
   const onSelectVariant = (variant: Variant) => {
     setActiveVariant(variant);

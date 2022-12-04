@@ -623,3 +623,90 @@ case! {
   )]
 }
 
+
+
+
+case! {
+  can_delete_a_variant,
+  [
+    (
+      "/entry.pc", r#"
+        component Test {
+          variant a
+        }
+      "#
+    )
+  ],
+  mutation::Inner::DeleteExpression(DeleteExpression {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component Test { }
+    "#
+  )]
+}
+
+
+
+case! {
+  variant_name_is_corrected_when_inserting,
+  [
+    (
+      "/entry.pc", r#"
+        component Test {
+          variant a
+        }
+      "#
+    )
+  ],
+  mutation::Inner::UpdateVariant(UpdateVariant {
+    component_id: "80f4925f-2".to_string(),
+    variant_id: None,
+    name: "12 abc d $ ! b c e e aadd".to_string(),
+    triggers: vec![update_variant_trigger::Inner::Str(StringTrigger {
+      value: ".div".to_string()
+    }).get_outer()]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component Test {
+        variant abcDBCEEAadd trigger {
+          ".div"
+        }
+        variant a
+      }
+    "#
+  )]
+}
+
+
+
+
+case! {
+  name_is_changed_if_duplicate,
+  [
+    (
+      "/entry.pc", r#"
+        component Test {
+          variant a
+        }
+      "#
+    )
+  ],
+  mutation::Inner::UpdateVariant(UpdateVariant {
+    component_id: "80f4925f-2".to_string(),
+    variant_id: None,
+    name: "a".to_string(),
+    triggers: vec![]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component Test {
+        variant a1
+        variant a
+      }
+    "#
+  )]
+}
+

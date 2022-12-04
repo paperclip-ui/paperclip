@@ -91,4 +91,19 @@ impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, DeleteExpression
             VisitorResult::Continue
         }
     }
+    fn visit_component(&mut self, expr: &mut ast::pc::Component) -> VisitorResult<Vec<MutationResult>> {
+        if matches!(
+            try_remove_child!(expr.body, &self.mutation.expression_id),
+            Some(_)
+        ) {
+            VisitorResult::Return(vec![mutation_result::Inner::ExpressionDeleted(
+                ExpressionDeleted {
+                    id: self.mutation.expression_id.to_string(),
+                },
+            )
+            .get_outer()])
+        } else {
+            VisitorResult::Continue
+        }
+    }
 }

@@ -29,7 +29,6 @@
     - ability to edit
       - rename
         - renaming should refactor tree that depends on this
-        - error if name exists
       - ability to add / remove trigger (raw for now)
   - ability to select variant
 

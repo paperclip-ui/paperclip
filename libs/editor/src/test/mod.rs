@@ -4,7 +4,7 @@ use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::pc;
 use paperclip_proto::ast_mutate::{
     mutation, AppendChild, Bounds, DeleteExpression, SetFrameBounds, SetStyleDeclarationValue,
-    SetStyleDeclarations, UpdateVariant, StringTrigger, update_variant_trigger
+    SetStyleDeclarations, UpdateVariant, update_variant_trigger
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use paperclip_proto_ext::graph::{load::LoadableGraph, test_utils};
@@ -608,9 +608,7 @@ case! {
     component_id: "80f4925f-1".to_string(),
     variant_id: None,
     name: "blah".to_string(),
-    triggers: vec![update_variant_trigger::Inner::Str(StringTrigger {
-      value: ":nth-child(2n)".to_string()
-    }).get_outer()]
+    triggers: vec![update_variant_trigger::Inner::Str(":nth-child(2n)".to_string()).get_outer()]
   }).get_outer(),
   [(
     "/entry.pc", r#"
@@ -664,9 +662,7 @@ case! {
     component_id: "80f4925f-2".to_string(),
     variant_id: None,
     name: "12 abc d $ ! b c e e aadd".to_string(),
-    triggers: vec![update_variant_trigger::Inner::Str(StringTrigger {
-      value: ".div".to_string()
-    }).get_outer()]
+    triggers: vec![update_variant_trigger::Inner::Str(".div".to_string()).get_outer()]
   }).get_outer(),
   [(
     "/entry.pc", r#"
@@ -705,6 +701,35 @@ case! {
       component Test {
         variant a1
         variant a
+      }
+    "#
+  )]
+}
+
+
+
+case! {
+  can_define_a_boolean_trigger,
+  [
+    (
+      "/entry.pc", r#"
+        component Test {
+        }
+      "#
+    )
+  ],
+  mutation::Inner::UpdateVariant(UpdateVariant {
+    component_id: "80f4925f-1".to_string(),
+    variant_id: None,
+    name: "a".to_string(),
+    triggers: vec![update_variant_trigger::Inner::Boolean(true).get_outer()]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component Test {
+        variant a trigger {
+          true
+        }
       }
     "#
   )]

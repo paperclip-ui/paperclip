@@ -31,8 +31,11 @@ impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, UpdateVariant> {
       }}
     "#, fix_variant_name(&self.mutation.name, &expr.body), self.mutation.triggers.iter().map(|trigger| {
       match trigger.get_inner() {
-        update_variant_trigger::Inner::Str(mutation) => {        
-          format!("\"{}\"", mutation.value)
+        update_variant_trigger::Inner::Str(value) => {        
+          format!("\"{}\"", value)
+        },
+        update_variant_trigger::Inner::Boolean(value) => {        
+          format!("{}", value)
         },
         _ => {
           "".to_string()

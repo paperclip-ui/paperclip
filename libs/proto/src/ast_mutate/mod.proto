@@ -52,13 +52,10 @@ message UpdateVariant {
 
 message UpdateVariantTrigger {
   oneof inner {
-    StringTrigger str = 1;
-    TriggerReference reference = 2;
+    string str = 1;
+    bool boolean = 2;
+    TriggerReference reference = 3;
   }
-}
-
-message StringTrigger {
-  string value = 1;
 }
 
 message TriggerReference {

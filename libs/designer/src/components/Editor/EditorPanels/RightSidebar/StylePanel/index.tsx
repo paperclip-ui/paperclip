@@ -14,6 +14,7 @@ import {
 } from "@paperclip-ui/designer/src/components/SuggestionMenu";
 import { getAllPublicAtoms } from "@paperclip-ui/designer/src/machine/state";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
+import { Variants } from "./Variants";
 
 namespace css {
   export enum InputType {
@@ -321,6 +322,7 @@ export const StylePanel = () => {
 
   return (
     <sidebarStyles.SidebarPanel>
+      <Variants />
       {Object.keys(GROUPS).map((name) => (
         <GroupSection
           key={name}

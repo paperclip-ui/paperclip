@@ -23,14 +23,7 @@
 
 #### On-deck
 
-- style variants (overall)
-
-  - ability to define variants
-    - ability to edit
-      - rename
-        - renaming should refactor tree that depends on this
-      - ability to add / remove trigger (raw for now)
-  - ability to select variant
+- ability to select variant
 
 - right-click -> convert to component
 - slots

@@ -4,7 +4,7 @@ import "./input.pc" as input
 import "./styles-panel.pc" as stylesPanel
 
 /**
- * @bounds(x: 514, y: 24, width: 1024, height: 768)
+ * @bounds(x: 0, y: 0, width: 317, height: 768)
 */
 
 public component RightSidebar {
@@ -14,7 +14,7 @@ public component RightSidebar {
 }
 
 /**
- * @bounds(x: 0, y: 0, width: 1024, height: 1095)
+ * @bounds(x: -270, y: 1287, width: 387, height: 852)
 */
 
 public component VariantPopup {
@@ -138,3 +138,4 @@ public component Preview {
         }
     }
 }
+

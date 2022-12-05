@@ -48,7 +48,7 @@ export const TextInput = ({
     }
   };
   const onKeyDown2 = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && onEnter) {
       onEnter(event);
     }
     if (onKeyDown) {

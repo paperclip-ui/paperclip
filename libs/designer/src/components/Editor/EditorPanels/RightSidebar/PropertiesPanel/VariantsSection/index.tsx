@@ -77,9 +77,7 @@ const useVariantsSection = () => {
   };
 
   useEffect(() => {
-    if (activeVariant) {
-      setVariantPopupOpen(true);
-    }
+    setVariantPopupOpen(activeVariant != null);
   }, [activeVariant]);
 
   const onAddClick = () => {
@@ -88,6 +86,7 @@ const useVariantsSection = () => {
 
   const onCloseEditVariantPopup = () => {
     dispatch(editorEvents.editVariantPopupClosed());
+    setVariantPopupOpen(false);
   };
 
   const onSaveCurrentVariant = ({ name, triggers }: SaveOptions) => {

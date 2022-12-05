@@ -37,6 +37,7 @@ export const EditVariantPopup = (props: EditVariantPopupProps) => {
           key={i}
           placeholder="CSS Selector..."
           value={trigger.str}
+          onBlur={onSave}
           onEnter={onSave}
         />
       );
@@ -46,6 +47,7 @@ export const EditVariantPopup = (props: EditVariantPopupProps) => {
         autoFocus
         key="new-trigger"
         placeholder="CSS Selector..."
+        onBlur={onNewTriggerSave}
         onEnter={onNewTriggerSave}
       />
     ) : null,
@@ -67,6 +69,7 @@ export const EditVariantPopup = (props: EditVariantPopupProps) => {
                 value={name}
                 autoFocus
                 onEnter={onNameSave}
+                onBlur={onNameSave}
               />
             }
           />
@@ -124,12 +127,20 @@ const useEditVariantPopup = ({
     });
   };
 
+  const onNameChange = (name: string) => {
+    setState({
+      ...state,
+      name,
+    });
+  };
+
   const onNameSave = (
     event: React.KeyboardEvent<any> | React.FocusEvent<any>
   ) => {
+    const value = event.currentTarget.value;
     persist((state) =>
       produce(state, (newState) => {
-        newState.name = event.currentTarget.value;
+        newState.name = value;
       })
     );
   };
@@ -169,6 +180,7 @@ const useEditVariantPopup = ({
     onSave,
     onNameSave,
     onAddTriggerClick,
+    onNameChange,
     showNewTriggerInput,
     state,
     onSaveTrigger,

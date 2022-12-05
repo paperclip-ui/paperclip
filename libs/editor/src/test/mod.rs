@@ -735,3 +735,36 @@ case! {
   )]
 }
 
+
+
+
+case! {
+  can_include_a_new_variant_with_a_trigger,
+  [
+    (
+      "/entry.pc", r#"
+        component Test {
+          variant alt trigger {
+            ":nth-child(2n)"
+          }
+        }
+      "#
+    )
+  ],
+  mutation::Inner::UpdateVariant(UpdateVariant {
+    component_id: "80f4925f-3".to_string(),
+    variant_id: None,
+    name: "light".to_string(),
+    triggers: vec![update_variant_trigger::Inner::Str(".light".to_string()).get_outer()]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component Test {
+        variant a trigger {
+          true
+        }
+      }
+    "#
+  )]
+}
+

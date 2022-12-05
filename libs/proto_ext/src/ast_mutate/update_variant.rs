@@ -43,6 +43,8 @@ impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, UpdateVariant> {
       }
     }).collect::<Vec<String>>().join("\n"));
 
+    println!("{}", mock_src);
+
 
     // ooof...
     let doc = parse(&mock_src, &expr.checksum()).unwrap();

@@ -23,7 +23,14 @@
 
 #### On-deck
 
-- ability to select variant
+- variant selection
+
+  - multi-select input
+  - ability to select variant from dropdown
+  - ability to add a varaint
+    - add button at bottom of list
+      - should display input field for variant
+  - variant should be applied when selected
 
 - right-click -> convert to component
 - slots

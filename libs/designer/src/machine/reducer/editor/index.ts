@@ -46,6 +46,9 @@ export const editorReducer = (
               newState.selectedVirtNodeId = id;
             }
             const expr = ast.getExprById(id, state.graph);
+            if (!expr) {
+              continue;
+            }
             if (ast.isVariant(expr, state.graph)) {
               newState.activeVariantId = expr.id;
             }

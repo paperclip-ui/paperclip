@@ -5,20 +5,26 @@ import cx from "classnames";
 import { usePositioner } from "../hooks/usePositioner";
 
 export type SuggestionMenuProps = {
-  value: string;
+  values: string[];
   children: React.ReactElement;
   style?: any;
+  multi?: boolean;
+  onChange: (values: any[]) => void;
+  onOtherChange?: (value: string) => void;
   menu: () => React.ReactElement[];
 };
 
 export const SuggestionMenu = ({
-  value,
+  values,
   children,
   style,
+  multi,
+  onChange,
+  onOtherChange = () => {},
   menu,
 }: SuggestionMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [internalValue, setInternalValue] = useState("");
+  const [typedValue, setTypedValued] = useState(null);
   const [preselectedIndex, setPreselectedIndex] = useState(0);
 
   const oldProps = children.props;
@@ -29,31 +35,40 @@ export const SuggestionMenu = ({
       oldProps.onFocus(event);
     }
   };
-  const onBlur = (event) => {
-    setIsOpen(false);
-    if (oldProps.onBlur) {
-      oldProps.onBlur(event);
-    }
+
+  const onBlur = () => {
+    setIsOpen((open) => {
+      if (open && typedValue != null) {
+        onOtherChange(typedValue);
+      }
+      return false;
+    });
   };
-  const onChange = (value: string) => {
-    setInternalValue(value);
-    if (oldProps.onChange) {
-      oldProps.onChange(value);
+
+  const onSelect = (value: any) => {
+    if (multi) {
+      if (!values.includes(value)) {
+        values = [...values, value];
+      } else {
+        values = values.filter((existing) => existing !== value);
+      }
+    } else {
+      values = [value];
     }
+    onChange(values);
+    setIsOpen(false);
   };
 
   const menuOptions = isOpen
     ? menu()
-        .filter(filterOption(internalValue))
+        .filter(filterOption(typedValue))
         .map((child, i) => {
           return React.cloneElement(child, {
-            selected: child.props.value === value,
+            selected: values.includes(child.props.value),
             preselected: i === preselectedIndex,
             onMouseDown: () => {
-              child.props.value && onChange(child.props.value);
-              if (child.props.onMouseDown) {
-                child.props.onMouseDown();
-              }
+              child.props.value &&
+                onSelect(child.props.selectValue || child.props.value);
             },
           });
         })
@@ -68,48 +83,53 @@ export const SuggestionMenu = ({
   );
 
   const onKeyDown = (event: React.KeyboardEvent<any>) => {
+    if (event.key !== "Tab") {
+      setIsOpen(true);
+    }
+
     if (event.key === "ArrowDown") {
       if (isOpen) {
         setPreselectedIndex(
           Math.min(preselectedIndex + 1, menuOptionsLength - 1)
         );
-      } else {
-        setIsOpen(true);
       }
-    }
-    if (event.key === "ArrowUp") {
+    } else if (event.key === "ArrowUp") {
       if (isOpen) {
         setPreselectedIndex(Math.max(preselectedIndex - 1, 0));
-      } else {
-        setIsOpen(true);
       }
-    }
-    if (event.key === "Enter") {
-      menuOptions[preselectedIndex]?.props.onSelect &&
-        menuOptions[preselectedIndex]?.props.onSelect();
+    } else if (event.key === "Enter") {
+      const value =
+        menuOptions[preselectedIndex]?.props.selectValue ||
+        menuOptions[preselectedIndex]?.props.value;
+      if (value) {
+        onSelect(value);
+      } else if (typedValue != null) {
+        onOtherChange(typedValue);
+      }
       setIsOpen(false);
-    }
-    if (oldProps.onKeyDown) {
+    } else if (oldProps.onKeyDown) {
       oldProps.onKeyDown(event);
     }
+  };
+
+  const onInputChange = (value: string) => {
+    setTypedValued(value);
   };
 
   const onClick = () => setIsOpen(true);
 
   useEffect(() => {
     if (!isOpen) {
-      setInternalValue("");
+      setTypedValued(null);
     }
   }, [isOpen, menuOptionsLength]);
 
   const { anchorRef, targetRef } = usePositioner();
 
   useEffect(() => {
-    if (typeof selectedIndex === "number") {
-      setPreselectedIndex(
-        selectedIndex === -1 ? firstOptionValueIndex : selectedIndex
-      );
-    }
+    setPreselectedIndex(
+      selectedIndex === -1 ? firstOptionValueIndex : selectedIndex
+    );
   }, [selectedIndex, firstOptionValueIndex]);
 
   return (
@@ -117,7 +137,7 @@ export const SuggestionMenu = ({
       input={React.cloneElement(children, {
         onBlur,
         onFocus,
-        onChange,
+        onChange: onInputChange,
         onKeyDown,
         onClick,
       })}
@@ -138,7 +158,7 @@ export const SuggestionMenu = ({
 };
 
 const filterOption = (value: string) => (child) => {
-  if (child.props.filterText) {
+  if (child.props.filterText && value != null) {
     return child.props.filterText.toLowerCase().includes(value.toLowerCase());
   }
 
@@ -151,16 +171,19 @@ export type SuggestionMenuItemProps = {
   children?: any;
   selected?: boolean;
   preselected?: boolean;
-  value: any;
+  value: string;
+
+  // the value to select if differs from "value"
+  selectValue?: any;
   filterText?: string;
-  onSelect: () => void;
+  onMouseDown?: () => void;
 };
 export const SuggestionMenuItem = ({
   children,
   value,
   selected,
   preselected,
-  onSelect,
+  onMouseDown,
 }: SuggestionMenuItemProps) => {
   const ref = useRef<HTMLDivElement>();
 
@@ -178,7 +201,7 @@ export const SuggestionMenuItem = ({
     <styles.SuggestionMenuItem
       ref={ref}
       class={cx({ selected, preselected })}
-      onMouseDown={onSelect}
+      onMouseDown={onMouseDown}
     >
       {children || value}
     </styles.SuggestionMenuItem>

@@ -18,6 +18,14 @@ public component MultiSelectItem {
     }
 }
 
+public component MultiSelectTextInput {
+    render input(style: style, onChange: onChange, autoFocus: autoFocus) {
+        style extends theme.reset {
+            width: 0px
+        }
+    }
+}
+
 public component Select {
     render div(onClick: onClick, tabIndex: "-1") {
         style {
@@ -69,8 +77,7 @@ public component SuggestionMenu {
         style extends theme.fontDefault {
             background: var(theme.inputBackground)
             border-radius: var(theme.rounded)
-            width: 100%
-            min-width: 250px
+            width: 250px
             filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.2))
             border: 1px solid var(theme.gray04)
             overflow-y: scroll
@@ -174,11 +181,12 @@ public component Fields {
 */
 
 public component MultiSelect {
-    render div {
+    render div(tabIndex: "0", onFocus: onFocus, onChange: onChange, onBlur: onBlur) {
         style extends theme.input {
             display: flex
             gap: var(theme.space02)
             padding: var(theme.space02)
+            flex-wrap: wrap
         }
         slot children
     }
@@ -546,7 +554,7 @@ public component ListItemInput {
         slot children {
             text "value"
         }
-        button (onClick: onRemoveClick) {
+        button(onClick: onRemoveClick) {
             style extends theme.reset {
                 cursor: pointer
                 display: none
@@ -556,6 +564,17 @@ public component ListItemInput {
             }
             text "×"
         }
+    }
+}
+
+/**
+ * @bounds(x: -170, y: -1736, width: 575, height: 437)
+*/
+
+div {
+    style {
+        position: static
+        font-family: var(theme.defaultFontFamily)
     }
 }
 

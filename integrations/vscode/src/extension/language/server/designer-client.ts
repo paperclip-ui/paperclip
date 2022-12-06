@@ -18,6 +18,7 @@ export class DesignerClient {
   private _client: Deferred<DesignerClientImpl>;
   private _port: number;
   private _em: EventEmitter;
+  private _ignoreNextUpdate: boolean;
 
   constructor() {
     this._em = new EventEmitter();
@@ -47,14 +48,19 @@ export class DesignerClient {
     const client = await this._client.promise;
     client.OnEvent({}).subscribe({
       next: (data) => {
-        console.log("EVENT", data);
         if (data.fileChanged) {
+          if (this._ignoreNextUpdate) {
+            this._ignoreNextUpdate = false;
+            return;
+          }
+
           this._em.emit("fileChanged", data.fileChanged);
         }
       },
     });
   };
   async updateVirtualFileContent(url: string, text: string) {
+    this._ignoreNextUpdate = true;
     const client = await this._client.promise;
     return new Promise((resolve, reject) => {
       const content = new TextEncoder();

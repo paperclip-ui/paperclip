@@ -61,6 +61,10 @@ public component Preview {
                             input.MultiSelectItem {
                                 text "dark"
                             }
+                            input.MultiSelectItem {
+                                text "another variant"
+                            }
+                            input.MultiSelectTextInput
                         }
                     }
                 }

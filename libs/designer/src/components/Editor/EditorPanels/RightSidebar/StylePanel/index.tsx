@@ -233,8 +233,19 @@ const cssSchema: schema.Map<css.Input> = [
     },
   },
   {
-    name: "gap",
+    name: "flex-wrap",
     displayWhen: { name: "display", value: /flex/ },
+    group: "layout",
+    sticky: true,
+    input: {
+      name: "display",
+      type: css.InputType.Enum,
+      options: ["nowrap", "wrap", "wrap-reverse", "inherit"],
+    },
+  },
+  {
+    name: "gap",
+    displayWhen: { name: "display", value: /flex|grid/ },
     group: "layout",
     sticky: true,
     input: { name: "gap", type: css.InputType.Unit },
@@ -463,21 +474,16 @@ const FieldInput = ({
   const tokens = useSelector(getAllPublicAtoms);
   const internalValue = useRef<NewDeclValue>();
 
-  const maybePersist = () => {
-    if (internalValue.current?.value !== explicitValue) {
-      onSave(internalValue.current);
-    }
+  const onChange = (values: any[]) => {
+    const newValue = values[values.length - 1];
+    console.log("ON CHANGE", values);
+    onSave(newValue);
   };
 
-  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      maybePersist();
-    }
+  const onOtherChange = (value) => {
+    console.log("ON OTHER CHANGE", value);
+    onSave({ value });
   };
-
-  const onBlur = () => maybePersist();
-
-  const onValueChange = (value: string) => (internalValue.current = { value });
 
   useEffect(() => {
     internalValue.current = { value: explicitValue };
@@ -490,8 +496,8 @@ const FieldInput = ({
           ...options.map((option) => (
             <SuggestionMenuItem
               value={option}
+              selectValue={{ value: option }}
               filterText={option}
-              onSelect={() => (internalValue.current = { value: option })}
             />
           )),
         ]
@@ -517,19 +523,17 @@ const FieldInput = ({
         }
       })
       .map((token) => {
-        const value = {
-          value: `var($1.${token.atom.name})`,
-          imports: {
-            $1: token.dependency.path,
-          },
-        };
-
         return (
           <SuggestionMenuItem
             key={token.atom.id}
             value={token.value}
+            selectValue={{
+              value: `var($1.${token.atom.name})`,
+              imports: {
+                $1: token.dependency.path,
+              },
+            }}
             filterText={token.atom.name + token.cssValue + token.value}
-            onSelect={() => (internalValue.current = value)}
           >
             <inputStyles.TokenMenuContent
               style={{ "--color": token.cssValue }}
@@ -553,15 +557,14 @@ const FieldInput = ({
   }, [options, tokens, onSave]);
 
   return (
-    <SuggestionMenu value={computedValue} menu={menu} style={{ width: 350 }}>
-      <TextInput
-        value={explicitValue}
-        placeholder={computedValue}
-        onBlur={onBlur}
-        onChange={onValueChange}
-        onKeyDown={onKeyDown}
-        select
-      />
+    <SuggestionMenu
+      onChange={onChange}
+      onOtherChange={onOtherChange}
+      values={[computedValue]}
+      menu={menu}
+      style={{ width: 350 }}
+    >
+      <TextInput value={explicitValue} placeholder={computedValue} select />
     </SuggestionMenu>
   );
 };

@@ -23,16 +23,11 @@
 
 #### On-deck
 
-- variants
+- context-menu
 
-  - persist styles with selected variants
-  -
-
-- !! How to detect variant triggers??
-
-  - probably need to turn this off since it could get in way of UX.
-    - potentially turn this off at component level
-    - !! or have explicit "play" functionality for turning them on?
+- right-click -> convert to component
+- ability to insert elements into slots
+- element insertion UI
 
 - variant selection
 

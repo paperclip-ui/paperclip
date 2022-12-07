@@ -604,3 +604,32 @@ fn bounds_are_attached_to_root_instances() {
         })
     );
 }
+
+
+#[test]
+fn children_slot_is_rendered_in_instance() {
+    let doc = evaluate_doc(HashMap::from([(
+        "/entry.pc",
+        r#"
+            component A {
+                render slot children {
+                    text "b"
+                }
+            }
+            A
+		"#,
+    )]));
+
+    let element = doc.children.get(1).expect("Node must exist").get_inner();
+
+    assert_eq!(
+        element,
+        &virt::html::node::Inner::TextNode(virt::html::TextNode {
+            id: "80f4925f-5.80f4925f-1".to_string(),
+            source_id: Some("80f4925f-1".to_string()),
+            source_instance_ids: vec!["80f4925f-5".to_string()],
+            metadata: None,
+            value: "b".to_string()
+        })
+    );
+}

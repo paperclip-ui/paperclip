@@ -23,10 +23,15 @@
 
 #### On-deck
 
+- variants
+
+  - do not persist variant selection to code
+
 - context-menu
 
 - right-click -> convert to component
 - ability to insert elements into slots
+
 - element insertion UI
 
 - variant selection

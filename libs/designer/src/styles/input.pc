@@ -1,5 +1,6 @@
 import "./theme.pc" as theme
 import "./sidebar.pc" as sidebar
+import "./menu.pc" as menu
 
 public component MultiSelectItem {
     render div {
@@ -75,17 +76,7 @@ public component SuggestionContainer {
 }
 
 public component SuggestionMenu {
-    render div(style: style) {
-        style extends theme.fontDefault {
-            background: var(theme.inputBackground)
-            border-radius: var(theme.rounded)
-            width: 250px
-            filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.2))
-            border: 1px solid var(theme.gray04)
-            overflow-y: scroll
-            overflow-x: hidden
-            max-height: 300px
-        }
+    render menu.Menu(style: style) {
         slot children
     }
 }
@@ -120,20 +111,7 @@ public component SuggestionMenuItem {
     variant checked trigger {
         ".checked"
     }
-    render div(onMouseDown: onMouseDown, class: class) {
-        style {
-            padding: var(theme.space03)
-            cursor: pointer
-            display: flex
-            flex-direction: row
-            justify-content: space-between
-        }
-        style variant preselected {
-            background: var(theme.blue01)
-        }
-        style variant selected {
-            background: var(theme.blue02)
-        }
+    render menu.MenuItem(onMouseDown: onMouseDown, class: class) {
         slot children
         div {
             style {
@@ -321,6 +299,7 @@ public component TokenMenuContent {
             display: flex
             align-items: center
             justify-content: space-between
+            width: 100%
         }
         div {
             style {

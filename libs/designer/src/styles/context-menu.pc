@@ -1,21 +1,28 @@
 import "./theme.pc" as imp
+import "./menu.pc" as menu
 
 /**
  * @bounds(x: 513, y: -909, width: 473, height: 109)
 */
 
 public component ContextMenu {
-    render div {
+    render menu.Menu(style: style) {
         slot children {
-            ContextMenuItem {
-                text "Something"
-            }
-            ContextMenuItem {
-                text "Something"
-            }
-            ContextMenuItem {
-                text "Something"
-            }
+
+        }
+    }
+}
+
+/**
+ * @bounds(x: 0, y: 0, width: 149, height: 66)
+*/
+
+public component ContextMenuDivider {
+    render hr {
+        style {
+            padding: 0px
+            margin: 0px
+            border-color: var(imp.gray02)
         }
     }
 }
@@ -25,23 +32,68 @@ public component ContextMenu {
 */
 
 public component ContextMenuItem {
-    variant alt trigger {
-        ":nth-child(2n)"
-        true
+    variant last trigger {
+        ":last-child"
     }
-    render div {
-        style variant alt {
-            background: var(imp.gray03)
-        }
-        style {
-            display: rgb(0, 0, 255)
-            padding: var(imp.space04)
-            font-family: var(imp.defaultFontFamily)
-            background: var(imp.gray04)
-            color: var(imp.gray0)
-        }
+    variant first trigger {
+        ":first-child"
+    }
+    render menu.MenuItem(onMouseDown: onMouseDown, class: class) {
         slot children {
             text "Context menu item"
+        }
+        div {
+            style {
+                opacity: 0.5
+                letter-spacing: 0.1em
+            }
+            slot keyCommand
+        }
+    }
+}
+
+/**
+ * @bounds(x: 183, y: -790, width: 297, height: 295)
+*/
+
+div {
+    style {
+        padding: 10px
+        background: var(imp.gray05)
+        width: 100%
+        height: 100%
+    }
+    ContextMenu {
+        ContextMenuItem {
+            text "Create component"
+            insert keyCommand {
+                text "⌥⌘K"
+            }
+        }
+        ContextMenuDivider
+        ContextMenuItem {
+            text "Cut"
+            insert keyCommand {
+                text "⌘X"
+            }
+        }
+        ContextMenuItem {
+            text "Copy"
+            insert keyCommand {
+                text "⌘C"
+            }
+        }
+        ContextMenuItem {
+            text "Paste"
+            insert keyCommand {
+                text "⌘P"
+            }
+        }
+        ContextMenuItem {
+            text "Delete"
+            insert keyCommand {
+                text "⌫"
+            }
         }
     }
 }

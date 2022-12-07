@@ -290,14 +290,26 @@ fn create_inserts<'expr, F: FileResolver>(
     context: &mut DocumentContext<F>,
 ) -> InsertsMap<'expr> {
     let mut inserts = HashMap::new();
-    inserts.insert("children".to_string(), (element.id.to_string(), vec![]));
+    // inserts.insert("children".to_string(), (element.id.to_string(), vec![]));
     for child in &element.body {
-        evaluate_instance_child(child, &mut inserts, &None, context);
+        evaluate_instance_child(element, child, &mut inserts, &None, context);
     }
     inserts
 }
 
+macro_rules! get_insert {
+    ($inserts: expr, $name: expr, $id: expr) => {
+        if let Some(fragment) = $inserts.get_mut($name) {
+            fragment
+        } else {
+            $inserts.insert($name.to_string(), ($id.to_string(), vec![]));
+            $inserts.get_mut($name).unwrap()
+        }
+    };
+}
+
 fn evaluate_instance_child<'expr, F: FileResolver>(
+    parent: &'expr ast::Element,
     child: &'expr ast::Node,
     inserts: &mut InsertsMap<'expr>,
     metadata: &Option<virt::NodeMedata>,
@@ -305,29 +317,31 @@ fn evaluate_instance_child<'expr, F: FileResolver>(
 ) {
     match child.get_inner() {
         ast::node::Inner::Insert(insert) => {
-            let (_source_id, fragment) = if let Some(fragment) = inserts.get_mut(&insert.name) {
-                fragment
-            } else {
-                inserts.insert(insert.name.to_string(), (insert.id.to_string(), vec![]));
-                inserts.get_mut(&insert.name).unwrap()
-            };
+            let (_source_id, fragment) = get_insert!(inserts, &insert.name, &insert.id);
 
             for child in &insert.body {
                 evaluate_node(child, fragment, metadata, context, false, false);
             }
         }
         _ => {
+            let mut fragment: Vec<virt::Node> = vec![];
+
             evaluate_node(
                 child,
-                &mut inserts.get_mut("children").unwrap().1,
+                &mut fragment,
                 metadata,
                 context,
                 false,
                 false,
             );
+
+            if !fragment.is_empty() {
+                get_insert!(inserts, "children", &parent.id).1.extend(fragment)
+            }
         }
     }
 }
+
 
 fn evaluate_render<F: FileResolver>(
     render: &ast::Render,

@@ -23,6 +23,12 @@
 
 #### On-deck
 
+- context-menu
+
+  - properly wire up global hotkeys
+  - wire up all context menu items
+  - context menu for layers
+
 - variants
 
   - do not persist variant selection to code

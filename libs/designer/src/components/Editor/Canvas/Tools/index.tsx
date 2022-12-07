@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect } from "react";
+import React, { useRef, useCallback, useEffect, useMemo } from "react";
 
 import * as styles from "./index.pc";
 import { Frames } from "./Frames";
@@ -41,6 +41,33 @@ export const Tools = () => {
     optionKeyDown,
   } = useTools();
 
+  const contextMenu = useMemo(
+    () => [
+      <ContextMenuItem keyCombo="alt+meta+k" onSelect={() => {}}>
+        Create component
+      </ContextMenuItem>,
+      <ContextMenuDivider />,
+      <ContextMenuItem keyCombo="meta+x" onSelect={() => {}}>
+        Cut
+      </ContextMenuItem>,
+      <ContextMenuItem keyCombo="meta+c" onSelect={() => {}}>
+        Copy
+      </ContextMenuItem>,
+      <ContextMenuItem keyCombo="meta+p" onSelect={() => {}}>
+        Paste
+      </ContextMenuItem>,
+      <ContextMenuItem
+        keyCombo="delete"
+        onSelect={() => {
+          dispatch(editorEvents.deleteHokeyPressed());
+        }}
+      >
+        Delete
+      </ContextMenuItem>,
+    ],
+    [dispatch]
+  );
+
   if (!currentDocument?.paperclip || !toolsLayerEnabled) {
     return null;
   }
@@ -56,15 +83,6 @@ export const Tools = () => {
   const style = {
     cursor,
   };
-
-  const contextMenu = () => [
-    <ContextMenuItem keyCombo="alt+meta+k">Create component</ContextMenuItem>,
-    <ContextMenuDivider />,
-    <ContextMenuItem keyCombo="meta+x">Cut</ContextMenuItem>,
-    <ContextMenuItem keyCombo="meta+c">Copy</ContextMenuItem>,
-    <ContextMenuItem keyCombo="meta+p">Paste</ContextMenuItem>,
-    <ContextMenuItem keyCombo="delete">Delete</ContextMenuItem>,
-  ];
 
   return (
     <ContextMenu menu={contextMenu}>

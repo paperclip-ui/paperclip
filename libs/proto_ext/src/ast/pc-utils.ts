@@ -642,7 +642,7 @@ export namespace ast {
       return `${expr.reference.path.join(".")}`;
     }
     if (expr.spacedList) {
-      return expr.commaList.items
+      return expr.spacedList.items
         .map((expr) => serializeDeclaration(expr))
         .join(" ");
     }

@@ -5,13 +5,16 @@ import { Portal } from "../Portal";
 
 export type ContextMenuProps = {
   children: React.ReactElement;
-  menu: () => React.ReactElement[];
+  menu: React.ReactElement[];
 };
 
-export const ContextMenu = ({ children, menu }: ContextMenuProps) => {
-  const setMenuRef = (element: HTMLElement) => {
-    element?.focus();
-  };
+export const ContextMenu = ({
+  children,
+  menu: menuOptions,
+}: ContextMenuProps) => {
+  const otherRef = useRef<HTMLElement>();
+  const ref = children.props.ref || otherRef;
+
   const [anchorStyle, setAnchorStyle] = useState<any>(null);
   const onContextMenu = (event: React.MouseEvent<any>) => {
     event.stopPropagation();
@@ -24,23 +27,31 @@ export const ContextMenu = ({ children, menu }: ContextMenuProps) => {
     });
   };
 
-  const menuOptions = useMemo(() => {
-    return menu();
-  }, [!!anchorStyle]);
+  const onTargetKeyDown = (event: React.KeyboardEvent<any>) => {
+    if (children.props.onKeyDown) {
+      children.props.onKeyDown(event);
+    }
 
-  const onMenuKeyDown = (event: React.KeyboardEvent<any>) => {
     if (event.key === "Escape") {
       setAnchorStyle(null);
     }
-    console.log(event, menuOptions);
 
     for (const option of menuOptions) {
       if (
         option.props.keyCombo &&
         isKeyComboDown(option.props.keyCombo, event.nativeEvent)
       ) {
-        console.log("COMBO!");
+        event.stopPropagation();
+        event.preventDefault();
+        option.props.onSelect();
       }
+    }
+  };
+
+  const onTargetMouseDown = (event: React.MouseEvent<any>) => {
+    ref.current.focus();
+    if (children.props.onMouseDown) {
+      children.props.onMouseDown(event);
     }
   };
 
@@ -61,15 +72,14 @@ export const ContextMenu = ({ children, menu }: ContextMenuProps) => {
   return (
     <>
       {React.cloneElement(children, {
+        ref,
+        onMouseDown: onTargetMouseDown,
+        onKeyDown: onTargetKeyDown,
         onContextMenu,
       })}
       <Portal>
         {anchorStyle && (
-          <styles.ContextMenu
-            ref={setMenuRef}
-            style={anchorStyle}
-            onKeyDown={onMenuKeyDown}
-          >
+          <styles.ContextMenu style={anchorStyle}>
             {menuOptions}
           </styles.ContextMenu>
         )}
@@ -81,14 +91,19 @@ export const ContextMenu = ({ children, menu }: ContextMenuProps) => {
 type ContextMenuItemProps = {
   keyCombo?: string;
   children: string;
+  onSelect: () => void;
 };
 
 export const ContextMenuItem = ({
   keyCombo,
   children,
+  onSelect,
 }: ContextMenuItemProps) => {
   return (
-    <styles.ContextMenuItem keyCommand={prettyKeyCombo(keyCombo)}>
+    <styles.ContextMenuItem
+      keyCommand={prettyKeyCombo(keyCombo)}
+      onMouseDown={onSelect}
+    >
       {children}
     </styles.ContextMenuItem>
   );

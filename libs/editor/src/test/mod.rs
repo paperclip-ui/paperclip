@@ -3,8 +3,8 @@ use futures::executor::block_on;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::pc;
 use paperclip_proto::ast_mutate::{
-    mutation, AppendChild, Bounds, DeleteExpression, SetFrameBounds, SetStyleDeclarationValue,
-    SetStyleDeclarations, UpdateVariant, update_variant_trigger
+    mutation, update_variant_trigger, AppendChild, Bounds, DeleteExpression, SetFrameBounds,
+    SetStyleDeclarationValue, SetStyleDeclarations, ToggleVariants, UpdateVariant,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use paperclip_proto_ext::graph::{load::LoadableGraph, test_utils};
@@ -270,6 +270,7 @@ case! {
   )],
   mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
     expression_id: "80f4925f-1".to_string(),
+    variant_ids: vec![],
     declarations: vec![
       SetStyleDeclarationValue {
         imports: HashMap::new(),
@@ -302,6 +303,7 @@ case! {
   )],
   mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
     expression_id: "80f4925f-4".to_string(),
+    variant_ids: vec![],
     declarations: vec![
       SetStyleDeclarationValue {
         imports: HashMap::new(),
@@ -334,6 +336,7 @@ case! {
   )],
   mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
     expression_id: "80f4925f-4".to_string(),
+    variant_ids: vec![],
     declarations: vec![
       SetStyleDeclarationValue {
         imports: HashMap::new(),
@@ -408,6 +411,7 @@ case! {
   ],
   mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
     expression_id: "80f4925f-2".to_string(),
+    variant_ids: vec![],
     declarations: vec![
       SetStyleDeclarationValue {
         imports: HashMap::from([("$1".to_string(), "/module.pc".to_string())]),
@@ -448,6 +452,7 @@ case! {
   ],
   mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
     expression_id: "80f4925f-2".to_string(),
+    variant_ids: vec![],
     declarations: vec![
       SetStyleDeclarationValue {
         imports: HashMap::from([("$1".to_string(), "/module.pc".to_string())]),
@@ -481,6 +486,7 @@ case! {
   ],
   mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
     expression_id: "80f4925f-1".to_string(),
+    variant_ids: vec![],
     declarations: vec![
       SetStyleDeclarationValue {
         imports: HashMap::new(),
@@ -547,6 +553,7 @@ case! {
   ],
   mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
     expression_id: "80f4925f-1".to_string(),
+    variant_ids: vec![],
     declarations: vec![
       SetStyleDeclarationValue {
         imports: HashMap::new(),
@@ -592,7 +599,6 @@ case! {
   )]
 }
 
-
 case! {
   can_add_a_variant_with_string_triggers,
   [
@@ -621,9 +627,6 @@ case! {
   )]
 }
 
-
-
-
 case! {
   can_delete_a_variant,
   [
@@ -644,8 +647,6 @@ case! {
     "#
   )]
 }
-
-
 
 case! {
   variant_name_is_corrected_when_inserting,
@@ -676,9 +677,6 @@ case! {
   )]
 }
 
-
-
-
 case! {
   name_is_changed_if_duplicate,
   [
@@ -705,8 +703,6 @@ case! {
     "#
   )]
 }
-
-
 
 case! {
   can_define_a_boolean_trigger,
@@ -735,3 +731,159 @@ case! {
   )]
 }
 
+case! {
+  can_toggle_variants_in_a_component,
+  [
+    (
+      "/entry.pc", r#"
+        component Test {
+          variant a
+          variant b trigger {
+            true
+          }
+        }
+      "#
+    )
+  ],
+  mutation::Inner::ToggleVariants(ToggleVariants {
+    enabled: HashMap::from([("80f4925f-1".to_string(), true), ("80f4925f-3".to_string(), false)])
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component Test {
+        variant a trigger {
+          true
+        }
+        variant b
+      }
+    "#
+  )]
+}
+
+case! {
+  can_set_style_declarations_with_variant_ids,
+  [
+    (
+      "/entry.pc", r#"
+        component Test {
+          variant a
+          variant b
+          render div {
+
+          }
+        }
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
+    expression_id: "80f4925f-3".to_string(),
+    variant_ids: vec!["80f4925f-1".to_string(), "80f4925f-2".to_string()],
+    declarations: vec![
+      SetStyleDeclarationValue {
+        imports: HashMap::new(),
+        name: "background".to_string(),
+        value: "red".to_string()
+      }
+    ]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component Test {
+        variant a
+        variant b
+        render div {
+          style variant a + b {
+            background: red
+          }
+        }
+      }
+    "#
+  )]
+}
+
+case! {
+  can_set_style_declarations_with_variant_ids_with_existing_style,
+  [
+    (
+      "/entry.pc", r#"
+        component Test {
+          variant a
+          variant b
+          render div {
+            style {
+              background: blue
+            }
+          }
+        }
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
+    expression_id: "80f4925f-6".to_string(),
+    variant_ids: vec!["80f4925f-1".to_string(), "80f4925f-2".to_string()],
+    declarations: vec![
+      SetStyleDeclarationValue {
+        imports: HashMap::new(),
+        name: "background".to_string(),
+        value: "red".to_string()
+      }
+    ]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component Test {
+        variant a
+        variant b
+        render div {
+          style variant a + b {
+            background: red
+          }
+          style {
+            background: blue
+          }
+        }
+      }
+    "#
+  )]
+}
+
+case! {
+  can_set_style_declarations_on_existing_variant,
+  [
+    (
+      "/entry.pc", r#"
+        component Test {
+          variant a
+          render div {
+            style variant a {
+              background: blue
+            }
+          }
+        }
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
+    expression_id: "80f4925f-6".to_string(),
+    variant_ids: vec!["80f4925f-1".to_string()],
+    declarations: vec![
+      SetStyleDeclarationValue {
+        imports: HashMap::new(),
+        name: "background".to_string(),
+        value: "red".to_string()
+      }
+    ]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component Test {
+        variant a
+        render div {
+          style variant a {
+            background: red
+          }
+        }
+      }
+    "#
+  )]
+}

@@ -8,15 +8,15 @@ use paperclip_proto::ast_mutate::{
 
 use crate::ast::{all::Visitor, all::VisitorResult};
 
-impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, DeleteStyleDeclarations> {
-    fn visit_style(&mut self, expr: &mut ast::pc::Style) -> VisitorResult<Vec<MutationResult>> {
+impl<'expr> Visitor<Vec<()>> for EditContext<'expr, DeleteStyleDeclarations> {
+    fn visit_style(&mut self, expr: &mut ast::pc::Style) -> VisitorResult<Vec<()>> {
         if expr.get_id() == self.mutation.expression_id {
             remove_declaration(expr, &self.mutation.declaration_names);
         }
         VisitorResult::Continue
     }
 
-    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<Vec<MutationResult>> {
+    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<Vec<()>> {
         if expr.get_id() == &self.mutation.expression_id {
             for child in &mut expr.body {
                 if let ast::pc::node::Inner::Style(style) = child.get_inner_mut() {
@@ -24,12 +24,12 @@ impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, DeleteStyleDecla
                 }
             }
 
-            return VisitorResult::Return(vec![mutation_result::Inner::ExpressionUpdated(
-                ExpressionUpdated {
+            self.changes.push(
+                mutation_result::Inner::ExpressionUpdated(ExpressionUpdated {
                     id: expr.id.to_string(),
-                },
-            )
-            .get_outer()]);
+                })
+                .get_outer(),
+            );
         }
 
         VisitorResult::Continue

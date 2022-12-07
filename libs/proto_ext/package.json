@@ -8,6 +8,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "build:watch": "tsc --watch",
     "test": "jest --runInBand --testTimeout=1000"
   },
   "files": [

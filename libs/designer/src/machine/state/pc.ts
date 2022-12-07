@@ -3,6 +3,7 @@ import { Variant } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { EditorState } from "./core";
 
 export const MIXED_VALUE = "mixed";
+const EMPTY_ARRAY = [];
 
 export type ComputedDeclaration = {
   name: string;
@@ -414,4 +415,28 @@ export const getActiveVariant = (state: EditorState) => {
     state.activeVariantId &&
     (ast.getExprByVirtId(state.activeVariantId, state.graph) as Variant)
   );
+};
+
+export const getSelectedExprOwnerComponent = (state: EditorState) => {
+  if (!state.selectedVirtNodeId) {
+    return null;
+  }
+  const expr = ast.getExprByVirtId(state.selectedVirtNodeId, state.graph);
+  if (!expr) {
+    return null;
+  }
+
+  return ast.getExprOwnerComponent(expr, state.graph);
+};
+
+export const getSelectedExprAvailableVariants = (state: EditorState) => {
+  const ownerComponent = getSelectedExprOwnerComponent(state);
+  if (!ownerComponent) {
+    return [];
+  }
+  return ast.getComponentVariants(ownerComponent) || [];
+};
+
+export const getEnabledVariants = (state: EditorState) => {
+  return getSelectedExprAvailableVariants(state).filter(ast.isVariantEnabled);
 };

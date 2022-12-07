@@ -15,15 +15,15 @@ pub fn edit_graph(
             let mut ctx = EditContext {
                 mutation,
                 dependency: dep.clone(),
+                changes: vec![],
             };
-
-            if let VisitorResult::Return(changes) = dep
-                .document
+            dep.document
                 .as_mut()
                 .expect("Document must exist")
-                .accept(&mut ctx)
-            {
-                changed.push((path.to_string(), changes));
+                .accept(&mut ctx);
+
+            if ctx.changes.len() > 0 {
+                changed.push((path.to_string(), ctx.changes.clone()));
             }
         }
     }

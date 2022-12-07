@@ -93,7 +93,6 @@ const useVariantsSection = () => {
     dispatch(
       editorEvents.variantEdited({
         componentId: component.id,
-        variantId: activeVariant?.id,
         newName: name,
         triggers,
       })

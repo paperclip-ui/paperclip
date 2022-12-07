@@ -162,7 +162,7 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
             }
             ServerEvent::ApplyMutationRequested { mutations } => {
                 let changed_files = edit_graph(&mut state.graph, mutations);
-                println!("Applying {:?}", mutations);
+                println!("Applying {:?} {:?}", mutations, changed_files);
                 let mut latest_ast_changes = vec![];
                 for (path, changes) in &changed_files {
                     latest_ast_changes.extend(changes.clone());

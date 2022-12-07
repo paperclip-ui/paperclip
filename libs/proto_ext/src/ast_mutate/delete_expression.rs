@@ -23,11 +23,8 @@ macro_rules! try_remove_child {
     }};
 }
 
-impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, DeleteExpression> {
-    fn visit_document(
-        &mut self,
-        expr: &mut ast::pc::Document,
-    ) -> VisitorResult<Vec<MutationResult>> {
+impl<'expr> Visitor<Vec<()>> for EditContext<'expr, DeleteExpression> {
+    fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<Vec<()>> {
         if let Some(i) = try_remove_child!(expr.body, &self.mutation.expression_id) {
             let prev_index = i - 1;
             let mut results = vec![
@@ -53,57 +50,51 @@ impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, DeleteExpression
                 }
             }
 
-            VisitorResult::Return(results)
-        } else {
-            VisitorResult::Continue
+            self.changes.extend(results);
         }
+        VisitorResult::Continue
     }
-    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<Vec<MutationResult>> {
+    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<Vec<()>> {
         if matches!(
             try_remove_child!(expr.body, &self.mutation.expression_id),
             Some(_)
         ) {
-            VisitorResult::Return(vec![mutation_result::Inner::ExpressionDeleted(
-                ExpressionDeleted {
+            self.changes.push(
+                mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
                     id: self.mutation.expression_id.to_string(),
-                },
-            )
-            .get_outer()])
-        } else {
-            VisitorResult::Continue
+                })
+                .get_outer(),
+            );
         }
+        VisitorResult::Continue
     }
-    fn visit_text_node(
-        &mut self,
-        expr: &mut ast::pc::TextNode,
-    ) -> VisitorResult<Vec<MutationResult>> {
+    fn visit_text_node(&mut self, expr: &mut ast::pc::TextNode) -> VisitorResult<Vec<()>> {
         if matches!(
             try_remove_child!(expr.body, &self.mutation.expression_id),
             Some(_)
         ) {
-            VisitorResult::Return(vec![mutation_result::Inner::ExpressionDeleted(
-                ExpressionDeleted {
+            self.changes.push(
+                mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
                     id: self.mutation.expression_id.to_string(),
-                },
-            )
-            .get_outer()])
-        } else {
-            VisitorResult::Continue
+                })
+                .get_outer(),
+            );
         }
+
+        VisitorResult::Continue
     }
-    fn visit_component(&mut self, expr: &mut ast::pc::Component) -> VisitorResult<Vec<MutationResult>> {
+    fn visit_component(&mut self, expr: &mut ast::pc::Component) -> VisitorResult<Vec<()>> {
         if matches!(
             try_remove_child!(expr.body, &self.mutation.expression_id),
             Some(_)
         ) {
-            VisitorResult::Return(vec![mutation_result::Inner::ExpressionDeleted(
-                ExpressionDeleted {
+            self.changes.push(
+                mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
                     id: self.mutation.expression_id.to_string(),
-                },
-            )
-            .get_outer()])
-        } else {
-            VisitorResult::Continue
+                })
+                .get_outer(),
+            );
         }
+        VisitorResult::Continue
     }
 }

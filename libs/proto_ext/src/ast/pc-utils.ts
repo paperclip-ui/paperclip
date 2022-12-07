@@ -323,10 +323,23 @@ export namespace ast {
     graph: Graph
   ): expr is Variant => {
     const parent = getParent(expr.id, graph);
-    console.log(parent);
     return (parent as Component).body?.some(
       (child) => child.variant?.id === expr.id
     );
+  };
+
+  export const isVariantEnabled = (variant: Variant) =>
+    variant.triggers?.some((trigger) => trigger.bool?.value);
+
+  export const getExprOwnerComponent = (
+    expr: InnerExpression,
+    graph: Graph
+  ) => {
+    const ancestorId = getAncestorIds(expr.id, graph).find((ancestorId) => {
+      return isComponent(getExprById(ancestorId, graph));
+    });
+
+    return ancestorId && (getExprById(ancestorId, graph) as Component);
   };
 
   export const getInstanceComponent = (element: Element, graph: Graph) => {

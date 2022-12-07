@@ -18,9 +18,9 @@ export const editorEvents = eventCreators(
     undoKeyPressed: null,
     redoKeyPressed: null,
     saveKeyComboPressed: null,
+    variantsSelected: identity<string[]>(),
     variantEdited: identity<{
       componentId: string;
-      variantId?: string;
       newName: string;
       triggers: UpdateVariantTrigger[];
     }>(),

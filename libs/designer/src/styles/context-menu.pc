@@ -13,6 +13,9 @@ public component ContextMenu {
             ContextMenuItem {
                 text "Something"
             }
+            ContextMenuItem {
+                text "Something"
+            }
         }
     }
 }
@@ -24,13 +27,17 @@ public component ContextMenu {
 public component ContextMenuItem {
     variant alt trigger {
         ":nth-child(2n)"
+        true
     }
     render div {
+        style variant alt {
+            background: var(imp.gray03)
+        }
         style {
             display: rgb(0, 0, 255)
             padding: var(imp.space04)
             font-family: var(imp.defaultFontFamily)
-            background: var(imp.gray03)
+            background: var(imp.gray04)
             color: var(imp.gray0)
         }
         slot children {

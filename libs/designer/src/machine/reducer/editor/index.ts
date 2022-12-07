@@ -40,21 +40,20 @@ export const editorReducer = (
       state = produce(state, (newState) => {
         newState.currentDocument = event.payload;
 
-        if (newState.insertedNodeIds.length) {
-          for (const id of newState.insertedNodeIds) {
-            if (virtHTML.getNodeById(id, event.payload.paperclip.html)) {
-              newState.selectedVirtNodeId = id;
-            }
-            const expr = ast.getExprById(id, state.graph);
-            if (!expr) {
-              continue;
-            }
-            if (ast.isVariant(expr, state.graph)) {
-              newState.activeVariantId = expr.id;
-            }
+        for (const id of newState.insertedNodeIds) {
+          if (virtHTML.getNodeById(id, event.payload.paperclip.html)) {
+            newState.selectedVirtNodeId = id;
           }
-          newState.insertedNodeIds = [];
+
+          const expr = ast.getExprById(id, state.graph);
+          if (!expr) {
+            continue;
+          }
+          if (ast.isVariant(expr, state.graph)) {
+            newState.activeVariantId = expr.id;
+          }
         }
+        newState.insertedNodeIds = [];
       });
       state = maybeCenterCanvas(state);
       return state;

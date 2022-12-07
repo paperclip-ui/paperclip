@@ -3,7 +3,7 @@ import "./sidebar.pc" as sidebar
 
 public component MultiSelectItem {
     render div {
-        style {
+        style extends theme.fontDefault {
             display: inline-block
             color: var(theme.backgroundSelectedText)
             background: var(theme.blue02)
@@ -14,7 +14,9 @@ public component MultiSelectItem {
             height: 100%
             align-items: center
         }
-        slot children
+        slot children {
+            text "multi-select item"
+        }
     }
 }
 
@@ -115,10 +117,16 @@ public component SuggestionMenuItem {
     variant selected trigger {
         ".selected"
     }
+    variant checked trigger {
+        ".checked"
+    }
     render div(onMouseDown: onMouseDown, class: class) {
         style {
             padding: var(theme.space03)
             cursor: pointer
+            display: flex
+            flex-direction: row
+            justify-content: space-between
         }
         style variant preselected {
             background: var(theme.blue01)
@@ -127,6 +135,15 @@ public component SuggestionMenuItem {
             background: var(theme.blue02)
         }
         slot children
+        div {
+            style {
+                display: none
+            }
+            style variant selected + checked {
+                display: block
+            }
+            text "✔"
+        }
     }
 }
 
@@ -177,18 +194,43 @@ public component Fields {
 }
 
 /**
- * @bounds(x: -190, y: 106, width: 915, height: 761)
+ * @bounds(x: -718, y: -1156, width: 188, height: 26)
 */
 
 public component MultiSelect {
+    
     render div(tabIndex: "0", onFocus: onFocus, onChange: onChange, onBlur: onBlur) {
-        style extends theme.input {
+        style extends theme.input, theme.fontDefault {
             display: flex
+            cursor: pointer
             gap: var(theme.space02)
             padding: var(theme.space02)
             flex-wrap: wrap
         }
-        slot children
+        div {
+            style {
+                opacity: 0.5
+            }
+            slot placeholder
+        }
+        slot children {
+            MultiSelectItem {
+                text "item 1"
+            }
+            MultiSelectItem {
+                text "item 2"
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: -720, y: -1094, width: 188, height: 26)
+*/
+
+MultiSelect {
+    insert placeholder {
+        text "Select..."
     }
 }
 
@@ -437,7 +479,7 @@ component TextInputAutoSuggest {
                 SuggestionMenuItem {
                     text "0.7em"
                 }
-                SuggestionMenuItem(class: "selected") {
+                SuggestionMenuItem(class: "selected checked") {
                     text "0.7em"
                 }
                 SuggestionMenuItem {

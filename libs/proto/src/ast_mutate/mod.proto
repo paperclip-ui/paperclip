@@ -31,6 +31,7 @@ message Mutation {
 
     // Component
     UpdateVariant update_variant = 12;
+    ToggleVariants toggle_variants = 13;
   }
 }
 
@@ -41,6 +42,10 @@ message MutationResult {
     ExpressionUpdated expression_updated = 2;
     ExpressionDeleted expression_deleted = 3;
   }
+}
+
+message ToggleVariants {
+  map<string, bool> enabled = 1;
 }
 
 message UpdateVariant {
@@ -131,7 +136,8 @@ message SetStyleDeclarationValue {
 
 message SetStyleDeclarations {
   string expression_id = 1;
-  repeated SetStyleDeclarationValue declarations = 2;
+  repeated string variant_ids = 2;
+  repeated SetStyleDeclarationValue declarations = 3;
 }
 
 message DeleteStyleDeclarations {

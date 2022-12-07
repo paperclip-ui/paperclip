@@ -23,6 +23,11 @@ import {
   TextNode as VirtTextNode,
 } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { getScaledBox, roundBox } from "../../state/geom";
+import {
+  getEnabledVariants,
+  getSelectedExprAvailableVariants,
+} from "../../state/pc";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -197,6 +202,8 @@ const createEventHandler = (actions: Actions) => {
       prevState.currentDocument.paperclip.html
     ) as VirtTextNode | VirtElement;
 
+    const variantIds = getEnabledVariants(state).map((variant) => variant.id);
+
     const path = virtHTML.getNodePath(
       node,
       prevState.currentDocument.paperclip.html
@@ -206,6 +213,7 @@ const createEventHandler = (actions: Actions) => {
       actions.applyChanges([
         {
           setStyleDeclarations: {
+            variantIds,
             expressionId: node.sourceId,
             declarations: Object.entries(
               state.styleOverrides[prevState.selectedVirtNodeId]
@@ -237,10 +245,12 @@ const createEventHandler = (actions: Actions) => {
       imports: event.payload.imports,
       value,
     }));
+    const variantIds = getEnabledVariants(state).map((variant) => variant.id);
 
     actions.applyChanges([
       {
         setStyleDeclarations: {
+          variantIds,
           expressionId: state.selectedVirtNodeId,
           declarations: style.filter((kv) => kv.value !== ""),
         },
@@ -259,9 +269,13 @@ const createEventHandler = (actions: Actions) => {
   const handleUndo = () => actions.undo();
   const handleRedo = () => actions.redo();
   const handleSave = () => actions.save();
-  const handleVariantEdited = ({
-    payload: { componentId, variantId, newName, triggers },
-  }: ReturnType<typeof editorEvents.variantEdited>) => {
+  const handleVariantEdited = (
+    {
+      payload: { componentId, newName, triggers },
+    }: ReturnType<typeof editorEvents.variantEdited>,
+    state: EditorState
+  ) => {
+    const variantId = state.activeVariantId;
     if (newName === "") {
       if (variantId) {
         actions.applyChanges([
@@ -296,6 +310,25 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
+  const handleVariantsSelected = (
+    selectedVariants: string[],
+    state: EditorState
+  ) => {
+    const availableVariants = getSelectedExprAvailableVariants(state);
+
+    const enabled = {};
+
+    for (const variant of availableVariants) {
+      enabled[variant.id] = selectedVariants.includes(variant.id);
+    }
+
+    actions.applyChanges([
+      {
+        toggleVariants: { enabled },
+      },
+    ]);
+  };
+
   return (
     event: EditorEvent,
     newState: EditorState,
@@ -314,6 +347,9 @@ const createEventHandler = (actions: Actions) => {
       case editorEvents.styleDeclarationsChanged.type: {
         return handleStyleDeclarationChanged(event, newState);
       }
+      case editorEvents.variantsSelected.type: {
+        return handleVariantsSelected(event.payload, newState);
+      }
       case editorEvents.undoKeyPressed.type: {
         return handleUndo();
       }
@@ -324,7 +360,7 @@ const createEventHandler = (actions: Actions) => {
         return handleDeleteExpression(event.payload.variantId);
       }
       case editorEvents.variantEdited.type: {
-        return handleVariantEdited(event);
+        return handleVariantEdited(event, newState);
       }
       case editorEvents.saveKeyComboPressed.type: {
         return handleSave();

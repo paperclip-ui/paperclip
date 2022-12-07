@@ -6,7 +6,7 @@ use pathdiff::diff_paths;
 use super::base::EditContext;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
-use paperclip_proto::ast::all::Expression;
+use paperclip_proto::ast::all::{Expression, ExpressionWrapper};
 use paperclip_proto::ast::graph_ext::Dependency;
 use paperclip_proto::ast_mutate::{
     mutation_result, ExpressionUpdated, MutationResult, SetStyleDeclarations,
@@ -15,34 +15,41 @@ use paperclip_proto::ast_mutate::{
 use crate::ast::all::Visitable;
 use crate::ast::{all::Visitor, all::VisitorResult};
 
-struct ContainsExpr {
+struct GetExpr {
     id: String,
-    contains: bool,
+    reference: Option<ExpressionWrapper>,
 }
 
-impl Visitor<()> for ContainsExpr {
+impl<'expr> Visitor<()> for GetExpr {
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
         if expr.id == self.id {
-            self.contains = true;
+            self.reference = Some(expr.into());
+            return VisitorResult::Return(());
+        }
+        VisitorResult::Continue
+    }
+    fn visit_variant(&mut self, expr: &mut ast::pc::Variant) -> VisitorResult<()> {
+        if expr.id == self.id {
+            self.reference = Some(expr.into());
             return VisitorResult::Return(());
         }
         VisitorResult::Continue
     }
 }
 
-impl ContainsExpr {
-    fn contains_expr(id: &str, doc: &mut ast::pc::Document) -> bool {
-        let mut imp = ContainsExpr {
+impl<'expr> GetExpr {
+    fn get_expr(id: &str, doc: &mut ast::pc::Document) -> Option<ExpressionWrapper> {
+        let mut imp = GetExpr {
             id: id.to_string(),
-            contains: false,
+            reference: None,
         };
         doc.accept(&mut imp);
-        imp.contains
+        imp.reference.clone()
     }
 }
 
-impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, SetStyleDeclarations> {
-    fn visit_style(&mut self, expr: &mut ast::pc::Style) -> VisitorResult<Vec<MutationResult>> {
+impl<'expr> Visitor<Vec<()>> for EditContext<'expr, SetStyleDeclarations> {
+    fn visit_style(&mut self, expr: &mut ast::pc::Style) -> VisitorResult<Vec<()>> {
         if expr.get_id() == self.mutation.expression_id {
             let new_style = parse_style(
                 &mutation_to_style(&self.mutation, &self.dependency),
@@ -53,11 +60,11 @@ impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, SetStyleDeclarat
         VisitorResult::Continue
     }
 
-    fn visit_document(
-        &mut self,
-        doc: &mut ast::pc::Document,
-    ) -> VisitorResult<Vec<MutationResult>> {
-        if !ContainsExpr::contains_expr(&self.mutation.expression_id, doc) {
+    fn visit_document(&mut self, doc: &mut ast::pc::Document) -> VisitorResult<Vec<()>> {
+        if !matches!(
+            GetExpr::get_expr(&self.mutation.expression_id, doc),
+            Some(_)
+        ) {
             return VisitorResult::Continue;
         }
 
@@ -83,15 +90,13 @@ impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, SetStyleDeclarat
         VisitorResult::Continue
     }
 
-    fn visit_text_node(
-        &mut self,
-        expr: &mut ast::pc::TextNode,
-    ) -> VisitorResult<Vec<MutationResult>> {
+    fn visit_text_node(&mut self, expr: &mut ast::pc::TextNode) -> VisitorResult<Vec<()>> {
         if expr.get_id() != self.mutation.expression_id {
             return VisitorResult::Continue;
         }
         let checksum = expr.checksum();
         return add_child_style(
+            &mut self.changes,
             &mut expr.body,
             &self.mutation.expression_id,
             &checksum,
@@ -100,10 +105,11 @@ impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, SetStyleDeclarat
         );
     }
 
-    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<Vec<MutationResult>> {
+    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<Vec<()>> {
         if expr.get_id() == &self.mutation.expression_id {
             let checksum = expr.checksum();
             return add_child_style(
+                &mut self.changes,
                 &mut expr.body,
                 &self.mutation.expression_id,
                 &checksum,
@@ -117,32 +123,76 @@ impl<'expr> Visitor<Vec<MutationResult>> for EditContext<'expr, SetStyleDeclarat
 }
 
 fn add_child_style(
+    changes: &mut Vec<MutationResult>,
     children: &mut Vec<ast::pc::Node>,
     parent_id: &str,
     checksum: &str,
     mutation: &SetStyleDeclarations,
     dependency: &Dependency,
-) -> VisitorResult<Vec<MutationResult>> {
-    let new_style: ast::pc::Style = parse_style(&mutation_to_style(mutation, dependency), checksum);
+) -> VisitorResult<Vec<()>> {
+    let mut new_style: ast::pc::Style =
+        parse_style(&mutation_to_style(mutation, dependency), checksum);
+
+    let mut doc = dependency.document.clone().expect("Document must exist");
+
+    let variant_names = mutation
+        .variant_ids
+        .iter()
+        .map(|id| match GetExpr::get_expr(id, &mut doc) {
+            Some(ExpressionWrapper::Variant(variant)) => Some(variant.name.to_string()),
+            _ => None,
+        })
+        .filter_map(|name| name)
+        .collect::<Vec<String>>();
+
+    new_style.variant_combo = variant_names
+        .iter()
+        .map(|name| ast::pc::Reference {
+            id: format!("{}-{}", new_style.checksum(), name),
+            path: vec![name.to_string()],
+            range: None,
+        })
+        .collect::<Vec<ast::pc::Reference>>();
 
     let mut found = false;
 
     for child in children.iter_mut() {
         if let ast::pc::node::Inner::Style(style) = child.get_inner_mut() {
-            update_style(style, &new_style);
-            found = true;
+            if variant_combo_equals(&style.variant_combo, &new_style.variant_combo) {
+                update_style(style, &new_style);
+                found = true;
+            }
         }
     }
 
     if !found {
         children.insert(0, ast::pc::node::Inner::Style(new_style).get_outer());
     }
-    return VisitorResult::Return(vec![mutation_result::Inner::ExpressionUpdated(
-        ExpressionUpdated {
+
+    changes.push(
+        mutation_result::Inner::ExpressionUpdated(ExpressionUpdated {
             id: parent_id.to_string(),
-        },
+        })
+        .get_outer(),
+    );
+
+    VisitorResult::Continue
+}
+
+fn variant_combo_equals(a: &Vec<ast::pc::Reference>, b: &Vec<ast::pc::Reference>) -> bool {
+    if a.len() != b.len() {
+        return false;
+    }
+
+    if a.len() == 0 {
+        return true;
+    }
+
+    !matches!(
+        a.iter()
+            .find(|a1| { matches!(b.iter().find(|b1| { b1.path == a1.path }), Some(_)) }),
+        None
     )
-    .get_outer()]);
 }
 
 fn get_dep_imports(

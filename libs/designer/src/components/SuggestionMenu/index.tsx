@@ -172,6 +172,7 @@ export type SuggestionMenuItemProps = {
   selected?: boolean;
   preselected?: boolean;
   value: string;
+  checked?: boolean;
 
   // the value to select if differs from "value"
   selectValue?: any;
@@ -184,6 +185,7 @@ export const SuggestionMenuItem = ({
   selected,
   preselected,
   onMouseDown,
+  checked,
 }: SuggestionMenuItemProps) => {
   const ref = useRef<HTMLDivElement>();
 
@@ -200,7 +202,7 @@ export const SuggestionMenuItem = ({
   return (
     <styles.SuggestionMenuItem
       ref={ref}
-      class={cx({ selected, preselected })}
+      class={cx({ selected, preselected, checked })}
       onMouseDown={onMouseDown}
     >
       {children || value}

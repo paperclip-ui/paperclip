@@ -7,7 +7,7 @@ public component Tools {
             height: 100%
             position: absolute
         }
-        div(onClick: onClick, onMouseUp: onMouseUp, onDragEnter: onDragEnter, onDragOver: onDragOver, onDrop: onDrop, onMouseDown: onMouseDown, onDoubleClick: onDoubleClick, onMouseMove: onMouseMove, onMouseLeave: onMouseLeave, onWheel: onWheel, style: style) {
+        div(onClick: onClick, onMouseUp: onMouseUp, onContextMenu: onContextMenu, onDragEnter: onDragEnter, onDragOver: onDragOver, onDrop: onDrop, onMouseDown: onMouseDown, onDoubleClick: onDoubleClick, onMouseMove: onMouseMove, onMouseLeave: onMouseLeave, onWheel: onWheel, style: style) {
             style {
                 position: absolute
                 top: 0px

@@ -13,6 +13,11 @@ import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
 import { mergeBoxes } from "@paperclip-ui/designer/src/machine/state/geom";
 import { Selectable } from "./Selectable";
 import { InsertElement } from "./InsertElement";
+import {
+  ContextMenu,
+  ContextMenuDivider,
+  ContextMenuItem,
+} from "../../../ContextMenu";
 
 export const Tools = () => {
   const {
@@ -52,49 +57,60 @@ export const Tools = () => {
     cursor,
   };
 
+  const contextMenu = () => [
+    <ContextMenuItem keyCombo="alt+meta+k">Create component</ContextMenuItem>,
+    <ContextMenuDivider />,
+    <ContextMenuItem keyCombo="meta+x">Cut</ContextMenuItem>,
+    <ContextMenuItem keyCombo="meta+c">Copy</ContextMenuItem>,
+    <ContextMenuItem keyCombo="meta+p">Paste</ContextMenuItem>,
+    <ContextMenuItem keyCombo="delete">Delete</ContextMenuItem>,
+  ];
+
   return (
-    <styles.Tools
-      ref={toolsRef}
-      onMouseDown={onMouswDown}
-      onMouseUp={onMouseUp}
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
-      style={style}
-    >
-      {insertMode == InsertMode.Element && <InsertElement />}
+    <ContextMenu menu={contextMenu}>
+      <styles.Tools
+        ref={toolsRef}
+        onMouseDown={onMouswDown}
+        onMouseUp={onMouseUp}
+        onMouseMove={onMouseMove}
+        onMouseLeave={onMouseLeave}
+        style={style}
+      >
+        {insertMode == InsertMode.Element && <InsertElement />}
 
-      {!resizerMoving && (
-        <Selectable
-          canvasScroll={canvas.scrollPosition}
-          canvasTransform={canvas.transform}
-          box={hoveringBox}
-          cursor={cursor}
-        />
-      )}
+        {!resizerMoving && (
+          <Selectable
+            canvasScroll={canvas.scrollPosition}
+            canvasTransform={canvas.transform}
+            box={hoveringBox}
+            cursor={cursor}
+          />
+        )}
 
-      {selectedBox && selectedBox.width && selectedBox.height ? (
-        <Selectable
-          canvasScroll={canvas.scrollPosition}
+        {selectedBox && selectedBox.width && selectedBox.height ? (
+          <Selectable
+            canvasScroll={canvas.scrollPosition}
+            canvasTransform={canvas.transform}
+            box={selectedBox}
+            showKnobs
+            cursor={cursor}
+          />
+        ) : null}
+        <Frames
+          frames={frames}
           canvasTransform={canvas.transform}
-          box={selectedBox}
-          showKnobs
-          cursor={cursor}
+          readonly={readonly}
         />
-      ) : null}
-      <Frames
-        frames={frames}
-        canvasTransform={canvas.transform}
-        readonly={readonly}
-      />
-      {/* {optionKeyDown && selectedBox && hoveringBox ? (
-        <Distance
-          canvasScroll={canvas.scrollPosition}
-          canvasTransform={canvas.transform}
-          from={selectedBox}
-          to={hoveringBox}
-        />
-      ) : null} */}
-    </styles.Tools>
+        {/* {optionKeyDown && selectedBox && hoveringBox ? (
+          <Distance
+            canvasScroll={canvas.scrollPosition}
+            canvasTransform={canvas.transform}
+            from={selectedBox}
+            to={hoveringBox}
+          />
+        ) : null} */}
+      </styles.Tools>
+    </ContextMenu>
   );
 };
 

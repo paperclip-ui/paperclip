@@ -6,7 +6,7 @@ import "./menu.pc" as menu
 */
 
 public component ContextMenu {
-    render menu.Menu(style: style) {
+    render menu.Menu(style: style, onKeyDown: onKeyDown) {
         slot children {
 
         }

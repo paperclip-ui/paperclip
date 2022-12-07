@@ -5,7 +5,7 @@ import "./theme.pc" as theme
 */
 
 public component Menu {
-    render div(style: style) {
+    render div(style: style, onKeyDown: onKeyDown, tabIndex: "-1") {
         style extends theme.fontDefault {
             background: var(theme.inputBackground)
             border-radius: var(theme.rounded)

@@ -1,5 +1,5 @@
 use super::parser::parse_style_declarations_with_string_scanner;
-use super::serializer::serialize_declarations;
+use paperclip_ast_serialize::css::serialize_declarations;
 use crate::core::string_scanner::StringScanner;
 use paperclip_common::id::IDGenerator;
 use paperclip_common::str_utils::strip_extra_ws;

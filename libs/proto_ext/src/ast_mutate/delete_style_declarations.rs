@@ -8,15 +8,15 @@ use paperclip_proto::ast_mutate::{
 
 use crate::ast::{all::Visitor, all::VisitorResult};
 
-impl<'expr> Visitor<Vec<()>> for EditContext<'expr, DeleteStyleDeclarations> {
-    fn visit_style(&mut self, expr: &mut ast::pc::Style) -> VisitorResult<Vec<()>> {
+impl<'expr> Visitor<()> for EditContext<'expr, DeleteStyleDeclarations> {
+    fn visit_style(&mut self, expr: &mut ast::pc::Style) -> VisitorResult<()> {
         if expr.get_id() == self.mutation.expression_id {
             remove_declaration(expr, &self.mutation.declaration_names);
         }
         VisitorResult::Continue
     }
 
-    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<Vec<()>> {
+    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
         if expr.get_id() == &self.mutation.expression_id {
             for child in &mut expr.body {
                 if let ast::pc::node::Inner::Style(style) = child.get_inner_mut() {

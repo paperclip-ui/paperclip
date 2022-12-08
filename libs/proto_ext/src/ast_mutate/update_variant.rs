@@ -16,11 +16,11 @@ use crate::ast::all::{Visitor, VisitorResult};
 
 use super::EditContext;
 
-impl<'expr> Visitor<Vec<()>> for EditContext<'expr, UpdateVariant> {
+impl<'expr> Visitor<()> for EditContext<'expr, UpdateVariant> {
     fn visit_component(
         &mut self,
         expr: &mut paperclip_proto::ast::pc::Component,
-    ) -> crate::ast::all::VisitorResult<Vec<()>> {
+    ) -> crate::ast::all::VisitorResult<()> {
         if expr.id != self.mutation.component_id {
             return VisitorResult::Continue;
         }

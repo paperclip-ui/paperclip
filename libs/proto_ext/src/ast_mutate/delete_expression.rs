@@ -23,8 +23,8 @@ macro_rules! try_remove_child {
     }};
 }
 
-impl<'expr> Visitor<Vec<()>> for EditContext<'expr, DeleteExpression> {
-    fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<Vec<()>> {
+impl<'expr> Visitor<()> for EditContext<'expr, DeleteExpression> {
+    fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
         if let Some(i) = try_remove_child!(expr.body, &self.mutation.expression_id) {
             let prev_index = i - 1;
             let mut results = vec![
@@ -54,7 +54,7 @@ impl<'expr> Visitor<Vec<()>> for EditContext<'expr, DeleteExpression> {
         }
         VisitorResult::Continue
     }
-    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<Vec<()>> {
+    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
         if matches!(
             try_remove_child!(expr.body, &self.mutation.expression_id),
             Some(_)
@@ -68,7 +68,7 @@ impl<'expr> Visitor<Vec<()>> for EditContext<'expr, DeleteExpression> {
         }
         VisitorResult::Continue
     }
-    fn visit_text_node(&mut self, expr: &mut ast::pc::TextNode) -> VisitorResult<Vec<()>> {
+    fn visit_text_node(&mut self, expr: &mut ast::pc::TextNode) -> VisitorResult<()> {
         if matches!(
             try_remove_child!(expr.body, &self.mutation.expression_id),
             Some(_)
@@ -83,7 +83,7 @@ impl<'expr> Visitor<Vec<()>> for EditContext<'expr, DeleteExpression> {
 
         VisitorResult::Continue
     }
-    fn visit_component(&mut self, expr: &mut ast::pc::Component) -> VisitorResult<Vec<()>> {
+    fn visit_component(&mut self, expr: &mut ast::pc::Component) -> VisitorResult<()> {
         if matches!(
             try_remove_child!(expr.body, &self.mutation.expression_id),
             Some(_)

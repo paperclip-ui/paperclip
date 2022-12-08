@@ -6,8 +6,8 @@ use paperclip_proto::ast_mutate::{mutation_result, ExpressionUpdated, SetFrameBo
 
 use crate::ast::{all::Visitor, all::VisitorResult};
 
-impl<'expr> Visitor<Vec<()>> for EditContext<'expr, SetFrameBounds> {
-    fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<Vec<()>> {
+impl<'expr> Visitor<()> for EditContext<'expr, SetFrameBounds> {
+    fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
         if let Some(frame_index) = expr.body.iter().position(|expr| {
             expr.get_inner().get_id() == &self.mutation.frame_id
                 || is_expr_render_node(&self.mutation.frame_id, expr)

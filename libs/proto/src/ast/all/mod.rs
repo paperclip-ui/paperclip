@@ -28,7 +28,7 @@ macro_rules! expressions {
         }
     }
 
-    #[derive(Clone)]
+    #[derive(Clone, Debug)]
     pub enum ExpressionWrapper {
         $(
             $name($expr),

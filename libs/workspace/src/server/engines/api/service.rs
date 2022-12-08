@@ -2,8 +2,8 @@
 
 use crate::server::core::{ServerEvent, ServerStore};
 use futures::Stream;
+use paperclip_ast_serialize::pc::serialize;
 use paperclip_language_services::DocumentInfo;
-use paperclip_parser::pc::serializer::serialize;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{

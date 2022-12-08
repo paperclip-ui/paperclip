@@ -1342,6 +1342,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "paperclip_ast_serialize"
+version = "0.1.1"
+dependencies = [
+ "paperclip_common",
+ "paperclip_proto",
+]
+
+[[package]]
 name = "paperclip_cli"
 version = "0.1.1"
 dependencies = [
@@ -1464,6 +1472,7 @@ dependencies = [
  "colors-transform",
  "css-color",
  "futures",
+ "paperclip_ast_serialize",
  "paperclip_common",
  "paperclip_parser",
  "paperclip_proto",
@@ -1477,6 +1486,7 @@ dependencies = [
  "anyhow",
  "crc 1.8.1",
  "futures",
+ "paperclip_ast_serialize",
  "paperclip_common",
  "paperclip_proto",
  "pretty_assertions",
@@ -1534,6 +1544,7 @@ dependencies = [
  "convert_case",
  "crc 1.8.1",
  "futures",
+ "paperclip_ast_serialize",
  "paperclip_common",
  "paperclip_parser",
  "paperclip_proto",
@@ -1563,6 +1574,7 @@ dependencies = [
  "mime_guess",
  "notify",
  "open",
+ "paperclip_ast_serialize",
  "paperclip_common",
  "paperclip_config",
  "paperclip_evaluator",

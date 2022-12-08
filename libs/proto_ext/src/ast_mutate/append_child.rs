@@ -9,8 +9,8 @@ use paperclip_proto::ast_mutate::{
 
 use crate::ast::{all::Visitor, all::VisitorResult};
 
-impl<'expr> Visitor<Vec<()>> for EditContext<'expr, AppendChild> {
-    fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<Vec<()>> {
+impl<'expr> Visitor<()> for EditContext<'expr, AppendChild> {
+    fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
         if expr.get_id() == &self.mutation.parent_id {
             let child = parse_pc(&self.mutation.child_source, &expr.checksum())
                 .expect("Unable to parse child source for AppendChild");
@@ -26,7 +26,7 @@ impl<'expr> Visitor<Vec<()>> for EditContext<'expr, AppendChild> {
         }
         VisitorResult::Continue
     }
-    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<Vec<()>> {
+    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
         if expr.get_id() == &self.mutation.parent_id {
             let child = parse_pc(&self.mutation.child_source, &expr.checksum())
                 .expect("Unable to parse child source for AppendChild");

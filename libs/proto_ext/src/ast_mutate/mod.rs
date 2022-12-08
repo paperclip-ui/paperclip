@@ -7,9 +7,11 @@ mod set_frame_bounds;
 mod set_style_declarations;
 mod toggle_variants;
 mod update_variant;
+mod convert_to_component;
 use crate::ast::all::{Visitable, Visitor, VisitorResult};
 pub use append_child::*;
 pub use base::*;
+pub use convert_to_component::*;
 pub use delete_expression::*;
 pub use delete_style_declarations::*;
 pub use paperclip_proto::ast;
@@ -25,8 +27,8 @@ mod test;
 
 macro_rules! mutations {
     ($($name:ident), *) => {
-      impl<'expr> Visitor<Vec<()>> for base::EditContext<'expr, Mutation> {
-        fn visit_document(&mut self, document: &mut ast::pc::Document) -> VisitorResult<Vec<()>> {
+      impl<'expr> Visitor<()> for base::EditContext<'expr, Mutation> {
+        fn visit_document(&mut self, document: &mut ast::pc::Document) -> VisitorResult<()> {
           match self.mutation.inner.as_ref().expect("Inner must exist") {
             $(
               mutation::Inner::$name(mutation) => {
@@ -82,6 +84,7 @@ mutations! {
   InsertFrame,
   ToggleVariants,
   UpdateVariant,
+  ConvertToComponent,
   DeleteStyleDeclarations,
   SetStyleDeclarations,
   DeleteExpression,

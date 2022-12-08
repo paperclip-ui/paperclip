@@ -6,8 +6,8 @@ use paperclip_proto::ast_mutate::{mutation_result, ExpressionUpdated, ToggleVari
 
 use crate::ast::{all::Visitor, all::VisitorResult};
 
-impl<'expr> Visitor<Vec<()>> for EditContext<'expr, ToggleVariants> {
-    fn visit_variant(&mut self, expr: &mut ast::pc::Variant) -> VisitorResult<Vec<()>> {
+impl<'expr> Visitor<()> for EditContext<'expr, ToggleVariants> {
+    fn visit_variant(&mut self, expr: &mut ast::pc::Variant) -> VisitorResult<()> {
         if let Some(enabled) = self.mutation.enabled.get(&expr.id) {
             // first turn all off
             expr.triggers = expr

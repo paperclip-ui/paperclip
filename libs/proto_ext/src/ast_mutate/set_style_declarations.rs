@@ -6,50 +6,17 @@ use pathdiff::diff_paths;
 use super::base::EditContext;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
+use crate::ast::get_expr::GetExpr;
 use paperclip_proto::ast::all::{Expression, ExpressionWrapper};
 use paperclip_proto::ast::graph_ext::Dependency;
 use paperclip_proto::ast_mutate::{
     mutation_result, ExpressionUpdated, MutationResult, SetStyleDeclarations,
 };
 
-use crate::ast::all::Visitable;
 use crate::ast::{all::Visitor, all::VisitorResult};
 
-struct GetExpr {
-    id: String,
-    reference: Option<ExpressionWrapper>,
-}
-
-impl<'expr> Visitor<()> for GetExpr {
-    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
-        if expr.id == self.id {
-            self.reference = Some(expr.into());
-            return VisitorResult::Return(());
-        }
-        VisitorResult::Continue
-    }
-    fn visit_variant(&mut self, expr: &mut ast::pc::Variant) -> VisitorResult<()> {
-        if expr.id == self.id {
-            self.reference = Some(expr.into());
-            return VisitorResult::Return(());
-        }
-        VisitorResult::Continue
-    }
-}
-
-impl<'expr> GetExpr {
-    fn get_expr(id: &str, doc: &mut ast::pc::Document) -> Option<ExpressionWrapper> {
-        let mut imp = GetExpr {
-            id: id.to_string(),
-            reference: None,
-        };
-        doc.accept(&mut imp);
-        imp.reference.clone()
-    }
-}
-
-impl<'expr> Visitor<Vec<()>> for EditContext<'expr, SetStyleDeclarations> {
-    fn visit_style(&mut self, expr: &mut ast::pc::Style) -> VisitorResult<Vec<()>> {
+impl<'expr> Visitor<()> for EditContext<'expr, SetStyleDeclarations> {
+    fn visit_style(&mut self, expr: &mut ast::pc::Style) -> VisitorResult<()> {
         if expr.get_id() == self.mutation.expression_id {
             let new_style = parse_style(
                 &mutation_to_style(&self.mutation, &self.dependency),
@@ -60,7 +27,7 @@ impl<'expr> Visitor<Vec<()>> for EditContext<'expr, SetStyleDeclarations> {
         VisitorResult::Continue
     }
 
-    fn visit_document(&mut self, doc: &mut ast::pc::Document) -> VisitorResult<Vec<()>> {
+    fn visit_document(&mut self, doc: &mut ast::pc::Document) -> VisitorResult<()> {
         if !matches!(
             GetExpr::get_expr(&self.mutation.expression_id, doc),
             Some(_)
@@ -90,7 +57,7 @@ impl<'expr> Visitor<Vec<()>> for EditContext<'expr, SetStyleDeclarations> {
         VisitorResult::Continue
     }
 
-    fn visit_text_node(&mut self, expr: &mut ast::pc::TextNode) -> VisitorResult<Vec<()>> {
+    fn visit_text_node(&mut self, expr: &mut ast::pc::TextNode) -> VisitorResult<()> {
         if expr.get_id() != self.mutation.expression_id {
             return VisitorResult::Continue;
         }
@@ -105,7 +72,7 @@ impl<'expr> Visitor<Vec<()>> for EditContext<'expr, SetStyleDeclarations> {
         );
     }
 
-    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<Vec<()>> {
+    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
         if expr.get_id() == &self.mutation.expression_id {
             let checksum = expr.checksum();
             return add_child_style(
@@ -129,7 +96,7 @@ fn add_child_style(
     checksum: &str,
     mutation: &SetStyleDeclarations,
     dependency: &Dependency,
-) -> VisitorResult<Vec<()>> {
+) -> VisitorResult<()> {
     let mut new_style: ast::pc::Style =
         parse_style(&mutation_to_style(mutation, dependency), checksum);
 

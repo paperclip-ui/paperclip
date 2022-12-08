@@ -24,6 +24,8 @@
 #### On-deck
 
 - shortcuts
+- convert to component
+- wrap in slot
 
 - context-menu
 

@@ -2,9 +2,10 @@ use super::edit_graph;
 use futures::executor::block_on;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::pc;
+use paperclip_ast_serialize::pc::serialize;
 use paperclip_proto::ast_mutate::{
     mutation, update_variant_trigger, AppendChild, Bounds, DeleteExpression, SetFrameBounds,
-    SetStyleDeclarationValue, SetStyleDeclarations, ToggleVariants, UpdateVariant,
+    SetStyleDeclarationValue, SetStyleDeclarations, ToggleVariants, UpdateVariant, ConvertToComponent,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use crate::graph::{load::LoadableGraph, test_utils};
@@ -29,7 +30,7 @@ macro_rules! case {
                 .map(|(path, dep)| {
                     (
                         path.to_string(),
-                        pc::serializer::serialize(
+                        serialize(
                             dep.document.as_ref().expect("Document must exist"),
                         ),
                     )
@@ -883,6 +884,137 @@ case! {
             background: red
           }
         }
+      }
+    "#
+  )]
+}
+
+
+case! {
+  can_convert_an_element_to_a_component,
+  [
+    (
+      "/entry.pc", r#"
+        div
+      "#
+    )
+  ],
+  mutation::Inner::ConvertToComponent(ConvertToComponent {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      public component Unnamed {
+        render div
+      }
+      Unnamed
+    "#
+  )]
+}
+
+
+case! {
+  can_convert_a_text_node_to_an_element,
+  [
+    (
+      "/entry.pc", r#"
+        text "ab"
+      "#
+    )
+  ],
+
+  mutation::Inner::ConvertToComponent(ConvertToComponent {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+        public component Unnamed {
+          render text "ab"
+        }
+        Unnamed
+    "#
+  )]
+}
+
+
+
+case! {
+  inserts_new_components_after_imports,
+  [
+    (
+      "/entry.pc", r#"
+        import "/a.pc" as ab
+        div
+      "#
+    ),
+    (
+      "/a.pc", r#"
+      "#
+    )
+  ],
+
+  mutation::Inner::ConvertToComponent(ConvertToComponent {
+    expression_id: "80f4925f-2".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      import "/a.pc" as ab
+      public component Unnamed {
+        render div
+      }
+      Unnamed
+    "#
+  )]
+}
+
+
+
+case! {
+  inserts_new_components_where_components_start,
+  [
+    (
+      "/entry.pc", r#"
+        public token ab #F60
+        public style test {
+          color: blue
+        }
+        div {
+          style {
+            color: blue
+          }
+        }
+        component Ab {
+          render span
+        }
+      "#
+    ),
+    (
+      "/a.pc", r#"
+      "#
+    )
+  ],
+
+  mutation::Inner::ConvertToComponent(ConvertToComponent {
+    expression_id: "80f4925f-9".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      public token ab #F60 
+      public style test { 
+        color: blue 
+      } 
+      Unnamed 
+      
+      public component Unnamed { 
+        render div { 
+          style { 
+            color: blue 
+          } 
+        } 
+      } 
+      
+      component Ab { 
+        render span 
       }
     "#
   )]

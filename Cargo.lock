@@ -1428,18 +1428,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "paperclip_editor"
-version = "0.1.1"
-dependencies = [
- "futures",
- "paperclip_common",
- "paperclip_parser",
- "paperclip_proto",
- "paperclip_proto_ext",
- "pathdiff",
-]
-
-[[package]]
 name = "paperclip_evaluator"
 version = "0.1.1"
 dependencies = [
@@ -1577,7 +1565,6 @@ dependencies = [
  "open",
  "paperclip_common",
  "paperclip_config",
- "paperclip_editor",
  "paperclip_evaluator",
  "paperclip_language_services",
  "paperclip_parser",

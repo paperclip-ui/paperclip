@@ -13,11 +13,15 @@ pub use base::*;
 pub use delete_expression::*;
 pub use delete_style_declarations::*;
 pub use paperclip_proto::ast;
+use paperclip_proto::ast::graph_ext::Graph;
 pub use paperclip_proto::ast_mutate::*;
 pub use set_frame_bounds::*;
 pub use set_style_declarations::*;
 pub use toggle_variants::*;
 pub use update_variant::*;
+
+#[cfg(test)]
+mod test;
 
 macro_rules! mutations {
     ($($name:ident), *) => {
@@ -42,10 +46,37 @@ macro_rules! mutations {
           }
         }
       }
-
-
     };
 }
+
+
+
+pub fn edit_graph(
+  graph: &mut Graph,
+  mutations: &Vec<Mutation>,
+) -> Vec<(String, Vec<MutationResult>)> {
+  let mut changed: Vec<(String, Vec<MutationResult>)> = vec![];
+
+  for mutation in mutations {
+      for (path, dep) in &mut graph.dependencies {
+          let mut ctx = EditContext {
+              mutation,
+              dependency: dep.clone(),
+              changes: vec![],
+          };
+          dep.document
+              .as_mut()
+              .expect("Document must exist")
+              .accept(&mut ctx);
+
+          if ctx.changes.len() > 0 {
+              changed.push((path.to_string(), ctx.changes.clone()));
+          }
+      }
+  }
+  return changed;
+}
+
 
 mutations! {
   InsertFrame,

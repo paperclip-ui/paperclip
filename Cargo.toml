@@ -5,7 +5,6 @@ members = [
   "libs/compiler-yew",
   "libs/cli",
   "libs/rs_common",
-  "libs/editor",
   "libs/project",
   "libs/evaluator",
   "libs/paperclip-loader",

@@ -5,6 +5,7 @@ import {
   DesignerEngineOptions,
 } from "../domains/api/engine";
 import { createHistoryEngine } from "../domains/history/engine";
+import { createKeyboardEngine } from "../domains/keyboard/engine";
 
 export const createEngine = (
   options: DesignerEngineOptions,
@@ -13,5 +14,6 @@ export const createEngine = (
   combineEngineCreators<DesignerState, any>(
     createDesignerEngine(options),
     createHistoryEngine,
+    createKeyboardEngine,
     ...otherEngineCreators
   );

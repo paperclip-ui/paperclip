@@ -9,16 +9,16 @@ use anyhow::{Error, Result};
 use paperclip_common::fs::FileWatchEvent;
 use paperclip_common::get_or_short;
 use paperclip_config::ConfigContext;
-use paperclip_editor::edit_graph;
-use paperclip_editor::Mutation;
 use paperclip_evaluator::css;
 use paperclip_evaluator::html;
 use paperclip_parser::pc::serializer::serialize;
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::graph_ext::Graph;
+use paperclip_proto::ast_mutate::Mutation;
 use paperclip_proto::ast_mutate::MutationResult;
 use paperclip_proto::virt::module::pc_module_import;
 use paperclip_proto::virt::module::{GlobalScript, PcModule, PcModuleImport, PccssImport};
+use paperclip_proto_ext::ast_mutate::edit_graph;
 
 pub struct StartOptions {
     pub config_context: ConfigContext,

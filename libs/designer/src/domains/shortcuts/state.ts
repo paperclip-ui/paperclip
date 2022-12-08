@@ -24,32 +24,32 @@ export const getEntityShortcuts = (): MenuItem<ShortcutCommand>[] => [
   {
     kind: MenuItemKind.Option,
     label: "Create component",
-    shortcut: ["alt", "cmd", "k"],
+    shortcut: ["alt", "meta", "k"],
     command: ShortcutCommand.ConvertToComponent,
   },
   { kind: MenuItemKind.Divider },
   {
     kind: MenuItemKind.Option,
     label: "Cut",
-    shortcut: ["cmd", "x"],
+    shortcut: ["meta", "x"],
     command: ShortcutCommand.Cut,
   },
   {
     kind: MenuItemKind.Option,
     label: "Cut",
-    shortcut: ["cmd", "c"],
+    shortcut: ["meta", "c"],
     command: ShortcutCommand.Copy,
   },
   {
     kind: MenuItemKind.Option,
     label: "Cut",
-    shortcut: ["cmd", "v"],
+    shortcut: ["meta", "v"],
     command: ShortcutCommand.Paste,
   },
   {
     kind: MenuItemKind.Option,
-    label: "Cut",
-    shortcut: ["delete"],
+    label: "Delete",
+    shortcut: ["backspace"],
     command: ShortcutCommand.Delete,
   },
 ];
@@ -66,7 +66,7 @@ export const getGlobalShortcuts = (): MenuItem<ShortcutCommand>[] => [
     kind: MenuItemKind.Option,
     label: "Insert Text",
     shortcut: ["t"],
-    command: ShortcutCommand.InsertElement,
+    command: ShortcutCommand.InsertText,
   },
 
   { kind: MenuItemKind.Divider },

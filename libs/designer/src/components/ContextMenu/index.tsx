@@ -101,7 +101,7 @@ const ContextMenuOption = ({
   };
   return (
     <styles.ContextMenuItem
-      keyCommand={shortcut ?? prettyKeyCombo(shortcut)}
+      keyCommand={shortcut ? prettyKeyCombo(shortcut) : null}
       onMouseDown={onSelect}
     >
       {label}

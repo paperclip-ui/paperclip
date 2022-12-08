@@ -1,4 +1,4 @@
-use crate::edit_graph;
+use super::edit_graph;
 use futures::executor::block_on;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::pc;
@@ -7,7 +7,7 @@ use paperclip_proto::ast_mutate::{
     SetStyleDeclarationValue, SetStyleDeclarations, ToggleVariants, UpdateVariant,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
-use paperclip_proto_ext::graph::{load::LoadableGraph, test_utils};
+use crate::graph::{load::LoadableGraph, test_utils};
 use std::collections::HashMap;
 
 macro_rules! case {

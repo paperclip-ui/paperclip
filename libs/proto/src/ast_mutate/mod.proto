@@ -13,6 +13,7 @@ message Mutation {
     AppendChild append_child = 1;
     DeleteChild delete_child = 2;
     InsertChild insert_child = 3;
+    ConvertToComponent convert_to_component = 14;
 
     // Element
     SetElementParameter set_element_parameter = 4;
@@ -87,6 +88,10 @@ message AppendChild {
 
 
 message DeleteExpression {
+  string expression_id = 1;
+}
+
+message ConvertToComponent {
   string expression_id = 1;
 }
 

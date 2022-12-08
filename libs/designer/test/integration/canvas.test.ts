@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { designerEngineEvents } from "@paperclip-ui/designer/src/machine/engine/designer/events";
+import { designerEngineEvents } from "@paperclip-ui/designer/src/domains/api/events";
 import {
   insertCanvasElement,
   startDesigner,
@@ -10,7 +10,7 @@ import {
   waitForEvent,
   waitUntilDesignerReady,
 } from "../controls";
-import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
+import { editorEvents } from "@paperclip-ui/designer/src/events";
 
 describe(__filename + "#", () => {
   it(`Can evaluate a simple document`, async () => {

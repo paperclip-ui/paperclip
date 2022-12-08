@@ -6,8 +6,8 @@ import {
   getCanvas,
   getInsertMode,
   InsertMode,
-} from "@paperclip-ui/designer/src/machine/state";
-import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
+} from "@paperclip-ui/designer/src/state";
+import { editorEvents } from "@paperclip-ui/designer/src/events";
 
 export const Toolbar = () => {
   const { zoom, insertMode, onInsertElementClick, onInsertTextClick } =

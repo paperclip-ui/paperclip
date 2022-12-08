@@ -4,7 +4,6 @@ import {
   Node,
   Document as HTMLDocument,
 } from "@paperclip-ui/proto/lib/generated/virt/html";
-import { DesignerEngineState } from "../engine/designer/state";
 import {
   Box,
   boxIntersectsPoint,
@@ -20,9 +19,12 @@ import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
 import {
   HistoryEngineState,
   INITIAL_HISTORY_STATE,
-} from "../engine/history/state";
+} from "../domains/history/state";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { Menu } from "../modules/shortcuts/base";
+import { EditorEvent } from "../events";
+import { getGlobalShortcuts } from "../domains/shortcuts/state";
 export const IS_WINDOWS = false;
 
 export enum InsertMode {
@@ -65,6 +67,7 @@ export type EditorState = {
   selectedVirtNodeId: string;
   activeVariantId?: string;
   insertedNodeIds: string[];
+  shortcut: Menu<EditorEvent>;
   graph: Graph;
   insertMode?: InsertMode;
   highlightNodePath?: string;
@@ -87,8 +90,7 @@ export type EditorState = {
   currentDocument?: FileResponse;
   rects: Record<number, Record<string, Box>>;
   canvas: Canvas;
-} & DesignerEngineState &
-  HistoryEngineState;
+} & HistoryEngineState;
 
 export const DEFAULT_STATE: EditorState = {
   readonly: false,
@@ -96,6 +98,9 @@ export const DEFAULT_STATE: EditorState = {
   preEditComputedStyles: {},
   graph: {
     dependencies: {},
+  },
+  shortcut: {
+    items: getGlobalShortcuts(),
   },
   expandedLayerVirtIds: [],
   computedStyles: {},

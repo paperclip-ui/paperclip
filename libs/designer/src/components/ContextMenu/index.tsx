@@ -1,17 +1,20 @@
+import { useDispatch } from "@paperclip-ui/common";
 import * as styles from "@paperclip-ui/designer/src/styles/context-menu.pc";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { isKeyComboDown } from "../../hooks/useHotkeys";
+import React, { useEffect, useRef, useState } from "react";
+import { EditorEvent } from "../../events";
+import {
+  MenuItem,
+  MenuItemKind,
+  MenuItemOption,
+} from "../../modules/shortcuts/base";
 import { Portal } from "../Portal";
 
 export type ContextMenuProps = {
   children: React.ReactElement;
-  menu: React.ReactElement[];
+  menu: MenuItem<EditorEvent>[];
 };
 
-export const ContextMenu = ({
-  children,
-  menu: menuOptions,
-}: ContextMenuProps) => {
+export const ContextMenu = ({ children, menu }: ContextMenuProps) => {
   const otherRef = useRef<HTMLElement>();
   const ref = children.props.ref || otherRef;
 
@@ -34,17 +37,6 @@ export const ContextMenu = ({
 
     if (event.key === "Escape") {
       setAnchorStyle(null);
-    }
-
-    for (const option of menuOptions) {
-      if (
-        option.props.keyCombo &&
-        isKeyComboDown(option.props.keyCombo, event.nativeEvent)
-      ) {
-        event.stopPropagation();
-        event.preventDefault();
-        option.props.onSelect();
-      }
     }
   };
 
@@ -80,7 +72,13 @@ export const ContextMenu = ({
       <Portal>
         {anchorStyle && (
           <styles.ContextMenu style={anchorStyle}>
-            {menuOptions}
+            {menu.map((item) => {
+              if (item.kind === MenuItemKind.Divider) {
+                return <ContextMenuDivider />;
+              } else if (item.kind === MenuItemKind.Option) {
+                return <ContextMenuOption option={item} />;
+              }
+            })}
           </styles.ContextMenu>
         )}
       </Portal>
@@ -88,34 +86,35 @@ export const ContextMenu = ({
   );
 };
 
-type ContextMenuItemProps = {
-  keyCombo?: string;
-  children: string;
-  onSelect: () => void;
+type ContextMenuOptionProps = {
+  option: MenuItemOption<EditorEvent>;
 };
 
-export const ContextMenuItem = ({
-  keyCombo,
-  children,
-  onSelect,
-}: ContextMenuItemProps) => {
+const ContextMenuOption = ({
+  option: { shortcut, event, label },
+}: ContextMenuOptionProps) => {
+  const dispatch = useDispatch();
+  const onSelect = () => {
+    dispatch(event);
+  };
   return (
     <styles.ContextMenuItem
-      keyCommand={prettyKeyCombo(keyCombo)}
+      keyCommand={shortcut ?? prettyKeyCombo(shortcut)}
       onMouseDown={onSelect}
     >
-      {children}
+      {label}
     </styles.ContextMenuItem>
   );
 };
 
-const prettyKeyCombo = (combo: string) => {
+const prettyKeyCombo = (combo: string[]) => {
   return combo
-    .replaceAll("+", "")
+    .join("+")
     .replace("meta", "⌘")
     .replace("delete", "⌫")
     .replace("alt", "⌥")
+    .replaceAll("+", "")
     .toUpperCase();
 };
 
-export const ContextMenuDivider = styles.ContextMenuDivider;
+const ContextMenuDivider = styles.ContextMenuDivider;

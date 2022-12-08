@@ -4,10 +4,11 @@ import {
   identity,
 } from "@paperclip-ui/common";
 import { UpdateVariantTrigger } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
-import { DesignerEngineEvent } from "../engine/designer/events";
-import { HistoryEngineEvent } from "../engine/history/events";
+import { DesignerEngineEvent } from "../domains/api/events";
+import { HistoryEngineEvent } from "../domains/history/events";
 import { InsertMode } from "../state";
 import { Box, Point, Size } from "../state/geom";
+import { ShortcutEvent } from "./shortcut";
 
 export const editorEvents = eventCreators(
   {
@@ -76,4 +77,5 @@ export const editorEvents = eventCreators(
 export type EditorEvent =
   | ExtractEventFromCreators<typeof editorEvents>
   | DesignerEngineEvent
-  | HistoryEngineEvent;
+  | HistoryEngineEvent
+  | ShortcutEvent;

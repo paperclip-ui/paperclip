@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect, useMemo } from "react";
+import React, { useRef, useCallback } from "react";
 
 import * as styles from "./index.pc";
 import { Frames } from "./Frames";
@@ -8,16 +8,15 @@ import {
   getEditorState,
   getSelectedNodePath,
   InsertMode,
-} from "@paperclip-ui/designer/src/machine/state";
-import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
-import { mergeBoxes } from "@paperclip-ui/designer/src/machine/state/geom";
+} from "@paperclip-ui/designer/src/state";
+import { editorEvents } from "@paperclip-ui/designer/src/events";
+import { mergeBoxes } from "@paperclip-ui/designer/src/state/geom";
 import { Selectable } from "./Selectable";
 import { InsertElement } from "./InsertElement";
-import {
-  ContextMenu,
-  ContextMenuDivider,
-  ContextMenuItem,
-} from "../../../ContextMenu";
+import { ContextMenu } from "../../../ContextMenu";
+import { createNodeShortcuts } from "@paperclip-ui/designer/src/domains/shortcuts/state";
+
+const MENU = createNodeShortcuts();
 
 export const Tools = () => {
   const {
@@ -41,33 +40,6 @@ export const Tools = () => {
     optionKeyDown,
   } = useTools();
 
-  const contextMenu = useMemo(
-    () => [
-      <ContextMenuItem keyCombo="alt+meta+k" onSelect={() => {}}>
-        Create component
-      </ContextMenuItem>,
-      <ContextMenuDivider />,
-      <ContextMenuItem keyCombo="meta+x" onSelect={() => {}}>
-        Cut
-      </ContextMenuItem>,
-      <ContextMenuItem keyCombo="meta+c" onSelect={() => {}}>
-        Copy
-      </ContextMenuItem>,
-      <ContextMenuItem keyCombo="meta+p" onSelect={() => {}}>
-        Paste
-      </ContextMenuItem>,
-      <ContextMenuItem
-        keyCombo="delete"
-        onSelect={() => {
-          dispatch(editorEvents.deleteHokeyPressed());
-        }}
-      >
-        Delete
-      </ContextMenuItem>,
-    ],
-    [dispatch]
-  );
-
   if (!currentDocument?.paperclip || !toolsLayerEnabled) {
     return null;
   }
@@ -85,7 +57,7 @@ export const Tools = () => {
   };
 
   return (
-    <ContextMenu menu={contextMenu}>
+    <ContextMenu menu={MENU}>
       <styles.Tools
         ref={toolsRef}
         onMouseDown={onMouswDown}

@@ -2,13 +2,13 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/left-sidebar.pc";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
-import { getHistoryState } from "@paperclip-ui/designer/src/machine/engine/history/state";
+import { getHistoryState } from "@paperclip-ui/designer/src/domains/history/state";
 import {
   getCurrentDependency,
   getExpandedVirtIds,
   getGraph,
   getSelectedNodeId,
-} from "@paperclip-ui/designer/src/machine/state";
+} from "@paperclip-ui/designer/src/state";
 import {
   Component,
   DocumentBodyItem,
@@ -19,7 +19,7 @@ import {
   TextNode,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
-import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
+import { editorEvents } from "@paperclip-ui/designer/src/events";
 import cx from "classnames";
 
 export const LeftSidebar = () => {

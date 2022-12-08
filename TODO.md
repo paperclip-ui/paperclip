@@ -23,6 +23,8 @@
 
 #### On-deck
 
+- shortcuts
+
 - context-menu
 
   - properly wire up global hotkeys

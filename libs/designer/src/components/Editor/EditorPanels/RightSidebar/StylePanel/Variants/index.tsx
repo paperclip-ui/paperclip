@@ -6,8 +6,8 @@ import {
   MultiSelectOption,
 } from "@paperclip-ui/designer/src/components/MultiSelectInput";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
-import { getSelectedExprAvailableVariants } from "@paperclip-ui/designer/src/machine/state/pc";
-import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
+import { getSelectedExprAvailableVariants } from "@paperclip-ui/designer/src/state/pc";
+import { editorEvents } from "@paperclip-ui/designer/src/events";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
 export const Variants = () => {

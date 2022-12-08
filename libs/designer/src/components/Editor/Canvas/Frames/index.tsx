@@ -8,9 +8,9 @@ import {
   getCurrentDocument,
   getEditorState,
   StyleOverrides,
-} from "@paperclip-ui/designer/src/machine/state";
+} from "@paperclip-ui/designer/src/state";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
-import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
+import { editorEvents } from "@paperclip-ui/designer/src/events";
 
 type FramesProps = {
   expandedFrameIndex?: number | null;

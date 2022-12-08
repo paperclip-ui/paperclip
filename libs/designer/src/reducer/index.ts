@@ -1,4 +1,4 @@
-import { Designer } from "../../../test/controls";
+import { Designer } from "../../test/controls";
 import { EditorEvent } from "../events";
 import { EditorState } from "../state";
 import { editorReducer } from "./editor";

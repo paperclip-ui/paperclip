@@ -1,7 +1,7 @@
 import { createEditorMachine } from "../../src/machine";
-import { DEFAULT_STATE, EditorState } from "../../src/machine/state";
+import { DEFAULT_STATE, EditorState } from "../../src/state";
 import getPort from "get-port";
-import { EditorEvent } from "../../src/machine/events";
+import { EditorEvent } from "../../src/events";
 import { EventEmitter } from "events";
 import { NodeHttpTransport } from "@improbable-eng/grpc-web-node-http-transport";
 import { Machine } from "@paperclip-ui/common";

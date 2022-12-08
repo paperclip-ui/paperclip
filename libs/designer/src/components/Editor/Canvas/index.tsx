@@ -9,13 +9,13 @@ import React, {
 import { Frames } from "./Frames";
 import * as styles from "@paperclip-ui/designer/src/styles/editor.pc";
 import { normalizeWheel } from "./normalize-wheel";
-import { editorEvents } from "@paperclip-ui/designer/src//machine/events";
+import { editorEvents } from "@paperclip-ui/designer/src/events";
 
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   getCanvas,
   getCurrentDocument,
-} from "@paperclip-ui/designer/src/machine/state";
+} from "@paperclip-ui/designer/src/state";
 import { Tools } from "./Tools";
 import { useHotkeys } from "@paperclip-ui/designer/src/hooks/useHotkeys";
 

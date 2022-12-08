@@ -19,7 +19,7 @@ public component Sidebar {
       overflow: scroll 
       pointer-events: all
     }
-      slot children
+    slot children
   }
 }
 

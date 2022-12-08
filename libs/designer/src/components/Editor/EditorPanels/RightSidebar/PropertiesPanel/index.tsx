@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { useSelector } from "@paperclip-ui/common";
-import { getSelectedExpression } from "@paperclip-ui/designer/src/machine/state/pc";
+import { getSelectedExpression } from "@paperclip-ui/designer/src/state/pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { VariantsSection } from "./VariantsSection";
 

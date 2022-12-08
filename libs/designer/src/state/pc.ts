@@ -3,7 +3,6 @@ import { Variant } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { EditorState } from "./core";
 
 export const MIXED_VALUE = "mixed";
-const EMPTY_ARRAY = [];
 
 export type ComputedDeclaration = {
   name: string;

@@ -1,4 +1,4 @@
-import { Canvas } from "@paperclip-ui/designer/src/machine/state";
+import { Canvas } from "@paperclip-ui/designer/src/state";
 import React from "react";
 import * as styles from "./index.pc";
 

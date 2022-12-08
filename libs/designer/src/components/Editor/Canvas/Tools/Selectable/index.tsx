@@ -6,10 +6,10 @@ import {
   Point,
   roundBox,
   Transform,
-} from "@paperclip-ui/designer/src/machine/state/geom";
+} from "@paperclip-ui/designer/src/state/geom";
 import { useDispatch } from "@paperclip-ui/common";
 import { startDOMDrag } from "@paperclip-ui/designer/src/components/utils/dnd";
-import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
+import { editorEvents } from "@paperclip-ui/designer/src/events";
 
 type Props = {
   canvasScroll: Point;

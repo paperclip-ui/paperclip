@@ -4,11 +4,11 @@ import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   getActiveVariant,
   getSelectedExpression,
-} from "@paperclip-ui/designer/src/machine/state/pc";
+} from "@paperclip-ui/designer/src/state/pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { EditVariantPopup, SaveOptions } from "./EditVariantPopup";
 import { Variant } from "@paperclip-ui/proto/lib/generated/ast/pc";
-import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
+import { editorEvents } from "@paperclip-ui/designer/src/events";
 
 export const VariantsSection = () => {
   const {

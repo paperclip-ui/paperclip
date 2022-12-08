@@ -1,10 +1,10 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import * as styles from "./index.pc";
 import { Node as VirtNode } from "@paperclip-ui/proto/lib/generated/virt/html";
-import { Transform } from "@paperclip-ui/designer/src/machine/state/geom";
+import { Transform } from "@paperclip-ui/designer/src/state/geom";
 import { useDispatch } from "@paperclip-ui/common";
-import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
-import { DEFAULT_FRAME_BOX } from "@paperclip-ui/designer/src/machine/state";
+import { editorEvents } from "@paperclip-ui/designer/src/events";
+import { DEFAULT_FRAME_BOX } from "@paperclip-ui/designer/src/state";
 
 export type FramesProps = {
   frames: VirtNode[];

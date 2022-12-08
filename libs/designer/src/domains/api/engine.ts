@@ -4,7 +4,6 @@ import {
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent, designerEngineEvents } from "./events";
-import { DesignerEngineState } from "./state";
 import { EditorEvent, editorEvents } from "../../events";
 import {
   EditorState,
@@ -13,10 +12,7 @@ import {
   getNodeInfoAtPoint,
   InsertMode,
 } from "../../state";
-import {
-  Mutation,
-  UpdateVariantTrigger,
-} from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
+import { Mutation } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
 import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
 import {
   Element as VirtElement,
@@ -27,7 +23,6 @@ import {
   getEnabledVariants,
   getSelectedExprAvailableVariants,
 } from "../../state/pc";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -39,8 +34,8 @@ export const createDesignerEngine =
   ({ protocol, host, transport }: DesignerEngineOptions) =>
   (
     dispatch: Dispatch<DesignerEngineEvent>,
-    state: DesignerEngineState
-  ): Engine<DesignerEngineState, DesignerEngineEvent> => {
+    state: EditorState
+  ): Engine<EditorState, DesignerEngineEvent> => {
     const client = new DesignerClientImpl(
       new GrpcWebImpl((protocol || "http:") + "//" + host, {
         transport,
@@ -378,7 +373,7 @@ const createEventHandler = (actions: Actions) => {
 
 const bootstrap = (
   { openFile, syncGraph }: Actions,
-  initialState: DesignerEngineState
+  initialState: EditorState
 ) => {
   setTimeout(() => {
     openFile(initialState.history.query.file);

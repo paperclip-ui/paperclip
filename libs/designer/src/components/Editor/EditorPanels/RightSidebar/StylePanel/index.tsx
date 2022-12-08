@@ -5,14 +5,14 @@ import { memoize, useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   ComputedDeclaration,
   getSelectedExprStyles,
-} from "@paperclip-ui/designer/src/machine/state/pc";
-import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
+} from "@paperclip-ui/designer/src/state/pc";
+import { editorEvents } from "@paperclip-ui/designer/src/events";
 import {
   SuggestionMenu,
   SuggestionMenuItem,
   SuggestionMenuSection,
 } from "@paperclip-ui/designer/src/components/SuggestionMenu";
-import { getAllPublicAtoms } from "@paperclip-ui/designer/src/machine/state";
+import { getAllPublicAtoms } from "@paperclip-ui/designer/src/state";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
 import { Variants } from "./Variants";
 

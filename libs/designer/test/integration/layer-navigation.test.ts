@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
+import { editorEvents } from "@paperclip-ui/designer/src/events";
 import { startDesigner, waitUntilDesignerReady } from "../controls";
 
 describe(__filename + "#", () => {

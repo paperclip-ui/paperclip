@@ -1,4 +1,4 @@
-import { designerEngineEvents } from "../../engine/designer/events";
+import { designerEngineEvents } from "../../domains/api/events";
 import { EditorEvent, editorEvents } from "../../events";
 import jasonpatch from "fast-json-patch";
 import {
@@ -22,7 +22,7 @@ import {
 import { memoize } from "@paperclip-ui/common";
 import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
-import { historyEngineEvents } from "../../engine/history/events";
+import { historyEngineEvents } from "../../domains/history/events";
 
 const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
 const PAN_X_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;

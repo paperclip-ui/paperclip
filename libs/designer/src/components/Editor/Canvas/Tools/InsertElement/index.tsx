@@ -1,11 +1,6 @@
 import { useDispatch, useSelector } from "@paperclip-ui/common";
-import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
-import {
-  EditorState,
-  getCanvas,
-  getInsertBox,
-} from "@paperclip-ui/designer/src/machine/state";
-import { Box, Point } from "@paperclip-ui/designer/src/machine/state/geom";
+import { getInsertBox } from "@paperclip-ui/designer/src/state";
+import { Box, Point } from "@paperclip-ui/designer/src/state/geom";
 import React, { useEffect, useMemo } from "react";
 
 export type InsertElementProps = {

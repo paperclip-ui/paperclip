@@ -18,7 +18,7 @@ export const useSelector = <TSelector extends (...args: any) => any>(
     return machine.onStateChange((state) => {
       setState(selector(state));
     });
-  }, [machine, selector]);
+  }, [machine]);
   return state;
 };
 

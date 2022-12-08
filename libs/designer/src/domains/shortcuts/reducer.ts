@@ -4,12 +4,16 @@ import { DesignerEvent } from "../../events";
 import { DesignerState, InsertMode } from "../../state";
 import { keyboardEvents } from "../keyboard/events";
 import { shortcutEvents } from "./events";
-import { getKeyboardMenuCommand, ShortcutCommand } from "./state";
+import {
+  getGlobalShortcuts,
+  getKeyboardMenuCommand,
+  ShortcutCommand,
+} from "./state";
 
 export const shortcutReducer = (state: DesignerState, event: DesignerEvent) => {
   switch (event.type) {
     case keyboardEvents.keyDown.type: {
-      const command = getKeyboardMenuCommand(event, state.shortcut.items);
+      const command = getKeyboardMenuCommand(event, getGlobalShortcuts(state));
       return command != null ? handleCommand(state, command) : state;
     }
     case shortcutEvents.itemSelected.type: {

@@ -102,6 +102,10 @@ export namespace ast {
     const ancestorIds: string[] = [];
 
     const dep = getOwnerDependency(id, graph);
+    if (!dep) {
+      console.error(`dependency missing!`);
+      return ancestorIds;
+    }
     const exprsById = flattenDocument(dep.document);
     const childParentMap = getChildParentMap(exprsById);
 
@@ -611,6 +615,15 @@ export namespace ast {
     expr: OuterExpression
   ): expr is DeclarationValue => {
     return getDeclarationValueInner(expr as DeclarationValue) != null;
+  };
+
+  export const isExpressionId = (exprId: string) =>
+    Boolean(exprId && !exprId.includes("."));
+
+  export const isExpressionInComponent = (exprId: string, graph: Graph) => {
+    return getAncestorIds(exprId, graph).some((ancestorId) =>
+      isComponent(getExprById(ancestorId, graph))
+    );
   };
 
   export const serializeDeclaration = (expr: DeclarationValue) => {

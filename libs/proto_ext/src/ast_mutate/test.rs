@@ -1,7 +1,6 @@
 use super::edit_graph;
 use futures::executor::block_on;
 use paperclip_common::str_utils::strip_extra_ws;
-use paperclip_parser::pc;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_proto::ast_mutate::{
     mutation, update_variant_trigger, AppendChild, Bounds, DeleteExpression, SetFrameBounds,
@@ -1011,6 +1010,137 @@ case! {
       
       component Ab { 
         render span 
+      }
+    "#
+  )]
+}
+
+case! {
+  can_convert_a_nested_element_to_component,
+  [
+    (
+      "/entry.pc", r#"
+        div {
+          text "something"
+        }
+      "#
+    ),
+    (
+      "/a.pc", r#"
+      "#
+    )
+  ],
+
+  mutation::Inner::ConvertToComponent(ConvertToComponent {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      public component Unnamed {
+        render text "something"
+      }
+      div {
+        Unnamed
+      }
+    "#
+  )]
+}
+
+case! {
+  can_convert_nested_slot_child_to_component,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render slot children {
+            div
+          }
+        }
+      "#
+    ),
+    (
+      "/a.pc", r#"
+      "#
+    )
+  ],
+
+  mutation::Inner::ConvertToComponent(ConvertToComponent {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      public component Unnamed { 
+        render div 
+      } 
+      
+      component A { 
+        render slot children { 
+          Unnamed 
+        } 
+      }
+    "#
+  )]
+}
+
+case! {
+  can_convert_a_child_of_insert_to_component,
+  [
+    (
+      "/entry.pc", r#"
+        A {
+          insert children {
+            div
+          }
+        }
+      "#
+    ),
+    (
+      "/a.pc", r#"
+      "#
+    )
+  ],
+
+  mutation::Inner::ConvertToComponent(ConvertToComponent {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      public component Unnamed { 
+        render div 
+      } 
+      
+      A {
+        insert children {
+          Unnamed
+        }
+      }
+    "#
+  )]
+}
+
+case! {
+  can_convert_a_render_node_to_component,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render div
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::ConvertToComponent(ConvertToComponent {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    public component Unnamed {
+      render div
+    }
+      
+      component A {
+        render Unnamed
       }
     "#
   )]

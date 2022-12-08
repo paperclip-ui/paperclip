@@ -70,7 +70,6 @@ export type DesignerState = {
   selectedVirtNodeId: string;
   activeVariantId?: string;
   insertedNodeIds: string[];
-  shortcut: Menu<ShortcutCommand>;
   graph: Graph;
   insertMode?: InsertMode;
   highlightNodePath?: string;
@@ -101,9 +100,6 @@ export const DEFAULT_STATE: DesignerState = {
   preEditComputedStyles: {},
   graph: {
     dependencies: {},
-  },
-  shortcut: {
-    items: getGlobalShortcuts(),
   },
   expandedLayerVirtIds: [],
   computedStyles: {},

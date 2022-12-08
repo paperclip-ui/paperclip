@@ -24,7 +24,11 @@ import {
   getSelectedExprAvailableVariants,
 } from "../../state/pc";
 import { keyboardEvents } from "../keyboard/events";
-import { getKeyboardMenuCommand, ShortcutCommand } from "../shortcuts/state";
+import {
+  getGlobalShortcuts,
+  getKeyboardMenuCommand,
+  ShortcutCommand,
+} from "../shortcuts/state";
 import { shortcutEvents } from "../shortcuts/events";
 
 export type DesignerEngineOptions = {
@@ -373,7 +377,7 @@ const createEventHandler = (actions: Actions) => {
     state: DesignerState,
     prevState: DesignerState
   ) => {
-    const command = getKeyboardMenuCommand(event, state.shortcut.items);
+    const command = getKeyboardMenuCommand(event, getGlobalShortcuts(state));
     if (command != null) {
       handleShortcutCommand(command, state, prevState);
     }

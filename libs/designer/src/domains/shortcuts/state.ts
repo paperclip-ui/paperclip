@@ -6,6 +6,8 @@ import {
 import { DesignerEvent } from "../../events";
 import { keyboardEvents } from "../keyboard/events";
 import { isKeyComboDown } from "./utils";
+import { DesignerState } from "../../state";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
 export enum ShortcutCommand {
   InsertElement,
@@ -20,41 +22,55 @@ export enum ShortcutCommand {
   Save,
 }
 
-export const getEntityShortcuts = (): MenuItem<ShortcutCommand>[] => [
-  {
-    kind: MenuItemKind.Option,
-    label: "Create component",
-    shortcut: ["alt", "meta", "k"],
-    command: ShortcutCommand.ConvertToComponent,
-  },
-  { kind: MenuItemKind.Divider },
-  {
-    kind: MenuItemKind.Option,
-    label: "Cut",
-    shortcut: ["meta", "x"],
-    command: ShortcutCommand.Cut,
-  },
-  {
-    kind: MenuItemKind.Option,
-    label: "Cut",
-    shortcut: ["meta", "c"],
-    command: ShortcutCommand.Copy,
-  },
-  {
-    kind: MenuItemKind.Option,
-    label: "Cut",
-    shortcut: ["meta", "v"],
-    command: ShortcutCommand.Paste,
-  },
-  {
-    kind: MenuItemKind.Option,
-    label: "Delete",
-    shortcut: ["backspace"],
-    command: ShortcutCommand.Delete,
-  },
-];
+export const getEntityShortcuts = (
+  state: DesignerState
+): MenuItem<ShortcutCommand>[] => {
+  return [
+    {
+      kind: MenuItemKind.Option,
+      label: "Create component",
+      shortcut: ["alt", "meta", "k"],
+      command: ShortcutCommand.ConvertToComponent,
+    },
+    {
+      kind: MenuItemKind.Option,
+      label: "Wrap in slot",
+      enabled:
+        ast.isExpressionId(state.selectedVirtNodeId) &&
+        ast.isExpressionInComponent(state.selectedVirtNodeId, state.graph),
+      command: ShortcutCommand.ConvertToComponent,
+    },
+    { kind: MenuItemKind.Divider },
+    {
+      kind: MenuItemKind.Option,
+      label: "Cut",
+      shortcut: ["meta", "x"],
+      command: ShortcutCommand.Cut,
+    },
+    {
+      kind: MenuItemKind.Option,
+      label: "Cut",
+      shortcut: ["meta", "c"],
+      command: ShortcutCommand.Copy,
+    },
+    {
+      kind: MenuItemKind.Option,
+      label: "Cut",
+      shortcut: ["meta", "v"],
+      command: ShortcutCommand.Paste,
+    },
+    {
+      kind: MenuItemKind.Option,
+      label: "Delete",
+      shortcut: ["backspace"],
+      command: ShortcutCommand.Delete,
+    },
+  ];
+};
 
-export const getGlobalShortcuts = (): MenuItem<ShortcutCommand>[] => [
+export const getGlobalShortcuts = (
+  state: DesignerState
+): MenuItem<ShortcutCommand>[] => [
   // Tooling
   {
     kind: MenuItemKind.Option,
@@ -92,7 +108,7 @@ export const getGlobalShortcuts = (): MenuItem<ShortcutCommand>[] => [
   { kind: MenuItemKind.Divider },
 
   // Entity
-  ...getEntityShortcuts(),
+  ...getEntityShortcuts(state),
 ];
 
 /*

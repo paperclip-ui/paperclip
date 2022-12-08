@@ -1,5 +1,6 @@
 import { useDispatch } from "@paperclip-ui/common";
 import * as styles from "@paperclip-ui/designer/src/styles/context-menu.pc";
+import cx from "classnames";
 import React, { useEffect, useRef, useState } from "react";
 import { shortcutEvents } from "../../domains/shortcuts/events";
 import { ShortcutCommand } from "../../domains/shortcuts/state";
@@ -93,7 +94,7 @@ type ContextMenuOptionProps = {
 };
 
 const ContextMenuOption = ({
-  option: { shortcut, command, label },
+  option: { shortcut, command, label, enabled },
 }: ContextMenuOptionProps) => {
   const dispatch = useDispatch();
   const onSelect = () => {
@@ -102,6 +103,7 @@ const ContextMenuOption = ({
   return (
     <styles.ContextMenuItem
       keyCommand={shortcut ? prettyKeyCombo(shortcut) : null}
+      class={cx({ disabled: enabled === false })}
       onMouseDown={onSelect}
     >
       {label}

@@ -1,6 +1,6 @@
 use paperclip_common::get_or_short;
 use paperclip_parser::{pc::{parser::parse}, base};
-use paperclip_proto::{ast_mutate::ConvertToComponent, ast::{all::{Expression, ExpressionWrapper}, pc::{document_body_item, Element, Component, Document, DocumentBodyItem}}};
+use paperclip_proto::{ast_mutate::ConvertToComponent, ast::{all::{Expression, ExpressionWrapper}, pc::{document_body_item, node , Element, Component, Document, DocumentBodyItem}}};
 use paperclip_ast_serialize::serializable::Serializable;
 
 use crate::ast::{all::{Visitor, VisitorResult}, get_expr::GetExpr};
@@ -8,16 +8,18 @@ use super::EditContext;
 
 
 macro_rules! replace_child_with_instance {
-    ($ctx: expr, $children: expr) => {
+    ($self: expr, $children: expr, $checksum: expr) => {
 
-      // for (i, v) in expr.body.iter_mut().enumerate() {
-      //   if v.get_id() == &self.mutation.expression_id {
-      //     let target: ExpressionWrapper = v.into();
-      //     let component_name = get_component_name(&target, self.dependency.document.as_ref().unwrap());
-      //     let rep: DocumentBodyItem = document_body_item::Inner::Element(create_element(&component_name, &checksum)).get_outer();
-      //     std::mem::replace(v, rep);
-      //   }
-      // }
+      let checksum = $checksum;
+
+      for (i, v) in $children.iter_mut().enumerate() {
+        if v.get_id() == &$self.mutation.expression_id {
+          let target: ExpressionWrapper = v.into();
+          let component_name = get_component_name(&target, $self.dependency.document.as_ref().unwrap());
+          let rep = node::Inner::Element(create_element(&component_name, &checksum)).get_outer();
+          std::mem::replace(v, rep);
+        }
+      }
         
     };
 }
@@ -27,7 +29,6 @@ impl<'a> Visitor<()> for EditContext<'a, ConvertToComponent> {
 
     let found_expr = get_or_short!(GetExpr::get_expr(&self.mutation.expression_id, expr), VisitorResult::Continue);
   
-
     let checksum = expr.checksum();
     let new_component = create_component(&get_component_name(&found_expr, expr), found_expr.serialize().as_str(), &checksum);
 
@@ -45,13 +46,27 @@ impl<'a> Visitor<()> for EditContext<'a, ConvertToComponent> {
     VisitorResult::Continue
   }
   fn visit_element(&mut self, expr: &mut paperclip_proto::ast::pc::Element) -> crate::ast::all::VisitorResult<()> {
-    if expr.id != self.mutation.expression_id {
-      return VisitorResult::Continue
-    }
+    replace_child_with_instance!(self, expr.body, expr.checksum());
     VisitorResult::Continue
   }
-  fn visit_text_node(&mut self, expr: &mut paperclip_proto::ast::pc::TextNode) -> crate::ast::all::VisitorResult<()> {
-      VisitorResult::Continue
+  fn visit_slot(&mut self, expr: &mut paperclip_proto::ast::pc::Slot) -> crate::ast::all::VisitorResult<()> {
+    replace_child_with_instance!(self, expr.body, expr.checksum());
+    VisitorResult::Continue
+  }
+  fn visit_render(&mut self, expr: &mut paperclip_proto::ast::pc::Render) -> crate::ast::all::VisitorResult<()> {
+    if expr.node.as_ref().unwrap().get_id() != self.mutation.expression_id {
+      return VisitorResult::Continue
+    }
+    let target: ExpressionWrapper = expr.node.as_mut().unwrap().into();
+    let checksum = expr.checksum();
+
+    let component_name = get_component_name(&target, self.dependency.document.as_ref().unwrap());
+    expr.node = Some(node::Inner::Element(create_element(&component_name, &checksum)).get_outer());
+    VisitorResult::Continue
+  }
+  fn visit_insert(&mut self, expr: &mut paperclip_proto::ast::pc::Insert) -> crate::ast::all::VisitorResult<()> {
+    replace_child_with_instance!(self, expr.body, expr.checksum());
+    VisitorResult::Continue
   }
 }
 

@@ -20,7 +20,9 @@ public component ContextMenuDivider {
         style {
             padding: 0px
             margin: 0px
-            border-color: var(imp.gray02)
+            border: none
+            height: 1px
+            background: var(imp.gray03)
         }
     }
 }
@@ -36,7 +38,7 @@ public component ContextMenuItem {
     variant first trigger {
         ":first-child"
     }
-    render menu.MenuItem(onMouseDown: onMouseDown, class: class) {
+    render menu.MenuItem(onMouseDown: onMouseDown, class: class, disabled: disabled) {
         slot children {
             text "Context menu item"
         }
@@ -67,6 +69,9 @@ div {
             insert keyCommand {
                 text "⌥⌘K"
             }
+        }
+        ContextMenuItem(class: "disabled") {
+            text "Wrap in slot"
         }
         ContextMenuDivider
         ContextMenuItem {

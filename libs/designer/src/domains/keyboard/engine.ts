@@ -27,6 +27,7 @@ export const createKeyboardEngine = (
   window.document.addEventListener("keydown", onKeyDown);
 
   return {
+    handleEvent: () => {},
     dispose: () => {},
   };
 };

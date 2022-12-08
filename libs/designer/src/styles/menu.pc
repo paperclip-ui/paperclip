@@ -44,7 +44,15 @@ public component MenuItem {
     variant checked trigger {
         ".checked"
     }
-    render div(onMouseDown: onMouseDown, class: class) {
+    variant disabled trigger {
+        ":disabled"
+        ".disabled"
+    }
+    variant enabled trigger {
+        ":not(:disabled)"
+        ":not(.disabled)"
+    }
+    render div(onMouseDown: onMouseDown, class: class, disabled: disabled) {
         style {
             padding: var(theme.space03)
             cursor: pointer
@@ -52,10 +60,13 @@ public component MenuItem {
             flex-direction: row
             justify-content: space-between
         }
-        style variant preselected {
+        style variant disabled {
+            opacity: 0.3
+        }
+        style variant preselected + enabled {
             background: var(theme.blue01)
         }
-        style variant selected {
+        style variant selected + enabled {
             background: var(theme.blue02)
         }
         slot children

@@ -16,8 +16,6 @@ import { InsertElement } from "./InsertElement";
 import { ContextMenu } from "../../../ContextMenu";
 import { getEntityShortcuts } from "@paperclip-ui/designer/src/domains/shortcuts/state";
 
-const MENU = getEntityShortcuts();
-
 export const Tools = () => {
   const {
     frames,
@@ -32,6 +30,7 @@ export const Tools = () => {
     currentDocument,
     canvas,
     dispatch,
+    contextMenu,
     selectedBox,
     readonly,
     hoveringBox,
@@ -57,7 +56,7 @@ export const Tools = () => {
   };
 
   return (
-    <ContextMenu menu={MENU}>
+    <ContextMenu menu={contextMenu}>
       <styles.Tools
         ref={toolsRef}
         onMouseDown={onMouswDown}
@@ -119,6 +118,7 @@ const useTools = () => {
   const toolsLayerEnabled = !canvas.isExpanded;
 
   const selectedNodePath = useSelector(getSelectedNodePath);
+  const contextMenu = useSelector(getEntityShortcuts);
 
   const getMousePoint = (event) => {
     const rect: ClientRect = (
@@ -181,6 +181,7 @@ const useTools = () => {
     onMouswDown,
     onMouseMove,
     onMouseLeave,
+    contextMenu,
     onMouseUp,
     insertMode,
     showEmpty,

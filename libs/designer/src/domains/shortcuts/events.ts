@@ -1,13 +1,13 @@
-import { eventCreators, ExtractEventFromCreators } from "@paperclip-ui/common";
+import {
+  eventCreators,
+  ExtractEventFromCreators,
+  identity,
+} from "@paperclip-ui/common";
+import { ShortcutCommand } from "./state";
 
 export const shortcutEvents = eventCreators(
   {
-    insertElement: null,
-    insertText: null,
-    convertToComponent: null,
-    cut: null,
-    copy: null,
-    paste: null,
+    itemSelected: identity<{ command: ShortcutCommand }>(),
   },
   "shortcuts"
 );

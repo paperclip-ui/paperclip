@@ -8,17 +8,12 @@ import { DesignerEngineEvent } from "../domains/api/events";
 import { HistoryEngineEvent } from "../domains/history/events";
 import { InsertMode } from "../state";
 import { Box, Point, Size } from "../state/geom";
-import { ShortcutEvent } from "./shortcut";
+import { ShortcutEvent } from "../domains/shortcuts/events";
+import { KeyboardEvent } from "../domains/keyboard/events";
 
 export const designerEvents = eventCreators(
   {
     canvasPanEnd: null,
-    eHotkeyPressed: null,
-    tHotkeyPressed: null,
-    deleteHokeyPressed: null,
-    undoKeyPressed: null,
-    redoKeyPressed: null,
-    saveKeyComboPressed: null,
     variantsSelected: identity<string[]>(),
     variantEdited: identity<{
       componentId: string;
@@ -78,4 +73,5 @@ export type DesignerEvent =
   | ExtractEventFromCreators<typeof designerEvents>
   | DesignerEngineEvent
   | HistoryEngineEvent
-  | ShortcutEvent;
+  | ShortcutEvent
+  | KeyboardEvent;

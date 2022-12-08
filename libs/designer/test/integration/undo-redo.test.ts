@@ -3,6 +3,8 @@
  */
 
 import { designerEngineEvents } from "@paperclip-ui/designer/src/domains/api/events";
+import { shortcutEvents } from "@paperclip-ui/designer/src/domains/shortcuts/events";
+import { ShortcutCommand } from "@paperclip-ui/designer/src/domains/shortcuts/state";
 import { designerEvents } from "@paperclip-ui/designer/src/events";
 import {
   insertCanvasElement,
@@ -31,7 +33,10 @@ describe(__filename + "#", () => {
     expect(frames).toBe(
       `<span id=\"_b5c97432-1\">hello</span><div id=\"_98d0141d-4\" class=\"_98d0141d-4\"></div>`
     );
-    designer.machine.dispatch(designerEvents.undoKeyPressed());
+
+    designer.machine.dispatch(
+      shortcutEvents.itemSelected({ command: ShortcutCommand.Undo })
+    );
     await waitForEvent(designerEngineEvents.documentOpened.type, designer);
     frames = stringifyDesignerFrames(designer);
     expect(frames).toBe(`<span id="_b5c97432-1">hello</span>`);
@@ -56,11 +61,15 @@ describe(__filename + "#", () => {
     expect(frames).toBe(
       `<span id=\"_8efcc1e7-1\">hello</span><div id=\"_d83ca679-4\" class=\"_d83ca679-4\"></div>`
     );
-    designer.machine.dispatch(designerEvents.undoKeyPressed());
+    designer.machine.dispatch(
+      shortcutEvents.itemSelected({ command: ShortcutCommand.Undo })
+    );
     await waitForEvent(designerEngineEvents.documentOpened.type, designer);
     frames = stringifyDesignerFrames(designer);
     expect(frames).toBe(`<span id="_8efcc1e7-1">hello</span>`);
-    designer.machine.dispatch(designerEvents.redoKeyPressed());
+    designer.machine.dispatch(
+      shortcutEvents.itemSelected({ command: ShortcutCommand.Redo })
+    );
     await waitForEvent(designerEngineEvents.documentOpened.type, designer);
     frames = stringifyDesignerFrames(designer);
     expect(frames).toBe(

@@ -23,6 +23,9 @@ import {
   getEnabledVariants,
   getSelectedExprAvailableVariants,
 } from "../../state/pc";
+import { keyboardEvents } from "../keyboard/events";
+import { getKeyboardMenuCommand, ShortcutCommand } from "../shortcuts/state";
+import { shortcutEvents } from "../shortcuts/events";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -327,6 +330,38 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
+  const handleShortcutCommand = (
+    command: ShortcutCommand,
+    state: DesignerState,
+    prevState: DesignerState
+  ) => {
+    switch (command) {
+      case ShortcutCommand.Delete: {
+        return handleDeleteKeyPressed(state, prevState);
+      }
+      case ShortcutCommand.Undo: {
+        return handleUndo();
+      }
+      case ShortcutCommand.Redo: {
+        return handleRedo();
+      }
+      case ShortcutCommand.Save: {
+        return handleSave();
+      }
+    }
+  };
+
+  const handleKeyDown = (
+    event: ReturnType<typeof keyboardEvents.keyDown>,
+    state: DesignerState,
+    prevState: DesignerState
+  ) => {
+    const command = getKeyboardMenuCommand(event, state.shortcut.items);
+    if (command != null) {
+      handleShortcutCommand(command, state, prevState);
+    }
+  };
+
   return (
     event: DesignerEvent,
     newState: DesignerState,
@@ -336,11 +371,15 @@ const createEventHandler = (actions: Actions) => {
       case designerEvents.canvasMouseUp.type: {
         return handleCanvasMouseUp(newState, prevState);
       }
-      case designerEvents.eHotkeyPressed.type: {
-        return handleCanvasMouseUp(newState, prevState);
+      case shortcutEvents.itemSelected.type: {
+        return handleShortcutCommand(
+          event.payload.command,
+          newState,
+          prevState
+        );
       }
-      case designerEvents.deleteHokeyPressed.type: {
-        return handleDeleteKeyPressed(newState, prevState);
+      case keyboardEvents.keyDown.type: {
+        return handleKeyDown(event, newState, prevState);
       }
       case designerEvents.styleDeclarationsChanged.type: {
         return handleStyleDeclarationChanged(event, newState);
@@ -348,20 +387,11 @@ const createEventHandler = (actions: Actions) => {
       case designerEvents.variantsSelected.type: {
         return handleVariantsSelected(event.payload, newState);
       }
-      case designerEvents.undoKeyPressed.type: {
-        return handleUndo();
-      }
-      case designerEvents.redoKeyPressed.type: {
-        return handleRedo();
-      }
       case designerEvents.removeVariantButtonClicked.type: {
         return handleDeleteExpression(event.payload.variantId);
       }
       case designerEvents.variantEdited.type: {
         return handleVariantEdited(event, newState);
-      }
-      case designerEvents.saveKeyComboPressed.type: {
-        return handleSave();
       }
       case designerEvents.resizerPathStoppedMoving.type: {
         return handleResizerStoppedMoving(event, newState, prevState);

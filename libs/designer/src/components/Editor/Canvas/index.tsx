@@ -17,7 +17,6 @@ import {
   getCurrentDocument,
 } from "@paperclip-ui/designer/src/state";
 import { Tools } from "./Tools";
-import { useHotkeys } from "@paperclip-ui/designer/src/hooks/useHotkeys";
 
 export const Canvas = React.memo(() => {
   const { canvasRef, actualTransform, expanded, activeFrameIndex } =

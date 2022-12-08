@@ -24,7 +24,10 @@ import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { Menu } from "../modules/shortcuts/base";
 import { DesignerEvent } from "../events";
-import { getGlobalShortcuts } from "../domains/shortcuts/state";
+import {
+  getGlobalShortcuts,
+  ShortcutCommand,
+} from "../domains/shortcuts/state";
 export const IS_WINDOWS = false;
 
 export enum InsertMode {
@@ -67,7 +70,7 @@ export type DesignerState = {
   selectedVirtNodeId: string;
   activeVariantId?: string;
   insertedNodeIds: string[];
-  shortcut: Menu<DesignerEvent>;
+  shortcut: Menu<ShortcutCommand>;
   graph: Graph;
   insertMode?: InsertMode;
   highlightNodePath?: string;

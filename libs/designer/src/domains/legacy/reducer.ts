@@ -99,16 +99,6 @@ export const legacyReducer = (
         jasonpatch.applyPatch(newState.graph.dependencies, diff);
       });
     }
-    case designerEvents.eHotkeyPressed.type:
-      return produce(state, (newState) => {
-        newState.insertMode = InsertMode.Element;
-        newState.selectedVirtNodeId = null;
-      });
-    case designerEvents.tHotkeyPressed.type:
-      return produce(state, (newState) => {
-        newState.insertMode = InsertMode.Text;
-        newState.selectedVirtNodeId = null;
-      });
     case designerEvents.layerLeafClicked.type: {
       state = selectNode(event.payload.virtId, false, false, state);
       return state;
@@ -136,32 +126,6 @@ export const legacyReducer = (
 
       return state;
     }
-    case designerEvents.deleteHokeyPressed.type:
-      return produce(state, (newState) => {
-        if (newState.selectedVirtNodeId) {
-          const node = virtHTML.getNodeById(
-            newState.selectedVirtNodeId,
-            state.currentDocument.paperclip.html
-          );
-          const parent = virtHTML.getNodeParent(
-            node,
-            state.currentDocument.paperclip.html
-          );
-          // const index = parent.children.findIndex(child => (child.element === node || child.textNode === node));
-          const nextChild = parent.children.find((child) => {
-            const inner = virtHTML.getInnerNode(child);
-            return newState.selectedVirtNodeId !== inner.id;
-          });
-
-          if (nextChild) {
-            newState.selectedVirtNodeId = virtHTML.getInnerNode(nextChild).id;
-          } else {
-            newState.selectedVirtNodeId = parent.id;
-          }
-        } else {
-          newState.selectedVirtNodeId = null;
-        }
-      });
     case designerEvents.canvasMouseUp.type: {
       return produce(state, (newState) => {
         newState.insertMode = null;

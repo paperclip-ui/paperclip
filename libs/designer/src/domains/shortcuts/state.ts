@@ -1,89 +1,98 @@
-import { MenuItem, MenuItemKind } from "../../modules/shortcuts/base";
-import { ShortcutEvent, shortcutEvents } from "./events";
+import {
+  MenuItem,
+  MenuItemKind,
+  MenuItemOption,
+} from "../../modules/shortcuts/base";
+import { DesignerEvent } from "../../events";
+import { keyboardEvents } from "../keyboard/events";
+import { isKeyComboDown } from "./utils";
 
-export const createNodeShortcuts = (): MenuItem<ShortcutEvent>[] => [
+export enum ShortcutCommand {
+  InsertElement,
+  InsertText,
+  ConvertToComponent,
+  Cut,
+  Copy,
+  Delete,
+  Paste,
+  Undo,
+  Redo,
+  Save,
+}
+
+export const getEntityShortcuts = (): MenuItem<ShortcutCommand>[] => [
   {
     kind: MenuItemKind.Option,
     label: "Create component",
     shortcut: ["alt", "cmd", "k"],
-    event: shortcutEvents.convertToComponent(),
+    command: ShortcutCommand.ConvertToComponent,
   },
   { kind: MenuItemKind.Divider },
   {
     kind: MenuItemKind.Option,
     label: "Cut",
     shortcut: ["cmd", "x"],
-    event: shortcutEvents.cut(),
+    command: ShortcutCommand.Cut,
   },
   {
     kind: MenuItemKind.Option,
     label: "Cut",
     shortcut: ["cmd", "c"],
-    event: shortcutEvents.copy(),
+    command: ShortcutCommand.Copy,
   },
   {
     kind: MenuItemKind.Option,
     label: "Cut",
     shortcut: ["cmd", "v"],
-    event: shortcutEvents.paste(),
-  },
-];
-
-export const getGlobalShortcuts = (): MenuItem<ShortcutEvent>[] => [
-  // Tooling
-  {
-    kind: MenuItemKind.Option,
-    label: "Insert Element",
-    shortcut: ["e"],
-    event: shortcutEvents.convertToComponent(),
-  },
-  {
-    kind: MenuItemKind.Option,
-    label: "Insert Text",
-    shortcut: ["t"],
-    event: shortcutEvents.convertToComponent(),
-  },
-
-  { kind: MenuItemKind.Divider },
-
-  // Entity
-  {
-    kind: MenuItemKind.Option,
-    label: "Create component",
-    shortcut: ["alt", "cmd", "k"],
-    event: shortcutEvents.convertToComponent(),
-  },
-  { kind: MenuItemKind.Divider },
-  {
-    kind: MenuItemKind.Option,
-    label: "Cut",
-    shortcut: ["cmd", "x"],
-    event: shortcutEvents.cut(),
-  },
-  {
-    kind: MenuItemKind.Option,
-    label: "Cut",
-    shortcut: ["cmd", "c"],
-    event: shortcutEvents.copy(),
-  },
-  {
-    kind: MenuItemKind.Option,
-    label: "Cut",
-    shortcut: ["cmd", "v"],
-    event: shortcutEvents.paste(),
-  },
-  {
-    kind: MenuItemKind.Option,
-    label: "Cut",
-    shortcut: ["cmd", "v"],
-    event: shortcutEvents.paste(),
+    command: ShortcutCommand.Paste,
   },
   {
     kind: MenuItemKind.Option,
     label: "Cut",
     shortcut: ["delete"],
-    event: shortcutEvents.paste(),
+    command: ShortcutCommand.Delete,
   },
+];
+
+export const getGlobalShortcuts = (): MenuItem<ShortcutCommand>[] => [
+  // Tooling
+  {
+    kind: MenuItemKind.Option,
+    label: "Insert Element",
+    shortcut: ["e"],
+    command: ShortcutCommand.InsertElement,
+  },
+  {
+    kind: MenuItemKind.Option,
+    label: "Insert Text",
+    shortcut: ["t"],
+    command: ShortcutCommand.InsertElement,
+  },
+
+  { kind: MenuItemKind.Divider },
+  {
+    kind: MenuItemKind.Option,
+    label: "Redo",
+    shortcut: ["meta", "s"],
+    command: ShortcutCommand.Save,
+  },
+  {
+    kind: MenuItemKind.Option,
+    label: "Undo",
+    shortcut: ["meta", "z"],
+    command: ShortcutCommand.Undo,
+  },
+  {
+    kind: MenuItemKind.Option,
+    label: "Redo",
+    shortcut: ["meta", "shift", "z"],
+    command: ShortcutCommand.Redo,
+  },
+
+  { kind: MenuItemKind.Divider },
+
+  // Entity
+  ...getEntityShortcuts(),
 ];
 
 /*
@@ -106,3 +115,22 @@ const useCanvasHotkeys = (ref: MutableRefObject<HTMLElement>) => {
 };
 
 */
+
+export const getKeyboardMenuItem = (
+  event: ReturnType<typeof keyboardEvents.keyDown>,
+  menu: MenuItem<ShortcutCommand>[]
+) => {
+  return menu.find(
+    (item) =>
+      item.kind === MenuItemKind.Option &&
+      item.shortcut &&
+      isKeyComboDown(item.shortcut, event)
+  ) as MenuItemOption<ShortcutCommand>;
+};
+
+export const getKeyboardMenuCommand = (
+  event: ReturnType<typeof keyboardEvents.keyDown>,
+  menu: MenuItem<ShortcutCommand>[]
+) => {
+  return getKeyboardMenuItem(event, menu)?.command;
+};

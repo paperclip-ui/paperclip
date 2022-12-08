@@ -14,9 +14,9 @@ import { mergeBoxes } from "@paperclip-ui/designer/src/state/geom";
 import { Selectable } from "./Selectable";
 import { InsertElement } from "./InsertElement";
 import { ContextMenu } from "../../../ContextMenu";
-import { createNodeShortcuts } from "@paperclip-ui/designer/src/domains/shortcuts/state";
+import { getEntityShortcuts } from "@paperclip-ui/designer/src/domains/shortcuts/state";
 
-const MENU = createNodeShortcuts();
+const MENU = getEntityShortcuts();
 
 export const Tools = () => {
   const {

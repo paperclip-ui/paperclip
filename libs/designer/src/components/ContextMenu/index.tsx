@@ -1,6 +1,8 @@
 import { useDispatch } from "@paperclip-ui/common";
 import * as styles from "@paperclip-ui/designer/src/styles/context-menu.pc";
 import React, { useEffect, useRef, useState } from "react";
+import { shortcutEvents } from "../../domains/shortcuts/events";
+import { ShortcutCommand } from "../../domains/shortcuts/state";
 import { DesignerEvent } from "../../events";
 import {
   MenuItem,
@@ -11,7 +13,7 @@ import { Portal } from "../Portal";
 
 export type ContextMenuProps = {
   children: React.ReactElement;
-  menu: MenuItem<DesignerEvent>[];
+  menu: MenuItem<ShortcutCommand>[];
 };
 
 export const ContextMenu = ({ children, menu }: ContextMenuProps) => {
@@ -87,15 +89,15 @@ export const ContextMenu = ({ children, menu }: ContextMenuProps) => {
 };
 
 type ContextMenuOptionProps = {
-  option: MenuItemOption<DesignerEvent>;
+  option: MenuItemOption<ShortcutCommand>;
 };
 
 const ContextMenuOption = ({
-  option: { shortcut, event, label },
+  option: { shortcut, command, label },
 }: ContextMenuOptionProps) => {
   const dispatch = useDispatch();
   const onSelect = () => {
-    dispatch(event);
+    dispatch(shortcutEvents.itemSelected({ command }));
   };
   return (
     <styles.ContextMenuItem

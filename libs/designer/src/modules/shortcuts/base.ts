@@ -10,10 +10,10 @@ export type BaseMenuItem<TKind extends MenuItemKind> = {
 
 export type MenuItemDivider = BaseMenuItem<MenuItemKind.Divider>;
 
-export type MenuItemOption<TEvent> = {
+export type MenuItemOption<TCommand> = {
   label: string;
   shortcut?: string[];
-  event: TEvent;
+  command: TCommand;
   enabled?: boolean;
 } & BaseMenuItem<MenuItemKind.Option>;
 
@@ -22,11 +22,11 @@ export type MenuItemGroup<TEvent> = {
   items: MenuItem<TEvent>[];
 } & BaseMenuItem<MenuItemKind.Group>;
 
-export type MenuItem<TEvent> =
+export type MenuItem<TCommand> =
   | MenuItemDivider
-  | MenuItemOption<TEvent>
-  | MenuItemGroup<TEvent>;
+  | MenuItemOption<TCommand>
+  | MenuItemGroup<TCommand>;
 
-export type Menu<TEvent> = {
-  items: MenuItem<TEvent>[];
+export type Menu<TCommand> = {
+  items: MenuItem<TCommand>[];
 };

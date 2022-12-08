@@ -5,7 +5,6 @@ import {
   DesignerEngineOptions,
 } from "../domains/api/engine";
 import { createHistoryEngine } from "../domains/history/engine";
-import { createShortcutEngine } from "../domains/shortcuts/engine";
 
 export const createEngine = (
   options: DesignerEngineOptions,
@@ -14,6 +13,5 @@ export const createEngine = (
   combineEngineCreators<DesignerState, any>(
     createDesignerEngine(options),
     createHistoryEngine,
-    createShortcutEngine,
     ...otherEngineCreators
   );

@@ -1,24 +1,30 @@
 import { isEqual } from "lodash";
+import { keyboardEvents } from "../keyboard/events";
 
-export const getKeysDown = (event: KeyboardEvent) => {
-  const keysDown = [event.key.toLowerCase()];
+export const getKeysDown = ({
+  payload: { key, shiftKey, metaKey, altKey, ctrlKey },
+}: ReturnType<typeof keyboardEvents.keyDown>) => {
+  const keysDown = [key.toLowerCase()];
 
-  if (event.shiftKey) {
+  if (shiftKey) {
     keysDown.push("shift");
   }
-  if (event.metaKey) {
+  if (metaKey) {
     keysDown.push("meta");
   }
-  if (event.altKey) {
+  if (altKey) {
     keysDown.push("alt");
   }
-  if (event.ctrlKey) {
+  if (ctrlKey) {
     keysDown.push("ctrl");
   }
   return keysDown;
 };
 
-export const isKeyComboDown = (combo: string[], event: KeyboardEvent) => {
+export const isKeyComboDown = (
+  combo: string[],
+  event: ReturnType<typeof keyboardEvents.keyDown>
+) => {
   const keysDown = getKeysDown(event);
 
   const sortedKeysDown = [...keysDown].sort();

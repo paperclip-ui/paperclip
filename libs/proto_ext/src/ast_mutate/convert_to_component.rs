@@ -10,6 +10,15 @@ use super::EditContext;
 macro_rules! replace_child_with_instance {
     ($ctx: expr, $children: expr) => {
 
+      // for (i, v) in expr.body.iter_mut().enumerate() {
+      //   if v.get_id() == &self.mutation.expression_id {
+      //     let target: ExpressionWrapper = v.into();
+      //     let component_name = get_component_name(&target, self.dependency.document.as_ref().unwrap());
+      //     let rep: DocumentBodyItem = document_body_item::Inner::Element(create_element(&component_name, &checksum)).get_outer();
+      //     std::mem::replace(v, rep);
+      //   }
+      // }
+        
     };
 }
 
@@ -17,27 +26,22 @@ impl<'a> Visitor<()> for EditContext<'a, ConvertToComponent> {
   fn visit_document(&mut self, expr: &mut paperclip_proto::ast::pc::Document) -> VisitorResult<()> {
 
     let found_expr = get_or_short!(GetExpr::get_expr(&self.mutation.expression_id, expr), VisitorResult::Continue);
-    
-    println!("FOUNDDDD {:?}", found_expr);
+  
 
     let checksum = expr.checksum();
     let new_component = create_component(&get_component_name(&found_expr, expr), found_expr.serialize().as_str(), &checksum);
 
 
-    let insert_index = get_component_insert_index(expr);
+    let insert_index = get_component_insert_index(&self.mutation.expression_id, expr);
 
     expr.body.insert(insert_index, document_body_item::Inner::Component(new_component).get_outer());
+    
+    // filter out expression if at the document body level
+    expr.body = expr.body.clone().into_iter().filter(|expr| {
+      expr.get_id() != self.mutation.expression_id
+    }).collect::<Vec<DocumentBodyItem>>();
 
 
-    for (i, v) in expr.body.iter_mut().enumerate() {
-      if v.get_id() == &self.mutation.expression_id {
-        let target: ExpressionWrapper = v.into();
-        let component_name = get_component_name(&target, self.dependency.document.as_ref().unwrap());
-        let rep: DocumentBodyItem = document_body_item::Inner::Element(create_element(&component_name, &checksum)).get_outer();
-        std::mem::replace(v, rep);
-      }
-    }
-      
     VisitorResult::Continue
   }
   fn visit_element(&mut self, expr: &mut paperclip_proto::ast::pc::Element) -> crate::ast::all::VisitorResult<()> {
@@ -52,11 +56,13 @@ impl<'a> Visitor<()> for EditContext<'a, ConvertToComponent> {
 }
 
 
-fn get_component_insert_index(expr: &Document) -> usize {
+fn get_component_insert_index(matching_id: &str, expr: &Document) -> usize {
 
-  let first_component = expr.body.iter().enumerate().find(|(i, item)| {
-    matches!(item.get_inner(), document_body_item::Inner::Component(_))
+  let first_component =  expr.body.iter().enumerate().find(|(i, item)| {
+    item.get_id() == matching_id
   }).or(expr.body.iter().enumerate().find(|(i, item)| {
+    matches!(item.get_inner(), document_body_item::Inner::Component(_))
+  })).or(expr.body.iter().enumerate().find(|(i, item)| {
     matches!(item.get_inner(), document_body_item::Inner::Import(_))
   }));
 

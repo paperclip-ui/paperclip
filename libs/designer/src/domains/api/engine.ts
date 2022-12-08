@@ -330,6 +330,20 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
+  const handleConvertToComponent = (state: DesignerState) => {
+    // Do not allow for nested instances to be converted to components.
+    // Or, at least provide a confirmation for this.
+    if (!state.selectedVirtNodeId.includes(".")) {
+      actions.applyChanges([
+        {
+          convertToComponent: {
+            expressionId: state.selectedVirtNodeId,
+          },
+        },
+      ]);
+    }
+  };
+
   const handleShortcutCommand = (
     command: ShortcutCommand,
     state: DesignerState,
@@ -338,6 +352,9 @@ const createEventHandler = (actions: Actions) => {
     switch (command) {
       case ShortcutCommand.Delete: {
         return handleDeleteKeyPressed(state, prevState);
+      }
+      case ShortcutCommand.ConvertToComponent: {
+        return handleConvertToComponent(state);
       }
       case ShortcutCommand.Undo: {
         return handleUndo();

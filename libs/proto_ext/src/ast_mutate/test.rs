@@ -907,7 +907,6 @@ case! {
       public component Unnamed {
         render div
       }
-      Unnamed
     "#
   )]
 }
@@ -931,7 +930,6 @@ case! {
         public component Unnamed {
           render text "ab"
         }
-        Unnamed
     "#
   )]
 }
@@ -962,7 +960,6 @@ case! {
       public component Unnamed {
         render div
       }
-      Unnamed
     "#
   )]
 }
@@ -1003,7 +1000,6 @@ case! {
       public style test { 
         color: blue 
       } 
-      Unnamed 
       
       public component Unnamed { 
         render div { 

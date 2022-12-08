@@ -2,10 +2,12 @@ import { eventCreators, ExtractEventFromCreators } from "@paperclip-ui/common";
 
 export const shortcutEvents = eventCreators(
   {
-    selectedConvertToComponent: null,
-    selectedCut: null,
-    selectedCopy: null,
-    selectedPaste: null,
+    insertElement: null,
+    insertText: null,
+    convertToComponent: null,
+    cut: null,
+    copy: null,
+    paste: null,
   },
   "shortcuts"
 );

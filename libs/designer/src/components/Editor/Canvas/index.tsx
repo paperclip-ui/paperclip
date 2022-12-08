@@ -66,7 +66,6 @@ const useCanvas = () => {
   const [canvasPanTimer, setCanvasPanTimer] = useState<any>(0);
 
   const canvasRef = useRef<HTMLElement>();
-  useCanvasHotkeys(canvasRef as any);
 
   const onWheel = useCallback(
     (event: WheelEvent) => {
@@ -153,20 +152,4 @@ const useCanvas = () => {
     expanded,
     activeFrameIndex: canvas.activeFrame,
   };
-};
-
-const useCanvasHotkeys = (ref: MutableRefObject<HTMLElement>) => {
-  const dispatch = useDispatch();
-  useHotkeys(
-    {
-      e: () => dispatch(designerEvents.eHotkeyPressed()),
-      t: () => dispatch(designerEvents.tHotkeyPressed()),
-      backspace: () => dispatch(designerEvents.deleteHokeyPressed()),
-      delete: () => dispatch(designerEvents.deleteHokeyPressed()),
-      "meta+z": () => dispatch(designerEvents.undoKeyPressed()),
-      "meta+shift+z": () => dispatch(designerEvents.redoKeyPressed()),
-      "meta+s": () => dispatch(designerEvents.saveKeyComboPressed()),
-    },
-    ref
-  );
 };

@@ -5,7 +5,6 @@ import {
   Canvas,
   DesignerState,
   flattenFrameBoxes,
-  getCurrentDependency,
   getNodeInfoAtPoint,
   InsertMode,
   IS_WINDOWS,
@@ -31,7 +30,7 @@ const MIN_ZOOM = 0.01;
 const MAX_ZOOM = 6400 / 100;
 const DOUBLE_CLICK_MS = 250;
 
-export const editorReducer = (
+export const legacyReducer = (
   state: DesignerState,
   event: DesignerEvent
 ): DesignerState => {

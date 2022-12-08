@@ -4,9 +4,9 @@ import {
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent, designerEngineEvents } from "./events";
-import { EditorEvent, editorEvents } from "../../events";
+import { DesignerEvent, designerEvents } from "../../events";
 import {
-  EditorState,
+  DesignerState,
   flattenFrameBoxes,
   getInsertBox,
   getNodeInfoAtPoint,
@@ -34,8 +34,8 @@ export const createDesignerEngine =
   ({ protocol, host, transport }: DesignerEngineOptions) =>
   (
     dispatch: Dispatch<DesignerEngineEvent>,
-    state: EditorState
-  ): Engine<EditorState, DesignerEngineEvent> => {
+    state: DesignerState
+  ): Engine<DesignerState, DesignerEngineEvent> => {
     const client = new DesignerClientImpl(
       new GrpcWebImpl((protocol || "http:") + "//" + host, {
         transport,
@@ -99,7 +99,7 @@ const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
  */
 
 const createEventHandler = (actions: Actions) => {
-  const handleInsert = async (state: EditorState) => {
+  const handleInsert = async (state: DesignerState) => {
     let bounds = getScaledBox(getInsertBox(state), state.canvas.transform);
     const insertMode = state.insertMode;
 
@@ -165,15 +165,18 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
-  const handleCanvasMouseUp = (state: EditorState, prevState: EditorState) => {
+  const handleCanvasMouseUp = (
+    state: DesignerState,
+    prevState: DesignerState
+  ) => {
     if (prevState.insertMode != null) {
       return handleInsert(prevState);
     }
   };
 
   const handleDeleteKeyPressed = (
-    state: EditorState,
-    prevState: EditorState
+    state: DesignerState,
+    prevState: DesignerState
   ) => {
     const node = virtHTML.getNodeById(
       prevState.selectedVirtNodeId,
@@ -188,9 +191,9 @@ const createEventHandler = (actions: Actions) => {
   };
 
   const handleResizerStoppedMoving = (
-    event: ReturnType<typeof editorEvents.resizerPathStoppedMoving>,
-    state: EditorState,
-    prevState: EditorState
+    event: ReturnType<typeof designerEvents.resizerPathStoppedMoving>,
+    state: DesignerState,
+    prevState: DesignerState
   ) => {
     const node = virtHTML.getNodeById(
       prevState.selectedVirtNodeId,
@@ -232,8 +235,8 @@ const createEventHandler = (actions: Actions) => {
   };
 
   const handleStyleDeclarationChanged = (
-    event: ReturnType<typeof editorEvents.styleDeclarationsChanged>,
-    state: EditorState
+    event: ReturnType<typeof designerEvents.styleDeclarationsChanged>,
+    state: DesignerState
   ) => {
     const style = Object.entries(event.payload.values).map(([name, value]) => ({
       name,
@@ -267,8 +270,8 @@ const createEventHandler = (actions: Actions) => {
   const handleVariantEdited = (
     {
       payload: { componentId, newName, triggers },
-    }: ReturnType<typeof editorEvents.variantEdited>,
-    state: EditorState
+    }: ReturnType<typeof designerEvents.variantEdited>,
+    state: DesignerState
   ) => {
     const variantId = state.activeVariantId;
     if (newName === "") {
@@ -307,7 +310,7 @@ const createEventHandler = (actions: Actions) => {
 
   const handleVariantsSelected = (
     selectedVariants: string[],
-    state: EditorState
+    state: DesignerState
   ) => {
     const availableVariants = getSelectedExprAvailableVariants(state);
 
@@ -325,42 +328,42 @@ const createEventHandler = (actions: Actions) => {
   };
 
   return (
-    event: EditorEvent,
-    newState: EditorState,
-    prevState: EditorState
+    event: DesignerEvent,
+    newState: DesignerState,
+    prevState: DesignerState
   ) => {
     switch (event.type) {
-      case editorEvents.canvasMouseUp.type: {
+      case designerEvents.canvasMouseUp.type: {
         return handleCanvasMouseUp(newState, prevState);
       }
-      case editorEvents.eHotkeyPressed.type: {
+      case designerEvents.eHotkeyPressed.type: {
         return handleCanvasMouseUp(newState, prevState);
       }
-      case editorEvents.deleteHokeyPressed.type: {
+      case designerEvents.deleteHokeyPressed.type: {
         return handleDeleteKeyPressed(newState, prevState);
       }
-      case editorEvents.styleDeclarationsChanged.type: {
+      case designerEvents.styleDeclarationsChanged.type: {
         return handleStyleDeclarationChanged(event, newState);
       }
-      case editorEvents.variantsSelected.type: {
+      case designerEvents.variantsSelected.type: {
         return handleVariantsSelected(event.payload, newState);
       }
-      case editorEvents.undoKeyPressed.type: {
+      case designerEvents.undoKeyPressed.type: {
         return handleUndo();
       }
-      case editorEvents.redoKeyPressed.type: {
+      case designerEvents.redoKeyPressed.type: {
         return handleRedo();
       }
-      case editorEvents.removeVariantButtonClicked.type: {
+      case designerEvents.removeVariantButtonClicked.type: {
         return handleDeleteExpression(event.payload.variantId);
       }
-      case editorEvents.variantEdited.type: {
+      case designerEvents.variantEdited.type: {
         return handleVariantEdited(event, newState);
       }
-      case editorEvents.saveKeyComboPressed.type: {
+      case designerEvents.saveKeyComboPressed.type: {
         return handleSave();
       }
-      case editorEvents.resizerPathStoppedMoving.type: {
+      case designerEvents.resizerPathStoppedMoving.type: {
         return handleResizerStoppedMoving(event, newState, prevState);
       }
     }
@@ -373,7 +376,7 @@ const createEventHandler = (actions: Actions) => {
 
 const bootstrap = (
   { openFile, syncGraph }: Actions,
-  initialState: EditorState
+  initialState: DesignerState
 ) => {
   setTimeout(() => {
     openFile(initialState.history.query.file);

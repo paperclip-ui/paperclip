@@ -1,6 +1,6 @@
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { Variant } from "@paperclip-ui/proto/lib/generated/ast/pc";
-import { EditorState } from "./core";
+import { DesignerState } from "./core";
 
 export const MIXED_VALUE = "mixed";
 
@@ -360,7 +360,7 @@ const AVAILABLE_STYLES = {
 };
 
 export const getSelectedExprStyles = (
-  state: EditorState
+  state: DesignerState
 ): ComputedDeclaration[] => {
   const combinedStyles: Record<string, ComputedDeclaration> = {};
 
@@ -402,21 +402,21 @@ export const getSelectedExprStyles = (
   return Object.values(combinedStyles);
 };
 
-export const getSelectedExpression = (state: EditorState) => {
+export const getSelectedExpression = (state: DesignerState) => {
   return (
     state.selectedVirtNodeId &&
     ast.getExprByVirtId(state.selectedVirtNodeId, state.graph)
   );
 };
 
-export const getActiveVariant = (state: EditorState) => {
+export const getActiveVariant = (state: DesignerState) => {
   return (
     state.activeVariantId &&
     (ast.getExprByVirtId(state.activeVariantId, state.graph) as Variant)
   );
 };
 
-export const getSelectedExprOwnerComponent = (state: EditorState) => {
+export const getSelectedExprOwnerComponent = (state: DesignerState) => {
   if (!state.selectedVirtNodeId) {
     return null;
   }
@@ -428,7 +428,7 @@ export const getSelectedExprOwnerComponent = (state: EditorState) => {
   return ast.getExprOwnerComponent(expr, state.graph);
 };
 
-export const getSelectedExprAvailableVariants = (state: EditorState) => {
+export const getSelectedExprAvailableVariants = (state: DesignerState) => {
   const ownerComponent = getSelectedExprOwnerComponent(state);
   if (!ownerComponent) {
     return [];
@@ -436,6 +436,6 @@ export const getSelectedExprAvailableVariants = (state: EditorState) => {
   return ast.getComponentVariants(ownerComponent) || [];
 };
 
-export const getEnabledVariants = (state: EditorState) => {
+export const getEnabledVariants = (state: DesignerState) => {
   return getSelectedExprAvailableVariants(state).filter(ast.isVariantEnabled);
 };

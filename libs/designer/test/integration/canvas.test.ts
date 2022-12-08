@@ -10,7 +10,7 @@ import {
   waitForEvent,
   waitUntilDesignerReady,
 } from "../controls";
-import { editorEvents } from "@paperclip-ui/designer/src/events";
+import { designerEvents } from "@paperclip-ui/designer/src/events";
 
 describe(__filename + "#", () => {
   it(`Can evaluate a simple document`, async () => {
@@ -82,7 +82,7 @@ describe(__filename + "#", () => {
       '<span id="_4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div>'
     );
 
-    designer.machine.dispatch(editorEvents.deleteHokeyPressed());
+    designer.machine.dispatch(designerEvents.deleteHokeyPressed());
     await waitForEvent(designerEngineEvents.documentOpened.type, designer);
 
     frames = stringifyDesignerFrames(designer);
@@ -112,7 +112,7 @@ describe(__filename + "#", () => {
       "8bc00fda-4"
     );
 
-    designer.machine.dispatch(editorEvents.deleteHokeyPressed());
+    designer.machine.dispatch(designerEvents.deleteHokeyPressed());
     await waitForEvent(designerEngineEvents.documentOpened.type, designer);
 
     frames = stringifyDesignerFrames(designer);
@@ -152,7 +152,7 @@ describe(__filename + "#", () => {
       "4f0e8e93-5"
     );
 
-    designer.machine.dispatch(editorEvents.deleteHokeyPressed());
+    designer.machine.dispatch(designerEvents.deleteHokeyPressed());
 
     await waitForEvent(designerEngineEvents.documentOpened.type, designer);
     frames = stringifyDesignerFrames(designer);
@@ -191,7 +191,7 @@ describe(__filename + "#", () => {
       "4f0e8e93-1"
     );
 
-    designer.machine.dispatch(editorEvents.deleteHokeyPressed());
+    designer.machine.dispatch(designerEvents.deleteHokeyPressed());
 
     expect(designer.machine.getState().selectedVirtNodeId).toEqual(
       "4f0e8e93-2"
@@ -259,7 +259,7 @@ describe(__filename + "#", () => {
     );
 
     await waitUntilDesignerReady(designer);
-    designer.machine.dispatch(editorEvents.deleteHokeyPressed());
+    designer.machine.dispatch(designerEvents.deleteHokeyPressed());
     await waitForEvent(designerEngineEvents.documentOpened.type, designer);
     expect(designer.machine.getState().selectedVirtNodeId).toEqual(
       "4f0e8e93-2"

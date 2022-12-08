@@ -7,7 +7,7 @@ import {
 } from "@paperclip-ui/designer/src/components/MultiSelectInput";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { getSelectedExprAvailableVariants } from "@paperclip-ui/designer/src/state/pc";
-import { editorEvents } from "@paperclip-ui/designer/src/events";
+import { designerEvents } from "@paperclip-ui/designer/src/events";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
 export const Variants = () => {
@@ -49,7 +49,7 @@ const useVariantSection = () => {
   const activeVariantIds =
     variants?.filter(ast.isVariantEnabled).map((variant) => variant.id) || [];
   const onChange = (values) => {
-    dispatch(editorEvents.variantsSelected(values));
+    dispatch(designerEvents.variantsSelected(values));
   };
   return { variants, onChange, activeVariantIds };
 };

@@ -1,7 +1,7 @@
 import { useDispatch } from "@paperclip-ui/common";
 import * as styles from "@paperclip-ui/designer/src/styles/context-menu.pc";
 import React, { useEffect, useRef, useState } from "react";
-import { EditorEvent } from "../../events";
+import { DesignerEvent } from "../../events";
 import {
   MenuItem,
   MenuItemKind,
@@ -11,7 +11,7 @@ import { Portal } from "../Portal";
 
 export type ContextMenuProps = {
   children: React.ReactElement;
-  menu: MenuItem<EditorEvent>[];
+  menu: MenuItem<DesignerEvent>[];
 };
 
 export const ContextMenu = ({ children, menu }: ContextMenuProps) => {
@@ -87,7 +87,7 @@ export const ContextMenu = ({ children, menu }: ContextMenuProps) => {
 };
 
 type ContextMenuOptionProps = {
-  option: MenuItemOption<EditorEvent>;
+  option: MenuItemOption<DesignerEvent>;
 };
 
 const ContextMenuOption = ({

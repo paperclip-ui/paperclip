@@ -9,7 +9,7 @@ import {
 } from "@paperclip-ui/designer/src/state/geom";
 import { useDispatch } from "@paperclip-ui/common";
 import { startDOMDrag } from "@paperclip-ui/designer/src/components/utils/dnd";
-import { editorEvents } from "@paperclip-ui/designer/src/events";
+import { designerEvents } from "@paperclip-ui/designer/src/events";
 
 type Props = {
   canvasScroll: Point;
@@ -140,8 +140,8 @@ export const Selectable = React.memo(
       startDOMDrag(
         event,
         null,
-        wrapActionCreator(editorEvents.resizerPathMoved),
-        wrapActionCreator(editorEvents.resizerPathStoppedMoving)
+        wrapActionCreator(designerEvents.resizerPathMoved),
+        wrapActionCreator(designerEvents.resizerPathStoppedMoving)
       );
     };
 
@@ -174,8 +174,8 @@ export const Selectable = React.memo(
         startDOMDrag(
           event,
           null,
-          wrapActionCreator(editorEvents.resizerPathMoved),
-          wrapActionCreator(editorEvents.resizerPathStoppedMoving)
+          wrapActionCreator(designerEvents.resizerPathMoved),
+          wrapActionCreator(designerEvents.resizerPathStoppedMoving)
         );
       }
     };

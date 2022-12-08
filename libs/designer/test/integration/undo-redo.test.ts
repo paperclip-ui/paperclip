@@ -3,7 +3,7 @@
  */
 
 import { designerEngineEvents } from "@paperclip-ui/designer/src/domains/api/events";
-import { editorEvents } from "@paperclip-ui/designer/src/events";
+import { designerEvents } from "@paperclip-ui/designer/src/events";
 import {
   insertCanvasElement,
   startDesigner,
@@ -31,7 +31,7 @@ describe(__filename + "#", () => {
     expect(frames).toBe(
       `<span id=\"_b5c97432-1\">hello</span><div id=\"_98d0141d-4\" class=\"_98d0141d-4\"></div>`
     );
-    designer.machine.dispatch(editorEvents.undoKeyPressed());
+    designer.machine.dispatch(designerEvents.undoKeyPressed());
     await waitForEvent(designerEngineEvents.documentOpened.type, designer);
     frames = stringifyDesignerFrames(designer);
     expect(frames).toBe(`<span id="_b5c97432-1">hello</span>`);
@@ -56,11 +56,11 @@ describe(__filename + "#", () => {
     expect(frames).toBe(
       `<span id=\"_8efcc1e7-1\">hello</span><div id=\"_d83ca679-4\" class=\"_d83ca679-4\"></div>`
     );
-    designer.machine.dispatch(editorEvents.undoKeyPressed());
+    designer.machine.dispatch(designerEvents.undoKeyPressed());
     await waitForEvent(designerEngineEvents.documentOpened.type, designer);
     frames = stringifyDesignerFrames(designer);
     expect(frames).toBe(`<span id="_8efcc1e7-1">hello</span>`);
-    designer.machine.dispatch(editorEvents.redoKeyPressed());
+    designer.machine.dispatch(designerEvents.redoKeyPressed());
     await waitForEvent(designerEngineEvents.documentOpened.type, designer);
     frames = stringifyDesignerFrames(designer);
     expect(frames).toBe(

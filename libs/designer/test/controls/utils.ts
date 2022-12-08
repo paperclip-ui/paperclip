@@ -3,7 +3,7 @@
  */
 
 import { designerEngineEvents } from "@paperclip-ui/designer/src/domains/api/events";
-import { editorEvents } from "@paperclip-ui/designer/src/events";
+import { designerEvents } from "@paperclip-ui/designer/src/events";
 import { Point } from "@paperclip-ui/designer/src/state/geom";
 import { renderFrames } from "@paperclip-ui/web-renderer";
 import { Designer } from "./mock-designer";
@@ -55,9 +55,9 @@ export const insertCanvasElement = async (
   designer: Designer,
   position: Point = { x: 0, y: 0 }
 ) => {
-  designer.machine.dispatch(editorEvents.eHotkeyPressed());
+  designer.machine.dispatch(designerEvents.eHotkeyPressed());
   designer.machine.dispatch(
-    editorEvents.canvasMouseDown({
+    designerEvents.canvasMouseDown({
       position: { x: 0, y: 0 },
       metaKey: false,
       ctrlKey: false,
@@ -66,7 +66,7 @@ export const insertCanvasElement = async (
     })
   );
   designer.machine.dispatch(
-    editorEvents.canvasMouseUp({
+    designerEvents.canvasMouseUp({
       position,
       metaKey: false,
       ctrlKey: false,

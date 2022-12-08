@@ -10,7 +10,7 @@ import { InsertMode } from "../state";
 import { Box, Point, Size } from "../state/geom";
 import { ShortcutEvent } from "./shortcut";
 
-export const editorEvents = eventCreators(
+export const designerEvents = eventCreators(
   {
     canvasPanEnd: null,
     eHotkeyPressed: null,
@@ -74,8 +74,8 @@ export const editorEvents = eventCreators(
   "editor"
 );
 
-export type EditorEvent =
-  | ExtractEventFromCreators<typeof editorEvents>
+export type DesignerEvent =
+  | ExtractEventFromCreators<typeof designerEvents>
   | DesignerEngineEvent
   | HistoryEngineEvent
   | ShortcutEvent;

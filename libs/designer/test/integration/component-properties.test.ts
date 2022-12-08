@@ -1,5 +1,5 @@
 import { designerEngineEvents } from "@paperclip-ui/designer/src/domains/api/events";
-import { editorEvents } from "@paperclip-ui/designer/src/events";
+import { designerEvents } from "@paperclip-ui/designer/src/events";
 import {
   startDesigner,
   waitForEvent,
@@ -17,7 +17,7 @@ describe(__filename + "#", () => {
     });
     await waitUntilDesignerReady(designer);
     designer.machine.dispatch(
-      editorEvents.variantEdited({
+      designerEvents.variantEdited({
         componentId: "4f0e8e93-2",
         newName: "bbddaaa",
         triggers: [],

@@ -23,7 +23,7 @@ import {
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { Menu } from "../modules/shortcuts/base";
-import { EditorEvent } from "../events";
+import { DesignerEvent } from "../events";
 import { getGlobalShortcuts } from "../domains/shortcuts/state";
 export const IS_WINDOWS = false;
 
@@ -61,13 +61,13 @@ type Query = {
   file?: string;
 };
 
-export type EditorState = {
+export type DesignerState = {
   readonly: boolean;
   scopedElementPath?: string;
   selectedVirtNodeId: string;
   activeVariantId?: string;
   insertedNodeIds: string[];
-  shortcut: Menu<EditorEvent>;
+  shortcut: Menu<DesignerEvent>;
   graph: Graph;
   insertMode?: InsertMode;
   highlightNodePath?: string;
@@ -92,7 +92,7 @@ export type EditorState = {
   canvas: Canvas;
 } & HistoryEngineState;
 
-export const DEFAULT_STATE: EditorState = {
+export const DEFAULT_STATE: DesignerState = {
   readonly: false,
   styleOverrides: {},
   preEditComputedStyles: {},
@@ -119,9 +119,10 @@ export const DEFAULT_STATE: EditorState = {
   ...INITIAL_HISTORY_STATE,
 };
 
-export const getCurrentDocument = (state: EditorState) => state.currentDocument;
+export const getCurrentDocument = (state: DesignerState) =>
+  state.currentDocument;
 
-export const maybeCenterCanvas = (editor: EditorState, force?: boolean) => {
+export const maybeCenterCanvas = (editor: DesignerState, force?: boolean) => {
   if (
     force ||
     (!editor.centeredInitial &&
@@ -149,7 +150,7 @@ export const maybeCenterCanvas = (editor: EditorState, force?: boolean) => {
 
 // https://github.com/crcn/tandem/blob/10.0.0/packages/dashboard/src/state/index.ts#L1304
 export const centerEditorCanvas = (
-  editor: EditorState,
+  editor: DesignerState,
   innerBounds?: Box,
   zoomOrZoomToFit: boolean | number = true
 ) => {
@@ -211,10 +212,10 @@ export const centerEditorCanvas = (
   return editor;
 };
 
-const getAllFrameBounds = (designer: EditorState) => {
+const getAllFrameBounds = (designer: DesignerState) => {
   return mergeBoxes(getCurrentPreviewFrameBoxes(designer));
 };
-export const getSelectedNodePath = (designer: EditorState) => {
+export const getSelectedNodePath = (designer: DesignerState) => {
   const nodeId = getSelectedNodeId(designer);
   if (!nodeId) {
     return null;
@@ -225,16 +226,16 @@ export const getSelectedNodePath = (designer: EditorState) => {
   );
   return virtHTML.getNodePath(node, designer.currentDocument.paperclip.html);
 };
-export const getSelectedNodeId = (designer: EditorState) => {
+export const getSelectedNodeId = (designer: DesignerState) => {
   return designer.selectedVirtNodeId;
 };
-export const getHighlightedNodePath = (designer: EditorState) =>
+export const getHighlightedNodePath = (designer: DesignerState) =>
   designer.highlightNodePath;
-export const getResizerMoving = (designer: EditorState) =>
+export const getResizerMoving = (designer: DesignerState) =>
   designer.resizerMoving;
-export const getEditorState = (designer: EditorState) => designer;
+export const getEditorState = (designer: DesignerState) => designer;
 
-export const getCurrentPreviewFrameBoxes = (editor: EditorState) => {
+export const getCurrentPreviewFrameBoxes = (editor: DesignerState) => {
   const preview = editor.currentDocument?.paperclip?.html;
 
   return preview ? getPreviewFrameBoxes(preview).filter(Boolean) : [];
@@ -256,7 +257,7 @@ const getPreviewFrameBoxes = (preview: HTMLDocument) => {
 
 const getInnerNode = (node: Node) => node.element || node.textNode;
 
-export const getCanvas = (editor: EditorState) => editor.canvas;
+export const getCanvas = (editor: DesignerState) => editor.canvas;
 
 export const getPreviewChildren = (frame: HTMLDocument) => {
   // return frame.kind === VirtualNodeKind.Fragment ? frame.children : [frame];
@@ -325,7 +326,7 @@ export const getFrameBoxes = memoize(
 export const getInsertBox = ({
   canvasMouseDownStartPoint: start,
   canvas: { mousePosition },
-}: EditorState): Box => {
+}: DesignerState): Box => {
   if (!start) {
     return null;
   }
@@ -338,20 +339,20 @@ export const getInsertBox = ({
   };
 };
 
-export const getCurrentFilePath = (state: EditorState) => {
+export const getCurrentFilePath = (state: DesignerState) => {
   return state.history?.query.file;
 };
 
-export const getCurrentDependency = (state: EditorState) => {
+export const getCurrentDependency = (state: DesignerState) => {
   return state.graph.dependencies[getCurrentFilePath(state)];
 };
 
-export const getExpandedVirtIds = (state: EditorState) =>
+export const getExpandedVirtIds = (state: DesignerState) =>
   state.expandedLayerVirtIds;
 
-export const getGraph = (state: EditorState) => state.graph;
+export const getGraph = (state: DesignerState) => state.graph;
 
-export const getInsertMode = (state: EditorState) => state.insertMode;
-export const getAllPublicAtoms = (state: EditorState) => {
+export const getInsertMode = (state: DesignerState) => state.insertMode;
+export const getAllPublicAtoms = (state: DesignerState) => {
   return ast.getGraphAtoms(state.graph);
 };

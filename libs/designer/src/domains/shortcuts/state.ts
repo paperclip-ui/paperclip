@@ -1,8 +1,8 @@
 import { MenuItem, MenuItemKind } from "../../modules/shortcuts/base";
-import { EditorEvent } from "../../events";
+import { DesignerEvent } from "../../events";
 import { shortcutEvents } from "./events";
 
-export const createNodeShortcuts = (): MenuItem<EditorEvent>[] => [
+export const createNodeShortcuts = (): MenuItem<DesignerEvent>[] => [
   {
     kind: MenuItemKind.Option,
     label: "Create component",
@@ -30,6 +30,6 @@ export const createNodeShortcuts = (): MenuItem<EditorEvent>[] => [
   },
 ];
 
-export const getGlobalShortcuts = (): MenuItem<EditorEvent>[] => [
+export const getGlobalShortcuts = (): MenuItem<DesignerEvent>[] => [
   ...createNodeShortcuts(),
 ];

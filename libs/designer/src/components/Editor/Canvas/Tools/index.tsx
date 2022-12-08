@@ -9,7 +9,7 @@ import {
   getSelectedNodePath,
   InsertMode,
 } from "@paperclip-ui/designer/src/state";
-import { editorEvents } from "@paperclip-ui/designer/src/events";
+import { designerEvents } from "@paperclip-ui/designer/src/events";
 import { mergeBoxes } from "@paperclip-ui/designer/src/state/geom";
 import { Selectable } from "./Selectable";
 import { InsertElement } from "./InsertElement";
@@ -132,7 +132,7 @@ const useTools = () => {
 
   const onMouseMove = useCallback(
     (event: React.MouseEvent<any>) => {
-      dispatch(editorEvents.canvasMouseMoved(getMousePoint(event)));
+      dispatch(designerEvents.canvasMouseMoved(getMousePoint(event)));
     },
     [dispatch]
   );
@@ -142,7 +142,7 @@ const useTools = () => {
   const onMouswDown = useCallback(
     (event: React.MouseEvent<any>) => {
       dispatch(
-        editorEvents.canvasMouseDown({
+        designerEvents.canvasMouseDown({
           metaKey: event.metaKey,
           ctrlKey: event.ctrlKey,
           shiftKey: event.shiftKey,
@@ -156,13 +156,13 @@ const useTools = () => {
 
   const onMouseUp = useCallback(
     (event: React.MouseEvent<any>) => {
-      dispatch(editorEvents.canvasMouseUp());
+      dispatch(designerEvents.canvasMouseUp());
     },
     [dispatch]
   );
 
   const onMouseLeave = () => {
-    dispatch(editorEvents.canvasMouseLeave(null));
+    dispatch(designerEvents.canvasMouseLeave(null));
   };
 
   const boxes = flattenFrameBoxes(frameBoxes);

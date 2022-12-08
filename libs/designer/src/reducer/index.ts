@@ -1,8 +1,9 @@
-import { Designer } from "../../test/controls";
-import { EditorEvent } from "../events";
-import { EditorState } from "../state";
-import { editorReducer } from "./editor";
+import { legacyReducer } from "../domains/legacy/reducer";
+import { shortcutReducer } from "../domains/shortcuts/reducer";
+import { DesignerEvent } from "../events";
+import { DesignerState } from "../state";
 
-export const rootReducer = (state: EditorState, event: EditorEvent) => {
-  return editorReducer(state, event);
-};
+const domainReducers = [legacyReducer, shortcutReducer];
+
+export const rootReducer = (state: DesignerState, event: DesignerEvent) =>
+  domainReducers.reduce((state, reduce) => reduce(state, event), state);

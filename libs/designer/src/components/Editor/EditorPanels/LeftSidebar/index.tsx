@@ -19,7 +19,7 @@ import {
   TextNode,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
-import { editorEvents } from "@paperclip-ui/designer/src/events";
+import { designerEvents } from "@paperclip-ui/designer/src/events";
 import cx from "classnames";
 
 export const LeftSidebar = () => {
@@ -347,13 +347,13 @@ const useLeaf = ({
 
   const dispatch = useDispatch();
   const onClick = useCallback(() => {
-    dispatch(editorEvents.layerLeafClicked({ virtId }));
+    dispatch(designerEvents.layerLeafClicked({ virtId }));
   }, [virtId]);
 
   const onArrowClick = useCallback(
     (event: React.MouseEvent<any>) => {
       event.stopPropagation();
-      dispatch(editorEvents.layerArrowClicked({ virtId }));
+      dispatch(designerEvents.layerArrowClicked({ virtId }));
     },
     [virtId]
   );

@@ -9,7 +9,7 @@ import React, {
 import { Frames } from "./Frames";
 import * as styles from "@paperclip-ui/designer/src/styles/editor.pc";
 import { normalizeWheel } from "./normalize-wheel";
-import { editorEvents } from "@paperclip-ui/designer/src/events";
+import { designerEvents } from "@paperclip-ui/designer/src/events";
 
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
@@ -78,7 +78,7 @@ const useCanvas = () => {
         return;
       }
       if (!canvasPanTimer) {
-        dispatch(editorEvents.canvasPanStart());
+        dispatch(designerEvents.canvasPanStart());
       }
       const rect = canvasRef.current.getBoundingClientRect();
 
@@ -88,7 +88,7 @@ const useCanvas = () => {
       }
 
       dispatch(
-        editorEvents.canvasPanned({
+        designerEvents.canvasPanned({
           delta: {
             x: pixelX,
             y: pixelY,
@@ -108,7 +108,7 @@ const useCanvas = () => {
       setCanvasPanTimer(
         setTimeout(() => {
           setCanvasPanTimer(null);
-          dispatch(editorEvents.canvasPanEnd());
+          dispatch(designerEvents.canvasPanEnd());
         }, 100)
       );
 
@@ -126,7 +126,7 @@ const useCanvas = () => {
     const onResize = () => {
       const { width, height } = ref.getBoundingClientRect();
       dispatch(
-        editorEvents.canvasResized({
+        designerEvents.canvasResized({
           width,
           height,
         })
@@ -159,13 +159,13 @@ const useCanvasHotkeys = (ref: MutableRefObject<HTMLElement>) => {
   const dispatch = useDispatch();
   useHotkeys(
     {
-      e: () => dispatch(editorEvents.eHotkeyPressed()),
-      t: () => dispatch(editorEvents.tHotkeyPressed()),
-      backspace: () => dispatch(editorEvents.deleteHokeyPressed()),
-      delete: () => dispatch(editorEvents.deleteHokeyPressed()),
-      "meta+z": () => dispatch(editorEvents.undoKeyPressed()),
-      "meta+shift+z": () => dispatch(editorEvents.redoKeyPressed()),
-      "meta+s": () => dispatch(editorEvents.saveKeyComboPressed()),
+      e: () => dispatch(designerEvents.eHotkeyPressed()),
+      t: () => dispatch(designerEvents.tHotkeyPressed()),
+      backspace: () => dispatch(designerEvents.deleteHokeyPressed()),
+      delete: () => dispatch(designerEvents.deleteHokeyPressed()),
+      "meta+z": () => dispatch(designerEvents.undoKeyPressed()),
+      "meta+shift+z": () => dispatch(designerEvents.redoKeyPressed()),
+      "meta+s": () => dispatch(designerEvents.saveKeyComboPressed()),
     },
     ref
   );

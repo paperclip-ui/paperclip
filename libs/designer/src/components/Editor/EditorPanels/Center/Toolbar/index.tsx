@@ -7,7 +7,7 @@ import {
   getInsertMode,
   InsertMode,
 } from "@paperclip-ui/designer/src/state";
-import { editorEvents } from "@paperclip-ui/designer/src/events";
+import { designerEvents } from "@paperclip-ui/designer/src/events";
 
 export const Toolbar = () => {
   const { zoom, insertMode, onInsertElementClick, onInsertTextClick } =
@@ -40,9 +40,11 @@ const useToolbar = () => {
   const insertMode = useSelector(getInsertMode);
   const dispatch = useDispatch();
   const onInsertElementClick = () =>
-    dispatch(editorEvents.insertModeButtonClick({ mode: InsertMode.Element }));
+    dispatch(
+      designerEvents.insertModeButtonClick({ mode: InsertMode.Element })
+    );
   const onInsertTextClick = () =>
-    dispatch(editorEvents.insertModeButtonClick({ mode: InsertMode.Text }));
+    dispatch(designerEvents.insertModeButtonClick({ mode: InsertMode.Text }));
 
   return {
     zoom: Math.round(canvas.transform.z * 100),

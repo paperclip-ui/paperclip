@@ -10,7 +10,7 @@ import {
   StyleOverrides,
 } from "@paperclip-ui/designer/src/state";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
-import { editorEvents } from "@paperclip-ui/designer/src/events";
+import { designerEvents } from "@paperclip-ui/designer/src/events";
 
 type FramesProps = {
   expandedFrameIndex?: number | null;
@@ -89,8 +89,8 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
 
       const rects = getFrameRects(mount, data, frameIndex);
       const computedStyles = computeAllStyles(mount, frameIndex);
-      dispatch(editorEvents.rectsCaptured({ frameIndex, rects }));
-      dispatch(editorEvents.computedStylesCaptured({ computedStyles }));
+      dispatch(designerEvents.rectsCaptured({ frameIndex, rects }));
+      dispatch(designerEvents.computedStylesCaptured({ computedStyles }));
     },
     [dispatch, shouldCollectRects]
   );

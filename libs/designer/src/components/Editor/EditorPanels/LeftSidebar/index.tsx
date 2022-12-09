@@ -31,21 +31,23 @@ export const LeftSidebar = () => {
 
   return (
     <styles.LeftSidebar>
-      <styles.LeftSidebarHeader title={title} />
-      <sidebarStyles.SidebarSection>
-        <sidebarStyles.SidebarPanelHeader>
-          Layers
-        </sidebarStyles.SidebarPanelHeader>
-      </sidebarStyles.SidebarSection>
-      <styles.Layers>
-        {document.body.map((item) => (
-          <DocumentBodyItemLeaf
-            key={ast.getDocumentBodyInner(item).id}
-            depth={1}
-            expr={item}
-          />
-        ))}
-      </styles.Layers>
+      <sidebarStyles.SidebarPanel>
+        <styles.LeftSidebarHeader title={title} />
+        <sidebarStyles.SidebarSection>
+          <sidebarStyles.SidebarPanelHeader>
+            Layers
+          </sidebarStyles.SidebarPanelHeader>
+        </sidebarStyles.SidebarSection>
+        <styles.Layers>
+          {document.body.map((item) => (
+            <DocumentBodyItemLeaf
+              key={ast.getDocumentBodyInner(item).id}
+              depth={1}
+              expr={item}
+            />
+          ))}
+        </styles.Layers>
+      </sidebarStyles.SidebarPanel>
     </styles.LeftSidebar>
   );
 };

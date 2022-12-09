@@ -2,539 +2,589 @@ import "./sidebar.pc" as sidebar
 import "./theme.pc" as theme
 
 public component Tabs {
-  render div {
-    style {
-      display: flex
+    render div {
+        style {
+            display: flex
+        }
+        slot children
     }
-    slot children
-  }
 }
 
 public component Tab {
-  variant selected trigger { ".selected" }
-  render div(class: class) {
-    style {
-      font-weight: 600
-      padding: var(theme.space05)
-      display: inline-block
-      flex: 1
-      text-align: center
-      border-bottom: 1px solid var(theme.borderColor)
+    variant selected trigger {
+        ".selected"
     }
-    style variant selected {
-      border-color: var(theme.backgroundSelected)
+    render div(class: class) {
+        style {
+            font-weight: 600
+            padding: var(theme.space05)
+            display: inline-block
+            flex: 1
+            text-align: center
+            border-bottom: 1px solid var(theme.borderColor)
+        }
+        style variant selected {
+            border-color: var(theme.backgroundSelected)
+        }
+        slot children
     }
-    slot children
-  }
 }
 
 public component LeftSidebar {
-  render sidebar.Sidebar { 
-    sidebar.SidebarPanel {
-      slot children
+    render sidebar.Sidebar {
+        slot children
     }
-     
-  }
 }
 
 public component LeftSidebarHeader {
-  render sidebar.SidebarPanelContent {
-    style {
-      display: flex
-      justify-content: space-between
-      align-items: center
-      height: 56px
-      font-weight: 600
-    }
-    div {
-      style {
-        display: flex
-        gap: 8px
-        align-items: center
-      }
-      div {
-        style extends theme.icon {
-          display: none
-          -webkit-mask-image: url("./back.svg")
-          --size: 1.6em
-          width: 12px
-          height: 1em
+    render sidebar.SidebarPanelContent {
+        style {
+            display: flex
+            justify-content: space-between
+            align-items: center
+            height: 56px
+            font-weight: 600
         }
-      }
-      span {
-        slot title
-      }
-    }
-    div {
-      style {
-        display: flex
-        gap: 4px
-      }
-      div {
-        style extends theme.icon {
-          cursor: pointer
-          -webkit-mask-image: url("./hamburger.svg")
-          --size: 1.2em
-          display: none
+        div {
+            style {
+                display: flex
+                gap: 8px
+                align-items: center
+            }
+            div {
+                style extends theme.icon {
+                    display: none
+                    -webkit-mask-image: url("./back.svg")
+                    --size: 1.6em
+                    width: 12px
+                    height: 1em
+                }
+            }
+            span {
+                slot title
+            }
         }
-      }
+        div {
+            style {
+                display: flex
+                gap: 4px
+            }
+            div {
+                style extends theme.icon {
+                    cursor: pointer
+                    -webkit-mask-image: url("./hamburger.svg")
+                    --size: 1.2em
+                    display: none
+                }
+            }
+        }
     }
-  }
 }
 
-
 component LayerIcon {
-  variant isComponent trigger { ".component" }
-  variant isInstance trigger { ".instance" }
-  variant isElement trigger { ".element" }
-  variant isCompositeToken trigger { ".composite-token" }
-  variant isAtomToken trigger { ".atom-token" }
-  variant isSlot trigger { ".slot" }
-  variant isText trigger { ".text" }
-  variant isTrigger trigger { ".trigger" }
-  render div root (class:class) {
-    style {
-      width: 12px
-      position: relative
-
-      height: 1em
+    variant isComponent trigger {
+        ".component"
     }
-    div {
-      style extends theme.icon {
-        position: absolute
-        top: 50%
-        left: 50%
-        transform: translate(-50%, -50%)
-
-      }
-      style variant isComponent {
-        --size: 1.1em
-        -webkit-mask-image: url("./component2.svg")
-      }
-      style variant isInstance {
-        --size: 0.9em
-        -webkit-mask-image: url("./box-outline.svg")
-        transform: translate(-50%, -50%) rotate(45deg)
-      }
-      style variant isSlot {
-        --size: 1em
-        -webkit-mask-image: url("./slot3.svg")
-      }
-      style variant isElement {
-        --size: 0.75em
-        -webkit-mask-image: url("./square.svg")
-      }
-      style variant isCompositeToken {
-        --size: 0.9em
-        -webkit-mask-image: url("./group.svg")
-      }
-      style variant isAtomToken {
-        --size: 0.8em
-        -webkit-mask-image: url("./dot4.svg")
-      }
-      style variant isTrigger {
-        --size: 1.1em
-        position: relative
-
-        -webkit-mask-image: url("./lightning.svg")
-      }
-      style variant isText {
-        --size: 0.8em
-        -webkit-mask-image: url("./text.svg")
-      }
+    variant isInstance trigger {
+        ".instance"
     }
-  }
+    variant isElement trigger {
+        ".element"
+    }
+    variant isCompositeToken trigger {
+        ".composite-token"
+    }
+    variant isAtomToken trigger {
+        ".atom-token"
+    }
+    variant isSlot trigger {
+        ".slot"
+    }
+    variant isText trigger {
+        ".text"
+    }
+    variant isTrigger trigger {
+        ".trigger"
+    }
+    render div root(class: class) {
+        style {
+            width: 12px
+            position: relative
+            height: 1em
+        }
+        div {
+            style extends theme.icon {
+                position: absolute
+                top: 50%
+                left: 50%
+                transform: translate(-50%, -50%)
+            }
+            style variant isComponent {
+                --size: 1.1em
+                -webkit-mask-image: url("./component2.svg")
+            }
+            style variant isInstance {
+                --size: 0.9em
+                -webkit-mask-image: url("./box-outline.svg")
+                transform: translate(-50%, -50%) rotate(45deg)
+            }
+            style variant isSlot {
+                --size: 1em
+                -webkit-mask-image: url("./slot3.svg")
+            }
+            style variant isElement {
+                --size: 0.75em
+                -webkit-mask-image: url("./square.svg")
+            }
+            style variant isCompositeToken {
+                --size: 0.9em
+                -webkit-mask-image: url("./group.svg")
+            }
+            style variant isAtomToken {
+                --size: 0.8em
+                -webkit-mask-image: url("./dot4.svg")
+            }
+            style variant isTrigger {
+                --size: 1.1em
+                position: relative
+                -webkit-mask-image: url("./lightning.svg")
+            }
+            style variant isText {
+                --size: 0.8em
+                -webkit-mask-image: url("./text.svg")
+            }
+        }
+    }
 }
 
 public component TreeNavigationItemContent {
-  render div {
-    slot children
-  }
+    render div {
+        slot children
+    }
 }
 
 public component TreeNavigationItem {
-  render div(class: class) {
-    slot children
-  }
+    render div(class: class) {
+        slot children
+    }
 }
 
 public component TagType {
-  render span {
-    style {
-      opacity: 0.3
+    render span {
+        style {
+            opacity: 0.3
+        }
+        slot children
     }
-    slot children
-  }
 }
 
-
 public component TreeNavigationItemHeader {
-  variant isContainer trigger { ".container" }
-  variant isOpen trigger { ".open" }
-  variant isHovering trigger { ":hover" }
-  variant isSelected trigger { ".selected" }
-  variant isShadow trigger { ".shadow" }
-  render div root(class:class, style: style, onClick: onClick) {
-    style {
-      --depth: 1
-      display: flex
-      gap: var(theme.space02)
-      padding: var(theme.space03) var(theme.space05)
-      padding-left: calc(22px * var(--depth))
-      justify-content: space-between
+    variant isContainer trigger {
+        ".container"
     }
-    style variant isShadow {
-      background: rgb(31, 31, 31)
+    variant isOpen trigger {
+        ".open"
     }
-    style variant isSelected {
-      background: rgb(46, 46, 46)
+    variant isHovering trigger {
+        ":hover"
     }
-    div {
-      style {
-        position: relative
-        display: flex
-        gap: var(theme.space03)
-        align-items: center
-      }
-      div(onClick: onArrowClick) {
-        style extends theme.icon {
-          -webkit-mask-image: url("./chevron2.svg")
-          opacity: 0
-          color: white
-          --size: 14px
-          position: absolute
-          left: -18px
-          transition: 0.2s
-          outline: none
+    variant isSelected trigger {
+        ".selected"
+    }
+    variant isShadow trigger {
+        ".shadow"
+    }
+    render div root(class: class, style: style, onClick: onClick) {
+        style {
+            --depth: 1
+            display: flex
+            gap: var(theme.space02)
+            padding: var(theme.space03) var(theme.space05)
+            padding-left: calc(22px * var(--depth))
+            justify-content: space-between
         }
-        style variant isContainer {
-          opacity: 0.3
+        style variant isShadow {
+            background: rgb(31, 31, 31)
         }
-        style variant isOpen {
-          transform: rotate(90deg)
+        style variant isSelected {
+            background: rgb(46, 46, 46)
         }
-      }
-      slot children
+        div {
+            style {
+                position: relative
+                display: flex
+                gap: var(theme.space03)
+                align-items: center
+            }
+            div(onClick: onArrowClick) {
+                style extends theme.icon {
+                    -webkit-mask-image: url("./chevron2.svg")
+                    opacity: 0
+                    color: white
+                    --size: 14px
+                    position: absolute
+                    left: -18px
+                    transition: 0.2s
+                    outline: none
+                }
+                style variant isContainer {
+                    opacity: 0.3
+                }
+                style variant isOpen {
+                    transform: rotate(90deg)
+                }
+            }
+            slot children
+        }
+        div {
+            style extends theme.easeIn {
+                opacity: 1
+                --controlOpacity: 0
+            }
+            style variant isHovering {
+                --controlOpacity: 0.5
+            }
+            slot controls
+        }
     }
-    div {
-      style extends theme.easeIn {
-        opacity: 1
-        --controlOpacity: 0
-      }
-      style variant isHovering {
-        --controlOpacity: 0.5
-      }
-      slot controls
-    }
-  }
 }
 
 public component LayerNavigationItemHeader {
-  variant isSlot trigger { ".slot" }
-  variant isComponent trigger { ".component" }
-  variant isInstance trigger { ".instance" }
-  variant isElement trigger { ".element" }
-  variant isCompositeToken trigger { ".composite-token" }
-  variant isShadow trigger { ".shadow" }
-  variant isAtomToken trigger { ".atom-token" }
-  variant isTrigger trigger { ".trigger" }
-  variant isText trigger { ".text" }
-  render TreeNavigationItemHeader container(class: class, style: style, onClick: onClick, onArrowClick: onArrowClick) {
-    override root {
-      style {
-        --depth: 1
-        --regular-layer: rgb(96, 149, 255)
-        white-space: nowrap
-      }
-      style variant isComponent {
-        --icon-color: var(theme.componentColor)
-      }
-      style variant isInstance {
-        --icon-color: rgb(219, 161, 255)
-      }
-      style variant isElement {
-        --icon-color:  var(--regular-layer)
-      }
-      style variant isCompositeToken {
-        --icon-color: rgb(114, 247, 134)
-      }
-      style variant isAtomToken {
-        --icon-color: rgb(114, 247, 134)
-      }
-      style variant isTrigger {
-        --icon-color: rgb(114, 247, 134)
-      }
-      style variant isSlot {
-        --icon-color:  var(--regular-layer)
-      }
-      style variant isText {
-        --icon-color:  var(--regular-layer)
-      }
-      style variant isShadow {
-        --icon-color: var(theme.componentColor)
-      }
+    variant isSlot trigger {
+        ".slot"
     }
-    LayerIcon(class: class) {
-      override root {
-        style {
-          color: var(--icon-color)
+    variant isComponent trigger {
+        ".component"
+    }
+    variant isInstance trigger {
+        ".instance"
+    }
+    variant isElement trigger {
+        ".element"
+    }
+    variant isCompositeToken trigger {
+        ".composite-token"
+    }
+    variant isShadow trigger {
+        ".shadow"
+    }
+    variant isAtomToken trigger {
+        ".atom-token"
+    }
+    variant isTrigger trigger {
+        ".trigger"
+    }
+    variant isText trigger {
+        ".text"
+    }
+    render TreeNavigationItemHeader container(class: class, style: style, onClick: onClick, onArrowClick: onArrowClick) {
+        override root {
+            style {
+                --depth: 1
+                --regular-layer: rgb(96, 149, 255)
+                white-space: nowrap
+            }
+            style variant isComponent {
+                --icon-color: var(theme.componentColor)
+            }
+            style variant isInstance {
+                --icon-color: rgb(219, 161, 255)
+            }
+            style variant isElement {
+                --icon-color: var(--regular-layer)
+            }
+            style variant isCompositeToken {
+                --icon-color: rgb(114, 247, 134)
+            }
+            style variant isAtomToken {
+                --icon-color: rgb(114, 247, 134)
+            }
+            style variant isTrigger {
+                --icon-color: rgb(114, 247, 134)
+            }
+            style variant isSlot {
+                --icon-color: var(--regular-layer)
+            }
+            style variant isText {
+                --icon-color: var(--regular-layer)
+            }
+            style variant isShadow {
+                --icon-color: var(theme.componentColor)
+            }
         }
-      }
+        LayerIcon(class: class) {
+            override root {
+                style {
+                    color: var(--icon-color)
+                }
+            }
+        }
+        slot children
+        insert controls {
+            slot controls
+        }
     }
-    slot children
-    insert controls {
-      slot controls
-    }
-  }
 }
 
 public component Tooltip {
-  variant isHovering trigger { ":hover" }
-  render div {
-    style {
-      position: relative
+    variant isHovering trigger {
+        ":hover"
     }
-    slot children
-    div {
-      style extends theme.easeIn {
-        pointer-events: none
-        opacity: 0
-        position: absolute
-        left: 50%
-        top: calc(100% + var(theme.space03))
-        transform: translateX(-50%)
-        background: var(theme.borderColor)
-        border: 1px solid var(theme.borderColor)
-        border-radius: var(theme.rounded)
-        padding: var(theme.space01) var(theme.space03)
-        white-space: nowrap
-      }
-      style variant isHovering {
-        opacity: 1
-      }
-      div {
+    render div {
         style {
-          position: relative
+            position: relative
         }
+        slot children
         div {
-          style extends theme.icon {
-            --size: 1.5em
-            color: var(theme.borderColor)
-            position: fixed
-            top: calc(-50% + 2px)
-            transform: rotate(-90deg) translateY(-50%) translateX(50%)
-            left: 50%
-            -webkit-mask-image: url("./chevron2.svg")
-          }
+            style extends theme.easeIn {
+                pointer-events: none
+                opacity: 0
+                position: absolute
+                left: 50%
+                top: calc(100% + var(theme.space03))
+                transform: translateX(-50%)
+                background: var(theme.borderColor)
+                border: 1px solid var(theme.borderColor)
+                border-radius: var(theme.rounded)
+                padding: var(theme.space01) var(theme.space03)
+                white-space: nowrap
+            }
+            style variant isHovering {
+                opacity: 1
+            }
+            div {
+                style {
+                    position: relative
+                }
+                div {
+                    style extends theme.icon {
+                        --size: 1.5em
+                        color: var(theme.borderColor)
+                        position: fixed
+                        top: calc(-50% + 2px)
+                        transform: rotate(-90deg) translateY(-50%) translateX(50%)
+                        left: 50%
+                        -webkit-mask-image: url("./chevron2.svg")
+                    }
+                }
+                text "open shadow instances"
+            }
         }
-        text "open shadow instances"
-      }
     }
-  }
 }
 
 public component Layers {
-  render div {
-    style {
-      padding: var(theme.space03) 0px
-      overflow: hidden
-      
+    render div {
+        style {
+            padding: var(theme.space03) 0px
+            overflow: hidden
+        }
+        slot children
     }
-    slot children
-  }
 }
 
-
 component Tokens {
-  render div {
-    style {
-      padding: var(theme.space04) 0px
+    render div {
+        style {
+            padding: var(theme.space04) 0px
+        }
+        TreeNavigationItem {
+            LayerNavigationItemHeader(class: "composite-token open") {
+                override container.root {
+                    style {
+                        --depth: 1
+                    }
+                }
+                text "Font Regular"
+            }
+            LayerNavigationItemHeader(class: "atom-token open") {
+                override container.root {
+                    style {
+                        --depth: 1
+                    }
+                }
+                text "red01"
+            }
+            LayerNavigationItemHeader(class: "atom-token open") {
+                override container.root {
+                    style {
+                        --depth: 1
+                    }
+                }
+                text "red02"
+            }
+            LayerNavigationItemHeader(class: "trigger open") {
+                override container.root {
+                    style {
+                        --depth: 1
+                    }
+                }
+                text "mobile"
+            }
+        }
     }
-    TreeNavigationItem {
-      LayerNavigationItemHeader(class: "composite-token open") {   
-        override container.root {
-          style {
-            --depth: 1
-          }
-        }
-        text "Font Regular"
-      }
-      LayerNavigationItemHeader(class: "atom-token open") {   
-        override container.root {
-          style {
-            --depth: 1
-          }
-        }
-        text "red01"
-      }
-      LayerNavigationItemHeader(class: "atom-token open") {   
-        override container.root {
-          style {
-            --depth: 1
-          }
-        }
-        text "red02"
-      }
-      LayerNavigationItemHeader(class: "trigger open") {    
-        override container.root {
-          style {
-            --depth: 1
-          }
-        }    
-        text "mobile"
-      }
-    }
-  }
 }
 
 public component ShadowIcon {
-  variant active trigger { 
-    ".visible"
-  }
-  render div(onClick: onClick, class: class) {
-    style extends theme.icon {
-      cursor: pointer
-      opacity: var(--controlOpacity)
-      -webkit-mask-image: url("./shadow2.svg")
+    variant active trigger {
+        ".visible"
     }
-    style variant active {
-      opacity: 0.5
+    render div(onClick: onClick, class: class) {
+        style extends theme.icon {
+            cursor: pointer
+            opacity: var(--controlOpacity)
+            -webkit-mask-image: url("./shadow2.svg")
+        }
+        style variant active {
+            opacity: 0.5
+        }
     }
-  }
 }
-
 
 public component LeftSidebarPreview {
-  render LeftSidebar {
-      LeftSidebarHeader {
-        insert title {
-          text "TodoList.pc"
-        }
-      }
-      sidebar.SidebarSection {
-        sidebar.SidebarPanelHeader {
-          text "Layers"
-          div {
-            style extends theme.icon {
-              -webkit-mask-image: url("./plus.svg")
-            }
+    render LeftSidebar {
+
+        sidebar.SidebarPanel {
+          LeftSidebarHeader {
+              insert title {
+                  text "TodoList.pc"
+              }
           }
-        }
-        Layers {
-          TreeNavigationItem {
-            LayerNavigationItemHeader(class: "instance container open") {  
-              text "Some instance"
-              insert controls {
-                Tooltip(title: "display shadow") {
-                  ShadowIcon(class: "visible")
-                }
-              }
-            }
-            LayerNavigationItemHeader(class: "component container open") {  
-              text "Some component"
-              insert controls {
-                Tooltip(title: "display shadow") {
-                  ShadowIcon
-                }
-              }
-            }
-            TreeNavigationItemContent {
-              TreeNavigationItem {
-                LayerNavigationItemHeader(class: "shadow element container open") {
-                  override container.root {
-                    style {
-                      --depth: 2
-                    }
+          sidebar.SidebarSection {
+              sidebar.SidebarPanelHeader {
+                  text "Layers"
+                  div {
+                      style extends theme.icon {
+                          -webkit-mask-image: url("./plus.svg")
+                      }
                   }
-                  text "container"
-                }
               }
-              TreeNavigationItem {
-                LayerNavigationItemHeader(class: "slot container open") {
-                  override container.root {
-                    style {
-                      --depth: 2
-                    }
-                  }
-                  text "label"
-                }
-                TreeNavigationItemContent {
+              Layers {
                   TreeNavigationItem {
-                    LayerNavigationItemHeader(class: "text") {
-                      override container.root {
-                        style {
-                          --depth: 3
-                        }
+                      LayerNavigationItemHeader(class: "instance container open") {
+                          text "Some instance"
+                          insert controls {
+                              Tooltip(title: "display shadow") {
+                                  ShadowIcon(class: "visible")
+                              }
+                          }
                       }
-                      text "some label"
-                    }
-                    LayerNavigationItemHeader(class: "element") {
-                      override container.root {
-                        style {
-                          --depth: 4
-                        }
+                      LayerNavigationItemHeader(class: "component container open") {
+                          text "Some component"
+                          insert controls {
+                              Tooltip(title: "display shadow") {
+                                  ShadowIcon
+                              }
+                          }
                       }
-                      text "some element"
-                      TagType {
-                        text "div"
+                      TreeNavigationItemContent {
+                          TreeNavigationItem {
+                              LayerNavigationItemHeader(class: "shadow element container open") {
+                                  override container.root {
+                                      style {
+                                          --depth: 2
+                                      }
+                                  }
+                                  text "container"
+                              }
+                          }
+                          TreeNavigationItem {
+                              LayerNavigationItemHeader(class: "slot container open") {
+                                  override container.root {
+                                      style {
+                                          --depth: 2
+                                      }
+                                  }
+                                  text "label"
+                              }
+                              TreeNavigationItemContent {
+                                  TreeNavigationItem {
+                                      LayerNavigationItemHeader(class: "text") {
+                                          override container.root {
+                                              style {
+                                                  --depth: 3
+                                              }
+                                          }
+                                          text "some label"
+                                      }
+                                      LayerNavigationItemHeader(class: "element") {
+                                          override container.root {
+                                              style {
+                                                  --depth: 4
+                                              }
+                                          }
+                                          text "some element"
+                                          TagType {
+                                              text "div"
+                                          }
+                                      }
+                                  }
+                              }
+                              TreeNavigationItemContent {
+                                  TreeNavigationItem {
+                                      LayerNavigationItemHeader(class: "text") {
+                                          override container.root {
+                                              style {
+                                                  --depth: 12
+                                              }
+                                          }
+                                          text "some label"
+                                      }
+                                  }
+                              }
+                          }
+                          TreeNavigationItem {
+                              LayerNavigationItemHeader(class: "selected slot container open") {
+                                  override container.root {
+                                      style {
+                                          --depth: 2
+                                      }
+                                  }
+                                  text "description"
+                              }
+                              TreeNavigationItemContent {
+                                  TreeNavigationItem {
+                                      LayerNavigationItemHeader(class: "text") {
+                                          override container.root {
+                                              style {
+                                                  --depth: 3
+                                              }
+                                          }
+                                          text "some long description"
+                                      }
+                                  }
+                              }
+                          }
                       }
-                    }
                   }
-                }
-                TreeNavigationItemContent {
-                  TreeNavigationItem {
-                    LayerNavigationItemHeader(class: "text") {
-                      override container.root {
-                        style {
-                          --depth: 12
-                        }
-                      }
-                      text "some label"
-                    }
-                  }
-                }
               }
-              TreeNavigationItem {
-                LayerNavigationItemHeader(class: "selected slot container open") {
-                  override container.root {
-                    style {
-                      --depth: 2
-                    }
+          }
+          sidebar.SidebarSection {
+              override root {
+                  style {
+                      display: none
                   }
-                  text "description"
-                }
-                TreeNavigationItemContent {
-                  TreeNavigationItem {
-                    LayerNavigationItemHeader(class: "text") {
-                      override container.root {
-                        style {
-                          --depth: 3
-                        }
-                      }
-                      text "some long description"
-                    }
-                  }
-                }
               }
-            }
+              sidebar.SidebarPanelHeader {
+                  text "Design Tokens"
+                  div {
+                      style extends theme.icon {
+                          -webkit-mask-image: url("./plus.svg")
+                      }
+                  }
+              }
+              Tokens
           }
         }
-      }
-      sidebar.SidebarSection {
-        override root {
-          style {
-            display: none
+
+        sidebar.SidebarPanel {
+          sidebar.SidebarSection {
+              sidebar.SidebarPanelHeader {
+                  text "Assets"
+              }
           }
         }
-        sidebar.SidebarPanelHeader {
-          text "Design Tokens"
-          div {
-            style extends theme.icon {
-              -webkit-mask-image: url("./plus.svg")
-            }
-          }
-        }
-        Tokens
-      }
-  }
+        
+    }
 }
+

@@ -23,7 +23,7 @@
 
 #### On-deck
 
-- wrap in slot
+- ability to insert elements (need UI)
 - ability to insert into slots
 
 - variants

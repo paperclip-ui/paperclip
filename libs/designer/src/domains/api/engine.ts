@@ -347,6 +347,19 @@ const createEventHandler = (actions: Actions) => {
       ]);
     }
   };
+  const handleConvertToSlot = (state: DesignerState) => {
+    // Do not allow for nested instances to be converted to components.
+    // Or, at least provide a confirmation for this.
+    if (!state.selectedVirtNodeId.includes(".")) {
+      actions.applyChanges([
+        {
+          convertToSlot: {
+            expressionId: state.selectedVirtNodeId,
+          },
+        },
+      ]);
+    }
+  };
 
   const handleShortcutCommand = (
     command: ShortcutCommand,
@@ -359,6 +372,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case ShortcutCommand.ConvertToComponent: {
         return handleConvertToComponent(state);
+      }
+      case ShortcutCommand.ConvertToSlot: {
+        return handleConvertToSlot(state);
       }
       case ShortcutCommand.Undo: {
         return handleUndo();

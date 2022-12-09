@@ -5,6 +5,7 @@ use paperclip_ast_serialize::pc::serialize;
 use paperclip_proto::ast_mutate::{
     mutation, update_variant_trigger, AppendChild, Bounds, DeleteExpression, SetFrameBounds,
     SetStyleDeclarationValue, SetStyleDeclarations, ToggleVariants, UpdateVariant, ConvertToComponent,
+    ConvertToSlot,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use crate::graph::{load::LoadableGraph, test_utils};
@@ -1141,6 +1142,185 @@ case! {
       
       component A {
         render Unnamed
+      }
+    "#
+  )]
+}
+
+case! {
+  can_convert_an_element_to_a_slot,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render div
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::ConvertToSlot(ConvertToSlot {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+
+      component A {
+        render slot child {
+          div
+        }
+      }
+    "#
+  )]
+}
+
+case! {
+  finds_unique_name_if_slot_already_exists,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render slot child {
+            div
+          }
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::ConvertToSlot(ConvertToSlot {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+
+      component A {
+        render slot child {
+          slot child1 {
+            div
+          }
+        }
+      }
+    "#
+  )]
+}
+
+
+case! {
+  can_convert_a_text_node_into_a_slot,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render text "ab"
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::ConvertToSlot(ConvertToSlot {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+
+      component A {
+        render slot child {
+          text "ab"
+        }
+      }
+    "#
+  )]
+}
+
+case! {
+  can_convert_a_child_of_insert_into_a_slot,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render B {
+            insert child {
+              div
+            }
+          }
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::ConvertToSlot(ConvertToSlot {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+
+      component A {
+        render B {
+          insert child {
+            slot child {
+              div
+            }
+          }
+        }
+      }
+    "#
+  )]
+}
+
+case! {
+  can_convert_a_child_of_element_into_a_slot,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render div {
+            text "a"
+          }
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::ConvertToSlot(ConvertToSlot {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+
+      component A {
+        render div {
+          slot child {
+            text "a"
+          }
+        }
+      }
+    "#
+  )]
+}
+
+case! {
+  can_delete_a_child_of_a_slot,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render slot child {
+            text "a"
+          }
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::DeleteExpression(DeleteExpression {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+
+      component A {
+        render slot child
       }
     "#
   )]

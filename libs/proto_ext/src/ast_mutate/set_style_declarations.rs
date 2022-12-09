@@ -13,9 +13,9 @@ use paperclip_proto::ast_mutate::{
     mutation_result, ExpressionUpdated, MutationResult, SetStyleDeclarations,
 };
 
-use crate::ast::{all::Visitor, all::VisitorResult};
+use crate::ast::{all::MutableVisitor, all::VisitorResult};
 
-impl<'expr> Visitor<()> for EditContext<'expr, SetStyleDeclarations> {
+impl<'expr> MutableVisitor<()> for EditContext<'expr, SetStyleDeclarations> {
     fn visit_style(&mut self, expr: &mut ast::pc::Style) -> VisitorResult<()> {
         if expr.get_id() == self.mutation.expression_id {
             let new_style = parse_style(

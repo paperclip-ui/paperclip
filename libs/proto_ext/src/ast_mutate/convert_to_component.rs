@@ -1,6 +1,7 @@
 use paperclip_common::get_or_short;
+use crate::{replace_child, ast::all::MutableVisitor};
 use paperclip_parser::{pc::{parser::parse}, base};
-use paperclip_proto::{ast_mutate::ConvertToComponent, ast::{all::{Expression, ExpressionWrapper}, pc::{document_body_item, node , Element, Component, Document, DocumentBodyItem}}};
+use paperclip_proto::{ast_mutate::ConvertToComponent, ast::{all::{Expression, ExpressionWrapper}, pc::{document_body_item, node , Node, Element, Component, Document, DocumentBodyItem}}};
 use paperclip_ast_serialize::serializable::Serializable;
 
 use crate::ast::{all::{Visitor, VisitorResult}, get_expr::GetExpr};
@@ -12,19 +13,15 @@ macro_rules! replace_child_with_instance {
 
       let checksum = $checksum;
 
-      for (i, v) in $children.iter_mut().enumerate() {
-        if v.get_id() == &$self.mutation.expression_id {
-          let target: ExpressionWrapper = v.into();
-          let component_name = get_component_name(&target, $self.dependency.document.as_ref().unwrap());
-          let rep = node::Inner::Element(create_element(&component_name, &checksum)).get_outer();
-          std::mem::replace(v, rep);
-        }
-      }
-        
+      replace_child!($children, &$self.mutation.expression_id, |v: &Node| {
+        let target: ExpressionWrapper = v.into();
+        let component_name = get_component_name(&target, $self.dependency.document.as_ref().unwrap());
+        node::Inner::Element(create_element(&component_name, &checksum)).get_outer()
+      })
     };
 }
 
-impl<'a> Visitor<()> for EditContext<'a, ConvertToComponent> {
+impl<'a> MutableVisitor<()> for EditContext<'a, ConvertToComponent> {
   fn visit_document(&mut self, expr: &mut paperclip_proto::ast::pc::Document) -> VisitorResult<()> {
 
     let found_expr = get_or_short!(GetExpr::get_expr(&self.mutation.expression_id, expr), VisitorResult::Continue);
@@ -64,6 +61,7 @@ impl<'a> Visitor<()> for EditContext<'a, ConvertToComponent> {
     expr.node = Some(node::Inner::Element(create_element(&component_name, &checksum)).get_outer());
     VisitorResult::Continue
   }
+  
   fn visit_insert(&mut self, expr: &mut paperclip_proto::ast::pc::Insert) -> crate::ast::all::VisitorResult<()> {
     replace_child_with_instance!(self, expr.body, expr.checksum());
     VisitorResult::Continue

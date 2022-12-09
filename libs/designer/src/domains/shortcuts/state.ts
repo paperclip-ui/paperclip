@@ -13,6 +13,7 @@ export enum ShortcutCommand {
   InsertElement,
   InsertText,
   ConvertToComponent,
+  ConvertToSlot,
   Cut,
   Copy,
   Delete,
@@ -34,11 +35,11 @@ export const getEntityShortcuts = (
     },
     {
       kind: MenuItemKind.Option,
-      label: "Wrap in slot",
+      label: "Create slot",
       enabled:
         ast.isExpressionId(state.selectedVirtNodeId) &&
         ast.isExpressionInComponent(state.selectedVirtNodeId, state.graph),
-      command: ShortcutCommand.ConvertToComponent,
+      command: ShortcutCommand.ConvertToSlot,
     },
     { kind: MenuItemKind.Divider },
     {

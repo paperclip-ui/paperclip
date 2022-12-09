@@ -7,9 +7,10 @@ use paperclip_proto::ast_mutate::{
     mutation_result, AppendChild, ExpressionInserted, MutationResult,
 };
 
+use crate::ast::all::MutableVisitor;
 use crate::ast::{all::Visitor, all::VisitorResult};
 
-impl<'expr> Visitor<()> for EditContext<'expr, AppendChild> {
+impl<'expr> MutableVisitor<()> for EditContext<'expr, AppendChild> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
         if expr.get_id() == &self.mutation.parent_id {
             let child = parse_pc(&self.mutation.child_source, &expr.checksum())

@@ -5,11 +5,12 @@ use paperclip_proto::{
     ast_mutate::{mutation_result, ExpressionInserted, InsertFrame, MutationResult},
 };
 
+use crate::ast::all::MutableVisitor;
 use crate::ast::{all::Visitor, all::VisitorResult};
 use paperclip_parser::docco::parser::parse as parse_comment;
 use paperclip_parser::pc::parser::parse as parse_pc;
 
-impl<'expr> Visitor<()> for EditContext<'expr, InsertFrame> {
+impl<'expr> MutableVisitor<()> for EditContext<'expr, InsertFrame> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
         if expr.id == self.mutation.document_id {
             let bounds = self.mutation.bounds.as_ref().unwrap();

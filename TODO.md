@@ -24,12 +24,7 @@
 #### On-deck
 
 - wrap in slot
-
-- context-menu
-
-  - properly wire up global hotkeys
-  - wire up all context menu items
-  - context menu for layers
+- ability to insert into slots
 
 - variants
 

@@ -12,7 +12,11 @@ export const createKeyboardEngine = (
     metaKey,
     ctrlKey,
     altKey,
+    target,
   }: KeyboardEvent) => {
+    if (/textarea|input/i.test((target as HTMLElement).tagName)) {
+      return;
+    }
     dispatch(
       keyboardEvents.keyDown({
         key,

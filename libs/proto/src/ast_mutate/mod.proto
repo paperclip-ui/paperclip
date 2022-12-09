@@ -14,7 +14,7 @@ message Mutation {
     DeleteChild delete_child = 2;
     InsertChild insert_child = 3;
     ConvertToComponent convert_to_component = 14;
-    WrapInSlot wrap_in_slot = 15;
+    ConvertToSlot convert_to_slot = 15;
 
     // Element
     SetElementParameter set_element_parameter = 4;
@@ -96,7 +96,7 @@ message ConvertToComponent {
   string expression_id = 1;
 }
 
-message WrapInSlot {
+message ConvertToSlot {
   string expression_id = 1;
 }
 

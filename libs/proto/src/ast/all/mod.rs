@@ -91,6 +91,11 @@ macro_rules! expressions {
                 ExpressionWrapper::$name(expr.clone())
             }
           }
+          impl From<&$expr> for ExpressionWrapper {
+            fn from(expr: &$expr) -> Self {
+                ExpressionWrapper::$name(expr.clone())
+            }
+          }
 
           impl<'a> TryFrom<ImmutableExpressionRef<'a>> for &'a $expr {
               type Error = ();

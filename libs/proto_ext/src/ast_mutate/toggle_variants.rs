@@ -4,9 +4,9 @@ use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::pc::{trigger_body_item, TriggerBodyItem};
 use paperclip_proto::ast_mutate::{mutation_result, ExpressionUpdated, ToggleVariants};
 
-use crate::ast::{all::Visitor, all::VisitorResult};
+use crate::ast::{all::MutableVisitor, all::VisitorResult};
 
-impl<'expr> Visitor<()> for EditContext<'expr, ToggleVariants> {
+impl<'expr> MutableVisitor<()> for EditContext<'expr, ToggleVariants> {
     fn visit_variant(&mut self, expr: &mut ast::pc::Variant) -> VisitorResult<()> {
         if let Some(enabled) = self.mutation.enabled.get(&expr.id) {
             // first turn all off

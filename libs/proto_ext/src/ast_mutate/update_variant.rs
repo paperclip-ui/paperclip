@@ -12,11 +12,11 @@ use paperclip_proto::{
 };
 use regex::Regex;
 
-use crate::ast::all::{Visitor, VisitorResult};
+use crate::ast::all::{MutableVisitor, VisitorResult};
 
 use super::EditContext;
 
-impl<'expr> Visitor<()> for EditContext<'expr, UpdateVariant> {
+impl<'expr> MutableVisitor<()> for EditContext<'expr, UpdateVariant> {
     fn visit_component(
         &mut self,
         expr: &mut paperclip_proto::ast::pc::Component,

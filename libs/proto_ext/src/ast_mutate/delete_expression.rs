@@ -3,6 +3,7 @@ use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast_mutate::{mutation_result, DeleteExpression, ExpressionDeleted};
 use paperclip_proto::{ast, ast_mutate::MutationResult};
 
+use crate::ast::all::MutableVisitor;
 use crate::ast::{all::Visitor, all::VisitorResult};
 macro_rules! try_remove_child {
     ($children:expr, $id: expr) => {{
@@ -23,7 +24,7 @@ macro_rules! try_remove_child {
     }};
 }
 
-impl<'expr> Visitor<()> for EditContext<'expr, DeleteExpression> {
+impl<'expr> MutableVisitor<()> for EditContext<'expr, DeleteExpression> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
         if let Some(i) = try_remove_child!(expr.body, &self.mutation.expression_id) {
             let prev_index = i - 1;
@@ -55,6 +56,20 @@ impl<'expr> Visitor<()> for EditContext<'expr, DeleteExpression> {
         VisitorResult::Continue
     }
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
+        if matches!(
+            try_remove_child!(expr.body, &self.mutation.expression_id),
+            Some(_)
+        ) {
+            self.changes.push(
+                mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
+                    id: self.mutation.expression_id.to_string(),
+                })
+                .get_outer(),
+            );
+        }
+        VisitorResult::Continue
+    }
+    fn visit_slot(&mut self, expr: &mut ast::pc::Slot) -> VisitorResult<()> {
         if matches!(
             try_remove_child!(expr.body, &self.mutation.expression_id),
             Some(_)

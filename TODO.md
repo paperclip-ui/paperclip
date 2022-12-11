@@ -23,6 +23,9 @@
 
 #### On-deck
 
+- wire up assets modal
+- insert element toolbar item
+
 - ability to insert elements (need UI)
 - ability to insert into slots
 

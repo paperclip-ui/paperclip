@@ -4,6 +4,7 @@ import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { getHistoryState } from "@paperclip-ui/designer/src/domains/history/state";
 import {
+  DesignerState,
   getCurrentDependency,
   getExpandedVirtIds,
   getGraph,
@@ -23,9 +24,9 @@ import { designerEvents } from "@paperclip-ui/designer/src/events";
 import cx from "classnames";
 
 export const LeftSidebar = () => {
-  const { title, document } = useLeftSidebar();
+  const { title, document, show } = useLeftSidebar();
 
-  if (!document) {
+  if (!document || !show) {
     return null;
   }
 
@@ -329,8 +330,10 @@ const Leaf = ({
 const useLeftSidebar = () => {
   const history = useSelector(getHistoryState);
   const dependency = useSelector(getCurrentDependency);
+  const show = useSelector((state: DesignerState) => state.showLeftSidebar);
 
   return {
+    show,
     title: history.query.file.split("/").pop(),
     document: dependency?.document,
   };

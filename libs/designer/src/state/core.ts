@@ -33,6 +33,7 @@ export const IS_WINDOWS = false;
 export enum InsertMode {
   Element,
   Text,
+  Resource,
 }
 
 export type Canvas = {
@@ -72,6 +73,8 @@ export type DesignerState = {
   insertedNodeIds: string[];
   graph: Graph;
   insertMode?: InsertMode;
+  showLeftSidebar: boolean;
+  showRightsidebar: boolean;
   highlightNodePath?: string;
 
   // temporary style overrides of canvas elements when elements are manipulated
@@ -101,6 +104,8 @@ export const DEFAULT_STATE: DesignerState = {
   graph: {
     dependencies: {},
   },
+  showLeftSidebar: true,
+  showRightsidebar: true,
   expandedLayerVirtIds: [],
   computedStyles: {},
   resizerMoving: false,

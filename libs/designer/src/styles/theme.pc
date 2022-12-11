@@ -4,6 +4,7 @@
 public token gray0 rgb(210, 210, 210)
 public token gray02 rgb(115, 115, 115)
 public token gray03 rgb(59, 59, 59)
+public token gray06 rgb(37, 37, 37)
 public token gray04 rgb(50, 50, 50)
 public token gray05 rgb(6, 5, 5)
 public token blue00 rgb(134, 174, 255)
@@ -14,7 +15,7 @@ public token purple01 rgb(228, 171, 255)
 public token selectedColor var(blue01)
 public token background01 rgb(0, 0, 0)
 public token canvasColor rgb(59, 59, 59)
-public token sidebarColor rgb(37, 37, 37)
+public token sidebarColor var(gray06)
 public token inputBackground rgb(42, 42, 42)
 public token inputBackgroun2 rgb(30, 30, 30)
 public token backgroundSelected var(selectedColor)
@@ -88,6 +89,12 @@ public style input {
   border: none
   color: currentColor
   min-height: 24px
+}
+
+public style card {
+  background: var(gray06)
+  border: 1px solid var(borderColor)
+  border-radius: var(roundedMD)
 }
 
 public style inputActive {

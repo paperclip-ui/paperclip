@@ -10,11 +10,23 @@ import {
 import { designerEvents } from "@paperclip-ui/designer/src/events";
 
 export const Toolbar = () => {
-  const { zoom, insertMode, onInsertElementClick, onInsertTextClick } =
-    useToolbar();
+  const {
+    zoom,
+    insertMode,
+    onInsertElementClick,
+    onInsertTextClick,
+    onInsertResourceClick,
+  } = useToolbar();
 
   return (
     <toolbarStyles.Toolbar>
+      <toolbarStyles.ToolbarButton
+        class={cx({ active: insertMode === InsertMode.Resource })}
+        onClick={onInsertTextClick}
+      >
+        <toolbarStyles.ToolbarIcon class="library" />
+      </toolbarStyles.ToolbarButton>
+      <toolbarStyles.ToolbarDivider />
       <toolbarStyles.ToolbarButton
         class={cx({ active: insertMode === InsertMode.Text })}
         onClick={onInsertTextClick}
@@ -46,10 +58,15 @@ const useToolbar = () => {
   const onInsertTextClick = () =>
     dispatch(designerEvents.insertModeButtonClick({ mode: InsertMode.Text }));
 
+  const onInsertResourceClick = () =>
+    dispatch(
+      designerEvents.insertModeButtonClick({ mode: InsertMode.Resource })
+    );
   return {
     zoom: Math.round(canvas.transform.z * 100),
     insertMode,
     onInsertElementClick,
+    onInsertResourceClick,
     onInsertTextClick,
   };
 };

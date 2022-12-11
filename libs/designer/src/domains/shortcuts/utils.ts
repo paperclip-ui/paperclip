@@ -16,7 +16,7 @@ export const getKeysDown = ({
     keysDown.push("alt");
   }
   if (ctrlKey) {
-    keysDown.push("ctrl");
+    keysDown.push("control");
   }
   return keysDown;
 };
@@ -27,9 +27,7 @@ export const isKeyComboDown = (
 ) => {
   const keysDown = getKeysDown(event);
 
-  const sortedKeysDown = [...keysDown].sort();
-
-  if (isEqual(sortedKeysDown, combo)) {
+  if (isEqual([...keysDown].sort(), [...combo].sort())) {
     return true;
   }
   return false;

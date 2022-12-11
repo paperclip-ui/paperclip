@@ -35,6 +35,17 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
         newState.insertMode = InsertMode.Text;
         newState.selectedVirtNodeId = null;
       });
+    case ShortcutCommand.InsertResource:
+      return produce(state, (newState) => {
+        newState.insertMode = InsertMode.Resource;
+        newState.selectedVirtNodeId = null;
+      });
+    case ShortcutCommand.ShowHideUI:
+      return produce(state, (newState) => {
+        newState.showLeftSidebar = newState.showRightsidebar =
+          !newState.showLeftSidebar;
+        console.log(newState.showLeftSidebar);
+      });
     case ShortcutCommand.Delete:
       return produce(state, (newState) => {
         if (newState.selectedVirtNodeId) {

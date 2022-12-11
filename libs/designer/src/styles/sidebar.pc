@@ -1,11 +1,7 @@
 
 import "./theme.pc" as theme
 
-public style panel {
-  background: var(theme.sidebarColor)
-  border: 1px solid var(theme.borderColor)
-  border-radius: var(theme.roundedMD)
-}
+public style panel extends theme.card
 
 public component Sidebar {
   render div root {

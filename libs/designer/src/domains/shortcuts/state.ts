@@ -11,8 +11,10 @@ import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
 export enum ShortcutCommand {
   InsertElement,
+  InsertResource,
   InsertText,
   ConvertToComponent,
+  ShowHideUI,
   ConvertToSlot,
   Cut,
   Copy,
@@ -73,6 +75,19 @@ export const getGlobalShortcuts = (
   state: DesignerState
 ): MenuItem<ShortcutCommand>[] => [
   // Tooling
+  {
+    kind: MenuItemKind.Option,
+    label: "Show/hide UI",
+    shortcut: ["control", "\\"],
+    command: ShortcutCommand.ShowHideUI,
+  },
+  { kind: MenuItemKind.Divider },
+  {
+    kind: MenuItemKind.Option,
+    label: "Insert Resource",
+    shortcut: ["shift", "i"],
+    command: ShortcutCommand.InsertResource,
+  },
   {
     kind: MenuItemKind.Option,
     label: "Insert Element",

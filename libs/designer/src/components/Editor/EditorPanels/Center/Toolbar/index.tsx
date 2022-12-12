@@ -22,7 +22,7 @@ export const Toolbar = () => {
     <toolbarStyles.Toolbar>
       <toolbarStyles.ToolbarButton
         class={cx({ active: insertMode === InsertMode.Resource })}
-        onClick={onInsertTextClick}
+        onClick={onInsertResourceClick}
       >
         <toolbarStyles.ToolbarIcon class="library" />
       </toolbarStyles.ToolbarButton>

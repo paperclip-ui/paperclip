@@ -53,6 +53,28 @@ public component Item {
     }
 }
 
+public component Tabs {
+    render div {
+                style {
+                    background: rgba(0, 0, 0, 0.1)
+                    height: 100%
+                    border-right: 1px solid var(theme.borderColor)
+                    display: flex
+                    flex-direction: column
+                    gap: var(theme.space04)
+                    padding: var(theme.space04)
+                }
+                slot children {
+                    Tab {
+                    text "images"
+                }
+                Tab(class: "selected") {
+                    text "components"
+                }
+                }
+            }
+}
+
 public component Container {
     render div {
         style {
@@ -63,6 +85,16 @@ public component Container {
             left: 0px
             z-index: 1024
         }
+        div(onClick: onBackgroundClick) {
+            style {
+                background: transparent
+                width: 100%
+                height: 100%
+                position: absolute
+                top: 0px
+                left: 0px
+            }
+        }
         div {
             style extends theme.centered, theme.card, theme.fontDefault {
                 width: 600px
@@ -70,22 +102,8 @@ public component Container {
                 display: flex
                 align-items: stretch
             }
-            div {
-                style {
-                    background: rgba(0, 0, 0, 0.1)
-                    height: 100%
-                    border-right: 1px solid var(theme.borderColor)
-                    display: flex
-                    flex-direction: column
-                    gap: var(theme.space04)
-                    padding: var(theme.space04)
-                }
-                Tab {
-                    text "images"
-                }
-                Tab(class: "selected") {
-                    text "components"
-                }
+            slot tabs {
+                Tabs
             }
             div {
                 style {
@@ -99,7 +117,9 @@ public component Container {
                         padding: var(theme.space04)
                         padding-bottom: 0px
                     }
-                    input.TextInput(placeholder: "search...", value: "")
+                    slot header {
+                        input.TextInput(placeholder: "search...", value: "")
+                    }
                 }
                 div items {
                     style {
@@ -110,7 +130,8 @@ public component Container {
                         gap: var(theme.space04)
                         overflow: scroll
                     }
-                    Item {
+                    slot items {
+                        Item {
                         insert label {
                             text "ComboBox"
                         }
@@ -124,6 +145,7 @@ public component Container {
                     Item
                     Item
                     Item
+                    }
                 }
             }
         }

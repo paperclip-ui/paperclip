@@ -20,6 +20,7 @@ export const designerEvents = eventCreators(
       newName: string;
       triggers: UpdateVariantTrigger[];
     }>(),
+    resourceModalBackgroundClicked: null,
     editVariantClicked: identity<{ variantId: string }>(),
     editVariantPopupClosed: null,
     removeVariantButtonClicked: identity<{ variantId: string }>(),

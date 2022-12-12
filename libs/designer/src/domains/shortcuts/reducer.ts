@@ -46,6 +46,10 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
           !newState.showLeftSidebar;
         console.log(newState.showLeftSidebar);
       });
+    case ShortcutCommand.Escape:
+      return produce(state, (newState) => {
+        newState.insertMode = null;
+      });
     case ShortcutCommand.Delete:
       return produce(state, (newState) => {
         if (newState.selectedVirtNodeId) {

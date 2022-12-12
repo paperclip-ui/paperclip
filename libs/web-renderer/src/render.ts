@@ -373,7 +373,6 @@ const patchCSSStyleSheet = (
       oldItem !== newItem ||
       (sheet.cssRules[i] as CSSStyleRule).selectorText === ".nil"
     ) {
-      console.log(sheet);
       sheet.deleteRule(i);
       insertRule(sheet, stringifyCSSRule(newItem, options), i);
     }

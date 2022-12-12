@@ -2,7 +2,7 @@ import "./theme.pc" as theme
 import "./left-sidebar.pc" as leftSidebar
 import "./right-sidebar.pc" as rightSidebar
 import "./center-panels.pc" as centerPanels
-import "./assets-modal.pc" as assetsModal
+import "./resource-modal.pc" as assetsModal
 
 token iconSize var(theme.fontSize03)
 component NodeIcon {

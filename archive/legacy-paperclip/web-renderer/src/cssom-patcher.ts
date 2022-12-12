@@ -8,11 +8,7 @@ export const patchCSSOM = (
   for (const { action } of mutations) {
     switch (action.kind) {
       case "DeleteRule": {
-        try {
-          sheet.deleteRule(action.index);
-        } catch (e) {
-          console.warn(e);
-        }
+        sheet.deleteRule(action.index);
         break;
       }
       case "InsertRule": {

@@ -19,6 +19,7 @@ export enum ShortcutCommand {
   Cut,
   Copy,
   Delete,
+  Escape,
   Paste,
   Undo,
   Redo,
@@ -80,6 +81,12 @@ export const getGlobalShortcuts = (
     label: "Show/hide UI",
     shortcut: ["control", "\\"],
     command: ShortcutCommand.ShowHideUI,
+  },
+  {
+    kind: MenuItemKind.Option,
+    label: "Escape",
+    shortcut: ["escape"],
+    command: ShortcutCommand.Escape,
   },
   { kind: MenuItemKind.Divider },
   {

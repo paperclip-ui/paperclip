@@ -24,7 +24,9 @@
 #### On-deck
 
 - wire up assets modal
-- insert element toolbar item
+
+  - react-dnd
+  - show preview
 
 - ability to insert elements (need UI)
 - ability to insert into slots

@@ -45,6 +45,7 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.0.6",
     "@paperclip-ui/proto": "^19.0.10",
     "@paperclip-ui/web-renderer": "^19.0.10",
     "classnames": "^2.3.2",

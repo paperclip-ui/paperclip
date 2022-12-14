@@ -36,7 +36,7 @@ public component Item {
         div preview {
             style {
                 width: 100%
-                height: 80px
+                height: 100px
                 background: white
                 border-top-left-radius: var(theme.rounded)
                 border-top-right-radius: var(theme.rounded)
@@ -70,6 +70,9 @@ public component Tabs {
                 }
                 Tab(class: "selected") {
                     text "components"
+                }
+                Tab {
+                    text "mixins"
                 }
                 }
             }

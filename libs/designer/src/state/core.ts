@@ -28,6 +28,7 @@ import {
   getGlobalShortcuts,
   ShortcutCommand,
 } from "../domains/shortcuts/state";
+import { Component } from "@paperclip-ui/proto/lib/generated/ast/pc";
 export const IS_WINDOWS = false;
 
 export enum InsertMode {
@@ -363,3 +364,23 @@ export const getAllPublicAtoms = (state: DesignerState) => {
 
 export const isResourceModalVisible = (state: DesignerState) =>
   state.insertMode === InsertMode.Resource;
+
+export type ComponentInfo = {
+  sourcePath: string;
+  component: Component;
+};
+
+export const getAllComponents = (state: DesignerState) => {
+  const allComponents: ComponentInfo[] = [];
+  for (const path in state.graph.dependencies) {
+    allComponents.push(
+      ...ast
+        .getDocumentComponents(state.graph.dependencies[path].document)
+        .map((component) => ({
+          sourcePath: path,
+          component,
+        }))
+    );
+  }
+  return allComponents;
+};

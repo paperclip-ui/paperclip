@@ -2,9 +2,9 @@
 pub use super::core::{ServerState, StartOptions};
 use super::{
     core::ServerStateEventHandler,
-    engines::{self},
     io::ServerIO,
 };
+use crate::server::domains;
 use crate::machine::engine::EngineContext;
 use crate::machine::store::Store;
 use anyhow::Result;
@@ -47,10 +47,10 @@ pub async fn start<IO: ServerIO>(
 
     start_engines!(
         engine_ctx.clone(),
-        engines::bootstrap,
-        engines::config,
-        engines::api,
-        engines::paperclip
+        domains::bootstrap::engine,
+        domains::config::engine,
+        domains::api::engine,
+        domains::paperclip::engine
     );
 
     Ok(())

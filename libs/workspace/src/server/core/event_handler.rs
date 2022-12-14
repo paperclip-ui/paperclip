@@ -19,123 +19,12 @@ use paperclip_proto::ast_mutate::MutationResult;
 use paperclip_proto::virt::module::pc_module_import;
 use paperclip_proto::virt::module::{GlobalScript, PcModule, PcModuleImport, PccssImport};
 use paperclip_proto_ext::ast_mutate::edit_graph;
-
-pub struct StartOptions {
-    pub config_context: ConfigContext,
-    pub open: bool,
-    pub port: Option<u16>,
-}
+use super::ServerEvent;
+use super::ServerState;
 
 enum HistoryStep {
-    Forward,
-    Back,
-}
-
-#[derive(Debug, Clone)]
-pub enum ServerEvent {
-    Initialized,
-    FileWatchEvent(FileWatchEvent),
-    DependencyChanged { path: String },
-    APIServerStarted { port: u16 },
-    GlobalScriptsLoaded(Vec<(String, Vec<u8>)>),
-    UpdateFileRequested { path: String, content: Vec<u8> },
-    UndoRequested,
-    RedoRequested,
-    SaveRequested,
-    ApplyMutationRequested { mutations: Vec<Mutation> },
-    PaperclipFilesLoaded { files: Vec<String> },
-    DependencyGraphLoaded { graph: Graph },
-    ModulesEvaluated(HashMap<String, (css::virt::Document, html::virt::Document)>),
-}
-
-pub struct History {
-    pub changes: Vec<Graph>,
-    position: usize,
-}
-
-pub struct ServerState {
-    pub history: History,
-    pub doc_checksums: HashMap<String, String>,
-    pub file_cache: HashMap<String, Vec<u8>>,
-    pub options: StartOptions,
-    pub latest_ast_changes: Vec<MutationResult>,
-    pub graph: Graph,
-    pub evaluated_modules: HashMap<String, (css::virt::Document, html::virt::Document)>,
-    pub updated_files: Vec<String>,
-}
-
-impl ServerState {
-    pub fn new(options: StartOptions) -> Self {
-        Self {
-            history: History {
-                changes: vec![],
-                position: 0,
-            },
-            options,
-            doc_checksums: HashMap::new(),
-            file_cache: HashMap::new(),
-            graph: Graph::new(),
-            evaluated_modules: HashMap::new(),
-            latest_ast_changes: vec![],
-            updated_files: vec![],
-        }
-    }
-
-    // TODO - this needs to be moved to PC runtime instead
-    pub fn bundle_evaluated_module(&self, path: &str) -> Result<PcModule> {
-        let (css, html) = get_or_short!(
-            self.evaluated_modules.get(path),
-            Err(Error::msg(format!("File not evaluated yet {}", path)))
-        );
-
-        let mut imported: HashSet<String> = HashSet::new();
-        let mut to_import: Vec<String> = vec![path.to_string()];
-        let mut imports = vec![];
-
-        while let Some(path) = to_import.pop() {
-            let dep = self.graph.dependencies.get(&path).unwrap();
-
-            for (_rel, path) in &dep.imports {
-                if !imported.contains(path) {
-                    imported.insert(path.to_string());
-                    to_import.push(path.to_string());
-                }
-
-                if let Some((css, _)) = self.evaluated_modules.get(path) {
-                    imports.push(PcModuleImport {
-                        inner: Some(pc_module_import::Inner::Css(PccssImport {
-                            path: path.to_string(),
-                            css: Some(css.clone()),
-                        })),
-                    })
-                }
-            }
-        }
-
-        imports.extend(
-            self.options
-                .config_context
-                .get_global_script_paths()
-                .iter()
-                .filter_map(|path| {
-                    Some(PcModuleImport {
-                        inner: Some(pc_module_import::Inner::GlobalScript(GlobalScript {
-                            path: path.to_string(),
-                            content: self.file_cache.get(path).and_then(|content| {
-                                Some(std::str::from_utf8(content).unwrap().to_string())
-                            }),
-                        })),
-                    })
-                })
-                .collect::<Vec<PcModuleImport>>(),
-        );
-
-        Ok(PcModule {
-            html: Some(html.clone()),
-            css: Some(css.clone()),
-            imports,
-        })
-    }
+  Forward,
+  Back,
 }
 
 #[derive(Default, Clone)]
@@ -315,7 +204,3 @@ fn update_changed_files(state: &mut ServerState) {
         }
     }
 }
-
-pub type ServerEngineContext<TIO> =
-    Arc<EngineContext<ServerState, ServerEvent, TIO, ServerStateEventHandler>>;
-pub type ServerStore = Store<ServerState, ServerEvent, ServerStateEventHandler>;

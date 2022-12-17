@@ -15,6 +15,7 @@ import { Selectable } from "./Selectable";
 import { InsertElement } from "./InsertElement";
 import { ContextMenu } from "../../../ContextMenu";
 import { getEntityShortcuts } from "@paperclip-ui/designer/src/domains/shortcuts/state";
+import { DropTarget } from "./DropTarget";
 
 export const Tools = () => {
   const {
@@ -47,6 +48,7 @@ export const Tools = () => {
     insertMode != null
       ? {
           [InsertMode.Element]: "crosshair",
+          [InsertMode.Resource]: "copy",
           [InsertMode.Text]: "text",
         }[insertMode]
       : null;
@@ -57,40 +59,41 @@ export const Tools = () => {
 
   return (
     <ContextMenu menu={contextMenu}>
-      <styles.Tools
-        ref={toolsRef}
-        onMouseDown={onMouswDown}
-        onMouseUp={onMouseUp}
-        onMouseMove={onMouseMove}
-        onMouseLeave={onMouseLeave}
-        style={style}
-      >
-        {insertMode == InsertMode.Element && <InsertElement />}
+      <DropTarget>
+        <styles.Tools
+          ref={toolsRef}
+          onMouseDown={onMouswDown}
+          onMouseUp={onMouseUp}
+          onMouseMove={onMouseMove}
+          onMouseLeave={onMouseLeave}
+          style={style}
+        >
+          {insertMode == InsertMode.Element && <InsertElement />}
 
-        {!resizerMoving && (
-          <Selectable
-            canvasScroll={canvas.scrollPosition}
-            canvasTransform={canvas.transform}
-            box={hoveringBox}
-            cursor={cursor}
-          />
-        )}
+          {!resizerMoving && (
+            <Selectable
+              canvasScroll={canvas.scrollPosition}
+              canvasTransform={canvas.transform}
+              box={hoveringBox}
+              cursor={cursor}
+            />
+          )}
 
-        {selectedBox && selectedBox.width && selectedBox.height ? (
-          <Selectable
-            canvasScroll={canvas.scrollPosition}
+          {selectedBox && selectedBox.width && selectedBox.height ? (
+            <Selectable
+              canvasScroll={canvas.scrollPosition}
+              canvasTransform={canvas.transform}
+              box={selectedBox}
+              showKnobs
+              cursor={cursor}
+            />
+          ) : null}
+          <Frames
+            frames={frames}
             canvasTransform={canvas.transform}
-            box={selectedBox}
-            showKnobs
-            cursor={cursor}
+            readonly={readonly}
           />
-        ) : null}
-        <Frames
-          frames={frames}
-          canvasTransform={canvas.transform}
-          readonly={readonly}
-        />
-        {/* {optionKeyDown && selectedBox && hoveringBox ? (
+          {/* {optionKeyDown && selectedBox && hoveringBox ? (
           <Distance
             canvasScroll={canvas.scrollPosition}
             canvasTransform={canvas.transform}
@@ -98,7 +101,8 @@ export const Tools = () => {
             to={hoveringBox}
           />
         ) : null} */}
-      </styles.Tools>
+        </styles.Tools>
+      </DropTarget>
     </ContextMenu>
   );
 };

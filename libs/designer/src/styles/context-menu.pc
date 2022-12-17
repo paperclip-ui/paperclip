@@ -7,7 +7,42 @@ import "./menu.pc" as menu
 
 public component ContextMenu {
     render menu.Menu(style: style, onKeyDown: onKeyDown) {
-        slot children
+        slot children {
+            ContextMenuItem {
+            text "Create component"
+            insert keyCommand {
+                text "⌥⌘K"
+            }
+        }
+        ContextMenuItem(class: "disabled") {
+            text "Wrap in slot"
+        }
+        ContextMenuDivider
+        ContextMenuItem {
+            text "Cut"
+            insert keyCommand {
+                text "⌘X"
+            }
+        }
+        ContextMenuItem {
+            text "Copy"
+            insert keyCommand {
+                text "⌘C"
+            }
+        }
+        ContextMenuItem {
+            text "Paste"
+            insert keyCommand {
+                text "⌘P"
+            }
+        }
+        ContextMenuItem {
+            text "Delete"
+            insert keyCommand {
+                text "⌫"
+            }
+        }
+        }
     }
 }
 
@@ -48,55 +83,6 @@ public component ContextMenuItem {
                 letter-spacing: 0.1em
             }
             slot keyCommand
-        }
-    }
-}
-
-/**
- * @bounds(x: 183, y: -790, width: 297, height: 295)
-*/
-
-div {
-    style {
-        padding: 10px
-        background: var(imp.gray05)
-        width: 100%
-        height: 100%
-    }
-    ContextMenu {
-        ContextMenuItem {
-            text "Create component"
-            insert keyCommand {
-                text "⌥⌘K"
-            }
-        }
-        ContextMenuItem(class: "disabled") {
-            text "Wrap in slot"
-        }
-        ContextMenuDivider
-        ContextMenuItem {
-            text "Cut"
-            insert keyCommand {
-                text "⌘X"
-            }
-        }
-        ContextMenuItem {
-            text "Copy"
-            insert keyCommand {
-                text "⌘C"
-            }
-        }
-        ContextMenuItem {
-            text "Paste"
-            insert keyCommand {
-                text "⌘P"
-            }
-        }
-        ContextMenuItem {
-            text "Delete"
-            insert keyCommand {
-                text "⌫"
-            }
         }
     }
 }

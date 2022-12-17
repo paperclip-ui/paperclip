@@ -27,7 +27,7 @@ public component Tab {
 }
 
 public component Item {
-    render div {
+    render div(style: style) {
         style {
             background: rgba(0, 0, 0, 0.1)
             border-radius: var(theme.rounded)
@@ -40,7 +40,7 @@ public component Item {
                 background: white
                 border-top-left-radius: var(theme.rounded)
                 border-top-right-radius: var(theme.rounded)
-                background-size: 100%
+                background-size: calc(100% - var(theme.space03))
                 background-repeat: no-repeat
                 background-position: 50% 50%
             }
@@ -101,7 +101,7 @@ public component Container {
                 left: 0px
             }
         }
-        div {
+        div(onDragExit: onDragExit, ref: modalRef) {
             style extends theme.centered, theme.card, theme.fontDefault {
                 width: 600px
                 height: 450px

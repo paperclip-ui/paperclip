@@ -12,6 +12,11 @@ export const resourceModalReducer = (
         newState.insertMode = null;
       });
     }
+    case designerEvents.resourceModalDragLeft.type: {
+      return produce(state, (newState) => {
+        newState.resourceModalDragLeft = true;
+      });
+    }
   }
   return state;
 };

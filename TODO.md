@@ -23,12 +23,8 @@
 
 #### On-deck
 
-- wire up assets modal
-
-  - react-dnd
-  - show preview
-
-- ability to insert elements (need UI)
+- drag + drop instances to canvas
+- render slots
 - ability to insert into slots
 
 - variants

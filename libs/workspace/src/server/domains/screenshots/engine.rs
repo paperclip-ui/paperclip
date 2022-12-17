@@ -12,6 +12,7 @@ use paperclip_proto::ast::pc::Component;
 use paperclip_proto::virt::html::{self, node};
 use paperclip_proto::virt::module::{pc_module_import, PcModule};
 use std::collections::HashMap;
+use std::sync::Arc;
 use ansi_term::Colour;
 
 use headless_chrome::protocol::cdp::Page;
@@ -36,32 +37,34 @@ async fn handle_modules_evaluated<IO: ServerIO>(
     let map = map.clone();
 
     tokio::spawn(async move {
-        handle_modules_evaluated2(ctx, &map);
+        handle_modules_evaluated2(ctx.clone(), &map).await;
     });
 
     Ok(())
 }
 
-fn handle_modules_evaluated2<IO: ServerIO>(
+async fn handle_modules_evaluated2<IO: ServerIO>(
     ctx: ServerEngineContext<IO>,
     map: &HashMap<String, (css::virt::Document, html::Document)>,
 ) -> Result<()> {
-    let browser = headless_chrome::Browser::default()?;
+    let browser = Arc::new(headless_chrome::Browser::default()?);
 
     for (path, _) in map {
-        let state = &ctx.store.lock().unwrap().state;
-        let dependency = state
-            .graph
-            .dependencies
-            .get(path)
-            .expect("Dependency must exist!");
+        let frames = {
+            let state = &ctx.store.lock().unwrap().state;
+            let dependency = state
+                .graph
+                .dependencies
+                .get(path)
+                .expect("Dependency must exist!");
 
-        let bundle = state.bundle_evaluated_module(&path).unwrap();
+            let bundle = state.bundle_evaluated_module(&path).unwrap();
 
-        let frames = get_component_frame_html(&bundle, &dependency);
+            get_component_frame_html(&bundle, &dependency)
+        };
 
         for (component, bounds, html) in frames {
-            let image = take_component_screenshot(component, path, &bounds, &html, &browser)?;
+            take_component_screenshot(component.clone(), path.to_string(), bounds.clone(), html.clone(), browser.clone()).await?;
             ctx.emit(ServerEvent::ScreenshotCaptured {
                 component_id: component.id.to_string()
             });
@@ -73,12 +76,12 @@ fn handle_modules_evaluated2<IO: ServerIO>(
     Ok(())
 }
 
-fn take_component_screenshot(component: &Component, path: &str, bounds: &Bounds, html: &str, browser: &headless_chrome::Browser)  -> Result<()> {
+async fn take_component_screenshot(component: Component, path: String, bounds: Bounds, html: String, browser: Arc<headless_chrome::Browser>)  -> Result<()> {
 
-    let tmp_file_path = save_tmp_component_html(component, html)?;
+    let tmp_file_path = save_tmp_component_html(&component, &html)?;
 
 
-    let tab = browser.wait_for_initial_tab()?;
+    let tab = browser.new_tab()?;
     tab.set_bounds( headless_chrome::types::Bounds::Normal { left: None, top: None, width: Some(bounds.width as f64), height: Some(bounds.height as f64) })?;
        
     tab.navigate_to(format!("file://{}", tmp_file_path).as_str())?;
@@ -93,6 +96,8 @@ fn take_component_screenshot(component: &Component, path: &str, bounds: &Bounds,
         None,
         true,
     )?;
+
+    tab.close(true)?;
 
     std::fs::write(format!("{}/{}.png", tmp_screenshot_dir().to_str().unwrap().to_string(), component.id), image)?;
 
@@ -120,7 +125,7 @@ fn save_tmp_component_html(component: &Component, html: &str) -> Result<String> 
     Ok(file_path)
 }
 
-fn get_component_frame_html<'a>(bundle: &PcModule, dependency: &'a Dependency) -> Vec<(&'a Component, Bounds, String)> {
+fn get_component_frame_html(bundle: &PcModule, dependency: &Dependency) -> Vec<(Component, Bounds, String)> {
     let head = stringify_module_bundle_head(bundle);
 
     let mut component_frames = vec![];
@@ -151,7 +156,7 @@ fn get_component_frame_html<'a>(bundle: &PcModule, dependency: &'a Dependency) -
             let body = ctx.buffer;
             let html = format!("<head>{}</head><body>{}</body>", head, body);
 
-            component_frames.push((component, bounds, html));
+            component_frames.push((component.clone(), bounds, html));
         }
     }
 
@@ -160,7 +165,11 @@ fn get_component_frame_html<'a>(bundle: &PcModule, dependency: &'a Dependency) -
 }
 
 fn stringify_module_bundle_head(bundle: &PcModule) -> String {
-    let mut head = "".to_string();
+    let mut head = r#"<style>
+        html, body {
+            overflow: hidden;
+        }
+    </style>"#.to_string();
 
     for import in &bundle.imports {
         match import.inner.as_ref().expect("Inner must exist") {

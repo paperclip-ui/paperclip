@@ -75,6 +75,7 @@ export type DesignerState = {
   graph: Graph;
   insertMode?: InsertMode;
   showLeftSidebar: boolean;
+  resourceModalDragLeft: boolean;
   showRightsidebar: boolean;
   highlightNodePath?: string;
   screenshotUrls: Record<string, string>;
@@ -365,7 +366,7 @@ export const getAllPublicAtoms = (state: DesignerState) => {
 };
 
 export const isResourceModalVisible = (state: DesignerState) =>
-  state.insertMode === InsertMode.Resource;
+  state.insertMode === InsertMode.Resource && !state.resourceModalDragLeft;
 
 export type ComponentInfo = {
   sourcePath: string;

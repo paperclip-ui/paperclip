@@ -20,6 +20,9 @@ export const designerEvents = eventCreators(
       newName: string;
       triggers: UpdateVariantTrigger[];
     }>(),
+    toolsLayerDragOver: identity<Point>(),
+    toolsLayerDrop: identity<{ node: any; point: Point }>(),
+    resourceModalDragLeft: null,
     resourceModalBackgroundClicked: null,
     editVariantClicked: identity<{ variantId: string }>(),
     editVariantPopupClosed: null,

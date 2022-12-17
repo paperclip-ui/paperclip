@@ -129,6 +129,15 @@ export const legacyReducer = (
     case designerEvents.canvasMouseUp.type: {
       return produce(state, (newState) => {
         newState.insertMode = null;
+        newState.resourceModalDragLeft = false;
+        newState.canvas.mouseDown = false;
+        newState.canvasMouseDownStartPoint = undefined;
+      });
+    }
+    case designerEvents.toolsLayerDrop.type: {
+      return produce(state, (newState) => {
+        newState.insertMode = null;
+        newState.resourceModalDragLeft = false;
         newState.canvas.mouseDown = false;
         newState.canvasMouseDownStartPoint = undefined;
       });

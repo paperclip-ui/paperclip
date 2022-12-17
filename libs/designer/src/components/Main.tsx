@@ -5,6 +5,8 @@ import { MachineContext } from "@paperclip-ui/common";
 import { DEFAULT_STATE } from "../state/core";
 import { env } from "../env";
 import { Editor } from "./Editor";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { DndProvider } from "react-dnd";
 
 export const Main = () => {
   const machine = useMemo(
@@ -16,8 +18,10 @@ export const Main = () => {
     []
   );
   return (
-    <MachineContext.Provider value={machine}>
-      <Editor />
-    </MachineContext.Provider>
+    <DndProvider backend={HTML5Backend}>
+      <MachineContext.Provider value={machine}>
+        <Editor />
+      </MachineContext.Provider>
+    </DndProvider>
   );
 };

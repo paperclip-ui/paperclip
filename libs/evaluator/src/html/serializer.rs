@@ -12,16 +12,20 @@ pub fn serialize(document: &virt::Document) -> String {
 
 fn serialize_children(children: &Vec<virt::Node>, context: &mut Context) {
     for child in children {
-        match child.get_inner() {
-            virt::node::Inner::Element(node) => {
-                serialize_element(&node, context);
-            }
-            virt::node::Inner::TextNode(node) => {
-                serialize_text_node(&node, context);
-            }
+        serialize_node(child, context);
+    }
+}
+pub fn serialize_node(node: &virt::Node, context: &mut Context) {
+    match node.get_inner() {
+        virt::node::Inner::Element(node) => {
+            serialize_element(&node, context);
+        }
+        virt::node::Inner::TextNode(node) => {
+            serialize_text_node(&node, context);
         }
     }
 }
+
 fn serialize_element(element: &virt::Element, context: &mut Context) {
     context.add_buffer(format!("<{}", element.tag_name).as_str());
     for attr in &element.attributes {

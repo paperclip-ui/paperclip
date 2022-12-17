@@ -5,7 +5,7 @@ use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast_mutate::{mutation_result, ExpressionUpdated, SetFrameBounds};
 
 use crate::ast::all::MutableVisitor;
-use crate::ast::{all::VisitorResult};
+use crate::ast::all::VisitorResult;
 
 impl<'expr> MutableVisitor<()> for EditContext<'expr, SetFrameBounds> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {

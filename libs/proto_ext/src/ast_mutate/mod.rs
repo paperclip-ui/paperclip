@@ -1,5 +1,7 @@
 mod append_child;
 mod base;
+mod convert_to_component;
+mod convert_to_slot;
 mod delete_expression;
 mod delete_style_declarations;
 mod insert_frame;
@@ -7,8 +9,6 @@ mod set_frame_bounds;
 mod set_style_declarations;
 mod toggle_variants;
 mod update_variant;
-mod convert_to_slot;
-mod convert_to_component;
 
 #[macro_use]
 mod utils;
@@ -56,34 +56,31 @@ macro_rules! mutations {
     };
 }
 
-
-
 pub fn edit_graph(
-  graph: &mut Graph,
-  mutations: &Vec<Mutation>,
+    graph: &mut Graph,
+    mutations: &Vec<Mutation>,
 ) -> Vec<(String, Vec<MutationResult>)> {
-  let mut changed: Vec<(String, Vec<MutationResult>)> = vec![];
+    let mut changed: Vec<(String, Vec<MutationResult>)> = vec![];
 
-  for mutation in mutations {
-      for (path, dep) in &mut graph.dependencies {
-          let mut ctx = EditContext {
-              mutation,
-              dependency: dep.clone(),
-              changes: vec![],
-          };
-          dep.document
-              .as_mut()
-              .expect("Document must exist")
-              .accept(&mut ctx);
+    for mutation in mutations {
+        for (path, dep) in &mut graph.dependencies {
+            let mut ctx = EditContext {
+                mutation,
+                dependency: dep.clone(),
+                changes: vec![],
+            };
+            dep.document
+                .as_mut()
+                .expect("Document must exist")
+                .accept(&mut ctx);
 
-          if ctx.changes.len() > 0 {
-              changed.push((path.to_string(), ctx.changes.clone()));
-          }
-      }
-  }
-  return changed;
+            if ctx.changes.len() > 0 {
+                changed.push((path.to_string(), ctx.changes.clone()));
+            }
+        }
+    }
+    return changed;
 }
-
 
 mutations! {
   InsertFrame,

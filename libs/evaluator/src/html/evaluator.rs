@@ -326,22 +326,16 @@ fn evaluate_instance_child<'expr, F: FileResolver>(
         _ => {
             let mut fragment: Vec<virt::Node> = vec![];
 
-            evaluate_node(
-                child,
-                &mut fragment,
-                metadata,
-                context,
-                false,
-                false,
-            );
+            evaluate_node(child, &mut fragment, metadata, context, false, false);
 
             if !fragment.is_empty() {
-                get_insert!(inserts, "children", &parent.id).1.extend(fragment)
+                get_insert!(inserts, "children", &parent.id)
+                    .1
+                    .extend(fragment)
             }
         }
     }
 }
-
 
 fn evaluate_render<F: FileResolver>(
     render: &ast::Render,

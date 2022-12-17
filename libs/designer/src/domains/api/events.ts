@@ -7,14 +7,15 @@ import {
   identity,
   ExtractEventFromCreators,
 } from "@paperclip-ui/common";
-import { MutationResult } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
+import { DesignerEvent as DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
 
 export const designerEngineEvents = eventCreators(
   {
     documentOpened: identity<FileResponse>(),
     changesApplied: identity<ApplyMutationsResult>(),
     graphLoaded: identity<Graph>(),
+    serverEvent: identity<DesignServerEvent>(),
   },
   "designer-engine"
 );

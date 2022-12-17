@@ -2,6 +2,7 @@ import {
   DesignerClientImpl,
   GrpcWebImpl,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
+import { DesignerEvent as DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent, designerEngineEvents } from "./events";
 import { DesignerEvent, designerEvents } from "../../events";
@@ -51,7 +52,7 @@ export const createDesignerEngine =
 
     const actions = createActions(client, dispatch);
     const handleEvent = createEventHandler(actions);
-    bootstrap(actions, state);
+    bootstrap(actions, dispatch, state);
 
     const dispose = () => {};
     return {
@@ -75,6 +76,11 @@ const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
         },
         complete() {},
         error() {},
+      });
+    },
+    onEvent(listener: (event: DesignServerEvent) => void) {
+      client.OnEvent({}).subscribe({
+        next: listener,
       });
     },
     undo() {
@@ -442,9 +448,14 @@ const createEventHandler = (actions: Actions) => {
  */
 
 const bootstrap = (
-  { openFile, syncGraph }: Actions,
+  { openFile, syncGraph, onEvent }: Actions,
+  dispatch: Dispatch<DesignerEvent>,
   initialState: DesignerState
 ) => {
+  onEvent((event) => {
+    dispatch(designerEngineEvents.serverEvent(event));
+  });
+
   setTimeout(() => {
     openFile(initialState.history.query.file);
     syncGraph();

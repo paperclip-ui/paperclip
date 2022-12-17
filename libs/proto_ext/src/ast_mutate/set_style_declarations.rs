@@ -4,9 +4,9 @@ use std::path::Path;
 use pathdiff::diff_paths;
 
 use super::base::EditContext;
+use crate::ast::get_expr::GetExpr;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
-use crate::ast::get_expr::GetExpr;
 use paperclip_proto::ast::all::{Expression, ExpressionWrapper};
 use paperclip_proto::ast::graph_ext::Dependency;
 use paperclip_proto::ast_mutate::{

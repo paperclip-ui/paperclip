@@ -8,7 +8,7 @@ use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
     designer_event, file_response, ApplyMutationsRequest, ApplyMutationsResult, DesignerEvent,
-    Empty, FileChanged, FileRequest, FileResponse, UpdateFileRequest,
+    Empty, FileChanged, FileRequest, FileResponse, UpdateFileRequest, ScreenshotCaptured
 };
 use std::pin::Pin;
 use std::sync::Arc;
@@ -170,6 +170,14 @@ impl Designer for DesignerService {
             };
 
             handle_store_events!(store.clone(),
+                ServerEvent::ScreenshotCaptured { component_id } => {
+                    tx.send(Result::Ok(
+                        designer_event::Inner::ScreenshotCaptured(ScreenshotCaptured {
+                            component_id: component_id.to_string()
+                        })
+                        .get_outer(),
+                    )).await.expect("Can't send");
+                },
                 ServerEvent::UpdateFileRequested { path, content } => {
                     tx.send((file_changed)(path.to_string(), content.clone())).await.expect("Can't send");
                 },

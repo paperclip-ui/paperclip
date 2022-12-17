@@ -77,6 +77,7 @@ export type DesignerState = {
   showLeftSidebar: boolean;
   showRightsidebar: boolean;
   highlightNodePath?: string;
+  screenshotUrls: Record<string, string>;
 
   // temporary style overrides of canvas elements when elements are manipulated
   // such as resizing
@@ -110,6 +111,7 @@ export const DEFAULT_STATE: DesignerState = {
   expandedLayerVirtIds: [],
   computedStyles: {},
   resizerMoving: false,
+  screenshotUrls: {},
   insertedNodeIds: [],
   optionKeyDown: false,
   scopedElementPath: null,
@@ -371,11 +373,15 @@ export type ComponentInfo = {
 };
 
 export const getAllComponents = (state: DesignerState) => {
+  return getGraphComponents(state.graph);
+};
+
+export const getGraphComponents = (graph: Graph) => {
   const allComponents: ComponentInfo[] = [];
-  for (const path in state.graph.dependencies) {
+  for (const path in graph.dependencies) {
     allComponents.push(
       ...ast
-        .getDocumentComponents(state.graph.dependencies[path].document)
+        .getDocumentComponents(graph.dependencies[path].document)
         .map((component) => ({
           sourcePath: path,
           component,
@@ -384,3 +390,5 @@ export const getAllComponents = (state: DesignerState) => {
   }
   return allComponents;
 };
+
+export const getScreenshotUrls = (state: DesignerState) => state.screenshotUrls;

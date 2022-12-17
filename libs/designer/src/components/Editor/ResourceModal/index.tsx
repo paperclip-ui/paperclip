@@ -4,13 +4,20 @@ import { TextInput } from "../../TextInput";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   getAllComponents,
+  getScreenshotUrls,
   isResourceModalVisible,
 } from "@paperclip-ui/designer/src/state";
 import { designerEvents } from "@paperclip-ui/designer/src/events";
 
 export const ResourceModal = () => {
-  const { visible, allComponents, onBackgroundClick, onFilterChange, filter } =
-    useResourceModal();
+  const {
+    visible,
+    allComponents,
+    onBackgroundClick,
+    onFilterChange,
+    screenshotUrls,
+    filter,
+  } = useResourceModal();
   if (!visible) {
     return null;
   }
@@ -38,7 +45,12 @@ export const ResourceModal = () => {
               );
             })
             .map((info) => {
-              return <Item label={info.component.name} />;
+              return (
+                <Item
+                  label={info.component.name}
+                  screenshotUrl={screenshotUrls[info.component.id]}
+                />
+              );
             })}
         </>
       }
@@ -49,18 +61,34 @@ export const ResourceModal = () => {
 const useResourceModal = () => {
   const visible = useSelector(isResourceModalVisible);
   const allComponents = useSelector(getAllComponents);
+  const screenshotUrls = useSelector(getScreenshotUrls);
   const [filter, setFilter] = useState("");
   const dispatch = useDispatch();
   const onBackgroundClick = () =>
     dispatch(designerEvents.resourceModalBackgroundClicked());
   const onFilterChange = (value: string) => setFilter(value?.toLowerCase());
-  return { visible, filter, allComponents, onBackgroundClick, onFilterChange };
+  return {
+    visible,
+    filter,
+    allComponents,
+    onBackgroundClick,
+    onFilterChange,
+    screenshotUrls,
+  };
 };
 
 export type ItemProps = {
   label: string;
+  screenshotUrl?: string;
 };
 
-const Item = ({ label }: ItemProps) => {
-  return <styles.Item label={label} />;
+const Item = ({ label, screenshotUrl }: ItemProps) => {
+  return (
+    <styles.Item
+      label={label}
+      previewStyle={{
+        backgroundImage: `url(${screenshotUrl})`,
+      }}
+    />
+  );
 };

@@ -1,6 +1,6 @@
 // https://github.com/hyperium/tonic/blob/master/examples/src/hyper_warp/server.rs
 use super::res_body::EitherBody;
-use super::routes::routes;
+use super::routes;
 use super::service::DesignerService;
 use super::utils::content_types;
 use crate::server::core::{ServerEngineContext, ServerEvent};
@@ -34,8 +34,6 @@ async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
 
     let addr = ([127, 0, 0, 1], port).into();
 
-    // let listener = TlsListener::new_hyper(tls_acceptor(), AddrIncoming::bind(&addr)?);
-
     println!("🎨 Starting design server on port {}", port);
 
     let designer = DesignerService::new(ctx.store.clone());
@@ -44,7 +42,7 @@ async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
 
     let server = Server::bind(&addr).serve(make_service_fn(move |_| {
         let cors = warp::cors().allow_any_origin();
-        let route = routes().with(cors);
+        let route = routes::screenshots_route().or(routes::static_files_route()).with(cors);
 
         let mut warp = warp::service(route);
         let mut designer_server = designer_server.clone();

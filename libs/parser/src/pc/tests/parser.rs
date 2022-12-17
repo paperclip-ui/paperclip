@@ -1,6 +1,6 @@
 use super::super::parser::parse;
-use paperclip_ast_serialize::pc::serialize;
 use crate::core::errors as err;
+use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::str_utils::strip_extra_ws;
 
 use crate::base::ast::{Range, U16Position};

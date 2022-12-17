@@ -1,14 +1,14 @@
 use super::edit_graph;
+use crate::graph::{load::LoadableGraph, test_utils};
 use futures::executor::block_on;
-use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_ast_serialize::pc::serialize;
+use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_proto::ast_mutate::{
-    mutation, update_variant_trigger, AppendChild, Bounds, DeleteExpression, SetFrameBounds,
-    SetStyleDeclarationValue, SetStyleDeclarations, ToggleVariants, UpdateVariant, ConvertToComponent,
-    ConvertToSlot,
+    mutation, update_variant_trigger, AppendChild, Bounds, ConvertToComponent, ConvertToSlot,
+    DeleteExpression, SetFrameBounds, SetStyleDeclarationValue, SetStyleDeclarations,
+    ToggleVariants, UpdateVariant,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
-use crate::graph::{load::LoadableGraph, test_utils};
 use std::collections::HashMap;
 
 macro_rules! case {
@@ -30,9 +30,7 @@ macro_rules! case {
                 .map(|(path, dep)| {
                     (
                         path.to_string(),
-                        serialize(
-                            dep.document.as_ref().expect("Document must exist"),
-                        ),
+                        serialize(dep.document.as_ref().expect("Document must exist")),
                     )
                 })
                 .collect::<HashMap<String, String>>();
@@ -889,7 +887,6 @@ case! {
   )]
 }
 
-
 case! {
   can_convert_an_element_to_a_component,
   [
@@ -910,7 +907,6 @@ case! {
     "#
   )]
 }
-
 
 case! {
   can_convert_a_text_node_to_an_element,
@@ -933,8 +929,6 @@ case! {
     "#
   )]
 }
-
-
 
 case! {
   inserts_new_components_after_imports,
@@ -963,8 +957,6 @@ case! {
     "#
   )]
 }
-
-
 
 case! {
   inserts_new_components_where_components_start,
@@ -1204,7 +1196,6 @@ case! {
     "#
   )]
 }
-
 
 case! {
   can_convert_a_text_node_into_a_slot,

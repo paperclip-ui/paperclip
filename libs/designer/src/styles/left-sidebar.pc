@@ -81,6 +81,7 @@ public component LeftSidebarHeader {
     }
 }
 
+
 component LayerIcon {
     variant isComponent trigger {
         ".component"

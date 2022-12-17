@@ -53,10 +53,15 @@ message FileResponse {
 message DesignerEvent {
   oneof inner {
     FileChanged file_changed = 1;
+    ScreenshotCaptured screenshot_captured = 2;
   }
 }
 
 message FileChanged {
   string path = 1;
   bytes content = 2;
+}
+
+message ScreenshotCaptured {
+  string component_id = 1;
 }

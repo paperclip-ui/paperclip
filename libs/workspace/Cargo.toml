@@ -15,6 +15,7 @@ paperclip_proto_ext = { path = "../proto_ext" }
 tonic = { version = "0.8.2", features = ["tls"] }
 tonic-web = "0.4.0"
 prost = "0.11.0"
+crc = "1.8.1"
 paperclip_ast_serialize = { path = "../ast_serialize" }
 tokio-native-tls = { version = "0.3.0" }
 tokio-rustls = { version = "0.23.0" }
@@ -51,7 +52,8 @@ flume = "0.10.14"
 tls-listener = { version = "0.5.1", features = ["rt", "rustls", "hyper-h1", "hyper-h2"] }
 rustls = "0.20.7"
 rustls-pemfile = "1.0.1"
-headless_chrome = "0.9.0"
+headless_chrome = {git = "https://github.com/atroche/rust-headless-chrome", features = ["fetch"]}
+ansi_term = "0.12.1"
 
 [dev-dependencies]
 assert_cmd = "2.0.4"

@@ -605,7 +605,6 @@ fn bounds_are_attached_to_root_instances() {
     );
 }
 
-
 #[test]
 fn children_slot_is_rendered_in_instance() {
     let doc = evaluate_doc(HashMap::from([(

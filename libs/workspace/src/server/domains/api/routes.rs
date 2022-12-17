@@ -3,13 +3,15 @@
 use headers::{AcceptRanges, ContentLength, ContentType, HeaderMapExt};
 use hyper::Body;
 use include_dir::{include_dir, Dir, File};
-use warp::any;
+use warp::{any};
 use warp::path::{tail, Tail};
 use warp::reject::Rejection;
 use warp::reply::{Reply, Response};
 use warp::Filter;
 
 use futures_util::future;
+
+use crate::server::core::utils::tmp_screenshot_dir;
 
 static DESIGNER_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/../designer/dist");
 
@@ -29,17 +31,12 @@ impl Reply for StaticFile {
     }
 }
 
-// Inspiration: https://github.com/seanmonstar/warp/blob/master/examples/returning.rs
-pub fn routes() -> impl Filter<Extract = (StaticFile,), Error = Rejection> + Clone {
-    let get_static_file = any().and(path_from_tail()).and_then(static_file_reply);
-
-    get_static_file
+pub fn screenshots_route() -> impl Filter<Extract = (warp::fs::File,), Error = Rejection> + Clone  {
+    warp::path("screenshots").and(warp::fs::dir(tmp_screenshot_dir()))
 }
 
-fn path_from_tail() -> impl Filter<Extract = (String,), Error = Rejection> + Clone {
-    tail().and_then(move |tail: Tail| {
-        future::ready::<Result<String, Rejection>>(Ok(tail.as_str().to_string()))
-    })
+pub fn static_files_route() -> impl Filter<Extract = (StaticFile, ), Error = Rejection> + Clone  {
+    any().and(path_from_tail()).and_then(static_file_reply)
 }
 
 pub async fn static_file_reply(path: String) -> Result<StaticFile, Rejection> {
@@ -57,4 +54,10 @@ pub async fn static_file_reply(path: String) -> Result<StaticFile, Rejection> {
         println!("File {} not found", path);
     }
     Err(warp::reject::not_found())
+}
+
+fn path_from_tail() -> impl Filter<Extract = (String,), Error = Rejection> + Clone {
+    tail().and_then(move |tail: Tail| {
+        future::ready::<Result<String, Rejection>>(Ok(tail.as_str().to_string()))
+    })
 }

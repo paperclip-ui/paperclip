@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use paperclip_common::event_bus::{EventBus, Receiver};
 
-pub trait EventHandler<TState, TEvent: Clone>: Clone {
+pub trait EventHandler<TState, TEvent: Clone> {
     fn handle_event(&self, state: &mut TState, event: &TEvent);
 }
 
@@ -23,9 +23,7 @@ impl<TState, TEvent: Clone, TEventHandler: EventHandler<TState, TEvent>>
         }
     }
     pub fn emit(&mut self, event: TEvent) {
-        self.event_handler
-            .clone()
-            .handle_event(&mut self.state, &event);
+        self.event_handler.handle_event(&mut self.state, &event);
         self.events.emit(event);
     }
     pub fn subscribe(&mut self) -> Receiver<Arc<TEvent>> {

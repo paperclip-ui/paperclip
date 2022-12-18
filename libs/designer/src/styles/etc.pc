@@ -4,7 +4,7 @@ import "./input.pc" as input
 
 public component Item {
     render div(style: style, onClick: onClick) {
-        style {
+        style extends theme.fontDefault {
             background: rgba(0, 0, 0, 0.1)
             border-radius: var(theme.rounded)
             width: 100%

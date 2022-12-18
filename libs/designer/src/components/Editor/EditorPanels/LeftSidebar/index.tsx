@@ -6,6 +6,7 @@ import { getHistoryState } from "@paperclip-ui/designer/src/domains/history/stat
 import {
   DesignerState,
   getCurrentDependency,
+  getCurrentFilePath,
   getExpandedVirtIds,
   getGraph,
   getSelectedNodeId,
@@ -22,9 +23,11 @@ import {
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { designerEvents } from "@paperclip-ui/designer/src/events";
 import cx from "classnames";
+import { useHistory } from "@paperclip-ui/designer/src/domains/history/react";
+import { routes } from "@paperclip-ui/designer/src/state/routes";
 
 export const LeftSidebar = () => {
-  const { title, document, show } = useLeftSidebar();
+  const { title, document, show, onBackClick } = useLeftSidebar();
 
   if (!document || !show) {
     return null;
@@ -33,7 +36,7 @@ export const LeftSidebar = () => {
   return (
     <styles.LeftSidebar>
       <sidebarStyles.SidebarPanel>
-        <styles.LeftSidebarHeader title={title} />
+        <styles.LeftSidebarHeader title={title} onBackClick={onBackClick} />
         <sidebarStyles.SidebarSection>
           <sidebarStyles.SidebarPanelHeader>
             Layers
@@ -328,13 +331,18 @@ const Leaf = ({
 };
 
 const useLeftSidebar = () => {
-  const history = useSelector(getHistoryState);
+  const currentFile = useSelector(getCurrentFilePath);
   const dependency = useSelector(getCurrentDependency);
   const show = useSelector((state: DesignerState) => state.showLeftSidebar);
+  const history = useHistory();
+  const onBackClick = () => {
+    history.redirect(routes.dashboard());
+  };
 
   return {
     show,
-    title: history.query.file.split("/").pop(),
+    onBackClick,
+    title: currentFile.split("/").pop(),
     document: dependency?.document,
   };
 };

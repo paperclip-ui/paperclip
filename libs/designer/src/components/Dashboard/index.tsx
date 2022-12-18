@@ -5,27 +5,40 @@ import { TextInput } from "../TextInput";
 import { useSelector } from "@paperclip-ui/common";
 import { getResourceFilePaths } from "../../state";
 import { useHistory } from "../../domains/history/react";
+import { routes } from "../../state/routes";
 
 export const Dashboard = () => {
-  const { onAddClick, onFilterChange, resourceFilePaths } = useDashboard();
+  const { onAddClick, onFilterChange, resourceFilePaths, filter } =
+    useDashboard();
   console.log(resourceFilePaths);
   return (
     <styles.Container
       controls={
         <>
-          <TextInput placeholder="Filter..." onChange={onFilterChange} />
+          <TextInput
+            placeholder="Filter..."
+            autoFocus
+            onChange={onFilterChange}
+          />
           <styles.AddFileButton onAddClick={onAddClick} />
         </>
       }
-      items={resourceFilePaths.map((filePath) => (
-        <Item key={filePath} filePath={filePath} />
-      ))}
+      items={resourceFilePaths
+        .filter((filePath) => {
+          return filter
+            .toLowerCase()
+            .split(/\s+/g)
+            .every((part) => filePath.includes(part));
+        })
+        .map((filePath) => (
+          <Item key={filePath} filePath={filePath} />
+        ))}
     />
   );
 };
 
 const useDashboard = () => {
-  const [filter, setFilter] = useState<string>();
+  const [filter, setFilter] = useState<string>("");
   const onAddClick = () => {};
 
   const onFilterChange = (value: string) => setFilter(value);
@@ -54,7 +67,7 @@ const useItem = ({ filePath }: ItemProps) => {
   }, [filePath]);
 
   const onClick = useCallback(() => {
-    history.redirect(`/?file=${encodeURIComponent(filePath)}`);
+    history.redirect(routes.editor(filePath));
   }, [history, filePath]);
 
   return { basename, dir, onClick };

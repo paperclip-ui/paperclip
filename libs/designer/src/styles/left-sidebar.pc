@@ -16,7 +16,7 @@ public component Tab {
     }
     render div(class: class) {
         style {
-            font-weight: 600
+            font-weight: 600w
             padding: var(theme.space05)
             display: inline-block
             flex: 1
@@ -51,9 +51,9 @@ public component LeftSidebarHeader {
                 gap: 8px
                 align-items: center
             }
-            div {
-                style extends theme.icon {
-                    display: none
+            button(onClick: onBackClick) {
+                style extends theme.reset, theme.icon {
+                    cursor: pointer
                     -webkit-mask-image: url("./back.svg")
                     --size: 1.6em
                     width: 12px

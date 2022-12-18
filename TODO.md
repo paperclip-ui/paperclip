@@ -21,6 +21,10 @@
 
 - How does the designer incentivize the app structure?
 
+#### Warm up (30 min)
+
+- remove eventCreators in favor of vanilla code
+
 #### On-deck
 
 - dashboard

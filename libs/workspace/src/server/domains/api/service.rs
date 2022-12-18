@@ -8,7 +8,7 @@ use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
     designer_event, file_response, ApplyMutationsRequest, ApplyMutationsResult, DesignerEvent,
-    Empty, FileChanged, FileRequest, FileResponse, ScreenshotCaptured, UpdateFileRequest,
+    Empty, FileChanged, FileRequest, FileResponse, ScreenshotCaptured, UpdateFileRequest, ResourceFiles,
 };
 use std::pin::Pin;
 use std::sync::Arc;
@@ -19,6 +19,7 @@ use tonic::{Request, Response, Status};
 
 type FileResponseStream = Pin<Box<dyn Stream<Item = Result<FileResponse, Status>> + Send>>;
 type DesignerEventStream = Pin<Box<dyn Stream<Item = Result<DesignerEvent, Status>> + Send>>;
+type ResourceFilesStream = Pin<Box<dyn Stream<Item = Result<ResourceFiles, Status>> + Send>>;
 type GetGraphStream = Pin<Box<dyn Stream<Item = Result<Graph, Status>> + Send>>;
 
 #[derive(Clone)]
@@ -36,7 +37,9 @@ impl DesignerService {
 impl Designer for DesignerService {
     type OpenFileStream = FileResponseStream;
     type OnEventStream = DesignerEventStream;
+    type GetResourceFilesStream = ResourceFilesStream;
     type GetGraphStream = GetGraphStream;
+
     async fn open_file(
         &self,
         request: Request<FileRequest>,
@@ -85,6 +88,34 @@ impl Designer for DesignerService {
         let output = ReceiverStream::new(rx);
 
         Ok(Response::new(Box::pin(output) as Self::OpenFileStream))
+    }
+
+    async fn get_resource_files(&self, _request: Request<Empty>) -> Result<Response<Self::GetResourceFilesStream>, Status> {
+
+        let (tx, rx) = mpsc::channel(128);
+        let output = ReceiverStream::new(rx);
+
+        let store = self.store.clone();
+
+        tokio::spawn(async move {
+             let get_files_response = |store: Arc<Mutex<ServerStore>>| {
+                let file_paths = store.lock().unwrap().state.graph.dependencies.keys().map(|key| {
+                    key.to_string()
+                 }).collect::<Vec<String>>();
+    
+                 Ok(ResourceFiles {
+                    file_paths
+                })
+             };
+
+             tx.send((get_files_response)(store.clone())).await.expect("Failed to send stream, must be closed");
+
+            handle_store_events!(store.clone(), ServerEvent::DependencyGraphLoaded { graph: _ } => {
+                tx.send((get_files_response)(store.clone())).await.expect("Failed to send stream, must be closed");
+            });
+        });
+
+        Ok(Response::new(Box::pin(output) as Self::GetResourceFilesStream))
     }
 
     async fn undo(&self, _request: Request<Empty>) -> Result<Response<Empty>, Status> {

@@ -1,16 +1,8 @@
-import {
-  eventCreators,
-  identity,
-  ExtractEventFromCreators,
-} from "@paperclip-ui/common";
+import { BaseEvent } from "@paperclip-ui/common";
 
-export const historyEngineEvents = eventCreators(
-  {
-    historyChanged: identity<{ pathname: string; query: any }>(),
-  },
-  "history-engine"
-);
-
-export type HistoryEngineEvent = ExtractEventFromCreators<
-  typeof historyEngineEvents
+export type HistoryChanged = BaseEvent<
+  "history-engine/historyChanged",
+  { pathname: string; query: any }
 >;
+
+export type HistoryEngineEvent = HistoryChanged;

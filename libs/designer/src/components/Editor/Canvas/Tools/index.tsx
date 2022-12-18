@@ -159,7 +159,15 @@ const useTools = () => {
 
   const onMouseUp = useCallback(
     (event: React.MouseEvent<any>) => {
-      dispatch(designerEvents.canvasMouseUp());
+      dispatch(
+        designerEvents.canvasMouseUp({
+          metaKey: event.metaKey,
+          ctrlKey: event.ctrlKey,
+          shiftKey: event.shiftKey,
+          timestamp: Date.now(),
+          position: getMousePoint(event),
+        })
+      );
     },
     [dispatch]
   );

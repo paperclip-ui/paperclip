@@ -16,6 +16,11 @@ export const apiReducer = (
       return serverEventReducer(state, event.payload);
     case designerEngineEvents.graphLoaded.type:
       return handleGraphLoaded(state, event);
+    case designerEngineEvents.resourceFilePathsLoaded.type: {
+      return produce(state, (newState) => {
+        newState.resourceFilePaths = event.payload;
+      });
+    }
   }
   return state;
 };

@@ -22,7 +22,6 @@ import {
 import { memoize } from "@paperclip-ui/common";
 import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
-import { historyEngineEvents } from "../../domains/history/events";
 
 const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
 const PAN_X_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;
@@ -78,7 +77,7 @@ export const editorReducer = (
           .filter(Boolean);
       });
     }
-    case historyEngineEvents.historyChanged.type: {
+    case "history-engine/historyChanged": {
       return produce(state, (newState) => {
         newState.history = event.payload;
       });

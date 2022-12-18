@@ -23,7 +23,6 @@ import {
 import { memoize } from "@paperclip-ui/common";
 import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
-import { historyEngineEvents } from "../../domains/history/events";
 
 const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
 const PAN_X_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;
@@ -79,7 +78,7 @@ export const legacyReducer = (
           .filter(Boolean);
       });
     }
-    case historyEngineEvents.historyChanged.type: {
+    case "history-engine/historyChanged": {
       return produce(state, (newState) => {
         newState.history = event.payload;
       });
@@ -129,31 +128,13 @@ export const legacyReducer = (
       return state;
     }
     case designerEvents.canvasMouseUp.type: {
-      return produce(state, (newState) => {
-        if (newState.insertMode != InsertMode.Resource) {
-          newState.insertMode = null;
-        }
-        newState.resourceModalDragLeft = false;
-        newState.canvas.mouseDown = false;
-        newState.canvasMouseDownStartPoint = undefined;
-      });
-    }
-    case designerEvents.toolsLayerDrop.type: {
-      return produce(state, (newState) => {
-        if (newState.insertMode != InsertMode.Resource) {
-          newState.insertMode = null;
-        }
-        newState.resourceModalDragLeft = false;
-        newState.canvas.mouseDown = false;
-        newState.canvasMouseDownStartPoint = undefined;
-      });
-    }
-    case designerEvents.canvasMouseDown.type: {
       state = produce(state, (newState) => {
-        newState.canvas.mouseDown = true;
-        newState.canvas.mousePosition = event.payload.position;
-        newState.canvasMouseDownStartPoint = event.payload.position;
-        newState.preEditComputedStyles = newState.computedStyles;
+        if (newState.insertMode != InsertMode.Resource) {
+          newState.insertMode = null;
+        }
+        newState.resourceModalDragLeft = false;
+        newState.canvas.mouseDown = false;
+        newState.canvasMouseDownStartPoint = undefined;
       });
 
       if (state.resizerMoving) {
@@ -207,6 +188,26 @@ export const legacyReducer = (
         event.payload.metaKey,
         state
       );
+    }
+    case designerEvents.toolsLayerDrop.type: {
+      return produce(state, (newState) => {
+        if (newState.insertMode != InsertMode.Resource) {
+          newState.insertMode = null;
+        }
+        newState.resourceModalDragLeft = false;
+        newState.canvas.mouseDown = false;
+        newState.canvasMouseDownStartPoint = undefined;
+      });
+    }
+    case designerEvents.canvasMouseDown.type: {
+      state = produce(state, (newState) => {
+        newState.canvas.mouseDown = true;
+        newState.canvas.mousePosition = event.payload.position;
+        newState.canvasMouseDownStartPoint = event.payload.position;
+        newState.preEditComputedStyles = newState.computedStyles;
+      });
+
+      return state;
     }
     case designerEvents.canvasPanned.type: {
       // do not allow panning when expanded
@@ -354,7 +355,7 @@ const pxToInt = (value: string) => Number(value.replace("px", ""));
 
 const handleDoubleClick = (
   designer: DesignerState,
-  action: ReturnType<typeof designerEvents.canvasMouseDown>
+  action: ReturnType<typeof designerEvents.canvasMouseUp>
 ): [DesignerState, boolean] => {
   const oldTimestamp = designer.canvasClickTimestamp;
 

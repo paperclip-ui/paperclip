@@ -3,7 +3,7 @@ import "./theme.pc" as theme
 import "./input.pc" as input
 
 public component Item {
-    render div(style: style) {
+    render div(style: style, onClick: onClick) {
         style {
             background: rgba(0, 0, 0, 0.1)
             border-radius: var(theme.rounded)

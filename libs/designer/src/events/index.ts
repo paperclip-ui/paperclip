@@ -33,7 +33,13 @@ export const designerEvents = eventCreators(
     canvasMouseLeave: null,
     layerLeafClicked: identity<{ virtId: string }>(),
     layerArrowClicked: identity<{ virtId: string }>(),
-    canvasMouseUp: null,
+    canvasMouseUp: identity<{
+      metaKey: boolean;
+      ctrlKey: boolean;
+      shiftKey: boolean;
+      timestamp: number;
+      position: Point;
+    }>(),
     computedStylesCaptured: identity<{
       computedStyles: Record<string, any>;
     }>(),

@@ -16,6 +16,9 @@ public component Container {
     variant largeScreen trigger {
         "@media screen and (min-width: 800px)"
     }
+    variant xlargeScreen trigger {
+        "@media screen and (min-width: 1200px)"
+    }
     render div {
         style extends theme.fontDefault {
             position: relative
@@ -37,11 +40,15 @@ public component Container {
                 text "Design files"
             }
             div controls {
-                div {
-                    style {
+                style {
                         max-width: 200px
+                        display: flex
+                        align-items: center
+                        gap: var(theme.space06)
                     }
+                slot controls {
                     input.TextInput(placeholder: "Filter...", value: "")
+                    AddFileButton
                 }
             }
         }
@@ -50,11 +57,7 @@ public component Container {
                 padding: var(theme.space06)
                 display: grid
                 gap: var(theme.space05)
-                left: NaNpx
-                top: NaNpx
                 position: relative
-                width: 428
-                height: 768
             }
             style variant smallScreen {
                 grid-template-columns: 1fr 1fr
@@ -65,36 +68,31 @@ public component Container {
             style variant largeScreen {
                 grid-template-columns: 1fr 1fr 1fr 1fr
             }
-            
-            Item
-            Item
-            Item
-            Item
-            Item
-            Item
-            Item
-            Item
-            Item
-            Item
-            Item
-            Item
-            Item
-            Item
-            Item
+            style variant xlargeScreen {
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr
+            }
+            slot items {
+                
+                etc.Item
+                etc.Item
+                etc.Item
+                etc.Item
+                etc.Item
+                etc.Item
+                etc.Item
+                etc.Item
+                etc.Item
+                etc.Item
+                etc.Item
+                etc.Item
+                etc.Item
+                etc.Item
+                etc.Item
+            }
         }
     }
 }
 
-public component Item {
-    render div {
-        style {
-            background: white
-            width: 100%
-            height: 150px
-            border-radius: var(theme.rounded)
-        }
-    }
-}
 
 /**
  * @bounds(x: -729, y: 334, width: 388, height: 750)
@@ -108,3 +106,13 @@ Container
 
 Container
 
+
+
+public component AddFileButton {
+    render button (onClick: onAddClick) {
+                        style extends theme.reset, theme.icon {
+                            -webkit-mask-image: url("./plus2.svg")
+                        }
+                        text "something"
+                    }
+}

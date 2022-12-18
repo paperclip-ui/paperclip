@@ -11,6 +11,7 @@ import {
   DesignerState,
   DNDKind,
   flattenFrameBoxes,
+  getCurrentFilePath,
   getInsertBox,
   getNodeInfoAtPoint,
   InsertMode,
@@ -34,6 +35,7 @@ import {
   ShortcutCommand,
 } from "../shortcuts/state";
 import { shortcutEvents } from "../shortcuts/events";
+import { HistoryChanged } from "../history/events";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -84,6 +86,16 @@ const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
     onEvent(listener: (event: DesignServerEvent) => void) {
       client.OnEvent({}).subscribe({
         next: listener,
+        error: () => {},
+      });
+    },
+    syncResourceFiles() {
+      client.GetResourceFiles({}).subscribe({
+        next(data) {
+          dispatch(
+            designerEngineEvents.resourceFilePathsLoaded(data.filePaths)
+          );
+        },
         error: () => {},
       });
     },
@@ -200,7 +212,6 @@ const createEventHandler = (actions: Actions) => {
       prevState.selectedTargetId,
       prevState.currentDocument.paperclip.html
     ) as VirtTextNode | VirtElement;
-    console.log("SELECTED", node, prevState.selectedTargetId);
 
     // could be expression
     handleDeleteExpression(node?.sourceId || prevState.selectedTargetId, state);
@@ -449,6 +460,16 @@ const createEventHandler = (actions: Actions) => {
       actions.applyChanges(changes);
     }
   };
+  const handleHistoryChanged = (
+    event: HistoryChanged,
+    state: DesignerState,
+    prevState: DesignerState
+  ) => {
+    const filePath = getCurrentFilePath(state);
+    if (getCurrentFilePath(state) !== getCurrentFilePath(prevState)) {
+      actions.openFile(filePath);
+    }
+  };
 
   return (
     event: DesignerEvent,
@@ -487,6 +508,9 @@ const createEventHandler = (actions: Actions) => {
       case designerEvents.toolsLayerDrop.type: {
         return handleDropItem(event, newState);
       }
+      case "history-engine/historyChanged": {
+        return handleHistoryChanged(event, newState, prevState);
+      }
     }
   };
 };
@@ -496,7 +520,7 @@ const createEventHandler = (actions: Actions) => {
  */
 
 const bootstrap = (
-  { openFile, syncGraph, onEvent }: Actions,
+  { openFile, syncGraph, onEvent, syncResourceFiles }: Actions,
   dispatch: Dispatch<DesignerEvent>,
   initialState: DesignerState
 ) => {
@@ -504,8 +528,13 @@ const bootstrap = (
     dispatch(designerEngineEvents.serverEvent(event));
   });
 
+  syncResourceFiles();
+  const filePath = getCurrentFilePath(initialState);
+
   setTimeout(() => {
-    openFile(initialState.history.query.file);
+    if (filePath) {
+      openFile(filePath);
+    }
     syncGraph();
   }, 100);
 };

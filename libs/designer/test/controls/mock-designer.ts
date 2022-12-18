@@ -7,6 +7,7 @@ import { NodeHttpTransport } from "@improbable-eng/grpc-web-node-http-transport"
 import { Machine } from "@paperclip-ui/common";
 import { startWorkspace } from "@paperclip-ui/workspace/lib/test_utils";
 import { DesignerClientImpl } from "@paperclip-ui/proto/lib/generated/service/designer";
+import { createHistory } from "@paperclip-ui/designer/src/domains/history/history";
 
 export type Designer = {
   onEvent(listener: (event: DesignerEvent) => void): () => void;
@@ -34,6 +35,7 @@ export const startDesigner = async (
     {
       host: `localhost:${port}`,
       transport: NodeHttpTransport(),
+      history: createHistory(),
     },
     () => {
       const handleEvent = (event) => {

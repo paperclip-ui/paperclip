@@ -74,6 +74,7 @@ export type DesignerState = {
   insertedNodeIds: string[];
   graph: Graph;
   insertMode?: InsertMode;
+  resourceFilePaths: string[];
   showLeftSidebar: boolean;
   resourceModalDragLeft: boolean;
   showRightsidebar: boolean;
@@ -102,6 +103,7 @@ export type DesignerState = {
 
 export const DEFAULT_STATE: DesignerState = {
   readonly: false,
+  resourceFilePaths: [],
   styleOverrides: {},
   preEditComputedStyles: {},
   resourceModalDragLeft: false,
@@ -467,3 +469,6 @@ const addHoverableChildren = (
     }
   }
 };
+
+export const getResourceFilePaths = (state: DesignerState) =>
+  state.resourceFilePaths;

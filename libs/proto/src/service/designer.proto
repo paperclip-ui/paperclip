@@ -14,6 +14,7 @@ service Designer {
   rpc GetGraph(Empty) returns (stream ast.graph.Graph);
   rpc OnEvent(Empty) returns (stream DesignerEvent);
   rpc UpdateFile(UpdateFileRequest) returns (Empty);
+  rpc GetResourceFiles(Empty) returns (stream ResourceFiles);
   rpc ApplyMutations(ApplyMutationsRequest) returns (ApplyMutationsResult);
   rpc GetDocumentInfo(FileRequest) returns (language_service.pc.DocumentInfo);
   rpc Undo(Empty) returns (Empty);
@@ -24,6 +25,9 @@ service Designer {
 message Empty {
 }
 
+message ResourceFiles {
+  repeated string file_paths = 1;
+}
 message ApplyMutationsRequest {
   repeated ast_mutate.Mutation mutations = 1;
 }

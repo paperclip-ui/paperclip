@@ -16,6 +16,7 @@ export const designerEngineEvents = eventCreators(
     changesApplied: identity<ApplyMutationsResult>(),
     graphLoaded: identity<Graph>(),
     serverEvent: identity<DesignServerEvent>(),
+    resourceFilePathsLoaded: identity<string[]>(),
   },
   "designer-engine"
 );

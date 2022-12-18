@@ -23,7 +23,12 @@
 
 #### On-deck
 
-- polish style panel
+- dashboard
+
+  - ability to search for file
+  - navigate to editor when file is clicked
+  - screenshot entire page
+  - --open should open dashboard
 
 - files view
 - prompt for component name

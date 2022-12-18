@@ -12,7 +12,7 @@ use paperclip_proto::ast::graph_ext::Dependency;
 use paperclip_proto::ast::pc::Component;
 use paperclip_proto::virt::html::{self, node};
 use paperclip_proto::virt::module::{pc_module_import, PcModule};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
 
 use headless_chrome;
@@ -23,8 +23,8 @@ pub async fn prepare<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()>
     if !ctx.store.lock().unwrap().state.component_screenshots {
         return Ok(());
     }
-    handle_store_events!(&next.store, ServerEvent::ModulesEvaluated(map) => {
-        handle_modules_evaluated(next.clone(), &map).await.expect("Unable to evaluate Dependency graph");
+    handle_store_events!(&next.store, ServerEvent::ModulesEvaluated(_) => {
+        handle_modules_evaluated(next.clone()).await.expect("Unable to evaluate Dependency graph");
     });
     Ok(())
 }
@@ -34,13 +34,26 @@ pub async fn start<TIO: ServerIO>(_ctx: ServerEngineContext<TIO>) -> Result<()> 
 }
 
 async fn handle_modules_evaluated<IO: ServerIO>(
-    ctx: ServerEngineContext<IO>,
-    map: &HashMap<String, (css::virt::Document, html::Document)>,
+    ctx: ServerEngineContext<IO>
 ) -> Result<()> {
-    let map = map.clone();
+    if ctx.store.lock().unwrap().state.screenshots_running {
+        return Ok(());
+    }
+
 
     tokio::spawn(async move {
-        handle_modules_evaluated2(ctx.clone(), &map).await;
+        
+
+        loop {
+            let screenshots_queue = ctx.store.lock().unwrap().state.screenshot_queue.clone();
+            if screenshots_queue.is_empty() {
+                break;
+            }
+            ctx.emit(ServerEvent::ScreenshotsStarted);
+            handle_modules_evaluated2(ctx.clone(), &screenshots_queue).await;
+        }
+
+        ctx.emit(ServerEvent::ScreenshotsFinished);
     });
 
     Ok(())
@@ -48,17 +61,27 @@ async fn handle_modules_evaluated<IO: ServerIO>(
 
 async fn handle_modules_evaluated2<IO: ServerIO>(
     ctx: ServerEngineContext<IO>,
-    map: &HashMap<String, (css::virt::Document, html::Document)>,
+    paths: &HashSet<String>
 ) -> Result<()> {
     let browser = Arc::new(headless_chrome::Browser::default()?);
 
-    for (path, _) in map {
+    let mut to_snapshot: HashSet<String> = HashSet::new();
+    
+    for path in paths {
+        let state = &ctx.store.lock().unwrap().state;
+        to_snapshot.insert(path.clone());
+        for dependent in state.graph.get_all_dependents(path) {
+            to_snapshot.insert(dependent.path.clone());
+        }
+    }
+
+    for path in to_snapshot {
         let frames = {
             let state = &ctx.store.lock().unwrap().state;
             let dependency = state
                 .graph
                 .dependencies
-                .get(path)
+                .get(&path)
                 .expect("Dependency must exist!");
 
             let bundle = state.bundle_evaluated_module(&path).unwrap();

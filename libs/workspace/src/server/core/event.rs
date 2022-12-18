@@ -21,4 +21,6 @@ pub enum ServerEvent {
     PaperclipFilesLoaded { files: Vec<String> },
     DependencyGraphLoaded { graph: Graph },
     ModulesEvaluated(HashMap<String, (css::virt::Document, html::virt::Document)>),
+    ScreenshotsStarted,
+    ScreenshotsFinished
 }

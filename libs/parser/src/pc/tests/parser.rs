@@ -436,3 +436,11 @@ add_case! {
         div(aria-label: "abba", style: "color: red;")
     "#
 }
+
+
+add_case! {
+    can_parse_comma_delim_tokens,
+    r#"
+        public token defaultFontFamily Inter, sans-serif
+    "#
+}

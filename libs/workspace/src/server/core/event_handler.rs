@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use super::ServerEvent;
 use super::ServerState;
 use crate::machine::store::EventHandler;
@@ -49,6 +51,13 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
             ServerEvent::FileWatchEvent(event) => {
                 state.file_cache.remove(&event.path);
             }
+            ServerEvent::ScreenshotsStarted => {
+                state.screenshot_queue = HashSet::default();
+                state.screenshots_running = true;
+            }
+            ServerEvent::ScreenshotsFinished => {
+                state.screenshots_running = false;
+            }
             ServerEvent::UndoRequested => {
                 load_history(state, HistoryStep::Back);
             }
@@ -58,6 +67,9 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
             ServerEvent::ModulesEvaluated(modules) => {
                 state.evaluated_modules.extend(modules.clone());
                 state.updated_files = vec![];
+                for (path, _) in modules {
+                    state.screenshot_queue.insert(path.to_string());
+                }
             }
             ServerEvent::GlobalScriptsLoaded(global_scripts) => {
                 for (path, content) in global_scripts {

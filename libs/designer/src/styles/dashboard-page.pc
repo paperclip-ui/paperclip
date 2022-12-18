@@ -22,7 +22,7 @@ public component Container {
                     font-size: 32px
                     padding: var(theme.space06)
                 }
-                text "ddd"
+                text "Filessd"
             }
         }
     }

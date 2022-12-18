@@ -28,6 +28,8 @@ pub struct ServerState {
     pub doc_checksums: HashMap<String, String>,
     pub file_cache: HashMap<String, Vec<u8>>,
     pub options: StartOptions,
+    pub screenshot_queue: HashSet<String>,
+    pub screenshots_running: bool,
     pub latest_ast_changes: Vec<MutationResult>,
     pub graph: Graph,
     pub evaluated_modules: HashMap<String, (css::virt::Document, html::virt::Document)>,
@@ -38,11 +40,13 @@ impl ServerState {
     pub fn new(options: StartOptions) -> Self {
         Self {
             component_screenshots: options.component_screenshots,
+            screenshot_queue: HashSet::default(),
             history: History {
                 changes: vec![],
                 position: 0,
             },
             options,
+            screenshots_running: false,
             doc_checksums: HashMap::new(),
             file_cache: HashMap::new(),
             graph: Graph::new(),

@@ -30,11 +30,13 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
         ServerEvent::PaperclipFilesLoaded { files } => {
             load_dependency_graph(next.clone(), &files).await.expect("Unable to load dependency graph");
         },
-        ServerEvent::DependencyGraphLoaded { graph: _graph } => {
-            evaluate_dependency_graph(next.clone()).await.expect("Unable to evaluate Dependency graph");
+        ServerEvent::DependencyGraphLoaded { graph: graph } => {
+            evaluate_dependency_graph(next.clone(), Some(graph.dependencies.keys().map(|k| {
+                k.to_string()
+            }).collect())).await.expect("Unable to evaluate Dependency graph");
         },
         ServerEvent::GlobalScriptsLoaded(_) => {
-            evaluate_dependency_graph(next.clone()).await.expect("Unable to evaluate Dependency graph");
+            evaluate_dependency_graph(next.clone(), None).await.expect("Unable to evaluate Dependency graph");
         },
         ServerEvent::UpdateFileRequested { path: _path, content: _content } => {
             let updated_files = next.clone().store.lock().unwrap().state.updated_files.clone();
@@ -46,7 +48,7 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
             }
         },
         ServerEvent::ApplyMutationRequested {mutations: _} | ServerEvent::UndoRequested | ServerEvent::RedoRequested  => {
-            evaluate_dependency_graph(next.clone()).await.expect("Unable to evaluate Dependency graph");
+            evaluate_dependency_graph(next.clone(), None).await.expect("Unable to evaluate Dependency graph");
         },
         ServerEvent::FileWatchEvent(event) => {
             if paperclip_common::pc::is_paperclip_file(&event.path) {
@@ -132,7 +134,16 @@ async fn load_files<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> 
     Ok(())
 }
 
-async fn evaluate_dependency_graph<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
+async fn evaluate_dependency_graph<TIO: ServerIO>(ctx: ServerEngineContext<TIO>, files: Option<Vec<String>>) -> Result<()> {
+    let files = if let Some(files) = files {
+        files
+    } else {
+        let store = ctx.store.lock().unwrap();
+        store.state.graph.dependencies.keys().map(|key| {
+            key.clone()
+        }).collect::<Vec<String>>().clone()
+    };
+
     let mut output: HashMap<String, (css::virt::Document, html::virt::Document)> = HashMap::new();
 
     // file resolver for embedding
@@ -141,7 +152,7 @@ async fn evaluate_dependency_graph<TIO: ServerIO>(ctx: ServerEngineContext<TIO>)
         let resolver = PCFileResolver::new(ctx.io.clone(), ctx.io.clone(), None);
         let graph = &ctx.store.lock().unwrap().state.graph;
 
-        for (path, _) in &graph.dependencies {
+        for path in &files {
             let css = block_on(css::evaluator::evaluate(path, &graph, &resolver))?;
             let html = block_on(html::evaluator::evaluate(
                 path,

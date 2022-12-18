@@ -28,7 +28,6 @@ import {
   getEnabledVariants,
   getSelectedExprAvailableVariants,
 } from "../../state/pc";
-import { keyboardEvents } from "../keyboard/events";
 import {
   getGlobalShortcuts,
   getKeyboardMenuCommand,
@@ -36,6 +35,7 @@ import {
 } from "../shortcuts/state";
 import { shortcutEvents } from "../shortcuts/events";
 import { HistoryChanged } from "../history/events";
+import { KeyDown } from "../keyboard/events";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -72,12 +72,15 @@ type Actions = ReturnType<typeof createActions>;
  * All of the imperative actions that can be invoked in the engine
  */
 
-const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
+const createActions = (
+  client: DesignerClientImpl,
+  dispatch: Dispatch<DesignerEngineEvent>
+) => {
   return {
     openFile(filePath: string) {
       client.OpenFile({ path: filePath }).subscribe({
         next(data) {
-          dispatch(designerEngineEvents.documentOpened(data));
+          dispatch({ type: "designer-engine/documentOpened", payload: data });
         },
         complete() {},
         error() {},
@@ -92,9 +95,10 @@ const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
     syncResourceFiles() {
       client.GetResourceFiles({}).subscribe({
         next(data) {
-          dispatch(
-            designerEngineEvents.resourceFilePathsLoaded(data.filePaths)
-          );
+          dispatch({
+            type: "designer-engine/resourceFilePathsLoaded",
+            payload: data.filePaths,
+          });
         },
         error: () => {},
       });
@@ -412,7 +416,7 @@ const createEventHandler = (actions: Actions) => {
   };
 
   const handleKeyDown = (
-    event: ReturnType<typeof keyboardEvents.keyDown>,
+    event: KeyDown,
     state: DesignerState,
     prevState: DesignerState
   ) => {
@@ -487,7 +491,7 @@ const createEventHandler = (actions: Actions) => {
           prevState
         );
       }
-      case keyboardEvents.keyDown.type: {
+      case "keyboard/keyDown": {
         return handleKeyDown(event, newState, prevState);
       }
       case designerEvents.styleDeclarationsChanged.type: {

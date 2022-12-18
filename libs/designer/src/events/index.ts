@@ -9,7 +9,7 @@ import { HistoryEngineEvent } from "../domains/history/events";
 import { DNDKind, InsertMode } from "../state";
 import { Box, Point, Size } from "../state/geom";
 import { ShortcutEvent } from "../domains/shortcuts/events";
-import { KeyboardEvent } from "../domains/keyboard/events";
+import { KeyboardEngineEvent } from "../domains/keyboard/events";
 
 export const designerEvents = eventCreators(
   {
@@ -84,4 +84,4 @@ export type DesignerEvent =
   | DesignerEngineEvent
   | HistoryEngineEvent
   | ShortcutEvent
-  | KeyboardEvent;
+  | KeyboardEngineEvent;

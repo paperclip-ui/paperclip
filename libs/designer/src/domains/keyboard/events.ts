@@ -1,20 +1,31 @@
-import {
-  eventCreators,
-  ExtractEventFromCreators,
-  identity,
-} from "@paperclip-ui/common";
+import { BaseEvent } from "@paperclip-ui/common";
 
-export const keyboardEvents = eventCreators(
+export type KeyDown = BaseEvent<
+  "keyboard/keyDown",
   {
-    keyDown: identity<{
-      key: string;
-      shiftKey: boolean;
-      metaKey: boolean;
-      ctrlKey: boolean;
-      altKey: boolean;
-    }>(),
-  },
-  "keyboard"
-);
+    key: string;
+    shiftKey: boolean;
+    metaKey: boolean;
+    ctrlKey: boolean;
+    altKey: boolean;
+  }
+>;
 
-export type KeyboardEvent = ExtractEventFromCreators<typeof keyboardEvents>;
+export const createKeyDownEvent = ({
+  key,
+  shiftKey,
+  metaKey,
+  ctrlKey,
+  altKey,
+}: KeyboardEvent): KeyDown => ({
+  type: "keyboard/keyDown",
+  payload: {
+    key,
+    shiftKey,
+    metaKey,
+    ctrlKey,
+    altKey,
+  },
+});
+
+export type KeyboardEngineEvent = KeyDown;

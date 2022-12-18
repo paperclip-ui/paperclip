@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { keyboardEvents } from "@paperclip-ui/designer/src/domains/keyboard/events";
 import { designerEvents } from "@paperclip-ui/designer/src/events";
 import { startDesigner, waitUntilDesignerReady } from "../controls";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
@@ -147,15 +146,16 @@ describe(__filename + "#", () => {
     let expr = ast.getExprById("4f0e8e93-4", designer.machine.getState().graph);
     expect(expr).toMatchObject({ id: "4f0e8e93-4" });
 
-    designer.machine.dispatch(
-      keyboardEvents.keyDown({
+    designer.machine.dispatch({
+      type: "keyboard/keyDown",
+      payload: {
         key: "backspace",
         shiftKey: false,
         ctrlKey: false,
         altKey: false,
         metaKey: false,
-      })
-    );
+      },
+    });
 
     await waitUntilDesignerReady(designer);
     expr = ast.getExprById("4f0e8e93-4", designer.machine.getState().graph);

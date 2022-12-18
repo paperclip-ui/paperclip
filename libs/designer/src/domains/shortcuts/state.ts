@@ -3,8 +3,7 @@ import {
   MenuItemKind,
   MenuItemOption,
 } from "../../modules/shortcuts/base";
-import { DesignerEvent } from "../../events";
-import { keyboardEvents } from "../keyboard/events";
+import { KeyDown } from "../keyboard/events";
 import { isKeyComboDown } from "./utils";
 import { DesignerState } from "../../state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
@@ -156,7 +155,7 @@ const useCanvasHotkeys = (ref: MutableRefObject<HTMLElement>) => {
 */
 
 export const getKeyboardMenuItem = (
-  event: ReturnType<typeof keyboardEvents.keyDown>,
+  event: KeyDown,
   menu: MenuItem<ShortcutCommand>[]
 ) => {
   return menu.find(
@@ -168,7 +167,7 @@ export const getKeyboardMenuItem = (
 };
 
 export const getKeyboardMenuCommand = (
-  event: ReturnType<typeof keyboardEvents.keyDown>,
+  event: KeyDown,
   menu: MenuItem<ShortcutCommand>[]
 ) => {
   return getKeyboardMenuItem(event, menu)?.command;

@@ -2,7 +2,6 @@ import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
 import produce from "immer";
 import { DesignerEvent } from "../../events";
 import { DesignerState, InsertMode } from "../../state";
-import { keyboardEvents } from "../keyboard/events";
 import { shortcutEvents } from "./events";
 import {
   getGlobalShortcuts,
@@ -12,7 +11,7 @@ import {
 
 export const shortcutReducer = (state: DesignerState, event: DesignerEvent) => {
   switch (event.type) {
-    case keyboardEvents.keyDown.type: {
+    case "keyboard/keyDown": {
       const command = getKeyboardMenuCommand(event, getGlobalShortcuts(state));
       return command != null ? handleCommand(state, command) : state;
     }

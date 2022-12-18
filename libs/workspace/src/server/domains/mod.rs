@@ -3,3 +3,4 @@ pub mod bootstrap;
 pub mod config;
 pub mod paperclip;
 pub mod screenshots;
+pub mod local;

@@ -1,5 +1,5 @@
 import { FileResponse } from "@paperclip-ui/proto/lib/generated/service/designer";
-import { pickBy } from "lodash";
+import { pick, pickBy } from "lodash";
 import {
   Node,
   Document as HTMLDocument,
@@ -23,6 +23,8 @@ import {
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { Component } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import produce from "immer";
+import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 export const IS_WINDOWS = false;
 
 export enum InsertMode {
@@ -392,3 +394,76 @@ export const getGraphComponents = (graph: Graph) => {
 };
 
 export const getScreenshotUrls = (state: DesignerState) => state.screenshotUrls;
+
+export const highlightNode = (
+  designer: DesignerState,
+  mousePosition: Point
+) => {
+  return produce(designer, (newDesigner) => {
+    newDesigner.canvas.mousePosition = mousePosition;
+    const canvas = newDesigner.canvas;
+    const info = getNodeInfoAtPoint(
+      mousePosition,
+      canvas.transform,
+      getScopedBoxes(
+        flattenFrameBoxes(designer.rects),
+        designer.scopedElementPath,
+        designer.currentDocument!.paperclip
+      ),
+      newDesigner.canvas.isExpanded ? newDesigner.canvas.activeFrame : null
+    );
+    newDesigner.highlightNodePath = info?.nodePath;
+  });
+};
+
+export const getScopedBoxes = memoize(
+  (boxes: Record<string, Box>, scopedElementPath: string, root: PCModule) => {
+    const hoverableNodePaths = getHoverableNodePaths(
+      scopedElementPath,
+      root.html
+    );
+
+    return pick(boxes, hoverableNodePaths);
+  }
+);
+
+export const getHoverableNodePaths = memoize(
+  (scopedNodePath: string | undefined, root: virtHTML.InnerVirtNode) => {
+    const scopedNode = scopedNodePath
+      ? virtHTML.getNodeByPath(scopedNodePath, root)
+      : root;
+    const ancestors = scopedNodePath
+      ? virtHTML.getNodeAncestors(scopedNodePath, root)
+      : [];
+
+    const hoverable: virtHTML.InnerVirtNode[] = [];
+
+    const scopes = [scopedNode, ...ancestors];
+
+    for (const scope of scopes) {
+      addHoverableChildren(scope, true, hoverable);
+    }
+
+    return hoverable.map((node) => virtHTML.getNodePath(node, root));
+  }
+);
+
+const addHoverableChildren = (
+  node: virtHTML.InnerVirtNode,
+  isScope: boolean,
+  hoverable: virtHTML.InnerVirtNode[]
+) => {
+  if (!hoverable.includes(node)) {
+    hoverable.push(node);
+  }
+
+  if (virtHTML.isInstance(node) && !isScope) {
+    return;
+  }
+
+  if (virtHTML.isNodeParent(node)) {
+    for (const child of node.children) {
+      addHoverableChildren(virtHTML.getInnerNode(child), false, hoverable);
+    }
+  }
+};

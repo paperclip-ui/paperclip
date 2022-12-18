@@ -6,6 +6,8 @@ import {
   DesignerState,
   flattenFrameBoxes,
   getNodeInfoAtPoint,
+  getScopedBoxes,
+  highlightNode,
   InsertMode,
   IS_WINDOWS,
   maybeCenterCanvas,
@@ -348,77 +350,7 @@ const clampCanvasTransform = (canvas: Canvas, rects: Record<string, Box>) => {
   });
 };
 
-const highlightNode = (designer: DesignerState, mousePosition: Point) => {
-  return produce(designer, (newDesigner) => {
-    newDesigner.canvas.mousePosition = mousePosition;
-    const canvas = newDesigner.canvas;
-    const info = getNodeInfoAtPoint(
-      mousePosition,
-      canvas.transform,
-      getScopedBoxes(
-        flattenFrameBoxes(designer.rects),
-        designer.scopedElementPath,
-        designer.currentDocument!.paperclip
-      ),
-      newDesigner.canvas.isExpanded ? newDesigner.canvas.activeFrame : null
-    );
-    newDesigner.highlightNodePath = info?.nodePath;
-  });
-};
-
-export const getScopedBoxes = memoize(
-  (boxes: Record<string, Box>, scopedElementPath: string, root: PCModule) => {
-    const hoverableNodePaths = getHoverableNodePaths(
-      scopedElementPath,
-      root.html
-    );
-
-    return pick(boxes, hoverableNodePaths);
-  }
-);
-
 const pxToInt = (value: string) => Number(value.replace("px", ""));
-
-const getHoverableNodePaths = memoize(
-  (scopedNodePath: string | undefined, root: virtHTML.InnerVirtNode) => {
-    const scopedNode = scopedNodePath
-      ? virtHTML.getNodeByPath(scopedNodePath, root)
-      : root;
-    const ancestors = scopedNodePath
-      ? virtHTML.getNodeAncestors(scopedNodePath, root)
-      : [];
-
-    const hoverable: virtHTML.InnerVirtNode[] = [];
-
-    const scopes = [scopedNode, ...ancestors];
-
-    for (const scope of scopes) {
-      addHoverableChildren(scope, true, hoverable);
-    }
-
-    return hoverable.map((node) => virtHTML.getNodePath(node, root));
-  }
-);
-
-const addHoverableChildren = (
-  node: virtHTML.InnerVirtNode,
-  isScope: boolean,
-  hoverable: virtHTML.InnerVirtNode[]
-) => {
-  if (!hoverable.includes(node)) {
-    hoverable.push(node);
-  }
-
-  if (virtHTML.isInstance(node) && !isScope) {
-    return;
-  }
-
-  if (virtHTML.isNodeParent(node)) {
-    for (const child of node.children) {
-      addHoverableChildren(virtHTML.getInnerNode(child), false, hoverable);
-    }
-  }
-};
 
 const handleDoubleClick = (
   designer: DesignerState,

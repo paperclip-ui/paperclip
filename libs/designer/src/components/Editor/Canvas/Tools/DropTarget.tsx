@@ -31,11 +31,13 @@ const useDropTarget = () => {
     accept: DNDKind.Resource,
     hover: (item, monitor) => {
       const offset = monitor.getClientOffset();
-      const rect = toolsRef.getBoundingClientRect();
+      // const rect = toolsRef.getBoundingClientRect();
+
+      // console.log(rect, offset);
       dispatch(
         designerEvents.toolsLayerDragOver({
-          x: offset.x - rect.x,
-          y: offset.y - rect.y,
+          x: offset.x,
+          y: offset.y,
         })
       );
     },

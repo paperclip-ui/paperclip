@@ -1,7 +1,11 @@
-use std::{fmt::Debug, path::Path, collections::HashMap};
+use std::{collections::HashMap, fmt::Debug, path::Path};
 
 use paperclip_parser::pc::parser::parse;
-use paperclip_proto::ast::{pc::{DocumentBodyItem, Document}, graph_ext::Dependency, all::Expression};
+use paperclip_proto::ast::{
+    all::Expression,
+    graph_ext::Dependency,
+    pc::{Document, DocumentBodyItem},
+};
 use pathdiff::diff_paths;
 
 use crate::ast::all::{Visitable, Visitor, VisitorResult};
@@ -50,21 +54,14 @@ pub fn get_named_expr_id<TVisitable: Visitable + Debug>(
     }
 }
 
-
 pub fn parse_import(path: &str, ns: &str, checksum: &str) -> DocumentBodyItem {
-
-    let new_imp_doc = parse(
-        format!("import \"{}\" as {}", path, ns).as_str(),
-        checksum,
-    )
-    .unwrap();
+    let new_imp_doc = parse(format!("import \"{}\" as {}", path, ns).as_str(), checksum).unwrap();
 
     new_imp_doc.body.get(0).unwrap().clone()
 }
 
 pub fn resolve_import(from: &str, to: &str) -> String {
-    let relative =
-    diff_paths(to, Path::new(from).parent().unwrap()).unwrap();
+    let relative = diff_paths(to, Path::new(from).parent().unwrap()).unwrap();
     let mut relative = relative.to_str().unwrap().to_string();
 
     if !relative.starts_with(".") {
@@ -77,56 +74,88 @@ pub fn resolve_import(from: &str, to: &str) -> String {
 pub struct NamespaceResolution {
     pub prev: String,
     pub resolved: Option<String>,
-    pub is_new: bool
+    pub is_new: bool,
 }
 
-
-pub fn resolve_imports(namespaces: &HashMap<String, String>, dependency: &Dependency) -> HashMap<String, NamespaceResolution> {
+pub fn resolve_imports(
+    namespaces: &HashMap<String, String>,
+    dependency: &Dependency,
+) -> HashMap<String, NamespaceResolution> {
     let mut actual_namespaces = HashMap::new();
     let document = dependency.document.as_ref().expect("Document must exist!");
 
     for (ns, path) in namespaces {
         if path == &dependency.path {
-            actual_namespaces.insert(path.to_string(), NamespaceResolution { prev:  ns.to_string(), resolved: None, is_new: false });
-            continue
+            actual_namespaces.insert(
+                path.to_string(),
+                NamespaceResolution {
+                    prev: ns.to_string(),
+                    resolved: None,
+                    is_new: false,
+                },
+            );
+            continue;
         }
 
-        let rel_path = dependency.imports.iter().find_map(|(rel, abs)| {
-            if abs == path {
-                Some(rel.clone())
-            } else {
-                None
-            }
-        });
+        let rel_path =
+            dependency.imports.iter().find_map(
+                |(rel, abs)| {
+                    if abs == path {
+                        Some(rel.clone())
+                    } else {
+                        None
+                    }
+                },
+            );
 
         if let Some(rel_path) = rel_path {
             let imports = document.get_imports();
-            let imp = imports.iter().find(|imp| {
-                imp.path == rel_path
-            }).expect("Import doesn't exist!");
-            actual_namespaces.insert(path.to_string(), NamespaceResolution {
-                prev: ns.to_string(),
-                resolved: Some(imp.namespace.to_string()),
-                is_new: false
-            });
-
+            let imp = imports
+                .iter()
+                .find(|imp| imp.path == rel_path)
+                .expect("Import doesn't exist!");
+            actual_namespaces.insert(
+                path.to_string(),
+                NamespaceResolution {
+                    prev: ns.to_string(),
+                    resolved: Some(imp.namespace.to_string()),
+                    is_new: false,
+                },
+            );
         } else {
             let unique_ns = get_unique_namespace(ns, document);
-            actual_namespaces.insert(path.to_string(), NamespaceResolution { prev: ns.to_string(), resolved: Some(unique_ns.to_string()), is_new: true });
+            actual_namespaces.insert(
+                path.to_string(),
+                NamespaceResolution {
+                    prev: ns.to_string(),
+                    resolved: Some(unique_ns.to_string()),
+                    is_new: true,
+                },
+            );
         }
     }
 
     actual_namespaces
 }
 
-
-pub fn add_imports(namespaces: &HashMap<String, String>, document: &mut Document, dependency: &Dependency) -> HashMap<String, NamespaceResolution> {
+pub fn add_imports(
+    namespaces: &HashMap<String, String>,
+    document: &mut Document,
+    dependency: &Dependency,
+) -> HashMap<String, NamespaceResolution> {
     let mut actual_namespaces = resolve_imports(namespaces, dependency);
 
     for (path, resolution) in &actual_namespaces {
         if resolution.is_new {
             if let Some(ns) = &resolution.resolved {
-                document.body.insert(0, parse_import(&resolve_import(&dependency.path, path), ns, document.checksum().as_str()));
+                document.body.insert(
+                    0,
+                    parse_import(
+                        &resolve_import(&dependency.path, path),
+                        ns,
+                        document.checksum().as_str(),
+                    ),
+                );
             }
         }
     }
@@ -139,9 +168,10 @@ pub fn get_unique_namespace(base: &str, document: &Document) -> String {
     let mut unique_ns = base.to_string();
     let imports = document.get_imports();
 
-    while matches!(imports.iter().find(|imp| {
-        imp.namespace == unique_ns
-    }), Some(_)) {
+    while matches!(
+        imports.iter().find(|imp| { imp.namespace == unique_ns }),
+        Some(_)
+    ) {
         i += 1;
         unique_ns = format!("{}{}", base, i);
     }

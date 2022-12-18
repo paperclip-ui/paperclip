@@ -3,7 +3,7 @@
 use headers::{AcceptRanges, ContentLength, ContentType, HeaderMapExt};
 use hyper::Body;
 use include_dir::{include_dir, Dir, File};
-use warp::{any};
+use warp::any;
 use warp::path::{tail, Tail};
 use warp::reject::Rejection;
 use warp::reply::{Reply, Response};
@@ -31,11 +31,11 @@ impl Reply for StaticFile {
     }
 }
 
-pub fn screenshots_route() -> impl Filter<Extract = (warp::fs::File,), Error = Rejection> + Clone  {
+pub fn screenshots_route() -> impl Filter<Extract = (warp::fs::File,), Error = Rejection> + Clone {
     warp::path("screenshots").and(warp::fs::dir(tmp_screenshot_dir()))
 }
 
-pub fn static_files_route() -> impl Filter<Extract = (StaticFile, ), Error = Rejection> + Clone  {
+pub fn static_files_route() -> impl Filter<Extract = (StaticFile,), Error = Rejection> + Clone {
     any().and(path_from_tail()).and_then(static_file_reply)
 }
 

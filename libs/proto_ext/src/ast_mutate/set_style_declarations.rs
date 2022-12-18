@@ -4,7 +4,9 @@ use std::path::Path;
 use pathdiff::diff_paths;
 
 use super::base::EditContext;
-use super::utils::{parse_import, resolve_import, resolve_imports, add_imports, NamespaceResolution};
+use super::utils::{
+    add_imports, parse_import, resolve_import, resolve_imports, NamespaceResolution,
+};
 use crate::ast::get_expr::GetExpr;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
@@ -40,7 +42,8 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetStyleDeclarations> {
             if resolution.is_new {
                 if let Some(ns) = &resolution.resolved {
                     let relative = resolve_import(&self.dependency.path, &path);
-                    doc.body.insert(0, parse_import(&relative, &ns, doc.checksum().as_str()));
+                    doc.body
+                        .insert(0, parse_import(&relative, &ns, doc.checksum().as_str()));
                 }
             }
         }

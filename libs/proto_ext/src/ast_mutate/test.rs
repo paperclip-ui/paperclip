@@ -5,8 +5,8 @@ use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_proto::ast_mutate::{
     mutation, update_variant_trigger, AppendChild, Bounds, ConvertToComponent, ConvertToSlot,
-    DeleteExpression, SetFrameBounds, SetStyleDeclarationValue, SetStyleDeclarations,
-    ToggleVariants, UpdateVariant, InsertFrame,
+    DeleteExpression, InsertFrame, SetFrameBounds, SetStyleDeclarationValue, SetStyleDeclarations,
+    ToggleVariants, UpdateVariant,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use std::collections::HashMap;
@@ -1358,7 +1358,7 @@ case! {
   can_import_a_frame,
   [
     (
-      "/entry.pc", r#"      
+      "/entry.pc", r#"
       "#
     ),
     (
@@ -1396,7 +1396,7 @@ case! {
   re_uses_import_if_exists,
   [
     (
-      "/entry.pc", r#"     
+      "/entry.pc", r#"
         import "/test.pc" as imp
       "#
     ),
@@ -1435,7 +1435,7 @@ case! {
   uses_unique_namespace,
   [
     (
-      "/entry.pc", r#"     
+      "/entry.pc", r#"
         import "/test2.pc" as mod
       "#
     ),
@@ -1476,12 +1476,11 @@ case! {
   )]
 }
 
-
 case! {
   if_inserting_frame_of_component_in_same_doc_the_namespace_is_dropped,
   [
     (
-      "/entry.pc", r#"     
+      "/entry.pc", r#"
         component A {
           render div
         }
@@ -1515,13 +1514,11 @@ case! {
   )]
 }
 
-
-
 case! {
   can_delete_the_render_node,
   [
     (
-      "/entry.pc", r#"     
+      "/entry.pc", r#"
         component A {
           render div
         }

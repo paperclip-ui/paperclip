@@ -23,7 +23,11 @@
 
 #### On-deck
 
-- drag + drop instances to canvas
+- polish style panel
+
+- files view
+- prompt for component name
+
 - render slots
 - ability to insert into slots
 

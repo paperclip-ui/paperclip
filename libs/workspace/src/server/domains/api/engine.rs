@@ -42,7 +42,9 @@ async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
 
     let server = Server::bind(&addr).serve(make_service_fn(move |_| {
         let cors = warp::cors().allow_any_origin();
-        let route = routes::screenshots_route().or(routes::static_files_route()).with(cors);
+        let route = routes::screenshots_route()
+            .or(routes::static_files_route())
+            .with(cors);
 
         let mut warp = warp::service(route);
         let mut designer_server = designer_server.clone();

@@ -8,7 +8,7 @@ use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
     designer_event, file_response, ApplyMutationsRequest, ApplyMutationsResult, DesignerEvent,
-    Empty, FileChanged, FileRequest, FileResponse, UpdateFileRequest, ScreenshotCaptured
+    Empty, FileChanged, FileRequest, FileResponse, ScreenshotCaptured, UpdateFileRequest,
 };
 use std::pin::Pin;
 use std::sync::Arc;
@@ -58,24 +58,19 @@ impl Designer for DesignerService {
                     None
                 };
 
-                Ok(FileResponse {
-                    raw_content: serialize(
-                        store
-                            .lock()
-                            .unwrap()
-                            .state
-                            .graph
-                            .dependencies
-                            .get(&path)
-                            .expect("Dependency doesn't exist!")
-                            .document
-                            .as_ref()
-                            .expect("Document must exist"),
-                    )
-                    .as_bytes()
-                    .to_vec(),
-                    data,
-                })
+                if let Some(dependency) = store.lock().unwrap().state.graph.dependencies.get(&path)
+                {
+                    Ok(FileResponse {
+                        raw_content: serialize(
+                            dependency.document.as_ref().expect("Document must exist"),
+                        )
+                        .as_bytes()
+                        .to_vec(),
+                        data,
+                    })
+                } else {
+                    Err(Status::not_found("Dependency not found"))
+                }
             };
 
             tx.send(emit(path.clone(), store.clone()))

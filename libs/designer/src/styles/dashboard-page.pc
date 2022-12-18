@@ -1,0 +1,30 @@
+import "./theme.pc" as theme
+
+/**
+ * @bounds(x: 290, y: 329, width: 1024, height: 768)
+*/
+
+public component Container {
+    render div {
+        style {
+            position: relative
+            background: var(theme.gray06)
+            width: 100vw
+            height: 100vh
+        }
+        div header {
+            style {
+                display: flex
+            }
+            h1 {
+                style extends theme.fontDefault {
+                    margin: 0px
+                    font-size: 32px
+                    padding: var(theme.space06)
+                }
+                text "ddd"
+            }
+        }
+    }
+}
+

@@ -1,5 +1,5 @@
 use anyhow::{Error, Result};
-use clap::{Args, ArgAction};
+use clap::{ArgAction, Args};
 use paperclip_config::ConfigContext;
 use paperclip_project::LocalIO;
 use paperclip_workspace::server::io::LocalServerIO;
@@ -40,7 +40,7 @@ pub async fn start_design_server(args: StartDesignServerArgs) -> Result<()> {
             config_context,
             port: args.port,
             open: args.open,
-            component_screenshots: args.screenshots
+            component_screenshots: args.screenshots,
         },
         LocalServerIO::default(),
     ) {

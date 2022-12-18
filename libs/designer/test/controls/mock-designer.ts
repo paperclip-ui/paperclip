@@ -6,11 +6,14 @@ import { EventEmitter } from "events";
 import { NodeHttpTransport } from "@improbable-eng/grpc-web-node-http-transport";
 import { Machine } from "@paperclip-ui/common";
 import { startWorkspace } from "@paperclip-ui/workspace/lib/test_utils";
+import { DesignerClientImpl } from "@paperclip-ui/proto/lib/generated/service/designer";
 
 export type Designer = {
   onEvent(listener: (event: DesignerEvent) => void): () => void;
   machine: Machine<DesignerState, DesignerEvent>;
   dispose: () => void;
+  getClient: () => DesignerClientImpl;
+  localFilePaths: Record<string, string>;
 };
 
 export const startDesigner = async (
@@ -63,5 +66,11 @@ export const startDesigner = async (
     workspace.dispose();
   };
 
-  return { machine, onEvent, dispose };
+  return {
+    machine,
+    onEvent,
+    dispose,
+    getClient: workspace.getClient,
+    localFilePaths: workspace.localFilesPaths,
+  };
 };

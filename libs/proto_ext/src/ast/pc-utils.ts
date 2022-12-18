@@ -307,8 +307,13 @@ export namespace ast {
     return serializeDeclaration(atom.value);
   };
 
-  export const getComponentRenderNode = (component: Component) =>
+  export const getComponentRenderExpr = (component: Component) =>
     component.body.find((body) => body.render)?.render;
+
+  export const getComponentRenderNode = (component: Component): Node => {
+    const render = getComponentRenderExpr(component);
+    return render && (getInnerExpression(render.node) as Node);
+  };
 
   export const isInstance = (element: Element, graph: Graph) => {
     return getInstanceComponent(element, graph) != null;

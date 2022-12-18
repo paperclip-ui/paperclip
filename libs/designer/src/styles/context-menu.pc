@@ -9,39 +9,39 @@ public component ContextMenu {
     render menu.Menu(style: style, onKeyDown: onKeyDown) {
         slot children {
             ContextMenuItem {
-            text "Create component"
-            insert keyCommand {
-                text "⌥⌘K"
+                text "Create component"
+                insert keyCommand {
+                    text "⌥⌘K"
+                }
             }
-        }
-        ContextMenuItem(class: "disabled") {
-            text "Wrap in slot"
-        }
-        ContextMenuDivider
-        ContextMenuItem {
-            text "Cut"
-            insert keyCommand {
-                text "⌘X"
+            ContextMenuItem(class: "disabled") {
+                text "Wrap in slot"
             }
-        }
-        ContextMenuItem {
-            text "Copy"
-            insert keyCommand {
-                text "⌘C"
+            ContextMenuDivider
+            ContextMenuItem {
+                text "Cut"
+                insert keyCommand {
+                    text "⌘X"
+                }
             }
-        }
-        ContextMenuItem {
-            text "Paste"
-            insert keyCommand {
-                text "⌘P"
+            ContextMenuItem {
+                text "Copy"
+                insert keyCommand {
+                    text "⌘C"
+                }
             }
-        }
-        ContextMenuItem {
-            text "Delete"
-            insert keyCommand {
-                text "⌫"
+            ContextMenuItem {
+                text "Paste"
+                insert keyCommand {
+                    text "⌘P"
+                }
             }
-        }
+            ContextMenuItem {
+                text "Delete"
+                insert keyCommand {
+                    text "⌫"
+                }
+            }
         }
     }
 }
@@ -86,3 +86,22 @@ public component ContextMenuItem {
         }
     }
 }
+
+/**
+ * @bounds(x: 246, y: -599, width: 556, height: 423)
+*/
+
+public component Unnamed {
+    render div {
+        style {
+            position: relative
+            font-size: var(imp.space07)
+            color: white
+            font-family: sans-serif
+        }
+        text "Type something"
+    }
+}
+
+
+

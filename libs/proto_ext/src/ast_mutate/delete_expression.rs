@@ -99,8 +99,18 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, DeleteExpression> {
         VisitorResult::Continue
     }
     fn visit_component(&mut self, expr: &mut ast::pc::Component) -> VisitorResult<()> {
+        let target_id = if let Some(render_node) = expr.get_render_expr() {
+            if render_node.node.as_ref().expect("node must exist").get_id() == self.mutation.expression_id {
+                render_node.id.to_string()
+            } else {
+                self.mutation.expression_id.to_string()
+            }
+        } else {
+            self.mutation.expression_id.to_string()
+        };
+
         if matches!(
-            try_remove_child!(expr.body, &self.mutation.expression_id),
+            try_remove_child!(expr.body, &target_id),
             Some(_)
         ) {
             self.changes.push(
@@ -110,6 +120,8 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, DeleteExpression> {
                 .get_outer(),
             );
         }
+
+        
         VisitorResult::Continue
     }
 }

@@ -57,8 +57,8 @@ export const Tools = () => {
   };
 
   return (
-    <ContextMenu menu={contextMenu}>
-      <DropTarget>
+    <DropTarget>
+      <ContextMenu menu={contextMenu}>
         <styles.Tools
           ref={toolsRef}
           onMouseDown={onMouswDown}
@@ -101,8 +101,8 @@ export const Tools = () => {
           />
         ) : null} */}
         </styles.Tools>
-      </DropTarget>
-    </ContextMenu>
+      </ContextMenu>
+    </DropTarget>
   );
 };
 

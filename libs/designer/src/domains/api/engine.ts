@@ -203,7 +203,7 @@ const createEventHandler = (actions: Actions) => {
       console.warn(`Node doesn't exist, skipping delete`);
       return;
     }
-    handleDeleteExpression(node.sourceId);
+    handleDeleteExpression(node.sourceId, state);
   };
 
   const handleResizerStoppedMoving = (
@@ -314,7 +314,19 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
-  const handleDeleteExpression = (expressionId: string) => {
+  const handleDeleteExpression = (
+    expressionId: string,
+    state: DesignerState
+  ) => {
+    // const expr = ast.getExprById(expressionId, state.graph);
+    // const component = ast.getExprOwnerComponent(expr, state.graph);
+    // console.log(expr, component, ast.getComponentRenderNode(component));
+
+    // // deleting the component?
+    // if (component && ast.getComponentRenderNode(component)?.id === expr.id) {
+    //   console.log("DEL COMP");
+    // }
+
     actions.applyChanges([
       {
         deleteExpression: {
@@ -424,6 +436,8 @@ const createEventHandler = (actions: Actions) => {
 
       let changes = [];
 
+      console.log(expr, item);
+
       if (ast.isComponent(expr)) {
         changes = [
           {
@@ -471,7 +485,7 @@ const createEventHandler = (actions: Actions) => {
         return handleVariantsSelected(event.payload, newState);
       }
       case designerEvents.removeVariantButtonClicked.type: {
-        return handleDeleteExpression(event.payload.variantId);
+        return handleDeleteExpression(event.payload.variantId, newState);
       }
       case designerEvents.variantEdited.type: {
         return handleVariantEdited(event, newState);

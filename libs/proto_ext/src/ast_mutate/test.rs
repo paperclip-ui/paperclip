@@ -1514,3 +1514,29 @@ case! {
     "#
   )]
 }
+
+
+
+case! {
+  can_delete_the_render_node,
+  [
+    (
+      "/entry.pc", r#"     
+        component A {
+          render div
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::DeleteExpression(DeleteExpression {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+
+      component A {
+      }
+    "#
+  )]
+}

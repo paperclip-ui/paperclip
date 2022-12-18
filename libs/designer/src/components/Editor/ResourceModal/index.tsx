@@ -11,6 +11,7 @@ import {
 import { boxIntersectsPoint } from "@paperclip-ui/designer/src/state/geom";
 import { designerEvents } from "@paperclip-ui/designer/src/events";
 import { useDrag } from "react-dnd";
+import { Component } from "@paperclip-ui/proto/lib/generated/ast/pc";
 
 export const ResourceModal = () => {
   const {
@@ -52,9 +53,9 @@ export const ResourceModal = () => {
             .map((info) => {
               return (
                 <Item
-                  componentId={info.component.id}
-                  label={info.component.name}
+                  component={info.component}
                   screenshotUrl={screenshotUrls[info.component.id]}
+                  key={info.component.id}
                 />
               );
             })}
@@ -107,17 +108,16 @@ const useResourceModal = () => {
 };
 
 export type ItemProps = {
-  componentId: string;
-  label: string;
+  component: Component;
   screenshotUrl?: string;
 };
 
-const Item = ({ componentId, label, screenshotUrl }: ItemProps) => {
-  const { style, ref } = useItem({ componentId });
+const Item = ({ component, screenshotUrl }: ItemProps) => {
+  const { style, ref } = useItem({ component });
   return (
     <styles.Item
       ref={ref}
-      label={label}
+      label={component.name}
       style={style}
       previewStyle={{
         backgroundImage: `url(${screenshotUrl})`,
@@ -127,13 +127,13 @@ const Item = ({ componentId, label, screenshotUrl }: ItemProps) => {
 };
 
 type UseItemProps = {
-  componentId: string;
+  component: Component;
 };
 
-const useItem = ({ componentId }: UseItemProps) => {
+const useItem = ({ component }: UseItemProps) => {
   const [style, dragRef] = useDrag(() => ({
     type: DNDKind.Resource,
-    item: { id: componentId },
+    item: component,
     collect: (monitor) => ({
       opacity: monitor.isDragging() ? 0.5 : 1,
       cursor: monitor.isDragging() ? "copy" : "initial",

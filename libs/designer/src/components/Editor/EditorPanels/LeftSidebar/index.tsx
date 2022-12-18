@@ -77,7 +77,7 @@ const DocumentBodyItemLeaf = memo(
 
 const ComponentLeaf = memo(
   ({ expr: component, depth, instanceOf }: LeafProps<Component>) => {
-    const render = ast.getComponentRenderNode(component);
+    const render = ast.getComponentRenderExpr(component);
     return (
       <Leaf
         id={component.id}
@@ -140,7 +140,7 @@ const InstanceLeaf = ({
 }: LeafProps<Element>) => {
   const graph = useSelector(getGraph);
   const component = ast.getInstanceComponent(element, graph);
-  const render = ast.getComponentRenderNode(component);
+  const render = ast.getComponentRenderExpr(component);
   const [shadowVisible, setShadowVisible] = useState(false);
   const onShadowIconClick = () => setShadowVisible(!shadowVisible);
   const expandedVirtIds = useSelector(getExpandedVirtIds);

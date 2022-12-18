@@ -84,6 +84,7 @@ const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
     onEvent(listener: (event: DesignServerEvent) => void) {
       client.OnEvent({}).subscribe({
         next: listener,
+        error: () => {},
       });
     },
     undo() {
@@ -100,6 +101,7 @@ const createActions = (client: DesignerClientImpl, dispatch: Dispatch<any>) => {
         next(data) {
           dispatch(designerEngineEvents.graphLoaded(data));
         },
+        error: () => {},
       });
     },
     async applyChanges(mutations: Mutation[]) {
@@ -198,6 +200,7 @@ const createEventHandler = (actions: Actions) => {
       prevState.selectedTargetId,
       prevState.currentDocument.paperclip.html
     ) as VirtTextNode | VirtElement;
+    console.log("SELECTED", node, prevState.selectedTargetId);
 
     // could be expression
     handleDeleteExpression(node?.sourceId || prevState.selectedTargetId, state);

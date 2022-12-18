@@ -20,6 +20,9 @@ use headless_chrome;
 
 pub async fn prepare<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
     let next = ctx.clone();
+    if !ctx.store.lock().unwrap().state.component_screenshots {
+        return Ok(());
+    }
     handle_store_events!(&next.store, ServerEvent::ModulesEvaluated(map) => {
         handle_modules_evaluated(next.clone(), &map).await.expect("Unable to evaluate Dependency graph");
     });

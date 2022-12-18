@@ -2,8 +2,10 @@
  * @jest-environment jsdom
  */
 
+import { keyboardEvents } from "@paperclip-ui/designer/src/domains/keyboard/events";
 import { designerEvents } from "@paperclip-ui/designer/src/events";
 import { startDesigner, waitUntilDesignerReady } from "../controls";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
 describe(__filename + "#", () => {
   xit(`Can select a simple layer`, async () => {
@@ -121,6 +123,44 @@ describe(__filename + "#", () => {
       "4f0e8e93-5",
       "4f0e8e93-6",
     ]);
+    designer.dispose();
+  });
+
+  it(`Can delete a component`, async () => {
+    const designer = await startDesigner({
+      "entry.pc": `
+        component A {
+          render div {
+            span {
+
+            }
+          }
+        }
+        A
+      `,
+    });
+    await waitUntilDesignerReady(designer);
+    designer.machine.dispatch(
+      designerEvents.layerLeafClicked({ virtId: "4f0e8e93-4" })
+    );
+
+    let expr = ast.getExprById("4f0e8e93-4", designer.machine.getState().graph);
+    expect(expr).toMatchObject({ id: "4f0e8e93-4" });
+
+    designer.machine.dispatch(
+      keyboardEvents.keyDown({
+        key: "backspace",
+        shiftKey: false,
+        ctrlKey: false,
+        altKey: false,
+        metaKey: false,
+      })
+    );
+
+    await waitUntilDesignerReady(designer);
+    expr = ast.getExprById("4f0e8e93-4", designer.machine.getState().graph);
+    expect(expr).toEqual(undefined);
+
     designer.dispose();
   });
 });

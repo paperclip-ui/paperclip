@@ -19,9 +19,11 @@ pub struct StartOptions {
     pub config_context: ConfigContext,
     pub open: bool,
     pub port: Option<u16>,
+    pub component_screenshots: bool,
 }
 
 pub struct ServerState {
+    pub component_screenshots: bool,
     pub history: History,
     pub doc_checksums: HashMap<String, String>,
     pub file_cache: HashMap<String, Vec<u8>>,
@@ -35,6 +37,7 @@ pub struct ServerState {
 impl ServerState {
     pub fn new(options: StartOptions) -> Self {
         Self {
+            component_screenshots: options.component_screenshots,
             history: History {
                 changes: vec![],
                 position: 0,

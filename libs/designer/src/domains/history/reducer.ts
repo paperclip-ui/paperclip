@@ -1,5 +1,5 @@
 import produce from "immer";
-import { DesignerState } from "../../state";
+import { DesignerState, resetCurrentDocument } from "../../state";
 import { HistoryEngineEvent } from "./events";
 
 export const historyReducer = (
@@ -8,9 +8,12 @@ export const historyReducer = (
 ) => {
   switch (event.type) {
     case "history-engine/historyChanged":
-      return produce(state, (newState) => {
+      state = produce(state, (newState) => {
         newState.history = event.payload;
       });
+      state = resetCurrentDocument(state);
+
+      return state;
   }
   return state;
 };

@@ -1,5 +1,5 @@
 use anyhow::{Error, Result};
-use clap::{Args};
+use clap::Args;
 use paperclip_config::ConfigContext;
 use paperclip_project::LocalIO;
 use paperclip_workspace::server::io::LocalServerIO;

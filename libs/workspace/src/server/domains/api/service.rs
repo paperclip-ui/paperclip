@@ -8,7 +8,8 @@ use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
     designer_event, file_response, ApplyMutationsRequest, ApplyMutationsResult, DesignerEvent,
-    Empty, FileChanged, FileRequest, FileResponse, ScreenshotCaptured, UpdateFileRequest, ResourceFiles,
+    Empty, FileChanged, FileRequest, FileResponse, ResourceFiles, ScreenshotCaptured,
+    UpdateFileRequest,
 };
 use std::pin::Pin;
 use std::sync::Arc;
@@ -90,32 +91,42 @@ impl Designer for DesignerService {
         Ok(Response::new(Box::pin(output) as Self::OpenFileStream))
     }
 
-    async fn get_resource_files(&self, _request: Request<Empty>) -> Result<Response<Self::GetResourceFilesStream>, Status> {
-
+    async fn get_resource_files(
+        &self,
+        _request: Request<Empty>,
+    ) -> Result<Response<Self::GetResourceFilesStream>, Status> {
         let (tx, rx) = mpsc::channel(128);
         let output = ReceiverStream::new(rx);
 
         let store = self.store.clone();
 
         tokio::spawn(async move {
-             let get_files_response = |store: Arc<Mutex<ServerStore>>| {
-                let file_paths = store.lock().unwrap().state.graph.dependencies.keys().map(|key| {
-                    key.to_string()
-                 }).collect::<Vec<String>>();
-    
-                 Ok(ResourceFiles {
-                    file_paths
-                })
-             };
+            let get_files_response = |store: Arc<Mutex<ServerStore>>| {
+                let file_paths = store
+                    .lock()
+                    .unwrap()
+                    .state
+                    .graph
+                    .dependencies
+                    .keys()
+                    .map(|key| key.to_string())
+                    .collect::<Vec<String>>();
 
-             tx.send((get_files_response)(store.clone())).await.expect("Failed to send stream, must be closed");
+                Ok(ResourceFiles { file_paths })
+            };
+
+            tx.send((get_files_response)(store.clone()))
+                .await
+                .expect("Failed to send stream, must be closed");
 
             handle_store_events!(store.clone(), ServerEvent::DependencyGraphLoaded { graph: _ } => {
                 tx.send((get_files_response)(store.clone())).await.expect("Failed to send stream, must be closed");
             });
         });
 
-        Ok(Response::new(Box::pin(output) as Self::GetResourceFilesStream))
+        Ok(Response::new(
+            Box::pin(output) as Self::GetResourceFilesStream
+        ))
     }
 
     async fn undo(&self, _request: Request<Empty>) -> Result<Response<Empty>, Status> {
@@ -196,10 +207,10 @@ impl Designer for DesignerService {
             };
 
             handle_store_events!(store.clone(),
-                ServerEvent::ScreenshotCaptured { component_id } => {
+                ServerEvent::ScreenshotCaptured { expr_id } => {
                     tx.send(Result::Ok(
                         designer_event::Inner::ScreenshotCaptured(ScreenshotCaptured {
-                            component_id: component_id.to_string()
+                            expr_id: expr_id.to_string()
                         })
                         .get_outer(),
                     )).await.expect("Can't send");

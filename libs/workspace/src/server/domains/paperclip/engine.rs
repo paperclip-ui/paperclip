@@ -134,14 +134,22 @@ async fn load_files<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> 
     Ok(())
 }
 
-async fn evaluate_dependency_graph<TIO: ServerIO>(ctx: ServerEngineContext<TIO>, files: Option<Vec<String>>) -> Result<()> {
+async fn evaluate_dependency_graph<TIO: ServerIO>(
+    ctx: ServerEngineContext<TIO>,
+    files: Option<Vec<String>>,
+) -> Result<()> {
     let files = if let Some(files) = files {
         files
     } else {
         let store = ctx.store.lock().unwrap();
-        store.state.graph.dependencies.keys().map(|key| {
-            key.clone()
-        }).collect::<Vec<String>>().clone()
+        store
+            .state
+            .graph
+            .dependencies
+            .keys()
+            .map(|key| key.clone())
+            .collect::<Vec<String>>()
+            .clone()
     };
 
     let mut output: HashMap<String, (css::virt::Document, html::virt::Document)> = HashMap::new();

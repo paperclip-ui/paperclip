@@ -28,8 +28,8 @@ export const apiReducer = (
 const serverEventReducer = (state: DesignerState, event: DesignServerEvent) => {
   if (event.screenshotCaptured) {
     return produce(state, (newState) => {
-      newState.screenshotUrls[event.screenshotCaptured.componentId] =
-        getComponentScreenshotUrl(event.screenshotCaptured.componentId);
+      newState.screenshotUrls[event.screenshotCaptured.exprId] =
+        getComponentScreenshotUrl(event.screenshotCaptured.exprId);
     });
   }
   return state;
@@ -48,11 +48,11 @@ const handleGraphLoaded = (
   });
 };
 
-const getComponentScreenshotUrl = (componentId: string) =>
+const getComponentScreenshotUrl = (exprId: string) =>
   window.location.protocol +
   "//" +
   window.location.host +
   "/screenshots/" +
-  componentId +
+  exprId +
   ".png?" +
   Date.now();

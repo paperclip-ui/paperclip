@@ -9,6 +9,10 @@ export const createShortcutsEngine = (
   initialState: DesignerState
 ): Engine<DesignerState, DesignerEvent> => {
   const onKeyDown = (event: KeyboardEvent) => {
+    if (/textarea|input/i.test((event.target as HTMLElement).tagName)) {
+      return;
+    }
+
     if (
       getKeyboardMenuCommand(
         createKeyDownEvent(event),

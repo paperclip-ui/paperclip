@@ -25,6 +25,8 @@ public component Container {
             background: var(theme.gray06)
             width: 100vw
             height: 100vh
+            display: flex
+            flex-direction: column
         }
         div header {
             style {
@@ -41,11 +43,11 @@ public component Container {
             }
             div controls {
                 style {
-                        max-width: 200px
-                        display: flex
-                        align-items: center
-                        gap: var(theme.space06)
-                    }
+                    max-width: 200px
+                    display: flex
+                    align-items: center
+                    gap: var(theme.space06)
+                }
                 slot controls {
                     input.TextInput(placeholder: "Filter...", value: "")
                     AddFileButton
@@ -57,7 +59,7 @@ public component Container {
                 padding: var(theme.space06)
                 display: grid
                 gap: var(theme.space05)
-                position: relative
+                overflow: scroll
             }
             style variant smallScreen {
                 grid-template-columns: 1fr 1fr
@@ -72,7 +74,6 @@ public component Container {
                 grid-template-columns: 1fr 1fr 1fr 1fr 1fr
             }
             slot items {
-                
                 etc.Item
                 etc.Item
                 etc.Item
@@ -93,7 +94,6 @@ public component Container {
     }
 }
 
-
 /**
  * @bounds(x: -729, y: 334, width: 388, height: 750)
 */
@@ -106,13 +106,12 @@ Container
 
 Container
 
-
-
 public component AddFileButton {
-    render button (onClick: onAddClick) {
-                        style extends theme.reset, theme.icon {
-                            -webkit-mask-image: url("./plus2.svg")
-                        }
-                        text "something"
-                    }
+    render button(onClick: onAddClick) {
+        style extends theme.reset, theme.icon {
+            -webkit-mask-image: url("./plus2.svg")
+        }
+        text "something"
+    }
 }
+

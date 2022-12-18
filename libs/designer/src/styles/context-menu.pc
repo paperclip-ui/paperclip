@@ -88,20 +88,14 @@ public component ContextMenuItem {
 }
 
 /**
- * @bounds(x: 246, y: -599, width: 556, height: 423)
+ * @bounds(x: -336, y: -930, width: 462, height: 376)
 */
 
-public component Unnamed {
-    render div {
-        style {
-            position: relative
-            font-size: var(imp.space07)
-            color: white
-            font-family: sans-serif
-        }
-        text "Type something"
+div {
+    style {
+        position: relative
+        color: white
     }
+    text "Type something"
 }
-
-
 

@@ -29,12 +29,7 @@
 
 - dashboard
 
-  - ability to search for file
-  - navigate to editor when file is clicked
-  - screenshot entire page
-  - --open should open dashboard
   - ability to create a file
-  - back button on editor page
 
 - files view
 - prompt for component name

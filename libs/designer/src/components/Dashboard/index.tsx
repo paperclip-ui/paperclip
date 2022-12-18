@@ -3,14 +3,19 @@ import * as styles from "@paperclip-ui/designer/src/styles/dashboard-page.pc";
 import * as etcStyles from "@paperclip-ui/designer/src/styles/etc.pc";
 import { TextInput } from "../TextInput";
 import { useSelector } from "@paperclip-ui/common";
-import { getResourceFilePaths } from "../../state";
+import { getGraph, getResourceFilePaths, getScreenshotUrls } from "../../state";
 import { useHistory } from "../../domains/history/react";
 import { routes } from "../../state/routes";
 
 export const Dashboard = () => {
-  const { onAddClick, onFilterChange, resourceFilePaths, filter } =
-    useDashboard();
-  console.log(resourceFilePaths);
+  const {
+    onAddClick,
+    onFilterChange,
+    dependencies,
+    resourceFilePaths,
+    filter,
+    screenshotUrls,
+  } = useDashboard();
   return (
     <styles.Container
       controls={
@@ -23,15 +28,19 @@ export const Dashboard = () => {
           <styles.AddFileButton onAddClick={onAddClick} />
         </>
       }
-      items={resourceFilePaths
-        .filter((filePath) => {
+      items={dependencies
+        .filter((dep) => {
           return filter
             .toLowerCase()
             .split(/\s+/g)
-            .every((part) => filePath.includes(part));
+            .every((part) => dep.path.includes(part));
         })
-        .map((filePath) => (
-          <Item key={filePath} filePath={filePath} />
+        .map((dep) => (
+          <Item
+            key={dep.document.id}
+            filePath={dep.path}
+            screenshotUrl={screenshotUrls[dep.document.id]}
+          />
         ))}
     />
   );
@@ -43,18 +52,35 @@ const useDashboard = () => {
 
   const onFilterChange = (value: string) => setFilter(value);
   const resourceFilePaths = useSelector(getResourceFilePaths);
+  const screenshotUrls = useSelector(getScreenshotUrls);
+  const graph = useSelector(getGraph);
 
-  return { onAddClick, filter, onFilterChange, resourceFilePaths };
+  return {
+    onAddClick,
+    filter,
+    onFilterChange,
+    resourceFilePaths,
+    screenshotUrls,
+    dependencies: Object.values(graph.dependencies),
+  };
 };
 
 type ItemProps = {
   filePath: string;
+  screenshotUrl: string;
 };
 
 const Item = (props: ItemProps) => {
+  const { screenshotUrl } = props;
   const { basename, onClick } = useItem(props);
 
-  return <etcStyles.Item label={basename} onClick={onClick}></etcStyles.Item>;
+  return (
+    <etcStyles.Item
+      label={basename}
+      previewStyle={{ backgroundImage: `url(${screenshotUrl})` }}
+      onClick={onClick}
+    ></etcStyles.Item>
+  );
 };
 
 const useItem = ({ filePath }: ItemProps) => {

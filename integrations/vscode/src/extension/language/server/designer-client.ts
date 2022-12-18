@@ -60,17 +60,18 @@ export class DesignerClient {
     });
   };
   async updateVirtualFileContent(url: string, text: string) {
-    this._ignoreNextUpdate = true;
-    const client = await this._client.promise;
-    return new Promise((resolve, reject) => {
-      const content = new TextEncoder();
-      client
-        .UpdateFile({
-          path: URL.fileURLToPath(url),
-          content: content.encode(text),
-        })
-        .then(resolve, reject);
-    });
+    // TODO: do this when stable. Until then, depend on FS changes
+    // this._ignoreNextUpdate = true;
+    // const client = await this._client.promise;
+    // return new Promise((resolve, reject) => {
+    //   const content = new TextEncoder();
+    //   client
+    //     .UpdateFile({
+    //       path: URL.fileURLToPath(url),
+    //       content: content.encode(text),
+    //     })
+    //     .then(resolve, reject);
+    // });
   }
 
   async getDocumentInfo(url: string): Promise<DocumentInfo> {

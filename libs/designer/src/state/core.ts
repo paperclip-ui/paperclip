@@ -228,7 +228,7 @@ const getAllFrameBounds = (designer: DesignerState) => {
 };
 export const getSelectedNodePath = (designer: DesignerState) => {
   const nodeId = getSelectedNodeId(designer);
-  if (!nodeId) {
+  if (!nodeId || !designer.currentDocument) {
     return null;
   }
   const node = virtHTML.getNodeById(
@@ -472,3 +472,18 @@ const addHoverableChildren = (
 
 export const getResourceFilePaths = (state: DesignerState) =>
   state.resourceFilePaths;
+
+export const resetCurrentDocument = (state: DesignerState): DesignerState => ({
+  ...state,
+  currentDocument: null,
+  rects: {},
+  computedStyles: {},
+  centeredInitial: false,
+  selectedTargetId: null,
+  highlightNodePath: null,
+  preEditComputedStyles: {},
+  canvas: {
+    transform: { x: 0, y: 0, z: 1 },
+    scrollPosition: { x: 0, y: 0 },
+  },
+});

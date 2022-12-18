@@ -1,10 +1,10 @@
 use super::base::EditContext;
+use paperclip_proto::ast;
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast_mutate::{mutation_result, DeleteExpression, ExpressionDeleted};
-use paperclip_proto::{ast};
 
 use crate::ast::all::MutableVisitor;
-use crate::ast::{all::VisitorResult};
+use crate::ast::all::VisitorResult;
 macro_rules! try_remove_child {
     ($children:expr, $id: expr) => {{
         let mut found_i = None;

@@ -15,12 +15,12 @@ pub enum ServerEvent {
     UpdateFileRequested { path: String, content: Vec<u8> },
     UndoRequested,
     RedoRequested,
-    ScreenshotCaptured { component_id: String },
+    ScreenshotCaptured { expr_id: String },
     SaveRequested,
     ApplyMutationRequested { mutations: Vec<Mutation> },
     PaperclipFilesLoaded { files: Vec<String> },
     DependencyGraphLoaded { graph: Graph },
     ModulesEvaluated(HashMap<String, (css::virt::Document, html::virt::Document)>),
     ScreenshotsStarted,
-    ScreenshotsFinished
+    ScreenshotsFinished,
 }

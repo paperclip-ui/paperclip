@@ -55,9 +55,7 @@ public component LeftSidebarHeader {
                 style extends theme.reset, theme.icon {
                     cursor: pointer
                     -webkit-mask-image: url("./back.svg")
-                    --size: 1.6em
-                    width: 12px
-                    height: 1em
+                    --size: 1.5em
                 }
             }
             span {

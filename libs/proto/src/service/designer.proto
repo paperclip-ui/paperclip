@@ -67,5 +67,5 @@ message FileChanged {
 }
 
 message ScreenshotCaptured {
-  string component_id = 1;
+  string expr_id = 1;
 }

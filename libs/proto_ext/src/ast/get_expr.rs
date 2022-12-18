@@ -34,7 +34,7 @@ impl<'expr> Visitor<()> for GetExpr {
 }
 
 impl<'expr> GetExpr {
-    pub fn get_expr(id: &str, doc: &mut ast::pc::Document) -> Option<ExpressionWrapper> {
+    pub fn get_expr(id: &str, doc: &ast::pc::Document) -> Option<ExpressionWrapper> {
         let mut imp = GetExpr {
             id: id.to_string(),
             reference: None,

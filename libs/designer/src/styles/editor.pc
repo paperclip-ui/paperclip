@@ -101,6 +101,13 @@ public component Editor {
 Editor {
     Canvas {
         CanvasInner {
+            style {
+                left: 1178px
+                top: -144px
+                position: relative
+                width: 1384
+                height: 1166
+            }
             Artboard(style: "left: 50%; top: 50%; position: absolute; transform: translate(-50%, -50%);") {
                 insert title {
                     text "this should work!"
@@ -116,3 +123,4 @@ Editor {
     }
     assetsModal.Container
 }
+

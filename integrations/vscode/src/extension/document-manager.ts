@@ -22,7 +22,9 @@ export class DocumentManager {
     private _client: PaperclipLanguageClient
   ) {
     console.log("DocumentManager::constructor");
-    this._client.onFileChanged(this._onFileChanged);
+
+    // TODO: enable this when working properly
+    // this._client.onFileChanged(this._onFileChanged);
   }
 
   activate() {

@@ -133,7 +133,7 @@ type UseItemProps = {
 const useItem = ({ componentId }: UseItemProps) => {
   const [style, dragRef] = useDrag(() => ({
     type: DNDKind.Resource,
-    item: componentId,
+    item: { id: componentId },
     collect: (monitor) => ({
       opacity: monitor.isDragging() ? 0.5 : 1,
       cursor: monitor.isDragging() ? "copy" : "initial",

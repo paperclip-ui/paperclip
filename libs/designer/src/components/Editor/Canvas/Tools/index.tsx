@@ -10,7 +10,6 @@ import {
   InsertMode,
 } from "@paperclip-ui/designer/src/state";
 import { designerEvents } from "@paperclip-ui/designer/src/events";
-import { mergeBoxes } from "@paperclip-ui/designer/src/state/geom";
 import { Selectable } from "./Selectable";
 import { InsertElement } from "./InsertElement";
 import { ContextMenu } from "../../../ContextMenu";

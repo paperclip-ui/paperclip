@@ -7,7 +7,9 @@ import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent, designerEngineEvents } from "./events";
 import { DesignerEvent, designerEvents } from "../../events";
 import {
+  DEFAULT_FRAME_BOX,
   DesignerState,
+  DNDKind,
   flattenFrameBoxes,
   getInsertBox,
   getNodeInfoAtPoint,
@@ -15,11 +17,12 @@ import {
 } from "../../state";
 import { Mutation } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
 import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import {
   Element as VirtElement,
   TextNode as VirtTextNode,
 } from "@paperclip-ui/proto/lib/generated/virt/html";
-import { getScaledBox, roundBox } from "../../state/geom";
+import { getScaledBox, getScaledPoint, roundBox } from "../../state/geom";
 import {
   getEnabledVariants,
   getSelectedExprAvailableVariants,
@@ -405,6 +408,43 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
+  const handleDropItem = (
+    {
+      payload: { kind, item, point },
+    }: ReturnType<typeof designerEvents.toolsLayerDrop>,
+    state: DesignerState
+  ) => {
+    if (kind === DNDKind.Resource) {
+      const bounds = {
+        ...DEFAULT_FRAME_BOX,
+        ...getScaledPoint(point, state.canvas.transform),
+      };
+
+      const expr = ast.getExprById(item.id, state.graph);
+
+      let changes = [];
+
+      if (ast.isComponent(expr)) {
+        changes = [
+          {
+            insertFrame: {
+              documentId: state.currentDocument.paperclip.html.sourceId,
+              bounds: roundBox(bounds),
+              nodeSource: [expr.name],
+              namespaces: {
+                [expr.name]: ast.getOwnerDependencyPath(item.id, state.graph),
+              },
+            },
+          },
+        ];
+      }
+
+      console.log(changes);
+
+      actions.applyChanges(changes);
+    }
+  };
+
   return (
     event: DesignerEvent,
     newState: DesignerState,
@@ -438,6 +478,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case designerEvents.resizerPathStoppedMoving.type: {
         return handleResizerStoppedMoving(event, newState, prevState);
+      }
+      case designerEvents.toolsLayerDrop.type: {
+        return handleDropItem(event, newState);
       }
     }
   };

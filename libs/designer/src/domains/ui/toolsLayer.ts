@@ -7,7 +7,6 @@ export const toolsLayerReducer = (
 ) => {
   switch (event.type) {
     case designerEvents.toolsLayerDragOver.type: {
-      console.log(event.payload);
       return highlightNode(state, event.payload);
     }
   }

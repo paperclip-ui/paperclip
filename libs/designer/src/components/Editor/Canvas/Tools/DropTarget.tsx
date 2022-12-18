@@ -31,9 +31,6 @@ const useDropTarget = () => {
     accept: DNDKind.Resource,
     hover: (item, monitor) => {
       const offset = monitor.getClientOffset();
-      // const rect = toolsRef.getBoundingClientRect();
-
-      // console.log(rect, offset);
       dispatch(
         designerEvents.toolsLayerDragOver({
           x: offset.x,
@@ -44,7 +41,8 @@ const useDropTarget = () => {
     drop(item, monitor) {
       dispatch(
         designerEvents.toolsLayerDrop({
-          node: item,
+          kind: DNDKind.Resource,
+          item,
           point: monitor.getSourceClientOffset(),
         })
       );

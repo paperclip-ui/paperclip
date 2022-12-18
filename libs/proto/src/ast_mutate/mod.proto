@@ -131,6 +131,7 @@ message InsertFrame {
   string document_id = 1;
   string node_source = 2;
   Bounds bounds = 3;
+  map<string, string> namespaces = 4;
 }
 
 message SetTextNodeValue {

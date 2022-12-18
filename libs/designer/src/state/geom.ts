@@ -137,8 +137,7 @@ export const boxIntersectsPoint = (box: Box, point: Point) => {
 
 export const getScaledBox = (box: Box, transform: Transform) => {
   return {
-    x: (box.x - transform.x) / transform.z,
-    y: (box.y - transform.y) / transform.z,
+    ...getScaledPoint(box, transform),
     width: box.width / transform.z,
     height: box.height / transform.z,
   };

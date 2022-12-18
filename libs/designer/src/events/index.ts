@@ -6,7 +6,7 @@ import {
 import { UpdateVariantTrigger } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
 import { DesignerEngineEvent } from "../domains/api/events";
 import { HistoryEngineEvent } from "../domains/history/events";
-import { InsertMode } from "../state";
+import { DNDKind, InsertMode } from "../state";
 import { Box, Point, Size } from "../state/geom";
 import { ShortcutEvent } from "../domains/shortcuts/events";
 import { KeyboardEvent } from "../domains/keyboard/events";
@@ -21,7 +21,7 @@ export const designerEvents = eventCreators(
       triggers: UpdateVariantTrigger[];
     }>(),
     toolsLayerDragOver: identity<Point>(),
-    toolsLayerDrop: identity<{ node: any; point: Point }>(),
+    toolsLayerDrop: identity<{ kind: DNDKind; item: any; point: Point }>(),
     resourceModalDragLeft: null,
     resourceModalBackgroundClicked: null,
     editVariantClicked: identity<{ variantId: string }>(),

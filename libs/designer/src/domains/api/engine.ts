@@ -430,9 +430,9 @@ const createEventHandler = (actions: Actions) => {
             insertFrame: {
               documentId: state.currentDocument.paperclip.html.sourceId,
               bounds: roundBox(bounds),
-              nodeSource: [expr.name],
-              namespaces: {
-                [expr.name]: ast.getOwnerDependencyPath(item.id, state.graph),
+              nodeSource: `imp.${expr.name}`,
+              imports: {
+                imp: ast.getOwnerDependencyPath(item.id, state.graph),
               },
             },
           },

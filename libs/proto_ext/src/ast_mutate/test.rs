@@ -6,7 +6,7 @@ use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_proto::ast_mutate::{
     mutation, update_variant_trigger, AppendChild, Bounds, ConvertToComponent, ConvertToSlot,
     DeleteExpression, SetFrameBounds, SetStyleDeclarationValue, SetStyleDeclarations,
-    ToggleVariants, UpdateVariant,
+    ToggleVariants, UpdateVariant, InsertFrame,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use std::collections::HashMap;
@@ -413,18 +413,55 @@ case! {
     variant_ids: vec![],
     declarations: vec![
       SetStyleDeclarationValue {
-        imports: HashMap::from([("$1".to_string(), "/module.pc".to_string())]),
+        imports: HashMap::from([("mod".to_string(), "/module.pc".to_string())]),
         name: "color".to_string(),
-        value: "var($1.blue01)".to_string()
+        value: "var(mod.blue01)".to_string()
       }
     ]
   }).get_outer(),
   [(
     "/entry.pc", r#"
-      import "./module.pc" as imp 
+      import "./module.pc" as mod 
       div { 
         style { 
-          color: var(imp.blue01) 
+          color: var(mod.blue01) 
+        } 
+      }
+    "#
+  )]
+}
+case! {
+  namespace_is_dropped_from_var_decl_if_in_same_file,
+  [
+    (
+      "/entry.pc", r#"
+
+        token blue01 blue 
+
+        div {
+          style {
+          }
+        }
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
+    expression_id: "80f4925f-3".to_string(),
+    variant_ids: vec![],
+    declarations: vec![
+      SetStyleDeclarationValue {
+        imports: HashMap::from([("mod".to_string(), "/entry.pc".to_string())]),
+        name: "color".to_string(),
+        value: "var(mod.blue01)".to_string()
+      }
+    ]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      token blue01 blue
+      div { 
+        style { 
+          color: var(blue01) 
         } 
       }
     "#
@@ -454,9 +491,9 @@ case! {
     variant_ids: vec![],
     declarations: vec![
       SetStyleDeclarationValue {
-        imports: HashMap::from([("$1".to_string(), "/module.pc".to_string())]),
+        imports: HashMap::from([("mod".to_string(), "/module.pc".to_string())]),
         name: "color".to_string(),
-        value: "var($1.blue01)".to_string()
+        value: "var(mod.blue01)".to_string()
       }
     ]
   }).get_outer(),
@@ -1313,6 +1350,167 @@ case! {
       component A {
         render slot child
       }
+    "#
+  )]
+}
+
+case! {
+  can_import_a_frame,
+  [
+    (
+      "/entry.pc", r#"      
+      "#
+    ),
+    (
+      "/test.pc", r#"
+        component A {
+          render div
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::InsertFrame(InsertFrame {
+    node_source: "mod.A".to_string(),
+    bounds: Some(Bounds {
+      x: 100.0,
+      y: 200.0,
+      width: 300.0,
+      height: 400.0
+    }),
+    document_id: "80f4925f-1".to_string(),
+    imports: HashMap::from([("mod".to_string(), "/test.pc".to_string())])
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      import "./test.pc" as mod
+      /**
+       * @bounds(x: 100, y: 200, width: 300, height: 400)
+       */
+      mod.A
+    "#
+  )]
+}
+
+case! {
+  re_uses_import_if_exists,
+  [
+    (
+      "/entry.pc", r#"     
+        import "/test.pc" as imp
+      "#
+    ),
+    (
+      "/test.pc", r#"
+        component A {
+          render div
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::InsertFrame(InsertFrame {
+    node_source: "mod.A".to_string(),
+    bounds: Some(Bounds {
+      x: 100.0,
+      y: 200.0,
+      width: 300.0,
+      height: 400.0
+    }),
+    document_id: "80f4925f-2".to_string(),
+    imports: HashMap::from([("mod".to_string(), "/test.pc".to_string())])
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      import "/test.pc" as imp
+      /**
+       * @bounds(x: 100, y: 200, width: 300, height: 400)
+       */
+      imp.A
+    "#
+  )]
+}
+
+case! {
+  uses_unique_namespace,
+  [
+    (
+      "/entry.pc", r#"     
+        import "/test2.pc" as mod
+      "#
+    ),
+    (
+      "/test.pc", r#"
+        component A {
+          render div
+        }
+      "#
+    ),
+    (
+      "/test2.pc", r#"
+        
+      "#
+    )
+  ],
+
+  mutation::Inner::InsertFrame(InsertFrame {
+    node_source: "mod.A".to_string(),
+    bounds: Some(Bounds {
+      x: 100.0,
+      y: 200.0,
+      width: 300.0,
+      height: 400.0
+    }),
+    document_id: "80f4925f-2".to_string(),
+    imports: HashMap::from([("mod".to_string(), "/test.pc".to_string())])
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      import "./test.pc" as mod1
+      import "/test2.pc" as mod
+      /**
+       * @bounds(x: 100, y: 200, width: 300, height: 400)
+       */
+      mod1.A
+    "#
+  )]
+}
+
+
+case! {
+  if_inserting_frame_of_component_in_same_doc_the_namespace_is_dropped,
+  [
+    (
+      "/entry.pc", r#"     
+        component A {
+          render div
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::InsertFrame(InsertFrame {
+    node_source: "mod.A".to_string(),
+    bounds: Some(Bounds {
+      x: 100.0,
+      y: 200.0,
+      width: 300.0,
+      height: 400.0
+    }),
+    document_id: "80f4925f-4".to_string(),
+    imports: HashMap::from([("mod".to_string(), "/entry.pc".to_string())])
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+
+      component A {
+        render div
+      }
+
+      /**
+       * @bounds(x: 100, y: 200, width: 300, height: 400)
+       */
+      A
     "#
   )]
 }

@@ -4,6 +4,7 @@ use std::path::Path;
 use pathdiff::diff_paths;
 
 use super::base::EditContext;
+use super::utils::{parse_import, resolve_import, resolve_imports, add_imports, NamespaceResolution};
 use crate::ast::get_expr::GetExpr;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
@@ -35,22 +36,12 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetStyleDeclarations> {
             return VisitorResult::Continue;
         }
 
-        for (ns, (_old_ns, path, is_new)) in get_dep_imports(&self.mutation, &self.dependency) {
-            if is_new {
-                let relative =
-                    diff_paths(&path, Path::new(&self.dependency.path).parent().unwrap()).unwrap();
-                let mut relative = relative.to_str().unwrap().to_string();
-
-                if !relative.starts_with(".") {
-                    relative = format!("./{}", relative);
+        for (path, resolution) in get_dep_imports(&self.mutation, &self.dependency) {
+            if resolution.is_new {
+                if let Some(ns) = &resolution.resolved {
+                    let relative = resolve_import(&self.dependency.path, &path);
+                    doc.body.insert(0, parse_import(&relative, &ns, doc.checksum().as_str()));
                 }
-
-                let new_imp_doc = parse_pc(
-                    format!("import \"{}\" as {}", relative, ns).as_str(),
-                    doc.checksum().as_str(),
-                )
-                .unwrap();
-                doc.body.insert(0, new_imp_doc.body.get(0).unwrap().clone());
             }
         }
 
@@ -165,49 +156,13 @@ fn variant_combo_equals(a: &Vec<ast::pc::Reference>, b: &Vec<ast::pc::Reference>
 fn get_dep_imports(
     mutation: &SetStyleDeclarations,
     dep: &Dependency,
-) -> HashMap<String, (String, String, bool)> {
+) -> HashMap<String, NamespaceResolution> {
     let mut imports = HashMap::new();
 
     for decl in &mutation.declarations {
-        for (key, path) in &decl.imports {
-            let existing_import = dep.imports.iter().find_map(|(relative, imp_path)| {
-                if imp_path == path {
-                    let ns = dep
-                        .document
-                        .as_ref()
-                        .unwrap()
-                        .get_imports()
-                        .iter()
-                        .find(|imp| &imp.path == relative)
-                        .unwrap()
-                        .namespace
-                        .to_string();
-
-                    Some(ns)
-                } else {
-                    None
-                }
-            });
-
-            if let Some(ns) = existing_import {
-                imports.insert(ns.to_string(), (key.to_string(), path.to_string(), false));
-            } else {
-                let mut ns = "imp".to_string();
-                let mut inc = 1;
-                loop {
-                    if matches!(
-                        dep.imports
-                            .iter()
-                            .find(|(existing_ns, _path)| existing_ns == &&ns),
-                        None
-                    ) {
-                        break;
-                    }
-                    ns = format!("imp{}", inc);
-                    inc += 1;
-                }
-                imports.insert(ns.to_string(), (key.to_string(), path.to_string(), true));
-            }
+        let resolved = resolve_imports(&decl.imports, dep);
+        for (path, resolution) in resolved {
+            imports.insert(path.to_string(), resolution);
         }
     }
 
@@ -233,8 +188,12 @@ fn mutation_to_style(mutation: &SetStyleDeclarations, dep: &Dependency) -> Strin
     for kv in &mutation.declarations {
         let mut value = kv.value.to_string();
 
-        for (ns, (old_ns, _path, _is_new)) in imports.iter() {
-            value = value.replace(old_ns.as_str(), &ns);
+        for (_, resolution) in imports.iter() {
+            if let Some(ns) = &resolution.resolved {
+                value = value.replace(&resolution.prev, ns);
+            } else {
+                value = value.replace(format!("{}.", resolution.prev).as_str(), "");
+            }
         }
 
         buffer = format!("{}{}: {}\n", buffer, kv.name, value)

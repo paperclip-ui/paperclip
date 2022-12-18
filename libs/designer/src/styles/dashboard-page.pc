@@ -1,12 +1,23 @@
+import "./input.pc" as input
 import "./theme.pc" as theme
+import "./etc.pc" as etc
 
 /**
  * @bounds(x: 290, y: 329, width: 1024, height: 768)
 */
 
 public component Container {
+    variant smallScreen trigger {
+        "@media screen and (min-width: 0px)"
+    }
+    variant medScreen trigger {
+        "@media screen and (min-width: 700px)"
+    }
+    variant largeScreen trigger {
+        "@media screen and (min-width: 800px)"
+    }
     render div {
-        style {
+        style extends theme.fontDefault {
             position: relative
             background: var(theme.gray06)
             width: 100vw
@@ -15,16 +26,85 @@ public component Container {
         div header {
             style {
                 display: flex
+                align-items: center
             }
             h1 {
                 style extends theme.fontDefault {
                     margin: 0px
-                    font-size: 32px
+                    font-size: 18px
                     padding: var(theme.space06)
                 }
-                text "Filessd"
+                text "Design files"
             }
+            div controls {
+                div {
+                    style {
+                        max-width: 200px
+                    }
+                    input.TextInput(placeholder: "Filter...", value: "")
+                }
+            }
+        }
+        div items {
+            style {
+                padding: var(theme.space06)
+                display: grid
+                gap: var(theme.space05)
+                left: NaNpx
+                top: NaNpx
+                position: relative
+                width: 428
+                height: 768
+            }
+            style variant smallScreen {
+                grid-template-columns: 1fr 1fr
+            }
+            style variant medScreen {
+                grid-template-columns: 1fr 1fr 1fr
+            }
+            style variant largeScreen {
+                grid-template-columns: 1fr 1fr 1fr 1fr
+            }
+            
+            Item
+            Item
+            Item
+            Item
+            Item
+            Item
+            Item
+            Item
+            Item
+            Item
+            Item
+            Item
+            Item
+            Item
+            Item
         }
     }
 }
+
+public component Item {
+    render div {
+        style {
+            background: white
+            width: 100%
+            height: 150px
+            border-radius: var(theme.rounded)
+        }
+    }
+}
+
+/**
+ * @bounds(x: -729, y: 334, width: 388, height: 750)
+*/
+
+Container
+
+/**
+ * @bounds(x: -1729, y: 334, width: 700, height: 750)
+*/
+
+Container
 

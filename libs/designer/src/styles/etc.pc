@@ -1,0 +1,33 @@
+import "./editor.pc" as imp
+import "./theme.pc" as theme
+import "./input.pc" as input
+
+public component Item {
+    render div(style: style) {
+        style {
+            background: rgba(0, 0, 0, 0.1)
+            border-radius: var(theme.rounded)
+            width: 100%
+        }
+        div preview (style: previewStyle) {
+            style {
+                width: 100%
+                height: 100px
+                background: white
+                border-top-left-radius: var(theme.rounded)
+                border-top-right-radius: var(theme.rounded)
+                background-size: calc(100% - var(theme.space03))
+                background-repeat: no-repeat
+                background-position: 50% 50%
+            }
+        }
+        div {
+            style {
+                padding: var(theme.space02) var(theme.space04)
+            }
+            slot label {
+                text "label"
+            }
+        }
+    }
+}

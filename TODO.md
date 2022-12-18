@@ -29,6 +29,7 @@
   - navigate to editor when file is clicked
   - screenshot entire page
   - --open should open dashboard
+  - ability to create a file
 
 - files view
 - prompt for component name

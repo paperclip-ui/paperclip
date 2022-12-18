@@ -1,6 +1,7 @@
 import "./editor.pc" as imp
 import "./theme.pc" as theme
 import "./input.pc" as input
+import "./etc.pc" as etc
 
 /**
  * @bounds(x: -1, y: 0, width: 1024, height: 768)
@@ -26,59 +27,29 @@ public component Tab {
     }
 }
 
-public component Item {
-    render div(style: style) {
+public component Tabs {
+    render div {
         style {
             background: rgba(0, 0, 0, 0.1)
-            border-radius: var(theme.rounded)
-            width: 100%
+            height: 100%
+            border-right: 1px solid var(theme.borderColor)
+            display: flex
+            flex-direction: column
+            gap: var(theme.space04)
+            padding: var(theme.space04)
         }
-        div preview (style: previewStyle) {
-            style {
-                width: 100%
-                height: 100px
-                background: white
-                border-top-left-radius: var(theme.rounded)
-                border-top-right-radius: var(theme.rounded)
-                background-size: calc(100% - var(theme.space03))
-                background-repeat: no-repeat
-                background-position: 50% 50%
+        slot children {
+            Tab {
+                text "images"
             }
-        }
-        div {
-            style {
-                padding: var(theme.space02) var(theme.space04)
+            Tab(class: "selected") {
+                text "components"
             }
-            slot label {
-                text "label"
+            Tab {
+                text "mixins"
             }
         }
     }
-}
-
-public component Tabs {
-    render div {
-                style {
-                    background: rgba(0, 0, 0, 0.1)
-                    height: 100%
-                    border-right: 1px solid var(theme.borderColor)
-                    display: flex
-                    flex-direction: column
-                    gap: var(theme.space04)
-                    padding: var(theme.space04)
-                }
-                slot children {
-                    Tab {
-                    text "images"
-                }
-                Tab(class: "selected") {
-                    text "components"
-                }
-                Tab {
-                    text "mixins"
-                }
-                }
-            }
 }
 
 public component Container {
@@ -94,9 +65,9 @@ public component Container {
         div(onClick: onBackgroundClick) {
             style {
                 background: transparent
-                width: 100%
-                height: 100%
-                position: absolute
+                width: 933
+                height: 739
+                position: relative
                 top: 0px
                 left: 0px
             }
@@ -137,20 +108,20 @@ public component Container {
                         overflow: scroll
                     }
                     slot items {
-                        Item {
-                        insert label {
-                            text "ComboBox"
+                        etc.Item {
+                            insert label {
+                                text "ComboBox"
+                            }
                         }
-                    }
-                    Item
-                    Item
-                    Item
-                    Item
-                    Item
-                    Item
-                    Item
-                    Item
-                    Item
+                        etc.Item
+                        etc.Item
+                        etc.Item
+                        etc.Item
+                        etc.Item
+                        etc.Item
+                        etc.Item
+                        etc.Item
+                        etc.Item
                     }
                 }
             }

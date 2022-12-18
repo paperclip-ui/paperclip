@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/resource-modal.pc";
+import * as etcStyles from "@paperclip-ui/designer/src/styles/etc.pc";
 import { TextInput } from "../../TextInput";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
@@ -115,7 +116,7 @@ export type ItemProps = {
 const Item = ({ component, screenshotUrl }: ItemProps) => {
   const { style, ref } = useItem({ component });
   return (
-    <styles.Item
+    <etcStyles.Item
       ref={ref}
       label={component.name}
       style={style}

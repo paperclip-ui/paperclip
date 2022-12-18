@@ -69,7 +69,7 @@ type Query = {
 export type DesignerState = {
   readonly: boolean;
   scopedElementPath?: string;
-  selectedVirtNodeId: string;
+  selectedTargetId: string;
   activeVariantId?: string;
   insertedNodeIds: string[];
   graph: Graph;
@@ -119,7 +119,7 @@ export const DEFAULT_STATE: DesignerState = {
   scopedElementPath: null,
   expandedNodePaths: [],
   centeredInitial: false,
-  selectedVirtNodeId: null,
+  selectedTargetId: null,
   canvas: {
     transform: { x: 0, y: 0, z: 1 },
     scrollPosition: { x: 0, y: 0 },
@@ -236,7 +236,7 @@ export const getSelectedNodePath = (designer: DesignerState) => {
   return virtHTML.getNodePath(node, designer.currentDocument.paperclip.html);
 };
 export const getSelectedNodeId = (designer: DesignerState) => {
-  return designer.selectedVirtNodeId;
+  return designer.selectedTargetId;
 };
 export const getHighlightedNodePath = (designer: DesignerState) =>
   designer.highlightNodePath;

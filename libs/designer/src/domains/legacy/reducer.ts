@@ -43,7 +43,7 @@ export const legacyReducer = (
 
         for (const id of newState.insertedNodeIds) {
           if (virtHTML.getNodeById(id, event.payload.paperclip.html)) {
-            newState.selectedVirtNodeId = id;
+            newState.selectedTargetId = id;
           }
 
           const expr = ast.getExprById(id, state.graph);
@@ -169,9 +169,9 @@ export const legacyReducer = (
       [state, doubleClicked] = handleDoubleClick(state, event);
 
       if (doubleClicked) {
-        if (state.selectedVirtNodeId) {
+        if (state.selectedTargetId) {
           const node = virtHTML.getNodeById(
-            state.selectedVirtNodeId,
+            state.selectedTargetId,
             state.currentDocument.paperclip.html
           );
 
@@ -262,7 +262,7 @@ export const legacyReducer = (
     case designerEvents.resizerPathMoved.type: {
       state = produce(state, (newState) => {
         const node = virtHTML.getNodeById(
-          newState.selectedVirtNodeId,
+          newState.selectedTargetId,
           newState.currentDocument.paperclip.html
         ) as any as VirtElement | VirtText;
 
@@ -399,7 +399,7 @@ const selectNode = (
 ) => {
   designer = produce(designer, (newDesigner) => {
     if (!virtNodeId) {
-      newDesigner.selectedVirtNodeId = null;
+      newDesigner.selectedTargetId = null;
       return;
     }
     const ancestorIds = ast.getAncestorVirtIdsFromShadow(
@@ -410,7 +410,7 @@ const selectNode = (
 
     const expr = ast.getExprById(virtNodeId.split(".").pop(), designer.graph);
 
-    newDesigner.selectedVirtNodeId = virtNodeId;
+    newDesigner.selectedTargetId = virtNodeId;
 
     // if (
     //   newDesigner.scopedElementPath &&

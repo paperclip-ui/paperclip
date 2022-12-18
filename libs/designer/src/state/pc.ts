@@ -364,7 +364,7 @@ export const getSelectedExprStyles = (
 ): ComputedDeclaration[] => {
   const combinedStyles: Record<string, ComputedDeclaration> = {};
 
-  const virtId = state.selectedVirtNodeId;
+  const virtId = state.selectedTargetId;
   if (!virtId) {
     return [];
   }
@@ -404,8 +404,8 @@ export const getSelectedExprStyles = (
 
 export const getSelectedExpression = (state: DesignerState) => {
   return (
-    state.selectedVirtNodeId &&
-    ast.getExprByVirtId(state.selectedVirtNodeId, state.graph)
+    state.selectedTargetId &&
+    ast.getExprByVirtId(state.selectedTargetId, state.graph)
   );
 };
 
@@ -417,10 +417,10 @@ export const getActiveVariant = (state: DesignerState) => {
 };
 
 export const getSelectedExprOwnerComponent = (state: DesignerState) => {
-  if (!state.selectedVirtNodeId) {
+  if (!state.selectedTargetId) {
     return null;
   }
-  const expr = ast.getExprByVirtId(state.selectedVirtNodeId, state.graph);
+  const expr = ast.getExprByVirtId(state.selectedTargetId, state.graph);
   if (!expr) {
     return null;
   }

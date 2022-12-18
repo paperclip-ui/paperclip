@@ -28,17 +28,17 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
     case ShortcutCommand.InsertElement:
       return produce(state, (newState) => {
         newState.insertMode = InsertMode.Element;
-        newState.selectedVirtNodeId = null;
+        newState.selectedTargetId = null;
       });
     case ShortcutCommand.InsertText:
       return produce(state, (newState) => {
         newState.insertMode = InsertMode.Text;
-        newState.selectedVirtNodeId = null;
+        newState.selectedTargetId = null;
       });
     case ShortcutCommand.InsertResource:
       return produce(state, (newState) => {
         newState.insertMode = InsertMode.Resource;
-        newState.selectedVirtNodeId = null;
+        newState.selectedTargetId = null;
       });
     case ShortcutCommand.ShowHideUI:
       return produce(state, (newState) => {
@@ -52,28 +52,32 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
       });
     case ShortcutCommand.Delete:
       return produce(state, (newState) => {
-        if (newState.selectedVirtNodeId) {
+        if (newState.selectedTargetId) {
           const node = virtHTML.getNodeById(
-            newState.selectedVirtNodeId,
+            newState.selectedTargetId,
             state.currentDocument.paperclip.html
           );
-          const parent = virtHTML.getNodeParent(
-            node,
-            state.currentDocument.paperclip.html
-          );
-          // const index = parent.children.findIndex(child => (child.element === node || child.textNode === node));
-          const nextChild = parent.children.find((child) => {
-            const inner = virtHTML.getInnerNode(child);
-            return newState.selectedVirtNodeId !== inner.id;
-          });
+          const parent =
+            node &&
+            virtHTML.getNodeParent(node, state.currentDocument.paperclip.html);
 
-          if (nextChild) {
-            newState.selectedVirtNodeId = virtHTML.getInnerNode(nextChild).id;
+          if (parent) {
+            // const index = parent.children.findIndex(child => (child.element === node || child.textNode === node));
+            const nextChild = parent.children.find((child) => {
+              const inner = virtHTML.getInnerNode(child);
+              return newState.selectedTargetId !== inner.id;
+            });
+
+            if (nextChild) {
+              newState.selectedTargetId = virtHTML.getInnerNode(nextChild).id;
+            } else {
+              newState.selectedTargetId = parent.id;
+            }
           } else {
-            newState.selectedVirtNodeId = parent.id;
+            newState.selectedTargetId = null;
           }
         } else {
-          newState.selectedVirtNodeId = null;
+          newState.selectedTargetId = null;
         }
       });
   }

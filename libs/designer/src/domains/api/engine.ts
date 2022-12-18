@@ -195,15 +195,12 @@ const createEventHandler = (actions: Actions) => {
     prevState: DesignerState
   ) => {
     const node = virtHTML.getNodeById(
-      prevState.selectedVirtNodeId,
+      prevState.selectedTargetId,
       prevState.currentDocument.paperclip.html
     ) as VirtTextNode | VirtElement;
 
-    if (!node) {
-      console.warn(`Node doesn't exist, skipping delete`);
-      return;
-    }
-    handleDeleteExpression(node.sourceId, state);
+    // could be expression
+    handleDeleteExpression(node?.sourceId || prevState.selectedTargetId, state);
   };
 
   const handleResizerStoppedMoving = (
@@ -212,7 +209,7 @@ const createEventHandler = (actions: Actions) => {
     prevState: DesignerState
   ) => {
     const node = virtHTML.getNodeById(
-      prevState.selectedVirtNodeId,
+      prevState.selectedTargetId,
       prevState.currentDocument.paperclip.html
     ) as VirtTextNode | VirtElement;
 
@@ -230,7 +227,7 @@ const createEventHandler = (actions: Actions) => {
             variantIds,
             expressionId: node.sourceId,
             declarations: Object.entries(
-              state.styleOverrides[prevState.selectedVirtNodeId]
+              state.styleOverrides[prevState.selectedTargetId]
             ).map(([name, value]) => {
               return { name, value: String(value) };
             }),
@@ -265,13 +262,13 @@ const createEventHandler = (actions: Actions) => {
       {
         setStyleDeclarations: {
           variantIds,
-          expressionId: state.selectedVirtNodeId,
+          expressionId: state.selectedTargetId,
           declarations: style.filter((kv) => kv.value !== ""),
         },
       },
       {
         deleteStyleDeclarations: {
-          expressionId: state.selectedVirtNodeId,
+          expressionId: state.selectedTargetId,
           declarationNames: style
             .filter((kv) => kv.value === "")
             .map((kv) => kv.name),
@@ -318,15 +315,6 @@ const createEventHandler = (actions: Actions) => {
     expressionId: string,
     state: DesignerState
   ) => {
-    // const expr = ast.getExprById(expressionId, state.graph);
-    // const component = ast.getExprOwnerComponent(expr, state.graph);
-    // console.log(expr, component, ast.getComponentRenderNode(component));
-
-    // // deleting the component?
-    // if (component && ast.getComponentRenderNode(component)?.id === expr.id) {
-    //   console.log("DEL COMP");
-    // }
-
     actions.applyChanges([
       {
         deleteExpression: {
@@ -358,11 +346,11 @@ const createEventHandler = (actions: Actions) => {
   const handleConvertToComponent = (state: DesignerState) => {
     // Do not allow for nested instances to be converted to components.
     // Or, at least provide a confirmation for this.
-    if (!state.selectedVirtNodeId.includes(".")) {
+    if (!state.selectedTargetId.includes(".")) {
       actions.applyChanges([
         {
           convertToComponent: {
-            expressionId: state.selectedVirtNodeId,
+            expressionId: state.selectedTargetId,
           },
         },
       ]);
@@ -371,11 +359,11 @@ const createEventHandler = (actions: Actions) => {
   const handleConvertToSlot = (state: DesignerState) => {
     // Do not allow for nested instances to be converted to components.
     // Or, at least provide a confirmation for this.
-    if (!state.selectedVirtNodeId.includes(".")) {
+    if (!state.selectedTargetId.includes(".")) {
       actions.applyChanges([
         {
           convertToSlot: {
-            expressionId: state.selectedVirtNodeId,
+            expressionId: state.selectedTargetId,
           },
         },
       ]);

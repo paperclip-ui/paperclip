@@ -52,9 +52,7 @@ describe(__filename + "#", () => {
       '<span id="_4f0e8e93-1">hello</span><div id="_edcb8fb4-4" class="_edcb8fb4-4"></div>'
     );
 
-    expect(designer.machine.getState().selectedVirtNodeId).toEqual(
-      "edcb8fb4-4"
-    );
+    expect(designer.machine.getState().selectedTargetId).toEqual("edcb8fb4-4");
     designer.dispose();
   });
 
@@ -67,7 +65,7 @@ describe(__filename + "#", () => {
       `,
       },
       {
-        selectedVirtNodeId: "4f0e8e93-1",
+        selectedTargetId: "4f0e8e93-1",
         rects: {
           "0": {
             "0": { x: 0, y: 0, width: 100, height: 10 },
@@ -112,9 +110,7 @@ describe(__filename + "#", () => {
       '<span id="_4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div><div id="_8bc00fda-4" class="_8bc00fda-4"></div>'
     );
 
-    expect(designer.machine.getState().selectedVirtNodeId).toEqual(
-      "8bc00fda-4"
-    );
+    expect(designer.machine.getState().selectedTargetId).toEqual("8bc00fda-4");
 
     designer.machine.dispatch(
       shortcutEvents.itemSelected({ command: ShortcutCommand.Delete })
@@ -143,7 +139,7 @@ describe(__filename + "#", () => {
       `,
       },
       {
-        selectedVirtNodeId: "4f0e8e93-5",
+        selectedTargetId: "4f0e8e93-5",
       }
     );
 
@@ -154,9 +150,7 @@ describe(__filename + "#", () => {
       '<div id="_4f0e8e93-2" class="_A-4f0e8e93-2"><span id="_4f0e8e93-1">hello</span></div><div id="_4f0e8e93-5" class="_A-4f0e8e93-2 _4f0e8e93-5"><span id="_4f0e8e93-5.4f0e8e93-1">hello</span></div><span id="_4f0e8e93-6">Hello</span>'
     );
 
-    expect(designer.machine.getState().selectedVirtNodeId).toEqual(
-      "4f0e8e93-5"
-    );
+    expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-5");
 
     designer.machine.dispatch(
       shortcutEvents.itemSelected({ command: ShortcutCommand.Delete })
@@ -169,9 +163,7 @@ describe(__filename + "#", () => {
       '<div id="_4f0e8e93-2" class="_A-4f0e8e93-2"><span id="_4f0e8e93-1">hello</span></div><span id="_4f0e8e93-6">Hello</span>'
     );
 
-    expect(designer.machine.getState().selectedVirtNodeId).toEqual(
-      "4f0e8e93-2"
-    );
+    expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-2");
     designer.dispose();
   });
 
@@ -184,7 +176,7 @@ describe(__filename + "#", () => {
       `,
       },
       {
-        selectedVirtNodeId: "4f0e8e93-1",
+        selectedTargetId: "4f0e8e93-1",
       }
     );
 
@@ -195,26 +187,20 @@ describe(__filename + "#", () => {
       '<span id="_4f0e8e93-1"></span><div id="_4f0e8e93-2"></div>'
     );
 
-    expect(designer.machine.getState().selectedVirtNodeId).toEqual(
-      "4f0e8e93-1"
-    );
+    expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-1");
 
     designer.machine.dispatch(
       shortcutEvents.itemSelected({ command: ShortcutCommand.Delete })
     );
 
-    expect(designer.machine.getState().selectedVirtNodeId).toEqual(
-      "4f0e8e93-2"
-    );
+    expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-2");
 
     await waitForEvent(designerEngineEvents.documentOpened.type, designer);
     frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual('<div id="_4f0e8e93-2"></div>');
 
-    expect(designer.machine.getState().selectedVirtNodeId).toEqual(
-      "4f0e8e93-2"
-    );
+    expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-2");
     designer.dispose();
   });
 
@@ -229,7 +215,7 @@ describe(__filename + "#", () => {
       `,
       },
       {
-        selectedVirtNodeId: null,
+        selectedTargetId: null,
         rects: {
           "0": {
             "0": { x: 0, y: 0, width: 1024, height: 768 },
@@ -243,9 +229,7 @@ describe(__filename + "#", () => {
 
     await waitForEvent(designerEngineEvents.documentOpened.type, designer);
 
-    expect(designer.machine.getState().selectedVirtNodeId).toEqual(
-      "31cf58e1-19"
-    );
+    expect(designer.machine.getState().selectedTargetId).toEqual("31cf58e1-19");
     let frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual(
@@ -264,7 +248,7 @@ describe(__filename + "#", () => {
       `,
       },
       {
-        selectedVirtNodeId: "4f0e8e93-1",
+        selectedTargetId: "4f0e8e93-1",
       }
     );
 
@@ -273,9 +257,7 @@ describe(__filename + "#", () => {
       shortcutEvents.itemSelected({ command: ShortcutCommand.Delete })
     );
     await waitForEvent(designerEngineEvents.documentOpened.type, designer);
-    expect(designer.machine.getState().selectedVirtNodeId).toEqual(
-      "4f0e8e93-2"
-    );
+    expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-2");
     designer.dispose();
   });
 });

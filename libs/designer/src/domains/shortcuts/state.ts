@@ -40,8 +40,8 @@ export const getEntityShortcuts = (
       kind: MenuItemKind.Option,
       label: "Create slot",
       enabled:
-        ast.isExpressionId(state.selectedVirtNodeId) &&
-        ast.isExpressionInComponent(state.selectedVirtNodeId, state.graph),
+        ast.isExpressionId(state.selectedTargetId) &&
+        ast.isExpressionInComponent(state.selectedTargetId, state.graph),
       command: ShortcutCommand.ConvertToSlot,
     },
     { kind: MenuItemKind.Divider },

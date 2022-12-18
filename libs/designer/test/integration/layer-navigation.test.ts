@@ -18,9 +18,7 @@ describe(__filename + "#", () => {
     designer.machine.dispatch(
       designerEvents.layerLeafClicked({ virtId: "4f0e8e93-1" })
     );
-    expect(designer.machine.getState().selectedVirtNodeId).toEqual(
-      "4f0e8e93-1"
-    );
+    expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-1");
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([
       "4f0e8e93-1",
       "4f0e8e93-2",
@@ -49,9 +47,7 @@ describe(__filename + "#", () => {
     designer.machine.dispatch(
       designerEvents.layerLeafClicked({ virtId: "4f0e8e93-2" })
     );
-    expect(designer.machine.getState().selectedVirtNodeId).toEqual(
-      "4f0e8e93-2"
-    );
+    expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-2");
 
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([
       "4f0e8e93-2",

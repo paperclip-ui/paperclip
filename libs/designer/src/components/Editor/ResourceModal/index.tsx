@@ -1,12 +1,14 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/resource-modal.pc";
 import { TextInput } from "../../TextInput";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
+  DNDKind,
   getAllComponents,
   getScreenshotUrls,
   isResourceModalVisible,
 } from "@paperclip-ui/designer/src/state";
+import { boxIntersectsPoint } from "@paperclip-ui/designer/src/state/geom";
 import { designerEvents } from "@paperclip-ui/designer/src/events";
 import { useDrag } from "react-dnd";
 
@@ -18,7 +20,6 @@ export const ResourceModal = () => {
     onFilterChange,
     screenshotUrls,
     filter,
-    onDragExit,
     ref,
   } = useResourceModal();
   if (!visible) {
@@ -27,7 +28,6 @@ export const ResourceModal = () => {
   return (
     <styles.Container
       modalRef={ref}
-      onDragExit={onDragExit}
       onBackgroundClick={onBackgroundClick}
       header={
         <TextInput
@@ -71,12 +71,27 @@ const useResourceModal = () => {
   const screenshotUrls = useSelector(getScreenshotUrls);
   const [filter, setFilter] = useState("");
   const dispatch = useDispatch();
-  const onDragExit = (event: React.DragEvent<any>) => {
-    console.log(event.target, event.currentTarget, ref.current);
-    if (event.target === ref.current) {
-      dispatch(designerEvents.resourceModalDragLeft());
-    }
-  };
+
+  // onDragLeave not working so we brute force it like so
+  useEffect(() => {
+    const onMouseMove = (event: DragEvent) => {
+      if (
+        ref.current &&
+        !boxIntersectsPoint(ref.current.getBoundingClientRect(), {
+          x: event.pageX,
+          y: event.pageY,
+        })
+      ) {
+        dispatch(designerEvents.resourceModalDragLeft());
+      }
+    };
+
+    document.body.addEventListener("dragover", onMouseMove);
+
+    return () => {
+      document.body.removeEventListener("dragover", onMouseMove);
+    };
+  });
   const onBackgroundClick = () =>
     dispatch(designerEvents.resourceModalBackgroundClicked());
   const onFilterChange = (value: string) => setFilter(value?.toLowerCase());
@@ -84,7 +99,6 @@ const useResourceModal = () => {
     visible,
     filter,
     ref,
-    onDragExit,
     allComponents,
     onBackgroundClick,
     onFilterChange,
@@ -118,7 +132,7 @@ type UseItemProps = {
 
 const useItem = ({ componentId }: UseItemProps) => {
   const [style, dragRef] = useDrag(() => ({
-    type: "component",
+    type: DNDKind.Resource,
     item: componentId,
     collect: (monitor) => ({
       opacity: monitor.isDragging() ? 0.5 : 1,

@@ -128,7 +128,9 @@ export const legacyReducer = (
     }
     case designerEvents.canvasMouseUp.type: {
       return produce(state, (newState) => {
-        newState.insertMode = null;
+        if (newState.insertMode != InsertMode.Resource) {
+          newState.insertMode = null;
+        }
         newState.resourceModalDragLeft = false;
         newState.canvas.mouseDown = false;
         newState.canvasMouseDownStartPoint = undefined;
@@ -136,7 +138,9 @@ export const legacyReducer = (
     }
     case designerEvents.toolsLayerDrop.type: {
       return produce(state, (newState) => {
-        newState.insertMode = null;
+        if (newState.insertMode != InsertMode.Resource) {
+          newState.insertMode = null;
+        }
         newState.resourceModalDragLeft = false;
         newState.canvas.mouseDown = false;
         newState.canvasMouseDownStartPoint = undefined;

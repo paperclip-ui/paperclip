@@ -101,7 +101,7 @@ public component Container {
                 left: 0px
             }
         }
-        div(onDragExit: onDragExit, ref: modalRef) {
+        div(onDragLeave: onDragLeave, ref: modalRef) {
             style extends theme.centered, theme.card, theme.fontDefault {
                 width: 600px
                 height: 450px

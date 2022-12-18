@@ -1,5 +1,6 @@
 import { useDispatch } from "@paperclip-ui/common";
 import { designerEvents } from "@paperclip-ui/designer/src/events";
+import { DNDKind } from "@paperclip-ui/designer/src/state";
 import React, { useEffect, useRef, useState } from "react";
 import { useDrop } from "react-dnd";
 
@@ -8,11 +9,26 @@ type DropTargetProps = {
 };
 
 export const DropTarget = ({ children }: DropTargetProps) => {
+  const { setToolsRef, isDraggingOver } = useDropTarget();
+
+  return (
+    <div
+      ref={setToolsRef}
+      style={{
+        cursor: isDraggingOver ? "copy" : "initial",
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
+const useDropTarget = () => {
   const [toolsRef, setToolsRef] = useState<HTMLDivElement>();
   const dispatch = useDispatch();
 
   const [{ isDraggingOver }, dragRef] = useDrop({
-    accept: "component",
+    accept: DNDKind.Resource,
     hover: (item, monitor) => {
       const offset = monitor.getClientOffset();
       const rect = toolsRef.getBoundingClientRect();
@@ -46,14 +62,5 @@ export const DropTarget = ({ children }: DropTargetProps) => {
     document.body.style.cursor = isDraggingOver ? "copy" : "initial";
   }, [isDraggingOver]);
 
-  return (
-    <div
-      ref={setToolsRef}
-      style={{
-        cursor: isDraggingOver ? "copy" : "initial",
-      }}
-    >
-      {children}
-    </div>
-  );
+  return { setToolsRef, isDraggingOver };
 };

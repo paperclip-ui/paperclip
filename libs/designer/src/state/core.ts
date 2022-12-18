@@ -22,12 +22,6 @@ import {
 } from "../domains/history/state";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
-import { Menu } from "../modules/shortcuts/base";
-import { DesignerEvent } from "../events";
-import {
-  getGlobalShortcuts,
-  ShortcutCommand,
-} from "../domains/shortcuts/state";
 import { Component } from "@paperclip-ui/proto/lib/generated/ast/pc";
 export const IS_WINDOWS = false;
 
@@ -35,6 +29,10 @@ export enum InsertMode {
   Element,
   Text,
   Resource,
+}
+
+export enum DNDKind {
+  Resource = "Resource",
 }
 
 export type Canvas = {
@@ -104,6 +102,7 @@ export const DEFAULT_STATE: DesignerState = {
   readonly: false,
   styleOverrides: {},
   preEditComputedStyles: {},
+  resourceModalDragLeft: false,
   graph: {
     dependencies: {},
   },

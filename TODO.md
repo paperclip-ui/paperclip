@@ -27,12 +27,13 @@
 
 #### On-deck
 
+- polish
+
+  - ensure that styles are loaded
+
 - dashboard
 
   - ability to delete file
-
-- files view
-- prompt for component name
 
 - render slots
 - ability to insert into slots

@@ -10,10 +10,7 @@ import {
   getSelectedExprAvailableVariants,
   getSelectedExprOwnerComponent,
 } from "@paperclip-ui/designer/src/state/pc";
-import {
-  DesignerEvent,
-  designerEvents,
-} from "@paperclip-ui/designer/src/events";
+import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
 export const Variants = () => {

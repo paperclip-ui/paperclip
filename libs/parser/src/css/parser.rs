@@ -28,7 +28,7 @@ pub fn parse_style_declaration_with_string_scanner<'src, 'scanner, 'idgenerator>
 ) -> Result<ast::DeclarationValue, ParserError> {
     let mut context = Context::new(source, url, &next_token, id_generator)?;
     context.skip(is_superfluous)?;
-    Ok(parse_decl_value(&mut context)?.get_outer())
+    Ok(parse_comma_list(&mut context)?.get_outer())
 }
 
 fn parse_style_declarations(

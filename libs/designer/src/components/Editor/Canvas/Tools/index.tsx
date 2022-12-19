@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect } from "react";
+import React, { useRef, useCallback } from "react";
 
 import * as styles from "./index.pc";
 import { Frames } from "./Frames";
@@ -6,13 +6,18 @@ import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   flattenFrameBoxes,
   getEditorState,
-  getSelectedNodePaths,
+  getSelectedNodePath,
   InsertMode,
-} from "@paperclip-ui/designer/src/machine/state";
-import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
-import { mergeBoxes } from "@paperclip-ui/designer/src/machine/state/geom";
+} from "@paperclip-ui/designer/src/state";
+import {
+  DesignerEvent,
+  designerEvents,
+} from "@paperclip-ui/designer/src/events";
 import { Selectable } from "./Selectable";
 import { InsertElement } from "./InsertElement";
+import { ContextMenu } from "../../../ContextMenu";
+import { getEntityShortcuts } from "@paperclip-ui/designer/src/domains/shortcuts/state";
+import { DropTarget } from "./DropTarget";
 
 export const Tools = () => {
   const {
@@ -28,12 +33,11 @@ export const Tools = () => {
     currentDocument,
     canvas,
     dispatch,
+    contextMenu,
     selectedBox,
     readonly,
     hoveringBox,
     toolsLayerEnabled,
-    selectedNodePaths,
-    optionKeyDown,
   } = useTools();
 
   if (!currentDocument?.paperclip || !toolsLayerEnabled) {
@@ -44,6 +48,7 @@ export const Tools = () => {
     insertMode != null
       ? {
           [InsertMode.Element]: "crosshair",
+          [InsertMode.Resource]: "copy",
           [InsertMode.Text]: "text",
         }[insertMode]
       : null;
@@ -53,56 +58,59 @@ export const Tools = () => {
   };
 
   return (
-    <styles.Tools
-      ref={toolsRef}
-      onMouseDown={onMouswDown}
-      onMouseUp={onMouseUp}
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
-      style={style}
-    >
-      {insertMode == InsertMode.Element && <InsertElement />}
+    <DropTarget>
+      <ContextMenu menu={contextMenu}>
+        <styles.Tools
+          ref={toolsRef}
+          onMouseDown={onMouswDown}
+          onMouseUp={onMouseUp}
+          onMouseMove={onMouseMove}
+          onMouseLeave={onMouseLeave}
+          style={style}
+        >
+          {insertMode == InsertMode.Element && <InsertElement />}
 
-      {!resizerMoving && (
-        <Selectable
-          canvasScroll={canvas.scrollPosition}
-          canvasTransform={canvas.transform}
-          box={hoveringBox}
-          cursor={cursor}
-        />
-      )}
+          {!resizerMoving && (
+            <Selectable
+              canvasScroll={canvas.scrollPosition}
+              canvasTransform={canvas.transform}
+              box={hoveringBox}
+              cursor={cursor}
+            />
+          )}
 
-      {selectedBox && selectedBox.width && selectedBox.height ? (
-        <Selectable
-          canvasScroll={canvas.scrollPosition}
-          canvasTransform={canvas.transform}
-          box={selectedBox}
-          showKnobs
-          cursor={cursor}
-        />
-      ) : null}
-      <Frames
-        frames={frames}
-        canvasTransform={canvas.transform}
-        readonly={readonly}
-      />
-      {/* {optionKeyDown && selectedBox && hoveringBox ? (
-        <Distance
-          canvasScroll={canvas.scrollPosition}
-          canvasTransform={canvas.transform}
-          from={selectedBox}
-          to={hoveringBox}
-        />
-      ) : null} */}
-    </styles.Tools>
+          {selectedBox && selectedBox.width && selectedBox.height ? (
+            <Selectable
+              canvasScroll={canvas.scrollPosition}
+              canvasTransform={canvas.transform}
+              box={selectedBox}
+              showKnobs
+              cursor={cursor}
+            />
+          ) : null}
+          <Frames
+            frames={frames}
+            canvasTransform={canvas.transform}
+            readonly={readonly}
+          />
+          {/* {optionKeyDown && selectedBox && hoveringBox ? (
+          <Distance
+            canvasScroll={canvas.scrollPosition}
+            canvasTransform={canvas.transform}
+            from={selectedBox}
+            to={hoveringBox}
+          />
+        ) : null} */}
+        </styles.Tools>
+      </ContextMenu>
+    </DropTarget>
   );
 };
 
 const useTools = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<DesignerEvent>();
   const {
     canvas,
-    selectedVirtNodeIds,
     highlightNodePath,
     optionKeyDown,
     resizerMoving,
@@ -113,7 +121,8 @@ const useTools = () => {
   } = useSelector(getEditorState);
   const toolsLayerEnabled = !canvas.isExpanded;
 
-  const selectedNodePaths = useSelector(getSelectedNodePaths);
+  const selectedNodePath = useSelector(getSelectedNodePath);
+  const contextMenu = useSelector(getEntityShortcuts);
 
   const getMousePoint = (event) => {
     const rect: ClientRect = (
@@ -127,7 +136,7 @@ const useTools = () => {
 
   const onMouseMove = useCallback(
     (event: React.MouseEvent<any>) => {
-      dispatch(editorEvents.canvasMouseMoved(getMousePoint(event)));
+      dispatch(designerEvents.canvasMouseMoved(getMousePoint(event)));
     },
     [dispatch]
   );
@@ -137,7 +146,7 @@ const useTools = () => {
   const onMouswDown = useCallback(
     (event: React.MouseEvent<any>) => {
       dispatch(
-        editorEvents.canvasMouseDown({
+        designerEvents.canvasMouseDown({
           metaKey: event.metaKey,
           ctrlKey: event.ctrlKey,
           shiftKey: event.shiftKey,
@@ -151,20 +160,27 @@ const useTools = () => {
 
   const onMouseUp = useCallback(
     (event: React.MouseEvent<any>) => {
-      dispatch(editorEvents.canvasMouseUp());
+      dispatch({
+        type: "editor/canvasMouseUp",
+        payload: {
+          metaKey: event.metaKey,
+          ctrlKey: event.ctrlKey,
+          shiftKey: event.shiftKey,
+          timestamp: Date.now(),
+          position: getMousePoint(event),
+        },
+      });
     },
     [dispatch]
   );
 
   const onMouseLeave = () => {
-    dispatch(editorEvents.canvasMouseLeave(null));
+    dispatch(designerEvents.canvasMouseLeave(null));
   };
 
   const boxes = flattenFrameBoxes(frameBoxes);
 
-  const selectedBox =
-    selectedNodePaths.length &&
-    mergeBoxes(selectedNodePaths.map((path) => boxes[path]).filter(Boolean));
+  const selectedBox = boxes[selectedNodePath];
 
   const hoveringBox = highlightNodePath && boxes[highlightNodePath];
 
@@ -178,6 +194,7 @@ const useTools = () => {
     onMouswDown,
     onMouseMove,
     onMouseLeave,
+    contextMenu,
     onMouseUp,
     insertMode,
     showEmpty,
@@ -188,7 +205,7 @@ const useTools = () => {
     selectedBox,
     readonly,
     hoveringBox,
-    selectedNodePaths,
+    selectedNodePath,
     optionKeyDown,
   };
 };

@@ -14,6 +14,8 @@ service Designer {
   rpc GetGraph(Empty) returns (stream ast.graph.Graph);
   rpc OnEvent(Empty) returns (stream DesignerEvent);
   rpc UpdateFile(UpdateFileRequest) returns (Empty);
+  rpc CreateDesignFile(CreateDesignFileRequest) returns (CreateDesignFileResponse);
+  rpc GetResourceFiles(Empty) returns (stream ResourceFiles);
   rpc ApplyMutations(ApplyMutationsRequest) returns (ApplyMutationsResult);
   rpc GetDocumentInfo(FileRequest) returns (language_service.pc.DocumentInfo);
   rpc Undo(Empty) returns (Empty);
@@ -24,11 +26,22 @@ service Designer {
 message Empty {
 }
 
+message ResourceFiles {
+  repeated string file_paths = 1;
+}
 message ApplyMutationsRequest {
   repeated ast_mutate.Mutation mutations = 1;
 }
 message ApplyMutationsResult {
   repeated ast_mutate.MutationResult changes = 1;
+}
+
+message CreateDesignFileRequest {
+  string name = 1;
+}
+
+message CreateDesignFileResponse {
+  string file_path = 1;
 }
 
 message FileRequest {
@@ -53,10 +66,15 @@ message FileResponse {
 message DesignerEvent {
   oneof inner {
     FileChanged file_changed = 1;
+    ScreenshotCaptured screenshot_captured = 2;
   }
 }
 
 message FileChanged {
   string path = 1;
   bytes content = 2;
+}
+
+message ScreenshotCaptured {
+  string expr_id = 1;
 }

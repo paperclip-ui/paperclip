@@ -12,6 +12,7 @@ name = "paperclip_language_services"
 paperclip_parser = { path = "../parser" }
 paperclip_proto = { path = "../proto" }
 paperclip_proto_ext = { path = "../proto_ext" }
+paperclip_ast_serialize = { path = "../ast_serialize" }
 paperclip_common = { path = "../rs_common" }
 colors-transform = "0.2.11"
 css-color = "0.2.4"

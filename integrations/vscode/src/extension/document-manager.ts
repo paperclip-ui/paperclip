@@ -5,6 +5,7 @@ import { fixFileUrlCasing } from "./utils";
 import { PaperclipLanguageClient } from "./language/client";
 import { isPaperclipFile } from "@paperclip-ui/common";
 import { serverEvents } from "./language/server/events";
+import { VersionedTextDocumentIdentifier } from "vscode-languageserver-protocol";
 
 enum OpenLivePreviewOptions {
   Yes = "Yes",
@@ -21,7 +22,9 @@ export class DocumentManager {
     private _client: PaperclipLanguageClient
   ) {
     console.log("DocumentManager::constructor");
-    this._client.onFileChanged(this._onFileChanged);
+
+    // TODO: enable this when working properly
+    // this._client.onFileChanged(this._onFileChanged);
   }
 
   activate() {
@@ -35,12 +38,15 @@ export class DocumentManager {
     event: ReturnType<typeof serverEvents.fileChanged>["payload"]
   ) => {
     const content = event.content;
-    const textDocument = await vscode.workspace.openTextDocument(event.path);
+    const uri = vscode.Uri.file(event.path);
+
+    const textDocument = await vscode.workspace.openTextDocument(uri);
+
     if (textDocument.getText() === content) {
       return;
     }
     await vscode.window.showTextDocument(textDocument);
-    const editor = await vscode.window.activeTextEditor.edit((builder) => {
+    await vscode.window.activeTextEditor.edit((builder) => {
       builder.replace(
         new vscode.Range(
           textDocument.positionAt(0),

@@ -2,13 +2,20 @@
  * @jest-environment jsdom
  */
 
-import { designerEngineEvents } from "@paperclip-ui/designer/src/machine/engine/designer/events";
-import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
-import { Point } from "@paperclip-ui/designer/src/machine/state/geom";
+import { shortcutEvents } from "@paperclip-ui/designer/src/domains/shortcuts/events";
+import { ShortcutCommand } from "@paperclip-ui/designer/src/domains/shortcuts/state";
+import {
+  DesignerEvent,
+  designerEvents,
+} from "@paperclip-ui/designer/src/events";
+import { Point } from "@paperclip-ui/designer/src/state/geom";
 import { renderFrames } from "@paperclip-ui/web-renderer";
 import { Designer } from "./mock-designer";
 
-export const waitForEvent = (eventType: string, designer: Designer) => {
+export const waitForEvent = (
+  eventType: DesignerEvent["type"],
+  designer: Designer
+) => {
   return new Promise((resolve) => {
     const dispose = designer.onEvent((event) => {
       if (event.type === eventType) {
@@ -23,8 +30,8 @@ export const waitUntilDesignerReady = (designer: Designer) => {
   return new Promise((resolve) => {
     const dispose = designer.onEvent((event) => {
       switch (event.type) {
-        case designerEngineEvents.documentOpened.type:
-        case designerEngineEvents.graphLoaded.type: {
+        case "designer-engine/documentOpened":
+        case "designer-engine/graphLoaded": {
           const state = designer.machine.getState();
           const isReady =
             Object.keys(state.graph.dependencies).length > 0 &&
@@ -55,9 +62,11 @@ export const insertCanvasElement = async (
   designer: Designer,
   position: Point = { x: 0, y: 0 }
 ) => {
-  designer.machine.dispatch(editorEvents.eHotkeyPressed());
   designer.machine.dispatch(
-    editorEvents.canvasMouseDown({
+    shortcutEvents.itemSelected({ command: ShortcutCommand.InsertElement })
+  );
+  designer.machine.dispatch(
+    designerEvents.canvasMouseDown({
       position: { x: 0, y: 0 },
       metaKey: false,
       ctrlKey: false,
@@ -65,15 +74,16 @@ export const insertCanvasElement = async (
       timestamp: 0,
     })
   );
-  designer.machine.dispatch(
-    editorEvents.canvasMouseUp({
+  designer.machine.dispatch({
+    type: "editor/canvasMouseUp",
+    payload: {
       position,
       metaKey: false,
       ctrlKey: false,
       shiftKey: false,
       timestamp: 0,
-    })
-  );
+    },
+  });
 
-  await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+  await waitForEvent("designer-engine/documentOpened", designer);
 };

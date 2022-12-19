@@ -74,6 +74,9 @@ impl Component {
 
         None
     }
+    pub fn get_variants(&self) -> Vec<&Variant> {
+        get_body_items!(&self.body, component_body_item::Inner::Variant, Variant)
+    }
     pub fn get_render_expr(&self) -> Option<&Render> {
         for item in &self.body {
             if let component_body_item::Inner::Render(expr) = &item.get_inner() {

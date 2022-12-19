@@ -1,0 +1,75 @@
+import "./theme.pc" as theme
+
+/**
+ * @bounds(x: 174, y: 399, width: 1024, height: 768)
+*/
+
+public component Menu {
+    render div(style: style, onKeyDown: onKeyDown, tabIndex: "-1") {
+        style extends theme.fontDefault {
+            background: var(theme.inputBackground)
+            border-radius: var(theme.rounded)
+            width: 250px
+            filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.2))
+            border: 1px solid var(theme.gray04)
+            overflow-y: scroll
+            overflow-x: hidden
+            max-height: 300px
+        }
+        slot children {
+            MenuItem {
+                text "something"
+            }
+            MenuItem(class: "preselected") {
+                text "something"
+            }
+            MenuItem {
+                text "something"
+            }
+            MenuItem(class: "selected") {
+                text "something"
+            }
+        }
+    }
+}
+
+public component MenuItem {
+    variant preselected trigger {
+        ":hover"
+        ".preselected"
+    }
+    variant selected trigger {
+        ".selected"
+    }
+    variant checked trigger {
+        ".checked"
+    }
+    variant disabled trigger {
+        ":disabled"
+        ".disabled"
+    }
+    variant enabled trigger {
+        ":not(:disabled)"
+        ":not(.disabled)"
+    }
+    render div(onMouseDown: onMouseDown, class: class, disabled: disabled) {
+        style {
+            padding: var(theme.space03)
+            cursor: pointer
+            display: flex
+            flex-direction: row
+            justify-content: space-between
+        }
+        style variant disabled {
+            opacity: 0.3
+        }
+        style variant preselected + enabled {
+            background: var(theme.blue01)
+        }
+        style variant selected + enabled {
+            background: var(theme.blue02)
+        }
+        slot children
+    }
+}
+

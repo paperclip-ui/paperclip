@@ -1,27 +1,101 @@
 import "./theme.pc" as imp
+import "./menu.pc" as menu
 
 /**
- * @bounds(x: 70, y: -1223, width: 1024, height: 768)
+ * @bounds(x: 513, y: -909, width: 473, height: 109)
 */
 
 public component ContextMenu {
-    render div {
+    render menu.Menu(style: style, onKeyDown: onKeyDown) {
         slot children {
             ContextMenuItem {
-                text "Something"
+                text "Create component"
+                insert keyCommand {
+                    text "⌥⌘K"
+                }
+            }
+            ContextMenuItem(class: "disabled") {
+                text "Wrap in slot"
+            }
+            ContextMenuDivider
+            ContextMenuItem {
+                text "Cut"
+                insert keyCommand {
+                    text "⌘X"
+                }
+            }
+            ContextMenuItem {
+                text "Copy"
+                insert keyCommand {
+                    text "⌘C"
+                }
+            }
+            ContextMenuItem {
+                text "Paste"
+                insert keyCommand {
+                    text "⌘P"
+                }
+            }
+            ContextMenuItem {
+                text "Delete"
+                insert keyCommand {
+                    text "⌫"
+                }
             }
         }
     }
 }
 
-public component ContextMenuItem {
-    render div {
+/**
+ * @bounds(x: 0, y: 0, width: 149, height: 66)
+*/
+
+public component ContextMenuDivider {
+    render hr {
         style {
-            display: rgb(0, 0, 255)
+            padding: 0px
+            margin: 0px
+            border: none
+            height: 1px
+            background: var(imp.gray03)
         }
+    }
+}
+
+/**
+ * @bounds(x: 202, y: -900, width: 263, height: 44)
+*/
+
+public component ContextMenuItem {
+    variant last trigger {
+        ":last-child"
+    }
+    variant first trigger {
+        ":first-child"
+    }
+    render menu.MenuItem(onMouseDown: onMouseDown, class: class, disabled: disabled) {
         slot children {
             text "Context menu item"
         }
+        div {
+            style {
+                opacity: 0.5
+                letter-spacing: 0.1em
+            }
+            slot keyCommand
+        }
     }
+}
+
+/**
+ * @bounds(x: -336, y: -930, width: 462, height: 376)
+*/
+
+div {
+    style {
+        position: relative
+        color: white
+    }
+    text "Type something"
 }
 

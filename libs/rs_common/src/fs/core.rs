@@ -8,6 +8,10 @@ use std::path::Path;
 pub trait FileReader: Clone {
     fn read_file<'content>(&self, path: &str) -> Result<Box<[u8]>>;
     fn get_file_size(&self, path: &str) -> Result<u64>;
+    fn file_exists(&self, path: &str) -> bool;
+}
+pub trait FileWriter<Content>: Clone {
+    fn write_file<'content>(&self, path: &str, content: Content) -> std::io::Result<()>;
 }
 
 #[derive(Default, Clone)]
@@ -27,6 +31,9 @@ impl FileReader for LocalFileReader {
         } else {
             Err(Error::msg(format!("file \"{}\" not found", path)))
         }
+    }
+    fn file_exists(&self, path: &str) -> bool {
+        Path::new(path).exists()
     }
 }
 

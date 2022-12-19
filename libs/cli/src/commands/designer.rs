@@ -13,6 +13,10 @@ pub struct StartDesignServerArgs {
     #[clap(short, long, value_parser, default_value_t = false)]
     open: bool,
 
+    /// Take component screenshots for the designer
+    #[clap(short, long, parse(try_from_str), default_value = "true")]
+    screenshots: bool,
+
     /// Port for the design server to listen on
     #[clap(short, long, value_parser)]
     port: Option<u16>,
@@ -36,6 +40,7 @@ pub async fn start_design_server(args: StartDesignServerArgs) -> Result<()> {
             config_context,
             port: args.port,
             open: args.open,
+            component_screenshots: args.screenshots,
         },
         LocalServerIO::default(),
     ) {

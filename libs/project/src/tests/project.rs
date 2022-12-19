@@ -42,6 +42,9 @@ impl FileReader for MockIO {
     fn get_file_size(&self, path: &str) -> Result<u64> {
         self.0.get_file_size(path)
     }
+    fn file_exists(&self, path: &str) -> bool {
+        self.0.file_exists(path)
+    }
 }
 
 impl FileResolver for MockIO {
@@ -118,6 +121,7 @@ fn default_config_with_compiler_options(src: &str, options: Vec<CompilerOptions>
     Config {
         src_dir: Some(src.to_string()),
         global_scripts: None,
+        designs_dir: None,
         module_dirs: None,
         compiler_options: Some(options),
     }

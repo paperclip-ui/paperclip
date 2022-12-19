@@ -33,7 +33,8 @@ export class Machine<TState extends any, TEvent extends BaseEvent<any, any>>
     const prevState = this._store.getState();
     this._store.dispatch(event);
     const currState = this._store.getState();
-    this._engine.handleEvent(event, currState, prevState);
+    this._engine.handleEvent &&
+      this._engine.handleEvent(event, currState, prevState);
   };
 
   onStateChange(listener: (TState) => void) {

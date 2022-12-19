@@ -67,9 +67,11 @@ const renderFrame2 = (
   options: RenderFrameOptions
 ) => {
   const frame = options.domFactory.createElement("div");
+  Object.assign(frame.style, { width: "100%", height: "100%" });
   frame.appendChild(importedStyles.cloneNode(true));
   frame.appendChild(documentStyles.cloneNode(true));
   const stage = options.domFactory.createElement("div");
+  Object.assign(stage.style, { width: "100%", height: "100%" });
   stage.appendChild(
     createNativeNode(
       node,

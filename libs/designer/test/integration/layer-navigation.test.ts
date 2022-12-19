@@ -2,8 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
+import { designerEvents } from "@paperclip-ui/designer/src/events";
 import { startDesigner, waitUntilDesignerReady } from "../controls";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
 describe(__filename + "#", () => {
   xit(`Can select a simple layer`, async () => {
@@ -13,13 +14,12 @@ describe(__filename + "#", () => {
       `,
     });
     await waitUntilDesignerReady(designer);
+
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([]);
     designer.machine.dispatch(
-      editorEvents.layerLeafClicked({ virtId: "4f0e8e93-1" })
+      designerEvents.layerLeafClicked({ virtId: "4f0e8e93-1" })
     );
-    expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
-      "4f0e8e93-1",
-    ]);
+    expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-1");
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([
       "4f0e8e93-1",
       "4f0e8e93-2",
@@ -42,14 +42,13 @@ describe(__filename + "#", () => {
         }
       `,
     });
+
     await waitUntilDesignerReady(designer);
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([]);
     designer.machine.dispatch(
-      editorEvents.layerLeafClicked({ virtId: "4f0e8e93-2" })
+      designerEvents.layerLeafClicked({ virtId: "4f0e8e93-2" })
     );
-    expect(designer.machine.getState().selectedVirtNodeIds).toEqual([
-      "4f0e8e93-2",
-    ]);
+    expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-2");
 
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([
       "4f0e8e93-2",
@@ -79,7 +78,7 @@ describe(__filename + "#", () => {
     });
     await waitUntilDesignerReady(designer);
     designer.machine.dispatch(
-      editorEvents.layerLeafClicked({ virtId: "4f0e8e93-2" })
+      designerEvents.layerLeafClicked({ virtId: "4f0e8e93-2" })
     );
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([
       "4f0e8e93-2",
@@ -89,7 +88,7 @@ describe(__filename + "#", () => {
       "4f0e8e93-6",
     ]);
     designer.machine.dispatch(
-      editorEvents.layerArrowClicked({ virtId: "4f0e8e93-6" })
+      designerEvents.layerArrowClicked({ virtId: "4f0e8e93-6" })
     );
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([]);
 
@@ -112,14 +111,56 @@ describe(__filename + "#", () => {
     });
     await waitUntilDesignerReady(designer);
     designer.machine.dispatch(
-      editorEvents.layerLeafClicked({ virtId: "4f0e8e93-5.4f0e8e93-1" })
+      designerEvents.layerLeafClicked({ virtId: "4f0e8e93-5.4f0e8e93-1" })
     );
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([
       "4f0e8e93-5.4f0e8e93-1",
       "4f0e8e93-5.4f0e8e93-2",
+      "4f0e8e93-5.4f0e8e93-3",
+      "4f0e8e93-5.4f0e8e93-4",
+      "4f0e8e93-5.4f0e8e93-6",
       "4f0e8e93-5",
       "4f0e8e93-6",
     ]);
+    designer.dispose();
+  });
+
+  it(`Can delete a component`, async () => {
+    const designer = await startDesigner({
+      "entry.pc": `
+        component A {
+          render div {
+            span {
+
+            }
+          }
+        }
+        A
+      `,
+    });
+    await waitUntilDesignerReady(designer);
+    designer.machine.dispatch(
+      designerEvents.layerLeafClicked({ virtId: "4f0e8e93-4" })
+    );
+
+    let expr = ast.getExprById("4f0e8e93-4", designer.machine.getState().graph);
+    expect(expr).toMatchObject({ id: "4f0e8e93-4" });
+
+    designer.machine.dispatch({
+      type: "keyboard/keyDown",
+      payload: {
+        key: "backspace",
+        shiftKey: false,
+        ctrlKey: false,
+        altKey: false,
+        metaKey: false,
+      },
+    });
+
+    await waitUntilDesignerReady(designer);
+    expr = ast.getExprById("4f0e8e93-4", designer.machine.getState().graph);
+    expect(expr).toEqual(undefined);
+
     designer.dispose();
   });
 });

@@ -10,6 +10,7 @@ target
 *.pc.mjs.*
 *.pc.d.ts
 *.pc.html
+*.pc.rs
 *.pc.js
 *.pc.js.map
 *.react.js

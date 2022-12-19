@@ -21,3 +21,4 @@ futures = "0.3.21"
 
 [dev-dependencies]
 pretty_assertions = "1.2.1"
+paperclip_ast_serialize = { path = "../ast_serialize" }

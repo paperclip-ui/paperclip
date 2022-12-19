@@ -6,15 +6,27 @@ import {
   getCanvas,
   getInsertMode,
   InsertMode,
-} from "@paperclip-ui/designer/src/machine/state";
-import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
+} from "@paperclip-ui/designer/src/state";
+import { designerEvents } from "@paperclip-ui/designer/src/events";
 
 export const Toolbar = () => {
-  const { zoom, insertMode, onInsertElementClick, onInsertTextClick } =
-    useToolbar();
+  const {
+    zoom,
+    insertMode,
+    onInsertElementClick,
+    onInsertTextClick,
+    onInsertResourceClick,
+  } = useToolbar();
 
   return (
     <toolbarStyles.Toolbar>
+      <toolbarStyles.ToolbarButton
+        class={cx({ active: insertMode === InsertMode.Resource })}
+        onClick={onInsertResourceClick}
+      >
+        <toolbarStyles.ToolbarIcon class="library" />
+      </toolbarStyles.ToolbarButton>
+      <toolbarStyles.ToolbarDivider />
       <toolbarStyles.ToolbarButton
         class={cx({ active: insertMode === InsertMode.Text })}
         onClick={onInsertTextClick}
@@ -40,14 +52,21 @@ const useToolbar = () => {
   const insertMode = useSelector(getInsertMode);
   const dispatch = useDispatch();
   const onInsertElementClick = () =>
-    dispatch(editorEvents.insertModeButtonClick({ mode: InsertMode.Element }));
+    dispatch(
+      designerEvents.insertModeButtonClick({ mode: InsertMode.Element })
+    );
   const onInsertTextClick = () =>
-    dispatch(editorEvents.insertModeButtonClick({ mode: InsertMode.Text }));
+    dispatch(designerEvents.insertModeButtonClick({ mode: InsertMode.Text }));
 
+  const onInsertResourceClick = () =>
+    dispatch(
+      designerEvents.insertModeButtonClick({ mode: InsertMode.Resource })
+    );
   return {
     zoom: Math.round(canvas.transform.z * 100),
     insertMode,
     onInsertElementClick,
+    onInsertResourceClick,
     onInsertTextClick,
   };
 };

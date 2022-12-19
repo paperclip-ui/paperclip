@@ -13,6 +13,8 @@ message Mutation {
     AppendChild append_child = 1;
     DeleteChild delete_child = 2;
     InsertChild insert_child = 3;
+    ConvertToComponent convert_to_component = 14;
+    ConvertToSlot convert_to_slot = 15;
 
     // Element
     SetElementParameter set_element_parameter = 4;
@@ -28,6 +30,10 @@ message Mutation {
 
     // General
     DeleteExpression delete_expression = 11;
+
+    // Component
+    UpdateVariant update_variant = 12;
+    ToggleVariants toggle_variants = 13;
   }
 }
 
@@ -38,6 +44,30 @@ message MutationResult {
     ExpressionUpdated expression_updated = 2;
     ExpressionDeleted expression_deleted = 3;
   }
+}
+
+message ToggleVariants {
+  map<string, bool> enabled = 1;
+}
+
+message UpdateVariant {
+  string component_id = 1;
+  optional string variant_id = 2;
+  string name = 3;
+  repeated UpdateVariantTrigger triggers = 4;
+}
+
+message UpdateVariantTrigger {
+  oneof inner {
+    string str = 1;
+    bool bool = 2;
+    TriggerReference reference = 3;
+  }
+}
+
+message TriggerReference {
+  string source_path = 1;
+  string name = 2;
 }
 
 message ExpressionInserted {
@@ -59,6 +89,14 @@ message AppendChild {
 
 
 message DeleteExpression {
+  string expression_id = 1;
+}
+
+message ConvertToComponent {
+  string expression_id = 1;
+}
+
+message ConvertToSlot {
   string expression_id = 1;
 }
 
@@ -93,6 +131,7 @@ message InsertFrame {
   string document_id = 1;
   string node_source = 2;
   Bounds bounds = 3;
+  map<string, string> imports = 4;
 }
 
 message SetTextNodeValue {
@@ -108,7 +147,8 @@ message SetStyleDeclarationValue {
 
 message SetStyleDeclarations {
   string expression_id = 1;
-  repeated SetStyleDeclarationValue declarations = 2;
+  repeated string variant_ids = 2;
+  repeated SetStyleDeclarationValue declarations = 3;
 }
 
 message DeleteStyleDeclarations {

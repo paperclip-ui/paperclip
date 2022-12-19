@@ -1,34 +1,29 @@
 
-
-
 public token gray0 rgb(210, 210, 210)
+public token gray02 rgb(115, 115, 115)
 public token gray03 rgb(59, 59, 59)
+public token gray06 rgb(37, 37, 37)
 public token gray04 rgb(50, 50, 50)
 public token gray05 rgb(6, 5, 5)
 public token blue00 rgb(134, 174, 255)
 public token blue01 rgb(96, 149, 255)
 public token blue02 rgb(23, 100, 255)
 public token purple01 rgb(228, 171, 255)
-
 public token selectedColor var(blue01)
 public token background01 rgb(0, 0, 0)
 public token canvasColor rgb(59, 59, 59)
-public token sidebarColor rgb(37, 37, 37)
+public token sidebarColor var(gray06)
 public token inputBackground rgb(42, 42, 42)
 public token inputBackgroun2 rgb(30, 30, 30)
 public token backgroundSelected var(selectedColor)
 public token backgroundSelectedLight rgb(46, 46, 46)
 public token backgroundSelectedText rgb(229, 236, 255)
 public token borderColor rgb(21, 21, 21)
-
 public token componentColor rgb(219, 161, 255)
 public token slotColor rgb(161, 255, 203)
 public token puncColor rgb(158, 158, 158)
 public token keywordColor rgb(158, 158, 158)
-public token ahahahahaaaaaa rgb(255, 0, 0)
-
 public token fontColor01 rgb(236, 236, 236)
-
 public token space01 2px
 public token space02 4px
 public token space03 8px
@@ -42,7 +37,6 @@ public token space10 64px
 public token space11 80px
 public token space12 96px
 public token space13 160px
-
 public token fontSize01 0.75rem
 public token fontSize02 0.875rem
 public token fontSize03 1.125rem
@@ -52,72 +46,83 @@ public token fontSize04 1.5rem
 public token fontSize05 1.75rem
 public token fontSize06 2rem
 public token fontSize07 2.25rem
-
+public token defaultFontFamily Inter, sans-serif
 public token roundedSM 0.125rem
 public token rounded 0.25rem
 public token roundedMD 0.375rem
-
 public style mask {
-  background-color: currentColor
-  -webkit-mask-size:100%
-  -webkit-mask-repeat: no-repeat
+    background-color: currentColor
+    -webkit-mask-size: 100%
+    -webkit-mask-repeat: no-repeat
 }
 
 public style icon extends mask {
-  --size: 1em
-  width: var(--size)
-  height: var(--size)
-  display: inline-block
+    --size: 1em
+    width: var(--size)
+    height: var(--size)
+    display: inline-block
 }
 
 public style input {
-  background: var(inputBackground)                                  
-  display: flex
-  outline: none
-  align-items: center
-  text-overflow: ellipsis
-  font-size: inherit
-  font-family: inherit
-  white-space: nowrap
-  overflow: hidden
-  flex: 1
-  padding: var(space01) var(space03)
-  border-radius: var(rounded)
-  border: none
-  color: currentColor
-  min-height: 24px
+    background: var(inputBackground)
+    display: flex
+    outline: none
+    align-items: center
+    text-overflow: ellipsis
+    font-size: inherit
+    font-family: inherit
+    white-space: nowrap
+    overflow: hidden
+    flex: 1
+    padding: var(space01) var(space03)
+    border-radius: var(rounded)
+    border: none
+    color: currentColor
+    min-height: 24px
+}
+
+public style card {
+    background: var(gray06)
+    border: 1px solid var(borderColor)
+    border-radius: var(roundedMD)
 }
 
 public style inputActive {
-  box-shadow: inset 0px 0px 0px 1px var(blue01)
+    box-shadow: inset 0px 0px 0px 1px var(blue01)
 }
 
 public style fontDefault {
-  font-family: Inter, sans-serif
-  color: var(fontColor01)
-  font-size: var(fontSize01)
+    font-family: Inter, sans-serif
+    color: var(fontColor01)
+    font-size: var(fontSize01)
 }
 
 public style reset {
-  border: none
-  background: transparent
-  color: currentColor
-  padding: 0
-  margin: 0
+    border: none
+    background: transparent
+    color: currentColor
+    padding: 0
+    margin: 0
 }
 
 public style fontHeader {
-  font-size: var(fontSize01)
-  font-weight: 600
+    font-size: var(fontSize01)
+    font-weight: 600
 }
 
 public style easeIn {
-  transition: 0.2s
+    transition: 0.2s
 }
 
 public style centered {
-  left: 50%
-  top: 50%
-  position: absolute
-  transform: translate(-50%, -50%)
+    left: 50%
+    top: 50%
+    position: absolute
+    transform: translate(-50%, -50%)
 }
+
+trigger mobile {
+    "@media screen and (max-width: 480px)"
+}
+
+

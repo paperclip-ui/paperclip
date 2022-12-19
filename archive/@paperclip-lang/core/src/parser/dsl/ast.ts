@@ -370,7 +370,7 @@ export const getOwnerInstance = (
   for (let i = 0, { length } = ancestors; i < length; i++) {
     const ancestor = ancestors[i];
     if (isComponent(ancestor)) {
-      return getComponentRenderNode(ancestor);
+      return getComponentRenderExpr(ancestor);
     }
     if (isInstance(ancestor, graph)) {
       return ancestor;
@@ -387,7 +387,7 @@ export const getExprDocUri = (node: Expression, graph: ASTDependencyGraph) => {
   });
 };
 
-export const getComponentRenderNode = (component: Component) =>
+export const getComponentRenderExpr = (component: Component) =>
   (component.body.find((item) => item.kind === ExpressionKind.Render) as Render)
     ?.node;
 

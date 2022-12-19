@@ -1,0 +1,131 @@
+import "./editor.pc" as imp
+import "./theme.pc" as theme
+import "./input.pc" as input
+import "./etc.pc" as etc
+
+/**
+ * @bounds(x: -1, y: 0, width: 1024, height: 768)
+*/
+
+public component Tab {
+    variant selected trigger {
+        ".selected"
+    }
+    render div(class: class) {
+        style {
+            background: rgba(0, 0, 0, 0.1)
+            border: 1px solid transparent
+            border-radius: var(theme.rounded)
+            padding: var(theme.space02) var(theme.space04)
+        }
+        style variant selected {
+            border-color: var(theme.selectedColor)
+        }
+        slot children {
+            text "something"
+        }
+    }
+}
+
+public component Tabs {
+    render div {
+        style {
+            background: rgba(0, 0, 0, 0.1)
+            height: 100%
+            border-right: 1px solid var(theme.borderColor)
+            display: flex
+            flex-direction: column
+            gap: var(theme.space04)
+            padding: var(theme.space04)
+        }
+        slot children {
+            Tab {
+                text "images"
+            }
+            Tab(class: "selected") {
+                text "components"
+            }
+            Tab {
+                text "mixins"
+            }
+        }
+    }
+}
+
+public component Container {
+    render div {
+        style {
+            width: 100%
+            height: 100%
+            position: fixed
+            top: 0px
+            left: 0px
+            z-index: 1024
+        }
+        div(onClick: onBackgroundClick) {
+            style {
+                background: transparent
+                width: 933
+                height: 739
+                position: relative
+                top: 0px
+                left: 0px
+            }
+        }
+        div(onDragLeave: onDragLeave, ref: modalRef) {
+            style extends theme.centered, theme.card, theme.fontDefault {
+                width: 600px
+                height: 450px
+                display: flex
+                align-items: stretch
+            }
+            slot tabs {
+                Tabs
+            }
+            div {
+                style {
+                    display: flex
+                    width: 100%
+                    gap: var(theme.space04)
+                    flex-direction: column
+                }
+                div header {
+                    style {
+                        padding: var(theme.space04)
+                        padding-bottom: 0px
+                    }
+                    slot header {
+                        input.TextInput(placeholder: "search...", value: "")
+                    }
+                }
+                div items {
+                    style {
+                        display: grid
+                        padding: var(theme.space04)
+                        padding-top: 0px
+                        grid-template-columns: 1fr 1fr 1fr
+                        gap: var(theme.space04)
+                        overflow: scroll
+                    }
+                    slot items {
+                        etc.Item {
+                            insert label {
+                                text "ComboBox"
+                            }
+                        }
+                        etc.Item
+                        etc.Item
+                        etc.Item
+                        etc.Item
+                        etc.Item
+                        etc.Item
+                        etc.Item
+                        etc.Item
+                        etc.Item
+                    }
+                }
+            }
+        }
+    }
+}
+

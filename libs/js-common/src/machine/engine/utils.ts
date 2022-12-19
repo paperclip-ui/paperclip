@@ -15,7 +15,7 @@ export const combineEngineCreators =
 
     const handleEvent = (event: TEvent, currState: TState, prevState: TState) =>
       engines.forEach((engine) => {
-        engine.handleEvent(event, currState, prevState);
+        engine.handleEvent && engine.handleEvent(event, currState, prevState);
       });
 
     const dispose = () =>

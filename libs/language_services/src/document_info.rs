@@ -1,10 +1,9 @@
 use super::context::Context;
 use anyhow::{Error, Result};
 use css_color::Srgb;
+use paperclip_ast_serialize::css::serialize_decl_value;
 use paperclip_common::get_or_short;
 use paperclip_common::serialize_context::Context as SerializeContext;
-
-use paperclip_parser::css;
 use paperclip_proto::ast::base;
 use paperclip_proto::ast::{
     css as css_ast,
@@ -188,7 +187,7 @@ fn scan_declaration_value(value: &declaration_value::Inner, ctx: &mut Context) {
                 let mut context = SerializeContext::new(0);
 
                 // a bit crude, but whatever...
-                css::serializer::serialize_decl_value(
+                serialize_decl_value(
                     &css_ast::DeclarationValue {
                         inner: Some(declaration_value::Inner::FunctionCall(call.clone())),
                     },

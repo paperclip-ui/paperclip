@@ -77,6 +77,10 @@ pub struct Config {
     #[serde(rename = "srcDir", skip_serializing_if = "Option::is_none")]
     pub src_dir: Option<String>,
 
+    /// source directory where *.pc files live
+    #[serde(rename = "designsDir", skip_serializing_if = "Option::is_none")]
+    pub designs_dir: Option<String>,
+
     /// directories where modules are stored
     #[serde(rename = "moduleDirs", skip_serializing_if = "Option::is_none")]
     pub module_dirs: Option<Vec<String>>,

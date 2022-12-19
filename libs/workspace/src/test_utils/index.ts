@@ -9,7 +9,7 @@ import {
 import { NodeHttpTransport } from "@improbable-eng/grpc-web-node-http-transport";
 
 export type Workspace = {
-  client: DesignerClientImpl;
+  getClient: () => DesignerClientImpl;
   localFilesPaths: Record<string, string>;
   dispose: () => void;
 };
@@ -61,15 +61,17 @@ export const startWorkspace = async ({
   }
 
   const ws = execa.command(
-    `${__dirname}/../../../../target/debug/paperclip_cli designer --port=${port}`,
+    `${__dirname}/../../../../target/debug/paperclip_cli designer --port=${port} --screenshots=false`,
     { cwd: tmpDirectory, stdio: "ignore" }
   );
 
-  const client = new DesignerClientImpl(
-    new GrpcWebImpl(`http://localhost:${port}`, {
-      transport: NodeHttpTransport(),
-    })
-  );
+  const getClient = () => {
+    return new DesignerClientImpl(
+      new GrpcWebImpl(`http://localhost:${port}`, {
+        transport: NodeHttpTransport(),
+      })
+    );
+  };
 
   const dispose = () => {
     ws.cancel();
@@ -79,5 +81,5 @@ export const startWorkspace = async ({
     });
   };
 
-  return { client, localFilesPaths, dispose };
+  return { getClient, localFilesPaths, dispose };
 };

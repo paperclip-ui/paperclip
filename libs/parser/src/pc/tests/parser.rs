@@ -1,6 +1,6 @@
 use super::super::parser::parse;
-use super::super::serializer::serialize;
 use crate::core::errors as err;
+use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::str_utils::strip_extra_ws;
 
 use crate::base::ast::{Range, U16Position};
@@ -434,5 +434,12 @@ add_case! {
     can_parse_attrs_with_dashes,
     r#"
         div(aria-label: "abba", style: "color: red;")
+    "#
+}
+
+add_case! {
+    can_parse_comma_delim_tokens,
+    r#"
+        public token defaultFontFamily Inter, sans-serif
     "#
 }

@@ -1,19 +1,23 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
-import * as commonStyles from "@paperclip-ui/designer/src/styles/common.pc";
+import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { memoize, useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   ComputedDeclaration,
   getSelectedExprStyles,
-} from "@paperclip-ui/designer/src/machine/state/pc";
-import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
+} from "@paperclip-ui/designer/src/state/pc";
+import {
+  DesignerEvent,
+  designerEvents,
+} from "@paperclip-ui/designer/src/events";
 import {
   SuggestionMenu,
   SuggestionMenuItem,
   SuggestionMenuSection,
 } from "@paperclip-ui/designer/src/components/SuggestionMenu";
-import { getAllPublicAtoms } from "@paperclip-ui/designer/src/machine/state";
+import { getAllPublicAtoms } from "@paperclip-ui/designer/src/state";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
+import { Variants } from "./Variants";
 
 namespace css {
   export enum InputType {
@@ -232,8 +236,19 @@ const cssSchema: schema.Map<css.Input> = [
     },
   },
   {
-    name: "gap",
+    name: "flex-wrap",
     displayWhen: { name: "display", value: /flex/ },
+    group: "layout",
+    sticky: true,
+    input: {
+      name: "display",
+      type: css.InputType.Enum,
+      options: ["nowrap", "wrap", "wrap-reverse", "inherit"],
+    },
+  },
+  {
+    name: "gap",
+    displayWhen: { name: "display", value: /flex|grid/ },
     group: "layout",
     sticky: true,
     input: { name: "gap", type: css.InputType.Unit },
@@ -303,7 +318,7 @@ const cssSchema: schema.Map<css.Input> = [
     name: "background",
     sticky: true,
     list: true,
-    input: { name: "background-image", type: css.InputType.Asset },
+    input: { name: "background", type: css.InputType.Color },
   },
   defaultOptions,
 ];
@@ -320,7 +335,8 @@ export const StylePanel = () => {
   const { style } = useStylePanel();
 
   return (
-    <commonStyles.SidebarPanel>
+    <sidebarStyles.SidebarPanel>
+      <Variants />
       {Object.keys(GROUPS).map((name) => (
         <GroupSection
           key={name}
@@ -328,7 +344,7 @@ export const StylePanel = () => {
           name={name}
         />
       ))}
-    </commonStyles.SidebarPanel>
+    </sidebarStyles.SidebarPanel>
   );
 };
 
@@ -358,11 +374,11 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
   });
 
   return (
-    <commonStyles.SidebarSection>
-      <commonStyles.SidebarPanelHeader>
+    <sidebarStyles.SidebarSection>
+      <sidebarStyles.SidebarPanelHeader>
         {name.charAt(0).toUpperCase() + name.substring(1)}
-      </commonStyles.SidebarPanelHeader>
-      <commonStyles.SidebarPanelContent>
+      </sidebarStyles.SidebarPanelHeader>
+      <sidebarStyles.SidebarPanelContent>
         <inputStyles.Fields>
           {sortedStyle.map((decl) => {
             const options = getPropField(decl.name);
@@ -397,8 +413,8 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
             );
           })}
         </inputStyles.Fields>
-      </commonStyles.SidebarPanelContent>
-    </commonStyles.SidebarSection>
+      </sidebarStyles.SidebarPanelContent>
+    </sidebarStyles.SidebarSection>
   );
 };
 
@@ -410,15 +426,16 @@ type FieldProps = {
 
 const Field = memo(
   ({ name, style, options: { input: inputOptions } }: FieldProps) => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<DesignerEvent>();
 
     const onSave = ({ value, imports }: NewDeclValue) => {
-      dispatch(
-        editorEvents.styleDeclarationsChanged({
+      dispatch({
+        type: "editor/styleDeclarationsChanged",
+        payload: {
           values: { [name]: value },
           imports,
-        })
-      );
+        },
+      });
     };
 
     const input = (
@@ -461,21 +478,14 @@ const FieldInput = ({
   const tokens = useSelector(getAllPublicAtoms);
   const internalValue = useRef<NewDeclValue>();
 
-  const maybePersist = () => {
-    if (internalValue.current?.value !== explicitValue) {
-      onSave(internalValue.current);
-    }
+  const onChange = (values: any[]) => {
+    const newValue = values[values.length - 1];
+    onSave(newValue);
   };
 
-  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      maybePersist();
-    }
+  const onOtherChange = (value) => {
+    onSave({ value });
   };
-
-  const onBlur = () => maybePersist();
-
-  const onValueChange = (value: string) => (internalValue.current = { value });
 
   useEffect(() => {
     internalValue.current = { value: explicitValue };
@@ -488,81 +498,83 @@ const FieldInput = ({
           ...options.map((option) => (
             <SuggestionMenuItem
               value={option}
+              selectValue={{ value: option }}
               filterText={option}
-              onSelect={() => (internalValue.current = { value: option })}
             />
           )),
         ]
       : [];
 
     // no enum options
-    if (tokens.length && type !== css.InputType.Enum) {
-      const availableTokens = tokens
-        .filter((token) => {
-          if (type === css.InputType.Unit) {
-            // https://www.w3schools.com/cssref/css_units.php
-            return /(cm|mm|in|px|pt|pc|em|ex|ch|rem|vw|vh|vmin|vmax|%)/.test(
-              token.cssValue
-            );
-          } else if (type === css.InputType.Color) {
-            // https://www.smashingmagazine.com/2021/11/guide-modern-css-colors/
-            return /(rgba?|hsla?|hwb|lab|lch|color|color-mix)\(/.test(
-              token.cssValue
-            );
-          } else if (type === css.InputType.Asset) {
-            return /url/.test(token.cssValue);
-          }
-        })
-        .map((token) => {
-          const value = {
-            value: `var($1.${token.atom.name})`,
-            imports: {
-              $1: token.dependency.path,
-            },
-          };
 
-          return (
-            <SuggestionMenuItem
-              key={token.atom.id}
-              value={token.value}
-              filterText={token.atom.name + token.cssValue + token.value}
-              onSelect={() => (internalValue.current = value)}
+    const availableTokens = tokens
+      .filter((token) => {
+        const isColor = isColorValue(token.cssValue);
+        const isUnit = isUnitValue(token.cssValue);
+
+        if (type === css.InputType.Unit) {
+          // https://www.w3schools.com/cssref/css_units.php
+          return isUnit;
+        } else if (type === css.InputType.Color) {
+          // https://www.smashingmagazine.com/2021/11/guide-modern-css-colors/
+          return isColor;
+        } else if (type === css.InputType.Enum) {
+          return !(isUnit || isColor);
+        } else if (type === css.InputType.Asset) {
+          return /url/.test(token.cssValue);
+        }
+      })
+      .map((token) => {
+        return (
+          <SuggestionMenuItem
+            key={token.atom.id}
+            value={token.value}
+            selectValue={{
+              value: `var(mod.${token.atom.name})`,
+              imports: {
+                mod: token.dependency.path,
+              },
+            }}
+            filterText={token.atom.name + token.cssValue + token.value}
+          >
+            <inputStyles.TokenMenuContent
+              style={{ "--color": token.cssValue }}
+              preview={token.value}
+              file={token.dependency.path.split("/").pop()}
             >
-              <inputStyles.TokenMenuContent
-                style={{ "--color": token.cssValue }}
-                preview={token.value}
-                file={token.dependency.path.split("/").pop()}
-              >
-                {token.atom.name}
-              </inputStyles.TokenMenuContent>
-            </SuggestionMenuItem>
-          );
-        });
-
-      if (availableTokens.length) {
-        ops.push(
-          <SuggestionMenuSection>Tokens</SuggestionMenuSection>,
-          ...availableTokens
+              {token.atom.name}
+            </inputStyles.TokenMenuContent>
+          </SuggestionMenuItem>
         );
-      }
+      });
+
+    if (availableTokens.length) {
+      ops.push(
+        <SuggestionMenuSection>Tokens</SuggestionMenuSection>,
+        ...availableTokens
+      );
     }
 
     return ops;
   }, [options, tokens, onSave]);
 
   return (
-    <SuggestionMenu value={computedValue} menu={menu} style={{ width: 350 }}>
-      <TextInput
-        value={explicitValue}
-        placeholder={computedValue}
-        onBlur={onBlur}
-        onChange={onValueChange}
-        onKeyDown={onKeyDown}
-        select
-      />
+    <SuggestionMenu
+      onChange={onChange}
+      onOtherChange={onOtherChange}
+      values={[computedValue]}
+      menu={menu}
+      style={{ width: 350 }}
+    >
+      <TextInput value={explicitValue} placeholder={computedValue} select />
     </SuggestionMenu>
   );
 };
+
+const isUnitValue = (value) =>
+  /(cm|mm|in|px|pt|pc|em|ex|ch|rem|vw|vh|vmin|vmax|%)/.test(value);
+const isColorValue = (value) =>
+  /(rgba?|hsla?|hwb|lab|lch|color|color-mix)\(/.test(value);
 
 const useStylePanel = () => {
   const style = useSelector(getSelectedExprStyles);

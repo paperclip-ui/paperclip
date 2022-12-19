@@ -1,0 +1,13 @@
+
+
+/**
+ * @bounds(x: 576, y: 204, width: 370, height: 213)
+*/
+
+div {
+    style {
+        position: relative
+    }
+    text "Type something"
+}
+

@@ -1,20 +1,66 @@
-import "./common.pc" as common
+import "./sidebar.pc" as sidebar
 import "./theme.pc" as theme
 import "./input.pc" as input
 import "./styles-panel.pc" as stylesPanel
 
+/**
+ * @bounds(x: 0, y: 0, width: 317, height: 768)
+*/
+
 public component RightSidebar {
-    render common.Sidebar {
+    render sidebar.Sidebar {
         slot children
+    }
+}
+
+/**
+ * @bounds(x: -270, y: 1287, width: 387, height: 852)
+*/
+
+public component VariantPopup {
+    render sidebar.SidebarPopup {
+        insert header {
+            text "header"
+        }
+        sidebar.SidebarPopupPanelContent {
+            input.Fields {
+                input.Field {
+                    insert name {
+                        text "name"
+                    }
+                    insert input {
+                        input.TextInput(value: "something")
+                    }
+                }
+                input.Field {
+                    insert name {
+                        text "triggers"
+                    }
+                    insert input {
+                        input.TextInput(value: "'.alt'")
+                    }
+                }
+                input.Field {
+                    insert input {
+                        input.TextInput(value: "':nth-child(2n)'")
+                    }
+                }
+                input.Field {
+                    insert input {
+                        input.TextInput(value: "add...")
+                    }
+                }
+            }
+        }
     }
 }
 
 public component Preview {
     render RightSidebar {
         stylesPanel.Preview
-        common.SidebarPanel {
-            common.SidebarSection {
-                common.SidebarPanelHeader {
+        sidebar.SidebarPanel {
+            sidebar.SidebarSection {
+                sidebar.SidebarPanelHeader {
                     text "Attributes"
                     div {
                         style extends theme.icon {
@@ -22,44 +68,68 @@ public component Preview {
                         }
                     }
                 }
-                common.SidebarPanelContent {
+                sidebar.SidebarPanelContent {
                     input.Fields {
                         input.Field {
                             insert name {
                                 input.Select {
-                                    text "onClick"
+                                    insert value {
+                                        text "onClick"
+                                    }
                                 }
                             }
                             insert input {
                                 input.Select(class: "error") {
-                                    text "onButtonClick"
+                                    insert value {
+                                        text "onButtonClick"
+                                    }
                                 }
                             }
                         }
                         input.Field {
                             insert name {
                                 input.Select {
-                                    text "onClick"
+                                    insert value {
+                                        text "onClick"
+                                    }
                                 }
                             }
                             insert input {
                                 input.Select {
-                                    text "onButtonClick"
+                                    insert value {
+                                        text "onButtonClick"
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-            common.SidebarSection {
-                common.SidebarPanelContent {
-                    input.Field {
-                        insert name {
-                            text "Logic"
+            sidebar.SidebarSection {
+                sidebar.SidebarPanelContent {
+                    input.Fields {
+                        input.Field {
+                            insert name {
+                                text "Logic"
+                            }
+                            insert input {
+                                input.TextInput(value: "./script.ts")
+                            }
                         }
-                        insert input {
-                            input.MultiSelect {
-                                text "./button.tsx"
+                        input.Field {
+                            insert name {
+                                text "Variants"
+                                VariantPopup
+                            }
+                            insert input {
+                                input.ListItemInput(class: "removable") {
+                                    text "isHover"
+                                }
+                            }
+                        }
+                        input.Field {
+                            insert input {
+                                input.AddListItemButton
                             }
                         }
                     }
@@ -68,3 +138,4 @@ public component Preview {
         }
     }
 }
+

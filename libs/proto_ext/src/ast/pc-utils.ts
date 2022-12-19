@@ -19,6 +19,7 @@ import {
   Slot,
   Style,
   TextNode,
+  Variant,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
 
 const EMPTY_ARRAY = [];
@@ -81,14 +82,30 @@ export namespace ast {
     getNodeInner(item as DocumentBodyItem) ||
     getDocumentBodyInner(item as Node) ||
     getComponentBodyInner(item as ComponentBodyItem);
-  export const getChildren = (expr: InnerExpression) =>
-    ((expr as Document | InnerNode).body as Array<DocumentBodyItem | Node>) ||
-    EMPTY_ARRAY;
+  export const getChildren = memoize((expr: InnerExpression) => {
+    const body = (expr as Document | InnerNode | Component).body as Array<
+      DocumentBodyItem | ComponentBodyItem | Node
+    >;
+
+    if (body) {
+      return body;
+    }
+
+    if ((expr as Render).node) {
+      return [(expr as Render).node];
+    }
+
+    return EMPTY_ARRAY;
+  });
 
   export const getAncestorIds = memoize((id: string, graph: Graph) => {
     const ancestorIds: string[] = [];
 
     const dep = getOwnerDependency(id, graph);
+    if (!dep) {
+      console.error(`dependency missing!`);
+      return ancestorIds;
+    }
     const exprsById = flattenDocument(dep.document);
     const childParentMap = getChildParentMap(exprsById);
 
@@ -105,6 +122,15 @@ export namespace ast {
     }
 
     return ancestorIds;
+  });
+
+  export const getParent = memoize((id: string, graph: Graph) => {
+    const dep = getOwnerDependency(id, graph);
+    const exprsById = flattenDocument(dep.document);
+    const childParentMap = getChildParentMap(exprsById);
+    const parentId = childParentMap[id];
+
+    return parentId && getExprById(parentId, graph);
   });
 
   export const getAncestorVirtIdsFromShadow = memoize(
@@ -176,6 +202,12 @@ export namespace ast {
     );
   };
 
+  export const getComponentVariants = memoize((component: Component) => {
+    return component.body
+      .filter((expr) => expr.variant)
+      .map(getInnerExpression) as Variant[];
+  });
+
   export const computeElementStyle = memoize(
     (
       exprId: string,
@@ -185,7 +217,7 @@ export namespace ast {
       // TODO
       const node = getExprById(exprId.split(".").pop(), graph);
       const map: Record<string, DeclarationValue> = {};
-      if (!node) {
+      if (!node || !node.body) {
         return map;
       }
       for (const item of node.body) {
@@ -275,8 +307,13 @@ export namespace ast {
     return serializeDeclaration(atom.value);
   };
 
-  export const getComponentRenderNode = (component: Component) =>
+  export const getComponentRenderExpr = (component: Component) =>
     component.body.find((body) => body.render)?.render;
+
+  export const getComponentRenderNode = (component: Component): Node => {
+    const render = getComponentRenderExpr(component);
+    return render && (getInnerExpression(render.node) as Node);
+  };
 
   export const isInstance = (element: Element, graph: Graph) => {
     return getInstanceComponent(element, graph) != null;
@@ -285,8 +322,33 @@ export namespace ast {
   export const isComponent = (expr: InnerExpression): expr is Component => {
     return (
       (expr as Component).name != null &&
+      // TODO: this is wrong.
       (expr as Component).body?.some((expr) => expr.render != null)
     );
+  };
+
+  export const isVariant = (
+    expr: InnerExpression,
+    graph: Graph
+  ): expr is Variant => {
+    const parent = getParent(expr.id, graph);
+    return (parent as Component).body?.some(
+      (child) => child.variant?.id === expr.id
+    );
+  };
+
+  export const isVariantEnabled = (variant: Variant) =>
+    variant.triggers?.some((trigger) => trigger.bool?.value);
+
+  export const getExprOwnerComponent = (
+    expr: InnerExpression,
+    graph: Graph
+  ) => {
+    const ancestorId = getAncestorIds(expr.id, graph).find((ancestorId) => {
+      return isComponent(getExprById(ancestorId, graph));
+    });
+
+    return ancestorId && (getExprById(ancestorId, graph) as Component);
   };
 
   export const getInstanceComponent = (element: Element, graph: Graph) => {
@@ -437,6 +499,9 @@ export namespace ast {
     if (expr.render) {
       return flattenRender(expr.render);
     }
+    if (expr.variant) {
+      return flattenVariant(expr.variant);
+    }
     return {};
   });
 
@@ -447,6 +512,12 @@ export namespace ast {
       },
       flattenNode(expr.node)
     );
+  });
+
+  export const flattenVariant = memoize((expr: Variant) => {
+    return Object.assign({
+      [expr.id]: expr,
+    });
   });
 
   export const flattenTextNode = memoize((expr: TextNode) => {
@@ -551,6 +622,15 @@ export namespace ast {
     return getDeclarationValueInner(expr as DeclarationValue) != null;
   };
 
+  export const isExpressionId = (exprId: string) =>
+    Boolean(exprId && !exprId.includes("."));
+
+  export const isExpressionInComponent = (exprId: string, graph: Graph) => {
+    return getAncestorIds(exprId, graph).some((ancestorId) =>
+      isComponent(getExprById(ancestorId, graph))
+    );
+  };
+
   export const serializeDeclaration = (expr: DeclarationValue) => {
     if (expr.arithmetic) {
       return `${serializeDeclaration(expr.arithmetic.left)} ${
@@ -580,7 +660,7 @@ export namespace ast {
       return `${expr.reference.path.join(".")}`;
     }
     if (expr.spacedList) {
-      return expr.commaList.items
+      return expr.spacedList.items
         .map((expr) => serializeDeclaration(expr))
         .join(" ");
     }

@@ -3,15 +3,65 @@
 - Try not to hand-write any new UI unless it's necessary for self-creation
 - It's all important so do what makes sense immediately
 
+- What's 0-1 look like?
+
+  - slots
+  - style panel
+    - mixins
+    - variants
+  - properties
+    - ability to define class
+  - ability to convert element to component
+  - ability to insert instances
+
+- 1+
+
+  - ability to re-organize slots
+  - style overrides
+
+- How does the designer incentivize the app structure?
+
+#### Warm up (30 min)
+
+- remove eventCreators in favor of vanilla code
+
 #### On-deck
 
-- instance style overrides (necessary for styling components)
-- right-click -> convert to component
+- dashboard
 
-- Create color picker visually
-  - copy + paste layers
-  - right click -> convert to component
-- filter options based on unit type
+  - ability to delete file
+
+- files view
+- prompt for component name
+
+- render slots
+- ability to insert into slots
+
+- variants
+
+  - do not persist variant selection to code
+
+- context-menu
+
+- right-click -> convert to component
+- ability to insert elements into slots
+
+- element insertion UI
+
+- variant selection
+
+  - multi-select input
+  - ability to select variant from dropdown
+  - ability to add a varaint
+    - add button at bottom of list
+      - should display input field for variant
+  - variant should be applied when selected
+
+- right-click -> convert to component
+- slots
+- ability to insert element
+
+  - should wire up "insert instance" button - use Framer for inspiration
 
 - Popover
 

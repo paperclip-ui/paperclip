@@ -1,9 +1,10 @@
 import "./theme.pc" as theme
-import "./common.pc" as common
+import "./sidebar.pc" as sidebar
+import "./menu.pc" as menu
 
 public component MultiSelectItem {
     render div {
-        style {
+        style extends theme.fontDefault {
             display: inline-block
             color: var(theme.backgroundSelectedText)
             background: var(theme.blue02)
@@ -14,7 +15,17 @@ public component MultiSelectItem {
             height: 100%
             align-items: center
         }
-        slot children
+        slot children {
+            text "multi-select item"
+        }
+    }
+}
+
+public component MultiSelectTextInput {
+    render input(style: style, onChange: onChange, autoFocus: autoFocus) {
+        style extends theme.reset {
+            width: 0px
+        }
     }
 }
 
@@ -65,18 +76,7 @@ public component SuggestionContainer {
 }
 
 public component SuggestionMenu {
-    render div(style: style) {
-        style extends theme.fontDefault {
-            background: var(theme.inputBackground)
-            border-radius: var(theme.rounded)
-            width: 100%
-            min-width: 250px
-            filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.2))
-            border: 1px solid var(theme.gray04)
-            overflow-y: scroll
-            overflow-x: hidden
-            max-height: 300px
-        }
+    render menu.Menu(style: style) {
         slot children
     }
 }
@@ -108,18 +108,20 @@ public component SuggestionMenuItem {
     variant selected trigger {
         ".selected"
     }
-    render div(onMouseDown: onMouseDown, class: class) {
-        style {
-            padding: var(theme.space03)
-            cursor: pointer
-        }
-        style variant preselected {
-            background: var(theme.blue01)
-        }
-        style variant selected {
-            background: var(theme.blue02)
-        }
+    variant checked trigger {
+        ".checked"
+    }
+    render menu.MenuItem(onMouseDown: onMouseDown, class: class) {
         slot children
+        div {
+            style {
+                display: none
+            }
+            style variant selected + checked {
+                display: block
+            }
+            text "✔"
+        }
     }
 }
 
@@ -129,7 +131,7 @@ public component TextInput {
         ":focus"
         ".active"
     }
-    render input root(value: value, placeholder: placeholder, defaultValue: defaultValue, onKeyDown: onKeyDown, onBlur: onBlur, onChange: onChange, onFocus: onFocus, onBlur: onBlur, class: class, onClick: onClick) {
+    render input root(value: value, placeholder: placeholder, autoFocus: autoFocus, defaultValue: defaultValue, onKeyDown: onKeyDown, onBlur: onBlur, onChange: onChange, onFocus: onFocus, onBlur: onBlur, class: class, onClick: onClick) {
         style extends theme.input {
             width: 100%
         }
@@ -169,14 +171,44 @@ public component Fields {
     }
 }
 
+/**
+ * @bounds(x: -718, y: -1156, width: 188, height: 26)
+*/
+
 public component MultiSelect {
-    render div {
-        style extends theme.input {
+    
+    render div(tabIndex: "0", onFocus: onFocus, onChange: onChange, onBlur: onBlur) {
+        style extends theme.input, theme.fontDefault {
             display: flex
+            cursor: pointer
             gap: var(theme.space02)
             padding: var(theme.space02)
+            flex-wrap: wrap
         }
-        slot children
+        div {
+            style {
+                opacity: 0.5
+            }
+            slot placeholder
+        }
+        slot children {
+            MultiSelectItem {
+                text "item 1"
+            }
+            MultiSelectItem {
+                text "item 2"
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: -720, y: -1094, width: 188, height: 26)
+*/
+
+MultiSelect {
+    insert placeholder {
+        text "Select..."
     }
 }
 
@@ -267,6 +299,7 @@ public component TokenMenuContent {
             display: flex
             align-items: center
             justify-content: space-between
+            width: 100%
         }
         div {
             style {
@@ -425,7 +458,7 @@ component TextInputAutoSuggest {
                 SuggestionMenuItem {
                     text "0.7em"
                 }
-                SuggestionMenuItem(class: "selected") {
+                SuggestionMenuItem(class: "selected checked") {
                     text "0.7em"
                 }
                 SuggestionMenuItem {
@@ -470,7 +503,7 @@ component TextInputAutoSuggest {
 }
 
 /**
- * @bounds(x: -190, y: 10, width: 915, height: 761)
+ * @bounds(x: -359, y: -1155, width: 915, height: 761)
 */
 
 div {
@@ -516,6 +549,53 @@ div {
             width: 100%
             height: 130px
         }
+    }
+}
+
+public component AddListItemButton {
+    render button(onClick: onClick) {
+        style extends theme.input {
+            color: rgb(115, 115, 115)
+            cursor: pointer
+        }
+        text "add..."
+    }
+}
+
+public component ListItemInput {
+    variant isRemovable trigger {
+        ".removable"
+    }
+    render div(class: class, onClick: onClick) {
+        style extends theme.input {
+            display: flex
+            justify-content: space-between
+            cursor: pointer
+        }
+        slot children {
+            text "value"
+        }
+        button(onClick: onRemoveClick) {
+            style extends theme.reset {
+                cursor: pointer
+                display: none
+            }
+            style variant isRemovable {
+                display: block
+            }
+            text "×"
+        }
+    }
+}
+
+/**
+ * @bounds(x: -170, y: -1736, width: 575, height: 437)
+*/
+
+div {
+    style {
+        position: static
+        font-family: var(theme.defaultFontFamily)
     }
 }
 

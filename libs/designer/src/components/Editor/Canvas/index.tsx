@@ -9,15 +9,17 @@ import React, {
 import { Frames } from "./Frames";
 import * as styles from "@paperclip-ui/designer/src/styles/editor.pc";
 import { normalizeWheel } from "./normalize-wheel";
-import { editorEvents } from "@paperclip-ui/designer/src//machine/events";
+import {
+  DesignerEvent,
+  designerEvents,
+} from "@paperclip-ui/designer/src/events";
 
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   getCanvas,
   getCurrentDocument,
-} from "@paperclip-ui/designer/src/machine/state";
+} from "@paperclip-ui/designer/src/state";
 import { Tools } from "./Tools";
-import { useHotkeys } from "@paperclip-ui/designer/src/hooks/useHotkeys";
 
 export const Canvas = React.memo(() => {
   const { canvasRef, actualTransform, expanded, activeFrameIndex } =
@@ -41,7 +43,7 @@ export const Canvas = React.memo(() => {
 const useCanvas = () => {
   const canvas = useSelector(getCanvas);
   const currentDocument = useSelector(getCurrentDocument);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<DesignerEvent>();
   const expanded = canvas.isExpanded;
 
   const actualTransform = useMemo(() => {
@@ -66,7 +68,6 @@ const useCanvas = () => {
   const [canvasPanTimer, setCanvasPanTimer] = useState<any>(0);
 
   const canvasRef = useRef<HTMLElement>();
-  useCanvasHotkeys(canvasRef as any);
 
   const onWheel = useCallback(
     (event: WheelEvent) => {
@@ -78,7 +79,7 @@ const useCanvas = () => {
         return;
       }
       if (!canvasPanTimer) {
-        dispatch(editorEvents.canvasPanStart());
+        dispatch(designerEvents.canvasPanStart());
       }
       const rect = canvasRef.current.getBoundingClientRect();
 
@@ -88,7 +89,7 @@ const useCanvas = () => {
       }
 
       dispatch(
-        editorEvents.canvasPanned({
+        designerEvents.canvasPanned({
           delta: {
             x: pixelX,
             y: pixelY,
@@ -108,7 +109,7 @@ const useCanvas = () => {
       setCanvasPanTimer(
         setTimeout(() => {
           setCanvasPanTimer(null);
-          dispatch(editorEvents.canvasPanEnd());
+          dispatch({ type: "designer/canvasPanEnd" });
         }, 100)
       );
 
@@ -125,12 +126,13 @@ const useCanvas = () => {
 
     const onResize = () => {
       const { width, height } = ref.getBoundingClientRect();
-      dispatch(
-        editorEvents.canvasResized({
+      dispatch({
+        type: "editor/canvasResized",
+        payload: {
           width,
           height,
-        })
-      );
+        },
+      });
     };
     const obs = new ResizeObserver(onResize);
     obs.observe(ref);
@@ -153,20 +155,4 @@ const useCanvas = () => {
     expanded,
     activeFrameIndex: canvas.activeFrame,
   };
-};
-
-const useCanvasHotkeys = (ref: MutableRefObject<HTMLElement>) => {
-  const dispatch = useDispatch();
-  useHotkeys(
-    {
-      e: () => dispatch(editorEvents.eHotkeyPressed()),
-      t: () => dispatch(editorEvents.tHotkeyPressed()),
-      backspace: () => dispatch(editorEvents.deleteHokeyPressed()),
-      delete: () => dispatch(editorEvents.deleteHokeyPressed()),
-      "meta+z": () => dispatch(editorEvents.undoKeyPressed()),
-      "meta+shift+z": () => dispatch(editorEvents.redoKeyPressed()),
-      "meta+s": () => dispatch(editorEvents.saveKeyComboPressed()),
-    },
-    ref
-  );
 };

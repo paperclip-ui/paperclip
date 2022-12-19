@@ -1,14 +1,16 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/left-sidebar.pc";
-import * as commonStyles from "@paperclip-ui/designer/src/styles/common.pc";
+import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
-import { getHistoryState } from "@paperclip-ui/designer/src/machine/engine/history/state";
+import { getHistoryState } from "@paperclip-ui/designer/src/domains/history/state";
 import {
+  DesignerState,
   getCurrentDependency,
+  getCurrentFilePath,
   getExpandedVirtIds,
   getGraph,
-  getSelectedNodeIds,
-} from "@paperclip-ui/designer/src/machine/state";
+  getSelectedNodeId,
+} from "@paperclip-ui/designer/src/state";
 import {
   Component,
   DocumentBodyItem,
@@ -19,33 +21,37 @@ import {
   TextNode,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
-import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
+import { designerEvents } from "@paperclip-ui/designer/src/events";
 import cx from "classnames";
+import { useHistory } from "@paperclip-ui/designer/src/domains/history/react";
+import { routes } from "@paperclip-ui/designer/src/state/routes";
 
 export const LeftSidebar = () => {
-  const { title, document } = useLeftSidebar();
+  const { title, document, show, onBackClick } = useLeftSidebar();
 
-  if (!document) {
+  if (!document || !show) {
     return null;
   }
 
   return (
     <styles.LeftSidebar>
-      <styles.LeftSidebarHeader title={title} />
-      <commonStyles.SidebarSection>
-        <commonStyles.SidebarPanelHeader>
-          Layers
-        </commonStyles.SidebarPanelHeader>
-      </commonStyles.SidebarSection>
-      <styles.Layers>
-        {document.body.map((item) => (
-          <DocumentBodyItemLeaf
-            key={ast.getDocumentBodyInner(item).id}
-            depth={1}
-            expr={item}
-          />
-        ))}
-      </styles.Layers>
+      <sidebarStyles.SidebarPanel>
+        <styles.LeftSidebarHeader title={title} onBackClick={onBackClick} />
+        <sidebarStyles.SidebarSection>
+          <sidebarStyles.SidebarPanelHeader>
+            Layers
+          </sidebarStyles.SidebarPanelHeader>
+        </sidebarStyles.SidebarSection>
+        <styles.Layers>
+          {document.body.map((item) => (
+            <DocumentBodyItemLeaf
+              key={ast.getDocumentBodyInner(item).id}
+              depth={1}
+              expr={item}
+            />
+          ))}
+        </styles.Layers>
+      </sidebarStyles.SidebarPanel>
     </styles.LeftSidebar>
   );
 };
@@ -74,7 +80,7 @@ const DocumentBodyItemLeaf = memo(
 
 const ComponentLeaf = memo(
   ({ expr: component, depth, instanceOf }: LeafProps<Component>) => {
-    const render = ast.getComponentRenderNode(component);
+    const render = ast.getComponentRenderExpr(component);
     return (
       <Leaf
         id={component.id}
@@ -137,7 +143,7 @@ const InstanceLeaf = ({
 }: LeafProps<Element>) => {
   const graph = useSelector(getGraph);
   const component = ast.getInstanceComponent(element, graph);
-  const render = ast.getComponentRenderNode(component);
+  const render = ast.getComponentRenderExpr(component);
   const [shadowVisible, setShadowVisible] = useState(false);
   const onShadowIconClick = () => setShadowVisible(!shadowVisible);
   const expandedVirtIds = useSelector(getExpandedVirtIds);
@@ -325,11 +331,18 @@ const Leaf = ({
 };
 
 const useLeftSidebar = () => {
-  const history = useSelector(getHistoryState);
+  const currentFile = useSelector(getCurrentFilePath);
   const dependency = useSelector(getCurrentDependency);
+  const show = useSelector((state: DesignerState) => state.showLeftSidebar);
+  const history = useHistory();
+  const onBackClick = () => {
+    history.redirect(routes.dashboard());
+  };
 
   return {
-    title: history.query.file.split("/").pop(),
+    show,
+    onBackClick,
+    title: currentFile.split("/").pop(),
     document: dependency?.document,
   };
 };
@@ -343,17 +356,17 @@ const useLeaf = ({
 }) => {
   const virtId = [...(instanceOf || []), exprId].join(".");
   const open = useSelector(getExpandedVirtIds).includes(virtId);
-  const selected = useSelector(getSelectedNodeIds).includes(virtId);
+  const selected = useSelector(getSelectedNodeId) === virtId;
 
   const dispatch = useDispatch();
   const onClick = useCallback(() => {
-    dispatch(editorEvents.layerLeafClicked({ virtId }));
+    dispatch(designerEvents.layerLeafClicked({ virtId }));
   }, [virtId]);
 
   const onArrowClick = useCallback(
     (event: React.MouseEvent<any>) => {
       event.stopPropagation();
-      dispatch(editorEvents.layerArrowClicked({ virtId }));
+      dispatch(designerEvents.layerArrowClicked({ virtId }));
     },
     [virtId]
   );

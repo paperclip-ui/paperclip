@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { Machine } from "../core";
-import { Dispatch } from "../events";
+import { BaseEvent, Dispatch } from "../events";
 
 export const MachineContext = createContext<any>({});
 
@@ -18,10 +18,12 @@ export const useSelector = <TSelector extends (...args: any) => any>(
     return machine.onStateChange((state) => {
       setState(selector(state));
     });
-  }, [machine, selector]);
+  }, [machine]);
   return state;
 };
 
-export const useDispatch = (): Dispatch<any> => {
+export const useDispatch = <
+  Event extends BaseEvent<any, any>
+>(): Dispatch<Event> => {
   return useMachine().dispatch;
 };

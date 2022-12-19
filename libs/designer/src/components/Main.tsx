@@ -1,23 +1,49 @@
 import React from "react";
 import { useMemo } from "react";
 import { createEditorMachine } from "../machine";
-import { MachineContext } from "@paperclip-ui/common";
-import { DEFAULT_STATE } from "../machine/state/core";
+import { MachineContext, useSelector } from "@paperclip-ui/common";
+import { DEFAULT_STATE, getCurrentFilePath } from "../state/core";
 import { env } from "../env";
 import { Editor } from "./Editor";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { DndProvider } from "react-dnd";
+import { Dashboard } from "./Dashboard";
+import { HistoryContext } from "../domains/history/react";
+import { createHistory } from "../domains/history/history";
 
 export const Main = () => {
-  const machine = useMemo(
-    () =>
-      createEditorMachine({
-        protocol: env.protocol,
-        host: env.host,
-      })(DEFAULT_STATE),
-    []
-  );
+  const { history, machine } = useMemo(() => {
+    const history = createHistory();
+    const machine = createEditorMachine({
+      protocol: env.protocol,
+      host: env.host,
+      history,
+    })(DEFAULT_STATE);
+
+    return { history, machine };
+  }, []);
   return (
-    <MachineContext.Provider value={machine}>
-      <Editor />
-    </MachineContext.Provider>
+    <DndProvider backend={HTML5Backend}>
+      <HistoryContext.Provider value={history}>
+        <MachineContext.Provider value={machine}>
+          <Inner />
+        </MachineContext.Provider>
+      </HistoryContext.Provider>
+    </DndProvider>
   );
+};
+
+const Inner = () => {
+  const { currentFilePath } = useInner();
+
+  if (currentFilePath) {
+    return <Editor />;
+  }
+
+  return <Dashboard />;
+};
+
+const useInner = () => {
+  const currentFilePath = useSelector(getCurrentFilePath);
+  return { currentFilePath };
 };

@@ -2,8 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { designerEngineEvents } from "@paperclip-ui/designer/src/machine/engine/designer/events";
-import { editorEvents } from "@paperclip-ui/designer/src/machine/events";
+import { ShortcutCommand } from "@paperclip-ui/designer/src/domains/shortcuts/state";
 import {
   insertCanvasElement,
   startDesigner,
@@ -31,8 +30,12 @@ describe(__filename + "#", () => {
     expect(frames).toBe(
       `<span id=\"_b5c97432-1\">hello</span><div id=\"_98d0141d-4\" class=\"_98d0141d-4\"></div>`
     );
-    designer.machine.dispatch(editorEvents.undoKeyPressed());
-    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+
+    designer.machine.dispatch({
+      type: "shortcuts/itemSelected",
+      payload: { command: ShortcutCommand.Undo },
+    });
+    await waitForEvent("designer-engine/documentOpened", designer);
     frames = stringifyDesignerFrames(designer);
     expect(frames).toBe(`<span id="_b5c97432-1">hello</span>`);
 
@@ -56,12 +59,18 @@ describe(__filename + "#", () => {
     expect(frames).toBe(
       `<span id=\"_8efcc1e7-1\">hello</span><div id=\"_d83ca679-4\" class=\"_d83ca679-4\"></div>`
     );
-    designer.machine.dispatch(editorEvents.undoKeyPressed());
-    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    designer.machine.dispatch({
+      type: "shortcuts/itemSelected",
+      payload: { command: ShortcutCommand.Undo },
+    });
+    await waitForEvent("designer-engine/documentOpened", designer);
     frames = stringifyDesignerFrames(designer);
     expect(frames).toBe(`<span id="_8efcc1e7-1">hello</span>`);
-    designer.machine.dispatch(editorEvents.redoKeyPressed());
-    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    designer.machine.dispatch({
+      type: "shortcuts/itemSelected",
+      payload: { command: ShortcutCommand.Redo },
+    });
+    await waitForEvent("designer-engine/documentOpened", designer);
     frames = stringifyDesignerFrames(designer);
     expect(frames).toBe(
       `<span id=\"_8efcc1e7-1\">hello</span><div id=\"_d83ca679-4\" class=\"_d83ca679-4\"></div>`

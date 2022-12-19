@@ -209,4 +209,23 @@ describe(__filename + "#", () => {
       },
     ]);
   });
+
+  it(`Render is returned as a parent`, async () => {
+    const graph = await parseFiles(
+      {
+        "entry.pc": `
+          public component A {
+            render div
+          }
+        `,
+      },
+      "render_is_returned_as_parent"
+    );
+
+    expect(ast.getAncestorIds("2e44277c-1", graph)).toMatchObject([
+      "2e44277c-2",
+      "2e44277c-3",
+      "2e44277c-4",
+    ]);
+  });
 });

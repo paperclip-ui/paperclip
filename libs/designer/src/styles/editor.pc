@@ -1,20 +1,19 @@
 import "./theme.pc" as theme
 import "./left-sidebar.pc" as leftSidebar
-import "./common.pc" as common
 import "./right-sidebar.pc" as rightSidebar
 import "./center-panels.pc" as centerPanels
+import "./resource-modal.pc" as assetsModal
 
 token iconSize var(theme.fontSize03)
 component NodeIcon {
     render div
 }
 
-
 public component Artboard {
     render div(style: style) {
         div {
             style {
-                color: var(theme.fontColor01)
+                color: rgb(236, 236, 236)
                 position: absolute
                 transform: translateY(calc(-100% - 0.5em))
             }
@@ -102,6 +101,13 @@ public component Editor {
 Editor {
     Canvas {
         CanvasInner {
+            style {
+                left: 1178px
+                top: -144px
+                position: relative
+                width: 1384
+                height: 1166
+            }
             Artboard(style: "left: 50%; top: 50%; position: absolute; transform: translate(-50%, -50%);") {
                 insert title {
                     text "this should work!"
@@ -115,6 +121,6 @@ Editor {
         centerPanels.Preview centerPanels
         rightSidebar.Preview
     }
+    assetsModal.Container
 }
-
 

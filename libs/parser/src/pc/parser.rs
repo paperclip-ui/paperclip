@@ -360,7 +360,7 @@ fn parse_render(context: &mut PCContext) -> Result<ast::Render, err::ParserError
     })
 }
 
-fn parse_variant(context: &mut PCContext) -> Result<ast::Variant, err::ParserError> {
+pub fn parse_variant(context: &mut PCContext) -> Result<ast::Variant, err::ParserError> {
     let start = context.curr_u16pos.clone();
     context.next_token()?;
     context.skip(is_superfluous_or_newline)?;

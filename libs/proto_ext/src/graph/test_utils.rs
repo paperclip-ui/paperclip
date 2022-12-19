@@ -34,6 +34,9 @@ impl<'kv> FileReader for MockFS<'kv> {
             Err(Error::msg("file not found"))
         }
     }
+    fn file_exists(&self, path: &str) -> bool {
+        self.files.contains_key(path)
+    }
 }
 impl<'kv> FileResolver for MockFS<'kv> {
     fn resolve_file(&self, _from_path: &str, to_path: &str) -> Result<String> {

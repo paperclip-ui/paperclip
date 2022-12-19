@@ -64,7 +64,7 @@ export const useFrameContainer = ({
     // addresses https://github.com/paperclipui/paperclip/issues/310
     Object.assign(iframe.style, {
       border: "none",
-      background: "white",
+      background: "transparent",
       width: "100%",
       height: "100%",
     });

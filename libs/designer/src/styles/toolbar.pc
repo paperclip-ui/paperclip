@@ -1,5 +1,5 @@
 import "./theme.pc" as theme
-import "./common.pc" as common
+import "./sidebar.pc" as sidebar
 
 
 public component ToolbarButton {
@@ -37,6 +37,7 @@ public component ToolbarIcon {
   variant isElement trigger { ".element" }
   variant isComponent trigger { ".component" }
   variant isAsset trigger { ".asset" }
+  variant isLibrary trigger { ".library" }
   render div(class: class) {
     style extends theme.icon
     style variant isText {
@@ -54,6 +55,10 @@ public component ToolbarIcon {
     }
     style variant isAsset {
       -webkit-mask-image: url("./image3.svg")
+      --size: 1.2em
+    }
+    style variant isLibrary {
+      -webkit-mask-image: url("./plus2.svg")
       --size: 1.2em
     }
   }
@@ -86,7 +91,7 @@ public component Toolbar {
       pointer-events: all
     }
     div {
-      style extends common.panel {
+      style extends sidebar.panel {
         display: inline-flex
         align-items: center
         padding: var(theme.space02)
@@ -100,17 +105,14 @@ public component Toolbar {
 public component Preview {
   render Toolbar {
       ToolbarButton {
+        ToolbarIcon(class: "library")
+      }
+      ToolbarDivider
+      ToolbarButton {
         ToolbarIcon(class: "text")
       }
       ToolbarButton {
         ToolbarIcon(class: "element")
-      }
-      ToolbarDivider
-      ToolbarButton {
-        ToolbarIcon(class: "component")
-      }
-      ToolbarButton {
-        ToolbarIcon(class: "asset")
       }
       ToolbarDivider
       ToolbarButton(class: "wide") {

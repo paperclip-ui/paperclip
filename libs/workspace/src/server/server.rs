@@ -1,12 +1,9 @@
 // https://github.com/hyperium/tonic/blob/master/examples/src/hyper_warp/server.rs
-pub use super::core::{ServerState, StartOptions};
-use super::{
-    core::ServerStateEventHandler,
-    engines::{self},
-    io::ServerIO,
-};
 use crate::machine::engine::EngineContext;
 use crate::machine::store::Store;
+pub use crate::server::core::{ServerState, StartOptions};
+use crate::server::domains;
+use crate::server::{core::ServerStateEventHandler, io::ServerIO};
 use anyhow::Result;
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -47,10 +44,12 @@ pub async fn start<IO: ServerIO>(
 
     start_engines!(
         engine_ctx.clone(),
-        engines::bootstrap,
-        engines::config,
-        engines::api,
-        engines::paperclip
+        domains::bootstrap::engine,
+        domains::config::engine,
+        domains::api::engine,
+        domains::paperclip::engine,
+        domains::screenshots::engine,
+        domains::local::engine
     );
 
     Ok(())

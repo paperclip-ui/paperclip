@@ -28,6 +28,27 @@ macro_rules! expressions {
         }
     }
 
+    #[derive(Clone, Debug)]
+    pub enum ExpressionWrapper {
+        $(
+            $name($expr),
+        )*
+    }
+
+
+    impl ExpressionWrapper {
+        pub fn get_id(&self) -> &str {
+            match self {
+                $(
+                    ExpressionWrapper::$name(exp) => {
+                        exp.get_id()
+                    },
+                )*
+            }
+        }
+    }
+
+
     #[derive(Clone)]
     pub enum ImmutableExpression {
         $(
@@ -47,16 +68,12 @@ macro_rules! expressions {
 
 
       pub trait Expression {
-          // fn outer<'a>(&'a self) -> ImmutableExpressionRef<'a>;
           fn get_id<'a>(&'a self) -> &'a str;
           fn checksum(&self) -> String;
       }
 
       $(
           impl Expression for $expr {
-              // fn outer<'a>(&'a self) -> ImmutableExpressionRef<'a> {
-              //     ImmutableExpressionRef::$name(self.borrow())
-              // }
               fn get_id<'a>(&'a $this) -> &'a str {
                   $id_ret
               }
@@ -68,7 +85,17 @@ macro_rules! expressions {
             fn from(expr: &'a $expr) -> Self {
                 ImmutableExpressionRef::$name(expr)
             }
-        }
+          }
+          impl From<&mut $expr> for ExpressionWrapper {
+            fn from(expr: &mut $expr) -> Self {
+                ExpressionWrapper::$name(expr.clone())
+            }
+          }
+          impl From<&$expr> for ExpressionWrapper {
+            fn from(expr: &$expr) -> Self {
+                ExpressionWrapper::$name(expr.clone())
+            }
+          }
 
           impl<'a> TryFrom<ImmutableExpressionRef<'a>> for &'a $expr {
               type Error = ();

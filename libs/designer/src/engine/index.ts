@@ -9,6 +9,7 @@ import { createKeyboardEngine } from "../domains/keyboard/engine";
 import { History } from "../domains/history/history";
 import { createShortcutsEngine } from "../domains/shortcuts/engine";
 import { createUIEngine } from "../domains/ui/engine";
+import { createLogEngine } from "../domains/log/engine";
 
 export type EngineOptions = {
   history: History;
@@ -24,5 +25,6 @@ export const createEngine = (
     createHistoryEngine(options.history),
     createKeyboardEngine,
     createUIEngine(options.history),
+    createLogEngine,
     ...otherEngineCreators
   );

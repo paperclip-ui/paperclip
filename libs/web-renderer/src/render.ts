@@ -1,7 +1,10 @@
 // FYI this code is super dumb and can definitely be made faster
 import * as html from "@paperclip-ui/proto/lib/generated/virt/html";
 import * as css from "@paperclip-ui/proto/lib/generated/virt/css";
-import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
+import {
+  PCModule,
+  PCModuleImport,
+} from "@paperclip-ui/proto/lib/generated/virt/module";
 import { NodeFactory } from "./node-factory";
 import {
   createNativeGlobalScript,
@@ -96,32 +99,34 @@ const renderDocumentStyles = (
   return container;
 };
 
-const renderImportedStyles = (
-  info: PCModule,
-  { domFactory, resolveUrl }: RenderFrameOptions
-) => {
-  const container = domFactory.createElement("div");
+const renderImportedStyles = (info: PCModule, options: RenderFrameOptions) => {
+  const container = options.domFactory.createElement("div");
   for (const imp of info.imports) {
-    if (imp.css) {
-      const sheet = createNativeStyleFromSheet(
-        imp.css.css,
-        domFactory,
-        resolveUrl
-      );
-      sheet.setAttribute(`data-source`, imp.css.path);
-      // sheet.setAttribute(`data-index`, String(imp.index));
-      container.appendChild(sheet);
-    } else if (imp.globalScript) {
-      container.appendChild(
-        createNativeGlobalScript(
-          imp.globalScript.content,
-          imp.globalScript.path,
-          domFactory
-        )
-      );
-    }
+    container.appendChild(createScriptFromImport(imp, options));
   }
   return container;
+};
+
+const createScriptFromImport = (
+  item: PCModuleImport,
+  options: RenderFrameOptions
+) => {
+  if (item.css) {
+    const sheet = createNativeStyleFromSheet(
+      item.css.css,
+      options.domFactory,
+      options.resolveUrl
+    );
+
+    sheet.setAttribute(`data-source`, item.css.path);
+    return sheet;
+  } else if (item.globalScript) {
+    return createNativeGlobalScript(
+      item.globalScript.content,
+      item.globalScript.path,
+      options.domFactory
+    );
+  }
 };
 
 export const patchFrames = (
@@ -335,20 +340,19 @@ const patchImportedSheets = (
           newItem.css.css,
           options
         );
+      } else {
+        const old = styleContainer.childNodes[i];
+        styleContainer.insertBefore(
+          createScriptFromImport(newItem, options),
+          old
+        );
+        old.remove();
       }
     }
   }
 
   for (const item of insert) {
-    if (item.css) {
-      styleContainer.appendChild(
-        createNativeStyleFromSheet(
-          item.css.css,
-          options.domFactory,
-          options.resolveUrl
-        )
-      );
-    }
+    styleContainer.appendChild(createScriptFromImport(item, options));
   }
 
   for (let i = removeCount; i--; ) {

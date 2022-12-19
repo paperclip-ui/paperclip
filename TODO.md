@@ -27,9 +27,7 @@
 
 #### On-deck
 
-- polish
-
-  - ensure that styles are loaded
+- when dropping instances to screen, wrong component pops up
 
 - dashboard
 

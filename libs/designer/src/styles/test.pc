@@ -1,0 +1,23 @@
+import "./resource-modal.pc" as imp
+import "./theme.pc" as mod
+
+/**
+ * @bounds(x: 324, y: 117, width: 137, height: 122)
+*/
+
+public component Unnamed1 {
+    render div {
+        style {
+            position: relative
+            font-family: var(mod.defaultFontFamily)
+            background: var(mod.blue00)
+            color: var(mod.blue02)
+            width: 100vw
+            height: 100vh
+        }
+        text "Type something" {
+            style
+        }
+    }
+}
+

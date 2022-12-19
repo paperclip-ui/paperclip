@@ -55,7 +55,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
             let path = request.into_inner().path;
             println!("Opening file: {}", path);
 
-            let emit = |path: String, store: Arc<Mutex<ServerStore>>| {
+            let get_file_response = |path: String, store: Arc<Mutex<ServerStore>>| {
                 let data = if let Ok(module) =
                     store.lock().unwrap().state.bundle_evaluated_module(&path)
                 {
@@ -79,12 +79,12 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                 }
             };
 
-            tx.send(emit(path.clone(), store.clone()))
+            tx.send(get_file_response(path.clone(), store.clone()))
                 .await
                 .expect("Can't send");
 
             handle_store_events!(store.clone(), ServerEvent::ModulesEvaluated(_) => {
-                tx.send(emit(path.clone(), store.clone())).await.expect("Failed to send stream, must be closed");
+                tx.send(get_file_response(path.clone(), store.clone())).await.expect("Failed to send stream, must be closed");
             });
         });
 
@@ -187,7 +187,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                         graph.clone()
                     )).await.expect("Can't send");
                 },
-                ServerEvent::ApplyMutationRequested {mutations: _mutations  } => {
+                ServerEvent::MutationsApplied { result: _, updated_graph: _ } => {
                     let graph = store.clone().lock().unwrap().state.graph.clone();
 
                     // TODO - need to pick out files that have changed
@@ -234,7 +234,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                 ServerEvent::UpdateFileRequested { path, content } => {
                     tx.send((file_changed)(path.to_string(), content.clone())).await.expect("Can't send");
                 },
-                ServerEvent::ApplyMutationRequested { mutations: _ } | ServerEvent::UndoRequested | ServerEvent::RedoRequested => {
+                ServerEvent::MutationsApplied { result: _, updated_graph: _ } | ServerEvent::UndoRequested | ServerEvent::RedoRequested => {
 
                     let updated_files = store.lock().unwrap().state.updated_files.clone();
                     let file_cache = store.lock().unwrap().state.file_cache.clone();

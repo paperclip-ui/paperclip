@@ -6,6 +6,7 @@ use futures::future::BoxFuture;
 use futures::lock::Mutex;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast::graph_ext::{Dependency, Graph};
+use paperclip_proto::ast::pc::Document;
 use std::collections::HashMap;
 use std::str;
 use std::sync::Arc;
@@ -46,7 +47,7 @@ impl LoadableGraph for Graph {
         self.dependencies.extend(
             load_dependencies::<TIO>(
                 String::from(path),
-                Arc::new(&io),
+                io,
                 Arc::new(Mutex::new(HashMap::new())),
             )
             .await?,
@@ -86,7 +87,7 @@ impl LoadableGraph for Graph {
         loaded: Arc<Mutex<HashMap<String, String>>>,
     ) -> Result<HashMap<String, &Dependency>> {
         let new_dependencies =
-            load_dependencies_wrapper::<TIO>(path.to_string(), Arc::new(&io), loaded).await?;
+            load_dependencies_wrapper::<TIO>(path.to_string(), io, loaded).await?;
 
         let new_dep_keys = new_dependencies
             .keys()
@@ -108,17 +109,29 @@ impl LoadableGraph for Graph {
     }
 }
 
+pub fn get_document_imports<TIO: IO>(document: &Document, document_path: &str, io: &TIO) -> Result<HashMap<String, String>> {
+    let mut imports = HashMap::new();
+
+    for import in &document.get_imports() {
+        imports.insert(
+            import.path.to_string(),
+            io.resolve_file(document_path, &import.path)?,
+        );
+    }
+    
+    Ok(imports)
+}
+
 /**
  * Asynchronously loads
  */
 
 async fn load_dependencies<'io, TIO: IO>(
     path: String,
-    io: Arc<&'io TIO>,
+    io: &TIO,
     loaded: Arc<Mutex<HashMap<String, String>>>,
 ) -> Result<HashMap<String, Dependency>> {
     let mut deps = HashMap::new();
-    let mut imports: HashMap<String, String> = HashMap::new();
 
     let content = str::from_utf8(&*io.read_file(&path)?).unwrap().to_string();
     let hash = format!("{:x}", crc32::checksum_ieee(content.as_bytes())).to_string();
@@ -140,12 +153,8 @@ async fn load_dependencies<'io, TIO: IO>(
         return Ok(deps);
     };
 
-    for import in &document.get_imports() {
-        imports.insert(
-            import.path.to_string(),
-            io.resolve_file(&path, &import.path)?,
-        );
-    }
+    let imports = get_document_imports(&document, &path, io)?;
+
 
     deps.insert(
         path.to_string(),
@@ -159,7 +168,7 @@ async fn load_dependencies<'io, TIO: IO>(
 
     if imports.len() > 0 {
         for path in imports.values() {
-            deps.extend(load_dependencies_wrapper(path.clone(), io.clone(), loaded.clone()).await?);
+            deps.extend(load_dependencies_wrapper(path.clone(), io, loaded.clone()).await?);
         }
     }
 
@@ -168,7 +177,7 @@ async fn load_dependencies<'io, TIO: IO>(
 
 fn load_dependencies_wrapper<'io, TIO: IO>(
     path: String,
-    io: Arc<&'io TIO>,
+    io: &'io TIO,
     loaded: Arc<Mutex<HashMap<String, String>>>,
 ) -> BoxFuture<'io, Result<HashMap<String, Dependency>>> {
     Box::pin(load_dependencies(path, io, loaded))

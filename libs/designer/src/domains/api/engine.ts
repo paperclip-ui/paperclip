@@ -61,7 +61,7 @@ export const createDesignerEngine =
 
     const actions = createActions(client, dispatch);
     const handleEvent = createEventHandler(actions);
-    bootstrap(actions, dispatch, state);
+    bootstrap(actions, state);
 
     const dispose = () => {};
     return {
@@ -539,7 +539,6 @@ const createEventHandler = (actions: Actions) => {
 
 const bootstrap = (
   { openFile, syncGraph, syncEvents, syncResourceFiles }: Actions,
-  dispatch: Dispatch<DesignerEvent>,
   initialState: DesignerState
 ) => {
   syncEvents();

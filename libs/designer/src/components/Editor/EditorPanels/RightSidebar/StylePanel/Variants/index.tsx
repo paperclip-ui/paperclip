@@ -6,7 +6,10 @@ import {
   MultiSelectOption,
 } from "@paperclip-ui/designer/src/components/MultiSelectInput";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
-import { getSelectedExprAvailableVariants } from "@paperclip-ui/designer/src/state/pc";
+import {
+  getSelectedExprAvailableVariants,
+  getSelectedExprOwnerComponent,
+} from "@paperclip-ui/designer/src/state/pc";
 import {
   DesignerEvent,
   designerEvents,
@@ -14,7 +17,7 @@ import {
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
 export const Variants = () => {
-  const { variants, activeVariantIds, onChange } = useVariantSection();
+  const { variants, activeVariantIds, onChange, visible } = useVariantSection();
 
   const options = useMemo(() => {
     return variants?.map((variant) => {
@@ -22,7 +25,7 @@ export const Variants = () => {
     });
   }, [variants]);
 
-  if (!variants) {
+  if (!visible) {
     return null;
   }
 
@@ -49,10 +52,16 @@ export const Variants = () => {
 const useVariantSection = () => {
   const dispatch = useDispatch<DesignerEvent>();
   const variants = useSelector(getSelectedExprAvailableVariants);
+  const component = useSelector(getSelectedExprOwnerComponent);
   const activeVariantIds =
     variants?.filter(ast.isVariantEnabled).map((variant) => variant.id) || [];
   const onChange = (values) => {
     dispatch({ type: "designer/variantSelected", payload: values });
   };
-  return { variants, onChange, activeVariantIds };
+  return {
+    variants,
+    onChange,
+    activeVariantIds,
+    visible: Boolean(variants && component),
+  };
 };

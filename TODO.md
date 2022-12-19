@@ -29,7 +29,7 @@
 
 - dashboard
 
-  - ability to create a file
+  - ability to delete file
 
 - files view
 - prompt for component name

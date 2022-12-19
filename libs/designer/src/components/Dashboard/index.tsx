@@ -51,7 +51,7 @@ const useDashboard = () => {
   const [filter, setFilter] = useState<string>("");
   const dispatch = useDispatch<DesignerEvent>();
   const onAddClick = () => {
-    const name = prompt(`Component name`);
+    const name = prompt(`Design file name`);
     if (!name) {
       return;
     }

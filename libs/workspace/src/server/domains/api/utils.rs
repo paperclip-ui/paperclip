@@ -35,7 +35,7 @@ pub fn create_design_file<TIO: ServerIO>(name: &str, ctx: ServerEngineContext<TI
         .options
         .config_context
         .clone();
-    let src_dir = &config_ctx.config.src_dir;
+    let src_dir = &config_ctx.config.designs_dir.or(config_ctx.config.src_dir);
 
     let mut file_dir: PathBuf = Path::new(&config_ctx.directory).to_path_buf();
 

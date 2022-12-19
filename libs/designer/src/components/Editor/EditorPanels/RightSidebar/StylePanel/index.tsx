@@ -480,12 +480,10 @@ const FieldInput = ({
 
   const onChange = (values: any[]) => {
     const newValue = values[values.length - 1];
-    console.log("ON CHANGE", values);
     onSave(newValue);
   };
 
   const onOtherChange = (value) => {
-    console.log("ON OTHER CHANGE", value);
     onSave({ value });
   };
 
@@ -532,9 +530,9 @@ const FieldInput = ({
             key={token.atom.id}
             value={token.value}
             selectValue={{
-              value: `var($1.${token.atom.name})`,
+              value: `var(mod.${token.atom.name})`,
               imports: {
-                $1: token.dependency.path,
+                mod: token.dependency.path,
               },
             }}
             filterText={token.atom.name + token.cssValue + token.value}

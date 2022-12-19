@@ -25,6 +25,7 @@ pub async fn init(_args: InitArgs) -> Result<()> {
 
     let new_config = Config {
         src_dir: Some("src".to_string()),
+        designs_dir: Some("src/designs".to_string()),
         global_scripts: None,
         module_dirs: None,
         compiler_options: Some(vec![CompilerOptions {

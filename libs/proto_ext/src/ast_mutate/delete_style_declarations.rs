@@ -2,12 +2,10 @@ use super::base::EditContext;
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::css::StyleDeclaration;
-use paperclip_proto::ast_mutate::{
-    mutation_result, DeleteStyleDeclarations, ExpressionUpdated, MutationResult,
-};
+use paperclip_proto::ast_mutate::{mutation_result, DeleteStyleDeclarations, ExpressionUpdated};
 
 use crate::ast::all::MutableVisitor;
-use crate::ast::{all::Visitor, all::VisitorResult};
+use crate::ast::all::VisitorResult;
 
 impl<'expr> MutableVisitor<()> for EditContext<'expr, DeleteStyleDeclarations> {
     fn visit_style(&mut self, expr: &mut ast::pc::Style) -> VisitorResult<()> {

@@ -30,7 +30,7 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
         ServerEvent::PaperclipFilesLoaded { files } => {
             load_dependency_graph(next.clone(), &files).await.expect("Unable to load dependency graph");
         },
-        ServerEvent::DependencyGraphLoaded { graph: graph } => {
+        ServerEvent::DependencyGraphLoaded { graph } => {
             evaluate_dependency_graph(next.clone(), Some(graph.dependencies.keys().map(|k| {
                 k.to_string()
             }).collect())).await.expect("Unable to evaluate Dependency graph");
@@ -79,6 +79,16 @@ impl<TIO: ServerIO> FileReader for VirtGraphIO<TIO> {
         } else {
             self.ctx.io.get_file_size(path)
         }
+    }
+    fn file_exists(&self, path: &str) -> bool {
+        self.ctx
+            .store
+            .lock()
+            .unwrap()
+            .state
+            .file_cache
+            .contains_key(path)
+            || self.ctx.io.file_exists(path)
     }
 }
 

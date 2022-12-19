@@ -1,12 +1,12 @@
 use anyhow::Result;
-use paperclip_common::fs::{FileReader, LocalFileReader};
+use paperclip_common::fs::{FileReader, FileWriter, LocalFileReader};
 use paperclip_common::fs::{FileResolver, LocalFileResolver};
 use paperclip_config::ConfigContext;
 use paperclip_config::ConfigIO;
 use paperclip_config::LocalIO as LocalConfigIO;
 use paperclip_proto_ext::graph::io::IO as GraphIO;
 
-pub trait ServerIO: GraphIO + ConfigIO + 'static {}
+pub trait ServerIO: GraphIO + ConfigIO + FileWriter<String> + 'static {}
 
 #[derive(Clone, Default)]
 pub struct LocalServerIO {}
@@ -17,6 +17,15 @@ impl FileReader for LocalServerIO {
     }
     fn get_file_size(&self, path: &str) -> Result<u64> {
         LocalFileReader::default().get_file_size(path)
+    }
+    fn file_exists(&self, path: &str) -> bool {
+        LocalFileReader::default().file_exists(path)
+    }
+}
+
+impl FileWriter<String> for LocalServerIO {
+    fn write_file<'content>(&self, path: &str, content: String) -> std::io::Result<()> {
+        std::fs::write(path, content)
     }
 }
 

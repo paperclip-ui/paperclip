@@ -1,7 +1,7 @@
 use paperclip_proto::{
     ast::{
         all::Expression,
-        pc::{node, Document, DocumentBodyItem, Node, Slot},
+        pc::{node, Document, Node, Slot},
     },
     ast_mutate::ConvertToSlot,
 };
@@ -24,7 +24,8 @@ impl<'a> MutableVisitor<()> for EditContext<'a, ConvertToSlot> {
         let node = expr.node.as_ref().unwrap().clone();
         let slot = create_slot(&self, node, &expr.checksum());
 
-        std::mem::replace(expr.node.as_mut().unwrap(), slot);
+        *expr.node.as_mut().unwrap() = slot;
+        // std::mem::replace(expr.node.as_mut().unwrap(), slot);
 
         VisitorResult::Return(())
     }

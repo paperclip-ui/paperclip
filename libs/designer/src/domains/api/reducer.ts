@@ -1,10 +1,6 @@
 import produce from "immer";
-import {
-  DesignerState,
-  getAllComponents,
-  getGraphComponents,
-} from "../../state";
-import { DesignerEngineEvent, designerEngineEvents } from "./events";
+import { DesignerState, getGraphComponents } from "../../state";
+import { DesignerEngineEvent, GraphLoaded } from "./events";
 import { DesignerEvent as DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
 
 export const apiReducer = (
@@ -12,11 +8,11 @@ export const apiReducer = (
   event: DesignerEngineEvent
 ) => {
   switch (event.type) {
-    case designerEngineEvents.serverEvent.type:
+    case "designer-engine/serverEvent":
       return serverEventReducer(state, event.payload);
-    case designerEngineEvents.graphLoaded.type:
+    case "designer-engine/graphLoaded":
       return handleGraphLoaded(state, event);
-    case designerEngineEvents.resourceFilePathsLoaded.type: {
+    case "designer-engine/resourceFilePathsLoaded": {
       return produce(state, (newState) => {
         newState.resourceFilePaths = event.payload;
       });
@@ -35,10 +31,7 @@ const serverEventReducer = (state: DesignerState, event: DesignServerEvent) => {
   return state;
 };
 
-const handleGraphLoaded = (
-  state: DesignerState,
-  event: ReturnType<typeof designerEngineEvents.graphLoaded>
-) => {
+const handleGraphLoaded = (state: DesignerState, event: GraphLoaded) => {
   return produce(state, (newState) => {
     for (const path in event.payload.dependencies) {
       const dep = event.payload.dependencies[path];

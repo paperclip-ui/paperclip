@@ -1,15 +1,17 @@
 // https://github.com/hyperium/tonic/blob/master/examples/src/hyper_warp/server.rs
 
-use crate::server::core::{ServerEvent, ServerStore};
+use super::utils::create_design_file;
+use crate::server::core::{ServerEngineContext, ServerEvent, ServerStore};
+use crate::server::io::ServerIO;
 use futures::Stream;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_language_services::DocumentInfo;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
-    designer_event, file_response, ApplyMutationsRequest, ApplyMutationsResult, DesignerEvent,
-    Empty, FileChanged, FileRequest, FileResponse, ResourceFiles, ScreenshotCaptured,
-    UpdateFileRequest,
+    designer_event, file_response, ApplyMutationsRequest, ApplyMutationsResult,
+    CreateDesignFileRequest, CreateDesignFileResponse, DesignerEvent, Empty, FileChanged,
+    FileRequest, FileResponse, ResourceFiles, ScreenshotCaptured, UpdateFileRequest,
 };
 use std::pin::Pin;
 use std::sync::Arc;
@@ -24,18 +26,18 @@ type ResourceFilesStream = Pin<Box<dyn Stream<Item = Result<ResourceFiles, Statu
 type GetGraphStream = Pin<Box<dyn Stream<Item = Result<Graph, Status>> + Send>>;
 
 #[derive(Clone)]
-pub struct DesignerService {
-    store: Arc<Mutex<ServerStore>>,
+pub struct DesignerService<TIO: ServerIO> {
+    ctx: ServerEngineContext<TIO>,
 }
 
-impl DesignerService {
-    pub fn new(store: Arc<Mutex<ServerStore>>) -> Self {
-        Self { store }
+impl<TIO: ServerIO> DesignerService<TIO> {
+    pub fn new(ctx: ServerEngineContext<TIO>) -> Self {
+        Self { ctx }
     }
 }
 
 #[tonic::async_trait]
-impl Designer for DesignerService {
+impl<TIO: ServerIO> Designer for DesignerService<TIO> {
     type OpenFileStream = FileResponseStream;
     type OnEventStream = DesignerEventStream;
     type GetResourceFilesStream = ResourceFilesStream;
@@ -45,7 +47,7 @@ impl Designer for DesignerService {
         &self,
         request: Request<FileRequest>,
     ) -> Result<Response<Self::OpenFileStream>, Status> {
-        let store = self.store.clone();
+        let store = self.ctx.store.clone();
 
         let (tx, rx) = mpsc::channel(128);
 
@@ -98,7 +100,7 @@ impl Designer for DesignerService {
         let (tx, rx) = mpsc::channel(128);
         let output = ReceiverStream::new(rx);
 
-        let store = self.store.clone();
+        let store = self.ctx.store.clone();
 
         tokio::spawn(async move {
             let get_files_response = |store: Arc<Mutex<ServerStore>>| {
@@ -129,8 +131,20 @@ impl Designer for DesignerService {
         ))
     }
 
+    async fn create_design_file(
+        &self,
+        request: Request<CreateDesignFileRequest>,
+    ) -> Result<Response<CreateDesignFileResponse>, Status> {
+        if let Ok(file_path) = create_design_file(&request.get_ref().name.to_string(), self.ctx.clone()) {
+            Ok(Response::new(CreateDesignFileResponse { file_path }))
+        } else {
+            Err(Status::already_exists("File already exists"))
+        }
+    }
+
     async fn undo(&self, _request: Request<Empty>) -> Result<Response<Empty>, Status> {
-        self.store
+        self.ctx
+            .store
             .lock()
             .unwrap()
             .emit(ServerEvent::UndoRequested {});
@@ -139,7 +153,8 @@ impl Designer for DesignerService {
     }
 
     async fn redo(&self, _request: Request<Empty>) -> Result<Response<Empty>, Status> {
-        self.store
+        self.ctx
+            .store
             .lock()
             .unwrap()
             .emit(ServerEvent::RedoRequested {});
@@ -147,7 +162,8 @@ impl Designer for DesignerService {
     }
 
     async fn save(&self, _request: Request<Empty>) -> Result<Response<Empty>, Status> {
-        self.store
+        self.ctx
+            .store
             .lock()
             .unwrap()
             .emit(ServerEvent::SaveRequested {});
@@ -158,7 +174,7 @@ impl Designer for DesignerService {
         &self,
         _request: Request<Empty>,
     ) -> Result<Response<Self::GetGraphStream>, Status> {
-        let store = self.store.clone();
+        let store = self.ctx.store.clone();
 
         let (tx, rx) = mpsc::channel(128);
 
@@ -191,7 +207,7 @@ impl Designer for DesignerService {
         &self,
         _request: Request<Empty>,
     ) -> Result<Response<Self::OnEventStream>, Status> {
-        let store = self.store.clone();
+        let store = self.ctx.store.clone();
 
         let (tx, rx) = mpsc::channel(128);
 
@@ -245,7 +261,8 @@ impl Designer for DesignerService {
         let path = inner.path;
         let content = inner.content;
 
-        self.store
+        self.ctx
+            .store
             .lock()
             .unwrap()
             .emit(ServerEvent::UpdateFileRequested { path, content });
@@ -258,7 +275,8 @@ impl Designer for DesignerService {
     ) -> Result<Response<ApplyMutationsResult>, Status> {
         let request = request.into_inner();
 
-        self.store
+        self.ctx
+            .store
             .lock()
             .unwrap()
             .emit(ServerEvent::ApplyMutationRequested {
@@ -266,7 +284,14 @@ impl Designer for DesignerService {
             });
 
         Ok(Response::new(ApplyMutationsResult {
-            changes: self.store.lock().unwrap().state.latest_ast_changes.clone(),
+            changes: self
+                .ctx
+                .store
+                .lock()
+                .unwrap()
+                .state
+                .latest_ast_changes
+                .clone(),
         }))
     }
 
@@ -276,7 +301,7 @@ impl Designer for DesignerService {
     ) -> Result<Response<DocumentInfo>, Status> {
         let inner = request.into_inner();
 
-        let state = &self.store.lock().unwrap().state;
+        let state = &self.ctx.store.lock().unwrap().state;
 
         if let Some(dep) = state.graph.dependencies.get(&inner.path) {
             return Ok(Response::new(

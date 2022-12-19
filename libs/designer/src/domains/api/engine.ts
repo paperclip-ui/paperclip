@@ -2,9 +2,8 @@ import {
   DesignerClientImpl,
   GrpcWebImpl,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
-import { DesignerEvent as DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { Engine, Dispatch } from "@paperclip-ui/common";
-import { DesignerEngineEvent, designerEngineEvents } from "./events";
+import { DesignerEngineEvent } from "./events";
 import {
   DesignerEvent,
   designerEvents,
@@ -38,9 +37,9 @@ import {
   getKeyboardMenuCommand,
   ShortcutCommand,
 } from "../shortcuts/state";
-import { shortcutEvents } from "../shortcuts/events";
 import { HistoryChanged } from "../history/events";
 import { KeyDown } from "../keyboard/events";
+import { DashboardAddFileConfirmed } from "../ui/events";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -91,9 +90,18 @@ const createActions = (
         error() {},
       });
     },
-    onEvent(listener: (event: DesignServerEvent) => void) {
+    async createDesignFile(name: string) {
+      const { filePath } = await client.CreateDesignFile({ name });
+      dispatch({
+        type: "designer-engine/designFileCreated",
+        payload: { filePath },
+      });
+    },
+    syncEvents() {
       client.OnEvent({}).subscribe({
-        next: listener,
+        next(event) {
+          dispatch({ type: "designer-engine/serverEvent", payload: event });
+        },
         error: () => {},
       });
     },
@@ -120,14 +128,14 @@ const createActions = (
     syncGraph() {
       client.GetGraph({}).subscribe({
         next(data) {
-          dispatch(designerEngineEvents.graphLoaded(data));
+          dispatch({ type: "designer-engine/graphLoaded", payload: data });
         },
         error: () => {},
       });
     },
     async applyChanges(mutations: Mutation[]) {
       const changes = await client.ApplyMutations({ mutations }, null);
-      dispatch(designerEngineEvents.changesApplied(changes));
+      dispatch({ type: "designer-engine/changesApplied", payload: changes });
       return changes;
     },
   };
@@ -460,8 +468,6 @@ const createEventHandler = (actions: Actions) => {
         ];
       }
 
-      console.log(changes);
-
       actions.applyChanges(changes);
     }
   };
@@ -474,6 +480,10 @@ const createEventHandler = (actions: Actions) => {
     if (getCurrentFilePath(state) !== getCurrentFilePath(prevState)) {
       actions.openFile(filePath);
     }
+  };
+
+  const handleAddFile = ({ payload: { name } }: DashboardAddFileConfirmed) => {
+    actions.createDesignFile(name);
   };
 
   return (
@@ -516,6 +526,9 @@ const createEventHandler = (actions: Actions) => {
       case "history-engine/historyChanged": {
         return handleHistoryChanged(event, newState, prevState);
       }
+      case "ui/dashboardAddFileConfirmed": {
+        return handleAddFile(event);
+      }
     }
   };
 };
@@ -525,14 +538,11 @@ const createEventHandler = (actions: Actions) => {
  */
 
 const bootstrap = (
-  { openFile, syncGraph, onEvent, syncResourceFiles }: Actions,
+  { openFile, syncGraph, syncEvents, syncResourceFiles }: Actions,
   dispatch: Dispatch<DesignerEvent>,
   initialState: DesignerState
 ) => {
-  onEvent((event) => {
-    dispatch(designerEngineEvents.serverEvent(event));
-  });
-
+  syncEvents();
   syncResourceFiles();
   const filePath = getCurrentFilePath(initialState);
 

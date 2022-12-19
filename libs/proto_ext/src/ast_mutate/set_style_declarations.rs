@@ -1,12 +1,7 @@
 use std::collections::HashMap;
-use std::path::Path;
-
-use pathdiff::diff_paths;
 
 use super::base::EditContext;
-use super::utils::{
-    add_imports, parse_import, resolve_import, resolve_imports, NamespaceResolution,
-};
+use super::utils::{parse_import, resolve_import, resolve_imports, NamespaceResolution};
 use crate::ast::get_expr::GetExpr;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;

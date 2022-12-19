@@ -2,15 +2,20 @@
  * @jest-environment jsdom
  */
 
-import { designerEngineEvents } from "@paperclip-ui/designer/src/domains/api/events";
 import { shortcutEvents } from "@paperclip-ui/designer/src/domains/shortcuts/events";
 import { ShortcutCommand } from "@paperclip-ui/designer/src/domains/shortcuts/state";
-import { designerEvents } from "@paperclip-ui/designer/src/events";
+import {
+  DesignerEvent,
+  designerEvents,
+} from "@paperclip-ui/designer/src/events";
 import { Point } from "@paperclip-ui/designer/src/state/geom";
 import { renderFrames } from "@paperclip-ui/web-renderer";
 import { Designer } from "./mock-designer";
 
-export const waitForEvent = (eventType: string, designer: Designer) => {
+export const waitForEvent = (
+  eventType: DesignerEvent["type"],
+  designer: Designer
+) => {
   return new Promise((resolve) => {
     const dispose = designer.onEvent((event) => {
       if (event.type === eventType) {
@@ -25,8 +30,8 @@ export const waitUntilDesignerReady = (designer: Designer) => {
   return new Promise((resolve) => {
     const dispose = designer.onEvent((event) => {
       switch (event.type) {
-        case designerEngineEvents.documentOpened.type:
-        case designerEngineEvents.graphLoaded.type: {
+        case "designer-engine/documentOpened":
+        case "designer-engine/graphLoaded": {
           const state = designer.machine.getState();
           const isReady =
             Object.keys(state.graph.dependencies).length > 0 &&
@@ -80,5 +85,5 @@ export const insertCanvasElement = async (
     },
   });
 
-  await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+  await waitForEvent("designer-engine/documentOpened", designer);
 };

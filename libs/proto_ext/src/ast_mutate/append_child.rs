@@ -3,12 +3,10 @@ use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::pc::Node;
-use paperclip_proto::ast_mutate::{
-    mutation_result, AppendChild, ExpressionInserted, MutationResult,
-};
+use paperclip_proto::ast_mutate::{mutation_result, AppendChild, ExpressionInserted};
 
 use crate::ast::all::MutableVisitor;
-use crate::ast::{all::Visitor, all::VisitorResult};
+use crate::ast::all::VisitorResult;
 
 impl<'expr> MutableVisitor<()> for EditContext<'expr, AppendChild> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {

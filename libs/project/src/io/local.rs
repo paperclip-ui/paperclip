@@ -70,6 +70,9 @@ impl FileReader for LocalIO {
     fn get_file_size(&self, path: &str) -> Result<u64> {
         LocalFileReader::default().get_file_size(path)
     }
+    fn file_exists(&self, path: &str) -> bool {
+        LocalFileReader::default().file_exists(path)
+    }
 }
 
 impl FileResolver for LocalIO {

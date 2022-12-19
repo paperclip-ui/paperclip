@@ -54,6 +54,7 @@ rustls = "0.20.7"
 rustls-pemfile = "1.0.1"
 headless_chrome = {git = "https://github.com/atroche/rust-headless-chrome", features = ["fetch"]}
 ansi_term = "0.12.1"
+Inflector = "0.11.4"
 
 [dev-dependencies]
 assert_cmd = "2.0.4"

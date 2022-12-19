@@ -36,7 +36,7 @@ async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
 
     println!("🎨 Starting design server on port {}", port);
 
-    let designer = DesignerService::new(ctx.store.clone());
+    let designer = DesignerService::new(ctx.clone());
     let designer_server = DesignerServer::new(designer);
     let designer_server = tonic_web::config().enable(designer_server);
 
@@ -72,44 +72,3 @@ async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
 
     Ok(())
 }
-
-// const LOCAL_CERT: &'static [u8] = include_bytes!("../../../../localhost+2.pem");
-// const LOCAL_PKEY: &'static [u8] = include_bytes!("../../../../localhost+2-key.pem");
-
-// fn tls_acceptor() -> TlsAcceptor {
-
-//     let mut cert = BufReader::new(LOCAL_CERT);
-//     let mut key = BufReader::new(LOCAL_PKEY);
-
-//     let cert_chain = certs(&mut cert)
-//         .unwrap()
-//         .iter()
-//         .map(|v| Certificate(v.clone()))
-//         .collect();
-
-//     let mut keys = rustls::PrivateKey(Vec::new());
-//     loop {
-//             match rustls_pemfile::read_one(&mut key).expect("cannot parse private key .pem file") {
-//                 Some(rustls_pemfile::Item::RSAKey(key)) => keys = rustls::PrivateKey(key),
-//                 Some(rustls_pemfile::Item::PKCS8Key(key)) => keys = rustls::PrivateKey(key),
-//                 Some(rustls_pemfile::Item::ECKey(key)) => keys = rustls::PrivateKey(key),
-//                 None => break,
-//                 _ => {}
-//             }
-//         }
-
-//     Arc::new(
-//         ServerConfig::builder()
-//             .with_safe_defaults()
-//             .with_no_client_auth()
-//             .with_single_cert(cert_chain, keys)
-//             .unwrap(),
-//     )
-//     .into()
-// }
-
-// #[derive(Debug)]
-// struct ConnInfo {
-//     addr: std::net::SocketAddr,
-//     certificates: Vec<Certificate>,
-// }

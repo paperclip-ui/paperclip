@@ -14,9 +14,10 @@ use crate::ast::all::{Visitable, Visitor, VisitorResult};
 macro_rules! replace_child {
     ($children: expr, $child_id: expr, $new_child: expr) => {{
         let mut ret = VisitorResult::Continue;
-        for (i, v) in $children.iter_mut().enumerate() {
+        for (_i, v) in $children.iter_mut().enumerate() {
             if v.get_id() == $child_id {
-                std::mem::replace(v, ($new_child)(v));
+                *v = ($new_child)(v);
+                // std::mem::replace(v, ($new_child)(v));
                 ret = VisitorResult::Return(());
                 break;
             }
@@ -143,7 +144,7 @@ pub fn add_imports(
     document: &mut Document,
     dependency: &Dependency,
 ) -> HashMap<String, NamespaceResolution> {
-    let mut actual_namespaces = resolve_imports(namespaces, dependency);
+    let actual_namespaces = resolve_imports(namespaces, dependency);
 
     for (path, resolution) in &actual_namespaces {
         if resolution.is_new {

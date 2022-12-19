@@ -1,7 +1,7 @@
 use crate::{ast::all::MutableVisitor, replace_child};
 use paperclip_ast_serialize::serializable::Serializable;
 use paperclip_common::get_or_short;
-use paperclip_parser::{base, pc::parser::parse};
+use paperclip_parser::pc::parser::parse;
 use paperclip_proto::{
     ast::{
         all::{Expression, ExpressionWrapper},
@@ -11,10 +11,7 @@ use paperclip_proto::{
 };
 
 use super::EditContext;
-use crate::ast::{
-    all::{Visitor, VisitorResult},
-    get_expr::GetExpr,
-};
+use crate::ast::{all::VisitorResult, get_expr::GetExpr};
 
 macro_rules! replace_child_with_instance {
     ($self: expr, $children: expr, $checksum: expr) => {
@@ -108,11 +105,11 @@ fn get_component_insert_index(matching_id: &str, expr: &Document) -> usize {
         expr.body
             .iter()
             .enumerate()
-            .find(|(i, item)| item.get_id() == matching_id)
-            .or(expr.body.iter().enumerate().find(|(i, item)| {
+            .find(|(_i, item)| item.get_id() == matching_id)
+            .or(expr.body.iter().enumerate().find(|(_i, item)| {
                 matches!(item.get_inner(), document_body_item::Inner::Component(_))
             }))
-            .or(expr.body.iter().enumerate().find(|(i, item)| {
+            .or(expr.body.iter().enumerate().find(|(_i, item)| {
                 matches!(item.get_inner(), document_body_item::Inner::Import(_))
             }));
 

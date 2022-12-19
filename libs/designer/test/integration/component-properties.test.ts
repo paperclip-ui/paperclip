@@ -1,4 +1,3 @@
-import { designerEngineEvents } from "@paperclip-ui/designer/src/domains/api/events";
 import {
   startDesigner,
   waitForEvent,
@@ -23,7 +22,7 @@ describe(__filename + "#", () => {
         triggers: [],
       },
     });
-    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    await waitForEvent("designer-engine/documentOpened", designer);
     expect(designer.machine.getState().activeVariantId).toBe("59b5c86-1");
     designer.dispose();
   });

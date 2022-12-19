@@ -7,7 +7,7 @@ pub async fn prepare<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()>
     handle_events(ctx.clone()).await;
     Ok(())
 }
-pub async fn start<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
+pub async fn start<TIO: ServerIO>(_ctx: ServerEngineContext<TIO>) -> Result<()> {
     Ok(())
 }
 
@@ -27,7 +27,7 @@ async fn save_project<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
 
     for (path, content) in file_cache {
         println!("Saving {}", path);
-        if let Err(err) = std::fs::write(path.clone(), content) {
+        if let Err(_err) = std::fs::write(path.clone(), content) {
             println!("Couldn't save {}", path);
         }
     }

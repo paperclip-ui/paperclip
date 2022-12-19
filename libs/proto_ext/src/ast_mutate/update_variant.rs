@@ -3,11 +3,11 @@ use paperclip_parser::pc::parser::parse;
 use paperclip_proto::{
     ast::{
         all::Expression,
-        pc::{component_body_item, Component, ComponentBodyItem},
+        pc::{component_body_item, ComponentBodyItem},
     },
     ast_mutate::{
         mutation_result, update_variant_trigger, ExpressionInserted, ExpressionUpdated,
-        MutationResult, UpdateVariant,
+        UpdateVariant,
     },
 };
 use regex::Regex;

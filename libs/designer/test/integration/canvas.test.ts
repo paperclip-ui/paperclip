@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { designerEngineEvents } from "@paperclip-ui/designer/src/domains/api/events";
 import {
   insertCanvasElement,
   startDesigner,
@@ -84,7 +83,7 @@ describe(__filename + "#", () => {
     designer.machine.dispatch(
       shortcutEvents.itemSelected({ command: ShortcutCommand.Delete })
     );
-    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    await waitForEvent("designer-engine/documentOpened", designer);
 
     frames = stringifyDesignerFrames(designer);
 
@@ -114,7 +113,7 @@ describe(__filename + "#", () => {
     designer.machine.dispatch(
       shortcutEvents.itemSelected({ command: ShortcutCommand.Delete })
     );
-    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    await waitForEvent("designer-engine/documentOpened", designer);
 
     frames = stringifyDesignerFrames(designer);
 
@@ -155,7 +154,7 @@ describe(__filename + "#", () => {
       shortcutEvents.itemSelected({ command: ShortcutCommand.Delete })
     );
 
-    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    await waitForEvent("designer-engine/documentOpened", designer);
     frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual(
@@ -194,7 +193,7 @@ describe(__filename + "#", () => {
 
     expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-2");
 
-    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    await waitForEvent("designer-engine/documentOpened", designer);
     frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual('<div id="_4f0e8e93-2"></div>');
@@ -226,7 +225,7 @@ describe(__filename + "#", () => {
     await waitUntilDesignerReady(designer);
     insertCanvasElement(designer, { x: 10, y: 10 });
 
-    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    await waitForEvent("designer-engine/documentOpened", designer);
 
     expect(designer.machine.getState().selectedTargetId).toEqual("31cf58e1-19");
     let frames = stringifyDesignerFrames(designer);
@@ -255,7 +254,7 @@ describe(__filename + "#", () => {
     designer.machine.dispatch(
       shortcutEvents.itemSelected({ command: ShortcutCommand.Delete })
     );
-    await waitForEvent(designerEngineEvents.documentOpened.type, designer);
+    await waitForEvent("designer-engine/documentOpened", designer);
     expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-2");
     designer.dispose();
   });

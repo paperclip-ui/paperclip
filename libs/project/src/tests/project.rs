@@ -42,6 +42,9 @@ impl FileReader for MockIO {
     fn get_file_size(&self, path: &str) -> Result<u64> {
         self.0.get_file_size(path)
     }
+    fn file_exists(&self, path: &str) -> bool {
+        self.0.file_exists(path)
+    }
 }
 
 impl FileResolver for MockIO {

@@ -27,7 +27,7 @@ macro_rules! try_remove_child {
 impl<'expr> MutableVisitor<()> for EditContext<'expr, DeleteExpression> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
         if let Some(i) = try_remove_child!(expr.body, &self.mutation.expression_id) {
-            let prev_index = i - 1;
+            let prev_index: i32 = (i as i32) - 1;
             let mut results = vec![
                 mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
                     id: self.mutation.expression_id.to_string(),
@@ -35,7 +35,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, DeleteExpression> {
                 .get_outer(),
             ];
             if prev_index >= 0 {
-                if let Some(child) = expr.body.get(prev_index) {
+                if let Some(child) = expr.body.get(prev_index as usize) {
                     if matches!(
                         child.get_inner(),
                         ast::pc::document_body_item::Inner::DocComment(_)
@@ -46,7 +46,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, DeleteExpression> {
                             })
                             .get_outer(),
                         );
-                        expr.body.remove(prev_index);
+                        expr.body.remove(prev_index as usize);
                     }
                 }
             }

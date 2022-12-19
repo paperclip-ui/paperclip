@@ -32,7 +32,8 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetFrameBounds> {
                     if let ast::pc::document_body_item::Inner::DocComment(comment) =
                         item.get_inner_mut()
                     {
-                        std::mem::replace(comment, new_comment);
+                        *comment = new_comment;
+                        // std::mem::replace(comment, new_comment);
                     } else {
                         results.push(
                             mutation_result::Inner::ExpressionUpdated(ExpressionUpdated {

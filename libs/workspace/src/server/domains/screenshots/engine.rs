@@ -1,7 +1,6 @@
 use crate::server::core::utils::tmp_screenshot_dir;
 use crate::server::{core::ServerEngineContext, core::ServerEvent};
 use crate::{handle_store_events, server::io::ServerIO};
-use ansi_term::Colour;
 use anyhow::Result;
 use paperclip_common::serialize_context::Context;
 use paperclip_evaluator::css;
@@ -9,10 +8,10 @@ use paperclip_evaluator::html::serializer as html_serializer;
 use paperclip_evaluator::html::virt::{Bounds, Node};
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::graph_ext::Dependency;
-use paperclip_proto::ast::pc::{Component, DocumentBodyItem, document_body_item};
-use paperclip_proto::virt::html::{self, node};
+use paperclip_proto::ast::pc::{document_body_item, DocumentBodyItem};
+use paperclip_proto::virt::html::node;
 use paperclip_proto::virt::module::{pc_module_import, PcModule};
-use std::collections::{HashSet};
+use std::collections::HashSet;
 use std::sync::Arc;
 
 use headless_chrome;
@@ -45,7 +44,9 @@ async fn handle_modules_evaluated<IO: ServerIO>(ctx: ServerEngineContext<IO>) ->
                 break;
             }
             ctx.emit(ServerEvent::ScreenshotsStarted);
-            handle_modules_evaluated2(ctx.clone(), &screenshots_queue).await;
+            handle_modules_evaluated2(ctx.clone(), &screenshots_queue)
+                .await
+                .expect("Couldn't take screenshots");
         }
 
         ctx.emit(ServerEvent::ScreenshotsFinished);
@@ -83,26 +84,26 @@ async fn handle_modules_evaluated2<IO: ServerIO>(
 
             (
                 get_frame_html(&bundle, &dependency),
-                get_page_html(&bundle, dependency)
+                get_page_html(&bundle, dependency),
             )
         };
 
-
-        take_page_screenshot(&page_info.0, path.to_string(), page_info.2, page_info.1, browser.clone()).await?;
+        take_page_screenshot(
+            &page_info.0,
+            path.to_string(),
+            page_info.2,
+            page_info.1,
+            browser.clone(),
+        )
+        .await?;
 
         ctx.emit(ServerEvent::ScreenshotCaptured {
             expr_id: page_info.0.to_string(),
         });
 
         for (frame_id, bounds, html) in frames {
-            take_component_screenshot(
-                &frame_id,
-                path.to_string(),
-                bounds.clone(),
-                html.clone(),
-                browser.clone(),
-            )
-            .await?;
+            take_component_screenshot(&frame_id, bounds.clone(), html.clone(), browser.clone())
+                .await?;
             ctx.emit(ServerEvent::ScreenshotCaptured {
                 expr_id: frame_id.to_string(),
             });
@@ -114,19 +115,15 @@ async fn handle_modules_evaluated2<IO: ServerIO>(
 
 async fn take_component_screenshot(
     expr_id: &str,
-    path: String,
     bounds: Bounds,
     html: String,
     browser: Arc<headless_chrome::Browser>,
 ) -> Result<()> {
     let tmp_file_path = save_tmp_page_html(&expr_id, &html)?;
-    let style = Colour::White.dimmed();
-    // println!("📸 {} {}", expr_id, style.paint(path));
     take_file_screenshot(&tmp_file_path, &expr_id, bounds, browser).await
 }
 
 fn get_page_html(bundle: &PcModule, dependency: &Dependency) -> (String, String, Bounds) {
-    
     let mut frames = vec![];
 
     let mut lowest_x = 0.0;
@@ -148,11 +145,7 @@ fn get_page_html(bundle: &PcModule, dependency: &Dependency) -> (String, String,
             lowest_y
         };
         let right = bounds.x + bounds.width;
-        highest_x = if right > highest_x {
-            right
-        } else {
-            highest_x
-        };
+        highest_x = if right > highest_x { right } else { highest_x };
         let bottom = bounds.y + bounds.height;
         highest_y = if bottom > highest_y {
             bottom
@@ -167,15 +160,21 @@ fn get_page_html(bundle: &PcModule, dependency: &Dependency) -> (String, String,
         "#, bounds.x - lowest_x, bounds.y - lowest_y, bounds.width, bounds.height, get_tmp_html_file_path(&id)))
     }
 
-    let html = format!("<html><head><style>body {{ background: gray; }}</style></head><body>{}</body></html>", frames.join("\n"));
+    let html = format!(
+        "<html><head><style>body {{ background: gray; }}</style></head><body>{}</body></html>",
+        frames.join("\n")
+    );
 
-
-   (dependency.document.as_ref().unwrap().get_id().to_string(),  html, Bounds {
-    x: 0.0,
-    y: 0.0,
-    width: highest_x - lowest_x,
-    height: highest_y - lowest_y
-   })
+    (
+        dependency.document.as_ref().unwrap().get_id().to_string(),
+        html,
+        Bounds {
+            x: 0.0,
+            y: 0.0,
+            width: highest_x - lowest_x,
+            height: highest_y - lowest_y,
+        },
+    )
 }
 
 async fn take_page_screenshot(
@@ -228,7 +227,6 @@ async fn take_file_screenshot(
     Ok(())
 }
 
-
 fn get_tmp_html_file_path(id: &str) -> String {
     let tmp_dir = tmp_screenshot_dir();
     let file_name = format!("{}.html", id);
@@ -238,31 +236,23 @@ fn get_tmp_html_file_path(id: &str) -> String {
 fn save_tmp_page_html(id: &str, html: &str) -> Result<String> {
     let file_path = get_tmp_html_file_path(id);
     let tmp_dir = tmp_screenshot_dir();
-    std::fs::create_dir_all(tmp_dir.clone());
+    std::fs::create_dir_all(tmp_dir.clone()).expect("Couldn't create directory");
     std::fs::write(&file_path, &html)?;
     Ok(file_path)
 }
 
-fn get_frame_html(
-    bundle: &PcModule,
-    dependency: &Dependency,
-) -> Vec<(String, Bounds, String)> {
+fn get_frame_html(bundle: &PcModule, dependency: &Dependency) -> Vec<(String, Bounds, String)> {
     let head = stringify_module_bundle_head(bundle);
 
     let mut frames = vec![];
 
     for child in &bundle.html.as_ref().unwrap().children {
         let id = match child.get_inner() {
-            node::Inner::Element(node) => {
-                node.id.to_string()
-            },
-            node::Inner::TextNode(node) => {
-                node.id.to_string()
-            }
+            node::Inner::Element(node) => node.id.to_string(),
+            node::Inner::TextNode(node) => node.id.to_string(),
         };
 
         if let Some(source) = get_doc_body_item_from_source_id(&id, dependency) {
-
             let bounds = get_virt_node_bounds(child);
             let mut ctx = Context::new(0);
             html_serializer::serialize_node(child, &mut ctx);
@@ -271,11 +261,7 @@ fn get_frame_html(
 
             frames.push((source.get_id().to_string(), bounds, html));
         }
-
-
     }
-
-    
 
     // for component in dependency
     //     .document
@@ -298,7 +284,10 @@ fn get_frame_html(
     frames
 }
 
-fn get_doc_body_item_from_source_id<'a>(id: &str, dep: &'a Dependency) -> Option<&'a DocumentBodyItem> {
+fn get_doc_body_item_from_source_id<'a>(
+    id: &str,
+    dep: &'a Dependency,
+) -> Option<&'a DocumentBodyItem> {
     dep.document.as_ref().unwrap().body.iter().find(|item| {
         item.get_id() == id || {
             match item.get_inner() {
@@ -309,18 +298,15 @@ fn get_doc_body_item_from_source_id<'a>(id: &str, dep: &'a Dependency) -> Option
                     } else {
                         false
                     }
-                },
-                _ => {
-                    false
                 }
+                _ => false,
             }
         }
     })
 }
 
 fn get_virt_node_bounds(node: &Node) -> Bounds {
-    node
-        .get_metadata()
+    node.get_metadata()
         .as_ref()
         .and_then(|metadata| metadata.bounds.clone())
         .unwrap_or(Bounds {
@@ -351,7 +337,7 @@ fn get_virt_node_bounds(node: &Node) -> Bounds {
 //     } else {
 //         None
 //     }
-    
+
 // }
 
 fn stringify_module_bundle_head(bundle: &PcModule) -> String {
@@ -385,28 +371,4 @@ fn stringify_module_bundle_head(bundle: &PcModule) -> String {
     );
 
     head
-}
-
-fn get_expr_virt_node<'a>(
-    component: &Component,
-    virt_doc: &'a html::Document,
-) -> Option<&'a html::Node> {
-    virt_doc.children.iter().find(|child| {
-        let render_node = component
-            .get_render_expr()
-            .and_then(|expr| expr.node.as_ref());
-
-        if let Some(rende_node) = render_node {
-            match child.get_inner() {
-                node::Inner::Element(node) => {
-                    node.source_id == Some(rende_node.get_id().to_string())
-                }
-                node::Inner::TextNode(node) => {
-                    node.source_id == Some(rende_node.get_id().to_string())
-                }
-            }
-        } else {
-            false
-        }
-    })
 }

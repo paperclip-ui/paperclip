@@ -9,7 +9,10 @@ import React, {
 import { Frames } from "./Frames";
 import * as styles from "@paperclip-ui/designer/src/styles/editor.pc";
 import { normalizeWheel } from "./normalize-wheel";
-import { designerEvents } from "@paperclip-ui/designer/src/events";
+import {
+  DesignerEvent,
+  designerEvents,
+} from "@paperclip-ui/designer/src/events";
 
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
@@ -40,7 +43,7 @@ export const Canvas = React.memo(() => {
 const useCanvas = () => {
   const canvas = useSelector(getCanvas);
   const currentDocument = useSelector(getCurrentDocument);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<DesignerEvent>();
   const expanded = canvas.isExpanded;
 
   const actualTransform = useMemo(() => {
@@ -106,7 +109,7 @@ const useCanvas = () => {
       setCanvasPanTimer(
         setTimeout(() => {
           setCanvasPanTimer(null);
-          dispatch(designerEvents.canvasPanEnd());
+          dispatch({ type: "designer/canvasPanEnd" });
         }, 100)
       );
 
@@ -123,12 +126,13 @@ const useCanvas = () => {
 
     const onResize = () => {
       const { width, height } = ref.getBoundingClientRect();
-      dispatch(
-        designerEvents.canvasResized({
+      dispatch({
+        type: "editor/canvasResized",
+        payload: {
           width,
           height,
-        })
-      );
+        },
+      });
     };
     const obs = new ResizeObserver(onResize);
     obs.observe(ref);

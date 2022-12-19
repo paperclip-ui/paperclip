@@ -1,4 +1,5 @@
 import {
+  BaseEvent,
   eventCreators,
   ExtractEventFromCreators,
   identity,
@@ -10,18 +11,39 @@ import { DNDKind, InsertMode } from "../state";
 import { Box, Point, Size } from "../state/geom";
 import { ShortcutEvent } from "../domains/shortcuts/events";
 import { KeyboardEngineEvent } from "../domains/keyboard/events";
+import { UIEvent } from "../domains/ui/events";
+
+export type CanvasPanEnd = BaseEvent<"designer/canvasPanEnd">;
+export type CanvasMouseUp = BaseEvent<
+  "editor/canvasMouseUp",
+  {
+    metaKey: boolean;
+    ctrlKey: boolean;
+    shiftKey: boolean;
+    timestamp: number;
+    position: Point;
+  }
+>;
+export type VariantSelected = BaseEvent<"designer/variantSelected", string[]>;
+export type VariantEdited = BaseEvent<
+  "designer/variantEdited",
+  {
+    componentId: string;
+    newName: string;
+    triggers: UpdateVariantTrigger[];
+  }
+>;
+export type ToolsLayerDragOver = BaseEvent<
+  "designer/ToolsLayerDragOver",
+  Point
+>;
+export type ToolsLayerDrop = BaseEvent<
+  "designer/ToolsLayerDrop",
+  { kind: DNDKind; item: any; point: Point }
+>;
 
 export const designerEvents = eventCreators(
   {
-    canvasPanEnd: null,
-    variantsSelected: identity<string[]>(),
-    variantEdited: identity<{
-      componentId: string;
-      newName: string;
-      triggers: UpdateVariantTrigger[];
-    }>(),
-    toolsLayerDragOver: identity<Point>(),
-    toolsLayerDrop: identity<{ kind: DNDKind; item: any; point: Point }>(),
     resourceModalDragLeft: null,
     resourceModalBackgroundClicked: null,
     editVariantClicked: identity<{ variantId: string }>(),
@@ -33,13 +55,6 @@ export const designerEvents = eventCreators(
     canvasMouseLeave: null,
     layerLeafClicked: identity<{ virtId: string }>(),
     layerArrowClicked: identity<{ virtId: string }>(),
-    canvasMouseUp: identity<{
-      metaKey: boolean;
-      ctrlKey: boolean;
-      shiftKey: boolean;
-      timestamp: number;
-      position: Point;
-    }>(),
     computedStylesCaptured: identity<{
       computedStyles: Record<string, any>;
     }>(),
@@ -79,9 +94,19 @@ export const designerEvents = eventCreators(
   "editor"
 );
 
+export type LegacyEvent =
+  | CanvasPanEnd
+  | VariantEdited
+  | VariantSelected
+  | ToolsLayerDragOver
+  | ToolsLayerDrop
+  | CanvasMouseUp;
+
 export type DesignerEvent =
   | ExtractEventFromCreators<typeof designerEvents>
   | DesignerEngineEvent
   | HistoryEngineEvent
   | ShortcutEvent
-  | KeyboardEngineEvent;
+  | KeyboardEngineEvent
+  | LegacyEvent
+  | UIEvent;

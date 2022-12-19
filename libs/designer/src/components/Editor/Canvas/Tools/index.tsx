@@ -9,7 +9,10 @@ import {
   getSelectedNodePath,
   InsertMode,
 } from "@paperclip-ui/designer/src/state";
-import { designerEvents } from "@paperclip-ui/designer/src/events";
+import {
+  DesignerEvent,
+  designerEvents,
+} from "@paperclip-ui/designer/src/events";
 import { Selectable } from "./Selectable";
 import { InsertElement } from "./InsertElement";
 import { ContextMenu } from "../../../ContextMenu";
@@ -35,8 +38,6 @@ export const Tools = () => {
     readonly,
     hoveringBox,
     toolsLayerEnabled,
-    selectedNodePath,
-    optionKeyDown,
   } = useTools();
 
   if (!currentDocument?.paperclip || !toolsLayerEnabled) {
@@ -107,7 +108,7 @@ export const Tools = () => {
 };
 
 const useTools = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<DesignerEvent>();
   const {
     canvas,
     highlightNodePath,
@@ -159,15 +160,16 @@ const useTools = () => {
 
   const onMouseUp = useCallback(
     (event: React.MouseEvent<any>) => {
-      dispatch(
-        designerEvents.canvasMouseUp({
+      dispatch({
+        type: "editor/canvasMouseUp",
+        payload: {
           metaKey: event.metaKey,
           ctrlKey: event.ctrlKey,
           shiftKey: event.shiftKey,
           timestamp: Date.now(),
           position: getMousePoint(event),
-        })
-      );
+        },
+      });
     },
     [dispatch]
   );

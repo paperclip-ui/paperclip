@@ -1,13 +1,10 @@
-import { designerEngineEvents } from "../../domains/api/events";
 import { DesignerEvent, designerEvents } from "../../events";
 import jasonpatch from "fast-json-patch";
 import {
   Canvas,
   DesignerState,
   flattenFrameBoxes,
-  getCurrentDependency,
   getNodeInfoAtPoint,
-  InsertMode,
   IS_WINDOWS,
   maybeCenterCanvas,
 } from "../../state";
@@ -35,7 +32,7 @@ export const editorReducer = (
   event: DesignerEvent
 ): DesignerState => {
   switch (event.type) {
-    case designerEngineEvents.documentOpened.type:
+    case "designer-engine/documentOpened":
       state = produce(state, (newState) => {
         newState.currentDocument = event.payload;
 
@@ -56,19 +53,19 @@ export const editorReducer = (
       });
       state = maybeCenterCanvas(state);
       return state;
-    case designerEvents.canvasResized.type:
+    case "editor/canvasResized":
       return produce(state, (newState) => {
         newState.canvas.size = event.payload;
       });
-    case designerEvents.editVariantClicked.type:
+    case "editor/editVariantClicked":
       return produce(state, (newState) => {
         newState.activeVariantId = event.payload.variantId;
       });
-    case designerEvents.editVariantPopupClosed.type:
+    case "editor/editVariantPopupClosed":
       return produce(state, (newState) => {
         newState.activeVariantId = null;
       });
-    case designerEngineEvents.changesApplied.type: {
+    case "designer-engine/changesApplied": {
       return produce(state, (newState) => {
         newState.insertedNodeIds = event.payload.changes
           .map((change) => {
@@ -82,7 +79,7 @@ export const editorReducer = (
         newState.history = event.payload;
       });
     }
-    case designerEngineEvents.graphLoaded.type: {
+    case "designer-engine/graphLoaded": {
       const next = {
         ...state.graph,
         dependencies: {
@@ -99,16 +96,16 @@ export const editorReducer = (
         jasonpatch.applyPatch(newState.graph.dependencies, diff);
       });
     }
-    case designerEvents.layerLeafClicked.type: {
+    case "editor/layerLeafClicked": {
       state = selectNode(event.payload.virtId, false, false, state);
       return state;
     }
-    case designerEvents.insertModeButtonClick.type: {
+    case "editor/insertModeButtonClick": {
       return produce(state, (newState) => {
         newState.insertMode = event.payload.mode;
       });
     }
-    case designerEvents.layerArrowClicked.type: {
+    case "editor/layerArrowClicked": {
       if (state.expandedLayerVirtIds.includes(event.payload.virtId)) {
         const flattened = ast.flattenUnknownInnerExpression(
           ast.getExprById(event.payload.virtId, state.graph)
@@ -126,14 +123,14 @@ export const editorReducer = (
 
       return state;
     }
-    case designerEvents.canvasMouseUp.type: {
+    case "editor/canvasMouseUp": {
       return produce(state, (newState) => {
         newState.insertMode = null;
         newState.canvas.mouseDown = false;
         newState.canvasMouseDownStartPoint = undefined;
       });
     }
-    case designerEvents.canvasMouseDown.type: {
+    case "editor/canvasMouseDown": {
       state = produce(state, (newState) => {
         newState.canvas.mouseDown = true;
         newState.canvas.mousePosition = event.payload.position;
@@ -193,7 +190,7 @@ export const editorReducer = (
         state
       );
     }
-    case designerEvents.canvasPanned.type: {
+    case "editor/canvasPanned": {
       // do not allow panning when expanded
       if (state.canvas.isExpanded) {
         return state;
@@ -243,8 +240,8 @@ export const editorReducer = (
         );
       });
     }
-    case designerEvents.resizerPathStoppedMoving.type:
-    case designerEvents.resizerPathMoved.type: {
+    case "editor/resizerPathStoppedMoving":
+    case "editor/resizerPathMoved": {
       state = produce(state, (newState) => {
         const node = virtHTML.getNodeById(
           newState.selectedTargetId,
@@ -296,14 +293,14 @@ export const editorReducer = (
       });
       return state;
     }
-    case designerEvents.canvasMouseMoved.type: {
+    case "editor/canvasMouseMoved": {
       return highlightNode(state, event.payload);
     }
-    case designerEvents.computedStylesCaptured.type:
+    case "editor/computedStylesCaptured":
       return produce(state, (newState) => {
         Object.assign(newState.computedStyles, event.payload.computedStyles);
       });
-    case designerEvents.rectsCaptured.type:
+    case "editor/rectsCaptured":
       state = produce(state, (newState) => {
         newState.rects[event.payload.frameIndex] = event.payload.rects;
 

@@ -45,6 +45,5 @@ public component Item {
  * @bounds(x: 1161, y: 4, width: 1024, height: 768)
 */
 
-Item {
-}
+Item
 

@@ -2,7 +2,7 @@ import { apiReducer } from "../domains/api/reducer";
 import { historyReducer } from "../domains/history/reducer";
 import { legacyReducer } from "../domains/legacy/reducer";
 import { shortcutReducer } from "../domains/shortcuts/reducer";
-import { uiReducer } from "../domains/ui";
+import { uiReducer } from "../domains/ui/reducers";
 import { DesignerEvent } from "../events";
 import { DesignerState } from "../state";
 

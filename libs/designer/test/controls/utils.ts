@@ -69,15 +69,16 @@ export const insertCanvasElement = async (
       timestamp: 0,
     })
   );
-  designer.machine.dispatch(
-    designerEvents.canvasMouseUp({
+  designer.machine.dispatch({
+    type: "editor/canvasMouseUp",
+    payload: {
       position,
       metaKey: false,
       ctrlKey: false,
       shiftKey: false,
       timestamp: 0,
-    })
-  );
+    },
+  });
 
   await waitForEvent(designerEngineEvents.documentOpened.type, designer);
 };

@@ -2,10 +2,11 @@ import React, { useCallback, useMemo, useState } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/dashboard-page.pc";
 import * as etcStyles from "@paperclip-ui/designer/src/styles/etc.pc";
 import { TextInput } from "../TextInput";
-import { useSelector } from "@paperclip-ui/common";
+import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { getGraph, getResourceFilePaths, getScreenshotUrls } from "../../state";
 import { useHistory } from "../../domains/history/react";
 import { routes } from "../../state/routes";
+import { DesignerEvent } from "../../events";
 
 export const Dashboard = () => {
   const {
@@ -48,7 +49,14 @@ export const Dashboard = () => {
 
 const useDashboard = () => {
   const [filter, setFilter] = useState<string>("");
-  const onAddClick = () => {};
+  const dispatch = useDispatch<DesignerEvent>();
+  const onAddClick = () => {
+    const name = prompt(`Component name`);
+    if (!name) {
+      return;
+    }
+    dispatch({ type: "ui/dashboardAddFileConfirmed", payload: { name } });
+  };
 
   const onFilterChange = (value: string) => setFilter(value);
   const resourceFilePaths = useSelector(getResourceFilePaths);

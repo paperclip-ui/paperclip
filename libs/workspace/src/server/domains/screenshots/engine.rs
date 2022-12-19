@@ -12,8 +12,7 @@ use paperclip_proto::ast::graph_ext::Dependency;
 use paperclip_proto::ast::pc::{Component, DocumentBodyItem, document_body_item};
 use paperclip_proto::virt::html::{self, node};
 use paperclip_proto::virt::module::{pc_module_import, PcModule};
-use paperclip_proto_ext::ast::get_expr::GetExpr;
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashSet};
 use std::sync::Arc;
 
 use headless_chrome;
@@ -122,7 +121,7 @@ async fn take_component_screenshot(
 ) -> Result<()> {
     let tmp_file_path = save_tmp_page_html(&expr_id, &html)?;
     let style = Colour::White.dimmed();
-    println!("📸 {} {}", expr_id, style.paint(path));
+    // println!("📸 {} {}", expr_id, style.paint(path));
     take_file_screenshot(&tmp_file_path, &expr_id, bounds, browser).await
 }
 

@@ -1,5 +1,8 @@
 import { useDispatch } from "@paperclip-ui/common";
-import { designerEvents } from "@paperclip-ui/designer/src/events";
+import {
+  DesignerEvent,
+  designerEvents,
+} from "@paperclip-ui/designer/src/events";
 import { DNDKind } from "@paperclip-ui/designer/src/state";
 import React, { useEffect, useRef, useState } from "react";
 import { useDrop } from "react-dnd";
@@ -25,27 +28,29 @@ export const DropTarget = ({ children }: DropTargetProps) => {
 
 const useDropTarget = () => {
   const [toolsRef, setToolsRef] = useState<HTMLDivElement>();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<DesignerEvent>();
 
   const [{ isDraggingOver }, dragRef] = useDrop({
     accept: DNDKind.Resource,
     hover: (item, monitor) => {
       const offset = monitor.getClientOffset();
-      dispatch(
-        designerEvents.toolsLayerDragOver({
+      dispatch({
+        type: "designer/ToolsLayerDragOver",
+        payload: {
           x: offset.x,
           y: offset.y,
-        })
-      );
+        },
+      });
     },
     drop(item, monitor) {
-      dispatch(
-        designerEvents.toolsLayerDrop({
+      dispatch({
+        type: "designer/ToolsLayerDrop",
+        payload: {
           kind: DNDKind.Resource,
           item,
           point: monitor.getSourceClientOffset(),
-        })
-      );
+        },
+      });
     },
     collect(monitor) {
       return {

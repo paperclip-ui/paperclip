@@ -1,5 +1,4 @@
-import { designerEngineEvents } from "../../domains/api/events";
-import { DesignerEvent, designerEvents } from "../../events";
+import { CanvasMouseUp, DesignerEvent } from "../../events";
 import jasonpatch from "fast-json-patch";
 import {
   Canvas,
@@ -13,14 +12,12 @@ import {
   maybeCenterCanvas,
 } from "../../state";
 import produce from "immer";
-import { clamp, pick } from "lodash";
-import { Box, centerTransformZoom, Point } from "../../state/geom";
-import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
+import { clamp } from "lodash";
+import { Box, centerTransformZoom } from "../../state/geom";
 import {
   Element as VirtElement,
   TextNode as VirtText,
 } from "@paperclip-ui/proto/lib/generated/virt/html";
-import { memoize } from "@paperclip-ui/common";
 import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
@@ -36,7 +33,7 @@ export const legacyReducer = (
   event: DesignerEvent
 ): DesignerState => {
   switch (event.type) {
-    case designerEngineEvents.documentOpened.type:
+    case "designer-engine/documentOpened":
       state = produce(state, (newState) => {
         newState.currentDocument = event.payload;
 
@@ -57,19 +54,19 @@ export const legacyReducer = (
       });
       state = maybeCenterCanvas(state);
       return state;
-    case designerEvents.canvasResized.type:
+    case "editor/canvasResized":
       return produce(state, (newState) => {
         newState.canvas.size = event.payload;
       });
-    case designerEvents.editVariantClicked.type:
+    case "editor/editVariantClicked":
       return produce(state, (newState) => {
         newState.activeVariantId = event.payload.variantId;
       });
-    case designerEvents.editVariantPopupClosed.type:
+    case "editor/editVariantPopupClosed":
       return produce(state, (newState) => {
         newState.activeVariantId = null;
       });
-    case designerEngineEvents.changesApplied.type: {
+    case "designer-engine/changesApplied": {
       return produce(state, (newState) => {
         newState.insertedNodeIds = event.payload.changes
           .map((change) => {
@@ -83,7 +80,7 @@ export const legacyReducer = (
         newState.history = event.payload;
       });
     }
-    case designerEngineEvents.graphLoaded.type: {
+    case "designer-engine/graphLoaded": {
       const next = {
         ...state.graph,
         dependencies: {
@@ -100,16 +97,16 @@ export const legacyReducer = (
         jasonpatch.applyPatch(newState.graph.dependencies, diff);
       });
     }
-    case designerEvents.layerLeafClicked.type: {
+    case "editor/layerLeafClicked": {
       state = selectNode(event.payload.virtId, false, false, state);
       return state;
     }
-    case designerEvents.insertModeButtonClick.type: {
+    case "editor/insertModeButtonClick": {
       return produce(state, (newState) => {
         newState.insertMode = event.payload.mode;
       });
     }
-    case designerEvents.layerArrowClicked.type: {
+    case "editor/layerArrowClicked": {
       if (state.expandedLayerVirtIds.includes(event.payload.virtId)) {
         const flattened = ast.flattenUnknownInnerExpression(
           ast.getExprById(event.payload.virtId, state.graph)
@@ -127,7 +124,7 @@ export const legacyReducer = (
 
       return state;
     }
-    case designerEvents.canvasMouseUp.type: {
+    case "editor/canvasMouseUp": {
       state = produce(state, (newState) => {
         if (newState.insertMode != InsertMode.Resource) {
           newState.insertMode = null;
@@ -189,7 +186,7 @@ export const legacyReducer = (
         state
       );
     }
-    case designerEvents.toolsLayerDrop.type: {
+    case "designer/ToolsLayerDrop": {
       return produce(state, (newState) => {
         if (newState.insertMode != InsertMode.Resource) {
           newState.insertMode = null;
@@ -199,7 +196,7 @@ export const legacyReducer = (
         newState.canvasMouseDownStartPoint = undefined;
       });
     }
-    case designerEvents.canvasMouseDown.type: {
+    case "editor/canvasMouseDown": {
       state = produce(state, (newState) => {
         newState.canvas.mouseDown = true;
         newState.canvas.mousePosition = event.payload.position;
@@ -209,7 +206,7 @@ export const legacyReducer = (
 
       return state;
     }
-    case designerEvents.canvasPanned.type: {
+    case "editor/canvasPanned": {
       // do not allow panning when expanded
       if (state.canvas.isExpanded) {
         return state;
@@ -259,8 +256,8 @@ export const legacyReducer = (
         );
       });
     }
-    case designerEvents.resizerPathStoppedMoving.type:
-    case designerEvents.resizerPathMoved.type: {
+    case "editor/resizerPathStoppedMoving":
+    case "editor/resizerPathMoved": {
       state = produce(state, (newState) => {
         const node = virtHTML.getNodeById(
           newState.selectedTargetId,
@@ -312,14 +309,14 @@ export const legacyReducer = (
       });
       return state;
     }
-    case designerEvents.canvasMouseMoved.type: {
+    case "editor/canvasMouseMoved": {
       return highlightNode(state, event.payload);
     }
-    case designerEvents.computedStylesCaptured.type:
+    case "editor/computedStylesCaptured":
       return produce(state, (newState) => {
         Object.assign(newState.computedStyles, event.payload.computedStyles);
       });
-    case designerEvents.rectsCaptured.type:
+    case "editor/rectsCaptured":
       state = produce(state, (newState) => {
         newState.rects[event.payload.frameIndex] = event.payload.rects;
 
@@ -355,7 +352,7 @@ const pxToInt = (value: string) => Number(value.replace("px", ""));
 
 const handleDoubleClick = (
   designer: DesignerState,
-  action: ReturnType<typeof designerEvents.canvasMouseUp>
+  action: CanvasMouseUp
 ): [DesignerState, boolean] => {
   const oldTimestamp = designer.canvasClickTimestamp;
 

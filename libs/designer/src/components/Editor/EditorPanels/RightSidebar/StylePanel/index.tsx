@@ -6,7 +6,10 @@ import {
   ComputedDeclaration,
   getSelectedExprStyles,
 } from "@paperclip-ui/designer/src/state/pc";
-import { designerEvents } from "@paperclip-ui/designer/src/events";
+import {
+  DesignerEvent,
+  designerEvents,
+} from "@paperclip-ui/designer/src/events";
 import {
   SuggestionMenu,
   SuggestionMenuItem,
@@ -423,15 +426,16 @@ type FieldProps = {
 
 const Field = memo(
   ({ name, style, options: { input: inputOptions } }: FieldProps) => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<DesignerEvent>();
 
     const onSave = ({ value, imports }: NewDeclValue) => {
-      dispatch(
-        designerEvents.styleDeclarationsChanged({
+      dispatch({
+        type: "editor/styleDeclarationsChanged",
+        payload: {
           values: { [name]: value },
           imports,
-        })
-      );
+        },
+      });
     };
 
     const input = (

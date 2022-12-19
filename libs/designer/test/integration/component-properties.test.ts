@@ -1,5 +1,4 @@
 import { designerEngineEvents } from "@paperclip-ui/designer/src/domains/api/events";
-import { designerEvents } from "@paperclip-ui/designer/src/events";
 import {
   startDesigner,
   waitForEvent,
@@ -16,13 +15,14 @@ describe(__filename + "#", () => {
       `,
     });
     await waitUntilDesignerReady(designer);
-    designer.machine.dispatch(
-      designerEvents.variantEdited({
+    designer.machine.dispatch({
+      type: "designer/variantEdited",
+      payload: {
         componentId: "4f0e8e93-2",
         newName: "bbddaaa",
         triggers: [],
-      })
-    );
+      },
+    });
     await waitForEvent(designerEngineEvents.documentOpened.type, designer);
     expect(designer.machine.getState().activeVariantId).toBe("59b5c86-1");
     designer.dispose();

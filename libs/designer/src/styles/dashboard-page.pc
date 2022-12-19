@@ -110,6 +110,7 @@ public component AddFileButton {
     render button(onClick: onAddClick) {
         style extends theme.reset, theme.icon {
             -webkit-mask-image: url("./plus2.svg")
+            cursor: pointer
         }
         text "something"
     }

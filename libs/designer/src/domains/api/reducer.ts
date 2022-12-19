@@ -40,6 +40,14 @@ const handleGraphLoaded = (
   event: ReturnType<typeof designerEngineEvents.graphLoaded>
 ) => {
   return produce(state, (newState) => {
+    for (const path in event.payload.dependencies) {
+      const dep = event.payload.dependencies[path];
+
+      newState.screenshotUrls[dep.document.id] = getComponentScreenshotUrl(
+        dep.document.id
+      );
+    }
+
     for (const { component } of getGraphComponents(event.payload)) {
       newState.screenshotUrls[component.id] = getComponentScreenshotUrl(
         component.id

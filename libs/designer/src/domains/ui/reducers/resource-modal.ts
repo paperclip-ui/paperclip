@@ -1,6 +1,6 @@
 import produce from "immer";
-import { DesignerEvent, designerEvents } from "../../events";
-import { DesignerState } from "../../state";
+import { DesignerEvent, designerEvents } from "../../../events";
+import { DesignerState } from "../../../state";
 
 export const resourceModalReducer = (
   state: DesignerState,

@@ -1,5 +1,5 @@
-import { DesignerEvent } from "../../events";
-import { DesignerState } from "../../state";
+import { DesignerEvent } from "../../../events";
+import { DesignerState } from "../../../state";
 import { resourceModalReducer } from "./resource-modal";
 import { toolsLayerReducer } from "./toolsLayer";
 

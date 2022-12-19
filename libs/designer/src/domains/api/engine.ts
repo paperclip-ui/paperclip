@@ -5,7 +5,12 @@ import {
 import { DesignerEvent as DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent, designerEngineEvents } from "./events";
-import { DesignerEvent, designerEvents } from "../../events";
+import {
+  DesignerEvent,
+  designerEvents,
+  ToolsLayerDrop,
+  VariantEdited,
+} from "../../events";
 import {
   DEFAULT_FRAME_BOX,
   DesignerState,
@@ -299,9 +304,7 @@ const createEventHandler = (actions: Actions) => {
   const handleRedo = () => actions.redo();
   const handleSave = () => actions.save();
   const handleVariantEdited = (
-    {
-      payload: { componentId, newName, triggers },
-    }: ReturnType<typeof designerEvents.variantEdited>,
+    { payload: { componentId, newName, triggers } }: VariantEdited,
     state: DesignerState
   ) => {
     const variantId = state.activeVariantId;
@@ -427,9 +430,7 @@ const createEventHandler = (actions: Actions) => {
   };
 
   const handleDropItem = (
-    {
-      payload: { kind, item, point },
-    }: ReturnType<typeof designerEvents.toolsLayerDrop>,
+    { payload: { kind, item, point } }: ToolsLayerDrop,
     state: DesignerState
   ) => {
     if (kind === DNDKind.Resource) {
@@ -481,10 +482,10 @@ const createEventHandler = (actions: Actions) => {
     prevState: DesignerState
   ) => {
     switch (event.type) {
-      case designerEvents.canvasMouseUp.type: {
+      case "editor/canvasMouseUp": {
         return handleCanvasMouseUp(newState, prevState);
       }
-      case shortcutEvents.itemSelected.type: {
+      case "shortcuts/itemSelected": {
         return handleShortcutCommand(
           event.payload.command,
           newState,
@@ -494,22 +495,22 @@ const createEventHandler = (actions: Actions) => {
       case "keyboard/keyDown": {
         return handleKeyDown(event, newState, prevState);
       }
-      case designerEvents.styleDeclarationsChanged.type: {
+      case "editor/styleDeclarationsChanged": {
         return handleStyleDeclarationChanged(event, newState);
       }
-      case designerEvents.variantsSelected.type: {
+      case "designer/variantSelected": {
         return handleVariantsSelected(event.payload, newState);
       }
-      case designerEvents.removeVariantButtonClicked.type: {
+      case "editor/removeVariantButtonClicked": {
         return handleDeleteExpression(event.payload.variantId, newState);
       }
-      case designerEvents.variantEdited.type: {
+      case "designer/variantEdited": {
         return handleVariantEdited(event, newState);
       }
-      case designerEvents.resizerPathStoppedMoving.type: {
+      case "editor/resizerPathStoppedMoving": {
         return handleResizerStoppedMoving(event, newState, prevState);
       }
-      case designerEvents.toolsLayerDrop.type: {
+      case "designer/ToolsLayerDrop": {
         return handleDropItem(event, newState);
       }
       case "history-engine/historyChanged": {

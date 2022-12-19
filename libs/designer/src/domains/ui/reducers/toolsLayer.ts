@@ -1,12 +1,12 @@
-import { DesignerEvent, designerEvents } from "../../events";
-import { DesignerState, highlightNode } from "../../state";
+import { DesignerEvent } from "../../../events";
+import { DesignerState, highlightNode } from "../../../state";
 
 export const toolsLayerReducer = (
   state: DesignerState,
   event: DesignerEvent
 ) => {
   switch (event.type) {
-    case designerEvents.toolsLayerDragOver.type: {
+    case "designer/ToolsLayerDragOver": {
       return highlightNode(state, event.payload);
     }
   }

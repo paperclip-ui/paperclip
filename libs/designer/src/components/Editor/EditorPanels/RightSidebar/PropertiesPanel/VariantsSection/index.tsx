@@ -8,7 +8,10 @@ import {
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { EditVariantPopup, SaveOptions } from "./EditVariantPopup";
 import { Variant } from "@paperclip-ui/proto/lib/generated/ast/pc";
-import { designerEvents } from "@paperclip-ui/designer/src/events";
+import {
+  DesignerEvent,
+  designerEvents,
+} from "@paperclip-ui/designer/src/events";
 
 export const VariantsSection = () => {
   const {
@@ -65,14 +68,20 @@ const useVariantsSection = () => {
   const variants = ast.getComponentVariants(component);
   const [editVariantPopupOpen, setVariantPopupOpen] = useState(false);
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<DesignerEvent>();
   const onRemoveVariant = (variant: Variant) => {
-    dispatch(
-      designerEvents.removeVariantButtonClicked({ variantId: variant.id })
-    );
+    dispatch({
+      type: "editor/removeVariantButtonClicked",
+      payload: {
+        variantId: variant.id,
+      },
+    });
   };
   const onSelectVariant = (variant: Variant) => {
-    dispatch(designerEvents.editVariantClicked({ variantId: variant.id }));
+    dispatch({
+      type: "editor/editVariantClicked",
+      payload: { variantId: variant.id },
+    });
     setVariantPopupOpen(true);
   };
 
@@ -90,13 +99,14 @@ const useVariantsSection = () => {
   };
 
   const onSaveCurrentVariant = ({ name, triggers }: SaveOptions) => {
-    dispatch(
-      designerEvents.variantEdited({
+    dispatch({
+      type: "designer/variantEdited",
+      payload: {
         componentId: component.id,
         newName: name,
         triggers,
-      })
-    );
+      },
+    });
   };
 
   return {

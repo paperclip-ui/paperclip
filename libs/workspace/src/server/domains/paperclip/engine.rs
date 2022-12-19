@@ -103,14 +103,19 @@ impl<TIO: ServerIO> FileResolver for VirtGraphIO<TIO> {
     }
 }
 
-async fn apply_mutations<TIO: ServerIO>(mutations: &Vec<Mutation>, ctx: ServerEngineContext<TIO>) -> Result<()> {
-
+async fn apply_mutations<TIO: ServerIO>(
+    mutations: &Vec<Mutation>,
+    ctx: ServerEngineContext<TIO>,
+) -> Result<()> {
     let mut graph = ctx.store.lock().unwrap().state.graph.clone();
 
     let changed_files = edit_graph(&mut graph, mutations, &ctx.io)?;
     println!("Applying {:?} {:?}", mutations, changed_files);
 
-    ctx.emit(ServerEvent::MutationsApplied { result: changed_files, updated_graph: graph });
+    ctx.emit(ServerEvent::MutationsApplied {
+        result: changed_files,
+        updated_graph: graph,
+    });
 
     Ok(())
 }

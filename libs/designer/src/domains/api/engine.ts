@@ -1,13 +1,14 @@
 import {
   DesignerClientImpl,
   GrpcWebImpl,
+  DesignServerEvent,
+  ModulesEvaluated,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent } from "./events";
 import {
   DesignerEvent,
   designerEvents,
-  ResizerPathStoppedMoving,
   ToolsLayerDrop,
   VariantEdited,
 } from "../../events";
@@ -82,14 +83,9 @@ const createActions = (
   dispatch: Dispatch<DesignerEngineEvent>
 ) => {
   return {
-    openFile(filePath: string) {
-      client.OpenFile({ path: filePath }).subscribe({
-        next(data) {
-          dispatch({ type: "designer-engine/documentOpened", payload: data });
-        },
-        complete() {},
-        error() {},
-      });
+    async openFile(filePath: string) {
+      const data = await client.OpenFile({ path: filePath });
+      dispatch({ type: "designer-engine/documentOpened", payload: data });
     },
     async createDesignFile(name: string) {
       const { filePath } = await client.CreateDesignFile({ name });
@@ -486,6 +482,24 @@ const createEventHandler = (actions: Actions) => {
     actions.createDesignFile(name);
   };
 
+  const handleServerEvent = (
+    event: DesignServerEvent,
+    state: DesignerState
+  ) => {
+    if (event.modulesEvaluated) {
+      handleModulesEvaluated(event.modulesEvaluated, state);
+    }
+  };
+  const handleModulesEvaluated = (
+    event: ModulesEvaluated,
+    state: DesignerState
+  ) => {
+    const activeFile = getCurrentFilePath(state);
+    if (event.filePaths.includes(activeFile)) {
+      actions.openFile(activeFile);
+    }
+  };
+
   return (
     event: DesignerEvent,
     newState: DesignerState,
@@ -516,6 +530,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "designer/variantEdited": {
         return handleVariantEdited(event, newState);
+      }
+      case "designer-engine/serverEvent": {
+        return handleServerEvent(event.payload, newState);
       }
       case "editor/resizerPathStoppedMoving": {
         return handleResizerStoppedMoving(newState, prevState);

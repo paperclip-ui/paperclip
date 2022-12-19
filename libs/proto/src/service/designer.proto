@@ -10,9 +10,9 @@ import "virt/module.proto";
 package service.designer;
 
 service Designer {
-  rpc OpenFile(FileRequest) returns (stream FileResponse);
+  rpc OpenFile(FileRequest) returns (FileResponse);
   rpc GetGraph(Empty) returns (stream ast.graph.Graph);
-  rpc OnEvent(Empty) returns (stream DesignerEvent);
+  rpc OnEvent(Empty) returns (stream DesignServerEvent);
   rpc UpdateFile(UpdateFileRequest) returns (Empty);
   rpc CreateDesignFile(CreateDesignFileRequest) returns (CreateDesignFileResponse);
   rpc GetResourceFiles(Empty) returns (stream ResourceFiles);
@@ -63,16 +63,21 @@ message FileResponse {
   }
 }
 
-message DesignerEvent {
+message DesignServerEvent {
   oneof inner {
     FileChanged file_changed = 1;
-    ScreenshotCaptured screenshot_captured = 2;
+    ModulesEvaluated modules_evaluated = 2;
+    ScreenshotCaptured screenshot_captured = 3;
   }
 }
 
 message FileChanged {
   string path = 1;
   bytes content = 2;
+}
+
+message ModulesEvaluated {
+  repeated string file_paths = 1;
 }
 
 message ScreenshotCaptured {

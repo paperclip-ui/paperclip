@@ -1,7 +1,7 @@
 import produce from "immer";
 import { DesignerState, getGraphComponents } from "../../state";
 import { DesignerEngineEvent, GraphLoaded } from "./events";
-import { DesignerEvent as DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
+import { DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
 
 export const apiReducer = (
   state: DesignerState,

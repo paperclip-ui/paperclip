@@ -3,5 +3,5 @@ pub mod designer {
 
     include!(concat!(env!("OUT_DIR"), "/service.designer.rs"));
 
-    add_inner_wrapper!(designer_event::Inner, DesignerEvent);
+    add_inner_wrapper!(design_server_event::Inner, DesignServerEvent);
 }

@@ -45,12 +45,8 @@ pub trait LoadableGraph {
 impl LoadableGraph for Graph {
     async fn load<TIO: IO>(&mut self, path: &str, io: &TIO) -> Result<()> {
         self.dependencies.extend(
-            load_dependencies::<TIO>(
-                String::from(path),
-                io,
-                Arc::new(Mutex::new(HashMap::new())),
-            )
-            .await?,
+            load_dependencies::<TIO>(String::from(path), io, Arc::new(Mutex::new(HashMap::new())))
+                .await?,
         );
         Ok(())
     }
@@ -109,7 +105,11 @@ impl LoadableGraph for Graph {
     }
 }
 
-pub fn get_document_imports<TIO: IO>(document: &Document, document_path: &str, io: &TIO) -> Result<HashMap<String, String>> {
+pub fn get_document_imports<TIO: IO>(
+    document: &Document,
+    document_path: &str,
+    io: &TIO,
+) -> Result<HashMap<String, String>> {
     let mut imports = HashMap::new();
 
     for import in &document.get_imports() {
@@ -118,7 +118,7 @@ pub fn get_document_imports<TIO: IO>(document: &Document, document_path: &str, i
             io.resolve_file(document_path, &import.path)?,
         );
     }
-    
+
     Ok(imports)
 }
 
@@ -154,7 +154,6 @@ async fn load_dependencies<'io, TIO: IO>(
     };
 
     let imports = get_document_imports(&document, &path, io)?;
-
 
     deps.insert(
         path.to_string(),

@@ -12,7 +12,10 @@ mod update_variant;
 
 #[macro_use]
 mod utils;
-use crate::{ast::all::{MutableVisitable, MutableVisitor, VisitorResult}, graph::{io::IO, get_document_imports}};
+use crate::{
+    ast::all::{MutableVisitable, MutableVisitor, VisitorResult},
+    graph::{get_document_imports, io::IO},
+};
 use anyhow::Result;
 pub use append_child::*;
 pub use base::*;
@@ -60,7 +63,7 @@ macro_rules! mutations {
 pub fn edit_graph<TIO: IO>(
     graph: &mut Graph,
     mutations: &Vec<Mutation>,
-    io: &TIO
+    io: &TIO,
 ) -> Result<Vec<(String, Vec<MutationResult>)>> {
     let mut changed: Vec<(String, Vec<MutationResult>)> = vec![];
 
@@ -71,17 +74,14 @@ pub fn edit_graph<TIO: IO>(
                 dependency: dep.clone(),
                 changes: vec![],
             };
-            let doc = 
-            dep.document
-                .as_mut()
-                .expect("Document must exist");
-            
+            let doc = dep.document.as_mut().expect("Document must exist");
+
             doc.accept(&mut ctx);
 
             dep.imports = get_document_imports(doc, path, io)?;
 
             if ctx.changes.len() > 0 {
-              println!("{:#?}", dep.imports);
+                println!("{:#?}", dep.imports);
                 changed.push((path.to_string(), ctx.changes.clone()));
             }
         }

@@ -34,8 +34,10 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
 
                 state.file_cache.insert(path.to_string(), content.clone());
             }
-            ServerEvent::MutationsApplied { result, updated_graph } => {
-
+            ServerEvent::MutationsApplied {
+                result,
+                updated_graph,
+            } => {
                 state.graph =
                     std::mem::replace(&mut state.graph, Graph::new()).merge(updated_graph.clone());
 
@@ -45,7 +47,6 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                     latest_ast_changes.extend(changes.clone());
                     println!("CHANGED PATH {}", path);
                 }
-                
 
                 update_changed_files(state);
                 store_history(state);

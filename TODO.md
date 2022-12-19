@@ -27,11 +27,10 @@
 
 #### On-deck
 
-- when dropping instances to screen, wrong component pops up
-
 - dashboard
 
   - ability to delete file
+    - file menu
 
 - render slots
 - ability to insert into slots

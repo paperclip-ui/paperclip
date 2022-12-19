@@ -26,7 +26,10 @@ pub mod content_types {
     }
 }
 
-pub fn create_design_file<TIO: ServerIO>(name: &str, ctx: ServerEngineContext<TIO>) -> Result<String> {
+pub fn create_design_file<TIO: ServerIO>(
+    name: &str,
+    ctx: ServerEngineContext<TIO>,
+) -> Result<String> {
     let config_ctx = ctx
         .store
         .lock()

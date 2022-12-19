@@ -42,6 +42,22 @@ export type ToolsLayerDrop = BaseEvent<
   { kind: DNDKind; item: any; point: Point }
 >;
 
+export type ResizerPathStoppedMoving = BaseEvent<
+  "editor/resizerPathStoppedMoving",
+  {
+    originalBounds: Box;
+    newBounds: Box;
+  }
+>;
+
+export type ResizerPathMoved = BaseEvent<
+  "editor/resizerPathMoved",
+  {
+    originalBounds: Box;
+    newBounds: Box;
+  }
+>;
+
 export const designerEvents = eventCreators(
   {
     resourceModalDragLeft: null,
@@ -69,14 +85,6 @@ export const designerEvents = eventCreators(
       timestamp: number;
       position: Point;
     }>(),
-    resizerPathMoved: identity<{
-      originalBounds: Box;
-      newBounds: Box;
-    }>(),
-    resizerPathStoppedMoving: identity<{
-      originalBounds: Box;
-      newBounds: Box;
-    }>(),
     canvasPanned: identity<{
       delta: Point;
       mousePosition: Point;
@@ -100,7 +108,9 @@ export type LegacyEvent =
   | VariantSelected
   | ToolsLayerDragOver
   | ToolsLayerDrop
-  | CanvasMouseUp;
+  | CanvasMouseUp
+  | ResizerPathMoved
+  | ResizerPathStoppedMoving;
 
 export type DesignerEvent =
   | ExtractEventFromCreators<typeof designerEvents>

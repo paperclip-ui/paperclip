@@ -95,13 +95,13 @@ public component Container {
 }
 
 /**
- * @bounds(x: -729, y: 334, width: 388, height: 750)
+ * @bounds(x: -188, y: 334, width: 388, height: 750)
 */
 
 Container
 
 /**
- * @bounds(x: -1729, y: 334, width: 700, height: 750)
+ * @bounds(x: -984, y: 349, width: 700, height: 750)
 */
 
 Container

@@ -202,7 +202,7 @@ export type GetAllScreensRequested = WrappedEvent<
 >;
 export type VirtualNodesSelected = BaseAction<
   ActionType.VIRTUAL_NODES_SELECTED,
-  { sources: Array<VirtNodeSource>; screenWidth: number }
+  { sources: VirtNodeSource[]; screenWidth: number }
 >;
 
 export type MetaClicked = BaseAction<
@@ -360,10 +360,10 @@ export type FrameTitleChanged = BaseAction<
 export type Pasted = BaseAction<
   ActionType.PASTED,
   {
-    clipboardData: Array<{
+    clipboardData: {
       type: string;
       content: string;
-    }>;
+    }[];
   }
 >;
 
@@ -564,9 +564,7 @@ export const styleRuleFileNameClicked = actionCreator<StyleRuleFileNameClicked>(
 );
 
 export const metaClicked = actionCreator<MetaClicked>(ActionType.META_CLICKED);
-export const resizerPathStoppedMoving = actionCreator<ResizerPathStoppedMoving>(
-  ActionType.RESIZER_PATH_MOUSE_STOPPED_MOVING
-);
+
 export const layerLeafClicked = actionCreator<LayerLeafClicked>(
   ActionType.LAYER_LEAF_CLICKED
 );

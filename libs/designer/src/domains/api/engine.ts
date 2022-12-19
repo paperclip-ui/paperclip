@@ -7,6 +7,7 @@ import { DesignerEngineEvent } from "./events";
 import {
   DesignerEvent,
   designerEvents,
+  ResizerPathStoppedMoving,
   ToolsLayerDrop,
   VariantEdited,
 } from "../../events";
@@ -235,7 +236,6 @@ const createEventHandler = (actions: Actions) => {
   };
 
   const handleResizerStoppedMoving = (
-    event: ReturnType<typeof designerEvents.resizerPathStoppedMoving>,
     state: DesignerState,
     prevState: DesignerState
   ) => {
@@ -518,7 +518,7 @@ const createEventHandler = (actions: Actions) => {
         return handleVariantEdited(event, newState);
       }
       case "editor/resizerPathStoppedMoving": {
-        return handleResizerStoppedMoving(event, newState, prevState);
+        return handleResizerStoppedMoving(newState, prevState);
       }
       case "designer/ToolsLayerDrop": {
         return handleDropItem(event, newState);

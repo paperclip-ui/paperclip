@@ -9,7 +9,10 @@ import {
 } from "@paperclip-ui/designer/src/state/geom";
 import { useDispatch } from "@paperclip-ui/common";
 import { startDOMDrag } from "@paperclip-ui/designer/src/components/utils/dnd";
-import { designerEvents } from "@paperclip-ui/designer/src/events";
+import {
+  DesignerEvent,
+  designerEvents,
+} from "@paperclip-ui/designer/src/events";
 
 type Props = {
   canvasScroll: Point;
@@ -77,71 +80,78 @@ export const Selectable = React.memo(
       // refreshed outside of this function because DND handlers here.
       let _currentBox = currentBox;
 
-      const wrapActionCreator = (createAction) => (event, info) => {
-        const delta = {
-          x: info.delta.x / zoom,
-          y: info.delta.y / zoom,
+      const wrapActionCreator =
+        (createAction: (payload) => DesignerEvent) => (event, info) => {
+          const delta = {
+            x: info.delta.x / zoom,
+            y: info.delta.y / zoom,
+          };
+
+          // prevent parent containers from event like mouse click
+          // which would deselect multi-selected elements
+          event.stopPropagation();
+
+          let x = point.x === 0 ? bounds.x + delta.x : bounds.x;
+          let y = point.y === 0 ? bounds.y + delta.y : bounds.y;
+
+          // make sure sizes don't go into negative values
+          const width = Math.max(
+            1,
+            point.x === 100
+              ? bounds.width + delta.x
+              : point.x == 50
+              ? bounds.width
+              : bounds.width - delta.x
+          );
+
+          const height = Math.max(
+            1,
+            point.y === 100
+              ? bounds.height + delta.y
+              : point.y === 50
+              ? bounds.height
+              : bounds.height - delta.y
+          );
+
+          // if params don't change, then make sure that the box doesn't move
+          if (width == _currentBox.width) {
+            x = _currentBox.x;
+          }
+
+          if (height == _currentBox.height) {
+            y = _currentBox.y;
+          }
+
+          const newBounds = (_currentBox = roundBox({
+            x,
+            y,
+            width,
+            height,
+          }));
+
+          setCurrentBox(newBounds);
+
+          dispatch(
+            createAction({
+              originalBounds: roundBox(bounds),
+              newBounds,
+              anchor: point,
+              sourceEvent: event,
+            })
+          );
         };
-
-        // prevent parent containers from event like mouse click
-        // which would deselect multi-selected elements
-        event.stopPropagation();
-
-        let x = point.x === 0 ? bounds.x + delta.x : bounds.x;
-        let y = point.y === 0 ? bounds.y + delta.y : bounds.y;
-
-        // make sure sizes don't go into negative values
-        const width = Math.max(
-          1,
-          point.x === 100
-            ? bounds.width + delta.x
-            : point.x == 50
-            ? bounds.width
-            : bounds.width - delta.x
-        );
-
-        const height = Math.max(
-          1,
-          point.y === 100
-            ? bounds.height + delta.y
-            : point.y === 50
-            ? bounds.height
-            : bounds.height - delta.y
-        );
-
-        // if params don't change, then make sure that the box doesn't move
-        if (width == _currentBox.width) {
-          x = _currentBox.x;
-        }
-
-        if (height == _currentBox.height) {
-          y = _currentBox.y;
-        }
-
-        const newBounds = (_currentBox = roundBox({
-          x,
-          y,
-          width,
-          height,
-        }));
-
-        setCurrentBox(newBounds);
-
-        dispatch(
-          createAction({
-            originalBounds: roundBox(bounds),
-            newBounds,
-            anchor: point,
-            sourceEvent: event,
-          })
-        );
-      };
 
       startDOMDrag(
         event,
         null,
-        wrapActionCreator(designerEvents.resizerPathMoved),
-        wrapActionCreator(designerEvents.resizerPathStoppedMoving)
+        wrapActionCreator((payload) => ({
+          type: "editor/resizerPathMoved",
+          payload,
+        })),
+        wrapActionCreator((payload) => ({
+          type: "editor/resizerPathStoppedMoving",
+          payload,
+        }))
       );
     };
 
@@ -174,8 +184,14 @@ export const Selectable = React.memo(
         startDOMDrag(
           event,
           null,
-          wrapActionCreator(designerEvents.resizerPathMoved),
-          wrapActionCreator(designerEvents.resizerPathStoppedMoving)
+          wrapActionCreator((payload) => ({
+            type: "editor/resizerPathMoved",
+            payload,
+          })),
+          wrapActionCreator((payload) => ({
+            type: "editor/resizerPathStoppedMoving",
+            payload,
+          }))
         );
       }
     };

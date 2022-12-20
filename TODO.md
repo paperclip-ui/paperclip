@@ -29,10 +29,14 @@ Simple tasks:
 
 -
 
+### Priorities
+
+- Insert into slots
+- style panel
+- attributes
+
 #### On-deck
 
-- ability to edit text
-- ability to rename layers
 - ability to insert elements into slots
 
 - projects screen
@@ -40,14 +44,6 @@ Simple tasks:
   - create new project button
   - store projects somewhere on disk
   - workspace needs ability to change projects
-
-- online service
-
-  - OAuth
-  - ability to link GIT repositories
-
-- render slots
-- ability to insert into slots
 
 - variants
 

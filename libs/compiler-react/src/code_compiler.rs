@@ -56,7 +56,7 @@ fn compile_imports(document: &ast::Document, context: &mut Context) {
 
 fn compile_import(import: &ast::Import, context: &mut Context) {
     context
-        .add_buffer(format!("import * as {} from \"{}\";", import.namespace, import.path).as_str());
+        .add_buffer(format!("import * as {} from \"{}\";\n", import.namespace, import.path).as_str());
 }
 
 macro_rules! compile_children {

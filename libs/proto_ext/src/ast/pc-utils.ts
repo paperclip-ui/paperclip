@@ -326,6 +326,58 @@ export namespace ast {
       (expr as Component).body?.some((expr) => expr.render != null)
     );
   };
+  export const isDocument = (
+    expr: InnerExpression,
+    graph: Graph
+  ): expr is Document => {
+    return !getParent(expr.id, graph);
+  };
+
+  export const isComponent2 = (
+    expr: InnerExpression,
+    graph: Graph
+  ): expr is Component => {
+    return parentContains(expr, "component", graph);
+  };
+
+  export const isRender = (
+    expr: InnerExpression,
+    graph: Graph
+  ): expr is Render => {
+    return parentContains(expr, "render", graph);
+  };
+
+  export const isInsert = (
+    expr: InnerExpression,
+    graph: Graph
+  ): expr is Render => {
+    return parentContains(expr, "insert", graph);
+  };
+
+  const parentContains = (
+    expr: InnerExpression,
+    ns: string,
+    graph: Graph
+  ): boolean => {
+    const parent = getParent(expr.id, graph);
+    return Boolean(
+      (isRender(parent, graph) &&
+        parent.node &&
+        parent.node[ns]?.id === expr.id) ||
+        parent.body?.some((child) => child[ns]?.id === expr.id)
+    );
+  };
+
+  export const isElement = (
+    expr: InnerExpression,
+    graph: Graph
+  ): expr is Element => {
+    return parentContains(expr, "element", graph);
+  };
+
+  export const isSlot = (expr: InnerExpression, graph: Graph): expr is Slot => {
+    return parentContains(expr, "slot", graph);
+  };
 
   export const isVariant = (
     expr: InnerExpression,

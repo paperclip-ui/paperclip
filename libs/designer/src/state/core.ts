@@ -25,6 +25,7 @@ import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { Component } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import produce from "immer";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
+import { Bounds } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
 export const IS_WINDOWS = false;
 
 export enum InsertMode {
@@ -485,3 +486,13 @@ export const resetCurrentDocument = (state: DesignerState): DesignerState => ({
     scrollPosition: { x: 0, y: 0 },
   },
 });
+
+export const getExprBounds = (exprId: string, state: DesignerState): Bounds => {
+  const expr = ast.getExprById(exprId, state.graph);
+  if (ast.isSlot(expr, state.graph)) {
+    console.log();
+  }
+  return null;
+};
+
+// export const getInsertableBounds = (state: DesignerState, )

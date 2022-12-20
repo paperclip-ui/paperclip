@@ -1844,3 +1844,31 @@ case! {
     "#
   )]
 }
+
+
+case! {
+  can_rename_a_slot_id,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render slot test {
+
+          }
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-1".to_string(),
+    value: "test2".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component A {
+        render slot test2
+      }
+    "#
+  )]
+}

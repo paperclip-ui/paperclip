@@ -1,5 +1,4 @@
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
-import { Document } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { startWorkspace } from "@paperclip-ui/workspace/lib/test_utils";
 
 // So many backflips in order to parse a PC file. I have a somewhat decent
@@ -23,7 +22,8 @@ export const parseFiles = async (
       dependencies: {},
     };
 
-    workspace.client
+    workspace
+      .getClient()
       .GetGraph({
         path: workspace.localFilesPaths["entry.pc"],
       })

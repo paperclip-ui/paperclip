@@ -1,3 +1,24 @@
 import "./resource-modal.pc" as imp
 import "./theme.pc" as mod
 
+/**
+ * @bounds(x: 254, y: 256, width: 258, height: 155)
+*/
+
+public component SlotInsertionTest {
+    render div {
+        style {
+            position: relative
+        }
+        slot childd {
+            text "something else"
+        }
+    }
+}
+
+/**
+ * @bounds(x: 550, y: 264, width: 255, height: 108)
+*/
+
+SlotInsertionTest
+

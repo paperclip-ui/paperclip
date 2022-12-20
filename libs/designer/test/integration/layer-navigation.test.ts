@@ -16,9 +16,10 @@ describe(__filename + "#", () => {
     await waitUntilDesignerReady(designer);
 
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([]);
-    designer.machine.dispatch(
-      designerEvents.layerLeafClicked({ virtId: "4f0e8e93-1" })
-    );
+    designer.machine.dispatch({
+      type: "editor/layerLeafClicked",
+      payload: { virtId: "4f0e8e93-1" },
+    });
     expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-1");
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([
       "4f0e8e93-1",

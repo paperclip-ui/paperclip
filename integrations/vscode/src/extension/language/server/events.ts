@@ -1,16 +1,9 @@
-import {
-  eventCreators,
-  ExtractEventFromCreators,
-  identity,
-} from "@paperclip-ui/common";
-import { FileChanged } from "@paperclip-ui/proto/lib/generated/service/designer";
+import { BaseEvent, eventCreators, identity } from "@paperclip-ui/common";
 
-export const serverEvents = eventCreators(
-  {
-    started: identity<{ port }>(),
-    fileChanged: identity<{ path: string; content: string }>(),
-  },
-  "server"
-);
+export type Started = BaseEvent<"server/started", { port: number }>;
+export type FileChanged = BaseEvent<
+  "server/fileChanged",
+  { path: string; content: string }
+>;
 
-export type ServerEvent = ExtractEventFromCreators<typeof serverEvents>;
+export type ServerEvent = Started | FileChanged;

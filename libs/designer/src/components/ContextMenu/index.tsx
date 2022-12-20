@@ -96,9 +96,12 @@ type ContextMenuOptionProps = {
 const ContextMenuOption = ({
   option: { shortcut, command, label, enabled },
 }: ContextMenuOptionProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<DesignerEvent>();
   const onSelect = () => {
-    dispatch(shortcutEvents.itemSelected({ command }));
+    dispatch({
+      type: "shortcuts/itemSelected",
+      payload: { command: ShortcutCommand.InsertElement },
+    });
   };
   return (
     <styles.ContextMenuItem

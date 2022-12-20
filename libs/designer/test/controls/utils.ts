@@ -62,9 +62,10 @@ export const insertCanvasElement = async (
   designer: Designer,
   position: Point = { x: 0, y: 0 }
 ) => {
-  designer.machine.dispatch(
-    shortcutEvents.itemSelected({ command: ShortcutCommand.InsertElement })
-  );
+  designer.machine.dispatch({
+    type: "shortcuts/itemSelected",
+    payload: { command: ShortcutCommand.InsertElement },
+  });
   designer.machine.dispatch(
     designerEvents.canvasMouseDown({
       position: { x: 0, y: 0 },

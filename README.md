@@ -135,6 +135,12 @@ Page {
 
 Ideally design files live in the same repository as your existing code. This will enabl -->
 
+## Contributing
+
+Right now, the _main_ focus for the app is around the designer UI and UX. If you're a designer and would like to help out with that, awesome! The main thing that would be super helpful is to come up with suggestions and / or design around how to improve the designer to better suite your workflow.
+
+You're welcome to use the designer, Figma, or any tool to submit suggestions. If they're accepted, we'll wire up your designs and include the new functionality in the designer.
+
 ## Roadmap
 
 There are a number of things on the horizon for Paperclip, not in order:

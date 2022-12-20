@@ -2,9 +2,11 @@
   <img src="./assets/logo-outline-5.png" width="400px">
 </p>
 
+> Join the [Discord channel](https://discord.gg/gHPTh9Rt) for the latest updates!
+
 Paperclip enables you to design and build just about any kind of web application end-to-end. It can be used directly within [Codespaces](https://github.com/features/codespaces), enabling anyone easy access to make changes to web applications.
 
-![Split view](./assets/screenshots/v10.1.7.png)
+![Split view](https://user-images.githubusercontent.com/757408/195644902-441364e0-cb44-41cf-90a3-348bb3a0eefb.png)
 
 <!-- ### Motivation
 
@@ -135,11 +137,13 @@ Page {
 
 Ideally design files live in the same repository as your existing code. This will enabl -->
 
+
 ## Contributing
 
 Right now, the _main_ focus for the app is around the designer UI and UX. If you're a designer and would like to help out with that, awesome! The main thing that would be super helpful is to come up with suggestions and / or design around how to improve the designer to better suite your workflow.
 
 You're welcome to use the designer, Figma, or any tool to submit suggestions. If they're accepted, we'll wire up your designs and include the new functionality in the designer.
+
 
 ## Roadmap
 

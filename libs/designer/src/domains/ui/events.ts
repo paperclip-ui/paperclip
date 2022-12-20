@@ -10,4 +10,9 @@ export type ToolsTextEditorChanged = BaseEvent<
   { text: string }
 >;
 
-export type UIEvent = DashboardAddFileConfirmed | ToolsTextEditorChanged;
+export type IDChanged = BaseEvent<"ui/idChanged", { value: string }>;
+
+export type UIEvent =
+  | DashboardAddFileConfirmed
+  | ToolsTextEditorChanged
+  | IDChanged;

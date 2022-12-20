@@ -30,6 +30,7 @@ message Mutation {
 
     // General
     DeleteExpression delete_expression = 11;
+    SetId set_id = 16;
 
     // Component
     UpdateVariant update_variant = 12;
@@ -94,6 +95,11 @@ message DeleteExpression {
 
 message ConvertToComponent {
   string expression_id = 1;
+}
+
+message SetId {
+  string expression_id = 1;
+  string value = 2;
 }
 
 message ConvertToSlot {

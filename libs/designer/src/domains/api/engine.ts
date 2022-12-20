@@ -44,6 +44,7 @@ import { HistoryChanged } from "../history/events";
 import { KeyDown } from "../keyboard/events";
 import {
   DashboardAddFileConfirmed,
+  IDChanged,
   ToolsTextEditorChanged,
 } from "../ui/events";
 import { TextNode } from "@paperclip-ui/proto/lib/generated/ast/pc";
@@ -466,8 +467,6 @@ const createEventHandler = (actions: Actions) => {
 
       let changes = [];
 
-      console.log(expr, item);
-
       if (ast.isComponent(expr)) {
         changes = [
           {
@@ -486,6 +485,19 @@ const createEventHandler = (actions: Actions) => {
       actions.applyChanges(changes);
     }
   };
+
+  const handleIDChanged = (event: IDChanged, state: DesignerState) => {
+    const expr = getSelectedExpression(state);
+    actions.applyChanges([
+      {
+        setId: {
+          expressionId: expr.id,
+          value: event.payload.value,
+        },
+      },
+    ]);
+  };
+
   const handleHistoryChanged = (
     event: HistoryChanged,
     state: DesignerState,
@@ -561,6 +573,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "designer/ToolsLayerDrop": {
         return handleDropItem(event, newState);
+      }
+      case "ui/idChanged": {
+        return handleIDChanged(event, newState);
       }
       case "history-engine/historyChanged": {
         return handleHistoryChanged(event, newState, prevState);

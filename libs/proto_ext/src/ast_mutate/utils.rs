@@ -1,9 +1,10 @@
 use std::{collections::HashMap, fmt::Debug, path::Path};
-
+use convert_case::{Case, Casing};
+use regex::Regex;
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::ast::{
     all::Expression,
-    graph_ext::Dependency,
+    graph_ext::{Dependency},
     pc::{Document, DocumentBodyItem},
 };
 use pathdiff::diff_paths;
@@ -164,18 +165,50 @@ pub fn add_imports(
     actual_namespaces
 }
 
-pub fn get_unique_namespace(base: &str, document: &Document) -> String {
+pub fn get_unique_id<CheckFn>(base: &str, is_unique: CheckFn) -> String where CheckFn: Fn(&str) -> bool {
     let mut i = 0;
-    let mut unique_ns = base.to_string();
-    let imports = document.get_imports();
+    let mut unique_id = base.to_string();
 
-    while matches!(
-        imports.iter().find(|imp| { imp.namespace == unique_ns }),
-        Some(_)
-    ) {
+    while !(is_unique)(&unique_id) {
         i += 1;
-        unique_ns = format!("{}{}", base, i);
+        unique_id = format!("{}{}", base, i);
     }
 
-    unique_ns
+    unique_id
+}
+
+
+
+
+pub fn get_unique_namespace(base: &str, document: &Document) -> String {
+    let imports = document.get_imports();
+
+    get_unique_id(base, |id| {
+        matches!(
+            imports.iter().find(|imp| { imp.namespace == id }),
+            None
+        )
+    })
+}
+
+
+
+pub fn get_unique_component_id(base: &str, dep: &Dependency) -> String {
+    let components = dep.document.as_ref().unwrap().get_components();
+
+    get_unique_id(&get_valid_name(base, Case::Pascal), |id| {
+        matches!(
+            components.iter().find(|imp| { imp.name == id }),
+            None
+        )
+    })
+}
+
+
+pub fn get_valid_name(name: &str, case: Case) -> String {
+    let invalids = Regex::new("[^\\w\\s]+").unwrap();
+    let invalid_start_char = Regex::new("^[^a-zA-Z]+").unwrap();
+    let name = invalids.replace_all(&name, "");
+    let name = invalid_start_char.replace_all(&name, "");
+    name.to_case(case)
 }

@@ -1,3 +1,4 @@
+import "../../../../../styles/input.pc" as imp
 import "../../../../../styles/theme.pc" as theme
 
 /**
@@ -19,16 +20,5 @@ public component TextInput {
             outline: none
         }
     }
-}
-
-/**
- * @bounds(x: 12, y: -123, width: 223, height: 98)
-*/
-
-div {
-    style {
-        position: relative
-    }
-    text "Type something"
 }
 

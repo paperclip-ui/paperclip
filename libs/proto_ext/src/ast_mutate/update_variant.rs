@@ -1,4 +1,4 @@
-use convert_case::{Case, Casing};
+use convert_case::Case;
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::{
     ast::{
@@ -10,11 +10,10 @@ use paperclip_proto::{
         UpdateVariant,
     },
 };
-use regex::Regex;
 
 use crate::ast::all::{MutableVisitor, VisitorResult};
 
-use super::EditContext;
+use super::{EditContext, utils::get_valid_name};
 
 impl<'expr> MutableVisitor<()> for EditContext<'expr, UpdateVariant> {
     fn visit_component(
@@ -89,15 +88,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, UpdateVariant> {
 }
 
 fn fix_variant_name(name: &str, siblings: &Vec<ComponentBodyItem>) -> String {
-    get_unique_name(&get_valid_name(name), siblings)
-}
-
-fn get_valid_name(name: &str) -> String {
-    let invalids = Regex::new("[^\\w\\s]+").unwrap();
-    let invalid_start_char = Regex::new("^[^a-zA-Z]+").unwrap();
-    let name = invalids.replace_all(&name, "");
-    let name = invalid_start_char.replace_all(&name, "");
-    name.to_case(Case::Camel)
+    get_unique_name(&get_valid_name(name, Case::Camel), siblings)
 }
 
 fn get_unique_name(name: &str, siblings: &Vec<ComponentBodyItem>) -> String {

@@ -35,7 +35,7 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 state.file_cache.insert(path.to_string(), content.clone());
             }
             ServerEvent::MutationsApplied {
-                result,
+                result: _result,
                 updated_graph,
             } => {
                 state.graph =

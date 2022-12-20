@@ -7,7 +7,7 @@ use paperclip_proto::ast_mutate::{
     mutation, update_variant_trigger, AppendChild, Bounds, ConvertToComponent, ConvertToSlot,
     DeleteExpression, InsertFrame, SetFrameBounds, SetStyleDeclarationValue, SetStyleDeclarations,
     SetTextNodeValue,
-    ToggleVariants, UpdateVariant,
+    ToggleVariants, UpdateVariant, SetId,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use std::collections::HashMap;
@@ -36,7 +36,7 @@ macro_rules! case {
                 })
                 .collect::<HashMap<String, String>>();
 
-            println!("{:#?}", graph.dependencies.get("/entry.pc"));
+            println!("{:#?}", graph.dependencies);
 
             for (path, content) in $expected_mock_files {
                 if let Some(serialized_content) = edited_docs.get(path) {
@@ -1556,6 +1556,291 @@ case! {
   [(
     "/entry.pc", r#"
       text "b"
+    "#
+  )]
+}
+
+case! {
+  can_change_the_id_of_an_element,
+  [
+    (
+      "/entry.pc", r#"
+        div
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-1".to_string(),
+    value: "a".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      div a
+    "#
+  )]
+}
+
+case! {
+  can_change_the_id_of_a_text_node,
+  [
+    (
+      "/entry.pc", r#"
+        text "a"
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-1".to_string(),
+    value: "a".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      text a "a"
+    "#
+  )]
+}
+
+
+case! {
+  can_change_the_id_of_a_component,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render div
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-3".to_string(),
+    value: "B".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component B {
+        render div
+      }
+    "#
+  )]
+}
+
+case! {
+  can_change_the_id_of_an_atom,
+  [
+    (
+      "/entry.pc", r#"
+        token a blue
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-2".to_string(),
+    value: "b".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      token b blue
+    "#
+  )]
+}
+
+case! {
+  can_change_the_id_of_a_style,
+  [
+    (
+      "/entry.pc", r#"
+        style a
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-1".to_string(),
+    value: "b".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      style b
+    "#
+  )]
+}
+
+
+case! {
+  can_change_the_id_of_a_trigger,
+  [
+    (
+      "/entry.pc", r#"
+        trigger a {
+          ":nth-child(2n)"
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-2".to_string(),
+    value: "b".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      trigger a {
+        ":nth-child(2n)"
+      }
+    "#
+  )]
+}
+
+case! {
+  ensures_that_ids_are_safe_when_set,
+  [
+    (
+      "/entry.pc", r#"
+        style a
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-1".to_string(),
+    value: "this is an id".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      style thisIsAnId
+    "#
+  )]
+}
+
+case! {
+  when_id_set_an_component_assoc_instances_are_changed_in_same_doc,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render div 
+        }
+
+        A
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-3".to_string(),
+    value: "B".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component B {
+        render div
+      }
+
+      B
+    "#
+  )]
+}
+
+case! {
+  when_id_set_an_component_assoc_instances_are_changed_in_another_doc,
+  [
+    (
+      "/entry.pc", r#"
+        import "/test.pc" as ent
+
+        ent.A
+      "#
+    ),
+    (
+      "/test.pc", r#"
+        public component A {
+          render div
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "6bcf0994-3".to_string(),
+    value: "B".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      import "/test.pc" as ent
+      ent.B
+    "#
+  )]
+}
+
+case! {
+  picks_a_unique_id,
+  [
+    (
+      "/entry.pc", r#"
+        component B {
+          render div
+        }
+        component A {
+          render div
+        }
+        A
+      "#
+    ),
+    (
+      "/test.pc", r#"
+        public component A {
+          render div
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-6".to_string(),
+    value: "B".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component B {
+        render div
+      }
+      component B1 {
+        render div
+      }
+      B1
+    "#
+  )]
+}
+
+
+case! {
+  does_not_pick_uid_if_target_name_is_same,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render div
+        }
+        A
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-3".to_string(),
+    value: "A".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component A {
+        render div
+      }
+      A
     "#
   )]
 }

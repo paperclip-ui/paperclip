@@ -20,7 +20,7 @@ macro_rules! replace_child_with_instance {
         replace_child!($children, &$self.mutation.expression_id, |v: &Node| {
             let target: ExpressionWrapper = v.into();
             let component_name =
-                get_component_name(&target, $self.dependency.document.as_ref().unwrap());
+                get_component_name(&target, $self.get_dependency().document.as_ref().unwrap());
             node::Inner::Element(create_element(&component_name, &checksum)).get_outer()
         })
     };
@@ -85,7 +85,7 @@ impl<'a> MutableVisitor<()> for EditContext<'a, ConvertToComponent> {
         let checksum = expr.checksum();
 
         let component_name =
-            get_component_name(&target, self.dependency.document.as_ref().unwrap());
+            get_component_name(&target, self.get_dependency().document.as_ref().unwrap());
         expr.node =
             Some(node::Inner::Element(create_element(&component_name, &checksum)).get_outer());
         VisitorResult::Continue

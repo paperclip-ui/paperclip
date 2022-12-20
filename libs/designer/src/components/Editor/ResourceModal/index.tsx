@@ -100,6 +100,12 @@ const useResourceModal = () => {
   const onBackgroundClick = () =>
     dispatch({ type: "editor/resourceModalBackgroundClicked" });
   const onFilterChange = (value: string) => setFilter(value?.toLowerCase());
+
+  useEffect(() => {
+    if (!visible) {
+      setFilter("");
+    }
+  }, [visible]);
   return {
     visible,
     filter,

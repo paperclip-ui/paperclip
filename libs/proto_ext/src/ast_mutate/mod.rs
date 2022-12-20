@@ -10,9 +10,12 @@ mod set_style_declarations;
 mod toggle_variants;
 mod update_variant;
 mod set_text_node_value;
+mod set_id;
 
 #[macro_use]
 mod utils;
+use std::rc::Rc;
+
 use crate::{
     ast::all::{MutableVisitable, MutableVisitor, VisitorResult},
     graph::{get_document_imports, io::IO},
@@ -32,6 +35,7 @@ pub use set_style_declarations::*;
 pub use toggle_variants::*;
 pub use update_variant::*;
 pub use set_text_node_value::*;
+pub use set_id::*;
 
 #[cfg(test)]
 mod test;
@@ -45,7 +49,8 @@ macro_rules! mutations {
               mutation::Inner::$name(mutation) => {
                 let mut sub: base::EditContext<$name> = base::EditContext {
                   mutation,
-                  dependency: self.dependency.clone(),
+                  path: self.path.clone(),
+                  graph: self.graph.clone(),
                   changes: vec![]
                 };
                 let ret = document.accept(&mut sub);
@@ -69,11 +74,14 @@ pub fn edit_graph<TIO: IO>(
 ) -> Result<Vec<(String, Vec<MutationResult>)>> {
     let mut changed: Vec<(String, Vec<MutationResult>)> = vec![];
 
+    let ctx_graph = Rc::new(graph.clone());
+
     for mutation in mutations {
         for (path, dep) in &mut graph.dependencies {
             let mut ctx = EditContext {
                 mutation,
-                dependency: dep.clone(),
+                path: path.clone(),
+                graph: ctx_graph.clone(),
                 changes: vec![],
             };
             let doc = dep.document.as_mut().expect("Document must exist");
@@ -99,6 +107,7 @@ mutations! {
   ConvertToComponent,
   ConvertToSlot,
   DeleteStyleDeclarations,
+  SetId,
   SetStyleDeclarations,
   DeleteExpression,
   AppendChild,

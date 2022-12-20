@@ -17,7 +17,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetStyleDeclarations> {
     fn visit_style(&mut self, expr: &mut ast::pc::Style) -> VisitorResult<()> {
         if expr.get_id() == self.mutation.expression_id {
             let new_style = parse_style(
-                &mutation_to_style(&self.mutation, &self.dependency),
+                &mutation_to_style(&self.mutation, self.get_dependency()),
                 &expr.checksum(),
             );
             update_style(expr, &new_style);
@@ -33,10 +33,10 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetStyleDeclarations> {
             return VisitorResult::Continue;
         }
 
-        for (path, resolution) in get_dep_imports(&self.mutation, &self.dependency) {
+        for (path, resolution) in get_dep_imports(&self.mutation, self.get_dependency()) {
             if resolution.is_new {
                 if let Some(ns) = &resolution.resolved {
-                    let relative = resolve_import(&self.dependency.path, &path);
+                    let relative = resolve_import(&self.get_dependency().path, &path);
                     doc.body
                         .insert(0, parse_import(&relative, &ns, doc.checksum().as_str()));
                 }
@@ -57,7 +57,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetStyleDeclarations> {
             &self.mutation.expression_id,
             &checksum,
             &self.mutation,
-            &self.dependency,
+            self.graph.dependencies.get(&self.path).as_ref().unwrap(),
         );
     }
 
@@ -70,7 +70,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetStyleDeclarations> {
                 &self.mutation.expression_id,
                 &checksum,
                 &self.mutation,
-                &self.dependency,
+                self.graph.dependencies.get(&self.path).as_ref().unwrap(),
             );
         }
 

@@ -19,7 +19,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, InsertFrame> {
         if expr.id == self.mutation.document_id {
             let bounds = self.mutation.bounds.as_ref().unwrap();
 
-            let imports = add_imports(&self.mutation.imports, expr, &self.dependency);
+            let imports = add_imports(&self.mutation.imports, expr, &self.get_dependency());
 
             let mut mutations = vec![];
             let checksum = expr.checksum();

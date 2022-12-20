@@ -27,10 +27,7 @@
 
 #### On-deck
 
-- dashboard
-
-  - ability to delete file
-    - file menu
+- GH hooks to work
 
 - online service
 

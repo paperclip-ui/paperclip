@@ -33,5 +33,8 @@ Easy wins:
 
 - ability to insert elements into slots
 - ability to move elements around in the layers panel
-- styles panel
+- styles panel (vanilla)
 - style overrides
+- style tokens
+  - mixins
+  - atoms

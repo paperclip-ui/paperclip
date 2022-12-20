@@ -3,23 +3,9 @@
 - Try not to hand-write any new UI unless it's necessary for self-creation
 - It's all important so do what makes sense immediately
 
-- What's 0-1 look like?
+### Litmus
 
-  - slots
-  - style panel
-    - mixins
-    - variants
-  - properties
-    - ability to define class
-  - ability to convert element to component
-  - ability to insert instances
-
-- 1+
-
-  - ability to re-organize slots
-  - style overrides
-
-- How does the designer incentivize the app structure?
+- Can update any element in the editor
 
 #### Warm up (30 min)
 

@@ -27,7 +27,9 @@
 
 #### On-deck
 
-- GH hooks to work
+- Deploy tooling
+
+  - lerna version patch automatically deploys
 
 - online service
 

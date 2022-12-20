@@ -58,11 +58,15 @@ export type ResizerPathMoved = BaseEvent<
   }
 >;
 
+export type EditVariantClicked = BaseEvent<
+  "editor/editVariantClicked",
+  { variantId: string }
+>;
+
 export const designerEvents = eventCreators(
   {
     resourceModalDragLeft: null,
     resourceModalBackgroundClicked: null,
-    editVariantClicked: identity<{ variantId: string }>(),
     editVariantPopupClosed: null,
     removeVariantButtonClicked: identity<{ variantId: string }>(),
     insertModeButtonClick: identity<{ mode: InsertMode }>(),
@@ -110,7 +114,8 @@ export type LegacyEvent =
   | ToolsLayerDrop
   | CanvasMouseUp
   | ResizerPathMoved
-  | ResizerPathStoppedMoving;
+  | ResizerPathStoppedMoving
+  | EditVariantClicked;
 
 export type DesignerEvent =
   | ExtractEventFromCreators<typeof designerEvents>

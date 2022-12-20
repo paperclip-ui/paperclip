@@ -94,7 +94,7 @@ const useVariantsSection = () => {
   };
 
   const onCloseEditVariantPopup = () => {
-    dispatch(designerEvents.editVariantPopupClosed());
+    dispatch({ type: "editor/editVariantPopupClosed" });
     setVariantPopupOpen(false);
   };
 

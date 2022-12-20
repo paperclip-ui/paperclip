@@ -9,7 +9,6 @@ import {
   waitForEvent,
   waitUntilDesignerReady,
 } from "../controls";
-import { shortcutEvents } from "@paperclip-ui/designer/src/domains/shortcuts/events";
 import { ShortcutCommand } from "@paperclip-ui/designer/src/domains/shortcuts/state";
 
 describe(__filename + "#", () => {

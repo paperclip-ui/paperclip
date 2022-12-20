@@ -1,5 +1,5 @@
 import produce from "immer";
-import { DesignerEvent, designerEvents } from "../../../events";
+import { DesignerEvent } from "../../../events";
 import { DesignerState } from "../../../state";
 
 export const resourceModalReducer = (
@@ -7,12 +7,12 @@ export const resourceModalReducer = (
   event: DesignerEvent
 ) => {
   switch (event.type) {
-    case designerEvents.resourceModalBackgroundClicked.type: {
+    case "editor/resourceModalBackgroundClicked": {
       return produce(state, (newState) => {
         newState.insertMode = null;
       });
     }
-    case designerEvents.resourceModalDragLeft.type: {
+    case "editor/resourceModalDragLeft": {
       return produce(state, (newState) => {
         newState.resourceModalDragLeft = true;
       });

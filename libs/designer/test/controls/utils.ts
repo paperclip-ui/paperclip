@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { shortcutEvents } from "@paperclip-ui/designer/src/domains/shortcuts/events";
 import { ShortcutCommand } from "@paperclip-ui/designer/src/domains/shortcuts/state";
 import {
   DesignerEvent,

@@ -10,7 +10,10 @@ import {
   isResourceModalVisible,
 } from "@paperclip-ui/designer/src/state";
 import { boxIntersectsPoint } from "@paperclip-ui/designer/src/state/geom";
-import { designerEvents } from "@paperclip-ui/designer/src/events";
+import {
+  DesignerEvent,
+  designerEvents,
+} from "@paperclip-ui/designer/src/events";
 import { useDrag } from "react-dnd";
 import { Component } from "@paperclip-ui/proto/lib/generated/ast/pc";
 
@@ -72,7 +75,7 @@ const useResourceModal = () => {
   const allComponents = useSelector(getAllComponents);
   const screenshotUrls = useSelector(getScreenshotUrls);
   const [filter, setFilter] = useState("");
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<DesignerEvent>();
 
   // onDragLeave not working so we brute force it like so
   useEffect(() => {
@@ -84,7 +87,7 @@ const useResourceModal = () => {
           y: event.pageY,
         })
       ) {
-        dispatch(designerEvents.resourceModalDragLeft());
+        dispatch({ type: "editor/resourceModalDragLeft" });
       }
     };
 
@@ -95,7 +98,7 @@ const useResourceModal = () => {
     };
   });
   const onBackgroundClick = () =>
-    dispatch(designerEvents.resourceModalBackgroundClicked());
+    dispatch({ type: "editor/resourceModalBackgroundClicked" });
   const onFilterChange = (value: string) => setFilter(value?.toLowerCase());
   return {
     visible,

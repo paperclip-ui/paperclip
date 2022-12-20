@@ -137,20 +137,13 @@ Page {
 
 Ideally design files live in the same repository as your existing code. This will enabl -->
 
-<!-- ## Contributing
 
-Looking to help out? Awesome! This is a massive project with many different rabbit holes - it's going to take a lot of people to get this right. So, all help is appreciated. Here are a few things that you can do:
+## Contributing
 
-- Designers - 
+Right now, the _main_ focus for the app is around the designer UI and UX. If you're a designer and would like to help out with that, awesome! The main thing that would be super helpful is to come up with suggestions and / or design around how to improve the designer to better suite your workflow.
 
-- Feedback on user experience. Are you a developer? Designer? Are you using Paperclip with your team? What sort of problems are you trying to solve?
-- Building out editor features. Things like canvas tooling and support for additional CSS properties are helpful. This is just a _lot_ of work.
-- Help figure out the data model for Paperclip + helping think through edge cases so that Paperclip can be 
+You're welcome to use the designer, Figma, or any tool to submit suggestions. If they're accepted, we'll wire up your designs and include the new functionality in the designer.
 
-
-If you're looking to submit a change that's big enough, please be sure to submit a ticket outlining your proposal including 
-
-You're welcome to submit -->
 
 ## Roadmap
 

@@ -9,7 +9,6 @@ import {
   waitForEvent,
   waitUntilDesignerReady,
 } from "../controls";
-import { shortcutEvents } from "@paperclip-ui/designer/src/domains/shortcuts/events";
 import { ShortcutCommand } from "@paperclip-ui/designer/src/domains/shortcuts/state";
 
 describe(__filename + "#", () => {
@@ -80,9 +79,10 @@ describe(__filename + "#", () => {
       '<span id="_4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div>'
     );
 
-    designer.machine.dispatch(
-      shortcutEvents.itemSelected({ command: ShortcutCommand.Delete })
-    );
+    designer.machine.dispatch({
+      type: "shortcuts/itemSelected",
+      payload: { command: ShortcutCommand.Delete },
+    });
     await waitForEvent("designer-engine/documentOpened", designer);
 
     frames = stringifyDesignerFrames(designer);
@@ -110,9 +110,10 @@ describe(__filename + "#", () => {
 
     expect(designer.machine.getState().selectedTargetId).toEqual("8bc00fda-4");
 
-    designer.machine.dispatch(
-      shortcutEvents.itemSelected({ command: ShortcutCommand.Delete })
-    );
+    designer.machine.dispatch({
+      type: "shortcuts/itemSelected",
+      payload: { command: ShortcutCommand.Delete },
+    });
     await waitForEvent("designer-engine/documentOpened", designer);
 
     frames = stringifyDesignerFrames(designer);
@@ -150,9 +151,10 @@ describe(__filename + "#", () => {
 
     expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-5");
 
-    designer.machine.dispatch(
-      shortcutEvents.itemSelected({ command: ShortcutCommand.Delete })
-    );
+    designer.machine.dispatch({
+      type: "shortcuts/itemSelected",
+      payload: { command: ShortcutCommand.Delete },
+    });
 
     await waitForEvent("designer-engine/documentOpened", designer);
     frames = stringifyDesignerFrames(designer);
@@ -187,9 +189,10 @@ describe(__filename + "#", () => {
 
     expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-1");
 
-    designer.machine.dispatch(
-      shortcutEvents.itemSelected({ command: ShortcutCommand.Delete })
-    );
+    designer.machine.dispatch({
+      type: "shortcuts/itemSelected",
+      payload: { command: ShortcutCommand.Delete },
+    });
 
     expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-2");
 
@@ -251,9 +254,10 @@ describe(__filename + "#", () => {
     );
 
     await waitUntilDesignerReady(designer);
-    designer.machine.dispatch(
-      shortcutEvents.itemSelected({ command: ShortcutCommand.Delete })
-    );
+    designer.machine.dispatch({
+      type: "shortcuts/itemSelected",
+      payload: { command: ShortcutCommand.Delete },
+    });
     await waitForEvent("designer-engine/documentOpened", designer);
     expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-2");
     designer.dispose();

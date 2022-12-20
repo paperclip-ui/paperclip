@@ -9,8 +9,8 @@ use paperclip_language_services::DocumentInfo;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
-    designer_event, file_response, ApplyMutationsRequest, ApplyMutationsResult,
-    CreateDesignFileRequest, CreateDesignFileResponse, DesignerEvent, Empty, FileChanged,
+    design_server_event, file_response, ApplyMutationsRequest, ApplyMutationsResult,
+    CreateDesignFileRequest, CreateDesignFileResponse, DesignServerEvent, Empty, FileChanged, ModulesEvaluated,
     FileRequest, FileResponse, ResourceFiles, ScreenshotCaptured, UpdateFileRequest,
 };
 use std::pin::Pin;
@@ -20,8 +20,7 @@ use tokio::sync::mpsc;
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
 
-type FileResponseStream = Pin<Box<dyn Stream<Item = Result<FileResponse, Status>> + Send>>;
-type DesignerEventStream = Pin<Box<dyn Stream<Item = Result<DesignerEvent, Status>> + Send>>;
+type DesignServerEventStream = Pin<Box<dyn Stream<Item = Result<DesignServerEvent, Status>> + Send>>;
 type ResourceFilesStream = Pin<Box<dyn Stream<Item = Result<ResourceFiles, Status>> + Send>>;
 type GetGraphStream = Pin<Box<dyn Stream<Item = Result<Graph, Status>> + Send>>;
 
@@ -38,59 +37,33 @@ impl<TIO: ServerIO> DesignerService<TIO> {
 
 #[tonic::async_trait]
 impl<TIO: ServerIO> Designer for DesignerService<TIO> {
-    type OpenFileStream = FileResponseStream;
-    type OnEventStream = DesignerEventStream;
+    type OnEventStream = DesignServerEventStream;
     type GetResourceFilesStream = ResourceFilesStream;
     type GetGraphStream = GetGraphStream;
 
     async fn open_file(
         &self,
         request: Request<FileRequest>,
-    ) -> Result<Response<Self::OpenFileStream>, Status> {
-        let store = self.ctx.store.clone();
+    ) -> Result<Response<FileResponse>, Status> {
+        let store = self.ctx.store.lock().unwrap();
+        let path = request.get_ref().path.clone();
 
-        let (tx, rx) = mpsc::channel(128);
+        let data = if let Ok(module) = store.state.bundle_evaluated_module(&path) {
+            Some(file_response::Data::Paperclip(module))
+        } else {
+            None
+        };
 
-        tokio::spawn(async move {
-            let path = request.into_inner().path;
-            println!("Opening file: {}", path);
-
-            let emit = |path: String, store: Arc<Mutex<ServerStore>>| {
-                let data = if let Ok(module) =
-                    store.lock().unwrap().state.bundle_evaluated_module(&path)
-                {
-                    Some(file_response::Data::Paperclip(module))
-                } else {
-                    None
-                };
-
-                if let Some(dependency) = store.lock().unwrap().state.graph.dependencies.get(&path)
-                {
-                    Ok(FileResponse {
-                        raw_content: serialize(
-                            dependency.document.as_ref().expect("Document must exist"),
-                        )
-                        .as_bytes()
-                        .to_vec(),
-                        data,
-                    })
-                } else {
-                    Err(Status::not_found("Dependency not found"))
-                }
-            };
-
-            tx.send(emit(path.clone(), store.clone()))
-                .await
-                .expect("Can't send");
-
-            handle_store_events!(store.clone(), ServerEvent::ModulesEvaluated(_) => {
-                tx.send(emit(path.clone(), store.clone())).await.expect("Failed to send stream, must be closed");
-            });
-        });
-
-        let output = ReceiverStream::new(rx);
-
-        Ok(Response::new(Box::pin(output) as Self::OpenFileStream))
+        if let Some(dependency) = store.state.graph.dependencies.get(&path) {
+            Ok(Response::new(FileResponse {
+                raw_content: serialize(dependency.document.as_ref().expect("Document must exist"))
+                    .as_bytes()
+                    .to_vec(),
+                data,
+            }))
+        } else {
+            Err(Status::not_found("Dependency not found"))
+        }
     }
 
     async fn get_resource_files(
@@ -135,7 +108,9 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         &self,
         request: Request<CreateDesignFileRequest>,
     ) -> Result<Response<CreateDesignFileResponse>, Status> {
-        if let Ok(file_path) = create_design_file(&request.get_ref().name.to_string(), self.ctx.clone()) {
+        if let Ok(file_path) =
+            create_design_file(&request.get_ref().name.to_string(), self.ctx.clone())
+        {
             Ok(Response::new(CreateDesignFileResponse { file_path }))
         } else {
             Err(Status::already_exists("File already exists"))
@@ -187,7 +162,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                         graph.clone()
                     )).await.expect("Can't send");
                 },
-                ServerEvent::ApplyMutationRequested {mutations: _mutations  } => {
+                ServerEvent::MutationsApplied { result: _, updated_graph: _ } => {
                     let graph = store.clone().lock().unwrap().state.graph.clone();
 
                     // TODO - need to pick out files that have changed
@@ -214,7 +189,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         tokio::spawn(async move {
             let file_changed = |path: String, content: Vec<u8>| {
                 Result::Ok(
-                    designer_event::Inner::FileChanged(FileChanged {
+                    design_server_event::Inner::FileChanged(FileChanged {
                         path: path.to_string(),
                         content: content.clone(),
                     })
@@ -225,7 +200,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
             handle_store_events!(store.clone(),
                 ServerEvent::ScreenshotCaptured { expr_id } => {
                     tx.send(Result::Ok(
-                        designer_event::Inner::ScreenshotCaptured(ScreenshotCaptured {
+                        design_server_event::Inner::ScreenshotCaptured(ScreenshotCaptured {
                             expr_id: expr_id.to_string()
                         })
                         .get_outer(),
@@ -234,7 +209,15 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                 ServerEvent::UpdateFileRequested { path, content } => {
                     tx.send((file_changed)(path.to_string(), content.clone())).await.expect("Can't send");
                 },
-                ServerEvent::ApplyMutationRequested { mutations: _ } | ServerEvent::UndoRequested | ServerEvent::RedoRequested => {
+                ServerEvent::ModulesEvaluated(map) => {
+                    tx.send(Ok(design_server_event::Inner::ModulesEvaluated(ModulesEvaluated {
+                        file_paths: map.keys().map(|key| {
+                            key.to_string()
+                        }).collect()
+                    })
+                    .get_outer())).await.expect("Can't send changes");
+                },
+                ServerEvent::MutationsApplied { result: _, updated_graph: _ } | ServerEvent::UndoRequested | ServerEvent::RedoRequested => {
 
                     let updated_files = store.lock().unwrap().state.updated_files.clone();
                     let file_cache = store.lock().unwrap().state.file_cache.clone();

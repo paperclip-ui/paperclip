@@ -6,7 +6,6 @@ use crate::machine::store::EventHandler;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::graph_ext::Graph;
-use paperclip_proto_ext::ast_mutate::edit_graph;
 
 enum HistoryStep {
     Forward,
@@ -35,14 +34,20 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
 
                 state.file_cache.insert(path.to_string(), content.clone());
             }
-            ServerEvent::ApplyMutationRequested { mutations } => {
-                let changed_files = edit_graph(&mut state.graph, mutations);
-                println!("Applying {:?} {:?}", mutations, changed_files);
+            ServerEvent::MutationsApplied {
+                result,
+                updated_graph,
+            } => {
+                state.graph =
+                    std::mem::replace(&mut state.graph, Graph::new()).merge(updated_graph.clone());
+
                 let mut latest_ast_changes = vec![];
-                for (path, changes) in &changed_files {
+
+                for (path, changes) in result {
                     latest_ast_changes.extend(changes.clone());
                     println!("CHANGED PATH {}", path);
                 }
+
                 update_changed_files(state);
                 store_history(state);
 

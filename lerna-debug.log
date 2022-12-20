@@ -1,12 +1,788 @@
-0 silly argv { _: [ 'list' ], lernaVersion: '4.0.0', '$0': '/usr/local/bin/lerna' }
-1 notice cli v4.0.0
-2 verbose rootPath /Users/crcn/Developer/private/tandem
-3 error Error: Unsupported URL Type "workspace:": workspace:^
-3 error     at unsupportedURLType (/usr/local/lib/node_modules/lerna/node_modules/npm-package-arg/npa.js:203:15)
-3 error     at fromURL (/usr/local/lib/node_modules/lerna/node_modules/npm-package-arg/npa.js:261:13)
-3 error     at Function.resolve (/usr/local/lib/node_modules/lerna/node_modules/npm-package-arg/npa.js:80:12)
-3 error     at /usr/local/lib/node_modules/lerna/node_modules/@lerna/package-graph/index.js:66:30
-3 error     at Array.forEach (<anonymous>)
-3 error     at /usr/local/lib/node_modules/lerna/node_modules/@lerna/package-graph/index.js:60:38
-3 error     at Map.forEach (<anonymous>)
-3 error     at new PackageGraph (/usr/local/lib/node_modules/lerna/node_modules/@lerna/package-graph/index.js:49:10)
+0 silly argv {
+0 silly argv   _: [ 'version' ],
+0 silly argv   lernaVersion: '5.6.2',
+0 silly argv   '$0': 'lerna',
+0 silly argv   bump: 'patch'
+0 silly argv }
+1 notice cli v5.6.2
+2 verbose rootPath /Users/crcn/Developer/private/paperclip/paperclip
+3 info current version 19.0.10
+4 silly isAnythingCommitted
+5 verbose isAnythingCommitted 1
+6 silly getCurrentBranch
+7 verbose currentBranch dev
+8 silly remoteBranchExists
+9 silly isBehindUpstream
+10 silly isBehindUpstream dev is behind origin/dev by 0 commit(s) and ahead by 0
+11 silly hasTags
+12 verbose hasTags true
+13 silly git-describe.sync "v19.0.10-351-g3aa5c92b" => {"lastTagName":"v19.0.10","lastVersion":"v19.0.10","refCount":"351","sha":"3aa5c92b","isDirty":false}
+14 info Looking for changed packages since v19.0.10
+15 silly checking diff integrations/vscode
+16 silly found diff in integrations/vscode/.gitignore
+16 silly found diff in integrations/vscode/.yarn/cache/@paperclip-ui-proto-npm-19.0.6-b5496ff44f-06fa3c112f.zip
+16 silly found diff in integrations/vscode/.yarn/cache/get-port-npm-6.1.2-5a92df687a-e3c3d59149.zip
+16 silly found diff in integrations/vscode/.yarn/install-state.gz
+16 silly found diff in integrations/vscode/package-lock.json
+16 silly found diff in integrations/vscode/package.json
+16 silly found diff in integrations/vscode/src/extension/command-manager.ts
+16 silly found diff in integrations/vscode/src/extension/document-manager.ts
+16 silly found diff in integrations/vscode/src/extension/index.ts
+16 silly found diff in integrations/vscode/src/extension/language/client.ts
+16 silly found diff in integrations/vscode/src/extension/language/server/connection.ts
+16 silly found diff in integrations/vscode/src/extension/language/server/designer-client.ts
+16 silly found diff in integrations/vscode/src/extension/language/server/documents.ts
+16 silly found diff in integrations/vscode/src/extension/language/server/events.ts
+16 silly found diff in integrations/vscode/src/extension/language/server/index.ts
+16 silly found diff in integrations/vscode/src/extension/language/server/resolver.ts
+16 silly found diff in integrations/vscode/src/extension/preview/live-window-manager.ts
+16 silly found diff in integrations/vscode/src/extension/preview/live-window.ts
+16 silly found diff in integrations/vscode/syntaxes/paperclip-core.yaml
+16 silly found diff in integrations/vscode/yarn.lock
+17 verbose filtered diff [
+17 verbose filtered diff   'integrations/vscode/.gitignore',
+17 verbose filtered diff   'integrations/vscode/.yarn/cache/@paperclip-ui-proto-npm-19.0.6-b5496ff44f-06fa3c112f.zip',
+17 verbose filtered diff   'integrations/vscode/.yarn/cache/get-port-npm-6.1.2-5a92df687a-e3c3d59149.zip',
+17 verbose filtered diff   'integrations/vscode/.yarn/install-state.gz',
+17 verbose filtered diff   'integrations/vscode/package-lock.json',
+17 verbose filtered diff   'integrations/vscode/package.json',
+17 verbose filtered diff   'integrations/vscode/src/extension/command-manager.ts',
+17 verbose filtered diff   'integrations/vscode/src/extension/document-manager.ts',
+17 verbose filtered diff   'integrations/vscode/src/extension/index.ts',
+17 verbose filtered diff   'integrations/vscode/src/extension/language/client.ts',
+17 verbose filtered diff   'integrations/vscode/src/extension/language/server/connection.ts',
+17 verbose filtered diff   'integrations/vscode/src/extension/language/server/designer-client.ts',
+17 verbose filtered diff   'integrations/vscode/src/extension/language/server/documents.ts',
+17 verbose filtered diff   'integrations/vscode/src/extension/language/server/events.ts',
+17 verbose filtered diff   'integrations/vscode/src/extension/language/server/index.ts',
+17 verbose filtered diff   'integrations/vscode/src/extension/language/server/resolver.ts',
+17 verbose filtered diff   'integrations/vscode/src/extension/preview/live-window-manager.ts',
+17 verbose filtered diff   'integrations/vscode/src/extension/preview/live-window.ts',
+17 verbose filtered diff   'integrations/vscode/syntaxes/paperclip-core.yaml',
+17 verbose filtered diff   'integrations/vscode/yarn.lock'
+17 verbose filtered diff ]
+18 silly checking diff libs/config
+19 silly found diff in libs/config/.gitignore
+19 silly found diff in libs/config/Cargo.toml
+19 silly found diff in libs/config/README.md
+19 silly found diff in libs/config/index.d.ts
+19 silly found diff in libs/config/index.js
+19 silly found diff in libs/config/package.json
+19 silly found diff in libs/config/src/config.rs
+19 silly found diff in libs/config/src/io.rs
+19 silly found diff in libs/config/src/lib.rs
+19 silly found diff in libs/config/src/local.rs
+20 verbose filtered diff [
+20 verbose filtered diff   'libs/config/.gitignore',
+20 verbose filtered diff   'libs/config/Cargo.toml',
+20 verbose filtered diff   'libs/config/README.md',
+20 verbose filtered diff   'libs/config/index.d.ts',
+20 verbose filtered diff   'libs/config/index.js',
+20 verbose filtered diff   'libs/config/package.json',
+20 verbose filtered diff   'libs/config/src/config.rs',
+20 verbose filtered diff   'libs/config/src/io.rs',
+20 verbose filtered diff   'libs/config/src/lib.rs',
+20 verbose filtered diff   'libs/config/src/local.rs'
+20 verbose filtered diff ]
+21 silly checking diff libs/designer-rust
+22 silly found diff in libs/designer-rust/.gitignore
+22 silly found diff in libs/designer-rust/Cargo.toml
+22 silly found diff in libs/designer-rust/index.html
+22 silly found diff in libs/designer-rust/package.json
+22 silly found diff in libs/designer-rust/paperclip.config.json
+22 silly found diff in libs/designer-rust/src/components/app/canvas/frames/frame/mod.rs
+22 silly found diff in libs/designer-rust/src/components/app/canvas/frames/mod.rs
+22 silly found diff in libs/designer-rust/src/components/app/canvas/mod.rs
+22 silly found diff in libs/designer-rust/src/components/app/mod.rs
+22 silly found diff in libs/designer-rust/src/components/app/styles.pc
+22 silly found diff in libs/designer-rust/src/components/app/test.pc
+22 silly found diff in libs/designer-rust/src/components/common/iframe_portal.rs
+22 silly found diff in libs/designer-rust/src/components/common/mod.rs
+22 silly found diff in libs/designer-rust/src/components/mod.rs
+22 silly found diff in libs/designer-rust/src/engines/api/mod.rs
+22 silly found diff in libs/designer-rust/src/engines/history/mod.rs
+22 silly found diff in libs/designer-rust/src/engines/logger/mod.rs
+22 silly found diff in libs/designer-rust/src/engines/mod.rs
+22 silly found diff in libs/designer-rust/src/events.rs
+22 silly found diff in libs/designer-rust/src/main.rs
+22 silly found diff in libs/designer-rust/src/shared/machine/core.rs
+22 silly found diff in libs/designer-rust/src/shared/machine/mod.rs
+22 silly found diff in libs/designer-rust/src/shared/machine/observable.rs
+22 silly found diff in libs/designer-rust/src/shared/mod.rs
+22 silly found diff in libs/designer-rust/src/state/mod.rs
+22 silly found diff in libs/designer-rust/src/types.rs
+23 verbose filtered diff [
+23 verbose filtered diff   'libs/designer-rust/.gitignore',
+23 verbose filtered diff   'libs/designer-rust/Cargo.toml',
+23 verbose filtered diff   'libs/designer-rust/index.html',
+23 verbose filtered diff   'libs/designer-rust/package.json',
+23 verbose filtered diff   'libs/designer-rust/paperclip.config.json',
+23 verbose filtered diff   'libs/designer-rust/src/components/app/canvas/frames/frame/mod.rs',
+23 verbose filtered diff   'libs/designer-rust/src/components/app/canvas/frames/mod.rs',
+23 verbose filtered diff   'libs/designer-rust/src/components/app/canvas/mod.rs',
+23 verbose filtered diff   'libs/designer-rust/src/components/app/mod.rs',
+23 verbose filtered diff   'libs/designer-rust/src/components/app/styles.pc',
+23 verbose filtered diff   'libs/designer-rust/src/components/app/test.pc',
+23 verbose filtered diff   'libs/designer-rust/src/components/common/iframe_portal.rs',
+23 verbose filtered diff   'libs/designer-rust/src/components/common/mod.rs',
+23 verbose filtered diff   'libs/designer-rust/src/components/mod.rs',
+23 verbose filtered diff   'libs/designer-rust/src/engines/api/mod.rs',
+23 verbose filtered diff   'libs/designer-rust/src/engines/history/mod.rs',
+23 verbose filtered diff   'libs/designer-rust/src/engines/logger/mod.rs',
+23 verbose filtered diff   'libs/designer-rust/src/engines/mod.rs',
+23 verbose filtered diff   'libs/designer-rust/src/events.rs',
+23 verbose filtered diff   'libs/designer-rust/src/main.rs',
+23 verbose filtered diff   'libs/designer-rust/src/shared/machine/core.rs',
+23 verbose filtered diff   'libs/designer-rust/src/shared/machine/mod.rs',
+23 verbose filtered diff   'libs/designer-rust/src/shared/machine/observable.rs',
+23 verbose filtered diff   'libs/designer-rust/src/shared/mod.rs',
+23 verbose filtered diff   'libs/designer-rust/src/state/mod.rs',
+23 verbose filtered diff   'libs/designer-rust/src/types.rs'
+23 verbose filtered diff ]
+24 silly checking diff libs/designer
+25 silly found diff in libs/designer/.gitignore
+25 silly found diff in libs/designer/Cargo.toml
+25 silly found diff in libs/designer/README.md
+25 silly found diff in libs/designer/assets/main.css
+25 silly found diff in libs/designer/babel.config.js
+25 silly found diff in libs/designer/image.png
+25 silly found diff in libs/designer/jest.config.js
+25 silly found diff in libs/designer/package.json
+25 silly found diff in libs/designer/paperclip.config.json
+25 silly found diff in libs/designer/paperclip.webpack.config.json
+25 silly found diff in libs/designer/src/components/ContextMenu/index.tsx
+25 silly found diff in libs/designer/src/components/Dashboard/index.tsx
+25 silly found diff in libs/designer/src/components/Editor/Canvas/Frames/Frame.tsx
+25 silly found diff in libs/designer/src/components/Editor/Canvas/Frames/index.tsx
+25 silly found diff in libs/designer/src/components/Editor/Canvas/Frames/styles.pc
+25 silly found diff in libs/designer/src/components/Editor/Canvas/Tools/DropTarget.tsx
+25 silly found diff in libs/designer/src/components/Editor/Canvas/Tools/Frames/expand.svg
+25 silly found diff in libs/designer/src/components/Editor/Canvas/Tools/Frames/expand2.svg
+25 silly found diff in libs/designer/src/components/Editor/Canvas/Tools/Frames/index.pc
+25 silly found diff in libs/designer/src/components/Editor/Canvas/Tools/Frames/index.tsx
+25 silly found diff in libs/designer/src/components/Editor/Canvas/Tools/InsertElement/index.pc
+25 silly found diff in libs/designer/src/components/Editor/Canvas/Tools/InsertElement/index.tsx
+25 silly found diff in libs/designer/src/components/Editor/Canvas/Tools/Pixels/index.pc
+25 silly found diff in libs/designer/src/components/Editor/Canvas/Tools/Pixels/index.tsx
+25 silly found diff in libs/designer/src/components/Editor/Canvas/Tools/Selectable/index.pc
+25 silly found diff in libs/designer/src/components/Editor/Canvas/Tools/Selectable/index.tsx
+25 silly found diff in libs/designer/src/components/Editor/Canvas/Tools/index.pc
+25 silly found diff in libs/designer/src/components/Editor/Canvas/Tools/index.tsx
+25 silly found diff in libs/designer/src/components/Editor/Canvas/index.tsx
+25 silly found diff in libs/designer/src/components/Editor/Canvas/normalize-wheel.ts
+25 silly found diff in libs/designer/src/components/Editor/Canvas/styles.pc
+25 silly found diff in libs/designer/src/components/Editor/EditorPanels/Center/Toolbar/index.tsx
+25 silly found diff in libs/designer/src/components/Editor/EditorPanels/Center/index.tsx
+25 silly found diff in libs/designer/src/components/Editor/EditorPanels/LeftSidebar/index.tsx
+25 silly found diff in libs/designer/src/components/Editor/EditorPanels/RightSidebar/PropertiesPanel/VariantsSection/EditVariantPopup.tsx
+25 silly found diff in libs/designer/src/components/Editor/EditorPanels/RightSidebar/PropertiesPanel/VariantsSection/index.tsx
+25 silly found diff in libs/designer/src/components/Editor/EditorPanels/RightSidebar/PropertiesPanel/index.tsx
+25 silly found diff in libs/designer/src/components/Editor/EditorPanels/RightSidebar/StylePanel/Variants/index.tsx
+25 silly found diff in libs/designer/src/components/Editor/EditorPanels/RightSidebar/StylePanel/index.tsx
+25 silly found diff in libs/designer/src/components/Editor/EditorPanels/RightSidebar/index.tsx
+25 silly found diff in libs/designer/src/components/Editor/ResourceModal/index.tsx
+25 silly found diff in libs/designer/src/components/Editor/index.tsx
+25 silly found diff in libs/designer/src/components/FrameContainer/index.tsx
+25 silly found diff in libs/designer/src/components/Main.tsx
+25 silly found diff in libs/designer/src/components/MultiSelectInput/index.tsx
+25 silly found diff in libs/designer/src/components/Portal/index.tsx
+25 silly found diff in libs/designer/src/components/SuggestionMenu/index.tsx
+25 silly found diff in libs/designer/src/components/TextInput/index.tsx
+25 silly found diff in libs/designer/src/components/hooks/usePositioner.ts
+25 silly found diff in libs/designer/src/components/utils/dnd.ts
+25 silly found diff in libs/designer/src/domains/api/engine.ts
+25 silly found diff in libs/designer/src/domains/api/events.ts
+25 silly found diff in libs/designer/src/domains/api/reducer.ts
+25 silly found diff in libs/designer/src/domains/history/engine.ts
+25 silly found diff in libs/designer/src/domains/history/events.ts
+25 silly found diff in libs/designer/src/domains/history/history.ts
+25 silly found diff in libs/designer/src/domains/history/react.ts
+25 silly found diff in libs/designer/src/domains/history/reducer.ts
+25 silly found diff in libs/designer/src/domains/history/state.ts
+25 silly found diff in libs/designer/src/domains/keyboard/engine.ts
+25 silly found diff in libs/designer/src/domains/keyboard/events.ts
+25 silly found diff in libs/designer/src/domains/legacy/reducer.ts
+25 silly found diff in libs/designer/src/domains/log/engine.ts
+25 silly found diff in libs/designer/src/domains/shortcuts/engine.ts
+25 silly found diff in libs/designer/src/domains/shortcuts/events.ts
+25 silly found diff in libs/designer/src/domains/shortcuts/reducer.ts
+25 silly found diff in libs/designer/src/domains/shortcuts/state.ts
+25 silly found diff in libs/designer/src/domains/shortcuts/utils.ts
+25 silly found diff in libs/designer/src/domains/ui/engine.ts
+25 silly found diff in libs/designer/src/domains/ui/events.ts
+25 silly found diff in libs/designer/src/domains/ui/reducers/index.ts
+25 silly found diff in libs/designer/src/domains/ui/reducers/resource-modal.ts
+25 silly found diff in libs/designer/src/domains/ui/reducers/toolsLayer.ts
+25 silly found diff in libs/designer/src/editor/components/Canvas/Frames/index.tsx
+25 silly found diff in libs/designer/src/editor/components/Main.tsx
+25 silly found diff in libs/designer/src/editor/env.ts
+25 silly found diff in libs/designer/src/editor/machine/engine/designer/engine.ts
+25 silly found diff in libs/designer/src/editor/machine/engine/designer/events.ts
+25 silly found diff in libs/designer/src/editor/machine/engine/designer/state.ts
+25 silly found diff in libs/designer/src/editor/machine/engine/index.ts
+25 silly found diff in libs/designer/src/editor/machine/events/index.ts
+25 silly found diff in libs/designer/src/editor/machine/index.ts
+25 silly found diff in libs/designer/src/editor/machine/reducer/editor/index.ts
+25 silly found diff in libs/designer/src/editor/machine/reducer/index.ts
+25 silly found diff in libs/designer/src/editor/machine/state/index.ts
+25 silly found diff in libs/designer/src/editor/styles/editor.pc
+25 silly found diff in libs/designer/src/editor/styles/theme.pc
+25 silly found diff in libs/designer/src/engine/index.ts
+25 silly found diff in libs/designer/src/entry.tsx
+25 silly found diff in libs/designer/src/env.ts
+25 silly found diff in libs/designer/src/events/index.ts
+25 silly found diff in libs/designer/src/hooks/useFrame/index.ts
+25 silly found diff in libs/designer/src/hooks/useFrameContainer/index.tsx
+25 silly found diff in libs/designer/src/hooks/useFrameMount/index.ts
+25 silly found diff in libs/designer/src/index.html
+25 silly found diff in libs/designer/src/lib.rs
+25 silly found diff in libs/designer/src/machine/index.ts
+25 silly found diff in libs/designer/src/modules/pc/state.ts
+25 silly found diff in libs/designer/src/modules/shortcuts/base.ts
+25 silly found diff in libs/designer/src/reducer/editor/index.ts
+25 silly found diff in libs/designer/src/reducer/index.ts
+25 silly found diff in libs/designer/src/server/mod.rs
+25 silly found diff in libs/designer/src/server/res_body.rs
+25 silly found diff in libs/designer/src/server/routes.rs
+25 silly found diff in libs/designer/src/server/server.rs
+25 silly found diff in libs/designer/src/server/service.rs
+25 silly found diff in libs/designer/src/server/utils.rs
+25 silly found diff in libs/designer/src/state/core.ts
+25 silly found diff in libs/designer/src/state/geom.ts
+25 silly found diff in libs/designer/src/state/index.ts
+25 silly found diff in libs/designer/src/state/pc.ts
+25 silly found diff in libs/designer/src/state/routes.ts
+25 silly found diff in libs/designer/src/styles/back.svg
+25 silly found diff in libs/designer/src/styles/box-outline.svg
+25 silly found diff in libs/designer/src/styles/center-panels.pc
+25 silly found diff in libs/designer/src/styles/chevron.svg
+25 silly found diff in libs/designer/src/styles/chevron2.svg
+25 silly found diff in libs/designer/src/styles/common.pc
+25 silly found diff in libs/designer/src/styles/component.svg
+25 silly found diff in libs/designer/src/styles/component2.svg
+25 silly found diff in libs/designer/src/styles/component3.svg
+25 silly found diff in libs/designer/src/styles/context-menu.pc
+25 silly found diff in libs/designer/src/styles/dashboard-page.pc
+25 silly found diff in libs/designer/src/styles/dot.svg
+25 silly found diff in libs/designer/src/styles/dot2.svg
+25 silly found diff in libs/designer/src/styles/dot3.svg
+25 silly found diff in libs/designer/src/styles/dot4.svg
+25 silly found diff in libs/designer/src/styles/editor.pc
+25 silly found diff in libs/designer/src/styles/etc.pc
+25 silly found diff in libs/designer/src/styles/folder.svg
+25 silly found diff in libs/designer/src/styles/folder2.svg
+25 silly found diff in libs/designer/src/styles/globals.css
+25 silly found diff in libs/designer/src/styles/group.svg
+25 silly found diff in libs/designer/src/styles/hamburger.svg
+25 silly found diff in libs/designer/src/styles/hamburger2.svg
+25 silly found diff in libs/designer/src/styles/home.svg
+25 silly found diff in libs/designer/src/styles/image.svg
+25 silly found diff in libs/designer/src/styles/image2.svg
+25 silly found diff in libs/designer/src/styles/image3.svg
+25 silly found diff in libs/designer/src/styles/input.pc
+25 silly found diff in libs/designer/src/styles/instance.svg
+25 silly found diff in libs/designer/src/styles/instance2.svg
+25 silly found diff in libs/designer/src/styles/instance3.svg
+25 silly found diff in libs/designer/src/styles/left-sidebar.pc
+25 silly found diff in libs/designer/src/styles/lightning.svg
+25 silly found diff in libs/designer/src/styles/menu.pc
+25 silly found diff in libs/designer/src/styles/modal-2.pc
+25 silly found diff in libs/designer/src/styles/modal.pc
+25 silly found diff in libs/designer/src/styles/plus.svg
+25 silly found diff in libs/designer/src/styles/plus2.svg
+25 silly found diff in libs/designer/src/styles/resource-modal.pc
+25 silly found diff in libs/designer/src/styles/right-sidebar.pc
+25 silly found diff in libs/designer/src/styles/shadow.svg
+25 silly found diff in libs/designer/src/styles/shadow2.svg
+25 silly found diff in libs/designer/src/styles/shapes.svg
+25 silly found diff in libs/designer/src/styles/sidebar.pc
+25 silly found diff in libs/designer/src/styles/slot.svg
+25 silly found diff in libs/designer/src/styles/slot2.svg
+25 silly found diff in libs/designer/src/styles/slot3.svg
+25 silly found diff in libs/designer/src/styles/square.svg
+25 silly found diff in libs/designer/src/styles/styles-panel.pc
+25 silly found diff in libs/designer/src/styles/test.pc
+25 silly found diff in libs/designer/src/styles/text.svg
+25 silly found diff in libs/designer/src/styles/theme.pc
+25 silly found diff in libs/designer/src/styles/tokens.pc
+25 silly found diff in libs/designer/src/styles/toolbar.pc
+25 silly found diff in libs/designer/src/styles/tree.pc
+25 silly found diff in libs/designer/test/controls/index.ts
+25 silly found diff in libs/designer/test/controls/mock-designer.ts
+25 silly found diff in libs/designer/test/controls/utils.ts
+25 silly found diff in libs/designer/test/integration/canvas.test.ts
+25 silly found diff in libs/designer/test/integration/component-properties.test.ts
+25 silly found diff in libs/designer/test/integration/editor.test.ts
+25 silly found diff in libs/designer/test/integration/layer-navigation.test.ts
+25 silly found diff in libs/designer/test/integration/undo-redo.test.ts
+25 silly found diff in libs/designer/tsconfig.json
+25 silly found diff in libs/designer/webpack.config.js
+26 verbose filtered diff [
+26 verbose filtered diff   'libs/designer/.gitignore',
+26 verbose filtered diff   'libs/designer/Cargo.toml',
+26 verbose filtered diff   'libs/designer/README.md',
+26 verbose filtered diff   'libs/designer/assets/main.css',
+26 verbose filtered diff   'libs/designer/babel.config.js',
+26 verbose filtered diff   'libs/designer/image.png',
+26 verbose filtered diff   'libs/designer/jest.config.js',
+26 verbose filtered diff   'libs/designer/package.json',
+26 verbose filtered diff   'libs/designer/paperclip.config.json',
+26 verbose filtered diff   'libs/designer/paperclip.webpack.config.json',
+26 verbose filtered diff   'libs/designer/src/components/ContextMenu/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Dashboard/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Editor/Canvas/Frames/Frame.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Editor/Canvas/Frames/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Editor/Canvas/Frames/styles.pc',
+26 verbose filtered diff   'libs/designer/src/components/Editor/Canvas/Tools/DropTarget.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Editor/Canvas/Tools/Frames/expand.svg',
+26 verbose filtered diff   'libs/designer/src/components/Editor/Canvas/Tools/Frames/expand2.svg',
+26 verbose filtered diff   'libs/designer/src/components/Editor/Canvas/Tools/Frames/index.pc',
+26 verbose filtered diff   'libs/designer/src/components/Editor/Canvas/Tools/Frames/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Editor/Canvas/Tools/InsertElement/index.pc',
+26 verbose filtered diff   'libs/designer/src/components/Editor/Canvas/Tools/InsertElement/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Editor/Canvas/Tools/Pixels/index.pc',
+26 verbose filtered diff   'libs/designer/src/components/Editor/Canvas/Tools/Pixels/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Editor/Canvas/Tools/Selectable/index.pc',
+26 verbose filtered diff   'libs/designer/src/components/Editor/Canvas/Tools/Selectable/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Editor/Canvas/Tools/index.pc',
+26 verbose filtered diff   'libs/designer/src/components/Editor/Canvas/Tools/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Editor/Canvas/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Editor/Canvas/normalize-wheel.ts',
+26 verbose filtered diff   'libs/designer/src/components/Editor/Canvas/styles.pc',
+26 verbose filtered diff   'libs/designer/src/components/Editor/EditorPanels/Center/Toolbar/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Editor/EditorPanels/Center/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Editor/EditorPanels/LeftSidebar/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Editor/EditorPanels/RightSidebar/PropertiesPanel/VariantsSection/EditVariantPopup.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Editor/EditorPanels/RightSidebar/PropertiesPanel/VariantsSection/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Editor/EditorPanels/RightSidebar/PropertiesPanel/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Editor/EditorPanels/RightSidebar/StylePanel/Variants/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Editor/EditorPanels/RightSidebar/StylePanel/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Editor/EditorPanels/RightSidebar/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Editor/ResourceModal/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Editor/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/FrameContainer/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Main.tsx',
+26 verbose filtered diff   'libs/designer/src/components/MultiSelectInput/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/Portal/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/SuggestionMenu/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/TextInput/index.tsx',
+26 verbose filtered diff   'libs/designer/src/components/hooks/usePositioner.ts',
+26 verbose filtered diff   'libs/designer/src/components/utils/dnd.ts',
+26 verbose filtered diff   'libs/designer/src/domains/api/engine.ts',
+26 verbose filtered diff   'libs/designer/src/domains/api/events.ts',
+26 verbose filtered diff   'libs/designer/src/domains/api/reducer.ts',
+26 verbose filtered diff   'libs/designer/src/domains/history/engine.ts',
+26 verbose filtered diff   'libs/designer/src/domains/history/events.ts',
+26 verbose filtered diff   'libs/designer/src/domains/history/history.ts',
+26 verbose filtered diff   'libs/designer/src/domains/history/react.ts',
+26 verbose filtered diff   'libs/designer/src/domains/history/reducer.ts',
+26 verbose filtered diff   'libs/designer/src/domains/history/state.ts',
+26 verbose filtered diff   'libs/designer/src/domains/keyboard/engine.ts',
+26 verbose filtered diff   'libs/designer/src/domains/keyboard/events.ts',
+26 verbose filtered diff   'libs/designer/src/domains/legacy/reducer.ts',
+26 verbose filtered diff   'libs/designer/src/domains/log/engine.ts',
+26 verbose filtered diff   'libs/designer/src/domains/shortcuts/engine.ts',
+26 verbose filtered diff   'libs/designer/src/domains/shortcuts/events.ts',
+26 verbose filtered diff   'libs/designer/src/domains/shortcuts/reducer.ts',
+26 verbose filtered diff   'libs/designer/src/domains/shortcuts/state.ts',
+26 verbose filtered diff   'libs/designer/src/domains/shortcuts/utils.ts',
+26 verbose filtered diff   'libs/designer/src/domains/ui/engine.ts',
+26 verbose filtered diff   'libs/designer/src/domains/ui/events.ts',
+26 verbose filtered diff   'libs/designer/src/domains/ui/reducers/index.ts',
+26 verbose filtered diff   'libs/designer/src/domains/ui/reducers/resource-modal.ts',
+26 verbose filtered diff   'libs/designer/src/domains/ui/reducers/toolsLayer.ts',
+26 verbose filtered diff   'libs/designer/src/editor/components/Canvas/Frames/index.tsx',
+26 verbose filtered diff   'libs/designer/src/editor/components/Main.tsx',
+26 verbose filtered diff   'libs/designer/src/editor/env.ts',
+26 verbose filtered diff   'libs/designer/src/editor/machine/engine/designer/engine.ts',
+26 verbose filtered diff   'libs/designer/src/editor/machine/engine/designer/events.ts',
+26 verbose filtered diff   'libs/designer/src/editor/machine/engine/designer/state.ts',
+26 verbose filtered diff   'libs/designer/src/editor/machine/engine/index.ts',
+26 verbose filtered diff   'libs/designer/src/editor/machine/events/index.ts',
+26 verbose filtered diff   'libs/designer/src/editor/machine/index.ts',
+26 verbose filtered diff   'libs/designer/src/editor/machine/reducer/editor/index.ts',
+26 verbose filtered diff   'libs/designer/src/editor/machine/reducer/index.ts',
+26 verbose filtered diff   'libs/designer/src/editor/machine/state/index.ts',
+26 verbose filtered diff   'libs/designer/src/editor/styles/editor.pc',
+26 verbose filtered diff   'libs/designer/src/editor/styles/theme.pc',
+26 verbose filtered diff   'libs/designer/src/engine/index.ts',
+26 verbose filtered diff   'libs/designer/src/entry.tsx',
+26 verbose filtered diff   'libs/designer/src/env.ts',
+26 verbose filtered diff   'libs/designer/src/events/index.ts',
+26 verbose filtered diff   'libs/designer/src/hooks/useFrame/index.ts',
+26 verbose filtered diff   'libs/designer/src/hooks/useFrameContainer/index.tsx',
+26 verbose filtered diff   'libs/designer/src/hooks/useFrameMount/index.ts',
+26 verbose filtered diff   'libs/designer/src/index.html',
+26 verbose filtered diff   'libs/designer/src/lib.rs',
+26 verbose filtered diff   'libs/designer/src/machine/index.ts',
+26 verbose filtered diff   'libs/designer/src/modules/pc/state.ts',
+26 verbose filtered diff   'libs/designer/src/modules/shortcuts/base.ts',
+26 verbose filtered diff   'libs/designer/src/reducer/editor/index.ts',
+26 verbose filtered diff   ... 77 more items
+26 verbose filtered diff ]
+27 silly checking diff libs/js-common
+28 silly found diff in libs/js-common/package.json
+28 silly found diff in libs/js-common/src/machine/core.ts
+28 silly found diff in libs/js-common/src/machine/engine/utils.ts
+28 silly found diff in libs/js-common/src/machine/hooks/index.ts
+28 silly found diff in libs/js-common/src/observable/map.ts
+29 verbose filtered diff [
+29 verbose filtered diff   'libs/js-common/package.json',
+29 verbose filtered diff   'libs/js-common/src/machine/core.ts',
+29 verbose filtered diff   'libs/js-common/src/machine/engine/utils.ts',
+29 verbose filtered diff   'libs/js-common/src/machine/hooks/index.ts',
+29 verbose filtered diff   'libs/js-common/src/observable/map.ts'
+29 verbose filtered diff ]
+30 silly checking diff libs/paperclip-loader
+31 silly found diff in libs/paperclip-loader/Cargo.toml
+31 silly found diff in libs/paperclip-loader/package.json
+31 silly found diff in libs/paperclip-loader/src/index.ts
+31 silly found diff in libs/paperclip-loader/src/lib.rs
+31 silly found diff in libs/paperclip-loader/src/loader.rs
+32 verbose filtered diff [
+32 verbose filtered diff   'libs/paperclip-loader/Cargo.toml',
+32 verbose filtered diff   'libs/paperclip-loader/package.json',
+32 verbose filtered diff   'libs/paperclip-loader/src/index.ts',
+32 verbose filtered diff   'libs/paperclip-loader/src/lib.rs',
+32 verbose filtered diff   'libs/paperclip-loader/src/loader.rs'
+32 verbose filtered diff ]
+33 silly checking diff libs/proto
+34 silly found diff in libs/proto/.gitignore
+34 silly found diff in libs/proto/Cargo.toml
+34 silly found diff in libs/proto/README.md
+34 silly found diff in libs/proto/build.rs
+34 silly found diff in libs/proto/index.d.ts
+34 silly found diff in libs/proto/package.json
+34 silly found diff in libs/proto/scripts/build.sh
+34 silly found diff in libs/proto/src/ast/all/mod.rs
+34 silly found diff in libs/proto/src/ast/base.proto
+34 silly found diff in libs/proto/src/ast/css.proto
+34 silly found diff in libs/proto/src/ast/css.rs
+34 silly found diff in libs/proto/src/ast/docco.proto
+34 silly found diff in libs/proto/src/ast/graph.proto
+34 silly found diff in libs/proto/src/ast/graph.rs
+34 silly found diff in libs/proto/src/ast/graph_ext/mod.rs
+34 silly found diff in libs/proto/src/ast/graph_ext/reference.rs
+34 silly found diff in libs/proto/src/ast/mod.rs
+34 silly found diff in libs/proto/src/ast/pc-utils.ts
+34 silly found diff in libs/proto/src/ast/pc.proto
+34 silly found diff in libs/proto/src/ast/pc.rs
+34 silly found diff in libs/proto/src/ast_mutate/mod.proto
+34 silly found diff in libs/proto/src/ast_mutate/mod.rs
+34 silly found diff in libs/proto/src/index.ts
+34 silly found diff in libs/proto/src/language_service/mod.rs
+34 silly found diff in libs/proto/src/language_service/pc.proto
+34 silly found diff in libs/proto/src/language_service/pc.rs
+34 silly found diff in libs/proto/src/lib.rs
+34 silly found diff in libs/proto/src/service/designer.proto
+34 silly found diff in libs/proto/src/service/mod.rs
+34 silly found diff in libs/proto/src/utils.rs
+34 silly found diff in libs/proto/src/virt/core.proto
+34 silly found diff in libs/proto/src/virt/core.rs
+34 silly found diff in libs/proto/src/virt/css.proto
+34 silly found diff in libs/proto/src/virt/html-utils.ts
+34 silly found diff in libs/proto/src/virt/html.proto
+34 silly found diff in libs/proto/src/virt/html.rs
+34 silly found diff in libs/proto/src/virt/mod.rs
+34 silly found diff in libs/proto/src/virt/module.proto
+34 silly found diff in libs/proto/src/virt/module.rs
+34 silly found diff in libs/proto/tsconfig.json
+35 verbose filtered diff [
+35 verbose filtered diff   'libs/proto/.gitignore',
+35 verbose filtered diff   'libs/proto/Cargo.toml',
+35 verbose filtered diff   'libs/proto/README.md',
+35 verbose filtered diff   'libs/proto/build.rs',
+35 verbose filtered diff   'libs/proto/index.d.ts',
+35 verbose filtered diff   'libs/proto/package.json',
+35 verbose filtered diff   'libs/proto/scripts/build.sh',
+35 verbose filtered diff   'libs/proto/src/ast/all/mod.rs',
+35 verbose filtered diff   'libs/proto/src/ast/base.proto',
+35 verbose filtered diff   'libs/proto/src/ast/css.proto',
+35 verbose filtered diff   'libs/proto/src/ast/css.rs',
+35 verbose filtered diff   'libs/proto/src/ast/docco.proto',
+35 verbose filtered diff   'libs/proto/src/ast/graph.proto',
+35 verbose filtered diff   'libs/proto/src/ast/graph.rs',
+35 verbose filtered diff   'libs/proto/src/ast/graph_ext/mod.rs',
+35 verbose filtered diff   'libs/proto/src/ast/graph_ext/reference.rs',
+35 verbose filtered diff   'libs/proto/src/ast/mod.rs',
+35 verbose filtered diff   'libs/proto/src/ast/pc-utils.ts',
+35 verbose filtered diff   'libs/proto/src/ast/pc.proto',
+35 verbose filtered diff   'libs/proto/src/ast/pc.rs',
+35 verbose filtered diff   'libs/proto/src/ast_mutate/mod.proto',
+35 verbose filtered diff   'libs/proto/src/ast_mutate/mod.rs',
+35 verbose filtered diff   'libs/proto/src/index.ts',
+35 verbose filtered diff   'libs/proto/src/language_service/mod.rs',
+35 verbose filtered diff   'libs/proto/src/language_service/pc.proto',
+35 verbose filtered diff   'libs/proto/src/language_service/pc.rs',
+35 verbose filtered diff   'libs/proto/src/lib.rs',
+35 verbose filtered diff   'libs/proto/src/service/designer.proto',
+35 verbose filtered diff   'libs/proto/src/service/mod.rs',
+35 verbose filtered diff   'libs/proto/src/utils.rs',
+35 verbose filtered diff   'libs/proto/src/virt/core.proto',
+35 verbose filtered diff   'libs/proto/src/virt/core.rs',
+35 verbose filtered diff   'libs/proto/src/virt/css.proto',
+35 verbose filtered diff   'libs/proto/src/virt/html-utils.ts',
+35 verbose filtered diff   'libs/proto/src/virt/html.proto',
+35 verbose filtered diff   'libs/proto/src/virt/html.rs',
+35 verbose filtered diff   'libs/proto/src/virt/mod.rs',
+35 verbose filtered diff   'libs/proto/src/virt/module.proto',
+35 verbose filtered diff   'libs/proto/src/virt/module.rs',
+35 verbose filtered diff   'libs/proto/tsconfig.json'
+35 verbose filtered diff ]
+36 silly checking diff libs/proto_ext
+37 silly found diff in libs/proto_ext/.gitignore
+37 silly found diff in libs/proto_ext/.npmignore
+37 silly found diff in libs/proto_ext/Cargo.toml
+37 silly found diff in libs/proto_ext/README.md
+37 silly found diff in libs/proto_ext/index.d.ts
+37 silly found diff in libs/proto_ext/package.json
+37 silly found diff in libs/proto_ext/scripts/build.sh
+37 silly found diff in libs/proto_ext/src/ast/all/mod.rs
+37 silly found diff in libs/proto_ext/src/ast/all/visit.rs
+37 silly found diff in libs/proto_ext/src/ast/get_expr.rs
+37 silly found diff in libs/proto_ext/src/ast/mod.rs
+37 silly found diff in libs/proto_ext/src/ast/pc-utils.ts
+37 silly found diff in libs/proto_ext/src/ast_merge/base.rs
+37 silly found diff in libs/proto_ext/src/ast_merge/merge.rs
+37 silly found diff in libs/proto_ext/src/ast_merge/mod.rs
+37 silly found diff in libs/proto_ext/src/ast_merge/test.rs
+37 silly found diff in libs/proto_ext/src/ast_mutate/append_child.rs
+37 silly found diff in libs/proto_ext/src/ast_mutate/base.rs
+37 silly found diff in libs/proto_ext/src/ast_mutate/convert_to_component.rs
+37 silly found diff in libs/proto_ext/src/ast_mutate/convert_to_slot.rs
+37 silly found diff in libs/proto_ext/src/ast_mutate/del_style_declaration.rs
+37 silly found diff in libs/proto_ext/src/ast_mutate/delete_expression.rs
+37 silly found diff in libs/proto_ext/src/ast_mutate/delete_style_declarations.rs
+37 silly found diff in libs/proto_ext/src/ast_mutate/insert_frame.rs
+37 silly found diff in libs/proto_ext/src/ast_mutate/mod.rs
+37 silly found diff in libs/proto_ext/src/ast_mutate/set_frame_bounds.rs
+37 silly found diff in libs/proto_ext/src/ast_mutate/set_style_declarations.rs
+37 silly found diff in libs/proto_ext/src/ast_mutate/test.rs
+37 silly found diff in libs/proto_ext/src/ast_mutate/toggle_variants.rs
+37 silly found diff in libs/proto_ext/src/ast_mutate/update_variant.rs
+37 silly found diff in libs/proto_ext/src/ast_mutate/utils.rs
+37 silly found diff in libs/proto_ext/src/graph/io.rs
+37 silly found diff in libs/proto_ext/src/graph/load.rs
+37 silly found diff in libs/proto_ext/src/graph/mod.rs
+37 silly found diff in libs/proto_ext/src/graph/test_utils.rs
+37 silly found diff in libs/proto_ext/src/graph/tests.rs
+37 silly found diff in libs/proto_ext/src/index.ts
+37 silly found diff in libs/proto_ext/src/lib.rs
+37 silly found diff in libs/proto_ext/src/test/pc.test.ts
+37 silly found diff in libs/proto_ext/src/test/utils.ts
+37 silly found diff in libs/proto_ext/src/utils.rs
+37 silly found diff in libs/proto_ext/tsconfig.json
+38 verbose filtered diff [
+38 verbose filtered diff   'libs/proto_ext/.gitignore',
+38 verbose filtered diff   'libs/proto_ext/.npmignore',
+38 verbose filtered diff   'libs/proto_ext/Cargo.toml',
+38 verbose filtered diff   'libs/proto_ext/README.md',
+38 verbose filtered diff   'libs/proto_ext/index.d.ts',
+38 verbose filtered diff   'libs/proto_ext/package.json',
+38 verbose filtered diff   'libs/proto_ext/scripts/build.sh',
+38 verbose filtered diff   'libs/proto_ext/src/ast/all/mod.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast/all/visit.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast/get_expr.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast/mod.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast/pc-utils.ts',
+38 verbose filtered diff   'libs/proto_ext/src/ast_merge/base.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast_merge/merge.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast_merge/mod.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast_merge/test.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast_mutate/append_child.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast_mutate/base.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast_mutate/convert_to_component.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast_mutate/convert_to_slot.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast_mutate/del_style_declaration.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast_mutate/delete_expression.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast_mutate/delete_style_declarations.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast_mutate/insert_frame.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast_mutate/mod.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast_mutate/set_frame_bounds.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast_mutate/set_style_declarations.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast_mutate/test.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast_mutate/toggle_variants.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast_mutate/update_variant.rs',
+38 verbose filtered diff   'libs/proto_ext/src/ast_mutate/utils.rs',
+38 verbose filtered diff   'libs/proto_ext/src/graph/io.rs',
+38 verbose filtered diff   'libs/proto_ext/src/graph/load.rs',
+38 verbose filtered diff   'libs/proto_ext/src/graph/mod.rs',
+38 verbose filtered diff   'libs/proto_ext/src/graph/test_utils.rs',
+38 verbose filtered diff   'libs/proto_ext/src/graph/tests.rs',
+38 verbose filtered diff   'libs/proto_ext/src/index.ts',
+38 verbose filtered diff   'libs/proto_ext/src/lib.rs',
+38 verbose filtered diff   'libs/proto_ext/src/test/pc.test.ts',
+38 verbose filtered diff   'libs/proto_ext/src/test/utils.ts',
+38 verbose filtered diff   'libs/proto_ext/src/utils.rs',
+38 verbose filtered diff   'libs/proto_ext/tsconfig.json'
+38 verbose filtered diff ]
+39 silly checking diff libs/releases
+40 silly found diff in libs/releases/package.json
+40 silly found diff in libs/releases/src/index.ts
+41 verbose filtered diff [ 'libs/releases/package.json', 'libs/releases/src/index.ts' ]
+42 silly checking diff libs/web-renderer
+43 silly found diff in libs/web-renderer/package.json
+43 silly found diff in libs/web-renderer/src/native.ts
+43 silly found diff in libs/web-renderer/src/node-factory.ts
+43 silly found diff in libs/web-renderer/src/render.ts
+43 silly found diff in libs/web-renderer/src/sheet.ts
+44 verbose filtered diff [
+44 verbose filtered diff   'libs/web-renderer/package.json',
+44 verbose filtered diff   'libs/web-renderer/src/native.ts',
+44 verbose filtered diff   'libs/web-renderer/src/node-factory.ts',
+44 verbose filtered diff   'libs/web-renderer/src/render.ts',
+44 verbose filtered diff   'libs/web-renderer/src/sheet.ts'
+44 verbose filtered diff ]
+45 silly checking diff libs/workspace
+46 silly found diff in libs/workspace/.gitignore
+46 silly found diff in libs/workspace/Cargo.toml
+46 silly found diff in libs/workspace/README.md
+46 silly found diff in libs/workspace/babel.config.js
+46 silly found diff in libs/workspace/jest.config.js
+46 silly found diff in libs/workspace/localhost+2-key.pem
+46 silly found diff in libs/workspace/localhost+2.pem
+46 silly found diff in libs/workspace/package.json
+46 silly found diff in libs/workspace/paperclip.config.json
+46 silly found diff in libs/workspace/paperclip.webpack.config.json
+46 silly found diff in libs/workspace/src/index.ts
+46 silly found diff in libs/workspace/src/lib.rs
+46 silly found diff in libs/workspace/src/machine/engine.rs
+46 silly found diff in libs/workspace/src/machine/mod.rs
+46 silly found diff in libs/workspace/src/machine/store.rs
+46 silly found diff in libs/workspace/src/server/base.rs
+46 silly found diff in libs/workspace/src/server/core/event.rs
+46 silly found diff in libs/workspace/src/server/core/event_handler.rs
+46 silly found diff in libs/workspace/src/server/core/mod.rs
+46 silly found diff in libs/workspace/src/server/core/state.rs
+46 silly found diff in libs/workspace/src/server/core/utils.rs
+46 silly found diff in libs/workspace/src/server/domains/api/engine.rs
+46 silly found diff in libs/workspace/src/server/domains/api/mod.rs
+46 silly found diff in libs/workspace/src/server/domains/api/res_body.rs
+46 silly found diff in libs/workspace/src/server/domains/api/routes.rs
+46 silly found diff in libs/workspace/src/server/domains/api/service.rs
+46 silly found diff in libs/workspace/src/server/domains/api/utils.rs
+46 silly found diff in libs/workspace/src/server/domains/bootstrap/engine.rs
+46 silly found diff in libs/workspace/src/server/domains/bootstrap/mod.rs
+46 silly found diff in libs/workspace/src/server/domains/config/engine.rs
+46 silly found diff in libs/workspace/src/server/domains/config/mod.rs
+46 silly found diff in libs/workspace/src/server/domains/evaluate/mod.rs
+46 silly found diff in libs/workspace/src/server/domains/local/engine.rs
+46 silly found diff in libs/workspace/src/server/domains/local/mod.rs
+46 silly found diff in libs/workspace/src/server/domains/mod.rs
+46 silly found diff in libs/workspace/src/server/domains/paperclip/engine.rs
+46 silly found diff in libs/workspace/src/server/domains/paperclip/mod.rs
+46 silly found diff in libs/workspace/src/server/domains/screenshots/engine.rs
+46 silly found diff in libs/workspace/src/server/domains/screenshots/mod.rs
+46 silly found diff in libs/workspace/src/server/io.rs
+46 silly found diff in libs/workspace/src/server/mod.rs
+46 silly found diff in libs/workspace/src/server/server.rs
+46 silly found diff in libs/workspace/src/test/history.test.ts
+46 silly found diff in libs/workspace/src/test_utils/index.ts
+46 silly found diff in libs/workspace/tsconfig.json
+47 verbose filtered diff [
+47 verbose filtered diff   'libs/workspace/.gitignore',
+47 verbose filtered diff   'libs/workspace/Cargo.toml',
+47 verbose filtered diff   'libs/workspace/README.md',
+47 verbose filtered diff   'libs/workspace/babel.config.js',
+47 verbose filtered diff   'libs/workspace/jest.config.js',
+47 verbose filtered diff   'libs/workspace/localhost+2-key.pem',
+47 verbose filtered diff   'libs/workspace/localhost+2.pem',
+47 verbose filtered diff   'libs/workspace/package.json',
+47 verbose filtered diff   'libs/workspace/paperclip.config.json',
+47 verbose filtered diff   'libs/workspace/paperclip.webpack.config.json',
+47 verbose filtered diff   'libs/workspace/src/index.ts',
+47 verbose filtered diff   'libs/workspace/src/lib.rs',
+47 verbose filtered diff   'libs/workspace/src/machine/engine.rs',
+47 verbose filtered diff   'libs/workspace/src/machine/mod.rs',
+47 verbose filtered diff   'libs/workspace/src/machine/store.rs',
+47 verbose filtered diff   'libs/workspace/src/server/base.rs',
+47 verbose filtered diff   'libs/workspace/src/server/core/event.rs',
+47 verbose filtered diff   'libs/workspace/src/server/core/event_handler.rs',
+47 verbose filtered diff   'libs/workspace/src/server/core/mod.rs',
+47 verbose filtered diff   'libs/workspace/src/server/core/state.rs',
+47 verbose filtered diff   'libs/workspace/src/server/core/utils.rs',
+47 verbose filtered diff   'libs/workspace/src/server/domains/api/engine.rs',
+47 verbose filtered diff   'libs/workspace/src/server/domains/api/mod.rs',
+47 verbose filtered diff   'libs/workspace/src/server/domains/api/res_body.rs',
+47 verbose filtered diff   'libs/workspace/src/server/domains/api/routes.rs',
+47 verbose filtered diff   'libs/workspace/src/server/domains/api/service.rs',
+47 verbose filtered diff   'libs/workspace/src/server/domains/api/utils.rs',
+47 verbose filtered diff   'libs/workspace/src/server/domains/bootstrap/engine.rs',
+47 verbose filtered diff   'libs/workspace/src/server/domains/bootstrap/mod.rs',
+47 verbose filtered diff   'libs/workspace/src/server/domains/config/engine.rs',
+47 verbose filtered diff   'libs/workspace/src/server/domains/config/mod.rs',
+47 verbose filtered diff   'libs/workspace/src/server/domains/evaluate/mod.rs',
+47 verbose filtered diff   'libs/workspace/src/server/domains/local/engine.rs',
+47 verbose filtered diff   'libs/workspace/src/server/domains/local/mod.rs',
+47 verbose filtered diff   'libs/workspace/src/server/domains/mod.rs',
+47 verbose filtered diff   'libs/workspace/src/server/domains/paperclip/engine.rs',
+47 verbose filtered diff   'libs/workspace/src/server/domains/paperclip/mod.rs',
+47 verbose filtered diff   'libs/workspace/src/server/domains/screenshots/engine.rs',
+47 verbose filtered diff   'libs/workspace/src/server/domains/screenshots/mod.rs',
+47 verbose filtered diff   'libs/workspace/src/server/io.rs',
+47 verbose filtered diff   'libs/workspace/src/server/mod.rs',
+47 verbose filtered diff   'libs/workspace/src/server/server.rs',
+47 verbose filtered diff   'libs/workspace/src/test/history.test.ts',
+47 verbose filtered diff   'libs/workspace/src/test_utils/index.ts',
+47 verbose filtered diff   'libs/workspace/tsconfig.json'
+47 verbose filtered diff ]
+48 verbose updated vscode-paperclip
+49 verbose updated @paperclip-ui/config
+50 verbose updated @paperclip-ui/designer-rust
+51 verbose updated @paperclip-ui/designer
+52 verbose updated @paperclip-ui/common
+53 verbose updated paperclip-loader
+54 verbose updated @paperclip-ui/proto
+55 verbose updated @paperclip-ui/proto-ext
+56 verbose updated @paperclip-ui/releases
+57 verbose updated @paperclip-ui/web-renderer
+58 verbose updated @paperclip-ui/workspace
+59 verbose git-describe undefined => "v19.0.10-351-g3aa5c92b"
+60 silly git-describe parsed => {"lastTagName":"v19.0.10","lastVersion":"v19.0.10","refCount":"351","sha":"3aa5c92b","isDirty":false}
+61 info execute Skipping releases
+62 silly lifecycle No script for "preversion" in "paperclip", continuing
+63 warn ECYCLE Dependency cycles detected, you should fix these!
+63 warn ECYCLE @paperclip-ui/designer -> @paperclip-ui/workspace -> @paperclip-ui/designer
+64 silly lifecycle No script for "preversion" in "@paperclip-ui/config", continuing
+65 silly lifecycle No script for "preversion" in "@paperclip-ui/designer-rust", continuing
+66 silly lifecycle No script for "preversion" in "@paperclip-ui/common", continuing
+67 silly lifecycle No script for "preversion" in "@paperclip-ui/releases", continuing
+68 verbose version @paperclip-ui/config has no lockfile. Skipping lockfile update.
+69 verbose version @paperclip-ui/common has no lockfile. Skipping lockfile update.
+70 verbose version @paperclip-ui/releases has no lockfile. Skipping lockfile update.
+71 verbose version @paperclip-ui/designer-rust has no lockfile. Skipping lockfile update.
+72 silly lifecycle No script for "version" in "@paperclip-ui/designer-rust", continuing
+73 silly lifecycle No script for "version" in "@paperclip-ui/releases", continuing
+74 silly lifecycle No script for "version" in "@paperclip-ui/config", continuing
+75 silly lifecycle No script for "preversion" in "paperclip-loader", continuing
+76 silly lifecycle No script for "version" in "@paperclip-ui/common", continuing
+77 silly lifecycle No script for "preversion" in "@paperclip-ui/proto", continuing
+78 verbose version paperclip-loader has no lockfile. Skipping lockfile update.
+79 verbose version @paperclip-ui/proto has no lockfile. Skipping lockfile update.
+80 silly lifecycle No script for "version" in "@paperclip-ui/proto", continuing
+81 silly lifecycle No script for "preversion" in "vscode-paperclip", continuing
+82 silly lifecycle No script for "preversion" in "@paperclip-ui/web-renderer", continuing
+83 verbose version @paperclip-ui/web-renderer has no lockfile. Skipping lockfile update.
+84 silly lifecycle No script for "version" in "paperclip-loader", continuing
+85 silly lifecycle No script for "version" in "@paperclip-ui/web-renderer", continuing
+86 silly lifecycle No script for "preversion" in "@paperclip-ui/designer", continuing
+87 silly lifecycle No script for "preversion" in "@paperclip-ui/workspace", continuing
+88 verbose version @paperclip-ui/designer has no lockfile. Skipping lockfile update.
+89 verbose version @paperclip-ui/workspace has no lockfile. Skipping lockfile update.
+90 silly lifecycle No script for "version" in "vscode-paperclip", continuing
+91 silly lifecycle No script for "version" in "@paperclip-ui/workspace", continuing
+92 silly lifecycle No script for "preversion" in "@paperclip-ui/proto-ext", continuing
+93 verbose version @paperclip-ui/proto-ext has no lockfile. Skipping lockfile update.
+94 silly lifecycle No script for "version" in "@paperclip-ui/designer", continuing
+95 silly lifecycle No script for "version" in "@paperclip-ui/proto-ext", continuing
+96 verbose version Updating root package-lock.json
+97 error Error: Command failed with exit code 1: npm install --package-lock-only --ignore-scripts
+97 error npm ERR! code EUNSUPPORTEDPROTOCOL
+97 error npm ERR! Unsupported URL Type "workspace:": workspace:^
+97 error
+97 error npm ERR! A complete log of this run can be found in:
+97 error npm ERR!     /Users/crcn/.npm/_logs/2022-12-20T02_27_05_430Z-debug-0.log
+97 error     at makeError (/Users/crcn/Developer/private/paperclip/paperclip/node_modules/execa/lib/error.js:60:11)
+97 error     at handlePromise (/Users/crcn/Developer/private/paperclip/paperclip/node_modules/execa/index.js:118:26)
+97 error     at processTicksAndRejections (node:internal/process/task_queues:96:5)
+97 error     at async Promise.all (index 0)

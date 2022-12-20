@@ -1,0 +1,3 @@
+import "./resource-modal.pc" as imp
+import "./theme.pc" as mod
+

@@ -4,7 +4,7 @@ import {
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { BaseEvent } from "@paperclip-ui/common";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
-import { DesignerEvent as DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
+import { DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
 
 export type DocumentOpened = BaseEvent<
   "designer-engine/documentOpened",

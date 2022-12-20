@@ -136,7 +136,10 @@ const useTools = () => {
 
   const onMouseMove = useCallback(
     (event: React.MouseEvent<any>) => {
-      dispatch(designerEvents.canvasMouseMoved(getMousePoint(event)));
+      dispatch({
+        type: "editor/canvasMouseMoved",
+        payload: getMousePoint(event),
+      });
     },
     [dispatch]
   );
@@ -175,7 +178,7 @@ const useTools = () => {
   );
 
   const onMouseLeave = () => {
-    dispatch(designerEvents.canvasMouseLeave(null));
+    dispatch({ type: "editor/canvasMouseLeave" });
   };
 
   const boxes = flattenFrameBoxes(frameBoxes);

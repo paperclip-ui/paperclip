@@ -12,7 +12,7 @@ import { DocumentManager } from "./documents";
 import { EventEmitter } from "stream";
 import { DesignerClient } from "./designer-client";
 import { EVENTS_NOTIFICATION_NAME } from "../constants";
-import { ServerEvent, serverEvents } from "./events";
+import { ServerEvent } from "./events";
 import { FileChanged } from "@paperclip-ui/proto/lib/generated/service/designer";
 
 // TODO - need better SRP here, this class is doing too much
@@ -44,9 +44,10 @@ export class PaperclipLanguageServerConnectionManager {
   }
 
   private _onDesignerConnected = () => {
-    this._dispatch(
-      serverEvents.started({ port: this._designerClient.getPort() })
-    );
+    this._dispatch({
+      type: "server/started",
+      payload: { port: this._designerClient.getPort() },
+    });
   };
 
   private _dispatch(event: ServerEvent) {

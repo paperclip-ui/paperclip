@@ -176,7 +176,6 @@ public component Fields {
 */
 
 public component MultiSelect {
-    
     render div(tabIndex: "0", onFocus: onFocus, onChange: onChange, onBlur: onBlur) {
         style extends theme.input, theme.fontDefault {
             display: flex
@@ -531,27 +530,6 @@ div {
     }
 }
 
-/**
- * @bounds(x: 939, y: 57, width: 376, height: 276)
-*/
-
-div {
-    style {
-        position: relative
-        padding: var(theme.space05)
-    }
-    div {
-        style {
-            background: rgba(0, 0, 0, 0.1)
-            position: static
-            left: 71px
-            top: 41px
-            width: 100%
-            height: 130px
-        }
-    }
-}
-
 public component AddListItemButton {
     render button(onClick: onClick) {
         style extends theme.input {
@@ -585,17 +563,6 @@ public component ListItemInput {
             }
             text "×"
         }
-    }
-}
-
-/**
- * @bounds(x: -170, y: -1736, width: 575, height: 437)
-*/
-
-div {
-    style {
-        position: static
-        font-family: var(theme.defaultFontFamily)
     }
 }
 

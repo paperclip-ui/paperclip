@@ -27,12 +27,12 @@
 
 #### On-deck
 
-- dashboard
+- GH hooks to work
 
-  - ability to delete file
+- online service
 
-- files view
-- prompt for component name
+  - OAuth
+  - ability to link GIT repositories
 
 - render slots
 - ability to insert into slots
@@ -40,11 +40,6 @@
 - variants
 
   - do not persist variant selection to code
-
-- context-menu
-
-- right-click -> convert to component
-- ability to insert elements into slots
 
 - element insertion UI
 

@@ -22,7 +22,7 @@ macro_rules! case {
                 panic!("Unable to load");
             }
 
-            edit_graph(&mut graph, &vec![$edit]);
+            edit_graph(&mut graph, &vec![$edit], &mock_fs).expect("Can't edit graph");
 
             let edited_docs = graph
                 .dependencies

@@ -8,10 +8,7 @@ import {
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { EditVariantPopup, SaveOptions } from "./EditVariantPopup";
 import { Variant } from "@paperclip-ui/proto/lib/generated/ast/pc";
-import {
-  DesignerEvent,
-  designerEvents,
-} from "@paperclip-ui/designer/src/events";
+import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 
 export const VariantsSection = () => {
   const {

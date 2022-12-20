@@ -1,9 +1,4 @@
-import {
-  BaseEvent,
-  eventCreators,
-  ExtractEventFromCreators,
-  identity,
-} from "@paperclip-ui/common";
+import { BaseEvent } from "@paperclip-ui/common";
 import { UpdateVariantTrigger } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
 import { DesignerEngineEvent } from "../domains/api/events";
 import { HistoryEngineEvent } from "../domains/history/events";
@@ -96,38 +91,54 @@ export type ComputedStylesCaptured = BaseEvent<
   }
 >;
 
-export const designerEvents = eventCreators(
+export type StyleDeclarationsChanged = BaseEvent<
+  "editor/styleDeclarationsChanged",
   {
-    styleDeclarationsChanged: identity<{
-      values: Record<string, string>;
-      imports: Record<string, string>;
-    }>(),
-    canvasMouseDown: identity<{
-      metaKey: boolean;
-      ctrlKey: boolean;
-      shiftKey: boolean;
-      timestamp: number;
-      position: Point;
-    }>(),
-    canvasPanned: identity<{
-      delta: Point;
-      mousePosition: Point;
-      metaKey: boolean;
-      ctrlKey: boolean;
-      size: Size;
-    }>(),
-    canvasPanStart: null,
-    canvasResized: identity<Size>(),
-    rectsCaptured: identity<{
-      frameIndex: number;
-      rects: Record<string, Box>;
-    }>(),
-  },
-  "editor"
-);
+    values: Record<string, string>;
+    imports: Record<string, string>;
+  }
+>;
+
+export type CanvasMouseDown = BaseEvent<
+  "editor/canvasMouseDown",
+  {
+    metaKey: boolean;
+    ctrlKey: boolean;
+    shiftKey: boolean;
+    timestamp: number;
+    position: Point;
+  }
+>;
+
+export type CanvasPanned = BaseEvent<
+  "editor/canvasPanned",
+  {
+    delta: Point;
+    mousePosition: Point;
+    metaKey: boolean;
+    ctrlKey: boolean;
+    size: Size;
+  }
+>;
+
+export type CanvasPanStart = BaseEvent<"editor/canvasPanStart">;
+export type CanvasResized = BaseEvent<"editor/canvasResized", Size>;
+export type RectsCaptured = BaseEvent<
+  "editor/rectsCaptured",
+  {
+    frameIndex: number;
+    rects: Record<string, Box>;
+  }
+>;
 
 export type LegacyEvent =
   | CanvasPanEnd
+  | CanvasPanned
+  | CanvasPanStart
+  | CanvasMouseDown
+  | CanvasResized
+  | RectsCaptured
+  | StyleDeclarationsChanged
   | VariantEdited
   | VariantSelected
   | ToolsLayerDragOver
@@ -149,7 +160,6 @@ export type LegacyEvent =
   | ComputedStylesCaptured;
 
 export type DesignerEvent =
-  | ExtractEventFromCreators<typeof designerEvents>
   | DesignerEngineEvent
   | HistoryEngineEvent
   | ShortcutEvent

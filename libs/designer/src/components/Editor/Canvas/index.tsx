@@ -4,15 +4,11 @@ import React, {
   useEffect,
   useMemo,
   useCallback,
-  MutableRefObject,
 } from "react";
 import { Frames } from "./Frames";
 import * as styles from "@paperclip-ui/designer/src/styles/editor.pc";
 import { normalizeWheel } from "./normalize-wheel";
-import {
-  DesignerEvent,
-  designerEvents,
-} from "@paperclip-ui/designer/src/events";
+import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
@@ -79,7 +75,7 @@ const useCanvas = () => {
         return;
       }
       if (!canvasPanTimer) {
-        dispatch(designerEvents.canvasPanStart());
+        dispatch({ type: "editor/canvasPanStart" });
       }
       const rect = canvasRef.current.getBoundingClientRect();
 
@@ -88,8 +84,9 @@ const useCanvas = () => {
         pixelX = pixelX / 100;
       }
 
-      dispatch(
-        designerEvents.canvasPanned({
+      dispatch({
+        type: "editor/canvasPanned",
+        payload: {
           delta: {
             x: pixelX,
             y: pixelY,
@@ -104,8 +101,8 @@ const useCanvas = () => {
             width: rect.width,
             height: rect.height,
           },
-        })
-      );
+        },
+      });
       setCanvasPanTimer(
         setTimeout(() => {
           setCanvasPanTimer(null);

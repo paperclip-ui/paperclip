@@ -6,10 +6,7 @@ import {
   ComputedDeclaration,
   getSelectedExprStyles,
 } from "@paperclip-ui/designer/src/state/pc";
-import {
-  DesignerEvent,
-  designerEvents,
-} from "@paperclip-ui/designer/src/events";
+import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import {
   SuggestionMenu,
   SuggestionMenuItem,

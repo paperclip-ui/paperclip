@@ -24,6 +24,7 @@
 #### Warm up (30 min)
 
 - remove eventCreators in favor of vanilla code
+- split legacy reducer code
 
 Simple tasks:
 

@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { designerEvents } from "@paperclip-ui/designer/src/events";
 import { startDesigner, waitUntilDesignerReady } from "../controls";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 

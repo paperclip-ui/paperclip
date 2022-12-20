@@ -7,10 +7,7 @@ import {
   getInsertMode,
   InsertMode,
 } from "@paperclip-ui/designer/src/state";
-import {
-  DesignerEvent,
-  designerEvents,
-} from "@paperclip-ui/designer/src/events";
+import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 
 export const Toolbar = () => {
   const {

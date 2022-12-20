@@ -1,4 +1,4 @@
-import { DesignerEvent, designerEvents } from "../../events";
+import { CanvasMouseDown, DesignerEvent } from "../../events";
 import jasonpatch from "fast-json-patch";
 import {
   Canvas,
@@ -406,7 +406,7 @@ const addHoverableChildren = (
 
 const handleDoubleClick = (
   designer: DesignerState,
-  action: ReturnType<typeof designerEvents.canvasMouseDown>
+  action: CanvasMouseDown
 ): [DesignerState, boolean] => {
   const oldTimestamp = designer.canvasClickTimestamp;
 

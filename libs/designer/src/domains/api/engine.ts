@@ -8,7 +8,7 @@ import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent } from "./events";
 import {
   DesignerEvent,
-  designerEvents,
+  StyleDeclarationsChanged,
   ToolsLayerDrop,
   VariantEdited,
 } from "../../events";
@@ -281,7 +281,7 @@ const createEventHandler = (actions: Actions) => {
   };
 
   const handleStyleDeclarationChanged = (
-    event: ReturnType<typeof designerEvents.styleDeclarationsChanged>,
+    event: StyleDeclarationsChanged,
     state: DesignerState
   ) => {
     const style = Object.entries(event.payload.values).map(([name, value]) => ({

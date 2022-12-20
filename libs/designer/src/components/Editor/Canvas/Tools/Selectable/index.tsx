@@ -9,10 +9,7 @@ import {
 } from "@paperclip-ui/designer/src/state/geom";
 import { useDispatch } from "@paperclip-ui/common";
 import { startDOMDrag } from "@paperclip-ui/designer/src/components/utils/dnd";
-import {
-  DesignerEvent,
-  designerEvents,
-} from "@paperclip-ui/designer/src/events";
+import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 
 type Props = {
   canvasScroll: Point;

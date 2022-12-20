@@ -10,10 +10,7 @@ import {
   isResourceModalVisible,
 } from "@paperclip-ui/designer/src/state";
 import { boxIntersectsPoint } from "@paperclip-ui/designer/src/state/geom";
-import {
-  DesignerEvent,
-  designerEvents,
-} from "@paperclip-ui/designer/src/events";
+import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { useDrag } from "react-dnd";
 import { Component } from "@paperclip-ui/proto/lib/generated/ast/pc";
 

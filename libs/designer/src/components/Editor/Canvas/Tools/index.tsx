@@ -9,10 +9,7 @@ import {
   getSelectedNodePath,
   InsertMode,
 } from "@paperclip-ui/designer/src/state";
-import {
-  DesignerEvent,
-  designerEvents,
-} from "@paperclip-ui/designer/src/events";
+import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { Selectable } from "./Selectable";
 import { InsertElement } from "./InsertElement";
 import { ContextMenu } from "../../../ContextMenu";
@@ -149,15 +146,16 @@ const useTools = () => {
 
   const onMouswDown = useCallback(
     (event: React.MouseEvent<any>) => {
-      dispatch(
-        designerEvents.canvasMouseDown({
+      dispatch({
+        type: "editor/canvasMouseDown",
+        payload: {
           metaKey: event.metaKey,
           ctrlKey: event.ctrlKey,
           shiftKey: event.shiftKey,
           timestamp: Date.now(),
           position: getMousePoint(event),
-        })
-      );
+        },
+      });
     },
     [dispatch]
   );

@@ -67,7 +67,7 @@ public token fontSize 12px variant {
   isMobile 32px
 }
 
-public tokken fontFamily Helvetica
+public token fontFamily Helvetica
 
 // You can define groups of re-usable styles throughout
 // your app

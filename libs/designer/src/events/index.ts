@@ -63,21 +63,41 @@ export type EditVariantClicked = BaseEvent<
   { variantId: string }
 >;
 
+export type ResourceModalDragLeft = BaseEvent<"editor/resourceModalDragLeft">;
+export type ResourceModalBackgroundClicked =
+  BaseEvent<"editor/resourceModalBackgroundClicked">;
+export type EditVariantPopupClosed = BaseEvent<"editor/editVariantPopupClosed">;
+export type RemoveVariantButtonClicked = BaseEvent<
+  "editor/removeVariantButtonClicked",
+  { variantId: string }
+>;
+export type InsertModeButtonClick = BaseEvent<
+  "editor/insertModeButtonClick",
+  { mode: InsertMode }
+>;
+export type InsertElementReleased = BaseEvent<
+  "editor/insertElementReleased",
+  Box
+>;
+export type CanvasMouseMoved = BaseEvent<"editor/canvasMouseMoved", Point>;
+export type CanvasMouseLeave = BaseEvent<"editor/canvasMouseLeave">;
+export type LayerLeafClicked = BaseEvent<
+  "editor/layerLeafClicked",
+  { virtId: string }
+>;
+export type LayerArrowClicked = BaseEvent<
+  "editor/layerArrowClicked",
+  { virtId: string }
+>;
+export type ComputedStylesCaptured = BaseEvent<
+  "editor/computedStylesCaptured",
+  {
+    computedStyles: Record<string, any>;
+  }
+>;
+
 export const designerEvents = eventCreators(
   {
-    resourceModalDragLeft: null,
-    resourceModalBackgroundClicked: null,
-    editVariantPopupClosed: null,
-    removeVariantButtonClicked: identity<{ variantId: string }>(),
-    insertModeButtonClick: identity<{ mode: InsertMode }>(),
-    insertElementReleased: identity<Box>(),
-    canvasMouseMoved: identity<Point>(),
-    canvasMouseLeave: null,
-    layerLeafClicked: identity<{ virtId: string }>(),
-    layerArrowClicked: identity<{ virtId: string }>(),
-    computedStylesCaptured: identity<{
-      computedStyles: Record<string, any>;
-    }>(),
     styleDeclarationsChanged: identity<{
       values: Record<string, string>;
       imports: Record<string, string>;
@@ -115,7 +135,18 @@ export type LegacyEvent =
   | CanvasMouseUp
   | ResizerPathMoved
   | ResizerPathStoppedMoving
-  | EditVariantClicked;
+  | EditVariantClicked
+  | EditVariantPopupClosed
+  | ResourceModalDragLeft
+  | ResourceModalBackgroundClicked
+  | RemoveVariantButtonClicked
+  | InsertModeButtonClick
+  | InsertElementReleased
+  | CanvasMouseMoved
+  | CanvasMouseLeave
+  | LayerLeafClicked
+  | LayerArrowClicked
+  | ComputedStylesCaptured;
 
 export type DesignerEvent =
   | ExtractEventFromCreators<typeof designerEvents>

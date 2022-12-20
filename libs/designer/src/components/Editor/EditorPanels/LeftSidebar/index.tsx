@@ -21,7 +21,10 @@ import {
   TextNode,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
-import { designerEvents } from "@paperclip-ui/designer/src/events";
+import {
+  DesignerEvent,
+  designerEvents,
+} from "@paperclip-ui/designer/src/events";
 import cx from "classnames";
 import { useHistory } from "@paperclip-ui/designer/src/domains/history/react";
 import { routes } from "@paperclip-ui/designer/src/state/routes";
@@ -358,15 +361,15 @@ const useLeaf = ({
   const open = useSelector(getExpandedVirtIds).includes(virtId);
   const selected = useSelector(getSelectedNodeId) === virtId;
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<DesignerEvent>();
   const onClick = useCallback(() => {
-    dispatch(designerEvents.layerLeafClicked({ virtId }));
+    dispatch({ type: "editor/layerLeafClicked", payload: { virtId } });
   }, [virtId]);
 
   const onArrowClick = useCallback(
     (event: React.MouseEvent<any>) => {
       event.stopPropagation();
-      dispatch(designerEvents.layerArrowClicked({ virtId }));
+      dispatch({ type: "editor/layerArrowClicked", payload: { virtId } });
     },
     [virtId]
   );

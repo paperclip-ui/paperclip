@@ -45,9 +45,10 @@ describe(__filename + "#", () => {
 
     await waitUntilDesignerReady(designer);
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([]);
-    designer.machine.dispatch(
-      designerEvents.layerLeafClicked({ virtId: "4f0e8e93-2" })
-    );
+    designer.machine.dispatch({
+      type: "editor/layerLeafClicked",
+      payload: { virtId: "4f0e8e93-2" },
+    });
     expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-2");
 
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([
@@ -77,9 +78,10 @@ describe(__filename + "#", () => {
       `,
     });
     await waitUntilDesignerReady(designer);
-    designer.machine.dispatch(
-      designerEvents.layerLeafClicked({ virtId: "4f0e8e93-2" })
-    );
+    designer.machine.dispatch({
+      type: "editor/layerLeafClicked",
+      payload: { virtId: "4f0e8e93-2" },
+    });
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([
       "4f0e8e93-2",
       "4f0e8e93-3",
@@ -87,9 +89,10 @@ describe(__filename + "#", () => {
       "4f0e8e93-5",
       "4f0e8e93-6",
     ]);
-    designer.machine.dispatch(
-      designerEvents.layerArrowClicked({ virtId: "4f0e8e93-6" })
-    );
+    designer.machine.dispatch({
+      type: "editor/layerLeafClicked",
+      payload: { virtId: "4f0e8e93-6" },
+    });
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([]);
 
     designer.dispose();
@@ -110,9 +113,10 @@ describe(__filename + "#", () => {
       `,
     });
     await waitUntilDesignerReady(designer);
-    designer.machine.dispatch(
-      designerEvents.layerLeafClicked({ virtId: "4f0e8e93-5.4f0e8e93-1" })
-    );
+    designer.machine.dispatch({
+      type: "editor/layerLeafClicked",
+      payload: { virtId: "4f0e8e93-1" },
+    });
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([
       "4f0e8e93-5.4f0e8e93-1",
       "4f0e8e93-5.4f0e8e93-2",
@@ -139,9 +143,10 @@ describe(__filename + "#", () => {
       `,
     });
     await waitUntilDesignerReady(designer);
-    designer.machine.dispatch(
-      designerEvents.layerLeafClicked({ virtId: "4f0e8e93-4" })
-    );
+    designer.machine.dispatch({
+      type: "editor/layerLeafClicked",
+      payload: { virtId: "4f0e8e93-4" },
+    });
 
     let expr = ast.getExprById("4f0e8e93-4", designer.machine.getState().graph);
     expect(expr).toMatchObject({ id: "4f0e8e93-4" });

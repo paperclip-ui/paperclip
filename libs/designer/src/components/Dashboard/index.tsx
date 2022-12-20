@@ -87,6 +87,7 @@ const Item = (props: ItemProps) => {
       label={basename}
       previewStyle={{ backgroundImage: `url(${screenshotUrl})` }}
       onClick={onClick}
+      title={props.filePath}
     ></etcStyles.Item>
   );
 };

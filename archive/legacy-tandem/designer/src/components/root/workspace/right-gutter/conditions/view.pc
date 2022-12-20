@@ -1,4 +1,0 @@
-/**
- * @bounds(left: 0, right: 600, top: 0, bottom: 400)
- */
-div variableTriggersPane

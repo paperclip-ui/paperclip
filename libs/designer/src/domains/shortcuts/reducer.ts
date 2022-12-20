@@ -47,6 +47,7 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
     case ShortcutCommand.Escape:
       return produce(state, (newState) => {
         newState.insertMode = null;
+        newState.showTextEditor = false;
       });
     case ShortcutCommand.Delete:
       return produce(state, (newState) => {

@@ -9,6 +9,7 @@ mod set_frame_bounds;
 mod set_style_declarations;
 mod toggle_variants;
 mod update_variant;
+mod set_text_node_value;
 
 #[macro_use]
 mod utils;
@@ -30,6 +31,7 @@ pub use set_frame_bounds::*;
 pub use set_style_declarations::*;
 pub use toggle_variants::*;
 pub use update_variant::*;
+pub use set_text_node_value::*;
 
 #[cfg(test)]
 mod test;
@@ -93,6 +95,7 @@ mutations! {
   InsertFrame,
   ToggleVariants,
   UpdateVariant,
+  SetTextNodeValue,
   ConvertToComponent,
   ConvertToSlot,
   DeleteStyleDeclarations,

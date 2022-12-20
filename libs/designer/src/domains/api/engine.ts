@@ -33,6 +33,7 @@ import { getScaledBox, getScaledPoint, roundBox } from "../../state/geom";
 import {
   getEnabledVariants,
   getSelectedExprAvailableVariants,
+  getSelectedExpression,
 } from "../../state/pc";
 import {
   getGlobalShortcuts,
@@ -41,7 +42,11 @@ import {
 } from "../shortcuts/state";
 import { HistoryChanged } from "../history/events";
 import { KeyDown } from "../keyboard/events";
-import { DashboardAddFileConfirmed } from "../ui/events";
+import {
+  DashboardAddFileConfirmed,
+  ToolsTextEditorChanged,
+} from "../ui/events";
+import { TextNode } from "@paperclip-ui/proto/lib/generated/ast/pc";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -164,7 +169,7 @@ const createEventHandler = (actions: Actions) => {
                 position: relative
               }
             }`,
-            [InsertMode.Text]: `text "Type something"`,
+            [InsertMode.Text]: `text ""`,
           }[insertMode],
         },
       };
@@ -201,7 +206,7 @@ const createEventHandler = (actions: Actions) => {
                   height: ${bounds.height}px
                 }
               }`,
-              [InsertMode.Text]: `text "Type something"`,
+              [InsertMode.Text]: `text ""`,
             }[insertMode],
           },
         },
@@ -334,6 +339,20 @@ const createEventHandler = (actions: Actions) => {
         },
       ]);
     }
+  };
+
+  const handleToolsTextEditorChanged = (
+    event: ToolsTextEditorChanged,
+    state: DesignerState
+  ) => {
+    actions.applyChanges([
+      {
+        setTextNodeValue: {
+          textNodeId: state.selectedTargetId,
+          value: event.payload.text,
+        },
+      },
+    ]);
   };
 
   const handleDeleteExpression = (
@@ -530,6 +549,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "designer/variantEdited": {
         return handleVariantEdited(event, newState);
+      }
+      case "ui/toolsTextEditorChanged": {
+        return handleToolsTextEditorChanged(event, newState);
       }
       case "designer-engine/serverEvent": {
         return handleServerEvent(event.payload, newState);

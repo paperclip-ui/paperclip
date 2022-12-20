@@ -1,6 +1,6 @@
 // https://github.com/hyperium/tonic/blob/master/examples/src/hyper_warp/server.rs
 
-use super::utils::create_design_file;
+use super::utils::{create_design_file, apply_mutations};
 use crate::server::core::{ServerEngineContext, ServerEvent, ServerStore};
 use crate::server::io::ServerIO;
 use futures::Stream;
@@ -257,25 +257,13 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         request: Request<ApplyMutationsRequest>,
     ) -> Result<Response<ApplyMutationsResult>, Status> {
         let request = request.into_inner();
-
-        self.ctx
-            .store
-            .lock()
-            .unwrap()
-            .emit(ServerEvent::ApplyMutationRequested {
-                mutations: request.mutations,
-            });
-
-        Ok(Response::new(ApplyMutationsResult {
-            changes: self
-                .ctx
-                .store
-                .lock()
-                .unwrap()
-                .state
-                .latest_ast_changes
-                .clone(),
-        }))
+        if let Ok(changes) = apply_mutations(&request.mutations, self.ctx.clone()).await {
+            Ok(Response::new(ApplyMutationsResult {
+                changes
+            }))
+        } else {
+            Err(Status::unknown("Cannot apply mutations"))
+        }
     }
 
     async fn get_document_info(

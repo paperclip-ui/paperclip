@@ -84,8 +84,6 @@ export type DesignerState = {
   // temporary style overrides of canvas elements when elements are manipulated
   // such as resizing
   styleOverrides: StyleOverrides;
-  // selectedNodeStyleInspections: any[];
-  // selectedNodeSources: any[];
   canvasClickTimestamp?: number;
   canvasMouseDownStartPoint?: Point;
   expandedLayerVirtIds: string[];

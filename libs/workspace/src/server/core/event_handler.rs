@@ -41,17 +41,8 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 state.graph =
                     std::mem::replace(&mut state.graph, Graph::new()).merge(updated_graph.clone());
 
-                let mut latest_ast_changes = vec![];
-
-                for (path, changes) in result {
-                    latest_ast_changes.extend(changes.clone());
-                    println!("CHANGED PATH {}", path);
-                }
-
                 update_changed_files(state);
                 store_history(state);
-
-                state.latest_ast_changes = latest_ast_changes;
             }
             ServerEvent::FileWatchEvent(event) => {
                 state.file_cache.remove(&event.path);

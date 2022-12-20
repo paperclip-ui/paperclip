@@ -18,6 +18,8 @@ import { InsertElement } from "./InsertElement";
 import { ContextMenu } from "../../../ContextMenu";
 import { getEntityShortcuts } from "@paperclip-ui/designer/src/domains/shortcuts/state";
 import { DropTarget } from "./DropTarget";
+import { TextEditor } from "./TextEditor";
+import { getSelectedExpression } from "@paperclip-ui/designer/src/state/pc";
 
 export const Tools = () => {
   const {
@@ -31,6 +33,8 @@ export const Tools = () => {
     insertMode,
     resizerMoving,
     currentDocument,
+    selectedExpr,
+    showTextEditor,
     canvas,
     dispatch,
     contextMenu,
@@ -88,19 +92,14 @@ export const Tools = () => {
               cursor={cursor}
             />
           ) : null}
+          {selectedBox && showTextEditor && (
+            <TextEditor expr={selectedExpr} box={selectedBox} canvas={canvas} />
+          )}
           <Frames
             frames={frames}
             canvasTransform={canvas.transform}
             readonly={readonly}
           />
-          {/* {optionKeyDown && selectedBox && hoveringBox ? (
-          <Distance
-            canvasScroll={canvas.scrollPosition}
-            canvasTransform={canvas.transform}
-            from={selectedBox}
-            to={hoveringBox}
-          />
-        ) : null} */}
         </styles.Tools>
       </ContextMenu>
     </DropTarget>
@@ -115,6 +114,7 @@ const useTools = () => {
     optionKeyDown,
     resizerMoving,
     readonly,
+    showTextEditor,
     insertMode,
     rects: frameBoxes,
     currentDocument,
@@ -123,6 +123,7 @@ const useTools = () => {
 
   const selectedNodePath = useSelector(getSelectedNodePath);
   const contextMenu = useSelector(getEntityShortcuts);
+  const selectedExpr = useSelector(getSelectedExpression);
 
   const getMousePoint = (event) => {
     const rect: ClientRect = (
@@ -198,7 +199,9 @@ const useTools = () => {
     onMouseMove,
     onMouseLeave,
     contextMenu,
+    showTextEditor,
     onMouseUp,
+    selectedExpr,
     insertMode,
     showEmpty,
     currentDocument,

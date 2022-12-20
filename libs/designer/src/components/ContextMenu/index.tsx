@@ -99,7 +99,7 @@ const ContextMenuOption = ({
   const onSelect = () => {
     dispatch({
       type: "shortcuts/itemSelected",
-      payload: { command: ShortcutCommand.InsertElement },
+      payload: { command },
     });
   };
   return (

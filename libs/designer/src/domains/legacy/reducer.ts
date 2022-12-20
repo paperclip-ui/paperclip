@@ -57,6 +57,7 @@ export const legacyReducer = (
         }
         newState.insertedNodeIds = [];
       });
+      state = pruneDanglingRects(state);
       state = maybeCenterCanvas(state);
       return state;
     case "editor/canvasResized":
@@ -131,6 +132,9 @@ export const legacyReducer = (
     }
     case "editor/canvasMouseUp": {
       state = produce(state, (newState) => {
+        if (newState.insertMode === InsertMode.Text) {
+          newState.showTextEditor = true;
+        }
         if (newState.insertMode != InsertMode.Resource) {
           newState.insertMode = null;
         }
@@ -277,22 +281,25 @@ export const legacyReducer = (
     case "editor/rectsCaptured":
       state = produce(state, (newState) => {
         newState.rects[event.payload.frameIndex] = event.payload.rects;
-
-        // prune frames that don't exist
-
-        for (const frameIndex in newState.rects) {
-          if (
-            Number(frameIndex) >=
-            state.currentDocument.paperclip.html.children.length
-          ) {
-            delete newState.rects[frameIndex];
-          }
-        }
       });
+      state = pruneDanglingRects(state);
       state = maybeCenterCanvas(state);
       return state;
   }
   return state;
+};
+
+const pruneDanglingRects = (state: DesignerState) => {
+  return produce(state, (newState) => {
+    for (const frameIndex in newState.rects) {
+      if (
+        Number(frameIndex) >=
+        state.currentDocument.paperclip.html.children.length
+      ) {
+        delete newState.rects[frameIndex];
+      }
+    }
+  });
 };
 
 const handleDragEvent = (

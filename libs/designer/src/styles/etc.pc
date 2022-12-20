@@ -7,7 +7,7 @@ public component Item {
         ":hover"
         ".active"
     }
-    render div(style: style, onClick: onClick) {
+    render div(style: style, onClick: onClick, title: title) {
         style variant hover {
             box-shadow: inset 0px 0px 0px 1px var(theme.selectedColor)
         }

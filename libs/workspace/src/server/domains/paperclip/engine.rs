@@ -7,8 +7,6 @@ use paperclip_evaluator::css;
 use futures::executor::block_on;
 use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_evaluator::html;
-use paperclip_proto::ast_mutate::Mutation;
-use paperclip_proto_ext::ast_mutate::edit_graph;
 use paperclip_proto_ext::graph::{io::IO as GraphIO, load::LoadableGraph};
 
 use crate::handle_store_events;
@@ -39,9 +37,6 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
         },
         ServerEvent::GlobalScriptsLoaded(_) => {
             evaluate_dependency_graph(next.clone(), None).await.expect("Unable to evaluate Dependency graph");
-        },
-        ServerEvent::ApplyMutationRequested { mutations } => {
-            apply_mutations(&mutations, next.clone()).await.expect("Unable to evaluate Dependency graph");
         },
         ServerEvent::UpdateFileRequested { path: _path, content: _content } => {
             let updated_files = next.clone().store.lock().unwrap().state.updated_files.clone();
@@ -103,22 +98,6 @@ impl<TIO: ServerIO> FileResolver for VirtGraphIO<TIO> {
     }
 }
 
-async fn apply_mutations<TIO: ServerIO>(
-    mutations: &Vec<Mutation>,
-    ctx: ServerEngineContext<TIO>,
-) -> Result<()> {
-    let mut graph = ctx.store.lock().unwrap().state.graph.clone();
-
-    let changed_files = edit_graph(&mut graph, mutations, &ctx.io)?;
-    println!("Applying {:?} {:?}", mutations, changed_files);
-
-    ctx.emit(ServerEvent::MutationsApplied {
-        result: changed_files,
-        updated_graph: graph,
-    });
-
-    Ok(())
-}
 
 async fn load_dependency_graph<TIO: ServerIO>(
     ctx: ServerEngineContext<TIO>,

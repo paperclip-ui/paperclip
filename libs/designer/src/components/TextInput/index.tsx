@@ -9,23 +9,46 @@ export type TextInputProps = {
   autoFocus?: boolean;
   onEnter?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onKeyDown?: (event: React.KeyboardEvent<any>) => void;
-  onFocus?: (event: React.FocusEvent<any>) => void;
+
   onBlur?: (event: React.FocusEvent<any>) => void;
+  select?: boolean;
+} & UseTextInputProps;
+
+export const TextInput = (props: TextInputProps) => {
+  const { autoFocus, placeholder, value, onBlur, onClick } = props;
+  const { onFocus, onChange, ref, onKeyDown } = useTextInput(props);
+  return (
+    <styles.TextInput
+      ref={ref}
+      autoFocus={autoFocus}
+      placeholder={placeholder}
+      defaultValue={value}
+      onFocus={onFocus}
+      onBlur={onBlur}
+      onChange={onChange}
+      onClick={onClick}
+      onKeyDown={onKeyDown}
+    />
+  );
+};
+
+export type UseTextInputProps = {
+  value: string;
+  onChange?: (value: string) => void;
+  onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
+  onEnter?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   select?: boolean;
 };
 
-export const TextInput = ({
+export const useTextInput = ({
   value,
-  onKeyDown,
-  onChange,
-  placeholder,
-  onEnter,
-  autoFocus,
-  onClick,
-  onFocus,
-  onBlur,
   select,
-}: TextInputProps) => {
+  onChange,
+  onFocus,
+  onEnter,
+  onKeyDown,
+}: UseTextInputProps) => {
   const ref = useRef<HTMLInputElement>();
   useEffect(() => {
     if (ref.current) {
@@ -55,17 +78,11 @@ export const TextInput = ({
       onKeyDown(event);
     }
   };
-  return (
-    <styles.TextInput
-      ref={ref}
-      autoFocus={autoFocus}
-      placeholder={placeholder}
-      defaultValue={value}
-      onFocus={onFocus2}
-      onBlur={onBlur}
-      onChange={onChange2}
-      onClick={onClick}
-      onKeyDown={onKeyDown2}
-    />
-  );
+
+  return {
+    ref,
+    onFocus: onFocus2,
+    onKeyDown: onKeyDown2,
+    onChange: onChange2,
+  };
 };

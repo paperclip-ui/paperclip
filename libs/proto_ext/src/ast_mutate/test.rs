@@ -6,6 +6,7 @@ use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_proto::ast_mutate::{
     mutation, update_variant_trigger, AppendChild, Bounds, ConvertToComponent, ConvertToSlot,
     DeleteExpression, InsertFrame, SetFrameBounds, SetStyleDeclarationValue, SetStyleDeclarations,
+    SetTextNodeValue,
     ToggleVariants, UpdateVariant,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
@@ -1534,6 +1535,27 @@ case! {
 
       component A {
       }
+    "#
+  )]
+}
+
+case! {
+  can_change_the_value_of_a_text_expr,
+  [
+    (
+      "/entry.pc", r#"
+        text "a"
+      "#
+    )
+  ],
+
+  mutation::Inner::SetTextNodeValue(SetTextNodeValue {
+    text_node_id: "80f4925f-1".to_string(),
+    value: "b".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      text "b"
     "#
   )]
 }

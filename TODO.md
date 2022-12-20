@@ -25,11 +25,21 @@
 
 - remove eventCreators in favor of vanilla code
 
+Simple tasks:
+
+-
+
 #### On-deck
 
-- Deploy tooling
+- ability to edit text
+- ability to rename layers
+- ability to insert elements into slots
 
-  - lerna version patch automatically deploys
+- projects screen
+
+  - create new project button
+  - store projects somewhere on disk
+  - workspace needs ability to change projects
 
 - online service
 

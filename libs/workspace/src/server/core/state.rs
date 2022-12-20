@@ -30,7 +30,6 @@ pub struct ServerState {
     pub options: StartOptions,
     pub screenshot_queue: HashSet<String>,
     pub screenshots_running: bool,
-    pub latest_ast_changes: Vec<MutationResult>,
     pub graph: Graph,
     pub evaluated_modules: HashMap<String, (css::virt::Document, html::virt::Document)>,
     pub updated_files: Vec<String>,
@@ -51,7 +50,6 @@ impl ServerState {
             file_cache: HashMap::new(),
             graph: Graph::new(),
             evaluated_modules: HashMap::new(),
-            latest_ast_changes: vec![],
             updated_files: vec![],
         }
     }

@@ -573,9 +573,12 @@ export namespace ast {
   });
 
   export const flattenTextNode = memoize((expr: TextNode) => {
-    return {
-      [expr.id]: expr,
-    };
+    return Object.assign(
+      {
+        [expr.id]: expr,
+      },
+      ...expr.body.map(flattenNode)
+    );
   });
 
   export const flattenSlot = memoize((expr: Slot) => {

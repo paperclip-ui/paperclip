@@ -1,5 +1,5 @@
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
-import { DesignerState, selectNode } from "@paperclip-ui/designer/src/state";
+import { DesignerState } from "@paperclip-ui/designer/src/state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import produce from "immer";
 

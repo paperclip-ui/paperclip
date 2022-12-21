@@ -368,6 +368,7 @@ export const getSelectedExprStyles = (
   if (!virtId) {
     return [];
   }
+
   const exprStyle = ast.computeElementStyle(virtId, state.graph);
   const computedStyle = state.computedStyles[virtId];
 

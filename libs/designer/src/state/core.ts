@@ -67,7 +67,7 @@ export type Canvas = {
 };
 
 export type BoxNodeInfo = {
-  nodePath: string;
+  nodeId: string;
   box: Box;
 };
 
@@ -87,7 +87,7 @@ type Query = {
 
 export type DesignerState = {
   readonly: boolean;
-  scopedElementPath?: string;
+  scopedElementId?: string;
   selectedTargetId: string;
   activeVariantId?: string;
   insertedNodeIds: string[];
@@ -97,7 +97,7 @@ export type DesignerState = {
   showLeftSidebar: boolean;
   resourceModalDragLeft: boolean;
   showRightsidebar: boolean;
-  highlightNodePath?: string;
+  highlightedNodeId?: string;
   screenshotUrls: Record<string, string>;
 
   // temporary style overrides of canvas elements when elements are manipulated
@@ -135,7 +135,7 @@ export const DEFAULT_STATE: DesignerState = {
   screenshotUrls: {},
   insertedNodeIds: [],
   optionKeyDown: false,
-  scopedElementPath: null,
+  scopedElementId: null,
   expandedNodePaths: [],
   centeredInitial: false,
   selectedTargetId: null,
@@ -257,8 +257,8 @@ export const getSelectedNodePath = (designer: DesignerState) => {
 export const getSelectedNodeId = (designer: DesignerState) => {
   return designer.selectedTargetId;
 };
-export const getHighlightedNodePath = (designer: DesignerState) =>
-  designer.highlightNodePath;
+export const getHighlightedNodeId = (designer: DesignerState) =>
+  designer.highlightedNodeId;
 export const getResizerMoving = (designer: DesignerState) =>
   designer.resizerMoving;
 export const getEditorState = (designer: DesignerState) => designer;
@@ -305,40 +305,49 @@ export const flattenFrameBoxes = memoize(
 export const getNodeInfoAtPoint = (
   point: Point,
   transform: Transform,
-  boxes: Record<string, Box>,
-  expandedFrameIndex?: number
+  current: virtHTML.InnerVirtNode,
+  scopeId: string,
+  boxes: Record<string, Box>
 ) => {
   return findBoxNodeInfo(
     getScaledPoint(point, transform),
-    expandedFrameIndex ? getFrameBoxes(boxes, expandedFrameIndex) : boxes
+    current,
+    scopeId,
+    boxes
   );
 };
 
 export const findBoxNodeInfo = memoize(
-  (point: Point, boxes: Record<string, Box>): BoxNodeInfo | null => {
-    let bestIntersetingBox;
-    let bestIntersetingNodePath;
-    for (const nodePath in boxes) {
-      const box = boxes[nodePath];
-      if (boxIntersectsPoint(box, point)) {
-        if (
-          !bestIntersetingBox ||
-          nodePath.length > bestIntersetingNodePath.length
-        ) {
-          bestIntersetingBox = box;
-          bestIntersetingNodePath = nodePath;
-        }
-      }
-    }
+  (
+    point: Point,
+    current: virtHTML.InnerVirtNode,
+    scopeId: string,
+    boxes: Record<string, Box>
+  ): BoxNodeInfo | null => {
+    return null;
+    // let bestIntersetingBox;
+    // let bestIntersetingNodePath;
+    // for (const virtId in boxes) {
+    //   const box = boxes[virtId];
+    //   if (boxIntersectsPoint(box, point)) {
+    //     if (
+    //       !bestIntersetingBox ||
+    //       nodePath.length > bestIntersetingNodePath.length
+    //     ) {
+    //       bestIntersetingBox = box;
+    //       bestIntersetingNodePath = nodePath;
+    //     }
+    //   }
+    // }
 
-    if (!bestIntersetingBox) {
-      return null;
-    }
+    // if (!bestIntersetingBox) {
+    //   return null;
+    // }
 
-    return {
-      nodePath: bestIntersetingNodePath,
-      box: bestIntersetingBox,
-    };
+    // return {
+    //   nodeId: null,
+    //   box: bestIntersetingBox,
+    // };
   }
 );
 
@@ -424,68 +433,71 @@ export const highlightNode = (
     const info = getNodeInfoAtPoint(
       mousePosition,
       canvas.transform,
-      getScopedBoxes(
-        flattenFrameBoxes(designer.rects),
-        designer.scopedElementPath,
-        designer.currentDocument!.paperclip
-      ),
-      newDesigner.canvas.isExpanded ? newDesigner.canvas.activeFrame : null
+      designer.currentDocument.paperclip.html,
+      designer.scopedElementId,
+      flattenFrameBoxes(designer.rects)
     );
-    newDesigner.highlightNodePath = info?.nodePath;
+    newDesigner.highlightedNodeId = info?.nodeId;
   });
 };
 
-export const getScopedBoxes = memoize(
-  (boxes: Record<string, Box>, scopedElementPath: string, root: PCModule) => {
-    const hoverableNodePaths = getHoverableNodePaths(
-      scopedElementPath,
-      root.html
-    );
+// export const getScopedBoxes = memoize(
+//   (boxes: Record<string, Box>, scopedElementPath: string, root: PCModule) => {
+//     const hoverableNodePaths = getHoverableNodePaths(
+//       scopedElementPath,
+//       root.html
+//     );
 
-    return pick(boxes, hoverableNodePaths);
-  }
-);
+//     return pick(boxes, hoverableNodePaths);
+//   }
+// );
 
-export const getHoverableNodePaths = memoize(
-  (scopedNodePath: string | undefined, root: virtHTML.InnerVirtNode) => {
-    const scopedNode = scopedNodePath
-      ? virtHTML.getNodeByPath(scopedNodePath, root)
-      : root;
-    const ancestors = scopedNodePath
-      ? virtHTML.getNodeAncestors(scopedNodePath, root)
-      : [];
+// export const getHoverableNodePaths = memoize(
+//   (scopedNodePath: string | undefined, root: virtHTML.InnerVirtNode) => {
+//     const scopedNode = scopedNodePath
+//       ? virtHTML.getNodeByPath(scopedNodePath, root)
+//       : root;
+//     const ancestors = scopedNodePath
+//       ? virtHTML.getNodeAncestors(scopedNodePath, root)
+//       : [];
 
-    const hoverable: virtHTML.InnerVirtNode[] = [];
+//     const hoverable: virtHTML.InnerVirtNode[] = [];
 
-    const scopes = [scopedNode, ...ancestors];
+//     const scopes = [scopedNode, ...ancestors];
 
-    for (const scope of scopes) {
-      addHoverableChildren(scope, true, hoverable);
-    }
+//     for (const scope of scopes) {
+//       addHoverableChildren(scope, true, hoverable);
+//     }
 
-    return hoverable.map((node) => virtHTML.getNodePath(node, root));
-  }
-);
+//     return hoverable.map((node) => virtHTML.getNodePath(node, root));
+//   }
+// );
 
-const addHoverableChildren = (
-  node: virtHTML.InnerVirtNode,
-  isScope: boolean,
-  hoverable: virtHTML.InnerVirtNode[]
-) => {
-  if (!hoverable.includes(node)) {
-    hoverable.push(node);
-  }
+// export const getSlotRects = memoize((rects: Record<string, Box>, document: Document) => {
+//   for (const nodePath in rects) {
+//     const virtNode = virtHTML.getNodeByPath(nodePath, )
+//   }
+// });
 
-  if (virtHTML.isInstance(node) && !isScope) {
-    return;
-  }
+// const addHoverableChildren = (
+//   node: virtHTML.InnerVirtNode,
+//   isScope: boolean,
+//   hoverable: virtHTML.InnerVirtNode[]
+// ) => {
+//   if (!hoverable.includes(node)) {
+//     hoverable.push(node);
+//   }
 
-  if (virtHTML.isNodeParent(node)) {
-    for (const child of node.children) {
-      addHoverableChildren(virtHTML.getInnerNode(child), false, hoverable);
-    }
-  }
-};
+//   if (virtHTML.isInstance(node) && !isScope) {
+//     return;
+//   }
+
+//   if (virtHTML.isNodeParent(node)) {
+//     for (const child of node.children) {
+//       addHoverableChildren(virtHTML.getInnerNode(child), false, hoverable);
+//     }
+//   }
+// };
 
 export const getResourceFilePaths = (state: DesignerState) =>
   state.resourceFilePaths;
@@ -497,7 +509,7 @@ export const resetCurrentDocument = (state: DesignerState): DesignerState => ({
   computedStyles: {},
   centeredInitial: false,
   selectedTargetId: null,
-  highlightNodePath: null,
+  highlightedNodeId: null,
   preEditComputedStyles: {},
   canvas: {
     transform: { x: 0, y: 0, z: 1 },
@@ -508,6 +520,14 @@ export const resetCurrentDocument = (state: DesignerState): DesignerState => ({
 export const getExprBounds = (exprId: string, state: DesignerState): Bounds => {
   const expr = ast.getExprById(exprId, state.graph);
   return null;
+};
+
+export const getHighlightedNodeBox = (state: DesignerState): Box => {
+  return getNodeBox(state.highlightedNodeId, state);
+};
+
+export const getNodeBox = (virtId: string, state: DesignerState): Box => {
+  return flattenFrameBoxes(state.rects)[virtId];
 };
 
 // export const getInsertableBounds = (state: DesignerState, )
@@ -583,20 +603,17 @@ export const handleDoubleClick = (
     ];
   }
 
-  const nodePath = getNodeInfoAtPoint(
+  const nodeId = getNodeInfoAtPoint(
     designer.canvas.mousePosition,
     designer.canvas.transform,
-    getScopedBoxes(
-      flattenFrameBoxes(designer.rects),
-      designer.scopedElementPath,
-      designer.currentDocument.paperclip
-    ),
-    designer.canvas.isExpanded ? designer.canvas.activeFrame : null
-  )?.nodePath;
+    designer.currentDocument.paperclip.html,
+    designer.scopedElementId,
+    flattenFrameBoxes(designer.rects)
+  )?.nodeId;
 
   designer = produce(designer, (newDesigner) => {
     newDesigner.canvasClickTimestamp = action.payload.timestamp;
-    newDesigner.scopedElementPath = nodePath;
+    newDesigner.scopedElementId = nodeId;
   });
 
   designer = highlightNode(designer, designer.canvas.mousePosition!);

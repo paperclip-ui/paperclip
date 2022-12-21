@@ -17,6 +17,10 @@ Easy wins:
 
 #### On-deck
 
+- slots
+
+  - use expr id to find virt node Ids and calc box around that
+
 - ability to insert elements into slots
 - ability to move elements around in the layers panel
 - styles panel (vanilla)
@@ -28,3 +32,5 @@ Easy wins:
 ### Polish
 
 - Detach instances when components are deleted
+
+## ga

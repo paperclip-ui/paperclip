@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   flattenFrameBoxes,
   getEditorState,
+  getHighlightedNodeBox,
   getSelectedNodePath,
   InsertMode,
 } from "@paperclip-ui/designer/src/state";
@@ -37,7 +38,7 @@ export const Tools = () => {
     contextMenu,
     selectedBox,
     readonly,
-    hoveringBox,
+    highlightedBox,
     toolsLayerEnabled,
   } = useTools();
 
@@ -75,7 +76,7 @@ export const Tools = () => {
             <Selectable
               canvasScroll={canvas.scrollPosition}
               canvasTransform={canvas.transform}
-              box={hoveringBox}
+              box={highlightedBox}
               cursor={cursor}
             />
           )}
@@ -107,7 +108,7 @@ const useTools = () => {
   const dispatch = useDispatch<DesignerEvent>();
   const {
     canvas,
-    highlightNodePath,
+    highlightedNodeId,
     optionKeyDown,
     resizerMoving,
     readonly,
@@ -116,6 +117,9 @@ const useTools = () => {
     rects: frameBoxes,
     currentDocument,
   } = useSelector(getEditorState);
+
+  const highlightedBox = useSelector(getHighlightedNodeBox);
+
   const toolsLayerEnabled = !canvas.isExpanded;
 
   const selectedNodePath = useSelector(getSelectedNodePath);
@@ -184,8 +188,6 @@ const useTools = () => {
 
   const selectedBox = boxes[selectedNodePath];
 
-  const hoveringBox = highlightNodePath && boxes[highlightNodePath];
-
   const frames = currentDocument?.paperclip?.html?.children || [];
   const showEmpty = frames.length === 0;
 
@@ -208,7 +210,7 @@ const useTools = () => {
     dispatch,
     selectedBox,
     readonly,
-    hoveringBox,
+    highlightedBox,
     selectedNodePath,
     optionKeyDown,
   };

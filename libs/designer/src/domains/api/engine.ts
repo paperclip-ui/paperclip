@@ -156,6 +156,8 @@ const createEventHandler = (actions: Actions) => {
     const intersectingNode = getNodeInfoAtPoint(
       state.canvas.mousePosition,
       state.canvas.transform,
+      state.currentDocument.paperclip.html,
+      state.scopedElementId,
       flattenFrameBoxes(state.rects)
     );
 
@@ -177,14 +179,12 @@ const createEventHandler = (actions: Actions) => {
 
       actions.applyChanges([mutation]);
     } else {
-      const parent = virtHTML.getNodeByPath(
-        intersectingNode.nodePath,
+      const parent = virtHTML.getNodeById(
+        intersectingNode.nodeId,
         state.currentDocument.paperclip.html
       );
 
-      const parentBox = flattenFrameBoxes(state.rects)[
-        intersectingNode.nodePath
-      ];
+      const parentBox = flattenFrameBoxes(state.rects)[intersectingNode.nodeId];
 
       bounds = roundBox({
         ...bounds,

@@ -4,7 +4,6 @@ import {
   DesignerState,
   flattenFrameBoxes,
   getNodeInfoAtPoint,
-  getScopedBoxes,
   handleDoubleClick,
   handleDragEvent,
   highlightNode,
@@ -100,24 +99,22 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
       }
 
       // Don't do this until deselecting can be handled properly
-      const nodePath = getNodeInfoAtPoint(
+      const nodeId = getNodeInfoAtPoint(
         state.canvas.mousePosition,
         state.canvas.transform,
-        getScopedBoxes(
-          flattenFrameBoxes(state.rects),
-          state.scopedElementPath,
-          state.currentDocument.paperclip
-        ),
-        state.canvas.isExpanded ? state.canvas.activeFrame : null
-      )?.nodePath;
-
-      const node = virtHTML.getNodeByPath(
-        nodePath,
-        state.currentDocument.paperclip.html
-      );
+        state.currentDocument.paperclip.html,
+        state.scopedElementId,
+        flattenFrameBoxes(state.rects)
+        // getScopedBoxes(
+        //   flattenFrameBoxes(state.rects),
+        //   state.scopedElementPath,
+        //   state.currentDocument.paperclip
+        // ),
+        // state.canvas.isExpanded ? state.canvas.activeFrame : null
+      )?.nodeId;
 
       return selectNode(
-        node?.id,
+        nodeId,
         event.payload.shiftKey,
         event.payload.metaKey,
         state

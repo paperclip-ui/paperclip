@@ -2,7 +2,6 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/left-sidebar.pc";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
-import { getHistoryState } from "@paperclip-ui/designer/src/domains/history/state";
 import {
   DesignerState,
   getCurrentDependency,

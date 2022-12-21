@@ -1,5 +1,5 @@
 import { FileResponse } from "@paperclip-ui/proto/lib/generated/service/designer";
-import { pick, pickBy } from "lodash";
+import { clamp, pick, pickBy } from "lodash";
 import {
   Node,
   Document as HTMLDocument,
@@ -16,6 +16,11 @@ import {
 } from "./geom";
 import { memoize } from "@paperclip-ui/common";
 import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
+
+import {
+  Element as VirtElement,
+  TextNode as VirtText,
+} from "@paperclip-ui/proto/lib/generated/virt/html";
 import {
   HistoryEngineState,
   INITIAL_HISTORY_STATE,
@@ -26,7 +31,19 @@ import { Component } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import produce from "immer";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 import { Bounds } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
+import {
+  CanvasMouseUp,
+  ResizerPathMoved,
+  ResizerPathStoppedMoving,
+} from "../events";
 export const IS_WINDOWS = false;
+
+export const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
+export const PAN_X_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;
+export const PAN_Y_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;
+export const MIN_ZOOM = 0.01;
+export const MAX_ZOOM = 6400 / 100;
+export const DOUBLE_CLICK_MS = 250;
 
 export enum InsertMode {
   Element,
@@ -509,3 +526,153 @@ export const pruneDanglingRects = (state: DesignerState) => {
     }
   });
 };
+
+export const selectNode = (
+  virtNodeId: string | null,
+  shiftKey: boolean,
+  metaKey: boolean,
+  designer: DesignerState
+) => {
+  designer = produce(designer, (newDesigner) => {
+    if (!virtNodeId) {
+      newDesigner.selectedTargetId = null;
+      return;
+    }
+    const ancestorIds = ast.getAncestorVirtIdsFromShadow(
+      virtNodeId,
+      designer.graph
+    );
+    newDesigner.expandedLayerVirtIds.push(virtNodeId, ...ancestorIds);
+
+    const expr = ast.getExprById(virtNodeId.split(".").pop(), designer.graph);
+
+    newDesigner.selectedTargetId = virtNodeId;
+
+    // if (
+    //   newDesigner.scopedElementPath &&
+    //   !node.id.startsWith(newDesigner.scopedElementPath)
+    // ) {
+    //   const preview = newDesigner.currentDocument.paperclip.html;
+    //   const node = getNodeByPath(nodePath, preview) as InnerVirtNode;
+    //   const instanceAncestor = getInstanceAncestor(node, preview);
+    //   newDesigner.scopedElementPath =
+    //     instanceAncestor && getNodePath(instanceAncestor, preview);
+    // }
+  });
+
+  // designer = expandNode(node, designer);
+  // if (nodePath) {
+  // }
+
+  return designer;
+};
+
+export const handleDoubleClick = (
+  designer: DesignerState,
+  action: CanvasMouseUp
+): [DesignerState, boolean] => {
+  const oldTimestamp = designer.canvasClickTimestamp;
+
+  if (
+    !oldTimestamp ||
+    action.payload.timestamp - oldTimestamp > DOUBLE_CLICK_MS
+  ) {
+    return [
+      produce(designer, (newDesigner) => {
+        newDesigner.canvasClickTimestamp = action.payload.timestamp;
+      }),
+      false,
+    ];
+  }
+
+  const nodePath = getNodeInfoAtPoint(
+    designer.canvas.mousePosition,
+    designer.canvas.transform,
+    getScopedBoxes(
+      flattenFrameBoxes(designer.rects),
+      designer.scopedElementPath,
+      designer.currentDocument.paperclip
+    ),
+    designer.canvas.isExpanded ? designer.canvas.activeFrame : null
+  )?.nodePath;
+
+  designer = produce(designer, (newDesigner) => {
+    newDesigner.canvasClickTimestamp = action.payload.timestamp;
+    newDesigner.scopedElementPath = nodePath;
+  });
+
+  designer = highlightNode(designer, designer.canvas.mousePosition!);
+
+  return [designer, true];
+};
+
+export const handleDragEvent = (
+  state: DesignerState,
+  event: ResizerPathStoppedMoving | ResizerPathMoved
+) => {
+  return produce(state, (newState) => {
+    const node = virtHTML.getNodeById(
+      newState.selectedTargetId,
+      newState.currentDocument.paperclip.html
+    ) as any as VirtElement | VirtText;
+
+    const path = virtHTML.getNodePath(
+      node,
+      newState.currentDocument.paperclip.html
+    );
+
+    // within a frame
+    if (path.includes(".")) {
+      const computedStyles = newState.preEditComputedStyles[node.id];
+
+      newState.styleOverrides = {};
+
+      newState.styleOverrides[node.id] = {
+        left: `${
+          pxToInt(computedStyles.left) +
+          event.payload.newBounds.x -
+          event.payload.originalBounds.x
+        }px`,
+        top: `${
+          pxToInt(computedStyles.top) +
+          event.payload.newBounds.y -
+          event.payload.originalBounds.y
+        }px`,
+
+        // TODO - check position here to make sure we're not overriding something like "absolute"
+        position: "relative",
+        width: event.payload.newBounds.width,
+        height: event.payload.newBounds.height,
+      };
+
+      // is a frame
+    } else {
+      if (!node.metadata) {
+        node.metadata = {};
+      }
+      if (!node.metadata.bounds) {
+        node.metadata.bounds = { x: 0, y: 0, width: 0, height: 0 };
+      }
+
+      node.metadata.bounds = {
+        ...event.payload.newBounds,
+      };
+    }
+  });
+};
+
+export const clampCanvasTransform = (
+  canvas: Canvas,
+  rects: Record<string, Box>
+) => {
+  return produce(canvas, (newCanvas) => {
+    const w = (canvas.size.width / MIN_ZOOM) * canvas.transform.z;
+    const h = (canvas.size.height / MIN_ZOOM) * canvas.transform.z;
+
+    newCanvas.transform.x = clamp(newCanvas.transform.x, -w, w);
+
+    newCanvas.transform.y = clamp(newCanvas.transform.y, -h, w);
+  });
+};
+
+const pxToInt = (value: string) => Number(value.replace("px", ""));

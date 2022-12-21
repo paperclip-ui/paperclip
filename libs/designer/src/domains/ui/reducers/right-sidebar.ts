@@ -1,5 +1,5 @@
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
-import { DesignerState } from "@paperclip-ui/designer/src/state";
+import { DesignerState, selectNode } from "@paperclip-ui/designer/src/state";
 import produce from "immer";
 
 export const rightSidebarReducer = (
@@ -15,6 +15,11 @@ export const rightSidebarReducer = (
       return produce(state, (newState) => {
         newState.activeVariantId = null;
       });
+
+    case "editor/layerLeafClicked": {
+      state = selectNode(event.payload.virtId, false, false, state);
+      return state;
+    }
   }
   return state;
 };

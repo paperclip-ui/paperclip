@@ -42,7 +42,6 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
       return produce(state, (newState) => {
         newState.showLeftSidebar = newState.showRightsidebar =
           !newState.showLeftSidebar;
-        console.log(newState.showLeftSidebar);
       });
     case ShortcutCommand.Escape:
       return produce(state, (newState) => {

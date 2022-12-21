@@ -24,3 +24,7 @@ Easy wins:
 - style tokens
   - mixins
   - atoms
+
+### Polish
+
+- Detach instances when components are deleted

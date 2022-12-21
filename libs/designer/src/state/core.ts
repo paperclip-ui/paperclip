@@ -496,3 +496,16 @@ export const getExprBounds = (exprId: string, state: DesignerState): Bounds => {
 };
 
 // export const getInsertableBounds = (state: DesignerState, )
+
+export const pruneDanglingRects = (state: DesignerState) => {
+  return produce(state, (newState) => {
+    for (const frameIndex in newState.rects) {
+      if (
+        Number(frameIndex) >=
+        state.currentDocument.paperclip.html.children.length
+      ) {
+        delete newState.rects[frameIndex];
+      }
+    }
+  });
+};

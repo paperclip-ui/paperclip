@@ -60,18 +60,6 @@ export const legacyReducer = (
       state = pruneDanglingRects(state);
       state = maybeCenterCanvas(state);
       return state;
-    case "editor/canvasResized":
-      return produce(state, (newState) => {
-        newState.canvas.size = event.payload;
-      });
-    case "editor/editVariantClicked":
-      return produce(state, (newState) => {
-        newState.activeVariantId = event.payload.variantId;
-      });
-    case "editor/editVariantPopupClosed":
-      return produce(state, (newState) => {
-        newState.activeVariantId = null;
-      });
     case "designer-engine/changesApplied": {
       return produce(state, (newState) => {
         newState.insertedNodeIds = event.payload.changes

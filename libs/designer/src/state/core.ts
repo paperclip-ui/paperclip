@@ -3,6 +3,7 @@ import { clamp, pick, pickBy } from "lodash";
 import {
   Node,
   Document as HTMLDocument,
+  Document,
 } from "@paperclip-ui/proto/lib/generated/virt/html";
 import {
   Box,
@@ -15,7 +16,7 @@ import {
   Transform,
 } from "./geom";
 import { memoize } from "@paperclip-ui/common";
-import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
+import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 
 import {
   Element as VirtElement,
@@ -506,9 +507,6 @@ export const resetCurrentDocument = (state: DesignerState): DesignerState => ({
 
 export const getExprBounds = (exprId: string, state: DesignerState): Bounds => {
   const expr = ast.getExprById(exprId, state.graph);
-  if (ast.isSlot(expr, state.graph)) {
-    console.log();
-  }
   return null;
 };
 

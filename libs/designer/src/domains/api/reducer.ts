@@ -7,7 +7,7 @@ import {
 } from "../../state";
 import { DesignerEngineEvent, GraphLoaded } from "./events";
 import { DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
-import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
+import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import jasonpatch from "fast-json-patch";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";

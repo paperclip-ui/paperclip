@@ -231,7 +231,7 @@ export const getFrameRects = (
   );
 
   // include frame sizes too
-  rects[index] = bounds;
+  rects[frame.element.id] = bounds;
 
   return rects;
 };

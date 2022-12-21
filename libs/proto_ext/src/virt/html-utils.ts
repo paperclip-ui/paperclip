@@ -7,6 +7,7 @@ import { ast } from "../ast/pc-utils";
 
 export namespace virtHTML {
   export type InnerVirtNode = virt.Element | virt.TextNode;
+  const EMPTY_ARRAY = [];
 
   export type OuterNode = {
     element?: virt.Element | undefined;
@@ -126,6 +127,10 @@ export namespace virtHTML {
 
   export const isInstance = (node: InnerVirtNode) => {
     return node.sourceInstanceIds?.length > 0;
+  };
+
+  export const getChildren = (node: InnerVirtNode): OuterNode[] => {
+    return (node as any).children || EMPTY_ARRAY;
   };
 
   export const isTextNode = (node: any): node is virt.TextNode =>

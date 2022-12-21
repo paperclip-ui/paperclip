@@ -324,30 +324,33 @@ export const findBoxNodeInfo = memoize(
     scopeId: string,
     boxes: Record<string, Box>
   ): BoxNodeInfo | null => {
-    return null;
-    // let bestIntersetingBox;
-    // let bestIntersetingNodePath;
-    // for (const virtId in boxes) {
-    //   const box = boxes[virtId];
-    //   if (boxIntersectsPoint(box, point)) {
-    //     if (
-    //       !bestIntersetingBox ||
-    //       nodePath.length > bestIntersetingNodePath.length
-    //     ) {
-    //       bestIntersetingBox = box;
-    //       bestIntersetingNodePath = nodePath;
-    //     }
-    //   }
-    // }
+    const box = boxes[current.id];
 
-    // if (!bestIntersetingBox) {
-    //   return null;
-    // }
+    if (!box || boxIntersectsPoint(box, point)) {
+      if (
+        !virtHTML.isInstance(current) ||
+        (scopeId && scopeId.includes(current.id))
+      ) {
+        for (const child of virtHTML.getChildren(current)) {
+          const childInfo = findBoxNodeInfo(
+            point,
+            virtHTML.getInnerNode(child),
+            scopeId,
+            boxes
+          );
+          if (childInfo) {
+            return childInfo;
+          }
+        }
+      }
 
-    // return {
-    //   nodeId: null,
-    //   box: bestIntersetingBox,
-    // };
+      return (
+        box && {
+          nodeId: current.id,
+          box,
+        }
+      );
+    }
   }
 );
 

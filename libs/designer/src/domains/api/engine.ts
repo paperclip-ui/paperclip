@@ -463,17 +463,17 @@ const createEventHandler = (actions: Actions) => {
         ...getScaledPoint(point, state.canvas.transform),
       };
 
-      const expr = ast.getExprById(item.id, state.graph);
+      const expr = ast.getExprInfoById(item.id, state.graph);
 
       let changes = [];
 
-      if (ast.isComponent(expr)) {
+      if (expr.kind === ast.ExprKind.Component) {
         changes = [
           {
             insertFrame: {
               documentId: state.currentDocument.paperclip.html.sourceId,
               bounds: roundBox(bounds),
-              nodeSource: `imp.${expr.name}`,
+              nodeSource: `imp.${expr.expr.name}`,
               imports: {
                 imp: ast.getOwnerDependencyPath(item.id, state.graph),
               },

@@ -9,7 +9,12 @@ import {
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { VariantsSection } from "./VariantsSection";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
-import { Element, TextNode } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import {
+  Atom,
+  Component,
+  Element,
+  TextNode,
+} from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 
 export const PropertiesPanel = () => {
@@ -24,7 +29,12 @@ export const PropertiesPanel = () => {
       <sidebarStyles.SidebarSection>
         <sidebarStyles.SidebarPanelContent>
           <inputStyles.Fields>
-            <IDField expr={expr} />
+            {expr.kind === ast.ExprKind.Element ||
+            expr.kind === ast.ExprKind.TextNode ||
+            expr.kind === ast.ExprKind.Atom ||
+            expr.kind === ast.ExprKind.Component ? (
+              <IDField expr={expr} />
+            ) : null}
             {expr.kind === ast.ExprKind.Component && <VariantsSection />}
           </inputStyles.Fields>
         </sidebarStyles.SidebarPanelContent>
@@ -34,7 +44,11 @@ export const PropertiesPanel = () => {
 };
 
 type IDFieldProps = {
-  expr: TextNode | Element;
+  expr:
+    | ast.BaseExprInfo<Element, ast.ExprKind.Element>
+    | ast.BaseExprInfo<TextNode, ast.ExprKind.TextNode>
+    | ast.BaseExprInfo<Atom, ast.ExprKind.Atom>
+    | ast.BaseExprInfo<Component, ast.ExprKind.Component>;
 };
 
 const IDField = ({ expr }: IDFieldProps) => {

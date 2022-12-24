@@ -19,6 +19,7 @@ import {
   Slot,
   Style,
   TextNode,
+  Trigger,
   Variant,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
 
@@ -47,9 +48,9 @@ export namespace ast {
     Declaration,
   }
 
-  type BaseExprInfo<Expr, Kind extends ExprKind> = {
+  export type BaseExprInfo<Expr, Kind extends ExprKind> = {
     expr: Expr;
-    kind: ExprKind;
+    kind: Kind;
   };
 
   export type InnerExpressionInfo =
@@ -57,7 +58,16 @@ export namespace ast {
     | BaseExprInfo<Atom, ExprKind.Atom>
     | BaseExprInfo<Reference, ExprKind.Reference>
     | BaseExprInfo<Element, ExprKind.Element>
-    | BaseExprInfo<Variant, ExprKind.Variant>;
+    | BaseExprInfo<Variant, ExprKind.Variant>
+    | BaseExprInfo<Document, ExprKind.Document>
+    | BaseExprInfo<Render, ExprKind.Render>
+    | BaseExprInfo<Import, ExprKind.Import>
+    | BaseExprInfo<TextNode, ExprKind.TextNode>
+    | BaseExprInfo<Trigger, ExprKind.Trigger>
+    | BaseExprInfo<Slot, ExprKind.Slot>
+    | BaseExprInfo<Insert, ExprKind.Insert>
+    | BaseExprInfo<Style, ExprKind.Style>
+    | BaseExprInfo<StyleDeclaration, ExprKind.Declaration>;
 
   export const getDocumentBodyInner = (item: DocumentBodyItem) => {
     // oneof forces us to do this :(
@@ -240,11 +250,11 @@ export namespace ast {
     const render = getComponentRenderNode(component);
 
     return render
-      ? Object.values(flattenNode(render))
+      ? (Object.values(flattenNode(render))
           .filter((descendent) => {
             return descendent.kind === ExprKind.Slot;
           })
-          .map((info) => info.expr)
+          .map((info) => info.expr) as Slot[])
       : [];
   };
 

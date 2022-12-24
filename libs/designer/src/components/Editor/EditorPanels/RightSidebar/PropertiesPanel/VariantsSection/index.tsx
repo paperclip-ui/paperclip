@@ -7,7 +7,7 @@ import {
 } from "@paperclip-ui/designer/src/state/pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { EditVariantPopup, SaveOptions } from "./EditVariantPopup";
-import { Variant } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import { Component, Variant } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 
 export const VariantsSection = () => {
@@ -60,7 +60,7 @@ export const VariantsSection = () => {
 };
 
 const useVariantsSection = () => {
-  const component = useSelector(getSelectedExpression);
+  const component = useSelector(getSelectedExpression) as Component;
   const activeVariant = useSelector(getActiveVariant);
   const variants = ast.getComponentVariants(component);
   const [editVariantPopupOpen, setVariantPopupOpen] = useState(false);

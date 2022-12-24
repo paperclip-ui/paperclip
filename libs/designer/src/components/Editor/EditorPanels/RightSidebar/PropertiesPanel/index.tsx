@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
-import { getSelectedExpression } from "@paperclip-ui/designer/src/state/pc";
+import {
+  getSelectedExpression,
+  getSelectedExpressionInfo,
+} from "@paperclip-ui/designer/src/state/pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { VariantsSection } from "./VariantsSection";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
@@ -10,7 +13,7 @@ import { Element, TextNode } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 
 export const PropertiesPanel = () => {
-  const expr = useSelector(getSelectedExpression);
+  const expr = useSelector(getSelectedExpressionInfo);
 
   if (!expr) {
     return null;
@@ -22,7 +25,7 @@ export const PropertiesPanel = () => {
         <sidebarStyles.SidebarPanelContent>
           <inputStyles.Fields>
             <IDField expr={expr} />
-            {ast.isComponent(expr) && <VariantsSection />}
+            {expr.kind === ast.ExprKind.Component && <VariantsSection />}
           </inputStyles.Fields>
         </sidebarStyles.SidebarPanelContent>
       </sidebarStyles.SidebarSection>

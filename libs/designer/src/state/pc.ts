@@ -410,6 +410,13 @@ export const getSelectedExpression = (state: DesignerState) => {
   );
 };
 
+export const getSelectedExpressionInfo = (state: DesignerState) => {
+  return (
+    state.selectedTargetId &&
+    ast.getExprInfoById(state.selectedTargetId, state.graph)
+  );
+};
+
 export const getActiveVariant = (state: DesignerState) => {
   return (
     state.activeVariantId &&

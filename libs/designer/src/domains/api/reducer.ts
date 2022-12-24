@@ -3,7 +3,6 @@ import {
   DesignerState,
   getGraphComponents,
   maybeCenterCanvas,
-  pruneDanglingRects,
 } from "../../state";
 import { DesignerEngineEvent, GraphLoaded } from "./events";
 import { DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
@@ -45,7 +44,6 @@ export const apiReducer = (
         }
         newState.insertedNodeIds = [];
       });
-      state = pruneDanglingRects(state);
       state = maybeCenterCanvas(state);
       return state;
 

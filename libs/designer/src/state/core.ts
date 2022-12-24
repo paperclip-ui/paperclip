@@ -30,7 +30,6 @@ import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { Component } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import produce from "immer";
-import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 import { Bounds } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
 import {
   CanvasMouseUp,
@@ -303,6 +302,25 @@ export const flattenFrameBoxes = memoize(
     return all;
   }
 );
+
+export const getSlotBoxes = (state: DesignerState) => {
+  const { graph, currentDocument, rects } = state;
+
+  const currentPath = getCurrentFilePath(state);
+
+  const dep = graph.dependencies[currentPath];
+
+  if (!dep || !currentDocument) {
+    return {};
+  }
+  const components = ast.getDocumentComponents(dep.document);
+
+  for (const component of components) {
+    const slots = ast.getComponentSlots(component, graph);
+  }
+
+  return {};
+};
 
 export const getNodeInfoAtPoint = (
   point: Point,

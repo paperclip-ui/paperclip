@@ -367,6 +367,22 @@ export const getNodeInfoAtCurrentPoint = (state: DesignerState) => {
   );
 };
 
+export const getInstanceInfoAtCurrentPoint = (state: DesignerState) => {
+  const scaledPoint = getScaledPoint(
+    state.canvas.mousePosition,
+    state.canvas.transform
+  );
+
+  const info = findVirtBoxNodeInfo(
+    scaledPoint,
+    state.currentDocument.paperclip.html,
+    state.scopedElementId,
+    state.rects
+  );
+
+  return info;
+};
+
 export const findInsertAtPoint = (
   point: Point,
   state: DesignerState

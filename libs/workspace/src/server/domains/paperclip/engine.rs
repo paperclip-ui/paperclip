@@ -98,7 +98,6 @@ impl<TIO: ServerIO> FileResolver for VirtGraphIO<TIO> {
     }
 }
 
-
 async fn load_dependency_graph<TIO: ServerIO>(
     ctx: ServerEngineContext<TIO>,
     files: &Vec<String>,

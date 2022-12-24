@@ -18,6 +18,7 @@ import {
   DNDKind,
   getCurrentFilePath,
   getInsertBox,
+  getInstanceInfoAtCurrentPoint,
   getNodeInfoAtCurrentPoint,
   InsertMode,
 } from "../../state";
@@ -172,13 +173,41 @@ const createEventHandler = (actions: Actions) => {
 
       actions.applyChanges([mutation]);
     } else {
+      const childSource = {
+        [InsertMode.Element]: `div {
+          style {
+            background: rgba(0,0,0,0.1)
+            position: absolute
+            left: ${bounds.x}px
+            top: ${bounds.y}px
+            width: ${bounds.width}px
+            height: ${bounds.height}px
+          }
+        }`,
+        [InsertMode.Text]: `text ""`,
+      }[insertMode];
+
       const exprInfo = ast.getExprInfoById(
         intersectingNode.nodeId,
         state.graph
       );
 
       if (exprInfo?.kind === ast.ExprKind.Slot) {
-        console.log("SddOT!");
+        const instanceInfo = getInstanceInfoAtCurrentPoint(state);
+        const instance = virtHTML.getNodeById(
+          instanceInfo.nodeId,
+          state.currentDocument.paperclip.html
+        );
+
+        actions.applyChanges([
+          {
+            appendInsert: {
+              instanceId: instance.id,
+              slotName: exprInfo.expr.name,
+              childSource,
+            },
+          },
+        ]);
       } else {
         const parent = virtHTML.getNodeById(
           intersectingNode.nodeId,
@@ -197,19 +226,7 @@ const createEventHandler = (actions: Actions) => {
           {
             appendChild: {
               parentId: parent.sourceId,
-              childSource: {
-                [InsertMode.Element]: `div {
-                  style {
-                    background: rgba(0,0,0,0.1)
-                    position: absolute
-                    left: ${bounds.x}px
-                    top: ${bounds.y}px
-                    width: ${bounds.width}px
-                    height: ${bounds.height}px
-                  }
-                }`,
-                [InsertMode.Text]: `text ""`,
-              }[insertMode],
+              childSource,
             },
           },
         ]);

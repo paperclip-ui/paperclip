@@ -1,6 +1,6 @@
 // https://github.com/hyperium/tonic/blob/master/examples/src/hyper_warp/server.rs
 
-use super::utils::{create_design_file, apply_mutations};
+use super::utils::{apply_mutations, create_design_file};
 use crate::server::core::{ServerEngineContext, ServerEvent, ServerStore};
 use crate::server::io::ServerIO;
 use futures::Stream;
@@ -10,8 +10,9 @@ use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
     design_server_event, file_response, ApplyMutationsRequest, ApplyMutationsResult,
-    CreateDesignFileRequest, CreateDesignFileResponse, DesignServerEvent, Empty, FileChanged, ModulesEvaluated,
-    FileRequest, FileResponse, ResourceFiles, ScreenshotCaptured, UpdateFileRequest,
+    CreateDesignFileRequest, CreateDesignFileResponse, DesignServerEvent, Empty, FileChanged,
+    FileRequest, FileResponse, ModulesEvaluated, ResourceFiles, ScreenshotCaptured,
+    UpdateFileRequest,
 };
 use std::pin::Pin;
 use std::sync::Arc;
@@ -20,7 +21,8 @@ use tokio::sync::mpsc;
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
 
-type DesignServerEventStream = Pin<Box<dyn Stream<Item = Result<DesignServerEvent, Status>> + Send>>;
+type DesignServerEventStream =
+    Pin<Box<dyn Stream<Item = Result<DesignServerEvent, Status>> + Send>>;
 type ResourceFilesStream = Pin<Box<dyn Stream<Item = Result<ResourceFiles, Status>> + Send>>;
 type GetGraphStream = Pin<Box<dyn Stream<Item = Result<Graph, Status>> + Send>>;
 
@@ -258,9 +260,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
     ) -> Result<Response<ApplyMutationsResult>, Status> {
         let request = request.into_inner();
         if let Ok(changes) = apply_mutations(&request.mutations, self.ctx.clone()).await {
-            Ok(Response::new(ApplyMutationsResult {
-                changes
-            }))
+            Ok(Response::new(ApplyMutationsResult { changes }))
         } else {
             Err(Status::unknown("Cannot apply mutations"))
         }

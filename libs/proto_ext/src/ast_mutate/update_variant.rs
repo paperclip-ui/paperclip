@@ -13,7 +13,7 @@ use paperclip_proto::{
 
 use crate::ast::all::{MutableVisitor, VisitorResult};
 
-use super::{EditContext, utils::get_valid_name};
+use super::{utils::get_valid_name, EditContext};
 
 impl<'expr> MutableVisitor<()> for EditContext<'expr, UpdateVariant> {
     fn visit_component(

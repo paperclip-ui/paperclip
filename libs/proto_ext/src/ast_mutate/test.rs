@@ -4,10 +4,9 @@ use futures::executor::block_on;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_proto::ast_mutate::{
-    mutation, update_variant_trigger, AppendChild, Bounds, ConvertToComponent, ConvertToSlot,
-    DeleteExpression, InsertFrame, SetFrameBounds, SetStyleDeclarationValue, SetStyleDeclarations,
-    SetTextNodeValue,
-    ToggleVariants, UpdateVariant, SetId,
+    mutation, update_variant_trigger, AppendChild, AppendInsert, Bounds, ConvertToComponent,
+    ConvertToSlot, DeleteExpression, InsertFrame, SetFrameBounds, SetId, SetStyleDeclarationValue,
+    SetStyleDeclarations, SetTextNodeValue, ToggleVariants, UpdateVariant,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use std::collections::HashMap;
@@ -1602,7 +1601,6 @@ case! {
   )]
 }
 
-
 case! {
   can_change_the_id_of_a_component,
   [
@@ -1669,7 +1667,6 @@ case! {
     "#
   )]
 }
-
 
 case! {
   can_change_the_id_of_a_trigger,
@@ -1817,7 +1814,6 @@ case! {
   )]
 }
 
-
 case! {
   does_not_pick_uid_if_target_name_is_same,
   [
@@ -1845,7 +1841,6 @@ case! {
   )]
 }
 
-
 case! {
   can_rename_a_slot_id,
   [
@@ -1869,6 +1864,128 @@ case! {
       component A {
         render slot test2
       }
+    "#
+  )]
+}
+
+case! {
+  can_append_an_insert,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render slot test
+        }
+
+        A
+      "#
+    )
+  ],
+
+  mutation::Inner::AppendInsert(AppendInsert {
+    instance_id: "80f4925f-4".to_string(),
+    slot_name: "test".to_string(),
+    child_source: r#"
+      text "abba" {
+        style {
+          color: blue
+        }
+      }
+    "#.to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component A {
+        render slot test
+      }
+      A {
+        insert test {
+          text "abba" {
+            style {
+              color: blue
+            }
+          }
+        }
+      }
+    "#
+  )]
+}
+
+case! {
+  can_append_to_an_existing_insert,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render slot test
+        }
+
+        A {
+          insert test {
+            div
+          }
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::AppendInsert(AppendInsert {
+    instance_id: "80f4925f-6".to_string(),
+    slot_name: "test".to_string(),
+    child_source: r#"
+      text "abba" {
+        style {
+          color: blue
+        }
+      }
+    "#.to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component A {
+        render slot test
+      }
+      A {
+        insert test {
+          div
+          text "abba" {
+            style {
+              color: blue
+            }
+          }
+        }
+      }
+    "#
+  )]
+}
+
+case! {
+  can_delete_an_expr_from_an_insert,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render slot test
+        }
+
+        A {
+          insert test {
+            div
+          }
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::DeleteExpression(DeleteExpression {
+    expression_id: "80f4925f-4".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component A {
+        render slot test
+      }
+      A
     "#
   )]
 }

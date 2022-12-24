@@ -1,5 +1,5 @@
 use paperclip_proto::ast;
-use paperclip_proto::ast::graph_ext::{Graph, Dependency};
+use paperclip_proto::ast::graph_ext::{Dependency, Graph};
 use paperclip_proto::ast::pc::{document_body_item, DocumentBodyItem, Element};
 use paperclip_proto::ast::{all::ExpressionWrapper, pc::Component};
 
@@ -78,7 +78,7 @@ pub fn get_expr(id: &str, dep: &Dependency) -> Option<ExpressionWrapper> {
 pub fn get_expr_dep<'a>(id: &str, graph: &'a Graph) -> Option<(ExpressionWrapper, &'a Dependency)> {
     for (_path, dep) in &graph.dependencies {
         if let Some(expr) = get_expr(id, dep) {
-            return Some((expr, dep))
+            return Some((expr, dep));
         }
     }
     return None;
@@ -86,18 +86,20 @@ pub fn get_expr_dep<'a>(id: &str, graph: &'a Graph) -> Option<(ExpressionWrapper
 
 pub fn get_ref_id(expr: ExpressionWrapper, graph: &Graph) -> Option<String> {
     match &expr {
-        ExpressionWrapper::Element(element) => {
-            get_element_origin_dep(element, graph).document.as_ref().unwrap().get_components().iter().find_map(|component| {
+        ExpressionWrapper::Element(element) => get_element_origin_dep(element, graph)
+            .document
+            .as_ref()
+            .unwrap()
+            .get_components()
+            .iter()
+            .find_map(|component| {
                 if &component.name == &element.tag_name {
                     Some(component.id.to_string())
                 } else {
                     None
                 }
-            })
-        },
-        _ => {
-            None
-        }
+            }),
+        _ => None,
     }
 }
 
@@ -105,9 +107,14 @@ fn get_element_origin_dep<'a>(element: &Element, graph: &'a Graph) -> &'a Depend
     let dep = get_expr_dep(&element.id, graph).unwrap().1;
 
     if let Some(namespace) = &element.namespace {
-        if let Some(imp) = dep.document.as_ref().unwrap().get_imports().iter().find(|imp| {
-            &imp.namespace == namespace
-        }) {
+        if let Some(imp) = dep
+            .document
+            .as_ref()
+            .unwrap()
+            .get_imports()
+            .iter()
+            .find(|imp| &imp.namespace == namespace)
+        {
             let imp_path = dep.imports.get(&imp.path).unwrap();
             return graph.dependencies.get(imp_path).as_ref().unwrap();
         }

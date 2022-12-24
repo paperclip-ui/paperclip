@@ -1,6 +1,9 @@
 // https://github.com/hyperium/tonic/blob/master/examples/src/hyper_warp/server.rs
 
-use crate::server::{core::{ServerEngineContext, ServerEvent}, io::ServerIO};
+use crate::server::{
+    core::{ServerEngineContext, ServerEvent},
+    io::ServerIO,
+};
 use anyhow::{Error, Result};
 use inflector::cases::kebabcase::to_kebab_case;
 use paperclip_proto::ast_mutate::{Mutation, MutationResult};
@@ -64,7 +67,6 @@ pub fn create_design_file<TIO: ServerIO>(
 
     Ok(file_path)
 }
-
 
 pub async fn apply_mutations<TIO: ServerIO>(
     mutations: &Vec<Mutation>,

@@ -85,6 +85,8 @@ type Query = {
   file?: string;
 };
 
+type FrameBox = { frameIndex: number } & Box;
+
 export type DesignerState = {
   readonly: boolean;
   scopedElementId?: string;
@@ -114,7 +116,7 @@ export type DesignerState = {
   optionKeyDown: boolean;
   centeredInitial: boolean;
   currentDocument?: FileResponse;
-  rects: Record<number, Record<string, Box>>;
+  rects: Record<string, FrameBox>;
   canvas: Canvas;
 } & HistoryEngineState;
 
@@ -438,69 +440,11 @@ export const highlightNode = (
       canvas.transform,
       designer.currentDocument.paperclip.html,
       designer.scopedElementId,
-      flattenFrameBoxes(designer.rects)
+      designer.rects
     );
     newDesigner.highlightedNodeId = info?.nodeId;
   });
 };
-
-// export const getScopedBoxes = memoize(
-//   (boxes: Record<string, Box>, scopedElementPath: string, root: PCModule) => {
-//     const hoverableNodePaths = getHoverableNodePaths(
-//       scopedElementPath,
-//       root.html
-//     );
-
-//     return pick(boxes, hoverableNodePaths);
-//   }
-// );
-
-// export const getHoverableNodePaths = memoize(
-//   (scopedNodePath: string | undefined, root: virtHTML.InnerVirtNode) => {
-//     const scopedNode = scopedNodePath
-//       ? virtHTML.getNodeByPath(scopedNodePath, root)
-//       : root;
-//     const ancestors = scopedNodePath
-//       ? virtHTML.getNodeAncestors(scopedNodePath, root)
-//       : [];
-
-//     const hoverable: virtHTML.InnerVirtNode[] = [];
-
-//     const scopes = [scopedNode, ...ancestors];
-
-//     for (const scope of scopes) {
-//       addHoverableChildren(scope, true, hoverable);
-//     }
-
-//     return hoverable.map((node) => virtHTML.getNodePath(node, root));
-//   }
-// );
-
-// export const getSlotRects = memoize((rects: Record<string, Box>, document: Document) => {
-//   for (const nodePath in rects) {
-//     const virtNode = virtHTML.getNodeByPath(nodePath, )
-//   }
-// });
-
-// const addHoverableChildren = (
-//   node: virtHTML.InnerVirtNode,
-//   isScope: boolean,
-//   hoverable: virtHTML.InnerVirtNode[]
-// ) => {
-//   if (!hoverable.includes(node)) {
-//     hoverable.push(node);
-//   }
-
-//   if (virtHTML.isInstance(node) && !isScope) {
-//     return;
-//   }
-
-//   if (virtHTML.isNodeParent(node)) {
-//     for (const child of node.children) {
-//       addHoverableChildren(virtHTML.getInnerNode(child), false, hoverable);
-//     }
-//   }
-// };
 
 export const getResourceFilePaths = (state: DesignerState) =>
   state.resourceFilePaths;
@@ -529,20 +473,19 @@ export const getHighlightedNodeBox = (state: DesignerState): Box => {
   return getNodeBox(state.highlightedNodeId, state);
 };
 
-export const getNodeBox = (virtId: string, state: DesignerState): Box => {
-  return flattenFrameBoxes(state.rects)[virtId];
-};
+export const getSelectedNodeBox = (state: DesignerState): Box =>
+  getNodeBox(state.selectedTargetId, state);
 
-// export const getInsertableBounds = (state: DesignerState, )
+export const getNodeBox = (virtId: string, state: DesignerState): Box => {
+  return state.rects[virtId];
+};
 
 export const pruneDanglingRects = (state: DesignerState) => {
   return produce(state, (newState) => {
-    for (const frameIndex in newState.rects) {
-      if (
-        Number(frameIndex) >=
-        state.currentDocument.paperclip.html.children.length
-      ) {
-        delete newState.rects[frameIndex];
+    for (const nodeId in newState.rects) {
+      const frameIndex = newState.rects[nodeId].frameIndex;
+      if (frameIndex >= state.currentDocument.paperclip.html.children.length) {
+        delete newState.rects[nodeId];
       }
     }
   });
@@ -611,7 +554,7 @@ export const handleDoubleClick = (
     designer.canvas.transform,
     designer.currentDocument.paperclip.html,
     designer.scopedElementId,
-    flattenFrameBoxes(designer.rects)
+    designer.rects
   )?.nodeId;
 
   designer = produce(designer, (newDesigner) => {

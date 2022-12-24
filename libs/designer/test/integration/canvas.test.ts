@@ -64,9 +64,7 @@ describe(__filename + "#", () => {
       {
         selectedTargetId: "4f0e8e93-1",
         rects: {
-          "0": {
-            "0": { x: 0, y: 0, width: 100, height: 10 },
-          },
+          "0": { x: 0, y: 0, width: 100, height: 10, frameIndex: 0 },
         },
       }
     );
@@ -218,9 +216,7 @@ describe(__filename + "#", () => {
       {
         selectedTargetId: null,
         rects: {
-          "0": {
-            "0": { x: 0, y: 0, width: 1024, height: 768 },
-          },
+          "0": { x: 0, y: 0, width: 1024, height: 768, frameIndex: 0 },
         },
       }
     );

@@ -7,6 +7,8 @@ import {
   flattenFrameBoxes,
   getEditorState,
   getHighlightedNodeBox,
+  getSelectedNodeBox,
+  getSelectedNodeId,
   getSelectedNodePath,
   InsertMode,
 } from "@paperclip-ui/designer/src/state";
@@ -108,21 +110,20 @@ const useTools = () => {
   const dispatch = useDispatch<DesignerEvent>();
   const {
     canvas,
-    highlightedNodeId,
     optionKeyDown,
     resizerMoving,
     readonly,
     showTextEditor,
     insertMode,
-    rects: frameBoxes,
+    rects,
     currentDocument,
   } = useSelector(getEditorState);
 
   const highlightedBox = useSelector(getHighlightedNodeBox);
+  const selectedBox = useSelector(getSelectedNodeBox);
 
   const toolsLayerEnabled = !canvas.isExpanded;
 
-  const selectedNodePath = useSelector(getSelectedNodePath);
   const contextMenu = useSelector(getEntityShortcuts);
   const selectedExpr = useSelector(getSelectedExpression);
 
@@ -184,10 +185,6 @@ const useTools = () => {
     dispatch({ type: "editor/canvasMouseLeave" });
   };
 
-  const boxes = flattenFrameBoxes(frameBoxes);
-
-  const selectedBox = boxes[selectedNodePath];
-
   const frames = currentDocument?.paperclip?.html?.children || [];
   const showEmpty = frames.length === 0;
 
@@ -211,7 +208,6 @@ const useTools = () => {
     selectedBox,
     readonly,
     highlightedBox,
-    selectedNodePath,
     optionKeyDown,
   };
 };

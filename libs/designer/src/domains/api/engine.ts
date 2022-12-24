@@ -158,7 +158,7 @@ const createEventHandler = (actions: Actions) => {
       state.canvas.transform,
       state.currentDocument.paperclip.html,
       state.scopedElementId,
-      flattenFrameBoxes(state.rects)
+      state.rects
     );
 
     if (!intersectingNode) {
@@ -184,7 +184,7 @@ const createEventHandler = (actions: Actions) => {
         state.currentDocument.paperclip.html
       );
 
-      const parentBox = flattenFrameBoxes(state.rects)[intersectingNode.nodeId];
+      const parentBox = state.rects[intersectingNode.nodeId];
 
       bounds = roundBox({
         ...bounds,

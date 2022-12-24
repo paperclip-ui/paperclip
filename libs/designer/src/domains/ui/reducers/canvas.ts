@@ -20,7 +20,7 @@ import {
 import { centerTransformZoom } from "@paperclip-ui/designer/src/state/geom";
 import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
 import produce from "immer";
-import { clamp } from "lodash";
+import { clamp, mapValues } from "lodash";
 
 export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
   switch (event.type) {
@@ -104,13 +104,7 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
         state.canvas.transform,
         state.currentDocument.paperclip.html,
         state.scopedElementId,
-        flattenFrameBoxes(state.rects)
-        // getScopedBoxes(
-        //   flattenFrameBoxes(state.rects),
-        //   state.scopedElementPath,
-        //   state.currentDocument.paperclip
-        // ),
-        // state.canvas.isExpanded ? state.canvas.activeFrame : null
+        state.rects
       )?.nodeId;
 
       return selectNode(
@@ -164,10 +158,7 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
 
         Object.assign(
           newState.canvas,
-          clampCanvasTransform(
-            newState.canvas,
-            flattenFrameBoxes(newState.rects)
-          )
+          clampCanvasTransform(newState.canvas, newState.rects)
         );
       });
     }
@@ -185,7 +176,13 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
 
     case "editor/rectsCaptured":
       state = produce(state, (newState) => {
-        newState.rects[event.payload.frameIndex] = event.payload.rects;
+        Object.assign(
+          newState.rects,
+          mapValues(event.payload.rects, (rect) => ({
+            frameIndex: event.payload.frameIndex,
+            ...rect,
+          }))
+        );
       });
       state = pruneDanglingRects(state);
       state = maybeCenterCanvas(state);

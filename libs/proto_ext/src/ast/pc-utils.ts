@@ -261,6 +261,25 @@ export namespace ast {
       : [];
   };
 
+  export const getComponentInstances = memoize(
+    (componentId: string, graph: Graph) => {
+      const instances: Element[] = [];
+      for (const path in graph.dependencies) {
+        instances.push(
+          ...(Object.values(flattenDocument(graph.dependencies[path].document))
+            .filter(
+              (info) =>
+                info.kind === ExprKind.Element &&
+                getInstanceComponent(info.expr, graph)?.id === componentId
+            )
+            .map((info) => info.expr) as Element[])
+        );
+      }
+
+      return instances;
+    }
+  );
+
   export const getComponentVariants = memoize((component: Component) => {
     return component.body
       .filter((expr) => expr.variant)
@@ -454,7 +473,6 @@ export namespace ast {
 
   export const getOwnerDependencyPath = memoize(
     (exprId: string, graph: Graph) => {
-      console.log("DD");
       for (const path in graph.dependencies) {
         const dep = graph.dependencies[path];
 

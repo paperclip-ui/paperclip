@@ -293,51 +293,103 @@ export const getPreviewChildren = (frame: HTMLDocument) => {
   return frame.children;
 };
 
-export const flattenFrameBoxes = memoize(
-  (frameBoxes: Record<string, Record<string, Box>>) => {
-    const all = {};
-    for (const id in frameBoxes) {
-      Object.assign(all, frameBoxes[id]);
+export const getInsertBoxes = memoize(
+  (
+    graph: Graph,
+    currentPath: string,
+    currentDocument: Document,
+    rects: Record<string, Box>
+  ) => {
+    const dep = graph.dependencies[currentPath];
+
+    if (!dep || !currentDocument) {
+      return {};
     }
-    return all;
+
+    const now = Date.now();
+
+    const components = ast.getDocumentComponents(dep.document);
+
+    const slotBoxes: Record<string, Box> = {};
+
+    for (const component of components) {
+      const slots = ast.getComponentSlots(component, graph);
+      const instances = ast
+        .getComponentInstances(component.id, graph)
+        .map((instance) => {
+          return virtHTML
+            .getInstancesOf(instance.id, currentDocument)
+            .find((instance) => !instance.id.includes("."));
+        })
+        .filter(Boolean) as virtHTML.BaseTreeNode[];
+
+      for (const slot of slots) {
+        const slotDescendents = Object.values(ast.flattenSlot(slot));
+
+        for (const instance of instances) {
+          const boxes: Box[] = [];
+          for (const id in virtHTML.flattenTreeNode(instance)) {
+            for (const descendent of slotDescendents) {
+              const rect = rects[instance.sourceId + "." + descendent.expr.id];
+              if (rect) {
+                boxes.push(rect);
+              }
+            }
+          }
+          slotBoxes[slot.id] = mergeBoxes(boxes);
+        }
+      }
+    }
+
+    return slotBoxes;
   }
 );
 
-export const getSlotBoxes = (state: DesignerState) => {
-  const { graph, currentDocument, rects } = state;
+const merge = memoize((a, b) => ({ ...a, ...b }));
 
-  const currentPath = getCurrentFilePath(state);
-
-  const dep = graph.dependencies[currentPath];
-
-  if (!dep || !currentDocument) {
-    return {};
+export const getNodeInfoAtCurrentPoint = (state: DesignerState) => {
+  if (!state.canvas.mousePosition) {
+    return null;
   }
-  const components = ast.getDocumentComponents(dep.document);
+  const scaledPoint = getScaledPoint(
+    state.canvas.mousePosition,
+    state.canvas.transform
+  );
 
-  for (const component of components) {
-    const slots = ast.getComponentSlots(component, graph);
-  }
-
-  return {};
-};
-
-export const getNodeInfoAtPoint = (
-  point: Point,
-  transform: Transform,
-  current: virtHTML.InnerVirtNode,
-  scopeId: string,
-  boxes: Record<string, Box>
-) => {
-  return findBoxNodeInfo(
-    getScaledPoint(point, transform),
-    current,
-    scopeId,
-    boxes
+  return (
+    findInsertAtPoint(scaledPoint, state) ||
+    findVirtBoxNodeInfo(
+      scaledPoint,
+      state.currentDocument.paperclip.html,
+      state.scopedElementId,
+      state.rects
+    )
   );
 };
 
-export const findBoxNodeInfo = memoize(
+export const findInsertAtPoint = (
+  point: Point,
+  state: DesignerState
+): BoxNodeInfo | null => {
+  const slotBoxes = getInsertBoxes(
+    state.graph,
+    getCurrentFilePath(state),
+    state.currentDocument!.paperclip.html,
+    state.rects
+  );
+
+  for (const slotId in slotBoxes) {
+    if (boxIntersectsPoint(slotBoxes[slotId], point)) {
+      return {
+        nodeId: slotId,
+        box: slotBoxes[slotId],
+      };
+    }
+  }
+  return null;
+};
+
+export const findVirtBoxNodeInfo = memoize(
   (
     point: Point,
     current: virtHTML.InnerVirtNode,
@@ -352,7 +404,7 @@ export const findBoxNodeInfo = memoize(
         (scopeId && scopeId.includes(current.id))
       ) {
         for (const child of virtHTML.getChildren(current)) {
-          const childInfo = findBoxNodeInfo(
+          const childInfo = findVirtBoxNodeInfo(
             point,
             virtHTML.getInnerNode(child),
             scopeId,
@@ -452,17 +504,22 @@ export const highlightNode = (
 ) => {
   return produce(designer, (newDesigner) => {
     newDesigner.canvas.mousePosition = mousePosition;
-    const canvas = newDesigner.canvas;
-    const info = getNodeInfoAtPoint(
-      mousePosition,
-      canvas.transform,
-      designer.currentDocument.paperclip.html,
-      designer.scopedElementId,
-      designer.rects
-    );
+    const info = getNodeInfoAtCurrentPoint(designer);
+
     newDesigner.highlightedNodeId = info?.nodeId;
   });
 };
+
+const getVirtWithExprRects = (designer: DesignerState) =>
+  merge(
+    designer.rects,
+    getInsertBoxes(
+      designer.graph,
+      getCurrentFilePath(designer),
+      designer.currentDocument?.paperclip.html,
+      designer.rects
+    )
+  );
 
 export const getResourceFilePaths = (state: DesignerState) =>
   state.resourceFilePaths;
@@ -495,7 +552,7 @@ export const getSelectedNodeBox = (state: DesignerState): Box =>
   getNodeBox(state.selectedTargetId, state);
 
 export const getNodeBox = (virtId: string, state: DesignerState): Box => {
-  return state.rects[virtId];
+  return getVirtWithExprRects(state)[virtId];
 };
 
 export const pruneDanglingRects = (state: DesignerState) => {
@@ -567,13 +624,7 @@ export const handleDoubleClick = (
     ];
   }
 
-  const nodeId = getNodeInfoAtPoint(
-    designer.canvas.mousePosition,
-    designer.canvas.transform,
-    designer.currentDocument.paperclip.html,
-    designer.scopedElementId,
-    designer.rects
-  )?.nodeId;
+  const nodeId = getNodeInfoAtCurrentPoint(designer)?.nodeId;
 
   designer = produce(designer, (newDesigner) => {
     newDesigner.canvasClickTimestamp = action.payload.timestamp;

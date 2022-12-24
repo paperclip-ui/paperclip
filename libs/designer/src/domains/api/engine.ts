@@ -16,10 +16,9 @@ import {
   DEFAULT_FRAME_BOX,
   DesignerState,
   DNDKind,
-  flattenFrameBoxes,
   getCurrentFilePath,
   getInsertBox,
-  getNodeInfoAtPoint,
+  getNodeInfoAtCurrentPoint,
   InsertMode,
 } from "../../state";
 import { Mutation } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
@@ -153,13 +152,7 @@ const createEventHandler = (actions: Actions) => {
     let bounds = getScaledBox(getInsertBox(state), state.canvas.transform);
     const insertMode = state.insertMode;
 
-    const intersectingNode = getNodeInfoAtPoint(
-      state.canvas.mousePosition,
-      state.canvas.transform,
-      state.currentDocument.paperclip.html,
-      state.scopedElementId,
-      state.rects
-    );
+    const intersectingNode = getNodeInfoAtCurrentPoint(state);
 
     if (!intersectingNode) {
       const mutation: Mutation = {
@@ -179,39 +172,48 @@ const createEventHandler = (actions: Actions) => {
 
       actions.applyChanges([mutation]);
     } else {
-      const parent = virtHTML.getNodeById(
+      const exprInfo = ast.getExprInfoById(
         intersectingNode.nodeId,
-        state.currentDocument.paperclip.html
+        state.graph
       );
 
-      const parentBox = state.rects[intersectingNode.nodeId];
+      if (exprInfo?.kind === ast.ExprKind.Slot) {
+        console.log("SddOT!");
+      } else {
+        const parent = virtHTML.getNodeById(
+          intersectingNode.nodeId,
+          state.currentDocument.paperclip.html
+        );
 
-      bounds = roundBox({
-        ...bounds,
-        x: bounds.x - parentBox.x,
-        y: bounds.y - parentBox.y,
-      });
+        const parentBox = state.rects[intersectingNode.nodeId];
 
-      actions.applyChanges([
-        {
-          appendChild: {
-            parentId: parent.sourceId,
-            childSource: {
-              [InsertMode.Element]: `div {
-                style {
-                  background: rgba(0,0,0,0.1)
-                  position: absolute
-                  left: ${bounds.x}px
-                  top: ${bounds.y}px
-                  width: ${bounds.width}px
-                  height: ${bounds.height}px
-                }
-              }`,
-              [InsertMode.Text]: `text ""`,
-            }[insertMode],
+        bounds = roundBox({
+          ...bounds,
+          x: bounds.x - parentBox.x,
+          y: bounds.y - parentBox.y,
+        });
+
+        actions.applyChanges([
+          {
+            appendChild: {
+              parentId: parent.sourceId,
+              childSource: {
+                [InsertMode.Element]: `div {
+                  style {
+                    background: rgba(0,0,0,0.1)
+                    position: absolute
+                    left: ${bounds.x}px
+                    top: ${bounds.y}px
+                    width: ${bounds.width}px
+                    height: ${bounds.height}px
+                  }
+                }`,
+                [InsertMode.Text]: `text ""`,
+              }[insertMode],
+            },
           },
-        },
-      ]);
+        ]);
+      }
     }
   };
 

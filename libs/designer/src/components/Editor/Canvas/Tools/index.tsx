@@ -4,12 +4,9 @@ import * as styles from "./index.pc";
 import { Frames } from "./Frames";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
-  flattenFrameBoxes,
   getEditorState,
   getHighlightedNodeBox,
   getSelectedNodeBox,
-  getSelectedNodeId,
-  getSelectedNodePath,
   InsertMode,
 } from "@paperclip-ui/designer/src/state";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
@@ -19,10 +16,7 @@ import { ContextMenu } from "../../../ContextMenu";
 import { getEntityShortcuts } from "@paperclip-ui/designer/src/domains/shortcuts/state";
 import { DropTarget } from "./DropTarget";
 import { TextEditor } from "./TextEditor";
-import {
-  getSelectedExpression,
-  getSelectedExpressionInfo,
-} from "@paperclip-ui/designer/src/state/pc";
+import { getSelectedExpressionInfo } from "@paperclip-ui/designer/src/state/pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
 export const Tools = () => {

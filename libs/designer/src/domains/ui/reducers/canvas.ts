@@ -2,8 +2,7 @@ import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import {
   clampCanvasTransform,
   DesignerState,
-  flattenFrameBoxes,
-  getNodeInfoAtPoint,
+  getNodeInfoAtCurrentPoint,
   handleDoubleClick,
   handleDragEvent,
   highlightNode,
@@ -99,13 +98,7 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
       }
 
       // Don't do this until deselecting can be handled properly
-      const nodeId = getNodeInfoAtPoint(
-        state.canvas.mousePosition,
-        state.canvas.transform,
-        state.currentDocument.paperclip.html,
-        state.scopedElementId,
-        state.rects
-      )?.nodeId;
+      const nodeId = getNodeInfoAtCurrentPoint(state)?.nodeId;
 
       return selectNode(
         nodeId,

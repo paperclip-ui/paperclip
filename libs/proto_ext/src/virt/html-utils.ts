@@ -135,4 +135,14 @@ export namespace virtHTML {
 
   export const isTextNode = (node: any): node is virt.TextNode =>
     (node as any).value != null;
+
+  export const getInstancesOf = memoize(
+    (nodeId: string, root: BaseTreeNode): InnerVirtNode[] => {
+      console.log("AASAfsdfssaasS", nodeId, flattenTreeNode(root));
+
+      return flattenTreeNode(root).filter((node) => {
+        return node.sourceId === nodeId;
+      }) as InnerVirtNode[];
+    }
+  );
 }

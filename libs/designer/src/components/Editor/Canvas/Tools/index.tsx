@@ -19,7 +19,11 @@ import { ContextMenu } from "../../../ContextMenu";
 import { getEntityShortcuts } from "@paperclip-ui/designer/src/domains/shortcuts/state";
 import { DropTarget } from "./DropTarget";
 import { TextEditor } from "./TextEditor";
-import { getSelectedExpression } from "@paperclip-ui/designer/src/state/pc";
+import {
+  getSelectedExpression,
+  getSelectedExpressionInfo,
+} from "@paperclip-ui/designer/src/state/pc";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
 export const Tools = () => {
   const {
@@ -92,9 +96,15 @@ export const Tools = () => {
               cursor={cursor}
             />
           ) : null}
-          {selectedBox && showTextEditor && (
-            <TextEditor expr={selectedExpr} box={selectedBox} canvas={canvas} />
-          )}
+          {selectedBox &&
+            showTextEditor &&
+            selectedExpr.kind === ast.ExprKind.TextNode && (
+              <TextEditor
+                expr={selectedExpr.expr}
+                box={selectedBox}
+                canvas={canvas}
+              />
+            )}
           <Frames
             frames={frames}
             canvasTransform={canvas.transform}
@@ -125,7 +135,7 @@ const useTools = () => {
   const toolsLayerEnabled = !canvas.isExpanded;
 
   const contextMenu = useSelector(getEntityShortcuts);
-  const selectedExpr = useSelector(getSelectedExpression);
+  const selectedExpr = useSelector(getSelectedExpressionInfo);
 
   const getMousePoint = (event) => {
     const rect: ClientRect = (

@@ -10,8 +10,8 @@ export const leftSidebarReducer = (
   switch (event.type) {
     case "editor/layerArrowClicked": {
       if (state.expandedLayerVirtIds.includes(event.payload.virtId)) {
-        const flattened = ast.flattenUnknownInnerExpression(
-          ast.getExprById(event.payload.virtId, state.graph)
+        const flattened = ast.flattenExpressionInfo(
+          ast.getExprInfoById(event.payload.virtId, state.graph)
         );
         state = produce(state, (newState) => {
           newState.expandedLayerVirtIds = newState.expandedLayerVirtIds.filter(

@@ -28,7 +28,7 @@ import {
 } from "../domains/history/state";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
-import { Component } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import { Component, Element } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import produce from "immer";
 import { Bounds } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
 import {
@@ -306,38 +306,43 @@ export const getInsertBoxes = memoize(
       return {};
     }
 
-    const now = Date.now();
+    console.log("GET INS BOXAA");
 
     const components = ast.getDocumentComponents(dep.document);
 
     const slotBoxes: Record<string, Box> = {};
 
-    for (const component of components) {
+    const instances = Object.values(ast.flattenDocument(dep.document))
+      .filter(
+        (node) =>
+          node.kind === ast.ExprKind.Element && ast.isInstance(node.expr, graph)
+      )
+      .map((node) => node.expr) as Element[];
+
+    for (const instance of instances) {
+      const component = ast.getInstanceComponent(instance, graph);
       const slots = ast.getComponentSlots(component, graph);
-      const instances = ast
-        .getComponentInstances(component.id, graph)
-        .map((instance) => {
-          return virtHTML
-            .getInstancesOf(instance.id, currentDocument)
-            .find((instance) => !instance.id.includes("."));
-        })
-        .filter(Boolean) as virtHTML.BaseTreeNode[];
 
       for (const slot of slots) {
+        const containsInsert = instance.body.some(
+          (child) => child.insert?.name === slot.name
+        );
+
+        // skip since we want the children of this insert to be insertable
+        if (containsInsert) {
+          continue;
+        }
+
         const slotDescendents = Object.values(ast.flattenSlot(slot));
 
-        for (const instance of instances) {
-          const boxes: Box[] = [];
-          for (const id in virtHTML.flattenTreeNode(instance)) {
-            for (const descendent of slotDescendents) {
-              const rect = rects[instance.sourceId + "." + descendent.expr.id];
-              if (rect) {
-                boxes.push(rect);
-              }
-            }
+        const boxes: Box[] = [];
+        for (const descendent of slotDescendents) {
+          const rect = rects[instance.id + "." + descendent.expr.id];
+          if (rect) {
+            boxes.push(rect);
           }
-          slotBoxes[slot.id] = mergeBoxes(boxes);
         }
+        slotBoxes[instance.id + "." + slot.id] = mergeBoxes(boxes);
       }
     }
 
@@ -355,92 +360,158 @@ export const getNodeInfoAtCurrentPoint = (state: DesignerState) => {
     state.canvas.mousePosition,
     state.canvas.transform
   );
+  const filePath = getCurrentFilePath(state);
 
-  return (
-    findInsertAtPoint(scaledPoint, state) ||
-    findVirtBoxNodeInfo(
-      scaledPoint,
-      state.currentDocument.paperclip.html,
-      state.scopedElementId,
-      state.rects
-    )
-  );
-};
+  const dep = state.graph.dependencies[filePath];
 
-export const getInstanceInfoAtCurrentPoint = (state: DesignerState) => {
-  const scaledPoint = getScaledPoint(
-    state.canvas.mousePosition,
-    state.canvas.transform
-  );
+  if (!dep) {
+    return null;
+  }
 
-  const info = findVirtBoxNodeInfo(
+  return findVirtBoxNodeInfo(
     scaledPoint,
-    state.currentDocument.paperclip.html,
+    { expr: dep.document, kind: ast.ExprKind.Document },
+    filePath,
+    state.graph,
     state.scopedElementId,
-    state.rects
+    [],
+    getVirtWithExprRects(state)
   );
-
-  return info;
 };
 
 export const findInsertAtPoint = (
   point: Point,
   state: DesignerState
 ): BoxNodeInfo | null => {
-  const slotBoxes = getInsertBoxes(
+  const insertBoxes = getInsertBoxes(
     state.graph,
     getCurrentFilePath(state),
     state.currentDocument!.paperclip.html,
     state.rects
   );
 
-  for (const slotId in slotBoxes) {
-    if (boxIntersectsPoint(slotBoxes[slotId], point)) {
+  for (const insertId in insertBoxes) {
+    if (boxIntersectsPoint(insertBoxes[insertId], point)) {
       return {
-        nodeId: slotId,
-        box: slotBoxes[slotId],
+        nodeId: insertId,
+        box: insertBoxes[insertId],
       };
     }
   }
   return null;
 };
 
-export const findVirtBoxNodeInfo = memoize(
-  (
-    point: Point,
-    current: virtHTML.InnerVirtNode,
-    scopeId: string,
-    boxes: Record<string, Box>
-  ): BoxNodeInfo | null => {
-    const box = boxes[current.id];
-
-    if (!box || boxIntersectsPoint(box, point)) {
-      if (
-        !virtHTML.isInstance(current) ||
-        (scopeId && scopeId.includes(current.id))
-      ) {
-        for (const child of virtHTML.getChildren(current)) {
-          const childInfo = findVirtBoxNodeInfo(
-            point,
-            virtHTML.getInnerNode(child),
-            scopeId,
-            boxes
-          );
-          if (childInfo) {
-            return childInfo;
-          }
-        }
+const findVirtBoxNodeInfo = (
+  point: Point,
+  current: ast.InnerExpressionInfo,
+  path: string,
+  graph: Graph,
+  scopeId: string,
+  instancePath: string[],
+  boxes: Record<string, Box>
+): BoxNodeInfo | null => {
+  if (
+    current.kind === ast.ExprKind.Element &&
+    ast.isInstance(current.expr, graph)
+  ) {
+    // return boxes
+    if (!instancePath.length) {
+      const info = findInsertBoxesAtPoint(point, current.expr, graph, boxes);
+      if (info) {
+        return info;
       }
+    }
 
-      return (
-        box && {
-          nodeId: current.id,
-          box,
-        }
-      );
+    if (scopeId?.includes(current.expr.id)) {
+      // console.log("INSPECT SHADOW!");
     }
   }
-);
+
+  const virtId = [...instancePath, current.expr.id].join(".");
+  const box = boxes[virtId];
+
+  // const box = boxes[current.id];
+  for (const child of ast.getChildren(current)) {
+    const childInfo = findVirtBoxNodeInfo(
+      point,
+      child,
+      path,
+      graph,
+      scopeId,
+      instancePath,
+      boxes
+    );
+    if (childInfo) {
+      return childInfo;
+    }
+  }
+
+  return (
+    box &&
+    boxIntersectsPoint(box, point) && {
+      nodeId: current.expr.id,
+      box,
+    }
+  );
+};
+
+const findInsertBoxesAtPoint = (
+  point: Point,
+  instance: Element,
+  graph: Graph,
+  rects: Record<string, Box>
+): BoxNodeInfo => {
+  const component = ast.getInstanceComponent(instance, graph);
+  const slots = ast.getComponentSlots(component, graph);
+  for (const slot of slots) {
+    const insertId = instance.id + "." + slot.id;
+    const rect = rects[insertId];
+    if (rect && boxIntersectsPoint(rect, point)) {
+      return {
+        nodeId: insertId,
+        box: rect,
+      };
+    }
+  }
+
+  // const slotBoxes = getSlotBoxes(instance, graph, rects);
+  // for (const id in slotBoxes) {
+  //   const box = slotBoxes[id];
+
+  // }
+
+  return null;
+};
+
+// const getSlotBoxes = memoize((instance: Element, graph: Graph, rects: Record<string, Box>) => {
+//   const component = ast.getInstanceComponent(instance, graph);
+//   const slots = ast.getComponentSlots(component, graph);
+
+//   const slotBoxes: Record<string, Box> = {};
+
+//   for (const slot of slots) {
+//     const slotDescendents = Object.values(ast.flattenSlot(slot));
+
+//       const instanceSource = ast.getExprById(instance.id, graph) as Element;
+
+//       const containsInsert = instanceSource.body.some(child => child.insert?.name === slot.name);
+
+//       // skip since we want the children of this insert to be insertable
+//       if (containsInsert) {
+//         continue;
+//       }
+
+//       const boxes: Box[] = [];
+//       for (const descendent of slotDescendents) {
+//         const rect = rects[instance.id + "." + descendent.expr.id];
+//         if (rect) {
+//           boxes.push(rect);
+//         }
+//       }
+//       slotBoxes[slot.id] = mergeBoxes(boxes);
+//     }
+//   return slotBoxes
+// })
 
 export const getFrameBoxes = memoize(
   (boxes: Record<string, Box>, frameIndex: number) => {
@@ -597,27 +668,13 @@ export const selectNode = (
       virtNodeId,
       designer.graph
     );
+
     newDesigner.expandedLayerVirtIds.push(virtNodeId, ...ancestorIds);
 
     const expr = ast.getExprById(virtNodeId.split(".").pop(), designer.graph);
 
     newDesigner.selectedTargetId = virtNodeId;
-
-    // if (
-    //   newDesigner.scopedElementPath &&
-    //   !node.id.startsWith(newDesigner.scopedElementPath)
-    // ) {
-    //   const preview = newDesigner.currentDocument.paperclip.html;
-    //   const node = getNodeByPath(nodePath, preview) as InnerVirtNode;
-    //   const instanceAncestor = getInstanceAncestor(node, preview);
-    //   newDesigner.scopedElementPath =
-    //     instanceAncestor && getNodePath(instanceAncestor, preview);
-    // }
   });
-
-  // designer = expandNode(node, designer);
-  // if (nodePath) {
-  // }
 
   return designer;
 };

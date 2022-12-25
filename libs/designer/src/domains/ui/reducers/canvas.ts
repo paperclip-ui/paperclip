@@ -107,7 +107,6 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
         state
       );
     }
-
     case "editor/canvasPanned": {
       // do not allow panning when expanded
       if (state.canvas.isExpanded) {

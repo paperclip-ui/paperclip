@@ -18,7 +18,6 @@ import {
   DNDKind,
   getCurrentFilePath,
   getInsertBox,
-  getInstanceInfoAtCurrentPoint,
   getNodeInfoAtCurrentPoint,
   InsertMode,
 } from "../../state";
@@ -187,18 +186,17 @@ const createEventHandler = (actions: Actions) => {
         [InsertMode.Text]: `text ""`,
       }[insertMode];
 
-      const exprInfo = ast.getExprInfoById(
+      const exprInfo = ast.getExprByVirtId(
         intersectingNode.nodeId,
         state.graph
       );
 
       if (exprInfo?.kind === ast.ExprKind.Slot) {
-        const instanceInfo = getInstanceInfoAtCurrentPoint(state);
+        const [instanceId] = intersectingNode.nodeId.split(".");
         const instance = virtHTML.getNodeById(
-          instanceInfo.nodeId,
+          instanceId,
           state.currentDocument.paperclip.html
         );
-
         actions.applyChanges([
           {
             appendInsert: {

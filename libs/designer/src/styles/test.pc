@@ -8,10 +8,10 @@ style someFont {
 }
 
 /**
- * @bounds(x: 91, y: 77, width: 258, height: 155)
+ * @bounds(x: 313, y: 48, width: 154, height: 155)
 */
 
-public component SlotInsertionTest {
+public component SlotA {
     render div header {
         style {
             position: relative
@@ -24,14 +24,38 @@ public component SlotInsertionTest {
                 style extends someFont
             }
         }
-        text "content" {
-            style extends someFont
+        slot child {
+            text "Contenfsfsfst" {
+                style {
+                    color: white
+                }
+            }
         }
     }
 }
 
 /**
- * @bounds(x: 433, y: 74, width: 255, height: 108)
+ * @bounds(x: 512, y: 51, width: 374, height: 138)
 */
 
-SlotInsertionTest
+public component SlotB {
+    render SlotA {
+        insert header {
+            slot child1 {
+                text "something"
+            }
+        }
+        insert child {
+            slot child {
+                text "something else"
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: 464, y: 170, width: 1024, height: 768)
+*/
+
+SlotB
+

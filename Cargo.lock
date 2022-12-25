@@ -454,6 +454,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "console_error_panic_hook"
+version = "0.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a06aeb73f470f66dcdbf7223caeebb85984942f22f1adb2a088cf9668146bbbc"
+dependencies = [
+ "cfg-if 1.0.0",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "const_format"
 version = "0.2.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1918,6 +1928,9 @@ dependencies = [
  "paperclip_proto",
  "pretty_assertions",
  "serde",
+ "tonic-web-wasm-client",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
 ]
 
 [[package]]
@@ -3214,6 +3227,25 @@ dependencies = [
  "tonic",
  "tower-service",
  "tracing",
+]
+
+[[package]]
+name = "tonic-web-wasm-client"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "48b047072b5eefde66066b37cc182bd71c98e47a297eb5b5298c84844f52c07c"
+dependencies = [
+ "base64 0.13.1",
+ "bytes",
+ "console_error_panic_hook",
+ "futures-core",
+ "http",
+ "http-body",
+ "httparse",
+ "reqwest",
+ "thiserror",
+ "tonic",
+ "tower",
 ]
 
 [[package]]

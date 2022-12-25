@@ -14,6 +14,7 @@ import {
   Import,
   Insert,
   Node,
+  Override,
   Reference,
   Render,
   Slot,
@@ -44,8 +45,11 @@ export namespace ast {
     Trigger,
     Slot,
     Insert,
+    Override,
     Style,
     Declaration,
+    Arithmetic,
+    FunctionCall,
   }
 
   export type BaseExprInfo<Expr, Kind extends ExprKind> = {
@@ -61,6 +65,8 @@ export namespace ast {
     | BaseExprInfo<Variant, ExprKind.Variant>
     | BaseExprInfo<Document, ExprKind.Document>
     | BaseExprInfo<Render, ExprKind.Render>
+    | BaseExprInfo<any, ExprKind.DocComment>
+    | BaseExprInfo<Override, ExprKind.Override>
     | BaseExprInfo<Import, ExprKind.Import>
     | BaseExprInfo<TextNode, ExprKind.TextNode>
     | BaseExprInfo<Trigger, ExprKind.Trigger>
@@ -123,24 +129,90 @@ export namespace ast {
     getDocumentBodyInner(item as Node) ||
     getComponentBodyInner(item as ComponentBodyItem);
 
-  export const getChildren = memoize(({ expr, kind }: InnerExpressionInfo) => {
-    switch (kind) {
-      case ExprKind.Component:
-      case ExprKind.Slot:
-      case ExprKind.Insert:
-      case ExprKind.Trigger:
-      case ExprKind.TextNode:
-      case ExprKind.Document:
-      case ExprKind.Element:
-        return expr.body || EMPTY_ARRAY;
-      case ExprKind.Render:
-        return [expr.node];
-      case ExprKind.Variant:
-        return expr.triggers || EMPTY_ARRAY;
-    }
+  export const getChildren = memoize(
+    ({ expr, kind }: InnerExpressionInfo): InnerExpressionInfo[] => {
+      switch (kind) {
+        case ExprKind.Component:
+        case ExprKind.Slot:
+        case ExprKind.Insert:
+        case ExprKind.Trigger:
+        case ExprKind.TextNode:
+        case ExprKind.Document:
+        case ExprKind.Element:
+          return (expr.body || EMPTY_ARRAY).map(getChildExprInner);
+        case ExprKind.Render:
+          return [getChildExprInner(expr.node)];
+        case ExprKind.Variant:
+          return (expr.triggers || EMPTY_ARRAY).map(getChildExprInner);
+      }
 
-    return EMPTY_ARRAY;
-  });
+      return EMPTY_ARRAY;
+    }
+  );
+
+  const getChildExprInner = (
+    expr: DocumentBodyItem | Node | ComponentBodyItem
+  ): InnerExpressionInfo => {
+    if ((expr as DocumentBodyItem).atom) {
+      return { expr: (expr as DocumentBodyItem).atom, kind: ExprKind.Atom };
+    }
+    if ((expr as DocumentBodyItem).component) {
+      return {
+        expr: (expr as DocumentBodyItem).component,
+        kind: ExprKind.Component,
+      };
+    }
+    if ((expr as DocumentBodyItem).element) {
+      return {
+        expr: (expr as DocumentBodyItem).element,
+        kind: ExprKind.Element,
+      };
+    }
+    if ((expr as DocumentBodyItem).docComment) {
+      return {
+        expr: (expr as DocumentBodyItem).docComment,
+        kind: ExprKind.DocComment,
+      };
+    }
+    if ((expr as DocumentBodyItem).import) {
+      return { expr: (expr as DocumentBodyItem).import, kind: ExprKind.Import };
+    }
+    if ((expr as DocumentBodyItem).text) {
+      return { expr: (expr as DocumentBodyItem).text, kind: ExprKind.TextNode };
+    }
+    if ((expr as DocumentBodyItem).trigger) {
+      return {
+        expr: (expr as DocumentBodyItem).trigger,
+        kind: ExprKind.Trigger,
+      };
+    }
+    if ((expr as ComponentBodyItem).render) {
+      return {
+        expr: (expr as ComponentBodyItem).render,
+        kind: ExprKind.Render,
+      };
+    }
+    if ((expr as ComponentBodyItem).variant) {
+      return {
+        expr: (expr as ComponentBodyItem).variant,
+        kind: ExprKind.Variant,
+      };
+    }
+    if ((expr as Node).insert) {
+      return { expr: (expr as Node).insert, kind: ExprKind.Insert };
+    }
+    if ((expr as Node).override) {
+      return { expr: (expr as Node).override, kind: ExprKind.Override };
+    }
+    if ((expr as Node).slot) {
+      return { expr: (expr as Node).slot, kind: ExprKind.Slot };
+    }
+    if ((expr as Node).style) {
+      return { expr: (expr as Node).style, kind: ExprKind.Style };
+    }
+    console.error(expr);
+    throw new Error(`Unhandled type`);
+  };
 
   export const getAncestorIds = memoize((id: string, graph: Graph) => {
     const ancestorIds: string[] = [];
@@ -207,7 +279,7 @@ export namespace ast {
 
       for (const id in exprs) {
         for (const child of getChildren(exprs[id])) {
-          map[getInnerExpression(child).id] = id;
+          map[child.expr.id] = id;
         }
       }
       return map;
@@ -620,7 +692,7 @@ export namespace ast {
     (expr: Render): Record<string, InnerExpressionInfo> => {
       return Object.assign(
         {
-          [expr.id]: { expr, kind: ExprKind.Element },
+          [expr.id]: { expr, kind: ExprKind.Render },
         },
         flattenNode(expr.node)
       );
@@ -630,7 +702,7 @@ export namespace ast {
   export const flattenVariant = memoize(
     (expr: Variant): Record<string, InnerExpressionInfo> => {
       return Object.assign({
-        [expr.id]: { expr, kind: ExprKind.Element },
+        [expr.id]: { expr, kind: ExprKind.Variant },
       });
     }
   );
@@ -696,7 +768,10 @@ export namespace ast {
       if (expr.arithmetic) {
         return Object.assign(
           {
-            [expr.arithmetic.id]: expr.arithmetic,
+            [expr.arithmetic.id]: {
+              expr: expr.arithmetic,
+              kind: ExprKind.Arithmetic,
+            },
           },
           flattenDeclarationValue(expr.arithmetic.left),
           flattenDeclarationValue(expr.arithmetic.right)
@@ -705,7 +780,10 @@ export namespace ast {
       if (expr.functionCall) {
         return Object.assign(
           {
-            [expr.functionCall.id]: expr.functionCall,
+            [expr.functionCall.id]: {
+              expr: expr.arithmetic,
+              kind: ExprKind.FunctionCall,
+            },
           },
           flattenDeclarationValue(expr.functionCall.arguments)
         );
@@ -758,10 +836,9 @@ export namespace ast {
     Boolean(exprId && !exprId.includes("."));
 
   export const isExpressionInComponent = (exprId: string, graph: Graph) => {
-    return getAncestorIds(exprId, graph).some(
-      (ancestorId) =>
-        getExprInfoById(ancestorId, graph).kind === ExprKind.Component
-    );
+    return getAncestorIds(exprId, graph).some((ancestorId) => {
+      return getExprInfoById(ancestorId, graph).kind === ExprKind.Component;
+    });
   };
 
   export const serializeDeclaration = (expr: DeclarationValue) => {

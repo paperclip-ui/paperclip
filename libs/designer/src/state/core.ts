@@ -397,6 +397,28 @@ export const findInsertAtPoint = (
   return null;
 };
 
+const getVirtId = (
+  current: ast.InnerExpressionInfo,
+  instancePath: string[],
+  graph: Graph
+) => {
+  let parts: string[] = [current.expr.id];
+  let curr = current;
+  while (
+    curr.kind === ast.ExprKind.Element &&
+    ast.isInstance(curr.expr, graph)
+  ) {
+    const component = ast.getInstanceComponent(curr.expr, graph);
+    curr = ast.getComponentRenderNode(component);
+
+    if (ast.isInstance(curr.expr, graph)) {
+      parts.push(curr.expr.id);
+    }
+  }
+
+  return [...instancePath, ...parts].join(".");
+};
+
 const findVirtBoxNodeInfo = (
   point: Point,
   current: ast.InnerExpressionInfo,
@@ -436,7 +458,7 @@ const findVirtBoxNodeInfo = (
     }
   }
 
-  const virtId = [...instancePath, current.expr.id].join(".");
+  const virtId = getVirtId(current, instancePath, graph);
   const box = boxes[virtId];
 
   // const box = boxes[current.id];

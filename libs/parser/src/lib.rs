@@ -1,6 +1,5 @@
 
 use wasm_bindgen::prelude::*;
-use paperclip_proto::ast::pc as ast;
 
 #[macro_use]
 pub mod base;

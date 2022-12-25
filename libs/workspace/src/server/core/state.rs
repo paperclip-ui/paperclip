@@ -4,7 +4,6 @@ use paperclip_config::ConfigContext;
 use paperclip_evaluator::css;
 use paperclip_evaluator::html;
 use paperclip_proto::ast::graph_ext::Graph;
-use paperclip_proto::ast_mutate::MutationResult;
 use paperclip_proto::virt::module::pc_module_import;
 use paperclip_proto::virt::module::{GlobalScript, PcModule, PcModuleImport, PccssImport};
 use std::collections::HashMap;
@@ -30,7 +29,6 @@ pub struct ServerState {
     pub options: StartOptions,
     pub screenshot_queue: HashSet<String>,
     pub screenshots_running: bool,
-    pub latest_ast_changes: Vec<MutationResult>,
     pub graph: Graph,
     pub evaluated_modules: HashMap<String, (css::virt::Document, html::virt::Document)>,
     pub updated_files: Vec<String>,
@@ -51,7 +49,6 @@ impl ServerState {
             file_cache: HashMap::new(),
             graph: Graph::new(),
             evaluated_modules: HashMap::new(),
-            latest_ast_changes: vec![],
             updated_files: vec![],
         }
     }

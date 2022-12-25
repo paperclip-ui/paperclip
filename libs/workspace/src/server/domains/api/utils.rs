@@ -1,8 +1,13 @@
 // https://github.com/hyperium/tonic/blob/master/examples/src/hyper_warp/server.rs
 
-use crate::server::{core::ServerEngineContext, io::ServerIO};
+use crate::server::{
+    core::{ServerEngineContext, ServerEvent},
+    io::ServerIO,
+};
 use anyhow::{Error, Result};
 use inflector::cases::kebabcase::to_kebab_case;
+use paperclip_proto::ast_mutate::{Mutation, MutationResult};
+use paperclip_proto_ext::ast_mutate::edit_graph;
 use std::path::{Path, PathBuf};
 
 // https://github.com/hyperium/tonic/blob/4b0ece6d2854af088fbc1bdb55c2cdd19ec9bb92/tonic-web/src/call.rs#L14
@@ -61,4 +66,28 @@ pub fn create_design_file<TIO: ServerIO>(
     ctx.io.write_file(&file_path, "".to_string())?;
 
     Ok(file_path)
+}
+
+pub async fn apply_mutations<TIO: ServerIO>(
+    mutations: &Vec<Mutation>,
+    ctx: ServerEngineContext<TIO>,
+) -> Result<Vec<MutationResult>> {
+    let mut graph = ctx.store.lock().unwrap().state.graph.clone();
+
+    println!("Applying {:?}", mutations);
+    let result = edit_graph(&mut graph, mutations, &ctx.io)?;
+
+    let mut latest_ast_changes = vec![];
+
+    for (path, changes) in &result {
+        latest_ast_changes.extend(changes.clone());
+        println!("CHANGED PATH {}", path);
+    }
+
+    ctx.emit(ServerEvent::MutationsApplied {
+        result,
+        updated_graph: graph,
+    });
+
+    Ok(latest_ast_changes)
 }

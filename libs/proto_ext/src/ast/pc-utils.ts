@@ -14,11 +14,13 @@ import {
   Import,
   Insert,
   Node,
+  Override,
   Reference,
   Render,
   Slot,
   Style,
   TextNode,
+  Trigger,
   Variant,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
 
@@ -28,6 +30,50 @@ export namespace ast {
   export type InnerExpression = Document | InnerNode | Style;
 
   export type OuterExpression = DocumentBodyItem | Node | DeclarationValue;
+
+  export enum ExprKind {
+    Atom,
+    Component,
+    DocComment,
+    Reference,
+    Element,
+    Variant,
+    Document,
+    Render,
+    Import,
+    TextNode,
+    Trigger,
+    Slot,
+    Insert,
+    Override,
+    Style,
+    Declaration,
+    Arithmetic,
+    FunctionCall,
+  }
+
+  export type BaseExprInfo<Expr, Kind extends ExprKind> = {
+    expr: Expr;
+    kind: Kind;
+  };
+
+  export type InnerExpressionInfo =
+    | BaseExprInfo<Component, ExprKind.Component>
+    | BaseExprInfo<Atom, ExprKind.Atom>
+    | BaseExprInfo<Reference, ExprKind.Reference>
+    | BaseExprInfo<Element, ExprKind.Element>
+    | BaseExprInfo<Variant, ExprKind.Variant>
+    | BaseExprInfo<Document, ExprKind.Document>
+    | BaseExprInfo<Render, ExprKind.Render>
+    | BaseExprInfo<any, ExprKind.DocComment>
+    | BaseExprInfo<Override, ExprKind.Override>
+    | BaseExprInfo<Import, ExprKind.Import>
+    | BaseExprInfo<TextNode, ExprKind.TextNode>
+    | BaseExprInfo<Trigger, ExprKind.Trigger>
+    | BaseExprInfo<Slot, ExprKind.Slot>
+    | BaseExprInfo<Insert, ExprKind.Insert>
+    | BaseExprInfo<Style, ExprKind.Style>
+    | BaseExprInfo<StyleDeclaration, ExprKind.Declaration>;
 
   export const getDocumentBodyInner = (item: DocumentBodyItem) => {
     // oneof forces us to do this :(
@@ -82,21 +128,91 @@ export namespace ast {
     getNodeInner(item as DocumentBodyItem) ||
     getDocumentBodyInner(item as Node) ||
     getComponentBodyInner(item as ComponentBodyItem);
-  export const getChildren = memoize((expr: InnerExpression) => {
-    const body = (expr as Document | InnerNode | Component).body as Array<
-      DocumentBodyItem | ComponentBodyItem | Node
-    >;
 
-    if (body) {
-      return body;
+  export const getChildren = memoize(
+    ({ expr, kind }: InnerExpressionInfo): InnerExpressionInfo[] => {
+      switch (kind) {
+        case ExprKind.Component:
+        case ExprKind.Slot:
+        case ExprKind.Insert:
+        case ExprKind.Trigger:
+        case ExprKind.TextNode:
+        case ExprKind.Document:
+        case ExprKind.Element:
+          return (expr.body || EMPTY_ARRAY).map(getChildExprInner);
+        case ExprKind.Render:
+          return [getChildExprInner(expr.node)];
+        case ExprKind.Variant:
+          return (expr.triggers || EMPTY_ARRAY).map(getChildExprInner);
+      }
+
+      return EMPTY_ARRAY;
     }
+  );
 
-    if ((expr as Render).node) {
-      return [(expr as Render).node];
+  const getChildExprInner = (
+    expr: DocumentBodyItem | Node | ComponentBodyItem
+  ): InnerExpressionInfo => {
+    if ((expr as DocumentBodyItem).atom) {
+      return { expr: (expr as DocumentBodyItem).atom, kind: ExprKind.Atom };
     }
-
-    return EMPTY_ARRAY;
-  });
+    if ((expr as DocumentBodyItem).component) {
+      return {
+        expr: (expr as DocumentBodyItem).component,
+        kind: ExprKind.Component,
+      };
+    }
+    if ((expr as DocumentBodyItem).element) {
+      return {
+        expr: (expr as DocumentBodyItem).element,
+        kind: ExprKind.Element,
+      };
+    }
+    if ((expr as DocumentBodyItem).docComment) {
+      return {
+        expr: (expr as DocumentBodyItem).docComment,
+        kind: ExprKind.DocComment,
+      };
+    }
+    if ((expr as DocumentBodyItem).import) {
+      return { expr: (expr as DocumentBodyItem).import, kind: ExprKind.Import };
+    }
+    if ((expr as DocumentBodyItem).text) {
+      return { expr: (expr as DocumentBodyItem).text, kind: ExprKind.TextNode };
+    }
+    if ((expr as DocumentBodyItem).trigger) {
+      return {
+        expr: (expr as DocumentBodyItem).trigger,
+        kind: ExprKind.Trigger,
+      };
+    }
+    if ((expr as ComponentBodyItem).render) {
+      return {
+        expr: (expr as ComponentBodyItem).render,
+        kind: ExprKind.Render,
+      };
+    }
+    if ((expr as ComponentBodyItem).variant) {
+      return {
+        expr: (expr as ComponentBodyItem).variant,
+        kind: ExprKind.Variant,
+      };
+    }
+    if ((expr as Node).insert) {
+      return { expr: (expr as Node).insert, kind: ExprKind.Insert };
+    }
+    if ((expr as Node).override) {
+      return { expr: (expr as Node).override, kind: ExprKind.Override };
+    }
+    if ((expr as Node).slot) {
+      return { expr: (expr as Node).slot, kind: ExprKind.Slot };
+    }
+    if ((expr as Node).style) {
+      return { expr: (expr as Node).style, kind: ExprKind.Style };
+    }
+    console.error(expr);
+    throw new Error(`Unhandled type`);
+  };
 
   export const getAncestorIds = memoize((id: string, graph: Graph) => {
     const ancestorIds: string[] = [];
@@ -109,11 +225,11 @@ export namespace ast {
     const exprsById = flattenDocument(dep.document);
     const childParentMap = getChildParentMap(exprsById);
 
-    let curr = exprsById[id];
+    let curr = exprsById[id].expr;
 
     while (curr) {
       const nextId = childParentMap[curr.id];
-      const next = exprsById[nextId];
+      const next = exprsById[nextId]?.expr;
 
       if (next) {
         ancestorIds.push(next.id);
@@ -158,12 +274,12 @@ export namespace ast {
   export const getShadowExprId = (id: string) => id.split(".").pop();
 
   export const getChildParentMap = memoize(
-    (exprs: Record<string, InnerExpression>) => {
+    (exprs: Record<string, InnerExpressionInfo>) => {
       const map: Record<string, string> = {};
 
       for (const id in exprs) {
         for (const child of getChildren(exprs[id])) {
-          map[getInnerExpression(child).id] = id;
+          map[child.expr.id] = id;
         }
       }
       return map;
@@ -202,6 +318,40 @@ export namespace ast {
     );
   };
 
+  export const getComponentSlots = (
+    component: Component,
+    graph: Graph
+  ): Slot[] => {
+    const render = getComponentRenderNode(component);
+
+    return render
+      ? (Object.values(flattenNode(render.expr))
+          .filter((descendent) => {
+            return descendent.kind === ExprKind.Slot;
+          })
+          .map((info) => info.expr) as Slot[])
+      : [];
+  };
+
+  export const getComponentInstances = memoize(
+    (componentId: string, graph: Graph) => {
+      const instances: Element[] = [];
+      for (const path in graph.dependencies) {
+        instances.push(
+          ...(Object.values(flattenDocument(graph.dependencies[path].document))
+            .filter(
+              (info) =>
+                info.kind === ExprKind.Element &&
+                getInstanceComponent(info.expr, graph)?.id === componentId
+            )
+            .map((info) => info.expr) as Element[])
+        );
+      }
+
+      return instances;
+    }
+  );
+
   export const getComponentVariants = memoize((component: Component) => {
     return component.body
       .filter((expr) => expr.variant)
@@ -215,7 +365,7 @@ export namespace ast {
       variantIds?: string[]
     ): Record<string, DeclarationValue> => {
       // TODO
-      const node = getExprById(exprId.split(".").pop(), graph);
+      const node = getExprById(exprId.split(".").pop(), graph) as Element;
       const map: Record<string, DeclarationValue> = {};
       if (!node || !node.body) {
         return map;
@@ -310,21 +460,15 @@ export namespace ast {
   export const getComponentRenderExpr = (component: Component) =>
     component.body.find((body) => body.render)?.render;
 
-  export const getComponentRenderNode = (component: Component): Node => {
+  export const getComponentRenderNode = (
+    component: Component
+  ): InnerExpressionInfo | undefined => {
     const render = getComponentRenderExpr(component);
-    return render && (getInnerExpression(render.node) as Node);
+    return render && getChildExprInner(render.node);
   };
 
   export const isInstance = (element: Element, graph: Graph) => {
     return getInstanceComponent(element, graph) != null;
-  };
-
-  export const isComponent = (expr: InnerExpression): expr is Component => {
-    return (
-      (expr as Component).name != null &&
-      // TODO: this is wrong.
-      (expr as Component).body?.some((expr) => expr.render != null)
-    );
   };
 
   export const isVariant = (
@@ -345,7 +489,7 @@ export namespace ast {
     graph: Graph
   ) => {
     const ancestorId = getAncestorIds(expr.id, graph).find((ancestorId) => {
-      return isComponent(getExprById(ancestorId, graph));
+      return getExprInfoById(ancestorId, graph).kind === ExprKind.Component;
     });
 
     return ancestorId && (getExprById(ancestorId, graph) as Component);
@@ -405,7 +549,8 @@ export namespace ast {
     (exprId: string, graph: Graph) => {
       for (const path in graph.dependencies) {
         const dep = graph.dependencies[path];
-        if (containsExpression(exprId, dep.document)) {
+
+        if (flattenDocument(dep.document)[exprId] != null) {
           return path;
         }
       }
@@ -415,13 +560,6 @@ export namespace ast {
 
   export const getOwnerDependency = (exprId: string, graph: Graph) => {
     return graph.dependencies[getOwnerDependencyPath(exprId, graph)];
-  };
-
-  export const containsExpression = (
-    exprId: string,
-    ancestor: InnerExpression
-  ) => {
-    return flattenUnknownInnerExpression(ancestor)[exprId] != null;
   };
 
   export const getExprByVirtId = (id: string, graph: Graph) =>
@@ -434,25 +572,64 @@ export namespace ast {
       .map(getInnerExpression);
 
   export const getExprById = (id: string, graph: Graph) => {
+    return getExprInfoById(id, graph)?.expr;
+  };
+
+  export const getExprInfoById = (id: string, graph: Graph) => {
     const dep = getOwnerDependency(id, graph);
     return dep && flattenDocument(dep.document)[id];
   };
 
-  export const flattenUnknownInnerExpression = memoize(
-    (expr: Document | Node): Record<string, InnerExpression> =>
-      Object.assign(flattenDocument(expr as Document), flattenElement(expr))
+  export const flattenExpressionInfo = memoize(
+    ({
+      expr,
+      kind,
+    }: InnerExpressionInfo): Record<string, InnerExpressionInfo> => {
+      switch (kind) {
+        case ExprKind.Atom:
+          return flattenAtom(expr);
+        case ExprKind.Component:
+          return flattenComponent(expr);
+        case ExprKind.Declaration:
+          return flattenDeclaration(expr);
+        case ExprKind.Document:
+          return flattenDocument(expr);
+        case ExprKind.Element:
+          return flattenElement(expr);
+        case ExprKind.Insert:
+          return flattenInsert(expr);
+        case ExprKind.Reference:
+          return flattenReference(expr);
+        case ExprKind.Render:
+          return flattenRender(expr);
+        case ExprKind.Slot:
+          return flattenSlot(expr);
+        case ExprKind.Style:
+          return flattenStyle(expr);
+        case ExprKind.TextNode:
+          return flattenTextNode(expr);
+        case ExprKind.Variant:
+          return flattenVariant(expr);
+      }
+
+      return {};
+    }
   );
 
-  export const flattenDocument = memoize((expr: Document) => {
-    return Object.assign(
-      {
-        [expr.id]: expr,
-      },
-      ...expr.body.map(flattenDocumentBodyItem)
-    );
-  });
+  export const flattenDocument = memoize(
+    (expr: Document): Record<string, InnerExpressionInfo> => {
+      return Object.assign(
+        {
+          [expr.id]: { expr, kind: ExprKind.Document },
+        },
+        ...expr.body.map(flattenDocumentBodyItem)
+      );
+    }
+  );
 
-  export const flattenDocumentBodyItem = (expr: DocumentBodyItem) => {
+  export const flattenDocumentBodyItem = (
+    expr: DocumentBodyItem
+  ): Record<string, InnerExpressionInfo> => {
     if (expr.element) {
       return flattenElement(expr.element);
     }
@@ -468,132 +645,167 @@ export namespace ast {
     return {};
   };
 
-  export const flattenElement = memoize((expr: Element) => {
-    return Object.assign(
-      {
-        [expr.id]: expr,
-      },
-      ...expr.body.map(flattenNode)
-    );
-  });
-
-  export const flattenComponent = memoize((expr: Component) => {
-    return Object.assign(
-      {
-        [expr.id]: expr,
-      },
-      ...expr.body.map(flattenComponentBodyItem)
-    );
-  });
-
-  export const flattenAtom = memoize((expr: Atom) => {
-    return Object.assign(
-      {
-        [expr.id]: expr,
-      },
-      flattenDeclarationValue(expr.value)
-    );
-  });
-
-  export const flattenComponentBodyItem = memoize((expr: ComponentBodyItem) => {
-    if (expr.render) {
-      return flattenRender(expr.render);
-    }
-    if (expr.variant) {
-      return flattenVariant(expr.variant);
-    }
-    return {};
-  });
-
-  export const flattenRender = memoize((expr: Render) => {
-    return Object.assign(
-      {
-        [expr.id]: expr,
-      },
-      flattenNode(expr.node)
-    );
-  });
-
-  export const flattenVariant = memoize((expr: Variant) => {
-    return Object.assign({
-      [expr.id]: expr,
-    });
-  });
-
-  export const flattenTextNode = memoize((expr: TextNode) => {
-    return {
-      [expr.id]: expr,
-    };
-  });
-
-  export const flattenSlot = memoize((expr: Slot) => {
-    return Object.assign(
-      {
-        [expr.id]: expr,
-      },
-      ...expr.body.map(flattenNode)
-    );
-  });
-
-  export const flattenInsert = memoize((expr: Insert) => {
-    return Object.assign(
-      {
-        [expr.id]: expr,
-      },
-      ...expr.body.map(flattenNode)
-    );
-  });
-
-  export const flattenStyle = memoize((expr: Style) => {
-    return Object.assign(
-      {
-        [expr.id]: expr,
-      },
-      ...expr.declarations.map(flattenDeclaration),
-      ...(expr.extends || []).map(flattenReference)
-    );
-  });
-
-  export const flattenDeclaration = memoize((expr: StyleDeclaration) => {
-    return Object.assign(
-      {
-        [expr.id]: expr,
-      },
-      flattenDeclarationValue(expr.value!)
-    );
-  });
-
-  export const flattenDeclarationValue = memoize((expr: DeclarationValue) => {
-    if (expr.arithmetic) {
+  export const flattenElement = memoize(
+    (expr: Element): Record<string, InnerExpressionInfo> => {
       return Object.assign(
         {
-          [expr.arithmetic.id]: expr.arithmetic,
+          [expr.id]: { expr, kind: ExprKind.Element },
         },
-        flattenDeclarationValue(expr.arithmetic.left),
-        flattenDeclarationValue(expr.arithmetic.right)
+        ...expr.body.map(flattenNode)
       );
     }
-    if (expr.functionCall) {
+  );
+
+  export const flattenComponent = memoize(
+    (expr: Component): Record<string, InnerExpressionInfo> => {
       return Object.assign(
         {
-          [expr.functionCall.id]: expr.functionCall,
+          [expr.id]: { expr, kind: ExprKind.Component },
         },
-        flattenDeclarationValue(expr.functionCall.arguments)
+        ...expr.body.map(flattenComponentBodyItem)
       );
     }
-    if (expr.reference) {
-      return {
-        [expr.reference.id]: expr.reference,
-      };
+  );
+
+  export const flattenAtom = memoize(
+    (expr: Atom): Record<string, InnerExpressionInfo> => {
+      return Object.assign(
+        {
+          [expr.id]: { expr, kind: ExprKind.Atom },
+        },
+        flattenDeclarationValue(expr.value)
+      );
     }
+  );
 
-    return {};
-  });
-  export const flattenReference = memoize((expr: Reference) => ({
-    [expr.id]: expr,
-  }));
+  export const flattenComponentBodyItem = memoize(
+    (expr: ComponentBodyItem): Record<string, InnerExpressionInfo> => {
+      if (expr.render) {
+        return flattenRender(expr.render);
+      }
+      if (expr.variant) {
+        return flattenVariant(expr.variant);
+      }
+      return {};
+    }
+  );
 
-  export const flattenNode = (expr: Node) => {
+  export const flattenRender = memoize(
+    (expr: Render): Record<string, InnerExpressionInfo> => {
+      return Object.assign(
+        {
+          [expr.id]: { expr, kind: ExprKind.Render },
+        },
+        flattenNode(expr.node)
+      );
+    }
+  );
+
+  export const flattenVariant = memoize(
+    (expr: Variant): Record<string, InnerExpressionInfo> => {
+      return Object.assign({
+        [expr.id]: { expr, kind: ExprKind.Variant },
+      });
+    }
+  );
+
+  export const flattenTextNode = memoize(
+    (expr: TextNode): Record<string, InnerExpressionInfo> => {
+      return Object.assign(
+        {
+          [expr.id]: { expr, kind: ExprKind.TextNode },
+        },
+        ...expr.body.map(flattenNode)
+      );
+    }
+  );
+
+  export const flattenSlot = memoize(
+    (expr: Slot): Record<string, InnerExpressionInfo> => {
+      return Object.assign(
+        {
+          [expr.id]: { expr, kind: ExprKind.Slot },
+        },
+        ...expr.body.map(flattenNode)
+      );
+    }
+  );
+
+  export const flattenInsert = memoize(
+    (expr: Insert): Record<string, InnerExpressionInfo> => {
+      return Object.assign(
+        {
+          [expr.id]: { expr, kind: ExprKind.Insert },
+        },
+        ...expr.body.map(flattenNode)
+      );
+    }
+  );
+
+  export const flattenStyle = memoize(
+    (expr: Style): Record<string, InnerExpressionInfo> => {
+      return Object.assign(
+        {
+          [expr.id]: { expr, kind: ExprKind.Style },
+        },
+        ...expr.declarations.map(flattenDeclaration),
+        ...(expr.extends || []).map(flattenReference)
+      );
+    }
+  );
+
+  export const flattenDeclaration = memoize(
+    (expr: StyleDeclaration): Record<string, InnerExpressionInfo> => {
+      return Object.assign(
+        {
+          [expr.id]: { expr, kind: ExprKind.Declaration },
+        },
+        flattenDeclarationValue(expr.value!)
+      );
+    }
+  );
+
+  export const flattenDeclarationValue = memoize(
+    (expr: DeclarationValue): Record<string, InnerExpressionInfo> => {
+      if (expr.arithmetic) {
+        return Object.assign(
+          {
+            [expr.arithmetic.id]: {
+              expr: expr.arithmetic,
+              kind: ExprKind.Arithmetic,
+            },
+          },
+          flattenDeclarationValue(expr.arithmetic.left),
+          flattenDeclarationValue(expr.arithmetic.right)
+        );
+      }
+      if (expr.functionCall) {
+        return Object.assign(
+          {
+            [expr.functionCall.id]: {
+              expr: expr.arithmetic,
+              kind: ExprKind.FunctionCall,
+            },
+          },
+          flattenDeclarationValue(expr.functionCall.arguments)
+        );
+      }
+      if (expr.reference) {
+        return flattenReference(expr.reference);
+      }
+
+      return {};
+    }
+  );
+  export const flattenReference = memoize(
+    (expr: Reference): Record<string, InnerExpressionInfo> => ({
+      [expr.id]: { expr, kind: ExprKind.Reference },
+    })
+  );
+
+  export const flattenNode = (
+    expr: Node
+  ): Record<string, InnerExpressionInfo> => {
     if (expr.element) {
       return flattenElement(expr.element);
     }
@@ -626,9 +838,9 @@ export namespace ast {
     Boolean(exprId && !exprId.includes("."));
 
   export const isExpressionInComponent = (exprId: string, graph: Graph) => {
-    return getAncestorIds(exprId, graph).some((ancestorId) =>
-      isComponent(getExprById(ancestorId, graph))
-    );
+    return getAncestorIds(exprId, graph).some((ancestorId) => {
+      return getExprInfoById(ancestorId, graph).kind === ExprKind.Component;
+    });
   };
 
   export const serializeDeclaration = (expr: DeclarationValue) => {

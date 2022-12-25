@@ -67,6 +67,37 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, DeleteExpression> {
                 .get_outer(),
             );
         }
+
+        let mut rm_i = None;
+
+        for (i, child) in &mut expr.body.iter_mut().enumerate() {
+            if let ast::pc::node::Inner::Insert(ins) = child.get_inner_mut() {
+                if matches!(
+                    try_remove_child!(ins.body, &self.mutation.expression_id),
+                    Some(_)
+                ) {
+                    self.changes.push(
+                        mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
+                            id: self.mutation.expression_id.to_string(),
+                        })
+                        .get_outer(),
+                    );
+                }
+
+                if ins.body.len() == 0 {
+                    rm_i = Some(i);
+                }
+            }
+        }
+        if let Some(i) = rm_i {
+            expr.body.remove(i);
+            self.changes.push(
+                mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
+                    id: self.mutation.expression_id.to_string(),
+                })
+                .get_outer(),
+            );
+        }
         VisitorResult::Continue
     }
     fn visit_slot(&mut self, expr: &mut ast::pc::Slot) -> VisitorResult<()> {

@@ -4,7 +4,7 @@ import {
   waitUntilDesignerReady,
 } from "../controls";
 
-describe(__filename + "#", () => {
+describe.skip(__filename + "#", () => {
   it(`When a variant is inserted, it is selected`, async () => {
     const designer = await startDesigner({
       "entry.pc": `

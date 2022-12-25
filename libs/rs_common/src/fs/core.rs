@@ -1,6 +1,8 @@
 use anyhow::Error;
 use anyhow::Result;
 use futures_core::stream::Stream;
+
+#[cfg(feature = "local")]
 use path_absolutize::*;
 use std::fs;
 use std::path::Path;
@@ -41,9 +43,11 @@ pub trait FileResolver: Clone {
     fn resolve_file(&self, from: &str, to: &str) -> Result<String>;
 }
 
+#[cfg(feature = "local")]
 #[derive(Default, Clone)]
 pub struct LocalFileResolver;
 
+#[cfg(feature = "local")]
 impl FileResolver for LocalFileResolver {
     fn resolve_file(&self, from_path: &str, to_path: &str) -> Result<String> {
         Ok(String::from(

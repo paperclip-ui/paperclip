@@ -368,6 +368,7 @@ export const getSelectedExprStyles = (
   if (!virtId) {
     return [];
   }
+
   const exprStyle = ast.computeElementStyle(virtId, state.graph);
   const computedStyle = state.computedStyles[virtId];
 
@@ -406,6 +407,13 @@ export const getSelectedExpression = (state: DesignerState) => {
   return (
     state.selectedTargetId &&
     ast.getExprByVirtId(state.selectedTargetId, state.graph)
+  );
+};
+
+export const getSelectedExpressionInfo = (state: DesignerState) => {
+  return (
+    state.selectedTargetId &&
+    ast.getExprInfoById(state.selectedTargetId, state.graph)
   );
 };
 

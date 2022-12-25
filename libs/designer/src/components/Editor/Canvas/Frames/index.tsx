@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import { computeAllStyles, getFrameRects } from "@paperclip-ui/web-renderer";
 import { memo } from "react";
 import { Frame } from "./Frame";
-import { throttle } from "lodash";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   getCurrentDocument,
@@ -10,7 +9,6 @@ import {
   StyleOverrides,
 } from "@paperclip-ui/designer/src/state";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
-import { designerEvents } from "@paperclip-ui/designer/src/events";
 
 type FramesProps = {
   expandedFrameIndex?: number | null;

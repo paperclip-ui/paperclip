@@ -1,6 +1,0 @@
-{
-  "compilerOptions": {
-    "target": "react"
-  },
-  "srcDir": "./src"
-}

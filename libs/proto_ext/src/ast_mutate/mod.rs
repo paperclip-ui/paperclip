@@ -1,4 +1,5 @@
 mod append_child;
+mod append_insert;
 mod base;
 mod convert_to_component;
 mod convert_to_slot;
@@ -6,18 +7,22 @@ mod delete_expression;
 mod delete_style_declarations;
 mod insert_frame;
 mod set_frame_bounds;
+mod set_id;
 mod set_style_declarations;
+mod set_text_node_value;
 mod toggle_variants;
 mod update_variant;
-
 #[macro_use]
 mod utils;
+use std::rc::Rc;
+
 use crate::{
     ast::all::{MutableVisitable, MutableVisitor, VisitorResult},
     graph::{get_document_imports, io::IO},
 };
 use anyhow::Result;
 pub use append_child::*;
+pub use append_insert::*;
 pub use base::*;
 pub use convert_to_component::*;
 pub use convert_to_slot::*;
@@ -27,7 +32,9 @@ pub use paperclip_proto::ast;
 use paperclip_proto::ast::graph_ext::Graph;
 pub use paperclip_proto::ast_mutate::*;
 pub use set_frame_bounds::*;
+pub use set_id::*;
 pub use set_style_declarations::*;
+pub use set_text_node_value::*;
 pub use toggle_variants::*;
 pub use update_variant::*;
 
@@ -43,7 +50,8 @@ macro_rules! mutations {
               mutation::Inner::$name(mutation) => {
                 let mut sub: base::EditContext<$name> = base::EditContext {
                   mutation,
-                  dependency: self.dependency.clone(),
+                  path: self.path.clone(),
+                  graph: self.graph.clone(),
                   changes: vec![]
                 };
                 let ret = document.accept(&mut sub);
@@ -67,11 +75,14 @@ pub fn edit_graph<TIO: IO>(
 ) -> Result<Vec<(String, Vec<MutationResult>)>> {
     let mut changed: Vec<(String, Vec<MutationResult>)> = vec![];
 
+    let ctx_graph = Rc::new(graph.clone());
+
     for mutation in mutations {
         for (path, dep) in &mut graph.dependencies {
             let mut ctx = EditContext {
                 mutation,
-                dependency: dep.clone(),
+                path: path.clone(),
+                graph: ctx_graph.clone(),
                 changes: vec![],
             };
             let doc = dep.document.as_mut().expect("Document must exist");
@@ -93,9 +104,12 @@ mutations! {
   InsertFrame,
   ToggleVariants,
   UpdateVariant,
+  AppendInsert,
+  SetTextNodeValue,
   ConvertToComponent,
   ConvertToSlot,
   DeleteStyleDeclarations,
+  SetId,
   SetStyleDeclarations,
   DeleteExpression,
   AppendChild,

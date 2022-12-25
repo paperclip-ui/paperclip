@@ -57,7 +57,7 @@ fn create_slot<'a>(ctx: &EditContext<'a, ConvertToSlot>, child: Node, checksum: 
         id: format!("{}-slot", checksum),
         name: get_unique_slot_name(
             &ctx.mutation.expression_id,
-            ctx.dependency
+            ctx.get_dependency()
                 .document
                 .as_ref()
                 .expect("Document must exist"),

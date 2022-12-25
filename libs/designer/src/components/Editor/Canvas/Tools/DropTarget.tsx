@@ -1,8 +1,5 @@
 import { useDispatch } from "@paperclip-ui/common";
-import {
-  DesignerEvent,
-  designerEvents,
-} from "@paperclip-ui/designer/src/events";
+import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { DNDKind } from "@paperclip-ui/designer/src/state";
 import React, { useEffect, useRef, useState } from "react";
 import { useDrop } from "react-dnd";

@@ -32,6 +32,7 @@ message ResourceFiles {
 message ApplyMutationsRequest {
   repeated ast_mutate.Mutation mutations = 1;
 }
+
 message ApplyMutationsResult {
   repeated ast_mutate.MutationResult changes = 1;
 }

@@ -30,10 +30,14 @@ message Mutation {
 
     // General
     DeleteExpression delete_expression = 11;
+    SetId set_id = 16;
 
     // Component
     UpdateVariant update_variant = 12;
     ToggleVariants toggle_variants = 13;
+
+    // Instance
+    AppendInsert append_insert = 17;
   }
 }
 
@@ -96,6 +100,11 @@ message ConvertToComponent {
   string expression_id = 1;
 }
 
+message SetId {
+  string expression_id = 1;
+  string value = 2;
+}
+
 message ConvertToSlot {
   string expression_id = 1;
 }
@@ -125,6 +134,12 @@ message SetElementParameter {
   string element_id = 1;
   string parameter_name = 2;
   ast.pc.SimpleExpression parameter_value = 3;
+}
+
+message AppendInsert {
+  string instance_id = 1;
+  string slot_name = 2;
+  string child_source = 3;
 }
 
 message InsertFrame {

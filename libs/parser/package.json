@@ -1,0 +1,15 @@
+{
+  "name": "@paperclip-ui/parser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "wasm-pack build --target nodejs; tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@paperclip-ui/proto": "workspace:^"
+  }
+}

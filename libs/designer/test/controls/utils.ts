@@ -3,10 +3,7 @@
  */
 
 import { ShortcutCommand } from "@paperclip-ui/designer/src/domains/shortcuts/state";
-import {
-  DesignerEvent,
-  designerEvents,
-} from "@paperclip-ui/designer/src/events";
+import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { Point } from "@paperclip-ui/designer/src/state/geom";
 import { renderFrames } from "@paperclip-ui/web-renderer";
 import { Designer } from "./mock-designer";
@@ -65,15 +62,16 @@ export const insertCanvasElement = async (
     type: "shortcuts/itemSelected",
     payload: { command: ShortcutCommand.InsertElement },
   });
-  designer.machine.dispatch(
-    designerEvents.canvasMouseDown({
+  designer.machine.dispatch({
+    type: "editor/canvasMouseDown",
+    payload: {
       position: { x: 0, y: 0 },
       metaKey: false,
       ctrlKey: false,
       shiftKey: false,
       timestamp: 0,
-    })
-  );
+    },
+  });
   designer.machine.dispatch({
     type: "editor/canvasMouseUp",
     payload: {

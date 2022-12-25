@@ -1,7 +1,0 @@
-/**
- * @bounds(left: -119, right: 481, top: -120, bottom: 280)
- */
-public component BlankFormOptions {
-  render div
-}
-

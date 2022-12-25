@@ -1,0 +1,15 @@
+{
+  "name": "@paperclip-ui/evaluator",
+  "version": "1.0.0",
+  "description": "```rust use paperclip_evaluator::evaluator::{Evaluator, LoadedData};",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "wasm-pack build --target nodejs; tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@paperclip-ui/proto": "workspace:^"
+  }
+}

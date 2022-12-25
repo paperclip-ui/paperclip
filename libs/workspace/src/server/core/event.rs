@@ -2,7 +2,6 @@ use paperclip_common::fs::FileWatchEvent;
 use paperclip_evaluator::css;
 use paperclip_evaluator::html;
 use paperclip_proto::ast::graph_ext::Graph;
-use paperclip_proto::ast_mutate::Mutation;
 use paperclip_proto::ast_mutate::MutationResult;
 use std::collections::HashMap;
 
@@ -27,9 +26,6 @@ pub enum ServerEvent {
         expr_id: String,
     },
     SaveRequested,
-    ApplyMutationRequested {
-        mutations: Vec<Mutation>,
-    },
     MutationsApplied {
         result: Vec<(String, Vec<MutationResult>)>,
         updated_graph: Graph,

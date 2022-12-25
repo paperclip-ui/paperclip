@@ -1,4 +1,4 @@
-import { BaseEvent, eventCreators, identity } from "@paperclip-ui/common";
+import { BaseEvent } from "@paperclip-ui/common";
 
 export type Started = BaseEvent<"server/started", { port: number }>;
 export type FileChanged = BaseEvent<

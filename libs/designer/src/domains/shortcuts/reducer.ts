@@ -42,11 +42,12 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
       return produce(state, (newState) => {
         newState.showLeftSidebar = newState.showRightsidebar =
           !newState.showLeftSidebar;
-        console.log(newState.showLeftSidebar);
       });
     case ShortcutCommand.Escape:
       return produce(state, (newState) => {
         newState.insertMode = null;
+        newState.showTextEditor = false;
+        newState.scopedElementId = null;
       });
     case ShortcutCommand.Delete:
       return produce(state, (newState) => {

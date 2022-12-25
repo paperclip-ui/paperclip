@@ -4,20 +4,20 @@ import * as styles from "./index.pc";
 import { Frames } from "./Frames";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
-  flattenFrameBoxes,
   getEditorState,
-  getSelectedNodePath,
+  getHighlightedNodeBox,
+  getSelectedNodeBox,
   InsertMode,
 } from "@paperclip-ui/designer/src/state";
-import {
-  DesignerEvent,
-  designerEvents,
-} from "@paperclip-ui/designer/src/events";
+import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { Selectable } from "./Selectable";
 import { InsertElement } from "./InsertElement";
 import { ContextMenu } from "../../../ContextMenu";
 import { getEntityShortcuts } from "@paperclip-ui/designer/src/domains/shortcuts/state";
 import { DropTarget } from "./DropTarget";
+import { TextEditor } from "./TextEditor";
+import { getSelectedExpressionInfo } from "@paperclip-ui/designer/src/state/pc";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
 export const Tools = () => {
   const {
@@ -31,12 +31,14 @@ export const Tools = () => {
     insertMode,
     resizerMoving,
     currentDocument,
+    selectedExpr,
+    showTextEditor,
     canvas,
     dispatch,
     contextMenu,
     selectedBox,
     readonly,
-    hoveringBox,
+    highlightedBox,
     toolsLayerEnabled,
   } = useTools();
 
@@ -74,7 +76,7 @@ export const Tools = () => {
             <Selectable
               canvasScroll={canvas.scrollPosition}
               canvasTransform={canvas.transform}
-              box={hoveringBox}
+              box={highlightedBox}
               cursor={cursor}
             />
           )}
@@ -88,19 +90,20 @@ export const Tools = () => {
               cursor={cursor}
             />
           ) : null}
+          {selectedBox &&
+            showTextEditor &&
+            selectedExpr.kind === ast.ExprKind.TextNode && (
+              <TextEditor
+                expr={selectedExpr.expr}
+                box={selectedBox}
+                canvas={canvas}
+              />
+            )}
           <Frames
             frames={frames}
             canvasTransform={canvas.transform}
             readonly={readonly}
           />
-          {/* {optionKeyDown && selectedBox && hoveringBox ? (
-          <Distance
-            canvasScroll={canvas.scrollPosition}
-            canvasTransform={canvas.transform}
-            from={selectedBox}
-            to={hoveringBox}
-          />
-        ) : null} */}
         </styles.Tools>
       </ContextMenu>
     </DropTarget>
@@ -111,18 +114,22 @@ const useTools = () => {
   const dispatch = useDispatch<DesignerEvent>();
   const {
     canvas,
-    highlightNodePath,
     optionKeyDown,
     resizerMoving,
     readonly,
+    showTextEditor,
     insertMode,
-    rects: frameBoxes,
+    rects,
     currentDocument,
   } = useSelector(getEditorState);
+
+  const highlightedBox = useSelector(getHighlightedNodeBox);
+  const selectedBox = useSelector(getSelectedNodeBox);
+
   const toolsLayerEnabled = !canvas.isExpanded;
 
-  const selectedNodePath = useSelector(getSelectedNodePath);
   const contextMenu = useSelector(getEntityShortcuts);
+  const selectedExpr = useSelector(getSelectedExpressionInfo);
 
   const getMousePoint = (event) => {
     const rect: ClientRect = (
@@ -148,15 +155,16 @@ const useTools = () => {
 
   const onMouswDown = useCallback(
     (event: React.MouseEvent<any>) => {
-      dispatch(
-        designerEvents.canvasMouseDown({
+      dispatch({
+        type: "editor/canvasMouseDown",
+        payload: {
           metaKey: event.metaKey,
           ctrlKey: event.ctrlKey,
           shiftKey: event.shiftKey,
           timestamp: Date.now(),
           position: getMousePoint(event),
-        })
-      );
+        },
+      });
     },
     [dispatch]
   );
@@ -181,12 +189,6 @@ const useTools = () => {
     dispatch({ type: "editor/canvasMouseLeave" });
   };
 
-  const boxes = flattenFrameBoxes(frameBoxes);
-
-  const selectedBox = boxes[selectedNodePath];
-
-  const hoveringBox = highlightNodePath && boxes[highlightNodePath];
-
   const frames = currentDocument?.paperclip?.html?.children || [];
   const showEmpty = frames.length === 0;
 
@@ -198,7 +200,9 @@ const useTools = () => {
     onMouseMove,
     onMouseLeave,
     contextMenu,
+    showTextEditor,
     onMouseUp,
+    selectedExpr,
     insertMode,
     showEmpty,
     currentDocument,
@@ -207,8 +211,7 @@ const useTools = () => {
     dispatch,
     selectedBox,
     readonly,
-    hoveringBox,
-    selectedNodePath,
+    highlightedBox,
     optionKeyDown,
   };
 };

@@ -1,0 +1,24 @@
+import "../../../../../styles/input.pc" as imp
+import "../../../../../styles/theme.pc" as theme
+
+/**
+ * @bounds(x: 344, y: -65, width: 218, height: 50)
+*/
+
+public component TextInput {
+    variant active trigger {
+        ":focus"
+    }
+    render input(placeholder: "Text...", value: value, style: style, onChange: onChange, onBlur: onBlur, autoFocus: true, onKeyDown: onKeyDown, onFocus: onFocus) {
+        style {
+            border: 2px solid var(theme.selectedColor)
+            border-radius: var(theme.rounded)
+            background: white
+            width: 100%
+            height: 100%
+            padding: var(theme.space04)
+            outline: none
+        }
+    }
+}
+

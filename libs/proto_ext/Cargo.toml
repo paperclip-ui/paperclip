@@ -8,10 +8,14 @@ exclude = []
 [lib]
 name = "paperclip_proto_ext"
 
+[features]
+default = []
+local = ["paperclip_common/local"]
+
 [dependencies]
 paperclip_proto = { path = "../proto" }
 paperclip_parser = { path = "../parser" }
-paperclip_common = { path = "../rs_common", features = ["local"] }
+paperclip_common = { path = "../rs_common", features = [] }
 anyhow = "1.0.66"
 futures = "0.3.25"
 crc = "1.8.1"

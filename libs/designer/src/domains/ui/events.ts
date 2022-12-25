@@ -5,4 +5,14 @@ export type DashboardAddFileConfirmed = BaseEvent<
   { name: string }
 >;
 
-export type UIEvent = DashboardAddFileConfirmed;
+export type ToolsTextEditorChanged = BaseEvent<
+  "ui/toolsTextEditorChanged",
+  { text: string }
+>;
+
+export type IDChanged = BaseEvent<"ui/idChanged", { value: string }>;
+
+export type UIEvent =
+  | DashboardAddFileConfirmed
+  | ToolsTextEditorChanged
+  | IDChanged;

@@ -201,19 +201,26 @@ export const getFrameRects = (
   traverseNativeNode(
     mount.childNodes[STAGE_INDEX].childNodes[0],
     (node, path) => {
-      const pathStr = path.length ? index + "." + path.join(".") : index;
-      let clientRect: DOMRect;
-      if (node.nodeType === 1) {
-        clientRect = (node as Element).getBoundingClientRect();
-      } else if (node.nodeType === 3) {
-        const range = document.createRange();
-        range.selectNode(node);
-        clientRect = range.getBoundingClientRect();
-        range.detach();
+      if (node.nodeType !== 1) {
+        return;
       }
 
+      const virtId = (node as HTMLElement).id?.substring(1);
+      const clientRect = (node as Element).getBoundingClientRect();
+
+      // const pathStr = path.length ? index + "." + path.join(".") : index;
+      // let clientRect: DOMRect;
+      // if (node.nodeType === 1) {
+      //   clientRect = (node as Element).getBoundingClientRect();
+      // } else if (node.nodeType === 3) {
+      //   const range = document.createRange();
+      //   range.selectNode(node);
+      //   clientRect = range.getBoundingClientRect();
+      //   range.detach();
+      // }
+
       if (clientRect) {
-        rects[pathStr] = {
+        rects[virtId] = {
           width: clientRect.width,
           height: clientRect.height,
           x: bounds.x + clientRect.left,
@@ -224,7 +231,7 @@ export const getFrameRects = (
   );
 
   // include frame sizes too
-  rects[index] = bounds;
+  rects[frame.element.id] = bounds;
 
   return rects;
 };

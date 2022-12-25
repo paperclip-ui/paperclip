@@ -8,7 +8,7 @@ import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent } from "./events";
 import {
   DesignerEvent,
-  designerEvents,
+  StyleDeclarationsChanged,
   ToolsLayerDrop,
   VariantEdited,
 } from "../../events";
@@ -16,10 +16,9 @@ import {
   DEFAULT_FRAME_BOX,
   DesignerState,
   DNDKind,
-  flattenFrameBoxes,
   getCurrentFilePath,
   getInsertBox,
-  getNodeInfoAtPoint,
+  getNodeInfoAtCurrentPoint,
   InsertMode,
 } from "../../state";
 import { Mutation } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
@@ -33,6 +32,7 @@ import { getScaledBox, getScaledPoint, roundBox } from "../../state/geom";
 import {
   getEnabledVariants,
   getSelectedExprAvailableVariants,
+  getSelectedExpression,
 } from "../../state/pc";
 import {
   getGlobalShortcuts,
@@ -41,7 +41,12 @@ import {
 } from "../shortcuts/state";
 import { HistoryChanged } from "../history/events";
 import { KeyDown } from "../keyboard/events";
-import { DashboardAddFileConfirmed } from "../ui/events";
+import {
+  DashboardAddFileConfirmed,
+  IDChanged,
+  ToolsTextEditorChanged,
+} from "../ui/events";
+import { TextNode } from "@paperclip-ui/proto/lib/generated/ast/pc";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -147,11 +152,7 @@ const createEventHandler = (actions: Actions) => {
     let bounds = getScaledBox(getInsertBox(state), state.canvas.transform);
     const insertMode = state.insertMode;
 
-    const intersectingNode = getNodeInfoAtPoint(
-      state.canvas.mousePosition,
-      state.canvas.transform,
-      flattenFrameBoxes(state.rects)
-    );
+    const intersectingNode = getNodeInfoAtCurrentPoint(state);
 
     if (!intersectingNode) {
       const mutation: Mutation = {
@@ -164,48 +165,70 @@ const createEventHandler = (actions: Actions) => {
                 position: relative
               }
             }`,
-            [InsertMode.Text]: `text "Type something"`,
+            [InsertMode.Text]: `text ""`,
           }[insertMode],
         },
       };
 
       actions.applyChanges([mutation]);
     } else {
-      const parent = virtHTML.getNodeByPath(
-        intersectingNode.nodePath,
-        state.currentDocument.paperclip.html
+      const childSource = {
+        [InsertMode.Element]: `div {
+          style {
+            background: rgba(0,0,0,0.1)
+            position: absolute
+            left: ${bounds.x}px
+            top: ${bounds.y}px
+            width: ${bounds.width}px
+            height: ${bounds.height}px
+          }
+        }`,
+        [InsertMode.Text]: `text ""`,
+      }[insertMode];
+
+      const exprInfo = ast.getExprByVirtId(
+        intersectingNode.nodeId,
+        state.graph
       );
 
-      const parentBox = flattenFrameBoxes(state.rects)[
-        intersectingNode.nodePath
-      ];
-
-      bounds = roundBox({
-        ...bounds,
-        x: bounds.x - parentBox.x,
-        y: bounds.y - parentBox.y,
-      });
-
-      actions.applyChanges([
-        {
-          appendChild: {
-            parentId: parent.sourceId,
-            childSource: {
-              [InsertMode.Element]: `div {
-                style {
-                  background: rgba(0,0,0,0.1)
-                  position: absolute
-                  left: ${bounds.x}px
-                  top: ${bounds.y}px
-                  width: ${bounds.width}px
-                  height: ${bounds.height}px
-                }
-              }`,
-              [InsertMode.Text]: `text "Type something"`,
-            }[insertMode],
+      if (exprInfo?.kind === ast.ExprKind.Slot) {
+        const [instanceId] = intersectingNode.nodeId.split(".");
+        const instance = virtHTML.getNodeById(
+          instanceId,
+          state.currentDocument.paperclip.html
+        );
+        actions.applyChanges([
+          {
+            appendInsert: {
+              instanceId: instance.id,
+              slotName: exprInfo.expr.name,
+              childSource,
+            },
           },
-        },
-      ]);
+        ]);
+      } else {
+        const parent = virtHTML.getNodeById(
+          intersectingNode.nodeId,
+          state.currentDocument.paperclip.html
+        );
+
+        const parentBox = state.rects[intersectingNode.nodeId];
+
+        bounds = roundBox({
+          ...bounds,
+          x: bounds.x - parentBox.x,
+          y: bounds.y - parentBox.y,
+        });
+
+        actions.applyChanges([
+          {
+            appendChild: {
+              parentId: parent.sourceId,
+              childSource,
+            },
+          },
+        ]);
+      }
     }
   };
 
@@ -275,7 +298,7 @@ const createEventHandler = (actions: Actions) => {
   };
 
   const handleStyleDeclarationChanged = (
-    event: ReturnType<typeof designerEvents.styleDeclarationsChanged>,
+    event: StyleDeclarationsChanged,
     state: DesignerState
   ) => {
     const style = Object.entries(event.payload.values).map(([name, value]) => ({
@@ -334,6 +357,20 @@ const createEventHandler = (actions: Actions) => {
         },
       ]);
     }
+  };
+
+  const handleToolsTextEditorChanged = (
+    event: ToolsTextEditorChanged,
+    state: DesignerState
+  ) => {
+    actions.applyChanges([
+      {
+        setTextNodeValue: {
+          textNodeId: state.selectedTargetId,
+          value: event.payload.text,
+        },
+      },
+    ]);
   };
 
   const handleDeleteExpression = (
@@ -443,19 +480,17 @@ const createEventHandler = (actions: Actions) => {
         ...getScaledPoint(point, state.canvas.transform),
       };
 
-      const expr = ast.getExprById(item.id, state.graph);
+      const expr = ast.getExprInfoById(item.id, state.graph);
 
       let changes = [];
 
-      console.log(expr, item);
-
-      if (ast.isComponent(expr)) {
+      if (expr.kind === ast.ExprKind.Component) {
         changes = [
           {
             insertFrame: {
               documentId: state.currentDocument.paperclip.html.sourceId,
               bounds: roundBox(bounds),
-              nodeSource: `imp.${expr.name}`,
+              nodeSource: `imp.${expr.expr.name}`,
               imports: {
                 imp: ast.getOwnerDependencyPath(item.id, state.graph),
               },
@@ -467,6 +502,19 @@ const createEventHandler = (actions: Actions) => {
       actions.applyChanges(changes);
     }
   };
+
+  const handleIDChanged = (event: IDChanged, state: DesignerState) => {
+    const expr = getSelectedExpression(state);
+    actions.applyChanges([
+      {
+        setId: {
+          expressionId: expr.id,
+          value: event.payload.value,
+        },
+      },
+    ]);
+  };
+
   const handleHistoryChanged = (
     event: HistoryChanged,
     state: DesignerState,
@@ -531,6 +579,9 @@ const createEventHandler = (actions: Actions) => {
       case "designer/variantEdited": {
         return handleVariantEdited(event, newState);
       }
+      case "ui/toolsTextEditorChanged": {
+        return handleToolsTextEditorChanged(event, newState);
+      }
       case "designer-engine/serverEvent": {
         return handleServerEvent(event.payload, newState);
       }
@@ -539,6 +590,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "designer/ToolsLayerDrop": {
         return handleDropItem(event, newState);
+      }
+      case "ui/idChanged": {
+        return handleIDChanged(event, newState);
       }
       case "history-engine/historyChanged": {
         return handleHistoryChanged(event, newState, prevState);

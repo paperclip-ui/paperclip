@@ -1,4 +1,0 @@
-<html export component as="default">
-  <head>{head}</head>
-  <body>{children}</body>
-</html>

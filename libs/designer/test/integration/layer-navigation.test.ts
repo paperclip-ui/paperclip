@@ -5,7 +5,7 @@
 import { startDesigner, waitUntilDesignerReady } from "../controls";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
-describe(__filename + "#", () => {
+describe.skip(__filename + "#", () => {
   xit(`Can select a simple layer`, async () => {
     const designer = await startDesigner({
       "entry.pc": `

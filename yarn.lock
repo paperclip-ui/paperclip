@@ -2937,6 +2937,8 @@ __metadata:
     "@babel/preset-env": ^7.20.2
     "@babel/preset-typescript": ^7.18.6
     "@improbable-eng/grpc-web-node-http-transport": ^0.15.0
+    "@paperclip-ui/evaluator": "workspace:^"
+    "@paperclip-ui/parser": "*"
     "@paperclip-ui/proto": ^19.0.12
     "@paperclip-ui/web-renderer": ^19.0.12
     "@paperclip-ui/workspace": ^19.0.12
@@ -2976,9 +2978,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@paperclip-ui/parser@workspace:libs/parser":
+"@paperclip-ui/evaluator@workspace:^, @paperclip-ui/evaluator@workspace:libs/evaluator":
+  version: 0.0.0-use.local
+  resolution: "@paperclip-ui/evaluator@workspace:libs/evaluator"
+  dependencies:
+    "@paperclip-ui/proto": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
+"@paperclip-ui/parser@*, @paperclip-ui/parser@workspace:libs/parser":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/parser@workspace:libs/parser"
+  dependencies:
+    "@paperclip-ui/proto": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -2994,7 +3006,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@paperclip-ui/proto@^19.0.12, @paperclip-ui/proto@workspace:libs/proto":
+"@paperclip-ui/proto@^19.0.12, @paperclip-ui/proto@workspace:^, @paperclip-ui/proto@workspace:libs/proto":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/proto@workspace:libs/proto"
   dependencies:

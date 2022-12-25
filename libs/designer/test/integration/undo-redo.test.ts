@@ -11,7 +11,7 @@ import {
   waitUntilDesignerReady,
 } from "../controls";
 
-describe(__filename + "#", () => {
+describe.skip(__filename + "#", () => {
   it(`Can undo a change`, async () => {
     const designer = await startDesigner(
       {

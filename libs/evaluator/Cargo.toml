@@ -7,15 +7,23 @@ exclude = []
 
 [lib]
 name = "paperclip_evaluator"
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 paperclip_parser = { path = "../parser" }
 serde = { version = "1.0.143", features = ["derive"] }
-paperclip_common = { path = "../rs_common" }
+serde-wasm-bindgen = "0.4"
+paperclip_common = { path = "../rs_common", features = [] }
 paperclip_proto = { path = "../proto" }
-paperclip_proto_ext = { path = "../proto_ext" }
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4.33"
+paperclip_proto_ext = { path = "../proto_ext", features = [] }
 mime_guess = "2.0.4"
 anyhow = "1.0.61"
 futures = "0.3.21"
 regex = "1.6.0"
 base64 = "0.13.0"
+
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+tonic-web-wasm-client = "0.2.2"

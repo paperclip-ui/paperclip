@@ -306,10 +306,6 @@ export const getInsertBoxes = memoize(
       return {};
     }
 
-    console.log("GET INS BOXAA");
-
-    const components = ast.getDocumentComponents(dep.document);
-
     const slotBoxes: Record<string, Box> = {};
 
     const instances = Object.values(ast.flattenDocument(dep.document))
@@ -423,7 +419,20 @@ const findVirtBoxNodeInfo = (
     }
 
     if (scopeId?.includes(current.expr.id)) {
-      // console.log("INSPECT SHADOW!");
+      const component = ast.getInstanceComponent(current.expr, graph);
+      const render = ast.getComponentRenderNode(component);
+      const boxInfo = findVirtBoxNodeInfo(
+        point,
+        render,
+        path,
+        graph,
+        scopeId,
+        [...instancePath, current.expr.id],
+        boxes
+      );
+      if (boxInfo) {
+        return boxInfo;
+      }
     }
   }
 
@@ -449,7 +458,7 @@ const findVirtBoxNodeInfo = (
   return (
     box &&
     boxIntersectsPoint(box, point) && {
-      nodeId: current.expr.id,
+      nodeId: virtId,
       box,
     }
   );

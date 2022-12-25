@@ -1,7 +1,7 @@
 {
-  "name": "@paperclip-ui/parser",
+  "name": "@paperclip-ui/evaluator",
   "version": "1.0.0",
-  "description": "",
+  "description": "```rust use paperclip_evaluator::evaluator::{Evaluator, LoadedData};",
   "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

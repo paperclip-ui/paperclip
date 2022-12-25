@@ -11,7 +11,7 @@ import {
 } from "../controls";
 import { ShortcutCommand } from "@paperclip-ui/designer/src/domains/shortcuts/state";
 
-describe(__filename + "#", () => {
+describe.skip(__filename + "#", () => {
   it(`Can evaluate a simple document`, async () => {
     const designer = await startDesigner({
       "entry.pc": `

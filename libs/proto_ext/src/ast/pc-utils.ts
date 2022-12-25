@@ -325,7 +325,7 @@ export namespace ast {
     const render = getComponentRenderNode(component);
 
     return render
-      ? (Object.values(flattenNode(render))
+      ? (Object.values(flattenNode(render.expr))
           .filter((descendent) => {
             return descendent.kind === ExprKind.Slot;
           })
@@ -460,9 +460,11 @@ export namespace ast {
   export const getComponentRenderExpr = (component: Component) =>
     component.body.find((body) => body.render)?.render;
 
-  export const getComponentRenderNode = (component: Component): Node => {
+  export const getComponentRenderNode = (
+    component: Component
+  ): InnerExpressionInfo | undefined => {
     const render = getComponentRenderExpr(component);
-    return render && render.node;
+    return render && getChildExprInner(render.node);
   };
 
   export const isInstance = (element: Element, graph: Graph) => {

@@ -3,7 +3,7 @@
 
 pub mod event_bus;
 
-#[cfg(feature = "local")]
+
 pub mod fs;
 pub mod fun;
 pub mod id;

@@ -8,7 +8,7 @@ import {
   waitUntilDesignerReady,
 } from "../controls";
 
-describe(__filename + "#", () => {
+describe.skip(__filename + "#", () => {
   xit(`Can open a file with a parse error`, async () => {
     const designer = await startDesigner({
       "entry.pc": `

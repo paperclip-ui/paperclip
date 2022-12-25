@@ -318,6 +318,11 @@ export const getInsertBoxes = memoize(
     for (const instance of instances) {
       const component = ast.getInstanceComponent(instance, graph);
       const slots = ast.getComponentSlots(component, graph);
+      const virtId = getVirtId(
+        { expr: instance, kind: ast.ExprKind.Element },
+        [],
+        graph
+      );
 
       for (const slot of slots) {
         const containsInsert = instance.body.some(
@@ -333,12 +338,12 @@ export const getInsertBoxes = memoize(
 
         const boxes: Box[] = [];
         for (const descendent of slotDescendents) {
-          const rect = rects[instance.id + "." + descendent.expr.id];
+          const rect = rects[virtId + "." + descendent.expr.id];
           if (rect) {
             boxes.push(rect);
           }
         }
-        slotBoxes[instance.id + "." + slot.id] = mergeBoxes(boxes);
+        slotBoxes[virtId + "." + slot.id] = mergeBoxes(boxes);
       }
     }
 
@@ -428,6 +433,8 @@ const findVirtBoxNodeInfo = (
   instancePath: string[],
   boxes: Record<string, Box>
 ): BoxNodeInfo | null => {
+  const virtId = getVirtId(current, instancePath, graph);
+
   if (
     current.kind === ast.ExprKind.Element &&
     ast.isInstance(current.expr, graph)
@@ -440,7 +447,7 @@ const findVirtBoxNodeInfo = (
       }
     }
 
-    if (scopeId?.includes(current.expr.id)) {
+    if (scopeId?.includes(virtId)) {
       const component = ast.getInstanceComponent(current.expr, graph);
       const render = ast.getComponentRenderNode(component);
       const boxInfo = findVirtBoxNodeInfo(
@@ -449,7 +456,7 @@ const findVirtBoxNodeInfo = (
         path,
         graph,
         scopeId,
-        [...instancePath, current.expr.id],
+        [...instancePath, virtId],
         boxes
       );
       if (boxInfo) {
@@ -458,7 +465,6 @@ const findVirtBoxNodeInfo = (
     }
   }
 
-  const virtId = getVirtId(current, instancePath, graph);
   const box = boxes[virtId];
 
   // const box = boxes[current.id];

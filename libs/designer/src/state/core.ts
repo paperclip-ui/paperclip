@@ -318,11 +318,7 @@ export const getInsertBoxes = memoize(
     for (const instance of instances) {
       const component = ast.getInstanceComponent(instance, graph);
       const slots = ast.getComponentSlots(component, graph);
-      const virtId = getVirtId(
-        { expr: instance, kind: ast.ExprKind.Element },
-        [],
-        graph
-      );
+      const virtId = instance.id;
 
       for (const slot of slots) {
         const containsInsert = instance.body.some(

@@ -322,10 +322,10 @@ export namespace ast {
     component: Component,
     graph: Graph
   ): Slot[] => {
-    const render = getComponentRenderNode(component);
+    const render = getComponentRenderExpr(component);
 
     return render
-      ? (Object.values(flattenNode(render.expr))
+      ? (Object.values(flattenNode(render.node))
           .filter((descendent) => {
             return descendent.kind === ExprKind.Slot;
           })

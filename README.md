@@ -89,7 +89,11 @@ Page {
 }
 ```
 
-A lot of the design around the DSL is inspired by common UI features 
+Much of the DSL's design is inspired by Figma, Sketch, among other design tools. Some overlapping concepts include:
+
+- Components
+- Style variants
+- 
 
 Paperclip enables you to design and build just about any kind of web application end-to-end. It can be used directly within [Codespaces](https://github.com/features/codespaces), enabling anyone easy access to make changes to web applications.
 

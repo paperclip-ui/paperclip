@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/parser",
-  "version": "19.0.1",
+  "version": "19.0.13",
   "description": "",
   "main": "lib/index.js",
   "scripts": {

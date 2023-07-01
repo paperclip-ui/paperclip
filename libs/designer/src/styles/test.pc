@@ -39,6 +39,7 @@ public component SlotA {
 */
 
 public component SlotB {
+    variant small
     render SlotA {
         insert header {
             slot child1 {
@@ -53,9 +54,40 @@ public component SlotB {
     }
 }
 
+
 /**
  * @bounds(x: 464, y: 170, width: 1024, height: 768)
 */
 
 SlotB
 
+public component TodoItem {
+    variant mobile trigger {
+        "@media screen and (max-width: 480px)"
+    }
+    variant alt trigger {
+        ":nth-child(2n)"
+    }
+    variant dark trigger {
+        ".dark"
+        "@within(.dark)"
+    }
+    render div(onClick: onClick) {
+        style variant mobile {
+            font-size: 72px
+        }
+        style variant mobile + dark {
+            transform: translateY(-20px)
+        }
+        style variant alt {
+            background: grey
+        }
+        style variant dark {
+            background: black
+            color: white
+        }
+        style variant dark + alt {
+            background: #333
+        }
+    }
+}

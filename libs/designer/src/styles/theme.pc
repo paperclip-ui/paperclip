@@ -50,6 +50,7 @@ public token defaultFontFamily Inter, sans-serif
 public token roundedSM 0.125rem
 public token rounded 0.25rem
 public token roundedMD 0.375rem
+
 public style mask {
     background-color: currentColor
     -webkit-mask-size: 100%

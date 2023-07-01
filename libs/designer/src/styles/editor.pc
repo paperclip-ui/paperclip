@@ -123,4 +123,3 @@ Editor {
     }
     assetsModal.Container
 }
-

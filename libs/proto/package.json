@@ -19,6 +19,7 @@
   "devDependencies": {
     "protoc-gen-grpc-js": "^0.4.0",
     "protoc-gen-grpc-web": "^1.4.0",
+    "protoc-gen-js": "^3.21.2",
     "protoc-gen-ts": "^0.8.5",
     "ts-proto": "^1.131.2"
   },
@@ -29,8 +30,6 @@
     "@paperclip-ui/common": "^19.0.12",
     "@types/node": "^18.11.9",
     "browser-headers": "^0.4.1",
-    "grpc": "^1.24.11",
-    "grpc-web": "^1.4.0",
     "rxjs": "^7.5.7",
     "typescript": "^4.9.3"
   }

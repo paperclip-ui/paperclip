@@ -1,3 +1,9 @@
+#### Now
+
+- Publish to NPM
+- get to work with diary app
+- Publish to NPM and VS Code on Release
+
 ### Considerations
 
 - Try not to hand-write any new UI unless it's necessary for self-creation

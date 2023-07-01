@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/evaluator",
-  "version": "19.0.13",
+  "version": "19.0.14",
   "description": "```rust use paperclip_evaluator::evaluator::{Evaluator, LoadedData};",
   "main": "lib/index.js",
   "scripts": {

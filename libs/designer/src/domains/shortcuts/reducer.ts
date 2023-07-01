@@ -1,4 +1,4 @@
-import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
+import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 import produce from "immer";
 import { DesignerEvent } from "../../events";
 import { DesignerState, InsertMode } from "../../state";

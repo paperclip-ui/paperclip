@@ -17,7 +17,7 @@ import {
   ZOOM_SENSITIVITY,
 } from "@paperclip-ui/designer/src/state";
 import { centerTransformZoom } from "@paperclip-ui/designer/src/state/geom";
-import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
+import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 import produce from "immer";
 import { clamp, mapValues } from "lodash";
 

@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 import { fixFileUrlCasing } from "./utils";
 import { PaperclipLanguageClient } from "./language/client";
 import { isPaperclipFile } from "@paperclip-ui/common";
-import { serverEvents } from "./language/server/events";
+import { FileChanged } from "./language/server/events";
 import { VersionedTextDocumentIdentifier } from "vscode-languageserver-protocol";
 
 enum OpenLivePreviewOptions {
@@ -35,7 +35,7 @@ export class DocumentManager {
   }
 
   private _onFileChanged = async (
-    event: ReturnType<typeof serverEvents.fileChanged>["payload"]
+    event: FileChanged["payload"]
   ) => {
     const content = event.content;
     const uri = vscode.Uri.file(event.path);

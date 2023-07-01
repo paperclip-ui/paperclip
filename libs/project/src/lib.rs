@@ -1,5 +1,6 @@
 #![feature(type_alias_impl_trait)]
 #![feature(trait_alias)]
+#![feature(impl_trait_in_assoc_type)]
 
 pub mod io;
 pub mod project;

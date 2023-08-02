@@ -1,8 +1,7 @@
 #### Now
 
-- Publish to NPM
-- get to work with diary app
-- Publish to NPM and VS Code on Release
+- Get styling to work
+
 
 ### Considerations
 

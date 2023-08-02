@@ -1,10 +1,11 @@
 import { FileResponse } from "@paperclip-ui/proto/lib/generated/service/designer";
-import { clamp, pick, pickBy } from "lodash";
+import { clamp, pickBy } from "lodash";
 import {
   Node,
   Document as HTMLDocument,
   Document,
 } from "@paperclip-ui/proto/lib/generated/virt/html";
+// import * as ast from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import {
   Box,
   boxIntersectsPoint,
@@ -660,8 +661,13 @@ export const resetCurrentDocument = (state: DesignerState): DesignerState => ({
 });
 
 export const getExprBounds = (exprId: string, state: DesignerState): Bounds => {
-  const expr = ast.getExprById(exprId, state.graph);
-  return null;
+
+  const node = virtHTML.getNodeById(
+    state.selectedTargetId,
+    state.currentDocument.paperclip.html
+  ) as any as VirtElement | VirtText;
+
+  return node?.metadata?.bounds;
 };
 
 export const getHighlightedNodeBox = (state: DesignerState): Box => {
@@ -796,6 +802,30 @@ export const handleDragEvent = (
     }
   });
 };
+
+export const setSelectedNodeBounds = (newBounds: Bounds, state: DesignerState) => {
+  return produce(state, (newState) => {
+    const node = virtHTML.getNodeById(
+      newState.selectedTargetId,
+      newState.currentDocument.paperclip.html
+    ) as any as VirtElement | VirtText;
+
+    const path = virtHTML.getNodePath(
+      node,
+      newState.currentDocument.paperclip.html
+    );
+    if (!node.metadata) {
+      node.metadata = {};
+    }
+    if (!node.metadata.bounds) {
+      node.metadata.bounds = { x: 0, y: 0, width: 0, height: 0 };
+    }
+
+    node.metadata.bounds = {
+      ...newBounds,
+    };
+  });
+}
 
 export const clampCanvasTransform = (
   canvas: Canvas,

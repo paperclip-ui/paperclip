@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
-  getSelectedExpression,
   getSelectedExpressionInfo,
-} from "@paperclip-ui/designer/src/state/pc";
+  getExprBounds
+} from "@paperclip-ui/designer/src/state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { VariantsSection } from "./VariantsSection";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
@@ -16,13 +16,19 @@ import {
   TextNode,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
+import { getEditorState } from "@paperclip-ui/designer/src/state";
+import { FrameSection } from "./FrameSection";
 
 export const PropertiesPanel = () => {
+
   const expr = useSelector(getSelectedExpressionInfo);
+  const state = useSelector(getEditorState);  
 
   if (!expr) {
     return null;
   }
+
+  const bounds = getExprBounds(expr.expr.id, state);
 
   return (
     <sidebarStyles.SidebarPanel>
@@ -40,6 +46,7 @@ export const PropertiesPanel = () => {
           </inputStyles.Fields>
         </sidebarStyles.SidebarPanelContent>
       </sidebarStyles.SidebarSection>
+      {bounds && <FrameSection bounds={bounds} />}
     </sidebarStyles.SidebarPanel>
   );
 };

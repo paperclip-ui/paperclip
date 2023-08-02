@@ -28,7 +28,7 @@ import {
   Element as VirtElement,
   TextNode as VirtTextNode,
 } from "@paperclip-ui/proto/lib/generated/virt/html";
-import { getScaledBox, getScaledPoint, roundBox } from "../../state/geom";
+import { Box, getScaledBox, getScaledPoint, roundBox } from "../../state/geom";
 import {
   getEnabledVariants,
   getSelectedExprAvailableVariants,
@@ -252,6 +252,24 @@ const createEventHandler = (actions: Actions) => {
 
     // could be expression
     handleDeleteExpression(node?.sourceId || prevState.selectedTargetId, state);
+  };
+  
+  const handleFrameBoundsChanged = (state: DesignerState, bounds: Box, prevState: DesignerState) => {
+
+    const node = virtHTML.getNodeById(
+      prevState.selectedTargetId,
+      prevState.currentDocument.paperclip.html
+    ) as VirtTextNode | VirtElement;
+
+    const mutation: Mutation = {
+      setFrameBounds: {
+        frameId: node.sourceId,
+        bounds,
+      },
+    };
+
+    console.log(mutation);
+    actions.applyChanges([mutation]);
   };
 
   const handleResizerStoppedMoving = (
@@ -587,6 +605,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "editor/resizerPathStoppedMoving": {
         return handleResizerStoppedMoving(newState, prevState);
+      }
+      case "designer/boundsChanged": {
+        return handleFrameBoundsChanged(newState, event.payload.newBounds, prevState);
       }
       case "designer/ToolsLayerDrop": {
         return handleDropItem(event, newState);

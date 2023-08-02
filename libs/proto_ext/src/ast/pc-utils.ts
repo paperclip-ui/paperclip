@@ -21,8 +21,12 @@ import {
   Style,
   TextNode,
   Trigger,
+  TriggerBodyItem,
   Variant,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import {
+  Str
+} from "@paperclip-ui/proto/lib/generated/ast/base";
 
 const EMPTY_ARRAY = [];
 export namespace ast {
@@ -46,6 +50,7 @@ export namespace ast {
     Slot,
     Insert,
     Override,
+    Str,
     Style,
     Declaration,
     Arithmetic,
@@ -73,6 +78,7 @@ export namespace ast {
     | BaseExprInfo<Slot, ExprKind.Slot>
     | BaseExprInfo<Insert, ExprKind.Insert>
     | BaseExprInfo<Style, ExprKind.Style>
+    | BaseExprInfo<Str, ExprKind.Str>
     | BaseExprInfo<StyleDeclaration, ExprKind.Declaration>;
 
   export const getDocumentBodyInner = (item: DocumentBodyItem) => {
@@ -209,6 +215,10 @@ export namespace ast {
     }
     if ((expr as Node).style) {
       return { expr: (expr as Node).style, kind: ExprKind.Style };
+    }
+
+    if ((expr as TriggerBodyItem).str) {
+      return { expr: (expr as TriggerBodyItem).str, kind: ExprKind.Str };
     }
     console.error(expr);
     throw new Error(`Unhandled type`);

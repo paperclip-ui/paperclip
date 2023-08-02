@@ -53,6 +53,13 @@ export type ResizerPathMoved = BaseEvent<
   }
 >;
 
+export type BoundsChanged = BaseEvent<
+  "designer/boundsChanged",
+  {
+    newBounds: Box;
+  }
+>;
+
 export type EditVariantClicked = BaseEvent<
   "editor/editVariantClicked",
   { variantId: string }
@@ -162,6 +169,7 @@ export type LegacyEvent =
 export type DesignerEvent =
   | DesignerEngineEvent
   | HistoryEngineEvent
+  | BoundsChanged
   | ShortcutEvent
   | KeyboardEngineEvent
   | LegacyEvent

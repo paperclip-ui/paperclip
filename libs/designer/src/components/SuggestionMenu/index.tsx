@@ -3,14 +3,17 @@ import * as styles from "@paperclip-ui/designer/src/styles/input.pc";
 import { Portal } from "../Portal";
 import cx from "classnames";
 import { usePositioner } from "../hooks/usePositioner";
+import { noop } from "lodash";
+import { on } from "process";
 
 export type SuggestionMenuProps = {
   values: string[];
   children: React.ReactElement;
   style?: any;
   multi?: boolean;
-  onChange: (values: any[]) => void;
-  onOtherChange?: (value: string) => void;
+  onChange?: (values: any[]) => void;
+  onSelect: (values: any[]) => void;
+  onOtherSelect?: (value: string) => void;
   menu: () => React.ReactElement[];
 };
 
@@ -19,13 +22,18 @@ export const SuggestionMenu = ({
   children,
   style,
   multi,
-  onChange,
-  onOtherChange = () => {},
+  onChange = noop,
+  onSelect: onSelect2,
+  onOtherSelect: onOtherSave = () => {},
   menu,
 }: SuggestionMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [typedValue, setTypedValued] = useState(null);
   const [preselectedIndex, setPreselectedIndex] = useState(0);
+
+  useEffect(() => {
+    onChange([{ value: typedValue }]);
+  }, [typedValue, onChange]);
 
   const oldProps = children.props;
 
@@ -39,7 +47,8 @@ export const SuggestionMenu = ({
   const onBlur = () => {
     setIsOpen((open) => {
       if (open && typedValue != null) {
-        onOtherChange(typedValue);
+        onChange([{ value: typedValue }]);
+        onOtherSave(typedValue);
       }
       return false;
     });
@@ -56,6 +65,7 @@ export const SuggestionMenu = ({
       values = [value];
     }
     onChange(values);
+    onSelect2(values);
     setIsOpen(false);
   };
 
@@ -104,7 +114,8 @@ export const SuggestionMenu = ({
       if (value) {
         onSelect(value);
       } else if (typedValue != null) {
-        onOtherChange(typedValue);
+        onChange([{ value: typedValue }]);
+        onOtherSave(typedValue);
       }
       setIsOpen(false);
     } else if (oldProps.onKeyDown) {
@@ -128,9 +139,8 @@ export const SuggestionMenu = ({
 
   useEffect(() => {
     setPreselectedIndex(
-
       // SUBTRACT 1 so that the value is not preselected. Could be a header or 0
-      selectedIndex === -1 ? (firstOptionValueIndex - 1) : selectedIndex
+      selectedIndex === -1 ? firstOptionValueIndex - 1 : selectedIndex
     );
   }, [selectedIndex, firstOptionValueIndex]);
 
@@ -197,7 +207,7 @@ export const SuggestionMenuItem = ({
       // timeout so that the menu is correctly positioned
       setTimeout(() => {
         ref.current?.scrollIntoView({
-          block: "nearest"
+          block: "nearest",
         });
       });
     }

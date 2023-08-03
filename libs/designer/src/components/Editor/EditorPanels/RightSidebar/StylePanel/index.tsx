@@ -30,8 +30,6 @@ type GroupSectionProps = {
 const GroupSection = ({ name, style }: GroupSectionProps) => {
   const [showNewDeclInput, setShowNewDeclInput] = useState(false);
 
-  const dispatch = useDispatch();
-
   const onLastValueTab = useCallback(
     (event: React.KeyboardEvent) => {
       event.preventDefault();
@@ -40,21 +38,9 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
     [setShowNewDeclInput]
   );
 
-  const onSaveNewDeclaration = useCallback(
-    (name: string, value: string) => {
-      setShowNewDeclInput(false);
-      if (name && value) {
-        dispatch({
-          type: "editor/styleDeclarationsChanged",
-          payload: {
-            values: { [name]: value },
-            imports: {},
-          },
-        });
-      }
-    },
-    [setShowNewDeclInput]
-  );
+  const onSaveNewDeclaration = useCallback(() => {
+    setShowNewDeclInput(false);
+  }, [setShowNewDeclInput]);
 
   return (
     <sidebarStyles.SidebarSection>
@@ -67,21 +53,20 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
           {style.propertyNames.map((propertyName, i) => {
             const decl = style.map[propertyName];
 
-            const options = getPropField(propertyName);
-            const fieldName = options.name || propertyName;
             const isLast = i === style.propertyNames.length - 1;
 
             return (
               <Declaration
-                name={fieldName}
-                key={fieldName}
+                name={propertyName}
+                key={i}
                 style={decl}
-                options={options}
                 onValueTab={isLast ? onLastValueTab : undefined}
               />
             );
           })}
-          {showNewDeclInput && <NewDeclaration onSave={onSaveNewDeclaration} />}
+          {showNewDeclInput && (
+            <Declaration isNewInput onSave={onSaveNewDeclaration} />
+          )}
         </inputStyles.Fields>
       </sidebarStyles.SidebarPanelContent>
     </sidebarStyles.SidebarSection>

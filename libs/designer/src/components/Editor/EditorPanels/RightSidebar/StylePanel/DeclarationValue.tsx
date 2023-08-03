@@ -21,6 +21,7 @@ type FieldInputProps = {
   isDefault: boolean;
   options?: string[];
   placeholder?: string;
+  onChange?: (value: string) => void;
   onSave: (value: NewDeclValue) => void;
   onTab?: (event: React.KeyboardEvent) => void;
   type: css.InputType;
@@ -30,6 +31,7 @@ export const DeclarationValue = ({
   value,
   isDefault,
   placeholder,
+  onChange = noop,
   options,
   type,
   onSave,
@@ -41,13 +43,11 @@ export const DeclarationValue = ({
 
   const internalValue = useRef<NewDeclValue>();
 
-  const onChange = (values: any[]) => {
-    const newValue = values[values.length - 1];
-
+  const onSelect = ([newValue]) => {
     onSave(newValue);
   };
 
-  const onOtherChange = (value) => {
+  const onOtherSelect = (value) => {
     onSave({ value });
   };
 
@@ -140,8 +140,11 @@ export const DeclarationValue = ({
 
   return (
     <SuggestionMenu
-      onChange={onChange}
-      onOtherChange={onOtherChange}
+      onChange={([value]) => {
+        onChange(value);
+      }}
+      onSelect={onSelect}
+      onOtherSelect={onOtherSelect}
       values={[value]}
       menu={menu}
       style={{ width: 350 }}

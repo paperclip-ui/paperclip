@@ -365,6 +365,8 @@ export const getSelectedExprStyles = (
   const combinedStyles: Record<string, ComputedDeclaration> = {};
 
   const virtId = state.selectedTargetId;
+
+  
   if (!virtId) {
     return [];
   }

@@ -12,7 +12,7 @@ import {
   SuggestionMenuItem,
   SuggestionMenuSection,
 } from "@paperclip-ui/designer/src/components/SuggestionMenu";
-import { getAllPublicAtoms } from "@paperclip-ui/designer/src/state";
+import { getAllPublicAtoms, getCurrentDocumentImports } from "@paperclip-ui/designer/src/state";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
 import { Variants } from "./Variants";
 
@@ -473,6 +473,8 @@ const FieldInput = ({
   onSave,
 }: FieldInputProps) => {
   const tokens = useSelector(getAllPublicAtoms);
+  const imports = useSelector(getCurrentDocumentImports);
+
   const internalValue = useRef<NewDeclValue>();
 
   const onChange = (values: any[]) => {
@@ -503,7 +505,6 @@ const FieldInput = ({
       : [];
 
     // no enum options
-
     const availableTokens = tokens
       .filter((token) => {
         const isColor = isColorValue(token.cssValue);
@@ -522,14 +523,19 @@ const FieldInput = ({
         }
       })
       .map((token) => {
+
+        // use existing NS so that we have preselected value
+        const tokenNs = imports[token.dependency.path] || "mod";
+        const value = `var(${tokenNs}.${token.atom.name})`;
+
         return (
           <SuggestionMenuItem
             key={token.atom.id}
-            value={token.value}
+            value={value}
             selectValue={{
-              value: `var(mod.${token.atom.name})`,
+              value,
               imports: {
-                mod: token.dependency.path,
+                [tokenNs]: token.dependency.path,
               },
             }}
             filterText={token.atom.name + token.cssValue + token.value}
@@ -553,13 +559,13 @@ const FieldInput = ({
     }
 
     return ops;
-  }, [options, tokens, onSave]);
+  }, [options, tokens, onSave, imports]);
 
   return (
     <SuggestionMenu
       onChange={onChange}
       onOtherChange={onOtherChange}
-      values={[computedValue]}
+      values={[explicitValue]}
       menu={menu}
       style={{ width: 350 }}
     >

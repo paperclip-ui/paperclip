@@ -268,7 +268,6 @@ const createEventHandler = (actions: Actions) => {
       },
     };
 
-    console.log(mutation);
     actions.applyChanges([mutation]);
   };
 

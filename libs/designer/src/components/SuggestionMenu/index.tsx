@@ -128,7 +128,9 @@ export const SuggestionMenu = ({
 
   useEffect(() => {
     setPreselectedIndex(
-      selectedIndex === -1 ? firstOptionValueIndex : selectedIndex
+
+      // SUBTRACT 1 so that the value is not preselected. Could be a header or 0
+      selectedIndex === -1 ? (firstOptionValueIndex - 1) : selectedIndex
     );
   }, [selectedIndex, firstOptionValueIndex]);
 
@@ -194,7 +196,9 @@ export const SuggestionMenuItem = ({
     if (ref.current && (selected || preselected)) {
       // timeout so that the menu is correctly positioned
       setTimeout(() => {
-        ref.current?.scrollIntoView(false);
+        ref.current?.scrollIntoView({
+          block: "nearest"
+        });
       });
     }
   }, [selected, preselected, ref.current]);

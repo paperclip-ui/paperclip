@@ -1,28 +1,20 @@
+import "./theme.pc" as mod
 
 /**
- * @bounds(x: 443, y: 134, width: 0, height: 0)
+ * @bounds(x: -49, y: 217, width: 1024, height: 748)
 */
 
 div {
     style {
         position: relative
-    }
-}
-
-/**
- * @bounds(x: 168, y: 90, width: 354, height: 167)
-*/
-
-div {
-    style {
-        position: relative
+        background: blue
     }
     div {
         style {
             background: rgba(0, 0, 0, 0.1)
             position: absolute
-            left: 229px
-            top: 135.5px
+            left: 0px
+            top: 100px
             width: 179px
             height: 119px
         }

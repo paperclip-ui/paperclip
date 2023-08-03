@@ -182,7 +182,7 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
 
     case "editor/computedStylesCaptured":
       return produce(state, (newState) => {
-        Object.assign(newState.computedStyles, event.payload.computedStyles);
+        Object.assign(newState.computedStyles, event.payload);
       });
   }
   return state;

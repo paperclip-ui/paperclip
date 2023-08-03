@@ -602,6 +602,9 @@ export const getAllComponents = (state: DesignerState) => {
   return getGraphComponents(state.graph);
 };
 
+export const getCurrentDocumentImports = (state: DesignerState) => ast.getDocumentImports(state.graph.dependencies[getCurrentFilePath(state)].document);
+
+
 export const getGraphComponents = (graph: Graph) => {
   const allComponents: ComponentInfo[] = [];
   for (const path in graph.dependencies) {

@@ -1,6 +1,8 @@
-#### Now
+#### Immediate
 
-- Get styling to work
+- Style panel
+  - try getting to work with computed props
+- ability to create component
 
 
 ### Considerations

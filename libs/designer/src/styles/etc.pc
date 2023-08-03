@@ -47,3 +47,11 @@ public component Item {
 
 Item
 
+
+public component PlusButton {
+    render div {
+                    style extends theme.icon {
+                        -webkit-mask-image: url("./plus.svg")
+                    }
+                }
+}

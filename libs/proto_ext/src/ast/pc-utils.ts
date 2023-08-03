@@ -437,9 +437,7 @@ export namespace ast {
         for (const ref of style.extends) {
           const extendsStyle = getExprRef(ref, graph)?.style;
           if (extendsStyle) {
-
             computedStyles = overrideComputedStyles(computeStyle(extendsStyle, graph, extendsStyle.id, variantIds), computedStyles);
-           
           }
         }
       }
@@ -456,7 +454,7 @@ export namespace ast {
     for (const name of computedStyles.propertyNames) {
       computed.propertyNames.push(name);
 
-      const override = overrides[name];
+      const override = overrides.map[name];
 
       if (override) {
         computed.map[name] = {

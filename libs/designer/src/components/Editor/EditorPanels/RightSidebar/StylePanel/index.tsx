@@ -4,7 +4,6 @@ import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { memoize, useDispatch, useSelector } from "@paperclip-ui/common";
 import {
-  ComputedDeclaration,
   getSelectedExprStyles,
 } from "@paperclip-ui/designer/src/state/pc";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
@@ -393,8 +392,6 @@ const Field = memo(
       });
     };
 
-    console.log(targetId, style.ownerId)
-
     const input = (
       <FieldInput
         value={ast.serializeDeclaration(style.value)}
@@ -440,6 +437,7 @@ const FieldInput = ({
 
   const onChange = (values: any[]) => {
     const newValue = values[values.length - 1];
+
     onSave(newValue);
   };
 
@@ -546,7 +544,6 @@ const isColorValue = (value) =>
 
 const useStylePanel = () => {
   const style = useSelector(getSelectedExprStyles);
-
   return {
     style,
   };

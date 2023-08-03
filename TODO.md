@@ -2,7 +2,9 @@
 
 - Style panel
   - ability to add another prop (+ button and tab)
-  - use placeholder for inherited properties
+  - ability to clear declarations
+  - color picker
+
 
 
 

@@ -8,7 +8,7 @@ import {
   getCurrentFilePath,
   getExpandedVirtIds,
   getGraph,
-  getSelectedNodeId,
+  getSelectedId,
 } from "@paperclip-ui/designer/src/state";
 import {
   Component,
@@ -355,7 +355,7 @@ const useLeaf = ({
 }) => {
   const virtId = [...(instanceOf || []), exprId].join(".");
   const open = useSelector(getExpandedVirtIds).includes(virtId);
-  const selected = useSelector(getSelectedNodeId) === virtId;
+  const selected = useSelector(getSelectedId) === virtId;
 
   const dispatch = useDispatch<DesignerEvent>();
   const onClick = useCallback(() => {

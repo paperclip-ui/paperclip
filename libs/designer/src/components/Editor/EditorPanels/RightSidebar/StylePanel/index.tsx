@@ -2,17 +2,21 @@ import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
+import * as etcStyles from "@paperclip-ui/designer/src/styles/etc.pc";
 import { memoize, useDispatch, useSelector } from "@paperclip-ui/common";
-import {
-  getSelectedExprStyles,
-} from "@paperclip-ui/designer/src/state/pc";
+import { getSelectedExprStyles } from "@paperclip-ui/designer/src/state/pc";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import {
   SuggestionMenu,
   SuggestionMenuItem,
   SuggestionMenuSection,
 } from "@paperclip-ui/designer/src/components/SuggestionMenu";
-import { getAllPublicAtoms, getCurrentDependency, getCurrentDocumentImports, getSelectedNodeId } from "@paperclip-ui/designer/src/state";
+import {
+  getAllPublicAtoms,
+  getCurrentDependency,
+  getCurrentDocumentImports,
+  getSelectedId,
+} from "@paperclip-ui/designer/src/state";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
 import { Variants } from "./Variants";
 
@@ -61,7 +65,6 @@ namespace schema {
     name?: string;
     group?: string;
 
-
     // alias property to use instead
     alias?: string;
 
@@ -85,7 +88,7 @@ const cssSchema: schema.Map<css.Input> = [
   {
     name: "position",
     group: "layout",
-    
+
     input: {
       name: "left",
       type: css.InputType.Enum,
@@ -95,25 +98,25 @@ const cssSchema: schema.Map<css.Input> = [
   {
     name: "left",
     group: "layout",
-    
+
     input: { name: "left", type: css.InputType.Unit },
   },
   {
     name: "top",
     group: "layout",
-    
+
     input: { name: "height", type: css.InputType.Unit },
   },
   {
     name: "width",
     group: "layout",
-    
+
     input: { name: "width", type: css.InputType.Unit },
   },
   {
     name: "height",
     group: "layout",
-    
+
     input: { name: "height", type: css.InputType.Unit },
   },
 
@@ -125,7 +128,7 @@ const cssSchema: schema.Map<css.Input> = [
   {
     name: "padding",
     group: "layout",
-    
+
     join: {
       padding: [
         "padding-left",
@@ -144,7 +147,7 @@ const cssSchema: schema.Map<css.Input> = [
   {
     name: "margin",
     group: "layout",
-    
+
     join: {
       margin: ["margin-left", "margin-right", "margin-top", "margin-bottom"],
     },
@@ -153,7 +156,7 @@ const cssSchema: schema.Map<css.Input> = [
   {
     name: "box-sizing",
     group: "layout",
-    
+
     input: {
       name: "box-sizing",
       type: css.InputType.Enum,
@@ -163,7 +166,7 @@ const cssSchema: schema.Map<css.Input> = [
   {
     name: "display",
     group: "layout",
-    
+
     input: {
       name: "display",
       type: css.InputType.Enum,
@@ -198,7 +201,7 @@ const cssSchema: schema.Map<css.Input> = [
   {
     name: "justify-content",
     group: "layout",
-    
+
     input: {
       name: "justify-content",
       type: css.InputType.Enum,
@@ -208,7 +211,7 @@ const cssSchema: schema.Map<css.Input> = [
   {
     name: "align-items",
     group: "layout",
-    
+
     input: {
       name: "display",
       type: css.InputType.Enum,
@@ -218,7 +221,7 @@ const cssSchema: schema.Map<css.Input> = [
   {
     name: "flex-direction",
     group: "layout",
-    
+
     input: {
       name: "display",
       type: css.InputType.Enum,
@@ -228,7 +231,7 @@ const cssSchema: schema.Map<css.Input> = [
   {
     name: "flex-wrap",
     group: "layout",
-    
+
     input: {
       name: "display",
       type: css.InputType.Enum,
@@ -238,26 +241,26 @@ const cssSchema: schema.Map<css.Input> = [
   {
     name: "gap",
     group: "layout",
-    
+
     input: { name: "gap", type: css.InputType.Unit },
   },
 
   {
     name: "font-family",
     group: "typography",
-    
+
     input: { name: "font-family", type: css.InputType.Enum, options: [] },
   },
   {
     name: "font-size",
     group: "typography",
-    
+
     input: { name: "font-size", type: css.InputType.Unit },
   },
   {
     name: "color",
     group: "typography",
-    
+
     input: { name: "color", type: css.InputType.Color },
   },
 
@@ -266,7 +269,7 @@ const cssSchema: schema.Map<css.Input> = [
   { name: "border-left-color", alias: "border" },
   {
     name: "border",
-    
+
     join: {
       "border-width": [
         "border-left-width",
@@ -304,7 +307,7 @@ const cssSchema: schema.Map<css.Input> = [
   // Background
   {
     name: "background",
-    
+
     list: true,
     input: { name: "background", type: css.InputType.Color },
   },
@@ -317,11 +320,7 @@ export const StylePanel = () => {
   return (
     <sidebarStyles.SidebarPanel>
       <Variants />
-      <GroupSection
-          style={style}
-          name="Style"
-        />
-
+      <GroupSection style={style} name="Style" />
     </sidebarStyles.SidebarPanel>
   );
 };
@@ -342,11 +341,11 @@ type GroupSectionProps = {
 };
 
 const GroupSection = ({ name, style }: GroupSectionProps) => {
-
   return (
     <sidebarStyles.SidebarSection>
       <sidebarStyles.SidebarPanelHeader>
         {name.charAt(0).toUpperCase() + name.substring(1)}
+        <etcStyles.PlusButton />
       </sidebarStyles.SidebarPanelHeader>
       <sidebarStyles.SidebarPanelContent>
         <inputStyles.Fields>
@@ -380,7 +379,7 @@ type FieldProps = {
 const Field = memo(
   ({ name, style, options: { input: inputOptions } }: FieldProps) => {
     const dispatch = useDispatch<DesignerEvent>();
-    const targetId = useSelector(getSelectedNodeId);
+    const targetId = useSelector(getSelectedId);
 
     const onSave = ({ value, imports }: NewDeclValue) => {
       dispatch({
@@ -482,14 +481,13 @@ const FieldInput = ({
         }
       })
       .map((token) => {
-
         // use existing NS so that we have preselected value
-        const tokenNs = imports.find(imp => {
-          return dep.imports[imp.path] === token.dependency.path
-        })?.namespace || "mod";
+        const tokenNs =
+          imports.find((imp) => {
+            return dep.imports[imp.path] === token.dependency.path;
+          })?.namespace || "mod";
 
         const value = `var(${tokenNs}.${token.atom.name})`;
-
 
         return (
           <SuggestionMenuItem
@@ -532,7 +530,11 @@ const FieldInput = ({
       menu={menu}
       style={{ width: 350 }}
     >
-      <TextInput value={isDefault ? undefined : value} placeholder={isDefault ? value : undefined} select />
+      <TextInput
+        value={isDefault ? undefined : value}
+        placeholder={isDefault ? value : undefined}
+        select
+      />
     </SuggestionMenu>
   );
 };

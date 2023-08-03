@@ -246,17 +246,17 @@ const getAllFrameBounds = (designer: DesignerState) => {
   return mergeBoxes(getCurrentPreviewFrameBoxes(designer));
 };
 export const getSelectedNodePath = (designer: DesignerState) => {
-  const nodeId = getSelectedNodeId(designer);
+  const nodeId = getSelectedId(designer);
   if (!nodeId || !designer.currentDocument) {
     return null;
   }
   const node = virtHTML.getNodeById(
-    getSelectedNodeId(designer),
+    getSelectedId(designer),
     designer.currentDocument.paperclip.html
   );
   return virtHTML.getNodePath(node, designer.currentDocument.paperclip.html);
 };
-export const getSelectedNodeId = (designer: DesignerState) => {
+export const getSelectedId = (designer: DesignerState) => {
   return designer.selectedTargetId;
 };
 export const getHighlightedNodeId = (designer: DesignerState) =>
@@ -602,9 +602,10 @@ export const getAllComponents = (state: DesignerState) => {
   return getGraphComponents(state.graph);
 };
 
-
-export const getCurrentDocumentImports = (state: DesignerState) => ast.getDocumentImports(state.graph.dependencies[getCurrentFilePath(state)].document);
-
+export const getCurrentDocumentImports = (state: DesignerState) =>
+  ast.getDocumentImports(
+    state.graph.dependencies[getCurrentFilePath(state)].document
+  );
 
 export const getGraphComponents = (graph: Graph) => {
   const allComponents: ComponentInfo[] = [];
@@ -665,7 +666,6 @@ export const resetCurrentDocument = (state: DesignerState): DesignerState => ({
 });
 
 export const getExprBounds = (exprId: string, state: DesignerState): Bounds => {
-
   const node = virtHTML.getNodeById(
     state.selectedTargetId,
     state.currentDocument.paperclip.html
@@ -807,7 +807,10 @@ export const handleDragEvent = (
   });
 };
 
-export const setSelectedNodeBounds = (newBounds: Bounds, state: DesignerState) => {
+export const setSelectedNodeBounds = (
+  newBounds: Bounds,
+  state: DesignerState
+) => {
   return produce(state, (newState) => {
     const node = virtHTML.getNodeById(
       newState.selectedTargetId,
@@ -829,7 +832,7 @@ export const setSelectedNodeBounds = (newBounds: Bounds, state: DesignerState) =
       ...newBounds,
     };
   });
-}
+};
 
 export const clampCanvasTransform = (
   canvas: Canvas,

@@ -1,8 +1,9 @@
 #### Immediate
 
 - Style panel
-  - try getting to work with computed props
-- ability to create component
+  - ability to add another prop (+ button and tab)
+  - use placeholder for inherited properties
+
 
 
 ### Considerations

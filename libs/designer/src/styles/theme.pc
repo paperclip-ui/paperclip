@@ -40,8 +40,6 @@ public token space13 160px
 public token fontSize01 0.75rem
 public token fontSize02 0.875rem
 public token fontSize03 1.125rem
-public token fontSize03 1.125rem
-public token fontSize03 1.25rem
 public token fontSize04 1.5rem
 public token fontSize05 1.75rem
 public token fontSize06 2rem

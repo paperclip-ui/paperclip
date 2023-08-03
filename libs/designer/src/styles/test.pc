@@ -1,17 +1,20 @@
 import "./editor.pc" as mod1
 import "./theme.pc" as mod2
 
+style test {
+    position: fixed
+}
+
 /**
  * @bounds(x: 0, y: 0, width: 1024, height: 748)
 */
 
 div {
-    style {
-        position: relative
-        background: var(mod2.gray06)
-        height: 100vh
+    style extends test {
+        background: var(mod2.backgroundSelectedText)
+        height: 70px
         width: 100vw
-        color: var(mod2.gray04)
+        color: var(mod2.purple01)
     }
     div {
         style {

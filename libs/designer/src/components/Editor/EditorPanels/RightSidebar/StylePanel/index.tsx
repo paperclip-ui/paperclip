@@ -1,5 +1,6 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { memoize, useDispatch, useSelector } from "@paperclip-ui/common";
 import {
@@ -12,7 +13,7 @@ import {
   SuggestionMenuItem,
   SuggestionMenuSection,
 } from "@paperclip-ui/designer/src/components/SuggestionMenu";
-import { getAllPublicAtoms, getCurrentDependency, getCurrentDocumentImports } from "@paperclip-ui/designer/src/state";
+import { getAllPublicAtoms, getCurrentDependency, getCurrentDocumentImports, getSelectedNodeId } from "@paperclip-ui/designer/src/state";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
 import { Variants } from "./Variants";
 
@@ -60,9 +61,7 @@ namespace schema {
   export type Field<Input extends BaseInput> = {
     name?: string;
     group?: string;
-    displayWhen?: DisplayWhen;
 
-    sticky?: boolean;
 
     // alias property to use instead
     alias?: string;
@@ -87,7 +86,7 @@ const cssSchema: schema.Map<css.Input> = [
   {
     name: "position",
     group: "layout",
-    sticky: true,
+    
     input: {
       name: "left",
       type: css.InputType.Enum,
@@ -97,27 +96,25 @@ const cssSchema: schema.Map<css.Input> = [
   {
     name: "left",
     group: "layout",
-    displayWhen: { name: "position", value: /relative|absolute|fixed/ },
-    sticky: true,
+    
     input: { name: "left", type: css.InputType.Unit },
   },
   {
     name: "top",
     group: "layout",
-    displayWhen: { name: "position", value: /relative|absolute|fixed/ },
-    sticky: true,
+    
     input: { name: "height", type: css.InputType.Unit },
   },
   {
     name: "width",
     group: "layout",
-    sticky: true,
+    
     input: { name: "width", type: css.InputType.Unit },
   },
   {
     name: "height",
     group: "layout",
-    sticky: true,
+    
     input: { name: "height", type: css.InputType.Unit },
   },
 
@@ -129,7 +126,7 @@ const cssSchema: schema.Map<css.Input> = [
   {
     name: "padding",
     group: "layout",
-    sticky: true,
+    
     join: {
       padding: [
         "padding-left",
@@ -148,7 +145,7 @@ const cssSchema: schema.Map<css.Input> = [
   {
     name: "margin",
     group: "layout",
-    sticky: true,
+    
     join: {
       margin: ["margin-left", "margin-right", "margin-top", "margin-bottom"],
     },
@@ -157,7 +154,7 @@ const cssSchema: schema.Map<css.Input> = [
   {
     name: "box-sizing",
     group: "layout",
-    sticky: true,
+    
     input: {
       name: "box-sizing",
       type: css.InputType.Enum,
@@ -167,7 +164,7 @@ const cssSchema: schema.Map<css.Input> = [
   {
     name: "display",
     group: "layout",
-    sticky: true,
+    
     input: {
       name: "display",
       type: css.InputType.Enum,
@@ -201,9 +198,8 @@ const cssSchema: schema.Map<css.Input> = [
   },
   {
     name: "justify-content",
-    displayWhen: { name: "display", value: /flex/ },
     group: "layout",
-    sticky: true,
+    
     input: {
       name: "justify-content",
       type: css.InputType.Enum,
@@ -212,9 +208,8 @@ const cssSchema: schema.Map<css.Input> = [
   },
   {
     name: "align-items",
-    displayWhen: { name: "display", value: /flex/ },
     group: "layout",
-    sticky: true,
+    
     input: {
       name: "display",
       type: css.InputType.Enum,
@@ -223,9 +218,8 @@ const cssSchema: schema.Map<css.Input> = [
   },
   {
     name: "flex-direction",
-    displayWhen: { name: "display", value: /flex/ },
     group: "layout",
-    sticky: true,
+    
     input: {
       name: "display",
       type: css.InputType.Enum,
@@ -234,9 +228,8 @@ const cssSchema: schema.Map<css.Input> = [
   },
   {
     name: "flex-wrap",
-    displayWhen: { name: "display", value: /flex/ },
     group: "layout",
-    sticky: true,
+    
     input: {
       name: "display",
       type: css.InputType.Enum,
@@ -245,28 +238,27 @@ const cssSchema: schema.Map<css.Input> = [
   },
   {
     name: "gap",
-    displayWhen: { name: "display", value: /flex|grid/ },
     group: "layout",
-    sticky: true,
+    
     input: { name: "gap", type: css.InputType.Unit },
   },
 
   {
     name: "font-family",
     group: "typography",
-    sticky: true,
+    
     input: { name: "font-family", type: css.InputType.Enum, options: [] },
   },
   {
     name: "font-size",
     group: "typography",
-    sticky: true,
+    
     input: { name: "font-size", type: css.InputType.Unit },
   },
   {
     name: "color",
     group: "typography",
-    sticky: true,
+    
     input: { name: "color", type: css.InputType.Color },
   },
 
@@ -275,7 +267,7 @@ const cssSchema: schema.Map<css.Input> = [
   { name: "border-left-color", alias: "border" },
   {
     name: "border",
-    sticky: true,
+    
     join: {
       "border-width": [
         "border-left-width",
@@ -313,20 +305,12 @@ const cssSchema: schema.Map<css.Input> = [
   // Background
   {
     name: "background",
-    sticky: true,
+    
     list: true,
     input: { name: "background", type: css.InputType.Color },
   },
   defaultOptions,
 ];
-
-const GROUPS = {
-  layout: (name: string) => getPropField(name).group === "layout",
-  typography: (name: string) => getPropField(name).group === "typography",
-  style: (name: string) => {
-    return getPropField(name).group == null;
-  },
-};
 
 export const StylePanel = () => {
   const { style } = useStylePanel();
@@ -334,13 +318,11 @@ export const StylePanel = () => {
   return (
     <sidebarStyles.SidebarPanel>
       <Variants />
-      {Object.keys(GROUPS).map((name) => (
-        <GroupSection
-          key={name}
-          style={style.filter((style) => GROUPS[name](style.name))}
-          name={name}
+      <GroupSection
+          style={style}
+          name="Style"
         />
-      ))}
+
     </sidebarStyles.SidebarPanel>
   );
 };
@@ -356,19 +338,11 @@ const getPropField = memoize((name: string): schema.Field<css.Input> => {
 
 type GroupSectionProps = {
   name: string;
-  style: ComputedDeclaration[];
+  style: ast.ComputedStyleMap;
   rest?: boolean;
 };
 
 const GroupSection = ({ name, style }: GroupSectionProps) => {
-  const used = {};
-
-  const sortedStyle = [...style].sort((a, b) => {
-    const ao = getPropField(a.name);
-    const ab = getPropField(b.name);
-
-    return cssSchema.indexOf(ao) > cssSchema.indexOf(ab) ? 1 : -1;
-  });
 
   return (
     <sidebarStyles.SidebarSection>
@@ -377,28 +351,11 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
       </sidebarStyles.SidebarPanelHeader>
       <sidebarStyles.SidebarPanelContent>
         <inputStyles.Fields>
-          {sortedStyle.map((decl) => {
-            const options = getPropField(decl.name);
-            const fieldName = options.name || decl.name;
-            if (used[fieldName] || !options) {
-              return null;
-            }
+          {style.propertyNames.map((propertyName) => {
+            const decl = style.map[propertyName];
 
-            used[fieldName] = true;
-
-            if (!options.sticky && !decl.isExplicitlyDefined) {
-              return null;
-            }
-
-            if (
-              options.displayWhen &&
-              !options.displayWhen.value.test(
-                style.find((decl2) => decl2.name === options.displayWhen?.name)
-                  ?.value || ""
-              )
-            ) {
-              return null;
-            }
+            const options = getPropField(propertyName);
+            const fieldName = options.name || propertyName;
 
             return (
               <Field
@@ -417,13 +374,14 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
 
 type FieldProps = {
   name: string;
-  style: ComputedDeclaration;
+  style: ast.ComputedStyle;
   options: schema.Field<css.Input>;
 };
 
 const Field = memo(
   ({ name, style, options: { input: inputOptions } }: FieldProps) => {
     const dispatch = useDispatch<DesignerEvent>();
+    const targetId = useSelector(getSelectedNodeId);
 
     const onSave = ({ value, imports }: NewDeclValue) => {
       dispatch({
@@ -435,10 +393,12 @@ const Field = memo(
       });
     };
 
+    console.log(targetId, style.ownerId)
+
     const input = (
       <FieldInput
-        computedValue={style.computedValue}
-        explicitValue={style.explicitValue}
+        value={ast.serializeDeclaration(style.value)}
+        isDefault={style.ownerId !== targetId}
         onSave={onSave}
         type={inputOptions.type}
         options={
@@ -453,8 +413,8 @@ const Field = memo(
 );
 
 type FieldInputProps = {
-  computedValue: string;
-  explicitValue?: string;
+  value?: string;
+  isDefault: boolean;
   options?: string[];
   onSave: (value: NewDeclValue) => void;
   type: css.InputType;
@@ -466,8 +426,8 @@ type NewDeclValue = {
 };
 
 const FieldInput = ({
-  computedValue,
-  explicitValue,
+  value,
+  isDefault,
   options,
   type,
   onSave,
@@ -488,8 +448,8 @@ const FieldInput = ({
   };
 
   useEffect(() => {
-    internalValue.current = { value: explicitValue };
-  }, [explicitValue]);
+    internalValue.current = { value };
+  }, [value]);
 
   const menu = useCallback(() => {
     const ops = options?.length
@@ -570,11 +530,11 @@ const FieldInput = ({
     <SuggestionMenu
       onChange={onChange}
       onOtherChange={onOtherChange}
-      values={[explicitValue]}
+      values={[value]}
       menu={menu}
       style={{ width: 350 }}
     >
-      <TextInput value={explicitValue} placeholder={computedValue} select />
+      <TextInput value={isDefault ? undefined : value} placeholder={isDefault ? value : undefined} select />
     </SuggestionMenu>
   );
 };

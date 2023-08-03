@@ -361,48 +361,18 @@ const AVAILABLE_STYLES = {
 
 export const getSelectedExprStyles = (
   state: DesignerState
-): ComputedDeclaration[] => {
+): ast.ComputedStyleMap => {
   const combinedStyles: Record<string, ComputedDeclaration> = {};
 
   const virtId = state.selectedTargetId;
 
   
   if (!virtId) {
-    return [];
+    return { propertyNames: [], map: {} }
   }
+  
 
-  const exprStyle = ast.computeElementStyle(virtId, state.graph);
-  const computedStyle = state.computedStyles[virtId];
-
-  if (!computedStyle) {
-    return [];
-  }
-
-  // not all props are computed (like gap), so we pull from constant that contains ALL CSS props
-  // instead.
-  for (const name in AVAILABLE_STYLES) {
-    const computedValue = computedStyle[name];
-    const explicitValue =
-      exprStyle[name] && ast.serializeDeclaration(exprStyle[name]);
-
-    if (
-      combinedStyles[name] != null &&
-      combinedStyles[name].computedValue !== computedValue
-    ) {
-      combinedStyles[name].computedValue = MIXED_VALUE;
-    } else {
-      combinedStyles[name] = {
-        name,
-        isDefault: computedValue === AVAILABLE_STYLES[name],
-        isExplicitlyDefined: exprStyle[name] != null,
-        computedValue,
-        value: computedValue || explicitValue,
-        explicitValue,
-      };
-    }
-  }
-
-  return Object.values(combinedStyles);
+  return ast.computeElementStyle(virtId, state.graph);
 };
 
 export const getSelectedExpression = (state: DesignerState) => {

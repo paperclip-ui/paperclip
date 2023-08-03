@@ -81,6 +81,22 @@ export namespace ast {
     | BaseExprInfo<Str, ExprKind.Str>
     | BaseExprInfo<StyleDeclaration, ExprKind.Declaration>;
 
+  export type ComputedStyleMap = {
+
+    // 
+    propertyNames: string[];
+
+    // map of computed styles
+    map: Record<string, ComputedStyle>;
+  };
+
+  export type ComputedStyle = {
+    value: DeclarationValue;
+    ownerId?: string;
+    variant?: Variant;
+    prevValue?: ComputedStyle;
+  }
+
   export const getDocumentBodyInner = (item: DocumentBodyItem) => {
     // oneof forces us to do this :(
     return (
@@ -373,22 +389,23 @@ export namespace ast {
       exprId: string,
       graph: Graph,
       variantIds?: string[]
-    ): Record<string, DeclarationValue> => {
-      // TODO
+    ): ComputedStyleMap => {
+
       const node = getExprById(exprId.split(".").pop(), graph) as Element;
-      const map: Record<string, DeclarationValue> = {};
+      let computedStyle: ComputedStyleMap = { propertyNames: [], map: {} };
       if (!node || !node.body) {
-        return map;
+        return computedStyle;
       }
+
       for (const item of node.body) {
         const { style } = item;
 
         if (style) {
-          Object.assign(map, computeStyle(style, graph, variantIds));
+          computedStyle = overrideComputedStyles(computedStyle, computeStyle(style, graph, node.id, variantIds));
         }
       }
 
-      return map;
+      return computedStyle;
     }
   );
 
@@ -396,35 +413,72 @@ export namespace ast {
     (
       style: Style,
       graph: Graph,
+      ownerId: string,
       variantIds?: string[]
-    ): Record<string, DeclarationValue> => {
-      let map: Record<string, DeclarationValue> = {};
+    ): ComputedStyleMap => {
+      let computedStyles: ComputedStyleMap = { propertyNames: [], map: {}};
 
       if (style.variantCombo && style.variantCombo.length > 0) {
         // TODO: do ehthis
         // if (!style.variantCombo.every(ref => getRef))
-        return map;
+        return computedStyles;
       }
 
       for (const value of style.declarations) {
-        map[value.name] = value.value;
+        computedStyles.propertyNames.push(value.name);
+        computedStyles.map[value.name] = {
+          ownerId,
+          value: value.value
+        }
       }
+      
 
       if (style.extends) {
         for (const ref of style.extends) {
           const extendsStyle = getExprRef(ref, graph)?.style;
           if (extendsStyle) {
-            map = Object.assign(
-              {},
-              computeStyle(extendsStyle, graph, variantIds),
-              map
-            );
+
+            computedStyles = overrideComputedStyles(computeStyle(extendsStyle, graph, extendsStyle.id, variantIds), computedStyles);
+           
           }
         }
       }
-      return map;
+      return computedStyles;
     }
   );
+
+  const overrideComputedStyles = (
+    computedStyles: ComputedStyleMap,
+    overrides: ComputedStyleMap
+  ): ComputedStyleMap => {
+    const computed: ComputedStyleMap = { propertyNames: [], map: {} };
+
+    for (const name of computedStyles.propertyNames) {
+      computed.propertyNames.push(name);
+
+      const override = overrides[name];
+
+      if (override) {
+        computed.map[name] = {
+          value: override.value,
+          ownerId: override.ownerId,
+          prevValue: computedStyles.map[name],
+        };
+      } else {
+        computed.map[name] = computedStyles.map[name];
+      }
+    }
+
+
+    for (const name of overrides.propertyNames) {
+      if (!computedStyles.propertyNames.includes(name)) {
+        computed.propertyNames.push(name);
+        computed.map[name] = overrides.map[name];
+      }
+    }
+
+    return computed;
+  };
 
   export type GraphAtomInfo = {
     dependency: Dependency;

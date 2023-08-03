@@ -1,6 +1,7 @@
 import "./sidebar.pc" as sidebar
 import "./theme.pc" as theme
 import "./input.pc" as input
+import "./etc.pc" as etc
 
 component ColorPickerPopup {
     render sidebar.SidebarPopup {
@@ -73,11 +74,7 @@ public component Preview {
         sidebar.SidebarSection {
             sidebar.SidebarPanelHeader {
                 text "Layout"
-                div {
-                    style extends theme.icon {
-                        -webkit-mask-image: url("./plus.svg")
-                    }
-                }
+                etc.PlusButton
             }
             sidebar.SidebarPanelContent {
                 input.Fields {
@@ -145,11 +142,7 @@ public component Preview {
         sidebar.SidebarSection {
             sidebar.SidebarPanelHeader {
                 text "Style"
-                div {
-                    style extends theme.icon {
-                        -webkit-mask-image: url("./plus.svg")
-                    }
-                }
+                etc.PlusButton
             }
             sidebar.SidebarPanelContent {
                 input.Fields {

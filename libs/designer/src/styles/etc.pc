@@ -49,9 +49,10 @@ Item
 
 
 public component PlusButton {
-    render div {
+    render button {
                     style extends theme.icon {
                         -webkit-mask-image: url("./plus.svg")
+                        color: inherit
                     }
                 }
 }

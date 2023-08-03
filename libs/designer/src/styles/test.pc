@@ -1,23 +1,40 @@
-import "./theme.pc" as mod
+import "./editor.pc" as mod1
+import "./theme.pc" as mod2
 
 /**
- * @bounds(x: -49, y: 217, width: 1024, height: 748)
+ * @bounds(x: 0, y: 0, width: 1024, height: 748)
 */
 
 div {
     style {
         position: relative
-        background: blue
+        background: var(mod2.gray06)
+        height: 100vh
+        width: 100vw
+        color: var(mod2.gray04)
     }
     div {
         style {
-            background: rgba(0, 0, 0, 0.1)
+            background: white
             position: absolute
-            left: 0px
-            top: 100px
-            width: 179px
-            height: 119px
+            left: 50%
+            top: 50%
+            width: 50%
+            height: 100vh
         }
+    }
+}
+
+/**
+ * @bounds(x: 1117, y: -2, width: 377, height: 519)
+*/
+
+div {
+    style {
+        position: relative
+        background: var(mod2.blue01)
+        height: 100vh
+        width: 100vw
     }
 }
 

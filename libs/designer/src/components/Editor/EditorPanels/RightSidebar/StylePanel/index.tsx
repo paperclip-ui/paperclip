@@ -12,7 +12,7 @@ import {
   SuggestionMenuItem,
   SuggestionMenuSection,
 } from "@paperclip-ui/designer/src/components/SuggestionMenu";
-import { getAllPublicAtoms, getCurrentDocumentImports } from "@paperclip-ui/designer/src/state";
+import { getAllPublicAtoms, getCurrentDependency, getCurrentDocumentImports } from "@paperclip-ui/designer/src/state";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
 import { Variants } from "./Variants";
 
@@ -473,6 +473,7 @@ const FieldInput = ({
   onSave,
 }: FieldInputProps) => {
   const tokens = useSelector(getAllPublicAtoms);
+  const dep = useSelector(getCurrentDependency);
   const imports = useSelector(getCurrentDocumentImports);
 
   const internalValue = useRef<NewDeclValue>();
@@ -525,8 +526,12 @@ const FieldInput = ({
       .map((token) => {
 
         // use existing NS so that we have preselected value
-        const tokenNs = imports[token.dependency.path] || "mod";
+        const tokenNs = imports.find(imp => {
+          return dep.imports[imp.path] === token.dependency.path
+        })?.namespace || "mod";
+
         const value = `var(${tokenNs}.${token.atom.name})`;
+
 
         return (
           <SuggestionMenuItem
@@ -559,7 +564,7 @@ const FieldInput = ({
     }
 
     return ops;
-  }, [options, tokens, onSave, imports]);
+  }, [options, tokens, onSave, dep, imports]);
 
   return (
     <SuggestionMenu

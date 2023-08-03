@@ -1,14 +1,14 @@
-import React, { memo } from "react";
+import React, { memo, useCallback, useState } from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import * as etcStyles from "@paperclip-ui/designer/src/styles/etc.pc";
-import { useSelector } from "@paperclip-ui/common";
+import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { getSelectedExprStyles } from "@paperclip-ui/designer/src/state/pc";
-import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
 import { Variants } from "./Variants";
 import { getPropField } from "./cssSchema";
 import { Declaration } from "./Declaration";
+import { NewDeclaration } from "./NewDeclaration";
 
 export const StylePanel = () => {
   const { style } = useStylePanel();
@@ -28,6 +28,34 @@ type GroupSectionProps = {
 };
 
 const GroupSection = ({ name, style }: GroupSectionProps) => {
+  const [showNewDeclInput, setShowNewDeclInput] = useState(false);
+
+  const dispatch = useDispatch();
+
+  const onLastValueTab = useCallback(
+    (event: React.KeyboardEvent) => {
+      event.preventDefault();
+      setShowNewDeclInput(true);
+    },
+    [setShowNewDeclInput]
+  );
+
+  const onSaveNewDeclaration = useCallback(
+    (name: string, value: string) => {
+      setShowNewDeclInput(false);
+      if (name && value) {
+        dispatch({
+          type: "editor/styleDeclarationsChanged",
+          payload: {
+            values: { [name]: value },
+            imports: {},
+          },
+        });
+      }
+    },
+    [setShowNewDeclInput]
+  );
+
   return (
     <sidebarStyles.SidebarSection>
       <sidebarStyles.SidebarPanelHeader>
@@ -36,11 +64,12 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
       </sidebarStyles.SidebarPanelHeader>
       <sidebarStyles.SidebarPanelContent>
         <inputStyles.Fields>
-          {style.propertyNames.map((propertyName) => {
+          {style.propertyNames.map((propertyName, i) => {
             const decl = style.map[propertyName];
 
             const options = getPropField(propertyName);
             const fieldName = options.name || propertyName;
+            const isLast = i === style.propertyNames.length - 1;
 
             return (
               <Declaration
@@ -48,27 +77,15 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
                 key={fieldName}
                 style={decl}
                 options={options}
+                onValueTab={isLast ? onLastValueTab : undefined}
               />
             );
           })}
+          {showNewDeclInput && <NewDeclaration onSave={onSaveNewDeclaration} />}
         </inputStyles.Fields>
       </sidebarStyles.SidebarPanelContent>
     </sidebarStyles.SidebarSection>
   );
-};
-
-const NewDeclField = memo(() => {
-  // default field input
-  return (
-    <inputStyles.Field
-      name={<TextInput placeholder="name" />}
-      input={<TextInput placeholder="value" />}
-    />
-  );
-});
-type NewDeclValue = {
-  imports?: Record<string, string>;
-  value: string;
 };
 
 const useStylePanel = () => {

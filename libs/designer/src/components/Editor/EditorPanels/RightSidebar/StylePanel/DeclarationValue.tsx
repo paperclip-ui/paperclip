@@ -1,11 +1,6 @@
-import React, { memo, useCallback, useEffect, useRef, useState } from "react";
-import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import React, { useCallback, useEffect, useRef } from "react";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
-import * as etcStyles from "@paperclip-ui/designer/src/styles/etc.pc";
-import { memoize, useDispatch, useSelector } from "@paperclip-ui/common";
-import { getSelectedExprStyles } from "@paperclip-ui/designer/src/state/pc";
-import { DesignerEvent } from "@paperclip-ui/designer/src/events";
+import { useSelector } from "@paperclip-ui/common";
 import {
   SuggestionMenu,
   SuggestionMenuItem,
@@ -15,27 +10,30 @@ import {
   getAllPublicAtoms,
   getCurrentDependency,
   getCurrentDocumentImports,
-  getSelectedId,
 } from "@paperclip-ui/designer/src/state";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
-import { Variants } from "./Variants";
 import { isColorValue, isUnitValue } from "./utils";
 import { NewDeclValue, css } from "./types";
+import { noop } from "lodash";
 
 type FieldInputProps = {
   value?: string;
   isDefault: boolean;
   options?: string[];
+  placeholder?: string;
   onSave: (value: NewDeclValue) => void;
+  onTab?: (event: React.KeyboardEvent) => void;
   type: css.InputType;
 };
 
 export const DeclarationValue = ({
   value,
   isDefault,
+  placeholder,
   options,
   type,
   onSave,
+  onTab = noop,
 }: FieldInputProps) => {
   const tokens = useSelector(getAllPublicAtoms);
   const dep = useSelector(getCurrentDependency);
@@ -131,7 +129,14 @@ export const DeclarationValue = ({
     return ops;
   }, [options, tokens, onSave, dep, imports]);
 
-  const onKeyDown = () => {};
+  const onKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (event.key === "Tab") {
+        onTab(event);
+      }
+    },
+    [onTab]
+  );
 
   return (
     <SuggestionMenu
@@ -143,7 +148,7 @@ export const DeclarationValue = ({
     >
       <TextInput
         value={isDefault ? undefined : value}
-        placeholder={isDefault ? value : undefined}
+        placeholder={isDefault ? value : placeholder}
         onKeyDown={onKeyDown}
         select
       />

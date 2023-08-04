@@ -11,17 +11,15 @@
 
 ### MVP
 
+- Style Panel
+
+  - smart dropdown for individual tokens e.g: border: 1px solid red
+
 - NPM installation
-- ability to build UIs end-to-end
-
-### Considerations
-
-- Try not to hand-write any new UI unless it's necessary for self-creation
-- It's all important so do what makes sense immediately
 
 ### Litmus
 
-- Can update any element in the editor
+- ability to build UIs end-to-end
 
 #### Warm up (30 min)
 
@@ -45,9 +43,6 @@ Easy wins:
 
   - mixins
   - atoms
-
-- Style Panel
-  - smart dropdown for individual tokens e.g: border: 1px solid red
 
 ### Polish
 

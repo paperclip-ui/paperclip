@@ -25,7 +25,7 @@ div {
     }
     div container {
         style {
-            background: var(mod2.blue00)
+            background: rgb(17, 236, 207)         
             position: red
             left: 224px
             top: 36.5px

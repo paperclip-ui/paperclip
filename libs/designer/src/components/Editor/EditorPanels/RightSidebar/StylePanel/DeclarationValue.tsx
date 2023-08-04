@@ -20,9 +20,10 @@ type FieldInputProps = {
   value?: string;
   isDefault: boolean;
   options?: string[];
+  autoFocus?: boolean;
   placeholder?: string;
   onChange?: (value: string) => void;
-  onSave: (value: NewDeclValue) => void;
+  onSelect: (value: NewDeclValue) => void;
   onTab?: (event: React.KeyboardEvent) => void;
   type: css.InputType;
 };
@@ -31,10 +32,11 @@ export const DeclarationValue = ({
   value,
   isDefault,
   placeholder,
+  autoFocus,
   onChange = noop,
   options,
   type,
-  onSave,
+  onSelect: onSelect2,
   onTab = noop,
 }: FieldInputProps) => {
   const tokens = useSelector(getAllPublicAtoms);
@@ -44,11 +46,11 @@ export const DeclarationValue = ({
   const internalValue = useRef<NewDeclValue>();
 
   const onSelect = ([newValue]) => {
-    onSave(newValue);
+    onSelect2(newValue);
   };
 
   const onOtherSelect = (value) => {
-    onSave({ value });
+    onSelect2({ value });
   };
 
   useEffect(() => {
@@ -127,11 +129,11 @@ export const DeclarationValue = ({
     }
 
     return ops;
-  }, [options, tokens, onSave, dep, imports]);
+  }, [options, tokens, onSelect2, dep, imports]);
 
   const onKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
-      if (event.key === "Tab") {
+      if (event.key === "Tab" && !event.shiftKey) {
         onTab(event);
       }
     },
@@ -150,6 +152,7 @@ export const DeclarationValue = ({
       style={{ width: 350 }}
     >
       <TextInput
+        autoFocus={autoFocus}
         value={isDefault ? undefined : value}
         placeholder={isDefault ? value : placeholder}
         onKeyDown={onKeyDown}

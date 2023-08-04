@@ -4,65 +4,78 @@ import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
 import { DeclarationValue } from "./DeclarationValue";
 import { getPropField } from "./cssSchema";
 import { css } from "./types";
+import { useDispatch } from "@paperclip-ui/common";
+import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 
 type NewDeclarationProps = {
-  onSave: (name: string, value: string) => void;
+  onSave: () => void;
 };
 
-export const NewDeclaration = memo(({ onSave }: NewDeclarationProps) => {
-  const [name, setName] = useState(undefined);
-  const [value, setValue] = useState(undefined);
+export const NewDeclaration = memo(
+  ({ onSave: onSave2 }: NewDeclarationProps) => {
+    const [name, setName] = useState(undefined);
+    const dispatch = useDispatch<DesignerEvent>();
 
-  const fieldRef = useRef(null);
+    const fieldRef = useRef(null);
 
-  const onSave2 = useCallback(() => {
-    onSave(name, value);
-  }, [name, value, fieldRef]);
+    const onSave = useCallback(
+      (name: string, value: string, imports: any) => {
+        if (name && value) {
+          dispatch({
+            type: "editor/styleDeclarationsChanged",
+            payload: {
+              values: { [name]: value },
+              imports,
+            },
+          });
+        }
+        onSave2();
+      },
+      [name, fieldRef]
+    );
 
-  const onBlur = useCallback(() => {
-    setTimeout(() => {
-      if (!fieldRef.current.contains(document.activeElement)) {
+    const onSelectValue = useCallback(
+      ({ value, imports }) => {
+        onSave(name, value, imports);
+      },
+      [name]
+    );
+
+    const onBlur = useCallback(() => {
+      if (!name) {
         onSave2();
       }
-    });
-  }, [onSave2, fieldRef]);
+    }, [name]);
 
-  const onValueSave = useCallback(
-    ({ value }) => {
-      onSave(name, value);
-    },
-    [name, value]
-  );
+    const field = getPropField(name);
 
-  const field = getPropField(name);
-
-  // default field input
-  return (
-    <inputStyles.Field
-      ref={fieldRef}
-      name={
-        <TextInput
-          placeholder="name"
-          autoFocus
-          onChange={setName}
-          onBlur={onBlur}
-        />
-      }
-      input={
-        <DeclarationValue
-          value={value}
-          placeholder="value"
-          isDefault={false}
-          onSave={onValueSave}
-          type={field.input.type}
-          options={
-            field.input.type === css.InputType.Enum ? field.input.options : []
-          }
-        />
-      }
-    />
-  );
-});
+    // default field input
+    return (
+      <inputStyles.Field
+        ref={fieldRef}
+        name={
+          <TextInput
+            placeholder="name"
+            autoFocus
+            onChange={setName}
+            onBlur={onBlur}
+          />
+        }
+        input={
+          <DeclarationValue
+            placeholder="value"
+            isDefault={false}
+            onSelect={onSelectValue}
+            type={field.input.type}
+            options={
+              field.input.type === css.InputType.Enum ? field.input.options : []
+            }
+          />
+        }
+      />
+    );
+  }
+);
 type NewDeclaration = {
   imports?: Record<string, string>;
   value: string;

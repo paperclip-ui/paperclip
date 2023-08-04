@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
@@ -29,17 +29,21 @@ type GroupSectionProps = {
 
 const GroupSection = ({ name, style }: GroupSectionProps) => {
   const [showNewDeclInput, setShowNewDeclInput] = useState(false);
+  const [focusLastValue, setFocusLastValue] = useState(false);
 
   const onLastValueTab = useCallback(
     (event: React.KeyboardEvent) => {
-      event.preventDefault();
+      if (!showNewDeclInput) {
+        event.preventDefault();
+      }
       setShowNewDeclInput(true);
     },
-    [setShowNewDeclInput]
+    [showNewDeclInput, setShowNewDeclInput]
   );
 
   const onSaveNewDeclaration = useCallback(() => {
     setShowNewDeclInput(false);
+    setFocusLastValue(true);
   }, [setShowNewDeclInput]);
 
   return (
@@ -61,12 +65,11 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
                 key={i}
                 style={decl}
                 onValueTab={isLast ? onLastValueTab : undefined}
+                autoFocusValue={isLast && focusLastValue}
               />
             );
           })}
-          {showNewDeclInput && (
-            <Declaration isNewInput onSave={onSaveNewDeclaration} />
-          )}
+          {showNewDeclInput && <NewDeclaration onSave={onSaveNewDeclaration} />}
         </inputStyles.Fields>
       </sidebarStyles.SidebarPanelContent>
     </sidebarStyles.SidebarSection>

@@ -4,7 +4,10 @@ import { Portal } from "../Portal";
 import cx from "classnames";
 import { usePositioner } from "../hooks/usePositioner";
 import { noop } from "lodash";
-import { on } from "process";
+
+export type SelectDetails = {
+  event: React.FocusEvent | React.MouseEvent | React.KeyboardEvent;
+};
 
 export type SuggestionMenuProps = {
   values: string[];
@@ -12,8 +15,8 @@ export type SuggestionMenuProps = {
   style?: any;
   multi?: boolean;
   onChange?: (values: any[]) => void;
-  onSelect: (values: any[]) => void;
-  onOtherSelect?: (value: string) => void;
+  onSelect: (values: any[], details: SelectDetails) => void;
+  onOtherSelect?: (value: string, details: SelectDetails) => void;
   menu: () => React.ReactElement[];
 };
 
@@ -44,17 +47,18 @@ export const SuggestionMenu = ({
     }
   };
 
-  const onBlur = () => {
+  const onBlur = (event: React.FocusEvent | React.KeyboardEvent) => {
     setIsOpen((open) => {
+      console.log("SET IS OPEN", open);
       if (open && typedValue != null) {
         onChange([{ value: typedValue }]);
-        onOtherSave(typedValue);
+        onOtherSave(typedValue, { event });
       }
       return false;
     });
   };
 
-  const onSelect = (value: any) => {
+  const onSelect = (value: any, details: SelectDetails) => {
     if (multi) {
       if (!values.includes(value)) {
         values = [...values, value];
@@ -65,7 +69,7 @@ export const SuggestionMenu = ({
       values = [value];
     }
     onChange(values);
-    onSelect2(values);
+    onSelect2(values, details);
     setIsOpen(false);
   };
 
@@ -76,9 +80,11 @@ export const SuggestionMenu = ({
           return React.cloneElement(child, {
             selected: values.includes(child.props.value),
             preselected: i === preselectedIndex,
-            onMouseDown: () => {
+            onMouseDown: (event: React.MouseEvent) => {
               child.props.value &&
-                onSelect(child.props.selectValue || child.props.value);
+                onSelect(child.props.selectValue || child.props.value, {
+                  event,
+                });
             },
           });
         })
@@ -112,12 +118,15 @@ export const SuggestionMenu = ({
         menuOptions[preselectedIndex]?.props.selectValue ||
         menuOptions[preselectedIndex]?.props.value;
       if (value) {
-        onSelect(value);
+        onSelect(value, { event });
       } else if (typedValue != null) {
         onChange([{ value: typedValue }]);
-        onOtherSave(typedValue);
+        onOtherSave(typedValue, { event });
       }
       setIsOpen(false);
+    } else if (event.key === "Tab") {
+      onBlur(event);
+      oldProps.onKeyDown?.(event);
     } else if (oldProps.onKeyDown) {
       oldProps.onKeyDown(event);
     }

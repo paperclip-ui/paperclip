@@ -1,12 +1,10 @@
 #### Immediate
 
 - Style panel
+  - tab insert props
   - ability to add another prop (+ button and tab)
   - ability to clear declarations
   - color picker
-
-
-
 
 ### Considerations
 

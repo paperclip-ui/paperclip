@@ -1,14 +1,12 @@
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import * as etcStyles from "@paperclip-ui/designer/src/styles/etc.pc";
-import { useDispatch, useSelector } from "@paperclip-ui/common";
+import { useSelector } from "@paperclip-ui/common";
 import { getSelectedExprStyles } from "@paperclip-ui/designer/src/state/pc";
 import { Variants } from "./Variants";
-import { getPropField } from "./cssSchema";
 import { Declaration } from "./Declaration";
-import { NewDeclaration } from "./NewDeclaration";
 
 export const StylePanel = () => {
   const { style } = useStylePanel();
@@ -28,23 +26,42 @@ type GroupSectionProps = {
 };
 
 const GroupSection = ({ name, style }: GroupSectionProps) => {
-  const [showNewDeclInput, setShowNewDeclInput] = useState(false);
-  const [focusLastValue, setFocusLastValue] = useState(false);
+  const [focusedDeclIndex, setFocusedDeclIndex] = useState<number | null>(null);
 
   const onLastValueTab = useCallback(
     (event: React.KeyboardEvent) => {
-      if (!showNewDeclInput) {
-        event.preventDefault();
-      }
-      setShowNewDeclInput(true);
+      event.preventDefault();
+      setFocusedDeclIndex(style.propertyNames.length + 1);
     },
-    [showNewDeclInput, setShowNewDeclInput]
+    [focusedDeclIndex, style.propertyNames.length]
   );
 
-  const onSaveNewDeclaration = useCallback(() => {
-    setShowNewDeclInput(false);
-    setFocusLastValue(true);
-  }, [setShowNewDeclInput]);
+  const onSave = () => {
+    // setFocusedDeclIndex(null);
+  };
+
+  const propNames = [...style.propertyNames];
+
+  if (focusedDeclIndex >= propNames.length) {
+    propNames.push(null);
+  }
+
+  const decls = propNames.map((propertyName, i) => {
+    const decl = style.map[propertyName];
+    const isLast = i === propNames.length - 1;
+    const isNew = propertyName === null;
+
+    return (
+      <Declaration
+        name={propertyName}
+        key={i}
+        isNew={isNew}
+        style={decl}
+        onValueTab={isLast ? onLastValueTab : undefined}
+        onFocus={() => setFocusedDeclIndex(i)}
+      />
+    );
+  });
 
   return (
     <sidebarStyles.SidebarSection>
@@ -53,24 +70,7 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
         <etcStyles.PlusButton />
       </sidebarStyles.SidebarPanelHeader>
       <sidebarStyles.SidebarPanelContent>
-        <inputStyles.Fields>
-          {style.propertyNames.map((propertyName, i) => {
-            const decl = style.map[propertyName];
-
-            const isLast = i === style.propertyNames.length - 1;
-
-            return (
-              <Declaration
-                name={propertyName}
-                key={i}
-                style={decl}
-                onValueTab={isLast ? onLastValueTab : undefined}
-                autoFocusValue={isLast && focusLastValue}
-              />
-            );
-          })}
-          {showNewDeclInput && <NewDeclaration onSave={onSaveNewDeclaration} />}
-        </inputStyles.Fields>
+        <inputStyles.Fields>{decls}</inputStyles.Fields>
       </sidebarStyles.SidebarPanelContent>
     </sidebarStyles.SidebarSection>
   );

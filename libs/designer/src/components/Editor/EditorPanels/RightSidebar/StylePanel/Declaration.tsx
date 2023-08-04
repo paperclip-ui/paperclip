@@ -8,40 +8,52 @@ import { DeclarationValue } from "./DeclarationValue";
 import { NewDeclValue, css, schema } from "./types";
 import { noop } from "lodash";
 import { getPropField } from "./cssSchema";
+import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
+import { SelectDetails } from "@paperclip-ui/designer/src/components/SuggestionMenu";
 
 type FieldProps = {
   name?: string;
   style?: ast.ComputedStyle;
+  onFocus?: () => void;
   onValueTab?: (event: React.KeyboardEvent) => void;
-  autoFocusValue?: boolean;
-  onSave?: () => void;
+  onSave?: (details: SelectDetails) => void;
+  isNew?: boolean;
 };
 
 export const Declaration = memo(
   ({
     name,
     style,
+    onFocus = noop,
     onValueTab = noop,
-    autoFocusValue,
-    onSave: onSave2 = noop,
+    onSave = noop,
+    isNew,
   }: FieldProps) => {
     const value = style && ast.serializeDeclaration(style.value);
-    const { input: inputOptions } = getPropField(name);
+    const [name2, setName] = useState(name);
+    const { input: inputOptions } = getPropField(name2);
     const dispatch = useDispatch<DesignerEvent>();
     const targetId = useSelector(getSelectedId);
     const ref = useRef(null);
 
     const onValueSelect = useCallback(
-      ({ value, imports }: NewDeclValue) => {
+      ({ value, imports }: NewDeclValue, details: SelectDetails) => {
         dispatch({
           type: "editor/styleDeclarationsChanged",
           payload: {
-            values: { [name]: value },
+            values: { [name2]: value },
             imports,
           },
         });
+        onSave(details);
       },
-      [name, onSave2]
+      [name2]
+    );
+
+    const nameInput = isNew ? (
+      <TextInput value={name2} onChange={setName} autoFocus />
+    ) : (
+      name
     );
 
     const input = (
@@ -51,7 +63,6 @@ export const Declaration = memo(
         onSelect={onValueSelect}
         onTab={onValueTab}
         type={inputOptions.type}
-        autoFocus={autoFocusValue}
         options={
           inputOptions.type === css.InputType.Enum ? inputOptions.options : []
         }
@@ -59,6 +70,13 @@ export const Declaration = memo(
     );
 
     // default field input
-    return <inputStyles.Field ref={ref} name={name} input={input} />;
+    return (
+      <inputStyles.Field
+        ref={ref}
+        onFocus={onFocus}
+        name={nameInput}
+        input={input}
+      />
+    );
   }
 );

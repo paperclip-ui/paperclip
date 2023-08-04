@@ -6,20 +6,21 @@ import { getPropField } from "./cssSchema";
 import { css } from "./types";
 import { useDispatch } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
+import { SelectDetails } from "@paperclip-ui/designer/src/components/SuggestionMenu";
 
 type NewDeclarationProps = {
-  onSave: () => void;
+  onDone: () => void;
 };
 
 export const NewDeclaration = memo(
-  ({ onSave: onSave2 }: NewDeclarationProps) => {
+  ({ onDone: onDone }: NewDeclarationProps) => {
     const [name, setName] = useState(undefined);
     const dispatch = useDispatch<DesignerEvent>();
 
     const fieldRef = useRef(null);
 
     const onSave = useCallback(
-      (name: string, value: string, imports: any) => {
+      (name: string, value: string, imports: any, { event }: SelectDetails) => {
         if (name && value) {
           dispatch({
             type: "editor/styleDeclarationsChanged",
@@ -29,24 +30,22 @@ export const NewDeclaration = memo(
             },
           });
         }
-        onSave2();
       },
       [name, fieldRef]
     );
 
     const onSelectValue = useCallback(
-      ({ value, imports }) => {
-        onSave(name, value, imports);
+      ({ value, imports }, details: SelectDetails) => {
+        onSave(name, value, imports, details);
       },
       [name]
     );
 
     const onBlur = useCallback(() => {
       if (!name) {
-        onSave2();
+        onDone();
       }
     }, [name]);
-
     const field = getPropField(name);
 
     // default field input

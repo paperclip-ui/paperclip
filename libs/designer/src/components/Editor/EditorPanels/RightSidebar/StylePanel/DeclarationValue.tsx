@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef } from "react";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { useSelector } from "@paperclip-ui/common";
 import {
+  SelectDetails,
   SuggestionMenu,
   SuggestionMenuItem,
   SuggestionMenuSection,
@@ -23,7 +24,7 @@ type FieldInputProps = {
   autoFocus?: boolean;
   placeholder?: string;
   onChange?: (value: string) => void;
-  onSelect: (value: NewDeclValue) => void;
+  onSelect: (value: NewDeclValue, details) => void;
   onTab?: (event: React.KeyboardEvent) => void;
   type: css.InputType;
 };
@@ -45,12 +46,12 @@ export const DeclarationValue = ({
 
   const internalValue = useRef<NewDeclValue>();
 
-  const onSelect = ([newValue]) => {
-    onSelect2(newValue);
+  const onSelect = ([newValue], details: SelectDetails) => {
+    onSelect2(newValue, details);
   };
 
-  const onOtherSelect = (value) => {
-    onSelect2({ value });
+  const onOtherSelect = (value, details: SelectDetails) => {
+    onSelect2({ value }, details);
   };
 
   useEffect(() => {

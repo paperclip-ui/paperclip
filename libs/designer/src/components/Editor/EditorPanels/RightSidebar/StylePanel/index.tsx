@@ -36,9 +36,9 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
     [focusedDeclIndex, style.propertyNames.length]
   );
 
-  const onSave = () => {
-    // setFocusedDeclIndex(null);
-  };
+  const onPlusClick = useCallback(() => {
+    setFocusedDeclIndex(style.propertyNames.length + 1);
+  }, [style.propertyNames.length]);
 
   const propNames = [...style.propertyNames];
 
@@ -59,6 +59,7 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
         style={decl}
         onValueTab={isLast ? onLastValueTab : undefined}
         onFocus={() => setFocusedDeclIndex(i)}
+        onBlur={isLast ? () => setFocusedDeclIndex(i - 1) : undefined}
       />
     );
   });
@@ -67,7 +68,7 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
     <sidebarStyles.SidebarSection>
       <sidebarStyles.SidebarPanelHeader>
         {name.charAt(0).toUpperCase() + name.substring(1)}
-        <etcStyles.PlusButton />
+        <etcStyles.PlusButton onClick={onPlusClick} />
       </sidebarStyles.SidebarPanelHeader>
       <sidebarStyles.SidebarPanelContent>
         <inputStyles.Fields>{decls}</inputStyles.Fields>

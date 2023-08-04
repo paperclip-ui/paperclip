@@ -263,7 +263,7 @@ public component Token {
 }
 
 public component Field {
-    render div(onFocus: onFocus) {
+    render div(onFocus: onFocus, onBlur: onBlur) {
         style {
             display: flex
             gap: var(theme.space03)

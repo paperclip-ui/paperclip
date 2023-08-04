@@ -15,6 +15,7 @@ type FieldProps = {
   name?: string;
   style?: ast.ComputedStyle;
   onFocus?: () => void;
+  onBlur?: () => void;
   onValueTab?: (event: React.KeyboardEvent) => void;
   onSave?: (details: SelectDetails) => void;
   isNew?: boolean;
@@ -24,6 +25,7 @@ export const Declaration = memo(
   ({
     name,
     style,
+    onBlur = noop,
     onFocus = noop,
     onValueTab = noop,
     onSave = noop,
@@ -69,11 +71,21 @@ export const Declaration = memo(
       />
     );
 
+    const onBlur2 = (event) => {
+      setTimeout(() => {
+        if (ref.current.contains(document.activeElement)) {
+          return;
+        }
+        onBlur();
+      });
+    };
+
     // default field input
     return (
       <inputStyles.Field
         ref={ref}
         onFocus={onFocus}
+        onBlur={onBlur2}
         name={nameInput}
         input={input}
       />

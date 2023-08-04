@@ -4,6 +4,7 @@ use super::utils::{apply_mutations, create_design_file};
 use crate::server::core::{ServerEngineContext, ServerEvent, ServerStore};
 use crate::server::io::ServerIO;
 use futures::Stream;
+use headers::Server;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_language_services::DocumentInfo;
 use paperclip_proto::ast::graph_ext::Graph;
@@ -164,7 +165,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                         graph.clone()
                     )).await.expect("Can't send");
                 },
-                ServerEvent::MutationsApplied { result: _, updated_graph: _ } => {
+                ServerEvent::MutationsApplied { result: _, updated_graph: _ } | ServerEvent::UndoRequested | ServerEvent::RedoRequested => {
                     let graph = store.clone().lock().unwrap().state.graph.clone();
 
                     // TODO - need to pick out files that have changed

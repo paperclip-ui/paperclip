@@ -1,10 +1,18 @@
 #### Immediate
 
 - Style panel
+
   - tab insert props
   - ability to add another prop (+ button and tab)
   - ability to clear declarations
   - color picker
+
+- ability to move layers around
+
+### MVP
+
+- NPM installation
+- ability to build UIs end-to-end
 
 ### Considerations
 
@@ -34,8 +42,12 @@ Easy wins:
 - styles panel (vanilla)
 - style overrides
 - style tokens
+
   - mixins
   - atoms
+
+- Style Panel
+  - smart dropdown for individual tokens e.g: border: 1px solid red
 
 ### Polish
 

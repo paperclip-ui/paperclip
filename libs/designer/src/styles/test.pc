@@ -6,26 +6,31 @@ style test {
 }
 
 /**
- * @bounds(x: 0, y: 0, width: 1423, height: 1184)
+ * @bounds(x: 27, y: -79, width: 928, height: 469)
 */
 
 div {
-    style extends test {
-        background: var(mod2.background01)
-        height: 100vh
+    style {
+        position: relative
+        background: var(mod2.gray0)
         width: 100vw
-        color: var(mod2.purple01)
-        font-size: var(mod2.fontSize04)
+        height: 100vh
+        font-family: var(mod2.defaultFontFamily)
     }
-    div {
+    text "Todos" {
         style {
-            background: var(mod2.backgroundSelectedText)
-            left: 50%
-            top: 50%
-            width: 50%
-            height: 50vh
-            transform: translate(-50%, -50%)
-            position: absolute
+            font-size: var(mod2.fontSize06)
+            color: var(mod2.gray03)
+        }
+    }
+    div container {
+        style {
+            background: var(mod2.blue00)
+            position: red
+            left: 224px
+            top: 36.5px
+            width: 100vw
+            height: 100vh
         }
     }
 }

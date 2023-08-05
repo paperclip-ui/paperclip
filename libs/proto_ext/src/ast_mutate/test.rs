@@ -5,8 +5,9 @@ use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_proto::ast_mutate::{
     mutation, update_variant_trigger, AppendChild, AppendInsert, Bounds, ConvertToComponent,
-    ConvertToSlot, DeleteExpression, InsertFrame, SetFrameBounds, SetId, SetStyleDeclarationValue,
-    SetStyleDeclarations, SetTextNodeValue, ToggleVariants, UpdateVariant, MoveNode,
+    ConvertToSlot, DeleteExpression, InsertFrame, MoveNode, SetFrameBounds, SetId,
+    SetStyleDeclarationValue, SetStyleDeclarations, SetTextNodeValue, ToggleVariants,
+    UpdateVariant,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use std::collections::HashMap;
@@ -1989,8 +1990,6 @@ case! {
     "#
   )]
 }
-
-
 
 case! {
   can_move_a_text_node_inside_an_element,

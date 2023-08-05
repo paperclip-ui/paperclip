@@ -1,3 +1,4 @@
+use paperclip_proto::ast_mutate::{mutation_result, DeleteExpression, ExpressionDeleted};
 use paperclip_proto::{
     ast::{
         all::{Expression, ExpressionWrapper},
@@ -5,18 +6,15 @@ use paperclip_proto::{
     },
     ast_mutate::MoveNode,
 };
-use paperclip_proto::ast_mutate::{mutation_result, DeleteExpression, ExpressionDeleted};
-
 
 use super::{utils::get_named_expr_id, EditContext};
 use crate::{
     ast::{
         all::{MutableVisitor, VisitorResult},
-        get_expr::{GetExpr, get_expr_dep},
+        get_expr::{get_expr_dep, GetExpr},
     },
     replace_child,
 };
-
 
 macro_rules! try_remove_child {
     ($children:expr, $id: expr) => {{
@@ -51,7 +49,10 @@ impl<'a> MutableVisitor<()> for EditContext<'a, MoveNode> {
             );
         }
 
-        let target_pos = expr.body.iter().position(|x| x.get_id() == self.mutation.target_id);
+        let target_pos = expr
+            .body
+            .iter()
+            .position(|x| x.get_id() == self.mutation.target_id);
 
         let pos = if let Some(pos) = target_pos {
             pos as i32
@@ -59,10 +60,11 @@ impl<'a> MutableVisitor<()> for EditContext<'a, MoveNode> {
             -1
         };
 
-        
-        if (expr.id == self.mutation.target_id && self.mutation.position == 2)  || (pos > -1 && self.mutation.position != 2) {
-
-            let (child, _) = get_expr_dep(&self.mutation.node_id, &self.graph).expect("Dep must exist");
+        if (expr.id == self.mutation.target_id && self.mutation.position == 2)
+            || (pos > -1 && self.mutation.position != 2)
+        {
+            let (child, _) =
+                get_expr_dep(&self.mutation.node_id, &self.graph).expect("Dep must exist");
             let node = match child {
                 ExpressionWrapper::TextNode(child) => {
                     Some(node::Inner::Text(child.clone()).get_outer())
@@ -70,25 +72,20 @@ impl<'a> MutableVisitor<()> for EditContext<'a, MoveNode> {
                 ExpressionWrapper::Element(child) => {
                     Some(node::Inner::Element(child.clone()).get_outer())
                 }
-                _ => {
-                    None
-                }   
+                _ => None,
             };
 
             if let Some(child) = node {
-
-
                 if self.mutation.position == 2 {
                     expr.body.push(child);
                 } else if self.mutation.position == 0 {
                     expr.body.insert(pos as usize, child);
                 } else if self.mutation.position == 1 {
-                    expr.body.insert((pos + 1).try_into().expect("Can't increase pos"), child);
+                    expr.body
+                        .insert((pos + 1).try_into().expect("Can't increase pos"), child);
                 }
             }
         }
-        
-
 
         VisitorResult::Continue
     }

@@ -1139,7 +1139,6 @@ add_case! {
   "#
 }
 
-
 add_case! {
   can_override_a_nested_instance_with_a_variant,
   [
@@ -1192,8 +1191,6 @@ add_case! {
   ._B-b_root-80f4925f-26.something ._B-80f4925f-20._A-a_root-80f4925f-5 ._A-a_text-80f4925f-4 { display: block; }
   "#
 }
-
-
 
 add_case! {
   can_override_a_nested_instance_with_a_variant_using_a_media_trigger,

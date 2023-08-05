@@ -313,7 +313,6 @@ fn evaluate_style<F: FileResolver>(style: &ast::Style, context: &mut DocumentCon
 }
 
 fn get_current_instance_scope_selector<F: FileResolver>(context: &DocumentContext<F>) -> String {
-
     let mut curr = context;
 
     let mut buffer: Vec<String> = vec![];
@@ -340,8 +339,6 @@ fn get_current_instance_scope_selector<F: FileResolver>(context: &DocumentContex
 }
 
 fn get_root_node_ns<F: FileResolver>(context: &DocumentContext<F>) -> Option<String> {
-
-
     let target_component = get_or_short!(context.current_component, None);
 
     let root_node = if let Some(render) = target_component.get_render_expr() {
@@ -397,7 +394,8 @@ fn evaluate_variant_styles<F: FileResolver>(
         return;
     };
 
-    let ctx_root_node_ns = get_root_node_ns(context.get_ref_context()).unwrap_or(instance_root_node_ns.clone());
+    let ctx_root_node_ns =
+        get_root_node_ns(context.get_ref_context()).unwrap_or(instance_root_node_ns.clone());
 
     let evaluated_style = create_style_declarations(style, context);
 
@@ -422,9 +420,7 @@ fn evaluate_variant_styles<F: FileResolver>(
     let is_root_inst = instance_root_node_ns == ctx_root_node_ns || !scope_selector.contains(" ");
 
     for (assoc_variant, _variant_context) in assoc_variants {
-
-
-        // IF scope selector doesn't contain spaces, then it's the root node OF the 
+        // IF scope selector doesn't contain spaces, then it's the root node OF the
         // top-most component
         let selector_text = if is_root_inst {
             format!(
@@ -444,7 +440,6 @@ fn evaluate_variant_styles<F: FileResolver>(
                 target_selector
             )
         };
-
 
         let virt_style = virt::rule::Inner::Style(virt::StyleRule {
             id: context.next_id(),
@@ -468,7 +463,7 @@ fn evaluate_variant_styles<F: FileResolver>(
                 virt::rule::Inner::Style(virt::StyleRule {
                     id: context.next_id(),
                     source_id: Some(style.id.to_string()),
-                    selector_text:  if is_root_inst {
+                    selector_text: if is_root_inst {
                         format!(
                             "{}.{}{}{}",
                             scope_selector,

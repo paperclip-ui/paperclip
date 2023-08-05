@@ -1,5 +1,3 @@
-
-
 use super::base::EditContext;
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::Expression;
@@ -30,7 +28,6 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, AppendInsert> {
             }
         });
 
-        
         if let Some(insert) = existing {
             insert.body.push(child);
         } else {
@@ -49,13 +46,10 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, AppendInsert> {
             );
         }
 
-
         self.changes.push(
-          mutation_result::Inner::ExpressionInserted(ExpressionInserted {
-              id: child_id
-          })
-          .get_outer(),
-      );
+            mutation_result::Inner::ExpressionInserted(ExpressionInserted { id: child_id })
+                .get_outer(),
+        );
 
         VisitorResult::Return(())
     }

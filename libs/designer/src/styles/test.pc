@@ -5,6 +5,8 @@ style test {
     position: fixed
 }
 
+text "something"
+
 /**
  * @bounds(x: 316, y: -93, width: 546, height: 459)
 */

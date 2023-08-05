@@ -72,7 +72,7 @@ const DocumentBodyItemLeaf = memo(
       return <ElementLeaf expr={item.element} depth={depth} />;
     }
     if (item.text) {
-      return <ElementLeaf expr={item.text} depth={depth} />;
+      return <TextLeaf expr={item.text} depth={depth} />;
     }
 
     return null;
@@ -371,7 +371,7 @@ const useLeftSidebar = () => {
   };
 };
 
-const BORDER_MARGIN = 4;
+const BORDER_MARGIN = 10;
 
 type DropHotSpot = "inside" | "before" | "after";
 
@@ -409,8 +409,16 @@ const useLeaf = ({
         const rect = headerRef.current?.getBoundingClientRect();
 
         if (offset && rect && monitor.isOver() && monitor.canDrop()) {
-          const isTop = offset.y < rect.top + BORDER_MARGIN;
-          const isBottom = offset.y > rect.bottom - BORDER_MARGIN;
+          let isTop = offset.y < rect.top + BORDER_MARGIN;
+          let isBottom = offset.y > rect.bottom - BORDER_MARGIN;
+
+          const expr = ast.getExprInfoById(exprId, graph);
+
+          // can only insert before or after text nodes
+          if (expr.kind === ast.ExprKind.TextNode) {
+            isTop = offset.y < rect.top + rect.height / 2;
+            isBottom = offset.y > rect.top + rect.height / 2;
+          }
 
           setDropHotSpot(isTop ? "before" : isBottom ? "after" : "inside");
         } else {

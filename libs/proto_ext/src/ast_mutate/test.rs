@@ -2103,3 +2103,31 @@ case! {
     "#
   )]
 }
+
+case! {
+  can_move_an_element_into_the_document,
+  [
+    (
+      "/entry.pc", r#"
+        div {
+          a
+          b
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::MoveNode(MoveNode {
+    position: 2,
+    target_id: "80f4925f-4".to_string(),
+    node_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      b
+    }
+    a
+    "#
+  )]
+}

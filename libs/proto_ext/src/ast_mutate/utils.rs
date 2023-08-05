@@ -26,6 +26,25 @@ macro_rules! replace_child {
         ret
     }};
 }
+#[macro_export]
+macro_rules! try_remove_child {
+    ($children:expr, $id: expr) => {{
+        let mut found_i = None;
+
+        for (i, item) in $children.iter().enumerate() {
+            if item.get_id() == $id {
+                found_i = Some(i);
+            }
+        }
+
+        if let Some(i) = found_i {
+            $children.remove(i);
+            Some(i)
+        } else {
+            None
+        }
+    }};
+}
 
 struct GetNamed {
     name: String,

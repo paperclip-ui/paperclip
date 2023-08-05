@@ -8,6 +8,7 @@ style test {
 /**
  * @bounds(x: 1024, y: -93, width: 546, height: 459)
 */
+
 div {
     style {
         width: 100vw
@@ -51,6 +52,32 @@ div {
             color: var(mod2.blue00)
         }
         text "Some text"
+    }
+}
+
+/**
+ * @bounds(x: -389, y: -323, width: 558, height: 210)
+*/
+
+div todos {
+    style {
+        position: relative
+        font-family: sans-serif
+        color: white
+        background: var(mod2.gray04)
+        width: 100vw
+        height: 100vh
+    }
+    text "Todo Items"
+    div {
+        style {
+            position: absolute
+            left: -246.41835px
+            top: -287.67758px
+            width: 214.87843px
+            height: 117.48749px
+            color: 0
+        }
     }
 }
 

@@ -3,6 +3,7 @@
 - Bugs
 
   - does not properly re-render when shuffling nodes around
+  - cannot delete css props
 
 - LeftSidebar
 
@@ -12,6 +13,10 @@
     - show banner for this
 
 - Style panel
+
+  - tooltip for props
+
+    - keep them sectioned (Layout, font-family)
 
   - tab insert props
   - ability to add another prop (+ button and tab)

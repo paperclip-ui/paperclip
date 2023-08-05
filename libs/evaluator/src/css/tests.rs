@@ -1141,7 +1141,7 @@ add_case! {
 
 
 add_case! {
-  can_override_an_instance_style_with_variant,
+  can_override_a_nested_instance_with_a_variant,
   [
     ("/entry.pc", r#"
       component A {
@@ -1183,6 +1183,52 @@ add_case! {
     "#)
   ],
   r#"
-  ._Something-root-80f4925f-10 { left: calc(10 * var(--x) / 8); }
+  ._A-a_root-80f4925f-5 { display: none; } 
+  ._B-b_root-80f4925f-26._test-80f4925f-9 ._B-text-80f4925f-25 { color: blue; } 
+  ._B-b_root-80f4925f-26.something ._B-text-80f4925f-25 { color: blue; } 
+  ._B-b_root-80f4925f-26._test-80f4925f-9 ._B-80f4925f-20._A-a_root-80f4925f-5 { display: block; } 
+  ._B-b_root-80f4925f-26.something ._B-80f4925f-20._A-a_root-80f4925f-5 { display: block; } 
+  ._B-b_root-80f4925f-26._test-80f4925f-9 ._B-80f4925f-20._A-a_root-80f4925f-5 ._A-a_text-80f4925f-4 { display: block; } 
+  ._B-b_root-80f4925f-26.something ._B-80f4925f-20._A-a_root-80f4925f-5 ._A-a_text-80f4925f-4 { display: block; }
+  "#
+}
+
+
+
+add_case! {
+  can_override_a_nested_instance_with_a_variant_using_a_media_trigger,
+  [
+    ("/entry.pc", r#"
+      component A {
+        render span a_root {
+          style {
+            display: none
+          }
+          span a_text {
+
+          }
+        }
+      }
+
+      component B {
+        variant test trigger {
+          "@media (min-width: 100px)"
+        }
+        render div b_root {
+          A {
+            override a_root {
+              style variant test {
+                display: block
+              }
+            }
+          }
+        }
+      }
+    "#)
+  ],
+  r#"
+  ._A-a_root-80f4925f-5 { display: none; } 
+  ._B-b_root-80f4925f-16._test-80f4925f-9 ._B-80f4925f-15._A-a_root-80f4925f-5 { display: block; } 
+   @media (min-width: 100px) { ._B-80f4925f-15._A-a_root-80f4925f-5 { display: block; } }
   "#
 }

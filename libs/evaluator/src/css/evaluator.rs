@@ -313,7 +313,6 @@ fn evaluate_style<F: FileResolver>(style: &ast::Style, context: &mut DocumentCon
 }
 
 fn get_current_instance_scope_selector<F: FileResolver>(context: &DocumentContext<F>) -> String {
-    // let is_root_node = context.is_target_node_root();
 
     let mut curr = context;
 
@@ -338,6 +337,28 @@ fn get_current_instance_scope_selector<F: FileResolver>(context: &DocumentContex
     buffer.reverse();
 
     buffer.join("")
+}
+
+fn get_root_node_ns<F: FileResolver>(context: &DocumentContext<F>) -> Option<String> {
+
+
+    let target_component = get_or_short!(context.current_component, None);
+
+    let root_node = if let Some(render) = target_component.get_render_expr() {
+        render.node.as_ref().expect("Node must exist")
+    } else {
+        return None;
+    };
+
+    return Some(get_style_namespace(
+        match root_node.get_inner() {
+            ast::node::Inner::Element(expr) => &expr.name,
+            ast::node::Inner::Text(expr) => &expr.name,
+            _ => &None,
+        },
+        root_node.get_id(),
+        Some(target_component),
+    ));
 }
 
 fn evaluate_variant_styles<F: FileResolver>(
@@ -370,15 +391,13 @@ fn evaluate_variant_styles<F: FileResolver>(
         Some(target_component),
     );
 
-    let root_node_ns = get_style_namespace(
-        match root_node.get_inner() {
-            ast::node::Inner::Element(expr) => &expr.name,
-            ast::node::Inner::Text(expr) => &expr.name,
-            _ => &None,
-        },
-        root_node.get_id(),
-        Some(target_component),
-    );
+    let instance_root_node_ns = if let Some(ns) = get_root_node_ns(context) {
+        ns
+    } else {
+        return;
+    };
+
+    let ctx_root_node_ns = get_root_node_ns(context.get_ref_context()).unwrap_or(instance_root_node_ns.clone());
 
     let evaluated_style = create_style_declarations(style, context);
 
@@ -394,21 +413,43 @@ fn evaluate_variant_styles<F: FileResolver>(
         }
     }
 
+    let target_selector = if is_root_node {
+        "".to_string()
+    } else {
+        format!(" .{}", node_ns)
+    };
+
+    let is_root_inst = instance_root_node_ns == ctx_root_node_ns || !scope_selector.contains(" ");
+
     for (assoc_variant, _variant_context) in assoc_variants {
+
+
+        // IF scope selector doesn't contain spaces, then it's the root node OF the 
+        // top-most component
+        let selector_text = if is_root_inst {
+            format!(
+                "{}.{}.{}{}",
+                scope_selector,
+                instance_root_node_ns,
+                get_variant_namespace(assoc_variant),
+                target_selector
+            )
+        } else {
+            format!(
+                ".{}.{} {}.{}{}",
+                ctx_root_node_ns,
+                get_variant_namespace(assoc_variant),
+                scope_selector,
+                instance_root_node_ns,
+                target_selector
+            )
+        };
+
+
         let virt_style = virt::rule::Inner::Style(virt::StyleRule {
             id: context.next_id(),
             source_id: Some(style.id.to_string()),
-            selector_text: format!(
-                "{}.{}.{}{}",
-                scope_selector,
-                root_node_ns,
-                get_variant_namespace(assoc_variant),
-                if is_root_node {
-                    "".to_string()
-                } else {
-                    format!(" .{}", node_ns)
-                }
-            ),
+            selector_text,
             style: evaluated_style.clone(),
         })
         .get_outer();
@@ -427,17 +468,24 @@ fn evaluate_variant_styles<F: FileResolver>(
                 virt::rule::Inner::Style(virt::StyleRule {
                     id: context.next_id(),
                     source_id: Some(style.id.to_string()),
-                    selector_text: format!(
-                        "{}.{}{}{}",
-                        scope_selector,
-                        root_node_ns,
-                        group_selectors.join(""),
-                        if is_root_node {
-                            "".to_string()
-                        } else {
-                            format!(" .{}", node_ns)
-                        }
-                    ),
+                    selector_text:  if is_root_inst {
+                        format!(
+                            "{}.{}{}{}",
+                            scope_selector,
+                            instance_root_node_ns,
+                            group_selectors.join(""),
+                            target_selector
+                        )
+                    } else {
+                        format!(
+                            ".{}{} {}.{}{}",
+                            ctx_root_node_ns,
+                            group_selectors.join(""),
+                            scope_selector,
+                            instance_root_node_ns,
+                            target_selector
+                        )
+                    },
                     style: evaluated_style.clone(),
                 })
                 .get_outer()
@@ -450,7 +498,7 @@ fn evaluate_variant_styles<F: FileResolver>(
             selector_text: format!(
                 "{}.{}{}",
                 scope_selector,
-                root_node_ns,
+                instance_root_node_ns,
                 if is_root_node {
                     "".to_string()
                 } else {

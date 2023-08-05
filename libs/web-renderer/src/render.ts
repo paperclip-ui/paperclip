@@ -208,17 +208,6 @@ export const getFrameRects = (
       const virtId = (node as HTMLElement).id?.substring(1);
       const clientRect = (node as Element).getBoundingClientRect();
 
-      // const pathStr = path.length ? index + "." + path.join(".") : index;
-      // let clientRect: DOMRect;
-      // if (node.nodeType === 1) {
-      //   clientRect = (node as Element).getBoundingClientRect();
-      // } else if (node.nodeType === 3) {
-      //   const range = document.createRange();
-      //   range.selectNode(node);
-      //   clientRect = range.getBoundingClientRect();
-      //   range.detach();
-      // }
-
       if (clientRect) {
         rects[virtId] = {
           width: clientRect.width,
@@ -230,8 +219,10 @@ export const getFrameRects = (
     }
   );
 
+  const id = (frame.element || frame.textNode).id;
+
   // include frame sizes too
-  rects[frame.element.id] = bounds;
+  rects[id] = bounds;
 
   return rects;
 };

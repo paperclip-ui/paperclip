@@ -5,6 +5,21 @@ style test {
     position: fixed
 }
 
+/**
+ * @bounds(x: 1024, y: -93, width: 546, height: 459)
+*/
+div {
+    style {
+        width: 100vw
+        height: 100vh
+        background: red
+    }
+}
+
+/**
+ * @bounds(x: -1024, y: -93, width: 546, height: 459)
+*/
+
 text "something"
 
 /**

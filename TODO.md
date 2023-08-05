@@ -1,5 +1,9 @@
 #### Immediate
 
+- Bugs
+
+  - does not properly re-render when shuffling nodes around
+
 - LeftSidebar
 
   - ability to shift siblings around

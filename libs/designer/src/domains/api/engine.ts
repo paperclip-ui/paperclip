@@ -22,7 +22,10 @@ import {
   getNodeInfoAtCurrentPoint,
   InsertMode,
 } from "../../state";
-import { Mutation } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
+import {
+  Mutation,
+  NodePosition,
+} from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
 import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import {
@@ -323,6 +326,32 @@ const createEventHandler = (actions: Actions) => {
     state: DesignerState
   ) => {
     const { targetId, droppedExprId, position } = event.payload;
+
+    console.log(position, {
+      moveNode: {
+        targetId,
+        nodeId: droppedExprId,
+        position: {
+          before: NodePosition.BEFORE,
+          after: NodePosition.AFTER,
+          inside: NodePosition.INSIDE,
+        }[position],
+      },
+    });
+
+    actions.applyChanges([
+      {
+        moveNode: {
+          targetId,
+          nodeId: droppedExprId,
+          position: {
+            before: NodePosition.BEFORE,
+            after: NodePosition.AFTER,
+            inside: NodePosition.INSIDE,
+          }[position],
+        },
+      },
+    ]);
   };
 
   const handleStyleDeclarationChanged = (

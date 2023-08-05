@@ -442,7 +442,7 @@ const useLeaf = ({
         };
       },
     },
-    [graph]
+    [graph, dropHotSpot]
   );
 
   useEffect(() => {

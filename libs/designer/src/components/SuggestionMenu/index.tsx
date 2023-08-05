@@ -15,7 +15,7 @@ export type SuggestionMenuProps = {
   style?: any;
   multi?: boolean;
   onChange?: (values: any[]) => void;
-  onSelect: (values: any[], details: SelectDetails) => void;
+  onSelect?: (values: any[], details: SelectDetails) => void;
   onOtherSelect?: (value: string, details: SelectDetails) => void;
   menu: () => React.ReactElement[];
 };
@@ -26,8 +26,8 @@ export const SuggestionMenu = ({
   style,
   multi,
   onChange = noop,
-  onSelect: onSelect2,
-  onOtherSelect: onOtherSave = () => {},
+  onSelect: onSelect2 = noop,
+  onOtherSelect: onOtherSave = noop,
   menu,
 }: SuggestionMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);

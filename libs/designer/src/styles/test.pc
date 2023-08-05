@@ -6,7 +6,7 @@ style test {
 }
 
 /**
- * @bounds(x: 27, y: -79, width: 928, height: 469)
+ * @bounds(x: 316, y: -93, width: 546, height: 459)
 */
 
 div {
@@ -25,13 +25,15 @@ div {
     }
     div container {
         style {
-            background: rgb(17, 236, 207)         
+            background: var(mod2.blue02)
             position: red
             left: 224px
             top: 36.5px
             width: 100vw
             height: 100vh
+            color: var(mod2.blue00)
         }
+        text "Some text"
     }
 }
 

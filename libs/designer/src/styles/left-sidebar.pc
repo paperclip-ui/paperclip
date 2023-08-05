@@ -163,7 +163,7 @@ public component TreeNavigationItemContent {
 }
 
 public component TreeNavigationItem {
-    render div(class: class) {
+    render div(class: class, style: style) {
         slot children
     }
 }
@@ -229,11 +229,14 @@ public component TreeNavigationItemHeader {
     variant isOpen trigger {
         ".open"
     }
-    variant showTopDivider trigger {
-        ".show-top-divider"
+    variant showDropTop trigger {
+        ".showDropTop"
     }
-    variant showBottomDivider trigger {
-        ".show-bottom-divider"
+    variant showDropBottom trigger {
+        ".showDropBottom"
+    }
+    variant showDropOver trigger {
+        ".showDropOver"
     }
     variant isHovering trigger {
         ":hover"
@@ -252,6 +255,9 @@ public component TreeNavigationItemHeader {
             padding-left: calc(22px * var(--depth))
             position: relative
         }
+        style variant showDropOver {
+            box-shadow: inset 0px 0px 0px 2px var(theme.blue01)
+        }
         style variant isShadow {
             background: rgb(31, 31, 31)
         }
@@ -260,7 +266,7 @@ public component TreeNavigationItemHeader {
         }
         DropZoneDivider(class: "top") {
             override root {
-                style variant showTopDivider {
+                style variant showDropTop {
                     display: block
                 }
             }
@@ -313,7 +319,7 @@ public component TreeNavigationItemHeader {
 
         DropZoneDivider(class: "bottom") {
             override root {
-                style variant showBottomDivider {
+                style variant showDropBottom {
                     display: block
                 }
             }
@@ -551,7 +557,7 @@ public component LeftSidebarPreview {
                       }
                       TreeNavigationItemContent {
                           TreeNavigationItem {
-                              LayerNavigationItemHeader(class: "shadow element container open") {
+                              LayerNavigationItemHeader(class: "shadow element container open showDropOver") {
                                   override container.root {
                                       style {
                                           --depth: 2
@@ -571,7 +577,7 @@ public component LeftSidebarPreview {
                               }
                               TreeNavigationItemContent {
                                   TreeNavigationItem {
-                                      LayerNavigationItemHeader(class: "text show-top-divider") {
+                                      LayerNavigationItemHeader(class: "text showDropTop") {
                                           override container.root {
                                               style {
                                                   --depth: 3

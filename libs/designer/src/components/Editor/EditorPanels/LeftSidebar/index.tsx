@@ -1,8 +1,9 @@
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/left-sidebar.pc";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
+  DNDKind,
   DesignerState,
   getCurrentDependency,
   getCurrentFilePath,
@@ -24,6 +25,7 @@ import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import cx from "classnames";
 import { useHistory } from "@paperclip-ui/designer/src/domains/history/react";
 import { routes } from "@paperclip-ui/designer/src/state/routes";
+import { useDrag, useDrop } from "react-dnd";
 
 export const LeftSidebar = () => {
   const { title, document, show, onBackClick } = useLeftSidebar();
@@ -308,15 +310,37 @@ const Leaf = ({
   controls?: any;
   instanceOf: string[];
 }) => {
-  const { selected, open, onClick, onArrowClick } = useLeaf({
+  const {
+    selected,
+    open,
+    onClick,
+    onArrowClick,
+    headerRef,
+    style,
+    dragRef,
+    dropRef,
+    dropHotSpot,
+  } = useLeaf({
     exprId: id,
     instanceOf,
   });
+
   const shadow = instanceOf != null;
   return (
-    <styles.TreeNavigationItem>
+    <styles.TreeNavigationItem style={style} ref={dragRef}>
       <styles.LayerNavigationItemHeader
-        class={cx(className, { open, selected, shadow })}
+        ref={(e) => {
+          dropRef(e);
+          headerRef.current = e;
+        }}
+        class={cx(className, {
+          open,
+          selected,
+          shadow,
+          showDropTop: dropHotSpot === "top",
+          showDropOver: dropHotSpot === "center",
+          showDropBottom: dropHotSpot === "bottom",
+        })}
         style={{ "--depth": depth }}
         onClick={onClick}
         onArrowClick={onArrowClick}
@@ -346,6 +370,10 @@ const useLeftSidebar = () => {
   };
 };
 
+const BORDER_MARGIN = 4;
+
+type DropHotSpot = "center" | "top" | "bottom";
+
 const useLeaf = ({
   exprId,
   instanceOf,
@@ -356,6 +384,59 @@ const useLeaf = ({
   const virtId = [...(instanceOf || []), exprId].join(".");
   const open = useSelector(getExpandedVirtIds).includes(virtId);
   const selected = useSelector(getSelectedId) === virtId;
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [dropHotSpot, setDropHotSpot] = useState<DropHotSpot>(null);
+
+  const [{ opacity }, dragRef] = useDrag(
+    () => ({
+      type: DNDKind.Node,
+      item: exprId,
+      collect: (monitor) => ({
+        opacity: monitor.isDragging() ? 0.5 : 1,
+        cursor: monitor.isDragging() ? "copy" : "initial",
+      }),
+    }),
+    []
+  );
+
+  const [{ isDraggingOver }, dropRef] = useDrop({
+    accept: DNDKind.Node,
+    hover: (item, monitor) => {
+      const offset = monitor.getClientOffset();
+      const rect = headerRef.current?.getBoundingClientRect();
+
+      if (offset && rect && monitor.isOver()) {
+        const isTop = offset.y < rect.top + BORDER_MARGIN;
+        const isBottom = offset.y > rect.bottom - BORDER_MARGIN;
+        const isCenter = !isTop && !isBottom;
+
+        setDropHotSpot(isTop ? "top" : isBottom ? "bottom" : "center");
+      } else {
+        setDropHotSpot(null);
+      }
+    },
+    drop(item, monitor) {
+      // dispatch({
+      //   type: "designer/ToolsLayerDrop",
+      //   payload: {
+      //     kind: DNDKind.Resource,
+      //     item,
+      //     point: monitor.getSourceClientOffset(),
+      //   },
+      // });
+    },
+    collect(monitor) {
+      return {
+        isDraggingOver: monitor.isOver(),
+      };
+    },
+  });
+
+  useEffect(() => {
+    if (!isDraggingOver) {
+      setDropHotSpot(null);
+    }
+  }, [isDraggingOver]);
 
   const dispatch = useDispatch<DesignerEvent>();
   const onClick = useCallback(() => {
@@ -373,6 +454,11 @@ const useLeaf = ({
   return {
     onClick,
     onArrowClick,
+    dropHotSpot,
+    headerRef,
+    dragRef,
+    dropRef,
+    style: { opacity },
     open,
     selected,
   };

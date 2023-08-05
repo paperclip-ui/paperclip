@@ -54,6 +54,7 @@ export enum InsertMode {
 
 export enum DNDKind {
   Resource = "Resource",
+  Node = "Node",
 }
 
 export type Canvas = {

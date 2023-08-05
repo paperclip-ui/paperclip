@@ -1138,3 +1138,51 @@ add_case! {
   ._Something-root-80f4925f-10 { left: calc(10 * var(--x) / 8); }
   "#
 }
+
+
+add_case! {
+  can_override_an_instance_style_with_variant,
+  [
+    ("/entry.pc", r#"
+      component A {
+        render span a_root {
+          style {
+            display: none
+          }
+          span a_text {
+
+          }
+        }
+      }
+
+      component B {
+        variant test trigger {
+          ".something"
+        }
+        render div b_root {
+          A {
+            override a_root {
+              style variant test {
+                display: block
+              }
+            }
+            override a_root.a_text {
+              style variant test {
+                display: block
+              }
+            }
+          }
+
+          span text {
+            style variant test {
+              color: blue
+            }
+          }
+        }
+      }
+    "#)
+  ],
+  r#"
+  ._Something-root-80f4925f-10 { left: calc(10 * var(--x) / 8); }
+  "#
+}

@@ -259,7 +259,7 @@ public component TreeNavigationItemHeader {
         }
         DropZoneDivier(class: "top") {
             override root {
-                style  {
+                style variant showTopDivier {
                     display: block
                 }
             }

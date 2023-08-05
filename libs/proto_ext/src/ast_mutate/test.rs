@@ -1993,7 +1993,7 @@ case! {
 
 
 case! {
-  can_move_a_node_inside_another,
+  can_move_a_text_node_inside_an_element,
   [
     (
       "/entry.pc", r#"
@@ -2022,7 +2022,7 @@ case! {
 }
 
 case! {
-  can_move_a_node_before_another,
+  can_move_a_text_node_before_another,
   [
     (
       "/entry.pc", r#"
@@ -2049,9 +2049,8 @@ case! {
   )]
 }
 
-
 case! {
-  can_move_a_node_after_another,
+  can_move_a_text_node_after_another,
   [
     (
       "/entry.pc", r#"
@@ -2073,6 +2072,34 @@ case! {
     div {
       span
       text "b"
+    }
+    "#
+  )]
+}
+
+case! {
+  can_move_an_element_inside_after_element,
+  [
+    (
+      "/entry.pc", r#"
+        div {
+          a
+          b
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::MoveNode(MoveNode {
+    position: 1,
+    target_id: "80f4925f-2".to_string(),
+    node_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      b
+      a
     }
     "#
   )]

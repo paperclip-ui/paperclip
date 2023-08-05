@@ -177,7 +177,7 @@ public component TagType {
     }
 }
 
-public component DropZoneDivier {
+public component DropZoneDivider {
 
     variant top trigger {
         ".top"
@@ -186,8 +186,6 @@ public component DropZoneDivier {
     variant bottom trigger {
         ".bottom"
     }
-
-    variant visible
 
     render  div root(class: class) {
             style {
@@ -232,7 +230,10 @@ public component TreeNavigationItemHeader {
         ".open"
     }
     variant showTopDivider trigger {
-        ".showTopDivider"
+        ".show-top-divider"
+    }
+    variant showBottomDivider trigger {
+        ".show-bottom-divider"
     }
     variant isHovering trigger {
         ":hover"
@@ -257,9 +258,9 @@ public component TreeNavigationItemHeader {
         style variant isSelected {
             background: rgb(46, 46, 46)
         }
-        DropZoneDivier(class: "top") {
+        DropZoneDivider(class: "top") {
             override root {
-                style variant showTopDivier {
+                style variant showTopDivider {
                     display: block
                 }
             }
@@ -310,7 +311,13 @@ public component TreeNavigationItemHeader {
             }
         }
 
-        DropZoneDivier
+        DropZoneDivider(class: "bottom") {
+            override root {
+                style variant showBottomDivider {
+                    display: block
+                }
+            }
+        }
     }
 }
 
@@ -564,7 +571,7 @@ public component LeftSidebarPreview {
                               }
                               TreeNavigationItemContent {
                                   TreeNavigationItem {
-                                      LayerNavigationItemHeader(class: "text showTopDivider") {
+                                      LayerNavigationItemHeader(class: "text show-top-divider") {
                                           override container.root {
                                               style {
                                                   --depth: 3

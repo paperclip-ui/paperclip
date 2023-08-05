@@ -8,6 +8,7 @@ import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent } from "./events";
 import {
   DesignerEvent,
+  ExprNavigatorDroppedNode,
   StyleDeclarationsChanged,
   ToolsLayerDrop,
   VariantEdited,
@@ -253,9 +254,12 @@ const createEventHandler = (actions: Actions) => {
     // could be expression
     handleDeleteExpression(node?.sourceId || prevState.selectedTargetId, state);
   };
-  
-  const handleFrameBoundsChanged = (state: DesignerState, bounds: Box, prevState: DesignerState) => {
 
+  const handleFrameBoundsChanged = (
+    state: DesignerState,
+    bounds: Box,
+    prevState: DesignerState
+  ) => {
     const node = virtHTML.getNodeById(
       prevState.selectedTargetId,
       prevState.currentDocument.paperclip.html
@@ -312,6 +316,13 @@ const createEventHandler = (actions: Actions) => {
       };
       actions.applyChanges([mutation]);
     }
+  };
+
+  const handleExprNavigatorDroppedNode = (
+    event: ExprNavigatorDroppedNode,
+    state: DesignerState
+  ) => {
+    const { targetId, droppedExprId, position } = event.payload;
   };
 
   const handleStyleDeclarationChanged = (
@@ -587,6 +598,9 @@ const createEventHandler = (actions: Actions) => {
       case "editor/styleDeclarationsChanged": {
         return handleStyleDeclarationChanged(event, newState);
       }
+      case "editor/exprNavigatorDroppedNode": {
+        return handleExprNavigatorDroppedNode(event, newState);
+      }
       case "designer/variantSelected": {
         return handleVariantsSelected(event.payload, newState);
       }
@@ -606,7 +620,11 @@ const createEventHandler = (actions: Actions) => {
         return handleResizerStoppedMoving(newState, prevState);
       }
       case "designer/boundsChanged": {
-        return handleFrameBoundsChanged(newState, event.payload.newBounds, prevState);
+        return handleFrameBoundsChanged(
+          newState,
+          event.payload.newBounds,
+          prevState
+        );
       }
       case "designer/ToolsLayerDrop": {
         return handleDropItem(event, newState);

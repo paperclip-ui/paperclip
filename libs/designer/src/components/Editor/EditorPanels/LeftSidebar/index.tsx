@@ -327,19 +327,20 @@ const Leaf = ({
 
   const shadow = instanceOf != null;
   return (
-    <styles.TreeNavigationItem style={style} ref={dragRef}>
+    <styles.TreeNavigationItem style={style}>
       <styles.LayerNavigationItemHeader
         ref={(e) => {
           dropRef(e);
+          dragRef(e);
           headerRef.current = e;
         }}
         class={cx(className, {
           open,
           selected,
           shadow,
-          showDropTop: dropHotSpot === "top",
-          showDropOver: dropHotSpot === "center",
-          showDropBottom: dropHotSpot === "bottom",
+          showDropTop: dropHotSpot === "before",
+          showDropOver: dropHotSpot === "inside",
+          showDropBottom: dropHotSpot === "after",
         })}
         style={{ "--depth": depth }}
         onClick={onClick}
@@ -372,7 +373,7 @@ const useLeftSidebar = () => {
 
 const BORDER_MARGIN = 4;
 
-type DropHotSpot = "center" | "top" | "bottom";
+type DropHotSpot = "inside" | "before" | "after";
 
 const useLeaf = ({
   exprId,
@@ -386,11 +387,12 @@ const useLeaf = ({
   const selected = useSelector(getSelectedId) === virtId;
   const headerRef = useRef<HTMLDivElement>(null);
   const [dropHotSpot, setDropHotSpot] = useState<DropHotSpot>(null);
+  const graph = useSelector(getGraph);
 
   const [{ opacity }, dragRef] = useDrag(
     () => ({
       type: DNDKind.Node,
-      item: exprId,
+      item: { id: exprId },
       collect: (monitor) => ({
         opacity: monitor.isDragging() ? 0.5 : 1,
         cursor: monitor.isDragging() ? "copy" : "initial",
@@ -399,38 +401,49 @@ const useLeaf = ({
     []
   );
 
-  const [{ isDraggingOver }, dropRef] = useDrop({
-    accept: DNDKind.Node,
-    hover: (item, monitor) => {
-      const offset = monitor.getClientOffset();
-      const rect = headerRef.current?.getBoundingClientRect();
+  const [{ isDraggingOver }, dropRef] = useDrop(
+    {
+      accept: DNDKind.Node,
+      hover: (_, monitor) => {
+        const offset = monitor.getClientOffset();
+        const rect = headerRef.current?.getBoundingClientRect();
 
-      if (offset && rect && monitor.isOver()) {
-        const isTop = offset.y < rect.top + BORDER_MARGIN;
-        const isBottom = offset.y > rect.bottom - BORDER_MARGIN;
-        const isCenter = !isTop && !isBottom;
+        if (offset && rect && monitor.isOver() && monitor.canDrop()) {
+          const isTop = offset.y < rect.top + BORDER_MARGIN;
+          const isBottom = offset.y > rect.bottom - BORDER_MARGIN;
 
-        setDropHotSpot(isTop ? "top" : isBottom ? "bottom" : "center");
-      } else {
-        setDropHotSpot(null);
-      }
+          setDropHotSpot(isTop ? "before" : isBottom ? "after" : "inside");
+        } else {
+          setDropHotSpot(null);
+        }
+      },
+      drop(item: any, monitor) {
+        dispatch({
+          type: "editor/exprNavigatorDroppedNode",
+          payload: {
+            position: dropHotSpot,
+            targetId: exprId,
+            droppedExprId: item.id,
+          },
+        });
+      },
+      canDrop({ id: draggedExprId }, monitor) {
+        if (draggedExprId === exprId) {
+          return false;
+        }
+
+        // don't allow dropping a node into a node that is already in it
+        const draggedExpr = ast.getExprInfoById(draggedExprId, graph);
+        return ast.flattenExpressionInfo(draggedExpr)[exprId] == null;
+      },
+      collect(monitor) {
+        return {
+          isDraggingOver: monitor.isOver(),
+        };
+      },
     },
-    drop(item, monitor) {
-      // dispatch({
-      //   type: "designer/ToolsLayerDrop",
-      //   payload: {
-      //     kind: DNDKind.Resource,
-      //     item,
-      //     point: monitor.getSourceClientOffset(),
-      //   },
-      // });
-    },
-    collect(monitor) {
-      return {
-        isDraggingOver: monitor.isOver(),
-      };
-    },
-  });
+    [graph]
+  );
 
   useEffect(() => {
     if (!isDraggingOver) {

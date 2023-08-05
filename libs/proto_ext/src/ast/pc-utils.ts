@@ -24,9 +24,7 @@ import {
   TriggerBodyItem,
   Variant,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
-import {
-  Str
-} from "@paperclip-ui/proto/lib/generated/ast/base";
+import { Str } from "@paperclip-ui/proto/lib/generated/ast/base";
 
 const EMPTY_ARRAY = [];
 export namespace ast {
@@ -82,8 +80,7 @@ export namespace ast {
     | BaseExprInfo<StyleDeclaration, ExprKind.Declaration>;
 
   export type ComputedStyleMap = {
-
-    // 
+    //
     propertyNames: string[];
 
     // map of computed styles
@@ -95,7 +92,7 @@ export namespace ast {
     ownerId?: string;
     variant?: Variant;
     prevValue?: ComputedStyle;
-  }
+  };
 
   export const getDocumentBodyInner = (item: DocumentBodyItem) => {
     // oneof forces us to do this :(
@@ -385,12 +382,7 @@ export namespace ast {
   });
 
   export const computeElementStyle = memoize(
-    (
-      exprId: string,
-      graph: Graph,
-      variantIds?: string[]
-    ): ComputedStyleMap => {
-
+    (exprId: string, graph: Graph, variantIds?: string[]): ComputedStyleMap => {
       const node = getExprById(exprId.split(".").pop(), graph) as Element;
       let computedStyle: ComputedStyleMap = { propertyNames: [], map: {} };
       if (!node || !node.body) {
@@ -401,7 +393,10 @@ export namespace ast {
         const { style } = item;
 
         if (style) {
-          computedStyle = overrideComputedStyles(computedStyle, computeStyle(style, graph, node.id, variantIds));
+          computedStyle = overrideComputedStyles(
+            computedStyle,
+            computeStyle(style, graph, node.id, variantIds)
+          );
         }
       }
 
@@ -416,7 +411,7 @@ export namespace ast {
       ownerId: string,
       variantIds?: string[]
     ): ComputedStyleMap => {
-      let computedStyles: ComputedStyleMap = { propertyNames: [], map: {}};
+      let computedStyles: ComputedStyleMap = { propertyNames: [], map: {} };
 
       if (style.variantCombo && style.variantCombo.length > 0) {
         // TODO: do ehthis
@@ -428,16 +423,18 @@ export namespace ast {
         computedStyles.propertyNames.push(value.name);
         computedStyles.map[value.name] = {
           ownerId,
-          value: value.value
-        }
+          value: value.value,
+        };
       }
-      
 
       if (style.extends) {
         for (const ref of style.extends) {
           const extendsStyle = getExprRef(ref, graph)?.style;
           if (extendsStyle) {
-            computedStyles = overrideComputedStyles(computeStyle(extendsStyle, graph, extendsStyle.id, variantIds), computedStyles);
+            computedStyles = overrideComputedStyles(
+              computeStyle(extendsStyle, graph, extendsStyle.id, variantIds),
+              computedStyles
+            );
           }
         }
       }
@@ -466,7 +463,6 @@ export namespace ast {
         computed.map[name] = computedStyles.map[name];
       }
     }
-
 
     for (const name of overrides.propertyNames) {
       if (!computedStyles.propertyNames.includes(name)) {
@@ -944,10 +940,10 @@ export namespace ast {
   };
 
   export const serializeComputedStyle = (
-    style: Record<string, DeclarationValue>
+    style: ComputedStyleMap
   ): Record<string, string> => {
     const comp = {};
-    for (const key in style) {
+    for (const key in style.map) {
       comp[key] = serializeDeclaration(style[key]);
     }
     return comp;

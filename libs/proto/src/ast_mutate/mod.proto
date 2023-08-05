@@ -15,6 +15,7 @@ message Mutation {
     InsertChild insert_child = 3;
     ConvertToComponent convert_to_component = 14;
     ConvertToSlot convert_to_slot = 15;
+    MoveNode move_node = 18;
 
     // Element
     SetElementParameter set_element_parameter = 4;
@@ -39,6 +40,18 @@ message Mutation {
     // Instance
     AppendInsert append_insert = 17;
   }
+}
+
+enum NodePosition {
+  BEFORE = 0;
+  AFTER = 1;
+  INSIDE = 2;
+}
+
+message MoveNode {
+  NodePosition position = 1;
+  string target_id = 2;
+  string node_id = 3;
 }
 
 // result after mutation 

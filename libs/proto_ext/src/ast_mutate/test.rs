@@ -6,7 +6,7 @@ use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_proto::ast_mutate::{
     mutation, update_variant_trigger, AppendChild, AppendInsert, Bounds, ConvertToComponent,
     ConvertToSlot, DeleteExpression, InsertFrame, SetFrameBounds, SetId, SetStyleDeclarationValue,
-    SetStyleDeclarations, SetTextNodeValue, ToggleVariants, UpdateVariant,
+    SetStyleDeclarations, SetTextNodeValue, ToggleVariants, UpdateVariant, MoveNode,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use std::collections::HashMap;
@@ -1986,6 +1986,94 @@ case! {
         render slot test
       }
       A
+    "#
+  )]
+}
+
+
+
+case! {
+  can_move_a_node_inside_another,
+  [
+    (
+      "/entry.pc", r#"
+        div {
+          span
+          text "b"
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::MoveNode(MoveNode {
+    position: 2,
+    target_id: "80f4925f-1".to_string(),
+    node_id: "80f4925f-2".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      span {
+        text "b"
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_move_a_node_before_another,
+  [
+    (
+      "/entry.pc", r#"
+        div {
+          span
+          text "b"
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::MoveNode(MoveNode {
+    position: 0,
+    target_id: "80f4925f-1".to_string(),
+    node_id: "80f4925f-2".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      text "b"
+      span
+    }
+    "#
+  )]
+}
+
+
+case! {
+  can_move_a_node_after_another,
+  [
+    (
+      "/entry.pc", r#"
+        div {
+          text "b"
+          span
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::MoveNode(MoveNode {
+    position: 1,
+    target_id: "80f4925f-2".to_string(),
+    node_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      span
+      text "b"
+    }
     "#
   )]
 }

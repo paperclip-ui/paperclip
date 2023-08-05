@@ -12,6 +12,7 @@ mod set_style_declarations;
 mod set_text_node_value;
 mod toggle_variants;
 mod update_variant;
+mod move_node;
 #[macro_use]
 mod utils;
 use std::rc::Rc;
@@ -27,6 +28,7 @@ pub use base::*;
 pub use convert_to_component::*;
 pub use convert_to_slot::*;
 pub use delete_expression::*;
+pub use move_node::*;
 pub use delete_style_declarations::*;
 pub use paperclip_proto::ast;
 use paperclip_proto::ast::graph_ext::Graph;
@@ -108,6 +110,7 @@ mutations! {
   SetTextNodeValue,
   ConvertToComponent,
   ConvertToSlot,
+  MoveNode,
   DeleteStyleDeclarations,
   SetId,
   SetStyleDeclarations,

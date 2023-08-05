@@ -105,6 +105,14 @@ export type StyleDeclarationsChanged = BaseEvent<
     imports: Record<string, string>;
   }
 >;
+export type ExprNavigatorDroppedNode = BaseEvent<
+  "editor/exprNavigatorDroppedNode",
+  {
+    position: "before" | "after" | "inside";
+    targetId: string;
+    droppedExprId: string;
+  }
+>;
 
 export type CanvasMouseDown = BaseEvent<
   "editor/canvasMouseDown",
@@ -146,6 +154,7 @@ export type LegacyEvent =
   | CanvasResized
   | RectsCaptured
   | StyleDeclarationsChanged
+  | ExprNavigatorDroppedNode
   | VariantEdited
   | VariantSelected
   | ToolsLayerDragOver

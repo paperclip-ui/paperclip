@@ -46,7 +46,9 @@ export const TAG_NAMES = [
   "form",
   "frame",
   "frameset",
-  "h1> to <h6",
+  ...Array(6)
+    .fill(0)
+    .map((v, i) => `h${i + 1}`),
   "head",
   "header",
   "hr",
@@ -116,4 +118,6 @@ export const TAG_NAMES = [
   "var",
   "video",
   "wbr",
-];
+].sort((a, b) => {
+  return a > b ? 1 : -1;
+});

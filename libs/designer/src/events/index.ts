@@ -105,6 +105,13 @@ export type StyleDeclarationsChanged = BaseEvent<
     imports: Record<string, string>;
   }
 >;
+
+export type ElementTagChanged = BaseEvent<
+  "editor/elementTagChanged",
+  {
+    newTagName: string;
+  }
+>;
 export type ExprNavigatorDroppedNode = BaseEvent<
   "editor/exprNavigatorDroppedNode",
   {
@@ -156,6 +163,7 @@ export type LegacyEvent =
   | StyleDeclarationsChanged
   | ExprNavigatorDroppedNode
   | VariantEdited
+  | ElementTagChanged
   | VariantSelected
   | ToolsLayerDragOver
   | ToolsLayerDrop

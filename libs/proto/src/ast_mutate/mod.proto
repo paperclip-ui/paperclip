@@ -16,6 +16,7 @@ message Mutation {
     ConvertToComponent convert_to_component = 14;
     WrapInElement wrap_in_element = 19;
     ConvertToSlot convert_to_slot = 15;
+    SetTagName set_tag_name = 20;
     MoveNode move_node = 18;
 
     // Element
@@ -45,6 +46,11 @@ message Mutation {
 
 message WrapInElement {
   string target_id = 1;
+}
+
+message SetTagName {
+  string tag_name = 1;
+  string element_id = 2;
 }
 
 enum NodePosition {

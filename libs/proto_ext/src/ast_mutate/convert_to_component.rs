@@ -128,7 +128,7 @@ fn get_component_name(expr: &ExpressionWrapper, doc: &Document) -> String {
             node::Inner::Element(node) => node.name.clone(),
             node::Inner::Text(node) => node.name.clone(),
             _ => None,
-        }
+        },
         _ => None,
     };
 

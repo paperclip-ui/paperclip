@@ -10,6 +10,7 @@ mod move_node;
 mod set_frame_bounds;
 mod set_id;
 mod set_style_declarations;
+mod set_tag_name;
 mod set_text_node_value;
 mod toggle_variants;
 mod update_variant;
@@ -37,6 +38,7 @@ pub use paperclip_proto::ast_mutate::*;
 pub use set_frame_bounds::*;
 pub use set_id::*;
 pub use set_style_declarations::*;
+pub use set_tag_name::*;
 pub use set_text_node_value::*;
 pub use toggle_variants::*;
 pub use update_variant::*;
@@ -109,6 +111,7 @@ mutations! {
   ToggleVariants,
   UpdateVariant,
   AppendInsert,
+  SetTagName,
   SetTextNodeValue,
   ConvertToComponent,
   ConvertToSlot,

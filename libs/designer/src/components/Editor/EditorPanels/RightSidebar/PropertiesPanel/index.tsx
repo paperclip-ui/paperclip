@@ -4,7 +4,7 @@ import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   getSelectedExpressionInfo,
-  getExprBounds
+  getExprBounds,
 } from "@paperclip-ui/designer/src/state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { VariantsSection } from "./VariantsSection";
@@ -18,11 +18,15 @@ import {
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { getEditorState } from "@paperclip-ui/designer/src/state";
 import { FrameSection } from "./FrameSection";
+import { MultiSelectInput } from "@paperclip-ui/designer/src/components/MultiSelectInput";
+import {
+  SelectInput,
+  SelectOption,
+} from "@paperclip-ui/designer/src/components/SelectInput";
 
 export const PropertiesPanel = () => {
-
   const expr = useSelector(getSelectedExpressionInfo);
-  const state = useSelector(getEditorState);  
+  const state = useSelector(getEditorState);
 
   if (!expr) {
     return null;
@@ -43,6 +47,9 @@ export const PropertiesPanel = () => {
               <IDField expr={expr} />
             ) : null}
             {expr.kind === ast.ExprKind.Component && <VariantsSection />}
+            {expr.kind === ast.ExprKind.Element && (
+              <ElementTagField expr={expr} />
+            )}
           </inputStyles.Fields>
         </sidebarStyles.SidebarPanelContent>
       </sidebarStyles.SidebarSection>
@@ -71,6 +78,36 @@ const IDField = ({ expr }: IDFieldProps) => {
     <inputStyles.Field
       name="Id"
       input={<TextInput value={expr.expr.name} onSave={onSave} />}
+    />
+  );
+};
+
+const TAG_OPTIONS = ["div", "span"].map((tag) => (
+  <SelectOption key={tag} label={tag} value={tag} />
+));
+
+type ElemengTagFieldProps = {
+  expr: ast.BaseExprInfo<Element, ast.ExprKind.Element>;
+};
+
+const ElementTagField = ({ expr }: ElemengTagFieldProps) => {
+  const dispatch = useDispatch<DesignerEvent>();
+
+  const onSave = (value: string) => {
+    dispatch({
+      type: "editor/elementTagChanged",
+      payload: { newTagName: value },
+    });
+  };
+
+  return (
+    <inputStyles.Field
+      name="Tag"
+      input={
+        <SelectInput value={expr.expr.tagName} onChange={onSave}>
+          {TAG_OPTIONS}
+        </SelectInput>
+      }
     />
   );
 };

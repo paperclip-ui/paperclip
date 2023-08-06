@@ -6,7 +6,7 @@ use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_proto::ast_mutate::{
     mutation, update_variant_trigger, AppendChild, AppendInsert, Bounds, ConvertToComponent,
     ConvertToSlot, DeleteExpression, InsertFrame, MoveNode, SetFrameBounds, SetId,
-    SetStyleDeclarationValue, SetStyleDeclarations, SetTextNodeValue, ToggleVariants,
+    SetStyleDeclarationValue, SetStyleDeclarations, SetTagName, SetTextNodeValue, ToggleVariants,
     UpdateVariant, WrapInElement,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
@@ -1177,7 +1177,6 @@ case! {
   )]
 }
 
-
 case! {
   can_convert_an_element_to_component_and_maintain_id,
   [
@@ -1199,7 +1198,6 @@ case! {
     "#
   )]
 }
-
 
 case! {
   can_convert_a_text_node_to_component_and_maintain_id,
@@ -2367,6 +2365,28 @@ case! {
         text "hello"
       }
     }
+    "#
+  )]
+}
+
+case! {
+  can_set_the_tag_name_of_element,
+  [
+    (
+      "/entry.pc", r#"
+        div
+      "#
+    )
+  ],
+
+
+  mutation::Inner::SetTagName(SetTagName {
+    element_id: "80f4925f-1".to_string(),
+    tag_name: "span".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    span
     "#
   )]
 }

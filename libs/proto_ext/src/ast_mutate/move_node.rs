@@ -18,7 +18,7 @@ use crate::{
 
 impl<'a> MutableVisitor<()> for EditContext<'a, MoveNode> {
     fn visit_element(&mut self, expr: &mut paperclip_proto::ast::pc::Element) -> VisitorResult<()> {
-        if let Some(i) = try_remove_child!(expr.body, &self.mutation.node_id) {
+        if let Some(_) = try_remove_child!(expr.body, &self.mutation.node_id) {
             self.changes.push(
                 mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
                     id: self.mutation.node_id.to_string(),

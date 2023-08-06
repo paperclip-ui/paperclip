@@ -8,6 +8,7 @@ import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent } from "./events";
 import {
   DesignerEvent,
+  ElementTagChanged,
   ExprNavigatorDroppedNode,
   StyleDeclarationsChanged,
   ToolsLayerDrop,
@@ -597,6 +598,21 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
+  const handleElementTagChanged = (
+    event: ElementTagChanged,
+    state: DesignerState
+  ) => {
+    const expr = getSelectedExpression(state);
+    actions.applyChanges([
+      {
+        setTagName: {
+          elementId: expr.id,
+          tagName: event.payload.newTagName,
+        },
+      },
+    ]);
+  };
+
   const handleHistoryChanged = (
     event: HistoryChanged,
     state: DesignerState,
@@ -685,6 +701,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "ui/idChanged": {
         return handleIDChanged(event, newState);
+      }
+      case "editor/elementTagChanged": {
+        handleElementTagChanged(event, newState);
       }
       case "history-engine/historyChanged": {
         return handleHistoryChanged(event, newState, prevState);

@@ -1,29 +1,23 @@
-use paperclip_proto::ast_mutate::{mutation_result, ExpressionDeleted, WrapInElement};
-use paperclip_proto::{
-    ast::{
-        all::{Expression, ExpressionWrapper},
-        pc::{document_body_item, node},
-    },
-    ast_mutate::MoveNode,
-};
+use paperclip_proto::ast::{all::Expression, pc::node};
+use paperclip_proto::ast_mutate::WrapInElement;
 
 use super::utils::parse_node;
 use super::EditContext;
 use crate::{
-    ast::{
-        all::{MutableVisitor, VisitorResult},
-    },
+    ast::all::{MutableVisitor, VisitorResult},
     try_remove_child,
 };
 
 #[macro_export]
 macro_rules! wrap_in_element {
     ($self: expr, $children: expr) => {{
-
-        
         if let Some((i, child)) = try_remove_child!($children, $self.mutation.target_id) {
             let doc = $self.get_dependency();
-            let checksum = doc.document.as_ref().expect("Document must exist").checksum();
+            let checksum = doc
+                .document
+                .as_ref()
+                .expect("Document must exist")
+                .checksum();
             let mut container = parse_node("div", &checksum);
             match &mut container.get_inner_mut() {
                 node::Inner::Element(element) => {

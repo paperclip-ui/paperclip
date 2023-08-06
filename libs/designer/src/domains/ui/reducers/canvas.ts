@@ -20,6 +20,11 @@ import { centerTransformZoom } from "@paperclip-ui/designer/src/state/geom";
 import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 import produce from "immer";
 import { clamp, mapValues } from "lodash";
+import {
+  getGlobalShortcuts,
+  getKeyboardMenuCommand,
+  ShortcutCommand,
+} from "../../shortcuts/state";
 
 export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
   switch (event.type) {
@@ -36,6 +41,17 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
         newState.resourceModalDragLeft = false;
         newState.canvas.mouseDown = false;
         newState.canvasMouseDownStartPoint = undefined;
+      });
+    }
+    case "keyboard/keyDown": {
+      return produce(state, (newState) => {
+        if (
+          getKeyboardMenuCommand(event, getGlobalShortcuts(state)) ===
+          ShortcutCommand.Delete
+        ) {
+          newState.highlightedNodeId = null;
+          newState.selectedTargetId = null;
+        }
       });
     }
 

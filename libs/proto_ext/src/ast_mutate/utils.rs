@@ -38,8 +38,8 @@ macro_rules! try_remove_child {
         }
 
         if let Some(i) = found_i {
-            $children.remove(i);
-            Some(i)
+            let el = $children.remove(i);
+            Some((i, el))
         } else {
             None
         }

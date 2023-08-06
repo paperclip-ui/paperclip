@@ -14,6 +14,7 @@ message Mutation {
     DeleteChild delete_child = 2;
     InsertChild insert_child = 3;
     ConvertToComponent convert_to_component = 14;
+    WrapInElement wrap_in_element = 19;
     ConvertToSlot convert_to_slot = 15;
     MoveNode move_node = 18;
 
@@ -40,6 +41,10 @@ message Mutation {
     // Instance
     AppendInsert append_insert = 17;
   }
+}
+
+message WrapInElement {
+  string target_id = 1;
 }
 
 enum NodePosition {

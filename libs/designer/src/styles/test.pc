@@ -6,15 +6,39 @@ style test {
 }
 
 /**
- * @bounds(x: 209, y: -120, width: 265, height: 168)
+ * @bounds(x: 209, y: -120, width: 443, height: 344)
 */
 
 div {
     style {
         position: relative
-        color: white
+        color: var(mod2.gray04)
         font-family: sans-serif
+        background: white
+        width: 100vw
+        height: 100vh
+        padding: var(mod2.space07)
     }
-    text "Todos"
+    div {
+        style {
+            left: 0
+            width: 50%
+            margin: 0px auto
+            height: 100%
+            position: relative
+            display: flex
+            flex-direction: column
+        }
+        text "Todos"
+        div {
+            style {
+                left: 0px
+                top: 0px
+                width: 113px
+                height: 65px
+            }
+            text "Something"
+        }
+    }
 }
 

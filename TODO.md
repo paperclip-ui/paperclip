@@ -22,6 +22,9 @@
   - ability to clear declarations
   - color picker
 
+- Right panel
+  - ability to set elment type
+
 ### MVP
 
 - Style Panel

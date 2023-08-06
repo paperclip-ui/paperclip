@@ -7,7 +7,7 @@ use paperclip_proto::ast_mutate::{
     mutation, update_variant_trigger, AppendChild, AppendInsert, Bounds, ConvertToComponent,
     ConvertToSlot, DeleteExpression, InsertFrame, MoveNode, SetFrameBounds, SetId,
     SetStyleDeclarationValue, SetStyleDeclarations, SetTextNodeValue, ToggleVariants,
-    UpdateVariant,
+    UpdateVariant, WrapInElement,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use std::collections::HashMap;
@@ -2194,8 +2194,6 @@ case! {
   )]
 }
 
-
-
 case! {
   moves_node_before_metadata_with_before_insert,
   [
@@ -2237,7 +2235,6 @@ case! {
   )]
 }
 
-
 case! {
   moves_node_before_metadata_with_after_insert,
   [
@@ -2275,6 +2272,55 @@ case! {
      * @bounds(x: 100, y: 200, width: 300, height: 400)
      */
     a
+    "#
+  )]
+}
+
+case! {
+  can_wrap_a_text_node_in_an_element,
+  [
+    (
+      "/entry.pc", r#"
+        text "hello"
+      "#
+    )
+  ],
+
+  mutation::Inner::WrapInElement(WrapInElement {
+    target_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      text "hello"
+    }
+    "#
+  )]
+}
+
+case! {
+  can_wrap_a_nested_text_node,
+  [
+    (
+      "/entry.pc", r#"
+        div {
+          text "hello"
+        }
+      "#
+    )
+  ],
+
+
+  mutation::Inner::WrapInElement(WrapInElement {
+    target_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      div {
+        text "hello"
+      }
+    }
     "#
   )]
 }

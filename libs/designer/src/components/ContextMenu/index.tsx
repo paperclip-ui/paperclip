@@ -119,6 +119,7 @@ const prettyKeyCombo = (combo: string[]) => {
     .replace("meta", "⌘")
     .replace("delete", "⌫")
     .replace("backspace", "⌫")
+    .replace("shift", "⇧")
     .replace("alt", "⌥")
     .replaceAll("+", "")
     .toUpperCase();

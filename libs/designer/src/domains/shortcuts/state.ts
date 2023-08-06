@@ -15,6 +15,7 @@ export enum ShortcutCommand {
   ConvertToComponent,
   ShowHideUI,
   ConvertToSlot,
+  WrapInElement,
   Cut,
   Copy,
   Delete,
@@ -42,6 +43,12 @@ export const getEntityShortcuts = (
         ast.isExpressionId(state.selectedTargetId) &&
         ast.isExpressionInComponent(state.selectedTargetId, state.graph),
       command: ShortcutCommand.ConvertToSlot,
+    },
+    {
+      kind: MenuItemKind.Option,
+      label: "Wrap in element",
+      shortcut: ["alt", "shift", "e"],
+      command: ShortcutCommand.WrapInElement,
     },
     { kind: MenuItemKind.Divider },
     {

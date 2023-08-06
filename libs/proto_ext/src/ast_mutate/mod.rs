@@ -13,6 +13,7 @@ mod set_style_declarations;
 mod set_text_node_value;
 mod toggle_variants;
 mod update_variant;
+mod wrap_in_element;
 #[macro_use]
 mod utils;
 use std::rc::Rc;
@@ -39,6 +40,7 @@ pub use set_style_declarations::*;
 pub use set_text_node_value::*;
 pub use toggle_variants::*;
 pub use update_variant::*;
+pub use wrap_in_element::*;
 
 #[cfg(test)]
 mod test;
@@ -111,6 +113,7 @@ mutations! {
   ConvertToComponent,
   ConvertToSlot,
   MoveNode,
+  WrapInElement,
   DeleteStyleDeclarations,
   SetId,
   SetStyleDeclarations,

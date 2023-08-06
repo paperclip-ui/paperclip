@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useRef, useState } from "react";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
@@ -37,6 +37,10 @@ export const Declaration = memo(
     const dispatch = useDispatch<DesignerEvent>();
     const targetId = useSelector(getSelectedId);
     const ref = useRef(null);
+
+    useEffect(() => {
+      setName(name);
+    }, [name]);
 
     const onValueSelect = useCallback(
       ({ value, imports }: NewDeclValue, details: SelectDetails) => {

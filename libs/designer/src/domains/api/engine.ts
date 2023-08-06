@@ -484,6 +484,19 @@ const createEventHandler = (actions: Actions) => {
       ]);
     }
   };
+
+  const handleWrapInElement = (state: DesignerState) => {
+    if (!state.selectedTargetId.includes(".")) {
+      actions.applyChanges([
+        {
+          wrapInElement: {
+            targetId: state.selectedTargetId,
+          },
+        },
+      ]);
+    }
+  };
+
   const handleConvertToSlot = (state: DesignerState) => {
     // Do not allow for nested instances to be converted to components.
     // Or, at least provide a confirmation for this.
@@ -509,6 +522,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case ShortcutCommand.ConvertToComponent: {
         return handleConvertToComponent(state);
+      }
+      case ShortcutCommand.WrapInElement: {
+        return handleWrapInElement(state);
       }
       case ShortcutCommand.ConvertToSlot: {
         return handleConvertToSlot(state);

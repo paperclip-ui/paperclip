@@ -786,10 +786,13 @@ export const handleDragEvent = (
           event.payload.originalBounds.y
         }px`,
 
-        // TODO - check position here to make sure we're not overriding something like "absolute"
-        position: "relative",
-        width: event.payload.newBounds.width,
-        height: event.payload.newBounds.height,
+        position:
+          computedStyles.position === "static"
+            ? "relative"
+            : computedStyles.position,
+
+        width: event.payload.newBounds.width + "px",
+        height: event.payload.newBounds.height + "px",
       };
 
       // is a frame

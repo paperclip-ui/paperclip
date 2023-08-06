@@ -5,7 +5,7 @@ import "./theme.pc" as mod2
  * @bounds(x: 701, y: -124, width: 168, height: 75)
 */
 
-public component item {
+public component TodoItem {
     render div item {
         style {
             display: flex
@@ -27,7 +27,7 @@ public component item {
 }
 
 /**
- * @bounds(x: 209, y: -120, width: 443, height: 344)
+ * @bounds(x: 208, y: -120, width: 443, height: 344)
 */
 
 div app {
@@ -70,7 +70,7 @@ div app {
                 align-items: center
                 gap: var(mod2.space05)
             }
-            item
+            TodoItem
         }
     }
 }

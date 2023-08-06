@@ -164,7 +164,12 @@ const InstanceLeaf = ({
       className={cx("instance", {
         container: shadowVisible || element.body.length > 0,
       })}
-      text={<>{element.name || element.tagName}</>}
+      text={
+        <>
+          {element.name || "Instance"}
+          <styles.TagType>{element.tagName}</styles.TagType>
+        </>
+      }
       depth={depth}
       instanceOf={instanceOf}
       controls={
@@ -212,7 +217,12 @@ const NativeElementLeaf = ({
     <Leaf
       id={element.id}
       className={cx("element", { container: element.body.length > 0 })}
-      text={<>{element.name || element.tagName}</>}
+      text={
+        <>
+          {element.name || "Element"}{" "}
+          <styles.TagType>{element.tagName}</styles.TagType>
+        </>
+      }
       depth={depth}
       instanceOf={instanceOf}
     >

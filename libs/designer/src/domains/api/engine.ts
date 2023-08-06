@@ -153,7 +153,10 @@ const createActions = (
 
 const createEventHandler = (actions: Actions) => {
   const handleInsert = async (state: DesignerState) => {
-    let bounds = getScaledBox(getInsertBox(state), state.canvas.transform);
+    let bounds = roundBox(
+      getScaledBox(getInsertBox(state), state.canvas.transform)
+    );
+
     const insertMode = state.insertMode;
 
     const intersectingNode = getNodeInfoAtCurrentPoint(state);
@@ -176,15 +179,21 @@ const createEventHandler = (actions: Actions) => {
 
       actions.applyChanges([mutation]);
     } else {
+      const relBox = {
+        ...bounds,
+        x: bounds.x - intersectingNode.box.x,
+        y: bounds.y - intersectingNode.box.y,
+      };
+
       const childSource = {
         [InsertMode.Element]: `div {
           style {
             background: rgba(0,0,0,0.1)
             position: absolute
-            left: ${bounds.x}px
-            top: ${bounds.y}px
-            width: ${bounds.width}px
-            height: ${bounds.height}px
+            left: ${relBox.x}px
+            top: ${relBox.y}px
+            width: ${relBox.width}px
+            height: ${relBox.height}px
           }
         }`,
         [InsertMode.Text]: `text ""`,

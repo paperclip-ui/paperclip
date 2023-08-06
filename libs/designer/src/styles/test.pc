@@ -6,38 +6,15 @@ style test {
 }
 
 /**
- * @bounds(x: 297, y: 15, width: 525, height: 255)
+ * @bounds(x: 209, y: -120, width: 265, height: 168)
 */
 
-div root {
+div {
     style {
         position: relative
-        display: flex
-        flex-direction: column
-        font-family: var(mod2.defaultFontFamily)
-        color: var(mod2.blue00)
-        background: white
-        width: 100vw
-        height: 100vh
+        color: white
+        font-family: sans-serif
     }
-    div container {
-        style {
-            background: var(mod2.blue01)
-            left: 0px
-            top: 0px
-            width: 525
-            height: 100px
-        }
-        text "Todos"
-    }
-    div {
-        style {
-            background: rgba(0, 0, 0, 0.1)
-            left: 335.08685px
-            top: 58.13771px
-            width: 174.07628px
-            height: 72.17796px
-        }
-    }
+    text "Todos"
 }
 

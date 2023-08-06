@@ -49,7 +49,6 @@ export const SuggestionMenu = ({
 
   const onBlur = (event: React.FocusEvent | React.KeyboardEvent) => {
     setIsOpen((open) => {
-      console.log("SET IS OPEN", open);
       if (open && typedValue != null) {
         onChange([{ value: typedValue }]);
         onOtherSave(typedValue, { event });

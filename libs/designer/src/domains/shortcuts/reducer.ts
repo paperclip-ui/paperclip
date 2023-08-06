@@ -51,6 +51,7 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
       });
     case ShortcutCommand.Delete:
       return produce(state, (newState) => {
+        newState.highlightedNodeId = null;
         if (newState.selectedTargetId) {
           const node = virtHTML.getNodeById(
             newState.selectedTargetId,

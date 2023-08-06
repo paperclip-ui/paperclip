@@ -7,25 +7,27 @@ import { useSelector } from "@paperclip-ui/common";
 import { getSelectedExprStyles } from "@paperclip-ui/designer/src/state/pc";
 import { Variants } from "./Variants";
 import { Declaration } from "./Declaration";
+import { getSelectedId } from "@paperclip-ui/designer/src/state";
 
 export const StylePanel = () => {
-  const { style } = useStylePanel();
+  const { style, targetId } = useStylePanel();
 
   return (
     <sidebarStyles.SidebarPanel>
       <Variants />
-      <GroupSection style={style} name="Style" />
+      <GroupSection targetId={targetId} style={style} name="Style" />
     </sidebarStyles.SidebarPanel>
   );
 };
 
 type GroupSectionProps = {
+  targetId: string;
   name: string;
   style: ast.ComputedStyleMap;
   rest?: boolean;
 };
 
-const GroupSection = ({ name, style }: GroupSectionProps) => {
+const GroupSection = ({ targetId, name, style }: GroupSectionProps) => {
   const [focusedDeclIndex, setFocusedDeclIndex] = useState<number | null>(null);
 
   const onLastValueTab = useCallback(
@@ -54,7 +56,7 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
     return (
       <Declaration
         name={propertyName}
-        key={i}
+        key={targetId + "-" + i}
         isNew={isNew}
         style={decl}
         onValueTab={isLast ? onLastValueTab : undefined}
@@ -79,7 +81,9 @@ const GroupSection = ({ name, style }: GroupSectionProps) => {
 
 const useStylePanel = () => {
   const style = useSelector(getSelectedExprStyles);
+  const targetId = useSelector(getSelectedId);
   return {
     style,
+    targetId,
   };
 };

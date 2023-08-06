@@ -2,8 +2,6 @@
 
 - Bugs
 
-  - cannot delete css props (try deleting top prop)
-
 - Polish
 
 - LeftSidebar

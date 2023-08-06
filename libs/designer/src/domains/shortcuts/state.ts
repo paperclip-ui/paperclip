@@ -59,13 +59,13 @@ export const getEntityShortcuts = (
     },
     {
       kind: MenuItemKind.Option,
-      label: "Cut",
+      label: "Copy",
       shortcut: ["meta", "c"],
       command: ShortcutCommand.Copy,
     },
     {
       kind: MenuItemKind.Option,
-      label: "Cut",
+      label: "Paste",
       shortcut: ["meta", "v"],
       command: ShortcutCommand.Paste,
     },

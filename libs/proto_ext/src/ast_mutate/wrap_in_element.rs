@@ -12,7 +12,6 @@ use super::EditContext;
 use crate::{
     ast::{
         all::{MutableVisitor, VisitorResult},
-        get_expr::get_expr_dep,
     },
     try_remove_child,
 };
@@ -20,8 +19,12 @@ use crate::{
 #[macro_export]
 macro_rules! wrap_in_element {
     ($self: expr, $children: expr) => {{
+
+        
         if let Some((i, child)) = try_remove_child!($children, $self.mutation.target_id) {
-            let mut container = parse_node("div", &child.checksum());
+            let doc = $self.get_dependency();
+            let checksum = doc.document.as_ref().expect("Document must exist").checksum();
+            let mut container = parse_node("div", &checksum);
             match &mut container.get_inner_mut() {
                 node::Inner::Element(element) => {
                     element.body.push(child.try_into().unwrap());

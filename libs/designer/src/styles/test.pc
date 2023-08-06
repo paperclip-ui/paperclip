@@ -1,15 +1,36 @@
 import "./editor.pc" as mod1
 import "./theme.pc" as mod2
 
-style test {
-    position: fixed
+/**
+ * @bounds(x: 701, y: -124, width: 168, height: 75)
+*/
+
+public component item {
+    render div item {
+        style {
+            display: flex
+            width: 100%
+            gap: var(mod2.space03)
+            align-items: center
+            font-family: sans-serif
+        }
+        div checkbox {
+            style {
+                background: rgba(0, 0, 0, 0.1)
+                width: 1em
+                height: 1em
+                border-radius: var(mod2.space01)
+            }
+        }
+        text "todo item"
+    }
 }
 
 /**
  * @bounds(x: 209, y: -120, width: 443, height: 344)
 */
 
-div {
+div app {
     style {
         position: relative
         color: var(mod2.gray04)
@@ -18,26 +39,38 @@ div {
         width: 100vw
         height: 100vh
         padding: var(mod2.space07)
+        font-size: 14px
     }
-    div {
+    div container {
         style {
-            left: 0
-            width: 50%
+            left: 0px
+            width: 190px
             margin: 0px auto
-            height: 100%
+            height: 280px
             position: relative
             display: flex
             flex-direction: column
+            top: 0px
         }
-        text "Todos"
-        div {
+        div header {
             style {
+                padding: var(mod2.space04) 0px
+                font-size: var(mod2.fontSize06)
+            }
+            text "Todos"
+        }
+        div items {
+            style {
+                width: 190px
+                height: 44px
+                display: flex
                 left: 0px
                 top: 0px
-                width: 113px
-                height: 65px
+                position: relative
+                align-items: center
+                gap: var(mod2.space05)
             }
-            text "Something"
+            item
         }
     }
 }

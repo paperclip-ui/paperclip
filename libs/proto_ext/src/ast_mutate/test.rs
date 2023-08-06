@@ -1177,6 +1177,52 @@ case! {
   )]
 }
 
+
+case! {
+  can_convert_an_element_to_component_and_maintain_id,
+  [
+    (
+      "/entry.pc", r#"
+        component B {
+          render div test
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::ConvertToComponent(ConvertToComponent {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    public component test { render div test } component B { render test }
+    "#
+  )]
+}
+
+
+case! {
+  can_convert_a_text_node_to_component_and_maintain_id,
+  [
+    (
+      "/entry.pc", r#"
+        component B {
+          render text abc "blarg"
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::ConvertToComponent(ConvertToComponent {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    public component abc { render text abc "blarg" } component B { render abc }
+    "#
+  )]
+}
+
 case! {
   can_convert_an_element_to_a_slot,
   [

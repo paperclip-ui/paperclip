@@ -23,6 +23,12 @@ export const cssSchema: schema.Map<css.Input> = [
     input: { name: "left", type: css.InputType.Unit },
   },
   {
+    name: "border-radius",
+    group: "style",
+
+    input: { name: "left", type: css.InputType.Unit },
+  },
+  {
     name: "top",
     group: "layout",
 

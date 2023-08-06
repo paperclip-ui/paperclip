@@ -1,8 +1,10 @@
 #### Immediate
 
-- Bugs
-
-- Polish
+- ability to change element type
+- ability to set frame background
+- copy
+- paste
+- paste
 
 - LeftSidebar
 

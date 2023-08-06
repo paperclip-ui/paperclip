@@ -2,6 +2,9 @@
 
 - Bugs
 
+  - copy / paste
+  - cut
+
   - cannot insert into slot
 
 - copy
@@ -15,6 +18,7 @@
     - ability to drop nodes in containers
     - prohibit instance nodes from being moved
       - show banner for this
+    - slots should be front and center
   - Symbols
     - ability to add token
     - ability to add mixin
@@ -27,8 +31,12 @@
   - \*color picker
 
 - Right panel
+
   - props pane
     - \*ability to set attributes
+
+- Canvas
+  - ability to insert into slot
 
 ### MVP
 

@@ -226,6 +226,8 @@ const createEventHandler = (actions: Actions) => {
           state.currentDocument.paperclip.html
         );
 
+        console.log(intersectingNode);
+
         const parentBox = state.rects[intersectingNode.nodeId];
 
         bounds = roundBox({

@@ -23,6 +23,7 @@ import {
   SelectInput,
   SelectOption,
 } from "@paperclip-ui/designer/src/components/SelectInput";
+import { TAG_NAMES } from "./constants";
 
 export const PropertiesPanel = () => {
   const expr = useSelector(getSelectedExpressionInfo);
@@ -82,7 +83,8 @@ const IDField = ({ expr }: IDFieldProps) => {
   );
 };
 
-const TAG_OPTIONS = ["div", "span"].map((tag) => (
+console.log(TAG_NAMES);
+const TAG_OPTIONS = TAG_NAMES.map((tag) => (
   <SelectOption key={tag} label={tag} value={tag} />
 ));
 

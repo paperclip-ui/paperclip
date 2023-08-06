@@ -1,7 +1,5 @@
 #### Immediate
 
-- ability to change element type
-- ability to set frame background
 - copy
 - paste
 - paste
@@ -25,7 +23,8 @@
   - color picker
 
 - Right panel
-  - ability to set elment type
+  - props pane
+    - ability to set attributes
 
 ### MVP
 

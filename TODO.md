@@ -6,25 +6,25 @@
 
 - LeftSidebar
 
-  - ability to shift siblings around
-  - ability to drop nodes in containers
-  - prohibit instance nodes from being moved
-    - show banner for this
+  - Layers
+    - ability to shift siblings around
+    - ability to drop nodes in containers
+    - prohibit instance nodes from being moved
+      - show banner for this
+  - Symbols
+    - ability to add token
+    - ability to add mixin
 
 - Style panel
 
   - tooltip for props
-
     - keep them sectioned (Layout, font-family)
-
-  - tab insert props
-  - ability to add another prop (+ button and tab)
   - ability to clear declarations
-  - color picker
+  - \*color picker
 
 - Right panel
   - props pane
-    - ability to set attributes
+    - \*ability to set attributes
 
 ### MVP
 

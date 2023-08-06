@@ -2131,3 +2131,150 @@ case! {
     "#
   )]
 }
+
+case! {
+  moves_metadata_with_insert_before,
+  [
+    (
+      "/entry.pc", r#"
+        a
+
+        /**
+         * @bounds(x: 100, y: 200, width: 300, height: 400)
+         */
+        b
+      "#
+    )
+  ],
+
+  mutation::Inner::MoveNode(MoveNode {
+    position: 0,
+    target_id: "80f4925f-1".to_string(),
+    node_id: "80f4925f-15".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    /**
+     * @bounds(x: 100, y: 200, width: 300, height: 400)
+     */
+    b
+    a
+    "#
+  )]
+}
+
+case! {
+  moves_metadata_with_insert_after,
+  [
+    (
+      "/entry.pc", r#"
+        /**
+         * @bounds(x: 100, y: 200, width: 300, height: 400)
+         */
+        a
+
+        b
+      "#
+    )
+  ],
+
+  mutation::Inner::MoveNode(MoveNode {
+    position: 1,
+    target_id: "80f4925f-15".to_string(),
+    node_id: "80f4925f-14".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    b
+    /**
+     * @bounds(x: 100, y: 200, width: 300, height: 400)
+     */
+    a
+    "#
+  )]
+}
+
+
+
+case! {
+  moves_node_before_metadata_with_before_insert,
+  [
+    (
+      "/entry.pc", r#"
+
+        /**
+         * @bounds(x: 100, y: 200, width: 300, height: 400)
+         */
+        a
+
+        /**
+         * @bounds(x: 100, y: 200, width: 300, height: 400)
+         */
+        b
+      "#
+    )
+  ],
+
+  mutation::Inner::MoveNode(MoveNode {
+    position: 0,
+    target_id: "80f4925f-14".to_string(),
+    node_id: "80f4925f-28".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    
+
+    /**
+     * @bounds(x: 100, y: 200, width: 300, height: 400)
+     */
+    b
+    
+    /**
+     * @bounds(x: 100, y: 200, width: 300, height: 400)
+     */
+    a
+    "#
+  )]
+}
+
+
+case! {
+  moves_node_before_metadata_with_after_insert,
+  [
+    (
+      "/entry.pc", r#"
+
+        /**
+         * @bounds(x: 100, y: 200, width: 300, height: 400)
+         */
+        a
+
+        /**
+         * @bounds(x: 100, y: 200, width: 300, height: 400)
+         */
+        b
+      "#
+    )
+  ],
+
+  mutation::Inner::MoveNode(MoveNode {
+    position: 1,
+    target_id: "80f4925f-28".to_string(),
+    node_id: "80f4925f-14".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    
+
+    /**
+     * @bounds(x: 100, y: 200, width: 300, height: 400)
+     */
+    b
+    
+    /**
+     * @bounds(x: 100, y: 200, width: 300, height: 400)
+     */
+    a
+    "#
+  )]
+}

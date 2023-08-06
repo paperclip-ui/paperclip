@@ -2,8 +2,9 @@
 
 - Bugs
 
-  - does not properly re-render when shuffling nodes around
-  - cannot delete css props
+  - cannot delete css props (try deleting top prop)
+
+- Polish
 
 - LeftSidebar
 

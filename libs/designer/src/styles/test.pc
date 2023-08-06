@@ -6,77 +6,37 @@ style test {
 }
 
 /**
- * @bounds(x: 1024, y: -93, width: 546, height: 459)
+ * @bounds(x: 297, y: 15, width: 525, height: 255)
 */
 
-div {
-    style {
-        width: 100vw
-        height: 100vh
-        background: red
-    }
-}
-
-/**
- * @bounds(x: -1024, y: -93, width: 546, height: 459)
-*/
-
-text "something"
-
-/**
- * @bounds(x: 316, y: -93, width: 546, height: 459)
-*/
-
-div {
+div root {
     style {
         position: relative
-        background: var(mod2.gray0)
+        display: flex
+        flex-direction: column
+        font-family: var(mod2.defaultFontFamily)
+        color: var(mod2.blue00)
+        background: white
         width: 100vw
         height: 100vh
-        font-family: var(mod2.defaultFontFamily)
-    }
-    text "Todos" {
-        style {
-            font-size: var(mod2.fontSize06)
-            color: var(mod2.gray03)
-        }
     }
     div container {
         style {
-            background: var(mod2.blue02)
-            position: red
-            left: 224px
-            top: 36.5px
-            width: 100vw
-            height: 100vh
-            color: var(mod2.blue00)
+            background: var(mod2.blue01)
+            left: 0px
+            top: 0px
+            width: 525
+            height: 100px
         }
-        text "Some text"
+        text "Todos"
     }
-}
-
-/**
- * @bounds(x: -389, y: -323, width: 558, height: 210)
-*/
-
-div todos {
-    style {
-        position: relative
-        font-family: sans-serif
-        color: white
-        background: var(mod2.gray04)
-        width: 100vw
-        height: 100vh
-    }
-    text "Todo Items"
     div {
         style {
-            position: absolute
-            left: -246.41835px
-            top: -287.67758px
-            width: 214.87843px
-            height: 117.48749px
-            color: 0
+            background: rgba(0, 0, 0, 0.1)
+            left: 335.08685px
+            top: 58.13771px
+            width: 174.07628px
+            height: 72.17796px
         }
     }
 }

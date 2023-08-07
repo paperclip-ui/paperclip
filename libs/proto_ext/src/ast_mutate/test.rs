@@ -2483,3 +2483,147 @@ case! {
     "#
   )]
 }
+
+case! {
+  can_drop_a_node_into_a_slot,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render div {
+            slot child {
+              text "a"
+            }
+          }
+        }
+        text "b"
+      "#
+    )
+  ],
+  mutation::Inner::MoveNode(MoveNode {
+    position: 2,
+    target_id: "80f4925f-2".to_string(),
+    node_id: "80f4925f-6".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div {
+        slot child {
+          text "a"
+          text "b"
+        }
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_drop_a_node_into_an_insert,
+  [
+    (
+      "/entry.pc", r#"
+        A {
+          insert child {
+            text "a"
+          }
+        }
+        text "b"
+      "#
+    )
+  ],
+  mutation::Inner::MoveNode(MoveNode {
+    position: 2,
+    target_id: "80f4925f-2".to_string(),
+    node_id: "80f4925f-4".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    A {
+      insert child {
+        text "a"
+        text "b"
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_paste_a_node_to_a_slot,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        render div {
+          slot child {
+            text "a"
+          }
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::PasteExpression(PasteExpression {
+    target_expression_id: "80f4925f-2".to_string(),
+    item: Some(paste_expression::Item::Element(Element {
+      namespace: None,
+      name: None,
+      parameters: vec![],
+      range: None,
+      body: vec![],
+      tag_name: "span".to_string(),
+      id: "123".to_string()
+    }))
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div {
+        slot child {
+          text "a"
+          span
+        }
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_paste_a_node_to_an_insert,
+  [
+    (
+      "/entry.pc", r#"
+      A {
+        insert child {
+          text "a"
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::PasteExpression(PasteExpression {
+    target_expression_id: "80f4925f-2".to_string(),
+    item: Some(paste_expression::Item::Element(Element {
+      namespace: None,
+      name: None,
+      parameters: vec![],
+      range: None,
+      body: vec![],
+      tag_name: "span".to_string(),
+      id: "123".to_string()
+    }))
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    A {
+      insert child {
+        text "a"
+        span
+      }
+    }
+    "#
+  )]
+}

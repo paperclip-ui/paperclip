@@ -29,7 +29,7 @@ public component TodoItem {
 }
 
 /**
- * @bounds(x: 208, y: -120, width: 443, height: 344)
+ * @bounds(x: 208, y: -120, width: 445, height: 464)
 */
 
 public component TodosApp {
@@ -98,13 +98,22 @@ public component TodosApp {
                     align-items: center
                     gap: var(mod2.space05)
                     padding: var(mod2.space05) 0px
+                    flex-direction: column
                 }
                 slot todos {
+                    TodoItem
+                    TodoItem
+                    TodoItem
+                    TodoItem
+                    TodoItem
+                    TodoItem
+                    TodoItem
+                    TodoItem
+                    TodoItem
                     TodoItem
                 }
             }
         }
-        TodoItem
     }
 }
 

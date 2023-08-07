@@ -16,21 +16,22 @@ use crate::{
     try_remove_child,
 };
 
-impl<'a> MutableVisitor<()> for EditContext<'a, MoveNode> {
-    fn visit_element(&mut self, expr: &mut paperclip_proto::ast::pc::Element) -> VisitorResult<()> {
-        if let Some(_) = try_remove_child!(expr.body, &self.mutation.node_id) {
-            self.changes.push(
+#[macro_export]
+macro_rules! move_child {
+    ($self: expr, $expr: expr) => {{
+        if let Some(_) = try_remove_child!($expr.body, &$self.mutation.node_id) {
+            $self.changes.push(
                 mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
-                    id: self.mutation.node_id.to_string(),
+                    id: $self.mutation.node_id.to_string(),
                 })
                 .get_outer(),
             );
         }
 
-        let target_pos = expr
+        let target_pos = $expr
             .body
             .iter()
-            .position(|x| x.get_id() == self.mutation.target_id);
+            .position(|x| x.get_id() == $self.mutation.target_id);
 
         let pos = if let Some(pos) = target_pos {
             pos as i32
@@ -38,11 +39,11 @@ impl<'a> MutableVisitor<()> for EditContext<'a, MoveNode> {
             -1
         };
 
-        if (expr.id == self.mutation.target_id && self.mutation.position == 2)
-            || (pos > -1 && self.mutation.position != 2)
+        if ($expr.id == $self.mutation.target_id && $self.mutation.position == 2)
+            || (pos > -1 && $self.mutation.position != 2)
         {
             let (child, _) =
-                get_expr_dep(&self.mutation.node_id, &self.graph).expect("Dep must exist");
+                get_expr_dep(&$self.mutation.node_id, &$self.graph).expect("Dep must exist");
             let node = match child {
                 ExpressionWrapper::TextNode(child) => {
                     Some(node::Inner::Text(child.clone()).get_outer())
@@ -54,18 +55,31 @@ impl<'a> MutableVisitor<()> for EditContext<'a, MoveNode> {
             };
 
             if let Some(child) = node {
-                if self.mutation.position == 2 {
-                    expr.body.push(child);
-                } else if self.mutation.position == 0 {
-                    expr.body.insert(pos as usize, child);
-                } else if self.mutation.position == 1 {
-                    expr.body
+                if $self.mutation.position == 2 {
+                    $expr.body.push(child);
+                } else if $self.mutation.position == 0 {
+                    $expr.body.insert(pos as usize, child);
+                } else if $self.mutation.position == 1 {
+                    $expr
+                        .body
                         .insert((pos + 1).try_into().expect("Can't increase pos"), child);
                 }
             }
         }
 
         VisitorResult::Continue
+    }};
+}
+
+impl<'a> MutableVisitor<()> for EditContext<'a, MoveNode> {
+    fn visit_element(&mut self, expr: &mut paperclip_proto::ast::pc::Element) -> VisitorResult<()> {
+        move_child!(self, expr)
+    }
+    fn visit_slot(&mut self, expr: &mut paperclip_proto::ast::pc::Slot) -> VisitorResult<()> {
+        move_child!(self, expr)
+    }
+    fn visit_insert(&mut self, expr: &mut paperclip_proto::ast::pc::Insert) -> VisitorResult<()> {
+        move_child!(self, expr)
     }
     fn visit_document(
         &mut self,

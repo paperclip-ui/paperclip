@@ -12,6 +12,25 @@ use super::EditContext;
 use crate::ast::all::{MutableVisitor, VisitorResult};
 use crate::ast_mutate::utils::parse_node;
 
+#[macro_export]
+macro_rules! paste_expr {
+    ($self: expr, $expr: expr) => {{
+        if $self.mutation.target_expression_id != $expr.id {
+            return VisitorResult::Continue;
+        }
+
+        let item = $self.mutation.item.as_ref().expect("item must exist");
+
+        let node = clone_pasted_expr(item, $self.get_dependency());
+
+        if let Some(node) = node {
+            $expr.body.push(node);
+        }
+
+        VisitorResult::Return(())
+    }};
+}
+
 fn clone_pasted_expr(expr: &paste_expression::Item, dep: &Dependency) -> Option<Node> {
     let node = match expr {
         paste_expression::Item::Element(el) => Some(node::Inner::Element(el.clone()).get_outer()),
@@ -33,19 +52,13 @@ fn clone_pasted_expr(expr: &paste_expression::Item, dep: &Dependency) -> Option<
 
 impl<'a> MutableVisitor<()> for EditContext<'a, PasteExpression> {
     fn visit_element(&mut self, expr: &mut paperclip_proto::ast::pc::Element) -> VisitorResult<()> {
-        if self.mutation.target_expression_id != expr.id {
-            return VisitorResult::Continue;
-        }
-
-        let item = self.mutation.item.as_ref().expect("item must exist");
-
-        let node = clone_pasted_expr(item, self.get_dependency());
-
-        if let Some(node) = node {
-            expr.body.push(node);
-        }
-
-        VisitorResult::Return(())
+        paste_expr!(self, expr)
+    }
+    fn visit_slot(&mut self, expr: &mut paperclip_proto::ast::pc::Slot) -> VisitorResult<()> {
+        paste_expr!(self, expr)
+    }
+    fn visit_insert(&mut self, expr: &mut paperclip_proto::ast::pc::Insert) -> VisitorResult<()> {
+        paste_expr!(self, expr)
     }
     fn visit_document(
         &mut self,

@@ -29,7 +29,9 @@ impl<
         tokio::spawn(async move {
             // VERY dirty way of throttling emit so that we don't
             // deal wiht race conditions between events
-            sleep(Duration::from_millis(1)).await;
+            // TODO: this causes race condition where multiple events that affect the same data
+            // are fired at the same time. E.g: applying mutations to dependency graph.
+            // sleep(Duration::from_millis(1)).await;
             let mut store = store.lock().unwrap();
             store.emit(event);
         });

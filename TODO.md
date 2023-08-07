@@ -7,6 +7,8 @@
 - Bugs / enhancements
 
   - ability to resize sidebars
+  - \*\*Fix race condition when multiple async mutations happening. Need to happen in sequence
+  - when pasting component, create an instance
 
 - copy
 - paste

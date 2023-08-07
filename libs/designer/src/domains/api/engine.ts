@@ -400,12 +400,19 @@ const createEventHandler = (actions: Actions) => {
       return;
     }
 
+    let targetExpressionId = state.selectedTargetId;
+
+    if (!targetExpressionId) {
+      targetExpressionId = state.currentDocument.paperclip.html.sourceId;
+    } else if (targetExpressionId === event.payload.expr.id) {
+      targetExpressionId = ast.getParent(targetExpressionId, state.graph).id;
+      console.log(ast.getParent(targetExpressionId, state.graph));
+    }
+
     actions.applyChanges([
       {
         pasteExpression: {
-          targetExpressionId:
-            state.selectedTargetId ||
-            state.currentDocument.paperclip.html.sourceId,
+          targetExpressionId,
           [kind]: event.payload.expr,
         },
       },

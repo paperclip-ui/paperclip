@@ -4,6 +4,10 @@
 
   - cannot insert into slot
 
+- Bugs / enhancements
+
+  - ability to resize sidebars
+
 - copy
 - paste
 - paste

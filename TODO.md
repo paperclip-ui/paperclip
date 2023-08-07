@@ -1,18 +1,20 @@
 #### Immediate
 
-- copy / paste
+- ability to insert into instance slot
+- ability to define variant
 
-  - cannot insert into slot
+  - test: line-through text decoration
+
+- Layers
+
+  - ability to insert style mixin
+  - ability to insert atom
 
 - Bugs / enhancements
 
   - ability to resize sidebars
   - \*\*Fix race condition when multiple async mutations happening. Need to happen in sequence
   - when pasting component, create an instance
-
-- copy
-- paste
-- paste
 
 - LeftSidebar
 

@@ -29,6 +29,7 @@ export const apiReducer = (
       state = produce(state, (newState) => {
         newState.currentDocument = event.payload;
 
+        console.log("DOC OPENED", state.insertedNodeIds);
         for (const id of newState.insertedNodeIds) {
           if (virtHTML.getNodeById(id, event.payload.paperclip.html)) {
             newState.selectedTargetId = id;
@@ -49,11 +50,13 @@ export const apiReducer = (
 
     case "designer-engine/changesApplied": {
       return produce(state, (newState) => {
-        newState.insertedNodeIds = event.payload.changes
-          .map((change) => {
-            return change.expressionInserted?.id;
-          })
-          .filter(Boolean);
+        newState.insertedNodeIds.push(
+          ...event.payload.changes
+            .map((change) => {
+              return change.expressionInserted?.id;
+            })
+            .filter(Boolean)
+        );
       });
     }
   }

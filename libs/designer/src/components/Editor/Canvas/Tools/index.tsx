@@ -92,7 +92,7 @@ export const Tools = () => {
           ) : null}
           {selectedBox &&
             showTextEditor &&
-            selectedExpr.kind === ast.ExprKind.TextNode && (
+            selectedExpr?.kind === ast.ExprKind.TextNode && (
               <TextEditor
                 expr={selectedExpr.expr}
                 box={selectedBox}

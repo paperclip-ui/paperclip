@@ -607,7 +607,7 @@ export namespace ast {
   };
 
   export const getExprByVirtId = (id: string, graph: Graph) =>
-    getExprById(id.split(".").pop(), graph);
+    getExprInfoById(id.split(".").pop(), graph);
   export const getExprStyles = (
     parent: Element | TextNode | Document
   ): Style[] =>

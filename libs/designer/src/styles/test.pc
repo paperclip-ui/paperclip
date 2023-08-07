@@ -20,7 +20,9 @@ public component todoItem {
                 border-radius: var(mod2.space02)
             }
         }
-        text "Item"
+        slot children {
+            text "Item"
+        }
     }
 }
 

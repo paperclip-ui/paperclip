@@ -377,7 +377,7 @@ export const getSelectedExprStyles = (
 export const getSelectedExpression = (state: DesignerState) => {
   return (
     state.selectedTargetId &&
-    ast.getExprByVirtId(state.selectedTargetId, state.graph)
+    ast.getExprByVirtId(state.selectedTargetId, state.graph)?.expr
   );
 };
 
@@ -399,7 +399,7 @@ export const getSelectedExprOwnerComponent = (state: DesignerState) => {
   if (!state.selectedTargetId) {
     return null;
   }
-  const expr = ast.getExprByVirtId(state.selectedTargetId, state.graph);
+  const expr = ast.getExprByVirtId(state.selectedTargetId, state.graph)?.expr;
   if (!expr) {
     return null;
   }

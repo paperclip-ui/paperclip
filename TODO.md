@@ -2,6 +2,7 @@
 
 - ability to insert into instance slot
 - ability to define variant
+- remove absolutely positioned elements
 
   - test: line-through text decoration
 
@@ -15,6 +16,7 @@
   - ability to resize sidebars
   - \*\*Fix race condition when multiple async mutations happening. Need to happen in sequence
   - when pasting component, create an instance
+  - shouldn't be able to delete children of instances
 
 - LeftSidebar
 

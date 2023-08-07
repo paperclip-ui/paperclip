@@ -22,12 +22,12 @@ export class Machine<TState extends any, TEvent extends BaseEvent<any, any>>
     initialState: TState
   ) {
     this._store = new Store(reduceState, initialState);
-    this._engine = createEngine(this.dispatch, initialState);
+    this._engine = createEngine(this.dispatch, this.getState);
   }
 
-  getState() {
+  getState = () => {
     return this._store.getState();
-  }
+  };
 
   dispatch = (event: TEvent) => {
     const prevState = this._store.getState();

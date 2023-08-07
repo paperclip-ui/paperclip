@@ -32,47 +32,80 @@ public component TodoItem {
  * @bounds(x: 208, y: -120, width: 443, height: 344)
 */
 
-div app {
-    style {
-        position: relative
-        color: var(mod2.gray04)
-        font-family: sans-serif
-        background: white
-        width: 100vw
-        height: 100vh
-        padding: var(mod2.space07)
-        font-size: 14px
-    }
-    div container {
+public component TodosApp {
+    render div root {
         style {
-            left: 0px
-            width: 190px
-            margin: 0px auto
-            height: 280px
             position: relative
-            display: flex
-            flex-direction: column
-            top: 0px
+            color: var(mod2.gray04)
+            font-family: sans-serif
+            background: white
+            width: 100vw
+            height: 100vh
+            padding: var(mod2.space07)
+            font-size: 14px
         }
-        div header {
+        div container {
             style {
-                padding: var(mod2.space04) 0px
-                font-size: var(mod2.fontSize06)
-            }
-            text "Todos"
-        }
-        div items {
-            style {
-                width: 190px
-                height: 44px
-                display: flex
                 left: 0px
-                top: 0px
+                width: 190px
+                margin: 0px auto
+                height: 280px
                 position: relative
-                align-items: center
-                gap: var(mod2.space05)
+                display: flex
+                flex-direction: column
+                top: 0px
             }
-            TodoItem
+            div header {
+                style {
+                    padding: var(mod2.space04) 0px
+                    font-size: var(mod2.fontSize06)
+                }
+                text "Todos"
+            }
+            div {
+                style {
+                    display: flex
+                    gap: var(mod2.space05)
+                    font-size: var(mod2.fontSize01)
+                }
+                input textInput {
+                    style {
+                        background: white
+                        border: 1px solid var(mod2.gray02)
+                        border-radius: var(mod2.space02)
+                        width: 100%
+                    }
+                }
+                button addButton {
+                    style {
+                        background: var(mod2.gray06)
+                        color: white
+                        border: none
+                        border-radius: var(mod2.space02)
+                        font-size: 12px
+                    }
+                    text "add" {
+                        style {
+                            font-size: var(mod2.fontSize01)
+                        }
+                    }
+                }
+            }
+            div items {
+                style {
+                    width: 190px
+                    height: 44px
+                    display: flex
+                    left: 0px
+                    top: 0px
+                    position: relative
+                    align-items: center
+                    gap: var(mod2.space05)
+                }
+                slot todos {
+                    TodoItem
+                }
+            }
         }
     }
 }

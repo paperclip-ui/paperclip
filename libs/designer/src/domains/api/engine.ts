@@ -51,7 +51,7 @@ import {
   IDChanged,
   ToolsTextEditorChanged,
 } from "../ui/events";
-import { TextNode } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import { ExpressionPasted } from "../clipboard/events";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -63,7 +63,7 @@ export const createDesignerEngine =
   ({ protocol, host, transport }: DesignerEngineOptions) =>
   (
     dispatch: Dispatch<DesignerEngineEvent>,
-    state: DesignerState
+    getState: () => DesignerState
   ): Engine<DesignerState, DesignerEngineEvent> => {
     const client = new DesignerClientImpl(
       new GrpcWebImpl((protocol || "http:") + "//" + host, {
@@ -73,7 +73,7 @@ export const createDesignerEngine =
 
     const actions = createActions(client, dispatch);
     const handleEvent = createEventHandler(actions);
-    bootstrap(actions, state);
+    bootstrap(actions, getState());
 
     const dispose = () => {};
     return {
@@ -225,8 +225,6 @@ const createEventHandler = (actions: Actions) => {
           intersectingNode.nodeId,
           state.currentDocument.paperclip.html
         );
-
-        console.log(intersectingNode);
 
         const parentBox = state.rects[intersectingNode.nodeId];
 
@@ -399,6 +397,14 @@ const createEventHandler = (actions: Actions) => {
   const handleUndo = () => actions.undo();
   const handleRedo = () => actions.redo();
   const handleSave = () => actions.save();
+
+  const handlePasteExpression = (
+    event: ExpressionPasted,
+    state: DesignerState
+  ) => {
+    console.log(event);
+  };
+
   const handleVariantEdited = (
     { payload: { componentId, newName, triggers } }: VariantEdited,
     state: DesignerState
@@ -682,6 +688,9 @@ const createEventHandler = (actions: Actions) => {
       case "designer/variantEdited": {
         return handleVariantEdited(event, newState);
       }
+      case "clipboard/expressionPasted": {
+        return handlePasteExpression(event, newState);
+      }
       case "ui/toolsTextEditorChanged": {
         return handleToolsTextEditorChanged(event, newState);
       }
@@ -705,7 +714,7 @@ const createEventHandler = (actions: Actions) => {
         return handleIDChanged(event, newState);
       }
       case "editor/elementTagChanged": {
-        handleElementTagChanged(event, newState);
+        return handleElementTagChanged(event, newState);
       }
       case "history-engine/historyChanged": {
         return handleHistoryChanged(event, newState, prevState);

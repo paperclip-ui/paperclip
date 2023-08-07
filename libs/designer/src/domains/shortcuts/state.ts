@@ -26,6 +26,12 @@ export enum ShortcutCommand {
   Save,
 }
 
+export const ALLOW_DEFAULTS = [
+  ShortcutCommand.Copy,
+  ShortcutCommand.Paste,
+  ShortcutCommand.Cut,
+];
+
 export const getEntityShortcuts = (
   state: DesignerState
 ): MenuItem<ShortcutCommand>[] => {

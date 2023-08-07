@@ -7,6 +7,7 @@ import { Box, Point, Size } from "../state/geom";
 import { ShortcutEvent } from "../domains/shortcuts/events";
 import { KeyboardEngineEvent } from "../domains/keyboard/events";
 import { UIEvent } from "../domains/ui/events";
+import { ClipboardEvent } from "../domains/clipboard/events";
 
 export type CanvasPanEnd = BaseEvent<"designer/canvasPanEnd">;
 export type CanvasMouseUp = BaseEvent<
@@ -187,6 +188,7 @@ export type DesignerEvent =
   | DesignerEngineEvent
   | HistoryEngineEvent
   | BoundsChanged
+  | ClipboardEvent
   | ShortcutEvent
   | KeyboardEngineEvent
   | LegacyEvent

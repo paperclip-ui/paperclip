@@ -83,7 +83,6 @@ const IDField = ({ expr }: IDFieldProps) => {
   );
 };
 
-console.log(TAG_NAMES);
 const TAG_OPTIONS = TAG_NAMES.map((tag) => (
   <SelectOption key={tag} label={tag} value={tag} />
 ));

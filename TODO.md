@@ -1,9 +1,6 @@
 #### Immediate
 
-- Bugs
-
-  - copy / paste
-  - cut
+- copy / paste
 
   - cannot insert into slot
 

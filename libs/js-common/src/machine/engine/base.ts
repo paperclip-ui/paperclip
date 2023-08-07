@@ -10,5 +10,5 @@ export type EngineCreator<
   TEvent extends BaseEvent<any, any>
 > = (
   dispatch: Dispatch<TEvent>,
-  initialState?: TState
+  getState?: () => TState
 ) => Engine<TState, TEvent>;

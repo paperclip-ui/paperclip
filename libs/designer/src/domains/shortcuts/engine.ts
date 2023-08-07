@@ -3,6 +3,7 @@ import { DesignerEvent } from "../../events";
 import { DesignerState } from "../../state";
 import { createKeyDownEvent } from "../keyboard/events";
 import {
+  ALLOW_DEFAULTS,
   ShortcutCommand,
   getGlobalShortcuts,
   getKeyboardMenuCommand,
@@ -10,7 +11,7 @@ import {
 
 export const createShortcutsEngine = (
   _dispatch: Dispatch<DesignerEvent>,
-  initialState: DesignerState
+  getState: () => DesignerState
 ): Engine<DesignerState, DesignerEvent> => {
   const onKeyDown = (event: KeyboardEvent) => {
     if (/textarea|input/i.test((event.target as HTMLElement).tagName)) {
@@ -19,10 +20,10 @@ export const createShortcutsEngine = (
 
     const command = getKeyboardMenuCommand(
       createKeyDownEvent(event),
-      getGlobalShortcuts(initialState)
+      getGlobalShortcuts(getState())
     );
 
-    if (command) {
+    if (command && !ALLOW_DEFAULTS.includes(command)) {
       event.preventDefault();
     }
   };

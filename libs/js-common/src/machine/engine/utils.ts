@@ -7,10 +7,10 @@ export const combineEngineCreators =
   ) =>
   (
     dispatch: Dispatch<TEvent>,
-    initialState: TState
+    getState: () => TState
   ): Engine<TState, TEvent> => {
     const engines = engineCreators.map((createEngine) =>
-      createEngine(dispatch, initialState)
+      createEngine(dispatch, getState)
     );
 
     const handleEvent = (event: TEvent, currState: TState, prevState: TState) =>

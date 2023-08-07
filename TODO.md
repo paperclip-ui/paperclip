@@ -30,6 +30,7 @@
     - keep them sectioned (Layout, font-family)
   - ability to clear declarations
   - \*color picker
+  - variables should show special UI - not typeable
 
 - Right panel
 

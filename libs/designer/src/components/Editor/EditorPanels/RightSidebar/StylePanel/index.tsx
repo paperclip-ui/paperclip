@@ -8,6 +8,7 @@ import { getSelectedExprStyles } from "@paperclip-ui/designer/src/state/pc";
 import { Variants } from "./Variants";
 import { Declaration } from "./Declaration";
 import { getSelectedId } from "@paperclip-ui/designer/src/state";
+import { ComputedStyleMap } from "@paperclip-ui/proto-ext/lib/ast/serialize";
 
 export const StylePanel = () => {
   const { style, targetId } = useStylePanel();
@@ -23,7 +24,7 @@ export const StylePanel = () => {
 type GroupSectionProps = {
   targetId: string;
   name: string;
-  style: ast.ComputedStyleMap;
+  style: ComputedStyleMap;
   rest?: boolean;
 };
 

@@ -93,14 +93,11 @@ public component TodosApp {
             }
             div items {
                 style {
-                    width: 190px
-                    height: 44px
                     display: flex
-                    left: 0px
-                    top: 0px
                     position: relative
                     align-items: center
                     gap: var(mod2.space05)
+                    padding: var(mod2.space05) 0px
                 }
                 slot todos {
                     TodoItem

@@ -1,6 +1,7 @@
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { Variant } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { DesignerState } from "./core";
+import { ComputedStyleMap } from "@paperclip-ui/proto-ext/lib/ast/serialize";
 
 export const MIXED_VALUE = "mixed";
 
@@ -361,16 +362,14 @@ const AVAILABLE_STYLES = {
 
 export const getSelectedExprStyles = (
   state: DesignerState
-): ast.ComputedStyleMap => {
+): ComputedStyleMap => {
   const combinedStyles: Record<string, ComputedDeclaration> = {};
 
   const virtId = state.selectedTargetId;
 
-  
   if (!virtId) {
-    return { propertyNames: [], map: {} }
+    return { propertyNames: [], map: {} };
   }
-  
 
   return ast.computeElementStyle(virtId, state.graph);
 };

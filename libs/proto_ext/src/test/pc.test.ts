@@ -1,5 +1,6 @@
 import { ast } from "../ast/pc-utils";
 import { parseFiles } from "./utils";
+import { serializeComputedStyle } from "../ast/serialize";
 
 describe(__filename + "#", () => {
   it(`Can return all components in a document`, async () => {
@@ -35,7 +36,7 @@ describe(__filename + "#", () => {
     );
 
     const style = ast.computeElementStyle("33267f8-4", graph);
-    expect(ast.serializeComputedStyle(style)).toEqual({
+    expect(serializeComputedStyle(style)).toEqual({
       color: "blue",
     });
   });
@@ -59,7 +60,7 @@ describe(__filename + "#", () => {
     );
 
     expect(
-      ast.serializeComputedStyle(ast.computeElementStyle("33267f8-10", graph))
+      serializeComputedStyle(ast.computeElementStyle("33267f8-10", graph))
     ).toEqual({
       color: "orange",
       "font-family": "sans-serif",
@@ -86,7 +87,7 @@ describe(__filename + "#", () => {
     );
 
     expect(
-      ast.serializeComputedStyle(ast.computeElementStyle("33267f8-10", graph))
+      serializeComputedStyle(ast.computeElementStyle("33267f8-10", graph))
     ).toEqual({
       color: "orange",
       background: "blue",
@@ -112,7 +113,7 @@ describe(__filename + "#", () => {
     );
 
     expect(
-      ast.serializeComputedStyle(ast.computeElementStyle("33267f8-4", graph))
+      serializeComputedStyle(ast.computeElementStyle("33267f8-4", graph))
     ).toEqual({
       background: "blue",
     });
@@ -136,7 +137,7 @@ describe(__filename + "#", () => {
     );
 
     expect(
-      ast.serializeComputedStyle(ast.computeElementStyle("33267f8-4", graph))
+      serializeComputedStyle(ast.computeElementStyle("33267f8-4", graph))
     ).toEqual({
       background: "blue",
     });

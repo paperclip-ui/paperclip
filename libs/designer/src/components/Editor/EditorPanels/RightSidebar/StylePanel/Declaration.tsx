@@ -10,10 +10,14 @@ import { noop } from "lodash";
 import { getPropField } from "./cssSchema";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
 import { SelectDetails } from "@paperclip-ui/designer/src/components/SuggestionMenu";
+import {
+  ComputedStyle,
+  serializeDeclaration,
+} from "@paperclip-ui/proto-ext/lib/ast/serialize";
 
 type FieldProps = {
   name?: string;
-  style?: ast.ComputedStyle;
+  style?: ComputedStyle;
   onFocus?: () => void;
   onBlur?: () => void;
   onValueTab?: (event: React.KeyboardEvent) => void;
@@ -31,7 +35,7 @@ export const Declaration = memo(
     onSave = noop,
     isNew,
   }: FieldProps) => {
-    const value = style && ast.serializeDeclaration(style.value);
+    const value = style && serializeDeclaration(style.value);
     const [name2, setName] = useState(name);
     const { input: inputOptions } = getPropField(name2);
     const dispatch = useDispatch<DesignerEvent>();

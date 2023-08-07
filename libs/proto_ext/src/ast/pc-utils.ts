@@ -25,6 +25,7 @@ import {
   Variant,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { Str } from "@paperclip-ui/proto/lib/generated/ast/base";
+import { ComputedStyleMap, serializeDeclaration } from "./serialize";
 
 const EMPTY_ARRAY = [];
 export namespace ast {
@@ -78,21 +79,6 @@ export namespace ast {
     | BaseExprInfo<Style, ExprKind.Style>
     | BaseExprInfo<Str, ExprKind.Str>
     | BaseExprInfo<StyleDeclaration, ExprKind.Declaration>;
-
-  export type ComputedStyleMap = {
-    //
-    propertyNames: string[];
-
-    // map of computed styles
-    map: Record<string, ComputedStyle>;
-  };
-
-  export type ComputedStyle = {
-    value: DeclarationValue;
-    ownerId?: string;
-    variant?: Variant;
-    prevValue?: ComputedStyle;
-  };
 
   export const getDocumentBodyInner = (item: DocumentBodyItem) => {
     // oneof forces us to do this :(
@@ -899,53 +885,5 @@ export namespace ast {
     return getAncestorIds(exprId, graph).some((ancestorId) => {
       return getExprInfoById(ancestorId, graph).kind === ExprKind.Component;
     });
-  };
-
-  export const serializeDeclaration = (expr: DeclarationValue) => {
-    if (expr.arithmetic) {
-      return `${serializeDeclaration(expr.arithmetic.left)} ${
-        expr.arithmetic.operator
-      } ${serializeDeclaration(expr.arithmetic.right)}`;
-    }
-    if (expr.commaList) {
-      return expr.commaList.items
-        .map((expr) => serializeDeclaration(expr))
-        .join(", ");
-    }
-    if (expr.functionCall) {
-      return `${expr.functionCall.name}(${serializeDeclaration(
-        expr.functionCall.arguments
-      )})`;
-    }
-    if (expr.hexColor) {
-      return `#${expr.hexColor.value}`;
-    }
-    if (expr.measurement) {
-      return `${expr.measurement.value}${expr.measurement.unit}`;
-    }
-    if (expr.number) {
-      return `${expr.number.value}`;
-    }
-    if (expr.reference) {
-      return `${expr.reference.path.join(".")}`;
-    }
-    if (expr.spacedList) {
-      return expr.spacedList.items
-        .map((expr) => serializeDeclaration(expr))
-        .join(" ");
-    }
-    if (expr.str) {
-      return `"${expr.str.value}"`;
-    }
-  };
-
-  export const serializeComputedStyle = (
-    style: ComputedStyleMap
-  ): Record<string, string> => {
-    const comp = {};
-    for (const key in style.map) {
-      comp[key] = serializeDeclaration(style[key]);
-    }
-    return comp;
   };
 }

@@ -337,18 +337,6 @@ const createEventHandler = (actions: Actions) => {
   ) => {
     const { targetId, droppedExprId, position } = event.payload;
 
-    console.log(position, {
-      moveNode: {
-        targetId,
-        nodeId: droppedExprId,
-        position: {
-          before: NodePosition.BEFORE,
-          after: NodePosition.AFTER,
-          inside: NodePosition.INSIDE,
-        }[position],
-      },
-    });
-
     actions.applyChanges([
       {
         moveNode: {
@@ -402,7 +390,24 @@ const createEventHandler = (actions: Actions) => {
     event: ExpressionPasted,
     state: DesignerState
   ) => {
-    console.log(event);
+    const kind = {
+      [ast.ExprKind.TextNode]: "textNode",
+      [ast.ExprKind.Element]: "element",
+    }[event.payload.kind];
+
+    if (!kind) {
+      console.error(`Cannot paste: `, event.payload.expr);
+      return;
+    }
+
+    actions.applyChanges([
+      {
+        pasteExpression: {
+          targetExpressionId: state.selectedTargetId,
+          [kind]: event.payload.expr,
+        },
+      },
+    ]);
   };
 
   const handleVariantEdited = (

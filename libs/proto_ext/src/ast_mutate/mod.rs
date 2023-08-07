@@ -14,6 +14,7 @@ mod set_tag_name;
 mod set_text_node_value;
 mod toggle_variants;
 mod update_variant;
+mod paste_expression;
 mod wrap_in_element;
 #[macro_use]
 mod utils;
@@ -29,6 +30,7 @@ pub use append_insert::*;
 pub use base::*;
 pub use convert_to_component::*;
 pub use convert_to_slot::*;
+pub use paste_expression::*;
 pub use delete_expression::*;
 pub use delete_style_declarations::*;
 pub use move_node::*;
@@ -114,6 +116,7 @@ mutations! {
   SetTagName,
   SetTextNodeValue,
   ConvertToComponent,
+  PasteExpression,  
   ConvertToSlot,
   MoveNode,
   WrapInElement,

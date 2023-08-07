@@ -71,7 +71,8 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, UpdateVariant> {
 
         expr.body.insert(
             0,
-            paperclip_proto::ast::pc::component_body_item::Inner::Variant(variant.clone()).get_outer(),
+            paperclip_proto::ast::pc::component_body_item::Inner::Variant(variant.clone())
+                .get_outer(),
         );
 
         self.changes.extend(vec![

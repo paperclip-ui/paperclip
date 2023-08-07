@@ -3,11 +3,12 @@ use crate::graph::{load::LoadableGraph, test_utils};
 use futures::executor::block_on;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::str_utils::strip_extra_ws;
+use paperclip_proto::ast::pc::{Element, TextNode};
 use paperclip_proto::ast_mutate::{
-    mutation, update_variant_trigger, AppendChild, AppendInsert, Bounds, ConvertToComponent,
-    ConvertToSlot, DeleteExpression, InsertFrame, MoveNode, SetFrameBounds, SetId,
-    SetStyleDeclarationValue, SetStyleDeclarations, SetTagName, SetTextNodeValue, ToggleVariants,
-    UpdateVariant, WrapInElement,
+    mutation, paste_expression, update_variant_trigger, AppendChild, AppendInsert, Bounds,
+    ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveNode, PasteExpression,
+    SetFrameBounds, SetId, SetStyleDeclarationValue, SetStyleDeclarations, SetTagName,
+    SetTextNodeValue, ToggleVariants, UpdateVariant, WrapInElement,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use std::collections::HashMap;
@@ -2387,6 +2388,98 @@ case! {
   [(
     "/entry.pc", r#"
     span
+    "#
+  )]
+}
+
+case! {
+  can_paste_an_element_into_another_element,
+  [
+    (
+      "/entry.pc", r#"
+        div
+      "#
+    )
+  ],
+
+
+  mutation::Inner::PasteExpression(PasteExpression {
+    target_expression_id: "80f4925f-1".to_string(),
+    item: Some(paste_expression::Item::Element(Element {
+      namespace: None,
+      name: None,
+      parameters: vec![],
+      range: None,
+      body: vec![],
+      tag_name: "span".to_string(),
+      id: "123".to_string()
+    }))
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      span
+    }
+    "#
+  )]
+}
+
+case! {
+  can_paste_an_element_into_the_document,
+  [
+    (
+      "/entry.pc", r#"
+        div
+      "#
+    )
+  ],
+
+
+  mutation::Inner::PasteExpression(PasteExpression {
+    target_expression_id: "80f4925f-2".to_string(),
+    item: Some(paste_expression::Item::Element(Element {
+      namespace: None,
+      name: None,
+      parameters: vec![],
+      range: None,
+      body: vec![],
+      tag_name: "span".to_string(),
+      id: "123".to_string()
+    }))
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div
+    span
+    "#
+  )]
+}
+
+case! {
+  can_paste_a_text_node_into_the_document,
+  [
+    (
+      "/entry.pc", r#"
+        div
+      "#
+    )
+  ],
+
+
+  mutation::Inner::PasteExpression(PasteExpression {
+    target_expression_id: "80f4925f-2".to_string(),
+    item: Some(paste_expression::Item::TextNode(TextNode {
+      name: None,
+      range: None,
+      body: vec![],
+      value: "span".to_string(),
+      id: "123".to_string()
+    }))
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div
+    text "span"
     "#
   )]
 }

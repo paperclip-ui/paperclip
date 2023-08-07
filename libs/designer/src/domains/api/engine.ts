@@ -403,7 +403,9 @@ const createEventHandler = (actions: Actions) => {
     actions.applyChanges([
       {
         pasteExpression: {
-          targetExpressionId: state.selectedTargetId,
+          targetExpressionId:
+            state.selectedTargetId ||
+            state.currentDocument.paperclip.html.sourceId,
           [kind]: event.payload.expr,
         },
       },

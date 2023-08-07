@@ -5,28 +5,11 @@ use paperclip_proto::ast_mutate::{mutation_result, DeleteExpression, ExpressionD
 
 use crate::ast::all::MutableVisitor;
 use crate::ast::all::VisitorResult;
-macro_rules! try_remove_child {
-    ($children:expr, $id: expr) => {{
-        let mut found_i = None;
-
-        for (i, item) in $children.iter().enumerate() {
-            if item.get_id() == $id {
-                found_i = Some(i);
-            }
-        }
-
-        if let Some(i) = found_i {
-            $children.remove(i);
-            Some(i)
-        } else {
-            None
-        }
-    }};
-}
+use crate::try_remove_child;
 
 impl<'expr> MutableVisitor<()> for EditContext<'expr, DeleteExpression> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
-        if let Some(i) = try_remove_child!(expr.body, &self.mutation.expression_id) {
+        if let Some((i, _)) = try_remove_child!(expr.body, &self.mutation.expression_id) {
             let prev_index: i32 = (i as i32) - 1;
             let mut results = vec![
                 mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {

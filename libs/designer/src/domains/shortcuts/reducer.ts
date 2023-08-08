@@ -2,6 +2,7 @@ import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 import produce from "immer";
 import { DesignerEvent } from "../../events";
 import { DesignerState, InsertMode } from "../../state";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import {
   getGlobalShortcuts,
   getKeyboardMenuCommand,
@@ -37,6 +38,16 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
       return produce(state, (newState) => {
         newState.insertMode = InsertMode.Resource;
         newState.selectedTargetId = null;
+      });
+
+    case ShortcutCommand.GoToMainComponent:
+      return produce(state, (newState) => {
+        const expr = ast.getExprById(state.selectedTargetId, state.graph);
+        const component = ast.getInstanceComponent(expr, state.graph);
+        const renderNode = ast.getComponentRenderNode(component);
+
+        // TODO: need to open the document
+        newState.selectedTargetId = renderNode?.expr.id ?? component.id;
       });
     case ShortcutCommand.ShowHideUI:
       return produce(state, (newState) => {

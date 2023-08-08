@@ -1,10 +1,11 @@
 #### Immediate
 
-- ability to insert into instance slot
+- slots should always be around
+- copying + pasting components should create instance
 - ability to define variant
 - remove absolutely positioned elements
-
   - test: line-through text decoration
+- go to instance
 
 - Layers
 
@@ -17,6 +18,7 @@
   - \*\*Fix race condition when multiple async mutations happening. Need to happen in sequence
   - when pasting component, create an instance
   - shouldn't be able to delete children of instances
+  - show title of frame
 
 - LeftSidebar
 

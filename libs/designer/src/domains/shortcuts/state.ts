@@ -10,6 +10,7 @@ import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
 export enum ShortcutCommand {
   InsertElement,
+  GoToMainComponent,
   InsertResource,
   InsertText,
   ConvertToComponent,
@@ -35,6 +36,12 @@ export const ALLOW_DEFAULTS = [
 export const getEntityShortcuts = (
   state: DesignerState
 ): MenuItem<ShortcutCommand>[] => {
+  const entity = ast.getExprInfoById(state.selectedTargetId, state.graph);
+  const isInstance =
+    entity &&
+    entity.kind === ast.ExprKind.Element &&
+    ast.isInstance(entity.expr, state.graph);
+
   return [
     {
       kind: MenuItemKind.Option,
@@ -44,7 +51,7 @@ export const getEntityShortcuts = (
     },
     {
       kind: MenuItemKind.Option,
-      label: "Create slot",
+      label: "Convert to slot",
       enabled:
         ast.isExpressionId(state.selectedTargetId) &&
         ast.isExpressionInComponent(state.selectedTargetId, state.graph),
@@ -57,6 +64,17 @@ export const getEntityShortcuts = (
       command: ShortcutCommand.WrapInElement,
     },
     { kind: MenuItemKind.Divider },
+    // Instance specific
+    ...((isInstance
+      ? [
+          {
+            kind: MenuItemKind.Option,
+            label: "Go to main component",
+            command: ShortcutCommand.GoToMainComponent,
+          },
+          { kind: MenuItemKind.Divider },
+        ]
+      : []) as MenuItem<ShortcutCommand>[]),
     {
       kind: MenuItemKind.Option,
       label: "Cut",

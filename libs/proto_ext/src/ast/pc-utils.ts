@@ -615,6 +615,13 @@ export namespace ast {
       .filter((expr) => expr.style)
       .map(getInnerExpression);
 
+  export const getInstanceSlots = (instance: Element, graph: Graph) => {
+    // const component = getInstanceComponent(instance, graph);
+    // const render = getComponentRenderExpr(component);
+    // const renderNode = render && getChildExprInner(render.node);
+    // return renderNode && getExprSlots(renderNode, graph);
+  };
+
   export const getExprById = (id: string, graph: Graph) => {
     return getExprInfoById(id, graph)?.expr;
   };

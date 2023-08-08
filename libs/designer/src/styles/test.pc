@@ -2,7 +2,7 @@ import "./editor.pc" as mod1
 import "./theme.pc" as mod2
 
 /**
- * @bounds(x: 1331, y: -287, width: 168, height: 75)
+ * @bounds(x: 1397, y: -290, width: 168, height: 75)
 */
 
 public component todoItem {
@@ -87,12 +87,26 @@ div {
                 gap: var(mod2.space05)
                 flex-direction: column
             }
-            todoItem
-            todoItem
-            todoItem
-            todoItem
-            todoItem
-            todoItem
+            todoItem {
+                insert children {
+                    text "eggs"
+                }
+            }
+            todoItem {
+                insert children {
+                    text "bacon"
+                }
+            }
+            todoItem {
+                insert children {
+                    text "almond milk"
+                }
+            }
+            todoItem {
+                insert children {
+                    text "hard cheese"
+                }
+            }
         }
     }
 }

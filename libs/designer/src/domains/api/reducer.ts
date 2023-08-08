@@ -28,8 +28,6 @@ export const apiReducer = (
     case "designer-engine/documentOpened":
       state = produce(state, (newState) => {
         newState.currentDocument = event.payload;
-
-        console.log("DOC OPENED", state.insertedNodeIds);
         for (const id of newState.insertedNodeIds) {
           if (virtHTML.getNodeById(id, event.payload.paperclip.html)) {
             newState.selectedTargetId = id;

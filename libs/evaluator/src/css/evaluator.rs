@@ -364,6 +364,7 @@ fn evaluate_variant_styles<F: FileResolver>(
     expanded_combo_selectors: &Vec<Vec<VariantTrigger>>,
     context: &mut DocumentContext<F>,
 ) {
+
     let current_node = if let Some(node) = &context.target_node {
         node
     } else {
@@ -418,23 +419,25 @@ fn evaluate_variant_styles<F: FileResolver>(
     };
 
     let is_root_inst = instance_root_node_ns == ctx_root_node_ns || !scope_selector.contains(" ");
+    
+    if assoc_variants.len() > 0 {
 
-    for (assoc_variant, _variant_context) in assoc_variants {
-        // IF scope selector doesn't contain spaces, then it's the root node OF the
+        let variant_combo = assoc_variants.iter().map(|(v, _)| format!(".{}", get_variant_namespace(v))).collect::<Vec<_>>().join("");
+         // IF scope selector doesn't contain spaces, then it's the root node OF the
         // top-most component
         let selector_text = if is_root_inst {
             format!(
-                "{}.{}.{}{}",
+                "{}.{}{}{}",
                 scope_selector,
                 instance_root_node_ns,
-                get_variant_namespace(assoc_variant),
+                variant_combo,
                 target_selector
             )
         } else {
             format!(
-                ".{}.{} {}.{}{}",
+                ".{}{} {}.{}{}",
                 ctx_root_node_ns,
-                get_variant_namespace(assoc_variant),
+                variant_combo,
                 scope_selector,
                 instance_root_node_ns,
                 target_selector
@@ -453,6 +456,7 @@ fn evaluate_variant_styles<F: FileResolver>(
             rule: virt_style,
         });
     }
+
 
     let (combo_queries, combo_selectors) = get_combo_selectors(expanded_combo_selectors);
 

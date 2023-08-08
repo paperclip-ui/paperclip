@@ -7,6 +7,7 @@ import "./theme.pc" as mod2
 
 public component todoItem {
     variant checked
+    variant other
     render div todoItem {
         style {
             display: flex
@@ -15,6 +16,12 @@ public component todoItem {
         }
         style variant checked {
             text-decoration: line-through
+        }
+        style variant other {
+            color: red
+        }
+        style variant checked + other {
+            font-size: 32px
         }
         div checkbox {
             style {

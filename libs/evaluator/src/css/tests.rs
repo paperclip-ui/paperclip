@@ -197,15 +197,7 @@ add_case! {
       "#,
   )],
   r#"
-  ._A-80f4925f-22._variant-80f4925f-11 {
-      color: blue;
-  }
-
-  ._A-80f4925f-22._variant-80f4925f-13 {
-      color: blue;
-  }
-
-  ._A-80f4925f-22._variant-80f4925f-15 {
+  ._A-80f4925f-22._variant-80f4925f-11._variant-80f4925f-13._variant-80f4925f-15 {
       color: blue;
   }
 
@@ -913,11 +905,9 @@ add_case! {
       "#)
   ],
   r#"
-  ._A-80f4925f-10._variant-80f4925f-2 { color: blue; } 
-  ._A-80f4925f-10._variant-80f4925f-4 { color: blue; } 
+  ._A-80f4925f-10._variant-80f4925f-2._variant-80f4925f-4 { color: blue; } 
   @media screen and (max-width: 200px) { ._A-80f4925f-10:nth-child(2n) { color: blue; } } 
-  ._B-80f4925f-16._A-80f4925f-10._variant-80f4925f-14 { color: blue; } 
-  ._B-80f4925f-16._A-80f4925f-10._variant-80f4925f-4 { color: blue; } 
+  ._B-80f4925f-16._A-80f4925f-10._variant-80f4925f-14._variant-80f4925f-4 { color: blue; } 
   @media screen and (max-width: 200px) { ._B-80f4925f-16._A-80f4925f-10 { color: blue; } }
   "#
 }

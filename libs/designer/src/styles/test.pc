@@ -13,6 +13,9 @@ public component todoItem {
             align-items: center
             gap: var(mod2.space05)
         }
+        style variant checked {
+            text-decoration: line-through
+        }
         div checkbox {
             style {
                 background: rgba(0, 0, 0, 0.1)

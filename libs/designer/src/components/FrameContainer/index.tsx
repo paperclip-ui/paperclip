@@ -9,6 +9,7 @@ type FrameContainerProps = {
   extraHTML?: string;
   document: PCModule;
   frameIndex: number;
+  variantIds: string[];
   fullscreen: boolean;
   onLoad?: (mount: HTMLElement) => void;
   onUpdate?: (mount: HTMLElement) => void;
@@ -20,6 +21,7 @@ export const FrameContainer = memo(
     style = {},
     document,
     extraHTML,
+    variantIds,
     fullscreen,
     onLoad = noop,
     onUpdate = noop,
@@ -27,6 +29,7 @@ export const FrameContainer = memo(
     const { ref } = useFrame({
       fullscreen,
       extraHTML,
+      variantIds,
       onUpdate,
       pcData: document,
       onLoad,

@@ -197,15 +197,15 @@ add_case! {
       "#,
   )],
   r#"
-  ._A-80f4925f-22._a-80f4925f-11 {
+  ._A-80f4925f-22._variant-80f4925f-11 {
       color: blue;
   }
 
-  ._A-80f4925f-22._b-80f4925f-13 {
+  ._A-80f4925f-22._variant-80f4925f-13 {
       color: blue;
   }
 
-  ._A-80f4925f-22._c-80f4925f-15 {
+  ._A-80f4925f-22._variant-80f4925f-15 {
       color: blue;
   }
 
@@ -268,7 +268,7 @@ add_case! {
   ],
   r#"
   
-  ._A-80f4925f-7._everyOther-80f4925f-2 { 
+  ._A-80f4925f-7._variant-80f4925f-2 { 
     color: blue; 
   } 
   
@@ -294,7 +294,7 @@ add_case! {
       "#)
   ],
   r#"
-  ._A-80f4925f-7._isMobile-80f4925f-2 { color: blue; }
+  ._A-80f4925f-7._variant-80f4925f-2 { color: blue; }
   ._A-80f4925f-7 { color: blue; }
   "#
 }
@@ -385,7 +385,7 @@ add_case! {
     "#,
   )],
   r#"
-  ._Message-80f4925f-9._mobile-80f4925f-4 { 
+  ._Message-80f4925f-9._variant-80f4925f-4 { 
       gap: 14px; 
     } 
     @media screen and (max-width: 100px) { 
@@ -421,7 +421,7 @@ add_case! {
     "#,
   )],
   r#"
-  ._Message-80f4925f-10._mobile-80f4925f-4 ._Message-80f4925f-9 { 
+  ._Message-80f4925f-10._variant-80f4925f-4 ._Message-80f4925f-9 { 
     color: orange;
     } 
     @media screen and (max-width: 100px) { 
@@ -774,7 +774,7 @@ add_case! {
       color: blue; 
     } 
     
-    ._B-80f4925f-14._A-root-80f4925f-4._test-80f4925f-8 { 
+    ._B-80f4925f-14._A-root-80f4925f-4._variant-80f4925f-8 { 
       color: purple; 
     } 
     
@@ -842,8 +842,8 @@ add_case! {
       "#)
   ],
   r#"
-  ._A-aElement-80f4925f-6._isMobile-80f4925f-1 { color: blue; } 
-  ._B-aInstance-80f4925f-12._A-aElement-80f4925f-6._isMobile-80f4925f-10 { color: blue; } 
+  ._A-aElement-80f4925f-6._variant-80f4925f-1 { color: blue; } 
+  ._B-aInstance-80f4925f-12._A-aElement-80f4925f-6._variant-80f4925f-10 { color: blue; } 
   ._B-aInstance-80f4925f-12._A-aElement-80f4925f-6 { color: blue; }
   "#
 }
@@ -875,8 +875,8 @@ add_case! {
       "#)
   ],
   r#"
-  ._A-aaa-80f4925f-6._isMobile-80f4925f-1 { color: blue; } 
-  ._B-80f4925f-12._A-aaa-80f4925f-6._isMobile-80f4925f-10 { color: blue; } 
+  ._A-aaa-80f4925f-6._variant-80f4925f-1 { color: blue; } 
+  ._B-80f4925f-12._A-aaa-80f4925f-6._variant-80f4925f-10 { color: blue; } 
   @media screen and (max-width: 1024px) { ._B-80f4925f-12._A-aaa-80f4925f-6 { color: blue; } }
   "#
 }
@@ -913,11 +913,11 @@ add_case! {
       "#)
   ],
   r#"
-  ._A-80f4925f-10._a1-80f4925f-2 { color: blue; } 
-  ._A-80f4925f-10._b1-80f4925f-4 { color: blue; } 
+  ._A-80f4925f-10._variant-80f4925f-2 { color: blue; } 
+  ._A-80f4925f-10._variant-80f4925f-4 { color: blue; } 
   @media screen and (max-width: 200px) { ._A-80f4925f-10:nth-child(2n) { color: blue; } } 
-  ._B-80f4925f-16._A-80f4925f-10._a1-80f4925f-14 { color: blue; } 
-  ._B-80f4925f-16._A-80f4925f-10._b1-80f4925f-4 { color: blue; } 
+  ._B-80f4925f-16._A-80f4925f-10._variant-80f4925f-14 { color: blue; } 
+  ._B-80f4925f-16._A-80f4925f-10._variant-80f4925f-4 { color: blue; } 
   @media screen and (max-width: 200px) { ._B-80f4925f-16._A-80f4925f-10 { color: blue; } }
   "#
 }
@@ -948,8 +948,8 @@ add_case! {
     "#)
   ],
   r#"
-  ._D-80f4925f-6._isMobile-80f4925f-1 { color: blue; } 
-  ._C-80f4925f-14._D-80f4925f-6._isMobile-80f4925f-12 { color: blue; } 
+  ._D-80f4925f-6._variant-80f4925f-1 { color: blue; } 
+  ._C-80f4925f-14._D-80f4925f-6._variant-80f4925f-12 { color: blue; } 
   ._C-80f4925f-14._D-80f4925f-6:nth-child(2n) { color: blue; }
   "#
 }
@@ -1028,13 +1028,13 @@ add_case! {
   ],
   r#"
 
-  ._D-80f4925f-12._isMobile-80f4925f-2 { color: blue; } 
+  ._D-80f4925f-12._variant-80f4925f-2 { color: blue; } 
   @media screen and (max-width: 10px) { ._D-80f4925f-12 { color: blue; } } 
-  ._D-80f4925f-12._isMobile-80f4925f-2 ._D-something-80f4925f-11 { font-size: 32px; } 
+  ._D-80f4925f-12._variant-80f4925f-2 ._D-something-80f4925f-11 { font-size: 32px; } 
   @media screen and (max-width: 10px) { ._D-80f4925f-12 ._D-something-80f4925f-11 { font-size: 32px; } } 
-  ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12._isMobile-80f4925f-23 { color: blue; } 
+  ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12._variant-80f4925f-23 { color: blue; } 
   ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12 { color: blue; } 
-  ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12._isMobile-80f4925f-23 ._D-something-80f4925f-11 { font-size: 32px; } 
+  ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12._variant-80f4925f-23 ._D-something-80f4925f-11 { font-size: 32px; } 
   ._B-blarg-80f4925f-25 ._A-c-80f4925f-18._C-d-80f4925f-15._D-80f4925f-12 ._D-something-80f4925f-11 { font-size: 32px; }
   "#
 }
@@ -1183,11 +1183,11 @@ add_case! {
   ],
   r#"
   ._A-a_root-80f4925f-5 { display: none; } 
-  ._B-b_root-80f4925f-26._test-80f4925f-9 ._B-text-80f4925f-25 { color: blue; } 
+  ._B-b_root-80f4925f-26._variant-80f4925f-9 ._B-text-80f4925f-25 { color: blue; } 
   ._B-b_root-80f4925f-26.something ._B-text-80f4925f-25 { color: blue; } 
-  ._B-b_root-80f4925f-26._test-80f4925f-9 ._B-80f4925f-20._A-a_root-80f4925f-5 { display: block; } 
+  ._B-b_root-80f4925f-26._variant-80f4925f-9 ._B-80f4925f-20._A-a_root-80f4925f-5 { display: block; } 
   ._B-b_root-80f4925f-26.something ._B-80f4925f-20._A-a_root-80f4925f-5 { display: block; } 
-  ._B-b_root-80f4925f-26._test-80f4925f-9 ._B-80f4925f-20._A-a_root-80f4925f-5 ._A-a_text-80f4925f-4 { display: block; } 
+  ._B-b_root-80f4925f-26._variant-80f4925f-9 ._B-80f4925f-20._A-a_root-80f4925f-5 ._A-a_text-80f4925f-4 { display: block; } 
   ._B-b_root-80f4925f-26.something ._B-80f4925f-20._A-a_root-80f4925f-5 ._A-a_text-80f4925f-4 { display: block; }
   "#
 }
@@ -1225,7 +1225,7 @@ add_case! {
   ],
   r#"
   ._A-a_root-80f4925f-5 { display: none; } 
-  ._B-b_root-80f4925f-16._test-80f4925f-9 ._B-80f4925f-15._A-a_root-80f4925f-5 { display: block; } 
+  ._B-b_root-80f4925f-16._variant-80f4925f-9 ._B-80f4925f-15._A-a_root-80f4925f-5 { display: block; } 
    @media (min-width: 100px) { ._B-80f4925f-15._A-a_root-80f4925f-5 { display: block; } }
   "#
 }

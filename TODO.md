@@ -1,5 +1,9 @@
 #### Immediate
 
+- try getting to work in web browser
+
+  - selected variants through wrench in plans
+
 - ability to set variants
   - combo variants
 - ability to insert atoms (left sidebar)

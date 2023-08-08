@@ -12,6 +12,7 @@ type FrameProps = {
   expanded: boolean;
   preview: VirtNode;
   document: PCModule;
+  variantIds: string[];
   extraHTML?: string;
   onLoad: (mount: HTMLElement, data: PCModule, frameIndex: number) => void;
   onUpdate: (mount: HTMLElement, data: PCModule, frameIndex: number) => void;
@@ -21,6 +22,7 @@ export const Frame = memo(
   ({
     frameIndex,
     preview,
+    variantIds,
     expanded,
     extraHTML,
     document,
@@ -77,6 +79,7 @@ export const Frame = memo(
       <styles.Artboard style={frameStyle}>
         <FrameContainer
           extraHTML={extraHTML}
+          variantIds={variantIds}
           frameIndex={frameIndex}
           document={document}
           fullscreen={expanded}

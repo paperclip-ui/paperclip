@@ -10,6 +10,7 @@ export type UseFrameProps = {
   style?: Record<string, any>;
   onLoad?: (mount: HTMLElement, data: PCModule) => void;
   onUpdate?: (mount: HTMLElement, data: PCModule) => void;
+  variantIds: string[];
   fullscreen?: boolean;
   showSlotPlaceholders?: boolean;
   extraHTML?: string;
@@ -19,6 +20,7 @@ export const useFrame = ({
   onLoad = noop,
   onUpdate = noop,
   fullscreen,
+  variantIds,
   pcData,
   extraHTML,
   frameIndex,
@@ -41,6 +43,7 @@ export const useFrame = ({
   const { mount } = useFrameMount({
     pcData,
     showSlotPlaceholders,
+    variantIds,
     frameIndex,
     onUpdate: onUpdate2,
   });

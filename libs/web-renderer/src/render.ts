@@ -29,6 +29,8 @@ export type FrameInfo = {
 
 export type RenderFrameOptions = {
   showSlotPlaceholders?: boolean;
+  variantIds?: string[];
+  selected?: string[];
   domFactory: NodeFactory;
   resolveUrl?: UrlResolver;
 };
@@ -75,15 +77,17 @@ const renderFrame2 = (
   frame.appendChild(documentStyles.cloneNode(true));
   const stage = options.domFactory.createElement("div");
   Object.assign(stage.style, { width: "100%", height: "100%" });
-  stage.appendChild(
-    createNativeNode(
-      node,
-      options.domFactory,
-      options.resolveUrl,
-      null,
-      options.showSlotPlaceholders
-    )
+  const root = createNativeNode(
+    node,
+    options.domFactory,
+    options.resolveUrl,
+    null,
+    options.showSlotPlaceholders
   );
+  stage.appendChild(root);
+  if (options.variantIds != null && root.nodeType === 1) {
+    setVariantClass(root as HTMLElement, options.variantIds);
+  }
   frame.appendChild(stage);
   return frame;
 };
@@ -250,6 +254,23 @@ export const computeAllStyles = (mount: HTMLElement, index: number) => {
   return styles;
 };
 
+const setVariantClass = (frame: HTMLElement, variantIds: string[]) => {
+  if (variantIds != null && frame.nodeType === 1) {
+    const el = frame as Element;
+    const className =
+      el.getAttribute("data-org-class") || el.getAttribute("class") || "";
+    el.setAttribute("data-org-class", className);
+    el.setAttribute(
+      "class",
+      `${className} ${variantIds
+        .map((variantId) => {
+          return `_variant-${variantId}`;
+        })
+        .join(" ")}`
+    );
+  }
+};
+
 const patchRoot = (
   frame: HTMLElement,
   prevInfo: PCModule,
@@ -269,14 +290,17 @@ const patchRoot = (
   const prevChildren = [prevVirtNode];
   const currChildren = [currVirtNode];
 
-  // patchNode(frame, prevVirtNode, currVirtNode, options);
+  const stage = frame.childNodes[STAGE_INDEX] as HTMLElement;
 
-  patchChildren(
-    frame.childNodes[STAGE_INDEX] as HTMLElement,
-    prevChildren,
-    currChildren,
-    options
-  );
+  if (
+    options.variantIds &&
+    stage.childNodes.length > 0 &&
+    stage.childNodes[0].nodeType === 1
+  ) {
+    setVariantClass(stage.childNodes[0] as HTMLElement, options.variantIds);
+  }
+
+  patchChildren(stage, prevChildren, currChildren, options);
 };
 
 const patchDocumentSheet = (

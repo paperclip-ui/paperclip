@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   getCurrentDocument,
   getEditorState,
+  getSelectedVariantIds,
   StyleOverrides,
 } from "@paperclip-ui/designer/src/state";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
@@ -19,7 +20,7 @@ export const Frames = memo(({ expandedFrameIndex }: FramesProps) => {
 
   const extraHTML = generateStyleOverrideHTML(styleOverrides);
 
-  const { frames, onFrameLoaded, onFrameUpdated } = useFrames({
+  const { frames, variantIds, onFrameLoaded, onFrameUpdated } = useFrames({
     shouldCollectRects: true,
   });
 
@@ -31,6 +32,7 @@ export const Frames = memo(({ expandedFrameIndex }: FramesProps) => {
             key={i}
             document={doc!.paperclip!}
             onLoad={onFrameLoaded}
+            variantIds={variantIds}
             onUpdate={onFrameUpdated}
             extraHTML={extraHTML}
             expanded={expandedFrameIndex === i}
@@ -78,6 +80,7 @@ type UseFramesProps = {
 const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
   const doc = useSelector(getCurrentDocument);
   const dispatch = useDispatch();
+  const variantIds = useSelector(getSelectedVariantIds);
 
   const emitFrameRects = useCallback(
     (mount: HTMLElement, data: PCModule, frameIndex: number) => {
@@ -120,5 +123,5 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
 
   const frames = doc.paperclip?.html?.children || [];
 
-  return { frames, onFrameLoaded, onFrameUpdated };
+  return { frames, onFrameLoaded, onFrameUpdated, variantIds };
 };

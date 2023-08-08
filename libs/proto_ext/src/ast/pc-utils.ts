@@ -24,7 +24,7 @@ import {
   TriggerBodyItem,
   Variant,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
-import { Str } from "@paperclip-ui/proto/lib/generated/ast/base";
+import { Bool, Str } from "@paperclip-ui/proto/lib/generated/ast/base";
 import { ComputedStyleMap, serializeDeclaration } from "./serialize";
 
 const EMPTY_ARRAY = [];
@@ -50,6 +50,7 @@ export namespace ast {
     Insert,
     Override,
     Str,
+    Bool,
     Style,
     Declaration,
     Arithmetic,
@@ -78,6 +79,7 @@ export namespace ast {
     | BaseExprInfo<Insert, ExprKind.Insert>
     | BaseExprInfo<Style, ExprKind.Style>
     | BaseExprInfo<Str, ExprKind.Str>
+    | BaseExprInfo<Bool, ExprKind.Bool>
     | BaseExprInfo<StyleDeclaration, ExprKind.Declaration>;
 
   export const getDocumentBodyInner = (item: DocumentBodyItem) => {
@@ -218,6 +220,9 @@ export namespace ast {
 
     if ((expr as TriggerBodyItem).str) {
       return { expr: (expr as TriggerBodyItem).str, kind: ExprKind.Str };
+    }
+    if ((expr as TriggerBodyItem).bool) {
+      return { expr: (expr as TriggerBodyItem).bool, kind: ExprKind.Bool };
     }
     console.error(expr);
     throw new Error(`Unhandled type`);

@@ -93,6 +93,7 @@ export type DesignerState = {
   scopedElementId?: string;
   selectedTargetId: string;
   activeVariantId?: string;
+  selectedVariantIds: string[];
   insertedNodeIds: string[];
   graph: Graph;
   insertMode?: InsertMode;
@@ -123,6 +124,7 @@ export type DesignerState = {
 
 export const DEFAULT_STATE: DesignerState = {
   readonly: false,
+  selectedVariantIds: [],
   resourceFilePaths: [],
   styleOverrides: {},
   preEditComputedStyles: {},

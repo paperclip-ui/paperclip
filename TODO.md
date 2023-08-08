@@ -1,11 +1,15 @@
 #### Immediate
 
+- UI for all expressions
+
+  - atoms
+  - style mixins
+
 - slots should always be around
-- copying + pasting components should create instance
 - ability to define variant
 - remove absolutely positioned elements
+
   - test: line-through text decoration
-- go to instance
 
 - Layers
 
@@ -28,6 +32,7 @@
     - prohibit instance nodes from being moved
       - show banner for this
     - slots should be front and center
+    - render node should be combined with component
   - Symbols
     - ability to add token
     - ability to add mixin

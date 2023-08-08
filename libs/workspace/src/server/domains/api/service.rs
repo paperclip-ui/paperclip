@@ -4,7 +4,6 @@ use super::utils::{apply_mutations, create_design_file};
 use crate::server::core::{ServerEngineContext, ServerEvent, ServerStore};
 use crate::server::io::ServerIO;
 use futures::Stream;
-use headers::Server;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_language_services::DocumentInfo;
 use paperclip_proto::ast::graph_ext::Graph;

@@ -407,6 +407,9 @@ export const getSelectedExprOwnerComponent = (state: DesignerState) => {
   return ast.getExprOwnerComponent(expr, state.graph);
 };
 
+export const getSelectedVariantIds = (state: DesignerState) =>
+  state.selectedVariantIds;
+
 export const getSelectedExprAvailableVariants = (state: DesignerState) => {
   const ownerComponent = getSelectedExprOwnerComponent(state);
   if (!ownerComponent) {

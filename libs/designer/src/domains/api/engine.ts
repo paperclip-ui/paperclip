@@ -479,6 +479,7 @@ const createEventHandler = (actions: Actions) => {
     selectedVariants: string[],
     state: DesignerState
   ) => {
+    return;
     const availableVariants = getSelectedExprAvailableVariants(state);
 
     const enabled = {};

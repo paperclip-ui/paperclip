@@ -2,10 +2,11 @@ import "./editor.pc" as mod1
 import "./theme.pc" as mod2
 
 /**
- * @bounds(x: 1397, y: -290, width: 168, height: 75)
+ * @bounds(x: 865, y: 16, width: 168, height: 75)
 */
 
 public component todoItem {
+    variant checked
     render div todoItem {
         style {
             display: flex
@@ -27,7 +28,7 @@ public component todoItem {
 }
 
 /**
- * @bounds(x: 1602, y: -288, width: 801, height: 553)
+ * @bounds(x: 0, y: 0, width: 800, height: 553)
 */
 
 div {

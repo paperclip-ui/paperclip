@@ -20,6 +20,12 @@ export const rightSidebarReducer = (
         newState.activeVariantId = null;
       });
 
+    case "designer/variantSelected": {
+      return produce(state, (newState) => {
+        newState.selectedVariantIds = event.payload;
+      });
+    }
+
     case "editor/styleDeclarationsChanged": {
       return produce(state, (newState) => {
         newState.styleOverrides = {};

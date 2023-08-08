@@ -1,9 +1,10 @@
 #### Immediate
 
-- UI for all expressions
-
-  - atoms
-  - style mixins
+- ability to set variants
+  - combo variants
+- ability to insert atoms (left sidebar)
+- ability to set style mixins (left sidebar)
+- ability to set trigger (left sidebar)
 
 - slots should always be around
 - ability to define variant

@@ -24,11 +24,32 @@ public component todoItem {
             font-size: 32px
         }
         div checkbox {
+            style variant checked {
+                background: var(mod2.blue02)
+                height: 1em
+                width: 1em
+            }
             style {
                 background: rgba(0, 0, 0, 0.1)
-                height: 32px
-                width: 32px
+                height: 1em
+                width: 1em
                 border-radius: var(mod2.space02)
+                position: relative
+            }
+            text "✓" {
+                style variant checked {
+                    display: block
+                    font-size: 0.8em
+                }
+                style {
+                    color: white
+                    position: absolute
+                    left: 50%
+                    top: 50%
+                    transform: translate(-50%, -50%)
+                    font-size: 32px
+                    display: none
+                }
             }
         }
         slot children {

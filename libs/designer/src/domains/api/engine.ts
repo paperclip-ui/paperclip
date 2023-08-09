@@ -297,7 +297,7 @@ const createEventHandler = (actions: Actions) => {
       prevState.currentDocument.paperclip.html
     ) as VirtTextNode | VirtElement;
 
-    const variantIds = getEnabledVariants(state).map((variant) => variant.id);
+    const variantIds = state.selectedVariantIds;
 
     const path = virtHTML.getNodePath(
       node,
@@ -361,7 +361,9 @@ const createEventHandler = (actions: Actions) => {
       imports: event.payload.imports,
       value,
     }));
-    const variantIds = getEnabledVariants(state).map((variant) => variant.id);
+    const variantIds = state.selectedVariantIds;
+
+    console.log(variantIds);
 
     actions.applyChanges([
       {
@@ -471,26 +473,6 @@ const createEventHandler = (actions: Actions) => {
         deleteExpression: {
           expressionId,
         },
-      },
-    ]);
-  };
-
-  const handleVariantsSelected = (
-    selectedVariants: string[],
-    state: DesignerState
-  ) => {
-    return;
-    const availableVariants = getSelectedExprAvailableVariants(state);
-
-    const enabled = {};
-
-    for (const variant of availableVariants) {
-      enabled[variant.id] = selectedVariants.includes(variant.id);
-    }
-
-    actions.applyChanges([
-      {
-        toggleVariants: { enabled },
       },
     ]);
   };
@@ -693,9 +675,6 @@ const createEventHandler = (actions: Actions) => {
       }
       case "editor/exprNavigatorDroppedNode": {
         return handleExprNavigatorDroppedNode(event, newState);
-      }
-      case "designer/variantSelected": {
-        return handleVariantsSelected(event.payload, newState);
       }
       case "editor/removeVariantButtonClicked": {
         return handleDeleteExpression(event.payload.variantId, newState);

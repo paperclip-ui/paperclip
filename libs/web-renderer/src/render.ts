@@ -292,6 +292,8 @@ const patchRoot = (
 
   const stage = frame.childNodes[STAGE_INDEX] as HTMLElement;
 
+  patchChildren(stage, prevChildren, currChildren, options);
+
   if (
     options.variantIds &&
     stage.childNodes.length > 0 &&
@@ -299,8 +301,6 @@ const patchRoot = (
   ) {
     setVariantClass(stage.childNodes[0] as HTMLElement, options.variantIds);
   }
-
-  patchChildren(stage, prevChildren, currChildren, options);
 };
 
 const patchDocumentSheet = (
@@ -527,8 +527,6 @@ const patchChildren = (
     }
   }
 };
-
-const getFragmentChildren = (node) => [node];
 
 export const getFrameBounds = (node: html.Node) => {
   return node.element?.metadata?.bounds || node.textNode?.metadata?.bounds;

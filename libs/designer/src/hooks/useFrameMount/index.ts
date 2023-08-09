@@ -48,6 +48,8 @@ export const useFrameMount = ({
     let mount;
     if (state?.mount && frameIndex === state.frameIndex) {
       mount = state.mount;
+
+      console.log("PAT", mount);
       patchFrame(state.mount, frameIndex, state.pcData, pcData, {
         showSlotPlaceholders,
         variantIds,

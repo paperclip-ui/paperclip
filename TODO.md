@@ -1,3 +1,13 @@
+#### NOW
+
+- ability to define atoms
+- ability to define styles
+- style panel
+  - UI For style overrides
+    - for combo selectors
+    - for inherited CSS
+    - for style mixins
+
 #### Immediate
 
 - try getting to work in web browser

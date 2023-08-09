@@ -109,7 +109,9 @@ const createActions = (
         next(event) {
           dispatch({ type: "designer-engine/serverEvent", payload: event });
         },
-        error: () => {},
+        error: () => {
+          dispatch({ type: "designer-engine/apiError" });
+        },
       });
     },
     syncResourceFiles() {
@@ -120,7 +122,9 @@ const createActions = (
             payload: data.filePaths,
           });
         },
-        error: () => {},
+        error: () => {
+          dispatch({ type: "designer-engine/apiError" });
+        },
       });
     },
     undo() {
@@ -667,6 +671,9 @@ const createEventHandler = (actions: Actions) => {
           prevState
         );
       }
+      case "designer-engine/apiError": {
+        return handleApiError(event, newState);
+      }
       case "keyboard/keyDown": {
         return handleKeyDown(event, newState, prevState);
       }
@@ -718,6 +725,13 @@ const createEventHandler = (actions: Actions) => {
       }
     }
   };
+};
+
+const handleApiError = () => {
+  // need to reload since state may be fudged
+  setTimeout(() => {
+    window.location.reload();
+  }, 1000);
 };
 
 /**

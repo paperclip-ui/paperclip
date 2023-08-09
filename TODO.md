@@ -1,5 +1,6 @@
 #### NOW
 
+- reconnect designer
 - ability to define atoms
 - ability to define styles
 - style panel

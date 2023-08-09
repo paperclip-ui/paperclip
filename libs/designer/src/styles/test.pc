@@ -2,12 +2,11 @@ import "./editor.pc" as mod1
 import "./theme.pc" as mod2
 
 /**
- * @bounds(x: 865, y: 16, width: 168, height: 75)
+ * @bounds(x: 631, y: 1, width: 168, height: 75)
 */
 
 public component todoItem {
     variant checked
-    variant other
     render div todoItem {
         style {
             display: flex
@@ -59,7 +58,7 @@ public component todoItem {
 }
 
 /**
- * @bounds(x: 0, y: 0, width: 800, height: 553)
+ * @bounds(x: 0, y: 0, width: 612, height: 553)
 */
 
 div {
@@ -79,11 +78,14 @@ div {
             top: NaNpx
             position: relative
             width: 400px
+            display: flex
+            flex-direction: column
+            gap: var(mod2.space05)
+            padding: var(mod2.space07) 0px
         }
         div header {
             style {
                 font-size: var(mod2.fontSize06)
-                padding: var(mod2.space05) 0px
             }
             text "Todos"
         }
@@ -91,7 +93,6 @@ div {
             style {
                 display: flex
                 gap: var(mod2.space05)
-                padding: var(mod2.space06) 0px
             }
             input text {
                 style {

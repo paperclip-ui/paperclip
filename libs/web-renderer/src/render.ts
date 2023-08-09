@@ -85,8 +85,8 @@ const renderFrame2 = (
     options.showSlotPlaceholders
   );
   stage.appendChild(root);
-  if (options.variantIds != null && root.nodeType === 1) {
-    setVariantClass(root as HTMLElement, options.variantIds);
+  if (options.variantIds != null) {
+    patchRenderNode(root, options.variantIds);
   }
   frame.appendChild(stage);
   return frame;
@@ -271,6 +271,17 @@ const setVariantClass = (frame: HTMLElement, variantIds: string[]) => {
   }
 };
 
+const patchRenderNode = (frame: HTMLElement | Text, variantIds: string[]) => {
+  if (frame.nodeType === 1) {
+    const el = frame as HTMLElement;
+    setVariantClass(el, variantIds);
+
+    // Fit the frame
+    el.style.width = "100%";
+    el.style.height = "100%";
+  }
+};
+
 const patchRoot = (
   frame: HTMLElement,
   prevInfo: PCModule,
@@ -294,12 +305,10 @@ const patchRoot = (
 
   patchChildren(stage, prevChildren, currChildren, options);
 
-  if (
-    options.variantIds &&
-    stage.childNodes.length > 0 &&
-    stage.childNodes[0].nodeType === 1
-  ) {
-    setVariantClass(stage.childNodes[0] as HTMLElement, options.variantIds);
+  const renderNode = stage.childNodes[0] as HTMLElement;
+
+  if (renderNode) {
+    patchRenderNode(renderNode, options.variantIds);
   }
 };
 

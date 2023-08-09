@@ -307,7 +307,7 @@ fn evaluate_style<F: FileResolver>(style: &ast::Style, context: &mut DocumentCon
             &expanded_combo_selectors,
             context,
         );
-    } else {
+    } else if matches!(context.top().current_variant, None) {
         evaluate_vanilla_style(style, context)
     }
 }
@@ -401,13 +401,24 @@ fn evaluate_variant_styles<F: FileResolver>(
     let evaluated_style = create_style_declarations(style, context);
 
     let mut assoc_variants = vec![];
+
+    let variant_override = context.top().current_variant;
+
+    let is_within_override = matches!(variant_override, Some(_));
+    let mut found_overridable = false;
+
     for variant_ref in variant_refs {
         let assoc_variant = variant_ref
             .path
             .get(0)
             .and_then(|name| context.get_scoped_variant(name));
 
-        if let Some(variant) = assoc_variant {
+        if let Some((variant, _)) = assoc_variant {
+
+            if let Some(curr_variant) = variant_override {
+                found_overridable = found_overridable || (variant == curr_variant);
+            }
+
             assoc_variants.push(variant);
         } else {
 
@@ -415,6 +426,10 @@ fn evaluate_variant_styles<F: FileResolver>(
             // TODO: need a more elegant way of handling this
             return;
         }
+    }
+
+    if is_within_override && !found_overridable {
+        return;
     }
 
     let target_selector = if is_root_node {
@@ -427,7 +442,7 @@ fn evaluate_variant_styles<F: FileResolver>(
     
     if assoc_variants.len() > 0 {
 
-        let variant_combo = assoc_variants.iter().map(|(v, _)| format!(".{}", get_variant_namespace(v))).collect::<Vec<_>>().join("");
+        let variant_combo = assoc_variants.iter().map(|v| format!(".{}", get_variant_namespace(v))).collect::<Vec<_>>().join("");
          // IF scope selector doesn't contain spaces, then it's the root node OF the
         // top-most component
         let selector_text = if is_root_inst {

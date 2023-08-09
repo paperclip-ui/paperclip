@@ -73,6 +73,38 @@ public component Preview {
         }
         sidebar.SidebarSection {
             sidebar.SidebarPanelHeader {
+                text "Instance"
+                etc.PlusButton
+            }
+            sidebar.SidebarPanelContent {
+                inputs.Fields {
+                    input.Field {
+                        insert name {
+                            text "mobile"
+                        }
+                        insert input {
+                            input.RadioInput
+                        }
+                    }
+                    input.Field {
+                        insert name {
+                            text "dark"
+                        }
+                        insert input {
+                            input.RadioInput {
+                                override {
+                                    variant on trigger {
+                                        true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        sidebar.SidebarSection {
+            sidebar.SidebarPanelHeader {
                 text "Layout"
                 etc.PlusButton
             }

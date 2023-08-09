@@ -732,7 +732,7 @@ const handleApiError = () => {
   // elegant solution. Though, this should be rare.
   setTimeout(() => {
     window.location.reload();
-  }, 1000);
+  }, 1000 * 2);
 };
 
 /**

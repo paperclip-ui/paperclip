@@ -1220,8 +1220,6 @@ add_case! {
   "#
 }
 
-
-
 add_case! {
   styles_with_variants_that_dont_exist_are_no_op,
   [
@@ -1243,4 +1241,43 @@ add_case! {
   ._A-root-80f4925f-10 { display: none; } 
   "#
 }
+
+add_case! {
+  can_toggle_root_instance_variant_style,
+  [
+    ("/entry.pc", r#"
+
+      style test {
+        color: white
+      }
+      component A {
+        variant a
+        render div root {
+          style variant a {
+            color: blue
+          }
+          style extends test {
+            color: white
+          }
+        }
+      }
+
+      A instance {
+        override {
+          variant a trigger {
+            true
+          }
+        }
+      }
+    "#)
+  ],
+  r#"
+  ._A-root-80f4925f-13._variant-80f4925f-4 { color: blue; } 
+._A-root-80f4925f-13 { color: white; color: white; } 
+._instance-80f4925f-19._A-root-80f4925f-13._variant-80f4925f-17 { color: blue; } 
+._instance-80f4925f-19._A-root-80f4925f-13 { color: blue; }
+  "#
+}
+
+
 

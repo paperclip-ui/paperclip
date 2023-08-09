@@ -409,6 +409,11 @@ fn evaluate_variant_styles<F: FileResolver>(
 
         if let Some(variant) = assoc_variant {
             assoc_variants.push(variant);
+        } else {
+
+            // variant ref does not exist, so do not evaluate
+            // TODO: need a more elegant way of handling this
+            return;
         }
     }
 

@@ -672,7 +672,7 @@ const createEventHandler = (actions: Actions) => {
         );
       }
       case "designer-engine/apiError": {
-        return handleApiError(event, newState);
+        return handleApiError();
       }
       case "keyboard/keyDown": {
         return handleKeyDown(event, newState, prevState);
@@ -728,7 +728,8 @@ const createEventHandler = (actions: Actions) => {
 };
 
 const handleApiError = () => {
-  // need to reload since state may be fudged
+  // If API Error, then do a hard reload. Pretty dumb, need a more
+  // elegant solution. Though, this should be rare.
   setTimeout(() => {
     window.location.reload();
   }, 1000);

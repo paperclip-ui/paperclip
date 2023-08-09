@@ -1220,3 +1220,27 @@ add_case! {
   "#
 }
 
+
+
+add_case! {
+  styles_with_variants_that_dont_exist_are_no_op,
+  [
+    ("/entry.pc", r#"
+      component A {
+        variant a
+        render span root {
+          style {
+            display: none
+          }
+          style variant a + b {
+            color: blue
+          }
+        }
+      }
+    "#)
+  ],
+  r#"
+  ._A-root-80f4925f-10 { display: none; } 
+  "#
+}
+

@@ -619,12 +619,15 @@ public component ListItemInput {
 */
 
 public component RadioInput {
-    variant on
-    render div container {
+    variant on trigger {
+        ".on"
+    }
+    render div container(onClick: onClick, class: class) {
         style variant on {
             background: var(theme.blue00)
         }
         style extends theme.input {
+            cursor: pointer
             position: relative
             border-radius: 9999px
             transition: 0.5s

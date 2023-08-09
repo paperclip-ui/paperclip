@@ -77,7 +77,7 @@ public component Preview {
                 etc.PlusButton
             }
             sidebar.SidebarPanelContent {
-                inputs.Fields {
+                input.Fields {
                     input.Field {
                         insert name {
                             text "mobile"

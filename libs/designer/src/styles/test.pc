@@ -1,3 +1,4 @@
+import "./input.pc" as imp
 import "./editor.pc" as mod1
 import "./theme.pc" as mod2
 
@@ -143,4 +144,10 @@ div {
         }
     }
 }
+
+/**
+ * @bounds(x: 19, y: 722, width: 261, height: 119)
+*/
+
+imp.RadioInput
 

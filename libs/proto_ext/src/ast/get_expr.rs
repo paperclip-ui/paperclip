@@ -36,6 +36,17 @@ impl<'expr> Visitor<()> for GetExpr {
 }
 
 impl<'expr> GetExpr {
+    pub fn get_expr_from_graph(id: &str, graph: &Graph) -> Option<ExpressionWrapper> {
+        for (_path, dep) in &graph.dependencies {
+            if let Some(document) = &dep.document {
+                if let Some(reference) = GetExpr::get_expr(id, document) {
+                    return Some(reference.clone());
+                }
+            }
+        }
+
+        None
+    }
     pub fn get_expr(id: &str, doc: &ast::pc::Document) -> Option<ExpressionWrapper> {
         let mut imp = GetExpr {
             id: id.to_string(),

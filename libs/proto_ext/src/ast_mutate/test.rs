@@ -8,7 +8,7 @@ use paperclip_proto::ast_mutate::{
     mutation, paste_expression, update_variant_trigger, AppendChild, AppendInsert, Bounds,
     ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveNode, PasteExpression,
     SetFrameBounds, SetId, SetStyleDeclarationValue, SetStyleDeclarations, SetTagName,
-    SetTextNodeValue, UpdateVariant, WrapInElement,
+    SetTextNodeValue, ToggleInstanceVariant, UpdateVariant, WrapInElement,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use std::collections::HashMap;
@@ -2593,6 +2593,101 @@ case! {
       insert child {
         text "a"
         span
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_toggle_an_instance_variant,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        variant a 
+        render div {
+          style variant a {
+            color: red
+          }
+        }
+      }
+
+      A
+      "#
+    )
+  ],
+  mutation::Inner::ToggleInstanceVariant(ToggleInstanceVariant {
+    instance_id: "80f4925f-9".to_string(),
+    variant_id: "80f4925f-1".to_string(),
+    combo_variant_ids: vec![]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      variant a 
+      render div {
+        style variant a {
+          color: red
+        }
+      }
+    }
+
+    A {
+      override {
+        variant a trigger {
+          true
+        }
+      }
+    }
+    "#
+  )]
+}
+
+
+case! {
+  can_disable_an_instance_variant,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        variant a 
+        render div {
+          style variant a {
+            color: red
+          }
+        }
+      }
+
+      A {
+        override {
+          variant a trigger {
+            true
+          }
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::ToggleInstanceVariant(ToggleInstanceVariant {
+    instance_id: "80f4925f-13".to_string(),
+    variant_id: "80f4925f-1".to_string(),
+    combo_variant_ids: vec![]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      variant a 
+      render div {
+        style variant a {
+          color: red
+        }
+      }
+    }
+
+    A {
+      override {
+        variant a
       }
     }
     "#

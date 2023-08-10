@@ -10,6 +10,7 @@ import {
   DesignerEvent,
   ElementTagChanged,
   ExprNavigatorDroppedNode,
+  InstanceVariantToggled,
   StyleDeclarationsChanged,
   ToolsLayerDrop,
   VariantEdited,
@@ -655,6 +656,21 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
+  const handleInstanceVariantToggled = (
+    event: InstanceVariantToggled,
+    state: DesignerState
+  ) => {
+    actions.applyChanges([
+      {
+        toggleInstanceVariant: {
+          instanceId: state.selectedTargetId,
+          variantId: event.payload,
+          comboVariantIds: state.selectedVariantIds,
+        },
+      },
+    ]);
+  };
+
   return (
     event: DesignerEvent,
     newState: DesignerState,
@@ -697,6 +713,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "designer-engine/serverEvent": {
         return handleServerEvent(event.payload, newState);
+      }
+      case "designer/instanceVariantToggled": {
+        return handleInstanceVariantToggled(event, newState);
       }
       case "editor/resizerPathStoppedMoving": {
         return handleResizerStoppedMoving(newState, prevState);

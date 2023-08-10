@@ -80,8 +80,7 @@ message MutationResult {
 message ToggleInstanceVariant {
   string instance_id = 1;
   string variant_id = 2;
-  string combo_variant_ids = 3;
-  bool enabled = 4;
+  repeated string combo_variant_ids = 3;
 }
 
 message UpdateVariant {

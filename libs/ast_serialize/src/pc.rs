@@ -62,7 +62,6 @@ pub fn serialize_trigger_body(body: &Vec<ast::TriggerBodyItemCombo>, context: &m
     context.add_buffer("{\n");
     context.start_block();
 
-
     for combo in body {
         serialize_trigger_combo(combo, context);
         context.add_buffer("\n");
@@ -73,7 +72,6 @@ pub fn serialize_trigger_body(body: &Vec<ast::TriggerBodyItemCombo>, context: &m
 }
 
 pub fn serialize_trigger_combo(combo: &ast::TriggerBodyItemCombo, context: &mut Context) {
-
     let mut it = combo.items.iter().peekable();
 
     while let Some(item) = it.next() {

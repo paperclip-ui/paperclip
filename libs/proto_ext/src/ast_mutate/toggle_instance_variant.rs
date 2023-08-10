@@ -14,11 +14,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, ToggleInstanceVariant> {
             return VisitorResult::Continue;
         }
 
-        let doc = self
-        .get_dependency()
-        .document
-        .as_ref()
-        .unwrap();
+        let doc = self.get_dependency().document.as_ref().unwrap();
 
         let variant: Variant = get_or_short!(
             GetExpr::get_expr_from_graph(&self.mutation.variant_id, &self.graph),
@@ -36,8 +32,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, ToggleInstanceVariant> {
                 ast::pc::node::Inner::Override(ast::pc::Override {
                     path: vec![],
                     range: None,
-                    id: doc.checksum()
-                        .to_string(),
+                    id: doc.checksum().to_string(),
                     body: vec![],
                 })
                 .get_outer(),
@@ -48,16 +43,16 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, ToggleInstanceVariant> {
 
         let mut component_override = component_override.expect("Component override must exist");
         let mut variant_override = get_variant_override(&variant.name, component_override);
-        
+
         if variant_override == None {
             component_override.body.push(
-                ast::pc::override_body_item::Inner::Variant(Variant { 
-                    id: doc.checksum()
-                        .to_string(),
+                ast::pc::override_body_item::Inner::Variant(Variant {
+                    id: doc.checksum().to_string(),
                     range: None,
                     name: variant.name.to_string(),
-                    triggers: vec![]
-                }).get_outer(),
+                    triggers: vec![],
+                })
+                .get_outer(),
             );
 
             variant_override = get_variant_override(&variant.name, component_override);
@@ -72,20 +67,19 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, ToggleInstanceVariant> {
             if let Some((expr, i)) = enabled_expression {
                 variant_override.0.triggers.remove(i);
             } else {
-                variant_override.0.triggers.push(
-                    ast::pc::TriggerBodyItemCombo {
-                        id: doc.checksum()
-                            .to_string(),
+                variant_override
+                    .0
+                    .triggers
+                    .push(ast::pc::TriggerBodyItemCombo {
+                        id: doc.checksum().to_string(),
                         range: None,
-                        items: vec![
-                            ast::pc::trigger_body_item::Inner::Bool(ast::base::Bool {
-                                id: doc.checksum(),
-                                range: None,
-                                value: true
-                            }).get_outer()
-                        ],
-                    }
-                );
+                        items: vec![ast::pc::trigger_body_item::Inner::Bool(ast::base::Bool {
+                            id: doc.checksum(),
+                            range: None,
+                            value: true,
+                        })
+                        .get_outer()],
+                    });
             }
         }
 
@@ -121,7 +115,6 @@ fn get_variant_override<'a>(
     None
 }
 
-
 fn get_combo_variant_trigger<'a>(
     combo: &Vec<String>,
     expr: &'a mut ast::pc::Variant,
@@ -131,9 +124,8 @@ fn get_combo_variant_trigger<'a>(
             for name in combo {
                 let mut found = false;
                 for item in &child.items {
-                    if let ast::pc::trigger_body_item::Inner::Reference(
-                        reference,
-                    ) = item.get_inner()
+                    if let ast::pc::trigger_body_item::Inner::Reference(reference) =
+                        item.get_inner()
                     {
                         if reference.path.len() == 1 && reference.path.get(0) == Some(name) {
                             found = true;
@@ -153,13 +145,17 @@ fn get_combo_variant_trigger<'a>(
     None
 }
 
-
 fn get_enabled_variant_trigger<'a>(
     expr: &'a mut ast::pc::Variant,
 ) -> Option<(&'a mut ast::base::Bool, usize)> {
     for (i, child) in &mut expr.triggers.iter_mut().enumerate() {
         if child.items.len() == 1 {
-            if let ast::pc::trigger_body_item::Inner::Bool(bool_expr) = child.items.get_mut(0).expect("Item must exist").get_inner_mut() {
+            if let ast::pc::trigger_body_item::Inner::Bool(bool_expr) = child
+                .items
+                .get_mut(0)
+                .expect("Item must exist")
+                .get_inner_mut()
+            {
                 return Some((bool_expr, i));
             }
         }

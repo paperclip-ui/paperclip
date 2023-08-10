@@ -2644,7 +2644,6 @@ case! {
   )]
 }
 
-
 case! {
   can_disable_an_instance_variant,
   [

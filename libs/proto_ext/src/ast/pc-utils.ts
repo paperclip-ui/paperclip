@@ -22,6 +22,7 @@ import {
   TextNode,
   Trigger,
   TriggerBodyItem,
+  TriggerBodyItemCombo,
   Variant,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { Bool, Str } from "@paperclip-ui/proto/lib/generated/ast/base";
@@ -46,6 +47,7 @@ export namespace ast {
     Import,
     TextNode,
     Trigger,
+    TriggerCombo,
     Slot,
     Insert,
     Override,
@@ -75,6 +77,7 @@ export namespace ast {
     | BaseExprInfo<Import, ExprKind.Import>
     | BaseExprInfo<TextNode, ExprKind.TextNode>
     | BaseExprInfo<Trigger, ExprKind.Trigger>
+    | BaseExprInfo<TriggerBodyItemCombo, ExprKind.TriggerCombo>
     | BaseExprInfo<Slot, ExprKind.Slot>
     | BaseExprInfo<Insert, ExprKind.Insert>
     | BaseExprInfo<Style, ExprKind.Style>
@@ -150,7 +153,13 @@ export namespace ast {
         case ExprKind.Render:
           return [getChildExprInner(expr.node)];
         case ExprKind.Variant:
-          return (expr.triggers || EMPTY_ARRAY).map(getChildExprInner);
+          return (expr.triggers || EMPTY_ARRAY).map((trigger) => ({
+            expr: trigger,
+            kind: ExprKind.TriggerCombo,
+          }));
+        case ExprKind.TriggerCombo: {
+          return (expr.items || EMPTY_ARRAY).map(getChildExprInner);
+        }
       }
 
       return EMPTY_ARRAY;
@@ -224,7 +233,10 @@ export namespace ast {
     if ((expr as TriggerBodyItem).bool) {
       return { expr: (expr as TriggerBodyItem).bool, kind: ExprKind.Bool };
     }
-    console.error(expr);
+    if ((expr as TriggerBodyItemCombo).items) {
+      return { expr: (expr as TriggerBodyItem).bool, kind: ExprKind.Bool };
+    }
+
     throw new Error(`Unhandled type`);
   };
 

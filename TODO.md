@@ -1,9 +1,8 @@
 #### NOW
 
-- toggle instance variants
-
-  - right style panel should reflect enabled state
-  - ensure that instance variant can be enabled with component
+- go to component
+- ensure that instance variants can be toggled _within_ component variants
+- element attributes
 
 - ability to define atoms
 - ability to define styles

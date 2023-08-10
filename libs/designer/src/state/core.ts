@@ -58,7 +58,7 @@ export enum DNDKind {
 }
 
 export type Canvas = {
-  size?: Size;
+  size: Size;
   transform: Transform;
   isExpanded?: boolean;
   activeFrame?: number;
@@ -147,6 +147,10 @@ export const DEFAULT_STATE: DesignerState = {
   canvas: {
     transform: { x: 0, y: 0, z: 1 },
     scrollPosition: { x: 0, y: 0 },
+    size: {
+      width: 0,
+      height: 0,
+    },
   },
   rects: {},
   ...INITIAL_HISTORY_STATE,
@@ -658,21 +662,24 @@ export const resetCurrentDocument = (state: DesignerState): DesignerState => ({
   currentDocument: null,
   rects: {},
   computedStyles: {},
+  // selectedTargetId: null,
   centeredInitial: false,
-  selectedTargetId: null,
   highlightedNodeId: null,
   preEditComputedStyles: {},
   canvas: {
     transform: { x: 0, y: 0, z: 1 },
     scrollPosition: { x: 0, y: 0 },
+    size: state.canvas.size,
   },
 });
 
 export const getExprBounds = (exprId: string, state: DesignerState): Bounds => {
-  const node = virtHTML.getNodeById(
-    state.selectedTargetId,
-    state.currentDocument.paperclip.html
-  ) as any as VirtElement | VirtText;
+  const node =
+    state.currentDocument &&
+    (virtHTML.getNodeById(
+      state.selectedTargetId,
+      state.currentDocument.paperclip.html
+    ) as any as VirtElement | VirtText);
 
   return node?.metadata?.bounds;
 };

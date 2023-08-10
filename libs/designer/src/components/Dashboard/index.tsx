@@ -9,14 +9,8 @@ import { routes } from "../../state/routes";
 import { DesignerEvent } from "../../events";
 
 export const Dashboard = () => {
-  const {
-    onAddClick,
-    onFilterChange,
-    dependencies,
-    resourceFilePaths,
-    filter,
-    screenshotUrls,
-  } = useDashboard();
+  const { onAddClick, onFilterChange, dependencies, filter, screenshotUrls } =
+    useDashboard();
   return (
     <styles.Container
       controls={

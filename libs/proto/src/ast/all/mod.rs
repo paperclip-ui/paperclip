@@ -111,6 +111,20 @@ macro_rules! expressions {
             }
           }
 
+          impl<'a> TryFrom<&'a ExpressionWrapper> for &'a $expr {
+            type Error = ();
+            fn try_from(wrapper: &'a ExpressionWrapper) -> Result<Self, Self::Error>  {
+                match wrapper {
+                    ExpressionWrapper::$name(expr) => {
+                        Ok(&expr)
+                    },
+                    _ => {
+                        Err(())
+                    }
+                }
+            }
+          }
+
           impl<'a> TryFrom<ImmutableExpressionRef<'a>> for &'a $expr {
               type Error = ();
               fn try_from(outer: ImmutableExpressionRef<'a>) -> Result<Self, Self::Error> {

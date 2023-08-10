@@ -749,6 +749,7 @@ add_case! {
   "#
 }
 
+
 add_case! {
   can_create_a_style_override_within_a_variant,
   [
@@ -925,6 +926,7 @@ add_case! {
   @media screen and (max-width: 200px) { ._A-80f4925f-12:nth-child(2n) { color: blue; } } 
   ._B-80f4925f-19._A-80f4925f-12._variant-80f4925f-17._variant-80f4925f-6 { color: blue; } 
   @media screen and (max-width: 200px) { ._B-80f4925f-19._A-80f4925f-12 { color: blue; } }
+
   "#
 }
 
@@ -1353,3 +1355,51 @@ add_case! {
   "#
 }
 
+
+add_case! {
+  instance_variant_can_be_bound_to_component_variant,
+  [
+    ("/entry.pc", r#"
+
+      style test {
+        color: white
+      }
+
+      component A {
+        variant a
+        render div root {
+          style variant a {
+            color: blue
+          }
+        }
+      }
+
+      component B {
+        variant b
+        render div {
+          A element {
+            override {
+              variant a trigger {
+                b
+              }
+            }
+          }
+          div {
+            style variant b {
+              color: red
+            }
+          }
+        }
+      }
+    "#)
+  ],
+  r#"
+  ._A-root-80f4925f-9._variant-80f4925f-4 { color: blue; } 
+  ._B-80f4925f-23._variant-80f4925f-15 ._B-element-80f4925f-17._A-root-80f4925f-9 { color: blue; } 
+  ._B-80f4925f-23._variant-80f4925f-12 ._B-80f4925f-22 { color: red; }
+
+  ._A-root-80f4925f-9._variant-80f4925f-4 { color: blue; } 
+  ._B-element-80f4925f-17._A-root-80f4925f-9._variant-80f4925f-15 { color: blue; } 
+  ._B-80f4925f-23._variant-80f4925f-12 ._B-80f4925f-22 { color: red; }
+  "#
+}

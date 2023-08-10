@@ -2,7 +2,7 @@ use super::base::EditContext;
 use paperclip_common::get_or_short;
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::Expression;
-use paperclip_proto::ast::pc::Variant;
+use paperclip_proto::ast::pc::{Reference, Variant};
 use paperclip_proto::ast_mutate::ToggleInstanceVariant;
 
 use crate::ast::get_expr::GetExpr;
@@ -41,8 +41,20 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, ToggleInstanceVariant> {
             component_override = get_component_override(expr);
         }
 
-        let mut component_override = component_override.expect("Component override must exist");
+        let component_override = component_override.expect("Component override must exist");
         let mut variant_override = get_variant_override(&variant.name, component_override);
+
+        let combo_variants: Vec<Variant> = self
+            .mutation
+            .combo_variant_ids
+            .iter()
+            .map(|id| {
+                GetExpr::get_expr_from_graph(id, &self.graph)
+                    .expect("Variant doesn't exist")
+                    .try_into()
+                    .expect("Variant must be a variant")
+            })
+            .collect();
 
         if variant_override == None {
             component_override.body.push(
@@ -58,13 +70,41 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, ToggleInstanceVariant> {
             variant_override = get_variant_override(&variant.name, component_override);
         }
 
+        let combo_variant_names = combo_variants
+            .iter()
+            .map(|variant| variant.name.to_string())
+            .collect::<Vec<String>>();
+
         let mut variant_override = variant_override.expect("Variant override must exist");
 
         if self.mutation.combo_variant_ids.len() > 0 {
-            // let mut variant_trigger = get_combo_variant_trigger(, variant_override);
+            let variant_trigger =
+                get_combo_variant_trigger(&combo_variant_names, variant_override.0);
+            if let Some((_, i)) = variant_trigger {
+                variant_override.0.triggers.remove(i);
+            } else {
+                variant_override
+                    .0
+                    .triggers
+                    .push(ast::pc::TriggerBodyItemCombo {
+                        id: doc.checksum().to_string(),
+                        range: None,
+                        items: combo_variant_names
+                            .iter()
+                            .map(|name: &String| {
+                                ast::pc::trigger_body_item::Inner::Reference(Reference {
+                                    id: doc.checksum().to_string(),
+                                    path: vec![name.to_string()],
+                                    range: None,
+                                })
+                                .get_outer()
+                            })
+                            .collect(),
+                    });
+            }
         } else {
             let enabled_expression = get_enabled_variant_trigger(&mut variant_override.0);
-            if let Some((expr, i)) = enabled_expression {
+            if let Some((_expr, i)) = enabled_expression {
                 variant_override.0.triggers.remove(i);
             } else {
                 variant_override
@@ -83,9 +123,6 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, ToggleInstanceVariant> {
             }
         }
 
-        println!("VAR {:?}", variant);
-
-        println!("VISIT EL");
         VisitorResult::Return(())
     }
 }
@@ -118,8 +155,8 @@ fn get_variant_override<'a>(
 fn get_combo_variant_trigger<'a>(
     combo: &Vec<String>,
     expr: &'a mut ast::pc::Variant,
-) -> Option<&'a mut ast::pc::TriggerBodyItemCombo> {
-    for child in &mut expr.triggers {
+) -> Option<(&'a mut ast::pc::TriggerBodyItemCombo, usize)> {
+    for (i, child) in &mut expr.triggers.iter_mut().enumerate() {
         if combo.len() == child.items.len() {
             for name in combo {
                 let mut found = false;
@@ -139,7 +176,7 @@ fn get_combo_variant_trigger<'a>(
                 }
             }
 
-            return Some(child);
+            return Some((child, i));
         }
     }
     None

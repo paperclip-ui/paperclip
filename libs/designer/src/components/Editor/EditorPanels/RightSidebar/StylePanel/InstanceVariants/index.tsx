@@ -16,7 +16,7 @@ import classNames from "classnames";
 export const InstanceVariants = () => {
   const expr = useSelector(getSelectedExpressionInfo);
 
-  if (expr.kind !== ast.ExprKind.Element) {
+  if (expr?.kind !== ast.ExprKind.Element) {
     return null;
   }
 

@@ -146,8 +146,26 @@ div {
 }
 
 /**
- * @bounds(x: 19, y: 722, width: 261, height: 119)
+ * @bounds(x: 434, y: 640, width: 349, height: 181)
 */
 
-imp.RadioInput
+public component test {
+    variant test
+    render div test {
+        style variant test {
+            background: black
+        }
+        style {
+            position: relative
+            background: white
+        }
+        imp.RadioInput {
+            override {
+                variant on trigger {
+                    test
+                }
+            }
+        }
+    }
+}
 

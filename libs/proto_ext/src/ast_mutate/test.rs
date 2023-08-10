@@ -2692,3 +2692,109 @@ case! {
     "#
   )]
 }
+
+case! {
+  can_enable_an_instance_variant_in_a_variant,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        variant a 
+        render div {
+          style variant a {
+            color: red
+          }
+        }
+      }
+
+      component B {
+        variant b
+        render A
+      }
+      "#
+    )
+  ],
+  mutation::Inner::ToggleInstanceVariant(ToggleInstanceVariant {
+    instance_id: "80f4925f-10".to_string(),
+    variant_id: "80f4925f-1".to_string(),
+    combo_variant_ids: vec!["80f4925f-9".to_string()]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      variant a 
+      render div {
+        style variant a {
+          color: red
+        }
+      }
+    }
+
+    component B {
+      variant b
+      render A {
+        override {
+          variant a trigger {
+            b
+          }
+        }
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_disable_an_instance_variant_in_a_variant,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        variant a 
+        render div {
+          style variant a {
+            color: red
+          }
+        }
+      }
+
+      component B {
+        variant b
+        render A {
+          override {
+            variant a trigger {
+              b
+            }
+          }
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::ToggleInstanceVariant(ToggleInstanceVariant {
+    instance_id: "80f4925f-14".to_string(),
+    variant_id: "80f4925f-1".to_string(),
+    combo_variant_ids: vec!["80f4925f-9".to_string()]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      variant a 
+      render div {
+        style variant a {
+          color: red
+        }
+      }
+    }
+
+    component B {
+      variant b
+      render A {
+        override {
+          variant a
+        }
+      }
+    }
+    "#
+  )]
+}

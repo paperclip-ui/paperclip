@@ -588,23 +588,27 @@ export namespace ast {
       )?.variant;
 
       return variantOverride.triggers.some((combo) => {
-        if (combo.items.length !== combo.items.length) {
+        if (selectedVariants.length === 0) {
+          return (
+            combo.items.length === 1 && combo.items[0].bool?.value === true
+          );
+        }
+
+        if (combo.items.length !== selectedVariants.length) {
           return false;
         }
 
-        for (const selectedVariant of selectedVariants) {
+        return selectedVariants.every((selectedVariant) => {
           for (const item of combo.items) {
             if (
-              item.reference?.path.length !== 1 ||
-              ast.getExprRef(item.reference!, graph).trigger?.id !==
+              item.reference?.path.length === 1 ||
+              ast.getExprRef(item.reference!, graph).trigger?.id ===
                 selectedVariant.id
             ) {
-              return false;
+              return true;
             }
           }
-        }
-
-        return true;
+        });
       });
     }
   );

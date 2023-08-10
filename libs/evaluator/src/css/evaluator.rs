@@ -233,11 +233,12 @@ fn into_shadow<'a, F: FileResolver>(
     );
 
     let mut shadow = context
-        .with_target_node(CurrentNode::Element(instance))
+        .within_instance(CurrentNode::Element(instance))
         .shadow(&instance_component_info);
 
     // looking for a.b. "a" is an instance
     // ignore single targets. E.g: just "a" since this is the target
+
     if path.len() > 0 {
         for i in 0..path.len() {
             let shadow_instance = context.graph.get_ref(
@@ -249,9 +250,9 @@ fn into_shadow<'a, F: FileResolver>(
             if let Some(info) = shadow_instance {
                 shadow = match info.expr {
                     Expr::Element(element) => {
-                        shadow.with_target_node(CurrentNode::Element(element))
+                        shadow.within_instance(CurrentNode::Element(element))
                     }
-                    Expr::Text(text) => shadow.with_target_node(CurrentNode::TextNode(text)),
+                    Expr::Text(text) => shadow.within_instance(CurrentNode::TextNode(text)),
                     _ => shadow,
                 };
 
@@ -396,6 +397,7 @@ fn evaluate_variant_styles<F: FileResolver>(
     let ctx_root_node_ns =
         get_root_node_ns(context.get_ref_context()).unwrap_or(instance_root_node_ns.clone());
 
+
     let evaluated_style = create_style_declarations(style, context);
 
     let mut assoc_variants = vec![];
@@ -425,6 +427,7 @@ fn evaluate_variant_styles<F: FileResolver>(
     }
 
     if is_within_override && !found_overridable {
+        println!("Variant override not found");
         return;
     }
 
@@ -434,7 +437,13 @@ fn evaluate_variant_styles<F: FileResolver>(
         format!(" .{}", node_ns)
     };
 
-    let is_root_inst = instance_root_node_ns == ctx_root_node_ns || !scope_selector.contains(" ");
+    let is_inst_root = context.is_instance_root();
+
+
+
+    
+
+    // println!("{:?} {:?} {:?}", ctx_root_node_ns, instance_root_node_ns, is_inst_root);
 
     if assoc_variants.len() > 0 {
         let variant_combo = assoc_variants
@@ -442,9 +451,11 @@ fn evaluate_variant_styles<F: FileResolver>(
             .map(|v| format!(".{}", get_variant_namespace(v)))
             .collect::<Vec<_>>()
             .join("");
+
+
         // IF scope selector doesn't contain spaces, then it's the root node OF the
         // top-most component
-        let selector_text = if is_root_inst {
+        let selector_text = if is_inst_root {
             format!(
                 "{}.{}{}{}",
                 scope_selector, instance_root_node_ns, variant_combo, target_selector
@@ -481,11 +492,12 @@ fn evaluate_variant_styles<F: FileResolver>(
         //     continue;
         // }
 
+
         let virt_style = if group_selectors.len() > 0 {
             virt::rule::Inner::Style(virt::StyleRule {
                 id: context.next_id(),
                 source_id: Some(style.id.to_string()),
-                selector_text: if is_root_inst {
+                selector_text: if is_inst_root {
                     format!(
                         "{}.{}{}{}",
                         scope_selector,
@@ -641,7 +653,6 @@ fn get_combo_selectors2(
     ret
 }
 
-
 // [[or, or, or] and [or]]
 
 fn collect_style_variant_selectors<F: FileResolver>(
@@ -735,7 +746,7 @@ fn collect_triggers<F: FileResolver>(
                 ast::trigger_body_item::Inner::Str(expr) => {
                     and_variants.push(VariantTrigger::Selector(expr.value.to_string()));
                 }
-                ast::trigger_body_item::Inner::Reference(expr) => {
+                ast::trigger_body_item::Inner::Reference(_) => {
                     // skip until the end
                 }
             }

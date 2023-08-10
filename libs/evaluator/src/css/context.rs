@@ -53,7 +53,7 @@ pub struct DocumentContext<'expr, 'resolve_asset, FR: FileResolver> {
     pub target_node: Option<CurrentNode<'expr>>,
 
     // current instance, this is necessary in case of overriding deeply nested node
-    // pub current_instance: Option<&'expr ast::Element>,
+    pub current_instance: Option<CurrentNode<'expr>>,
 
     // Current component that this document is in
     pub current_component: Option<&'expr ast::Component>,
@@ -83,6 +83,7 @@ impl<'expr, 'resolve_asset, FR: FileResolver> DocumentContext<'expr, 'resolve_as
             id_generator: id_generator.clone(),
             file_resolver,
             graph,
+            current_instance: None,
             path: path.to_string(),
             current_component: None,
             current_ref_context: None,
@@ -106,22 +107,55 @@ impl<'expr, 'resolve_asset, FR: FileResolver> DocumentContext<'expr, 'resolve_as
         }
     }
 
+    pub fn within_instance(&self, instance: CurrentNode<'expr>) -> Self {
+        println!("WITHIN INST {:?}", instance);
+        let mut clone = self.clone();
+        clone.target_node = Some(instance.clone());
+        clone.current_instance = Some(instance.clone());
+        clone
+    }
+
     pub fn within_component(&self, component: &'expr ast::Component) -> Self {
+        println!("WITHIN CCOMP {:?}", component.name);
         let mut clone: DocumentContext<FR> = self.clone();
         clone.current_component = Some(component);
         clone
     }
 
     pub fn is_target_node_render_node(&self) -> bool {
-        if let Some(node) = self.target_node {
-            if let Some(component) = self.current_component {
-                if let Some(render) = component.get_render_expr() {
-                    return render.node.as_ref().expect("Node must exist").get_id()
-                        == node.get_id();
-                }
+        if let Some(node) = &self.target_node {
+           return self.is_render_node(node);
+        }
+        return false;
+    }
+
+    fn is_render_node(&self, node: &CurrentNode) -> bool {
+        if let Some(component) = self.current_component {
+            if let Some(render) = component.get_render_expr() {
+                return render.node.as_ref().expect("Node must exist").get_id()
+                    == node.get_id();
             }
         }
         return false;
+    }
+
+    pub fn is_instance_root(&self) -> bool {
+
+        let mut curr = Some(Box::new(self.clone()));
+
+        while let Some(inner) = curr {
+
+            let inst = inner.current_instance.or(inner.target_node);
+
+            if let Some(instance) = &inst {
+                if !self.is_render_node(instance) {
+                    return false;
+                }
+            }
+
+            curr = inner.shadow_of;
+        }
+        return true;
     }
 
     pub fn with_ref_context(&self, context: &DocumentContext<'expr, 'resolve_asset, FR>) -> Self {

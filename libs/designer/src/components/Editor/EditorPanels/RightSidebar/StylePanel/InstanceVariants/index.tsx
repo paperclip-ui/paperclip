@@ -6,15 +6,15 @@ import {
   getGraph,
   getSelectedExpressionInfo,
   getSelectedExprOwnerComponent,
+  getSelectedVariantIds,
 } from "@paperclip-ui/designer/src/state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { Element } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
+import classNames from "classnames";
 
 export const InstanceVariants = () => {
   const expr = useSelector(getSelectedExpressionInfo);
-
-  console.log(expr);
 
   if (expr.kind !== ast.ExprKind.Element) {
     return null;
@@ -29,6 +29,7 @@ type InstanceVariantsInnerProps = {
 
 export const InstanceVariantsInner = ({ expr }: InstanceVariantsInnerProps) => {
   const graph = useSelector(getGraph);
+  const selectedVariantIds = useSelector(getSelectedVariantIds);
   const component = ast.getInstanceComponent(expr, graph);
   const variants = component?.body.filter((body) => body.variant != null);
   const dispatch = useDispatch<DesignerEvent>();
@@ -48,11 +49,19 @@ export const InstanceVariantsInner = ({ expr }: InstanceVariantsInnerProps) => {
       </sidebarStyles.SidebarPanelHeader>
       <sidebarStyles.SidebarPanelContent>
         {variants.map((variant) => {
+          const on = ast.isInstanceVariantEnabled(
+            expr.id,
+            variant.variant.id,
+            selectedVariantIds,
+            graph
+          );
+
           return (
             <input.Field
               name={variant.variant.name}
               input={
                 <input.RadioInput
+                  class={classNames({ on })}
                   onClick={() => onVariantToggle(variant.variant.id)}
                 />
               }

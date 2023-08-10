@@ -300,25 +300,24 @@ export namespace ast {
     }
   );
 
-  export const getExprRef = (
-    ref: Reference,
-    graph: Graph
-  ): DocumentBodyItem | null => {
-    const dep = getOwnerDependency(ref.id, graph);
-    if (ref.path.length === 1) {
-      return getDocumentBodyExprByName(ref.path[0], dep.document);
-    } else {
-      // const imp = graph.dependencies[dep.imports[]];
-      const imp = getDocumentImport(ref.path[0], dep.document);
-      const impDep = imp && graph.dependencies[dep.imports[imp.path]];
+  export const getExprRef = memoize(
+    (ref: Reference, graph: Graph): DocumentBodyItem | null => {
+      const dep = getOwnerDependency(ref.id, graph);
+      if (ref.path.length === 1) {
+        return getDocumentBodyExprByName(ref.path[0], dep.document);
+      } else {
+        // const imp = graph.dependencies[dep.imports[]];
+        const imp = getDocumentImport(ref.path[0], dep.document);
+        const impDep = imp && graph.dependencies[dep.imports[imp.path]];
 
-      // Broken references will happen all the time
-      if (impDep) {
-        return getDocumentBodyExprByName(ref.path[1], impDep.document);
+        // Broken references will happen all the time
+        if (impDep) {
+          return getDocumentBodyExprByName(ref.path[1], impDep.document);
+        }
       }
+      return null;
     }
-    return null;
-  };
+  );
 
   export const getDocumentBodyExprByName = (
     name: string,
@@ -552,6 +551,51 @@ export namespace ast {
       getInstanceDefinitionDependency(element, graph).document
     );
   };
+
+  export const isInstanceVariantEnabled = memoize(
+    (
+      instanceId: string,
+      variantId: string,
+      selectedVariantIds: string[],
+      graph: Graph
+    ) => {
+      const selectedVariants = selectedVariantIds.map(
+        (id) => getExprById(id, graph) as Variant
+      );
+      const instance = getExprById(instanceId, graph) as Element;
+      const primaryOverride = instance.body.find(
+        (body) => body.override?.path.length === 0
+      )?.override;
+      if (!primaryOverride) {
+        return false;
+      }
+
+      const variant = ast.getExprById(variantId, graph) as Variant;
+      const variantOverride = primaryOverride.body.find(
+        (body) => body.variant.name === variant.name
+      )?.variant;
+
+      return variantOverride.triggers.some((combo) => {
+        if (combo.items.length !== combo.items.length) {
+          return false;
+        }
+
+        for (const selectedVariant of selectedVariants) {
+          for (const item of combo.items) {
+            if (
+              item.reference?.path.length !== 1 ||
+              ast.getExprRef(item.reference!, graph).trigger?.id !==
+                selectedVariant.id
+            ) {
+              return false;
+            }
+          }
+        }
+
+        return true;
+      });
+    }
+  );
 
   export const getInstanceDefinitionDependency = (
     element: Element,

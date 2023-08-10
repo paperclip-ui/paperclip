@@ -2894,7 +2894,7 @@ __metadata:
     execa: ^5.1.1
     ora: ^5.4.1
   bin:
-    cli: lib/index.js
+    paperclip: lib/index.js
   languageName: unknown
   linkType: soft
 

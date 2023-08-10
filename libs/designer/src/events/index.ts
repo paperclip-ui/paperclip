@@ -21,6 +21,10 @@ export type CanvasMouseUp = BaseEvent<
   }
 >;
 export type VariantSelected = BaseEvent<"designer/variantSelected", string[]>;
+export type InstanceVariantToggled = BaseEvent<
+  "designer/instanceVariantToggled",
+  string
+>;
 export type VariantEdited = BaseEvent<
   "designer/variantEdited",
   {
@@ -187,6 +191,7 @@ export type LegacyEvent =
 export type DesignerEvent =
   | DesignerEngineEvent
   | HistoryEngineEvent
+  | InstanceVariantToggled
   | BoundsChanged
   | ClipboardEvent
   | ShortcutEvent

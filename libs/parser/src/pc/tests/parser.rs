@@ -443,3 +443,18 @@ add_case! {
         public token defaultFontFamily Inter, sans-serif
     "#
 }
+
+add_case! {
+    can_set_combo_trigger,
+    r#"
+        component A {
+            render div {
+                override {
+                    variant b trigger {
+                        c + d
+                    }
+                }
+            }
+        }
+    "#
+}

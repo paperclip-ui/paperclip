@@ -8,7 +8,7 @@ use paperclip_proto::ast_mutate::{
     mutation, paste_expression, update_variant_trigger, AppendChild, AppendInsert, Bounds,
     ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveNode, PasteExpression,
     SetFrameBounds, SetId, SetStyleDeclarationValue, SetStyleDeclarations, SetTagName,
-    SetTextNodeValue, ToggleVariants, UpdateVariant, WrapInElement,
+    SetTextNodeValue, UpdateVariant, WrapInElement,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use std::collections::HashMap;
@@ -764,35 +764,6 @@ case! {
         variant a trigger {
           true
         }
-      }
-    "#
-  )]
-}
-
-case! {
-  can_toggle_variants_in_a_component,
-  [
-    (
-      "/entry.pc", r#"
-        component Test {
-          variant a
-          variant b trigger {
-            true
-          }
-        }
-      "#
-    )
-  ],
-  mutation::Inner::ToggleVariants(ToggleVariants {
-    enabled: HashMap::from([("80f4925f-1".to_string(), true), ("80f4925f-3".to_string(), false)])
-  }).get_outer(),
-  [(
-    "/entry.pc", r#"
-      component Test {
-        variant a trigger {
-          true
-        }
-        variant b
       }
     "#
   )]

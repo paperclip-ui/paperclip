@@ -8,12 +8,12 @@ use paperclip_proto::ast::all::{Expression, ImmutableExpressionRef};
 use paperclip_proto::ast::css as css_ast;
 use paperclip_proto::ast::graph_ext as graph;
 use paperclip_proto::ast::graph_ext::{self as graph_ref, Expr};
-use paperclip_proto::ast::pc as ast;
 use paperclip_proto::ast::pc::override_body_item;
+use paperclip_proto::ast::pc::{self as ast, Variant};
 use paperclip_proto::virt::css::Rule;
 use std::string::ToString;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum VariantTrigger {
     Boolean(bool),
     Selector(String),
@@ -364,7 +364,6 @@ fn evaluate_variant_styles<F: FileResolver>(
     expanded_combo_selectors: &Vec<Vec<VariantTrigger>>,
     context: &mut DocumentContext<F>,
 ) {
-
     let current_node = if let Some(node) = &context.target_node {
         node
     } else {
@@ -414,14 +413,12 @@ fn evaluate_variant_styles<F: FileResolver>(
             .and_then(|name| context.get_scoped_variant(name));
 
         if let Some((variant, _)) = assoc_variant {
-
             if let Some(curr_variant) = variant_override {
                 found_overridable = found_overridable || (variant == curr_variant);
             }
 
             assoc_variants.push(variant);
         } else {
-
             // variant ref does not exist, so do not evaluate
             // TODO: need a more elegant way of handling this
             return;
@@ -439,19 +436,19 @@ fn evaluate_variant_styles<F: FileResolver>(
     };
 
     let is_root_inst = instance_root_node_ns == ctx_root_node_ns || !scope_selector.contains(" ");
-    
-    if assoc_variants.len() > 0 {
 
-        let variant_combo = assoc_variants.iter().map(|v| format!(".{}", get_variant_namespace(v))).collect::<Vec<_>>().join("");
-         // IF scope selector doesn't contain spaces, then it's the root node OF the
+    if assoc_variants.len() > 0 {
+        let variant_combo = assoc_variants
+            .iter()
+            .map(|v| format!(".{}", get_variant_namespace(v)))
+            .collect::<Vec<_>>()
+            .join("");
+        // IF scope selector doesn't contain spaces, then it's the root node OF the
         // top-most component
         let selector_text = if is_root_inst {
             format!(
                 "{}.{}{}{}",
-                scope_selector,
-                instance_root_node_ns,
-                variant_combo,
-                target_selector
+                scope_selector, instance_root_node_ns, variant_combo, target_selector
             )
         } else {
             format!(
@@ -477,98 +474,93 @@ fn evaluate_variant_styles<F: FileResolver>(
         });
     }
 
+    let combos = get_combo_selectors2(expanded_combo_selectors);
 
-    let (combo_queries, combo_selectors) = get_combo_selectors(expanded_combo_selectors);
+    for (queries, group_selectors) in combos {
+        // TODO: need to implement
+        // if group_selectors.len() == 0 {
+        //     continue;
+        // }
 
-    let virt_styles = if combo_selectors.len() > 0 {
-        combo_selectors
-            .iter()
-            .map(|group_selectors| {
-                virt::rule::Inner::Style(virt::StyleRule {
-                    id: context.next_id(),
-                    source_id: Some(style.id.to_string()),
-                    selector_text: if is_root_inst {
-                        format!(
-                            "{}.{}{}{}",
-                            scope_selector,
-                            instance_root_node_ns,
-                            group_selectors.join(""),
-                            target_selector
-                        )
-                    } else {
-                        format!(
-                            ".{}{} {}.{}{}",
-                            ctx_root_node_ns,
-                            group_selectors.join(""),
-                            scope_selector,
-                            instance_root_node_ns,
-                            target_selector
-                        )
-                    },
-                    style: evaluated_style.clone(),
-                })
-                .get_outer()
-            })
-            .collect::<Vec<virt::Rule>>()
-    } else if combo_queries.len() > 0 {
-        vec![virt::rule::Inner::Style(virt::StyleRule {
-            id: context.next_id(),
-            source_id: Some(style.id.to_string()),
-            selector_text: format!(
-                "{}.{}{}",
-                scope_selector,
-                instance_root_node_ns,
-                if is_root_node {
-                    "".to_string()
+        let virt_style = if group_selectors.len() > 0 {
+            virt::rule::Inner::Style(virt::StyleRule {
+                id: context.next_id(),
+                source_id: Some(style.id.to_string()),
+                selector_text: if is_root_inst {
+                    format!(
+                        "{}.{}{}{}",
+                        scope_selector,
+                        instance_root_node_ns,
+                        group_selectors.join(""),
+                        target_selector
+                    )
                 } else {
-                    format!(" .{}", node_ns)
-                }
-            ),
-            style: evaluated_style.clone(),
-        })
-        .get_outer()]
-    } else {
-        return;
-    };
+                    format!(
+                        ".{}{} {}.{}{}",
+                        ctx_root_node_ns,
+                        group_selectors.join(""),
+                        scope_selector,
+                        instance_root_node_ns,
+                        target_selector
+                    )
+                },
+                style: evaluated_style.clone(),
+            })
+            .get_outer()
+        } else {
+            virt::rule::Inner::Style(virt::StyleRule {
+                id: context.next_id(),
+                source_id: Some(style.id.to_string()),
+                selector_text: format!(
+                    "{}.{}{}",
+                    scope_selector,
+                    instance_root_node_ns,
+                    if is_root_node {
+                        "".to_string()
+                    } else {
+                        format!(" .{}", node_ns)
+                    }
+                ),
+                style: evaluated_style.clone(),
+            })
+            .get_outer()
+        };
 
-    for virt_style in virt_styles {
-        if combo_queries.len() == 0 {
+        if queries.len() == 0 {
             context.rules.borrow_mut().push(PrioritizedRule {
                 priority: context.priority,
                 rule: virt_style,
             });
         } else {
-            for container_queries in &combo_queries {
-                let container_rule =
-                    container_queries
-                        .iter()
-                        .fold(virt_style.clone(), |rule, container_query| {
-                            if container_query.starts_with("@media") {
-                                virt::rule::Inner::Media(create_condition_rule(
-                                    "media",
-                                    container_query,
-                                    vec![rule],
-                                    context,
-                                ))
-                                .get_outer()
-                            } else if container_query.starts_with("@supports") {
-                                virt::rule::Inner::Supports(create_condition_rule(
-                                    "supports",
-                                    container_query,
-                                    vec![rule],
-                                    context,
-                                ))
-                                .get_outer()
-                            } else {
-                                rule
-                            }
-                        });
+            let container_rule =
+                queries
+                    .iter()
+                    .fold(virt_style.clone(), |rule, container_query| {
+                        if container_query.starts_with("@media") {
+                            virt::rule::Inner::Media(create_condition_rule(
+                                "media",
+                                container_query,
+                                vec![rule],
+                                context,
+                            ))
+                            .get_outer()
+                        } else if container_query.starts_with("@supports") {
+                            virt::rule::Inner::Supports(create_condition_rule(
+                                "supports",
+                                container_query,
+                                vec![rule],
+                                context,
+                            ))
+                            .get_outer()
+                        } else {
+                            panic!("Unsupported container query: {}", container_query);
+                        }
+                    });
 
-                context.rules.borrow_mut().push(PrioritizedRule {
-                    priority: context.priority,
-                    rule: container_rule,
-                });
-            }
+            context.rules.borrow_mut().push(PrioritizedRule {
+                priority: context.priority,
+                rule: container_rule,
+            });
         }
     }
 }
@@ -619,17 +611,19 @@ fn substr(start: usize, value: &str) -> String {
 }
 */
 
-fn get_combo_selectors(
+fn get_combo_selectors2(
     expanded_combo_selectors: &Vec<Vec<VariantTrigger>>,
-) -> (SelectorCombos, SelectorCombos) {
-    let mut combo_container_queries: SelectorCombos = vec![];
-    let mut combo_selectors: SelectorCombos = vec![];
+) -> Vec<(SelectorCombo, SelectorCombo)> {
+    let mut ret = vec![];
 
-    for group in expanded_combo_selectors {
+    // let mut combo_container_queries: SelectorCombos = vec![];
+    // let mut combo_selectors: SelectorCombos = vec![];
+
+    for combo_selectors in expanded_combo_selectors {
         let mut container_queries = vec![];
         let mut selectors = vec![];
 
-        for selector in group {
+        for selector in combo_selectors {
             if let VariantTrigger::Selector(selector) = selector {
                 if selector.starts_with("@") {
                     container_queries.push(selector.to_string());
@@ -637,6 +631,38 @@ fn get_combo_selectors(
                     selectors.push(selector.to_string());
                 }
             } else if let VariantTrigger::Boolean(_value) = selector {
+                // trick to enable selector
+                selectors.push("".to_string());
+            }
+        }
+
+        ret.push((container_queries.clone(), selectors.clone()));
+
+        // combo_container_queries = merge_combos(&combo_container_queries, &container_queries);
+        // combo_selectors = merge_combos(&combo_selectors, &selectors);
+    }
+
+    ret
+}
+
+fn get_combo_selectors(
+    expanded_combo_selectors: &Vec<Vec<VariantTrigger>>,
+) -> (SelectorCombos, SelectorCombos) {
+    let mut combo_container_queries: SelectorCombos = vec![];
+    let mut combo_selectors: SelectorCombos = vec![];
+
+    for or_selectors in expanded_combo_selectors {
+        let mut container_queries = vec![];
+        let mut selectors = vec![];
+
+        for and_selector in or_selectors {
+            if let VariantTrigger::Selector(selector) = and_selector {
+                if selector.starts_with("@") {
+                    container_queries.push(selector.to_string());
+                } else {
+                    selectors.push(selector.to_string());
+                }
+            } else if let VariantTrigger::Boolean(_value) = and_selector {
                 // trick to enable selector
                 selectors.push("".to_string());
             }
@@ -670,6 +696,8 @@ fn merge_combos(existing_combos: &SelectorCombos, new_items: &Vec<String>) -> Se
     new_combos
 }
 
+// [[or, or, or] and [or]]
+
 fn collect_style_variant_selectors<F: FileResolver>(
     variant_refs: &Vec<ast::Reference>,
     context: &mut DocumentContext<F>,
@@ -682,13 +710,23 @@ fn collect_style_variant_selectors<F: FileResolver>(
             let variant = context.get_scoped_variant(variant_ref.path.get(0).unwrap());
 
             if let Some((variant, ctx)) = variant {
-                let mut triggers = vec![];
-                collect_triggers(
-                    &variant.triggers,
-                    &mut triggers,
-                    &mut ctx.with_variant(variant),
-                );
-                combo_triggers.push(triggers);
+                let variant_triggers =
+                    collect_triggers(&variant.triggers, &mut ctx.with_variant(variant));
+
+                if combo_triggers.len() == 0 {
+                    combo_triggers = variant_triggers;
+                } else {
+                    let mut new_combos = vec![];
+
+                    for item in variant_triggers {
+                        for item2 in &combo_triggers {
+                            let mut new_combo = item2.clone();
+                            new_combo.extend(item.clone());
+                            new_combos.push(new_combo);
+                        }
+                    }
+                    combo_triggers = new_combos;
+                }
             }
         }
     }
@@ -696,46 +734,120 @@ fn collect_style_variant_selectors<F: FileResolver>(
     combo_triggers
 }
 
-fn collect_triggers<F: FileResolver>(
-    triggers: &Vec<ast::TriggerBodyItem>,
-    into: &mut Vec<VariantTrigger>,
-    context: &DocumentContext<F>,
-) {
-    for trigger in triggers {
-        match trigger.get_inner() {
-            ast::trigger_body_item::Inner::Bool(expr) => {
-                into.push(VariantTrigger::Boolean(expr.value));
-            }
-            ast::trigger_body_item::Inner::Str(expr) => {
-                into.push(VariantTrigger::Selector(expr.value.to_string()));
-            }
-            ast::trigger_body_item::Inner::Reference(expr) => {
-                let ref_info = context
-                    .graph
-                    .get_ref(
-                        &expr.path,
-                        &context.path,
-                        context
-                            .current_component
-                            .and_then(|component| Some(Expr::Component(component))),
-                    )
-                    .or_else(|| context.graph.get_ref(&expr.path, &context.path, None));
+/*
 
-                if let Some(info) = ref_info {
-                    if let graph_ref::Expr::Trigger(trigger) = &info.expr {
-                        collect_triggers(&trigger.body, into, context);
-                    } else if let graph_ref::Expr::Variant(variant) = &info.expr {
-                        // avoid recursion
-                        if Some(variant) != context.current_variant.as_ref() {
-                            collect_triggers(&variant.triggers, into, context);
-                        } else {
-                            println!("Recursive variants are not allowed!");
-                        }
-                    }
+trigger e {
+    ".selector" + ".another"
+    ".blarg"
+}
+
+trigger b {
+    e + ".blarg2"
+    ".something-else"
+}
+
+trigger c {
+    ".d"
+}
+
+trigger a {
+    b + c
+    ".eee"
+}
+
+[
+    [".selector", ".another", ".blarg2"]
+    [".blarg", ".blarg2"]
+    [".something-else"]
+]
+
+
+[
+    [".selector", ".another", ".blarg2", ".d"]
+    [".blarg", ".blarg2", ".d"]
+    [".something-else", ".d"]
+    [".eee"]
+]
+
+*/
+
+fn collect_triggers<F: FileResolver>(
+    triggers: &Vec<ast::TriggerBodyItemCombo>,
+    context: &DocumentContext<F>,
+) -> Vec<Vec<VariantTrigger>> {
+    let mut all_or_variants = vec![];
+
+    for combo in triggers {
+        let mut or_and_variants = vec![];
+        let mut and_variants = vec![];
+
+        for trigger in &combo.items {
+            match trigger.get_inner() {
+                ast::trigger_body_item::Inner::Bool(expr) => {
+                    and_variants.push(VariantTrigger::Boolean(expr.value));
+                }
+                ast::trigger_body_item::Inner::Str(expr) => {
+                    and_variants.push(VariantTrigger::Selector(expr.value.to_string()));
+                }
+                ast::trigger_body_item::Inner::Reference(expr) => {
+                    // skip until the end
                 }
             }
         }
+
+        or_and_variants.push(and_variants);
+
+        for trigger in &combo.items {
+            match trigger.get_inner() {
+                ast::trigger_body_item::Inner::Reference(expr) => {
+                    let ref_info = context
+                        .graph
+                        .get_ref(
+                            &expr.path,
+                            &context.path,
+                            context
+                                .current_component
+                                .and_then(|component| Some(Expr::Component(component))),
+                        )
+                        .or_else(|| context.graph.get_ref(&expr.path, &context.path, None));
+
+                    let nested = if let Some(info) = ref_info {
+                        if let graph_ref::Expr::Trigger(trigger) = &info.expr {
+                            collect_triggers(&trigger.body, context)
+                        } else if let graph_ref::Expr::Variant(variant) = &info.expr {
+                            // avoid recursion
+                            if Some(variant) != context.current_variant.as_ref() {
+                                collect_triggers(&variant.triggers, context)
+                            } else {
+                                vec![]
+                            }
+                        } else {
+                            vec![]
+                        }
+                    } else {
+                        vec![]
+                    };
+
+                    let mut new_combos = vec![];
+
+                    for item in nested {
+                        for item2 in &or_and_variants {
+                            let mut new_combo = item2.clone();
+                            new_combo.extend(item.clone());
+                            new_combos.push(new_combo);
+                        }
+                    }
+
+                    or_and_variants = new_combos;
+                }
+                _ => {}
+            }
+        }
+
+        all_or_variants.extend(or_and_variants);
     }
+
+    all_or_variants
 }
 
 fn evaluate_atom<F: FileResolver>(atom: &ast::Atom, context: &DocumentContext<F>) -> String {

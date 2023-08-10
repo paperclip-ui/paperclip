@@ -58,10 +58,25 @@ pub fn serialize_trigger(trigger: &ast::Trigger, context: &mut Context) {
     context.add_buffer("\n\n");
 }
 
-pub fn serialize_trigger_body(body: &Vec<ast::TriggerBodyItem>, context: &mut Context) {
+pub fn serialize_trigger_body(body: &Vec<ast::TriggerBodyItemCombo>, context: &mut Context) {
     context.add_buffer("{\n");
     context.start_block();
-    for item in body {
+
+
+    for combo in body {
+        serialize_trigger_combo(combo, context);
+        context.add_buffer("\n");
+    }
+
+    context.end_block();
+    context.add_buffer("}");
+}
+
+pub fn serialize_trigger_combo(combo: &ast::TriggerBodyItemCombo, context: &mut Context) {
+
+    let mut it = combo.items.iter().peekable();
+
+    while let Some(item) = it.next() {
         match item.get_inner() {
             ast::trigger_body_item::Inner::Str(value) => {
                 context.add_buffer(format!("\"{}\"", value.value).as_str());
@@ -73,10 +88,11 @@ pub fn serialize_trigger_body(body: &Vec<ast::TriggerBodyItem>, context: &mut Co
                 serialize_boolean(&expr, context);
             }
         }
-        context.add_buffer("\n");
+
+        if !it.peek().is_none() {
+            context.add_buffer(" + ");
+        }
     }
-    context.end_block();
-    context.add_buffer("}");
 }
 
 pub fn serialize_atom(atom: &ast::Atom, context: &mut Context) {

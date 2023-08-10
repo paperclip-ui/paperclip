@@ -1,6 +1,7 @@
 #### NOW
 
-- reconnect designer
+- toggle instance variants
+  - ability to couple with component variant
 - ability to define atoms
 - ability to define styles
 - style panel

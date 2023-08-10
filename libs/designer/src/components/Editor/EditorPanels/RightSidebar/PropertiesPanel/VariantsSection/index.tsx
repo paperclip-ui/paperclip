@@ -48,7 +48,8 @@ export const VariantsSection = () => {
           name={activeVariant?.name}
           onSave={onSaveCurrentVariant}
           onClose={onCloseEditVariantPopup}
-          triggers={activeVariant?.triggers}
+          triggers={[]}
+          // triggers={activeVariant?.triggers}
         />
       )}
       <inputStyles.Field name="Variants" input={inputs[0]} />

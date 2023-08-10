@@ -531,7 +531,9 @@ export namespace ast {
   };
 
   export const isVariantEnabled = (variant: Variant) =>
-    variant.triggers?.some((trigger) => trigger.bool?.value);
+    variant.triggers?.some((trigger) =>
+      trigger.items.some((item) => item.bool?.value === true)
+    );
 
   export const getExprOwnerComponent = (
     expr: InnerExpression,

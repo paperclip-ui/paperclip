@@ -1,6 +1,5 @@
 #### NOW
 
-- go to component
 - ensure that instance variants can be toggled _within_ component variants
 - element attributes
 

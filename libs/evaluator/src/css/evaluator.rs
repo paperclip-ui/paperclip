@@ -9,7 +9,7 @@ use paperclip_proto::ast::css as css_ast;
 use paperclip_proto::ast::graph_ext as graph;
 use paperclip_proto::ast::graph_ext::{self as graph_ref, Expr};
 use paperclip_proto::ast::pc::override_body_item;
-use paperclip_proto::ast::pc::{self as ast, Variant};
+use paperclip_proto::ast::pc::{self as ast};
 use paperclip_proto::virt::css::Rule;
 use std::string::ToString;
 
@@ -20,7 +20,6 @@ enum VariantTrigger {
 }
 
 type SelectorCombo = Vec<String>;
-type SelectorCombos = Vec<SelectorCombo>;
 
 // TODO - scan for all tokens and shove in root
 pub async fn evaluate<'asset_resolver, FR: FileResolver>(
@@ -637,64 +636,11 @@ fn get_combo_selectors2(
         }
 
         ret.push((container_queries.clone(), selectors.clone()));
-
-        // combo_container_queries = merge_combos(&combo_container_queries, &container_queries);
-        // combo_selectors = merge_combos(&combo_selectors, &selectors);
     }
 
     ret
 }
 
-fn get_combo_selectors(
-    expanded_combo_selectors: &Vec<Vec<VariantTrigger>>,
-) -> (SelectorCombos, SelectorCombos) {
-    let mut combo_container_queries: SelectorCombos = vec![];
-    let mut combo_selectors: SelectorCombos = vec![];
-
-    for or_selectors in expanded_combo_selectors {
-        let mut container_queries = vec![];
-        let mut selectors = vec![];
-
-        for and_selector in or_selectors {
-            if let VariantTrigger::Selector(selector) = and_selector {
-                if selector.starts_with("@") {
-                    container_queries.push(selector.to_string());
-                } else {
-                    selectors.push(selector.to_string());
-                }
-            } else if let VariantTrigger::Boolean(_value) = and_selector {
-                // trick to enable selector
-                selectors.push("".to_string());
-            }
-        }
-
-        combo_container_queries = merge_combos(&combo_container_queries, &container_queries);
-        combo_selectors = merge_combos(&combo_selectors, &selectors);
-    }
-
-    (combo_container_queries, combo_selectors)
-}
-
-fn merge_combos(existing_combos: &SelectorCombos, new_items: &Vec<String>) -> SelectorCombos {
-    if new_items.len() == 0 {
-        return existing_combos.clone();
-    }
-
-    let mut new_combos: SelectorCombos = vec![];
-    for item in new_items {
-        for combo in existing_combos {
-            let mut new_combo = combo.clone();
-            new_combo.push(item.to_string());
-            new_combos.push(new_combo);
-        }
-
-        if existing_combos.len() == 0 {
-            new_combos.push(vec![item.to_string()]);
-        }
-    }
-
-    new_combos
-}
 
 // [[or, or, or] and [or]]
 

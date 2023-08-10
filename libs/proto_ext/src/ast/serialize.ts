@@ -41,7 +41,11 @@ export const serializeDeclaration = (expr: DeclarationValue) => {
     return `#${expr.hexColor.value}`;
   }
   if (expr.measurement) {
-    return `${expr.measurement.value}${expr.measurement.unit}`;
+    // 0.3 converted in f32 rust adds a bunch of shit, so we need to fix that.
+    // this is a hack.
+    return `${Math.round(expr.measurement.value * 1000) / 1000}${
+      expr.measurement.unit
+    }`;
   }
   if (expr.number) {
     return `${expr.number.value}`;

@@ -368,8 +368,6 @@ const createEventHandler = (actions: Actions) => {
     }));
     const variantIds = state.selectedVariantIds;
 
-    console.log(variantIds);
-
     actions.applyChanges([
       {
         setStyleDeclarations: {

@@ -30,22 +30,16 @@ impl<'expr> CurrentNode<'expr> {
     }
 }
 
-
 impl<'expr> TryFrom<&'expr ast::Node> for CurrentNode<'expr> {
     type Error = ();
     fn try_from(value: &'expr ast::Node) -> Result<Self, Self::Error> {
         match value.get_inner() {
-            ast::node::Inner::Element(element) => {
-                Ok(CurrentNode::Element(element))
-            }
-            ast::node::Inner::Text(text) => {
-                Ok(CurrentNode::TextNode(text))
-            }
+            ast::node::Inner::Element(element) => Ok(CurrentNode::Element(element)),
+            ast::node::Inner::Text(text) => Ok(CurrentNode::TextNode(text)),
             _ => Err(()),
         }
     }
-  }
-
+}
 
 #[derive(PartialEq, Debug)]
 pub struct PrioritizedRule {
@@ -139,18 +133,15 @@ impl<'expr, 'resolve_asset, FR: FileResolver> DocumentContext<'expr, 'resolve_as
 
     pub fn is_target_node_render_node(&self) -> bool {
         if let Some(node) = &self.target_node {
-           return self.is_render_node(node);
+            return self.is_render_node(node);
         }
         return false;
     }
 
-
-
     fn is_render_node(&self, node: &CurrentNode) -> bool {
         if let Some(component) = self.current_component {
             if let Some(render) = component.get_render_expr() {
-                return render.node.as_ref().expect("Node must exist").get_id()
-                    == node.get_id();
+                return render.node.as_ref().expect("Node must exist").get_id() == node.get_id();
             }
         }
         return false;

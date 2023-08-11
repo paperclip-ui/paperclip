@@ -135,13 +135,12 @@ fn evaluate_component<F: FileResolver>(
 ) {
     for item in &component.body {
         if let ast::component_body_item::Inner::Render(render) = item.get_inner() {
-
             let mut context = context.within_component(component);
 
             evaluate_node(
                 render.node.as_ref().expect("Render node value must exist"),
                 None,
-                &mut context
+                &mut context,
             );
         }
     }
@@ -252,9 +251,7 @@ fn into_shadow<'a, F: FileResolver>(
 
             if let Some(info) = shadow_instance {
                 shadow = match info.expr {
-                    Expr::Element(element) => {
-                        shadow.within_instance(CurrentNode::Element(element))
-                    }
+                    Expr::Element(element) => shadow.within_instance(CurrentNode::Element(element)),
                     Expr::Text(text) => shadow.within_instance(CurrentNode::TextNode(text)),
                     _ => shadow,
                 };
@@ -322,17 +319,17 @@ fn get_shadow_instance_selector<F: FileResolver>(context: &DocumentContext<F>) -
 
     while let Some(shadow_of) = &curr.shadow_of {
         if let Some(CurrentNode::Element(instance)) = shadow_of.target_node {
-           
-
-            buffer.insert(0, format!(
-                ".{}",
-                get_style_namespace(&instance.name, &instance.id, shadow_of.current_component)
-            ));
+            buffer.insert(
+                0,
+                format!(
+                    ".{}",
+                    get_style_namespace(&instance.name, &instance.id, shadow_of.current_component)
+                ),
+            );
 
             if shadow_of.current_component.is_some() && !shadow_of.is_target_node_render_node() {
                 buffer.insert(0, " ".to_string());
             }
-
         } else {
             println!("Instance not defined!")
         }
@@ -368,7 +365,6 @@ fn evaluate_variant_styles<F: FileResolver>(
     expanded_combo_selectors: &Vec<Vec<VariantTrigger>>,
     context: &mut DocumentContext<F>,
 ) {
-
     // The selector of the element currently in focus. Could be the render node.
     let target_node = get_or_short!(&context.target_node, {});
 
@@ -382,9 +378,9 @@ fn evaluate_variant_styles<F: FileResolver>(
         return;
     };
 
-    // The shadow selector which is defined if evaluating instances. 
+    // The shadow selector which is defined if evaluating instances.
     let shadow_instance_selector_parts = get_shadow_instance_selector(context);
-    
+
     let target_node_ns = get_style_namespace(
         target_node.get_name(),
         target_node.get_id(),
@@ -392,19 +388,21 @@ fn evaluate_variant_styles<F: FileResolver>(
         Some(current_component),
     );
 
-
     let top_context = context.top();
     let target_node_selector = format!(".{}", target_node_ns);
     let is_target_render_node = current_render_node.get_id() == target_node.get_id();
     let is_within_shadow = shadow_instance_selector_parts.len() > 0;
 
     let instance_selector = if let Some(instance) = top_context.current_instance {
-        format!(".{}", get_style_namespace(
-            instance.get_name(),
-            instance.get_id(),
-            // TODO - this may be different with varint overrides
-            top_context.current_component,
-        ))
+        format!(
+            ".{}",
+            get_style_namespace(
+                instance.get_name(),
+                instance.get_id(),
+                // TODO - this may be different with varint overrides
+                top_context.current_component,
+            )
+        )
     } else {
         "".to_string()
     };
@@ -415,11 +413,14 @@ fn evaluate_variant_styles<F: FileResolver>(
         instance_selector.clone()
     };
     let is_target_node_top_render_node = top_render_node_selector == target_node_selector;
-    
-    let shadow_instance_selector = if is_within_shadow {
 
+    let shadow_instance_selector = if is_within_shadow {
         // if SPACE then top shadow instance is NOT render node, so leave as-is
-        if shadow_instance_selector_parts.get(0).expect("Value must exist") == &" ".to_string() {
+        if shadow_instance_selector_parts
+            .get(0)
+            .expect("Value must exist")
+            == &" ".to_string()
+        {
             shadow_instance_selector_parts.join("")
 
         // if NO space then top shadow instance IS render node, which is already
@@ -427,13 +428,13 @@ fn evaluate_variant_styles<F: FileResolver>(
         } else {
             shadow_instance_selector_parts[1..].join("")
         }
-        // leave out TOP 
+        // leave out TOP
     } else {
         "".to_string()
     };
 
-
-    let is_shadow_instance_render_node = !shadow_instance_selector_parts.contains(&" ".to_string()) && is_within_shadow;
+    let is_shadow_instance_render_node =
+        !shadow_instance_selector_parts.contains(&" ".to_string()) && is_within_shadow;
 
     let (pre_selector, post_selector) = if is_target_render_node {
         if is_shadow_instance_render_node {
@@ -441,20 +442,20 @@ fn evaluate_variant_styles<F: FileResolver>(
                 if is_target_node_top_render_node {
                     format!("{}", target_node_selector)
                 } else {
-                    format!("{}{}{}", top_render_node_selector, shadow_instance_selector, target_node_selector)
+                    format!(
+                        "{}{}{}",
+                        top_render_node_selector, shadow_instance_selector, target_node_selector
+                    )
                 },
-                "".to_string()
-            )    
+                "".to_string(),
+            )
         } else {
             if is_target_node_top_render_node {
-                (
-                    format!("{}", target_node_selector),
-                    "".to_string()
-                )
+                (format!("{}", target_node_selector), "".to_string())
             } else {
                 (
                     format!("{}", top_render_node_selector),
-                    format!("{}{}", shadow_instance_selector, target_node_selector)
+                    format!("{}{}", shadow_instance_selector, target_node_selector),
                 )
             }
         }
@@ -462,16 +463,15 @@ fn evaluate_variant_styles<F: FileResolver>(
         if is_shadow_instance_render_node {
             (
                 format!("{}{}", top_render_node_selector, shadow_instance_selector),
-                format!(" {}", target_node_selector)
+                format!(" {}", target_node_selector),
             )
         } else {
             (
                 format!("{}", top_render_node_selector),
-                format!("{} {}", shadow_instance_selector, target_node_selector)
+                format!("{} {}", shadow_instance_selector, target_node_selector),
             )
         }
     };
-
 
     // FOR DEBUGGING!
     // println!("shadow_instance_selector_parts: {:?}", shadow_instance_selector_parts);
@@ -545,7 +545,12 @@ fn evaluate_variant_styles<F: FileResolver>(
             virt::rule::Inner::Style(virt::StyleRule {
                 id: context.next_id(),
                 source_id: Some(style.id.to_string()),
-                selector_text: format!("{}{}{}", pre_selector, group_selectors.join(""), post_selector),
+                selector_text: format!(
+                    "{}{}{}",
+                    pre_selector,
+                    group_selectors.join(""),
+                    post_selector
+                ),
                 style: evaluated_style.clone(),
             })
             .get_outer()

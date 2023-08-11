@@ -80,9 +80,8 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, ToggleInstanceVariant> {
         if self.mutation.combo_variant_ids.len() > 0 {
             let variant_trigger =
                 get_combo_variant_trigger(&combo_variant_names, variant_override.0);
-            if let Some((_, i)) = variant_trigger {
-                variant_override.0.triggers.remove(i);
-            } else {
+
+            if variant_trigger.is_none() {
                 variant_override
                     .0
                     .triggers
@@ -101,7 +100,14 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, ToggleInstanceVariant> {
                             })
                             .collect(),
                     });
+            } else {
+
+                // cover: trigger { a a a a a a a a a a a a a a a }
+                while let Some((_, i)) = get_combo_variant_trigger(&combo_variant_names, variant_override.0) {
+                    variant_override.0.triggers.remove(i);
+                }
             }
+
         } else {
             let enabled_expression = get_enabled_variant_trigger(&mut variant_override.0);
             if let Some((_expr, i)) = enabled_expression {

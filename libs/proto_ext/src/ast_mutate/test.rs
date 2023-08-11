@@ -2798,3 +2798,62 @@ case! {
     "#
   )]
 }
+
+
+
+case! {
+  removes_dupe_triggers,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        variant a 
+        render div {
+          style variant a {
+            color: red
+          }
+        }
+      }
+
+      component B {
+        variant b
+        render A {
+          override {
+            variant a trigger {
+              b
+              b
+              b
+            }
+          }
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::ToggleInstanceVariant(ToggleInstanceVariant {
+    instance_id: "80f4925f-18".to_string(),
+    variant_id: "80f4925f-1".to_string(),
+    combo_variant_ids: vec!["80f4925f-9".to_string()]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      variant a 
+      render div {
+        style variant a {
+          color: red
+        }
+      }
+    }
+
+    component B {
+      variant b
+      render A {
+        override {
+          variant a
+        }
+      }
+    }
+    "#
+  )]
+}

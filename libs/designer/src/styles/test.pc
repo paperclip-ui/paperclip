@@ -150,7 +150,8 @@ div {
 */
 
 public component test {
-    variant test222
+    variant blarg
+    variant test
     render div test {
         style variant test222 {
             background: black
@@ -162,7 +163,7 @@ public component test {
         imp.RadioInput {
             override {
                 variant on trigger {
-                    test222
+                    blarg + test
                 }
             }
         }

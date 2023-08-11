@@ -48,11 +48,13 @@ export const useFrameMount = ({
     let mount;
     if (state?.mount && frameIndex === state.frameIndex) {
       mount = state.mount;
-      patchFrame(state.mount, frameIndex, state.pcData, pcData, {
-        showSlotPlaceholders,
-        variantIds,
-        domFactory: document,
-      });
+      if (mount.isConnected) {
+        patchFrame(state.mount, frameIndex, state.pcData, pcData, {
+          showSlotPlaceholders,
+          variantIds,
+          domFactory: document,
+        });
+      }
     } else {
       mount = renderFrame(pcData, frameIndex, {
         showSlotPlaceholders,

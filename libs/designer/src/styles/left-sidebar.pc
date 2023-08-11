@@ -80,7 +80,7 @@ public component LeftSidebarHeader {
 }
 
 
-component LayerIcon {
+public component LayerIcon {
     variant isComponent trigger {
         ".component"
     }

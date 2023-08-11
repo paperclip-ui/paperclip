@@ -58,9 +58,9 @@ export const PropertiesPanel = () => {
         </sidebarStyles.SidebarPanelContent>
       </sidebarStyles.SidebarSection>
       {bounds && <FrameSection bounds={bounds} />}
-      {expr.kind === ast.ExprKind.Element && (
+      {/* {expr.kind === ast.ExprKind.Element && (
         <AttributesSection expr={expr.expr} />
-      )}
+      )} */}
     </sidebarStyles.SidebarPanel>
   );
 };

@@ -1,8 +1,11 @@
 #### NOW
 
-- Table component
+- ability to define atoms
+- ability to define mixins
+- display extended styles in style panel
+- ability to define triggers
 
-- element attributes
+- Table component
 
 - ability to define atoms
 - ability to define styles

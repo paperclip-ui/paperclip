@@ -1,6 +1,7 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/left-sidebar.pc";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
+import * as etcStyles from "@paperclip-ui/designer/src/styles/etc.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   DNDKind,
@@ -26,6 +27,7 @@ import cx from "classnames";
 import { useHistory } from "@paperclip-ui/designer/src/domains/history/react";
 import { routes } from "@paperclip-ui/designer/src/state/routes";
 import { useDrag, useDrop } from "react-dnd";
+import { SuggestionMenu, SuggestionMenuItem } from "../../../SuggestionMenu";
 
 export const LeftSidebar = () => {
   const { title, document, show, onBackClick } = useLeftSidebar();
@@ -41,6 +43,29 @@ export const LeftSidebar = () => {
         <sidebarStyles.SidebarSection>
           <sidebarStyles.SidebarPanelHeader>
             Layers
+            <SuggestionMenu
+              values={[]}
+              menu={() => [
+                <SuggestionMenuItem value="Atom">
+                  <styles.LayerIcon class="atom-token" />
+                  Atom
+                </SuggestionMenuItem>,
+                <SuggestionMenuItem value="Style mixin">
+                  <styles.LayerIcon class="composite-token" />
+                  Style mixin
+                </SuggestionMenuItem>,
+                <SuggestionMenuItem value="Element">
+                  <styles.LayerIcon class="element" />
+                  Element
+                </SuggestionMenuItem>,
+                <SuggestionMenuItem value="Text node">
+                  <styles.LayerIcon class="text" />
+                  Tet
+                </SuggestionMenuItem>,
+              ]}
+            >
+              <etcStyles.PlusButton />
+            </SuggestionMenu>
           </sidebarStyles.SidebarPanelHeader>
         </sidebarStyles.SidebarSection>
         <styles.Layers>

@@ -1398,3 +1398,49 @@ add_case! {
   ._B-80f4925f-23._variant-80f4925f-12 ._B-80f4925f-22 { color: red; }
   "#
 }
+
+
+/*
+
+
+*/
+
+
+add_case! {
+  instance_variant_can_be_bound_to_component_variant2,
+  [
+    ("/entry.pc", r#"
+
+    public component RadioInput {
+      variant on trigger {
+          ".on"
+      }
+      render div container(onClick: onClick, class: class) {
+          style variant on {
+              background: var(theme.blue00)
+          }
+          style {
+              cursor: pointer
+          }
+          div dot {
+              style variant on {
+                  left: 100%
+              }
+              style {
+                  background: var(theme.gray02)
+              }
+          }
+      }
+  }
+    "#)
+  ],
+  r#"
+  ._RadioInput-container-80f4925f-25._variant-80f4925f-3 { background: var(theme.blue00); } 
+  ._RadioInput-container-80f4925f-25.on { background: var(theme.blue00); } 
+  ._RadioInput-container-80f4925f-25 { cursor: pointer; } 
+  ._RadioInput-container-80f4925f-25._variant-80f4925f-3 ._RadioInput-dot-80f4925f-24 { left: 100%; } 
+  ._RadioInput-container-80f4925f-25.on ._RadioInput-dot-80f4925f-24 { left: 100%; } 
+  ._RadioInput-dot-80f4925f-24 { background: var(theme.gray02); }
+  "#
+}
+

@@ -178,7 +178,7 @@ fn parse_trigger_body_combo(
 
         if matches!(context.curr_token, Some(Token::Plus)) {
             // eat token
-            context.next_token();
+            context.next_token()?;
             context.skip(is_superfluous_or_newline)?;
         } else {
             break;

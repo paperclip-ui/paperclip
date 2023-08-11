@@ -474,12 +474,12 @@ fn evaluate_variant_styles<F: FileResolver>(
 
 
     // FOR DEBUGGING!
-    println!("shadow_instance_selector_parts: {:?}", shadow_instance_selector_parts);
-    println!("is_target_render_node: {}, is_shadow_instance_render_node: {}, is_target_node_top_render_node: {}", is_target_render_node, is_shadow_instance_render_node, is_target_node_top_render_node);
-    println!("top_render_node_selector:'{}', shadow_instance_selector:'{}', target_node_selector:'{}', instance_selector: '{}'", top_render_node_selector, shadow_instance_selector, target_node_selector, instance_selector);
-    println!("PRE:{}, POST:{}", pre_selector, post_selector);
+    // println!("shadow_instance_selector_parts: {:?}", shadow_instance_selector_parts);
+    // println!("is_target_render_node: {}, is_shadow_instance_render_node: {}, is_target_node_top_render_node: {}", is_target_render_node, is_shadow_instance_render_node, is_target_node_top_render_node);
+    // println!("top_render_node_selector:'{}', shadow_instance_selector:'{}', target_node_selector:'{}', instance_selector: '{}'", top_render_node_selector, shadow_instance_selector, target_node_selector, instance_selector);
+    // println!("PRE:{}, POST:{}", pre_selector, post_selector);
 
-    println!("------------------------------");
+    // println!("------------------------------");
 
     let evaluated_style = create_style_declarations(style, context);
 

@@ -498,10 +498,13 @@ fn evaluate_variant_styles<F: FileResolver>(
 
         if let Some((variant, _)) = assoc_variant {
             if let Some(curr_variant) = variant_override {
-                found_overridable = found_overridable || (variant == curr_variant);
+                if variant == curr_variant {
+                    found_overridable = true;
+                }
             }
 
             assoc_variants.push(variant);
+
         } else {
             // variant ref does not exist, so do not evaluate
             // TODO: need a more elegant way of handling this
@@ -514,9 +517,7 @@ fn evaluate_variant_styles<F: FileResolver>(
         return;
     }
 
-    // let is_inst_root = context.is_instance_root();
-
-    if assoc_variants.len() > 0 {
+    if assoc_variants.len() > 0 && !is_within_override {
         let variant_combo = assoc_variants
             .iter()
             .map(|v| format!(".{}", get_variant_namespace(v)))
@@ -694,8 +695,9 @@ fn collect_style_variant_selectors<F: FileResolver>(
             let variant = context.get_scoped_variant(variant_ref.path.get(0).unwrap());
 
             if let Some((variant, ctx)) = variant {
+                
                 let variant_triggers =
-                    collect_triggers(&variant.triggers, &mut ctx.with_variant(variant));
+                    collect_triggers(&variant.triggers, &mut ctx.clone());
 
                 if combo_triggers.len() == 0 {
                     combo_triggers = variant_triggers;
@@ -799,9 +801,16 @@ fn collect_triggers<F: FileResolver>(
                         if let graph_ref::Expr::Trigger(trigger) = &info.expr {
                             collect_triggers(&trigger.body, context)
                         } else if let graph_ref::Expr::Variant(variant) = &info.expr {
+
                             // avoid recursion
                             if Some(variant) != context.current_variant.as_ref() {
-                                collect_triggers(&variant.triggers, context)
+
+                                let mut sel = vec![vec![VariantTrigger::Selector(
+                                    format!(".{}", get_variant_namespace(variant))
+                                )]];
+                                sel.extend(collect_triggers(&variant.triggers, context));
+
+                                sel
                             } else {
                                 vec![]
                             }

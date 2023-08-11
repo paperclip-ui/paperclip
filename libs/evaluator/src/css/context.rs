@@ -30,6 +30,23 @@ impl<'expr> CurrentNode<'expr> {
     }
 }
 
+
+impl<'expr> TryFrom<&'expr ast::Node> for CurrentNode<'expr> {
+    type Error = ();
+    fn try_from(value: &'expr ast::Node) -> Result<Self, Self::Error> {
+        match value.get_inner() {
+            ast::node::Inner::Element(element) => {
+                Ok(CurrentNode::Element(element))
+            }
+            ast::node::Inner::Text(text) => {
+                Ok(CurrentNode::TextNode(text))
+            }
+            _ => Err(()),
+        }
+    }
+  }
+
+
 #[derive(PartialEq, Debug)]
 pub struct PrioritizedRule {
     pub priority: u8,
@@ -108,7 +125,6 @@ impl<'expr, 'resolve_asset, FR: FileResolver> DocumentContext<'expr, 'resolve_as
     }
 
     pub fn within_instance(&self, instance: CurrentNode<'expr>) -> Self {
-        println!("WITHIN INST {:?}", instance);
         let mut clone = self.clone();
         clone.target_node = Some(instance.clone());
         clone.current_instance = Some(instance.clone());
@@ -116,7 +132,6 @@ impl<'expr, 'resolve_asset, FR: FileResolver> DocumentContext<'expr, 'resolve_as
     }
 
     pub fn within_component(&self, component: &'expr ast::Component) -> Self {
-        println!("WITHIN CCOMP {:?}", component.name);
         let mut clone: DocumentContext<FR> = self.clone();
         clone.current_component = Some(component);
         clone
@@ -129,6 +144,8 @@ impl<'expr, 'resolve_asset, FR: FileResolver> DocumentContext<'expr, 'resolve_as
         return false;
     }
 
+
+
     fn is_render_node(&self, node: &CurrentNode) -> bool {
         if let Some(component) = self.current_component {
             if let Some(render) = component.get_render_expr() {
@@ -137,25 +154,6 @@ impl<'expr, 'resolve_asset, FR: FileResolver> DocumentContext<'expr, 'resolve_as
             }
         }
         return false;
-    }
-
-    pub fn is_instance_root(&self) -> bool {
-
-        let mut curr = Some(Box::new(self.clone()));
-
-        while let Some(inner) = curr {
-
-            let inst = inner.current_instance.or(inner.target_node);
-
-            if let Some(instance) = &inst {
-                if !self.is_render_node(instance) {
-                    return false;
-                }
-            }
-
-            curr = inner.shadow_of;
-        }
-        return true;
     }
 
     pub fn with_ref_context(&self, context: &DocumentContext<'expr, 'resolve_asset, FR>) -> Self {

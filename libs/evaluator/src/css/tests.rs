@@ -767,7 +767,7 @@ add_case! {
             "@supports mobile"
          }
 
-         render A {
+         render A inst {
            override root {
              style variant test {
                color: purple
@@ -783,12 +783,12 @@ add_case! {
       color: blue; 
     } 
     
-    ._B-80f4925f-15._A-root-80f4925f-4._variant-80f4925f-9 { 
+    ._B-inst-80f4925f-15._A-root-80f4925f-4._variant-80f4925f-9 { 
       color: purple; 
     } 
     
     @supports mobile { 
-      ._B-80f4925f-15._A-root-80f4925f-4 { 
+      ._B-inst-80f4925f-15._A-root-80f4925f-4 { 
         color: purple; 
       } 
     }
@@ -1035,19 +1035,16 @@ add_case! {
       "#)
   ],
   r#"
-
   ._D-80f4925f-13._variant-80f4925f-3 { color: blue; } 
-  @media screen and (max-width: 10px) { 
-    ._D-80f4925f-13 { color: blue; } 
-  } 
+  @media screen and (max-width: 10px) { ._D-80f4925f-13 { color: blue; } } 
+
   ._D-80f4925f-13._variant-80f4925f-3 ._D-something-80f4925f-12 { font-size: 32px; } 
-  @media screen and (max-width: 10px) { 
-    ._D-80f4925f-13 ._D-something-80f4925f-12 { font-size: 32px; } 
-  } 
-  ._B-blarg-80f4925f-27 ._A-c-80f4925f-19._C-d-80f4925f-16._D-80f4925f-13._variant-80f4925f-25 { color: blue; } 
+  @media screen and (max-width: 10px) { ._D-80f4925f-13 ._D-something-80f4925f-12 { font-size: 32px; } } 
+
+  ._B-blarg-80f4925f-27._variant-80f4925f-25 ._A-c-80f4925f-19._C-d-80f4925f-16._D-80f4925f-13 { color: blue; } 
   ._B-blarg-80f4925f-27 ._A-c-80f4925f-19._C-d-80f4925f-16._D-80f4925f-13 { color: blue; } 
-  ._B-blarg-80f4925f-27 ._A-c-80f4925f-19._C-d-80f4925f-16._D-80f4925f-13._variant-80f4925f-25 ._D-something-80f4925f-12 { font-size: 32px; } 
-  ._B-blarg-80f4925f-27 ._A-c-80f4925f-19._C-d-80f4925f-16._D-80f4925f-13 ._D-something-80f4925f-12 { font-size: 32px; }
+  ._B-blarg-80f4925f-27._variant-80f4925f-25 ._A-c-80f4925f-19._C-d-80f4925f-16 ._D-something-80f4925f-12 { font-size: 32px; } 
+  ._B-blarg-80f4925f-27 ._A-c-80f4925f-19._C-d-80f4925f-16 ._D-something-80f4925f-12 { font-size: 32px; }
   "#
 }
 
@@ -1199,8 +1196,8 @@ add_case! {
   ._B-b_root-80f4925f-27.something ._B-text-80f4925f-26 { color: blue; } 
   ._B-b_root-80f4925f-27._variant-80f4925f-10 ._B-80f4925f-21._A-a_root-80f4925f-5 { display: block; } 
   ._B-b_root-80f4925f-27.something ._B-80f4925f-21._A-a_root-80f4925f-5 { display: block; } 
-  ._B-b_root-80f4925f-27._variant-80f4925f-10 ._B-80f4925f-21._A-a_root-80f4925f-5 ._A-a_text-80f4925f-4 { display: block; } 
-  ._B-b_root-80f4925f-27.something ._B-80f4925f-21._A-a_root-80f4925f-5 ._A-a_text-80f4925f-4 { display: block; }
+  ._B-b_root-80f4925f-27._variant-80f4925f-10 ._B-80f4925f-21 ._A-a_text-80f4925f-4 { display: block; } 
+  ._B-b_root-80f4925f-27.something ._B-80f4925f-21 ._A-a_text-80f4925f-4 { display: block; }
   "#
 }
 
@@ -1236,9 +1233,11 @@ add_case! {
     "#)
   ],
   r#"
-  ._A-a_root-80f4925f-5 { display: none; } 
-  ._B-b_root-80f4925f-17._variant-80f4925f-10 ._B-80f4925f-16._A-a_root-80f4925f-5 { display: block; } 
-   @media (min-width: 100px) { ._B-80f4925f-16._A-a_root-80f4925f-5 { display: block; } }
+   ._A-a_root-80f4925f-5 { display: none; } 
+   ._B-b_root-80f4925f-17._variant-80f4925f-10 ._B-80f4925f-16._A-a_root-80f4925f-5 { display: block; } 
+   @media (min-width: 100px) { 
+    ._B-b_root-80f4925f-17 ._B-80f4925f-16._A-a_root-80f4925f-5 { display: block; } 
+   }
   "#
 }
 
@@ -1396,10 +1395,6 @@ add_case! {
   r#"
   ._A-root-80f4925f-9._variant-80f4925f-4 { color: blue; } 
   ._B-80f4925f-23._variant-80f4925f-15 ._B-element-80f4925f-17._A-root-80f4925f-9 { color: blue; } 
-  ._B-80f4925f-23._variant-80f4925f-12 ._B-80f4925f-22 { color: red; }
-
-  ._A-root-80f4925f-9._variant-80f4925f-4 { color: blue; } 
-  ._B-element-80f4925f-17._A-root-80f4925f-9._variant-80f4925f-15 { color: blue; } 
   ._B-80f4925f-23._variant-80f4925f-12 ._B-80f4925f-22 { color: red; }
   "#
 }

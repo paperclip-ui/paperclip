@@ -1,6 +1,7 @@
 #### NOW
 
-- ensure that instance variants can be toggled _within_ component variants
+- Table component
+
 - element attributes
 
 - ability to define atoms

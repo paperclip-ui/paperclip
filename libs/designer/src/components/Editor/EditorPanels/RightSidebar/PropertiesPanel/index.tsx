@@ -24,6 +24,7 @@ import {
   SelectOption,
 } from "@paperclip-ui/designer/src/components/SelectInput";
 import { TAG_NAMES } from "./constants";
+import { AttributesSection } from "./AttributesSection";
 
 export const PropertiesPanel = () => {
   const expr = useSelector(getSelectedExpressionInfo);
@@ -49,12 +50,17 @@ export const PropertiesPanel = () => {
             ) : null}
             {expr.kind === ast.ExprKind.Component && <VariantsSection />}
             {expr.kind === ast.ExprKind.Element && (
-              <ElementTagField expr={expr} />
+              <>
+                <ElementTagField expr={expr} />
+              </>
             )}
           </inputStyles.Fields>
         </sidebarStyles.SidebarPanelContent>
       </sidebarStyles.SidebarSection>
       {bounds && <FrameSection bounds={bounds} />}
+      {expr.kind === ast.ExprKind.Element && (
+        <AttributesSection expr={expr.expr} />
+      )}
     </sidebarStyles.SidebarPanel>
   );
 };

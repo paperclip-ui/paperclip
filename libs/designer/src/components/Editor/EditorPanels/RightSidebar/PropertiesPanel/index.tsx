@@ -44,7 +44,6 @@ export const PropertiesPanel = () => {
             {expr.kind === ast.ExprKind.Element ||
             expr.kind === ast.ExprKind.TextNode ||
             expr.kind === ast.ExprKind.Atom ||
-            expr.kind === ast.ExprKind.Style ||
             expr.kind === ast.ExprKind.Slot ||
             expr.kind === ast.ExprKind.Component ? (
               <IDField expr={expr} />

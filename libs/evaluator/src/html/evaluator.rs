@@ -364,7 +364,7 @@ fn get_virt_id(expr_id: &str, instance_path: &Vec<String>, _is_instance: bool) -
 
 fn get_source_id(expr_id: &str, instance_path: &Vec<String>, is_instance: bool) -> String {
     if is_instance {
-        instance_path.last().unwrap().clone()
+        instance_path.first().unwrap().clone()
     } else {
         expr_id.to_string()
     }

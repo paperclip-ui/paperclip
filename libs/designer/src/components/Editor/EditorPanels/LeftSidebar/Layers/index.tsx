@@ -42,7 +42,7 @@ export const Layers = () => {
   return (
     <sidebarStyles.SidebarSection>
       <sidebarStyles.SidebarPanelHeader>
-        Layers
+        Entities
         <AddLayerButton />
       </sidebarStyles.SidebarPanelHeader>
       <styles.Layers>

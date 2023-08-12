@@ -48,26 +48,28 @@ export const InstanceVariantsInner = ({ expr }: InstanceVariantsInnerProps) => {
         Instance
       </sidebarStyles.SidebarPanelHeader>
       <sidebarStyles.SidebarPanelContent>
-        {variants.map((variant) => {
-          const on = ast.isInstanceVariantEnabled(
-            expr.id,
-            variant.variant.id,
-            selectedVariantIds,
-            graph
-          );
+        <input.Fields>
+          {variants.map((variant) => {
+            const on = ast.isInstanceVariantEnabled(
+              expr.id,
+              variant.variant.id,
+              selectedVariantIds,
+              graph
+            );
 
-          return (
-            <input.Field
-              name={variant.variant.name}
-              input={
-                <input.RadioInput
-                  class={classNames({ on })}
-                  onClick={() => onVariantToggle(variant.variant.id)}
-                />
-              }
-            />
-          );
-        })}
+            return (
+              <input.Field
+                name={variant.variant.name}
+                input={
+                  <input.RadioInput
+                    class={classNames({ on })}
+                    onClick={() => onVariantToggle(variant.variant.id)}
+                  />
+                }
+              />
+            );
+          })}
+        </input.Fields>
       </sidebarStyles.SidebarPanelContent>
     </sidebarStyles.SidebarSection>
   );

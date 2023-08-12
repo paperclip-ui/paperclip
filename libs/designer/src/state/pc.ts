@@ -367,11 +367,21 @@ export const getSelectedExprStyles = (
 
   const virtId = state.selectedTargetId;
 
+  const ret = { propertyNames: [], map: {} };
+
   if (!virtId) {
-    return { propertyNames: [], map: {} };
+    return ret;
   }
 
-  return ast.computeElementStyle(virtId, state.graph);
+  const exprInfo = ast.getExprInfoById(virtId, state.graph);
+
+  if (exprInfo.kind === ast.ExprKind.Element) {
+    return ast.computeElementStyle(virtId, state.graph);
+  } else if (exprInfo.kind === ast.ExprKind.Style) {
+    return ast.computeStyle(exprInfo.expr, state.graph, exprInfo.expr.id, []);
+  }
+
+  return ret;
 };
 
 export const getSelectedExpression = (state: DesignerState) => {

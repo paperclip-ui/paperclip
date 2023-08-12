@@ -4,7 +4,8 @@ import "./theme.pc" as mod2
 
 token test2 red
 style baab {
-    color: red
+    color: blue
+    font-family: var(mod2.defaultFontFamily)
 }
 
 /**

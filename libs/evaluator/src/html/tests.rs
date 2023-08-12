@@ -632,3 +632,4 @@ fn children_slot_is_rendered_in_instance() {
         })
     );
 }
+

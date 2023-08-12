@@ -724,8 +724,6 @@ export const selectNode = (
 
     newDesigner.expandedLayerVirtIds.push(virtNodeId, ...ancestorIds);
 
-    const expr = ast.getExprById(virtNodeId.split(".").pop(), designer.graph);
-
     newDesigner.selectedTargetId = virtNodeId;
   });
 

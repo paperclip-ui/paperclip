@@ -2,6 +2,11 @@ import "./input.pc" as imp
 import "./editor.pc" as mod1
 import "./theme.pc" as mod2
 
+token test2 red
+style baab {
+    color: red
+}
+
 /**
  * @bounds(x: 631, y: 1, width: 168, height: 75)
 */
@@ -149,24 +154,51 @@ div {
  * @bounds(x: 434, y: 640, width: 349, height: 181)
 */
 
-public component test {
+public component Test {
     variant blarg
     variant test
-    render div test {
-        style variant test222 {
-            background: black
-        }
+    render div testRoot {
         style {
             position: relative
             background: white
+            font-family: var(mod2.defaultFontFamily)
+            padding: var(mod2.space05)
         }
-        imp.RadioInput {
-            override {
-                variant on trigger {
-                    blarg + test
+        slot children {
+            text "Something" {
+                style {
+                    color: blue
                 }
             }
         }
     }
 }
+
+/**
+ * @bounds(x: 813, y: 636, width: 299, height: 193)
+*/
+
+public component Test2 {
+    render Test test {
+        slot children {
+            text "try inserting child into me" {
+                style {
+                    color: orange
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: 1500, y: 636, width: 299, height: 193)
+*/
+
+Test2 test2Instance
+
+/**
+ * @bounds(x: 437, y: 880, width: 281, height: 198)
+*/
+
+Test testInstance
 

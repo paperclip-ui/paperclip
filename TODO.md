@@ -71,6 +71,7 @@
 
   - props pane
     - \*ability to set attributes
+      - ablity to change instance
 
 - Canvas
   - ability to insert into slot

@@ -760,6 +760,9 @@ export namespace ast {
     if (expr.atom) {
       return flattenAtom(expr.atom);
     }
+    if (expr.style) {
+      return flattenStyle(expr.style);
+    }
     return {};
   };
 

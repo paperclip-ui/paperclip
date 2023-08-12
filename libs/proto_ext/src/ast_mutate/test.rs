@@ -2857,3 +2857,59 @@ case! {
     "#
   )]
 }
+
+
+
+
+case! {
+  defines_render_expr_if_dropped_in_component,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        
+      }
+      div
+      "#
+    )
+  ],
+  mutation::Inner::MoveNode(MoveNode {
+    position: 2,
+    target_id: "80f4925f-1".to_string(),
+    node_id: "80f4925f-2".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div
+    }
+    "#
+  )]
+}
+
+
+case! {
+  defines_render_expr_if_text_node_dropped_in_component,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        
+      }
+      text "a"
+      "#
+    )
+  ],
+  mutation::Inner::MoveNode(MoveNode {
+    position: 2,
+    target_id: "80f4925f-1".to_string(),
+    node_id: "80f4925f-2".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render text "a"
+    }
+    "#
+  )]
+}

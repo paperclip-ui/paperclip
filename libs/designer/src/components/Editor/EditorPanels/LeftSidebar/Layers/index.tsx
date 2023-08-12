@@ -157,19 +157,27 @@ const ElementLeaf = memo(
 );
 
 const InstanceLeaf = ({
-  expr: element,
+  expr: instance,
   depth,
   instanceOf,
 }: LeafProps<Element>) => {
   const graph = useSelector(getGraph);
-  const component = ast.getInstanceComponent(element, graph);
+  const component = ast.getInstanceComponent(instance, graph);
   const render = ast.getComponentRenderExpr(component);
   const [shadowVisible, setShadowVisible] = useState(false);
   const onShadowIconClick = () => setShadowVisible(!shadowVisible);
   const expandedVirtIds = useSelector(getExpandedVirtIds);
   const shouldExpandShadow = expandedVirtIds.some((virtId) =>
-    virtId.includes(element.id)
+    virtId.includes(instance.id)
   );
+
+  // // Instances can only have ONE child since render functions
+  // // can only return a single node
+  // let child = instance.body[0];
+
+  // while (child.element && ast.getInstanceComponent(child.element, graph)) {
+  //   instanceOf = [...(instanceOf || []), instance.id];
+  // }
 
   useEffect(() => {
     if (shouldExpandShadow) {
@@ -179,14 +187,14 @@ const InstanceLeaf = ({
 
   return (
     <Leaf
-      id={element.id}
+      id={instance.id}
       className={cx("instance", {
-        container: shadowVisible || element.body.length > 0,
+        container: shadowVisible || instance.body.length > 0,
       })}
       text={
         <>
-          {element.name || "Instance"}
-          <styles.TagType>{element.tagName}</styles.TagType>
+          {instance.name || "Instance"}
+          <styles.TagType>{instance.tagName}</styles.TagType>
         </>
       }
       depth={depth}
@@ -209,10 +217,10 @@ const InstanceLeaf = ({
               <NodeLeaf
                 expr={render.node}
                 depth={depth + 1}
-                instanceOf={[...(instanceOf || []), element.id]}
+                instanceOf={[...(instanceOf || []), instance.id]}
               />
             )}
-            {element.body.map((child) => (
+            {instance.body.map((child) => (
               <NodeLeaf
                 key={ast.getNodeInner(child).id}
                 expr={child}

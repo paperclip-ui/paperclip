@@ -1,5 +1,7 @@
 #### NOW
 
+- render instances properly
+
 - ability to define atoms
 - ability to define mixins
 - display extended styles in style panel

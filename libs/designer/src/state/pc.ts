@@ -375,6 +375,10 @@ export const getSelectedExprStyles = (
 
   const exprInfo = ast.getExprInfoById(virtId, state.graph);
 
+  if (exprInfo == null) {
+    return ret;
+  }
+
   if (exprInfo.kind === ast.ExprKind.Element) {
     return ast.computeElementStyle(virtId, state.graph);
   } else if (exprInfo.kind === ast.ExprKind.Style) {

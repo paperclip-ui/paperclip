@@ -2,6 +2,7 @@ import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import {
   clampCanvasTransform,
   DesignerState,
+  findVirtNode,
   getNodeInfoAtCurrentPoint,
   handleDoubleClick,
   handleDragEvent,
@@ -82,10 +83,7 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
 
       if (doubleClicked) {
         if (state.selectedTargetId) {
-          const node = virtHTML.getNodeById(
-            state.selectedTargetId,
-            state.currentDocument.paperclip.html
-          );
+          const node = findVirtNode(state.selectedTargetId, state);
 
           if (node && virtHTML.isTextNode(node)) {
             state = produce(state, (newDesigner) => {
@@ -175,6 +173,7 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
           }))
         );
       });
+      // state = expandInstanceRects(state);
       state = pruneDanglingRects(state);
       state = maybeCenterCanvas(state);
       return state;

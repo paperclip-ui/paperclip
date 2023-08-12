@@ -19,6 +19,7 @@ import {
   DEFAULT_FRAME_BOX,
   DesignerState,
   DNDKind,
+  findVirtNode,
   getCurrentFilePath,
   getInsertBox,
   getNodeInfoAtCurrentPoint,
@@ -212,10 +213,7 @@ const createEventHandler = (actions: Actions) => {
 
       if (exprInfo?.kind === ast.ExprKind.Slot) {
         const [instanceId] = intersectingNode.nodeId.split(".");
-        const instance = virtHTML.getNodeById(
-          instanceId,
-          state.currentDocument.paperclip.html
-        );
+        const instance = findVirtNode(instanceId, state);
         actions.applyChanges([
           {
             appendInsert: {
@@ -226,10 +224,7 @@ const createEventHandler = (actions: Actions) => {
           },
         ]);
       } else {
-        const parent = virtHTML.getNodeById(
-          intersectingNode.nodeId,
-          state.currentDocument.paperclip.html
-        );
+        const parent = findVirtNode(intersectingNode.nodeId, state);
 
         const parentBox = state.rects[intersectingNode.nodeId];
 
@@ -264,10 +259,9 @@ const createEventHandler = (actions: Actions) => {
     state: DesignerState,
     prevState: DesignerState
   ) => {
-    const node = virtHTML.getNodeById(
-      prevState.selectedTargetId,
-      prevState.currentDocument.paperclip.html
-    ) as VirtTextNode | VirtElement;
+    const node = findVirtNode(prevState.selectedTargetId, prevState) as
+      | VirtTextNode
+      | VirtElement;
 
     // could be expression
     handleDeleteExpression(node?.sourceId || prevState.selectedTargetId, state);
@@ -278,10 +272,9 @@ const createEventHandler = (actions: Actions) => {
     bounds: Box,
     prevState: DesignerState
   ) => {
-    const node = virtHTML.getNodeById(
-      prevState.selectedTargetId,
-      prevState.currentDocument.paperclip.html
-    ) as VirtTextNode | VirtElement;
+    const node = findVirtNode(prevState.selectedTargetId, prevState) as
+      | VirtTextNode
+      | VirtElement;
 
     const mutation: Mutation = {
       setFrameBounds: {
@@ -297,10 +290,9 @@ const createEventHandler = (actions: Actions) => {
     state: DesignerState,
     prevState: DesignerState
   ) => {
-    const node = virtHTML.getNodeById(
-      prevState.selectedTargetId,
-      prevState.currentDocument.paperclip.html
-    ) as VirtTextNode | VirtElement;
+    const node = findVirtNode(prevState.selectedTargetId, prevState) as
+      | VirtTextNode
+      | VirtElement;
 
     const variantIds = state.selectedVariantIds;
 

@@ -37,6 +37,7 @@ import {
   ResizerPathMoved,
   ResizerPathStoppedMoving,
 } from "../events";
+import { WritableDraft } from "immer/dist/internal";
 export const IS_WINDOWS = false;
 
 export const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
@@ -257,12 +258,55 @@ export const getSelectedNodePath = (designer: DesignerState) => {
   if (!nodeId || !designer.currentDocument) {
     return null;
   }
-  const node = virtHTML.getNodeById(
-    getSelectedId(designer),
-    designer.currentDocument.paperclip.html
-  );
+  const node = findVirtNode(getSelectedId(designer), designer);
   return virtHTML.getNodePath(node, designer.currentDocument.paperclip.html);
 };
+
+const findVirtId = (
+  id: string,
+  state: DesignerState | WritableDraft<DesignerState>
+) => {
+  if (
+    virtHTML.getNodeById(
+      state.selectedTargetId,
+      state.currentDocument.paperclip.html
+    )
+  ) {
+    return id;
+  }
+
+  let idParts = id.split(".");
+
+  // assume it's an instance
+  let curr = ast.getExprInfoById(idParts[idParts.length - 1], state.graph);
+
+  while (curr.kind === ast.ExprKind.Element) {
+    const component = ast.getInstanceComponent(curr.expr, state.graph);
+    if (!component) {
+      break;
+    }
+    const renderNode = ast.getComponentRenderNode(component);
+    idParts.push(renderNode.expr.id);
+    curr = renderNode;
+  }
+
+  return idParts.join(".");
+};
+
+/**
+ * Safer utility fn that expands
+ */
+
+export const findVirtNode = (
+  id: string,
+  state: DesignerState | WritableDraft<DesignerState>
+) => {
+  return virtHTML.getNodeById(
+    findVirtId(id, state),
+    state.currentDocument.paperclip.html
+  );
+};
+
 export const getSelectedId = (designer: DesignerState) => {
   return designer.selectedTargetId;
 };
@@ -471,7 +515,6 @@ const findVirtBoxNodeInfo = (
 
   const box = boxes[virtId];
 
-  // const box = boxes[current.id];
   for (const child of ast.getChildren(current)) {
     const childInfo = findVirtBoxNodeInfo(
       point,
@@ -676,10 +719,9 @@ export const resetCurrentDocument = (state: DesignerState): DesignerState => ({
 export const getExprBounds = (exprId: string, state: DesignerState): Bounds => {
   const node =
     state.currentDocument &&
-    (virtHTML.getNodeById(
-      state.selectedTargetId,
-      state.currentDocument.paperclip.html
-    ) as any as VirtElement | VirtText);
+    (findVirtNode(state.selectedTargetId, state) as any as
+      | VirtElement
+      | VirtText);
 
   return node?.metadata?.bounds;
 };
@@ -694,6 +736,19 @@ export const getSelectedNodeBox = (state: DesignerState): Box =>
 export const getNodeBox = (virtId: string, state: DesignerState): Box => {
   return getVirtWithExprRects(state)[virtId];
 };
+
+// export const expandInstanceRects = (state: DesignerState) => {
+//   return produce(state, newState => {
+//     for (const nodeId in newState.rects) {
+//       if (nodeId.includes(".")) {
+//         const nodePath = nodeId.split(".");
+//         for (let i = 0, {length} = nodePath; i < length - 1; i++) {
+//           newState.rects[nodePath.slice(0, i + 1).join(".")] = newState.rects[nodeId];
+//         }
+//       }
+//     }
+//   });
+// }
 
 export const pruneDanglingRects = (state: DesignerState) => {
   return produce(state, (newState) => {
@@ -765,10 +820,9 @@ export const handleDragEvent = (
   event: ResizerPathStoppedMoving | ResizerPathMoved
 ) => {
   return produce(state, (newState) => {
-    const node = virtHTML.getNodeById(
-      newState.selectedTargetId,
-      newState.currentDocument.paperclip.html
-    ) as any as VirtElement | VirtText;
+    const node = findVirtNode(newState.selectedTargetId, newState) as any as
+      | VirtElement
+      | VirtText;
 
     const path = virtHTML.getNodePath(
       node,
@@ -823,10 +877,9 @@ export const setSelectedNodeBounds = (
   state: DesignerState
 ) => {
   return produce(state, (newState) => {
-    const node = virtHTML.getNodeById(
-      newState.selectedTargetId,
-      newState.currentDocument.paperclip.html
-    ) as any as VirtElement | VirtText;
+    const node = findVirtNode(newState.selectedTargetId, state) as any as
+      | VirtElement
+      | VirtText;
 
     const path = virtHTML.getNodePath(
       node,

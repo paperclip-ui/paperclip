@@ -1,7 +1,7 @@
 import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 import produce from "immer";
 import { DesignerEvent } from "../../events";
-import { DesignerState, InsertMode } from "../../state";
+import { DesignerState, InsertMode, findVirtNode } from "../../state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import {
   getGlobalShortcuts,
@@ -64,10 +64,7 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
       return produce(state, (newState) => {
         newState.highlightedNodeId = null;
         if (newState.selectedTargetId) {
-          const node = virtHTML.getNodeById(
-            newState.selectedTargetId,
-            state.currentDocument.paperclip.html
-          );
+          const node = findVirtNode(newState.selectedTargetId, state);
           const parent =
             node &&
             virtHTML.getNodeParent(node, state.currentDocument.paperclip.html);

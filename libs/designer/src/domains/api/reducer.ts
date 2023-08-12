@@ -1,6 +1,7 @@
 import produce from "immer";
 import {
   DesignerState,
+  findVirtNode,
   getGraphComponents,
   maybeCenterCanvas,
 } from "../../state";
@@ -29,7 +30,7 @@ export const apiReducer = (
       state = produce(state, (newState) => {
         newState.currentDocument = event.payload;
         for (const id of newState.insertedNodeIds) {
-          if (virtHTML.getNodeById(id, event.payload.paperclip.html)) {
+          if (findVirtNode(id, state)) {
             newState.selectedTargetId = id;
           }
 

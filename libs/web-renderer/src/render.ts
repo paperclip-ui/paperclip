@@ -201,32 +201,37 @@ export const getFrameRects = (
     height: 768,
   };
 
+  const root = mount.childNodes[STAGE_INDEX].childNodes[0];
+
   // mount child node _is_ the frame -- can only ever be one child
-  traverseNativeNode(
-    mount.childNodes[STAGE_INDEX].childNodes[0],
-    (node, path) => {
-      if (node.nodeType !== 1) {
-        return;
-      }
-
-      const virtId = (node as HTMLElement).id?.substring(1);
-      const clientRect = (node as Element).getBoundingClientRect();
-
-      if (clientRect) {
-        rects[virtId] = {
-          width: clientRect.width,
-          height: clientRect.height,
-          x: bounds.x + clientRect.left,
-          y: bounds.y + clientRect.top,
-        };
-      }
+  traverseNativeNode(root, (node, path) => {
+    if (node.nodeType !== 1) {
+      return;
     }
-  );
+
+    const virtId = (node as HTMLElement).id?.substring(1);
+    const clientRect = (node as Element).getBoundingClientRect();
+
+    if (clientRect) {
+      rects[virtId] = {
+        width: clientRect.width,
+        height: clientRect.height,
+        x: bounds.x + clientRect.left,
+        y: bounds.y + clientRect.top,
+      };
+    }
+  });
 
   const id = (frame.element || frame.textNode).id;
 
-  // include frame sizes too
-  rects[id] = bounds;
+  const idParts = id.split(".");
+
+  for (let i = 0, { length } = idParts; i < length; i++) {
+    const instId = idParts.slice(0, i + 1).join(".");
+
+    // include frame sizes too
+    rects[instId] = bounds;
+  }
 
   return rects;
 };

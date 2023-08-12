@@ -587,7 +587,7 @@ export namespace ast {
         (body) => body.variant.name === variant.name
       )?.variant;
 
-      return variantOverride.triggers.some((combo) => {
+      return variantOverride?.triggers.some((combo) => {
         if (selectedVariants.length === 0) {
           return (
             combo.items.length === 1 && combo.items[0].bool?.value === true

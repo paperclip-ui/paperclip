@@ -173,6 +173,7 @@ export type LegacyEvent =
   | ToolsLayerDragOver
   | ToolsLayerDrop
   | CanvasMouseUp
+  | InstanceVariantToggled
   | ResizerPathMoved
   | ResizerPathStoppedMoving
   | EditVariantClicked
@@ -191,7 +192,6 @@ export type LegacyEvent =
 export type DesignerEvent =
   | DesignerEngineEvent
   | HistoryEngineEvent
-  | InstanceVariantToggled
   | BoundsChanged
   | ClipboardEvent
   | ShortcutEvent

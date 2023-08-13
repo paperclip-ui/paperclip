@@ -48,7 +48,7 @@ export const MultiSelectInput = ({
 };
 
 export type MultiSelectOptionProps = {
-  label: string;
+  label: any;
   value: string;
   children?: any;
 };

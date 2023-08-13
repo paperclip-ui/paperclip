@@ -6,6 +6,7 @@ import { InstanceVariants } from "./InstanceVariants";
 import { getSelectedExpressionInfo } from "@paperclip-ui/designer/src/state";
 import { useSelector } from "@paperclip-ui/common";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { Mixins } from "./Mixins";
 
 export const StylePanel = () => {
   const expr = useSelector(getSelectedExpressionInfo);
@@ -22,6 +23,7 @@ export const StylePanel = () => {
     <sidebarStyles.SidebarPanel>
       <Variants />
       <InstanceVariants />
+      <Mixins />
       <Declarations />
     </sidebarStyles.SidebarPanel>
   );

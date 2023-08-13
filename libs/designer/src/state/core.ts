@@ -639,6 +639,9 @@ export const getInsertMode = (state: DesignerState) => state.insertMode;
 export const getAllPublicAtoms = (state: DesignerState) => {
   return ast.getGraphAtoms(state.graph);
 };
+export const getAllPublicStyleMixins = (state: DesignerState) => {
+  return ast.getGraphStyleMixins(state.graph);
+};
 
 export const isResourceModalVisible = (state: DesignerState) =>
   state.insertMode === InsertMode.Resource && !state.resourceModalDragLeft;

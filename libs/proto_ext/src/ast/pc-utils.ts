@@ -501,6 +501,29 @@ export namespace ast {
     return atoms;
   });
 
+  export type GraphStyleMixinInfo = {
+    dependency: Dependency;
+    style: Style;
+  };
+
+  export const getGraphStyleMixins = memoize(
+    (graph: Graph): GraphStyleMixinInfo[] => {
+      const styles: GraphStyleMixinInfo[] = [];
+      for (const path in graph.dependencies) {
+        const dependency = graph.dependencies[path];
+        for (const expr of dependency.document.body) {
+          if (expr.style) {
+            styles.push({
+              dependency,
+              style: expr.style,
+            });
+          }
+        }
+      }
+      return styles;
+    }
+  );
+
   const getAtomValue = (atom: Atom, graph: Graph) => {
     const dep = getOwnerDependency(atom.id, graph);
     if (atom.value.functionCall) {

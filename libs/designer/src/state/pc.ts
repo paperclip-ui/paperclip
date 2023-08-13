@@ -421,6 +421,8 @@ export const getSelectedExprOwnerComponent = (state: DesignerState) => {
   return ast.getExprOwnerComponent(expr, state.graph);
 };
 
+export const getAllStyleMixins = (state: DesignerState) => {};
+
 export const getSelectedVariantIds = (state: DesignerState) =>
   state.selectedVariantIds;
 

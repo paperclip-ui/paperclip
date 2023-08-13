@@ -317,7 +317,6 @@ const createEventHandler = (actions: Actions) => {
       ]);
     } else {
       const newBounds = node.metadata.bounds;
-      console.log("SET FRAME BOUNDS", node, prevState.selectedTargetId);
 
       const mutation: Mutation = {
         setFrameBounds: {

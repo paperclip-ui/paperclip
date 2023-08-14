@@ -182,30 +182,37 @@ impl<'a> MutableVisitor<()> for EditContext<'a, MoveNode> {
         VisitorResult::Continue
     }
 
-    fn visit_component(&mut self, expr: &mut paperclip_proto::ast::pc::Component) -> VisitorResult<()> {
+    fn visit_component(
+        &mut self,
+        expr: &mut paperclip_proto::ast::pc::Component,
+    ) -> VisitorResult<()> {
         if self.mutation.target_id != expr.id {
             return VisitorResult::Continue;
         }
 
-        let node = GetExpr::get_expr_from_graph(&self.mutation.node_id, &self.graph).expect("Node must exist");
+        let node = GetExpr::get_expr_from_graph(&self.mutation.node_id, &self.graph)
+            .expect("Node must exist")
+            .0;
 
         let node = match node {
-            ExpressionWrapper::Element(node) => {
-                Some(node::Inner::Element(node).get_outer())
-            },
-            ExpressionWrapper::TextNode(node) => {
-                Some(node::Inner::Text(node).get_outer())
-            },
-            _ => {
-                None
-            }
+            ExpressionWrapper::Element(node) => Some(node::Inner::Element(node).get_outer()),
+            ExpressionWrapper::TextNode(node) => Some(node::Inner::Text(node).get_outer()),
+            _ => None,
         };
 
-        expr.body.push(component_body_item::Inner::Render(Render {
-            id: self.get_dependency().document.as_ref().expect("Doc must exist").checksum(),
-            range: None,
-            node
-        }).get_outer());
+        expr.body.push(
+            component_body_item::Inner::Render(Render {
+                id: self
+                    .get_dependency()
+                    .document
+                    .as_ref()
+                    .expect("Doc must exist")
+                    .checksum(),
+                range: None,
+                node,
+            })
+            .get_outer(),
+        );
 
         VisitorResult::Return(())
     }

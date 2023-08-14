@@ -1,5 +1,10 @@
 #### NOW
 
+- warm up
+
+  - refactor legacy events
+    - replace editor/ with designer/
+
 - render instances properly
 
 - ability to define atoms

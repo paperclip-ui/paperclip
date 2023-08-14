@@ -7,8 +7,8 @@ use paperclip_proto::ast::pc::{Element, TextNode};
 use paperclip_proto::ast_mutate::{
     mutation, paste_expression, update_variant_trigger, AppendChild, AppendInsert, Bounds,
     ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveNode, PasteExpression,
-    SetFrameBounds, SetId, SetStyleDeclarationValue, SetStyleDeclarations, SetTagName,
-    SetTextNodeValue, ToggleInstanceVariant, UpdateVariant, WrapInElement,
+    SetFrameBounds, SetId, SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins,
+    SetTagName, SetTextNodeValue, ToggleInstanceVariant, UpdateVariant, WrapInElement,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use std::collections::HashMap;
@@ -19,6 +19,10 @@ macro_rules! case {
         pub fn $name() {
             let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
             let mut graph = graph::Graph::new();
+
+            for (path, _) in $mock_files {
+              block_on(graph.load(&path, &mock_fs)).expect("Unable to load");
+            }
 
             if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
                 panic!("Unable to load");
@@ -2799,8 +2803,6 @@ case! {
   )]
 }
 
-
-
 case! {
   removes_dupe_triggers,
   [
@@ -2858,9 +2860,6 @@ case! {
   )]
 }
 
-
-
-
 case! {
   defines_render_expr_if_dropped_in_component,
   [
@@ -2887,7 +2886,6 @@ case! {
   )]
 }
 
-
 case! {
   defines_render_expr_if_text_node_dropped_in_component,
   [
@@ -2910,6 +2908,202 @@ case! {
     component A {
       render text "a"
     }
+    "#
+  )]
+}
+
+case! {
+  can_add_a_style_mixin,
+  [
+    (
+      "/entry.pc", r#"
+      style a {
+        
+      }
+
+      style b {
+
+      }
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleMixins(SetStyleMixins {
+    target_expr_id: "80f4925f-2".to_string(),
+    mixin_ids: vec!["80f4925f-1".to_string()],
+    variant_ids: vec![]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    style a
+    style b extends a
+    "#
+  )]
+}
+
+case! {
+  setting_style_mixins_resets_styles,
+  [
+    (
+      "/entry.pc", r#"
+
+      style a {
+
+      }
+      style b {
+        
+      }
+
+      style c extends b {
+
+      }
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleMixins(SetStyleMixins {
+    target_expr_id: "80f4925f-4".to_string(),
+    mixin_ids: vec!["80f4925f-1".to_string()],
+    variant_ids: vec![]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    style a
+    style b
+    style c extends a
+    "#
+  )]
+}
+
+
+case! {
+  auto_imports_style_from_other_dep,
+  [
+    (
+      "/entry.pc", r#"
+      style a
+      "#
+    ),
+    (
+      "/theme.pc", r#"
+      public style test {
+        color: red
+      }
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleMixins(SetStyleMixins {
+    target_expr_id: "80f4925f-1".to_string(),
+    mixin_ids: vec!["63c0af9a-3".to_string()],
+    variant_ids: vec![]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    import "./theme.pc" as module
+    style a extends module.test
+    "#
+  )]
+}
+
+
+
+case! {
+  can_define_mixins_on_an_element_without_a_style,
+  [
+    (
+      "/entry.pc", r#"
+      style a {
+        color: blue
+      }
+      div
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleMixins(SetStyleMixins {
+    target_expr_id: "80f4925f-4".to_string(),
+    mixin_ids: vec!["80f4925f-3".to_string()],
+    variant_ids: vec![]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    style a {
+      color: blue
+    }
+    div {
+      style extends a
+    }
+    "#
+  )]
+}
+
+
+
+case! {
+  can_define_mixins_within_variant,
+  [
+    (
+      "/entry.pc", r#"
+      style a
+      component B {
+        variant bv 
+        render div {
+
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleMixins(SetStyleMixins {
+    target_expr_id: "80f4925f-3".to_string(),
+    mixin_ids: vec!["80f4925f-1".to_string()],
+    variant_ids: vec!["80f4925f-2".to_string()]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    style a
+      component B {
+        variant bv 
+        render div {
+          style variant bv extends a
+        }
+      }
+    "#
+  )]
+}
+
+
+
+case! {
+  can_define_mixins_for_existing_style_with_variant,
+  [
+    (
+      "/entry.pc", r#"
+      style a
+      component B {
+        variant bv 
+        render div {
+          style variant bv {
+            color: blue
+          }
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleMixins(SetStyleMixins {
+    target_expr_id: "80f4925f-7".to_string(),
+    mixin_ids: vec!["80f4925f-1".to_string()],
+    variant_ids: vec!["80f4925f-2".to_string()]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    style a
+      component B {
+        variant bv 
+        render div {
+          style variant bv extends a {
+            color: blue
+          }
+        }
+      }
     "#
   )]
 }

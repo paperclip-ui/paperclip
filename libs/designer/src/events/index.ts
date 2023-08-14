@@ -25,6 +25,7 @@ export type InstanceVariantToggled = BaseEvent<
   "designer/instanceVariantToggled",
   string
 >;
+export type StyleMixinsSet = BaseEvent<"designer/styleMixinsSet", string[]>;
 export type VariantEdited = BaseEvent<
   "designer/variantEdited",
   {
@@ -175,6 +176,7 @@ export type LegacyEvent =
   | CanvasMouseUp
   | InstanceVariantToggled
   | ResizerPathMoved
+  | StyleMixinsSet
   | ResizerPathStoppedMoving
   | EditVariantClicked
   | EditVariantPopupClosed

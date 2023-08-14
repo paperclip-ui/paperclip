@@ -11,6 +11,7 @@ mod paste_expression;
 mod set_frame_bounds;
 mod set_id;
 mod set_style_declarations;
+mod set_style_mixins;
 mod set_tag_name;
 mod set_text_node_value;
 mod toggle_instance_variant;
@@ -40,6 +41,7 @@ pub use paste_expression::*;
 pub use set_frame_bounds::*;
 pub use set_id::*;
 pub use set_style_declarations::*;
+pub use set_style_mixins::*;
 pub use set_tag_name::*;
 pub use set_text_node_value::*;
 pub use toggle_instance_variant::*;
@@ -115,7 +117,7 @@ mutations! {
   AppendInsert,
   SetTagName,
   SetTextNodeValue,
-  ConvertToComponent,
+  ConvertToComponent,SetStyleMixins,
   PasteExpression,
   ConvertToSlot,
   MoveNode,

@@ -20,6 +20,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, ToggleInstanceVariant> {
             GetExpr::get_expr_from_graph(&self.mutation.variant_id, &self.graph),
             VisitorResult::Return(())
         )
+        .0
         .try_into()
         .expect("Variant must be a variant");
 
@@ -51,6 +52,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, ToggleInstanceVariant> {
             .map(|id| {
                 GetExpr::get_expr_from_graph(id, &self.graph)
                     .expect("Variant doesn't exist")
+                    .0
                     .try_into()
                     .expect("Variant must be a variant")
             })
@@ -101,13 +103,13 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, ToggleInstanceVariant> {
                             .collect(),
                     });
             } else {
-
                 // cover: trigger { a a a a a a a a a a a a a a a }
-                while let Some((_, i)) = get_combo_variant_trigger(&combo_variant_names, variant_override.0) {
+                while let Some((_, i)) =
+                    get_combo_variant_trigger(&combo_variant_names, variant_override.0)
+                {
                     variant_override.0.triggers.remove(i);
                 }
             }
-
         } else {
             let enabled_expression = get_enabled_variant_trigger(&mut variant_override.0);
             if let Some((_expr, i)) = enabled_expression {

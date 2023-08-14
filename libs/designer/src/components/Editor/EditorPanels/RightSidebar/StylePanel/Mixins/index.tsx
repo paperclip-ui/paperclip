@@ -34,23 +34,12 @@ type InstanceVariantsInnerProps = {
 
 export const MixinsInner = ({ expr }: InstanceVariantsInnerProps) => {
   const graph = useSelector(getGraph);
-  const selectedVariantIds = useSelector(getSelectedVariantIds);
   const mixins = useSelector(getAllPublicStyleMixins);
-  const component = ast.getInstanceComponent(expr, graph);
-  const variants = component?.body.filter((body) => body.variant != null);
   const dispatch = useDispatch<DesignerEvent>();
 
-  const onVariantToggle = (variantId: string) => {
-    dispatch({ type: "designer/instanceVariantToggled", payload: variantId });
+  const onMixinsChange = (values: string[]) => {
+    dispatch({ type: "designer/styleMixinsSet", payload: values });
   };
-
-  const onMixinsChange = (values) => {
-    console.log(values);
-  };
-
-  if (!component || variants.length === 0) {
-    return null;
-  }
 
   const options = useMemo(() => {
     return mixins.map((mixin) => {

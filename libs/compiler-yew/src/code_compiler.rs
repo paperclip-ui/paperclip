@@ -86,7 +86,6 @@ macro_rules! compile_children {
 }
 
 fn compile_component(component: &ast::Component, context: &mut Context) -> Result<()> {
-
     let render_node = get_or_short!(component.get_render_expr(), Ok(()));
 
     compile_component_props(component, context)?;
@@ -105,10 +104,7 @@ fn compile_component(component: &ast::Component, context: &mut Context) -> Resul
         .as_str(),
     );
     context.start_block();
-    compile_render(
-        render_node,
-        &mut context.within_component(component),
-    );
+    compile_render(render_node, &mut context.within_component(component));
     context.end_block();
     context.add_buffer("}\n\n");
     Ok(())

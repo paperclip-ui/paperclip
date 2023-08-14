@@ -31,16 +31,20 @@ impl<'expr> Visitor<()> for GetExpr {
       (visit_element, ast::pc::Element),
       (visit_component, ast::pc::Component),
       (visit_text_node, ast::pc::TextNode),
-      (visit_variant, ast::pc::Variant)
+      (visit_variant, ast::pc::Variant),
+      (visit_style, ast::pc::Style)
     }
 }
 
 impl<'expr> GetExpr {
-    pub fn get_expr_from_graph(id: &str, graph: &Graph) -> Option<ExpressionWrapper> {
+    pub fn get_expr_from_graph<'graph>(
+        id: &str,
+        graph: &'graph Graph,
+    ) -> Option<(ExpressionWrapper, &'graph Dependency)> {
         for (_path, dep) in &graph.dependencies {
             if let Some(document) = &dep.document {
                 if let Some(reference) = GetExpr::get_expr(id, document) {
-                    return Some(reference.clone());
+                    return Some((reference.clone(), &dep));
                 }
             }
         }

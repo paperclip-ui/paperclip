@@ -1,5 +1,6 @@
 use convert_case::{Case, Casing};
 use paperclip_parser::pc::parser::parse;
+use paperclip_proto::ast;
 use paperclip_proto::ast::{
     all::Expression,
     graph_ext::Dependency,
@@ -90,6 +91,32 @@ pub fn resolve_import(from: &str, to: &str) -> String {
     }
 
     relative
+}
+
+
+pub fn resolve_import_ns(document_dep: &Dependency, path: &str) -> String {
+    for (ns, resolved_path) in &document_dep.imports {
+        if resolved_path == path {
+            return ns.clone();
+        }
+    }
+
+    return get_unique_namespace("module", document_dep.document.as_ref().expect("Document must exist"));
+}
+
+pub fn import_dep(document: &mut ast::pc::Document, document_dep: &Dependency, path: &str) -> String {
+    let ns = resolve_import_ns(document_dep, path);
+
+    document.body.insert(
+        0,
+        parse_import(
+            &resolve_import(&document_dep.path, path),
+            &ns,
+            document.checksum().as_str(),
+        ),
+    );
+
+    return ns;
 }
 
 pub struct NamespaceResolution {

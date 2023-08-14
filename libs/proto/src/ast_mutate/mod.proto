@@ -30,6 +30,7 @@ message Mutation {
     // Style
     SetStyleDeclarations set_style_declarations = 5;
     DeleteStyleDeclarations delete_style_declarations = 10;
+    SetStyleMixins set_style_mixins = 22;
 
     // General
     DeleteExpression delete_expression = 11;
@@ -201,6 +202,12 @@ message SetStyleDeclarations {
   string expression_id = 1;
   repeated string variant_ids = 2;
   repeated SetStyleDeclarationValue declarations = 3;
+}
+
+message SetStyleMixins {
+  string target_expr_id = 1;
+  repeated string mixin_ids = 2;
+  repeated string variant_ids = 3;
 }
 
 message DeleteStyleDeclarations {

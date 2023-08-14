@@ -165,3 +165,24 @@ impl TryFrom<DocumentBodyItem> for Style {
         }
     }
 }
+
+
+impl TryFrom<Node> for Style {
+    type Error = ();
+    fn try_from(value: Node) -> Result<Self, Self::Error> {
+        match value.get_inner() {
+            node::Inner::Style(style) => Ok(style.clone()),
+            _ => Err(()),
+        }
+    }
+}
+
+impl<'a> TryFrom<&'a mut Node> for &'a mut Style {
+    type Error = ();
+    fn try_from(value: &'a mut Node) -> Result<Self, Self::Error> {
+        match value.get_inner_mut() {
+            node::Inner::Style(style) => Ok(style),
+            _ => Err(()),
+        }
+    }
+}

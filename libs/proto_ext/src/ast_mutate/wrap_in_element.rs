@@ -2,7 +2,6 @@ use paperclip_proto::ast::{all::Expression, pc::node};
 use paperclip_proto::ast_mutate::WrapInElement;
 use paperclip_proto::ast_mutate::{mutation_result, ExpressionInserted};
 
-
 use super::utils::parse_node;
 use super::EditContext;
 use crate::{
@@ -23,10 +22,12 @@ macro_rules! wrap_in_element {
             let mut container = parse_node("div", &checksum);
 
             $self.changes.push(
-                mutation_result::Inner::ExpressionInserted(ExpressionInserted { id: container.get_id().to_string() })
-                    .get_outer(),
+                mutation_result::Inner::ExpressionInserted(ExpressionInserted {
+                    id: container.get_id().to_string(),
+                })
+                .get_outer(),
             );
-            
+
             match &mut container.get_inner_mut() {
                 node::Inner::Element(element) => {
                     element.body.push(child.try_into().unwrap());
@@ -34,8 +35,6 @@ macro_rules! wrap_in_element {
                 _ => {}
             }
             $children.insert(i, container.try_into().unwrap());
-
-
 
             VisitorResult::Return(())
         } else {

@@ -1431,8 +1431,7 @@ public component test {
 
  */
 
-
- add_case! {
+add_case! {
   can_override_a_variant_of_a_radio_input,
   [
     ("/entry.pc", r#"

@@ -1,5 +1,4 @@
-use paperclip_proto::ast::graph_ext::Expr;
-use paperclip_proto::ast::pc::{component_body_item, Render};
+use paperclip_proto::ast::pc::{component_body_item, Render, Node};
 use paperclip_proto::ast_mutate::{mutation_result, ExpressionDeleted};
 use paperclip_proto::{
     ast::{
@@ -195,25 +194,52 @@ impl<'a> MutableVisitor<()> for EditContext<'a, MoveNode> {
             .0;
 
         let node = match node {
-            ExpressionWrapper::Element(node) => Some(node::Inner::Element(node).get_outer()),
-            ExpressionWrapper::TextNode(node) => Some(node::Inner::Text(node).get_outer()),
-            _ => None,
+            ExpressionWrapper::Element(node) => node::Inner::Element(node).get_outer(),
+            ExpressionWrapper::TextNode(node) => node::Inner::Text(node).get_outer(),
+            _ => return VisitorResult::Return(()),
         };
 
-        expr.body.push(
-            component_body_item::Inner::Render(Render {
-                id: self
-                    .get_dependency()
-                    .document
-                    .as_ref()
-                    .expect("Doc must exist")
-                    .checksum(),
-                range: None,
-                node,
-            })
-            .get_outer(),
-        );
+        let existing_render_node = expr.body.iter_mut().find(|x| match x.get_inner() {
+            component_body_item::Inner::Render(_) => true,
+            _ => false,
+        });
+
+
+
+        if existing_render_node.is_some() {
+            let existing_render_node: &mut Render = existing_render_node.unwrap().try_into().expect("Must be render node");
+            append_child(existing_render_node.node.as_mut().expect("Node must exist"), node);
+        } else {
+            expr.body.push(
+                component_body_item::Inner::Render(Render {
+                    id: self
+                        .get_dependency()
+                        .document
+                        .as_ref()
+                        .expect("Doc must exist")
+                        .checksum(),
+                    range: None,
+                    node: Some(node),
+                })
+                .get_outer(),
+            );
+        }
 
         VisitorResult::Return(())
+    }
+}
+
+
+fn append_child(node: &mut Node, child: Node) {
+    match node.get_inner_mut() {
+        node::Inner::Element(expr)  => {
+            expr.body.push(child);
+        },
+        node::Inner::Text(expr)  => {
+            expr.body.push(child);
+        },
+        _ => {
+
+        }
     }
 }

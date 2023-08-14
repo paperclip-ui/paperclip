@@ -4,6 +4,7 @@ import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import { useSelector } from "@paperclip-ui/common";
 import {
   DesignerState,
+  getComponentSlots,
   getCurrentDependency,
   getExpandedVirtIds,
   getGraph,
@@ -107,7 +108,7 @@ const ComponentLeaf = memo(
         instanceOf={instanceOf}
       >
         {() => {
-          return <NodeLeaf expr={render.node} depth={depth + 1} />;
+          return <RenderNodeLeaf expr={render} depth={depth + 1} />;
         }}
       </Leaf>
     );
@@ -186,6 +187,7 @@ const InstanceLeaf = ({
   const [shadowVisible, setShadowVisible] = useState(false);
   const onShadowIconClick = () => setShadowVisible(!shadowVisible);
   const expandedVirtIds = useSelector(getExpandedVirtIds);
+  const slots = getComponentSlots(component);
 
   // const shouldExpandShadow = expandedVirtIds.some((virtId) =>
   //   virtId.includes(instance.id)

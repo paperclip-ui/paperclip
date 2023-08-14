@@ -166,6 +166,16 @@ impl TryFrom<DocumentBodyItem> for Style {
     }
 }
 
+impl<'a> TryFrom<&'a mut ComponentBodyItem> for &'a mut Render {
+    type Error = ();
+    fn try_from(value: &'a mut ComponentBodyItem) -> Result<Self, Self::Error> {
+        match value.get_inner_mut() {
+            component_body_item::Inner::Render(expr) => Ok(expr),
+            _ => Err(()),
+        }
+    }
+}
+
 
 impl TryFrom<Node> for Style {
     type Error = ();

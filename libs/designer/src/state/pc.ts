@@ -961,6 +961,16 @@ const getStyleMixinRefs = (state: DesignerState): Reference[] => {
   return [];
 };
 
+export const getComponentSlots = memoize((component: Component): pc.Slot[] => {
+  return Object.values(ast.flattenComponent(component))
+    .filter((descendent) => {
+      return descendent.kind === ast.ExprKind.Slot;
+    })
+    .map((descendent) => {
+      return descendent.expr;
+    });
+});
+
 // const getSlotBoxes = memoize((instance: Element, graph: Graph, rects: Record<string, Box>) => {
 //   const component = ast.getInstanceComponent(instance, graph);
 //   const slots = ast.getComponentSlots(component, graph);

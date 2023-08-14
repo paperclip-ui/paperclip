@@ -1,7 +1,6 @@
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import {
   DesignerState,
-  selectNode,
   setSelectedNodeBounds,
 } from "@paperclip-ui/designer/src/state";
 import produce from "immer";

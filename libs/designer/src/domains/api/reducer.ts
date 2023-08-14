@@ -1,10 +1,5 @@
 import produce from "immer";
-import {
-  DesignerState,
-  findVirtNode,
-  getGraphComponents,
-  maybeCenterCanvas,
-} from "../../state";
+import { DesignerState, findVirtNode, getGraphComponents } from "../../state";
 import { DesignerEngineEvent, GraphLoaded } from "./events";
 import { DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
@@ -43,7 +38,6 @@ export const apiReducer = (
         }
         newState.insertedNodeIds = [];
       });
-      state = maybeCenterCanvas(state);
       return state;
 
     case "designer-engine/changesApplied": {

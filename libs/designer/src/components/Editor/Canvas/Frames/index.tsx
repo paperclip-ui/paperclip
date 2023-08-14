@@ -4,8 +4,8 @@ import { memo } from "react";
 import { Frame } from "./Frame";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
-  getCurrentDocument,
   getEditorState,
+  getCurrentDocument,
   getSelectedVariantIds,
   StyleOverrides,
 } from "@paperclip-ui/designer/src/state";

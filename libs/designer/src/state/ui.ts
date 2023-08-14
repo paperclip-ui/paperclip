@@ -1,70 +1,41 @@
-import produce from "immer";
-import {
-  ResizerPathMoved,
-  ResizerPathStoppedMoving,
-} from "../domains/ui/events";
 import { DesignerState } from "./core";
+import { Box } from "./geom";
 import { findVirtNode } from "./pc";
-import {
-  Element as VirtElement,
-  TextNode as VirtText,
-} from "@paperclip-ui/proto/lib/generated/virt/html";
 import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 
-export const handleDragEvent = (
-  state: DesignerState,
-  event: ResizerPathStoppedMoving | ResizerPathMoved
-) => {
-  return produce(state, (newState) => {
-    const node = findVirtNode(newState.selectedTargetId, newState) as any as
-      | VirtElement
-      | VirtText;
+export const getInsertMode = (state: DesignerState) => state.insertMode;
 
-    const path = virtHTML.getNodePath(
-      node,
-      newState.currentDocument.paperclip.html
-    );
+export const getExpandedVirtIds = (state: DesignerState) =>
+  state.expandedLayerVirtIds;
 
-    // within a frame
-    if (path.includes(".")) {
-      const computedStyles = newState.preEditComputedStyles[node.id];
+export const getInsertBox = ({
+  canvasMouseDownStartPoint: start,
+  canvas: { mousePosition },
+}: DesignerState): Box => {
+  if (!start) {
+    return null;
+  }
 
-      newState.styleOverrides = {};
-
-      newState.styleOverrides[node.id] = {
-        left: `${
-          pxToInt(computedStyles.left) +
-          event.payload.newBounds.x -
-          event.payload.originalBounds.x
-        }px`,
-        top: `${
-          pxToInt(computedStyles.top) +
-          event.payload.newBounds.y -
-          event.payload.originalBounds.y
-        }px`,
-
-        position:
-          computedStyles.position === "static"
-            ? "relative"
-            : computedStyles.position,
-
-        width: event.payload.newBounds.width + "px",
-        height: event.payload.newBounds.height + "px",
-      };
-
-      // is a frame
-    } else {
-      if (!node.metadata) {
-        node.metadata = {};
-      }
-      if (!node.metadata.bounds) {
-        node.metadata.bounds = { x: 0, y: 0, width: 0, height: 0 };
-      }
-
-      node.metadata.bounds = {
-        ...event.payload.newBounds,
-      };
-    }
-  });
+  return {
+    width: Math.abs(start.x - mousePosition.x),
+    height: Math.abs(start.y - mousePosition.y),
+    x: Math.min(start.x, mousePosition.x),
+    y: Math.min(start.y, mousePosition.y),
+  };
 };
-const pxToInt = (value: string) => Number(value.replace("px", ""));
+export const getSelectedId = (designer: DesignerState) => {
+  return designer.selectedTargetId;
+};
+export const getHighlightedNodeId = (designer: DesignerState) =>
+  designer.highlightedNodeId;
+export const getResizerMoving = (designer: DesignerState) =>
+  designer.resizerMoving;
+
+export const getSelectedNodePath = (designer: DesignerState) => {
+  const nodeId = getSelectedId(designer);
+  if (!nodeId || !designer.currentDocument) {
+    return null;
+  }
+  const node = findVirtNode(getSelectedId(designer), designer);
+  return virtHTML.getNodePath(node, designer.currentDocument.paperclip.html);
+};

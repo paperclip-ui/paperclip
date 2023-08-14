@@ -1,12 +1,19 @@
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import {
-  clampCanvasTransform,
   DesignerState,
   findVirtNode,
   getNodeInfoAtCurrentPoint,
-  handleDoubleClick,
   highlightNode,
   InsertMode,
+} from "@paperclip-ui/designer/src/state";
+import { centerTransformZoom } from "@paperclip-ui/designer/src/state/geom";
+import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
+import produce from "immer";
+import { clamp, mapValues } from "lodash";
+import {
+  clampCanvasTransform,
+  handleDoubleClick,
+  handleDragEvent,
   MAX_ZOOM,
   maybeCenterCanvas,
   MIN_ZOOM,
@@ -15,12 +22,7 @@ import {
   pruneDanglingRects,
   selectNode,
   ZOOM_SENSITIVITY,
-} from "@paperclip-ui/designer/src/state";
-import { centerTransformZoom } from "@paperclip-ui/designer/src/state/geom";
-import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
-import produce from "immer";
-import { clamp, mapValues } from "lodash";
-import { handleDragEvent } from "../state";
+} from "../state";
 
 export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
   switch (event.type) {
@@ -169,6 +171,10 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
     case "ui/resizerPathMoved": {
       return handleDragEvent({ ...state, resizerMoving: true }, event);
     }
+    case "designer-engine/documentOpened": {
+      state = maybeCenterCanvas(state);
+      return state;
+    }
 
     case "ui/rectsCaptured":
       state = produce(state, (newState) => {
@@ -180,7 +186,6 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
           }))
         );
       });
-      // state = expandInstanceRects(state);
       state = pruneDanglingRects(state);
       state = maybeCenterCanvas(state);
       return state;

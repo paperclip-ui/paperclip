@@ -96,6 +96,7 @@ const DocumentBodyItemLeaf = memo(
 const ComponentLeaf = memo(
   ({ expr: component, depth, instanceOf }: LeafProps<Component>) => {
     const render = ast.getComponentRenderExpr(component);
+
     const renderNode =
       render?.node && (ast.getNodeInner(render.node) as ast.InnerNode);
 
@@ -103,7 +104,18 @@ const ComponentLeaf = memo(
       <Leaf
         id={component.id}
         className={cx("component", { container: renderNode?.body?.length > 0 })}
-        text={component.name}
+        text={
+          <>
+            {component.name}
+            <styles.TagType>
+              {render?.node.element
+                ? render?.node.element.tagName
+                : render?.node.text
+                ? "text"
+                : undefined}
+            </styles.TagType>
+          </>
+        }
         depth={depth}
         instanceOf={instanceOf}
       >

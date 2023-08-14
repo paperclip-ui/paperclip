@@ -212,6 +212,6 @@ Test testInstance
 */
 
 public component Card {
-    variant test
 }
+
 

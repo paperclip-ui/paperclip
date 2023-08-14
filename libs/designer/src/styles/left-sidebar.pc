@@ -1,6 +1,10 @@
 import "./sidebar.pc" as sidebar
 import "./theme.pc" as theme
 
+/**
+ * @bounds(x: 976, y: -2, width: 1024, height: 768)
+*/
+
 public component Tabs {
     render div {
         style {
@@ -9,6 +13,10 @@ public component Tabs {
         slot children
     }
 }
+
+/**
+ * @bounds(x: 1096, y: -377, width: 1024, height: 768)
+*/
 
 public component Tab {
     variant selected trigger {
@@ -29,6 +37,10 @@ public component Tab {
         slot children
     }
 }
+
+/**
+ * @bounds(x: 594, y: 718, width: 1024, height: 768)
+*/
 
 public component LeftSidebar {
     render sidebar.Sidebar {
@@ -78,7 +90,6 @@ public component LeftSidebarHeader {
         }
     }
 }
-
 
 public component LayerIcon {
     variant isComponent trigger {
@@ -178,48 +189,45 @@ public component TagType {
 }
 
 public component DropZoneDivider {
-
     variant top trigger {
         ".top"
     }
-
     variant bottom trigger {
         ".bottom"
     }
-
-    render  div root(class: class) {
+    render div root(class: class) {
+        style {
+            background: var(theme.blue01)
+            width: 100%
+            height: 2px
+            position: absolute
+            transform: translateY(-50%)
+            z-index: 1024
+            display: none
+        }
+        style variant top {
+            top: 0px
+        }
+        style variant bottom {
+            bottom: 0px
+            transform: translateY(50%)
+        }
+        style variant visible {
+            display: block
+        }
+        div circle {
             style {
-                background: var(theme.blue01)
-                width: 100%
-                height: 2px
+                width: 4px
+                height: 4px
                 position: absolute
+                left: 0px
+                top: 50%
+                border-radius: 99px
                 transform: translateY(-50%)
-                z-index: 1024
-                display: none
-            }
-            style variant top {
-                top: 0px
-            }
-            style variant bottom {
-                bottom: 0px
-                transform: translateY(50%)
-            }
-            style variant visible {
-                display: block
-            }
-            div circle{
-                style {
-                    width: 4px
-                    height: 4px
-                    position: absolute
-                    left: 0px
-                    top: 50%
-                    border-radius: 99px
-                    transform: translateY(-50%)
-                    background: var(theme.blue01)
-                }
+                background: var(theme.blue01)
             }
         }
+    }
 }
 
 public component TreeNavigationItemHeader {
@@ -316,7 +324,6 @@ public component TreeNavigationItemHeader {
                 slot controls
             }
         }
-
         DropZoneDivider(class: "bottom") {
             override root {
                 style variant showDropBottom {
@@ -519,150 +526,151 @@ public component ShadowIcon {
     }
 }
 
+/**
+ * @bounds(x: -766, y: 931, width: 1024, height: 768)
+*/
+
 public component LeftSidebarPreview {
     render LeftSidebar {
-
         sidebar.SidebarPanel {
-          LeftSidebarHeader {
-              insert title {
-                  text "TodoList.pc"
-              }
-          }
-          sidebar.SidebarSection {
-              sidebar.SidebarPanelHeader {
-                  text "Layers"
-                  div {
-                      style extends theme.icon {
-                          -webkit-mask-image: url("./plus.svg")
-                      }
-                  }
-              }
-              Layers {
-                  TreeNavigationItem {
-                      LayerNavigationItemHeader(class: "instance container open") {
-                          text "Some instance"
-                          insert controls {
-                              Tooltip(title: "display shadow") {
-                                  ShadowIcon(class: "visible")
-                              }
-                          }
-                      }
-                      LayerNavigationItemHeader(class: "component container open") {
-                          text "Some component"
-                          insert controls {
-                              Tooltip(title: "display shadow") {
-                                  ShadowIcon
-                              }
-                          }
-                      }
-                      TreeNavigationItemContent {
-                          TreeNavigationItem {
-                              LayerNavigationItemHeader(class: "shadow element container open showDropOver") {
-                                  override container.root {
-                                      style {
-                                          --depth: 2
-                                      }
-                                  }
-                                  text "container"
-                              }
-                          }
-                          TreeNavigationItem {
-                              LayerNavigationItemHeader(class: "slot container open") {
-                                  override container.root {
-                                      style {
-                                          --depth: 2
-                                      }
-                                  }
-                                  text "label"
-                              }
-                              TreeNavigationItemContent {
-                                  TreeNavigationItem {
-                                      LayerNavigationItemHeader(class: "text showDropTop") {
-                                          override container.root {
-                                              style {
-                                                  --depth: 3
-                                              }
-                                          }
-                                          text "some label"
-                                      }
-                                      LayerNavigationItemHeader(class: "element") {
-                                          override container.root {
-                                              style {
-                                                  --depth: 4
-                                              }
-                                          }
-                                          text "some element"
-                                          TagType {
-                                              text "div"
-                                          }
-                                      }
-                                  }
-                              }
-                              TreeNavigationItemContent {
-                                  TreeNavigationItem {
-                                      LayerNavigationItemHeader(class: "text") {
-                                          override container.root {
-                                              style {
-                                                  --depth: 12
-                                              }
-                                          }
-                                          text "some label"
-                                      }
-                                  }
-                              }
-                          }
-                          TreeNavigationItem {
-                              LayerNavigationItemHeader(class: "selected slot container open") {
-                                  override container.root {
-                                      style {
-                                          --depth: 2
-                                      }
-                                  }
-                                  text "description"
-                              }
-                              TreeNavigationItemContent {
-                                  TreeNavigationItem {
-                                      LayerNavigationItemHeader(class: "text") {
-                                          override container.root {
-                                              style {
-                                                  --depth: 3
-                                              }
-                                          }
-                                          text "some long description"
-                                      }
-                                  }
-                              }
-                          }
-                      }
-                  }
-              }
-          }
-          sidebar.SidebarSection {
-              override root {
-                  style {
-                      display: none
-                  }
-              }
-              sidebar.SidebarPanelHeader {
-                  text "Design Tokens"
-                  div {
-                      style extends theme.icon {
-                          -webkit-mask-image: url("./plus.svg")
-                      }
-                  }
-              }
-              Tokens
-          }
+            LeftSidebarHeader {
+                insert title {
+                    text "TodoList.pc"
+                }
+            }
+            sidebar.SidebarSection {
+                sidebar.SidebarPanelHeader {
+                    text "Layers"
+                    div {
+                        style extends theme.icon {
+                            -webkit-mask-image: url("./plus.svg")
+                        }
+                    }
+                }
+                Layers {
+                    TreeNavigationItem {
+                        LayerNavigationItemHeader(class: "instance container open") {
+                            text "Some instance"
+                            insert controls {
+                                Tooltip(title: "display shadow") {
+                                    ShadowIcon(class: "visible")
+                                }
+                            }
+                        }
+                        LayerNavigationItemHeader(class: "component container open") {
+                            text "Some component"
+                            insert controls {
+                                Tooltip(title: "display shadow") {
+                                    ShadowIcon
+                                }
+                            }
+                        }
+                        TreeNavigationItemContent {
+                            TreeNavigationItem {
+                                LayerNavigationItemHeader(class: "shadow element container open showDropOver") {
+                                    override container.root {
+                                        style {
+                                            --depth: 2
+                                        }
+                                    }
+                                    text "container"
+                                }
+                            }
+                            TreeNavigationItem {
+                                LayerNavigationItemHeader(class: "slot container open") {
+                                    override container.root {
+                                        style {
+                                            --depth: 2
+                                        }
+                                    }
+                                    text "label"
+                                }
+                                TreeNavigationItemContent {
+                                    TreeNavigationItem {
+                                        LayerNavigationItemHeader(class: "text showDropTop") {
+                                            override container.root {
+                                                style {
+                                                    --depth: 3
+                                                }
+                                            }
+                                            text "some label"
+                                        }
+                                        LayerNavigationItemHeader(class: "element") {
+                                            override container.root {
+                                                style {
+                                                    --depth: 4
+                                                }
+                                            }
+                                            text "some element"
+                                            TagType {
+                                                text "div"
+                                            }
+                                        }
+                                    }
+                                }
+                                TreeNavigationItemContent {
+                                    TreeNavigationItem {
+                                        LayerNavigationItemHeader(class: "text") {
+                                            override container.root {
+                                                style {
+                                                    --depth: 12
+                                                }
+                                            }
+                                            text "some label"
+                                        }
+                                    }
+                                }
+                            }
+                            TreeNavigationItem {
+                                LayerNavigationItemHeader(class: "selected slot container open") {
+                                    override container.root {
+                                        style {
+                                            --depth: 2
+                                        }
+                                    }
+                                    text "description"
+                                }
+                                TreeNavigationItemContent {
+                                    TreeNavigationItem {
+                                        LayerNavigationItemHeader(class: "text") {
+                                            override container.root {
+                                                style {
+                                                    --depth: 3
+                                                }
+                                            }
+                                            text "some long description"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            sidebar.SidebarSection {
+                override root {
+                    style {
+                        display: none
+                    }
+                }
+                sidebar.SidebarPanelHeader {
+                    text "Design Tokens"
+                    div {
+                        style extends theme.icon {
+                            -webkit-mask-image: url("./plus.svg")
+                        }
+                    }
+                }
+                Tokens
+            }
         }
-
         sidebar.SidebarPanel {
-          sidebar.SidebarSection {
-              sidebar.SidebarPanelHeader {
-                  text "Assets"
-              }
-          }
+            sidebar.SidebarSection {
+                sidebar.SidebarPanelHeader {
+                    text "Assets"
+                }
+            }
         }
-        
     }
 }
 

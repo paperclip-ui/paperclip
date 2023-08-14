@@ -217,8 +217,13 @@ public component Card {
         style extends theme.fontDefault {
             position: relative
             background: var(theme.gray05)
+            transition: 0.3s
         }
-        text "hello"
+        text "hello" {
+            style {
+                transition: 0.3s
+            }
+        }
         style variant test extends baab, abba
     }
 }

@@ -1,32 +1,37 @@
 import "./theme.pc" as theme
 
+/**
+ * @bounds(x: 3, y: 49, width: 1024, height: 768)
+*/
+
 public component TreeNavigationItem {
-  render div {
-    style {
-      font-size: var(theme.fontSize02)
-      background: rgb(179, 179, 179)
-      border-radius: 3px
+    render div {
+        style {
+            font-size: var(theme.fontSize02)
+            background: rgb(179, 179, 179)
+            border-radius: 3px
+        }
+        slot children
     }
-    slot children
-  }
 }
+
 public component TreeNavigationItemHeader {
-  render div container {
-    style {
-      --depth: 1
-      display: flex
-      align-items: center
-      gap: var(theme.space02)
-      padding: var(theme.space03) var(theme.space05)
-      padding-left: calc(var(theme.space05) * var(--depth))
+    render div container {
+        style {
+            --depth: 1
+            display: flex
+            align-items: center
+            gap: var(theme.space02)
+            padding: var(theme.space03) var(theme.space05)
+            padding-left: calc(var(theme.space05) * var(--depth))
+        }
+        slot children
     }
-    slot children
-  }
 }
 
 public component TreeNavigationItemContent {
-  render div {
-    slot children
-  }
+    render div {
+        slot children
+    }
 }
 

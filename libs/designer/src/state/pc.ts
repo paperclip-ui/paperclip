@@ -509,12 +509,7 @@ export const findVirtId = (
   id: string,
   state: DesignerState | WritableDraft<DesignerState>
 ) => {
-  if (
-    virtHTML.getNodeById(
-      state.selectedTargetId,
-      state.currentDocument.paperclip.html
-    )
-  ) {
+  if (virtHTML.getNodeById(id, state.currentDocument.paperclip.html)) {
     return id;
   }
 

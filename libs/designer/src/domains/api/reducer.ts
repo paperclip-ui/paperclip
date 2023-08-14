@@ -1,5 +1,10 @@
 import produce from "immer";
-import { DesignerState, findVirtNode, getGraphComponents } from "../../state";
+import {
+  DesignerState,
+  findVirtId,
+  findVirtNode,
+  getGraphComponents,
+} from "../../state";
 import { DesignerEngineEvent, GraphLoaded } from "./events";
 import { DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
@@ -24,7 +29,7 @@ export const apiReducer = (
       state = produce(state, (newState) => {
         newState.currentDocument = event.payload;
         for (const id of newState.insertedNodeIds) {
-          if (findVirtNode(id, state)) {
+          if (findVirtNode(id, newState)) {
             newState.selectedTargetId = id;
           }
 

@@ -129,7 +129,7 @@ const useLeaf = ({
           setDropHotSpot(null);
         }
       },
-      drop(item: any, monitor) {
+      drop(item: any) {
         dispatch({
           type: "ui/exprNavigatorDroppedNode",
           payload: {
@@ -139,7 +139,7 @@ const useLeaf = ({
           },
         });
       },
-      canDrop({ id: draggedExprId }, monitor) {
+      canDrop({ id: draggedExprId }, _monitor) {
         if (draggedExprId === exprId) {
           return false;
         }

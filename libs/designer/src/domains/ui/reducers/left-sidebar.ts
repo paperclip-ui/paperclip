@@ -2,7 +2,7 @@ import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { DesignerState } from "@paperclip-ui/designer/src/state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import produce from "immer";
-import { selectNode } from "../state";
+import { expandVirtIds, selectNode } from "../state";
 
 export const leftSidebarReducer = (
   state: DesignerState,
@@ -21,7 +21,7 @@ export const leftSidebarReducer = (
         });
       } else {
         state = produce(state, (newState) => {
-          newState.expandedLayerVirtIds.push(event.payload.virtId);
+          Object.assign(expandVirtIds([event.payload.virtId], newState));
         });
       }
 

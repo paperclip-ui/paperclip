@@ -20,8 +20,9 @@ import {
   ResizerPathStoppedMoving,
 } from "./events";
 import { Box, centerTransformZoom } from "../../state/geom";
-import { clamp } from "lodash";
+import { clamp, uniq } from "lodash";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { WritableDraft } from "immer/dist/internal";
 
 export const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
 export const PAN_X_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;
@@ -134,6 +135,16 @@ export const clampCanvasTransform = (
   });
 };
 
+export const expandVirtIds = (
+  ids: string[],
+  state: DesignerState | WritableDraft<DesignerState>
+) => {
+  return {
+    ...state,
+    expandedLayerVirtIds: uniq([...ids, ...state.expandedLayerVirtIds]),
+  };
+};
+
 export const selectNode = (
   virtNodeId: string | null,
   shiftKey: boolean,
@@ -150,7 +161,10 @@ export const selectNode = (
       designer.graph
     );
 
-    newDesigner.expandedLayerVirtIds.push(virtNodeId, ...ancestorIds);
+    Object.assign(
+      newDesigner,
+      expandVirtIds([virtNodeId, ...ancestorIds], newDesigner)
+    );
 
     newDesigner.selectedTargetId = virtNodeId;
   });

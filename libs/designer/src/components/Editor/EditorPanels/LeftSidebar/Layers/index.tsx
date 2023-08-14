@@ -1,15 +1,12 @@
-import React, { memo, useCallback, useEffect, useRef, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/left-sidebar.pc";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
-import { useDispatch, useSelector } from "@paperclip-ui/common";
+import { useSelector } from "@paperclip-ui/common";
 import {
-  DNDKind,
   DesignerState,
   getCurrentDependency,
-  getCurrentFilePath,
   getExpandedVirtIds,
   getGraph,
-  getSelectedId,
 } from "@paperclip-ui/designer/src/state";
 import {
   Component,
@@ -23,12 +20,8 @@ import {
   TextNode,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
-import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import cx from "classnames";
 import { useHistory } from "@paperclip-ui/designer/src/domains/history/react";
-import { routes } from "@paperclip-ui/designer/src/state/routes";
-import { useDrag, useDrop } from "react-dnd";
-import { SuggestionMenu, SuggestionMenuItem } from "../../../../SuggestionMenu";
 import { Atom } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { Leaf } from "./Leaf";
 import { AddLayerButton } from "./AddLayerButton";
@@ -193,15 +186,16 @@ const InstanceLeaf = ({
   const [shadowVisible, setShadowVisible] = useState(false);
   const onShadowIconClick = () => setShadowVisible(!shadowVisible);
   const expandedVirtIds = useSelector(getExpandedVirtIds);
-  const shouldExpandShadow = expandedVirtIds.some((virtId) =>
-    virtId.includes(instance.id)
-  );
 
-  useEffect(() => {
-    if (shouldExpandShadow) {
-      setShadowVisible(shouldExpandShadow);
-    }
-  }, [shouldExpandShadow]);
+  // const shouldExpandShadow = expandedVirtIds.some((virtId) =>
+  //   virtId.includes(instance.id)
+  // );
+
+  // useEffect(() => {
+  //   if (shouldExpandShadow) {
+  //     setShadowVisible(shouldExpandShadow);
+  //   }
+  // }, [shouldExpandShadow]);
 
   return (
     <Leaf

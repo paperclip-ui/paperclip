@@ -8,13 +8,12 @@ import {
   getGraph,
   getSelectedExpressionInfo,
 } from "@paperclip-ui/designer/src/state";
-import { Element } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import { Element, Reference } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import {
   MultiSelectInput,
   MultiSelectOption,
 } from "@paperclip-ui/designer/src/components/MultiSelectInput";
-import { current } from "immer";
 
 export const Mixins = () => {
   const expr = useSelector(getSelectedExpressionInfo);
@@ -31,11 +30,14 @@ type InstanceVariantsInnerProps = {
 };
 
 export const MixinsInner = ({ expr }: InstanceVariantsInnerProps) => {
-  const currentStyleMixins = useSelector(getCurrentStyleMixins);
-  console.log(currentStyleMixins);
+  const currentStyleMixins: Reference[] = useSelector(getCurrentStyleMixins);
   const graph = useSelector(getGraph);
   const allMixins = useSelector(getAllPublicStyleMixins);
   const dispatch = useDispatch<DesignerEvent>();
+
+  const currentStyleMixinNames = currentStyleMixins.map(
+    (mixin) => mixin.path[mixin.path.length - 1]
+  );
 
   const onMixinsChange = (values: string[]) => {
     dispatch({ type: "designer/styleMixinsSet", payload: values });
@@ -63,7 +65,7 @@ export const MixinsInner = ({ expr }: InstanceVariantsInnerProps) => {
               <MultiSelectInput
                 placeholder="mixins..."
                 onChange={onMixinsChange}
-                values={[]}
+                values={currentStyleMixinNames}
               >
                 {options}
               </MultiSelectInput>

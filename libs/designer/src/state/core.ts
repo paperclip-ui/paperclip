@@ -673,7 +673,7 @@ export const getCurrentStyleMixins = (state: DesignerState): Reference[] => {
       );
     });
 
-    return variantStyle.style?.extends;
+    return variantStyle?.style?.extends || [];
   } else if (expr.kind === ast.ExprKind.Style) {
     return expr.expr.extends;
   }

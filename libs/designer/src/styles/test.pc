@@ -203,3 +203,15 @@ Test2 test2Instance
 
 Test testInstance
 
+/**
+ * @bounds(x: 869, y: 935, width: 393, height: 173)
+*/
+
+div {
+    style extends mod2.fontDefault {
+        position: relative
+        background: var(mod2.gray05)
+    }
+    text "hello"
+}
+

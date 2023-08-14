@@ -5,7 +5,6 @@ import {
   findVirtNode,
   getNodeInfoAtCurrentPoint,
   handleDoubleClick,
-  handleDragEvent,
   highlightNode,
   InsertMode,
   MAX_ZOOM,
@@ -21,6 +20,7 @@ import { centerTransformZoom } from "@paperclip-ui/designer/src/state/geom";
 import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 import produce from "immer";
 import { clamp, mapValues } from "lodash";
+import { handleDragEvent } from "../state";
 
 export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
   switch (event.type) {

@@ -259,59 +259,6 @@ export const centerEditorCanvas = (
 const getAllFrameBounds = (designer: DesignerState) => {
   return mergeBoxes(getCurrentPreviewFrameBoxes(designer));
 };
-export const getSelectedNodePath = (designer: DesignerState) => {
-  const nodeId = getSelectedId(designer);
-  if (!nodeId || !designer.currentDocument) {
-    return null;
-  }
-  const node = findVirtNode(getSelectedId(designer), designer);
-  return virtHTML.getNodePath(node, designer.currentDocument.paperclip.html);
-};
-
-const findVirtId = (
-  id: string,
-  state: DesignerState | WritableDraft<DesignerState>
-) => {
-  if (
-    virtHTML.getNodeById(
-      state.selectedTargetId,
-      state.currentDocument.paperclip.html
-    )
-  ) {
-    return id;
-  }
-
-  let idParts = id.split(".");
-
-  // assume it's an instance
-  let curr = ast.getExprInfoById(idParts[idParts.length - 1], state.graph);
-
-  while (curr.kind === ast.ExprKind.Element) {
-    const component = ast.getInstanceComponent(curr.expr, state.graph);
-    if (!component) {
-      break;
-    }
-    const renderNode = ast.getComponentRenderNode(component);
-    idParts.push(renderNode.expr.id);
-    curr = renderNode;
-  }
-
-  return idParts.join(".");
-};
-
-/**
- * Safer utility fn that expands
- */
-
-export const findVirtNode = (
-  id: string,
-  state: DesignerState | WritableDraft<DesignerState>
-) => {
-  return virtHTML.getNodeById(
-    findVirtId(id, state),
-    state.currentDocument.paperclip.html
-  );
-};
 
 export const getSelectedId = (designer: DesignerState) => {
   return designer.selectedTargetId;
@@ -719,6 +666,8 @@ const getStyleMixinRefs = (state: DesignerState): Reference[] => {
   } else if (expr.kind === ast.ExprKind.Style) {
     return expr.expr.extends;
   }
+
+  return [];
 };
 
 export const isResourceModalVisible = (state: DesignerState) =>
@@ -796,16 +745,6 @@ export const resetCurrentDocument = (state: DesignerState): DesignerState => ({
     size: state.canvas.size,
   },
 });
-
-export const getExprBounds = (exprId: string, state: DesignerState): Bounds => {
-  const node =
-    state.currentDocument &&
-    (findVirtNode(state.selectedTargetId, state) as any as
-      | VirtElement
-      | VirtText);
-
-  return node?.metadata?.bounds;
-};
 
 export const getHighlightedNodeBox = (state: DesignerState): Box => {
   return getNodeBox(state.highlightedNodeId, state);
@@ -896,89 +835,6 @@ export const handleDoubleClick = (
   return [designer, true];
 };
 
-export const handleDragEvent = (
-  state: DesignerState,
-  event: ResizerPathStoppedMoving | ResizerPathMoved
-) => {
-  return produce(state, (newState) => {
-    const node = findVirtNode(newState.selectedTargetId, newState) as any as
-      | VirtElement
-      | VirtText;
-
-    const path = virtHTML.getNodePath(
-      node,
-      newState.currentDocument.paperclip.html
-    );
-
-    // within a frame
-    if (path.includes(".")) {
-      const computedStyles = newState.preEditComputedStyles[node.id];
-
-      newState.styleOverrides = {};
-
-      newState.styleOverrides[node.id] = {
-        left: `${
-          pxToInt(computedStyles.left) +
-          event.payload.newBounds.x -
-          event.payload.originalBounds.x
-        }px`,
-        top: `${
-          pxToInt(computedStyles.top) +
-          event.payload.newBounds.y -
-          event.payload.originalBounds.y
-        }px`,
-
-        position:
-          computedStyles.position === "static"
-            ? "relative"
-            : computedStyles.position,
-
-        width: event.payload.newBounds.width + "px",
-        height: event.payload.newBounds.height + "px",
-      };
-
-      // is a frame
-    } else {
-      if (!node.metadata) {
-        node.metadata = {};
-      }
-      if (!node.metadata.bounds) {
-        node.metadata.bounds = { x: 0, y: 0, width: 0, height: 0 };
-      }
-
-      node.metadata.bounds = {
-        ...event.payload.newBounds,
-      };
-    }
-  });
-};
-
-export const setSelectedNodeBounds = (
-  newBounds: Bounds,
-  state: DesignerState
-) => {
-  return produce(state, (newState) => {
-    const node = findVirtNode(newState.selectedTargetId, state) as any as
-      | VirtElement
-      | VirtText;
-
-    const path = virtHTML.getNodePath(
-      node,
-      newState.currentDocument.paperclip.html
-    );
-    if (!node.metadata) {
-      node.metadata = {};
-    }
-    if (!node.metadata.bounds) {
-      node.metadata.bounds = { x: 0, y: 0, width: 0, height: 0 };
-    }
-
-    node.metadata.bounds = {
-      ...newBounds,
-    };
-  });
-};
-
 export const clampCanvasTransform = (
   canvas: Canvas,
   rects: Record<string, Box>
@@ -992,5 +848,3 @@ export const clampCanvasTransform = (
     newCanvas.transform.y = clamp(newCanvas.transform.y, -h, w);
   });
 };
-
-const pxToInt = (value: string) => Number(value.replace("px", ""));

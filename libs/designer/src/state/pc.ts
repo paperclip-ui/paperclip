@@ -1,7 +1,15 @@
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { Variant } from "@paperclip-ui/proto/lib/generated/ast/pc";
-import { DesignerState } from "./core";
+import { DesignerState, getSelectedId } from "./core";
 import { ComputedStyleMap } from "@paperclip-ui/proto-ext/lib/ast/serialize";
+import { WritableDraft } from "immer/dist/internal";
+import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
+import { Bounds } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
+import {
+  Element as VirtElement,
+  TextNode as VirtText,
+} from "@paperclip-ui/proto/lib/generated/virt/html";
+import produce from "immer";
 
 export const MIXED_VALUE = "mixed";
 
@@ -436,4 +444,94 @@ export const getSelectedExprAvailableVariants = (state: DesignerState) => {
 
 export const getEnabledVariants = (state: DesignerState) => {
   return getSelectedExprAvailableVariants(state).filter(ast.isVariantEnabled);
+};
+
+export const findVirtId = (
+  id: string,
+  state: DesignerState | WritableDraft<DesignerState>
+) => {
+  if (
+    virtHTML.getNodeById(
+      state.selectedTargetId,
+      state.currentDocument.paperclip.html
+    )
+  ) {
+    return id;
+  }
+
+  let idParts = id.split(".");
+
+  // assume it's an instance
+  let curr = ast.getExprInfoById(idParts[idParts.length - 1], state.graph);
+
+  while (curr?.kind === ast.ExprKind.Element) {
+    const component = ast.getInstanceComponent(curr.expr, state.graph);
+    if (!component) {
+      break;
+    }
+    const renderNode = ast.getComponentRenderNode(component);
+    idParts.push(renderNode.expr.id);
+    curr = renderNode;
+  }
+
+  return idParts.join(".");
+};
+
+/**
+ * Safer utility fn that expands
+ */
+
+export const findVirtNode = (
+  id: string,
+  state: DesignerState | WritableDraft<DesignerState>
+) => {
+  return virtHTML.getNodeById(
+    findVirtId(id, state),
+    state.currentDocument.paperclip.html
+  );
+};
+
+export const getSelectedNodePath = (designer: DesignerState) => {
+  const nodeId = getSelectedId(designer);
+  if (!nodeId || !designer.currentDocument) {
+    return null;
+  }
+  const node = findVirtNode(getSelectedId(designer), designer);
+  return virtHTML.getNodePath(node, designer.currentDocument.paperclip.html);
+};
+
+export const getExprBounds = (exprId: string, state: DesignerState): Bounds => {
+  const node =
+    state.currentDocument &&
+    (findVirtNode(state.selectedTargetId, state) as any as
+      | VirtElement
+      | VirtText);
+
+  return node?.metadata?.bounds;
+};
+
+export const setSelectedNodeBounds = (
+  newBounds: Bounds,
+  state: DesignerState
+) => {
+  return produce(state, (newState) => {
+    const node = findVirtNode(newState.selectedTargetId, state) as any as
+      | VirtElement
+      | VirtText;
+
+    const path = virtHTML.getNodePath(
+      node,
+      newState.currentDocument.paperclip.html
+    );
+    if (!node.metadata) {
+      node.metadata = {};
+    }
+    if (!node.metadata.bounds) {
+      node.metadata.bounds = { x: 0, y: 0, width: 0, height: 0 };
+    }
+
+    node.metadata.bounds = {
+      ...newBounds,
+    };
+  });
 };

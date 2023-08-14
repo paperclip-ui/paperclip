@@ -1,9 +1,7 @@
 #### NOW
 
-- warm up
-
-  - refactor legacy events
-    - replace editor/ with designer/
+- display source of mixins
+- Display origin of styles
 
 - render instances properly
 

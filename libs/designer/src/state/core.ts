@@ -675,7 +675,7 @@ export const getCurrentStyleMixins = (state: DesignerState): MixinInfo[] => {
       }
 
       const mixin = getDocumentMixins(refDep.document).find(
-        (item) => item.name === ref.path[1]
+        (item) => item.name === ref.path[ref.path.length - 1]
       );
 
       if (mixin) {
@@ -710,7 +710,7 @@ const getStyleMixinRefs = (state: DesignerState): Reference[] => {
         item.style.variantCombo.every((ref) => {
           return (
             ref.path.length === 1 &&
-            selectedVariants.some((variant) => variant.id === ref.path[0])
+            selectedVariants.some((variant) => variant.name === ref.path[0])
           );
         })
       );

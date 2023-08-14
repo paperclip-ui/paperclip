@@ -8,6 +8,10 @@ style baab {
     font-family: var(theme.defaultFontFamily)
 }
 
+style abba {
+    font-size: 32px
+}
+
 /**
  * @bounds(x: 631, y: 1, width: 168, height: 75)
 */
@@ -207,11 +211,15 @@ Test testInstance
  * @bounds(x: 869, y: 935, width: 393, height: 173)
 */
 
-div {
-    style extends theme.card {
-        position: relative
-        background: var(theme.gray05)
+public component Card {
+    variant test
+    render div {
+        style extends theme.fontDefault {
+            position: relative
+            background: var(theme.gray05)
+        }
+        text "hello"
+        style variant test extends baab, abba
     }
-    text "hello"
 }
 

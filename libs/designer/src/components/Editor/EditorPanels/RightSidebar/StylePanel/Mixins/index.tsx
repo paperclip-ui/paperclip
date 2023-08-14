@@ -30,14 +30,10 @@ type InstanceVariantsInnerProps = {
 };
 
 export const MixinsInner = ({ expr }: InstanceVariantsInnerProps) => {
-  const currentStyleMixins: Reference[] = useSelector(getCurrentStyleMixins);
+  const currentStyleMixins = useSelector(getCurrentStyleMixins);
   const graph = useSelector(getGraph);
   const allMixins = useSelector(getAllPublicStyleMixins);
   const dispatch = useDispatch<DesignerEvent>();
-
-  const currentStyleMixinNames = currentStyleMixins.map(
-    (mixin) => mixin.path[mixin.path.length - 1]
-  );
 
   const onMixinsChange = (values: string[]) => {
     dispatch({ type: "designer/styleMixinsSet", payload: values });
@@ -65,7 +61,7 @@ export const MixinsInner = ({ expr }: InstanceVariantsInnerProps) => {
               <MultiSelectInput
                 placeholder="mixins..."
                 onChange={onMixinsChange}
-                values={currentStyleMixinNames}
+                values={currentStyleMixins.map((mixin) => mixin.mixinId)}
               >
                 {options}
               </MultiSelectInput>

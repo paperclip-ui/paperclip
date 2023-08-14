@@ -28,6 +28,7 @@ import {
   INITIAL_HISTORY_STATE,
 } from "../domains/history/state";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
+import * as pc from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import {
   Component,
@@ -649,7 +650,49 @@ export const getAllPublicStyleMixins = (state: DesignerState) => {
   return ast.getGraphStyleMixins(state.graph);
 };
 
-export const getCurrentStyleMixins = (state: DesignerState): Reference[] => {
+type MixinInfo = {
+  name: string;
+  mixinId: string;
+};
+
+export const getCurrentStyleMixins = (state: DesignerState): MixinInfo[] => {
+  const dep = getCurrentDependency(state);
+  return getStyleMixinRefs(state)
+    .map((ref) => {
+      const refDep =
+        ref.path.length === 1
+          ? dep
+          : state.graph.dependencies[
+              dep.imports[
+                dep.document.body.find((item) => {
+                  return item.import?.namespace === ref.path[0];
+                }).import.path
+              ]
+            ];
+
+      if (!refDep) {
+        return null;
+      }
+
+      const mixin = getDocumentMixins(refDep.document).find(
+        (item) => item.name === ref.path[1]
+      );
+
+      if (mixin) {
+        return {
+          name: mixin.name,
+          mixinId: mixin.id,
+        };
+      }
+    })
+    .filter(Boolean);
+};
+
+const getDocumentMixins = (doc: pc.Document): pc.Style[] => {
+  return doc.body.filter((item) => item.style).map((item) => item.style);
+};
+
+const getStyleMixinRefs = (state: DesignerState): Reference[] => {
   const expr = ast.getExprInfoById(state.selectedTargetId, state.graph);
   if (!expr) {
     return [];
@@ -677,7 +720,6 @@ export const getCurrentStyleMixins = (state: DesignerState): Reference[] => {
   } else if (expr.kind === ast.ExprKind.Style) {
     return expr.expr.extends;
   }
-  return [];
 };
 
 export const isResourceModalVisible = (state: DesignerState) =>

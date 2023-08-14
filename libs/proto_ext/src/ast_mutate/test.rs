@@ -3137,3 +3137,30 @@ case! {
     "#
   )]
 }
+
+case! {
+  can_move_a_node_before_a_component,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        render div
+      }
+      span
+      "#
+    )
+  ],
+  mutation::Inner::MoveNode(MoveNode {
+    target_id: "80f4925f-3".to_string(),
+    position: 0,
+    node_id: "80f4925f-4".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    span
+    component A {
+      render div
+    }
+    "#
+  )]
+}

@@ -189,6 +189,10 @@ impl<'a> MutableVisitor<()> for EditContext<'a, MoveNode> {
             return VisitorResult::Continue;
         }
 
+        if self.mutation.position != 2 {
+            return VisitorResult::Continue;
+        }
+
         let node = GetExpr::get_expr_from_graph(&self.mutation.node_id, &self.graph)
             .expect("Node must exist")
             .0;

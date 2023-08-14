@@ -196,7 +196,7 @@ public component Test2 {
 }
 
 /**
- * @bounds(x: 1500, y: 636, width: 299, height: 193)
+ * @bounds(x: 801, y: 878, width: 299, height: 193)
 */
 
 Test2 test2Instance
@@ -213,18 +213,5 @@ Test testInstance
 
 public component Card {
     variant test
-    render div {
-        style extends theme.fontDefault {
-            position: relative
-            background: var(theme.gray05)
-            transition: 0.3s
-        }
-        text "hello" {
-            style {
-                transition: 0.3s
-            }
-        }
-        style variant test extends baab, abba
-    }
 }
 

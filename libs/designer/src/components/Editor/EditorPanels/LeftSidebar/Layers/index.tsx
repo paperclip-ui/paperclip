@@ -17,6 +17,7 @@ import {
   Element,
   Insert,
   Node,
+  Render,
   Slot,
   Style,
   TextNode,
@@ -101,16 +102,41 @@ const DocumentBodyItemLeaf = memo(
 const ComponentLeaf = memo(
   ({ expr: component, depth, instanceOf }: LeafProps<Component>) => {
     const render = ast.getComponentRenderExpr(component);
+    const renderNode =
+      render?.node && (ast.getNodeInner(render.node) as ast.InnerNode);
+
     return (
       <Leaf
         id={component.id}
-        className={cx("component", { container: component.body.length > 0 })}
+        className={cx("component", { container: renderNode?.body?.length > 0 })}
         text={component.name}
         depth={depth}
         instanceOf={instanceOf}
       >
-        {() => render && <NodeLeaf expr={render.node} depth={depth + 1} />}
+        {() => {
+          return <NodeLeaf expr={render.node} depth={depth + 1} />;
+        }}
       </Leaf>
+    );
+  }
+);
+
+const RenderNodeLeaf = memo(
+  ({ expr: render, depth, instanceOf }: LeafProps<Render>) => {
+    const renderNode =
+      render?.node && (ast.getNodeInner(render.node) as ast.InnerNode);
+
+    return (
+      <>
+        {renderNode?.body?.map((child) => (
+          <NodeLeaf
+            key={ast.getNodeInner(child).id}
+            expr={child}
+            depth={depth}
+            instanceOf={instanceOf}
+          />
+        ))}
+      </>
     );
   }
 );
@@ -171,14 +197,6 @@ const InstanceLeaf = ({
     virtId.includes(instance.id)
   );
 
-  // // Instances can only have ONE child since render functions
-  // // can only return a single node
-  // let child = instance.body[0];
-
-  // while (child.element && ast.getInstanceComponent(child.element, graph)) {
-  //   instanceOf = [...(instanceOf || []), instance.id];
-  // }
-
   useEffect(() => {
     if (shouldExpandShadow) {
       setShadowVisible(shouldExpandShadow);
@@ -200,14 +218,12 @@ const InstanceLeaf = ({
       depth={depth}
       instanceOf={instanceOf}
       controls={
-        <>
-          <styles.Tooltip>
-            <styles.ShadowIcon
-              class={cx({ visible: shadowVisible })}
-              onClick={onShadowIconClick}
-            />
-          </styles.Tooltip>
-        </>
+        <div title="Open shadow">
+          <styles.ShadowIcon
+            class={cx({ visible: shadowVisible })}
+            onClick={onShadowIconClick}
+          />
+        </div>
       }
     >
       {() => {

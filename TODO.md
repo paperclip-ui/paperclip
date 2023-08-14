@@ -1,5 +1,7 @@
 #### NOW
 
+- Component layer should include render node children
+
 - inserted elements is not selected
 - display source of mixins
 - Display origin of styles

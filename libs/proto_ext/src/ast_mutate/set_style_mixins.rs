@@ -13,7 +13,12 @@ use crate::ast::all::VisitorResult;
 use crate::ast::get_expr::GetExpr;
 
 impl<'expr> MutableVisitor<()> for EditContext<'expr, SetStyleMixins> {
-    fn visit_document(&mut self,expr: &mut ast::pc::Document) -> VisitorResult<()> {
+    fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
+
+        if GetExpr::get_expr(&self.mutation.target_expr_id, expr).is_none() {
+            return VisitorResult::Continue;
+        }
+
         for mixin_id in &self.mutation.mixin_ids {
             let (_, dep) =
                 GetExpr::get_expr_from_graph(mixin_id, &self.graph).expect("Mixin must exist");
@@ -89,7 +94,7 @@ fn edit_style(style: &mut ast::pc::Style, style_dep: &Dependency, mutation: &Set
         let mut path = vec![mixin.name.expect("Name must exist").clone()];
 
         if dep.path != style_dep.path {
-            path.insert(0, resolve_import_ns(style_dep, &dep.path))
+            path.insert(0, resolve_import_ns(style_dep, &dep.path).0)
         }
 
 

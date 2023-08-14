@@ -12,6 +12,7 @@ import {
   ExprNavigatorDroppedNode,
   InstanceVariantToggled,
   StyleDeclarationsChanged,
+  StyleMixinsSet,
   ToolsLayerDrop,
   VariantEdited,
 } from "../../events";
@@ -459,6 +460,21 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
+  const handleStyleMixinsSet = (
+    { payload: mixinIds }: StyleMixinsSet,
+    state: DesignerState
+  ) => {
+    actions.applyChanges([
+      {
+        setStyleMixins: {
+          targetExprId: state.selectedTargetId,
+          mixinIds,
+          variantIds: state.selectedVariantIds,
+        },
+      },
+    ]);
+  };
+
   const handleDeleteExpression = (
     expressionId: string,
     state: DesignerState
@@ -688,6 +704,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "editor/exprNavigatorDroppedNode": {
         return handleExprNavigatorDroppedNode(event, newState);
+      }
+      case "designer/styleMixinsSet": {
+        return handleStyleMixinsSet(event, newState);
       }
       case "editor/removeVariantButtonClicked": {
         return handleDeleteExpression(event.payload.variantId, newState);

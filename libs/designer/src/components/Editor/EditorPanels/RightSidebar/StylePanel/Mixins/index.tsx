@@ -4,19 +4,17 @@ import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   getAllPublicStyleMixins,
+  getCurrentStyleMixins,
   getGraph,
   getSelectedExpressionInfo,
-  getSelectedExprOwnerComponent,
-  getSelectedVariantIds,
 } from "@paperclip-ui/designer/src/state";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { Element } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
-import classNames from "classnames";
 import {
   MultiSelectInput,
   MultiSelectOption,
 } from "@paperclip-ui/designer/src/components/MultiSelectInput";
+import { current } from "immer";
 
 export const Mixins = () => {
   const expr = useSelector(getSelectedExpressionInfo);
@@ -33,8 +31,10 @@ type InstanceVariantsInnerProps = {
 };
 
 export const MixinsInner = ({ expr }: InstanceVariantsInnerProps) => {
+  const currentStyleMixins = useSelector(getCurrentStyleMixins);
+  console.log(currentStyleMixins);
   const graph = useSelector(getGraph);
-  const mixins = useSelector(getAllPublicStyleMixins);
+  const allMixins = useSelector(getAllPublicStyleMixins);
   const dispatch = useDispatch<DesignerEvent>();
 
   const onMixinsChange = (values: string[]) => {
@@ -42,7 +42,7 @@ export const MixinsInner = ({ expr }: InstanceVariantsInnerProps) => {
   };
 
   const options = useMemo(() => {
-    return mixins.map((mixin) => {
+    return allMixins.map((mixin) => {
       return (
         <MultiSelectOption
           key={mixin.style.id}
@@ -51,7 +51,7 @@ export const MixinsInner = ({ expr }: InstanceVariantsInnerProps) => {
         />
       );
     });
-  }, [mixins]);
+  }, [allMixins]);
 
   return (
     <sidebarStyles.SidebarSection>

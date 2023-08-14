@@ -94,29 +94,40 @@ pub fn resolve_import(from: &str, to: &str) -> String {
 }
 
 
-pub fn resolve_import_ns(document_dep: &Dependency, path: &str) -> String {
-    for (ns, resolved_path) in &document_dep.imports {
+pub fn resolve_import_ns(document_dep: &Dependency, path: &str) -> (String, bool) {
+    for (rel_path, resolved_path) in &document_dep.imports {
         if resolved_path == path {
-            return ns.clone();
+            return (document_dep
+                .document
+                .as_ref()
+                .unwrap()
+                .get_imports()
+                .iter()
+                .find(|imp| &imp.path == rel_path)
+                .unwrap()
+                .namespace
+                .clone(), false);
         }
     }
 
-    return get_unique_namespace("module", document_dep.document.as_ref().expect("Document must exist"));
+    return (get_unique_namespace("module", document_dep.document.as_ref().expect("Document must exist")), true)
 }
 
 pub fn import_dep(document: &mut ast::pc::Document, document_dep: &Dependency, path: &str) -> String {
     let ns = resolve_import_ns(document_dep, path);
 
-    document.body.insert(
-        0,
-        parse_import(
-            &resolve_import(&document_dep.path, path),
-            &ns,
-            document.checksum().as_str(),
-        ),
-    );
+    if ns.1 {
+        document.body.insert(
+            0,
+            parse_import(
+                &resolve_import(&document_dep.path, path),
+                &ns.0,
+                document.checksum().as_str(),
+            ),
+        );
+    }
 
-    return ns;
+    return ns.0;
 }
 
 pub struct NamespaceResolution {

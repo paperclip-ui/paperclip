@@ -29,7 +29,12 @@ import {
 } from "../domains/history/state";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
-import { Component, Element } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import {
+  Component,
+  Element,
+  Reference,
+  Variant,
+} from "@paperclip-ui/proto/lib/generated/ast/pc";
 import produce from "immer";
 import { Bounds } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
 import {
@@ -38,6 +43,7 @@ import {
   ResizerPathStoppedMoving,
 } from "../events";
 import { WritableDraft } from "immer/dist/internal";
+import { getSelectedVariantIds } from "./pc";
 export const IS_WINDOWS = false;
 
 export const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
@@ -641,6 +647,37 @@ export const getAllPublicAtoms = (state: DesignerState) => {
 };
 export const getAllPublicStyleMixins = (state: DesignerState) => {
   return ast.getGraphStyleMixins(state.graph);
+};
+
+export const getCurrentStyleMixins = (state: DesignerState): Reference[] => {
+  const expr = ast.getExprInfoById(state.selectedTargetId, state.graph);
+  if (!expr) {
+    return [];
+  }
+
+  const selectedVariants: Variant[] = state.selectedVariantIds.map((id) =>
+    ast.getExprById(id, state.graph)
+  );
+
+  if (expr.kind === ast.ExprKind.Element) {
+    const variantStyle = expr.expr.body.find((item) => {
+      return (
+        item.style &&
+        item.style.variantCombo.length === selectedVariants.length &&
+        item.style.variantCombo.every((ref) => {
+          return (
+            ref.path.length === 1 &&
+            selectedVariants.some((variant) => variant.id === ref.path[0])
+          );
+        })
+      );
+    });
+
+    return variantStyle.style?.extends;
+  } else if (expr.kind === ast.ExprKind.Style) {
+    return expr.expr.extends;
+  }
+  return [];
 };
 
 export const isResourceModalVisible = (state: DesignerState) =>

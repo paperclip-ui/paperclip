@@ -1,5 +1,6 @@
 #### NOW
 
+- inserted elements is not selected
 - display source of mixins
 - Display origin of styles
 

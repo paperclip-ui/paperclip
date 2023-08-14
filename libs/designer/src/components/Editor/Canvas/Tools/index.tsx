@@ -144,7 +144,7 @@ const useTools = () => {
   const onMouseMove = useCallback(
     (event: React.MouseEvent<any>) => {
       dispatch({
-        type: "editor/canvasMouseMoved",
+        type: "ui/canvasMouseMoved",
         payload: getMousePoint(event),
       });
     },
@@ -156,7 +156,7 @@ const useTools = () => {
   const onMouswDown = useCallback(
     (event: React.MouseEvent<any>) => {
       dispatch({
-        type: "editor/canvasMouseDown",
+        type: "ui/canvasMouseDown",
         payload: {
           metaKey: event.metaKey,
           ctrlKey: event.ctrlKey,
@@ -172,7 +172,7 @@ const useTools = () => {
   const onMouseUp = useCallback(
     (event: React.MouseEvent<any>) => {
       dispatch({
-        type: "editor/canvasMouseUp",
+        type: "ui/canvasMouseUp",
         payload: {
           metaKey: event.metaKey,
           ctrlKey: event.ctrlKey,
@@ -186,7 +186,7 @@ const useTools = () => {
   );
 
   const onMouseLeave = () => {
-    dispatch({ type: "editor/canvasMouseLeave" });
+    dispatch({ type: "ui/canvasMouseLeave" });
   };
 
   const frames = currentDocument?.paperclip?.html?.children || [];

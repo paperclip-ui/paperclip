@@ -22,9 +22,9 @@ describe(__filename + "#", () => {
     });
 
     const events: DesignerEvent[] = [
-      { type: "editor/canvasMouseMoved", payload: { x: 10, y: 10 } },
+      { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
       {
-        type: "editor/canvasMouseUp",
+        type: "ui/canvasMouseUp",
         payload: {
           position: { x: 10, y: 10 },
           timestamp: 100,
@@ -68,9 +68,9 @@ describe(__filename + "#", () => {
     });
 
     const events: DesignerEvent[] = [
-      { type: "editor/canvasMouseMoved", payload: { x: 10, y: 10 } },
+      { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
       {
-        type: "editor/canvasMouseUp",
+        type: "ui/canvasMouseUp",
         payload: {
           position: { x: 10, y: 10 },
           timestamp: 100,
@@ -115,9 +115,9 @@ describe(__filename + "#", () => {
     });
 
     const events: DesignerEvent[] = [
-      { type: "editor/canvasMouseMoved", payload: { x: 10, y: 10 } },
+      { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
       {
-        type: "editor/canvasMouseUp",
+        type: "ui/canvasMouseUp",
         payload: {
           position: { x: 10, y: 10 },
           timestamp: 100,
@@ -171,9 +171,9 @@ describe(__filename + "#", () => {
     });
 
     const events: DesignerEvent[] = [
-      { type: "editor/canvasMouseMoved", payload: { x: 10, y: 10 } },
+      { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
       {
-        type: "editor/canvasMouseUp",
+        type: "ui/canvasMouseUp",
         payload: {
           position: { x: 10, y: 10 },
           timestamp: 100,
@@ -226,9 +226,9 @@ describe(__filename + "#", () => {
     console.log(JSON.stringify(state, null, 2));
 
     const events: DesignerEvent[] = [
-      { type: "editor/canvasMouseMoved", payload: { x: 10, y: 10 } },
+      { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
       {
-        type: "editor/canvasMouseUp",
+        type: "ui/canvasMouseUp",
         payload: {
           position: { x: 10, y: 10 },
           timestamp: 100,
@@ -291,9 +291,9 @@ describe(__filename + "#", () => {
     console.log(JSON.stringify(state, null, 2));
 
     const events: DesignerEvent[] = [
-      { type: "editor/canvasMouseMoved", payload: { x: 10, y: 10 } },
+      { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
       {
-        type: "editor/canvasMouseUp",
+        type: "ui/canvasMouseUp",
         payload: {
           position: { x: 10, y: 10 },
           timestamp: 100,
@@ -355,9 +355,9 @@ describe(__filename + "#", () => {
     console.log(JSON.stringify(state, null, 2));
 
     const events: DesignerEvent[] = [
-      { type: "editor/canvasMouseMoved", payload: { x: 10, y: 10 } },
+      { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
       {
-        type: "editor/canvasMouseUp",
+        type: "ui/canvasMouseUp",
         payload: {
           position: { x: 10, y: 10 },
           timestamp: 100,

@@ -11,32 +11,27 @@ export const rightSidebarReducer = (
   event: DesignerEvent
 ) => {
   switch (event.type) {
-    case "editor/editVariantClicked":
+    case "ui/editVariantClicked":
       return produce(state, (newState) => {
         newState.activeVariantId = event.payload.variantId;
       });
-    case "editor/editVariantPopupClosed":
+    case "ui/editVariantPopupClosed":
       return produce(state, (newState) => {
         newState.activeVariantId = null;
       });
 
-    case "designer/variantSelected": {
+    case "ui/variantSelected": {
       return produce(state, (newState) => {
         newState.selectedVariantIds = event.payload;
       });
     }
 
-    case "editor/styleDeclarationsChanged": {
+    case "ui/styleDeclarationsChanged": {
       return produce(state, (newState) => {
         newState.styleOverrides = {};
       });
     }
-
-    case "editor/layerLeafClicked": {
-      state = selectNode(event.payload.virtId, false, false, state);
-      return state;
-    }
-    case "designer/boundsChanged": {
+    case "ui/boundsChanged": {
       state = setSelectedNodeBounds(event.payload.newBounds, state);
       return state;
     }

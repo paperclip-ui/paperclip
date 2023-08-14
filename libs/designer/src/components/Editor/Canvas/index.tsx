@@ -75,7 +75,7 @@ const useCanvas = () => {
         return;
       }
       if (!canvasPanTimer) {
-        dispatch({ type: "editor/canvasPanStart" });
+        dispatch({ type: "ui/canvasPanStart" });
       }
       const rect = canvasRef.current.getBoundingClientRect();
 
@@ -85,7 +85,7 @@ const useCanvas = () => {
       }
 
       dispatch({
-        type: "editor/canvasPanned",
+        type: "ui/canvasPanned",
         payload: {
           delta: {
             x: pixelX,
@@ -106,7 +106,7 @@ const useCanvas = () => {
       setCanvasPanTimer(
         setTimeout(() => {
           setCanvasPanTimer(null);
-          dispatch({ type: "designer/canvasPanEnd" });
+          dispatch({ type: "ui/canvasPanEnd" });
         }, 100)
       );
 
@@ -124,7 +124,7 @@ const useCanvas = () => {
     const onResize = () => {
       const { width, height } = ref.getBoundingClientRect();
       dispatch({
-        type: "editor/canvasResized",
+        type: "ui/canvasResized",
         payload: {
           width,
           height,

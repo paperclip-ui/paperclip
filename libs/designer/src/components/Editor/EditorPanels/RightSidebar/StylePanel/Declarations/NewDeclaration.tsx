@@ -23,7 +23,7 @@ export const NewDeclaration = memo(
       (name: string, value: string, imports: any, { event }: SelectDetails) => {
         if (name && value) {
           dispatch({
-            type: "editor/styleDeclarationsChanged",
+            type: "ui/styleDeclarationsChanged",
             payload: {
               values: { [name]: value },
               imports,

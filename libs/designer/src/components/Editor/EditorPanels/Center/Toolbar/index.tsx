@@ -53,18 +53,18 @@ const useToolbar = () => {
   const dispatch = useDispatch<DesignerEvent>();
   const onInsertElementClick = () =>
     dispatch({
-      type: "editor/insertModeButtonClick",
+      type: "ui/insertModeButtonClick",
       payload: { mode: InsertMode.Element },
     });
   const onInsertTextClick = () =>
     dispatch({
-      type: "editor/insertModeButtonClick",
+      type: "ui/insertModeButtonClick",
       payload: { mode: InsertMode.Text },
     });
 
   const onInsertResourceClick = () =>
     dispatch({
-      type: "editor/insertModeButtonClick",
+      type: "ui/insertModeButtonClick",
       payload: { mode: InsertMode.Resource },
     });
   return {

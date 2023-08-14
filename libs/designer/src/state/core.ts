@@ -5,7 +5,6 @@ import {
   Document as HTMLDocument,
   Document,
 } from "@paperclip-ui/proto/lib/generated/virt/html";
-// import * as ast from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import {
   Box,
   boxIntersectsPoint,
@@ -38,13 +37,13 @@ import {
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import produce from "immer";
 import { Bounds } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
+import { WritableDraft } from "immer/dist/internal";
+import { getSelectedVariantIds } from "./pc";
 import {
   CanvasMouseUp,
   ResizerPathMoved,
   ResizerPathStoppedMoving,
-} from "../events";
-import { WritableDraft } from "immer/dist/internal";
-import { getSelectedVariantIds } from "./pc";
+} from "../domains/ui/events";
 export const IS_WINDOWS = false;
 
 export const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;

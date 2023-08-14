@@ -102,7 +102,7 @@ const ElementTagField = ({ expr }: ElemengTagFieldProps) => {
 
   const onSave = (value: string) => {
     dispatch({
-      type: "editor/elementTagChanged",
+      type: "ui/elementTagChanged",
       payload: { newTagName: value },
     });
   };

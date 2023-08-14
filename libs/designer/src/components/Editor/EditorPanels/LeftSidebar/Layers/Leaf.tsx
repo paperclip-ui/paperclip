@@ -148,7 +148,7 @@ const useLeaf = ({
       },
       drop(item: any, monitor) {
         dispatch({
-          type: "editor/exprNavigatorDroppedNode",
+          type: "ui/exprNavigatorDroppedNode",
           payload: {
             position: dropHotSpot,
             targetId: exprId,
@@ -182,13 +182,13 @@ const useLeaf = ({
 
   const dispatch = useDispatch<DesignerEvent>();
   const onClick = useCallback(() => {
-    dispatch({ type: "editor/layerLeafClicked", payload: { virtId } });
+    dispatch({ type: "ui/layerLeafClicked", payload: { virtId } });
   }, [virtId]);
 
   const onArrowClick = useCallback(
     (event: React.MouseEvent<any>) => {
       event.stopPropagation();
-      dispatch({ type: "editor/layerArrowClicked", payload: { virtId } });
+      dispatch({ type: "ui/layerArrowClicked", payload: { virtId } });
     },
     [virtId]
   );

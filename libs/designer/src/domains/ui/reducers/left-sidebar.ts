@@ -1,5 +1,5 @@
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
-import { DesignerState } from "@paperclip-ui/designer/src/state";
+import { DesignerState, selectNode } from "@paperclip-ui/designer/src/state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import produce from "immer";
 
@@ -8,7 +8,7 @@ export const leftSidebarReducer = (
   event: DesignerEvent
 ) => {
   switch (event.type) {
-    case "editor/layerArrowClicked": {
+    case "ui/layerArrowClicked": {
       if (state.expandedLayerVirtIds.includes(event.payload.virtId)) {
         const flattened = ast.flattenExpressionInfo(
           ast.getExprInfoById(event.payload.virtId, state.graph)
@@ -24,6 +24,11 @@ export const leftSidebarReducer = (
         });
       }
 
+      return state;
+    }
+
+    case "ui/layerLeafClicked": {
+      state = selectNode(event.payload.virtId, false, false, state);
       return state;
     }
   }

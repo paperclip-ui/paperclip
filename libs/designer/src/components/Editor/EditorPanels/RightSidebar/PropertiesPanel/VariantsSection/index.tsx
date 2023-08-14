@@ -69,7 +69,7 @@ const useVariantsSection = () => {
   const dispatch = useDispatch<DesignerEvent>();
   const onRemoveVariant = (variant: Variant) => {
     dispatch({
-      type: "editor/removeVariantButtonClicked",
+      type: "ui/removeVariantButtonClicked",
       payload: {
         variantId: variant.id,
       },
@@ -77,7 +77,7 @@ const useVariantsSection = () => {
   };
   const onSelectVariant = (variant: Variant) => {
     dispatch({
-      type: "editor/editVariantClicked",
+      type: "ui/editVariantClicked",
       payload: { variantId: variant.id },
     });
     setVariantPopupOpen(true);
@@ -92,7 +92,7 @@ const useVariantsSection = () => {
   };
 
   const onCloseEditVariantPopup = () => {
-    dispatch({ type: "editor/editVariantPopupClosed" });
+    dispatch({ type: "ui/editVariantPopupClosed" });
     setVariantPopupOpen(false);
   };
 

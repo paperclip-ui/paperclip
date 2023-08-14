@@ -49,7 +49,7 @@ export const Declaration = memo(
     const onValueSelect = useCallback(
       ({ value, imports }: NewDeclValue, details: SelectDetails) => {
         dispatch({
-          type: "editor/styleDeclarationsChanged",
+          type: "ui/styleDeclarationsChanged",
           payload: {
             values: { [name2]: value },
             imports,

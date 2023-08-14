@@ -54,7 +54,7 @@ const useVariantSection = () => {
   const selectedVariantIds = useSelector(getSelectedVariantIds);
 
   const onChange = (values: any[]) => {
-    dispatch({ type: "designer/variantSelected", payload: values });
+    dispatch({ type: "ui/variantSelected", payload: values });
   };
   return {
     variants,

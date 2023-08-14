@@ -6,8 +6,9 @@ import {
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent } from "./events";
+import { DesignerEvent } from "../../events";
 import {
-  DesignerEvent,
+  // DesignerEvent,
   ElementTagChanged,
   ExprNavigatorDroppedNode,
   InstanceVariantToggled,
@@ -15,7 +16,8 @@ import {
   StyleMixinsSet,
   ToolsLayerDrop,
   VariantEdited,
-} from "../../events";
+} from "../ui/events";
+
 import {
   DEFAULT_FRAME_BOX,
   DesignerState,
@@ -683,7 +685,7 @@ const createEventHandler = (actions: Actions) => {
     prevState: DesignerState
   ) => {
     switch (event.type) {
-      case "editor/canvasMouseUp": {
+      case "ui/canvasMouseUp": {
         return handleCanvasMouseUp(newState, prevState);
       }
       case "shortcuts/itemSelected": {
@@ -699,16 +701,16 @@ const createEventHandler = (actions: Actions) => {
       case "keyboard/keyDown": {
         return handleKeyDown(event, newState, prevState);
       }
-      case "editor/styleDeclarationsChanged": {
+      case "ui/styleDeclarationsChanged": {
         return handleStyleDeclarationChanged(event, newState);
       }
-      case "editor/exprNavigatorDroppedNode": {
+      case "ui/exprNavigatorDroppedNode": {
         return handleExprNavigatorDroppedNode(event, newState);
       }
       case "designer/styleMixinsSet": {
         return handleStyleMixinsSet(event, newState);
       }
-      case "editor/removeVariantButtonClicked": {
+      case "ui/removeVariantButtonClicked": {
         return handleDeleteExpression(event.payload.variantId, newState);
       }
       case "designer/variantEdited": {
@@ -726,23 +728,23 @@ const createEventHandler = (actions: Actions) => {
       case "designer/instanceVariantToggled": {
         return handleInstanceVariantToggled(event, newState);
       }
-      case "editor/resizerPathStoppedMoving": {
+      case "ui/resizerPathStoppedMoving": {
         return handleResizerStoppedMoving(newState, prevState);
       }
-      case "designer/boundsChanged": {
+      case "ui/boundsChanged": {
         return handleFrameBoundsChanged(
           newState,
           event.payload.newBounds,
           prevState
         );
       }
-      case "designer/ToolsLayerDrop": {
+      case "ui/toolsLayerDrop": {
         return handleDropItem(event, newState);
       }
       case "ui/idChanged": {
         return handleIDChanged(event, newState);
       }
-      case "editor/elementTagChanged": {
+      case "ui/elementTagChanged": {
         return handleElementTagChanged(event, newState);
       }
       case "history-engine/historyChanged": {

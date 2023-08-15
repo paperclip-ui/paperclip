@@ -80,7 +80,7 @@ fn create_slot<'a>(ctx: &mut EditContext<'a, ConvertToSlot>, child: Node, checks
 }
 
 fn get_unique_slot_name(id: &str, doc: &Document) -> String {
-    let base_name = "child".to_string();
+    let base_name = "children".to_string();
     let owner_component = GetExpr::get_owner_component(id, doc).expect("Component must exist!");
     let mut i = 0;
     let mut name = base_name.to_string();

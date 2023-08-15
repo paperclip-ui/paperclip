@@ -14,6 +14,7 @@ import {
   Atom,
   Component,
   Element,
+  Style,
   TextNode,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
@@ -45,6 +46,7 @@ export const PropertiesPanel = () => {
             {expr.kind === ast.ExprKind.Element ||
             expr.kind === ast.ExprKind.TextNode ||
             expr.kind === ast.ExprKind.Atom ||
+            expr.kind === ast.ExprKind.Style ||
             expr.kind === ast.ExprKind.Slot ||
             expr.kind === ast.ExprKind.Component ? (
               <IDField expr={expr} />
@@ -71,6 +73,7 @@ type IDFieldProps = {
   expr:
     | ast.BaseExprInfo<Element, ast.ExprKind.Element>
     | ast.BaseExprInfo<TextNode, ast.ExprKind.TextNode>
+    | ast.BaseExprInfo<Style, ast.ExprKind.Style>
     | ast.BaseExprInfo<Atom, ast.ExprKind.Atom>
     | ast.BaseExprInfo<Atom, ast.ExprKind.Slot>
     | ast.BaseExprInfo<Component, ast.ExprKind.Component>;

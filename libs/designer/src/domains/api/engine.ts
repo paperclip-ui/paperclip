@@ -412,10 +412,12 @@ const createEventHandler = (actions: Actions) => {
 
     if (!targetExpressionId) {
       targetExpressionId = state.currentDocument.paperclip.html.sourceId;
-    } else if (targetExpressionId === event.payload.expr.id) {
-      targetExpressionId = ast.getParent(targetExpressionId, state.graph).id;
-      console.log(ast.getParent(targetExpressionId, state.graph));
     }
+
+    // TODO: need to check when user selects leaf in left sidebar, then need to use
+    // that state to insert INTO the element instead of adjacent to it. This is an
+    // incomplete solution necessary for cases like: copy -> paste -> paste -> paste
+    targetExpressionId = ast.getParent(targetExpressionId, state.graph).id;
 
     actions.applyChanges([
       {

@@ -208,23 +208,14 @@ Test2 test2Instance
 Test testInstance
 
 /**
- * @bounds(x: 220, y: 1276, width: 376, height: 199)
+ * @bounds(x: -31, y: 1385, width: 492, height: 291)
 */
 
-public component Test333 {
-    render div {
-        style {
-            position: relative
-            background: var(theme.gray0)
-            font-family: var(theme.defaultFontFamily)
-        }
-        slot children {
-            text "something" {
-                style {
-                    color: red
-                }
-            }
-        }
+div {
+    style {
+        position: relative
     }
+    text "fdsfsd"
+    text "fdsfsd"
 }
 

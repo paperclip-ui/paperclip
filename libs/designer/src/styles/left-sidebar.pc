@@ -48,6 +48,10 @@ public component LeftSidebar {
     }
 }
 
+/**
+ * @bounds(x: -1166, y: 946, width: 358, height: 52)
+*/
+
 public component LeftSidebarHeader {
     render sidebar.SidebarPanelContent {
         style {
@@ -57,29 +61,31 @@ public component LeftSidebarHeader {
             height: 56px
             font-weight: 600
         }
-        div {
+        div left {
             style {
                 display: flex
                 gap: 8px
                 align-items: center
             }
-            button(onClick: onBackClick) {
+            button backButton(onClick: onBackClick) {
                 style extends theme.reset, theme.icon {
                     cursor: pointer
                     -webkit-mask-image: url("./back.svg")
                     --size: 1.5em
                 }
             }
-            span {
-                slot title
+            span titleContainer {
+                slot title {
+                    text "title"
+                }
             }
         }
-        div {
+        div right {
             style {
                 display: flex
                 gap: 4px
             }
-            div {
+            div controls {
                 style extends theme.icon {
                     cursor: pointer
                     -webkit-mask-image: url("./hamburger.svg")
@@ -527,7 +533,7 @@ public component ShadowIcon {
 }
 
 /**
- * @bounds(x: -766, y: 931, width: 1024, height: 768)
+ * @bounds(x: -766, y: 931, width: 273, height: 768)
 */
 
 public component LeftSidebarPreview {

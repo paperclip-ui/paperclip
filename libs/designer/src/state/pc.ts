@@ -411,6 +411,7 @@ export const isSelectableExpr = (expr: ast.InnerExpressionInfo) => {
     expr.kind === ast.ExprKind.Atom ||
     expr.kind === ast.ExprKind.Style ||
     expr.kind === ast.ExprKind.Trigger ||
+    expr.kind === ast.ExprKind.TextNode ||
     expr.kind === ast.ExprKind.Element ||
     expr.kind === ast.ExprKind.Component
   );
@@ -544,9 +545,14 @@ export const findVirtId = (
   let curr = ast.getExprInfoById(idParts[idParts.length - 1], state.graph);
 
   // IF a component, then we want to fetch the render node that IS visible
-  if (curr.kind === ast.ExprKind.Component) {
+  if (curr?.kind === ast.ExprKind.Component) {
     curr = ast.getComponentRenderNode(curr.expr);
-    idParts = [curr.expr.id];
+    if (curr) {
+      idParts = [curr.expr.id];
+    } else {
+      // NO virt ID present
+      return null;
+    }
   }
 
   // assume it's an instance
@@ -556,8 +562,12 @@ export const findVirtId = (
       break;
     }
     const renderNode = ast.getComponentRenderNode(component);
-    idParts.push(renderNode.expr.id);
-    curr = renderNode;
+    if (renderNode) {
+      idParts.push(renderNode.expr.id);
+      curr = renderNode;
+    } else {
+      break;
+    }
   }
 
   return idParts.join(".");

@@ -1,7 +1,7 @@
 use convert_case::{Case, Casing};
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::ast;
-use paperclip_proto::ast::pc::{Component, Render, component_body_item};
+use paperclip_proto::ast::pc::{Component, Render, component_body_item, document_body_item};
 use paperclip_proto::ast::{
     all::Expression,
     graph_ext::Dependency,
@@ -267,11 +267,17 @@ pub fn get_unique_namespace(base: &str, document: &Document) -> String {
     })
 }
 
-pub fn get_unique_component_id(base: &str, dep: &Dependency) -> String {
-    let components = dep.document.as_ref().unwrap().get_components();
+pub fn get_unique_component_name(base: &str, dep: &Dependency) -> String {
+    get_unique_document_body_item_name(&get_valid_name(base, Case::Pascal), dep)
+}
 
-    get_unique_id(&get_valid_name(base, Case::Pascal), |id| {
-        matches!(components.iter().find(|imp| { imp.name == id }), None)
+pub fn get_unique_document_body_item_name(base: &str, dep: &Dependency) -> String {
+    let body = &dep.document.as_ref().unwrap().body;
+
+    get_unique_id(base, |id| {
+        matches!(body.iter().find(|imp| { 
+            imp.get_name() == Some(id.to_string())
+        }), None)
     })
 }
 

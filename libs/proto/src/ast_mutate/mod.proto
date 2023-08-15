@@ -11,6 +11,7 @@ message Mutation {
 
     // Node specific
     AppendChild append_child = 1;
+    PrependChild prepend_child = 23;
     DeleteChild delete_child = 2;
     InsertChild insert_child = 3;
     ConvertToComponent convert_to_component = 14;
@@ -121,6 +122,10 @@ message AppendChild {
   string child_source = 2;
 }
 
+message PrependChild {
+  string parent_id = 1;
+  string child_source = 2;
+}
 
 message DeleteExpression {
   string expression_id = 1;

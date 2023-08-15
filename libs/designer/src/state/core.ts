@@ -15,6 +15,15 @@ export enum InsertMode {
   Resource,
 }
 
+export enum LayerKind {
+  Text = "Text",
+  Atom = "Atom",
+  Element = "Element",
+  Trigger = "Trigger",
+  Style = "Style",
+  Component = "Component",
+}
+
 export enum DNDKind {
   Resource = "Resource",
   Node = "Node",

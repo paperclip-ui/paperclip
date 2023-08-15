@@ -8,6 +8,7 @@ import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent } from "./events";
 import { DesignerEvent } from "../../events";
 import {
+  AddLayerMenuItemClicked,
   // DesignerEvent,
   ElementTagChanged,
   ExprNavigatorDroppedNode,
@@ -27,6 +28,7 @@ import {
   getInsertBox,
   getNodeInfoAtCurrentPoint,
   InsertMode,
+  LayerKind,
 } from "../../state";
 import {
   Mutation,
@@ -39,7 +41,11 @@ import {
   TextNode as VirtTextNode,
 } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { Box, getScaledBox, getScaledPoint, roundBox } from "../../state/geom";
-import { getSelectedExpression, getStyleableTargetId } from "../../state/pc";
+import {
+  getCurrentDependency,
+  getSelectedExpression,
+  getStyleableTargetId,
+} from "../../state/pc";
 import {
   getGlobalShortcuts,
   getKeyboardMenuCommand,
@@ -430,6 +436,29 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
+  const handleAddLayerMenuItemClick = (
+    { payload: layerKind }: AddLayerMenuItemClicked,
+    state: DesignerState
+  ) => {
+    const source = {
+      [LayerKind.Atom]: `token unnamed unset`,
+      [LayerKind.Component]: `Component unnamed {}`,
+      [LayerKind.Element]: `div`,
+      [LayerKind.Text]: `text "double click to edit`,
+      [LayerKind.Style]: `style unnamed {}`,
+      [LayerKind.Trigger]: `trigger unnamed {}`,
+    }[layerKind];
+
+    actions.applyChanges([
+      {
+        prependChild: {
+          parentId: getCurrentDependency(state).document.id,
+          childSource: source,
+        },
+      },
+    ]);
+  };
+
   const handleVariantEdited = (
     { payload: { componentId, newName, triggers } }: VariantEdited,
     state: DesignerState
@@ -726,6 +755,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "designer/variantEdited": {
         return handleVariantEdited(event, newState);
+      }
+      case "ui/AddLayerMenuItemClicked": {
+        return handleAddLayerMenuItemClick(event, newState);
       }
       case "clipboard/expressionPasted": {
         return handlePasteExpression(event, newState);

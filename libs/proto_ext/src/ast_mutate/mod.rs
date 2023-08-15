@@ -8,6 +8,7 @@ mod delete_style_declarations;
 mod insert_frame;
 mod move_node;
 mod paste_expression;
+mod prepend_child;
 mod set_frame_bounds;
 mod set_id;
 mod set_style_declarations;
@@ -116,6 +117,7 @@ mutations! {
   UpdateVariant,
   AppendInsert,
   SetTagName,
+  PrependChild,
   SetTextNodeValue,
   ConvertToComponent,SetStyleMixins,
   PasteExpression,

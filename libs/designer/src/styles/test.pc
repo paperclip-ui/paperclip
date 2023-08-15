@@ -3,22 +3,52 @@ import "./editor.pc" as mod1
 import "./theme.pc" as theme
 
 /**
- * @bounds(x: 593, y: 47, width: 691, height: 503)
+ * @bounds(x: 10, y: 81, width: 941, height: 471)
 */
 
-public component Unnamed {
-    render div {
-        style {
-            position: relative
-            background: white
-        }
-        text "Todos"
+div {
+    style {
+        position: relative
     }
 }
 
-public component Unnamed1 {
-    render Unnamed
+/**
+ * @bounds(x: 1323, y: 308, width: 623, height: 433)
+*/
+
+div {
+    style {
+        position: relative
+    }
 }
 
-Unnamed1
+/**
+ * @bounds(x: 1198, y: -187, width: 567, height: 371)
+*/
+
+div {
+    style {
+        position: relative
+    }
+}
+
+/**
+ * @bounds(x: -557, y: 212, width: 595, height: 411)
+*/
+
+div {
+    style {
+        position: relative
+    }
+}
+
+/**
+ * @bounds(x: -460, y: -256, width: 577, height: 315)
+*/
+
+div {
+    style {
+        position: relative
+    }
+}
 

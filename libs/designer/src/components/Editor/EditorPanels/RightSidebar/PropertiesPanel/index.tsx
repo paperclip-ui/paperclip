@@ -109,7 +109,7 @@ const ElementTagField = ({ expr }: ElemengTagFieldProps) => {
       ? ast.getComponentRenderNode(expr.expr)
       : expr;
 
-  if (el.kind !== ast.ExprKind.Element) {
+  if (el?.kind !== ast.ExprKind.Element) {
     return null;
   }
 

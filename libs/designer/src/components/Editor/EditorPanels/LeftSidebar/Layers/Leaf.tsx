@@ -60,27 +60,29 @@ export const Leaf = ({
   return (
     <styles.TreeNavigationItem style={style}>
       <ContextMenu menu={contextMenu}>
-        <styles.LayerNavigationItemHeader
-          ref={(e) => {
-            dropRef(e);
-            dragRef(e);
-            headerRef.current = e;
-          }}
-          class={cx(className, {
-            open,
-            selected,
-            shadow,
-            showDropTop: dropHotSpot === "before",
-            showDropOver: dropHotSpot === "inside",
-            showDropBottom: dropHotSpot === "after",
-          })}
-          style={{ "--depth": depth }}
-          onClick={onClick}
-          onArrowClick={onArrowClick}
-          controls={controls}
-        >
-          {text}
-        </styles.LayerNavigationItemHeader>
+        <div>
+          <styles.LayerNavigationItemHeader
+            ref={(e) => {
+              dropRef(e);
+              dragRef(e);
+              headerRef.current = e;
+            }}
+            class={cx(className, {
+              open,
+              selected,
+              shadow,
+              showDropTop: dropHotSpot === "before",
+              showDropOver: dropHotSpot === "inside",
+              showDropBottom: dropHotSpot === "after",
+            })}
+            style={{ "--depth": depth }}
+            onClick={onClick}
+            onArrowClick={onArrowClick}
+            controls={controls}
+          >
+            {text}
+          </styles.LayerNavigationItemHeader>
+        </div>
       </ContextMenu>
       {open && children && children()}
     </styles.TreeNavigationItem>

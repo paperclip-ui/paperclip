@@ -13,6 +13,7 @@ import {
   getKeyboardMenuCommand,
   ShortcutCommand,
 } from "./state";
+import { DocumentBodyItem } from "@paperclip-ui/proto/lib/generated/ast/pc";
 
 export const shortcutReducer = (state: DesignerState, event: DesignerEvent) => {
   switch (event.type) {
@@ -79,18 +80,14 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
           if (parent) {
             const parentBody = ast.getChildren(parent);
 
-            let nextChild: ast.InnerExpressionInfo;
+            const pos = parentBody.findIndex(
+              (expr) => expr.expr.id === node.expr.id
+            );
+            const inc = pos === 0 ? 1 : -1;
 
-            for (let i = parentBody.length; i--; ) {
-              const child = parentBody[i];
-              if (
-                newState.selectedTargetId !== child.expr.id &&
-                isSelectableExpr(child)
-              ) {
-                nextChild = child;
-                break;
-              }
-            }
+            let nextChild =
+              trySelecting(parentBody, pos, inc) ||
+              trySelecting(parentBody, pos, inc * -1);
 
             if (nextChild) {
               newState.selectedTargetId = nextChild.expr.id;
@@ -107,4 +104,18 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
   }
 
   return state;
+};
+
+const trySelecting = (parentBody: any[], start: number, inc: number) => {
+  let nextPos = start + inc;
+
+  while (nextPos > 0 && nextPos < parentBody.length) {
+    const nextChild = parentBody[nextPos];
+    nextPos += inc;
+    if (nextChild && isSelectableExpr(nextChild)) {
+      return nextChild;
+    }
+  }
+
+  return null;
 };

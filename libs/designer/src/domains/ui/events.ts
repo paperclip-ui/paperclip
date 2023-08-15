@@ -1,7 +1,7 @@
 import { BaseEvent } from "@paperclip-ui/common";
 import { Box, Point, Size } from "../../state/geom";
 import { UpdateVariantTrigger } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
-import { DNDKind, InsertMode } from "../../state";
+import { DNDKind, InsertMode, LayerKind } from "../../state";
 
 export type DashboardAddFileConfirmed = BaseEvent<
   "ui/dashboardAddFileConfirmed",
@@ -143,6 +143,11 @@ export type BoundsChanged = BaseEvent<
   }
 >;
 
+export type AddLayerMenuItemClicked = BaseEvent<
+  "ui/AddLayerMenuItemClicked",
+  LayerKind
+>;
+
 export type EditVariantClicked = BaseEvent<
   "ui/editVariantClicked",
   { variantId: string }
@@ -169,6 +174,7 @@ export type UIEvent =
   | ToolsTextEditorChanged
   | CanvasMouseMoved
   | ToolsLayerDragOver
+  | AddLayerMenuItemClicked
   | BoundsChanged
   | CanvasResized
   | ToolsLayerDrop

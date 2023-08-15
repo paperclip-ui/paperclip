@@ -2,6 +2,7 @@
 
 - ability to define atoms
 - ability to define mixins
+- ability to define trigger
 - Table component
 - HTML attributes
 - autocomplete for decl names
@@ -22,7 +23,11 @@
       - show up based on token
 
 - Canvas
+
   - show title of frame
+
+- Properties
+  - see instances of components
 
 #### Immediate
 

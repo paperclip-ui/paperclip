@@ -126,6 +126,58 @@ impl Atom {
     }
 }
 
+impl DocumentBodyItem {
+    pub fn set_name(&mut self, value: &str) {
+        match self.get_inner_mut() {
+            document_body_item::Inner::Atom(expr) => {
+                expr.name = value.to_string()
+            },
+            document_body_item::Inner::Component(expr) => {
+                expr.name = value.to_string()
+            },
+            document_body_item::Inner::Trigger(expr) => {
+                expr.name = value.to_string()
+            },
+            document_body_item::Inner::Element(expr) => {
+                expr.name = Some(value.to_string())
+            },
+            document_body_item::Inner::Text(expr) => {
+                expr.name = Some(value.to_string())
+            },
+            document_body_item::Inner::Style(expr) => {
+                expr.name = Some(value.to_string())
+            },
+            document_body_item::Inner::Import(_) | document_body_item::Inner::DocComment(_) => {
+            }
+        }
+    }
+    pub fn get_name(&self) -> Option<String> {
+        match self.get_inner() {
+            document_body_item::Inner::Atom(expr) => {
+                Some(expr.name.clone())
+            },
+            document_body_item::Inner::Component(expr) => {
+                Some(expr.name.clone())
+            },
+            document_body_item::Inner::Trigger(expr) => {
+                Some(expr.name.clone())
+            },
+            document_body_item::Inner::Element(expr) => {
+                expr.name.clone()
+            },
+            document_body_item::Inner::Text(expr) => {
+                expr.name.clone()
+            },
+            document_body_item::Inner::Style(expr) => {
+                expr.name.clone()
+            },
+            document_body_item::Inner::Import(_) | document_body_item::Inner::DocComment(_) => {
+                None
+            }
+        }
+    }
+}
+
 impl TryFrom<Node> for DocumentBodyItem {
     type Error = ();
     fn try_from(value: Node) -> Result<Self, Self::Error> {

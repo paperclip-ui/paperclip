@@ -8,7 +8,7 @@ use paperclip_proto::ast_mutate::{
     mutation, paste_expression, update_variant_trigger, AppendChild, AppendInsert, Bounds,
     ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveNode, PasteExpression,
     SetFrameBounds, SetId, SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins,
-    SetTagName, SetTextNodeValue, ToggleInstanceVariant, UpdateVariant, WrapInElement,
+    SetTagName, SetTextNodeValue, ToggleInstanceVariant, UpdateVariant, WrapInElement, PrependChild,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use std::collections::HashMap;
@@ -68,7 +68,7 @@ case! {
   [(
     "/entry.pc", r#"
       div 
-      div
+      div unnamed
     "#
   )]
 }
@@ -89,7 +89,7 @@ case! {
   [(
     "/entry.pc", r#"
       div 
-      text "something"
+      text unnamed "something"
     "#
   )]
 }
@@ -3376,6 +3376,55 @@ case! {
     "/entry.pc", r#"
     component A {
       render span
+    }
+    "#
+  )]
+}
+
+
+case! {
+  can_prepend_a_child_in_a_document,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+      }
+      "#
+    )
+  ],
+  mutation::Inner::PrependChild(PrependChild {
+    parent_id: "80f4925f-2".to_string(),
+    child_source: "span".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    span unnamed
+    component A {
+    }
+    "#
+  )]
+}
+
+case! {
+  creates_unique_id_when_prepending_node,
+  [
+    (
+      "/entry.pc", r#"
+      span a
+      component A {
+      }
+      "#
+    )
+  ],
+  mutation::Inner::PrependChild(PrependChild {
+    parent_id: "80f4925f-3".to_string(),
+    child_source: "span a".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    span a1
+    span a
+    component A {
     }
     "#
   )]

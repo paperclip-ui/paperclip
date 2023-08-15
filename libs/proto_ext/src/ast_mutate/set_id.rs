@@ -1,4 +1,4 @@
-use super::utils::{get_unique_component_id, get_valid_name};
+use super::utils::{get_unique_component_name, get_valid_name};
 use convert_case::Case;
 use paperclip_proto::{
     ast::all::ExpressionWrapper,
@@ -48,7 +48,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetId> {
                 match &info.0 {
                     ExpressionWrapper::Component(comp) => {
                         if comp.name != self.mutation.value {
-                            expr.tag_name = get_unique_component_id(&self.mutation.value, info.1);
+                            expr.tag_name = get_unique_component_name(&self.mutation.value, info.1);
                             self.changes.push(
                                 mutation_result::Inner::ExpressionUpdated(ExpressionUpdated {
                                     id: expr.id.to_string(),
@@ -101,7 +101,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetId> {
             set_name!(
                 self,
                 expr,
-                get_unique_component_id(
+                get_unique_component_name(
                     &self.mutation.value,
                     &self.graph.dependencies.get(&self.path).unwrap()
                 )

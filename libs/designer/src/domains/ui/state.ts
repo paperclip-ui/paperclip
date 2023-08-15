@@ -11,7 +11,6 @@ import {
   findVirtNode,
   getAllFrameBounds,
   getCurrentDependency,
-  getCurrentDocument,
   getNodeInfoAtCurrentPoint,
   getPreviewFrameBoxes,
   highlightNode,

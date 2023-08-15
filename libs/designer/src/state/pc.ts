@@ -541,9 +541,15 @@ export const findVirtId = (
 
   let idParts = id.split(".");
 
-  // assume it's an instance
   let curr = ast.getExprInfoById(idParts[idParts.length - 1], state.graph);
 
+  // IF a component, then we want to fetch the render node that IS visible
+  if (curr.kind === ast.ExprKind.Component) {
+    curr = ast.getComponentRenderNode(curr.expr);
+    idParts = [curr.expr.id];
+  }
+
+  // assume it's an instance
   while (curr?.kind === ast.ExprKind.Element) {
     const component = ast.getInstanceComponent(curr.expr, state.graph);
     if (!component) {

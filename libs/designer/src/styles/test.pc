@@ -6,11 +6,19 @@ import "./theme.pc" as theme
  * @bounds(x: 593, y: 47, width: 691, height: 503)
 */
 
-div {
-    style {
-        position: relative
-        background: white
+public component Unnamed {
+    render div {
+        style {
+            position: relative
+            background: white
+        }
+        text "Todos"
     }
-    text "Todos"
 }
+
+public component Unnamed1 {
+    render Unnamed
+}
+
+Unnamed1
 

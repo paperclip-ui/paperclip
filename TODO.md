@@ -1,12 +1,14 @@
 #### NOW
 
+- Table component
+- HTML attributes
 - autocomplete for decl names
-
-- copy + paste components = create instance
-- get slots / inserts to work
+- autocomplete for attributes
 
 - Layers
-  - create children insert when dropping element
+
+  - display slots by default
+
 - Canvas
 
   - ability to insert in

@@ -29,7 +29,7 @@ export const apiReducer = (
       state = produce(state, (newState) => {
         newState.currentDocument = event.payload;
         for (const id of newState.insertedNodeIds) {
-          const expr = ast.getExprInfoById(id, newState.graph);
+          const expr = ast.getExprInfoById(id, state.graph);
           if (!expr) {
             continue;
           }

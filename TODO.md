@@ -1,5 +1,7 @@
 #### NOW
 
+- context menu for left sidebar
+
 - copy + paste components = create instance
 - get slots / inserts to work
 

@@ -362,7 +362,7 @@ public component LayerNavigationItemHeader {
     variant isText trigger {
         ".text"
     }
-    render TreeNavigationItemHeader container(class: class, style: style, onClick: onClick, onArrowClick: onArrowClick) {
+    render TreeNavigationItemHeader container(class: class, style: style, onClick: onClick, onArrowClick: onArrowClick, onContextMenu: onContextMenu, onKeyDown: onKeyDown, onMouseDown: onMouseDown) {
         override root {
             style {
                 --depth: 1

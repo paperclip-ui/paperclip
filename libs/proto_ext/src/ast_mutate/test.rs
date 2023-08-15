@@ -3267,3 +3267,69 @@ case! {
     "#
   )]
 }
+
+case! {
+  can_wrap_a_node_within_an_insert,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        render div {
+          insert a {
+            text "blah"
+          }
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::WrapInElement(WrapInElement {
+    target_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div {
+        insert a {
+          div {
+            text "blah"
+          }
+        }
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_wrap_a_node_within_a_slot,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        render div {
+          slot a {
+            text "blah"
+          }
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::WrapInElement(WrapInElement {
+    target_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div {
+        slot a {
+          div {
+            text "blah"
+          }
+        }
+      }
+    }
+    "#
+  )]
+}

@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/left-sidebar.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
@@ -11,6 +17,8 @@ import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import cx from "classnames";
 import { useDrag, useDrop } from "react-dnd";
+import { ContextMenu } from "@paperclip-ui/designer/src/components/ContextMenu";
+import { getEntityShortcuts } from "@paperclip-ui/designer/src/domains/shortcuts/state";
 
 type DropHotSpot = "inside" | "before" | "after";
 const BORDER_MARGIN = 10;
@@ -36,6 +44,7 @@ export const Leaf = ({
     selected,
     open,
     onClick,
+    contextMenu,
     onArrowClick,
     headerRef,
     style,
@@ -50,27 +59,29 @@ export const Leaf = ({
   const shadow = instanceOf != null;
   return (
     <styles.TreeNavigationItem style={style}>
-      <styles.LayerNavigationItemHeader
-        ref={(e) => {
-          dropRef(e);
-          dragRef(e);
-          headerRef.current = e;
-        }}
-        class={cx(className, {
-          open,
-          selected,
-          shadow,
-          showDropTop: dropHotSpot === "before",
-          showDropOver: dropHotSpot === "inside",
-          showDropBottom: dropHotSpot === "after",
-        })}
-        style={{ "--depth": depth }}
-        onClick={onClick}
-        onArrowClick={onArrowClick}
-        controls={controls}
-      >
-        {text}
-      </styles.LayerNavigationItemHeader>
+      <ContextMenu menu={contextMenu}>
+        <styles.LayerNavigationItemHeader
+          ref={(e) => {
+            dropRef(e);
+            dragRef(e);
+            headerRef.current = e;
+          }}
+          class={cx(className, {
+            open,
+            selected,
+            shadow,
+            showDropTop: dropHotSpot === "before",
+            showDropOver: dropHotSpot === "inside",
+            showDropBottom: dropHotSpot === "after",
+          })}
+          style={{ "--depth": depth }}
+          onClick={onClick}
+          onArrowClick={onArrowClick}
+          controls={controls}
+        >
+          {text}
+        </styles.LayerNavigationItemHeader>
+      </ContextMenu>
       {open && children && children()}
     </styles.TreeNavigationItem>
   );
@@ -86,12 +97,17 @@ const useLeaf = ({
   const virtId = [...(instanceOf || []), exprId].join(".");
   const open = useSelector(getExpandedVirtIds).includes(virtId);
   const selectedId = useSelector(getSelectedId);
+  const graph = useSelector(getGraph);
+
+  const contextMenu = useCallback(
+    () => getEntityShortcuts(exprId, graph),
+    [exprId, graph]
+  );
 
   const selected = selectedId === virtId;
 
   const headerRef = useRef<HTMLDivElement>(null);
   const [dropHotSpot, setDropHotSpot] = useState<DropHotSpot>(null);
-  const graph = useSelector(getGraph);
 
   const [{ opacity }, dragRef] = useDrag(
     () => ({
@@ -179,6 +195,7 @@ const useLeaf = ({
   return {
     onClick,
     onArrowClick,
+    contextMenu,
     dropHotSpot,
     headerRef,
     dragRef,

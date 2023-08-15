@@ -54,4 +54,10 @@ impl<'a> MutableVisitor<()> for EditContext<'a, WrapInElement> {
     fn visit_element(&mut self, expr: &mut paperclip_proto::ast::pc::Element) -> VisitorResult<()> {
         wrap_in_element!(self, expr.body)
     }
+    fn visit_insert(&mut self, expr: &mut paperclip_proto::ast::pc::Insert) -> VisitorResult<()> {
+        wrap_in_element!(self, expr.body)
+    }
+    fn visit_slot(&mut self, expr: &mut paperclip_proto::ast::pc::Slot) -> VisitorResult<()> {
+        wrap_in_element!(self, expr.body)
+    }
 }

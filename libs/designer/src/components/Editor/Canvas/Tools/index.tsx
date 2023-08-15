@@ -13,7 +13,7 @@ import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { Selectable } from "./Selectable";
 import { InsertElement } from "./InsertElement";
 import { ContextMenu } from "../../../ContextMenu";
-import { getEntityShortcuts } from "@paperclip-ui/designer/src/domains/shortcuts/state";
+import { getSelectedEntityShortcuts } from "@paperclip-ui/designer/src/domains/shortcuts/state";
 import { DropTarget } from "./DropTarget";
 import { TextEditor } from "./TextEditor";
 import { getSelectedExpressionInfo } from "@paperclip-ui/designer/src/state/pc";
@@ -62,7 +62,7 @@ export const Tools = () => {
 
   return (
     <DropTarget>
-      <ContextMenu menu={contextMenu}>
+      <ContextMenu menu={() => contextMenu}>
         <styles.Tools
           ref={toolsRef}
           onMouseDown={onMouswDown}
@@ -129,7 +129,7 @@ const useTools = () => {
 
   const toolsLayerEnabled = !canvas.isExpanded;
 
-  const contextMenu = useSelector(getEntityShortcuts);
+  const contextMenu = useSelector(getSelectedEntityShortcuts);
   const selectedExpr = useSelector(getSelectedExpressionInfo);
 
   const resizeable = true;

@@ -27,19 +27,21 @@ export const apiReducer = (
     }
     case "designer-engine/documentOpened":
       state = produce(state, (newState) => {
-        console.log("CDOCC");
         newState.currentDocument = event.payload;
         for (const id of newState.insertedNodeIds) {
-          if (findVirtNode(id, newState)) {
-            newState.selectedTargetId = id;
-          }
-
-          const expr = ast.getExprById(id, newState.graph);
+          const expr = ast.getExprInfoById(id, newState.graph);
           if (!expr) {
             continue;
           }
-          if (ast.isVariant(expr, state.graph)) {
-            newState.activeVariantId = expr.id;
+          if (expr.kind === ast.ExprKind.Variant) {
+            newState.activeVariantId = expr.expr.id;
+          } else if (
+            expr.kind === ast.ExprKind.TextNode ||
+            expr.kind === ast.ExprKind.Element ||
+            expr.kind === ast.ExprKind.Component ||
+            expr.kind === ast.ExprKind.Slot
+          ) {
+            newState.selectedTargetId = expr.expr.id;
           }
         }
         newState.insertedNodeIds = [];

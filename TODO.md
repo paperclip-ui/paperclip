@@ -1,10 +1,13 @@
 #### NOW
 
-- Component layer should include render node children
+- copy + paste components = create instance
+- get slots / inserts to work
 
-- inserted elements is not selected
-- display source of mixins
-- Display origin of styles
+- Layers
+  - create children insert when dropping element
+- Canvas
+
+  - ability to insert in
 
 - render instances properly
 

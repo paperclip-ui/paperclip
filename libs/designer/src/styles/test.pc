@@ -208,21 +208,18 @@ Test2 test2Instance
 Test testInstance
 
 /**
- * @bounds(x: 129, y: 1341, width: 523, height: 282)
+ * @bounds(x: 220, y: 1276, width: 376, height: 199)
 */
 
 div {
     style {
         position: relative
-        color: blue
-        background: white
+        background: var(theme.gray0)
+        font-family: var(theme.defaultFontFamily)
     }
-    text "something like this" {
+    text "something" {
         style {
-            font-family: Helvetica
-            position: relative
-            width: 132px
-            height: 19px
+            color: red
         }
     }
 }

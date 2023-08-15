@@ -19,6 +19,7 @@ import {
   Slot,
   Style,
   TextNode,
+  Trigger,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import cx from "classnames";
@@ -80,6 +81,9 @@ const DocumentBodyItemLeaf = memo(
     }
     if (item.text) {
       return <TextLeaf expr={item.text} depth={depth} />;
+    }
+    if (item.trigger) {
+      return <TriggerLeaf expr={item.trigger} depth={depth} />;
     }
 
     if (item.atom) {
@@ -304,6 +308,17 @@ const TextLeaf = memo(
     );
   }
 );
+const TriggerLeaf = memo(({ expr, depth, instanceOf }: LeafProps<Trigger>) => {
+  return (
+    <Leaf
+      id={expr.id}
+      className="trigger"
+      text={expr.name}
+      depth={depth}
+      instanceOf={instanceOf}
+    />
+  );
+});
 
 const AtomLeaf = memo(({ expr, depth, instanceOf }: LeafProps<Atom>) => {
   return (

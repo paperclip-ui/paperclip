@@ -441,13 +441,17 @@ const createEventHandler = (actions: Actions) => {
     state: DesignerState
   ) => {
     const source = {
-      [LayerKind.Atom]: `token unnamed unset`,
-      [LayerKind.Component]: `Component unnamed {}`,
+      [LayerKind.Atom]: `public token unnamed unset`,
+      [LayerKind.Component]: `public component unnamed {}`,
       [LayerKind.Element]: `div`,
       [LayerKind.Text]: `text "double click to edit`,
-      [LayerKind.Style]: `style unnamed {}`,
-      [LayerKind.Trigger]: `trigger unnamed {}`,
+      [LayerKind.Style]: `public style unnamed {}`,
+      [LayerKind.Trigger]: `public trigger unnamed {}`,
     }[layerKind];
+
+    if (!source) {
+      return;
+    }
 
     actions.applyChanges([
       {

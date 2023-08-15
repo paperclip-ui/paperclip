@@ -35,7 +35,7 @@ export const AddLayerButton = () => {
           Text
         </SuggestionMenuItem>,
         <SuggestionMenuItem value={LayerKind.Component}>
-          <styles.LayerIcon class="text" />
+          <styles.LayerIcon class="component" />
           Component
         </SuggestionMenuItem>,
         <SuggestionMenuItem value={LayerKind.Trigger}>

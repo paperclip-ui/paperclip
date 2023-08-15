@@ -68,6 +68,7 @@ export namespace ast {
     | BaseExprInfo<Component, ExprKind.Component>
     | BaseExprInfo<Atom, ExprKind.Atom>
     | BaseExprInfo<Reference, ExprKind.Reference>
+    | BaseExprInfo<Trigger, ExprKind.Trigger>
     | BaseExprInfo<Element, ExprKind.Element>
     | BaseExprInfo<Variant, ExprKind.Variant>
     | BaseExprInfo<Document, ExprKind.Document>
@@ -789,6 +790,9 @@ export namespace ast {
     if (expr.style) {
       return flattenStyle(expr.style);
     }
+    if (expr.trigger) {
+      return flattenTrigger(expr.trigger);
+    }
     return {};
   };
 
@@ -898,6 +902,14 @@ export namespace ast {
         ...expr.declarations.map(flattenDeclaration),
         ...(expr.extends || []).map(flattenReference)
       );
+    }
+  );
+
+  export const flattenTrigger = memoize(
+    (expr: Trigger): Record<string, InnerExpressionInfo> => {
+      return Object.assign({
+        [expr.id]: { expr, kind: ExprKind.Trigger },
+      });
     }
   );
 

@@ -4,6 +4,7 @@ import {
   findVirtId,
   findVirtNode,
   getGraphComponents,
+  isSelectableExpr,
 } from "../../state";
 import { DesignerEngineEvent, GraphLoaded } from "./events";
 import { DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
@@ -35,12 +36,7 @@ export const apiReducer = (
           }
           if (expr.kind === ast.ExprKind.Variant) {
             newState.activeVariantId = expr.expr.id;
-          } else if (
-            expr.kind === ast.ExprKind.TextNode ||
-            expr.kind === ast.ExprKind.Element ||
-            expr.kind === ast.ExprKind.Component ||
-            expr.kind === ast.ExprKind.Slot
-          ) {
+          } else if (isSelectableExpr(expr)) {
             newState.selectedTargetId = expr.expr.id;
           }
         }

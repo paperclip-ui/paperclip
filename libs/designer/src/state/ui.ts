@@ -1,6 +1,7 @@
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { DesignerState } from "./core";
 import { Box } from "./geom";
-import { findVirtNode } from "./pc";
+import { findVirtNode, getSelectedId } from "./pc";
 import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 
 export const getInsertMode = (state: DesignerState) => state.insertMode;
@@ -22,9 +23,6 @@ export const getInsertBox = ({
     x: Math.min(start.x, mousePosition.x),
     y: Math.min(start.y, mousePosition.y),
   };
-};
-export const getSelectedId = (designer: DesignerState) => {
-  return designer.selectedTargetId;
 };
 export const getHighlightedNodeId = (designer: DesignerState) =>
   designer.highlightedNodeId;

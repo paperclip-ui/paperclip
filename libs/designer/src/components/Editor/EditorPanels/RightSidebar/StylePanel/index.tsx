@@ -18,7 +18,8 @@ export const StylePanel = () => {
   if (
     expr.kind !== ast.ExprKind.Style &&
     expr.kind !== ast.ExprKind.Element &&
-    expr.kind !== ast.ExprKind.TextNode
+    expr.kind !== ast.ExprKind.TextNode &&
+    expr.kind !== ast.ExprKind.Component
   ) {
     return null;
   }

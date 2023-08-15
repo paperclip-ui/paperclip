@@ -196,7 +196,7 @@ public component Test2 {
 }
 
 /**
- * @bounds(x: 801, y: 878, width: 299, height: 193)
+ * @bounds(x: 813, y: 899, width: 299, height: 193)
 */
 
 Test2 test2Instance
@@ -208,10 +208,22 @@ Test2 test2Instance
 Test testInstance
 
 /**
- * @bounds(x: 869, y: 935, width: 393, height: 173)
+ * @bounds(x: 129, y: 1341, width: 523, height: 282)
 */
 
-public component Card {
+div {
+    style {
+        position: relative
+        color: blue
+        background: white
+    }
+    text "something like this" {
+        style {
+            font-family: Helvetica
+            position: relative
+            width: 132px
+            height: 19px
+        }
+    }
 }
-
 

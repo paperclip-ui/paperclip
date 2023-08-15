@@ -43,6 +43,7 @@ import {
   getEnabledVariants,
   getSelectedExprAvailableVariants,
   getSelectedExpression,
+  getStyleableTargetId,
 } from "../../state/pc";
 import {
   getGlobalShortcuts,
@@ -100,6 +101,7 @@ const createActions = (
   return {
     async openFile(filePath: string) {
       const data = await client.OpenFile({ path: filePath });
+
       dispatch({ type: "designer-engine/documentOpened", payload: data });
     },
     async createDesignFile(name: string) {
@@ -167,6 +169,14 @@ const createEventHandler = (actions: Actions) => {
       getScaledBox(getInsertBox(state), state.canvas.transform)
     );
 
+    bounds = roundBox(bounds);
+
+    bounds = {
+      ...bounds,
+      width: bounds.width || DEFAULT_FRAME_BOX.width,
+      height: bounds.height || DEFAULT_FRAME_BOX.height,
+    };
+
     const insertMode = state.insertMode;
 
     const intersectingNode = getNodeInfoAtCurrentPoint(state);
@@ -175,7 +185,7 @@ const createEventHandler = (actions: Actions) => {
       const mutation: Mutation = {
         insertFrame: {
           documentId: state.currentDocument.paperclip.html.sourceId,
-          bounds: roundBox(bounds),
+          bounds,
           nodeSource: {
             [InsertMode.Element]: `div {
               style {
@@ -293,7 +303,9 @@ const createEventHandler = (actions: Actions) => {
     state: DesignerState,
     prevState: DesignerState
   ) => {
-    const node = findVirtNode(prevState.selectedTargetId, prevState) as
+    const targetId = getStyleableTargetId(prevState);
+
+    const node = findVirtNode(targetId, prevState) as
       | VirtTextNode
       | VirtElement;
 

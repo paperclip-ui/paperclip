@@ -47,6 +47,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         &self,
         request: Request<FileRequest>,
     ) -> Result<Response<FileResponse>, Status> {
+
         let store = self.ctx.store.lock().unwrap();
         let path = request.get_ref().path.clone();
 

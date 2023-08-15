@@ -10,6 +10,8 @@ import {
   IS_WINDOWS,
   findVirtNode,
   getAllFrameBounds,
+  getCurrentDependency,
+  getCurrentDocument,
   getNodeInfoAtCurrentPoint,
   getPreviewFrameBoxes,
   highlightNode,
@@ -272,3 +274,20 @@ export const maybeCenterCanvas = (editor: DesignerState, force?: boolean) => {
   }
   return editor;
 };
+
+export const includeExtraRects = (state: DesignerState) =>
+  produce(state, (newState) => {
+    const components = ast.getDocumentComponents(
+      getCurrentDependency(state).document
+    );
+
+    for (const component of components) {
+      const renderNode = ast.getComponentRenderNode(component);
+      if (renderNode && newState.rects[renderNode.expr.id]) {
+        newState.rects[component.id] = newState.rects[renderNode.expr.id];
+
+        // DELETE render node since the component should always be selected
+        delete newState.rects[renderNode.expr.id];
+      }
+    }
+  });

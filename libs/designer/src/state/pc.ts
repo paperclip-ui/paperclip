@@ -31,6 +31,7 @@ import {
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { memoize } from "@paperclip-ui/common";
 import { pickBy } from "lodash";
+import { hasUncaughtExceptionCaptureCallback } from "process";
 
 export const MIXED_VALUE = "mixed";
 
@@ -401,12 +402,25 @@ const AVAILABLE_STYLES = {
   "z-index": "auto",
 };
 
+export const getSelectedId = (designer: DesignerState) => {
+  return designer.selectedTargetId;
+};
+
+export const getStyleableTargetId = (designer: DesignerState) => {
+  const id = getSelectedId(designer);
+  const expr = ast.getExprInfoById(id, designer.graph);
+  if (expr?.kind === ast.ExprKind.Component) {
+    return ast.getComponentRenderNode(expr.expr)?.expr.id;
+  }
+  return id;
+};
+
 export const getSelectedExprStyles = (
   state: DesignerState
 ): ComputedStyleMap => {
   const combinedStyles: Record<string, ComputedDeclaration> = {};
 
-  const virtId = state.selectedTargetId;
+  const virtId = getStyleableTargetId(state);
 
   const ret = { propertyNames: [], map: {} };
 
@@ -420,7 +434,10 @@ export const getSelectedExprStyles = (
     return ret;
   }
 
-  if (exprInfo.kind === ast.ExprKind.Element) {
+  if (
+    exprInfo.kind === ast.ExprKind.Element ||
+    exprInfo.kind === ast.ExprKind.TextNode
+  ) {
     return ast.computeElementStyle(virtId, state.graph);
   } else if (exprInfo.kind === ast.ExprKind.Style) {
     return ast.computeStyle(exprInfo.expr, state.graph, exprInfo.expr.id, []);
@@ -545,7 +562,7 @@ export const findVirtNode = (
   );
 };
 
-export const getExprBounds = (exprId: string, state: DesignerState): Bounds => {
+export const getExprBounds = (state: DesignerState): Bounds => {
   const node =
     state.currentDocument &&
     (findVirtNode(state.selectedTargetId, state) as any as
@@ -560,7 +577,7 @@ export const setSelectedNodeBounds = (
   state: DesignerState
 ) => {
   return produce(state, (newState) => {
-    const node = findVirtNode(newState.selectedTargetId, state) as any as
+    const node = findVirtNode(newState.selectedTargetId, newState) as any as
       | VirtElement
       | VirtText;
 

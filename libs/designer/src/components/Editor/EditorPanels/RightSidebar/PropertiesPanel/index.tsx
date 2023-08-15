@@ -34,7 +34,7 @@ export const PropertiesPanel = () => {
     return null;
   }
 
-  const bounds = getExprBounds(expr.expr.id, state);
+  const bounds = getExprBounds(state);
 
   return (
     <sidebarStyles.SidebarPanel>

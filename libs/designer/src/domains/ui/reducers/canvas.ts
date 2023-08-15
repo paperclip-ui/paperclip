@@ -14,6 +14,7 @@ import {
   clampCanvasTransform,
   handleDoubleClick,
   handleDragEvent,
+  includeExtraRects,
   MAX_ZOOM,
   maybeCenterCanvas,
   MIN_ZOOM,
@@ -186,6 +187,7 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
           }))
         );
       });
+      state = includeExtraRects(state);
       state = pruneDanglingRects(state);
       state = maybeCenterCanvas(state);
       return state;

@@ -64,7 +64,7 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
       return produce(state, (newState) => {
         newState.highlightedNodeId = null;
         if (newState.selectedTargetId) {
-          const node = findVirtNode(newState.selectedTargetId, state);
+          const node = findVirtNode(newState.selectedTargetId, newState);
           const parent =
             node &&
             virtHTML.getNodeParent(node, state.currentDocument.paperclip.html);

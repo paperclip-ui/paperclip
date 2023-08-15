@@ -6,7 +6,7 @@ import * as etcStyles from "@paperclip-ui/designer/src/styles/etc.pc";
 import { useSelector } from "@paperclip-ui/common";
 import { getSelectedExprStyles } from "@paperclip-ui/designer/src/state/pc";
 import { Declaration } from "./Declaration";
-import { getSelectedId } from "@paperclip-ui/designer/src/state";
+import { getStyleableTargetId } from "@paperclip-ui/designer/src/state";
 import { ComputedStyleMap } from "@paperclip-ui/proto-ext/lib/ast/serialize";
 
 export const Declarations = () => {
@@ -80,7 +80,7 @@ const GroupSection = ({ targetId, name, style }: GroupSectionProps) => {
 
 const useDeclarations = () => {
   const style = useSelector(getSelectedExprStyles);
-  const targetId = useSelector(getSelectedId);
+  const targetId = useSelector(getStyleableTargetId);
   return {
     style,
     targetId,

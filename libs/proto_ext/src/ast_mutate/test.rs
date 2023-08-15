@@ -3164,3 +3164,39 @@ case! {
     "#
   )]
 }
+
+case! {
+  sets_style_on_render_node_if_expr_is_component,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        render div
+      }
+      "#
+    )
+  ],
+  
+  mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
+    expression_id: "80f4925f-3".to_string(),
+    variant_ids: vec![],
+    declarations: vec![
+      SetStyleDeclarationValue {
+        imports: HashMap::new(),
+        name: "background".to_string(),
+        value: "red".to_string()
+      }
+    ]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div {
+        style {
+          background: red
+        }
+      }
+    }
+    "#
+  )]
+}

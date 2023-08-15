@@ -1,7 +1,12 @@
 import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 import produce from "immer";
 import { DesignerEvent } from "../../events";
-import { DesignerState, InsertMode, findVirtNode } from "../../state";
+import {
+  DesignerState,
+  InsertMode,
+  findVirtNode,
+  isSelectableExpr,
+} from "../../state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import {
   getGlobalShortcuts,
@@ -64,22 +69,33 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
       return produce(state, (newState) => {
         newState.highlightedNodeId = null;
         if (newState.selectedTargetId) {
-          const node = findVirtNode(newState.selectedTargetId, newState);
+          const node = ast.getExprByVirtId(
+            newState.selectedTargetId,
+            state.graph
+          );
           const parent =
-            node &&
-            virtHTML.getNodeParent(node, state.currentDocument.paperclip.html);
+            node && ast.getParentExprInfo(node.expr.id, state.graph);
 
           if (parent) {
-            // const index = parent.children.findIndex(child => (child.element === node || child.textNode === node));
-            const nextChild = parent.children.find((child) => {
-              const inner = virtHTML.getInnerNode(child);
-              return newState.selectedTargetId !== inner.id;
-            });
+            const parentBody = ast.getChildren(parent);
+
+            let nextChild: ast.InnerExpressionInfo;
+
+            for (let i = parentBody.length; i--; ) {
+              const child = parentBody[i];
+              if (
+                newState.selectedTargetId !== child.expr.id &&
+                isSelectableExpr(child)
+              ) {
+                nextChild = child;
+                break;
+              }
+            }
 
             if (nextChild) {
-              newState.selectedTargetId = virtHTML.getInnerNode(nextChild).id;
+              newState.selectedTargetId = nextChild.expr.id;
             } else {
-              newState.selectedTargetId = parent.id;
+              newState.selectedTargetId = parent.expr.id;
             }
           } else {
             newState.selectedTargetId = null;

@@ -406,6 +406,15 @@ export const getSelectedId = (designer: DesignerState) => {
   return designer.selectedTargetId;
 };
 
+export const isSelectableExpr = (expr: ast.InnerExpressionInfo) => {
+  return (
+    expr.kind === ast.ExprKind.Atom ||
+    expr.kind === ast.ExprKind.Style ||
+    expr.kind === ast.ExprKind.Trigger ||
+    expr.kind === ast.ExprKind.Element ||
+    expr.kind === ast.ExprKind.Component
+  );
+};
 export const getStyleableTargetId = (designer: DesignerState) => {
   const id = getSelectedId(designer);
   const expr = ast.getExprInfoById(id, designer.graph);

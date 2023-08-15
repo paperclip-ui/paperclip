@@ -267,12 +267,15 @@ export namespace ast {
   });
 
   export const getParent = memoize((id: string, graph: Graph) => {
+    return getParentExprInfo(id, graph)?.expr;
+  });
+
+  export const getParentExprInfo = memoize((id: string, graph: Graph) => {
     const dep = getOwnerDependency(id, graph);
     const exprsById = flattenDocument(dep.document);
     const childParentMap = getChildParentMap(exprsById);
     const parentId = childParentMap[id];
-
-    return parentId && getExprById(parentId, graph);
+    return getExprInfoById(parentId, graph);
   });
 
   export const getAncestorVirtIdsFromShadow = memoize(

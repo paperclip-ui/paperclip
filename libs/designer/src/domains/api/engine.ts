@@ -221,11 +221,12 @@ const createEventHandler = (actions: Actions) => {
 
       if (exprInfo?.kind === ast.ExprKind.Slot) {
         const [instanceId] = intersectingNode.nodeId.split(".");
-        const instance = findVirtNode(instanceId, state);
+        // const instance = findVirtNode(instanceId, state);
+
         actions.applyChanges([
           {
             appendInsert: {
-              instanceId: instance.id,
+              instanceId,
               slotName: exprInfo.expr.name,
               childSource,
             },

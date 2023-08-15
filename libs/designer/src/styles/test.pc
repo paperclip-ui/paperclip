@@ -208,14 +208,51 @@ Test2 test2Instance
 Test testInstance
 
 /**
- * @bounds(x: -31, y: 1385, width: 492, height: 291)
+ * @bounds(x: 50, y: 1438, width: 524, height: 341)
 */
 
-div {
-    style {
-        position: relative
+public component Test1 {
+    render div {
+        style {
+            position: relative
+            background: white
+            font-family: var(theme.defaultFontFamily)
+        }
+        slot children {
+            text "Insert something here" {
+                style {
+                    left: NaNpx
+                    top: NaNpx
+                    position: relative
+                    width: 524px
+                    height: 341px
+                }
+            }
+        }
     }
-    text "fdsfsd"
-    text "fdsfsd"
+}
+
+/**
+ * @bounds(x: 685, y: 1425, width: 600, height: 344)
+*/
+
+public component Test3 {
+    render Test1 {
+        insert children {
+            slot children {
+                text "something else"
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: -727, y: 1433, width: 718, height: 362)
+*/
+
+Test3 {
+    insert children {
+        text "another thing"
+    }
 }
 

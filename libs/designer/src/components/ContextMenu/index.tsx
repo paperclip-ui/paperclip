@@ -20,8 +20,6 @@ export const ContextMenu = ({ children, menu }: ContextMenuProps) => {
   const otherRef = useRef<HTMLElement>();
   const ref = children.props.ref || otherRef;
 
-  console.log("OKFDSNFSDfdfsFNKD");
-
   const [anchorStyle, setAnchorStyle] = useState<any>(null);
   const onContextMenu = (event: React.MouseEvent<any>) => {
     event.stopPropagation();

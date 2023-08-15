@@ -255,7 +255,7 @@ public component TreeNavigationItemHeader {
     variant isShadow trigger {
         ".shadow"
     }
-    render div root(class: class, style: style, onClick: onClick) {
+    render div root(class: class, style: style, onClick: onClick, onContextMenu: onContextMenu, onKeyDown: onKeyDown, onMouseDown: onMouseDown) {
         style {
             --depth: 1
             display: flex

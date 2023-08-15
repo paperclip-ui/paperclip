@@ -39,12 +39,7 @@ import {
   TextNode as VirtTextNode,
 } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { Box, getScaledBox, getScaledPoint, roundBox } from "../../state/geom";
-import {
-  getEnabledVariants,
-  getSelectedExprAvailableVariants,
-  getSelectedExpression,
-  getStyleableTargetId,
-} from "../../state/pc";
+import { getSelectedExpression, getStyleableTargetId } from "../../state/pc";
 import {
   getGlobalShortcuts,
   getKeyboardMenuCommand,
@@ -405,6 +400,7 @@ const createEventHandler = (actions: Actions) => {
     const kind = {
       [ast.ExprKind.TextNode]: "textNode",
       [ast.ExprKind.Element]: "element",
+      [ast.ExprKind.Component]: "component",
     }[event.payload.kind];
 
     if (!kind) {

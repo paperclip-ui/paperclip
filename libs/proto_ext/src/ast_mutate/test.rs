@@ -3,7 +3,7 @@ use crate::graph::{load::LoadableGraph, test_utils};
 use futures::executor::block_on;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::str_utils::strip_extra_ws;
-use paperclip_proto::ast::pc::{Element, TextNode};
+use paperclip_proto::ast::pc::{Element, TextNode, Component};
 use paperclip_proto::ast_mutate::{
     mutation, paste_expression, update_variant_trigger, AppendChild, AppendInsert, Bounds,
     ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveNode, PasteExpression,
@@ -1216,7 +1216,7 @@ case! {
     "/entry.pc", r#"
 
       component A {
-        render slot child {
+        render slot children {
           div
         }
       }
@@ -1230,7 +1230,7 @@ case! {
     (
       "/entry.pc", r#"
         component A {
-          render slot child {
+          render slot children {
             div
           }
         }
@@ -1245,8 +1245,8 @@ case! {
     "/entry.pc", r#"
 
       component A {
-        render slot child {
-          slot child1 {
+        render slot children {
+          slot children1 {
             div
           }
         }
@@ -1274,7 +1274,7 @@ case! {
     "/entry.pc", r#"
 
       component A {
-        render slot child {
+        render slot children {
           text "ab"
         }
       }
@@ -1289,7 +1289,7 @@ case! {
       "/entry.pc", r#"
         component A {
           render B {
-            insert child {
+            insert children {
               div
             }
           }
@@ -1306,8 +1306,8 @@ case! {
 
       component A {
         render B {
-          insert child {
-            slot child {
+          insert children {
+            slot children {
               div
             }
           }
@@ -1339,7 +1339,7 @@ case! {
 
       component A {
         render div {
-          slot child {
+          slot children {
             text "a"
           }
         }
@@ -1354,7 +1354,7 @@ case! {
     (
       "/entry.pc", r#"
         component A {
-          render slot child {
+          render slot children {
             text "a"
           }
         }
@@ -1369,7 +1369,7 @@ case! {
     "/entry.pc", r#"
 
       component A {
-        render slot child
+        render slot children
       }
     "#
   )]
@@ -2466,7 +2466,7 @@ case! {
       "/entry.pc", r#"
         component A {
           render div {
-            slot child {
+            slot children {
               text "a"
             }
           }
@@ -2484,7 +2484,7 @@ case! {
     "/entry.pc", r#"
     component A {
       render div {
-        slot child {
+        slot children {
           text "a"
           text "b"
         }
@@ -2500,7 +2500,7 @@ case! {
     (
       "/entry.pc", r#"
         A {
-          insert child {
+          insert children {
             text "a"
           }
         }
@@ -2516,7 +2516,7 @@ case! {
   [(
     "/entry.pc", r#"
     A {
-      insert child {
+      insert children {
         text "a"
         text "b"
       }
@@ -2532,7 +2532,7 @@ case! {
       "/entry.pc", r#"
       component A {
         render div {
-          slot child {
+          slot children {
             text "a"
           }
         }
@@ -2556,7 +2556,7 @@ case! {
     "/entry.pc", r#"
     component A {
       render div {
-        slot child {
+        slot children {
           text "a"
           span
         }
@@ -2572,7 +2572,7 @@ case! {
     (
       "/entry.pc", r#"
       A {
-        insert child {
+        insert children {
           text "a"
         }
       }
@@ -2594,7 +2594,7 @@ case! {
   [(
     "/entry.pc", r#"
     A {
-      insert child {
+      insert children {
         text "a"
         span
       }
@@ -3197,6 +3197,73 @@ case! {
         }
       }
     }
+    "#
+  )]
+}
+
+
+case! {
+  creates_instance_of_pasted_component,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        render div
+      }
+      "#
+    )
+  ],
+  mutation::Inner::PasteExpression(PasteExpression {
+    target_expression_id: "80f4925f-4".to_string(),
+    item: Some(paste_expression::Item::Component(Component {
+      name: "Baaabbb".to_string(),
+      is_public: false,
+      range: None,
+      body: vec![],
+      id: "80f4925f-3".to_string()
+    }))
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div
+    }
+    A
+    "#
+  )]
+}
+
+
+case! {
+  imports_pasted_instance_from_other_doc,
+  [
+    (
+      "/entry.pc", r#"
+      "#
+    ),
+    (
+
+      "/module.pc", r#"
+      component A {
+        render div
+      }
+      "#
+    )
+  ],
+  mutation::Inner::PasteExpression(PasteExpression {
+    target_expression_id: "80f4925f-1".to_string(),
+    item: Some(paste_expression::Item::Component(Component {
+      name: "A".to_string(),
+      is_public: false,
+      range: None,
+      body: vec![],
+      id: "139cec8e-3".to_string()
+    }))
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    import "./module.pc" as module
+    module.A
     "#
   )]
 }

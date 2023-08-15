@@ -160,6 +160,7 @@ message PasteExpression {
   oneof item {
     ast.pc.TextNode text_node = 2;
     ast.pc.Element element = 3;
+    ast.pc.Component component = 4;
   }
 }
 

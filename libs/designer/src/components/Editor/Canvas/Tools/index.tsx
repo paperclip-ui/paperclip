@@ -26,6 +26,7 @@ export const Tools = () => {
     onMouseMove,
     onMouseLeave,
     toolsRef,
+    resizeable,
     onMouseUp,
     showEmpty,
     insertMode,
@@ -86,7 +87,7 @@ export const Tools = () => {
               canvasScroll={canvas.scrollPosition}
               canvasTransform={canvas.transform}
               box={selectedBox}
-              showKnobs
+              showKnobs={resizeable}
               cursor={cursor}
             />
           ) : null}
@@ -130,6 +131,8 @@ const useTools = () => {
 
   const contextMenu = useSelector(getEntityShortcuts);
   const selectedExpr = useSelector(getSelectedExpressionInfo);
+
+  const resizeable = true;
 
   const getMousePoint = (event) => {
     const rect: ClientRect = (
@@ -200,6 +203,7 @@ const useTools = () => {
     onMouseMove,
     onMouseLeave,
     contextMenu,
+    resizeable,
     showTextEditor,
     onMouseUp,
     selectedExpr,

@@ -1,6 +1,6 @@
 #### NOW
 
-- context menu for left sidebar
+- autocomplete for decl names
 
 - copy + paste components = create instance
 - get slots / inserts to work

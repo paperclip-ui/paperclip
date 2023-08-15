@@ -3333,3 +3333,50 @@ case! {
     "#
   )]
 }
+
+case! {
+  can_set_the_tag_name_of_a_component,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        render div
+      }
+      "#
+    )
+  ],
+  mutation::Inner::SetTagName(SetTagName {
+    element_id: "80f4925f-3".to_string(),
+    tag_name: "span".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render span
+    }
+    "#
+  )]
+}
+
+case! {
+  can_set_the_tag_name_of_a_component_that_doesnt_have_a_render_node,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+      }
+      "#
+    )
+  ],
+  mutation::Inner::SetTagName(SetTagName {
+    element_id: "80f4925f-1".to_string(),
+    tag_name: "span".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render span
+    }
+    "#
+  )]
+}

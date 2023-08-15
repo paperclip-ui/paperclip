@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   getSelectedExpressionInfo,
   getExprBounds,
+  getStyleableTargetId,
 } from "@paperclip-ui/designer/src/state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { VariantsSection } from "./VariantsSection";
@@ -49,7 +50,8 @@ export const PropertiesPanel = () => {
               <IDField expr={expr} />
             ) : null}
             {expr.kind === ast.ExprKind.Component && <VariantsSection />}
-            {expr.kind === ast.ExprKind.Element && (
+            {(expr.kind === ast.ExprKind.Element ||
+              expr.kind === ast.ExprKind.Component) && (
               <>
                 <ElementTagField expr={expr} />
               </>
@@ -94,11 +96,22 @@ const TAG_OPTIONS = TAG_NAMES.map((tag) => (
 ));
 
 type ElemengTagFieldProps = {
-  expr: ast.BaseExprInfo<Element, ast.ExprKind.Element>;
+  expr:
+    | ast.BaseExprInfo<Element, ast.ExprKind.Element>
+    | ast.BaseExprInfo<Component, ast.ExprKind.Component>;
 };
 
 const ElementTagField = ({ expr }: ElemengTagFieldProps) => {
   const dispatch = useDispatch<DesignerEvent>();
+
+  const el =
+    expr.kind === ast.ExprKind.Component
+      ? ast.getComponentRenderNode(expr.expr)
+      : expr;
+
+  if (el.kind !== ast.ExprKind.Element) {
+    return null;
+  }
 
   const onSave = (value: string) => {
     dispatch({
@@ -111,7 +124,7 @@ const ElementTagField = ({ expr }: ElemengTagFieldProps) => {
     <inputStyles.Field
       name="Tag"
       input={
-        <SelectInput value={expr.expr.tagName} onChange={onSave}>
+        <SelectInput value={el.expr.tagName} onChange={onSave}>
           {TAG_OPTIONS}
         </SelectInput>
       }

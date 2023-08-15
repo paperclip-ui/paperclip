@@ -1,6 +1,7 @@
 use convert_case::{Case, Casing};
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::ast;
+use paperclip_proto::ast::pc::{Component, Render, component_body_item};
 use paperclip_proto::ast::{
     all::Expression,
     graph_ext::Dependency,
@@ -111,6 +112,27 @@ pub fn resolve_import_ns(document_dep: &Dependency, path: &str) -> (String, bool
     }
 
     return (get_unique_namespace("module", document_dep.document.as_ref().expect("Document must exist")), true)
+}
+
+pub fn upsert_render_node<'a>(component: &'a mut Component) -> &'a mut Render {
+    let existing_render_node = component.body.iter_mut().position(|x| match x.get_inner() {
+        component_body_item::Inner::Render(_) => true,
+        _ => false,
+    });
+
+    if let Some(i) = existing_render_node {
+        component.body.get_mut(i).unwrap().try_into().expect("Must be render node")
+    } else {
+        
+        component.body.push(component_body_item::Inner::Render(Render {
+            id: component.checksum().to_string(),
+            range: None,
+            node: None
+        })
+        .get_outer());
+
+        component.body.last_mut().unwrap().try_into().expect("Must be render node")
+    }
 }
 
 pub fn import_dep(document: &mut ast::pc::Document, document_dep: &Dependency, path: &str) -> String {

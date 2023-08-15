@@ -9,6 +9,7 @@ use paperclip_proto::{
 };
 
 use super::EditContext;
+use super::utils::upsert_render_node;
 use crate::ast::get_expr::GetExpr;
 use crate::{
     ast::{
@@ -203,35 +204,20 @@ impl<'a> MutableVisitor<()> for EditContext<'a, MoveNode> {
             _ => return VisitorResult::Return(()),
         };
 
-        let existing_render_node = expr.body.iter_mut().find(|x| match x.get_inner() {
-            component_body_item::Inner::Render(_) => true,
-            _ => false,
-        });
+        let existing_render_node = upsert_render_node(expr);
 
-
-
-        if existing_render_node.is_some() {
-            let existing_render_node: &mut Render = existing_render_node.unwrap().try_into().expect("Must be render node");
-            append_child(existing_render_node.node.as_mut().expect("Node must exist"), node);
+        if let Some(render_node) = &mut existing_render_node.node {
+            append_child(render_node, node);
         } else {
-            expr.body.push(
-                component_body_item::Inner::Render(Render {
-                    id: self
-                        .get_dependency()
-                        .document
-                        .as_ref()
-                        .expect("Doc must exist")
-                        .checksum(),
-                    range: None,
-                    node: Some(node),
-                })
-                .get_outer(),
-            );
+            existing_render_node.node = Some(node);
         }
+
 
         VisitorResult::Return(())
     }
 }
+
+
 
 
 fn append_child(node: &mut Node, child: Node) {

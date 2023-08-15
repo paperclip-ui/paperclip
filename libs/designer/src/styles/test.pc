@@ -211,15 +211,17 @@ Test testInstance
  * @bounds(x: 220, y: 1276, width: 376, height: 199)
 */
 
-div {
-    style {
-        position: relative
-        background: var(theme.gray0)
-        font-family: var(theme.defaultFontFamily)
-    }
-    text "something" {
+public component Unnamed {
+    render div {
         style {
-            color: red
+            position: relative
+            background: var(theme.gray0)
+            font-family: var(theme.defaultFontFamily)
+        }
+        text "something" {
+            style {
+                color: red
+            }
         }
     }
 }

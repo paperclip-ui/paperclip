@@ -21,10 +21,11 @@ import {
   ResizerPathMoved,
   ResizerPathStoppedMoving,
 } from "./events";
-import { Box, centerTransformZoom } from "../../state/geom";
+import { Box, centerTransformZoom, mergeBoxes } from "../../state/geom";
 import { clamp, uniq } from "lodash";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { WritableDraft } from "immer/dist/internal";
+import { Component, Slot } from "@paperclip-ui/proto/lib/generated/ast/pc";
 
 export const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
 export const PAN_X_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;
@@ -282,12 +283,54 @@ export const includeExtraRects = (state: DesignerState) =>
     );
 
     for (const component of components) {
-      const renderNode = ast.getComponentRenderNode(component);
-      if (renderNode && newState.rects[renderNode.expr.id]) {
-        newState.rects[component.id] = newState.rects[renderNode.expr.id];
-
-        // DELETE render node since the component should always be selected
-        delete newState.rects[renderNode.expr.id];
-      }
+      includeComponentRects(component, newState);
     }
   });
+
+const includeComponentRects = (
+  component: Component,
+  newState: WritableDraft<DesignerState>
+) => {
+  const renderNode = ast.getComponentRenderNode(component);
+  const renderNodeRect = newState.rects[renderNode?.expr.id];
+  if (!renderNodeRect) {
+    return;
+  }
+
+  newState.rects[component.id] = newState.rects[renderNode.expr.id];
+
+  // DELETE render node since the component should always be selected
+  delete newState.rects[renderNode.expr.id];
+
+  const slots = ast.getComponentSlots(component, newState.graph);
+
+  for (const slot of slots) {
+    includeSlotRects(slot, renderNodeRect.frameIndex, newState);
+  }
+};
+const includeSlotRects = (
+  slot: Slot,
+  frameIndex: number,
+  newState: WritableDraft<DesignerState>
+) => {
+  const slotDescendents = ast.flattenSlot(slot);
+
+  const descendantRects: Box[] = [];
+  for (const id in slotDescendents) {
+    const expr = slotDescendents[id];
+    if (
+      expr.kind === ast.ExprKind.TextNode ||
+      expr.kind === ast.ExprKind.Element
+    ) {
+      const rect = newState.rects[expr.expr.id];
+      if (rect) {
+        descendantRects.push(rect);
+      }
+    }
+
+    newState.rects[slot.id] = {
+      frameIndex,
+      ...mergeBoxes(descendantRects),
+    };
+  }
+};

@@ -8,6 +8,15 @@
 
 - File navigator
 
+  - ability to open any file
+  - follow-ups:
+    - update entities panel to only show file name _and_ folder
+    - deprecate dashboard view
+    - show "new file" in entities panel
+    - ability to drop entities in folders
+      - when doing so, prompt for new file
+    - ability to drop entities in PC files
+
 - Table component
 - CSS declaration input
 - ability to define atoms

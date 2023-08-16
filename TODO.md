@@ -1,36 +1,47 @@
-### Considerations
+#### Warm up!
 
-- Try not to hand-write any new UI unless it's necessary for self-creation
-- It's all important so do what makes sense immediately
+- clean up \*.pc files
+  - re-organize frames
+  - add names
 
-### Litmus
+#### NOW
 
-- Can update any element in the editor
+- File navigator
 
-#### Warm up (30 min)
+- Table component
+- CSS declaration input
+- ability to define atoms
+  - ability to define value (use CSS decl input)
+- ability to define mixins
+- ability to define trigger
+- HTML attributes
+- autocomplete for decl names
+- autocomplete for attributes
+- metadata should be part of AST
 
-- split legacy reducer code
+- Layers
 
-Easy wins:
+  - display slots by default
+  - clean up add layer button
 
-- ability to rename layers
+- style panel
 
-#### On-deck
+  - UI For style overrides
+    - for combo selectors
+    - for inherited CSS
+    - for style mixins
+  - inputs
+    - color pickers (background, font-family)
+      - show up based on token
 
-- slots
+- Canvas
 
-  - use expr id to find virt node Ids and calc box around that
+  - show title of frame
 
-- ability to insert elements into slots
-- ability to move elements around in the layers panel
-- styles panel (vanilla)
-- style overrides
-- style tokens
-  - mixins
-  - atoms
+- Properties
+  - see instances of components
 
-### Polish
+#### Immediate
 
-- Detach instances when components are deleted
-
-## ga
+- Bugs / enhancements
+  - ability to resize sidebars or scrollbars

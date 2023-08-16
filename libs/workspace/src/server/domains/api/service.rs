@@ -47,6 +47,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         &self,
         request: Request<FileRequest>,
     ) -> Result<Response<FileResponse>, Status> {
+
         let store = self.ctx.store.lock().unwrap();
         let path = request.get_ref().path.clone();
 
@@ -164,7 +165,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                         graph.clone()
                     )).await.expect("Can't send");
                 },
-                ServerEvent::MutationsApplied { result: _, updated_graph: _ } => {
+                ServerEvent::MutationsApplied { result: _, updated_graph: _ } | ServerEvent::UndoRequested | ServerEvent::RedoRequested => {
                     let graph = store.clone().lock().unwrap().state.graph.clone();
 
                     // TODO - need to pick out files that have changed

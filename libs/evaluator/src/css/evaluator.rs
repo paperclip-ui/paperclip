@@ -8,19 +8,18 @@ use paperclip_proto::ast::all::{Expression, ImmutableExpressionRef};
 use paperclip_proto::ast::css as css_ast;
 use paperclip_proto::ast::graph_ext as graph;
 use paperclip_proto::ast::graph_ext::{self as graph_ref, Expr};
-use paperclip_proto::ast::pc as ast;
 use paperclip_proto::ast::pc::override_body_item;
+use paperclip_proto::ast::pc::{self as ast};
 use paperclip_proto::virt::css::Rule;
 use std::string::ToString;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum VariantTrigger {
     Boolean(bool),
     Selector(String),
 }
 
 type SelectorCombo = Vec<String>;
-type SelectorCombos = Vec<SelectorCombo>;
 
 // TODO - scan for all tokens and shove in root
 pub async fn evaluate<'asset_resolver, FR: FileResolver>(
@@ -136,10 +135,12 @@ fn evaluate_component<F: FileResolver>(
 ) {
     for item in &component.body {
         if let ast::component_body_item::Inner::Render(render) = item.get_inner() {
+            let mut context = context.within_component(component);
+
             evaluate_node(
                 render.node.as_ref().expect("Render node value must exist"),
                 None,
-                &mut context.within_component(component),
+                &mut context,
             );
         }
     }
@@ -234,11 +235,12 @@ fn into_shadow<'a, F: FileResolver>(
     );
 
     let mut shadow = context
-        .with_target_node(CurrentNode::Element(instance))
+        .within_instance(CurrentNode::Element(instance))
         .shadow(&instance_component_info);
 
     // looking for a.b. "a" is an instance
     // ignore single targets. E.g: just "a" since this is the target
+
     if path.len() > 0 {
         for i in 0..path.len() {
             let shadow_instance = context.graph.get_ref(
@@ -249,10 +251,8 @@ fn into_shadow<'a, F: FileResolver>(
 
             if let Some(info) = shadow_instance {
                 shadow = match info.expr {
-                    Expr::Element(element) => {
-                        shadow.with_target_node(CurrentNode::Element(element))
-                    }
-                    Expr::Text(text) => shadow.with_target_node(CurrentNode::TextNode(text)),
+                    Expr::Element(element) => shadow.within_instance(CurrentNode::Element(element)),
+                    Expr::Text(text) => shadow.within_instance(CurrentNode::TextNode(text)),
                     _ => shadow,
                 };
 
@@ -307,37 +307,56 @@ fn evaluate_style<F: FileResolver>(style: &ast::Style, context: &mut DocumentCon
             &expanded_combo_selectors,
             context,
         );
-    } else {
+    } else if matches!(context.top().current_variant, None) {
         evaluate_vanilla_style(style, context)
     }
 }
 
-fn get_current_instance_scope_selector<F: FileResolver>(context: &DocumentContext<F>) -> String {
-    // let is_root_node = context.is_target_node_root();
-
+fn get_shadow_instance_selector<F: FileResolver>(context: &DocumentContext<F>) -> Vec<String> {
     let mut curr = context;
 
     let mut buffer: Vec<String> = vec![];
 
     while let Some(shadow_of) = &curr.shadow_of {
         if let Some(CurrentNode::Element(instance)) = shadow_of.target_node {
-            buffer.push(format!(
-                "{}.{}",
-                if shadow_of.is_target_node_render_node() {
-                    ""
-                } else {
-                    " "
-                },
-                get_style_namespace(&instance.name, &instance.id, shadow_of.current_component)
-            ));
+            buffer.insert(
+                0,
+                format!(
+                    ".{}",
+                    get_style_namespace(&instance.name, &instance.id, shadow_of.current_component)
+                ),
+            );
+
+            if shadow_of.current_component.is_some() && !shadow_of.is_target_node_render_node() {
+                buffer.insert(0, " ".to_string());
+            }
         } else {
             println!("Instance not defined!")
         }
         curr = shadow_of.as_ref();
     }
-    buffer.reverse();
 
-    buffer.join("")
+    buffer
+}
+
+fn get_render_node_ns<F: FileResolver>(context: &DocumentContext<F>) -> Option<String> {
+    let target_component = get_or_short!(context.current_component, None);
+
+    let render_node = if let Some(render) = target_component.get_render_expr() {
+        render.node.as_ref().expect("Node must exist")
+    } else {
+        return None;
+    };
+
+    return Some(get_style_namespace(
+        match render_node.get_inner() {
+            ast::node::Inner::Element(expr) => &expr.name,
+            ast::node::Inner::Text(expr) => &expr.name,
+            _ => &None,
+        },
+        render_node.get_id(),
+        Some(target_component),
+    ));
 }
 
 fn evaluate_variant_styles<F: FileResolver>(
@@ -346,69 +365,170 @@ fn evaluate_variant_styles<F: FileResolver>(
     expanded_combo_selectors: &Vec<Vec<VariantTrigger>>,
     context: &mut DocumentContext<F>,
 ) {
-    let current_node = if let Some(node) = &context.target_node {
-        node
-    } else {
-        return;
-    };
+    // The selector of the element currently in focus. Could be the render node.
+    let target_node = get_or_short!(&context.target_node, {});
 
-    let target_component = get_or_short!(context.current_component, {});
+    // The component where the variant is defined
+    let current_component = get_or_short!(context.current_component, {});
 
-    let root_node = if let Some(render) = target_component.get_render_expr() {
+    // the render node of the current component
+    let current_render_node = if let Some(render) = current_component.get_render_expr() {
         render.node.as_ref().expect("Node must exist")
     } else {
         return;
     };
 
-    let scope_selector = get_current_instance_scope_selector(context);
-    let is_root_node = root_node.get_id() == current_node.get_id();
+    // The shadow selector which is defined if evaluating instances.
+    let shadow_instance_selector_parts = get_shadow_instance_selector(context);
 
-    let node_ns = get_style_namespace(
-        current_node.get_name(),
-        current_node.get_id(),
+    let target_node_ns = get_style_namespace(
+        target_node.get_name(),
+        target_node.get_id(),
         // TODO - this may be different with varint overrides
-        Some(target_component),
+        Some(current_component),
     );
 
-    let root_node_ns = get_style_namespace(
-        match root_node.get_inner() {
-            ast::node::Inner::Element(expr) => &expr.name,
-            ast::node::Inner::Text(expr) => &expr.name,
-            _ => &None,
-        },
-        root_node.get_id(),
-        Some(target_component),
-    );
+    let top_context = context.top();
+    let target_node_selector = format!(".{}", target_node_ns);
+    let is_target_render_node = current_render_node.get_id() == target_node.get_id();
+    let is_within_shadow = shadow_instance_selector_parts.len() > 0;
+
+    let instance_selector = if let Some(instance) = top_context.current_instance {
+        format!(
+            ".{}",
+            get_style_namespace(
+                instance.get_name(),
+                instance.get_id(),
+                // TODO - this may be different with varint overrides
+                top_context.current_component,
+            )
+        )
+    } else {
+        "".to_string()
+    };
+
+    let top_render_node_selector = if let Some(render_node_ns) = get_render_node_ns(top_context) {
+        format!(".{}", render_node_ns)
+    } else {
+        instance_selector.clone()
+    };
+    let is_target_node_top_render_node = top_render_node_selector == target_node_selector;
+
+    let shadow_instance_selector = if is_within_shadow {
+        // if SPACE then top shadow instance is NOT render node, so leave as-is
+        if shadow_instance_selector_parts
+            .get(0)
+            .expect("Value must exist")
+            == &" ".to_string()
+        {
+            shadow_instance_selector_parts.join("")
+
+        // if NO space then top shadow instance IS render node, which is already
+        // top_render_node_selector.
+        } else {
+            shadow_instance_selector_parts[1..].join("")
+        }
+        // leave out TOP
+    } else {
+        "".to_string()
+    };
+
+    let is_shadow_instance_render_node =
+        !shadow_instance_selector_parts.contains(&" ".to_string()) && is_within_shadow;
+
+    let (pre_selector, post_selector) = if is_target_render_node {
+        if is_shadow_instance_render_node {
+            (
+                if is_target_node_top_render_node {
+                    format!("{}", target_node_selector)
+                } else {
+                    format!(
+                        "{}{}{}",
+                        top_render_node_selector, shadow_instance_selector, target_node_selector
+                    )
+                },
+                "".to_string(),
+            )
+        } else {
+            if is_target_node_top_render_node {
+                (format!("{}", target_node_selector), "".to_string())
+            } else {
+                (
+                    format!("{}", top_render_node_selector),
+                    format!("{}{}", shadow_instance_selector, target_node_selector),
+                )
+            }
+        }
+    } else {
+        if is_shadow_instance_render_node {
+            (
+                format!("{}{}", top_render_node_selector, shadow_instance_selector),
+                format!(" {}", target_node_selector),
+            )
+        } else {
+            (
+                format!("{}", top_render_node_selector),
+                format!("{} {}", shadow_instance_selector, target_node_selector),
+            )
+        }
+    };
+
+    // FOR DEBUGGING!
+    // println!("shadow_instance_selector_parts: {:?}", shadow_instance_selector_parts);
+    // println!("is_target_render_node: {}, is_shadow_instance_render_node: {}, is_target_node_top_render_node: {}", is_target_render_node, is_shadow_instance_render_node, is_target_node_top_render_node);
+    // println!("top_render_node_selector:'{}', shadow_instance_selector:'{}', target_node_selector:'{}', instance_selector: '{}'", top_render_node_selector, shadow_instance_selector, target_node_selector, instance_selector);
+    // println!("PRE:{}, POST:{}", pre_selector, post_selector);
+
+    // println!("------------------------------");
 
     let evaluated_style = create_style_declarations(style, context);
 
     let mut assoc_variants = vec![];
+
+    let variant_override = context.top().current_variant;
+
+    let is_within_override = matches!(variant_override, Some(_));
+    let mut found_overridable = false;
+
     for variant_ref in variant_refs {
         let assoc_variant = variant_ref
             .path
             .get(0)
             .and_then(|name| context.get_scoped_variant(name));
 
-        if let Some(variant) = assoc_variant {
+        if let Some((variant, _)) = assoc_variant {
+            if let Some(curr_variant) = variant_override {
+                if variant == curr_variant {
+                    found_overridable = true;
+                }
+            }
+
             assoc_variants.push(variant);
+        } else {
+            // variant ref does not exist, so do not evaluate
+            // TODO: need a more elegant way of handling this
+            return;
         }
     }
 
-    for (assoc_variant, _variant_context) in assoc_variants {
+    if is_within_override && !found_overridable {
+        println!("Variant override not found");
+        return;
+    }
+
+    if assoc_variants.len() > 0 && !is_within_override {
+        let variant_combo = assoc_variants
+            .iter()
+            .map(|v| format!(".{}", get_variant_namespace(v)))
+            .collect::<Vec<_>>()
+            .join("");
+
+        let selector_text = format!("{}{}{}", pre_selector, variant_combo, post_selector);
+
         let virt_style = virt::rule::Inner::Style(virt::StyleRule {
             id: context.next_id(),
             source_id: Some(style.id.to_string()),
-            selector_text: format!(
-                "{}.{}.{}{}",
-                scope_selector,
-                root_node_ns,
-                get_variant_namespace(assoc_variant),
-                if is_root_node {
-                    "".to_string()
-                } else {
-                    format!(" .{}", node_ns)
-                }
-            ),
+            selector_text,
             style: evaluated_style.clone(),
         })
         .get_outer();
@@ -418,90 +538,67 @@ fn evaluate_variant_styles<F: FileResolver>(
         });
     }
 
-    let (combo_queries, combo_selectors) = get_combo_selectors(expanded_combo_selectors);
+    let combos = get_combo_selectors2(expanded_combo_selectors);
 
-    let virt_styles = if combo_selectors.len() > 0 {
-        combo_selectors
-            .iter()
-            .map(|group_selectors| {
-                virt::rule::Inner::Style(virt::StyleRule {
-                    id: context.next_id(),
-                    source_id: Some(style.id.to_string()),
-                    selector_text: format!(
-                        "{}.{}{}{}",
-                        scope_selector,
-                        root_node_ns,
-                        group_selectors.join(""),
-                        if is_root_node {
-                            "".to_string()
-                        } else {
-                            format!(" .{}", node_ns)
-                        }
-                    ),
-                    style: evaluated_style.clone(),
-                })
-                .get_outer()
+    for (queries, group_selectors) in combos {
+        let virt_style = if group_selectors.len() > 0 {
+            virt::rule::Inner::Style(virt::StyleRule {
+                id: context.next_id(),
+                source_id: Some(style.id.to_string()),
+                selector_text: format!(
+                    "{}{}{}",
+                    pre_selector,
+                    group_selectors.join(""),
+                    post_selector
+                ),
+                style: evaluated_style.clone(),
             })
-            .collect::<Vec<virt::Rule>>()
-    } else if combo_queries.len() > 0 {
-        vec![virt::rule::Inner::Style(virt::StyleRule {
-            id: context.next_id(),
-            source_id: Some(style.id.to_string()),
-            selector_text: format!(
-                "{}.{}{}",
-                scope_selector,
-                root_node_ns,
-                if is_root_node {
-                    "".to_string()
-                } else {
-                    format!(" .{}", node_ns)
-                }
-            ),
-            style: evaluated_style.clone(),
-        })
-        .get_outer()]
-    } else {
-        return;
-    };
+            .get_outer()
+        } else {
+            virt::rule::Inner::Style(virt::StyleRule {
+                id: context.next_id(),
+                source_id: Some(style.id.to_string()),
+                selector_text: format!("{}{}", pre_selector, post_selector),
+                style: evaluated_style.clone(),
+            })
+            .get_outer()
+        };
 
-    for virt_style in virt_styles {
-        if combo_queries.len() == 0 {
+        if queries.len() == 0 {
             context.rules.borrow_mut().push(PrioritizedRule {
                 priority: context.priority,
                 rule: virt_style,
             });
         } else {
-            for container_queries in &combo_queries {
-                let container_rule =
-                    container_queries
-                        .iter()
-                        .fold(virt_style.clone(), |rule, container_query| {
-                            if container_query.starts_with("@media") {
-                                virt::rule::Inner::Media(create_condition_rule(
-                                    "media",
-                                    container_query,
-                                    vec![rule],
-                                    context,
-                                ))
-                                .get_outer()
-                            } else if container_query.starts_with("@supports") {
-                                virt::rule::Inner::Supports(create_condition_rule(
-                                    "supports",
-                                    container_query,
-                                    vec![rule],
-                                    context,
-                                ))
-                                .get_outer()
-                            } else {
-                                rule
-                            }
-                        });
+            let container_rule =
+                queries
+                    .iter()
+                    .fold(virt_style.clone(), |rule, container_query| {
+                        if container_query.starts_with("@media") {
+                            virt::rule::Inner::Media(create_condition_rule(
+                                "media",
+                                container_query,
+                                vec![rule],
+                                context,
+                            ))
+                            .get_outer()
+                        } else if container_query.starts_with("@supports") {
+                            virt::rule::Inner::Supports(create_condition_rule(
+                                "supports",
+                                container_query,
+                                vec![rule],
+                                context,
+                            ))
+                            .get_outer()
+                        } else {
+                            panic!("Unsupported container query: {}", container_query);
+                        }
+                    });
 
-                context.rules.borrow_mut().push(PrioritizedRule {
-                    priority: context.priority,
-                    rule: container_rule,
-                });
-            }
+            context.rules.borrow_mut().push(PrioritizedRule {
+                priority: context.priority,
+                rule: container_rule,
+            });
         }
     }
 }
@@ -552,17 +649,19 @@ fn substr(start: usize, value: &str) -> String {
 }
 */
 
-fn get_combo_selectors(
+fn get_combo_selectors2(
     expanded_combo_selectors: &Vec<Vec<VariantTrigger>>,
-) -> (SelectorCombos, SelectorCombos) {
-    let mut combo_container_queries: SelectorCombos = vec![];
-    let mut combo_selectors: SelectorCombos = vec![];
+) -> Vec<(SelectorCombo, SelectorCombo)> {
+    let mut ret = vec![];
 
-    for group in expanded_combo_selectors {
+    // let mut combo_container_queries: SelectorCombos = vec![];
+    // let mut combo_selectors: SelectorCombos = vec![];
+
+    for combo_selectors in expanded_combo_selectors {
         let mut container_queries = vec![];
         let mut selectors = vec![];
 
-        for selector in group {
+        for selector in combo_selectors {
             if let VariantTrigger::Selector(selector) = selector {
                 if selector.starts_with("@") {
                     container_queries.push(selector.to_string());
@@ -575,33 +674,13 @@ fn get_combo_selectors(
             }
         }
 
-        combo_container_queries = merge_combos(&combo_container_queries, &container_queries);
-        combo_selectors = merge_combos(&combo_selectors, &selectors);
+        ret.push((container_queries.clone(), selectors.clone()));
     }
 
-    (combo_container_queries, combo_selectors)
+    ret
 }
 
-fn merge_combos(existing_combos: &SelectorCombos, new_items: &Vec<String>) -> SelectorCombos {
-    if new_items.len() == 0 {
-        return existing_combos.clone();
-    }
-
-    let mut new_combos: SelectorCombos = vec![];
-    for item in new_items {
-        for combo in existing_combos {
-            let mut new_combo = combo.clone();
-            new_combo.push(item.to_string());
-            new_combos.push(new_combo);
-        }
-
-        if existing_combos.len() == 0 {
-            new_combos.push(vec![item.to_string()]);
-        }
-    }
-
-    new_combos
-}
+// [[or, or, or] and [or]]
 
 fn collect_style_variant_selectors<F: FileResolver>(
     variant_refs: &Vec<ast::Reference>,
@@ -615,13 +694,22 @@ fn collect_style_variant_selectors<F: FileResolver>(
             let variant = context.get_scoped_variant(variant_ref.path.get(0).unwrap());
 
             if let Some((variant, ctx)) = variant {
-                let mut triggers = vec![];
-                collect_triggers(
-                    &variant.triggers,
-                    &mut triggers,
-                    &mut ctx.with_variant(variant),
-                );
-                combo_triggers.push(triggers);
+                let variant_triggers = collect_triggers(&variant.triggers, &mut ctx.clone());
+
+                if combo_triggers.len() == 0 {
+                    combo_triggers = variant_triggers;
+                } else {
+                    let mut new_combos = vec![];
+
+                    for item in variant_triggers {
+                        for item2 in &combo_triggers {
+                            let mut new_combo = item2.clone();
+                            new_combo.extend(item.clone());
+                            new_combos.push(new_combo);
+                        }
+                    }
+                    combo_triggers = new_combos;
+                }
             }
         }
     }
@@ -629,46 +717,126 @@ fn collect_style_variant_selectors<F: FileResolver>(
     combo_triggers
 }
 
-fn collect_triggers<F: FileResolver>(
-    triggers: &Vec<ast::TriggerBodyItem>,
-    into: &mut Vec<VariantTrigger>,
-    context: &DocumentContext<F>,
-) {
-    for trigger in triggers {
-        match trigger.get_inner() {
-            ast::trigger_body_item::Inner::Bool(expr) => {
-                into.push(VariantTrigger::Boolean(expr.value));
-            }
-            ast::trigger_body_item::Inner::Str(expr) => {
-                into.push(VariantTrigger::Selector(expr.value.to_string()));
-            }
-            ast::trigger_body_item::Inner::Reference(expr) => {
-                let ref_info = context
-                    .graph
-                    .get_ref(
-                        &expr.path,
-                        &context.path,
-                        context
-                            .current_component
-                            .and_then(|component| Some(Expr::Component(component))),
-                    )
-                    .or_else(|| context.graph.get_ref(&expr.path, &context.path, None));
+/*
 
-                if let Some(info) = ref_info {
-                    if let graph_ref::Expr::Trigger(trigger) = &info.expr {
-                        collect_triggers(&trigger.body, into, context);
-                    } else if let graph_ref::Expr::Variant(variant) = &info.expr {
-                        // avoid recursion
-                        if Some(variant) != context.current_variant.as_ref() {
-                            collect_triggers(&variant.triggers, into, context);
-                        } else {
-                            println!("Recursive variants are not allowed!");
-                        }
-                    }
+trigger e {
+    ".selector" + ".another"
+    ".blarg"
+}
+
+trigger b {
+    e + ".blarg2"
+    ".something-else"
+}
+
+trigger c {
+    ".d"
+}
+
+trigger a {
+    b + c
+    ".eee"
+}
+
+[
+    [".selector", ".another", ".blarg2"]
+    [".blarg", ".blarg2"]
+    [".something-else"]
+]
+
+
+[
+    [".selector", ".another", ".blarg2", ".d"]
+    [".blarg", ".blarg2", ".d"]
+    [".something-else", ".d"]
+    [".eee"]
+]
+
+*/
+
+fn collect_triggers<F: FileResolver>(
+    triggers: &Vec<ast::TriggerBodyItemCombo>,
+    context: &DocumentContext<F>,
+) -> Vec<Vec<VariantTrigger>> {
+    let mut all_or_variants = vec![];
+
+    for combo in triggers {
+        let mut or_and_variants = vec![];
+        let mut and_variants = vec![];
+
+        for trigger in &combo.items {
+            match trigger.get_inner() {
+                ast::trigger_body_item::Inner::Bool(expr) => {
+                    and_variants.push(VariantTrigger::Boolean(expr.value));
+                }
+                ast::trigger_body_item::Inner::Str(expr) => {
+                    and_variants.push(VariantTrigger::Selector(expr.value.to_string()));
+                }
+                ast::trigger_body_item::Inner::Reference(_) => {
+                    // skip until the end
                 }
             }
         }
+
+        or_and_variants.push(and_variants);
+
+        for trigger in &combo.items {
+            match trigger.get_inner() {
+                ast::trigger_body_item::Inner::Reference(expr) => {
+                    let ref_info = context
+                        .graph
+                        .get_ref(
+                            &expr.path,
+                            &context.path,
+                            context
+                                .current_component
+                                .and_then(|component| Some(Expr::Component(component))),
+                        )
+                        .or_else(|| context.graph.get_ref(&expr.path, &context.path, None));
+
+                    let nested = if let Some(info) = ref_info {
+                        if let graph_ref::Expr::Trigger(trigger) = &info.expr {
+                            collect_triggers(&trigger.body, context)
+                        } else if let graph_ref::Expr::Variant(variant) = &info.expr {
+                            // avoid recursion
+                            if Some(variant) != context.current_variant.as_ref() {
+                                let mut sel = vec![vec![VariantTrigger::Selector(format!(
+                                    ".{}",
+                                    get_variant_namespace(variant)
+                                ))]];
+                                sel.extend(collect_triggers(&variant.triggers, context));
+
+                                sel
+                            } else {
+                                vec![]
+                            }
+                        } else {
+                            vec![]
+                        }
+                    } else {
+                        vec![]
+                    };
+
+                    let mut new_combos = vec![];
+
+                    for item in nested {
+                        for item2 in &or_and_variants {
+                            let mut new_combo = item2.clone();
+                            new_combo.extend(item.clone());
+                            new_combos.push(new_combo);
+                        }
+                    }
+
+                    or_and_variants = new_combos;
+                }
+                _ => {}
+            }
+        }
+
+        all_or_variants.extend(or_and_variants);
     }
+
+    all_or_variants
 }
 
 fn evaluate_atom<F: FileResolver>(atom: &ast::Atom, context: &DocumentContext<F>) -> String {
@@ -688,7 +856,7 @@ fn create_virt_style<F: FileResolver>(
     style: &ast::Style,
     context: &mut DocumentContext<F>,
 ) -> Option<virt::StyleRule> {
-    let mut scope_selector = get_current_instance_scope_selector(context);
+    let mut scope_selector = get_shadow_instance_selector(context).join("");
     if !context.is_target_node_render_node() {
         scope_selector = format!("{} ", scope_selector);
     }

@@ -582,7 +582,7 @@ fn bounds_are_attached_to_root_instances() {
     assert_eq!(
         element,
         &virt::html::node::Inner::Element(virt::html::Element {
-            id: "80f4925f-17".to_string(),
+            id: "80f4925f-17.80f4925f-1".to_string(),
             tag_name: "div".to_string(),
             source_id: Some("80f4925f-17".to_string()),
             source_instance_ids: vec!["80f4925f-17".to_string()],

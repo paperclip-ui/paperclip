@@ -5,7 +5,7 @@ use crate::core::parser_context::{create_initial_context, Context};
 use crate::core::string_scanner::StringScanner;
 use paperclip_proto::ast::css as css_ast;
 use paperclip_proto::ast::docco as docco_ast;
-use paperclip_proto::ast::pc as ast;
+use paperclip_proto::ast::pc::{self as ast, TriggerBodyItem};
 
 use crate::css::parser::{
     parse_style_declaration_with_string_scanner, parse_style_declarations_with_string_scanner,
@@ -152,16 +152,45 @@ fn parse_trigger(
 
 fn parse_trigger_body(
     context: &mut PCContext,
-) -> Result<Vec<ast::TriggerBodyItem>, err::ParserError> {
-    let mut body: Vec<ast::TriggerBodyItem> = vec![];
+) -> Result<Vec<ast::TriggerBodyItemCombo>, err::ParserError> {
+    let mut body: Vec<ast::TriggerBodyItemCombo> = vec![];
     context.next_token()?; // eat {
     context.skip(is_superfluous_or_newline)?;
     while context.curr_token != Some(Token::CurlyClose) {
-        body.push(parse_trigger_body_item(context)?);
+        body.push(parse_trigger_body_combo(context)?);
         context.skip(is_superfluous_or_newline)?;
     }
     context.next_token()?; // eat }
     Ok(body)
+}
+
+fn parse_trigger_body_combo(
+    context: &mut PCContext,
+) -> Result<ast::TriggerBodyItemCombo, err::ParserError> {
+    let start = context.curr_u16pos.clone();
+
+    let mut items: Vec<TriggerBodyItem> = vec![];
+
+    loop {
+        let item = parse_trigger_body_item(context)?;
+        context.skip(is_superfluous_or_newline)?;
+        items.push(item);
+
+        if matches!(context.curr_token, Some(Token::Plus)) {
+            // eat token
+            context.next_token()?;
+            context.skip(is_superfluous_or_newline)?;
+        } else {
+            break;
+        }
+    }
+    let end = context.curr_u16pos.clone();
+
+    Ok(ast::TriggerBodyItemCombo {
+        id: context.next_id(),
+        range: Some(base_ast::Range::new(start, end)),
+        items,
+    })
 }
 
 fn parse_trigger_body_item(
@@ -239,7 +268,7 @@ fn parse_style(context: &mut PCContext, is_public: bool) -> Result<ast::Style, e
     let variant_combo = if context.curr_token == Some(Token::KeywordVariant) {
         context.next_token()?; // eat keyword
         context.skip(is_superfluous)?;
-        parse_list(context, parse_ref, Token::Byte(b'+'))?
+        parse_list(context, parse_ref, Token::Plus)?
     } else {
         vec![]
     };

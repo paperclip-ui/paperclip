@@ -3,10 +3,12 @@ use std::collections::HashMap;
 use super::base::EditContext;
 use super::utils::{parse_import, resolve_import, resolve_imports, NamespaceResolution};
 use crate::ast::get_expr::GetExpr;
+use paperclip_common::get_or_short;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::{Expression, ExpressionWrapper};
 use paperclip_proto::ast::graph_ext::Dependency;
+use paperclip_proto::ast::pc::Render;
 use paperclip_proto::ast_mutate::{
     mutation_result, ExpressionUpdated, MutationResult, SetStyleDeclarations,
 };
@@ -74,6 +76,37 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetStyleDeclarations> {
             );
         }
 
+        VisitorResult::Continue
+    }
+    fn visit_component(&mut self, expr: &mut ast::pc::Component) -> VisitorResult<()> {
+        if expr.get_id() == &self.mutation.expression_id {
+            
+
+
+            let render_expr: &mut Render = get_or_short!(expr.body.iter_mut().find(|x| {
+                matches!(x.get_inner(), ast::pc::component_body_item::Inner::Render(_))
+            }), VisitorResult::Continue).try_into().expect("Must be render");
+
+            let el = render_expr.node.as_mut().expect("Node must exist");
+
+            let checksum = el.checksum().to_string();
+            let parent_id = el.get_id().to_string();
+            
+            let mut body = match el.get_inner_mut() {
+                ast::pc::node::Inner::Element(el) => &mut el.body,
+                ast::pc::node::Inner::Text(el) => &mut el.body,
+                _ => return VisitorResult::Continue
+            };
+
+            return add_child_style(
+                &mut self.changes,
+                &mut body,
+                &parent_id,
+                &checksum,
+                &self.mutation,
+                self.graph.dependencies.get(&self.path).as_ref().unwrap(),
+            );
+        }
         VisitorResult::Continue
     }
 }

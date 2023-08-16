@@ -40,8 +40,6 @@ public token space13 160px
 public token fontSize01 0.75rem
 public token fontSize02 0.875rem
 public token fontSize03 1.125rem
-public token fontSize03 1.125rem
-public token fontSize03 1.25rem
 public token fontSize04 1.5rem
 public token fontSize05 1.75rem
 public token fontSize06 2rem
@@ -50,6 +48,8 @@ public token defaultFontFamily Inter, sans-serif
 public token roundedSM 0.125rem
 public token rounded 0.25rem
 public token roundedMD 0.375rem
+
+public token inputHeight 24px
 
 public style mask {
     background-color: currentColor
@@ -79,7 +79,7 @@ public style input {
     border-radius: var(rounded)
     border: none
     color: currentColor
-    min-height: 24px
+    min-height: var(inputHeight)
 }
 
 public style card {

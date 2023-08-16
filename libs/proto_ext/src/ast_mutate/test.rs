@@ -3,10 +3,12 @@ use crate::graph::{load::LoadableGraph, test_utils};
 use futures::executor::block_on;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::str_utils::strip_extra_ws;
+use paperclip_proto::ast::pc::{Element, TextNode, Component};
 use paperclip_proto::ast_mutate::{
-    mutation, update_variant_trigger, AppendChild, AppendInsert, Bounds, ConvertToComponent,
-    ConvertToSlot, DeleteExpression, InsertFrame, SetFrameBounds, SetId, SetStyleDeclarationValue,
-    SetStyleDeclarations, SetTextNodeValue, ToggleVariants, UpdateVariant,
+    mutation, paste_expression, update_variant_trigger, AppendChild, AppendInsert, Bounds,
+    ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveNode, PasteExpression,
+    SetFrameBounds, SetId, SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins,
+    SetTagName, SetTextNodeValue, ToggleInstanceVariant, UpdateVariant, WrapInElement, PrependChild,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use std::collections::HashMap;
@@ -17,6 +19,10 @@ macro_rules! case {
         pub fn $name() {
             let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
             let mut graph = graph::Graph::new();
+
+            for (path, _) in $mock_files {
+              block_on(graph.load(&path, &mock_fs)).expect("Unable to load");
+            }
 
             if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
                 panic!("Unable to load");
@@ -62,7 +68,7 @@ case! {
   [(
     "/entry.pc", r#"
       div 
-      div
+      div unnamed
     "#
   )]
 }
@@ -83,7 +89,7 @@ case! {
   [(
     "/entry.pc", r#"
       div 
-      text "something"
+      text unnamed "something"
     "#
   )]
 }
@@ -768,35 +774,6 @@ case! {
 }
 
 case! {
-  can_toggle_variants_in_a_component,
-  [
-    (
-      "/entry.pc", r#"
-        component Test {
-          variant a
-          variant b trigger {
-            true
-          }
-        }
-      "#
-    )
-  ],
-  mutation::Inner::ToggleVariants(ToggleVariants {
-    enabled: HashMap::from([("80f4925f-1".to_string(), true), ("80f4925f-3".to_string(), false)])
-  }).get_outer(),
-  [(
-    "/entry.pc", r#"
-      component Test {
-        variant a trigger {
-          true
-        }
-        variant b
-      }
-    "#
-  )]
-}
-
-case! {
   can_set_style_declarations_with_variant_ids,
   [
     (
@@ -1177,6 +1154,50 @@ case! {
 }
 
 case! {
+  can_convert_an_element_to_component_and_maintain_id,
+  [
+    (
+      "/entry.pc", r#"
+        component B {
+          render div test
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::ConvertToComponent(ConvertToComponent {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    public component test { render div test } component B { render test }
+    "#
+  )]
+}
+
+case! {
+  can_convert_a_text_node_to_component_and_maintain_id,
+  [
+    (
+      "/entry.pc", r#"
+        component B {
+          render text abc "blarg"
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::ConvertToComponent(ConvertToComponent {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    public component abc { render text abc "blarg" } component B { render abc }
+    "#
+  )]
+}
+
+case! {
   can_convert_an_element_to_a_slot,
   [
     (
@@ -1195,7 +1216,7 @@ case! {
     "/entry.pc", r#"
 
       component A {
-        render slot child {
+        render slot children {
           div
         }
       }
@@ -1209,7 +1230,7 @@ case! {
     (
       "/entry.pc", r#"
         component A {
-          render slot child {
+          render slot children {
             div
           }
         }
@@ -1224,8 +1245,8 @@ case! {
     "/entry.pc", r#"
 
       component A {
-        render slot child {
-          slot child1 {
+        render slot children {
+          slot children1 {
             div
           }
         }
@@ -1253,7 +1274,7 @@ case! {
     "/entry.pc", r#"
 
       component A {
-        render slot child {
+        render slot children {
           text "ab"
         }
       }
@@ -1268,7 +1289,7 @@ case! {
       "/entry.pc", r#"
         component A {
           render B {
-            insert child {
+            insert children {
               div
             }
           }
@@ -1285,8 +1306,8 @@ case! {
 
       component A {
         render B {
-          insert child {
-            slot child {
+          insert children {
+            slot children {
               div
             }
           }
@@ -1318,7 +1339,7 @@ case! {
 
       component A {
         render div {
-          slot child {
+          slot children {
             text "a"
           }
         }
@@ -1333,7 +1354,7 @@ case! {
     (
       "/entry.pc", r#"
         component A {
-          render slot child {
+          render slot children {
             text "a"
           }
         }
@@ -1348,7 +1369,7 @@ case! {
     "/entry.pc", r#"
 
       component A {
-        render slot child
+        render slot children
       }
     "#
   )]
@@ -1986,6 +2007,1425 @@ case! {
         render slot test
       }
       A
+    "#
+  )]
+}
+
+case! {
+  can_move_a_text_node_inside_an_element,
+  [
+    (
+      "/entry.pc", r#"
+        div {
+          span
+          text "b"
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::MoveNode(MoveNode {
+    position: 2,
+    target_id: "80f4925f-1".to_string(),
+    node_id: "80f4925f-2".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      span {
+        text "b"
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_move_a_text_node_before_another,
+  [
+    (
+      "/entry.pc", r#"
+        div {
+          span
+          text "b"
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::MoveNode(MoveNode {
+    position: 0,
+    target_id: "80f4925f-1".to_string(),
+    node_id: "80f4925f-2".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      text "b"
+      span
+    }
+    "#
+  )]
+}
+
+case! {
+  can_move_a_text_node_after_another,
+  [
+    (
+      "/entry.pc", r#"
+        div {
+          text "b"
+          span
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::MoveNode(MoveNode {
+    position: 1,
+    target_id: "80f4925f-2".to_string(),
+    node_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      span
+      text "b"
+    }
+    "#
+  )]
+}
+
+case! {
+  can_move_an_element_inside_after_element,
+  [
+    (
+      "/entry.pc", r#"
+        div {
+          a
+          b
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::MoveNode(MoveNode {
+    position: 1,
+    target_id: "80f4925f-2".to_string(),
+    node_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      b
+      a
+    }
+    "#
+  )]
+}
+
+case! {
+  can_move_an_element_into_the_document,
+  [
+    (
+      "/entry.pc", r#"
+        div {
+          a
+          b
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::MoveNode(MoveNode {
+    position: 2,
+    target_id: "80f4925f-4".to_string(),
+    node_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      b
+    }
+    a
+    "#
+  )]
+}
+
+case! {
+  moves_metadata_with_insert_before,
+  [
+    (
+      "/entry.pc", r#"
+        a
+
+        /**
+         * @bounds(x: 100, y: 200, width: 300, height: 400)
+         */
+        b
+      "#
+    )
+  ],
+
+  mutation::Inner::MoveNode(MoveNode {
+    position: 0,
+    target_id: "80f4925f-1".to_string(),
+    node_id: "80f4925f-15".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    /**
+     * @bounds(x: 100, y: 200, width: 300, height: 400)
+     */
+    b
+    a
+    "#
+  )]
+}
+
+case! {
+  moves_metadata_with_insert_after,
+  [
+    (
+      "/entry.pc", r#"
+        /**
+         * @bounds(x: 100, y: 200, width: 300, height: 400)
+         */
+        a
+
+        b
+      "#
+    )
+  ],
+
+  mutation::Inner::MoveNode(MoveNode {
+    position: 1,
+    target_id: "80f4925f-15".to_string(),
+    node_id: "80f4925f-14".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    b
+    /**
+     * @bounds(x: 100, y: 200, width: 300, height: 400)
+     */
+    a
+    "#
+  )]
+}
+
+case! {
+  moves_node_before_metadata_with_before_insert,
+  [
+    (
+      "/entry.pc", r#"
+
+        /**
+         * @bounds(x: 100, y: 200, width: 300, height: 400)
+         */
+        a
+
+        /**
+         * @bounds(x: 100, y: 200, width: 300, height: 400)
+         */
+        b
+      "#
+    )
+  ],
+
+  mutation::Inner::MoveNode(MoveNode {
+    position: 0,
+    target_id: "80f4925f-14".to_string(),
+    node_id: "80f4925f-28".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    
+
+    /**
+     * @bounds(x: 100, y: 200, width: 300, height: 400)
+     */
+    b
+    
+    /**
+     * @bounds(x: 100, y: 200, width: 300, height: 400)
+     */
+    a
+    "#
+  )]
+}
+
+case! {
+  moves_node_before_metadata_with_after_insert,
+  [
+    (
+      "/entry.pc", r#"
+
+        /**
+         * @bounds(x: 100, y: 200, width: 300, height: 400)
+         */
+        a
+
+        /**
+         * @bounds(x: 100, y: 200, width: 300, height: 400)
+         */
+        b
+      "#
+    )
+  ],
+
+  mutation::Inner::MoveNode(MoveNode {
+    position: 1,
+    target_id: "80f4925f-28".to_string(),
+    node_id: "80f4925f-14".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    
+
+    /**
+     * @bounds(x: 100, y: 200, width: 300, height: 400)
+     */
+    b
+    
+    /**
+     * @bounds(x: 100, y: 200, width: 300, height: 400)
+     */
+    a
+    "#
+  )]
+}
+
+case! {
+  can_wrap_a_text_node_in_an_element,
+  [
+    (
+      "/entry.pc", r#"
+        text "hello"
+      "#
+    )
+  ],
+
+  mutation::Inner::WrapInElement(WrapInElement {
+    target_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      text "hello"
+    }
+    "#
+  )]
+}
+
+case! {
+  can_wrap_a_nested_text_node,
+  [
+    (
+      "/entry.pc", r#"
+        div {
+          text "hello"
+        }
+      "#
+    )
+  ],
+
+
+  mutation::Inner::WrapInElement(WrapInElement {
+    target_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      div {
+        text "hello"
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_set_the_tag_name_of_element,
+  [
+    (
+      "/entry.pc", r#"
+        div
+      "#
+    )
+  ],
+
+
+  mutation::Inner::SetTagName(SetTagName {
+    element_id: "80f4925f-1".to_string(),
+    tag_name: "span".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    span
+    "#
+  )]
+}
+
+case! {
+  can_paste_an_element_into_another_element,
+  [
+    (
+      "/entry.pc", r#"
+        div
+      "#
+    )
+  ],
+
+
+  mutation::Inner::PasteExpression(PasteExpression {
+    target_expression_id: "80f4925f-1".to_string(),
+    item: Some(paste_expression::Item::Element(Element {
+      namespace: None,
+      name: None,
+      parameters: vec![],
+      range: None,
+      body: vec![],
+      tag_name: "span".to_string(),
+      id: "123".to_string()
+    }))
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      span
+    }
+    "#
+  )]
+}
+
+case! {
+  can_paste_an_element_into_the_document,
+  [
+    (
+      "/entry.pc", r#"
+        div
+      "#
+    )
+  ],
+
+
+  mutation::Inner::PasteExpression(PasteExpression {
+    target_expression_id: "80f4925f-2".to_string(),
+    item: Some(paste_expression::Item::Element(Element {
+      namespace: None,
+      name: None,
+      parameters: vec![],
+      range: None,
+      body: vec![],
+      tag_name: "span".to_string(),
+      id: "123".to_string()
+    }))
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div
+    span
+    "#
+  )]
+}
+
+case! {
+  can_paste_a_text_node_into_the_document,
+  [
+    (
+      "/entry.pc", r#"
+        div
+      "#
+    )
+  ],
+
+
+  mutation::Inner::PasteExpression(PasteExpression {
+    target_expression_id: "80f4925f-2".to_string(),
+    item: Some(paste_expression::Item::TextNode(TextNode {
+      name: None,
+      range: None,
+      body: vec![],
+      value: "span".to_string(),
+      id: "123".to_string()
+    }))
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div
+    text "span"
+    "#
+  )]
+}
+
+case! {
+  can_drop_a_node_into_a_slot,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render div {
+            slot children {
+              text "a"
+            }
+          }
+        }
+        text "b"
+      "#
+    )
+  ],
+  mutation::Inner::MoveNode(MoveNode {
+    position: 2,
+    target_id: "80f4925f-2".to_string(),
+    node_id: "80f4925f-6".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div {
+        slot children {
+          text "a"
+          text "b"
+        }
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_drop_a_node_into_an_insert,
+  [
+    (
+      "/entry.pc", r#"
+        A {
+          insert children {
+            text "a"
+          }
+        }
+        text "b"
+      "#
+    )
+  ],
+  mutation::Inner::MoveNode(MoveNode {
+    position: 2,
+    target_id: "80f4925f-2".to_string(),
+    node_id: "80f4925f-4".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    A {
+      insert children {
+        text "a"
+        text "b"
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_paste_a_node_to_a_slot,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        render div {
+          slot children {
+            text "a"
+          }
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::PasteExpression(PasteExpression {
+    target_expression_id: "80f4925f-2".to_string(),
+    item: Some(paste_expression::Item::Element(Element {
+      namespace: None,
+      name: None,
+      parameters: vec![],
+      range: None,
+      body: vec![],
+      tag_name: "span".to_string(),
+      id: "123".to_string()
+    }))
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div {
+        slot children {
+          text "a"
+          span
+        }
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_paste_a_node_to_an_insert,
+  [
+    (
+      "/entry.pc", r#"
+      A {
+        insert children {
+          text "a"
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::PasteExpression(PasteExpression {
+    target_expression_id: "80f4925f-2".to_string(),
+    item: Some(paste_expression::Item::Element(Element {
+      namespace: None,
+      name: None,
+      parameters: vec![],
+      range: None,
+      body: vec![],
+      tag_name: "span".to_string(),
+      id: "123".to_string()
+    }))
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    A {
+      insert children {
+        text "a"
+        span
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_toggle_an_instance_variant,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        variant a 
+        render div {
+          style variant a {
+            color: red
+          }
+        }
+      }
+
+      A
+      "#
+    )
+  ],
+  mutation::Inner::ToggleInstanceVariant(ToggleInstanceVariant {
+    instance_id: "80f4925f-9".to_string(),
+    variant_id: "80f4925f-1".to_string(),
+    combo_variant_ids: vec![]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      variant a 
+      render div {
+        style variant a {
+          color: red
+        }
+      }
+    }
+
+    A {
+      override {
+        variant a trigger {
+          true
+        }
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_disable_an_instance_variant,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        variant a 
+        render div {
+          style variant a {
+            color: red
+          }
+        }
+      }
+
+      A {
+        override {
+          variant a trigger {
+            true
+          }
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::ToggleInstanceVariant(ToggleInstanceVariant {
+    instance_id: "80f4925f-13".to_string(),
+    variant_id: "80f4925f-1".to_string(),
+    combo_variant_ids: vec![]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      variant a 
+      render div {
+        style variant a {
+          color: red
+        }
+      }
+    }
+
+    A {
+      override {
+        variant a
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_enable_an_instance_variant_in_a_variant,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        variant a 
+        render div {
+          style variant a {
+            color: red
+          }
+        }
+      }
+
+      component B {
+        variant b
+        render A
+      }
+      "#
+    )
+  ],
+  mutation::Inner::ToggleInstanceVariant(ToggleInstanceVariant {
+    instance_id: "80f4925f-10".to_string(),
+    variant_id: "80f4925f-1".to_string(),
+    combo_variant_ids: vec!["80f4925f-9".to_string()]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      variant a 
+      render div {
+        style variant a {
+          color: red
+        }
+      }
+    }
+
+    component B {
+      variant b
+      render A {
+        override {
+          variant a trigger {
+            b
+          }
+        }
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_disable_an_instance_variant_in_a_variant,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        variant a 
+        render div {
+          style variant a {
+            color: red
+          }
+        }
+      }
+
+      component B {
+        variant b
+        render A {
+          override {
+            variant a trigger {
+              b
+            }
+          }
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::ToggleInstanceVariant(ToggleInstanceVariant {
+    instance_id: "80f4925f-14".to_string(),
+    variant_id: "80f4925f-1".to_string(),
+    combo_variant_ids: vec!["80f4925f-9".to_string()]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      variant a 
+      render div {
+        style variant a {
+          color: red
+        }
+      }
+    }
+
+    component B {
+      variant b
+      render A {
+        override {
+          variant a
+        }
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  removes_dupe_triggers,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        variant a 
+        render div {
+          style variant a {
+            color: red
+          }
+        }
+      }
+
+      component B {
+        variant b
+        render A {
+          override {
+            variant a trigger {
+              b
+              b
+              b
+            }
+          }
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::ToggleInstanceVariant(ToggleInstanceVariant {
+    instance_id: "80f4925f-18".to_string(),
+    variant_id: "80f4925f-1".to_string(),
+    combo_variant_ids: vec!["80f4925f-9".to_string()]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      variant a 
+      render div {
+        style variant a {
+          color: red
+        }
+      }
+    }
+
+    component B {
+      variant b
+      render A {
+        override {
+          variant a
+        }
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  defines_render_expr_if_dropped_in_component,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        
+      }
+      div
+      "#
+    )
+  ],
+  mutation::Inner::MoveNode(MoveNode {
+    position: 2,
+    target_id: "80f4925f-1".to_string(),
+    node_id: "80f4925f-2".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div
+    }
+    "#
+  )]
+}
+
+case! {
+  defines_render_expr_if_text_node_dropped_in_component,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        
+      }
+      text "a"
+      "#
+    )
+  ],
+  mutation::Inner::MoveNode(MoveNode {
+    position: 2,
+    target_id: "80f4925f-1".to_string(),
+    node_id: "80f4925f-2".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render text "a"
+    }
+    "#
+  )]
+}
+
+case! {
+  can_add_a_style_mixin,
+  [
+    (
+      "/entry.pc", r#"
+      style a {
+        
+      }
+
+      style b {
+
+      }
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleMixins(SetStyleMixins {
+    target_expr_id: "80f4925f-2".to_string(),
+    mixin_ids: vec!["80f4925f-1".to_string()],
+    variant_ids: vec![]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    style a
+    style b extends a
+    "#
+  )]
+}
+
+case! {
+  setting_style_mixins_resets_styles,
+  [
+    (
+      "/entry.pc", r#"
+
+      style a {
+
+      }
+      style b {
+        
+      }
+
+      style c extends b {
+
+      }
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleMixins(SetStyleMixins {
+    target_expr_id: "80f4925f-4".to_string(),
+    mixin_ids: vec!["80f4925f-1".to_string()],
+    variant_ids: vec![]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    style a
+    style b
+    style c extends a
+    "#
+  )]
+}
+
+
+case! {
+  auto_imports_style_from_other_dep,
+  [
+    (
+      "/entry.pc", r#"
+      style a
+      "#
+    ),
+    (
+      "/theme.pc", r#"
+      public style test {
+        color: red
+      }
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleMixins(SetStyleMixins {
+    target_expr_id: "80f4925f-1".to_string(),
+    mixin_ids: vec!["63c0af9a-3".to_string()],
+    variant_ids: vec![]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    import "./theme.pc" as module
+    style a extends module.test
+    "#
+  )]
+}
+
+
+
+case! {
+  can_define_mixins_on_an_element_without_a_style,
+  [
+    (
+      "/entry.pc", r#"
+      style a {
+        color: blue
+      }
+      div
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleMixins(SetStyleMixins {
+    target_expr_id: "80f4925f-4".to_string(),
+    mixin_ids: vec!["80f4925f-3".to_string()],
+    variant_ids: vec![]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    style a {
+      color: blue
+    }
+    div {
+      style extends a
+    }
+    "#
+  )]
+}
+
+
+
+case! {
+  can_define_mixins_within_variant,
+  [
+    (
+      "/entry.pc", r#"
+      style a
+      component B {
+        variant bv 
+        render div {
+
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleMixins(SetStyleMixins {
+    target_expr_id: "80f4925f-3".to_string(),
+    mixin_ids: vec!["80f4925f-1".to_string()],
+    variant_ids: vec!["80f4925f-2".to_string()]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    style a
+      component B {
+        variant bv 
+        render div {
+          style variant bv extends a
+        }
+      }
+    "#
+  )]
+}
+
+
+
+case! {
+  can_define_mixins_for_existing_style_with_variant,
+  [
+    (
+      "/entry.pc", r#"
+      style a
+      component B {
+        variant bv 
+        render div {
+          style variant bv {
+            color: blue
+          }
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleMixins(SetStyleMixins {
+    target_expr_id: "80f4925f-7".to_string(),
+    mixin_ids: vec!["80f4925f-1".to_string()],
+    variant_ids: vec!["80f4925f-2".to_string()]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    style a
+      component B {
+        variant bv 
+        render div {
+          style variant bv extends a {
+            color: blue
+          }
+        }
+      }
+    "#
+  )]
+}
+
+
+
+case! {
+  moves_node_to_render_node_if_dropped_in_component,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        render div
+      }
+      span
+      "#
+    )
+  ],
+  mutation::Inner::MoveNode(MoveNode {
+    target_id: "80f4925f-3".to_string(),
+    position: 2,
+    node_id: "80f4925f-4".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div {
+        span
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_move_a_node_before_a_component,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        render div
+      }
+      span
+      "#
+    )
+  ],
+  mutation::Inner::MoveNode(MoveNode {
+    target_id: "80f4925f-3".to_string(),
+    position: 0,
+    node_id: "80f4925f-4".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    span
+    component A {
+      render div
+    }
+    "#
+  )]
+}
+
+case! {
+  sets_style_on_render_node_if_expr_is_component,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        render div
+      }
+      "#
+    )
+  ],
+  
+  mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
+    expression_id: "80f4925f-3".to_string(),
+    variant_ids: vec![],
+    declarations: vec![
+      SetStyleDeclarationValue {
+        imports: HashMap::new(),
+        name: "background".to_string(),
+        value: "red".to_string()
+      }
+    ]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div {
+        style {
+          background: red
+        }
+      }
+    }
+    "#
+  )]
+}
+
+
+case! {
+  creates_instance_of_pasted_component,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        render div
+      }
+      "#
+    )
+  ],
+  mutation::Inner::PasteExpression(PasteExpression {
+    target_expression_id: "80f4925f-4".to_string(),
+    item: Some(paste_expression::Item::Component(Component {
+      name: "Baaabbb".to_string(),
+      is_public: false,
+      range: None,
+      body: vec![],
+      id: "80f4925f-3".to_string()
+    }))
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div
+    }
+    A
+    "#
+  )]
+}
+
+
+case! {
+  imports_pasted_instance_from_other_doc,
+  [
+    (
+      "/entry.pc", r#"
+      "#
+    ),
+    (
+
+      "/module.pc", r#"
+      component A {
+        render div
+      }
+      "#
+    )
+  ],
+  mutation::Inner::PasteExpression(PasteExpression {
+    target_expression_id: "80f4925f-1".to_string(),
+    item: Some(paste_expression::Item::Component(Component {
+      name: "A".to_string(),
+      is_public: false,
+      range: None,
+      body: vec![],
+      id: "139cec8e-3".to_string()
+    }))
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    import "./module.pc" as module
+    module.A
+    "#
+  )]
+}
+
+case! {
+  can_wrap_a_node_within_an_insert,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        render div {
+          insert a {
+            text "blah"
+          }
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::WrapInElement(WrapInElement {
+    target_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div {
+        insert a {
+          div {
+            text "blah"
+          }
+        }
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_wrap_a_node_within_a_slot,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        render div {
+          slot a {
+            text "blah"
+          }
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::WrapInElement(WrapInElement {
+    target_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div {
+        slot a {
+          div {
+            text "blah"
+          }
+        }
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_set_the_tag_name_of_a_component,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        render div
+      }
+      "#
+    )
+  ],
+  mutation::Inner::SetTagName(SetTagName {
+    element_id: "80f4925f-3".to_string(),
+    tag_name: "span".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render span
+    }
+    "#
+  )]
+}
+
+case! {
+  can_set_the_tag_name_of_a_component_that_doesnt_have_a_render_node,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+      }
+      "#
+    )
+  ],
+  mutation::Inner::SetTagName(SetTagName {
+    element_id: "80f4925f-1".to_string(),
+    tag_name: "span".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render span
+    }
+    "#
+  )]
+}
+
+
+case! {
+  can_prepend_a_child_in_a_document,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+      }
+      "#
+    )
+  ],
+  mutation::Inner::PrependChild(PrependChild {
+    parent_id: "80f4925f-2".to_string(),
+    child_source: "span".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    span unnamed
+    component A {
+    }
+    "#
+  )]
+}
+
+case! {
+  creates_unique_id_when_prepending_node,
+  [
+    (
+      "/entry.pc", r#"
+      span a
+      component A {
+      }
+      "#
+    )
+  ],
+  mutation::Inner::PrependChild(PrependChild {
+    parent_id: "80f4925f-3".to_string(),
+    child_source: "span a".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    span a1
+    span a
+    component A {
+    }
     "#
   )]
 }

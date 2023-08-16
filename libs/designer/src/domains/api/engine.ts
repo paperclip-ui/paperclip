@@ -6,33 +6,45 @@ import {
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent } from "./events";
+import { DesignerEvent } from "../../events";
 import {
-  DesignerEvent,
+  AddLayerMenuItemClicked,
+  // DesignerEvent,
+  ElementTagChanged,
+  ExprNavigatorDroppedNode,
+  InstanceVariantToggled,
   StyleDeclarationsChanged,
+  StyleMixinsSet,
   ToolsLayerDrop,
   VariantEdited,
-} from "../../events";
+} from "../ui/events";
+
 import {
   DEFAULT_FRAME_BOX,
   DesignerState,
   DNDKind,
+  findVirtNode,
   getCurrentFilePath,
   getInsertBox,
   getNodeInfoAtCurrentPoint,
   InsertMode,
+  LayerKind,
 } from "../../state";
-import { Mutation } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
-import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
+import {
+  Mutation,
+  NodePosition,
+} from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
+import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import {
   Element as VirtElement,
   TextNode as VirtTextNode,
 } from "@paperclip-ui/proto/lib/generated/virt/html";
-import { getScaledBox, getScaledPoint, roundBox } from "../../state/geom";
+import { Box, getScaledBox, getScaledPoint, roundBox } from "../../state/geom";
 import {
-  getEnabledVariants,
-  getSelectedExprAvailableVariants,
+  getCurrentDependency,
   getSelectedExpression,
+  getStyleableTargetId,
 } from "../../state/pc";
 import {
   getGlobalShortcuts,
@@ -46,7 +58,7 @@ import {
   IDChanged,
   ToolsTextEditorChanged,
 } from "../ui/events";
-import { TextNode } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import { ExpressionPasted } from "../clipboard/events";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -58,7 +70,7 @@ export const createDesignerEngine =
   ({ protocol, host, transport }: DesignerEngineOptions) =>
   (
     dispatch: Dispatch<DesignerEngineEvent>,
-    state: DesignerState
+    getState: () => DesignerState
   ): Engine<DesignerState, DesignerEngineEvent> => {
     const client = new DesignerClientImpl(
       new GrpcWebImpl((protocol || "http:") + "//" + host, {
@@ -68,7 +80,7 @@ export const createDesignerEngine =
 
     const actions = createActions(client, dispatch);
     const handleEvent = createEventHandler(actions);
-    bootstrap(actions, state);
+    bootstrap(actions, getState());
 
     const dispose = () => {};
     return {
@@ -90,6 +102,7 @@ const createActions = (
   return {
     async openFile(filePath: string) {
       const data = await client.OpenFile({ path: filePath });
+
       dispatch({ type: "designer-engine/documentOpened", payload: data });
     },
     async createDesignFile(name: string) {
@@ -104,7 +117,9 @@ const createActions = (
         next(event) {
           dispatch({ type: "designer-engine/serverEvent", payload: event });
         },
-        error: () => {},
+        error: () => {
+          dispatch({ type: "designer-engine/apiError" });
+        },
       });
     },
     syncResourceFiles() {
@@ -115,7 +130,9 @@ const createActions = (
             payload: data.filePaths,
           });
         },
-        error: () => {},
+        error: () => {
+          dispatch({ type: "designer-engine/apiError" });
+        },
       });
     },
     undo() {
@@ -149,7 +166,18 @@ const createActions = (
 
 const createEventHandler = (actions: Actions) => {
   const handleInsert = async (state: DesignerState) => {
-    let bounds = getScaledBox(getInsertBox(state), state.canvas.transform);
+    let bounds = roundBox(
+      getScaledBox(getInsertBox(state), state.canvas.transform)
+    );
+
+    bounds = roundBox(bounds);
+
+    bounds = {
+      ...bounds,
+      width: bounds.width || DEFAULT_FRAME_BOX.width,
+      height: bounds.height || DEFAULT_FRAME_BOX.height,
+    };
+
     const insertMode = state.insertMode;
 
     const intersectingNode = getNodeInfoAtCurrentPoint(state);
@@ -158,7 +186,7 @@ const createEventHandler = (actions: Actions) => {
       const mutation: Mutation = {
         insertFrame: {
           documentId: state.currentDocument.paperclip.html.sourceId,
-          bounds: roundBox(bounds),
+          bounds,
           nodeSource: {
             [InsertMode.Element]: `div {
               style {
@@ -172,15 +200,21 @@ const createEventHandler = (actions: Actions) => {
 
       actions.applyChanges([mutation]);
     } else {
+      const relBox = {
+        ...bounds,
+        x: bounds.x - intersectingNode.box.x,
+        y: bounds.y - intersectingNode.box.y,
+      };
+
       const childSource = {
         [InsertMode.Element]: `div {
           style {
             background: rgba(0,0,0,0.1)
             position: absolute
-            left: ${bounds.x}px
-            top: ${bounds.y}px
-            width: ${bounds.width}px
-            height: ${bounds.height}px
+            left: ${relBox.x}px
+            top: ${relBox.y}px
+            width: ${relBox.width}px
+            height: ${relBox.height}px
           }
         }`,
         [InsertMode.Text]: `text ""`,
@@ -193,24 +227,19 @@ const createEventHandler = (actions: Actions) => {
 
       if (exprInfo?.kind === ast.ExprKind.Slot) {
         const [instanceId] = intersectingNode.nodeId.split(".");
-        const instance = virtHTML.getNodeById(
-          instanceId,
-          state.currentDocument.paperclip.html
-        );
+        // const instance = findVirtNode(instanceId, state);
+
         actions.applyChanges([
           {
             appendInsert: {
-              instanceId: instance.id,
+              instanceId,
               slotName: exprInfo.expr.name,
               childSource,
             },
           },
         ]);
       } else {
-        const parent = virtHTML.getNodeById(
-          intersectingNode.nodeId,
-          state.currentDocument.paperclip.html
-        );
+        const parent = findVirtNode(intersectingNode.nodeId, state);
 
         const parentBox = state.rects[intersectingNode.nodeId];
 
@@ -245,25 +274,44 @@ const createEventHandler = (actions: Actions) => {
     state: DesignerState,
     prevState: DesignerState
   ) => {
-    const node = virtHTML.getNodeById(
-      prevState.selectedTargetId,
-      prevState.currentDocument.paperclip.html
-    ) as VirtTextNode | VirtElement;
+    const node = findVirtNode(prevState.selectedTargetId, prevState) as
+      | VirtTextNode
+      | VirtElement;
 
     // could be expression
     handleDeleteExpression(node?.sourceId || prevState.selectedTargetId, state);
+  };
+
+  const handleFrameBoundsChanged = (
+    state: DesignerState,
+    bounds: Box,
+    prevState: DesignerState
+  ) => {
+    const node = findVirtNode(prevState.selectedTargetId, prevState) as
+      | VirtTextNode
+      | VirtElement;
+
+    const mutation: Mutation = {
+      setFrameBounds: {
+        frameId: node.sourceId,
+        bounds,
+      },
+    };
+
+    actions.applyChanges([mutation]);
   };
 
   const handleResizerStoppedMoving = (
     state: DesignerState,
     prevState: DesignerState
   ) => {
-    const node = virtHTML.getNodeById(
-      prevState.selectedTargetId,
-      prevState.currentDocument.paperclip.html
-    ) as VirtTextNode | VirtElement;
+    const targetId = getStyleableTargetId(prevState);
 
-    const variantIds = getEnabledVariants(state).map((variant) => variant.id);
+    const node = findVirtNode(targetId, prevState) as
+      | VirtTextNode
+      | VirtElement;
+
+    const variantIds = state.selectedVariantIds;
 
     const path = virtHTML.getNodePath(
       node,
@@ -297,6 +345,27 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
+  const handleExprNavigatorDroppedNode = (
+    event: ExprNavigatorDroppedNode,
+    state: DesignerState
+  ) => {
+    const { targetId, droppedExprId, position } = event.payload;
+
+    actions.applyChanges([
+      {
+        moveNode: {
+          targetId,
+          nodeId: droppedExprId,
+          position: {
+            before: NodePosition.BEFORE,
+            after: NodePosition.AFTER,
+            inside: NodePosition.INSIDE,
+          }[position],
+        },
+      },
+    ]);
+  };
+
   const handleStyleDeclarationChanged = (
     event: StyleDeclarationsChanged,
     state: DesignerState
@@ -306,7 +375,7 @@ const createEventHandler = (actions: Actions) => {
       imports: event.payload.imports,
       value,
     }));
-    const variantIds = getEnabledVariants(state).map((variant) => variant.id);
+    const variantIds = state.selectedVariantIds;
 
     actions.applyChanges([
       {
@@ -330,6 +399,70 @@ const createEventHandler = (actions: Actions) => {
   const handleUndo = () => actions.undo();
   const handleRedo = () => actions.redo();
   const handleSave = () => actions.save();
+
+  const handlePasteExpression = (
+    event: ExpressionPasted,
+    state: DesignerState
+  ) => {
+    const kind = {
+      [ast.ExprKind.TextNode]: "textNode",
+      [ast.ExprKind.Element]: "element",
+      [ast.ExprKind.Component]: "component",
+    }[event.payload.kind];
+
+    if (!kind) {
+      console.error(`Cannot paste: `, event.payload.expr);
+      return;
+    }
+
+    let targetExpressionId = state.selectedTargetId;
+
+    if (!targetExpressionId) {
+      targetExpressionId = state.currentDocument.paperclip.html.sourceId;
+    }
+
+    // TODO: need to check when user selects leaf in left sidebar, then need to use
+    // that state to insert INTO the element instead of adjacent to it. This is an
+    // incomplete solution necessary for cases like: copy -> paste -> paste -> paste
+    targetExpressionId = ast.getParent(targetExpressionId, state.graph).id;
+
+    actions.applyChanges([
+      {
+        pasteExpression: {
+          targetExpressionId,
+          [kind]: event.payload.expr,
+        },
+      },
+    ]);
+  };
+
+  const handleAddLayerMenuItemClick = (
+    { payload: layerKind }: AddLayerMenuItemClicked,
+    state: DesignerState
+  ) => {
+    const source = {
+      [LayerKind.Atom]: `public token unnamed unset`,
+      [LayerKind.Component]: `public component unnamed {}`,
+      [LayerKind.Element]: `div`,
+      [LayerKind.Text]: `text "double click to edit`,
+      [LayerKind.Style]: `public style unnamed {}`,
+      [LayerKind.Trigger]: `public trigger unnamed {}`,
+    }[layerKind];
+
+    if (!source) {
+      return;
+    }
+
+    actions.applyChanges([
+      {
+        prependChild: {
+          parentId: getCurrentDependency(state).document.id,
+          childSource: source,
+        },
+      },
+    ]);
+  };
+
   const handleVariantEdited = (
     { payload: { componentId, newName, triggers } }: VariantEdited,
     state: DesignerState
@@ -373,6 +506,21 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
+  const handleStyleMixinsSet = (
+    { payload: mixinIds }: StyleMixinsSet,
+    state: DesignerState
+  ) => {
+    actions.applyChanges([
+      {
+        setStyleMixins: {
+          targetExprId: state.selectedTargetId,
+          mixinIds,
+          variantIds: state.selectedVariantIds,
+        },
+      },
+    ]);
+  };
+
   const handleDeleteExpression = (
     expressionId: string,
     state: DesignerState
@@ -382,25 +530,6 @@ const createEventHandler = (actions: Actions) => {
         deleteExpression: {
           expressionId,
         },
-      },
-    ]);
-  };
-
-  const handleVariantsSelected = (
-    selectedVariants: string[],
-    state: DesignerState
-  ) => {
-    const availableVariants = getSelectedExprAvailableVariants(state);
-
-    const enabled = {};
-
-    for (const variant of availableVariants) {
-      enabled[variant.id] = selectedVariants.includes(variant.id);
-    }
-
-    actions.applyChanges([
-      {
-        toggleVariants: { enabled },
       },
     ]);
   };
@@ -418,6 +547,19 @@ const createEventHandler = (actions: Actions) => {
       ]);
     }
   };
+
+  const handleWrapInElement = (state: DesignerState) => {
+    if (!state.selectedTargetId.includes(".")) {
+      actions.applyChanges([
+        {
+          wrapInElement: {
+            targetId: state.selectedTargetId,
+          },
+        },
+      ]);
+    }
+  };
+
   const handleConvertToSlot = (state: DesignerState) => {
     // Do not allow for nested instances to be converted to components.
     // Or, at least provide a confirmation for this.
@@ -443,6 +585,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case ShortcutCommand.ConvertToComponent: {
         return handleConvertToComponent(state);
+      }
+      case ShortcutCommand.WrapInElement: {
+        return handleWrapInElement(state);
       }
       case ShortcutCommand.ConvertToSlot: {
         return handleConvertToSlot(state);
@@ -515,6 +660,21 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
+  const handleElementTagChanged = (
+    event: ElementTagChanged,
+    state: DesignerState
+  ) => {
+    const expr = getSelectedExpression(state);
+    actions.applyChanges([
+      {
+        setTagName: {
+          elementId: expr.id,
+          tagName: event.payload.newTagName,
+        },
+      },
+    ]);
+  };
+
   const handleHistoryChanged = (
     event: HistoryChanged,
     state: DesignerState,
@@ -548,13 +708,28 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
+  const handleInstanceVariantToggled = (
+    event: InstanceVariantToggled,
+    state: DesignerState
+  ) => {
+    actions.applyChanges([
+      {
+        toggleInstanceVariant: {
+          instanceId: state.selectedTargetId,
+          variantId: event.payload,
+          comboVariantIds: state.selectedVariantIds,
+        },
+      },
+    ]);
+  };
+
   return (
     event: DesignerEvent,
     newState: DesignerState,
     prevState: DesignerState
   ) => {
     switch (event.type) {
-      case "editor/canvasMouseUp": {
+      case "ui/canvasMouseUp": {
         return handleCanvasMouseUp(newState, prevState);
       }
       case "shortcuts/itemSelected": {
@@ -564,20 +739,32 @@ const createEventHandler = (actions: Actions) => {
           prevState
         );
       }
+      case "designer-engine/apiError": {
+        return handleApiError();
+      }
       case "keyboard/keyDown": {
         return handleKeyDown(event, newState, prevState);
       }
-      case "editor/styleDeclarationsChanged": {
+      case "ui/styleDeclarationsChanged": {
         return handleStyleDeclarationChanged(event, newState);
       }
-      case "designer/variantSelected": {
-        return handleVariantsSelected(event.payload, newState);
+      case "ui/exprNavigatorDroppedNode": {
+        return handleExprNavigatorDroppedNode(event, newState);
       }
-      case "editor/removeVariantButtonClicked": {
+      case "designer/styleMixinsSet": {
+        return handleStyleMixinsSet(event, newState);
+      }
+      case "ui/removeVariantButtonClicked": {
         return handleDeleteExpression(event.payload.variantId, newState);
       }
       case "designer/variantEdited": {
         return handleVariantEdited(event, newState);
+      }
+      case "ui/AddLayerMenuItemClicked": {
+        return handleAddLayerMenuItemClick(event, newState);
+      }
+      case "clipboard/expressionPasted": {
+        return handlePasteExpression(event, newState);
       }
       case "ui/toolsTextEditorChanged": {
         return handleToolsTextEditorChanged(event, newState);
@@ -585,14 +772,27 @@ const createEventHandler = (actions: Actions) => {
       case "designer-engine/serverEvent": {
         return handleServerEvent(event.payload, newState);
       }
-      case "editor/resizerPathStoppedMoving": {
+      case "designer/instanceVariantToggled": {
+        return handleInstanceVariantToggled(event, newState);
+      }
+      case "ui/resizerPathStoppedMoving": {
         return handleResizerStoppedMoving(newState, prevState);
       }
-      case "designer/ToolsLayerDrop": {
+      case "ui/boundsChanged": {
+        return handleFrameBoundsChanged(
+          newState,
+          event.payload.newBounds,
+          prevState
+        );
+      }
+      case "ui/toolsLayerDrop": {
         return handleDropItem(event, newState);
       }
       case "ui/idChanged": {
         return handleIDChanged(event, newState);
+      }
+      case "ui/elementTagChanged": {
+        return handleElementTagChanged(event, newState);
       }
       case "history-engine/historyChanged": {
         return handleHistoryChanged(event, newState, prevState);
@@ -602,6 +802,14 @@ const createEventHandler = (actions: Actions) => {
       }
     }
   };
+};
+
+const handleApiError = () => {
+  // If API Error, then do a hard reload. Pretty dumb, need a more
+  // elegant solution. Though, this should be rare.
+  setTimeout(() => {
+    window.location.reload();
+  }, 1000 * 2);
 };
 
 /**

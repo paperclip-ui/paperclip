@@ -7,14 +7,18 @@ import { KeyDown } from "../keyboard/events";
 import { isKeyComboDown } from "./utils";
 import { DesignerState } from "../../state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { memoize } from "@paperclip-ui/common";
+import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 
 export enum ShortcutCommand {
   InsertElement,
+  GoToMainComponent,
   InsertResource,
   InsertText,
   ConvertToComponent,
   ShowHideUI,
   ConvertToSlot,
+  WrapInElement,
   Cut,
   Copy,
   Delete,
@@ -25,51 +29,84 @@ export enum ShortcutCommand {
   Save,
 }
 
-export const getEntityShortcuts = (
+export const ALLOW_DEFAULTS = [
+  ShortcutCommand.Copy,
+  ShortcutCommand.Paste,
+  ShortcutCommand.Cut,
+];
+
+export const getEntityShortcuts = memoize(
+  (id: string, graph: Graph): MenuItem<ShortcutCommand>[] => {
+    const entity = ast.getExprInfoById(id, graph);
+    const isInstance =
+      entity &&
+      entity.kind === ast.ExprKind.Element &&
+      ast.isInstance(entity.expr, graph);
+
+    return [
+      {
+        kind: MenuItemKind.Option,
+        label: "Create component",
+        shortcut: ["alt", "meta", "k"],
+        command: ShortcutCommand.ConvertToComponent,
+      },
+      {
+        kind: MenuItemKind.Option,
+        label: "Convert to slot",
+        enabled:
+          ast.isExpressionId(id) && ast.isExpressionInComponent(id, graph),
+        command: ShortcutCommand.ConvertToSlot,
+      },
+      {
+        kind: MenuItemKind.Option,
+        label: "Wrap in element",
+        shortcut: ["alt", "shift", "e"],
+        command: ShortcutCommand.WrapInElement,
+      },
+      { kind: MenuItemKind.Divider },
+      // Instance specific
+      ...((isInstance
+        ? [
+            {
+              kind: MenuItemKind.Option,
+              label: "Go to main component",
+              command: ShortcutCommand.GoToMainComponent,
+            },
+            { kind: MenuItemKind.Divider },
+          ]
+        : []) as MenuItem<ShortcutCommand>[]),
+      {
+        kind: MenuItemKind.Option,
+        label: "Cut",
+        shortcut: ["meta", "x"],
+        command: ShortcutCommand.Cut,
+      },
+      {
+        kind: MenuItemKind.Option,
+        label: "Copy",
+        shortcut: ["meta", "c"],
+        command: ShortcutCommand.Copy,
+      },
+      {
+        kind: MenuItemKind.Option,
+        label: "Paste",
+        shortcut: ["meta", "v"],
+        command: ShortcutCommand.Paste,
+      },
+      {
+        kind: MenuItemKind.Option,
+        label: "Delete",
+        shortcut: ["backspace"],
+        command: ShortcutCommand.Delete,
+      },
+    ];
+  }
+);
+
+export const getSelectedEntityShortcuts = (
   state: DesignerState
-): MenuItem<ShortcutCommand>[] => {
-  return [
-    {
-      kind: MenuItemKind.Option,
-      label: "Create component",
-      shortcut: ["alt", "meta", "k"],
-      command: ShortcutCommand.ConvertToComponent,
-    },
-    {
-      kind: MenuItemKind.Option,
-      label: "Create slot",
-      enabled:
-        ast.isExpressionId(state.selectedTargetId) &&
-        ast.isExpressionInComponent(state.selectedTargetId, state.graph),
-      command: ShortcutCommand.ConvertToSlot,
-    },
-    { kind: MenuItemKind.Divider },
-    {
-      kind: MenuItemKind.Option,
-      label: "Cut",
-      shortcut: ["meta", "x"],
-      command: ShortcutCommand.Cut,
-    },
-    {
-      kind: MenuItemKind.Option,
-      label: "Cut",
-      shortcut: ["meta", "c"],
-      command: ShortcutCommand.Copy,
-    },
-    {
-      kind: MenuItemKind.Option,
-      label: "Cut",
-      shortcut: ["meta", "v"],
-      command: ShortcutCommand.Paste,
-    },
-    {
-      kind: MenuItemKind.Option,
-      label: "Delete",
-      shortcut: ["backspace"],
-      command: ShortcutCommand.Delete,
-    },
-  ];
-};
+): MenuItem<ShortcutCommand>[] =>
+  getEntityShortcuts(state.selectedTargetId, state.graph);
 
 export const getGlobalShortcuts = (
   state: DesignerState
@@ -130,7 +167,7 @@ export const getGlobalShortcuts = (
   { kind: MenuItemKind.Divider },
 
   // Entity
-  ...getEntityShortcuts(state),
+  ...getSelectedEntityShortcuts(state),
 ];
 
 /*

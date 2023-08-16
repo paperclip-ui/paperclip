@@ -7,7 +7,7 @@ export type MultiSelectInputProps = {
   values: string[];
   placeholder: string;
   children: React.ReactElement[];
-  onChange: (values: string[]) => void;
+  onChange: (values: any[]) => void;
 };
 
 export const MultiSelectInput = ({
@@ -33,7 +33,7 @@ export const MultiSelectInput = ({
   return (
     <SuggestionMenu
       multi
-      onChange={onChange}
+      onSelect={onChange}
       values={values}
       menu={() => options}
     >
@@ -48,7 +48,7 @@ export const MultiSelectInput = ({
 };
 
 export type MultiSelectOptionProps = {
-  label: string;
+  label: any;
   value: string;
   children?: any;
 };

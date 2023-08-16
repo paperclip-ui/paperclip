@@ -3,14 +3,20 @@ import * as styles from "@paperclip-ui/designer/src/styles/input.pc";
 import { Portal } from "../Portal";
 import cx from "classnames";
 import { usePositioner } from "../hooks/usePositioner";
+import { noop } from "lodash";
+
+export type SelectDetails = {
+  event: React.FocusEvent | React.MouseEvent | React.KeyboardEvent;
+};
 
 export type SuggestionMenuProps = {
   values: string[];
   children: React.ReactElement;
   style?: any;
   multi?: boolean;
-  onChange: (values: any[]) => void;
-  onOtherChange?: (value: string) => void;
+  onChange?: (values: any[]) => void;
+  onSelect?: (values: any[], details: SelectDetails) => void;
+  onOtherSelect?: (value: string, details: SelectDetails) => void;
   menu: () => React.ReactElement[];
 };
 
@@ -19,13 +25,18 @@ export const SuggestionMenu = ({
   children,
   style,
   multi,
-  onChange,
-  onOtherChange = () => {},
+  onChange = noop,
+  onSelect: onSelect2 = noop,
+  onOtherSelect: onOtherSave = noop,
   menu,
 }: SuggestionMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [typedValue, setTypedValued] = useState(null);
   const [preselectedIndex, setPreselectedIndex] = useState(0);
+
+  useEffect(() => {
+    onChange([{ value: typedValue }]);
+  }, [typedValue, onChange]);
 
   const oldProps = children.props;
 
@@ -36,16 +47,17 @@ export const SuggestionMenu = ({
     }
   };
 
-  const onBlur = () => {
+  const onBlur = (event: React.FocusEvent | React.KeyboardEvent) => {
     setIsOpen((open) => {
       if (open && typedValue != null) {
-        onOtherChange(typedValue);
+        onChange([{ value: typedValue }]);
+        onOtherSave(typedValue, { event });
       }
       return false;
     });
   };
 
-  const onSelect = (value: any) => {
+  const onSelect = (value: any, details: SelectDetails) => {
     if (multi) {
       if (!values.includes(value)) {
         values = [...values, value];
@@ -56,6 +68,7 @@ export const SuggestionMenu = ({
       values = [value];
     }
     onChange(values);
+    onSelect2(values, details);
     setIsOpen(false);
   };
 
@@ -66,9 +79,11 @@ export const SuggestionMenu = ({
           return React.cloneElement(child, {
             selected: values.includes(child.props.value),
             preselected: i === preselectedIndex,
-            onMouseDown: () => {
+            onMouseDown: (event: React.MouseEvent) => {
               child.props.value &&
-                onSelect(child.props.selectValue || child.props.value);
+                onSelect(child.props.selectValue || child.props.value, {
+                  event,
+                });
             },
           });
         })
@@ -102,11 +117,15 @@ export const SuggestionMenu = ({
         menuOptions[preselectedIndex]?.props.selectValue ||
         menuOptions[preselectedIndex]?.props.value;
       if (value) {
-        onSelect(value);
+        onSelect(value, { event });
       } else if (typedValue != null) {
-        onOtherChange(typedValue);
+        onChange([{ value: typedValue }]);
+        onOtherSave(typedValue, { event });
       }
       setIsOpen(false);
+    } else if (event.key === "Tab") {
+      onBlur(event);
+      oldProps.onKeyDown?.(event);
     } else if (oldProps.onKeyDown) {
       oldProps.onKeyDown(event);
     }
@@ -128,7 +147,8 @@ export const SuggestionMenu = ({
 
   useEffect(() => {
     setPreselectedIndex(
-      selectedIndex === -1 ? firstOptionValueIndex : selectedIndex
+      // SUBTRACT 1 so that the value is not preselected. Could be a header or 0
+      selectedIndex === -1 ? firstOptionValueIndex - 1 : selectedIndex
     );
   }, [selectedIndex, firstOptionValueIndex]);
 
@@ -194,7 +214,9 @@ export const SuggestionMenuItem = ({
     if (ref.current && (selected || preselected)) {
       // timeout so that the menu is correctly positioned
       setTimeout(() => {
-        ref.current?.scrollIntoView(false);
+        ref.current?.scrollIntoView({
+          block: "nearest",
+        });
       });
     }
   }, [selected, preselected, ref.current]);

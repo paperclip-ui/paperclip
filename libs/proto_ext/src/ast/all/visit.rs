@@ -246,11 +246,17 @@ visitable! {
 }, {
   visit_each!(&mut self.triggers, visitor)
 }),
-  (pc::TriggerBodyItem, visit_trigger_body_item, (self, visitor) {
-    visit_enum!(self.get_inner(), visitor, pc::trigger_body_item::Inner::Str, pc::trigger_body_item::Inner::Reference, pc::trigger_body_item::Inner::Bool)
+(pc::TriggerBodyItem, visit_trigger_body_item, (self, visitor) {
+  visit_enum!(self.get_inner(), visitor, pc::trigger_body_item::Inner::Str, pc::trigger_body_item::Inner::Reference, pc::trigger_body_item::Inner::Bool)
 }, {
-  visit_enum!(self.get_inner_mut(), visitor, pc::trigger_body_item::Inner::Str, pc::trigger_body_item::Inner::Reference, pc::trigger_body_item::Inner::Bool)
+visit_enum!(self.get_inner_mut(), visitor, pc::trigger_body_item::Inner::Str, pc::trigger_body_item::Inner::Reference, pc::trigger_body_item::Inner::Bool)
 }),
+(pc::TriggerBodyItemCombo, visit_trigger_body_combo, (self, visitor) {
+  visit_each!(&self.items, visitor)
+}, {
+  visit_each!(&mut self.items, visitor)
+}),
+
   (pc::Reference, visit_reference, (self, visitor) {
     VisitorResult::Continue
   }, {

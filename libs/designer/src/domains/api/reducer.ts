@@ -1,12 +1,13 @@
 import produce from "immer";
 import {
   DesignerState,
+  findVirtId,
+  findVirtNode,
   getGraphComponents,
-  maybeCenterCanvas,
+  isSelectableExpr,
 } from "../../state";
 import { DesignerEngineEvent, GraphLoaded } from "./events";
 import { DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
-import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import jasonpatch from "fast-json-patch";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
@@ -28,32 +29,30 @@ export const apiReducer = (
     case "designer-engine/documentOpened":
       state = produce(state, (newState) => {
         newState.currentDocument = event.payload;
-
         for (const id of newState.insertedNodeIds) {
-          if (virtHTML.getNodeById(id, event.payload.paperclip.html)) {
-            newState.selectedTargetId = id;
-          }
-
-          const expr = ast.getExprById(id, state.graph);
+          const expr = ast.getExprInfoById(id, state.graph);
           if (!expr) {
             continue;
           }
-          if (ast.isVariant(expr, state.graph)) {
-            newState.activeVariantId = expr.id;
+          if (expr.kind === ast.ExprKind.Variant) {
+            newState.activeVariantId = expr.expr.id;
+          } else if (isSelectableExpr(expr)) {
+            newState.selectedTargetId = expr.expr.id;
           }
         }
         newState.insertedNodeIds = [];
       });
-      state = maybeCenterCanvas(state);
       return state;
 
     case "designer-engine/changesApplied": {
       return produce(state, (newState) => {
-        newState.insertedNodeIds = event.payload.changes
-          .map((change) => {
-            return change.expressionInserted?.id;
-          })
-          .filter(Boolean);
+        newState.insertedNodeIds.push(
+          ...event.payload.changes
+            .map((change) => {
+              return change.expressionInserted?.id;
+            })
+            .filter(Boolean)
+        );
       });
     }
   }

@@ -1,12 +1,20 @@
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import {
-  clampCanvasTransform,
   DesignerState,
+  findVirtNode,
   getNodeInfoAtCurrentPoint,
-  handleDoubleClick,
-  handleDragEvent,
   highlightNode,
   InsertMode,
+} from "@paperclip-ui/designer/src/state";
+import { centerTransformZoom } from "@paperclip-ui/designer/src/state/geom";
+import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
+import produce from "immer";
+import { clamp, mapValues } from "lodash";
+import {
+  clampCanvasTransform,
+  handleDoubleClick,
+  handleDragEvent,
+  includeExtraRects,
   MAX_ZOOM,
   maybeCenterCanvas,
   MIN_ZOOM,
@@ -15,20 +23,23 @@ import {
   pruneDanglingRects,
   selectNode,
   ZOOM_SENSITIVITY,
-} from "@paperclip-ui/designer/src/state";
-import { centerTransformZoom } from "@paperclip-ui/designer/src/state/geom";
-import { virtHTML } from "@paperclip-ui/proto/lib/virt/html-utils";
-import produce from "immer";
-import { clamp, mapValues } from "lodash";
+} from "../state";
 
 export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
   switch (event.type) {
-    case "editor/canvasResized":
+    case "ui/toolsLayerDragOver": {
+      return highlightNode(state, event.payload);
+    }
+    case "ui/toolsTextEditorChanged": {
+      return produce(state, (newState) => {
+        newState.showTextEditor = false;
+      });
+    }
+    case "ui/canvasResized":
       return produce(state, (newState) => {
         newState.canvas.size = event.payload;
       });
-
-    case "designer/ToolsLayerDrop": {
+    case "ui/toolsLayerDrop": {
       return produce(state, (newState) => {
         if (newState.insertMode != InsertMode.Resource) {
           newState.insertMode = null;
@@ -38,14 +49,13 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
         newState.canvasMouseDownStartPoint = undefined;
       });
     }
-
-    case "editor/insertModeButtonClick": {
+    case "ui/insertModeButtonClick": {
       return produce(state, (newState) => {
         newState.insertMode = event.payload.mode;
       });
     }
 
-    case "editor/canvasMouseDown": {
+    case "ui/canvasMouseDown": {
       state = produce(state, (newState) => {
         newState.canvas.mouseDown = true;
         newState.canvas.mousePosition = event.payload.position;
@@ -56,7 +66,7 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
       return state;
     }
 
-    case "editor/canvasMouseUp": {
+    case "ui/canvasMouseUp": {
       state = produce(state, (newState) => {
         if (newState.insertMode === InsertMode.Text) {
           newState.showTextEditor = true;
@@ -83,10 +93,7 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
 
       if (doubleClicked) {
         if (state.selectedTargetId) {
-          const node = virtHTML.getNodeById(
-            state.selectedTargetId,
-            state.currentDocument.paperclip.html
-          );
+          const node = findVirtNode(state.selectedTargetId, state);
 
           if (node && virtHTML.isTextNode(node)) {
             state = produce(state, (newDesigner) => {
@@ -107,7 +114,7 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
         state
       );
     }
-    case "editor/canvasPanned": {
+    case "ui/canvasPanned": {
       // do not allow panning when expanded
       if (state.canvas.isExpanded) {
         return state;
@@ -155,18 +162,22 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
       });
     }
 
-    case "editor/canvasMouseMoved": {
+    case "ui/canvasMouseMoved": {
       return highlightNode(state, event.payload);
     }
 
-    case "editor/resizerPathStoppedMoving": {
+    case "ui/resizerPathStoppedMoving": {
       return handleDragEvent({ ...state, resizerMoving: false }, event);
     }
-    case "editor/resizerPathMoved": {
+    case "ui/resizerPathMoved": {
       return handleDragEvent({ ...state, resizerMoving: true }, event);
     }
+    case "designer-engine/documentOpened": {
+      state = maybeCenterCanvas(state);
+      return state;
+    }
 
-    case "editor/rectsCaptured":
+    case "ui/rectsCaptured":
       state = produce(state, (newState) => {
         Object.assign(
           newState.rects,
@@ -176,13 +187,14 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
           }))
         );
       });
+      state = includeExtraRects(state);
       state = pruneDanglingRects(state);
       state = maybeCenterCanvas(state);
       return state;
 
-    case "editor/computedStylesCaptured":
+    case "ui/computedStylesCaptured":
       return produce(state, (newState) => {
-        Object.assign(newState.computedStyles, event.payload.computedStyles);
+        Object.assign(newState.computedStyles, event.payload);
       });
   }
   return state;

@@ -3,7 +3,7 @@ use paperclip_proto::{
         all::Expression,
         pc::{node, Document, Node, Slot},
     },
-    ast_mutate::ConvertToSlot,
+    ast_mutate::{ConvertToSlot, ExpressionInserted, mutation_result},
 };
 
 use super::{utils::get_named_expr_id, EditContext};
@@ -22,10 +22,9 @@ impl<'a> MutableVisitor<()> for EditContext<'a, ConvertToSlot> {
         }
 
         let node = expr.node.as_ref().unwrap().clone();
-        let slot = create_slot(&self, node, &expr.checksum());
+        let slot = create_slot(self, node, &expr.checksum());
 
         *expr.node.as_mut().unwrap() = slot;
-        // std::mem::replace(expr.node.as_mut().unwrap(), slot);
 
         VisitorResult::Return(())
     }
@@ -52,9 +51,21 @@ impl<'a> MutableVisitor<()> for EditContext<'a, ConvertToSlot> {
     }
 }
 
-fn create_slot<'a>(ctx: &EditContext<'a, ConvertToSlot>, child: Node, checksum: &str) -> Node {
+fn create_slot<'a>(ctx: &mut EditContext<'a, ConvertToSlot>, child: Node, checksum: &str) -> Node {
+
+    let id = format!("{}-slot", checksum);
+
+    ctx.changes.push(
+        mutation_result::Inner::ExpressionInserted(ExpressionInserted {
+            id: id.to_string(),
+        })
+        .get_outer(),
+    );
+
+
+
     node::Inner::Slot(Slot {
-        id: format!("{}-slot", checksum),
+        id,
         name: get_unique_slot_name(
             &ctx.mutation.expression_id,
             ctx.get_dependency()
@@ -69,7 +80,7 @@ fn create_slot<'a>(ctx: &EditContext<'a, ConvertToSlot>, child: Node, checksum: 
 }
 
 fn get_unique_slot_name(id: &str, doc: &Document) -> String {
-    let base_name = "child".to_string();
+    let base_name = "children".to_string();
     let owner_component = GetExpr::get_owner_component(id, doc).expect("Component must exist!");
     let mut i = 0;
     let mut name = base_name.to_string();

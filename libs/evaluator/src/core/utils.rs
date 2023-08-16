@@ -30,5 +30,5 @@ pub fn get_style_namespace(
 }
 
 pub fn get_variant_namespace(variant: &ast::Variant) -> String {
-    format!("_{}-{}", variant.name, variant.id)
+    format!("_variant-{}", variant.id)
 }

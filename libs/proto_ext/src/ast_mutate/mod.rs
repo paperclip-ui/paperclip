@@ -6,12 +6,18 @@ mod convert_to_slot;
 mod delete_expression;
 mod delete_style_declarations;
 mod insert_frame;
+mod move_node;
+mod paste_expression;
+mod prepend_child;
 mod set_frame_bounds;
 mod set_id;
 mod set_style_declarations;
+mod set_style_mixins;
+mod set_tag_name;
 mod set_text_node_value;
-mod toggle_variants;
+mod toggle_instance_variant;
 mod update_variant;
+mod wrap_in_element;
 #[macro_use]
 mod utils;
 use std::rc::Rc;
@@ -28,15 +34,20 @@ pub use convert_to_component::*;
 pub use convert_to_slot::*;
 pub use delete_expression::*;
 pub use delete_style_declarations::*;
+pub use move_node::*;
 pub use paperclip_proto::ast;
 use paperclip_proto::ast::graph_ext::Graph;
 pub use paperclip_proto::ast_mutate::*;
+pub use paste_expression::*;
 pub use set_frame_bounds::*;
 pub use set_id::*;
 pub use set_style_declarations::*;
+pub use set_style_mixins::*;
+pub use set_tag_name::*;
 pub use set_text_node_value::*;
-pub use toggle_variants::*;
+pub use toggle_instance_variant::*;
 pub use update_variant::*;
+pub use wrap_in_element::*;
 
 #[cfg(test)]
 mod test;
@@ -102,12 +113,17 @@ pub fn edit_graph<TIO: IO>(
 
 mutations! {
   InsertFrame,
-  ToggleVariants,
+  ToggleInstanceVariant,
   UpdateVariant,
   AppendInsert,
+  SetTagName,
+  PrependChild,
   SetTextNodeValue,
-  ConvertToComponent,
+  ConvertToComponent,SetStyleMixins,
+  PasteExpression,
   ConvertToSlot,
+  MoveNode,
+  WrapInElement,
   DeleteStyleDeclarations,
   SetId,
   SetStyleDeclarations,

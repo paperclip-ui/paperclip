@@ -66,12 +66,13 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, UpdateVariant> {
         let doc = parse(&mock_src, &expr.checksum()).unwrap();
         let new_variants = doc.get_components().get(0).unwrap().get_variants();
 
-        let variant = new_variants.get(0).unwrap().clone().clone();
+        let variant = *new_variants.get(0).unwrap();
         let variant_id = variant.id.to_string();
 
         expr.body.insert(
             0,
-            paperclip_proto::ast::pc::component_body_item::Inner::Variant(variant).get_outer(),
+            paperclip_proto::ast::pc::component_body_item::Inner::Variant(variant.clone())
+                .get_outer(),
         );
 
         self.changes.extend(vec![

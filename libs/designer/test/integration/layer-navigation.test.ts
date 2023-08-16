@@ -16,7 +16,7 @@ describe.skip(__filename + "#", () => {
 
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([]);
     designer.machine.dispatch({
-      type: "editor/layerLeafClicked",
+      type: "ui/layerLeafClicked",
       payload: { virtId: "4f0e8e93-1" },
     });
     expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-1");
@@ -46,7 +46,7 @@ describe.skip(__filename + "#", () => {
     await waitUntilDesignerReady(designer);
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([]);
     designer.machine.dispatch({
-      type: "editor/layerLeafClicked",
+      type: "ui/layerLeafClicked",
       payload: { virtId: "4f0e8e93-2" },
     });
     expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-2");
@@ -79,7 +79,7 @@ describe.skip(__filename + "#", () => {
     });
     await waitUntilDesignerReady(designer);
     designer.machine.dispatch({
-      type: "editor/layerLeafClicked",
+      type: "ui/layerLeafClicked",
       payload: { virtId: "4f0e8e93-2" },
     });
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([
@@ -90,7 +90,7 @@ describe.skip(__filename + "#", () => {
       "4f0e8e93-6",
     ]);
     designer.machine.dispatch({
-      type: "editor/layerLeafClicked",
+      type: "ui/layerLeafClicked",
       payload: { virtId: "4f0e8e93-6" },
     });
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([]);
@@ -114,7 +114,7 @@ describe.skip(__filename + "#", () => {
     });
     await waitUntilDesignerReady(designer);
     designer.machine.dispatch({
-      type: "editor/layerLeafClicked",
+      type: "ui/layerLeafClicked",
       payload: { virtId: "4f0e8e93-1" },
     });
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([
@@ -144,7 +144,7 @@ describe.skip(__filename + "#", () => {
     });
     await waitUntilDesignerReady(designer);
     designer.machine.dispatch({
-      type: "editor/layerLeafClicked",
+      type: "ui/layerLeafClicked",
       payload: { virtId: "4f0e8e93-4" },
     });
 

@@ -63,7 +63,7 @@ export const insertCanvasElement = async (
     payload: { command: ShortcutCommand.InsertElement },
   });
   designer.machine.dispatch({
-    type: "editor/canvasMouseDown",
+    type: "ui/canvasMouseDown",
     payload: {
       position: { x: 0, y: 0 },
       metaKey: false,
@@ -73,7 +73,7 @@ export const insertCanvasElement = async (
     },
   });
   designer.machine.dispatch({
-    type: "editor/canvasMouseUp",
+    type: "ui/canvasMouseUp",
     payload: {
       position,
       metaKey: false,

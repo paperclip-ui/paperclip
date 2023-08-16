@@ -1,5 +1,7 @@
 use convert_case::{Case, Casing};
 use paperclip_parser::pc::parser::parse;
+use paperclip_proto::ast;
+use paperclip_proto::ast::pc::{Component, Render, component_body_item, document_body_item};
 use paperclip_proto::ast::{
     all::Expression,
     graph_ext::Dependency,
@@ -24,6 +26,25 @@ macro_rules! replace_child {
             }
         }
         ret
+    }};
+}
+#[macro_export]
+macro_rules! try_remove_child {
+    ($children:expr, $id: expr) => {{
+        let mut found_i = None;
+
+        for (i, item) in $children.iter().enumerate() {
+            if item.get_id() == $id {
+                found_i = Some(i);
+            }
+        }
+
+        if let Some(i) = found_i {
+            let el = $children.remove(i);
+            Some((i, el))
+        } else {
+            None
+        }
     }};
 }
 
@@ -71,6 +92,64 @@ pub fn resolve_import(from: &str, to: &str) -> String {
     }
 
     relative
+}
+
+
+pub fn resolve_import_ns(document_dep: &Dependency, path: &str) -> (String, bool) {
+    for (rel_path, resolved_path) in &document_dep.imports {
+        if resolved_path == path {
+            return (document_dep
+                .document
+                .as_ref()
+                .unwrap()
+                .get_imports()
+                .iter()
+                .find(|imp| &imp.path == rel_path)
+                .unwrap()
+                .namespace
+                .clone(), false);
+        }
+    }
+
+    return (get_unique_namespace("module", document_dep.document.as_ref().expect("Document must exist")), true)
+}
+
+pub fn upsert_render_node<'a>(component: &'a mut Component) -> &'a mut Render {
+    let existing_render_node = component.body.iter_mut().position(|x| match x.get_inner() {
+        component_body_item::Inner::Render(_) => true,
+        _ => false,
+    });
+
+    if let Some(i) = existing_render_node {
+        component.body.get_mut(i).unwrap().try_into().expect("Must be render node")
+    } else {
+        
+        component.body.push(component_body_item::Inner::Render(Render {
+            id: component.checksum().to_string(),
+            range: None,
+            node: None
+        })
+        .get_outer());
+
+        component.body.last_mut().unwrap().try_into().expect("Must be render node")
+    }
+}
+
+pub fn import_dep(document: &mut ast::pc::Document, document_dep: &Dependency, path: &str) -> String {
+    let ns = resolve_import_ns(document_dep, path);
+
+    if ns.1 {
+        document.body.insert(
+            0,
+            parse_import(
+                &resolve_import(&document_dep.path, path),
+                &ns.0,
+                document.checksum().as_str(),
+            ),
+        );
+    }
+
+    return ns.0;
 }
 
 pub struct NamespaceResolution {
@@ -188,11 +267,17 @@ pub fn get_unique_namespace(base: &str, document: &Document) -> String {
     })
 }
 
-pub fn get_unique_component_id(base: &str, dep: &Dependency) -> String {
-    let components = dep.document.as_ref().unwrap().get_components();
+pub fn get_unique_component_name(base: &str, dep: &Dependency) -> String {
+    get_unique_document_body_item_name(&get_valid_name(base, Case::Pascal), dep)
+}
 
-    get_unique_id(&get_valid_name(base, Case::Pascal), |id| {
-        matches!(components.iter().find(|imp| { imp.name == id }), None)
+pub fn get_unique_document_body_item_name(base: &str, dep: &Dependency) -> String {
+    let body = &dep.document.as_ref().unwrap().body;
+
+    get_unique_id(base, |id| {
+        matches!(body.iter().find(|imp| { 
+            imp.get_name() == Some(id.to_string())
+        }), None)
     })
 }
 

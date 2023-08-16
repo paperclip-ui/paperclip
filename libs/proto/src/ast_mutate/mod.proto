@@ -11,10 +11,14 @@ message Mutation {
 
     // Node specific
     AppendChild append_child = 1;
+    PrependChild prepend_child = 23;
     DeleteChild delete_child = 2;
     InsertChild insert_child = 3;
     ConvertToComponent convert_to_component = 14;
+    WrapInElement wrap_in_element = 19;
     ConvertToSlot convert_to_slot = 15;
+    SetTagName set_tag_name = 20;
+    MoveNode move_node = 18;
 
     // Element
     SetElementParameter set_element_parameter = 4;
@@ -27,18 +31,43 @@ message Mutation {
     // Style
     SetStyleDeclarations set_style_declarations = 5;
     DeleteStyleDeclarations delete_style_declarations = 10;
+    SetStyleMixins set_style_mixins = 22;
 
     // General
     DeleteExpression delete_expression = 11;
     SetId set_id = 16;
+    PasteExpression paste_expression = 21;
+
+    // Instance
+    ToggleInstanceVariant toggle_instance_variant = 13;
 
     // Component
     UpdateVariant update_variant = 12;
-    ToggleVariants toggle_variants = 13;
 
     // Instance
     AppendInsert append_insert = 17;
   }
+}
+
+message WrapInElement {
+  string target_id = 1;
+}
+
+message SetTagName {
+  string tag_name = 1;
+  string element_id = 2;
+}
+
+enum NodePosition {
+  BEFORE = 0;
+  AFTER = 1;
+  INSIDE = 2;
+}
+
+message MoveNode {
+  NodePosition position = 1;
+  string target_id = 2;
+  string node_id = 3;
 }
 
 // result after mutation 
@@ -50,8 +79,10 @@ message MutationResult {
   }
 }
 
-message ToggleVariants {
-  map<string, bool> enabled = 1;
+message ToggleInstanceVariant {
+  string instance_id = 1;
+  string variant_id = 2;
+  repeated string combo_variant_ids = 3;
 }
 
 message UpdateVariant {
@@ -91,6 +122,10 @@ message AppendChild {
   string child_source = 2;
 }
 
+message PrependChild {
+  string parent_id = 1;
+  string child_source = 2;
+}
 
 message DeleteExpression {
   string expression_id = 1;
@@ -123,6 +158,15 @@ message Bounds {
   float y = 2;
   float width = 3;
   float height = 4;
+}
+
+message PasteExpression {
+  string target_expression_id = 1;
+  oneof item {
+    ast.pc.TextNode text_node = 2;
+    ast.pc.Element element = 3;
+    ast.pc.Component component = 4;
+  }
 }
 
 message InsertChild {
@@ -164,6 +208,12 @@ message SetStyleDeclarations {
   string expression_id = 1;
   repeated string variant_ids = 2;
   repeated SetStyleDeclarationValue declarations = 3;
+}
+
+message SetStyleMixins {
+  string target_expr_id = 1;
+  repeated string mixin_ids = 2;
+  repeated string variant_ids = 3;
 }
 
 message DeleteStyleDeclarations {

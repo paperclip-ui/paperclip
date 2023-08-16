@@ -13,7 +13,7 @@ import { Portal } from "../Portal";
 
 export type ContextMenuProps = {
   children: React.ReactElement;
-  menu: MenuItem<ShortcutCommand>[];
+  menu: () => MenuItem<ShortcutCommand>[];
 };
 
 export const ContextMenu = ({ children, menu }: ContextMenuProps) => {
@@ -74,7 +74,7 @@ export const ContextMenu = ({ children, menu }: ContextMenuProps) => {
       <Portal>
         {anchorStyle && (
           <styles.ContextMenu style={anchorStyle}>
-            {menu.map((item) => {
+            {menu().map((item) => {
               if (item.kind === MenuItemKind.Divider) {
                 return <ContextMenuDivider />;
               } else if (item.kind === MenuItemKind.Option) {
@@ -119,6 +119,7 @@ const prettyKeyCombo = (combo: string[]) => {
     .replace("meta", "⌘")
     .replace("delete", "⌫")
     .replace("backspace", "⌫")
+    .replace("shift", "⇧")
     .replace("alt", "⌥")
     .replaceAll("+", "")
     .toUpperCase();

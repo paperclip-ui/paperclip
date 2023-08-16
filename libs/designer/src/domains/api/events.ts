@@ -14,6 +14,7 @@ export type ChangesApplied = BaseEvent<
   "designer-engine/changesApplied",
   ApplyMutationsResult
 >;
+export type APIError = BaseEvent<"designer-engine/apiError">;
 export type GraphLoaded = BaseEvent<"designer-engine/graphLoaded", Graph>;
 export type ServerEvent = BaseEvent<
   "designer-engine/serverEvent",
@@ -31,6 +32,7 @@ export type DesignFileCreated = BaseEvent<
 export type DesignerEngineEvent =
   | DocumentOpened
   | ChangesApplied
+  | APIError
   | GraphLoaded
   | ServerEvent
   | ResourceFilePathsLoaded

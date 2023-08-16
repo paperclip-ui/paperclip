@@ -7,12 +7,12 @@ export const resourceModalReducer = (
   event: DesignerEvent
 ) => {
   switch (event.type) {
-    case "editor/resourceModalBackgroundClicked": {
+    case "ui/resourceModalBackgroundClicked": {
       return produce(state, (newState) => {
         newState.insertMode = null;
       });
     }
-    case "editor/resourceModalDragLeft": {
+    case "ui/resourceModalDragLeft": {
       return produce(state, (newState) => {
         newState.resourceModalDragLeft = true;
       });

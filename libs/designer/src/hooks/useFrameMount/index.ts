@@ -5,17 +5,20 @@ import { useEffect, useState } from "react";
 
 type UseFrameStageOuterProps = {
   onUpdate: (mount: HTMLElement, data: PCModule) => void;
+  variantIds: string[];
 } & UseFrameStageInnerProps;
 
 type UseFrameStageInnerProps = {
   frameIndex: number;
   showSlotPlaceholders?: boolean;
   pcData: PCModule;
+  variantIds: string[];
 };
 
 export const useFrameMount = ({
   frameIndex,
   pcData,
+  variantIds,
   showSlotPlaceholders,
   onUpdate,
 }: UseFrameStageOuterProps) => {
@@ -34,26 +37,34 @@ export const useFrameMount = ({
       return;
     }
 
-    if (state?.frameIndex === frameIndex && state?.pcData === pcData) {
+    if (
+      state?.frameIndex === frameIndex &&
+      state?.pcData === pcData &&
+      state?.variantIds === variantIds
+    ) {
       return;
     }
 
     let mount;
     if (state?.mount && frameIndex === state.frameIndex) {
       mount = state.mount;
-      patchFrame(state.mount, frameIndex, state.pcData, pcData, {
-        showSlotPlaceholders,
-        domFactory: document,
-      });
+      if (mount.isConnected) {
+        patchFrame(state.mount, frameIndex, state.pcData, pcData, {
+          showSlotPlaceholders,
+          variantIds,
+          domFactory: document,
+        });
+      }
     } else {
       mount = renderFrame(pcData, frameIndex, {
         showSlotPlaceholders,
+        variantIds,
         domFactory: document,
       });
     }
     onUpdate(mount, pcData);
-    setState({ mount, frameIndex, pcData });
-  }, [frameIndex, pcData, onUpdate]);
+    setState({ mount, frameIndex, pcData, variantIds });
+  }, [frameIndex, pcData, variantIds, onUpdate]);
 
   return {
     mount: state?.mount,

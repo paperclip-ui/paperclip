@@ -1,6 +1,7 @@
 import "./sidebar.pc" as sidebar
 import "./theme.pc" as theme
 import "./input.pc" as input
+import "./etc.pc" as etc
 
 component ColorPickerPopup {
     render sidebar.SidebarPopup {
@@ -72,12 +73,40 @@ public component Preview {
         }
         sidebar.SidebarSection {
             sidebar.SidebarPanelHeader {
-                text "Layout"
-                div {
-                    style extends theme.icon {
-                        -webkit-mask-image: url("./plus.svg")
+                text "Instance"
+                etc.PlusButton
+            }
+            sidebar.SidebarPanelContent {
+                input.Fields {
+                    input.Field {
+                        insert name {
+                            text "mobile"
+                        }
+                        insert input {
+                            input.RadioInput
+                        }
+                    }
+                    input.Field {
+                        insert name {
+                            text "dark"
+                        }
+                        insert input {
+                            input.RadioInput {
+                                override {
+                                    variant on trigger {
+                                        true
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
+            }
+        }
+        sidebar.SidebarSection {
+            sidebar.SidebarPanelHeader {
+                text "Layout"
+                etc.PlusButton
             }
             sidebar.SidebarPanelContent {
                 input.Fields {
@@ -145,11 +174,7 @@ public component Preview {
         sidebar.SidebarSection {
             sidebar.SidebarPanelHeader {
                 text "Style"
-                div {
-                    style extends theme.icon {
-                        -webkit-mask-image: url("./plus.svg")
-                    }
-                }
+                etc.PlusButton
             }
             sidebar.SidebarPanelContent {
                 input.Fields {

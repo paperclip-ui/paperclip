@@ -67,7 +67,7 @@ message Variant {
   string id = 1;
   ast.base.Range range = 2;
   string name = 3;
-  repeated TriggerBodyItem triggers = 4;
+  repeated TriggerBodyItemCombo triggers = 4;
 }
 
 message Render {
@@ -100,7 +100,13 @@ message Trigger {
   ast.base.Range range = 2;
   string name = 3;
   bool is_public = 4;
-  repeated TriggerBodyItem body = 5;
+  repeated TriggerBodyItemCombo body = 5;
+}
+
+message TriggerBodyItemCombo {
+  string id = 3;
+  repeated TriggerBodyItem items = 1;
+  ast.base.Range range = 2;
 }
 
 message TriggerBodyItem {

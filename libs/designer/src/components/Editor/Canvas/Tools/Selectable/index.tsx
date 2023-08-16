@@ -142,11 +142,11 @@ export const Selectable = React.memo(
         event,
         null,
         wrapActionCreator((payload) => ({
-          type: "editor/resizerPathMoved",
+          type: "ui/resizerPathMoved",
           payload,
         })),
         wrapActionCreator((payload) => ({
-          type: "editor/resizerPathStoppedMoving",
+          type: "ui/resizerPathStoppedMoving",
           payload,
         }))
       );
@@ -182,11 +182,11 @@ export const Selectable = React.memo(
           event,
           null,
           wrapActionCreator((payload) => ({
-            type: "editor/resizerPathMoved",
+            type: "ui/resizerPathMoved",
             payload,
           })),
           wrapActionCreator((payload) => ({
-            type: "editor/resizerPathStoppedMoving",
+            type: "ui/resizerPathStoppedMoving",
             payload,
           }))
         );

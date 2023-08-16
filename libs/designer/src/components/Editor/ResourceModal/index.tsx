@@ -84,7 +84,7 @@ const useResourceModal = () => {
           y: event.pageY,
         })
       ) {
-        dispatch({ type: "editor/resourceModalDragLeft" });
+        dispatch({ type: "ui/resourceModalDragLeft" });
       }
     };
 
@@ -95,7 +95,7 @@ const useResourceModal = () => {
     };
   });
   const onBackgroundClick = () =>
-    dispatch({ type: "editor/resourceModalBackgroundClicked" });
+    dispatch({ type: "ui/resourceModalBackgroundClicked" });
   const onFilterChange = (value: string) => setFilter(value?.toLowerCase());
 
   useEffect(() => {

@@ -126,6 +126,58 @@ impl Atom {
     }
 }
 
+impl DocumentBodyItem {
+    pub fn set_name(&mut self, value: &str) {
+        match self.get_inner_mut() {
+            document_body_item::Inner::Atom(expr) => {
+                expr.name = value.to_string()
+            },
+            document_body_item::Inner::Component(expr) => {
+                expr.name = value.to_string()
+            },
+            document_body_item::Inner::Trigger(expr) => {
+                expr.name = value.to_string()
+            },
+            document_body_item::Inner::Element(expr) => {
+                expr.name = Some(value.to_string())
+            },
+            document_body_item::Inner::Text(expr) => {
+                expr.name = Some(value.to_string())
+            },
+            document_body_item::Inner::Style(expr) => {
+                expr.name = Some(value.to_string())
+            },
+            document_body_item::Inner::Import(_) | document_body_item::Inner::DocComment(_) => {
+            }
+        }
+    }
+    pub fn get_name(&self) -> Option<String> {
+        match self.get_inner() {
+            document_body_item::Inner::Atom(expr) => {
+                Some(expr.name.clone())
+            },
+            document_body_item::Inner::Component(expr) => {
+                Some(expr.name.clone())
+            },
+            document_body_item::Inner::Trigger(expr) => {
+                Some(expr.name.clone())
+            },
+            document_body_item::Inner::Element(expr) => {
+                expr.name.clone()
+            },
+            document_body_item::Inner::Text(expr) => {
+                expr.name.clone()
+            },
+            document_body_item::Inner::Style(expr) => {
+                expr.name.clone()
+            },
+            document_body_item::Inner::Import(_) | document_body_item::Inner::DocComment(_) => {
+                None
+            }
+        }
+    }
+}
+
 impl TryFrom<Node> for DocumentBodyItem {
     type Error = ();
     fn try_from(value: Node) -> Result<Self, Self::Error> {
@@ -161,6 +213,37 @@ impl TryFrom<DocumentBodyItem> for Style {
     fn try_from(value: DocumentBodyItem) -> Result<Self, Self::Error> {
         match value.get_inner() {
             document_body_item::Inner::Style(style) => Ok(style.clone()),
+            _ => Err(()),
+        }
+    }
+}
+
+impl<'a> TryFrom<&'a mut ComponentBodyItem> for &'a mut Render {
+    type Error = ();
+    fn try_from(value: &'a mut ComponentBodyItem) -> Result<Self, Self::Error> {
+        match value.get_inner_mut() {
+            component_body_item::Inner::Render(expr) => Ok(expr),
+            _ => Err(()),
+        }
+    }
+}
+
+
+impl TryFrom<Node> for Style {
+    type Error = ();
+    fn try_from(value: Node) -> Result<Self, Self::Error> {
+        match value.get_inner() {
+            node::Inner::Style(style) => Ok(style.clone()),
+            _ => Err(()),
+        }
+    }
+}
+
+impl<'a> TryFrom<&'a mut Node> for &'a mut Style {
+    type Error = ();
+    fn try_from(value: &'a mut Node) -> Result<Self, Self::Error> {
+        match value.get_inner_mut() {
+            node::Inner::Style(style) => Ok(style),
             _ => Err(()),
         }
     }

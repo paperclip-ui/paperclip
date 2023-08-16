@@ -10,6 +10,7 @@ import { History } from "../domains/history/history";
 import { createShortcutsEngine } from "../domains/shortcuts/engine";
 import { createUIEngine } from "../domains/ui/engine";
 import { createLogEngine } from "../domains/log/engine";
+import { createClipboardEngine } from "../domains/clipboard/engine";
 
 export type EngineOptions = {
   history: History;
@@ -21,7 +22,8 @@ export const createEngine = (
 ) =>
   combineEngineCreators<DesignerState, any>(
     createDesignerEngine(options),
-    createShortcutsEngine,
+    createShortcutsEngine(options.history),
+    createClipboardEngine,
     createHistoryEngine(options.history),
     createKeyboardEngine,
     createUIEngine(options.history),

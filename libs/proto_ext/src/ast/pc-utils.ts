@@ -21,8 +21,12 @@ import {
   Style,
   TextNode,
   Trigger,
+  TriggerBodyItem,
+  TriggerBodyItemCombo,
   Variant,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import { Bool, Str } from "@paperclip-ui/proto/lib/generated/ast/base";
+import { ComputedStyleMap, serializeDeclaration } from "./serialize";
 
 const EMPTY_ARRAY = [];
 export namespace ast {
@@ -43,9 +47,12 @@ export namespace ast {
     Import,
     TextNode,
     Trigger,
+    TriggerCombo,
     Slot,
     Insert,
     Override,
+    Str,
+    Bool,
     Style,
     Declaration,
     Arithmetic,
@@ -61,6 +68,7 @@ export namespace ast {
     | BaseExprInfo<Component, ExprKind.Component>
     | BaseExprInfo<Atom, ExprKind.Atom>
     | BaseExprInfo<Reference, ExprKind.Reference>
+    | BaseExprInfo<Trigger, ExprKind.Trigger>
     | BaseExprInfo<Element, ExprKind.Element>
     | BaseExprInfo<Variant, ExprKind.Variant>
     | BaseExprInfo<Document, ExprKind.Document>
@@ -70,9 +78,12 @@ export namespace ast {
     | BaseExprInfo<Import, ExprKind.Import>
     | BaseExprInfo<TextNode, ExprKind.TextNode>
     | BaseExprInfo<Trigger, ExprKind.Trigger>
+    | BaseExprInfo<TriggerBodyItemCombo, ExprKind.TriggerCombo>
     | BaseExprInfo<Slot, ExprKind.Slot>
     | BaseExprInfo<Insert, ExprKind.Insert>
     | BaseExprInfo<Style, ExprKind.Style>
+    | BaseExprInfo<Str, ExprKind.Str>
+    | BaseExprInfo<Bool, ExprKind.Bool>
     | BaseExprInfo<StyleDeclaration, ExprKind.Declaration>;
 
   export const getDocumentBodyInner = (item: DocumentBodyItem) => {
@@ -143,7 +154,13 @@ export namespace ast {
         case ExprKind.Render:
           return [getChildExprInner(expr.node)];
         case ExprKind.Variant:
-          return (expr.triggers || EMPTY_ARRAY).map(getChildExprInner);
+          return (expr.triggers || EMPTY_ARRAY).map((trigger) => ({
+            expr: trigger,
+            kind: ExprKind.TriggerCombo,
+          }));
+        case ExprKind.TriggerCombo: {
+          return (expr.items || EMPTY_ARRAY).map(getChildExprInner);
+        }
       }
 
       return EMPTY_ARRAY;
@@ -210,7 +227,17 @@ export namespace ast {
     if ((expr as Node).style) {
       return { expr: (expr as Node).style, kind: ExprKind.Style };
     }
-    console.error(expr);
+
+    if ((expr as TriggerBodyItem).str) {
+      return { expr: (expr as TriggerBodyItem).str, kind: ExprKind.Str };
+    }
+    if ((expr as TriggerBodyItem).bool) {
+      return { expr: (expr as TriggerBodyItem).bool, kind: ExprKind.Bool };
+    }
+    if ((expr as TriggerBodyItemCombo).items) {
+      return { expr: (expr as TriggerBodyItem).bool, kind: ExprKind.Bool };
+    }
+
     throw new Error(`Unhandled type`);
   };
 
@@ -241,12 +268,15 @@ export namespace ast {
   });
 
   export const getParent = memoize((id: string, graph: Graph) => {
+    return getParentExprInfo(id, graph)?.expr;
+  });
+
+  export const getParentExprInfo = memoize((id: string, graph: Graph) => {
     const dep = getOwnerDependency(id, graph);
     const exprsById = flattenDocument(dep.document);
     const childParentMap = getChildParentMap(exprsById);
     const parentId = childParentMap[id];
-
-    return parentId && getExprById(parentId, graph);
+    return getExprInfoById(parentId, graph);
   });
 
   export const getAncestorVirtIdsFromShadow = memoize(
@@ -286,25 +316,24 @@ export namespace ast {
     }
   );
 
-  export const getExprRef = (
-    ref: Reference,
-    graph: Graph
-  ): DocumentBodyItem | null => {
-    const dep = getOwnerDependency(ref.id, graph);
-    if (ref.path.length === 1) {
-      return getDocumentBodyExprByName(ref.path[0], dep.document);
-    } else {
-      // const imp = graph.dependencies[dep.imports[]];
-      const imp = getDocumentImport(ref.path[0], dep.document);
-      const impDep = imp && graph.dependencies[dep.imports[imp.path]];
+  export const getExprRef = memoize(
+    (ref: Reference, graph: Graph): DocumentBodyItem | null => {
+      const dep = getOwnerDependency(ref.id, graph);
+      if (ref.path.length === 1) {
+        return getDocumentBodyExprByName(ref.path[0], dep.document);
+      } else {
+        // const imp = graph.dependencies[dep.imports[]];
+        const imp = getDocumentImport(ref.path[0], dep.document);
+        const impDep = imp && graph.dependencies[dep.imports[imp.path]];
 
-      // Broken references will happen all the time
-      if (impDep) {
-        return getDocumentBodyExprByName(ref.path[1], impDep.document);
+        // Broken references will happen all the time
+        if (impDep) {
+          return getDocumentBodyExprByName(ref.path[1], impDep.document);
+        }
       }
+      return null;
     }
-    return null;
-  };
+  );
 
   export const getDocumentBodyExprByName = (
     name: string,
@@ -359,26 +388,25 @@ export namespace ast {
   });
 
   export const computeElementStyle = memoize(
-    (
-      exprId: string,
-      graph: Graph,
-      variantIds?: string[]
-    ): Record<string, DeclarationValue> => {
-      // TODO
+    (exprId: string, graph: Graph, variantIds?: string[]): ComputedStyleMap => {
       const node = getExprById(exprId.split(".").pop(), graph) as Element;
-      const map: Record<string, DeclarationValue> = {};
+      let computedStyle: ComputedStyleMap = { propertyNames: [], map: {} };
       if (!node || !node.body) {
-        return map;
+        return computedStyle;
       }
+
       for (const item of node.body) {
         const { style } = item;
 
         if (style) {
-          Object.assign(map, computeStyle(style, graph, variantIds));
+          computedStyle = overrideComputedStyles(
+            computedStyle,
+            computeStyle(style, graph, node.id, variantIds)
+          );
         }
       }
 
-      return map;
+      return computedStyle;
     }
   );
 
@@ -386,35 +414,71 @@ export namespace ast {
     (
       style: Style,
       graph: Graph,
+      ownerId: string,
       variantIds?: string[]
-    ): Record<string, DeclarationValue> => {
-      let map: Record<string, DeclarationValue> = {};
+    ): ComputedStyleMap => {
+      let computedStyles: ComputedStyleMap = { propertyNames: [], map: {} };
 
       if (style.variantCombo && style.variantCombo.length > 0) {
         // TODO: do ehthis
         // if (!style.variantCombo.every(ref => getRef))
-        return map;
+        return computedStyles;
       }
 
       for (const value of style.declarations) {
-        map[value.name] = value.value;
+        computedStyles.propertyNames.push(value.name);
+        computedStyles.map[value.name] = {
+          ownerId,
+          value: value.value,
+        };
       }
 
       if (style.extends) {
         for (const ref of style.extends) {
           const extendsStyle = getExprRef(ref, graph)?.style;
           if (extendsStyle) {
-            map = Object.assign(
-              {},
-              computeStyle(extendsStyle, graph, variantIds),
-              map
+            computedStyles = overrideComputedStyles(
+              computeStyle(extendsStyle, graph, extendsStyle.id, variantIds),
+              computedStyles
             );
           }
         }
       }
-      return map;
+      return computedStyles;
     }
   );
+
+  const overrideComputedStyles = (
+    computedStyles: ComputedStyleMap,
+    overrides: ComputedStyleMap
+  ): ComputedStyleMap => {
+    const computed: ComputedStyleMap = { propertyNames: [], map: {} };
+
+    for (const name of computedStyles.propertyNames) {
+      computed.propertyNames.push(name);
+
+      const override = overrides.map[name];
+
+      if (override) {
+        computed.map[name] = {
+          value: override.value,
+          ownerId: override.ownerId,
+          prevValue: computedStyles.map[name],
+        };
+      } else {
+        computed.map[name] = computedStyles.map[name];
+      }
+    }
+
+    for (const name of overrides.propertyNames) {
+      if (!computedStyles.propertyNames.includes(name)) {
+        computed.propertyNames.push(name);
+        computed.map[name] = overrides.map[name];
+      }
+    }
+
+    return computed;
+  };
 
   export type GraphAtomInfo = {
     dependency: Dependency;
@@ -440,6 +504,29 @@ export namespace ast {
     }
     return atoms;
   });
+
+  export type GraphStyleMixinInfo = {
+    dependency: Dependency;
+    style: Style;
+  };
+
+  export const getGraphStyleMixins = memoize(
+    (graph: Graph): GraphStyleMixinInfo[] => {
+      const styles: GraphStyleMixinInfo[] = [];
+      for (const path in graph.dependencies) {
+        const dependency = graph.dependencies[path];
+        for (const expr of dependency.document.body) {
+          if (expr.style) {
+            styles.push({
+              dependency,
+              style: expr.style,
+            });
+          }
+        }
+      }
+      return styles;
+    }
+  );
 
   const getAtomValue = (atom: Atom, graph: Graph) => {
     const dep = getOwnerDependency(atom.id, graph);
@@ -482,7 +569,9 @@ export namespace ast {
   };
 
   export const isVariantEnabled = (variant: Variant) =>
-    variant.triggers?.some((trigger) => trigger.bool?.value);
+    variant.triggers?.some((trigger) =>
+      trigger.items.some((item) => item.bool?.value === true)
+    );
 
   export const getExprOwnerComponent = (
     expr: InnerExpression,
@@ -501,6 +590,55 @@ export namespace ast {
       getInstanceDefinitionDependency(element, graph).document
     );
   };
+
+  export const isInstanceVariantEnabled = memoize(
+    (
+      instanceId: string,
+      variantId: string,
+      selectedVariantIds: string[],
+      graph: Graph
+    ) => {
+      const selectedVariants = selectedVariantIds.map(
+        (id) => getExprById(id, graph) as Variant
+      );
+      const instance = getExprById(instanceId, graph) as Element;
+      const primaryOverride = instance.body.find(
+        (body) => body.override?.path.length === 0
+      )?.override;
+      if (!primaryOverride) {
+        return false;
+      }
+
+      const variant = ast.getExprById(variantId, graph) as Variant;
+      const variantOverride = primaryOverride.body.find(
+        (body) => body.variant.name === variant.name
+      )?.variant;
+
+      return variantOverride?.triggers.some((combo) => {
+        if (selectedVariants.length === 0) {
+          return (
+            combo.items.length === 1 && combo.items[0].bool?.value === true
+          );
+        }
+
+        if (combo.items.length !== selectedVariants.length) {
+          return false;
+        }
+
+        return selectedVariants.every((selectedVariant) => {
+          for (const item of combo.items) {
+            if (
+              item.reference?.path.length === 1 ||
+              ast.getExprRef(item.reference!, graph).trigger?.id ===
+                selectedVariant.id
+            ) {
+              return true;
+            }
+          }
+        });
+      });
+    }
+  );
 
   export const getInstanceDefinitionDependency = (
     element: Element,
@@ -563,13 +701,20 @@ export namespace ast {
   };
 
   export const getExprByVirtId = (id: string, graph: Graph) =>
-    getExprById(id.split(".").pop(), graph);
+    getExprInfoById(id.split(".").pop(), graph);
   export const getExprStyles = (
     parent: Element | TextNode | Document
   ): Style[] =>
     (parent as Element).body
       .filter((expr) => expr.style)
       .map(getInnerExpression);
+
+  export const getInstanceSlots = (instance: Element, graph: Graph) => {
+    // const component = getInstanceComponent(instance, graph);
+    // const render = getComponentRenderExpr(component);
+    // const renderNode = render && getChildExprInner(render.node);
+    // return renderNode && getExprSlots(renderNode, graph);
+  };
 
   export const getExprById = (id: string, graph: Graph) => {
     return getExprInfoById(id, graph)?.expr;
@@ -641,6 +786,12 @@ export namespace ast {
     }
     if (expr.atom) {
       return flattenAtom(expr.atom);
+    }
+    if (expr.style) {
+      return flattenStyle(expr.style);
+    }
+    if (expr.trigger) {
+      return flattenTrigger(expr.trigger);
     }
     return {};
   };
@@ -754,6 +905,14 @@ export namespace ast {
     }
   );
 
+  export const flattenTrigger = memoize(
+    (expr: Trigger): Record<string, InnerExpressionInfo> => {
+      return Object.assign({
+        [expr.id]: { expr, kind: ExprKind.Trigger },
+      });
+    }
+  );
+
   export const flattenDeclaration = memoize(
     (expr: StyleDeclaration): Record<string, InnerExpressionInfo> => {
       return Object.assign(
@@ -841,53 +1000,5 @@ export namespace ast {
     return getAncestorIds(exprId, graph).some((ancestorId) => {
       return getExprInfoById(ancestorId, graph).kind === ExprKind.Component;
     });
-  };
-
-  export const serializeDeclaration = (expr: DeclarationValue) => {
-    if (expr.arithmetic) {
-      return `${serializeDeclaration(expr.arithmetic.left)} ${
-        expr.arithmetic.operator
-      } ${serializeDeclaration(expr.arithmetic.right)}`;
-    }
-    if (expr.commaList) {
-      return expr.commaList.items
-        .map((expr) => serializeDeclaration(expr))
-        .join(", ");
-    }
-    if (expr.functionCall) {
-      return `${expr.functionCall.name}(${serializeDeclaration(
-        expr.functionCall.arguments
-      )})`;
-    }
-    if (expr.hexColor) {
-      return `#${expr.hexColor.value}`;
-    }
-    if (expr.measurement) {
-      return `${expr.measurement.value}${expr.measurement.unit}`;
-    }
-    if (expr.number) {
-      return `${expr.number.value}`;
-    }
-    if (expr.reference) {
-      return `${expr.reference.path.join(".")}`;
-    }
-    if (expr.spacedList) {
-      return expr.spacedList.items
-        .map((expr) => serializeDeclaration(expr))
-        .join(" ");
-    }
-    if (expr.str) {
-      return `"${expr.str.value}"`;
-    }
-  };
-
-  export const serializeComputedStyle = (
-    style: Record<string, DeclarationValue>
-  ): Record<string, string> => {
-    const comp = {};
-    for (const key in style) {
-      comp[key] = serializeDeclaration(style[key]);
-    }
-    return comp;
   };
 }

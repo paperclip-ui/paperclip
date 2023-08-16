@@ -55,10 +55,10 @@ export class PaperclipLanguageServerConnectionManager {
   }
   private _onDesignerFileChanged = (data: FileChanged) => {
     this._dispatch(
-      serverEvents.fileChanged({
+      { type: "server/fileChanged", payload: {
         path: data.path,
         content: new TextDecoder().decode(data.content),
-      })
+      } }
     );
   };
   private _onDidOpenTextDocument = ({

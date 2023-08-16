@@ -1,8 +1,46 @@
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
-import { Variant } from "@paperclip-ui/proto/lib/generated/ast/pc";
-import { DesignerState } from "./core";
+import { BoxNodeInfo, DesignerState, getCurrentFilePath } from "./core";
+import { ComputedStyleMap } from "@paperclip-ui/proto-ext/lib/ast/serialize";
+import { WritableDraft } from "immer/dist/internal";
+import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
+import { Bounds } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
+
+import * as pc from "@paperclip-ui/proto/lib/generated/ast/pc";
+import {
+  Node,
+  Document as HTMLDocument,
+} from "@paperclip-ui/proto/lib/generated/virt/html";
+import {
+  Element as VirtElement,
+  TextNode as VirtText,
+} from "@paperclip-ui/proto/lib/generated/virt/html";
+import {
+  Component,
+  Element,
+  Reference,
+  Variant,
+} from "@paperclip-ui/proto/lib/generated/ast/pc";
+import produce from "immer";
+import {
+  Box,
+  Point,
+  boxIntersectsPoint,
+  getScaledPoint,
+  mergeBoxes,
+} from "./geom";
+import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
+import { memoize } from "@paperclip-ui/common";
+import { pickBy } from "lodash";
+import { hasUncaughtExceptionCaptureCallback } from "process";
 
 export const MIXED_VALUE = "mixed";
+
+export const DEFAULT_FRAME_BOX = {
+  width: 1024,
+  height: 768,
+  x: 0,
+  y: 0,
+};
 
 export type ComputedDeclaration = {
   name: string;
@@ -18,6 +56,11 @@ export type ComputedDeclaration = {
   // Is the value explicitly defined in the AST? If so we always want
   // to display this, even if it's default
   isExplicitlyDefined: boolean;
+};
+
+export type ComponentInfo = {
+  sourcePath: string;
+  component: Component;
 };
 
 const AVAILABLE_STYLES = {
@@ -359,54 +402,73 @@ const AVAILABLE_STYLES = {
   "z-index": "auto",
 };
 
+export const getSelectedId = (designer: DesignerState) => {
+  return designer.selectedTargetId;
+};
+
+export const isSelectableExpr = (expr: ast.InnerExpressionInfo) => {
+  return (
+    expr.kind === ast.ExprKind.Atom ||
+    expr.kind === ast.ExprKind.Style ||
+    expr.kind === ast.ExprKind.Trigger ||
+    expr.kind === ast.ExprKind.TextNode ||
+    expr.kind === ast.ExprKind.Element ||
+    expr.kind === ast.ExprKind.Component
+  );
+};
+
+export const isStyleableExpr = (expr: ast.InnerExpressionInfo) => {
+  return (
+    expr.kind === ast.ExprKind.Style ||
+    expr.kind === ast.ExprKind.TextNode ||
+    expr.kind === ast.ExprKind.Element ||
+    expr.kind === ast.ExprKind.Component
+  );
+};
+export const getStyleableTargetId = (designer: DesignerState) => {
+  const id = getSelectedId(designer);
+  const expr = ast.getExprInfoById(id, designer.graph);
+  if (expr?.kind === ast.ExprKind.Component) {
+    return ast.getComponentRenderNode(expr.expr)?.expr.id;
+  }
+  return id;
+};
+
 export const getSelectedExprStyles = (
   state: DesignerState
-): ComputedDeclaration[] => {
+): ComputedStyleMap => {
   const combinedStyles: Record<string, ComputedDeclaration> = {};
 
-  const virtId = state.selectedTargetId;
+  const virtId = getStyleableTargetId(state);
+
+  const ret = { propertyNames: [], map: {} };
+
   if (!virtId) {
-    return [];
+    return ret;
   }
 
-  const exprStyle = ast.computeElementStyle(virtId, state.graph);
-  const computedStyle = state.computedStyles[virtId];
+  const exprInfo = ast.getExprInfoById(virtId, state.graph);
 
-  if (!computedStyle) {
-    return [];
+  if (exprInfo == null) {
+    return ret;
   }
 
-  // not all props are computed (like gap), so we pull from constant that contains ALL CSS props
-  // instead.
-  for (const name in AVAILABLE_STYLES) {
-    const computedValue = computedStyle[name];
-    const explicitValue =
-      exprStyle[name] && ast.serializeDeclaration(exprStyle[name]);
-
-    if (
-      combinedStyles[name] != null &&
-      combinedStyles[name].computedValue !== computedValue
-    ) {
-      combinedStyles[name].computedValue = MIXED_VALUE;
-    } else {
-      combinedStyles[name] = {
-        name,
-        isDefault: computedValue === AVAILABLE_STYLES[name],
-        isExplicitlyDefined: exprStyle[name] != null,
-        computedValue,
-        value: computedValue || explicitValue,
-        explicitValue,
-      };
-    }
+  if (
+    exprInfo.kind === ast.ExprKind.Element ||
+    exprInfo.kind === ast.ExprKind.TextNode
+  ) {
+    return ast.computeElementStyle(virtId, state.graph);
+  } else if (exprInfo.kind === ast.ExprKind.Style) {
+    return ast.computeStyle(exprInfo.expr, state.graph, exprInfo.expr.id, []);
   }
 
-  return Object.values(combinedStyles);
+  return ret;
 };
 
 export const getSelectedExpression = (state: DesignerState) => {
   return (
     state.selectedTargetId &&
-    ast.getExprByVirtId(state.selectedTargetId, state.graph)
+    ast.getExprByVirtId(state.selectedTargetId, state.graph)?.expr
   );
 };
 
@@ -424,17 +486,48 @@ export const getActiveVariant = (state: DesignerState) => {
   );
 };
 
+export const getFrameBoxes = memoize(
+  (boxes: Record<string, Box>, frameIndex: number) => {
+    const v = pickBy(boxes, (value: Box, key: string) => {
+      return key.indexOf(String(frameIndex)) === 0;
+    });
+    return v;
+  }
+);
+export const getPreviewChildren = (frame: HTMLDocument) => {
+  return frame.children;
+};
+
 export const getSelectedExprOwnerComponent = (state: DesignerState) => {
   if (!state.selectedTargetId) {
     return null;
   }
-  const expr = ast.getExprByVirtId(state.selectedTargetId, state.graph);
+  const expr = ast.getExprByVirtId(state.selectedTargetId, state.graph)?.expr;
   if (!expr) {
     return null;
   }
 
   return ast.getExprOwnerComponent(expr, state.graph);
 };
+
+export const getAllStyleMixins = (state: DesignerState) => {};
+
+export const getAllPublicStyleMixins = (state: DesignerState) => {
+  return ast.getGraphStyleMixins(state.graph);
+};
+
+export const getGraph = (state: DesignerState) => state.graph;
+
+export const getCurrentDependency = (state: DesignerState) => {
+  return state.graph.dependencies[getCurrentFilePath(state)];
+};
+
+export const getAllPublicAtoms = (state: DesignerState) => {
+  return ast.getGraphAtoms(state.graph);
+};
+
+export const getSelectedVariantIds = (state: DesignerState) =>
+  state.selectedVariantIds;
 
 export const getSelectedExprAvailableVariants = (state: DesignerState) => {
   const ownerComponent = getSelectedExprOwnerComponent(state);
@@ -447,3 +540,527 @@ export const getSelectedExprAvailableVariants = (state: DesignerState) => {
 export const getEnabledVariants = (state: DesignerState) => {
   return getSelectedExprAvailableVariants(state).filter(ast.isVariantEnabled);
 };
+
+export const findVirtId = (
+  id: string,
+  state: DesignerState | WritableDraft<DesignerState>
+) => {
+  if (virtHTML.getNodeById(id, state.currentDocument.paperclip.html)) {
+    return id;
+  }
+
+  let idParts = id.split(".");
+
+  let curr = ast.getExprInfoById(idParts[idParts.length - 1], state.graph);
+
+  // IF a component, then we want to fetch the render node that IS visible
+  if (curr?.kind === ast.ExprKind.Component) {
+    curr = ast.getComponentRenderNode(curr.expr);
+    if (curr) {
+      idParts = [curr.expr.id];
+    } else {
+      // NO virt ID present
+      return null;
+    }
+  }
+
+  // assume it's an instance
+  while (curr?.kind === ast.ExprKind.Element) {
+    const component = ast.getInstanceComponent(curr.expr, state.graph);
+    if (!component) {
+      break;
+    }
+    const renderNode = ast.getComponentRenderNode(component);
+    if (renderNode) {
+      idParts.push(renderNode.expr.id);
+      curr = renderNode;
+    } else {
+      break;
+    }
+  }
+
+  return idParts.join(".");
+};
+
+/**
+ * Safer utility fn that expands
+ */
+
+export const findVirtNode = (
+  id: string,
+  state: DesignerState | WritableDraft<DesignerState>
+) => {
+  return virtHTML.getNodeById(
+    findVirtId(id, state),
+    state.currentDocument.paperclip.html
+  );
+};
+
+export const getExprBounds = (state: DesignerState): Bounds => {
+  const node =
+    state.currentDocument &&
+    (findVirtNode(state.selectedTargetId, state) as any as
+      | VirtElement
+      | VirtText);
+
+  return node?.metadata?.bounds;
+};
+
+export const setSelectedNodeBounds = (
+  newBounds: Bounds,
+  state: DesignerState
+) => {
+  return produce(state, (newState) => {
+    const node = findVirtNode(newState.selectedTargetId, newState) as any as
+      | VirtElement
+      | VirtText;
+
+    const path = virtHTML.getNodePath(
+      node,
+      newState.currentDocument.paperclip.html
+    );
+    if (!node.metadata) {
+      node.metadata = {};
+    }
+    if (!node.metadata.bounds) {
+      node.metadata.bounds = { x: 0, y: 0, width: 0, height: 0 };
+    }
+
+    node.metadata.bounds = {
+      ...newBounds,
+    };
+  });
+};
+
+const getVirtId = (
+  current: ast.InnerExpressionInfo,
+  instancePath: string[],
+  graph: Graph
+) => {
+  let parts: string[] = [current.expr.id];
+  let curr = current;
+  while (
+    curr.kind === ast.ExprKind.Element &&
+    ast.isInstance(curr.expr, graph)
+  ) {
+    const component = ast.getInstanceComponent(curr.expr, graph);
+    curr = ast.getComponentRenderNode(component);
+
+    if (ast.isInstance(curr.expr, graph)) {
+      parts.push(curr.expr.id);
+    }
+  }
+
+  return [...instancePath, ...parts].join(".");
+};
+
+const findInsertBoxesAtPoint = (
+  point: Point,
+  instance: Element,
+  graph: Graph,
+  rects: Record<string, Box>
+): BoxNodeInfo => {
+  const component = ast.getInstanceComponent(instance, graph);
+  const slots = ast.getComponentSlots(component, graph);
+  for (const slot of slots) {
+    const insertId = instance.id + "." + slot.id;
+    const rect = rects[insertId];
+    if (rect && boxIntersectsPoint(rect, point)) {
+      return {
+        nodeId: insertId,
+        box: rect,
+      };
+    }
+  }
+
+  // const slotBoxes = getSlotBoxes(instance, graph, rects);
+  // for (const id in slotBoxes) {
+  //   const box = slotBoxes[id];
+
+  // }
+
+  return null;
+};
+
+const findVirtBoxNodeInfo = (
+  point: Point,
+  current: ast.InnerExpressionInfo,
+  path: string,
+  graph: Graph,
+  scopeId: string,
+  instancePath: string[],
+  boxes: Record<string, Box>
+): BoxNodeInfo | null => {
+  const virtId = getVirtId(current, instancePath, graph);
+
+  if (
+    current.kind === ast.ExprKind.Element &&
+    ast.isInstance(current.expr, graph)
+  ) {
+    // return boxes
+    if (!instancePath.length) {
+      const info = findInsertBoxesAtPoint(point, current.expr, graph, boxes);
+      if (info) {
+        return info;
+      }
+    }
+
+    if (scopeId?.includes(virtId)) {
+      const component = ast.getInstanceComponent(current.expr, graph);
+      const render = ast.getComponentRenderNode(component);
+      const boxInfo = findVirtBoxNodeInfo(
+        point,
+        render,
+        path,
+        graph,
+        scopeId,
+        [...instancePath, virtId],
+        boxes
+      );
+      if (boxInfo) {
+        return boxInfo;
+      }
+    }
+  }
+
+  const box = boxes[virtId];
+
+  for (const child of ast.getChildren(current)) {
+    const childInfo = findVirtBoxNodeInfo(
+      point,
+      child,
+      path,
+      graph,
+      scopeId,
+      instancePath,
+      boxes
+    );
+    if (childInfo) {
+      return childInfo;
+    }
+  }
+
+  return (
+    box &&
+    boxIntersectsPoint(box, point) && {
+      nodeId: virtId,
+      box,
+    }
+  );
+};
+
+export const getNodeInfoAtCurrentPoint = (state: DesignerState) => {
+  if (!state.canvas.mousePosition) {
+    return null;
+  }
+  const scaledPoint = getScaledPoint(
+    state.canvas.mousePosition,
+    state.canvas.transform
+  );
+  const filePath = getCurrentFilePath(state);
+
+  const dep = state.graph.dependencies[filePath];
+
+  if (!dep) {
+    return null;
+  }
+
+  return findVirtBoxNodeInfo(
+    scaledPoint,
+    { expr: dep.document, kind: ast.ExprKind.Document },
+    filePath,
+    state.graph,
+    state.scopedElementId,
+    [],
+    getVirtWithExprRects(state)
+  );
+};
+
+const merge = memoize((a, b) => ({ ...a, ...b }));
+
+const getVirtWithExprRects = (designer: DesignerState) =>
+  merge(
+    designer.rects,
+    getInsertBoxes(
+      designer.graph,
+      getCurrentFilePath(designer),
+      designer.currentDocument?.paperclip.html,
+      designer.rects
+    )
+  );
+
+export const findInsertAtPoint = (
+  point: Point,
+  state: DesignerState
+): BoxNodeInfo | null => {
+  const insertBoxes = getInsertBoxes(
+    state.graph,
+    getCurrentFilePath(state),
+    state.currentDocument!.paperclip.html,
+    state.rects
+  );
+
+  for (const insertId in insertBoxes) {
+    if (boxIntersectsPoint(insertBoxes[insertId], point)) {
+      return {
+        nodeId: insertId,
+        box: insertBoxes[insertId],
+      };
+    }
+  }
+  return null;
+};
+
+export const getAllFrameBounds = (designer: DesignerState) => {
+  return mergeBoxes(getCurrentPreviewFrameBoxes(designer));
+};
+export const getInsertBoxes = memoize(
+  (
+    graph: Graph,
+    currentPath: string,
+    currentDocument: HTMLDocument,
+    rects: Record<string, Box>
+  ) => {
+    const dep = graph.dependencies[currentPath];
+
+    if (!dep || !currentDocument) {
+      return {};
+    }
+
+    const slotBoxes: Record<string, Box> = {};
+
+    const instances = Object.values(ast.flattenDocument(dep.document))
+      .filter(
+        (node) =>
+          node.kind === ast.ExprKind.Element && ast.isInstance(node.expr, graph)
+      )
+      .map((node) => node.expr) as Element[];
+
+    for (const instance of instances) {
+      const component = ast.getInstanceComponent(instance, graph);
+      const slots = ast.getComponentSlots(component, graph);
+      const virtId = instance.id;
+
+      for (const slot of slots) {
+        const containsInsert = instance.body.some(
+          (child) => child.insert?.name === slot.name
+        );
+
+        // skip since we want the children of this insert to be insertable
+        if (containsInsert) {
+          continue;
+        }
+
+        const slotDescendents = Object.values(ast.flattenSlot(slot));
+
+        const boxes: Box[] = [];
+        for (const descendent of slotDescendents) {
+          const rect = rects[virtId + "." + descendent.expr.id];
+          if (rect) {
+            boxes.push(rect);
+          }
+        }
+        slotBoxes[virtId + "." + slot.id] = mergeBoxes(boxes);
+      }
+    }
+
+    return slotBoxes;
+  }
+);
+const getInnerNode = (node: Node) => node.element || node.textNode;
+
+export const getCurrentPreviewFrameBoxes = (editor: DesignerState) => {
+  const preview = editor.currentDocument?.paperclip?.html;
+
+  return preview ? getPreviewFrameBoxes(preview).filter(Boolean) : [];
+};
+
+export const getPreviewFrameBoxes = (preview: HTMLDocument) => {
+  const currentPreview = preview;
+  const frameBoxes = getPreviewChildren(currentPreview).map((frame: Node) => {
+    const metadata = getInnerNode(frame).metadata;
+    const box = metadata?.bounds || DEFAULT_FRAME_BOX;
+    if (metadata?.visible === false) {
+      return null;
+    }
+    return { ...DEFAULT_FRAME_BOX, ...box };
+  });
+
+  return frameBoxes;
+};
+
+export const highlightNode = (
+  designer: DesignerState,
+  mousePosition: Point
+) => {
+  return produce(designer, (newDesigner) => {
+    newDesigner.canvas.mousePosition = mousePosition;
+    const info = getNodeInfoAtCurrentPoint(designer);
+
+    newDesigner.highlightedNodeId = info?.nodeId;
+  });
+};
+
+export const getCurrentDocument = (state: DesignerState) =>
+  state.currentDocument;
+
+export const getCurrentDocumentImports = (state: DesignerState) =>
+  ast.getDocumentImports(
+    state.graph.dependencies[getCurrentFilePath(state)].document
+  );
+
+export const getHighlightedNodeBox = (state: DesignerState): Box => {
+  return getNodeBox(state.highlightedNodeId, state);
+};
+
+export const getSelectedNodeBox = (state: DesignerState): Box =>
+  getNodeBox(state.selectedTargetId, state);
+
+export const getNodeBox = (virtId: string, state: DesignerState): Box => {
+  return getVirtWithExprRects(state)[virtId];
+};
+
+export const getAllComponents = (state: DesignerState) => {
+  return getGraphComponents(state.graph);
+};
+
+export const getGraphComponents = (graph: Graph) => {
+  const allComponents: ComponentInfo[] = [];
+  for (const path in graph.dependencies) {
+    allComponents.push(
+      ...ast
+        .getDocumentComponents(graph.dependencies[path].document)
+        .map((component) => ({
+          sourcePath: path,
+          component,
+        }))
+    );
+  }
+  return allComponents;
+};
+type MixinInfo = {
+  name: string;
+  mixinId: string;
+};
+
+const getDocumentMixins = (doc: pc.Document): pc.Style[] => {
+  return doc.body.filter((item) => item.style).map((item) => item.style);
+};
+
+export const getCurrentStyleMixins = (state: DesignerState): MixinInfo[] => {
+  const dep = getCurrentDependency(state);
+  return getStyleMixinRefs(state)
+    .map((ref) => {
+      const refDep =
+        ref.path.length === 1
+          ? dep
+          : state.graph.dependencies[
+              dep.imports[
+                dep.document.body.find((item) => {
+                  return item.import?.namespace === ref.path[0];
+                }).import.path
+              ]
+            ];
+
+      if (!refDep) {
+        return null;
+      }
+
+      const mixin = getDocumentMixins(refDep.document).find(
+        (item) => item.name === ref.path[ref.path.length - 1]
+      );
+
+      if (mixin) {
+        return {
+          name: mixin.name,
+          mixinId: mixin.id,
+        };
+      }
+    })
+    .filter(Boolean);
+};
+
+const getStyleMixinRefs = (state: DesignerState): Reference[] => {
+  const expr = ast.getExprInfoById(state.selectedTargetId, state.graph);
+  if (!expr) {
+    return [];
+  }
+
+  const selectedVariants: Variant[] = state.selectedVariantIds.map((id) =>
+    ast.getExprById(id, state.graph)
+  );
+
+  if (expr.kind === ast.ExprKind.Element) {
+    const variantStyle = expr.expr.body.find((item) => {
+      return (
+        item.style &&
+        item.style.variantCombo.length === selectedVariants.length &&
+        item.style.variantCombo.every((ref) => {
+          return (
+            ref.path.length === 1 &&
+            selectedVariants.some((variant) => variant.name === ref.path[0])
+          );
+        })
+      );
+    });
+
+    return variantStyle?.style?.extends || [];
+  } else if (expr.kind === ast.ExprKind.Style) {
+    return expr.expr.extends;
+  }
+
+  return [];
+};
+
+export const getComponentSlots = memoize((component: Component): pc.Slot[] => {
+  return Object.values(ast.flattenComponent(component))
+    .filter((descendent) => {
+      return descendent.kind === ast.ExprKind.Slot;
+    })
+    .map((descendent) => {
+      return descendent.expr;
+    });
+});
+
+// const getSlotBoxes = memoize((instance: Element, graph: Graph, rects: Record<string, Box>) => {
+//   const component = ast.getInstanceComponent(instance, graph);
+//   const slots = ast.getComponentSlots(component, graph);
+
+//   const slotBoxes: Record<string, Box> = {};
+
+//   for (const slot of slots) {
+//     const slotDescendents = Object.values(ast.flattenSlot(slot));
+
+//       const instanceSource = ast.getExprById(instance.id, graph) as Element;
+
+//       const containsInsert = instanceSource.body.some(child => child.insert?.name === slot.name);
+
+//       // skip since we want the children of this insert to be insertable
+//       if (containsInsert) {
+//         continue;
+//       }
+
+//       const boxes: Box[] = [];
+//       for (const descendent of slotDescendents) {
+//         const rect = rects[instance.id + "." + descendent.expr.id];
+//         if (rect) {
+//           boxes.push(rect);
+//         }
+//       }
+//       slotBoxes[slot.id] = mergeBoxes(boxes);
+//     }
+//   return slotBoxes
+// })
+
+// export const expandInstanceRects = (state: DesignerState) => {
+//   return produce(state, newState => {
+//     for (const nodeId in newState.rects) {
+//       if (nodeId.includes(".")) {
+//         const nodePath = nodeId.split(".");
+//         for (let i = 0, {length} = nodePath; i < length - 1; i++) {
+//           newState.rects[nodePath.slice(0, i + 1).join(".")] = newState.rects[nodeId];
+//         }
+//       }
+//     }
+//   });
+// }

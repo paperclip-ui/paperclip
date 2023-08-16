@@ -13,7 +13,7 @@ import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { Selectable } from "./Selectable";
 import { InsertElement } from "./InsertElement";
 import { ContextMenu } from "../../../ContextMenu";
-import { getEntityShortcuts } from "@paperclip-ui/designer/src/domains/shortcuts/state";
+import { getSelectedEntityShortcuts } from "@paperclip-ui/designer/src/domains/shortcuts/state";
 import { DropTarget } from "./DropTarget";
 import { TextEditor } from "./TextEditor";
 import { getSelectedExpressionInfo } from "@paperclip-ui/designer/src/state/pc";
@@ -26,6 +26,7 @@ export const Tools = () => {
     onMouseMove,
     onMouseLeave,
     toolsRef,
+    resizeable,
     onMouseUp,
     showEmpty,
     insertMode,
@@ -61,7 +62,7 @@ export const Tools = () => {
 
   return (
     <DropTarget>
-      <ContextMenu menu={contextMenu}>
+      <ContextMenu menu={() => contextMenu}>
         <styles.Tools
           ref={toolsRef}
           onMouseDown={onMouswDown}
@@ -86,13 +87,13 @@ export const Tools = () => {
               canvasScroll={canvas.scrollPosition}
               canvasTransform={canvas.transform}
               box={selectedBox}
-              showKnobs
+              showKnobs={resizeable}
               cursor={cursor}
             />
           ) : null}
           {selectedBox &&
             showTextEditor &&
-            selectedExpr.kind === ast.ExprKind.TextNode && (
+            selectedExpr?.kind === ast.ExprKind.TextNode && (
               <TextEditor
                 expr={selectedExpr.expr}
                 box={selectedBox}
@@ -128,8 +129,10 @@ const useTools = () => {
 
   const toolsLayerEnabled = !canvas.isExpanded;
 
-  const contextMenu = useSelector(getEntityShortcuts);
+  const contextMenu = useSelector(getSelectedEntityShortcuts);
   const selectedExpr = useSelector(getSelectedExpressionInfo);
+
+  const resizeable = true;
 
   const getMousePoint = (event) => {
     const rect: ClientRect = (
@@ -144,7 +147,7 @@ const useTools = () => {
   const onMouseMove = useCallback(
     (event: React.MouseEvent<any>) => {
       dispatch({
-        type: "editor/canvasMouseMoved",
+        type: "ui/canvasMouseMoved",
         payload: getMousePoint(event),
       });
     },
@@ -156,7 +159,7 @@ const useTools = () => {
   const onMouswDown = useCallback(
     (event: React.MouseEvent<any>) => {
       dispatch({
-        type: "editor/canvasMouseDown",
+        type: "ui/canvasMouseDown",
         payload: {
           metaKey: event.metaKey,
           ctrlKey: event.ctrlKey,
@@ -172,7 +175,7 @@ const useTools = () => {
   const onMouseUp = useCallback(
     (event: React.MouseEvent<any>) => {
       dispatch({
-        type: "editor/canvasMouseUp",
+        type: "ui/canvasMouseUp",
         payload: {
           metaKey: event.metaKey,
           ctrlKey: event.ctrlKey,
@@ -186,7 +189,7 @@ const useTools = () => {
   );
 
   const onMouseLeave = () => {
-    dispatch({ type: "editor/canvasMouseLeave" });
+    dispatch({ type: "ui/canvasMouseLeave" });
   };
 
   const frames = currentDocument?.paperclip?.html?.children || [];
@@ -200,6 +203,7 @@ const useTools = () => {
     onMouseMove,
     onMouseLeave,
     contextMenu,
+    resizeable,
     showTextEditor,
     onMouseUp,
     selectedExpr,

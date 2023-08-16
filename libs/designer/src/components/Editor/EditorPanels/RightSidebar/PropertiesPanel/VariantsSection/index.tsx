@@ -48,7 +48,8 @@ export const VariantsSection = () => {
           name={activeVariant?.name}
           onSave={onSaveCurrentVariant}
           onClose={onCloseEditVariantPopup}
-          triggers={activeVariant?.triggers}
+          triggers={[]}
+          // triggers={activeVariant?.triggers}
         />
       )}
       <inputStyles.Field name="Variants" input={inputs[0]} />
@@ -68,7 +69,7 @@ const useVariantsSection = () => {
   const dispatch = useDispatch<DesignerEvent>();
   const onRemoveVariant = (variant: Variant) => {
     dispatch({
-      type: "editor/removeVariantButtonClicked",
+      type: "ui/removeVariantButtonClicked",
       payload: {
         variantId: variant.id,
       },
@@ -76,7 +77,7 @@ const useVariantsSection = () => {
   };
   const onSelectVariant = (variant: Variant) => {
     dispatch({
-      type: "editor/editVariantClicked",
+      type: "ui/editVariantClicked",
       payload: { variantId: variant.id },
     });
     setVariantPopupOpen(true);
@@ -91,7 +92,7 @@ const useVariantsSection = () => {
   };
 
   const onCloseEditVariantPopup = () => {
-    dispatch({ type: "editor/editVariantPopupClosed" });
+    dispatch({ type: "ui/editVariantPopupClosed" });
     setVariantPopupOpen(false);
   };
 

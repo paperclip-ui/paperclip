@@ -47,7 +47,7 @@ export namespace virtHTML {
       const map = getTreeNodeMap(root);
       for (const path in map) {
         const c = map[path];
-        if (c === node) return path;
+        if (c.id === node.id) return path;
       }
     }
   );

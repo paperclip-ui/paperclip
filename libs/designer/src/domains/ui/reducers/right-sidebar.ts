@@ -1,5 +1,8 @@
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
-import { DesignerState, selectNode } from "@paperclip-ui/designer/src/state";
+import {
+  DesignerState,
+  setSelectedNodeBounds,
+} from "@paperclip-ui/designer/src/state";
 import produce from "immer";
 
 export const rightSidebarReducer = (
@@ -7,17 +10,28 @@ export const rightSidebarReducer = (
   event: DesignerEvent
 ) => {
   switch (event.type) {
-    case "editor/editVariantClicked":
+    case "ui/editVariantClicked":
       return produce(state, (newState) => {
         newState.activeVariantId = event.payload.variantId;
       });
-    case "editor/editVariantPopupClosed":
+    case "ui/editVariantPopupClosed":
       return produce(state, (newState) => {
         newState.activeVariantId = null;
       });
 
-    case "editor/layerLeafClicked": {
-      state = selectNode(event.payload.virtId, false, false, state);
+    case "ui/variantSelected": {
+      return produce(state, (newState) => {
+        newState.selectedVariantIds = event.payload;
+      });
+    }
+
+    case "ui/styleDeclarationsChanged": {
+      return produce(state, (newState) => {
+        newState.styleOverrides = {};
+      });
+    }
+    case "ui/boundsChanged": {
+      state = setSelectedNodeBounds(event.payload.newBounds, state);
       return state;
     }
   }

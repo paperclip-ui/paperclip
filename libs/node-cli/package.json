@@ -1,0 +1,20 @@
+{
+  "name": "@paperclip-ui/cli",
+  "version": "19.0.14",
+  "description": "",
+  "main": "lib/index.js",
+  "bin": {
+    "paperclip": "lib/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch --preserveWatchOutput"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@paperclip-ui/releases": "19.0.14",
+    "execa": "^5.1.1",
+    "ora": "^5.4.1"
+  }
+}

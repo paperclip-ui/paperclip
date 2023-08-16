@@ -32,7 +32,7 @@ const useDropTarget = () => {
     hover: (item, monitor) => {
       const offset = monitor.getClientOffset();
       dispatch({
-        type: "designer/ToolsLayerDragOver",
+        type: "ui/toolsLayerDragOver",
         payload: {
           x: offset.x,
           y: offset.y,
@@ -41,7 +41,7 @@ const useDropTarget = () => {
     },
     drop(item, monitor) {
       dispatch({
-        type: "designer/ToolsLayerDrop",
+        type: "ui/toolsLayerDrop",
         payload: {
           kind: DNDKind.Resource,
           item,

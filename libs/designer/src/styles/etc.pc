@@ -47,3 +47,14 @@ public component Item {
 
 Item
 
+
+public component PlusButton {
+    render button(onClick: onClick) {
+                   
+                    style extends theme.icon {
+                        cursor: pointer
+                        -webkit-mask-image: url("./plus.svg")
+                        color: inherit
+                    }
+                }
+}

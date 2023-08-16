@@ -290,7 +290,6 @@ fn create_inserts<'expr, F: FileResolver>(
     context: &mut DocumentContext<F>,
 ) -> InsertsMap<'expr> {
     let mut inserts = HashMap::new();
-    // inserts.insert("children".to_string(), (element.id.to_string(), vec![]));
     for child in &element.body {
         evaluate_instance_child(element, child, &mut inserts, &None, context);
     }
@@ -355,11 +354,9 @@ fn evaluate_render<F: FileResolver>(
     );
 }
 
-fn get_virt_id(expr_id: &str, instance_path: &Vec<String>, is_instance: bool) -> String {
+fn get_virt_id(expr_id: &str, instance_path: &Vec<String>, _is_instance: bool) -> String {
     if instance_path.len() == 0 {
         return expr_id.to_string();
-    } else if is_instance {
-        instance_path.join(".")
     } else {
         format!("{}.{}", instance_path.join("."), expr_id)
     }
@@ -367,7 +364,7 @@ fn get_virt_id(expr_id: &str, instance_path: &Vec<String>, is_instance: bool) ->
 
 fn get_source_id(expr_id: &str, instance_path: &Vec<String>, is_instance: bool) -> String {
     if is_instance {
-        instance_path.last().unwrap().clone()
+        instance_path.first().unwrap().clone()
     } else {
         expr_id.to_string()
     }

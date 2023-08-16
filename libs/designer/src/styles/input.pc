@@ -2,6 +2,10 @@ import "./theme.pc" as theme
 import "./sidebar.pc" as sidebar
 import "./menu.pc" as menu
 
+/**
+ * @bounds(x: -717, y: -1108, width: 136, height: 28)
+*/
+
 public component MultiSelectItem {
     render div {
         style extends theme.fontDefault {
@@ -21,6 +25,10 @@ public component MultiSelectItem {
     }
 }
 
+/**
+ * @bounds(x: -794, y: -983, width: 297, height: 50)
+*/
+
 public component MultiSelectTextInput {
     render input(style: style, onChange: onChange, autoFocus: autoFocus) {
         style extends theme.reset {
@@ -28,6 +36,10 @@ public component MultiSelectTextInput {
         }
     }
 }
+
+/**
+ * @bounds(x: 884, y: -2489, width: 1024, height: 768)
+*/
 
 public component Select {
     render div(onClick: onClick, tabIndex: "-1") {
@@ -56,6 +68,10 @@ public component Select {
     }
 }
 
+/**
+ * @bounds(x: 799, y: -1205, width: 1024, height: 768)
+*/
+
 public component SuggestionContainer {
     render div(onFocus: onFocus, onBlur: onBlur) {
         style {
@@ -75,11 +91,19 @@ public component SuggestionContainer {
     }
 }
 
+/**
+ * @bounds(x: 1563, y: -210, width: 1024, height: 768)
+*/
+
 public component SuggestionMenu {
     render menu.Menu(style: style) {
         slot children
     }
 }
+
+/**
+ * @bounds(x: -1053, y: -2729, width: 492, height: 91)
+*/
 
 public component SuggestionMenuHeader {
     render div {
@@ -90,6 +114,10 @@ public component SuggestionMenuHeader {
     }
 }
 
+/**
+ * @bounds(x: -1464, y: -326, width: 236, height: 31)
+*/
+
 public component SuggestionMenuSearch {
     render TextInput(placeholder: placeholder, value: value) {
         override root {
@@ -99,6 +127,10 @@ public component SuggestionMenuSearch {
         }
     }
 }
+
+/**
+ * @bounds(x: -1323, y: -178, width: 433, height: 64)
+*/
 
 public component SuggestionMenuItem {
     variant preselected trigger {
@@ -125,6 +157,10 @@ public component SuggestionMenuItem {
     }
 }
 
+/**
+ * @bounds(x: -1106, y: -341, width: 367, height: 55)
+*/
+
 public component TextInput {
     variant isActive trigger {
         ":active"
@@ -138,6 +174,10 @@ public component TextInput {
         style variant isActive extends theme.inputActive
     }
 }
+
+/**
+ * @bounds(x: -1471, y: -211, width: 1024, height: 768)
+*/
 
 public component ColorInput {
     render div root {
@@ -159,6 +199,10 @@ public component ColorInput {
         slot children
     }
 }
+
+/**
+ * @bounds(x: -1493, y: 393, width: 1024, height: 768)
+*/
 
 public component Fields {
     render div {
@@ -202,14 +246,8 @@ public component MultiSelect {
 }
 
 /**
- * @bounds(x: -720, y: -1094, width: 188, height: 26)
+ * @bounds(x: 1293, y: 111, width: 1024, height: 768)
 */
-
-MultiSelect {
-    insert placeholder {
-        text "Select..."
-    }
-}
 
 public component TokenInput {
     render span {
@@ -263,7 +301,7 @@ public component Token {
 }
 
 public component Field {
-    render div {
+    render div(onFocus: onFocus, onBlur: onBlur) {
         style {
             display: flex
             gap: var(theme.space03)
@@ -562,6 +600,46 @@ public component ListItemInput {
                 display: block
             }
             text "×"
+        }
+    }
+}
+
+/**
+ * @bounds(x: -343, y: -1641, width: 249, height: 123)
+*/
+
+public component RadioInput {
+    variant on trigger {
+        ".on"
+    }
+    render div container(onClick: onClick, class: class) {
+        style variant on {
+            background: var(theme.blue00)
+        }
+        style extends theme.input {
+            cursor: pointer
+            position: relative
+            border-radius: 9999px
+            transition: 0.3s
+            width: calc(var(theme.inputHeight) * 2)
+            height: var(theme.inputHeight)
+        }
+        div dot {
+            style variant on {
+                left: 100%
+                transform: translateX(-100%)
+                background: var(theme.blue02)
+            }
+            style {
+                background: var(theme.gray02)
+                position: absolute
+                left: 0px
+                top: 0px
+                width: 50%
+                height: 100%
+                border-radius: 999px
+                transition: 0.3s
+            }
         }
     }
 }

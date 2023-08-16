@@ -29,6 +29,8 @@ export type FrameInfo = {
 
 export type RenderFrameOptions = {
   showSlotPlaceholders?: boolean;
+  variantIds?: string[];
+  selected?: string[];
   domFactory: NodeFactory;
   resolveUrl?: UrlResolver;
 };
@@ -75,15 +77,17 @@ const renderFrame2 = (
   frame.appendChild(documentStyles.cloneNode(true));
   const stage = options.domFactory.createElement("div");
   Object.assign(stage.style, { width: "100%", height: "100%" });
-  stage.appendChild(
-    createNativeNode(
-      node,
-      options.domFactory,
-      options.resolveUrl,
-      null,
-      options.showSlotPlaceholders
-    )
+  const root = createNativeNode(
+    node,
+    options.domFactory,
+    options.resolveUrl,
+    null,
+    options.showSlotPlaceholders
   );
+  stage.appendChild(root);
+  if (options.variantIds != null) {
+    patchRenderNode(root, options.variantIds);
+  }
   frame.appendChild(stage);
   return frame;
 };
@@ -197,41 +201,37 @@ export const getFrameRects = (
     height: 768,
   };
 
+  const root = mount.childNodes[STAGE_INDEX].childNodes[0];
+
   // mount child node _is_ the frame -- can only ever be one child
-  traverseNativeNode(
-    mount.childNodes[STAGE_INDEX].childNodes[0],
-    (node, path) => {
-      if (node.nodeType !== 1) {
-        return;
-      }
-
-      const virtId = (node as HTMLElement).id?.substring(1);
-      const clientRect = (node as Element).getBoundingClientRect();
-
-      // const pathStr = path.length ? index + "." + path.join(".") : index;
-      // let clientRect: DOMRect;
-      // if (node.nodeType === 1) {
-      //   clientRect = (node as Element).getBoundingClientRect();
-      // } else if (node.nodeType === 3) {
-      //   const range = document.createRange();
-      //   range.selectNode(node);
-      //   clientRect = range.getBoundingClientRect();
-      //   range.detach();
-      // }
-
-      if (clientRect) {
-        rects[virtId] = {
-          width: clientRect.width,
-          height: clientRect.height,
-          x: bounds.x + clientRect.left,
-          y: bounds.y + clientRect.top,
-        };
-      }
+  traverseNativeNode(root, (node, path) => {
+    if (node.nodeType !== 1) {
+      return;
     }
-  );
 
-  // include frame sizes too
-  rects[frame.element.id] = bounds;
+    const virtId = (node as HTMLElement).id?.substring(1);
+    const clientRect = (node as Element).getBoundingClientRect();
+
+    if (clientRect) {
+      rects[virtId] = {
+        width: clientRect.width,
+        height: clientRect.height,
+        x: bounds.x + clientRect.left,
+        y: bounds.y + clientRect.top,
+      };
+    }
+  });
+
+  const id = (frame.element || frame.textNode).id;
+
+  const idParts = id.split(".");
+
+  for (let i = 0, { length } = idParts; i < length; i++) {
+    const instId = idParts.slice(0, i + 1).join(".");
+
+    // include frame sizes too
+    rects[instId] = bounds;
+  }
 
   return rects;
 };
@@ -259,6 +259,34 @@ export const computeAllStyles = (mount: HTMLElement, index: number) => {
   return styles;
 };
 
+const setVariantClass = (frame: HTMLElement, variantIds: string[]) => {
+  if (variantIds != null && frame.nodeType === 1) {
+    const el = frame as Element;
+    const className =
+      el.getAttribute("data-org-class") || el.getAttribute("class") || "";
+    el.setAttribute("data-org-class", className);
+    el.setAttribute(
+      "class",
+      `${className} ${variantIds
+        .map((variantId) => {
+          return `_variant-${variantId}`;
+        })
+        .join(" ")}`
+    );
+  }
+};
+
+const patchRenderNode = (frame: HTMLElement | Text, variantIds: string[]) => {
+  if (frame.nodeType === 1) {
+    const el = frame as HTMLElement;
+    setVariantClass(el, variantIds);
+
+    // Fit the frame
+    el.style.width = "100%";
+    el.style.height = "100%";
+  }
+};
+
 const patchRoot = (
   frame: HTMLElement,
   prevInfo: PCModule,
@@ -278,14 +306,15 @@ const patchRoot = (
   const prevChildren = [prevVirtNode];
   const currChildren = [currVirtNode];
 
-  // patchNode(frame, prevVirtNode, currVirtNode, options);
+  const stage = frame.childNodes[STAGE_INDEX] as HTMLElement;
 
-  patchChildren(
-    frame.childNodes[STAGE_INDEX] as HTMLElement,
-    prevChildren,
-    currChildren,
-    options
-  );
+  patchChildren(stage, prevChildren, currChildren, options);
+
+  const renderNode = stage.childNodes[0] as HTMLElement;
+
+  if (renderNode) {
+    patchRenderNode(renderNode, options.variantIds);
+  }
 };
 
 const patchDocumentSheet = (
@@ -512,8 +541,6 @@ const patchChildren = (
     }
   }
 };
-
-const getFragmentChildren = (node) => [node];
 
 export const getFrameBounds = (node: html.Node) => {
   return node.element?.metadata?.bounds || node.textNode?.metadata?.bounds;

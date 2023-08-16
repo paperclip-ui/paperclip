@@ -110,6 +110,12 @@ public component LayerIcon {
     variant isCompositeToken trigger {
         ".composite-token"
     }
+    variant isFolder trigger {
+        ".folder"
+    }
+    variant isFile trigger {
+        ".file"
+    }
     variant isAtomToken trigger {
         ".atom-token"
     }
@@ -151,6 +157,15 @@ public component LayerIcon {
             style variant isElement {
                 --size: 0.75em
                 -webkit-mask-image: url("./square.svg")
+            }
+            style variant isFolder {
+                --size: 0.9em
+                top: calc(50% + 1px)
+                -webkit-mask-image: url("./folder.svg")
+            }
+            style variant isFile {
+                --size: 0.9em
+                -webkit-mask-image: url("./file.svg")
             }
             style variant isCompositeToken {
                 --size: 0.9em
@@ -677,6 +692,25 @@ public component LeftSidebarPreview {
                     div {
                         style extends theme.icon {
                             -webkit-mask-image: url("./plus.svg")
+                        }
+                    }
+                }
+                Layers {
+                    TreeNavigationItem {
+                        LayerNavigationItemHeader(class: "folder container open") {
+                            text "components/"
+                        }
+                        TreeNavigationItemContent {
+                            TreeNavigationItem {
+                                LayerNavigationItemHeader(class: "file open") {
+                                    override container.root {
+                                        style {
+                                            --depth: 2
+                                        }
+                                    }
+                                    text "index.tsx"
+                                }
+                            }
                         }
                     }
                 }

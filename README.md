@@ -2,20 +2,72 @@
   <img src="./assets/logo-outline-5.png" width="400px">
 </p>
 
-> Join the [Discord channel](https://discord.gg/gHPTh9Rt) for the latest updates!
+> Join the [Discord channel](https://discord.gg/H6wEVtd) for the latest updates!
 
-Paperclip enables you to design and build just about any kind of web application end-to-end. It can be used directly within [Codespaces](https://github.com/features/codespaces), enabling anyone easy access to make changes to web applications.
+Paperclip is a tiny visual programming language that offers a hybrid approach for creating design systems and presentational components. You have the option to use the UI builder:
 
 ![Split view](https://user-images.githubusercontent.com/757408/195644902-441364e0-cb44-41cf-90a3-348bb3a0eefb.png)
 
-<!-- ### Motivation
+The UI builder writes Paperclip code which you may also write by hand. Here's what the code might look like:
 
-Paperclip is designed for product teams and enable anyone on that team to make changes to web applications in a safe, easy, and scalable fashion. Some example use cases that are envisioned are:
+```javascript
 
-- Enable designers to make visual changes themselves (cutting down on the constant back-and-forth between devs and designers)
-- Free-up developers to focus on the back-end of the front-end (instead of spending their time on HTML and CSS)-->
+/* This is a design system token */
+token defaultFontFamily "Inter"
 
-## Designer setup
+/* This is a re-usable style */
+style typography {
+  font-family: var(defaultFontFamily)
+}
+
+/* A re-usable component that you can import directly into code */
+public component TodoItem {
+
+  /* variant styles of the component that can be triggered by
+  CSS selectors */
+  variant done trigger {
+    ".done"
+  }
+
+  render li(class: className) {
+    style extends typography
+    style variant done {
+      text-decoration: strike-through;
+    }
+
+    /* slots are areas where you can insert children into */
+    slot children {
+
+      /* This will be displayed if no slot is defined */
+      text "Todo Item"
+    }
+  }
+}
+```
+
+This can be compiled and imported directly into code like so:
+
+```typescript
+import { TodoItem } from "./todo-item.pc";
+
+<TodoItem />
+
+// show "done" variation
+<TodoItem className="done" />
+```
+
+Right now Paperclip supports **React**. Other compiler targets in the future may be supported such Svelte, Vue, Rust, PHP, Ruby, etc.
+
+<!--
+## Why use Paperclip?
+
+Paperclip is intended to make it easier and faster for anyone to contribute to UI development, and in the same codebase. Why is this special?
+
+- Everything is saved in GIT
+- UI changes go through the same CI / CD pipeline
+- UI changes are easy to code review -->
+
+## Installation
 
 To get started with the designer, just create a new codespace and install the Paperclip extension. After that, you'll see a new toolbar icon that you can click in order to open the designer whenever you want.
 
@@ -44,106 +96,11 @@ paperclip build
 paperclip designer
 ```
 
-## Design files
-
-Paperclip's design files are in plain text and can be written by hand. Here's a kitchen sink example:
-
-```javascript
-
-// You can define "variant" styles that contain behavior like media queries
-// and other CSS selectors
-variant isMobile {
-  "@media screen and (max-width: 400px)"
-}
-
-// Tokens enable you to define individual CSS values that you can use
-// throughout your app
-public token gray0 #333
-public token gray1 #CCC
-
-
-// Tokens can be responsive to media queries, too
-public token fontSize 12px variant {
-  isMobile 32px
-}
-
-public token fontFamily Helvetica
-
-// You can define groups of re-usable styles throughout
-// your app
-style defaultFont {
-
-  // Tokens can be referenced by `var`
-  font-family: var(fontFamily)
-  font-size: var(fontSize)
-}
-
-/**
- * Metadata like this allows you to specific infomation about
- * your UIs that is used in the designer
- *
- * @bounds { width: 1024, height: 768 }
- */
-
-public component Page {
-
-
-  render div {
-
-    // Styles can be defined inlined. You can also
-    // include any style that you want like so
-    style extends defaultFont
-
-    // "header" is an ID that gives your element some meaning
-    div pageHeader {
-
-      style {
-        width: 100%
-        background: var(gray1)
-      }
-
-      // You can define areas of your components where elements are insertable
-      slot header {
-
-        // Slots also contain default children
-        text "This is a default child"
-      }
-    }
-
-    div pageContent {
-      slot content
-    }
-  }
-}
-
-// You can specify component instances
-Page {
-  insert header {
-
-    // If you want, Paperclip comes with a "strict" mode that
-    // disallows cascading styles and requires you to define styles
-    // on each element. This provides a UX similar to Figma.
-    text "Some custom header" {
-      style extends defaultFont
-    }
-  }
-  insert content {
-    text "Some custom content"
-  }
-}
-```
-
-<!-- ## Ideal project setup
-
-Ideally design files live in the same repository as your existing code. This will enabl -->
-
-
 ## Contributing
 
 Right now, the _main_ focus for the app is around the designer UI and UX. If you're a designer and would like to help out with that, awesome! The main thing that would be super helpful is to come up with suggestions and / or design around how to improve the designer to better suite your workflow.
 
 You're welcome to use the designer, Figma, or any tool to submit suggestions. If they're accepted, we'll wire up your designs and include the new functionality in the designer.
-
 
 ## Roadmap
 

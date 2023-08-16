@@ -673,7 +673,12 @@ public component LeftSidebarPreview {
         sidebar.SidebarPanel {
             sidebar.SidebarSection {
                 sidebar.SidebarPanelHeader {
-                    text "Assets"
+                    text "Files"
+                    div {
+                        style extends theme.icon {
+                            -webkit-mask-image: url("./plus.svg")
+                        }
+                    }
                 }
             }
         }

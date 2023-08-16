@@ -3,7 +3,7 @@ import "./sidebar.pc" as sidebar
 import "./menu.pc" as menu
 
 /**
- * @bounds(x: -724, y: -1046, width: 136, height: 28)
+ * @bounds(x: -717, y: -1108, width: 136, height: 28)
 */
 
 public component MultiSelectItem {
@@ -242,16 +242,6 @@ public component MultiSelect {
                 text "item 2"
             }
         }
-    }
-}
-
-/**
- * @bounds(x: -720, y: -1094, width: 188, height: 26)
-*/
-
-MultiSelect {
-    insert placeholder {
-        text "Select..."
     }
 }
 

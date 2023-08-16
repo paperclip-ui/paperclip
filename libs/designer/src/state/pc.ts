@@ -416,6 +416,15 @@ export const isSelectableExpr = (expr: ast.InnerExpressionInfo) => {
     expr.kind === ast.ExprKind.Component
   );
 };
+
+export const isStyleableExpr = (expr: ast.InnerExpressionInfo) => {
+  return (
+    expr.kind === ast.ExprKind.Style ||
+    expr.kind === ast.ExprKind.TextNode ||
+    expr.kind === ast.ExprKind.Element ||
+    expr.kind === ast.ExprKind.Component
+  );
+};
 export const getStyleableTargetId = (designer: DesignerState) => {
   const id = getSelectedId(designer);
   const expr = ast.getExprInfoById(id, designer.graph);

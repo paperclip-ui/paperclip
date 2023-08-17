@@ -5,6 +5,7 @@ pub struct Context {
     pub indent_size: u8,
 }
 
+
 impl Context {
     pub fn new(depth: u8) -> Context {
         Context {

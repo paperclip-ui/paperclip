@@ -10,6 +10,7 @@ import {
 import { useHistory } from "@paperclip-ui/designer/src/domains/history/react";
 import { routes } from "@paperclip-ui/designer/src/state/routes";
 import { Layers } from "./Layers";
+import { FileNavigator } from "./FileNavigator";
 
 export const LeftSidebar = () => {
   const { title, document, show, onBackClick } = useLeftSidebar();
@@ -24,6 +25,7 @@ export const LeftSidebar = () => {
         <styles.LeftSidebarHeader title={title} onBackClick={onBackClick} />
         <Layers />
       </sidebarStyles.SidebarPanel>
+      <FileNavigator />
     </styles.LeftSidebar>
   );
 };

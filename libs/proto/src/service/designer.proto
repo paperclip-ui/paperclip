@@ -14,6 +14,7 @@ service Designer {
   rpc GetGraph(Empty) returns (stream ast.graph.Graph);
   rpc OnEvent(Empty) returns (stream DesignServerEvent);
   rpc UpdateFile(UpdateFileRequest) returns (Empty);
+  rpc ReadDirectory(ReadDirectoryRequest) returns (ReadDirectoryResponse);
   rpc CreateDesignFile(CreateDesignFileRequest) returns (CreateDesignFileResponse);
   rpc GetResourceFiles(Empty) returns (stream ResourceFiles);
   rpc ApplyMutations(ApplyMutationsRequest) returns (ApplyMutationsResult);
@@ -21,6 +22,25 @@ service Designer {
   rpc Undo(Empty) returns (Empty);
   rpc Redo(Empty) returns (Empty);
   rpc Save(Empty) returns (Empty);
+}
+
+message ReadDirectoryRequest {
+  string path = 1;
+}
+
+message ReadDirectoryResponse {
+  oneof item {
+    FSDirectory directory = 1;
+    FSFile file = 2;
+  }
+}
+
+message FSDirectory {
+  string path = 1;
+}
+
+message FSFile {
+  string path = 1;
 }
 
 message Empty {

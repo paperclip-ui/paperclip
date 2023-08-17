@@ -36,6 +36,8 @@ async fn file_watcher<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
         )
         .unwrap();
 
+        println!("watching {:?}", config_context.directory);
+
         watcher
             .watch(config_context.directory.as_ref(), RecursiveMode::Recursive)
             .unwrap();

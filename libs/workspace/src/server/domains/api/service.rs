@@ -5,6 +5,7 @@ use crate::server::core::{ServerEngineContext, ServerEvent, ServerStore};
 use crate::server::io::ServerIO;
 use futures::Stream;
 use paperclip_ast_serialize::pc::serialize;
+use paperclip_common::fs::FSItemKind;
 use paperclip_language_services::DocumentInfo;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::service::designer::designer_server::Designer;
@@ -12,7 +13,7 @@ use paperclip_proto::service::designer::{
     design_server_event, file_response, ApplyMutationsRequest, ApplyMutationsResult,
     CreateDesignFileRequest, CreateDesignFileResponse, DesignServerEvent, Empty, FileChanged,
     FileRequest, FileResponse, ModulesEvaluated, ResourceFiles, ScreenshotCaptured,
-    UpdateFileRequest,
+    UpdateFileRequest, ReadDirectoryRequest, ReadDirectoryResponse, FsItem, CreateFileRequest,
 };
 use std::pin::Pin;
 use std::sync::Arc;
@@ -49,7 +50,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
     ) -> Result<Response<FileResponse>, Status> {
 
         let store = self.ctx.store.lock().unwrap();
-        let path = request.get_ref().path.clone();
+        let path: String = request.get_ref().path.clone();
 
         let data = if let Ok(module) = store.state.bundle_evaluated_module(&path) {
             Some(file_response::Data::Paperclip(module))
@@ -68,6 +69,54 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
             Err(Status::not_found("Dependency not found"))
         }
     }
+
+    async fn read_directory(
+        &self,
+        request: Request<ReadDirectoryRequest>
+    ) -> Result<Response<ReadDirectoryResponse>, Status> {
+        let path: String = request.get_ref().path.clone();
+
+        if let Ok(items) = self.ctx.io.read_directory(&path) {
+            Ok(Response::new(ReadDirectoryResponse { 
+                items: items.iter().map(|item| {
+                    FsItem {
+                        kind: if matches!(item.kind, FSItemKind::Directory) {
+                            0
+                        } else {
+                            1
+                        },
+                        path: item.path.to_string()
+                    }
+                }).collect()
+            }))
+        } else {
+            Err(Status::not_found("Not implemented yet"))
+        }
+    }
+
+
+    async fn create_file(
+        &self,
+        request: Request<CreateFileRequest>
+    ) -> Result<Response<Empty>, Status> {
+        let path: String = request.get_ref().path.clone();
+        let kind: i32 = request.get_ref().kind;
+
+        let result = if kind == 0 {
+            self.ctx.io.create_directory(&path)
+        } else {
+            self.ctx.io.write_file(&path, "".to_string())
+        };
+
+        if result.is_ok() {
+            Ok(Response::new(Empty {}))
+        } else {
+            Err(Status::unknown("Cannot create file"))
+        }
+
+        
+    }
+
 
     async fn get_resource_files(
         &self,

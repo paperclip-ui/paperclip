@@ -1,5 +1,5 @@
 use anyhow::Result;
-use paperclip_common::fs::{FileReader, FileWriter, LocalFileReader};
+use paperclip_common::fs::{FileReader, FileWriter, LocalFileReader, self};
 use paperclip_common::fs::{FileResolver, LocalFileResolver};
 use paperclip_config::ConfigContext;
 use paperclip_config::ConfigIO;
@@ -18,6 +18,9 @@ impl FileReader for LocalServerIO {
     fn get_file_size(&self, path: &str) -> Result<u64> {
         LocalFileReader::default().get_file_size(path)
     }
+    fn read_directory(&self, path: &str) -> Result<Vec<paperclip_common::fs::FSItem>> {
+        LocalFileReader::default().read_directory(path)
+    }
     fn file_exists(&self, path: &str) -> bool {
         LocalFileReader::default().file_exists(path)
     }
@@ -26,6 +29,9 @@ impl FileReader for LocalServerIO {
 impl FileWriter<String> for LocalServerIO {
     fn write_file<'content>(&self, path: &str, content: String) -> std::io::Result<()> {
         std::fs::write(path, content)
+    }
+    fn create_directory<'content>(&self, path: &str) -> std::io::Result<()> {
+        std::fs::create_dir(path)
     }
 }
 

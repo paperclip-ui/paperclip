@@ -34,6 +34,9 @@ impl FileReader for LocalIO {
     fn get_file_size(&self, path: &str) -> Result<u64> {
         LocalFileReader::default().get_file_size(path)
     }
+    fn read_directory(&self, path: &str) -> Result<Vec<paperclip_common::fs::FSItem>> {
+        LocalFileReader::default().read_directory(path)
+    }
     fn file_exists(&self, path: &str) -> bool {
         LocalFileReader::default().file_exists(path)
     }

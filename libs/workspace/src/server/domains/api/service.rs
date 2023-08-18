@@ -7,6 +7,7 @@ use futures::Stream;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::fs::FSItemKind;
 use paperclip_language_services::DocumentInfo;
+use path_absolutize::*;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
@@ -15,6 +16,7 @@ use paperclip_proto::service::designer::{
     FileRequest, FileResponse, ModulesEvaluated, ResourceFiles, ScreenshotCaptured,
     UpdateFileRequest, ReadDirectoryRequest, ReadDirectoryResponse, FsItem, CreateFileRequest,
 };
+use std::path::Path;
 use std::pin::Pin;
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -74,7 +76,21 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         &self,
         request: Request<ReadDirectoryRequest>
     ) -> Result<Response<ReadDirectoryResponse>, Status> {
-        let path: String = request.get_ref().path.clone();
+        let mut path: String = request.get_ref().path.clone();
+
+
+        if path.get(0..1) != Some("/")  {
+            // path = format!("{}")
+            let store = self.ctx.store.clone();
+            let project_dir = &store.lock().unwrap().state.options.config_context.directory;
+            path = Path::new(project_dir)
+            .join(path)
+            .absolutize()
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .to_string();
+        }
 
         if let Ok(items) = self.ctx.io.read_directory(&path) {
             Ok(Response::new(ReadDirectoryResponse { 

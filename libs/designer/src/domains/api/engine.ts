@@ -122,6 +122,11 @@ const createActions = (
         },
       });
     },
+    loadProjectDirectory() {
+      client.ReadDirectory({ path: "." }).then((result) => {
+        console.log(result);
+      });
+    },
     syncResourceFiles() {
       client.GetResourceFiles({}).subscribe({
         next(data) {
@@ -817,9 +822,16 @@ const handleApiError = () => {
  */
 
 const bootstrap = (
-  { openFile, syncGraph, syncEvents, syncResourceFiles }: Actions,
+  {
+    openFile,
+    syncGraph,
+    syncEvents,
+    syncResourceFiles,
+    loadProjectDirectory,
+  }: Actions,
   initialState: DesignerState
 ) => {
+  loadProjectDirectory();
   syncEvents();
   syncResourceFiles();
   const filePath = getCurrentFilePath(initialState);

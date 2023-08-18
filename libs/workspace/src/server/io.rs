@@ -1,5 +1,5 @@
 use anyhow::Result;
-use paperclip_common::fs::{FileReader, FileWriter, LocalFileReader, self};
+use paperclip_common::fs::{FileReader, FileWriter, LocalFileReader};
 use paperclip_common::fs::{FileResolver, LocalFileResolver};
 use paperclip_config::ConfigContext;
 use paperclip_config::ConfigIO;

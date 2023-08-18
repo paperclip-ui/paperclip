@@ -1,7 +1,7 @@
 use convert_case::{Case, Casing};
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::ast;
-use paperclip_proto::ast::pc::{Component, Render, component_body_item, document_body_item};
+use paperclip_proto::ast::pc::{Component, Render, component_body_item};
 use paperclip_proto::ast::{
     all::Expression,
     graph_ext::Dependency,

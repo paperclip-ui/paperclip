@@ -12,7 +12,6 @@ public component Sidebar {
       flex-direction: column
       gap: var(theme.space05)
       padding: var(theme.space05)
-      overflow: scroll 
       pointer-events: all
     }
     slot children
@@ -24,6 +23,10 @@ public component SidebarPanel {
   render div {
     style extends panel {
       flex: 1
+      height: 100%
+      overflow: hidden
+      display: flex
+      flex-direction: column
     }
     slot children
   }
@@ -37,6 +40,11 @@ public component SidebarSection {
   render div root {
     style {
       border-top: 1px solid var(theme.borderColor)
+      overflow: hidden
+      display: flex
+      flex-direction: column
+      overflow: hidden
+      height: 100%
     }
     style variant first {
       border-top: none
@@ -49,7 +57,6 @@ public component SidebarPanelHeader {
   render div {
     style extends theme.fontHeader {
       padding: var(theme.space05)
-      padding-bottom: 0px
 
     }
     div {
@@ -66,9 +73,14 @@ public component SidebarPanelHeader {
 
 public component SidebarPanelContent {
   variant flush trigger { ".flush" }
+  variant scroll trigger { ".scroll" }
   render div(class:class) {
     style {
       padding: var(theme.space05)
+    }
+    style variant scroll {
+      height: 100%
+      overflow: scroll
     }
     style variant flush {
       padding: var(theme.space05) 0px

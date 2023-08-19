@@ -483,7 +483,7 @@ public component Layers {
     render div {
         style {
             padding: var(theme.space03) 0px
-            overflow: hidden
+            overflow: scroll
         }
         slot children
     }

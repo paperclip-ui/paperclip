@@ -1,12 +1,15 @@
 import produce from "immer";
 import {
   DesignerState,
+  FSItemKind,
   findVirtId,
   findVirtNode,
   getGraphComponents,
   isSelectableExpr,
+  setDirItems,
 } from "../../state";
 import { DesignerEngineEvent, GraphLoaded } from "./events";
+import * as path from "path";
 import { DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import jasonpatch from "fast-json-patch";
@@ -24,6 +27,35 @@ export const apiReducer = (
     case "designer-engine/resourceFilePathsLoaded": {
       return produce(state, (newState) => {
         newState.resourceFilePaths = event.payload;
+      });
+    }
+    case "designer-engine/directoryRead": {
+      return produce(state, (newState) => {
+        if (event.payload.isRoot) {
+          const dirParts = event.payload.path.split("/");
+          dirParts.pop();
+          newState.projectDirectory = {
+            kind: FSItemKind.Directory,
+            path: event.payload.path,
+            items: [],
+          };
+        }
+        newState.projectDirectory = setDirItems(
+          newState.projectDirectory,
+          event.payload.path,
+          event.payload.items.map((item) =>
+            item.kind === 0
+              ? {
+                  path: item.path,
+                  items: [],
+                  kind: FSItemKind.Directory,
+                }
+              : {
+                  path: item.path,
+                  kind: FSItemKind.File,
+                }
+          )
+        );
       });
     }
     case "designer-engine/documentOpened":

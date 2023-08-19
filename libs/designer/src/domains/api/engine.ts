@@ -24,6 +24,8 @@ import {
   DesignerState,
   DNDKind,
   findVirtNode,
+  FSItem,
+  FSItemKind,
   getCurrentFilePath,
   getInsertBox,
   getNodeInfoAtCurrentPoint,
@@ -122,9 +124,12 @@ const createActions = (
         },
       });
     },
-    loadProjectDirectory() {
-      client.ReadDirectory({ path: "." }).then((result) => {
-        console.log(result);
+    readDirectory(inputPath: string) {
+      client.ReadDirectory({ path: inputPath }).then(({ path, items }) => {
+        dispatch({
+          type: "designer-engine/directoryRead",
+          payload: { items, path, isRoot: inputPath === "." },
+        });
       });
     },
     syncResourceFiles() {
@@ -728,6 +733,12 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
+  const handleFileNavigatorItemClicked = (item: FSItem) => {
+    if (item.kind === FSItemKind.Directory) {
+      actions.readDirectory(item.path);
+    }
+  };
+
   return (
     event: DesignerEvent,
     newState: DesignerState,
@@ -736,6 +747,9 @@ const createEventHandler = (actions: Actions) => {
     switch (event.type) {
       case "ui/canvasMouseUp": {
         return handleCanvasMouseUp(newState, prevState);
+      }
+      case "ui/FileNavigatorItemClicked": {
+        return handleFileNavigatorItemClicked(event.payload);
       }
       case "shortcuts/itemSelected": {
         return handleShortcutCommand(
@@ -827,11 +841,11 @@ const bootstrap = (
     syncGraph,
     syncEvents,
     syncResourceFiles,
-    loadProjectDirectory,
+    readDirectory,
   }: Actions,
   initialState: DesignerState
 ) => {
-  loadProjectDirectory();
+  readDirectory(".");
   syncEvents();
   syncResourceFiles();
   const filePath = getCurrentFilePath(initialState);

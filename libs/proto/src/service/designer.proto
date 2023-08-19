@@ -36,7 +36,8 @@ message ReadDirectoryRequest {
 }
 
 message ReadDirectoryResponse {
-  repeated FSItem items = 1;
+  string path = 1;
+  repeated FSItem items = 2;
 }
 
 enum FSItemKind {

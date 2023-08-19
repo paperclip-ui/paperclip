@@ -94,6 +94,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
 
         if let Ok(items) = self.ctx.io.read_directory(&path) {
             Ok(Response::new(ReadDirectoryResponse { 
+                path: path.to_string(),
                 items: items.iter().map(|item| {
                     FsItem {
                         kind: if matches!(item.kind, FSItemKind::Directory) {

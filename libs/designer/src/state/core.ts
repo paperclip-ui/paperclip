@@ -52,10 +52,29 @@ type Query = {
 
 type FrameBox = { frameIndex: number } & Box;
 
+export enum FSItemKind {
+  Directory = "Directory",
+  File = "File",
+}
+
+type BaseFSItem<Kind extends FSItemKind> = {
+  kind: Kind;
+  path: string;
+};
+
+export type FSDirectory = BaseFSItem<FSItemKind.Directory> & {
+  items: FSItem[];
+};
+
+export type FSFile = BaseFSItem<FSItemKind.File>;
+
+export type FSItem = FSDirectory | FSFile;
+
 export type DesignerState = {
   readonly: boolean;
   scopedElementId?: string;
   selectedTargetId: string;
+  projectDirectory?: FSDirectory;
   activeVariantId?: string;
   selectedVariantIds: string[];
   insertedNodeIds: string[];

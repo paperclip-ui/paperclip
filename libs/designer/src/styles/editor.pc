@@ -95,7 +95,7 @@ public component Editor {
 }
 
 /**
- * @bounds(x: -52, y: 1007, width: 1384, height: 1166)
+ * @bounds(x: -52, y: 1007, width: 2136, height: 1454)
 */
 
 Editor {

@@ -223,7 +223,6 @@ describe(__filename + "#", () => {
         },
       },
     });
-    console.log(JSON.stringify(state, null, 2));
 
     const events: DesignerEvent[] = [
       { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
@@ -288,7 +287,6 @@ describe(__filename + "#", () => {
         },
       },
     });
-    console.log(JSON.stringify(state, null, 2));
 
     const events: DesignerEvent[] = [
       { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
@@ -352,7 +350,6 @@ describe(__filename + "#", () => {
         },
       },
     });
-    console.log(JSON.stringify(state, null, 2));
 
     const events: DesignerEvent[] = [
       { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
@@ -370,6 +367,61 @@ describe(__filename + "#", () => {
 
     state = events.reduce(rootReducer, state);
 
-    expect(state.highlightedNodeId).toEqual("b0f3b8a2-12.b0f3b8a2-7");
+    expect(state.highlightedNodeId).toEqual("b0f3b8a2-11.b0f3b8a2-8");
+  });
+
+  describe("hovering", () => {
+    it("Can hover a canvas element", async () => {
+      let state = await loadState({
+        files: {
+          "/entry.pc": `
+          div
+        `,
+        },
+        extraState: {
+          rects: {
+            "b0f3b8a2-1": {
+              x: 0,
+              y: 0,
+              width: 100,
+              height: 100,
+              frameIndex: 0,
+            },
+          },
+        },
+      });
+
+      console.log(JSON.stringify(state, null, 2));
+
+      const events: DesignerEvent[] = [
+        { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
+        {
+          type: "ui/canvasMouseUp",
+          payload: {
+            position: { x: 10, y: 10 },
+            timestamp: 100,
+            metaKey: false,
+            ctrlKey: false,
+            shiftKey: false,
+          },
+        },
+
+        // Double click!
+        {
+          type: "ui/canvasMouseUp",
+          payload: {
+            position: { x: 10, y: 10 },
+            timestamp: 100,
+            metaKey: false,
+            ctrlKey: false,
+            shiftKey: false,
+          },
+        },
+      ];
+
+      state = events.reduce(rootReducer, state);
+
+      expect(state.highlightedNodeId).toEqual("b0f3b8a2-1");
+    });
   });
 });

@@ -697,6 +697,7 @@ const findVirtBoxNodeInfo = (
     current.kind === ast.ExprKind.Element &&
     ast.isInstance(current.expr, graph)
   ) {
+    console.log("INS", current.expr.id, virtId);
     // return boxes
     if (!instancePath.length) {
       const info = findInsertBoxesAtPoint(point, current.expr, graph, boxes);
@@ -705,7 +706,7 @@ const findVirtBoxNodeInfo = (
       }
     }
 
-    if (scopeId?.includes(virtId)) {
+    if (scopeId && virtId.indexOf(scopeId) === 0) {
       const component = ast.getInstanceComponent(current.expr, graph);
       const render = ast.getComponentRenderNode(component);
       const boxInfo = findVirtBoxNodeInfo(

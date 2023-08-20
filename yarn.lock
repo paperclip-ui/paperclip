@@ -11808,6 +11808,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"paperclip-node@workspace:libs/paperclip-node":
+  version: 0.0.0-use.local
+  resolution: "paperclip-node@workspace:libs/paperclip-node"
+  dependencies:
+    "@paperclip-ui/config": ^19.0.14
+    cargo-cp-artifact: ^0.1
+    loader-utils: ^3.2.0
+    lodash: ^4.17.21
+  languageName: unknown
+  linkType: soft
+
 "paperclip@workspace:.":
   version: 0.0.0-use.local
   resolution: "paperclip@workspace:."

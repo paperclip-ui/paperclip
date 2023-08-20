@@ -5,8 +5,6 @@ export const setDirItems = (
   cwd: string,
   items: FSItem[]
 ) => {
-  console.log("SET DIR ITEMSaa", curr.path, cwd);
-
   if (cwd.indexOf(curr.path) !== 0) {
     return curr;
   }

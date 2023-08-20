@@ -6,6 +6,8 @@
 
 #### NOW
 
+- unit TESTS
+
 - File navigator
 
   - ability to filter files

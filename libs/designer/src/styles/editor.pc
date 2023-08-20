@@ -95,7 +95,7 @@ public component Editor {
 }
 
 /**
- * @bounds(x: 10, y: 0, width: 1384, height: 1166)
+ * @bounds(x: -52, y: 1007, width: 1384, height: 1166)
 */
 
 Editor {
@@ -123,3 +123,4 @@ Editor {
     }
     assetsModal.Container
 }
+

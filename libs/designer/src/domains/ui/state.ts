@@ -174,21 +174,17 @@ export const selectNode = (
   return designer;
 };
 
+const boundsIsNull = (bounds: Box) =>
+  bounds.x + bounds.y + bounds.width + bounds.height === 0;
+
 // https://github.com/crcn/tandem/blob/10.0.0/packages/dashboard/src/state/index.ts#L1304
 export const centerEditorCanvas = (
   editor: DesignerState,
-  innerBounds?: Box,
+  innerBounds: Box,
   zoomOrZoomToFit: boolean | number = true
 ) => {
-  if (!innerBounds) {
-    innerBounds = getAllFrameBounds(editor);
-  }
-
   // no windows loaded
-  if (
-    innerBounds.x + innerBounds.y + innerBounds.width + innerBounds.height ===
-    0
-  ) {
+  if (boundsIsNull(innerBounds)) {
     console.warn(` Cannot center when bounds has no size`);
     return editor;
   }
@@ -256,8 +252,6 @@ export const maybeCenterCanvas = (editor: DesignerState, force?: boolean) => {
       editor.canvas.size?.width &&
       editor.canvas.size?.height)
   ) {
-    editor = { ...editor, centeredInitial: true };
-
     let targetBounds: Box;
     const currentFrameIndex = editor.canvas.activeFrame;
 
@@ -266,7 +260,16 @@ export const maybeCenterCanvas = (editor: DesignerState, force?: boolean) => {
         editor.currentDocument?.paperclip?.html
       );
       targetBounds = frameBoxes[currentFrameIndex];
+    } else {
+      targetBounds = getAllFrameBounds(editor);
     }
+
+    // ONLY center if there are actual bounds
+    if (!targetBounds || boundsIsNull(targetBounds)) {
+      return editor;
+    }
+
+    editor = { ...editor, centeredInitial: true };
 
     editor = centerEditorCanvas(editor, targetBounds);
 

@@ -8,6 +8,12 @@
 
 - File navigator
 
+  - ability to filter files
+  - ability to move files around
+  - ability to create directory
+  - ability to create design file
+  - ability to drop entities into file navigator
+
   - ability to open any file
   - follow-ups:
     - update entities panel to only show file name _and_ folder

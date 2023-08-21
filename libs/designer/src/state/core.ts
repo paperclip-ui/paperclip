@@ -50,7 +50,7 @@ type Query = {
   file?: string;
 };
 
-type FrameBox = { frameIndex: number } & Box;
+export type FrameBox = { frameIndex: number } & Box;
 
 export enum FSItemKind {
   Directory = "Directory",

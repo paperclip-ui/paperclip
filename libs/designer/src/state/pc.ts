@@ -1,5 +1,10 @@
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
-import { BoxNodeInfo, DesignerState, getCurrentFilePath } from "./core";
+import {
+  BoxNodeInfo,
+  DesignerState,
+  FrameBox,
+  getCurrentFilePath,
+} from "./core";
 import { ComputedStyleMap } from "@paperclip-ui/proto-ext/lib/ast/serialize";
 import { WritableDraft } from "immer/dist/internal";
 import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
@@ -697,7 +702,6 @@ const findVirtBoxNodeInfo = (
     current.kind === ast.ExprKind.Element &&
     ast.isInstance(current.expr, graph)
   ) {
-    console.log("INS", current.expr.id, virtId);
     // return boxes
     if (!instancePath.length) {
       const info = findInsertBoxesAtPoint(point, current.expr, graph, boxes);
@@ -706,7 +710,7 @@ const findVirtBoxNodeInfo = (
       }
     }
 
-    if (scopeId && virtId.indexOf(scopeId) === 0) {
+    if (scopeId?.includes(virtId)) {
       const component = ast.getInstanceComponent(current.expr, graph);
       const render = ast.getComponentRenderNode(component);
       const boxInfo = findVirtBoxNodeInfo(
@@ -754,10 +758,12 @@ export const getNodeInfoAtCurrentPoint = (state: DesignerState) => {
   if (!state.canvas.mousePosition) {
     return null;
   }
+
   const scaledPoint = getScaledPoint(
     state.canvas.mousePosition,
     state.canvas.transform
   );
+
   const filePath = getCurrentFilePath(state);
 
   const dep = state.graph.dependencies[filePath];
@@ -765,6 +771,8 @@ export const getNodeInfoAtCurrentPoint = (state: DesignerState) => {
   if (!dep) {
     return null;
   }
+
+  // const rects = getAllRectsAtPoint(scaledPoint, state.rects);
 
   return findVirtBoxNodeInfo(
     scaledPoint,
@@ -777,18 +785,202 @@ export const getNodeInfoAtCurrentPoint = (state: DesignerState) => {
   );
 };
 
+// const findVirtBoxNodeInfo2 = (
+//   current: ast.InnerExpressionInfo,
+//   path: string,
+//   graph: Graph,
+//   scopeId: string,
+//   instancePath: string[],
+//   boxes: Record<string, Box>
+// ): BoxNodeInfo | null => {
+//   const virtId = getVirtId(current, instancePath, graph);
+
+//   if (
+//     current.kind === ast.ExprKind.Element &&
+//     ast.isInstance(current.expr, graph)
+//   ) {
+//     console.log("INS", current.expr.id, virtId);
+//     // return boxes
+//     if (!instancePath.length) {
+//       const info = findInsertBoxesAtPoint(point, current.expr, graph, boxes);
+//       if (info) {
+//         return info;
+//       }
+//     }
+
+//     if (scopeId && virtId.indexOf(scopeId) === 0) {
+//       const component = ast.getInstanceComponent(current.expr, graph);
+//       const render = ast.getComponentRenderNode(component);
+//       const boxInfo = findVirtBoxNodeInfo(
+//         point,
+//         render,
+//         path,
+//         graph,
+//         scopeId,
+//         [...instancePath, virtId],
+//         boxes
+//       );
+//       if (boxInfo) {
+//         return boxInfo;
+//       }
+//     }
+//   }
+
+//   const box = boxes[virtId];
+
+//   for (const child of ast.getChildren(current)) {
+//     const childInfo = findVirtBoxNodeInfo(
+//       point,
+//       child,
+//       path,
+//       graph,
+//       scopeId,
+//       instancePath,
+//       boxes
+//     );
+//     if (childInfo) {
+//       return childInfo;
+//     }
+//   }
+
+//   return (
+//     box &&
+//     boxIntersectsPoint(box, point) && {
+//       nodeId: virtId,
+//       box,
+//     }
+//   );
+// };
+
+const getAllRectsAtPoint = memoize(
+  (point: Point, rects: Record<string, FrameBox>): Record<string, FrameBox> => {
+    const overlappingRects = {};
+    for (const id in rects) {
+      const rect = rects[id];
+      if (boxIntersectsPoint(rect, point)) {
+        overlappingRects[id] = rect;
+      }
+    }
+
+    return overlappingRects;
+  }
+);
+
 const merge = memoize((a, b) => ({ ...a, ...b }));
 
 const getVirtWithExprRects = (designer: DesignerState) =>
   merge(
     designer.rects,
-    getInsertBoxes(
-      designer.graph,
-      getCurrentFilePath(designer),
-      designer.currentDocument?.paperclip.html,
-      designer.rects
+    merge(
+      getInsertBoxes(
+        designer.graph,
+        getCurrentFilePath(designer),
+        designer.currentDocument?.paperclip.html,
+        designer.rects
+      ),
+      merge(
+        getInstanceBoxes(designer.rects),
+        getGraphComponentRects(designer.graph, designer.rects)
+      )
     )
   );
+
+const getGraphComponentRects = memoize(
+  (graph: Graph, rects: Record<string, FrameBox>) => {
+    const allComponentRects = {};
+    for (const path in graph.dependencies) {
+      const dep = graph.dependencies[path];
+      const components = ast.getDocumentComponents(dep.document);
+      for (const component of components) {
+        Object.assign(allComponentRects, component, rects, graph);
+      }
+    }
+
+    return allComponentRects;
+  }
+);
+
+const getComponentRects = (
+  component: Component,
+  rects: Record<string, FrameBox>,
+  graph: Graph
+): Record<string, FrameBox> => {
+  const componentRects: Record<string, FrameBox> = {};
+
+  const renderNode = ast.getComponentRenderNode(component);
+  const renderNodeRect = rects[renderNode?.expr.id];
+  if (!renderNodeRect) {
+    return;
+  }
+
+  componentRects[component.id] = rects[renderNode.expr.id];
+
+  // DELETE render node since the component should always be selected
+  // delete newState.rects[renderNode.expr.id];
+  const slots = ast.getComponentSlots(component, graph);
+
+  for (const slot of slots) {
+    Object.assign(
+      componentRects,
+      getSlotRects(slot, renderNodeRect.frameIndex, rects)
+    );
+  }
+
+  return componentRects;
+};
+
+const getSlotRects = (
+  slot: pc.Slot,
+  frameIndex: number,
+  rects: Record<string, FrameBox>
+) => {
+  const slotDescendents = ast.flattenSlot(slot);
+
+  const slotRects = {};
+
+  const descendantRects: Box[] = [];
+  for (const id in slotDescendents) {
+    const expr = slotDescendents[id];
+    if (
+      expr.kind === ast.ExprKind.TextNode ||
+      expr.kind === ast.ExprKind.Element
+    ) {
+      const rect = rects[expr.expr.id];
+      if (rect) {
+        descendantRects.push(rect);
+      }
+    }
+
+    slotRects[slot.id] = {
+      frameIndex,
+      ...mergeBoxes(descendantRects),
+    };
+  }
+
+  return slotRects;
+};
+
+const getInstanceBoxes = memoize(
+  (rects: Record<string, FrameBox>): Record<string, FrameBox> => {
+    const instanceBoxes: Record<string, FrameBox> = {};
+
+    for (const id in rects) {
+      const rect = rects[id];
+      if (id.includes(".")) {
+        const idParts = id.split(".");
+        for (let i = 0, n = idParts.length - 1; i < n; i++) {
+          const instanceId = idParts.slice(i, 1).join(".");
+          instanceBoxes[instanceId] = instanceBoxes[instanceId]
+            ? (mergeBoxes([rect, instanceBoxes[instanceId]]) as FrameBox)
+            : rect;
+          instanceBoxes[instanceId].frameIndex = rect.frameIndex;
+        }
+      }
+    }
+
+    return instanceBoxes;
+  }
+);
 
 export const findInsertAtPoint = (
   point: Point,

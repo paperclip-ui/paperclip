@@ -9,7 +9,7 @@ const getArgumentCount = (fn: (...args: any[]) => any) => {
   const args = params
     .replace(/[=>()]/g, "")
     .split(/\s*,\s*/)
-    .filter((arg) => arg.substr(0, 3) !== "...");
+    .filter((arg) => arg.substring(0, 3) !== "...");
 
   return args.length;
 };

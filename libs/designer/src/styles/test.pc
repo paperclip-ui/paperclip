@@ -8,7 +8,7 @@ public style something
  * @bounds(x: 532, y: 309, width: 472, height: 178)
 */
 
-public component Unnamed {
+public component A {
     render div {
         style {
             position: relative
@@ -25,5 +25,40 @@ public component Unnamed {
  * @bounds(x: 1112, y: 295, width: 337, height: 224)
 */
 
-Unnamed
+public component B {
+    render A {
+        insert children {
+            text "something"
+            div {
+                style {
+                    font-family: var(theme.defaultFontFamily)
+                    color: var(theme.blue02)
+                }
+                slot children {
+                    text "another slot"
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: 1518, y: 275, width: 489, height: 326)
+*/
+
+B {
+    insert children {
+        text "a child"
+    }
+}
+
+/**
+ * @bounds(x: 1164, y: 698, width: 1024, height: 768)
+*/
+
+B {
+    insert children {
+        text "something else"
+    }
+}
 

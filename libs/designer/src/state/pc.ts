@@ -1220,7 +1220,7 @@ export const getNodeBox = (virtId: string, state: DesignerState): Box => {
   const nodePath = virtId.split(".");
   const instancePath = nodePath.slice(0, nodePath.length - 1);
   const expr = ast.getExprInfoById(nodePath[nodePath.length - 1], state.graph);
-  const box = calcExprBox(expr, instancePath, state.rects, state.graph);
+  const box = expr && calcExprBox(expr, instancePath, state.rects, state.graph);
   return box;
 };
 

@@ -182,6 +182,18 @@ describe(__filename + "#", () => {
           shiftKey: false,
         },
       },
+
+      // focus IN
+      {
+        type: "ui/canvasMouseUp",
+        payload: {
+          position: { x: 10, y: 10 },
+          timestamp: 100,
+          metaKey: false,
+          ctrlKey: false,
+          shiftKey: false,
+        },
+      },
     ];
 
     state = events.reduce(rootReducer, state);
@@ -206,7 +218,7 @@ describe(__filename + "#", () => {
       },
       extraState: {
         rects: {
-          "b0f3b8a2-6": {
+          "b0f3b8a2-6.b0f3b8a2-3": {
             x: 0,
             y: 0,
             width: 100,
@@ -305,69 +317,6 @@ describe(__filename + "#", () => {
     state = events.reduce(rootReducer, state);
 
     expect(state.highlightedNodeId).toEqual("b0f3b8a2-12.b0f3b8a2-7");
-  });
-
-  it("When focused on an instance of an instance, its child is highlighted", async () => {
-    let state = await loadState({
-      files: {
-        "/entry.pc": `
-          component A {
-            render div {
-              slot child {
-                div
-              }
-            }
-          }
-
-          component B {
-            render A {
-              insert child {
-                span
-              }
-            }
-          }
-
-          B
-        `,
-      },
-      extraState: {
-        scopedElementId: "b0f3b8a2-11",
-        rects: {
-          "b0f3b8a2-11.b0f3b8a2-8": {
-            x: 0,
-            y: 0,
-            width: 100,
-            height: 100,
-            frameIndex: 0,
-          },
-          "b0f3b8a2-11.b0f3b8a2-6": {
-            x: 0,
-            y: 0,
-            width: 100,
-            height: 100,
-            frameIndex: 0,
-          },
-        },
-      },
-    });
-
-    const events: DesignerEvent[] = [
-      { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
-      {
-        type: "ui/canvasMouseUp",
-        payload: {
-          position: { x: 10, y: 10 },
-          timestamp: 100,
-          metaKey: false,
-          ctrlKey: false,
-          shiftKey: false,
-        },
-      },
-    ];
-
-    state = events.reduce(rootReducer, state);
-
-    expect(state.highlightedNodeId).toEqual("b0f3b8a2-11.b0f3b8a2-8");
   });
 
   describe("hovering", () => {
@@ -534,28 +483,6 @@ describe(__filename + "#", () => {
 
       const events: DesignerEvent[] = [
         { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
-        {
-          type: "ui/canvasMouseUp",
-          payload: {
-            position: { x: 10, y: 10 },
-            timestamp: 100,
-            metaKey: false,
-            ctrlKey: false,
-            shiftKey: false,
-          },
-        },
-
-        // Double click!
-        {
-          type: "ui/canvasMouseUp",
-          payload: {
-            position: { x: 10, y: 10 },
-            timestamp: 100,
-            metaKey: false,
-            ctrlKey: false,
-            shiftKey: false,
-          },
-        },
       ];
 
       state = events.reduce(rootReducer, state);

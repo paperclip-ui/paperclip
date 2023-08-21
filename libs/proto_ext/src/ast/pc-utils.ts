@@ -167,8 +167,8 @@ export namespace ast {
     }
   );
 
-  const getChildExprInner = (
-    expr: DocumentBodyItem | Node | ComponentBodyItem
+  export const getChildExprInner = (
+    expr: DocumentBodyItem | Node | ComponentBodyItem | Slot
   ): InnerExpressionInfo => {
     if ((expr as DocumentBodyItem).atom) {
       return { expr: (expr as DocumentBodyItem).atom, kind: ExprKind.Atom };

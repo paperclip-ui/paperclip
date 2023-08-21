@@ -284,12 +284,7 @@ const createEventHandler = (actions: Actions) => {
     state: DesignerState,
     prevState: DesignerState
   ) => {
-    const node = findVirtNode(prevState.selectedTargetId, prevState) as
-      | VirtTextNode
-      | VirtElement;
-
-    // could be expression
-    handleDeleteExpression(node?.sourceId || prevState.selectedTargetId, state);
+    handleDeleteExpression(prevState.selectedTargetId, state);
   };
 
   const handleFrameBoundsChanged = (

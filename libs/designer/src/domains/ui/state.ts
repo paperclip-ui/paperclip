@@ -168,7 +168,7 @@ export const selectNode = (
   metaKey: boolean,
   designer: DesignerState
 ) => {
-  virtNodeId = findSelectableExprId(virtNodeId, designer);
+  virtNodeId = virtNodeId && findSelectableExprId(virtNodeId, designer);
 
   designer = produce(designer, (newDesigner) => {
     if (!virtNodeId) {

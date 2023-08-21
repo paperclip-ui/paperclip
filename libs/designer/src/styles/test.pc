@@ -4,4 +4,18 @@ import "./theme.pc" as theme
 
 public style something
 
+/**
+ * @bounds(x: 532, y: 309, width: 472, height: 178)
+*/
+
+public component Unnamed {
+    render div {
+        style {
+            position: relative
+            background: white
+            font-family: var(theme.defaultFontFamily)
+        }
+        text "something"
+    }
+}
 

@@ -147,12 +147,29 @@ export const expandVirtIds = (
   };
 };
 
+const findSelectableExprId = (virtNodeId: string, state: DesignerState) => {
+  if (virtNodeId.includes(".")) {
+    return virtNodeId;
+  }
+
+  const expr = ast.getExprById(virtNodeId, state.graph);
+  const parent = ast.getParentExprInfo(expr.id, state.graph);
+  if (parent.kind === ast.ExprKind.Render) {
+    const component = ast.getParentExprInfo(parent.expr.id, state.graph);
+    return component.expr.id;
+  }
+
+  return virtNodeId;
+};
+
 export const selectNode = (
   virtNodeId: string | null,
   shiftKey: boolean,
   metaKey: boolean,
   designer: DesignerState
 ) => {
+  virtNodeId = findSelectableExprId(virtNodeId, designer);
+
   designer = produce(designer, (newDesigner) => {
     if (!virtNodeId) {
       newDesigner.selectedTargetId = null;

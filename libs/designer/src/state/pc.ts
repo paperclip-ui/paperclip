@@ -783,69 +783,71 @@ const calcExprBoxInfo = (
   );
 };
 
-const calcExprBox = (
-  current: ast.InnerExpressionInfo,
-  instancePath: string[],
-  rects: Record<string, Box>,
-  graph: Graph
-) => {
-  const virtId = [...instancePath, current.expr.id].join(".");
+const calcExprBox = memoize(
+  (
+    current: ast.InnerExpressionInfo,
+    instancePath: string[],
+    rects: Record<string, Box>,
+    graph: Graph
+  ) => {
+    const virtId = [...instancePath, current.expr.id].join(".");
 
-  // IF the rect exists, then it's a render node, just return it
-  if (rects[virtId]) {
-    return rects[virtId];
+    // IF the rect exists, then it's a render node, just return it
+    if (rects[virtId]) {
+      return rects[virtId];
+    }
+
+    // OTHERWISE we're dealing with an expression such as a component, instance, slot, or insert
+    // Check for INSTANCES
+    if (
+      current.kind === ast.ExprKind.Element &&
+      ast.isInstance(current.expr, graph)
+    ) {
+      const component = ast.getInstanceComponent(
+        current.expr as pc.Element,
+        graph
+      );
+      return calcExprBox(
+        ast.getComponentRenderNode(component),
+        [...instancePath, current.expr.id],
+        rects,
+        graph
+      );
+
+      // Check for COMPONENTS
+    } else if (current.kind === ast.ExprKind.Component) {
+      return calcExprBox(
+        ast.getComponentRenderNode(current.expr as pc.Component),
+        instancePath,
+        rects,
+        graph
+      );
+
+      // Check for INSERTS (part of instances)
+    } else if (current.kind === ast.ExprKind.Insert) {
+      const boxes = current.expr.body
+        .map((child) =>
+          calcExprBox(ast.getChildExprInner(child), instancePath, rects, graph)
+        )
+        .filter(Boolean);
+      return boxes.length > 0 ? mergeBoxes(boxes) : null;
+    } else if (current.kind === ast.ExprKind.Slot) {
+      const boxes = current.expr.body
+        .map((child) =>
+          calcExprBox(ast.getChildExprInner(child), instancePath, rects, graph)
+        )
+        .filter(Boolean);
+      return boxes.length > 0 ? mergeBoxes(boxes) : null;
+    } else if (current.kind === ast.ExprKind.Render) {
+      return calcExprBox(
+        ast.getChildExprInner(current.expr.node),
+        instancePath,
+        rects,
+        graph
+      );
+    }
   }
-
-  // OTHERWISE we're dealing with an expression such as a component, instance, slot, or insert
-  // Check for INSTANCES
-  if (
-    current.kind === ast.ExprKind.Element &&
-    ast.isInstance(current.expr, graph)
-  ) {
-    const component = ast.getInstanceComponent(
-      current.expr as pc.Element,
-      graph
-    );
-    return calcExprBox(
-      ast.getComponentRenderNode(component),
-      [...instancePath, current.expr.id],
-      rects,
-      graph
-    );
-
-    // Check for COMPONENTS
-  } else if (current.kind === ast.ExprKind.Component) {
-    return calcExprBox(
-      ast.getComponentRenderNode(current.expr as pc.Component),
-      instancePath,
-      rects,
-      graph
-    );
-
-    // Check for INSERTS (part of instances)
-  } else if (current.kind === ast.ExprKind.Insert) {
-    const boxes = current.expr.body
-      .map((child) =>
-        calcExprBox(ast.getChildExprInner(child), instancePath, rects, graph)
-      )
-      .filter(Boolean);
-    return boxes.length > 0 ? mergeBoxes(boxes) : null;
-  } else if (current.kind === ast.ExprKind.Slot) {
-    const boxes = current.expr.body
-      .map((child) =>
-        calcExprBox(ast.getChildExprInner(child), instancePath, rects, graph)
-      )
-      .filter(Boolean);
-    return boxes.length > 0 ? mergeBoxes(boxes) : null;
-  } else if (current.kind === ast.ExprKind.Render) {
-    return calcExprBox(
-      ast.getChildExprInner(current.expr.node),
-      instancePath,
-      rects,
-      graph
-    );
-  }
-};
+);
 
 // const findVirtBoxNodeInfo = (
 //   point: Point,
@@ -1211,8 +1213,15 @@ export const getSelectedNodeBox = (state: DesignerState): Box =>
   getNodeBox(state.selectedTargetId, state);
 
 export const getNodeBox = (virtId: string, state: DesignerState): Box => {
-  // return getVirtWithExprRects(state)[virtId];
-  return state.rects[virtId];
+  if (!virtId) {
+    return null;
+  }
+
+  const nodePath = virtId.split(".");
+  const instancePath = nodePath.slice(0, nodePath.length - 1);
+  const expr = ast.getExprInfoById(virtId, state.graph);
+  const box = calcExprBox(expr, instancePath, state.rects, state.graph);
+  return box;
 };
 
 export const getAllComponents = (state: DesignerState) => {

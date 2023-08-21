@@ -15,7 +15,15 @@ public component Unnamed {
             background: white
             font-family: var(theme.defaultFontFamily)
         }
-        text "something"
+        slot children {
+            text "insert something into me"
+        }
     }
 }
+
+/**
+ * @bounds(x: 1112, y: 295, width: 337, height: 224)
+*/
+
+Unnamed
 

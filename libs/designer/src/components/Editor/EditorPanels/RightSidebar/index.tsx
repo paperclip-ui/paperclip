@@ -10,6 +10,7 @@ import {
 } from "@paperclip-ui/designer/src/state";
 import { useSelector } from "@paperclip-ui/common";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { SidebarContainer } from "../../../Sidebar";
 
 export const RightSidebar = () => {
   const showUI = useSelector((state: DesignerState) => state.showRightsidebar);
@@ -18,9 +19,11 @@ export const RightSidebar = () => {
   }
 
   return (
-    <styles.RightSidebar>
-      <StylePanel />
-      <PropertiesPanel />
-    </styles.RightSidebar>
+    <SidebarContainer position="right">
+      <styles.RightSidebar>
+        <StylePanel />
+        <PropertiesPanel />
+      </styles.RightSidebar>
+    </SidebarContainer>
   );
 };

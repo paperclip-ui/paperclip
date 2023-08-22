@@ -2,31 +2,54 @@ import "./theme.pc" as theme
 
 public style panel extends theme.card
 
-/**
- * @bounds(x: 1329, y: -71, width: 243, height: 768)
-*/
-
-public component Sidebar {
+public component SidebarContainer {
     variant right trigger {
         ".right"
     }
     variant left trigger {
         ".left"
     }
-    render div root(class: class) {
+    render div(class: class, style: style) {
+        style {
+            display: flex
+            padding: var(theme.space05)
+            pointer-events: all
+        }
         style variant left {
             flex-direction: row
         }
         style variant right {
             flex-direction: row-reverse
         }
+        slot children {
+            Sidebar
+        }
+        div sidebar(onMouseDown: onSidebarMouseDown) {
+            style {
+                background: transparent
+                position: relative
+                width: 4px
+                height: 100%
+                cursor: ew-resize
+                flex-shrink: 0
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: 1329, y: -71, width: 243, height: 768)
+*/
+
+public component Sidebar {
+    render div root(class: class, style: style) {
         style extends theme.fontDefault {
-            width: 300px
+            width: 100%
             flex-shrink: 0
             display: flex
             flex-direction: row
             gap: 0px
-            padding: var(theme.space05)
+            padding: 0px
             pointer-events: all
         }
         div panels {
@@ -44,15 +67,6 @@ public component Sidebar {
                 SidebarPanel {
                     text "panel 2"
                 }
-            }
-        }
-        div sidebar {
-            style {
-                background: transparent
-                position: relative
-                width: 4px
-                height: 100%
-                cursor: ew-resize
             }
         }
     }

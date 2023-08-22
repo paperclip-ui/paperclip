@@ -5,9 +5,10 @@
   - re-organize frames
   - add names
 
-- Questions
+- GOALS
 
   - what's going to make it faster for you to edit doc?
+  - get editor to state where PC UI can be created in PC efficiently
 
 - tests
   - tests for computing CSS

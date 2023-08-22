@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   getSelectedExpressionInfo,
   getExprBounds,
-  getStyleableTargetId,
 } from "@paperclip-ui/designer/src/state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { VariantsSection } from "./VariantsSection";
@@ -20,13 +19,11 @@ import {
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { getEditorState } from "@paperclip-ui/designer/src/state";
 import { FrameSection } from "./FrameSection";
-import { MultiSelectInput } from "@paperclip-ui/designer/src/components/MultiSelectInput";
 import {
   SelectInput,
   SelectOption,
 } from "@paperclip-ui/designer/src/components/SelectInput";
 import { TAG_NAMES } from "./constants";
-import { AttributesSection } from "./AttributesSection";
 
 export const PropertiesPanel = () => {
   const expr = useSelector(getSelectedExpressionInfo);

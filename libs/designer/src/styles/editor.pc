@@ -95,14 +95,18 @@ public component Editor {
 }
 
 /**
- * @bounds(x: -52, y: 1007, width: 2136, height: 1454)
+ * @bounds(x: 117, y: 1071, width: 2136, height: 1454)
 */
 
 Editor {
     EditorPanels panels {
-        leftSidebar.LeftSidebarPreview leftSidebar
+        div {
+            leftSidebar.LeftSidebarPreview leftSidebar
+        }
         centerPanels.Preview centerPanels
-        rightSidebar.Preview rightPanel
+        div {
+            rightSidebar.Preview rightPanel
+        }
     }
     assetsModal.Container
 }

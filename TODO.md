@@ -15,10 +15,7 @@
 
 #### NOW
 
-- unit TESTS
-
-  - expanding virt nodes
-
+- ability to change tag name of element
 - File navigator
 
   - ability to filter files

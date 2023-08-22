@@ -5,10 +5,12 @@
   - re-organize frames
   - add names
 
-- "open in code" option
-
 - Questions
+
   - what's going to make it faster for you to edit doc?
+
+- tests
+  - tests for computing CSS
 
 #### NOW
 

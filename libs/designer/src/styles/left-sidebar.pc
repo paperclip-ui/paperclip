@@ -487,7 +487,8 @@ public component Layers {
     render div {
         style {
             padding: var(theme.space03) 0px
-            overflow: scroll
+            overflow-y: scroll
+            overflow-x: hidden
         }
         slot children
     }
@@ -552,7 +553,7 @@ public component ShadowIcon {
 }
 
 /**
- * @bounds(x: -766, y: 931, width: 273, height: 768)
+ * @bounds(x: -766, y: 931, width: 273, height: 1025)
 */
 
 public component LeftSidebarPreview {
@@ -621,12 +622,15 @@ public component LeftSidebarPreview {
                                             text "some label"
                                         }
                                         LayerNavigationItemHeader(class: "element") {
+                                            override {
+                                                variant isElement
+                                            }
                                             override container.root {
                                                 style {
                                                     --depth: 4
                                                 }
                                             }
-                                            text "some element"
+                                            text "a looooooooooooooooooong label"
                                             TagType {
                                                 text "div"
                                             }

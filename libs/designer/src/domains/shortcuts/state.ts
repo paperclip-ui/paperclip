@@ -39,7 +39,10 @@ export const ALLOW_DEFAULTS = [
 export const getEntityShortcuts = memoize(
   (id: string, graph: Graph): MenuItem<ShortcutCommand>[] => {
     const entity = ast.getExprInfoById(id, graph);
-    const isInstance = id && id.includes(".");
+    const isInstance =
+      (id && id.includes(".")) ||
+      (entity?.kind === ast.ExprKind.Element &&
+        ast.isInstance(entity.expr, graph));
 
     return [
       {

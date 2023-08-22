@@ -29,6 +29,7 @@ export const Leaf = ({
   id,
   depth,
   text,
+  altText,
   controls,
   instanceOf,
 }: {
@@ -37,6 +38,7 @@ export const Leaf = ({
   id: string;
   depth: number;
   text: any;
+  altText?: any;
   controls?: any;
   instanceOf: string[];
 }) => {
@@ -59,7 +61,7 @@ export const Leaf = ({
   return (
     <styles.TreeNavigationItem style={style}>
       <ContextMenu menu={contextMenu}>
-        <div>
+        <div style={{ width: "100%" }}>
           <styles.LayerNavigationItemHeader
             ref={setHeaderRef}
             class={cx(className, {
@@ -76,6 +78,7 @@ export const Leaf = ({
             controls={controls}
           >
             <span ref={labelRef}>{text}</span>
+            {altText}
           </styles.LayerNavigationItemHeader>
         </div>
       </ContextMenu>
@@ -179,10 +182,10 @@ const useLeaf = ({
 
   useEffect(() => {
     if (selected) {
-      labelRef.current.scrollIntoView({
+      headerRef.current.scrollIntoView({
         // behavior: "smooth",
         block: "center",
-        inline: "center",
+        // inline: "center",
       });
     }
   }, [selected]);

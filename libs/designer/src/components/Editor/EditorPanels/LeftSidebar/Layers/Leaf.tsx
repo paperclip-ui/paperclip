@@ -46,10 +46,9 @@ export const Leaf = ({
     onClick,
     contextMenu,
     onArrowClick,
-    headerRef,
+    setHeaderRef,
+    labelRef,
     style,
-    dragRef,
-    dropRef,
     dropHotSpot,
   } = useLeaf({
     exprId: id,
@@ -62,11 +61,7 @@ export const Leaf = ({
       <ContextMenu menu={contextMenu}>
         <div>
           <styles.LayerNavigationItemHeader
-            ref={(e) => {
-              dropRef(e);
-              dragRef(e);
-              headerRef.current = e;
-            }}
+            ref={setHeaderRef}
             class={cx(className, {
               open,
               selected,
@@ -80,7 +75,7 @@ export const Leaf = ({
             onArrowClick={onArrowClick}
             controls={controls}
           >
-            {text}
+            <span ref={labelRef}>{text}</span>
           </styles.LayerNavigationItemHeader>
         </div>
       </ContextMenu>
@@ -109,6 +104,7 @@ const useLeaf = ({
   const selected = selectedId === virtId;
 
   const headerRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
   const [dropHotSpot, setDropHotSpot] = useState<DropHotSpot>(null);
 
   const [{ opacity }, dragRef] = useDrag(
@@ -181,6 +177,16 @@ const useLeaf = ({
     }
   }, [isDraggingOver]);
 
+  useEffect(() => {
+    if (selected) {
+      labelRef.current.scrollIntoView({
+        // behavior: "smooth",
+        block: "center",
+        inline: "center",
+      });
+    }
+  }, [selected]);
+
   const dispatch = useDispatch<DesignerEvent>();
   const onClick = useCallback(() => {
     dispatch({ type: "ui/layerLeafClicked", payload: { virtId } });
@@ -194,14 +200,22 @@ const useLeaf = ({
     [virtId]
   );
 
+  const setHeaderRef = useCallback(
+    (el) => {
+      headerRef.current = el;
+      dragRef(el);
+      dropRef(el);
+    },
+    [dragRef, dropRef]
+  );
+
   return {
     onClick,
     onArrowClick,
     contextMenu,
     dropHotSpot,
-    headerRef,
-    dragRef,
-    dropRef,
+    setHeaderRef,
+    labelRef,
     style: { opacity },
     open,
     selected,

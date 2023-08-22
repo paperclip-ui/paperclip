@@ -25,7 +25,7 @@ export const FileNavigator = () => {
 
   return (
     <sidebarStyles.SidebarPanel>
-      <sidebarStyles.SidebarSection>
+      <sidebarStyles.SidebarSection class="fill">
         <sidebarStyles.SidebarPanelHeader>
           Files
           {/* <etc.PlusButton /> */}
@@ -56,10 +56,16 @@ const FSItem = ({ item, depth }: FSItemProps<FSItem>) => {
 const DirectoryItem = ({ item, depth }: FSItemProps<FSDirectory>) => {
   const dispatch = useDispatch<DesignerEvent>();
 
-  const onClick = useCallback(
-    () => dispatch({ type: "ui/FileNavigatorItemClicked", payload: item }),
-    [item.path]
-  );
+  const [open, setOpen] = useState(false);
+
+  const onClick = useCallback(() => {
+    if (!open) {
+      dispatch({ type: "ui/FileNavigatorItemClicked", payload: item });
+      setOpen(true);
+    } else {
+      setOpen(false);
+    }
+  }, [item.path, open]);
 
   return (
     <styles.TreeNavigationItem>
@@ -69,7 +75,7 @@ const DirectoryItem = ({ item, depth }: FSItemProps<FSDirectory>) => {
         class={classNames({
           folder: true,
           container: true,
-          open: false,
+          open,
         })}
       >
         {dirname(item.path)}

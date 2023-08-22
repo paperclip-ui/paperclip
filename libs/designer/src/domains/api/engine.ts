@@ -535,6 +535,8 @@ const createEventHandler = (actions: Actions) => {
     expressionId: string,
     state: DesignerState
   ) => {
+    console.log("handleDeleteExpression");
+
     actions.applyChanges([
       {
         deleteExpression: {

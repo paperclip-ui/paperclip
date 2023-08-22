@@ -48,8 +48,7 @@ export const VariantsSection = () => {
           name={activeVariant?.name}
           onSave={onSaveCurrentVariant}
           onClose={onCloseEditVariantPopup}
-          triggers={[]}
-          // triggers={activeVariant?.triggers}
+          triggers={activeVariant?.triggers}
         />
       )}
       <inputStyles.Field name="Variants" input={inputs[0]} />
@@ -63,6 +62,7 @@ export const VariantsSection = () => {
 const useVariantsSection = () => {
   const component = useSelector(getSelectedExpression) as Component;
   const activeVariant = useSelector(getActiveVariant);
+
   const variants = ast.getComponentVariants(component);
   const [editVariantPopupOpen, setVariantPopupOpen] = useState(false);
 

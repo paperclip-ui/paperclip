@@ -36,7 +36,7 @@ export const Layers = () => {
   }
 
   return (
-    <sidebarStyles.SidebarSection>
+    <sidebarStyles.SidebarSection class="fill">
       <sidebarStyles.SidebarPanelHeader>
         Entities
         <AddLayerButton />

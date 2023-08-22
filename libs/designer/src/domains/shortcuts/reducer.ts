@@ -48,7 +48,10 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
 
     case ShortcutCommand.GoToMainComponent:
       return produce(state, (newState) => {
-        const expr = ast.getExprById(state.selectedTargetId, state.graph);
+        const { expr } = ast.getExprByVirtId(
+          state.selectedTargetId,
+          state.graph
+        );
         const component = ast.getInstanceComponent(expr, state.graph);
         const renderNode = ast.getComponentRenderNode(component);
 

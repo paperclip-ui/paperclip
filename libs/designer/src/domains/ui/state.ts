@@ -152,7 +152,7 @@ const findSelectableExprId = (virtNodeId: string, state: DesignerState) => {
     return virtNodeId;
   }
 
-  const expr = ast.getExprById(virtNodeId, state.graph);
+  const { expr } = ast.getExprByVirtId(virtNodeId, state.graph);
   const parent = ast.getParentExprInfo(expr.id, state.graph);
   if (parent.kind === ast.ExprKind.Render) {
     const component = ast.getParentExprInfo(parent.expr.id, state.graph);

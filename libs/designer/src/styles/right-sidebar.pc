@@ -14,7 +14,7 @@ public component RightSidebar {
 }
 
 /**
- * @bounds(x: -270, y: 1287, width: 387, height: 852)
+ * @bounds(x: -784, y: 1208, width: 901, height: 931)
 */
 
 public component VariantPopup {
@@ -54,6 +54,10 @@ public component VariantPopup {
         }
     }
 }
+
+/**
+ * @bounds(x: 1223, y: 394, width: 290, height: 1394)
+*/
 
 public component Preview {
     render RightSidebar {

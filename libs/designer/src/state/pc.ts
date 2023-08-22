@@ -487,7 +487,7 @@ export const getSelectedExpressionInfo = (state: DesignerState) => {
 export const getActiveVariant = (state: DesignerState) => {
   return (
     state.activeVariantId &&
-    (ast.getExprByVirtId(state.activeVariantId, state.graph) as Variant)
+    (ast.getExprByVirtId(state.activeVariantId, state.graph)?.expr as Variant)
   );
 };
 
@@ -507,12 +507,17 @@ export const getSelectedExprOwnerComponent = (state: DesignerState) => {
   if (!state.selectedTargetId) {
     return null;
   }
-  const expr = ast.getExprByVirtId(state.selectedTargetId, state.graph)?.expr;
-  if (!expr) {
+  const info = ast.getExprByVirtId(state.selectedTargetId, state.graph);
+
+  if (!info) {
     return null;
   }
 
-  return ast.getExprOwnerComponent(expr, state.graph);
+  if (info.kind === ast.ExprKind.Component) {
+    return info.expr;
+  }
+
+  return ast.getExprOwnerComponent(info.expr, state.graph);
 };
 
 export const getAllStyleMixins = (state: DesignerState) => {};
@@ -1291,8 +1296,8 @@ const getStyleMixinRefs = (state: DesignerState): Reference[] => {
     return [];
   }
 
-  const selectedVariants: Variant[] = state.selectedVariantIds.map((id) =>
-    ast.getExprById(id, state.graph)
+  const selectedVariants: Variant[] = state.selectedVariantIds.map(
+    (id) => ast.getExprByVirtId(id, state.graph).expr
   );
 
   if (expr.kind === ast.ExprKind.Element) {

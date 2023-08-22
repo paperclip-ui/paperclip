@@ -12,7 +12,7 @@ import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 
 export enum ShortcutCommand {
   InsertElement,
-  GoToMainComponent,
+  GoToMain,
   InsertResource,
   InsertText,
   ConvertToComponent,
@@ -39,10 +39,7 @@ export const ALLOW_DEFAULTS = [
 export const getEntityShortcuts = memoize(
   (id: string, graph: Graph): MenuItem<ShortcutCommand>[] => {
     const entity = ast.getExprInfoById(id, graph);
-    const isInstance =
-      entity &&
-      entity.kind === ast.ExprKind.Element &&
-      ast.isInstance(entity.expr, graph);
+    const isInstance = id && id.includes(".");
 
     return [
       {
@@ -77,8 +74,8 @@ export const getEntityShortcuts = memoize(
         ? [
             {
               kind: MenuItemKind.Option,
-              label: "Go to main component",
-              command: ShortcutCommand.GoToMainComponent,
+              label: "Go to main",
+              command: ShortcutCommand.GoToMain,
             },
           ]
         : []) as MenuItem<ShortcutCommand>[]),
@@ -107,7 +104,7 @@ export const getEntityShortcuts = memoize(
         shortcut: ["backspace"],
         command: ShortcutCommand.Delete,
       },
-    ].filter(Boolean);
+    ].filter(Boolean) as MenuItem<any>[];
   }
 );
 

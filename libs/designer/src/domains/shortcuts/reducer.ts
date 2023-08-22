@@ -46,17 +46,22 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
         newState.selectedTargetId = null;
       });
 
-    case ShortcutCommand.GoToMainComponent:
+    case ShortcutCommand.GoToMain:
       return produce(state, (newState) => {
         const { expr } = ast.getExprByVirtId(
           state.selectedTargetId,
           state.graph
         );
-        const component = ast.getInstanceComponent(expr, state.graph);
-        const renderNode = ast.getComponentRenderNode(component);
 
-        // TODO: need to open the document
-        newState.selectedTargetId = renderNode?.expr.id ?? component.id;
+        if (ast.isInstance(expr, state.graph)) {
+          const component = ast.getInstanceComponent(expr, state.graph);
+          const renderNode = ast.getComponentRenderNode(component);
+
+          // TODO: need to open the document
+          newState.selectedTargetId = component.id;
+        } else {
+          newState.selectedTargetId = expr.id;
+        }
       });
     case ShortcutCommand.ShowHideUI:
       return produce(state, (newState) => {

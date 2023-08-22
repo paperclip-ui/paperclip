@@ -97,6 +97,10 @@ public component LeftSidebarHeader {
     }
 }
 
+/**
+ * @bounds(x: 818, y: 1510, width: 90, height: 56)
+*/
+
 public component LayerIcon {
     variant isComponent trigger {
         ".component"

@@ -19,6 +19,7 @@ export enum ShortcutCommand {
   ShowHideUI,
   ConvertToSlot,
   WrapInElement,
+  OpenCodeEditor,
   Cut,
   Copy,
   Delete,
@@ -64,7 +65,14 @@ export const getEntityShortcuts = memoize(
         command: ShortcutCommand.WrapInElement,
       },
       { kind: MenuItemKind.Divider },
+      {
+        kind: MenuItemKind.Option,
+        label: "Open code editor",
+        shortcut: ["alt", "shift", "c"],
+        command: ShortcutCommand.OpenCodeEditor,
+      },
       // Instance specific
+
       ...((isInstance
         ? [
             {
@@ -72,9 +80,9 @@ export const getEntityShortcuts = memoize(
               label: "Go to main component",
               command: ShortcutCommand.GoToMainComponent,
             },
-            { kind: MenuItemKind.Divider },
           ]
         : []) as MenuItem<ShortcutCommand>[]),
+      { kind: MenuItemKind.Divider },
       {
         kind: MenuItemKind.Option,
         label: "Cut",
@@ -99,7 +107,7 @@ export const getEntityShortcuts = memoize(
         shortcut: ["backspace"],
         command: ShortcutCommand.Delete,
       },
-    ];
+    ].filter(Boolean);
   }
 );
 

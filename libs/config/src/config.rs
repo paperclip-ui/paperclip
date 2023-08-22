@@ -88,6 +88,10 @@ pub struct Config {
     /// options for the output settings
     #[serde(rename = "compilerOptions", skip_serializing_if = "Option::is_none")]
     pub compiler_options: Option<Vec<CompilerOptions>>,
+
+    // /// options for the output settings
+    #[serde(rename = "openCodeEditorCommandTemplate", skip_serializing_if = "Option::is_none")]
+    pub open_code_editor_command_template: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone, TS)]

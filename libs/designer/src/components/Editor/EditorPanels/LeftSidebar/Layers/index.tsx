@@ -205,15 +205,15 @@ const InstanceLeaf = ({
   const expandedVirtIds = useSelector(getExpandedVirtIds);
   const slots = getComponentSlots(component);
 
-  // const shouldExpandShadow = expandedVirtIds.some((virtId) =>
-  //   virtId.includes(instance.id)
-  // );
+  const shouldExpandShadow = expandedVirtIds.some((virtId) =>
+    virtId.includes(instance.id)
+  );
 
-  // useEffect(() => {
-  //   if (shouldExpandShadow) {
-  //     setShadowVisible(shouldExpandShadow);
-  //   }
-  // }, [shouldExpandShadow]);
+  useEffect(() => {
+    if (shouldExpandShadow) {
+      setShadowVisible(shouldExpandShadow);
+    }
+  }, [shouldExpandShadow]);
 
   return (
     <Leaf

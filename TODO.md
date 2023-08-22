@@ -1,12 +1,20 @@
 #### Warm up!
 
 - clean up \*.pc files
+
   - re-organize frames
   - add names
+
+- "open in code" option
+
+- Questions
+  - what's going to make it faster for you to edit doc?
 
 #### NOW
 
 - unit TESTS
+
+  - expanding virt nodes
 
 - File navigator
 

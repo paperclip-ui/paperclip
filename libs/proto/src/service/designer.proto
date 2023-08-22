@@ -4,6 +4,7 @@ import "ast_mutate/mod.proto";
 import "ast/graph.proto";
 import "virt/html.proto";
 import "virt/css.proto";
+import "ast/base.proto";
 import "language_service/pc.proto";
 import "virt/module.proto";
 
@@ -15,6 +16,7 @@ service Designer {
   rpc OnEvent(Empty) returns (stream DesignServerEvent);
   rpc UpdateFile(UpdateFileRequest) returns (Empty);
   rpc ReadDirectory(ReadDirectoryRequest) returns (ReadDirectoryResponse);
+  rpc OpenCodeEditor(OpenCodeEditorRequest) returns (Empty);
   rpc CreateFile(CreateFileRequest) returns (Empty);
   rpc CreateDesignFile(CreateDesignFileRequest) returns (CreateDesignFileResponse);
   rpc GetResourceFiles(Empty) returns (stream ResourceFiles);
@@ -28,6 +30,11 @@ service Designer {
 message CreateFileRequest {
   string path = 1;
   FSItemKind kind = 2;
+}
+
+message OpenCodeEditorRequest {
+  string path = 1;
+  ast.base.Range range = 2;
 }
 
 

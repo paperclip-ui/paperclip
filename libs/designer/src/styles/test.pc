@@ -5,60 +5,71 @@ import "./theme.pc" as theme
 public style something
 
 /**
- * @bounds(x: 532, y: 309, width: 472, height: 178)
+ * @bounds(x: 2200, y: 291, width: 186, height: 118)
 */
 
-public component A {
+public component RightPanel {
     render div {
         style {
             position: relative
+        }
+        text "right panel"
+    }
+}
+
+/**
+ * @bounds(x: 1082, y: 505, width: 782, height: 603)
+*/
+
+public component Editor {
+    render div {
+        style {
+            position: relative
+            display: flex
+            justify-content: space-between
             background: white
-            font-family: var(theme.defaultFontFamily)
+        }
+        LeftSidebar
+        RightPanel right
+    }
+}
+
+/**
+ * @bounds(x: 492, y: 430, width: 425, height: 231)
+*/
+
+public component SidebarHeader {
+    render div {
+        style {
+            position: relative
         }
         slot children {
-            text "insert something into me"
+            text "Header"
         }
     }
 }
 
 /**
- * @bounds(x: 1112, y: 295, width: 337, height: 224)
+ * @bounds(x: -456, y: -39, width: 573, height: 262)
 */
 
-public component B {
-    render A {
-        insert children {
-            text "something"
-            div {
-                style {
-                    font-family: var(theme.defaultFontFamily)
-                    color: var(theme.blue02)
-                }
-                slot children {
-                    text "another slot"
-                }
-            }
+public component Sidebar {
+    render div {
+        style {
+            position: relative
+            display: flex
+            flex-direction: column
         }
+        text "Header"
+        text "Content"
     }
 }
 
 /**
- * @bounds(x: 1518, y: 275, width: 489, height: 326)
+ * @bounds(x: 604, y: -199, width: 1024, height: 768)
 */
 
-B {
-    insert children {
-        text "a child"
-    }
-}
-
-/**
- * @bounds(x: 1164, y: 698, width: 1024, height: 768)
-*/
-
-B {
-    insert children {
-        text "something else"
-    }
+public component LeftSidebar {
+    render Sidebar
 }
 

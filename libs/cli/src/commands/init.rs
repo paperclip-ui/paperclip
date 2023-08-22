@@ -28,6 +28,7 @@ pub async fn init(_args: InitArgs) -> Result<()> {
         designs_dir: Some("src/designs".to_string()),
         global_scripts: None,
         module_dirs: None,
+        open_code_editor_command_template: None,
         compiler_options: Some(vec![CompilerOptions {
             emit: Some(vec!["css".to_string(), "react.js:js".to_string()]),
             out_dir: Some("lib".to_string()),

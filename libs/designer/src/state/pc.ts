@@ -807,6 +807,7 @@ const calcExprBox = memoize(
         current.expr as pc.Element,
         graph
       );
+
       return calcExprBox(
         ast.getComponentRenderNode(component),
         [...instancePath, current.expr.id],
@@ -934,9 +935,7 @@ export const getNodeInfoAtCurrentPoint = (state: DesignerState) => {
     return null;
   }
 
-  // return findTargetNodeBoxInfo(state.rects, filePath, state.graph, state.scopedElementId);
-
-  return findVirtBoxNodeInfo(
+  const info = findVirtBoxNodeInfo(
     scaledPoint,
     { expr: dep.document, kind: ast.ExprKind.Document },
     state.graph,
@@ -944,6 +943,8 @@ export const getNodeInfoAtCurrentPoint = (state: DesignerState) => {
     [],
     state.rects
   );
+
+  return info;
 };
 
 const getAllRectsAtPoint = (point: Point, rects: Record<string, FrameBox>) => {

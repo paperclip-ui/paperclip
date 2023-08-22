@@ -7,14 +7,17 @@ use futures::Stream;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::fs::FSItemKind;
 use paperclip_language_services::DocumentInfo;
+use paperclip_proto::ast::base::Range;
 use path_absolutize::*;
+use std::process::Command;
+use run_script::ScriptOptions;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
     design_server_event, file_response, ApplyMutationsRequest, ApplyMutationsResult,
     CreateDesignFileRequest, CreateDesignFileResponse, DesignServerEvent, Empty, FileChanged,
     FileRequest, FileResponse, ModulesEvaluated, ResourceFiles, ScreenshotCaptured,
-    UpdateFileRequest, ReadDirectoryRequest, ReadDirectoryResponse, FsItem, CreateFileRequest,
+    UpdateFileRequest, ReadDirectoryRequest, ReadDirectoryResponse, FsItem, CreateFileRequest, OpenCodeEditorRequest,
 };
 use std::path::Path;
 use std::pin::Pin;
@@ -70,6 +73,48 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         } else {
             Err(Status::not_found("Dependency not found"))
         }
+    }
+    async fn open_code_editor(
+        &self,
+        request: Request<OpenCodeEditorRequest>
+    ) -> Result<Response<Empty>, Status> {
+
+        let code_editor_command_template = self.ctx.store.lock().unwrap().state.options.config_context.config.open_code_editor_command_template.clone();
+
+        let code_editor_command_template = if let Some(command) = code_editor_command_template {
+            command
+        } else {
+            return Err(Status::unknown("No code editor command provided"))
+        };
+
+        let path: String = request.get_ref().path.clone();
+        let range: Range = request.get_ref().range.clone().expect("Range must exist");
+        let start = range.start.as_ref().expect("Stat must exist");
+        
+        
+        println!("Opening code editor with \"{}\"", code_editor_command_template);
+
+        let command = code_editor_command_template
+        .replace("<file>", &path)
+        .replace("<line>", &start.line.to_string())
+        .replace("<column>", &start.column.to_string());
+
+        let (_, output, error) = run_script::run(&command, &vec![], &ScriptOptions::new()).unwrap();
+
+        // let result = Command::new("code")
+        // .arg("--goto")
+        // .arg(format!("\"{}:{}:{}\"", path, start.line, start.column))
+        // .output();
+
+        println!("Output: {}", output);
+        println!("Error: {}", error);
+
+        Ok(Response::new(Empty {}))
+
+        // if result.is_ok() {
+        // } else {
+        //     Err(Status::unknown("Error executing command"))
+        // }
     }
 
     async fn read_directory(
@@ -130,8 +175,6 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         } else {
             Err(Status::unknown("Cannot create file"))
         }
-
-        
     }
 
 

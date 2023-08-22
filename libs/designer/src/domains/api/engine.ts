@@ -46,6 +46,7 @@ import { Box, getScaledBox, getScaledPoint, roundBox } from "../../state/geom";
 import {
   getCurrentDependency,
   getSelectedExpression,
+  getSelectedExpressionInfo,
   getStyleableTargetId,
 } from "../../state/pc";
 import {
@@ -61,6 +62,7 @@ import {
   ToolsTextEditorChanged,
 } from "../ui/events";
 import { ExpressionPasted } from "../clipboard/events";
+import { Range } from "@paperclip-ui/proto/lib/generated/ast/base";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -131,6 +133,9 @@ const createActions = (
           payload: { items, path, isRoot: inputPath === "." },
         });
       });
+    },
+    openCodeEditor(path: string, range: Range) {
+      client.OpenCodeEditor({ path, range });
     },
     syncResourceFiles() {
       client.GetResourceFiles({}).subscribe({
@@ -553,6 +558,29 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
+  const openCodeEditor = (state: DesignerState) => {
+    const { kind, expr } = getSelectedExpressionInfo(state);
+    let range: Range;
+    switch (kind) {
+      case ast.ExprKind.Element:
+      case ast.ExprKind.TextNode:
+      case ast.ExprKind.Component:
+      case ast.ExprKind.Slot:
+      case ast.ExprKind.Insert:
+      case ast.ExprKind.Style:
+      case ast.ExprKind.Trigger:
+      case ast.ExprKind.Atom:
+        range = expr.range;
+        break;
+    }
+    if (!range) {
+      console.error(`Cannot open code editor for ${kind}`);
+      return;
+    }
+
+    actions.openCodeEditor(getCurrentFilePath(state), range);
+  };
+
   const handleWrapInElement = (state: DesignerState) => {
     if (!state.selectedTargetId.includes(".")) {
       actions.applyChanges([
@@ -590,6 +618,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case ShortcutCommand.ConvertToComponent: {
         return handleConvertToComponent(state);
+      }
+      case ShortcutCommand.OpenCodeEditor: {
+        return openCodeEditor(state);
       }
       case ShortcutCommand.WrapInElement: {
         return handleWrapInElement(state);

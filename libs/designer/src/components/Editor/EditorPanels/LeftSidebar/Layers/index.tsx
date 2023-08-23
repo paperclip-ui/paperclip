@@ -199,11 +199,6 @@ const InstanceLeaf = ({
   const component = ast.getInstanceComponent(instance, graph);
   const render = ast.getComponentRenderExpr(component);
   const expandedVirtIds = useSelector(getExpandedVirtIds);
-  const slots = getComponentSlots(component);
-
-  const shouldExpandShadow = expandedVirtIds.some((virtId) =>
-    virtId.includes(instance.id)
-  );
 
   return (
     <Leaf

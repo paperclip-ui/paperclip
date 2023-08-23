@@ -6,6 +6,8 @@ import {
   INITIAL_HISTORY_STATE,
 } from "../domains/history/state";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
+import { WritableDraft } from "immer/dist/internal";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
 export const IS_WINDOWS = false;
 
@@ -73,10 +75,10 @@ export type FSItem = FSDirectory | FSFile;
 export type DesignerState = {
   readonly: boolean;
   scopedElementId?: string;
-  selectedTargetId: string;
   projectDirectory?: FSDirectory;
   activeVariantId?: string;
   selectedVariantIds: string[];
+  renderedFilePath?: string;
   insertedNodeIds: string[];
   graph: Graph;
   insertMode?: InsertMode;
@@ -126,7 +128,6 @@ export const DEFAULT_STATE: DesignerState = {
   scopedElementId: null,
   expandedNodePaths: [],
   centeredInitial: false,
-  selectedTargetId: null,
   canvas: {
     transform: { x: 0, y: 0, z: 1 },
     scrollPosition: { x: 0, y: 0 },
@@ -143,6 +144,25 @@ export const getCanvas = (editor: DesignerState) => editor.canvas;
 
 export const getCurrentFilePath = (state: DesignerState) => {
   return state.history?.query.file;
+};
+export const getRenderedFilePath = (state: DesignerState) => {
+  return state.renderedFilePath;
+};
+export const getTargetExprId = (state: DesignerState) => {
+  return state.history?.query.nodeId;
+};
+export const setTargetExprId = (
+  state: WritableDraft<DesignerState>,
+  nodeId: string
+) => {
+  state.history.query.nodeId = nodeId;
+
+  if (nodeId != null) {
+    const exprPath = ast.getOwnerDependencyPath(nodeId, state.graph);
+    if (exprPath != null) {
+      state.history.query.file = exprPath;
+    }
+  }
 };
 
 export const getEditorState = (state: DesignerState) => state;

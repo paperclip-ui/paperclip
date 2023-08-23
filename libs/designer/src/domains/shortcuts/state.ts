@@ -5,7 +5,7 @@ import {
 } from "../../modules/shortcuts/base";
 import { KeyDown } from "../keyboard/events";
 import { isKeyComboDown } from "./utils";
-import { DesignerState } from "../../state";
+import { DesignerState, getTargetExprId } from "../../state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { memoize } from "@paperclip-ui/common";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
@@ -114,7 +114,7 @@ export const getEntityShortcuts = memoize(
 export const getSelectedEntityShortcuts = (
   state: DesignerState
 ): MenuItem<ShortcutCommand>[] =>
-  getEntityShortcuts(state.selectedTargetId, state.graph);
+  getEntityShortcuts(getTargetExprId(state), state.graph);
 
 export const getGlobalShortcuts = (
   state: DesignerState

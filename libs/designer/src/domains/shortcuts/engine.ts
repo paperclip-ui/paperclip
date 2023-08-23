@@ -1,6 +1,6 @@
 import { Dispatch, Engine } from "@paperclip-ui/common";
 import { DesignerEvent } from "../../events";
-import { DesignerState } from "../../state";
+import { DesignerState, getTargetExprId } from "../../state";
 import { createKeyDownEvent } from "../keyboard/events";
 import {
   ALLOW_DEFAULTS,
@@ -37,7 +37,7 @@ export const createShortcutsEngine =
 
     const handleGoToMain = (state: DesignerState) => {
       const { expr: element } = ast.getExprByVirtId(
-        state.selectedTargetId,
+        getTargetExprId(state),
         state.graph
       );
 

@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { getTargetExprId } from "@paperclip-ui/designer/src/state";
 import {
   insertCanvasElement,
   startDesigner,
@@ -49,7 +50,7 @@ describe.skip(__filename + "#", () => {
       '<span id="_4f0e8e93-1">hello</span><div id="_edcb8fb4-4" class="_edcb8fb4-4"></div>'
     );
 
-    expect(designer.machine.getState().selectedTargetId).toEqual("edcb8fb4-4");
+    expect(getTargetExprId(designer.machine.getState())).toEqual("edcb8fb4-4");
     designer.dispose();
   });
 
@@ -62,7 +63,12 @@ describe.skip(__filename + "#", () => {
       `,
       },
       {
-        selectedTargetId: "4f0e8e93-1",
+        history: {
+          pathname: "/",
+          query: {
+            nodeId: "4f0e8e93-1",
+          },
+        },
         rects: {
           "0": { x: 0, y: 0, width: 100, height: 10, frameIndex: 0 },
         },
@@ -106,7 +112,7 @@ describe.skip(__filename + "#", () => {
       '<span id="_4f0e8e93-1">hello</span><div id="_4f0e8e93-2"></div><div id="_8bc00fda-4" class="_8bc00fda-4"></div>'
     );
 
-    expect(designer.machine.getState().selectedTargetId).toEqual("8bc00fda-4");
+    expect(getTargetExprId(designer.machine.getState())).toEqual("8bc00fda-4");
 
     designer.machine.dispatch({
       type: "shortcuts/itemSelected",
@@ -136,7 +142,12 @@ describe.skip(__filename + "#", () => {
       `,
       },
       {
-        selectedTargetId: "4f0e8e93-5",
+        history: {
+          pathname: "/",
+          query: {
+            nodeId: "4f0e8e93-5",
+          },
+        },
       }
     );
 
@@ -147,7 +158,7 @@ describe.skip(__filename + "#", () => {
       '<div id="_4f0e8e93-2" class="_A-4f0e8e93-2"><span id="_4f0e8e93-1">hello</span></div><div id="_4f0e8e93-5" class="_A-4f0e8e93-2 _4f0e8e93-5"><span id="_4f0e8e93-5.4f0e8e93-1">hello</span></div><span id="_4f0e8e93-6">Hello</span>'
     );
 
-    expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-5");
+    expect(getTargetExprId(designer.machine.getState())).toEqual("4f0e8e93-5");
 
     designer.machine.dispatch({
       type: "shortcuts/itemSelected",
@@ -161,7 +172,7 @@ describe.skip(__filename + "#", () => {
       '<div id="_4f0e8e93-2" class="_A-4f0e8e93-2"><span id="_4f0e8e93-1">hello</span></div><span id="_4f0e8e93-6">Hello</span>'
     );
 
-    expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-2");
+    expect(getTargetExprId(designer.machine.getState())).toEqual("4f0e8e93-2");
     designer.dispose();
   });
 
@@ -174,7 +185,12 @@ describe.skip(__filename + "#", () => {
       `,
       },
       {
-        selectedTargetId: "4f0e8e93-1",
+        history: {
+          pathname: "/",
+          query: {
+            nodeId: "4f0e8e93-1",
+          },
+        },
       }
     );
 
@@ -185,21 +201,21 @@ describe.skip(__filename + "#", () => {
       '<span id="_4f0e8e93-1"></span><div id="_4f0e8e93-2"></div>'
     );
 
-    expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-1");
+    expect(getTargetExprId(designer.machine.getState())).toEqual("4f0e8e93-1");
 
     designer.machine.dispatch({
       type: "shortcuts/itemSelected",
       payload: { command: ShortcutCommand.Delete },
     });
 
-    expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-2");
+    expect(getTargetExprId(designer.machine.getState())).toEqual("4f0e8e93-2");
 
     await waitForEvent("designer-engine/documentOpened", designer);
     frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual('<div id="_4f0e8e93-2"></div>');
 
-    expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-2");
+    expect(getTargetExprId(designer.machine.getState())).toEqual("4f0e8e93-2");
     designer.dispose();
   });
 
@@ -214,7 +230,12 @@ describe.skip(__filename + "#", () => {
       `,
       },
       {
-        selectedTargetId: null,
+        history: {
+          pathname: "/",
+          query: {
+            nodeId: null,
+          },
+        },
         rects: {
           "0": { x: 0, y: 0, width: 1024, height: 768, frameIndex: 0 },
         },
@@ -226,7 +247,7 @@ describe.skip(__filename + "#", () => {
 
     await waitForEvent("designer-engine/documentOpened", designer);
 
-    expect(designer.machine.getState().selectedTargetId).toEqual("31cf58e1-19");
+    expect(getTargetExprId(designer.machine.getState())).toEqual("31cf58e1-19");
     let frames = stringifyDesignerFrames(designer);
 
     expect(frames).toEqual(
@@ -245,7 +266,12 @@ describe.skip(__filename + "#", () => {
       `,
       },
       {
-        selectedTargetId: "4f0e8e93-1",
+        history: {
+          pathname: "/",
+          query: {
+            nodeId: "4f0e8e93-1",
+          },
+        },
       }
     );
 
@@ -255,7 +281,7 @@ describe.skip(__filename + "#", () => {
       payload: { command: ShortcutCommand.Delete },
     });
     await waitForEvent("designer-engine/documentOpened", designer);
-    expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-2");
+    expect(getTargetExprId(designer.machine.getState())).toEqual("4f0e8e93-2");
     designer.dispose();
   });
 });

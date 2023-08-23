@@ -3,6 +3,7 @@ import {
   DesignerState,
   findVirtNode,
   getNodeInfoAtCurrentPoint,
+  getTargetExprId,
   highlightNode,
   InsertMode,
 } from "@paperclip-ui/designer/src/state";
@@ -92,8 +93,8 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
       [state, doubleClicked] = handleDoubleClick(state, event);
 
       if (doubleClicked) {
-        if (state.selectedTargetId) {
-          const node = findVirtNode(state.selectedTargetId, state);
+        if (getTargetExprId(state)) {
+          const node = findVirtNode(getTargetExprId(state), state);
 
           if (node && virtHTML.isTextNode(node)) {
             state = produce(state, (newDesigner) => {

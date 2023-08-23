@@ -5,7 +5,9 @@ import {
   DesignerState,
   InsertMode,
   findVirtNode,
+  getTargetExprId,
   isSelectableExpr,
+  setTargetExprId,
 } from "../../state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import {
@@ -33,23 +35,23 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
     case ShortcutCommand.InsertElement:
       return produce(state, (newState) => {
         newState.insertMode = InsertMode.Element;
-        newState.selectedTargetId = null;
+        setTargetExprId(newState, null);
       });
     case ShortcutCommand.InsertText:
       return produce(state, (newState) => {
         newState.insertMode = InsertMode.Text;
-        newState.selectedTargetId = null;
+        setTargetExprId(newState, null);
       });
     case ShortcutCommand.InsertResource:
       return produce(state, (newState) => {
         newState.insertMode = InsertMode.Resource;
-        newState.selectedTargetId = null;
+        setTargetExprId(newState, null);
       });
 
     case ShortcutCommand.GoToMain:
       return produce(state, (newState) => {
         const { expr } = ast.getExprByVirtId(
-          state.selectedTargetId,
+          getTargetExprId(state),
           state.graph
         );
 
@@ -58,9 +60,9 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
           const renderNode = ast.getComponentRenderNode(component);
 
           // TODO: need to open the document
-          newState.selectedTargetId = component.id;
+          setTargetExprId(newState, component.id);
         } else {
-          newState.selectedTargetId = expr.id;
+          setTargetExprId(newState, expr.id);
         }
       });
     case ShortcutCommand.ShowHideUI:
@@ -77,11 +79,8 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
     case ShortcutCommand.Delete:
       return produce(state, (newState) => {
         newState.highlightedNodeId = null;
-        if (newState.selectedTargetId) {
-          const node = ast.getExprByVirtId(
-            newState.selectedTargetId,
-            state.graph
-          );
+        if (getTargetExprId(state)) {
+          const node = ast.getExprByVirtId(getTargetExprId(state), state.graph);
           const parent =
             node && ast.getParentExprInfo(node.expr.id, state.graph);
 
@@ -98,15 +97,15 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
               trySelecting(parentBody, pos, inc * -1);
 
             if (nextChild) {
-              newState.selectedTargetId = nextChild.expr.id;
+              setTargetExprId(newState, nextChild.expr.id);
             } else {
-              newState.selectedTargetId = parent.expr.id;
+              setTargetExprId(newState, parent.expr.id);
             }
           } else {
-            newState.selectedTargetId = null;
+            setTargetExprId(newState, null);
           }
         } else {
-          newState.selectedTargetId = null;
+          setTargetExprId(newState, null);
         }
       });
   }

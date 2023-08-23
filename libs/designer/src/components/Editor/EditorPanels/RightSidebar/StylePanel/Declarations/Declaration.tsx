@@ -1,20 +1,18 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
-import { getSelectedId } from "@paperclip-ui/designer/src/state";
 import { DeclarationValue } from "./DeclarationValue";
 import { NewDeclValue, css } from "./types";
 import { noop } from "lodash";
 import { getPropField } from "./cssSchema";
-import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
 import { SelectDetails } from "@paperclip-ui/designer/src/components/SuggestionMenu";
 import {
   ComputedStyle,
   serializeDeclaration,
 } from "@paperclip-ui/proto-ext/lib/ast/serialize";
 import { NameInput } from "./NameInput";
+import { getTargetExprId } from "@paperclip-ui/designer/src/state";
 
 type FieldProps = {
   name?: string;
@@ -40,7 +38,7 @@ export const Declaration = memo(
     const [name2, setName] = useState(name);
     const { input: inputOptions } = getPropField(name2);
     const dispatch = useDispatch<DesignerEvent>();
-    const targetId = useSelector(getSelectedId);
+    const targetId = useSelector(getTargetExprId);
     const ref = useRef(null);
 
     useEffect(() => {

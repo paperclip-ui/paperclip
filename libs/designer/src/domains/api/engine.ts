@@ -30,6 +30,8 @@ import {
   getCurrentFilePath,
   getInsertBox,
   getNodeInfoAtCurrentPoint,
+  getRenderedFilePath,
+  getTargetExprId,
   InsertMode,
   LayerKind,
 } from "../../state";
@@ -291,7 +293,7 @@ const createEventHandler = (actions: Actions) => {
     state: DesignerState,
     prevState: DesignerState
   ) => {
-    handleDeleteExpression(prevState.selectedTargetId, state);
+    handleDeleteExpression(getTargetExprId(prevState), state);
   };
 
   const handleFrameBoundsChanged = (
@@ -299,7 +301,7 @@ const createEventHandler = (actions: Actions) => {
     bounds: Box,
     prevState: DesignerState
   ) => {
-    const node = findVirtNode(prevState.selectedTargetId, prevState) as
+    const node = findVirtNode(getTargetExprId(prevState), prevState) as
       | VirtTextNode
       | VirtElement;
 
@@ -337,7 +339,7 @@ const createEventHandler = (actions: Actions) => {
             variantIds,
             expressionId: node.sourceId,
             declarations: Object.entries(
-              state.styleOverrides[prevState.selectedTargetId]
+              state.styleOverrides[getTargetExprId(prevState)]
             ).map(([name, value]) => {
               return { name, value: String(value) };
             }),
@@ -393,13 +395,13 @@ const createEventHandler = (actions: Actions) => {
       {
         setStyleDeclarations: {
           variantIds,
-          expressionId: state.selectedTargetId,
+          expressionId: getTargetExprId(state),
           declarations: style.filter((kv) => kv.value !== ""),
         },
       },
       {
         deleteStyleDeclarations: {
-          expressionId: state.selectedTargetId,
+          expressionId: getTargetExprId(state),
           declarationNames: style
             .filter((kv) => kv.value === "")
             .map((kv) => kv.name),
@@ -427,7 +429,7 @@ const createEventHandler = (actions: Actions) => {
       return;
     }
 
-    let targetExpressionId = state.selectedTargetId;
+    let targetExpressionId = getTargetExprId(state);
 
     if (!targetExpressionId) {
       targetExpressionId = state.currentDocument.paperclip.html.sourceId;
@@ -511,7 +513,7 @@ const createEventHandler = (actions: Actions) => {
     actions.applyChanges([
       {
         setTextNodeValue: {
-          textNodeId: state.selectedTargetId,
+          textNodeId: getTargetExprId(state),
           value: event.payload.text,
         },
       },
@@ -541,7 +543,7 @@ const createEventHandler = (actions: Actions) => {
     actions.applyChanges([
       {
         setStyleMixins: {
-          targetExprId: state.selectedTargetId,
+          targetExprId: getTargetExprId(state),
           mixinIds,
           variantIds: state.selectedVariantIds,
         },
@@ -565,11 +567,11 @@ const createEventHandler = (actions: Actions) => {
   const handleConvertToComponent = (state: DesignerState) => {
     // Do not allow for nested instances to be converted to components.
     // Or, at least provide a confirmation for this.
-    if (!state.selectedTargetId.includes(".")) {
+    if (!getTargetExprId(state).includes(".")) {
       actions.applyChanges([
         {
           convertToComponent: {
-            expressionId: state.selectedTargetId,
+            expressionId: getTargetExprId(state),
           },
         },
       ]);
@@ -596,15 +598,15 @@ const createEventHandler = (actions: Actions) => {
       return;
     }
 
-    actions.openCodeEditor(getCurrentFilePath(state), range);
+    actions.openCodeEditor(getRenderedFilePath(state), range);
   };
 
   const handleWrapInElement = (state: DesignerState) => {
-    if (!state.selectedTargetId.includes(".")) {
+    if (!getTargetExprId(state).includes(".")) {
       actions.applyChanges([
         {
           wrapInElement: {
-            targetId: state.selectedTargetId,
+            targetId: getTargetExprId(state),
           },
         },
       ]);
@@ -614,11 +616,11 @@ const createEventHandler = (actions: Actions) => {
   const handleConvertToSlot = (state: DesignerState) => {
     // Do not allow for nested instances to be converted to components.
     // Or, at least provide a confirmation for this.
-    if (!state.selectedTargetId.includes(".")) {
+    if (!getTargetExprId(state).includes(".")) {
       actions.applyChanges([
         {
           convertToSlot: {
-            expressionId: state.selectedTargetId,
+            expressionId: getTargetExprId(state),
           },
         },
       ]);
@@ -732,11 +734,10 @@ const createEventHandler = (actions: Actions) => {
 
   const handleHistoryChanged = (
     event: HistoryChanged,
-    state: DesignerState,
-    prevState: DesignerState
+    state: DesignerState
   ) => {
     const filePath = getCurrentFilePath(state);
-    if (getCurrentFilePath(state) !== getCurrentFilePath(prevState)) {
+    if (filePath && filePath !== getRenderedFilePath(state)) {
       actions.openFile(filePath);
     }
   };
@@ -757,7 +758,7 @@ const createEventHandler = (actions: Actions) => {
     event: ModulesEvaluated,
     state: DesignerState
   ) => {
-    const activeFile = getCurrentFilePath(state);
+    const activeFile = getRenderedFilePath(state);
     if (event.filePaths.includes(activeFile)) {
       actions.openFile(activeFile);
     }
@@ -770,7 +771,7 @@ const createEventHandler = (actions: Actions) => {
     actions.applyChanges([
       {
         toggleInstanceVariant: {
-          instanceId: state.selectedTargetId,
+          instanceId: getTargetExprId(state),
           variantId: event.payload,
           comboVariantIds: state.selectedVariantIds,
         },
@@ -862,7 +863,7 @@ const createEventHandler = (actions: Actions) => {
         return handleElementTagChanged(event, newState);
       }
       case "history-engine/historyChanged": {
-        return handleHistoryChanged(event, newState, prevState);
+        return handleHistoryChanged(event, newState);
       }
       case "ui/dashboardAddFileConfirmed": {
         return handleAddFile(event);

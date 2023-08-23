@@ -2,14 +2,13 @@ import produce from "immer";
 import {
   DesignerState,
   FSItemKind,
-  findVirtId,
-  findVirtNode,
+  getCurrentFilePath,
   getGraphComponents,
   isSelectableExpr,
   setDirItems,
+  setTargetExprId,
 } from "../../state";
 import { DesignerEngineEvent, GraphLoaded } from "./events";
-import * as path from "path";
 import { DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import jasonpatch from "fast-json-patch";
@@ -69,9 +68,10 @@ export const apiReducer = (
           if (expr.kind === ast.ExprKind.Variant) {
             newState.activeVariantId = expr.expr.id;
           } else if (isSelectableExpr(expr)) {
-            newState.selectedTargetId = expr.expr.id;
+            setTargetExprId(newState, expr.expr.id);
           }
         }
+        newState.renderedFilePath = getCurrentFilePath(state);
         newState.insertedNodeIds = [];
       });
       return state;

@@ -361,10 +361,13 @@ export namespace ast {
             }
 
             if (componentDep.path === dep.path) {
-              return el.expr.tagName === component.name;
+              return (
+                el.expr.namespace == null && el.expr.tagName === component.name
+              );
             }
 
-            const imp = getDocumentImport(componentDep.path, dep.document);
+            const imp = getDocumentImport(el.expr.namespace, dep.document);
+
             return (
               imp &&
               dep.imports[imp.path] === componentDep.path &&

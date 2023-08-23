@@ -13,7 +13,9 @@ import {
   getCurrentDependency,
   getNodeInfoAtCurrentPoint,
   getPreviewFrameBoxes,
+  getTargetExprId,
   highlightNode,
+  setTargetExprId,
 } from "../../state";
 import {
   CanvasMouseUp,
@@ -39,7 +41,7 @@ export const handleDragEvent = (
   event: ResizerPathStoppedMoving | ResizerPathMoved
 ) => {
   return produce(state, (newState) => {
-    const node = findVirtNode(newState.selectedTargetId, newState) as any as
+    const node = findVirtNode(getTargetExprId(state), newState) as any as
       | VirtElement
       | VirtText;
 
@@ -172,7 +174,7 @@ export const selectNode = (
 
   designer = produce(designer, (newDesigner) => {
     if (!virtNodeId) {
-      newDesigner.selectedTargetId = null;
+      setTargetExprId(newDesigner, null);
       return;
     }
     const ancestorIds = ast.getAncestorVirtIdsFromShadow(
@@ -185,7 +187,7 @@ export const selectNode = (
       expandVirtIds([virtNodeId, ...ancestorIds], newDesigner)
     );
 
-    newDesigner.selectedTargetId = virtNodeId;
+    setTargetExprId(newDesigner, virtNodeId);
   });
 
   return designer;

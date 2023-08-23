@@ -4,6 +4,8 @@ import {
   DesignerState,
   FrameBox,
   getCurrentFilePath,
+  getRenderedFilePath,
+  getTargetExprId,
 } from "./core";
 import { ComputedStyleMap } from "@paperclip-ui/proto-ext/lib/ast/serialize";
 import { WritableDraft } from "immer/dist/internal";
@@ -407,10 +409,6 @@ const AVAILABLE_STYLES = {
   "z-index": "auto",
 };
 
-export const getSelectedId = (designer: DesignerState) => {
-  return designer.selectedTargetId;
-};
-
 export const isSelectableExpr = (expr: ast.InnerExpressionInfo) => {
   return (
     expr.kind === ast.ExprKind.Atom ||
@@ -431,7 +429,7 @@ export const isStyleableExpr = (expr: ast.InnerExpressionInfo) => {
   );
 };
 export const getStyleableTargetId = (designer: DesignerState) => {
-  const id = getSelectedId(designer);
+  const id = getTargetExprId(designer);
   const expr = ast.getExprInfoById(id, designer.graph);
   if (expr?.kind === ast.ExprKind.Component) {
     return ast.getComponentRenderNode(expr.expr)?.expr.id;
@@ -477,15 +475,15 @@ export const getSelectedExprStyles = (
 
 export const getSelectedExpression = (state: DesignerState) => {
   return (
-    state.selectedTargetId &&
-    ast.getExprByVirtId(state.selectedTargetId, state.graph)?.expr
+    getTargetExprId(state) &&
+    ast.getExprByVirtId(getTargetExprId(state), state.graph)?.expr
   );
 };
 
 export const getSelectedExpressionInfo = (state: DesignerState) => {
   return (
-    state.selectedTargetId &&
-    ast.getExprInfoById(state.selectedTargetId, state.graph)
+    getTargetExprId(state) &&
+    ast.getExprInfoById(getTargetExprId(state), state.graph)
   );
 };
 
@@ -509,10 +507,10 @@ export const getPreviewChildren = (frame: HTMLDocument) => {
 };
 
 export const getSelectedExprOwnerComponent = (state: DesignerState) => {
-  if (!state.selectedTargetId) {
+  if (!getTargetExprId(state)) {
     return null;
   }
-  const info = ast.getExprByVirtId(state.selectedTargetId, state.graph);
+  const info = ast.getExprByVirtId(getTargetExprId(state), state.graph);
 
   if (!info) {
     return null;
@@ -534,7 +532,7 @@ export const getAllPublicStyleMixins = (state: DesignerState) => {
 export const getGraph = (state: DesignerState) => state.graph;
 
 export const getCurrentDependency = (state: DesignerState) => {
-  return state.graph.dependencies[getCurrentFilePath(state)];
+  return state.graph.dependencies[getRenderedFilePath(state)];
 };
 
 export const getAllPublicAtoms = (state: DesignerState) => {
@@ -614,7 +612,7 @@ export const findVirtNode = (
 export const getExprBounds = (state: DesignerState): Bounds => {
   const node =
     state.currentDocument &&
-    (findVirtNode(state.selectedTargetId, state) as any as
+    (findVirtNode(getTargetExprId(state), state) as any as
       | VirtElement
       | VirtText);
 
@@ -626,7 +624,7 @@ export const setSelectedNodeBounds = (
   state: DesignerState
 ) => {
   return produce(state, (newState) => {
-    const node = findVirtNode(newState.selectedTargetId, newState) as any as
+    const node = findVirtNode(getTargetExprId(state), newState) as any as
       | VirtElement
       | VirtText;
 
@@ -1102,7 +1100,7 @@ export const findInsertAtPoint = (
 ): BoxNodeInfo | null => {
   const insertBoxes = getInsertBoxes(
     state.graph,
-    getCurrentFilePath(state),
+    getRenderedFilePath(state),
     state.currentDocument!.paperclip.html,
     state.rects
   );
@@ -1221,7 +1219,7 @@ export const getHighlightedNodeBox = (state: DesignerState): Box => {
 };
 
 export const getSelectedNodeBox = (state: DesignerState): Box =>
-  getNodeBox(state.selectedTargetId, state);
+  getNodeBox(getTargetExprId(state), state);
 
 export const getNodeBox = (virtId: string, state: DesignerState): Box => {
   if (!virtId) {
@@ -1296,7 +1294,7 @@ export const getCurrentStyleMixins = (state: DesignerState): MixinInfo[] => {
 };
 
 const getStyleMixinRefs = (state: DesignerState): Reference[] => {
-  const expr = ast.getExprInfoById(state.selectedTargetId, state.graph);
+  const expr = ast.getExprInfoById(getTargetExprId(state), state.graph);
   if (!expr) {
     return [];
   }

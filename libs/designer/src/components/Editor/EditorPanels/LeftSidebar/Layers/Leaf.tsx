@@ -11,7 +11,7 @@ import {
   DNDKind,
   getExpandedVirtIds,
   getGraph,
-  getSelectedId,
+  getTargetExprId,
 } from "@paperclip-ui/designer/src/state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
@@ -96,7 +96,7 @@ const useLeaf = ({
 }) => {
   const virtId = [...(instanceOf || []), exprId].join(".");
   const open = useSelector(getExpandedVirtIds).includes(virtId);
-  const selectedId = useSelector(getSelectedId);
+  const selectedId = useSelector(getTargetExprId);
   const graph = useSelector(getGraph);
 
   const contextMenu = useCallback(

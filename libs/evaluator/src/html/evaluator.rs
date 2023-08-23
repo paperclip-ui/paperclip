@@ -496,10 +496,12 @@ fn resolve_element_attributes<F: FileResolver>(
     if element.namespace == None {
         if element.tag_name.as_str() == "img" {
             if let Some(src) = attributes.get_mut("src") {
+                if !src.value.starts_with("http://") && !src.value.starts_with("https://") {
                 src.value = context
                     .file_resolver
                     .resolve_file(&context.path, &src.value)
                     .unwrap()
+                }
             }
         }
     }

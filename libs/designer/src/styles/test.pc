@@ -2,7 +2,7 @@ import "./input.pc" as imp
 import "./theme.pc" as theme
 
 /**
- * @bounds(x: 576, y: 218, width: 483, height: 217)
+ * @bounds(x: 1440, y: 46, width: 678, height: 494)
 */
 
 public component Something {
@@ -31,5 +31,5 @@ public component Something {
  * @bounds(x: 1092, y: 222, width: 315, height: 191)
 */
 
-Something(class: "other")
+Something
 

@@ -436,6 +436,18 @@ add_case! {
 	<div class="_A-80f4925f-3 _80f4925f-8 b c d e"> </div>
 "#
 }
+add_case! {
+    img_urls_are_left_as_is,
+    [
+    ("/entry.pc", r#"
+        img (src: "http://google.com")
+        img (src: "https://google.com")
+	"#)
+    ],
+    r#"
+	<img src="http://google.com"> <img src="https://google.com">
+"#
+}
 
 #[test]
 fn bounds_are_attached_to_root_elements() {

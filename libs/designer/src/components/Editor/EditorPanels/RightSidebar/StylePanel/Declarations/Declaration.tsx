@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { getSelectedId } from "@paperclip-ui/designer/src/state";
 import { DeclarationValue } from "./DeclarationValue";
-import { NewDeclValue, css, schema } from "./types";
+import { NewDeclValue, css } from "./types";
 import { noop } from "lodash";
 import { getPropField } from "./cssSchema";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
@@ -14,6 +14,7 @@ import {
   ComputedStyle,
   serializeDeclaration,
 } from "@paperclip-ui/proto-ext/lib/ast/serialize";
+import { NameInput } from "./NameInput";
 
 type FieldProps = {
   name?: string;
@@ -61,7 +62,7 @@ export const Declaration = memo(
     );
 
     const nameInput = isNew ? (
-      <TextInput value={name2} onChange={setName} autoFocus />
+      <NameInput name={name2} onSave={setName} />
     ) : (
       name
     );

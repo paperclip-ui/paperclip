@@ -19,11 +19,7 @@ import {
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { getEditorState } from "@paperclip-ui/designer/src/state";
 import { FrameSection } from "./FrameSection";
-import {
-  SelectInput,
-  SelectOption,
-} from "@paperclip-ui/designer/src/components/SelectInput";
-import { TAG_NAMES } from "./constants";
+import { ExprTagNameField } from "./TagInput";
 
 export const PropertiesPanel = () => {
   const expr = useSelector(getSelectedExpressionInfo);
@@ -52,7 +48,7 @@ export const PropertiesPanel = () => {
             {(expr.kind === ast.ExprKind.Element ||
               expr.kind === ast.ExprKind.Component) && (
               <>
-                <ElementTagField expr={expr} />
+                <ExprTagNameField expr={expr} />
               </>
             )}
           </inputStyles.Fields>
@@ -87,47 +83,6 @@ const IDField = ({ expr }: IDFieldProps) => {
     <inputStyles.Field
       name="Id"
       input={<TextInput value={expr.expr.name} onSave={onSave} />}
-    />
-  );
-};
-
-const TAG_OPTIONS = TAG_NAMES.map((tag) => (
-  <SelectOption key={tag} label={tag} value={tag} />
-));
-
-type ElemengTagFieldProps = {
-  expr:
-    | ast.BaseExprInfo<Element, ast.ExprKind.Element>
-    | ast.BaseExprInfo<Component, ast.ExprKind.Component>;
-};
-
-const ElementTagField = ({ expr }: ElemengTagFieldProps) => {
-  const dispatch = useDispatch<DesignerEvent>();
-
-  const el =
-    expr.kind === ast.ExprKind.Component
-      ? ast.getComponentRenderNode(expr.expr)
-      : expr;
-
-  if (el?.kind !== ast.ExprKind.Element) {
-    return null;
-  }
-
-  const onSave = (value: string) => {
-    dispatch({
-      type: "ui/elementTagChanged",
-      payload: { newTagName: value },
-    });
-  };
-
-  return (
-    <inputStyles.Field
-      name="Tag"
-      input={
-        <SelectInput value={el.expr.tagName} onChange={onSave}>
-          {TAG_OPTIONS}
-        </SelectInput>
-      }
     />
   );
 };

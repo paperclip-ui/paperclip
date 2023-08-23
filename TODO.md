@@ -15,7 +15,11 @@
 
 #### NOW
 
-- ability to change tag name of element
+- generic autocomplete dropdown
+  - refactor decls to use this
+- ability to change tag names
+  - use autocomplete
+  - ability to switch to instance
 - File navigator
 
   - ability to filter files

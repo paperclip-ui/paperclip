@@ -1,3 +1,4 @@
+import "../components/Editor/Canvas/Tools/Selectable/index.pc" as module
 import "./theme.pc" as theme
 import "./sidebar.pc" as sidebar
 import "./menu.pc" as menu
@@ -331,6 +332,32 @@ public component Field {
 }
 
 public component TokenMenuContent {
+    render MenuContent(style: style) {
+        insert children {
+            div {
+                style {
+                    width: 1em
+                    height: 1em
+                    background: var(--color)
+                    border-radius: var(theme.rounded)
+                    flex-shrink: 0
+                }
+            }
+            slot children
+            div {
+                style {
+                    opacity: 0.3
+                }
+                slot preview
+            }
+        }
+        insert context {
+            slot context
+        }
+    }
+}
+
+public component MenuContent {
     render div(style: style) {
         style {
             display: flex
@@ -343,28 +370,15 @@ public component TokenMenuContent {
                 display: flex
                 align-items: center
                 gap: var(theme.space03)
-            }
-            div {
-                style {
-                    width: 1em
-                    height: 1em
-                    background: var(--color)
-                    border-radius: var(theme.rounded)
-                }
+                text-overflow: ellipsis
             }
             slot children
-            div {
-                style {
-                    opacity: 0.3
-                }
-                slot preview
-            }
         }
         div {
             style {
                 opacity: 0.3
             }
-            slot file
+            slot context
         }
     }
 }
@@ -439,7 +453,7 @@ component SelectPreview {
                 SuggestionMenuItem {
                     TokenMenuContent(style: "--color: orange") {
                         text "orange05"
-                        insert file {
+                        insert context {
                             text "theme.pc"
                         }
                     }
@@ -447,18 +461,18 @@ component SelectPreview {
                 SuggestionMenuItem {
                     TokenMenuContent(style: "--color: yellow") {
                         text "orange04"
-                        insert file {
+                        insert context {
                             text "theme.pc"
                         }
                     }
                 }
                 SuggestionMenuItem {
                     TokenMenuContent(style: "--color: yellow") {
-                        text "superLongTokenName"
+                        text "superLongTokenNamenamenenenen"
                         insert preview {
                             text "yellllowwwwwwwwwodddddooooooow"
                         }
-                        insert file {
+                        insert context {
                             text "theme.pc"
                         }
                     }
@@ -466,7 +480,7 @@ component SelectPreview {
                 SuggestionMenuItem {
                     TokenMenuContent(style: "--color: #F60") {
                         text "something"
-                        insert file {
+                        insert context {
                             text "theme.pc"
                         }
                     }
@@ -510,7 +524,7 @@ component TextInputAutoSuggest {
                         insert preview {
                             text "#F60"
                         }
-                        insert file {
+                        insert context {
                             text "theme.pc"
                         }
                     }
@@ -521,7 +535,7 @@ component TextInputAutoSuggest {
                         insert preview {
                             text "yellow"
                         }
-                        insert file {
+                        insert context {
                             text "theme.pc"
                         }
                     }
@@ -529,7 +543,7 @@ component TextInputAutoSuggest {
                 SuggestionMenuItem {
                     TokenMenuContent(style: "--color: #F60") {
                         text "something"
-                        insert file {
+                        insert context {
                             text "theme.pc"
                         }
                     }
@@ -605,7 +619,7 @@ public component ListItemInput {
 }
 
 /**
- * @bounds(x: -343, y: -1641, width: 249, height: 123)
+ * @bounds(x: -343, y: -1559, width: 249, height: 123)
 */
 
 public component RadioInput {

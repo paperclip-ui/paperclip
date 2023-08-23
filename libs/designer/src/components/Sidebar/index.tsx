@@ -20,9 +20,13 @@ export const SidebarContainer = ({
     startDOMDrag(e, null, (_event, data) => {
       const x = position === "left" ? data.delta.x : -data.delta.x;
 
-      setWidth(clamp(width + x, 50, 700));
+      setWidth(clamp(width + data.delta.x, 50, 700));
     });
   };
+
+  if (children == null) {
+    return null;
+  }
 
   return (
     <styles.SidebarContainer

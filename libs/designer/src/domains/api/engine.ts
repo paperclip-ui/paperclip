@@ -707,7 +707,8 @@ const createEventHandler = (actions: Actions) => {
       {
         setTagName: {
           elementId: expr.id,
-          tagName: event.payload.newTagName,
+          tagName: event.payload.tagName,
+          tagFilePath: event.payload.sourceFilePath,
         },
       },
     ]);

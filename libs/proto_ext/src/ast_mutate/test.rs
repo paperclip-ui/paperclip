@@ -2358,7 +2358,8 @@ case! {
 
   mutation::Inner::SetTagName(SetTagName {
     element_id: "80f4925f-1".to_string(),
-    tag_name: "span".to_string()
+    tag_name: "span".to_string(),
+    tag_file_path: None
   }).get_outer(),
   [(
     "/entry.pc", r#"
@@ -3347,7 +3348,8 @@ case! {
   ],
   mutation::Inner::SetTagName(SetTagName {
     element_id: "80f4925f-3".to_string(),
-    tag_name: "span".to_string()
+    tag_name: "span".to_string(),
+    tag_file_path: None
   }).get_outer(),
   [(
     "/entry.pc", r#"
@@ -3370,7 +3372,8 @@ case! {
   ],
   mutation::Inner::SetTagName(SetTagName {
     element_id: "80f4925f-1".to_string(),
-    tag_name: "span".to_string()
+    tag_name: "span".to_string(),
+    tag_file_path: None
   }).get_outer(),
   [(
     "/entry.pc", r#"
@@ -3426,6 +3429,85 @@ case! {
     span a
     component A {
     }
+    "#
+  )]
+}
+
+
+
+case! {
+  can_change_a_tag_to_an_instance_from_another_doc,
+  [
+    (
+      "/entry.pc", r#"
+        public component A {
+          render div
+        }
+
+        span
+      "#
+    ),
+    (
+      "/test.pc", r#"
+        public component B {
+          render div
+        }
+      "#
+    )
+  ],
+
+
+  mutation::Inner::SetTagName(SetTagName {
+    element_id: "80f4925f-4".to_string(),
+    tag_name: "B".to_string(),
+    tag_file_path: Some("/test.pc".to_string())
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    import "./test.pc" as module
+    public component A {
+      render div
+    }
+
+    module.B
+    "#
+  )]
+}
+
+case! {
+  can_change_a_tag_to_an_instance_from_same_doc,
+  [
+    (
+      "/entry.pc", r#"
+        public component A {
+          render div
+        }
+
+        span
+      "#
+    ),
+    (
+      "/test.pc", r#"
+        public component B {
+          render div
+        }
+      "#
+    )
+  ],
+
+
+  mutation::Inner::SetTagName(SetTagName {
+    element_id: "80f4925f-4".to_string(),
+    tag_name: "A".to_string(),
+    tag_file_path: Some("/entry.pc".to_string())
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    public component A {
+      render div
+    }
+
+    A
     "#
   )]
 }

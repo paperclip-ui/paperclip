@@ -5,6 +5,7 @@ import * as etcStyles from "@paperclip-ui/designer/src/styles/etc.pc";
 import { LayerKind } from "@paperclip-ui/designer/src/state";
 import { useDispatch } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
+import { noop } from "lodash";
 
 export const AddLayerButton = () => {
   const dispatch = useDispatch<DesignerEvent>();
@@ -16,7 +17,8 @@ export const AddLayerButton = () => {
   return (
     <SuggestionMenu
       values={[]}
-      onChange={onChange}
+      onSelect={onChange}
+      onOtherSelect={noop}
       menu={() => [
         <SuggestionMenuItem value={LayerKind.Atom}>
           <styles.LayerIcon class="atom-token" />

@@ -102,7 +102,8 @@ export type CanvasMouseLeave = BaseEvent<"ui/canvasMouseLeave">;
 export type ElementTagChanged = BaseEvent<
   "ui/elementTagChanged",
   {
-    newTagName: string;
+    tagName: string;
+    sourceFilePath?: string;
   }
 >;
 export type ExprNavigatorDroppedNode = BaseEvent<

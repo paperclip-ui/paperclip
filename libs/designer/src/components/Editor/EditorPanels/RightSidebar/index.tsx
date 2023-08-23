@@ -5,16 +5,14 @@ import { PropertiesPanel } from "./PropertiesPanel";
 import {
   DesignerState,
   getSelectedExpression,
-  getSelectedExpressionInfo,
-  getSelectedId,
 } from "@paperclip-ui/designer/src/state";
 import { useSelector } from "@paperclip-ui/common";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { SidebarContainer } from "../../../Sidebar";
 
 export const RightSidebar = () => {
   const showUI = useSelector((state: DesignerState) => state.showRightsidebar);
-  if (!showUI) {
+  const expr = useSelector(getSelectedExpression);
+  if (!showUI || !expr) {
     return null;
   }
 

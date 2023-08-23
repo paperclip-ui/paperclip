@@ -525,7 +525,7 @@ const createEventHandler = (actions: Actions) => {
     actions.applyChanges([
       {
         setElementParameter: {
-          elementId: getSelectedExpression(state).id,
+          targetId: getSelectedExpression(state).id,
           parameterId: event.payload.attributeId,
           parameterName: event.payload.name,
           parameterValue: event.payload.value,

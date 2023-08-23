@@ -9,7 +9,7 @@ public component Something {
     variant other trigger {
         ".other"
     }
-    render div {
+    render div(class: class) {
         style variant other {
             background: var(theme.blue02)
         }
@@ -31,5 +31,5 @@ public component Something {
  * @bounds(x: 1092, y: 222, width: 315, height: 191)
 */
 
-Something(class: other)
+Something(class: "other")
 

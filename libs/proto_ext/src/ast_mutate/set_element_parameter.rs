@@ -1,5 +1,5 @@
 use super::base::EditContext;
-use super::utils::{parse_element_attribute_value, parse_node, upsert_render_node};
+use super::utils::{parse_element_attribute_value, upsert_render_node};
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::pc::{Element, Parameter};
@@ -50,7 +50,7 @@ fn set_element_attribute(element: &mut Element, mutation: &SetElementParameter) 
 
 impl<'expr> MutableVisitor<()> for EditContext<'expr, SetElementParameter> {
     fn visit_element(&mut self, element: &mut ast::pc::Element) -> VisitorResult<()> {
-        if self.mutation.element_id != element.get_id() {
+        if self.mutation.target_id != element.get_id() {
             return VisitorResult::Continue;
         }
 
@@ -60,7 +60,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetElementParameter> {
     }
 
     fn visit_component(&mut self, component: &mut ast::pc::Component) -> VisitorResult<()> {
-        if self.mutation.element_id != component.get_id() {
+        if self.mutation.target_id != component.get_id() {
             return VisitorResult::Continue;
         }
 

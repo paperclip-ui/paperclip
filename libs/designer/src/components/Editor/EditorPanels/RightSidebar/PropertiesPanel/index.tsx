@@ -21,6 +21,7 @@ import { getEditorState } from "@paperclip-ui/designer/src/state";
 import { FrameSection } from "./FrameSection";
 import { ExprTagNameField } from "./TagInput";
 import { AttributesSection } from "./AttributesSection";
+import { UsedBySection } from "./UsedBySection";
 
 export const PropertiesPanel = () => {
   const expr = useSelector(getSelectedExpressionInfo);
@@ -37,14 +38,7 @@ export const PropertiesPanel = () => {
       <sidebarStyles.SidebarSection>
         <sidebarStyles.SidebarPanelContent>
           <inputStyles.Fields>
-            {expr.kind === ast.ExprKind.Element ||
-            expr.kind === ast.ExprKind.TextNode ||
-            expr.kind === ast.ExprKind.Atom ||
-            expr.kind === ast.ExprKind.Style ||
-            expr.kind === ast.ExprKind.Slot ||
-            expr.kind === ast.ExprKind.Component ? (
-              <IDField expr={expr} />
-            ) : null}
+            <IDField expr={expr} />
             <ExprTagNameField expr={expr} />
             {expr.kind === ast.ExprKind.Component && <VariantsSection />}
           </inputStyles.Fields>
@@ -52,18 +46,13 @@ export const PropertiesPanel = () => {
       </sidebarStyles.SidebarSection>
       <AttributesSection />
       {bounds && <FrameSection bounds={bounds} />}
+      <UsedBySection />
     </sidebarStyles.SidebarPanel>
   );
 };
 
 type IDFieldProps = {
-  expr:
-    | ast.BaseExprInfo<Element, ast.ExprKind.Element>
-    | ast.BaseExprInfo<TextNode, ast.ExprKind.TextNode>
-    | ast.BaseExprInfo<Style, ast.ExprKind.Style>
-    | ast.BaseExprInfo<Atom, ast.ExprKind.Atom>
-    | ast.BaseExprInfo<Atom, ast.ExprKind.Slot>
-    | ast.BaseExprInfo<Component, ast.ExprKind.Component>;
+  expr: ast.InnerExpressionInfo;
 };
 
 const IDField = ({ expr }: IDFieldProps) => {
@@ -72,6 +61,17 @@ const IDField = ({ expr }: IDFieldProps) => {
   const onSave = (value: string) => {
     dispatch({ type: "ui/idChanged", payload: { value } });
   };
+
+  if (
+    expr.kind !== ast.ExprKind.Element &&
+    expr.kind !== ast.ExprKind.TextNode &&
+    expr.kind !== ast.ExprKind.Atom &&
+    expr.kind !== ast.ExprKind.Style &&
+    expr.kind !== ast.ExprKind.Slot &&
+    expr.kind !== ast.ExprKind.Component
+  ) {
+    return null;
+  }
 
   return (
     <inputStyles.Field

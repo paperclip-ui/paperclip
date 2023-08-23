@@ -4,8 +4,27 @@ import "./input.pc" as input
 import "./styles-panel.pc" as stylesPanel
 
 /**
- * @bounds(x: 0, y: 0, width: 317, height: 768)
+ * @bounds(x: 1553, y: 1425, width: 437, height: 61)
 */
+
+public component UsedBy {
+    render div(onClick: onClick) {
+        style {
+            color: var(theme.gray02)
+            text-align: right
+            font-family: var(theme.defaultFontFamily)
+            display: flex
+            align-items: center
+            justify-content: flex-start
+            gap: var(theme.space03)
+            cursor: pointer
+            text-decoration: underline
+        }
+        slot children {
+            text "./some/file.pc ➜"
+        }
+    }
+}
 
 public component RightSidebar {
     render sidebar.Sidebar {
@@ -123,7 +142,11 @@ public component Preview {
                         input.Field {
                             insert name {
                                 text "Variants"
-                                VariantPopup
+                                VariantPopup {
+                                    style {
+                                        display: none
+                                    }
+                                }
                             }
                             insert input {
                                 input.ListItemInput(class: "removable") {
@@ -134,6 +157,35 @@ public component Preview {
                         input.Field {
                             insert input {
                                 input.AddListItemButton
+                            }
+                        }
+                    }
+                }
+            }
+            sidebar.SidebarSection {
+                sidebar.SidebarPanelHeader {
+                    text "Used by"
+                }
+                sidebar.SidebarPanelContent {
+                    input.Fields {
+                        UsedBy {
+                            insert children {
+                                text "./another/file.pc"
+                            }
+                        }
+                        UsedBy {
+                            insert children {
+                                text "./another/file.pc"
+                            }
+                        }
+                        UsedBy {
+                            insert children {
+                                text "./another/file.pc"
+                            }
+                        }
+                        UsedBy {
+                            insert children {
+                                text "./another/file.pc"
                             }
                         }
                     }

@@ -19,6 +19,7 @@ import {
   useSelector,
 } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
+import { ContextMenu } from "@paperclip-ui/designer/src/components/ContextMenu";
 
 export const FileNavigator = () => {
   const state = useSelector(getEditorState);
@@ -67,19 +68,25 @@ const DirectoryItem = ({ item, depth }: FSItemProps<FSDirectory>) => {
     }
   }, [item.path, open]);
 
+  const openContextMenu = useCallback(() => {
+    return [];
+  }, []);
+
   return (
     <styles.TreeNavigationItem>
-      <styles.LayerNavigationItemHeader
-        onClick={onClick}
-        style={{ "--depth": depth }}
-        class={classNames({
-          folder: true,
-          container: true,
-          open,
-        })}
-      >
-        {dirname(item.path)}
-      </styles.LayerNavigationItemHeader>
+      <ContextMenu menu={openContextMenu}>
+        <styles.LayerNavigationItemHeader
+          onClick={onClick}
+          style={{ "--depth": depth }}
+          class={classNames({
+            folder: true,
+            container: true,
+            open,
+          })}
+        >
+          {dirname(item.path)}
+        </styles.LayerNavigationItemHeader>
+      </ContextMenu>
       <styles.TreeNavigationItemContent>
         {item.items.map((item) => {
           return <FSItem key={item.path} item={item} depth={depth + 1} />;

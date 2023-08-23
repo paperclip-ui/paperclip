@@ -347,6 +347,39 @@ export namespace ast {
     );
   };
 
+  export const getAllInstancesOfComponent = memoize(
+    (component: Component, graph: Graph) => {
+      const componentDep = getOwnerDependency(component.id, graph);
+
+      const allInstances: Element[] = [];
+      for (const path in graph.dependencies) {
+        const dep = graph.dependencies[path];
+        const instances = Object.values(flattenDocument(dep.document))
+          .filter((el) => {
+            if (el.kind !== ExprKind.Element) {
+              return false;
+            }
+
+            if (componentDep.path === dep.path) {
+              return el.expr.tagName === component.name;
+            }
+
+            const imp = getDocumentImport(componentDep.path, dep.document);
+            return (
+              imp &&
+              dep.imports[imp.path] === componentDep.path &&
+              el.expr.tagName === component.name
+            );
+          })
+          .map((info) => info.expr);
+
+        allInstances.push(...instances);
+      }
+
+      return allInstances;
+    }
+  );
+
   export const getComponentSlots = (
     component: Component,
     graph: Graph

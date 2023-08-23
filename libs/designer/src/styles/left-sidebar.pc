@@ -98,7 +98,7 @@ public component LeftSidebarHeader {
 }
 
 /**
- * @bounds(x: 818, y: 1510, width: 90, height: 56)
+ * @bounds(x: -374, y: 920, width: 90, height: 56)
 */
 
 public component LayerIcon {
@@ -191,6 +191,10 @@ public component LayerIcon {
         }
     }
 }
+
+/**
+ * @bounds(x: 428, y: -205, width: 1024, height: 768)
+*/
 
 public component TreeNavigationItemContent {
     render div {
@@ -494,6 +498,10 @@ public component Layers {
     }
 }
 
+/**
+ * @bounds(x: 0, y: 0, width: 269, height: 164)
+*/
+
 component Tokens {
     render div {
         style {
@@ -535,6 +543,10 @@ component Tokens {
         }
     }
 }
+
+/**
+ * @bounds(x: -307, y: 917, width: 54, height: 60)
+*/
 
 public component ShadowIcon {
     variant active trigger {

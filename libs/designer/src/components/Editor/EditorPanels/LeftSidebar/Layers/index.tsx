@@ -198,8 +198,6 @@ const InstanceLeaf = ({
   const graph = useSelector(getGraph);
   const component = ast.getInstanceComponent(instance, graph);
   const render = ast.getComponentRenderExpr(component);
-  const [shadowVisible, setShadowVisible] = useState(false);
-  const onShadowIconClick = () => setShadowVisible(!shadowVisible);
   const expandedVirtIds = useSelector(getExpandedVirtIds);
   const slots = getComponentSlots(component);
 
@@ -207,41 +205,20 @@ const InstanceLeaf = ({
     virtId.includes(instance.id)
   );
 
-  useEffect(() => {
-    if (shouldExpandShadow) {
-      setShadowVisible(shouldExpandShadow);
-    }
-  }, [shouldExpandShadow]);
-
   return (
     <Leaf
       id={instance.id}
       className={cx("instance", {
-        container: shadowVisible || instance.body.length > 0,
+        container: instance.body.length > 0,
       })}
       text={<>{instance.name || "Instance"}</>}
       altText={<styles.TagType>{instance.tagName}</styles.TagType>}
       depth={depth}
       instanceOf={instanceOf}
-      controls={
-        <div title="Open shadow">
-          <styles.ShadowIcon
-            class={cx({ visible: shadowVisible })}
-            onClick={onShadowIconClick}
-          />
-        </div>
-      }
     >
       {() => {
         return (
           <>
-            {shadowVisible && render && (
-              <NodeLeaf
-                expr={render.node}
-                depth={depth + 1}
-                instanceOf={[...(instanceOf || []), instance.id]}
-              />
-            )}
             {instance.body.map((child) => (
               <NodeLeaf
                 key={ast.getNodeInner(child).id}

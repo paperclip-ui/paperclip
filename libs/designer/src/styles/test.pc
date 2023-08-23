@@ -20,7 +20,7 @@ public component A {
 }
 
 /**
- * @bounds(x: 1451, y: 82, width: 1024, height: 768)
+ * @bounds(x: 1451, y: 82, width: 542, height: 376)
 */
 
 public component B {

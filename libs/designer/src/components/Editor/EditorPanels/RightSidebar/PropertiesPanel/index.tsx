@@ -20,6 +20,7 @@ import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { getEditorState } from "@paperclip-ui/designer/src/state";
 import { FrameSection } from "./FrameSection";
 import { ExprTagNameField } from "./TagInput";
+import { AttributesSection } from "./AttributesSection";
 
 export const PropertiesPanel = () => {
   const expr = useSelector(getSelectedExpressionInfo);
@@ -44,20 +45,13 @@ export const PropertiesPanel = () => {
             expr.kind === ast.ExprKind.Component ? (
               <IDField expr={expr} />
             ) : null}
-            {(expr.kind === ast.ExprKind.Element ||
-              expr.kind === ast.ExprKind.Component) && (
-              <>
-                <ExprTagNameField expr={expr} />
-              </>
-            )}
+            <ExprTagNameField expr={expr} />
             {expr.kind === ast.ExprKind.Component && <VariantsSection />}
           </inputStyles.Fields>
         </sidebarStyles.SidebarPanelContent>
       </sidebarStyles.SidebarSection>
+      <AttributesSection expr={expr} />
       {bounds && <FrameSection bounds={bounds} />}
-      {/* {expr.kind === ast.ExprKind.Element && (
-        <AttributesSection expr={expr.expr} />
-      )} */}
     </sidebarStyles.SidebarPanel>
   );
 };

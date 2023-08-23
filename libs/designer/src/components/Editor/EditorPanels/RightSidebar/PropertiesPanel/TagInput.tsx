@@ -18,9 +18,7 @@ import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { getGraph, getGraphComponents } from "@paperclip-ui/designer/src/state";
 
 type ExprTagNameFieldProps = {
-  expr:
-    | ast.BaseExprInfo<Element, ast.ExprKind.Element>
-    | ast.BaseExprInfo<Component, ast.ExprKind.Component>;
+  expr: ast.InnerExpressionInfo;
 };
 
 export const ExprTagNameField = ({ expr }: ExprTagNameFieldProps) => {

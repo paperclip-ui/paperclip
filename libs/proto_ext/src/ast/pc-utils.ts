@@ -362,6 +362,22 @@ export namespace ast {
       : [];
   };
 
+  export const getComponentPropNames = memoize((component: Component) => {
+    const propNames: string[] = [];
+    const descendents = Object.values(flattenComponent(component));
+    for (const descendent of descendents) {
+      if (descendent.kind === ExprKind.Element) {
+        for (const param of descendent.expr.parameters) {
+          if (param.value.reference) {
+            propNames.push(param.value.reference.path[0]);
+          }
+        }
+      }
+    }
+
+    return propNames;
+  });
+
   export const getComponentInstances = memoize(
     (componentId: string, graph: Graph) => {
       const instances: Element[] = [];

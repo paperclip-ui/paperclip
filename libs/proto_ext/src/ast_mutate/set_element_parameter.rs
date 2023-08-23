@@ -13,10 +13,20 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetElementParameter> {
         if self.mutation.element_id != element.get_id() {
             return VisitorResult::Continue;
         }
-        let value = parse_element_attribute_value(
+
+        let checksum = element.checksum();
+
+
+        let value = if self.mutation.parameter_value == "" {
+            None 
+        } else {
+            Some(parse_element_attribute_value(
             &self.mutation.parameter_value,
-            &format!("{}-value", element.checksum()),
-        );
+            &format!("{}-value", checksum),
+        ))
+    };
+
+    if value.is_some() {
 
         let existing_param = if let Some(parameter_id) = &self.mutation.parameter_id {
             element
@@ -29,15 +39,20 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetElementParameter> {
 
         if let Some(param) = existing_param {
             param.name = self.mutation.parameter_name.clone();
-            param.value = Some(value);
+            param.value = value;
         } else {
             element.parameters.push(Parameter {
-                id: element.checksum().to_string(),
+                id: format!("{}-name", checksum),
                 name: self.mutation.parameter_name.clone(),
                 range: None,
-                value: Some(value),
+                value: value
             });
         }
+    } else {
+        if let Some(parameter_id) = &self.mutation.parameter_id {
+            element.parameters.retain(|p| &p.id != parameter_id);
+        }
+    }
 
         VisitorResult::Return(())
     }

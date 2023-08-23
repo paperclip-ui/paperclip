@@ -3594,3 +3594,27 @@ case! {
     "#
   )]
 }
+
+case! {
+  removes_a_param_if_the_value_is_empty,
+  [
+    (
+      "/entry.pc", r#"
+        span(a: "abba")
+      "#
+    )
+  ],
+
+
+  mutation::Inner::SetElementParameter(SetElementParameter {
+    element_id: "80f4925f-3".to_string(),
+    parameter_id: Some("80f4925f-2".to_string()),
+    parameter_name: "a".to_string(),
+    parameter_value: "".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    span
+    "#
+  )]
+}

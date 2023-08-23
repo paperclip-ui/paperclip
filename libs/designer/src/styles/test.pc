@@ -5,7 +5,7 @@ import "./theme.pc" as theme
  * @bounds(x: 576, y: 218, width: 483, height: 217)
 */
 
-div {
+div(a: b, a: b, a: b, a: b, a: b, a: b) {
     style {
         position: relative
     }

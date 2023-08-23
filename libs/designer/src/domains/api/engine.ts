@@ -522,43 +522,13 @@ const createEventHandler = (actions: Actions) => {
     event: AttributeChanged,
     state: DesignerState
   ) => {
-    let kind: string;
-    let value: any;
-    if (/^(true|false)$/.test(event.payload.value)) {
-      kind = "bool";
-      value = {
-        value: event.payload.value === "true",
-      };
-    } else if (!isNaN(Number(event.payload.value))) {
-      kind = "num";
-      value = {
-        value: parseInt(event.payload.value),
-      };
-    } else if (
-      event.payload.value.charAt(0) === '"' &&
-      event.payload.value.charAt(event.payload.value.length - 1) === '"'
-    ) {
-      kind = "str";
-      value = {
-        value: event.payload.value.substring(1, event.payload.value.length - 1),
-      };
-    } else {
-      kind = "reference";
-      value = {
-        value: event.payload.value,
-      };
-    }
-
-    console.log(kind, value);
-
     actions.applyChanges([
       {
         setElementParameter: {
           elementId: getSelectedExpression(state).id,
+          parameterId: event.payload.attributeId,
           parameterName: event.payload.name,
-          parameterValue: {
-            [kind]: value,
-          },
+          parameterValue: event.payload.value,
         },
       },
     ]);

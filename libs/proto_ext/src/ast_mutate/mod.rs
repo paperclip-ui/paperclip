@@ -9,6 +9,7 @@ mod insert_frame;
 mod move_node;
 mod paste_expression;
 mod prepend_child;
+mod set_element_parameter;
 mod set_frame_bounds;
 mod set_id;
 mod set_style_declarations;
@@ -39,6 +40,7 @@ pub use paperclip_proto::ast;
 use paperclip_proto::ast::graph_ext::Graph;
 pub use paperclip_proto::ast_mutate::*;
 pub use paste_expression::*;
+pub use set_element_parameter::*;
 pub use set_frame_bounds::*;
 pub use set_id::*;
 pub use set_style_declarations::*;
@@ -121,6 +123,7 @@ mutations! {
   SetTextNodeValue,
   ConvertToComponent,SetStyleMixins,
   PasteExpression,
+  SetElementParameter,
   ConvertToSlot,
   MoveNode,
   WrapInElement,

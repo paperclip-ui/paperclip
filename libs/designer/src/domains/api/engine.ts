@@ -9,6 +9,7 @@ import { DesignerEngineEvent } from "./events";
 import { DesignerEvent } from "../../events";
 import {
   AddLayerMenuItemClicked,
+  AttributeChanged,
   // DesignerEvent,
   ElementTagChanged,
   ExprNavigatorDroppedNode,
@@ -62,7 +63,8 @@ import {
   ToolsTextEditorChanged,
 } from "../ui/events";
 import { ExpressionPasted } from "../clipboard/events";
-import { Range } from "@paperclip-ui/proto/lib/generated/ast/base";
+import { Num, Range } from "@paperclip-ui/proto/lib/generated/ast/base";
+import { SimpleExpression } from "@paperclip-ui/proto/lib/generated/ast/pc";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -516,6 +518,52 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
+  const handleAttributeChanged = (
+    event: AttributeChanged,
+    state: DesignerState
+  ) => {
+    let kind: string;
+    let value: any;
+    if (/^(true|false)$/.test(event.payload.value)) {
+      kind = "bool";
+      value = {
+        value: event.payload.value === "true",
+      };
+    } else if (!isNaN(Number(event.payload.value))) {
+      kind = "num";
+      value = {
+        value: parseInt(event.payload.value),
+      };
+    } else if (
+      event.payload.value.charAt(0) === '"' &&
+      event.payload.value.charAt(event.payload.value.length - 1) === '"'
+    ) {
+      kind = "str";
+      value = {
+        value: event.payload.value.substring(1, event.payload.value.length - 1),
+      };
+    } else {
+      kind = "reference";
+      value = {
+        value: event.payload.value,
+      };
+    }
+
+    console.log(kind, value);
+
+    actions.applyChanges([
+      {
+        setElementParameter: {
+          elementId: getSelectedExpression(state).id,
+          parameterName: event.payload.name,
+          parameterValue: {
+            [kind]: value,
+          },
+        },
+      },
+    ]);
+  };
+
   const handleStyleMixinsSet = (
     { payload: mixinIds }: StyleMixinsSet,
     state: DesignerState
@@ -535,8 +583,6 @@ const createEventHandler = (actions: Actions) => {
     expressionId: string,
     state: DesignerState
   ) => {
-    console.log("handleDeleteExpression");
-
     actions.applyChanges([
       {
         deleteExpression: {
@@ -816,6 +862,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "ui/toolsTextEditorChanged": {
         return handleToolsTextEditorChanged(event, newState);
+      }
+      case "ui/attributeChanged": {
+        return handleAttributeChanged(event, newState);
       }
       case "designer-engine/serverEvent": {
         return handleServerEvent(event.payload, newState);

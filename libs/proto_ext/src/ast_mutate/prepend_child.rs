@@ -1,5 +1,5 @@
 use super::base::EditContext;
-use super::utils::{parse_node, get_unique_document_body_item_name};
+use super::utils::{get_unique_document_body_item_name, parse_node};
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::Expression;
@@ -25,7 +25,6 @@ use crate::ast::all::VisitorResult;
 //     }};
 // }
 
-
 impl<'expr> MutableVisitor<()> for EditContext<'expr, PrependChild> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
         if expr.get_id() == &self.mutation.parent_id {
@@ -33,7 +32,10 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, PrependChild> {
                 .expect("Unable to parse child source for AppendChild");
             let mut child = child.body.get(0).unwrap().clone();
 
-            child.set_name(&get_unique_document_body_item_name(&child.get_name().unwrap_or("unnamed".to_string()), &self.get_dependency()));
+            child.set_name(&get_unique_document_body_item_name(
+                &child.get_name().unwrap_or("unnamed".to_string()),
+                &self.get_dependency(),
+            ));
 
             self.changes.push(
                 mutation_result::Inner::ExpressionInserted(ExpressionInserted {

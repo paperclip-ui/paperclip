@@ -208,6 +208,7 @@ impl TryFrom<DocumentBodyItem> for Node {
     }
 }
 
+
 impl TryFrom<DocumentBodyItem> for Style {
     type Error = ();
     fn try_from(value: DocumentBodyItem) -> Result<Self, Self::Error> {
@@ -234,6 +235,15 @@ impl TryFrom<Node> for Style {
     fn try_from(value: Node) -> Result<Self, Self::Error> {
         match value.get_inner() {
             node::Inner::Style(style) => Ok(style.clone()),
+            _ => Err(()),
+        }
+    }
+}
+impl TryFrom<Node> for Element {
+    type Error = ();
+    fn try_from(value: Node) -> Result<Self, Self::Error> {
+        match value.get_inner() {
+            node::Inner::Element(style) => Ok(style.clone()),
             _ => Err(()),
         }
     }

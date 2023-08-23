@@ -177,8 +177,9 @@ message InsertChild {
 
 message SetElementParameter {
   string element_id = 1;
-  string parameter_name = 2;
-  ast.pc.SimpleExpression parameter_value = 3;
+  optional string parameter_id = 2;
+  string parameter_name = 3;
+  string parameter_value = 4;
 }
 
 message AppendInsert {

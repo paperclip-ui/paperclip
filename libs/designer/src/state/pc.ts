@@ -439,6 +439,11 @@ export const getStyleableTargetId = (designer: DesignerState) => {
   return id;
 };
 
+export const getStyleableTarget = (designer: DesignerState) => {
+  const id = getStyleableTargetId(designer);
+  return id && ast.getExprInfoById(id, designer.graph);
+};
+
 export const getSelectedExprStyles = (
   state: DesignerState
 ): ComputedStyleMap => {

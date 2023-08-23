@@ -2,45 +2,12 @@ import "./input.pc" as imp
 import "./theme.pc" as theme
 
 /**
- * @bounds(x: 370, y: 144, width: 926, height: 476)
+ * @bounds(x: 576, y: 218, width: 483, height: 217)
 */
 
-public component A {
-    render div {
-        style {
-            position: relative
-            background: white
-            font-family: var(theme.defaultFontFamily)
-            padding: var(theme.space05)
-        }
-        slot children {
-            text "a child"
-        }
-    }
-}
-
-/**
- * @bounds(x: 1451, y: 82, width: 542, height: 376)
-*/
-
-public component B {
-    render A {
-        insert children {
-            text "something else"
-            text "something else"
-            text "something else"
-            text "something else"
-            div {
-                style {
-                    background: blue
-                    color: var(theme.gray0)
-                    padding: 32px
-                }
-                slot children {
-                    text "something else"
-                }
-            }
-        }
+div {
+    style {
+        position: relative
     }
 }
 

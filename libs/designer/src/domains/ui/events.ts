@@ -72,6 +72,15 @@ export type CanvasPanned = BaseEvent<
   }
 >;
 
+export type AttributeChanged = BaseEvent<
+  "ui/attributeChanged",
+  {
+    attributeId?: string;
+    name: string;
+    value: string;
+  }
+>;
+
 export type LayerLeafClicked = BaseEvent<
   "ui/layerLeafClicked",
   { virtId: string }
@@ -197,6 +206,7 @@ export type UIEvent =
   | InsertElementReleased
   | CanvasMouseLeave
   | RectsCaptured
+  | AttributeChanged
   | CanvasPanned
   | CanvasPanStart
   | CanvasMouseDown

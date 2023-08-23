@@ -1,4 +1,4 @@
-use paperclip_proto::ast::pc::{component_body_item, Render, Node};
+use paperclip_proto::ast::pc::{component_body_item, Node, Render};
 use paperclip_proto::ast_mutate::{mutation_result, ExpressionDeleted};
 use paperclip_proto::{
     ast::{
@@ -8,8 +8,8 @@ use paperclip_proto::{
     ast_mutate::MoveNode,
 };
 
-use super::EditContext;
 use super::utils::upsert_render_node;
+use super::EditContext;
 use crate::ast::get_expr::GetExpr;
 use crate::{
     ast::{
@@ -212,24 +212,18 @@ impl<'a> MutableVisitor<()> for EditContext<'a, MoveNode> {
             existing_render_node.node = Some(node);
         }
 
-
         VisitorResult::Return(())
     }
 }
 
-
-
-
 fn append_child(node: &mut Node, child: Node) {
     match node.get_inner_mut() {
-        node::Inner::Element(expr)  => {
+        node::Inner::Element(expr) => {
             expr.body.push(child);
-        },
-        node::Inner::Text(expr)  => {
-            expr.body.push(child);
-        },
-        _ => {
-
         }
+        node::Inner::Text(expr) => {
+            expr.body.push(child);
+        }
+        _ => {}
     }
 }

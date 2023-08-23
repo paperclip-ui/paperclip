@@ -1,7 +1,8 @@
 use convert_case::{Case, Casing};
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::ast;
-use paperclip_proto::ast::pc::{Component, Render, component_body_item};
+use paperclip_proto::ast::docco::ParameterValue;
+use paperclip_proto::ast::pc::{component_body_item, Component, Element, Render, SimpleExpression};
 use paperclip_proto::ast::{
     all::Expression,
     graph_ext::Dependency,
@@ -94,24 +95,32 @@ pub fn resolve_import(from: &str, to: &str) -> String {
     relative
 }
 
-
 pub fn resolve_import_ns(document_dep: &Dependency, path: &str) -> (String, bool) {
     for (rel_path, resolved_path) in &document_dep.imports {
         if resolved_path == path {
-            return (document_dep
-                .document
-                .as_ref()
-                .unwrap()
-                .get_imports()
-                .iter()
-                .find(|imp| &imp.path == rel_path)
-                .unwrap()
-                .namespace
-                .clone(), false);
+            return (
+                document_dep
+                    .document
+                    .as_ref()
+                    .unwrap()
+                    .get_imports()
+                    .iter()
+                    .find(|imp| &imp.path == rel_path)
+                    .unwrap()
+                    .namespace
+                    .clone(),
+                false,
+            );
         }
     }
 
-    return (get_unique_namespace("module", document_dep.document.as_ref().expect("Document must exist")), true)
+    return (
+        get_unique_namespace(
+            "module",
+            document_dep.document.as_ref().expect("Document must exist"),
+        ),
+        true,
+    );
 }
 
 pub fn upsert_render_node<'a>(component: &'a mut Component) -> &'a mut Render {
@@ -121,21 +130,36 @@ pub fn upsert_render_node<'a>(component: &'a mut Component) -> &'a mut Render {
     });
 
     if let Some(i) = existing_render_node {
-        component.body.get_mut(i).unwrap().try_into().expect("Must be render node")
+        component
+            .body
+            .get_mut(i)
+            .unwrap()
+            .try_into()
+            .expect("Must be render node")
     } else {
-        
-        component.body.push(component_body_item::Inner::Render(Render {
-            id: component.checksum().to_string(),
-            range: None,
-            node: None
-        })
-        .get_outer());
+        component.body.push(
+            component_body_item::Inner::Render(Render {
+                id: component.checksum().to_string(),
+                range: None,
+                node: None,
+            })
+            .get_outer(),
+        );
 
-        component.body.last_mut().unwrap().try_into().expect("Must be render node")
+        component
+            .body
+            .last_mut()
+            .unwrap()
+            .try_into()
+            .expect("Must be render node")
     }
 }
 
-pub fn import_dep(document: &mut ast::pc::Document, document_dep: &Dependency, path: &str) -> String {
+pub fn import_dep(
+    document: &mut ast::pc::Document,
+    document_dep: &Dependency,
+    path: &str,
+) -> String {
     let ns = resolve_import_ns(document_dep, path);
 
     if ns.1 {
@@ -275,9 +299,11 @@ pub fn get_unique_document_body_item_name(base: &str, dep: &Dependency) -> Strin
     let body = &dep.document.as_ref().unwrap().body;
 
     get_unique_id(base, |id| {
-        matches!(body.iter().find(|imp| { 
-            imp.get_name() == Some(id.to_string())
-        }), None)
+        matches!(
+            body.iter()
+                .find(|imp| { imp.get_name() == Some(id.to_string()) }),
+            None
+        )
     })
 }
 
@@ -292,4 +318,23 @@ pub fn get_valid_name(name: &str, case: Case) -> String {
 pub fn parse_node(source: &str, checksum: &str) -> Node {
     let child = parse(source, checksum).expect("Unable to parse child source for AppendChild");
     child.body.get(0).unwrap().clone().try_into().unwrap()
+}
+
+pub fn parse_element_attribute_value(source: &str, checksum: &str) -> SimpleExpression {
+    let doc = parse(&format!("div(a: {})", source), checksum).expect("Unable to parse attribute");
+    let el: Node = doc
+        .body
+        .get(0)
+        .unwrap()
+        .clone()
+        .try_into()
+        .expect("Cannot cast as node");
+
+    let el: Element = el.try_into().expect("Cannot cast into el");
+    el.parameters
+        .get(0)
+        .expect("Cannot find parameter")
+        .clone()
+        .value
+        .expect("Value must exist")
 }

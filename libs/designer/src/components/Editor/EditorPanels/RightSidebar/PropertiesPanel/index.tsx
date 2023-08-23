@@ -50,7 +50,7 @@ export const PropertiesPanel = () => {
           </inputStyles.Fields>
         </sidebarStyles.SidebarPanelContent>
       </sidebarStyles.SidebarSection>
-      <AttributesSection expr={expr} />
+      <AttributesSection />
       {bounds && <FrameSection bounds={bounds} />}
     </sidebarStyles.SidebarPanel>
   );

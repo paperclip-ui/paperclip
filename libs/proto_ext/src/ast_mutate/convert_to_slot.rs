@@ -3,7 +3,7 @@ use paperclip_proto::{
         all::Expression,
         pc::{node, Document, Node, Slot},
     },
-    ast_mutate::{ConvertToSlot, ExpressionInserted, mutation_result},
+    ast_mutate::{mutation_result, ConvertToSlot, ExpressionInserted},
 };
 
 use super::{utils::get_named_expr_id, EditContext};
@@ -52,17 +52,12 @@ impl<'a> MutableVisitor<()> for EditContext<'a, ConvertToSlot> {
 }
 
 fn create_slot<'a>(ctx: &mut EditContext<'a, ConvertToSlot>, child: Node, checksum: &str) -> Node {
-
     let id = format!("{}-slot", checksum);
 
     ctx.changes.push(
-        mutation_result::Inner::ExpressionInserted(ExpressionInserted {
-            id: id.to_string(),
-        })
-        .get_outer(),
+        mutation_result::Inner::ExpressionInserted(ExpressionInserted { id: id.to_string() })
+            .get_outer(),
     );
-
-
 
     node::Inner::Slot(Slot {
         id,

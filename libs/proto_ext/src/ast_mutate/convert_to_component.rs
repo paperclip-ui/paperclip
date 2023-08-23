@@ -7,7 +7,7 @@ use paperclip_proto::{
         all::{Expression, ExpressionWrapper},
         pc::{document_body_item, node, Component, Document, DocumentBodyItem, Element, Node},
     },
-    ast_mutate::{ConvertToComponent, ExpressionInserted, mutation_result},
+    ast_mutate::{mutation_result, ConvertToComponent, ExpressionInserted},
 };
 
 use super::EditContext;
@@ -51,12 +51,11 @@ impl<'a> MutableVisitor<()> for EditContext<'a, ConvertToComponent> {
             })
             .get_outer(),
         );
-        
+
         expr.body.insert(
             insert_index,
             document_body_item::Inner::Component(new_component).get_outer(),
         );
-
 
         // filter out expression if at the document body level
         expr.body = expr

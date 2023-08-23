@@ -9,12 +9,12 @@ use std::path::Path;
 
 pub enum FSItemKind {
     File,
-    Directory
+    Directory,
 }
 
 pub struct FSItem {
     pub kind: FSItemKind,
-    pub path: String
+    pub path: String,
 }
 
 pub trait FileReader: Clone {
@@ -53,11 +53,14 @@ impl FileReader for LocalFileReader {
             for entry in fs::read_dir(dir)? {
                 let entry = entry?;
                 let path = entry.path();
-                items.push(FSItem { kind: if path.is_dir() {
-                    FSItemKind::Directory
-                } else {
-                    FSItemKind::File
-                }, path: path.clone().into_os_string().into_string().unwrap() })
+                items.push(FSItem {
+                    kind: if path.is_dir() {
+                        FSItemKind::Directory
+                    } else {
+                        FSItemKind::File
+                    },
+                    path: path.clone().into_os_string().into_string().unwrap(),
+                })
             }
             Ok(items)
         } else {

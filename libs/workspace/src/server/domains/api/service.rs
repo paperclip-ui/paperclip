@@ -8,19 +8,20 @@ use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::fs::FSItemKind;
 use paperclip_language_services::DocumentInfo;
 use paperclip_proto::ast::base::Range;
-use path_absolutize::*;
-use std::process::Command;
-use run_script::ScriptOptions;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
     design_server_event, file_response, ApplyMutationsRequest, ApplyMutationsResult,
-    CreateDesignFileRequest, CreateDesignFileResponse, DesignServerEvent, Empty, FileChanged,
-    FileRequest, FileResponse, ModulesEvaluated, ResourceFiles, ScreenshotCaptured,
-    UpdateFileRequest, ReadDirectoryRequest, ReadDirectoryResponse, FsItem, CreateFileRequest, OpenCodeEditorRequest,
+    CreateDesignFileRequest, CreateDesignFileResponse, CreateFileRequest, DesignServerEvent, Empty,
+    FileChanged, FileRequest, FileResponse, FsItem, ModulesEvaluated, OpenCodeEditorRequest,
+    ReadDirectoryRequest, ReadDirectoryResponse, ResourceFiles, ScreenshotCaptured,
+    UpdateFileRequest,
 };
+use path_absolutize::*;
+use run_script::ScriptOptions;
 use std::path::Path;
 use std::pin::Pin;
+use std::process::Command;
 use std::sync::Arc;
 use std::sync::Mutex;
 use tokio::sync::mpsc;
@@ -53,7 +54,6 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         &self,
         request: Request<FileRequest>,
     ) -> Result<Response<FileResponse>, Status> {
-
         let store = self.ctx.store.lock().unwrap();
         let path: String = request.get_ref().path.clone();
 
@@ -76,28 +76,39 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
     }
     async fn open_code_editor(
         &self,
-        request: Request<OpenCodeEditorRequest>
+        request: Request<OpenCodeEditorRequest>,
     ) -> Result<Response<Empty>, Status> {
-
-        let code_editor_command_template = self.ctx.store.lock().unwrap().state.options.config_context.config.open_code_editor_command_template.clone();
+        let code_editor_command_template = self
+            .ctx
+            .store
+            .lock()
+            .unwrap()
+            .state
+            .options
+            .config_context
+            .config
+            .open_code_editor_command_template
+            .clone();
 
         let code_editor_command_template = if let Some(command) = code_editor_command_template {
             command
         } else {
-            return Err(Status::unknown("No code editor command provided"))
+            return Err(Status::unknown("No code editor command provided"));
         };
 
         let path: String = request.get_ref().path.clone();
         let range: Range = request.get_ref().range.clone().expect("Range must exist");
         let start = range.start.as_ref().expect("Stat must exist");
-        
-        
-        println!("Opening code editor with \"{}\"", code_editor_command_template);
+
+        println!(
+            "Opening code editor with \"{}\"",
+            code_editor_command_template
+        );
 
         let command = code_editor_command_template
-        .replace("<file>", &path)
-        .replace("<line>", &start.line.to_string())
-        .replace("<column>", &start.column.to_string());
+            .replace("<file>", &path)
+            .replace("<line>", &start.line.to_string())
+            .replace("<column>", &start.column.to_string());
 
         let (_, output, error) = run_script::run(&command, &vec![], &ScriptOptions::new()).unwrap();
 
@@ -119,47 +130,46 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
 
     async fn read_directory(
         &self,
-        request: Request<ReadDirectoryRequest>
+        request: Request<ReadDirectoryRequest>,
     ) -> Result<Response<ReadDirectoryResponse>, Status> {
         let mut path: String = request.get_ref().path.clone();
 
-
-        if path.get(0..1) != Some("/")  {
+        if path.get(0..1) != Some("/") {
             // path = format!("{}")
             let store = self.ctx.store.clone();
             let project_dir = &store.lock().unwrap().state.options.config_context.directory;
             path = Path::new(project_dir)
-            .join(path)
-            .absolutize()
-            .unwrap()
-            .to_str()
-            .unwrap()
-            .to_string();
+                .join(path)
+                .absolutize()
+                .unwrap()
+                .to_str()
+                .unwrap()
+                .to_string();
         }
 
         if let Ok(items) = self.ctx.io.read_directory(&path) {
-            Ok(Response::new(ReadDirectoryResponse { 
+            Ok(Response::new(ReadDirectoryResponse {
                 path: path.to_string(),
-                items: items.iter().map(|item| {
-                    FsItem {
+                items: items
+                    .iter()
+                    .map(|item| FsItem {
                         kind: if matches!(item.kind, FSItemKind::Directory) {
                             0
                         } else {
                             1
                         },
-                        path: item.path.to_string()
-                    }
-                }).collect()
+                        path: item.path.to_string(),
+                    })
+                    .collect(),
             }))
         } else {
             Err(Status::not_found("Not implemented yet"))
         }
     }
 
-
     async fn create_file(
         &self,
-        request: Request<CreateFileRequest>
+        request: Request<CreateFileRequest>,
     ) -> Result<Response<Empty>, Status> {
         let path: String = request.get_ref().path.clone();
         let kind: i32 = request.get_ref().kind;
@@ -176,7 +186,6 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
             Err(Status::unknown("Cannot create file"))
         }
     }
-
 
     async fn get_resource_files(
         &self,

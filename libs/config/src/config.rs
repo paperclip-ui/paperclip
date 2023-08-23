@@ -90,7 +90,10 @@ pub struct Config {
     pub compiler_options: Option<Vec<CompilerOptions>>,
 
     // /// options for the output settings
-    #[serde(rename = "openCodeEditorCommandTemplate", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "openCodeEditorCommandTemplate",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub open_code_editor_command_template: Option<String>,
 }
 

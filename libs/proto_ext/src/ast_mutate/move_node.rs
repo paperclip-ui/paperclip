@@ -204,7 +204,7 @@ impl<'a> MutableVisitor<()> for EditContext<'a, MoveNode> {
             _ => return VisitorResult::Return(()),
         };
 
-        let existing_render_node = upsert_render_node(expr);
+        let existing_render_node = upsert_render_node(expr, false);
 
         if let Some(render_node) = &mut existing_render_node.node {
             append_child(render_node, node);

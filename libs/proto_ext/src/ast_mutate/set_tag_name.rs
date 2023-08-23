@@ -50,7 +50,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetTagName> {
         if expr.get_id() != &self.mutation.element_id {
             return VisitorResult::Continue;
         }
-        let render_node = upsert_render_node(expr);
+        let render_node = upsert_render_node(expr, false);
         if let Some(node) = &mut render_node.node {
             if let node::Inner::Element(element) = node.get_inner_mut() {
                 element.tag_name = self.mutation.tag_name.clone();

@@ -3546,7 +3546,6 @@ case! {
   )]
 }
 
-
 case! {
   can_add_a_bool_parameter,
   [
@@ -3615,6 +3614,61 @@ case! {
   [(
     "/entry.pc", r#"
     span
+    "#
+  )]
+}
+
+case! {
+  can_set_attributes_on_components,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render div
+        }
+      "#
+    )
+  ],
+
+
+  mutation::Inner::SetElementParameter(SetElementParameter {
+    element_id: "80f4925f-3".to_string(),
+    parameter_id: None,
+    parameter_name: "a".to_string(),
+    parameter_value: "b".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div(a: b)
+    }
+    "#
+  )]
+}
+
+case! {
+  can_set_attributes_on_components_without_render_node,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+        }
+      "#
+    )
+  ],
+
+
+  mutation::Inner::SetElementParameter(SetElementParameter {
+    element_id: "80f4925f-1".to_string(),
+    parameter_id: None,
+    parameter_name: "a".to_string(),
+    parameter_value: "b".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div(a: b)
+    }
     "#
   )]
 }

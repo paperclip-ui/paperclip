@@ -123,7 +123,7 @@ pub fn resolve_import_ns(document_dep: &Dependency, path: &str) -> (String, bool
     );
 }
 
-pub fn upsert_render_node<'a>(component: &'a mut Component) -> &'a mut Render {
+pub fn upsert_render_node<'a>(component: &'a mut Component, create_node: bool) -> &'a mut Render {
     let existing_render_node = component.body.iter_mut().position(|x| match x.get_inner() {
         component_body_item::Inner::Render(_) => true,
         _ => false,
@@ -141,7 +141,14 @@ pub fn upsert_render_node<'a>(component: &'a mut Component) -> &'a mut Render {
             component_body_item::Inner::Render(Render {
                 id: component.checksum().to_string(),
                 range: None,
-                node: None,
+                node: if create_node {
+                    Some(parse_node(
+                        "div",
+                        &format!("{}-node", component.checksum().to_string()),
+                    ))
+                } else {
+                    None
+                },
             })
             .get_outer(),
         );

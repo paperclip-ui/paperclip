@@ -1,75 +1,46 @@
 import "./input.pc" as imp
-import "./editor.pc" as mod1
 import "./theme.pc" as theme
 
-public style something
-
 /**
- * @bounds(x: 2200, y: 291, width: 186, height: 118)
+ * @bounds(x: 370, y: 144, width: 926, height: 476)
 */
 
-public component RightPanel {
+public component A {
     render div {
         style {
             position: relative
-        }
-        text "right panel"
-    }
-}
-
-/**
- * @bounds(x: 1082, y: 505, width: 782, height: 603)
-*/
-
-public component Editor {
-    render div {
-        style {
-            position: relative
-            display: flex
-            justify-content: space-between
             background: white
-        }
-        LeftSidebar
-        RightPanel right
-    }
-}
-
-/**
- * @bounds(x: 492, y: 430, width: 425, height: 231)
-*/
-
-public component SidebarHeader {
-    render div {
-        style {
-            position: relative
+            font-family: var(theme.defaultFontFamily)
+            padding: var(theme.space05)
         }
         slot children {
-            text "Header"
+            text "a child"
         }
     }
 }
 
 /**
- * @bounds(x: -456, y: -39, width: 573, height: 262)
+ * @bounds(x: 1451, y: 82, width: 1024, height: 768)
 */
 
-public component Sidebar {
-    render div {
-        style {
-            position: relative
-            display: flex
-            flex-direction: column
+public component B {
+    render A {
+        insert children {
+            text "something else"
+            text "something else"
+            text "something else"
+            text "something else"
+            div {
+                style {
+                    background: blue
+                    color: var(theme.gray0)
+                    padding: 32px
+                }
+                slot children {
+                    text "something else"
+                }
+            }
         }
-        text "Header"
-        text "Content"
     }
-}
-
-/**
- * @bounds(x: 604, y: -199, width: 1024, height: 768)
-*/
-
-public component LeftSidebar {
-    render Sidebar
 }
 

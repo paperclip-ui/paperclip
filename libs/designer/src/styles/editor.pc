@@ -111,3 +111,11 @@ Editor {
     assetsModal.Container
 }
 
+/**
+ * @bounds(x: 2358, y: 366, width: 877, height: 407)
+*/
+
+div {
+    text "something"
+}
+

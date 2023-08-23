@@ -255,7 +255,7 @@ fn parse_import(context: &mut PCContext) -> Result<ast::Import, err::ParserError
 fn parse_style(context: &mut PCContext, is_public: bool) -> Result<ast::Style, err::ParserError> {
     let start = context.curr_u16pos.clone();
     context.next_token()?; // eat style
-    context.skip(is_superfluous_or_newline)?;
+    context.skip(is_superfluous)?;
 
     let name = if let Some(Token::Word(name)) = context.curr_token {
         context.next_token()?;
@@ -281,7 +281,7 @@ fn parse_style(context: &mut PCContext, is_public: bool) -> Result<ast::Style, e
         vec![]
     };
 
-    context.skip(is_superfluous_or_newline)?;
+    context.skip(is_superfluous)?;
 
     // enable styles to be created without bodies
     let declarations: Vec<css_ast::StyleDeclaration> =

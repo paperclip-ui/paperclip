@@ -44,13 +44,13 @@ export const PropertiesPanel = () => {
             expr.kind === ast.ExprKind.Component ? (
               <IDField expr={expr} />
             ) : null}
-            {expr.kind === ast.ExprKind.Component && <VariantsSection />}
             {(expr.kind === ast.ExprKind.Element ||
               expr.kind === ast.ExprKind.Component) && (
               <>
                 <ExprTagNameField expr={expr} />
               </>
             )}
+            {expr.kind === ast.ExprKind.Component && <VariantsSection />}
           </inputStyles.Fields>
         </sidebarStyles.SidebarPanelContent>
       </sidebarStyles.SidebarSection>

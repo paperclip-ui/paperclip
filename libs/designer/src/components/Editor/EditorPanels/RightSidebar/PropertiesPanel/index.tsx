@@ -76,7 +76,13 @@ const IDField = ({ expr }: IDFieldProps) => {
   return (
     <inputStyles.Field
       name="Id"
-      input={<TextInput value={expr.expr.name} onSave={onSave} />}
+      input={
+        <TextInput
+          placeholder="Undefined"
+          value={expr.expr.name}
+          onSave={onSave}
+        />
+      }
     />
   );
 };

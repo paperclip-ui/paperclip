@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import * as etcStyles from "@paperclip-ui/designer/src/styles/etc.pc";
@@ -11,7 +11,10 @@ import {
 } from "@paperclip-ui/designer/src/state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
-import { SuggestionMenu } from "@paperclip-ui/designer/src/components/SuggestionMenu";
+import {
+  SuggestionMenu,
+  SuggestionMenuItem,
+} from "@paperclip-ui/designer/src/components/SuggestionMenu";
 
 type AttributesSectionProps = {};
 
@@ -69,9 +72,18 @@ const Attribute = ({
 }: AttributeProps) => {
   const isNew = parameter == null;
   const value = parameter?.value;
+  const valueRef = useRef<HTMLInputElement>();
 
   const [name, setName] = useState(parameter?.name);
   const dispatch = useDispatch<DesignerEvent>();
+  const onNameSave = (value: string) => {
+    setName(value);
+
+    // hack to beat blur race condition
+    setTimeout(() => {
+      valueRef.current?.focus();
+    }, 100);
+  };
 
   const onSave = useCallback(
     (value: string) => {
@@ -92,7 +104,7 @@ const Attribute = ({
   );
 
   const name2 = isNew ? (
-    <NameInput tagName={elementTagName} onSave={setName} />
+    <NameInput tagName={elementTagName} attrName={name} onSave={onNameSave} />
   ) : (
     name
   );
@@ -112,17 +124,18 @@ const Attribute = ({
   return (
     <inputStyles.Field
       name={name2}
-      input={<TextInput value={value2} onSave={onSave} />}
+      input={<TextInput ref={valueRef} value={value2} onSave={onSave} />}
     />
   );
 };
 
 type NameInputProps = {
   tagName: string;
+  attrName: string;
   onSave: (value: string) => void;
 };
 
-const NameInput = ({ tagName, onSave }: NameInputProps) => {
+const NameInput = ({ tagName, attrName, onSave }: NameInputProps) => {
   const components = useSelector(getAllComponents);
   const selectedComponent = useMemo(() => {
     return components.find((component) => component.component.name === tagName);
@@ -130,16 +143,26 @@ const NameInput = ({ tagName, onSave }: NameInputProps) => {
 
   const onSelect = useCallback(
     ([value]) => {
-      const propNames = selectedComponent
-        ? ast.getComponentPropNames(selectedComponent.component)
-        : NATIVE_PROP_NAMES[tagName] || [];
+      onSave(value);
     },
     [onSave]
   );
   const onOtherSelect = onSave;
 
   const menu = useCallback(() => {
-    return [];
+    const propNames = selectedComponent
+      ? ast.getComponentPropNames(selectedComponent.component)
+      : NATIVE_PROP_NAMES[tagName] || GLOBAL_ATTRIBUTE_NAMES;
+
+    return propNames.map((propName) => {
+      return (
+        <SuggestionMenuItem
+          key={propName}
+          value={propName}
+          filterText={propName}
+        />
+      );
+    });
   }, [tagName, selectedComponent]);
   return (
     <SuggestionMenu
@@ -148,12 +171,40 @@ const NameInput = ({ tagName, onSave }: NameInputProps) => {
       onSelect={onSelect}
       onOtherSelect={onOtherSelect}
     >
-      <TextInput autoFocus />
+      <TextInput autoFocus value={attrName} />
     </SuggestionMenu>
   );
 };
 
-const GLOBAL_ATTRIBUTE_NAMES = [
+const KEYBOARD_EVENT_HANDLERS = ["onKeyDown", "onKeyPress", "onKeyUp"];
+const MOUSE_EVENT_HANDLERS = [
+  "onClick",
+  "onContextMenu",
+  "onDoubleClick",
+  "onDrag",
+  "onDragEnd",
+  "onDragEnter",
+  "onDragExit",
+  "onDragLeave",
+  "onDragOver",
+  "onDragStart",
+  "onDrop",
+  "onMouseDown",
+  "onMouseEnter",
+  "onMouseLeave",
+  "onMouseMove",
+  "onMouseOut",
+  "onMouseOver",
+  "onMouseUp",
+];
+
+const ELEMENT_EVENT_HANDLERS = [
+  ...KEYBOARD_EVENT_HANDLERS,
+  ...MOUSE_EVENT_HANDLERS,
+];
+
+// https://www.w3schools.com/tags/ref_eventattributes.asp
+const BASE_ATTRIBUTE_NAMES = [
   "accesskey",
   "class",
   "contenteditable",
@@ -164,10 +215,14 @@ const GLOBAL_ATTRIBUTE_NAMES = [
   "lang",
   "spellcheck",
   "style",
-  "style",
   "tabindex",
   "title",
   "translate",
+];
+
+const GLOBAL_ATTRIBUTE_NAMES = [
+  ...BASE_ATTRIBUTE_NAMES,
+  ...ELEMENT_EVENT_HANDLERS,
 ];
 
 const NATIVE_PROP_NAMES = {
@@ -185,5 +240,4 @@ const NATIVE_PROP_NAMES = {
     "usemap",
     "width",
   ],
-  div: [...GLOBAL_ATTRIBUTE_NAMES, "title", "tabindex"],
 };

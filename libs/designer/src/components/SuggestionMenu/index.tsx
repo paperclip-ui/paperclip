@@ -153,8 +153,7 @@ export const SuggestionMenu = ({
         onClick,
       })}
       menu={
-        isOpen &&
-        menuOptions.length && (
+        isOpen && menuOptions.length ? (
           <div ref={anchorRef}>
             <Portal>
               <styles.SuggestionMenu ref={targetRef} style={style}>
@@ -162,7 +161,7 @@ export const SuggestionMenu = ({
               </styles.SuggestionMenu>
             </Portal>
           </div>
-        )
+        ) : null
       }
     />
   );

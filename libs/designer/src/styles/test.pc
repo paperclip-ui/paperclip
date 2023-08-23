@@ -2,34 +2,40 @@ import "./input.pc" as imp
 import "./theme.pc" as theme
 
 /**
- * @bounds(x: 1440, y: 46, width: 678, height: 494)
+ * @bounds(x: 1157, y: 600, width: 895, height: 631)
 */
 
-public component Something {
-    variant other trigger {
-        ".other"
-    }
-    render div(class: class) {
-        style variant other {
-            background: var(theme.blue02)
-        }
+public component Unnamed {
+    render button(onClick: onClick) {
         style {
             position: relative
             font-family: var(theme.defaultFontFamily)
+            font-size: var(theme.fontSize04)
+            border: none
+            padding: var(theme.space06)
+            border-radius: var(theme.space03)
+            background: var(theme.blue02)
             color: var(theme.gray0)
-            background: var(theme.gray05)
         }
-        text "something" {
-            style variant other {
-                color: var(theme.blue00)
-            }
-        }
+        text "something else"
     }
 }
 
 /**
- * @bounds(x: 1092, y: 222, width: 315, height: 191)
+ * @bounds(x: -160, y: 570, width: 1024, height: 768)
 */
 
-Something
+div preview {
+    style {
+        background: black
+    }
+    Unnamed {
+        style {
+            position: absolute
+            left: 50%
+            top: 50%
+            transform: translate(-50%, -50%)
+        }
+    }
+}
 

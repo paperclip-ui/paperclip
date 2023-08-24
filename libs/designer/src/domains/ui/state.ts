@@ -127,18 +127,25 @@ export const handleDoubleClick = (
   }
 
   // const nodeId = getNodeInfoAtCurrentPoint(designer)?.nodeId;
+  const virtId = getSelectedExprIdSourceId(designer);
+  const expr = ast.getExprByVirtId(virtId, designer.graph);
 
   designer = produce(designer, (newDesigner) => {
     newDesigner.canvasClickTimestamp = action.payload.timestamp;
 
-    setTargetExprId(newDesigner, getSelectedExprIdSourceId(designer));
+    setTargetExprId(newDesigner, virtId);
 
     // LEGACY.
     // newDesigner.scopedElementId = nodeId;
   });
 
-  // force center canvas to component when double clicked
-  designer = maybeCenterCanvas(designer, true);
+  if (
+    expr.kind === ast.ExprKind.Element &&
+    ast.isInstance(expr.expr, designer.graph)
+  ) {
+    // force center canvas to component when double clicked
+    designer = maybeCenterCanvas(designer, true);
+  }
 
   // LEGACY. We want to redirect to the component instead
   // designer = highlightNode(designer, designer.canvas.mousePosition!);
@@ -182,7 +189,15 @@ export const findSelectableExprId = (
     return virtNodeId;
   }
 
-  const { expr } = ast.getExprByVirtId(virtNodeId, state.graph);
+  const exprInfo = ast.getExprByVirtId(virtNodeId, state.graph);
+
+  // may not exist because of virt expr ids. E.g: inst.slot:name
+  if (!exprInfo) {
+    return virtNodeId;
+  }
+
+  const { expr } = exprInfo;
+
   const parent = ast.getParentExprInfo(expr.id, state.graph);
   if (parent.kind === ast.ExprKind.Render) {
     const component = ast.getParentExprInfo(parent.expr.id, state.graph);

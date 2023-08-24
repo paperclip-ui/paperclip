@@ -158,10 +158,16 @@ export const setTargetExprId = (
 ) => {
   state.redirect = {
     ...state.history,
-    query: {},
+    query: {
+      ...state.history.query,
+    },
   };
 
-  state.redirect.query.nodeId = nodeId;
+  if (nodeId) {
+    state.redirect.query.nodeId = nodeId;
+  } else {
+    delete state.redirect.query.nodeId;
+  }
 
   if (nodeId != null) {
     const exprPath = ast.getOwnerDependencyPath(nodeId, state.graph);
@@ -172,6 +178,13 @@ export const setTargetExprId = (
 };
 
 export const getEditorState = (state: DesignerState) => state;
+export const getHistoryStr = (state: DesignerState) => {
+  let path = state.history.pathname;
+  if (Object.keys(state.history.query).length) {
+    path += "?" + new URLSearchParams(state.history.query).toString();
+  }
+  return path;
+};
 
 export const isResourceModalVisible = (state: DesignerState) =>
   state.insertMode === InsertMode.Resource && !state.resourceModalDragLeft;

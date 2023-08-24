@@ -35,7 +35,7 @@ export const Leaf = ({
 }: {
   children?: () => any;
   className: string;
-  id: string;
+  id?: string;
   depth: number;
   text: any;
   altText?: any;
@@ -94,7 +94,7 @@ const useLeaf = ({
   exprId: string;
   instanceOf: string[];
 }) => {
-  const virtId = [...(instanceOf || []), exprId].join(".");
+  const virtId = exprId && [...(instanceOf || []), exprId].join(".");
   const open = useSelector(getExpandedVirtIds).includes(virtId);
   const selectedId = useSelector(getTargetExprId);
 

@@ -6,10 +6,10 @@ use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_proto::ast::pc::{Component, Element, TextNode};
 use paperclip_proto::ast_mutate::{
     mutation, paste_expression, update_variant_trigger, AppendChild, AppendInsert, Bounds,
-    ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveNode, PasteExpression,
-    PrependChild, SetElementParameter, SetFrameBounds, SetId, SetStyleDeclarationValue,
-    SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue, ToggleInstanceVariant,
-    UpdateVariant, WrapInElement,
+    ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveNode,
+    PasteExpression, PrependChild, SetElementParameter, SetFrameBounds,
+    SetId, SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins, SetTagName,
+    SetTextNodeValue, ToggleInstanceVariant, UpdateVariant, WrapInElement,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use std::collections::HashMap;
@@ -3668,6 +3668,50 @@ case! {
     "/entry.pc", r#"
     component A {
       render div(a: b)
+    }
+    "#
+  )]
+}
+
+case! {
+  when_setting_tag_to_instance_slot_children_are_added,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render div {
+            slot a {
+
+            }
+            slot b {
+
+            }
+          }
+        }
+
+        div
+      "#
+    )
+  ],
+
+
+  mutation::Inner::SetTagName(SetTagName {
+    element_id: "80f4925f-6".to_string(),
+    tag_name: "A".to_string(),
+    tag_file_path: None
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div {
+        slot a
+        slot b
+      }
+    }
+
+    A {
+      insert a
+      insert b
     }
     "#
   )]

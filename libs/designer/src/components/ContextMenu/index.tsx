@@ -11,7 +11,7 @@ import {
 } from "../../modules/shortcuts/base";
 import { Portal } from "../Portal";
 import { getHistoryState } from "../../domains/history/state";
-import { getEditorState } from "../../state";
+import { getEditorState, getHistoryStr } from "../../state";
 
 export type ContextMenuProps = {
   children: React.ReactElement;
@@ -21,7 +21,7 @@ export type ContextMenuProps = {
 export const ContextMenu = ({ children, menu }: ContextMenuProps) => {
   const otherRef = useRef<HTMLElement>();
   const ref = otherRef;
-  const history = useSelector(getEditorState).history;
+  const history = useSelector(getHistoryStr);
 
   const [anchorStyle, setAnchorStyle] = useState<any>(null);
   const onContextMenu = (event: React.MouseEvent<any>) => {

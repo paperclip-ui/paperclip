@@ -35,16 +35,6 @@ export const createShortcutsEngine =
 
     window.document.addEventListener("keydown", onKeyDown);
 
-    const handleGoToMain = (state: DesignerState) => {
-      const { expr: element } = ast.getExprByVirtId(
-        getTargetExprId(state),
-        state.graph
-      );
-
-      const dep = ast.getOwnerDependency(element.id, state.graph);
-      history.redirect(routes.editor(dep.path));
-    };
-
     const handleCommand = (
       command: ShortcutCommand,
       state: DesignerState

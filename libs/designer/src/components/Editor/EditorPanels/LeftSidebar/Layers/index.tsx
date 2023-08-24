@@ -197,8 +197,6 @@ const InstanceLeaf = ({
 }: LeafProps<Element>) => {
   const graph = useSelector(getGraph);
   const component = ast.getInstanceComponent(instance, graph);
-  const render = ast.getComponentRenderExpr(component);
-  const expandedVirtIds = useSelector(getExpandedVirtIds);
 
   return (
     <Leaf

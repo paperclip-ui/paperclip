@@ -37,6 +37,16 @@ impl Document {
     pub fn get_atoms(&self) -> Vec<&Atom> {
         get_body_items!(&self.body, document_body_item::Inner::Atom, Atom)
     }
+    pub fn get_import_by_ns(&self, ns: &str) -> Option<&Import> {
+        self.get_imports().into_iter().find(|imp| {
+            &imp.namespace == ns
+        })
+    }
+    pub fn get_component_by_name(&self, name: &str) -> Option<&Component> {
+        self.get_components().into_iter().find(|expr| {
+            &expr.name == name
+        })
+    }
     pub fn get_components(&self) -> Vec<&Component> {
         get_body_items!(&self.body, document_body_item::Inner::Component, Component)
     }
@@ -224,6 +234,16 @@ impl<'a> TryFrom<&'a mut Node> for &'a mut Element {
     fn try_from(value: &'a mut Node) -> Result<Self, Self::Error> {
         match value.get_inner_mut() {
             node::Inner::Element(expr) => Ok(expr),
+            _ => Err(()),
+        }
+    }
+}
+
+impl<'a> TryFrom<&'a mut Node> for &'a mut Insert {
+    type Error = ();
+    fn try_from(value: &'a mut Node) -> Result<Self, Self::Error> {
+        match value.get_inner_mut() {
+            node::Inner::Insert(expr) => Ok(expr),
             _ => Err(()),
         }
     }

@@ -2,26 +2,32 @@ import "./input.pc" as imp
 import "./theme.pc" as theme
 
 /**
- * @bounds(x: -507, y: -1, width: 584, height: 442)
+ * @bounds(x: 267, y: -48, width: 492, height: 291)
 */
 
-public component A {
+public component Unnamed {
     render div {
         style {
             position: relative
-            background: white
-            font-family: var(theme.defaultFontFamily)
-            font-size: var(theme.fontSize05)
         }
-        slot children {
-            text "something else"
+        slot bInsert {
+            text "a"
+        }
+        slot aInsert {
+            text "b"
         }
     }
 }
 
 /**
- * @bounds(x: 249, y: 9, width: 615, height: 418)
+ * @bounds(x: 455, y: 59, width: 1024, height: 768)
 */
 
-A
+Unnamed
+
+/**
+ * @bounds(x: 215, y: 294, width: 1024, height: 768)
+*/
+
+text "something"
 

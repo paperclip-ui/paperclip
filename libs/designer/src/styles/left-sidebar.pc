@@ -2,43 +2,6 @@ import "./sidebar.pc" as sidebar
 import "./theme.pc" as theme
 
 /**
- * @bounds(x: 976, y: -2, width: 1024, height: 768)
-*/
-
-public component Tabs {
-    render div {
-        style {
-            display: flex
-        }
-        slot children
-    }
-}
-
-/**
- * @bounds(x: 1096, y: -377, width: 1024, height: 768)
-*/
-
-public component Tab {
-    variant selected trigger {
-        ".selected"
-    }
-    render div(class: class) {
-        style {
-            font-weight: 600w
-            padding: var(theme.space05)
-            display: inline-block
-            flex: 1
-            text-align: center
-            border-bottom: 1px solid var(theme.borderColor)
-        }
-        style variant selected {
-            border-color: var(theme.backgroundSelected)
-        }
-        slot children
-    }
-}
-
-/**
  * @bounds(x: 594, y: 718, width: 1024, height: 768)
 */
 
@@ -202,11 +165,19 @@ public component TreeNavigationItemContent {
     }
 }
 
+/**
+ * @bounds(x: -175, y: 1212, width: 1024, height: 768)
+*/
+
 public component TreeNavigationItem {
     render div(class: class, style: style) {
         slot children
     }
 }
+
+/**
+ * @bounds(x: -459, y: 1034, width: 93, height: 37)
+*/
 
 public component TagType {
     render span {
@@ -216,6 +187,10 @@ public component TagType {
         slot children
     }
 }
+
+/**
+ * @bounds(x: -1896, y: 1728, width: 1024, height: 768)
+*/
 
 public component DropZoneDivider {
     variant top trigger {
@@ -321,6 +296,10 @@ public component TreeNavigationItemHeader {
                     display: flex
                     gap: var(theme.space03)
                     align-items: center
+                    left: -1px
+                    top: -1px
+                    width: 239px
+                    height: 15px
                 }
                 div(onClick: onArrowClick) {
                     style extends theme.icon {
@@ -545,26 +524,6 @@ component Tokens {
 }
 
 /**
- * @bounds(x: -307, y: 917, width: 54, height: 60)
-*/
-
-public component ShadowIcon {
-    variant active trigger {
-        ".visible"
-    }
-    render div(onClick: onClick, class: class) {
-        style extends theme.icon {
-            cursor: pointer
-            opacity: var(--controlOpacity)
-            -webkit-mask-image: url("./shadow2.svg")
-        }
-        style variant active {
-            opacity: 0.5
-        }
-    }
-}
-
-/**
  * @bounds(x: -766, y: 931, width: 273, height: 1025)
 */
 
@@ -590,17 +549,13 @@ public component LeftSidebarPreview {
                         LayerNavigationItemHeader(class: "instance container open") {
                             text "Some instance"
                             insert controls {
-                                Tooltip(title: "display shadow") {
-                                    ShadowIcon(class: "visible")
-                                }
+                                Tooltip(title: "display shadow")
                             }
                         }
                         LayerNavigationItemHeader(class: "component container open") {
                             text "Some component"
                             insert controls {
-                                Tooltip(title: "display shadow") {
-                                    ShadowIcon
-                                }
+                                Tooltip(title: "display shadow")
                             }
                         }
                         TreeNavigationItemContent {
@@ -616,6 +571,9 @@ public component LeftSidebarPreview {
                             }
                             TreeNavigationItem {
                                 LayerNavigationItemHeader(class: "slot container open") {
+                                    override {
+                                        variant isCompositeToken
+                                    }
                                     override container.root {
                                         style {
                                             --depth: 2
@@ -642,7 +600,7 @@ public component LeftSidebarPreview {
                                                     --depth: 4
                                                 }
                                             }
-                                            text "a looooooooooooooooooong label"
+                                            text "some long label"
                                             TagType {
                                                 text "div"
                                             }
@@ -650,16 +608,7 @@ public component LeftSidebarPreview {
                                     }
                                 }
                                 TreeNavigationItemContent {
-                                    TreeNavigationItem {
-                                        LayerNavigationItemHeader(class: "text") {
-                                            override container.root {
-                                                style {
-                                                    --depth: 12
-                                                }
-                                            }
-                                            text "some label"
-                                        }
-                                    }
+                                    TreeNavigationItem
                                 }
                             }
                             TreeNavigationItem {

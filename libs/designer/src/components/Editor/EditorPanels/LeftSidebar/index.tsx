@@ -5,7 +5,7 @@ import { useSelector } from "@paperclip-ui/common";
 import {
   DesignerState,
   getCurrentDependency,
-  getRenderedFilePath,
+  getCurrentFilePath,
 } from "@paperclip-ui/designer/src/state";
 import { useHistory } from "@paperclip-ui/designer/src/domains/history/react";
 import { routes } from "@paperclip-ui/designer/src/state/routes";
@@ -34,7 +34,7 @@ export const LeftSidebar = () => {
 };
 
 const useLeftSidebar = () => {
-  const currentFile = useSelector(getRenderedFilePath);
+  const currentFile = useSelector(getCurrentFilePath);
   const dependency = useSelector(getCurrentDependency);
   const show = useSelector((state: DesignerState) => state.showLeftSidebar);
   const history = useHistory();

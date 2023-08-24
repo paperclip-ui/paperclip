@@ -17,10 +17,12 @@ export const historyReducer = (state: DesignerState, event: DesignerEvent) => {
 
       const newPath = getCurrentFilePath(state);
 
-      console.log(newPath, prevPath, state.history);
-
       if (newPath !== prevPath) {
         state = resetCurrentDocument(state);
+      }
+
+      if (newPath == null) {
+        state.renderedFilePath = null;
       }
 
       return state;

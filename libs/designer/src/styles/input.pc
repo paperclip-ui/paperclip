@@ -130,7 +130,7 @@ public component SuggestionMenuSearch {
 }
 
 /**
- * @bounds(x: -1323, y: -178, width: 433, height: 64)
+ * @bounds(x: -1092, y: -747, width: 433, height: 64)
 */
 
 public component SuggestionMenuItem {

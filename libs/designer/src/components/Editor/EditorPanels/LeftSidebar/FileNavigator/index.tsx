@@ -8,8 +8,8 @@ import {
   FSFile,
   FSItem,
   FSItemKind,
+  getCurrentFilePath,
   getEditorState,
-  getRenderedFilePath,
 } from "@paperclip-ui/designer/src/state";
 import classNames from "classnames";
 import {
@@ -104,7 +104,7 @@ const FileItem = ({ item, depth }: FSItemProps<FSFile>) => {
   }
   const state = useSelector(getEditorState);
   const dispatch = useDispatch<DesignerEvent>();
-  const currentFilePath = useSelector(getRenderedFilePath);
+  const currentFilePath = useSelector(getCurrentFilePath);
   const onClick = useCallback(
     () => dispatch({ type: "ui/FileNavigatorItemClicked", payload: item }),
     [item.path]

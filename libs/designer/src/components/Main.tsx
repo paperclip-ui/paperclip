@@ -2,7 +2,11 @@ import React from "react";
 import { useMemo } from "react";
 import { createEditorMachine } from "../machine";
 import { MachineContext, useSelector } from "@paperclip-ui/common";
-import { DEFAULT_STATE, getRenderedFilePath } from "../state/core";
+import {
+  DEFAULT_STATE,
+  getCurrentFilePath,
+  getRenderedFilePath,
+} from "../state/core";
 import { env } from "../env";
 import { Editor } from "./Editor";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -44,6 +48,6 @@ const Inner = () => {
 };
 
 const useInner = () => {
-  const currentFilePath = useSelector(getRenderedFilePath);
+  const currentFilePath = useSelector(getCurrentFilePath);
   return { currentFilePath };
 };

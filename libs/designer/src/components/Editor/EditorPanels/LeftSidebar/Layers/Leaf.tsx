@@ -97,6 +97,7 @@ const useLeaf = ({
   const virtId = [...(instanceOf || []), exprId].join(".");
   const open = useSelector(getExpandedVirtIds).includes(virtId);
   const selectedId = useSelector(getTargetExprId);
+
   const graph = useSelector(getGraph);
 
   const contextMenu = useCallback(

@@ -85,6 +85,8 @@ export type DesignerState = {
   graph: Graph;
   insertMode?: InsertMode;
   resourceFilePaths: string[];
+  searchedFilePaths?: string[];
+  searchedFilePathRoot?: string;
   showLeftSidebar: boolean;
   resourceModalDragLeft: boolean;
   showRightsidebar: boolean;
@@ -99,6 +101,7 @@ export type DesignerState = {
   expandedLayerVirtIds: string[];
   showTextEditor?: boolean;
   resizerMoving: boolean;
+  fileFilter?: string;
   expandedNodePaths: string[];
   preEditComputedStyles: Record<string, CSSStyleDeclaration>;
   computedStyles: Record<string, CSSStyleDeclaration>;
@@ -212,3 +215,10 @@ export const resetCurrentDocument = (
     size: state.canvas.size,
   },
 });
+
+export const getFileFilter = (state: DesignerState) => state.fileFilter;
+
+export const getSearchedFiles = (state: DesignerState) =>
+  state.searchedFilePaths || [];
+export const getSearchedFilesRoot = (state: DesignerState) =>
+  state.searchedFilePathRoot;

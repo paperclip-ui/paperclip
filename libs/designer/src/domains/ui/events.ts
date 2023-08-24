@@ -177,6 +177,8 @@ export type InsertModeButtonClick = BaseEvent<
   { mode: InsertMode }
 >;
 
+export type FileFilterChanged = BaseEvent<"ui/fileFilterChanged", string>;
+
 export type FileNavigatorItemClicked = BaseEvent<
   "ui/FileNavigatorItemClicked",
   FSItem
@@ -203,6 +205,7 @@ export type UIEvent =
   | ResourceModalDragLeft
   | ResourceModalBackgroundClicked
   | RemoveVariantButtonClicked
+  | FileFilterChanged
   | TextValueChanged
   | InsertModeButtonClick
   | InsertElementReleased

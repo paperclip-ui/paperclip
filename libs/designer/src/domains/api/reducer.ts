@@ -29,6 +29,12 @@ export const apiReducer = (
         newState.resourceFilePaths = event.payload;
       });
     }
+    case "designer-engine/fileSearchResult": {
+      return produce(state, (newState) => {
+        newState.searchedFilePathRoot = event.payload.rootDir;
+        newState.searchedFilePaths = event.payload.paths;
+      });
+    }
     case "designer-engine/directoryRead": {
       return produce(state, (newState) => {
         if (event.payload.isRoot) {

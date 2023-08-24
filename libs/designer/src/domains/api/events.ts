@@ -23,6 +23,13 @@ export type DirectoryRead = BaseEvent<
     items: ReadDirectoryResponse["items"];
   }
 >;
+export type FileSearchResult = BaseEvent<
+  "designer-engine/fileSearchResult",
+  {
+    rootDir: string;
+    paths: string[];
+  }
+>;
 
 export type APIError = BaseEvent<"designer-engine/apiError">;
 export type GraphLoaded = BaseEvent<"designer-engine/graphLoaded", Graph>;
@@ -42,6 +49,7 @@ export type DesignFileCreated = BaseEvent<
 export type DesignerEngineEvent =
   | DocumentOpened
   | ChangesApplied
+  | FileSearchResult
   | DirectoryRead
   | APIError
   | GraphLoaded

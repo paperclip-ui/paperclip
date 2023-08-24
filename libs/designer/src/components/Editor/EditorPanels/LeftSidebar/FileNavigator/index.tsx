@@ -9,6 +9,9 @@ import {
   FSItemKind,
   getCurrentFilePath,
   getEditorState,
+  getFileFilter,
+  getSearchedFiles,
+  getSearchedFilesRoot,
 } from "@paperclip-ui/designer/src/state";
 import classNames from "classnames";
 import {
@@ -19,21 +22,38 @@ import {
 } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { ContextMenu } from "@paperclip-ui/designer/src/components/ContextMenu";
+import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
+import { useHistory } from "@paperclip-ui/designer/src/domains/history/react";
+import { routes } from "@paperclip-ui/designer/src/state/routes";
 
 export const FileNavigator = () => {
   const state = useSelector(getEditorState);
+  const dispatch = useDispatch<DesignerEvent>();
+  const fileFilter = useSelector(getFileFilter);
+  const onFilter = (value: string) => {
+    dispatch({ type: "ui/fileFilterChanged", payload: value });
+  };
 
   return (
     <sidebarStyles.SidebarPanel>
       <sidebarStyles.SidebarSection class="fill">
         <sidebarStyles.SidebarPanelHeader>
           Files
+          <TextInput
+            onChange={onFilter}
+            value={fileFilter}
+            placeholder="search..."
+          />
           {/* <etc.PlusButton /> */}
         </sidebarStyles.SidebarPanelHeader>
         <styles.Layers>
-          {state.projectDirectory?.items.map((item) => {
-            return <FSItem key={item.path} item={item} depth={1} />;
-          })}
+          {fileFilter ? (
+            <FilteredFiles />
+          ) : (
+            state.projectDirectory?.items.map((item) => {
+              return <FSItem key={item.path} item={item} depth={1} />;
+            })
+          )}
         </styles.Layers>
       </sidebarStyles.SidebarSection>
     </sidebarStyles.SidebarPanel>
@@ -50,6 +70,47 @@ const FSItem = ({ item, depth }: FSItemProps<FSItem>) => {
     <DirectoryItem item={item} depth={depth} />
   ) : (
     <FileItem item={item} depth={depth} />
+  );
+};
+
+const isOpenableFile = (path: string) => /\.pc$/.test(path);
+
+const FilteredFiles = () => {
+  const paths = useSelector(getSearchedFiles);
+  const rootDir = useSelector(getSearchedFilesRoot);
+
+  return (
+    <styles.FilteredFiles>
+      {paths
+        .filter(isOpenableFile)
+        .slice(0, 20)
+        .map((path) => {
+          return <FilteredFile key={path} path={path} rootDir={rootDir} />;
+        })}
+    </styles.FilteredFiles>
+  );
+};
+
+type FilteredFileProps = {
+  path: string;
+  rootDir: string;
+};
+
+const FilteredFile = ({ path, rootDir }: FilteredFileProps) => {
+  const parts = path.split("/");
+  const basename = parts.pop();
+  const dirname = parts.join("/").replace(rootDir + "/", "");
+  const history = useHistory();
+  const onClick = () => {
+    history.redirect(routes.editor(path));
+  };
+  return (
+    <styles.FilteredFile
+      basename={basename}
+      dirname={dirname}
+      dirTitle={dirname}
+      onClick={onClick}
+    />
   );
 };
 

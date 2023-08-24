@@ -45,9 +45,17 @@ export const leftSidebarReducer = (
           ]);
         });
       }
+
+      state = produce(state, (newState) => {
+        newState.fileFilter = null;
+      });
       return state;
     }
-
+    case "ui/fileFilterChanged": {
+      return produce(state, (newState) => {
+        newState.fileFilter = event.payload;
+      });
+    }
     case "ui/layerLeafClicked": {
       state = selectNode(event.payload.virtId, false, false, state);
       return state;

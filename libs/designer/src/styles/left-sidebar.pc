@@ -6,41 +6,117 @@ import "./theme.pc" as theme
  * @bounds(x: 594, y: 718, width: 1024, height: 768)
 */
 
+public component FilteredFiles {
+    render div filteredFiles {
+        slot children {
+            FilteredFile(class: "hover") {
+                override {
+                    variant hovering trigger {
+                        hovering
+                    }
+                }
+                insert basename {
+                    text "file.svg"
+                }
+                insert dirname {
+                    text "./path/to/some/dir"
+                }
+            }
+            FilteredFile
+            FilteredFile {
+                insert basename {
+                    text "file.svg"
+                }
+                insert dirname {
+                    text "./path/to/some/dir"
+                }
+            }
+            FilteredFile {
+                insert basename {
+                    text "file.svg"
+                }
+                insert dirname {
+                    text "./path/to/some/dir"
+                }
+            }
+            FilteredFile {
+                insert basename {
+                    text "file.svg"
+                }
+                insert dirname {
+                    text "./a/super/loooooooooooooooooo00000000000000000ong-dir"
+                }
+            }
+        }
+        style {
+            padding: var(theme.space05)
+            gap: var(theme.space02)
+            display: flex
+            flex-direction: column
+        }
+    }
+}
+
+/**
+ * @bounds(x: 97, y: 1181, width: 1024, height: 768)
+*/
+
 public component FilteredFile {
-    render div container {
+    variant hovering trigger {
+        ".hover"
+        ":hover"
+    }
+    render div container(onClick: onClick, class: class) {
         style {
             display: flex
             align-items: center
             gap: var(theme.space05)
             cursor: pointer
+            background: transparent
         }
-        div icon {
-            style {
-                width: 1em
-                height: 1em
-                background: red
-                flex-shrink: 0
-                border-radius: 4px
-                display: none
+        div container {
+            style variant hovering {
+                background: var(theme.blue02)
             }
-        }
-        div info {
             style {
                 display: flex
                 justify-content: space-between
                 width: 100%
+                padding: var(theme.space03)
+                border-radius: var(theme.space02)
             }
-            div basename {
-                slot basename {
-                    text "file.pc"
-                }
-            }
-            div dirname {
+            div icon {
                 style {
-                    opacity: 0.5
+                    width: 1em
+                    height: 1em
+                    background: red
+                    flex-shrink: 0
+                    border-radius: 4px
+                    display: none
                 }
-                slot dirname {
-                    text "./some/dir"
+            }
+            div info {
+                style {
+                    display: flex
+                    justify-content: space-between
+                    width: 100%
+                    gap: var(theme.space05)
+                }
+                div basename {
+                    slot basename {
+                        text "file.pc"
+                    }
+                }
+                div dirname(title: dirTitle) {
+                    style {
+                        opacity: 0.5
+                        overflow: hidden
+                        text-overflow: ellipsis
+                        white-space: nowrap
+                    }
+                    slot dirname {
+                        text "./some/dir"
+                    }
                 }
             }
         }
@@ -99,6 +175,17 @@ public component LeftSidebarHeader {
                 }
             }
         }
+    }
+}
+
+public component Layers {
+    render div {
+        style {
+            padding: var(theme.space03) 0px
+            overflow-y: scroll
+            overflow-x: hidden
+        }
+        slot children
     }
 }
 
@@ -478,21 +565,6 @@ public component LayerNavigationItemHeader {
 }
 
 /**
- * @bounds(x: -270, y: 1599, width: 1024, height: 768)
-*/
-
-public component Layers {
-    render div {
-        style {
-            padding: var(theme.space03) 0px
-            overflow-y: scroll
-            overflow-x: hidden
-        }
-        slot children
-    }
-}
-
-/**
  * @bounds(x: -766, y: 931, width: 466, height: 1912)
 */
 
@@ -662,47 +734,7 @@ LeftSidebar {
                         }
                     }
                 }
-                div filteredFiles {
-                    FilteredFile {
-                        insert basename {
-                            text "file.svg"
-                        }
-                        insert dirname {
-                            text "./path/to/some/dir"
-                        }
-                    }
-                    FilteredFile
-                    style {
-                        padding: var(theme.space05)
-                        gap: var(theme.space05)
-                        display: flex
-                        flex-direction: column
-                    }
-                    FilteredFile {
-                        insert basename {
-                            text "file.svg"
-                        }
-                        insert dirname {
-                            text "./path/to/some/dir"
-                        }
-                    }
-                    FilteredFile {
-                        insert basename {
-                            text "file.svg"
-                        }
-                        insert dirname {
-                            text "./path/to/some/dir"
-                        }
-                    }
-                    FilteredFile {
-                        insert basename {
-                            text "file.svg"
-                        }
-                        insert dirname {
-                            text "./path/to/some/dir"
-                        }
-                    }
-                }
+                FilteredFiles
             }
         }
     }

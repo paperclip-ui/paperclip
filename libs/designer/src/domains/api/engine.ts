@@ -13,6 +13,7 @@ import {
   // DesignerEvent,
   ElementTagChanged,
   ExprNavigatorDroppedNode,
+  FileFilterChanged,
   InstanceVariantToggled,
   StyleDeclarationsChanged,
   StyleMixinsSet,
@@ -29,6 +30,7 @@ import {
   FSItem,
   FSItemKind,
   getCurrentFilePath,
+  getFileFilter,
   getInsertBox,
   getNodeInfoAtCurrentPoint,
   getRenderedFilePath,
@@ -176,6 +178,13 @@ const createActions = (
       const changes = await client.ApplyMutations({ mutations }, null);
       dispatch({ type: "designer-engine/changesApplied", payload: changes });
       return changes;
+    },
+    async searchFiles(query: string) {
+      const { paths, rootDir } = await client.SearchFiles({ query }, null);
+      dispatch({
+        type: "designer-engine/fileSearchResult",
+        payload: { paths, rootDir },
+      });
     },
   };
 };
@@ -551,6 +560,14 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
+  const handleFileFilterChanged = async (
+    _event: FileFilterChanged,
+    state: DesignerState
+  ) => {
+    const query = getFileFilter(state);
+    await actions.searchFiles(query);
+  };
+
   const handleStyleMixinsSet = (
     { payload: mixinIds }: StyleMixinsSet,
     state: DesignerState
@@ -851,6 +868,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "ui/attributeChanged": {
         return handleAttributeChanged(event, newState);
+      }
+      case "ui/fileFilterChanged": {
+        return handleFileFilterChanged(event, newState);
       }
       case "ui/textValueChanged": {
         return handleTextValueChanged(event, newState);

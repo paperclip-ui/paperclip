@@ -49,11 +49,22 @@ export const useFrameMount = ({
     if (state?.mount && frameIndex === state.frameIndex) {
       mount = state.mount;
       if (mount.isConnected) {
-        patchFrame(state.mount, frameIndex, state.pcData, pcData, {
-          showSlotPlaceholders,
-          variantIds,
-          domFactory: document,
-        });
+        // This MAY fail (try holding delete key on a bunch of frames), so blow everything away if it does and just restart.
+        // Dumb approach, but simple and works for MVP. Eventually needs to be fixed.
+        try {
+          patchFrame(state.mount, frameIndex, state.pcData, pcData, {
+            showSlotPlaceholders,
+            variantIds,
+            domFactory: document,
+          });
+        } catch (e) {
+          console.error(e);
+          mount = renderFrame(pcData, frameIndex, {
+            showSlotPlaceholders,
+            variantIds,
+            domFactory: document,
+          });
+        }
       }
     } else {
       mount = renderFrame(pcData, frameIndex, {

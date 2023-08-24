@@ -1,12 +1,9 @@
 import "./input.pc" as imp
 import "./theme.pc" as theme
 
-div {
-    style {
-        position: relative
-        background: white
-    }
-}
+/**
+ * @bounds(x: -988, y: 853, width: 1024, height: 768)
+*/
 
 div {
     style {
@@ -15,19 +12,9 @@ div {
     }
 }
 
-div {
-    style {
-        position: relative
-        background: white
-    }
-}
-
-div {
-    style {
-        position: relative
-        background: white
-    }
-}
+/**
+ * @bounds(x: -1296, y: 584, width: 1024, height: 768)
+*/
 
 div {
     style {
@@ -215,13 +202,38 @@ div {
  * @bounds(x: -1412, y: 115, width: 1024, height: 768)
 */
 
-div {
-    style {
-        background: var(theme.blue02)
-        color: var(theme.blue00)
-        font-family: var(theme.defaultFontFamily)
-        font-size: 32px
+public component Something {
+    variant large trigger {
+        ".large"
     }
-    text "Something"
+    variant alt trigger {
+        ".alt"
+    }
+    render div(class: class) {
+        style variant alt + large {
+            font-size: 42px
+        }
+        style variant alt {
+            background: var(theme.gray05)
+            color: var(theme.gray0)
+        }
+        style variant aVariant {
+            background: var(theme.gray05)
+            color: var(theme.gray0)
+        }
+        style {
+            background: var(theme.blue02)
+            color: var(theme.blue00)
+            font-family: var(theme.defaultFontFamily)
+            font-size: 32px
+        }
+        text "Something"
+    }
 }
+
+/**
+ * @bounds(x: -2538, y: 169, width: 1024, height: 768)
+*/
+
+Something(class: "alt large")
 

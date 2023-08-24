@@ -421,6 +421,7 @@ const patchCSSStyleSheet = (
   for (const item of insert) {
     insertRule(sheet, stringifyCSSRule(item, options));
   }
+
   for (let i = removeCount; i--; ) {
     sheet.deleteRule(sheet.cssRules.length - 1);
   }

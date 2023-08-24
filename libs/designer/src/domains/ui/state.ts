@@ -102,10 +102,9 @@ export const getSelectedExprIdSourceId = (state: DesignerState) => {
   if (ast.isInstance(expr, state.graph)) {
     const component = ast.getInstanceComponent(expr, state.graph);
     const renderNode = ast.getComponentRenderNode(component);
-
     return component.id;
   } else {
-    return expr;
+    return expr.id;
   }
 };
 
@@ -127,7 +126,7 @@ export const handleDoubleClick = (
     ];
   }
 
-  const nodeId = getNodeInfoAtCurrentPoint(designer)?.nodeId;
+  // const nodeId = getNodeInfoAtCurrentPoint(designer)?.nodeId;
 
   designer = produce(designer, (newDesigner) => {
     newDesigner.canvasClickTimestamp = action.payload.timestamp;
@@ -137,6 +136,9 @@ export const handleDoubleClick = (
     // LEGACY.
     // newDesigner.scopedElementId = nodeId;
   });
+
+  // force center canvas to component when double clicked
+  designer = maybeCenterCanvas(designer, true);
 
   // LEGACY. We want to redirect to the component instead
   // designer = highlightNode(designer, designer.canvas.mousePosition!);

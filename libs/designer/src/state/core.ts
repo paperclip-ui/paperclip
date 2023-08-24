@@ -156,11 +156,10 @@ export const setTargetExprId = (
   state: WritableDraft<DesignerState>,
   nodeId: string
 ) => {
-  const selectableId = nodeId.includes(".") ? nodeId.split(".")[1] : nodeId;
-  state.history.query.nodeId = findSelectableExprId(selectableId, state);
+  state.history.query.nodeId = nodeId;
 
-  if (selectableId != null) {
-    const exprPath = ast.getOwnerDependencyPath(selectableId, state.graph);
+  if (nodeId != null) {
+    const exprPath = ast.getOwnerDependencyPath(nodeId, state.graph);
     if (exprPath != null) {
       state.history.query.file = exprPath;
     }

@@ -16,7 +16,7 @@ import {
   ShortcutCommand,
 } from "./state";
 import { DocumentBodyItem } from "@paperclip-ui/proto/lib/generated/ast/pc";
-import { getSelectedExprIdSourceId } from "../ui/state";
+import { getSelectedExprIdSourceId, maybeCenterCanvas } from "../ui/state";
 
 export const shortcutReducer = (state: DesignerState, event: DesignerEvent) => {
   switch (event.type) {
@@ -50,13 +50,16 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
       });
 
     case ShortcutCommand.GoToMain:
-      return produce(state, (newState) => {
+      state = produce(state, (newState) => {
         const { expr } = ast.getExprByVirtId(
           getTargetExprId(state),
           state.graph
         );
         setTargetExprId(newState, getSelectedExprIdSourceId(state));
       });
+
+      state = maybeCenterCanvas(state, true);
+      return state;
     case ShortcutCommand.ShowHideUI:
       return produce(state, (newState) => {
         newState.showLeftSidebar = newState.showRightsidebar =

@@ -603,10 +603,13 @@ export const findVirtNode = (
   id: string,
   state: DesignerState | WritableDraft<DesignerState>
 ) => {
-  return virtHTML.getNodeById(
-    findVirtId(id, state),
-    state.currentDocument.paperclip.html
-  );
+  const virtId = findVirtId(id, state);
+
+  if (!virtId) {
+    return null;
+  }
+
+  return virtHTML.getNodeById(virtId, state.currentDocument.paperclip.html);
 };
 
 export const getExprBounds = (state: DesignerState): Bounds => {

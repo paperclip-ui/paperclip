@@ -38,14 +38,14 @@ impl Document {
         get_body_items!(&self.body, document_body_item::Inner::Atom, Atom)
     }
     pub fn get_import_by_ns(&self, ns: &str) -> Option<&Import> {
-        self.get_imports().into_iter().find(|imp| {
-            &imp.namespace == ns
-        })
+        self.get_imports()
+            .into_iter()
+            .find(|imp| &imp.namespace == ns)
     }
     pub fn get_component_by_name(&self, name: &str) -> Option<&Component> {
-        self.get_components().into_iter().find(|expr| {
-            &expr.name == name
-        })
+        self.get_components()
+            .into_iter()
+            .find(|expr| &expr.name == name)
     }
     pub fn get_components(&self) -> Vec<&Component> {
         get_body_items!(&self.body, document_body_item::Inner::Component, Component)

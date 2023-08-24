@@ -5,7 +5,7 @@ import { uiReducer } from "../domains/ui/reducers";
 import { DesignerEvent } from "../events";
 import { DesignerState } from "../state";
 
-const domainReducers = [shortcutReducer, uiReducer, apiReducer, historyReducer];
+const domainReducers = [historyReducer, shortcutReducer, apiReducer, uiReducer];
 
 export const rootReducer = (state: DesignerState, event: DesignerEvent) =>
   domainReducers.reduce((state, reduce) => reduce(state, event), state);

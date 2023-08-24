@@ -9,6 +9,7 @@ import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { WritableDraft } from "immer/dist/internal";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { findSelectableExprId } from "../domains/ui/state";
+import { uniq } from "lodash";
 
 export const IS_WINDOWS = false;
 

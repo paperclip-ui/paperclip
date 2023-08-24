@@ -449,6 +449,37 @@ add_case! {
 "#
 }
 
+// business rule decision for inserts. If `insert slot {}` then default to original 
+// children. Reason for this is because inserts are added in the editor by default so that
+// they're accessible.
+add_case! {
+    empty_inserts_are_ignored,
+    [
+    ("/entry.pc", r#"
+        component A {
+            render div {
+                slot abba {
+                    text "blah"
+                }
+            }
+        }
+        A {
+            insert abba {
+
+            }
+        }
+	"#)
+    ],
+    r#"
+	<div class="_A-80f4925f-3">
+    blah
+</div>
+<div class="_A-80f4925f-3 _80f4925f-7">
+blah
+</div>
+"#
+}
+
 #[test]
 fn bounds_are_attached_to_root_elements() {
     let doc = evaluate_doc(HashMap::from([(

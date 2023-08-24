@@ -1,5 +1,5 @@
 use super::base::EditContext;
-use super::utils::{import_dep, resolve_import_ns, upsert_render_node, get_instance_component};
+use super::utils::{get_instance_component, import_dep, resolve_import_ns, upsert_render_node};
 use paperclip_common::get_or_short;
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::Expression;
@@ -24,7 +24,12 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetTagName> {
                 None
             };
 
-            let inst_component = get_instance_component(&self.mutation.tag_name, namespace.clone(), &self.get_dependency(), &self.graph);
+            let inst_component = get_instance_component(
+                &self.mutation.tag_name,
+                namespace.clone(),
+                &self.get_dependency(),
+                &self.graph,
+            );
             let slot_names = if let Some(component) = inst_component {
                 FindSlotNames::find_slot_names(&component)
             } else {
@@ -37,16 +42,13 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetTagName> {
             println!("{:?}", slot_names);
 
             for slot_name in slot_names {
-                let existing_insert = expr
-                    .body
-                    .iter_mut()
-                    .find(|x| {
-                        if let node::Inner::Insert(insert) = x.get_inner() {
-                            insert.name == slot_name
-                        } else {
-                            false
-                        }
-                    });
+                let existing_insert = expr.body.iter_mut().find(|x| {
+                    if let node::Inner::Insert(insert) = x.get_inner() {
+                        insert.name == slot_name
+                    } else {
+                        false
+                    }
+                });
 
                 if existing_insert.is_none() {
                     expr.body.push(

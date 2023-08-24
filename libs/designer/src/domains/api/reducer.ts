@@ -13,6 +13,7 @@ import { DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/des
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import jasonpatch from "fast-json-patch";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
+import { uniq } from "lodash";
 
 export const apiReducer = (
   state: DesignerState,

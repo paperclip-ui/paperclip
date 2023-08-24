@@ -3,13 +3,15 @@ use crate::graph::{load::LoadableGraph, test_utils};
 use futures::executor::block_on;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::str_utils::strip_extra_ws;
-use paperclip_proto::ast::pc::{Component, Element, TextNode};
+use paperclip_proto::ast::pc::{
+    component_body_item, node, Component, Element, Render, Slot, TextNode,
+};
 use paperclip_proto::ast_mutate::{
     mutation, paste_expression, update_variant_trigger, AppendChild, AppendInsert, Bounds,
-    ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveNode,
-    PasteExpression, PrependChild, SetElementParameter, SetFrameBounds,
-    SetId, SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins, SetTagName,
-    SetTextNodeValue, ToggleInstanceVariant, UpdateVariant, WrapInElement,
+    ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveNode, PasteExpression,
+    PrependChild, SetElementParameter, SetFrameBounds, SetId, SetStyleDeclarationValue,
+    SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue, ToggleInstanceVariant,
+    UpdateVariant, WrapInElement,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use std::collections::HashMap;
@@ -3710,8 +3712,75 @@ case! {
     }
 
     A {
-      insert a
-      insert b
+      insert a { }
+      insert b { }
+    }
+    "#
+  )]
+}
+
+case! {
+  when_pasting_component_slots_are_created_too,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        render div {
+          slot a
+          slot b
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::PasteExpression(PasteExpression {
+    target_expression_id: "80f4925f-6".to_string(),
+    item: Some(paste_expression::Item::Component(Component {
+      name: "Baaabbb".to_string(),
+      is_public: false,
+      range: None,
+      body: vec![
+        component_body_item::Inner::Render(Render {
+          id: "render".to_string(),
+          range: None,
+          node: Some(node::Inner::Element(Element {
+            id: "div".to_string(),
+            tag_name: "div".to_string(),
+            namespace: None,
+            name: None,
+            parameters: vec![],
+            range: None,
+            body: vec![
+              node::Inner::Slot(Slot {
+                range: None,
+                id: "slot-1".to_string(),
+                name: "a".to_string(),
+                body: vec![]
+              }).get_outer(),
+              node::Inner::Slot(Slot {
+                range: None,
+                id: "slot-2".to_string(),
+                name: "b".to_string(),
+                body: vec![]
+              }).get_outer()
+            ]
+          }).get_outer())
+        }).get_outer()
+      ],
+      id: "80f4925f-5".to_string()
+    }))
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div {
+        slot a
+        slot b
+      }
+    }
+    A {
+      insert a { }
+      insert b { }
     }
     "#
   )]

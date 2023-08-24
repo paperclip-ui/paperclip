@@ -481,7 +481,7 @@ public component Tooltip {
 }
 
 /**
- * @bounds(x: 198, y: 950, width: 1024, height: 768)
+ * @bounds(x: -270, y: 1599, width: 1024, height: 768)
 */
 
 public component Layers {
@@ -496,53 +496,7 @@ public component Layers {
 }
 
 /**
- * @bounds(x: -373, y: 1791, width: 269, height: 164)
-*/
-
-component Tokens {
-    render div {
-        style {
-            padding: var(theme.space04) 0px
-        }
-        TreeNavigationItem {
-            LayerNavigationItemHeader(class: "composite-token open") {
-                override container.root {
-                    style {
-                        --depth: 1
-                    }
-                }
-                text "Font Regular"
-            }
-            LayerNavigationItemHeader(class: "atom-token open") {
-                override container.root {
-                    style {
-                        --depth: 1
-                    }
-                }
-                text "red01"
-            }
-            LayerNavigationItemHeader(class: "atom-token open") {
-                override container.root {
-                    style {
-                        --depth: 1
-                    }
-                }
-                text "red02"
-            }
-            LayerNavigationItemHeader(class: "trigger open") {
-                override container.root {
-                    style {
-                        --depth: 1
-                    }
-                }
-                text "mobile"
-            }
-        }
-    }
-}
-
-/**
- * @bounds(x: -766, y: 931, width: 273, height: 1025)
+ * @bounds(x: -766, y: 931, width: 273, height: 1912)
 */
 
 public component LeftSidebarPreview {
@@ -654,22 +608,6 @@ public component LeftSidebarPreview {
                         }
                     }
                 }
-            }
-            sidebar.SidebarSection {
-                override root {
-                    style {
-                        display: none
-                    }
-                }
-                sidebar.SidebarPanelHeader {
-                    text "Design Tokens"
-                    div {
-                        style extends theme.icon {
-                            -webkit-mask-image: url("./plus.svg")
-                        }
-                    }
-                }
-                Tokens
             }
         }
         sidebar.SidebarPanel {

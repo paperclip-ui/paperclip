@@ -288,17 +288,13 @@ pub fn serialize_slot(slot: &ast::Slot, context: &mut Context) {
 
 pub fn serialize_insert(insert: &ast::Insert, context: &mut Context) {
     context.add_buffer(format!("insert {}", insert.name).as_str());
-    if insert.body.len() > 0 {
-        context.add_buffer(" {\n");
-        context.start_block();
-        for item in &insert.body {
-            serialize_node(item, context);
-        }
-        context.end_block();
-        context.add_buffer("}\n");
-    } else {
-        context.add_buffer("\n");
+    context.add_buffer(" {\n");
+    context.start_block();
+    for item in &insert.body {
+        serialize_node(item, context);
     }
+    context.end_block();
+    context.add_buffer("}\n");
 }
 
 pub fn serialize_simple_expression(node: &ast::SimpleExpression, context: &mut Context) {

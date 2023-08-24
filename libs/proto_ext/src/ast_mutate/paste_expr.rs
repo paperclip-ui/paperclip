@@ -4,7 +4,7 @@
 use paperclip_ast_serialize::pc::serialize_node;
 use paperclip_common::serialize_context::Context;
 use paperclip_proto::ast::graph_ext::{Dependency, Graph};
-use paperclip_proto::ast::pc::{Component, Element, Node};
+use paperclip_proto::ast::pc::{Component, Element, Insert, Node};
 use paperclip_proto::ast::{all::Expression, pc::node};
 use paperclip_proto::ast_mutate::{mutation_result, ExpressionInserted};
 use paperclip_proto::ast_mutate::{paste_expression, PasteExpression};
@@ -13,9 +13,9 @@ use super::utils::resolve_import_ns;
 use super::EditContext;
 use crate::ast::all::{MutableVisitor, VisitorResult};
 use crate::ast::get_expr::GetExpr;
+use crate::ast::pc::FindSlotNames;
 use crate::ast_mutate::utils::{parse_import, parse_node, resolve_import};
 
-#[macro_export]
 macro_rules! paste_expr {
     ($self: expr, $expr: expr) => {{
         if $self.mutation.target_expression_id != $expr.id {
@@ -40,7 +40,7 @@ macro_rules! paste_expr {
     }};
 }
 
-fn clone_pasted_expr(
+pub fn clone_pasted_expr(
     expr: &paste_expression::Item,
     dep: &Dependency,
     graph: &Graph,
@@ -60,14 +60,29 @@ fn clone_pasted_expr(
                 Some(resolve_import_ns(dep, &component_dep.path).0)
             };
 
+            let slot_names = FindSlotNames::find_slot_names(component);
+
+            let id = dep.document.as_ref().unwrap().checksum().to_string();
+
             let el = Element {
                 namespace,
-                id: dep.document.as_ref().unwrap().checksum().to_string(),
+                id: id.to_string(),
                 name: None,
                 tag_name: graph_component.name.to_string(),
                 parameters: vec![],
                 range: None,
-                body: vec![],
+                body: slot_names
+                    .iter()
+                    .map(|name| {
+                        node::Inner::Insert(Insert {
+                            id: format!("{}-insert-{}", id, name),
+                            name: name.to_string(),
+                            range: None,
+                            body: vec![],
+                        })
+                        .get_outer()
+                    })
+                    .collect::<Vec<Node>>(),
             };
 
             Some(node::Inner::Element(el).get_outer())
@@ -78,6 +93,8 @@ fn clone_pasted_expr(
         // Clone node to refresh IDs
         let mut context = Context::new(0);
         serialize_node(&node, &mut context);
+
+        println!("PST {:?}", context.buffer);
         Some(parse_node(
             &context.buffer,
             &dep.document.as_ref().unwrap().checksum(),

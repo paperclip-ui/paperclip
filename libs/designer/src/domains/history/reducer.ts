@@ -3,6 +3,7 @@ import { DesignerEvent } from "../../events";
 import {
   DesignerState,
   getCurrentFilePath,
+  getTargetExprId,
   resetCurrentDocument,
 } from "../../state";
 

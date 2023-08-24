@@ -316,6 +316,14 @@ fn evaluate_instance_child<'expr, F: FileResolver>(
 ) {
     match child.get_inner() {
         ast::node::Inner::Insert(insert) => {
+
+            // inserts that don't have children are no-op. I.e: `insert a {}` does nothing. It needs
+            // children. This is a business rule that's reflected in editor where inserts are added by default
+            // so that they can be filled with children
+            if insert.body.len() == 0 {
+                return;
+            }
+
             let (_source_id, fragment) = get_insert!(inserts, &insert.name, &insert.id);
 
             for child in &insert.body {

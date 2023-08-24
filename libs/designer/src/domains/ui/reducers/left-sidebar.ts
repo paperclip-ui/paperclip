@@ -6,6 +6,7 @@ import {
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import produce from "immer";
 import { expandVirtIds, selectNode } from "../state";
+import { uniq } from "lodash";
 
 export const leftSidebarReducer = (
   state: DesignerState,
@@ -30,16 +31,18 @@ export const leftSidebarReducer = (
 
       return state;
     }
+    case "designer-engine/graphLoaded":
+    case "designer-engine/documentOpened":
     case "history-engine/historyChanged": {
       const targetId = getTargetExprId(state);
+
       if (targetId) {
-        state = expandVirtIds(
-          [
-            getTargetExprId(state),
+        state = produce(state, (newState) => {
+          newState.expandedLayerVirtIds = uniq([
+            ...state.expandedLayerVirtIds,
             ...ast.getAncestorIds(targetId, state.graph),
-          ],
-          state
-        );
+          ]);
+        });
       }
       return state;
     }

@@ -436,57 +436,6 @@ public component LayerNavigationItemHeader {
 }
 
 /**
- * @bounds(x: 566, y: -16, width: 1024, height: 768)
-*/
-
-public component Tooltip {
-    variant isHovering trigger {
-        ":hover"
-    }
-    render div {
-        style {
-            position: relative
-        }
-        slot children
-        div {
-            style extends theme.easeIn {
-                pointer-events: none
-                opacity: 0
-                position: absolute
-                left: 50%
-                top: calc(100% + var(theme.space03))
-                transform: translateX(-50%)
-                background: var(theme.borderColor)
-                border: 1px solid var(theme.borderColor)
-                border-radius: var(theme.rounded)
-                padding: var(theme.space01) var(theme.space03)
-                white-space: nowrap
-            }
-            style variant isHovering {
-                opacity: 1
-            }
-            div {
-                style {
-                    position: relative
-                }
-                div {
-                    style extends theme.icon {
-                        --size: 1.5em
-                        color: var(theme.borderColor)
-                        position: fixed
-                        top: calc(-50% + 2px)
-                        transform: rotate(-90deg) translateY(-50%) translateX(50%)
-                        left: 50%
-                        -webkit-mask-image: url("./chevron2.svg")
-                    }
-                }
-                text "open shadow instances"
-            }
-        }
-    }
-}
-
-/**
  * @bounds(x: -270, y: 1599, width: 1024, height: 768)
 */
 
@@ -507,14 +456,14 @@ public component Layers {
 
 public component LeftSidebarPreview {
     render LeftSidebar {
-        sidebar.SidebarPanel {
-            LeftSidebarHeader {
+        sidebar.SidebarPanel sidebar {
+            LeftSidebarHeader header {
                 insert title {
                     text "TodoList.pc"
                 }
             }
-            sidebar.SidebarSection {
-                sidebar.SidebarPanelHeader {
+            sidebar.SidebarSection entities {
+                sidebar.SidebarPanelHeader entitiesHeader {
                     text "Layers"
                     div {
                         style extends theme.icon {
@@ -526,9 +475,6 @@ public component LeftSidebarPreview {
                     TreeNavigationItem {
                         LayerNavigationItemHeader(class: "instance container open") {
                             text "Some instance"
-                            insert controls {
-                                Tooltip(title: "display shadow")
-                            }
                         }
                         LayerNavigationItemHeader(class: "component container open") {
                             text "Some component"

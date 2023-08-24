@@ -162,9 +162,11 @@ export const clampCanvasTransform = (
   });
 };
 
-export const expandVirtIds = (
+export const expandVirtIds = <
+  TState extends DesignerState | WritableDraft<DesignerState>
+>(
   ids: string[],
-  state: DesignerState | WritableDraft<DesignerState>
+  state: TState
 ) => {
   return {
     ...state,
@@ -203,15 +205,6 @@ export const selectNode = (
       setTargetExprId(newDesigner, null);
       return;
     }
-    const ancestorIds = ast.getAncestorVirtIdsFromShadow(
-      virtNodeId,
-      designer.graph
-    );
-
-    Object.assign(
-      newDesigner,
-      expandVirtIds([virtNodeId, ...ancestorIds], newDesigner)
-    );
 
     setTargetExprId(newDesigner, virtNodeId);
   });

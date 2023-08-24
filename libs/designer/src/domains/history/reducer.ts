@@ -10,6 +10,7 @@ export const historyReducer = (state: DesignerState, event: DesignerEvent) => {
   switch (event.type) {
     case "history-engine/historyChanged":
       const prevPath = getCurrentFilePath(state);
+      state.redirect = null;
 
       state = produce(state, (newState) => {
         newState.history = event.payload;

@@ -1,5 +1,8 @@
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
-import { DesignerState } from "@paperclip-ui/designer/src/state";
+import {
+  DesignerState,
+  getTargetExprId,
+} from "@paperclip-ui/designer/src/state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import produce from "immer";
 import { expandVirtIds, selectNode } from "../state";
@@ -25,6 +28,19 @@ export const leftSidebarReducer = (
         });
       }
 
+      return state;
+    }
+    case "history-engine/historyChanged": {
+      const targetId = getTargetExprId(state);
+      if (targetId) {
+        state = expandVirtIds(
+          [
+            getTargetExprId(state),
+            ...ast.getAncestorIds(targetId, state.graph),
+          ],
+          state
+        );
+      }
       return state;
     }
 

@@ -156,12 +156,17 @@ export const setTargetExprId = (
   state: WritableDraft<DesignerState>,
   nodeId: string
 ) => {
-  state.history.query.nodeId = nodeId;
+  state.redirect = {
+    ...state.history,
+    query: {},
+  };
+
+  state.redirect.query.nodeId = nodeId;
 
   if (nodeId != null) {
     const exprPath = ast.getOwnerDependencyPath(nodeId, state.graph);
     if (exprPath != null) {
-      state.history.query.file = exprPath;
+      state.redirect.query.file = exprPath;
     }
   }
 };

@@ -562,8 +562,12 @@ public component LayerNavigationItemHeader {
 */
 
 public component LeftSidebarPreview {
+    variant onlyFileNavigator
     render LeftSidebar {
         sidebar.SidebarPanel sidebar {
+            style variant onlyFileNavigator {
+                display: none
+            }
             LeftSidebarHeader header {
                 insert title {
                     text "TodoList.pc"

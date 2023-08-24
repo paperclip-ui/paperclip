@@ -14,6 +14,7 @@ public component SidebarContainer {
             display: flex
             padding: var(theme.space05)
             pointer-events: all
+            flex-shrink: 0
         }
         style variant left {
             flex-direction: row

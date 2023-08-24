@@ -1,21 +1,3 @@
 import "./input.pc" as imp
 import "./theme.pc" as theme
 
-/**
- * @bounds(x: 267, y: -48, width: 492, height: 291)
-*/
-
-public component Unnamed {
-    render div {
-        style {
-            position: relative
-        }
-        slot bInsert {
-            text "a"
-        }
-        slot aInsert {
-            text "b"
-        }
-    }
-}
-

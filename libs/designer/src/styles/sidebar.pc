@@ -213,3 +213,23 @@ public component SidebarPopupPanelContent {
     }
 }
 
+/**
+ * @bounds(x: 1069, y: 86, width: 189, height: 162)
+*/
+
+div {
+    style {
+        position: relative
+    }
+    div {
+        style {
+            background: rgba(0, 0, 0, 0.1)
+            position: absolute
+            left: 46px
+            top: 51px
+            width: 124px
+            height: 83px
+        }
+    }
+}
+

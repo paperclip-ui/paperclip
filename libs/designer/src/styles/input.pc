@@ -144,7 +144,7 @@ public component SuggestionMenuItem {
     variant checked trigger {
         ".checked"
     }
-    render menu.MenuItem(onMouseDown: onMouseDown, class: class) {
+    render menu.MenuItem(onMouseDown: onMouseDown, onClick: onClick, class: class) {
         slot children
         div {
             style {
@@ -301,6 +301,10 @@ public component Token {
     }
 }
 
+/**
+ * @bounds(x: 1015, y: 858, width: 557, height: 114)
+*/
+
 public component Field {
     render div(onFocus: onFocus, onBlur: onBlur) {
         style {
@@ -309,16 +313,18 @@ public component Field {
             align-items: center
             position: relative
         }
-        div {
+        div nameContainer {
             style {
                 position: relative
                 width: 90px
                 flex-shrink: 0
                 font-size: var(theme.fontSize01)
+                overflow: hidden
+                text-overflow: ellipsis
             }
             slot name
         }
-        div {
+        div inputContainer {
             style {
                 display: flex
                 flex-direction: column
@@ -326,7 +332,9 @@ public component Field {
                 flex: 1
                 overflow: hidden
             }
-            slot input
+            slot input {
+                TextInput(value: "some value")
+            }
         }
     }
 }

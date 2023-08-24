@@ -71,7 +71,9 @@ export const SuggestionMenu = ({
           return React.cloneElement(child, {
             selected: values.includes(child.props.value),
             preselected: i === preselectedIndex,
-            onMouseDown: (event: React.MouseEvent) => {
+            onSelect: (event: React.MouseEvent) => {
+              console.log("SELECT");
+
               child.props.value &&
                 onSelect(child.props.selectValue || child.props.value, {
                   event,
@@ -188,14 +190,14 @@ export type SuggestionMenuItemProps = {
   // the value to select if differs from "value"
   selectValue?: any;
   filterText?: string;
-  onMouseDown?: () => void;
+  onSelect?: () => void;
 };
 export const SuggestionMenuItem = ({
   children,
   value,
   selected,
   preselected,
-  onMouseDown,
+  onSelect,
   checked,
 }: SuggestionMenuItemProps) => {
   const ref = useRef<HTMLDivElement>();
@@ -216,7 +218,7 @@ export const SuggestionMenuItem = ({
     <styles.SuggestionMenuItem
       ref={ref}
       class={cx({ selected, preselected, checked })}
-      onMouseDown={onMouseDown}
+      onMouseDown={onSelect}
     >
       {children || value}
     </styles.SuggestionMenuItem>

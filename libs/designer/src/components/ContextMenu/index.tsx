@@ -1,4 +1,4 @@
-import { useDispatch } from "@paperclip-ui/common";
+import { useDispatch, useSelector } from "@paperclip-ui/common";
 import * as styles from "@paperclip-ui/designer/src/styles/context-menu.pc";
 import cx from "classnames";
 import React, { useEffect, useRef, useState } from "react";
@@ -10,6 +10,8 @@ import {
   MenuItemOption,
 } from "../../modules/shortcuts/base";
 import { Portal } from "../Portal";
+import { getHistoryState } from "../../domains/history/state";
+import { getEditorState } from "../../state";
 
 export type ContextMenuProps = {
   children: React.ReactElement;
@@ -19,6 +21,7 @@ export type ContextMenuProps = {
 export const ContextMenu = ({ children, menu }: ContextMenuProps) => {
   const otherRef = useRef<HTMLElement>();
   const ref = otherRef;
+  const history = useSelector(getEditorState).history;
 
   const [anchorStyle, setAnchorStyle] = useState<any>(null);
   const onContextMenu = (event: React.MouseEvent<any>) => {
@@ -42,6 +45,11 @@ export const ContextMenu = ({ children, menu }: ContextMenuProps) => {
     }
   };
 
+  // close context menu if history changes
+  useEffect(() => {
+    setAnchorStyle(null);
+  }, [history]);
+
   const onTargetMouseDown = (event: React.MouseEvent<any>) => {
     ref.current.focus();
     if (children.props.onMouseDown) {
@@ -58,9 +66,11 @@ export const ContextMenu = ({ children, menu }: ContextMenuProps) => {
       setAnchorStyle(null);
     };
 
-    document.addEventListener("click", onClick);
+    document.body.addEventListener("click", onClick);
 
-    return () => document.removeEventListener("click", onClick);
+    return () => {
+      document.body.removeEventListener("click", onClick);
+    };
   }, [anchorStyle]);
 
   return (

@@ -11,6 +11,8 @@ import { memoize } from "@paperclip-ui/common";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 
 export enum ShortcutCommand {
+  SearchFiles,
+  CreateDesignFile,
   InsertElement,
   GoToMain,
   InsertResource,
@@ -170,6 +172,20 @@ export const getGlobalShortcuts = (
     label: "Redo",
     shortcut: ["meta", "shift", "z"],
     command: ShortcutCommand.Redo,
+  },
+
+  { kind: MenuItemKind.Divider },
+  {
+    kind: MenuItemKind.Option,
+    label: "Create Design File",
+    shortcut: ["meta", "shift", "n"],
+    command: ShortcutCommand.CreateDesignFile,
+  },
+  {
+    kind: MenuItemKind.Option,
+    label: "Search Files",
+    shortcut: ["meta", "shift", "f"],
+    command: ShortcutCommand.SearchFiles,
   },
 
   { kind: MenuItemKind.Divider },

@@ -7,9 +7,15 @@ import { CenterPanels } from "./EditorPanels/Center";
 import { ResourceModal } from "./ResourceModal";
 import { useSelector } from "@paperclip-ui/common";
 import { getCurrentFilePath } from "../../state";
+import {
+  ShortcutCommand,
+  getGlobalShortcuts,
+} from "../../domains/shortcuts/state";
+import { MenuItemOption } from "../../modules/shortcuts/base";
 
 export const Editor = () => {
   const currentFile = useSelector(getCurrentFilePath);
+  const shortcuts = useSelector(getGlobalShortcuts);
 
   return (
     <styles.Editor>
@@ -23,7 +29,22 @@ export const Editor = () => {
             <RightSidebar />
           </>
         ) : (
-          <styles.SplashInfo />
+          <styles.SplashInfo
+            commands={
+              <>
+                {shortcuts
+                  .filter((shortcut) =>
+                    [
+                      ShortcutCommand.CreateDesignFile,
+                      ShortcutCommand.OpenCodeEditor,
+                    ].includes((shortcut as MenuItemOption<any>).command)
+                  )
+                  .map((shortcut: MenuItemOption<any>) => (
+                    <styles.SplashTip label={shortcut.label} />
+                  ))}
+              </>
+            }
+          />
         )}
       </styles.EditorPanels>
     </styles.Editor>

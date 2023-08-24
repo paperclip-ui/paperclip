@@ -7,7 +7,7 @@ import "./resource-modal.pc" as assetsModal
 
 token iconSize var(theme.fontSize03)
 /**
- * @bounds(x: 6489, y: 1292, width: 1024, height: 768)
+ * @bounds(x: 6489, y: 1292, width: 1926, height: 1486)
 */
 
 public component SplashInfo {
@@ -55,46 +55,48 @@ public component SplashInfo {
                     gap: var(theme.space02)
                     width: 100%
                 }
-                SplashTip {
-                    insert label {
-                        text "Create design file"
+                slot commands {
+                    SplashTip {
+                        insert label {
+                            text "Create design file"
+                        }
+                        insert shortcuts {
+                            ComboKey {
+                                style
+                                insert children {
+                                    text "⌘"
+                                }
+                            }
+                            ComboKey {
+                                style
+                                insert children {
+                                    text "⇧"
+                                }
+                            }
+                            ComboKey {
+                                style
+                                insert children {
+                                    text "d"
+                                }
+                            }
+                        }
                     }
-                    insert shortcuts {
-                        ComboKey {
-                            style
-                            insert children {
-                                text "⌘"
-                            }
+                    SplashTip {
+                        insert label {
+                            text "Find design file"
                         }
-                        ComboKey {
-                            style
-                            insert children {
-                                text "⇧"
+                        insert shortcuts {
+                            ComboKey {
+                                style
+                                insert children {
+                                    text "⌘"
+                                }
                             }
-                        }
-                        ComboKey {
-                            style
-                            insert children {
-                                text "d"
-                            }
-                        }
-                    }
-                }
-                SplashTip {
-                    insert label {
-                        text "Find design file"
-                    }
-                    insert shortcuts {
-                        ComboKey {
-                            style
-                            insert children {
-                                text "⌘"
-                            }
-                        }
-                        ComboKey {
-                            style
-                            insert children {
-                                text "f"
+                            ComboKey {
+                                style
+                                insert children {
+                                    text "f"
+                                }
                             }
                         }
                     }

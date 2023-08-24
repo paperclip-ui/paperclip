@@ -4,7 +4,7 @@ import "./input.pc" as input
 import "./styles-panel.pc" as stylesPanel
 
 /**
- * @bounds(x: 1378, y: 1395, width: 140, height: 35)
+ * @bounds(x: 1424, y: 1394, width: 140, height: 35)
 */
 
 public component UsedBy {
@@ -48,14 +48,10 @@ public component RightSidebar {
                         input.Fields {
                             input.Field {
                                 insert name {
-                                    input.Select {
-                                        insert value {
-                                            text "onClick"
-                                        }
-                                    }
+                                    input.TextInput(value: "onClick")
                                 }
                                 insert input {
-                                    input.Select(class: "error") {
+                                    input.TextInput(value: "onClick") {
                                         insert value {
                                             text "onButtonClick"
                                         }
@@ -64,14 +60,14 @@ public component RightSidebar {
                             }
                             input.Field {
                                 insert name {
-                                    input.Select {
+                                    input.TextInput(value: "href") {
                                         insert value {
                                             text "onClick"
                                         }
                                     }
                                 }
                                 insert input {
-                                    input.Select {
+                                    input.TextInput(value: "http://google.com") {
                                         insert value {
                                             text "onButtonClick"
                                         }

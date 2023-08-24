@@ -10,6 +10,7 @@ export const createKeyboardEngine = (
     if (/textarea|input/i.test((event.target as HTMLElement).tagName)) {
       return;
     }
+
     dispatch(createKeyDownEvent(event));
   };
 

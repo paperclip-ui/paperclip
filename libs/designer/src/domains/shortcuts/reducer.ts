@@ -1,10 +1,8 @@
-import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 import produce from "immer";
 import { DesignerEvent } from "../../events";
 import {
   DesignerState,
   InsertMode,
-  findVirtNode,
   getTargetExprId,
   isSelectableExpr,
   setTargetExprId,
@@ -15,7 +13,6 @@ import {
   getKeyboardMenuCommand,
   ShortcutCommand,
 } from "./state";
-import { DocumentBodyItem } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { getSelectedExprIdSourceId, maybeCenterCanvas } from "../ui/state";
 
 export const shortcutReducer = (state: DesignerState, event: DesignerEvent) => {
@@ -47,6 +44,10 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
       return produce(state, (newState) => {
         newState.insertMode = InsertMode.Resource;
         setTargetExprId(newState, null);
+      });
+    case ShortcutCommand.SearchFiles:
+      return produce(state, (newState) => {
+        newState.focusOnFileSearch = true;
       });
 
     case ShortcutCommand.GoToMain:

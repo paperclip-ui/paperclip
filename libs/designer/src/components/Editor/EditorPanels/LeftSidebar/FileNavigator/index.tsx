@@ -10,6 +10,7 @@ import {
   getCurrentFilePath,
   getEditorState,
   getFileFilter,
+  getFocusOnFileFilter,
   getSearchedFiles,
   getSearchedFilesRoot,
 } from "@paperclip-ui/designer/src/state";
@@ -30,6 +31,8 @@ export const FileNavigator = () => {
   const state = useSelector(getEditorState);
   const dispatch = useDispatch<DesignerEvent>();
   const fileFilter = useSelector(getFileFilter);
+  const focusOnFileFilter = useSelector(getFocusOnFileFilter);
+
   const onFilter = (value: string) => {
     dispatch({ type: "ui/fileFilterChanged", payload: value });
   };
@@ -40,6 +43,7 @@ export const FileNavigator = () => {
         <sidebarStyles.SidebarPanelHeader>
           Files
           <TextInput
+            autoFocus={focusOnFileFilter}
             onChange={onFilter}
             value={fileFilter}
             placeholder="search..."

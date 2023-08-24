@@ -17,6 +17,7 @@ export const TextInput = forwardRef((props: TextInputProps, forwardRef) => {
     props,
     forwardRef
   );
+
   return (
     <styles.TextInput
       ref={setRef}
@@ -34,6 +35,7 @@ export const TextInput = forwardRef((props: TextInputProps, forwardRef) => {
 
 export type UseTextInputProps = {
   value?: string;
+  autoFocus?: boolean;
   onChange?: (value: string) => void;
   onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
   onEnter?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -47,6 +49,7 @@ export const useTextInput = (
   {
     value,
     select,
+    autoFocus,
     onChange,
     onFocus,
     onSave,
@@ -99,6 +102,12 @@ export const useTextInput = (
       onKeyDown(event);
     }
   };
+
+  useEffect(() => {
+    if (autoFocus) {
+      ref.current.focus();
+    }
+  }, [autoFocus]);
 
   const setRef = useCallback((ref2) => {
     if (forwardRef) {

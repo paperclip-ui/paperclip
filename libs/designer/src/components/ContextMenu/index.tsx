@@ -12,6 +12,7 @@ import {
 import { Portal } from "../Portal";
 import { getHistoryState } from "../../domains/history/state";
 import { getEditorState, getHistoryStr } from "../../state";
+import { prettyKeyCombo } from "../../domains/ui/state";
 
 export type ContextMenuProps = {
   children: React.ReactElement;
@@ -121,18 +122,6 @@ const ContextMenuOption = ({
       {label}
     </styles.ContextMenuItem>
   );
-};
-
-const prettyKeyCombo = (combo: string[]) => {
-  return combo
-    .join("+")
-    .replace("meta", "⌘")
-    .replace("delete", "⌫")
-    .replace("backspace", "⌫")
-    .replace("shift", "⇧")
-    .replace("alt", "⌥")
-    .replaceAll("+", "")
-    .toUpperCase();
 };
 
 const ContextMenuDivider = styles.ContextMenuDivider;

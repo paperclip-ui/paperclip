@@ -12,6 +12,7 @@ import {
   getGlobalShortcuts,
 } from "../../domains/shortcuts/state";
 import { MenuItemOption } from "../../modules/shortcuts/base";
+import { prettyKeyCombo } from "../../domains/ui/state";
 
 export const Editor = () => {
   const currentFile = useSelector(getCurrentFilePath);
@@ -36,11 +37,20 @@ export const Editor = () => {
                   .filter((shortcut) =>
                     [
                       ShortcutCommand.CreateDesignFile,
-                      ShortcutCommand.OpenCodeEditor,
+                      ShortcutCommand.SearchFiles,
                     ].includes((shortcut as MenuItemOption<any>).command)
                   )
                   .map((shortcut: MenuItemOption<any>) => (
-                    <styles.SplashTip label={shortcut.label} />
+                    <styles.SplashTip
+                      label={shortcut.label}
+                      shortcuts={shortcut.shortcut.map((key) => {
+                        return (
+                          <styles.ComboKey key={key}>
+                            {prettyKeyCombo([key])}
+                          </styles.ComboKey>
+                        );
+                      })}
+                    />
                   ))}
               </>
             }

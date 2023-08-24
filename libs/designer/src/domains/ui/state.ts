@@ -96,6 +96,20 @@ export const handleDragEvent = (
   });
 };
 
+export const prettyKeyCombo = (combo: string[]) => {
+  return combo
+    .join("+")
+    .replace("meta", "⌘")
+    .replace("delete", "⌫")
+    .replace("backspace", "⌫")
+    .replace("option", "⌥")
+    .replace("shift", "⇧")
+    .replace("control", "^")
+    .replace("alt", "⌥")
+    .replaceAll("+", "")
+    .toUpperCase();
+};
+
 export const getSelectedExprIdSourceId = (state: DesignerState) => {
   const { expr } = ast.getExprByVirtId(getTargetExprId(state), state.graph);
 

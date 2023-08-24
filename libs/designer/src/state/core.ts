@@ -84,6 +84,7 @@ export type DesignerState = {
   insertedNodeIds: string[];
   graph: Graph;
   insertMode?: InsertMode;
+  focusOnFileSearch?: boolean;
   resourceFilePaths: string[];
   searchedFilePaths?: string[];
   searchedFilePathRoot?: string;
@@ -217,6 +218,8 @@ export const resetCurrentDocument = (
 });
 
 export const getFileFilter = (state: DesignerState) => state.fileFilter;
+export const getFocusOnFileFilter = (state: DesignerState) =>
+  state.focusOnFileSearch;
 
 export const getSearchedFiles = (state: DesignerState) =>
   state.searchedFilePaths || [];

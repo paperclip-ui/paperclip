@@ -54,6 +54,7 @@ export const leftSidebarReducer = (
     case "ui/fileFilterChanged": {
       return produce(state, (newState) => {
         newState.fileFilter = event.payload;
+        newState.focusOnFileSearch = false;
       });
     }
     case "ui/layerLeafClicked": {

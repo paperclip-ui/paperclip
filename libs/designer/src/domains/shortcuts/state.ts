@@ -184,7 +184,8 @@ export const getGlobalShortcuts = (
   {
     kind: MenuItemKind.Option,
     label: "Search Files",
-    shortcut: ["meta", "shift", "f"],
+
+    shortcut: ["control", "f"],
     command: ShortcutCommand.SearchFiles,
   },
 
@@ -193,27 +194,6 @@ export const getGlobalShortcuts = (
   // Entity
   ...getSelectedEntityShortcuts(state),
 ];
-
-/*
-
-
-const useCanvasHotkeys = (ref: MutableRefObject<HTMLElement>) => {
-  const dispatch = useDispatch();
-  useHotkeys(
-    {
-      e: () => dispatch(designerEvents.eHotkeyPressed()),
-      t: () => dispatch(designerEvents.tHotkeyPressed()),
-      backspace: () => dispatch(designerEvents.deleteHokeyPressed()),
-      delete: () => dispatch(designerEvents.deleteHokeyPressed()),
-      "meta+z": () => dispatch(designerEvents.undoKeyPressed()),
-      "meta+shift+z": () => dispatch(designerEvents.redoKeyPressed()),
-      "meta+s": () => dispatch(designerEvents.saveKeyComboPressed()),
-    },
-    ref
-  );
-};
-
-*/
 
 export const getKeyboardMenuItem = (
   event: KeyDown,

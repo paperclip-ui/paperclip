@@ -39,6 +39,7 @@ export const leftSidebarReducer = (
       if (targetId) {
         state = produce(state, (newState) => {
           newState.expandedLayerVirtIds = uniq([
+            targetId,
             ...state.expandedLayerVirtIds,
             ...ast.getAncestorIds(targetId, state.graph),
           ]);

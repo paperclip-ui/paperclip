@@ -100,6 +100,7 @@ public component LayerIcon {
             width: 12px
             position: relative
             height: 1em
+            flex-shrink: 0
         }
         div {
             style extends theme.icon {
@@ -270,6 +271,8 @@ public component TreeNavigationItemHeader {
             flex-direction: column
             padding-left: calc(22px * var(--depth))
             position: relative
+            cursor: pointer
+            user-select: none
         }
         style variant showDropOver {
             box-shadow: inset 0px 0px 0px 2px var(theme.blue01)
@@ -349,7 +352,7 @@ public component TreeNavigationItemHeader {
 }
 
 /**
- * @bounds(x: -154, y: 210, width: 1024, height: 768)
+ * @bounds(x: -446, y: 575, width: 350, height: 54)
 */
 
 public component LayerNavigationItemHeader {
@@ -422,7 +425,10 @@ public component LayerNavigationItemHeader {
                 }
             }
         }
-        slot children
+        slot children {
+            text "some layer"
+            text "some layer"
+        }
         insert controls {
             slot controls
         }
@@ -526,9 +532,7 @@ public component LeftSidebarPreview {
                         }
                         LayerNavigationItemHeader(class: "component container open") {
                             text "Some component"
-                            insert controls {
-                                Tooltip(title: "display shadow")
-                            }
+                            text "some blarggggfgdf gdfgd"
                         }
                         TreeNavigationItemContent {
                             TreeNavigationItem {

@@ -471,7 +471,7 @@ const createEventHandler = (actions: Actions) => {
     actions.applyChanges([
       {
         prependChild: {
-          parentId: getCurrentDependency(state).document.id,
+          parentId: getTargetExprId(state),
           childSource: source,
         },
       },

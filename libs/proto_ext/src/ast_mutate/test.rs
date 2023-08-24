@@ -3398,6 +3398,62 @@ case! {
     "#
   )]
 }
+case! {
+  can_prepend_a_child_in_an_insert,
+  [
+    (
+      "/entry.pc", r#"
+      div {
+        insert a {
+
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::PrependChild(PrependChild {
+    parent_id: "80f4925f-1".to_string(),
+    child_source: "span".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      insert a {
+        span
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_prepend_a_child_in_a_slot,
+  [
+    (
+      "/entry.pc", r#"
+      div {
+        slot a {
+
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::PrependChild(PrependChild {
+    parent_id: "80f4925f-1".to_string(),
+    child_source: "span".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      slot a {
+        span
+      }
+    }
+    "#
+  )]
+}
+
 
 case! {
   creates_unique_id_when_prepending_node,

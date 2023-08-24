@@ -107,6 +107,7 @@ export type StyleDeclarationsChanged = BaseEvent<
 export type CanvasPanStart = BaseEvent<"ui/canvasPanStart">;
 
 export type CanvasMouseMoved = BaseEvent<"ui/canvasMouseMoved", Point>;
+export type TextValueChanged = BaseEvent<"ui/textValueChanged", string>;
 export type CanvasMouseLeave = BaseEvent<"ui/canvasMouseLeave">;
 export type ElementTagChanged = BaseEvent<
   "ui/elementTagChanged",
@@ -202,6 +203,7 @@ export type UIEvent =
   | ResourceModalDragLeft
   | ResourceModalBackgroundClicked
   | RemoveVariantButtonClicked
+  | TextValueChanged
   | InsertModeButtonClick
   | InsertElementReleased
   | CanvasMouseLeave

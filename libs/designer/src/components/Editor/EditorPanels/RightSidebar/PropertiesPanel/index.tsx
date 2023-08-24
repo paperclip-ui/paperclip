@@ -22,6 +22,7 @@ import { FrameSection } from "./FrameSection";
 import { ExprTagNameField } from "./TagInput";
 import { AttributesSection } from "./AttributesSection";
 import { UsedBySection } from "./UsedBySection";
+import { TextValueInput } from "./TextValueInput";
 
 export const PropertiesPanel = () => {
   const expr = useSelector(getSelectedExpressionInfo);
@@ -38,8 +39,9 @@ export const PropertiesPanel = () => {
       <sidebarStyles.SidebarSection>
         <sidebarStyles.SidebarPanelContent>
           <inputStyles.Fields>
-            <IDField expr={expr} />
-            <ExprTagNameField expr={expr} />
+            <IDField />
+            <TextValueInput />
+            <ExprTagNameField />
             {expr.kind === ast.ExprKind.Component && <VariantsSection />}
           </inputStyles.Fields>
         </sidebarStyles.SidebarPanelContent>
@@ -51,11 +53,8 @@ export const PropertiesPanel = () => {
   );
 };
 
-type IDFieldProps = {
-  expr: ast.InnerExpressionInfo;
-};
-
-const IDField = ({ expr }: IDFieldProps) => {
+const IDField = () => {
+  const expr = useSelector(getSelectedExpressionInfo);
   const dispatch = useDispatch<DesignerEvent>();
 
   const onSave = (value: string) => {

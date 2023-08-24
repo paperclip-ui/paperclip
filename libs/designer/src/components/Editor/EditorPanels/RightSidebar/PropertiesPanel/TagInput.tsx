@@ -12,16 +12,17 @@ import React, { useCallback, useMemo } from "react";
 import { TAG_NAMES } from "./constants";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
-import { Component, Element } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import { Element } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
-import { getGraph, getGraphComponents } from "@paperclip-ui/designer/src/state";
+import {
+  getGraph,
+  getGraphComponents,
+  getSelectedExpressionInfo,
+} from "@paperclip-ui/designer/src/state";
 
-type ExprTagNameFieldProps = {
-  expr: ast.InnerExpressionInfo;
-};
-
-export const ExprTagNameField = ({ expr }: ExprTagNameFieldProps) => {
+export const ExprTagNameField = () => {
+  const expr = useSelector(getSelectedExpressionInfo);
   const el =
     expr.kind === ast.ExprKind.Component
       ? ast.getComponentRenderNode(expr.expr)

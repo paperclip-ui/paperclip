@@ -16,6 +16,7 @@ import {
   InstanceVariantToggled,
   StyleDeclarationsChanged,
   StyleMixinsSet,
+  TextValueChanged,
   ToolsLayerDrop,
   VariantEdited,
 } from "../ui/events";
@@ -520,6 +521,20 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
+  const handleTextValueChanged = (
+    event: TextValueChanged,
+    state: DesignerState
+  ) => {
+    actions.applyChanges([
+      {
+        setTextNodeValue: {
+          textNodeId: getTargetExprId(state),
+          value: event.payload,
+        },
+      },
+    ]);
+  };
+
   const handleAttributeChanged = (
     event: AttributeChanged,
     state: DesignerState
@@ -836,6 +851,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "ui/attributeChanged": {
         return handleAttributeChanged(event, newState);
+      }
+      case "ui/textValueChanged": {
+        return handleTextValueChanged(event, newState);
       }
       case "designer-engine/serverEvent": {
         return handleServerEvent(event.payload, newState);

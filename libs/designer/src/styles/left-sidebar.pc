@@ -148,13 +148,6 @@ public component LeftSidebarHeader {
                 gap: 8px
                 align-items: center
             }
-            button backButton(onClick: onBackClick) {
-                style extends theme.reset, theme.icon {
-                    cursor: pointer
-                    -webkit-mask-image: url("./back.svg")
-                    --size: 1.5em
-                }
-            }
             span titleContainer {
                 slot title {
                     text "title"

@@ -6,6 +6,7 @@ import {
   DesignerState,
   getComponentSlots,
   getCurrentDependency,
+  getCurrentFilePath,
   getExpandedVirtIds,
   getGraph,
 } from "@paperclip-ui/designer/src/state";
@@ -29,38 +30,40 @@ import { Leaf } from "./Leaf";
 import { AddLayerButton } from "./AddLayerButton";
 
 export const Layers = () => {
-  const { document, show } = useLayers();
+  const { document, title } = useLayers();
 
-  if (!document || !show) {
+  if (!document) {
     return null;
   }
 
   return (
-    <sidebarStyles.SidebarSection class="fill">
-      <sidebarStyles.SidebarPanelHeader>
-        Entities
-        <AddLayerButton />
-      </sidebarStyles.SidebarPanelHeader>
-      <styles.Layers>
-        {document.body.map((item) => (
-          <DocumentBodyItemLeaf
-            key={ast.getDocumentBodyInner(item).id}
-            depth={1}
-            expr={item}
-          />
-        ))}
-      </styles.Layers>
-    </sidebarStyles.SidebarSection>
+    <sidebarStyles.SidebarPanel>
+      <styles.LeftSidebarHeader title={title} />
+      <sidebarStyles.SidebarSection class="fill">
+        <sidebarStyles.SidebarPanelHeader>
+          Entities
+          <AddLayerButton />
+        </sidebarStyles.SidebarPanelHeader>
+        <styles.Layers>
+          {document.body.map((item) => (
+            <DocumentBodyItemLeaf
+              key={ast.getDocumentBodyInner(item).id}
+              depth={1}
+              expr={item}
+            />
+          ))}
+        </styles.Layers>
+      </sidebarStyles.SidebarSection>
+    </sidebarStyles.SidebarPanel>
   );
 };
 
 const useLayers = () => {
+  const currentFile = useSelector(getCurrentFilePath);
   const dependency = useSelector(getCurrentDependency);
-  const show = useSelector((state: DesignerState) => state.showLeftSidebar);
-  const history = useHistory();
 
   return {
-    show,
+    title: currentFile && currentFile.split("/").pop(),
     document: dependency?.document,
   };
 };

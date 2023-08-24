@@ -82,7 +82,7 @@ public component SplashInfo {
                 }
                 SplashTip {
                     insert label {
-                        text "Find file"
+                        text "Find design file"
                     }
                     insert shortcuts {
                         ComboKey {

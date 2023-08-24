@@ -96,6 +96,19 @@ export const handleDragEvent = (
   });
 };
 
+export const getSelectedExprIdSourceId = (state: DesignerState) => {
+  const { expr } = ast.getExprByVirtId(getTargetExprId(state), state.graph);
+
+  if (ast.isInstance(expr, state.graph)) {
+    const component = ast.getInstanceComponent(expr, state.graph);
+    const renderNode = ast.getComponentRenderNode(component);
+
+    return component.id;
+  } else {
+    return expr;
+  }
+};
+
 export const handleDoubleClick = (
   designer: DesignerState,
   action: CanvasMouseUp
@@ -118,10 +131,15 @@ export const handleDoubleClick = (
 
   designer = produce(designer, (newDesigner) => {
     newDesigner.canvasClickTimestamp = action.payload.timestamp;
-    newDesigner.scopedElementId = nodeId;
+
+    setTargetExprId(newDesigner, getSelectedExprIdSourceId(designer));
+
+    // LEGACY.
+    // newDesigner.scopedElementId = nodeId;
   });
 
-  designer = highlightNode(designer, designer.canvas.mousePosition!);
+  // LEGACY. We want to redirect to the component instead
+  // designer = highlightNode(designer, designer.canvas.mousePosition!);
 
   return [designer, true];
 };
@@ -152,7 +170,10 @@ export const expandVirtIds = (
   };
 };
 
-const findSelectableExprId = (virtNodeId: string, state: DesignerState) => {
+export const findSelectableExprId = (
+  virtNodeId: string,
+  state: DesignerState | WritableDraft<DesignerState>
+) => {
   if (virtNodeId.includes(".")) {
     return virtNodeId;
   }

@@ -8,6 +8,7 @@ import {
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { WritableDraft } from "immer/dist/internal";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { findSelectableExprId } from "../domains/ui/state";
 
 export const IS_WINDOWS = false;
 
@@ -155,10 +156,11 @@ export const setTargetExprId = (
   state: WritableDraft<DesignerState>,
   nodeId: string
 ) => {
-  state.history.query.nodeId = nodeId;
+  const selectableId = nodeId.includes(".") ? nodeId.split(".")[1] : nodeId;
+  state.history.query.nodeId = findSelectableExprId(selectableId, state);
 
-  if (nodeId != null) {
-    const exprPath = ast.getOwnerDependencyPath(nodeId, state.graph);
+  if (selectableId != null) {
+    const exprPath = ast.getOwnerDependencyPath(selectableId, state.graph);
     if (exprPath != null) {
       state.history.query.file = exprPath;
     }

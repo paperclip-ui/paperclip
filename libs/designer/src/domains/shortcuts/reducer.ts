@@ -16,6 +16,7 @@ import {
   ShortcutCommand,
 } from "./state";
 import { DocumentBodyItem } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import { getSelectedExprIdSourceId } from "../ui/state";
 
 export const shortcutReducer = (state: DesignerState, event: DesignerEvent) => {
   switch (event.type) {
@@ -54,16 +55,7 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
           getTargetExprId(state),
           state.graph
         );
-
-        if (ast.isInstance(expr, state.graph)) {
-          const component = ast.getInstanceComponent(expr, state.graph);
-          const renderNode = ast.getComponentRenderNode(component);
-
-          // TODO: need to open the document
-          setTargetExprId(newState, component.id);
-        } else {
-          setTargetExprId(newState, expr.id);
-        }
+        setTargetExprId(newState, getSelectedExprIdSourceId(state));
       });
     case ShortcutCommand.ShowHideUI:
       return produce(state, (newState) => {

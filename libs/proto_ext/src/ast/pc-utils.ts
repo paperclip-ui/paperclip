@@ -246,7 +246,6 @@ export namespace ast {
 
     const dep = getOwnerDependency(id, graph);
     if (!dep) {
-      console.error(`dependency missing!`);
       return ancestorIds;
     }
     const exprsById = flattenDocument(dep.document);

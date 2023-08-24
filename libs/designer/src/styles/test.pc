@@ -34,3 +34,87 @@ AComponent(class: "b") {
     }
 }
 
+/**
+ * @bounds(x: 802, y: -164, width: 533, height: 286)
+*/
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+/**
+ * @bounds(x: 1838, y: 229, width: 1024, height: 768)
+*/
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+/**
+ * @bounds(x: 306, y: 1068, width: 1024, height: 768)
+*/
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+/**
+ * @bounds(x: 1590, y: -1169, width: 1024, height: 768)
+*/
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+/**
+ * @bounds(x: -1557, y: -157, width: 1024, height: 768)
+*/
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+/**
+ * @bounds(x: -1109, y: 1215, width: 1024, height: 768)
+*/
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+/**
+ * @bounds(x: -300, y: -1751, width: 1024, height: 768)
+*/
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+

@@ -12,20 +12,28 @@ import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
+  DesignerState,
   getCanvas,
   getCurrentDocument,
+  getEditorState,
 } from "@paperclip-ui/designer/src/state";
 import { Tools } from "./Tools";
 
 export const Canvas = React.memo(() => {
-  const { canvasRef, actualTransform, expanded, activeFrameIndex } =
+  const { canvasRef, actualTransform, expanded, activeFrameIndex, visible } =
     useCanvas();
 
   return (
     <styles.Canvas ref={canvasRef}>
       <styles.CanvasInner
         style={{
+          // Only want canvas to be visible after initially centered. Otherwise it feels janky
+          opacity: visible ? 1 : 0,
           transform: `translateX(${actualTransform.x}px) translateY(${actualTransform.y}px) scale(${actualTransform.z}) translateZ(0)`,
+
+          // fade in when centered for extra smoothness
+          transition: "0.2s",
+          transitionProperty: "opacity",
           transformOrigin: "top left",
         }}
       >
@@ -146,7 +154,10 @@ const useCanvas = () => {
     };
   }, [canvasRef]);
 
+  const visible = useSelector(getEditorState).centeredInitial;
+
   return {
+    visible,
     canvasRef,
     actualTransform,
     expanded,

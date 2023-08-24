@@ -27,7 +27,7 @@ public component EditorPanels {
 }
 
 /**
- * @bounds(x: 0, y: 0, width: 2648, height: 1753)
+ * @bounds(x: 0, y: 0, width: 1853, height: 1753)
 */
 
 public component Editor {
@@ -51,8 +51,6 @@ public component Editor {
         }
     }
 }
-
-
 
 public component Artboard {
     render div(style: style) {
@@ -92,3 +90,4 @@ public component CanvasInner {
         slot children
     }
 }
+

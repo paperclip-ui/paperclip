@@ -101,6 +101,7 @@ public component SidebarSection {
             border-top: 1px solid var(theme.borderColor)
             display: flex
             flex-direction: column
+            width: 100%
         }
         style variant fill {
             height: 100%
@@ -113,15 +114,23 @@ public component SidebarSection {
     }
 }
 
+/**
+ * @bounds(x: 325, y: 958, width: 1024, height: 768)
+*/
+
 public component SidebarPanelHeader {
     render div {
         style extends theme.fontHeader {
             padding: var(theme.space05)
+            width: 100%
         }
         div {
             style {
                 display: flex
                 justify-content: space-between
+                align-items: center
+                gap: var(theme.space03)
+                width: 100%
             }
             slot children
         }

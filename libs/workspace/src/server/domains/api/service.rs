@@ -21,7 +21,6 @@ use path_absolutize::*;
 use run_script::ScriptOptions;
 use std::path::Path;
 use std::pin::Pin;
-use std::process::Command;
 use std::sync::Arc;
 use std::sync::Mutex;
 use tokio::sync::mpsc;

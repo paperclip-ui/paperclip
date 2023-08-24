@@ -1,6 +1,227 @@
 import "./input.pc" as imp
-import "./editor.pc" as mod1
 import "./theme.pc" as theme
 
-public style something
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+div {
+    style {
+        position: relative
+        background: white
+    }
+}
+
+/**
+ * @bounds(x: -1412, y: 115, width: 1024, height: 768)
+*/
+
+div {
+    style {
+        background: var(theme.blue02)
+        color: var(theme.blue00)
+        font-family: var(theme.defaultFontFamily)
+        font-size: 32px
+    }
+    text "Something"
+}
 

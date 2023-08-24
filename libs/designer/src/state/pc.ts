@@ -1,5 +1,12 @@
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
-import { BoxNodeInfo, DesignerState, getCurrentFilePath } from "./core";
+import {
+  BoxNodeInfo,
+  DesignerState,
+  FrameBox,
+  getCurrentFilePath,
+  getRenderedFilePath,
+  getTargetExprId,
+} from "./core";
 import { ComputedStyleMap } from "@paperclip-ui/proto-ext/lib/ast/serialize";
 import { WritableDraft } from "immer/dist/internal";
 import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
@@ -402,10 +409,6 @@ const AVAILABLE_STYLES = {
   "z-index": "auto",
 };
 
-export const getSelectedId = (designer: DesignerState) => {
-  return designer.selectedTargetId;
-};
-
 export const isSelectableExpr = (expr: ast.InnerExpressionInfo) => {
   return (
     expr.kind === ast.ExprKind.Atom ||
@@ -426,12 +429,17 @@ export const isStyleableExpr = (expr: ast.InnerExpressionInfo) => {
   );
 };
 export const getStyleableTargetId = (designer: DesignerState) => {
-  const id = getSelectedId(designer);
+  const id = getTargetExprId(designer);
   const expr = ast.getExprInfoById(id, designer.graph);
   if (expr?.kind === ast.ExprKind.Component) {
     return ast.getComponentRenderNode(expr.expr)?.expr.id;
   }
   return id;
+};
+
+export const getStyleableTarget = (designer: DesignerState) => {
+  const id = getStyleableTargetId(designer);
+  return id && ast.getExprInfoById(id, designer.graph);
 };
 
 export const getSelectedExprStyles = (
@@ -467,22 +475,22 @@ export const getSelectedExprStyles = (
 
 export const getSelectedExpression = (state: DesignerState) => {
   return (
-    state.selectedTargetId &&
-    ast.getExprByVirtId(state.selectedTargetId, state.graph)?.expr
+    getTargetExprId(state) &&
+    ast.getExprByVirtId(getTargetExprId(state), state.graph)?.expr
   );
 };
 
 export const getSelectedExpressionInfo = (state: DesignerState) => {
   return (
-    state.selectedTargetId &&
-    ast.getExprInfoById(state.selectedTargetId, state.graph)
+    getTargetExprId(state) &&
+    ast.getExprInfoById(getTargetExprId(state), state.graph)
   );
 };
 
 export const getActiveVariant = (state: DesignerState) => {
   return (
     state.activeVariantId &&
-    (ast.getExprByVirtId(state.activeVariantId, state.graph) as Variant)
+    (ast.getExprByVirtId(state.activeVariantId, state.graph)?.expr as Variant)
   );
 };
 
@@ -499,15 +507,20 @@ export const getPreviewChildren = (frame: HTMLDocument) => {
 };
 
 export const getSelectedExprOwnerComponent = (state: DesignerState) => {
-  if (!state.selectedTargetId) {
+  if (!getTargetExprId(state)) {
     return null;
   }
-  const expr = ast.getExprByVirtId(state.selectedTargetId, state.graph)?.expr;
-  if (!expr) {
+  const info = ast.getExprByVirtId(getTargetExprId(state), state.graph);
+
+  if (!info) {
     return null;
   }
 
-  return ast.getExprOwnerComponent(expr, state.graph);
+  if (info.kind === ast.ExprKind.Component) {
+    return info.expr;
+  }
+
+  return ast.getExprOwnerComponent(info.expr, state.graph);
 };
 
 export const getAllStyleMixins = (state: DesignerState) => {};
@@ -519,7 +532,7 @@ export const getAllPublicStyleMixins = (state: DesignerState) => {
 export const getGraph = (state: DesignerState) => state.graph;
 
 export const getCurrentDependency = (state: DesignerState) => {
-  return state.graph.dependencies[getCurrentFilePath(state)];
+  return state.graph.dependencies[getRenderedFilePath(state)];
 };
 
 export const getAllPublicAtoms = (state: DesignerState) => {
@@ -599,7 +612,7 @@ export const findVirtNode = (
 export const getExprBounds = (state: DesignerState): Bounds => {
   const node =
     state.currentDocument &&
-    (findVirtNode(state.selectedTargetId, state) as any as
+    (findVirtNode(getTargetExprId(state), state) as any as
       | VirtElement
       | VirtText);
 
@@ -611,7 +624,7 @@ export const setSelectedNodeBounds = (
   state: DesignerState
 ) => {
   return produce(state, (newState) => {
-    const node = findVirtNode(newState.selectedTargetId, newState) as any as
+    const node = findVirtNode(getTargetExprId(state), newState) as any as
       | VirtElement
       | VirtText;
 
@@ -632,13 +645,14 @@ export const setSelectedNodeBounds = (
   });
 };
 
-const getVirtId = (
+const getExprVirtId = (
   current: ast.InnerExpressionInfo,
   instancePath: string[],
   graph: Graph
 ) => {
   let parts: string[] = [current.expr.id];
   let curr = current;
+
   while (
     curr.kind === ast.ExprKind.Element &&
     ast.isInstance(curr.expr, graph)
@@ -654,82 +668,96 @@ const getVirtId = (
   return [...instancePath, ...parts].join(".");
 };
 
-const findInsertBoxesAtPoint = (
-  point: Point,
-  instance: Element,
-  graph: Graph,
-  rects: Record<string, Box>
-): BoxNodeInfo => {
-  const component = ast.getInstanceComponent(instance, graph);
-  const slots = ast.getComponentSlots(component, graph);
-  for (const slot of slots) {
-    const insertId = instance.id + "." + slot.id;
-    const rect = rects[insertId];
-    if (rect && boxIntersectsPoint(rect, point)) {
-      return {
-        nodeId: insertId,
-        box: rect,
-      };
-    }
-  }
+// const findInsertBoxesAtPoint = (
+//   point: Point,
+//   instance: Element,
+//   graph: Graph,
+//   rects: Record<string, Box>
+// ): BoxNodeInfo => {
+//   const component = ast.getInstanceComponent(instance, graph);
+//   const slots = ast.getComponentSlots(component, graph);
+//   for (const slot of slots) {
+//     const insertId = instance.id + "." + slot.id;
+//     const rect = rects[insertId];
+//     if (rect && boxIntersectsPoint(rect, point)) {
+//       return {
+//         nodeId: insertId,
+//         box: rect,
+//       };
+//     }
+//   }
 
-  // const slotBoxes = getSlotBoxes(instance, graph, rects);
-  // for (const id in slotBoxes) {
-  //   const box = slotBoxes[id];
+//   // const slotBoxes = getSlotBoxes(instance, graph, rects);
+//   // for (const id in slotBoxes) {
+//   //   const box = slotBoxes[id];
 
-  // }
+//   // }
 
-  return null;
-};
+//   return null;
+// };
+
+/*
+
+1. 
+*/
 
 const findVirtBoxNodeInfo = (
   point: Point,
   current: ast.InnerExpressionInfo,
-  path: string,
   graph: Graph,
   scopeId: string,
   instancePath: string[],
   boxes: Record<string, Box>
 ): BoxNodeInfo | null => {
-  const virtId = getVirtId(current, instancePath, graph);
+  const virtId = [...instancePath, current.expr.id].join(".");
 
   if (
     current.kind === ast.ExprKind.Element &&
     ast.isInstance(current.expr, graph)
   ) {
-    // return boxes
-    if (!instancePath.length) {
-      const info = findInsertBoxesAtPoint(point, current.expr, graph, boxes);
-      if (info) {
-        return info;
-      }
-    }
+    const component = ast.getInstanceComponent(current.expr, graph);
+    const subInstancePath = [...instancePath, current.expr.id];
 
+    // Scoped in the shadow? Look for children there
     if (scopeId?.includes(virtId)) {
-      const component = ast.getInstanceComponent(current.expr, graph);
       const render = ast.getComponentRenderNode(component);
       const boxInfo = findVirtBoxNodeInfo(
         point,
         render,
-        path,
         graph,
         scopeId,
-        [...instancePath, virtId],
+        subInstancePath,
         boxes
       );
       if (boxInfo) {
         return boxInfo;
       }
     }
-  }
 
-  const box = boxes[virtId];
+    // Expose slot information if at the root so
+    if (instancePath.length === 0) {
+      const slots = ast.getComponentSlots(component, graph);
+
+      for (const slot of slots) {
+        const boxInfo = calcExprBoxInfo(
+          { kind: ast.ExprKind.Slot, expr: slot },
+          virtId + "." + slot.id,
+          point,
+          subInstancePath,
+          boxes,
+          graph
+        );
+        if (boxInfo) {
+          return boxInfo;
+        }
+      }
+    }
+  }
 
   for (const child of ast.getChildren(current)) {
     const childInfo = findVirtBoxNodeInfo(
       point,
       child,
-      path,
       graph,
       scopeId,
       instancePath,
@@ -740,6 +768,20 @@ const findVirtBoxNodeInfo = (
     }
   }
 
+  return calcExprBoxInfo(current, virtId, point, instancePath, boxes, graph);
+};
+
+const calcExprBoxInfo = (
+  current: ast.InnerExpressionInfo,
+  virtId: string,
+  point: Point,
+  instancePath: string[],
+  rects: Record<string, Box>,
+  graph: Graph
+) => {
+  // not all expressions have box information, so we need to calculate
+  const box = calcExprBox(current, instancePath, rects, graph);
+
   return (
     box &&
     boxIntersectsPoint(box, point) && {
@@ -749,14 +791,83 @@ const findVirtBoxNodeInfo = (
   );
 };
 
+const calcExprBox = memoize(
+  (
+    current: ast.InnerExpressionInfo,
+    instancePath: string[],
+    rects: Record<string, Box>,
+    graph: Graph
+  ) => {
+    const virtId = [...instancePath, current.expr.id].join(".");
+
+    // IF the rect exists, then it's a render node, just return it
+    if (rects[virtId]) {
+      return rects[virtId];
+    }
+
+    // OTHERWISE we're dealing with an expression such as a component, instance, slot, or insert
+    // Check for INSTANCES
+    if (
+      current.kind === ast.ExprKind.Element &&
+      ast.isInstance(current.expr, graph)
+    ) {
+      const component = ast.getInstanceComponent(
+        current.expr as pc.Element,
+        graph
+      );
+
+      return calcExprBox(
+        ast.getComponentRenderNode(component),
+        [...instancePath, current.expr.id],
+        rects,
+        graph
+      );
+
+      // Check for COMPONENTS
+    } else if (current.kind === ast.ExprKind.Component) {
+      return calcExprBox(
+        ast.getComponentRenderNode(current.expr as pc.Component),
+        instancePath,
+        rects,
+        graph
+      );
+
+      // Check for INSERTS (part of instances)
+    } else if (current.kind === ast.ExprKind.Insert) {
+      const boxes = current.expr.body
+        .map((child) =>
+          calcExprBox(ast.getChildExprInner(child), instancePath, rects, graph)
+        )
+        .filter(Boolean);
+      return boxes.length > 0 ? mergeBoxes(boxes) : null;
+    } else if (current.kind === ast.ExprKind.Slot) {
+      const boxes = current.expr.body
+        .map((child) =>
+          calcExprBox(ast.getChildExprInner(child), instancePath, rects, graph)
+        )
+        .filter(Boolean);
+      return boxes.length > 0 ? mergeBoxes(boxes) : null;
+    } else if (current.kind === ast.ExprKind.Render) {
+      return calcExprBox(
+        ast.getChildExprInner(current.expr.node),
+        instancePath,
+        rects,
+        graph
+      );
+    }
+  }
+);
+
 export const getNodeInfoAtCurrentPoint = (state: DesignerState) => {
   if (!state.canvas.mousePosition) {
     return null;
   }
+
   const scaledPoint = getScaledPoint(
     state.canvas.mousePosition,
     state.canvas.transform
   );
+
   const filePath = getCurrentFilePath(state);
 
   const dep = state.graph.dependencies[filePath];
@@ -765,29 +876,156 @@ export const getNodeInfoAtCurrentPoint = (state: DesignerState) => {
     return null;
   }
 
-  return findVirtBoxNodeInfo(
+  const info = findVirtBoxNodeInfo(
     scaledPoint,
     { expr: dep.document, kind: ast.ExprKind.Document },
-    filePath,
     state.graph,
     state.scopedElementId,
     [],
-    getVirtWithExprRects(state)
+    state.rects
   );
+
+  return info;
+};
+
+const getAllRectsAtPoint = (point: Point, rects: Record<string, FrameBox>) => {
+  const overlappingRects: Record<string, FrameBox> = {};
+  for (const virtId in rects) {
+    const rect = rects[virtId];
+    if (boxIntersectsPoint(rect, point)) {
+      overlappingRects[virtId] = rect;
+    }
+  }
+  return overlappingRects;
+};
+
+const findTargetNodeBoxInfo = (
+  overlappingRects: Record<string, FrameBox>,
+  filePath: string,
+  graph: Graph,
+  scopedId: string
+): BoxNodeInfo => {
+  return null;
 };
 
 const merge = memoize((a, b) => ({ ...a, ...b }));
 
-const getVirtWithExprRects = (designer: DesignerState) =>
-  merge(
-    designer.rects,
-    getInsertBoxes(
-      designer.graph,
-      getCurrentFilePath(designer),
-      designer.currentDocument?.paperclip.html,
-      designer.rects
-    )
-  );
+// const getVirtWithExprRects = (designer: DesignerState) =>
+//   merge(
+//     designer.rects,
+//     merge(
+//       getInsertBoxes(
+//         designer.graph,
+//         getCurrentFilePath(designer),
+//         designer.currentDocument?.paperclip.html,
+//         designer.rects
+//       ),
+//       merge(
+//         getInstanceBoxes(designer.rects),
+//         getGraphComponentRects(designer.graph, designer.rects)
+//       )
+//     )
+//   );
+
+const getGraphComponentRects = memoize(
+  (graph: Graph, rects: Record<string, FrameBox>) => {
+    const allComponentRects = {};
+    for (const path in graph.dependencies) {
+      const dep = graph.dependencies[path];
+      const components = ast.getDocumentComponents(dep.document);
+      for (const component of components) {
+        Object.assign(
+          allComponentRects,
+          getComponentRects(component, rects, graph)
+        );
+      }
+    }
+
+    return allComponentRects;
+  }
+);
+
+const getComponentRects = (
+  component: Component,
+  rects: Record<string, FrameBox>,
+  graph: Graph
+): Record<string, FrameBox> => {
+  const componentRects: Record<string, FrameBox> = {};
+
+  const renderNode = ast.getComponentRenderNode(component);
+  const renderNodeRect = rects[renderNode?.expr.id];
+  if (!renderNodeRect) {
+    return;
+  }
+
+  componentRects[component.id] = rects[renderNode.expr.id];
+
+  // DELETE render node since the component should always be selected
+  // delete newState.rects[renderNode.expr.id];
+  const slots = ast.getComponentSlots(component, graph);
+
+  for (const slot of slots) {
+    Object.assign(
+      componentRects,
+      getSlotRects(slot, renderNodeRect.frameIndex, rects)
+    );
+  }
+
+  return componentRects;
+};
+
+const getSlotRects = (
+  slot: pc.Slot,
+  frameIndex: number,
+  rects: Record<string, FrameBox>
+) => {
+  const slotDescendents = ast.flattenSlot(slot);
+
+  const slotRects = {};
+
+  const descendantRects: Box[] = [];
+  for (const id in slotDescendents) {
+    const expr = slotDescendents[id];
+    if (
+      expr.kind === ast.ExprKind.TextNode ||
+      expr.kind === ast.ExprKind.Element
+    ) {
+      const rect = rects[expr.expr.id];
+      if (rect) {
+        descendantRects.push(rect);
+      }
+    }
+
+    slotRects[slot.id] = {
+      frameIndex,
+      ...mergeBoxes(descendantRects),
+    };
+  }
+
+  return slotRects;
+};
+
+const getInstanceBoxes = memoize(
+  (rects: Record<string, FrameBox>): Record<string, FrameBox> => {
+    const instanceBoxes: Record<string, FrameBox> = {};
+
+    for (const id in rects) {
+      const rect = rects[id];
+      if (id.includes(".")) {
+        const idParts = id.split(".");
+        for (let i = 0, n = idParts.length - 1; i < n; i++) {
+          const instanceId = idParts.slice(i, 1).join(".");
+          instanceBoxes[instanceId] = instanceBoxes[instanceId]
+            ? (mergeBoxes([rect, instanceBoxes[instanceId]]) as FrameBox)
+            : rect;
+          instanceBoxes[instanceId].frameIndex = rect.frameIndex;
+        }
+      }
+    }
+
+    return instanceBoxes;
+  }
+);
 
 export const findInsertAtPoint = (
   point: Point,
@@ -795,7 +1033,7 @@ export const findInsertAtPoint = (
 ): BoxNodeInfo | null => {
   const insertBoxes = getInsertBoxes(
     state.graph,
-    getCurrentFilePath(state),
+    getRenderedFilePath(state),
     state.currentDocument!.paperclip.html,
     state.rects
   );
@@ -914,10 +1152,18 @@ export const getHighlightedNodeBox = (state: DesignerState): Box => {
 };
 
 export const getSelectedNodeBox = (state: DesignerState): Box =>
-  getNodeBox(state.selectedTargetId, state);
+  getNodeBox(getTargetExprId(state), state);
 
 export const getNodeBox = (virtId: string, state: DesignerState): Box => {
-  return getVirtWithExprRects(state)[virtId];
+  if (!virtId) {
+    return null;
+  }
+
+  const nodePath = virtId.split(".");
+  const instancePath = nodePath.slice(0, nodePath.length - 1);
+  const expr = ast.getExprInfoById(nodePath[nodePath.length - 1], state.graph);
+  const box = expr && calcExprBox(expr, instancePath, state.rects, state.graph);
+  return box;
 };
 
 export const getAllComponents = (state: DesignerState) => {
@@ -981,13 +1227,13 @@ export const getCurrentStyleMixins = (state: DesignerState): MixinInfo[] => {
 };
 
 const getStyleMixinRefs = (state: DesignerState): Reference[] => {
-  const expr = ast.getExprInfoById(state.selectedTargetId, state.graph);
+  const expr = ast.getExprInfoById(getTargetExprId(state), state.graph);
   if (!expr) {
     return [];
   }
 
-  const selectedVariants: Variant[] = state.selectedVariantIds.map((id) =>
-    ast.getExprById(id, state.graph)
+  const selectedVariants: Variant[] = state.selectedVariantIds.map(
+    (id) => ast.getExprByVirtId(id, state.graph).expr
   );
 
   if (expr.kind === ast.ExprKind.Element) {

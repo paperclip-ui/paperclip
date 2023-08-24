@@ -11,7 +11,7 @@ import {
   DNDKind,
   getExpandedVirtIds,
   getGraph,
-  getSelectedId,
+  getTargetExprId,
 } from "@paperclip-ui/designer/src/state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
@@ -29,6 +29,7 @@ export const Leaf = ({
   id,
   depth,
   text,
+  altText,
   controls,
   instanceOf,
 }: {
@@ -37,6 +38,7 @@ export const Leaf = ({
   id: string;
   depth: number;
   text: any;
+  altText?: any;
   controls?: any;
   instanceOf: string[];
 }) => {
@@ -46,10 +48,9 @@ export const Leaf = ({
     onClick,
     contextMenu,
     onArrowClick,
-    headerRef,
+    setHeaderRef,
+    labelRef,
     style,
-    dragRef,
-    dropRef,
     dropHotSpot,
   } = useLeaf({
     exprId: id,
@@ -60,13 +61,9 @@ export const Leaf = ({
   return (
     <styles.TreeNavigationItem style={style}>
       <ContextMenu menu={contextMenu}>
-        <div>
+        <div style={{ width: "100%" }}>
           <styles.LayerNavigationItemHeader
-            ref={(e) => {
-              dropRef(e);
-              dragRef(e);
-              headerRef.current = e;
-            }}
+            ref={setHeaderRef}
             class={cx(className, {
               open,
               selected,
@@ -80,7 +77,8 @@ export const Leaf = ({
             onArrowClick={onArrowClick}
             controls={controls}
           >
-            {text}
+            <span ref={labelRef}>{text}</span>
+            {altText}
           </styles.LayerNavigationItemHeader>
         </div>
       </ContextMenu>
@@ -98,7 +96,8 @@ const useLeaf = ({
 }) => {
   const virtId = [...(instanceOf || []), exprId].join(".");
   const open = useSelector(getExpandedVirtIds).includes(virtId);
-  const selectedId = useSelector(getSelectedId);
+  const selectedId = useSelector(getTargetExprId);
+
   const graph = useSelector(getGraph);
 
   const contextMenu = useCallback(
@@ -109,6 +108,7 @@ const useLeaf = ({
   const selected = selectedId === virtId;
 
   const headerRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
   const [dropHotSpot, setDropHotSpot] = useState<DropHotSpot>(null);
 
   const [{ opacity }, dragRef] = useDrag(
@@ -181,6 +181,16 @@ const useLeaf = ({
     }
   }, [isDraggingOver]);
 
+  useEffect(() => {
+    if (selected) {
+      headerRef.current.scrollIntoView({
+        // behavior: "smooth",
+        block: "center",
+        // inline: "center",
+      });
+    }
+  }, [selected]);
+
   const dispatch = useDispatch<DesignerEvent>();
   const onClick = useCallback(() => {
     dispatch({ type: "ui/layerLeafClicked", payload: { virtId } });
@@ -194,14 +204,22 @@ const useLeaf = ({
     [virtId]
   );
 
+  const setHeaderRef = useCallback(
+    (el) => {
+      headerRef.current = el;
+      dragRef(el);
+      dropRef(el);
+    },
+    [dragRef, dropRef]
+  );
+
   return {
     onClick,
     onArrowClick,
     contextMenu,
     dropHotSpot,
-    headerRef,
-    dragRef,
-    dropRef,
+    setHeaderRef,
+    labelRef,
     style: { opacity },
     open,
     selected,

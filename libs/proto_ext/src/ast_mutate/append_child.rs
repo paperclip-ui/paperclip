@@ -1,5 +1,5 @@
 use super::base::EditContext;
-use super::utils::{parse_node, get_unique_document_body_item_name};
+use super::utils::{get_unique_document_body_item_name, parse_node};
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::Expression;
@@ -15,7 +15,10 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, AppendChild> {
             let child = parse_pc(&self.mutation.child_source, &expr.checksum())
                 .expect("Unable to parse child source for AppendChild");
             let mut child = child.body.get(0).unwrap().clone();
-            child.set_name(&get_unique_document_body_item_name(&child.get_name().unwrap_or("unnamed".to_string()), &self.get_dependency()));
+            child.set_name(&get_unique_document_body_item_name(
+                &child.get_name().unwrap_or("unnamed".to_string()),
+                &self.get_dependency(),
+            ));
 
             expr.body.push(child.clone());
             self.changes.push(

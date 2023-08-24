@@ -3,12 +3,13 @@ use crate::graph::{load::LoadableGraph, test_utils};
 use futures::executor::block_on;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::str_utils::strip_extra_ws;
-use paperclip_proto::ast::pc::{Element, TextNode, Component};
+use paperclip_proto::ast::pc::{Component, Element, TextNode};
 use paperclip_proto::ast_mutate::{
     mutation, paste_expression, update_variant_trigger, AppendChild, AppendInsert, Bounds,
     ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveNode, PasteExpression,
-    SetFrameBounds, SetId, SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins,
-    SetTagName, SetTextNodeValue, ToggleInstanceVariant, UpdateVariant, WrapInElement, PrependChild,
+    PrependChild, SetElementParameter, SetFrameBounds, SetId, SetStyleDeclarationValue,
+    SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue, ToggleInstanceVariant,
+    UpdateVariant, WrapInElement,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use std::collections::HashMap;
@@ -21,7 +22,7 @@ macro_rules! case {
             let mut graph = graph::Graph::new();
 
             for (path, _) in $mock_files {
-              block_on(graph.load(&path, &mock_fs)).expect("Unable to load");
+                block_on(graph.load(&path, &mock_fs)).expect("Unable to load");
             }
 
             if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
@@ -2358,7 +2359,8 @@ case! {
 
   mutation::Inner::SetTagName(SetTagName {
     element_id: "80f4925f-1".to_string(),
-    tag_name: "span".to_string()
+    tag_name: "span".to_string(),
+    tag_file_path: None
   }).get_outer(),
   [(
     "/entry.pc", r#"
@@ -2973,7 +2975,6 @@ case! {
   )]
 }
 
-
 case! {
   auto_imports_style_from_other_dep,
   [
@@ -3003,8 +3004,6 @@ case! {
   )]
 }
 
-
-
 case! {
   can_define_mixins_on_an_element_without_a_style,
   [
@@ -3033,8 +3032,6 @@ case! {
     "#
   )]
 }
-
-
 
 case! {
   can_define_mixins_within_variant,
@@ -3068,8 +3065,6 @@ case! {
     "#
   )]
 }
-
-
 
 case! {
   can_define_mixins_for_existing_style_with_variant,
@@ -3107,8 +3102,6 @@ case! {
     "#
   )]
 }
-
-
 
 case! {
   moves_node_to_render_node_if_dropped_in_component,
@@ -3176,7 +3169,7 @@ case! {
       "#
     )
   ],
-  
+
   mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
     expression_id: "80f4925f-3".to_string(),
     variant_ids: vec![],
@@ -3200,7 +3193,6 @@ case! {
     "#
   )]
 }
-
 
 case! {
   creates_instance_of_pasted_component,
@@ -3232,7 +3224,6 @@ case! {
     "#
   )]
 }
-
 
 case! {
   imports_pasted_instance_from_other_doc,
@@ -3347,7 +3338,8 @@ case! {
   ],
   mutation::Inner::SetTagName(SetTagName {
     element_id: "80f4925f-3".to_string(),
-    tag_name: "span".to_string()
+    tag_name: "span".to_string(),
+    tag_file_path: None
   }).get_outer(),
   [(
     "/entry.pc", r#"
@@ -3370,7 +3362,8 @@ case! {
   ],
   mutation::Inner::SetTagName(SetTagName {
     element_id: "80f4925f-1".to_string(),
-    tag_name: "span".to_string()
+    tag_name: "span".to_string(),
+    tag_file_path: None
   }).get_outer(),
   [(
     "/entry.pc", r#"
@@ -3380,7 +3373,6 @@ case! {
     "#
   )]
 }
-
 
 case! {
   can_prepend_a_child_in_a_document,
@@ -3425,6 +3417,257 @@ case! {
     span a1
     span a
     component A {
+    }
+    "#
+  )]
+}
+
+case! {
+  can_change_a_tag_to_an_instance_from_another_doc,
+  [
+    (
+      "/entry.pc", r#"
+        public component A {
+          render div
+        }
+
+        span
+      "#
+    ),
+    (
+      "/test.pc", r#"
+        public component B {
+          render div
+        }
+      "#
+    )
+  ],
+
+
+  mutation::Inner::SetTagName(SetTagName {
+    element_id: "80f4925f-4".to_string(),
+    tag_name: "B".to_string(),
+    tag_file_path: Some("/test.pc".to_string())
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    import "./test.pc" as module
+    public component A {
+      render div
+    }
+
+    module.B
+    "#
+  )]
+}
+
+case! {
+  can_change_a_tag_to_an_instance_from_same_doc,
+  [
+    (
+      "/entry.pc", r#"
+        public component A {
+          render div
+        }
+
+        span
+      "#
+    ),
+    (
+      "/test.pc", r#"
+        public component B {
+          render div
+        }
+      "#
+    )
+  ],
+
+
+  mutation::Inner::SetTagName(SetTagName {
+    element_id: "80f4925f-4".to_string(),
+    tag_name: "A".to_string(),
+    tag_file_path: Some("/entry.pc".to_string())
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    public component A {
+      render div
+    }
+
+    A
+    "#
+  )]
+}
+case! {
+  can_add_a_str_parameter,
+  [
+    (
+      "/entry.pc", r#"
+        span
+      "#
+    )
+  ],
+
+
+  mutation::Inner::SetElementParameter(SetElementParameter {
+    target_id: "80f4925f-1".to_string(),
+    parameter_id: None,
+    parameter_name: "a".to_string(),
+    parameter_value: "\"abba\"".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    span(a: "abba")
+    "#
+  )]
+}
+
+case! {
+  can_add_a_ref_parameter,
+  [
+    (
+      "/entry.pc", r#"
+        span
+      "#
+    )
+  ],
+
+
+  mutation::Inner::SetElementParameter(SetElementParameter {
+    target_id: "80f4925f-1".to_string(),
+    parameter_id: None,
+    parameter_name: "a".to_string(),
+    parameter_value: "abba".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    span(a: abba)
+    "#
+  )]
+}
+
+case! {
+  can_add_a_bool_parameter,
+  [
+    (
+      "/entry.pc", r#"
+        span
+      "#
+    )
+  ],
+
+
+  mutation::Inner::SetElementParameter(SetElementParameter {
+    target_id: "80f4925f-1".to_string(),
+    parameter_id: None,
+    parameter_name: "a".to_string(),
+    parameter_value: "false".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    span(a: false)
+    "#
+  )]
+}
+
+case! {
+  can_change_an_existing_parameter,
+  [
+    (
+      "/entry.pc", r#"
+        span(a: "abba")
+      "#
+    )
+  ],
+
+
+  mutation::Inner::SetElementParameter(SetElementParameter {
+    target_id: "80f4925f-3".to_string(),
+    parameter_id: Some("80f4925f-2".to_string()),
+    parameter_name: "a".to_string(),
+    parameter_value: "baab".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    span(a: baab)
+    "#
+  )]
+}
+
+case! {
+  removes_a_param_if_the_value_is_empty,
+  [
+    (
+      "/entry.pc", r#"
+        span(a: "abba")
+      "#
+    )
+  ],
+
+
+  mutation::Inner::SetElementParameter(SetElementParameter {
+    target_id: "80f4925f-3".to_string(),
+    parameter_id: Some("80f4925f-2".to_string()),
+    parameter_name: "a".to_string(),
+    parameter_value: "".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    span
+    "#
+  )]
+}
+
+case! {
+  can_set_attributes_on_components,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render div
+        }
+      "#
+    )
+  ],
+
+
+  mutation::Inner::SetElementParameter(SetElementParameter {
+    target_id: "80f4925f-3".to_string(),
+    parameter_id: None,
+    parameter_name: "a".to_string(),
+    parameter_value: "b".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div(a: b)
+    }
+    "#
+  )]
+}
+
+case! {
+  can_set_attributes_on_components_without_render_node,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+        }
+      "#
+    )
+  ],
+
+
+  mutation::Inner::SetElementParameter(SetElementParameter {
+    target_id: "80f4925f-1".to_string(),
+    parameter_id: None,
+    parameter_name: "a".to_string(),
+    parameter_value: "b".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div(a: b)
     }
     "#
   )]

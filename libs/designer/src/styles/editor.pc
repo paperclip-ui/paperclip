@@ -1,3 +1,4 @@
+import "./sidebar.pc" as module
 import "./theme.pc" as theme
 import "./left-sidebar.pc" as leftSidebar
 import "./right-sidebar.pc" as rightSidebar
@@ -5,9 +6,53 @@ import "./center-panels.pc" as centerPanels
 import "./resource-modal.pc" as assetsModal
 
 token iconSize var(theme.fontSize03)
-component NodeIcon {
-    render div
+/**
+ * @bounds(x: -36, y: -1211, width: 1024, height: 768)
+*/
+
+public component EditorPanels {
+    render div {
+        style {
+            display: flex
+            flex: 1
+            z-index: 3
+            gap: var(theme.space05)
+            position: relative
+            height: 100%
+            justify-content: space-between
+            pointer-events: none
+        }
+        slot children
+    }
 }
+
+/**
+ * @bounds(x: 0, y: 0, width: 2648, height: 1753)
+*/
+
+public component Editor {
+    render div {
+        style extends theme.fontDefault {
+            width: 100vw
+            height: 100vh
+            background: var(theme.canvasColor)
+        }
+        slot children {
+            EditorPanels panels {
+                module.SidebarContainer {
+                    leftSidebar.LeftSidebarPreview leftSidebar
+                }
+                centerPanels.Preview centerPanels
+                module.SidebarContainer {
+                    rightSidebar.RightSidebar rightPanel
+                }
+            }
+            assetsModal.Container
+        }
+    }
+}
+
+
 
 public component Artboard {
     render div(style: style) {
@@ -20,16 +65,6 @@ public component Artboard {
             slot title
         }
         slot children
-    }
-}
-
-component ArtboardPreview {
-    render div {
-        style {
-            width: 400px
-            height: 300px
-            background: white
-        }
     }
 }
 
@@ -56,70 +91,4 @@ public component CanvasInner {
         }
         slot children
     }
-}
-
-public component EditorPanels {
-    render div {
-        style {
-            display: flex
-            flex: 1
-            z-index: 3
-            gap: var(theme.space05)
-            position: relative
-            height: 100%
-            justify-content: space-between
-            pointer-events: none
-        }
-        slot children
-    }
-}
-
-component FooterBar {
-    render div {
-        style extends panel {
-            width: 100%
-            height: 30px
-        }
-    }
-}
-
-public component Editor {
-    render div {
-        style extends theme.fontDefault {
-            width: 100vw
-            height: 100vh
-            background: var(theme.canvasColor)
-        }
-        slot children
-    }
-}
-
-/**
- * @bounds(x: 10, y: 0, width: 1384, height: 1166)
-*/
-
-Editor {
-    Canvas {
-        CanvasInner {
-            style {
-                left: 1178px
-                top: -144px
-                position: relative
-                width: 1384
-                height: 1166
-            }
-            Artboard(style: "left: 50%; top: 50%; position: absolute; transform: translate(-50%, -50%);") {
-                insert title {
-                    text "this should work!"
-                }
-                ArtboardPreview
-            }
-        }
-    }
-    EditorPanels panels {
-        leftSidebar.LeftSidebarPreview leftSidebar
-        centerPanels.Preview centerPanels
-        rightSidebar.Preview
-    }
-    assetsModal.Container
 }

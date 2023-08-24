@@ -3,6 +3,10 @@ import "./theme.pc" as theme
 import "./input.pc" as input
 import "./etc.pc" as etc
 
+/**
+ * @bounds(x: 0, y: -5, width: 1024, height: 768)
+*/
+
 component ColorPickerPopup {
     render sidebar.SidebarPopup {
         insert header {

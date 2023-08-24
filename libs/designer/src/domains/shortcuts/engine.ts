@@ -1,6 +1,6 @@
 import { Dispatch, Engine } from "@paperclip-ui/common";
 import { DesignerEvent } from "../../events";
-import { DesignerState } from "../../state";
+import { DesignerState, getTargetExprId } from "../../state";
 import { createKeyDownEvent } from "../keyboard/events";
 import {
   ALLOW_DEFAULTS,
@@ -35,19 +35,20 @@ export const createShortcutsEngine =
 
     window.document.addEventListener("keydown", onKeyDown);
 
-    const handleGoToMainComponent = (state: DesignerState) => {
-      const element = ast.getExprById(state.selectedTargetId, state.graph);
-      const dep = ast.getInstanceDefinitionDependency(element, state.graph);
+    const handleGoToMain = (state: DesignerState) => {
+      const { expr: element } = ast.getExprByVirtId(
+        getTargetExprId(state),
+        state.graph
+      );
+
+      const dep = ast.getOwnerDependency(element.id, state.graph);
       history.redirect(routes.editor(dep.path));
     };
 
-    const handleCommand = (command: ShortcutCommand, state: DesignerState) => {
-      switch (command) {
-        case ShortcutCommand.GoToMainComponent: {
-          return handleGoToMainComponent(state);
-        }
-      }
-    };
+    const handleCommand = (
+      command: ShortcutCommand,
+      state: DesignerState
+    ) => {};
 
     const handleEvent = (event: DesignerEvent, state: DesignerState) => {
       if (event.type === "shortcuts/itemSelected") {

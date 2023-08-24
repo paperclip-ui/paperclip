@@ -7,13 +7,25 @@ use path_absolutize::*;
 use std::fs;
 use std::path::Path;
 
+pub enum FSItemKind {
+    File,
+    Directory,
+}
+
+pub struct FSItem {
+    pub kind: FSItemKind,
+    pub path: String,
+}
+
 pub trait FileReader: Clone {
     fn read_file<'content>(&self, path: &str) -> Result<Box<[u8]>>;
     fn get_file_size(&self, path: &str) -> Result<u64>;
     fn file_exists(&self, path: &str) -> bool;
+    fn read_directory(&self, path: &str) -> Result<Vec<FSItem>>;
 }
 pub trait FileWriter<Content>: Clone {
     fn write_file<'content>(&self, path: &str, content: Content) -> std::io::Result<()>;
+    fn create_directory<'content>(&self, path: &str) -> std::io::Result<()>;
 }
 
 #[derive(Default, Clone)]
@@ -32,6 +44,27 @@ impl FileReader for LocalFileReader {
             Ok(metadata.len())
         } else {
             Err(Error::msg(format!("file \"{}\" not found", path)))
+        }
+    }
+    fn read_directory(&self, path: &str) -> Result<Vec<FSItem>> {
+        let dir = Path::new(path);
+        if dir.is_dir() {
+            let mut items = vec![];
+            for entry in fs::read_dir(dir)? {
+                let entry = entry?;
+                let path = entry.path();
+                items.push(FSItem {
+                    kind: if path.is_dir() {
+                        FSItemKind::Directory
+                    } else {
+                        FSItemKind::File
+                    },
+                    path: path.clone().into_os_string().into_string().unwrap(),
+                })
+            }
+            Ok(items)
+        } else {
+            Err(Error::msg(format!("directory \"{}\" not found", path)))
         }
     }
     fn file_exists(&self, path: &str) -> bool {

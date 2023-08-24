@@ -142,9 +142,9 @@ add_case! {
         return React.createElement("span", {
             "key": "80f4925f-2",
             "ref": ref
-        }, [
+        }, 
             "Hello"
-        ]);
+        );
     };
     _A.displayName = "A";
     export const A = React.memo(React.forwardRef(_A));
@@ -210,11 +210,11 @@ add_case! {
         return React.createElement("span", {
             "key": "80f4925f-2",
             "ref": ref
-        }, [
+        }, 
             React.createElement("div", {
               "key": "80f4925f-1"
             })
-        ]);
+        );
     };
     _A.displayName = "A";
     export const A = React.memo(React.forwardRef(_A));
@@ -253,9 +253,9 @@ add_case! {
         return React.createElement("div", {
             "key": "80f4925f-2",  
             "ref": ref
-        }, [
+        }, 
             props.abba
-        ]);
+        );
     };
     _A.displayName = "A";
     export const A = React.memo(React.forwardRef(_A));
@@ -298,9 +298,9 @@ add_case! {
             "a", 
             React.createElement("div", {
               "key": "80f4925f-3"
-            }, [
+            }, 
                 "b"
-            ])
+            )
         ];
     };
     _A.displayName = "A";
@@ -502,12 +502,12 @@ add_case! {
       return React.createElement("div", {
           "key": "80f4925f-12",
           "ref": ref
-      }, [
+      }, 
           React.createElement(A, {
               "$$scopeClassName": "_B-80f4925f-11",
               "key": "80f4925f-11"
           })
-      ]);
+      );
   };
   _B.displayName = "B";
   const B = React.memo(React.forwardRef(_B));
@@ -579,14 +579,14 @@ add_case! {
             "className": "_A-80f4925f-7" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
             "key": "80f4925f-7",
             "ref": ref
-        }, [
+        },
             
             React.createElement("span", {
                 "key": "80f4925f-6"
-            }, [
+            }, 
                 "something"
-            ])
-        ]);
+            )
+        );
     };
     _A.displayName = "A";
     const A = React.memo(React.forwardRef(_A));

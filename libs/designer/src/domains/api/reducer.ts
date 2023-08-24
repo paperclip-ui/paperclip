@@ -1,10 +1,12 @@
 import produce from "immer";
 import {
   DesignerState,
-  findVirtId,
-  findVirtNode,
+  FSItemKind,
+  getCurrentFilePath,
   getGraphComponents,
   isSelectableExpr,
+  setDirItems,
+  setTargetExprId,
 } from "../../state";
 import { DesignerEngineEvent, GraphLoaded } from "./events";
 import { DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
@@ -26,6 +28,35 @@ export const apiReducer = (
         newState.resourceFilePaths = event.payload;
       });
     }
+    case "designer-engine/directoryRead": {
+      return produce(state, (newState) => {
+        if (event.payload.isRoot) {
+          const dirParts = event.payload.path.split("/");
+          dirParts.pop();
+          newState.projectDirectory = {
+            kind: FSItemKind.Directory,
+            path: event.payload.path,
+            items: [],
+          };
+        }
+        newState.projectDirectory = setDirItems(
+          newState.projectDirectory,
+          event.payload.path,
+          event.payload.items.map((item) =>
+            item.kind === 0
+              ? {
+                  path: item.path,
+                  items: [],
+                  kind: FSItemKind.Directory,
+                }
+              : {
+                  path: item.path,
+                  kind: FSItemKind.File,
+                }
+          )
+        );
+      });
+    }
     case "designer-engine/documentOpened":
       state = produce(state, (newState) => {
         newState.currentDocument = event.payload;
@@ -37,9 +68,10 @@ export const apiReducer = (
           if (expr.kind === ast.ExprKind.Variant) {
             newState.activeVariantId = expr.expr.id;
           } else if (isSelectableExpr(expr)) {
-            newState.selectedTargetId = expr.expr.id;
+            setTargetExprId(newState, expr.expr.id);
           }
         }
+        newState.renderedFilePath = getCurrentFilePath(state);
         newState.insertedNodeIds = [];
       });
       return state;

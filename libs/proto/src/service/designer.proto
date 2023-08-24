@@ -4,6 +4,7 @@ import "ast_mutate/mod.proto";
 import "ast/graph.proto";
 import "virt/html.proto";
 import "virt/css.proto";
+import "ast/base.proto";
 import "language_service/pc.proto";
 import "virt/module.proto";
 
@@ -14,6 +15,9 @@ service Designer {
   rpc GetGraph(Empty) returns (stream ast.graph.Graph);
   rpc OnEvent(Empty) returns (stream DesignServerEvent);
   rpc UpdateFile(UpdateFileRequest) returns (Empty);
+  rpc ReadDirectory(ReadDirectoryRequest) returns (ReadDirectoryResponse);
+  rpc OpenCodeEditor(OpenCodeEditorRequest) returns (Empty);
+  rpc CreateFile(CreateFileRequest) returns (Empty);
   rpc CreateDesignFile(CreateDesignFileRequest) returns (CreateDesignFileResponse);
   rpc GetResourceFiles(Empty) returns (stream ResourceFiles);
   rpc ApplyMutations(ApplyMutationsRequest) returns (ApplyMutationsResult);
@@ -22,6 +26,37 @@ service Designer {
   rpc Redo(Empty) returns (Empty);
   rpc Save(Empty) returns (Empty);
 }
+
+message CreateFileRequest {
+  string path = 1;
+  FSItemKind kind = 2;
+}
+
+message OpenCodeEditorRequest {
+  string path = 1;
+  ast.base.Range range = 2;
+}
+
+
+message ReadDirectoryRequest {
+  string path = 1;
+}
+
+message ReadDirectoryResponse {
+  string path = 1;
+  repeated FSItem items = 2;
+}
+
+enum FSItemKind {
+  Directory = 0;
+  File = 1;
+}
+
+message FSItem {
+  FSItemKind kind = 1;
+  string path = 2;
+}
+
 
 message Empty {
 }

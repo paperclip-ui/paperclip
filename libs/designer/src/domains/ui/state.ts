@@ -11,9 +11,14 @@ import {
   findVirtNode,
   getAllFrameBounds,
   getCurrentDependency,
+  getCurrentPreviewFrameBoxes,
+  getExprBounds,
+  getNodeBox,
   getNodeInfoAtCurrentPoint,
   getPreviewFrameBoxes,
+  getTargetExprId,
   highlightNode,
+  setTargetExprId,
 } from "../../state";
 import {
   CanvasMouseUp,
@@ -39,7 +44,7 @@ export const handleDragEvent = (
   event: ResizerPathStoppedMoving | ResizerPathMoved
 ) => {
   return produce(state, (newState) => {
-    const node = findVirtNode(newState.selectedTargetId, newState) as any as
+    const node = findVirtNode(getTargetExprId(state), newState) as any as
       | VirtElement
       | VirtText;
 
@@ -147,15 +152,32 @@ export const expandVirtIds = (
   };
 };
 
+const findSelectableExprId = (virtNodeId: string, state: DesignerState) => {
+  if (virtNodeId.includes(".")) {
+    return virtNodeId;
+  }
+
+  const { expr } = ast.getExprByVirtId(virtNodeId, state.graph);
+  const parent = ast.getParentExprInfo(expr.id, state.graph);
+  if (parent.kind === ast.ExprKind.Render) {
+    const component = ast.getParentExprInfo(parent.expr.id, state.graph);
+    return component.expr.id;
+  }
+
+  return virtNodeId;
+};
+
 export const selectNode = (
   virtNodeId: string | null,
   shiftKey: boolean,
   metaKey: boolean,
   designer: DesignerState
 ) => {
+  virtNodeId = virtNodeId && findSelectableExprId(virtNodeId, designer);
+
   designer = produce(designer, (newDesigner) => {
     if (!virtNodeId) {
-      newDesigner.selectedTargetId = null;
+      setTargetExprId(newDesigner, null);
       return;
     }
     const ancestorIds = ast.getAncestorVirtIdsFromShadow(
@@ -168,27 +190,23 @@ export const selectNode = (
       expandVirtIds([virtNodeId, ...ancestorIds], newDesigner)
     );
 
-    newDesigner.selectedTargetId = virtNodeId;
+    setTargetExprId(newDesigner, virtNodeId);
   });
 
   return designer;
 };
 
+const boundsIsNull = (bounds: Box) =>
+  bounds.x + bounds.y + bounds.width + bounds.height === 0;
+
 // https://github.com/crcn/tandem/blob/10.0.0/packages/dashboard/src/state/index.ts#L1304
 export const centerEditorCanvas = (
   editor: DesignerState,
-  innerBounds?: Box,
+  innerBounds: Box,
   zoomOrZoomToFit: boolean | number = true
 ) => {
-  if (!innerBounds) {
-    innerBounds = getAllFrameBounds(editor);
-  }
-
   // no windows loaded
-  if (
-    innerBounds.x + innerBounds.y + innerBounds.width + innerBounds.height ===
-    0
-  ) {
+  if (boundsIsNull(innerBounds)) {
     console.warn(` Cannot center when bounds has no size`);
     return editor;
   }
@@ -249,87 +267,51 @@ export const pruneDanglingRects = (state: DesignerState) => {
   });
 };
 
+const allFrameRectsLoaded = (state: DesignerState) => {
+  const frames = getCurrentPreviewFrameBoxes(state);
+  return (
+    frames.length ===
+    uniq(Object.values(state.rects).map((rect) => rect.frameIndex)).length
+  );
+};
+
 export const maybeCenterCanvas = (editor: DesignerState, force?: boolean) => {
+  if (!allFrameRectsLoaded(editor)) {
+    return editor;
+  }
+
   if (
     force ||
     (!editor.centeredInitial &&
       editor.canvas.size?.width &&
       editor.canvas.size?.height)
   ) {
-    editor = { ...editor, centeredInitial: true };
-
     let targetBounds: Box;
     const currentFrameIndex = editor.canvas.activeFrame;
-
-    if (currentFrameIndex != null) {
+    const currentExprId = getTargetExprId(editor);
+    if (currentExprId != null) {
+      targetBounds = getNodeBox(currentExprId, editor);
+    } else if (currentFrameIndex != null) {
       const frameBoxes = getPreviewFrameBoxes(
         editor.currentDocument?.paperclip?.html
       );
       targetBounds = frameBoxes[currentFrameIndex];
     }
 
+    if (!targetBounds) {
+      targetBounds = getAllFrameBounds(editor);
+    }
+
+    // ONLY center if there are actual bounds
+    if (!targetBounds || boundsIsNull(targetBounds)) {
+      return editor;
+    }
+
+    editor = { ...editor, centeredInitial: true };
+
     editor = centerEditorCanvas(editor, targetBounds);
 
     return editor;
   }
   return editor;
-};
-
-export const includeExtraRects = (state: DesignerState) =>
-  produce(state, (newState) => {
-    const components = ast.getDocumentComponents(
-      getCurrentDependency(state).document
-    );
-
-    for (const component of components) {
-      includeComponentRects(component, newState);
-    }
-  });
-
-const includeComponentRects = (
-  component: Component,
-  newState: WritableDraft<DesignerState>
-) => {
-  const renderNode = ast.getComponentRenderNode(component);
-  const renderNodeRect = newState.rects[renderNode?.expr.id];
-  if (!renderNodeRect) {
-    return;
-  }
-
-  newState.rects[component.id] = newState.rects[renderNode.expr.id];
-
-  // DELETE render node since the component should always be selected
-  delete newState.rects[renderNode.expr.id];
-
-  const slots = ast.getComponentSlots(component, newState.graph);
-
-  for (const slot of slots) {
-    includeSlotRects(slot, renderNodeRect.frameIndex, newState);
-  }
-};
-const includeSlotRects = (
-  slot: Slot,
-  frameIndex: number,
-  newState: WritableDraft<DesignerState>
-) => {
-  const slotDescendents = ast.flattenSlot(slot);
-
-  const descendantRects: Box[] = [];
-  for (const id in slotDescendents) {
-    const expr = slotDescendents[id];
-    if (
-      expr.kind === ast.ExprKind.TextNode ||
-      expr.kind === ast.ExprKind.Element
-    ) {
-      const rect = newState.rects[expr.expr.id];
-      if (rect) {
-        descendantRects.push(rect);
-      }
-    }
-
-    newState.rects[slot.id] = {
-      frameIndex,
-      ...mergeBoxes(descendantRects),
-    };
-  }
 };

@@ -80,22 +80,27 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetStyleDeclarations> {
     }
     fn visit_component(&mut self, expr: &mut ast::pc::Component) -> VisitorResult<()> {
         if expr.get_id() == &self.mutation.expression_id {
-            
-
-
-            let render_expr: &mut Render = get_or_short!(expr.body.iter_mut().find(|x| {
-                matches!(x.get_inner(), ast::pc::component_body_item::Inner::Render(_))
-            }), VisitorResult::Continue).try_into().expect("Must be render");
+            let render_expr: &mut Render = get_or_short!(
+                expr.body.iter_mut().find(|x| {
+                    matches!(
+                        x.get_inner(),
+                        ast::pc::component_body_item::Inner::Render(_)
+                    )
+                }),
+                VisitorResult::Continue
+            )
+            .try_into()
+            .expect("Must be render");
 
             let el = render_expr.node.as_mut().expect("Node must exist");
 
             let checksum = el.checksum().to_string();
             let parent_id = el.get_id().to_string();
-            
+
             let mut body = match el.get_inner_mut() {
                 ast::pc::node::Inner::Element(el) => &mut el.body,
                 ast::pc::node::Inner::Text(el) => &mut el.body,
-                _ => return VisitorResult::Continue
+                _ => return VisitorResult::Continue,
             };
 
             return add_child_style(

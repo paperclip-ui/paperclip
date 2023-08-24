@@ -67,6 +67,9 @@ impl FileReader for LocalIO {
     fn read_file(&self, path: &str) -> Result<Box<[u8]>> {
         LocalFileReader::default().read_file(path)
     }
+    fn read_directory(&self, path: &str) -> Result<Vec<paperclip_common::fs::FSItem>> {
+        LocalFileReader::default().read_directory(path)
+    }
     fn get_file_size(&self, path: &str) -> Result<u64> {
         LocalFileReader::default().get_file_size(path)
     }

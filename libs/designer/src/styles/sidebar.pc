@@ -1,146 +1,215 @@
-
 import "./theme.pc" as theme
 
 public style panel extends theme.card
 
-public component Sidebar {
-  render div root {
-    style extends theme.fontDefault {
-      width: 300px
-      flex-shrink: 0
-      display: flex
-      flex-direction: column
-      gap: var(theme.space05)
-      padding: var(theme.space05)
-      overflow: scroll 
-      pointer-events: all
+public component SidebarContainer {
+    variant right trigger {
+        ".right"
     }
-    slot children
-  }
+    variant left trigger {
+        ".left"
+    }
+    render div(class: class, style: style) {
+        style {
+            display: flex
+            padding: var(theme.space05)
+            pointer-events: all
+        }
+        style variant left {
+            flex-direction: row
+        }
+        style variant right {
+            flex-direction: row-reverse
+        }
+        slot children {
+            Sidebar
+        }
+        div sidebar(onMouseDown: onSidebarMouseDown) {
+            style {
+                background: transparent
+                position: relative
+                width: 4px
+                height: 100%
+                cursor: ew-resize
+                flex-shrink: 0
+            }
+        }
+    }
 }
 
+/**
+ * @bounds(x: 1329, y: -71, width: 243, height: 768)
+*/
+
+public component Sidebar {
+    render div root(class: class, style: style) {
+        style extends theme.fontDefault {
+            width: 100%
+            flex-shrink: 0
+            display: flex
+            flex-direction: row
+            gap: 0px
+            padding: 0px
+            pointer-events: all
+        }
+        div panels {
+            style {
+                height: 100%
+                width: 100%
+                display: flex
+                flex-direction: column
+                gap: var(theme.space05)
+            }
+            slot children {
+                SidebarPanel {
+                    text "panel 2"
+                }
+                SidebarPanel {
+                    text "panel 2"
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: 1598, y: -49, width: 189, height: 369)
+*/
 
 public component SidebarPanel {
-  render div {
-    style extends panel {
-      flex: 1
+    render div {
+        style extends panel {
+            flex: 1
+            height: 100%
+            overflow: scroll
+            display: flex
+            flex-direction: column
+        }
+        slot children
     }
-    slot children
-  }
 }
 
-
 public component SidebarSection {
-  variant first trigger {
-    ":first-child"
-  }
-  render div root {
-    style {
-      border-top: 1px solid var(theme.borderColor)
+    variant fill trigger {
+        ".fill"
     }
-    style variant first {
-      border-top: none
+    variant first trigger {
+        ":first-child"
     }
-    slot children
-  }
+    render div root(class: class) {
+        style {
+            border-top: 1px solid var(theme.borderColor)
+            display: flex
+            flex-direction: column
+        }
+        style variant fill {
+            height: 100%
+            overflow: hidden
+        }
+        style variant first {
+            border-top: none
+        }
+        slot children
+    }
 }
 
 public component SidebarPanelHeader {
-  render div {
-    style extends theme.fontHeader {
-      padding: var(theme.space05)
-      padding-bottom: 0px
-
+    render div {
+        style extends theme.fontHeader {
+            padding: var(theme.space05)
+        }
+        div {
+            style {
+                display: flex
+                justify-content: space-between
+            }
+            slot children
+        }
     }
-    div {
-      style {
-        display: flex
-        justify-content: space-between
-
-      }
-
-      slot children
-    }
-  }
 }
 
 public component SidebarPanelContent {
-  variant flush trigger { ".flush" }
-  render div(class:class) {
-    style {
-      padding: var(theme.space05)
+    variant scroll trigger {
+        ".scroll"
     }
-    style variant flush {
-      padding: var(theme.space05) 0px
+    render div(class: class) {
+        style {
+            padding: var(theme.space05)
+        }
+        style variant scroll {
+            height: 100%
+            overflow: scroll
+        }
+        style variant flush {
+            padding: var(theme.space05) 0px
+        }
+        slot children
     }
-    slot children
-  }
 }
 
-
 public component SidebarHeader {
-  render div {
-    style {
-      display: flex
+    render div {
+        style {
+            display: flex
+        }
+        slot children
     }
-    slot children
-  }
 }
 
 public component SidebarHeaderButton {
-  variant selected
-  render div root {
-    style extends theme.easeIn {
-      padding: var(theme.space03) var(theme.space05)
-      font-size: var(theme.fontSize01)
-      text-align: center
-      width: 100%
-      border-bottom: 2px solid transparent
+    variant selected
+    render div root {
+        style extends theme.easeIn {
+            padding: var(theme.space03) var(theme.space05)
+            font-size: var(theme.fontSize01)
+            text-align: center
+            width: 100%
+            border-bottom: 2px solid transparent
+        }
+        style variant selected {
+            border-color: var(theme.selectedColor)
+        }
+        slot children
     }
-    style variant selected {
-      border-color: var(theme.selectedColor)
-    }
-    slot children
-  }
 }
 
 public component SidebarPopup {
-  render div {
-    style extends panel {
-        position: fixed
-        flex-shrink: 0
-        transform: translate(calc(-100% - var(theme.space07)))
-        z-index: 1024
-        min-width: 200px
-    }
-    div {
-      style {
-          padding: var(theme.space04)
-          display: flex
-          justify-content: space-between
-          font-weight: 600
-          padding-bottom: var(theme.space04)
-      }
-      slot header
-
-      button(onClick: onCloseClick) {
-        style extends theme.reset {
-          cursor: pointer
+    render div {
+        style extends panel {
+            position: fixed
+            flex-shrink: 0
+            transform: translate(calc(-100% - var(theme.space07)))
+            z-index: 1024
+            min-width: 200px
         }
-        text "×"
-      }
+        div {
+            style {
+                padding: var(theme.space04)
+                display: flex
+                justify-content: space-between
+                font-weight: 600
+                padding-bottom: var(theme.space04)
+            }
+            slot header
+            button(onClick: onCloseClick) {
+                style extends theme.reset {
+                    cursor: pointer
+                }
+                text "×"
+            }
+        }
+        div {
+            slot children
+        }
     }
-    div {
-      slot children
-    }
-  }
 }
 
 public component SidebarPopupPanelContent {
-  render div {
-      style {
-        padding: var(theme.space04)
-      }
-      slot children
-  }
+    render div {
+        style {
+            padding: var(theme.space04)
+        }
+        slot children
+    }
 }
+

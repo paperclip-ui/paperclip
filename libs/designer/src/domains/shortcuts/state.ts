@@ -5,20 +5,21 @@ import {
 } from "../../modules/shortcuts/base";
 import { KeyDown } from "../keyboard/events";
 import { isKeyComboDown } from "./utils";
-import { DesignerState } from "../../state";
+import { DesignerState, getTargetExprId } from "../../state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { memoize } from "@paperclip-ui/common";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 
 export enum ShortcutCommand {
   InsertElement,
-  GoToMainComponent,
+  GoToMain,
   InsertResource,
   InsertText,
   ConvertToComponent,
   ShowHideUI,
   ConvertToSlot,
   WrapInElement,
+  OpenCodeEditor,
   Cut,
   Copy,
   Delete,
@@ -39,9 +40,9 @@ export const getEntityShortcuts = memoize(
   (id: string, graph: Graph): MenuItem<ShortcutCommand>[] => {
     const entity = ast.getExprInfoById(id, graph);
     const isInstance =
-      entity &&
-      entity.kind === ast.ExprKind.Element &&
-      ast.isInstance(entity.expr, graph);
+      (id && id.includes(".")) ||
+      (entity?.kind === ast.ExprKind.Element &&
+        ast.isInstance(entity.expr, graph));
 
     return [
       {
@@ -64,17 +65,24 @@ export const getEntityShortcuts = memoize(
         command: ShortcutCommand.WrapInElement,
       },
       { kind: MenuItemKind.Divider },
+      {
+        kind: MenuItemKind.Option,
+        label: "Open code editor",
+        shortcut: ["alt", "shift", "c"],
+        command: ShortcutCommand.OpenCodeEditor,
+      },
       // Instance specific
+
       ...((isInstance
         ? [
             {
               kind: MenuItemKind.Option,
-              label: "Go to main component",
-              command: ShortcutCommand.GoToMainComponent,
+              label: "Go to main",
+              command: ShortcutCommand.GoToMain,
             },
-            { kind: MenuItemKind.Divider },
           ]
         : []) as MenuItem<ShortcutCommand>[]),
+      { kind: MenuItemKind.Divider },
       {
         kind: MenuItemKind.Option,
         label: "Cut",
@@ -99,14 +107,14 @@ export const getEntityShortcuts = memoize(
         shortcut: ["backspace"],
         command: ShortcutCommand.Delete,
       },
-    ];
+    ].filter(Boolean) as MenuItem<any>[];
   }
 );
 
 export const getSelectedEntityShortcuts = (
   state: DesignerState
 ): MenuItem<ShortcutCommand>[] =>
-  getEntityShortcuts(state.selectedTargetId, state.graph);
+  getEntityShortcuts(getTargetExprId(state), state.graph);
 
 export const getGlobalShortcuts = (
   state: DesignerState

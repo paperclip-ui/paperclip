@@ -1,7 +1,7 @@
 import { BaseEvent } from "@paperclip-ui/common";
 import { Box, Point, Size } from "../../state/geom";
 import { UpdateVariantTrigger } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
-import { DNDKind, InsertMode, LayerKind } from "../../state";
+import { DNDKind, FSItem, InsertMode, LayerKind } from "../../state";
 
 export type DashboardAddFileConfirmed = BaseEvent<
   "ui/dashboardAddFileConfirmed",
@@ -72,6 +72,15 @@ export type CanvasPanned = BaseEvent<
   }
 >;
 
+export type AttributeChanged = BaseEvent<
+  "ui/attributeChanged",
+  {
+    attributeId?: string;
+    name: string;
+    value: string;
+  }
+>;
+
 export type LayerLeafClicked = BaseEvent<
   "ui/layerLeafClicked",
   { virtId: string }
@@ -98,11 +107,13 @@ export type StyleDeclarationsChanged = BaseEvent<
 export type CanvasPanStart = BaseEvent<"ui/canvasPanStart">;
 
 export type CanvasMouseMoved = BaseEvent<"ui/canvasMouseMoved", Point>;
+export type TextValueChanged = BaseEvent<"ui/textValueChanged", string>;
 export type CanvasMouseLeave = BaseEvent<"ui/canvasMouseLeave">;
 export type ElementTagChanged = BaseEvent<
   "ui/elementTagChanged",
   {
-    newTagName: string;
+    tagName: string;
+    sourceFilePath?: string;
   }
 >;
 export type ExprNavigatorDroppedNode = BaseEvent<
@@ -165,6 +176,12 @@ export type InsertModeButtonClick = BaseEvent<
   "ui/insertModeButtonClick",
   { mode: InsertMode }
 >;
+
+export type FileNavigatorItemClicked = BaseEvent<
+  "ui/FileNavigatorItemClicked",
+  FSItem
+>;
+
 export type InsertElementReleased = BaseEvent<"ui/insertElementReleased", Box>;
 
 export type UIEvent =
@@ -178,6 +195,7 @@ export type UIEvent =
   | BoundsChanged
   | CanvasResized
   | ToolsLayerDrop
+  | FileNavigatorItemClicked
   | ResizerPathMoved
   | ResizerPathStoppedMoving
   | EditVariantClicked
@@ -185,10 +203,12 @@ export type UIEvent =
   | ResourceModalDragLeft
   | ResourceModalBackgroundClicked
   | RemoveVariantButtonClicked
+  | TextValueChanged
   | InsertModeButtonClick
   | InsertElementReleased
   | CanvasMouseLeave
   | RectsCaptured
+  | AttributeChanged
   | CanvasPanned
   | CanvasPanStart
   | CanvasMouseDown

@@ -36,7 +36,7 @@ export const Layers = () => {
   }
 
   return (
-    <sidebarStyles.SidebarSection>
+    <sidebarStyles.SidebarSection class="fill">
       <sidebarStyles.SidebarPanelHeader>
         Entities
         <AddLayerButton />
@@ -108,17 +108,15 @@ const ComponentLeaf = memo(
       <Leaf
         id={component.id}
         className={cx("component", { container: renderNode?.body?.length > 0 })}
-        text={
-          <>
-            {component.name}
-            <styles.TagType>
-              {render?.node.element
-                ? render?.node.element.tagName
-                : render?.node.text
-                ? "text"
-                : undefined}
-            </styles.TagType>
-          </>
+        text={<>{component.name}</>}
+        altText={
+          <styles.TagType>
+            {render?.node.element
+              ? render?.node.element.tagName
+              : render?.node.text
+              ? "text"
+              : undefined}
+          </styles.TagType>
         }
         depth={depth}
         instanceOf={instanceOf}
@@ -200,54 +198,22 @@ const InstanceLeaf = ({
   const graph = useSelector(getGraph);
   const component = ast.getInstanceComponent(instance, graph);
   const render = ast.getComponentRenderExpr(component);
-  const [shadowVisible, setShadowVisible] = useState(false);
-  const onShadowIconClick = () => setShadowVisible(!shadowVisible);
   const expandedVirtIds = useSelector(getExpandedVirtIds);
-  const slots = getComponentSlots(component);
-
-  // const shouldExpandShadow = expandedVirtIds.some((virtId) =>
-  //   virtId.includes(instance.id)
-  // );
-
-  // useEffect(() => {
-  //   if (shouldExpandShadow) {
-  //     setShadowVisible(shouldExpandShadow);
-  //   }
-  // }, [shouldExpandShadow]);
 
   return (
     <Leaf
       id={instance.id}
       className={cx("instance", {
-        container: shadowVisible || instance.body.length > 0,
+        container: instance.body.length > 0,
       })}
-      text={
-        <>
-          {instance.name || "Instance"}
-          <styles.TagType>{instance.tagName}</styles.TagType>
-        </>
-      }
+      text={<>{instance.name || "Instance"}</>}
+      altText={<styles.TagType>{instance.tagName}</styles.TagType>}
       depth={depth}
       instanceOf={instanceOf}
-      controls={
-        <div title="Open shadow">
-          <styles.ShadowIcon
-            class={cx({ visible: shadowVisible })}
-            onClick={onShadowIconClick}
-          />
-        </div>
-      }
     >
       {() => {
         return (
           <>
-            {shadowVisible && render && (
-              <NodeLeaf
-                expr={render.node}
-                depth={depth + 1}
-                instanceOf={[...(instanceOf || []), instance.id]}
-              />
-            )}
             {instance.body.map((child) => (
               <NodeLeaf
                 key={ast.getNodeInner(child).id}
@@ -272,12 +238,8 @@ const NativeElementLeaf = ({
     <Leaf
       id={element.id}
       className={cx("element", { container: element.body.length > 0 })}
-      text={
-        <>
-          {element.name || "Element"}{" "}
-          <styles.TagType>{element.tagName}</styles.TagType>
-        </>
-      }
+      text={<>{element.name || "Element"} </>}
+      altText={<styles.TagType>{element.tagName}</styles.TagType>}
       depth={depth}
       instanceOf={instanceOf}
     >

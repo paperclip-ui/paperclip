@@ -18,7 +18,7 @@ export type ContextMenuProps = {
 
 export const ContextMenu = ({ children, menu }: ContextMenuProps) => {
   const otherRef = useRef<HTMLElement>();
-  const ref = children.props.ref || otherRef;
+  const ref = otherRef;
 
   const [anchorStyle, setAnchorStyle] = useState<any>(null);
   const onContextMenu = (event: React.MouseEvent<any>) => {
@@ -106,7 +106,7 @@ const ContextMenuOption = ({
     <styles.ContextMenuItem
       keyCommand={shortcut ? prettyKeyCombo(shortcut) : null}
       class={cx({ disabled: enabled === false })}
-      onMouseDown={onSelect}
+      onClick={onSelect}
     >
       {label}
     </styles.ContextMenuItem>

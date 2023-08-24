@@ -23,7 +23,6 @@ type FieldInputProps = {
   options?: string[];
   autoFocus?: boolean;
   placeholder?: string;
-  onChange?: (value: string) => void;
   onSelect: (value: NewDeclValue, details) => void;
   onTab?: (event: React.KeyboardEvent) => void;
   type: css.InputType;
@@ -34,7 +33,6 @@ export const DeclarationValue = ({
   isDefault,
   placeholder,
   autoFocus,
-  onChange = noop,
   options,
   type,
   onSelect: onSelect2,
@@ -114,7 +112,7 @@ export const DeclarationValue = ({
             <inputStyles.TokenMenuContent
               style={{ "--color": token.cssValue }}
               preview={token.value}
-              file={token.dependency.path.split("/").pop()}
+              context={token.dependency.path.split("/").pop()}
             >
               {token.atom.name}
             </inputStyles.TokenMenuContent>
@@ -143,9 +141,6 @@ export const DeclarationValue = ({
 
   return (
     <SuggestionMenu
-      onChange={([value]) => {
-        onChange(value);
-      }}
       onSelect={onSelect}
       onOtherSelect={onOtherSelect}
       values={[value]}

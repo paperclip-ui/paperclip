@@ -9,12 +9,14 @@ import { DesignerEngineEvent } from "./events";
 import { DesignerEvent } from "../../events";
 import {
   AddLayerMenuItemClicked,
+  AttributeChanged,
   // DesignerEvent,
   ElementTagChanged,
   ExprNavigatorDroppedNode,
   InstanceVariantToggled,
   StyleDeclarationsChanged,
   StyleMixinsSet,
+  TextValueChanged,
   ToolsLayerDrop,
   VariantEdited,
 } from "../ui/events";
@@ -24,9 +26,13 @@ import {
   DesignerState,
   DNDKind,
   findVirtNode,
+  FSItem,
+  FSItemKind,
   getCurrentFilePath,
   getInsertBox,
   getNodeInfoAtCurrentPoint,
+  getRenderedFilePath,
+  getTargetExprId,
   InsertMode,
   LayerKind,
 } from "../../state";
@@ -44,6 +50,7 @@ import { Box, getScaledBox, getScaledPoint, roundBox } from "../../state/geom";
 import {
   getCurrentDependency,
   getSelectedExpression,
+  getSelectedExpressionInfo,
   getStyleableTargetId,
 } from "../../state/pc";
 import {
@@ -59,6 +66,8 @@ import {
   ToolsTextEditorChanged,
 } from "../ui/events";
 import { ExpressionPasted } from "../clipboard/events";
+import { Num, Range } from "@paperclip-ui/proto/lib/generated/ast/base";
+import { SimpleExpression } from "@paperclip-ui/proto/lib/generated/ast/pc";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -121,6 +130,17 @@ const createActions = (
           dispatch({ type: "designer-engine/apiError" });
         },
       });
+    },
+    readDirectory(inputPath: string) {
+      client.ReadDirectory({ path: inputPath }).then(({ path, items }) => {
+        dispatch({
+          type: "designer-engine/directoryRead",
+          payload: { items, path, isRoot: inputPath === "." },
+        });
+      });
+    },
+    openCodeEditor(path: string, range: Range) {
+      client.OpenCodeEditor({ path, range });
     },
     syncResourceFiles() {
       client.GetResourceFiles({}).subscribe({
@@ -274,12 +294,7 @@ const createEventHandler = (actions: Actions) => {
     state: DesignerState,
     prevState: DesignerState
   ) => {
-    const node = findVirtNode(prevState.selectedTargetId, prevState) as
-      | VirtTextNode
-      | VirtElement;
-
-    // could be expression
-    handleDeleteExpression(node?.sourceId || prevState.selectedTargetId, state);
+    handleDeleteExpression(getTargetExprId(prevState), state);
   };
 
   const handleFrameBoundsChanged = (
@@ -287,7 +302,7 @@ const createEventHandler = (actions: Actions) => {
     bounds: Box,
     prevState: DesignerState
   ) => {
-    const node = findVirtNode(prevState.selectedTargetId, prevState) as
+    const node = findVirtNode(getTargetExprId(prevState), prevState) as
       | VirtTextNode
       | VirtElement;
 
@@ -325,7 +340,7 @@ const createEventHandler = (actions: Actions) => {
             variantIds,
             expressionId: node.sourceId,
             declarations: Object.entries(
-              state.styleOverrides[prevState.selectedTargetId]
+              state.styleOverrides[getTargetExprId(prevState)]
             ).map(([name, value]) => {
               return { name, value: String(value) };
             }),
@@ -381,13 +396,13 @@ const createEventHandler = (actions: Actions) => {
       {
         setStyleDeclarations: {
           variantIds,
-          expressionId: state.selectedTargetId,
+          expressionId: getTargetExprId(state),
           declarations: style.filter((kv) => kv.value !== ""),
         },
       },
       {
         deleteStyleDeclarations: {
-          expressionId: state.selectedTargetId,
+          expressionId: getTargetExprId(state),
           declarationNames: style
             .filter((kv) => kv.value === "")
             .map((kv) => kv.name),
@@ -415,7 +430,7 @@ const createEventHandler = (actions: Actions) => {
       return;
     }
 
-    let targetExpressionId = state.selectedTargetId;
+    let targetExpressionId = getTargetExprId(state);
 
     if (!targetExpressionId) {
       targetExpressionId = state.currentDocument.paperclip.html.sourceId;
@@ -499,8 +514,38 @@ const createEventHandler = (actions: Actions) => {
     actions.applyChanges([
       {
         setTextNodeValue: {
-          textNodeId: state.selectedTargetId,
+          textNodeId: getTargetExprId(state),
           value: event.payload.text,
+        },
+      },
+    ]);
+  };
+
+  const handleTextValueChanged = (
+    event: TextValueChanged,
+    state: DesignerState
+  ) => {
+    actions.applyChanges([
+      {
+        setTextNodeValue: {
+          textNodeId: getTargetExprId(state),
+          value: event.payload,
+        },
+      },
+    ]);
+  };
+
+  const handleAttributeChanged = (
+    event: AttributeChanged,
+    state: DesignerState
+  ) => {
+    actions.applyChanges([
+      {
+        setElementParameter: {
+          targetId: getSelectedExpression(state).id,
+          parameterId: event.payload.attributeId,
+          parameterName: event.payload.name,
+          parameterValue: event.payload.value,
         },
       },
     ]);
@@ -513,7 +558,7 @@ const createEventHandler = (actions: Actions) => {
     actions.applyChanges([
       {
         setStyleMixins: {
-          targetExprId: state.selectedTargetId,
+          targetExprId: getTargetExprId(state),
           mixinIds,
           variantIds: state.selectedVariantIds,
         },
@@ -537,23 +582,46 @@ const createEventHandler = (actions: Actions) => {
   const handleConvertToComponent = (state: DesignerState) => {
     // Do not allow for nested instances to be converted to components.
     // Or, at least provide a confirmation for this.
-    if (!state.selectedTargetId.includes(".")) {
+    if (!getTargetExprId(state).includes(".")) {
       actions.applyChanges([
         {
           convertToComponent: {
-            expressionId: state.selectedTargetId,
+            expressionId: getTargetExprId(state),
           },
         },
       ]);
     }
   };
 
+  const openCodeEditor = (state: DesignerState) => {
+    const { kind, expr } = getSelectedExpressionInfo(state);
+    let range: Range;
+    switch (kind) {
+      case ast.ExprKind.Element:
+      case ast.ExprKind.TextNode:
+      case ast.ExprKind.Component:
+      case ast.ExprKind.Slot:
+      case ast.ExprKind.Insert:
+      case ast.ExprKind.Style:
+      case ast.ExprKind.Trigger:
+      case ast.ExprKind.Atom:
+        range = expr.range;
+        break;
+    }
+    if (!range) {
+      console.error(`Cannot open code editor for ${kind}`);
+      return;
+    }
+
+    actions.openCodeEditor(getRenderedFilePath(state), range);
+  };
+
   const handleWrapInElement = (state: DesignerState) => {
-    if (!state.selectedTargetId.includes(".")) {
+    if (!getTargetExprId(state).includes(".")) {
       actions.applyChanges([
         {
           wrapInElement: {
-            targetId: state.selectedTargetId,
+            targetId: getTargetExprId(state),
           },
         },
       ]);
@@ -563,11 +631,11 @@ const createEventHandler = (actions: Actions) => {
   const handleConvertToSlot = (state: DesignerState) => {
     // Do not allow for nested instances to be converted to components.
     // Or, at least provide a confirmation for this.
-    if (!state.selectedTargetId.includes(".")) {
+    if (!getTargetExprId(state).includes(".")) {
       actions.applyChanges([
         {
           convertToSlot: {
-            expressionId: state.selectedTargetId,
+            expressionId: getTargetExprId(state),
           },
         },
       ]);
@@ -585,6 +653,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case ShortcutCommand.ConvertToComponent: {
         return handleConvertToComponent(state);
+      }
+      case ShortcutCommand.OpenCodeEditor: {
+        return openCodeEditor(state);
       }
       case ShortcutCommand.WrapInElement: {
         return handleWrapInElement(state);
@@ -669,7 +740,8 @@ const createEventHandler = (actions: Actions) => {
       {
         setTagName: {
           elementId: expr.id,
-          tagName: event.payload.newTagName,
+          tagName: event.payload.tagName,
+          tagFilePath: event.payload.sourceFilePath,
         },
       },
     ]);
@@ -677,11 +749,10 @@ const createEventHandler = (actions: Actions) => {
 
   const handleHistoryChanged = (
     event: HistoryChanged,
-    state: DesignerState,
-    prevState: DesignerState
+    state: DesignerState
   ) => {
     const filePath = getCurrentFilePath(state);
-    if (getCurrentFilePath(state) !== getCurrentFilePath(prevState)) {
+    if (filePath && filePath !== getRenderedFilePath(state)) {
       actions.openFile(filePath);
     }
   };
@@ -702,7 +773,7 @@ const createEventHandler = (actions: Actions) => {
     event: ModulesEvaluated,
     state: DesignerState
   ) => {
-    const activeFile = getCurrentFilePath(state);
+    const activeFile = getRenderedFilePath(state);
     if (event.filePaths.includes(activeFile)) {
       actions.openFile(activeFile);
     }
@@ -715,12 +786,18 @@ const createEventHandler = (actions: Actions) => {
     actions.applyChanges([
       {
         toggleInstanceVariant: {
-          instanceId: state.selectedTargetId,
+          instanceId: getTargetExprId(state),
           variantId: event.payload,
           comboVariantIds: state.selectedVariantIds,
         },
       },
     ]);
+  };
+
+  const handleFileNavigatorItemClicked = (item: FSItem) => {
+    if (item.kind === FSItemKind.Directory) {
+      actions.readDirectory(item.path);
+    }
   };
 
   return (
@@ -731,6 +808,9 @@ const createEventHandler = (actions: Actions) => {
     switch (event.type) {
       case "ui/canvasMouseUp": {
         return handleCanvasMouseUp(newState, prevState);
+      }
+      case "ui/FileNavigatorItemClicked": {
+        return handleFileNavigatorItemClicked(event.payload);
       }
       case "shortcuts/itemSelected": {
         return handleShortcutCommand(
@@ -769,6 +849,12 @@ const createEventHandler = (actions: Actions) => {
       case "ui/toolsTextEditorChanged": {
         return handleToolsTextEditorChanged(event, newState);
       }
+      case "ui/attributeChanged": {
+        return handleAttributeChanged(event, newState);
+      }
+      case "ui/textValueChanged": {
+        return handleTextValueChanged(event, newState);
+      }
       case "designer-engine/serverEvent": {
         return handleServerEvent(event.payload, newState);
       }
@@ -795,7 +881,7 @@ const createEventHandler = (actions: Actions) => {
         return handleElementTagChanged(event, newState);
       }
       case "history-engine/historyChanged": {
-        return handleHistoryChanged(event, newState, prevState);
+        return handleHistoryChanged(event, newState);
       }
       case "ui/dashboardAddFileConfirmed": {
         return handleAddFile(event);
@@ -817,9 +903,16 @@ const handleApiError = () => {
  */
 
 const bootstrap = (
-  { openFile, syncGraph, syncEvents, syncResourceFiles }: Actions,
+  {
+    openFile,
+    syncGraph,
+    syncEvents,
+    syncResourceFiles,
+    readDirectory,
+  }: Actions,
   initialState: DesignerState
 ) => {
+  readDirectory(".");
   syncEvents();
   syncResourceFiles();
   const filePath = getCurrentFilePath(initialState);

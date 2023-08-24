@@ -167,8 +167,8 @@ export namespace ast {
     }
   );
 
-  const getChildExprInner = (
-    expr: DocumentBodyItem | Node | ComponentBodyItem
+  export const getChildExprInner = (
+    expr: DocumentBodyItem | Node | ComponentBodyItem | Slot
   ): InnerExpressionInfo => {
     if ((expr as DocumentBodyItem).atom) {
       return { expr: (expr as DocumentBodyItem).atom, kind: ExprKind.Atom };
@@ -246,7 +246,6 @@ export namespace ast {
 
     const dep = getOwnerDependency(id, graph);
     if (!dep) {
-      console.error(`dependency missing!`);
       return ancestorIds;
     }
     const exprsById = flattenDocument(dep.document);
@@ -347,6 +346,42 @@ export namespace ast {
     );
   };
 
+  export const getAllInstancesOfComponent = memoize(
+    (component: Component, graph: Graph) => {
+      const componentDep = getOwnerDependency(component.id, graph);
+
+      const allInstances: Element[] = [];
+      for (const path in graph.dependencies) {
+        const dep = graph.dependencies[path];
+        const instances = Object.values(flattenDocument(dep.document))
+          .filter((el) => {
+            if (el.kind !== ExprKind.Element) {
+              return false;
+            }
+
+            if (componentDep.path === dep.path) {
+              return (
+                el.expr.namespace == null && el.expr.tagName === component.name
+              );
+            }
+
+            const imp = getDocumentImport(el.expr.namespace, dep.document);
+
+            return (
+              imp &&
+              dep.imports[imp.path] === componentDep.path &&
+              el.expr.tagName === component.name
+            );
+          })
+          .map((info) => info.expr);
+
+        allInstances.push(...instances);
+      }
+
+      return allInstances;
+    }
+  );
+
   export const getComponentSlots = (
     component: Component,
     graph: Graph
@@ -361,6 +396,22 @@ export namespace ast {
           .map((info) => info.expr) as Slot[])
       : [];
   };
+
+  export const getComponentPropNames = memoize((component: Component) => {
+    const propNames: string[] = [];
+    const descendents = Object.values(flattenComponent(component));
+    for (const descendent of descendents) {
+      if (descendent.kind === ExprKind.Element) {
+        for (const param of descendent.expr.parameters) {
+          if (param.value.reference) {
+            propNames.push(param.value.reference.path[0]);
+          }
+        }
+      }
+    }
+
+    return propNames;
+  });
 
   export const getComponentInstances = memoize(
     (componentId: string, graph: Graph) => {

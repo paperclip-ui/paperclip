@@ -1,6 +1,7 @@
 import {
   ApplyMutationsResult,
   FileResponse,
+  ReadDirectoryResponse,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { BaseEvent } from "@paperclip-ui/common";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
@@ -14,6 +15,15 @@ export type ChangesApplied = BaseEvent<
   "designer-engine/changesApplied",
   ApplyMutationsResult
 >;
+export type DirectoryRead = BaseEvent<
+  "designer-engine/directoryRead",
+  {
+    isRoot: boolean;
+    path: string;
+    items: ReadDirectoryResponse["items"];
+  }
+>;
+
 export type APIError = BaseEvent<"designer-engine/apiError">;
 export type GraphLoaded = BaseEvent<"designer-engine/graphLoaded", Graph>;
 export type ServerEvent = BaseEvent<
@@ -32,6 +42,7 @@ export type DesignFileCreated = BaseEvent<
 export type DesignerEngineEvent =
   | DocumentOpened
   | ChangesApplied
+  | DirectoryRead
   | APIError
   | GraphLoaded
   | ServerEvent

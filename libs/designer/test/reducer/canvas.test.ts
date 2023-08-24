@@ -182,6 +182,18 @@ describe(__filename + "#", () => {
           shiftKey: false,
         },
       },
+
+      // focus IN
+      {
+        type: "ui/canvasMouseUp",
+        payload: {
+          position: { x: 10, y: 10 },
+          timestamp: 100,
+          metaKey: false,
+          ctrlKey: false,
+          shiftKey: false,
+        },
+      },
     ];
 
     state = events.reduce(rootReducer, state);
@@ -206,7 +218,7 @@ describe(__filename + "#", () => {
       },
       extraState: {
         rects: {
-          "b0f3b8a2-6": {
+          "b0f3b8a2-6.b0f3b8a2-3": {
             x: 0,
             y: 0,
             width: 100,
@@ -223,7 +235,6 @@ describe(__filename + "#", () => {
         },
       },
     });
-    console.log(JSON.stringify(state, null, 2));
 
     const events: DesignerEvent[] = [
       { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
@@ -288,7 +299,6 @@ describe(__filename + "#", () => {
         },
       },
     });
-    console.log(JSON.stringify(state, null, 2));
 
     const events: DesignerEvent[] = [
       { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
@@ -309,67 +319,239 @@ describe(__filename + "#", () => {
     expect(state.highlightedNodeId).toEqual("b0f3b8a2-12.b0f3b8a2-7");
   });
 
-  it("When focused on an instance of an instance, its child is highlighted", async () => {
-    let state = await loadState({
-      files: {
-        "/entry.pc": `
+  describe("hovering", () => {
+    it("Can hover a canvas element", async () => {
+      let state = await loadState({
+        files: {
+          "/entry.pc": `
+          div
+        `,
+        },
+        extraState: {
+          rects: {
+            "b0f3b8a2-1": {
+              x: 0,
+              y: 0,
+              width: 100,
+              height: 100,
+              frameIndex: 0,
+            },
+          },
+        },
+      });
+
+      const events: DesignerEvent[] = [
+        { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
+        {
+          type: "ui/canvasMouseUp",
+          payload: {
+            position: { x: 10, y: 10 },
+            timestamp: 100,
+            metaKey: false,
+            ctrlKey: false,
+            shiftKey: false,
+          },
+        },
+
+        // Double click!
+        {
+          type: "ui/canvasMouseUp",
+          payload: {
+            position: { x: 10, y: 10 },
+            timestamp: 100,
+            metaKey: false,
+            ctrlKey: false,
+            shiftKey: false,
+          },
+        },
+      ];
+
+      state = events.reduce(rootReducer, state);
+
+      expect(state.highlightedNodeId).toEqual("b0f3b8a2-1");
+    });
+
+    it("Can over over an instance", async () => {
+      let state = await loadState({
+        files: {
+          "/entry.pc": `
           component A {
-            render div {
-              slot child {
-                div
-              }
+            render div
+          }
+
+          A
+        `,
+        },
+        extraState: {
+          rects: {
+            "b0f3b8a2-4.b0f3b8a2-1": {
+              x: 0,
+              y: 0,
+              width: 100,
+              height: 100,
+              frameIndex: 0,
+            },
+          },
+        },
+      });
+
+      const events: DesignerEvent[] = [
+        { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
+      ];
+
+      state = events.reduce(rootReducer, state);
+
+      expect(state.highlightedNodeId).toEqual("b0f3b8a2-4");
+    });
+
+    it("when double clicked into instance, highlights child", async () => {
+      let state = await loadState({
+        files: {
+          "/entry.pc": `
+          component A {
+            render div
+          }
+
+          A
+        `,
+        },
+        extraState: {
+          rects: {
+            "b0f3b8a2-4.b0f3b8a2-1": {
+              x: 0,
+              y: 0,
+              width: 100,
+              height: 100,
+              frameIndex: 0,
+            },
+          },
+        },
+      });
+
+      const events: DesignerEvent[] = [
+        { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
+        {
+          type: "ui/canvasMouseUp",
+          payload: {
+            position: { x: 10, y: 10 },
+            timestamp: 100,
+            metaKey: false,
+            ctrlKey: false,
+            shiftKey: false,
+          },
+        },
+
+        // Double click!
+        {
+          type: "ui/canvasMouseUp",
+          payload: {
+            position: { x: 10, y: 10 },
+            timestamp: 100,
+            metaKey: false,
+            ctrlKey: false,
+            shiftKey: false,
+          },
+        },
+      ];
+
+      state = events.reduce(rootReducer, state);
+
+      expect(state.highlightedNodeId).toEqual("b0f3b8a2-4.b0f3b8a2-1");
+    });
+
+    it("Can hover over a component", async () => {
+      let state = await loadState({
+        files: {
+          "/entry.pc": `
+          component A {
+            render span
+          }
+        `,
+        },
+        extraState: {
+          rects: {
+            "b0f3b8a2-2": {
+              x: 0,
+              y: 0,
+              width: 100,
+              height: 100,
+              frameIndex: 0,
+            },
+          },
+        },
+      });
+
+      const events: DesignerEvent[] = [
+        { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
+      ];
+
+      state = events.reduce(rootReducer, state);
+
+      expect(state.highlightedNodeId).toEqual("b0f3b8a2-2");
+    });
+
+    it("Can select a node of an instance that is a render node of a component", async () => {
+      let state = await loadState({
+        files: {
+          "/entry.pc": `
+          component A {
+            render span {
+              text "select me!"
             }
           }
 
           component B {
-            render A {
-              insert child {
-                span
-              }
-            }
+            render A
           }
-
-          B
         `,
-      },
-      extraState: {
-        scopedElementId: "b0f3b8a2-11",
-        rects: {
-          "b0f3b8a2-11.b0f3b8a2-8": {
-            x: 0,
-            y: 0,
-            width: 100,
-            height: 100,
-            frameIndex: 0,
-          },
-          "b0f3b8a2-11.b0f3b8a2-6": {
-            x: 0,
-            y: 0,
-            width: 100,
-            height: 100,
-            frameIndex: 0,
+        },
+        extraState: {
+          rects: {
+            "b0f3b8a2-5.b0f3b8a2-2": {
+              x: 0,
+              y: 0,
+              width: 100,
+              height: 100,
+              frameIndex: 0,
+            },
+            "b0f3b8a2-5.b0f3b8a2-1": {
+              x: 0,
+              y: 0,
+              width: 100,
+              height: 100,
+              frameIndex: 0,
+            },
           },
         },
-      },
+      });
+
+      const events: DesignerEvent[] = [
+        { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
+        {
+          type: "ui/canvasMouseUp",
+          payload: {
+            position: { x: 10, y: 10 },
+            timestamp: 100,
+            metaKey: false,
+            ctrlKey: false,
+            shiftKey: false,
+          },
+        },
+        {
+          type: "ui/canvasMouseUp",
+          payload: {
+            position: { x: 10, y: 10 },
+            timestamp: 100,
+            metaKey: false,
+            ctrlKey: false,
+            shiftKey: false,
+          },
+        },
+      ];
+
+      state = events.reduce(rootReducer, state);
+
+      expect(state.highlightedNodeId).toEqual("b0f3b8a2-5.b0f3b8a2-1");
     });
-    console.log(JSON.stringify(state, null, 2));
-
-    const events: DesignerEvent[] = [
-      { type: "ui/canvasMouseMoved", payload: { x: 10, y: 10 } },
-      {
-        type: "ui/canvasMouseUp",
-        payload: {
-          position: { x: 10, y: 10 },
-          timestamp: 100,
-          metaKey: false,
-          ctrlKey: false,
-          shiftKey: false,
-        },
-      },
-    ];
-
-    state = events.reduce(rootReducer, state);
-
-    expect(state.highlightedNodeId).toEqual("b0f3b8a2-12.b0f3b8a2-7");
   });
 });

@@ -6,6 +6,7 @@
     "https://rsms.me/inter/inter.css",
     "src/styles/globals.css"
   ],
+  "openCodeEditorCommandTemplate": "code --goto \"<file>:<line>:<column>\"",
   "compilerOptions": [
     {
       "emit": ["yew.rs:rs", "css", "react.js:js", "react.d.ts:d.ts"],

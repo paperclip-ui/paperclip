@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   getSelectedExpressionInfo,
   getExprBounds,
-  getStyleableTargetId,
 } from "@paperclip-ui/designer/src/state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { VariantsSection } from "./VariantsSection";
@@ -20,13 +19,10 @@ import {
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { getEditorState } from "@paperclip-ui/designer/src/state";
 import { FrameSection } from "./FrameSection";
-import { MultiSelectInput } from "@paperclip-ui/designer/src/components/MultiSelectInput";
-import {
-  SelectInput,
-  SelectOption,
-} from "@paperclip-ui/designer/src/components/SelectInput";
-import { TAG_NAMES } from "./constants";
+import { ExprTagNameField } from "./TagInput";
 import { AttributesSection } from "./AttributesSection";
+import { UsedBySection } from "./UsedBySection";
+import { TextValueInput } from "./TextValueInput";
 
 export const PropertiesPanel = () => {
   const expr = useSelector(getSelectedExpressionInfo);
@@ -43,93 +39,48 @@ export const PropertiesPanel = () => {
       <sidebarStyles.SidebarSection>
         <sidebarStyles.SidebarPanelContent>
           <inputStyles.Fields>
-            {expr.kind === ast.ExprKind.Element ||
-            expr.kind === ast.ExprKind.TextNode ||
-            expr.kind === ast.ExprKind.Atom ||
-            expr.kind === ast.ExprKind.Style ||
-            expr.kind === ast.ExprKind.Slot ||
-            expr.kind === ast.ExprKind.Component ? (
-              <IDField expr={expr} />
-            ) : null}
+            <IDField />
+            <TextValueInput />
+            <ExprTagNameField />
             {expr.kind === ast.ExprKind.Component && <VariantsSection />}
-            {(expr.kind === ast.ExprKind.Element ||
-              expr.kind === ast.ExprKind.Component) && (
-              <>
-                <ElementTagField expr={expr} />
-              </>
-            )}
           </inputStyles.Fields>
         </sidebarStyles.SidebarPanelContent>
       </sidebarStyles.SidebarSection>
+      <AttributesSection />
       {bounds && <FrameSection bounds={bounds} />}
-      {/* {expr.kind === ast.ExprKind.Element && (
-        <AttributesSection expr={expr.expr} />
-      )} */}
+      <UsedBySection />
     </sidebarStyles.SidebarPanel>
   );
 };
 
-type IDFieldProps = {
-  expr:
-    | ast.BaseExprInfo<Element, ast.ExprKind.Element>
-    | ast.BaseExprInfo<TextNode, ast.ExprKind.TextNode>
-    | ast.BaseExprInfo<Style, ast.ExprKind.Style>
-    | ast.BaseExprInfo<Atom, ast.ExprKind.Atom>
-    | ast.BaseExprInfo<Atom, ast.ExprKind.Slot>
-    | ast.BaseExprInfo<Component, ast.ExprKind.Component>;
-};
-
-const IDField = ({ expr }: IDFieldProps) => {
+const IDField = () => {
+  const expr = useSelector(getSelectedExpressionInfo);
   const dispatch = useDispatch<DesignerEvent>();
 
   const onSave = (value: string) => {
     dispatch({ type: "ui/idChanged", payload: { value } });
   };
 
-  return (
-    <inputStyles.Field
-      name="Id"
-      input={<TextInput value={expr.expr.name} onSave={onSave} />}
-    />
-  );
-};
-
-const TAG_OPTIONS = TAG_NAMES.map((tag) => (
-  <SelectOption key={tag} label={tag} value={tag} />
-));
-
-type ElemengTagFieldProps = {
-  expr:
-    | ast.BaseExprInfo<Element, ast.ExprKind.Element>
-    | ast.BaseExprInfo<Component, ast.ExprKind.Component>;
-};
-
-const ElementTagField = ({ expr }: ElemengTagFieldProps) => {
-  const dispatch = useDispatch<DesignerEvent>();
-
-  const el =
-    expr.kind === ast.ExprKind.Component
-      ? ast.getComponentRenderNode(expr.expr)
-      : expr;
-
-  if (el?.kind !== ast.ExprKind.Element) {
+  if (
+    expr.kind !== ast.ExprKind.Element &&
+    expr.kind !== ast.ExprKind.TextNode &&
+    expr.kind !== ast.ExprKind.Atom &&
+    expr.kind !== ast.ExprKind.Style &&
+    expr.kind !== ast.ExprKind.Slot &&
+    expr.kind !== ast.ExprKind.Component
+  ) {
     return null;
   }
 
-  const onSave = (value: string) => {
-    dispatch({
-      type: "ui/elementTagChanged",
-      payload: { newTagName: value },
-    });
-  };
-
   return (
     <inputStyles.Field
-      name="Tag"
+      name="Id"
       input={
-        <SelectInput value={el.expr.tagName} onChange={onSave}>
-          {TAG_OPTIONS}
-        </SelectInput>
+        <TextInput
+          placeholder="Undefined"
+          value={expr.expr.name}
+          onSave={onSave}
+        />
       }
     />
   );

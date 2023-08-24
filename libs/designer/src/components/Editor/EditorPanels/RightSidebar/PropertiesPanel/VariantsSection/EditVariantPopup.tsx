@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
-import { TriggerBodyItem } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import {
+  TriggerBodyItem,
+  TriggerBodyItemCombo,
+} from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { UpdateVariantTrigger } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
 import produce from "immer";
 
@@ -15,7 +18,7 @@ export type EditVariantPopupProps = {
   onSave?: ({ name, triggers }: SaveOptions) => void;
   onClose?: () => void;
   name?: string;
-  triggers?: TriggerBodyItem[];
+  triggers?: TriggerBodyItemCombo[];
 };
 
 export const EditVariantPopup = (props: EditVariantPopupProps) => {
@@ -83,11 +86,11 @@ export const EditVariantPopup = (props: EditVariantPopupProps) => {
   );
 };
 
-const mapTriggers = (triggers: TriggerBodyItem[]) =>
-  triggers.map((trigger) => {
+const mapTriggers = (triggers: TriggerBodyItemCombo[]) =>
+  triggers.map((combo) => {
     return {
-      bool: trigger.bool?.value,
-      str: trigger.str?.value,
+      bool: combo.items.find((item) => item.bool)?.bool.value,
+      str: combo.items.find((item) => item.str)?.str.value,
     };
   });
 

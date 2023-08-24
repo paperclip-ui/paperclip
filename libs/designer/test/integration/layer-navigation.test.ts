@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { getTargetExprId } from "@paperclip-ui/designer/src/state";
 import { startDesigner, waitUntilDesignerReady } from "../controls";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
@@ -19,7 +20,8 @@ describe.skip(__filename + "#", () => {
       type: "ui/layerLeafClicked",
       payload: { virtId: "4f0e8e93-1" },
     });
-    expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-1");
+
+    expect(getTargetExprId(designer.machine.getState())).toEqual("4f0e8e93-1");
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([
       "4f0e8e93-1",
       "4f0e8e93-2",
@@ -49,7 +51,7 @@ describe.skip(__filename + "#", () => {
       type: "ui/layerLeafClicked",
       payload: { virtId: "4f0e8e93-2" },
     });
-    expect(designer.machine.getState().selectedTargetId).toEqual("4f0e8e93-2");
+    expect(getTargetExprId(designer.machine.getState())).toEqual("4f0e8e93-2");
 
     expect(designer.machine.getState().expandedLayerVirtIds).toEqual([
       "4f0e8e93-2",

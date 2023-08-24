@@ -1,11 +1,7 @@
-import React, {
-  JSXElementConstructor,
-  ReactElement,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { ReactElement, useCallback, useMemo } from "react";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { SuggestionMenu, SuggestionMenuItem } from "../SuggestionMenu";
+import { noop } from "lodash";
 
 type SelectInputProps = {
   children: ReactElement<SelectOptionProps>[];
@@ -28,7 +24,12 @@ export const SelectInput = ({
   const selectedOption = options.find((option) => option.props.value === value);
 
   return (
-    <SuggestionMenu menu={() => options} values={[value]} onSelect={onSelect}>
+    <SuggestionMenu
+      menu={() => options}
+      values={[value]}
+      onSelect={onSelect}
+      onOtherSelect={noop}
+    >
       <inputStyles.Select
         value={selectedOption?.props.label ?? selectedOption?.props.value}
       />

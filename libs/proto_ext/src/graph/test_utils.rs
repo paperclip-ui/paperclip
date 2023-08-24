@@ -27,6 +27,9 @@ impl<'kv> FileReader for MockFS<'kv> {
             Err(Error::msg("file not found"))
         }
     }
+    fn read_directory(&self, _path: &str) -> Result<Vec<paperclip_common::fs::FSItem>> {
+        Err(Error::msg("Not implemented"))
+    }
     fn get_file_size<'content>(&self, path: &str) -> Result<u64> {
         if let Some(content) = self.files.get(path) {
             Ok(content.as_bytes().len() as u64)

@@ -1,6 +1,10 @@
 import { Dispatch, Engine } from "@paperclip-ui/common";
 import { DesignerEvent } from "../../events";
-import { DesignerState, getSelectedExpression } from "../../state";
+import {
+  DesignerState,
+  getSelectedExpression,
+  getTargetExprId,
+} from "../../state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
 export const createClipboardEngine = (
@@ -10,11 +14,11 @@ export const createClipboardEngine = (
   const onCopy = (event: ClipboardEvent) => {
     const state = getState();
 
-    if (!state.selectedTargetId) {
+    if (!getTargetExprId(state)) {
       return;
     }
 
-    const expr = ast.getExprInfoById(state.selectedTargetId, state.graph);
+    const expr = ast.getExprInfoById(getTargetExprId(state), state.graph);
     event.clipboardData.setData("text/plain", JSON.stringify(expr));
     event.preventDefault();
   };

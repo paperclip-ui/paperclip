@@ -59,6 +59,8 @@ import { TodoItem } from "./todo-item.pc";
 Right now Paperclip supports **React**. Other compiler targets in the future may be supported such Svelte, Vue, Rust, PHP, Ruby, etc.
 
 <!--
+
+## Why the hybrid approach?
 ## Why use Paperclip?
 
 Paperclip is intended to make it easier and faster for anyone to contribute to UI development, and in the same codebase. Why is this special?

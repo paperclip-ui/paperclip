@@ -14,9 +14,8 @@ export type SuggestionMenuProps = {
   children: React.ReactElement;
   style?: any;
   multi?: boolean;
-  onChange?: (values: any[]) => void;
-  onSelect?: (values: any[], details: SelectDetails) => void;
-  onOtherSelect?: (value: string, details: SelectDetails) => void;
+  onSelect: (values: any[], details: SelectDetails) => void;
+  onOtherSelect: (value: string, details: SelectDetails) => void;
   menu: () => React.ReactElement[];
 };
 
@@ -25,18 +24,13 @@ export const SuggestionMenu = ({
   children,
   style,
   multi,
-  onChange = noop,
-  onSelect: onSelect2 = noop,
-  onOtherSelect: onOtherSave = noop,
+  onSelect: onSelect2,
+  onOtherSelect: onOtherSave,
   menu,
 }: SuggestionMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [typedValue, setTypedValued] = useState(null);
   const [preselectedIndex, setPreselectedIndex] = useState(0);
-
-  useEffect(() => {
-    onChange([{ value: typedValue }]);
-  }, [typedValue, onChange]);
 
   const oldProps = children.props;
 
@@ -50,7 +44,6 @@ export const SuggestionMenu = ({
   const onBlur = (event: React.FocusEvent | React.KeyboardEvent) => {
     setIsOpen((open) => {
       if (open && typedValue != null) {
-        onChange([{ value: typedValue }]);
         onOtherSave(typedValue, { event });
       }
       return false;
@@ -67,7 +60,6 @@ export const SuggestionMenu = ({
     } else {
       values = [value];
     }
-    onChange(values);
     onSelect2(values, details);
     setIsOpen(false);
   };
@@ -119,7 +111,6 @@ export const SuggestionMenu = ({
       if (value) {
         onSelect(value, { event });
       } else if (typedValue != null) {
-        onChange([{ value: typedValue }]);
         onOtherSave(typedValue, { event });
       }
       setIsOpen(false);
@@ -155,6 +146,7 @@ export const SuggestionMenu = ({
   return (
     <styles.SuggestionContainer
       input={React.cloneElement(children, {
+        key: "input",
         onBlur,
         onFocus,
         onChange: onInputChange,
@@ -162,16 +154,15 @@ export const SuggestionMenu = ({
         onClick,
       })}
       menu={
-        isOpen &&
-        menuOptions.length && (
-          <div ref={anchorRef}>
+        isOpen && menuOptions.length ? (
+          <div ref={anchorRef} key="menu">
             <Portal>
               <styles.SuggestionMenu ref={targetRef} style={style}>
                 {menuOptions}
               </styles.SuggestionMenu>
             </Portal>
           </div>
-        )
+        ) : null
       }
     />
   );

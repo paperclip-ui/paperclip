@@ -458,3 +458,13 @@ add_case! {
         }
     "#
 }
+
+add_case! {
+    can_parse_a_syle_without_body,
+    r#"
+        div {
+            style
+            text "hello"
+        }
+    "#
+}

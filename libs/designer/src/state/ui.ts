@@ -1,7 +1,7 @@
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
-import { DesignerState } from "./core";
+import { DesignerState, getTargetExprId } from "./core";
 import { Box } from "./geom";
-import { findVirtNode, getSelectedId } from "./pc";
+import { findVirtNode } from "./pc";
 import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 
 export const getInsertMode = (state: DesignerState) => state.insertMode;
@@ -30,10 +30,10 @@ export const getResizerMoving = (designer: DesignerState) =>
   designer.resizerMoving;
 
 export const getSelectedNodePath = (designer: DesignerState) => {
-  const nodeId = getSelectedId(designer);
+  const nodeId = getTargetExprId(designer);
   if (!nodeId || !designer.currentDocument) {
     return null;
   }
-  const node = findVirtNode(getSelectedId(designer), designer);
+  const node = findVirtNode(getTargetExprId(designer), designer);
   return virtHTML.getNodePath(node, designer.currentDocument.paperclip.html);
 };

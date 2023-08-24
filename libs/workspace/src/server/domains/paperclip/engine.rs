@@ -73,6 +73,9 @@ impl<TIO: ServerIO> FileReader for VirtGraphIO<TIO> {
             self.ctx.io.read_file(path)
         }
     }
+    fn read_directory(&self, path: &str) -> Result<Vec<paperclip_common::fs::FSItem>> {
+        self.ctx.io.read_directory(path)
+    }
     fn get_file_size(&self, path: &str) -> Result<u64> {
         if let Some(content) = self.ctx.store.lock().unwrap().state.file_cache.get(path) {
             Ok(content.len() as u64)

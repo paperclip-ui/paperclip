@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { forwardRef, useCallback, useEffect, useRef } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/input.pc";
 
 export type TextInputProps = {
@@ -11,12 +11,15 @@ export type TextInputProps = {
   select?: boolean;
 } & UseTextInputProps;
 
-export const TextInput = (props: TextInputProps) => {
+export const TextInput = forwardRef((props: TextInputProps, forwardRef) => {
   const { autoFocus, placeholder, value, onClick } = props;
-  const { onFocus, onChange, ref, onBlur, onKeyDown } = useTextInput(props);
+  const { onFocus, onChange, setRef, onBlur, onKeyDown } = useTextInput(
+    props,
+    forwardRef
+  );
   return (
     <styles.TextInput
-      ref={ref}
+      ref={setRef}
       autoFocus={autoFocus}
       placeholder={placeholder}
       defaultValue={value}
@@ -27,7 +30,7 @@ export const TextInput = (props: TextInputProps) => {
       onKeyDown={onKeyDown}
     />
   );
-};
+});
 
 export type UseTextInputProps = {
   value?: string;
@@ -40,16 +43,19 @@ export type UseTextInputProps = {
   select?: boolean;
 };
 
-export const useTextInput = ({
-  value,
-  select,
-  onChange,
-  onFocus,
-  onSave,
-  onBlur,
-  onEnter,
-  onKeyDown,
-}: UseTextInputProps) => {
+export const useTextInput = (
+  {
+    value,
+    select,
+    onChange,
+    onFocus,
+    onSave,
+    onBlur,
+    onEnter,
+    onKeyDown,
+  }: UseTextInputProps,
+  forwardRef?: any
+) => {
   const ref = useRef<HTMLInputElement>();
   useEffect(() => {
     if (ref.current) {
@@ -94,8 +100,19 @@ export const useTextInput = ({
     }
   };
 
+  const setRef = useCallback((ref2) => {
+    if (forwardRef) {
+      if (typeof forwardRef === "function") {
+        forwardRef(ref2);
+      } else {
+        forwardRef.current = ref2;
+      }
+    }
+    ref.current = ref2;
+  }, []);
+
   return {
-    ref,
+    setRef,
     onBlur: onBlur2,
     onFocus: onFocus2,
     onKeyDown: onKeyDown2,

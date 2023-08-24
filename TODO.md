@@ -1,12 +1,41 @@
 #### Warm up!
 
 - clean up \*.pc files
+
   - re-organize frames
   - add names
 
+- GOALS
+
+  - what's going to make it faster for you to edit doc?
+  - get editor to state where PC UI can be created in PC efficiently
+
+- tests
+  - tests for computing CSS
+
 #### NOW
 
+- generic autocomplete dropdown
+  - refactor decls to use this
+- ability to change tag names
+  - use autocomplete
+  - ability to switch to instance
 - File navigator
+
+  - ability to filter files
+  - ability to move files around
+  - ability to create directory
+  - ability to create design file
+  - ability to drop entities into file navigator
+
+  - ability to open any file
+  - follow-ups:
+    - update entities panel to only show file name _and_ folder
+    - deprecate dashboard view
+    - show "new file" in entities panel
+    - ability to drop entities in folders
+      - when doing so, prompt for new file
+    - ability to drop entities in PC files
 
 - Table component
 - CSS declaration input

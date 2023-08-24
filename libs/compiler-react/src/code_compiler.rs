@@ -65,9 +65,12 @@ fn compile_import(import: &ast::Import, context: &mut Context) {
 }
 
 macro_rules! compile_children {
-    ($expr: expr, $cb: expr, $context: expr) => {{
-        $context.add_buffer("[\n");
-        $context.start_block();
+    ($expr: expr, $cb: expr, $context: expr, $include_ary: expr) => {{
+
+        if $include_ary {
+            $context.add_buffer("[\n");
+            $context.start_block();
+        }
 
         let mut children = $expr.into_iter().peekable();
         while let Some(child) = children.next() {
@@ -80,8 +83,11 @@ macro_rules! compile_children {
                 $context.add_buffer("\n");
             }
         }
-        $context.end_block();
-        $context.add_buffer("]");
+
+        if $include_ary {
+            $context.end_block();
+            $context.add_buffer("]");
+        }
     }};
 }
 
@@ -135,7 +141,7 @@ fn compile_slot(node: &ast::Slot, context: &mut Context) {
 
     if node.body.len() > 0 {
         context.add_buffer(" || ");
-        compile_node_children(&node.body, context);
+        compile_node_children(&node.body, context, true);
     }
 }
 fn compile_element(element: &ast::Element, is_root: bool, context: &mut Context) {
@@ -172,16 +178,17 @@ fn compile_element_children(element: &ast::Element, context: &mut Context) {
 
     context.add_buffer(", ");
 
-    compile_node_children(&element.body, context);
+    compile_node_children(&element.body, context, false);
 }
 
-fn compile_node_children(children: &Vec<ast::Node>, context: &mut Context) {
+fn compile_node_children(children: &Vec<ast::Node>, context: &mut Context, include_ary: bool) {
     compile_children! {
       &children,
       |child: &ast::Node| {
         compile_node(child, context, false)
       },
-      context
+      context,
+      include_ary
     }
 }
 
@@ -292,7 +299,7 @@ fn get_raw_element_attrs<'dependency>(
 }
 
 fn compile_insert(insert: &ast::Insert, context: &mut Context) {
-    compile_node_children(&insert.body, context);
+    compile_node_children(&insert.body, context, true);
 }
 
 fn rename_attrs_for_react(

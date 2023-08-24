@@ -150,6 +150,6 @@ const useCanvas = () => {
     canvasRef,
     actualTransform,
     expanded,
-    activeFrameIndex: canvas.activeFrame,
+    activeFrameIndex: 0,
   };
 };

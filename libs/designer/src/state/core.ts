@@ -35,8 +35,8 @@ export type Canvas = {
   size: Size;
   transform: Transform;
   isExpanded?: boolean;
-  activeFrame?: number;
   scrollPosition: Point;
+  activeFrame?: number;
   mousePosition?: Point;
   mouseDown?: boolean;
 };
@@ -175,7 +175,9 @@ export const getScreenshotUrls = (state: DesignerState) => state.screenshotUrls;
 export const getResourceFilePaths = (state: DesignerState) =>
   state.resourceFilePaths;
 
-export const resetCurrentDocument = (state: DesignerState): DesignerState => ({
+export const resetCurrentDocument = (
+  state: DesignerState | WritableDraft<DesignerState>
+): DesignerState => ({
   ...state,
   currentDocument: null,
   rects: {},

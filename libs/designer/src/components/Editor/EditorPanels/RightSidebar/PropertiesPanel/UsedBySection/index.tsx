@@ -35,6 +35,7 @@ export const UsedBySection = () => {
             const instancePath = ast.getOwnerDependencyPath(instance.id, graph);
             return (
               <UsedBy
+                key={instance.id}
                 onClick={() => {
                   history.redirect(routes.editor(instancePath, instance.id));
                 }}

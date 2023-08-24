@@ -369,7 +369,7 @@ const patchImportedSheets = (
   for (let i = 0; i < update.length; i++) {
     const [oldItem, newItem] = update[i];
     if (oldItem !== newItem) {
-      if (oldItem.css) {
+      if (oldItem.css && newItem.css) {
         patchStyleElement(
           styleContainer.childNodes[i] as HTMLStyleElement,
           oldItem.css.css,

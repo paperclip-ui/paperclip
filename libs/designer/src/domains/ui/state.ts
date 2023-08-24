@@ -11,6 +11,9 @@ import {
   findVirtNode,
   getAllFrameBounds,
   getCurrentDependency,
+  getCurrentPreviewFrameBoxes,
+  getExprBounds,
+  getNodeBox,
   getNodeInfoAtCurrentPoint,
   getPreviewFrameBoxes,
   getTargetExprId,
@@ -264,7 +267,19 @@ export const pruneDanglingRects = (state: DesignerState) => {
   });
 };
 
+const allFrameRectsLoaded = (state: DesignerState) => {
+  const frames = getCurrentPreviewFrameBoxes(state);
+  return (
+    frames.length ===
+    uniq(Object.values(state.rects).map((rect) => rect.frameIndex)).length
+  );
+};
+
 export const maybeCenterCanvas = (editor: DesignerState, force?: boolean) => {
+  if (!allFrameRectsLoaded(editor)) {
+    return editor;
+  }
+
   if (
     force ||
     (!editor.centeredInitial &&
@@ -273,13 +288,17 @@ export const maybeCenterCanvas = (editor: DesignerState, force?: boolean) => {
   ) {
     let targetBounds: Box;
     const currentFrameIndex = editor.canvas.activeFrame;
-
-    if (currentFrameIndex != null) {
+    const currentExprId = getTargetExprId(editor);
+    if (currentExprId != null) {
+      targetBounds = getNodeBox(currentExprId, editor);
+    } else if (currentFrameIndex != null) {
       const frameBoxes = getPreviewFrameBoxes(
         editor.currentDocument?.paperclip?.html
       );
       targetBounds = frameBoxes[currentFrameIndex];
-    } else {
+    }
+
+    if (!targetBounds) {
       targetBounds = getAllFrameBounds(editor);
     }
 

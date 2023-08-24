@@ -146,6 +146,7 @@ export const SuggestionMenu = ({
   return (
     <styles.SuggestionContainer
       input={React.cloneElement(children, {
+        key: "input",
         onBlur,
         onFocus,
         onChange: onInputChange,
@@ -154,7 +155,7 @@ export const SuggestionMenu = ({
       })}
       menu={
         isOpen && menuOptions.length ? (
-          <div ref={anchorRef}>
+          <div ref={anchorRef} key="menu">
             <Portal>
               <styles.SuggestionMenu ref={targetRef} style={style}>
                 {menuOptions}

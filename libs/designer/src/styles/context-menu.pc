@@ -73,7 +73,7 @@ public component ContextMenuItem {
     variant first trigger {
         ":first-child"
     }
-    render menu.MenuItem(onMouseDown: onMouseDown, class: class, disabled: disabled) {
+    render menu.MenuItem(onClick: onClick, class: class, disabled: disabled) {
         slot children {
             text "Context menu item"
         }

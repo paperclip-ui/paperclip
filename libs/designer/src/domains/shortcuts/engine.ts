@@ -45,13 +45,10 @@ export const createShortcutsEngine =
       history.redirect(routes.editor(dep.path));
     };
 
-    const handleCommand = (command: ShortcutCommand, state: DesignerState) => {
-      switch (command) {
-        case ShortcutCommand.GoToMain: {
-          return handleGoToMain(state);
-        }
-      }
-    };
+    const handleCommand = (
+      command: ShortcutCommand,
+      state: DesignerState
+    ) => {};
 
     const handleEvent = (event: DesignerEvent, state: DesignerState) => {
       if (event.type === "shortcuts/itemSelected") {

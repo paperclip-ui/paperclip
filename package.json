@@ -24,7 +24,7 @@
     "lint": "eslint packages/*/src/**/*.ts",
     "sync-versions": "node scripts/sync-version.js",
     "precommit": "lint-staged",
-    "clean": "lerna run clean",
+    "clean": "git clean -fXd; yarn; yarn prepare; cargo build",
     "build": "lerna run build",
     "build:watch": "concurrently \"lerna run build:watch --parallel\" \"cargo watch -x build\"",
     "prepare": "husky install"

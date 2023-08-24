@@ -68,9 +68,10 @@ macro_rules! compile_children {
     ($expr: expr, $cb: expr, $context: expr, $include_ary: expr) => {{
 
         if $include_ary {
-            $context.add_buffer("[\n");
-            $context.start_block();
+            $context.add_buffer("[");
         }
+        $context.add_buffer("\n");
+        $context.start_block();
 
         let mut children = $expr.into_iter().peekable();
         while let Some(child) = children.next() {
@@ -80,12 +81,14 @@ macro_rules! compile_children {
                 if !children.peek().is_none() {
                     $context.add_buffer(", ");
                 }
+
                 $context.add_buffer("\n");
             }
         }
 
+        $context.end_block();
+
         if $include_ary {
-            $context.end_block();
             $context.add_buffer("]");
         }
     }};

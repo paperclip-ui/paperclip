@@ -35,6 +35,10 @@ public component ModalFooter {
     }
 }
 
+/**
+ * @bounds(x: 1162, y: 647, width: 567, height: 70)
+*/
+
 public component ModalContent {
     render div content {
         style {

@@ -175,7 +175,7 @@ public component EditorPanels {
 }
 
 /**
- * @bounds(x: 0, y: 0, width: 2837, height: 1944)
+ * @bounds(x: 512, y: 542, width: 1830, height: 1256)
 */
 
 public component Editor {
@@ -240,7 +240,7 @@ public component CanvasInner {
 }
 
 /**
- * @bounds(x: 3333, y: 70, width: 2762, height: 1978)
+ * @bounds(x: 2563, y: 595, width: 1557, height: 993)
 */
 
 Editor splash {

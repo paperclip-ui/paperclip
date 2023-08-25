@@ -11,6 +11,8 @@ import { memoize } from "@paperclip-ui/common";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 
 export enum ShortcutCommand {
+  SearchFiles,
+  CreateDesignFile,
   InsertElement,
   GoToMain,
   InsertResource,
@@ -173,31 +175,25 @@ export const getGlobalShortcuts = (
   },
 
   { kind: MenuItemKind.Divider },
+  {
+    kind: MenuItemKind.Option,
+    label: "Create Design File",
+    shortcut: ["meta", "shift", "n"],
+    command: ShortcutCommand.CreateDesignFile,
+  },
+  {
+    kind: MenuItemKind.Option,
+    label: "Search Files",
+
+    shortcut: ["control", "f"],
+    command: ShortcutCommand.SearchFiles,
+  },
+
+  { kind: MenuItemKind.Divider },
 
   // Entity
   ...getSelectedEntityShortcuts(state),
 ];
-
-/*
-
-
-const useCanvasHotkeys = (ref: MutableRefObject<HTMLElement>) => {
-  const dispatch = useDispatch();
-  useHotkeys(
-    {
-      e: () => dispatch(designerEvents.eHotkeyPressed()),
-      t: () => dispatch(designerEvents.tHotkeyPressed()),
-      backspace: () => dispatch(designerEvents.deleteHokeyPressed()),
-      delete: () => dispatch(designerEvents.deleteHokeyPressed()),
-      "meta+z": () => dispatch(designerEvents.undoKeyPressed()),
-      "meta+shift+z": () => dispatch(designerEvents.redoKeyPressed()),
-      "meta+s": () => dispatch(designerEvents.saveKeyComboPressed()),
-    },
-    ref
-  );
-};
-
-*/
 
 export const getKeyboardMenuItem = (
   event: KeyDown,

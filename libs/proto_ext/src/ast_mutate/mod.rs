@@ -7,7 +7,7 @@ mod delete_expression;
 mod delete_style_declarations;
 mod insert_frame;
 mod move_node;
-mod paste_expression;
+mod paste_expr;
 mod prepend_child;
 mod set_element_parameter;
 mod set_frame_bounds;
@@ -20,6 +20,7 @@ mod toggle_instance_variant;
 mod update_variant;
 mod wrap_in_element;
 #[macro_use]
+
 mod utils;
 use std::rc::Rc;
 
@@ -39,7 +40,7 @@ pub use move_node::*;
 pub use paperclip_proto::ast;
 use paperclip_proto::ast::graph_ext::Graph;
 pub use paperclip_proto::ast_mutate::*;
-pub use paste_expression::*;
+pub use paste_expr::*;
 pub use set_element_parameter::*;
 pub use set_frame_bounds::*;
 pub use set_id::*;

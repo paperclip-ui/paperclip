@@ -3,6 +3,7 @@ import { DesignerEvent } from "../../events";
 import {
   DesignerState,
   getCurrentFilePath,
+  getTargetExprId,
   resetCurrentDocument,
 } from "../../state";
 
@@ -13,6 +14,7 @@ export const historyReducer = (state: DesignerState, event: DesignerEvent) => {
 
       state = produce(state, (newState) => {
         newState.history = event.payload;
+        newState.redirect = null;
       });
 
       const newPath = getCurrentFilePath(state);

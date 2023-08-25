@@ -9,19 +9,19 @@ use paperclip_common::fs::FSItemKind;
 use paperclip_language_services::DocumentInfo;
 use paperclip_proto::ast::base::Range;
 use paperclip_proto::ast::graph_ext::Graph;
+use glob::glob;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
     design_server_event, file_response, ApplyMutationsRequest, ApplyMutationsResult,
     CreateDesignFileRequest, CreateDesignFileResponse, CreateFileRequest, DesignServerEvent, Empty,
     FileChanged, FileRequest, FileResponse, FsItem, ModulesEvaluated, OpenCodeEditorRequest,
     ReadDirectoryRequest, ReadDirectoryResponse, ResourceFiles, ScreenshotCaptured,
-    UpdateFileRequest,
+    UpdateFileRequest, SearchFilesRequest, SearchFilesResponse,
 };
 use path_absolutize::*;
 use run_script::ScriptOptions;
 use std::path::Path;
 use std::pin::Pin;
-use std::process::Command;
 use std::sync::Arc;
 use std::sync::Mutex;
 use tokio::sync::mpsc;
@@ -74,6 +74,31 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
             Err(Status::not_found("Dependency not found"))
         }
     }
+
+    async fn search_files(
+        &self,
+        request: Request<SearchFilesRequest>,
+    ) -> Result<Response<SearchFilesResponse>, Status> {
+        let query = request.get_ref().query.clone();
+        let store = self.ctx.store.clone();
+        let project_dir = &store.lock().unwrap().state.options.config_context.directory;
+
+        let pat = format!("{}/**/*{}*", project_dir, query);
+
+        let mut paths: Vec<String> = vec![];
+
+        for entry in glob(&pat).expect("Failed to read glob pattern") {
+            if let Ok(path) = entry {
+                paths.push(path.to_str().unwrap().to_string());
+            }
+        }
+
+        Ok(Response::new(SearchFilesResponse {
+            root_dir: project_dir.clone(),
+            paths,
+        }))
+    }
+    
     async fn open_code_editor(
         &self,
         request: Request<OpenCodeEditorRequest>,

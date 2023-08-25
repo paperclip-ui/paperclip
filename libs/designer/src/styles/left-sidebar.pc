@@ -1,9 +1,127 @@
+import "./input.pc" as module
 import "./sidebar.pc" as sidebar
 import "./theme.pc" as theme
 
 /**
  * @bounds(x: 594, y: 718, width: 1024, height: 768)
 */
+
+public component FilteredFiles {
+    render div filteredFiles {
+        slot children {
+            FilteredFile(class: "hover") {
+                override {
+                    variant hovering trigger {
+                        hovering
+                    }
+                }
+                insert basename {
+                    text "file.svg"
+                }
+                insert dirname {
+                    text "./path/to/some/dir"
+                }
+            }
+            FilteredFile
+            FilteredFile {
+                insert basename {
+                    text "file.svg"
+                }
+                insert dirname {
+                    text "./path/to/some/dir"
+                }
+            }
+            FilteredFile {
+                insert basename {
+                    text "file.svg"
+                }
+                insert dirname {
+                    text "./path/to/some/dir"
+                }
+            }
+            FilteredFile {
+                insert basename {
+                    text "file.svg"
+                }
+                insert dirname {
+                    text "./a/super/loooooooooooooooooo00000000000000000ong-dir"
+                }
+            }
+        }
+        style {
+            padding: var(theme.space05)
+            gap: var(theme.space02)
+            display: flex
+            flex-direction: column
+        }
+    }
+}
+
+/**
+ * @bounds(x: 97, y: 1181, width: 1024, height: 768)
+*/
+
+public component FilteredFile {
+    variant hovering trigger {
+        ".hover"
+        ":hover"
+    }
+    render div container(onClick: onClick, class: class) {
+        style {
+            display: flex
+            align-items: center
+            gap: var(theme.space05)
+            cursor: pointer
+            background: transparent
+        }
+        div container {
+            style variant hovering {
+                background: var(theme.blue02)
+            }
+            style {
+                display: flex
+                justify-content: space-between
+                width: 100%
+                padding: var(theme.space03)
+                border-radius: var(theme.space02)
+            }
+            div icon {
+                style {
+                    width: 1em
+                    height: 1em
+                    background: red
+                    flex-shrink: 0
+                    border-radius: 4px
+                    display: none
+                }
+            }
+            div info {
+                style {
+                    display: flex
+                    justify-content: space-between
+                    width: 100%
+                    gap: var(theme.space05)
+                }
+                div basename {
+                    slot basename {
+                        text "file.pc"
+                    }
+                }
+                div dirname(title: dirTitle) {
+                    style {
+                        opacity: 0.5
+                        overflow: hidden
+                        text-overflow: ellipsis
+                        white-space: nowrap
+                    }
+                    slot dirname {
+                        text "./some/dir"
+                    }
+                }
+            }
+        }
+    }
+}
 
 public component LeftSidebar {
     render sidebar.Sidebar {
@@ -12,7 +130,7 @@ public component LeftSidebar {
 }
 
 /**
- * @bounds(x: -1166, y: 946, width: 358, height: 52)
+ * @bounds(x: -1009, y: 946, width: 201, height: 52)
 */
 
 public component LeftSidebarHeader {
@@ -29,13 +147,6 @@ public component LeftSidebarHeader {
                 display: flex
                 gap: 8px
                 align-items: center
-            }
-            button backButton(onClick: onBackClick) {
-                style extends theme.reset, theme.icon {
-                    cursor: pointer
-                    -webkit-mask-image: url("./back.svg")
-                    --size: 1.5em
-                }
             }
             span titleContainer {
                 slot title {
@@ -57,6 +168,17 @@ public component LeftSidebarHeader {
                 }
             }
         }
+    }
+}
+
+public component Layers {
+    render div {
+        style {
+            padding: var(theme.space03) 0px
+            overflow-y: scroll
+            overflow-x: hidden
+        }
+        slot children
     }
 }
 
@@ -100,6 +222,7 @@ public component LayerIcon {
             width: 12px
             position: relative
             height: 1em
+            flex-shrink: 0
         }
         div {
             style extends theme.icon {
@@ -166,7 +289,7 @@ public component TreeNavigationItemContent {
 }
 
 /**
- * @bounds(x: -175, y: 1212, width: 1024, height: 768)
+ * @bounds(x: -453, y: 1092, width: 202, height: 112)
 */
 
 public component TreeNavigationItem {
@@ -189,7 +312,7 @@ public component TagType {
 }
 
 /**
- * @bounds(x: -1896, y: 1728, width: 1024, height: 768)
+ * @bounds(x: -1928, y: 3271, width: 1024, height: 768)
 */
 
 public component DropZoneDivider {
@@ -234,6 +357,10 @@ public component DropZoneDivider {
     }
 }
 
+/**
+ * @bounds(x: -1036, y: 1079, width: 224, height: 38)
+*/
+
 public component TreeNavigationItemHeader {
     variant isContainer trigger {
         ".container"
@@ -266,6 +393,8 @@ public component TreeNavigationItemHeader {
             flex-direction: column
             padding-left: calc(22px * var(--depth))
             position: relative
+            cursor: pointer
+            user-select: none
         }
         style variant showDropOver {
             box-shadow: inset 0px 0px 0px 2px var(theme.blue01)
@@ -319,7 +448,9 @@ public component TreeNavigationItemHeader {
                         transform: rotate(90deg)
                     }
                 }
-                slot children
+                slot children {
+                    text "label"
+                }
             }
             div {
                 style extends theme.easeIn {
@@ -341,6 +472,10 @@ public component TreeNavigationItemHeader {
         }
     }
 }
+
+/**
+ * @bounds(x: -446, y: 575, width: 350, height: 54)
+*/
 
 public component LayerNavigationItemHeader {
     variant isSlot trigger {
@@ -412,131 +547,34 @@ public component LayerNavigationItemHeader {
                 }
             }
         }
-        slot children
+        slot children {
+            text "some layer"
+            text "some layer"
+        }
         insert controls {
             slot controls
         }
     }
 }
 
-public component Tooltip {
-    variant isHovering trigger {
-        ":hover"
-    }
-    render div {
-        style {
-            position: relative
-        }
-        slot children
-        div {
-            style extends theme.easeIn {
-                pointer-events: none
-                opacity: 0
-                position: absolute
-                left: 50%
-                top: calc(100% + var(theme.space03))
-                transform: translateX(-50%)
-                background: var(theme.borderColor)
-                border: 1px solid var(theme.borderColor)
-                border-radius: var(theme.rounded)
-                padding: var(theme.space01) var(theme.space03)
-                white-space: nowrap
-            }
-            style variant isHovering {
-                opacity: 1
-            }
-            div {
-                style {
-                    position: relative
-                }
-                div {
-                    style extends theme.icon {
-                        --size: 1.5em
-                        color: var(theme.borderColor)
-                        position: fixed
-                        top: calc(-50% + 2px)
-                        transform: rotate(-90deg) translateY(-50%) translateX(50%)
-                        left: 50%
-                        -webkit-mask-image: url("./chevron2.svg")
-                    }
-                }
-                text "open shadow instances"
-            }
-        }
-    }
-}
-
-public component Layers {
-    render div {
-        style {
-            padding: var(theme.space03) 0px
-            overflow-y: scroll
-            overflow-x: hidden
-        }
-        slot children
-    }
-}
-
 /**
- * @bounds(x: 0, y: 0, width: 269, height: 164)
-*/
-
-component Tokens {
-    render div {
-        style {
-            padding: var(theme.space04) 0px
-        }
-        TreeNavigationItem {
-            LayerNavigationItemHeader(class: "composite-token open") {
-                override container.root {
-                    style {
-                        --depth: 1
-                    }
-                }
-                text "Font Regular"
-            }
-            LayerNavigationItemHeader(class: "atom-token open") {
-                override container.root {
-                    style {
-                        --depth: 1
-                    }
-                }
-                text "red01"
-            }
-            LayerNavigationItemHeader(class: "atom-token open") {
-                override container.root {
-                    style {
-                        --depth: 1
-                    }
-                }
-                text "red02"
-            }
-            LayerNavigationItemHeader(class: "trigger open") {
-                override container.root {
-                    style {
-                        --depth: 1
-                    }
-                }
-                text "mobile"
-            }
-        }
-    }
-}
-
-/**
- * @bounds(x: -766, y: 931, width: 273, height: 1025)
+ * @bounds(x: -766, y: 931, width: 466, height: 1912)
 */
 
 public component LeftSidebarPreview {
+    variant onlyFileNavigator
     render LeftSidebar {
-        sidebar.SidebarPanel {
-            LeftSidebarHeader {
+        sidebar.SidebarPanel sidebar {
+            style variant onlyFileNavigator {
+                display: none
+            }
+            LeftSidebarHeader header {
                 insert title {
                     text "TodoList.pc"
                 }
             }
-            sidebar.SidebarSection {
-                sidebar.SidebarPanelHeader {
+            sidebar.SidebarSection entities {
+                sidebar.SidebarPanelHeader entitiesHeader {
                     text "Layers"
                     div {
                         style extends theme.icon {
@@ -548,15 +586,10 @@ public component LeftSidebarPreview {
                     TreeNavigationItem {
                         LayerNavigationItemHeader(class: "instance container open") {
                             text "Some instance"
-                            insert controls {
-                                Tooltip(title: "display shadow")
-                            }
                         }
                         LayerNavigationItemHeader(class: "component container open") {
                             text "Some component"
-                            insert controls {
-                                Tooltip(title: "display shadow")
-                            }
+                            text "some blarggggfgdf gdfgd"
                         }
                         TreeNavigationItemContent {
                             TreeNavigationItem {
@@ -637,27 +670,16 @@ public component LeftSidebarPreview {
                     }
                 }
             }
-            sidebar.SidebarSection {
-                override root {
-                    style {
-                        display: none
-                    }
-                }
-                sidebar.SidebarPanelHeader {
-                    text "Design Tokens"
-                    div {
-                        style extends theme.icon {
-                            -webkit-mask-image: url("./plus.svg")
-                        }
-                    }
-                }
-                Tokens
-            }
         }
         sidebar.SidebarPanel {
             sidebar.SidebarSection {
                 sidebar.SidebarPanelHeader {
+                    style {
+                        align-items: center
+                        display: flex
+                    }
                     text "Files"
+                    module.TextInput(value: "", placeholder: "filter...")
                     div {
                         style extends theme.icon {
                             -webkit-mask-image: url("./plus.svg")
@@ -683,6 +705,33 @@ public component LeftSidebarPreview {
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: -1158, y: 1885, width: 352, height: 965)
+*/
+
+LeftSidebar {
+    insert children {
+        sidebar.SidebarPanel {
+            sidebar.SidebarSection {
+                sidebar.SidebarPanelHeader {
+                    style {
+                        align-items: center
+                        display: flex
+                    }
+                    text "Files"
+                    module.TextInput(value: "some file")
+                    div {
+                        style extends theme.icon {
+                            -webkit-mask-image: url("./plus.svg")
+                        }
+                    }
+                }
+                FilteredFiles
             }
         }
     }

@@ -4,6 +4,25 @@ use std::collections::{HashMap, HashSet};
 
 pub use super::graph_ext::*;
 
+impl<'a> Dependency {
+    pub fn resolve_import_from_ns(&'a self, ns: &str, graph: &'a Graph) -> Option<&'a Dependency> {
+        let imp = self
+            .document
+            .as_ref()
+            .expect("Document must exist")
+            .get_import_by_ns(ns);
+        if let Some(imp) = imp {
+            if let Some(resolved_path) = self.imports.get(&imp.path) {
+                graph.dependencies.get(resolved_path)
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    }
+}
+
 impl Graph {
     pub fn new() -> Self {
         Graph {

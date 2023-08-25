@@ -52,7 +52,7 @@ public component MenuItem {
         ":not(:disabled)"
         ":not(.disabled)"
     }
-    render div(onClick: onClick, class: class, disabled: disabled) {
+    render div(onMouseDown: onMouseDown, onClick: onClick, class: class, disabled: disabled) {
         style {
             padding: var(theme.space03)
             cursor: pointer

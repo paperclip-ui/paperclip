@@ -10,11 +10,8 @@ import {
   IS_WINDOWS,
   findVirtNode,
   getAllFrameBounds,
-  getCurrentDependency,
   getCurrentPreviewFrameBoxes,
-  getExprBounds,
   getNodeBox,
-  getNodeInfoAtCurrentPoint,
   getPreviewFrameBoxes,
   getTargetExprId,
   highlightNode,
@@ -29,7 +26,6 @@ import { Box, centerTransformZoom, mergeBoxes } from "../../state/geom";
 import { clamp, uniq } from "lodash";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { WritableDraft } from "immer/dist/internal";
-import { Component, Slot } from "@paperclip-ui/proto/lib/generated/ast/pc";
 
 export const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
 export const PAN_X_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;
@@ -96,6 +92,32 @@ export const handleDragEvent = (
   });
 };
 
+export const prettyKeyCombo = (combo: string[]) => {
+  return combo
+    .join("+")
+    .replace("meta", "⌘")
+    .replace("delete", "⌫")
+    .replace("backspace", "⌫")
+    .replace("option", "⌥")
+    .replace("shift", "⇧")
+    .replace("control", "^")
+    .replace("alt", "⌥")
+    .replaceAll("+", "")
+    .toUpperCase();
+};
+
+export const getSelectedExprIdSourceId = (state: DesignerState) => {
+  const { expr } = ast.getExprByVirtId(getTargetExprId(state), state.graph);
+
+  if (ast.isInstance(expr, state.graph)) {
+    const component = ast.getInstanceComponent(expr, state.graph);
+    const renderNode = ast.getComponentRenderNode(component);
+    return component.id;
+  } else {
+    return expr.id;
+  }
+};
+
 export const handleDoubleClick = (
   designer: DesignerState,
   action: CanvasMouseUp
@@ -114,14 +136,29 @@ export const handleDoubleClick = (
     ];
   }
 
-  const nodeId = getNodeInfoAtCurrentPoint(designer)?.nodeId;
+  // const nodeId = getNodeInfoAtCurrentPoint(designer)?.nodeId;
+  const virtId = getSelectedExprIdSourceId(designer);
+  const expr = ast.getExprByVirtId(virtId, designer.graph);
 
   designer = produce(designer, (newDesigner) => {
     newDesigner.canvasClickTimestamp = action.payload.timestamp;
-    newDesigner.scopedElementId = nodeId;
+
+    setTargetExprId(newDesigner, virtId);
+
+    // LEGACY.
+    // newDesigner.scopedElementId = nodeId;
   });
 
-  designer = highlightNode(designer, designer.canvas.mousePosition!);
+  if (
+    expr.kind === ast.ExprKind.Element &&
+    ast.isInstance(expr.expr, designer.graph)
+  ) {
+    // force center canvas to component when double clicked
+    designer = maybeCenterCanvas(designer, true);
+  }
+
+  // LEGACY. We want to redirect to the component instead
+  // designer = highlightNode(designer, designer.canvas.mousePosition!);
 
   return [designer, true];
 };
@@ -142,9 +179,11 @@ export const clampCanvasTransform = (
   });
 };
 
-export const expandVirtIds = (
+export const expandVirtIds = <
+  TState extends DesignerState | WritableDraft<DesignerState>
+>(
   ids: string[],
-  state: DesignerState | WritableDraft<DesignerState>
+  state: TState
 ) => {
   return {
     ...state,
@@ -152,12 +191,23 @@ export const expandVirtIds = (
   };
 };
 
-const findSelectableExprId = (virtNodeId: string, state: DesignerState) => {
+export const findSelectableExprId = (
+  virtNodeId: string,
+  state: DesignerState | WritableDraft<DesignerState>
+) => {
   if (virtNodeId.includes(".")) {
     return virtNodeId;
   }
 
-  const { expr } = ast.getExprByVirtId(virtNodeId, state.graph);
+  const exprInfo = ast.getExprByVirtId(virtNodeId, state.graph);
+
+  // may not exist because of virt expr ids. E.g: inst.slot:name
+  if (!exprInfo) {
+    return virtNodeId;
+  }
+
+  const { expr } = exprInfo;
+
   const parent = ast.getParentExprInfo(expr.id, state.graph);
   if (parent.kind === ast.ExprKind.Render) {
     const component = ast.getParentExprInfo(parent.expr.id, state.graph);
@@ -180,15 +230,6 @@ export const selectNode = (
       setTargetExprId(newDesigner, null);
       return;
     }
-    const ancestorIds = ast.getAncestorVirtIdsFromShadow(
-      virtNodeId,
-      designer.graph
-    );
-
-    Object.assign(
-      newDesigner,
-      expandVirtIds([virtNodeId, ...ancestorIds], newDesigner)
-    );
 
     setTargetExprId(newDesigner, virtNodeId);
   });

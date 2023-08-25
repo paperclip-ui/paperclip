@@ -1,10 +1,12 @@
 import React, { forwardRef, useCallback, useEffect, useRef } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/input.pc";
+import classNames from "classnames";
 
 export type TextInputProps = {
   onClick?: () => void;
   placeholder?: string;
   autoFocus?: boolean;
+  large?: boolean;
   onEnter?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onKeyDown?: (event: React.KeyboardEvent<any>) => void;
   onBlur?: (event: React.FocusEvent<any>) => void;
@@ -12,14 +14,16 @@ export type TextInputProps = {
 } & UseTextInputProps;
 
 export const TextInput = forwardRef((props: TextInputProps, forwardRef) => {
-  const { autoFocus, placeholder, value, onClick } = props;
+  const { autoFocus, placeholder, value, large, onClick } = props;
   const { onFocus, onChange, setRef, onBlur, onKeyDown } = useTextInput(
     props,
     forwardRef
   );
+
   return (
     <styles.TextInput
       ref={setRef}
+      class={classNames({ large })}
       autoFocus={autoFocus}
       placeholder={placeholder}
       defaultValue={value}
@@ -34,6 +38,7 @@ export const TextInput = forwardRef((props: TextInputProps, forwardRef) => {
 
 export type UseTextInputProps = {
   value?: string;
+  autoFocus?: boolean;
   onChange?: (value: string) => void;
   onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
   onEnter?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -47,6 +52,7 @@ export const useTextInput = (
   {
     value,
     select,
+    autoFocus,
     onChange,
     onFocus,
     onSave,
@@ -99,6 +105,14 @@ export const useTextInput = (
       onKeyDown(event);
     }
   };
+
+  useEffect(() => {
+    if (autoFocus) {
+      setTimeout(() => {
+        ref.current.focus();
+      });
+    }
+  }, [autoFocus]);
 
   const setRef = useCallback((ref2) => {
     if (forwardRef) {

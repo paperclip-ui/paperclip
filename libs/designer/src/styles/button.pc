@@ -1,0 +1,94 @@
+import "./theme.pc" as mod
+
+/**
+ * @bounds(x: 571, y: 201, width: 512, height: 215)
+*/
+
+public component Button {
+    variant danger trigger {
+        ".danger"
+    }
+    variant secondary trigger {
+        ".secondary"
+    }
+    variant warning trigger {
+        ".warning"
+    }
+    render button(class: class, onClick: onClick) {
+        style variant secondary {
+            background: var(mod.gray02)
+        }
+        style variant danger {
+            background: red
+            color: maroon
+        }
+        style {
+            position: relative
+            background: var(mod.blue02)
+            border: 0px
+            border-radius: var(mod.space02)
+            padding: var(mod.space03)
+            color: var(mod.gray0)
+        }
+        slot children {
+            text "a button"
+        }
+    }
+}
+
+/**
+ * @bounds(x: 1158, y: 198, width: 486, height: 235)
+*/
+
+div preview {
+    style {
+        position: relative
+        display: flex
+        gap: var(mod.space02)
+    }
+    div {
+        style {
+            display: inline-flex
+            align-items: flex-start
+            gap: var(mod.space03)
+            cursor: pointer
+        }
+        Button {
+            insert children {
+                text "primary"
+            }
+        }
+        Button {
+            override {
+                variant secondary trigger {
+                    true
+                }
+            }
+            insert children {
+                text "secondary"
+            }
+        }
+        Button {
+            override {
+                variant warning trigger {
+                    true
+                }
+            }
+            insert children {
+                text "warning (todo)"
+            }
+        }
+        Button {
+            override {
+                variant warning
+                variant danger trigger {
+                    true
+                }
+            }
+            insert children {
+                text "danger (todo)"
+            }
+        }
+    }
+}
+

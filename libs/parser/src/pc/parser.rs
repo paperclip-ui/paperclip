@@ -504,7 +504,7 @@ fn parse_insert(context: &mut PCContext) -> Result<ast::Insert, err::ParserError
     context.skip(is_superfluous_or_newline)?;
     let name = extract_word_value(context)?;
     context.next_token()?; // eat value
-    context.skip(is_superfluous_or_newline)?;
+    context.skip(is_superfluous)?;
     let end = context.curr_u16pos.clone();
     let body = parse_body(
         context,

@@ -22,14 +22,11 @@ export const createHistoryEngine =
       state: DesignerState,
       prevState: DesignerState
     ) => {
-      if (
-        isEqual(state.history, prevState.history) ||
-        isEqual(getHistoryState(), state.history)
-      ) {
+      if (!state.redirect) {
         return;
       }
 
-      history.redirect(stringifyHistory(state.history));
+      history.redirect(stringifyHistory(state.redirect));
     };
     const dispose = () => {};
 

@@ -13,6 +13,7 @@ package service.designer;
 service Designer {
   rpc OpenFile(FileRequest) returns (FileResponse);
   rpc GetGraph(Empty) returns (stream ast.graph.Graph);
+  rpc SearchFiles(SearchFilesRequest) returns (SearchFilesResponse);
   rpc OnEvent(Empty) returns (stream DesignServerEvent);
   rpc UpdateFile(UpdateFileRequest) returns (Empty);
   rpc ReadDirectory(ReadDirectoryRequest) returns (ReadDirectoryResponse);
@@ -25,6 +26,15 @@ service Designer {
   rpc Undo(Empty) returns (Empty);
   rpc Redo(Empty) returns (Empty);
   rpc Save(Empty) returns (Empty);
+}
+
+message SearchFilesRequest {
+  string query = 1;
+}
+
+message SearchFilesResponse {
+  string root_dir = 1;
+  repeated string paths = 2;
 }
 
 message CreateFileRequest {

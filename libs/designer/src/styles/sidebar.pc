@@ -14,6 +14,7 @@ public component SidebarContainer {
             display: flex
             padding: var(theme.space05)
             pointer-events: all
+            flex-shrink: 0
         }
         style variant left {
             flex-direction: row
@@ -101,6 +102,7 @@ public component SidebarSection {
             border-top: 1px solid var(theme.borderColor)
             display: flex
             flex-direction: column
+            width: 100%
         }
         style variant fill {
             height: 100%
@@ -113,15 +115,23 @@ public component SidebarSection {
     }
 }
 
+/**
+ * @bounds(x: 325, y: 958, width: 1024, height: 768)
+*/
+
 public component SidebarPanelHeader {
     render div {
         style extends theme.fontHeader {
             padding: var(theme.space05)
+            width: 100%
         }
         div {
             style {
                 display: flex
                 justify-content: space-between
+                align-items: center
+                gap: var(theme.space03)
+                width: 100%
             }
             slot children
         }
@@ -210,6 +220,26 @@ public component SidebarPopupPanelContent {
             padding: var(theme.space04)
         }
         slot children
+    }
+}
+
+/**
+ * @bounds(x: 1069, y: 86, width: 189, height: 162)
+*/
+
+div {
+    style {
+        position: relative
+    }
+    div {
+        style {
+            background: rgba(0, 0, 0, 0.1)
+            position: absolute
+            left: 46px
+            top: 51px
+            width: 124px
+            height: 83px
+        }
     }
 }
 

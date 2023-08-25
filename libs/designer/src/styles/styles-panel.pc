@@ -4,7 +4,7 @@ import "./input.pc" as input
 import "./etc.pc" as etc
 
 /**
- * @bounds(x: 0, y: -5, width: 1024, height: 768)
+ * @bounds(x: 120, y: -1060, width: 1024, height: 768)
 */
 
 component ColorPickerPopup {
@@ -50,6 +50,10 @@ component ColorPickerPopup {
     }
 }
 
+/**
+ * @bounds(x: 262, y: 7, width: 1024, height: 1105)
+*/
+
 public component Preview {
     render sidebar.SidebarPanel {
         sidebar.SidebarSection {
@@ -93,6 +97,20 @@ public component Preview {
                     input.Field {
                         insert name {
                             text "dark"
+                        }
+                        insert input {
+                            input.RadioInput {
+                                override {
+                                    variant on trigger {
+                                        true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    input.Field {
+                        insert name {
+                            text "asupperlongpropthatneedstrimming"
                         }
                         insert input {
                             input.RadioInput {
@@ -311,49 +329,6 @@ public component Preview {
                                 insert value {
                                     text "add..."
                                 }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        div {
-            style {
-                display: none
-            }
-            sidebar.SidebarSection {
-                sidebar.SidebarPanelHeader {
-                    text "Atoms"
-                    div {
-                        style extends theme.icon {
-                            display: none
-                            -webkit-mask-image: url("./plus.svg")
-                        }
-                    }
-                }
-                sidebar.SidebarPanelContent {
-                    input.Fields {
-                        input.Field {
-                            insert name {
-                                text "iconColor"
-                            }
-                            insert input {
-                                input.ColorInput {
-                                    override root {
-                                        style {
-                                            --color: rgb(255, 81, 119)
-                                        }
-                                    }
-                                    text "red"
-                                }
-                            }
-                        }
-                        input.Field {
-                            insert name {
-                                text "iconSize"
-                            }
-                            insert input {
-                                input.TextInput(value: "12px")
                             }
                         }
                     }

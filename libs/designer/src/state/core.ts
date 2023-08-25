@@ -8,6 +8,7 @@ import {
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { WritableDraft } from "immer/dist/internal";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import produce from "immer";
 
 export const IS_WINDOWS = false;
 
@@ -15,6 +16,10 @@ export enum InsertMode {
   Element,
   Text,
   Resource,
+}
+
+export enum PromptKind {
+  NewDesignFile,
 }
 
 export enum LayerKind {
@@ -72,6 +77,14 @@ export type FSFile = BaseFSItem<FSItemKind.File>;
 
 export type FSItem = FSDirectory | FSFile;
 
+type Prompt = {
+  title: string;
+  okLabel: string;
+  placeholder: string;
+  okActionType: string;
+  kind: PromptKind;
+};
+
 export type DesignerState = {
   readonly: boolean;
   scopedElementId?: string;
@@ -82,9 +95,13 @@ export type DesignerState = {
   insertedNodeIds: string[];
   graph: Graph;
   insertMode?: InsertMode;
+  focusOnFileSearch?: boolean;
   resourceFilePaths: string[];
+  searchedFilePaths?: string[];
+  searchedFilePathRoot?: string;
   showLeftSidebar: boolean;
   resourceModalDragLeft: boolean;
+  prompt?: Prompt;
   showRightsidebar: boolean;
   highlightedNodeId?: string;
   screenshotUrls: Record<string, string>;
@@ -97,6 +114,7 @@ export type DesignerState = {
   expandedLayerVirtIds: string[];
   showTextEditor?: boolean;
   resizerMoving: boolean;
+  fileFilter?: string;
   expandedNodePaths: string[];
   preEditComputedStyles: Record<string, CSSStyleDeclaration>;
   computedStyles: Record<string, CSSStyleDeclaration>;
@@ -155,17 +173,35 @@ export const setTargetExprId = (
   state: WritableDraft<DesignerState>,
   nodeId: string
 ) => {
-  state.history.query.nodeId = nodeId;
+  state.redirect = {
+    ...state.history,
+    query: {
+      ...state.history.query,
+    },
+  };
+
+  if (nodeId) {
+    state.redirect.query.nodeId = nodeId;
+  } else {
+    delete state.redirect.query.nodeId;
+  }
 
   if (nodeId != null) {
     const exprPath = ast.getOwnerDependencyPath(nodeId, state.graph);
     if (exprPath != null) {
-      state.history.query.file = exprPath;
+      state.redirect.query.file = exprPath;
     }
   }
 };
 
 export const getEditorState = (state: DesignerState) => state;
+export const getHistoryStr = (state: DesignerState) => {
+  let path = state.history.pathname;
+  if (Object.keys(state.history.query).length) {
+    path += "?" + new URLSearchParams(state.history.query).toString();
+  }
+  return path;
+};
 
 export const isResourceModalVisible = (state: DesignerState) =>
   state.insertMode === InsertMode.Resource && !state.resourceModalDragLeft;
@@ -192,3 +228,26 @@ export const resetCurrentDocument = (
     size: state.canvas.size,
   },
 });
+
+export const getFileFilter = (state: DesignerState) => state.fileFilter;
+export const getFocusOnFileFilter = (state: DesignerState) =>
+  state.focusOnFileSearch;
+
+export const getSearchedFiles = (state: DesignerState) =>
+  state.searchedFilePaths || [];
+export const getSearchedFilesRoot = (state: DesignerState) =>
+  state.searchedFilePathRoot;
+
+export const redirect = (state: DesignerState, path: string) => {
+  const parts = new URL("http://localhost" + path);
+  console.log("REDIRR", parts);
+
+  return produce(state, (newState) => {
+    newState.history = {
+      pathname: parts.pathname,
+      query: Object.fromEntries(new URLSearchParams(location?.search)),
+    };
+
+    console.log(newState.history);
+  });
+};

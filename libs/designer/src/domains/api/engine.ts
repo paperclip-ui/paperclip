@@ -13,7 +13,9 @@ import {
   // DesignerEvent,
   ElementTagChanged,
   ExprNavigatorDroppedNode,
+  FileFilterChanged,
   InstanceVariantToggled,
+  PromptClosed,
   StyleDeclarationsChanged,
   StyleMixinsSet,
   TextValueChanged,
@@ -29,12 +31,14 @@ import {
   FSItem,
   FSItemKind,
   getCurrentFilePath,
+  getFileFilter,
   getInsertBox,
   getNodeInfoAtCurrentPoint,
   getRenderedFilePath,
   getTargetExprId,
   InsertMode,
   LayerKind,
+  PromptKind,
 } from "../../state";
 import {
   Mutation,
@@ -68,6 +72,7 @@ import {
 import { ExpressionPasted } from "../clipboard/events";
 import { Num, Range } from "@paperclip-ui/proto/lib/generated/ast/base";
 import { SimpleExpression } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import { kebabCase } from "lodash";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -115,7 +120,10 @@ const createActions = (
       dispatch({ type: "designer-engine/documentOpened", payload: data });
     },
     async createDesignFile(name: string) {
-      const { filePath } = await client.CreateDesignFile({ name });
+      // kebab case in case spaces are added
+      const { filePath } = await client.CreateDesignFile({
+        name: kebabCase(name),
+      });
       dispatch({
         type: "designer-engine/designFileCreated",
         payload: { filePath },
@@ -176,6 +184,13 @@ const createActions = (
       const changes = await client.ApplyMutations({ mutations }, null);
       dispatch({ type: "designer-engine/changesApplied", payload: changes });
       return changes;
+    },
+    async searchFiles(query: string) {
+      const { paths, rootDir } = await client.SearchFiles({ query }, null);
+      dispatch({
+        type: "designer-engine/fileSearchResult",
+        payload: { paths, rootDir },
+      });
     },
   };
 };
@@ -471,7 +486,7 @@ const createEventHandler = (actions: Actions) => {
     actions.applyChanges([
       {
         prependChild: {
-          parentId: getCurrentDependency(state).document.id,
+          parentId: getTargetExprId(state),
           childSource: source,
         },
       },
@@ -549,6 +564,14 @@ const createEventHandler = (actions: Actions) => {
         },
       },
     ]);
+  };
+
+  const handleFileFilterChanged = async (
+    _event: FileFilterChanged,
+    state: DesignerState
+  ) => {
+    const query = getFileFilter(state);
+    await actions.searchFiles(query);
   };
 
   const handleStyleMixinsSet = (
@@ -673,6 +696,13 @@ const createEventHandler = (actions: Actions) => {
         return handleSave();
       }
     }
+  };
+
+  const handlePromptClosed = ({ payload: { value, kind } }: PromptClosed) => {
+    if (value == null || kind !== PromptKind.NewDesignFile) {
+      return;
+    }
+    actions.createDesignFile(value);
   };
 
   const handleKeyDown = (
@@ -822,6 +852,9 @@ const createEventHandler = (actions: Actions) => {
       case "designer-engine/apiError": {
         return handleApiError();
       }
+      case "ui/promptClosed": {
+        return handlePromptClosed(event);
+      }
       case "keyboard/keyDown": {
         return handleKeyDown(event, newState, prevState);
       }
@@ -851,6 +884,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "ui/attributeChanged": {
         return handleAttributeChanged(event, newState);
+      }
+      case "ui/fileFilterChanged": {
+        return handleFileFilterChanged(event, newState);
       }
       case "ui/textValueChanged": {
         return handleTextValueChanged(event, newState);

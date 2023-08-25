@@ -66,7 +66,6 @@ fn compile_import(import: &ast::Import, context: &mut Context) {
 
 macro_rules! compile_children {
     ($expr: expr, $cb: expr, $context: expr, $include_ary: expr) => {{
-
         if $include_ary {
             $context.add_buffer("[");
         }

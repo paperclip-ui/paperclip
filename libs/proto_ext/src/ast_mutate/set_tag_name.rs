@@ -1,5 +1,5 @@
 use super::base::EditContext;
-use super::utils::{import_dep, resolve_import_ns, upsert_render_node};
+use super::utils::{get_instance_component, import_dep, resolve_import_ns, upsert_render_node};
 use paperclip_common::get_or_short;
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::Expression;
@@ -9,6 +9,7 @@ use paperclip_proto::ast_mutate::SetTagName;
 use crate::ast::all::MutableVisitor;
 use crate::ast::all::VisitorResult;
 use crate::ast::get_expr::GetExpr;
+use crate::ast::pc::FindSlotNames;
 
 impl<'expr> MutableVisitor<()> for EditContext<'expr, SetTagName> {
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
@@ -23,8 +24,42 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetTagName> {
                 None
             };
 
+            let inst_component = get_instance_component(
+                &self.mutation.tag_name,
+                namespace.clone(),
+                &self.get_dependency(),
+                &self.graph,
+            );
+            let slot_names = if let Some(component) = inst_component {
+                FindSlotNames::find_slot_names(&component)
+            } else {
+                vec![]
+            };
+
             expr.tag_name = self.mutation.tag_name.clone();
             expr.namespace = namespace;
+
+            println!("{:?}", slot_names);
+
+            for slot_name in slot_names {
+                let existing_insert = expr.body.iter_mut().find(|x| {
+                    if let node::Inner::Insert(insert) = x.get_inner() {
+                        insert.name == slot_name
+                    } else {
+                        false
+                    }
+                });
+
+                if existing_insert.is_none() {
+                    expr.body.push(
+                        node::Inner::Insert(ast::pc::Insert {
+                            name: slot_name,
+                            ..Default::default()
+                        })
+                        .get_outer(),
+                    );
+                }
+            }
             VisitorResult::Return(())
         } else {
             VisitorResult::Continue

@@ -5,6 +5,7 @@ export type History = {
 
 export type HistoryEngineState = {
   history: History;
+  redirect?: History;
 };
 
 export const getHistoryState = (): History => {

@@ -9,21 +9,22 @@ use paperclip_proto::ast_mutate::{mutation_result, ExpressionInserted, PrependCh
 use crate::ast::all::MutableVisitor;
 use crate::ast::all::VisitorResult;
 
-// #[macro_export]
-// macro_rules! set_unique_id {
-//     ($children: expr, $child_id: expr, $new_child: expr) => {{
-//         let mut ret = VisitorResult::Continue;
-//         for (_i, v) in $children.iter_mut().enumerate() {
-//             if v.get_id() == $child_id {
-//                 *v = ($new_child)(v);
-//                 // std::mem::replace(v, ($new_child)(v));
-//                 ret = VisitorResult::Return(());
-//                 break;
-//             }
-//         }
-//         ret
-//     }};
-// }
+macro_rules! prepend_child {
+    ($self:expr, $expr: expr) => {{
+        if $expr.get_id() == &$self.mutation.parent_id {
+            let child: Node = parse_node(&$self.mutation.child_source, &$expr.checksum());
+            $expr.body.insert(0, child.clone());
+
+            $self.changes.push(
+                mutation_result::Inner::ExpressionInserted(ExpressionInserted {
+                    id: child.get_id().to_string(),
+                })
+                .get_outer(),
+            );
+        }
+        VisitorResult::Continue
+    }};
+}
 
 impl<'expr> MutableVisitor<()> for EditContext<'expr, PrependChild> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
@@ -49,17 +50,12 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, PrependChild> {
         VisitorResult::Continue
     }
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
-        if expr.get_id() == &self.mutation.parent_id {
-            let child: Node = parse_node(&self.mutation.child_source, &expr.checksum());
-            expr.body.insert(0, child.clone());
-
-            self.changes.push(
-                mutation_result::Inner::ExpressionInserted(ExpressionInserted {
-                    id: child.get_id().to_string(),
-                })
-                .get_outer(),
-            );
-        }
-        VisitorResult::Continue
+        prepend_child!(self, expr)
+    }
+    fn visit_insert(&mut self, expr: &mut ast::pc::Insert) -> VisitorResult<()> {
+        prepend_child!(self, expr)
+    }
+    fn visit_slot(&mut self, expr: &mut ast::pc::Slot) -> VisitorResult<()> {
+        prepend_child!(self, expr)
     }
 }

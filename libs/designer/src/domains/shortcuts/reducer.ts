@@ -1,10 +1,9 @@
-import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 import produce from "immer";
 import { DesignerEvent } from "../../events";
 import {
   DesignerState,
   InsertMode,
-  findVirtNode,
+  PromptKind,
   getTargetExprId,
   isSelectableExpr,
   setTargetExprId,
@@ -15,7 +14,7 @@ import {
   getKeyboardMenuCommand,
   ShortcutCommand,
 } from "./state";
-import { DocumentBodyItem } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import { getSelectedExprIdSourceId, maybeCenterCanvas } from "../ui/state";
 
 export const shortcutReducer = (state: DesignerState, event: DesignerEvent) => {
   switch (event.type) {
@@ -47,28 +46,36 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
         newState.insertMode = InsertMode.Resource;
         setTargetExprId(newState, null);
       });
+    case ShortcutCommand.SearchFiles:
+      return produce(state, (newState) => {
+        newState.focusOnFileSearch = true;
+      });
 
     case ShortcutCommand.GoToMain:
-      return produce(state, (newState) => {
+      state = produce(state, (newState) => {
         const { expr } = ast.getExprByVirtId(
           getTargetExprId(state),
           state.graph
         );
-
-        if (ast.isInstance(expr, state.graph)) {
-          const component = ast.getInstanceComponent(expr, state.graph);
-          const renderNode = ast.getComponentRenderNode(component);
-
-          // TODO: need to open the document
-          setTargetExprId(newState, component.id);
-        } else {
-          setTargetExprId(newState, expr.id);
-        }
+        setTargetExprId(newState, getSelectedExprIdSourceId(state));
       });
+
+      state = maybeCenterCanvas(state, true);
+      return state;
     case ShortcutCommand.ShowHideUI:
       return produce(state, (newState) => {
         newState.showLeftSidebar = newState.showRightsidebar =
           !newState.showLeftSidebar;
+      });
+    case ShortcutCommand.CreateDesignFile:
+      return produce(state, (newState) => {
+        newState.prompt = {
+          kind: PromptKind.NewDesignFile,
+          title: "New design file",
+          placeholder: "design file name",
+          okActionType: "test",
+          okLabel: "Create design file",
+        };
       });
     case ShortcutCommand.Escape:
       return produce(state, (newState) => {

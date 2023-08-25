@@ -7,8 +7,156 @@ import "./resource-modal.pc" as assetsModal
 
 token iconSize var(theme.fontSize03)
 /**
- * @bounds(x: -36, y: -1211, width: 1024, height: 768)
+ * @bounds(x: 6489, y: 1292, width: 1926, height: 1486)
 */
+
+public component SplashInfo {
+    render div {
+        style {
+            width: 100%
+            left: 0px
+            top: 0px
+            position: relative
+            height: 100%
+        }
+        div {
+            style {
+                transform: translate(-50%, -50%)
+                font-size: 1em
+                font-family: var(theme.defaultFontFamily)
+                display: flex
+                flex-direction: column
+                gap: var(theme.space08)
+                align-items: center
+                color: var(theme.gray0)
+                position: absolute
+                left: 50%
+                top: 50%
+                width: 600px
+            }
+            div logo(src: "./logo.svg") {
+                style {
+                    width: 200px
+                    opacity: 0.5
+                    mask-image: url("./logo.svg")
+                    height: 200px
+                    background: var(theme.gray06)
+                    mask-repeat: no-repeat
+                    mask-position: center
+                    mask-size: 100%
+                    position: relative
+                    top: 60px
+                }
+            }
+            div commands {
+                style {
+                    display: flex
+                    flex-direction: column
+                    gap: var(theme.space02)
+                    width: 100%
+                }
+                slot commands {
+                    SplashTip {
+                        insert label {
+                            text "Create design file"
+                        }
+                        insert shortcuts {
+                            ComboKey {
+                                style
+                                insert children {
+                                    text "⌘"
+                                }
+                            }
+                            ComboKey {
+                                style
+                                insert children {
+                                    text "⇧"
+                                }
+                            }
+                            ComboKey {
+                                style
+                                insert children {
+                                    text "d"
+                                }
+                            }
+                        }
+                    }
+                    SplashTip {
+                        insert label {
+                            text "Find design file"
+                        }
+                        insert shortcuts {
+                            ComboKey {
+                                style
+                                insert children {
+                                    text "⌘"
+                                }
+                            }
+                            ComboKey {
+                                style
+                                insert children {
+                                    text "f"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: 6229, y: 124, width: 1024, height: 768)
+*/
+
+public component SplashTip {
+    render div {
+        style {
+            display: flex
+            gap: var(theme.space04)
+            align-items: center
+            font-family: var(theme.defaultFontFamily)
+            color: var(theme.gray0)
+            justify-content: flex-end
+            width: 100%
+        }
+        slot label {
+            div {
+                style {
+                    font-weight: bold
+                }
+                text "Create a design file"
+            }
+        }
+        div {
+            style {
+                display: flex
+                gap: var(theme.space02)
+                width: 50%
+            }
+            slot shortcuts {
+                ComboKey
+                ComboKey
+            }
+        }
+    }
+}
+
+public component ComboKey {
+    render span {
+        style {
+            background: var(theme.gray06)
+            padding: var(theme.space02)
+            border-radius: var(theme.space03)
+            width: 30px
+            text-align: center
+        }
+        slot children {
+            text "meta"
+        }
+    }
+}
 
 public component EditorPanels {
     render div {
@@ -27,7 +175,7 @@ public component EditorPanels {
 }
 
 /**
- * @bounds(x: 0, y: 0, width: 2648, height: 1753)
+ * @bounds(x: 512, y: 542, width: 1830, height: 1256)
 */
 
 public component Editor {
@@ -51,8 +199,6 @@ public component Editor {
         }
     }
 }
-
-
 
 public component Artboard {
     render div(style: style) {
@@ -92,3 +238,29 @@ public component CanvasInner {
         slot children
     }
 }
+
+/**
+ * @bounds(x: 2563, y: 595, width: 1557, height: 993)
+*/
+
+Editor splash {
+    EditorPanels splash {
+        module.SidebarContainer {
+            leftSidebar.LeftSidebarPreview {
+                override {
+                    variant onlyFileNavigator trigger {
+                        true
+                    }
+                }
+            }
+        }
+        SplashInfo
+        style {
+            position: relative
+            display: flex
+        }
+    }
+}
+
+ComboKey
+

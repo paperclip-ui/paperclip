@@ -144,7 +144,7 @@ public component SuggestionMenuItem {
     variant checked trigger {
         ".checked"
     }
-    render menu.MenuItem(onMouseDown: onMouseDown, class: class) {
+    render menu.MenuItem(onMouseDown: onMouseDown, onClick: onClick, class: class) {
         slot children
         div {
             style {
@@ -163,12 +163,18 @@ public component SuggestionMenuItem {
 */
 
 public component TextInput {
+    variant large trigger {
+        ".large"
+    }
     variant isActive trigger {
         ":active"
         ":focus"
         ".active"
     }
     render input root(value: value, placeholder: placeholder, autoFocus: autoFocus, defaultValue: defaultValue, onKeyDown: onKeyDown, onBlur: onBlur, onChange: onChange, onFocus: onFocus, onBlur: onBlur, class: class, onClick: onClick) {
+        style variant large {
+            padding: var(theme.space04)
+        }
         style extends theme.input {
             width: 100%
         }
@@ -301,6 +307,10 @@ public component Token {
     }
 }
 
+/**
+ * @bounds(x: 1015, y: 858, width: 557, height: 114)
+*/
+
 public component Field {
     render div(onFocus: onFocus, onBlur: onBlur) {
         style {
@@ -309,16 +319,18 @@ public component Field {
             align-items: center
             position: relative
         }
-        div {
+        div nameContainer {
             style {
                 position: relative
                 width: 90px
                 flex-shrink: 0
                 font-size: var(theme.fontSize01)
+                overflow: hidden
+                text-overflow: ellipsis
             }
             slot name
         }
-        div {
+        div inputContainer {
             style {
                 display: flex
                 flex-direction: column
@@ -326,7 +338,9 @@ public component Field {
                 flex: 1
                 overflow: hidden
             }
-            slot input
+            slot input {
+                TextInput(value: "some value")
+            }
         }
     }
 }
@@ -653,6 +667,36 @@ public component RadioInput {
                 height: 100%
                 border-radius: 999px
                 transition: 0.3s
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: -1149, y: -557, width: 277, height: 112)
+*/
+
+div textInputPreview {
+    style {
+        font-family: var(theme.defaultFontFamily)
+        color: var(theme.gray0)
+        display: flex
+        gap: var(theme.space03)
+        flex-direction: column
+    }
+    div {
+        style {
+            display: flex
+            flex-direction: column
+            gap: var(theme.space03)
+            width: 200px
+        }
+        TextInput(value: "regular")
+        TextInput(value: "regular") {
+            override {
+                variant large trigger {
+                    true
+                }
             }
         }
     }

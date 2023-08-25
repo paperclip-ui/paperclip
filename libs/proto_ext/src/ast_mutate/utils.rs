@@ -1,7 +1,8 @@
 use convert_case::{Case, Casing};
+use paperclip_common::get_or_short;
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::ast;
-use paperclip_proto::ast::docco::ParameterValue;
+use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::ast::pc::{component_body_item, Component, Element, Render, SimpleExpression};
 use paperclip_proto::ast::{
     all::Expression,
@@ -161,6 +162,59 @@ pub fn upsert_render_node<'a>(component: &'a mut Component, create_node: bool) -
             .expect("Must be render node")
     }
 }
+
+pub fn get_instance_component<'a>(
+    tag_name: &str,
+    namespace: Option<String>,
+    owner: &'a Dependency,
+    graph: &'a Graph,
+) -> Option<&'a Component> {
+    let dep = if let Some(namespace) = &namespace {
+        owner.resolve_import_from_ns(namespace, graph)
+    } else {
+        Some(owner)
+    };
+
+    let dep = get_or_short!(dep, None);
+
+    dep.document
+        .as_ref()
+        .expect("Document must exist")
+        .get_component_by_name(tag_name)
+}
+
+// pub fn upsert_insert<'a>(instance: &'a mut Element, name: &str) -> &'a mut Insert {
+//     let existing_insert = instance.body.iter_mut().position(|x| match x.get_inner() {
+//         node::Inner::Insert(insert) => &insert.name == name,
+//         _ => false,
+//     });
+
+//     if let Some(i) = existing_insert {
+//         instance
+//             .body
+//             .get_mut(i)
+//             .unwrap()
+//             .try_into()
+//             .expect("Must be render node")
+//     } else {
+//         instance.body.push(
+//             node::Inner::Insert(Insert {
+//                 id: instance.checksum().to_string(),
+//                 range: None,
+//                 name: name.to_string(),
+//                 body: vec![],
+//             })
+//             .get_outer(),
+//         );
+
+//         instance
+//             .body
+//             .last_mut()
+//             .unwrap()
+//             .try_into()
+//             .expect("Must be insert")
+//     }
+// }
 
 pub fn import_dep(
     document: &mut ast::pc::Document,

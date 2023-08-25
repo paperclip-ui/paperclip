@@ -3,7 +3,9 @@ use crate::graph::{load::LoadableGraph, test_utils};
 use futures::executor::block_on;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::str_utils::strip_extra_ws;
-use paperclip_proto::ast::pc::{Component, Element, TextNode};
+use paperclip_proto::ast::pc::{
+    component_body_item, node, Component, Element, Render, Slot, TextNode,
+};
 use paperclip_proto::ast_mutate::{
     mutation, paste_expression, update_variant_trigger, AppendChild, AppendInsert, Bounds,
     ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveNode, PasteExpression,
@@ -3396,6 +3398,62 @@ case! {
     "#
   )]
 }
+case! {
+  can_prepend_a_child_in_an_insert,
+  [
+    (
+      "/entry.pc", r#"
+      div {
+        insert a {
+
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::PrependChild(PrependChild {
+    parent_id: "80f4925f-1".to_string(),
+    child_source: "span".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      insert a {
+        span
+      }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_prepend_a_child_in_a_slot,
+  [
+    (
+      "/entry.pc", r#"
+      div {
+        slot a {
+
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::PrependChild(PrependChild {
+    parent_id: "80f4925f-1".to_string(),
+    child_source: "span".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      slot a {
+        span
+      }
+    }
+    "#
+  )]
+}
+
 
 case! {
   creates_unique_id_when_prepending_node,
@@ -3668,6 +3726,117 @@ case! {
     "/entry.pc", r#"
     component A {
       render div(a: b)
+    }
+    "#
+  )]
+}
+
+case! {
+  when_setting_tag_to_instance_slot_children_are_added,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render div {
+            slot a {
+
+            }
+            slot b {
+
+            }
+          }
+        }
+
+        div
+      "#
+    )
+  ],
+
+
+  mutation::Inner::SetTagName(SetTagName {
+    element_id: "80f4925f-6".to_string(),
+    tag_name: "A".to_string(),
+    tag_file_path: None
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div {
+        slot a
+        slot b
+      }
+    }
+
+    A {
+      insert a { }
+      insert b { }
+    }
+    "#
+  )]
+}
+
+case! {
+  when_pasting_component_slots_are_created_too,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+        render div {
+          slot a
+          slot b
+        }
+      }
+      "#
+    )
+  ],
+  mutation::Inner::PasteExpression(PasteExpression {
+    target_expression_id: "80f4925f-6".to_string(),
+    item: Some(paste_expression::Item::Component(Component {
+      name: "Baaabbb".to_string(),
+      is_public: false,
+      range: None,
+      body: vec![
+        component_body_item::Inner::Render(Render {
+          id: "render".to_string(),
+          range: None,
+          node: Some(node::Inner::Element(Element {
+            id: "div".to_string(),
+            tag_name: "div".to_string(),
+            namespace: None,
+            name: None,
+            parameters: vec![],
+            range: None,
+            body: vec![
+              node::Inner::Slot(Slot {
+                range: None,
+                id: "slot-1".to_string(),
+                name: "a".to_string(),
+                body: vec![]
+              }).get_outer(),
+              node::Inner::Slot(Slot {
+                range: None,
+                id: "slot-2".to_string(),
+                name: "b".to_string(),
+                body: vec![]
+              }).get_outer()
+            ]
+          }).get_outer())
+        }).get_outer()
+      ],
+      id: "80f4925f-5".to_string()
+    }))
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div {
+        slot a
+        slot b
+      }
+    }
+    A {
+      insert a { }
+      insert b { }
     }
     "#
   )]

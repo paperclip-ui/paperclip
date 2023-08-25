@@ -41,7 +41,7 @@ export const FileNavigator = () => {
     <sidebarStyles.SidebarPanel>
       <sidebarStyles.SidebarSection class="fill">
         <sidebarStyles.SidebarPanelHeader>
-          Files
+          Resources
           <TextInput
             autoFocus={focusOnFileFilter}
             onChange={onFilter}

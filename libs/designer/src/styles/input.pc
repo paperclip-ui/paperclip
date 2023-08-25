@@ -163,12 +163,18 @@ public component SuggestionMenuItem {
 */
 
 public component TextInput {
+    variant large trigger {
+        ".large"
+    }
     variant isActive trigger {
         ":active"
         ":focus"
         ".active"
     }
     render input root(value: value, placeholder: placeholder, autoFocus: autoFocus, defaultValue: defaultValue, onKeyDown: onKeyDown, onBlur: onBlur, onChange: onChange, onFocus: onFocus, onBlur: onBlur, class: class, onClick: onClick) {
+        style variant large {
+            padding: var(theme.space04)
+        }
         style extends theme.input {
             width: 100%
         }
@@ -661,6 +667,36 @@ public component RadioInput {
                 height: 100%
                 border-radius: 999px
                 transition: 0.3s
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: -1149, y: -557, width: 277, height: 112)
+*/
+
+div textInputPreview {
+    style {
+        font-family: var(theme.defaultFontFamily)
+        color: var(theme.gray0)
+        display: flex
+        gap: var(theme.space03)
+        flex-direction: column
+    }
+    div {
+        style {
+            display: flex
+            flex-direction: column
+            gap: var(theme.space03)
+            width: 200px
+        }
+        TextInput(value: "regular")
+        TextInput(value: "regular") {
+            override {
+                variant large trigger {
+                    true
+                }
             }
         }
     }

@@ -8,8 +8,6 @@ import {
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { WritableDraft } from "immer/dist/internal";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
-import { findSelectableExprId } from "../domains/ui/state";
-import { uniq } from "lodash";
 
 export const IS_WINDOWS = false;
 
@@ -17,6 +15,10 @@ export enum InsertMode {
   Element,
   Text,
   Resource,
+}
+
+export enum PromptKind {
+  NewDesignFile,
 }
 
 export enum LayerKind {
@@ -74,6 +76,14 @@ export type FSFile = BaseFSItem<FSItemKind.File>;
 
 export type FSItem = FSDirectory | FSFile;
 
+type Prompt = {
+  title: string;
+  okLabel: string;
+  placeholder: string;
+  okActionType: string;
+  kind: PromptKind;
+};
+
 export type DesignerState = {
   readonly: boolean;
   scopedElementId?: string;
@@ -90,6 +100,7 @@ export type DesignerState = {
   searchedFilePathRoot?: string;
   showLeftSidebar: boolean;
   resourceModalDragLeft: boolean;
+  prompt?: Prompt;
   showRightsidebar: boolean;
   highlightedNodeId?: string;
   screenshotUrls: Record<string, string>;

@@ -1,9 +1,162 @@
-public component Modal {
-  render div {
-    style {
-      position: fixed
-      top: 0px
-      left: 0px
+import "./input.pc" as module1
+import "./button.pc" as module
+import "./theme.pc" as mod
+
+/**
+ * @bounds(x: 1285, y: 559, width: 428, height: 38)
+*/
+
+public component ModalFooter {
+    render div content {
+        style {
+            display: flex
+            justify-content: space-between
+        }
+        div left
+        div right {
+            style {
+                display: flex
+                gap: var(mod.space03)
+            }
+            slot rightControls {
+                module.Button {
+                    override {
+                        variant secondary trigger {
+                            true
+                        }
+                    }
+                    text "cancel"
+                }
+                module.Button {
+                    text "ok"
+                }
+            }
+        }
     }
-  }
 }
+
+public component ModalContent {
+    render div content {
+        style {
+            height: 100%
+            min-height: 0px
+        }
+        slot children {
+            text "some description of text and stuff"
+        }
+    }
+}
+
+public component ModalHeader {
+    render div header {
+        style {
+            font-weight: bold
+            font-size: var(mod.fontSize03)
+            display: flex
+            justify-content: space-between
+            align-items: flex-start
+            bakground: blue
+            background: transparent
+        }
+        slot children {
+            text "title"
+        }
+        button(onClick: onCloseClick) {
+            style {
+                color: inherit
+                border: none
+                padding: 0
+                margin: 0
+                font-size: inherit
+                align-items: center
+                display: flex
+                background: transparent
+                cursor: pointer
+            }
+            text "×"
+        }
+    }
+}
+
+/**
+ * @bounds(x: 1168, y: 187, width: 557, height: 254)
+*/
+
+public component Modal {
+    render div modal {
+        style {
+            background: var(mod.gray04)
+            position: absolute
+            left: 50%
+            top: 50%
+            transform: translate(-50%, -50%)
+            color: var(mod.fontColor01)
+            border-radius: var(mod.space02)
+            font-family: var(mod.defaultFontFamily)
+            padding: var(mod.space04)
+            display: flex
+            flex-direction: column
+            gap: var(mod.space05)
+            min-width: 300px
+            filter: drop-shadow(10px 10px 3px rgba(0, 0, 0, 0.4))
+            border: 1px solid transparent
+            border-color: var(mod.gray02)
+        }
+        slot children {
+            ModalHeader
+            ModalContent
+            ModalFooter
+        }
+    }
+}
+
+/**
+ * @bounds(x: -53, y: 18, width: 1024, height: 768)
+*/
+
+public component ModalContainer {
+    render div container {
+        div background(onClick: onBackgroundClick)
+        style {
+            position: fixed
+            background: rgba(0, 0, 0, 0.2)
+            top: 0px
+            left: 0px
+            width: 100vw
+            height: 100vh
+            z-index: 1024
+        }
+        slot children {
+            Modal
+        }
+    }
+}
+
+/**
+ * @bounds(x: -43, y: 896, width: 1024, height: 768)
+*/
+
+ModalContainer {
+    insert children {
+        Modal {
+            ModalHeader {
+                insert children {
+                    text "Create a new file"
+                }
+            }
+            ModalContent {
+                insert children {
+                    module1.TextInput(placeholder: "new file name", value: "") {
+                        override {
+                            variant large trigger {
+                                true
+                            }
+                        }
+                    }
+                }
+            }
+            ModalFooter
+        }
+    }
+}
+

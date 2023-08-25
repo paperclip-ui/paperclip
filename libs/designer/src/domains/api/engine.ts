@@ -15,6 +15,7 @@ import {
   ExprNavigatorDroppedNode,
   FileFilterChanged,
   InstanceVariantToggled,
+  PromptClosed,
   StyleDeclarationsChanged,
   StyleMixinsSet,
   TextValueChanged,
@@ -37,6 +38,7 @@ import {
   getTargetExprId,
   InsertMode,
   LayerKind,
+  PromptKind,
 } from "../../state";
 import {
   Mutation,
@@ -692,6 +694,13 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
+  const handlePromptClosed = ({ payload: { value, kind } }: PromptClosed) => {
+    if (value == null || kind !== PromptKind.NewDesignFile) {
+      return;
+    }
+    console.log("CREATE DESIGN FILE", value);
+  };
+
   const handleKeyDown = (
     event: KeyDown,
     state: DesignerState,
@@ -838,6 +847,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "designer-engine/apiError": {
         return handleApiError();
+      }
+      case "ui/promptClosed": {
+        return handlePromptClosed(event);
       }
       case "keyboard/keyDown": {
         return handleKeyDown(event, newState, prevState);

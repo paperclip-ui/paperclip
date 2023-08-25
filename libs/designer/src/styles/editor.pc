@@ -259,10 +259,6 @@ Editor splash {
             position: relative
             display: flex
         }
-        insert children {
-        }
-    }
-    insert children {
     }
 }
 

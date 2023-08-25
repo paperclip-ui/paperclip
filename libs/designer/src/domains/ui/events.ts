@@ -1,7 +1,13 @@
 import { BaseEvent } from "@paperclip-ui/common";
 import { Box, Point, Size } from "../../state/geom";
 import { UpdateVariantTrigger } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
-import { DNDKind, FSItem, InsertMode, LayerKind } from "../../state";
+import {
+  DNDKind,
+  FSItem,
+  InsertMode,
+  LayerKind,
+  PromptKind,
+} from "../../state";
 
 export type DashboardAddFileConfirmed = BaseEvent<
   "ui/dashboardAddFileConfirmed",
@@ -125,6 +131,13 @@ export type ExprNavigatorDroppedNode = BaseEvent<
   }
 >;
 
+export type PromptClosed = BaseEvent<
+  "ui/promptClosed",
+  {
+    value?: string;
+    kind: PromptKind;
+  }
+>;
 export type ToolsLayerDragOver = BaseEvent<"ui/toolsLayerDragOver", Point>;
 export type ToolsLayerDrop = BaseEvent<
   "ui/toolsLayerDrop",
@@ -197,6 +210,7 @@ export type UIEvent =
   | BoundsChanged
   | CanvasResized
   | ToolsLayerDrop
+  | PromptClosed
   | FileNavigatorItemClicked
   | ResizerPathMoved
   | ResizerPathStoppedMoving

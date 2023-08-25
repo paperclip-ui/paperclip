@@ -3,6 +3,7 @@ import { DesignerEvent } from "../../events";
 import {
   DesignerState,
   InsertMode,
+  PromptKind,
   getTargetExprId,
   isSelectableExpr,
   setTargetExprId,
@@ -65,6 +66,16 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
       return produce(state, (newState) => {
         newState.showLeftSidebar = newState.showRightsidebar =
           !newState.showLeftSidebar;
+      });
+    case ShortcutCommand.CreateDesignFile:
+      return produce(state, (newState) => {
+        newState.prompt = {
+          kind: PromptKind.NewDesignFile,
+          title: "New design file",
+          placeholder: "design file name",
+          okActionType: "test",
+          okLabel: "Create design file",
+        };
       });
     case ShortcutCommand.Escape:
       return produce(state, (newState) => {

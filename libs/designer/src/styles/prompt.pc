@@ -1,0 +1,11 @@
+
+/**
+ * @bounds(x: 711, y: 161, width: 650, height: 398)
+*/
+
+div {
+    style {
+        position: relative
+    }
+}
+

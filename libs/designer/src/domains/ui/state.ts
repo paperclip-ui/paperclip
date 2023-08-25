@@ -10,11 +10,8 @@ import {
   IS_WINDOWS,
   findVirtNode,
   getAllFrameBounds,
-  getCurrentDependency,
   getCurrentPreviewFrameBoxes,
-  getExprBounds,
   getNodeBox,
-  getNodeInfoAtCurrentPoint,
   getPreviewFrameBoxes,
   getTargetExprId,
   highlightNode,
@@ -29,7 +26,6 @@ import { Box, centerTransformZoom, mergeBoxes } from "../../state/geom";
 import { clamp, uniq } from "lodash";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { WritableDraft } from "immer/dist/internal";
-import { Component, Slot } from "@paperclip-ui/proto/lib/generated/ast/pc";
 
 export const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
 export const PAN_X_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;

@@ -51,6 +51,10 @@ public component ModalContent {
     }
 }
 
+/**
+ * @bounds(x: 1155, y: 893, width: 584, height: 70)
+*/
+
 public component ModalHeader {
     render div header {
         style {

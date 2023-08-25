@@ -72,6 +72,7 @@ import {
 import { ExpressionPasted } from "../clipboard/events";
 import { Num, Range } from "@paperclip-ui/proto/lib/generated/ast/base";
 import { SimpleExpression } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import { kebabCase } from "lodash";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -119,7 +120,10 @@ const createActions = (
       dispatch({ type: "designer-engine/documentOpened", payload: data });
     },
     async createDesignFile(name: string) {
-      const { filePath } = await client.CreateDesignFile({ name });
+      // kebab case in case spaces are added
+      const { filePath } = await client.CreateDesignFile({
+        name: kebabCase(name),
+      });
       dispatch({
         type: "designer-engine/designFileCreated",
         payload: { filePath },
@@ -698,7 +702,7 @@ const createEventHandler = (actions: Actions) => {
     if (value == null || kind !== PromptKind.NewDesignFile) {
       return;
     }
-    console.log("CREATE DESIGN FILE", value);
+    actions.createDesignFile(value);
   };
 
   const handleKeyDown = (

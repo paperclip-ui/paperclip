@@ -8,6 +8,7 @@ import {
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { WritableDraft } from "immer/dist/internal";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import produce from "immer";
 
 export const IS_WINDOWS = false;
 
@@ -236,3 +237,17 @@ export const getSearchedFiles = (state: DesignerState) =>
   state.searchedFilePaths || [];
 export const getSearchedFilesRoot = (state: DesignerState) =>
   state.searchedFilePathRoot;
+
+export const redirect = (state: DesignerState, path: string) => {
+  const parts = new URL("http://localhost" + path);
+  console.log("REDIRR", parts);
+
+  return produce(state, (newState) => {
+    newState.history = {
+      pathname: parts.pathname,
+      query: Object.fromEntries(new URLSearchParams(location?.search)),
+    };
+
+    console.log(newState.history);
+  });
+};

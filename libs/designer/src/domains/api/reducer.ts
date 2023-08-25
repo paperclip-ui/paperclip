@@ -5,6 +5,7 @@ import {
   getCurrentFilePath,
   getGraphComponents,
   isSelectableExpr,
+  redirect,
   setDirItems,
   setTargetExprId,
 } from "../../state";
@@ -14,6 +15,7 @@ import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import jasonpatch from "fast-json-patch";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { uniq } from "lodash";
+import { routes } from "../../state/routes";
 
 export const apiReducer = (
   state: DesignerState,
@@ -34,6 +36,9 @@ export const apiReducer = (
         newState.searchedFilePathRoot = event.payload.rootDir;
         newState.searchedFilePaths = event.payload.paths;
       });
+    }
+    case "designer-engine/designFileCreated": {
+      return redirect(state, routes.editor(event.payload.filePath));
     }
     case "designer-engine/directoryRead": {
       return produce(state, (newState) => {

@@ -46,6 +46,11 @@ export const leftSidebarReducer = (
       });
       return state;
     }
+    case "designer-engine/fileCreated": {
+      return produce(state, (newState) => {
+        newState.selectedFilePath = event.payload.filePath;
+      });
+    }
     case "history-engine/historyChanged": {
       return produce(state, (newState) => {
         newState.fileFilter = null;

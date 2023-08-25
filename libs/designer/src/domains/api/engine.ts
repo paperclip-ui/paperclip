@@ -129,10 +129,27 @@ const createActions = (
   return {
     openFile,
     readDirectory,
-    async createDesignFile(name: string) {
+    async createDirectory(name: string, parentDir?: string) {
+      const filePath = parentDir + "/" + name;
+
+      // // kebab case in case spaces are added
+      await client.CreateFile({
+        path: filePath,
+        kind: FSItemKind.Directory,
+      });
+
+      dispatch({
+        type: "designer-engine/fileCreated",
+        payload: { filePath, kind: FSItemKind.Directory },
+      });
+
+      readDirectory(parentDir);
+    },
+    async createDesignFile(name: string, parentDir?: string) {
       // kebab case in case spaces are added
       const { filePath } = await client.CreateDesignFile({
         name: kebabCase(name),
+        parentDir,
       });
       dispatch({
         type: "designer-engine/designFileCreated",
@@ -704,10 +721,15 @@ const createEventHandler = (actions: Actions) => {
   const handlePromptClosed = ({
     payload: { value, details },
   }: PromptClosed) => {
-    if (value == null || details.kind !== PromptKind.NewDesignFile) {
+    if (!value) {
       return;
     }
-    actions.createDesignFile(value);
+
+    if (details.kind === PromptKind.NewDesignFile) {
+      actions.createDesignFile(value, details.parentDirectory);
+    } else if (details.kind === PromptKind.NewDirectory) {
+      actions.createDirectory(value, details.parentDirectory);
+    }
   };
 
   const handleDocumentOpened = (

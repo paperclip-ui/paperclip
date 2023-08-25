@@ -84,6 +84,7 @@ message ApplyMutationsResult {
 
 message CreateDesignFileRequest {
   string name = 1;
+  optional string parent_dir = 2;
 }
 
 message CreateDesignFileResponse {

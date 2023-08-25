@@ -6,6 +6,7 @@ import {
 import { BaseEvent } from "@paperclip-ui/common";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
+import { FSItemKind } from "../../state";
 
 export type DocumentOpened = BaseEvent<
   "designer-engine/documentOpened",
@@ -45,11 +46,16 @@ export type DesignFileCreated = BaseEvent<
   "designer-engine/designFileCreated",
   { filePath: string }
 >;
+export type FileCreated = BaseEvent<
+  "designer-engine/fileCreated",
+  { filePath: string; kind: FSItemKind }
+>;
 
 export type DesignerEngineEvent =
   | DocumentOpened
   | ChangesApplied
   | FileSearchResult
+  | FileCreated
   | DirectoryRead
   | APIError
   | GraphLoaded

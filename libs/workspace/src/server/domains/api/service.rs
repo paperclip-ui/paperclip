@@ -251,7 +251,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         request: Request<CreateDesignFileRequest>,
     ) -> Result<Response<CreateDesignFileResponse>, Status> {
         if let Ok(file_path) =
-            create_design_file(&request.get_ref().name.to_string(), self.ctx.clone())
+            create_design_file(&request.get_ref().name.to_string(), request.get_ref().parent_dir.clone(), self.ctx.clone())
         {
             Ok(Response::new(CreateDesignFileResponse { file_path }))
         } else {

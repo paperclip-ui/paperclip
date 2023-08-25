@@ -34,6 +34,11 @@ import {
   SuggestionMenuItem,
 } from "@paperclip-ui/designer/src/components/SuggestionMenu";
 import { noop } from "lodash";
+import {
+  getFileShortcuts,
+  getGlobalShortcuts,
+} from "@paperclip-ui/designer/src/domains/shortcuts/state";
+import { ContextMenuItem } from "@paperclip-ui/designer/src/styles/context-menu.pc";
 
 export const FileNavigator = () => {
   const state = useSelector(getEditorState);
@@ -175,28 +180,33 @@ const FSItem = ({ depth, item }: FSItemProps) => {
     return null;
   }
 
+  const shortcuts = useSelector(getFileShortcuts);
   return (
-    <styles.TreeNavigationItem>
-      <styles.LayerNavigationItemHeader
-        ref={ref}
-        style={{ "--depth": depth }}
-        onClick={onClick}
-        class={classNames({
-          file: item.kind === FSItemKind.File,
-          folder: item.kind === FSItemKind.Directory,
-          container: item.kind === FSItemKind.Directory,
-          open,
-          selected,
-        })}
-      >
-        {dirname(item.path)}
-      </styles.LayerNavigationItemHeader>
-      {item.kind === FSItemKind.Directory && open
-        ? item.items.map((item) => {
-            return <FSItem key={item.path} item={item} depth={depth + 1} />;
-          })
-        : null}
-    </styles.TreeNavigationItem>
+    <ContextMenu menu={() => shortcuts}>
+      <div>
+        <styles.TreeNavigationItem>
+          <styles.LayerNavigationItemHeader
+            ref={ref}
+            style={{ "--depth": depth }}
+            onClick={onClick}
+            class={classNames({
+              file: item.kind === FSItemKind.File,
+              folder: item.kind === FSItemKind.Directory,
+              container: item.kind === FSItemKind.Directory,
+              open,
+              selected,
+            })}
+          >
+            {dirname(item.path)}
+          </styles.LayerNavigationItemHeader>
+          {item.kind === FSItemKind.Directory && open
+            ? item.items.map((item) => {
+                return <FSItem key={item.path} item={item} depth={depth + 1} />;
+              })
+            : null}
+        </styles.TreeNavigationItem>
+      </div>
+    </ContextMenu>
   );
 };
 

@@ -21,6 +21,7 @@ export enum InsertMode {
 
 export enum PromptKind {
   NewDesignFile,
+  RenameFile,
   NewDirectory,
 }
 
@@ -36,9 +37,11 @@ export type NewDirectoryPromptDetails =
   BasePromptDetails<PromptKind.NewDirectory> & {
     parentDirectory: string;
   };
+export type RenameFile = BasePromptDetails<PromptKind.RenameFile>;
 
 export type PromptDetails =
   | NewDesignFilePromptDetails
+  | RenameFile
   | NewDirectoryPromptDetails;
 
 export enum LayerKind {
@@ -296,6 +299,13 @@ export const newDesignFilePrompt = (parentDirectory?: string): Prompt => ({
   title: "New design file",
   placeholder: "design file name",
   okLabel: "Create design file",
+});
+
+export const renameFilePrompt = (): Prompt => ({
+  details: { kind: PromptKind.RenameFile },
+  title: "New file name",
+  placeholder: "file name",
+  okLabel: "Rename file",
 });
 
 export const newDirectoryPrompt = (parentDirectory?: string): Prompt => ({

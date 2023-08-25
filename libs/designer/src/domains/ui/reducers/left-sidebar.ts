@@ -9,12 +9,14 @@ import {
   newDesignFilePrompt,
   newDirectoryPrompt,
   redirect,
+  renameFilePrompt,
 } from "@paperclip-ui/designer/src/state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import produce from "immer";
 import { expandVirtIds, selectNode } from "../state";
 import { uniq } from "lodash";
 import { routes } from "@paperclip-ui/designer/src/state/routes";
+import { ShortcutCommand } from "../../shortcuts/state";
 
 export const leftSidebarReducer = (
   state: DesignerState,
@@ -63,6 +65,14 @@ export const leftSidebarReducer = (
           newState.prompt = newDesignFilePrompt(newState.selectedFilePath);
         } else if (event.payload === NewFileKind.Directory) {
           newState.prompt = newDirectoryPrompt(newState.selectedFilePath);
+        }
+      });
+    }
+
+    case "shortcuts/itemSelected": {
+      return produce(state, (newState) => {
+        if (event.payload.command === ShortcutCommand.RenameFile) {
+          newState.prompt = renameFilePrompt();
         }
       });
     }

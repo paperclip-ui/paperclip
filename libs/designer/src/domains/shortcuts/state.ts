@@ -19,6 +19,8 @@ export enum ShortcutCommand {
   InsertText,
   ConvertToComponent,
   ShowHideUI,
+  DeleteFile,
+  RenameFile,
   ConvertToSlot,
   WrapInElement,
   OpenCodeEditor,
@@ -193,6 +195,24 @@ export const getGlobalShortcuts = (
 
   // Entity
   ...getSelectedEntityShortcuts(state),
+];
+
+export const getFileShortcuts = (
+  state: DesignerState
+): MenuItem<ShortcutCommand>[] => [
+  // Tooling
+  {
+    kind: MenuItemKind.Option,
+    label: "Delete File",
+    shortcut: [],
+    command: ShortcutCommand.DeleteFile,
+  },
+  {
+    kind: MenuItemKind.Option,
+    label: "Rename File",
+    shortcut: [],
+    command: ShortcutCommand.RenameFile,
+  },
 ];
 
 export const getKeyboardMenuItem = (

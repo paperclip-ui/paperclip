@@ -1,12 +1,17 @@
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import {
   DesignerState,
+  FSItemKind,
+  expandDirs,
+  getCurrentFilePath,
   getTargetExprId,
+  redirect,
 } from "@paperclip-ui/designer/src/state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import produce from "immer";
 import { expandVirtIds, selectNode } from "../state";
 import { uniq } from "lodash";
+import { routes } from "@paperclip-ui/designer/src/state/routes";
 
 export const leftSidebarReducer = (
   state: DesignerState,
@@ -31,24 +36,30 @@ export const leftSidebarReducer = (
 
       return state;
     }
-    case "designer-engine/graphLoaded":
-    case "designer-engine/documentOpened":
+    case "designer-engine/documentOpened": {
+      state = expandLayerVirtIds(state);
+      state = produce(state, (newState) => {
+        newState.selectedFilePath = getCurrentFilePath(state);
+      });
+      return state;
+    }
     case "history-engine/historyChanged": {
-      const targetId = getTargetExprId(state);
-
-      if (targetId) {
+      return produce(state, (newState) => {
+        newState.fileFilter = null;
+        expandDirs(state.projectDirectory.path)(newState);
+      });
+    }
+    case "ui/FileNavigatorItemClicked": {
+      if (event.payload.kind === FSItemKind.File) {
+        state = redirect(state, routes.editor(event.payload.path));
+      } else {
         state = produce(state, (newState) => {
-          newState.expandedLayerVirtIds = uniq([
-            targetId,
-            ...state.expandedLayerVirtIds,
-            ...ast.getAncestorIds(targetId, state.graph),
-          ]);
+          newState.selectedFilePath = event.payload.path;
         });
+        // gets done on redirect so we're good!
+        state = produce(state, expandDirs(event.payload.path));
       }
 
-      state = produce(state, (newState) => {
-        newState.fileFilter = null;
-      });
       return state;
     }
     case "ui/fileFilterChanged": {
@@ -62,5 +73,21 @@ export const leftSidebarReducer = (
       return state;
     }
   }
+  return state;
+};
+
+const expandLayerVirtIds = (state: DesignerState) => {
+  const targetId = getTargetExprId(state);
+
+  if (targetId) {
+    state = produce(state, (newState) => {
+      newState.expandedLayerVirtIds = uniq([
+        targetId,
+        ...state.expandedLayerVirtIds,
+        ...ast.getAncestorIds(targetId, state.graph),
+      ]);
+    });
+  }
+
   return state;
 };

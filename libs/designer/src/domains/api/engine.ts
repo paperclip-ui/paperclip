@@ -119,7 +119,6 @@ const createActions = (
   };
 
   const readDirectory = async (inputPath: string) => {
-    console.log("reading ", inputPath);
     const { items, path } = await client.ReadDirectory({ path: inputPath });
     dispatch({
       type: "designer-engine/directoryRead",
@@ -989,5 +988,6 @@ const bootstrap = (
   if (filePath) {
     openFile(filePath);
   }
+
   syncGraph();
 };

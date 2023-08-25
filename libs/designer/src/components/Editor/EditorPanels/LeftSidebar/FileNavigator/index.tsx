@@ -13,6 +13,7 @@ import {
   getFocusOnFileFilter,
   getSearchedFiles,
   getSearchedFilesRoot,
+  getSelectedFilePath,
 } from "@paperclip-ui/designer/src/state";
 import classNames from "classnames";
 import {
@@ -113,14 +114,15 @@ type FSItemProps = {
 const FSItem = ({ depth, item }: FSItemProps) => {
   const dispatch = useDispatch<DesignerEvent>();
   const currentFilePath = useSelector(getCurrentFilePath);
+  const selectedFilePath = useSelector(getSelectedFilePath);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const selected = currentFilePath === item.path;
+  const selected = selectedFilePath === item.path;
 
   const onClick = useCallback(() => {
     dispatch({ type: "ui/FileNavigatorItemClicked", payload: item });
     setOpen(!open);
-  }, [item.path]);
+  }, [open, item.path]);
 
   useEffect(() => {
     if (selected) {

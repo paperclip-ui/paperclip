@@ -14,23 +14,10 @@ export const createUIEngine =
       history.redirect(routes.editor(filePath));
     };
 
-    const handleFileNavigatorItemClicked = (
-      event: FileNavigatorItemClicked
-    ) => {
-      if (event.payload.kind === FSItemKind.File) {
-        // TODO: need to display an error somehow
-        if (isPaperclipFile(event.payload.path)) {
-          history.redirect(routes.editor(event.payload.path));
-        }
-      }
-    };
-
     const handleEvent = (event: DesignerEvent) => {
       switch (event.type) {
         case "designer-engine/designFileCreated":
           return handleDesignFileCreated(event);
-        case "ui/FileNavigatorItemClicked":
-          return handleFileNavigatorItemClicked(event);
       }
     };
 

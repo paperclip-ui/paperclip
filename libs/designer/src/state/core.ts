@@ -9,6 +9,7 @@ import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { WritableDraft } from "immer/dist/internal";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import produce from "immer";
+import { uniq } from "lodash";
 
 export const IS_WINDOWS = false;
 
@@ -99,6 +100,7 @@ export type DesignerState = {
   resourceFilePaths: string[];
   searchedFilePaths?: string[];
   selectedFilePath?: string;
+  expandedDirs?: string[];
   searchedFilePathRoot?: string;
   showLeftSidebar: boolean;
   resourceModalDragLeft: boolean;
@@ -163,6 +165,9 @@ export const getCanvas = (editor: DesignerState) => editor.canvas;
 
 export const getCurrentFilePath = (state: DesignerState) => {
   return state.history?.query.file;
+};
+export const getSelectedFilePath = (state: DesignerState) => {
+  return state.selectedFilePath;
 };
 export const getRenderedFilePath = (state: DesignerState) => {
   return state.renderedFilePath;
@@ -241,14 +246,25 @@ export const getSearchedFilesRoot = (state: DesignerState) =>
 
 export const redirect = (state: DesignerState, path: string) => {
   const parts = new URL("http://localhost" + path);
-  console.log("REDIRR", parts);
 
   return produce(state, (newState) => {
-    newState.history = {
+    newState.redirect = {
       pathname: parts.pathname,
-      query: Object.fromEntries(new URLSearchParams(location?.search)),
+      query: Object.fromEntries(new URLSearchParams(parts.search)),
     };
-
-    console.log(newState.history);
   });
 };
+
+export const selectFilePath =
+  (filePath: string) => (state: WritableDraft<DesignerState>) => {
+    state.selectedFilePath = filePath;
+    expandDirs(filePath)(state);
+  };
+
+export const expandDirs =
+  (top: string) => (state: WritableDraft<DesignerState>) => {
+    state.expandedDirs = uniq([
+      ...(state.expandedDirs || []),
+      ...top.split("/").map((_, i, arr) => arr.slice(0, i + 1).join("/")),
+    ]);
+  };

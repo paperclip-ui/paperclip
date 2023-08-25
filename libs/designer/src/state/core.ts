@@ -98,6 +98,7 @@ export type DesignerState = {
   focusOnFileSearch?: boolean;
   resourceFilePaths: string[];
   searchedFilePaths?: string[];
+  selectedFilePath?: string;
   searchedFilePathRoot?: string;
   showLeftSidebar: boolean;
   resourceModalDragLeft: boolean;

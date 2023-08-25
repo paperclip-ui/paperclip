@@ -137,20 +137,12 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
 
         let (_, output, error) = run_script::run(&command, &vec![], &ScriptOptions::new()).unwrap();
 
-        // let result = Command::new("code")
-        // .arg("--goto")
-        // .arg(format!("\"{}:{}:{}\"", path, start.line, start.column))
-        // .output();
 
         println!("Output: {}", output);
         println!("Error: {}", error);
 
         Ok(Response::new(Empty {}))
 
-        // if result.is_ok() {
-        // } else {
-        //     Err(Status::unknown("Error executing command"))
-        // }
     }
 
     async fn read_directory(
@@ -158,11 +150,10 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         request: Request<ReadDirectoryRequest>,
     ) -> Result<Response<ReadDirectoryResponse>, Status> {
         let mut path: String = request.get_ref().path.clone();
+        let store = self.ctx.store.clone();
+        let project_dir = &store.lock().unwrap().state.options.config_context.directory;
 
         if path.get(0..1) != Some("/") {
-            // path = format!("{}")
-            let store = self.ctx.store.clone();
-            let project_dir = &store.lock().unwrap().state.options.config_context.directory;
             path = Path::new(project_dir)
                 .join(path)
                 .absolutize()
@@ -170,6 +161,11 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                 .to_str()
                 .unwrap()
                 .to_string();
+        }
+
+        // prohibit reading outside of project directory
+        if !path.contains(project_dir) {
+            return Err(Status::not_found("Cannot ready directory outside of project"));
         }
 
         if let Ok(items) = self.ctx.io.read_directory(&path) {

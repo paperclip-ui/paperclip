@@ -5,7 +5,7 @@ import {
   ModulesEvaluated,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { Engine, Dispatch } from "@paperclip-ui/common";
-import { DesignerEngineEvent } from "./events";
+import { DesignerEngineEvent, DocumentOpened } from "./events";
 import { DesignerEvent } from "../../events";
 import {
   AddLayerMenuItemClicked,
@@ -113,12 +113,23 @@ const createActions = (
   client: DesignerClientImpl,
   dispatch: Dispatch<DesignerEngineEvent>
 ) => {
-  return {
-    async openFile(filePath: string) {
-      const data = await client.OpenFile({ path: filePath });
+  const openFile = async (filePath: string) => {
+    const data = await client.OpenFile({ path: filePath });
+    dispatch({ type: "designer-engine/documentOpened", payload: data });
+  };
 
-      dispatch({ type: "designer-engine/documentOpened", payload: data });
-    },
+  const readDirectory = async (inputPath: string) => {
+    console.log("reading ", inputPath);
+    const { items, path } = await client.ReadDirectory({ path: inputPath });
+    dispatch({
+      type: "designer-engine/directoryRead",
+      payload: { items, path, isRoot: inputPath === "." },
+    });
+  };
+
+  return {
+    openFile,
+    readDirectory,
     async createDesignFile(name: string) {
       // kebab case in case spaces are added
       const { filePath } = await client.CreateDesignFile({
@@ -139,14 +150,7 @@ const createActions = (
         },
       });
     },
-    readDirectory(inputPath: string) {
-      client.ReadDirectory({ path: inputPath }).then(({ path, items }) => {
-        dispatch({
-          type: "designer-engine/directoryRead",
-          payload: { items, path, isRoot: inputPath === "." },
-        });
-      });
-    },
+
     openCodeEditor(path: string, range: Range) {
       client.OpenCodeEditor({ path, range });
     },
@@ -705,6 +709,31 @@ const createEventHandler = (actions: Actions) => {
     actions.createDesignFile(value);
   };
 
+  const handleDocumentOpened = (
+    _event: DocumentOpened,
+    state: DesignerState
+  ) => {
+    // read ALL dirs so that they expand in file navigator
+    readFileAncestorDirectories(getCurrentFilePath(state));
+  };
+
+  const readFileAncestorDirectories = async (filePath: string) => {
+    const dirs = filePath.split("/");
+
+    // pop off file name
+    dirs.pop();
+    while (dirs.length) {
+      try {
+        await actions.readDirectory(dirs.join("/"));
+
+        // outside of project scope
+      } catch (e) {
+        break;
+      }
+      dirs.pop();
+    }
+  };
+
   const handleKeyDown = (
     event: KeyDown,
     state: DesignerState,
@@ -781,6 +810,7 @@ const createEventHandler = (actions: Actions) => {
     event: HistoryChanged,
     state: DesignerState
   ) => {
+    // open the document
     const filePath = getCurrentFilePath(state);
     if (filePath && filePath !== getRenderedFilePath(state)) {
       actions.openFile(filePath);
@@ -854,6 +884,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "ui/promptClosed": {
         return handlePromptClosed(event);
+      }
+      case "designer-engine/documentOpened": {
+        return handleDocumentOpened(event, newState);
       }
       case "keyboard/keyDown": {
         return handleKeyDown(event, newState, prevState);
@@ -953,10 +986,8 @@ const bootstrap = (
   syncResourceFiles();
   const filePath = getCurrentFilePath(initialState);
 
-  setTimeout(() => {
-    if (filePath) {
-      openFile(filePath);
-    }
-    syncGraph();
-  }, 100);
+  if (filePath) {
+    openFile(filePath);
+  }
+  syncGraph();
 };

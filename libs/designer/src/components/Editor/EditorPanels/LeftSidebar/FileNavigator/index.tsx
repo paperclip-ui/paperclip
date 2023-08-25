@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import * as styles from "@paperclip-ui/designer/src/styles/left-sidebar.pc";
@@ -64,19 +64,6 @@ export const FileNavigator = () => {
   );
 };
 
-type FSItemProps<Item extends FSItem> = {
-  item: Item;
-  depth: number;
-};
-
-const FSItem = ({ item, depth }: FSItemProps<FSItem>) => {
-  return item.kind === FSItemKind.Directory ? (
-    <DirectoryItem item={item} depth={depth} />
-  ) : (
-    <FileItem item={item} depth={depth} />
-  );
-};
-
 const isOpenableFile = (path: string) => /\.pc$/.test(path);
 
 const FilteredFiles = () => {
@@ -118,74 +105,62 @@ const FilteredFile = ({ path, rootDir }: FilteredFileProps) => {
   );
 };
 
-const DirectoryItem = ({ item, depth }: FSItemProps<FSDirectory>) => {
-  const dispatch = useDispatch<DesignerEvent>();
-
-  const [open, setOpen] = useState(false);
-
-  const onClick = useCallback(() => {
-    if (!open) {
-      dispatch({ type: "ui/FileNavigatorItemClicked", payload: item });
-      setOpen(true);
-    } else {
-      setOpen(false);
-    }
-  }, [item.path, open]);
-
-  const openContextMenu = useCallback(() => {
-    return [];
-  }, []);
-
-  return (
-    <styles.TreeNavigationItem>
-      <ContextMenu menu={openContextMenu}>
-        <styles.LayerNavigationItemHeader
-          onClick={onClick}
-          style={{ "--depth": depth }}
-          class={classNames({
-            folder: true,
-            container: true,
-            open,
-          })}
-        >
-          {dirname(item.path)}
-        </styles.LayerNavigationItemHeader>
-      </ContextMenu>
-      <styles.TreeNavigationItemContent>
-        {item.items.map((item) => {
-          return <FSItem key={item.path} item={item} depth={depth + 1} />;
-        })}
-      </styles.TreeNavigationItemContent>
-    </styles.TreeNavigationItem>
-  );
+type FSItemProps = {
+  item: FSItem;
+  depth: number;
 };
 
-const FileItem = ({ item, depth }: FSItemProps<FSFile>) => {
-  // only show files that can be opened up in the designer.
-  // TODO: need to have a toggle for this
-  if (!isPaperclipFile(item.path)) {
-    return null;
-  }
-  const state = useSelector(getEditorState);
+const FSItem = ({ depth, item }: FSItemProps) => {
   const dispatch = useDispatch<DesignerEvent>();
   const currentFilePath = useSelector(getCurrentFilePath);
-  const onClick = useCallback(
-    () => dispatch({ type: "ui/FileNavigatorItemClicked", payload: item }),
-    [item.path]
-  );
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const selected = currentFilePath === item.path;
+
+  const onClick = useCallback(() => {
+    dispatch({ type: "ui/FileNavigatorItemClicked", payload: item });
+    setOpen(!open);
+  }, [item.path]);
+
+  useEffect(() => {
+    if (selected) {
+      ref.current?.scrollIntoView({
+        block: "nearest",
+      });
+    }
+  }, [selected]);
+
+  useEffect(() => {
+    if (currentFilePath && currentFilePath.includes(item.path)) {
+      setOpen(true);
+    }
+  }, [currentFilePath]);
+
+  if (item.kind === FSItemKind.File && !isPaperclipFile(item.path)) {
+    return null;
+  }
 
   return (
     <styles.TreeNavigationItem>
       <styles.LayerNavigationItemHeader
+        ref={ref}
         style={{ "--depth": depth }}
         onClick={onClick}
         class={classNames({
-          file: true,
-          selected: currentFilePath === item.path,
+          file: item.kind === FSItemKind.File,
+          folder: item.kind === FSItemKind.Directory,
+          container: item.kind === FSItemKind.Directory,
+          open,
+          selected,
         })}
       >
         {dirname(item.path)}
       </styles.LayerNavigationItemHeader>
+      {item.kind === FSItemKind.Directory && open
+        ? item.items.map((item) => {
+            return <FSItem key={item.path} item={item} depth={depth + 1} />;
+          })
+        : null}
     </styles.TreeNavigationItem>
   );
 };

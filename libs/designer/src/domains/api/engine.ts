@@ -701,8 +701,10 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
-  const handlePromptClosed = ({ payload: { value, kind } }: PromptClosed) => {
-    if (value == null || kind !== PromptKind.NewDesignFile) {
+  const handlePromptClosed = ({
+    payload: { value, details },
+  }: PromptClosed) => {
+    if (value == null || details.kind !== PromptKind.NewDesignFile) {
       return;
     }
     actions.createDesignFile(value);

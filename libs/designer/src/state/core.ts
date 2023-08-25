@@ -21,7 +21,25 @@ export enum InsertMode {
 
 export enum PromptKind {
   NewDesignFile,
+  NewDirectory,
 }
+
+export type BasePromptDetails<Kind extends PromptKind> = {
+  kind: Kind;
+};
+
+export type NewDesignFilePromptDetails =
+  BasePromptDetails<PromptKind.NewDesignFile> & {
+    parentDirectory?: string;
+  };
+export type NewDirectoryPromptDetails =
+  BasePromptDetails<PromptKind.NewDirectory> & {
+    parentDirectory: string;
+  };
+
+export type PromptDetails =
+  | NewDesignFilePromptDetails
+  | NewDirectoryPromptDetails;
 
 export enum LayerKind {
   Text = "Text",
@@ -30,6 +48,11 @@ export enum LayerKind {
   Trigger = "Trigger",
   Style = "Style",
   Component = "Component",
+}
+
+export enum NewFileKind {
+  DesignFile = "DesignFile",
+  Directory = "Directory",
 }
 
 export enum DNDKind {
@@ -82,8 +105,7 @@ type Prompt = {
   title: string;
   okLabel: string;
   placeholder: string;
-  okActionType: string;
-  kind: PromptKind;
+  details: PromptDetails;
 };
 
 export type DesignerState = {
@@ -268,3 +290,17 @@ export const expandDirs =
       ...top.split("/").map((_, i, arr) => arr.slice(0, i + 1).join("/")),
     ]);
   };
+
+export const newDesignFilePrompt = (parentDirectory?: string): Prompt => ({
+  details: { kind: PromptKind.NewDesignFile, parentDirectory },
+  title: "New design file",
+  placeholder: "design file name",
+  okLabel: "Create design file",
+});
+
+export const newDirectoryPrompt = (parentDirectory?: string): Prompt => ({
+  details: { kind: PromptKind.NewDirectory, parentDirectory },
+  title: "New directory",
+  placeholder: "directory name",
+  okLabel: "Create directory",
+});

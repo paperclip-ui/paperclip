@@ -6,6 +6,7 @@ import {
   PromptKind,
   getTargetExprId,
   isSelectableExpr,
+  newDesignFilePrompt,
   setTargetExprId,
 } from "../../state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
@@ -69,13 +70,7 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
       });
     case ShortcutCommand.CreateDesignFile:
       return produce(state, (newState) => {
-        newState.prompt = {
-          kind: PromptKind.NewDesignFile,
-          title: "New design file",
-          placeholder: "design file name",
-          okActionType: "test",
-          okLabel: "Create design file",
-        };
+        newState.prompt = newDesignFilePrompt();
       });
     case ShortcutCommand.Escape:
       return produce(state, (newState) => {

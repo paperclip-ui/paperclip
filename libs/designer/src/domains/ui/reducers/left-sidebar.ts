@@ -2,9 +2,12 @@ import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import {
   DesignerState,
   FSItemKind,
+  NewFileKind,
   expandDirs,
   getCurrentFilePath,
   getTargetExprId,
+  newDesignFilePrompt,
+  newDirectoryPrompt,
   redirect,
 } from "@paperclip-ui/designer/src/state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
@@ -47,6 +50,15 @@ export const leftSidebarReducer = (
       return produce(state, (newState) => {
         newState.fileFilter = null;
         expandDirs(state.projectDirectory.path)(newState);
+      });
+    }
+    case "ui/AddFileItemClicked": {
+      return produce(state, (newState) => {
+        if (event.payload === NewFileKind.DesignFile) {
+          newState.prompt = newDesignFilePrompt(newState.selectedFilePath);
+        } else if (event.payload === NewFileKind.Directory) {
+          newState.prompt = newDirectoryPrompt(newState.selectedFilePath);
+        }
       });
     }
     case "ui/FileNavigatorItemClicked": {

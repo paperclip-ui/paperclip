@@ -6,6 +6,8 @@ import {
   FSItem,
   InsertMode,
   LayerKind,
+  NewFileKind,
+  PromptDetails,
   PromptKind,
 } from "../../state";
 
@@ -135,7 +137,7 @@ export type PromptClosed = BaseEvent<
   "ui/promptClosed",
   {
     value?: string;
-    kind: PromptKind;
+    details: PromptDetails;
   }
 >;
 export type ToolsLayerDragOver = BaseEvent<"ui/toolsLayerDragOver", Point>;
@@ -171,6 +173,8 @@ export type AddLayerMenuItemClicked = BaseEvent<
   "ui/AddLayerMenuItemClicked",
   LayerKind
 >;
+
+export type AddFileItem = BaseEvent<"ui/AddFileItemClicked", NewFileKind>;
 
 export type EditVariantClicked = BaseEvent<
   "ui/editVariantClicked",
@@ -225,6 +229,7 @@ export type UIEvent =
   | InsertElementReleased
   | CanvasMouseLeave
   | RectsCaptured
+  | AddFileItem
   | AttributeChanged
   | CanvasPanned
   | CanvasPanStart

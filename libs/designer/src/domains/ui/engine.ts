@@ -8,18 +8,7 @@ import { FileNavigatorItemClicked } from "./events";
 
 export const createUIEngine =
   (history: History) => (): Engine<DesignerState, DesignerEvent> => {
-    const handleDesignFileCreated = ({
-      payload: { filePath },
-    }: DesignFileCreated) => {
-      history.redirect(routes.editor(filePath));
-    };
-
-    const handleEvent = (event: DesignerEvent) => {
-      switch (event.type) {
-        case "designer-engine/designFileCreated":
-          return handleDesignFileCreated(event);
-      }
-    };
+    const handleEvent = (event: DesignerEvent) => {};
 
     return {
       dispose: () => {},

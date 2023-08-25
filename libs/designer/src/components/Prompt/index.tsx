@@ -22,7 +22,7 @@ export const PromptContainer = () => {
   const onSave = (value) => {
     dispatch({
       type: "ui/promptClosed",
-      payload: { value, kind: prompt.kind },
+      payload: { value, details: prompt.details },
     });
   };
 

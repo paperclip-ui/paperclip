@@ -47,10 +47,10 @@ impl<TReader: FileReader, TResolver: FileResolver> PCFileResolver<TReader, TReso
             false
         };
 
+        
         if !exceeds_max_size {
             let mime = mime_guess::from_path(Path::new(&full_path)).first_or_octet_stream();
             let content = base64::encode(self.reader.read_file(full_path)?);
-
             return Ok(format!("data:{};base64,{}", mime, content));
         }
 
@@ -69,6 +69,7 @@ impl<TReader: FileReader, TResolver: FileResolver> FileResolver
         if let Some(contents) = resolved_paths.get(&actual_path) {
             return Ok(contents.clone());
         } else {
+
             let contents = self.resolve_contents(&actual_path)?;
             resolved_paths.insert(actual_path.to_string(), contents.clone());
             return Ok(contents);

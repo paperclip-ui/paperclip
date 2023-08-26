@@ -56,6 +56,8 @@ export const leftSidebarReducer = (
       });
     }
     case "history-engine/historyChanged": {
+      state = expandLayerVirtIds(state);
+
       return produce(state, (newState) => {
         newState.fileFilter = null;
         expandDirs(state.projectDirectory.path)(newState);

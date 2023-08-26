@@ -32,6 +32,7 @@ import {
   findVirtNode,
   FSItem,
   FSItemKind,
+  getActiveFilePath,
   getCurrentFilePath,
   getFileFilter,
   getInsertBox,
@@ -178,6 +179,9 @@ const createActions = (
 
     openCodeEditor(path: string, range: Range) {
       client.OpenCodeEditor({ path, range });
+    },
+    openFileInNavigator(filePath: string) {
+      client.OpenFileInNavigator({ filePath });
     },
     syncResourceFiles() {
       client.GetResourceFiles({}).subscribe({
@@ -676,6 +680,10 @@ const createEventHandler = (actions: Actions) => {
     actions.openCodeEditor(getRenderedFilePath(state), range);
   };
 
+  const openFileInNavigator = (state: DesignerState) => {
+    actions.openFileInNavigator(getActiveFilePath(state));
+  };
+
   const handleWrapInElement = (state: DesignerState) => {
     if (!getTargetExprId(state).includes(".")) {
       actions.applyChanges([
@@ -716,6 +724,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case ShortcutCommand.OpenCodeEditor: {
         return openCodeEditor(state);
+      }
+      case ShortcutCommand.OpenFileInNavigator: {
+        return openFileInNavigator(state);
       }
       case ShortcutCommand.WrapInElement: {
         return handleWrapInElement(state);

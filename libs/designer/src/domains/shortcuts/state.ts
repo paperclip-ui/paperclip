@@ -21,6 +21,7 @@ export enum ShortcutCommand {
   ShowHideUI,
   DeleteFile,
   RenameFile,
+  OpenFileInNavigator,
   ConvertToSlot,
   WrapInElement,
   OpenCodeEditor,
@@ -199,21 +200,33 @@ export const getGlobalShortcuts = (
 
 export const getFileShortcuts = (
   state: DesignerState
-): MenuItem<ShortcutCommand>[] => [
-  // Tooling
-  {
-    kind: MenuItemKind.Option,
-    label: "Delete File",
-    shortcut: [],
-    command: ShortcutCommand.DeleteFile,
-  },
-  {
-    kind: MenuItemKind.Option,
-    label: "Rename File",
-    shortcut: [],
-    command: ShortcutCommand.RenameFile,
-  },
-];
+): MenuItem<ShortcutCommand>[] => {
+  const isDir = !state.selectedFilePath?.split("/").pop().includes(".");
+
+  return [
+    // Tooling
+    {
+      kind: MenuItemKind.Option,
+      label: "Delete File",
+      shortcut: [],
+      command: ShortcutCommand.DeleteFile,
+    },
+    {
+      kind: MenuItemKind.Option,
+      label: "Rename File",
+      shortcut: [],
+      command: ShortcutCommand.RenameFile,
+    },
+    isDir
+      ? {
+          kind: MenuItemKind.Option,
+          label: "Open In File Navigator",
+          shortcut: [],
+          command: ShortcutCommand.OpenFileInNavigator,
+        }
+      : null,
+  ].filter(Boolean) as MenuItem<ShortcutCommand>[];
+};
 
 export const getKeyboardMenuItem = (
   event: KeyDown,

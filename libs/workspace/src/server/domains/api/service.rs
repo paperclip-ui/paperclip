@@ -12,7 +12,7 @@ use paperclip_proto::ast::graph_ext::Graph;
 use glob::glob;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
-    design_server_event, file_response, ApplyMutationsRequest, ApplyMutationsResult,
+    design_server_event, file_response, ApplyMutationsRequest, OpenFileInNavigatorRequest, ApplyMutationsResult,
     CreateDesignFileRequest, CreateDesignFileResponse, CreateFileRequest, DesignServerEvent, Empty,
     FileChanged, FileRequest, FileResponse, FsItem, ModulesEvaluated, OpenCodeEditorRequest,
     ReadDirectoryRequest, ReadDirectoryResponse, ResourceFiles, ScreenshotCaptured,
@@ -219,6 +219,23 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
             Ok(Response::new(Empty {}))
         } else {
             Err(Status::unknown("Cannot move file"))
+        }
+    }
+
+    async fn open_file_in_navigator(
+        &self,
+        request: Request<OpenFileInNavigatorRequest>,
+    ) -> Result<Response<Empty>, Status> {
+        let file_path: String = request.get_ref().file_path.clone();
+
+        println!("open{}", file_path);
+        
+        let result = open::that(&file_path);
+
+        if result.is_ok() {
+            Ok(Response::new(Empty {}))
+        } else {
+            Err(Status::unknown("Cannot open file"))
         }
     }
 

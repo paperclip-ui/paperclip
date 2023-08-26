@@ -51,11 +51,15 @@ component ColorPickerPopup {
 }
 
 /**
- * @bounds(x: 262, y: 7, width: 1024, height: 1105)
+ * @bounds(x: 881, y: 7, width: 405, height: 1105)
 */
 
 public component Preview {
     render sidebar.SidebarPanel {
+        style {
+            font-family: var(theme.defaultFontFamily)
+            color: var(theme.gray0)
+        }
         sidebar.SidebarSection {
             sidebar.SidebarPanelContent {
                 input.Field {

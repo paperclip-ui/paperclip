@@ -1,0 +1,9 @@
+
+/**
+ * @bounds(x: 0, y: 0, width: 843, height: 1000)
+*/
+
+div {
+    img(src: "./color-picker-screenshot.png")
+}
+

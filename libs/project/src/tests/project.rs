@@ -49,6 +49,7 @@ impl FileReader for MockIO {
 
 impl FileResolver for MockIO {
     fn resolve_file(&self, from_path: &str, to_path: &str) -> Result<String> {
+
         let resolved_path = String::from(
             Path::new(from_path)
                 .parent()

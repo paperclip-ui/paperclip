@@ -6,6 +6,8 @@ use futures_core::stream::Stream;
 use path_absolutize::*;
 use std::fs;
 use std::path::Path;
+use std::io::Read;
+use std::fs::File;
 
 pub enum FSItemKind {
     File,
@@ -33,11 +35,11 @@ pub struct LocalFileReader;
 
 impl FileReader for LocalFileReader {
     fn read_file(&self, path: &str) -> Result<Box<[u8]>> {
-        if let Ok(content) = fs::read_to_string(path) {
-            Ok(content.as_bytes().to_vec().into_boxed_slice())
-        } else {
-            Err(Error::msg(format!("file \"{}\" not found", path)))
-        }
+        let mut f = File::open(path)?;
+        let metadata = fs::metadata(path)?;
+        let mut buffer = vec![0; metadata.len() as usize];
+        f.read(&mut buffer)?;
+        Ok(buffer.into_boxed_slice())
     }
     fn get_file_size(&self, path: &str) -> Result<u64> {
         if let Ok(metadata) = fs::metadata(path) {

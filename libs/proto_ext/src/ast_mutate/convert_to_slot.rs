@@ -15,7 +15,7 @@ use crate::{
     replace_child,
 };
 
-impl<'a> MutableVisitor<()> for EditContext<'a, ConvertToSlot> {
+impl MutableVisitor<()> for EditContext<ConvertToSlot> {
     fn visit_render(&mut self, expr: &mut paperclip_proto::ast::pc::Render) -> VisitorResult<()> {
         if expr.node.as_ref().unwrap().get_id() != self.mutation.expression_id {
             return VisitorResult::Continue;
@@ -51,10 +51,10 @@ impl<'a> MutableVisitor<()> for EditContext<'a, ConvertToSlot> {
     }
 }
 
-fn create_slot<'a>(ctx: &mut EditContext<'a, ConvertToSlot>, child: Node, checksum: &str) -> Node {
+fn create_slot(ctx: &mut EditContext<ConvertToSlot>, child: Node, checksum: &str) -> Node {
     let id = format!("{}-slot", checksum);
 
-    ctx.changes.push(
+    ctx.add_change(
         mutation_result::Inner::ExpressionInserted(ExpressionInserted { id: id.to_string() })
             .get_outer(),
     );

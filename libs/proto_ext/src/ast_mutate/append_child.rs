@@ -9,7 +9,7 @@ use paperclip_proto::ast_mutate::{mutation_result, AppendChild, ExpressionInsert
 use crate::ast::all::MutableVisitor;
 use crate::ast::all::VisitorResult;
 
-impl<'expr> MutableVisitor<()> for EditContext<'expr, AppendChild> {
+impl MutableVisitor<()> for EditContext<AppendChild> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
         if expr.get_id() == &self.mutation.parent_id {
             let child = parse_pc(&self.mutation.child_source, &expr.checksum())
@@ -21,7 +21,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, AppendChild> {
             ));
 
             expr.body.push(child.clone());
-            self.changes.push(
+            self.add_change(
                 mutation_result::Inner::ExpressionInserted(ExpressionInserted {
                     id: child.get_id().to_string(),
                 })
@@ -35,7 +35,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, AppendChild> {
             let child: Node = parse_node(&self.mutation.child_source, &expr.checksum());
             expr.body.push(child.clone());
 
-            self.changes.push(
+            self.add_change(
                 mutation_result::Inner::ExpressionInserted(ExpressionInserted {
                     id: child.get_id().to_string(),
                 })

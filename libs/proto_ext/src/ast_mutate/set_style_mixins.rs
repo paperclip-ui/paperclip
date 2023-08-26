@@ -12,7 +12,7 @@ use crate::ast::all::MutableVisitor;
 use crate::ast::all::VisitorResult;
 use crate::ast::get_expr::GetExpr;
 
-impl<'expr> MutableVisitor<()> for EditContext<'expr, SetStyleMixins> {
+impl MutableVisitor<()> for EditContext<SetStyleMixins> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
         if GetExpr::get_expr(&self.mutation.target_expr_id, expr).is_none() {
             return VisitorResult::Continue;

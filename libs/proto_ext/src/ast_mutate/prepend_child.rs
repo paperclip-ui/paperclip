@@ -6,8 +6,9 @@ use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::pc::Node;
 use paperclip_proto::ast_mutate::{mutation_result, ExpressionInserted, PrependChild};
 
-use crate::ast::all::MutableVisitor;
 use crate::ast::all::VisitorResult;
+use crate::ast::all::{MutableVisitable, MutableVisitor};
+use crate::ast_mutate::utils::upsert_render_expr;
 
 macro_rules! prepend_child {
     ($self:expr, $expr: expr) => {{
@@ -15,7 +16,7 @@ macro_rules! prepend_child {
             let child: Node = parse_node(&$self.mutation.child_source, &$expr.checksum());
             $expr.body.insert(0, child.clone());
 
-            $self.changes.push(
+            $self.changes.borrow_mut().push(
                 mutation_result::Inner::ExpressionInserted(ExpressionInserted {
                     id: child.get_id().to_string(),
                 })
@@ -26,7 +27,7 @@ macro_rules! prepend_child {
     }};
 }
 
-impl<'expr> MutableVisitor<()> for EditContext<'expr, PrependChild> {
+impl MutableVisitor<()> for EditContext<PrependChild> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
         if expr.get_id() == &self.mutation.parent_id {
             let child = parse_pc(&self.mutation.child_source, &expr.checksum())
@@ -38,7 +39,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, PrependChild> {
                 &self.get_dependency(),
             ));
 
-            self.changes.push(
+            self.changes.borrow_mut().push(
                 mutation_result::Inner::ExpressionInserted(ExpressionInserted {
                     id: child.get_id().to_string(),
                 })
@@ -51,6 +52,25 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, PrependChild> {
     }
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
         prepend_child!(self, expr)
+    }
+    fn visit_component(&mut self, expr: &mut ast::pc::Component) -> VisitorResult<()> {
+
+        if expr.get_id() != &self.mutation.parent_id {
+            return VisitorResult::Continue
+        }
+
+        let render: &mut ast::pc::Render = upsert_render_expr(expr, true);
+
+        let mut ctx = self.with_mutation(PrependChild {
+            parent_id: render.node.as_ref().expect("Node must exist").get_id().to_string(),
+            child_source: self.mutation.child_source.clone(),
+        });
+
+        render
+            .node
+            .as_mut()
+            .expect("Node must exist")
+            .accept(&mut ctx)
     }
     fn visit_insert(&mut self, expr: &mut ast::pc::Insert) -> VisitorResult<()> {
         prepend_child!(self, expr)

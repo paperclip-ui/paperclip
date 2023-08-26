@@ -7,7 +7,7 @@ use paperclip_proto::ast_mutate::{mutation_result, DeleteStyleDeclarations, Expr
 use crate::ast::all::MutableVisitor;
 use crate::ast::all::VisitorResult;
 
-impl<'expr> MutableVisitor<()> for EditContext<'expr, DeleteStyleDeclarations> {
+impl MutableVisitor<()> for EditContext<DeleteStyleDeclarations> {
     fn visit_style(&mut self, expr: &mut ast::pc::Style) -> VisitorResult<()> {
         if expr.get_id() == self.mutation.expression_id {
             remove_declaration(expr, &self.mutation.declaration_names);
@@ -23,7 +23,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, DeleteStyleDeclarations> {
                 }
             }
 
-            self.changes.push(
+            self.add_change(
                 mutation_result::Inner::ExpressionUpdated(ExpressionUpdated {
                     id: expr.id.to_string(),
                 })

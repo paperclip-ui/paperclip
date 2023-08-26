@@ -27,7 +27,7 @@ macro_rules! paste_expr {
         let node = clone_pasted_expr(item, $self.get_dependency(), &$self.graph);
 
         if let Some(node) = node {
-            $self.changes.push(
+            $self.add_change(
                 mutation_result::Inner::ExpressionInserted(ExpressionInserted {
                     id: node.get_id().to_string(),
                 })
@@ -104,7 +104,7 @@ pub fn clone_pasted_expr(
     }
 }
 
-impl<'a> MutableVisitor<()> for EditContext<'a, PasteExpression> {
+impl MutableVisitor<()> for EditContext<PasteExpression> {
     fn visit_element(&mut self, expr: &mut paperclip_proto::ast::pc::Element) -> VisitorResult<()> {
         paste_expr!(self, expr)
     }

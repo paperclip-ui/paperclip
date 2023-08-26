@@ -3398,6 +3398,32 @@ case! {
     "#
   )]
 }
+
+case! {
+  can_prepend_a_child_to_a_component_without_render_node,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+      }
+      "#
+    )
+  ],
+  mutation::Inner::PrependChild(PrependChild {
+    parent_id: "80f4925f-1".to_string(),
+    child_source: "span".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div {
+        span
+      }
+    }
+    "#
+  )]
+}
+
 case! {
   can_prepend_a_child_in_an_insert,
   [
@@ -3453,7 +3479,6 @@ case! {
     "#
   )]
 }
-
 
 case! {
   creates_unique_id_when_prepending_node,

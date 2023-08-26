@@ -124,7 +124,7 @@ pub fn resolve_import_ns(document_dep: &Dependency, path: &str) -> (String, bool
     );
 }
 
-pub fn upsert_render_node<'a>(component: &'a mut Component, create_node: bool) -> &'a mut Render {
+pub fn upsert_render_expr<'a>(component: &'a mut Component, create_node: bool) -> &'a mut Render {
     let existing_render_node = component.body.iter_mut().position(|x| match x.get_inner() {
         component_body_item::Inner::Render(_) => true,
         _ => false,

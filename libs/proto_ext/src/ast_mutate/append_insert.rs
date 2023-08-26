@@ -7,7 +7,7 @@ use crate::ast::all::MutableVisitor;
 use crate::ast::all::VisitorResult;
 use crate::ast_mutate::utils::parse_node;
 
-impl<'expr> MutableVisitor<()> for EditContext<'expr, AppendInsert> {
+impl MutableVisitor<()> for EditContext<AppendInsert> {
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
         if expr.id != self.mutation.instance_id {
             return VisitorResult::Continue;
@@ -46,7 +46,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, AppendInsert> {
             );
         }
 
-        self.changes.push(
+        self.add_change(
             mutation_result::Inner::ExpressionInserted(ExpressionInserted { id: child_id })
                 .get_outer(),
         );

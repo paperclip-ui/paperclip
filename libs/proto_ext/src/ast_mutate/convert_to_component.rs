@@ -26,7 +26,7 @@ macro_rules! replace_child_with_instance {
     };
 }
 
-impl<'a> MutableVisitor<()> for EditContext<'a, ConvertToComponent> {
+impl MutableVisitor<()> for EditContext<ConvertToComponent> {
     fn visit_document(
         &mut self,
         expr: &mut paperclip_proto::ast::pc::Document,
@@ -45,7 +45,7 @@ impl<'a> MutableVisitor<()> for EditContext<'a, ConvertToComponent> {
 
         let insert_index = get_component_insert_index(&self.mutation.expression_id, expr);
 
-        self.changes.push(
+        self.add_change(
             mutation_result::Inner::ExpressionInserted(ExpressionInserted {
                 id: new_component.id.to_string(),
             })

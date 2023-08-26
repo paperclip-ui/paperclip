@@ -1108,6 +1108,7 @@ export const getInsertBoxes = memoize(
     return slotBoxes;
   }
 );
+
 const getInnerNode = (node: Node) => node.element || node.textNode;
 
 export const getCurrentPreviewFrameBoxes = (editor: DesignerState) => {

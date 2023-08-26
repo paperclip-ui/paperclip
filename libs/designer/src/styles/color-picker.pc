@@ -1,3 +1,22 @@
+import "./input.pc" as module1
+import "../components/Editor/Canvas/Tools/TextEditor/styles.pc" as module
+import "./theme.pc" as mod
+
+public component Bar {
+    render div hue {
+        style extends colorPart, bar
+    }
+}
+
+public style bar {
+    height: var(mod.space08)
+}
+
+public style colorPart {
+    border-radius: var(mod.space02)
+    width: 100%
+    background: var(mod.gray02)
+}
 
 /**
  * @bounds(x: 0, y: 0, width: 843, height: 1000)
@@ -8,21 +27,37 @@ div {
 }
 
 /**
- * @bounds(x: -250, y: 883, width: 496, height: 431)
+ * @bounds(x: -746, y: 784, width: 496, height: 431)
 */
 
 div {
     style {
-        position: relative
+        display: flex
+        flex-direction: column
+        gap: var(mod.space03)
+        padding: var(mod.space03)
+        color: var(mod.gray0)
+        font-family: var(mod.defaultFontFamily)
     }
-    div {
+    Bar top {
+        style extends colorPart {
+            height: 100%
+        }
+    }
+    Bar
+    div opacity {
+        style extends bar, colorPart
+    }
+    div footer {
         style {
-            background: rgba(0, 0, 0, 0.1)
-            position: absolute
-            left: 23px
-            top: 44px
-            width: 133px
-            height: 93px
+            left: NaNpx
+            top: NaNpx
+            position: relative
+            width: 480px
+            height: 40px
+        }
+        module1.TextInput(value: "rgba(0, 0, 0, 0.5)") {
+            style extends bar
         }
     }
 }

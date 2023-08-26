@@ -16,7 +16,7 @@ macro_rules! set_name {
     ($self: expr, $expr: expr, $value: expr) => {
         if $expr.id == $self.mutation.expression_id {
             $expr.name = $value;
-            $self.changes.push(
+            $self.add_change(
                 mutation_result::Inner::ExpressionUpdated(ExpressionUpdated {
                     id: $expr.id.to_string(),
                 })
@@ -29,7 +29,7 @@ macro_rules! set_name {
     };
 }
 
-impl<'expr> MutableVisitor<()> for EditContext<'expr, SetId> {
+impl MutableVisitor<()> for EditContext<SetId> {
     fn visit_element(
         &mut self,
         expr: &mut paperclip_proto::ast::pc::Element,
@@ -49,7 +49,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetId> {
                     ExpressionWrapper::Component(comp) => {
                         if comp.name != self.mutation.value {
                             expr.tag_name = get_unique_component_name(&self.mutation.value, info.1);
-                            self.changes.push(
+                            self.add_change(
                                 mutation_result::Inner::ExpressionUpdated(ExpressionUpdated {
                                     id: expr.id.to_string(),
                                 })

@@ -12,10 +12,12 @@ use paperclip_proto::ast::pc::Render;
 use paperclip_proto::ast_mutate::{
     mutation_result, ExpressionUpdated, MutationResult, SetStyleDeclarations,
 };
+use std::cell::RefCell;
+use std::rc::Rc;
 
 use crate::ast::{all::MutableVisitor, all::VisitorResult};
 
-impl<'expr> MutableVisitor<()> for EditContext<'expr, SetStyleDeclarations> {
+impl MutableVisitor<()> for EditContext<SetStyleDeclarations> {
     fn visit_style(&mut self, expr: &mut ast::pc::Style) -> VisitorResult<()> {
         if expr.get_id() == self.mutation.expression_id {
             let new_style = parse_style(
@@ -54,7 +56,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetStyleDeclarations> {
         }
         let checksum = expr.checksum();
         return add_child_style(
-            &mut self.changes,
+            self.changes.clone(),
             &mut expr.body,
             &self.mutation.expression_id,
             &checksum,
@@ -67,7 +69,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetStyleDeclarations> {
         if expr.get_id() == &self.mutation.expression_id {
             let checksum = expr.checksum();
             return add_child_style(
-                &mut self.changes,
+                self.changes.clone(),
                 &mut expr.body,
                 &self.mutation.expression_id,
                 &checksum,
@@ -104,7 +106,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetStyleDeclarations> {
             };
 
             return add_child_style(
-                &mut self.changes,
+                self.changes.clone(),
                 &mut body,
                 &parent_id,
                 &checksum,
@@ -117,7 +119,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetStyleDeclarations> {
 }
 
 fn add_child_style(
-    changes: &mut Vec<MutationResult>,
+    changes: Rc<RefCell<Vec<MutationResult>>>,
     children: &mut Vec<ast::pc::Node>,
     parent_id: &str,
     checksum: &str,
@@ -163,7 +165,7 @@ fn add_child_style(
         children.insert(0, ast::pc::node::Inner::Style(new_style).get_outer());
     }
 
-    changes.push(
+    changes.borrow_mut().push(
         mutation_result::Inner::ExpressionUpdated(ExpressionUpdated {
             id: parent_id.to_string(),
         })

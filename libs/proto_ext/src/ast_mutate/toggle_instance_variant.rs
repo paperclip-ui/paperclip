@@ -8,7 +8,7 @@ use paperclip_proto::ast_mutate::ToggleInstanceVariant;
 use crate::ast::get_expr::GetExpr;
 use crate::ast::{all::MutableVisitor, all::VisitorResult};
 
-impl<'expr> MutableVisitor<()> for EditContext<'expr, ToggleInstanceVariant> {
+impl MutableVisitor<()> for EditContext<ToggleInstanceVariant> {
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
         if expr.id != self.mutation.instance_id {
             return VisitorResult::Continue;

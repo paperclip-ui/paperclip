@@ -14,7 +14,7 @@ use crate::ast::all::{MutableVisitable, MutableVisitor};
 use paperclip_parser::docco::parser::parse as parse_comment;
 use paperclip_parser::pc::parser::parse as parse_pc;
 
-impl<'expr> MutableVisitor<()> for EditContext<'expr, InsertFrame> {
+impl MutableVisitor<()> for EditContext<InsertFrame> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
         if expr.id == self.mutation.document_id {
             let bounds = self.mutation.bounds.as_ref().unwrap();
@@ -57,7 +57,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, InsertFrame> {
                 expr.body.push(node.clone());
             }
 
-            self.changes.extend(mutations);
+            self.add_changes(mutations);
         }
 
         VisitorResult::Continue

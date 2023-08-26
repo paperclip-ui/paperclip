@@ -4,7 +4,7 @@ use crate::ast::all::MutableVisitor;
 
 use super::EditContext;
 
-impl<'expr> MutableVisitor<()> for EditContext<'expr, SetTextNodeValue> {
+impl MutableVisitor<()> for EditContext<SetTextNodeValue> {
     fn visit_text_node(
         &mut self,
         expr: &mut paperclip_proto::ast::pc::TextNode,
@@ -15,7 +15,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetTextNodeValue> {
 
         expr.value = self.mutation.value.to_string();
 
-        self.changes.push(
+        self.add_change(
             mutation_result::Inner::ExpressionUpdated(ExpressionUpdated {
                 id: expr.id.to_string(),
             })

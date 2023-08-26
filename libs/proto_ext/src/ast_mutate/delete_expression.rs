@@ -7,7 +7,7 @@ use crate::ast::all::MutableVisitor;
 use crate::ast::all::VisitorResult;
 use crate::try_remove_child;
 
-impl<'expr> MutableVisitor<()> for EditContext<'expr, DeleteExpression> {
+impl MutableVisitor<()> for EditContext<DeleteExpression> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
         if let Some((i, _)) = try_remove_child!(expr.body, &self.mutation.expression_id) {
             let prev_index: i32 = (i as i32) - 1;
@@ -34,7 +34,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, DeleteExpression> {
                 }
             }
 
-            self.changes.extend(results);
+            self.add_changes(results);
         }
         VisitorResult::Continue
     }
@@ -43,7 +43,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, DeleteExpression> {
             try_remove_child!(expr.body, &self.mutation.expression_id),
             Some(_)
         ) {
-            self.changes.push(
+            self.add_change(
                 mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
                     id: self.mutation.expression_id.to_string(),
                 })
@@ -59,7 +59,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, DeleteExpression> {
                     try_remove_child!(ins.body, &self.mutation.expression_id),
                     Some(_)
                 ) {
-                    self.changes.push(
+                    self.add_change(
                         mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
                             id: self.mutation.expression_id.to_string(),
                         })
@@ -74,7 +74,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, DeleteExpression> {
         }
         if let Some(i) = rm_i {
             expr.body.remove(i);
-            self.changes.push(
+            self.add_change(
                 mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
                     id: self.mutation.expression_id.to_string(),
                 })
@@ -88,7 +88,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, DeleteExpression> {
             try_remove_child!(expr.body, &self.mutation.expression_id),
             Some(_)
         ) {
-            self.changes.push(
+            self.add_change(
                 mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
                     id: self.mutation.expression_id.to_string(),
                 })
@@ -102,7 +102,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, DeleteExpression> {
             try_remove_child!(expr.body, &self.mutation.expression_id),
             Some(_)
         ) {
-            self.changes.push(
+            self.add_change(
                 mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
                     id: self.mutation.expression_id.to_string(),
                 })
@@ -126,7 +126,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, DeleteExpression> {
         };
 
         if matches!(try_remove_child!(expr.body, &target_id), Some(_)) {
-            self.changes.push(
+            self.add_change(
                 mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
                     id: self.mutation.expression_id.to_string(),
                 })

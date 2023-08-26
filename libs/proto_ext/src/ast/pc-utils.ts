@@ -993,7 +993,7 @@ export namespace ast {
         return Object.assign(
           {
             [expr.functionCall.id]: {
-              expr: expr.arithmetic,
+              expr: expr.functionCall,
               kind: ExprKind.FunctionCall,
             },
           },

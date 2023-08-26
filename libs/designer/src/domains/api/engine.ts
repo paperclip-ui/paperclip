@@ -55,6 +55,7 @@ import {
 } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { Box, getScaledBox, getScaledPoint, roundBox } from "../../state/geom";
 import {
+  getCurrentDependency,
   getSelectedExpression,
   getSelectedExpressionInfo,
   getStyleableTargetId,
@@ -507,7 +508,7 @@ const createEventHandler = (actions: Actions) => {
       [LayerKind.Atom]: `public token unnamed unset`,
       [LayerKind.Component]: `public component unnamed {}`,
       [LayerKind.Element]: `div`,
-      [LayerKind.Text]: `text "double click to edit`,
+      [LayerKind.Text]: `text "double click to edit"`,
       [LayerKind.Style]: `public style unnamed {}`,
       [LayerKind.Trigger]: `public trigger unnamed {}`,
     }[layerKind];
@@ -516,10 +517,30 @@ const createEventHandler = (actions: Actions) => {
       return;
     }
 
+    // start with document for safety. Some exprs cannot be added
+    // to parent els
+    let parentId = getCurrentDependency(state).document.id;
+
+    const targetExpr = ast.getExprInfoById(getTargetExprId(state), state.graph);
+
+    if (
+      [LayerKind.Element, LayerKind.Text].includes(layerKind) &&
+      [
+        ast.ExprKind.Element,
+        ast.ExprKind.Component,
+        ast.ExprKind.Slot,
+        ast.ExprKind.Insert,
+      ].includes(targetExpr.kind)
+    ) {
+      parentId = targetExpr.expr.id;
+    }
+
+    console.log(targetExpr, parentId);
+
     actions.applyChanges([
       {
         prependChild: {
-          parentId: getTargetExprId(state),
+          parentId,
           childSource: source,
         },
       },

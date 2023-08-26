@@ -22,6 +22,7 @@ mod wrap_in_element;
 #[macro_use]
 
 mod utils;
+use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::{
@@ -57,19 +58,13 @@ mod test;
 
 macro_rules! mutations {
     ($($name:ident), *) => {
-      impl<'expr> MutableVisitor<()> for base::EditContext<'expr, Mutation> {
+      impl MutableVisitor<()> for base::EditContext<Mutation> {
         fn visit_document(&mut self, document: &mut ast::pc::Document) -> VisitorResult<()> {
           match self.mutation.inner.as_ref().expect("Inner must exist") {
             $(
               mutation::Inner::$name(mutation) => {
-                let mut sub: base::EditContext<$name> = base::EditContext {
-                  mutation,
-                  path: self.path.clone(),
-                  graph: self.graph.clone(),
-                  changes: vec![]
-                };
+                let mut sub = self.with_mutation(mutation.clone());
                 let ret = document.accept(&mut sub);
-                self.changes.extend(sub.changes);
                 ret
               }
             )*
@@ -93,21 +88,16 @@ pub fn edit_graph<TIO: IO>(
 
     for mutation in mutations {
         for (path, dep) in &mut graph.dependencies {
-            let mut ctx = EditContext {
-                mutation,
-                path: path.clone(),
-                graph: ctx_graph.clone(),
-                changes: vec![],
-            };
+            let mut ctx = EditContext::new(mutation.clone(), &path, ctx_graph.clone());
             let doc = dep.document.as_mut().expect("Document must exist");
 
             doc.accept(&mut ctx);
 
-            dep.imports = get_document_imports(doc, path, io)?;
+            dep.imports = get_document_imports(doc, &path, io)?;
 
-            if ctx.changes.len() > 0 {
+            if ctx.changes.borrow().len() > 0 {
                 println!("{:#?}", dep.imports);
-                changed.push((path.to_string(), ctx.changes.clone()));
+                changed.push((path.to_string(), ctx.changes.borrow().clone().to_vec()));
             }
         }
     }

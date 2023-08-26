@@ -21,7 +21,7 @@ macro_rules! wrap_in_element {
                 .checksum();
             let mut container = parse_node("div", &checksum);
 
-            $self.changes.push(
+            $self.add_change(
                 mutation_result::Inner::ExpressionInserted(ExpressionInserted {
                     id: container.get_id().to_string(),
                 })
@@ -43,7 +43,7 @@ macro_rules! wrap_in_element {
     }};
 }
 
-impl<'a> MutableVisitor<()> for EditContext<'a, WrapInElement> {
+impl MutableVisitor<()> for EditContext<WrapInElement> {
     fn visit_document(
         &mut self,
         expr: &mut paperclip_proto::ast::pc::Document,

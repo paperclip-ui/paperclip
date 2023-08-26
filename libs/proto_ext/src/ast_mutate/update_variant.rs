@@ -15,7 +15,7 @@ use crate::ast::all::{MutableVisitor, VisitorResult};
 
 use super::{utils::get_valid_name, EditContext};
 
-impl<'expr> MutableVisitor<()> for EditContext<'expr, UpdateVariant> {
+impl MutableVisitor<()> for EditContext<UpdateVariant> {
     fn visit_component(
         &mut self,
         expr: &mut paperclip_proto::ast::pc::Component,
@@ -75,7 +75,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, UpdateVariant> {
                 .get_outer(),
         );
 
-        self.changes.extend(vec![
+        self.add_changes(vec![
             mutation_result::Inner::ExpressionUpdated(ExpressionUpdated {
                 id: self.mutation.component_id.to_string(),
             })

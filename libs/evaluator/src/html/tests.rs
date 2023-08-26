@@ -317,23 +317,25 @@ add_case! {
 add_case! {
     classes_are_added_to_nested_instances_that_are_render_nodes,
     [
-                    ("/entry.pc", r#"
-					component C {
-						render div {
-		
-						}
-					}
+        ("/entry.pc", r#"
+            component C {
+                render div {
 
-					component B {
-						render C
-					}
+                }
+            }
+
+            component B {
+                render C
+            }
 
 			component A {
 				render B
 			}
 		"#)
     ],
-    "<div class=\"_C-80f4925f-1\"> </div> <div class=\"_C-80f4925f-1 _B-80f4925f-4\"> </div> <div class=\"_C-80f4925f-1 _A-80f4925f-7 _B-80f4925f-4\"> </div>"
+    "<div class=\"_C-80f4925f-1\"> </div> 
+    <div class=\"_C-80f4925f-1 _B-80f4925f-4\"> </div> 
+    <div class=\"_C-80f4925f-1 _A-80f4925f-7 _B-80f4925f-4\"> </div>"
 }
 
 add_case! {
@@ -393,7 +395,7 @@ add_case! {
     ],
     r#"
 <div class="_B-139cec8e-3 _A-80f4925f-2">
-	<span class="_C-139cec8e-7 _A-80f4925f-2 _B-139cec8e-2">
+	<span class="_C-139cec8e-7 _B-139cec8e-2">
 			Hello
 	</span>
 </div>
@@ -446,6 +448,39 @@ add_case! {
     ],
     r#"
 	<img src="http://google.com"> <img src="https://google.com">
+"#
+}
+
+
+add_case! {
+    inst_classes_are_attached_only_at_root,
+    [
+    ("/entry.pc", r#"
+        component B {
+            render span {
+
+            }
+        }
+        component A {
+            render div root {
+                B
+            }
+        }
+
+        A inst
+	"#)
+    ],
+    r#"
+    <span class="_B-80f4925f-1"> </span> 
+
+    <div class="_A-root-80f4925f-5"> 
+        <span class="_B-80f4925f-1 _A-80f4925f-4"> </span> 
+    </div> 
+    
+    <div class="_A-root-80f4925f-5 _inst-80f4925f-8"> 
+        <span class="_B-80f4925f-1 _A-80f4925f-4">
+        </span> 
+    </div>
 "#
 }
 

@@ -405,7 +405,8 @@ fn evaluate_native_element<F: FileResolver>(
             attributes: create_native_attributes(
                 element,
                 context,
-                is_instance || is_component_root,
+                is_instance,
+                is_component_root,
             ),
             children,
             metadata: metadata.clone(),
@@ -442,7 +443,8 @@ fn evaluate_node<F: FileResolver>(
 fn create_native_attributes<F: FileResolver>(
     element: &ast::Element,
     context: &DocumentContext<F>,
-    is_instance_or_root: bool,
+    is_instance: bool,
+    is_root: bool,
 ) -> Vec<virt::Attribute> {
     let mut attributes = BTreeMap::new();
 
@@ -450,7 +452,7 @@ fn create_native_attributes<F: FileResolver>(
         evaluate_native_attribute(param, &mut attributes, context);
     }
 
-    resolve_element_attributes(element, &mut attributes, context, is_instance_or_root);
+    resolve_element_attributes(element, &mut attributes, context, is_instance, is_root);
 
     attributes.values().cloned().collect()
 }
@@ -475,15 +477,21 @@ fn resolve_element_attributes<F: FileResolver>(
     element: &ast::Element,
     attributes: &mut BTreeMap<String, virt::Attribute>,
     context: &DocumentContext<F>,
-    is_instance_or_root: bool,
+    is_instance: bool,
+    is_root: bool
 ) {
     // add styling hooks. If the element is root, then we need to add a special
     // ID so that child styles can be overridable
-    if element.is_stylable() || is_instance_or_root {
+    if element.is_stylable() || is_instance || is_root {
         let mut class_name =
             get_style_namespace(&element.name, &element.id, context.current_component);
-        if is_instance_or_root && !context.render_scopes.is_empty() {
-            class_name = format!("{} {}", class_name, context.render_scopes.join(" "));
+            
+        if is_root {
+            if !context.render_scopes.is_empty() {
+                class_name = format!("{} {}", class_name, context.render_scopes.join(" "));
+            }
+        } else if let Some(scope) = context.render_scopes.last() {
+            class_name = format!("{} {}", class_name, scope);
         }
 
         if let Some(class) = attributes.get_mut("class") {

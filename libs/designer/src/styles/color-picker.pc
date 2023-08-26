@@ -1,28 +1,55 @@
 import "./input.pc" as module1
-import "../components/Editor/Canvas/Tools/TextEditor/styles.pc" as module
 import "./theme.pc" as mod
 
-public component Bar {
-    render div hue {
-        style extends colorPart, bar
+/**
+ * @bounds(x: -1631, y: -136, width: 1024, height: 768)
+*/
+
+public component ColorDrop {
+    render div root {
+        style {
+            width: 16px
+            height: 16px
+            top: 0px
+            left: 0px
+            background: blue
+            border-radius: 16px
+            cursor: pointer
+            position: absolute
+            box-shadow: inset 0px 0px 0px 2px white
+        }
     }
 }
 
-public style bar {
-    height: var(mod.space08)
-}
+/**
+ * @bounds(x: -15, y: 920, width: 1024, height: 768)
+*/
 
-public style colorPart {
-    border-radius: var(mod.space02)
-    width: 100%
-    background: var(mod.gray02)
+public component ColorBox {
+    variant rounded trigger {
+        ".rounded"
+    }
+    render div {
+        style variant rounded {
+            border-radius: 99px
+        }
+        ColorDrop drop
+        style {
+            position: relative
+            flex-shrink: 1
+            min-height: 16px
+            border-radius: 0px
+            width: 100%
+            background-color: var(mod.gray02)
+        }
+    }
 }
 
 /**
  * @bounds(x: 0, y: 0, width: 843, height: 1000)
 */
 
-div {
+div inspiration {
     img(src: "./color-picker-screenshot.png")
 }
 
@@ -39,21 +66,31 @@ div {
         color: var(mod.gray0)
         font-family: var(mod.defaultFontFamily)
     }
-    Bar top {
-        style extends colorPart {
+    ColorBox top {
+        style {
             height: 100%
         }
+        override {
+            variant rounded
+        }
     }
-    Bar
-    div opacity {
-        style extends bar, colorPart
+    ColorBox {
+        override {
+            variant rounded trigger {
+                true
+            }
+        }
+    }
+    ColorBox {
+        override {
+            variant rounded trigger {
+                true
+            }
+        }
     }
     div footer {
         style {
-            left: NaNpx
-            top: NaNpx
             position: relative
-            width: 480px
             height: 40px
         }
         module1.TextInput(value: "rgba(0, 0, 0, 0.5)") {

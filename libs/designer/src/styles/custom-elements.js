@@ -1,3 +1,4 @@
+// from https://github.com/crcn/tandem-old/blob/10.0.0/packages/front-end/src/components/inputs/color/picker-controller.tsx
 (() => {
   const drawHSL = (h) => (canvas, width, height) => {
     const hv = h * 360;
@@ -31,13 +32,13 @@
     }
   };
 
-  const drawOpacity = (h) => (canvas, width, height) => {
+  const drawOpacity = (canvas, width, height) => {
     let ctx = canvas.getContext("2d");
-    const hv = h * 360;
     canvas.width = width;
     canvas.height = height;
     for (let row = 0; row <= width; row++) {
-      ctx.fillStyle = `hsl(${hv}, 100%, ${((width - row) / width) * 50 + 50}%)`;
+      const num = Math.round(((width - row) / width) * 255);
+      ctx.fillStyle = `rgb(${num}, ${num}, ${num})`;
       ctx.fillRect(row, 0, 1, height);
     }
   };
@@ -49,24 +50,22 @@
       this.canvas = document.createElement("canvas");
       Object.assign(this.style, {
         display: "block",
-        background: "orange",
         position: "relative",
       });
       Object.assign(this.canvas.style, { width: "100%", height: "100%" });
       shadow.appendChild(this.canvas);
-      console.log(this);
-      var ro = new ResizeObserver(() => {
-        this.draw();
-      });
-
-      ro.observe(this);
-      ro.observe(this.canvas);
-
+      this.draw();
+    }
+    attributeChangedCallback(name, oldValue, newValue) {
       this.draw();
     }
     draw() {
-      // const {width, height} = this.getBoundingClientRect();
-      // drawHSL(0.5)(this.canvas, width, height);
+      const { width, height } = this.getBoundingClientRect();
+      drawHSL(Number(this.getAttribute("hue") || 0.5))(
+        this.canvas,
+        width,
+        height
+      );
     }
   }
 
@@ -77,24 +76,15 @@
       this.canvas = document.createElement("canvas");
       Object.assign(this.style, {
         display: "block",
-        background: "orange",
         position: "relative",
       });
       Object.assign(this.canvas.style, { width: "100%", height: "100%" });
       shadow.appendChild(this.canvas);
-      console.log(this);
-      var ro = new ResizeObserver(() => {
-        this.draw();
-      });
-
-      ro.observe(this);
-      ro.observe(this.canvas);
-
       this.draw();
     }
     draw() {
-      // const {width, height} = this.getBoundingClientRect();
-      // drawHue(this.canvas, width, height);
+      const { width, height } = this.getBoundingClientRect();
+      drawHue(this.canvas, width, height);
     }
   }
   class OpacityColorBox extends HTMLDivElement {
@@ -104,24 +94,15 @@
       this.canvas = document.createElement("canvas");
       Object.assign(this.style, {
         display: "block",
-        background: "orange",
         position: "relative",
       });
       Object.assign(this.canvas.style, { width: "100%", height: "100%" });
       shadow.appendChild(this.canvas);
-      console.log(this);
-      var ro = new ResizeObserver(() => {
-        this.draw();
-      });
-
-      ro.observe(this);
-      ro.observe(this.canvas);
-
       this.draw();
     }
     draw() {
-      // const {width, height} = this.getBoundingClientRect();
-      // drawOpacity(this.canvas, width, height);
+      const { width, height } = this.getBoundingClientRect();
+      drawOpacity(this.canvas, width, height);
     }
   }
 

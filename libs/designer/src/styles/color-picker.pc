@@ -17,12 +17,13 @@ public component ColorDrop {
             cursor: pointer
             position: absolute
             box-shadow: inset 0px 0px 0px 4px white
+            filter: drop-shadow(0px 0px 2px rgba(0, 0, 0, 1))
         }
     }
 }
 
 /**
- * @bounds(x: -15, y: 920, width: 458, height: 311)
+ * @bounds(x: -732, y: 404, width: 458, height: 311)
 */
 
 public component ColorBox {
@@ -30,10 +31,12 @@ public component ColorBox {
         ".rounded"
     }
     render div {
-        hsl-color-box {
-            style {
-                width: 100%
-                height: 100%
+        slot bg {
+            hsl-color-box(hue: "0.2") {
+                style {
+                    width: 100%
+                    height: 100%
+                }
             }
         }
         style variant rounded {
@@ -88,6 +91,14 @@ public component ColorPicker {
             }
         }
         ColorBox {
+            insert bg {
+                hue-color-box {
+                    style {
+                        width: 100%
+                        height: 100%
+                    }
+                }
+            }
             style {
                 height: 24px
             }
@@ -98,6 +109,14 @@ public component ColorPicker {
             }
         }
         ColorBox {
+            insert bg {
+                alpha-color-box {
+                    style {
+                        width: 100%
+                        height: 100%
+                    }
+                }
+            }
             style {
                 height: 24px
             }
@@ -124,7 +143,7 @@ public component ColorPicker {
 }
 
 /**
- * @bounds(x: -1617, y: 1268, width: 1152, height: 1066)
+ * @bounds(x: -2094, y: 769, width: 1152, height: 1066)
 */
 
 div preview {

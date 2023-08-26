@@ -4,6 +4,7 @@ import {
   FSItemKind,
   NewFileKind,
   expandDirs,
+  getActiveFilePath,
   getCurrentFilePath,
   getTargetExprId,
   newDesignFilePrompt,
@@ -17,7 +18,7 @@ import { expandVirtIds, selectNode } from "../state";
 import { uniq } from "lodash";
 import { routes } from "@paperclip-ui/designer/src/state/routes";
 import { ShortcutCommand } from "../../shortcuts/state";
-import { newDeleteFileConformation } from "@paperclip-ui/designer/src/state/confirm";
+import { newDeleteFileConfirmation } from "@paperclip-ui/designer/src/state/confirm";
 
 export const leftSidebarReducer = (
   state: DesignerState,
@@ -63,9 +64,9 @@ export const leftSidebarReducer = (
     case "ui/AddFileItemClicked": {
       return produce(state, (newState) => {
         if (event.payload === NewFileKind.DesignFile) {
-          newState.prompt = newDesignFilePrompt(newState.selectedFilePath);
+          newState.prompt = newDesignFilePrompt(getActiveFilePath(state));
         } else if (event.payload === NewFileKind.Directory) {
-          newState.prompt = newDirectoryPrompt(newState.selectedFilePath);
+          newState.prompt = newDirectoryPrompt(getActiveFilePath(state));
         }
       });
     }
@@ -75,7 +76,7 @@ export const leftSidebarReducer = (
         if (event.payload.command === ShortcutCommand.RenameFile) {
           newState.prompt = renameFilePrompt(newState.selectedFilePath);
         } else if (event.payload.command === ShortcutCommand.DeleteFile) {
-          newState.confirm = newDeleteFileConformation(
+          newState.confirm = newDeleteFileConfirmation(
             newState.selectedFilePath
           );
         }

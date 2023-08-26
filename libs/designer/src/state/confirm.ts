@@ -20,7 +20,7 @@ export type Confirm = {
   details: ConfirmDetails;
 };
 
-export const newDeleteFileConformation = (filePath: string): Confirm => ({
+export const newDeleteFileConfirmation = (filePath: string): Confirm => ({
   details: { kind: ConfirmKind.DeleteFile, filePath },
   title: "Move file to trash",
   text: "Are you sure you want to move this file to trash?",

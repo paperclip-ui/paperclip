@@ -77,6 +77,7 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
         newState.insertMode = null;
         newState.showTextEditor = false;
         newState.scopedElementId = null;
+        newState.selectedFilePath = null;
       });
     case ShortcutCommand.Delete:
       return produce(state, (newState) => {

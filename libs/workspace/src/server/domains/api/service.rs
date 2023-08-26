@@ -195,8 +195,13 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         let path: String = request.get_ref().path.clone();
 
         // Moves to trash
-        trash::delete(&path).expect("Unable to delete file");
-        Err(Status::not_found("Not implemented yet"))
+        let result = trash::delete(&path);
+
+        if result.is_ok() {
+            Ok(Response::new(Empty {}))
+        } else {
+            Err(Status::unknown("Cannot delete file"))
+        }
     }
 
     async fn move_file(
@@ -205,10 +210,16 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
     ) -> Result<Response<Empty>, Status> {
         let from_path: String = request.get_ref().from_path.clone();
         let to_path: String = request.get_ref().to_path.clone();
-        
-        std::fs::rename(from_path, to_path).expect("Unable to move file");
 
-        Err(Status::not_found("Not implemented yet"))
+        println!("mv {} {}", from_path, to_path);
+        
+        let result = std::fs::rename(from_path, to_path);
+
+        if result.is_ok() {
+            Ok(Response::new(Empty {}))
+        } else {
+            Err(Status::unknown("Cannot move file"))
+        }
     }
 
     async fn create_file(

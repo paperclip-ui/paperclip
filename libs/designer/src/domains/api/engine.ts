@@ -632,7 +632,11 @@ const createEventHandler = (actions: Actions) => {
   };
 
   const handleDroppedFile = (event: FileNavigatorDroppedFile) => {
-    actions.moveFile(event.payload.item.path, event.payload.directory);
+    // mv /some/path/to/file-or-dir -> /new/path + /file-or-dir
+    actions.moveFile(
+      event.payload.item.path,
+      event.payload.directory + "/" + event.payload.item.path.split("/").pop()
+    );
   };
 
   const handleConvertToComponent = (state: DesignerState) => {

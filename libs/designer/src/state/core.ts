@@ -265,3 +265,6 @@ export const expandDirs =
       ...top.split("/").map((_, i, arr) => arr.slice(0, i + 1).join("/")),
     ]);
   };
+
+export const getActiveFilePath = (state: DesignerState) =>
+  state.selectedFilePath || state.projectDirectory.path;

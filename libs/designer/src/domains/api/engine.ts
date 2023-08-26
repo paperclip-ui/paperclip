@@ -10,6 +10,7 @@ import { DesignerEvent } from "../../events";
 import {
   AddLayerMenuItemClicked,
   AttributeChanged,
+  ConfirmClosed,
   // DesignerEvent,
   ElementTagChanged,
   ExprNavigatorDroppedNode,
@@ -52,7 +53,6 @@ import {
 } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { Box, getScaledBox, getScaledPoint, roundBox } from "../../state/geom";
 import {
-  getCurrentDependency,
   getSelectedExpression,
   getSelectedExpressionInfo,
   getStyleableTargetId,
@@ -70,9 +70,9 @@ import {
   ToolsTextEditorChanged,
 } from "../ui/events";
 import { ExpressionPasted } from "../clipboard/events";
-import { Num, Range } from "@paperclip-ui/proto/lib/generated/ast/base";
-import { SimpleExpression } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import { Range } from "@paperclip-ui/proto/lib/generated/ast/base";
 import { kebabCase } from "lodash";
+import { ConfirmKind } from "../../state/confirm";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -129,6 +129,14 @@ const createActions = (
   return {
     openFile,
     readDirectory,
+    async deleteFile(filePath: string) {
+      // no need to do anything else since file watcher trigger changes
+      await client.DeleteFile({ path: filePath });
+    },
+    async moveFile(fromPath: string, toPath: string) {
+      // no need to do anything else since file watcher will trigger changes
+      await client.MoveFile({ fromPath, toPath });
+    },
     async createDirectory(name: string, parentDir?: string) {
       const filePath = parentDir + "/" + name;
 
@@ -729,6 +737,23 @@ const createEventHandler = (actions: Actions) => {
       actions.createDesignFile(value, details.parentDirectory);
     } else if (details.kind === PromptKind.NewDirectory) {
       actions.createDirectory(value, details.parentDirectory);
+    } else if (details.kind === PromptKind.RenameFile) {
+      const dir = details.filePath.split("/").slice(0, -1).join("/");
+      const ext = details.filePath.split("/").pop().split(".").pop();
+
+      actions.moveFile(
+        details.filePath,
+        dir + "/" + kebabCase(value).replace("." + ext, "") + "." + ext
+      );
+    }
+  };
+
+  const handleConfirmClose = ({ payload: { yes, details } }: ConfirmClosed) => {
+    if (!yes) {
+      return;
+    }
+    if (details.kind === ConfirmKind.DeleteFile) {
+      actions.deleteFile(details.filePath);
     }
   };
 
@@ -907,6 +932,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "ui/promptClosed": {
         return handlePromptClosed(event);
+      }
+      case "ui/confirmClosed": {
+        return handleConfirmClose(event);
       }
       case "designer-engine/documentOpened": {
         return handleDocumentOpened(event, newState);

@@ -10,6 +10,8 @@ import { WritableDraft } from "immer/dist/internal";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import produce from "immer";
 import { uniq } from "lodash";
+import { Prompt } from "./prompt";
+import { Confirm } from "./confirm";
 
 export const IS_WINDOWS = false;
 
@@ -18,31 +20,6 @@ export enum InsertMode {
   Text,
   Resource,
 }
-
-export enum PromptKind {
-  NewDesignFile,
-  RenameFile,
-  NewDirectory,
-}
-
-export type BasePromptDetails<Kind extends PromptKind> = {
-  kind: Kind;
-};
-
-export type NewDesignFilePromptDetails =
-  BasePromptDetails<PromptKind.NewDesignFile> & {
-    parentDirectory?: string;
-  };
-export type NewDirectoryPromptDetails =
-  BasePromptDetails<PromptKind.NewDirectory> & {
-    parentDirectory: string;
-  };
-export type RenameFile = BasePromptDetails<PromptKind.RenameFile>;
-
-export type PromptDetails =
-  | NewDesignFilePromptDetails
-  | RenameFile
-  | NewDirectoryPromptDetails;
 
 export enum LayerKind {
   Text = "Text",
@@ -104,13 +81,6 @@ export type FSFile = BaseFSItem<FSItemKind.File>;
 
 export type FSItem = FSDirectory | FSFile;
 
-type Prompt = {
-  title: string;
-  okLabel: string;
-  placeholder: string;
-  details: PromptDetails;
-};
-
 export type DesignerState = {
   readonly: boolean;
   scopedElementId?: string;
@@ -130,6 +100,7 @@ export type DesignerState = {
   showLeftSidebar: boolean;
   resourceModalDragLeft: boolean;
   prompt?: Prompt;
+  confirm?: Confirm;
   showRightsidebar: boolean;
   highlightedNodeId?: string;
   screenshotUrls: Record<string, string>;
@@ -293,24 +264,3 @@ export const expandDirs =
       ...top.split("/").map((_, i, arr) => arr.slice(0, i + 1).join("/")),
     ]);
   };
-
-export const newDesignFilePrompt = (parentDirectory?: string): Prompt => ({
-  details: { kind: PromptKind.NewDesignFile, parentDirectory },
-  title: "New design file",
-  placeholder: "design file name",
-  okLabel: "Create design file",
-});
-
-export const renameFilePrompt = (): Prompt => ({
-  details: { kind: PromptKind.RenameFile },
-  title: "New file name",
-  placeholder: "file name",
-  okLabel: "Rename file",
-});
-
-export const newDirectoryPrompt = (parentDirectory?: string): Prompt => ({
-  details: { kind: PromptKind.NewDirectory, parentDirectory },
-  title: "New directory",
-  placeholder: "directory name",
-  okLabel: "Create directory",
-});

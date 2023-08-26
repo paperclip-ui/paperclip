@@ -10,6 +10,7 @@ import {
   PromptDetails,
   PromptKind,
 } from "../../state";
+import { ConfirmDetails } from "../../state/confirm";
 
 export type DashboardAddFileConfirmed = BaseEvent<
   "ui/dashboardAddFileConfirmed",
@@ -140,6 +141,13 @@ export type PromptClosed = BaseEvent<
     details: PromptDetails;
   }
 >;
+export type ConfirmClosed = BaseEvent<
+  "ui/confirmClosed",
+  {
+    yes: boolean;
+    details: ConfirmDetails;
+  }
+>;
 export type ToolsLayerDragOver = BaseEvent<"ui/toolsLayerDragOver", Point>;
 export type ToolsLayerDrop = BaseEvent<
   "ui/toolsLayerDrop",
@@ -231,6 +239,7 @@ export type UIEvent =
   | RectsCaptured
   | AddFileItem
   | AttributeChanged
+  | ConfirmClosed
   | CanvasPanned
   | CanvasPanStart
   | CanvasMouseDown

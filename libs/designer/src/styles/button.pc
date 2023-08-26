@@ -14,7 +14,7 @@ public component Button {
     variant warning trigger {
         ".warning"
     }
-    render button(class: class, onClick: onClick) {
+    render button(class: class, onClick: onClick, autoFocus: autoFocus) {
         style variant secondary {
             background: var(mod.gray02)
         }
@@ -29,6 +29,7 @@ public component Button {
             border-radius: var(mod.space02)
             padding: var(mod.space03)
             color: var(mod.gray0)
+            cursor: pointer
         }
         slot children {
             text "a button"

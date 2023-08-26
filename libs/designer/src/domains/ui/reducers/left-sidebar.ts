@@ -17,6 +17,7 @@ import { expandVirtIds, selectNode } from "../state";
 import { uniq } from "lodash";
 import { routes } from "@paperclip-ui/designer/src/state/routes";
 import { ShortcutCommand } from "../../shortcuts/state";
+import { newDeleteFileConformation } from "@paperclip-ui/designer/src/state/confirm";
 
 export const leftSidebarReducer = (
   state: DesignerState,
@@ -72,7 +73,11 @@ export const leftSidebarReducer = (
     case "shortcuts/itemSelected": {
       return produce(state, (newState) => {
         if (event.payload.command === ShortcutCommand.RenameFile) {
-          newState.prompt = renameFilePrompt();
+          newState.prompt = renameFilePrompt(newState.selectedFilePath);
+        } else if (event.payload.command === ShortcutCommand.DeleteFile) {
+          newState.confirm = newDeleteFileConformation(
+            newState.selectedFilePath
+          );
         }
       });
     }

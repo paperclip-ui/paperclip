@@ -16,7 +16,7 @@ use paperclip_proto::service::designer::{
     CreateDesignFileRequest, CreateDesignFileResponse, CreateFileRequest, DesignServerEvent, Empty,
     FileChanged, FileRequest, FileResponse, FsItem, ModulesEvaluated, OpenCodeEditorRequest,
     ReadDirectoryRequest, ReadDirectoryResponse, ResourceFiles, ScreenshotCaptured,
-    UpdateFileRequest, SearchFilesRequest, SearchFilesResponse,
+    UpdateFileRequest, SearchFilesRequest, SearchFilesResponse, DeleteFileRequest, MoveFileRequest,
 };
 use path_absolutize::*;
 use run_script::ScriptOptions;
@@ -186,6 +186,29 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         } else {
             Err(Status::not_found("Not implemented yet"))
         }
+    }
+
+    async fn delete_file(
+        &self,
+        request: Request<DeleteFileRequest>,
+    ) -> Result<Response<Empty>, Status> {
+        let path: String = request.get_ref().path.clone();
+
+        // Moves to trash
+        trash::delete(&path).expect("Unable to delete file");
+        Err(Status::not_found("Not implemented yet"))
+    }
+
+    async fn move_file(
+        &self,
+        request: Request<MoveFileRequest>,
+    ) -> Result<Response<Empty>, Status> {
+        let from_path: String = request.get_ref().from_path.clone();
+        let to_path: String = request.get_ref().to_path.clone();
+        
+        std::fs::rename(from_path, to_path).expect("Unable to move file");
+
+        Err(Status::not_found("Not implemented yet"))
     }
 
     async fn create_file(

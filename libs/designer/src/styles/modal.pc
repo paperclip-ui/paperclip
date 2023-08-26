@@ -44,6 +44,7 @@ public component ModalContent {
         style {
             height: 100%
             min-height: 0px
+            max-width: 300px
         }
         slot children {
             text "some description of text and stuff"
@@ -52,7 +53,7 @@ public component ModalContent {
 }
 
 /**
- * @bounds(x: 1155, y: 893, width: 584, height: 70)
+ * @bounds(x: 1145, y: 709, width: 584, height: 70)
 */
 
 public component ModalHeader {
@@ -144,7 +145,7 @@ public component ModalContainer {
  * @bounds(x: -43, y: 896, width: 1024, height: 768)
 */
 
-ModalContainer {
+ModalContainer promptPreview {
     insert children {
         Modal {
             ModalHeader {
@@ -161,6 +162,28 @@ ModalContainer {
                             }
                         }
                     }
+                }
+            }
+            ModalFooter
+        }
+    }
+}
+
+/**
+ * @bounds(x: 1044, y: 913, width: 1024, height: 768)
+*/
+
+ModalContainer confirmPreview {
+    insert children {
+        Modal {
+            ModalHeader {
+                insert children {
+                    text "Are you sure?"
+                }
+            }
+            ModalContent {
+                insert children {
+                    text "Are you sure you want to move this file to the trash?"
                 }
             }
             ModalFooter

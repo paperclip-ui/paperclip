@@ -10,6 +10,7 @@ import { DndProvider } from "react-dnd";
 import { HistoryContext } from "../domains/history/react";
 import { createHistory } from "../domains/history/history";
 import { PromptContainer } from "./Prompt";
+import { ConfirmContainer } from "./Confirm";
 
 export const Main = () => {
   const { history, machine } = useMemo(() => {
@@ -28,6 +29,7 @@ export const Main = () => {
         <MachineContext.Provider value={machine}>
           <Editor />
           <PromptContainer />
+          <ConfirmContainer />
         </MachineContext.Provider>
       </HistoryContext.Provider>
     </DndProvider>

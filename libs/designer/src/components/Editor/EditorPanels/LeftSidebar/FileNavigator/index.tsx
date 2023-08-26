@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import * as styles from "@paperclip-ui/designer/src/styles/left-sidebar.pc";
 import {
+  DNDKind,
   FSDirectory,
   FSFile,
   FSItem,
@@ -39,6 +40,7 @@ import {
   getGlobalShortcuts,
 } from "@paperclip-ui/designer/src/domains/shortcuts/state";
 import { ContextMenuItem } from "@paperclip-ui/designer/src/styles/context-menu.pc";
+import { useDrag, useDrop } from "react-dnd";
 
 export const FileNavigator = () => {
   const state = useSelector(getEditorState);
@@ -154,8 +156,55 @@ const FSItem = ({ depth, item }: FSItemProps) => {
   const currentFilePath = useSelector(getCurrentFilePath);
   const selectedFilePath = useSelector(getSelectedFilePath);
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
   const selected = selectedFilePath === item.path;
+  const headerRef = useRef<HTMLDivElement>(null);
+  // const [isOver, setIsOver] = useState(false);;
+
+  const [{ opacity }, dragRef] = useDrag(
+    () => ({
+      type: DNDKind.Node,
+      item,
+      collect: (monitor) => ({
+        opacity: monitor.isDragging() ? 0.5 : 1,
+        cursor: monitor.isDragging() ? "copy" : "initial",
+      }),
+    }),
+    []
+  );
+
+  const [{ isDraggingOver }, dropRef] = useDrop(
+    {
+      accept: DNDKind.Node,
+      // hover: (_, monitor) => {
+      //   const offset = monitor.getClientOffset();
+      //   const rect = headerRef.current?.getBoundingClientRect();
+
+      //   if (offset && rect && monitor.isOver() && monitor.canDrop()) {
+      //     setIsOver(true);
+      //   } else {
+      //     setIsOver(false);
+      //   }
+      // },
+      drop(droppedItem: FSItem) {
+        dispatch({
+          type: "ui/FileNavigatorDroppedFile",
+          payload: {
+            directory: item.path,
+            item: droppedItem,
+          },
+        });
+      },
+      canDrop() {
+        return item.kind === FSItemKind.Directory;
+      },
+      collect(monitor) {
+        return {
+          isDraggingOver: monitor.isOver(),
+        };
+      },
+    },
+    [item]
+  );
 
   const onClick = useCallback(() => {
     dispatch({ type: "ui/FileNavigatorItemClicked", payload: item });
@@ -164,7 +213,7 @@ const FSItem = ({ depth, item }: FSItemProps) => {
 
   useEffect(() => {
     if (selected) {
-      ref.current?.scrollIntoView({
+      headerRef.current?.scrollIntoView({
         block: "nearest",
       });
     }
@@ -175,24 +224,31 @@ const FSItem = ({ depth, item }: FSItemProps) => {
       setOpen(true);
     }
   }, [currentFilePath]);
+  const shortcuts = useSelector(getFileShortcuts);
+
+  const setHeader = (current) => {
+    headerRef.current = current;
+    dropRef(current);
+    dragRef(current);
+  };
 
   if (item.kind === FSItemKind.File && !isPaperclipFile(item.path)) {
     return null;
   }
 
-  const shortcuts = useSelector(getFileShortcuts);
   return (
     <ContextMenu menu={() => shortcuts}>
       <div>
         <styles.TreeNavigationItem>
           <styles.LayerNavigationItemHeader
-            ref={ref}
-            style={{ "--depth": depth }}
+            ref={headerRef}
+            style={{ "--depth": depth, opacity }}
             onClick={onClick}
             class={classNames({
               file: item.kind === FSItemKind.File,
               folder: item.kind === FSItemKind.Directory,
               container: item.kind === FSItemKind.Directory,
+              showDropOver: isDraggingOver,
               open,
               selected,
             })}

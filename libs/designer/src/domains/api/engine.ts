@@ -15,6 +15,7 @@ import {
   ElementTagChanged,
   ExprNavigatorDroppedNode,
   FileFilterChanged,
+  FileNavigatorDroppedFile,
   InstanceVariantToggled,
   PromptClosed,
   StyleDeclarationsChanged,
@@ -630,6 +631,10 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
+  const handleDroppedFile = (event: FileNavigatorDroppedFile) => {
+    actions.moveFile(event.payload.item.path, event.payload.directory);
+  };
+
   const handleConvertToComponent = (state: DesignerState) => {
     // Do not allow for nested instances to be converted to components.
     // Or, at least provide a confirmation for this.
@@ -953,6 +958,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "ui/removeVariantButtonClicked": {
         return handleDeleteExpression(event.payload.variantId, newState);
+      }
+      case "ui/FileNavigatorDroppedFile": {
+        return handleDroppedFile(event);
       }
       case "designer/variantEdited": {
         return handleVariantEdited(event, newState);

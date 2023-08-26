@@ -38,6 +38,7 @@ export enum NewFileKind {
 export enum DNDKind {
   Resource = "Resource",
   Node = "Node",
+  File = "File",
 }
 
 export type Canvas = {

@@ -133,6 +133,13 @@ export type ExprNavigatorDroppedNode = BaseEvent<
     droppedExprId: string;
   }
 >;
+export type FileNavigatorDroppedFile = BaseEvent<
+  "ui/FileNavigatorDroppedFile",
+  {
+    directory: string;
+    item: FSItem;
+  }
+>;
 
 export type PromptClosed = BaseEvent<
   "ui/promptClosed",
@@ -226,6 +233,7 @@ export type UIEvent =
   | FileNavigatorItemClicked
   | ResizerPathMoved
   | ResizerPathStoppedMoving
+  | FileNavigatorDroppedFile
   | EditVariantClicked
   | EditVariantPopupClosed
   | ResourceModalDragLeft

@@ -451,7 +451,7 @@ const patchNode = (
   }
 
   if (
-    isNodeKindSame(prevVirtNode, currVirtNode) ||
+    !isNodeKindSame(prevVirtNode, currVirtNode) ||
     (prevVirtNode.element &&
       prevVirtNode.element.tagName !== currVirtNode.element?.tagName)
   ) {

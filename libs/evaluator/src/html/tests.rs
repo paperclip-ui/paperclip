@@ -484,6 +484,22 @@ add_case! {
 "#
 }
 
+
+// NECESSARY for custom elements
+add_case! {
+    tag_names_can_contain_hyphens,
+    [
+    ("/entry.pc", r#"
+        some-custom-el(a: "b") {
+            text "somethin"
+        }
+	"#)
+    ],
+    r#"
+    <some-custom-el a=\"b\"> somethin </some-custom-el>
+"#
+}
+
 // business rule decision for inserts. If `insert slot {}` then default to original 
 // children. Reason for this is because inserts are added in the editor by default so that
 // they're accessible.

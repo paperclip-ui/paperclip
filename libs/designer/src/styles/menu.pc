@@ -1,7 +1,7 @@
 import "./theme.pc" as theme
 
 /**
- * @bounds(x: 174, y: 399, width: 1024, height: 768)
+ * @bounds(x: 174, y: 399, width: 428, height: 311)
 */
 
 public component Menu {
@@ -32,6 +32,10 @@ public component Menu {
         }
     }
 }
+
+/**
+ * @bounds(x: 632, y: 415, width: 323, height: 84)
+*/
 
 public component MenuItem {
     variant preselected trigger {

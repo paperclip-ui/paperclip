@@ -120,8 +120,8 @@ export const createNativeGlobalScript = (
     script.textContent = content;
 
     // execute immmediately in case of custom elements
-    document.body.appendChild(script);
-    // return script;
+    // document.body.appendChild(script);
+    return script;
   }
   // other things not supported yet
   return factory.createDocumentFragment();

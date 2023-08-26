@@ -1,51 +1,51 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/modal.pc";
 import * as buttonStyles from "@paperclip-ui/designer/src/styles/button.pc";
 import { Portal } from "../Portal";
-import { TextInput } from "../TextInput";
 import { getEditorState } from "../../state";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { DesignerEvent } from "../../events";
+import { Confirm } from "../../state/confirm";
 
-export type PromptProps = {
-  title: string;
-  placeholder: string;
-  okLabel: string;
-  onClose: (value?: string) => void;
-  defaultValue?: string;
-};
+export type ConfirmProps = {
+  onClose: (yes: boolean) => void;
+} & Confirm;
 
-export const PromptContainer = () => {
-  const { prompt } = useSelector(getEditorState);
+export const ConfirmContainer = () => {
+  const { confirm } = useSelector(getEditorState);
   const dispatch = useDispatch<DesignerEvent>();
 
-  const onSave = (value) => {
+  const onConfirm = (yes) => {
     dispatch({
-      type: "ui/promptClosed",
-      payload: { value, details: prompt.details },
+      type: "ui/confirmClosed",
+      payload: { yes, details: confirm.details },
     });
   };
 
-  if (!prompt) {
+  if (!confirm) {
     return null;
   }
 
-  return <Prompt {...prompt} onClose={onSave} />;
+  return <BaseConfirm {...confirm} onClose={onConfirm} />;
 };
 
-export const Prompt = ({
+export const BaseConfirm = ({
   title,
-  placeholder,
-  defaultValue,
+  text,
   okLabel,
   onClose,
-}: PromptProps) => {
-  const [value, setValue] = React.useState(defaultValue);
-  const onSave = () => {
-    onClose(value);
+}: ConfirmProps) => {
+  const onConfirm = () => {
+    onClose(true);
   };
 
-  const onCancel = () => onClose();
+  const onCancel = () => onClose(false);
+
+  const okRef = useRef<HTMLButtonElement>();
+
+  useEffect(() => {
+    okRef.current.focus();
+  }, []);
 
   return (
     <Portal>
@@ -54,22 +54,14 @@ export const Prompt = ({
           <styles.ModalHeader onCloseClick={onCancel}>
             {title}
           </styles.ModalHeader>
-          <styles.ModalContent>
-            <TextInput
-              large
-              autoFocus
-              placeholder={placeholder}
-              onChange={setValue}
-              onSave={onSave}
-            />
-          </styles.ModalContent>
+          <styles.ModalContent>{text}</styles.ModalContent>
           <styles.ModalFooter
             rightControls={
               <>
                 <buttonStyles.Button onClick={onCancel} class="secondary">
                   Cancel
                 </buttonStyles.Button>
-                <buttonStyles.Button onClick={onSave}>
+                <buttonStyles.Button ref={okRef} onClick={onConfirm}>
                   {okLabel}
                 </buttonStyles.Button>
               </>

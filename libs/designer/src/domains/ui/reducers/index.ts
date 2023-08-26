@@ -1,6 +1,7 @@
 import { DesignerEvent } from "../../../events";
 import { DesignerState } from "../../../state";
 import { canvasReducer } from "./canvas";
+import { confirmReducer } from "./confirm";
 import { leftSidebarReducer } from "./left-sidebar";
 import { promptReducer } from "./prompt";
 import { resourceModalReducer } from "./resource-modal";
@@ -12,6 +13,7 @@ const reducers = [
   canvasReducer,
   rightSidebarReducer,
   promptReducer,
+  confirmReducer,
 ];
 
 export const uiReducer = (state: DesignerState, event: DesignerEvent) =>

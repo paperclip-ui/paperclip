@@ -1,3 +1,0 @@
-import "./input.pc" as imp
-import "./theme.pc" as theme
-

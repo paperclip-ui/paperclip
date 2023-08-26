@@ -6,8 +6,11 @@ import {
   FSItem,
   InsertMode,
   LayerKind,
+  NewFileKind,
+  PromptDetails,
   PromptKind,
 } from "../../state";
+import { ConfirmDetails } from "../../state/confirm";
 
 export type DashboardAddFileConfirmed = BaseEvent<
   "ui/dashboardAddFileConfirmed",
@@ -130,12 +133,26 @@ export type ExprNavigatorDroppedNode = BaseEvent<
     droppedExprId: string;
   }
 >;
+export type FileNavigatorDroppedFile = BaseEvent<
+  "ui/FileNavigatorDroppedFile",
+  {
+    directory: string;
+    item: FSItem;
+  }
+>;
 
 export type PromptClosed = BaseEvent<
   "ui/promptClosed",
   {
     value?: string;
-    kind: PromptKind;
+    details: PromptDetails;
+  }
+>;
+export type ConfirmClosed = BaseEvent<
+  "ui/confirmClosed",
+  {
+    yes: boolean;
+    details: ConfirmDetails;
   }
 >;
 export type ToolsLayerDragOver = BaseEvent<"ui/toolsLayerDragOver", Point>;
@@ -171,6 +188,8 @@ export type AddLayerMenuItemClicked = BaseEvent<
   "ui/AddLayerMenuItemClicked",
   LayerKind
 >;
+
+export type AddFileItem = BaseEvent<"ui/AddFileItemClicked", NewFileKind>;
 
 export type EditVariantClicked = BaseEvent<
   "ui/editVariantClicked",
@@ -214,6 +233,7 @@ export type UIEvent =
   | FileNavigatorItemClicked
   | ResizerPathMoved
   | ResizerPathStoppedMoving
+  | FileNavigatorDroppedFile
   | EditVariantClicked
   | EditVariantPopupClosed
   | ResourceModalDragLeft
@@ -225,7 +245,9 @@ export type UIEvent =
   | InsertElementReleased
   | CanvasMouseLeave
   | RectsCaptured
+  | AddFileItem
   | AttributeChanged
+  | ConfirmClosed
   | CanvasPanned
   | CanvasPanStart
   | CanvasMouseDown

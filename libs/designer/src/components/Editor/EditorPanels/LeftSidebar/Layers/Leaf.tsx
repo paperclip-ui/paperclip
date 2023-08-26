@@ -184,9 +184,7 @@ const useLeaf = ({
   useEffect(() => {
     if (selected) {
       headerRef.current.scrollIntoView({
-        // behavior: "smooth",
-        block: "center",
-        // inline: "center",
+        block: "nearest",
       });
     }
   }, [selected]);

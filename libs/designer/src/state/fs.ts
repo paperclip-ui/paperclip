@@ -12,7 +12,10 @@ export const setDirItems = (
   if (curr.path === cwd) {
     return {
       ...curr,
-      items,
+      items: items.map((item) => {
+        // use existing item in case of directory
+        return curr.items.find((i) => i.path === item.path) || item;
+      }),
     };
   }
 

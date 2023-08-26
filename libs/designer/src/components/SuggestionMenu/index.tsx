@@ -72,8 +72,6 @@ export const SuggestionMenu = ({
             selected: values.includes(child.props.value),
             preselected: i === preselectedIndex,
             onSelect: (event: React.MouseEvent) => {
-              console.log("SELECT");
-
               child.props.value &&
                 onSelect(child.props.selectValue || child.props.value, {
                   event,

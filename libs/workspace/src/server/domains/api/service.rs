@@ -16,7 +16,7 @@ use paperclip_proto::service::designer::{
     CreateDesignFileRequest, CreateDesignFileResponse, CreateFileRequest, DesignServerEvent, Empty,
     FileChanged, FileRequest, FileResponse, FsItem, ModulesEvaluated, OpenCodeEditorRequest,
     ReadDirectoryRequest, ReadDirectoryResponse, ResourceFiles, ScreenshotCaptured,
-    UpdateFileRequest, SearchFilesRequest, SearchFilesResponse,
+    UpdateFileRequest, SearchFilesRequest, SearchFilesResponse, DeleteFileRequest, MoveFileRequest,
 };
 use path_absolutize::*;
 use run_script::ScriptOptions;
@@ -137,20 +137,12 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
 
         let (_, output, error) = run_script::run(&command, &vec![], &ScriptOptions::new()).unwrap();
 
-        // let result = Command::new("code")
-        // .arg("--goto")
-        // .arg(format!("\"{}:{}:{}\"", path, start.line, start.column))
-        // .output();
 
         println!("Output: {}", output);
         println!("Error: {}", error);
 
         Ok(Response::new(Empty {}))
 
-        // if result.is_ok() {
-        // } else {
-        //     Err(Status::unknown("Error executing command"))
-        // }
     }
 
     async fn read_directory(
@@ -158,11 +150,10 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         request: Request<ReadDirectoryRequest>,
     ) -> Result<Response<ReadDirectoryResponse>, Status> {
         let mut path: String = request.get_ref().path.clone();
+        let store = self.ctx.store.clone();
+        let project_dir = &store.lock().unwrap().state.options.config_context.directory;
 
         if path.get(0..1) != Some("/") {
-            // path = format!("{}")
-            let store = self.ctx.store.clone();
-            let project_dir = &store.lock().unwrap().state.options.config_context.directory;
             path = Path::new(project_dir)
                 .join(path)
                 .absolutize()
@@ -170,6 +161,11 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                 .to_str()
                 .unwrap()
                 .to_string();
+        }
+
+        // prohibit reading outside of project directory
+        if !path.contains(project_dir) {
+            return Err(Status::not_found("Cannot ready directory outside of project"));
         }
 
         if let Ok(items) = self.ctx.io.read_directory(&path) {
@@ -189,6 +185,40 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
             }))
         } else {
             Err(Status::not_found("Not implemented yet"))
+        }
+    }
+
+    async fn delete_file(
+        &self,
+        request: Request<DeleteFileRequest>,
+    ) -> Result<Response<Empty>, Status> {
+        let path: String = request.get_ref().path.clone();
+
+        // Moves to trash
+        let result = trash::delete(&path);
+
+        if result.is_ok() {
+            Ok(Response::new(Empty {}))
+        } else {
+            Err(Status::unknown("Cannot delete file"))
+        }
+    }
+
+    async fn move_file(
+        &self,
+        request: Request<MoveFileRequest>,
+    ) -> Result<Response<Empty>, Status> {
+        let from_path: String = request.get_ref().from_path.clone();
+        let to_path: String = request.get_ref().to_path.clone();
+
+        println!("mv {} {}", from_path, to_path);
+        
+        let result = std::fs::rename(from_path, to_path);
+
+        if result.is_ok() {
+            Ok(Response::new(Empty {}))
+        } else {
+            Err(Status::unknown("Cannot move file"))
         }
     }
 
@@ -255,7 +285,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         request: Request<CreateDesignFileRequest>,
     ) -> Result<Response<CreateDesignFileResponse>, Status> {
         if let Ok(file_path) =
-            create_design_file(&request.get_ref().name.to_string(), self.ctx.clone())
+            create_design_file(&request.get_ref().name.to_string(), request.get_ref().parent_dir.clone(), self.ctx.clone())
         {
             Ok(Response::new(CreateDesignFileResponse { file_path }))
         } else {

@@ -1,18 +1,21 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import * as styles from "@paperclip-ui/designer/src/styles/left-sidebar.pc";
 import {
+  DNDKind,
   FSDirectory,
   FSFile,
   FSItem,
   FSItemKind,
+  NewFileKind,
   getCurrentFilePath,
   getEditorState,
   getFileFilter,
   getFocusOnFileFilter,
   getSearchedFiles,
   getSearchedFilesRoot,
+  getSelectedFilePath,
 } from "@paperclip-ui/designer/src/state";
 import classNames from "classnames";
 import {
@@ -26,6 +29,18 @@ import { ContextMenu } from "@paperclip-ui/designer/src/components/ContextMenu";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
 import { useHistory } from "@paperclip-ui/designer/src/domains/history/react";
 import { routes } from "@paperclip-ui/designer/src/state/routes";
+import { PlusButton } from "@paperclip-ui/designer/src/styles/etc.pc";
+import {
+  SuggestionMenu,
+  SuggestionMenuItem,
+} from "@paperclip-ui/designer/src/components/SuggestionMenu";
+import { noop } from "lodash";
+import {
+  getFileShortcuts,
+  getGlobalShortcuts,
+} from "@paperclip-ui/designer/src/domains/shortcuts/state";
+import { ContextMenuItem } from "@paperclip-ui/designer/src/styles/context-menu.pc";
+import { useDrag, useDrop } from "react-dnd";
 
 export const FileNavigator = () => {
   const state = useSelector(getEditorState);
@@ -48,7 +63,7 @@ export const FileNavigator = () => {
             value={fileFilter}
             placeholder="search..."
           />
-          {/* <etc.PlusButton /> */}
+          <AddFileButton />
         </sidebarStyles.SidebarPanelHeader>
         <styles.Layers>
           {fileFilter ? (
@@ -64,16 +79,29 @@ export const FileNavigator = () => {
   );
 };
 
-type FSItemProps<Item extends FSItem> = {
-  item: Item;
-  depth: number;
-};
+export const AddFileButton = () => {
+  const dispatch = useDispatch<DesignerEvent>();
 
-const FSItem = ({ item, depth }: FSItemProps<FSItem>) => {
-  return item.kind === FSItemKind.Directory ? (
-    <DirectoryItem item={item} depth={depth} />
-  ) : (
-    <FileItem item={item} depth={depth} />
+  const onChange = (values: NewFileKind[]) => {
+    dispatch({ type: "ui/AddFileItemClicked", payload: values[0] });
+  };
+
+  return (
+    <SuggestionMenu
+      values={[]}
+      onSelect={onChange}
+      onOtherSelect={noop}
+      menu={() => [
+        <SuggestionMenuItem value={NewFileKind.DesignFile}>
+          Design file
+        </SuggestionMenuItem>,
+        <SuggestionMenuItem value={NewFileKind.Directory}>
+          Directory
+        </SuggestionMenuItem>,
+      ]}
+    >
+      <PlusButton />
+    </SuggestionMenu>
   );
 };
 
@@ -118,75 +146,123 @@ const FilteredFile = ({ path, rootDir }: FilteredFileProps) => {
   );
 };
 
-const DirectoryItem = ({ item, depth }: FSItemProps<FSDirectory>) => {
-  const dispatch = useDispatch<DesignerEvent>();
-
-  const [open, setOpen] = useState(false);
-
-  const onClick = useCallback(() => {
-    if (!open) {
-      dispatch({ type: "ui/FileNavigatorItemClicked", payload: item });
-      setOpen(true);
-    } else {
-      setOpen(false);
-    }
-  }, [item.path, open]);
-
-  const openContextMenu = useCallback(() => {
-    return [];
-  }, []);
-
-  return (
-    <styles.TreeNavigationItem>
-      <ContextMenu menu={openContextMenu}>
-        <styles.LayerNavigationItemHeader
-          onClick={onClick}
-          style={{ "--depth": depth }}
-          class={classNames({
-            folder: true,
-            container: true,
-            open,
-          })}
-        >
-          {dirname(item.path)}
-        </styles.LayerNavigationItemHeader>
-      </ContextMenu>
-      <styles.TreeNavigationItemContent>
-        {item.items.map((item) => {
-          return <FSItem key={item.path} item={item} depth={depth + 1} />;
-        })}
-      </styles.TreeNavigationItemContent>
-    </styles.TreeNavigationItem>
-  );
+type FSItemProps = {
+  item: FSItem;
+  depth: number;
 };
 
-const FileItem = ({ item, depth }: FSItemProps<FSFile>) => {
-  // only show files that can be opened up in the designer.
-  // TODO: need to have a toggle for this
-  if (!isPaperclipFile(item.path)) {
-    return null;
-  }
-  const state = useSelector(getEditorState);
+const FSItem = ({ depth, item }: FSItemProps) => {
   const dispatch = useDispatch<DesignerEvent>();
   const currentFilePath = useSelector(getCurrentFilePath);
-  const onClick = useCallback(
-    () => dispatch({ type: "ui/FileNavigatorItemClicked", payload: item }),
-    [item.path]
+  const selectedFilePath = useSelector(getSelectedFilePath);
+  const [open, setOpen] = useState(false);
+  const selected = selectedFilePath === item.path;
+  const headerRef = useRef<HTMLDivElement>(null);
+  // const [isOver, setIsOver] = useState(false);;
+
+  const [{ opacity }, dragRef] = useDrag(
+    () => ({
+      type: DNDKind.Node,
+      item,
+      collect: (monitor) => ({
+        opacity: monitor.isDragging() ? 0.5 : 1,
+        cursor: monitor.isDragging() ? "copy" : "initial",
+      }),
+    }),
+    []
   );
 
+  const [{ isDraggingOver }, dropRef] = useDrop(
+    {
+      accept: DNDKind.Node,
+      // hover: (_, monitor) => {
+      //   const offset = monitor.getClientOffset();
+      //   const rect = headerRef.current?.getBoundingClientRect();
+
+      //   if (offset && rect && monitor.isOver() && monitor.canDrop()) {
+      //     setIsOver(true);
+      //   } else {
+      //     setIsOver(false);
+      //   }
+      // },
+      drop(droppedItem: FSItem) {
+        dispatch({
+          type: "ui/FileNavigatorDroppedFile",
+          payload: {
+            directory: item.path,
+            item: droppedItem,
+          },
+        });
+      },
+      canDrop() {
+        return item.kind === FSItemKind.Directory;
+      },
+      collect(monitor) {
+        return {
+          isDraggingOver: monitor.isOver(),
+        };
+      },
+    },
+    [item]
+  );
+
+  const onClick = useCallback(() => {
+    dispatch({ type: "ui/FileNavigatorItemClicked", payload: item });
+    setOpen(!open);
+  }, [open, item.path]);
+
+  useEffect(() => {
+    if (selected) {
+      headerRef.current?.scrollIntoView({
+        block: "nearest",
+      });
+    }
+  }, [selected]);
+
+  useEffect(() => {
+    if (currentFilePath && currentFilePath.includes(item.path)) {
+      setOpen(true);
+    }
+  }, [currentFilePath]);
+  const shortcuts = useSelector(getFileShortcuts);
+
+  const setHeader = (current) => {
+    headerRef.current = current;
+    dropRef(current);
+    dragRef(current);
+  };
+
+  if (item.kind === FSItemKind.File && !isPaperclipFile(item.path)) {
+    return null;
+  }
+
   return (
-    <styles.TreeNavigationItem>
-      <styles.LayerNavigationItemHeader
-        style={{ "--depth": depth }}
-        onClick={onClick}
-        class={classNames({
-          file: true,
-          selected: currentFilePath === item.path,
-        })}
-      >
-        {dirname(item.path)}
-      </styles.LayerNavigationItemHeader>
-    </styles.TreeNavigationItem>
+    <ContextMenu menu={() => shortcuts}>
+      <div>
+        <styles.TreeNavigationItem>
+          <styles.LayerNavigationItemHeader
+            ref={setHeader}
+            style={{ "--depth": depth, opacity }}
+            onClick={onClick}
+            class={classNames({
+              file: item.kind === FSItemKind.File,
+              folder: item.kind === FSItemKind.Directory,
+              container: item.kind === FSItemKind.Directory,
+              showDropOver: isDraggingOver,
+              open,
+              selected,
+            })}
+          >
+            {dirname(item.path)}
+          </styles.LayerNavigationItemHeader>
+          {item.kind === FSItemKind.Directory && open
+            ? item.items.map((item) => {
+                return <FSItem key={item.path} item={item} depth={depth + 1} />;
+              })
+            : null}
+        </styles.TreeNavigationItem>
+      </div>
+    </ContextMenu>
   );
 };
 

@@ -6,6 +6,7 @@ import { LayerKind } from "@paperclip-ui/designer/src/state";
 import { useDispatch } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { noop } from "lodash";
+import { Box } from "@paperclip-ui/designer/src/styles/layout.pc";
 
 export const AddLayerButton = () => {
   const dispatch = useDispatch<DesignerEvent>();
@@ -21,28 +22,40 @@ export const AddLayerButton = () => {
       onOtherSelect={noop}
       menu={() => [
         <SuggestionMenuItem value={LayerKind.Atom}>
-          <styles.LayerIcon class="atom-token" />
-          Atom
+          <Box class="space03">
+            <styles.LayerIcon class="atom-token" />
+            Atom
+          </Box>
         </SuggestionMenuItem>,
         <SuggestionMenuItem value={LayerKind.Style}>
-          <styles.LayerIcon class="composite-token" />
-          Style mixin
+          <Box class="space03">
+            <styles.LayerIcon class="composite-token" />
+            Style mixin
+          </Box>
         </SuggestionMenuItem>,
         <SuggestionMenuItem value={LayerKind.Element}>
-          <styles.LayerIcon class="element" />
-          Element
+          <Box class="space03">
+            <styles.LayerIcon class="element" />
+            Element
+          </Box>
         </SuggestionMenuItem>,
         <SuggestionMenuItem value={LayerKind.Text}>
-          <styles.LayerIcon class="text" />
-          Text
+          <Box class="space03">
+            <styles.LayerIcon class="text" />
+            Text
+          </Box>
         </SuggestionMenuItem>,
         <SuggestionMenuItem value={LayerKind.Component}>
-          <styles.LayerIcon class="component" />
-          Component
+          <Box class="space03">
+            <styles.LayerIcon class="component" />
+            Component
+          </Box>
         </SuggestionMenuItem>,
         <SuggestionMenuItem value={LayerKind.Trigger}>
-          <styles.LayerIcon class="trigger" />
-          Trigger
+          <Box class="space03">
+            <styles.LayerIcon class="trigger" />
+            Trigger
+          </Box>
         </SuggestionMenuItem>,
       ]}
     >

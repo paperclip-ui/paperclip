@@ -1,12 +1,24 @@
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import {
   DesignerState,
+  FSItemKind,
+  NewFileKind,
+  expandDirs,
+  getActiveFilePath,
+  getCurrentFilePath,
   getTargetExprId,
+  newDesignFilePrompt,
+  newDirectoryPrompt,
+  redirect,
+  renameFilePrompt,
 } from "@paperclip-ui/designer/src/state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import produce from "immer";
 import { expandVirtIds, selectNode } from "../state";
 import { uniq } from "lodash";
+import { routes } from "@paperclip-ui/designer/src/state/routes";
+import { ShortcutCommand } from "../../shortcuts/state";
+import { newDeleteFileConfirmation } from "@paperclip-ui/designer/src/state/confirm";
 
 export const leftSidebarReducer = (
   state: DesignerState,
@@ -31,24 +43,56 @@ export const leftSidebarReducer = (
 
       return state;
     }
-    case "designer-engine/graphLoaded":
-    case "designer-engine/documentOpened":
+    case "designer-engine/documentOpened": {
+      state = expandLayerVirtIds(state);
+      state = produce(state, (newState) => {
+        newState.selectedFilePath = getCurrentFilePath(state);
+      });
+      return state;
+    }
+    case "designer-engine/fileCreated": {
+      return produce(state, (newState) => {
+        newState.selectedFilePath = event.payload.filePath;
+      });
+    }
     case "history-engine/historyChanged": {
-      const targetId = getTargetExprId(state);
+      return produce(state, (newState) => {
+        newState.fileFilter = null;
+        expandDirs(state.projectDirectory.path)(newState);
+      });
+    }
+    case "ui/AddFileItemClicked": {
+      return produce(state, (newState) => {
+        if (event.payload === NewFileKind.DesignFile) {
+          newState.prompt = newDesignFilePrompt(getActiveFilePath(state));
+        } else if (event.payload === NewFileKind.Directory) {
+          newState.prompt = newDirectoryPrompt(getActiveFilePath(state));
+        }
+      });
+    }
 
-      if (targetId) {
+    case "shortcuts/itemSelected": {
+      return produce(state, (newState) => {
+        if (event.payload.command === ShortcutCommand.RenameFile) {
+          newState.prompt = renameFilePrompt(newState.selectedFilePath);
+        } else if (event.payload.command === ShortcutCommand.DeleteFile) {
+          newState.confirm = newDeleteFileConfirmation(
+            newState.selectedFilePath
+          );
+        }
+      });
+    }
+    case "ui/FileNavigatorItemClicked": {
+      if (event.payload.kind === FSItemKind.File) {
+        state = redirect(state, routes.editor(event.payload.path));
+      } else {
         state = produce(state, (newState) => {
-          newState.expandedLayerVirtIds = uniq([
-            targetId,
-            ...state.expandedLayerVirtIds,
-            ...ast.getAncestorIds(targetId, state.graph),
-          ]);
+          newState.selectedFilePath = event.payload.path;
         });
+        // gets done on redirect so we're good!
+        state = produce(state, expandDirs(event.payload.path));
       }
 
-      state = produce(state, (newState) => {
-        newState.fileFilter = null;
-      });
       return state;
     }
     case "ui/fileFilterChanged": {
@@ -62,5 +106,21 @@ export const leftSidebarReducer = (
       return state;
     }
   }
+  return state;
+};
+
+const expandLayerVirtIds = (state: DesignerState) => {
+  const targetId = getTargetExprId(state);
+
+  if (targetId) {
+    state = produce(state, (newState) => {
+      newState.expandedLayerVirtIds = uniq([
+        targetId,
+        ...state.expandedLayerVirtIds,
+        ...ast.getAncestorIds(targetId, state.graph),
+      ]);
+    });
+  }
+
   return state;
 };

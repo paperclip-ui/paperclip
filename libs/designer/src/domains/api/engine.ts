@@ -5,15 +5,17 @@ import {
   ModulesEvaluated,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { Engine, Dispatch } from "@paperclip-ui/common";
-import { DesignerEngineEvent } from "./events";
+import { DesignerEngineEvent, DocumentOpened } from "./events";
 import { DesignerEvent } from "../../events";
 import {
   AddLayerMenuItemClicked,
   AttributeChanged,
+  ConfirmClosed,
   // DesignerEvent,
   ElementTagChanged,
   ExprNavigatorDroppedNode,
   FileFilterChanged,
+  FileNavigatorDroppedFile,
   InstanceVariantToggled,
   PromptClosed,
   StyleDeclarationsChanged,
@@ -52,7 +54,6 @@ import {
 } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { Box, getScaledBox, getScaledPoint, roundBox } from "../../state/geom";
 import {
-  getCurrentDependency,
   getSelectedExpression,
   getSelectedExpressionInfo,
   getStyleableTargetId,
@@ -70,9 +71,9 @@ import {
   ToolsTextEditorChanged,
 } from "../ui/events";
 import { ExpressionPasted } from "../clipboard/events";
-import { Num, Range } from "@paperclip-ui/proto/lib/generated/ast/base";
-import { SimpleExpression } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import { Range } from "@paperclip-ui/proto/lib/generated/ast/base";
 import { kebabCase } from "lodash";
+import { ConfirmKind } from "../../state/confirm";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -113,16 +114,51 @@ const createActions = (
   client: DesignerClientImpl,
   dispatch: Dispatch<DesignerEngineEvent>
 ) => {
-  return {
-    async openFile(filePath: string) {
-      const data = await client.OpenFile({ path: filePath });
+  const openFile = async (filePath: string) => {
+    const data = await client.OpenFile({ path: filePath });
+    dispatch({ type: "designer-engine/documentOpened", payload: data });
+  };
 
-      dispatch({ type: "designer-engine/documentOpened", payload: data });
+  const readDirectory = async (inputPath: string) => {
+    const { items, path } = await client.ReadDirectory({ path: inputPath });
+    dispatch({
+      type: "designer-engine/directoryRead",
+      payload: { items, path, isRoot: inputPath === "." },
+    });
+  };
+
+  return {
+    openFile,
+    readDirectory,
+    async deleteFile(filePath: string) {
+      // no need to do anything else since file watcher trigger changes
+      await client.DeleteFile({ path: filePath });
     },
-    async createDesignFile(name: string) {
+    async moveFile(fromPath: string, toPath: string) {
+      // no need to do anything else since file watcher will trigger changes
+      await client.MoveFile({ fromPath, toPath });
+    },
+    async createDirectory(name: string, parentDir?: string) {
+      const filePath = parentDir + "/" + name;
+
+      // // kebab case in case spaces are added
+      await client.CreateFile({
+        path: filePath,
+        kind: FSItemKind.Directory,
+      });
+
+      dispatch({
+        type: "designer-engine/fileCreated",
+        payload: { filePath, kind: FSItemKind.Directory },
+      });
+
+      readDirectory(parentDir);
+    },
+    async createDesignFile(name: string, parentDir?: string) {
       // kebab case in case spaces are added
       const { filePath } = await client.CreateDesignFile({
         name: kebabCase(name),
+        parentDir,
       });
       dispatch({
         type: "designer-engine/designFileCreated",
@@ -139,14 +175,7 @@ const createActions = (
         },
       });
     },
-    readDirectory(inputPath: string) {
-      client.ReadDirectory({ path: inputPath }).then(({ path, items }) => {
-        dispatch({
-          type: "designer-engine/directoryRead",
-          payload: { items, path, isRoot: inputPath === "." },
-        });
-      });
-    },
+
     openCodeEditor(path: string, range: Range) {
       client.OpenCodeEditor({ path, range });
     },
@@ -602,6 +631,14 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
+  const handleDroppedFile = (event: FileNavigatorDroppedFile) => {
+    // mv /some/path/to/file-or-dir -> /new/path + /file-or-dir
+    actions.moveFile(
+      event.payload.item.path,
+      event.payload.directory + "/" + event.payload.item.path.split("/").pop()
+    );
+  };
+
   const handleConvertToComponent = (state: DesignerState) => {
     // Do not allow for nested instances to be converted to components.
     // Or, at least provide a confirmation for this.
@@ -698,11 +735,60 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
-  const handlePromptClosed = ({ payload: { value, kind } }: PromptClosed) => {
-    if (value == null || kind !== PromptKind.NewDesignFile) {
+  const handlePromptClosed = ({
+    payload: { value, details },
+  }: PromptClosed) => {
+    if (!value) {
       return;
     }
-    actions.createDesignFile(value);
+
+    if (details.kind === PromptKind.NewDesignFile) {
+      actions.createDesignFile(value, details.parentDirectory);
+    } else if (details.kind === PromptKind.NewDirectory) {
+      actions.createDirectory(value, details.parentDirectory);
+    } else if (details.kind === PromptKind.RenameFile) {
+      const dir = details.filePath.split("/").slice(0, -1).join("/");
+      const ext = details.filePath.split("/").pop().split(".").pop();
+
+      actions.moveFile(
+        details.filePath,
+        dir + "/" + kebabCase(value).replace("." + ext, "") + "." + ext
+      );
+    }
+  };
+
+  const handleConfirmClose = ({ payload: { yes, details } }: ConfirmClosed) => {
+    if (!yes) {
+      return;
+    }
+    if (details.kind === ConfirmKind.DeleteFile) {
+      actions.deleteFile(details.filePath);
+    }
+  };
+
+  const handleDocumentOpened = (
+    _event: DocumentOpened,
+    state: DesignerState
+  ) => {
+    // read ALL dirs so that they expand in file navigator
+    readFileAncestorDirectories(getCurrentFilePath(state));
+  };
+
+  const readFileAncestorDirectories = async (filePath: string) => {
+    const dirs = filePath.split("/");
+
+    // pop off file name
+    dirs.pop();
+    while (dirs.length) {
+      try {
+        await actions.readDirectory(dirs.join("/"));
+
+        // outside of project scope
+      } catch (e) {
+        break;
+      }
+      dirs.pop();
+    }
   };
 
   const handleKeyDown = (
@@ -781,6 +867,7 @@ const createEventHandler = (actions: Actions) => {
     event: HistoryChanged,
     state: DesignerState
   ) => {
+    // open the document
     const filePath = getCurrentFilePath(state);
     if (filePath && filePath !== getRenderedFilePath(state)) {
       actions.openFile(filePath);
@@ -855,6 +942,12 @@ const createEventHandler = (actions: Actions) => {
       case "ui/promptClosed": {
         return handlePromptClosed(event);
       }
+      case "ui/confirmClosed": {
+        return handleConfirmClose(event);
+      }
+      case "designer-engine/documentOpened": {
+        return handleDocumentOpened(event, newState);
+      }
       case "keyboard/keyDown": {
         return handleKeyDown(event, newState, prevState);
       }
@@ -869,6 +962,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "ui/removeVariantButtonClicked": {
         return handleDeleteExpression(event.payload.variantId, newState);
+      }
+      case "ui/FileNavigatorDroppedFile": {
+        return handleDroppedFile(event);
       }
       case "designer/variantEdited": {
         return handleVariantEdited(event, newState);
@@ -953,10 +1049,9 @@ const bootstrap = (
   syncResourceFiles();
   const filePath = getCurrentFilePath(initialState);
 
-  setTimeout(() => {
-    if (filePath) {
-      openFile(filePath);
-    }
-    syncGraph();
-  }, 100);
+  if (filePath) {
+    openFile(filePath);
+  }
+
+  syncGraph();
 };

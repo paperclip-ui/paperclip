@@ -7,3 +7,23 @@ div {
     img(src: "./color-picker-screenshot.png")
 }
 
+/**
+ * @bounds(x: -250, y: 883, width: 496, height: 431)
+*/
+
+div {
+    style {
+        position: relative
+    }
+    div {
+        style {
+            background: rgba(0, 0, 0, 0.1)
+            position: absolute
+            left: 23px
+            top: 44px
+            width: 133px
+            height: 93px
+        }
+    }
+}
+

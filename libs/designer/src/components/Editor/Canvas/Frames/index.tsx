@@ -10,6 +10,7 @@ import {
   StyleOverrides,
 } from "@paperclip-ui/designer/src/state";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
+import { Node } from "@paperclip-ui/proto/lib/generated/virt/html";
 
 type FramesProps = {
   expandedFrameIndex?: number | null;
@@ -26,10 +27,12 @@ export const Frames = memo(({ expandedFrameIndex }: FramesProps) => {
 
   return (
     <>
-      {frames.map((frame, i) => {
+      {frames.map((frame: Node, i) => {
+        const id = (frame.element || frame.textNode).id;
+
         return (
           <Frame
-            key={i}
+            key={id}
             document={doc!.paperclip!}
             onLoad={onFrameLoaded}
             variantIds={variantIds}
@@ -121,7 +124,7 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
     return { frames: [], onFrameLoaded };
   }
 
-  const frames = doc.paperclip?.html?.children || [];
+  const frames: Node[] = doc.paperclip?.html?.children || [];
 
   return { frames, onFrameLoaded, onFrameUpdated, variantIds };
 };

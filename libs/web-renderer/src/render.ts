@@ -473,9 +473,17 @@ const patchNode = (
         options
       );
     } else if (currVirtNode.textNode) {
-      (node as Text).nodeValue = entities.decode(
-        currVirtNode.textNode.value.replace(/[\s\r]+/g, " ")
-      );
+      // Might be span since text nodes can be styled too.
+      const textNode: Text =
+        node.nodeType === Node.ELEMENT_NODE
+          ? (node.childNodes[0] as Text)
+          : (node as Text);
+
+      if (textNode) {
+        textNode.nodeValue = entities.decode(
+          currVirtNode.textNode.value.replace(/[\s\r]+/g, " ")
+        );
+      }
     }
   }
 

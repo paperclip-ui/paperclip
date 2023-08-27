@@ -71,7 +71,7 @@ export const useTextInput = (
   const onFocus2 = (event: any) => {
     if (select) {
       setTimeout(() => {
-        ref.current.select();
+        ref.current?.select();
       });
     }
     if (onFocus) {

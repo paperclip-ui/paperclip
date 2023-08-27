@@ -4,53 +4,6 @@ import "./input.pc" as input
 import "./etc.pc" as etc
 
 /**
- * @bounds(x: 120, y: -1060, width: 1024, height: 768)
-*/
-
-component ColorPickerPopup {
-    render sidebar.SidebarPopup {
-        insert header {
-            text "Color"
-        }
-        sidebar.SidebarPanelContent {
-            style {
-                display: flex
-                flex-direction: column
-                gap: var(theme.space04)
-            }
-            color-picker(width: "220", height: "130")
-            div {
-                text "Hue"
-            }
-            div {
-                text "Opacity"
-            }
-            div {
-                text "value"
-            }
-        }
-        sidebar.SidebarPanelContent {
-            style {
-                border-top: 1px solid rgb(21, 21, 21)
-                padding-top: var(theme.space04)
-                display: flex
-                flex-direction: column
-                gap: var(theme.space03)
-            }
-            div {
-                text "color var"
-            }
-            div {
-                text "color var"
-            }
-            div {
-                text "color var"
-            }
-        }
-    }
-}
-
-/**
  * @bounds(x: 881, y: 7, width: 405, height: 1105)
 */
 
@@ -207,7 +160,6 @@ public component Preview {
                     input.Field {
                         insert name {
                             text "Background"
-                            ColorPickerPopup
                         }
                         insert input {
                             input.ColorInput {

@@ -512,7 +512,9 @@ fn evaluate_variant_styles<F: FileResolver>(
     }
 
     if is_within_override && !found_overridable {
-        println!("Variant override not found");
+
+        // TODO: return warning instead 
+        // println!("Variant override not found");
         return;
     }
 

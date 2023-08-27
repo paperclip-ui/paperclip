@@ -7,7 +7,7 @@ import "./resource-modal.pc" as assetsModal
 
 token iconSize var(theme.fontSize03)
 /**
- * @bounds(x: 6489, y: 1292, width: 1926, height: 1486)
+ * @bounds(x: 4694, y: 896, width: 1926, height: 1486)
 */
 
 public component SplashInfo {
@@ -107,7 +107,7 @@ public component SplashInfo {
 }
 
 /**
- * @bounds(x: 6229, y: 124, width: 1024, height: 768)
+ * @bounds(x: 4855, y: 24, width: 1024, height: 768)
 */
 
 public component SplashTip {
@@ -199,7 +199,6 @@ public component Editor {
         }
     }
 }
-
 
 public component Artboard {
     render div(style: style) {

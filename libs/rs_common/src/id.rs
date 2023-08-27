@@ -1,5 +1,4 @@
 use crc::crc32;
-use uuid::Uuid;
 
 #[derive(Debug, Clone)]
 pub struct IDGenerator {
@@ -20,10 +19,6 @@ impl IDGenerator {
     pub fn new_seed(&mut self) -> String {
         self.new_id()
     }
-}
-
-pub fn generate_seed() -> String {
-    Uuid::new_v4().to_string()
 }
 
 pub fn get_document_id<'a>(url: &str) -> String {

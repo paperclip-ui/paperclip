@@ -4,19 +4,20 @@ use super::utils::{apply_mutations, create_design_file};
 use crate::server::core::{ServerEngineContext, ServerEvent, ServerStore};
 use crate::server::io::ServerIO;
 use futures::Stream;
+use glob::glob;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::fs::FSItemKind;
 use paperclip_language_services::DocumentInfo;
 use paperclip_proto::ast::base::Range;
 use paperclip_proto::ast::graph_ext::Graph;
-use glob::glob;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
-    design_server_event, file_response, ApplyMutationsRequest, OpenFileInNavigatorRequest, ApplyMutationsResult,
-    CreateDesignFileRequest, CreateDesignFileResponse, CreateFileRequest, DesignServerEvent, Empty,
-    FileChanged, FileRequest, FileResponse, FsItem, ModulesEvaluated, OpenCodeEditorRequest,
-    ReadDirectoryRequest, ReadDirectoryResponse, ResourceFiles, ScreenshotCaptured,
-    UpdateFileRequest, SearchFilesRequest, SearchFilesResponse, DeleteFileRequest, MoveFileRequest,
+    design_server_event, file_response, ApplyMutationsRequest, ApplyMutationsResult,
+    CreateDesignFileRequest, CreateDesignFileResponse, CreateFileRequest, DeleteFileRequest,
+    DesignServerEvent, Empty, FileChanged, FileRequest, FileResponse, FsItem, ModulesEvaluated,
+    MoveFileRequest, OpenCodeEditorRequest, OpenFileInNavigatorRequest, ReadDirectoryRequest,
+    ReadDirectoryResponse, ResourceFiles, ScreenshotCaptured, SearchFilesRequest,
+    SearchFilesResponse, UpdateFileRequest,
 };
 use path_absolutize::*;
 use run_script::ScriptOptions;
@@ -98,7 +99,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
             paths,
         }))
     }
-    
+
     async fn open_code_editor(
         &self,
         request: Request<OpenCodeEditorRequest>,
@@ -137,12 +138,10 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
 
         let (_, output, error) = run_script::run(&command, &vec![], &ScriptOptions::new()).unwrap();
 
-
         println!("Output: {}", output);
         println!("Error: {}", error);
 
         Ok(Response::new(Empty {}))
-
     }
 
     async fn read_directory(
@@ -165,7 +164,9 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
 
         // prohibit reading outside of project directory
         if !path.contains(project_dir) {
-            return Err(Status::not_found("Cannot ready directory outside of project"));
+            return Err(Status::not_found(
+                "Cannot ready directory outside of project",
+            ));
         }
 
         if let Ok(items) = self.ctx.io.read_directory(&path) {
@@ -212,7 +213,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         let to_path: String = request.get_ref().to_path.clone();
 
         println!("mv {} {}", from_path, to_path);
-        
+
         let result = std::fs::rename(from_path, to_path);
 
         if result.is_ok() {
@@ -229,7 +230,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         let file_path: String = request.get_ref().file_path.clone();
 
         println!("open{}", file_path);
-        
+
         let result = open::that(&file_path);
 
         if result.is_ok() {
@@ -301,9 +302,11 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         &self,
         request: Request<CreateDesignFileRequest>,
     ) -> Result<Response<CreateDesignFileResponse>, Status> {
-        if let Ok(file_path) =
-            create_design_file(&request.get_ref().name.to_string(), request.get_ref().parent_dir.clone(), self.ctx.clone())
-        {
+        if let Ok(file_path) = create_design_file(
+            &request.get_ref().name.to_string(),
+            request.get_ref().parent_dir.clone(),
+            self.ctx.clone(),
+        ) {
             Ok(Response::new(CreateDesignFileResponse { file_path }))
         } else {
             Err(Status::already_exists("File already exists"))

@@ -2,9 +2,6 @@ use super::base::EditContext;
 use super::utils::import_dep;
 use super::utils::resolve_import_ns;
 use paperclip_proto::ast;
-use paperclip_proto::ast::all::Expression;
-use paperclip_proto::ast::graph_ext::Dependency;
-use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::ast::pc::Reference;
 use paperclip_proto::ast_mutate::SetStyleMixins;
 
@@ -23,7 +20,7 @@ impl MutableVisitor<()> for EditContext<SetStyleMixins> {
                 GetExpr::get_expr_from_graph(mixin_id, &self.graph).expect("Mixin must exist");
 
             if dep.path != self.get_dependency().path {
-                import_dep(expr, &self.get_dependency(), &dep.path);
+                import_dep(expr, &dep.path, self);
             }
         }
 
@@ -34,7 +31,7 @@ impl MutableVisitor<()> for EditContext<SetStyleMixins> {
             return VisitorResult::Continue;
         }
 
-        edit_style(expr, self.get_dependency(), &self.mutation, &self.graph);
+        edit_style(expr, &self);
 
         return VisitorResult::Return(());
     }
@@ -60,14 +57,14 @@ impl MutableVisitor<()> for EditContext<SetStyleMixins> {
         let mut style: &mut ast::pc::Style = (if style.is_none() {
             element.body.push(
                 ast::pc::node::Inner::Style(ast::pc::Style {
-                    id: element.checksum(),
+                    id: self.new_id(),
                     is_public: false,
                     range: None,
                     declarations: vec![],
                     variant_combo: variant_combo
                         .iter()
                         .map(|x| ast::pc::Reference {
-                            id: format!("{}-{}", element.checksum(), x),
+                            id: self.new_id(),
                             path: vec![x.clone()],
                             range: None,
                         })
@@ -85,24 +82,17 @@ impl MutableVisitor<()> for EditContext<SetStyleMixins> {
         .try_into()
         .expect("Must be style");
 
-        edit_style(
-            &mut style,
-            self.get_dependency(),
-            &self.mutation,
-            &self.graph,
-        );
+        edit_style(&mut style, &self);
 
         return VisitorResult::Return(());
     }
 }
 
-fn edit_style(
-    style: &mut ast::pc::Style,
-    style_dep: &Dependency,
-    mutation: &SetStyleMixins,
-    graph: &Graph,
-) {
+fn edit_style(style: &mut ast::pc::Style, ctx: &EditContext<SetStyleMixins>) {
     style.extends = vec![];
+    let mutation = &ctx.mutation;
+    let graph = &ctx.graph;
+    let style_dep = ctx.get_dependency();
 
     for mixin_id in &mutation.mixin_ids {
         let (mixin, dep) =
@@ -116,7 +106,7 @@ fn edit_style(
         }
 
         style.extends.push(Reference {
-            id: style.checksum(),
+            id: ctx.new_id(),
             range: None,
             path,
         });

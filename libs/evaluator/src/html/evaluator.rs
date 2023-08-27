@@ -316,7 +316,6 @@ fn evaluate_instance_child<'expr, F: FileResolver>(
 ) {
     match child.get_inner() {
         ast::node::Inner::Insert(insert) => {
-
             // inserts that don't have children are no-op. I.e: `insert a {}` does nothing. It needs
             // children. This is a business rule that's reflected in editor where inserts are added by default
             // so that they can be filled with children
@@ -402,12 +401,7 @@ fn evaluate_native_element<F: FileResolver>(
                 is_instance,
             )),
             source_instance_ids: context.instance_ids.clone(),
-            attributes: create_native_attributes(
-                element,
-                context,
-                is_instance,
-                is_component_root,
-            ),
+            attributes: create_native_attributes(element, context, is_instance, is_component_root),
             children,
             metadata: metadata.clone(),
         })
@@ -478,14 +472,14 @@ fn resolve_element_attributes<F: FileResolver>(
     attributes: &mut BTreeMap<String, virt::Attribute>,
     context: &DocumentContext<F>,
     is_instance: bool,
-    is_root: bool
+    is_root: bool,
 ) {
     // add styling hooks. If the element is root, then we need to add a special
     // ID so that child styles can be overridable
     if element.is_stylable() || is_instance || is_root {
         let mut class_name =
             get_style_namespace(&element.name, &element.id, context.current_component);
-            
+
         if is_root {
             if !context.render_scopes.is_empty() {
                 class_name = format!("{} {}", class_name, context.render_scopes.join(" "));
@@ -514,8 +508,8 @@ fn resolve_element_attributes<F: FileResolver>(
             if let Some(src) = attributes.get_mut("src") {
                 if !src.value.starts_with("http://") && !src.value.starts_with("https://") {
                     let ret = context
-                    .file_resolver
-                    .resolve_file(&context.path, &src.value);
+                        .file_resolver
+                        .resolve_file(&context.path, &src.value);
                     src.value = ret.unwrap();
                 }
             }

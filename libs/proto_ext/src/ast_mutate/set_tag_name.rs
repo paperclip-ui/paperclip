@@ -77,7 +77,7 @@ impl MutableVisitor<()> for EditContext<SetTagName> {
             return VisitorResult::Continue;
         }
 
-        import_dep(document, &self.get_dependency(), imp);
+        import_dep(document, imp, &self);
 
         VisitorResult::Continue
     }
@@ -85,7 +85,7 @@ impl MutableVisitor<()> for EditContext<SetTagName> {
         if expr.get_id() != &self.mutation.element_id {
             return VisitorResult::Continue;
         }
-        let render_node = upsert_render_expr(expr, false);
+        let render_node = upsert_render_expr(expr, false, &self);
         if let Some(node) = &mut render_node.node {
             if let node::Inner::Element(element) = node.get_inner_mut() {
                 element.tag_name = self.mutation.tag_name.clone();

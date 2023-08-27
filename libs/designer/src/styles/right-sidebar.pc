@@ -1,3 +1,5 @@
+import "./menu.pc" as imp1
+import "./color-picker.pc" as imp
 import "./sidebar.pc" as sidebar
 import "./theme.pc" as theme
 import "./input.pc" as input
@@ -182,6 +184,49 @@ public component VariantPopup {
                         input.TextInput(value: "add...")
                     }
                 }
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: 2670, y: 398, width: 1048, height: 774)
+*/
+
+div {
+    style {
+        position: relative
+    }
+    imp.ColorPicker
+    text ""
+}
+
+/**
+ * @bounds(x: 3841, y: 76, width: 1024, height: 768)
+*/
+
+input.SuggestionMenu
+
+/**
+ * @bounds(x: 3316, y: 1217, width: 627, height: 768)
+*/
+
+imp1.Menu {
+    input.SuggestionMenuSection {
+        override {
+            variant isFirst
+        }
+        insert children {
+            text "soemthing"
+        }
+    }
+    input.SuggestionMenuItem {
+        override {
+            variant checked
+        }
+        insert children {
+            div {
+                text "something else"
             }
         }
     }

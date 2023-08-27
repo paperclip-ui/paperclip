@@ -5,9 +5,9 @@ use futures_core::stream::Stream;
 #[cfg(feature = "local")]
 use path_absolutize::*;
 use std::fs;
-use std::path::Path;
-use std::io::Read;
 use std::fs::File;
+use std::io::Read;
+use std::path::Path;
 
 pub enum FSItemKind {
     File,

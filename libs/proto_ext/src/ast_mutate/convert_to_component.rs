@@ -36,11 +36,10 @@ impl MutableVisitor<()> for EditContext<ConvertToComponent> {
             VisitorResult::Continue
         );
 
-        let checksum = expr.checksum();
         let new_component = create_component(
             &get_component_name(&found_expr, expr),
             found_expr.serialize().as_str(),
-            &checksum,
+            &self.new_id(),
         );
 
         let insert_index = get_component_insert_index(&self.mutation.expression_id, expr);
@@ -71,14 +70,14 @@ impl MutableVisitor<()> for EditContext<ConvertToComponent> {
         &mut self,
         expr: &mut paperclip_proto::ast::pc::Element,
     ) -> crate::ast::all::VisitorResult<()> {
-        replace_child_with_instance!(self, expr.body, expr.checksum());
+        replace_child_with_instance!(self, expr.body, self.new_id());
         VisitorResult::Continue
     }
     fn visit_slot(
         &mut self,
         expr: &mut paperclip_proto::ast::pc::Slot,
     ) -> crate::ast::all::VisitorResult<()> {
-        replace_child_with_instance!(self, expr.body, expr.checksum());
+        replace_child_with_instance!(self, expr.body, self.new_id());
         VisitorResult::Continue
     }
     fn visit_render(
@@ -89,12 +88,11 @@ impl MutableVisitor<()> for EditContext<ConvertToComponent> {
             return VisitorResult::Continue;
         }
         let target: ExpressionWrapper = expr.node.as_mut().unwrap().into();
-        let checksum = expr.checksum();
 
         let component_name =
             get_component_name(&target, self.get_dependency().document.as_ref().unwrap());
         expr.node =
-            Some(node::Inner::Element(create_element(&component_name, &checksum)).get_outer());
+            Some(node::Inner::Element(create_element(&component_name, &self.new_id())).get_outer());
         VisitorResult::Continue
     }
 
@@ -102,7 +100,7 @@ impl MutableVisitor<()> for EditContext<ConvertToComponent> {
         &mut self,
         expr: &mut paperclip_proto::ast::pc::Insert,
     ) -> crate::ast::all::VisitorResult<()> {
-        replace_child_with_instance!(self, expr.body, expr.checksum());
+        replace_child_with_instance!(self, expr.body, self.new_id());
         VisitorResult::Continue
     }
 }
@@ -162,8 +160,8 @@ fn get_unique_component_name(base_name: &str, doc: &Document) -> String {
     name
 }
 
-fn create_element(tag_name: &str, checksum: &str) -> Element {
-    let doc = parse(tag_name, checksum).unwrap();
+fn create_element(tag_name: &str, id_seed: &str) -> Element {
+    let doc = parse(tag_name, id_seed).unwrap();
     match doc.body.get(0).unwrap().get_inner() {
         document_body_item::Inner::Element(element) => Some(element),
         _ => None,
@@ -172,7 +170,7 @@ fn create_element(tag_name: &str, checksum: &str) -> Element {
     .clone()
 }
 
-fn create_component(name: &str, render: &str, checksum: &str) -> Component {
+fn create_component(name: &str, render: &str, id_seed: &str) -> Component {
     let doc = parse(
         format!(
             r#"
@@ -183,7 +181,7 @@ fn create_component(name: &str, render: &str, checksum: &str) -> Component {
             name, render
         )
         .as_str(),
-        checksum,
+        id_seed,
     )
     .unwrap();
     match doc.body.get(0).unwrap().get_inner() {

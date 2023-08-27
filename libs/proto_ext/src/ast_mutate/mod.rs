@@ -22,7 +22,6 @@ mod wrap_in_element;
 #[macro_use]
 
 mod utils;
-use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::{

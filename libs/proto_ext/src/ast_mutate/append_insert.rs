@@ -13,7 +13,7 @@ impl MutableVisitor<()> for EditContext<AppendInsert> {
             return VisitorResult::Continue;
         }
 
-        let child = parse_node(&self.mutation.child_source, &expr.checksum());
+        let child = parse_node(&self.mutation.child_source, &self.new_id());
         let child_id = child.get_id().to_string();
 
         let existing = expr.body.iter_mut().find_map(|child| {
@@ -33,11 +33,7 @@ impl MutableVisitor<()> for EditContext<AppendInsert> {
         } else {
             expr.body.push(
                 ast::pc::node::Inner::Insert(ast::pc::Insert {
-                    id: format!(
-                        "{}-{}",
-                        expr.checksum().to_string(),
-                        self.mutation.slot_name
-                    ),
+                    id: self.new_id(),
                     range: None,
                     name: self.mutation.slot_name.to_string(),
                     body: vec![child],

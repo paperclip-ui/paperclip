@@ -5,7 +5,6 @@ use paperclip_proto::ast;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::ast::pc::{component_body_item, Component, Element, Render, SimpleExpression};
 use paperclip_proto::ast::{
-    all::Expression,
     graph_ext::Dependency,
     pc::{Document, DocumentBodyItem, Node},
 };
@@ -14,6 +13,8 @@ use regex::Regex;
 use std::{collections::HashMap, fmt::Debug, path::Path};
 
 use crate::ast::all::{Visitable, Visitor, VisitorResult};
+
+use super::EditContext;
 
 #[macro_export]
 macro_rules! replace_child {
@@ -124,7 +125,11 @@ pub fn resolve_import_ns(document_dep: &Dependency, path: &str) -> (String, bool
     );
 }
 
-pub fn upsert_render_expr<'a>(component: &'a mut Component, create_node: bool) -> &'a mut Render {
+pub fn upsert_render_expr<'a, Mutation>(
+    component: &'a mut Component,
+    create_node: bool,
+    ctx: &EditContext<Mutation>,
+) -> &'a mut Render {
     let existing_render_node = component.body.iter_mut().position(|x| match x.get_inner() {
         component_body_item::Inner::Render(_) => true,
         _ => false,
@@ -140,13 +145,10 @@ pub fn upsert_render_expr<'a>(component: &'a mut Component, create_node: bool) -
     } else {
         component.body.push(
             component_body_item::Inner::Render(Render {
-                id: component.checksum().to_string(),
+                id: ctx.new_id(),
                 range: None,
                 node: if create_node {
-                    Some(parse_node(
-                        "div",
-                        &format!("{}-node", component.checksum().to_string()),
-                    ))
+                    Some(parse_node("div", &ctx.new_id()))
                 } else {
                     None
                 },
@@ -183,44 +185,12 @@ pub fn get_instance_component<'a>(
         .get_component_by_name(tag_name)
 }
 
-// pub fn upsert_insert<'a>(instance: &'a mut Element, name: &str) -> &'a mut Insert {
-//     let existing_insert = instance.body.iter_mut().position(|x| match x.get_inner() {
-//         node::Inner::Insert(insert) => &insert.name == name,
-//         _ => false,
-//     });
-
-//     if let Some(i) = existing_insert {
-//         instance
-//             .body
-//             .get_mut(i)
-//             .unwrap()
-//             .try_into()
-//             .expect("Must be render node")
-//     } else {
-//         instance.body.push(
-//             node::Inner::Insert(Insert {
-//                 id: instance.checksum().to_string(),
-//                 range: None,
-//                 name: name.to_string(),
-//                 body: vec![],
-//             })
-//             .get_outer(),
-//         );
-
-//         instance
-//             .body
-//             .last_mut()
-//             .unwrap()
-//             .try_into()
-//             .expect("Must be insert")
-//     }
-// }
-
-pub fn import_dep(
+pub fn import_dep<Mutation>(
     document: &mut ast::pc::Document,
-    document_dep: &Dependency,
     path: &str,
+    ctx: &EditContext<Mutation>,
 ) -> String {
+    let document_dep = ctx.get_dependency();
     let ns = resolve_import_ns(document_dep, path);
 
     if ns.1 {
@@ -229,7 +199,7 @@ pub fn import_dep(
             parse_import(
                 &resolve_import(&document_dep.path, path),
                 &ns.0,
-                document.checksum().as_str(),
+                &ctx.new_id(),
             ),
         );
     }
@@ -304,11 +274,12 @@ pub fn resolve_imports(
     actual_namespaces
 }
 
-pub fn add_imports(
+pub fn add_imports<Mutation>(
     namespaces: &HashMap<String, String>,
     document: &mut Document,
-    dependency: &Dependency,
+    ctx: &EditContext<Mutation>,
 ) -> HashMap<String, NamespaceResolution> {
+    let dependency = &ctx.get_dependency();
     let actual_namespaces = resolve_imports(namespaces, dependency);
 
     for (path, resolution) in &actual_namespaces {
@@ -316,11 +287,7 @@ pub fn add_imports(
             if let Some(ns) = &resolution.resolved {
                 document.body.insert(
                     0,
-                    parse_import(
-                        &resolve_import(&dependency.path, path),
-                        ns,
-                        document.checksum().as_str(),
-                    ),
+                    parse_import(&resolve_import(&dependency.path, path), ns, &ctx.new_id()),
                 );
             }
         }

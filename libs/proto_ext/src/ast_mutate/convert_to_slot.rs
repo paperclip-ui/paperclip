@@ -22,7 +22,7 @@ impl MutableVisitor<()> for EditContext<ConvertToSlot> {
         }
 
         let node = expr.node.as_ref().unwrap().clone();
-        let slot = create_slot(self, node, &expr.checksum());
+        let slot = create_slot(self, node, &self.new_id());
 
         *expr.node.as_mut().unwrap() = slot;
 
@@ -32,35 +32,33 @@ impl MutableVisitor<()> for EditContext<ConvertToSlot> {
         replace_child!(
             &mut expr.body,
             self.mutation.expression_id,
-            |child: &Node| { create_slot(self, child.clone(), child.checksum().as_str()) }
+            |child: &Node| { create_slot(self, child.clone(), &self.new_id()) }
         )
     }
     fn visit_element(&mut self, expr: &mut paperclip_proto::ast::pc::Element) -> VisitorResult<()> {
         replace_child!(
             &mut expr.body,
             self.mutation.expression_id,
-            |child: &Node| { create_slot(self, child.clone(), child.checksum().as_str()) }
+            |child: &Node| { create_slot(self, child.clone(), &self.new_id()) }
         )
     }
     fn visit_insert(&mut self, expr: &mut paperclip_proto::ast::pc::Insert) -> VisitorResult<()> {
         replace_child!(
             &mut expr.body,
             self.mutation.expression_id,
-            |child: &Node| { create_slot(self, child.clone(), child.checksum().as_str()) }
+            |child: &Node| { create_slot(self, child.clone(), &self.new_id()) }
         )
     }
 }
 
-fn create_slot(ctx: &mut EditContext<ConvertToSlot>, child: Node, checksum: &str) -> Node {
-    let id = format!("{}-slot", checksum);
-
+fn create_slot(ctx: &mut EditContext<ConvertToSlot>, child: Node, id: &str) -> Node {
     ctx.add_change(
         mutation_result::Inner::ExpressionInserted(ExpressionInserted { id: id.to_string() })
             .get_outer(),
     );
 
     node::Inner::Slot(Slot {
-        id,
+        id: id.to_string(),
         name: get_unique_slot_name(
             &ctx.mutation.expression_id,
             ctx.get_dependency()

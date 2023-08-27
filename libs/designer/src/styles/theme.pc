@@ -130,8 +130,6 @@ trigger mobile {
 */
 
 div preview {
-    style {
-        position: relative
-    }
+    style
 }
 

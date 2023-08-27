@@ -22,7 +22,7 @@ impl MutableVisitor<()> for EditContext<SetStyleDeclarations> {
         if expr.get_id() == self.mutation.expression_id {
             let new_style = parse_style(
                 &mutation_to_style(&self.mutation, self.get_dependency()),
-                &expr.checksum(),
+                &self.new_id(),
             );
             update_style(expr, &new_style);
         }
@@ -42,7 +42,7 @@ impl MutableVisitor<()> for EditContext<SetStyleDeclarations> {
                 if let Some(ns) = &resolution.resolved {
                     let relative = resolve_import(&self.get_dependency().path, &path);
                     doc.body
-                        .insert(0, parse_import(&relative, &ns, doc.checksum().as_str()));
+                        .insert(0, parse_import(&relative, &ns, &self.new_id()));
                 }
             }
         }
@@ -54,27 +54,21 @@ impl MutableVisitor<()> for EditContext<SetStyleDeclarations> {
         if expr.get_id() != self.mutation.expression_id {
             return VisitorResult::Continue;
         }
-        let checksum = expr.checksum();
         return add_child_style(
             self.changes.clone(),
             &mut expr.body,
             &self.mutation.expression_id,
-            &checksum,
-            &self.mutation,
-            self.graph.dependencies.get(&self.path).as_ref().unwrap(),
+            &self,
         );
     }
 
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
         if expr.get_id() == &self.mutation.expression_id {
-            let checksum = expr.checksum();
             return add_child_style(
                 self.changes.clone(),
                 &mut expr.body,
                 &self.mutation.expression_id,
-                &checksum,
-                &self.mutation,
-                self.graph.dependencies.get(&self.path).as_ref().unwrap(),
+                &self,
             );
         }
 
@@ -96,7 +90,6 @@ impl MutableVisitor<()> for EditContext<SetStyleDeclarations> {
 
             let el = render_expr.node.as_mut().expect("Node must exist");
 
-            let checksum = el.checksum().to_string();
             let parent_id = el.get_id().to_string();
 
             let mut body = match el.get_inner_mut() {
@@ -105,14 +98,7 @@ impl MutableVisitor<()> for EditContext<SetStyleDeclarations> {
                 _ => return VisitorResult::Continue,
             };
 
-            return add_child_style(
-                self.changes.clone(),
-                &mut body,
-                &parent_id,
-                &checksum,
-                &self.mutation,
-                self.graph.dependencies.get(&self.path).as_ref().unwrap(),
-            );
+            return add_child_style(self.changes.clone(), &mut body, &parent_id, &self);
         }
         VisitorResult::Continue
     }
@@ -122,12 +108,13 @@ fn add_child_style(
     changes: Rc<RefCell<Vec<MutationResult>>>,
     children: &mut Vec<ast::pc::Node>,
     parent_id: &str,
-    checksum: &str,
-    mutation: &SetStyleDeclarations,
-    dependency: &Dependency,
+    ctx: &EditContext<SetStyleDeclarations>,
 ) -> VisitorResult<()> {
+    let mutation = &ctx.mutation;
+    let dependency = ctx.get_dependency();
+
     let mut new_style: ast::pc::Style =
-        parse_style(&mutation_to_style(mutation, dependency), checksum);
+        parse_style(&mutation_to_style(mutation, dependency), &ctx.new_id());
 
     let mut doc = dependency.document.clone().expect("Document must exist");
 
@@ -144,7 +131,7 @@ fn add_child_style(
     new_style.variant_combo = variant_names
         .iter()
         .map(|name| ast::pc::Reference {
-            id: format!("{}-{}", new_style.checksum(), name),
+            id: ctx.new_id(),
             path: vec![name.to_string()],
             range: None,
         })

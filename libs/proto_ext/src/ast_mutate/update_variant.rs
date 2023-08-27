@@ -63,7 +63,7 @@ impl MutableVisitor<()> for EditContext<UpdateVariant> {
         println!("{}", mock_src);
 
         // ooof...
-        let doc = parse(&mock_src, &expr.checksum()).unwrap();
+        let doc = parse(&mock_src, &self.new_id()).unwrap();
         let new_variants = doc.get_components().get(0).unwrap().get_variants();
 
         let variant = *new_variants.get(0).unwrap();

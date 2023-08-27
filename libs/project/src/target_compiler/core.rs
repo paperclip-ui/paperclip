@@ -28,7 +28,6 @@ struct EmitInfo {
 
 impl<IO: FileReader + FileResolver> FileResolver for TargetCompilerResolver<IO> {
     fn resolve_file(&self, from: &str, to: &str) -> Result<String> {
-
         self.io.resolve_file(from, to).and_then(|resolved_path| {
             if let Some(max_embed) = self.context.options.embed_asset_max_size {
                 let file_size = self.io.get_file_size(&resolved_path).unwrap();

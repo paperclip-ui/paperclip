@@ -75,11 +75,9 @@ public component ColorPicker {
             padding: var(mod.space03)
             color: var(mod.gray0)
             font-family: var(mod.defaultFontFamily)
-            background: var(mod.gray06)
             width: 400px
             height: 400px
             border-radius: var(mod.space03)
-            filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.2))
             border: 1px solid var(mod.gray03)
         }
         ColorBox top {

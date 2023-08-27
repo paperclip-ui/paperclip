@@ -13,7 +13,7 @@ use crate::ast_mutate::utils::upsert_render_expr;
 macro_rules! prepend_child {
     ($self:expr, $expr: expr) => {{
         if $expr.get_id() == &$self.mutation.parent_id {
-            let child: Node = parse_node(&$self.mutation.child_source, &$expr.checksum());
+            let child: Node = parse_node(&$self.mutation.child_source, &$self.new_id());
             $expr.body.insert(0, child.clone());
 
             $self.changes.borrow_mut().push(
@@ -30,7 +30,7 @@ macro_rules! prepend_child {
 impl MutableVisitor<()> for EditContext<PrependChild> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
         if expr.get_id() == &self.mutation.parent_id {
-            let child = parse_pc(&self.mutation.child_source, &expr.checksum())
+            let child = parse_pc(&self.mutation.child_source, &self.new_id())
                 .expect("Unable to parse child source for AppendChild");
             let mut child = child.body.get(0).unwrap().clone();
 
@@ -54,15 +54,19 @@ impl MutableVisitor<()> for EditContext<PrependChild> {
         prepend_child!(self, expr)
     }
     fn visit_component(&mut self, expr: &mut ast::pc::Component) -> VisitorResult<()> {
-
         if expr.get_id() != &self.mutation.parent_id {
-            return VisitorResult::Continue
+            return VisitorResult::Continue;
         }
 
-        let render: &mut ast::pc::Render = upsert_render_expr(expr, true);
+        let render: &mut ast::pc::Render = upsert_render_expr(expr, true, &self);
 
         let mut ctx = self.with_mutation(PrependChild {
-            parent_id: render.node.as_ref().expect("Node must exist").get_id().to_string(),
+            parent_id: render
+                .node
+                .as_ref()
+                .expect("Node must exist")
+                .get_id()
+                .to_string(),
             child_source: self.mutation.child_source.clone(),
         });
 

@@ -93,7 +93,7 @@ public component SuggestionContainer {
 }
 
 /**
- * @bounds(x: 1563, y: -210, width: 1024, height: 768)
+ * @bounds(x: 1259, y: -557, width: 1024, height: 768)
 */
 
 public component SuggestionMenu {

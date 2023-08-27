@@ -12,7 +12,7 @@ use crate::ast::all::VisitorResult;
 impl MutableVisitor<()> for EditContext<AppendChild> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
         if expr.get_id() == &self.mutation.parent_id {
-            let child = parse_pc(&self.mutation.child_source, &expr.checksum())
+            let child = parse_pc(&self.mutation.child_source, &self.new_id())
                 .expect("Unable to parse child source for AppendChild");
             let mut child = child.body.get(0).unwrap().clone();
             child.set_name(&get_unique_document_body_item_name(
@@ -32,7 +32,7 @@ impl MutableVisitor<()> for EditContext<AppendChild> {
     }
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
         if expr.get_id() == &self.mutation.parent_id {
-            let child: Node = parse_node(&self.mutation.child_source, &expr.checksum());
+            let child: Node = parse_node(&self.mutation.child_source, &self.new_id());
             expr.body.push(child.clone());
 
             self.add_change(

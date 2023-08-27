@@ -6,12 +6,8 @@ import "./theme.pc" as theme
 
 public component Menu {
     render div(style: style, onKeyDown: onKeyDown, tabIndex: "-1") {
-        style extends theme.fontDefault {
-            background: var(theme.inputBackground)
-            border-radius: var(theme.rounded)
+        style extends theme.fontDefault, theme.popup {
             width: 250px
-            filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.2))
-            border: 1px solid var(theme.gray04)
             overflow-y: scroll
             overflow-x: hidden
             max-height: 300px

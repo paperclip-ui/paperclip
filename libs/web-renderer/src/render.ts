@@ -510,6 +510,8 @@ const patchAttributes = (
   curr: html.Element,
   options: RenderFrameOptions
 ) => {
+  node.id = "_" + curr.id;
+
   for (let { name: key, value } of curr.attributes) {
     if (key === "src" && options.resolveUrl) {
       value = options.resolveUrl(value);

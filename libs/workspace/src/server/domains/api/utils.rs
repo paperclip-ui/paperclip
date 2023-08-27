@@ -81,7 +81,7 @@ pub async fn apply_mutations<TIO: ServerIO>(
 
     let mut latest_ast_changes = vec![];
 
-    for (path, changes) in &result {
+    for (_path, changes) in &result {
         latest_ast_changes.extend(changes.clone());
     }
 

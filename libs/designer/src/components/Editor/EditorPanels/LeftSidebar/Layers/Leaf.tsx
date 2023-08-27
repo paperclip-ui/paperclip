@@ -126,7 +126,7 @@ const useLeaf = ({
   const [{ isDraggingOver }, dropRef] = useDrop(
     {
       accept: DNDKind.Node,
-      hover: (_, monitor) => {
+      hover: ({ id: draggedExprId }, monitor) => {
         const offset = monitor.getClientOffset();
         const rect = headerRef.current?.getBoundingClientRect();
 
@@ -135,9 +135,18 @@ const useLeaf = ({
           let isBottom = offset.y > rect.bottom - BORDER_MARGIN;
 
           const expr = ast.getExprInfoById(exprId, graph);
+          const draggedExpr = ast.getExprInfoById(draggedExprId, graph);
 
           // can only insert before or after text nodes
-          if (expr.kind === ast.ExprKind.TextNode) {
+          if (
+            [ast.ExprKind.TextNode].includes(expr.kind) ||
+            [
+              ast.ExprKind.Atom,
+              ast.ExprKind.Trigger,
+              ast.ExprKind.Style,
+              ast.ExprKind.Component,
+            ].includes(draggedExpr.kind)
+          ) {
             isTop = offset.y < rect.top + rect.height / 2;
             isBottom = offset.y > rect.top + rect.height / 2;
           }
@@ -164,6 +173,7 @@ const useLeaf = ({
 
         // don't allow dropping a node into a node that is already in it
         const draggedExpr = ast.getExprInfoById(draggedExprId, graph);
+
         return ast.flattenExpressionInfo(draggedExpr)[exprId] == null;
       },
       collect(monitor) {

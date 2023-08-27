@@ -1,3 +1,4 @@
+import "./color-picker.pc" as imp2
 import "./button.pc" as imp1
 import "./menu.pc" as imp
 import "./sidebar.pc" as sidebar
@@ -297,7 +298,7 @@ public component Preview {
 }
 
 /**
- * @bounds(x: 1653, y: 244, width: 677, height: 424)
+ * @bounds(x: 1653, y: 244, width: 1091, height: 812)
 */
 
 div {
@@ -310,10 +311,12 @@ div {
     }
     input.Field {
         insert name {
-            text ""
+            text "color"
         }
         insert input {
+            input.TextInput(value: "rgba(0,0, 1, 1)")
         }
     }
+    imp2.ColorPicker
 }
 

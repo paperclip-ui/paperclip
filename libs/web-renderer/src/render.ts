@@ -474,10 +474,14 @@ const patchNode = (
       );
     } else if (currVirtNode.textNode) {
       // Might be span since text nodes can be styled too.
-      const textNode: Text =
-        node.nodeType === Node.ELEMENT_NODE
-          ? (node.childNodes[0] as Text)
-          : (node as Text);
+      let textNode: Text;
+
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        const el = node as Element;
+
+        el.id = "_" + currVirtNode.textNode.id;
+        textNode = el.childNodes[0] as Text;
+      }
 
       if (textNode) {
         textNode.nodeValue = entities.decode(

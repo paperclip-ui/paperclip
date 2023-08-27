@@ -401,6 +401,36 @@ case! {
 }
 
 case! {
+  can_delete_a_child_within_an_insert,
+  [(
+    "/entry.pc", r#"
+      div {
+        insert a {
+          text ""
+        }
+        insert b {
+          
+        }
+      }
+    "#
+  )],
+  mutation::Inner::DeleteExpression(DeleteExpression {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      insert a {
+      }
+      insert b {
+        
+      }
+    }
+    "#
+  )]
+}
+
+case! {
   can_import_an_atom_from_another_file,
   [
     (
@@ -2009,7 +2039,11 @@ case! {
       component A {
         render slot test
       }
-      A
+      A {
+        insert test {
+
+        }
+      }
     "#
   )]
 }

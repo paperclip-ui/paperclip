@@ -328,7 +328,9 @@ public component Field {
                 overflow: hidden
                 text-overflow: ellipsis
             }
-            slot name
+            slot name {
+                text "field name"
+            }
         }
         div inputContainer {
             style {

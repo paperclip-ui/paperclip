@@ -49,38 +49,39 @@ impl MutableVisitor<()> for EditContext<DeleteExpression> {
                 })
                 .get_outer(),
             );
+            return VisitorResult::Return(());
         }
 
-        let mut rm_i = None;
+        // let mut rm_i = None;
 
-        for (i, child) in &mut expr.body.iter_mut().enumerate() {
-            if let ast::pc::node::Inner::Insert(ins) = child.get_inner_mut() {
-                if matches!(
-                    try_remove_child!(ins.body, &self.mutation.expression_id),
-                    Some(_)
-                ) {
-                    self.add_change(
-                        mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
-                            id: self.mutation.expression_id.to_string(),
-                        })
-                        .get_outer(),
-                    );
-                }
+        // for (i, child) in &mut expr.body.iter_mut().enumerate() {
+        //     if let ast::pc::node::Inner::Insert(ins) = child.get_inner_mut() {
+        //         if matches!(
+        //             try_remove_child!(ins.body, &self.mutation.expression_id),
+        //             Some(_)
+        //         ) {
+        //             self.add_change(
+        //                 mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
+        //                     id: self.mutation.expression_id.to_string(),
+        //                 })
+        //                 .get_outer(),
+        //             );
+        //         }
 
-                if ins.body.len() == 0 {
-                    rm_i = Some(i);
-                }
-            }
-        }
-        if let Some(i) = rm_i {
-            expr.body.remove(i);
-            self.add_change(
-                mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
-                    id: self.mutation.expression_id.to_string(),
-                })
-                .get_outer(),
-            );
-        }
+        //         if ins.body.len() == 0 {
+        //             rm_i = Some(i);
+        //         }
+        //     }
+        // }
+        // if let Some(i) = rm_i {
+        //     expr.body.remove(i);
+        //     self.add_change(
+        //         mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
+        //             id: self.mutation.expression_id.to_string(),
+        //         })
+        //         .get_outer(),
+        //     );
+        // }
         VisitorResult::Continue
     }
     fn visit_slot(&mut self, expr: &mut ast::pc::Slot) -> VisitorResult<()> {
@@ -96,6 +97,23 @@ impl MutableVisitor<()> for EditContext<DeleteExpression> {
             );
         }
         VisitorResult::Continue
+    }
+    fn visit_insert(&mut self, expr: &mut ast::pc::Insert) -> VisitorResult<()> {
+        if matches!(
+            try_remove_child!(expr.body, &self.mutation.expression_id),
+            Some(_)
+        ) {
+            self.add_change(
+                mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
+                    id: self.mutation.expression_id.to_string(),
+                })
+                .get_outer(),
+            );
+            return VisitorResult::Return(())
+        }
+
+        VisitorResult::Continue
+        
     }
     fn visit_text_node(&mut self, expr: &mut ast::pc::TextNode) -> VisitorResult<()> {
         if matches!(

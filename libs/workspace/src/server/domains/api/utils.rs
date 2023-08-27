@@ -44,9 +44,7 @@ pub fn create_design_file<TIO: ServerIO>(
         .options
         .config_context
         .clone();
-    let src_dir = &parent_dir
-        .or(config_ctx.config.designs_dir)
-        .or(config_ctx.config.src_dir);
+    let src_dir = &parent_dir.or(config_ctx.config.designs_dir).or(config_ctx.config.src_dir);
 
     let mut file_dir: PathBuf = Path::new(&config_ctx.directory).to_path_buf();
 
@@ -77,14 +75,14 @@ pub async fn apply_mutations<TIO: ServerIO>(
 ) -> Result<Vec<MutationResult>> {
     let mut graph = ctx.store.lock().unwrap().state.graph.clone();
 
-    println!("Applying {:?}", mutations);
+    println!("Applying {:#?}", mutations);
     let result = edit_graph(&mut graph, mutations, &ctx.io)?;
+    println!("Mutation result: {:#?}", result);
 
     let mut latest_ast_changes = vec![];
 
     for (path, changes) in &result {
         latest_ast_changes.extend(changes.clone());
-        println!("CHANGED PATH {}", path);
     }
 
     ctx.emit(ServerEvent::MutationsApplied {

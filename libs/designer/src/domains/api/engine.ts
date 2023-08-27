@@ -923,7 +923,6 @@ const createEventHandler = (actions: Actions) => {
     state: DesignerState
   ) => {
     const activeFile = getRenderedFilePath(state);
-    console.log("EVALUATED ");
     if (event.filePaths.includes(activeFile)) {
       actions.openFile(activeFile);
     }

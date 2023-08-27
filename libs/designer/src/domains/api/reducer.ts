@@ -71,7 +71,6 @@ export const apiReducer = (
     }
     case "designer-engine/documentOpened":
       state = produce(state, (newState) => {
-        console.log("designer-engine/documentOpened", event.payload);
         newState.currentDocument = event.payload;
         for (const id of newState.insertedNodeIds) {
           const expr = ast.getExprInfoById(id, state.graph);

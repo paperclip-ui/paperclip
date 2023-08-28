@@ -109,11 +109,10 @@ impl MutableVisitor<()> for EditContext<DeleteExpression> {
                 })
                 .get_outer(),
             );
-            return VisitorResult::Return(())
+            return VisitorResult::Return(());
         }
 
         VisitorResult::Continue
-        
     }
     fn visit_text_node(&mut self, expr: &mut ast::pc::TextNode) -> VisitorResult<()> {
         if matches!(

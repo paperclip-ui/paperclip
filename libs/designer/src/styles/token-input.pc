@@ -24,7 +24,7 @@ public style tokenPreview {
 public component ColorTokenPreview {
     render div(style: style) {
         style extends tokenPreview {
-            display: inline
+            display: inline-block
             width: 1em
             flex-shrink: 0
             height: 1em
@@ -40,7 +40,10 @@ public component ColorTokenPreview {
 
 public component TokenInput {
     render div input {
-        style extends module.input
+        style extends module.input {
+            display: inline-flex
+            aling-items: center
+        }
         slot children {
             Token(style: "--color: orange") {
                 insert children {
@@ -61,13 +64,25 @@ public component Token {
     variant string trigger {
         ".string"
     }
+    variant unit trigger {
+        ".unit"
+    }
     variant sugar trigger {
         ".sugar"
+    }
+    variant space trigger {
+        ".space"
     }
     render div token(class: class) {
         style extends token
         style variant sugar {
             opacity: 0.5
+        }
+        style variant unit {
+            opacity: 0.5
+        }
+        style variant space {
+            width: 2px
         }
         style variant string {
             color: rgb(100, 200, 100)
@@ -161,52 +176,54 @@ div preview {
             }
             insert input {
                 TokenInput {
-                    Token {
                         Token(class: "number") {
-                text "0"
-            }
-            Token(class: "unit") {
-                text "px"
-            }
-            Token(class: "space") {
-                text " "
-            }
-            Token(class: "number") {
-                text "0"
-            }
-            Token(class: "unit") {
-                text "px"
-            }
-            Token(class: "space") {
-                text " "
-            }
-            Token(class: "number") {
-                text "0"
-            }
-            Token(class: "unit") {
-                text "px"
-            }
-            Token(class: "space") {
-                text " "
-            }
-            Token(class: "number") {
-                text "0"
-            }
-            Token(class: "unit") {
-                text "px"
-            }
-            Token(class: "space") {
-                text " "
-            }
-            Token(class: "color") {
-                text "0"
-            }
-            ColorTokenPreview(style: "--color: blue")
-            Token(class: "color") {
-                text "red"
-            }
+                            text "0"
+                        }
+                        Token(class: "unit") {
+                            text "px"
+                        }
+                        Token(class: "space") {
+                            text " "
+                        }
+                        Token(class: "number") {
+                            text "0"
+                        }
+                        Token(class: "unit") {
+                            text "px"
+                        }
+                        Token(class: "space") {
+                            text " "
+                        }
+                        Token(class: "number") {
+                            text "0"
+                        }
+                        Token(class: "unit") {
+                            text "px"
+                        }
+                        Token(class: "space") {
+                            text " "
+                        }
+                        Token(class: "number") {
+                            text "0"
+                        }
+                        Token(class: "unit") {
+                            text "px"
+                        }
+                        Token(class: "space") {
+                            text " "
+                        }
+                        Token(class: "number") {
+                            text "0"
+                        }
+                        Token(class: "unit") {
+                            text "px"
+                        }
+                        ColorTokenPreview(style: "--color: #F00")
+                        Token(class: "color") {
+                            text "#F00"
+                        }
                     }
-                }
+
             }
         }
         imp1.Field {
@@ -217,7 +234,7 @@ div preview {
                 TokenInput {
                     Token(class: "string") {
                         insert children {
-                            text '\".test\"'
+                            text "\".test\""
                         }
                     }
                 }

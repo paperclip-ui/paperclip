@@ -1,0 +1,12 @@
+
+/**
+ * @bounds(x: 562, y: 217, width: 430, height: 185)
+*/
+
+div {
+    style {
+        position: relative
+        color: abc + def
+    }
+}
+

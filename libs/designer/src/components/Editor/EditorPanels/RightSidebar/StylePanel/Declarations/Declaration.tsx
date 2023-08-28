@@ -13,6 +13,7 @@ import {
 } from "@paperclip-ui/proto-ext/lib/ast/serialize";
 import { NameInput } from "./NameInput";
 import { getTargetExprId } from "@paperclip-ui/designer/src/state";
+import { DeclarationValue2 } from "./DeclarationValue2";
 
 type FieldProps = {
   name?: string;
@@ -65,18 +66,20 @@ export const Declaration = memo(
       name
     );
 
-    const input = (
-      <DeclarationValue
-        value={value}
-        isDefault={style?.ownerId !== targetId}
-        onSelect={onValueSelect}
-        onTab={onValueTab}
-        type={inputOptions.type}
-        options={
-          inputOptions.type === css.InputType.Enum ? inputOptions.options : []
-        }
-      />
-    );
+    const input = <DeclarationValue2 value={style.value} />;
+
+    // const input = (
+    //   <DeclarationValue
+    //     value={value}
+    //     isDefault={style?.ownerId !== targetId}
+    //     onSelect={onValueSelect}
+    //     onTab={onValueTab}
+    //     type={inputOptions.type}
+    //     options={
+    //       inputOptions.type === css.InputType.Enum ? inputOptions.options : []
+    //     }
+    //   />
+    // );
 
     const onBlur2 = (event) => {
       setTimeout(() => {

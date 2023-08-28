@@ -124,7 +124,7 @@ public component ColorTokenPreview {
 */
 
 public component TokenInput {
-    render div input {
+    render div input (onKeyDown: onKeyDown) {
         style extends module.input {
             display: inline-flex
             aling-items: center
@@ -158,7 +158,7 @@ public component Token {
     variant space trigger {
         ".space"
     }
-    render div token(class: class) {
+    render div token(class: class, contentEditable: true) {
         style extends token
         style variant sugar {
             opacity: 0.5

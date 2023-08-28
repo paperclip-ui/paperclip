@@ -37,9 +37,9 @@ const Arithmetic = ({ value }: ExpressionProps<ast.Arithmetic>) => {
   return (
     <>
       <Expression value={value.left} />
-      &nbsp;
+      <styles.Token class="sugar">&nbsp;</styles.Token>
       <styles.Token class="sugar">+</styles.Token>
-      &nbsp;
+      <styles.Token class="sugar">&nbsp;</styles.Token>
       <Expression value={value.right} />
     </>
   );

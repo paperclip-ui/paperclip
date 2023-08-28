@@ -124,11 +124,17 @@ public component ColorTokenPreview {
 */
 
 public component TokenInput {
-    render div input (onKeyDown: onKeyDown) {
+    variant active trigger {
+        ".active"
+        ":focus"
+        ":active"
+    }
+    render div input(onKeyDown: onKeyDown, onKeyPress: onKeyPress, onFocus: onFocus, onBlur: onBlur) {
         style extends module.input {
             display: inline-flex
             aling-items: center
         }
+        style variant active extends module.inputActive
         slot children {
             Token(style: "--color: orange") {
                 insert children {
@@ -146,6 +152,10 @@ public component TokenInput {
 */
 
 public component Token {
+    variant active trigger {
+        ":active"
+        ":focus"
+    }
     variant string trigger {
         ".string"
     }
@@ -160,6 +170,9 @@ public component Token {
     }
     render div token(class: class, contentEditable: true) {
         style extends token
+        style variant active {
+            outline: none
+        }
         style variant sugar {
             opacity: 0.5
         }
@@ -203,6 +216,11 @@ div preview {
             }
             insert input {
                 TokenInput {
+                    override {
+                        variant active trigger {
+                            true
+                        }
+                    }
                     Token {
                         override {
                             variant sugar

@@ -5,6 +5,7 @@ mod commands;
 use clap::{Parser, Subcommand};
 use commands::build::{build, BuildArgs};
 use commands::designer::{start_design_server, StartDesignServerArgs};
+use commands::fmt::{FmtArgs, fmt};
 use commands::init::{init, InitArgs};
 use futures::executor::block_on;
 
@@ -29,6 +30,10 @@ enum Command {
     /// Starts the visual development tooling
     #[clap(arg_required_else_help = false)]
     Designer(StartDesignServerArgs),
+
+    /// Formats all PC files
+    #[clap(arg_required_else_help = false)]
+    Fmt(FmtArgs),
 }
 
 fn main() {
@@ -37,6 +42,7 @@ fn main() {
     match args.command {
         Command::Build(args) => block_on(build(args)).expect("Build error"),
         Command::Init(args) => block_on(init(args)).expect("Build error"),
+        Command::Fmt(args) => block_on(fmt(args)).expect("Format error"),
         Command::Designer(args) => {
             block_on(start_design_server(args)).expect("Can't start the design server")
         }

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { useSelector } from "@paperclip-ui/common";
+import { camelCase } from "lodash";
 import {
   SelectDetails,
   SuggestionMenu,
@@ -93,7 +94,7 @@ export const DeclarationValue = ({
         const tokenNs =
           imports.find((imp) => {
             return dep.imports[imp.path] === token.dependency.path;
-          })?.namespace || "mod";
+          })?.namespace || getDependencyNamespace(token.dependency.path);
 
         const value = `var(${tokenNs}.${token.atom.name})`;
 
@@ -157,3 +158,6 @@ export const DeclarationValue = ({
     </SuggestionMenu>
   );
 };
+
+const getDependencyNamespace = (path: string) =>
+  camelCase(path.split("/").pop().replace(".pc", ""));

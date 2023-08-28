@@ -1,0 +1,28 @@
+import "./theme.pc" as mod
+
+/**
+ * @bounds(x: 533, y: 271, width: 399, height: 194)
+*/
+
+public component Note {
+    render div {
+        style {
+            position: relative
+            background-color: yellow
+            font-family: var(mod.defaultFontFamily)
+            padding: var(mod.space05)
+        }
+        slot children {
+            text "A note" {
+                style {
+                    left: NaNpx
+                    top: NaNpx
+                    position: relative
+                    width: 75px
+                    height: 20px
+                }
+            }
+        }
+    }
+}
+

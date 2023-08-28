@@ -26,6 +26,7 @@ public component ColorTokenPreview {
         style extends tokenPreview {
             display: inline
             width: 1em
+            flex-shrink: 0
             height: 1em
             background: var(--color)
             border-radius: var(module.space01)
@@ -72,13 +73,13 @@ public component Token {
             color: rgb(100, 200, 100)
         }
         slot children {
-            text "0px 0px 2px 0px red"
+            text "value"
         }
     }
 }
 
 /**
- * @bounds(x: 341, y: 410, width: 431, height: 183)
+ * @bounds(x: 341, y: 410, width: 431, height: 446)
 */
 
 div preview {
@@ -161,8 +162,49 @@ div preview {
             insert input {
                 TokenInput {
                     Token {
-                        insert children {
-                        }
+                        Token(class: "number") {
+                text "0"
+            }
+            Token(class: "unit") {
+                text "px"
+            }
+            Token(class: "space") {
+                text " "
+            }
+            Token(class: "number") {
+                text "0"
+            }
+            Token(class: "unit") {
+                text "px"
+            }
+            Token(class: "space") {
+                text " "
+            }
+            Token(class: "number") {
+                text "0"
+            }
+            Token(class: "unit") {
+                text "px"
+            }
+            Token(class: "space") {
+                text " "
+            }
+            Token(class: "number") {
+                text "0"
+            }
+            Token(class: "unit") {
+                text "px"
+            }
+            Token(class: "space") {
+                text " "
+            }
+            Token(class: "color") {
+                text "0"
+            }
+            ColorTokenPreview(style: "--color: blue")
+            Token(class: "color") {
+                text "red"
+            }
                     }
                 }
             }
@@ -175,7 +217,7 @@ div preview {
                 TokenInput {
                     Token(class: "string") {
                         insert children {
-                            text "".test""
+                            text '\".test\"'
                         }
                     }
                 }

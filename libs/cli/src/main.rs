@@ -5,7 +5,7 @@ mod commands;
 use clap::{Parser, Subcommand};
 use commands::build::{build, BuildArgs};
 use commands::designer::{start_design_server, StartDesignServerArgs};
-use commands::fmt::{FmtArgs, fmt};
+use commands::fmt::{fmt, FmtArgs};
 use commands::init::{init, InitArgs};
 use futures::executor::block_on;
 

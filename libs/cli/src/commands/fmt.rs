@@ -3,7 +3,8 @@ use clap::Args;
 use paperclip_ast_serialize::pc::serialize as serialize_pc;
 use paperclip_config::{ConfigContext, DEFAULT_CONFIG_NAME};
 use paperclip_project::{LocalIO, Project};
-use std::env;
+use std::io::prelude::*;
+use std::{env, fs::File};
 
 #[derive(Debug, Args)]
 pub struct FmtArgs {
@@ -32,25 +33,11 @@ pub async fn fmt(args: FmtArgs) -> Result<()> {
             let content = serialize_pc(document);
             if args.print {
                 println!("{}", content);
+            } else {
+                let mut file = File::create(path)?;
+                file.write_all(content.as_str().as_bytes())?;
             }
         }
     }
-
-
-    // for dep in graph.
-
-    // let s = project.compile_all(CompileOptions { watch: args.watch });
-    // pin_mut!(s);
-    // while let Some(Ok((path, content))) = s.next().await {
-    //     // replace cd with relative since it's a prettier output
-    //     println!("✍🏻  {}", path.replace(&format!("{}/", current_dir), ""));
-    //     if args.print {
-    //         println!("{}", content);
-    //     } else {
-    //         let mut file = File::create(path)?;
-    //         file.write_all(content.as_str().as_bytes())?;
-    //     }
-    // }
-
     Ok(())
 }

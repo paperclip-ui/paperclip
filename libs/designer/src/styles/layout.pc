@@ -47,9 +47,7 @@ public component Box {
         style variant space05 {
             gap: var(mod.space05)
         }
-        slot children {
-
-        }
+        slot children
     }
 }
 

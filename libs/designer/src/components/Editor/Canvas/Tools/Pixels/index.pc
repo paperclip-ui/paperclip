@@ -1,5 +1,5 @@
-style grid {
 
+style grid {
     --stroke-width: 2px
     width: 100%
     height: 100%
@@ -9,12 +9,11 @@ style grid {
     left: 0px
     filter: contrast(0)
     pointer-events: none
-  }
-
+}
 
 public component Pixels {
-  render div(style: style) {
-    style extends grid
-  }
+    render div(style: style) {
+        style extends grid
+    }
 }
 

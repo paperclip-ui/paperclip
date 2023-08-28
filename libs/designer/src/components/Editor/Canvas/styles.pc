@@ -1,3 +1,4 @@
+
 style canvas {
     background: rgb(231, 231, 231)
 }
@@ -23,3 +24,4 @@ public component Inner {
         slot children
     }
 }
+

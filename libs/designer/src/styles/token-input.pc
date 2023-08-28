@@ -2,24 +2,53 @@ import "./input.pc" as imp1
 import "./theme.pc" as module
 import "./utils.pc" as imp
 
+public style token {
+    font-family: var(module.defaultFontFamily)
+    color: var(module.gray0)
+    font-size: 11px
+    display: inline
+}
+
+public style tokenPreview {
+    font-family: var(module.defaultFontFamily)
+    color: var(module.gray0)
+    margin: 0px var(module.space01)
+    font-size: 11px
+    display: inline
+}
+
 /**
  * @bounds(x: 1158, y: 478, width: 310, height: 24)
 */
 
+public component ColorTokenPreview {
+    render div(style: style) {
+        style extends tokenPreview {
+            display: inline
+            width: 1em
+            height: 1em
+            background: var(--color)
+            border-radius: var(module.space01)
+        }
+    }
+}
+
+/**
+ * @bounds(x: 944, y: 711, width: 80, height: 57)
+*/
+
 public component TokenInput {
     render div input {
-        style extends module.input {
-            gap: var(module.space02)
-            padding: var(module.space02)
-            display: inline-flex
-        }
-        Token {
-            insert children {
-                text "space01"
+        style extends module.input
+        slot children {
+            Token(style: "--color: orange") {
+                insert children {
+                    text "space01"
+                }
             }
+            Token
+            Token
         }
-        Token
-        Token
     }
 }
 
@@ -28,17 +57,16 @@ public component TokenInput {
 */
 
 public component Token {
-    render div token {
-        style {
-            background: rgba(255, 255, 255, 0.05)
-            font-family: var(module.defaultFontFamily)
-            color: var(module.gray0)
-            border-radius: 2px
-            padding: 0px var(module.space03)
-            font-size: 11px
+    variant sugar trigger {
+        ".sugar"
+    }
+    render div token(class: class) {
+        style extends token
+        style variant sugar {
+            opacity: 0.5
         }
         slot children {
-            text "value"
+            text "0px 0px 2px 0px red"
         }
     }
 }
@@ -51,10 +79,98 @@ div preview {
     style {
         position: relative
     }
-    TokenInput
-    imp1.Field {
-        insert name {
-            text "background"
+    imp1.Fields {
+        imp1.Field {
+            insert name {
+                text "background"
+            }
+            insert input {
+                TokenInput {
+                    ColorTokenPreview(style: "--color: linear-gradient(#F60, #000)")
+                    Token {
+                        text "linear-gradient"
+                    }
+                    Token(class: "sugar") {
+                        text "("
+                    }
+                    ColorTokenPreview(style: "--color: #F60")
+                    Token {
+                        text "#F60"
+                    }
+                    Token(class: "sugar") {
+                        text ","
+                    }
+                    ColorTokenPreview(style: "--color: #000")
+                    Token {
+                        text "#000"
+                    }
+                    Token(class: "sugar") {
+                        text ")"
+                    }
+                }
+            }
+        }
+        insert children {
+        }
+        imp1.Field {
+            insert name {
+                text "font-family"
+            }
+            insert input {
+                TokenInput {
+                    Token {
+                        insert children {
+                            text "var"
+                        }
+                    }
+                    Token(class: "sugar") {
+                        text "("
+                    }
+                    Token {
+                        insert children {
+                            text "theme"
+                        }
+                    }
+                    Token(class: "sugar") {
+                        text "."
+                    }
+                    Token {
+                        insert children {
+                            text "defaultFont"
+                        }
+                    }
+                    Token(class: "sugar") {
+                        text ")"
+                    }
+                }
+            }
+        }
+        imp1.Field {
+            insert name {
+                text "box-shadow"
+            }
+            insert input {
+                TokenInput {
+                    Token {
+                        insert children {
+                        }
+                    }
+                }
+            }
+        }
+        imp1.Field {
+            insert name {
+                text "color"
+            }
+            insert input {
+                TokenInput {
+                    Token(style: "--color: orange") {
+                        insert children {
+                            text "orange"
+                        }
+                    }
+                }
+            }
         }
     }
 }

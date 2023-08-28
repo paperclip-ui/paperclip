@@ -297,22 +297,3 @@ public component Preview {
     }
 }
 
-/**
- * @bounds(x: 2911, y: 306, width: 573, height: 505)
-*/
-
-div tokenInputContainer {
-    style {
-        position: relative
-        background: var(theme.gray04)
-        padding: var(theme.space06)
-    }
-    div {
-        style {
-            background: var(theme.gray06)
-            width: 100%
-            height: 100%
-        }
-    }
-}
-

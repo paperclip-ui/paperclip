@@ -3,7 +3,7 @@ import "./sidebar.pc" as sidebar
 import "./theme.pc" as theme
 
 /**
- * @bounds(x: 594, y: 718, width: 1024, height: 768)
+ * @bounds(x: -1561, y: 1882, width: 347, height: 768)
 */
 
 public component FilteredFiles {
@@ -58,7 +58,7 @@ public component FilteredFiles {
 }
 
 /**
- * @bounds(x: 97, y: 1181, width: 1024, height: 768)
+ * @bounds(x: -2077, y: 1894, width: 442, height: 64)
 */
 
 public component FilteredFile {

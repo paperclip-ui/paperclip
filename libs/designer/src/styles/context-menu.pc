@@ -2,7 +2,7 @@ import "./theme.pc" as imp
 import "./menu.pc" as menu
 
 /**
- * @bounds(x: 513, y: -909, width: 473, height: 109)
+ * @bounds(x: 513, y: -909, width: 515, height: 326)
 */
 
 public component ContextMenu {
@@ -62,7 +62,6 @@ public component ContextMenuDivider {
     }
 }
 
-
 /**
  * @bounds(x: 202, y: -900, width: 263, height: 44)
 */
@@ -86,17 +85,5 @@ public component ContextMenuItem {
             slot keyCommand
         }
     }
-}
-
-/**
- * @bounds(x: -336, y: -930, width: 462, height: 376)
-*/
-
-div {
-    style {
-        position: relative
-        color: white
-    }
-    text "Type something"
 }
 

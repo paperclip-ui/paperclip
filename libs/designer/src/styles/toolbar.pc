@@ -1,122 +1,152 @@
 import "./theme.pc" as theme
 import "./sidebar.pc" as sidebar
 
+/**
+ * @bounds(x: 1349, y: -31, width: 149, height: 104)
+*/
 
 public component ToolbarButton {
-  variant hovering trigger { 
-    ":hover"
-    ".active"
-  }
-  variant wide trigger { ".wide" }
-  variant enabled trigger { ":not(:disabled)" }
-  render button(class:class, disabled: disabled, style: style, onClick: onClick) {
-    style extends theme.reset, theme.easeIn {
-      padding: 0px
-      cursor: pointer
-      border-radius: var(theme.roundedMD)
-      min-width: var(theme.space06)
-      height: var(theme.space06)
+    variant hovering trigger {
+        ":hover"
+        ".active"
     }
-    style variant hovering + enabled {
-      background: var(theme.selectedColor)
+    variant wide trigger {
+        ".wide"
     }
-    style variant wide {
-      padding-left: var(theme.space03)
-      padding-right:var(theme.space03)
+    variant enabled trigger {
+        ":not(:disabled)"
     }
-    style variant wide {
-      padding-left: var(theme.space03)
-      padding-right:var(theme.space03)
+    render button(class: class, disabled: disabled, style: style, onClick: onClick) {
+        style extends theme.reset, theme.easeIn {
+            padding: 0px
+            cursor: pointer
+            border-radius: var(theme.roundedMD)
+            min-width: var(theme.space06)
+            height: var(theme.space06)
+        }
+        style variant hovering + enabled {
+            background: var(theme.selectedColor)
+        }
+        style variant wide {
+            padding-left: var(theme.space03)
+            padding-right: var(theme.space03)
+        }
+        style variant wide {
+            padding-left: var(theme.space03)
+            padding-right: var(theme.space03)
+        }
+        slot children
     }
-    slot children
-  }
 }
+
+/**
+ * @bounds(x: 1341, y: 97, width: 201, height: 182)
+*/
 
 public component ToolbarIcon {
-  variant isText trigger { ".text" }
-  variant isElement trigger { ".element" }
-  variant isComponent trigger { ".component" }
-  variant isAsset trigger { ".asset" }
-  variant isLibrary trigger { ".library" }
-  render div(class: class) {
-    style extends theme.icon
-    style variant isText {
-      -webkit-mask-image: url("./text.svg")
-      --size: 0.9em
+    variant isText trigger {
+        ".text"
     }
-    style variant isElement {
-      -webkit-mask-image: url("./instance3.svg")
-      transform: rotate(45deg)
-      --size: 1.2em
+    variant isElement trigger {
+        ".element"
     }
-    style variant isComponent {
-       -webkit-mask-image: url("./component2.svg")
-       --size: 1.2em
+    variant isComponent trigger {
+        ".component"
     }
-    style variant isAsset {
-      -webkit-mask-image: url("./image3.svg")
-      --size: 1.2em
+    variant isAsset trigger {
+        ".asset"
     }
-    style variant isLibrary {
-      -webkit-mask-image: url("./plus2.svg")
-      --size: 1.2em
+    variant isLibrary trigger {
+        ".library"
     }
-  }
+    render div(class: class) {
+        style extends theme.icon
+        style variant isText {
+            -webkit-mask-image: url("./text.svg")
+            --size: 0.9em
+        }
+        style variant isElement {
+            -webkit-mask-image: url("./instance3.svg")
+            transform: rotate(45deg)
+            --size: 1.2em
+        }
+        style variant isComponent {
+            -webkit-mask-image: url("./component2.svg")
+            --size: 1.2em
+        }
+        style variant isAsset {
+            -webkit-mask-image: url("./image3.svg")
+            --size: 1.2em
+        }
+        style variant isLibrary {
+            -webkit-mask-image: url("./plus2.svg")
+            --size: 1.2em
+        }
+    }
 }
+
+/**
+ * @bounds(x: 1348, y: 406, width: 182, height: 121)
+*/
 
 component Zoom {
-  render div {
-    slot children
-  }
+    render div {
+        slot children
+    }
 }
+
+/**
+ * @bounds(x: 1376, y: 375, width: 100, height: 64)
+*/
 
 public component ToolbarDivider {
-  render div {
-    style {
-      width: 1px
-      border-radius: var(theme.roundedMD)
-      height: 100%
-      background: var(theme.borderColor)
+    render div {
+        style {
+            width: 1px
+            border-radius: var(theme.roundedMD)
+            height: 100%
+            background: var(theme.borderColor)
+        }
     }
-  }
 }
 
+/**
+ * @bounds(x: 520, y: 166, width: 407, height: 78)
+*/
 
 public component Toolbar {
-  render div {
-    style {
-      display: flex
-      justify-content: center
-      padding: var(theme.space05)
-      pointer-events: all
+    render div {
+        style {
+            display: flex
+            justify-content: center
+            padding: var(theme.space05)
+            pointer-events: all
+            color: var(theme.gray0)
+        }
+        div {
+            style extends sidebar.panel {
+                display: inline-flex
+                align-items: center
+                padding: var(theme.space02)
+                gap: var(theme.space03)
+            }
+            slot children {
+                ToolbarButton {
+                    ToolbarIcon(class: "library")
+                }
+                ToolbarDivider
+                ToolbarButton {
+                    ToolbarIcon(class: "text")
+                }
+                ToolbarButton {
+                    ToolbarIcon(class: "element")
+                }
+                ToolbarDivider
+                ToolbarButton(class: "wide") {
+                    text "100%"
+                }
+            }
+        }
     }
-    div {
-      style extends sidebar.panel {
-        display: inline-flex
-        align-items: center
-        padding: var(theme.space02)
-        gap: var(theme.space03)
-      }
-      slot children
-    }
-  }
 }
 
-public component Preview {
-  render Toolbar {
-      ToolbarButton {
-        ToolbarIcon(class: "library")
-      }
-      ToolbarDivider
-      ToolbarButton {
-        ToolbarIcon(class: "text")
-      }
-      ToolbarButton {
-        ToolbarIcon(class: "element")
-      }
-      ToolbarDivider
-      ToolbarButton(class: "wide") {
-        text "100%"
-      }
-  }
-}

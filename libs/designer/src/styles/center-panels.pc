@@ -1,4 +1,3 @@
-
 import "./toolbar.pc" as toolbar
 
 public component CenterPanels {
@@ -15,6 +14,10 @@ public component CenterPanels {
 
 public component Preview {
     render CenterPanels {
-        toolbar.Preview
+        toolbar.Toolbar {
+            insert children {
+            }
+        }
     }
 }
+

@@ -34,7 +34,7 @@ public component ColorTokenPreview {
 }
 
 /**
- * @bounds(x: 944, y: 711, width: 80, height: 57)
+ * @bounds(x: 1147, y: 478, width: 80, height: 57)
 */
 
 public component TokenInput {
@@ -57,6 +57,9 @@ public component TokenInput {
 */
 
 public component Token {
+    variant string trigger {
+        ".string"
+    }
     variant sugar trigger {
         ".sugar"
     }
@@ -65,6 +68,9 @@ public component Token {
         style variant sugar {
             opacity: 0.5
         }
+        style variant string {
+            color: rgb(100, 200, 100)
+        }
         slot children {
             text "0px 0px 2px 0px red"
         }
@@ -72,7 +78,7 @@ public component Token {
 }
 
 /**
- * @bounds(x: 341, y: 410, width: 693, height: 446)
+ * @bounds(x: 341, y: 410, width: 431, height: 183)
 */
 
 div preview {
@@ -119,6 +125,9 @@ div preview {
             insert input {
                 TokenInput {
                     Token {
+                        override {
+                            variant sugar
+                        }
                         insert children {
                             text "var"
                         }
@@ -160,13 +169,13 @@ div preview {
         }
         imp1.Field {
             insert name {
-                text "color"
+                text "trigger"
             }
             insert input {
                 TokenInput {
-                    Token(style: "--color: orange") {
+                    Token(class: "string") {
                         insert children {
-                            text "orange"
+                            text "".test""
                         }
                     }
                 }
@@ -174,4 +183,10 @@ div preview {
         }
     }
 }
+
+/**
+ * @bounds(x: -91, y: 88, width: 273, height: 193)
+*/
+
+imp.Note
 

@@ -57,7 +57,9 @@ pub fn create_design_file<TIO: ServerIO>(
     };
 
     let file_path = file_dir
-        .join(format!("{}.pc", to_kebab_case(name)))
+
+        // strip .pc from name in case it exists because we're already adding it.
+        .join(format!("{}.pc", to_kebab_case(&name.replace(".pc", ""))))
         .to_str()
         .unwrap()
         .to_string();
@@ -65,6 +67,8 @@ pub fn create_design_file<TIO: ServerIO>(
     if ctx.io.file_exists(&file_path) {
         return Err(Error::msg("Design file already exists."));
     }
+
+    println!("Created design file: {}", file_path);
 
     ctx.io.write_file(&file_path, "".to_string())?;
 

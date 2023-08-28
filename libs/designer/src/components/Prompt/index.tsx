@@ -58,6 +58,7 @@ export const Prompt = ({
             <TextInput
               large
               autoFocus
+              value={defaultValue}
               placeholder={placeholder}
               onChange={setValue}
               onSave={onSave}

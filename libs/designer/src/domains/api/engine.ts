@@ -26,6 +26,7 @@ import {
 } from "../ui/events";
 
 import {
+  ConvertToComponentDetails,
   DEFAULT_FRAME_BOX,
   DesignerState,
   DNDKind,
@@ -157,9 +158,8 @@ const createActions = (
       readDirectory(parentDir);
     },
     async createDesignFile(name: string, parentDir?: string) {
-      // kebab case in case spaces are added
       const { filePath } = await client.CreateDesignFile({
-        name: kebabCase(name),
+        name,
         parentDir,
       });
       dispatch({
@@ -664,18 +664,18 @@ const createEventHandler = (actions: Actions) => {
     );
   };
 
-  const handleConvertToComponent = (state: DesignerState) => {
-    // Do not allow for nested instances to be converted to components.
-    // Or, at least provide a confirmation for this.
-    if (!getTargetExprId(state).includes(".")) {
-      actions.applyChanges([
-        {
-          convertToComponent: {
-            expressionId: getTargetExprId(state),
-          },
+  const handleConvertToComponent = (
+    name: string,
+    { exprId }: ConvertToComponentDetails
+  ) => {
+    actions.applyChanges([
+      {
+        convertToComponent: {
+          name,
+          expressionId: exprId,
         },
-      ]);
-    }
+      },
+    ]);
   };
 
   const openCodeEditor = (state: DesignerState) => {
@@ -740,9 +740,6 @@ const createEventHandler = (actions: Actions) => {
       case ShortcutCommand.Delete: {
         return handleDeleteKeyPressed(state, prevState);
       }
-      case ShortcutCommand.ConvertToComponent: {
-        return handleConvertToComponent(state);
-      }
       case ShortcutCommand.OpenCodeEditor: {
         return openCodeEditor(state);
       }
@@ -778,6 +775,8 @@ const createEventHandler = (actions: Actions) => {
       actions.createDesignFile(value, details.parentDirectory);
     } else if (details.kind === PromptKind.NewDirectory) {
       actions.createDirectory(value, details.parentDirectory);
+    } else if (details.kind === PromptKind.ConvertToComponent) {
+      handleConvertToComponent(value, details);
     } else if (details.kind === PromptKind.RenameFile) {
       const dir = details.filePath.split("/").slice(0, -1).join("/");
       const ext = details.filePath.split("/").pop().split(".").pop();

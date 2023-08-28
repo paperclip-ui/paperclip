@@ -1,5 +1,8 @@
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+
 export enum PromptKind {
   NewDesignFile,
+  ConvertToComponent,
   RenameFile,
   NewDirectory,
 }
@@ -16,6 +19,10 @@ export type NewDirectoryPromptDetails =
   BasePromptDetails<PromptKind.NewDirectory> & {
     parentDirectory: string;
   };
+export type ConvertToComponentDetails =
+  BasePromptDetails<PromptKind.ConvertToComponent> & {
+    exprId: string;
+  };
 export type RenameFile = BasePromptDetails<PromptKind.RenameFile> & {
   filePath: string;
 };
@@ -23,12 +30,14 @@ export type RenameFile = BasePromptDetails<PromptKind.RenameFile> & {
 export type PromptDetails =
   | NewDesignFilePromptDetails
   | RenameFile
+  | ConvertToComponentDetails
   | NewDirectoryPromptDetails;
 
 export type Prompt = {
   title: string;
   okLabel: string;
   placeholder: string;
+  defaultValue?: string;
   details: PromptDetails;
 };
 
@@ -38,6 +47,30 @@ export const newDesignFilePrompt = (parentDirectory?: string): Prompt => ({
   placeholder: "design file name",
   okLabel: "Create design file",
 });
+
+export const newConvertToComponentPrompt = (
+  expr: ast.InnerExpressionInfo
+): Prompt => ({
+  details: { kind: PromptKind.ConvertToComponent, exprId: expr.expr.id },
+  title: "Convert to component",
+  placeholder: "component name",
+  defaultValue: pascalCase(getExprName(expr)),
+  okLabel: "Convert to component",
+});
+
+const pascalCase = (str: string) => {
+  return str?.length > 0 ? str[0].toUpperCase() + str.slice(1) : null;
+};
+
+const getExprName = (expr: ast.InnerExpressionInfo) => {
+  if (
+    expr.kind === ast.ExprKind.Element ||
+    expr.kind === ast.ExprKind.TextNode
+  ) {
+    return expr.expr.name;
+  }
+  return null;
+};
 
 export const renameFilePrompt = (filePath: string): Prompt => ({
   details: { kind: PromptKind.RenameFile, filePath },

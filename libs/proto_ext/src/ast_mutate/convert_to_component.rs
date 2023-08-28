@@ -1,6 +1,7 @@
 use crate::{ast::all::MutableVisitor, replace_child};
 use paperclip_ast_serialize::serializable::Serializable;
 use paperclip_common::get_or_short;
+use inflector::cases::pascalcase::to_pascal_case;
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::{
     ast::{
@@ -20,7 +21,7 @@ macro_rules! replace_child_with_instance {
         replace_child!($children, &$self.mutation.expression_id, |v: &Node| {
             let target: ExpressionWrapper = v.into();
             let component_name =
-                get_component_name(&target, $self.get_dependency().document.as_ref().unwrap());
+                get_component_name(&target, &$self.mutation.name, $self.get_dependency().document.as_ref().unwrap());
             node::Inner::Element(create_element(&component_name, &checksum)).get_outer()
         })
     };
@@ -37,7 +38,11 @@ impl MutableVisitor<()> for EditContext<ConvertToComponent> {
         );
 
         let new_component = create_component(
-            &get_component_name(&found_expr, expr),
+            &get_component_name(
+                &found_expr,
+                &self.mutation.name,
+                expr
+            ),
             found_expr.serialize().as_str(),
             &self.new_id(),
         );
@@ -90,7 +95,7 @@ impl MutableVisitor<()> for EditContext<ConvertToComponent> {
         let target: ExpressionWrapper = expr.node.as_mut().unwrap().into();
 
         let component_name =
-            get_component_name(&target, self.get_dependency().document.as_ref().unwrap());
+            get_component_name(&target, &self.mutation.name, self.get_dependency().document.as_ref().unwrap());
         expr.node =
             Some(node::Inner::Element(create_element(&component_name, &self.new_id())).get_outer());
         VisitorResult::Continue
@@ -125,8 +130,8 @@ fn get_component_insert_index(matching_id: &str, expr: &Document) -> usize {
     }
 }
 
-fn get_component_name(expr: &ExpressionWrapper, doc: &Document) -> String {
-    let base_name = match expr {
+fn get_component_name(expr: &ExpressionWrapper, name: &Option<String>, doc: &Document) -> String {
+    let base_name = name.clone().or(match expr {
         ExpressionWrapper::Element(element) => element.name.clone(),
         ExpressionWrapper::TextNode(node) => node.name.clone(),
         ExpressionWrapper::Node(node) => match node.get_inner() {
@@ -135,13 +140,14 @@ fn get_component_name(expr: &ExpressionWrapper, doc: &Document) -> String {
             _ => None,
         },
         _ => None,
-    };
+    });
 
-    get_unique_component_name(&base_name.unwrap_or("Unnamed".to_string()), doc)
+    get_unique_component_name(&to_pascal_case(&base_name.unwrap_or("Unnamed".to_string())), doc)
 }
 
-fn get_unique_component_name(base_name: &str, doc: &Document) -> String {
+pub fn get_unique_component_name(base_name: &str, doc: &Document) -> String {
     let components = doc.get_components();
+    
 
     let mut name = base_name.to_string();
     let mut i = 0;

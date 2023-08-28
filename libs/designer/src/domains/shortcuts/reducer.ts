@@ -3,9 +3,9 @@ import { DesignerEvent } from "../../events";
 import {
   DesignerState,
   InsertMode,
-  PromptKind,
   getTargetExprId,
   isSelectableExpr,
+  newConvertToComponentPrompt,
   newDesignFilePrompt,
   setTargetExprId,
 } from "../../state";
@@ -46,6 +46,11 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
       return produce(state, (newState) => {
         newState.insertMode = InsertMode.Resource;
         setTargetExprId(newState, null);
+      });
+    case ShortcutCommand.ConvertToComponent:
+      return produce(state, (newState) => {
+        const expr = ast.getExprInfoById(getTargetExprId(state), state.graph);
+        newState.prompt = newConvertToComponentPrompt(expr);
       });
     case ShortcutCommand.SearchFiles:
       return produce(state, (newState) => {

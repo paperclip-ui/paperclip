@@ -944,6 +944,7 @@ case! {
     )
   ],
   mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
     expression_id: "80f4925f-1".to_string()
   }).get_outer(),
   [(
@@ -966,6 +967,7 @@ case! {
   ],
 
   mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
     expression_id: "80f4925f-1".to_string()
   }).get_outer(),
   [(
@@ -993,6 +995,7 @@ case! {
   ],
 
   mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
     expression_id: "80f4925f-2".to_string()
   }).get_outer(),
   [(
@@ -1031,6 +1034,7 @@ case! {
   ],
 
   mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
     expression_id: "80f4925f-9".to_string()
   }).get_outer(),
   [(
@@ -1072,6 +1076,7 @@ case! {
   ],
 
   mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
     expression_id: "80f4925f-1".to_string()
   }).get_outer(),
   [(
@@ -1105,6 +1110,7 @@ case! {
   ],
 
   mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
     expression_id: "80f4925f-1".to_string()
   }).get_outer(),
   [(
@@ -1141,6 +1147,7 @@ case! {
   ],
 
   mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
     expression_id: "80f4925f-1".to_string()
   }).get_outer(),
   [(
@@ -1171,6 +1178,7 @@ case! {
   ],
 
   mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
     expression_id: "80f4925f-1".to_string()
   }).get_outer(),
   [(
@@ -1199,11 +1207,12 @@ case! {
   ],
 
   mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
     expression_id: "80f4925f-1".to_string()
   }).get_outer(),
   [(
     "/entry.pc", r#"
-    public component test { render div test } component B { render test }
+    public component Test { render div test } component B { render Test }
     "#
   )]
 }
@@ -1221,14 +1230,40 @@ case! {
   ],
 
   mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
     expression_id: "80f4925f-1".to_string()
   }).get_outer(),
   [(
     "/entry.pc", r#"
-    public component abc { render text abc "blarg" } component B { render abc }
+    public component Abc { render text abc "blarg" } component B { render Abc }
     "#
   )]
 }
+
+
+case! {
+  can_convert_component_with_a_name,
+  [
+    (
+      "/entry.pc", r#"
+        div 
+      "#
+    )
+  ],
+
+  mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: Some("abba".to_string()),
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      public component Abba {
+        render div
+      }
+    "#
+  )]
+}
+
 
 case! {
   can_convert_an_element_to_a_slot,

@@ -134,6 +134,7 @@ message DeleteExpression {
 
 message ConvertToComponent {
   string expression_id = 1;
+  optional string name = 2;
 }
 
 message SetId {

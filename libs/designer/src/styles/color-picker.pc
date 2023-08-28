@@ -125,19 +125,6 @@ public component ColorPicker {
                 }
             }
         }
-        div footer {
-            style {
-                position: relative
-                height: 40px
-            }
-            module1.TextInput(value: "rgba(0, 0, 0, 0.5)") {
-                style extends bar {
-                    height: 24px
-                    flex-shrink: 0
-                    min-height: 42px
-                }
-            }
-        }
     }
 }
 
@@ -147,7 +134,7 @@ public component ColorPicker {
 
 div preview {
     div {
-        style {
+        style extends mod.popup {
             position: absolute
             top: 50%
             left: 50%
@@ -158,13 +145,33 @@ div preview {
         }
         hr {
             style {
-                height: 2px
-                background: var(mod.gray06)
+                height: 1px
+                background: var(mod.borderColor)
+                border: none
             }
         }
         div {
-            module.MenuItem {
-                text "something"
+            div {
+                module.MenuItem {
+                    text "rgba(0, 0, 0, 0.5)"
+                }
+                module.MenuItem {
+                    text "rgba(0, 0, 0, 1)"
+                }
+                module.MenuItem {
+                    override {
+                        variant selected trigger {
+                            true
+                        }
+                    }
+                    text "red"
+                }
+                module.MenuItem {
+                    text "blue"
+                }
+                module.MenuItem {
+                    text "orange"
+                }
             }
             style {
                 color: var(mod.gray0)
@@ -172,19 +179,6 @@ div preview {
                 display: flex
                 flex-direction: column
                 gap: var(mod.space03)
-            }
-            div {
-                style {
-                    display: flex
-                    flex-direction: column
-                }
-                text "Project colors" {
-                    style {
-                        font-family: var(mod.defaultFontFamily)
-                        font-weight: bold
-                    }
-                }
-                module1.TextInput(value: "", placeholder: "filter...")
             }
         }
         insert children {

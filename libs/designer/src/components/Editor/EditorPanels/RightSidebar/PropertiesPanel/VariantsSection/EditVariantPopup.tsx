@@ -78,7 +78,7 @@ export const EditVariantPopup = (props: EditVariantPopupProps) => {
           />
           <inputStyles.Field name="triggers" input={triggerInputs[0]} />
           {triggerInputs.slice(1).map((input, i) => {
-            return <inputStyles.Field key={i} input={input} />;
+            return <inputStyles.Field name=" " key={i} input={input} />;
           })}
         </inputStyles.Fields>
       </sidebarStyles.SidebarPopupPanelContent>

@@ -298,25 +298,21 @@ public component Preview {
 }
 
 /**
- * @bounds(x: 1653, y: 244, width: 1091, height: 812)
+ * @bounds(x: 2911, y: 306, width: 573, height: 505)
 */
 
-div {
+div tokenInputContainer {
     style {
         position: relative
-        background: var(theme.gray06)
-        font-family: var(theme.defaultFontFamily)
-        color: var(theme.gray0)
-        padding: var(theme.space07)
+        background: var(theme.gray04)
+        padding: var(theme.space06)
     }
-    input.Field {
-        insert name {
-            text "color"
-        }
-        insert input {
-            input.TextInput(value: "rgba(0,0, 1, 1)")
+    div {
+        style {
+            background: var(theme.gray06)
+            width: 100%
+            height: 100%
         }
     }
-    imp2.ColorPicker
 }
 

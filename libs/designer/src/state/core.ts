@@ -267,4 +267,15 @@ export const expandDirs =
   };
 
 export const getActiveFilePath = (state: DesignerState) =>
-  state.selectedFilePath || state.projectDirectory.path;
+  state.selectedFilePath || state.projectDirectory?.path;
+
+export const getActiveRelativeDirectory = (state: DesignerState) => {
+  const activeFilePath = getActiveFilePath(state);
+  if (!activeFilePath) {
+    return null;
+  }
+  const parts = activeFilePath.split("/");
+  return parts[parts.length - 1].includes(".")
+    ? parts.slice(0, -1).join("/")
+    : activeFilePath;
+};

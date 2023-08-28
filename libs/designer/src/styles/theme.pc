@@ -90,6 +90,13 @@ public style inputActive {
     box-shadow: inset 0px 0px 0px 1px var(blue01)
 }
 
+public style popup {
+    background: var(gray06)
+    border-radius: var(rounded)
+    filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.2))
+    border: 1px solid var(borderColor)
+}
+
 public style fontDefault {
     font-family: Inter, sans-serif
     color: var(fontColor01)

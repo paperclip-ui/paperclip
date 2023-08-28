@@ -5,6 +5,7 @@ import {
   NewFileKind,
   expandDirs,
   getActiveFilePath,
+  getActiveRelativeDirectory,
   getCurrentFilePath,
   getTargetExprId,
   newDesignFilePrompt,
@@ -66,9 +67,13 @@ export const leftSidebarReducer = (
     case "ui/AddFileItemClicked": {
       return produce(state, (newState) => {
         if (event.payload === NewFileKind.DesignFile) {
-          newState.prompt = newDesignFilePrompt(getActiveFilePath(state));
+          newState.prompt = newDesignFilePrompt(
+            getActiveRelativeDirectory(state)
+          );
         } else if (event.payload === NewFileKind.Directory) {
-          newState.prompt = newDirectoryPrompt(getActiveFilePath(state));
+          newState.prompt = newDirectoryPrompt(
+            getActiveRelativeDirectory(state)
+          );
         }
       });
     }

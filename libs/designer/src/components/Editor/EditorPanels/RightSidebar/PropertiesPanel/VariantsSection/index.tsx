@@ -54,7 +54,9 @@ export const VariantsSection = () => {
       <inputStyles.Field name="Variants" input={inputs[0]} />
       {...inputs
         .slice(1)
-        .map((input, i) => <inputStyles.Field key={i} input={input} />)}
+        .map((input, i) => (
+          <inputStyles.Field name=" " key={i} input={input} />
+        ))}
     </>
   );
 };

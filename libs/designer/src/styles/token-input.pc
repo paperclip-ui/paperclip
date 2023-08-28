@@ -5,7 +5,7 @@ import "./utils.pc" as imp
 public style token {
     font-family: var(module.defaultFontFamily)
     color: var(module.gray0)
-    font-size: 11px
+    font-size: var(module.fontSize01)
     display: inline
 }
 
@@ -18,7 +18,92 @@ public style tokenPreview {
 }
 
 /**
- * @bounds(x: 1158, y: 478, width: 310, height: 24)
+ * @bounds(x: 1146, y: 638, width: 310, height: 24)
+*/
+
+public component BoxShadowTokenInputPreview {
+    render TokenInput {
+        Token(class: "number") {
+            text "0"
+        }
+        Token(class: "unit") {
+            text "px"
+        }
+        Token(class: "space") {
+            text " "
+        }
+        Token(class: "number") {
+            text "0"
+        }
+        Token(class: "unit") {
+            text "px"
+        }
+        Token(class: "space") {
+            text " "
+        }
+        Token(class: "number") {
+            text "0"
+        }
+        Token(class: "unit") {
+            text "px"
+        }
+        Token(class: "space") {
+            text " "
+        }
+        Token(class: "number") {
+            text "0"
+        }
+        Token(class: "unit") {
+            text "px"
+        }
+        Token(class: "space") {
+            text " "
+        }
+        Token(class: "number") {
+            text "0"
+        }
+        Token(class: "unit") {
+            text "px"
+        }
+        ColorTokenPreview(style: "--color: #F00")
+        Token(class: "color") {
+            text "#F00"
+        }
+    }
+}
+
+/**
+ * @bounds(x: 699, y: 715, width: 325, height: 53)
+*/
+
+public component BackgroundTokenInputPreview {
+    render TokenInput {
+        ColorTokenPreview(style: "--color: linear-gradient(#F60, #000)")
+        Token {
+            text "linear-gradient"
+        }
+        Token(class: "sugar") {
+            text "("
+        }
+        ColorTokenPreview(style: "--color: #F60")
+        Token {
+            text "#F60"
+        }
+        Token(class: "sugar") {
+            text ","
+        }
+        ColorTokenPreview(style: "--color: #000")
+        Token {
+            text "#000"
+        }
+        Token(class: "sugar") {
+            text ")"
+        }
+    }
+}
+
+/**
+ * @bounds(x: 643, y: 599, width: 381, height: 169)
 */
 
 public component ColorTokenPreview {
@@ -107,29 +192,7 @@ div preview {
                 text "background"
             }
             insert input {
-                TokenInput {
-                    ColorTokenPreview(style: "--color: linear-gradient(#F60, #000)")
-                    Token {
-                        text "linear-gradient"
-                    }
-                    Token(class: "sugar") {
-                        text "("
-                    }
-                    ColorTokenPreview(style: "--color: #F60")
-                    Token {
-                        text "#F60"
-                    }
-                    Token(class: "sugar") {
-                        text ","
-                    }
-                    ColorTokenPreview(style: "--color: #000")
-                    Token {
-                        text "#000"
-                    }
-                    Token(class: "sugar") {
-                        text ")"
-                    }
-                }
+                BackgroundTokenInputPreview
             }
         }
         insert children {
@@ -175,55 +238,7 @@ div preview {
                 text "box-shadow"
             }
             insert input {
-                TokenInput {
-                        Token(class: "number") {
-                            text "0"
-                        }
-                        Token(class: "unit") {
-                            text "px"
-                        }
-                        Token(class: "space") {
-                            text " "
-                        }
-                        Token(class: "number") {
-                            text "0"
-                        }
-                        Token(class: "unit") {
-                            text "px"
-                        }
-                        Token(class: "space") {
-                            text " "
-                        }
-                        Token(class: "number") {
-                            text "0"
-                        }
-                        Token(class: "unit") {
-                            text "px"
-                        }
-                        Token(class: "space") {
-                            text " "
-                        }
-                        Token(class: "number") {
-                            text "0"
-                        }
-                        Token(class: "unit") {
-                            text "px"
-                        }
-                        Token(class: "space") {
-                            text " "
-                        }
-                        Token(class: "number") {
-                            text "0"
-                        }
-                        Token(class: "unit") {
-                            text "px"
-                        }
-                        ColorTokenPreview(style: "--color: #F00")
-                        Token(class: "color") {
-                            text "#F00"
-                        }
-                    }
-
+                BoxShadowTokenInputPreview
             }
         }
         imp1.Field {

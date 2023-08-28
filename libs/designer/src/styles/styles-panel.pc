@@ -1,3 +1,4 @@
+import "./token-input.pc" as module
 import "./color-picker.pc" as imp2
 import "./button.pc" as imp1
 import "./menu.pc" as imp
@@ -165,7 +166,7 @@ public component Preview {
                             text "Background"
                         }
                         insert input {
-                            input.ColorInput {
+                            module.BackgroundTokenInputPreview {
                                 override root {
                                     style {
                                         --color: rgb(255, 81, 119)
@@ -202,7 +203,7 @@ public component Preview {
                     }
                     input.Field {
                         insert input {
-                            input.ColorInput {
+                            module.BoxShadowTokenInputPreview {
                                 override root {
                                     style {
                                         --color: magenta
@@ -215,21 +216,8 @@ public component Preview {
                                 }
                             }
                         }
-                    }
-                    input.Field {
-                        insert input {
-                            input.ColorInput {
-                                override root {
-                                    style {
-                                        --color: rgb(69, 69, 69)
-                                    }
-                                }
-                                span {
-                                    input.Token(class: "keyword") {
-                                        text "add..."
-                                    }
-                                }
-                            }
+                        insert name {
+                            text "box-shadow"
                         }
                     }
                     input.Field {

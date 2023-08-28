@@ -68,7 +68,7 @@ public style input {
     outline: none
     align-items: center
     text-overflow: ellipsis
-    font-size: inherit
+    font-size: var(fontSize01)
     font-family: inherit
     white-space: nowrap
     overflow: hidden

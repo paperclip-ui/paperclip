@@ -1,8 +1,5 @@
 import React from "react";
-import {
-  Arithmetic,
-  DeclarationValue,
-} from "@paperclip-ui/proto/lib/generated/ast/css";
+import { DeclarationValue } from "@paperclip-ui/proto/lib/generated/ast/css";
 import * as styles from "@paperclip-ui/designer/src/styles/token-input.pc";
 
 export type InteractiveDeclValueProps = {

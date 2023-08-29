@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
-import { DeclarationValue } from "./DeclarationValue";
+import { DeclarationValue } from "./DeclarationValue/index";
 import { NewDeclValue, css } from "./types";
 import { noop } from "lodash";
 import { getPropField } from "./cssSchema";
@@ -13,7 +13,7 @@ import {
 } from "@paperclip-ui/proto-ext/lib/ast/serialize";
 import { NameInput } from "./NameInput";
 import { getTargetExprId } from "@paperclip-ui/designer/src/state";
-import { DeclarationValue2 } from "./DeclarationValue2";
+// import { InteractiveDeclValue } from "./InteractiveDeclValue";
 
 type FieldProps = {
   name?: string;
@@ -66,18 +66,20 @@ export const Declaration = memo(
       name
     );
 
-    const input = (
-      <DeclarationValue
-        value={value}
-        isDefault={style?.ownerId !== targetId}
-        onSelect={onValueSelect}
-        onTab={onValueTab}
-        type={inputOptions.type}
-        options={
-          inputOptions.type === css.InputType.Enum ? inputOptions.options : []
-        }
-      />
-    );
+    // const input = (
+    //   <DeclarationValue
+    //     value={value}
+    //     isDefault={style?.ownerId !== targetId}
+    //     onSelect={onValueSelect}
+    //     onTab={onValueTab}
+    //     type={inputOptions.type}
+    //     options={
+    //       inputOptions.type === css.InputType.Enum ? inputOptions.options : []
+    //     }
+    //   />
+    // );
+
+    const input = <DeclarationValue expression={style.value} />;
 
     const onBlur2 = (event) => {
       setTimeout(() => {

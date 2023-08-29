@@ -9,6 +9,7 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
         draft.value = event.payload.value;
       });
     }
+    case "focused":
     case "keyDown": {
       return produce(state, (draft) => {
         draft.caretPosition = event.payload.caretPosition;

@@ -8,6 +8,12 @@ type KeyDown = BaseEvent<
 >;
 
 type Blurred = BaseEvent<"blurred">;
+type Focused = BaseEvent<
+  "focused",
+  {
+    caretPosition: number;
+  }
+>;
 
 type InputChanged = BaseEvent<
   "inputChanged",
@@ -16,4 +22,4 @@ type InputChanged = BaseEvent<
   }
 >;
 
-export type DeclarationValueEvent = KeyDown | InputChanged | Blurred;
+export type DeclarationValueEvent = KeyDown | InputChanged | Blurred | Focused;

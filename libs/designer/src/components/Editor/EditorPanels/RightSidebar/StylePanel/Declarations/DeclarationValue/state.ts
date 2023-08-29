@@ -1,6 +1,28 @@
 import { memoize } from "@paperclip-ui/common";
-import { serializeDeclaration } from "@paperclip-ui/proto-ext/lib/ast/serialize";
 import { tokenizer } from "./utils";
+import { DesignerState } from "@paperclip-ui/designer/src/state";
+
+export enum RawInputValueSuggestionKind {
+  Section,
+  Item,
+}
+
+export type RawInputValueSuggestionItem = {
+  kind: RawInputValueSuggestionKind.Item;
+  value: string;
+  preview?: string;
+  source?: string;
+  id: string;
+};
+
+export type RawInputValueSuggestionSection = {
+  kind: RawInputValueSuggestionKind.Section;
+  label: string;
+};
+
+export type RawInputValueSuggestion =
+  | RawInputValueSuggestionItem
+  | RawInputValueSuggestionSection;
 
 export type State = {
   value?: string;
@@ -8,20 +30,21 @@ export type State = {
 };
 
 export const getInitialState = memoize(
-  (expression): State => ({
+  (value: string): State => ({
     caretPosition: -1,
-    value: expression ?? serializeDeclaration(expression.expr),
+    value,
   })
 );
 
 export const getTokenAtBoundary = memoize((state: State) => {
   const tokens = tokenizeStyleDeclaration(state.value);
+
   for (let i = tokens.length; i--; ) {
     const token = tokens[i];
     if (
       token.kind &&
-      token.pos >= state.caretPosition &&
-      token.value.length + token.pos <= state.caretPosition
+      token.pos <= state.caretPosition &&
+      token.value.length + token.pos >= state.caretPosition
     ) {
       return token;
     }
@@ -33,14 +56,18 @@ export const getTokenIndexAtBoundary = (state: State) => {
 };
 
 export enum TokenKind {
+  FunctionCall = "functionCall",
   Keyword = "keyword",
   Number = "number",
   Unit = "unit",
   Whitespace = "whitespace",
 }
 
+const keywordRegexp = /^[a-zA-Z]+[a-zA-Z0-9\_\-]*/;
+
 export const tokenizeStyleDeclaration = tokenizer([
-  [TokenKind.Keyword, /^[a-zA-Z]+[a-zA-Z0-9\_\-]*/],
+  [TokenKind.FunctionCall, keywordRegexp, [/\(/, /\)/]],
+  [TokenKind.Keyword, keywordRegexp],
   [TokenKind.Unit, /^\-?\d+(\.\d+)?[a-z]+/],
   [TokenKind.Number, /^\-?\d+(\.\d+)?/],
   [TokenKind.Whitespace, /^[\s\t]+/],
@@ -58,3 +85,13 @@ const isCaretInBoundary = (value: string, position: number) => {
 const isBoundary = (char?: string) => {
   return !char || /[\(\)\[\],\s]/.test(char);
 };
+
+const declSuggestions = {
+  background: ["linear-gradient(%|)", "rgba(%|)"],
+};
+
+export const getDeclSuggestionItems = memoize(
+  (declName: string, state: DesignerState) => (filter: string) => {
+    return [];
+  }
+);

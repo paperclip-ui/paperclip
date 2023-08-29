@@ -10,6 +10,7 @@ export type SelectDetails = {
 };
 
 export type SuggestionMenuProps = {
+  open?: boolean;
   values: string[];
   children: React.ReactElement;
   style?: any;
@@ -20,6 +21,7 @@ export type SuggestionMenuProps = {
 };
 
 export const SuggestionMenu = ({
+  open,
   values,
   children,
   style,
@@ -28,9 +30,11 @@ export const SuggestionMenu = ({
   onOtherSelect: onOtherSave,
   menu,
 }: SuggestionMenuProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalIsOpen, setIsOpen] = useState(false);
   const [typedValue, setTypedValued] = useState(null);
   const [preselectedIndex, setPreselectedIndex] = useState(0);
+
+  const isOpen = open || internalIsOpen;
 
   const oldProps = children.props;
 

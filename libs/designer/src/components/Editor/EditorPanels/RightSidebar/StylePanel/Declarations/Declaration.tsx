@@ -79,7 +79,7 @@ export const Declaration = memo(
     //   />
     // );
 
-    const input = <DeclarationValue expression={style.value} />;
+    const input = <DeclarationValue name={name2} expression={style.value} />;
 
     const onBlur2 = (event) => {
       setTimeout(() => {

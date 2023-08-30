@@ -28,19 +28,25 @@ import { Token as SimpleExpression } from "./utils";
 
 export type DeclarationValueProps = {
   name: string;
-  expression: DeclarationValueExpr;
+  value: string;
+  onChange: (value: string) => void;
+  onTab?: (event: React.KeyboardEvent<void>) => void;
 };
 
 export const DeclarationValue = ({
   name,
-  expression,
+  value,
+  onChange,
+  onTab,
 }: DeclarationValueProps) => {
   const state = useSelector(getEditorState);
 
   return (
     <RawInput
-      value={serializeDeclaration(expression)}
+      value={value}
       getSuggestionItems={getDeclSuggestionItems(name, state)}
+      onChange={onChange}
+      onTab={onTab}
     />
   );
 };
@@ -48,6 +54,8 @@ export const DeclarationValue = ({
 type RawInputProps = {
   getSuggestionItems: (token: SimpleExpression) => RawInputValueSuggestion[];
   value: string;
+  onChange: (value: string) => void;
+  onTab: (event: React.KeyboardEvent<void>) => void;
 };
 
 const RawInput = (props: RawInputProps) => {
@@ -60,6 +68,7 @@ const RawInput = (props: RawInputProps) => {
     onKeyUp,
     onBlur,
     onFocus,
+    onKeyDown,
     onSuggestionSelect,
     onSuggestionMenuClose,
     onInputClick,
@@ -103,6 +112,7 @@ const RawInput = (props: RawInputProps) => {
         ref={ref}
         value={value}
         onKeyUp={onKeyUp}
+        onKeyDown={onKeyDown}
         onFocus={onFocus}
         onClick={onInputClick}
       />
@@ -110,11 +120,17 @@ const RawInput = (props: RawInputProps) => {
   );
 };
 
-const useRawInput = ({ value }: RawInputProps) => {
+const useRawInput = ({ value, onChange, onTab }: RawInputProps) => {
   const [state, dispatch] = useReducer(reducer, getInitialState(value));
   const activeToken = getTokenAtCaret(state);
 
   const ref = useRef<HTMLInputElement>(null);
+  const onKeyDown = (event: React.KeyboardEvent<any>) => {
+    if (event.key === "Tab" && onTab) {
+      onTab(event);
+    }
+  };
+
   const onKeyUp = () => {
     dispatch({
       type: "keyDown",
@@ -159,6 +175,12 @@ const useRawInput = ({ value }: RawInputProps) => {
   };
 
   useEffect(() => {
+    if (value !== state.value) {
+      onChange(state.value);
+    }
+  }, [state.value]);
+
+  useEffect(() => {
     if (state.caretPosition !== -1 && state.active) {
       setTimeout(() => {
         ref.current.focus();
@@ -175,6 +197,7 @@ const useRawInput = ({ value }: RawInputProps) => {
     value: state.value,
     showSuggestionMenu: state.showSuggestionMenu && activeToken != null,
     activeToken,
+    onKeyDown,
     onKeyUp,
     onInputClick,
     onSuggestionMenuClose,

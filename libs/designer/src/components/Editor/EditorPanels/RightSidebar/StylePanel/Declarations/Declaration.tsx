@@ -3,7 +3,7 @@ import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { DeclarationValue } from "./DeclarationValue";
-import { NewDeclValue, css } from "./types";
+import { NewDeclValue } from "./types";
 import { noop } from "lodash";
 import { getPropField } from "./cssSchema";
 import { SelectDetails } from "@paperclip-ui/designer/src/components/SuggestionMenu";
@@ -20,7 +20,7 @@ type FieldProps = {
   style?: ComputedStyle;
   onFocus?: () => void;
   onBlur?: () => void;
-  onValueTab?: (event: React.KeyboardEvent) => void;
+  onValueTab?: (event: React.KeyboardEvent<any>) => void;
   onSave?: (details: SelectDetails) => void;
   isNew?: boolean;
 };
@@ -79,7 +79,14 @@ export const Declaration = memo(
     //   />
     // );
 
-    const input = <DeclarationValue name={name2} expression={style.value} />;
+    const input = (
+      <DeclarationValue
+        name={name2}
+        value={value}
+        onTab={onValueTab}
+        onChange={noop}
+      />
+    );
 
     const onBlur2 = (event) => {
       setTimeout(() => {

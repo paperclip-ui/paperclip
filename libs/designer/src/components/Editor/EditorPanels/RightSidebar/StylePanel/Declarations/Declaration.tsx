@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
-import { DeclarationValue } from "./DeclarationValue/index";
+import { DeclarationValue } from "./DeclarationValue";
 import { NewDeclValue, css } from "./types";
 import { noop } from "lodash";
 import { getPropField } from "./cssSchema";

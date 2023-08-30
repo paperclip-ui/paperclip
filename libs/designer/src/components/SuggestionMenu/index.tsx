@@ -18,6 +18,7 @@ export type SuggestionMenuProps = {
   onSelect: (values: any[], details: SelectDetails) => void;
   onOtherSelect: (value: string, details: SelectDetails) => void;
   menu: () => React.ReactElement[];
+  onClose?: () => void;
 };
 
 export const SuggestionMenu = ({
@@ -26,6 +27,7 @@ export const SuggestionMenu = ({
   children,
   style,
   multi,
+  onClose = noop,
   onSelect: onSelect2,
   onOtherSelect: onOtherSave,
   menu,
@@ -34,7 +36,13 @@ export const SuggestionMenu = ({
   const [typedValue, setTypedValued] = useState(null);
   const [preselectedIndex, setPreselectedIndex] = useState(0);
 
-  const isOpen = open || internalIsOpen;
+  const isOpen = open ?? internalIsOpen;
+
+  useEffect(() => {
+    if (!internalIsOpen) {
+      onClose();
+    }
+  }, [internalIsOpen]);
 
   const oldProps = children.props;
 
@@ -76,6 +84,9 @@ export const SuggestionMenu = ({
             selected: values.includes(child.props.value),
             preselected: i === preselectedIndex,
             onSelect: (event: React.MouseEvent) => {
+              // prevent blur mainly
+              event.preventDefault();
+
               child.props.value &&
                 onSelect(child.props.selectValue || child.props.value, {
                   event,

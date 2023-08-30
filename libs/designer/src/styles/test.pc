@@ -6,7 +6,7 @@
 div {
     style {
         position: relative
-        color: abc + def
+        color: linear-gradient(red)
     }
 }
 

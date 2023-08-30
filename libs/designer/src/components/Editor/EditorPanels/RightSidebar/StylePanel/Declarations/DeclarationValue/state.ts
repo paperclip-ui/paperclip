@@ -1,6 +1,7 @@
 import { memoize } from "@paperclip-ui/common";
-import { tokenizer } from "./utils";
+// import { Token, tokenizer } from "./utils";
 import { DesignerState } from "@paperclip-ui/designer/src/state";
+import { Expression, simpleParser } from "./utils";
 
 export enum RawInputValueSuggestionKind {
   Section,
@@ -9,6 +10,7 @@ export enum RawInputValueSuggestionKind {
 
 export type RawInputValueSuggestionItem = {
   kind: RawInputValueSuggestionKind.Item;
+  label?: string;
   value: string;
   preview?: string;
   source?: string;
@@ -27,17 +29,22 @@ export type RawInputValueSuggestion =
 export type State = {
   value?: string;
   caretPosition: number;
+  showSuggestionMenu: boolean;
 };
 
 export const getInitialState = memoize(
   (value: string): State => ({
     caretPosition: -1,
     value,
+    showSuggestionMenu: false,
   })
 );
 
-export const getTokenAtBoundary = memoize((state: State) => {
-  const tokens = tokenizeStyleDeclaration(state.value);
+export const getTokenAtCaret = memoize((state: State) => {
+  const valueAfterCaret = state.value.substring(state.caretPosition);
+
+  // FIRST we we need to fetch all tokens
+  const tokens = parseStyleDeclaration(state.value);
 
   for (let i = tokens.length; i--; ) {
     const token = tokens[i];
@@ -52,10 +59,10 @@ export const getTokenAtBoundary = memoize((state: State) => {
 });
 
 export const getTokenIndexAtBoundary = (state: State) => {
-  const tokens = tokenizeStyleDeclaration(state.value);
+  const tokens = parseStyleDeclaration(state.value);
 };
 
-export enum TokenKind {
+export enum ExpressionKind {
   FunctionCall = "functionCall",
   Keyword = "keyword",
   Number = "number",
@@ -65,33 +72,75 @@ export enum TokenKind {
 
 const keywordRegexp = /^[a-zA-Z]+[a-zA-Z0-9\_\-]*/;
 
-export const tokenizeStyleDeclaration = tokenizer([
-  [TokenKind.FunctionCall, keywordRegexp, [/\(/, /\)/]],
-  [TokenKind.Keyword, keywordRegexp],
-  [TokenKind.Unit, /^\-?\d+(\.\d+)?[a-z]+/],
-  [TokenKind.Number, /^\-?\d+(\.\d+)?/],
-  [TokenKind.Whitespace, /^[\s\t]+/],
+export const parseStyleDeclaration = simpleParser([
+  [ExpressionKind.FunctionCall, keywordRegexp, [/^\(/, /^\)/]],
+  [ExpressionKind.Keyword, keywordRegexp],
+  [ExpressionKind.Unit, /^\-?\d+(\.\d+)?[a-z]+/],
+  [ExpressionKind.Number, /^\-?\d+(\.\d+)?/],
+  [ExpressionKind.Whitespace, /^[\s\t]+/],
 ]);
 
-const isCaretInBoundary = (value: string, position: number) => {
-  const before = value.slice(0, position);
-  const after = value.slice(position);
+const valueSuggestion =
+  (value: string): ((token: Expression) => RawInputValueSuggestionItem) =>
+  (expr: Expression) => ({
+    kind: RawInputValueSuggestionKind.Item,
+    label: value.replace("%|%", "").replace("%value%", expr.value),
+    value: value.replace("%value", expr.value),
+    id: value,
+  });
 
-  return (
-    isBoundary(before.charAt(before.length - 1)) && isBoundary(after.charAt(0))
-  );
-};
-
-const isBoundary = (char?: string) => {
-  return !char || /[\(\)\[\],\s]/.test(char);
-};
-
-const declSuggestions = {
-  background: ["linear-gradient(%|)", "rgba(%|)"],
+const declSuggestions: Record<
+  string,
+  Partial<
+    Record<
+      ExpressionKind,
+      Array<
+        | RawInputValueSuggestionItem
+        | ((value: Expression) => RawInputValueSuggestionItem)
+      >
+    >
+  >
+> = {
+  background: {
+    [ExpressionKind.FunctionCall]: [valueSuggestion("linear-gradient(%|%)")],
+    [ExpressionKind.Unit]: [],
+    [ExpressionKind.Keyword]: [
+      valueSuggestion("repeat"),
+      valueSuggestion("no-repeat"),
+    ],
+    [ExpressionKind.Whitespace]: [],
+    [ExpressionKind.Number]: [
+      valueSuggestion("%value%px"),
+      valueSuggestion("%value%em"),
+      valueSuggestion("%value%rem"),
+    ],
+  },
+  color: {
+    [ExpressionKind.FunctionCall]: [valueSuggestion("linear-gradient(%|%)")],
+    [ExpressionKind.Keyword]: [valueSuggestion("linear-gradient(%|%)")],
+    [ExpressionKind.Whitespace]: [valueSuggestion("linear-gradient(%|%)")],
+  },
 };
 
 export const getDeclSuggestionItems = memoize(
-  (declName: string, state: DesignerState) => (filter: string) => {
-    return [];
+  (declName: string, state: DesignerState) => (token: Expression) => {
+    const nativeSuggestions =
+      declSuggestions[declName]?.[token.kind]?.map((suggestion) => {
+        if (typeof suggestion === "function") {
+          return suggestion(token);
+        }
+        return suggestion;
+      }) || [];
+
+    const items = [];
+
+    if (nativeSuggestions) {
+      items.push(
+        { kind: RawInputValueSuggestionKind.Section, label: "Native" },
+        ...nativeSuggestions
+      );
+    }
+
+    return items;
   }
 );

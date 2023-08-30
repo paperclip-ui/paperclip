@@ -16,6 +16,12 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
         draft.showSuggestionMenu = false;
       });
     }
+    case "inputClicked": {
+      return produce(state, (draft) => {
+        draft.showSuggestionMenu = true;
+        draft.caretPosition = event.payload.caretPosition;
+      });
+    }
     case "suggestionSelected": {
       return produce(state, (draft) => {
         const token = getTokenAtCaret(state);
@@ -40,6 +46,7 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
     case "blurred": {
       return produce(state, (draft) => {
         draft.caretPosition = -1;
+        draft.active = false;
       });
     }
   }

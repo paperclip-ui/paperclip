@@ -19,6 +19,7 @@ export type SuggestionMenuProps = {
   onOtherSelect: (value: string, details: SelectDetails) => void;
   menu: () => React.ReactElement[];
   onClose?: () => void;
+  onBlur?: () => void;
 };
 
 export const SuggestionMenu = ({
@@ -28,6 +29,7 @@ export const SuggestionMenu = ({
   style,
   multi,
   onClose = noop,
+  onBlur: onBlur2 = noop,
   onSelect: onSelect2,
   onOtherSelect: onOtherSave,
   menu,
@@ -35,6 +37,7 @@ export const SuggestionMenu = ({
   const [internalIsOpen, setIsOpen] = useState(false);
   const [typedValue, setTypedValued] = useState(null);
   const [preselectedIndex, setPreselectedIndex] = useState(0);
+  const ref = useRef<HTMLDivElement>();
 
   const isOpen = open ?? internalIsOpen;
 
@@ -60,6 +63,7 @@ export const SuggestionMenu = ({
       }
       return false;
     });
+    onBlur2();
   };
 
   const onSelect = (value: any, details: SelectDetails) => {
@@ -141,7 +145,12 @@ export const SuggestionMenu = ({
     setTypedValued(value);
   };
 
-  const onClick = () => setIsOpen(true);
+  const onClick = () => {
+    setIsOpen(true);
+    if (children.props.onClick) {
+      children.props.onClick();
+    }
+  };
 
   useEffect(() => {
     if (!isOpen) {
@@ -160,6 +169,7 @@ export const SuggestionMenu = ({
 
   return (
     <styles.SuggestionContainer
+      ref={ref}
       input={React.cloneElement(children, {
         key: "input",
         onBlur,

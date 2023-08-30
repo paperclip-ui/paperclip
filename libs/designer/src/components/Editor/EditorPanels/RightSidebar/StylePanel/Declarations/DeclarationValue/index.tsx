@@ -35,12 +35,11 @@ export const DeclarationValue = ({
   name,
   expression,
 }: DeclarationValueProps) => {
-  const [value, setValue] = useState(serializeDeclaration(expression));
   const state = useSelector(getEditorState);
 
   return (
     <RawInput
-      value={value}
+      value={serializeDeclaration(expression)}
       getSuggestionItems={getDeclSuggestionItems(name, state)}
     />
   );
@@ -59,9 +58,11 @@ const RawInput = (props: RawInputProps) => {
     showSuggestionMenu,
     value,
     onKeyUp,
+    onBlur,
     onFocus,
     onSuggestionSelect,
     onSuggestionMenuClose,
+    onInputClick,
     onCustomSelect,
   } = useRawInput(props);
 
@@ -93,11 +94,18 @@ const RawInput = (props: RawInputProps) => {
       values={values}
       open={showSuggestionMenu}
       menu={menu}
+      onBlur={onBlur}
       onSelect={onSuggestionSelect}
       onOtherSelect={onCustomSelect}
       onClose={onSuggestionMenuClose}
     >
-      <TextInput ref={ref} value={value} onKeyUp={onKeyUp} onFocus={onFocus} />
+      <TextInput
+        ref={ref}
+        value={value}
+        onKeyUp={onKeyUp}
+        onFocus={onFocus}
+        onClick={onInputClick}
+      />
     </SuggestionMenu>
   );
 };
@@ -143,16 +151,22 @@ const useRawInput = ({ value }: RawInputProps) => {
     dispatch({
       type: "suggestionMenuClose",
     });
+  const onInputClick = () => {
+    dispatch({
+      type: "inputClicked",
+      payload: { caretPosition: ref.current.selectionStart },
+    });
+  };
 
   useEffect(() => {
-    if (state.caretPosition !== -1) {
+    if (state.caretPosition !== -1 && state.active) {
       setTimeout(() => {
         ref.current.focus();
         ref.current.selectionStart = state.caretPosition;
         ref.current.selectionEnd = state.caretPosition;
       });
     }
-  }, [state.caretPosition, state.showSuggestionMenu]);
+  }, [state.caretPosition, state.active, state.showSuggestionMenu]);
 
   const onCustomSelect = (value: string) => {};
 
@@ -162,6 +176,7 @@ const useRawInput = ({ value }: RawInputProps) => {
     showSuggestionMenu: state.showSuggestionMenu && activeToken != null,
     activeToken,
     onKeyUp,
+    onInputClick,
     onSuggestionMenuClose,
     onSuggestionSelect,
     onCustomSelect,

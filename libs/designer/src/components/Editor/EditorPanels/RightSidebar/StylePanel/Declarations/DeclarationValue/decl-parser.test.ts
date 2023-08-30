@@ -24,6 +24,7 @@ describe(__filename + "#", () => {
         },
       ],
     ],
+
     "Can parse a function": [
       [
         ["functionCall", /^\w+/, [/^\(/, /^\)/]],
@@ -48,10 +49,30 @@ describe(__filename + "#", () => {
         },
       ],
     ],
+    "Cannot parse incomplete function": [
+      [
+        ["functionCall", /^\w+/, [/^\(/, /^\)/]],
+        ["word", /^\w+/],
+      ],
+      "lineargradient(",
+      [
+        {
+          kind: "word",
+          parts: ["lineargradient"],
+          pos: 0,
+        },
+        {
+          kind: null,
+          parts: ["("],
+          pos: 14,
+        },
+      ],
+    ],
   }).forEach(([key, inf]) => {
     const [pattern, source, expected] = inf as any;
     it(key, () => {
       const result = simpleParser(pattern)(source);
+      //   console.log(JSON.stringify(result, null, 2));
       expect(result).toEqual(expected);
     });
   });

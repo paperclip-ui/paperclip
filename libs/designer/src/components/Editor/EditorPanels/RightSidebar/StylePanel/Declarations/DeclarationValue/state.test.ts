@@ -9,6 +9,7 @@ describe(__filename + "#", () => {
         caretPosition: 0,
         value: "test",
         showSuggestionMenu: false,
+        active: false,
       });
 
       expect(token).toEqual({ kind: "keyword", parts: ["test"], pos: 0 });
@@ -18,6 +19,7 @@ describe(__filename + "#", () => {
         caretPosition: "linear-gradient".length,
         value: "linear-gradient(red, blue)",
         showSuggestionMenu: false,
+        active: false,
       });
 
       expect(token).toEqual({
@@ -32,9 +34,10 @@ describe(__filename + "#", () => {
         caretPosition: "linear-gradient(".length,
         value: "linear-gradient(red, blue)",
         showSuggestionMenu: false,
+        active: false,
       });
 
-      expect(token).toEqual({ kind: "keyword", parts: ["red"], pos: 0 });
+      expect(token).toEqual({ kind: "keyword", parts: ["red"], pos: 16 });
     });
 
     it("Returns the secone param token ", () => {
@@ -42,9 +45,10 @@ describe(__filename + "#", () => {
         caretPosition: "linear-gradient(red, bl".length,
         value: "linear-gradient(red, blue)",
         showSuggestionMenu: false,
+        active: false,
       });
 
-      expect(token).toEqual({ kind: "keyword", parts: ["blue"], pos: 0 });
+      expect(token).toEqual({ kind: "keyword", parts: ["blue"], pos: 21 });
     });
   });
 });

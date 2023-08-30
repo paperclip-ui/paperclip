@@ -118,7 +118,7 @@ const parseTokenPart = (
       const innerContext = parseRoot(
         childContext(movePos(context, partsLength(parts))),
         (context) => {
-          return parseTokenPart(end, context) != null;
+          return ended(context) || parseTokenPart(end, context) != null;
         }
       );
 
@@ -171,7 +171,14 @@ export const getTokenAtPosition = memoize(
         }
 
         if (j > 0) {
-          return getTokenAtPosition(parse)(value.substring(cpos), 0) ?? token;
+          const subToken = getTokenAtPosition(parse)(value.substring(cpos), 0);
+
+          return subToken
+            ? {
+                ...subToken,
+                pos: subToken.pos + cpos,
+              }
+            : token;
         } else {
           return token;
         }

@@ -32,6 +32,7 @@ export type RawInputValueSuggestion =
   | RawInputValueSuggestionSection;
 
 export type State = {
+  active: boolean;
   value?: string;
   caretPosition: number;
   showSuggestionMenu: boolean;
@@ -41,6 +42,7 @@ export const getInitialState = memoize(
   (value: string): State => ({
     caretPosition: -1,
     value,
+    active: false,
     showSuggestionMenu: false,
   })
 );
@@ -110,6 +112,14 @@ const declSuggestions: Record<
     [ExpressionKind.FunctionCall]: [valueSuggestion("linear-gradient(%|%)")],
     [ExpressionKind.Keyword]: [valueSuggestion("linear-gradient(%|%)")],
     [ExpressionKind.Whitespace]: [valueSuggestion("linear-gradient(%|%)")],
+  },
+  position: {
+    [ExpressionKind.Keyword]: [
+      valueSuggestion("relative"),
+      valueSuggestion("absolute"),
+      valueSuggestion("fixed"),
+      valueSuggestion("static"),
+    ],
   },
 };
 

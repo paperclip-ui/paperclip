@@ -8,6 +8,13 @@ type KeyDown = BaseEvent<
   }
 >;
 
+type InputClicked = BaseEvent<
+  "inputClicked",
+  {
+    caretPosition: number;
+  }
+>;
+
 type SuggestionMenuClose = BaseEvent<"suggestionMenuClose">;
 
 type Blurred = BaseEvent<"blurred">;
@@ -27,6 +34,7 @@ type SuggestionSelected = BaseEvent<
 export type DeclarationValueEvent =
   | KeyDown
   | Blurred
+  | InputClicked
   | Focused
   | SuggestionSelected
   | SuggestionMenuClose;

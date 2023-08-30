@@ -1,7 +1,12 @@
 import { memoize } from "@paperclip-ui/common";
 // import { Token, tokenizer } from "./utils";
 import { DesignerState } from "@paperclip-ui/designer/src/state";
-import { Expression, simpleParser } from "./utils";
+import {
+  Token,
+  getTokenAtPosition,
+  getTokenValue,
+  simpleParser,
+} from "./utils";
 
 export enum RawInputValueSuggestionKind {
   Section,
@@ -40,23 +45,9 @@ export const getInitialState = memoize(
   })
 );
 
-export const getTokenAtCaret = memoize((state: State) => {
-  const valueAfterCaret = state.value.substring(state.caretPosition);
-
-  // FIRST we we need to fetch all tokens
-  const tokens = parseStyleDeclaration(state.value);
-
-  for (let i = tokens.length; i--; ) {
-    const token = tokens[i];
-    if (
-      token.kind &&
-      token.pos <= state.caretPosition &&
-      token.value.length + token.pos >= state.caretPosition
-    ) {
-      return token;
-    }
-  }
-});
+export const getTokenAtCaret = memoize((state: State) =>
+  getTokenAtPosition(parseStyleDeclaration)(state.value, state.caretPosition)
+);
 
 export const getTokenIndexAtBoundary = (state: State) => {
   const tokens = parseStyleDeclaration(state.value);
@@ -81,11 +72,11 @@ export const parseStyleDeclaration = simpleParser([
 ]);
 
 const valueSuggestion =
-  (value: string): ((token: Expression) => RawInputValueSuggestionItem) =>
-  (expr: Expression) => ({
+  (value: string): ((token: Token) => RawInputValueSuggestionItem) =>
+  (expr: Token) => ({
     kind: RawInputValueSuggestionKind.Item,
-    label: value.replace("%|%", "").replace("%value%", expr.value),
-    value: value.replace("%value", expr.value),
+    label: value.replace("%|%", "").replace("%value%", getTokenValue(expr)),
+    value: value.replace("%value", getTokenValue(expr)),
     id: value,
   });
 
@@ -96,7 +87,7 @@ const declSuggestions: Record<
       ExpressionKind,
       Array<
         | RawInputValueSuggestionItem
-        | ((value: Expression) => RawInputValueSuggestionItem)
+        | ((value: Token) => RawInputValueSuggestionItem)
       >
     >
   >
@@ -123,7 +114,7 @@ const declSuggestions: Record<
 };
 
 export const getDeclSuggestionItems = memoize(
-  (declName: string, state: DesignerState) => (token: Expression) => {
+  (declName: string, state: DesignerState) => (token: Token) => {
     const nativeSuggestions =
       declSuggestions[declName]?.[token.kind]?.map((suggestion) => {
         if (typeof suggestion === "function") {

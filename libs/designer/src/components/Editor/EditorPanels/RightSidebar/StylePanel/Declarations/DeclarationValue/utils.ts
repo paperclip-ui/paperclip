@@ -1,6 +1,7 @@
 import { memoize } from "@paperclip-ui/common";
+import { parseStyleDeclaration } from "./state";
 
-export type Expression = {
+export type Token = {
   kind: string;
   parts: Array<string>;
   pos: number;
@@ -11,7 +12,7 @@ type Patterns = Array<[string, ...ExprPatternParts]>;
 
 type Context = {
   patterns: Patterns;
-  expressions: Expression[];
+  tokens: Token[];
   source: string;
   pos: number;
 };
@@ -20,20 +21,20 @@ const ended = (context: Context) => context.pos >= context.source.length;
 
 const childContext = (context: Context) => ({
   ...context,
-  expressions: [],
+  tokens: [],
 });
 
 const getContextParts = (context: Context): string[] => {
   const parts = [];
-  for (const expr of context.expressions) {
-    parts.push(...expr.parts);
+  for (const token of context.tokens) {
+    parts.push(...token.parts);
   }
   return parts;
 };
 
-const addExpression = (kind: string, parts: string[], context: Context) => ({
+const addToken = (kind: string, parts: string[], context: Context) => ({
   ...context,
-  expressions: [...context.expressions, { kind, parts, pos: context.pos }],
+  tokens: [...context.tokens, { kind, parts, pos: context.pos }],
 
   pos: context.pos + parts.join("").length,
 });
@@ -46,16 +47,16 @@ const movePos = (context: Context, amount: number) => ({
 const currChar = (context: Context) => context.source.charAt(context.pos);
 
 export const simpleParser = (patterns: Patterns) =>
-  memoize((source: string): Expression[] => {
+  memoize((source: string): Token[] => {
     return parseRoot(
       {
         patterns,
         source,
         pos: 0,
-        expressions: [],
+        tokens: [],
       },
       ended
-    ).expressions;
+    ).tokens;
   });
 
 const parseRoot = (
@@ -64,12 +65,12 @@ const parseRoot = (
 ): Context => {
   while (!until(context)) {
     let parts: string[] = null;
-    let exprKind = null;
+    let tokenKind = null;
 
     for (const [kind, ...testers] of context.patterns) {
-      parts = parseExprParts(testers, context);
+      parts = parseTokenParts(testers, context);
       if (parts) {
-        exprKind = kind;
+        tokenKind = kind;
         break;
       }
     }
@@ -78,17 +79,20 @@ const parseRoot = (
       parts = [currChar(context)];
     }
 
-    context = addExpression(exprKind, parts, context);
+    context = addToken(tokenKind, parts, context);
   }
 
   return context;
 };
 
-const parseExprParts = (tests: ExprPatternParts, context: Context) => {
+const parseTokenParts = (tests: ExprPatternParts, context: Context) => {
   const parts = [];
 
   for (const test of tests) {
-    const nextParts = parseExprPart(test, movePos(context, partsLength(parts)));
+    const nextParts = parseTokenPart(
+      test,
+      movePos(context, partsLength(parts))
+    );
     if (!nextParts) {
       return null;
     }
@@ -98,7 +102,7 @@ const parseExprParts = (tests: ExprPatternParts, context: Context) => {
   return parts;
 };
 
-const parseExprPart = (
+const parseTokenPart = (
   test: RegExp | [RegExp, RegExp],
   context: Context
 ): string[] => {
@@ -106,7 +110,7 @@ const parseExprPart = (
     const [start, end] = test;
     start.lastIndex = 0;
     const parts = [];
-    const startParts = parseExprPart(start, context);
+    const startParts = parseTokenPart(start, context);
 
     if (startParts) {
       parts.push(...startParts);
@@ -114,13 +118,13 @@ const parseExprPart = (
       const innerContext = parseRoot(
         childContext(movePos(context, partsLength(parts))),
         (context) => {
-          return parseExprPart(end, context) != null;
+          return parseTokenPart(end, context) != null;
         }
       );
 
       parts.push(...getContextParts(innerContext));
 
-      const endPart = parseExprPart(end, movePos(context, partsLength(parts)));
+      const endPart = parseTokenPart(end, movePos(context, partsLength(parts)));
       if (endPart) {
         return [...parts, ...endPart];
       } else {
@@ -140,3 +144,37 @@ const parsePart = (test: RegExp, context: Context): string => {
 };
 
 const partsLength = (buffer: string[]) => buffer.join("").length;
+export const getTokenValue = memoize((value: Token) => value.parts.join(""));
+
+export const getTokenAtPosition = memoize(
+  (parse: (source: string) => Token[]) =>
+    memoize((value: string, pos: number) => {
+      const tokens = parse(value);
+
+      for (let i = tokens.length; i--; ) {
+        const token = tokens[i];
+
+        if (!token.kind || token.pos > pos) {
+          continue;
+        }
+
+        let cpos = token.pos;
+        let j = 0;
+
+        for (; j < token.parts.length; j++) {
+          const part = token.parts[j];
+          const npos = cpos + part.length;
+          if (npos > pos) {
+            break;
+          }
+          cpos = npos;
+        }
+
+        if (j > 0) {
+          return getTokenAtPosition(parse)(value.substring(cpos), 0) ?? token;
+        } else {
+          return token;
+        }
+      }
+    })
+);

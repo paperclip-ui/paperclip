@@ -1,6 +1,7 @@
 import { State, getTokenAtCaret } from "./state";
 import { DeclarationValueEvent } from "./events";
 import produce from "immer";
+import { getTokenValue } from "./utils";
 
 export const reducer = (state: State, event: DeclarationValueEvent) => {
   switch (event.type) {
@@ -21,7 +22,7 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
         const newValue =
           state.value.slice(0, token.pos) +
           event.payload.value +
-          state.value.slice(token.pos + token.value.length);
+          state.value.slice(token.pos + getTokenValue(token).length);
         let caretPosition = newValue.indexOf("%|%");
         if (caretPosition === -1) {
           caretPosition = token.pos + event.payload.value.length;

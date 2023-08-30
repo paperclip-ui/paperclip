@@ -1,5 +1,5 @@
 import {} from "./reducer";
-import { Expression, simpleParser } from "./utils";
+import { Token, simpleParser } from "./utils";
 
 describe(__filename + "#", () => {
   Object.entries({

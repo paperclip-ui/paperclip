@@ -24,7 +24,7 @@ import {
 } from "@paperclip-ui/designer/src/components/SuggestionMenu";
 import { useSelector } from "@paperclip-ui/common";
 import { getEditorState } from "@paperclip-ui/designer/src/state";
-import { Expression as SimpleExpression } from "./utils";
+import { Token as SimpleExpression } from "./utils";
 
 export type DeclarationValueProps = {
   name: string;

@@ -29,14 +29,16 @@ import { Token as SimpleExpression } from "./utils";
 export type DeclarationValueProps = {
   name: string;
   value: string;
-  onChange: (value: string) => void;
+  isInherited?: boolean;
+  onChange: (value: string, imports: Record<string, string>) => void;
   onTab?: (event: React.KeyboardEvent<void>) => void;
 };
 
 export const DeclarationValue = ({
   name,
-  value,
+  value = "",
   onChange,
+  isInherited,
   onTab,
 }: DeclarationValueProps) => {
   const state = useSelector(getEditorState);
@@ -44,6 +46,7 @@ export const DeclarationValue = ({
   return (
     <RawInput
       value={value}
+      isInherited={isInherited}
       getSuggestionItems={getDeclSuggestionItems(name, state)}
       onChange={onChange}
       onTab={onTab}
@@ -52,14 +55,15 @@ export const DeclarationValue = ({
 };
 
 type RawInputProps = {
+  isInherited: boolean;
   getSuggestionItems: (token: SimpleExpression) => RawInputValueSuggestion[];
   value: string;
-  onChange: (value: string) => void;
+  onChange: (value: string, imports: Record<string, string>) => void;
   onTab: (event: React.KeyboardEvent<void>) => void;
 };
 
 const RawInput = (props: RawInputProps) => {
-  const { getSuggestionItems } = props;
+  const { getSuggestionItems, isInherited } = props;
   const {
     ref,
     activeToken,
@@ -112,6 +116,7 @@ const RawInput = (props: RawInputProps) => {
         ref={ref}
         value={value}
         onKeyUp={onKeyUp}
+        placeholder={isInherited ? value : undefined}
         onKeyDown={onKeyDown}
         onFocus={onFocus}
         onClick={onInputClick}
@@ -120,8 +125,16 @@ const RawInput = (props: RawInputProps) => {
   );
 };
 
-const useRawInput = ({ value, onChange, onTab }: RawInputProps) => {
-  const [state, dispatch] = useReducer(reducer, getInitialState(value));
+const useRawInput = ({
+  value,
+  onChange,
+  onTab,
+  isInherited,
+}: RawInputProps) => {
+  const [state, dispatch] = useReducer(
+    reducer,
+    getInitialState(isInherited ? "" : value)
+  );
   const activeToken = getTokenAtCaret(state);
 
   const ref = useRef<HTMLInputElement>(null);
@@ -176,9 +189,9 @@ const useRawInput = ({ value, onChange, onTab }: RawInputProps) => {
 
   useEffect(() => {
     if (value !== state.value) {
-      onChange(state.value);
+      onChange(state.value, state.valueNamespaces || {});
     }
-  }, [state.value]);
+  }, [state.value, state.valueNamespaces]);
 
   useEffect(() => {
     if (state.caretPosition !== -1 && state.active) {

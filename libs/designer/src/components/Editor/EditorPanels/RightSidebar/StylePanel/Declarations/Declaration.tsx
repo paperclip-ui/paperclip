@@ -21,7 +21,6 @@ type FieldProps = {
   onFocus?: () => void;
   onBlur?: () => void;
   onValueTab?: (event: React.KeyboardEvent<any>) => void;
-  onSave?: (details: SelectDetails) => void;
   isNew?: boolean;
 };
 
@@ -32,7 +31,6 @@ export const Declaration = memo(
     onBlur = noop,
     onFocus = noop,
     onValueTab = noop,
-    onSave = noop,
     isNew,
   }: FieldProps) => {
     const value = style && serializeDeclaration(style.value);
@@ -47,7 +45,7 @@ export const Declaration = memo(
     }, [name]);
 
     const onValueSelect = useCallback(
-      ({ value, imports }: NewDeclValue, details: SelectDetails) => {
+      (value: string, imports: Record<string, string>) => {
         dispatch({
           type: "ui/styleDeclarationsChanged",
           payload: {
@@ -55,7 +53,6 @@ export const Declaration = memo(
             imports,
           },
         });
-        onSave(details);
       },
       [name2]
     );
@@ -66,25 +63,13 @@ export const Declaration = memo(
       name
     );
 
-    // const input = (
-    //   <DeclarationValue
-    //     value={value}
-    //     isDefault={style?.ownerId !== targetId}
-    //     onSelect={onValueSelect}
-    //     onTab={onValueTab}
-    //     type={inputOptions.type}
-    //     options={
-    //       inputOptions.type === css.InputType.Enum ? inputOptions.options : []
-    //     }
-    //   />
-    // );
-
     const input = (
       <DeclarationValue
         name={name2}
         value={value}
+        isInherited={style?.ownerId !== targetId}
         onTab={onValueTab}
-        onChange={noop}
+        onChange={onValueSelect}
       />
     );
 

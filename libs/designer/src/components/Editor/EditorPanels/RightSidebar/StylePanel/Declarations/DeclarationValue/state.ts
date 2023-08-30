@@ -32,6 +32,8 @@ export type RawInputValueSuggestion =
   | RawInputValueSuggestionSection;
 
 export type State = {
+  // if something like var(mod.something) where mod points to a file
+  valueNamespaces?: Record<string, string>;
   active: boolean;
   value?: string;
   caretPosition: number;

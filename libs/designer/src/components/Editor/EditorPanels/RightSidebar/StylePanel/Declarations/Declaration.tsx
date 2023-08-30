@@ -44,8 +44,9 @@ export const Declaration = memo(
       setName(name);
     }, [name]);
 
-    const onValueSelect = useCallback(
+    const onValueSave = useCallback(
       (value: string, imports: Record<string, string>) => {
+        console.log("SAVE");
         dispatch({
           type: "ui/styleDeclarationsChanged",
           payload: {
@@ -69,11 +70,11 @@ export const Declaration = memo(
         value={value}
         isInherited={style?.ownerId !== targetId}
         onTab={onValueTab}
-        onChange={onValueSelect}
+        onSave={onValueSave}
       />
     );
 
-    const onBlur2 = (event) => {
+    const onBlur2 = () => {
       setTimeout(() => {
         if (ref.current.contains(document.activeElement)) {
           return;

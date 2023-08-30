@@ -1,12 +1,10 @@
 import { memoize } from "@paperclip-ui/common";
-// import { Token, tokenizer } from "./utils";
 import { DesignerState } from "@paperclip-ui/designer/src/state";
-import {
-  Token,
-  getTokenAtPosition,
-  getTokenValue,
-  simpleParser,
-} from "./utils";
+import { Token, getTokenAtPosition, simpleParser } from "./utils";
+import { declSuggestionMap } from "./css";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { DeclarationValueType, inferDeclarationValueType } from "./css-utils";
+import { camelCase } from "lodash";
 
 export enum RawInputValueSuggestionKind {
   Section,
@@ -17,7 +15,7 @@ export type RawInputValueSuggestionItem = {
   kind: RawInputValueSuggestionKind.Item;
   label?: string;
   value: string;
-  preview?: string;
+  previewValue?: string;
   source?: string;
   id: string;
 };
@@ -33,7 +31,8 @@ export type RawInputValueSuggestion =
 
 export type State = {
   // if something like var(mod.something) where mod points to a file
-  valueNamespaces?: Record<string, string>;
+  imports?: Record<string, string>;
+  shouldPersist?: boolean;
   active: boolean;
   value?: string;
   caretPosition: number;
@@ -75,60 +74,12 @@ export const parseStyleDeclaration = simpleParser([
   [ExpressionKind.Whitespace, /^[\s\t]+/],
 ]);
 
-const valueSuggestion =
-  (value: string): ((token: Token) => RawInputValueSuggestionItem) =>
-  (expr: Token) => ({
-    kind: RawInputValueSuggestionKind.Item,
-    label: value.replace("%|%", "").replace("%value%", getTokenValue(expr)),
-    value: value.replace("%value", getTokenValue(expr)),
-    id: value,
-  });
-
-const declSuggestions: Record<
-  string,
-  Partial<
-    Record<
-      ExpressionKind,
-      Array<
-        | RawInputValueSuggestionItem
-        | ((value: Token) => RawInputValueSuggestionItem)
-      >
-    >
-  >
-> = {
-  background: {
-    [ExpressionKind.FunctionCall]: [valueSuggestion("linear-gradient(%|%)")],
-    [ExpressionKind.Unit]: [],
-    [ExpressionKind.Keyword]: [
-      valueSuggestion("repeat"),
-      valueSuggestion("no-repeat"),
-    ],
-    [ExpressionKind.Whitespace]: [],
-    [ExpressionKind.Number]: [
-      valueSuggestion("%value%px"),
-      valueSuggestion("%value%em"),
-      valueSuggestion("%value%rem"),
-    ],
-  },
-  color: {
-    [ExpressionKind.FunctionCall]: [valueSuggestion("linear-gradient(%|%)")],
-    [ExpressionKind.Keyword]: [valueSuggestion("linear-gradient(%|%)")],
-    [ExpressionKind.Whitespace]: [valueSuggestion("linear-gradient(%|%)")],
-  },
-  position: {
-    [ExpressionKind.Keyword]: [
-      valueSuggestion("relative"),
-      valueSuggestion("absolute"),
-      valueSuggestion("fixed"),
-      valueSuggestion("static"),
-    ],
-  },
-};
-
 export const getDeclSuggestionItems = memoize(
   (declName: string, state: DesignerState) => (token: Token) => {
+    const declSuggestionInfo = declSuggestionMap[declName];
+
     const nativeSuggestions =
-      declSuggestions[declName]?.[token.kind]?.map((suggestion) => {
+      declSuggestionInfo?.suggestions?.map((suggestion) => {
         if (typeof suggestion === "function") {
           return suggestion(token);
         }
@@ -137,13 +88,49 @@ export const getDeclSuggestionItems = memoize(
 
     const items = [];
 
-    if (nativeSuggestions) {
+    if (nativeSuggestions.length) {
       items.push(
         { kind: RawInputValueSuggestionKind.Section, label: "Native" },
         ...nativeSuggestions
       );
     }
 
+    const possibleTokens = ast.getGraphAtoms(state.graph).filter((atom) => {
+      // default to keyword (could be something like "inter sans-serif")
+      const valueType =
+        inferDeclarationValueType(atom.cssValue) ??
+        DeclarationValueType.Keyword;
+
+      return (
+        atom.atom.isPublic &&
+        declSuggestionInfo?.valueTypes?.includes(valueType)
+      );
+    });
+
+    if (possibleTokens.length) {
+      items.push({
+        kind: RawInputValueSuggestionKind.Section,
+        label: "Tokens",
+      });
+      for (const token of possibleTokens) {
+        const namespace = getPathNamespace(token.dependency.path);
+
+        items.push({
+          kind: RawInputValueSuggestionKind.Item,
+          label: token.atom.name,
+          value: `var(${namespace}.${token.atom.name})`,
+          previewValue: token.cssValue,
+          source: token.dependency.path,
+          id: token.atom.id,
+        });
+      }
+    }
+
     return items;
   }
 );
+
+export const getPathNamespace = (path: string) => {
+  const parts = path.split("/");
+  return camelCase(parts[parts.length - 1].replace(".pc", ""));
+};

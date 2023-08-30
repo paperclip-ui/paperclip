@@ -4,7 +4,6 @@ import React, {
   useMemo,
   useReducer,
   useRef,
-  useState,
 } from "react";
 import { reducer } from "./reducer";
 import {
@@ -15,8 +14,8 @@ import {
   getTokenAtCaret,
 } from "./state";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
-import { serializeDeclaration } from "@paperclip-ui/proto-ext/lib/ast/serialize";
-import { DeclarationValue as DeclarationValueExpr } from "@paperclip-ui/proto/lib/generated/ast/css";
+import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
+
 import {
   SuggestionMenu,
   SuggestionMenuItem,
@@ -30,14 +29,14 @@ export type DeclarationValueProps = {
   name: string;
   value: string;
   isInherited?: boolean;
-  onChange: (value: string, imports: Record<string, string>) => void;
+  onSave: (value: string, imports: Record<string, string>) => void;
   onTab?: (event: React.KeyboardEvent<void>) => void;
 };
 
 export const DeclarationValue = ({
   name,
   value = "",
-  onChange,
+  onSave,
   isInherited,
   onTab,
 }: DeclarationValueProps) => {
@@ -48,7 +47,7 @@ export const DeclarationValue = ({
       value={value}
       isInherited={isInherited}
       getSuggestionItems={getDeclSuggestionItems(name, state)}
-      onChange={onChange}
+      onSave={onSave}
       onTab={onTab}
     />
   );
@@ -58,7 +57,7 @@ type RawInputProps = {
   isInherited: boolean;
   getSuggestionItems: (token: SimpleExpression) => RawInputValueSuggestion[];
   value: string;
-  onChange: (value: string, imports: Record<string, string>) => void;
+  onSave: (value: string, imports: Record<string, string>) => void;
   onTab: (event: React.KeyboardEvent<void>) => void;
 };
 
@@ -94,9 +93,15 @@ const RawInput = (props: RawInputProps) => {
         <SuggestionMenuItem
           key={item.id}
           value={item.value}
-          filterText={item.value + item.source + item.preview}
+          selectValue={item}
+          filterText={item.value + item.source + item.previewValue + item.label}
         >
-          {item.label ?? item.value}
+          <inputStyles.TokenMenuContent
+            style={{ "--color": item.previewValue }}
+            context={item.source?.split("/").pop()}
+          >
+            {item.label ?? item.value}
+          </inputStyles.TokenMenuContent>
         </SuggestionMenuItem>
       );
     });
@@ -125,12 +130,7 @@ const RawInput = (props: RawInputProps) => {
   );
 };
 
-const useRawInput = ({
-  value,
-  onChange,
-  onTab,
-  isInherited,
-}: RawInputProps) => {
+const useRawInput = ({ value, onSave, onTab, isInherited }: RawInputProps) => {
   const [state, dispatch] = useReducer(
     reducer,
     getInitialState(isInherited ? "" : value)
@@ -167,11 +167,11 @@ const useRawInput = ({
     });
   };
 
-  const onSuggestionSelect = ([value]) => {
+  const onSuggestionSelect = ([item]) => {
     dispatch({
       type: "suggestionSelected",
       payload: {
-        value,
+        item,
       },
     });
   };
@@ -188,10 +188,10 @@ const useRawInput = ({
   };
 
   useEffect(() => {
-    if (value !== state.value) {
-      onChange(state.value, state.valueNamespaces || {});
+    if (state.shouldPersist) {
+      onSave(state.value, state.imports);
     }
-  }, [state.value, state.valueNamespaces]);
+  }, [state.shouldPersist]);
 
   useEffect(() => {
     if (state.caretPosition !== -1 && state.active) {

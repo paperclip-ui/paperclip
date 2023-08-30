@@ -1,4 +1,5 @@
 import { BaseEvent } from "@paperclip-ui/common";
+import { RawInputValueSuggestionItem } from "./state";
 
 type KeyDown = BaseEvent<
   "keyDown",
@@ -27,7 +28,7 @@ type Focused = BaseEvent<
 type SuggestionSelected = BaseEvent<
   "suggestionSelected",
   {
-    value: string;
+    value: RawInputValueSuggestionItem;
   }
 >;
 

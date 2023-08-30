@@ -85,7 +85,6 @@ public style card {
     border-radius: var(roundedMD)
     background: rgba(37, 37, 37, 0.8)
     backdrop-filter: blur(10px)
-
 }
 
 public style inputActive {

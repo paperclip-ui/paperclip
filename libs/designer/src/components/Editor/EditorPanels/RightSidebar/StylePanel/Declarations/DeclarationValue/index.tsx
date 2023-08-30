@@ -23,7 +23,9 @@ import {
 } from "@paperclip-ui/designer/src/components/SuggestionMenu";
 import { useSelector } from "@paperclip-ui/common";
 import { getEditorState } from "@paperclip-ui/designer/src/state";
-import { Token as SimpleExpression } from "./utils";
+import { Token as SimpleExpression, getTokenValue } from "./utils";
+import { DeclarationValueType, inferDeclarationValueType } from "./css-utils";
+import { ColorInput } from "./ValueInputs/color";
 
 export type DeclarationValueProps = {
   name: string;
@@ -81,30 +83,42 @@ const RawInput = (props: RawInputProps) => {
   const values = useMemo(() => [value], [value]);
 
   const menu = useCallback(() => {
-    return getSuggestionItems(activeToken).map((item) => {
-      if (item.kind === RawInputValueSuggestionKind.Section) {
+    const items = [];
+
+    const valueType = inferDeclarationValueType(getTokenValue(activeToken));
+
+    items.push(<ColorInput value={getTokenValue(activeToken)} />);
+
+    items.push(
+      ...getSuggestionItems(activeToken).map((item) => {
+        if (item.kind === RawInputValueSuggestionKind.Section) {
+          return (
+            <SuggestionMenuSection key={item.label}>
+              {item.label}
+            </SuggestionMenuSection>
+          );
+        }
         return (
-          <SuggestionMenuSection key={item.label}>
-            {item.label}
-          </SuggestionMenuSection>
-        );
-      }
-      return (
-        <SuggestionMenuItem
-          key={item.id}
-          value={item.value}
-          selectValue={item}
-          filterText={item.value + item.source + item.previewValue + item.label}
-        >
-          <inputStyles.TokenMenuContent
-            style={{ "--color": item.previewValue }}
-            context={item.source?.split("/").pop()}
+          <SuggestionMenuItem
+            key={item.id}
+            value={item.value}
+            selectValue={item}
+            filterText={
+              item.value + item.source + item.previewValue + item.label
+            }
           >
-            {item.label ?? item.value}
-          </inputStyles.TokenMenuContent>
-        </SuggestionMenuItem>
-      );
-    });
+            <inputStyles.TokenMenuContent
+              style={{ "--color": item.previewValue }}
+              context={item.source?.split("/").pop()}
+            >
+              {item.label ?? item.value}
+            </inputStyles.TokenMenuContent>
+          </SuggestionMenuItem>
+        );
+      })
+    );
+
+    return items;
   }, [activeToken, getSuggestionItems]);
 
   return (

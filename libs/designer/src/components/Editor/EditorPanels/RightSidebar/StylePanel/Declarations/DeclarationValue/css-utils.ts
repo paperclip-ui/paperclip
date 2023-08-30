@@ -29,7 +29,7 @@ export const declValueSuggestions = (
 });
 
 const colorDeclValueTypes: Array<[DeclarationValueType, RegExp]> = [
-  [DeclarationValueType.Color, /^(linear-gradient|rgba?|hsl|lab|lch|#)/],
+  [DeclarationValueType.Color, /^(linear-gradient|rgba?|hsl|lab|lch|red|#)/],
   [DeclarationValueType.Unit, /^\-?\d+(\.\d+)?\w+/],
   [DeclarationValueType.Number, /^\-?\d+(\.\d+)?/],
   [DeclarationValueType.Variable, /^var\(/],

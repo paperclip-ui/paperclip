@@ -76,8 +76,8 @@ public component ColorPicker {
             padding: var(mod.space03)
             color: var(mod.gray0)
             font-family: var(mod.defaultFontFamily)
-            width: 400px
-            height: 400px
+            width: 250px
+            height: 250px
             border-radius: 0px
             border: 0px
         }
@@ -133,12 +133,13 @@ public component ColorPicker {
 */
 
 div preview {
-    div {
+    div container {
         style extends mod.popup {
             position: absolute
             top: 50%
             left: 50%
             transform: translate(-50%, -50%)
+            width: 250px
         }
         ColorPicker {
             style

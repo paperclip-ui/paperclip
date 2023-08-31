@@ -144,7 +144,7 @@ const parsePart = (test: RegExp, context: Context): string => {
 };
 
 const partsLength = (buffer: string[]) => buffer.join("").length;
-export const getTokenValue = memoize((value: Token) => value.parts.join(""));
+export const getTokenValue = memoize((value: Token) => value?.parts.join(""));
 
 export const getTokenAtPosition = memoize(
   (parse: (source: string) => Token[]) =>

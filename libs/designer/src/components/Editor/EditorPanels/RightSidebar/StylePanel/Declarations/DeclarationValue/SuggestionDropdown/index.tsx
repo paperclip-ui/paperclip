@@ -4,31 +4,50 @@ import {
   SuggestionMenuContainer,
   SuggestionMenuProps,
 } from "@paperclip-ui/designer/src/components/SuggestionMenu";
+import { MenuList } from "@paperclip-ui/designer/src/styles/menu.pc";
 
 export type SuggestionDropdownProps = {
   editorInput?: React.ReactChild;
 } & SuggestionMenuProps;
 
-export const SuggestionDropdown = ({
+export const DeclSuggestionMenu = ({
   editorInput,
   ...rest
 }: SuggestionDropdownProps) => {
+  const { onInputMouseDown } = useDeclSuggestionMenu();
+
   return (
     <SuggestionMenuContainer
       {...rest}
-      renderMenu={(options) => {
+      renderMenu={(options, props) => {
         return (
-          <styles.DeclSuggestionMenu>
+          <styles.DeclSuggestionMenu {...props}>
             {editorInput && (
               <>
-                {editorInput}
+                <div onMouseDown={onInputMouseDown}>{editorInput}</div>
                 <styles.Divider />
               </>
             )}
-            {options}
+            <MenuList>{options}</MenuList>
           </styles.DeclSuggestionMenu>
         );
       }}
     />
   );
+};
+
+const useDeclSuggestionMenu = () => {
+  const onInputMouseDown = (event: React.MouseEvent) => {
+    console.log("DOWNN");
+
+    // prevent menu from being closed
+    event.stopPropagation();
+
+    // prevent from blurring
+    event.preventDefault();
+  };
+
+  return {
+    onInputMouseDown,
+  };
 };

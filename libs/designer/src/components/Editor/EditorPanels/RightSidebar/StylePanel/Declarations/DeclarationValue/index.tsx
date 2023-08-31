@@ -17,7 +17,6 @@ import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 
 import {
-  SuggestionMenu,
   SuggestionMenuItem,
   SuggestionMenuSection,
 } from "@paperclip-ui/designer/src/components/SuggestionMenu";
@@ -26,6 +25,7 @@ import { getEditorState } from "@paperclip-ui/designer/src/state";
 import { Token as SimpleExpression, getTokenValue } from "./utils";
 import { DeclarationValueType, inferDeclarationValueType } from "./css-utils";
 import { ColorInput } from "./ValueInputs/color";
+import { DeclSuggestionMenu } from "./SuggestionDropdown";
 
 export type DeclarationValueProps = {
   name: string;
@@ -81,13 +81,16 @@ const RawInput = (props: RawInputProps) => {
   } = useRawInput(props);
 
   const values = useMemo(() => [value], [value]);
+  const valueType = inferDeclarationValueType(getTokenValue(activeToken));
+
+  let editorInput = null;
+
+  if (valueType === DeclarationValueType.Color) {
+    editorInput = <ColorInput value={value} />;
+  }
 
   const menu = useCallback(() => {
     const items = [];
-
-    const valueType = inferDeclarationValueType(getTokenValue(activeToken));
-
-    items.push(<ColorInput value={getTokenValue(activeToken)} />);
 
     items.push(
       ...getSuggestionItems(activeToken).map((item) => {
@@ -122,11 +125,12 @@ const RawInput = (props: RawInputProps) => {
   }, [activeToken, getSuggestionItems]);
 
   return (
-    <SuggestionMenu
+    <DeclSuggestionMenu
       values={values}
       open={showSuggestionMenu}
       menu={menu}
       onBlur={onBlur}
+      editorInput={editorInput}
       onSelect={onSuggestionSelect}
       onOtherSelect={onCustomSelect}
       onClose={onSuggestionMenuClose}
@@ -140,7 +144,7 @@ const RawInput = (props: RawInputProps) => {
         onFocus={onFocus}
         onClick={onInputClick}
       />
-    </SuggestionMenu>
+    </DeclSuggestionMenu>
   );
 };
 

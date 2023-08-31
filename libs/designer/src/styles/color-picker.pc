@@ -7,7 +7,7 @@ import "./theme.pc" as mod
 */
 
 public component ColorDrop {
-    render div root {
+    render div root(style: style) {
         style {
             width: var(mod.space06)
             height: var(mod.space06)
@@ -31,19 +31,26 @@ public component ColorBox {
     variant rounded trigger {
         ".rounded"
     }
-    render div {
-        slot bg {
-            x-hsl-color-box(hue: "0.2") {
+    variant big trigger {
+        ".big"
+    }
+    render div(class: class, style: style) {
+        style variant rounded {
+            border-radius: 99px
+        }
+        style variant big {
+            height: 100%
+        }
+        slot children {
+            div {
                 style {
+                    background: gray
                     width: 100%
                     height: 100%
                 }
             }
+            ColorDrop drop
         }
-        style variant rounded {
-            border-radius: 99px
-        }
-        ColorDrop drop
         style {
             position: relative
             flex-shrink: 1
@@ -77,51 +84,29 @@ public component ColorPicker {
             color: var(mod.gray0)
             font-family: var(mod.defaultFontFamily)
             width: 250px
-            height: 250px
             border-radius: 0px
             border: 0px
         }
-        ColorBox top {
-            style {
-                height: 100%
+        slot children {
+
+            ColorBox top(class: "big") {
+                override {
+                    variant rounded
+                }
             }
-            override {
-                variant rounded
-            }
-        }
-        ColorBox {
-            insert bg {
-                x-hue-color-box {
-                    style {
-                        width: 100%
-                        height: 100%
+
+            ColorBox {
+                override {
+                    variant rounded trigger {
+                        true
                     }
                 }
             }
-            style {
-                height: 24px
-            }
-            override {
-                variant rounded trigger {
-                    true
-                }
-            }
-        }
-        ColorBox {
-            insert bg {
-                x-alpha-color-box {
-                    style {
-                        width: 100%
-                        height: 100%
+            ColorBox {
+                override {
+                    variant rounded trigger {
+                        true
                     }
-                }
-            }
-            style {
-                height: 24px
-            }
-            override {
-                variant rounded trigger {
-                    true
                 }
             }
         }
@@ -141,9 +126,7 @@ div preview {
             transform: translate(-50%, -50%)
             width: 250px
         }
-        ColorPicker {
-            style
-        }
+        ColorPicker
         hr {
             style {
                 height: 1px

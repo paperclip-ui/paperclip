@@ -16,8 +16,8 @@ export const usePositioner = () => {
     Object.assign(currentTargetRef.style, {
       position: "fixed",
       zIndex: 9999,
-      top: bounds.top,
-      minWidth: bounds.width,
+      top: `${bounds.top}px`,
+      minWidth: `${bounds.width}px`,
       scroll: "hidden",
       display: "inline-block",
     });
@@ -25,10 +25,11 @@ export const usePositioner = () => {
     const containerBounds = currentTargetRef.getBoundingClientRect();
 
     Object.assign(currentTargetRef.style, {
-      left: Math.min(
-        bounds.left,
-        window.outerWidth - containerBounds.width - PADDING
-      ),
+      left:
+        Math.min(
+          bounds.left,
+          window.outerWidth - containerBounds.width - PADDING
+        ) + "px",
     });
   }, [anchorRef.current, currentTargetRef]);
 

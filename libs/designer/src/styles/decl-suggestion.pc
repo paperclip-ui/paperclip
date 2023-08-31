@@ -22,10 +22,10 @@ public component Divider {
 */
 
 public component DeclSuggestionMenu {
-    render div {
-        style extends theme.popup {
+    render div(style: style, onKeyDown: onKeyDown, tabIndex: "-1") {
+        style extends theme.fontDefault, theme.popup {
+            width: 250px
             position: relative
-            font-family: var(theme.defaultFontFamily)
             color: var(theme.gray0)
         }
         slot children {

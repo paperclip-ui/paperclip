@@ -9,6 +9,7 @@ import { reducer } from "./reducer";
 import {
   RawInputValueSuggestion,
   RawInputValueSuggestionKind,
+  State,
   getDeclSuggestionItems,
   getInitialState,
   getTokenAtCaret,
@@ -84,6 +85,7 @@ const RawInput = (props: RawInputProps) => {
     onSuggestionSelect,
     onSuggestionMenuClose,
     onInputClick,
+    onCustomInputChangeComplete,
     onCustomInputChange,
     onCustomSelect,
   } = useRawInput(props);
@@ -96,7 +98,11 @@ const RawInput = (props: RawInputProps) => {
 
   if (valueType === DeclarationValueType.Color) {
     editorInput = (
-      <ColorInput value={tokenValue} onChange={onCustomInputChange} />
+      <ColorInput
+        value={tokenValue}
+        onChange={onCustomInputChange}
+        onChangeComplete={onCustomInputChangeComplete}
+      />
     );
   }
 
@@ -160,10 +166,22 @@ const RawInput = (props: RawInputProps) => {
 };
 
 const engine = (onChange, onChangeComplete) => () => {
-  console.log("ENGINE");
   return {
-    handleEvent(event: DeclarationValueEvent) {
-      console.log("EVENT");
+    handleEvent(event: DeclarationValueEvent, state: State) {
+      switch (event.type) {
+        case "suggestionSelected":
+        case "customInputChangeComplete":
+        case "inputClicked": {
+          console.log("CHANGEEEEEE");
+
+          onChangeComplete(state.value, state.imports);
+          break;
+        }
+        case "customInputChanged": {
+          onChange(state.value);
+          break;
+        }
+      }
     },
   };
 };

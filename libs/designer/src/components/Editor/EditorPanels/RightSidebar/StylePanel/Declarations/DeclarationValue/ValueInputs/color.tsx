@@ -15,6 +15,7 @@ import { startDOMDrag } from "@paperclip-ui/designer/src/components/utils/dnd";
 type ColorInputProps = {
   value: string;
   onChange: (value: string) => void;
+  onChangeComplete: (value: string) => void;
 };
 
 type RGBA = [number, number, number, number];
@@ -25,7 +26,11 @@ enum GrabberAxis {
   Y = 2,
 }
 
-export const ColorInput = ({ value, onChange }: ColorInputProps) => {
+export const ColorInput = ({
+  value,
+  onChange,
+  onChangeComplete,
+}: ColorInputProps) => {
   const color: Color | null = useMemo(() => {
     try {
       return Color(value);
@@ -37,14 +42,22 @@ export const ColorInput = ({ value, onChange }: ColorInputProps) => {
     color ? normalizeColorHSL(color) : [0, 0, 0, 1]
   );
 
-  const colorChangeCallback = useMemo(
-    () => (updater: (curr: HSLA, prev: HSLA) => HSLA) => (rgba: RGBA) => {
-      const newValue = updater(rgbaToHsla(rgba), hsla);
-      setHSLA(newValue);
-      onChange(stringifyRgba(hslaToRgba(newValue)));
-    },
-    [hsla, onChange]
+  const changeCallback = useMemo(
+    () =>
+      memoize(
+        (callback) =>
+          (updater: (curr: HSLA, prev: HSLA) => HSLA) =>
+          (rgba: RGBA) => {
+            const newValue = updater(rgbaToHsla(rgba), hsla);
+            setHSLA(newValue);
+            callback(stringifyRgba(hslaToRgba(newValue)));
+          }
+      ),
+    [hsla]
   );
+
+  const colorChangeCallback = changeCallback(onChange);
+  const colorChangeCompleteCallback = changeCallback(onChangeComplete);
 
   return (
     <styles.ColorPicker>
@@ -53,7 +66,7 @@ export const ColorInput = ({ value, onChange }: ColorInputProps) => {
         big
         draw={hslDrawer(hsla[0])}
         onChange={colorChangeCallback(updateHSLA)}
-        onChangeComplete={colorChangeCallback(updateHSLA)}
+        onChangeComplete={colorChangeCompleteCallback(updateHSLA)}
         grabberAxis={GrabberAxis.X | GrabberAxis.Y}
         getGrapperPoint={hslPointer}
       />
@@ -61,7 +74,7 @@ export const ColorInput = ({ value, onChange }: ColorInputProps) => {
         value={hsla}
         draw={hueDrawer}
         onChange={colorChangeCallback(updateHue)}
-        onChangeComplete={colorChangeCallback(updateHue)}
+        onChangeComplete={colorChangeCompleteCallback(updateHue)}
         grabberAxis={GrabberAxis.X}
         getGrapperPoint={huePointer}
       />
@@ -69,7 +82,7 @@ export const ColorInput = ({ value, onChange }: ColorInputProps) => {
         value={hsla}
         draw={opacityDrawer(hsla[0])}
         onChange={colorChangeCallback(updateOpacity)}
-        onChangeComplete={colorChangeCallback(updateOpacity)}
+        onChangeComplete={colorChangeCompleteCallback(updateOpacity)}
         grabberAxis={GrabberAxis.X}
         getGrapperPoint={opacityPointer}
       />
@@ -232,8 +245,7 @@ const hslPointer = (hsl: HSLA, width: number, height: number) => {
   };
 };
 
-const opacityPointer = ([h, s, l, a]: HSLA, width: number, height: number) => {
-  console.log("A", a);
+const opacityPointer = ([, , , a]: HSLA, width: number, height: number) => {
   return {
     left: width * a,
   };

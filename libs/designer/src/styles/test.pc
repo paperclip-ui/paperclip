@@ -6,7 +6,8 @@
 div {
     style {
         position: relative
-        color: linear-gradient(red)
+        color: #FF6600
     }
+    text "something!!"
 }
 

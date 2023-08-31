@@ -46,7 +46,6 @@ export const Declaration = memo(
 
     const onValueSave = useCallback(
       (value: string, imports: Record<string, string>) => {
-        console.log("SAVE");
         dispatch({
           type: "ui/styleDeclarationsChanged",
           payload: {

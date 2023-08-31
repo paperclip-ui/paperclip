@@ -12,6 +12,7 @@ public component ColorDrop {
             width: var(mod.space06)
             height: var(mod.space06)
             top: 0px
+            transform: translate(-50%, -50%)
             left: 0px
             background: transparent
             border-radius: 16px
@@ -34,7 +35,7 @@ public component ColorBox {
     variant big trigger {
         ".big"
     }
-    render div(class: class, style: style) {
+    render div(class: class, style: style, onMouseDown: onMouseDown, onMouseUp: onMouseUp) {
         style variant rounded {
             border-radius: 99px
         }

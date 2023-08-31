@@ -1,13 +1,20 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/color-picker.pc";
 import { memoize } from "@paperclip-ui/common";
-import { Point } from "@paperclip-ui/designer/src/state/geom";
 import classNames from "classnames";
-import { noop } from "lodash";
+import Color from "color";
+import { startDOMDrag } from "@paperclip-ui/designer/src/components/utils/dnd";
 // https://github.com/crcn/tandem-old/blob/10.0.0/packages/front-end/src/components/inputs/color/picker-controller.tsx#L66
 
 type ColorInputProps = {
   value: string;
+  onChange: (value: string) => void;
 };
 
 type RGBA = [number, number, number, number];
@@ -18,8 +25,18 @@ enum GrabberAxis {
   Y = 2,
 }
 
-export const ColorInput = ({ value }: ColorInputProps) => {
-  const hsla = rgbaToHsla(parseRGBA("rgba(255, 0, 0, 1)"));
+export const ColorInput = ({ value, onChange }: ColorInputProps) => {
+  const color: Color = useMemo(() => Color(value), [value]);
+  const [hsla, setHSLA] = useState(normalizeColorHSL(color));
+
+  const colorChangeCallback = useMemo(
+    () => (updater: (curr: HSLA, prev: HSLA) => HSLA) => (rgba: RGBA) => {
+      const newValue = updater(rgbaToHsla(rgba), hsla);
+      setHSLA(newValue);
+      onChange(stringifyRgba(hslaToRgba(newValue)));
+    },
+    [hsla, onChange]
+  );
 
   return (
     <styles.ColorPicker>
@@ -27,25 +44,25 @@ export const ColorInput = ({ value }: ColorInputProps) => {
         value={hsla}
         big
         draw={hslDrawer(hsla[0])}
-        onChange={noop}
-        onChangeComplete={noop}
+        onChange={colorChangeCallback(updateHSLA)}
+        onChangeComplete={colorChangeCallback(updateHSLA)}
         grabberAxis={GrabberAxis.X | GrabberAxis.Y}
         getGrapperPoint={hslPointer}
       />
       <ColorBox
         value={hsla}
         draw={hueDrawer}
-        onChange={noop}
-        onChangeComplete={noop}
-        grabberAxis={GrabberAxis.X | GrabberAxis.Y}
+        onChange={colorChangeCallback(updateHue)}
+        onChangeComplete={colorChangeCallback(updateHue)}
+        grabberAxis={GrabberAxis.X}
         getGrapperPoint={huePointer}
       />
       <ColorBox
         value={hsla}
         draw={opacityDrawer(hsla[0])}
-        onChange={noop}
-        onChangeComplete={noop}
-        grabberAxis={GrabberAxis.X | GrabberAxis.Y}
+        onChange={colorChangeCallback(updateOpacity)}
+        onChangeComplete={colorChangeCallback(updateOpacity)}
+        grabberAxis={GrabberAxis.X}
         getGrapperPoint={opacityPointer}
       />
     </styles.ColorPicker>
@@ -66,11 +83,29 @@ type ColorBoxProps = {
   grabberAxis: number;
 };
 
-const ColorBox = ({ big, draw }: ColorBoxProps) => {
+const normalizeColorHSL = memoize((color: Color): HSLA => {
+  return rgbaToHsla([color.red(), color.green(), color.blue(), color.alpha()]);
+});
+
+const ColorBox = ({
+  grabberAxis,
+  value: hsla,
+  big,
+  draw,
+  getGrapperPoint,
+  onChange,
+  onChangeComplete,
+}: ColorBoxProps) => {
   const ref = useRef<HTMLDivElement>();
   const canvasRef = useRef<HTMLCanvasElement>();
-  const [size, setSize] = useState<{ width: number; height: number }>();
-  const [drawn, setDrawn] = useState(false);
+  const width = `100%`;
+  const height = big ? `150px` : `24px`;
+
+  const [size, setSize] = useState<{ width: number; height: number }>({
+    width: 0,
+    height: 0,
+  });
+  const [grabberPoint, setGrabberPoint] = useState<Record<string, any>>({});
 
   const onResize = useCallback(() => {
     setSize(ref.current.getBoundingClientRect());
@@ -85,29 +120,73 @@ const ColorBox = ({ big, draw }: ColorBoxProps) => {
   }, []);
 
   useEffect(() => {
-    if (!drawn && size?.width && size?.height) {
-      setDrawn(() => {
-        draw(canvasRef.current, size.width, size.height);
-        return true;
-      });
+    if (size?.width && size?.height) {
+      setGrabberPoint(getGrapperPoint(hsla, size.width, size.height));
+      draw(canvasRef.current, size.width, size.height);
     }
-  }, [size, drawn, draw]);
+  }, [size, draw]);
+
+  useEffect(() => {});
+
+  const onMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    const rect = ref.current.getBoundingClientRect();
+
+    const handleChange = (callback) => (event) => {
+      const point = {
+        left:
+          grabberAxis & GrabberAxis.X
+            ? Math.max(0, Math.min(rect.width - 1, event.clientX - rect.left))
+            : 0,
+        top:
+          grabberAxis & GrabberAxis.Y
+            ? Math.max(0, Math.min(rect.height - 1, event.clientY - rect.top))
+            : 0,
+      };
+      if (callback) {
+        const imageData = canvasRef.current
+          .getContext("2d")
+          .getImageData(point.left, point.top, 1, 1, {}).data;
+
+        callback(imageData);
+      }
+
+      setGrabberPoint(point);
+    };
+
+    startDOMDrag(
+      event.nativeEvent,
+      null,
+      handleChange(onChange),
+      handleChange(onChangeComplete)
+    );
+  };
 
   return (
     <styles.ColorBox
       ref={ref}
+      onMouseDown={onMouseDown}
+      style={{ width, height }}
       class={classNames({
         big,
       })}
     >
       <canvas ref={canvasRef} />
-      <Grabber />
+      <Grabber
+        style={{
+          ...grabberPoint,
+          transform: big ? `translate(-50%, -50%)` : `translateX(-50%)`,
+        }}
+      />
     </styles.ColorBox>
   );
 };
 
-const Grabber = () => {
-  return <styles.ColorDrop />;
+type GrabberProps = {
+  style: Record<string, any>;
+};
+
+const Grabber = ({ style }: GrabberProps) => {
+  return <styles.ColorDrop style={style} />;
 };
 
 const stringifyRgba = ([r, g, b, a]: RGBA) => `rgba(${r}, ${g}, ${b}, ${a})`;
@@ -138,6 +217,7 @@ const hslDrawer = memoize(
 
 const hslPointer = (hsl: HSLA, width: number, height: number) => {
   const [h, s, v] = hslToHsv(hsl);
+
   return {
     left: width * (1 - s),
     top: height * (1 - v),
@@ -145,6 +225,7 @@ const hslPointer = (hsl: HSLA, width: number, height: number) => {
 };
 
 const opacityPointer = ([h, s, l, a]: HSLA, width: number, height: number) => {
+  console.log("A", a);
   return {
     left: width * a,
   };
@@ -184,22 +265,16 @@ const opacityDrawer = memoize(
   }
 );
 
-const updateOpacity = (rgba: RGBA, [h, s, l]: HSLA) => {
-  const l2 = rgbaToHsla(rgba)[2];
+const updateOpacity = ([, , l2]: HSLA, [h, s, l]: HSLA): HSLA => {
   return [h, s, l, lToA(l2)];
 };
 
 const lToA = (l) =>
   Number((1 - Math.min(0.5, Math.max(0, l - 0.5)) / 0.5).toFixed(2));
 
-const updateHue = (rgba: RGBA, [, s, l, a]: HSLA) => [
-  rgbaToHsla(rgba)[0],
-  s,
-  l,
-  a,
-];
-const updateHSLA = (rgba: RGBA, [h, , , a]: HSLA) => {
-  const [, s, l] = rgbaToHsla(rgba);
+const updateHue = ([h]: HSLA, [, s, l, a]: HSLA): HSLA => [h, s, l, a];
+
+const updateHSLA = ([, s, l]: HSLA, [h, , , a]: HSLA): HSLA => {
   return [h, s, l, a];
 };
 

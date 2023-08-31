@@ -13,6 +13,7 @@ import {
   getInitialState,
   getTokenAtCaret,
 } from "./state";
+
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 
@@ -77,16 +78,20 @@ const RawInput = (props: RawInputProps) => {
     onSuggestionSelect,
     onSuggestionMenuClose,
     onInputClick,
+    onCustomInputChange,
     onCustomSelect,
   } = useRawInput(props);
 
   const values = useMemo(() => [value], [value]);
-  const valueType = inferDeclarationValueType(getTokenValue(activeToken));
+  const tokenValue = getTokenValue(activeToken);
+  const valueType = inferDeclarationValueType(tokenValue);
 
   let editorInput = null;
 
   if (valueType === DeclarationValueType.Color) {
-    editorInput = <ColorInput value={value} />;
+    editorInput = (
+      <ColorInput value={tokenValue} onChange={onCustomInputChange} />
+    );
   }
 
   const menu = useCallback(() => {
@@ -194,6 +199,15 @@ const useRawInput = ({ value, onSave, onTab, isInherited }: RawInputProps) => {
     });
   };
 
+  const onCustomInputChange = (value: string) => {
+    dispatch({
+      type: "customInputChanged",
+      payload: {
+        value,
+      },
+    });
+  };
+
   const onSuggestionMenuClose = () =>
     dispatch({
       type: "suggestionMenuClose",
@@ -205,11 +219,13 @@ const useRawInput = ({ value, onSave, onTab, isInherited }: RawInputProps) => {
     });
   };
 
+  // TODO: probably want to incorporate onChange and onChangeComplete where
+  // onChange fires temporary changes
   useEffect(() => {
     if (state.shouldPersist) {
       onSave(state.value, state.imports);
     }
-  }, [state.shouldPersist]);
+  }, [state.shouldPersist, state.value]);
 
   useEffect(() => {
     if (state.caretPosition !== -1 && state.active) {
@@ -229,6 +245,7 @@ const useRawInput = ({ value, onSave, onTab, isInherited }: RawInputProps) => {
     showSuggestionMenu: state.showSuggestionMenu && activeToken != null,
     activeToken,
     onKeyDown,
+    onCustomInputChange,
     onKeyUp,
     onInputClick,
     onSuggestionMenuClose,

@@ -59,6 +59,7 @@ export const getTokenIndexAtBoundary = (state: State) => {
 export enum ExpressionKind {
   FunctionCall = "functionCall",
   Keyword = "keyword",
+  Color = "color",
   Number = "number",
   Unit = "unit",
   Whitespace = "whitespace",
@@ -68,6 +69,7 @@ const keywordRegexp = /^[a-zA-Z]+[a-zA-Z0-9\_\-]*/;
 
 export const parseStyleDeclaration = simpleParser([
   [ExpressionKind.FunctionCall, keywordRegexp, [/^\(/, /^\)/]],
+  [ExpressionKind.Color, /^#[\w\d]+/],
   [ExpressionKind.Keyword, keywordRegexp],
   [ExpressionKind.Unit, /^\-?\d+(\.\d+)?[a-z]+/],
   [ExpressionKind.Number, /^\-?\d+(\.\d+)?/],

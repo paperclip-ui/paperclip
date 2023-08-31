@@ -2,6 +2,7 @@ import { State, getPathNamespace, getTokenAtCaret } from "./state";
 import { DeclarationValueEvent } from "./events";
 import produce from "immer";
 import { getTokenValue } from "./utils";
+import { stat } from "fs-extra";
 
 export const reducer = (state: State, event: DeclarationValueEvent) => {
   switch (event.type) {
@@ -16,6 +17,10 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
         draft.showSuggestionMenu = false;
       });
     }
+    case "customInputChanged": {
+      state = replaceActiveToken(event.payload.value, state, true);
+      return state;
+    }
     case "inputClicked": {
       return produce(state, (draft) => {
         draft.showSuggestionMenu = true;
@@ -24,28 +29,15 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
       });
     }
     case "suggestionSelected": {
+      state = replaceActiveToken(event.payload.item.value, state, true);
+
       return produce(state, (draft) => {
-        const token = getTokenAtCaret(state);
-
-        const value = event.payload.item.value;
-
-        const newValue =
-          state.value.slice(0, token.pos) +
-          value +
-          state.value.slice(token.pos + getTokenValue(token).length);
-        let caretPosition = newValue.indexOf("%|%");
-        if (caretPosition === -1) {
-          caretPosition = token.pos + value.length;
-        }
-        draft.caretPosition = caretPosition;
-        draft.value = newValue.replace("%|%", "");
         if (event.payload.item.source) {
           draft.imports = Object.assign({}, draft.imports, {
             [getPathNamespace(event.payload.item.source)]:
               event.payload.item.source,
           });
         }
-        draft.shouldPersist = true;
       });
     }
     case "keyDown": {
@@ -63,4 +55,29 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
   }
 
   return state;
+};
+
+const replaceActiveToken = (
+  value: string,
+  state: State,
+  setCaretPosition: boolean
+) => {
+  return produce(state, (draft) => {
+    const token = getTokenAtCaret(state);
+
+    const newValue =
+      state.value.slice(0, token.pos) +
+      value +
+      state.value.slice(token.pos + getTokenValue(token).length);
+    let caretPosition = newValue.indexOf("%|%");
+    if (caretPosition === -1) {
+      caretPosition = token.pos + value.length;
+    }
+
+    if (setCaretPosition) {
+      draft.caretPosition = caretPosition;
+    }
+    draft.value = newValue.replace("%|%", "");
+    draft.shouldPersist = true;
+  });
 };

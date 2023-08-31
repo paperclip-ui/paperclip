@@ -22,6 +22,10 @@ export type SuggestionMenuProps = {
   onBlur?: () => void;
 };
 
+export type SuggestionMenuContainerProps = SuggestionMenuProps & {
+  renderMenu: (menuOptions: React.ReactElement[]) => React.ReactElement;
+};
+
 export const useSuggestionMenu = ({
   open,
   values,
@@ -158,7 +162,7 @@ export const useSuggestionMenu = ({
     }
   }, [isOpen, menuOptionsLength]);
 
-  const { anchorRef, targetRef } = usePositioner();
+  const { anchorRef } = usePositioner();
 
   useEffect(() => {
     setPreselectedIndex(
@@ -177,13 +181,14 @@ export const useSuggestionMenu = ({
     isOpen,
     menuOptions,
     anchorRef,
-    targetRef,
     style,
   };
 };
 
-export const SuggestionMenu = (props: SuggestionMenuProps) => {
-  const { children } = props;
+export const SuggestionMenuContainer = (
+  props: SuggestionMenuContainerProps
+) => {
+  const { children, renderMenu } = props;
   const {
     onBlur,
     onFocus,
@@ -194,7 +199,6 @@ export const SuggestionMenu = (props: SuggestionMenuProps) => {
     isOpen,
     menuOptions,
     anchorRef,
-    targetRef,
     style,
   } = useSuggestionMenu(props);
 
@@ -213,13 +217,24 @@ export const SuggestionMenu = (props: SuggestionMenuProps) => {
         isOpen && menuOptions.length ? (
           <div ref={anchorRef} key="menu">
             <Portal>
-              <styles.SuggestionMenu ref={targetRef} style={style}>
-                {menuOptions}
-              </styles.SuggestionMenu>
+              {React.cloneElement(renderMenu(menuOptions), {
+                style,
+              })}
             </Portal>
           </div>
         ) : null
       }
+    />
+  );
+};
+
+export const SuggestionMenu = (props: SuggestionMenuProps) => {
+  return (
+    <SuggestionMenuContainer
+      {...props}
+      renderMenu={(options) => (
+        <styles.SuggestionMenu>{options}</styles.SuggestionMenu>
+      )}
     />
   );
 };

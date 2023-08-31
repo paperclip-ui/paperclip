@@ -22,7 +22,7 @@ export type SuggestionMenuProps = {
   onBlur?: () => void;
 };
 
-export const SuggestionMenu = ({
+export const useSuggestionMenu = ({
   open,
   values,
   children,
@@ -166,6 +166,37 @@ export const SuggestionMenu = ({
       selectedIndex === -1 ? firstOptionValueIndex - 1 : selectedIndex
     );
   }, [selectedIndex, firstOptionValueIndex]);
+
+  return {
+    onBlur,
+    onFocus,
+    onInputChange,
+    onKeyDown,
+    onClick,
+    ref,
+    isOpen,
+    menuOptions,
+    anchorRef,
+    targetRef,
+    style,
+  };
+};
+
+export const SuggestionMenu = (props: SuggestionMenuProps) => {
+  const { children } = props;
+  const {
+    onBlur,
+    onFocus,
+    onInputChange,
+    onKeyDown,
+    onClick,
+    ref,
+    isOpen,
+    menuOptions,
+    anchorRef,
+    targetRef,
+    style,
+  } = useSuggestionMenu(props);
 
   return (
     <styles.SuggestionContainer

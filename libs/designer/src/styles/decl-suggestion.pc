@@ -1,0 +1,38 @@
+import "./menu.pc" as imp1
+import "./theme.pc" as theme
+import "./color-picker.pc" as imp
+
+/**
+ * @bounds(x: -151, y: 15, width: 250, height: 32)
+*/
+
+public component Divider {
+    render hr {
+        style {
+            width: 100%
+            height: 1px
+            border: none
+            background: var(theme.borderColor)
+        }
+    }
+}
+
+/**
+ * @bounds(x: -547, y: 5, width: 250, height: 585)
+*/
+
+public component DeclSuggestionMenu {
+    render div {
+        style extends theme.popup {
+            position: relative
+            font-family: var(theme.defaultFontFamily)
+            color: var(theme.gray0)
+        }
+        slot children {
+            imp.ColorPicker
+            Divider
+            imp1.MenuList
+        }
+    }
+}
+

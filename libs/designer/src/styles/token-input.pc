@@ -192,7 +192,7 @@ public component Token {
 }
 
 /**
- * @bounds(x: 341, y: 410, width: 431, height: 446)
+ * @bounds(x: 341, y: 410, width: 273, height: 175)
 */
 
 div preview {
@@ -275,10 +275,4 @@ div preview {
         }
     }
 }
-
-/**
- * @bounds(x: -91, y: 88, width: 273, height: 193)
-*/
-
-imp.Note
 

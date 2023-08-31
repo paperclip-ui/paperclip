@@ -73,3 +73,55 @@ public component MenuItem {
     }
 }
 
+/**
+ * @bounds(x: 450, y: 732, width: 421, height: 295)
+*/
+
+public component MenuList {
+    render div {
+        style {
+            position: relative
+            overflow: scroll
+            max-height: 300px
+        }
+        slot children {
+            MenuItem {
+                text "something"
+            }
+            MenuItem(class: "preselected") {
+                text "something"
+            }
+            MenuItem {
+                text "something"
+            }
+            MenuItem(class: "selected") {
+                text "something"
+            }
+            MenuItem {
+                text "something"
+            }
+            MenuItem(class: "selected") {
+                text "something"
+            }
+            MenuItem {
+                text "something"
+            }
+            MenuItem(class: "selected") {
+                text "something"
+            }
+            MenuItem {
+                text "something"
+            }
+            MenuItem(class: "selected") {
+                text "something"
+            }
+            MenuItem {
+                text "something"
+            }
+            MenuItem(class: "selected") {
+                text "something"
+            }
+        }
+    }
+}
+

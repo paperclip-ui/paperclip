@@ -27,3 +27,16 @@ export const useDispatch = <
 >(): Dispatch<Event> => {
   return useMachine().dispatch;
 };
+
+export const useInlineMachine = (reducer, engine, initialState) => {
+  const machine = useMemo(() => {
+    return new Machine(reducer, engine, initialState);
+  }, []);
+  const [state, setState] = useState(machine.getState());
+
+  useEffect(() => {
+    machine.onStateChange(setState);
+  }, [machine]);
+
+  return [state, machine.dispatch];
+};

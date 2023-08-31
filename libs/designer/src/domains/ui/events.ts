@@ -109,6 +109,13 @@ export type StyleDeclarationsChanged = BaseEvent<
   "ui/styleDeclarationsChanged",
   {
     values: Record<string, string>;
+  }
+>;
+
+export type StyleDeclarationsChangeCompleted = BaseEvent<
+  "ui/styleDeclarationsChangeCompleted",
+  {
+    values: Record<string, string>;
     imports: Record<string, string>;
   }
 >;
@@ -242,6 +249,7 @@ export type UIEvent =
   | FileFilterChanged
   | TextValueChanged
   | InsertModeButtonClick
+  | StyleDeclarationsChanged
   | InsertElementReleased
   | CanvasMouseLeave
   | RectsCaptured
@@ -251,7 +259,7 @@ export type UIEvent =
   | CanvasPanned
   | CanvasPanStart
   | CanvasMouseDown
-  | StyleDeclarationsChanged
+  | StyleDeclarationsChangeCompleted
   | LayerLeafClicked
   | LayerArrowClicked
   | ComputedStylesCaptured

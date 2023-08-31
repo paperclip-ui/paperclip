@@ -18,6 +18,7 @@ import {
   FileNavigatorDroppedFile,
   InstanceVariantToggled,
   PromptClosed,
+  StyleDeclarationsChangeCompleted,
   StyleDeclarationsChanged,
   StyleMixinsSet,
   TextValueChanged,
@@ -431,7 +432,7 @@ const createEventHandler = (actions: Actions) => {
   };
 
   const handleStyleDeclarationChanged = (
-    event: StyleDeclarationsChanged,
+    event: StyleDeclarationsChangeCompleted,
     state: DesignerState
   ) => {
     const style = Object.entries(event.payload.values).map(([name, value]) => ({
@@ -982,7 +983,7 @@ const createEventHandler = (actions: Actions) => {
       case "keyboard/keyDown": {
         return handleKeyDown(event, newState, prevState);
       }
-      case "ui/styleDeclarationsChanged": {
+      case "ui/styleDeclarationsChangeCompleted": {
         return handleStyleDeclarationChanged(event, newState);
       }
       case "ui/exprNavigatorDroppedNode": {

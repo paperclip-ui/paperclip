@@ -176,10 +176,24 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
     case "ui/resizerPathMoved": {
       return handleDragEvent({ ...state, resizerMoving: true }, event);
     }
+    case "ui/styleDeclarationsChangeCompleted":
+    case "ui/styleDeclarationsChanged": {
+      return produce(state, (draft) => {
+        draft.styleOverrides[getTargetExprId(state)] = Object.assign(
+          {},
+          draft.styleOverrides[getTargetExprId(state)],
+          event.payload.values
+        );
+      });
+    }
     case "designer-engine/documentOpened": {
       if (getCurrentFilePath(state) !== getRenderedFilePath(state)) {
         state = resetCurrentDocument(state);
       }
+      state = produce(state, (draft) => {
+        draft.styleOverrides = {};
+      });
+
       state = maybeCenterCanvas(state);
       return state;
     }

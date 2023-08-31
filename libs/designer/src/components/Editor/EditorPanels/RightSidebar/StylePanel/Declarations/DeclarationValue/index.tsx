@@ -16,6 +16,7 @@ import {
 
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
+import { useInlineMachine } from "@paperclip-ui/common";
 
 import {
   SuggestionMenuItem,
@@ -27,19 +28,22 @@ import { Token as SimpleExpression, getTokenValue } from "./utils";
 import { DeclarationValueType, inferDeclarationValueType } from "./css-utils";
 import { ColorInput } from "./ValueInputs/color";
 import { DeclSuggestionMenu } from "./SuggestionDropdown";
+import { DeclarationValueEvent } from "./events";
 
 export type DeclarationValueProps = {
   name: string;
   value: string;
   isInherited?: boolean;
-  onSave: (value: string, imports: Record<string, string>) => void;
+  onChange: (value: string) => void;
+  onChangeComplete: (value: string, imports: Record<string, string>) => void;
   onTab?: (event: React.KeyboardEvent<void>) => void;
 };
 
 export const DeclarationValue = ({
   name,
   value = "",
-  onSave,
+  onChange,
+  onChangeComplete,
   isInherited,
   onTab,
 }: DeclarationValueProps) => {
@@ -50,7 +54,8 @@ export const DeclarationValue = ({
       value={value}
       isInherited={isInherited}
       getSuggestionItems={getDeclSuggestionItems(name, state)}
-      onSave={onSave}
+      onChange={onChange}
+      onChangeComplete={onChangeComplete}
       onTab={onTab}
     />
   );
@@ -60,7 +65,8 @@ type RawInputProps = {
   isInherited: boolean;
   getSuggestionItems: (token: SimpleExpression) => RawInputValueSuggestion[];
   value: string;
-  onSave: (value: string, imports: Record<string, string>) => void;
+  onChange: (value: string) => void;
+  onChangeComplete: (value: string, imports: Record<string, string>) => void;
   onTab: (event: React.KeyboardEvent<void>) => void;
 };
 
@@ -153,9 +159,25 @@ const RawInput = (props: RawInputProps) => {
   );
 };
 
-const useRawInput = ({ value, onSave, onTab, isInherited }: RawInputProps) => {
-  const [state, dispatch] = useReducer(
+const engine = (onChange, onChangeComplete) => () => {
+  console.log("ENGINE");
+  return {
+    handleEvent(event: DeclarationValueEvent) {
+      console.log("EVENT");
+    },
+  };
+};
+
+const useRawInput = ({
+  value,
+  onChange,
+  onChangeComplete,
+  onTab,
+  isInherited,
+}: RawInputProps) => {
+  const [state, dispatch] = useInlineMachine(
     reducer,
+    engine(onChange, onChangeComplete),
     getInitialState(isInherited ? "" : value)
   );
   const activeToken = getTokenAtCaret(state);
@@ -207,6 +229,14 @@ const useRawInput = ({ value, onSave, onTab, isInherited }: RawInputProps) => {
       },
     });
   };
+  const onCustomInputChangeComplete = (value: string) => {
+    dispatch({
+      type: "customInputChangeComplete",
+      payload: {
+        value,
+      },
+    });
+  };
 
   const onSuggestionMenuClose = () =>
     dispatch({
@@ -218,14 +248,6 @@ const useRawInput = ({ value, onSave, onTab, isInherited }: RawInputProps) => {
       payload: { caretPosition: ref.current.selectionStart },
     });
   };
-
-  // TODO: probably want to incorporate onChange and onChangeComplete where
-  // onChange fires temporary changes
-  useEffect(() => {
-    if (state.shouldPersist) {
-      onSave(state.value, state.imports);
-    }
-  }, [state.shouldPersist, state.value]);
 
   useEffect(() => {
     if (state.caretPosition !== -1 && state.active) {
@@ -246,6 +268,7 @@ const useRawInput = ({ value, onSave, onTab, isInherited }: RawInputProps) => {
     activeToken,
     onKeyDown,
     onCustomInputChange,
+    onCustomInputChangeComplete,
     onKeyUp,
     onInputClick,
     onSuggestionMenuClose,

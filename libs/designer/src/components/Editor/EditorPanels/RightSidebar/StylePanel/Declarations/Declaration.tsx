@@ -44,13 +44,24 @@ export const Declaration = memo(
       setName(name);
     }, [name]);
 
-    const onValueSave = useCallback(
+    const onValueChangeComplete = useCallback(
       (value: string, imports: Record<string, string>) => {
+        dispatch({
+          type: "ui/styleDeclarationsChangeCompleted",
+          payload: {
+            values: { [name2]: value },
+            imports,
+          },
+        });
+      },
+      [name2]
+    );
+    const onValueChange = useCallback(
+      (value: string) => {
         dispatch({
           type: "ui/styleDeclarationsChanged",
           payload: {
             values: { [name2]: value },
-            imports,
           },
         });
       },
@@ -69,7 +80,8 @@ export const Declaration = memo(
         value={value}
         isInherited={style?.ownerId !== targetId}
         onTab={onValueTab}
-        onSave={onValueSave}
+        onChangeComplete={onValueChangeComplete}
+        onChange={onValueChange}
       />
     );
 

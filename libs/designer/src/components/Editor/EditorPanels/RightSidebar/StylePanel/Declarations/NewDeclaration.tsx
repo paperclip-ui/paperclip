@@ -23,7 +23,7 @@ export const NewDeclaration = memo(
       (name: string, value: string, imports: any) => {
         if (name && value) {
           dispatch({
-            type: "ui/styleDeclarationsChanged",
+            type: "ui/styleDeclarationsChangeCompleted",
             payload: {
               values: { [name]: value },
               imports,
@@ -60,7 +60,7 @@ export const NewDeclaration = memo(
             onBlur={onBlur}
           />
         }
-        input={<DeclarationValue name={name} value="" onSave={onSelectValue} />}
+        input={null}
       />
     );
   }

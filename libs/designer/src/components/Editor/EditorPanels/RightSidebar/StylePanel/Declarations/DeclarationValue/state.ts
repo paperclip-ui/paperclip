@@ -32,7 +32,6 @@ export type RawInputValueSuggestion =
 export type State = {
   // if something like var(mod.something) where mod points to a file
   imports?: Record<string, string>;
-  shouldPersist?: boolean;
   active: boolean;
   value?: string;
   caretPosition: number;

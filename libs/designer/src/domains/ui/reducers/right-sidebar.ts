@@ -24,12 +24,6 @@ export const rightSidebarReducer = (
         newState.selectedVariantIds = event.payload;
       });
     }
-
-    case "ui/styleDeclarationsChanged": {
-      return produce(state, (newState) => {
-        newState.styleOverrides = {};
-      });
-    }
     case "ui/boundsChanged": {
       state = setSelectedNodeBounds(event.payload.newBounds, state);
       return state;

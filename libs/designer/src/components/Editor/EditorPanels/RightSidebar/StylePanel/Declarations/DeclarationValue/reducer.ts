@@ -21,11 +21,14 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
       state = replaceActiveToken(event.payload.value, state, true);
       return state;
     }
+    case "customInputChangeComplete": {
+      state = replaceActiveToken(event.payload.value, state, true);
+      return state;
+    }
     case "inputClicked": {
       return produce(state, (draft) => {
         draft.showSuggestionMenu = true;
         draft.caretPosition = event.payload.caretPosition;
-        draft.shouldPersist = false;
       });
     }
     case "suggestionSelected": {
@@ -78,6 +81,5 @@ const replaceActiveToken = (
       draft.caretPosition = caretPosition;
     }
     draft.value = newValue.replace("%|%", "");
-    draft.shouldPersist = true;
   });
 };

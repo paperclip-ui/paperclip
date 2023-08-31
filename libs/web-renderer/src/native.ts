@@ -162,6 +162,8 @@ const createNativeElement = (
   showSlotPlaceholders?: boolean,
   inInstance?: boolean
 ) => {
+  console.log(element.tagName);
+
   const nativeElement = (
     element.tagName === "svg"
       ? factory.createElementNS(XMLNS_NAMESPACE, "svg")

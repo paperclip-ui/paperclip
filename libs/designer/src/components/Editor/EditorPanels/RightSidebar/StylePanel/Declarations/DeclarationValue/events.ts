@@ -28,7 +28,7 @@ type Focused = BaseEvent<
 type SuggestionSelected = BaseEvent<
   "suggestionSelected",
   {
-    value: RawInputValueSuggestionItem;
+    item: RawInputValueSuggestionItem;
   }
 >;
 

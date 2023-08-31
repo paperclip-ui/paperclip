@@ -30,12 +30,14 @@ module.exports = {
   devtool: false,
 
   plugins: [
-    new CopyWebpackPlugin([
-      {
-        from: path.resolve(__dirname, "src/styles/custom-elements.js"),
-        to: "./dist",
-      },
-    ]),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, "src/styles/custom-elements.js"),
+          to: ".",
+        },
+      ],
+    }),
     new MiniCssExtractPlugin({
       filename: devMode
         ? "[name]-[contenthash].css"

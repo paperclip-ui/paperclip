@@ -16,6 +16,7 @@
         0,
         `hsl(${hv}, 100%, ${((height - row) / height) * 50}%)`
       );
+
       ctx.fillStyle = grad;
       ctx.fillRect(0, row, width, 1);
     }
@@ -43,75 +44,73 @@
     }
   };
 
-  class HSLColorBox extends HTMLDivElement {
+  class HSLColorBox extends HTMLElement {
     constructor() {
       super();
+    }
+    connectedCallback() {
       const shadow = this.attachShadow({ mode: "open" });
-      this.canvas = document.createElement("canvas");
+      const canvas = document.createElement("canvas");
       Object.assign(this.style, {
         display: "block",
         position: "relative",
+        width: "100%",
+        height: "100%",
       });
-      Object.assign(this.canvas.style, { width: "100%", height: "100%" });
-      shadow.appendChild(this.canvas);
-      this.draw();
+
+      const { width, height } = this.getBoundingClientRect();
+
+      shadow.appendChild(canvas);
+      drawHSL(Number(this.getAttribute("hue") || 1))(canvas, width, height);
     }
     attributeChangedCallback(name, oldValue, newValue) {
-      this.draw();
-    }
-    draw() {
-      const { width, height } = this.getBoundingClientRect();
-      drawHSL(Number(this.getAttribute("hue") || 0.5))(
-        this.canvas,
-        width,
-        height
-      );
+      // this.draw();
     }
   }
 
-  class HueColorBox extends HTMLDivElement {
+  class HueColorBox extends HTMLElement {
     constructor() {
       super();
+    }
+    connectedCallback() {
       const shadow = this.attachShadow({ mode: "open" });
-      this.canvas = document.createElement("canvas");
+      const canvas = document.createElement("canvas");
       Object.assign(this.style, {
         display: "block",
         position: "relative",
+        width: "100%",
+        height: "100%",
       });
-      Object.assign(this.canvas.style, { width: "100%", height: "100%" });
-      shadow.appendChild(this.canvas);
-      this.draw();
-    }
-    draw() {
       const { width, height } = this.getBoundingClientRect();
-      drawHue(this.canvas, width, height);
+      shadow.appendChild(canvas);
+      drawHue(canvas, width, height);
     }
+    draw() {}
   }
-  class OpacityColorBox extends HTMLDivElement {
+  class OpacityColorBox extends HTMLElement {
     constructor() {
       super();
+    }
+    connectedCallback() {
       const shadow = this.attachShadow({ mode: "open" });
-      this.canvas = document.createElement("canvas");
+      const canvas = document.createElement("canvas");
       Object.assign(this.style, {
         display: "block",
         position: "relative",
+        width: "100%",
+        height: "100%",
       });
-      Object.assign(this.canvas.style, { width: "100%", height: "100%" });
-      shadow.appendChild(this.canvas);
-      this.draw();
-    }
-    draw() {
+
       const { width, height } = this.getBoundingClientRect();
-      drawOpacity(this.canvas, width, height);
+      shadow.appendChild(canvas);
+      drawOpacity(canvas, width, height);
     }
   }
 
   try {
-    customElements.define("hsl-color-box", HSLColorBox, { extends: "div" });
-    customElements.define("hue-color-box", HueColorBox, { extends: "div" });
-    customElements.define("alpha-color-box", OpacityColorBox, {
-      extends: "div",
-    });
+    customElements.define("x-hsl-color-box", HSLColorBox);
+    customElements.define("x-hue-color-box", HueColorBox);
+    customElements.define("x-alpha-color-box", OpacityColorBox);
   } catch (e) {
     console.warn(e);
   }

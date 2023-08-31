@@ -13,7 +13,7 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
     }
     case "suggestionMenuClose": {
       return produce(state, (draft) => {
-        draft.showSuggestionMenu = false;
+        // draft.showSuggestionMenu = false;
       });
     }
     case "inputClicked": {
@@ -56,8 +56,8 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
     }
     case "blurred": {
       return produce(state, (draft) => {
-        draft.caretPosition = -1;
-        draft.active = false;
+        // draft.caretPosition = -1;
+        // draft.active = false;
       });
     }
   }

@@ -26,8 +26,16 @@ enum GrabberAxis {
 }
 
 export const ColorInput = ({ value, onChange }: ColorInputProps) => {
-  const color: Color = useMemo(() => Color(value), [value]);
-  const [hsla, setHSLA] = useState(normalizeColorHSL(color));
+  const color: Color | null = useMemo(() => {
+    try {
+      return Color(value);
+    } catch (e) {
+      return null;
+    }
+  }, [value]);
+  const [hsla, setHSLA] = useState<HSLA>(
+    color ? normalizeColorHSL(color) : [0, 0, 0, 1]
+  );
 
   const colorChangeCallback = useMemo(
     () => (updater: (curr: HSLA, prev: HSLA) => HSLA) => (rgba: RGBA) => {

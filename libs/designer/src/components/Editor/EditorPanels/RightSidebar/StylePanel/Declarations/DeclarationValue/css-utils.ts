@@ -1,3 +1,4 @@
+import Color from "color";
 import { ExpressionKind, RawInputValueSuggestionItem } from "./state";
 import { valueSuggestion } from "./suggestion";
 import { Token } from "./utils";
@@ -28,19 +29,27 @@ export const declValueSuggestions = (
   suggestions: suggestions.map(valueSuggestion),
 });
 
-const colorDeclValueTypes: Array<[DeclarationValueType, RegExp]> = [
+const colorDeclValueTypes: Array<
+  [DeclarationValueType, (value: string) => boolean]
+> = [
   [
     DeclarationValueType.Color,
-    /^(linear-gradient|rgba?|hsl|lab|lch|red|#[\w\d]+)/,
+    (value) => {
+      try {
+        return Color(value) != null;
+      } catch (e) {
+        return false;
+      }
+    },
   ],
-  [DeclarationValueType.Unit, /^\-?\d+(\.\d+)?\w+/],
-  [DeclarationValueType.Number, /^\-?\d+(\.\d+)?/],
-  [DeclarationValueType.Variable, /^var\(/],
+  [DeclarationValueType.Unit, (value) => /^\-?\d+(\.\d+)?\w+/.test(value)],
+  [DeclarationValueType.Number, (value) => /^\-?\d+(\.\d+)?/.test(value)],
+  [DeclarationValueType.Variable, (value) => /^var\(/.test(value)],
 ];
 
 export const inferDeclarationValueType = (value: string) => {
   for (const [type, test] of colorDeclValueTypes) {
-    if (test.test(value)) {
+    if (test(value)) {
       return type;
     }
   }

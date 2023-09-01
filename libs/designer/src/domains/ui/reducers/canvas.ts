@@ -5,6 +5,7 @@ import {
   getCurrentFilePath,
   getNodeInfoAtCurrentPoint,
   getRenderedFilePath,
+  getStyleableTargetId,
   getTargetExprId,
   highlightNode,
   InsertMode,
@@ -178,15 +179,15 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
     }
     case "ui/atomValueChanged": {
       return produce(state, (draft) => {
-        draft.atomOverrides[getTargetExprId(state)] = event.payload.value;
+        draft.atomOverrides[getStyleableTargetId(state)] = event.payload.value;
       });
     }
     case "ui/styleDeclarationsChangeCompleted":
     case "ui/styleDeclarationsChanged": {
       return produce(state, (draft) => {
-        draft.styleOverrides[getTargetExprId(state)] = Object.assign(
+        draft.styleOverrides[getStyleableTargetId(state)] = Object.assign(
           {},
-          draft.styleOverrides[getTargetExprId(state)],
+          draft.styleOverrides[getStyleableTargetId(state)],
           event.payload.values
         );
       });

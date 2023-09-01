@@ -392,7 +392,7 @@ const createEventHandler = (actions: Actions) => {
             variantIds,
             expressionId: node.sourceId,
             declarations: Object.entries(
-              state.styleOverrides[getTargetExprId(prevState)]
+              state.styleOverrides[getStyleableTargetId(prevState)]
             ).map(([name, value]) => {
               return { name, value: String(value) };
             }),

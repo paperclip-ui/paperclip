@@ -1,15 +1,8 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { reducer } from "./reducer";
 import {
   RawInputValueSuggestion,
   RawInputValueSuggestionKind,
-  State,
   getDeclSuggestionItems,
   getInitialState,
   getRenderedCssValue,
@@ -30,14 +23,13 @@ import { Token as SimpleExpression, getTokenValue } from "./utils";
 import { DeclarationValueType, inferDeclarationValueType } from "./css-utils";
 import { ColorInput } from "./ValueInputs/color";
 import { DeclSuggestionMenu } from "./SuggestionDropdown";
-import { DeclarationValueEvent } from "./events";
 import { engine } from "./engine";
 
 export type DeclarationValueProps = {
-  name: string;
+  name?: string;
   value: string;
   isInherited?: boolean;
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
   onChangeComplete: (value: string, imports: Record<string, string>) => void;
   onKeyDown?: (event: React.KeyboardEvent<any>) => void;
 };

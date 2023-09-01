@@ -191,6 +191,16 @@ impl TryFrom<DocumentBodyItem> for Node {
     }
 }
 
+impl TryFrom<DocumentBodyItem> for Atom {
+    type Error = ();
+    fn try_from(value: DocumentBodyItem) -> Result<Self, Self::Error> {
+        match value.get_inner() {
+            document_body_item::Inner::Atom(element) => Ok(element.clone()),
+            _ => Err(()),
+        }
+    }
+}
+
 impl TryFrom<DocumentBodyItem> for Style {
     type Error = ();
     fn try_from(value: DocumentBodyItem) -> Result<Self, Self::Error> {
@@ -220,6 +230,7 @@ impl TryFrom<Node> for Style {
         }
     }
 }
+
 impl TryFrom<Node> for Element {
     type Error = ();
     fn try_from(value: Node) -> Result<Self, Self::Error> {

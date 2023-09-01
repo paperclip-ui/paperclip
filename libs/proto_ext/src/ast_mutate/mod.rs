@@ -12,6 +12,7 @@ mod prepend_child;
 mod set_element_parameter;
 mod set_frame_bounds;
 mod set_id;
+mod set_style_declaration_value;
 mod set_style_declarations;
 mod set_style_mixins;
 mod set_tag_name;
@@ -44,6 +45,7 @@ pub use paste_expr::*;
 pub use set_element_parameter::*;
 pub use set_frame_bounds::*;
 pub use set_id::*;
+pub use set_style_declaration_value::*;
 pub use set_style_declarations::*;
 pub use set_style_mixins::*;
 pub use set_tag_name::*;
@@ -113,6 +115,7 @@ mutations! {
   SetTextNodeValue,
   ConvertToComponent,SetStyleMixins,
   PasteExpression,
+  SetStyleDeclarationValue,
   SetElementParameter,
   ConvertToSlot,
   MoveNode,

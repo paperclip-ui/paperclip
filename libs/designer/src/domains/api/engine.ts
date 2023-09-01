@@ -9,6 +9,7 @@ import { DesignerEngineEvent, DocumentOpened } from "./events";
 import { DesignerEvent } from "../../events";
 import {
   AddLayerMenuItemClicked,
+  AtomValueChanged,
   AttributeChanged,
   ConfirmClosed,
   // DesignerEvent,
@@ -76,7 +77,7 @@ import {
 } from "../ui/events";
 import { ExpressionPasted } from "../clipboard/events";
 import { Range } from "@paperclip-ui/proto/lib/generated/ast/base";
-import { kebabCase } from "lodash";
+import { get, kebabCase } from "lodash";
 import { ConfirmKind } from "../../state/confirm";
 
 export type DesignerEngineOptions = {
@@ -765,6 +766,21 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
+  const handleAtomValueChanged = (
+    event: AtomValueChanged,
+    state: DesignerState
+  ) => {
+    actions.applyChanges([
+      {
+        setStyleDeclarationValue: {
+          targetId: getTargetExprId(state),
+          value: event.payload.value,
+          imports: event.payload.imports,
+        },
+      },
+    ]);
+  };
+
   const handlePromptClosed = ({
     payload: { value, details },
   }: PromptClosed) => {
@@ -970,6 +986,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "designer-engine/apiError": {
         return handleApiError();
+      }
+      case "ui/atomValueChanged": {
+        return handleAtomValueChanged(event, newState);
       }
       case "ui/promptClosed": {
         return handlePromptClosed(event);

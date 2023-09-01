@@ -72,7 +72,10 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                 data,
             }))
         } else {
-            Err(Status::not_found(format!("Dependency \"{}\" not found", path)))
+            Err(Status::not_found(format!(
+                "Dependency \"{}\" not found",
+                path
+            )))
         }
     }
 

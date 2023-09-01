@@ -8,9 +8,12 @@ import {
   getCurrentDocument,
   getSelectedVariantIds,
   StyleOverrides,
+  getGraph,
 } from "@paperclip-ui/designer/src/state";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 import { Node } from "@paperclip-ui/proto/lib/generated/virt/html";
+import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
 type FramesProps = {
   expandedFrameIndex?: number | null;
@@ -18,8 +21,9 @@ type FramesProps = {
 
 export const Frames = memo(({ expandedFrameIndex }: FramesProps) => {
   const { currentDocument: doc, styleOverrides } = useSelector(getEditorState);
+  const graph = useSelector(getGraph);
 
-  const extraHTML = generateStyleOverrideHTML(styleOverrides);
+  const extraHTML = generateStyleOverrideHTML(styleOverrides, graph);
 
   const { frames, variantIds, onFrameLoaded, onFrameUpdated } = useFrames({
     shouldCollectRects: true,
@@ -48,7 +52,10 @@ export const Frames = memo(({ expandedFrameIndex }: FramesProps) => {
   );
 });
 
-const generateStyleOverrideHTML = (styleOverrides: StyleOverrides) => {
+const generateStyleOverrideHTML = (
+  styleOverrides: StyleOverrides,
+  graph: Graph
+) => {
   if (!styleOverrides) {
     return "";
   }
@@ -59,6 +66,12 @@ const generateStyleOverrideHTML = (styleOverrides: StyleOverrides) => {
 
   for (const id in styleOverrides) {
     const decls = styleOverrides[id];
+
+    const expr = ast.getExprById(id, graph);
+
+    if (!expr) {
+      continue;
+    }
 
     html += `  #_${id} {\n`;
 

@@ -9,9 +9,9 @@ use paperclip_proto::ast::pc::{
 use paperclip_proto::ast_mutate::{
     mutation, paste_expression, update_variant_trigger, AppendChild, AppendInsert, Bounds,
     ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveNode, PasteExpression,
-    PrependChild, SetElementParameter, SetFrameBounds, SetId, SetStyleDeclarationValue,
-    SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue, ToggleInstanceVariant,
-    UpdateVariant, WrapInElement,
+    PrependChild, SetElementParameter, SetFrameBounds, SetId, SetStyleDeclaration,
+    SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue,
+    ToggleInstanceVariant, UpdateVariant, WrapInElement,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use std::collections::HashMap;
@@ -280,7 +280,7 @@ case! {
     expression_id: "80f4925f-1".to_string(),
     variant_ids: vec![],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::new(),
         name: "background".to_string(),
         value: "red".to_string()
@@ -294,6 +294,50 @@ case! {
           background: red
         }
       }
+    "#
+  )]
+}
+
+case! {
+  can_set_the_declaration_value_of_an_atom,
+  [(
+    "/entry.pc", r#"
+      public token something red
+    "#
+  )],
+  mutation::Inner::SetStyleDeclarationValue(SetStyleDeclarationValue {
+    target_id: "80f4925f-2".to_string(),
+    value: "blue".to_string(),
+    imports: HashMap::new()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      public token something blue
+    "#
+  )]
+}
+
+case! {
+  imports_doc_when_setting_value_of_atom,
+  [(
+    "/entry.pc", r#"
+      public token something red
+    "#
+  ), (
+
+    "/module.pc", r#"
+      public token something orange
+    "#
+  )],
+  mutation::Inner::SetStyleDeclarationValue(SetStyleDeclarationValue {
+    target_id: "80f4925f-2".to_string(),
+    value: "var(mod.something)".to_string(),
+    imports: HashMap::from([("mod".to_string(), "/module.pc".to_string())])
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      import "./module.pc" as mod
+      public token something var(mod.something)
     "#
   )]
 }
@@ -313,7 +357,7 @@ case! {
     expression_id: "80f4925f-4".to_string(),
     variant_ids: vec![],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::new(),
         name: "background".to_string(),
         value: "red".to_string()
@@ -346,12 +390,12 @@ case! {
     expression_id: "80f4925f-4".to_string(),
     variant_ids: vec![],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::new(),
         name: "background".to_string(),
         value: "red".to_string()
       },
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::new(),
         name: "opacity".to_string(),
         value: "0.5".to_string()
@@ -451,7 +495,7 @@ case! {
     expression_id: "80f4925f-2".to_string(),
     variant_ids: vec![],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::from([("mod".to_string(), "/module.pc".to_string())]),
         name: "color".to_string(),
         value: "var(mod.blue01)".to_string()
@@ -488,7 +532,7 @@ case! {
     expression_id: "80f4925f-5".to_string(),
     variant_ids: vec![],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::from([("mod".to_string(), "/entry.pc".to_string())]),
         name: "color".to_string(),
         value: "var(mod.blue01)".to_string()
@@ -529,7 +573,7 @@ case! {
     expression_id: "80f4925f-2".to_string(),
     variant_ids: vec![],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::from([("mod".to_string(), "/module.pc".to_string())]),
         name: "color".to_string(),
         value: "var(mod.blue01)".to_string()
@@ -563,7 +607,7 @@ case! {
     expression_id: "80f4925f-1".to_string(),
     variant_ids: vec![],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::new(),
         name: "color".to_string(),
         value: "blue".to_string()
@@ -630,7 +674,7 @@ case! {
     expression_id: "80f4925f-1".to_string(),
     variant_ids: vec![],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::new(),
         name: "color".to_string(),
         value: "blue".to_string()
@@ -825,7 +869,7 @@ case! {
     expression_id: "80f4925f-3".to_string(),
     variant_ids: vec!["80f4925f-1".to_string(), "80f4925f-2".to_string()],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::new(),
         name: "background".to_string(),
         value: "red".to_string()
@@ -868,7 +912,7 @@ case! {
     expression_id: "80f4925f-6".to_string(),
     variant_ids: vec!["80f4925f-1".to_string(), "80f4925f-2".to_string()],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::new(),
         name: "background".to_string(),
         value: "red".to_string()
@@ -913,7 +957,7 @@ case! {
     expression_id: "80f4925f-6".to_string(),
     variant_ids: vec!["80f4925f-1".to_string()],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::new(),
         name: "background".to_string(),
         value: "red".to_string()
@@ -1240,7 +1284,6 @@ case! {
   )]
 }
 
-
 case! {
   can_convert_component_with_a_name,
   [
@@ -1263,7 +1306,6 @@ case! {
     "#
   )]
 }
-
 
 case! {
   can_convert_an_element_to_a_slot,
@@ -3245,7 +3287,7 @@ case! {
     expression_id: "80f4925f-3".to_string(),
     variant_ids: vec![],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::new(),
         name: "background".to_string(),
         value: "red".to_string()

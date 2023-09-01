@@ -57,7 +57,6 @@ pub fn create_design_file<TIO: ServerIO>(
     };
 
     let file_path = file_dir
-
         // strip .pc from name in case it exists because we're already adding it.
         .join(format!("{}.pc", to_kebab_case(&name.replace(".pc", ""))))
         .to_str()

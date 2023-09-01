@@ -2,8 +2,11 @@ use convert_case::{Case, Casing};
 use paperclip_common::get_or_short;
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::ast;
+use paperclip_proto::ast::css::DeclarationValue;
 use paperclip_proto::ast::graph_ext::Graph;
-use paperclip_proto::ast::pc::{component_body_item, Component, Element, Render, SimpleExpression};
+use paperclip_proto::ast::pc::{
+    component_body_item, Atom, Component, Element, Render, SimpleExpression,
+};
 use paperclip_proto::ast::{
     graph_ext::Dependency,
     pc::{Document, DocumentBodyItem, Node},
@@ -346,6 +349,14 @@ pub fn get_valid_name(name: &str, case: Case) -> String {
 pub fn parse_node(source: &str, checksum: &str) -> Node {
     let child = parse(source, checksum).expect("Unable to parse child source for AppendChild");
     child.body.get(0).unwrap().clone().try_into().unwrap()
+}
+
+pub fn parse_declaration_value(source: &str, checksum: &str) -> DeclarationValue {
+    let child = parse(&format!("token surrogate {}", source), checksum)
+        .expect("Unable to parse child source for AppendChild");
+    let atom: Atom = child.body.get(0).unwrap().clone().try_into().unwrap();
+
+    atom.value.unwrap()
 }
 
 pub fn parse_element_attribute_value(source: &str, checksum: &str) -> SimpleExpression {

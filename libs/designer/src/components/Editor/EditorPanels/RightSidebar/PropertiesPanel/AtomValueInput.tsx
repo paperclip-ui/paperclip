@@ -5,22 +5,32 @@ import { getSelectedExpressionInfo } from "@paperclip-ui/designer/src/state";
 import { Field } from "@paperclip-ui/designer/src/styles/input.pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import React from "react";
+import { DeclarationValue } from "../StylePanel/Declarations/DeclarationValue";
 
-export const TextValueField = () => {
+import { serializeDeclaration } from "@paperclip-ui/proto-ext/lib/ast/serialize";
+
+export const AtomValueField = () => {
   const expr = useSelector(getSelectedExpressionInfo);
   const dispatch = useDispatch<DesignerEvent>();
 
-  const onSave = (value: string) => {
-    dispatch({ type: "ui/textValueChanged", payload: value });
+  const onChangeComplete = (value: string, imports: Record<string, string>) => {
+    dispatch({ type: "ui/atomValueChanged", payload: { value, imports } });
   };
-  if (expr.kind !== ast.ExprKind.TextNode) {
+  if (expr.kind !== ast.ExprKind.Atom) {
     return null;
   }
+
+  ast;
 
   return (
     <Field
       name="Text"
-      input={<TextInput value={expr.expr.value} onSave={onSave} select />}
+      input={
+        <DeclarationValue
+          value={serializeDeclaration(expr.expr.value)}
+          onChangeComplete={onChangeComplete}
+        />
+      }
     />
   );
 };

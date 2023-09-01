@@ -154,7 +154,7 @@ const RawInput = (props: RawInputProps) => {
       editorInput={editorInput}
       onSelect={onSuggestionSelect}
       onOtherSelect={onCustomSelect}
-      onClose={onSuggestionMenuClose}
+      onComplete={onSuggestionMenuClose}
     >
       <TextInput
         ref={ref}
@@ -258,7 +258,8 @@ const useRawInput = ({
 
   useEffect(() => {
     if (state.caretPosition !== -1 && state.active) {
-      ref.current.focus();
+      // ref.current.focus();
+
       ref.current.selectionStart = state.caretPosition;
       ref.current.selectionEnd =
         state.caretPosition + (state.selectionLength || 0);

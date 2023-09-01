@@ -86,7 +86,7 @@ export const Declaration = memo(
 
     const onBlur2 = () => {
       setTimeout(() => {
-        if (ref.current.contains(document.activeElement)) {
+        if (ref.current?.contains(document.activeElement)) {
           return;
         }
         onBlur();

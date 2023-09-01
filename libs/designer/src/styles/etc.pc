@@ -46,7 +46,7 @@ public component Item {
 */
 
 public component PlusButton {
-    render button(onClick: onClick) {
+    render button(onClick: onClick, onBlur: onBlur) {
         style extends theme.icon {
             cursor: pointer
             -webkit-mask-image: url("./plus.svg")

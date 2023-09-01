@@ -8,7 +8,7 @@ export type Callbacks = {
   // TODO: this needs to be deprecated
   onOtherSelect: (value: string) => void;
   onSelect: (value: any[]) => void;
-  onClose: () => void;
+  onComplete: () => void;
 };
 
 export const suggestionMenuEngine =
@@ -39,18 +39,13 @@ export const suggestionMenuEngine =
               }
               break;
             }
-
-            // We really don't want to do this...
-            // case "Tab": {
-            //     // callbacks.current.onBlur();
-            // }
           }
           break;
         }
       }
 
-      if (!isOpen(state) && isOpen(prevState)) {
-        callbacks.current.onClose();
+      if (!state.isOpen && prevState.isOpen) {
+        callbacks.current.onComplete();
       }
     },
   });

@@ -13,6 +13,7 @@ export const reducer = (state: State, event: SuggestionMenuEvent) => {
     }
     case "inputChanged": {
       return produce(state, (draft) => {
+        draft.isOpen = true;
         draft.customValue = event.payload;
       });
     }
@@ -38,6 +39,11 @@ export const reducer = (state: State, event: SuggestionMenuEvent) => {
             break;
           }
         }
+      });
+    }
+    case "focused": {
+      return produce(state, (draft) => {
+        draft.isOpen = true;
       });
     }
     case "inputClicked": {

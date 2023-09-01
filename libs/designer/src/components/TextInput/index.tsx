@@ -111,7 +111,7 @@ export const useTextInput = (
   useEffect(() => {
     if (autoFocus) {
       setTimeout(() => {
-        ref.current.focus();
+        ref.current?.focus();
       });
     }
   }, [autoFocus]);

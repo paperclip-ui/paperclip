@@ -11,7 +11,10 @@ import {
   serializeDeclaration,
 } from "@paperclip-ui/proto-ext/lib/ast/serialize";
 import { NameInput } from "./NameInput";
-import { getTargetExprId } from "@paperclip-ui/designer/src/state";
+import {
+  getStyleableTargetId,
+  getTargetExprId,
+} from "@paperclip-ui/designer/src/state";
 // import { InteractiveDeclValue } from "./InteractiveDeclValue";
 
 type FieldProps = {
@@ -36,7 +39,7 @@ export const Declaration = memo(
     const [name2, setName] = useState(name);
     const { input: inputOptions } = getPropField(name2);
     const dispatch = useDispatch<DesignerEvent>();
-    const targetId = useSelector(getTargetExprId);
+    const targetId = useSelector(getStyleableTargetId);
     const ref = useRef(null);
 
     useEffect(() => {
@@ -77,8 +80,8 @@ export const Declaration = memo(
     const input = (
       <DeclarationValue
         name={name2}
-        value={value}
-        isInherited={style?.ownerId !== targetId}
+        value={style?.ownerId === targetId ? undefined : value}
+        placeholder={style?.ownerId === targetId ? value : undefined}
         onKeyDown={onValueKeyDown}
         onChangeComplete={onValueChangeComplete}
         onChange={onValueChange}

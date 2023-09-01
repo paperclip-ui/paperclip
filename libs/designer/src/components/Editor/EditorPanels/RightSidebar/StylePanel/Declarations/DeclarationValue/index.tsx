@@ -27,8 +27,8 @@ import { engine } from "./engine";
 
 export type DeclarationValueProps = {
   name?: string;
-  value: string;
-  isInherited?: boolean;
+  value?: string;
+  placeholder?: string;
   onChange?: (value: string) => void;
   onChangeComplete: (value: string, imports: Record<string, string>) => void;
   onKeyDown?: (event: React.KeyboardEvent<any>) => void;
@@ -39,7 +39,7 @@ export const DeclarationValue = ({
   value = "",
   onChange,
   onChangeComplete,
-  isInherited,
+  placeholder,
   onKeyDown,
 }: DeclarationValueProps) => {
   const state = useSelector(getEditorState);
@@ -47,7 +47,7 @@ export const DeclarationValue = ({
   return (
     <RawInput
       value={value}
-      isInherited={isInherited}
+      placeholder={placeholder}
       getSuggestionItems={getDeclSuggestionItems(name, state)}
       onChange={onChange}
       onChangeComplete={onChangeComplete}
@@ -57,16 +57,16 @@ export const DeclarationValue = ({
 };
 
 type RawInputProps = {
-  isInherited: boolean;
+  placeholder?: string;
   getSuggestionItems: (token: SimpleExpression) => RawInputValueSuggestion[];
-  value: string;
+  value?: string;
   onChange: (value: string) => void;
   onChangeComplete: (value: string, imports: Record<string, string>) => void;
   onKeyDown: (event: React.KeyboardEvent<any>) => void;
 };
 
 const RawInput = (props: RawInputProps) => {
-  const { getSuggestionItems, isInherited } = props;
+  const { getSuggestionItems, placeholder } = props;
   const {
     ref,
     activeToken,
@@ -152,7 +152,7 @@ const RawInput = (props: RawInputProps) => {
         onBlur={onBlur}
         onKeyUp={onKeyUp}
         onChange={onTextInputChange}
-        placeholder={isInherited ? value : undefined}
+        placeholder={placeholder}
         onKeyDown={onKeyDown}
         onFocus={onFocus}
         onClick={onInputClick}
@@ -166,7 +166,6 @@ const useRawInput = ({
   onChange,
   onChangeComplete,
   onKeyDown: onKeyDown2,
-  isInherited,
 }: RawInputProps) => {
   const callbacks = useRef<any>();
   callbacks.current = {
@@ -177,7 +176,7 @@ const useRawInput = ({
   const [state, dispatch] = useInlineMachine(
     reducer,
     engine(callbacks),
-    getInitialState(isInherited ? "" : value)
+    getInitialState(value)
   );
   const activeToken = getTokenAtCaret(state);
 

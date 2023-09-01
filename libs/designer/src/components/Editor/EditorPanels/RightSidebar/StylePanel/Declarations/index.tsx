@@ -24,6 +24,7 @@ type GroupSectionProps = {
 
 const GroupSection = ({ targetId, name, style }: GroupSectionProps) => {
   const [focusedDeclIndex, setFocusedDeclIndex] = useState<number | null>(null);
+  console.log(style);
 
   const onLastValueKeyDown = useCallback(
     (event: React.KeyboardEvent) => {

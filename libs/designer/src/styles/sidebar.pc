@@ -196,14 +196,21 @@ public component SidebarHeaderButton {
     }
 }
 
+/**
+ * @bounds(x: 93, y: 904, width: 378, height: 267)
+*/
+
 public component SidebarPopup {
-    render div {
+    render div(style: style) {
         style extends panel {
             position: fixed
             flex-shrink: 0
-            transform: translate(calc(-100% - var(theme.space07)))
             z-index: 1024
             min-width: 200px
+            font-family: var(theme.defaultFontFamily)
+            color: var(theme.fontColor01)
+            font-size: var(theme.fontSize01)
+            transform: translate(calc(-100% - var(theme.space07)))
         }
         div {
             style {
@@ -213,7 +220,9 @@ public component SidebarPopup {
                 font-weight: 600
                 padding-bottom: var(theme.space04)
             }
-            slot header
+            slot header {
+                text "title"
+            }
             button(onClick: onCloseClick) {
                 style extends theme.reset {
                     cursor: pointer

@@ -7,7 +7,10 @@ import {
   getSelectedExpressionInfo,
 } from "@paperclip-ui/designer/src/state/pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
-import { EditVariantPopup, SaveOptions } from "./EditVariantPopup";
+import {
+  EditVariantPopup,
+  SaveOptions,
+} from "./EditVariantPopup/EditVariantPopup";
 import { Component, Variant } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 

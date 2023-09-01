@@ -12,6 +12,7 @@ import {
   State,
   getDeclSuggestionItems,
   getInitialState,
+  getRenderedCssValue,
   getTokenAtCaret,
 } from "./state";
 
@@ -90,8 +91,9 @@ const RawInput = (props: RawInputProps) => {
     onCustomSelect,
   } = useRawInput(props);
 
+  const state = useSelector(getEditorState);
   const values = useMemo(() => [value], [value]);
-  const tokenValue = getTokenValue(activeToken);
+  const tokenValue = getRenderedCssValue(getTokenValue(activeToken), state);
   const valueType = inferDeclarationValueType(tokenValue);
 
   let editorInput = null;
@@ -271,11 +273,18 @@ const useRawInput = ({
     if (state.caretPosition !== -1 && state.active) {
       setTimeout(() => {
         ref.current.focus();
+
         ref.current.selectionStart = state.caretPosition;
-        ref.current.selectionEnd = state.caretPosition;
+        ref.current.selectionEnd =
+          state.caretPosition + (state.selectionLength || 0);
       });
     }
-  }, [state.caretPosition, state.active, state.showSuggestionMenu]);
+  }, [
+    state.caretPosition,
+    state.active,
+    state.showSuggestionMenu,
+    state.selectionLength,
+  ]);
 
   const onCustomSelect = (value: string) => {};
 

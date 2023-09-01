@@ -1,10 +1,14 @@
 import { memoize } from "@paperclip-ui/common";
-import { DesignerState } from "@paperclip-ui/designer/src/state";
+import {
+  DesignerState,
+  getCurrentDependency,
+} from "@paperclip-ui/designer/src/state";
 import { Token, getTokenAtPosition, simpleParser } from "./utils";
 import { declSuggestionMap } from "./css";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { DeclarationValueType, inferDeclarationValueType } from "./css-utils";
 import { camelCase } from "lodash";
+import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 
 export enum RawInputValueSuggestionKind {
   Section,
@@ -35,6 +39,7 @@ export type State = {
   active: boolean;
   value?: string;
   caretPosition: number;
+  selectionLength?: number;
   showSuggestionMenu: boolean;
 };
 
@@ -134,4 +139,39 @@ export const getDeclSuggestionItems = memoize(
 export const getPathNamespace = (path: string) => {
   const parts = path.split("/");
   return camelCase(parts[parts.length - 1].replace(".pc", ""));
+};
+
+export const getRenderedCssValue = (value: string, state: DesignerState) => {
+  if (!value) {
+    return null;
+  }
+
+  if (!value.startsWith("var")) {
+    return value;
+  }
+
+  const dep = getCurrentDependency(state);
+  const document = dep.document;
+
+  let varImpSource: string = dep.path;
+
+  const varInfo = value.match(/var\((.*)\)/)[1];
+  const [namespace, name] = varInfo.split(".");
+
+  if (varInfo.includes(".")) {
+    const imp = ast.getDocumentImport(namespace, document);
+
+    if (!imp) {
+      return value;
+    }
+    varImpSource = dep.imports[imp.path];
+  }
+
+  const atoms = ast.getGraphAtoms(state.graph);
+
+  const atom = atoms.find(
+    (atom) => atom.atom.name === name && atom.dependency.path === varImpSource
+  );
+
+  return atom?.cssValue ?? value;
 };

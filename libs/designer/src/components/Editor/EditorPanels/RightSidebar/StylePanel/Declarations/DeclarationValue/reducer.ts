@@ -79,6 +79,7 @@ const replaceActiveToken = (
 
     if (setCaretPosition) {
       draft.caretPosition = caretPosition;
+      draft.selectionLength = newValue.length;
     }
     draft.value = newValue.replace("%|%", "");
   });

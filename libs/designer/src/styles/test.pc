@@ -1,3 +1,4 @@
+import "./theme.pc" as theme
 
 /**
  * @bounds(x: 562, y: 217, width: 430, height: 185)
@@ -6,7 +7,7 @@
 div {
     style {
         position: relative
-        color: #FF6600
+        color: var(theme.backgroundSelected)
     }
     text "something!!"
 }

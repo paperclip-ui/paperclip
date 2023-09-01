@@ -3,12 +3,18 @@ import {
   DesignerState,
   getCurrentDependency,
 } from "@paperclip-ui/designer/src/state";
-import { Token, getTokenAtPosition, simpleParser } from "./utils";
+import {
+  Token,
+  getTokenAtPosition,
+  getTokenValue,
+  simpleParser,
+} from "./utils";
 import { declSuggestionMap, defaultDeclSuggestions } from "./css";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { DeclarationValueType, inferDeclarationValueType } from "./css-utils";
 import { camelCase } from "lodash";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
+import produce from "immer";
 
 export enum RawInputValueSuggestionKind {
   Section,
@@ -46,7 +52,7 @@ export type State = {
 export const getInitialState = memoize(
   (value: string): State => ({
     caretPosition: -1,
-    value,
+    value: value ?? "",
     active: false,
     showSuggestionMenu: false,
   })
@@ -180,4 +186,60 @@ export const getRenderedCssValue = (value: string, state: DesignerState) => {
   );
 
   return atom?.cssValue ?? value;
+};
+
+export const replaceActiveToken = (
+  value: string,
+  state: State,
+  selectionBehavior?: "beginning" | "picked" | "all"
+) => {
+  return produce(state, (draft) => {
+    const token = getTokenAtCaret(state);
+
+    let newValue;
+    let tokenPos: number;
+
+    if (token) {
+      tokenPos = token.pos;
+      newValue =
+        state.value.slice(0, token.pos) +
+        value +
+        state.value.slice(token.pos + getTokenValue(token).length);
+
+      // may not be the case if value is ""
+    } else {
+      newValue = state.value + value;
+      tokenPos = state.value.length;
+    }
+
+    let pickedCaretPosition = newValue.indexOf("%|%");
+    if (pickedCaretPosition === -1) {
+      pickedCaretPosition = tokenPos + value.length;
+    }
+
+    if (selectionBehavior) {
+      if (selectionBehavior === "beginning") {
+        draft.caretPosition = tokenPos;
+        draft.selectionLength = 0;
+      } else if (selectionBehavior === "picked") {
+        draft.caretPosition = pickedCaretPosition;
+        draft.selectionLength = 0;
+      } else if (selectionBehavior === "all") {
+        draft.caretPosition = tokenPos;
+        draft.selectionLength = value.length;
+      }
+    }
+
+    draft.value = newValue.replace("%|%", "");
+  });
+};
+
+export const selectActiveToken = (state: State) => {
+  return produce(state, (draft) => {
+    const token = getTokenAtCaret(state);
+    if (token) {
+      draft.caretPosition = token.pos;
+      draft.selectionLength = getTokenValue(token).length;
+    }
+  });
 };

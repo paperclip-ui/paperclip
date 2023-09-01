@@ -1,4 +1,9 @@
-import { State, getPathNamespace, getTokenAtCaret } from "./state";
+import {
+  State,
+  getPathNamespace,
+  selectActiveToken,
+  replaceActiveToken,
+} from "./state";
 import { DeclarationValueEvent } from "./events";
 import produce from "immer";
 import { getTokenValue } from "./utils";
@@ -92,48 +97,4 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
   }
 
   return state;
-};
-
-const replaceActiveToken = (
-  value: string,
-  state: State,
-  selectionBehavior?: "beginning" | "picked" | "all"
-) => {
-  return produce(state, (draft) => {
-    const token = getTokenAtCaret(state);
-
-    const newValue =
-      state.value.slice(0, token.pos) +
-      value +
-      state.value.slice(token.pos + getTokenValue(token).length);
-    let pickedCaretPosition = newValue.indexOf("%|%");
-    if (pickedCaretPosition === -1) {
-      pickedCaretPosition = token.pos + value.length;
-    }
-
-    if (selectionBehavior) {
-      if (selectionBehavior === "beginning") {
-        draft.caretPosition = token.pos;
-        draft.selectionLength = 0;
-      } else if (selectionBehavior === "picked") {
-        draft.caretPosition = pickedCaretPosition;
-        draft.selectionLength = 0;
-      } else if (selectionBehavior === "all") {
-        draft.caretPosition = token.pos;
-        draft.selectionLength = value.length;
-      }
-    }
-
-    draft.value = newValue.replace("%|%", "");
-  });
-};
-
-const selectActiveToken = (state: State) => {
-  return produce(state, (draft) => {
-    const token = getTokenAtCaret(state);
-    if (token) {
-      draft.caretPosition = token.pos;
-      draft.selectionLength = getTokenValue(token).length;
-    }
-  });
 };

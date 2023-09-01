@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import * as etcStyles from "@paperclip-ui/designer/src/styles/etc.pc";
 import { useSelector } from "@paperclip-ui/common";
@@ -24,7 +23,6 @@ type GroupSectionProps = {
 
 const GroupSection = ({ targetId, name, style }: GroupSectionProps) => {
   const [focusedDeclIndex, setFocusedDeclIndex] = useState<number | null>(null);
-  console.log(style);
 
   const onLastValueKeyDown = useCallback(
     (event: React.KeyboardEvent) => {

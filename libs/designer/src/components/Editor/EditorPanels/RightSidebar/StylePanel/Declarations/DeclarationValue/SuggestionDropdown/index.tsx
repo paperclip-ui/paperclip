@@ -38,8 +38,6 @@ export const DeclSuggestionMenu = ({
 
 const useDeclSuggestionMenu = () => {
   const onInputMouseDown = (event: React.MouseEvent) => {
-    console.log("DOWNN");
-
     // prevent menu from being closed
     event.stopPropagation();
 

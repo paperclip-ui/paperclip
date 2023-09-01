@@ -51,11 +51,6 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
         }
       });
     }
-    case "customSelected": {
-      return produce(state, (draft) => {
-        draft.value = event.payload.value;
-      });
-    }
     case "keyDown": {
       return produce(state, (draft) => {
         draft.caretPosition = event.payload.caretPosition;

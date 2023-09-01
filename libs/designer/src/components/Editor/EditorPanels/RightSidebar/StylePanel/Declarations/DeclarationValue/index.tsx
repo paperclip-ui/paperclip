@@ -92,7 +92,6 @@ const RawInput = (props: RawInputProps) => {
   } = useRawInput(props);
 
   const state = useSelector(getEditorState);
-  const values = useMemo(() => [value], [value]);
   const tokenValue = getRenderedCssValue(getTokenValue(activeToken), state);
   const valueType = inferDeclarationValueType(tokenValue);
 
@@ -142,6 +141,8 @@ const RawInput = (props: RawInputProps) => {
 
     return items;
   }, [activeToken, getSuggestionItems]);
+
+  const values = useMemo(() => [value], [value]);
 
   return (
     <DeclSuggestionMenu

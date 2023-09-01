@@ -143,6 +143,10 @@ public component SplashTip {
     }
 }
 
+/**
+ * @bounds(x: 319, y: -452, width: 1024, height: 768)
+*/
+
 public component ComboKey {
     render span {
         style {

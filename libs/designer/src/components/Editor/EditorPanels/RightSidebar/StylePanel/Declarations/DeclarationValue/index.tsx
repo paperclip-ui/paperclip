@@ -39,7 +39,7 @@ export type DeclarationValueProps = {
   isInherited?: boolean;
   onChange: (value: string) => void;
   onChangeComplete: (value: string, imports: Record<string, string>) => void;
-  onTab?: (event: React.KeyboardEvent<void>) => void;
+  onKeyDown?: (event: React.KeyboardEvent<any>) => void;
 };
 
 export const DeclarationValue = ({
@@ -48,7 +48,7 @@ export const DeclarationValue = ({
   onChange,
   onChangeComplete,
   isInherited,
-  onTab,
+  onKeyDown,
 }: DeclarationValueProps) => {
   const state = useSelector(getEditorState);
 
@@ -59,7 +59,7 @@ export const DeclarationValue = ({
       getSuggestionItems={getDeclSuggestionItems(name, state)}
       onChange={onChange}
       onChangeComplete={onChangeComplete}
-      onTab={onTab}
+      onKeyDown={onKeyDown}
     />
   );
 };
@@ -70,7 +70,7 @@ type RawInputProps = {
   value: string;
   onChange: (value: string) => void;
   onChangeComplete: (value: string, imports: Record<string, string>) => void;
-  onTab: (event: React.KeyboardEvent<void>) => void;
+  onKeyDown: (event: React.KeyboardEvent<any>) => void;
 };
 
 const RawInput = (props: RawInputProps) => {
@@ -173,7 +173,7 @@ const useRawInput = ({
   value,
   onChange,
   onChangeComplete,
-  onTab,
+  onKeyDown,
   isInherited,
 }: RawInputProps) => {
   const callbacks = useRef<any>();
@@ -190,11 +190,6 @@ const useRawInput = ({
   const activeToken = getTokenAtCaret(state);
 
   const ref = useRef<HTMLInputElement>(null);
-  const onKeyDown = (event: React.KeyboardEvent<any>) => {
-    if (event.key === "Tab" && onTab) {
-      onTab(event);
-    }
-  };
 
   const onKeyUp = () => {
     dispatch({
@@ -258,8 +253,6 @@ const useRawInput = ({
 
   useEffect(() => {
     if (state.caretPosition !== -1 && state.active) {
-      // ref.current.focus();
-
       ref.current.selectionStart = state.caretPosition;
       ref.current.selectionEnd =
         state.caretPosition + (state.selectionLength || 0);

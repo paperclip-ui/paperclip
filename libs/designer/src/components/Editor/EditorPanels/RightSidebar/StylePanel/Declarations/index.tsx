@@ -25,10 +25,12 @@ type GroupSectionProps = {
 const GroupSection = ({ targetId, name, style }: GroupSectionProps) => {
   const [focusedDeclIndex, setFocusedDeclIndex] = useState<number | null>(null);
 
-  const onLastValueTab = useCallback(
+  const onLastValueKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
-      event.preventDefault();
-      setFocusedDeclIndex(style.propertyNames.length + 1);
+      if (event.key === "Tab" && !event.shiftKey) {
+        event.preventDefault();
+        setFocusedDeclIndex(style.propertyNames.length + 1);
+      }
     },
     [focusedDeclIndex, style.propertyNames.length]
   );
@@ -58,7 +60,7 @@ const GroupSection = ({ targetId, name, style }: GroupSectionProps) => {
         key={targetId + "-" + i}
         isNew={isNew}
         style={decl}
-        onValueTab={isLast ? onLastValueTab : undefined}
+        onValueKeyDown={isLast ? onLastValueKeyDown : undefined}
         onFocus={() => setFocusedDeclIndex(i)}
         onBlur={isLast ? () => setFocusedDeclIndex(i - 1) : undefined}
       />

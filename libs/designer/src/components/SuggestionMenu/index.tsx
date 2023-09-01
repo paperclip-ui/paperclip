@@ -1,26 +1,30 @@
-import React, {
-  MutableRefObject,
-  Ref,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/input.pc";
 import { Portal } from "../Portal";
 import cx from "classnames";
 import { usePositioner } from "../hooks/usePositioner";
-import { noop, reduce } from "lodash";
+import { noop } from "lodash";
 import { useInlineMachine } from "@paperclip-ui/common";
 import { reducer } from "./reducer";
-import {
-  State,
-  getInitialState,
-  getSelectedValues,
-  isOpen as isOpen2,
-} from "./state";
-import { SuggestionMenuEvent } from "./events";
+import { getInitialState, isOpen as isOpen2 } from "./state";
 import { Callbacks, suggestionMenuEngine } from "./engine";
+
+// export enum SuggestionMenuItemKind {
+//   Section,
+//   Value
+// }
+
+// export type SuggestionMenuValueItem = {
+//   kind: SuggestionMenuItemKind.Value;
+//   value: any;
+//   label: string;
+// };
+
+// export type SuggestionMenuSection = {
+//   label: SuggestionMenuItemKind.Section;
+// };
+
+// export type SuggestionMenuSectionItem = SuggestionMenuValueItem | SuggestionMenuSection;
 
 export type SuggestionMenuProps = {
   open?: boolean;

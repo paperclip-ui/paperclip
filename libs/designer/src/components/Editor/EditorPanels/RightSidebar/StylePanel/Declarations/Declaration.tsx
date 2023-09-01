@@ -19,7 +19,7 @@ type FieldProps = {
   style?: ComputedStyle;
   onFocus?: () => void;
   onBlur?: () => void;
-  onValueTab?: (event: React.KeyboardEvent<any>) => void;
+  onValueKeyDown?: (event: React.KeyboardEvent<any>) => void;
   isNew?: boolean;
 };
 
@@ -29,7 +29,7 @@ export const Declaration = memo(
     style,
     onBlur = noop,
     onFocus = noop,
-    onValueTab = noop,
+    onValueKeyDown = noop,
     isNew,
   }: FieldProps) => {
     const value = style && serializeDeclaration(style.value);
@@ -78,7 +78,7 @@ export const Declaration = memo(
         name={name2}
         value={value}
         isInherited={style?.ownerId !== targetId}
-        onTab={onValueTab}
+        onKeyDown={onValueKeyDown}
         onChangeComplete={onValueChangeComplete}
         onChange={onValueChange}
       />

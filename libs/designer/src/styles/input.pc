@@ -234,7 +234,7 @@ public component Fields {
 */
 
 public component MultiSelect {
-    render div(tabIndex: "0", onFocus: onFocus, onChange: onChange, onBlur: onBlur) {
+    render div(tabIndex: "0", onClick: onClick, onFocus: onFocus, onChange: onChange, onBlur: onBlur) {
         style extends theme.input, theme.fontDefault {
             display: flex
             cursor: pointer

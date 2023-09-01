@@ -1,8 +1,7 @@
 import React, { useMemo } from "react";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
-import cx from "classnames";
+
 import { SuggestionMenu, SuggestionMenuItem } from "../SuggestionMenu";
-import { noop } from "lodash";
 
 export type MultiSelectInputProps = {
   values: string[];

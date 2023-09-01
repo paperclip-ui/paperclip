@@ -568,7 +568,7 @@ add_case! {
         }
       "#),
   ],
-  r#"._80f4925f-6 { 
+  r#"._80f4925f-6 {
     mask-size: var(--mask-mask-size-6bcf0994-2); 
     --size: 
     var(--icon---size-6bcf0994-6); 

@@ -102,8 +102,10 @@ fn evaluate_tokens<F: FileResolver>(document: &ast::Document, context: &mut Docu
     })
 }
 
-
-fn evaluate_style_mixins<F: FileResolver>(document: &ast::Document, context: &mut DocumentContext<F>) {
+fn evaluate_style_mixins<F: FileResolver>(
+    document: &ast::Document,
+    context: &mut DocumentContext<F>,
+) {
     let styles = document.get_styles();
 
     if styles.len() == 0 {
@@ -119,22 +121,18 @@ fn evaluate_style_mixins<F: FileResolver>(document: &ast::Document, context: &mu
             source_id: None,
             selector_text: ":root".to_string(),
 
-            style: styles
-                .iter()
-                .fold(vec![], |mut acc, style| {
-                    acc.extend(create_style_mixin_declarations(style, context));
-                    acc
-                })
-
-            // style: atoms
-            //     .iter()
-            //     .map(|atom| virt::StyleDeclaration {
-            //         id: atom.id.to_string(),
-            //         source_id: atom.id.to_string(),
-            //         name: atom.get_var_name(),
-            //         value: evaluate_atom(atom, context),
-            //     })
-            //     .collect(),
+            style: styles.iter().fold(vec![], |mut acc, style| {
+                acc.extend(create_style_mixin_declarations(style, context));
+                acc
+            }), // style: atoms
+                //     .iter()
+                //     .map(|atom| virt::StyleDeclaration {
+                //         id: atom.id.to_string(),
+                //         source_id: atom.id.to_string(),
+                //         name: atom.get_var_name(),
+                //         value: evaluate_atom(atom, context),
+                //     })
+                //     .collect(),
         })
         .get_outer(),
     })
@@ -933,7 +931,10 @@ fn create_style_declarations<F: FileResolver>(
             id: "dec".to_string(),
             source_id: decl.id.to_string(),
             name: decl.name.to_string(),
-            value: stringify_style_decl_value(&decl.value.as_ref().expect("value missing"), context),
+            value: stringify_style_decl_value(
+                &decl.value.as_ref().expect("value missing"),
+                context,
+            ),
         });
     }
     decls
@@ -944,7 +945,7 @@ fn evaluate_style_extends<F: FileResolver>(
     context: &DocumentContext<F>,
 ) -> Vec<virt::StyleDeclaration> {
     let mut decls = vec![];
-     // insert extended styles _before_ the declarations in the body since
+    // insert extended styles _before_ the declarations in the body since
     // these declarations should be overwritten. Also note that we're
     // including the entire body of extended styles to to cover !important statements.
     // This could be smarter at some point.
@@ -966,7 +967,6 @@ fn evaluate_style_extends<F: FileResolver>(
     decls
 }
 
-
 fn create_extended_style_declarations<F: FileResolver>(
     style: &ast::Style,
     context: &DocumentContext<F>,
@@ -983,20 +983,20 @@ fn create_style_mixin_declarations<F: FileResolver>(
     style: &ast::Style,
     context: &DocumentContext<F>,
 ) -> Vec<virt::StyleDeclaration> {
-    create_style_declarations(style, context).iter().map(|decl|  {
-        virt::StyleDeclaration {
+    create_style_declarations(style, context)
+        .iter()
+        .map(|decl| virt::StyleDeclaration {
             id: "dec".to_string(),
             source_id: decl.id.to_string(),
             name: get_decl_var_name(style, &decl.name, &decl.source_id),
             value: decl.value.to_string(),
-        }
-    }).collect()
+        })
+        .collect()
 }
-
 
 fn evaluate_extended_style_declaration(
     style: &ast::Style,
-    decl: &css_ast::StyleDeclaration
+    decl: &css_ast::StyleDeclaration,
 ) -> virt::StyleDeclaration {
     virt::StyleDeclaration {
         id: "dec".to_string(),
@@ -1007,7 +1007,12 @@ fn evaluate_extended_style_declaration(
 }
 
 fn get_decl_var_name(style: &ast::Style, name: &str, id: &str) -> String {
-    format!("--{}-{}-{}", style.name.as_ref().unwrap_or(&"mixin".to_string()), name, id)
+    format!(
+        "--{}-{}-{}",
+        style.name.as_ref().unwrap_or(&"mixin".to_string()),
+        name,
+        id
+    )
 }
 
 fn stringify_style_decl_value<F: FileResolver>(

@@ -14,7 +14,7 @@ export const engine = (callbacks: MutableRefObject<Callbacks>) => () => {
       switch (event.type) {
         case "blurred":
         case "suggestionSelected":
-        case "customInputChangeComplete":
+        case "suggestionMenuClose":
         case "inputClicked": {
           callbacks.current.onChangeComplete(state.value, state.imports);
           break;

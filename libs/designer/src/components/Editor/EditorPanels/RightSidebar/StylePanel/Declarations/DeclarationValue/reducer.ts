@@ -51,10 +51,22 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
         }
       });
     }
-    case "keyDown": {
+    case "keyUp": {
       return produce(state, (draft) => {
         draft.caretPosition = event.payload.caretPosition;
         draft.value = event.payload.value;
+      });
+    }
+    case "keyDown": {
+      return produce(state, (draft) => {
+        if (
+          event.payload.key === "ArrowDown" ||
+          event.payload.key === "ArrowUp"
+        ) {
+          draft.showSuggestionMenu = true;
+        } else if (event.payload.key === "Escape") {
+          draft.showSuggestionMenu = false;
+        }
       });
     }
     case "blurred": {

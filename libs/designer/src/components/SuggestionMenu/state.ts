@@ -16,13 +16,13 @@ export type State = {
 export const getInitialState = (props: StatefulProps): State => ({
   props,
   isOpen: false,
-  preselectedIndex: 0,
+  preselectedIndex: -1,
 });
 
 export const isOpen = (state: State) => state.props.open ?? state.isOpen;
 
 export const getSelectedValues = (
-  value: any,
+  value: any[],
   { props: { multi, values } }: State
 ) => {
   let newValues: any[] = [];

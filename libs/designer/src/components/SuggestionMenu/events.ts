@@ -13,6 +13,7 @@ export type SuggestionMenuEvent =
       {
         key: string;
         menuLength: number;
+        firstSelectedIndex: number;
         selectedValue: any;
       }
     >

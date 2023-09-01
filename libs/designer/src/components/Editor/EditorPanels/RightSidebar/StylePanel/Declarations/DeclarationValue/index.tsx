@@ -173,7 +173,7 @@ const useRawInput = ({
   value,
   onChange,
   onChangeComplete,
-  onKeyDown,
+  onKeyDown: onKeyDown2,
   isInherited,
 }: RawInputProps) => {
   const callbacks = useRef<any>();
@@ -193,12 +193,24 @@ const useRawInput = ({
 
   const onKeyUp = () => {
     dispatch({
-      type: "keyDown",
+      type: "keyUp",
       payload: {
         caretPosition: ref.current.selectionStart,
         value: ref.current.value,
       },
     });
+  };
+
+  const onKeyDown = (event: React.KeyboardEvent<any>) => {
+    dispatch({
+      type: "keyDown",
+      payload: {
+        key: event.key,
+      },
+    });
+    if (onKeyDown2) {
+      onKeyDown2(event);
+    }
   };
   const onBlur = () => {
     dispatch({

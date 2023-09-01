@@ -1,4 +1,4 @@
-import { State } from "./state";
+import { State, isOpen } from "./state";
 import { SuggestionMenuEvent } from "./events";
 import produce from "immer";
 
@@ -18,6 +18,8 @@ export const reducer = (state: State, event: SuggestionMenuEvent) => {
       });
     }
     case "keyDown": {
+      console.log("KEYD WON", event.payload.key, event.payload.menuLength);
+
       return produce(state, (draft) => {
         switch (event.payload.key) {
           case "Enter":
@@ -27,15 +29,29 @@ export const reducer = (state: State, event: SuggestionMenuEvent) => {
           }
           case "ArrowDown": {
             draft.isOpen = true;
-            draft.preselectedIndex = Math.min(
-              draft.preselectedIndex + 1,
-              event.payload.menuLength - 1
-            );
+
+            if (draft.preselectedIndex === -1) {
+              draft.preselectedIndex = event.payload.firstSelectedIndex;
+            }
+
+            console.log(draft.preselectedIndex);
+
+            if (isOpen(draft)) {
+              draft.preselectedIndex = Math.min(
+                draft.preselectedIndex + 1,
+                event.payload.menuLength - 1
+              );
+            }
             break;
           }
           case "ArrowUp": {
             draft.isOpen = true;
-            draft.preselectedIndex = Math.max(draft.preselectedIndex - 1, 0);
+            if (draft.preselectedIndex === -1) {
+              draft.preselectedIndex = event.payload.firstSelectedIndex;
+            }
+            if (isOpen(draft)) {
+              draft.preselectedIndex = Math.max(draft.preselectedIndex - 1, 0);
+            }
             break;
           }
         }
@@ -54,6 +70,11 @@ export const reducer = (state: State, event: SuggestionMenuEvent) => {
     case "propsChanged": {
       return produce(state, (draft) => {
         draft.props = event.payload;
+
+        // reset
+        if (!isOpen(draft)) {
+          draft.preselectedIndex = -1;
+        }
       });
     }
   }

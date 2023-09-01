@@ -4,7 +4,7 @@ import {
   getCurrentDependency,
 } from "@paperclip-ui/designer/src/state";
 import { Token, getTokenAtPosition, simpleParser } from "./utils";
-import { declSuggestionMap } from "./css";
+import { declSuggestionMap, defaultDeclSuggestions } from "./css";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { DeclarationValueType, inferDeclarationValueType } from "./css-utils";
 import { camelCase } from "lodash";
@@ -82,7 +82,8 @@ export const parseStyleDeclaration = simpleParser([
 
 export const getDeclSuggestionItems = memoize(
   (declName: string, state: DesignerState) => (token: Token) => {
-    const declSuggestionInfo = declSuggestionMap[declName];
+    const declSuggestionInfo =
+      declSuggestionMap[declName] ?? defaultDeclSuggestions;
 
     const nativeSuggestions =
       declSuggestionInfo?.suggestions?.map((suggestion) => {

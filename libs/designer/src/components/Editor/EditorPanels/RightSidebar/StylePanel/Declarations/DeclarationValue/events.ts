@@ -1,11 +1,18 @@
 import { BaseEvent } from "@paperclip-ui/common";
 import { RawInputValueSuggestionItem } from "./state";
 
-type KeyDown = BaseEvent<
-  "keyDown",
+type KeyUp = BaseEvent<
+  "keyUp",
   {
     caretPosition: number;
     value: string;
+  }
+>;
+
+type KeyDown = BaseEvent<
+  "keyDown",
+  {
+    key: string;
   }
 >;
 
@@ -55,6 +62,7 @@ type SuggestionSelected = BaseEvent<
 
 export type DeclarationValueEvent =
   | KeyDown
+  | KeyUp
   | Blurred
   | CustomSelected
   | InputClicked

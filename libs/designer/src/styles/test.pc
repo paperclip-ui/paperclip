@@ -8,6 +8,7 @@ div {
     style {
         position: relative
         color: var(theme.backgroundSelected)
+        background-color: var(theme.fontSize01)
     }
     text "something!!"
 }

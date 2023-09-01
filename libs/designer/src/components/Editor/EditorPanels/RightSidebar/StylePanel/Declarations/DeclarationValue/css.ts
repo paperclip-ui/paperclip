@@ -89,3 +89,8 @@ export const declSuggestionMap: DeclarationSuggestionMap = {
     [...UNIT_OPTIONS]
   ),
 };
+
+export const defaultDeclSuggestions = declValueSuggestions(
+  Object.values(DeclarationValueType),
+  GLOBAL_VALUES
+);

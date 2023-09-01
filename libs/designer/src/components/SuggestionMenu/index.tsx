@@ -138,13 +138,11 @@ export const useSuggestionMenu = ({
         })
     : null;
 
-  const selectedIndex = menuOptions?.findIndex(
+  const firstSelectedIndex = menuOptions?.findIndex(
     (option) => option.props.selected
   );
+
   const menuOptionsLength = menuOptions?.length;
-  const firstOptionValueIndex = menuOptions?.findIndex(
-    (child) => child.props.value != null
-  );
 
   const onKeyDown = (event: React.KeyboardEvent<any>) => {
     const selectedValue =
@@ -153,7 +151,12 @@ export const useSuggestionMenu = ({
 
     dispatch({
       type: "keyDown",
-      payload: { key: event.key, menuLength: menuOptionsLength, selectedValue },
+      payload: {
+        key: event.key,
+        menuLength: menuOptionsLength,
+        selectedValue,
+        firstSelectedIndex,
+      },
     });
 
     if (oldProps.onKeyDown) {

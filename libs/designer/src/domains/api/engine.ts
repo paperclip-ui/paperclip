@@ -448,13 +448,13 @@ const createEventHandler = (actions: Actions) => {
       {
         setStyleDeclarations: {
           variantIds,
-          expressionId: getTargetExprId(state),
+          expressionId: getStyleableTargetId(state),
           declarations: style.filter((kv) => kv.value !== ""),
         },
       },
       {
         deleteStyleDeclarations: {
-          expressionId: getTargetExprId(state),
+          expressionId: getStyleableTargetId(state),
           declarationNames: style
             .filter((kv) => kv.value === "")
             .map((kv) => kv.name),

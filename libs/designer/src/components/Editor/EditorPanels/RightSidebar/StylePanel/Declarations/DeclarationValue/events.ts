@@ -27,6 +27,7 @@ type InputClicked = BaseEvent<
   }
 >;
 
+type PropsValueChanged = BaseEvent<"propsValueChanged", string>;
 type CustomInputChanged = BaseEvent<"customInputChanged", string>;
 
 type TextInputChanged = BaseEvent<"textInputChanged", string>;
@@ -55,6 +56,7 @@ export type DeclarationValueEvent =
   | Blurred
   | InputClicked
   | TextInputChanged
+  | PropsValueChanged
   | CustomInputChanged
   | CustomInputChangeComplete
   | Focused

@@ -80,8 +80,8 @@ export const Declaration = memo(
     const input = (
       <DeclarationValue
         name={name2}
-        value={style?.ownerId === targetId ? undefined : value}
-        placeholder={style?.ownerId === targetId ? value : undefined}
+        value={style?.ownerId === targetId ? value : undefined}
+        placeholder={style?.ownerId === targetId ? undefined : value}
         onKeyDown={onValueKeyDown}
         onChangeComplete={onValueChangeComplete}
         onChange={onValueChange}

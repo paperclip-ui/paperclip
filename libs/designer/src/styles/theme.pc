@@ -1,4 +1,21 @@
 
+/**
+ * @bounds(x: 1075, y: 49, width: 1024, height: 768)
+*/
+
+public component TokenPreview {
+    render div {
+        style {
+            background: rgba(0, 0, 0, 0.1)
+            position: absolute
+            left: 112px
+            top: 28px
+            width: 223px
+            height: 153px
+        }
+    }
+}
+
 public token gray0 rgb(210, 210, 210)
 public token gray02 rgb(115, 115, 115)
 public token gray03 rgb(59, 59, 59)
@@ -138,5 +155,6 @@ trigger mobile {
 
 div preview {
     style
+    TokenPreview
 }
 

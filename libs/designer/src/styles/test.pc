@@ -16,9 +16,20 @@ public component Something {
     render div {
         style extends aMixin {
             position: relative
-            color: var(something)
+            color: rgba(236, 57, 42, 0.72)
         }
         text "something!!"
+    }
+}
+
+/**
+ * @bounds(x: 569, y: -90, width: 456, height: 205)
+*/
+
+div {
+    style extends aMixin {
+        position: relative
+        font-size: 32px
     }
 }
 

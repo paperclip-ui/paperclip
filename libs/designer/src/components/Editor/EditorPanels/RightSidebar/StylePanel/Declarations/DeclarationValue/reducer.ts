@@ -22,6 +22,16 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
         draft.showSuggestionMenu = false;
       });
     }
+    case "propsValueChanged": {
+      return produce(state, (draft) => {
+        if (draft.value !== event.payload) {
+          draft.caretPosition = 0;
+          draft.selectionLength = null;
+          draft.showSuggestionMenu = false;
+          draft.value = event.payload;
+        }
+      });
+    }
     case "customInputChanged": {
       state = replaceActiveToken(event.payload, state, "all");
       return state;

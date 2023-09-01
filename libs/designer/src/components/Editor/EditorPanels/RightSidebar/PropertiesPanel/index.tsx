@@ -37,7 +37,7 @@ export const PropertiesPanel = () => {
             <TextValueField />
             <AtomValueField />
             <ExprTagNameField />
-            {expr.kind === ast.ExprKind.Component && <VariantsSection />}
+            <VariantsSection />
           </inputStyles.Fields>
         </sidebarStyles.SidebarPanelContent>
       </sidebarStyles.SidebarSection>

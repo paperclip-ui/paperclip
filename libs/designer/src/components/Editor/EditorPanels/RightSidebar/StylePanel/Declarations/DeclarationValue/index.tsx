@@ -178,6 +178,13 @@ const useRawInput = ({
     engine(callbacks),
     getInitialState(value)
   );
+
+  useEffect(() => {
+    dispatch({
+      type: "propsValueChanged",
+      payload: value,
+    });
+  }, [value]);
   const activeToken = getTokenAtCaret(state);
 
   const ref = useRef<HTMLInputElement>(null);

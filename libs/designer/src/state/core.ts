@@ -88,6 +88,7 @@ export type DesignerState = {
   scopedElementId?: string;
   projectDirectory?: FSDirectory;
   activeVariantId?: string;
+  editVariantPopupOpen?: boolean;
   selectedVariantIds: string[];
   renderedFilePath?: string;
   insertedNodeIds: string[];

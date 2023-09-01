@@ -493,6 +493,9 @@ export const getActiveVariant = (state: DesignerState) => {
     (ast.getExprByVirtId(state.activeVariantId, state.graph)?.expr as Variant)
   );
 };
+export const getEditVariantPopupOpened = (state: DesignerState) => {
+  return state.editVariantPopupOpen;
+};
 
 export const getFrameBoxes = memoize(
   (boxes: Record<string, Box>, frameIndex: number) => {

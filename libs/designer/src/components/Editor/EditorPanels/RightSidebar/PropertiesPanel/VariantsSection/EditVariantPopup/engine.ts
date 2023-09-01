@@ -11,6 +11,8 @@ export const engine = (ref: MutableRefObject<Callbacks>) => () => ({
     switch (event.type) {
       case "newTriggerSaved":
       case "nameSaved": {
+        console.log("STATE", state);
+
         ref.current.onSave({
           name: state.name,
           triggers: state.triggers,

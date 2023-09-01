@@ -14,7 +14,6 @@ import {
   getNodeBox,
   getPreviewFrameBoxes,
   getTargetExprId,
-  highlightNode,
   setTargetExprId,
 } from "../../state";
 import {
@@ -22,7 +21,7 @@ import {
   ResizerPathMoved,
   ResizerPathStoppedMoving,
 } from "./events";
-import { Box, centerTransformZoom, mergeBoxes } from "../../state/geom";
+import { Box, centerTransformZoom } from "../../state/geom";
 import { clamp, uniq } from "lodash";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { WritableDraft } from "immer/dist/internal";

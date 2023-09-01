@@ -6,13 +6,12 @@ import {
   TriggerBodyItem,
   TriggerBodyItemCombo,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
-import { UpdateVariantTrigger } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
-import produce from "immer";
 import { SidebarPopup } from "@paperclip-ui/designer/src/components/SidebarPopup";
 import { useInlineMachine } from "@paperclip-ui/common";
 import { reducer } from "./reducer";
 import { Callbacks, engine } from "./engine";
 import { SaveOptions, getInitialState } from "./state";
+export { SaveOptions };
 
 export type EditVariantPopupProps = {
   onSave?: ({ name, triggers }: SaveOptions) => void;
@@ -112,7 +111,7 @@ const useEditVariantPopup = ({
     event: React.KeyboardEvent<any> | React.FocusEvent<any>
   ) => {
     const value = event.currentTarget.value;
-    dispatch({ type: "nameSaved", payload: name });
+    dispatch({ type: "nameSaved", payload: value });
   };
 
   const onAddTriggerClick = () => {

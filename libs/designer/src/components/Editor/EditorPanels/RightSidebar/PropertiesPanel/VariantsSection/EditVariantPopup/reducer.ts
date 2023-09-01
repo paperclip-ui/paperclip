@@ -6,15 +6,11 @@ export const reducer = (state: State, event: VariantSectionEvent) => {
   switch (event.type) {
     case "propsChanged": {
       return produce(state, (draft) => {
-        draft.triggers = mapTriggers(event.payload.triggers);
+        draft.triggers = mapTriggers(event.payload.triggers || []);
+        draft.name = event.payload.name;
       });
     }
     case "nameChanged":
-    case "nameSaved": {
-      return produce(state, (draft) => {
-        draft.name = event.payload;
-      });
-    }
     case "nameSaved": {
       return produce(state, (draft) => {
         draft.name = event.payload;
@@ -28,6 +24,7 @@ export const reducer = (state: State, event: VariantSectionEvent) => {
     case "newTriggerSaved": {
       return produce(state, (draft) => {
         draft.triggers.push({ str: event.payload });
+        draft.showNewTriggerInput = false;
       });
     }
     case "triggerSaved": {

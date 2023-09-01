@@ -59,7 +59,8 @@ public component Select {
             }
             div {
                 style extends theme.icon {
-                    --size: 1em
+                    width: 1em
+                    height: 1em
                     -webkit-mask-image: url("./chevron2.svg")
                     transform: rotate(90deg)
                 }

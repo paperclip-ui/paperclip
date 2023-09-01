@@ -56,9 +56,8 @@ public style mask {
 }
 
 public style icon extends mask {
-    --size: 1em
-    width: var(--size)
-    height: var(--size)
+    width: 1em
+    height: 1em
     display: inline-block
 }
 

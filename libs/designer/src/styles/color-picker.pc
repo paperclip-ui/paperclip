@@ -89,13 +89,11 @@ public component ColorPicker {
             border: 0px
         }
         slot children {
-
             ColorBox top(class: "big") {
                 override {
                     variant rounded
                 }
             }
-
             ColorBox {
                 override {
                     variant rounded trigger {

@@ -1,22 +1,24 @@
 import "./theme.pc" as theme
 
-public token color rgba(46, 209, 205, 1)
+public token color var(theme.gray0)
 public style aMixin {
     color: var(color)
     font-size: 32px
     font-family: var(theme.defaultFontFamily)
-    background: rgba(97, 152, 231, 1)
+    background: var(theme.gray04)
 }
 
 /**
  * @bounds(x: 562, y: 217, width: 430, height: 185)
 */
 
-div {
-    style extends aMixin {
-        position: relative
-        color: var(something)
+public component Something {
+    render div {
+        style extends aMixin {
+            position: relative
+            color: var(something)
+        }
+        text "something!!"
     }
-    text "something!!"
 }
 

@@ -163,7 +163,8 @@ public component LeftSidebarHeader {
                 style extends theme.icon {
                     cursor: pointer
                     -webkit-mask-image: url("./hamburger.svg")
-                    --size: 1.2em
+                    width: 1.2em
+                    height: 1.2em
                     display: none
                 }
             }
@@ -232,46 +233,54 @@ public component LayerIcon {
                 transform: translate(-50%, -50%)
             }
             style variant isComponent {
-                --size: 1.1em
+                width: 1.1em
+                height: 1.1em
                 -webkit-mask-image: url("./component2.svg")
             }
             style variant isInstance {
-                --size: 0.9em
+                width: 0.9em
+                height: 0.9em
                 -webkit-mask-image: url("./box-outline.svg")
                 transform: translate(-50%, -50%) rotate(45deg)
             }
             style variant isSlot {
-                --size: 1em
                 -webkit-mask-image: url("./slot3.svg")
             }
             style variant isElement {
-                --size: 0.75em
+                width: 0.75em
+                height: 0.75em
                 -webkit-mask-image: url("./square.svg")
             }
             style variant isFolder {
-                --size: 0.9em
+                width: 0.9em
+                height: 0.9em
                 top: calc(50% + 1px)
                 -webkit-mask-image: url("./folder.svg")
             }
             style variant isFile {
-                --size: 0.9em
+                width: 0.9em
+                height: 0.9em
                 -webkit-mask-image: url("./file.svg")
             }
             style variant isCompositeToken {
-                --size: 0.9em
+                width: 0.9em
+                height: 0.9em
                 -webkit-mask-image: url("./group.svg")
             }
             style variant isAtomToken {
-                --size: 0.8em
+                width: 0.8em
+                height: 0.8em
                 -webkit-mask-image: url("./dot4.svg")
             }
             style variant isTrigger {
-                --size: 1.1em
+                width: 1.1em
+                height: 1.1em
                 position: relative
                 -webkit-mask-image: url("./lightning.svg")
             }
             style variant isText {
-                --size: 0.8em
+                width: 0.8em
+                height: 0.8em
                 -webkit-mask-image: url("./text.svg")
             }
         }
@@ -435,7 +444,8 @@ public component TreeNavigationItemHeader {
                         -webkit-mask-image: url("./chevron2.svg")
                         opacity: 0
                         color: white
-                        --size: 14px
+                        width: 0.9em
+                        height: 0.9em
                         position: absolute
                         left: -18px
                         transition: 0.2s

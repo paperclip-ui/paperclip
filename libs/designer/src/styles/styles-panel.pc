@@ -246,7 +246,8 @@ public component Preview {
                                 }
                                 div {
                                     style extends theme.icon {
-                                        --size: 0.8em
+                                        width: 0.8em
+                                        height: 0.8em
                                         -webkit-mask-image: url("./group.svg")
                                     }
                                 }

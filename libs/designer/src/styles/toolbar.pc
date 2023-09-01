@@ -63,24 +63,29 @@ public component ToolbarIcon {
         style extends theme.icon
         style variant isText {
             -webkit-mask-image: url("./text.svg")
-            --size: 0.9em
+            width: 0.9em
+            height: 0.9em
         }
         style variant isElement {
             -webkit-mask-image: url("./instance3.svg")
             transform: rotate(45deg)
-            --size: 1.2em
+            width: 1.2em
+            height: 1.2em
         }
         style variant isComponent {
             -webkit-mask-image: url("./component2.svg")
-            --size: 1.2em
+            width: 1.2em
+            height: 1.2em
         }
         style variant isAsset {
             -webkit-mask-image: url("./image3.svg")
-            --size: 1.2em
+            width: 1.2em
+            height: 1.2em
         }
         style variant isLibrary {
             -webkit-mask-image: url("./plus2.svg")
-            --size: 1.2em
+            width: 1.2em
+            height: 1.2em
         }
     }
 }

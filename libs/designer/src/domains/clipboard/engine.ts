@@ -6,6 +6,7 @@ import {
   getTargetExprId,
 } from "../../state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { isEventTargetTextInput } from "../../state/utils";
 
 export const createClipboardEngine = (
   dispatch: Dispatch<DesignerEvent>,
@@ -13,6 +14,10 @@ export const createClipboardEngine = (
 ): Engine<DesignerState, DesignerEvent> => {
   const onCopy = (event: ClipboardEvent) => {
     const state = getState();
+
+    if (isEventTargetTextInput(event.target)) {
+      return;
+    }
 
     if (!getTargetExprId(state)) {
       return;

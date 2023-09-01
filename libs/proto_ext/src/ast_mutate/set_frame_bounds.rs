@@ -7,7 +7,7 @@ use paperclip_proto::ast_mutate::{mutation_result, ExpressionUpdated, SetFrameBo
 use crate::ast::all::MutableVisitor;
 use crate::ast::all::VisitorResult;
 
-impl<'expr> MutableVisitor<()> for EditContext<'expr, SetFrameBounds> {
+impl MutableVisitor<()> for EditContext<SetFrameBounds> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
         if let Some(frame_index) = expr.body.iter().position(|expr| {
             expr.get_inner().get_id() == &self.mutation.frame_id
@@ -54,7 +54,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetFrameBounds> {
                 );
             }
 
-            self.changes.extend(results);
+            self.add_changes(results);
         }
 
         VisitorResult::Continue

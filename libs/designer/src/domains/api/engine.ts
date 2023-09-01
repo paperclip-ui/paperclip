@@ -9,6 +9,8 @@ import { DesignerEngineEvent, DocumentOpened } from "./events";
 import { DesignerEvent } from "../../events";
 import {
   AddLayerMenuItemClicked,
+  AtomValueChangeCompleted,
+  AtomValueChanged,
   AttributeChanged,
   ConfirmClosed,
   // DesignerEvent,
@@ -18,6 +20,7 @@ import {
   FileNavigatorDroppedFile,
   InstanceVariantToggled,
   PromptClosed,
+  StyleDeclarationsChangeCompleted,
   StyleDeclarationsChanged,
   StyleMixinsSet,
   TextValueChanged,
@@ -26,12 +29,14 @@ import {
 } from "../ui/events";
 
 import {
+  ConvertToComponentDetails,
   DEFAULT_FRAME_BOX,
   DesignerState,
   DNDKind,
   findVirtNode,
   FSItem,
   FSItemKind,
+  getActiveFilePath,
   getCurrentFilePath,
   getFileFilter,
   getInsertBox,
@@ -54,6 +59,7 @@ import {
 } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { Box, getScaledBox, getScaledPoint, roundBox } from "../../state/geom";
 import {
+  getCurrentDependency,
   getSelectedExpression,
   getSelectedExpressionInfo,
   getStyleableTargetId,
@@ -72,7 +78,7 @@ import {
 } from "../ui/events";
 import { ExpressionPasted } from "../clipboard/events";
 import { Range } from "@paperclip-ui/proto/lib/generated/ast/base";
-import { kebabCase } from "lodash";
+import { get, kebabCase } from "lodash";
 import { ConfirmKind } from "../../state/confirm";
 
 export type DesignerEngineOptions = {
@@ -155,9 +161,8 @@ const createActions = (
       readDirectory(parentDir);
     },
     async createDesignFile(name: string, parentDir?: string) {
-      // kebab case in case spaces are added
       const { filePath } = await client.CreateDesignFile({
-        name: kebabCase(name),
+        name,
         parentDir,
       });
       dispatch({
@@ -178,6 +183,9 @@ const createActions = (
 
     openCodeEditor(path: string, range: Range) {
       client.OpenCodeEditor({ path, range });
+    },
+    openFileInNavigator(filePath: string) {
+      client.OpenFileInNavigator({ filePath });
     },
     syncResourceFiles() {
       client.GetResourceFiles({}).subscribe({
@@ -384,7 +392,7 @@ const createEventHandler = (actions: Actions) => {
             variantIds,
             expressionId: node.sourceId,
             declarations: Object.entries(
-              state.styleOverrides[getTargetExprId(prevState)]
+              state.styleOverrides[getStyleableTargetId(prevState)]
             ).map(([name, value]) => {
               return { name, value: String(value) };
             }),
@@ -426,7 +434,7 @@ const createEventHandler = (actions: Actions) => {
   };
 
   const handleStyleDeclarationChanged = (
-    event: StyleDeclarationsChanged,
+    event: StyleDeclarationsChangeCompleted,
     state: DesignerState
   ) => {
     const style = Object.entries(event.payload.values).map(([name, value]) => ({
@@ -440,13 +448,13 @@ const createEventHandler = (actions: Actions) => {
       {
         setStyleDeclarations: {
           variantIds,
-          expressionId: getTargetExprId(state),
+          expressionId: getStyleableTargetId(state),
           declarations: style.filter((kv) => kv.value !== ""),
         },
       },
       {
         deleteStyleDeclarations: {
-          expressionId: getTargetExprId(state),
+          expressionId: getStyleableTargetId(state),
           declarationNames: style
             .filter((kv) => kv.value === "")
             .map((kv) => kv.name),
@@ -503,7 +511,7 @@ const createEventHandler = (actions: Actions) => {
       [LayerKind.Atom]: `public token unnamed unset`,
       [LayerKind.Component]: `public component unnamed {}`,
       [LayerKind.Element]: `div`,
-      [LayerKind.Text]: `text "double click to edit`,
+      [LayerKind.Text]: `text "double click to edit"`,
       [LayerKind.Style]: `public style unnamed {}`,
       [LayerKind.Trigger]: `public trigger unnamed {}`,
     }[layerKind];
@@ -512,10 +520,30 @@ const createEventHandler = (actions: Actions) => {
       return;
     }
 
+    // start with document for safety. Some exprs cannot be added
+    // to parent els
+    let parentId = getCurrentDependency(state).document.id;
+
+    const targetExpr = ast.getExprInfoById(getTargetExprId(state), state.graph);
+
+    if (
+      [LayerKind.Element, LayerKind.Text].includes(layerKind) &&
+      [
+        ast.ExprKind.Element,
+        ast.ExprKind.Component,
+        ast.ExprKind.Slot,
+        ast.ExprKind.Insert,
+      ].includes(targetExpr.kind)
+    ) {
+      parentId = targetExpr.expr.id;
+    }
+
+    console.log(targetExpr, parentId);
+
     actions.applyChanges([
       {
         prependChild: {
-          parentId: getTargetExprId(state),
+          parentId,
           childSource: source,
         },
       },
@@ -610,7 +638,7 @@ const createEventHandler = (actions: Actions) => {
     actions.applyChanges([
       {
         setStyleMixins: {
-          targetExprId: getTargetExprId(state),
+          targetExprId: getStyleableTargetId(state),
           mixinIds,
           variantIds: state.selectedVariantIds,
         },
@@ -639,18 +667,18 @@ const createEventHandler = (actions: Actions) => {
     );
   };
 
-  const handleConvertToComponent = (state: DesignerState) => {
-    // Do not allow for nested instances to be converted to components.
-    // Or, at least provide a confirmation for this.
-    if (!getTargetExprId(state).includes(".")) {
-      actions.applyChanges([
-        {
-          convertToComponent: {
-            expressionId: getTargetExprId(state),
-          },
+  const handleConvertToComponent = (
+    name: string,
+    { exprId }: ConvertToComponentDetails
+  ) => {
+    actions.applyChanges([
+      {
+        convertToComponent: {
+          name,
+          expressionId: exprId,
         },
-      ]);
-    }
+      },
+    ]);
   };
 
   const openCodeEditor = (state: DesignerState) => {
@@ -674,6 +702,10 @@ const createEventHandler = (actions: Actions) => {
     }
 
     actions.openCodeEditor(getRenderedFilePath(state), range);
+  };
+
+  const openFileInNavigator = (state: DesignerState) => {
+    actions.openFileInNavigator(getActiveFilePath(state));
   };
 
   const handleWrapInElement = (state: DesignerState) => {
@@ -711,11 +743,11 @@ const createEventHandler = (actions: Actions) => {
       case ShortcutCommand.Delete: {
         return handleDeleteKeyPressed(state, prevState);
       }
-      case ShortcutCommand.ConvertToComponent: {
-        return handleConvertToComponent(state);
-      }
       case ShortcutCommand.OpenCodeEditor: {
         return openCodeEditor(state);
+      }
+      case ShortcutCommand.OpenFileInNavigator: {
+        return openFileInNavigator(state);
       }
       case ShortcutCommand.WrapInElement: {
         return handleWrapInElement(state);
@@ -735,6 +767,21 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
+  const handleAtomValueChanged = (
+    event: AtomValueChangeCompleted,
+    state: DesignerState
+  ) => {
+    actions.applyChanges([
+      {
+        setStyleDeclarationValue: {
+          targetId: getTargetExprId(state),
+          value: event.payload.value,
+          imports: event.payload.imports,
+        },
+      },
+    ]);
+  };
+
   const handlePromptClosed = ({
     payload: { value, details },
   }: PromptClosed) => {
@@ -746,6 +793,8 @@ const createEventHandler = (actions: Actions) => {
       actions.createDesignFile(value, details.parentDirectory);
     } else if (details.kind === PromptKind.NewDirectory) {
       actions.createDirectory(value, details.parentDirectory);
+    } else if (details.kind === PromptKind.ConvertToComponent) {
+      handleConvertToComponent(value, details);
     } else if (details.kind === PromptKind.RenameFile) {
       const dir = details.filePath.split("/").slice(0, -1).join("/");
       const ext = details.filePath.split("/").pop().split(".").pop();
@@ -939,6 +988,9 @@ const createEventHandler = (actions: Actions) => {
       case "designer-engine/apiError": {
         return handleApiError();
       }
+      case "ui/atomValueChangeCompleted": {
+        return handleAtomValueChanged(event, newState);
+      }
       case "ui/promptClosed": {
         return handlePromptClosed(event);
       }
@@ -951,7 +1003,7 @@ const createEventHandler = (actions: Actions) => {
       case "keyboard/keyDown": {
         return handleKeyDown(event, newState, prevState);
       }
-      case "ui/styleDeclarationsChanged": {
+      case "ui/styleDeclarationsChangeCompleted": {
         return handleStyleDeclarationChanged(event, newState);
       }
       case "ui/exprNavigatorDroppedNode": {

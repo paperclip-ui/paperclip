@@ -1,20 +1,17 @@
 use super::base::EditContext;
 use paperclip_common::get_or_short;
 use paperclip_proto::ast;
-use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::pc::{Reference, Variant};
 use paperclip_proto::ast_mutate::ToggleInstanceVariant;
 
 use crate::ast::get_expr::GetExpr;
 use crate::ast::{all::MutableVisitor, all::VisitorResult};
 
-impl<'expr> MutableVisitor<()> for EditContext<'expr, ToggleInstanceVariant> {
+impl MutableVisitor<()> for EditContext<ToggleInstanceVariant> {
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
         if expr.id != self.mutation.instance_id {
             return VisitorResult::Continue;
         }
-
-        let doc = self.get_dependency().document.as_ref().unwrap();
 
         let variant: Variant = get_or_short!(
             GetExpr::get_expr_from_graph(&self.mutation.variant_id, &self.graph),
@@ -33,7 +30,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, ToggleInstanceVariant> {
                 ast::pc::node::Inner::Override(ast::pc::Override {
                     path: vec![],
                     range: None,
-                    id: doc.checksum().to_string(),
+                    id: self.new_id(),
                     body: vec![],
                 })
                 .get_outer(),
@@ -61,7 +58,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, ToggleInstanceVariant> {
         if variant_override == None {
             component_override.body.push(
                 ast::pc::override_body_item::Inner::Variant(Variant {
-                    id: doc.checksum().to_string(),
+                    id: self.new_id(),
                     range: None,
                     name: variant.name.to_string(),
                     triggers: vec![],
@@ -88,13 +85,13 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, ToggleInstanceVariant> {
                     .0
                     .triggers
                     .push(ast::pc::TriggerBodyItemCombo {
-                        id: doc.checksum().to_string(),
+                        id: self.new_id(),
                         range: None,
                         items: combo_variant_names
                             .iter()
                             .map(|name: &String| {
                                 ast::pc::trigger_body_item::Inner::Reference(Reference {
-                                    id: doc.checksum().to_string(),
+                                    id: self.new_id(),
                                     path: vec![name.to_string()],
                                     range: None,
                                 })
@@ -119,10 +116,10 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, ToggleInstanceVariant> {
                     .0
                     .triggers
                     .push(ast::pc::TriggerBodyItemCombo {
-                        id: doc.checksum().to_string(),
+                        id: self.new_id(),
                         range: None,
                         items: vec![ast::pc::trigger_body_item::Inner::Bool(ast::base::Bool {
-                            id: doc.checksum(),
+                            id: self.new_id(),
                             range: None,
                             value: true,
                         })

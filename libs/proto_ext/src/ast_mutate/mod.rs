@@ -12,6 +12,7 @@ mod prepend_child;
 mod set_element_parameter;
 mod set_frame_bounds;
 mod set_id;
+mod set_style_declaration_value;
 mod set_style_declarations;
 mod set_style_mixins;
 mod set_tag_name;
@@ -44,6 +45,7 @@ pub use paste_expr::*;
 pub use set_element_parameter::*;
 pub use set_frame_bounds::*;
 pub use set_id::*;
+pub use set_style_declaration_value::*;
 pub use set_style_declarations::*;
 pub use set_style_mixins::*;
 pub use set_tag_name::*;
@@ -57,19 +59,13 @@ mod test;
 
 macro_rules! mutations {
     ($($name:ident), *) => {
-      impl<'expr> MutableVisitor<()> for base::EditContext<'expr, Mutation> {
+      impl MutableVisitor<()> for base::EditContext<Mutation> {
         fn visit_document(&mut self, document: &mut ast::pc::Document) -> VisitorResult<()> {
           match self.mutation.inner.as_ref().expect("Inner must exist") {
             $(
               mutation::Inner::$name(mutation) => {
-                let mut sub: base::EditContext<$name> = base::EditContext {
-                  mutation,
-                  path: self.path.clone(),
-                  graph: self.graph.clone(),
-                  changes: vec![]
-                };
+                let mut sub = self.with_mutation(mutation.clone());
                 let ret = document.accept(&mut sub);
-                self.changes.extend(sub.changes);
                 ret
               }
             )*
@@ -93,21 +89,16 @@ pub fn edit_graph<TIO: IO>(
 
     for mutation in mutations {
         for (path, dep) in &mut graph.dependencies {
-            let mut ctx = EditContext {
-                mutation,
-                path: path.clone(),
-                graph: ctx_graph.clone(),
-                changes: vec![],
-            };
+            let mut ctx = EditContext::new(mutation.clone(), &path, ctx_graph.clone());
             let doc = dep.document.as_mut().expect("Document must exist");
 
             doc.accept(&mut ctx);
 
-            dep.imports = get_document_imports(doc, path, io)?;
+            dep.imports = get_document_imports(doc, &path, io)?;
 
-            if ctx.changes.len() > 0 {
+            if ctx.changes.borrow().len() > 0 {
                 println!("{:#?}", dep.imports);
-                changed.push((path.to_string(), ctx.changes.clone()));
+                changed.push((path.to_string(), ctx.changes.borrow().clone().to_vec()));
             }
         }
     }
@@ -124,6 +115,7 @@ mutations! {
   SetTextNodeValue,
   ConvertToComponent,SetStyleMixins,
   PasteExpression,
+  SetStyleDeclarationValue,
   SetElementParameter,
   ConvertToSlot,
   MoveNode,

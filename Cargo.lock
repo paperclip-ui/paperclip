@@ -1833,6 +1833,7 @@ dependencies = [
  "futures",
  "futures-core",
  "futures-util",
+ "paperclip_ast_serialize",
  "paperclip_config",
  "paperclip_parser",
  "paperclip_project",
@@ -2020,6 +2021,7 @@ dependencies = [
 name = "paperclip_proto_ext"
 version = "0.1.1"
 dependencies = [
+ "Inflector",
  "anyhow",
  "async-trait",
  "convert_case 0.6.0",

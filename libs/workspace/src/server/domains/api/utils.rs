@@ -44,7 +44,9 @@ pub fn create_design_file<TIO: ServerIO>(
         .options
         .config_context
         .clone();
-    let src_dir = &parent_dir.or(config_ctx.config.designs_dir).or(config_ctx.config.src_dir);
+    let src_dir = &parent_dir
+        .or(config_ctx.config.designs_dir)
+        .or(config_ctx.config.src_dir);
 
     let mut file_dir: PathBuf = Path::new(&config_ctx.directory).to_path_buf();
 
@@ -55,7 +57,8 @@ pub fn create_design_file<TIO: ServerIO>(
     };
 
     let file_path = file_dir
-        .join(format!("{}.pc", to_kebab_case(name)))
+        // strip .pc from name in case it exists because we're already adding it.
+        .join(format!("{}.pc", to_kebab_case(&name.replace(".pc", ""))))
         .to_str()
         .unwrap()
         .to_string();
@@ -63,6 +66,8 @@ pub fn create_design_file<TIO: ServerIO>(
     if ctx.io.file_exists(&file_path) {
         return Err(Error::msg("Design file already exists."));
     }
+
+    println!("Created design file: {}", file_path);
 
     ctx.io.write_file(&file_path, "".to_string())?;
 
@@ -75,14 +80,14 @@ pub async fn apply_mutations<TIO: ServerIO>(
 ) -> Result<Vec<MutationResult>> {
     let mut graph = ctx.store.lock().unwrap().state.graph.clone();
 
-    println!("Applying {:?}", mutations);
+    println!("Applying {:#?}", mutations);
     let result = edit_graph(&mut graph, mutations, &ctx.io)?;
+    println!("Mutation result: {:#?}", result);
 
     let mut latest_ast_changes = vec![];
 
-    for (path, changes) in &result {
+    for (_path, changes) in &result {
         latest_ast_changes.extend(changes.clone());
-        println!("CHANGED PATH {}", path);
     }
 
     ctx.emit(ServerEvent::MutationsApplied {

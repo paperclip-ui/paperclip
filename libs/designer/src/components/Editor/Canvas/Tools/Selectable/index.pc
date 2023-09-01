@@ -1,17 +1,14 @@
 import "../../../../../styles/theme.pc" as theme
 
 public component Knob {
-
     variant topLeftBottomRight trigger {
         ".top-left"
         ".bottom-right"
     }
-
     variant topRightBottomLeft trigger {
         ".top-right"
         ".bottom-left"
     }
-
     render svg(onMouseDown: onMouseDown, class: class, style: style) {
         style {
             width: var(--knob-size)

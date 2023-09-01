@@ -146,7 +146,6 @@ export namespace ast {
         case ExprKind.Component:
         case ExprKind.Slot:
         case ExprKind.Insert:
-        case ExprKind.Trigger:
         case ExprKind.TextNode:
         case ExprKind.Document:
         case ExprKind.Element:
@@ -234,8 +233,12 @@ export namespace ast {
     if ((expr as TriggerBodyItem).bool) {
       return { expr: (expr as TriggerBodyItem).bool, kind: ExprKind.Bool };
     }
+
     if ((expr as TriggerBodyItemCombo).items) {
-      return { expr: (expr as TriggerBodyItem).bool, kind: ExprKind.Bool };
+      return {
+        expr: expr as TriggerBodyItemCombo,
+        kind: ExprKind.TriggerCombo,
+      };
     }
 
     throw new Error(`Unhandled type`);
@@ -993,7 +996,7 @@ export namespace ast {
         return Object.assign(
           {
             [expr.functionCall.id]: {
-              expr: expr.arithmetic,
+              expr: expr.functionCall,
               kind: ExprKind.FunctionCall,
             },
           },

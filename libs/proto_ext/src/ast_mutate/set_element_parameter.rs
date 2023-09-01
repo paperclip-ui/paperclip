@@ -1,5 +1,5 @@
 use super::base::EditContext;
-use super::utils::{parse_element_attribute_value, upsert_render_node};
+use super::utils::{parse_element_attribute_value, upsert_render_expr};
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::pc::{Element, Parameter};
@@ -8,20 +8,18 @@ use paperclip_proto::ast_mutate::SetElementParameter;
 use crate::ast::all::MutableVisitor;
 use crate::ast::all::VisitorResult;
 
-fn set_element_attribute(element: &mut Element, mutation: &SetElementParameter) {
-    let checksum = element.checksum();
-
-    let value = if mutation.parameter_value == "" {
+fn set_element_attribute(element: &mut Element, ctx: &EditContext<SetElementParameter>) {
+    let value = if ctx.mutation.parameter_value == "" {
         None
     } else {
         Some(parse_element_attribute_value(
-            &mutation.parameter_value,
-            &format!("{}-value", checksum),
+            &ctx.mutation.parameter_value,
+            &ctx.new_id(),
         ))
     };
 
     if value.is_some() {
-        let existing_param = if let Some(parameter_id) = &mutation.parameter_id {
+        let existing_param = if let Some(parameter_id) = &ctx.mutation.parameter_id {
             element
                 .parameters
                 .iter_mut()
@@ -31,30 +29,30 @@ fn set_element_attribute(element: &mut Element, mutation: &SetElementParameter) 
         };
 
         if let Some(param) = existing_param {
-            param.name = mutation.parameter_name.clone();
+            param.name = ctx.mutation.parameter_name.clone();
             param.value = value;
         } else {
             element.parameters.push(Parameter {
-                id: format!("{}-name", checksum),
-                name: mutation.parameter_name.clone(),
+                id: ctx.new_id(),
+                name: ctx.mutation.parameter_name.clone(),
                 range: None,
                 value: value,
             });
         }
     } else {
-        if let Some(parameter_id) = &mutation.parameter_id {
+        if let Some(parameter_id) = &ctx.mutation.parameter_id {
             element.parameters.retain(|p| &p.id != parameter_id);
         }
     }
 }
 
-impl<'expr> MutableVisitor<()> for EditContext<'expr, SetElementParameter> {
+impl MutableVisitor<()> for EditContext<SetElementParameter> {
     fn visit_element(&mut self, element: &mut ast::pc::Element) -> VisitorResult<()> {
         if self.mutation.target_id != element.get_id() {
             return VisitorResult::Continue;
         }
 
-        set_element_attribute(element, &self.mutation);
+        set_element_attribute(element, &self);
 
         VisitorResult::Return(())
     }
@@ -64,7 +62,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetElementParameter> {
             return VisitorResult::Continue;
         }
 
-        let render_node = upsert_render_node(component, true);
+        let render_node = upsert_render_expr(component, true, &self);
 
         set_element_attribute(
             render_node
@@ -73,7 +71,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetElementParameter> {
                 .expect("Node must exist")
                 .try_into()
                 .expect("Element must exist"),
-            &self.mutation,
+            &self,
         );
         VisitorResult::Return(())
     }

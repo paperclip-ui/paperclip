@@ -94,9 +94,14 @@ add_case! {
     "#,
   )],
   r#"
+  :root { 
+    --fontRegular-font-family-80f4925f-2: Helvetica; 
+    --fontRegular-font-weight-80f4925f-4: 600; 
+  }
+
   ._80f4925f-10 {
-      font-family: Helvetica;
-      font-weight: 600;
+      font-family:  var(--fontRegular-font-family-80f4925f-2);
+      font-weight:  var(--fontRegular-font-weight-80f4925f-4);
       font-weight: 300;
   }
   "#
@@ -122,9 +127,14 @@ add_case! {
     "#,
   )],
   r#"
+    :root { 
+      --a-color-80f4925f-2: red; 
+      --b-color-80f4925f-5: orange; 
+    }
+
     ._80f4925f-12 {
-    color: red;
-    color: orange;
+    color: var(--a-color-80f4925f-2);
+    color: var(--b-color-80f4925f-5);
     color: blue;
     }
   "#
@@ -155,7 +165,7 @@ add_case! {
   ],
   r#"
     ._80f4925f-6 {
-        font-family: Helvetica;
+        font-family: var(--fontRegular-font-family-cfd9c7f-2);
         color: blue;
     }
   "#
@@ -456,7 +466,8 @@ div {
     "#,
   )],
   r#"
-  ._80f4925f-7 { font-family: Helvetica; }
+  :root { --fontRegular-font-family-80f4925f-3: Helvetica; }
+  ._80f4925f-7 { font-family: var(--fontRegular-font-family-80f4925f-3); }
   "#
 }
 
@@ -483,7 +494,17 @@ div {
     "#,
   )],
   r#"
-  ._80f4925f-13 { font-family: Helvetica; color: red; }
+  :root {
+    --a-font-family-80f4925f-3: Helvetica; 
+    --b-color-80f4925f-6: red; --c-font-family-80f4925f-3: 
+    var(--a-font-family-80f4925f-3); 
+    --c-color-80f4925f-6: var(--b-color-80f4925f-6); 
+  } 
+  
+  ._80f4925f-13 { 
+    font-family: var(--a-font-family-80f4925f-3); 
+    color: var(--b-color-80f4925f-6); 
+  }
   "#
 }
 
@@ -547,7 +568,14 @@ add_case! {
         }
       "#),
   ],
-  r#"._80f4925f-6 { mask-size: 100%; --size: 20px; width: var(--size); height: var(--size); mask-url: abba; }"#
+  r#"._80f4925f-6 {
+    mask-size: var(--mask-mask-size-6bcf0994-2); 
+    --size: 
+    var(--icon---size-6bcf0994-6); 
+    width: var(--icon-width-6bcf0994-9); 
+    height: var(--icon-height-6bcf0994-12); 
+    mask-url: abba; 
+  }"#
 }
 
 add_case! {
@@ -585,6 +613,7 @@ add_case! {
   ],
   r#"._blarg-80f4925f-4 { color: blue; }"#
 }
+
 
 add_case! {
   can_define_styles_within_text_in_a_slot,
@@ -1075,7 +1104,8 @@ add_case! {
     "#)
   ],
   r#"
-  ._A-80f4925f-8 ._B-root-139cec8e-6 { background: orange; }
+  :root { --something-background-80f4925f-3: orange; }
+  ._A-80f4925f-8 ._B-root-139cec8e-6 { background: var(--something-background-80f4925f-3); }
   "#
 }
 
@@ -1286,9 +1316,9 @@ add_case! {
     "#)
   ],
   r#"
-
+  :root { --test-color-80f4925f-2: white; }
   ._A-root-80f4925f-13._variant-80f4925f-4 { color: blue; } 
-  ._A-root-80f4925f-13 { color: white; color: white; } 
+  ._A-root-80f4925f-13 { color: var(--test-color-80f4925f-2); color: white; } 
   ._instance-80f4925f-20._A-root-80f4925f-13 { color: blue; }
   "#
 }
@@ -1334,6 +1364,8 @@ add_case! {
     "#)
   ],
   r#"
+  :root { --test-color-80f4925f-2: white; }
+  
   ._A-root-80f4925f-9._variant-80f4925f-4 { color: blue; } 
   ._B-80f4925f-30._A-root-80f4925f-9._variant-80f4925f-14._variant-80f4925f-17 { color: blue; } 
 
@@ -1397,6 +1429,7 @@ add_case! {
     "#)
   ],
   r#"
+  :root { --test-color-80f4925f-2: white; }
   ._A-root-80f4925f-9._variant-80f4925f-4 { color: blue; } 
   ._B-80f4925f-23._variant-80f4925f-12 ._B-element-80f4925f-17._A-root-80f4925f-9 { color: blue; } 
   ._B-80f4925f-23._variant-80f4925f-12 ._B-80f4925f-22 { color: red; }

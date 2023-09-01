@@ -40,8 +40,6 @@ type FrameProps = {
 
 const Frame = memo(
   ({ frame, frameIndex, canvasTransform, readonly }: FrameProps) => {
-    const dispatch = useDispatch();
-
     const metadata = (frame.element || frame.textNode).metadata;
     const frameBounds = metadata?.bounds || DEFAULT_FRAME_BOX;
     const [editing, setEditing] = useState(false);

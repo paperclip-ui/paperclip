@@ -1,61 +1,22 @@
+import "./token-input.pc" as module
+import "./color-picker.pc" as imp2
+import "./button.pc" as imp1
+import "./menu.pc" as imp
 import "./sidebar.pc" as sidebar
 import "./theme.pc" as theme
 import "./input.pc" as input
 import "./etc.pc" as etc
 
 /**
- * @bounds(x: 120, y: -1060, width: 1024, height: 768)
-*/
-
-component ColorPickerPopup {
-    render sidebar.SidebarPopup {
-        insert header {
-            text "Color"
-        }
-        sidebar.SidebarPanelContent {
-            style {
-                display: flex
-                flex-direction: column
-                gap: var(theme.space04)
-            }
-            color-picker(width: "220", height: "130")
-            div {
-                text "Hue"
-            }
-            div {
-                text "Opacity"
-            }
-            div {
-                text "value"
-            }
-        }
-        sidebar.SidebarPanelContent {
-            style {
-                border-top: 1px solid rgb(21, 21, 21)
-                padding-top: var(theme.space04)
-                display: flex
-                flex-direction: column
-                gap: var(theme.space03)
-            }
-            div {
-                text "color var"
-            }
-            div {
-                text "color var"
-            }
-            div {
-                text "color var"
-            }
-        }
-    }
-}
-
-/**
- * @bounds(x: 262, y: 7, width: 1024, height: 1105)
+ * @bounds(x: 881, y: 7, width: 405, height: 1105)
 */
 
 public component Preview {
     render sidebar.SidebarPanel {
+        style {
+            font-family: var(theme.defaultFontFamily)
+            color: var(theme.gray0)
+        }
         sidebar.SidebarSection {
             sidebar.SidebarPanelContent {
                 input.Field {
@@ -203,10 +164,9 @@ public component Preview {
                     input.Field {
                         insert name {
                             text "Background"
-                            ColorPickerPopup
                         }
                         insert input {
-                            input.ColorInput {
+                            module.BackgroundTokenInputPreview {
                                 override root {
                                     style {
                                         --color: rgb(255, 81, 119)
@@ -243,7 +203,7 @@ public component Preview {
                     }
                     input.Field {
                         insert input {
-                            input.ColorInput {
+                            module.BoxShadowTokenInputPreview {
                                 override root {
                                     style {
                                         --color: magenta
@@ -256,21 +216,8 @@ public component Preview {
                                 }
                             }
                         }
-                    }
-                    input.Field {
-                        insert input {
-                            input.ColorInput {
-                                override root {
-                                    style {
-                                        --color: rgb(69, 69, 69)
-                                    }
-                                }
-                                span {
-                                    input.Token(class: "keyword") {
-                                        text "add..."
-                                    }
-                                }
-                            }
+                        insert name {
+                            text "box-shadow"
                         }
                     }
                     input.Field {
@@ -299,7 +246,8 @@ public component Preview {
                                 }
                                 div {
                                     style extends theme.icon {
-                                        --size: 0.8em
+                                        width: 0.8em
+                                        height: 0.8em
                                         -webkit-mask-image: url("./group.svg")
                                     }
                                 }

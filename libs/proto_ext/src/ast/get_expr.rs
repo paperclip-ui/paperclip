@@ -32,7 +32,8 @@ impl<'expr> Visitor<()> for GetExpr {
       (visit_component, ast::pc::Component),
       (visit_text_node, ast::pc::TextNode),
       (visit_variant, ast::pc::Variant),
-      (visit_style, ast::pc::Style)
+      (visit_style, ast::pc::Style),
+      (visit_atom, ast::pc::Atom)
     }
 }
 

@@ -7,13 +7,13 @@ use crate::ast::all::MutableVisitor;
 use crate::ast::all::VisitorResult;
 use crate::ast_mutate::utils::parse_node;
 
-impl<'expr> MutableVisitor<()> for EditContext<'expr, AppendInsert> {
+impl MutableVisitor<()> for EditContext<AppendInsert> {
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
         if expr.id != self.mutation.instance_id {
             return VisitorResult::Continue;
         }
 
-        let child = parse_node(&self.mutation.child_source, &expr.checksum());
+        let child = parse_node(&self.mutation.child_source, &self.new_id());
         let child_id = child.get_id().to_string();
 
         let existing = expr.body.iter_mut().find_map(|child| {
@@ -33,11 +33,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, AppendInsert> {
         } else {
             expr.body.push(
                 ast::pc::node::Inner::Insert(ast::pc::Insert {
-                    id: format!(
-                        "{}-{}",
-                        expr.checksum().to_string(),
-                        self.mutation.slot_name
-                    ),
+                    id: self.new_id(),
                     range: None,
                     name: self.mutation.slot_name.to_string(),
                     body: vec![child],
@@ -46,7 +42,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, AppendInsert> {
             );
         }
 
-        self.changes.push(
+        self.add_change(
             mutation_result::Inner::ExpressionInserted(ExpressionInserted { id: child_id })
                 .get_outer(),
         );

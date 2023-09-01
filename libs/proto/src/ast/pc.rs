@@ -37,6 +37,9 @@ impl Document {
     pub fn get_atoms(&self) -> Vec<&Atom> {
         get_body_items!(&self.body, document_body_item::Inner::Atom, Atom)
     }
+    pub fn get_styles(&self) -> Vec<&Style> {
+        get_body_items!(&self.body, document_body_item::Inner::Style, Style)
+    }
     pub fn get_import_by_ns(&self, ns: &str) -> Option<&Import> {
         self.get_imports()
             .into_iter()
@@ -191,6 +194,16 @@ impl TryFrom<DocumentBodyItem> for Node {
     }
 }
 
+impl TryFrom<DocumentBodyItem> for Atom {
+    type Error = ();
+    fn try_from(value: DocumentBodyItem) -> Result<Self, Self::Error> {
+        match value.get_inner() {
+            document_body_item::Inner::Atom(element) => Ok(element.clone()),
+            _ => Err(()),
+        }
+    }
+}
+
 impl TryFrom<DocumentBodyItem> for Style {
     type Error = ();
     fn try_from(value: DocumentBodyItem) -> Result<Self, Self::Error> {
@@ -220,6 +233,7 @@ impl TryFrom<Node> for Style {
         }
     }
 }
+
 impl TryFrom<Node> for Element {
     type Error = ();
     fn try_from(value: Node) -> Result<Self, Self::Error> {

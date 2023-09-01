@@ -451,7 +451,7 @@ const patchNode = (
   }
 
   if (
-    isNodeKindSame(prevVirtNode, currVirtNode) ||
+    !isNodeKindSame(prevVirtNode, currVirtNode) ||
     (prevVirtNode.element &&
       prevVirtNode.element.tagName !== currVirtNode.element?.tagName)
   ) {
@@ -473,9 +473,21 @@ const patchNode = (
         options
       );
     } else if (currVirtNode.textNode) {
-      (node as Text).nodeValue = entities.decode(
-        currVirtNode.textNode.value.replace(/[\s\r]+/g, " ")
-      );
+      // Might be span since text nodes can be styled too.
+      let textNode: Text;
+
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        const el = node as Element;
+
+        el.id = "_" + currVirtNode.textNode.id;
+        textNode = el.childNodes[0] as Text;
+      }
+
+      if (textNode) {
+        textNode.nodeValue = entities.decode(
+          currVirtNode.textNode.value.replace(/[\s\r]+/g, " ")
+        );
+      }
     }
   }
 
@@ -498,6 +510,8 @@ const patchAttributes = (
   curr: html.Element,
   options: RenderFrameOptions
 ) => {
+  node.id = "_" + curr.id;
+
   for (let { name: key, value } of curr.attributes) {
     if (key === "src" && options.resolveUrl) {
       value = options.resolveUrl(value);

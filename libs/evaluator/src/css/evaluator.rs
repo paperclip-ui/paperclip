@@ -5,7 +5,7 @@ use crate::core::utils::{get_style_namespace, get_variant_namespace};
 use paperclip_common::fs::FileResolver;
 use paperclip_common::get_or_short;
 use paperclip_proto::ast::all::{Expression, ImmutableExpressionRef};
-use paperclip_proto::ast::css as css_ast;
+use paperclip_proto::ast::css::{self as css_ast};
 use paperclip_proto::ast::graph_ext as graph;
 use paperclip_proto::ast::graph_ext::{self as graph_ref, Expr};
 use paperclip_proto::ast::pc::override_body_item;
@@ -69,6 +69,7 @@ fn collect_sorted_rules<F: FileResolver>(context: &mut DocumentContext<F>) -> Ve
 
 fn evaluate_document<F: FileResolver>(document: &ast::Document, context: &mut DocumentContext<F>) {
     evaluate_tokens(document, context);
+    evaluate_style_mixins(document, context);
     evaluate_document_rules(document, context);
 }
 
@@ -100,6 +101,43 @@ fn evaluate_tokens<F: FileResolver>(document: &ast::Document, context: &mut Docu
         .get_outer(),
     })
 }
+
+fn evaluate_style_mixins<F: FileResolver>(
+    document: &ast::Document,
+    context: &mut DocumentContext<F>,
+) {
+    let styles = document.get_styles();
+
+    if styles.len() == 0 {
+        return;
+    }
+
+    let id = context.next_id();
+
+    context.rules.borrow_mut().push(PrioritizedRule {
+        priority: context.priority,
+        rule: virt::rule::Inner::Style(virt::StyleRule {
+            id,
+            source_id: None,
+            selector_text: ":root".to_string(),
+
+            style: styles.iter().fold(vec![], |mut acc, style| {
+                acc.extend(create_style_mixin_declarations(style, context));
+                acc
+            }), // style: atoms
+                //     .iter()
+                //     .map(|atom| virt::StyleDeclaration {
+                //         id: atom.id.to_string(),
+                //         source_id: atom.id.to_string(),
+                //         name: atom.get_var_name(),
+                //         value: evaluate_atom(atom, context),
+                //     })
+                //     .collect(),
+        })
+        .get_outer(),
+    })
+}
+
 fn evaluate_document_rules<F: FileResolver>(
     document: &ast::Document,
     context: &mut DocumentContext<F>,
@@ -512,7 +550,8 @@ fn evaluate_variant_styles<F: FileResolver>(
     }
 
     if is_within_override && !found_overridable {
-        println!("Variant override not found");
+        // TODO: return warning instead
+        // println!("Variant override not found");
         return;
     }
 
@@ -886,8 +925,26 @@ fn create_style_declarations<F: FileResolver>(
     style: &ast::Style,
     context: &DocumentContext<F>,
 ) -> Vec<virt::StyleDeclaration> {
-    let mut decls = vec![];
+    let mut decls = evaluate_style_extends(style, context);
+    for decl in &style.declarations {
+        decls.push(virt::StyleDeclaration {
+            id: "dec".to_string(),
+            source_id: decl.id.to_string(),
+            name: decl.name.to_string(),
+            value: stringify_style_decl_value(
+                &decl.value.as_ref().expect("value missing"),
+                context,
+            ),
+        });
+    }
+    decls
+}
 
+fn evaluate_style_extends<F: FileResolver>(
+    style: &ast::Style,
+    context: &DocumentContext<F>,
+) -> Vec<virt::StyleDeclaration> {
+    let mut decls = vec![];
     // insert extended styles _before_ the declarations in the body since
     // these declarations should be overwritten. Also note that we're
     // including the entire body of extended styles to to cover !important statements.
@@ -899,7 +956,7 @@ fn create_style_declarations<F: FileResolver>(
                 .get_ref(&reference.path, &context.get_ref_context().path, None)
         {
             if let graph_ref::Expr::Style(style) = &reference.expr {
-                decls.extend(create_style_declarations(
+                decls.extend(create_extended_style_declarations(
                     style,
                     &mut context.within_path(&reference.path),
                 ));
@@ -907,22 +964,55 @@ fn create_style_declarations<F: FileResolver>(
         }
     }
 
+    decls
+}
+
+fn create_extended_style_declarations<F: FileResolver>(
+    style: &ast::Style,
+    context: &DocumentContext<F>,
+) -> Vec<virt::StyleDeclaration> {
+    let mut decls = evaluate_style_extends(style, context);
+
     for decl in &style.declarations {
-        decls.push(evaluate_style_declaration(&decl, context));
+        decls.push(evaluate_extended_style_declaration(style, decl));
     }
     decls
 }
 
-fn evaluate_style_declaration<F: FileResolver>(
-    decl: &css_ast::StyleDeclaration,
+fn create_style_mixin_declarations<F: FileResolver>(
+    style: &ast::Style,
     context: &DocumentContext<F>,
+) -> Vec<virt::StyleDeclaration> {
+    create_style_declarations(style, context)
+        .iter()
+        .map(|decl| virt::StyleDeclaration {
+            id: "dec".to_string(),
+            source_id: decl.id.to_string(),
+            name: get_decl_var_name(style, &decl.name, &decl.source_id),
+            value: decl.value.to_string(),
+        })
+        .collect()
+}
+
+fn evaluate_extended_style_declaration(
+    style: &ast::Style,
+    decl: &css_ast::StyleDeclaration,
 ) -> virt::StyleDeclaration {
     virt::StyleDeclaration {
         id: "dec".to_string(),
         source_id: decl.id.to_string(),
         name: decl.name.to_string(),
-        value: stringify_style_decl_value(&decl.value.as_ref().expect("value missing"), context),
+        value: format!("var({})", get_decl_var_name(style, &decl.name, &decl.id)),
     }
+}
+
+fn get_decl_var_name(style: &ast::Style, name: &str, id: &str) -> String {
+    format!(
+        "--{}-{}-{}",
+        style.name.as_ref().unwrap_or(&"mixin".to_string()),
+        name,
+        id
+    )
 }
 
 fn stringify_style_decl_value<F: FileResolver>(

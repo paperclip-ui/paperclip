@@ -9,12 +9,13 @@ export type TextInputProps = {
   large?: boolean;
   onEnter?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onKeyDown?: (event: React.KeyboardEvent<any>) => void;
+  onKeyUp?: (event: React.KeyboardEvent<any>) => void;
   onBlur?: (event: React.FocusEvent<any>) => void;
   select?: boolean;
 } & UseTextInputProps;
 
 export const TextInput = forwardRef((props: TextInputProps, forwardRef) => {
-  const { autoFocus, placeholder, value, large, onClick } = props;
+  const { autoFocus, onKeyUp, placeholder, value, large, onClick } = props;
   const { onFocus, onChange, setRef, onBlur, onKeyDown } = useTextInput(
     props,
     forwardRef
@@ -32,6 +33,7 @@ export const TextInput = forwardRef((props: TextInputProps, forwardRef) => {
       onChange={onChange}
       onClick={onClick}
       onKeyDown={onKeyDown}
+      onKeyUp={onKeyUp}
     />
   );
 });
@@ -71,7 +73,7 @@ export const useTextInput = (
   const onFocus2 = (event: any) => {
     if (select) {
       setTimeout(() => {
-        ref.current.select();
+        ref.current?.select();
       });
     }
     if (onFocus) {
@@ -109,7 +111,7 @@ export const useTextInput = (
   useEffect(() => {
     if (autoFocus) {
       setTimeout(() => {
-        ref.current.focus();
+        ref.current?.focus();
       });
     }
   }, [autoFocus]);

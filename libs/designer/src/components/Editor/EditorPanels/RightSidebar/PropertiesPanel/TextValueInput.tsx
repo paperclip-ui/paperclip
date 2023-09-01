@@ -6,7 +6,7 @@ import { Field } from "@paperclip-ui/designer/src/styles/input.pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import React from "react";
 
-export const TextValueInput = () => {
+export const TextValueField = () => {
   const expr = useSelector(getSelectedExpressionInfo);
   const dispatch = useDispatch<DesignerEvent>();
 

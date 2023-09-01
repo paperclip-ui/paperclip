@@ -9,9 +9,9 @@ use paperclip_proto::ast::pc::{
 use paperclip_proto::ast_mutate::{
     mutation, paste_expression, update_variant_trigger, AppendChild, AppendInsert, Bounds,
     ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveNode, PasteExpression,
-    PrependChild, SetElementParameter, SetFrameBounds, SetId, SetStyleDeclarationValue,
-    SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue, ToggleInstanceVariant,
-    UpdateVariant, WrapInElement,
+    PrependChild, SetElementParameter, SetFrameBounds, SetId, SetStyleDeclaration,
+    SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue,
+    ToggleInstanceVariant, UpdateVariant, WrapInElement,
 };
 use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
 use std::collections::HashMap;
@@ -280,7 +280,7 @@ case! {
     expression_id: "80f4925f-1".to_string(),
     variant_ids: vec![],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::new(),
         name: "background".to_string(),
         value: "red".to_string()
@@ -294,6 +294,50 @@ case! {
           background: red
         }
       }
+    "#
+  )]
+}
+
+case! {
+  can_set_the_declaration_value_of_an_atom,
+  [(
+    "/entry.pc", r#"
+      public token something red
+    "#
+  )],
+  mutation::Inner::SetStyleDeclarationValue(SetStyleDeclarationValue {
+    target_id: "80f4925f-2".to_string(),
+    value: "blue".to_string(),
+    imports: HashMap::new()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      public token something blue
+    "#
+  )]
+}
+
+case! {
+  imports_doc_when_setting_value_of_atom,
+  [(
+    "/entry.pc", r#"
+      public token something red
+    "#
+  ), (
+
+    "/module.pc", r#"
+      public token something orange
+    "#
+  )],
+  mutation::Inner::SetStyleDeclarationValue(SetStyleDeclarationValue {
+    target_id: "80f4925f-2".to_string(),
+    value: "var(mod.something)".to_string(),
+    imports: HashMap::from([("mod".to_string(), "/module.pc".to_string())])
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      import "./module.pc" as mod
+      public token something var(mod.something)
     "#
   )]
 }
@@ -313,7 +357,7 @@ case! {
     expression_id: "80f4925f-4".to_string(),
     variant_ids: vec![],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::new(),
         name: "background".to_string(),
         value: "red".to_string()
@@ -346,12 +390,12 @@ case! {
     expression_id: "80f4925f-4".to_string(),
     variant_ids: vec![],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::new(),
         name: "background".to_string(),
         value: "red".to_string()
       },
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::new(),
         name: "opacity".to_string(),
         value: "0.5".to_string()
@@ -401,6 +445,36 @@ case! {
 }
 
 case! {
+  can_delete_a_child_within_an_insert,
+  [(
+    "/entry.pc", r#"
+      div {
+        insert a {
+          text ""
+        }
+        insert b {
+          
+        }
+      }
+    "#
+  )],
+  mutation::Inner::DeleteExpression(DeleteExpression {
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      insert a {
+      }
+      insert b {
+        
+      }
+    }
+    "#
+  )]
+}
+
+case! {
   can_import_an_atom_from_another_file,
   [
     (
@@ -421,7 +495,7 @@ case! {
     expression_id: "80f4925f-2".to_string(),
     variant_ids: vec![],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::from([("mod".to_string(), "/module.pc".to_string())]),
         name: "color".to_string(),
         value: "var(mod.blue01)".to_string()
@@ -458,7 +532,7 @@ case! {
     expression_id: "80f4925f-5".to_string(),
     variant_ids: vec![],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::from([("mod".to_string(), "/entry.pc".to_string())]),
         name: "color".to_string(),
         value: "var(mod.blue01)".to_string()
@@ -499,7 +573,7 @@ case! {
     expression_id: "80f4925f-2".to_string(),
     variant_ids: vec![],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::from([("mod".to_string(), "/module.pc".to_string())]),
         name: "color".to_string(),
         value: "var(mod.blue01)".to_string()
@@ -533,7 +607,7 @@ case! {
     expression_id: "80f4925f-1".to_string(),
     variant_ids: vec![],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::new(),
         name: "color".to_string(),
         value: "blue".to_string()
@@ -600,7 +674,7 @@ case! {
     expression_id: "80f4925f-1".to_string(),
     variant_ids: vec![],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::new(),
         name: "color".to_string(),
         value: "blue".to_string()
@@ -795,7 +869,7 @@ case! {
     expression_id: "80f4925f-3".to_string(),
     variant_ids: vec!["80f4925f-1".to_string(), "80f4925f-2".to_string()],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::new(),
         name: "background".to_string(),
         value: "red".to_string()
@@ -838,7 +912,7 @@ case! {
     expression_id: "80f4925f-6".to_string(),
     variant_ids: vec!["80f4925f-1".to_string(), "80f4925f-2".to_string()],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::new(),
         name: "background".to_string(),
         value: "red".to_string()
@@ -883,7 +957,7 @@ case! {
     expression_id: "80f4925f-6".to_string(),
     variant_ids: vec!["80f4925f-1".to_string()],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::new(),
         name: "background".to_string(),
         value: "red".to_string()
@@ -914,6 +988,7 @@ case! {
     )
   ],
   mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
     expression_id: "80f4925f-1".to_string()
   }).get_outer(),
   [(
@@ -936,6 +1011,7 @@ case! {
   ],
 
   mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
     expression_id: "80f4925f-1".to_string()
   }).get_outer(),
   [(
@@ -963,6 +1039,7 @@ case! {
   ],
 
   mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
     expression_id: "80f4925f-2".to_string()
   }).get_outer(),
   [(
@@ -1001,6 +1078,7 @@ case! {
   ],
 
   mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
     expression_id: "80f4925f-9".to_string()
   }).get_outer(),
   [(
@@ -1042,6 +1120,7 @@ case! {
   ],
 
   mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
     expression_id: "80f4925f-1".to_string()
   }).get_outer(),
   [(
@@ -1075,6 +1154,7 @@ case! {
   ],
 
   mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
     expression_id: "80f4925f-1".to_string()
   }).get_outer(),
   [(
@@ -1111,6 +1191,7 @@ case! {
   ],
 
   mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
     expression_id: "80f4925f-1".to_string()
   }).get_outer(),
   [(
@@ -1141,6 +1222,7 @@ case! {
   ],
 
   mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
     expression_id: "80f4925f-1".to_string()
   }).get_outer(),
   [(
@@ -1169,11 +1251,12 @@ case! {
   ],
 
   mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
     expression_id: "80f4925f-1".to_string()
   }).get_outer(),
   [(
     "/entry.pc", r#"
-    public component test { render div test } component B { render test }
+    public component Test { render div test } component B { render Test }
     "#
   )]
 }
@@ -1191,11 +1274,35 @@ case! {
   ],
 
   mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
     expression_id: "80f4925f-1".to_string()
   }).get_outer(),
   [(
     "/entry.pc", r#"
-    public component abc { render text abc "blarg" } component B { render abc }
+    public component Abc { render text abc "blarg" } component B { render Abc }
+    "#
+  )]
+}
+
+case! {
+  can_convert_component_with_a_name,
+  [
+    (
+      "/entry.pc", r#"
+        div 
+      "#
+    )
+  ],
+
+  mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: Some("abba".to_string()),
+    expression_id: "80f4925f-1".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      public component Abba {
+        render div
+      }
     "#
   )]
 }
@@ -2009,7 +2116,11 @@ case! {
       component A {
         render slot test
       }
-      A
+      A {
+        insert test {
+
+        }
+      }
     "#
   )]
 }
@@ -3176,7 +3287,7 @@ case! {
     expression_id: "80f4925f-3".to_string(),
     variant_ids: vec![],
     declarations: vec![
-      SetStyleDeclarationValue {
+      SetStyleDeclaration {
         imports: HashMap::new(),
         name: "background".to_string(),
         value: "red".to_string()
@@ -3398,6 +3509,32 @@ case! {
     "#
   )]
 }
+
+case! {
+  can_prepend_a_child_to_a_component_without_render_node,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+      }
+      "#
+    )
+  ],
+  mutation::Inner::PrependChild(PrependChild {
+    parent_id: "80f4925f-1".to_string(),
+    child_source: "span".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div {
+        span
+      }
+    }
+    "#
+  )]
+}
+
 case! {
   can_prepend_a_child_in_an_insert,
   [
@@ -3453,7 +3590,6 @@ case! {
     "#
   )]
 }
-
 
 case! {
   creates_unique_id_when_prepending_node,

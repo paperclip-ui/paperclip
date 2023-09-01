@@ -1,150 +1,196 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/input.pc";
 import { Portal } from "../Portal";
 import cx from "classnames";
 import { usePositioner } from "../hooks/usePositioner";
 import { noop } from "lodash";
-
-export type SelectDetails = {
-  event: React.FocusEvent | React.MouseEvent | React.KeyboardEvent;
-};
+import { useInlineMachine } from "@paperclip-ui/common";
+import { reducer } from "./reducer";
+import { getInitialState, isOpen as isOpen2 } from "./state";
+import { Callbacks, suggestionMenuEngine } from "./engine";
 
 export type SuggestionMenuProps = {
+  open?: boolean;
   values: string[];
   children: React.ReactElement;
   style?: any;
   multi?: boolean;
-  onSelect: (values: any[], details: SelectDetails) => void;
-  onOtherSelect: (value: string, details: SelectDetails) => void;
+  onSelect: (values: any[]) => void;
   menu: () => React.ReactElement[];
+  onComplete?: () => void;
+  onBlur?: () => void;
 };
 
-export const SuggestionMenu = ({
+export type SuggestionMenuContainerProps = SuggestionMenuProps & {
+  renderMenu: (
+    menuOptions: React.ReactElement[],
+    props: any
+  ) => React.ReactElement;
+};
+
+export const useSuggestionMenu = ({
+  open,
   values,
   children,
   style,
   multi,
+  onComplete = noop,
+  onBlur: onBlur2 = noop,
   onSelect: onSelect2,
-  onOtherSelect: onOtherSave,
   menu,
 }: SuggestionMenuProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [typedValue, setTypedValued] = useState(null);
-  const [preselectedIndex, setPreselectedIndex] = useState(0);
+  const callbacksRef = useRef<Callbacks>();
+  callbacksRef.current = {
+    onBlur: onBlur2,
+    onComplete,
+    onSelect: onSelect2,
+  };
+
+  const statefulProps = useMemo(
+    () => ({
+      open,
+      multi,
+      values,
+    }),
+    [open, multi, values]
+  );
+
+  const [state, dispatch] = useInlineMachine(
+    reducer,
+    suggestionMenuEngine(callbacksRef),
+    getInitialState(statefulProps)
+  );
+
+  const { customValue, preselectedIndex } = state;
+
+  const isOpen = isOpen2(state);
+
+  useEffect(() => {
+    dispatch({ type: "propsChanged", payload: statefulProps });
+  }, [statefulProps]);
+
+  const ref = useRef<HTMLDivElement>();
 
   const oldProps = children.props;
 
   const onFocus = (event) => {
-    setIsOpen(true);
+    dispatch({ type: "focused" });
     if (oldProps.onFocus) {
       oldProps.onFocus(event);
     }
   };
 
   const onBlur = (event: React.FocusEvent | React.KeyboardEvent) => {
-    setIsOpen((open) => {
-      if (open && typedValue != null) {
-        onOtherSave(typedValue, { event });
-      }
-      return false;
-    });
+    dispatch({ type: "blurred" });
+
+    if (oldProps.onBlur) {
+      oldProps.onBlur(event);
+    }
   };
 
-  const onSelect = (value: any, details: SelectDetails) => {
-    if (multi) {
-      if (!values.includes(value)) {
-        values = [...values, value];
-      } else {
-        values = values.filter((existing) => existing !== value);
-      }
-    } else {
-      values = [value];
-    }
-    onSelect2(values, details);
-    setIsOpen(false);
+  const onSelect = (value: any) => {
+    dispatch({
+      type: "selected",
+      payload: value,
+    });
   };
 
   const menuOptions = isOpen
     ? menu()
-        .filter(filterOption(typedValue))
+        .filter(filterOption(customValue))
         .map((child, i) => {
           return React.cloneElement(child, {
             selected: values.includes(child.props.value),
             preselected: i === preselectedIndex,
             onSelect: (event: React.MouseEvent) => {
+              // prevent blur mainly
+              event.preventDefault();
+
               child.props.value &&
-                onSelect(child.props.selectValue || child.props.value, {
-                  event,
-                });
+                onSelect(child.props.selectValue || child.props.value);
             },
           });
         })
     : null;
 
-  const selectedIndex = menuOptions?.findIndex(
+  const firstSelectedIndex = menuOptions?.findIndex(
     (option) => option.props.selected
   );
+
   const menuOptionsLength = menuOptions?.length;
-  const firstOptionValueIndex = menuOptions?.findIndex(
-    (child) => child.props.value != null
-  );
 
   const onKeyDown = (event: React.KeyboardEvent<any>) => {
-    if (event.key !== "Tab") {
-      setIsOpen(true);
-    }
+    const selectedValue =
+      menuOptions?.[preselectedIndex]?.props.selectValue ||
+      menuOptions?.[preselectedIndex]?.props.value;
 
-    if (event.key === "ArrowDown") {
-      if (isOpen) {
-        setPreselectedIndex(
-          Math.min(preselectedIndex + 1, menuOptionsLength - 1)
-        );
-      }
-    } else if (event.key === "ArrowUp") {
-      if (isOpen) {
-        setPreselectedIndex(Math.max(preselectedIndex - 1, 0));
-      }
-    } else if (event.key === "Enter") {
-      const value =
-        menuOptions[preselectedIndex]?.props.selectValue ||
-        menuOptions[preselectedIndex]?.props.value;
-      if (value) {
-        onSelect(value, { event });
-      } else if (typedValue != null) {
-        onOtherSave(typedValue, { event });
-      }
-      setIsOpen(false);
-    } else if (event.key === "Tab") {
-      onBlur(event);
-      oldProps.onKeyDown?.(event);
-    } else if (oldProps.onKeyDown) {
+    dispatch({
+      type: "keyDown",
+      payload: {
+        key: event.key,
+        menuLength: menuOptionsLength,
+        selectedValue,
+        firstSelectedIndex,
+      },
+    });
+
+    if (oldProps.onKeyDown) {
       oldProps.onKeyDown(event);
     }
   };
 
   const onInputChange = (value: string) => {
-    setTypedValued(value);
+    dispatch({ type: "inputChanged", payload: value });
+    if (oldProps.onChange) {
+      oldProps.onChange(value);
+    }
   };
 
-  const onClick = () => setIsOpen(true);
-
-  useEffect(() => {
-    if (!isOpen) {
-      setTypedValued(null);
+  const onClick = (event: React.MouseEvent<any>) => {
+    dispatch({ type: "inputClicked" });
+    if (oldProps.onClick) {
+      oldProps.onClick(event);
     }
-  }, [isOpen, menuOptionsLength]);
+  };
 
   const { anchorRef, targetRef } = usePositioner();
 
-  useEffect(() => {
-    setPreselectedIndex(
-      // SUBTRACT 1 so that the value is not preselected. Could be a header or 0
-      selectedIndex === -1 ? firstOptionValueIndex - 1 : selectedIndex
-    );
-  }, [selectedIndex, firstOptionValueIndex]);
+  return {
+    onBlur,
+    onFocus,
+    onInputChange,
+    onKeyDown,
+    onClick,
+    ref,
+    isOpen,
+    menuOptions,
+    anchorRef,
+    targetRef,
+    style,
+  };
+};
+
+export const SuggestionMenuContainer = (
+  props: SuggestionMenuContainerProps
+) => {
+  const { children, renderMenu } = props;
+  const {
+    onBlur,
+    onFocus,
+    onInputChange,
+    onKeyDown,
+    onClick,
+    ref,
+    isOpen,
+    targetRef,
+    menuOptions,
+    anchorRef,
+    style,
+  } = useSuggestionMenu(props);
 
   return (
     <styles.SuggestionContainer
+      ref={ref}
       input={React.cloneElement(children, {
         key: "input",
         onBlur,
@@ -157,13 +203,24 @@ export const SuggestionMenu = ({
         isOpen && menuOptions.length ? (
           <div ref={anchorRef} key="menu">
             <Portal>
-              <styles.SuggestionMenu ref={targetRef} style={style}>
-                {menuOptions}
-              </styles.SuggestionMenu>
+              {renderMenu(menuOptions, {
+                ref: targetRef,
+              })}
             </Portal>
           </div>
         ) : null
       }
+    />
+  );
+};
+
+export const SuggestionMenu = (props: SuggestionMenuProps) => {
+  return (
+    <SuggestionMenuContainer
+      {...props}
+      renderMenu={(options, props) => (
+        <styles.SuggestionMenu {...props}>{options}</styles.SuggestionMenu>
+      )}
     />
   );
 };

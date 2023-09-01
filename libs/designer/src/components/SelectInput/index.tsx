@@ -24,12 +24,7 @@ export const SelectInput = ({
   const selectedOption = options.find((option) => option.props.value === value);
 
   return (
-    <SuggestionMenu
-      menu={() => options}
-      values={[value]}
-      onSelect={onSelect}
-      onOtherSelect={noop}
-    >
+    <SuggestionMenu menu={() => options} values={[value]} onSelect={onSelect}>
       <inputStyles.Select
         value={selectedOption?.props.label ?? selectedOption?.props.value}
       />

@@ -59,7 +59,8 @@ public component Select {
             }
             div {
                 style extends theme.icon {
-                    --size: 1em
+                    width: 1em
+                    height: 1em
                     -webkit-mask-image: url("./chevron2.svg")
                     transform: rotate(90deg)
                 }
@@ -93,7 +94,7 @@ public component SuggestionContainer {
 }
 
 /**
- * @bounds(x: 1563, y: -210, width: 1024, height: 768)
+ * @bounds(x: 1259, y: -557, width: 1024, height: 768)
 */
 
 public component SuggestionMenu {
@@ -163,6 +164,9 @@ public component SuggestionMenuItem {
 */
 
 public component TextInput {
+    variant medium trigger {
+        ".medium"
+    }
     variant large trigger {
         ".large"
     }
@@ -171,7 +175,10 @@ public component TextInput {
         ":focus"
         ".active"
     }
-    render input root(value: value, placeholder: placeholder, autoFocus: autoFocus, defaultValue: defaultValue, onKeyDown: onKeyDown, onBlur: onBlur, onChange: onChange, onFocus: onFocus, onBlur: onBlur, class: class, onClick: onClick) {
+    render input root(value: value, placeholder: placeholder, autoFocus: autoFocus, defaultValue: defaultValue, onKeyDown: onKeyDown, onKeyUp: onKeyUp, onBlur: onBlur, onChange: onChange, onFocus: onFocus, onBlur: onBlur, class: class, onClick: onClick) {
+        style variant medium {
+            padding: var(theme.space04)
+        }
         style variant large {
             padding: var(theme.space04)
         }
@@ -227,7 +234,7 @@ public component Fields {
 */
 
 public component MultiSelect {
-    render div(tabIndex: "0", onFocus: onFocus, onChange: onChange, onBlur: onBlur) {
+    render div(tabIndex: "0", onClick: onClick, onFocus: onFocus, onChange: onChange, onBlur: onBlur) {
         style extends theme.input, theme.fontDefault {
             display: flex
             cursor: pointer
@@ -318,6 +325,8 @@ public component Field {
             gap: var(theme.space03)
             align-items: center
             position: relative
+            font-family: var(theme.defaultFontFamily)
+            color: var(theme.gray0)
         }
         div nameContainer {
             style {
@@ -328,7 +337,9 @@ public component Field {
                 overflow: hidden
                 text-overflow: ellipsis
             }
-            slot name
+            slot name {
+                text "field name"
+            }
         }
         div inputContainer {
             style {
@@ -673,7 +684,7 @@ public component RadioInput {
 }
 
 /**
- * @bounds(x: -1149, y: -557, width: 277, height: 112)
+ * @bounds(x: -1149, y: -557, width: 293, height: 164)
 */
 
 div textInputPreview {
@@ -695,6 +706,14 @@ div textInputPreview {
         TextInput(value: "regular") {
             override {
                 variant large trigger {
+                    true
+                }
+            }
+        }
+        TextInput(value: "regular") {
+            override {
+                variant large
+                variant medium trigger {
                     true
                 }
             }

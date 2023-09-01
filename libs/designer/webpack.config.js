@@ -5,6 +5,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 /*
  * We've enabled HtmlWebpackPlugin for you! This generates a html
@@ -29,6 +30,14 @@ module.exports = {
   devtool: false,
 
   plugins: [
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, "src/styles/custom-elements.js"),
+          to: ".",
+        },
+      ],
+    }),
     new MiniCssExtractPlugin({
       filename: devMode
         ? "[name]-[contenthash].css"

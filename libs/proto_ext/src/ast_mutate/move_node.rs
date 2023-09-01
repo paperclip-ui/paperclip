@@ -8,7 +8,7 @@ use paperclip_proto::{
     ast_mutate::MoveNode,
 };
 
-use super::utils::upsert_render_node;
+use super::utils::upsert_render_expr;
 use super::EditContext;
 use crate::ast::get_expr::GetExpr;
 use crate::{
@@ -23,7 +23,7 @@ use crate::{
 macro_rules! move_child {
     ($self: expr, $expr: expr) => {{
         if let Some(_) = try_remove_child!($expr.body, &$self.mutation.node_id) {
-            $self.changes.push(
+            $self.add_change(
                 mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
                     id: $self.mutation.node_id.to_string(),
                 })
@@ -74,7 +74,7 @@ macro_rules! move_child {
     }};
 }
 
-impl<'a> MutableVisitor<()> for EditContext<'a, MoveNode> {
+impl MutableVisitor<()> for EditContext<MoveNode> {
     fn visit_element(&mut self, expr: &mut paperclip_proto::ast::pc::Element) -> VisitorResult<()> {
         move_child!(self, expr)
     }
@@ -102,7 +102,7 @@ impl<'a> MutableVisitor<()> for EditContext<'a, MoveNode> {
                     }
                 }
             }
-            self.changes.push(
+            self.add_change(
                 mutation_result::Inner::ExpressionDeleted(ExpressionDeleted {
                     id: self.mutation.node_id.to_string(),
                 })
@@ -204,7 +204,7 @@ impl<'a> MutableVisitor<()> for EditContext<'a, MoveNode> {
             _ => return VisitorResult::Return(()),
         };
 
-        let existing_render_node = upsert_render_node(expr, false);
+        let existing_render_node = upsert_render_expr(expr, false, &self);
 
         if let Some(render_node) = &mut existing_render_node.node {
             append_child(render_node, node);

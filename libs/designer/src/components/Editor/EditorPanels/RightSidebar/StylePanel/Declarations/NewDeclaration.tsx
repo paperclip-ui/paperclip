@@ -6,7 +6,6 @@ import { getPropField } from "./cssSchema";
 import { css } from "./types";
 import { useDispatch } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
-import { SelectDetails } from "@paperclip-ui/designer/src/components/SuggestionMenu";
 
 type NewDeclarationProps = {
   onDone: () => void;
@@ -20,10 +19,10 @@ export const NewDeclaration = memo(
     const fieldRef = useRef(null);
 
     const onSave = useCallback(
-      (name: string, value: string, imports: any, { event }: SelectDetails) => {
+      (name: string, value: string, imports: any) => {
         if (name && value) {
           dispatch({
-            type: "ui/styleDeclarationsChanged",
+            type: "ui/styleDeclarationsChangeCompleted",
             payload: {
               values: { [name]: value },
               imports,
@@ -35,8 +34,8 @@ export const NewDeclaration = memo(
     );
 
     const onSelectValue = useCallback(
-      ({ value, imports }, details: SelectDetails) => {
-        onSave(name, value, imports, details);
+      (value: string, imports: Record<string, string>) => {
+        onSave(name, value, imports);
       },
       [name]
     );
@@ -60,17 +59,7 @@ export const NewDeclaration = memo(
             onBlur={onBlur}
           />
         }
-        input={
-          <DeclarationValue
-            placeholder="value"
-            isDefault={false}
-            onSelect={onSelectValue}
-            type={field.input.type}
-            options={
-              field.input.type === css.InputType.Enum ? field.input.options : []
-            }
-          />
-        }
+        input={null}
       />
     );
   }

@@ -1,5 +1,5 @@
 use super::base::EditContext;
-use super::utils::{get_instance_component, import_dep, resolve_import_ns, upsert_render_node};
+use super::utils::{get_instance_component, import_dep, resolve_import_ns, upsert_render_expr};
 use paperclip_common::get_or_short;
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::Expression;
@@ -11,7 +11,7 @@ use crate::ast::all::VisitorResult;
 use crate::ast::get_expr::GetExpr;
 use crate::ast::pc::FindSlotNames;
 
-impl<'expr> MutableVisitor<()> for EditContext<'expr, SetTagName> {
+impl MutableVisitor<()> for EditContext<SetTagName> {
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
         if expr.get_id() == &self.mutation.element_id {
             let namespace = if let Some(file_path) = &self.mutation.tag_file_path {
@@ -77,7 +77,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetTagName> {
             return VisitorResult::Continue;
         }
 
-        import_dep(document, &self.get_dependency(), imp);
+        import_dep(document, imp, &self);
 
         VisitorResult::Continue
     }
@@ -85,7 +85,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, SetTagName> {
         if expr.get_id() != &self.mutation.element_id {
             return VisitorResult::Continue;
         }
-        let render_node = upsert_render_node(expr, false);
+        let render_node = upsert_render_expr(expr, false, &self);
         if let Some(node) = &mut render_node.node {
             if let node::Inner::Element(element) = node.get_inner_mut() {
                 element.tag_name = self.mutation.tag_name.clone();

@@ -4,7 +4,8 @@
   "moduleDirs": [],
   "globalScripts": [
     "https://rsms.me/inter/inter.css",
-    "src/styles/globals.css"
+    "src/styles/globals.css",
+    "src/styles/custom-elements.js"
   ],
   "openCodeEditorCommandTemplate": "code --goto \"<file>:<line>:<column>\"",
   "compilerOptions": [

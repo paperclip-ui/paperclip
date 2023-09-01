@@ -94,18 +94,6 @@ public component Container {
     }
 }
 
-/**
- * @bounds(x: -188, y: 334, width: 388, height: 750)
-*/
-
-Container
-
-/**
- * @bounds(x: -984, y: 349, width: 700, height: 750)
-*/
-
-Container
-
 public component AddFileButton {
     render button(onClick: onAddClick) {
         style extends theme.reset, theme.icon {

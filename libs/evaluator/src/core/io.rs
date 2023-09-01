@@ -50,7 +50,6 @@ impl<TReader: FileReader, TResolver: FileResolver> PCFileResolver<TReader, TReso
         if !exceeds_max_size {
             let mime = mime_guess::from_path(Path::new(&full_path)).first_or_octet_stream();
             let content = base64::encode(self.reader.read_file(full_path)?);
-
             return Ok(format!("data:{};base64,{}", mime, content));
         }
 

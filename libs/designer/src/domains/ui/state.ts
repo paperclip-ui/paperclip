@@ -54,6 +54,7 @@ export const handleDragEvent = (
       const computedStyles = newState.preEditComputedStyles[node.id];
 
       newState.styleOverrides = {};
+      newState.atomOverrides = {};
 
       newState.styleOverrides[node.id] = {
         left: `${

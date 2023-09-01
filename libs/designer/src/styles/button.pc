@@ -93,3 +93,49 @@ div preview {
     }
 }
 
+/**
+ * @bounds(x: 603, y: 613, width: 438, height: 253)
+*/
+
+public component Something {
+    render div {
+        style extends mod.card {
+            position: relative
+            font-family: var(mod.defaultFontFamily)
+        }
+        text "Hello world" {
+            style {
+                color: var(mod.gray0)
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: 371, y: 1289, width: 1024, height: 768)
+*/
+
+component Card {
+    variant light trigger {
+        ".light"
+        "@media screen and (min-width: 400px)"
+    }
+    render div(class: class) {
+        style variant light {
+            color: black
+            background: white
+        }
+        style {
+            background: black
+            color: white
+        }
+        text "Hello"
+    }
+}
+
+/**
+ * @bounds(x: 675, y: 2376, width: 1024, height: 768)
+*/
+
+Card(class: "light")
+

@@ -60,7 +60,7 @@ public component ModalHeader {
     render div header {
         style {
             font-weight: bold
-            font-size: var(mod.fontSize03)
+            font-size: var(mod.fontSize02)
             display: flex
             justify-content: space-between
             align-items: flex-start
@@ -93,23 +93,18 @@ public component ModalHeader {
 
 public component Modal {
     render div modal {
-        style {
-            background: var(mod.gray04)
+        style extends mod.popup {
             position: absolute
             left: 50%
             top: 50%
             transform: translate(-50%, -50%)
             color: var(mod.fontColor01)
-            border-radius: var(mod.space02)
             font-family: var(mod.defaultFontFamily)
-            padding: var(mod.space04)
+            padding: var(mod.space05)
             display: flex
             flex-direction: column
             gap: var(mod.space05)
             min-width: 300px
-            filter: drop-shadow(10px 10px 3px rgba(0, 0, 0, 0.4))
-            border: 1px solid transparent
-            border-color: var(mod.gray02)
         }
         slot children {
             ModalHeader
@@ -157,7 +152,8 @@ ModalContainer promptPreview {
                 insert children {
                     module1.TextInput(placeholder: "new file name", value: "") {
                         override {
-                            variant large trigger {
+                            variant large
+                            variant medium trigger {
                                 true
                             }
                         }

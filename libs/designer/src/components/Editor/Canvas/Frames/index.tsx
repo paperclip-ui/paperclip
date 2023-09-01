@@ -8,17 +8,32 @@ import {
   getCurrentDocument,
   getSelectedVariantIds,
   StyleOverrides,
+  getGraph,
+  AtomOverrides,
 } from "@paperclip-ui/designer/src/state";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
+import { Node } from "@paperclip-ui/proto/lib/generated/virt/html";
+import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { Atom } from "@paperclip-ui/proto/lib/generated/ast/pc";
 
 type FramesProps = {
   expandedFrameIndex?: number | null;
 };
 
 export const Frames = memo(({ expandedFrameIndex }: FramesProps) => {
-  const { currentDocument: doc, styleOverrides } = useSelector(getEditorState);
+  const {
+    currentDocument: doc,
+    styleOverrides,
+    atomOverrides,
+  } = useSelector(getEditorState);
+  const graph = useSelector(getGraph);
 
-  const extraHTML = generateStyleOverrideHTML(styleOverrides);
+  const extraHTML = generateStyleOverrideHTML(
+    styleOverrides,
+    atomOverrides,
+    graph
+  );
 
   const { frames, variantIds, onFrameLoaded, onFrameUpdated } = useFrames({
     shouldCollectRects: true,
@@ -26,10 +41,12 @@ export const Frames = memo(({ expandedFrameIndex }: FramesProps) => {
 
   return (
     <>
-      {frames.map((frame, i) => {
+      {frames.map((frame: Node, i) => {
+        const id = (frame.element || frame.textNode).id;
+
         return (
           <Frame
-            key={i}
+            key={id}
             document={doc!.paperclip!}
             onLoad={onFrameLoaded}
             variantIds={variantIds}
@@ -45,7 +62,11 @@ export const Frames = memo(({ expandedFrameIndex }: FramesProps) => {
   );
 });
 
-const generateStyleOverrideHTML = (styleOverrides: StyleOverrides) => {
+const generateStyleOverrideHTML = (
+  styleOverrides: StyleOverrides,
+  atomOverrides: AtomOverrides,
+  graph: Graph
+) => {
   if (!styleOverrides) {
     return "";
   }
@@ -55,15 +76,56 @@ const generateStyleOverrideHTML = (styleOverrides: StyleOverrides) => {
   html += "<style>\n";
 
   for (const id in styleOverrides) {
+    const expr = ast.getExprInfoById(id, graph);
+
+    // defensive
+    if (!expr) {
+      continue;
+    }
+
     const decls = styleOverrides[id];
 
-    html += `  #_${id} {\n`;
+    if (expr.kind === ast.ExprKind.Style) {
+      html += ":root {\n";
+      for (const key in decls) {
+        const declExpr = expr.expr.declarations.find(
+          (decl) => decl.name === key
+        );
+        if (!declExpr) {
+          continue;
+        }
+        const name = `--${expr.expr.name}-${key}-${declExpr.id}`;
 
-    for (const key in decls) {
-      html += `    ${key}: ${castDeclValue(decls[key])} !important;\n`;
+        html += `    ${name}: ${castDeclValue(decls[key])} !important;\n`;
+      }
+      html += "}\n\n";
+    } else {
+      // regular selector
+
+      html += `  #_${id} {\n`;
+
+      for (const key in decls) {
+        html += `    ${key}: ${castDeclValue(decls[key])} !important;\n`;
+      }
+      html += "  }\n\n";
     }
-    html += "  }\n\n";
   }
+
+  html += `:root {\n`;
+
+  for (const id in atomOverrides) {
+    const expr: Atom = ast.getExprById(id, graph);
+
+    if (!expr) {
+      continue;
+    }
+
+    html += `  --${expr.name}-${expr.id}: ${castDeclValue(
+      atomOverrides[id]
+    )} !important;\n`;
+  }
+
+  html += "}\n\n";
 
   html += "</style>";
 
@@ -121,7 +183,7 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
     return { frames: [], onFrameLoaded };
   }
 
-  const frames = doc.paperclip?.html?.children || [];
+  const frames: Node[] = doc.paperclip?.html?.children || [];
 
   return { frames, onFrameLoaded, onFrameUpdated, variantIds };
 };

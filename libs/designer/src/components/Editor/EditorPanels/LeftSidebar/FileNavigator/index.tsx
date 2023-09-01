@@ -90,7 +90,6 @@ export const AddFileButton = () => {
     <SuggestionMenu
       values={[]}
       onSelect={onChange}
-      onOtherSelect={noop}
       menu={() => [
         <SuggestionMenuItem value={NewFileKind.DesignFile}>
           Design file

@@ -24,10 +24,10 @@ macro_rules! paste_expr {
 
         let item = $self.mutation.item.as_ref().expect("item must exist");
 
-        let node = clone_pasted_expr(item, $self.get_dependency(), &$self.graph);
+        let node = clone_pasted_expr(&$self, item, $self.get_dependency(), &$self.graph);
 
         if let Some(node) = node {
-            $self.changes.push(
+            $self.add_change(
                 mutation_result::Inner::ExpressionInserted(ExpressionInserted {
                     id: node.get_id().to_string(),
                 })
@@ -40,7 +40,8 @@ macro_rules! paste_expr {
     }};
 }
 
-pub fn clone_pasted_expr(
+pub fn clone_pasted_expr<Mutation>(
+    ctx: &EditContext<Mutation>,
     expr: &paste_expression::Item,
     dep: &Dependency,
     graph: &Graph,
@@ -62,11 +63,9 @@ pub fn clone_pasted_expr(
 
             let slot_names = FindSlotNames::find_slot_names(component);
 
-            let id = dep.document.as_ref().unwrap().checksum().to_string();
-
             let el = Element {
                 namespace,
-                id: id.to_string(),
+                id: ctx.new_id(),
                 name: None,
                 tag_name: graph_component.name.to_string(),
                 parameters: vec![],
@@ -75,7 +74,7 @@ pub fn clone_pasted_expr(
                     .iter()
                     .map(|name| {
                         node::Inner::Insert(Insert {
-                            id: format!("{}-insert-{}", id, name),
+                            id: ctx.new_id(),
                             name: name.to_string(),
                             range: None,
                             body: vec![],
@@ -93,18 +92,13 @@ pub fn clone_pasted_expr(
         // Clone node to refresh IDs
         let mut context = Context::new(0);
         serialize_node(&node, &mut context);
-
-        println!("PST {:?}", context.buffer);
-        Some(parse_node(
-            &context.buffer,
-            &dep.document.as_ref().unwrap().checksum(),
-        ))
+        Some(parse_node(&context.buffer, &ctx.new_id()))
     } else {
         None
     }
 }
 
-impl<'a> MutableVisitor<()> for EditContext<'a, PasteExpression> {
+impl MutableVisitor<()> for EditContext<PasteExpression> {
     fn visit_element(&mut self, expr: &mut paperclip_proto::ast::pc::Element) -> VisitorResult<()> {
         paste_expr!(self, expr)
     }
@@ -137,7 +131,7 @@ impl<'a> MutableVisitor<()> for EditContext<'a, PasteExpression> {
                 if is_new_import {
                     let relative = resolve_import(&self.get_dependency().path, &component_dep.path);
                     expr.body
-                        .insert(0, parse_import(&relative, &ns, doc.checksum().as_str()));
+                        .insert(0, parse_import(&relative, &ns, &self.new_id()));
                 }
             }
         }

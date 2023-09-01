@@ -9,20 +9,14 @@ import {
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { VariantsSection } from "./VariantsSection";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
-import {
-  Atom,
-  Component,
-  Element,
-  Style,
-  TextNode,
-} from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { getEditorState } from "@paperclip-ui/designer/src/state";
 import { FrameSection } from "./FrameSection";
 import { ExprTagNameField } from "./TagInput";
 import { AttributesSection } from "./AttributesSection";
 import { UsedBySection } from "./UsedBySection";
-import { TextValueInput } from "./TextValueInput";
+import { TextValueField } from "./TextValueInput";
+import { AtomValueField } from "./AtomValueInput";
 
 export const PropertiesPanel = () => {
   const expr = useSelector(getSelectedExpressionInfo);
@@ -40,9 +34,10 @@ export const PropertiesPanel = () => {
         <sidebarStyles.SidebarPanelContent>
           <inputStyles.Fields>
             <IDField />
-            <TextValueInput />
+            <TextValueField />
+            <AtomValueField />
             <ExprTagNameField />
-            {expr.kind === ast.ExprKind.Component && <VariantsSection />}
+            <VariantsSection />
           </inputStyles.Fields>
         </sidebarStyles.SidebarPanelContent>
       </sidebarStyles.SidebarSection>

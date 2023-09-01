@@ -14,15 +14,14 @@ use crate::ast::all::{MutableVisitable, MutableVisitor};
 use paperclip_parser::docco::parser::parse as parse_comment;
 use paperclip_parser::pc::parser::parse as parse_pc;
 
-impl<'expr> MutableVisitor<()> for EditContext<'expr, InsertFrame> {
+impl MutableVisitor<()> for EditContext<InsertFrame> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
         if expr.id == self.mutation.document_id {
             let bounds = self.mutation.bounds.as_ref().unwrap();
 
-            let imports = add_imports(&self.mutation.imports, expr, &self.get_dependency());
+            let imports = add_imports(&self.mutation.imports, expr, &self);
 
             let mut mutations = vec![];
-            let checksum = expr.checksum();
 
             let new_comment = parse_comment(
                 format!(
@@ -30,11 +29,11 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, InsertFrame> {
                     bounds.x, bounds.y, bounds.width, bounds.height
                 )
                 .trim(),
-                &checksum,
+                &self.new_id(),
             )
             .unwrap();
 
-            let mut to_insert = parse_pc(&self.mutation.node_source, &checksum).unwrap();
+            let mut to_insert = parse_pc(&self.mutation.node_source, &self.new_id()).unwrap();
             replace_namespaces(&mut to_insert, &imports);
 
             mutations.push(
@@ -57,7 +56,7 @@ impl<'expr> MutableVisitor<()> for EditContext<'expr, InsertFrame> {
                 expr.body.push(node.clone());
             }
 
-            self.changes.extend(mutations);
+            self.add_changes(mutations);
         }
 
         VisitorResult::Continue

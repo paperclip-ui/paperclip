@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import * as etcStyles from "@paperclip-ui/designer/src/styles/etc.pc";
 import { useSelector } from "@paperclip-ui/common";
@@ -25,10 +24,12 @@ type GroupSectionProps = {
 const GroupSection = ({ targetId, name, style }: GroupSectionProps) => {
   const [focusedDeclIndex, setFocusedDeclIndex] = useState<number | null>(null);
 
-  const onLastValueTab = useCallback(
+  const onLastValueKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
-      event.preventDefault();
-      setFocusedDeclIndex(style.propertyNames.length + 1);
+      if (event.key === "Tab" && !event.shiftKey) {
+        event.preventDefault();
+        setFocusedDeclIndex(style.propertyNames.length + 1);
+      }
     },
     [focusedDeclIndex, style.propertyNames.length]
   );
@@ -44,7 +45,12 @@ const GroupSection = ({ targetId, name, style }: GroupSectionProps) => {
   const propNames = [...style.propertyNames];
 
   if (focusedDeclIndex != null && focusedDeclIndex >= propNames.length) {
-    propNames.push(null);
+    // We do this since last new decl may tab to ANOTHER so we'll have two new declarations
+    propNames.push(
+      ...Array.from({ length: focusedDeclIndex - (propNames.length - 1) }).map(
+        (v) => null
+      )
+    );
   }
 
   const decls = propNames.map((propertyName, i) => {
@@ -55,10 +61,10 @@ const GroupSection = ({ targetId, name, style }: GroupSectionProps) => {
     return (
       <Declaration
         name={propertyName}
-        key={targetId + "-" + i}
+        key={targetId + "-" + (propertyName || i)}
         isNew={isNew}
         style={decl}
-        onValueTab={isLast ? onLastValueTab : undefined}
+        onValueKeyDown={isLast ? onLastValueKeyDown : undefined}
         onFocus={() => setFocusedDeclIndex(i)}
         onBlur={isLast ? () => setFocusedDeclIndex(i - 1) : undefined}
       />

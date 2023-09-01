@@ -11,6 +11,7 @@ import {
 import { History } from "../history/history";
 import { routes } from "../../state/routes";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { isEventTargetTextInput } from "../../state/utils";
 
 export const createShortcutsEngine =
   (history: History) =>
@@ -19,7 +20,7 @@ export const createShortcutsEngine =
     getState: () => DesignerState
   ): Engine<DesignerState, DesignerEvent> => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (/textarea|input/i.test((event.target as HTMLElement).tagName)) {
+      if (isEventTargetTextInput(event.target)) {
         return;
       }
 

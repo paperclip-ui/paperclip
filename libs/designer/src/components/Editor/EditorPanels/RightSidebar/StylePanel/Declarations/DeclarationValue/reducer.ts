@@ -13,6 +13,10 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
     case "focused": {
       return produce(state, (draft) => {
         draft.caretPosition = event.payload.caretPosition;
+
+        // when focused initially, we want to select the entire value. Particularly
+        // useful when tabbing between inputs
+        draft.selectionLength = draft.value.length;
         draft.showSuggestionMenu = true;
         draft.active = true;
       });

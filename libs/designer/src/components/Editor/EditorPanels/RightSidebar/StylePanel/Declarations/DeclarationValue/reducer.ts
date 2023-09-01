@@ -6,14 +6,12 @@ import {
 } from "./state";
 import { DeclarationValueEvent } from "./events";
 import produce from "immer";
-import { getTokenValue } from "./utils";
 
 export const reducer = (state: State, event: DeclarationValueEvent) => {
   switch (event.type) {
     case "focused": {
       return produce(state, (draft) => {
         draft.caretPosition = event.payload.caretPosition;
-
         // when focused initially, we want to select the entire value. Particularly
         // useful when tabbing between inputs
         draft.selectionLength = draft.value.length;

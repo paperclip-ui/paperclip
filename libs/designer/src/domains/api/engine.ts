@@ -538,8 +538,6 @@ const createEventHandler = (actions: Actions) => {
       parentId = targetExpr.expr.id;
     }
 
-    console.log(targetExpr, parentId);
-
     actions.applyChanges([
       {
         prependChild: {

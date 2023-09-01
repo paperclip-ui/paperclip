@@ -9,10 +9,9 @@ export type Callbacks = {
 export const engine = (ref: MutableRefObject<Callbacks>) => () => ({
   handleEvent(event: VariantSectionEvent, state: State) {
     switch (event.type) {
+      case "triggerSaved":
       case "newTriggerSaved":
       case "nameSaved": {
-        console.log("STATE", state);
-
         ref.current.onSave({
           name: state.name,
           triggers: state.triggers,

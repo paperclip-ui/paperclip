@@ -97,13 +97,9 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
     }
     case "textInputChanged": {
       return produce(state, (draft) => {
-        draft.value = event.payload;
-
-        // native behavior is prefered, but we have
-        // strict control over caret position, so we
-        // should set at the end of the value as it
-        // would be native.
-        draft.caretPosition = draft.value.length;
+        draft.value = event.payload.value;
+        draft.caretPosition = event.payload.caretPosition;
+        draft.selectionLength = null;
       });
     }
   }

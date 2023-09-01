@@ -277,7 +277,10 @@ const useRawInput = ({
   const onTextInputChange = (value: string) => {
     dispatch({
       type: "textInputChanged",
-      payload: value,
+      payload: {
+        value,
+        caretPosition: ref.current.selectionStart,
+      },
     });
   };
 

@@ -80,6 +80,7 @@ const Attribute = ({
     setName(value);
 
     // hack to beat blur race condition
+
     setTimeout(() => {
       valueRef.current?.focus();
     }, 100);
@@ -104,7 +105,12 @@ const Attribute = ({
   );
 
   const name2 = isNew ? (
-    <NameInput tagName={elementTagName} attrName={name} onSave={onNameSave} />
+    <NameInput
+      tagName={elementTagName}
+      attrName={name}
+      onChange={setName}
+      onSave={onNameSave}
+    />
   ) : (
     name
   );
@@ -132,10 +138,11 @@ const Attribute = ({
 type NameInputProps = {
   tagName: string;
   attrName: string;
+  onChange: (value: string) => void;
   onSave: (value: string) => void;
 };
 
-const NameInput = ({ tagName, attrName, onSave }: NameInputProps) => {
+const NameInput = ({ tagName, attrName, onChange, onSave }: NameInputProps) => {
   const components = useSelector(getAllComponents);
   const selectedComponent = useMemo(() => {
     return components.find((component) => component.component.name === tagName);
@@ -147,7 +154,7 @@ const NameInput = ({ tagName, attrName, onSave }: NameInputProps) => {
     },
     [onSave]
   );
-  const onOtherSelect = onSave;
+  const onOtherSelect = onChange;
 
   const menu = useCallback(() => {
     const propNames = selectedComponent
@@ -166,7 +173,7 @@ const NameInput = ({ tagName, attrName, onSave }: NameInputProps) => {
   }, [tagName, selectedComponent]);
   return (
     <SuggestionMenu values={[]} menu={menu} onSelect={onSelect}>
-      <TextInput autoFocus value={attrName} />
+      <TextInput autoFocus value={attrName} onChange={onChange} />
     </SuggestionMenu>
   );
 };

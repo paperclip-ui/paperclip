@@ -8,7 +8,34 @@ import "./input.pc" as input
 import "./etc.pc" as etc
 
 /**
- * @bounds(x: 881, y: 7, width: 405, height: 1105)
+ * @bounds(x: 284, y: 3, width: 281, height: 44)
+*/
+
+public component DeclName {
+    variant inherited trigger {
+        ".inherited"
+    }
+    render div(class: class) {
+        style variant inherited {
+            color: var(theme.gray0)
+            background: var(theme.blue01)
+        }
+        style {
+            font-family: var(theme.defaultFontFamily)
+            color: var(theme.gray0)
+            display: inline-block
+            border-radius: var(theme.roundedSM)
+            padding: var(theme.space02)
+            position: relative
+        }
+        slot children {
+            text "display"
+        }
+    }
+}
+
+/**
+ * @bounds(x: 0, y: 0, width: 271, height: 768)
 */
 
 public component Preview {
@@ -95,7 +122,13 @@ public component Preview {
                 input.Fields {
                     input.Field {
                         insert name {
-                            text "display"
+                            DeclName(class: "inherited") {
+                                override {
+                                    variant inherited trigger {
+                                        inherited
+                                    }
+                                }
+                            }
                         }
                         insert input {
                             input.Select {
@@ -109,7 +142,11 @@ public component Preview {
                     }
                     input.Field {
                         insert name {
-                            text "Padding"
+                            DeclName {
+                                text "Padding"
+                                insert children {
+                                }
+                            }
                         }
                         insert input {
                             input.TextInput(value: "", placeholder: "0px", class: "active")
@@ -117,7 +154,11 @@ public component Preview {
                     }
                     input.Field {
                         insert name {
-                            text "Margin"
+                            DeclName {
+                                text "Margin"
+                                insert children {
+                                }
+                            }
                         }
                         insert input {
                             input.TextInput(value: "", placeholder: "0px")
@@ -125,7 +166,11 @@ public component Preview {
                     }
                     input.Field {
                         insert name {
-                            text "Position"
+                            DeclName {
+                                text "Position"
+                                insert children {
+                                }
+                            }
                         }
                         insert input {
                             input.Select {
@@ -138,8 +183,18 @@ public component Preview {
                         }
                     }
                     input.Field {
+                        style {
+                            position: relative
+                        }
                         insert name {
-                            text "Box Sizing"
+                            DeclName {
+                                override {
+                                    variant inherited trigger {
+                                        true
+                                    }
+                                }
+                                text "Box Sizing"
+                            }
                         }
                         insert input {
                             input.Select {

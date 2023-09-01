@@ -474,9 +474,27 @@ export namespace ast {
       let computedStyles: ComputedStyleMap = { propertyNames: [], map: {} };
 
       if (style.variantCombo && style.variantCombo.length > 0) {
-        // TODO: do ehthis
-        // if (!style.variantCombo.every(ref => getRef))
-        return computedStyles;
+        const ownerComponent = getExprOwnerComponent(style, graph);
+        if (!ownerComponent) {
+          return computedStyles;
+        }
+
+        const componentVariants = getComponentVariants(ownerComponent);
+
+        const comboMatches = style.variantCombo.every((combo) => {
+          const variant = componentVariants.find(
+            (variant) => variant.name === combo.path[0]
+          );
+          if (!variant) {
+            return false;
+          }
+
+          return variantIds.includes(variant.id);
+        });
+
+        if (!comboMatches) {
+          return computedStyles;
+        }
       }
 
       for (const value of style.declarations) {
@@ -627,16 +645,15 @@ export namespace ast {
       trigger.items.some((item) => item.bool?.value === true)
     );
 
-  export const getExprOwnerComponent = (
-    expr: InnerExpression,
-    graph: Graph
-  ) => {
-    const ancestorId = getAncestorIds(expr.id, graph).find((ancestorId) => {
-      return getExprInfoById(ancestorId, graph).kind === ExprKind.Component;
-    });
+  export const getExprOwnerComponent = memoize(
+    (expr: InnerExpression, graph: Graph) => {
+      const ancestorId = getAncestorIds(expr.id, graph).find((ancestorId) => {
+        return getExprInfoById(ancestorId, graph).kind === ExprKind.Component;
+      });
 
-    return ancestorId && (getExprById(ancestorId, graph) as Component);
-  };
+      return ancestorId && (getExprById(ancestorId, graph) as Component);
+    }
+  );
 
   export const getInstanceComponent = (element: Element, graph: Graph) => {
     return getDocumentComponent(

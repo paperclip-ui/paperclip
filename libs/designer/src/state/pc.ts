@@ -465,9 +465,18 @@ export const getSelectedExprStyles = (
     exprInfo.kind === ast.ExprKind.Element ||
     exprInfo.kind === ast.ExprKind.TextNode
   ) {
-    return ast.computeElementStyle(virtId, state.graph);
+    return ast.computeElementStyle(
+      virtId,
+      state.graph,
+      state.selectedVariantIds
+    );
   } else if (exprInfo.kind === ast.ExprKind.Style) {
-    return ast.computeStyle(exprInfo.expr, state.graph, exprInfo.expr.id, []);
+    return ast.computeStyle(
+      exprInfo.expr,
+      state.graph,
+      exprInfo.expr.id,
+      state.selectedVariantIds
+    );
   }
 
   return ret;

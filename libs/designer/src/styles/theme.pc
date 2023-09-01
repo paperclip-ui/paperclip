@@ -203,3 +203,13 @@ div preview {
     }
 }
 
+/**
+ * @bounds(x: 413, y: 888, width: 475, height: 273)
+*/
+
+div {
+    style {
+        position: relative
+    }
+}
+

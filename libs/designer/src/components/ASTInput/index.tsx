@@ -31,9 +31,7 @@ export const ExpressionInput = ({
 
     if (value === "" && event.key === "Backspace") {
       const prev = getPrevToken(target);
-      console.log("FOCUS!", prev);
       if (prev) {
-        prev.focus();
         moveCaretToEnd(prev);
       }
     }

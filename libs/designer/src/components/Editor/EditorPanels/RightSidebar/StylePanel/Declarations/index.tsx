@@ -45,7 +45,12 @@ const GroupSection = ({ targetId, name, style }: GroupSectionProps) => {
   const propNames = [...style.propertyNames];
 
   if (focusedDeclIndex != null && focusedDeclIndex >= propNames.length) {
-    propNames.push(null);
+    // We do this since last new decl may tab to ANOTHER so we'll have two new declarations
+    propNames.push(
+      ...Array.from({ length: focusedDeclIndex - (propNames.length - 1) }).map(
+        (v) => null
+      )
+    );
   }
 
   const decls = propNames.map((propertyName, i) => {
@@ -56,7 +61,7 @@ const GroupSection = ({ targetId, name, style }: GroupSectionProps) => {
     return (
       <Declaration
         name={propertyName}
-        key={targetId + "-" + i}
+        key={targetId + "-" + (propertyName || i)}
         isNew={isNew}
         style={decl}
         onValueKeyDown={isLast ? onLastValueKeyDown : undefined}

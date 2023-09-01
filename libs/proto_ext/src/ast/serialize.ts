@@ -3,6 +3,7 @@
  * in JavaScript
  */
 
+import { memoize } from "@paperclip-ui/common";
 import { DeclarationValue } from "@paperclip-ui/proto/lib/generated/ast/css";
 import { Variant } from "@paperclip-ui/proto/lib/generated/ast/pc";
 
@@ -21,7 +22,7 @@ export type ComputedStyleMap = {
   map: Record<string, ComputedStyle>;
 };
 
-export const serializeDeclaration = (expr: DeclarationValue) => {
+export const serializeDeclaration = memoize((expr: DeclarationValue) => {
   if (expr.arithmetic) {
     return `${serializeDeclaration(expr.arithmetic.left)} ${
       expr.arithmetic.operator
@@ -41,14 +42,10 @@ export const serializeDeclaration = (expr: DeclarationValue) => {
     return `#${expr.hexColor.value}`;
   }
   if (expr.measurement) {
-    // 0.3 converted in f32 rust adds a bunch of shit, so we need to fix that.
-    // this is a hack.
-    return `${Math.round(expr.measurement.value * 1000) / 1000}${
-      expr.measurement.unit
-    }`;
+    return `${fixFloating(expr.measurement.value)}${expr.measurement.unit}`;
   }
   if (expr.number) {
-    return `${expr.number.value}`;
+    return `${fixFloating(expr.number.value)}`;
   }
   if (expr.reference) {
     return `${expr.reference.path.join(".")}`;
@@ -61,14 +58,18 @@ export const serializeDeclaration = (expr: DeclarationValue) => {
   if (expr.str) {
     return `"${expr.str.value}"`;
   }
-};
+});
 
-export const serializeComputedStyle = (
-  style: ComputedStyleMap
-): Record<string, string> => {
-  const comp = {};
-  for (const key in style.map) {
-    comp[key] = serializeDeclaration(style[key]);
+export const serializeComputedStyle = memoize(
+  (style: ComputedStyleMap): Record<string, string> => {
+    const comp = {};
+    for (const key in style.map) {
+      comp[key] = serializeDeclaration(style[key]);
+    }
+    return comp;
   }
-  return comp;
-};
+);
+
+// 0.3 converted in f32 rust adds a bunch of shit, so we need to fix that.
+// this is a hack.
+const fixFloating = (value: number) => Math.round(value * 1000) / 1000;

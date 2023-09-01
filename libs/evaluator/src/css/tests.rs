@@ -614,6 +614,7 @@ add_case! {
   r#"._blarg-80f4925f-4 { color: blue; }"#
 }
 
+
 add_case! {
   can_define_styles_within_text_in_a_slot,
   [

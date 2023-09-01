@@ -6,7 +6,6 @@ import { getPropField } from "./cssSchema";
 import { css } from "./types";
 import { useDispatch } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
-import { SelectDetails } from "@paperclip-ui/designer/src/components/SuggestionMenu";
 
 type NewDeclarationProps = {
   onDone: () => void;

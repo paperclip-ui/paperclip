@@ -6,7 +6,6 @@ import { DeclarationValue } from "./DeclarationValue";
 import { NewDeclValue } from "./types";
 import { noop } from "lodash";
 import { getPropField } from "./cssSchema";
-import { SelectDetails } from "@paperclip-ui/designer/src/components/SuggestionMenu";
 import {
   ComputedStyle,
   serializeDeclaration,

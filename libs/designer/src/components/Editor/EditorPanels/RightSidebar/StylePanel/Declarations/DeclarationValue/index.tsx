@@ -31,6 +31,7 @@ import { DeclarationValueType, inferDeclarationValueType } from "./css-utils";
 import { ColorInput } from "./ValueInputs/color";
 import { DeclSuggestionMenu } from "./SuggestionDropdown";
 import { DeclarationValueEvent } from "./events";
+import { engine } from "./engine";
 
 export type DeclarationValueProps = {
   name: string;
@@ -166,26 +167,6 @@ const RawInput = (props: RawInputProps) => {
       />
     </DeclSuggestionMenu>
   );
-};
-
-const engine = (callbacks) => () => {
-  return {
-    handleEvent(event: DeclarationValueEvent, state: State) {
-      switch (event.type) {
-        case "customSelected":
-        case "suggestionSelected":
-        case "customInputChangeComplete":
-        case "inputClicked": {
-          callbacks.current.onChangeComplete(state.value, state.imports);
-          break;
-        }
-        case "customInputChanged": {
-          callbacks.current.onChange(state.value);
-          break;
-        }
-      }
-    },
-  };
 };
 
 const useRawInput = ({

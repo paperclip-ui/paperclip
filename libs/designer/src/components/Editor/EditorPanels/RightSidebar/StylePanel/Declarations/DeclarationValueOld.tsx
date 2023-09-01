@@ -3,7 +3,6 @@ import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { useSelector } from "@paperclip-ui/common";
 import { camelCase } from "lodash";
 import {
-  SelectDetails,
   SuggestionMenu,
   SuggestionMenuItem,
   SuggestionMenuSection,
@@ -24,7 +23,7 @@ type FieldInputProps = {
   options?: string[];
   autoFocus?: boolean;
   placeholder?: string;
-  onSelect: (value: NewDeclValue, details) => void;
+  onSelect: (value: NewDeclValue) => void;
   onTab?: (event: React.KeyboardEvent) => void;
   type: css.InputType;
 };
@@ -45,12 +44,12 @@ export const DeclarationValue = ({
 
   const internalValue = useRef<NewDeclValue>();
 
-  const onSelect = ([newValue], details: SelectDetails) => {
-    onSelect2(newValue, details);
+  const onSelect = ([newValue]) => {
+    onSelect2(newValue);
   };
 
-  const onOtherSelect = (value, details: SelectDetails) => {
-    onSelect2({ value }, details);
+  const onOtherSelect = (value) => {
+    onSelect2({ value });
   };
 
   useEffect(() => {

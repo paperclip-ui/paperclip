@@ -30,6 +30,13 @@ type CustomInputChangeComplete = BaseEvent<
   }
 >;
 
+type CustomSelected = BaseEvent<
+  "customSelected",
+  {
+    value: string;
+  }
+>;
+
 type SuggestionMenuClose = BaseEvent<"suggestionMenuClose">;
 
 type Blurred = BaseEvent<"blurred">;
@@ -49,6 +56,7 @@ type SuggestionSelected = BaseEvent<
 export type DeclarationValueEvent =
   | KeyDown
   | Blurred
+  | CustomSelected
   | InputClicked
   | CustomInputChanged
   | CustomInputChangeComplete

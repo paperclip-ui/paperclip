@@ -167,18 +167,19 @@ const RawInput = (props: RawInputProps) => {
   );
 };
 
-const engine = (onChange, onChangeComplete) => () => {
+const engine = (callbacks) => () => {
   return {
     handleEvent(event: DeclarationValueEvent, state: State) {
       switch (event.type) {
+        case "customSelected":
         case "suggestionSelected":
         case "customInputChangeComplete":
         case "inputClicked": {
-          onChangeComplete(state.value, state.imports);
+          callbacks.current.onChangeComplete(state.value, state.imports);
           break;
         }
         case "customInputChanged": {
-          onChange(state.value);
+          callbacks.current.onChange(state.value);
           break;
         }
       }
@@ -193,9 +194,15 @@ const useRawInput = ({
   onTab,
   isInherited,
 }: RawInputProps) => {
+  const callbacks = useRef<any>();
+  callbacks.current = {
+    onChange,
+    onChangeComplete,
+  };
+
   const [state, dispatch] = useInlineMachine(
     reducer,
-    engine(onChange, onChangeComplete),
+    engine(callbacks),
     getInitialState(isInherited ? "" : value)
   );
   const activeToken = getTokenAtCaret(state);
@@ -282,7 +289,12 @@ const useRawInput = ({
     state.selectionLength,
   ]);
 
-  const onCustomSelect = (value: string) => {};
+  const onCustomSelect = (value: string) => {
+    dispatch({
+      type: "customSelected",
+      payload: { value },
+    });
+  };
 
   return {
     ref,

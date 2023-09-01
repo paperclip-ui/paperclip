@@ -155,7 +155,12 @@ export const getRenderedCssValue = (value: string, state: DesignerState) => {
 
   let varImpSource: string = dep.path;
 
-  const varInfo = value.match(/var\((.*)\)/)[1];
+  const varInfo = value.match(/var\((.*)\)/)?.[1];
+
+  if (!varInfo) {
+    return value;
+  }
+
   const [namespace, name] = varInfo.split(".");
 
   if (varInfo.includes(".")) {

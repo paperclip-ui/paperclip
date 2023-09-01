@@ -132,8 +132,9 @@ export const useSuggestionMenu = ({
       }
     } else if (event.key === "Enter") {
       const value =
-        menuOptions[preselectedIndex]?.props.selectValue ||
-        menuOptions[preselectedIndex]?.props.value;
+        menuOptions?.[preselectedIndex]?.props.selectValue ||
+        menuOptions?.[preselectedIndex]?.props.value;
+
       if (value) {
         onSelect(value, { event });
       } else if (typedValue != null) {

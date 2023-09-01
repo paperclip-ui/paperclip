@@ -48,6 +48,10 @@ const colorDeclValueTypes: Array<
 ];
 
 export const inferDeclarationValueType = (value: string) => {
+  if (value == null) {
+    return null;
+  }
+
   for (const [type, test] of colorDeclValueTypes) {
     if (test(value)) {
       return type;

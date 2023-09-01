@@ -68,6 +68,11 @@ export const reducer = (state: State, event: SuggestionMenuEvent) => {
         draft.props = event.payload;
         if (!isOpen(draft)) {
           draft.preselectedIndex = -1;
+
+          // reset custom value so that if menu opens again
+          // user must type to filter. OTHERWISE the full
+          // list isn't displayed.
+          draft.customValue = null;
         }
       });
     }

@@ -7,7 +7,7 @@ import "./theme.pc" as theme
 div {
     style {
         position: relative
-        color: var(theme.backgroundSelected)
+        color: red
         background-color: var(theme.fontSize01)
     }
     text "something!!"

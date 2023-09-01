@@ -166,6 +166,9 @@ export const useSuggestionMenu = ({
 
   const onInputChange = (value: string) => {
     dispatch({ type: "inputChanged", payload: value });
+    if (oldProps.onChange) {
+      oldProps.onChange(value);
+    }
   };
 
   const onClick = (event: React.MouseEvent<any>) => {

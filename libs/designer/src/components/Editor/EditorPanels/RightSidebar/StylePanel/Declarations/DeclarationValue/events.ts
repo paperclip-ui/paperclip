@@ -13,6 +13,10 @@ type KeyDown = BaseEvent<
   "keyDown",
   {
     key: string;
+
+    // ctrl + a may have been selected. Want to preserve that
+    selectionStart: number;
+    selectionLength: number;
   }
 >;
 
@@ -23,26 +27,13 @@ type InputClicked = BaseEvent<
   }
 >;
 
-type CustomInputChanged = BaseEvent<
-  "customInputChanged",
-  {
-    value: string;
-  }
->;
+type CustomInputChanged = BaseEvent<"customInputChanged", string>;
 
-type CustomInputChangeComplete = BaseEvent<
-  "customInputChangeComplete",
-  {
-    value: string;
-  }
->;
+type TextInputChanged = BaseEvent<"textInputChanged", string>;
 
-type CustomSelected = BaseEvent<
-  "customSelected",
-  {
-    value: string;
-  }
->;
+type CustomInputChangeComplete = BaseEvent<"customInputChangeComplete", string>;
+
+type CustomSelected = BaseEvent<"customSelected", string>;
 
 type SuggestionMenuClose = BaseEvent<"suggestionMenuClose">;
 
@@ -66,6 +57,7 @@ export type DeclarationValueEvent =
   | Blurred
   | CustomSelected
   | InputClicked
+  | TextInputChanged
   | CustomInputChanged
   | CustomInputChangeComplete
   | Focused

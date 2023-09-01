@@ -86,6 +86,7 @@ const RawInput = (props: RawInputProps) => {
     onKeyDown,
     onSuggestionSelect,
     onSuggestionMenuClose,
+    onTextInputChange,
     onInputClick,
     onCustomInputChangeComplete,
     onCustomInputChange,
@@ -160,6 +161,7 @@ const RawInput = (props: RawInputProps) => {
         ref={ref}
         value={value}
         onKeyUp={onKeyUp}
+        onChange={onTextInputChange}
         placeholder={isInherited ? value : undefined}
         onKeyDown={onKeyDown}
         onFocus={onFocus}
@@ -206,6 +208,8 @@ const useRawInput = ({
       type: "keyDown",
       payload: {
         key: event.key,
+        selectionStart: ref.current.selectionStart,
+        selectionLength: ref.current.selectionEnd - ref.current.selectionStart,
       },
     });
     if (onKeyDown2) {
@@ -238,17 +242,13 @@ const useRawInput = ({
   const onCustomInputChange = (value: string) => {
     dispatch({
       type: "customInputChanged",
-      payload: {
-        value,
-      },
+      payload: value,
     });
   };
   const onCustomInputChangeComplete = (value: string) => {
     dispatch({
       type: "customInputChangeComplete",
-      payload: {
-        value,
-      },
+      payload: value,
     });
   };
 
@@ -277,20 +277,28 @@ const useRawInput = ({
     state.selectionLength,
   ]);
 
+  const onTextInputChange = (value: string) => {
+    dispatch({
+      type: "textInputChanged",
+      payload: value,
+    });
+  };
+
   const onCustomSelect = (value: string) => {
     dispatch({
       type: "customSelected",
-      payload: { value },
+      payload: value,
     });
   };
 
   return {
     ref,
     value: state.value,
-    showSuggestionMenu: state.showSuggestionMenu && activeToken != null,
+    showSuggestionMenu: state.showSuggestionMenu,
     activeToken,
     onKeyDown,
     onCustomInputChange,
+    onTextInputChange,
     onCustomInputChangeComplete,
     onKeyUp,
     onInputClick,

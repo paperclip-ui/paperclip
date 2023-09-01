@@ -2,8 +2,6 @@ import { State, getPathNamespace, getTokenAtCaret } from "./state";
 import { DeclarationValueEvent } from "./events";
 import produce from "immer";
 import { getTokenValue } from "./utils";
-import { stat } from "fs-extra";
-import { WritableDraft } from "immer/dist/internal";
 
 export const reducer = (state: State, event: DeclarationValueEvent) => {
   switch (event.type) {
@@ -20,24 +18,22 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
       });
     }
     case "customInputChanged": {
-      state = replaceActiveToken(event.payload.value, state, "all");
+      state = replaceActiveToken(event.payload, state, "all");
       return state;
     }
     case "customInputChangeComplete": {
-      state = replaceActiveToken(event.payload.value, state, "all");
+      state = replaceActiveToken(event.payload, state, "all");
       return state;
     }
     case "inputClicked": {
-      return produce(state, (draft) => {
+      state = produce(state, (draft) => {
         draft.active = true;
         draft.showSuggestionMenu = true;
         draft.caretPosition = event.payload.caretPosition;
-        const activeToken = getTokenAtCaret(draft);
-        if (activeToken) {
-          draft.caretPosition = activeToken.pos;
-          draft.selectionLength = getTokenValue(activeToken).length;
-        }
+        Object.assign(draft, selectActiveToken(draft));
       });
+
+      return state;
     }
     case "suggestionSelected": {
       state = replaceActiveToken(event.payload.item.value, state, "picked");
@@ -64,8 +60,15 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
           event.payload.key === "ArrowUp"
         ) {
           draft.showSuggestionMenu = true;
+          draft.selectionLength = event.payload.selectionLength;
+          Object.assign(draft, selectActiveToken(draft));
         } else if (event.payload.key === "Escape") {
           draft.showSuggestionMenu = false;
+        } else {
+          // otherwise, want to maintain selection because of cases like ctrl + a
+          // and other key combos
+          draft.caretPosition = event.payload.selectionStart;
+          draft.selectionLength = event.payload.selectionLength;
         }
       });
     }
@@ -73,6 +76,17 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
       return produce(state, (draft) => {
         draft.caretPosition = -1;
         draft.active = false;
+      });
+    }
+    case "textInputChanged": {
+      return produce(state, (draft) => {
+        draft.value = event.payload;
+
+        // native behavior is prefered, but we have
+        // strict control over caret position, so we
+        // should set at the end of the value as it
+        // would be native.
+        draft.caretPosition = draft.value.length;
       });
     }
   }
@@ -111,5 +125,15 @@ const replaceActiveToken = (
     }
 
     draft.value = newValue.replace("%|%", "");
+  });
+};
+
+const selectActiveToken = (state: State) => {
+  return produce(state, (draft) => {
+    const token = getTokenAtCaret(state);
+    if (token) {
+      draft.caretPosition = token.pos;
+      draft.selectionLength = getTokenValue(token).length;
+    }
   });
 };

@@ -3,6 +3,7 @@ import { DeclarationValueEvent } from "./events";
 import produce from "immer";
 import { getTokenValue } from "./utils";
 import { stat } from "fs-extra";
+import { WritableDraft } from "immer/dist/internal";
 
 export const reducer = (state: State, event: DeclarationValueEvent) => {
   switch (event.type) {
@@ -10,6 +11,7 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
       return produce(state, (draft) => {
         draft.caretPosition = event.payload.caretPosition;
         draft.showSuggestionMenu = true;
+        draft.active = true;
       });
     }
     case "suggestionMenuClose": {
@@ -18,21 +20,27 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
       });
     }
     case "customInputChanged": {
-      state = replaceActiveToken(event.payload.value, state, true);
+      state = replaceActiveToken(event.payload.value, state, "all");
       return state;
     }
     case "customInputChangeComplete": {
-      state = replaceActiveToken(event.payload.value, state, true);
+      state = replaceActiveToken(event.payload.value, state, "all");
       return state;
     }
     case "inputClicked": {
       return produce(state, (draft) => {
+        draft.active = true;
         draft.showSuggestionMenu = true;
         draft.caretPosition = event.payload.caretPosition;
+        const activeToken = getTokenAtCaret(draft);
+        if (activeToken) {
+          draft.caretPosition = activeToken.pos;
+          draft.selectionLength = getTokenValue(activeToken).length;
+        }
       });
     }
     case "suggestionSelected": {
-      state = replaceActiveToken(event.payload.item.value, state, true);
+      state = replaceActiveToken(event.payload.item.value, state, "picked");
 
       return produce(state, (draft) => {
         if (event.payload.item.source) {
@@ -63,7 +71,7 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
 const replaceActiveToken = (
   value: string,
   state: State,
-  setCaretPosition: boolean
+  selectionBehavior?: "beginning" | "picked" | "all"
 ) => {
   return produce(state, (draft) => {
     const token = getTokenAtCaret(state);
@@ -72,15 +80,24 @@ const replaceActiveToken = (
       state.value.slice(0, token.pos) +
       value +
       state.value.slice(token.pos + getTokenValue(token).length);
-    let caretPosition = newValue.indexOf("%|%");
-    if (caretPosition === -1) {
-      caretPosition = token.pos + value.length;
+    let pickedCaretPosition = newValue.indexOf("%|%");
+    if (pickedCaretPosition === -1) {
+      pickedCaretPosition = token.pos + value.length;
     }
 
-    if (setCaretPosition) {
-      draft.caretPosition = caretPosition;
-      draft.selectionLength = newValue.length;
+    if (selectionBehavior) {
+      if (selectionBehavior === "beginning") {
+        draft.caretPosition = token.pos;
+        draft.selectionLength = 0;
+      } else if (selectionBehavior === "picked") {
+        draft.caretPosition = pickedCaretPosition;
+        draft.selectionLength = 0;
+      } else if (selectionBehavior === "all") {
+        draft.caretPosition = token.pos;
+        draft.selectionLength = value.length;
+      }
     }
+
     draft.value = newValue.replace("%|%", "");
   });
 };

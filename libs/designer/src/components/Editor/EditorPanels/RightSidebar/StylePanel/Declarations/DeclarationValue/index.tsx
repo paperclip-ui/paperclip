@@ -174,8 +174,6 @@ const engine = (onChange, onChangeComplete) => () => {
         case "suggestionSelected":
         case "customInputChangeComplete":
         case "inputClicked": {
-          console.log("CHANGEEEEEE");
-
           onChangeComplete(state.value, state.imports);
           break;
         }
@@ -271,15 +269,13 @@ const useRawInput = ({
 
   useEffect(() => {
     if (state.caretPosition !== -1 && state.active) {
-      setTimeout(() => {
-        ref.current.focus();
-
-        ref.current.selectionStart = state.caretPosition;
-        ref.current.selectionEnd =
-          state.caretPosition + (state.selectionLength || 0);
-      });
+      ref.current.focus();
+      ref.current.selectionStart = state.caretPosition;
+      ref.current.selectionEnd =
+        state.caretPosition + (state.selectionLength || 0);
     }
   }, [
+    state.value,
     state.caretPosition,
     state.active,
     state.showSuggestionMenu,

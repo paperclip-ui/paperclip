@@ -128,12 +128,7 @@ const TagInput = ({ value, onChange }: TagInputProps) => {
   );
 
   return (
-    <SuggestionMenu
-      menu={menu}
-      values={values}
-      onSelect={onSelect}
-      onOtherSelect={onOtherSelect}
-    >
+    <SuggestionMenu menu={menu} values={values} onSelect={onSelect}>
       <TextInput placeholder="tag name" value={value} />
     </SuggestionMenu>
   );

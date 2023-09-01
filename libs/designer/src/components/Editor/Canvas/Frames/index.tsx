@@ -76,14 +76,39 @@ const generateStyleOverrideHTML = (
   html += "<style>\n";
 
   for (const id in styleOverrides) {
+    const expr = ast.getExprInfoById(id, graph);
+
+    // defensive
+    if (!expr) {
+      continue;
+    }
+
     const decls = styleOverrides[id];
 
-    html += `  #_${id} {\n`;
+    if (expr.kind === ast.ExprKind.Style) {
+      html += ":root {\n";
+      for (const key in decls) {
+        const declExpr = expr.expr.declarations.find(
+          (decl) => decl.name === key
+        );
+        if (!declExpr) {
+          continue;
+        }
+        const name = `--${expr.expr.name}-${key}-${declExpr.id}`;
 
-    for (const key in decls) {
-      html += `    ${key}: ${castDeclValue(decls[key])} !important;\n`;
+        html += `    ${name}: ${castDeclValue(decls[key])} !important;\n`;
+      }
+      html += "}\n\n";
+    } else {
+      // regular selector
+
+      html += `  #_${id} {\n`;
+
+      for (const key in decls) {
+        html += `    ${key}: ${castDeclValue(decls[key])} !important;\n`;
+      }
+      html += "  }\n\n";
     }
-    html += "  }\n\n";
   }
 
   html += `:root {\n`;

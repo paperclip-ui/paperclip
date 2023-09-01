@@ -1,15 +1,21 @@
 import "./theme.pc" as theme
 
-public token something rgba(23, 23, 192, 1)
+public token color rgba(46, 209, 205, 1)
+public style aMixin {
+    color: var(color)
+    font-size: 32px
+    font-family: var(theme.defaultFontFamily)
+    background: rgba(97, 152, 231, 1)
+}
+
 /**
  * @bounds(x: 562, y: 217, width: 430, height: 185)
 */
 
 div {
-    style {
+    style extends aMixin {
         position: relative
         color: var(something)
-        background-color: var(theme.fontSize01)
     }
     text "something!!"
 }

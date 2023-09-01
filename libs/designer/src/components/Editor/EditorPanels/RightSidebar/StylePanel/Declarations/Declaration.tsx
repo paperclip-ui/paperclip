@@ -55,6 +55,7 @@ export const Declaration = memo(
       },
       [name2]
     );
+
     const onValueChange = useCallback(
       (value: string) => {
         dispatch({
@@ -68,7 +69,7 @@ export const Declaration = memo(
     );
 
     const nameInput = isNew ? (
-      <NameInput name={name2} onSave={setName} />
+      <NameInput name={name2} onChange={setName} />
     ) : (
       name
     );

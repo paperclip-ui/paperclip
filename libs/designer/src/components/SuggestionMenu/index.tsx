@@ -16,7 +16,6 @@ export type SuggestionMenuProps = {
   style?: any;
   multi?: boolean;
   onSelect: (values: any[]) => void;
-  onOtherSelect: (value: string) => void;
   menu: () => React.ReactElement[];
   onComplete?: () => void;
   onBlur?: () => void;
@@ -38,13 +37,11 @@ export const useSuggestionMenu = ({
   onComplete = noop,
   onBlur: onBlur2 = noop,
   onSelect: onSelect2,
-  onOtherSelect: onOtherSave,
   menu,
 }: SuggestionMenuProps) => {
   const callbacksRef = useRef<Callbacks>();
   callbacksRef.current = {
     onBlur: onBlur2,
-    onOtherSelect: onOtherSave,
     onComplete,
     onSelect: onSelect2,
   };

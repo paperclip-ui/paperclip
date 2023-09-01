@@ -12,13 +12,14 @@ export const engine = (callbacks: MutableRefObject<Callbacks>) => () => {
     dispose() {},
     handleEvent(event: DeclarationValueEvent, state: State) {
       switch (event.type) {
-        case "customSelected":
+        case "blurred":
         case "suggestionSelected":
         case "customInputChangeComplete":
         case "inputClicked": {
           callbacks.current.onChangeComplete(state.value, state.imports);
           break;
         }
+        case "textInputChanged":
         case "customInputChanged": {
           callbacks.current.onChange(state.value);
           break;

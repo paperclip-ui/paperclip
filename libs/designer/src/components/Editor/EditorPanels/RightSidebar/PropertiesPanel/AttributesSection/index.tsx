@@ -165,12 +165,7 @@ const NameInput = ({ tagName, attrName, onSave }: NameInputProps) => {
     });
   }, [tagName, selectedComponent]);
   return (
-    <SuggestionMenu
-      values={[]}
-      menu={menu}
-      onSelect={onSelect}
-      onOtherSelect={onOtherSelect}
-    >
+    <SuggestionMenu values={[]} menu={menu} onSelect={onSelect}>
       <TextInput autoFocus value={attrName} />
     </SuggestionMenu>
   );

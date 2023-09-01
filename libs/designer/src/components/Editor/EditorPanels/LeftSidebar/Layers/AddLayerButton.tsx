@@ -19,7 +19,6 @@ export const AddLayerButton = () => {
     <SuggestionMenu
       values={[]}
       onSelect={onChange}
-      onOtherSelect={noop}
       menu={() => [
         <SuggestionMenuItem value={LayerKind.Atom}>
           <Box class="space03">

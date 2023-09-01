@@ -494,7 +494,7 @@ add_case! {
 	"#)
     ],
     r#"
-    <some-custom-el a=\"b\"> somethin </some-custom-el>
+    <some-custom-el a="b"> somethin </some-custom-el>
 "#
 }
 

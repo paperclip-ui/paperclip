@@ -37,6 +37,9 @@ impl Document {
     pub fn get_atoms(&self) -> Vec<&Atom> {
         get_body_items!(&self.body, document_body_item::Inner::Atom, Atom)
     }
+    pub fn get_styles(&self) -> Vec<&Style> {
+        get_body_items!(&self.body, document_body_item::Inner::Style, Style)
+    }
     pub fn get_import_by_ns(&self, ns: &str) -> Option<&Import> {
         self.get_imports()
             .into_iter()

@@ -9,17 +9,16 @@ import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
 
 type NameInputProps = {
   name: string;
-  onSave: (value: string) => void;
+  onChange: (value: string) => void;
 };
 
-export const NameInput = ({ name, onSave }: NameInputProps) => {
+export const NameInput = ({ name, onChange }: NameInputProps) => {
   const onSelect = useCallback(
     ([value]) => {
-      onSave(value);
+      onChange(value);
     },
-    [onSave]
+    [onChange]
   );
-  const onOtherSelect = onSave;
 
   const menu = useCallback(() => {
     return CSS_PROP_NAMES.map((propName) => {
@@ -33,13 +32,8 @@ export const NameInput = ({ name, onSave }: NameInputProps) => {
     });
   }, []);
   return (
-    <SuggestionMenu
-      values={[name]}
-      menu={menu}
-      onSelect={onSelect}
-      onOtherSelect={onOtherSelect}
-    >
-      <TextInput autoFocus value={name} />
+    <SuggestionMenu values={[name]} menu={menu} onSelect={onSelect}>
+      <TextInput autoFocus value={name} onChange={onChange} />
     </SuggestionMenu>
   );
 };

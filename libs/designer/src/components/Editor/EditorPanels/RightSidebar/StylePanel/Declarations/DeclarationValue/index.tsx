@@ -82,7 +82,6 @@ const RawInput = (props: RawInputProps) => {
     onInputClick,
     onCustomInputChangeComplete,
     onCustomInputChange,
-    onCustomSelect,
   } = useRawInput(props);
 
   const state = useSelector(getEditorState);
@@ -143,15 +142,14 @@ const RawInput = (props: RawInputProps) => {
       values={values}
       open={showSuggestionMenu}
       menu={menu}
-      onBlur={onBlur}
       editorInput={editorInput}
       onSelect={onSuggestionSelect}
-      onOtherSelect={onCustomSelect}
       onComplete={onSuggestionMenuClose}
     >
       <TextInput
         ref={ref}
         value={value}
+        onBlur={onBlur}
         onKeyUp={onKeyUp}
         onChange={onTextInputChange}
         placeholder={isInherited ? value : undefined}
@@ -276,13 +274,6 @@ const useRawInput = ({
     });
   };
 
-  const onCustomSelect = (value: string) => {
-    dispatch({
-      type: "customSelected",
-      payload: value,
-    });
-  };
-
   return {
     ref,
     value: state.value,
@@ -296,7 +287,6 @@ const useRawInput = ({
     onInputClick,
     onSuggestionMenuClose,
     onSuggestionSelect,
-    onCustomSelect,
     onFocus,
     onBlur,
   };

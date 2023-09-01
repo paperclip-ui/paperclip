@@ -35,7 +35,6 @@ export const MultiSelectInput = ({
     <SuggestionMenu
       multi
       onSelect={onChange}
-      onOtherSelect={noop}
       values={values}
       menu={() => options}
     >

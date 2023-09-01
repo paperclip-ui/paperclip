@@ -4,9 +4,6 @@ import { State, getSelectedValues, isOpen } from "./state";
 
 export type Callbacks = {
   onBlur: () => void;
-
-  // TODO: this needs to be deprecated
-  onOtherSelect: (value: string) => void;
   onSelect: (value: any[]) => void;
   onComplete: () => void;
 };
@@ -16,12 +13,6 @@ export const suggestionMenuEngine =
     dispose() {},
     handleEvent(event: SuggestionMenuEvent, state: State, prevState: State) {
       switch (event.type) {
-        case "blurred": {
-          if (isOpen(state) && state.customValue != null) {
-            callbacks.current.onOtherSelect(state.customValue);
-          }
-          break;
-        }
         case "selected": {
           callbacks.current.onSelect(getSelectedValues(event.payload, state));
           break;
@@ -34,8 +25,6 @@ export const suggestionMenuEngine =
                 callbacks.current.onSelect(
                   getSelectedValues(selectedValue, state)
                 );
-              } else if (state.customValue != null) {
-                callbacks.current.onOtherSelect(state.customValue);
               }
               break;
             }

@@ -9,23 +9,6 @@ import { reducer } from "./reducer";
 import { getInitialState, isOpen as isOpen2 } from "./state";
 import { Callbacks, suggestionMenuEngine } from "./engine";
 
-// export enum SuggestionMenuItemKind {
-//   Section,
-//   Value
-// }
-
-// export type SuggestionMenuValueItem = {
-//   kind: SuggestionMenuItemKind.Value;
-//   value: any;
-//   label: string;
-// };
-
-// export type SuggestionMenuSection = {
-//   label: SuggestionMenuItemKind.Section;
-// };
-
-// export type SuggestionMenuSectionItem = SuggestionMenuValueItem | SuggestionMenuSection;
-
 export type SuggestionMenuProps = {
   open?: boolean;
   values: string[];
@@ -58,18 +41,13 @@ export const useSuggestionMenu = ({
   onOtherSelect: onOtherSave,
   menu,
 }: SuggestionMenuProps) => {
-  const callbacks = useMemo(
-    () => ({
-      onBlur: onBlur2,
-      onOtherSelect: onOtherSave,
-      onComplete,
-      onSelect: onSelect2,
-    }),
-    [onBlur2, onOtherSave, onComplete, onSelect2]
-  );
-
   const callbacksRef = useRef<Callbacks>();
-  callbacksRef.current = callbacks;
+  callbacksRef.current = {
+    onBlur: onBlur2,
+    onOtherSelect: onOtherSave,
+    onComplete,
+    onSelect: onSelect2,
+  };
 
   const statefulProps = useMemo(
     () => ({

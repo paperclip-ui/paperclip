@@ -357,7 +357,7 @@ public component Field {
 }
 
 public component TokenMenuContent {
-    render MenuContent(style: style) {
+    render MenuContent(style: style, title: title) {
         insert children {
             div {
                 style {
@@ -383,7 +383,7 @@ public component TokenMenuContent {
 }
 
 public component MenuContent {
-    render div(style: style) {
+    render div(style: style, title: title) {
         style {
             display: flex
             align-items: center

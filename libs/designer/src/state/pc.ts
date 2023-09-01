@@ -1231,7 +1231,7 @@ export const getCurrentStyleMixins = (state: DesignerState): MixinInfo[] => {
 };
 
 const getStyleMixinRefs = (state: DesignerState): Reference[] => {
-  const expr = ast.getExprInfoById(getTargetExprId(state), state.graph);
+  const expr = ast.getExprInfoById(getStyleableTargetId(state), state.graph);
   if (!expr) {
     return [];
   }
@@ -1271,46 +1271,3 @@ export const getComponentSlots = memoize((component: Component): pc.Slot[] => {
       return descendent.expr;
     });
 });
-
-// const getSlotBoxes = memoize((instance: Element, graph: Graph, rects: Record<string, Box>) => {
-//   const component = ast.getInstanceComponent(instance, graph);
-//   const slots = ast.getComponentSlots(component, graph);
-
-//   const slotBoxes: Record<string, Box> = {};
-
-//   for (const slot of slots) {
-//     const slotDescendents = Object.values(ast.flattenSlot(slot));
-
-//       const instanceSource = ast.getExprById(instance.id, graph) as Element;
-
-//       const containsInsert = instanceSource.body.some(child => child.insert?.name === slot.name);
-
-//       // skip since we want the children of this insert to be insertable
-//       if (containsInsert) {
-//         continue;
-//       }
-
-//       const boxes: Box[] = [];
-//       for (const descendent of slotDescendents) {
-//         const rect = rects[instance.id + "." + descendent.expr.id];
-//         if (rect) {
-//           boxes.push(rect);
-//         }
-//       }
-//       slotBoxes[slot.id] = mergeBoxes(boxes);
-//     }
-//   return slotBoxes
-// })
-
-// export const expandInstanceRects = (state: DesignerState) => {
-//   return produce(state, newState => {
-//     for (const nodeId in newState.rects) {
-//       if (nodeId.includes(".")) {
-//         const nodePath = nodeId.split(".");
-//         for (let i = 0, {length} = nodePath; i < length - 1; i++) {
-//           newState.rects[nodePath.slice(0, i + 1).join(".")] = newState.rects[nodeId];
-//         }
-//       }
-//     }
-//   });
-// }

@@ -638,7 +638,7 @@ const createEventHandler = (actions: Actions) => {
     actions.applyChanges([
       {
         setStyleMixins: {
-          targetExprId: getTargetExprId(state),
+          targetExprId: getStyleableTargetId(state),
           mixinIds,
           variantIds: state.selectedVariantIds,
         },

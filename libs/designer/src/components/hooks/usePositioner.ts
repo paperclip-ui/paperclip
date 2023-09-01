@@ -28,7 +28,7 @@ export const usePositioner = () => {
       left:
         Math.min(
           bounds.left,
-          window.outerWidth - containerBounds.width - PADDING
+          window.innerWidth - containerBounds.width - PADDING
         ) + "px",
     });
   }, [anchorRef.current, currentTargetRef]);

@@ -14,8 +14,16 @@ export const AtomValueField = () => {
   const dispatch = useDispatch<DesignerEvent>();
 
   const onChangeComplete = (value: string, imports: Record<string, string>) => {
-    dispatch({ type: "ui/atomValueChanged", payload: { value, imports } });
+    dispatch({
+      type: "ui/atomValueChangeCompleted",
+      payload: { value, imports },
+    });
   };
+
+  const onChange = (value: string) => {
+    dispatch({ type: "ui/atomValueChanged", payload: { value } });
+  };
+
   if (expr.kind !== ast.ExprKind.Atom) {
     return null;
   }
@@ -29,6 +37,7 @@ export const AtomValueField = () => {
         <DeclarationValue
           value={serializeDeclaration(expr.expr.value)}
           onChangeComplete={onChangeComplete}
+          onChange={onChange}
         />
       }
     />

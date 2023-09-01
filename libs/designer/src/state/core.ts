@@ -57,6 +57,7 @@ export type BoxNodeInfo = {
 };
 
 export type StyleOverrides = Record<string, Record<string, string | number>>;
+export type AtomOverrides = Record<string, string>;
 
 type Query = {
   file?: string;
@@ -109,6 +110,7 @@ export type DesignerState = {
   // temporary style overrides of canvas elements when elements are manipulated
   // such as resizing
   styleOverrides: StyleOverrides;
+  atomOverrides: AtomOverrides;
   canvasClickTimestamp?: number;
   canvasMouseDownStartPoint?: Point;
   expandedLayerVirtIds: string[];
@@ -130,6 +132,7 @@ export const DEFAULT_STATE: DesignerState = {
   selectedVariantIds: [],
   resourceFilePaths: [],
   styleOverrides: {},
+  atomOverrides: {},
   preEditComputedStyles: {},
   resourceModalDragLeft: false,
   graph: {

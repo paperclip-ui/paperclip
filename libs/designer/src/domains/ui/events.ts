@@ -116,6 +116,13 @@ export type AtomValueChanged = BaseEvent<
   "ui/atomValueChanged",
   {
     value: string;
+  }
+>;
+
+export type AtomValueChangeCompleted = BaseEvent<
+  "ui/atomValueChangeCompleted",
+  {
+    value: string;
     imports: Record<string, string>;
   }
 >;
@@ -268,6 +275,7 @@ export type UIEvent =
   | CanvasPanStart
   | CanvasMouseDown
   | AtomValueChanged
+  | AtomValueChangeCompleted
   | StyleDeclarationsChangeCompleted
   | LayerLeafClicked
   | LayerArrowClicked

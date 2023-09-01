@@ -1,6 +1,6 @@
 import "./theme.pc" as theme
 
-public token something unset
+public token something rgba(23, 23, 192, 1)
 /**
  * @bounds(x: 562, y: 217, width: 430, height: 185)
 */
@@ -8,7 +8,7 @@ public token something unset
 div {
     style {
         position: relative
-        color: red
+        color: var(something)
         background-color: var(theme.fontSize01)
     }
     text "something!!"

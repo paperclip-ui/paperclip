@@ -9,6 +9,7 @@ import { DesignerEngineEvent, DocumentOpened } from "./events";
 import { DesignerEvent } from "../../events";
 import {
   AddLayerMenuItemClicked,
+  AtomValueChangeCompleted,
   AtomValueChanged,
   AttributeChanged,
   ConfirmClosed,
@@ -767,7 +768,7 @@ const createEventHandler = (actions: Actions) => {
   };
 
   const handleAtomValueChanged = (
-    event: AtomValueChanged,
+    event: AtomValueChangeCompleted,
     state: DesignerState
   ) => {
     actions.applyChanges([
@@ -987,7 +988,7 @@ const createEventHandler = (actions: Actions) => {
       case "designer-engine/apiError": {
         return handleApiError();
       }
-      case "ui/atomValueChanged": {
+      case "ui/atomValueChangeCompleted": {
         return handleAtomValueChanged(event, newState);
       }
       case "ui/promptClosed": {

@@ -176,6 +176,11 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
     case "ui/resizerPathMoved": {
       return handleDragEvent({ ...state, resizerMoving: true }, event);
     }
+    case "ui/atomValueChanged": {
+      return produce(state, (draft) => {
+        draft.atomOverrides[getTargetExprId(state)] = event.payload.value;
+      });
+    }
     case "ui/styleDeclarationsChangeCompleted":
     case "ui/styleDeclarationsChanged": {
       return produce(state, (draft) => {
@@ -192,6 +197,7 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
       }
       state = produce(state, (draft) => {
         draft.styleOverrides = {};
+        draft.atomOverrides = {};
       });
 
       state = maybeCenterCanvas(state);

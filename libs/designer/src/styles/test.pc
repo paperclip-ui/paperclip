@@ -17,6 +17,7 @@ public style aMixin {
 */
 
 public component Something {
+    variant cd
     variant ab
     render div {
         style variant ab {

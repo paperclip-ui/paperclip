@@ -92,6 +92,7 @@ const PreValue = ({ name: declName, value }: PreValueProps) => {
         filePath: ownerDep.path,
         nodeId: owner.expr.id,
         declName: declName,
+        variantIds: value.variantIds,
       })
     );
   };
@@ -104,7 +105,18 @@ const PreValue = ({ name: declName, value }: PreValueProps) => {
         mixin,
       })}
       onMouseDown={onMouseDown}
-      name={name}
+      name={
+        name +
+        (value.variantIds.length
+          ? " / " +
+            value.variantIds
+              .map((variantId) => {
+                const variant = ast.getExprInfoById(variantId, graph);
+                return variant.expr.name;
+              })
+              .join("+")
+          : "")
+      }
       value={serializeDeclaration(value.value)}
     />
   );

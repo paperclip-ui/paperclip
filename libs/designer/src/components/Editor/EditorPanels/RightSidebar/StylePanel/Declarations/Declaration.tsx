@@ -17,7 +17,6 @@ import {
 } from "@paperclip-ui/designer/src/state";
 import { DeclName } from "@paperclip-ui/designer/src/styles/styles-panel.pc";
 import classNames from "classnames";
-// import { InteractiveDeclValue } from "./InteractiveDeclValue";
 
 type FieldProps = {
   name?: string;
@@ -82,6 +81,7 @@ export const Declaration = memo(
         class={classNames({
           inherited: isInherited,
         })}
+        title={name}
       >
         {name}
       </DeclName>

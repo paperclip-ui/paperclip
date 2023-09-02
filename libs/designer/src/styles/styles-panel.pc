@@ -9,10 +9,16 @@ import "./input.pc" as input
 import "./etc.pc" as etc
 
 /**
- * @bounds(x: 298, y: -131, width: 281, height: 44)
+ * @bounds(x: 298, y: -131, width: 281, height: 62)
 */
 
 public component InheritedDeclInfo {
+    variant otherVariant trigger {
+        ".variant"
+    }
+    variant mixin trigger {
+        ".mixin"
+    }
     variant hovering trigger {
         ".hovering"
         ":hover"
@@ -31,17 +37,23 @@ public component InheritedDeclInfo {
             white-space: nowrap
             overflow: hidden
             justify-content: space-between
+            align-items: center
         }
         div ownerName {
             style {
                 display: flex
-                align-items: center
                 gap: var(theme.space02)
+                align-items: center
             }
-            div {
-                style extends theme.icon {
+            div icon {
+                style variant otherVariant {
+                    mask-image: url("./square.svg")
+                    background-color: var(theme.blue01)
+                }
+                style variant mixin {
                     mask-image: url("./group.svg")
                 }
+                style extends theme.icon
             }
             text "mixin name"
         }
@@ -89,16 +101,26 @@ public component DeclInheritanceInfo {
                         variant hovering trigger {
                             true
                         }
+                        variant mixin trigger {
+                            true
+                        }
                     }
                 }
                 InheritedDeclInfo {
                     override {
                         variant hovering
+                        variant mixin
+                        variant otherVariant trigger {
+                            true
+                        }
                     }
                 }
                 InheritedDeclInfo {
                     override {
                         variant hovering
+                        variant mixin trigger {
+                            true
+                        }
                     }
                 }
             }
@@ -139,7 +161,7 @@ public component DeclName {
     variant inherited trigger {
         ".inherited"
     }
-    render div(class: class) {
+    render div(class: class, title: title) {
         style variant overridden {
             position: relative
             border-radius: var(theme.roundedSM)
@@ -159,9 +181,13 @@ public component DeclName {
             border-radius: var(theme.roundedSM)
             padding: var(theme.space01)
             position: relative
+            overflow: hidden
+            text-overflow: ellipsis
+            white-space: nowrap
+            max-width: 100%
         }
         slot children {
-            text "display"
+            text "background-image"
         }
     }
 }

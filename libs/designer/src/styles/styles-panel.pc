@@ -36,7 +36,9 @@ public component DeclInfoCard {
                 padding: var(theme.space03)
                 font-weight: 600
             }
-            text "This value comes from:"
+            slot header {
+                text "This value comes from:"
+            }
         }
         div list {
             slot children {
@@ -158,6 +160,7 @@ public component InheritedDeclInfo {
                 opacity: 0.5
                 overflow: hidden
                 text-overflow: ellipsis
+                width: 100%
             }
             slot value {
                 text unnamed "var(theme.backgroundColorSomethingBig)"

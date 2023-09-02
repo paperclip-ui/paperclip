@@ -548,7 +548,7 @@ export namespace ast {
 
       if (override) {
         const [low, high] =
-          override.variantIds.length > prev.variantIds.length
+          override.variantIds.length >= prev.variantIds.length
             ? [computedStyles, overrides]
             : [overrides, computedStyles];
 
@@ -556,18 +556,8 @@ export namespace ast {
           value: high.map[name].value,
           ownerId: high.map[name].ownerId,
           variantIds: high.map[name].variantIds,
-          prevValues: [...(low.map[name].prevValues || []), low.map[name]],
+          prevValues: [low.map[name], ...(low.map[name].prevValues || [])],
         };
-
-        // computed.map[name] = {
-        //   value: override.value,
-        //   ownerId: override.ownerId,
-        //   variantIds: override.variantIds,
-        //   prevValues: [
-        //     ...(overrides.map[name].prevValues || []),
-        //     computedStyles.map[name],
-        //   ],
-        // };
       } else {
         computed.map[name] = computedStyles.map[name];
       }

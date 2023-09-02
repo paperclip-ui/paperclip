@@ -1,10 +1,15 @@
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import {
   DesignerState,
+  getCurrentFilePath,
+  getTargetExprId,
+  redirect,
   setSelectedNodeBounds,
 } from "@paperclip-ui/designer/src/state";
+import { routes } from "@paperclip-ui/designer/src/state/routes";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import produce from "immer";
+import { get } from "lodash";
 
 export const rightSidebarReducer = (
   state: DesignerState,
@@ -47,9 +52,14 @@ export const rightSidebarReducer = (
       });
     }
     case "ui/variantSelected": {
-      return produce(state, (newState) => {
-        newState.selectedVariantIds = event.payload;
-      });
+      return redirect(
+        state,
+        routes.editor({
+          filePath: getCurrentFilePath(state),
+          nodeId: getTargetExprId(state),
+          variantIds: event.payload,
+        })
+      );
     }
     case "ui/boundsChanged": {
       state = setSelectedNodeBounds(event.payload.newBounds, state);

@@ -17,10 +17,11 @@ public style aMixin {
 */
 
 public component Something {
-    variant ab trigger {
-        ""
-    }
+    variant ab
     render div {
+        style variant ab {
+            position: absolute
+        }
         style extends aMixin, bMixin {
             position: relative
             color: rgba(236, 57, 42, 0.72)

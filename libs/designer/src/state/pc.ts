@@ -41,6 +41,7 @@ import { pickBy } from "lodash";
 import { hasUncaughtExceptionCaptureCallback } from "process";
 
 export const MIXED_VALUE = "mixed";
+const EMPTY_ARRAY = [];
 
 export const DEFAULT_FRAME_BOX = {
   width: 1024,
@@ -468,14 +469,14 @@ export const getSelectedExprStyles = (
     return ast.computeElementStyle(
       virtId,
       state.graph,
-      state.selectedVariantIds
+      getSelectedVariantIds(state)
     );
   } else if (exprInfo.kind === ast.ExprKind.Style) {
     return ast.computeStyle(
       exprInfo.expr,
       state.graph,
       exprInfo.expr.id,
-      state.selectedVariantIds
+      getSelectedVariantIds(state)
     );
   }
 
@@ -551,8 +552,15 @@ export const getAllPublicAtoms = (state: DesignerState) => {
   return ast.getGraphAtoms(state.graph);
 };
 
-export const getSelectedVariantIds = (state: DesignerState) =>
-  state.selectedVariantIds;
+export const getSelectedVariantIds = memoize((state: DesignerState) => {
+  return getSelectedVariantIds2(state.history.query?.variantIds, state.graph);
+});
+
+const getSelectedVariantIds2 = memoize((value: string, graph: Graph) => {
+  return (value?.split(",") ?? EMPTY_ARRAY).filter(
+    (variantId) => !!ast.getExprInfoById(variantId, graph)
+  );
+});
 
 export const getSelectedExprAvailableVariants = (state: DesignerState) => {
   const ownerComponent = getSelectedExprOwnerComponent(state);
@@ -1256,9 +1264,9 @@ const getStyleMixinRefs = (state: DesignerState): Reference[] => {
     return [];
   }
 
-  const selectedVariants: Variant[] = state.selectedVariantIds.map(
-    (id) => ast.getExprByVirtId(id, state.graph).expr
-  );
+  const selectedVariants: Variant[] = getSelectedVariantIds(state)
+    .map((id) => ast.getExprByVirtId(id, state.graph)?.expr)
+    .filter(Boolean);
 
   if (expr.kind === ast.ExprKind.Element) {
     const variantStyle = expr.expr.body.find((item) => {

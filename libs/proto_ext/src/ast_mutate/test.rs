@@ -13,7 +13,7 @@ use paperclip_proto::ast_mutate::{
     SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue,
     ToggleInstanceVariant, UpdateVariant, WrapInElement,
 };
-use paperclip_proto::{ast::graph_ext as graph, ast_mutate::DeleteStyleDeclarations};
+use paperclip_proto::{ast::graph_ext as graph};
 use std::collections::HashMap;
 
 macro_rules! case {
@@ -409,35 +409,6 @@ case! {
           display: block
           background: red
           opacity: 0.5
-        }
-      }
-    "#
-  )]
-}
-
-case! {
-  can_remove_declaration_values,
-  [(
-    "/entry.pc", r#"
-      div {
-        style {
-          display: block
-          padding: 10px
-          margin: 0px
-        }
-      }
-    "#
-  )],
-  mutation::Inner::DeleteStyleDeclarations(DeleteStyleDeclarations {
-    expression_id: "80f4925f-8".to_string(),
-    declaration_names: vec!["margin".to_string()]
-  }).get_outer(),
-  [(
-    "/entry.pc", r#"
-      div {
-        style {
-          display: block
-          padding: 10px
         }
       }
     "#
@@ -1387,7 +1358,7 @@ case! {
     "/entry.pc", r#"
 
       component A {
-        render slot chil {
+        render slot child {
           text "ab"
         }
       }
@@ -3306,6 +3277,44 @@ case! {
         style {
           background: red
         }
+      }
+    }
+    "#
+  )]
+}
+
+
+case! {
+  removes_style_declarations_that_are_empty,
+  [
+    (
+      "/entry.pc", r#"
+      div {
+        style {
+          color: blue
+          background: orange
+        }
+      }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
+    expression_id: "80f4925f-6".to_string(),
+    variant_ids: vec![],
+    declarations: vec![
+      SetStyleDeclaration {
+        imports: HashMap::new(),
+        name: "color".to_string(),
+        value: "".to_string()
+      }
+    ]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    div {
+      style {
+        background: orange
       }
     }
     "#

@@ -4,7 +4,6 @@ mod base;
 mod convert_to_component;
 mod convert_to_slot;
 mod delete_expression;
-mod delete_style_declarations;
 mod insert_frame;
 mod move_node;
 mod paste_expr;
@@ -36,7 +35,6 @@ pub use base::*;
 pub use convert_to_component::*;
 pub use convert_to_slot::*;
 pub use delete_expression::*;
-pub use delete_style_declarations::*;
 pub use move_node::*;
 pub use paperclip_proto::ast;
 use paperclip_proto::ast::graph_ext::Graph;
@@ -120,7 +118,6 @@ mutations! {
   ConvertToSlot,
   MoveNode,
   WrapInElement,
-  DeleteStyleDeclarations,
   SetId,
   SetStyleDeclarations,
   DeleteExpression,

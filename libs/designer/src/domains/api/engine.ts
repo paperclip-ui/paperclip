@@ -63,6 +63,7 @@ import {
   getCurrentDependency,
   getSelectedExpression,
   getSelectedExpressionInfo,
+  getSelectedVariantIds,
   getStyleableTargetId,
 } from "../../state/pc";
 import {
@@ -379,7 +380,7 @@ const createEventHandler = (actions: Actions) => {
       | VirtTextNode
       | VirtElement;
 
-    const variantIds = state.selectedVariantIds;
+    const variantIds = getSelectedVariantIds(state);
 
     const path = virtHTML.getNodePath(
       node,
@@ -443,22 +444,14 @@ const createEventHandler = (actions: Actions) => {
       imports: event.payload.imports,
       value,
     }));
-    const variantIds = state.selectedVariantIds;
+    const variantIds = getSelectedVariantIds(state);
 
     actions.applyChanges([
       {
         setStyleDeclarations: {
           variantIds,
           expressionId: getStyleableTargetId(state),
-          declarations: style.filter((kv) => kv.value !== ""),
-        },
-      },
-      {
-        deleteStyleDeclarations: {
-          expressionId: getStyleableTargetId(state),
-          declarationNames: style
-            .filter((kv) => kv.value === "")
-            .map((kv) => kv.name),
+          declarations: style,
         },
       },
     ]);
@@ -639,7 +632,7 @@ const createEventHandler = (actions: Actions) => {
         setStyleMixins: {
           targetExprId: getStyleableTargetId(state),
           mixinIds,
-          variantIds: state.selectedVariantIds,
+          variantIds: getSelectedVariantIds(state),
         },
       },
     ]);
@@ -949,7 +942,7 @@ const createEventHandler = (actions: Actions) => {
         toggleInstanceVariant: {
           instanceId: getTargetExprId(state),
           variantId: event.payload,
-          comboVariantIds: state.selectedVariantIds,
+          comboVariantIds: getSelectedVariantIds(state),
         },
       },
     ]);

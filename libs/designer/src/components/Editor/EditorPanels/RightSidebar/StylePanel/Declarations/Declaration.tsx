@@ -12,6 +12,7 @@ import { NameInput } from "./NameInput";
 import {
   getAllStyleMixins,
   getCurrentFilePath,
+  getGraph,
   getSelectedDeclName,
   getSelectedVariantIds,
   getStyleableTargetId,
@@ -19,6 +20,7 @@ import {
 } from "@paperclip-ui/designer/src/state";
 import { DeclName } from "./DeclName";
 import classNames from "classnames";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
 type FieldProps = {
   name?: string;
@@ -78,7 +80,7 @@ export const Declaration = memo(
     const inherited =
       style?.ownerId !== targetId ||
       (activeVariantIds.length &&
-        !activeVariantIds.some((id) => style.variantIds.includes(id)));
+        !activeVariantIds.every((id) => style.variantIds.includes(id)));
 
     const nameInput = isNew ? (
       <NameInput name={name2} onChange={setName} />

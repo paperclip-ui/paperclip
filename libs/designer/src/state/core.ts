@@ -89,7 +89,6 @@ export type DesignerState = {
   projectDirectory?: FSDirectory;
   activeVariantId?: string;
   editVariantPopupOpen?: boolean;
-  selectedVariantIds: string[];
   renderedFilePath?: string;
   insertedNodeIds: string[];
   graph: Graph;
@@ -130,7 +129,6 @@ export type DesignerState = {
 
 export const DEFAULT_STATE: DesignerState = {
   readonly: false,
-  selectedVariantIds: [],
   resourceFilePaths: [],
   styleOverrides: {},
   atomOverrides: {},

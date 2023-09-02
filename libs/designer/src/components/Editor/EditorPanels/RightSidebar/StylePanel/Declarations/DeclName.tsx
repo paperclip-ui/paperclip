@@ -40,7 +40,10 @@ export const DeclName = ({ name, style, inherited }: DeclNameProps) => {
       </styles.DeclName>
       {open && (style.prevValues?.length || inherited) && (
         <Portal>
-          <styles.DeclInfoCard ref={targetRef}>
+          <styles.DeclInfoCard
+            ref={targetRef}
+            header={inherited ? "Inherited from:" : "Overrides:"}
+          >
             {inherited ? <PreValue name={name} value={style} /> : null}
             {style.prevValues?.map((prevValue, i) => {
               return <PreValue name={name} key={i} value={prevValue} />;

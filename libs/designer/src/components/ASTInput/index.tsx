@@ -27,8 +27,6 @@ export const ExpressionInput = ({
     const value = target.textContent;
     event.stopPropagation();
 
-    console.log(target, JSON.stringify(value));
-
     if (value === "" && event.key === "Backspace") {
       const prev = getPrevToken(target);
       if (prev) {

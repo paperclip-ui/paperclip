@@ -556,7 +556,11 @@ export namespace ast {
           value: high.map[name].value,
           ownerId: high.map[name].ownerId,
           variantIds: high.map[name].variantIds,
-          prevValues: [low.map[name], ...(low.map[name].prevValues || [])],
+          prevValues: [
+            ...(high.map[name].prevValues || []),
+            low.map[name],
+            ...(low.map[name].prevValues || []),
+          ],
         };
       } else {
         computed.map[name] = computedStyles.map[name];

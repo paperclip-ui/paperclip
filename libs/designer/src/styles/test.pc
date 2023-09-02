@@ -23,6 +23,10 @@ public component Something {
         style variant ab {
             position: absolute
         }
+
+        style variant ab + cd {
+            position: fixed
+        }
         style extends aMixin, bMixin {
             position: relative
             color: rgba(236, 57, 42, 0.72)

@@ -1,3 +1,4 @@
+import "./decl-suggestion.pc" as module1
 import "./token-input.pc" as module
 import "./color-picker.pc" as imp2
 import "./button.pc" as imp1
@@ -12,13 +13,25 @@ import "./etc.pc" as etc
 */
 
 public component DeclName {
+    variant overridden trigger {
+        ".overridden"
+    }
     variant inherited trigger {
         ".inherited"
     }
     render div(class: class) {
+        style variant overridden {
+            position: relative
+            padding: var(theme.space02)
+            border-radius: var(theme.roundedSM)
+            display: inline-block
+            font-family: var(theme.defaultFontFamily)
+            color: var(theme.gray0)
+            background: var(theme.blue02)
+        }
         style variant inherited {
             color: var(theme.gray0)
-            background: var(theme.blue01)
+            background: rgba(182, 46, 178, 1)
         }
         style {
             font-family: var(theme.defaultFontFamily)
@@ -143,8 +156,13 @@ public component Preview {
                     input.Field {
                         insert name {
                             DeclName {
-                                text "Padding"
+                                override {
+                                    variant overridden trigger {
+                                        true
+                                    }
+                                }
                                 insert children {
+                                    text "Padding"
                                 }
                             }
                         }
@@ -155,9 +173,12 @@ public component Preview {
                     input.Field {
                         insert name {
                             DeclName {
-                                text "Margin"
-                                insert children {
+                                override {
+                                    variant overridden trigger {
+                                        true
+                                    }
                                 }
+                                text "Margin"
                             }
                         }
                         insert input {
@@ -167,9 +188,12 @@ public component Preview {
                     input.Field {
                         insert name {
                             DeclName {
-                                text "Position"
-                                insert children {
+                                override {
+                                    variant overridden trigger {
+                                        true
+                                    }
                                 }
+                                text "Position"
                             }
                         }
                         insert input {

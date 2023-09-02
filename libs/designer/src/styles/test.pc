@@ -18,12 +18,10 @@ public style aMixin {
 
 public component Something {
     variant cd
-    variant ab
     render div {
         style variant ab {
             position: absolute
         }
-
         style variant ab + cd {
             position: fixed
         }

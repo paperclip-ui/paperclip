@@ -83,7 +83,7 @@ public component FilteredFile {
                 display: flex
                 justify-content: space-between
                 width: 100%
-                padding: var(theme.space03)
+                padding: var(theme.space03) var(theme.space05)
             }
             div icon {
                 style {

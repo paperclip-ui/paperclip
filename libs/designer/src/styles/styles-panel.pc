@@ -30,7 +30,6 @@ public component DeclInfoCard {
             left: 50%
             width: 200px
             pointer-events: initial
-            transition: 0.2s
         }
         div header {
             style {
@@ -88,6 +87,10 @@ public component DeclInfoCard {
     }
 }
 
+/**
+ * @bounds(x: -131, y: -562, width: 447, height: 73)
+*/
+
 public component InheritedDeclInfo {
     variant otherVariant trigger {
         ".variant"
@@ -114,6 +117,7 @@ public component InheritedDeclInfo {
             overflow: hidden
             justify-content: space-between
             align-items: center
+            cursor: pointer
         }
         div ownerName {
             style {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/styles-panel.pc";
 import { ComputedStyle } from "@paperclip-ui/proto-ext/lib/ast/serialize";
 import classNames from "classnames";
@@ -50,7 +50,22 @@ export const DeclName = ({ name, style, targetId }: DeclNameProps) => {
 const useDeclName = () => {
   const [open, setOpen] = useState(false);
 
-  const { anchorRef, targetRef } = usePositioner();
+  const { anchorRef, targetRef } = usePositioner({
+    x: "center",
+    y: "bottom",
+  });
+
+  useEffect(() => {
+    const close = () => setOpen(false);
+    const onResize = close;
+    const onMouseDown = close;
+    window.addEventListener("resize", onResize);
+    window.addEventListener("mousedown", onMouseDown);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("mousedown", onMouseDown);
+    };
+  }, [open]);
 
   const onClick = () => {
     setOpen(true);

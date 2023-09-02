@@ -1209,38 +1209,46 @@ const getDocumentMixins = (doc: pc.Document): pc.Style[] => {
   return doc.body.filter((item) => item.style).map((item) => item.style);
 };
 
-export const getCurrentStyleMixins = (state: DesignerState): MixinInfo[] => {
-  const dep = getCurrentDependency(state);
-  return getStyleMixinRefs(state)
-    .map((ref) => {
-      const refDep =
-        ref.path.length === 1
-          ? dep
-          : state.graph.dependencies[
-              dep.imports[
-                dep.document.body.find((item) => {
-                  return item.import?.namespace === ref.path[0];
-                }).import.path
-              ]
-            ];
+export const getCurrentStyleMixins = memoize(
+  (state: DesignerState): MixinInfo[] => {
+    const dep = getCurrentDependency(state);
 
-      if (!refDep) {
-        return null;
-      }
+    // may not have loaded yet
+    if (!dep) {
+      return [];
+    }
 
-      const mixin = getDocumentMixins(refDep.document).find(
-        (item) => item.name === ref.path[ref.path.length - 1]
-      );
+    return getStyleMixinRefs(state)
+      .map((ref) => {
+        const refDep =
+          ref.path.length === 1
+            ? dep
+            : state.graph.dependencies[
+                dep.imports[
+                  dep.document.body.find((item) => {
+                    return item.import?.namespace === ref.path[0];
+                  }).import.path
+                ]
+              ];
 
-      if (mixin) {
-        return {
-          name: mixin.name,
-          mixinId: mixin.id,
-        };
-      }
-    })
-    .filter(Boolean);
-};
+        if (!refDep) {
+          return null;
+        }
+
+        const mixin = getDocumentMixins(refDep.document).find(
+          (item) => item.name === ref.path[ref.path.length - 1]
+        );
+
+        if (mixin) {
+          return {
+            name: mixin.name,
+            mixinId: mixin.id,
+          };
+        }
+      })
+      .filter(Boolean);
+  }
+);
 
 const getStyleMixinRefs = (state: DesignerState): Reference[] => {
   const expr = ast.getExprInfoById(getStyleableTargetId(state), state.graph);

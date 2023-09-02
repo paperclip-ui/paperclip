@@ -2,9 +2,19 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 const PADDING = 12;
 
-export const usePositioner = () => {
+type PositionProps = {
+  y: "top" | "bottom" | "center";
+  x: "left" | "right" | "center";
+};
+
+export const usePositioner = (
+  { x, y }: PositionProps = { x: "left", y: "top" }
+) => {
   const anchorRef = useRef<HTMLDivElement>();
   const [currentTargetRef, targetRef] = useState<HTMLDivElement>();
+
+  const leftMultiplier = x === "left" ? 0 : x === "right" ? 1 : 0.5;
+  const topMultiplier = y === "top" ? 0 : y === "bottom" ? 1 : 0.5;
 
   const reposition = useCallback(() => {
     if (!anchorRef.current || !currentTargetRef) {
@@ -16,7 +26,7 @@ export const usePositioner = () => {
     Object.assign(currentTargetRef.style, {
       position: "fixed",
       zIndex: 9999,
-      top: `${bounds.top}px`,
+      top: `${bounds.top + bounds.height * topMultiplier}px`,
       minWidth: `${bounds.width}px`,
       scroll: "hidden",
       display: "inline-block",
@@ -27,7 +37,7 @@ export const usePositioner = () => {
     Object.assign(currentTargetRef.style, {
       left:
         Math.min(
-          bounds.left,
+          bounds.left + bounds.width * leftMultiplier,
           window.innerWidth - containerBounds.width - PADDING
         ) + "px",
     });

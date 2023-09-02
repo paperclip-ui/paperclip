@@ -5,6 +5,7 @@ export enum PromptKind {
   ConvertToComponent,
   RenameFile,
   NewDirectory,
+  ConvertToSlot,
 }
 
 export type BasePromptDetails<Kind extends PromptKind> = {
@@ -23,12 +24,19 @@ export type ConvertToComponentDetails =
   BasePromptDetails<PromptKind.ConvertToComponent> & {
     exprId: string;
   };
+
+export type ConvertToSlotDetails =
+  BasePromptDetails<PromptKind.ConvertToSlot> & {
+    exprId: string;
+  };
+
 export type RenameFile = BasePromptDetails<PromptKind.RenameFile> & {
   filePath: string;
 };
 
 export type PromptDetails =
   | NewDesignFilePromptDetails
+  | ConvertToSlotDetails
   | RenameFile
   | ConvertToComponentDetails
   | NewDirectoryPromptDetails;
@@ -84,4 +92,11 @@ export const newDirectoryPrompt = (parentDirectory?: string): Prompt => ({
   title: "New directory",
   placeholder: "directory name",
   okLabel: "Create directory",
+});
+
+export const newConvertToSlotPrompt = (exprId?: string): Prompt => ({
+  details: { kind: PromptKind.ConvertToSlot, exprId },
+  title: "Convert to slot",
+  placeholder: "slot name",
+  okLabel: "Convert toslot",
 });

@@ -59,7 +59,7 @@ type PreValueProps = {
   name: string;
 };
 
-const PreValue = ({ name: declName, value, parent }: PreValueProps) => {
+const PreValue = ({ name: declName, value }: PreValueProps) => {
   const history = useHistory();
   const graph = useSelector(getGraph);
 

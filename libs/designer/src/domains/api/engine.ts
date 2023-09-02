@@ -30,6 +30,7 @@ import {
 
 import {
   ConvertToComponentDetails,
+  ConvertToSlotDetails,
   DEFAULT_FRAME_BOX,
   DesignerState,
   DNDKind,
@@ -718,18 +719,15 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
-  const handleConvertToSlot = (state: DesignerState) => {
-    // Do not allow for nested instances to be converted to components.
-    // Or, at least provide a confirmation for this.
-    if (!getTargetExprId(state).includes(".")) {
-      actions.applyChanges([
-        {
-          convertToSlot: {
-            expressionId: getTargetExprId(state),
-          },
+  const handleConvertToSlot = (name: string, details: ConvertToSlotDetails) => {
+    actions.applyChanges([
+      {
+        convertToSlot: {
+          expressionId: details.exprId,
+          name,
         },
-      ]);
-    }
+      },
+    ]);
   };
 
   const handleShortcutCommand = (
@@ -749,9 +747,6 @@ const createEventHandler = (actions: Actions) => {
       }
       case ShortcutCommand.WrapInElement: {
         return handleWrapInElement(state);
-      }
-      case ShortcutCommand.ConvertToSlot: {
-        return handleConvertToSlot(state);
       }
       case ShortcutCommand.Undo: {
         return handleUndo();
@@ -793,6 +788,8 @@ const createEventHandler = (actions: Actions) => {
       actions.createDirectory(value, details.parentDirectory);
     } else if (details.kind === PromptKind.ConvertToComponent) {
       handleConvertToComponent(value, details);
+    } else if (details.kind === PromptKind.ConvertToSlot) {
+      handleConvertToSlot(value, details);
     } else if (details.kind === PromptKind.RenameFile) {
       const dir = details.filePath.split("/").slice(0, -1).join("/");
       const ext = details.filePath.split("/").pop().split(".").pop();

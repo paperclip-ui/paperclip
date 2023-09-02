@@ -1320,7 +1320,8 @@ case! {
   ],
 
   mutation::Inner::ConvertToSlot(ConvertToSlot {
-    expression_id: "80f4925f-1".to_string()
+    expression_id: "80f4925f-1".to_string(),
+    name: "children".to_string()
   }).get_outer(),
   [(
     "/entry.pc", r#"
@@ -1349,7 +1350,8 @@ case! {
   ],
 
   mutation::Inner::ConvertToSlot(ConvertToSlot {
-    expression_id: "80f4925f-1".to_string()
+    expression_id: "80f4925f-1".to_string(),
+    name: "children".to_string()
   }).get_outer(),
   [(
     "/entry.pc", r#"
@@ -1378,13 +1380,14 @@ case! {
   ],
 
   mutation::Inner::ConvertToSlot(ConvertToSlot {
-    expression_id: "80f4925f-1".to_string()
+    expression_id: "80f4925f-1".to_string(),
+    name: "child".to_string()
   }).get_outer(),
   [(
     "/entry.pc", r#"
 
       component A {
-        render slot children {
+        render slot chil {
           text "ab"
         }
       }
@@ -1409,7 +1412,8 @@ case! {
   ],
 
   mutation::Inner::ConvertToSlot(ConvertToSlot {
-    expression_id: "80f4925f-1".to_string()
+    expression_id: "80f4925f-1".to_string(),
+    name: "children".to_string()
   }).get_outer(),
   [(
     "/entry.pc", r#"
@@ -1442,7 +1446,8 @@ case! {
   ],
 
   mutation::Inner::ConvertToSlot(ConvertToSlot {
-    expression_id: "80f4925f-1".to_string()
+    expression_id: "80f4925f-1".to_string(),
+    name: "children".to_string()
   }).get_outer(),
   [(
     "/entry.pc", r#"

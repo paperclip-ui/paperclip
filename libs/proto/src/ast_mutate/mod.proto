@@ -145,6 +145,7 @@ message SetId {
 
 message ConvertToSlot {
   string expression_id = 1;
+  string name = 2;
 }
 
 message DeleteChild {

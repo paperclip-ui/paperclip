@@ -14,6 +14,8 @@ export type DeclNameProps = {
 export const DeclName = ({ name, style, targetId }: DeclNameProps) => {
   const { onClick, open, anchorRef, targetRef } = useDeclName();
 
+  console.log("STYLE", name, style);
+
   return (
     <styles.DeclInheritanceInfo
       class={classNames({

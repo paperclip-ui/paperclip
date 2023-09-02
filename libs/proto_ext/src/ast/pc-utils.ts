@@ -535,7 +535,10 @@ export namespace ast {
         computed.map[name] = {
           value: override.value,
           ownerId: override.ownerId,
-          prevValue: computedStyles.map[name],
+          prevValues: [
+            ...(overrides.map[name].prevValues || []),
+            computedStyles.map[name],
+          ],
         };
       } else {
         computed.map[name] = computedStyles.map[name];

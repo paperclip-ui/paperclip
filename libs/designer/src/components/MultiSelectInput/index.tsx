@@ -17,17 +17,20 @@ export const MultiSelectInput = ({
   onChange,
 }: MultiSelectInputProps) => {
   const pills = useMemo(() => {
-    return options
-      .filter((option) => {
-        return values.includes(option.props.value);
-      })
-      .map((option) => {
+    return values
+      .map((value) => {
+        const option = options.find((option) => option.props.value === value);
+        if (!option) {
+          return null;
+        }
+
         return (
-          <inputStyles.MultiSelectItem>
+          <inputStyles.MultiSelectItem key={value}>
             {option.props.label}
           </inputStyles.MultiSelectItem>
         );
-      });
+      })
+      .filter(Boolean);
   }, [options, values]);
 
   return (

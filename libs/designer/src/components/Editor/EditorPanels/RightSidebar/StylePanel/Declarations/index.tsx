@@ -1,4 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import * as etcStyles from "@paperclip-ui/designer/src/styles/etc.pc";
@@ -38,7 +43,7 @@ const GroupSection = ({ targetId, name, style }: GroupSectionProps) => {
     setFocusedDeclIndex(style.propertyNames.length + 1);
   }, [style.propertyNames.length]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setFocusedDeclIndex(null);
   }, [targetId]);
 

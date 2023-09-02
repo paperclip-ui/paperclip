@@ -16,13 +16,11 @@ import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 export type DeclNameProps = {
   name: string;
   style: ComputedStyle;
-  targetId: string;
+  inherited: boolean;
 };
 
-export const DeclName = ({ name, style, targetId }: DeclNameProps) => {
+export const DeclName = ({ name, style, inherited }: DeclNameProps) => {
   const { onClick, open, anchorRef, targetRef } = useDeclName();
-
-  const inherited = style.ownerId !== targetId;
 
   return (
     <styles.DeclInheritanceInfo

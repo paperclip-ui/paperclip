@@ -12,10 +12,10 @@ export type ComputedStyle = {
   ownerId?: string;
   variant?: Variant;
   prevValues?: ComputedStyle[];
+  variantIds: string[];
 };
 
 export type ComputedStyleMap = {
-  //
   propertyNames: string[];
 
   // map of computed styles

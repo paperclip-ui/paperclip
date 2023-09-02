@@ -228,7 +228,7 @@ const useRawInput = ({
     dispatch({
       type: "focused",
       payload: {
-        caretPosition: ref.current.selectionStart,
+        caretPosition: ref.current?.selectionStart,
       },
     });
   };

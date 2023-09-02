@@ -10,8 +10,10 @@ import {
 } from "@paperclip-ui/proto-ext/lib/ast/serialize";
 import { NameInput } from "./NameInput";
 import {
+  getAllStyleMixins,
   getCurrentFilePath,
   getSelectedDeclName,
+  getSelectedVariantIds,
   getStyleableTargetId,
   getTargetExprId,
 } from "@paperclip-ui/designer/src/state";
@@ -41,6 +43,7 @@ export const Declaration = memo(
     const dispatch = useDispatch<DesignerEvent>();
     const targetId = useSelector(getStyleableTargetId);
     const activeDeclName = useSelector(getSelectedDeclName);
+    const activeVariantIds = useSelector(getSelectedVariantIds);
     const ref = useRef(null);
 
     useEffect(() => {
@@ -72,20 +75,23 @@ export const Declaration = memo(
       [name2]
     );
 
-    const isInherited = style?.ownerId !== targetId;
+    const inherited =
+      style?.ownerId !== targetId ||
+      (activeVariantIds.length &&
+        !activeVariantIds.some((id) => style.variantIds.includes(id)));
 
     const nameInput = isNew ? (
       <NameInput name={name2} onChange={setName} />
     ) : (
-      <DeclName name={name2} style={style} targetId={targetId} />
+      <DeclName name={name2} inherited={inherited} style={style} />
     );
 
     const input = (
       <DeclarationValue
         name={name2}
         autoFocus={activeDeclName === name2}
-        value={isInherited ? undefined : value}
-        placeholder={isInherited ? value : undefined}
+        value={inherited ? undefined : value}
+        placeholder={inherited ? value : undefined}
         onKeyDown={onValueKeyDown}
         onChangeComplete={onValueChangeComplete}
         onChange={onValueChange}

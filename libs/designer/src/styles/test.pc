@@ -17,6 +17,9 @@ public style aMixin {
 */
 
 public component Something {
+    variant ab trigger {
+        ""
+    }
     render div {
         style extends aMixin, bMixin {
             position: relative

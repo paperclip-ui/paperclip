@@ -91,7 +91,10 @@ export const leftSidebarReducer = (
     }
     case "ui/FileNavigatorItemClicked": {
       if (event.payload.kind === FSItemKind.File) {
-        state = redirect(state, routes.editor(event.payload.path));
+        state = redirect(
+          state,
+          routes.editor({ filePath: event.payload.path })
+        );
       } else {
         state = produce(state, (newState) => {
           newState.selectedFilePath = event.payload.path;

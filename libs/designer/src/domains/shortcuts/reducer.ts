@@ -6,6 +6,7 @@ import {
   getTargetExprId,
   isSelectableExpr,
   newConvertToComponentPrompt,
+  newConvertToSlotPrompt,
   newDesignFilePrompt,
   setTargetExprId,
 } from "../../state";
@@ -51,6 +52,11 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
       return produce(state, (newState) => {
         const expr = ast.getExprInfoById(getTargetExprId(state), state.graph);
         newState.prompt = newConvertToComponentPrompt(expr);
+      });
+    case ShortcutCommand.ConvertToSlot:
+      return produce(state, (newState) => {
+        const expr = ast.getExprInfoById(getTargetExprId(state), state.graph);
+        newState.prompt = newConvertToSlotPrompt(expr.expr.id);
       });
     case ShortcutCommand.SearchFiles:
       return produce(state, (newState) => {

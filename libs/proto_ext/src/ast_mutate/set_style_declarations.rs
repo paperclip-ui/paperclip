@@ -24,7 +24,7 @@ impl MutableVisitor<()> for EditContext<SetStyleDeclarations> {
                 &mutation_to_style(&self.mutation, self.get_dependency()),
                 &self.new_id(),
             );
-            update_style(expr, &new_style);
+            update_style(expr, &new_style, &get_styles_to_delete(&self.mutation));
         }
         VisitorResult::Continue
     }
@@ -142,7 +142,7 @@ fn add_child_style(
     for child in children.iter_mut() {
         if let ast::pc::node::Inner::Style(style) = child.get_inner_mut() {
             if variant_combo_equals(&style.variant_combo, &new_style.variant_combo) {
-                update_style(style, &new_style);
+                update_style(style, &new_style, &get_styles_to_delete(mutation));
                 found = true;
             }
         }
@@ -221,7 +221,9 @@ fn mutation_to_style(mutation: &SetStyleDeclarations, dep: &Dependency) -> Strin
             }
         }
 
-        buffer = format!("{}{}: {}\n", buffer, kv.name, value)
+        if value != "" {
+            buffer = format!("{}{}: {}\n", buffer, kv.name, value)
+        }
     }
 
     buffer = format!("{}{}", buffer, "}");
@@ -229,7 +231,19 @@ fn mutation_to_style(mutation: &SetStyleDeclarations, dep: &Dependency) -> Strin
     buffer
 }
 
-fn update_style(style: &mut ast::pc::Style, new_style: &ast::pc::Style) {
+fn get_styles_to_delete(mutation: &SetStyleDeclarations) -> Vec<String> {
+    let mut styles = Vec::new();
+
+    for decl in &mutation.declarations {
+        if decl.value == "" {
+            styles.push(decl.name.to_string());
+        }
+    }
+
+    styles
+}
+
+fn update_style(style: &mut ast::pc::Style, new_style: &ast::pc::Style, omit_decl_names: &Vec<String>) {
     for decl in &new_style.declarations {
         let mut found = false;
         for existing_decl in &mut style.declarations {
@@ -241,5 +255,14 @@ fn update_style(style: &mut ast::pc::Style, new_style: &ast::pc::Style) {
         if !found {
             style.declarations.push(decl.clone());
         }
+    }
+
+    for decl_name in omit_decl_names {
+        style.declarations = style
+            .declarations
+            .clone()
+            .into_iter()
+            .filter(|decl| decl.name != *decl_name)
+            .collect();
     }
 }

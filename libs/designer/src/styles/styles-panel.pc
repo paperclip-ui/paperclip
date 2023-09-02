@@ -1,3 +1,4 @@
+import "./decl-suggestion.pc" as module1
 import "./token-input.pc" as module
 import "./color-picker.pc" as imp2
 import "./button.pc" as imp1
@@ -8,7 +9,234 @@ import "./input.pc" as input
 import "./etc.pc" as etc
 
 /**
- * @bounds(x: 881, y: 7, width: 405, height: 1105)
+ * @bounds(x: 298, y: -131, width: 289, height: 162)
+*/
+
+public component DeclInfoCard {
+    render div card {
+        style variant open {
+            pointer-events: initial
+            transform: translateX(-50%) translateY(4px)
+        }
+        style variant hovering {
+            left: 50%
+            min-width: 200px
+            width: 200px
+        }
+        style extends theme.fontDefault, theme.popup {
+            transform: translateX(-50%) translateY(4px)
+            position: absolute
+            border-radius: var(theme.roundedMD)
+            left: 50%
+            width: 200px
+            pointer-events: initial
+        }
+        div header {
+            style {
+                padding: var(theme.space03)
+                font-weight: 600
+            }
+            slot header {
+                text "This value comes from:"
+            }
+        }
+        div list {
+            slot children {
+                InheritedDeclInfo {
+                    override {
+                        variant hovering trigger {
+                            true
+                        }
+                        variant mixin trigger {
+                            true
+                        }
+                    }
+                }
+                InheritedDeclInfo {
+                    override {
+                        variant hovering
+                        variant mixin
+                        variant otherVariant trigger {
+                            true
+                        }
+                    }
+                }
+                InheritedDeclInfo {
+                    override {
+                        variant hovering
+                        variant mixin trigger {
+                            true
+                        }
+                    }
+                }
+            }
+        }
+        div arrow {
+            style {
+                background-color: var(theme.popupBackgroundColor)
+                width: 5px
+                height: 5px
+                position: absolute
+                left: 50%
+                top: -3px
+                transform: translateX(-50%) rotate(45deg)
+                pointer-events: none
+                border: 1px solid var(theme.borderColor)
+                border-right: none
+                border-bottom: none
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: -131, y: -562, width: 447, height: 73)
+*/
+
+public component InheritedDeclInfo {
+    variant otherVariant trigger {
+        ".variant"
+    }
+    variant mixin trigger {
+        ".mixin"
+    }
+    variant hovering trigger {
+        ".hovering"
+        ":hover"
+    }
+    render div inheritedDeclInfo(class: class, onClick: onClick, onMouseDown: onMouseDown) {
+        style variant hovering {
+            padding: var(theme.space03)
+            background: var(theme.gray04)
+            display: flex
+            justify-content: space-between
+        }
+        style extends theme.fontDefault {
+            padding: var(theme.space03)
+            display: flex
+            text-overflow: ellipsis
+            white-space: nowrap
+            overflow: hidden
+            justify-content: space-between
+            align-items: center
+            cursor: pointer
+            gap: var(theme.space02)
+        }
+        div ownerName {
+            style {
+                display: inline-flex
+                gap: var(theme.space02)
+                align-items: center
+                overflow: hidden
+                text-overflow: ellipsis
+                white-space: nowrap
+                width: 100%
+            }
+            div icon {
+                style variant otherVariant {
+                    mask-image: url("./square.svg")
+                    background-color: var(theme.blue01)
+                }
+                style variant mixin {
+                    mask-image: url("./group.svg")
+                }
+                style extends theme.icon {
+                    flex-shrink: 0
+                }
+            }
+            div {
+                style {
+                    overflow: hidden
+                    display: inline
+                    text-overflow: ellipsis
+                }
+                slot name {
+                    text "a suppper long name that should split"
+                }
+            }
+        }
+        div value {
+            style {
+                opacity: 0.5
+                overflow: hidden
+                text-overflow: ellipsis
+                width: 100%
+            }
+            slot value {
+                text unnamed "var(theme.backgroundColorSomethingBig)"
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: 633, y: -467, width: 355, height: 254)
+*/
+
+public component DeclInheritanceInfo {
+    variant open trigger {
+        ".open"
+    }
+    render div container(class: class) {
+        style {
+            display: inline-block
+            position: relative
+        }
+        slot children {
+            DeclName {
+                insert children {
+                }
+            }
+            DeclInfoCard
+        }
+    }
+}
+
+/**
+ * @bounds(x: 1184, y: -293, width: 1024, height: 768)
+*/
+
+public component DeclName {
+    variant overridden trigger {
+        ".overridden"
+    }
+    variant inherited trigger {
+        ".inherited"
+    }
+    render div(class: class, title: title, onClick: onClick) {
+        style variant overridden {
+            position: relative
+            border-radius: var(theme.roundedSM)
+            display: inline-block
+            font-family: var(theme.defaultFontFamily)
+            color: var(theme.gray0)
+            background: rgba(46, 72, 124, 1)
+        }
+        style variant inherited {
+            color: var(theme.gray0)
+            background: rgba(121, 41, 119, 1)
+        }
+        style {
+            cursor: pointer
+            font-family: var(theme.defaultFontFamily)
+            color: var(theme.gray0)
+            display: inline-block
+            border-radius: var(theme.roundedSM)
+            padding: var(theme.space01)
+            position: relative
+            overflow: hidden
+            text-overflow: ellipsis
+            white-space: nowrap
+            max-width: 100%
+        }
+        slot children {
+            text "background-image"
+        }
+    }
+}
+
+/**
+ * @bounds(x: 0, y: 0, width: 271, height: 768)
 */
 
 public component Preview {
@@ -95,7 +323,13 @@ public component Preview {
                 input.Fields {
                     input.Field {
                         insert name {
-                            text "display"
+                            DeclName(class: "inherited") {
+                                override {
+                                    variant inherited trigger {
+                                        inherited
+                                    }
+                                }
+                            }
                         }
                         insert input {
                             input.Select {
@@ -109,7 +343,24 @@ public component Preview {
                     }
                     input.Field {
                         insert name {
-                            text "Padding"
+                            DeclName {
+                                override {
+                                    variant overridden trigger {
+                                        true
+                                    }
+                                }
+                                insert children {
+                                    text "Padding" {
+                                        style variant inherited + overridden {
+                                            left: NaNpx
+                                            top: NaNpx
+                                            position: relative
+                                            width: 46px
+                                            height: 15px
+                                        }
+                                    }
+                                }
+                            }
                         }
                         insert input {
                             input.TextInput(value: "", placeholder: "0px", class: "active")
@@ -117,7 +368,14 @@ public component Preview {
                     }
                     input.Field {
                         insert name {
-                            text "Margin"
+                            DeclName {
+                                override {
+                                    variant overridden trigger {
+                                        true
+                                    }
+                                }
+                                text "Margin"
+                            }
                         }
                         insert input {
                             input.TextInput(value: "", placeholder: "0px")
@@ -125,7 +383,14 @@ public component Preview {
                     }
                     input.Field {
                         insert name {
-                            text "Position"
+                            DeclName {
+                                override {
+                                    variant overridden trigger {
+                                        true
+                                    }
+                                }
+                                text "Position"
+                            }
                         }
                         insert input {
                             input.Select {
@@ -138,8 +403,18 @@ public component Preview {
                         }
                     }
                     input.Field {
+                        style {
+                            position: relative
+                        }
                         insert name {
-                            text "Box Sizing"
+                            DeclName {
+                                override {
+                                    variant inherited trigger {
+                                        true
+                                    }
+                                }
+                                text "Box Sizing"
+                            }
                         }
                         insert input {
                             input.Select {
@@ -282,6 +557,25 @@ public component Preview {
                     }
                 }
             }
+        }
+    }
+}
+
+/**
+ * @bounds(x: 452, y: 107, width: 345, height: 214)
+*/
+
+div preview {
+    DeclInheritanceInfo {
+        override {
+            variant open trigger {
+                true
+            }
+        }
+        style {
+            position: absolute
+            left: 50%
+            transform: translateX(-50%)
         }
     }
 }

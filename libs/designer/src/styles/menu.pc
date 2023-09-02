@@ -125,3 +125,19 @@ public component MenuList {
     }
 }
 
+/**
+ * @bounds(x: 1092, y: 367, width: 418, height: 284)
+*/
+
+div {
+    Menu {
+        style {
+            position: absolute
+            left: 100px
+            top: 100px
+        }
+        insert children {
+        }
+    }
+}
+

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
@@ -6,13 +6,12 @@ import {
   TriggerBodyItem,
   TriggerBodyItemCombo,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
-import { UpdateVariantTrigger } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
-import produce from "immer";
-
-export type SaveOptions = {
-  name: string;
-  triggers: UpdateVariantTrigger[];
-};
+import { SidebarPopup } from "@paperclip-ui/designer/src/components/SidebarPopup";
+import { useInlineMachine } from "@paperclip-ui/common";
+import { reducer } from "./reducer";
+import { Callbacks, engine } from "./engine";
+import { SaveOptions, getInitialState } from "./state";
+export { SaveOptions };
 
 export type EditVariantPopupProps = {
   onSave?: ({ name, triggers }: SaveOptions) => void;
@@ -28,12 +27,12 @@ export const EditVariantPopup = (props: EditVariantPopupProps) => {
     onAddTriggerClick,
     onNameSave,
     onNewTriggerSave,
-    state,
+    triggers,
     onSaveTrigger,
   } = useEditVariantPopup(props);
 
   const triggerInputs = [
-    ...state.triggers.map((trigger, i) => {
+    ...triggers.map((trigger, i) => {
       const onSave = (event) => onSaveTrigger(event, i);
       return (
         <TextInput
@@ -61,7 +60,7 @@ export const EditVariantPopup = (props: EditVariantPopupProps) => {
   ].filter(Boolean);
 
   return (
-    <sidebarStyles.SidebarPopup header="Edit variant" onCloseClick={onClose}>
+    <SidebarPopup header="Edit variant" onCloseClick={onClose}>
       <sidebarStyles.SidebarPopupPanelContent>
         <inputStyles.Fields>
           <inputStyles.Field
@@ -82,74 +81,41 @@ export const EditVariantPopup = (props: EditVariantPopupProps) => {
           })}
         </inputStyles.Fields>
       </sidebarStyles.SidebarPopupPanelContent>
-    </sidebarStyles.SidebarPopup>
+    </SidebarPopup>
   );
 };
-
-const mapTriggers = (triggers: TriggerBodyItemCombo[]) =>
-  triggers.map((combo) => {
-    return {
-      bool: combo.items.find((item) => item.bool)?.bool.value,
-      str: combo.items.find((item) => item.str)?.str.value,
-    };
-  });
 
 const useEditVariantPopup = ({
   name,
   triggers,
   onSave,
 }: EditVariantPopupProps) => {
-  const [state, setState] = useState<SaveOptions>({
-    name,
-    triggers: triggers ? mapTriggers(triggers) : [],
-  });
-  const [showNewTriggerInput, setShowNewTriggerInput] = useState(false);
+  const callbacksRef = useRef<Callbacks>();
+  callbacksRef.current = { onSave };
+
+  const [state, dispatch] = useInlineMachine(
+    reducer,
+    engine(callbacksRef),
+    getInitialState(name, triggers)
+  );
 
   useEffect(() => {
-    setState((state) =>
-      produce(state, (newState) => {
-        newState.triggers = triggers ? mapTriggers(triggers) : [];
-      })
-    );
-  }, [triggers]);
-
-  useEffect(() => {
-    setState((state) =>
-      produce(state, (newState) => {
-        newState.name = name;
-      })
-    );
-  }, [name]);
-
-  const persist = (update: (state: SaveOptions) => SaveOptions) => {
-    setShowNewTriggerInput(false);
-    setState((state) => {
-      const newState = update(state);
-      onSave(newState);
-      return newState;
-    });
-  };
+    dispatch({ type: "propsChanged", payload: { name, triggers } });
+  }, [name, triggers]);
 
   const onNameChange = (name: string) => {
-    setState({
-      ...state,
-      name,
-    });
+    dispatch({ type: "nameChanged", payload: name });
   };
 
   const onNameSave = (
     event: React.KeyboardEvent<any> | React.FocusEvent<any>
   ) => {
     const value = event.currentTarget.value;
-    persist((state) =>
-      produce(state, (newState) => {
-        newState.name = value;
-      })
-    );
+    dispatch({ type: "nameSaved", payload: value });
   };
 
   const onAddTriggerClick = () => {
-    setShowNewTriggerInput(true);
+    dispatch({ type: "addNewTriggerButtonClicked" });
   };
 
   const onNewTriggerSave = (
@@ -158,12 +124,7 @@ const useEditVariantPopup = ({
       | React.FocusEvent<HTMLInputElement>
   ) => {
     const value = event.currentTarget.value;
-
-    persist((state) =>
-      produce(state, (newState) => {
-        newState.triggers.push({ str: value });
-      })
-    );
+    dispatch({ type: "newTriggerSaved", payload: value });
   };
 
   const onSaveTrigger = (
@@ -171,21 +132,16 @@ const useEditVariantPopup = ({
     index: number
   ) => {
     const value = event.currentTarget.value;
-    persist((state) =>
-      produce(state, (newState) => {
-        newState.triggers[index] = { str: value };
-      })
-    );
+    dispatch({ type: "triggerSaved", payload: { value, index } });
   };
 
   return {
-    triggers,
     onSave,
     onNameSave,
     onAddTriggerClick,
     onNameChange,
-    showNewTriggerInput,
-    state,
+    showNewTriggerInput: state.showNewTriggerInput,
+    triggers: state.triggers,
     onSaveTrigger,
     onNewTriggerSave,
   };

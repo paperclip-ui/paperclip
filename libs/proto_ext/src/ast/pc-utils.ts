@@ -442,7 +442,11 @@ export namespace ast {
   });
 
   export const computeElementStyle = memoize(
-    (exprId: string, graph: Graph, variantIds?: string[]): ComputedStyleMap => {
+    (
+      exprId: string,
+      graph: Graph,
+      activeVariantIds?: string[]
+    ): ComputedStyleMap => {
       const node = getExprById(exprId.split(".").pop(), graph) as Element;
       let computedStyle: ComputedStyleMap = { propertyNames: [], map: {} };
       if (!node || !node.body) {
@@ -455,7 +459,7 @@ export namespace ast {
         if (style) {
           computedStyle = overrideComputedStyles(
             computedStyle,
-            computeStyle(style, graph, node.id, variantIds)
+            computeStyle(style, graph, node.id, activeVariantIds)
           );
         }
       }
@@ -469,19 +473,42 @@ export namespace ast {
       style: Style,
       graph: Graph,
       ownerId: string,
-      variantIds?: string[]
+      activeVariantIds: string[]
     ): ComputedStyleMap => {
       let computedStyles: ComputedStyleMap = { propertyNames: [], map: {} };
 
+      let variantIds = [];
+
       if (style.variantCombo && style.variantCombo.length > 0) {
-        // TODO: do ehthis
-        // if (!style.variantCombo.every(ref => getRef))
+        const ownerComponent = getExprOwnerComponent(style, graph);
+        if (!ownerComponent) {
+          return computedStyles;
+        }
+
+        const componentVariants = getComponentVariants(ownerComponent);
+
+        variantIds = style.variantCombo.map((combo) => {
+          const variant = componentVariants.find(
+            (variant) => variant.name === combo.path[0]
+          );
+          if (!variant) {
+            return false;
+          }
+
+          return variant.id;
+        });
+      }
+
+      const isActive = variantIds.every((id) => activeVariantIds.includes(id));
+
+      if (!isActive) {
         return computedStyles;
       }
 
       for (const value of style.declarations) {
         computedStyles.propertyNames.push(value.name);
         computedStyles.map[value.name] = {
+          variantIds,
           ownerId,
           value: value.value,
         };
@@ -492,7 +519,12 @@ export namespace ast {
           const extendsStyle = getExprRef(ref, graph)?.style;
           if (extendsStyle) {
             computedStyles = overrideComputedStyles(
-              computeStyle(extendsStyle, graph, extendsStyle.id, variantIds),
+              computeStyle(
+                extendsStyle,
+                graph,
+                extendsStyle.id,
+                activeVariantIds
+              ),
               computedStyles
             );
           }
@@ -511,13 +543,24 @@ export namespace ast {
     for (const name of computedStyles.propertyNames) {
       computed.propertyNames.push(name);
 
+      const prev = computedStyles.map[name];
       const override = overrides.map[name];
 
       if (override) {
+        const [low, high] =
+          override.variantIds.length >= prev.variantIds.length
+            ? [computedStyles, overrides]
+            : [overrides, computedStyles];
+
         computed.map[name] = {
-          value: override.value,
-          ownerId: override.ownerId,
-          prevValue: computedStyles.map[name],
+          value: high.map[name].value,
+          ownerId: high.map[name].ownerId,
+          variantIds: high.map[name].variantIds,
+          prevValues: [
+            ...(high.map[name].prevValues || []),
+            low.map[name],
+            ...(low.map[name].prevValues || []),
+          ],
         };
       } else {
         computed.map[name] = computedStyles.map[name];
@@ -627,16 +670,15 @@ export namespace ast {
       trigger.items.some((item) => item.bool?.value === true)
     );
 
-  export const getExprOwnerComponent = (
-    expr: InnerExpression,
-    graph: Graph
-  ) => {
-    const ancestorId = getAncestorIds(expr.id, graph).find((ancestorId) => {
-      return getExprInfoById(ancestorId, graph).kind === ExprKind.Component;
-    });
+  export const getExprOwnerComponent = memoize(
+    (expr: InnerExpression, graph: Graph) => {
+      const ancestorId = getAncestorIds(expr.id, graph).find((ancestorId) => {
+        return getExprInfoById(ancestorId, graph).kind === ExprKind.Component;
+      });
 
-    return ancestorId && (getExprById(ancestorId, graph) as Component);
-  };
+      return ancestorId && (getExprById(ancestorId, graph) as Component);
+    }
+  );
 
   export const getInstanceComponent = (element: Element, graph: Graph) => {
     return getDocumentComponent(

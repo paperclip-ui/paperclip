@@ -11,11 +11,11 @@ export type ComputedStyle = {
   value: DeclarationValue;
   ownerId?: string;
   variant?: Variant;
-  prevValue?: ComputedStyle;
+  prevValues?: ComputedStyle[];
+  variantIds: string[];
 };
 
 export type ComputedStyleMap = {
-  //
   propertyNames: string[];
 
   // map of computed styles

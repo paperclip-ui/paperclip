@@ -61,6 +61,7 @@ fn create_slot(ctx: &mut EditContext<ConvertToSlot>, child: Node, id: &str) -> N
         id: id.to_string(),
         name: get_unique_slot_name(
             &ctx.mutation.expression_id,
+            &ctx.mutation.name,
             ctx.get_dependency()
                 .document
                 .as_ref()
@@ -72,8 +73,8 @@ fn create_slot(ctx: &mut EditContext<ConvertToSlot>, child: Node, id: &str) -> N
     .get_outer()
 }
 
-fn get_unique_slot_name(id: &str, doc: &Document) -> String {
-    let base_name = "children".to_string();
+fn get_unique_slot_name(id: &str, name: &String, doc: &Document) -> String {
+    let base_name = name.clone();
     let owner_component = GetExpr::get_owner_component(id, doc).expect("Component must exist!");
     let mut i = 0;
     let mut name = base_name.to_string();

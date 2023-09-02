@@ -222,6 +222,7 @@ export type ResourceModalDragLeft = BaseEvent<"ui/resourceModalDragLeft">;
 export type ResourceModalBackgroundClicked =
   BaseEvent<"ui/resourceModalBackgroundClicked">;
 export type EditVariantPopupClosed = BaseEvent<"ui/editVariantPopupClosed">;
+export type AddVariantPopupClicked = BaseEvent<"ui/AddVariantPopupClicked">;
 export type RemoveVariantButtonClicked = BaseEvent<
   "ui/removeVariantButtonClicked",
   { variantId: string }
@@ -243,6 +244,7 @@ export type InsertElementReleased = BaseEvent<"ui/insertElementReleased", Box>;
 export type UIEvent =
   | ExprNavigatorDroppedNode
   | ElementTagChanged
+  | AddVariantPopupClicked
   | DashboardAddFileConfirmed
   | ToolsTextEditorChanged
   | CanvasMouseMoved

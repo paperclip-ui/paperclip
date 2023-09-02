@@ -5,10 +5,9 @@ import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   getAllPublicStyleMixins,
   getCurrentStyleMixins,
-  getGraph,
   getSelectedExpressionInfo,
 } from "@paperclip-ui/designer/src/state";
-import { Element, Reference } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import { Element } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import {
   MultiSelectInput,
@@ -31,7 +30,7 @@ type InstanceVariantsInnerProps = {
 
 export const MixinsInner = ({ expr }: InstanceVariantsInnerProps) => {
   const currentStyleMixins = useSelector(getCurrentStyleMixins);
-  const graph = useSelector(getGraph);
+
   const allMixins = useSelector(getAllPublicStyleMixins);
   const dispatch = useDispatch<DesignerEvent>();
 

@@ -3,19 +3,24 @@ import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { DeclarationValue } from "./DeclarationValue";
-import { NewDeclValue } from "./types";
 import { noop } from "lodash";
-import { getPropField } from "./cssSchema";
 import {
   ComputedStyle,
   serializeDeclaration,
 } from "@paperclip-ui/proto-ext/lib/ast/serialize";
 import { NameInput } from "./NameInput";
 import {
+  getAllStyleMixins,
+  getCurrentFilePath,
+  getGraph,
+  getSelectedDeclName,
+  getSelectedVariantIds,
   getStyleableTargetId,
   getTargetExprId,
 } from "@paperclip-ui/designer/src/state";
-// import { InteractiveDeclValue } from "./InteractiveDeclValue";
+import { DeclName } from "./DeclName";
+import classNames from "classnames";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
 type FieldProps = {
   name?: string;
@@ -37,9 +42,10 @@ export const Declaration = memo(
   }: FieldProps) => {
     const value = style && serializeDeclaration(style.value);
     const [name2, setName] = useState(name);
-    const { input: inputOptions } = getPropField(name2);
     const dispatch = useDispatch<DesignerEvent>();
     const targetId = useSelector(getStyleableTargetId);
+    const activeDeclName = useSelector(getSelectedDeclName);
+    const activeVariantIds = useSelector(getSelectedVariantIds);
     const ref = useRef(null);
 
     useEffect(() => {
@@ -71,17 +77,23 @@ export const Declaration = memo(
       [name2]
     );
 
+    const inherited =
+      style?.ownerId !== targetId ||
+      (activeVariantIds.length &&
+        !activeVariantIds.every((id) => style.variantIds.includes(id)));
+
     const nameInput = isNew ? (
       <NameInput name={name2} onChange={setName} />
     ) : (
-      name
+      <DeclName name={name2} inherited={inherited} style={style} />
     );
 
     const input = (
       <DeclarationValue
         name={name2}
-        value={style?.ownerId === targetId ? value : undefined}
-        placeholder={style?.ownerId === targetId ? undefined : value}
+        autoFocus={activeDeclName === name2}
+        value={inherited ? undefined : value}
+        placeholder={inherited ? value : undefined}
         onKeyDown={onValueKeyDown}
         onChangeComplete={onValueChangeComplete}
         onChange={onValueChange}

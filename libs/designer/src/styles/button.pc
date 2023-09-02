@@ -27,7 +27,7 @@ public component Button {
             background: var(mod.blue02)
             border: 0px
             border-radius: var(mod.space02)
-            padding: var(mod.space03)
+            padding: var(mod.space02) var(mod.space04)
             color: var(mod.gray0)
             cursor: pointer
         }

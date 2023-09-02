@@ -49,10 +49,11 @@ public component FilteredFiles {
             }
         }
         style {
-            padding: var(theme.space05)
             gap: var(theme.space02)
             display: flex
             flex-direction: column
+            font-family: var(theme.defaultFontFamily)
+            color: var(theme.gray0)
         }
     }
 }
@@ -76,14 +77,13 @@ public component FilteredFile {
         }
         div container {
             style variant hovering {
-                background: var(theme.blue02)
+                background: var(theme.gray04)
             }
             style {
                 display: flex
                 justify-content: space-between
                 width: 100%
-                padding: var(theme.space03)
-                border-radius: var(theme.space02)
+                padding: var(theme.space03) var(theme.space05)
             }
             div icon {
                 style {
@@ -412,7 +412,7 @@ public component TreeNavigationItemHeader {
             background: rgb(31, 31, 31)
         }
         style variant isSelected {
-            background: rgb(46, 46, 46)
+            background: var(theme.gray04)
         }
         DropZoneDivider(class: "top") {
             override root {

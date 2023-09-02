@@ -23,7 +23,7 @@ export const Variants = () => {
     });
   }, [variants]);
 
-  if (!visible) {
+  if (!visible || !options.length) {
     return null;
   }
 

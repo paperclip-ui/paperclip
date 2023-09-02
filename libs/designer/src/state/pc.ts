@@ -41,6 +41,7 @@ import { pickBy } from "lodash";
 import { hasUncaughtExceptionCaptureCallback } from "process";
 
 export const MIXED_VALUE = "mixed";
+const EMPTY_ARRAY = [];
 
 export const DEFAULT_FRAME_BOX = {
   width: 1024,
@@ -465,9 +466,18 @@ export const getSelectedExprStyles = (
     exprInfo.kind === ast.ExprKind.Element ||
     exprInfo.kind === ast.ExprKind.TextNode
   ) {
-    return ast.computeElementStyle(virtId, state.graph);
+    return ast.computeElementStyle(
+      virtId,
+      state.graph,
+      getSelectedVariantIds(state)
+    );
   } else if (exprInfo.kind === ast.ExprKind.Style) {
-    return ast.computeStyle(exprInfo.expr, state.graph, exprInfo.expr.id, []);
+    return ast.computeStyle(
+      exprInfo.expr,
+      state.graph,
+      exprInfo.expr.id,
+      getSelectedVariantIds(state)
+    );
   }
 
   return ret;
@@ -492,6 +502,9 @@ export const getActiveVariant = (state: DesignerState) => {
     state.activeVariantId &&
     (ast.getExprByVirtId(state.activeVariantId, state.graph)?.expr as Variant)
   );
+};
+export const getEditVariantPopupOpened = (state: DesignerState) => {
+  return state.editVariantPopupOpen;
 };
 
 export const getFrameBoxes = memoize(
@@ -539,8 +552,15 @@ export const getAllPublicAtoms = (state: DesignerState) => {
   return ast.getGraphAtoms(state.graph);
 };
 
-export const getSelectedVariantIds = (state: DesignerState) =>
-  state.selectedVariantIds;
+export const getSelectedVariantIds = memoize((state: DesignerState) => {
+  return getSelectedVariantIds2(state.history.query?.variantIds, state.graph);
+});
+
+const getSelectedVariantIds2 = memoize((value: string, graph: Graph) => {
+  return (value?.split(",") ?? EMPTY_ARRAY).filter(
+    (variantId) => !!ast.getExprInfoById(variantId, graph)
+  );
+});
 
 export const getSelectedExprAvailableVariants = (state: DesignerState) => {
   const ownerComponent = getSelectedExprOwnerComponent(state);
@@ -1197,38 +1217,46 @@ const getDocumentMixins = (doc: pc.Document): pc.Style[] => {
   return doc.body.filter((item) => item.style).map((item) => item.style);
 };
 
-export const getCurrentStyleMixins = (state: DesignerState): MixinInfo[] => {
-  const dep = getCurrentDependency(state);
-  return getStyleMixinRefs(state)
-    .map((ref) => {
-      const refDep =
-        ref.path.length === 1
-          ? dep
-          : state.graph.dependencies[
-              dep.imports[
-                dep.document.body.find((item) => {
-                  return item.import?.namespace === ref.path[0];
-                }).import.path
-              ]
-            ];
+export const getCurrentStyleMixins = memoize(
+  (state: DesignerState): MixinInfo[] => {
+    const dep = getCurrentDependency(state);
 
-      if (!refDep) {
-        return null;
-      }
+    // may not have loaded yet
+    if (!dep) {
+      return [];
+    }
 
-      const mixin = getDocumentMixins(refDep.document).find(
-        (item) => item.name === ref.path[ref.path.length - 1]
-      );
+    return getStyleMixinRefs(state)
+      .map((ref) => {
+        const refDep =
+          ref.path.length === 1
+            ? dep
+            : state.graph.dependencies[
+                dep.imports[
+                  dep.document.body.find((item) => {
+                    return item.import?.namespace === ref.path[0];
+                  }).import.path
+                ]
+              ];
 
-      if (mixin) {
-        return {
-          name: mixin.name,
-          mixinId: mixin.id,
-        };
-      }
-    })
-    .filter(Boolean);
-};
+        if (!refDep) {
+          return null;
+        }
+
+        const mixin = getDocumentMixins(refDep.document).find(
+          (item) => item.name === ref.path[ref.path.length - 1]
+        );
+
+        if (mixin) {
+          return {
+            name: mixin.name,
+            mixinId: mixin.id,
+          };
+        }
+      })
+      .filter(Boolean);
+  }
+);
 
 const getStyleMixinRefs = (state: DesignerState): Reference[] => {
   const expr = ast.getExprInfoById(getStyleableTargetId(state), state.graph);
@@ -1236,9 +1264,9 @@ const getStyleMixinRefs = (state: DesignerState): Reference[] => {
     return [];
   }
 
-  const selectedVariants: Variant[] = state.selectedVariantIds.map(
-    (id) => ast.getExprByVirtId(id, state.graph).expr
-  );
+  const selectedVariants: Variant[] = getSelectedVariantIds(state)
+    .map((id) => ast.getExprByVirtId(id, state.graph)?.expr)
+    .filter(Boolean);
 
   if (expr.kind === ast.ExprKind.Element) {
     const variantStyle = expr.expr.body.find((item) => {

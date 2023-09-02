@@ -45,6 +45,14 @@ const GLOBAL_VALUES = [
   "normal",
 ];
 
+const OVERFLOW_VALUES = [
+  "visible",
+  "hidden",
+  "scroll",
+  "auto",
+  ...GLOBAL_VALUES,
+];
+
 const BACKGROUND_IMAGE_OPTIONS = [...COLOR_OPTIONS, "url(%|%)"];
 
 const BACKGROUND_REPEAT_OPTIONS = ["repeat", "no-repeat"];
@@ -83,6 +91,23 @@ export const declSuggestionMap: DeclarationSuggestionMap = {
   "font-family": declValueSuggestions(
     [DeclarationValueType.Keyword],
     [...FONT_FAMILY_VALUES]
+  ),
+  "text-overflow": declValueSuggestions(
+    [DeclarationValueType.Color],
+    ["clip", "ellipsis", ...GLOBAL_VALUES]
+  ),
+  "white-space": declValueSuggestions(
+    [DeclarationValueType.Color],
+    ["normal", "nowrap", "pre", "pre-line", "pre-wrap", ...GLOBAL_VALUES]
+  ),
+  overflow: declValueSuggestions([DeclarationValueType.Color], OVERFLOW_VALUES),
+  "overflow-x": declValueSuggestions(
+    [DeclarationValueType.Color],
+    OVERFLOW_VALUES
+  ),
+  "overflow-y": declValueSuggestions(
+    [DeclarationValueType.Color],
+    OVERFLOW_VALUES
   ),
   "font-size": declValueSuggestions(
     [DeclarationValueType.Unit],

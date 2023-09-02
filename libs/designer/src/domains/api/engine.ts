@@ -30,6 +30,7 @@ import {
 
 import {
   ConvertToComponentDetails,
+  ConvertToSlotDetails,
   DEFAULT_FRAME_BOX,
   DesignerState,
   DNDKind,
@@ -62,6 +63,7 @@ import {
   getCurrentDependency,
   getSelectedExpression,
   getSelectedExpressionInfo,
+  getSelectedVariantIds,
   getStyleableTargetId,
 } from "../../state/pc";
 import {
@@ -378,7 +380,7 @@ const createEventHandler = (actions: Actions) => {
       | VirtTextNode
       | VirtElement;
 
-    const variantIds = state.selectedVariantIds;
+    const variantIds = getSelectedVariantIds(state);
 
     const path = virtHTML.getNodePath(
       node,
@@ -442,22 +444,14 @@ const createEventHandler = (actions: Actions) => {
       imports: event.payload.imports,
       value,
     }));
-    const variantIds = state.selectedVariantIds;
+    const variantIds = getSelectedVariantIds(state);
 
     actions.applyChanges([
       {
         setStyleDeclarations: {
           variantIds,
           expressionId: getStyleableTargetId(state),
-          declarations: style.filter((kv) => kv.value !== ""),
-        },
-      },
-      {
-        deleteStyleDeclarations: {
-          expressionId: getStyleableTargetId(state),
-          declarationNames: style
-            .filter((kv) => kv.value === "")
-            .map((kv) => kv.name),
+          declarations: style,
         },
       },
     ]);
@@ -537,8 +531,6 @@ const createEventHandler = (actions: Actions) => {
     ) {
       parentId = targetExpr.expr.id;
     }
-
-    console.log(targetExpr, parentId);
 
     actions.applyChanges([
       {
@@ -640,7 +632,7 @@ const createEventHandler = (actions: Actions) => {
         setStyleMixins: {
           targetExprId: getStyleableTargetId(state),
           mixinIds,
-          variantIds: state.selectedVariantIds,
+          variantIds: getSelectedVariantIds(state),
         },
       },
     ]);
@@ -720,18 +712,15 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
-  const handleConvertToSlot = (state: DesignerState) => {
-    // Do not allow for nested instances to be converted to components.
-    // Or, at least provide a confirmation for this.
-    if (!getTargetExprId(state).includes(".")) {
-      actions.applyChanges([
-        {
-          convertToSlot: {
-            expressionId: getTargetExprId(state),
-          },
+  const handleConvertToSlot = (name: string, details: ConvertToSlotDetails) => {
+    actions.applyChanges([
+      {
+        convertToSlot: {
+          expressionId: details.exprId,
+          name,
         },
-      ]);
-    }
+      },
+    ]);
   };
 
   const handleShortcutCommand = (
@@ -751,9 +740,6 @@ const createEventHandler = (actions: Actions) => {
       }
       case ShortcutCommand.WrapInElement: {
         return handleWrapInElement(state);
-      }
-      case ShortcutCommand.ConvertToSlot: {
-        return handleConvertToSlot(state);
       }
       case ShortcutCommand.Undo: {
         return handleUndo();
@@ -795,6 +781,8 @@ const createEventHandler = (actions: Actions) => {
       actions.createDirectory(value, details.parentDirectory);
     } else if (details.kind === PromptKind.ConvertToComponent) {
       handleConvertToComponent(value, details);
+    } else if (details.kind === PromptKind.ConvertToSlot) {
+      handleConvertToSlot(value, details);
     } else if (details.kind === PromptKind.RenameFile) {
       const dir = details.filePath.split("/").slice(0, -1).join("/");
       const ext = details.filePath.split("/").pop().split(".").pop();
@@ -954,7 +942,7 @@ const createEventHandler = (actions: Actions) => {
         toggleInstanceVariant: {
           instanceId: getTargetExprId(state),
           variantId: event.payload,
-          comboVariantIds: state.selectedVariantIds,
+          comboVariantIds: getSelectedVariantIds(state),
         },
       },
     ]);

@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/designer-rust",
-  "version": "19.0.14",
+  "version": "20.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {

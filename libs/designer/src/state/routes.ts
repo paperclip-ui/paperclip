@@ -1,11 +1,36 @@
+type EditorRedirectInfo = {
+  filePath: string;
+  nodeId?: string;
+  declName?: string;
+  variantIds?: string[];
+};
+
 export namespace routes {
   export const home = () => "/";
-  export const editor = (filePath: string, nodeId?: string) => {
-    let url = `/?file=${encodeURIComponent(filePath)}`;
+  export const editor = ({
+    filePath,
+    nodeId,
+    declName,
+    variantIds = [],
+  }: EditorRedirectInfo) => {
+    const query = {
+      file: encodeURIComponent(filePath),
+      nodeId,
+      declName,
+    };
+
+    const params = new URLSearchParams();
+    params.set("file", filePath);
     if (nodeId) {
-      url += "&nodeId=" + nodeId;
+      params.set("nodeId", nodeId);
+    }
+    if (declName) {
+      params.set("declName", declName);
+    }
+    if (variantIds.length) {
+      params.set("variantIds", variantIds.join(","));
     }
 
-    return url;
+    return `/?${params.toString()}`;
   };
 }

@@ -1,5 +1,9 @@
 import "./theme.pc" as theme
 
+public style bMixin {
+    font-family: sans-serif
+}
+
 public token color var(theme.gray0)
 public style aMixin {
     color: var(color)
@@ -13,10 +17,18 @@ public style aMixin {
 */
 
 public component Something {
+    variant cd
     render div {
-        style extends aMixin {
+        style variant ab {
+            position: absolute
+        }
+        style variant ab + cd {
+            position: fixed
+        }
+        style extends aMixin, bMixin {
             position: relative
             color: rgba(236, 57, 42, 0.72)
+            font-family: something
         }
         text "something!!"
     }

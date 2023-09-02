@@ -88,7 +88,7 @@ export type DesignerState = {
   scopedElementId?: string;
   projectDirectory?: FSDirectory;
   activeVariantId?: string;
-  selectedVariantIds: string[];
+  editVariantPopupOpen?: boolean;
   renderedFilePath?: string;
   insertedNodeIds: string[];
   graph: Graph;
@@ -129,7 +129,6 @@ export type DesignerState = {
 
 export const DEFAULT_STATE: DesignerState = {
   readonly: false,
-  selectedVariantIds: [],
   resourceFilePaths: [],
   styleOverrides: {},
   atomOverrides: {},
@@ -165,6 +164,10 @@ export const getCanvas = (editor: DesignerState) => editor.canvas;
 
 export const getCurrentFilePath = (state: DesignerState) => {
   return state.history?.query.file;
+};
+
+export const getSelectedDeclName = (state: DesignerState) => {
+  return state.history?.query.declName;
 };
 export const getSelectedFilePath = (state: DesignerState) => {
   return state.selectedFilePath;

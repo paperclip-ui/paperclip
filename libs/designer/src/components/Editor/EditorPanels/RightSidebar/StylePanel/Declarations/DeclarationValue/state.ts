@@ -47,12 +47,14 @@ export type State = {
   caretPosition: number;
   selectionLength?: number;
   showSuggestionMenu: boolean;
+  autoFocus?: boolean;
 };
 
 export const getInitialState = memoize(
-  (value: string): State => ({
+  ({ value, autoFocus }: { value: string; autoFocus: boolean }): State => ({
     caretPosition: -1,
     value: value ?? "",
+    autoFocus,
     active: false,
     showSuggestionMenu: false,
   })
@@ -61,10 +63,6 @@ export const getInitialState = memoize(
 export const getTokenAtCaret = memoize((state: State) =>
   getTokenAtPosition(parseStyleDeclaration)(state.value, state.caretPosition)
 );
-
-export const getTokenIndexAtBoundary = (state: State) => {
-  const tokens = parseStyleDeclaration(state.value);
-};
 
 export enum ExpressionKind {
   FunctionCall = "functionCall",

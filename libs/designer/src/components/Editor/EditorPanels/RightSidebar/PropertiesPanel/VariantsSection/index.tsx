@@ -3,6 +3,7 @@ import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   getActiveVariant,
+  getEditVariantPopupOpened,
   getSelectedExpression,
   getSelectedExpressionInfo,
 } from "@paperclip-ui/designer/src/state/pc";
@@ -74,9 +75,8 @@ export const VariantsSectionInner = () => {
 const useVariantsSection = () => {
   const component = useSelector(getSelectedExpression) as Component;
   const activeVariant = useSelector(getActiveVariant);
-
+  const editVariantPopupOpen = useSelector(getEditVariantPopupOpened);
   const variants = ast.getComponentVariants(component);
-  const [editVariantPopupOpen, setVariantPopupOpen] = useState(false);
 
   const dispatch = useDispatch<DesignerEvent>();
   const onRemoveVariant = (variant: Variant) => {
@@ -92,20 +92,14 @@ const useVariantsSection = () => {
       type: "ui/editVariantClicked",
       payload: { variantId: variant.id },
     });
-    setVariantPopupOpen(true);
   };
 
-  useEffect(() => {
-    setVariantPopupOpen(activeVariant != null);
-  }, [activeVariant]);
-
   const onAddClick = () => {
-    setVariantPopupOpen(true);
+    dispatch({ type: "ui/AddVariantPopupClicked" });
   };
 
   const onCloseEditVariantPopup = () => {
     dispatch({ type: "ui/editVariantPopupClosed" });
-    setVariantPopupOpen(false);
   };
 
   const onSaveCurrentVariant = ({ name, triggers }: SaveOptions) => {

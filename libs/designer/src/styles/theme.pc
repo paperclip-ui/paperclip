@@ -1,30 +1,5 @@
 
-/**
- * @bounds(x: 1346, y: 16, width: 1024, height: 768)
-*/
-
-public component TokenPreview {
-    render div {
-        style {
-            display: flex
-            flex-direction: column
-            font-family: var(defaultFontFamily)
-            width: 200px
-            height: 200px
-        }
-        div {
-            style {
-                background: var(--color)
-                width: 100%
-                height: 100%
-            }
-        }
-        slot children {
-            text "Color"
-        }
-    }
-}
-
+public token popupBackgroundColor var(gray06)
 public token gray0 rgb(210, 210, 210)
 public token gray02 rgb(115, 115, 115)
 public token gray03 rgb(59, 59, 59)
@@ -44,7 +19,7 @@ public token inputBackgroun2 rgb(30, 30, 30)
 public token backgroundSelected var(selectedColor)
 public token backgroundSelectedLight rgb(46, 46, 46)
 public token backgroundSelectedText rgb(229, 236, 255)
-public token borderColor rgb(21, 21, 21)
+public token borderColor var(gray03)
 public token componentColor rgb(219, 161, 255)
 public token slotColor rgb(161, 255, 203)
 public token puncColor rgb(158, 158, 158)
@@ -88,7 +63,7 @@ public style icon extends mask {
 }
 
 public style input {
-    background: var(inputBackground)
+    background: var(gray04)
     display: flex
     outline: none
     align-items: center
@@ -117,9 +92,9 @@ public style inputActive {
 }
 
 public style popup {
-    background: var(gray06)
+    background: var(popupBackgroundColor)
     border-radius: var(rounded)
-    filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.2))
+    filter: drop-shadow(5px 5px 8px rgba(0, 0, 0, 0.7))
     border: 1px solid var(borderColor)
 }
 
@@ -157,59 +132,4 @@ trigger mobile {
     "@media screen and (max-width: 480px)"
 }
 
-
-/**
- * @bounds(x: 542, y: 139, width: 835, height: 547)
-*/
-
-div preview {
-    style {
-        display: flex
-        gap: var(space04)
-        padding: var(space04)
-        background: white
-    }
-    TokenPreview {
-        style {
-            --color: var(gray0)
-        }
-        insert children {
-            text "var(gray0)"
-        }
-    }
-    TokenPreview {
-        style {
-            --color: var(gray02)
-        }
-        insert children {
-            text "var(gray02)"
-        }
-    }
-    TokenPreview {
-        style {
-            --color: var(gray03)
-        }
-        insert children {
-            text "var(gray003)"
-        }
-    }
-    TokenPreview {
-        style {
-            --color: var(gray06)
-        }
-        insert children {
-            text "var(gray06)"
-        }
-    }
-}
-
-/**
- * @bounds(x: 413, y: 888, width: 475, height: 273)
-*/
-
-div {
-    style {
-        position: relative
-    }
-}
 

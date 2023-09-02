@@ -68,7 +68,7 @@ const useDeclName = () => {
   }, [open]);
 
   const onClick = () => {
-    setOpen(true);
+    setOpen(!open);
   };
 
   return { onClick, open, anchorRef, targetRef };

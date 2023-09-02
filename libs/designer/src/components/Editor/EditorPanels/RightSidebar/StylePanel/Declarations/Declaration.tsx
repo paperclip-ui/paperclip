@@ -15,6 +15,8 @@ import {
   getStyleableTargetId,
   getTargetExprId,
 } from "@paperclip-ui/designer/src/state";
+import { DeclName } from "@paperclip-ui/designer/src/styles/styles-panel.pc";
+import classNames from "classnames";
 // import { InteractiveDeclValue } from "./InteractiveDeclValue";
 
 type FieldProps = {
@@ -71,17 +73,25 @@ export const Declaration = memo(
       [name2]
     );
 
+    const isInherited = style?.ownerId !== targetId;
+
     const nameInput = isNew ? (
       <NameInput name={name2} onChange={setName} />
     ) : (
-      name
+      <DeclName
+        class={classNames({
+          inherited: isInherited,
+        })}
+      >
+        {name}
+      </DeclName>
     );
 
     const input = (
       <DeclarationValue
         name={name2}
-        value={style?.ownerId === targetId ? value : undefined}
-        placeholder={style?.ownerId === targetId ? undefined : value}
+        value={isInherited ? undefined : value}
+        placeholder={isInherited ? value : undefined}
         onKeyDown={onValueKeyDown}
         onChangeComplete={onValueChangeComplete}
         onChange={onValueChange}

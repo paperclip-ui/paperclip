@@ -22,12 +22,11 @@ public component DeclName {
     render div(class: class) {
         style variant overridden {
             position: relative
-            padding: var(theme.space02)
             border-radius: var(theme.roundedSM)
             display: inline-block
             font-family: var(theme.defaultFontFamily)
             color: var(theme.gray0)
-            background: var(theme.blue02)
+            background: rgba(46, 72, 124, 1)
         }
         style variant inherited {
             color: var(theme.gray0)
@@ -38,7 +37,7 @@ public component DeclName {
             color: var(theme.gray0)
             display: inline-block
             border-radius: var(theme.roundedSM)
-            padding: var(theme.space02)
+            padding: var(theme.space01)
             position: relative
         }
         slot children {
@@ -162,7 +161,15 @@ public component Preview {
                                     }
                                 }
                                 insert children {
-                                    text "Padding"
+                                    text "Padding" {
+                                        style variant inherited + overridden {
+                                            left: NaNpx
+                                            top: NaNpx
+                                            position: relative
+                                            width: 46px
+                                            height: 15px
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -361,6 +368,17 @@ public component Preview {
                     }
                 }
             }
+        }
+    }
+}
+
+/**
+ * @bounds(x: 452, y: 107, width: 345, height: 214)
+*/
+
+div preview {
+    DeclName {
+        insert children {
         }
     }
 }

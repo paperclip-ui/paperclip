@@ -4,9 +4,10 @@
 
 > Join the [Discord channel](https://discord.gg/H6wEVtd) for the latest updates!
 
+
 Paperclip is a tiny visual programming language that offers a hybrid approach for creating design systems and presentational components. You have the option to use the UI builder:
 
-![Split view](https://user-images.githubusercontent.com/757408/195644902-441364e0-cb44-41cf-90a3-348bb3a0eefb.png)
+<img width="1840" alt="Screenshot 2023-09-02 at 6 54 04 PM" src="https://github.com/paperclip-ui/paperclip/assets/757408/4a46b041-636f-4960-a663-177a044432f9">
 
 The UI builder writes Paperclip code which you may also write by hand. Here's what the code might look like:
 

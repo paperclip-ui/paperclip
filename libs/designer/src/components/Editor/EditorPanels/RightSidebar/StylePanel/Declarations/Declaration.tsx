@@ -3,9 +3,7 @@ import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { DeclarationValue } from "./DeclarationValue";
-import { NewDeclValue } from "./types";
 import { noop } from "lodash";
-import { getPropField } from "./cssSchema";
 import {
   ComputedStyle,
   serializeDeclaration,
@@ -15,7 +13,7 @@ import {
   getStyleableTargetId,
   getTargetExprId,
 } from "@paperclip-ui/designer/src/state";
-import { DeclName } from "@paperclip-ui/designer/src/styles/styles-panel.pc";
+import { DeclName } from "./DeclName";
 import classNames from "classnames";
 
 type FieldProps = {
@@ -38,7 +36,6 @@ export const Declaration = memo(
   }: FieldProps) => {
     const value = style && serializeDeclaration(style.value);
     const [name2, setName] = useState(name);
-    const { input: inputOptions } = getPropField(name2);
     const dispatch = useDispatch<DesignerEvent>();
     const targetId = useSelector(getStyleableTargetId);
     const ref = useRef(null);
@@ -77,14 +74,7 @@ export const Declaration = memo(
     const nameInput = isNew ? (
       <NameInput name={name2} onChange={setName} />
     ) : (
-      <DeclName
-        class={classNames({
-          inherited: isInherited,
-        })}
-        title={name}
-      >
-        {name}
-      </DeclName>
+      <DeclName name={name2} style={style} targetId={targetId} />
     );
 
     const input = (

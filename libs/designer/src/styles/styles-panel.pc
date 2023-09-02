@@ -12,6 +12,82 @@ import "./etc.pc" as etc
  * @bounds(x: 298, y: -131, width: 281, height: 62)
 */
 
+public component DeclInfoCard {
+    render div card {
+        style variant open {
+            pointer-events: initial
+            transform: translateX(-50%) translateY(4px)
+        }
+        style variant hovering {
+            left: 50%
+            min-width: 200px
+            width: 200px
+        }
+        style extends theme.fontDefault, theme.popup {
+            transform: translateX(-50%) translateY(4px)
+            position: absolute
+            border-radius: var(theme.roundedMD)
+            left: 50%
+            width: 200px
+            pointer-events: initial
+            transition: 0.2s
+        }
+        div header {
+            style {
+                padding: var(theme.space03)
+                font-weight: 600
+            }
+            text "This value comes from:"
+        }
+        div list {
+            slot children {
+                InheritedDeclInfo {
+                    override {
+                        variant hovering trigger {
+                            true
+                        }
+                        variant mixin trigger {
+                            true
+                        }
+                    }
+                }
+                InheritedDeclInfo {
+                    override {
+                        variant hovering
+                        variant mixin
+                        variant otherVariant trigger {
+                            true
+                        }
+                    }
+                }
+                InheritedDeclInfo {
+                    override {
+                        variant hovering
+                        variant mixin trigger {
+                            true
+                        }
+                    }
+                }
+            }
+        }
+        div arrow {
+            style {
+                background-color: var(theme.popupBackgroundColor)
+                width: 5px
+                height: 5px
+                position: absolute
+                left: 50%
+                top: -3px
+                transform: translateX(-50%) rotate(45deg)
+                pointer-events: none
+                border: 1px solid var(theme.borderColor)
+                border-right: none
+                border-bottom: none
+            }
+        }
+    }
+}
+
 public component InheritedDeclInfo {
     variant otherVariant trigger {
         ".variant"
@@ -23,7 +99,7 @@ public component InheritedDeclInfo {
         ".hovering"
         ":hover"
     }
-    render div inheritedDeclInfo {
+    render div inheritedDeclInfo(class: class) {
         style variant hovering {
             padding: var(theme.space03)
             background: var(theme.gray04)
@@ -55,13 +131,17 @@ public component InheritedDeclInfo {
                 }
                 style extends theme.icon
             }
-            text "mixin name"
+            slot name {
+                text "mixin name"
+            }
         }
         div value {
             style {
                 opacity: 0.5
             }
-            text unnamed "rgba(0 0, 0, 0.3)"
+            slot value {
+                text unnamed "rgba(0 0, 0, 0.3)"
+            }
         }
     }
 }
@@ -71,7 +151,10 @@ public component InheritedDeclInfo {
 */
 
 public component DeclInheritanceInfo {
-    render div container {
+    variant open trigger {
+        ".open"
+    }
+    render div container(class: class) {
         style {
             display: inline-block
             position: relative
@@ -81,71 +164,7 @@ public component DeclInheritanceInfo {
                 insert children {
                 }
             }
-        }
-        div card {
-            style variant hovering {
-                left: 50%
-                min-width: 200px
-                width: 200px
-            }
-            div header {
-                style {
-                    padding: var(theme.space03)
-                    font-weight: 600
-                }
-                text "This value comes from:"
-            }
-            div list {
-                InheritedDeclInfo {
-                    override {
-                        variant hovering trigger {
-                            true
-                        }
-                        variant mixin trigger {
-                            true
-                        }
-                    }
-                }
-                InheritedDeclInfo {
-                    override {
-                        variant hovering
-                        variant mixin
-                        variant otherVariant trigger {
-                            true
-                        }
-                    }
-                }
-                InheritedDeclInfo {
-                    override {
-                        variant hovering
-                        variant mixin trigger {
-                            true
-                        }
-                    }
-                }
-            }
-            div arrow {
-                style {
-                    background-color: var(theme.popupBackgroundColor)
-                    width: 5px
-                    height: 5px
-                    position: absolute
-                    left: 50%
-                    top: -3px
-                    transform: translateX(-50%) rotate(45deg)
-                    pointer-events: none
-                    border: 1px solid var(theme.borderColor)
-                    border-right: none
-                    border-bottom: none
-                }
-            }
-            style extends theme.fontDefault, theme.popup {
-                transform: translateX(-50%)
-                position: absolute
-                border-radius: var(theme.roundedMD)
-                left: 50%
-                width: 200px
-            }
+            DeclInfoCard
         }
     }
 }
@@ -161,7 +180,7 @@ public component DeclName {
     variant inherited trigger {
         ".inherited"
     }
-    render div(class: class, title: title) {
+    render div(class: class, title: title, onClick: onClick) {
         style variant overridden {
             position: relative
             border-radius: var(theme.roundedSM)
@@ -175,6 +194,7 @@ public component DeclName {
             background: rgba(121, 41, 119, 1)
         }
         style {
+            cursor: pointer
             font-family: var(theme.defaultFontFamily)
             color: var(theme.gray0)
             display: inline-block
@@ -524,6 +544,11 @@ public component Preview {
 
 div preview {
     DeclInheritanceInfo {
+        override {
+            variant open trigger {
+                true
+            }
+        }
         style {
             position: absolute
             left: 50%

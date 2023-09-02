@@ -38,7 +38,7 @@ export const DeclName = ({ name, style, inherited }: DeclNameProps) => {
       >
         {name}
       </styles.DeclName>
-      {open && (style.prevValues?.length || inherited) && (
+      {open && (!!style.prevValues?.length || inherited) && (
         <Portal>
           <styles.DeclInfoCard
             ref={targetRef}

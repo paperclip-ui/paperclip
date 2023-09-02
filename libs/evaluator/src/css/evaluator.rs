@@ -6,7 +6,7 @@ use paperclip_common::fs::FileResolver;
 use paperclip_common::get_or_short;
 use paperclip_proto::ast::all::{Expression, ImmutableExpressionRef};
 use paperclip_proto::ast::css::{self as css_ast};
-use paperclip_proto::ast::graph_ext as graph;
+use paperclip_proto::ast::graph_ext::{self as graph};
 use paperclip_proto::ast::graph_ext::{self as graph_ref, Expr};
 use paperclip_proto::ast::pc::override_body_item;
 use paperclip_proto::ast::pc::{self as ast};
@@ -124,15 +124,7 @@ fn evaluate_style_mixins<F: FileResolver>(
             style: styles.iter().fold(vec![], |mut acc, style| {
                 acc.extend(create_style_mixin_declarations(style, context));
                 acc
-            }), // style: atoms
-                //     .iter()
-                //     .map(|atom| virt::StyleDeclaration {
-                //         id: atom.id.to_string(),
-                //         source_id: atom.id.to_string(),
-                //         name: atom.get_var_name(),
-                //         value: evaluate_atom(atom, context),
-                //     })
-                //     .collect(),
+            }), 
         })
         .get_outer(),
     })
@@ -900,25 +892,59 @@ fn create_virt_style<F: FileResolver>(
         scope_selector = format!("{} ", scope_selector);
     }
 
+
+
+
+
     context
         .target_node
         .clone()
         .as_ref()
         .and_then(|node| {
-            Some(get_style_namespace(
+
+
+
+            Some((get_style_namespace(
                 node.get_name(),
                 node.get_id(),
                 context.current_component,
-            ))
+            ), get_element_instance_root_ns(node, context)))
         })
-        .and_then(|ns| {
+        .and_then(|(ns, component_ns)| {
+
+            let selector_text = if let Some(component_ns) = component_ns {
+                format!("{}.{}.{}", scope_selector, component_ns, ns)
+            }else {
+                format!("{}.{}", scope_selector, ns)
+            };
+
+
             Some(virt::StyleRule {
                 id: "rule".to_string(),
                 source_id: Some(style.id.to_string()),
-                selector_text: format!("{}.{}", scope_selector, ns),
+                selector_text,
                 style: create_style_declarations(style, context),
             })
         })
+}
+
+
+fn get_element_instance_root_ns<F:FileResolver>(node: &CurrentNode, context: &DocumentContext<F>) -> Option<String> {
+    if let CurrentNode::Element(element) = node {
+        if let Some(info) = context.graph.get_instance_component_ref(element, &context.path) {
+            if let Some(render_expr) = info.expr.get_render_expr() {
+                if let Some(node) = &render_expr.node {
+                    return Some(get_style_namespace(
+                        &node.get_name(),
+                        node.get_id(),
+                        Some(info.expr),
+                    ));
+                }
+            }
+        }
+    }
+
+    None
 }
 
 fn create_style_declarations<F: FileResolver>(

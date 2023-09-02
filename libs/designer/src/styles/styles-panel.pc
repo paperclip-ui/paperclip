@@ -9,7 +9,127 @@ import "./input.pc" as input
 import "./etc.pc" as etc
 
 /**
- * @bounds(x: 284, y: 3, width: 281, height: 44)
+ * @bounds(x: 298, y: -131, width: 281, height: 44)
+*/
+
+public component InheritedDeclInfo {
+    variant hovering trigger {
+        ".hovering"
+        ":hover"
+    }
+    render div inheritedDeclInfo {
+        style variant hovering {
+            padding: var(theme.space03)
+            background: var(theme.gray04)
+            display: flex
+            justify-content: space-between
+        }
+        style extends theme.fontDefault {
+            padding: var(theme.space03)
+            display: flex
+            text-overflow: ellipsis
+            white-space: nowrap
+            overflow: hidden
+            justify-content: space-between
+        }
+        div ownerName {
+            style {
+                display: flex
+                align-items: center
+                gap: var(theme.space02)
+            }
+            div {
+                style extends theme.icon {
+                    mask-image: url("./group.svg")
+                }
+            }
+            text "mixin name"
+        }
+        div value {
+            style {
+                opacity: 0.5
+            }
+            text unnamed "rgba(0 0, 0, 0.3)"
+        }
+    }
+}
+
+/**
+ * @bounds(x: 633, y: -467, width: 355, height: 254)
+*/
+
+public component DeclInheritanceInfo {
+    render div container {
+        style {
+            display: inline-block
+            position: relative
+        }
+        slot children {
+            DeclName {
+                insert children {
+                }
+            }
+        }
+        div card {
+            style variant hovering {
+                left: 50%
+                min-width: 200px
+                width: 200px
+            }
+            div header {
+                style {
+                    padding: var(theme.space03)
+                    font-weight: 600
+                }
+                text "This value comes from:"
+            }
+            div list {
+                InheritedDeclInfo {
+                    override {
+                        variant hovering trigger {
+                            true
+                        }
+                    }
+                }
+                InheritedDeclInfo {
+                    override {
+                        variant hovering
+                    }
+                }
+                InheritedDeclInfo {
+                    override {
+                        variant hovering
+                    }
+                }
+            }
+            div arrow {
+                style {
+                    background-color: var(theme.popupBackgroundColor)
+                    width: 5px
+                    height: 5px
+                    position: absolute
+                    left: 50%
+                    top: -3px
+                    transform: translateX(-50%) rotate(45deg)
+                    pointer-events: none
+                    border: 1px solid var(theme.borderColor)
+                    border-right: none
+                    border-bottom: none
+                }
+            }
+            style extends theme.fontDefault, theme.popup {
+                transform: translateX(-50%)
+                position: absolute
+                border-radius: var(theme.roundedMD)
+                left: 50%
+                width: 200px
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: 1184, y: -293, width: 1024, height: 768)
 */
 
 public component DeclName {
@@ -30,7 +150,7 @@ public component DeclName {
         }
         style variant inherited {
             color: var(theme.gray0)
-            background: rgba(182, 46, 178, 1)
+            background: rgba(121, 41, 119, 1)
         }
         style {
             font-family: var(theme.defaultFontFamily)
@@ -377,8 +497,11 @@ public component Preview {
 */
 
 div preview {
-    DeclName {
-        insert children {
+    DeclInheritanceInfo {
+        style {
+            position: absolute
+            left: 50%
+            transform: translateX(-50%)
         }
     }
 }

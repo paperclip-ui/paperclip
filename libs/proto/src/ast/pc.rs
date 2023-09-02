@@ -124,6 +124,18 @@ impl Element {
     }
 }
 
+impl Node {
+    pub fn get_name(&self) -> Option<String> {
+        match self.get_inner() {
+            node::Inner::Element(element) => element.name.clone(),
+            node::Inner::Text(text) => text.name.clone(),
+            node::Inner::Insert(insert) => Some(insert.name.clone()),
+            node::Inner::Slot(slot) => Some(slot.name.clone()),
+            node::Inner::Style(_) | node::Inner::Override(_) => None,
+        }
+    }
+}
+
 /**
  */
 

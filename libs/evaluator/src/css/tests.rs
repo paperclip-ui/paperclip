@@ -1518,3 +1518,41 @@ component RadioInput {
   ._test-test-80f4925f-34._variant-80f4925f-24 ._test-radio-80f4925f-33 ._RadioInput-dot-80f4925f-20 { left: 100%; }
   "#
 }
+
+
+
+
+add_case! {
+  instance_style_overrides_are_defined_only_on_instance,
+  [
+    ("/entry.pc", r#"
+
+
+    component A {
+      render div {
+        style {
+          color: orange
+        }
+        span {
+          style {
+            color: blue
+          }
+        }
+      }
+    }
+
+    A {
+      style {
+        color: purple
+      }
+    }
+    "#)
+  ],
+  r#"
+  ._A-80f4925f-8 { color: orange; } 
+  ._A-80f4925f-7 { color: blue; } 
+  ._A-80f4925f-8._80f4925f-14 { color: purple; }
+  "#
+}
+
+

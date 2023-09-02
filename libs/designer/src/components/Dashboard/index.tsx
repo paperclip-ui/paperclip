@@ -96,7 +96,7 @@ const useItem = ({ filePath }: ItemProps) => {
   }, [filePath]);
 
   const onClick = useCallback(() => {
-    history.redirect(routes.editor(filePath));
+    history.redirect(routes.editor({ filePath }));
   }, [history, filePath]);
 
   return { basename, dir, onClick };

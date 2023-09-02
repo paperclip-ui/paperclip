@@ -167,6 +167,10 @@ export const getCanvas = (editor: DesignerState) => editor.canvas;
 export const getCurrentFilePath = (state: DesignerState) => {
   return state.history?.query.file;
 };
+
+export const getSelectedDeclName = (state: DesignerState) => {
+  return state.history?.query.declName;
+};
 export const getSelectedFilePath = (state: DesignerState) => {
   return state.selectedFilePath;
 };

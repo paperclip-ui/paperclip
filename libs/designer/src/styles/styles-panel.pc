@@ -9,7 +9,7 @@ import "./input.pc" as input
 import "./etc.pc" as etc
 
 /**
- * @bounds(x: 298, y: -131, width: 281, height: 62)
+ * @bounds(x: 298, y: -131, width: 289, height: 162)
 */
 
 public component DeclInfoCard {
@@ -102,7 +102,7 @@ public component InheritedDeclInfo {
         ".hovering"
         ":hover"
     }
-    render div inheritedDeclInfo(class: class) {
+    render div inheritedDeclInfo(class: class, onClick: onClick, onMouseDown: onMouseDown) {
         style variant hovering {
             padding: var(theme.space03)
             background: var(theme.gray04)
@@ -118,12 +118,17 @@ public component InheritedDeclInfo {
             justify-content: space-between
             align-items: center
             cursor: pointer
+            gap: var(theme.space02)
         }
         div ownerName {
             style {
-                display: flex
+                display: inline-flex
                 gap: var(theme.space02)
                 align-items: center
+                overflow: hidden
+                text-overflow: ellipsis
+                white-space: nowrap
+                width: 100%
             }
             div icon {
                 style variant otherVariant {
@@ -133,18 +138,29 @@ public component InheritedDeclInfo {
                 style variant mixin {
                     mask-image: url("./group.svg")
                 }
-                style extends theme.icon
+                style extends theme.icon {
+                    flex-shrink: 0
+                }
             }
-            slot name {
-                text "mixin name"
+            div {
+                style {
+                    overflow: hidden
+                    display: inline
+                    text-overflow: ellipsis
+                }
+                slot name {
+                    text "a suppper long name that should split"
+                }
             }
         }
         div value {
             style {
                 opacity: 0.5
+                overflow: hidden
+                text-overflow: ellipsis
             }
             slot value {
-                text unnamed "rgba(0 0, 0, 0.3)"
+                text unnamed "var(theme.backgroundColorSomethingBig)"
             }
         }
     }

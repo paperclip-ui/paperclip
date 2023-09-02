@@ -133,7 +133,7 @@ const FilteredFile = ({ path, rootDir }: FilteredFileProps) => {
   const dirname = parts.join("/").replace(rootDir + "/", "");
   const history = useHistory();
   const onClick = () => {
-    history.redirect(routes.editor(path));
+    history.redirect(routes.editor({ filePath: path }));
   };
   return (
     <styles.FilteredFile

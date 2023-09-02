@@ -38,7 +38,10 @@ export const apiReducer = (
       });
     }
     case "designer-engine/designFileCreated": {
-      return redirect(state, routes.editor(event.payload.filePath));
+      return redirect(
+        state,
+        routes.editor({ filePath: event.payload.filePath })
+      );
     }
     case "designer-engine/directoryRead": {
       return produce(state, (newState) => {

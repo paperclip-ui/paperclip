@@ -10,6 +10,8 @@ import {
 } from "@paperclip-ui/proto-ext/lib/ast/serialize";
 import { NameInput } from "./NameInput";
 import {
+  getCurrentFilePath,
+  getSelectedDeclName,
   getStyleableTargetId,
   getTargetExprId,
 } from "@paperclip-ui/designer/src/state";
@@ -38,6 +40,7 @@ export const Declaration = memo(
     const [name2, setName] = useState(name);
     const dispatch = useDispatch<DesignerEvent>();
     const targetId = useSelector(getStyleableTargetId);
+    const activeDeclName = useSelector(getSelectedDeclName);
     const ref = useRef(null);
 
     useEffect(() => {
@@ -80,6 +83,7 @@ export const Declaration = memo(
     const input = (
       <DeclarationValue
         name={name2}
+        autoFocus={activeDeclName === name2}
         value={isInherited ? undefined : value}
         placeholder={isInherited ? value : undefined}
         onKeyDown={onValueKeyDown}

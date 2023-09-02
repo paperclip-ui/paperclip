@@ -15,7 +15,9 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
         // when focused initially, we want to select the entire value. Particularly
         // useful when tabbing between inputs
         draft.selectionLength = draft.value.length;
-        draft.showSuggestionMenu = true;
+
+        // don't want show if autofocused since this is jarring (via ?declName=activeDeclName)
+        draft.showSuggestionMenu = !draft.autoFocus;
         draft.active = true;
       });
     }
@@ -24,13 +26,14 @@ export const reducer = (state: State, event: DeclarationValueEvent) => {
         draft.showSuggestionMenu = false;
       });
     }
-    case "propsValueChanged": {
+    case "propsChanged": {
       return produce(state, (draft) => {
-        if (draft.value !== event.payload) {
+        if (draft.value !== event.payload.value) {
           draft.caretPosition = 0;
           draft.selectionLength = null;
           draft.showSuggestionMenu = false;
-          draft.value = event.payload;
+          draft.value = event.payload.value;
+          draft.autoFocus = event.payload.autoFocus;
         }
       });
     }

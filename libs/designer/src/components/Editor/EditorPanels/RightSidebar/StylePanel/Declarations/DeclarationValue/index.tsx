@@ -28,6 +28,7 @@ import { engine } from "./engine";
 export type DeclarationValueProps = {
   name?: string;
   value?: string;
+  autoFocus?: boolean;
   placeholder?: string;
   onChange?: (value: string) => void;
   onChangeComplete: (value: string, imports: Record<string, string>) => void;
@@ -37,6 +38,7 @@ export type DeclarationValueProps = {
 export const DeclarationValue = ({
   name,
   value = "",
+  autoFocus,
   onChange,
   onChangeComplete,
   placeholder,
@@ -47,6 +49,7 @@ export const DeclarationValue = ({
   return (
     <RawInput
       value={value}
+      autoFocus={autoFocus}
       placeholder={placeholder}
       getSuggestionItems={getDeclSuggestionItems(name, state)}
       onChange={onChange}
@@ -58,6 +61,7 @@ export const DeclarationValue = ({
 
 type RawInputProps = {
   placeholder?: string;
+  autoFocus?: boolean;
   getSuggestionItems: (token: SimpleExpression) => RawInputValueSuggestion[];
   value?: string;
   onChange: (value: string) => void;
@@ -66,7 +70,7 @@ type RawInputProps = {
 };
 
 const RawInput = (props: RawInputProps) => {
-  const { getSuggestionItems, placeholder } = props;
+  const { autoFocus, getSuggestionItems, placeholder } = props;
   const {
     ref,
     activeToken,
@@ -149,6 +153,7 @@ const RawInput = (props: RawInputProps) => {
     >
       <TextInput
         ref={ref}
+        autoFocus={autoFocus}
         value={value}
         onBlur={onBlur}
         onKeyUp={onKeyUp}
@@ -164,6 +169,7 @@ const RawInput = (props: RawInputProps) => {
 
 const useRawInput = ({
   value,
+  autoFocus,
   onChange,
   onChangeComplete,
   onKeyDown: onKeyDown2,
@@ -177,15 +183,15 @@ const useRawInput = ({
   const [state, dispatch] = useInlineMachine(
     reducer,
     engine(callbacks),
-    getInitialState(value)
+    getInitialState({ value, autoFocus })
   );
 
   useEffect(() => {
     dispatch({
-      type: "propsValueChanged",
-      payload: value,
+      type: "propsChanged",
+      payload: { autoFocus, value },
     });
-  }, [value]);
+  }, [value, autoFocus]);
   const activeToken = getTokenAtCaret(state);
 
   const ref = useRef<HTMLInputElement>(null);

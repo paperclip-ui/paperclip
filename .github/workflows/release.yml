@@ -82,7 +82,7 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$P12_PASSWORD" $KEYCHAIN_PATH
           ID=$(security find-identity -v)
           echo $ID
-          /usr/bin/codesign --force -s $ID ./target/release/paperclip-cli -v
+          /usr/bin/codesign --force -s "Apple Development: Craig Condon (Craig Condon)" ./target/release/paperclip-cli -v
       # - name: Compile
       #   id: compile
       #   uses: rust-build/rust-build.action@v1.3.2

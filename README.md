@@ -4,48 +4,15 @@
 
 > Join the [Discord channel](https://discord.gg/H6wEVtd) for the latest updates!
 
-Paperclip is a tiny visual programming language that offers a hybrid approach for creating design systems and presentational components. You have the option to use the UI builder:
-
 <img width="1840" alt="Screenshot 2023-09-02 at 6 54 04 PM" src="https://github.com/paperclip-ui/paperclip/assets/757408/4a46b041-636f-4960-a663-177a044432f9">
 
-The UI builder writes Paperclip code which you may also write by hand. Here's what the code might look like:
+Paperclip is a visual programming language that offers a hybrid approach for creating web apps. Build apps visually, or write them by hand. Pick whatever medium that suites you and your team!
 
-```javascript
+### Invite everyone on your team build UIs 👨🏻‍🎨
 
-/* This is a design system token */
-token defaultFontFamily "Inter"
+### Use Paperclip in your existing app
 
-/* This is a re-usable style */
-style typography {
-  font-family: var(defaultFontFamily)
-}
-
-/* A re-usable component that you can import directly into code */
-public component TodoItem {
-
-  /* variant styles of the component that can be triggered by
-  CSS selectors */
-  variant done trigger {
-    ".done"
-  }
-
-  render li(class: className) {
-    style extends typography
-    style variant done {
-      text-decoration: strike-through;
-    }
-
-    /* slots are areas where you can insert children into */
-    slot children {
-
-      /* This will be displayed if no slot is defined */
-      text "Todo Item"
-    }
-  }
-}
-```
-
-This can be compiled and imported directly into code like so:
+Paperclip is designed to work with your existing codebase. Just import Paperclip files like so:
 
 ```typescript
 import { TodoItem } from "./todo-item.pc";
@@ -56,7 +23,7 @@ import { TodoItem } from "./todo-item.pc";
 <TodoItem className="done" />
 ```
 
-Right now Paperclip supports **React**. Other compiler targets in the future may be supported such Svelte, Vue, Rust, PHP, Ruby, etc.
+Easy peasy!
 
 <!--
 
@@ -68,12 +35,6 @@ Paperclip is intended to make it easier and faster for anyone to contribute to U
 - Everything is saved in GIT
 - UI changes go through the same CI / CD pipeline
 - UI changes are easy to code review -->
-
-## Installation
-
-To get started with the designer, just create a new codespace and install the Paperclip extension. After that, you'll see a new toolbar icon that you can click in order to open the designer whenever you want.
-
-After the designer is open, you're free to edit any Paperclip file (`*.pc`) and save directly to the codebase (probably through a pull-request).
 
 ## Development setup
 

@@ -39,14 +39,18 @@ import { TodoItem } from "./todo-item.pc";
 
 Easy peasy!
 
-## Motivation
-
-The primary motivation behind Paperclip is to enable _anyone_ to create UIs in an easy-ish way that's also safe and scalable.
-
-#### Safety
-
-#### Scalability
-
 ## Getting Started
 
+If you're running Node, all you need to do is run:
+
+```
+yarn add paperclip && yarn paperclip start
+```
+
+You can also head over to [releases](https://github.com/paperclip-ui/paperclip/releases) and to download the standalone binary.
+
 ## Roadmap
+
+- Codespaces integration
+- Online designer
+- AI assistance

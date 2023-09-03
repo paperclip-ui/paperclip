@@ -79,9 +79,9 @@ jobs:
           # mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           # cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
 
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$P12_PASSWORD" build.keychain
-          ID=$(security find-identity -v)
-          /usr/bin/codesign --force -s $ID ./target/release/paperclip-cli -v
+          #security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$P12_PASSWORD" build.keychain
+          #ID=$(security find-identity -v)
+          #/usr/bin/codesign --force -s $ID ./target/release/paperclip-cli -v
       # - name: Compile
       #   id: compile
       #   uses: rust-build/rust-build.action@v1.3.2

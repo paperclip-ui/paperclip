@@ -1,13 +1,14 @@
 name: Release
 
-on:
-  release:
-    types: [created]
-
 # on:
-#   push:
-#     branches:
-#       - master
+#   release:
+#     types: [created]
+
+on:
+  push:
+    branches:
+      - master
+      - dev
 
 jobs:
   release:
@@ -15,10 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        target:
-          [
-            x86_64-pc-windows-gnu,
-            x86_64-unknown-linux-musl,
+        target: [
+            # x86_64-pc-windows-gnu,
+            # x86_64-unknown-linux-musl,
             x86_64-apple-darwin,
           ]
         package: [libs/cli]
@@ -49,9 +49,10 @@ jobs:
         run: yarn build
       - name: Compile
         id: compile
-        uses: rust-build/rust-build.action@v1.3.2
+        uses: rust-build/rust-build.action@v1.4.2
         env:
           PRE_BUILD: .github/workflows/pre.sh
+          POST_BUILD: .github/workflows/post.sh
           SRC_DIR: ${{ matrix.package }}
           RUSTTARGET: ${{ matrix.target }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

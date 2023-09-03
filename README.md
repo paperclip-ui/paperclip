@@ -4,6 +4,8 @@
 
 > Join the [Discord channel](https://discord.gg/H6wEVtd) for the latest updates!
 
+Paperclip is a visual programming language for design systems.
+
 Paperclip is a tiny visual programming language that offers a hybrid approach for creating design systems and presentational components. You have the option to use the UI builder:
 
 ![Split view](https://user-images.githubusercontent.com/757408/195644902-441364e0-cb44-41cf-90a3-348bb3a0eefb.png)

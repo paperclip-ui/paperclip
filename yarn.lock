@@ -2258,6 +2258,7 @@ __metadata:
     "@paperclip-ui/evaluator": ^20.0.4
     "@paperclip-ui/parser": ^20.0.4
     "@paperclip-ui/proto": ^20.0.4
+    "@paperclip-ui/proto-ext": ^20.0.4
     "@paperclip-ui/web-renderer": ^20.0.4
     "@paperclip-ui/workspace": ^20.0.4
     "@types/color": ^3.0.3
@@ -2316,7 +2317,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@paperclip-ui/proto-ext@workspace:libs/proto_ext":
+"@paperclip-ui/proto-ext@^20.0.4, @paperclip-ui/proto-ext@workspace:libs/proto_ext":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/proto-ext@workspace:libs/proto_ext"
   dependencies:

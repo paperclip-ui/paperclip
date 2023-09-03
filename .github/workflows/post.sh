@@ -12,6 +12,9 @@ CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
 PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
 KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
 
+echo $P12_PASSWORD;
+echo $BUILD_CERTIFICATE_BASE64;
+
 # import certificate and provisioning profile from secrets
 echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
 

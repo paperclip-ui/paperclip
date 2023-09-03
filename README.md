@@ -20,6 +20,10 @@ Paperclip aims to lower the barrier for building UIs and create an inviting user
 
 Paperclip takes inspiration from existing tooling like Figma and Webflow to help create a user experience that people will feel comfortable with.
 
+<!-- ### Just covers the UI
+
+Paperclip is just a replacement for HTML and CSS, and nothing more.  -->
+
 <!-- ### Simplified and safe data model
 
 HTML and CSS can feel complex and daunting to some people, and there are also many gotchas around web development that people. Paperclip -->

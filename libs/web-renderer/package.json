@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/web-renderer",
-  "version": "20.0.1",
+  "version": "20.0.2",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -13,8 +13,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@paperclip-ui/common": "^20.0.1",
-    "@paperclip-ui/proto": "^20.0.1",
+    "@paperclip-ui/common": "^20.0.2",
+    "@paperclip-ui/proto": "^20.0.2",
     "html-entities": "^1.2.1"
   },
   "gitHead": "e21804d0f4839ad1506435a86ad5e1ff2d53ee9f"

@@ -16,17 +16,9 @@ yarn install paperclip && yarn paperclip designer
 
 No more needing to ask developers to make HTML and CSS changes, Paperclip enables anyone to make changes themselves using the UI builder. Marketers, designers, copywriters, whoever. Invite everyone to build UIs, and ship things faster than ever!
 
-<!--
-
-### Copy and paste directly from Figma
-### AI assistant
-### Import your existing codebase
-
--->
-
 ### Use Paperclip in your existing app
 
-Paperclip is designed to work with your existing codebase. Just import Paperclip files like so:
+Paperclip is designed to work with your existing codebase. Just use one of the built-in compilers to convert `*.pc` files in your framework or language of choice, and import them like normal code. Here's an example:
 
 ```typescript
 import { TodoItem } from "./todo-item.pc";
@@ -39,15 +31,80 @@ import { TodoItem } from "./todo-item.pc";
 
 Easy peasy!
 
-## Getting Started
+### Simple file format
 
-If you're running Node, all you need to do is run:
+Paperclip is a very simple language that only covers basic functionality for primitive or "dumb" components. Here's an example of what a Paperclip file looks like:
 
+```javascript
+
+// Re-usable design tokens that you can use throughout the app
+public token fontSize01 14px
+public token fontColor #333
+
+// Re-usable composite tokens or "mixins" that you can re-use
+public style defaultFont {
+  font-family: sans-serif
+  font-size: var(fontSize01)
+  color: var(fontColor)
+}
+
+public component TodoItem {
+
+  // Variations of the component that can triggered
+  // by CSS selectors and media queries
+  variant checked trigger {
+    ".checked"
+  }
+
+  render li(class: className, onClick: onClick, checked: checked) {
+
+    // Styles are declared directly on the element that's being styled
+    style extends defaultFont {
+      display: flex
+      align-items: center
+    }
+
+    style variant checked {
+      text-decoration: linethrough
+    }
+
+    // You can define callbacks
+    input(type: "checkbox", checked: checked)
+
+    span label {
+
+      // Areas of the component that
+      slot label {
+
+        // Default child for preview purposes
+        text "Buy groceries"
+      }
+    }
+  }
+}
 ```
-yarn add paperclip && yarn paperclip designer
-```
 
-You can also head over to [releases](https://github.com/paperclip-ui/paperclip/releases) and to download the standalone binary.
+<!--
+
+### Copy and paste directly from Figma
+### AI assistant
+### Import your existing codebase
+
+-->
+
+<!--Here's what the language looks like:
+
+This can be imported directly into code like so:
+
+
+```typescript
+import { TodoItem } from "./todo-item.pc";
+
+<TodoItem />
+
+// show "done" variation
+<TodoItem className="done" />
+```-->
 
 ## Roadmap
 

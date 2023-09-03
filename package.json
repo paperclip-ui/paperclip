@@ -40,7 +40,7 @@
     "concurrently": "^7.5.0",
     "eslint": "^5.13.0",
     "husky": "^7.0.0",
-    "lerna": "^5.5.2",
+    "lerna": "^7.2.0",
     "lint-staged": "^7.2.0",
     "prettier": "2.6.2",
     "pretty-quick": "^3.1.3",

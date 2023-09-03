@@ -24,6 +24,10 @@ jobs:
         package: [libs/cli]
     steps:
       - uses: actions/checkout@master
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
       - uses: arduino/setup-protoc@v1
         with:
           version: "3.x"
@@ -38,7 +42,6 @@ jobs:
         with:
           toolchain: nightly
           override: true
-      - run: cargo build
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
@@ -47,18 +50,19 @@ jobs:
         run: yarn install
       - name: Build Packages
         run: yarn build
-      - name: Compile
-        id: compile
-        uses: rust-build/rust-build.action@v1.3.2
-        env:
-          PRE_BUILD: .github/workflows/pre.sh
-          POST_BUILD: .github/workflows/post.sh
-          SRC_DIR: ${{ matrix.package }}
-          RUSTTARGET: ${{ matrix.target }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TOOLCHAIN_VERSION: nightly
-          ARCHIVE_TYPES: tar.gz
-          # UPLOAD_MODE: none
+      - run: ./post.sh
+      # - name: Compile
+      #   id: compile
+      #   uses: rust-build/rust-build.action@v1.3.2
+      #   env:
+      #     PRE_BUILD: .github/workflows/pre.sh
+      #     POST_BUILD: .github/workflows/post.sh
+      #     SRC_DIR: ${{ matrix.package }}
+      #     RUSTTARGET: ${{ matrix.target }}
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     TOOLCHAIN_VERSION: nightly
+      #     ARCHIVE_TYPES: tar.gz
+      # UPLOAD_MODE: none
       # - name: Upload artifact
       #   uses: actions/upload-artifact@v3
       #   with:

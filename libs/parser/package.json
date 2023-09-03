@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@paperclip-ui/proto": "workspace:^"
-  }
+    "@paperclip-ui/proto": "^20.0.2"
+  },
+  "gitHead": "541b3f803430b1fa9dce863b1702e7bf5b7fee2c"
 }

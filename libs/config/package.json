@@ -8,5 +8,6 @@
   },
   "author": "",
   "license": "ISC",
-  "types": "./index.d.ts"
+  "types": "./index.d.ts",
+  "gitHead": "541b3f803430b1fa9dce863b1702e7bf5b7fee2c"
 }

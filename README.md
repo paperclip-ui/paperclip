@@ -18,7 +18,7 @@ No more needing to ask developers to make HTML and CSS changes, Paperclip enable
 
 ### Use Paperclip in your existing app
 
-Paperclip is designed to work with your existing codebase. Just use one of the built-in compilers to convert `*.pc` files in your framework or language of choice, and import them like normal code. Here's an example:
+Paperclip is complimentary to your existing codebase. Just use one of the built-in compilers to convert `*.pc` files in your framework or language of choice, and import them like normal code. Here's an example:
 
 ```typescript
 import { TodoItem } from "./todo-item.pc";
@@ -31,7 +31,7 @@ import { TodoItem } from "./todo-item.pc";
 
 Easy peasy!
 
-### Simple file format
+### Simple file format ✨
 
 Paperclip is a very simple language that only covers basic functionality for primitive or "dumb" components. Here's an example of what a Paperclip file looks like:
 

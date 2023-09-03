@@ -42,7 +42,7 @@ jobs:
         with:
           toolchain: nightly
           override: true
-      - name: Set up Node
+      - name: Set up Nodeme
         uses: actions/setup-node@v3
         with:
           node-version: "20.x"
@@ -50,7 +50,7 @@ jobs:
         run: yarn install
       - name: Build Packages
         run: yarn build
-      - run: ./post.sh
+      - run: .github/workflows/post.sh
       # - name: Compile
       #   id: compile
       #   uses: rust-build/rust-build.action@v1.3.2

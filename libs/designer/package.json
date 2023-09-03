@@ -22,6 +22,7 @@
     "@improbable-eng/grpc-web-node-http-transport": "^0.15.0",
     "@paperclip-ui/evaluator": "^20.0.3",
     "@paperclip-ui/parser": "^20.0.3",
+    "@paperclip-ui/workspace": "^20.0.3",
     "@types/jest": "^29.2.3",
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",

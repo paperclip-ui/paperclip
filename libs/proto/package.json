@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/proto",
-  "version": "20.0.0",
+  "version": "20.0.5",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -23,11 +23,11 @@
     "protoc-gen-ts": "^0.8.5",
     "ts-proto": "^1.131.2"
   },
-  "gitHead": "e21804d0f4839ad1506435a86ad5e1ff2d53ee9f",
+  "gitHead": "541b3f803430b1fa9dce863b1702e7bf5b7fee2c",
   "dependencies": {
     "@grpc/grpc-js": "^1.7.3",
     "@improbable-eng/grpc-web": "^0.15.0",
-    "@paperclip-ui/common": "^20.0.0",
+    "@paperclip-ui/common": "^20.0.5",
     "@types/node": "^18.11.9",
     "browser-headers": "^0.4.1",
     "rxjs": "^7.5.7",

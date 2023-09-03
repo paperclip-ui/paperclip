@@ -4,49 +4,29 @@
 
 > Join the [Discord channel](https://discord.gg/H6wEVtd) for the latest updates!
 
-
-Paperclip is a tiny visual programming language that offers a hybrid approach for creating design systems and presentational components. You have the option to use the UI builder:
+```sh
+yarn install paperclip && yarn paperclip designer
+```
 
 <img width="1840" alt="Screenshot 2023-09-02 at 6 54 04 PM" src="https://github.com/paperclip-ui/paperclip/assets/757408/4a46b041-636f-4960-a663-177a044432f9">
 
-The UI builder writes Paperclip code which you may also write by hand. Here's what the code might look like:
+**Paperclip is a visual programming language that offers a hybrid approach for creating web apps.** It comes with a UI builder that you can use to visually create UIs, and a readable file format that you can easily edit by hand.
 
-```javascript
+### Invite everyone on your team build UIs 👨🏻‍🎨
 
-/* This is a design system token */
-token defaultFontFamily "Inter"
+No more needing to ask developers to make HTML and CSS changes, Paperclip enables anyone to make changes themselves using the UI builder. Marketers, designers, copywriters, whoever. Invite everyone to build UIs, and ship things faster than ever!
 
-/* This is a re-usable style */
-style typography {
-  font-family: var(defaultFontFamily)
-}
+<!--
 
-/* A re-usable component that you can import directly into code */
-public component TodoItem {
+### Copy and paste directly from Figma
+### AI assistant
+### Import your existing codebase
 
-  /* variant styles of the component that can be triggered by
-  CSS selectors */
-  variant done trigger {
-    ".done"
-  }
+-->
 
-  render li(class: className) {
-    style extends typography
-    style variant done {
-      text-decoration: strike-through;
-    }
+### Use Paperclip in your existing app
 
-    /* slots are areas where you can insert children into */
-    slot children {
-
-      /* This will be displayed if no slot is defined */
-      text "Todo Item"
-    }
-  }
-}
-```
-
-This can be compiled and imported directly into code like so:
+Paperclip is designed to work with your existing codebase. Just import Paperclip files like so:
 
 ```typescript
 import { TodoItem } from "./todo-item.pc";
@@ -57,63 +37,20 @@ import { TodoItem } from "./todo-item.pc";
 <TodoItem className="done" />
 ```
 
-Right now Paperclip supports **React**. Other compiler targets in the future may be supported such Svelte, Vue, Rust, PHP, Ruby, etc.
+Easy peasy!
 
-<!--
+## Getting Started
 
-## Why the hybrid approach?
-## Why use Paperclip?
+If you're running Node, all you need to do is run:
 
-Paperclip is intended to make it easier and faster for anyone to contribute to UI development, and in the same codebase. Why is this special?
-
-- Everything is saved in GIT
-- UI changes go through the same CI / CD pipeline
-- UI changes are easy to code review -->
-
-## Installation
-
-To get started with the designer, just create a new codespace and install the Paperclip extension. After that, you'll see a new toolbar icon that you can click in order to open the designer whenever you want.
-
-After the designer is open, you're free to edit any Paperclip file (`*.pc`) and save directly to the codebase (probably through a pull-request).
-
-## Development setup
-
-The develeopment tooling enables you to compile design files into application code (currently supporting vanilla React, HTML, and vanilla CSS). To get started, run the following command:
-
-```sh
-# TODO SH installation command
-npx @paperclip-ui/cli init
+```
+yarn add paperclip && yarn paperclip designer
 ```
 
-This will run through the installation process for your project. After that, you can start using Paperclip locally with your existing codebase.
-
-## CLI Usage
-
-You can use the CLI tool to compile and edit design files locally. Here are some example commands:
-
-```sh
-# Build all paperclip files
-paperclip build
-
-# Open the paperclip designer in a browser for visual development
-paperclip designer
-```
-
-## Contributing
-
-Right now, the _main_ focus for the app is around the designer UI and UX. If you're a designer and would like to help out with that, awesome! The main thing that would be super helpful is to come up with suggestions and / or design around how to improve the designer to better suite your workflow.
-
-You're welcome to use the designer, Figma, or any tool to submit suggestions. If they're accepted, we'll wire up your designs and include the new functionality in the designer.
+You can also head over to [releases](https://github.com/paperclip-ui/paperclip/releases) and to download the standalone binary.
 
 ## Roadmap
 
-There are a number of things on the horizon for Paperclip, not in order:
-
-- Visual regression coverage of all UI
-- Import directly from Figma
-- More compiler targets
-  - Various frameworks: Svelte, Vue
-  - Various design systems: MaterialUI, Radix, Chakra, etc.
-  - More language: PHP, Java, Ruby, etc.
-- Ability to build and deploy apps built in Paperclip
-- More platform targets like iOS, Android (this is a big maybe)
+- Codespaces integration
+- Online designer
+- AI assistance

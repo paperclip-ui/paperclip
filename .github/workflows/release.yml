@@ -13,14 +13,13 @@ on:
 jobs:
   release:
     name: Release CLI
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     strategy:
       matrix:
         target: [
             # x86_64-pc-windows-gnu,
             # x86_64-unknown-linux-musl,
-            # x86_64-apple-darwin,
-            macos-latest,
+            x86_64-apple-darwin,
           ]
         package: [libs/cli]
     steps:

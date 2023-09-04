@@ -49,7 +49,7 @@ jobs:
       - run: yarn install
       - name: Build Packages
         run: yarn build
-      - run: cargo build --release
+      - run: cargo build --release --locked
       - name: Sign bin
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.MACOS_CERTIFICATE }}
@@ -85,9 +85,13 @@ jobs:
           ls
           pwd
           /usr/bin/codesign --force -s "Apple Development: Craig Condon (ALX94TWLQX)" ./target/release/paperclip_cli -v
+      # https://github.com/actions/upload-release-asset
+      # https://github.com/marketplace/actions/upload-files-to-a-github-release
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: x86_64-apple-darwin
-          path: ./target/release/paperclip_cli
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/release/paperclip_cli
+          asset_name: ${{ matrix.asset_name }}
+          tag: ${{ github.ref }}

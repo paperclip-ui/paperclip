@@ -46,10 +46,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "20.x"
-      - name: Install Dependencies
-        run: yarn install
+      - run: yarn install
       - name: Build Packages
         run: yarn build
+      - run: cargo build --release
       - name: Sign bin
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.MACOS_CERTIFICATE }}
@@ -82,6 +82,8 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$P12_PASSWORD" $KEYCHAIN_PATH
           ID=$(security find-identity -v)
           echo $ID
+          ls
+          pwd
           /usr/bin/codesign --force -s "Apple Development: Craig Condon (ALX94TWLQX)" ./target/release/paperclip-cli -v
       # - name: Compile
       #   id: compile

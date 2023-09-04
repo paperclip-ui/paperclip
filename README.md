@@ -12,7 +12,20 @@ yarn install paperclip && yarn paperclip designer
 
 **Paperclip is a visual programming language that offers a hybrid approach for creating web apps.** It comes with a UI builder that you can use to visually create UIs, and a readable file format that you can easily edit by hand.
 
-Paperclip aims to lower the barrier for building UIs and create an inviting user experience for everyone that wants to contribute to building web applications.
+Paperclip aims to lower the barrier for building UIs and create an inviting user experience for everyone that wants to contribute to building web applications. It was initially designed for product teams in the hopes of bridging the gap between development teams and all other key stakeholders (designers, marketers, copywriters). With Paperclip, the hope is that other team members feel empowered to build UIs, giving engineers more freedom to focus on some of the harder parts of the application such as business logic.
+
+**Paperclip is _not_ a replacement for hand-written code**. It's my belief that code is _not_ a problem, but incidental complexity around _tooling_ is. Paperclip is an attempt to reduce some of the incidental complexity that, specifically HTML and CSS.
+
+### What makes Paperclip pretty neat? 🤩
+
+Paperclip is a _bit_ different than other no-code platforms such as Webflow. Here are some bits that I thinks stand out:
+
+- Design files can be stored anywhere you want, including GIT
+  - Everyone can work out of the same source of truth! And you'll probably want this since I'm assuming that you also have a whole CI / CD process with this.
+- Paperclip can be compiled to different frameworks and languages, and is designed to work with your existing codebase and libraries.
+  - For example, you can use any CSS framework you want within the Paperclip designer such as Tailwind, Bootstrap, or jQuery if you really want. And even Mootools.
+- **No dependencies!** Just download the `paperclip_cli` bin and start'er up. Batteries are all included.
+  - A note: The NPM dependency is really just a thin wrapper around this
 
 <!-- ### Just covers the UI
 
@@ -47,80 +60,39 @@ import { TodoItem } from "./todo-item.pc";
 <TodoItem className="done" />
 ```
 
-### Simple file format ✨
+### Not your typical HTML and CSS
 
-Paperclip is a very simple language that only covers basic functionality for primitive or "dumb" components. Here's an example of what a Paperclip file looks like:
+Paperclip hopes to remove some of the gotchas around HTML and CSS (e.g: selectors) by introducing _different_ syntax for styling elements, and reflects an ideal designer experience.
+
+Here's an example of what "design file" looks like:
 
 ```javascript
+public component Card {
 
-// Re-usable design tokens that you can use throughout the app
-public token fontSize01 14px
-public token fontColor #333
-
-// Re-usable composite tokens or "mixins" that you can re-use
-public style defaultFont {
-  font-family: sans-serif
-  font-size: var(fontSize01)
-  color: var(fontColor)
-}
-
-public component TodoItem {
-
-  // Variations of the component that can triggered
-  // by CSS selectors and media queries
-  variant checked trigger {
-    ".checked"
+  // Variant fo the component that can be _triggered_
+  // by a CSS selector or media query
+  variant dark trigger {
+    ".dark"
   }
+  render div (class: class) {
 
-  render li(class: className, onClick: onClick, checked: checked) {
-
-    // Styles are declared directly on the element that's being styled
-    style extends defaultFont {
-      display: flex
-      align-items: center
+    // styles are added directly on the element being styled
+    style {
+      font-family: sans-serif
+      color: black
     }
 
-    style variant checked {
-      text-decoration: linethrough
-    }
-
-    // You can define callbacks
-    input(type: "checkbox", checked: checked)
-
-    span label {
-
-      // Areas of the component that
-      slot label {
-
-        // Default child for preview purposes
-        text "Buy groceries"
-      }
+    // You may attach variants to any element within
+    // this component
+    style variant dark {
+      background: black
+      color: white
     }
   }
 }
 ```
 
-<!--
-
-### Copy and paste directly from Figma
-### AI assistant
-### Import your existing codebase
-
--->
-
-<!--Here's what the language looks like:
-
-This can be imported directly into code like so:
-
-
-```typescript
-import { TodoItem } from "./todo-item.pc";
-
-<TodoItem />
-
-// show "done" variation
-<TodoItem className="done" />
-```-->
+This is reflected in the design tooling which has a similar feel to Figma.
 
 ## Roadmap
 

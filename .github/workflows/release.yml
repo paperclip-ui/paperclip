@@ -52,12 +52,12 @@ jobs:
       - run: cargo build --release --locked
       - name: Sign bin
         uses: lando/code-sign-action@v2
+        if: matrix.target == 'x86_64-apple-darwin'
         with:
-          if: matrix.target == 'x86_64-apple-darwin'
           file: ./target/release/paperclip_cli
           certificate-data: ${{ secrets.MACOS_CERTIFICATE }}
           certificate-password: ${{ secrets.MACOS_CERTIFICATE_PWD }}
-          apple-team-id: "C94Z352LDR"
+          # apple-team-id: "C94Z352LDR"
         # env:
         #   BUILD_CERTIFICATE_BASE64: ${{ secrets.MACOS_CERTIFICATE }}
         #   P12_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PWD }}

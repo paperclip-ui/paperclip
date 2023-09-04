@@ -103,3 +103,6 @@ This is reflected in the design tooling which has a similar feel to Figma.
 - Codespaces integration
 - Online designer
 - AI assistance
+- Figma integration
+  - ability to copy + paste designs to Paperclip
+  - ability to keep designs in sync

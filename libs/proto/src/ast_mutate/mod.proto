@@ -1,7 +1,4 @@
 syntax = "proto3";
-import "ast/base.proto";
-import "ast/css.proto";
-import "ast/docco.proto";
 import "ast/pc.proto";
 
 package ast_mutate;

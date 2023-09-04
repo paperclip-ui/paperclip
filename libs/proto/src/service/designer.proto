@@ -1,9 +1,6 @@
 syntax = "proto3";
-import "ast/pc.proto";
 import "ast_mutate/mod.proto";
 import "ast/graph.proto";
-import "virt/html.proto";
-import "virt/css.proto";
 import "ast/base.proto";
 import "language_service/pc.proto";
 import "virt/module.proto";

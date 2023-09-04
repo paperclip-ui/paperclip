@@ -12,9 +12,27 @@ yarn install paperclip && yarn paperclip designer
 
 **Paperclip is a visual programming language that offers a hybrid approach for creating web apps.** It comes with a UI builder that you can use to visually create UIs, and a readable file format that you can easily edit by hand.
 
-### Invite everyone on your team build UIs 👨🏻‍🎨
+Paperclip aims to lower the barrier for building UIs and create an inviting user experience for everyone that wants to contribute to building web applications.
+
+<!-- ### Just covers the UI
+
+Paperclip is just a replacement for HTML and CSS, and nothing more.  -->
+
+<!-- ### Simplified and safe data model
+
+HTML and CSS can feel complex and daunting to some people, and there are also many gotchas around web development that people. Paperclip -->
+
+<!-- ### Can handle the most complex web apps
+
+Paperclip is designed to take on any problem that you throw at it -->
+
+<!-- ### Invite everyone on your team build UIs 👨🏻‍🎨
 
 No more needing to ask developers to make HTML and CSS changes, Paperclip enables anyone to make changes themselves using the UI builder. Marketers, designers, copywriters, whoever. Invite everyone to build UIs, and ship things faster than ever!
+
+- spot edit visual bugs
+
+-->
 
 ### Use Paperclip in your existing app
 
@@ -28,8 +46,6 @@ import { TodoItem } from "./todo-item.pc";
 // show "done" variation
 <TodoItem className="done" />
 ```
-
-Easy peasy!
 
 ### Simple file format ✨
 

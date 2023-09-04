@@ -51,40 +51,46 @@ jobs:
         run: yarn build
       - run: cargo build --release --locked
       - name: Sign bin
-        if: matrix.target == 'x86_64-apple-darwin'
-        env:
-          BUILD_CERTIFICATE_BASE64: ${{ secrets.MACOS_CERTIFICATE }}
-          P12_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
-          KEYCHAIN_PASSWORD: "KEYCHAIN_PASSWORD"
-        run: |
-          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
-          PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
-          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+        uses: lando/code-sign-action@v2
+        with:
+          if: matrix.target == 'x86_64-apple-darwin'
+          file: ./target/release/paperclip_cli
+          certificate-data: ${{ secrets.MACOS_CERTIFICATE }}
+          certificate-password: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+          apple-team-id: "C94Z352LDR"
+        # env:
+        #   BUILD_CERTIFICATE_BASE64: ${{ secrets.MACOS_CERTIFICATE }}
+        #   P12_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+        #   KEYCHAIN_PASSWORD: "KEYCHAIN_PASSWORD"
+        # run: |
+        #   CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+        #   PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+        #   KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
 
-           echo $P12_PASSWORD;
-           echo $BUILD_CERTIFICATE_BASE64;
+        #    echo $P12_PASSWORD;
+        #    echo $BUILD_CERTIFICATE_BASE64;
 
-          # import certificate and provisioning profile from secrets
-          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+        #   # import certificate and provisioning profile from secrets
+        #   echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
 
-          # create temporary keychain
-          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+        #   # create temporary keychain
+        #   security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+        #   security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+        #   security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
 
-          # import certificate to keychain
-          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-          security list-keychain -d user -s $KEYCHAIN_PATH
+        #   # import certificate to keychain
+        #   security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+        #   security list-keychain -d user -s $KEYCHAIN_PATH
 
-          # apply provisioning profile
-          # mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          # cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+        #   # apply provisioning profile
+        #   # mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+        #   # cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
 
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$P12_PASSWORD" $KEYCHAIN_PATH
-          ID=$(security find-identity -v)
-          echo $ID
+        #   security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$P12_PASSWORD" $KEYCHAIN_PATH
+        #   ID=$(security find-identity -v)
+        #   echo $ID
 
-          /usr/bin/codesign --force -s "Developer ID Application: Craig Condon (C94Z352LDR)" ./target/release/paperclip_cli -v
+        #   /usr/bin/codesign --force -s "Developer ID Application: Craig Condon (C94Z352LDR)" ./target/release/paperclip_cli -v
       # https://github.com/actions/upload-release-asset
       # https://github.com/marketplace/actions/upload-files-to-a-github-release
 

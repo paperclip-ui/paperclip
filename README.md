@@ -14,9 +14,9 @@ yarn install paperclip && yarn paperclip designer
 
 Paperclip aims to lower the barrier for building UIs and create an inviting user experience for everyone that wants to contribute to building web applications.
 
-### Familiar tooling
+### Just covers the UI
 
-Paperclip takes inspiration from existing tooling like Figma and Webflow to help create a user experience that people will feel comfortable with.
+Paperclip just the _visuals_ of your app - HTML and CSS, not logic.
 
 <!-- ### Just covers the UI
 

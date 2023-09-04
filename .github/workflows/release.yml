@@ -85,22 +85,9 @@ jobs:
           ls
           pwd
           /usr/bin/codesign --force -s "Apple Development: Craig Condon (ALX94TWLQX)" ./target/release/paperclip_cli -v
-      # - name: Compile
-      #   id: compile
-      #   uses: rust-build/rust-build.action@v1.3.2
-      #   env:
-      #     PRE_BUILD: .github/workflows/pre.sh
-      #     POST_BUILD: .github/workflows/post.sh
-      #     SRC_DIR: ${{ matrix.package }}
-      #     RUSTTARGET: ${{ matrix.target }}
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     TOOLCHAIN_VERSION: nightly
-      #     ARCHIVE_TYPES: tar.gz
-      # UPLOAD_MODE: none
-      # - name: Upload artifact
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: Binary
-      #     path: |
-      #       ${{ steps.compile.outputs.BUILT_ARCHIVE }}
-      #       ${{ steps.compile.outputs.BUILT_CHECKSUM }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: x86_64-apple-darwin
+          path: ./target/release/paperclip_cli

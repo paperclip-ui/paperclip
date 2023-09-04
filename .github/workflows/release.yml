@@ -16,9 +16,10 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        target: [
-            # x86_64-pc-windows-gnu,
-            # x86_64-unknown-linux-musl,
+        target:
+          [
+            x86_64-pc-windows-gnu,
+            x86_64-unknown-linux-musl,
             x86_64-apple-darwin,
           ]
         package: [libs/cli]
@@ -51,6 +52,7 @@ jobs:
         run: yarn build
       - run: cargo build --release --locked
       - name: Sign bin
+        if: matrix.os == 'x86_64-apple-darwin'
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.MACOS_CERTIFICATE }}
           P12_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
@@ -82,17 +84,17 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$P12_PASSWORD" $KEYCHAIN_PATH
           ID=$(security find-identity -v)
 
-          /usr/bin/codesign --force -s "Apple Development: Craig Condon (ALX94TWLQX)" ./target/release/paperclip_cli -v
+          /usr/bin/codesign --force -s "Apple Development: Craig Condon (C94Z352LDR)" ./target/release/paperclip_cli -v
       # https://github.com/actions/upload-release-asset
       # https://github.com/marketplace/actions/upload-files-to-a-github-release
 
       - name: Compress file
-        run: cd target/release && tar -czvf paperclip_cli.tar.gz paperclip_cli
+        run: cd target/release && tar -czvf ${{ matrix.os }}-paperclip_cli.tar.gz paperclip_cli
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/release/paperclip_cli.tar.gz
+          file: target/release/${{ matrix.os }}-paperclip_cli.tar.gz
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref }}

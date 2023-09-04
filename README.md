@@ -97,6 +97,9 @@ This is reflected in the design tooling which has a similar feel to Figma.
 
 ## Roadmap
 
+- More design tooling
+  - canvas tooling
+  - potentially custom components
 - Codespaces integration
 - Online designer
 - AI assistance

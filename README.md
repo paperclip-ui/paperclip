@@ -14,7 +14,7 @@ yarn install paperclip && yarn paperclip designer
 
 Paperclip aims to lower the barrier for building UIs and create an inviting user experience for everyone that wants to contribute to building web applications. It was initially designed for product teams in the hopes of bridging the gap between development teams and all other key stakeholders (designers, marketers, copywriters). With Paperclip, the hope is that other team members feel empowered to build UIs, giving engineers more freedom to focus on some of the harder parts of the application such as business logic.
 
-**Paperclip is _not_ a replacement for hand-written code**. It's my belief that code is _not_ a problem, but incidental complexity around _tooling_ is. Paperclip is an attempt to reduce some of the incidental complexity that, specifically HTML and CSS.
+**Paperclip is _not_ a replacement for hand-written code**. It's my belief that code is _not_ a problem, but incidental complexity around _tooling_ is. Paperclip is an attempt to reduce some of the incidental complexity, specifically around visual development (basically just HTML and CSS).
 
 ### What makes Paperclip pretty neat? 🤩
 
@@ -97,6 +97,9 @@ This is reflected in the design tooling which has a similar feel to Figma.
 
 ## Roadmap
 
+- More design tooling
+  - canvas tooling
+  - potentially custom components
 - Codespaces integration
 - Online designer
 - AI assistance

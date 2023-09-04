@@ -1,14 +1,14 @@
 name: Release
 
-# on:
-#   release:
-#     types: [created]
-
 on:
-  push:
-    branches:
-      - master
-      - dev
+  release:
+    types: [created]
+
+# on:
+#   push:
+#     branches:
+#       - master
+#       - dev
 
 jobs:
   release:

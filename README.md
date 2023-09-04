@@ -14,10 +14,6 @@ yarn install paperclip && yarn paperclip designer
 
 Paperclip aims to lower the barrier for building UIs and create an inviting user experience for everyone that wants to contribute to building web applications.
 
-### Just covers the UI
-
-Paperclip just the _visuals_ of your app - HTML and CSS, not logic.
-
 <!-- ### Just covers the UI
 
 Paperclip is just a replacement for HTML and CSS, and nothing more.  -->
@@ -50,8 +46,6 @@ import { TodoItem } from "./todo-item.pc";
 // show "done" variation
 <TodoItem className="done" />
 ```
-
-Easy peasy!
 
 ### Simple file format ✨
 

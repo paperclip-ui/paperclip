@@ -84,7 +84,7 @@ jobs:
           ID=$(security find-identity -v)
           echo $ID
 
-          /usr/bin/codesign --force -s "Apple Development: Craig Condon (C94Z352LDR)" ./target/release/paperclip_cli -v
+          /usr/bin/codesign --force -s "Developer ID Application: Craig Condon (C94Z352LDR)" ./target/release/paperclip_cli -v
       # https://github.com/actions/upload-release-asset
       # https://github.com/marketplace/actions/upload-files-to-a-github-release
 

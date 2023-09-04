@@ -14,21 +14,30 @@ yarn install paperclip && yarn paperclip designer
 
 Paperclip aims to lower the barrier for building UIs and create an inviting user experience for everyone that wants to contribute to building web applications. It was initially designed for product teams in the hopes of bridging the gap between development teams and all other key stakeholders (designers, marketers, copywriters). With Paperclip, the hope is that other team members feel empowered to build UIs, giving engineers more freedom to focus on some of the harder parts of the application such as business logic.
 
-**Paperclip is _not_ a replacement for hand-written code**. It's my belief that code is _not_ a problem, but incidental complexity around _tooling_ is. Paperclip is an attempt to reduce some of the incidental complexity, specifically around visual development (basically just HTML and CSS).
+**Paperclip is _not_ a replacement for hand-written code**. It's my belief that code is _not_ a problem, but incidental complexity around _tooling_ is. Paperclip is an attempt to reduce some of the incidental complexity, specifically around visual development (basically just HTML and CSS). It's also my belief that HTML and CSS can safely be handed off to anyone that wants to edit it.
 
 ### What makes Paperclip pretty neat? 🤩
 
-Paperclip is a _bit_ different than other no-code platforms such as Webflow. Here are some bits that I thinks stand out:
+Paperclip is a _bit_ different than other no-code platforms such as Webflow. Here are some bits that I think stand out:
 
 - Design files can be stored anywhere you want, including GIT
   - Everyone can work out of the same source of truth! And you'll probably want this since I'm assuming that you also have a whole CI / CD process with this.
   - Meaning that you can also use GIT for versioning designs. Other design tools have their own way of doing this.
+  - Also meaning that you can feel safer handing the keys over to other teammates.
 - Paperclip can be compiled to different frameworks and languages, and is designed to work with your existing codebase and libraries.
   - For example, you can use any CSS framework you want within the Paperclip designer such as Tailwind, Bootstrap, or jQuery if you really want. And even Mootools.
 - **No dependencies!** Just download the `paperclip_cli` bin and start'er up. Batteries are all included.
   - A note: The NPM dependency is really just a thin wrapper around this
+- Easily migrate away from Paperclip if things don't work out 💔
+  - Paperclip is mostly just HTML and CSS, so you can easily migrate over to something like styled components if you want to. In the future, there may be tooling to help with this.
+
+### Should I use Paperclip right now?
+
+I wouldn't recommend using it for anything other than a side project of yours. At _some_ point Paperclip I may recommend Paperclip for
 
 <!-- ### Just covers the UI
+
+## Design and code in parallel!
 
 Paperclip is just a replacement for HTML and CSS, and nothing more.  -->
 

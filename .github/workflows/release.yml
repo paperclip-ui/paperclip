@@ -52,7 +52,7 @@ jobs:
         run: yarn build
       - run: cargo build --release --locked
       - name: Sign bin
-        if: matrix.os == 'x86_64-apple-darwin'
+        if: matrix.target == 'x86_64-apple-darwin'
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.MACOS_CERTIFICATE }}
           P12_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PWD }}

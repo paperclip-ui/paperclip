@@ -84,7 +84,7 @@ jobs:
           echo $ID
           ls
           pwd
-          /usr/bin/codesign --force -s "Apple Development: Craig Condon (ALX94TWLQX)" ./target/release/paperclip-cli -v
+          /usr/bin/codesign --force -s "Apple Development: Craig Condon (ALX94TWLQX)" ./target/release/paperclip_cli -v
       # - name: Compile
       #   id: compile
       #   uses: rust-build/rust-build.action@v1.3.2

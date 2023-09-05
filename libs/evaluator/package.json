@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/evaluator",
-  "version": "20.0.21",
+  "version": "20.0.22",
   "description": "```rust use paperclip_evaluator::evaluator::{Evaluator, LoadedData};",
   "main": "lib/index.js",
   "scripts": {
@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@paperclip-ui/proto": "^20.0.21"
+    "@paperclip-ui/proto": "^20.0.22"
   },
   "gitHead": "541b3f803430b1fa9dce863b1702e7bf5b7fee2c"
 }

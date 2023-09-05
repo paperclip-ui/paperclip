@@ -55,7 +55,7 @@ Paperclip works well with CSS frameworks like Tailwind since you can load these 
 
 ### Not your typical HTML and CSS
 
-Paperclip hopes to remove some of the gotchas around HTML and CSS (e.g:selectors) by introducing _different_ syntax for styling elements. The DSL is also a _reflection_ of an ideal user experience similar to Figma and other design tools, hoping to create an inviting experience for people who are mostly living in those spaces.
+Paperclip hopes to remove some of the gotchas around HTML and CSS (e.g: selectors, globals, style collisions) by introducing _different_ syntax for styling elements. The DSL is also a _reflection_ of an ideal user experience similar to Figma and other design tools, hoping to create an inviting experience for people who are mostly living in those spaces.
 
 Here's an example of what a "design file" looks like:
 

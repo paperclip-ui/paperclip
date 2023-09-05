@@ -29,9 +29,70 @@ Paperclip is a _bit_ different than other no-code platforms such as Webflow. Her
 - Paperclip can be compiled to different frameworks and languages, and is designed to work with your existing codebase and libraries.
   - For example, you can use any CSS framework you want within the Paperclip designer such as Tailwind, Bootstrap, or jQuery if you really want. And even Mootools.
 - **No dependencies!** Just download the `paperclip_cli` bin and start'er up. Batteries are all included.
-  - A note: The NPM dependency is really just a thin wrapper around this
+- A note: The NPM dependency is really just a thin wrapper around this
+- **Sometimes it's just faster to write HTML and CSS by hand**. With Paperclip you can do that. Heck, you can even code _and_ design in side-by-side!
+- Some people may also prefer _not_ to use a UI for building apps. Some people may want to use the editor, some people may want to write by hand. With Paperclip, you have that option.
 - Easily migrate away from Paperclip if things don't work out 💔
+
   - Paperclip is mostly just HTML and CSS, so you can easily migrate over to something like styled components if you want to. In the future, there may be tooling to help with this.
+
+  ### Use Paperclip in your existing app
+
+  Paperclip is complimentary to your existing codebase. Just use one of the built-in compilers to convert `*.pc` files in your framework or language of choice, and import them like normal code. Here's an example:
+
+  ```typescript
+  import { TodoItem } from "./todo-item.pc";
+
+  <TodoItem />
+
+  // show "done" variation
+  <TodoItem className="done" />
+  ```
+
+  ### Not your typical HTML and CSS
+
+  Paperclip hopes to remove some of the gotchas around HTML and CSS (e.g: selectors) by introducing _different_ syntax for styling elements, and reflects an ideal designer experience.
+
+  Here's an example of what "design file" looks like:
+
+  ```javascript
+  public component Card {
+
+    // Variant fo the component that can be _triggered_
+    // by a CSS selector or media query
+    variant dark trigger {
+      ".dark"
+    }
+    render div (class: class) {
+
+      // styles are added directly on the element being styled
+      style {
+        font-family: sans-serif
+        color: black
+      }
+
+      // You may attach variants to any element within
+      // this component
+      style variant dark {
+        background: black
+        color: white
+      }
+    }
+  }
+  ```
+
+  This is reflected in the design tooling which has a similar feel to Figma.
+
+### Why a DSL? Why not JSON?
+
+The main point of having a DSL is to have a readable file format that can be hand-written when necessary. Some other points:
+
+- Code reviewing is easier with a DSL
+- quality assurance - easier to see how well a document is structured
+  - You _want_ this since HTML and CSS has behavior around responsiveness and such. It's not like you can just look at a UI and QA it based on that - you need to inspect the document.
+- Sometimes it's just faster to type out the UI by hand rather than feeling restricted by a visual editor. This was a big one for me.
+
+An earlier version of Paperclip _did_ use JSON and it failed the practicality test _I think_. If you want to get a sense about how impractical JSON felt, take a look at this file: https://github.com/crcn/tandem-old/blob/10.0.0/packages/front-end/src/components/root/workspace/right-gutter/styles/pretty/panes/box-shadows.pc
 
 ### Should I use Paperclip right now?
 
@@ -58,53 +119,6 @@ No more needing to ask developers to make HTML and CSS changes, Paperclip enable
 - spot edit visual bugs
 
 -->
-
-### Use Paperclip in your existing app
-
-Paperclip is complimentary to your existing codebase. Just use one of the built-in compilers to convert `*.pc` files in your framework or language of choice, and import them like normal code. Here's an example:
-
-```typescript
-import { TodoItem } from "./todo-item.pc";
-
-<TodoItem />
-
-// show "done" variation
-<TodoItem className="done" />
-```
-
-### Not your typical HTML and CSS
-
-Paperclip hopes to remove some of the gotchas around HTML and CSS (e.g: selectors) by introducing _different_ syntax for styling elements, and reflects an ideal designer experience.
-
-Here's an example of what "design file" looks like:
-
-```javascript
-public component Card {
-
-  // Variant fo the component that can be _triggered_
-  // by a CSS selector or media query
-  variant dark trigger {
-    ".dark"
-  }
-  render div (class: class) {
-
-    // styles are added directly on the element being styled
-    style {
-      font-family: sans-serif
-      color: black
-    }
-
-    // You may attach variants to any element within
-    // this component
-    style variant dark {
-      background: black
-      color: white
-    }
-  }
-}
-```
-
-This is reflected in the design tooling which has a similar feel to Figma.
 
 ## Roadmap
 

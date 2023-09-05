@@ -35,6 +35,7 @@ Other no-code tools are also a great _starting_ point for startups, but don't do
 - **No dependencies!** Just download the `paperclip_cli` bin and start'er up. Batteries are all included.
 - You can use any CSS framework you want within the Paperclip designer such as Tailwind, Bootstrap, or jQuery if you really want. And even Mootools.
 - PC fies are compiled to strongly typed code.
+- Use PC files between different platforms! E.g: use the same PC files between your Python / Rust / TypeScript apps.
 
 ### Use Paperclip in your existing app
 

@@ -3,6 +3,7 @@
   "version": "20.0.30",
   "description": "",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "build": "yarn build:pc && yarn webpack",
     "build:watch": "rm -rf dist && yarn build:pc && concurrently \"yarn build:pc --watch\" \"webpack --watch\"",

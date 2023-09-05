@@ -4,7 +4,7 @@
   "description": "",
   "main": "lib/index.js",
   "bin": {
-    "paperclip": "lib/index.js"
+    "paperclip": "bin/paperclip"
   },
   "scripts": {
     "build": "tsc",

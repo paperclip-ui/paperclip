@@ -5,6 +5,8 @@ import * as os from "node:os";
 import tar from "tar";
 import stream from "node:stream";
 import { promisify } from "node:util";
+import execa from "execa";
+
 const pipeline = promisify(stream.pipeline);
 
 const pkg = require("../package.json");
@@ -12,9 +14,9 @@ const BIN_NAME = "paperclip_cli";
 import path from "path";
 
 const OS_VENDOR = {
-  win32: "windows",
-  darwin: "apple",
-  linux: "linux",
+  win32: "x86_64-pc-windows-gnu",
+  darwin: "x86_64-apple-darwin",
+  linux: "x86_64-unknown-linux-musl",
 }[os.platform as any];
 
 const downloadRelease = async (versionDir: string) => {
@@ -59,18 +61,48 @@ const downloadRelease = async (versionDir: string) => {
     fsa.mkdirpSync(versionDir);
   } catch (e) {}
 
-  await pipeline(
-    got.stream(asset.browser_download_url),
-    tar.x({
-      C: versionDir,
-    })
+  const filePath = path.join(
+    versionDir,
+    path.basename(asset.browser_download_url)
   );
 
-  return;
+  await pipeline(
+    got.stream(asset.browser_download_url),
+    fs.createWriteStream(filePath)
+  );
+
+  await decompress(filePath);
+};
+
+const decompress = async (filePath: string) => {
+  if (/\.dmg$/.test(filePath)) {
+    const { stdout, stderr } = await execa(`hdiutil`, ["attach", filePath]);
+
+    if (stderr) {
+      throw new Error(stderr.toString());
+    }
+
+    const volumeDir = stdout.match(/\/Volumes\/[^\n]+/)[0];
+
+    for (const basename of await fsa.readdir(volumeDir)) {
+      await fsa.copyFile(
+        path.join(volumeDir, basename),
+        path.join(path.dirname(filePath), basename)
+      );
+    }
+
+    await execa("hdiutil", ["detach", volumeDir]);
+  } else {
+    await pipeline(
+      fs.createReadStream(filePath),
+      tar.x({
+        C: path.dirname(filePath),
+      })
+    );
+  }
 };
 
 export const loadCLIBinPath = async (cwd: string) => {
-  return path.resolve(__dirname, "../../../target/debug/paperclip_cli");
   const versionDir = path.join(cwd, pkg.version);
   const binPath = path.join(versionDir, BIN_NAME);
   if (!fs.existsSync(binPath)) {

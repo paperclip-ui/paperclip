@@ -20,7 +20,7 @@ Paperclip aims to lower the barrier for building UIs and create an inviting user
 
 ### What makes Paperclip different?
 
-Most other tools like Webflow are great for building websites and prototypes, and empowering everyone on your team to build in those space. Paperclip is tool to help empower everyone on your team to help build the _actual product_. Here's how:
+Most other tools like Webflow are great for building websites and prototypes, and empowering everyone on your team to build in those space. Paperclip is tool to help empower everyone on your team to help build the actual product. Here's how:
 
 - Design files are readable, and can be stored anywhere you want, including GIT.
   - Everyone can work out of the same source of truth! And you'll probably want this since I'm assuming that you also have a whole quality assurance process with this (which I'm assuming you'll want if _everyone_ is touching mission critical software).

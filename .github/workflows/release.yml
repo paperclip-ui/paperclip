@@ -82,7 +82,8 @@ jobs:
           security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_PWD" build.keychain
 
-          # We finally codesign our app bundle, specifying the Hardened runtime option
+          # print for debugging
+          security find-certificate -a
 
           /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime target/release/paperclip_cli -v
 

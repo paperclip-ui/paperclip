@@ -43,15 +43,13 @@ jobs:
         with:
           toolchain: nightly
           override: true
-      - name: Set up Nodeme
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: "20.x"
       - run: yarn install
-      - name: Build Packages
-        run: yarn build
+      - run: yarn build
       - run: cargo build --release --locked
-      - name: Sign bin
+      - name: Sign Mac OS binary
         if: matrix.target == 'x86_64-apple-darwin'
         env:
           MACOS_CERTIFICATE: ${{ secrets.PROD_MACOS_CERTIFICATE }}
@@ -77,7 +75,7 @@ jobs:
 
           /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime target/release/paperclip_cli -v
 
-      - name: "NOTARIZE!"
+      - name: Notaize Mac OS binary
         if: matrix.target == 'x86_64-apple-darwin'
         env:
           PROD_MACOS_NOTARIZATION_APPLE_ID: ${{ secrets.PROD_MACOS_NOTARIZATION_APPLE_ID }}
@@ -122,7 +120,7 @@ jobs:
         if: matrix.target != 'x86_64-apple-darwin'
         run: cd target/release && tar -czvf ${{ matrix.target }}-paperclip_cli.tar.gz paperclip_cli
 
-      - name: Upload binaries to release
+      - name: Upload Mac OS binary to release
         if: matrix.target == 'x86_64-apple-darwin'
         uses: svenstaro/upload-release-action@v2
         with:
@@ -131,7 +129,7 @@ jobs:
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref }}
 
-      - name: Upload binaries to release
+      - name: Upload other binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -140,7 +138,7 @@ jobs:
           tag: ${{ github.ref }}
   publish:
     needs: build
-    name: Publish Packages
+    name: Publish packages
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

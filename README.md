@@ -31,7 +31,6 @@ Paperclip is a _bit_ different than other no-code platforms such as Webflow. Her
 ### Some other neat things...
 
 - **No dependencies!** Just download the `paperclip_cli` bin and start'er up. Batteries are all included.
-  - A note: The NPM dependency is really just a thin wrapper around this
 - You can use any CSS framework you want within the Paperclip designer such as Tailwind, Bootstrap, or jQuery if you really want. And even Mootools.
 - PC fies are compiled to strongly typed code
 

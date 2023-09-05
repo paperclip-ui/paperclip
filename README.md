@@ -34,7 +34,7 @@ Paperclip is a _bit_ different than other no-code platforms such as Webflow. Her
 - Easily migrate away from Paperclip if things don't work out 💔
   - Paperclip is mostly just HTML and CSS, so you can easily migrate over to something like styled components if you want to. In the future, there may be tooling to help with this.
 
-### Use Paperclip in your existing app
+### Use Paperclip in your existing app ♻️
 
 Paperclip is complimentary to your existing codebase. Just use one of thebuilt-in compilers to convert `*.pc` files in your framework or language ofchoice, and import them like normal code. Here's an example:
 
@@ -49,9 +49,9 @@ import { TodoItem } from "./todo-item.pc";
 
 ### Not your typical HTML and CSS
 
-Paperclip hopes to remove some of the gotchas around HTML and CSS (e.g:selectors) by introducing _different_ syntax for styling elements, andreflects an ideal designer experience.
+Paperclip hopes to remove some of the gotchas around HTML and CSS (e.g:selectors) by introducing _different_ syntax for styling elements. The DSL is also a _reflection_ of an ideal user experience similar to Figma and other design tools, hoping to create an inviting experience for people who are mostly living in those spaces.
 
-Here's an example of what "design file" looks like:
+Here's an example of what a "design file" looks like:
 
 ```javascript
 public component Card {
@@ -72,14 +72,16 @@ public component Card {
     // You may attach variants to any element within
     // this component
     style variant dark {
-    background: black
-    color: white
+      background: black
+      color: white
     }
-    }
+  }
 }
 ```
 
-This is reflected in the design tooling which has a similar feel to Figma.
+You still have the same flexibility as CSS! Just in a different format.
+
+<!-- TODO: read more here -->
 
 ### Why a DSL? Why not JSON?
 

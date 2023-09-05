@@ -116,10 +116,6 @@ jobs:
           echo "Attach staple"
           xcrun stapler staple "$DMG_NAME"
 
-      - name: Compress file
-        if: matrix.target != 'x86_64-apple-darwin'
-        run: cd target/release && tar -czvf ${{ matrix.target }}-paperclip_cli.tar.gz paperclip_cli
-
       - name: Upload Mac OS binary to release
         if: matrix.target == 'x86_64-apple-darwin'
         uses: svenstaro/upload-release-action@v2
@@ -128,6 +124,10 @@ jobs:
           file: ${{ matrix.target }}-paperclip_cli.dmg
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref }}
+
+      - name: Compress other binaries
+        if: matrix.target != 'x86_64-apple-darwin'
+        run: cd target/release && tar -czvf ${{ matrix.target }}-paperclip_cli.tar.gz paperclip_cli
 
       - name: Upload other binaries to release
         uses: svenstaro/upload-release-action@v2

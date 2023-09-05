@@ -18,7 +18,7 @@ Paperclip aims to lower the barrier for building UIs and create an inviting user
 
 <!-- It's also my belief that code _is_ the correct medium for writing software - even for "no-code" apps - since code is yet another "user interface" for building applications, and  -->
 
-### What makes Paperclip stand out?
+### What makes Paperclip different?
 
 Paperclip is a _bit_ different than other no-code platforms such as Webflow. Here are some bits that I think differentiate Paperclip from _almost_ everything else:
 

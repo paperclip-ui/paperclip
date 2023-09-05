@@ -39,6 +39,9 @@ impl FileReader for MockIO {
     fn read_file(&self, path: &str) -> Result<Box<[u8]>> {
         self.0.read_file(path)
     }
+    fn read_directory(&self, path: &str) -> Result<Vec<paperclip_common::fs::FSItem>> {
+        self.0.read_directory(path)
+    }
     fn get_file_size(&self, path: &str) -> Result<u64> {
         self.0.get_file_size(path)
     }
@@ -124,6 +127,7 @@ fn default_config_with_compiler_options(src: &str, options: Vec<CompilerOptions>
         designs_dir: None,
         module_dirs: None,
         compiler_options: Some(options),
+        open_code_editor_command_template: None
     }
 }
 

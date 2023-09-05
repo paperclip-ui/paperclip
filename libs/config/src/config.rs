@@ -52,11 +52,15 @@ impl ConfigContext {
         };
 
         let file_path = Path::new(cwd).join(file_name.to_string());
-        let content = io.read_file(file_path.to_str().unwrap())?;
 
-        let content = str::from_utf8(&*content).unwrap().to_string();
-
-        let config = serde_json::from_str::<Config>(content.as_str())?;
+        let config = if file_path.exists() {
+            let content = io.read_file(file_path.to_str().unwrap())?;    
+            let content = str::from_utf8(&*content).unwrap().to_string();
+            serde_json::from_str::<Config>(content.as_str())?
+        } else {
+            Config::default()
+        };
+        
 
         Ok(ConfigContext {
             directory: cwd.to_string(),
@@ -67,6 +71,7 @@ impl ConfigContext {
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone, TS)]
+#[derive(Default)]
 #[ts(export)]
 pub struct Config {
     /// Global scripts that are injected into the page (JS, and CSS)

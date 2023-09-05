@@ -210,10 +210,11 @@ add_case! {
             }
         }
     }
-
     A {
         text "hello world"
-        insert another
+        insert another {
+
+        }
     }
     "#
 }

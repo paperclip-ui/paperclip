@@ -40,9 +40,10 @@ Many no-code tools are also a great _starting_ point for companies, but don't do
 - **No dependencies!** Just download the `paperclip_cli` bin and start'er up. Batteries are all included.
 - Some people may also prefer _not_ to use a UI for building apps. Some people may want to use the editor, some people may want to write by hand. With Paperclip, teammates can pick medium they want for creating HTML and CSS.
 - Paperclip works with you existing codebase and libraries, and can be compiled to different frameworks and languages.
-<!--- You can use any CSS framework you want within the Paperclip designer such as Tailwind, Bootstrap, or jQuery if you really want. And even Mootools. -->
 - PC fies are compiled to strongly typed code.
 - Use PC files between different platforms! E.g: use the same PC files between your Python / Rust / TypeScript apps.
+
+<!--- You can use any CSS framework you want within the Paperclip designer such as Tailwind, Bootstrap, or jQuery if you really want. And even Mootools. -->
 
 ### Use Paperclip in your existing app
 

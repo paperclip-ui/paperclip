@@ -45,7 +45,7 @@ Many no-code tools are also a great _starting_ point for companies, but don't do
 
 <!--- You can use any CSS framework you want within the Paperclip designer such as Tailwind, Bootstrap, or jQuery if you really want. And even Mootools. -->
 
-### Use Paperclip in your existing app
+### Import Paperclip files like any other module
 
 Paperclip is complimentary to your existing codebase. Just use one of the built-in compilers to convert `*.pc` files in your framework or language of choice, and import them like normal code. Here's an example:
 

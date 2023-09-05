@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/common",
-  "version": "20.0.29",
+  "version": "20.0.30",
   "description": "",
   "main": "lib/index.js",
   "scripts": {

@@ -108,7 +108,7 @@ This version of Paperclip is the result of many years of work and experimentatio
 
 ### Should I use Paperclip right now?
 
-Are you working on an experiment or side-project? Sure! Give it a whirl! I'd love to hear what you think. Though, I wouldn't recommend using Paperclip right now for mission critial pieces of software since it's still very alpha, and very buggy. This may change at a later point, _but_ I need to emphasize that this is a side project and a passion of mine, and so I only get to work on Paperclip when I can.
+Are you working on an experiment or side-project? Sure! Give it a whirl! I'd love to hear what you think. Though, I _wouldn't_ recommend using Paperclip right now for mission critial pieces of software since it's still very alpha, and very buggy. This may change at a later point, _but_ I need to emphasize that this is a side project and a passion of mine, and so I only get to work on Paperclip when I can.
 
 <!-- ### Just covers the UI
 

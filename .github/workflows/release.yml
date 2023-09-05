@@ -28,7 +28,7 @@ jobs:
         with:
           toolchain: nightly
           override: true
-      - uses: arduino/setup-protoc@v2
+      - uses: arduino/setup-protoc@v1
         with:
           version: "3.x"
 

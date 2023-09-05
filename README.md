@@ -34,9 +34,9 @@ Paperclip is a _bit_ different than other no-code platforms such as Webflow. Her
 - Easily migrate away from Paperclip if things don't work out 💔
   - Paperclip is mostly just HTML and CSS, so you can easily migrate over to something like styled components if you want to. In the future, there may be tooling to help with this.
 
-### Use Paperclip in your existing app ♻️
+### Use Paperclip in your existing app
 
-Paperclip is complimentary to your existing codebase. Just use one of thebuilt-in compilers to convert `*.pc` files in your framework or language ofchoice, and import them like normal code. Here's an example:
+Paperclip is complimentary to your existing codebase. Just use one of the built-in compilers to convert `*.pc` files in your framework or language of choice, and import them like normal code. Here's an example:
 
 ```typescript
 import { TodoItem } from "./todo-item.pc";
@@ -46,6 +46,8 @@ import { TodoItem } from "./todo-item.pc";
 // show "done" variation
 <TodoItem className="done" />
 ```
+
+`*.pc` are even strongly typed too in case you're working with something like TypeScript, or another strongly typed language.
 
 ### How can I use Paperclip in my project? 🤔
 

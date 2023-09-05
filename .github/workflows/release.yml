@@ -57,8 +57,12 @@ jobs:
           file: ./target/release/paperclip_cli
           certificate-data: ${{ secrets.MACOS_CERTIFICATE }}
           certificate-password: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+          apple-notary-user: ${{ secrets.APPLE_NOTARY_USER }}
+          apple-notary-password: ${{ secrets.APPLE_NOTARY_PASSWORD }}
+          apple-team-id: C94Z352LDR
           # apple-team-id: "C94Z352LDR"
-          apple-team-id: "Developer ID Application: Craig Condon (C94Z352LDR)"
+          apple-product-id: "dev.crcn.paperclip_cli"
+          # apple-team-id: "Developer ID Application: Craig Condon (C94Z352LDR)"
         # env:
         #   BUILD_CERTIFICATE_BASE64: ${{ secrets.MACOS_CERTIFICATE }}
         #   P12_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PWD }}

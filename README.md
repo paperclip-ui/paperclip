@@ -29,7 +29,7 @@ Paperclip is a _bit_ different than other no-code platforms such as Webflow. Her
   - For example, you can use any CSS framework you want within the Paperclip designer such as Tailwind, Bootstrap, or jQuery if you really want. And even Mootools.
 - **No dependencies!** Just download the `paperclip_cli` bin and start'er up. Batteries are all included.
   - A note: The NPM dependency is really just a thin wrapper around this
-- **Sometimes it's just faster to write HTML and CSS by hand**. With Paperclip you can do that. Heck, you can even code _and_ design in side-by-side!
+- **Sometimes it's just faster to write HTML and CSS by hand**. With Paperclip you can do that. Heck, you can even code _and_ design side-by-side!
 - Some people may also prefer _not_ to use a UI for building apps. Some people may want to use the editor, some people may want to write by hand. With Paperclip, you can pick whatever medium you want for creating HTML and CSS.
 - Easily migrate away from Paperclip if things don't work out 💔
   - Paperclip is mostly just HTML and CSS, so you can easily migrate over to something like styled components if you want to. In the future, there may be tooling to help with this.

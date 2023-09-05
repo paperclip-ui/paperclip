@@ -124,8 +124,9 @@ No more needing to ask developers to make HTML and CSS changes, Paperclip enable
 - More design tooling
   - canvas tooling
   - potentially custom components
-- Codespaces integration
+  - bringing UX closer to Figma for a more inviting user experience
 - Online designer
+  - multi-player editing too!
 - AI assistance
 - Figma integration
   - ability to copy + paste designs to Paperclip

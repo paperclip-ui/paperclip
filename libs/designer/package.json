@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/designer",
-  "version": "20.0.23",
+  "version": "20.0.24",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -20,9 +20,9 @@
     "@babel/preset-env": "^7.20.2",
     "@babel/preset-typescript": "^7.18.6",
     "@improbable-eng/grpc-web-node-http-transport": "^0.15.0",
-    "@paperclip-ui/evaluator": "^20.0.23",
-    "@paperclip-ui/parser": "^20.0.23",
-    "@paperclip-ui/workspace": "^20.0.23",
+    "@paperclip-ui/evaluator": "^20.0.24",
+    "@paperclip-ui/parser": "^20.0.24",
+    "@paperclip-ui/workspace": "^20.0.24",
     "@types/jest": "^29.2.3",
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
@@ -47,9 +47,9 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
-    "@paperclip-ui/proto": "^20.0.23",
-    "@paperclip-ui/proto-ext": "^20.0.23",
-    "@paperclip-ui/web-renderer": "^20.0.23",
+    "@paperclip-ui/proto": "^20.0.24",
+    "@paperclip-ui/proto-ext": "^20.0.24",
+    "@paperclip-ui/web-renderer": "^20.0.24",
     "@types/color": "^3.0.3",
     "classnames": "^2.3.2",
     "color": "^4.2.3",
@@ -58,7 +58,7 @@
     "grpc-web": "^1.3.1",
     "immer": "^9.0.15",
     "lodash": "^4.17.21",
-    "paperclip-loader": "^20.0.23",
+    "paperclip-loader": "^20.0.24",
     "raw-loader": "^4.0.2",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",

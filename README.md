@@ -47,6 +47,12 @@ import { TodoItem } from "./todo-item.pc";
 <TodoItem className="done" />
 ```
 
+### How can I use Paperclip in my project? 🤔
+
+Paperclip is meant for _styling_ and creating primitive components. It's almost like a design system tool, and replaces other tools like styled components, BEM (CSS pattern), CSS modules, etc.
+
+Paperclip works well with CSS frameworks like Tailwind since you can load these CSS frameworks into the designer and use them when you're creating your UIs visually. ✨
+
 ### Not your typical HTML and CSS
 
 Paperclip hopes to remove some of the gotchas around HTML and CSS (e.g:selectors) by introducing _different_ syntax for styling elements. The DSL is also a _reflection_ of an ideal user experience similar to Figma and other design tools, hoping to create an inviting experience for people who are mostly living in those spaces.
@@ -96,7 +102,7 @@ An earlier version of Paperclip _did_ use JSON and it failed the practicality te
 
 ### Should I use Paperclip right now?
 
-Are you working on an experiment or side-project? Sure! Give it a whirl! I'd love to hear what you think. Though, I wouldn't recommend using Paperclip right now for mission critial pieces of software since it's still very alpha, and very buggy. This may change at a later point, _but_ I need to emphasize that this is a side project and a passion of mine, and so I only get to work on Paperclip when I feel like it.
+Are you working on an experiment or side-project? Sure! Give it a whirl! I'd love to hear what you think. Though, I wouldn't recommend using Paperclip right now for mission critial pieces of software since it's still very alpha, and very buggy. This may change at a later point, _but_ I need to emphasize that this is a side project and a passion of mine, and so I only get to work on Paperclip when I can.
 
 <!-- ### Just covers the UI
 

@@ -32,7 +32,7 @@ Paperclip is a _bit_ different than other no-code platforms such as Webflow. Her
 
 - **No dependencies!** Just download the `paperclip_cli` bin and start'er up. Batteries are all included.
 - You can use any CSS framework you want within the Paperclip designer such as Tailwind, Bootstrap, or jQuery if you really want. And even Mootools.
-- PC fies are compiled to strongly typed code
+- PC fies are compiled to strongly typed code.
 
 ### Use Paperclip in your existing app
 
@@ -40,18 +40,14 @@ Paperclip is complimentary to your existing codebase. Just use one of the built-
 
 ```typescript
 import { TodoItem } from "./todo-item.pc";
-
-<TodoItem />
-
-// show "done" variation
-<TodoItem className="done" />
+<TodoItem />;
 ```
 
 `*.pc` are even strongly typed too in case you're working with something like TypeScript, or another strongly typed language.
 
 ### How can I use Paperclip in my project? 🤔
 
-Paperclip is meant for _styling_ and creating primitive components. **It's probably best thought of as a design system tool**, and replaces other tools like styled components, BEM (CSS pattern), CSS modules, etc.
+Paperclip is meant for styling and creating simple components. **It's probably best thought of as a design system tool**, and replaces other tools like styled components, BEM (CSS pattern), CSS modules, etc.
 
 Paperclip works well with CSS frameworks like Tailwind since you can load these CSS frameworks into the designer and use them when you're creating your UIs visually. ✨
 
@@ -108,7 +104,7 @@ This version of Paperclip is the result of many years of work and experimentatio
 
 ### Should I use Paperclip right now?
 
-Are you working on an experiment or side-project? Sure! Give it a whirl! I'd love to hear what you think. Though, I _wouldn't_ recommend using Paperclip right now for mission critial pieces of software since it's still very alpha, and very buggy. This may change at a later point, _but_ I need to emphasize that this is a side project and a passion of mine, and so I only get to work on Paperclip when I can.
+Are you working on an experiment or side-project? Sure! Give it a whirl! I'd love to hear what you think. All feedback is welcome! Though, I _wouldn't_ recommend using Paperclip right now for mission critial pieces of software since it's still very alpha, and very buggy.
 
 <!-- ### Just covers the UI
 

@@ -11,8 +11,8 @@ on:
 #       - dev
 
 jobs:
-  release:
-    name: Release CLI
+  build:
+    name: Build CLI
     runs-on: macos-latest
     strategy:
       matrix:
@@ -138,3 +138,18 @@ jobs:
           file: target/release/${{ matrix.target }}-paperclip_cli.tar.gz
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref }}
+  publish:
+    needs: build
+    name: Publish Packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "20.x"
+          registry-url: "https://registry.npmjs.org"
+      - run: yarn install
+      - run: yarn build
+      - run: yarn lerna publish --no-private
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

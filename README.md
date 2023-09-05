@@ -76,7 +76,7 @@ public component Card {
       font-family: sans-serif
       color: black
     }
-s
+
     // You may attach variants to any element within
     // this component
     style variant dark {

@@ -135,6 +135,6 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/release/${{ matrix.target }}-paperclip_cli.dmg
+          file: ${{ matrix.target }}-paperclip_cli.dmg
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref }}

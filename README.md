@@ -24,7 +24,7 @@ Paperclip is a _bit_ different than other no-code platforms such as Webflow. Her
 
 - Design files can be stored anywhere you want, including GIT
   - Everyone can work out of the same source of truth! And you'll probably want this since I'm assuming that you also have a whole QA process with this (which I'm assuming you'll want if _everyone_ can write code).
-  - Meaning that you can also use GIT for versioning designs. Other design tools have their own way of doing this.
+  - Meaning that you can also use GIT for versioning designs and keep everything in sync (especially nice for feature development).
 - Paperclip can be compiled to different frameworks and languages, and is designed to work with your existing codebase and libraries.
   - For example, you can use any CSS framework you want within the Paperclip designer such as Tailwind, Bootstrap, or jQuery if you really want. And even Mootools.
 - **No dependencies!** Just download the `paperclip_cli` bin and start'er up. Batteries are all included.

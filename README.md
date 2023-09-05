@@ -20,7 +20,7 @@ Paperclip aims to lower the barrier for building UIs and create an inviting user
 
 ### What makes Paperclip pretty neat? 🤩
 
-Paperclip is a _bit_ different than other no-code platforms such as Webflow. Here are some bits that I think stand out:
+Paperclip is a _bit_ different than other no-code platforms such as Webflow. Here are some bits that I think differentiate Paperclip from _almost_ everything else:
 
 - Design files can be stored anywhere you want, including GIT
   - Everyone can work out of the same source of truth! And you'll probably want this since I'm assuming that you also have a whole QA process with this (which I'm assuming you'll want if _everyone_ can write code).
@@ -32,55 +32,54 @@ Paperclip is a _bit_ different than other no-code platforms such as Webflow. Her
 - **Sometimes it's just faster to write HTML and CSS by hand**. With Paperclip you can do that. Heck, you can even code _and_ design in side-by-side!
 - Some people may also prefer _not_ to use a UI for building apps. Some people may want to use the editor, some people may want to write by hand. With Paperclip, you have that option.
 - Easily migrate away from Paperclip if things don't work out 💔
-
   - Paperclip is mostly just HTML and CSS, so you can easily migrate over to something like styled components if you want to. In the future, there may be tooling to help with this.
 
-  ### Use Paperclip in your existing app
+### Use Paperclip in your existing app
 
-  Paperclip is complimentary to your existing codebase. Just use one of the built-in compilers to convert `*.pc` files in your framework or language of choice, and import them like normal code. Here's an example:
+Paperclip is complimentary to your existing codebase. Just use one of thebuilt-in compilers to convert `*.pc` files in your framework or language ofchoice, and import them like normal code. Here's an example:
 
-  ```typescript
-  import { TodoItem } from "./todo-item.pc";
+```typescript
+import { TodoItem } from "./todo-item.pc";
 
-  <TodoItem />
+<TodoItem />
 
-  // show "done" variation
-  <TodoItem className="done" />
-  ```
+// show "done" variation
+<TodoItem className="done" />
+```
 
-  ### Not your typical HTML and CSS
+### Not your typical HTML and CSS
 
-  Paperclip hopes to remove some of the gotchas around HTML and CSS (e.g: selectors) by introducing _different_ syntax for styling elements, and reflects an ideal designer experience.
+Paperclip hopes to remove some of the gotchas around HTML and CSS (e.g:selectors) by introducing _different_ syntax for styling elements, andreflects an ideal designer experience.
 
-  Here's an example of what "design file" looks like:
+Here's an example of what "design file" looks like:
 
-  ```javascript
-  public component Card {
+```javascript
+public component Card {
 
-    // Variant fo the component that can be _triggered_
-    // by a CSS selector or media query
-    variant dark trigger {
-      ".dark"
-    }
-    render div (class: class) {
-
-      // styles are added directly on the element being styled
-      style {
-        font-family: sans-serif
-        color: black
-      }
-
-      // You may attach variants to any element within
-      // this component
-      style variant dark {
-        background: black
-        color: white
-      }
-    }
+  // Variant fo the component that can be _triggered_
+  // by a CSS selector or media query
+  variant dark trigger {
+    ".dark"
   }
-  ```
+  render div (class: class) {
 
-  This is reflected in the design tooling which has a similar feel to Figma.
+    // styles are added directly on the element being styled
+    style {
+      font-family: sans-serif
+      color: black
+    }
+
+    // You may attach variants to any element within
+    // this component
+    style variant dark {
+    background: black
+    color: white
+    }
+    }
+}
+```
+
+This is reflected in the design tooling which has a similar feel to Figma.
 
 ### Why a DSL? Why not JSON?
 

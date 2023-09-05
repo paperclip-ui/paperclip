@@ -100,6 +100,10 @@ The main point of having a DSL is to have a readable file format that can be han
 
 An earlier version of Paperclip _did_ use JSON and it failed the practicality test _I think_. If you want to get a sense about how impractical JSON felt, take a look at this file: https://github.com/crcn/tandem-old/blob/10.0.0/packages/front-end/src/components/root/workspace/right-gutter/styles/pretty/panes/box-shadows.pc
 
+<!-- ### History 📚
+
+This version of Paperclip is the result of many years of work and experimentation in the no-code space and working at Webflow. Here are some prior versions of Paperclip -->
+
 ### Should I use Paperclip right now?
 
 Are you working on an experiment or side-project? Sure! Give it a whirl! I'd love to hear what you think. Though, I wouldn't recommend using Paperclip right now for mission critial pieces of software since it's still very alpha, and very buggy. This may change at a later point, _but_ I need to emphasize that this is a side project and a passion of mine, and so I only get to work on Paperclip when I can.

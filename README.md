@@ -20,7 +20,7 @@ Paperclip aims to lower the barrier for building UIs and create an inviting user
 
 ### What makes Paperclip different?
 
-Most other tools like Webflow are great for building websites and prototypes, and empowering everyone on your team to build in those space. Paperclip is tool to help empower everyone on your team to help build the actual product.
+Most other tools like Webflow are great for building websites and prototypes, and empowering everyone on your team to build in those space. Paperclip is tool to help empower everyone on your team to build the actual product.
 
 <!-- Here's how:
 

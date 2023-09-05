@@ -91,7 +91,7 @@ You still have the same flexibility as CSS! Just in a different format.
 
 <!-- TODO: read more here -->
 
-### Why a DSL? Why not JSON?
+<!-- ### Why a DSL? Why not JSON?
 
 The main point of having a DSL is to have a readable file format that can be hand-written when necessary. Some other points:
 
@@ -100,7 +100,7 @@ The main point of having a DSL is to have a readable file format that can be han
   - You _want_ this since HTML and CSS has behavior around responsiveness and such. It's not like you can just look at a UI and QA it based on that - you need to inspect the document.
 - Sometimes it's just faster to type out the UI by hand rather than feeling restricted by a visual editor. This was a big one for me.
 
-An earlier version of Paperclip _did_ use JSON and it failed the practicality test _I think_. If you want to get a sense about how impractical JSON felt, take a look at this file: https://github.com/crcn/tandem-old/blob/10.0.0/packages/front-end/src/components/root/workspace/right-gutter/styles/pretty/panes/box-shadows.pc
+An earlier version of Paperclip _did_ use JSON and it failed the practicality test _I think_. If you want to get a sense about how impractical JSON felt, take a look at this file: https://github.com/crcn/tandem-old/blob/10.0.0/packages/front-end/src/components/root/workspace/right-gutter/styles/pretty/panes/box-shadows.pc-->
 
 <!-- ### History 📚
 

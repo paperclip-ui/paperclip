@@ -10,17 +10,27 @@ yarn add @paperclip-ui/cli && yarn paperclip designer --open
 
 <img width="1840" alt="Screenshot 2023-09-02 at 6 54 04 PM" src="https://github.com/paperclip-ui/paperclip/assets/757408/4a46b041-636f-4960-a663-177a044432f9">
 
+---
+
+- [Documentation](./docs)
+  - [Designer](./docs/designer.md) - Using the designer
+  - [Syntax](./docs/syntax.md) - Info about the DSL and how write it by hand
+  - [Integration](./docs/integration.md) - Integrating Paperclip into your app
+  - [Configuration](./docs/config.md) - Configuring your project
+
+---
+
 **Paperclip is a visual programming language that offers a hybrid approach for creating web apps.** It comes with a UI builder that you can use to visually create UIs, and a readable file format that you can easily edit by hand.
 
 Paperclip aims to lower the barrier for building UIs and create an inviting user experience for everyone that wants to contribute to building web applications. It was initially designed for product teams in the hopes of bridging the gap between development teams and all other key stakeholders (designers, marketers, copywriters, PMs, etc.). With Paperclip, the hope is that other team members feel empowered to build UIs, prototype, make tweaks, giving engineers more freedom to focus on some of the harder and more mission critical parts of the application such as business logic.
 
-**Paperclip is _not_ a replacement for hand-written code**. It's my belief that code is _not_ a problem, but incidental complexity around _tooling_ is. I.e: it's a design problem. Paperclip is an attempt to reduce some of the incidental complexity, specifically around HTML and CSS development.
+**Paperclip is _not_ a replacement for hand-written code**. It's my belief that code is _not_ a problem, but incidental complexity around _tooling_ is. I.e: it's a design problem. Paperclip is an attempt to reduce some of the incidental complexity, specifically around HTML and CSS development. So, **think of Paperclip as a designer for primitive components, and a replacement for libraries like Emotion or Styled Components.**
 
 <!-- It's also my belief that code _is_ the correct medium for writing software - even for "no-code" apps - since code is yet another "user interface" for building applications, and  -->
 
-### What makes Paperclip different?
+<!-- ### What makes Paperclip different?
 
-Most other tools like Webflow are great for building websites and prototypes, and empowering everyone on your team to build in those space. Paperclip is tool to help empower everyone on your team to build the actual product.
+Most other tools like Webflow are great for building websites and prototypes, and empowering everyone on your team to build in those space. Paperclip is tool to help empower everyone on your team to build the actual product.-->
 
 <!-- Here's how:
 
@@ -31,17 +41,17 @@ Most other tools like Webflow are great for building websites and prototypes, an
 - Paperclip works with you existing codebase and libraries, and can be compiled to different frameworks and languages.
 -->
 
-Many no-code tools are also a great _starting_ point for companies, but don't do so well as they grow bigger (hard to maintain, hard to collaborate), and you may be forced to migrate away from them as they become more complex. **Paperclip's goal is to be a solution for any size codebase, any degree of complexity, and any size team, while also catering to specific needs and preferences of everyone that may need to interact with the tool.**
+<!--Many no-code tools are also a great _starting_ point for companies, but don't do so well as they grow bigger (hard to maintain, hard to collaborate), and you may be forced to migrate away from them as they become more complex. **Paperclip's goal is to be a solution for any size codebase, any degree of complexity, and any size team, while also catering to specific needs and preferences of everyone that may need to interact with the tool.**-->
 
-### Some other neat things...
+<!--### Technical features
 
-- Store design files anywhere you want, including GIT!
-  - Everyone can work out of the same source of truth! And you'll probably want this since I'm assuming that you also have a whole quality assurance process with this (which I'm assuming you'll want if _everyone_ is touching mission critical software).
-- **No dependencies!** Just download the `paperclip_cli` bin and start'er up. Batteries are all included.
-- Some people may also prefer _not_ to use a UI for building apps. Some people may want to use the editor, some people may want to write by hand. With Paperclip, teammates can pick medium they want for creating HTML and CSS.
+- Store design files anywhere you want, including GIT
+  - Everyone can work out of the same source of truth. And you'll probably want this since I'm assuming that you also have a whole quality assurance process for your dev stack (which I'm assuming you'll want if _everyone_ is touching mission critical software).
+  - Unlike other visual editors that use JSON as a file format, Paperclip files can easily be code reviewed.
+- **No dependencies!** Just download the `paperclip_cli` bin from [releases](https://github.com/paperclip-ui/paperclip/releases) and start'er up. Batteries are all included.
 - Paperclip works with you existing codebase and libraries, and can be compiled to different frameworks and languages.
 - PC fies are compiled to strongly typed code.
-- Use PC files between different platforms! E.g: use the same PC files between your Python / Rust / TypeScript apps.
+- Use PC files between different platforms! E.g: use the same PC files between your Python / Rust / TypeScript apps.-->
 
 <!--- You can use any CSS framework you want within the Paperclip designer such as Tailwind, Bootstrap, or jQuery if you really want. And even Mootools. -->
 

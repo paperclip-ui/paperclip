@@ -3,11 +3,9 @@
   "version": "20.0.33",
   "description": "Crate for managing paperclip config files + utils for things like:",
   "main": "index.js",
-  "scripts": {
-    "build": "cargo test"
-  },
+  "scripts": {},
   "author": "",
   "license": "ISC",
   "types": "./index.d.ts",
-  "gitHead": "541b3f803430b1fa9dce863b1702e7bf5b7fee2c"
+  "gitHead": "fa6a245f465e83d45f79f740f269e4e9cbf86f76"
 }

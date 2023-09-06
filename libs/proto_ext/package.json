@@ -16,7 +16,7 @@
   ],
   "author": "",
   "license": "ISC",
-  "gitHead": "fa6a245f465e83d45f79f740f269e4e9cbf86f76",
+  "gitHead": "8104e4d9b0b976b8c8eccf1e4eee194a251bc76e",
   "devDependencies": {
     "@babel/core": "^7.20.2",
     "@babel/preset-env": "^7.20.2",

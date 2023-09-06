@@ -614,7 +614,6 @@ add_case! {
   r#"._blarg-80f4925f-4 { color: blue; }"#
 }
 
-
 add_case! {
   can_define_styles_within_text_in_a_slot,
   [
@@ -1519,9 +1518,6 @@ component RadioInput {
   "#
 }
 
-
-
-
 add_case! {
   instance_style_overrides_are_defined_only_on_instance,
   [
@@ -1554,5 +1550,3 @@ add_case! {
   ._A-80f4925f-8._80f4925f-14 { color: purple; }
   "#
 }
-
-

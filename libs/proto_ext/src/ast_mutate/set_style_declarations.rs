@@ -243,7 +243,11 @@ fn get_styles_to_delete(mutation: &SetStyleDeclarations) -> Vec<String> {
     styles
 }
 
-fn update_style(style: &mut ast::pc::Style, new_style: &ast::pc::Style, omit_decl_names: &Vec<String>) {
+fn update_style(
+    style: &mut ast::pc::Style,
+    new_style: &ast::pc::Style,
+    omit_decl_names: &Vec<String>,
+) {
     for decl in &new_style.declarations {
         let mut found = false;
         for existing_decl in &mut style.declarations {

@@ -54,13 +54,12 @@ impl ConfigContext {
         let file_path = Path::new(cwd).join(file_name.to_string());
 
         let config = if file_path.exists() {
-            let content = io.read_file(file_path.to_str().unwrap())?;    
+            let content = io.read_file(file_path.to_str().unwrap())?;
             let content = str::from_utf8(&*content).unwrap().to_string();
             serde_json::from_str::<Config>(content.as_str())?
         } else {
             Config::default()
         };
-        
 
         Ok(ConfigContext {
             directory: cwd.to_string(),
@@ -70,8 +69,7 @@ impl ConfigContext {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Clone, TS)]
-#[derive(Default)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone, TS, Default)]
 #[ts(export)]
 pub struct Config {
     /// Global scripts that are injected into the page (JS, and CSS)
@@ -163,6 +161,29 @@ impl Config {
                 .to_str()
                 .unwrap(),
         )
+    }
+
+    pub fn load<FR: FileReader>(
+        &self,
+        cwd: &str,
+        file_name: Option<String>,
+        io: &FR,
+    ) -> Result<Self> {
+        let file_name = if let Some(value) = file_name {
+            value
+        } else {
+            DEFAULT_CONFIG_NAME.to_string()
+        };
+
+        let file_path = Path::new(cwd).join(file_name.to_string());
+
+        if file_path.exists() {
+            let content = io.read_file(file_path.to_str().unwrap())?;
+            let content = str::from_utf8(&*content).unwrap().to_string();
+            Ok(serde_json::from_str::<Config>(content.as_str())?)
+        } else {
+            Err(anyhow::Error::msg("Config file not found"))
+        }
     }
 }
 

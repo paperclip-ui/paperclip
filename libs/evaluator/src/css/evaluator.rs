@@ -124,7 +124,7 @@ fn evaluate_style_mixins<F: FileResolver>(
             style: styles.iter().fold(vec![], |mut acc, style| {
                 acc.extend(create_style_mixin_declarations(style, context));
                 acc
-            }), 
+            }),
         })
         .get_outer(),
     })
@@ -892,32 +892,22 @@ fn create_virt_style<F: FileResolver>(
         scope_selector = format!("{} ", scope_selector);
     }
 
-
-
-
-
     context
         .target_node
         .clone()
         .as_ref()
         .and_then(|node| {
-
-
-
-            Some((get_style_namespace(
-                node.get_name(),
-                node.get_id(),
-                context.current_component,
-            ), get_element_instance_root_ns(node, context)))
+            Some((
+                get_style_namespace(node.get_name(), node.get_id(), context.current_component),
+                get_element_instance_root_ns(node, context),
+            ))
         })
         .and_then(|(ns, component_ns)| {
-
             let selector_text = if let Some(component_ns) = component_ns {
                 format!("{}.{}.{}", scope_selector, component_ns, ns)
-            }else {
+            } else {
                 format!("{}.{}", scope_selector, ns)
             };
-
 
             Some(virt::StyleRule {
                 id: "rule".to_string(),
@@ -928,10 +918,15 @@ fn create_virt_style<F: FileResolver>(
         })
 }
 
-
-fn get_element_instance_root_ns<F:FileResolver>(node: &CurrentNode, context: &DocumentContext<F>) -> Option<String> {
+fn get_element_instance_root_ns<F: FileResolver>(
+    node: &CurrentNode,
+    context: &DocumentContext<F>,
+) -> Option<String> {
     if let CurrentNode::Element(element) = node {
-        if let Some(info) = context.graph.get_instance_component_ref(element, &context.path) {
+        if let Some(info) = context
+            .graph
+            .get_instance_component_ref(element, &context.path)
+        {
             if let Some(render_expr) = info.expr.get_render_expr() {
                 if let Some(node) = &render_expr.node {
                     return Some(get_style_namespace(

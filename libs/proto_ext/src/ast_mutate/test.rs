@@ -3,6 +3,7 @@ use crate::graph::{load::LoadableGraph, test_utils};
 use futures::executor::block_on;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::str_utils::strip_extra_ws;
+use paperclip_proto::ast::graph_ext as graph;
 use paperclip_proto::ast::pc::{
     component_body_item, node, Component, Element, Render, Slot, TextNode,
 };
@@ -13,7 +14,6 @@ use paperclip_proto::ast_mutate::{
     SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue,
     ToggleInstanceVariant, UpdateVariant, WrapInElement,
 };
-use paperclip_proto::{ast::graph_ext as graph};
 use std::collections::HashMap;
 
 macro_rules! case {
@@ -3282,7 +3282,6 @@ case! {
     "#
   )]
 }
-
 
 case! {
   removes_style_declarations_that_are_empty,

@@ -23,7 +23,7 @@
     "protoc-gen-ts": "^0.8.5",
     "ts-proto": "^1.131.2"
   },
-  "gitHead": "c959b8baacb099c4aa92cad866ad0e793abba09f",
+  "gitHead": "38815c891a6b6d2a656ba3d6507458ebbb25697e",
   "dependencies": {
     "@grpc/grpc-js": "^1.7.3",
     "@improbable-eng/grpc-web": "^0.15.0",

@@ -28,6 +28,7 @@ jobs:
       - uses: arduino/setup-protoc@v2
         with:
           version: "24.x"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: jetli/wasm-pack-action@v0.4.0
         with:

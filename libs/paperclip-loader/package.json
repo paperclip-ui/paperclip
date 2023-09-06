@@ -1,6 +1,6 @@
 {
   "name": "paperclip-loader",
-  "version": "20.0.39",
+  "version": "20.0.40",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -23,8 +23,8 @@
     "lodash": "^4.17.21"
   },
   "dependencies": {
-    "@paperclip-ui/config": "^20.0.39",
+    "@paperclip-ui/config": "^20.0.40",
     "loader-utils": "^3.2.0"
   },
-  "gitHead": "c959b8baacb099c4aa92cad866ad0e793abba09f"
+  "gitHead": "987c6ac31e80e56bdc5a9c1c925b846fe1a77fa0"
 }

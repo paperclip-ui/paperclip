@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/config",
-  "version": "20.0.39",
+  "version": "20.0.40",
   "description": "Crate for managing paperclip config files + utils for things like:",
   "main": "index.js",
   "scripts": {
@@ -9,5 +9,5 @@
   "author": "",
   "license": "ISC",
   "types": "./index.d.ts",
-  "gitHead": "8104e4d9b0b976b8c8eccf1e4eee194a251bc76e"
+  "gitHead": "987c6ac31e80e56bdc5a9c1c925b846fe1a77fa0"
 }

@@ -11,14 +11,15 @@
   },
   "scripts": {
     "build": "tsc",
-    "build:watch": "tsc --watch --preserveWatchOutput"
+    "build:watch": "tsc --watch --preserveWatchOutput",
+    "postinstall": "node lib/postinstall.js",
+    "postupdate": "node lib/postinstall.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@paperclip-ui/releases": "^20.0.41",
-    "execa": "^5.1.1",
-    "ora": "^5.4.1"
+    "execa": "^5.1.1"
   },
   "gitHead": "9cbfaf54c043385661768ba1b1a41de3ec872d1d"
 }

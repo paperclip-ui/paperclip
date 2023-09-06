@@ -1,16 +1,14 @@
-import {loadCLIBinPath } from "@paperclip-ui/releases";
-import ora from "ora";
-import execa from 'execa';
+import { loadCLIBinPath } from "@paperclip-ui/releases";
 
-const spinner = ora('Downloading Paperclip binary...').start();
+import execa from "execa";
 
-loadCLIBinPath(__dirname).then((binPath) => {
+loadCLIBinPath(__dirname)
+  .then((binPath) => {
     execa(binPath, process.argv.slice(2), {
-        stdio: 'inherit',
-        env: process.env
+      stdio: "inherit",
+      env: process.env,
     });
-    spinner.stop();
-}).catch((e) => {
+  })
+  .catch((e) => {
     console.error(e);
-});
-
+  });

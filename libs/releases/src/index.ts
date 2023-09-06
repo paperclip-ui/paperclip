@@ -33,7 +33,8 @@ const downloadRelease = async (versionDir: string) => {
         const releaseVersion = extractVersionParts(release.tag_name);
         return (
           releaseVersion.major === currentVersion.major &&
-          release.minor == releaseVersion.minor
+          releaseVersion.minor === currentVersion.minor &&
+          releaseVersion.patch === currentVersion.patch
         );
       })
       .sort((a, b) => {
@@ -112,6 +113,6 @@ export const loadCLIBinPath = async (cwd: string) => {
 };
 
 const extractVersionParts = (version: string) => {
-  const [major, minor, patch] = version.split(".");
+  const [major, minor, patch] = version.replace(/^v/, "").split(".");
   return { major, minor, patch };
 };

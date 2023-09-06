@@ -2217,7 +2217,6 @@ __metadata:
   dependencies:
     "@paperclip-ui/releases": ^20.0.41
     execa: ^5.1.1
-    ora: ^5.4.1
   bin:
     paperclip: bin/paperclip
   languageName: unknown

@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/releases",
-  "version": "20.0.34",
+  "version": "20.0.35",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -22,5 +22,5 @@
   "devDependencies": {
     "@types/fs-extra": "^9.0.13"
   },
-  "gitHead": "c0ae616158aa45d955026186a5bb04f46241f53f"
+  "gitHead": "c959b8baacb099c4aa92cad866ad0e793abba09f"
 }

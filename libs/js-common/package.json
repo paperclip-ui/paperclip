@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/common",
-  "version": "20.0.33",
+  "version": "20.0.34",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -16,5 +16,5 @@
   "devDependencies": {
     "@types/lru-cache": "^7.10.10"
   },
-  "gitHead": "8104e4d9b0b976b8c8eccf1e4eee194a251bc76e"
+  "gitHead": "c0ae616158aa45d955026186a5bb04f46241f53f"
 }

@@ -1,10 +1,9 @@
 {
   "name": "@paperclip-ui/config",
-  "version": "20.0.33",
+  "version": "20.0.34",
   "private": true,
   "description": "Crate for managing paperclip config files + utils for things like:",
   "main": "index.js",
-  "scripts": {},
   "author": "",
   "license": "ISC",
   "types": "./index.d.ts",

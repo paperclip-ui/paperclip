@@ -25,9 +25,9 @@ jobs:
         package: [libs/cli]
     steps:
       - uses: actions/checkout@master
-      - uses: arduino/setup-protoc@v1
+      - uses: arduino/setup-protoc@v2
         with:
-          version: "3.x"
+          version: "24.x"
 
       - uses: jetli/wasm-pack-action@v0.4.0
         with:

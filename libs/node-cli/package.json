@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/cli",
-  "version": "20.0.40",
+  "version": "20.0.41",
   "description": "",
   "main": "lib/index.js",
   "publishConfig": {
@@ -16,7 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@paperclip-ui/releases": "^20.0.40",
+    "@paperclip-ui/releases": "^20.0.41",
     "execa": "^5.1.1",
     "ora": "^5.4.1"
   },

@@ -12,8 +12,8 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch --preserveWatchOutput",
-    "postinstall": "node lib/postinstall.js",
-    "postupdate": "node lib/postinstall.js"
+    "postinstall": "node postinstall.js",
+    "postupdate": "node postinstall.js"
   },
   "author": "",
   "license": "ISC",

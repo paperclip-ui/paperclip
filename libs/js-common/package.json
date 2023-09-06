@@ -3,6 +3,9 @@
   "version": "20.0.40",
   "description": "",
   "main": "lib/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch --preserveWatchOutput"
@@ -16,5 +19,5 @@
   "devDependencies": {
     "@types/lru-cache": "^7.10.10"
   },
-  "gitHead": "38815c891a6b6d2a656ba3d6507458ebbb25697e"
+  "gitHead": "9cbfaf54c043385661768ba1b1a41de3ec872d1d"
 }

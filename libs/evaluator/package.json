@@ -2,6 +2,9 @@
   "name": "@paperclip-ui/evaluator",
   "version": "20.0.40",
   "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "```rust use paperclip_evaluator::evaluator::{Evaluator, LoadedData};",
   "main": "lib/index.js",
   "scripts": {

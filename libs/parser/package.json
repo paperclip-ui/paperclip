@@ -7,10 +7,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "wasm-pack build --target nodejs; tsc"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@paperclip-ui/proto": "^20.0.40"
   },
-  "gitHead": "38815c891a6b6d2a656ba3d6507458ebbb25697e"
+  "gitHead": "9cbfaf54c043385661768ba1b1a41de3ec872d1d"
 }

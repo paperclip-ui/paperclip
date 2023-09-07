@@ -80,7 +80,7 @@ all the time!
 
 Design-wise, the DSL hopes to remove some of the gotchas around HTML and CSS (e.g: selectors, globals, style collisions) by introducing _different_ syntax for styling elements. The DSL is also a _reflection_ of an ideal user experience similar to Figma and other design tools, hoping to create an inviting and intuitive experience for people who are mostly living in those spaces.
 
-Here's an example of what a "design file" looks like:
+Here's an example of what a `*.pc` looks like:
 
 ```javascript
 public component Card {

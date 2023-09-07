@@ -13,10 +13,10 @@ yarn add @paperclip-ui/cli && yarn paperclip designer --open
 ---
 
 - [Documentation](./docs)
-  - [Designer](./docs/designer.md) - Using the designer
-  - [Syntax](./docs/syntax.md) - Info about the DSL and how write it by hand
+  <!-- - [Designer](./docs/designer.md) - Using the designer -->
+  <!-- - [Syntax](./docs/syntax.md) - Info about the DSL and how write it by hand -->
   - [Integration](./docs/integration.md) - Integrating Paperclip into your app
-  - [Configuration](./docs/config.md) - Configuring your project
+  <!-- - [Configuration](./docs/config.md) - Configuring your project -->
 
 ---
 

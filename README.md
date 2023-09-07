@@ -72,7 +72,7 @@ Paperclip is meant for styling and creating simple components. **It's probably b
 
 Paperclip works well with CSS frameworks like Tailwind since you can load these CSS frameworks into the designer and use them when you're creating your UIs visually. -->✨
 
-### DSL example
+### The DSL
 
 The DSL can be thought of like content of a design file. They're meant to be created visually, but can also be written by hand. These files are readable because _I_ think
 that it makes it easier for things like version control, code reviewing, and other QA stuff. 

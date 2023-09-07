@@ -72,7 +72,7 @@ import { TodoItem } from "./todo-item.pc";
 
 Paperclip is meant for styling and creating simple components. **It's probably best thought of as a design system tool**, and replaces other tools like styled components, BEM (CSS pattern), CSS modules, etc.
 
-Paperclip works well with CSS frameworks like Tailwind since you can load these CSS frameworks into the designer and use them when you're creating your UIs visually. -->✨
+Paperclip works well with CSS frameworks like Tailwind since you can load these CSS frameworks into the designer and use them when you're creating your UIs visually. -->
 
 ### The DSL
 

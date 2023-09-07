@@ -66,13 +66,13 @@ import { TodoItem } from "./todo-item.pc";
 
 `*.pc` are even strongly typed too in case you're working with something like TypeScript, or another strongly typed language.
 
-### How can I use Paperclip in my project? 🤔
+<!--### How can I use Paperclip in my project? 🤔
 
 Paperclip is meant for styling and creating simple components. **It's probably best thought of as a design system tool**, and replaces other tools like styled components, BEM (CSS pattern), CSS modules, etc.
 
-Paperclip works well with CSS frameworks like Tailwind since you can load these CSS frameworks into the designer and use them when you're creating your UIs visually. ✨
+Paperclip works well with CSS frameworks like Tailwind since you can load these CSS frameworks into the designer and use them when you're creating your UIs visually. -->✨
 
-### Not your typical HTML and CSS
+### DSL example
 
 Paperclip hopes to remove some of the gotchas around HTML and CSS (e.g: selectors, globals, style collisions) by introducing _different_ syntax for styling elements. The DSL is also a _reflection_ of an ideal user experience similar to Figma and other design tools, hoping to create an inviting experience for people who are mostly living in those spaces.
 

@@ -76,9 +76,8 @@ Paperclip works well with CSS frameworks like Tailwind since you can load these 
 
 ### The DSL
 
-The DSL can be thought of like content of a design file. They're meant to be created visually, but can also be written by hand. These files are readable because _I_ think
-that it makes it easier for things like version control, code reviewing, and other QA stuff. That and sometimes it's just nicer to write UIs by hand. I don't want being stuck using the design tool
-all the time!
+The DSL can be thought of like a design file. It's in a DSL format because I believe
+that it makes it easier for things like version control, code reviewing, and other QA stuff. That and sometimes it's just nicer to write UIs by hand.
 
 Design-wise, the DSL hopes to remove some of the gotchas around HTML and CSS (e.g: selectors, globals, style collisions) by introducing _different_ syntax for styling elements. The DSL is also a _reflection_ of an ideal user experience similar to Figma and other design tools, hoping to create an inviting and intuitive experience for people who are mostly living in those spaces.
 

@@ -31,7 +31,7 @@ This will install and generate a new Paperclip config file that looks something 
 
 Next, go ahead and spin up the designer with `yarn paperclip designer --open`, create a new design anywhere you want, then save it.
 
-Finally, run `yarn paperclip build` to compile your PC file, and then import into your JS app.
+Finally, run `yarn paperclip build` to compile your PC file, and then import into your JS app. That's all there is to it!
 
 ### Webpack integration
 

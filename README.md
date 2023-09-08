@@ -8,7 +8,7 @@
 yarn add @paperclip-ui/cli -D && yarn paperclip designer --open
 ```
 
-<img width="1840" alt="Screenshot 2023-09-02 at 6 54 04 PM" src="https://github.com/paperclip-ui/paperclip/assets/757408/4a46b041-636f-4960-a663-177a044432f9">
+https://github.com/paperclip-ui/paperclip/assets/757408/429b22e0-41d6-4621-8b6e-613c1686cdda
 
 ---
 

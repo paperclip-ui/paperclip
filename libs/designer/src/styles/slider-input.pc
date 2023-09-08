@@ -1,55 +1,37 @@
 import "./theme.pc" as theme
 
+public style centerY {
+    top: 50%
+    position: absolute
+    transform: translateY(-50%)
+}
+
 /**
- * @bounds(x: 568, y: 261, width: 435, height: 15)
+ * @bounds(x: 388, y: 528, width: 506, height: 59)
 */
 
 public component Slider {
     render div {
         style {
             position: relative
-            background: transparent
         }
-        div container {
-            style {
-                position: relative
-            }
-            div track {
-                style {
-                    background: var(theme.blue00)
-                    width: 100%
-                    height: 2px
-                }
-            }
-            div dot(style: dotStyle) {
-                style {
-                    background: var(theme.blue02)
-                    width: 10px
-                    height: 10px
-                    border-radius: 99px
-                    position: absolute
-                    top: 50%
-                    left: 50%
-                    transform: translate(-50%, -50%)
-                    cursor: pointer
-                }
+        div track {
+            style extends centerY {
+                background: var(theme.blue01)
+                width: 100%
+                height: 2px
+                position: absolute
             }
         }
-    }
-}
-
-/**
- * @bounds(x: 1063, y: 228, width: 281, height: 208)
-*/
-
-div preview {
-    style {
-        background: white
-        padding: 30px
-    }
-    Slider {
-        style {
-            background: white
+        div knob(onMouseDown: onMouseDown) {
+            style extends centerY {
+                background: var(theme.blue02)
+                position: absolute
+                width: 20px
+                height: 20px
+                border-radius: 99px
+                left: 100px
+            }
         }
     }
 }

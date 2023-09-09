@@ -9,36 +9,34 @@ type SidebarContainerProps = {
   position: "left" | "right";
 };
 
-export const SidebarContainer = ({
-  children,
-  position,
-}: SidebarContainerProps) => {
-  const [width, setWidth] = useState(300);
+export default (Base: React.FC<styles.BaseSidebarContainerProps>) =>
+  ({ children, position }: SidebarContainerProps) => {
+    const [width, setWidth] = useState(300);
 
-  const ref = useRef<HTMLDivElement>(null);
-  const onSidebarMouseDown = (e: React.MouseEvent) => {
-    startDOMDrag(e, null, (_event, data) => {
-      const x = position === "left" ? data.delta.x : -data.delta.x;
+    const ref = useRef<HTMLDivElement>(null);
+    const onSidebarMouseDown = (e: React.MouseEvent) => {
+      startDOMDrag(e, null, (_event, data) => {
+        const x = position === "left" ? data.delta.x : -data.delta.x;
 
-      setWidth(clamp(width + x, 50, 700));
-    });
+        setWidth(clamp(width + x, 50, 700));
+      });
+    };
+
+    if (children == null) {
+      return null;
+    }
+
+    return (
+      <Base
+        ref={ref}
+        style={{ width }}
+        onSidebarMouseDown={onSidebarMouseDown}
+        class={cx({
+          left: position === "left",
+          right: position === "right",
+        })}
+      >
+        {children}
+      </Base>
+    );
   };
-
-  if (children == null) {
-    return null;
-  }
-
-  return (
-    <styles.SidebarContainer
-      ref={ref}
-      style={{ width }}
-      onSidebarMouseDown={onSidebarMouseDown}
-      class={cx({
-        left: position === "left",
-        right: position === "right",
-      })}
-    >
-      {children}
-    </styles.SidebarContainer>
-  );
-};

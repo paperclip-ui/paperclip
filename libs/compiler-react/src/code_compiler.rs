@@ -8,6 +8,8 @@ use paperclip_proto::ast::{
 };
 use std::collections::BTreeMap;
 
+const COMPILER_NAME: &str = "react";
+
 pub fn compile_code(dependency: &Dependency, graph: &Graph) -> Result<String> {
     let mut context = Context::new(&dependency, graph);
     compile_document(
@@ -48,10 +50,21 @@ fn compile_imports(document: &ast::Document, context: &mut Context) {
             ast::document_body_item::Inner::Import(import) => {
                 compile_import(import, context);
             }
+            ast::document_body_item::Inner::Component(component) => {
+                include_component_script(component, context);
+            }
             _ => {}
         }
     }
     context.add_buffer("\n");
+}
+
+fn include_component_script(component: &ast::Component, context: &mut Context) {
+    let script = get_or_short!(component.get_script(COMPILER_NAME), ());
+    context.add_buffer(format!(
+        "import * as {}Script from \"{}\";\n",
+        component.name, script.get_src().expect("Src must exist")
+    ).as_str());
 }
 
 fn compile_import(import: &ast::Import, context: &mut Context) {
@@ -109,17 +122,29 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
         .as_str(),
     );
 
-    if component.is_public {
-        context.add_buffer("export ");
-    }
-
     context.add_buffer(
         format!(
-            "const {} = React.memo(React.forwardRef(_{}));\n\n",
+            "let {} = React.memo(React.forwardRef(_{}));\n",
             component.name, component.name
         )
         .as_str(),
     );
+
+    if let Some(script) = component.get_script(COMPILER_NAME) {
+        context.add_buffer(
+            format!(
+                "{} = React.memo(React.forwardRef({}({})));\n",
+                component.name, format!("{}Script", component.name), component.name
+            )
+            .as_str(),
+        );
+    }
+
+
+    if component.is_public {
+        context.add_buffer(format!("export {{ {} }};\n", component.name).as_str());
+    }
+    context.add_buffer("\n");
 }
 
 fn compile_component_render(component: &ast::Component, context: &mut Context) {

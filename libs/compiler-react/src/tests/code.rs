@@ -54,7 +54,7 @@ add_case! {
         });
     };
     _A.displayName = "A";
-    const A = React.memo(React.forwardRef(_A));
+    let A = React.memo(React.forwardRef(_A));
   "#
 }
 
@@ -76,7 +76,8 @@ add_case! {
         });
     };
     _A.displayName = "A";
-    export const A = React.memo(React.forwardRef(_A));
+    let A = React.memo(React.forwardRef(_A));
+    export { A };
   "#
 }
 
@@ -101,7 +102,8 @@ add_case! {
         });
     };
     _A.displayName = "A";
-    export const A = React.memo(React.forwardRef(_A));
+    let A = React.memo(React.forwardRef(_A));
+    export { A };
   "#
 }
 
@@ -123,7 +125,8 @@ add_case! {
         });
     };
     _A.displayName = "A";
-    export const A = React.memo(React.forwardRef(_A));
+    let A = React.memo(React.forwardRef(_A));
+    export { A };
   "#
 }
 
@@ -147,7 +150,8 @@ add_case! {
         );
     };
     _A.displayName = "A";
-    export const A = React.memo(React.forwardRef(_A));
+    let A = React.memo(React.forwardRef(_A));
+    export { A };
   "#
 }
 
@@ -168,7 +172,8 @@ add_case! {
         });
     };
     _A.displayName = "A";
-    export const A = React.memo(React.forwardRef(_A));
+    let A = React.memo(React.forwardRef(_A));
+    export { A };
   "#
 }
 
@@ -189,7 +194,8 @@ add_case! {
         });
     };
     _A.displayName = "A";
-    export const A = React.memo(React.forwardRef(_A));
+    let A = React.memo(React.forwardRef(_A));
+    export { A };
   "#
 }
 
@@ -217,7 +223,8 @@ add_case! {
         );
     };
     _A.displayName = "A";
-    export const A = React.memo(React.forwardRef(_A));
+    let A = React.memo(React.forwardRef(_A));
+    export { A };
   "#
 }
 
@@ -234,7 +241,8 @@ add_case! {
         return "ab";
     };
     _A.displayName = "A";
-    export const A = React.memo(React.forwardRef(_A));
+    let A = React.memo(React.forwardRef(_A));
+    export { A };
   "#
 }
 
@@ -258,7 +266,8 @@ add_case! {
         );
     };
     _A.displayName = "A";
-    export const A = React.memo(React.forwardRef(_A));
+    let A = React.memo(React.forwardRef(_A));
+    export { A };
   "#
 }
 
@@ -275,7 +284,8 @@ add_case! {
         return props.abba;
     };
     _A.displayName = "A";
-    export const A = React.memo(React.forwardRef(_A));
+    let A = React.memo(React.forwardRef(_A));
+    export { A };
   "#
 }
 
@@ -304,7 +314,8 @@ add_case! {
         ];
     };
     _A.displayName = "A";
-    export const A = React.memo(React.forwardRef(_A));
+    let A = React.memo(React.forwardRef(_A));
+    export { A };
   "#
 }
 
@@ -326,7 +337,7 @@ add_case! {
         return props.abba;
     };
     _A.displayName = "A";
-    const A = React.memo(React.forwardRef(_A));
+    let A = React.memo(React.forwardRef(_A));
     
     const _B = (props, ref) => {
         return React.createElement(A, {
@@ -336,7 +347,7 @@ add_case! {
         });
     };
     _B.displayName = "B";
-    const B = React.memo(React.forwardRef(_B));
+    let B = React.memo(React.forwardRef(_B));
   "#
 }
 
@@ -362,7 +373,7 @@ add_case! {
         return props.abba;
     };
     _A.displayName = "A";
-    const A = React.memo(React.forwardRef(_A));
+    let A = React.memo(React.forwardRef(_A));
     
     const _B = (props, ref) => {
         return React.createElement(A, {
@@ -375,7 +386,7 @@ add_case! {
         });
     };
     _B.displayName = "B";
-    const B = React.memo(React.forwardRef(_B));
+    let B = React.memo(React.forwardRef(_B));
   "#
 }
 
@@ -398,7 +409,7 @@ add_case! {
         });
     };
     _A.displayName = "A";
-    const A = React.memo(React.forwardRef(_A));
+    let A = React.memo(React.forwardRef(_A));
   "#
 }
 
@@ -424,7 +435,7 @@ add_case! {
         });
     };
     _B.displayName = "B";
-    const B = React.memo(React.forwardRef(_B));
+    let B = React.memo(React.forwardRef(_B));
     
     const _A = (props, ref) => {
         return React.createElement(B, {
@@ -434,7 +445,7 @@ add_case! {
         });
     };
     _A.displayName = "A";
-    const A = React.memo(React.forwardRef(_A));
+    let A = React.memo(React.forwardRef(_A));
   "#
 }
 
@@ -459,7 +470,7 @@ add_case! {
         });
     };
     _A.displayName = "A";
-    const A = React.memo(React.forwardRef(_A));
+    let A = React.memo(React.forwardRef(_A));
   "#
 }
 
@@ -496,7 +507,7 @@ add_case! {
       });
   };
   _A.displayName = "A";
-  const A = React.memo(React.forwardRef(_A));
+  let A = React.memo(React.forwardRef(_A));
   
   const _B = (props, ref) => {
       return React.createElement("div", {
@@ -510,7 +521,7 @@ add_case! {
       );
   };
   _B.displayName = "B";
-  const B = React.memo(React.forwardRef(_B));
+  let B = React.memo(React.forwardRef(_B));
   "#
 }
 
@@ -539,7 +550,7 @@ add_case! {
         });
     };
     _A.displayName = "A";
-    const A = React.memo(React.forwardRef(_A));
+    let A = React.memo(React.forwardRef(_A));
     
     const _B = (props, ref) => {
         return React.createElement(A, {
@@ -550,7 +561,7 @@ add_case! {
         });
     };
     _B.displayName = "B";
-    const B = React.memo(React.forwardRef(_B));
+    let B = React.memo(React.forwardRef(_B));
   "#
 }
 
@@ -589,6 +600,37 @@ add_case! {
         );
     };
     _A.displayName = "A";
-    const A = React.memo(React.forwardRef(_A));
+    let A = React.memo(React.forwardRef(_A));
+  "#
+}
+
+
+add_case! {
+  can_compile_with_a_script,
+  r#"
+  public component AB {
+    script(src: "./test.js", target: "react")
+    render div {
+      text "something"
+    }
+  }
+  "#,
+  r#"
+  require("./entry.pc.css");
+  import * as React from "react";
+  import * as ABScript from "./test.js";
+  
+  const _AB = (props, ref) => {
+      return React.createElement("div", {
+          "key": "80f4925f-7",
+          "ref": ref
+      }, 
+          "something"
+      );
+  };
+  _AB.displayName = "AB";
+  let AB = React.memo(React.forwardRef(_AB));
+  AB = React.memo(React.forwardRef(ABScript(AB)));
+  export { AB };
   "#
 }

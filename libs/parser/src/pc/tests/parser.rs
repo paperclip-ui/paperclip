@@ -469,3 +469,13 @@ add_case! {
         }
     "#
 }
+
+add_case! {
+    can_parse_a_component_with_a_script,
+    r#"
+        public component Ab {
+            script(src: "./target.js", target: "react")
+            render div
+        }
+    "#
+}

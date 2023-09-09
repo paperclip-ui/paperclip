@@ -1,4 +1,4 @@
-use crate::add_inner_wrapper;
+use crate::{add_inner_wrapper, virt::core::value};
 include!(concat!(env!("OUT_DIR"), "/ast.pc.rs"));
 
 macro_rules! body_contains {
@@ -87,6 +87,17 @@ impl Component {
 
         None
     }
+    pub fn get_script(&self, target: &str) -> Option<&Script> {
+        for item in &self.body {
+            if let component_body_item::Inner::Script(script) = &item.get_inner() {
+                if script.get_target() == Some(target.to_string()) && script.get_src().is_some() {
+                    return Some(script);
+                }
+            }
+        }
+
+        None
+    }
     pub fn get_variants(&self) -> Vec<&Variant> {
         get_body_items!(&self.body, component_body_item::Inner::Variant, Variant)
     }
@@ -94,6 +105,33 @@ impl Component {
         for item in &self.body {
             if let component_body_item::Inner::Render(expr) = &item.get_inner() {
                 return Some(expr);
+            }
+        }
+
+        None
+    }
+}
+
+impl Script {
+    pub fn get_target(&self) -> Option<String> {
+        for param in &self.parameters {
+            if param.name == "target" {
+                match &param.value.as_ref().unwrap().inner.clone().unwrap() {
+                    simple_expression::Inner::Str(value) => return Some(value.value.clone()),
+                    _ => {}
+                }
+            }
+        }
+
+        None
+    }
+    pub fn get_src(&self) -> Option<String> {
+        for param in &self.parameters {
+            if param.name == "src" {
+                match &param.value.as_ref().unwrap().inner.clone().unwrap() {
+                    simple_expression::Inner::Str(value) => return Some(value.value.clone()),
+                    _ => {}
+                }
             }
         }
 

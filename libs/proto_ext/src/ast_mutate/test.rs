@@ -500,7 +500,7 @@ case! {
     )
   ],
   mutation::Inner::SetStyleDeclarations(SetStyleDeclarations {
-    expression_id: "80f4925f-5".to_string(),
+    expression_id: "80f4925f-4".to_string(),
     variant_ids: vec![],
     declarations: vec![
       SetStyleDeclaration {
@@ -4016,15 +4016,9 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
+    import "/some/dir/module2.pc" as mod
+
     component A {
-      render div {
-        slot a
-        slot b
-      }
-    }
-    A {
-      insert a { }
-      insert b { }
     }
     "#
   )]

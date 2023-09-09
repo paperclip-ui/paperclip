@@ -1,8 +1,8 @@
 import React from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/left-sidebar.pc";
+import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
 import { Layers } from "./Layers";
 import { FileNavigator } from "./FileNavigator";
-import { SidebarContainer } from "../../../Sidebar";
 import { useSelector } from "@paperclip-ui/common";
 import { DesignerState } from "@paperclip-ui/designer/src/state";
 
@@ -13,12 +13,12 @@ export const LeftSidebar = () => {
   }
 
   return (
-    <SidebarContainer position="left">
+    <sidebarStyles.SidebarContainer position="left">
       <styles.LeftSidebar>
         <Layers />
         <FileNavigator />
       </styles.LeftSidebar>
-    </SidebarContainer>
+    </sidebarStyles.SidebarContainer>
   );
 };
 

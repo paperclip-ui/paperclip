@@ -42,10 +42,10 @@ add_case! {
   r#"
     import * as React from "react";
 
-    export type AProps = {
+    export type BaseAProps = {
       "ref"?: any,
     };
-    export const A: React.FC<AProps>;
+    export const A: React.FC<BaseAProps>;
   "#
 }
 
@@ -81,12 +81,11 @@ add_case! {
   r#"
     import * as React from "react";
 
-    export type AProps = {
+    export type BaseAProps = {
       "ref"?: any,
       "class"?: string,
     };
-    export const A: React.FC<AProps>;
-  "#
+    export const A: React.FC<BaseAProps>;  "#
 }
 
 add_case! {
@@ -104,11 +103,11 @@ add_case! {
   r#"
     import * as React from "react";
 
-    export type AProps = {
+    export type BaseAProps = {
       "ref"?: any,
       "children"?: React.Children,
     };
-    export const A: React.FC<AProps>;
+    export const A: React.FC<BaseAProps>;
   "#
 }
 
@@ -126,11 +125,11 @@ add_case! {
   r#"
     import * as React from "react";
 
-    export type AProps = {
+    export type BaseAProps = {
       "ref"?: any,
       "fsdfsdfs"?: any,
     };
-    export const A: React.FC<AProps>;
+    export const A: React.FC<BaseAProps>;
   "#
 }
 
@@ -148,11 +147,11 @@ add_case! {
   r#"
     import * as React from "react";
 
-    export type AProps = {
+    export type BaseAProps = {
       "ref"?: any,
       "abProps"?: React.DOMAttributes<any>,
     };
-    export const A: React.FC<AProps>;
+    export const A: React.FC<BaseAProps>;
   "#
 }
 
@@ -179,16 +178,16 @@ add_case! {
   r#"
     import * as React from "react";
 
-    export type AProps = {
+    export type BaseAProps = {
       "ref"?: any,
       "somethingProps": React.ComponentProps<typeof B>,
     };
-    export const A: React.FC<AProps>;
+    export const A: React.FC<BaseAProps>;
 
-    export type BProps = {
+    export type BaseBProps = {
       "ref"?: any,
     };
-    export const B: React.FC<BProps>;
+    export const B: React.FC<BaseBProps>;
   "#
 }
 
@@ -221,10 +220,38 @@ add_case! {
     import * as React from "react";
     import * as mod from "/mod.pc";
 
-    export type AProps = {
+    export type BaseAProps = {
       "ref"?: any,
       "somethingProps": React.ComponentProps<typeof mod.B>,
     };
-    export const A: React.FC<AProps>;
+    export const A: React.FC<BaseAProps>;
+
+  "#
+}
+
+add_case! {
+  imports_script_definitions,
+  [
+      (
+          "/entry.pc",
+          r#"
+          public component A {
+            script(src: "./something.tsx", target: "react")
+            render div {
+
+            }
+          }
+          "#,
+      )
+  ],
+  r#"
+    import * as React from "react";
+    import AScript from "./something.tsx";
+
+    export type BaseAProps = {
+        "ref"?: any,
+    };
+
+    export const A: ReturnType<AScript>;
   "#
 }

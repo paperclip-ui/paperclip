@@ -16,6 +16,7 @@ pub fn compile_typed_definition(dep: &Dependency, graph: &Graph) -> Result<Strin
 fn compile_document(context: &mut Context) {
     context.add_buffer("import * as React from \"react\";\n");
     compile_imports(context);
+    compile_component_imports(context);
     compile_components(context);
 }
 
@@ -31,6 +32,31 @@ fn compile_imports(context: &mut Context) {
             compile_import(import, context);
         }
     }
+}
+
+fn compile_component_imports(context: &mut Context) {
+    for item in &context
+        .dependency
+        .document
+        .as_ref()
+        .expect("Document must exist")
+        .body
+    {
+        if let ast::document_body_item::Inner::Component(component) = item.get_inner() {
+            compile_component_script_import(component, context);
+        }
+    }
+}
+
+fn compile_component_script_import(
+    component: &ast::Component,
+    context: &mut Context,
+) -> Option<()> {
+    let script = component.get_script("react")?;
+    let src = script.get_src()?;
+    context.add_buffer(format!("import {}Script from \"{}\";\n", component.name, src).as_str());
+
+    Some(())
 }
 
 fn compile_import(import: &ast::Import, context: &mut Context) {
@@ -65,7 +91,7 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
         .infer_component(component, &context.dependency.path, context.graph)
         .unwrap();
 
-    context.add_buffer(format!("export type {}Props = {{\n", component.name).as_str());
+    context.add_buffer(format!("export type Base{}Props = {{\n", component.name).as_str());
     context.start_block();
     context.add_buffer("\"ref\"?: any,\n");
 
@@ -88,13 +114,23 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
     context.end_block();
     context.add_buffer("};\n");
 
-    context.add_buffer(
-        format!(
-            "export const {}: React.FC<{}Props>;\n",
-            component.name, component.name
-        )
-        .as_str(),
-    );
+    if component.get_script("react").is_some() {
+        context.add_buffer(
+            format!(
+                "export const {}: ReturnType<{}Script>;\n",
+                component.name, component.name
+            )
+            .as_str(),
+        );
+    } else {
+        context.add_buffer(
+            format!(
+                "export const {}: React.FC<Base{}Props>;\n",
+                component.name, component.name
+            )
+            .as_str(),
+        );
+    }
 }
 
 fn compile_inference(inference: &infer_types::Type, context: &mut Context) {

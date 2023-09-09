@@ -623,7 +623,7 @@ add_case! {
   r#"
   require("./entry.pc.css");
   import * as React from "react";
-  import * as ABScript from "./test.js";
+  import ABScript from "./test.js";
 
   const _AB = (props, ref) => {
       return React.createElement("div", {
@@ -655,7 +655,7 @@ add_case! {
   r#"
   require("./entry.pc.css");
   import * as React from "react";
-  import * as ABScript from "./test.js";
+  import ABScript from "./test.js";
 
   const _AB = (props, ref) => {
       return React.createElement("div", {

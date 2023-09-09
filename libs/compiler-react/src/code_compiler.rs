@@ -63,7 +63,7 @@ fn include_component_script(component: &ast::Component, context: &mut Context) {
     let script = get_or_short!(component.get_script(COMPILER_NAME), ());
     context.add_buffer(
         format!(
-            "import * as {}Script from \"{}\";\n",
+            "import {}Script from \"{}\";\n",
             component.name,
             script.get_src().expect("Src must exist")
         )

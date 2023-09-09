@@ -7,10 +7,12 @@ use paperclip_evaluator::css;
 use futures::executor::block_on;
 use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_evaluator::html;
+use paperclip_proto_ext::ast_mutate;
 use paperclip_proto_ext::graph::{io::IO as GraphIO, load::LoadableGraph};
 
 use crate::handle_store_events;
 use crate::server::core::{ServerEngineContext, ServerEvent};
+use crate::server::domains::paperclip::utils::apply_mutations;
 use crate::server::io::ServerIO;
 
 pub async fn prepare<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
@@ -29,6 +31,21 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
         &ctx.store,
         ServerEvent::PaperclipFilesLoaded { files } => {
             load_dependency_graph(next.clone(), &files).await.expect("Unable to load dependency graph");
+        },
+        ServerEvent::FileMoved { from_path, to_path } => {
+                apply_mutations(
+                    &vec![
+                        ast_mutate::mutation::Inner::UpdateImportPath(ast_mutate::UpdateImportPath {
+                            old_path: from_path.clone(),
+                            new_path: to_path.clone(),
+                        })
+                        .get_outer(),
+                    ],
+                    ctx.clone(),
+                )
+                .await.expect("Could not update imports");
+
+                ctx.emit(ServerEvent::MutationsInternallyApplied);
         },
         ServerEvent::DependencyGraphLoaded { graph } => {
             evaluate_dependency_graph(next.clone(), Some(graph.dependencies.keys().map(|k| {

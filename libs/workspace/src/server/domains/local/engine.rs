@@ -16,7 +16,7 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
 
     handle_store_events!(
         &ctx.store,
-        ServerEvent::SaveRequested => {
+        ServerEvent::SaveRequested | ServerEvent::MutationsInternallyApplied => {
             save_project(next.clone()).await.expect("Unable to load dependency graph");
         }
     );

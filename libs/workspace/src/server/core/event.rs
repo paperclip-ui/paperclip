@@ -26,6 +26,11 @@ pub enum ServerEvent {
         expr_id: String,
     },
     SaveRequested,
+    MutationsInternallyApplied,
+    FileMoved {
+        from_path: String,
+        to_path: String,
+    },
     MutationsApplied {
         result: Vec<(String, Vec<MutationResult>)>,
         updated_graph: Graph,

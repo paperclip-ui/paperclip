@@ -1,7 +1,8 @@
 // https://github.com/hyperium/tonic/blob/master/examples/src/hyper_warp/server.rs
 
-use super::utils::{apply_mutations, create_design_file};
+use super::utils::create_design_file;
 use crate::server::core::{ServerEngineContext, ServerEvent, ServerStore};
+use crate::server::domains::paperclip::utils::apply_mutations;
 use crate::server::io::ServerIO;
 use futures::Stream;
 use glob::glob;
@@ -217,7 +218,14 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
 
         println!("mv {} {}", from_path, to_path);
 
-        let result = std::fs::rename(from_path, to_path);
+        let result = std::fs::rename(&from_path, &to_path);
+
+        // save after mutation
+        self.ctx
+            .store
+            .lock()
+            .unwrap()
+            .emit(ServerEvent::FileMoved { from_path, to_path });
 
         if result.is_ok() {
             Ok(Response::new(Empty {}))

@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use super::context::Context;
 use anyhow::Result;
 use paperclip_infer::infer::Inferencer;
@@ -14,8 +16,34 @@ pub fn compile_typed_definition(dep: &Dependency, graph: &Graph) -> Result<Strin
 }
 
 fn compile_document(context: &mut Context) {
-    context.add_buffer("import * as React from \"react\";\n\n");
+    context.add_buffer("import * as React from \"react\";\n");
+    compile_imports(context);
     compile_components(context);
+}
+
+fn compile_imports(context: &mut Context) {
+    for item in &context
+        .dependency
+        .document
+        .as_ref()
+        .expect("Document must exist")
+        .body
+    {
+        if let ast::document_body_item::Inner::Import(import) = item.get_inner() {
+            compile_import(import, context);
+        }
+    }
+}
+
+fn compile_import(import: &ast::Import, context: &mut Context) {
+    context.add_buffer(
+        format!(
+            "import * as {} from \"{}\";\n",
+            import.namespace, import.path
+        )
+        .as_str(),
+    );
+    context.add_buffer("\n");
 }
 
 fn compile_components(context: &mut Context) {
@@ -43,9 +71,19 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
     context.start_block();
     context.add_buffer("\"ref\"?: any,\n");
 
-    for (name, prop_type) in &component_inference.properties {
-        context.add_buffer(format!("\"{}\"?: ", name).as_str());
-        compile_inference(prop_type, context);
+    for (name, prop) in &component_inference.properties {
+        let name = if matches!(prop.prop_type, infer_types::Type::Element(_)) {
+            format!("{}Props", name)
+        } else {
+            name.clone()
+        };
+
+        context.add_buffer(format!("\"{}\"", name).as_str());
+        if prop.optional {
+            context.add_buffer("?");
+        }
+        context.add_buffer(": ");
+        compile_inference(&prop.prop_type, context);
         context.add_buffer(",\n");
     }
 
@@ -74,6 +112,21 @@ fn compile_inference(inference: &infer_types::Type, context: &mut Context) {
         }
         infer_types::Type::Boolean => {
             context.add_buffer("boolean");
+        }
+        infer_types::Type::Element(el) => {
+            if let Some(component) =
+                el.get_instance_component(&context.dependency.path, &context.graph)
+            {
+                let ref_name = if let Some(ns) = &el.namespace {
+                    format!("{}.{}", ns, component.name.clone()).to_string()
+                } else {
+                    component.name.clone()
+                };
+
+                context.add_buffer(format!("React.ComponentProps<typeof {}>", ref_name).as_str());
+            } else {
+                context.add_buffer("React.DOMAttributes<any>");
+            }
         }
         infer_types::Type::Reference(reference) => {
             context.add_buffer(reference.path.join("::").as_str());

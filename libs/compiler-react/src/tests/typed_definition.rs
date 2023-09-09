@@ -9,10 +9,10 @@ use std::collections::HashMap;
 // TODO: insert test
 
 macro_rules! add_case {
-    ($name: ident, $mock_content: expr, $expected_output: expr) => {
+    ($name: ident, $mock_files: expr, $expected_output: expr) => {
         #[test]
         fn $name() {
-            let mock_fs = test_utils::MockFS::new(HashMap::from([("/entry.pc", $mock_content)]));
+            let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
             let mut graph = Graph::new();
 
             if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
@@ -31,11 +31,14 @@ macro_rules! add_case {
 
 add_case! {
   can_compile_a_simple_component,
-  r#"public component A {
-    render div {
-      
-    }
-  }"#,
+      [
+          ("/entry.pc",
+          r#"public component A {
+            render div {
+
+            }
+          }"#)
+      ],
   r#"
     import * as React from "react";
 
@@ -48,11 +51,16 @@ add_case! {
 
 add_case! {
   ignores_private_components,
-  r#"component A {
-    render div {
-      
-    }
-  }"#,
+      [
+          (
+              "/entry.pc",
+              r#"component A {
+                render div {
+
+                }
+              }"#,
+          )
+      ],
   r#"
     import * as React from "react";
   "#
@@ -60,11 +68,16 @@ add_case! {
 
 add_case! {
   a_simple_prop_can_be_inferred,
-  r#"public component A {
-    render div(class: class) {
-      
-    }
-  }"#,
+  [
+      (
+          "/entry.pc",
+          r#"public component A {
+            render div(class: class) {
+
+            }
+          }"#
+      )
+  ],
   r#"
     import * as React from "react";
 
@@ -78,11 +91,16 @@ add_case! {
 
 add_case! {
   children_is_properly_inferred,
-  r#"public component A {
-    render div {
-      slot children
-    }
-  }"#,
+  [
+   (
+       "/entry.pc",
+       r#"public component A {
+         render div {
+           slot children
+         }
+       }"#
+   )
+  ],
   r#"
     import * as React from "react";
 
@@ -96,10 +114,15 @@ add_case! {
 
 add_case! {
   unknown_props_are_inferred,
-  r#"public component A {
-    render div(fsdffsfs: fsdfsdfs) {
-    }
-  }"#,
+  [
+      (
+          "/entry.pc",
+          r#"public component A {
+            render div(fsdffsfs: fsdfsdfs) {
+            }
+          }"#
+      )
+  ],
   r#"
     import * as React from "react";
 
@@ -111,3 +134,97 @@ add_case! {
   "#
 }
 
+add_case! {
+  elements_with_ids_are_inferred,
+  [
+      (
+          "/entry.pc",
+          r#"public component A {
+            render div ab {
+            }
+          }"#,
+      )
+  ],
+  r#"
+    import * as React from "react";
+
+    export type AProps = {
+      "ref"?: any,
+      "abProps"?: React.DOMAttributes<any>,
+    };
+    export const A: React.FC<AProps>;
+  "#
+}
+
+add_case! {
+  instances_with_ids_are_inferred_with_required_props,
+  [
+      (
+          "/entry.pc",
+          r#"
+          public component A {
+            render B something {
+
+            }
+          }
+
+          public component B {
+            render div {
+
+            }
+          }
+          "#,
+      )
+  ],
+  r#"
+    import * as React from "react";
+
+    export type AProps = {
+      "ref"?: any,
+      "somethingProps": React.ComponentProps<typeof B>,
+    };
+    export const A: React.FC<AProps>;
+
+    export type BProps = {
+      "ref"?: any,
+    };
+    export const B: React.FC<BProps>;
+  "#
+}
+
+add_case! {
+  imports_definitions_from_other_files,
+  [
+      (
+          "/entry.pc",
+          r#"
+          import "/mod.pc" as mod
+          public component A {
+            render mod.B something {
+
+            }
+          }
+          "#,
+      ),
+      (
+          "/mod.pc",
+          r#"
+          public component B {
+            render div {
+
+            }
+          }
+          "#,
+      )
+  ],
+  r#"
+    import * as React from "react";
+    import * as mod from "/mod.pc";
+
+    export type AProps = {
+      "ref"?: any,
+      "somethingProps": React.ComponentProps<typeof mod.B>,
+    };
+    export const A: React.FC<AProps>;
+  "#
+}

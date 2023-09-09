@@ -61,10 +61,14 @@ fn compile_imports(document: &ast::Document, context: &mut Context) {
 
 fn include_component_script(component: &ast::Component, context: &mut Context) {
     let script = get_or_short!(component.get_script(COMPILER_NAME), ());
-    context.add_buffer(format!(
-        "import * as {}Script from \"{}\";\n",
-        component.name, script.get_src().expect("Src must exist")
-    ).as_str());
+    context.add_buffer(
+        format!(
+            "import * as {}Script from \"{}\";\n",
+            component.name,
+            script.get_src().expect("Src must exist")
+        )
+        .as_str(),
+    );
 }
 
 fn compile_import(import: &ast::Import, context: &mut Context) {
@@ -134,12 +138,13 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
         context.add_buffer(
             format!(
                 "{} = React.memo(React.forwardRef({}({})));\n",
-                component.name, format!("{}Script", component.name), component.name
+                component.name,
+                format!("{}Script", component.name),
+                component.name
             )
             .as_str(),
         );
     }
-
 
     if component.is_public {
         context.add_buffer(format!("export {{ {} }};\n", component.name).as_str());
@@ -247,6 +252,9 @@ fn compile_element_parameters(
 
     context.add_buffer("{\n");
     context.start_block();
+    if let Some(name) = &element.name {
+        context.add_buffer(format!("...props.{}Props,\n", name).as_str());
+    }
 
     let mut attrs = raw_attrs.iter().peekable();
 
@@ -257,6 +265,7 @@ fn compile_element_parameters(
         }
         context.add_buffer("\n");
     }
+
     context.end_block();
     context.add_buffer("}");
 }

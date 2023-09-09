@@ -74,7 +74,7 @@ fn infer_dep(dep: &Dependency, context: &mut InferContext) -> Result<()> {
         .expect("Document must exist")
         .get_components()
     {
-        context.step_in(&component.name);
+        context.step_in(&component.name, true);
         infer_component(component, context)?;
         context.step_out();
     }
@@ -110,6 +110,21 @@ fn infer_render_node(node: &ast::pc::node::Inner, context: &mut InferContext) ->
 }
 
 fn infer_element(expr: &ast::pc::Element, context: &mut InferContext) -> Result<()> {
+    if let Some(name) = &expr.name {
+        let el_type = types::Element {
+            id: name.to_string(),
+            tag_name: expr.tag_name.to_string(),
+            namespace: expr.namespace.clone(),
+        };
+        context.step_in(
+            name,
+            el_type
+                .get_instance_component(&context.dependency.path, &context.graph)
+                .is_none(),
+        );
+        context.set_scope_type(types::Type::Element(el_type));
+        context.step_out();
+    }
     infer_attributes(expr, context)?;
     for child in &expr.body {
         infer_node(child, context)?;
@@ -118,7 +133,7 @@ fn infer_element(expr: &ast::pc::Element, context: &mut InferContext) -> Result<
 }
 
 fn infer_slot(expr: &ast::pc::Slot, context: &mut InferContext) -> Result<()> {
-    context.step_in(&expr.name);
+    context.step_in(&expr.name, true);
     context.set_scope_type(types::Type::Slot);
     context.step_out();
     Ok(())
@@ -163,16 +178,20 @@ fn infer_attributes(expr: &ast::pc::Element, context: &mut InferContext) -> Resu
 fn infer_simple_expression(value: &ast::pc::simple_expression::Inner, context: &mut InferContext) {
     let current_parameter = get_or_short!(context.current_parameter, ());
     let instance_inference = get_or_short!(&context.current_instance_inference, ());
-    let prop_inference = instance_inference
-        .get(&current_parameter.name)
-        .unwrap_or(&types::Type::Unknown);
+    let prop_inference =
+        instance_inference
+            .get(&current_parameter.name)
+            .unwrap_or(&types::MapProp {
+                prop_type: types::Type::Unknown,
+                optional: true,
+            });
 
     match value {
         ast::pc::simple_expression::Inner::Reference(expr) => {
             if expr.path.len() == 1 {
                 if let Some(part) = expr.path.get(0) {
-                    context.step_in(part);
-                    context.set_scope_type(prop_inference.clone());
+                    context.step_in(part, true);
+                    context.set_scope_type(prop_inference.clone().prop_type);
                     context.step_out();
                 }
             }
@@ -183,18 +202,27 @@ fn infer_simple_expression(value: &ast::pc::simple_expression::Inner, context: &
 
 lazy_static! {
     static ref NATIVE_ELEMENT_TYPES: HashMap<&'static str, types::Map> = {
-        let mouse_event_type = types::Type::Callback(types::Callback {
-            arguments: vec![types::Type::Reference(types::Reference {
-                path: vec!["MouseEvent".to_string()],
-            })],
-        });
+        let mouse_event_type = types::MapProp {
+            prop_type: types::Type::Callback(types::Callback {
+                arguments: vec![types::Type::Reference(types::Reference {
+                    path: vec!["MouseEvent".to_string()],
+                })],
+            }),
+            optional: true,
+        };
 
         let base_el_type = types::Map::from([
             ("onclick".to_string(), mouse_event_type.clone()),
             ("onmousedown".to_string(), mouse_event_type.clone()),
             ("onmouseup".to_string(), mouse_event_type.clone()),
             ("onpress".to_string(), mouse_event_type.clone()),
-            ("class".to_string(), types::Type::String),
+            (
+                "class".to_string(),
+                types::MapProp {
+                    prop_type: types::Type::String,
+                    optional: true,
+                },
+            ),
         ]);
 
         HashMap::from([
@@ -252,7 +280,13 @@ fn infer_unknown_element(expr: &ast::pc::Element, _context: &InferContext) -> Re
     let mut map = types::Map::new();
 
     for param in &expr.parameters {
-        map.insert(param.name.to_string(), types::Type::Unknown);
+        map.insert(
+            param.name.to_string(),
+            types::MapProp {
+                prop_type: types::Type::Unknown,
+                optional: true,
+            },
+        );
     }
 
     Ok(map)

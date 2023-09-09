@@ -7,12 +7,12 @@ use crate::{infer::Inferencer, types};
 #[derive(Clone)]
 pub struct Scope {
     pub root_type: types::Type,
-    pub path: Vec<String>,
+    pub path: Vec<(String, bool)>,
 }
 
 impl Scope {
-    pub fn step_in(&mut self, property: &str) {
-        self.path.push(property.to_string());
+    pub fn step_in(&mut self, property: &str, optional: bool) {
+        self.path.push((property.to_string(), optional));
     }
 
     pub fn step_out(&mut self) {
@@ -23,9 +23,15 @@ impl Scope {
     }
     pub fn get_scope_type(&mut self) -> &types::Type {
         let mut curr = &self.root_type;
-        for part in &self.path {
+        for (part, optional) in &self.path {
             if let types::Type::Map(map) = curr {
-                curr = map.get(part).unwrap_or(&types::Type::Unknown);
+                curr = &map
+                    .get(part)
+                    .unwrap_or(&types::MapProp {
+                        prop_type: types::Type::Unknown,
+                        optional: true,
+                    })
+                    .prop_type
             }
         }
 
@@ -34,12 +40,13 @@ impl Scope {
 }
 
 fn set_scope_type(
-    scope: &Vec<String>,
+    scope: &Vec<(String, bool)>,
     index: usize,
     owner: &types::Type,
     new_type: types::Type,
 ) -> types::Type {
-    if let Some(part) = scope.get(index) {
+    if let Some((part, optional)) = scope.get(index) {
+        let optional = *optional;
         let mut new_owner = types::Map::new();
         if let types::Type::Map(prev_owner) = owner {
             new_owner.extend(prev_owner.clone());
@@ -47,12 +54,21 @@ fn set_scope_type(
 
         new_owner.insert(
             part.to_string(),
-            set_scope_type(
-                scope,
-                index + 1,
-                &new_owner.get(part).unwrap_or(&types::Type::Unknown),
-                new_type,
-            ),
+            types::MapProp {
+                prop_type: set_scope_type(
+                    scope,
+                    index + 1,
+                    &new_owner
+                        .get(part)
+                        .unwrap_or(&types::MapProp {
+                            prop_type: types::Type::Unknown,
+                            optional: false,
+                        })
+                        .prop_type,
+                    new_type,
+                ),
+                optional,
+            },
         );
 
         types::Type::Map(new_owner)
@@ -89,8 +105,8 @@ impl<'graph, 'infer> InferContext<'graph, 'infer> {
             current_parameter: None,
         }
     }
-    pub fn step_in(&self, path: &str) {
-        self.scope.as_ref().borrow_mut().step_in(path);
+    pub fn step_in(&self, path: &str, optional: bool) {
+        self.scope.as_ref().borrow_mut().step_in(path, optional);
     }
     pub fn step_out(&self) {
         self.scope.as_ref().borrow_mut().step_out();

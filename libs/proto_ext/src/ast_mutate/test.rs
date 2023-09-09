@@ -12,7 +12,7 @@ use paperclip_proto::ast_mutate::{
     ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveNode, PasteExpression,
     PrependChild, SetElementParameter, SetFrameBounds, SetId, SetStyleDeclaration,
     SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue,
-    ToggleInstanceVariant, UpdateVariant, WrapInElement,
+    ToggleInstanceVariant, UpdateImportPath, UpdateVariant, WrapInElement,
 };
 use std::collections::HashMap;
 
@@ -70,7 +70,7 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-      div 
+      div
       div unnamed
     "#
   )]
@@ -91,7 +91,7 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-      div 
+      div
       text unnamed "something"
     "#
   )]
@@ -424,7 +424,7 @@ case! {
           text ""
         }
         insert b {
-          
+
         }
       }
     "#
@@ -438,7 +438,7 @@ case! {
       insert a {
       }
       insert b {
-        
+
       }
     }
     "#
@@ -475,11 +475,11 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-      import "./module.pc" as mod 
-      div { 
-        style { 
-          color: var(mod.blue01) 
-        } 
+      import "./module.pc" as mod
+      div {
+        style {
+          color: var(mod.blue01)
+        }
       }
     "#
   )]
@@ -490,7 +490,7 @@ case! {
     (
       "/entry.pc", r#"
 
-        token blue01 blue 
+        token blue01 blue
 
         div {
           style {
@@ -513,10 +513,10 @@ case! {
   [(
     "/entry.pc", r#"
       token blue01 blue
-      div { 
-        style { 
-          color: var(blue01) 
-        } 
+      div {
+        style {
+          color: var(blue01)
+        }
       }
     "#
   )]
@@ -553,11 +553,11 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-      import "/module.pc" as mod 
-      div { 
-        style { 
-          color: var(mod.blue01) 
-        } 
+      import "/module.pc" as mod
+      div {
+        style {
+          color: var(mod.blue01)
+        }
       }
     "#
   )]
@@ -621,10 +621,10 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-    /** 
+    /**
      * @bounds(x: 100, y: 200, width: 300, height: 400)
      */
-    
+
      component A {
       render div
      }
@@ -669,7 +669,7 @@ case! {
     (
       "/entry.pc", r#"
         component Test {
-          
+
         }
       "#
     )
@@ -695,7 +695,7 @@ case! {
     (
       "/entry.pc", r#"
         component Test {
-          
+
         }
       "#
     )
@@ -1054,21 +1054,21 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-      public token ab #F60 
-      public style test { 
-        color: blue 
-      } 
-      
-      public component Unnamed { 
-        render div { 
-          style { 
-            color: blue 
-          } 
-        } 
-      } 
-      
-      component Ab { 
-        render span 
+      public token ab #F60
+      public style test {
+        color: blue
+      }
+
+      public component Unnamed {
+        render div {
+          style {
+            color: blue
+          }
+        }
+      }
+
+      component Ab {
+        render span
       }
     "#
   )]
@@ -1130,14 +1130,14 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-      public component Unnamed { 
-        render div 
-      } 
-      
-      component A { 
-        render slot children { 
-          Unnamed 
-        } 
+      public component Unnamed {
+        render div
+      }
+
+      component A {
+        render slot children {
+          Unnamed
+        }
       }
     "#
   )]
@@ -1167,10 +1167,10 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-      public component Unnamed { 
-        render div 
-      } 
-      
+      public component Unnamed {
+        render div
+      }
+
       A {
         insert children {
           Unnamed
@@ -1201,7 +1201,7 @@ case! {
     public component Unnamed {
       render div
     }
-      
+
       component A {
         render Unnamed
       }
@@ -1260,7 +1260,7 @@ case! {
   [
     (
       "/entry.pc", r#"
-        div 
+        div
       "#
     )
   ],
@@ -1555,7 +1555,7 @@ case! {
     ),
     (
       "/test2.pc", r#"
-        
+
       "#
     )
   ],
@@ -1827,7 +1827,7 @@ case! {
     (
       "/entry.pc", r#"
         component A {
-          render div 
+          render div
         }
 
         A
@@ -2330,13 +2330,13 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-    
+
 
     /**
      * @bounds(x: 100, y: 200, width: 300, height: 400)
      */
     b
-    
+
     /**
      * @bounds(x: 100, y: 200, width: 300, height: 400)
      */
@@ -2371,13 +2371,13 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-    
+
 
     /**
      * @bounds(x: 100, y: 200, width: 300, height: 400)
      */
     b
-    
+
     /**
      * @bounds(x: 100, y: 200, width: 300, height: 400)
      */
@@ -2700,7 +2700,7 @@ case! {
     (
       "/entry.pc", r#"
       component A {
-        variant a 
+        variant a
         render div {
           style variant a {
             color: red
@@ -2720,7 +2720,7 @@ case! {
   [(
     "/entry.pc", r#"
     component A {
-      variant a 
+      variant a
       render div {
         style variant a {
           color: red
@@ -2745,7 +2745,7 @@ case! {
     (
       "/entry.pc", r#"
       component A {
-        variant a 
+        variant a
         render div {
           style variant a {
             color: red
@@ -2771,7 +2771,7 @@ case! {
   [(
     "/entry.pc", r#"
     component A {
-      variant a 
+      variant a
       render div {
         style variant a {
           color: red
@@ -2794,7 +2794,7 @@ case! {
     (
       "/entry.pc", r#"
       component A {
-        variant a 
+        variant a
         render div {
           style variant a {
             color: red
@@ -2817,7 +2817,7 @@ case! {
   [(
     "/entry.pc", r#"
     component A {
-      variant a 
+      variant a
       render div {
         style variant a {
           color: red
@@ -2845,7 +2845,7 @@ case! {
     (
       "/entry.pc", r#"
       component A {
-        variant a 
+        variant a
         render div {
           style variant a {
             color: red
@@ -2874,7 +2874,7 @@ case! {
   [(
     "/entry.pc", r#"
     component A {
-      variant a 
+      variant a
       render div {
         style variant a {
           color: red
@@ -2900,7 +2900,7 @@ case! {
     (
       "/entry.pc", r#"
       component A {
-        variant a 
+        variant a
         render div {
           style variant a {
             color: red
@@ -2931,7 +2931,7 @@ case! {
   [(
     "/entry.pc", r#"
     component A {
-      variant a 
+      variant a
       render div {
         style variant a {
           color: red
@@ -2957,7 +2957,7 @@ case! {
     (
       "/entry.pc", r#"
       component A {
-        
+
       }
       div
       "#
@@ -2983,7 +2983,7 @@ case! {
     (
       "/entry.pc", r#"
       component A {
-        
+
       }
       text "a"
       "#
@@ -3009,7 +3009,7 @@ case! {
     (
       "/entry.pc", r#"
       style a {
-        
+
       }
 
       style b {
@@ -3041,7 +3041,7 @@ case! {
 
       }
       style b {
-        
+
       }
 
       style c extends b {
@@ -3129,7 +3129,7 @@ case! {
       "/entry.pc", r#"
       style a
       component B {
-        variant bv 
+        variant bv
         render div {
 
         }
@@ -3146,7 +3146,7 @@ case! {
     "/entry.pc", r#"
     style a
       component B {
-        variant bv 
+        variant bv
         render div {
           style variant bv extends a
         }
@@ -3162,7 +3162,7 @@ case! {
       "/entry.pc", r#"
       style a
       component B {
-        variant bv 
+        variant bv
         render div {
           style variant bv {
             color: blue
@@ -3181,7 +3181,7 @@ case! {
     "/entry.pc", r#"
     style a
       component B {
-        variant bv 
+        variant bv
         render div {
           style variant bv extends a {
             color: blue
@@ -3974,6 +3974,45 @@ case! {
       ],
       id: "80f4925f-5".to_string()
     }))
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+      render div {
+        slot a
+        slot b
+      }
+    }
+    A {
+      insert a { }
+      insert b { }
+    }
+    "#
+  )]
+}
+
+case! {
+  can_update_the_imports_if_file_moved,
+  [
+    (
+      "/entry.pc", r#"
+      import "/some/module.pc" as mod
+
+      component A {
+      }
+      "#
+    ),
+    (
+      "/some/module.pc", r#"
+
+      component B {
+      }
+      "#
+    )
+  ],
+  mutation::Inner::UpdateImportPath(UpdateImportPath {
+      old_path: "/some/module.pc".to_string(),
+      new_path: "/some/dir/module2.pc".to_string(),
   }).get_outer(),
   [(
     "/entry.pc", r#"

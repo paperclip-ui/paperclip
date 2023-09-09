@@ -240,6 +240,7 @@ const FSItem = ({ depth, item }: FSItemProps) => {
       <div>
         <styles.TreeNavigationItem>
           <styles.LayerNavigationItemHeader
+            containerProps={null}
             ref={setHeader}
             style={{ "--depth": depth, opacity }}
             onClick={onClick}

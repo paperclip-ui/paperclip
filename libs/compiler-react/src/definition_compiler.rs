@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use super::context::Context;
 use anyhow::Result;
 use paperclip_infer::infer::Inferencer;

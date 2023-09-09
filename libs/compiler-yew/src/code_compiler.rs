@@ -122,13 +122,13 @@ fn compile_component_props(component: &ast::Component, context: &mut Context) ->
     context.start_block();
     context.add_buffer("pub __scope_class_name: Option<String>,\n");
 
-    for (name, prop_type) in &component_inference.properties {
-        if name == "children" && matches!(prop_type, infer_types::Type::Slot) {
+    for (name, prop) in &component_inference.properties {
+        if name == "children" && matches!(prop.prop_type, infer_types::Type::Slot) {
             context.add_buffer("#[prop_or_default]\n");
         }
 
         context.add_buffer(format!("pub {}: ", name).as_str());
-        compile_inference(prop_type, context);
+        compile_inference(&prop.prop_type, context);
         context.add_buffer(",\n");
     }
 

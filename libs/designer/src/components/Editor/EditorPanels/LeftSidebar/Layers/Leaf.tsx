@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/left-sidebar.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
@@ -63,6 +57,7 @@ export const Leaf = ({
       <ContextMenu menu={contextMenu}>
         <div style={{ width: "100%" }}>
           <styles.LayerNavigationItemHeader
+            containerProps={null}
             ref={setHeaderRef}
             class={cx(className, {
               open,

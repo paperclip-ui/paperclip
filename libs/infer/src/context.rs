@@ -23,7 +23,7 @@ impl Scope {
     }
     pub fn get_scope_type(&mut self) -> &types::Type {
         let mut curr = &self.root_type;
-        for (part, optional) in &self.path {
+        for (part, _optional) in &self.path {
             if let types::Type::Map(map) = curr {
                 curr = &map
                     .get(part)

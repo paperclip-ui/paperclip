@@ -39,11 +39,17 @@ add_case! {
   ],
   types::Map::from([
     (
-      "Test".to_string(), types::Type::Component(types::Component {
-        properties: types::Map::from([
-          ("class".to_string(), types::Type::String)
-        ])
-      })
+      "Test".to_string(), types::MapProp {
+          prop_type: types::Type::Component(types::Component {
+            properties: types::Map::from([
+              ("class".to_string(), types::MapProp {
+                  prop_type: types::Type::String,
+                  optional: true
+              })
+            ])
+          }),
+          optional: true
+      }
     )
   ])
 }
@@ -63,30 +69,45 @@ add_case! {
   ],
   types::Map::from([
     (
-      "Test".to_string(), types::Type::Component(types::Component {
-        properties: types::Map::from([
-          ("on_click".to_string(), types::Type::Callback(types::Callback {
-            arguments: vec![types::Type::Reference(types::Reference {
-              path: vec!["MouseEvent".to_string()]
-            })]
-          })),
-          ("on_mouse_down".to_string(), types::Type::Callback(types::Callback {
-            arguments: vec![types::Type::Reference(types::Reference {
-              path: vec!["MouseEvent".to_string()]
-            })]
-          })),
-          ("on_mouse_up".to_string(), types::Type::Callback(types::Callback {
-            arguments: vec![types::Type::Reference(types::Reference {
-              path: vec!["MouseEvent".to_string()]
-            })]
-          })),
-          ("on_press".to_string(), types::Type::Callback(types::Callback {
-            arguments: vec![types::Type::Reference(types::Reference {
-              path: vec!["MouseEvent".to_string()]
-            })]
-          }))
-        ])
-      })
+      "Test".to_string(), types::MapProp {
+          prop_type: types::Type::Component(types::Component {
+            properties: types::Map::from([
+              ("on_click".to_string(), types::MapProp {
+                  prop_type: types::Type::Callback(types::Callback {
+                    arguments: vec![types::Type::Reference(types::Reference {
+                      path: vec!["MouseEvent".to_string()]
+                    })]
+                  }),
+                  optional: true
+              }),
+              ("on_mouse_down".to_string(), types::MapProp {
+                  prop_type: types::Type::Callback(types::Callback {
+                    arguments: vec![types::Type::Reference(types::Reference {
+                      path: vec!["MouseEvent".to_string()]
+                    })]
+                  }),
+                  optional: true
+              }),
+              ("on_mouse_up".to_string(), types::MapProp {
+                  prop_type: types::Type::Callback(types::Callback {
+                    arguments: vec![types::Type::Reference(types::Reference {
+                      path: vec!["MouseEvent".to_string()]
+                    })]
+                  }),
+                  optional: true
+              }),
+              ("on_press".to_string(), types::MapProp {
+                  prop_type: types::Type::Callback(types::Callback {
+                    arguments: vec![types::Type::Reference(types::Reference {
+                      path: vec!["MouseEvent".to_string()]
+                    })]
+                  }),
+                  optional: true
+              })
+            ])
+          }),
+          optional: true
+      }
     )
   ])
 }
@@ -107,16 +128,25 @@ add_case! {
   ],
   types::Map::from([
     (
-      "A".to_string(), types::Type::Component(types::Component {
-        properties: types::Map::from([
-          ("class".to_string(), types::Type::Unknown)
-        ])
-      }),
+      "A".to_string(), types::MapProp {
+          prop_type: types::Type::Component(types::Component {
+            properties: types::Map::from([
+              ("class".to_string(), types::MapProp {
+                  prop_type: types::Type::Unknown,
+                  optional: true
+              })
+            ])
+          }),
+          optional: true
+      },
     ),
     (
-      "B".to_string(), types::Type::Component(types::Component {
-        properties: types::Map::from([])
-      })
+      "B".to_string(), types::MapProp {
+          prop_type: types::Type::Component(types::Component {
+            properties: types::Map::from([])
+          }),
+          optional: true
+      }
     )
   ])
 }
@@ -137,18 +167,30 @@ add_case! {
   ],
   types::Map::from([
     (
-      "A".to_string(), types::Type::Component(types::Component {
-        properties: types::Map::from([
-          ("class".to_string(), types::Type::String)
-        ])
-      }),
+      "A".to_string(), types::MapProp {
+          prop_type: types::Type::Component(types::Component {
+            properties: types::Map::from([
+              ("class".to_string(), types::MapProp {
+                  prop_type: types::Type::String,
+                  optional: true
+              })
+            ])
+          }),
+          optional: true
+      },
     ),
     (
-      "B".to_string(), types::Type::Component(types::Component {
-        properties: types::Map::from([
-          ("cd".to_string(), types::Type::String)
-        ])
-      })
+      "B".to_string(), types::MapProp {
+          prop_type: types::Type::Component(types::Component {
+            properties: types::Map::from([
+              ("cd".to_string(), types::MapProp {
+                  prop_type: types::Type::String,
+                  optional: true
+              })
+            ])
+          }),
+          optional: true
+      }
     )
   ])
 }
@@ -169,26 +211,38 @@ add_case! {
   ],
   types::Map::from([
     (
-      "A".to_string(), types::Type::Component(types::Component {
-        properties: types::Map::from([
-          ("blarg".to_string(), types::Type::Callback(types::Callback {
-            arguments: vec![types::Type::Reference(types::Reference {
-              path: vec!["MouseEvent".to_string()]
-            })]
-          })),
-        ])
-      }),
+      "A".to_string(), types::MapProp {
+          prop_type: types::Type::Component(types::Component {
+            properties: types::Map::from([
+              ("blarg".to_string(), types::MapProp {
+                  prop_type: types::Type::Callback(types::Callback {
+                    arguments: vec![types::Type::Reference(types::Reference {
+                      path: vec!["MouseEvent".to_string()]
+                    })]
+                  }),
+                  optional: true
+              }),
+            ])
+          }),
+          optional: true
+      },
     ),
     (
-      "B".to_string(), types::Type::Component(types::Component {
-        properties: types::Map::from([
-          ("cd".to_string(), types::Type::Callback(types::Callback {
-            arguments: vec![types::Type::Reference(types::Reference {
-              path: vec!["MouseEvent".to_string()]
-            })]
-          })),
-        ])
-      })
+      "B".to_string(), types::MapProp {
+          prop_type: types::Type::Component(types::Component {
+            properties: types::Map::from([
+              ("cd".to_string(), types::MapProp {
+                  prop_type: types::Type::Callback(types::Callback {
+                    arguments: vec![types::Type::Reference(types::Reference {
+                      path: vec!["MouseEvent".to_string()]
+                    })]
+                  }),
+                  optional: true
+              }),
+            ])
+          }),
+          optional: true
+      }
     )
   ])
 }
@@ -214,15 +268,21 @@ add_case! {
   ],
   types::Map::from([
     (
-      "A".to_string(), types::Type::Component(types::Component {
-        properties: types::Map::from([
-          ("blarg".to_string(), types::Type::Callback(types::Callback {
-            arguments: vec![types::Type::Reference(types::Reference {
-              path: vec!["MouseEvent".to_string()]
-            })]
-          })),
-        ])
-      }),
+      "A".to_string(), types::MapProp {
+          prop_type: types::Type::Component(types::Component {
+            properties: types::Map::from([
+              ("blarg".to_string(), types::MapProp {
+                  prop_type: types::Type::Callback(types::Callback {
+                    arguments: vec![types::Type::Reference(types::Reference {
+                      path: vec!["MouseEvent".to_string()]
+                    })]
+                  }),
+                  optional: true
+              }),
+            ])
+          }),
+          optional: true
+      },
     )
   ])
 }
@@ -244,11 +304,17 @@ add_case! {
   ],
   types::Map::from([
     (
-      "A".to_string(), types::Type::Component(types::Component {
-        properties: types::Map::from([
-          ("class".to_string(), types::Type::String),
-        ])
-      }),
+      "A".to_string(), types::MapProp {
+          prop_type: types::Type::Component(types::Component {
+            properties: types::Map::from([
+              ("class".to_string(), types::MapProp {
+                  prop_type: types::Type::String,
+                  optional: true
+              }),
+            ])
+          }),
+          optional: true
+      },
     )
   ])
 }
@@ -268,11 +334,17 @@ add_case! {
   ],
   types::Map::from([
     (
-      "A".to_string(), types::Type::Component(types::Component {
-        properties: types::Map::from([
-          ("something".to_string(), types::Type::Slot),
-        ])
-      }),
+      "A".to_string(), types::MapProp {
+          prop_type: types::Type::Component(types::Component {
+            properties: types::Map::from([
+              ("something".to_string(), types::MapProp {
+                  prop_type: types::Type::Slot,
+                  optional: true
+              }),
+            ])
+          }),
+          optional: true
+      },
     )
   ])
 }
@@ -294,11 +366,17 @@ add_case! {
   ],
   types::Map::from([
     (
-      "A".to_string(), types::Type::Component(types::Component {
-        properties: types::Map::from([
-          ("something".to_string(), types::Type::Slot),
-        ])
-      }),
+      "A".to_string(), types::MapProp {
+          prop_type: types::Type::Component(types::Component {
+            properties: types::Map::from([
+              ("something".to_string(), types::MapProp {
+                  prop_type: types::Type::Slot,
+                  optional: true
+              }),
+            ])
+          }),
+          optional: true
+      },
     )
   ])
 }

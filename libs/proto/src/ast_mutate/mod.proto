@@ -43,6 +43,9 @@ message Mutation {
 
     // Instance
     AppendInsert append_insert = 17;
+
+    // Module
+    UpdateImportPath update_import_path = 25;
   }
 }
 
@@ -62,13 +65,18 @@ enum NodePosition {
   INSIDE = 2;
 }
 
+message UpdateImportPath {
+  string old_path = 1;
+  string new_path = 2;
+}
+
 message MoveNode {
   NodePosition position = 1;
   string target_id = 2;
   string node_id = 3;
 }
 
-// result after mutation 
+// result after mutation
 message MutationResult {
   oneof inner {
     ExpressionInserted expression_inserted = 1;

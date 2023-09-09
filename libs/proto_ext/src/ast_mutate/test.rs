@@ -4016,7 +4016,7 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-    import "/some/dir/module2.pc" as mod
+    import "some/dir/module2.pc" as mod
 
     component A {
     }

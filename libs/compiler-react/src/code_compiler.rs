@@ -130,7 +130,7 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
         .as_str(),
     );
 
-    if let Some(script) = component.get_script(COMPILER_NAME) {
+    if component.get_script(COMPILER_NAME).is_some() {
         context.add_buffer(
             format!(
                 "{} = React.memo(React.forwardRef({}({})));\n",

@@ -110,3 +110,4 @@ add_case! {
     export const A: React.FC<AProps>;
   "#
 }
+

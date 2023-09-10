@@ -72,6 +72,10 @@ impl ConfigContext {
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone, TS, Default)]
 #[ts(export)]
 pub struct Config {
+    /// TRUE if experimental flags are enabled
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub experimental: Option<bool>,
+
     /// Global scripts that are injected into the page (JS, and CSS)
     #[serde(rename = "globalScripts", skip_serializing_if = "Option::is_none")]
     pub global_scripts: Option<Vec<String>>,

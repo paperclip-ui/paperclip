@@ -7,17 +7,17 @@ use crate::ast::all::{MutableVisitor, VisitorResult};
 
 impl MutableVisitor<()> for EditContext<MoveExpressionToFile> {
     // check for Instances
-    fn visit_element(&mut self, el: &mut Element) -> VisitorResult<()> {
+    fn visit_element(&mut self, _el: &mut Element) -> VisitorResult<()> {
         VisitorResult::Continue
     }
 
     // check for tokens
-    fn visit_css_function_call(&mut self, expr: &mut Box<FunctionCall>) -> VisitorResult<()> {
+    fn visit_css_function_call(&mut self, _expr: &mut Box<FunctionCall>) -> VisitorResult<()> {
         VisitorResult::Continue
     }
 
     // check for extends
-    fn visit_style(&mut self, expr: &mut Style) -> VisitorResult<()> {
+    fn visit_style(&mut self, _expr: &mut Style) -> VisitorResult<()> {
         VisitorResult::Continue
     }
 }

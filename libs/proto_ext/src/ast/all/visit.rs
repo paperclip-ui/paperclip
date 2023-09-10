@@ -312,15 +312,38 @@ visitable! {
   }, {
     VisitorResult::Continue
   }),
+  (pc::Ary, visit_ary, (self, visitor) {
+    visit_each!(&self.items, visitor)
+  }, {
+      visit_each!(&mut self.items, visitor)
+  }),
   (pc::Trigger, visit_trigger, (self, visitor) {
     VisitorResult::Continue
   }, {
     VisitorResult::Continue
   }),
   (pc::Parameter, visit_parameter, (self, visitor) {
-    VisitorResult::Continue
+      self.value.as_ref().expect("Value must exist").accept(visitor)
+
   }, {
-    VisitorResult::Continue
+      self.value.as_mut().expect("Value must exist").accept(visitor)
+  }),
+  (pc::SimpleExpression, visit_simple_expression, (self, visitor) {
+    visit_enum!(self.get_inner(), visitor,
+        pc::simple_expression::Inner::Str,
+        pc::simple_expression::Inner::Num,
+        pc::simple_expression::Inner::Bool,
+        pc::simple_expression::Inner::Reference,
+        pc::simple_expression::Inner::Ary
+    )
+  }, {
+      visit_enum!(self.get_inner_mut(), visitor,
+          pc::simple_expression::Inner::Str,
+          pc::simple_expression::Inner::Num,
+          pc::simple_expression::Inner::Bool,
+          pc::simple_expression::Inner::Reference,
+          pc::simple_expression::Inner::Ary
+      )
   }),
   (pc::Node, visit_node, (self, visitor) {
     visit_enum!(self.get_inner(), visitor,

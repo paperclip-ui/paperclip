@@ -4104,6 +4104,143 @@ case! {
   )]
 }
 
+case! {
+  img_src_is_updated_when_file_is_moved,
+  [
+    (
+      "/entry.pc", r#"
+      img(src: "./test.svg")
+      "#
+    )
+  ],
+  mutation::Inner::UpdateDependencyPath(UpdateDependencyPath {
+      old_path: "/entry.pc".to_string(),
+      new_path: "/some/dir/entry.pc".to_string(),
+  }).get_outer(),
+  [(
+    "/some/dir/entry.pc", r#"
+    img(src: "../../test.svg")
+    "#
+  )]
+}
+
+case! {
+  img_src_is_ignored_if_http_and_file_is_moved,
+  [
+    (
+      "/entry.pc", r#"
+      img(src: "http://localhost/test.svg")
+      "#
+    )
+  ],
+  mutation::Inner::UpdateDependencyPath(UpdateDependencyPath {
+      old_path: "/entry.pc".to_string(),
+      new_path: "/some/dir/entry.pc".to_string(),
+  }).get_outer(),
+  [(
+    "/some/dir/entry.pc", r#"
+    img(src: "http://localhost/test.svg")
+    "#
+  )]
+}
+
+case! {
+  decl_url_is_updated_when_file_is_moved,
+  [
+    (
+      "/entry.pc", r#"
+      style {
+        background: url("./img.svg")
+      }
+      "#
+    )
+  ],
+  mutation::Inner::UpdateDependencyPath(UpdateDependencyPath {
+      old_path: "/entry.pc".to_string(),
+      new_path: "/some/dir/entry.pc".to_string(),
+  }).get_outer(),
+  [(
+    "/some/dir/entry.pc", r#"
+
+    style {
+      background: url("../../img.svg")
+    }
+    "#
+  )]
+}
+case! {
+  decl_url_is_ignored_if_http_and_file_is_moved,
+  [
+    (
+      "/entry.pc", r#"
+      style {
+        background: url("http://localhost/img.svg")
+      }
+      "#
+    )
+  ],
+  mutation::Inner::UpdateDependencyPath(UpdateDependencyPath {
+      old_path: "/entry.pc".to_string(),
+      new_path: "/some/dir/entry.pc".to_string(),
+  }).get_outer(),
+  [(
+    "/some/dir/entry.pc", r#"
+
+    style {
+      background: url("http://localhost/img.svg")
+    }
+    "#
+  )]
+}
+
+case! {
+  pc_file_is_updated_if_resource_moved,
+  [
+    (
+      "/entry.pc", r#"
+      style {
+        background: url("img.svg")
+        background: url("dont-touch.svg")
+      }
+      "#
+    )
+  ],
+  mutation::Inner::UpdateDependencyPath(UpdateDependencyPath {
+      old_path: "/img.svg".to_string(),
+      new_path: "/some/dir/img.svg".to_string(),
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+
+    style {
+      background: url("some/dir/img.svg")
+      background: url("dont-touch.svg")
+    }
+    "#
+  )]
+}
+case! {
+  img_src_is_update_if_resource_is_moved,
+  [
+    (
+      "/entry.pc", r#"
+      img (src: "img.svg")
+      img (src: "./dont-touch.svg")
+      "#
+    )
+  ],
+  mutation::Inner::UpdateDependencyPath(UpdateDependencyPath {
+      old_path: "/img.svg".to_string(),
+      new_path: "/some/dir/img.svg".to_string(),
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    img(src: "some/dir/img.svg")
+    img(src: "./dont-touch.svg")
+    "#
+  )]
+}
+
 // refs are updated when atoms are moved
 // refs are updated when styles are moved
 // Circ error is raised for moved component

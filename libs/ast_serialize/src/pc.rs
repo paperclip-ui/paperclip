@@ -107,6 +107,10 @@ pub fn serialize_doc_comment2(docco: &docco_ast::Comment, context: &mut Context)
 }
 
 pub fn serialize_component(component: &ast::Component, context: &mut Context) {
+    if let Some(comment) = &component.comment {
+        serialize_doc_comment2(comment, context);
+    }
+
     if component.is_public {
         context.add_buffer("public ");
     }
@@ -204,6 +208,9 @@ pub fn serialize_node(node: &ast::Node, context: &mut Context) {
 }
 
 pub fn serialize_text(node: &ast::TextNode, context: &mut Context) {
+    if let Some(comment) = &node.comment {
+        serialize_doc_comment2(comment, context);
+    }
     context.add_buffer("text");
     maybe_serialize_ref_name(&node.name, context);
 
@@ -223,6 +230,9 @@ pub fn serialize_text(node: &ast::TextNode, context: &mut Context) {
 }
 
 pub fn serialize_element(node: &ast::Element, context: &mut Context) {
+    if let Some(comment) = &node.comment {
+        serialize_doc_comment2(comment, context);
+    }
     if let Some(namespace) = &node.namespace {
         context.add_buffer(format!("{}.", namespace).as_str());
     }

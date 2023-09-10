@@ -67,6 +67,7 @@ pub fn clone_pasted_expr<Mutation>(
                 namespace,
                 id: ctx.new_id(),
                 name: None,
+                comment: None,
                 tag_name: graph_component.name.to_string(),
                 parameters: vec![],
                 range: None,

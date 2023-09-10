@@ -64,6 +64,12 @@ fn parse_document(context: &mut PCContext) -> Result<ast::Document, err::ParserE
 fn parse_document_child(
     context: &mut PCContext,
 ) -> Result<ast::DocumentBodyItem, err::ParserError> {
+    let comment = if matches!(context.curr_token, Some(Token::DoccoStart)) {
+        Some(parse_docco(context)?)
+    } else {
+        None
+    };
+
     let is_public = if context.curr_token == Some(Token::KeywordPublic) {
         context.next_token()?; // eat
         context.skip(is_superfluous_or_newline)?;
@@ -73,11 +79,8 @@ fn parse_document_child(
     };
 
     match context.curr_token {
-        Some(Token::DoccoStart) => {
-            Ok(ast::document_body_item::Inner::DocComment(parse_docco(context)?).get_outer())
-        }
         Some(Token::KeywordComponent) => Ok(ast::document_body_item::Inner::Component(
-            parse_component(context, is_public)?,
+            parse_component(context, comment, is_public)?,
         )
         .get_outer()),
         Some(Token::KeywordImport) => {
@@ -94,11 +97,12 @@ fn parse_document_child(
         )
         .get_outer()),
         Some(Token::Word(b"text")) => {
-            Ok(ast::document_body_item::Inner::Text(parse_text(context)?).get_outer())
+            Ok(ast::document_body_item::Inner::Text(parse_text(comment, context)?).get_outer())
         }
-        Some(Token::Word(_)) => {
-            Ok(ast::document_body_item::Inner::Element(parse_element(context)?).get_outer())
-        }
+        Some(Token::Word(_)) => Ok(ast::document_body_item::Inner::Element(parse_element(
+            comment, context,
+        )?)
+        .get_outer()),
         _ => {
             return Err(context.new_unexpected_token_error());
         }
@@ -335,6 +339,7 @@ fn parse_style_extends(context: &mut PCContext) -> Result<Vec<ast::Reference>, e
 
 fn parse_component(
     context: &mut PCContext,
+    comment: Option<docco_ast::Comment>,
     is_public: bool,
 ) -> Result<ast::Component, err::ParserError> {
     let start = context.curr_u16pos.clone();
@@ -371,6 +376,7 @@ fn parse_component(
         is_public,
         name,
         body,
+        comment,
         range: Some(base_ast::Range::new(start, end)),
     })
 }
@@ -454,9 +460,13 @@ where
 
 fn parse_render_node(context: &mut PCContext) -> Result<ast::Node, err::ParserError> {
     match context.curr_token {
-        Some(Token::Word(b"text")) => Ok(ast::node::Inner::Text(parse_text(context)?).get_outer()),
+        Some(Token::Word(b"text")) => {
+            Ok(ast::node::Inner::Text(parse_text(None, context)?).get_outer())
+        }
         Some(Token::Word(b"slot")) => Ok(ast::node::Inner::Slot(parse_slot(context)?).get_outer()),
-        Some(Token::Word(_)) => Ok(ast::node::Inner::Element(parse_element(context)?).get_outer()),
+        Some(Token::Word(_)) => {
+            Ok(ast::node::Inner::Element(parse_element(None, context)?).get_outer())
+        }
         _ => Err(context.new_unexpected_token_error()),
     }
 }
@@ -475,10 +485,10 @@ fn parse_slot(context: &mut PCContext) -> Result<ast::Slot, err::ParserError> {
             context,
             |context: &mut PCContext| match context.curr_token {
                 Some(Token::Word(b"text")) => {
-                    Ok(ast::node::Inner::Text(parse_text(context)?).get_outer())
+                    Ok(ast::node::Inner::Text(parse_text(None, context)?).get_outer())
                 }
                 Some(Token::Word(_)) => {
-                    Ok(ast::node::Inner::Element(parse_element(context)?).get_outer())
+                    Ok(ast::node::Inner::Element(parse_element(None, context)?).get_outer())
                 }
                 _ => Err(context.new_unexpected_token_error()),
             },
@@ -510,13 +520,13 @@ fn parse_insert(context: &mut PCContext) -> Result<ast::Insert, err::ParserError
         context,
         |context: &mut PCContext| match context.curr_token {
             Some(Token::Word(b"text")) => {
-                Ok(ast::node::Inner::Text(parse_text(context)?).get_outer())
+                Ok(ast::node::Inner::Text(parse_text(None, context)?).get_outer())
             }
             Some(Token::Word(b"slot")) => {
                 Ok(ast::node::Inner::Slot(parse_slot(context)?).get_outer())
             }
             Some(Token::Word(_)) => {
-                Ok(ast::node::Inner::Element(parse_element(context)?).get_outer())
+                Ok(ast::node::Inner::Element(parse_element(None, context)?).get_outer())
             }
             _ => Err(context.new_unexpected_token_error()),
         },
@@ -532,7 +542,10 @@ fn parse_insert(context: &mut PCContext) -> Result<ast::Insert, err::ParserError
     })
 }
 
-fn parse_text(context: &mut PCContext) -> Result<ast::TextNode, err::ParserError> {
+fn parse_text(
+    comment: Option<docco_ast::Comment>,
+    context: &mut PCContext,
+) -> Result<ast::TextNode, err::ParserError> {
     let start = context.curr_u16pos.clone();
     context.next_token()?; // eat render
     context.skip(is_superfluous_or_newline)?;
@@ -569,6 +582,7 @@ fn parse_text(context: &mut PCContext) -> Result<ast::TextNode, err::ParserError
         range: Some(base_ast::Range::new(start, end)),
         name: ref_name,
         value,
+        comment,
         body,
     })
 }
@@ -642,7 +656,10 @@ fn parse_override(context: &mut PCContext) -> Result<ast::Override, err::ParserE
     })
 }
 
-fn parse_element(context: &mut PCContext) -> Result<ast::Element, err::ParserError> {
+fn parse_element(
+    comment: Option<docco_ast::Comment>,
+    context: &mut PCContext,
+) -> Result<ast::Element, err::ParserError> {
     let start = context.curr_u16pos.clone();
     let tag_parts = parse_path(context)?;
     let namespace: Option<String> = if tag_parts.len() == 2 {
@@ -671,7 +688,7 @@ fn parse_element(context: &mut PCContext) -> Result<ast::Element, err::ParserErr
                     Ok(ast::node::Inner::Style(parse_style(context, false)?).get_outer())
                 }
                 Some(Token::Word(b"text")) => {
-                    Ok(ast::node::Inner::Text(parse_text(context)?).get_outer())
+                    Ok(ast::node::Inner::Text(parse_text(None, context)?).get_outer())
                 }
                 Some(Token::Word(b"insert")) => {
                     Ok(ast::node::Inner::Insert(parse_insert(context)?).get_outer())
@@ -683,7 +700,7 @@ fn parse_element(context: &mut PCContext) -> Result<ast::Element, err::ParserErr
                     Ok(ast::node::Inner::Override(parse_override(context)?).get_outer())
                 }
                 Some(Token::Word(_)) => {
-                    Ok(ast::node::Inner::Element(parse_element(context)?).get_outer())
+                    Ok(ast::node::Inner::Element(parse_element(None, context)?).get_outer())
                 }
                 _ => Err(context.new_unexpected_token_error()),
             },
@@ -701,6 +718,7 @@ fn parse_element(context: &mut PCContext) -> Result<ast::Element, err::ParserErr
         id: context.next_id(),
         parameters,
         name: ref_name,
+        comment,
         namespace,
         tag_name,
         range: Some(base_ast::Range::new(start, end)),

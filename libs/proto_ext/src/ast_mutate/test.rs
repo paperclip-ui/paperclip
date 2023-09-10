@@ -2476,6 +2476,7 @@ case! {
     item: Some(paste_expression::Item::Element(Element {
       namespace: None,
       name: None,
+      comment: None,
       parameters: vec![],
       range: None,
       body: vec![],
@@ -2508,6 +2509,7 @@ case! {
     item: Some(paste_expression::Item::Element(Element {
       namespace: None,
       name: None,
+      comment: None,
       parameters: vec![],
       range: None,
       body: vec![],
@@ -2538,6 +2540,7 @@ case! {
     target_expression_id: "80f4925f-2".to_string(),
     item: Some(paste_expression::Item::TextNode(TextNode {
       name: None,
+      comment: None,
       range: None,
       body: vec![],
       value: "span".to_string(),
@@ -2637,6 +2640,7 @@ case! {
     target_expression_id: "80f4925f-2".to_string(),
     item: Some(paste_expression::Item::Element(Element {
       namespace: None,
+      comment: None,
       name: None,
       parameters: vec![],
       range: None,
@@ -2677,6 +2681,7 @@ case! {
     item: Some(paste_expression::Item::Element(Element {
       namespace: None,
       name: None,
+      comment: None,
       parameters: vec![],
       range: None,
       body: vec![],
@@ -3338,6 +3343,7 @@ case! {
     item: Some(paste_expression::Item::Component(Component {
       name: "Baaabbb".to_string(),
       is_public: false,
+      comment: None,
       range: None,
       body: vec![],
       id: "80f4925f-3".to_string()
@@ -3374,6 +3380,7 @@ case! {
     item: Some(paste_expression::Item::Component(Component {
       name: "A".to_string(),
       is_public: false,
+      comment: None,
       range: None,
       body: vec![],
       id: "139cec8e-3".to_string()
@@ -3944,6 +3951,7 @@ case! {
     target_expression_id: "80f4925f-6".to_string(),
     item: Some(paste_expression::Item::Component(Component {
       name: "Baaabbb".to_string(),
+      comment: None,
       is_public: false,
       range: None,
       body: vec![
@@ -3952,6 +3960,7 @@ case! {
           range: None,
           node: Some(node::Inner::Element(Element {
             id: "div".to_string(),
+            comment: None,
             tag_name: "div".to_string(),
             namespace: None,
             name: None,

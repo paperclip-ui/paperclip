@@ -47,6 +47,7 @@ message Component {
   ast.base.Range range = 3;
   string name = 4;
   repeated ComponentBodyItem body = 5;
+  optional docco.Comment comment = 6;
 }
 
 message ComponentBodyItem {
@@ -123,6 +124,7 @@ message TextNode {
   string value = 3;
   ast.base.Range range = 4;
   repeated Node body = 5;
+  optional docco.Comment comment = 6;
 }
 
 message Parameter {
@@ -162,6 +164,7 @@ message Element {
   string id = 5;
   ast.base.Range range = 6;
   repeated Node body = 7;
+  optional docco.Comment comment = 8;
 }
 
 message Slot {

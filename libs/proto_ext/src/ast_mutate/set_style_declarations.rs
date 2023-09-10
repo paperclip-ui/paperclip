@@ -2,12 +2,12 @@ use std::collections::HashMap;
 
 use super::base::EditContext;
 use super::utils::{parse_import, resolve_import, resolve_imports, NamespaceResolution};
-use crate::ast::get_expr::GetExpr;
 use paperclip_common::get_or_short;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast::all::{Expression, ExpressionWrapper};
+use paperclip_proto::ast::get_expr::GetExpr;
 use paperclip_proto::ast::graph_ext::Dependency;
 use paperclip_proto::ast::pc::Render;
 use paperclip_proto::ast_mutate::{

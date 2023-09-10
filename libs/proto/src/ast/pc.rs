@@ -1,4 +1,4 @@
-use crate::add_inner_wrapper;
+use crate::{add_inner_wrapper, ast::get_expr::GetExpr};
 include!(concat!(env!("OUT_DIR"), "/ast.pc.rs"));
 
 macro_rules! body_contains {
@@ -45,12 +45,15 @@ impl Document {
             .into_iter()
             .find(|imp| &imp.namespace == ns)
     }
+    pub fn get_import_by_src(&self, src: &str) -> Option<&Import> {
+        self.get_imports().into_iter().find(|imp| &imp.path == src)
+    }
     pub fn get_component_by_name(&self, name: &str) -> Option<&Component> {
         self.get_components()
             .into_iter()
             .find(|expr| &expr.name == name)
     }
-    pub fn get_elements(&self, tag_name: &str, namespace: Option<String>) -> Vec<Element> {
+    pub fn get_elements(&self, tag_name: &str, namespace: Option<String>) -> Vec<&Element> {
         vec![]
     }
     pub fn get_components(&self) -> Vec<&Component> {

@@ -8,7 +8,7 @@ use paperclip_proto::{
     ast_mutate::{mutation_result, ExpressionUpdated, SetId},
 };
 
-use crate::ast::get_expr::{get_expr_dep, get_ref_id};
+use paperclip_proto::ast::get_expr::{get_expr_dep, get_ref_id};
 
 use super::EditContext;
 

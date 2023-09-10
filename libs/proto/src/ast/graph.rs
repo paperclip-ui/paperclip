@@ -21,20 +21,25 @@ impl<'a> Dependency {
     pub fn get_document(&self) -> &Document {
         self.document.as_ref().expect("Document must exist")
     }
-    // pub fn find_instances_of(&self, component_name: &str, component_source: &str) -> Vec<&Element> {
-    //     let import_rel_path = self
-    //         .imports
-    //         .iter()
-    //         .find(|(key, value)| component_source == value.as_str());
+    pub fn find_instances_of(&self, component_name: &str, component_source: &str) -> Vec<&Element> {
+        let import_rel_path = self
+            .imports
+            .iter()
+            .find(|(key, value)| component_source == value.as_str());
 
-    //     if import_rel_path.is_none() {
-    //         return vec![];
-    //     }
+        let import_rel_path = if let Some(path) = import_rel_path {
+            path.0
+        } else {
+            return vec![];
+        };
 
-    //     self.get_document()
+        let ns = self
+            .get_document()
+            .get_import_by_src(import_rel_path)
+            .and_then(|imp| Some(imp.namespace.clone()));
 
-    //     vec![]
-    // }
+        self.get_document().get_elements(component_name, ns)
+    }
 }
 
 impl Graph {

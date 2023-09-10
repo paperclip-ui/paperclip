@@ -11,8 +11,8 @@ use paperclip_proto::{
 
 use super::utils::upsert_render_expr;
 use super::EditContext;
-use crate::ast::get_expr::GetExpr;
-use crate::{ast::get_expr::get_expr_dep, try_remove_child};
+use crate::try_remove_child;
+use paperclip_proto::ast::get_expr::{get_expr_dep, GetExpr};
 
 #[macro_export]
 macro_rules! move_child {

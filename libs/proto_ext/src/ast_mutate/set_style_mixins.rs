@@ -7,7 +7,7 @@ use paperclip_proto::ast::all::visit::VisitorResult;
 use paperclip_proto::ast::pc::Reference;
 use paperclip_proto::ast_mutate::SetStyleMixins;
 
-use crate::ast::get_expr::GetExpr;
+use paperclip_proto::ast::get_expr::GetExpr;
 
 impl MutableVisitor<()> for EditContext<SetStyleMixins> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {

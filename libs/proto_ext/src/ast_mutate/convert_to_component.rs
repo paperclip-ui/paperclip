@@ -12,7 +12,7 @@ use paperclip_proto::{
 };
 
 use super::EditContext;
-use crate::ast::get_expr::GetExpr;
+use paperclip_proto::ast::get_expr::GetExpr;
 
 use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 

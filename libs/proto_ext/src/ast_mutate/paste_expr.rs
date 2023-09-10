@@ -12,9 +12,9 @@ use paperclip_proto::ast_mutate::{paste_expression, PasteExpression};
 
 use super::utils::resolve_import_ns;
 use super::EditContext;
-use crate::ast::get_expr::GetExpr;
 use crate::ast::pc::FindSlotNames;
 use crate::ast_mutate::utils::{parse_import, parse_node, resolve_import};
+use paperclip_proto::ast::get_expr::GetExpr;
 
 macro_rules! paste_expr {
     ($self: expr, $expr: expr) => {{

@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
+import * as sidebarStyles from "@paperclip-ui/designer/src/components/Sidebar/sidebar.pc";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {

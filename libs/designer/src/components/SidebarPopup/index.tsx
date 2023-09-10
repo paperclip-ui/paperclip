@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from "react";
-import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
+import * as sidebarStyles from "@paperclip-ui/designer/src/components/Sidebar/sidebar.pc";
 import { Portal } from "../Portal";
 
 type SidebarPopupProps = {

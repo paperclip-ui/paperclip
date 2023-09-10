@@ -1,5 +1,5 @@
 import React from "react";
-import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
+import * as sidebarStyles from "@paperclip-ui/designer/src/components/Sidebar/sidebar.pc";
 import { Variants } from "./Variants";
 import { Declarations } from "./Declarations";
 import { InstanceVariants } from "./InstanceVariants";

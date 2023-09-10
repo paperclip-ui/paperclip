@@ -1,5 +1,6 @@
 pub use paperclip_proto::ast::base;
 pub use paperclip_proto::ast::docco;
+pub use paperclip_proto::ast::graph;
 pub use paperclip_proto::ast::pc;
 
 macro_rules! visitable {
@@ -98,6 +99,20 @@ macro_rules! visit_each {
 }
 
 visitable! {
+    (graph::Dependency, visit_dependency, (self, visitor) {
+        if let Some(document) = &self.document {
+            document.accept(visitor)
+        } else {
+            VisitorResult::Continue
+        }
+  }, {
+
+      if let Some(document) = &mut self.document {
+          document.accept(visitor)
+      } else {
+          VisitorResult::Continue
+      }
+  }),
   (pc::Document, visit_document, (self, visitor) {
     visit_each!(&self.body, visitor)
 }, {

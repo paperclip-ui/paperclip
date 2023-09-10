@@ -12,7 +12,7 @@ use paperclip_proto::ast_mutate::{
     ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveNode, PasteExpression,
     PrependChild, SetElementParameter, SetFrameBounds, SetId, SetStyleDeclaration,
     SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue,
-    ToggleInstanceVariant, UpdateImportPath, UpdateVariant, WrapInElement,
+    ToggleInstanceVariant, UpdateDependencyPath, UpdateVariant, WrapInElement,
 };
 use std::collections::HashMap;
 
@@ -49,6 +49,8 @@ macro_rules! case {
             for (path, content) in $expected_mock_files {
                 if let Some(serialized_content) = edited_docs.get(path) {
                     assert_eq!(strip_extra_ws(serialized_content), strip_extra_ws(&content));
+                } else {
+                    panic!("File {} not found", path);
                 }
             }
         }
@@ -4010,7 +4012,7 @@ case! {
       "#
     )
   ],
-  mutation::Inner::UpdateImportPath(UpdateImportPath {
+  mutation::Inner::UpdateDependencyPath(UpdateDependencyPath {
       old_path: "/some/module.pc".to_string(),
       new_path: "/some/dir/module2.pc".to_string(),
   }).get_outer(),
@@ -4019,6 +4021,43 @@ case! {
     import "some/dir/module2.pc" as mod
 
     component A {
+    }
+    "#
+  ),(
+    "/some/dir/module2.pc", r#"
+    component B {
+    }
+    "#
+  )]
+}
+
+case! {
+  imports_in_new_path_are_changed,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+      }
+      "#
+    ),
+    (
+      "/some/module.pc", r#"
+      import "/entry.pc" as entry
+
+      component B {
+      }
+      "#
+    )
+  ],
+  mutation::Inner::UpdateDependencyPath(UpdateDependencyPath {
+      old_path: "/some/module.pc".to_string(),
+      new_path: "/some/dir/module2.pc".to_string(),
+  }).get_outer(),
+  [(
+    "/some/dir/module2.pc", r#"
+    import "../../entry.pc" as entry
+
+    component B {
     }
     "#
   )]

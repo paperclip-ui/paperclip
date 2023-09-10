@@ -1,6 +1,6 @@
 import "./menu.pc" as imp1
 import "./color-picker.pc" as imp
-import "./sidebar.pc" as sidebar
+import "../components/Sidebar/sidebar.pc" as sidebar
 import "./theme.pc" as theme
 import "./input.pc" as input
 import "./styles-panel.pc" as stylesPanel

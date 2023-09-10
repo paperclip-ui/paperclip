@@ -1,9 +1,9 @@
-import "./theme.pc" as theme
+import "../../styles/theme.pc" as theme
 
 public style panel extends theme.card
 
 public component SidebarContainer {
-    script(src: "../components/Sidebar/index.tsx", target: "react")
+    script(src: "./index.tsx", target: "react")
     variant right trigger {
         ".right"
     }

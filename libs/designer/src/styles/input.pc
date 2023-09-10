@@ -1,6 +1,6 @@
 import "../components/Editor/Canvas/Tools/Selectable/index.pc" as module
 import "./theme.pc" as theme
-import "./sidebar.pc" as sidebar
+import "../components/Sidebar/sidebar.pc" as sidebar
 import "./menu.pc" as menu
 
 /**

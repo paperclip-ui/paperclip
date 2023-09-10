@@ -3,7 +3,7 @@ import "./token-input.pc" as module
 import "./color-picker.pc" as imp2
 import "./button.pc" as imp1
 import "./menu.pc" as imp
-import "./sidebar.pc" as sidebar
+import "../components/Sidebar/sidebar.pc" as sidebar
 import "./theme.pc" as theme
 import "./input.pc" as input
 import "./etc.pc" as etc

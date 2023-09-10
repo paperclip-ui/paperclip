@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
+import * as sidebarStyles from "@paperclip-ui/designer/src/components/Sidebar/sidebar.pc";
 import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
 import * as etcStyles from "@paperclip-ui/designer/src/styles/etc.pc";
 import { Parameter } from "@paperclip-ui/proto/lib/generated/ast/pc";

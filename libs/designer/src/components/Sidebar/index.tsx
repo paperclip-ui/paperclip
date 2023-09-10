@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import * as styles from "@paperclip-ui/designer/src/styles/sidebar.pc";
+import * as styles from "./sidebar.pc";
 import cx from "classnames";
 import { startDOMDrag } from "../utils/dnd";
 import { clamp } from "lodash";

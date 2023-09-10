@@ -53,7 +53,6 @@ impl MutableVisitor<()> for EditContext<SetElementParameter> {
         }
 
         set_element_attribute(element, &self);
-
         VisitorResult::Return(())
     }
 

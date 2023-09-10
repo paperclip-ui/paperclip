@@ -45,7 +45,7 @@ message Mutation {
     AppendInsert append_insert = 17;
 
     // Module
-    UpdateImportPath update_import_path = 25;
+    UpdateDependencyPath update_dependency_path = 25;
   }
 }
 
@@ -65,7 +65,7 @@ enum NodePosition {
   INSIDE = 2;
 }
 
-message UpdateImportPath {
+message UpdateDependencyPath {
   string old_path = 1;
   string new_path = 2;
 }

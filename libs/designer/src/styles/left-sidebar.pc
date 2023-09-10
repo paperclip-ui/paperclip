@@ -1,5 +1,5 @@
 import "./input.pc" as module
-import "./sidebar.pc" as sidebar
+import "../components/Sidebar/sidebar.pc" as sidebar
 import "./theme.pc" as theme
 
 /**
@@ -746,3 +746,4 @@ LeftSidebar {
         }
     }
 }
+

@@ -33,19 +33,7 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
             load_dependency_graph(next.clone(), &files).await.expect("Unable to load dependency graph");
         },
         ServerEvent::FileMoved { from_path, to_path } => {
-                apply_mutations(
-                    &vec![
-                        ast_mutate::mutation::Inner::UpdateImportPath(ast_mutate::UpdateImportPath {
-                            old_path: from_path.clone(),
-                            new_path: to_path.clone(),
-                        })
-                        .get_outer(),
-                    ],
-                    ctx.clone(),
-                )
-                .await.expect("Could not update imports");
-
-                ctx.emit(ServerEvent::MutationsInternallyApplied);
+            move_pc_file(ctx.clone(), from_path, to_path).await.expect("Unable to update refs");
         },
         ServerEvent::DependencyGraphLoaded { graph } => {
             evaluate_dependency_graph(next.clone(), Some(graph.dependencies.keys().map(|k| {
@@ -161,6 +149,38 @@ async fn load_files<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> 
     println!("Loaded designer files: {:?}", files);
 
     ctx.emit(ServerEvent::PaperclipFilesLoaded { files });
+    Ok(())
+}
+
+async fn move_pc_file<TIO: ServerIO>(
+    ctx: ServerEngineContext<TIO>,
+    from_path: &str,
+    to_path: &str,
+) -> Result<()> {
+    let mut graph = ctx.store.lock().unwrap().state.graph.clone();
+    let dep = graph.dependencies.get(from_path);
+
+    if let Some(dep) = dep {
+        let mut dep = dep.clone();
+        dep.path = to_path.to_string();
+        graph.dependencies.insert(to_path.to_string(), dep.clone());
+    }
+
+    apply_mutations(
+        &vec![ast_mutate::mutation::Inner::UpdateDependencyPath(
+            ast_mutate::UpdateDependencyPath {
+                old_path: from_path.to_string(),
+                new_path: to_path.to_string(),
+            },
+        )
+        .get_outer()],
+        ctx.clone(),
+    )
+    .await
+    .expect("Could not update imports");
+
+    ctx.emit(ServerEvent::MutationsInternallyApplied);
+
     Ok(())
 }
 

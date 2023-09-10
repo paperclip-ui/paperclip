@@ -17,13 +17,13 @@ mod set_style_mixins;
 mod set_tag_name;
 mod set_text_node_value;
 mod toggle_instance_variant;
-mod update_import_path;
+mod update_dependency_path;
 mod update_variant;
 mod wrap_in_element;
 #[macro_use]
 
 mod utils;
-use std::rc::Rc;
+use std::{collections::HashMap, rc::Rc};
 
 use crate::{
     ast::all::{MutableVisitable, MutableVisitor, VisitorResult},
@@ -38,6 +38,7 @@ pub use convert_to_slot::*;
 pub use delete_expression::*;
 pub use move_node::*;
 pub use paperclip_proto::ast;
+use paperclip_proto::ast::graph;
 use paperclip_proto::ast::graph_ext::Graph;
 pub use paperclip_proto::ast_mutate::*;
 pub use paste_expr::*;
@@ -50,7 +51,7 @@ pub use set_style_mixins::*;
 pub use set_tag_name::*;
 pub use set_text_node_value::*;
 pub use toggle_instance_variant::*;
-pub use update_import_path::*;
+pub use update_dependency_path::*;
 pub use update_variant::*;
 pub use wrap_in_element::*;
 
@@ -60,12 +61,12 @@ mod test;
 macro_rules! mutations {
     ($($name:ident), *) => {
       impl MutableVisitor<()> for base::EditContext<Mutation> {
-        fn visit_document(&mut self, document: &mut ast::pc::Document) -> VisitorResult<()> {
+        fn visit_dependency(&mut self, dependency: &mut ast::graph::Dependency) -> VisitorResult<()> {
           match self.mutation.inner.as_ref().expect("Inner must exist") {
             $(
               mutation::Inner::$name(mutation) => {
                 let mut sub = self.with_mutation(mutation.clone());
-                let ret = document.accept(&mut sub);
+                let ret = dependency.accept(&mut sub);
                 ret
               }
             )*
@@ -89,26 +90,34 @@ pub fn edit_graph<TIO: IO>(
 
     for mutation in mutations {
         for (path, dep) in &mut graph.dependencies {
-            let mut ctx = EditContext::new(mutation.clone(), &path, ctx_graph.clone());
-            let doc = dep.document.as_mut().expect("Document must exist");
+            let mut ctx = EditContext::new(mutation.clone(), &dep.path, ctx_graph.clone());
+            dep.accept(&mut ctx);
+            let doc = dep.document.as_ref().expect("Document must exist");
 
-            doc.accept(&mut ctx);
-
-            dep.imports = get_document_imports(doc, &path, io)?;
+            dep.imports = get_document_imports(doc, &dep.path, io)?;
 
             if ctx.changes.borrow().len() > 0 {
-                println!("{:#?}", dep.imports);
                 changed.push((path.to_string(), ctx.changes.borrow().clone().to_vec()));
             }
         }
     }
+
+    let mut new_deps = HashMap::new();
+
+    // need to update deps in case path has changed
+    for (_, dep) in &graph.dependencies {
+        new_deps.insert(dep.path.clone(), dep.clone());
+    }
+
+    graph.dependencies = new_deps;
+
     return Ok(changed);
 }
 
 mutations! {
   InsertFrame,
   ToggleInstanceVariant,
-  UpdateImportPath,
+  UpdateDependencyPath,
   UpdateVariant,
   AppendInsert,
   SetTagName,

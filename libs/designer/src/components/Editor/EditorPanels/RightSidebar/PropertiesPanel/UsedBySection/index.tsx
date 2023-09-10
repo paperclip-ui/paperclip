@@ -11,7 +11,7 @@ import {
   SidebarSection,
   SidebarPanelHeader,
   SidebarPanelContent,
-} from "@paperclip-ui/designer/src/styles/sidebar.pc";
+} from "@paperclip-ui/designer/src/components/Sidebar/sidebar.pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import React from "react";
 

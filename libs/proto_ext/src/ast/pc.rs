@@ -1,8 +1,6 @@
-use paperclip_proto::ast::pc::Component;
-
-use crate::ast::all::Visitable;
-
 use super::all::Visitor;
+use crate::ast::all::Visitable;
+use paperclip_proto::ast::pc::Component;
 
 pub struct FindSlotNames {
     found: Vec<String>,

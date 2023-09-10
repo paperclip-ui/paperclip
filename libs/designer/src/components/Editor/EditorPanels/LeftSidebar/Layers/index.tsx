@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from "react";
 import * as styles from "@paperclip-ui/designer/src/styles/left-sidebar.pc";
-import * as sidebarStyles from "@paperclip-ui/designer/src/styles/sidebar.pc";
+import * as sidebarStyles from "@paperclip-ui/designer/src/components/Sidebar/sidebar.pc";
 import { useSelector } from "@paperclip-ui/common";
 import {
   DesignerState,

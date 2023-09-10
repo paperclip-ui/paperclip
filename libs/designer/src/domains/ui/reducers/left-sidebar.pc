@@ -1,0 +1,749 @@
+import "../../../styles/input.pc" as module
+import "../../../components/Sidebar/sidebar.pc" as sidebar
+import "../../../styles/theme.pc" as theme
+
+/**
+ * @bounds(x: -1561, y: 1882, width: 347, height: 768)
+*/
+
+public component FilteredFiles {
+    render div filteredFiles {
+        slot children {
+            FilteredFile(class: "hover") {
+                override {
+                    variant hovering trigger {
+                        hovering
+                    }
+                }
+                insert basename {
+                    text "file.svg"
+                }
+                insert dirname {
+                    text "./path/to/some/dir"
+                }
+            }
+            FilteredFile
+            FilteredFile {
+                insert basename {
+                    text "file.svg"
+                }
+                insert dirname {
+                    text "./path/to/some/dir"
+                }
+            }
+            FilteredFile {
+                insert basename {
+                    text "file.svg"
+                }
+                insert dirname {
+                    text "./path/to/some/dir"
+                }
+            }
+            FilteredFile {
+                insert basename {
+                    text "file.svg"
+                }
+                insert dirname {
+                    text "./a/super/loooooooooooooooooo00000000000000000ong-dir"
+                }
+            }
+        }
+        style {
+            gap: var(theme.space02)
+            display: flex
+            flex-direction: column
+            font-family: var(theme.defaultFontFamily)
+            color: var(theme.gray0)
+        }
+    }
+}
+
+/**
+ * @bounds(x: -2077, y: 1894, width: 442, height: 64)
+*/
+
+public component FilteredFile {
+    variant hovering trigger {
+        ".hover"
+        ":hover"
+    }
+    render div container(onClick: onClick, class: class) {
+        style {
+            display: flex
+            align-items: center
+            gap: var(theme.space05)
+            cursor: pointer
+            background: transparent
+        }
+        div container {
+            style variant hovering {
+                background: var(theme.gray04)
+            }
+            style {
+                display: flex
+                justify-content: space-between
+                width: 100%
+                padding: var(theme.space03) var(theme.space05)
+            }
+            div icon {
+                style {
+                    width: 1em
+                    height: 1em
+                    background: red
+                    flex-shrink: 0
+                    border-radius: 4px
+                    display: none
+                }
+            }
+            div info {
+                style {
+                    display: flex
+                    justify-content: space-between
+                    width: 100%
+                    gap: var(theme.space05)
+                }
+                div basename {
+                    slot basename {
+                        text "file.pc"
+                    }
+                }
+                div dirname(title: dirTitle) {
+                    style {
+                        opacity: 0.5
+                        overflow: hidden
+                        text-overflow: ellipsis
+                        white-space: nowrap
+                    }
+                    slot dirname {
+                        text "./some/dir"
+                    }
+                }
+            }
+        }
+    }
+}
+
+public component LeftSidebar {
+    render sidebar.Sidebar {
+        slot children
+    }
+}
+
+/**
+ * @bounds(x: -1009, y: 946, width: 201, height: 52)
+*/
+
+public component LeftSidebarHeader {
+    render sidebar.SidebarPanelContent {
+        style {
+            display: flex
+            justify-content: space-between
+            align-items: center
+            height: 56px
+            font-weight: 600
+        }
+        div left {
+            style {
+                display: flex
+                gap: 8px
+                align-items: center
+            }
+            span titleContainer {
+                slot title {
+                    text "title"
+                }
+            }
+        }
+        div right {
+            style {
+                display: flex
+                gap: 4px
+            }
+            div controls {
+                style extends theme.icon {
+                    cursor: pointer
+                    -webkit-mask-image: url("./hamburger.svg")
+                    width: 1.2em
+                    height: 1.2em
+                    display: none
+                }
+            }
+        }
+    }
+}
+
+public component Layers {
+    render div {
+        style {
+            padding: var(theme.space03) 0px
+            overflow-y: scroll
+            overflow-x: hidden
+        }
+        slot children
+    }
+}
+
+/**
+ * @bounds(x: -374, y: 920, width: 90, height: 56)
+*/
+
+public component LayerIcon {
+    variant isComponent trigger {
+        ".component"
+    }
+    variant isInstance trigger {
+        ".instance"
+    }
+    variant isElement trigger {
+        ".element"
+    }
+    variant isCompositeToken trigger {
+        ".composite-token"
+    }
+    variant isFolder trigger {
+        ".folder"
+    }
+    variant isFile trigger {
+        ".file"
+    }
+    variant isAtomToken trigger {
+        ".atom-token"
+    }
+    variant isSlot trigger {
+        ".slot"
+    }
+    variant isText trigger {
+        ".text"
+    }
+    variant isTrigger trigger {
+        ".trigger"
+    }
+    render div root(class: class) {
+        style {
+            width: 12px
+            position: relative
+            height: 1em
+            flex-shrink: 0
+        }
+        div {
+            style extends theme.icon {
+                position: absolute
+                top: 50%
+                left: 50%
+                transform: translate(-50%, -50%)
+            }
+            style variant isComponent {
+                width: 1.1em
+                height: 1.1em
+                -webkit-mask-image: url("./component2.svg")
+            }
+            style variant isInstance {
+                width: 0.9em
+                height: 0.9em
+                -webkit-mask-image: url("./box-outline.svg")
+                transform: translate(-50%, -50%) rotate(45deg)
+            }
+            style variant isSlot {
+                -webkit-mask-image: url("./slot3.svg")
+            }
+            style variant isElement {
+                width: 0.75em
+                height: 0.75em
+                -webkit-mask-image: url("./square.svg")
+            }
+            style variant isFolder {
+                width: 0.9em
+                height: 0.9em
+                top: calc(50% + 1px)
+                -webkit-mask-image: url("./folder.svg")
+            }
+            style variant isFile {
+                width: 0.9em
+                height: 0.9em
+                -webkit-mask-image: url("./file.svg")
+            }
+            style variant isCompositeToken {
+                width: 0.9em
+                height: 0.9em
+                -webkit-mask-image: url("./group.svg")
+            }
+            style variant isAtomToken {
+                width: 0.8em
+                height: 0.8em
+                -webkit-mask-image: url("./dot4.svg")
+            }
+            style variant isTrigger {
+                width: 1.1em
+                height: 1.1em
+                position: relative
+                -webkit-mask-image: url("./lightning.svg")
+            }
+            style variant isText {
+                width: 0.8em
+                height: 0.8em
+                -webkit-mask-image: url("./text.svg")
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: 428, y: -205, width: 1024, height: 768)
+*/
+
+public component TreeNavigationItemContent {
+    render div {
+        slot children
+    }
+}
+
+/**
+ * @bounds(x: -453, y: 1092, width: 202, height: 112)
+*/
+
+public component TreeNavigationItem {
+    render div(class: class, style: style) {
+        slot children
+    }
+}
+
+/**
+ * @bounds(x: -459, y: 1034, width: 93, height: 37)
+*/
+
+public component TagType {
+    render span {
+        style {
+            opacity: 0.3
+        }
+        slot children
+    }
+}
+
+/**
+ * @bounds(x: -1928, y: 3271, width: 1024, height: 768)
+*/
+
+public component DropZoneDivider {
+    variant top trigger {
+        ".top"
+    }
+    variant bottom trigger {
+        ".bottom"
+    }
+    render div root(class: class) {
+        style {
+            background: var(theme.blue01)
+            width: 100%
+            height: 2px
+            position: absolute
+            transform: translateY(-50%)
+            z-index: 1024
+            display: none
+        }
+        style variant top {
+            top: 0px
+        }
+        style variant bottom {
+            bottom: 0px
+            transform: translateY(50%)
+        }
+        style variant visible {
+            display: block
+        }
+        div circle {
+            style {
+                width: 4px
+                height: 4px
+                position: absolute
+                left: 0px
+                top: 50%
+                border-radius: 99px
+                transform: translateY(-50%)
+                background: var(theme.blue01)
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: -1036, y: 1079, width: 224, height: 38)
+*/
+
+public component TreeNavigationItemHeader {
+    variant isContainer trigger {
+        ".container"
+    }
+    variant isOpen trigger {
+        ".open"
+    }
+    variant showDropTop trigger {
+        ".showDropTop"
+    }
+    variant showDropBottom trigger {
+        ".showDropBottom"
+    }
+    variant showDropOver trigger {
+        ".showDropOver"
+    }
+    variant isHovering trigger {
+        ":hover"
+    }
+    variant isSelected trigger {
+        ".selected"
+    }
+    variant isShadow trigger {
+        ".shadow"
+    }
+    render div root(class: class, style: style, onClick: onClick, onContextMenu: onContextMenu, onKeyDown: onKeyDown, onMouseDown: onMouseDown) {
+        style {
+            --depth: 1
+            display: flex
+            flex-direction: column
+            padding-left: calc(22px * var(--depth))
+            position: relative
+            cursor: pointer
+            user-select: none
+        }
+        style variant showDropOver {
+            box-shadow: inset 0px 0px 0px 2px var(theme.blue01)
+        }
+        style variant isShadow {
+            background: rgb(31, 31, 31)
+        }
+        style variant isSelected {
+            background: var(theme.gray04)
+        }
+        DropZoneDivider(class: "top") {
+            override root {
+                style variant showDropTop {
+                    display: block
+                }
+            }
+        }
+        div {
+            style {
+                display: flex
+                gap: var(theme.space02)
+                justify-content: space-between
+                padding: var(theme.space03) var(theme.space05)
+            }
+            div {
+                style {
+                    position: relative
+                    display: flex
+                    gap: var(theme.space03)
+                    align-items: center
+                    left: -1px
+                    top: -1px
+                    width: 239px
+                    height: 15px
+                }
+                div(onClick: onArrowClick) {
+                    style extends theme.icon {
+                        -webkit-mask-image: url("./chevron2.svg")
+                        opacity: 0
+                        color: white
+                        width: 0.9em
+                        height: 0.9em
+                        position: absolute
+                        left: -18px
+                        transition: 0.2s
+                        outline: none
+                    }
+                    style variant isContainer {
+                        opacity: 0.3
+                    }
+                    style variant isOpen {
+                        transform: rotate(90deg)
+                    }
+                }
+                slot children {
+                    text "label"
+                }
+            }
+            div {
+                style extends theme.easeIn {
+                    opacity: 1
+                    --controlOpacity: 0
+                }
+                style variant isHovering {
+                    --controlOpacity: 0.5
+                }
+                slot controls
+            }
+        }
+        DropZoneDivider(class: "bottom") {
+            override root {
+                style variant showDropBottom {
+                    display: block
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: -446, y: 575, width: 350, height: 54)
+*/
+
+public component LayerNavigationItemHeader {
+    variant isSlot trigger {
+        ".slot"
+    }
+    variant isComponent trigger {
+        ".component"
+    }
+    variant isInstance trigger {
+        ".instance"
+    }
+    variant isElement trigger {
+        ".element"
+    }
+    variant isCompositeToken trigger {
+        ".composite-token"
+    }
+    variant isShadow trigger {
+        ".shadow"
+    }
+    variant isAtomToken trigger {
+        ".atom-token"
+    }
+    variant isTrigger trigger {
+        ".trigger"
+    }
+    variant isText trigger {
+        ".text"
+    }
+    render TreeNavigationItemHeader container(class: class, style: style, onClick: onClick, onArrowClick: onArrowClick, onContextMenu: onContextMenu, onKeyDown: onKeyDown, onMouseDown: onMouseDown) {
+        override root {
+            style {
+                --depth: 1
+                --regular-layer: rgb(96, 149, 255)
+                white-space: nowrap
+            }
+            style variant isComponent {
+                --icon-color: var(theme.componentColor)
+            }
+            style variant isInstance {
+                --icon-color: rgb(219, 161, 255)
+            }
+            style variant isElement {
+                --icon-color: var(--regular-layer)
+            }
+            style variant isCompositeToken {
+                --icon-color: rgb(114, 247, 134)
+            }
+            style variant isAtomToken {
+                --icon-color: rgb(114, 247, 134)
+            }
+            style variant isTrigger {
+                --icon-color: rgb(114, 247, 134)
+            }
+            style variant isSlot {
+                --icon-color: var(--regular-layer)
+            }
+            style variant isText {
+                --icon-color: var(--regular-layer)
+            }
+            style variant isShadow {
+                --icon-color: var(theme.componentColor)
+            }
+        }
+        LayerIcon(class: class) {
+            override root {
+                style {
+                    color: var(--icon-color)
+                }
+            }
+        }
+        slot children {
+            text "some layer"
+            text "some layer"
+        }
+        insert controls {
+            slot controls
+        }
+    }
+}
+
+/**
+ * @bounds(x: -766, y: 931, width: 466, height: 1912)
+*/
+
+public component LeftSidebarPreview {
+    variant onlyFileNavigator
+    render LeftSidebar {
+        sidebar.SidebarPanel sidebar {
+            style variant onlyFileNavigator {
+                display: none
+            }
+            LeftSidebarHeader header {
+                insert title {
+                    text "TodoList.pc"
+                }
+            }
+            sidebar.SidebarSection entities {
+                sidebar.SidebarPanelHeader entitiesHeader {
+                    text "Layers"
+                    div {
+                        style extends theme.icon {
+                            -webkit-mask-image: url("./plus.svg")
+                        }
+                    }
+                }
+                Layers {
+                    TreeNavigationItem {
+                        LayerNavigationItemHeader(class: "instance container open") {
+                            text "Some instance"
+                        }
+                        LayerNavigationItemHeader(class: "component container open") {
+                            text "Some component"
+                            text "some blarggggfgdf gdfgd"
+                        }
+                        TreeNavigationItemContent {
+                            TreeNavigationItem {
+                                LayerNavigationItemHeader(class: "shadow element container open showDropOver") {
+                                    override container.root {
+                                        style {
+                                            --depth: 2
+                                        }
+                                    }
+                                    text "container"
+                                }
+                            }
+                            TreeNavigationItem {
+                                LayerNavigationItemHeader(class: "slot container open") {
+                                    override {
+                                        variant isCompositeToken
+                                    }
+                                    override container.root {
+                                        style {
+                                            --depth: 2
+                                        }
+                                    }
+                                    text "label"
+                                }
+                                TreeNavigationItemContent {
+                                    TreeNavigationItem {
+                                        LayerNavigationItemHeader(class: "text showDropTop") {
+                                            override container.root {
+                                                style {
+                                                    --depth: 3
+                                                }
+                                            }
+                                            text "some label"
+                                        }
+                                        LayerNavigationItemHeader(class: "element") {
+                                            override {
+                                                variant isElement
+                                            }
+                                            override container.root {
+                                                style {
+                                                    --depth: 4
+                                                }
+                                            }
+                                            text "some long label"
+                                            TagType {
+                                                text "div"
+                                            }
+                                        }
+                                    }
+                                }
+                                TreeNavigationItemContent {
+                                    TreeNavigationItem
+                                }
+                            }
+                            TreeNavigationItem {
+                                LayerNavigationItemHeader(class: "selected slot container open") {
+                                    override container.root {
+                                        style {
+                                            --depth: 2
+                                        }
+                                    }
+                                    text "description"
+                                }
+                                TreeNavigationItemContent {
+                                    TreeNavigationItem {
+                                        LayerNavigationItemHeader(class: "text") {
+                                            override container.root {
+                                                style {
+                                                    --depth: 3
+                                                }
+                                            }
+                                            text "some long description"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        sidebar.SidebarPanel {
+            sidebar.SidebarSection {
+                sidebar.SidebarPanelHeader {
+                    style {
+                        align-items: center
+                        display: flex
+                    }
+                    text "Files"
+                    module.TextInput(value: "", placeholder: "filter...")
+                    div {
+                        style extends theme.icon {
+                            -webkit-mask-image: url("./plus.svg")
+                        }
+                    }
+                }
+                Layers {
+                    TreeNavigationItem {
+                        LayerNavigationItemHeader(class: "folder container open") {
+                            text "components/"
+                        }
+                        TreeNavigationItemContent {
+                            TreeNavigationItem {
+                                LayerNavigationItemHeader(class: "file open") {
+                                    override container.root {
+                                        style {
+                                            --depth: 2
+                                        }
+                                    }
+                                    text "index.tsx"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: -1158, y: 1885, width: 352, height: 965)
+*/
+
+LeftSidebar {
+    insert children {
+        sidebar.SidebarPanel {
+            sidebar.SidebarSection {
+                sidebar.SidebarPanelHeader {
+                    style {
+                        align-items: center
+                        display: flex
+                    }
+                    text "Files"
+                    module.TextInput(value: "some file")
+                    div {
+                        style extends theme.icon {
+                            -webkit-mask-image: url("./plus.svg")
+                        }
+                    }
+                }
+                FilteredFiles
+            }
+        }
+    }
+}
+

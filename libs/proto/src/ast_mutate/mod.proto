@@ -34,6 +34,7 @@ message Mutation {
     DeleteExpression delete_expression = 11;
     SetId set_id = 16;
     PasteExpression paste_expression = 21;
+    MoveExpressionToFile move_expression_to_file = 26;
 
     // Instance
     ToggleInstanceVariant toggle_instance_variant = 13;
@@ -46,6 +47,7 @@ message Mutation {
 
     // Module
     UpdateDependencyPath update_dependency_path = 25;
+
   }
 }
 
@@ -63,6 +65,11 @@ enum NodePosition {
   BEFORE = 0;
   AFTER = 1;
   INSIDE = 2;
+}
+
+message MoveExpressionToFile {
+    string expression_id = 1;
+    string new_file_path = 2;
 }
 
 message UpdateDependencyPath {

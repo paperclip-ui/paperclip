@@ -5,6 +5,7 @@ mod convert_to_component;
 mod convert_to_slot;
 mod delete_expression;
 mod insert_frame;
+mod move_expression_to_file;
 mod move_node;
 mod paste_expr;
 mod prepend_child;
@@ -36,9 +37,9 @@ pub use base::*;
 pub use convert_to_component::*;
 pub use convert_to_slot::*;
 pub use delete_expression::*;
+pub use move_expression_to_file::*;
 pub use move_node::*;
 pub use paperclip_proto::ast;
-use paperclip_proto::ast::graph;
 use paperclip_proto::ast::graph_ext::Graph;
 pub use paperclip_proto::ast_mutate::*;
 pub use paste_expr::*;
@@ -119,11 +120,13 @@ mutations! {
   ToggleInstanceVariant,
   UpdateDependencyPath,
   UpdateVariant,
+  MoveExpressionToFile,
   AppendInsert,
   SetTagName,
   PrependChild,
   SetTextNodeValue,
-  ConvertToComponent,SetStyleMixins,
+  ConvertToComponent,
+  SetStyleMixins,
   PasteExpression,
   SetStyleDeclarationValue,
   SetElementParameter,

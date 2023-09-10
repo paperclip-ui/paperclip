@@ -4062,3 +4062,41 @@ case! {
     "#
   )]
 }
+
+case! {
+  instances_are_updated_when_component_is_moved,
+  [
+    (
+      "/entry.pc", r#"
+      component A {
+      }
+      "#
+    ),
+    (
+      "/some/module.pc", r#"
+      import "/entry.pc" as entry
+
+      component B {
+      }
+      "#
+    )
+  ],
+  mutation::Inner::UpdateDependencyPath(UpdateDependencyPath {
+      old_path: "/some/module.pc".to_string(),
+      new_path: "/some/dir/module2.pc".to_string(),
+  }).get_outer(),
+  [(
+    "/some/dir/module2.pc", r#"
+    import "../../entry.pc" as entry
+
+    component B {
+    }
+    "#
+  )]
+}
+
+// refs are updated when atoms are moved
+// refs are updated when styles are moved
+// Circ error is raised for moved component
+// Circ error is rased for moved atom
+// Circ error is raised for moved style

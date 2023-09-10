@@ -11,6 +11,7 @@ import {
   Document,
   DocumentBodyItem,
   Element,
+  Script,
   Import,
   Insert,
   Node,
@@ -44,6 +45,7 @@ export namespace ast {
     Variant,
     Document,
     Render,
+    Script,
     Import,
     TextNode,
     Trigger,
@@ -69,6 +71,7 @@ export namespace ast {
     | BaseExprInfo<Atom, ExprKind.Atom>
     | BaseExprInfo<Reference, ExprKind.Reference>
     | BaseExprInfo<Trigger, ExprKind.Trigger>
+    | BaseExprInfo<Script, ExprKind.Script>
     | BaseExprInfo<Element, ExprKind.Element>
     | BaseExprInfo<Variant, ExprKind.Variant>
     | BaseExprInfo<Document, ExprKind.Document>
@@ -208,6 +211,12 @@ export namespace ast {
         kind: ExprKind.Render,
       };
     }
+    if ((expr as ComponentBodyItem).script) {
+      return {
+        expr: (expr as ComponentBodyItem).script,
+        kind: ExprKind.Script,
+      };
+    }
     if ((expr as ComponentBodyItem).variant) {
       return {
         expr: (expr as ComponentBodyItem).variant,
@@ -240,6 +249,8 @@ export namespace ast {
         kind: ExprKind.TriggerCombo,
       };
     }
+
+    console.error(expr);
 
     throw new Error(`Unhandled type`);
   };

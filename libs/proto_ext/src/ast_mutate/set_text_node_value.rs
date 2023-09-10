@@ -1,6 +1,7 @@
-use paperclip_proto::ast_mutate::{mutation_result, ExpressionUpdated, SetTextNodeValue};
-
-use crate::ast::all::MutableVisitor;
+use paperclip_proto::{
+    ast::all::visit::{MutableVisitor, VisitorResult},
+    ast_mutate::{mutation_result, ExpressionUpdated, SetTextNodeValue},
+};
 
 use super::EditContext;
 
@@ -8,9 +9,9 @@ impl MutableVisitor<()> for EditContext<SetTextNodeValue> {
     fn visit_text_node(
         &mut self,
         expr: &mut paperclip_proto::ast::pc::TextNode,
-    ) -> crate::ast::all::VisitorResult<()> {
+    ) -> VisitorResult<()> {
         if expr.id != self.mutation.text_node_id {
-            return crate::ast::all::VisitorResult::Continue;
+            return VisitorResult::Continue;
         }
 
         expr.value = self.mutation.value.to_string();
@@ -22,6 +23,6 @@ impl MutableVisitor<()> for EditContext<SetTextNodeValue> {
             .get_outer(),
         );
 
-        return crate::ast::all::VisitorResult::Return(());
+        return VisitorResult::Return(());
     }
 }

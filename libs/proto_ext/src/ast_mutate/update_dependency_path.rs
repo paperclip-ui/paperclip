@@ -1,13 +1,14 @@
 use super::base::EditContext;
+use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast::css::{declaration_value, FunctionCall};
 use paperclip_proto::ast::graph::Dependency;
-use paperclip_proto::ast::pc::{simple_expression, Document, Element, Import};
+use paperclip_proto::ast::pc::{simple_expression, Element, Import};
 use paperclip_proto::ast_mutate::UpdateDependencyPath;
 use pathdiff::diff_paths;
 use std::path::Path;
-// use path_absolutize::*;
 
-use crate::ast::{all::MutableVisitor, all::VisitorResult};
+// TODO
+// use path_absolutize::*;
 
 impl MutableVisitor<()> for EditContext<UpdateDependencyPath> {
     fn visit_dependency(&mut self, dep: &mut Dependency) -> VisitorResult<()> {

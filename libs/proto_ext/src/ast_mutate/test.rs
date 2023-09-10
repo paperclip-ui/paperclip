@@ -9,10 +9,11 @@ use paperclip_proto::ast::pc::{
 };
 use paperclip_proto::ast_mutate::{
     mutation, paste_expression, update_variant_trigger, AppendChild, AppendInsert, Bounds,
-    ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveNode, PasteExpression,
-    PrependChild, SetElementParameter, SetFrameBounds, SetId, SetStyleDeclaration,
-    SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue,
-    ToggleInstanceVariant, UpdateDependencyPath, UpdateVariant, WrapInElement,
+    ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveExpressionToFile,
+    MoveNode, PasteExpression, PrependChild, SetElementParameter, SetFrameBounds, SetId,
+    SetStyleDeclaration, SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins,
+    SetTagName, SetTextNodeValue, ToggleInstanceVariant, UpdateDependencyPath, UpdateVariant,
+    WrapInElement,
 };
 use std::collections::HashMap;
 
@@ -4073,38 +4074,6 @@ case! {
 }
 
 case! {
-  instances_are_updated_when_component_is_moved,
-  [
-    (
-      "/entry.pc", r#"
-      component A {
-      }
-      "#
-    ),
-    (
-      "/some/module.pc", r#"
-      import "/entry.pc" as entry
-
-      component B {
-      }
-      "#
-    )
-  ],
-  mutation::Inner::UpdateDependencyPath(UpdateDependencyPath {
-      old_path: "/some/module.pc".to_string(),
-      new_path: "/some/dir/module2.pc".to_string(),
-  }).get_outer(),
-  [(
-    "/some/dir/module2.pc", r#"
-    import "../../entry.pc" as entry
-
-    component B {
-    }
-    "#
-  )]
-}
-
-case! {
   img_src_is_updated_when_file_is_moved,
   [
     (
@@ -4239,6 +4208,59 @@ case! {
     img(src: "./dont-touch.svg")
     "#
   )]
+}
+
+case! {
+  refs_are_updated_when_component_is_moved,
+  [
+      (
+          "/entry.pc", r#"
+          import "/a.pc" as mod
+
+          mod.A
+          "#
+      ),
+        (
+            "/a.pc", r#"
+            public component A {
+                render div {
+
+                }
+            }
+            "#
+          ),
+
+          (
+              "/b.pc", r#"
+              "#
+            )
+  ],
+  mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
+      expression_id: "a".to_string(),
+      new_file_path: "/b.pc".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    import "/a.pc" as mod
+    import "/b.pc" as mod2
+
+    mod2.A
+    "#
+  ),
+  (
+      "/a.pc", r#"
+      "#
+    ),
+  (
+      "/b.pc", r#"
+
+      public component A {
+          render div {
+
+          }
+      }
+      "#
+    )]
 }
 
 // refs are updated when atoms are moved

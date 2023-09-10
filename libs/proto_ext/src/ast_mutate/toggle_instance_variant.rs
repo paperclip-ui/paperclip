@@ -1,11 +1,11 @@
 use super::base::EditContext;
 use paperclip_common::get_or_short;
 use paperclip_proto::ast;
+use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast::pc::{Reference, Variant};
 use paperclip_proto::ast_mutate::ToggleInstanceVariant;
 
 use crate::ast::get_expr::GetExpr;
-use crate::ast::{all::MutableVisitor, all::VisitorResult};
 
 impl MutableVisitor<()> for EditContext<ToggleInstanceVariant> {
     fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {

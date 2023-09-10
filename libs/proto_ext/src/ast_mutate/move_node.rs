@@ -1,3 +1,4 @@
+use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast::pc::Node;
 use paperclip_proto::ast_mutate::{mutation_result, ExpressionDeleted};
 use paperclip_proto::{
@@ -11,13 +12,7 @@ use paperclip_proto::{
 use super::utils::upsert_render_expr;
 use super::EditContext;
 use crate::ast::get_expr::GetExpr;
-use crate::{
-    ast::{
-        all::{MutableVisitor, VisitorResult},
-        get_expr::get_expr_dep,
-    },
-    try_remove_child,
-};
+use crate::{ast::get_expr::get_expr_dep, try_remove_child};
 
 #[macro_export]
 macro_rules! move_child {

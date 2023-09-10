@@ -1,19 +1,16 @@
 use paperclip_proto::{
     ast::{
-        all::Expression,
+        all::{
+            visit::{MutableVisitor, VisitorResult},
+            Expression,
+        },
         pc::{node, Document, Node, Slot},
     },
     ast_mutate::{mutation_result, ConvertToSlot, ExpressionInserted},
 };
 
 use super::{utils::get_named_expr_id, EditContext};
-use crate::{
-    ast::{
-        all::{MutableVisitor, VisitorResult},
-        get_expr::GetExpr,
-    },
-    replace_child,
-};
+use crate::{ast::get_expr::GetExpr, replace_child};
 
 impl MutableVisitor<()> for EditContext<ConvertToSlot> {
     fn visit_render(&mut self, expr: &mut paperclip_proto::ast::pc::Render) -> VisitorResult<()> {

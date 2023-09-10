@@ -6,6 +6,7 @@ use crate::ast::get_expr::GetExpr;
 use paperclip_common::get_or_short;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
+use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast::all::{Expression, ExpressionWrapper};
 use paperclip_proto::ast::graph_ext::Dependency;
 use paperclip_proto::ast::pc::Render;
@@ -14,8 +15,6 @@ use paperclip_proto::ast_mutate::{
 };
 use std::cell::RefCell;
 use std::rc::Rc;
-
-use crate::ast::{all::MutableVisitor, all::VisitorResult};
 
 impl MutableVisitor<()> for EditContext<SetStyleDeclarations> {
     fn visit_style(&mut self, expr: &mut ast::pc::Style) -> VisitorResult<()> {

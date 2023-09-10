@@ -2,12 +2,11 @@ use super::base::EditContext;
 use super::utils::{get_unique_document_body_item_name, parse_node};
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
+use paperclip_proto::ast::all::visit::{MutableVisitable, MutableVisitor, VisitorResult};
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::pc::Node;
 use paperclip_proto::ast_mutate::{mutation_result, ExpressionInserted, PrependChild};
 
-use crate::ast::all::VisitorResult;
-use crate::ast::all::{MutableVisitable, MutableVisitor};
 use crate::ast_mutate::utils::upsert_render_expr;
 
 macro_rules! prepend_child {

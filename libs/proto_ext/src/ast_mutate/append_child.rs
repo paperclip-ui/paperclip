@@ -6,8 +6,7 @@ use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::pc::Node;
 use paperclip_proto::ast_mutate::{mutation_result, AppendChild, ExpressionInserted};
 
-use crate::ast::all::MutableVisitor;
-use crate::ast::all::VisitorResult;
+use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 
 impl MutableVisitor<()> for EditContext<AppendChild> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {

@@ -26,10 +26,7 @@ mod wrap_in_element;
 mod utils;
 use std::{collections::HashMap, rc::Rc};
 
-use crate::{
-    ast::all::{MutableVisitable, MutableVisitor, VisitorResult},
-    graph::{get_document_imports, io::IO},
-};
+use crate::graph::{get_document_imports, io::IO};
 use anyhow::Result;
 pub use append_child::*;
 pub use append_insert::*;
@@ -40,6 +37,7 @@ pub use delete_expression::*;
 pub use move_expression_to_file::*;
 pub use move_node::*;
 pub use paperclip_proto::ast;
+use paperclip_proto::ast::all::visit::{MutableVisitable, MutableVisitor, VisitorResult};
 use paperclip_proto::ast::graph_ext::Graph;
 pub use paperclip_proto::ast_mutate::*;
 pub use paste_expr::*;

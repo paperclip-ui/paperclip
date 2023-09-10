@@ -50,6 +50,9 @@ impl Document {
             .into_iter()
             .find(|expr| &expr.name == name)
     }
+    pub fn get_elements(&self, tag_name: &str, namespace: Option<String>) -> Vec<Element> {
+        vec![]
+    }
     pub fn get_components(&self) -> Vec<&Component> {
         get_body_items!(&self.body, document_body_item::Inner::Component, Component)
     }

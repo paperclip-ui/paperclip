@@ -3,9 +3,10 @@ use paperclip_proto::ast::graph_ext::{Dependency, Graph};
 use paperclip_proto::ast::pc::{document_body_item, DocumentBodyItem, Element};
 use paperclip_proto::ast::{all::ExpressionWrapper, pc::Component};
 
-use crate::ast::all::Visitable;
+// use crate::ast::all::Visitable;
+use paperclip_proto::ast::all::visit::{Visitable, Visitor, VisitorResult};
 
-use super::all::{Visitor, VisitorResult};
+// use super::all::{Visitor, VisitorResult};
 
 pub struct GetExpr {
     id: String,

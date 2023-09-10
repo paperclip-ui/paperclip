@@ -4,10 +4,8 @@ use paperclip_proto::ast_mutate::{mutation_result, ExpressionInserted};
 
 use super::utils::parse_node;
 use super::EditContext;
-use crate::{
-    ast::all::{MutableVisitor, VisitorResult},
-    try_remove_child,
-};
+use crate::try_remove_child;
+use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 
 #[macro_export]
 macro_rules! wrap_in_element {

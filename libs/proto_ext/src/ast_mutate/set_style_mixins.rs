@@ -2,11 +2,11 @@ use super::base::EditContext;
 use super::utils::import_dep;
 use super::utils::resolve_import_ns;
 use paperclip_proto::ast;
+use paperclip_proto::ast::all::visit::MutableVisitor;
+use paperclip_proto::ast::all::visit::VisitorResult;
 use paperclip_proto::ast::pc::Reference;
 use paperclip_proto::ast_mutate::SetStyleMixins;
 
-use crate::ast::all::MutableVisitor;
-use crate::ast::all::VisitorResult;
 use crate::ast::get_expr::GetExpr;
 
 impl MutableVisitor<()> for EditContext<SetStyleMixins> {

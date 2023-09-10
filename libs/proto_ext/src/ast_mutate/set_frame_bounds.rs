@@ -1,11 +1,9 @@
 use super::base::EditContext;
 use paperclip_parser::docco::parser::parse as parse_comment;
 use paperclip_proto::ast;
+use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast_mutate::{mutation_result, ExpressionUpdated, SetFrameBounds};
-
-use crate::ast::all::MutableVisitor;
-use crate::ast::all::VisitorResult;
 
 impl MutableVisitor<()> for EditContext<SetFrameBounds> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {

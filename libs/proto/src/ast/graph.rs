@@ -3,14 +3,11 @@ include!(concat!(env!("OUT_DIR"), "/ast.graph.rs"));
 use std::collections::{HashMap, HashSet};
 
 pub use super::graph_ext::*;
+use super::pc::{Document, Element};
 
 impl<'a> Dependency {
     pub fn resolve_import_from_ns(&'a self, ns: &str, graph: &'a Graph) -> Option<&'a Dependency> {
-        let imp = self
-            .document
-            .as_ref()
-            .expect("Document must exist")
-            .get_import_by_ns(ns);
+        let imp = self.get_document().get_import_by_ns(ns);
         if let Some(imp) = imp {
             if let Some(resolved_path) = self.imports.get(&imp.path) {
                 graph.dependencies.get(resolved_path)
@@ -21,6 +18,23 @@ impl<'a> Dependency {
             None
         }
     }
+    pub fn get_document(&self) -> &Document {
+        self.document.as_ref().expect("Document must exist")
+    }
+    // pub fn find_instances_of(&self, component_name: &str, component_source: &str) -> Vec<&Element> {
+    //     let import_rel_path = self
+    //         .imports
+    //         .iter()
+    //         .find(|(key, value)| component_source == value.as_str());
+
+    //     if import_rel_path.is_none() {
+    //         return vec![];
+    //     }
+
+    //     self.get_document()
+
+    //     vec![]
+    // }
 }
 
 impl Graph {

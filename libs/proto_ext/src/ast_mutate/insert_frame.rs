@@ -9,10 +9,9 @@ use paperclip_proto::{
     ast_mutate::{mutation_result, ExpressionInserted, InsertFrame},
 };
 
-use crate::ast::all::VisitorResult;
-use crate::ast::all::{MutableVisitable, MutableVisitor};
 use paperclip_parser::docco::parser::parse as parse_comment;
 use paperclip_parser::pc::parser::parse as parse_pc;
+use paperclip_proto::ast::all::visit::{MutableVisitable, MutableVisitor, VisitorResult};
 
 impl MutableVisitor<()> for EditContext<InsertFrame> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {

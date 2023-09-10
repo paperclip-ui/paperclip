@@ -2,6 +2,7 @@ pub use super::base;
 pub use super::docco;
 pub use super::pc;
 use crc::{Crc, CRC_32_ISCSI};
+pub mod visit;
 
 const CASTAGNOLI: Crc<u32> = Crc::<u32>::new(&CRC_32_ISCSI);
 

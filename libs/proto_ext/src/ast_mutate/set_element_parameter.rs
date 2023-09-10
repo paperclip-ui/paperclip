@@ -1,12 +1,10 @@
 use super::base::EditContext;
 use super::utils::{parse_element_attribute_value, upsert_render_expr};
 use paperclip_proto::ast;
+use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::pc::{Element, Parameter};
 use paperclip_proto::ast_mutate::SetElementParameter;
-
-use crate::ast::all::MutableVisitor;
-use crate::ast::all::VisitorResult;
 
 fn set_element_attribute(element: &mut Element, ctx: &EditContext<SetElementParameter>) {
     let value = if ctx.mutation.parameter_value == "" {

@@ -1,11 +1,9 @@
 use super::base::EditContext;
+use crate::try_remove_child;
 use paperclip_proto::ast;
+use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast_mutate::{mutation_result, DeleteExpression, ExpressionDeleted};
-
-use crate::ast::all::MutableVisitor;
-use crate::ast::all::VisitorResult;
-use crate::try_remove_child;
 
 impl MutableVisitor<()> for EditContext<DeleteExpression> {
     fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {

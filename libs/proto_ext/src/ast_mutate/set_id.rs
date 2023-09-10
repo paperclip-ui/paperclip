@@ -1,14 +1,14 @@
 use super::utils::{get_unique_component_name, get_valid_name};
 use convert_case::Case;
 use paperclip_proto::{
-    ast::all::ExpressionWrapper,
+    ast::all::{
+        visit::{MutableVisitor, VisitorResult},
+        ExpressionWrapper,
+    },
     ast_mutate::{mutation_result, ExpressionUpdated, SetId},
 };
 
-use crate::ast::{
-    all::MutableVisitor,
-    get_expr::{get_expr_dep, get_ref_id},
-};
+use crate::ast::get_expr::{get_expr_dep, get_ref_id};
 
 use super::EditContext;
 
@@ -30,16 +30,13 @@ macro_rules! set_name {
 }
 
 impl MutableVisitor<()> for EditContext<SetId> {
-    fn visit_element(
-        &mut self,
-        expr: &mut paperclip_proto::ast::pc::Element,
-    ) -> crate::ast::all::VisitorResult<()> {
+    fn visit_element(&mut self, expr: &mut paperclip_proto::ast::pc::Element) -> VisitorResult<()> {
         if set_name!(
             self,
             expr,
             Some(get_valid_name(&self.mutation.value, Case::Camel))
         ) {
-            return crate::ast::all::VisitorResult::Continue;
+            return VisitorResult::Continue;
         }
 
         if let Some(ref_id) = get_ref_id(expr.into(), &self.graph) {
@@ -62,41 +59,32 @@ impl MutableVisitor<()> for EditContext<SetId> {
             }
         }
 
-        crate::ast::all::VisitorResult::Continue
+        VisitorResult::Continue
     }
-    fn visit_style(
-        &mut self,
-        expr: &mut paperclip_proto::ast::pc::Style,
-    ) -> crate::ast::all::VisitorResult<()> {
+    fn visit_style(&mut self, expr: &mut paperclip_proto::ast::pc::Style) -> VisitorResult<()> {
         set_name!(
             self,
             expr,
             Some(get_valid_name(&self.mutation.value, Case::Camel))
         );
-        crate::ast::all::VisitorResult::Continue
+        VisitorResult::Continue
     }
-    fn visit_insert(
-        &mut self,
-        _expr: &mut paperclip_proto::ast::pc::Insert,
-    ) -> crate::ast::all::VisitorResult<()> {
+    fn visit_insert(&mut self, _expr: &mut paperclip_proto::ast::pc::Insert) -> VisitorResult<()> {
         // TODO - ensure that this is renamed if assoc slot is
-        crate::ast::all::VisitorResult::Continue
+        VisitorResult::Continue
     }
-    fn visit_slot(
-        &mut self,
-        expr: &mut paperclip_proto::ast::pc::Slot,
-    ) -> crate::ast::all::VisitorResult<()> {
+    fn visit_slot(&mut self, expr: &mut paperclip_proto::ast::pc::Slot) -> VisitorResult<()> {
         set_name!(
             self,
             expr,
             get_valid_name(&self.mutation.value, Case::Camel)
         );
-        crate::ast::all::VisitorResult::Continue
+        VisitorResult::Continue
     }
     fn visit_component(
         &mut self,
         expr: &mut paperclip_proto::ast::pc::Component,
-    ) -> crate::ast::all::VisitorResult<()> {
+    ) -> VisitorResult<()> {
         if expr.name != self.mutation.value {
             set_name!(
                 self,
@@ -107,28 +95,25 @@ impl MutableVisitor<()> for EditContext<SetId> {
                 )
             );
         }
-        crate::ast::all::VisitorResult::Continue
+        VisitorResult::Continue
     }
     fn visit_text_node(
         &mut self,
         expr: &mut paperclip_proto::ast::pc::TextNode,
-    ) -> crate::ast::all::VisitorResult<()> {
+    ) -> VisitorResult<()> {
         set_name!(
             self,
             expr,
             Some(get_valid_name(&self.mutation.value, Case::Camel))
         );
-        crate::ast::all::VisitorResult::Continue
+        VisitorResult::Continue
     }
-    fn visit_atom(
-        &mut self,
-        expr: &mut paperclip_proto::ast::pc::Atom,
-    ) -> crate::ast::all::VisitorResult<()> {
+    fn visit_atom(&mut self, expr: &mut paperclip_proto::ast::pc::Atom) -> VisitorResult<()> {
         set_name!(
             self,
             expr,
             get_valid_name(&self.mutation.value, Case::Camel)
         );
-        crate::ast::all::VisitorResult::Continue
+        VisitorResult::Continue
     }
 }

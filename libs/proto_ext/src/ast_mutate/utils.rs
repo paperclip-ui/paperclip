@@ -15,7 +15,7 @@ use pathdiff::diff_paths;
 use regex::Regex;
 use std::{collections::HashMap, fmt::Debug, path::Path};
 
-use crate::ast::all::{Visitable, Visitor, VisitorResult};
+use paperclip_proto::ast::all::visit::{Visitable, Visitor, VisitorResult};
 
 use super::EditContext;
 

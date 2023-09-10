@@ -2,7 +2,10 @@ use convert_case::Case;
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::{
     ast::{
-        all::Expression,
+        all::{
+            visit::{MutableVisitor, VisitorResult},
+            Expression,
+        },
         pc::{component_body_item, ComponentBodyItem},
     },
     ast_mutate::{
@@ -11,15 +14,13 @@ use paperclip_proto::{
     },
 };
 
-use crate::ast::all::{MutableVisitor, VisitorResult};
-
 use super::{utils::get_valid_name, EditContext};
 
 impl MutableVisitor<()> for EditContext<UpdateVariant> {
     fn visit_component(
         &mut self,
         expr: &mut paperclip_proto::ast::pc::Component,
-    ) -> crate::ast::all::VisitorResult<()> {
+    ) -> VisitorResult<()> {
         if expr.id != self.mutation.component_id {
             return VisitorResult::Continue;
         }

@@ -3,6 +3,7 @@
  */
 use paperclip_ast_serialize::pc::serialize_node;
 use paperclip_common::serialize_context::Context;
+use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast::graph_ext::{Dependency, Graph};
 use paperclip_proto::ast::pc::{Component, Element, Insert, Node};
 use paperclip_proto::ast::{all::Expression, pc::node};
@@ -11,7 +12,6 @@ use paperclip_proto::ast_mutate::{paste_expression, PasteExpression};
 
 use super::utils::resolve_import_ns;
 use super::EditContext;
-use crate::ast::all::{MutableVisitor, VisitorResult};
 use crate::ast::get_expr::GetExpr;
 use crate::ast::pc::FindSlotNames;
 use crate::ast_mutate::utils::{parse_import, parse_node, resolve_import};

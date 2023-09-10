@@ -1,4 +1,4 @@
-use crate::{ast::all::MutableVisitor, replace_child};
+use crate::replace_child;
 use inflector::cases::pascalcase::to_pascal_case;
 use paperclip_ast_serialize::serializable::Serializable;
 use paperclip_common::get_or_short;
@@ -12,7 +12,9 @@ use paperclip_proto::{
 };
 
 use super::EditContext;
-use crate::ast::{all::VisitorResult, get_expr::GetExpr};
+use crate::ast::get_expr::GetExpr;
+
+use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 
 macro_rules! replace_child_with_instance {
     ($self: expr, $children: expr, $checksum: expr) => {
@@ -70,24 +72,15 @@ impl MutableVisitor<()> for EditContext<ConvertToComponent> {
 
         VisitorResult::Continue
     }
-    fn visit_element(
-        &mut self,
-        expr: &mut paperclip_proto::ast::pc::Element,
-    ) -> crate::ast::all::VisitorResult<()> {
+    fn visit_element(&mut self, expr: &mut paperclip_proto::ast::pc::Element) -> VisitorResult<()> {
         replace_child_with_instance!(self, expr.body, self.new_id());
         VisitorResult::Continue
     }
-    fn visit_slot(
-        &mut self,
-        expr: &mut paperclip_proto::ast::pc::Slot,
-    ) -> crate::ast::all::VisitorResult<()> {
+    fn visit_slot(&mut self, expr: &mut paperclip_proto::ast::pc::Slot) -> VisitorResult<()> {
         replace_child_with_instance!(self, expr.body, self.new_id());
         VisitorResult::Continue
     }
-    fn visit_render(
-        &mut self,
-        expr: &mut paperclip_proto::ast::pc::Render,
-    ) -> crate::ast::all::VisitorResult<()> {
+    fn visit_render(&mut self, expr: &mut paperclip_proto::ast::pc::Render) -> VisitorResult<()> {
         if expr.node.as_ref().unwrap().get_id() != self.mutation.expression_id {
             return VisitorResult::Continue;
         }
@@ -103,10 +96,7 @@ impl MutableVisitor<()> for EditContext<ConvertToComponent> {
         VisitorResult::Continue
     }
 
-    fn visit_insert(
-        &mut self,
-        expr: &mut paperclip_proto::ast::pc::Insert,
-    ) -> crate::ast::all::VisitorResult<()> {
+    fn visit_insert(&mut self, expr: &mut paperclip_proto::ast::pc::Insert) -> VisitorResult<()> {
         replace_child_with_instance!(self, expr.body, self.new_id());
         VisitorResult::Continue
     }

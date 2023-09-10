@@ -42,7 +42,6 @@ public component SidebarContainer {
 /**
  * @bounds(x: 1329, y: -71, width: 243, height: 768)
 */
-
 public component Sidebar {
     render div root(class: class, style: style) {
         style extends theme.fontDefault {
@@ -77,7 +76,6 @@ public component Sidebar {
 /**
  * @bounds(x: 1598, y: -49, width: 189, height: 369)
 */
-
 public component SidebarPanel {
     render div {
         style extends panel {
@@ -132,7 +130,6 @@ public component SidebarSection {
 /**
  * @bounds(x: 325, y: 958, width: 1024, height: 768)
 */
-
 public component SidebarPanelHeader {
     render div {
         style extends theme.fontHeader {
@@ -200,7 +197,6 @@ public component SidebarHeaderButton {
 /**
  * @bounds(x: 93, y: 904, width: 378, height: 267)
 */
-
 public component SidebarPopup {
     render div(style: style) {
         style extends panel {
@@ -246,22 +242,3 @@ public component SidebarPopupPanelContent {
     }
 }
 
-/**
- * @bounds(x: 1069, y: 86, width: 189, height: 162)
-*/
-
-div {
-    style {
-        position: relative
-    }
-    div {
-        style {
-            background: rgba(0, 0, 0, 0.1)
-            position: absolute
-            left: 46px
-            top: 51px
-            width: 124px
-            height: 83px
-        }
-    }
-}

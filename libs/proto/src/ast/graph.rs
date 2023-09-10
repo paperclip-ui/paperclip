@@ -25,7 +25,7 @@ impl<'a> Dependency {
         let import_rel_path = self
             .imports
             .iter()
-            .find(|(key, value)| component_source == value.as_str());
+            .find(|(_key, value)| component_source == value.as_str());
 
         let import_rel_path = if let Some(path) = import_rel_path {
             path.0

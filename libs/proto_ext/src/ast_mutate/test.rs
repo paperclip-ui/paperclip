@@ -4241,10 +4241,10 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
+    import "./b.pc" as module
     import "/a.pc" as mod
-    import "/b.pc" as mod2
 
-    mod2.A
+    module.A
     "#
   ),
   (
@@ -4255,16 +4255,60 @@ case! {
       "/b.pc", r#"
 
       public component A {
-          render div {
-
-          }
+          render div
       }
       "#
     )]
 }
 
-// refs are updated when atoms are moved
-// refs are updated when styles are moved
-// Circ error is raised for moved component
-// Circ error is rased for moved atom
-// Circ error is raised for moved style
+// case! {
+//   refs_are_updated_when_style_is_moved,
+//   [
+//       (
+//           "/entry.pc", r#"
+//           import "/a.pc" as mod
+
+//           div {
+//             style extends mod.test
+//           }
+//           "#
+//       ),
+//         (
+//             "/a.pc", r#"
+//             public style test {
+//                 color: blue
+//             }
+//             "#
+//           ),
+
+//           (
+//               "/b.pc", r#"
+//               "#
+//             )
+//   ],
+//   mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
+//       expression_id: "98523c41-3".to_string(),
+//       new_file_path: "/b.pc".to_string()
+//   }).get_outer(),
+//   [(
+//     "/entry.pc", r#"
+//     import "./b.pc" as module
+//     import "/a.pc" as mod
+
+//     div {
+//         style extends module.test
+//     }
+//     "#
+//   ),
+//   (
+//       "/a.pc", r#"
+//       "#
+//     ),
+//   (
+//       "/b.pc", r#"
+//       public style test {
+//           color: blue
+//       }
+//       "#
+//     )]
+// }

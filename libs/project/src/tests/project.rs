@@ -122,6 +122,7 @@ macro_rules! test_case {
 
 fn default_config_with_compiler_options(src: &str, options: Vec<CompilerOptions>) -> Config {
     Config {
+        experimental: None,
         src_dir: Some(src.to_string()),
         global_scripts: None,
         designs_dir: None,
@@ -184,7 +185,7 @@ test_case! {
   [
     ("/entry.pc.html", r#"
       <!doctype html>
-      <html> 
+      <html>
         <head>
           <link rel="stylesheet" href="/entry.pc.css">
         </head>
@@ -221,7 +222,7 @@ test_case! {
   [
     ("/entry.pc.html", r#"
       <!doctype html>
-      <html> 
+      <html>
         <head>
           <link rel="stylesheet" href="/entry.pc.css">
           <link rel="stylesheet" href="/imp.pc.css">
@@ -233,7 +234,7 @@ test_case! {
     "#),
     ("/imp.pc.html", r#"
       <!doctype html>
-      <html> 
+      <html>
         <head>
           <link rel="stylesheet" href="/imp.pc.css">
         </head>
@@ -276,7 +277,7 @@ test_case! {
   [
     ("/entry.pc.html", r#"
       <!doctype html>
-      <html> 
+      <html>
         <head>
           <link rel="stylesheet" href="/entry.pc.css">
         </head>
@@ -329,7 +330,7 @@ test_case! {
   [
     ("/project/out/entry.pc.html", r#"
       <!doctype html>
-      <html> 
+      <html>
         <head>
           <link rel="stylesheet" href="/project/assets/main.css">
         </head>
@@ -340,7 +341,7 @@ test_case! {
     "#),
     ("/project/out/imp.pc.html", r#"
       <!doctype html>
-      <html> 
+      <html>
         <head>
           <link rel="stylesheet" href="/project/assets/main.css">
         </head>
@@ -350,10 +351,10 @@ test_case! {
       </html>
     "#),
     ("/project/assets/main.css", r#"
-    /* /project/out/entry.pc.css */ 
+    /* /project/out/entry.pc.css */
     ._856b6f45-6 { color: blue; }
-    /* /project/out/imp.pc.css */ 
-    ._e2ff1d5b-5 { color: orange; } 
+    /* /project/out/imp.pc.css */
+    ._e2ff1d5b-5 { color: orange; }
     "#)
   ]
 }
@@ -436,13 +437,13 @@ test_case! {
   [
     ("/entry.pc", r#"
       import "/test.pc" as test
-      
+
       test.Component
     "#),
 
     ("/test.pc", r#"
       import "/colors.pc" as colors
-      
+
       public component Component {
         render div {
           style {
@@ -460,40 +461,40 @@ test_case! {
   [
     ("/entry.pc.css", ""),
     ("/entry.pc.html", r#"
-      <!doctype html> 
+      <!doctype html>
       <html>
-        <head> 
-          <link rel="stylesheet" href="/entry.pc.css"> 
+        <head>
+          <link rel="stylesheet" href="/entry.pc.css">
           <link rel="stylesheet" href="/test.pc.css">
           <link rel="stylesheet" href="/colors.pc.css">
-        </head> 
-        <body> 
+        </head>
+        <body>
           <div class="_Component-6bcf0994-6 _80f4925f-2">
-          </div> 
-        </body> 
+          </div>
+        </body>
       </html>
     "#),
     ("/colors.pc.css", ":root { --white0-e05e7926-2: #FFF; }"),
     ("/colors.pc.html", r#"
-      <!doctype html> 
-      <html> 
-        <head> 
+      <!doctype html>
+      <html>
+        <head>
           <link rel="stylesheet" href="/colors.pc.css">
-        </head> 
+        </head>
         <body>
         </body>
       </html>
     "#),
     ("/test.pc.css", "._Component-6bcf0994-6 { background: var(--white0-e05e7926-2); }"),
     ("/test.pc.html", r#"
-      <!doctype html> 
-      <html> 
-        <head> 
+      <!doctype html>
+      <html>
+        <head>
           <link rel="stylesheet" href="/test.pc.css">
           <link rel="stylesheet" href="/colors.pc.css">
-        </head> 
+        </head>
         <body>
-        </body> 
+        </body>
       </html>
     "#)
   ]
@@ -516,7 +517,7 @@ test_case! {
   [
     ("/entry.pc.html2", r#"
       <!doctype html>
-      <html> 
+      <html>
         <head>
           <link rel="stylesheet" href="/entry.pc.css">
         </head>
@@ -560,7 +561,7 @@ test_case! {
   ],
   [
     ("/entry.pc.css", r#"
-    ._80f4925f-5 { 
+    ._80f4925f-5 {
       color: url("data:image/svg+xml;base64,CiAgICAgIGJsYXJnCiAgICA=");
     }
     "#)

@@ -42,26 +42,44 @@ fn evaluate_document<F: FileResolver>(
     context: &mut DocumentContext<F>,
 ) -> virt::Document {
     let mut children = vec![];
-    let mut metadata: Option<virt::NodeMedata> = None;
-
     for item in &document.body {
         match item.get_inner() {
             ast::document_body_item::Inner::Component(component) => {
                 if context.options.include_components {
-                    evaluate_component::<F>(component, &mut children, &metadata, context);
+                    evaluate_component::<F>(
+                        component,
+                        &mut children,
+                        &component
+                            .comment
+                            .as_ref()
+                            .and_then(|comment| Some(evaluate_comment_metadata(&comment))),
+                        context,
+                    );
                 }
-                metadata = None;
             }
             ast::document_body_item::Inner::Element(element) => {
-                evaluate_element::<F>(element, &mut children, &metadata, context, false, false);
-                metadata = None;
-            }
-            ast::document_body_item::Inner::DocComment(doc_comment) => {
-                metadata = Some(evaluate_comment_metadata(doc_comment));
+                evaluate_element::<F>(
+                    element,
+                    &mut children,
+                    &element
+                        .comment
+                        .as_ref()
+                        .and_then(|comment| Some(evaluate_comment_metadata(&comment))),
+                    context,
+                    false,
+                    false,
+                );
             }
             ast::document_body_item::Inner::Text(text_node) => {
-                evaluate_text_node(text_node, &mut children, &metadata, context);
-                metadata = None;
+                evaluate_text_node(
+                    text_node,
+                    &mut children,
+                    &text_node
+                        .comment
+                        .as_ref()
+                        .and_then(|comment| Some(evaluate_comment_metadata(&comment))),
+                    context,
+                );
             }
             _ => {}
         }

@@ -13,9 +13,8 @@ public style aMixin {
 }
 
 /**
- * @bounds(x: 562, y: 217, width: 430, height: 185)
+ * @bounds(x: 1380, y: -234, width: 430, height: 185)
 */
-
 public component Something {
     variant cd
     render div {
@@ -35,9 +34,8 @@ public component Something {
 }
 
 /**
- * @bounds(x: 569, y: -90, width: 456, height: 205)
+ * @bounds(x: 622, y: -252, width: 456, height: 205)
 */
-
 div {
     style extends aMixin {
         position: relative

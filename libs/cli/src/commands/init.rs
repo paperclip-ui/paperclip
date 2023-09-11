@@ -24,6 +24,7 @@ pub async fn init(_args: InitArgs) -> Result<()> {
     println!("{}", textwrap::dedent(&info));
 
     let new_config = Config {
+        experimental: None,
         src_dir: Some("src".to_string()),
         designs_dir: Some("src/designs".to_string()),
         global_scripts: None,

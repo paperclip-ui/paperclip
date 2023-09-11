@@ -338,7 +338,6 @@ add_case! {
 add_case! {
     can_parse_a_document_style,
     r#"
-    /** define a mixin */
     style {
         background-color: blue
     }

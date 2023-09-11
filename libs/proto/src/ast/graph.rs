@@ -3,7 +3,11 @@ include!(concat!(env!("OUT_DIR"), "/ast.graph.rs"));
 use std::collections::{HashMap, HashSet};
 
 pub use super::graph_ext::*;
-use super::pc::{Document, Element};
+use super::{
+    all::ExpressionWrapper,
+    get_expr::GetExpr,
+    pc::{Document, Element},
+};
 
 impl<'a> Dependency {
     pub fn resolve_import_from_ns(&'a self, ns: &str, graph: &'a Graph) -> Option<&'a Dependency> {
@@ -20,6 +24,9 @@ impl<'a> Dependency {
     }
     pub fn get_document(&self) -> &Document {
         self.document.as_ref().expect("Document must exist")
+    }
+    pub fn get_expr(&self, id: &str) -> Option<ExpressionWrapper> {
+        GetExpr::get_expr(id, &self.document.as_ref().expect("Document must exist"))
     }
     pub fn find_instances_of(&self, component_name: &str, component_source: &str) -> Vec<&Element> {
         let import_rel_path = self
@@ -48,7 +55,6 @@ impl Graph {
             dependencies: HashMap::new(),
         }
     }
-
     pub fn merge(self, graph: Graph) -> Graph {
         let mut dependencies = self.dependencies;
         dependencies.extend(graph.dependencies);
@@ -66,6 +72,14 @@ impl Graph {
             }
         }
         dependents
+    }
+    pub fn get_expr_dep<'a>(&'a self, id: &str) -> Option<(ExpressionWrapper, &'a Dependency)> {
+        for (_path, dep) in &self.dependencies {
+            if let Some(expr) = dep.get_expr(id) {
+                return Some((expr, dep));
+            }
+        }
+        return None;
     }
     pub fn get_all_dependents(&self, path: &str) -> Vec<&Dependency> {
         let mut all_dependents: Vec<&Dependency> = vec![];

@@ -1,12 +1,8 @@
 use paperclip_proto::ast;
+use paperclip_proto::ast::all::visit::{Visitable, Visitor, VisitorResult};
 use paperclip_proto::ast::graph_ext::{Dependency, Graph};
 use paperclip_proto::ast::pc::{document_body_item, DocumentBodyItem, Element};
 use paperclip_proto::ast::{all::ExpressionWrapper, pc::Component};
-
-// use crate::ast::all::Visitable;
-use paperclip_proto::ast::all::visit::{Visitable, Visitor, VisitorResult};
-
-// use super::all::{Visitor, VisitorResult};
 
 pub struct GetExpr {
     id: String,
@@ -86,56 +82,4 @@ impl<'expr> GetExpr {
             }
         })
     }
-}
-
-pub fn get_expr(id: &str, dep: &Dependency) -> Option<ExpressionWrapper> {
-    GetExpr::get_expr(id, &dep.document.as_ref().expect("Document must exist"))
-}
-
-pub fn get_expr_dep<'a>(id: &str, graph: &'a Graph) -> Option<(ExpressionWrapper, &'a Dependency)> {
-    for (_path, dep) in &graph.dependencies {
-        if let Some(expr) = get_expr(id, dep) {
-            return Some((expr, dep));
-        }
-    }
-    return None;
-}
-
-pub fn get_ref_id(expr: ExpressionWrapper, graph: &Graph) -> Option<String> {
-    match &expr {
-        ExpressionWrapper::Element(element) => get_element_origin_dep(element, graph)
-            .document
-            .as_ref()
-            .unwrap()
-            .get_components()
-            .iter()
-            .find_map(|component| {
-                if &component.name == &element.tag_name {
-                    Some(component.id.to_string())
-                } else {
-                    None
-                }
-            }),
-        _ => None,
-    }
-}
-
-fn get_element_origin_dep<'a>(element: &Element, graph: &'a Graph) -> &'a Dependency {
-    let dep = get_expr_dep(&element.id, graph).unwrap().1;
-
-    if let Some(namespace) = &element.namespace {
-        if let Some(imp) = dep
-            .document
-            .as_ref()
-            .unwrap()
-            .get_imports()
-            .iter()
-            .find(|imp| &imp.namespace == namespace)
-        {
-            let imp_path = dep.imports.get(&imp.path).unwrap();
-            return graph.dependencies.get(imp_path).as_ref().unwrap();
-        }
-    }
-
-    dep
 }

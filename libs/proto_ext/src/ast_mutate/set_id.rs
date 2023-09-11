@@ -8,7 +8,7 @@ use paperclip_proto::{
     ast_mutate::{mutation_result, ExpressionUpdated, SetId},
 };
 
-use paperclip_proto::ast::get_expr::{get_expr_dep, get_ref_id};
+use paperclip_proto::ast::get_expr::get_expr_dep;
 
 use super::EditContext;
 
@@ -39,8 +39,8 @@ impl MutableVisitor<()> for EditContext<SetId> {
             return VisitorResult::Continue;
         }
 
-        if let Some(ref_id) = get_ref_id(expr.into(), &self.graph) {
-            if ref_id == self.mutation.expression_id {
+        if let Some(component) = expr.get_instance_component(&self.graph) {
+            if component.id == self.mutation.expression_id {
                 let info = get_expr_dep(&self.mutation.expression_id, &self.graph).unwrap();
                 match &info.0 {
                     ExpressionWrapper::Component(comp) => {

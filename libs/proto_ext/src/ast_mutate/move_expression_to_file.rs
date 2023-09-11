@@ -1,15 +1,12 @@
-use std::path::Component;
-
 use crate::ast_mutate::utils::resolve_import_ns;
 
 use super::{base::EditContext, utils::import_dep};
-use paperclip_common::{fs::FileResolver, get_or_short};
+use paperclip_common::get_or_short;
 use paperclip_proto::{
     ast::css::FunctionCall,
     ast::pc::Element,
     ast::{
         all::{Expression, ExpressionWrapper},
-        graph_ext::Dependency,
         pc::{document_body_item, Document, Style},
     },
     ast_mutate::MoveExpressionToFile,
@@ -97,6 +94,8 @@ impl MutableVisitor<()> for EditContext<MoveExpressionToFile> {
     }
 
     fn visit_style(&mut self, style: &mut Style) -> VisitorResult<()> {
+        for extends in &style.extends {}
+
         VisitorResult::Continue
     }
 

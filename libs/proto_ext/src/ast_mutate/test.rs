@@ -4261,54 +4261,54 @@ case! {
     )]
 }
 
-// case! {
-//   refs_are_updated_when_style_is_moved,
-//   [
-//       (
-//           "/entry.pc", r#"
-//           import "/a.pc" as mod
+case! {
+  refs_are_updated_when_style_is_moved,
+  [
+      (
+          "/entry.pc", r#"
+          import "/a.pc" as mod
 
-//           div {
-//             style extends mod.test
-//           }
-//           "#
-//       ),
-//         (
-//             "/a.pc", r#"
-//             public style test {
-//                 color: blue
-//             }
-//             "#
-//           ),
+          div {
+            style extends mod.test
+          }
+          "#
+      ),
+        (
+            "/a.pc", r#"
+            public style test {
+                color: blue
+            }
+            "#
+          ),
 
-//           (
-//               "/b.pc", r#"
-//               "#
-//             )
-//   ],
-//   mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
-//       expression_id: "98523c41-3".to_string(),
-//       new_file_path: "/b.pc".to_string()
-//   }).get_outer(),
-//   [(
-//     "/entry.pc", r#"
-//     import "./b.pc" as module
-//     import "/a.pc" as mod
+          (
+              "/b.pc", r#"
+              "#
+            )
+  ],
+  mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
+      expression_id: "98523c41-3".to_string(),
+      new_file_path: "/b.pc".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    import "./b.pc" as module
+    import "/a.pc" as mod
 
-//     div {
-//         style extends module.test
-//     }
-//     "#
-//   ),
-//   (
-//       "/a.pc", r#"
-//       "#
-//     ),
-//   (
-//       "/b.pc", r#"
-//       public style test {
-//           color: blue
-//       }
-//       "#
-//     )]
-// }
+    div {
+        style extends module.test
+    }
+    "#
+  ),
+  (
+      "/a.pc", r#"
+      "#
+    ),
+  (
+      "/b.pc", r#"
+      public style test {
+          color: blue
+      }
+      "#
+    )]
+}

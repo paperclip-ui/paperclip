@@ -1,0 +1,10 @@
+syntax = "proto3";
+import "ast/base.proto";
+
+package ast.shared;
+
+message Reference {
+  string id = 1;
+  ast.base.Range range = 2;
+  repeated string path = 3;
+}

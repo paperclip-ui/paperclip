@@ -7,6 +7,7 @@ use crate::core::parser_context::Context;
 use crate::core::string_scanner::StringScanner;
 use paperclip_common::id::IDGenerator;
 use paperclip_proto::ast::css as ast;
+use paperclip_proto::ast::shared as shared_ast;
 use std::str;
 
 type ParserContext<'tokenizer, 'scanner, 'idgenerator, 'src> =
@@ -239,7 +240,7 @@ fn parse_call(context: &mut ParserContext) -> Result<ast::FunctionCall, err::Par
     })
 }
 
-fn parse_reference(context: &mut ParserContext) -> Result<ast::Reference, err::ParserError> {
+fn parse_reference(context: &mut ParserContext) -> Result<shared_ast::Reference, err::ParserError> {
     let start = context.curr_u16pos.clone();
     let mut path: Vec<String> = vec![];
 
@@ -255,7 +256,7 @@ fn parse_reference(context: &mut ParserContext) -> Result<ast::Reference, err::P
         }
     }
     let end = context.curr_u16pos.clone();
-    Ok(ast::Reference {
+    Ok(shared_ast::Reference {
         id: context.next_id(),
         range: Some(Range::new(start, end)),
         path,

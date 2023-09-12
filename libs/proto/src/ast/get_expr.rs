@@ -1,6 +1,7 @@
 use super::graph_ext::{Dependency, Graph};
 use super::pc;
-use super::pc::{document_body_item, DocumentBodyItem, Element};
+use super::pc::{document_body_item, DocumentBodyItem};
+use super::shared;
 use super::{all::ExpressionWrapper, pc::Component};
 
 // use crate::ast::all::Visitable;
@@ -34,6 +35,7 @@ impl<'expr> Visitor<()> for GetExpr {
       (visit_text_node, pc::TextNode),
       (visit_variant, pc::Variant),
       (visit_style, pc::Style),
+      (visit_reference, shared::Reference),
       (visit_atom, pc::Atom)
     }
 }

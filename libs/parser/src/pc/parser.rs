@@ -6,6 +6,7 @@ use crate::core::string_scanner::StringScanner;
 use paperclip_proto::ast::css as css_ast;
 use paperclip_proto::ast::docco as docco_ast;
 use paperclip_proto::ast::pc::{self as ast, TriggerBodyItem};
+use paperclip_proto::ast::shared as shared_ast;
 
 use crate::css::parser::{
     parse_style_declaration_with_string_scanner, parse_style_declarations_with_string_scanner,
@@ -319,11 +320,13 @@ fn parse_style(context: &mut PCContext, is_public: bool) -> Result<ast::Style, e
     })
 }
 
-fn parse_style_extends(context: &mut PCContext) -> Result<Vec<ast::Reference>, err::ParserError> {
+fn parse_style_extends(
+    context: &mut PCContext,
+) -> Result<Vec<shared_ast::Reference>, err::ParserError> {
     context.next_token()?; // eat
     context.skip(is_superfluous_or_newline)?;
 
-    let mut extends: Vec<ast::Reference> = vec![];
+    let mut extends: Vec<shared_ast::Reference> = vec![];
     loop {
         extends.push(parse_ref(context)?);
         context.skip(is_superfluous_or_newline)?;
@@ -833,11 +836,11 @@ fn parse_boolean(context: &mut PCContext) -> Result<base_ast::Bool, err::ParserE
     })
 }
 
-fn parse_ref(context: &mut PCContext) -> Result<ast::Reference, err::ParserError> {
+fn parse_ref(context: &mut PCContext) -> Result<shared_ast::Reference, err::ParserError> {
     let start = context.curr_u16pos.clone();
     let path: Vec<String> = parse_path(context)?;
     let end = context.curr_u16pos.clone();
-    Ok(ast::Reference {
+    Ok(shared_ast::Reference {
         id: context.next_id(),
         range: Some(base_ast::Range::new(start, end)),
         path,

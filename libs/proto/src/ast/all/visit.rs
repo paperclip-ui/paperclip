@@ -3,6 +3,7 @@ pub use super::super::css;
 pub use super::super::docco;
 pub use super::super::graph;
 pub use super::super::pc;
+pub use super::super::shared;
 
 macro_rules! visitable {
 (
@@ -230,11 +231,6 @@ visitable! {
           css::declaration_value::Inner::CommaList
       )
   }),
-  (css::Reference, visit_css_reference, (self, visitor) {
-      VisitorResult::Continue
-  },{
-      VisitorResult::Continue
-  }),
   (css::Measurement, visit_css_measurement, (self, visitor) {
       VisitorResult::Continue
   },{
@@ -412,7 +408,7 @@ visit_enum!(self.get_inner_mut(), visitor, pc::trigger_body_item::Inner::Str, pc
 }, {
   visit_each!(&mut self.items, visitor)
 }),
-  (pc::Reference, visit_reference, (self, visitor) {
+  (shared::Reference, visit_reference, (self, visitor) {
     VisitorResult::Continue
   }, {
     VisitorResult::Continue

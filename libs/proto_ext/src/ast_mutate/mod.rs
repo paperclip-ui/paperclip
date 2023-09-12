@@ -1,3 +1,4 @@
+mod add_import;
 mod append_child;
 mod append_insert;
 mod base;
@@ -27,6 +28,7 @@ mod utils;
 use std::{collections::HashMap, rc::Rc};
 
 use crate::graph::{get_document_imports, io::IO};
+pub use add_import::*;
 use anyhow::Result;
 pub use append_child::*;
 pub use append_insert::*;
@@ -89,15 +91,21 @@ pub fn edit_graph<TIO: IO>(
 
     for mutation in mutations {
         for (path, dep) in &mut graph.dependencies {
-            let mut ctx = EditContext::new(mutation.clone(), &dep.path, ctx_graph.clone());
-            dep.accept(&mut ctx);
-            let doc = dep.document.as_ref().expect("Document must exist");
+            let mut mutations = vec![mutation.clone()];
 
-            dep.imports = get_document_imports(doc, &dep.path, io)?;
+            while !mutations.is_empty() {
+                let mutation = mutations.remove(0);
+                let mut ctx = EditContext::new(mutation.clone(), &dep.path, ctx_graph.clone());
+                dep.accept(&mut ctx);
+                if ctx.changes.borrow().len() > 0 {
+                    changed.push((path.to_string(), ctx.changes.borrow().clone().to_vec()));
+                }
 
-            if ctx.changes.borrow().len() > 0 {
-                changed.push((path.to_string(), ctx.changes.borrow().clone().to_vec()));
+                mutations.extend(ctx.post_mutations.borrow().clone());
             }
+
+            let doc = dep.document.as_ref().expect("Document must exist");
+            dep.imports = get_document_imports(doc, &dep.path, io)?;
         }
     }
 
@@ -119,6 +127,7 @@ mutations! {
   UpdateDependencyPath,
   UpdateVariant,
   MoveExpressionToFile,
+  AddImport,
   AppendInsert,
   SetTagName,
   PrependChild,

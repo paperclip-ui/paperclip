@@ -1,6 +1,7 @@
 use crate::add_inner_wrapper;
 
 use super::{
+    all::ExpressionWrapper,
     get_expr::GetExpr,
     graph::{Dependency, Graph},
 };
@@ -52,6 +53,31 @@ impl Document {
     }
     pub fn get_import_by_src(&self, src: &str) -> Option<&Import> {
         self.get_imports().into_iter().find(|imp| &imp.path == src)
+    }
+    pub fn get_export(&self, name: &str) -> Option<ExpressionWrapper> {
+        for child in &self.body {
+            match child.get_inner() {
+                document_body_item::Inner::Component(component) => {
+                    if component.name == name {
+                        return Some(component.into());
+                    }
+                }
+                document_body_item::Inner::Style(style) => {
+                    if let Some(style_name) = &style.name {
+                        if style_name == name {
+                            return Some(style.into());
+                        }
+                    }
+                }
+                document_body_item::Inner::Atom(atom) => {
+                    if atom.name == name {
+                        return Some(atom.into());
+                    }
+                }
+                _ => {}
+            }
+        }
+        None
     }
     pub fn get_component_by_name(&self, name: &str) -> Option<&Component> {
         self.get_components()

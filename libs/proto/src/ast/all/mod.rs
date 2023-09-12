@@ -1,6 +1,7 @@
 pub use super::base;
 pub use super::docco;
 pub use super::pc;
+pub use super::shared;
 use crc::{Crc, CRC_32_ISCSI};
 pub mod visit;
 
@@ -193,7 +194,7 @@ expressions! {
     pc::simple_expression::Inner::Reference,
     pc::simple_expression::Inner::Ary
   )),
-  (Reference, pc::Reference, self => &self.id),
+  (Reference, shared::Reference, self => &self.id),
   (Ary, pc::Ary, self => &self.id),
   (Element, pc::Element, self => &self.id),
   (Node, pc::Node, self => &self.get_inner().get_id()),

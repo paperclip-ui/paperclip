@@ -5,6 +5,7 @@ use paperclip_evaluator::core::utils::get_style_namespace;
 use paperclip_proto::ast::{
     graph_ext::{Dependency, Graph},
     pc as ast,
+    shared::Reference,
 };
 use std::collections::BTreeMap;
 
@@ -375,7 +376,7 @@ fn compile_simple_expression(expr: &ast::SimpleExpression, context: &mut Context
     }
 }
 
-fn compile_reference(expr: &ast::Reference, context: &mut Context) {
+fn compile_reference(expr: &Reference, context: &mut Context) {
     let mut parts = expr.path.iter().peekable();
 
     while let Some(part) = parts.next() {

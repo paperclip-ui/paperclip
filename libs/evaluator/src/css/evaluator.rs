@@ -10,6 +10,7 @@ use paperclip_proto::ast::graph_ext::{self as graph};
 use paperclip_proto::ast::graph_ext::{self as graph_ref, Expr};
 use paperclip_proto::ast::pc::override_body_item;
 use paperclip_proto::ast::pc::{self as ast};
+use paperclip_proto::ast::shared::Reference;
 use paperclip_proto::virt::css::Rule;
 use std::string::ToString;
 
@@ -391,7 +392,7 @@ fn get_render_node_ns<F: FileResolver>(context: &DocumentContext<F>) -> Option<S
 
 fn evaluate_variant_styles<F: FileResolver>(
     style: &ast::Style,
-    variant_refs: &Vec<ast::Reference>,
+    variant_refs: &Vec<Reference>,
     expanded_combo_selectors: &Vec<Vec<VariantTrigger>>,
     context: &mut DocumentContext<F>,
 ) {
@@ -714,7 +715,7 @@ fn get_combo_selectors2(
 // [[or, or, or] and [or]]
 
 fn collect_style_variant_selectors<F: FileResolver>(
-    variant_refs: &Vec<ast::Reference>,
+    variant_refs: &Vec<Reference>,
     context: &mut DocumentContext<F>,
 ) -> Vec<Vec<VariantTrigger>> {
     let mut combo_triggers = vec![];

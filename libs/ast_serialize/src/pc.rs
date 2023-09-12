@@ -1,9 +1,9 @@
 use crate::css::{serialize_decl_value, serialize_declarations};
 use crate::docco::serialize_comment as serialize_doc_comment;
 use paperclip_common::serialize_context::Context;
-use paperclip_proto::ast::base as base_ast;
 use paperclip_proto::ast::docco as docco_ast;
 use paperclip_proto::ast::pc as ast;
+use paperclip_proto::ast::{base as base_ast, shared};
 
 pub fn serialize(document: &ast::Document) -> String {
     let mut context = Context::new(0);
@@ -322,7 +322,7 @@ pub fn serialize_string(node: &base_ast::Str, context: &mut Context) {
 }
 
 pub fn serialize_number(_node: &base_ast::Num, _context: &mut Context) {}
-pub fn serialize_reference(node: &ast::Reference, context: &mut Context) {
+pub fn serialize_reference(node: &shared::Reference, context: &mut Context) {
     context.add_buffer(node.path.join(".").as_str());
 }
 

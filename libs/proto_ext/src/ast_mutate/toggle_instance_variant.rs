@@ -2,7 +2,8 @@ use super::base::EditContext;
 use paperclip_common::get_or_short;
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
-use paperclip_proto::ast::pc::{Reference, Variant};
+use paperclip_proto::ast::pc::Variant;
+use paperclip_proto::ast::shared::Reference;
 use paperclip_proto::ast_mutate::ToggleInstanceVariant;
 
 use paperclip_proto::ast::get_expr::GetExpr;

@@ -2,6 +2,7 @@ syntax = "proto3";
 import "ast/base.proto";
 import "ast/css.proto";
 import "ast/docco.proto";
+import "ast/shared.proto";
 
 package ast.pc;
 
@@ -35,8 +36,8 @@ message Style {
   string id = 1;
   bool is_public = 2;
   optional string name = 3;
-  repeated Reference variant_combo = 4;
-  repeated Reference extends = 5;
+  repeated ast.shared.Reference variant_combo = 4;
+  repeated ast.shared.Reference extends = 5;
   ast.base.Range range = 6;
   repeated ast.css.StyleDeclaration declarations = 7;
 }
@@ -113,7 +114,7 @@ message TriggerBodyItemCombo {
 message TriggerBodyItem {
   oneof inner {
     ast.base.Str str = 1;
-    Reference reference = 2;
+    ast.shared.Reference reference = 2;
     ast.base.Bool bool = 3;
   }
 }
@@ -139,16 +140,11 @@ message SimpleExpression {
     ast.base.Str str = 1;
     ast.base.Num num = 2;
     ast.base.Bool bool = 3;
-    Reference reference = 4;
+    ast.shared.Reference reference = 4;
     Ary ary = 5;
   }
 }
 
-message Reference {
-  string id = 1;
-  ast.base.Range range = 2;
-  repeated string path = 3;
-}
 
 message Ary {
   string id = 1;

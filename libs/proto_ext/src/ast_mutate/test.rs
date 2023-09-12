@@ -32,6 +32,8 @@ macro_rules! case {
                 panic!("Unable to load");
             }
 
+            println!("{:#?}", graph.dependencies);
+
             edit_graph(&mut graph, &vec![$edit], &mock_fs).expect("Can't edit graph");
 
             let edited_docs = graph
@@ -4309,6 +4311,169 @@ case! {
       public style test {
           color: blue
       }
+      "#
+    )]
+}
+
+case! {
+  refs_are_updated_when_atom_is_moved,
+  [
+      (
+          "/entry.pc", r#"
+          import "/a.pc" as mod
+
+          div {
+            style {
+                background: var(mod.blue)
+            }
+          }
+          "#
+      ),
+        (
+            "/a.pc", r#"
+            public token blue #0000FF
+            "#
+          ),
+
+          (
+              "/b.pc", r#"
+              "#
+            )
+  ],
+  mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
+      expression_id: "98523c41-2".to_string(),
+      new_file_path: "/b.pc".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    import "./b.pc" as module
+    import "/a.pc" as mod
+
+    div {
+        style {
+            background: var(module.blue)
+        }
+    }
+    "#
+  ),
+  (
+      "/a.pc", r#"
+      "#
+    ),
+  (
+      "/b.pc", r#"
+      public token blue #0000FF
+      "#
+    )]
+}
+
+case! {
+  refs_are_update_when_atom_moved_out_of_dep_where_its_used,
+  [
+      (
+          "/entry.pc", r#"
+          public token blue #0000FF
+
+          div {
+            style {
+                background: var(blue)
+            }
+          }
+          "#
+      ),
+        (
+            "/a.pc", r#"
+            "#
+          )
+  ],
+  mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
+      expression_id: "80f4925f-2".to_string(),
+      new_file_path: "/a.pc".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    import "./a.pc" as module
+
+    div {
+        style {
+            background: var(module.blue)
+        }
+    }
+    "#
+  ),
+  (
+      "/a.pc", r#"
+      public token blue #0000FF
+      "#
+    )]
+}
+
+case! {
+  can_move_an_element_to_a_doc,
+  [
+      (
+          "/entry.pc", r#"
+
+
+          div {
+            style {
+                background: var(blue)
+            }
+          }
+          "#
+      ),
+        (
+            "/a.pc", r#"
+            "#
+          )
+  ],
+  mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
+      expression_id: "80f4925f-5".to_string(),
+      new_file_path: "/a.pc".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    "#
+  ),
+  (
+      "/a.pc", r#"
+
+      div {
+                  style {
+                      background: var(blue)
+                  }
+                }
+      "#
+    )]
+}
+
+case! {
+  can_move_a_text_node_to_a_doc,
+  [
+      (
+          "/entry.pc", r#"
+
+
+          text "ab"
+          "#
+      ),
+        (
+            "/a.pc", r#"
+            "#
+          )
+  ],
+  mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
+      expression_id: "80f4925f-1".to_string(),
+      new_file_path: "/a.pc".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    "#
+  ),
+  (
+      "/a.pc", r#"
+
+      text "ab"
       "#
     )]
 }

@@ -35,6 +35,7 @@ message Mutation {
     SetId set_id = 16;
     PasteExpression paste_expression = 21;
     MoveExpressionToFile move_expression_to_file = 26;
+    AddImport add_import = 27;
 
     // Instance
     ToggleInstanceVariant toggle_instance_variant = 13;
@@ -49,6 +50,12 @@ message Mutation {
     UpdateDependencyPath update_dependency_path = 25;
 
   }
+}
+
+
+message AddImport {
+  string ns = 1;
+  string path = 2;
 }
 
 message WrapInElement {

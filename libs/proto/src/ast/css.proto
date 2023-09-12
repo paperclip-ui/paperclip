@@ -1,5 +1,6 @@
 syntax = "proto3";
 import "ast/base.proto";
+import "ast/shared.proto";
 
 package ast.css;
 
@@ -14,7 +15,7 @@ message StyleDeclaration {
 message DeclarationValue {
   oneof inner {
     ast.base.Num number = 1;
-    Reference reference = 2;
+    ast.shared.Reference reference = 2;
     ast.base.Str str = 3;
     Measurement measurement = 4;
     FunctionCall function_call = 5;
@@ -23,12 +24,6 @@ message DeclarationValue {
     SpacedList spaced_list = 8;
     CommaList comma_list = 9;
   }
-}
-
-message Reference {
-  string id = 1;
-  ast.base.Range range = 2;
-  repeated string path = 3;
 }
 
 message Arithmetic {

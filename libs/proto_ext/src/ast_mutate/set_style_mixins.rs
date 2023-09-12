@@ -4,7 +4,7 @@ use super::utils::resolve_import_ns;
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::visit::MutableVisitor;
 use paperclip_proto::ast::all::visit::VisitorResult;
-use paperclip_proto::ast::pc::Reference;
+use paperclip_proto::ast::shared::Reference;
 use paperclip_proto::ast_mutate::SetStyleMixins;
 
 use paperclip_proto::ast::get_expr::GetExpr;
@@ -63,12 +63,12 @@ impl MutableVisitor<()> for EditContext<SetStyleMixins> {
                     declarations: vec![],
                     variant_combo: variant_combo
                         .iter()
-                        .map(|x| ast::pc::Reference {
+                        .map(|x| ast::shared::Reference {
                             id: self.new_id(),
                             path: vec![x.clone()],
                             range: None,
                         })
-                        .collect::<Vec<ast::pc::Reference>>(),
+                        .collect::<Vec<ast::shared::Reference>>(),
                     name: None,
                     extends: vec![],
                 })

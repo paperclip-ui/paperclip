@@ -129,12 +129,12 @@ fn add_child_style(
 
     new_style.variant_combo = variant_names
         .iter()
-        .map(|name| ast::pc::Reference {
+        .map(|name| ast::shared::Reference {
             id: ctx.new_id(),
             path: vec![name.to_string()],
             range: None,
         })
-        .collect::<Vec<ast::pc::Reference>>();
+        .collect::<Vec<ast::shared::Reference>>();
 
     let mut found = false;
 
@@ -161,7 +161,7 @@ fn add_child_style(
     VisitorResult::Continue
 }
 
-fn variant_combo_equals(a: &Vec<ast::pc::Reference>, b: &Vec<ast::pc::Reference>) -> bool {
+fn variant_combo_equals(a: &Vec<ast::shared::Reference>, b: &Vec<ast::shared::Reference>) -> bool {
     if a.len() != b.len() {
         return false;
     }

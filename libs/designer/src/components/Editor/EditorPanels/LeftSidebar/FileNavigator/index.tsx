@@ -161,7 +161,7 @@ const FSItem = ({ depth, item }: FSItemProps) => {
 
   const [{ opacity }, dragRef] = useDrag(
     () => ({
-      type: DNDKind.Node,
+      type: DNDKind.File,
       item,
       collect: (monitor) => ({
         opacity: monitor.isDragging() ? 0.5 : 1,
@@ -173,7 +173,7 @@ const FSItem = ({ depth, item }: FSItemProps) => {
 
   const [{ isDraggingOver }, dropRef] = useDrop(
     {
-      accept: DNDKind.Node,
+      accept: [DNDKind.File, DNDKind.Node],
       // hover: (_, monitor) => {
       //   const offset = monitor.getClientOffset();
       //   const rect = headerRef.current?.getBoundingClientRect();
@@ -184,17 +184,32 @@ const FSItem = ({ depth, item }: FSItemProps) => {
       //     setIsOver(false);
       //   }
       // },
-      drop(droppedItem: FSItem) {
-        dispatch({
-          type: "ui/FileNavigatorDroppedFile",
-          payload: {
-            directory: item.path,
-            item: droppedItem,
-          },
-        });
+      drop(droppedItem: any, monitor) {
+        if (monitor.getItemType() === DNDKind.File) {
+          dispatch({
+            type: "ui/FileNavigatorDroppedFile",
+            payload: {
+              directory: item.path,
+              item: droppedItem,
+            },
+          });
+        } else if (monitor.getItemType() === DNDKind.Node) {
+          dispatch({
+            type: "ui/FileNavigatorDroppedNode",
+            payload: {
+              filePath: item.path,
+              droppedExprId: droppedItem.id,
+            },
+          });
+        }
       },
-      canDrop() {
-        return item.kind === FSItemKind.Directory;
+      canDrop(_droppedItem: FSItem, monitor) {
+        return (
+          (monitor.getItemType() === DNDKind.File &&
+            item.kind === FSItemKind.Directory) ||
+          (monitor.getItemType() === DNDKind.Node &&
+            item.kind === FSItemKind.File)
+        );
       },
       collect(monitor) {
         return {

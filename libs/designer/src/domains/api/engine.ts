@@ -10,18 +10,16 @@ import { DesignerEvent } from "../../events";
 import {
   AddLayerMenuItemClicked,
   AtomValueChangeCompleted,
-  AtomValueChanged,
   AttributeChanged,
   ConfirmClosed,
-  // DesignerEvent,
   ElementTagChanged,
   ExprNavigatorDroppedNode,
+  FileNavigatorDroppedNode,
   FileFilterChanged,
   FileNavigatorDroppedFile,
   InstanceVariantToggled,
   PromptClosed,
   StyleDeclarationsChangeCompleted,
-  StyleDeclarationsChanged,
   StyleMixinsSet,
   TextValueChanged,
   ToolsLayerDrop,
@@ -638,6 +636,19 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
+  const handleFileNavigatorDroppedNode = ({
+    payload: { filePath, droppedExprId },
+  }: FileNavigatorDroppedNode) => {
+    actions.applyChanges([
+      {
+        moveExpressionToFile: {
+          newFilePath: filePath,
+          expressionId: droppedExprId,
+        },
+      },
+    ]);
+  };
+
   const handleDeleteExpression = (
     expressionId: string,
     state: DesignerState
@@ -999,6 +1010,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "designer/styleMixinsSet": {
         return handleStyleMixinsSet(event, newState);
+      }
+      case "ui/FileNavigatorDroppedNode": {
+        return handleFileNavigatorDroppedNode(event);
       }
       case "ui/removeVariantButtonClicked": {
         return handleDeleteExpression(event.payload.variantId, newState);

@@ -24,9 +24,9 @@ import {
 import {
   Component,
   Element,
-  Reference,
   Variant,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import { Reference } from "@paperclip-ui/proto/lib/generated/ast/shared";
 import produce from "immer";
 import {
   Box,
@@ -721,7 +721,7 @@ const getExprVirtId = (
 
 /*
 
-1. 
+1.
 */
 
 const findVirtBoxNodeInfo = (

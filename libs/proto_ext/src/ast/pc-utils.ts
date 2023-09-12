@@ -3,6 +3,8 @@ import {
   DeclarationValue,
   StyleDeclaration,
 } from "@paperclip-ui/proto/lib/generated/ast/css";
+import { Reference } from "@paperclip-ui/proto/lib/generated/ast/shared";
+
 import { Dependency, Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import {
   Atom,
@@ -16,7 +18,6 @@ import {
   Insert,
   Node,
   Override,
-  Reference,
   Render,
   Slot,
   Style,

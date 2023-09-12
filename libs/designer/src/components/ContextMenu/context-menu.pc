@@ -1,11 +1,12 @@
-import "./theme.pc" as imp
-import "./menu.pc" as menu
+import "../../styles/theme.pc" as imp
+import "../../styles/menu.pc" as menu
 
 /**
  * @bounds(x: 513, y: -909, width: 515, height: 326)
 */
-
 public component ContextMenu {
+    script(src: "./controller.tsx", target: "react")
+
     render menu.Menu(style: style, onKeyDown: onKeyDown) {
         slot children {
             ContextMenuItem {
@@ -49,7 +50,6 @@ public component ContextMenu {
 /**
  * @bounds(x: 0, y: 0, width: 149, height: 66)
 */
-
 public component ContextMenuDivider {
     render hr {
         style {
@@ -65,7 +65,6 @@ public component ContextMenuDivider {
 /**
  * @bounds(x: 202, y: -900, width: 263, height: 44)
 */
-
 public component ContextMenuItem {
     variant last trigger {
         ":last-child"
@@ -86,4 +85,3 @@ public component ContextMenuItem {
         }
     }
 }
-

@@ -222,6 +222,11 @@ const createActions = (
       dispatch({ type: "designer-engine/changesApplied", payload: changes });
       return changes;
     },
+    async loadProjectInfo() {
+      const info = await client.GetProjectInfo({}, null);
+      dispatch({ type: "designer-engine/ProjectInfoResult", payload: info });
+      return info;
+    },
     async searchFiles(query: string) {
       const { paths, rootDir } = await client.SearchFiles({ query }, null);
       dispatch({
@@ -1095,12 +1100,15 @@ const bootstrap = (
     syncEvents,
     syncResourceFiles,
     readDirectory,
+    loadProjectInfo,
   }: Actions,
   initialState: DesignerState
 ) => {
+  loadProjectInfo();
   readDirectory(".");
   syncEvents();
   syncResourceFiles();
+
   const filePath = getCurrentFilePath(initialState);
 
   if (filePath) {

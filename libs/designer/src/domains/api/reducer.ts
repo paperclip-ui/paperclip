@@ -14,7 +14,6 @@ import { DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/des
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import jasonpatch from "fast-json-patch";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
-import { uniq } from "lodash";
 import { routes } from "../../state/routes";
 
 export const apiReducer = (
@@ -26,6 +25,11 @@ export const apiReducer = (
       return serverEventReducer(state, event.payload);
     case "designer-engine/graphLoaded":
       return handleGraphLoaded(state, event);
+    case "designer-engine/ProjectInfoResult":
+      return produce(state, (draft) => {
+        draft.projectInfo = event.payload;
+        console.log("INFOOO!!!");
+      });
     case "designer-engine/resourceFilePathsLoaded": {
       return produce(state, (newState) => {
         newState.resourceFilePaths = event.payload;

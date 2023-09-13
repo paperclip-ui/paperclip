@@ -1,6 +1,7 @@
 import {
   ApplyMutationsResult,
   FileResponse,
+  ProjectInfo,
   ReadDirectoryResponse,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { BaseEvent } from "@paperclip-ui/common";
@@ -31,6 +32,10 @@ export type FileSearchResult = BaseEvent<
     paths: string[];
   }
 >;
+export type ProjectInfoResult = BaseEvent<
+  "designer-engine/ProjectInfoResult",
+  ProjectInfo
+>;
 
 export type APIError = BaseEvent<"designer-engine/apiError">;
 export type GraphLoaded = BaseEvent<"designer-engine/graphLoaded", Graph>;
@@ -58,6 +63,7 @@ export type DesignerEngineEvent =
   | FileCreated
   | DirectoryRead
   | APIError
+  | ProjectInfoResult
   | GraphLoaded
   | ServerEvent
   | ResourceFilePathsLoaded

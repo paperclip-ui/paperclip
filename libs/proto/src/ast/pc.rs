@@ -33,6 +33,7 @@ add_inner_wrapper!(component_body_item::Inner, ComponentBodyItem);
 add_inner_wrapper!(document_body_item::Inner, DocumentBodyItem);
 add_inner_wrapper!(override_body_item::Inner, OverrideBodyItem);
 add_inner_wrapper!(trigger_body_item::Inner, TriggerBodyItem);
+add_inner_wrapper!(switch_item::Inner, SwitchItem);
 /**
  */
 
@@ -222,7 +223,10 @@ impl Node {
             node::Inner::Text(text) => text.name.clone(),
             node::Inner::Insert(insert) => Some(insert.name.clone()),
             node::Inner::Slot(slot) => Some(slot.name.clone()),
-            node::Inner::Style(_) | node::Inner::Override(_) => None,
+            node::Inner::Style(_)
+            | node::Inner::Override(_)
+            | node::Inner::Repeat(_)
+            | node::Inner::Switch(_) => None,
         }
     }
 }

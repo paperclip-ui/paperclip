@@ -204,7 +204,43 @@ pub fn serialize_node(node: &ast::Node, context: &mut Context) {
         ast::node::Inner::Style(style) => serialize_style(style, context),
         ast::node::Inner::Override(over) => serialize_override(over, context),
         ast::node::Inner::Text(text) => serialize_text(text, context),
+        ast::node::Inner::Switch(expr) => serialize_switch(expr, context),
+        ast::node::Inner::Repeat(expr) => serialize_repeat(expr, context),
     }
+}
+
+pub fn serialize_switch(expr: &ast::Switch, context: &mut Context) {
+    context.add_buffer(format!("switch {} {{\n", expr.property).as_str());
+    context.start_block();
+    for item in &expr.body {
+        match item.get_inner() {
+            ast::switch_item::Inner::Case(expr) => {
+                context.add_buffer(format!("case \"{}\" {{\n", expr.condition).as_str());
+                context.start_block();
+                for item in &expr.body {
+                    serialize_node(item, context);
+                }
+                context.end_block();
+                context.add_buffer("}\n");
+            }
+            ast::switch_item::Inner::Default(expr) => {
+                context.add_buffer("default {\n");
+                context.start_block();
+                for item in &expr.body {
+                    serialize_node(item, context);
+                }
+                context.end_block();
+                context.add_buffer("}\n");
+            }
+        }
+    }
+    context.end_block();
+    context.add_buffer("}\n");
+}
+
+pub fn serialize_repeat(expr: &ast::Repeat, context: &mut Context) {
+    context.add_buffer(format!("repeat {} as ", expr.property).as_str());
+    serialize_node(expr.node.as_ref().expect("Node must exist"), context);
 }
 
 pub fn serialize_text(node: &ast::TextNode, context: &mut Context) {

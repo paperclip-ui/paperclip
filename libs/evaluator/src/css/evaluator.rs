@@ -201,6 +201,12 @@ fn evaluate_node<'a, F: FileResolver>(
         ast::node::Inner::Override(expr) => {
             evaluate_override(expr, parent, context);
         }
+        ast::node::Inner::Switch(expr) => {
+            evaluate_switch(expr, parent, context);
+        }
+        ast::node::Inner::Repeat(expr) => {
+            evaluate_repeat(expr, parent, context);
+        }
     }
 }
 
@@ -216,6 +222,19 @@ fn evaluate_insert<F: FileResolver>(insert: &ast::Insert, context: &mut Document
     for item in &insert.body {
         evaluate_node(item, Some(insert.into()), context);
     }
+}
+
+fn evaluate_switch<'a, F: FileResolver>(
+    expr: &'a ast::Switch,
+    parent: Option<ImmutableExpressionRef<'a>>,
+    context: &mut DocumentContext<F>,
+) {
+}
+fn evaluate_repeat<'a, F: FileResolver>(
+    expr: &'a ast::Repeat,
+    parent: Option<ImmutableExpressionRef<'a>>,
+    context: &mut DocumentContext<F>,
+) {
 }
 
 fn evaluate_override<'a, F: FileResolver>(

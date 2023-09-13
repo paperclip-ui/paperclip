@@ -14,7 +14,11 @@ macro_rules! add_case {
             let parse_result = parse(
                 $source,
                 &"".to_string(),
-                &Options::new(vec!["script".to_string()]),
+                &Options::new(vec![
+                    "script".to_string(),
+                    "switch".to_string(),
+                    "repeat".to_string(),
+                ]),
             );
             if let Ok(ast) = parse_result {
                 let output = serialize(&ast);
@@ -31,7 +35,11 @@ macro_rules! add_case {
             let parse_result = parse(
                 $source,
                 &"".to_string(),
-                &Options::new(vec!["script".to_string()]),
+                &Options::new(vec![
+                    "script".to_string(),
+                    "switch".to_string(),
+                    "repeat".to_string(),
+                ]),
             );
             pretty_assertions::assert_eq!(parse_result, $error)
         }
@@ -483,6 +491,33 @@ add_case! {
         public component Ab {
             script(src: "./target.js", target: "react")
             render div
+        }
+    "#
+}
+
+add_case! {
+    can_parse_a_switch_block,
+    r#"
+        public component Ab {
+            render switch something {
+                case "showA" {
+                    text "a"
+                }
+                default {
+                    text "b"
+                }
+            }
+        }
+    "#
+}
+
+add_case! {
+    can_parse_a_repeat_block,
+    r#"
+        public component Ab {
+            render repeat items as div {
+                text "hello world"
+            }
         }
     "#
 }

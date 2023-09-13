@@ -476,6 +476,12 @@ fn parse_render_node(context: &mut PCContext) -> Result<ast::Node, err::ParserEr
             Ok(ast::node::Inner::Text(parse_text(None, context)?).get_outer())
         }
         Some(Token::Word(b"slot")) => Ok(ast::node::Inner::Slot(parse_slot(context)?).get_outer()),
+        Some(Token::Word(b"repeat")) => {
+            Ok(ast::node::Inner::Repeat(parse_repeat(context)?).get_outer())
+        }
+        Some(Token::Word(b"switch")) => {
+            Ok(ast::node::Inner::Switch(parse_switch(context)?).get_outer())
+        }
         Some(Token::Word(_)) => {
             Ok(ast::node::Inner::Element(parse_element(None, context)?).get_outer())
         }
@@ -515,6 +521,107 @@ fn parse_slot(context: &mut PCContext) -> Result<ast::Slot, err::ParserError> {
     Ok(ast::Slot {
         id: context.next_id(),
         name,
+        range: Some(base_ast::Range::new(start, end)),
+        body,
+    })
+}
+
+fn parse_repeat(context: &mut PCContext) -> Result<Box<ast::Repeat>, err::ParserError> {
+    if !context.options.feature_enabled("repeat") {
+        return Err(err::ParserError::new_feature_not_enabled("repeat"));
+    }
+    let start = context.curr_u16pos.clone();
+
+    context.next_token()?; // eat repeat
+
+    context.skip(is_superfluous_or_newline)?;
+    let property = extract_word_value(context)?;
+    context.next_token()?; // eat word
+    context.skip(is_superfluous_or_newline)?;
+    context.next_token()?; // eat "as"
+    context.skip(is_superfluous_or_newline)?;
+    let node = parse_node(context)?;
+
+    let end = context.curr_u16pos.clone();
+
+    Ok(Box::new(ast::Repeat {
+        id: context.next_id(),
+        range: Some(base_ast::Range::new(start, end)),
+        property,
+        node: Some(Box::new(node)),
+    }))
+}
+
+fn parse_switch(context: &mut PCContext) -> Result<ast::Switch, err::ParserError> {
+    if !context.options.feature_enabled("switch") {
+        return Err(err::ParserError::new_feature_not_enabled("switch"));
+    }
+
+    let start = context.curr_u16pos.clone();
+    context.next_token()?;
+    // each switch
+    context.skip(is_superfluous_or_newline)?;
+    let property = extract_word_value(context)?;
+    context.next_token()?; // eat word
+    context.skip(is_superfluous_or_newline)?;
+    let body = parse_body(
+        context,
+        |context| match context.curr_token {
+            Some(Token::Word(b"case")) => {
+                Ok(ast::switch_item::Inner::Case(parse_switch_case(context)?).get_outer())
+            }
+            Some(Token::Word(b"default")) => {
+                Ok(ast::switch_item::Inner::Default(parse_switch_default(context)?).get_outer())
+            }
+            _ => Err(context.new_unexpected_token_error()),
+        },
+        Some((Token::CurlyOpen, Token::CurlyClose)),
+    )?;
+    let end = context.curr_u16pos.clone();
+
+    Ok(ast::Switch {
+        id: context.id_generator.new_id(),
+        range: Some(base_ast::Range::new(start, end)),
+        property,
+        body,
+    })
+}
+
+fn parse_switch_case(context: &mut PCContext) -> Result<ast::SwitchCase, err::ParserError> {
+    let start = context.curr_u16pos.clone();
+    context.next_token()?; // eat case
+    context.skip(is_superfluous_or_newline)?; // ws
+    let condition = extract_string_value(context)?;
+    context.next_token()?; // eat word
+    context.skip(is_superfluous_or_newline)?;
+    let body = parse_body(
+        context,
+        parse_node,
+        Some((Token::CurlyOpen, Token::CurlyClose)),
+    )?;
+    let end = context.curr_u16pos.clone();
+
+    Ok(ast::SwitchCase {
+        id: context.id_generator.new_id(),
+        range: Some(base_ast::Range::new(start, end)),
+        condition,
+        body,
+    })
+}
+
+fn parse_switch_default(context: &mut PCContext) -> Result<ast::SwitchDefault, err::ParserError> {
+    let start = context.curr_u16pos.clone();
+    context.next_token()?; // eat default
+    context.skip(is_superfluous_or_newline)?;
+    let body = parse_body(
+        context,
+        parse_node,
+        Some((Token::CurlyOpen, Token::CurlyClose)),
+    )?;
+    let end = context.curr_u16pos.clone();
+
+    Ok(ast::SwitchDefault {
+        id: context.id_generator.new_id(),
         range: Some(base_ast::Range::new(start, end)),
         body,
     })
@@ -668,6 +775,34 @@ fn parse_override(context: &mut PCContext) -> Result<ast::Override, err::ParserE
     })
 }
 
+fn parse_node(context: &mut PCContext) -> Result<ast::Node, err::ParserError> {
+    match context.curr_token {
+        Some(Token::Word(b"style")) => {
+            Ok(ast::node::Inner::Style(parse_style(context, false)?).get_outer())
+        }
+        Some(Token::Word(b"text")) => {
+            Ok(ast::node::Inner::Text(parse_text(None, context)?).get_outer())
+        }
+        Some(Token::Word(b"insert")) => {
+            Ok(ast::node::Inner::Insert(parse_insert(context)?).get_outer())
+        }
+        Some(Token::Word(b"repeat")) => {
+            Ok(ast::node::Inner::Repeat(parse_repeat(context)?).get_outer())
+        }
+        Some(Token::Word(b"switch")) => {
+            Ok(ast::node::Inner::Switch(parse_switch(context)?).get_outer())
+        }
+        Some(Token::Word(b"slot")) => Ok(ast::node::Inner::Slot(parse_slot(context)?).get_outer()),
+        Some(Token::Word(b"override")) => {
+            Ok(ast::node::Inner::Override(parse_override(context)?).get_outer())
+        }
+        Some(Token::Word(_)) => {
+            Ok(ast::node::Inner::Element(parse_element(None, context)?).get_outer())
+        }
+        _ => Err(context.new_unexpected_token_error()),
+    }
+}
+
 fn parse_element(
     comment: Option<docco_ast::Comment>,
     context: &mut PCContext,
@@ -695,27 +830,7 @@ fn parse_element(
     let body = if context.curr_token == Some(Token::CurlyOpen) {
         parse_body(
             context,
-            |context: &mut PCContext| match context.curr_token {
-                Some(Token::Word(b"style")) => {
-                    Ok(ast::node::Inner::Style(parse_style(context, false)?).get_outer())
-                }
-                Some(Token::Word(b"text")) => {
-                    Ok(ast::node::Inner::Text(parse_text(None, context)?).get_outer())
-                }
-                Some(Token::Word(b"insert")) => {
-                    Ok(ast::node::Inner::Insert(parse_insert(context)?).get_outer())
-                }
-                Some(Token::Word(b"slot")) => {
-                    Ok(ast::node::Inner::Slot(parse_slot(context)?).get_outer())
-                }
-                Some(Token::Word(b"override")) => {
-                    Ok(ast::node::Inner::Override(parse_override(context)?).get_outer())
-                }
-                Some(Token::Word(_)) => {
-                    Ok(ast::node::Inner::Element(parse_element(None, context)?).get_outer())
-                }
-                _ => Err(context.new_unexpected_token_error()),
-            },
+            |context: &mut PCContext| parse_node(context),
             Some((Token::CurlyOpen, Token::CurlyClose)),
         )?
     } else {

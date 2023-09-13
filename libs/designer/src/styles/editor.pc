@@ -1,6 +1,6 @@
 import "../components/Sidebar/sidebar.pc" as module
 import "./theme.pc" as theme
-import "./left-sidebar.pc" as leftSidebar
+import "../components/Editor/EditorPanels/LeftSidebar/ui.pc" as leftSidebar
 import "./right-sidebar.pc" as rightSidebar
 import "./center-panels.pc" as centerPanels
 import "./resource-modal.pc" as assetsModal
@@ -262,3 +262,4 @@ Editor splash {
 }
 
 ComboKey
+

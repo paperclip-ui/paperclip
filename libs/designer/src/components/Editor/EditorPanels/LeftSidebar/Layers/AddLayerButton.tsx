@@ -8,7 +8,7 @@ import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { noop } from "lodash";
 import { Box } from "@paperclip-ui/designer/src/styles/layout.pc";
 
-export const AddLayerButton = () => {
+export const AddLayerButton = (Base: React.FC<BaseLa>) => () => {
   const dispatch = useDispatch<DesignerEvent>();
 
   const onChange = (values: LayerKind[]) => {

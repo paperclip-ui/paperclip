@@ -28,35 +28,37 @@ import { useHistory } from "@paperclip-ui/designer/src/domains/history/react";
 import { Atom } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { Leaf } from "./Leaf";
 import { AddLayerButton } from "./AddLayerButton";
+import { BaseLayersProps } from "../ui.pc";
 
-export const Layers = () => {
-  const { document, title } = useLayers();
+export default (Base: React.FC<BaseLayersProps>) =>
+  function Layers() {
+    const { document, title } = useLayers();
 
-  if (!document) {
-    return null;
-  }
+    if (!document) {
+      return null;
+    }
 
-  return (
-    <sidebarStyles.SidebarPanel>
-      <styles.LeftSidebarHeader title={title} />
-      <sidebarStyles.SidebarSection class="fill">
-        <sidebarStyles.SidebarPanelHeader>
-          Entities
-          <AddLayerButton />
-        </sidebarStyles.SidebarPanelHeader>
-        <styles.Layers>
-          {document.body.map((item) => (
-            <DocumentBodyItemLeaf
-              key={ast.getDocumentBodyInner(item).id}
-              depth={1}
-              expr={item}
-            />
-          ))}
-        </styles.Layers>
-      </sidebarStyles.SidebarSection>
-    </sidebarStyles.SidebarPanel>
-  );
-};
+    return (
+      <sidebarStyles.SidebarPanel>
+        <styles.LeftSidebarHeader title={title} />
+        <sidebarStyles.SidebarSection class="fill">
+          <sidebarStyles.SidebarPanelHeader>
+            Entities
+            <AddLayerButton />
+          </sidebarStyles.SidebarPanelHeader>
+          <styles.Layers>
+            {document.body.map((item) => (
+              <DocumentBodyItemLeaf
+                key={ast.getDocumentBodyInner(item).id}
+                depth={1}
+                expr={item}
+              />
+            ))}
+          </styles.Layers>
+        </sidebarStyles.SidebarSection>
+      </sidebarStyles.SidebarPanel>
+    );
+  };
 
 const useLayers = () => {
   const currentFile = useSelector(getCurrentFilePath);

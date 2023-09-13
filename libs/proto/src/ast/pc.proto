@@ -88,7 +88,16 @@ message Node {
     Override override = 6;
     Switch switch = 7;
     Repeat repeat = 8;
+    Condition condition = 9;
   }
+}
+
+
+message Condition {
+    string id = 1;
+    ast.base.Range range = 2;
+    string property = 3;
+    repeated Node body = 4;
 }
 
 message Switch {

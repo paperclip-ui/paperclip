@@ -189,6 +189,16 @@ fn infer_repeat(expr: &ast::pc::Repeat, context: &mut InferContext) -> Result<()
     context.step_out();
     Ok(())
 }
+fn infer_condition(expr: &ast::pc::Condition, context: &mut InferContext) -> Result<()> {
+    context.step_in(&expr.property, true);
+    context.set_scope_type(types::Type::Boolean);
+    context.step_out();
+
+    for child in &expr.body {
+        infer_node(child, context)?;
+    }
+    Ok(())
+}
 
 fn infer_node(expr: &ast::pc::Node, context: &mut InferContext) -> Result<()> {
     match expr.get_inner() {
@@ -203,6 +213,9 @@ fn infer_node(expr: &ast::pc::Node, context: &mut InferContext) -> Result<()> {
         }
         ast::pc::node::Inner::Switch(child) => {
             infer_switch(child, context)?;
+        }
+        ast::pc::node::Inner::Condition(child) => {
+            infer_condition(child, context)?;
         }
         ast::pc::node::Inner::Repeat(child) => {
             infer_repeat(child, context)?;

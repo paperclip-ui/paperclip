@@ -23,6 +23,7 @@ macro_rules! add_case {
                     "script".to_string(),
                     "repeat".to_string(),
                     "switch".to_string(),
+                    "condition".to_string(),
                 ]),
             )) {
                 panic!("Unable to load");
@@ -414,6 +415,32 @@ add_case! {
       "a"?: Array<{
           "bb": React.ComponentProps<typeof B>,
       }>,
+  };
+  export const A: React.FC<BaseAProps>;
+  "#
+}
+
+add_case! {
+  can_compile_condition,
+  [
+      (
+          "/entry.pc",
+          r#"
+          public component A {
+            render div {
+                if show {
+                    text "something"
+                }
+            }
+          }
+          "#,
+      )
+  ],
+  r#"
+  import * as React from "react";
+  export type BaseAProps = {
+      "ref"?: any,
+      "show"?: boolean,
   };
   export const A: React.FC<BaseAProps>;
   "#

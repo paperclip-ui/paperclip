@@ -450,6 +450,9 @@ fn evaluate_node<F: FileResolver>(
         ast::node::Inner::Text(child) => evaluate_text_node(child, fragment, metadata, context),
         ast::node::Inner::Switch(child) => evaluate_switch(child, fragment, metadata, context),
         ast::node::Inner::Repeat(child) => evaluate_repeat(child, fragment, metadata, context),
+        ast::node::Inner::Condition(child) => {
+            evaluate_condition(child, fragment, metadata, context)
+        }
         ast::node::Inner::Override(_)
         | ast::node::Inner::Style(_)
         | ast::node::Inner::Insert(_) => {}
@@ -659,6 +662,25 @@ fn evaluate_switch<F: FileResolver>(
                     evaluate_node(item, fragment, metadata, context, false, false)
                 }
             }
+        }
+    }
+}
+
+fn evaluate_condition<F: FileResolver>(
+    expr: &ast::Condition,
+    fragment: &mut Vec<virt::Node>,
+    metadata: &Option<virt::NodeMedata>,
+    context: &mut DocumentContext<F>,
+) {
+    let value = context
+        .data
+        .as_ref()
+        .and_then(|data| data.get(&expr.property))
+        .and_then(|value| if value.is_truthy() { Some(()) } else { None });
+
+    if value.is_some() {
+        for item in &expr.body {
+            evaluate_node(item, fragment, metadata, context, false, false)
         }
     }
 }

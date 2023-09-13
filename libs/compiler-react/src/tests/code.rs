@@ -26,6 +26,7 @@ macro_rules! add_case {
                     "script".to_string(),
                     "repeat".to_string(),
                     "switch".to_string(),
+                    "condition".to_string(),
                 ]),
             )) {
                 panic!("Unable to load");
@@ -772,6 +773,37 @@ add_case! {
                   "onClick": props_items.onClick
               })
           ])
+      );
+  };
+  _AB.displayName = "AB";
+  let AB = React.memo(React.forwardRef(_AB));
+  export { AB };
+  "#
+}
+
+add_case! {
+  can_compile_condition,
+  r#"
+  public component AB {
+    render div {
+      if show {
+        text "hello"
+      }
+    }
+  }
+  "#,
+  r#"
+  require("./entry.pc.css");
+  import * as React from "react";
+
+  const _AB = (props, ref) => {
+      return React.createElement("div", {
+          "key": "80f4925f-3",
+          "ref": ref
+      },
+          props.show ? [
+              "hello"
+          ] : null
       );
   };
   _AB.displayName = "AB";

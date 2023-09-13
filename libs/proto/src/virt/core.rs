@@ -6,6 +6,18 @@ include!(concat!(env!("OUT_DIR"), "/virt.core.rs"));
 
 add_inner_wrapper!(value::Inner, Value);
 
+impl Value {
+    pub fn is_truthy(&self) -> bool {
+        match self.get_inner() {
+            value::Inner::Bool(value) => value.value,
+            value::Inner::Str(value) => value.value != "",
+            value::Inner::Num(value) => value.value != 0 as f32,
+            value::Inner::Undef(_) => false,
+            _ => true,
+        }
+    }
+}
+
 impl Obj {
     pub fn extend(&mut self, other: &mut Obj) {
         let mut combined = self.to_map();

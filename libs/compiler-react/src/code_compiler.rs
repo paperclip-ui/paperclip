@@ -206,6 +206,13 @@ fn compile_switch(switch: &ast::Switch, context: &mut Context) {
         context.add_buffer("null");
     }
 }
+
+fn compile_condition(condition: &ast::Condition, context: &mut Context) {
+    context.add_buffer(format!("{}.{} ? ", context.ctx_name, condition.property).as_str());
+    compile_node_children(&condition.body, context, true);
+    context.add_buffer(" : null");
+}
+
 fn compile_repeat(repeat: &ast::Repeat, context: &mut Context) {
     let sub_name = format!("{}_{}", context.ctx_name, repeat.property);
 
@@ -276,6 +283,7 @@ fn compile_node(node: &ast::Node, context: &mut Context, is_root: bool) -> bool 
         ast::node::Inner::Element(expr) => compile_element(&expr, is_root, context),
         ast::node::Inner::Slot(expr) => compile_slot(&expr, context),
         ast::node::Inner::Switch(expr) => compile_switch(&expr, context),
+        ast::node::Inner::Condition(expr) => compile_condition(&expr, context),
         ast::node::Inner::Repeat(expr) => compile_repeat(&expr, context),
         _ => return false,
     };

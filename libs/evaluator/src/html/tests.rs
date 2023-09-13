@@ -31,7 +31,11 @@ fn evaluate_doc(sources: HashMap<&str, &str>) -> virt::html::Document {
     if let Err(_err) = block_on(graph.load(
         "/entry.pc",
         &mock_fs,
-        ParserOptions::new(vec!["repeat".to_string(), "switch".to_string()]),
+        ParserOptions::new(vec![
+            "repeat".to_string(),
+            "switch".to_string(),
+            "condition".to_string(),
+        ]),
     )) {
         panic!("Unable to load");
     }
@@ -582,6 +586,37 @@ add_case! {
     <span>
         a2
     </span>
+"#
+}
+
+add_case! {
+    can_evaluate_a_condition,
+    [
+    ("/entry.pc", r#"
+        component A {
+            render div {
+                if show {
+                    text "blah"
+                }
+                text "something else"
+            }
+        }
+
+        A(show: true)
+        A
+	"#)
+    ],
+    r#"
+    <div class="_A-80f4925f-4">
+        something else
+    </div>
+    <div class="_A-80f4925f-4 _80f4925f-9">
+        blah
+        something else
+    </div>
+    <div class="_A-80f4925f-4 _80f4925f-10">
+        something else
+    </div>
 "#
 }
 

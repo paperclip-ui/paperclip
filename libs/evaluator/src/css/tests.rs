@@ -28,7 +28,11 @@ macro_rules! add_case {
             if let Err(_err) = block_on(graph.load(
                 "/entry.pc",
                 &mock_fs,
-                Options::new(vec!["repeat".to_string(), "switch".to_string()]),
+                Options::new(vec![
+                    "repeat".to_string(),
+                    "switch".to_string(),
+                    "condition".to_string(),
+                ]),
             )) {
                 panic!("Unable to load");
             }
@@ -1610,5 +1614,29 @@ add_case! {
   ],
   r#"
   ._A-80f4925f-4 { color: blue; } ._A-80f4925f-9 { color: purple; }
+  "#
+}
+
+add_case! {
+  evlauates_css_in_condition,
+  [
+    ("/entry.pc", r#"
+
+
+    component A {
+      render div {
+        if a {
+            span {
+                style {
+                    color: blue
+                }
+            }
+        }
+      }
+    }
+    "#)
+  ],
+  r#"
+  ._A-80f4925f-4 { color: blue; }
   "#
 }

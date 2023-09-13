@@ -204,9 +204,20 @@ pub fn serialize_node(node: &ast::Node, context: &mut Context) {
         ast::node::Inner::Style(style) => serialize_style(style, context),
         ast::node::Inner::Override(over) => serialize_override(over, context),
         ast::node::Inner::Text(text) => serialize_text(text, context),
+        ast::node::Inner::Condition(expr) => serialize_condition(expr, context),
         ast::node::Inner::Switch(expr) => serialize_switch(expr, context),
         ast::node::Inner::Repeat(expr) => serialize_repeat(expr, context),
     }
+}
+
+pub fn serialize_condition(expr: &ast::Condition, context: &mut Context) {
+    context.add_buffer(format!("if {} {{\n", expr.property).as_str());
+    context.start_block();
+    for item in &expr.body {
+        serialize_node(item, context);
+    }
+    context.end_block();
+    context.add_buffer("}\n");
 }
 
 pub fn serialize_switch(expr: &ast::Switch, context: &mut Context) {

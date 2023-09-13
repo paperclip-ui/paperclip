@@ -482,6 +482,9 @@ fn parse_render_node(context: &mut PCContext) -> Result<ast::Node, err::ParserEr
         Some(Token::Word(b"switch")) => {
             Ok(ast::node::Inner::Switch(parse_switch(context)?).get_outer())
         }
+        Some(Token::Word(b"condition")) => {
+            Ok(ast::node::Inner::Condition(parse_condition(context)?).get_outer())
+        }
         Some(Token::Word(_)) => {
             Ok(ast::node::Inner::Element(parse_element(None, context)?).get_outer())
         }
@@ -522,6 +525,35 @@ fn parse_slot(context: &mut PCContext) -> Result<ast::Slot, err::ParserError> {
         id: context.next_id(),
         name,
         range: Some(base_ast::Range::new(start, end)),
+        body,
+    })
+}
+
+fn parse_condition(context: &mut PCContext) -> Result<ast::Condition, err::ParserError> {
+    if !context.options.feature_enabled("condition") {
+        return Err(err::ParserError::new_feature_not_enabled("condition"));
+    }
+
+    let start = context.curr_u16pos.clone();
+
+    context.next_token()?; // eat "if"
+
+    context.skip(is_superfluous_or_newline)?;
+    let property = extract_word_value(context)?;
+    context.next_token()?; // eat word
+    context.skip(is_superfluous_or_newline)?;
+    let body = parse_body(
+        context,
+        parse_node,
+        Some((Token::CurlyOpen, Token::CurlyClose)),
+    )?;
+
+    let end = context.curr_u16pos.clone();
+
+    Ok(ast::Condition {
+        id: context.next_id(),
+        range: Some(base_ast::Range::new(start, end)),
+        property,
         body,
     })
 }
@@ -794,6 +826,9 @@ fn parse_node(context: &mut PCContext) -> Result<ast::Node, err::ParserError> {
         }
         Some(Token::Word(b"switch")) => {
             Ok(ast::node::Inner::Switch(parse_switch(context)?).get_outer())
+        }
+        Some(Token::Word(b"if")) => {
+            Ok(ast::node::Inner::Condition(parse_condition(context)?).get_outer())
         }
         Some(Token::Word(b"slot")) => Ok(ast::node::Inner::Slot(parse_slot(context)?).get_outer()),
         Some(Token::Word(b"override")) => {

@@ -204,6 +204,9 @@ fn evaluate_node<'a, F: FileResolver>(
         ast::node::Inner::Switch(expr) => {
             evaluate_switch(expr, parent, context);
         }
+        ast::node::Inner::Condition(expr) => {
+            evaluate_condition(expr, parent, context);
+        }
         ast::node::Inner::Repeat(expr) => {
             evaluate_repeat(expr, parent, context);
         }
@@ -224,6 +227,15 @@ fn evaluate_insert<F: FileResolver>(insert: &ast::Insert, context: &mut Document
     }
 }
 
+fn evaluate_condition<'a, F: FileResolver>(
+    expr: &'a ast::Condition,
+    parent: Option<ImmutableExpressionRef<'a>>,
+    context: &mut DocumentContext<F>,
+) {
+    for item in &expr.body {
+        evaluate_node(item, parent.clone(), context);
+    }
+}
 fn evaluate_switch<'a, F: FileResolver>(
     expr: &'a ast::Switch,
     parent: Option<ImmutableExpressionRef<'a>>,

@@ -349,6 +349,7 @@ visitable! {
     pc::node::Inner::Text,
     pc::node::Inner::Override,
     pc::node::Inner::Slot,
+    pc::node::Inner::Condition,
     pc::node::Inner::Switch,
     pc::node::Inner::Repeat
       )
@@ -360,6 +361,7 @@ visitable! {
     pc::node::Inner::Text,
     pc::node::Inner::Override,
     pc::node::Inner::Slot,
+    pc::node::Inner::Condition,
     pc::node::Inner::Switch,
     pc::node::Inner::Repeat
     )
@@ -373,6 +375,7 @@ visitable! {
     pc::node::Inner::Text,
     pc::node::Inner::Override,
     pc::node::Inner::Slot,
+    pc::node::Inner::Condition,
     pc::node::Inner::Switch,
     pc::node::Inner::Repeat
       )
@@ -384,9 +387,16 @@ visitable! {
     pc::node::Inner::Text,
     pc::node::Inner::Override,
     pc::node::Inner::Slot,
+    pc::node::Inner::Condition,
     pc::node::Inner::Switch,
     pc::node::Inner::Repeat
     )
+  }),
+  (pc::Condition, visit_condition, (self, visitor) {
+      visit_each!(&self.body, visitor)
+
+  }, {
+      visit_each!(&mut self.body, visitor)
   }),
   (pc::Switch, visit_switch, (self, visitor) {
       visit_each!(&self.body, visitor)

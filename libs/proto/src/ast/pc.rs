@@ -195,6 +195,7 @@ impl Element {
                         | node::Inner::Slot(_)
                         | node::Inner::Repeat(_)
                         | node::Inner::Switch(_)
+                        | node::Inner::Condition(_)
                 )
             })
             .collect()
@@ -230,7 +231,8 @@ impl Node {
             node::Inner::Style(_)
             | node::Inner::Override(_)
             | node::Inner::Repeat(_)
-            | node::Inner::Switch(_) => None,
+            | node::Inner::Switch(_)
+            | node::Inner::Condition(_) => None,
         }
     }
 }

@@ -1,7 +1,7 @@
 {
   "srcDir": "src",
   "designsDir": "src/styles",
-  "experimental": ["script"],
+  "experimental": ["script", "condition", "repeat"],
   "moduleDirs": [],
   "globalScripts": [
     "https://rsms.me/inter/inter.css",

@@ -6,7 +6,6 @@ import "../../styles/menu.pc" as menu
 */
 public component ContextMenu {
     script(src: "./controller.tsx", target: "react")
-
     render menu.Menu(style: style, onKeyDown: onKeyDown) {
         slot children {
             ContextMenuItem {
@@ -85,3 +84,4 @@ public component ContextMenuItem {
         }
     }
 }
+

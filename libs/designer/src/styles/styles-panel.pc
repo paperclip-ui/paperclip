@@ -11,7 +11,6 @@ import "./etc.pc" as etc
 /**
  * @bounds(x: 298, y: -131, width: 289, height: 162)
 */
-
 public component DeclInfoCard {
     render div card {
         style variant open {
@@ -92,7 +91,6 @@ public component DeclInfoCard {
 /**
  * @bounds(x: -131, y: -562, width: 447, height: 73)
 */
-
 public component InheritedDeclInfo {
     variant otherVariant trigger {
         ".variant"
@@ -172,7 +170,6 @@ public component InheritedDeclInfo {
 /**
  * @bounds(x: 633, y: -467, width: 355, height: 254)
 */
-
 public component DeclInheritanceInfo {
     variant open trigger {
         ".open"
@@ -195,7 +192,6 @@ public component DeclInheritanceInfo {
 /**
  * @bounds(x: 1184, y: -293, width: 1024, height: 768)
 */
-
 public component DeclName {
     variant overridden trigger {
         ".overridden"
@@ -238,7 +234,6 @@ public component DeclName {
 /**
  * @bounds(x: 0, y: 0, width: 271, height: 768)
 */
-
 public component Preview {
     render sidebar.SidebarPanel {
         style {
@@ -564,7 +559,6 @@ public component Preview {
 /**
  * @bounds(x: 452, y: 107, width: 345, height: 214)
 */
-
 div preview {
     DeclInheritanceInfo {
         override {

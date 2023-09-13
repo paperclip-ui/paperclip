@@ -8,7 +8,6 @@ import "./styles-panel.pc" as stylesPanel
 /**
  * @bounds(x: 1424, y: 1394, width: 140, height: 35)
 */
-
 public component UsedBy {
     render div(onClick: onClick) {
         style {
@@ -31,7 +30,6 @@ public component UsedBy {
 /**
  * @bounds(x: 1043, y: 478, width: 331, height: 1270)
 */
-
 public component RightSidebar {
     render sidebar.Sidebar {
         slot children {
@@ -150,7 +148,6 @@ public component RightSidebar {
 /**
  * @bounds(x: -207, y: 537, width: 901, height: 931)
 */
-
 public component VariantPopup {
     render sidebar.SidebarPopup {
         insert header {
@@ -192,7 +189,6 @@ public component VariantPopup {
 /**
  * @bounds(x: 2670, y: 398, width: 1048, height: 774)
 */
-
 div {
     style {
         position: relative
@@ -204,13 +200,11 @@ div {
 /**
  * @bounds(x: 3841, y: 76, width: 1024, height: 768)
 */
-
 input.SuggestionMenu
 
 /**
  * @bounds(x: 3316, y: 1217, width: 627, height: 768)
 */
-
 imp1.Menu {
     input.SuggestionMenuSection {
         override {

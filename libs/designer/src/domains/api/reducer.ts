@@ -28,7 +28,6 @@ export const apiReducer = (
     case "designer-engine/ProjectInfoResult":
       return produce(state, (draft) => {
         draft.projectInfo = event.payload;
-        console.log("INFOOO!!!");
       });
     case "designer-engine/resourceFilePathsLoaded": {
       return produce(state, (newState) => {

@@ -5,7 +5,6 @@ import "./theme.pc" as theme
 /**
  * @bounds(x: -1561, y: 1882, width: 347, height: 768)
 */
-
 public component FilteredFiles {
     render div filteredFiles {
         slot children {
@@ -61,7 +60,6 @@ public component FilteredFiles {
 /**
  * @bounds(x: -2077, y: 1894, width: 442, height: 64)
 */
-
 public component FilteredFile {
     variant hovering trigger {
         ".hover"
@@ -125,15 +123,180 @@ public component FilteredFile {
 
 public component LeftSidebar {
     render sidebar.Sidebar {
-        slot children
+        if showLayers {
+            sidebar.SidebarPanel sidebar {
+                style variant onlyFileNavigator {
+                    display: none
+                }
+                LeftSidebarHeader header {
+                    insert title {
+                        text "TodoList.pc"
+                    }
+                }
+                sidebar.SidebarSection entities {
+                    sidebar.SidebarPanelHeader entitiesHeader {
+                        text "Layers"
+                        div {
+                            style extends theme.icon {
+                                -webkit-mask-image: url("./plus.svg")
+                            }
+                        }
+                    }
+                    Layers {
+                        TreeNavigationItem {
+                            LayerNavigationItemHeader(class: "instance container open") {
+                                text "Some instance"
+                            }
+                            LayerNavigationItemHeader(class: "component container open") {
+                                text "Some component"
+                                text "some blarggggfgdf gdfgd"
+                            }
+                            TreeNavigationItemContent {
+                                TreeNavigationItem {
+                                    LayerNavigationItemHeader(class: "shadow element container open showDropOver") {
+                                        override container.root {
+                                            style {
+                                                --depth: 2
+                                            }
+                                        }
+                                        text "container"
+                                    }
+                                }
+                                TreeNavigationItem {
+                                    LayerNavigationItemHeader(class: "slot container open") {
+                                        override {
+                                            variant isCompositeToken
+                                        }
+                                        override container.root {
+                                            style {
+                                                --depth: 2
+                                            }
+                                        }
+                                        text "label"
+                                    }
+                                    TreeNavigationItemContent {
+                                        TreeNavigationItem {
+                                            LayerNavigationItemHeader(class: "text showDropTop") {
+                                                override container.root {
+                                                    style {
+                                                        --depth: 3
+                                                    }
+                                                }
+                                                text "some label"
+                                            }
+                                            LayerNavigationItemHeader(class: "element") {
+                                                override {
+                                                    variant isElement
+                                                }
+                                                override container.root {
+                                                    style {
+                                                        --depth: 4
+                                                    }
+                                                }
+                                                text "some long label"
+                                                TagType {
+                                                    text "div"
+                                                }
+                                            }
+                                        }
+                                    }
+                                    TreeNavigationItemContent {
+                                        TreeNavigationItem
+                                    }
+                                }
+                                TreeNavigationItem {
+                                    LayerNavigationItemHeader(class: "selected slot container open") {
+                                        override container.root {
+                                            style {
+                                                --depth: 2
+                                            }
+                                        }
+                                        text "description"
+                                    }
+                                    TreeNavigationItemContent {
+                                        TreeNavigationItem {
+                                            LayerNavigationItemHeader(class: "text") {
+                                                override container.root {
+                                                    style {
+                                                        --depth: 3
+                                                    }
+                                                }
+                                                text "some long description"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if showFileNavigator {
+            sidebar.SidebarPanel {
+                sidebar.SidebarSection {
+                    sidebar.SidebarPanelHeader {
+                        style {
+                            align-items: center
+                            display: flex
+                        }
+                        text "Files"
+                        module.TextInput(value: "", placeholder: "filter...")
+                        div {
+                            style extends theme.icon {
+                                -webkit-mask-image: url("./plus.svg")
+                            }
+                        }
+                    }
+                    Layers {
+                        TreeNavigationItem {
+                            LayerNavigationItemHeader(class: "folder container open") {
+                                text "components/"
+                            }
+                            TreeNavigationItemContent {
+                                TreeNavigationItem {
+                                    LayerNavigationItemHeader(class: "file open") {
+                                        override container.root {
+                                            style {
+                                                --depth: 2
+                                            }
+                                        }
+                                        text "index.tsx"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if showFileResources {
+            sidebar.SidebarPanel {
+                sidebar.SidebarSection {
+                    sidebar.SidebarPanelHeader {
+                        style {
+                            align-items: center
+                            display: flex
+                        }
+                        text "Files"
+                        module.TextInput(value: "some file")
+                        div {
+                            style extends theme.icon {
+                                -webkit-mask-image: url("./plus.svg")
+                            }
+                        }
+                    }
+                    FilteredFiles
+                }
+            }
+        }
     }
 }
 
 /**
  * @bounds(x: -1009, y: 946, width: 201, height: 52)
 */
-
-public component LeftSidebarHeader {
+component LeftSidebarHeader {
     render sidebar.SidebarPanelContent {
         style {
             display: flex
@@ -186,7 +349,6 @@ public component Layers {
 /**
  * @bounds(x: -374, y: 920, width: 90, height: 56)
 */
-
 public component LayerIcon {
     variant isComponent trigger {
         ".component"
@@ -290,7 +452,6 @@ public component LayerIcon {
 /**
  * @bounds(x: 428, y: -205, width: 1024, height: 768)
 */
-
 public component TreeNavigationItemContent {
     render div {
         slot children
@@ -300,7 +461,6 @@ public component TreeNavigationItemContent {
 /**
  * @bounds(x: -453, y: 1092, width: 202, height: 112)
 */
-
 public component TreeNavigationItem {
     render div(class: class, style: style) {
         slot children
@@ -310,7 +470,6 @@ public component TreeNavigationItem {
 /**
  * @bounds(x: -459, y: 1034, width: 93, height: 37)
 */
-
 public component TagType {
     render span {
         style {
@@ -323,7 +482,6 @@ public component TagType {
 /**
  * @bounds(x: -1928, y: 3271, width: 1024, height: 768)
 */
-
 public component DropZoneDivider {
     variant top trigger {
         ".top"
@@ -369,7 +527,6 @@ public component DropZoneDivider {
 /**
  * @bounds(x: -1036, y: 1079, width: 224, height: 38)
 */
-
 public component TreeNavigationItemHeader {
     variant isContainer trigger {
         ".container"
@@ -486,7 +643,6 @@ public component TreeNavigationItemHeader {
 /**
  * @bounds(x: -446, y: 575, width: 350, height: 54)
 */
-
 public component LayerNavigationItemHeader {
     variant isSlot trigger {
         ".slot"
@@ -568,182 +724,9 @@ public component LayerNavigationItemHeader {
 }
 
 /**
- * @bounds(x: -766, y: 931, width: 466, height: 1912)
-*/
-
-public component LeftSidebarPreview {
-    variant onlyFileNavigator
-    render LeftSidebar {
-        sidebar.SidebarPanel sidebar {
-            style variant onlyFileNavigator {
-                display: none
-            }
-            LeftSidebarHeader header {
-                insert title {
-                    text "TodoList.pc"
-                }
-            }
-            sidebar.SidebarSection entities {
-                sidebar.SidebarPanelHeader entitiesHeader {
-                    text "Layers"
-                    div {
-                        style extends theme.icon {
-                            -webkit-mask-image: url("./plus.svg")
-                        }
-                    }
-                }
-                Layers {
-                    TreeNavigationItem {
-                        LayerNavigationItemHeader(class: "instance container open") {
-                            text "Some instance"
-                        }
-                        LayerNavigationItemHeader(class: "component container open") {
-                            text "Some component"
-                            text "some blarggggfgdf gdfgd"
-                        }
-                        TreeNavigationItemContent {
-                            TreeNavigationItem {
-                                LayerNavigationItemHeader(class: "shadow element container open showDropOver") {
-                                    override container.root {
-                                        style {
-                                            --depth: 2
-                                        }
-                                    }
-                                    text "container"
-                                }
-                            }
-                            TreeNavigationItem {
-                                LayerNavigationItemHeader(class: "slot container open") {
-                                    override {
-                                        variant isCompositeToken
-                                    }
-                                    override container.root {
-                                        style {
-                                            --depth: 2
-                                        }
-                                    }
-                                    text "label"
-                                }
-                                TreeNavigationItemContent {
-                                    TreeNavigationItem {
-                                        LayerNavigationItemHeader(class: "text showDropTop") {
-                                            override container.root {
-                                                style {
-                                                    --depth: 3
-                                                }
-                                            }
-                                            text "some label"
-                                        }
-                                        LayerNavigationItemHeader(class: "element") {
-                                            override {
-                                                variant isElement
-                                            }
-                                            override container.root {
-                                                style {
-                                                    --depth: 4
-                                                }
-                                            }
-                                            text "some long label"
-                                            TagType {
-                                                text "div"
-                                            }
-                                        }
-                                    }
-                                }
-                                TreeNavigationItemContent {
-                                    TreeNavigationItem
-                                }
-                            }
-                            TreeNavigationItem {
-                                LayerNavigationItemHeader(class: "selected slot container open") {
-                                    override container.root {
-                                        style {
-                                            --depth: 2
-                                        }
-                                    }
-                                    text "description"
-                                }
-                                TreeNavigationItemContent {
-                                    TreeNavigationItem {
-                                        LayerNavigationItemHeader(class: "text") {
-                                            override container.root {
-                                                style {
-                                                    --depth: 3
-                                                }
-                                            }
-                                            text "some long description"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        sidebar.SidebarPanel {
-            sidebar.SidebarSection {
-                sidebar.SidebarPanelHeader {
-                    style {
-                        align-items: center
-                        display: flex
-                    }
-                    text "Files"
-                    module.TextInput(value: "", placeholder: "filter...")
-                    div {
-                        style extends theme.icon {
-                            -webkit-mask-image: url("./plus.svg")
-                        }
-                    }
-                }
-                Layers {
-                    TreeNavigationItem {
-                        LayerNavigationItemHeader(class: "folder container open") {
-                            text "components/"
-                        }
-                        TreeNavigationItemContent {
-                            TreeNavigationItem {
-                                LayerNavigationItemHeader(class: "file open") {
-                                    override container.root {
-                                        style {
-                                            --depth: 2
-                                        }
-                                    }
-                                    text "index.tsx"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-/**
  * @bounds(x: -1158, y: 1885, width: 352, height: 965)
 */
-
 LeftSidebar {
     insert children {
-        sidebar.SidebarPanel {
-            sidebar.SidebarSection {
-                sidebar.SidebarPanelHeader {
-                    style {
-                        align-items: center
-                        display: flex
-                    }
-                    text "Files"
-                    module.TextInput(value: "some file")
-                    div {
-                        style extends theme.icon {
-                            -webkit-mask-image: url("./plus.svg")
-                        }
-                    }
-                }
-                FilteredFiles
-            }
-        }
     }
 }
-

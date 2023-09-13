@@ -2,6 +2,7 @@
 use anyhow::Result;
 use paperclip_common::fs::FileReader;
 use paperclip_common::join_path;
+use paperclip_parser::core::parser_context::Options;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 use std::str;
@@ -74,7 +75,7 @@ impl ConfigContext {
 pub struct Config {
     /// TRUE if experimental flags are enabled
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub experimental: Option<bool>,
+    pub experimental: Option<Vec<String>>,
 
     /// Global scripts that are injected into the page (JS, and CSS)
     #[serde(rename = "globalScripts", skip_serializing_if = "Option::is_none")]
@@ -146,6 +147,9 @@ pub struct CompilerOptions {
 }
 
 impl Config {
+    pub fn into_parser_options(&self) -> Options {
+        Options::new(self.experimental.clone().unwrap_or(vec![]))
+    }
     pub fn get_src_dir(&self) -> String {
         if let Some(src_dir) = &self.src_dir {
             src_dir.to_string()

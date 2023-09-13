@@ -99,7 +99,7 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
                     if is_paperclip_file(&value.path) {
 
                         // blah, this shouldn't be happening.....
-                        graph.load(&value.path, &self.io).await?;
+                        graph.load(&value.path, &self.io, self.config_context.config.into_parser_options()).await?;
                         for (file_path, content) in self.maybe_recompile_file(&value.path, &graph).await? {
                             yield (file_path.to_string(), content.to_string());
                         }

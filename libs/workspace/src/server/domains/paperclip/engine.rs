@@ -111,10 +111,19 @@ async fn load_dependency_graph<TIO: ServerIO>(
     files: &Vec<String>,
 ) -> Result<()> {
     let graph = ctx.store.lock().unwrap().state.graph.clone();
+    let parse_options = ctx
+        .store
+        .lock()
+        .unwrap()
+        .state
+        .options
+        .config_context
+        .config
+        .into_parser_options();
 
     // let store = self.store.lock().await;
     let graph = graph
-        .load_into_partial(files, &VirtGraphIO { ctx: ctx.clone() })
+        .load_into_partial(files, &VirtGraphIO { ctx: ctx.clone() }, parse_options)
         .await?;
 
     ctx.emit(ServerEvent::DependencyGraphLoaded { graph });
@@ -124,10 +133,19 @@ async fn load_dependency_graph<TIO: ServerIO>(
 
 async fn load_pc_file<TIO: ServerIO>(ctx: ServerEngineContext<TIO>, file: &str) -> Result<()> {
     let graph = ctx.store.lock().unwrap().state.graph.clone();
+    let parse_options = ctx
+        .store
+        .lock()
+        .unwrap()
+        .state
+        .options
+        .config_context
+        .config
+        .into_parser_options();
 
     // let store = self.store.lock().await;
     let graph = graph
-        .load_into_partial(&vec![file.to_string()], &ctx.io)
+        .load_into_partial(&vec![file.to_string()], &ctx.io, parse_options)
         .await?;
 
     ctx.emit(ServerEvent::DependencyGraphLoaded { graph });

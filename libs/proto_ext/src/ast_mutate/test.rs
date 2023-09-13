@@ -3,6 +3,7 @@ use crate::graph::{load::LoadableGraph, test_utils};
 use futures::executor::block_on;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::str_utils::strip_extra_ws;
+use paperclip_parser::core::parser_context::Options;
 use paperclip_proto::ast::graph_ext as graph;
 use paperclip_proto::ast::pc::{
     component_body_item, node, Component, Element, Render, Slot, TextNode,
@@ -25,10 +26,11 @@ macro_rules! case {
             let mut graph = graph::Graph::new();
 
             for (path, _) in $mock_files {
-                block_on(graph.load(&path, &mock_fs)).expect("Unable to load");
+                block_on(graph.load(&path, &mock_fs, Options::new(vec![])))
+                    .expect("Unable to load");
             }
 
-            if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
+            if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs, Options::new(vec![]))) {
                 panic!("Unable to load");
             }
 

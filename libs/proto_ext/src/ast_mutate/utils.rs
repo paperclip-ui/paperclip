@@ -1,5 +1,6 @@
 use convert_case::{Case, Casing};
 use paperclip_common::get_or_short;
+use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::ast;
 use paperclip_proto::ast::css::DeclarationValue;
@@ -84,7 +85,12 @@ pub fn get_named_expr_id<TVisitable: Visitable + Debug>(
 }
 
 pub fn parse_import(path: &str, ns: &str, checksum: &str) -> DocumentBodyItem {
-    let new_imp_doc = parse(format!("import \"{}\" as {}", path, ns).as_str(), checksum).unwrap();
+    let new_imp_doc = parse(
+        format!("import \"{}\" as {}", path, ns).as_str(),
+        checksum,
+        &Options::new(vec![]),
+    )
+    .unwrap();
 
     new_imp_doc.body.get(0).unwrap().clone()
 }
@@ -347,20 +353,30 @@ pub fn get_valid_name(name: &str, case: Case) -> String {
 }
 
 pub fn parse_node(source: &str, checksum: &str) -> Node {
-    let child = parse(source, checksum).expect("Unable to parse child source for AppendChild");
+    let child = parse(source, checksum, &Options::new(vec![]))
+        .expect("Unable to parse child source for AppendChild");
     child.body.get(0).unwrap().clone().try_into().unwrap()
 }
 
 pub fn parse_declaration_value(source: &str, checksum: &str) -> DeclarationValue {
-    let child = parse(&format!("token surrogate {}", source), checksum)
-        .expect("Unable to parse child source for AppendChild");
+    let child = parse(
+        &format!("token surrogate {}", source),
+        checksum,
+        &Options::new(vec![]),
+    )
+    .expect("Unable to parse child source for AppendChild");
     let atom: Atom = child.body.get(0).unwrap().clone().try_into().unwrap();
 
     atom.value.unwrap()
 }
 
 pub fn parse_element_attribute_value(source: &str, checksum: &str) -> SimpleExpression {
-    let doc = parse(&format!("div(a: {})", source), checksum).expect("Unable to parse attribute");
+    let doc = parse(
+        &format!("div(a: {})", source),
+        checksum,
+        &Options::new(vec![]),
+    )
+    .expect("Unable to parse attribute");
     let el: Node = doc
         .body
         .get(0)

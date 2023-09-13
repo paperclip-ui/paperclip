@@ -1,5 +1,5 @@
 use super::super::parser::parse;
-use crate::core::errors as err;
+use crate::core::{errors as err, parser_context::Options};
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::str_utils::strip_extra_ws;
 
@@ -11,7 +11,11 @@ macro_rules! add_case {
         #[test]
         fn $name() {
             println!("Try parsing {}", $source);
-            let parse_result = parse($source, &"".to_string());
+            let parse_result = parse(
+                $source,
+                &"".to_string(),
+                &Options::new(vec!["script".to_string()]),
+            );
             if let Ok(ast) = parse_result {
                 let output = serialize(&ast);
                 assert_eq!(strip_extra_ws($source), strip_extra_ws(output.as_str()));
@@ -24,7 +28,11 @@ macro_rules! add_case {
         #[test]
         fn $name() {
             println!("Try parsing {}", $source);
-            let parse_result = parse($source, &"".to_string());
+            let parse_result = parse(
+                $source,
+                &"".to_string(),
+                &Options::new(vec!["script".to_string()]),
+            );
             pretty_assertions::assert_eq!(parse_result, $error)
         }
     };

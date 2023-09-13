@@ -1,10 +1,10 @@
 use super::tokenizer::{is_superfluous, next_token, Token};
-use crate::base::ast as base_ast;
 use crate::base::ast::Range;
 use crate::core::errors as err;
 use crate::core::errors::ParserError;
 use crate::core::parser_context::Context;
 use crate::core::string_scanner::StringScanner;
+use crate::{base::ast as base_ast, core::parser_context::Options};
 use paperclip_common::id::{get_document_id, IDGenerator};
 use paperclip_proto::ast::docco as ast;
 use std::str;
@@ -23,7 +23,7 @@ pub fn parse_with_string_scanner<'src, 'scanner, 'idgenerator>(
     id_generator: &'idgenerator mut IDGenerator,
     url: &str,
 ) -> Result<ast::Comment, ParserError> {
-    let mut context = Context::new(source, url, &next_token, id_generator)?;
+    let mut context = Context::new(source, url, &next_token, id_generator, Options::new(vec![]))?;
     parse_comment(&mut context)
 }
 

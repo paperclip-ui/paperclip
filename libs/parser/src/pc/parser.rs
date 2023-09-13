@@ -1,7 +1,7 @@
 use super::tokenizer::{is_superfluous, is_superfluous_or_newline, next_token, Token};
 use crate::base::ast as base_ast;
 use crate::core::errors as err;
-use crate::core::parser_context::{create_initial_context, Context};
+use crate::core::parser_context::{create_initial_context, Context, Options};
 use crate::core::string_scanner::StringScanner;
 use paperclip_proto::ast::css as css_ast;
 use paperclip_proto::ast::docco as docco_ast;
@@ -18,15 +18,20 @@ use std::str;
 type PCContext<'tokenizer, 'scanner, 'idgenerator, 'scan, 'src> =
     Context<'tokenizer, 'scanner, 'idgenerator, 'src, Token<'src>>;
 
-pub fn parse<'src>(source: &'src str, id_seed: &str) -> Result<ast::Document, err::ParserError> {
+pub fn parse<'src>(
+    source: &'src str,
+    id_seed: &str,
+    options: &Options,
+) -> Result<ast::Document, err::ParserError> {
     let (mut scanner, mut id_generator) = create_initial_context(source, id_seed);
-    parse_with_context(&mut scanner, &mut id_generator, id_seed)
+    parse_with_context(&mut scanner, &mut id_generator, id_seed, options)
 }
 
 pub fn parse_with_context<'src>(
     source: &'src mut StringScanner<'src>,
     id_generator: &mut IDGenerator,
     id_seed: &str,
+    options: &Options,
 ) -> Result<ast::Document, err::ParserError> {
     if source.is_eof() {
         return Ok(ast::Document {
@@ -39,7 +44,7 @@ pub fn parse_with_context<'src>(
         });
     }
 
-    let mut context = Context::new(source, id_seed, &next_token, id_generator)?;
+    let mut context = Context::new(source, id_seed, &next_token, id_generator, options.clone())?;
     parse_document(&mut context)
 }
 
@@ -426,6 +431,10 @@ pub fn parse_variant(context: &mut PCContext) -> Result<ast::Variant, err::Parse
 }
 
 fn parse_script(context: &mut PCContext) -> Result<ast::Script, err::ParserError> {
+    if !context.options.feature_enabled("script") {
+        return Err(err::ParserError::new_feature_not_enabled("script"));
+    }
+
     context.next_token()?; // eat script
     context.skip(is_superfluous_or_newline)?;
     let start = context.curr_u16pos.clone();

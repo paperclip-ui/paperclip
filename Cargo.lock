@@ -1941,6 +1941,7 @@ dependencies = [
  "anyhow",
  "crc 1.8.1",
  "futures",
+ "js-sys",
  "paperclip_ast_serialize",
  "paperclip_common",
  "paperclip_proto",

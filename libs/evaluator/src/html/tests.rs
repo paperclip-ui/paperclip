@@ -5,6 +5,7 @@ use anyhow::Result;
 use futures::executor::block_on;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::str_utils::strip_extra_ws;
+use paperclip_parser::core::parser_context::Options as ParserOptions;
 use paperclip_proto::ast::graph;
 use paperclip_proto::virt;
 use paperclip_proto_ext::graph::load::LoadableGraph;
@@ -27,7 +28,7 @@ impl FileResolver for MockResolver {
 fn evaluate_doc(sources: HashMap<&str, &str>) -> virt::html::Document {
     let mock_fs = test_utils::MockFS::new(sources);
     let mut graph = graph::Graph::new();
-    if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
+    if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs, ParserOptions::new(vec![]))) {
         panic!("Unable to load");
     }
     let resolver = MockResolver {};
@@ -334,7 +335,7 @@ add_case! {
 		"#)
     ],
     "<div class=\"_C-80f4925f-1\"> </div>
-    <div class=\"_C-80f4925f-1 _B-80f4925f-4\"> </div> 
+    <div class=\"_C-80f4925f-1 _B-80f4925f-4\"> </div>
     <div class=\"_C-80f4925f-1 _A-80f4925f-7 _B-80f4925f-4\"> </div>"
 }
 
@@ -416,7 +417,7 @@ add_case! {
     ],
     r#"
 	<div class="_A-80f4925f-3" data-test="undefined">
-	</div> 
+	</div>
 	<div class="_A-80f4925f-3 _80f4925f-8" data-test="b"> </div>
 "#
 }
@@ -434,7 +435,7 @@ add_case! {
 	"#)
     ],
     r#"
-	<div class="_A-80f4925f-3 undefined"> </div> 
+	<div class="_A-80f4925f-3 undefined"> </div>
 	<div class="_A-80f4925f-3 _80f4925f-8 b c d e"> </div>
 "#
 }
@@ -470,15 +471,15 @@ add_case! {
 	"#)
     ],
     r#"
-    <span class="_B-80f4925f-1"> </span> 
+    <span class="_B-80f4925f-1"> </span>
 
-    <div class="_A-root-80f4925f-5"> 
-        <span class="_B-80f4925f-1 _A-80f4925f-4"> </span> 
-    </div> 
-    
-    <div class="_A-root-80f4925f-5 _inst-80f4925f-8"> 
+    <div class="_A-root-80f4925f-5">
+        <span class="_B-80f4925f-1 _A-80f4925f-4"> </span>
+    </div>
+
+    <div class="_A-root-80f4925f-5 _inst-80f4925f-8">
         <span class="_B-80f4925f-1 _A-80f4925f-4">
-        </span> 
+        </span>
     </div>
 "#
 }

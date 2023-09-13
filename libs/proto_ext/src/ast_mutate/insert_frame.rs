@@ -9,6 +9,7 @@ use paperclip_proto::{
     ast_mutate::{mutation_result, ExpressionInserted, InsertFrame},
 };
 
+use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::docco::parser::parse as parse_comment;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast::all::visit::{MutableVisitable, MutableVisitor, VisitorResult};
@@ -32,7 +33,12 @@ impl MutableVisitor<()> for EditContext<InsertFrame> {
             )
             .unwrap();
 
-            let mut to_insert = parse_pc(&self.mutation.node_source, &self.new_id()).unwrap();
+            let mut to_insert = parse_pc(
+                &self.mutation.node_source,
+                &self.new_id(),
+                &Options::new(vec![]),
+            )
+            .unwrap();
             replace_namespaces(&mut to_insert, &imports);
 
             mutations.push(

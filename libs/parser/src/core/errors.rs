@@ -6,6 +6,7 @@ use std::fmt;
 pub enum ErrorKind {
     UnexpectedToken,
     EOF,
+    Experimental,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -28,6 +29,13 @@ impl ParserError {
             message: "End of file".to_string(),
             range: Range::new(U16Position::new(0, 0, 0), U16Position::new(0, 0, 0)),
             kind: ErrorKind::EOF,
+        }
+    }
+    pub fn new_feature_not_enabled(feature: &str) -> ParserError {
+        ParserError {
+            message: format!("Experimental feature \"{}\" not enabled", feature).to_string(),
+            range: Range::new(U16Position::new(0, 0, 0), U16Position::new(0, 0, 0)),
+            kind: ErrorKind::Experimental,
         }
     }
 }

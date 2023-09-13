@@ -2,6 +2,7 @@ use crate::compile_typed_definition;
 use paperclip_common::str_utils::strip_extra_ws;
 
 use futures::executor::block_on;
+use paperclip_parser::core::parser_context::Options;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto_ext::graph::{load::LoadableGraph, test_utils};
 use std::collections::HashMap;
@@ -15,7 +16,11 @@ macro_rules! add_case {
             let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
             let mut graph = Graph::new();
 
-            if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
+            if let Err(_err) = block_on(graph.load(
+                "/entry.pc",
+                &mock_fs,
+                Options::new(vec!["script".to_string()]),
+            )) {
                 panic!("Unable to load");
             }
 

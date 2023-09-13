@@ -1,5 +1,6 @@
 use crate::{get_document_info, ColorInfo, ColorValue, DocumentInfo, Position};
 use ::futures::executor::block_on;
+use paperclip_parser::core::parser_context::Options;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto_ext::graph::{load::LoadableGraph, test_utils::MockFS};
 use std::collections::HashMap;
@@ -10,7 +11,9 @@ macro_rules! test_case {
         fn $name() {
             let mock_fs = MockFS::new(HashMap::from([("/entry.pc", $source)]));
             let mut graph = Graph::new();
-            if let Err(_err) = block_on(graph.load(&"/entry.pc".to_string(), &mock_fs)) {
+            if let Err(_err) =
+                block_on(graph.load(&"/entry.pc".to_string(), &mock_fs, Options::new(vec![])))
+            {
                 panic!("unable to load");
             }
             let info = get_document_info(&"/entry.pc", &graph).unwrap();
@@ -81,8 +84,8 @@ test_case! {
 test_case! {
   can_pull_colors_from_a_style,
   r#"
-    style test { 
-      color: blue 
+    style test {
+      color: blue
     }
     "#,
   DocumentInfo {
@@ -96,8 +99,8 @@ test_case! {
 
       position: Some(Position {
 
-      start: 32,
-      end: 36
+      start: 31,
+      end: 35
       })
     }]
   }

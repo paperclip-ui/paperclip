@@ -1,4 +1,5 @@
 use convert_case::Case;
+use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::{
     ast::{
@@ -64,7 +65,7 @@ impl MutableVisitor<()> for EditContext<UpdateVariant> {
         println!("{}", mock_src);
 
         // ooof...
-        let doc = parse(&mock_src, &self.new_id()).unwrap();
+        let doc = parse(&mock_src, &self.new_id(), &Options::new(vec![])).unwrap();
         let new_variants = doc.get_components().get(0).unwrap().get_variants();
 
         let variant = *new_variants.get(0).unwrap();

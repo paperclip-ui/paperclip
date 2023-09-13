@@ -10,6 +10,9 @@ pub enum Type {
     Slot,
     Number,
     Boolean,
+    Enum(Vec<Type>),
+    ExactString(String),
+    Array(Box<Type>),
     Optional(Box<Type>),
     Callback(Callback),
     Element(Element),
@@ -25,12 +28,20 @@ impl Type {
         }
         return Err(Error::msg("root type isn't a component"));
     }
-
     pub fn into_map(&self) -> Result<Map> {
         if let Type::Map(map) = &self {
             return Ok(map.clone());
         }
         return Err(Error::msg("root type isn't a component"));
+    }
+    pub fn add_enum(&self, typee: Type) -> Type {
+        if let Type::Enum(types) = self {
+            let mut new_types = vec![typee];
+            new_types.extend(types.clone());
+            Type::Enum(new_types)
+        } else {
+            Type::Enum(vec![typee])
+        }
     }
 }
 

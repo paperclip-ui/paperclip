@@ -19,13 +19,23 @@ macro_rules! add_case {
             if let Err(_err) = block_on(graph.load(
                 "/entry.pc",
                 &mock_fs,
-                Options::new(vec!["script".to_string()]),
+                Options::new(vec![
+                    "script".to_string(),
+                    "repeat".to_string(),
+                    "switch".to_string(),
+                ]),
             )) {
                 panic!("Unable to load");
             }
 
-            let dep = graph.dependencies.get("/entry.pc").unwrap();
-            let output = compile_typed_definition(&dep, &graph).unwrap();
+            let dep = graph
+                .dependencies
+                .get("/entry.pc")
+                .expect("Cannot get dependency");
+            let output = compile_typed_definition(&dep, &graph).expect("Cannot compile");
+
+            println!("{}", output);
+
             assert_eq!(
                 strip_extra_ws(output.as_str()),
                 strip_extra_ws($expected_output)
@@ -258,5 +268,153 @@ add_case! {
     };
 
     export const A: ReturnType<AScript>;
+  "#
+}
+
+add_case! {
+  switch_cases_are_compiled_as_enums,
+  [
+      (
+          "/entry.pc",
+          r#"
+          public component A {
+            render div {
+                switch show {
+                    case "a" {
+
+                    }
+                    case "b" {
+
+                    }
+                    default {
+
+                    }
+                }
+            }
+          }
+          "#,
+      )
+  ],
+  r#"
+  import * as React from "react";
+  export type BaseAProps = {
+      "ref"?: any,
+      "show"?: "b" | "a",
+  };
+  export const A: React.FC<BaseAProps>;
+  "#
+}
+
+add_case! {
+  repeat_cases_are_compiled_correctly,
+  [
+      (
+          "/entry.pc",
+          r#"
+          public component A {
+            render div {
+                repeat items {
+                    div(onClick: onClick)
+                }
+            }
+          }
+          "#,
+      )
+  ],
+  r#"
+  import * as React from "react";
+  export type BaseAProps = {
+      "ref"?: any,
+      "items"?: Array<{
+          "onClick"?: any,
+      }>,
+  };
+  export const A: React.FC<BaseAProps>;
+  "#
+}
+
+add_case! {
+  nested_repeats_are_compiled_correctly,
+  [
+      (
+          "/entry.pc",
+          r#"
+          public component A {
+            render div {
+                repeat a {
+                    span (onMouseDown: onMouseDown)
+                    repeat b {
+                        div (onClick: onClick) {
+                            switch c {
+                                case "d" {
+                                    text "span"
+                                }
+
+                                case "e" {
+                                        text "span"
+                                    }
+                            }
+                        }
+                    }
+                }
+                span (onClick: onClick)
+            }
+          }
+          "#,
+      )
+  ],
+  r#"
+  import * as React from "react";
+  export type BaseAProps = {
+      "ref"?: any,
+      "a"?: Array<{
+          "b"?: Array<{
+              "c"?: "e",
+              "onClick"?: any,
+          }>,
+          "onMouseDown"?: any,
+      }>,
+      "onClick"?: any,
+  };
+  export const A: React.FC<BaseAProps>;
+  "#
+}
+
+add_case! {
+  can_repeat_an_instance_with_script,
+  [
+      (
+          "/entry.pc",
+          r#"
+          public component B {
+            script(src: "./b.tsx", target: "react")
+            render div {
+
+            }
+          }
+          public component A {
+            render div {
+                repeat a {
+                    B bb
+                }
+            }
+          }
+          "#,
+      )
+  ],
+  r#"
+  import * as React from "react";
+  import BScript from "./b.tsx";
+  export type BaseBProps = {
+      "ref"?: any,
+  };
+  export const B: ReturnType<BScript>;
+  export type BaseAProps = {
+      "ref"?: any,
+      "a"?: Array<{
+          "bb": React.ComponentProps<typeof B>,
+      }>,
+  };
+  export const A: React.FC<BaseAProps>;
   "#
 }

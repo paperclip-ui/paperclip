@@ -146,6 +146,50 @@ fn infer_insert(expr: &ast::pc::Insert, context: &mut InferContext) -> Result<()
     Ok(())
 }
 
+fn infer_switch(expr: &ast::pc::Switch, context: &mut InferContext) -> Result<()> {
+    context.step_in(&expr.property, true);
+    for child in &expr.body {
+        match child.get_inner() {
+            ast::pc::switch_item::Inner::Case(case) => infer_switch_case(case, context)?,
+            ast::pc::switch_item::Inner::Default(default) => {
+                infer_switch_default(default, context)?
+            }
+        }
+    }
+    context.step_out();
+    Ok(())
+}
+
+fn infer_switch_case(expr: &ast::pc::SwitchCase, context: &mut InferContext) -> Result<()> {
+    context.set_scope_type(
+        context
+            .get_scope_type()
+            .add_enum(types::Type::ExactString(expr.condition.clone())),
+    );
+
+    for child in &expr.body {
+        infer_node(child, context)?;
+    }
+    Ok(())
+}
+
+fn infer_switch_default(expr: &ast::pc::SwitchDefault, context: &mut InferContext) -> Result<()> {
+    for child in &expr.body {
+        infer_node(child, context)?;
+    }
+    Ok(())
+}
+
+fn infer_repeat(expr: &ast::pc::Repeat, context: &mut InferContext) -> Result<()> {
+    context.step_in(&expr.property, true);
+    context.set_scope_type(types::Type::Array(Box::new(types::Type::Unknown)));
+    for child in &expr.body {
+        infer_node(child, context)?;
+    }
+    context.step_out();
+    Ok(())
+}
+
 fn infer_node(expr: &ast::pc::Node, context: &mut InferContext) -> Result<()> {
     match expr.get_inner() {
         ast::pc::node::Inner::Element(child) => {
@@ -156,6 +200,12 @@ fn infer_node(expr: &ast::pc::Node, context: &mut InferContext) -> Result<()> {
         }
         ast::pc::node::Inner::Insert(child) => {
             infer_insert(child, context)?;
+        }
+        ast::pc::node::Inner::Switch(child) => {
+            infer_switch(child, context)?;
+        }
+        ast::pc::node::Inner::Repeat(child) => {
+            infer_repeat(child, context)?;
         }
         _ => {}
     }

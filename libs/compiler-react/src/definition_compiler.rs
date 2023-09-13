@@ -89,7 +89,7 @@ fn compile_components(context: &mut Context) {
 fn compile_component(component: &ast::Component, context: &mut Context) {
     let component_inference = Inferencer::new()
         .infer_component(component, &context.dependency.path, context.graph)
-        .unwrap();
+        .expect("Cannot infer component");
 
     context.add_buffer(format!("export type Base{}Props = {{\n", component.name).as_str());
     context.start_block();
@@ -179,6 +179,40 @@ fn compile_inference(inference: &infer_types::Type, context: &mut Context) {
         }
         infer_types::Type::Unknown => {
             context.add_buffer("any");
+        }
+        infer_types::Type::Enum(types) => {
+            let mut peekable = types.iter().peekable();
+
+            while let Some(arg) = peekable.next() {
+                compile_inference(arg, context);
+                if !matches!(peekable.peek(), None) {
+                    context.add_buffer(" | ")
+                }
+            }
+        }
+        infer_types::Type::ExactString(value) => {
+            context.add_buffer(format!("\"{}\"", value).as_str());
+        }
+        infer_types::Type::Array(value) => {
+            context.add_buffer(format!("Array<").as_str());
+            compile_inference(value, context);
+            context.add_buffer(format!(">").as_str());
+        }
+        infer_types::Type::Map(map) => {
+            context.add_buffer("{\n");
+            context.start_block();
+
+            for (key, value) in map {
+                context.add_buffer(format!("\"{}\"", key).as_str());
+                if value.optional {
+                    context.add_buffer("?");
+                }
+                context.add_buffer(": ");
+                compile_inference(&value.prop_type, context);
+                context.add_buffer(",\n");
+            }
+            context.end_block();
+            context.add_buffer("}");
         }
         _ => {}
     }

@@ -515,7 +515,7 @@ add_case! {
     can_parse_a_repeat_block,
     r#"
         public component Ab {
-            render repeat items as div {
+            render repeat items {
                 text "hello world"
             }
         }

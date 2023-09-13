@@ -526,10 +526,11 @@ fn parse_slot(context: &mut PCContext) -> Result<ast::Slot, err::ParserError> {
     })
 }
 
-fn parse_repeat(context: &mut PCContext) -> Result<Box<ast::Repeat>, err::ParserError> {
+fn parse_repeat(context: &mut PCContext) -> Result<ast::Repeat, err::ParserError> {
     if !context.options.feature_enabled("repeat") {
         return Err(err::ParserError::new_feature_not_enabled("repeat"));
     }
+
     let start = context.curr_u16pos.clone();
 
     context.next_token()?; // eat repeat
@@ -538,18 +539,20 @@ fn parse_repeat(context: &mut PCContext) -> Result<Box<ast::Repeat>, err::Parser
     let property = extract_word_value(context)?;
     context.next_token()?; // eat word
     context.skip(is_superfluous_or_newline)?;
-    context.next_token()?; // eat "as"
-    context.skip(is_superfluous_or_newline)?;
-    let node = parse_node(context)?;
+    let body = parse_body(
+        context,
+        parse_node,
+        Some((Token::CurlyOpen, Token::CurlyClose)),
+    )?;
 
     let end = context.curr_u16pos.clone();
 
-    Ok(Box::new(ast::Repeat {
+    Ok(ast::Repeat {
         id: context.next_id(),
         range: Some(base_ast::Range::new(start, end)),
         property,
-        node: Some(Box::new(node)),
-    }))
+        body,
+    })
 }
 
 fn parse_switch(context: &mut PCContext) -> Result<ast::Switch, err::ParserError> {

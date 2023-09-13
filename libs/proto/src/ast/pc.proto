@@ -125,7 +125,7 @@ message Repeat {
     string id = 1;
     ast.base.Range range = 2;
     string property = 3;
-    Node node = 4;
+    repeated Node body = 4;
 }
 
 

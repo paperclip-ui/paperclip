@@ -448,7 +448,11 @@ fn evaluate_node<F: FileResolver>(
             evaluate_slot(&slot, fragment, context);
         }
         ast::node::Inner::Text(child) => evaluate_text_node(child, fragment, metadata, context),
-        _ => {}
+        ast::node::Inner::Switch(child) => evaluate_switch(child, fragment, metadata, context),
+        ast::node::Inner::Repeat(child) => evaluate_repeat(child, fragment, metadata, context),
+        ast::node::Inner::Override(_)
+        | ast::node::Inner::Style(_)
+        | ast::node::Inner::Insert(_) => {}
     }
 }
 
@@ -605,6 +609,67 @@ fn create_attribute_value<F: FileResolver>(
             source_id: Some(value.id.to_string()),
         })
         .get_outer(),
+    }
+}
+
+fn evaluate_switch<F: FileResolver>(
+    expr: &ast::Switch,
+    fragment: &mut Vec<virt::Node>,
+    metadata: &Option<virt::NodeMedata>,
+    context: &mut DocumentContext<F>,
+) {
+    let value = context
+        .data
+        .as_ref()
+        .and_then(|data| data.get(&expr.property))
+        .and_then(|value| {
+            if let core_virt::value::Inner::Str(value) = &value.get_inner() {
+                Some(&value.value)
+            } else {
+                None
+            }
+        });
+
+    let case = if let Some(value) = value {
+        expr.body.iter().find(|item| {
+            if let ast::switch_item::Inner::Case(case) = &item.get_inner() {
+                &case.condition == value
+            } else {
+                false
+            }
+        })
+    } else {
+        None
+    };
+
+    let case = case.or(expr
+        .body
+        .iter()
+        .find(|item| matches!(item.get_inner(), ast::switch_item::Inner::Default(_))));
+
+    if let Some(case) = case {
+        match case.get_inner() {
+            ast::switch_item::Inner::Case(case) => {
+                for item in &case.body {
+                    evaluate_node(item, fragment, metadata, context, false, false)
+                }
+            }
+            ast::switch_item::Inner::Default(case) => {
+                for item in &case.body {
+                    evaluate_node(item, fragment, metadata, context, false, false)
+                }
+            }
+        }
+    }
+}
+fn evaluate_repeat<F: FileResolver>(
+    expr: &ast::Repeat,
+    fragment: &mut Vec<virt::Node>,
+    metadata: &Option<virt::NodeMedata>,
+    context: &mut DocumentContext<F>,
+) {
+    for item in &expr.body {
+        evaluate_node(item, fragment, metadata, context, false, false)
     }
 }
 

@@ -411,10 +411,10 @@ visitable! {
   }, {
       visit_each!(&mut self.body, visitor)
   }),
-  (Box<pc::Repeat>, visit_repeat, (self, visitor) {
-      self.node.as_ref().expect("Node must exist").accept(visitor)
+  (pc::Repeat, visit_repeat, (self, visitor) {
+      visit_each!(&self.body, visitor)
   }, {
-      self.node.as_mut().expect("Node must exist").accept(visitor)
+      visit_each!(&mut self.body, visitor)
   }),
   (pc::Element, visit_element, (self, visitor) {
     if let VisitorResult::Return(ret) = visit_each!(&self.parameters, visitor) {

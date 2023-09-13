@@ -239,8 +239,13 @@ pub fn serialize_switch(expr: &ast::Switch, context: &mut Context) {
 }
 
 pub fn serialize_repeat(expr: &ast::Repeat, context: &mut Context) {
-    context.add_buffer(format!("repeat {} as ", expr.property).as_str());
-    serialize_node(expr.node.as_ref().expect("Node must exist"), context);
+    context.add_buffer(format!("repeat {} {{\n", expr.property).as_str());
+    context.start_block();
+    for item in &expr.body {
+        serialize_node(item, context);
+    }
+    context.end_block();
+    context.add_buffer("}\n");
 }
 
 pub fn serialize_text(node: &ast::TextNode, context: &mut Context) {

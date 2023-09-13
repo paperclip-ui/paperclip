@@ -28,7 +28,11 @@ impl FileResolver for MockResolver {
 fn evaluate_doc(sources: HashMap<&str, &str>) -> virt::html::Document {
     let mock_fs = test_utils::MockFS::new(sources);
     let mut graph = graph::Graph::new();
-    if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs, ParserOptions::new(vec![]))) {
+    if let Err(_err) = block_on(graph.load(
+        "/entry.pc",
+        &mock_fs,
+        ParserOptions::new(vec!["repeat".to_string(), "switch".to_string()]),
+    )) {
         panic!("Unable to load");
     }
     let resolver = MockResolver {};
@@ -527,6 +531,57 @@ add_case! {
 <div class="_A-80f4925f-3 _80f4925f-7">
 blah
 </div>
+"#
+}
+
+add_case! {
+    can_evaluate_a_repeat_block,
+    [
+    ("/entry.pc", r#"
+        component A {
+            render div {
+                repeat items {
+                    div
+                }
+            }
+        }
+	"#)
+    ],
+    r#"
+    <div class="_A-80f4925f-3">
+        <div>
+        </div>
+    </div>
+"#
+}
+
+add_case! {
+    can_evaluate_a_switch_case,
+    [
+    ("/entry.pc", r#"
+        component A {
+            render switch show {
+                case "a" {
+                    text "a"
+                    span {
+                        text "a2"
+                    }
+                }
+                default {
+                        text "b"
+                    }
+            }
+        }
+
+        A(show: "a")
+	"#)
+    ],
+    r#"
+    b
+    a
+    <span>
+        a2
+    </span>
 "#
 }
 

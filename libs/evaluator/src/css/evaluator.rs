@@ -229,12 +229,30 @@ fn evaluate_switch<'a, F: FileResolver>(
     parent: Option<ImmutableExpressionRef<'a>>,
     context: &mut DocumentContext<F>,
 ) {
+    for item in &expr.body {
+        match item.get_inner() {
+            ast::switch_item::Inner::Case(expr) => {
+                for item in &expr.body {
+                    evaluate_node(item, parent.clone(), context)
+                }
+            }
+
+            ast::switch_item::Inner::Default(expr) => {
+                for item in &expr.body {
+                    evaluate_node(item, parent.clone(), context)
+                }
+            }
+        }
+    }
 }
 fn evaluate_repeat<'a, F: FileResolver>(
     expr: &'a ast::Repeat,
     parent: Option<ImmutableExpressionRef<'a>>,
     context: &mut DocumentContext<F>,
 ) {
+    for item in &expr.body {
+        evaluate_node(item, parent.clone(), context);
+    }
 }
 
 fn evaluate_override<'a, F: FileResolver>(

@@ -190,7 +190,11 @@ impl Element {
             .filter(|child| {
                 matches!(
                     child.get_inner(),
-                    node::Inner::Text(_) | node::Inner::Element(_) | node::Inner::Slot(_)
+                    node::Inner::Text(_)
+                        | node::Inner::Element(_)
+                        | node::Inner::Slot(_)
+                        | node::Inner::Repeat(_)
+                        | node::Inner::Switch(_)
                 )
             })
             .collect()

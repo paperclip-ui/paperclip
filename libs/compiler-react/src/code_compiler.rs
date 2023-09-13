@@ -170,13 +170,58 @@ fn compile_text_node(node: &ast::TextNode, context: &mut Context) {
 }
 
 fn compile_slot(node: &ast::Slot, context: &mut Context) {
-    context.add_buffer(format!("props.{}", node.name).as_str());
+    context.add_buffer(format!("{}.{}", context.ctx_name, node.name).as_str());
 
     if node.body.len() > 0 {
         context.add_buffer(" || ");
         compile_node_children(&node.body, context, true);
     }
 }
+
+fn compile_switch(switch: &ast::Switch, context: &mut Context) {
+    for item in &switch.body {
+        if let ast::switch_item::Inner::Case(case) = &item.get_inner() {
+            context.add_buffer("\n");
+            context.add_buffer(
+                format!(
+                    "{}.{} === \"{}\" ? ",
+                    context.ctx_name, switch.property, case.condition
+                )
+                .as_str(),
+            );
+            compile_node_children(&case.body, context, true);
+            context.add_buffer(" : ");
+        }
+    }
+
+    let default = switch
+        .body
+        .iter()
+        .find(|item| matches!(item.get_inner(), ast::switch_item::Inner::Default(_)))
+        .and_then(|item| Some(item.get_inner()));
+
+    if let Some(ast::switch_item::Inner::Default(default)) = default {
+        compile_node_children(&default.body, context, true);
+    } else {
+        context.add_buffer("null");
+    }
+}
+fn compile_repeat(repeat: &ast::Repeat, context: &mut Context) {
+    let sub_name = format!("{}_{}", context.ctx_name, repeat.property);
+
+    context.add_buffer(
+        format!(
+            "{}.{} && {}.{}.map({} => ",
+            context.ctx_name, repeat.property, context.ctx_name, repeat.property, sub_name
+        )
+        .as_str(),
+    );
+
+    compile_node_children(&repeat.body, &mut context.with_ctx_name(&sub_name), true);
+
+    context.add_buffer(")");
+}
+
 fn compile_element(element: &ast::Element, is_root: bool, context: &mut Context) {
     let is_instance = context
         .dependency
@@ -230,6 +275,8 @@ fn compile_node(node: &ast::Node, context: &mut Context, is_root: bool) -> bool 
         ast::node::Inner::Text(expr) => compile_text_node(&expr, context),
         ast::node::Inner::Element(expr) => compile_element(&expr, is_root, context),
         ast::node::Inner::Slot(expr) => compile_slot(&expr, context),
+        ast::node::Inner::Switch(expr) => compile_switch(&expr, context),
+        ast::node::Inner::Repeat(expr) => compile_repeat(&expr, context),
         _ => return false,
     };
     return true;
@@ -254,7 +301,7 @@ fn compile_element_parameters(
     context.add_buffer("{\n");
     context.start_block();
     if let Some(name) = &element.name {
-        context.add_buffer(format!("...props.{}Props,\n", name).as_str());
+        context.add_buffer(format!("...{}.{}Props,\n", context.ctx_name, name).as_str());
     }
 
     let mut attrs = raw_attrs.iter().peekable();
@@ -380,7 +427,7 @@ fn compile_reference(expr: &Reference, context: &mut Context) {
     let mut parts = expr.path.iter().peekable();
 
     while let Some(part) = parts.next() {
-        context.add_buffer(format!("props.{}", part).as_str());
+        context.add_buffer(format!("{}.{}", context.ctx_name, part).as_str());
         if !parts.peek().is_none() {
             context.add_buffer(", ");
         }

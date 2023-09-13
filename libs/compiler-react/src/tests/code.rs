@@ -22,7 +22,11 @@ macro_rules! add_case {
             if let Err(_err) = block_on(graph.load(
                 "/entry.pc",
                 &mock_fs,
-                Options::new(vec!["script".to_string()]),
+                Options::new(vec![
+                    "script".to_string(),
+                    "repeat".to_string(),
+                    "switch".to_string(),
+                ]),
             )) {
                 panic!("Unable to load");
             }
@@ -677,6 +681,101 @@ add_case! {
   _AB.displayName = "AB";
   let AB = React.memo(React.forwardRef(_AB));
   AB = React.memo(React.forwardRef(ABScript(AB)));
+  export { AB };
+  "#
+}
+
+add_case! {
+  can_compile_switches,
+  r#"
+  public component AB {
+    render div {
+      switch show {
+      case "a" {
+            text "a"
+        }
+        case "b" {
+              text "b"
+          }
+          case "c" {
+            span {
+                text "c"
+            }
+            }
+        default {
+            text "d"
+            text "e"
+        }
+      }
+    }
+  }
+  "#,
+  r#"
+  require("./entry.pc.css");
+  import * as React from "react";
+
+  const _AB = (props, ref) => {
+      return React.createElement("div", {
+          "key": "80f4925f-12",
+          "ref": ref
+      },
+
+          props.show === "a" ? [
+              "a"
+          ] :
+          props.show === "b" ? [
+              "b"
+          ] :
+          props.show === "c" ? [
+              React.createElement("span", {
+                  "key": "80f4925f-6"
+              },
+                  "c"
+              )
+          ] : [
+              "d",
+              "e"
+          ]
+      );
+  };
+  _AB.displayName = "AB";
+  let AB = React.memo(React.forwardRef(_AB));
+  export { AB };
+  "#
+}
+
+add_case! {
+  can_compile_repeat,
+  r#"
+  public component AB {
+    render div {
+      repeat items {
+        div something (onClick: onClick)
+      }
+    }
+  }
+  "#,
+  r#"
+  require("./entry.pc.css");
+  import * as React from "react";
+
+  const _AB = (props, ref) => {
+      return React.createElement("div", {
+          "key": "80f4925f-5",
+          "ref": ref
+      },
+          props.items && props.items.map(props_items => [
+              React.createElement("div", {
+                  ...props_items.somethingProps,
+                  "className": "_AB-something-80f4925f-3",
+                  "key": "80f4925f-3",
+                  "onClick": props_items.onClick
+              })
+          ])
+      );
+  };
+  _AB.displayName = "AB";
+  let AB = React.memo(React.forwardRef(_AB));
   export { AB };
   "#
 }

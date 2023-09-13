@@ -25,7 +25,11 @@ macro_rules! add_case {
             let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
             let mut graph = Graph::new();
 
-            if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs, Options::new(vec![]))) {
+            if let Err(_err) = block_on(graph.load(
+                "/entry.pc",
+                &mock_fs,
+                Options::new(vec!["repeat".to_string(), "switch".to_string()]),
+            )) {
                 panic!("Unable to load");
             }
             let resolver = PCFileResolver::new(mock_fs.clone(), MockResolver {}, None);
@@ -1549,5 +1553,62 @@ add_case! {
   ._A-80f4925f-8 { color: orange; }
   ._A-80f4925f-7 { color: blue; }
   ._A-80f4925f-8._80f4925f-14 { color: purple; }
+  "#
+}
+
+add_case! {
+  evaluates_css_in_repeat,
+  [
+    ("/entry.pc", r#"
+
+
+    component A {
+      render div {
+        repeat items {
+          span {
+            style {
+                color: red
+            }
+          }
+        }
+      }
+    }
+    "#)
+  ],
+  r#"
+  ._A-80f4925f-4 { color: red; }
+  "#
+}
+
+add_case! {
+  evaluates_css_in_switch,
+  [
+    ("/entry.pc", r#"
+
+
+    component A {
+      render div {
+        switch a {
+          case "b" {
+            span {
+              style {
+                color: blue
+              }
+            }
+          }
+          case "c" {
+            span {
+              style {
+                color: purple
+              }
+            }
+          }
+        }
+      }
+    }
+    "#)
+  ],
+  r#"
+  ._A-80f4925f-4 { color: blue; } ._A-80f4925f-9 { color: purple; }
   "#
 }

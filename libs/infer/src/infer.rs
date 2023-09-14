@@ -1,9 +1,8 @@
 use anyhow::{Error, Result};
 use lazy_static::lazy_static;
 use paperclip_proto::ast;
-use std::cell::RefCell;
+
 use std::collections::HashMap;
-use std::{collections::BTreeMap, rc::Rc};
 
 use crate::context::InferContext;
 use crate::types;
@@ -111,7 +110,7 @@ fn infer_render_node(node: &ast::pc::node::Inner, context: &mut InferContext) ->
 fn infer_element(expr: &ast::pc::Element, context: &mut InferContext) -> Result<()> {
     if let Some(name) = &expr.name {
         let el_type = types::Element {
-            id: name.to_string(),
+            id: expr.id.to_string(),
             tag_name: expr.tag_name.to_string(),
             namespace: expr.namespace.clone(),
         };

@@ -2,7 +2,7 @@ import React from "react";
 import * as styles from "../../styles/editor.pc";
 import { Canvas } from "./Canvas";
 import { RightSidebar } from "./EditorPanels/RightSidebar";
-import { LeftSidebar } from "./EditorPanels/LeftSidebar";
+import { LeftSidebar } from "./EditorPanels/LeftSidebar/ui.pc";
 import { CenterPanels } from "./EditorPanels/Center";
 import { ResourceModal } from "./ResourceModal";
 import { useSelector } from "@paperclip-ui/common";

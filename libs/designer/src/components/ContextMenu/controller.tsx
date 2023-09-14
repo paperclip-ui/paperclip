@@ -20,7 +20,8 @@ export type ContextMenuProps = {
   menu: () => MenuItem<ShortcutCommand>[];
 };
 
-export default (Base: React.FC<BaseContextMenuProps>) =>
+export const ContextMenu =
+  (Base: React.FC<BaseContextMenuProps>) =>
   ({ children, menu }: ContextMenuProps) => {
     const otherRef = useRef<HTMLElement>();
     const ref = otherRef;

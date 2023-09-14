@@ -233,8 +233,8 @@ add_case! {
       )
   ],
   r#"
-    import * as React from "react";
     import * as mod from "/mod.pc";
+    import * as React from "react";
 
     export type BaseAProps = {
       "ref"?: any,
@@ -261,14 +261,14 @@ add_case! {
       )
   ],
   r#"
+    import * as _38b93036 from "./something.tsx";
     import * as React from "react";
-    import AScript from "./something.tsx";
 
     export type BaseAProps = {
         "ref"?: any,
     };
 
-    export const A: ReturnType<AScript>;
+    export const A: ReturnType<_38b93036.default>;
   "#
 }
 
@@ -404,12 +404,12 @@ add_case! {
       )
   ],
   r#"
+  import * as _5e3fc5cb from "./b.tsx";
   import * as React from "react";
-  import BScript from "./b.tsx";
   export type BaseBProps = {
       "ref"?: any,
   };
-  export const B: ReturnType<BScript>;
+  export const B: ReturnType<_5e3fc5cb.default>;
   export type BaseAProps = {
       "ref"?: any,
       "a"?: Array<{

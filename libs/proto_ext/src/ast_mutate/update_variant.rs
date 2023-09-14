@@ -62,8 +62,6 @@ impl MutableVisitor<()> for EditContext<UpdateVariant> {
                 .join("\n")
         );
 
-        println!("{}", mock_src);
-
         // ooof...
         let doc = parse(&mock_src, &self.new_id(), &Options::new(vec![])).unwrap();
         let new_variants = doc.get_components().get(0).unwrap().get_variants();

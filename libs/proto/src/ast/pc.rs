@@ -175,6 +175,18 @@ impl Script {
 
         None
     }
+    pub fn get_name(&self) -> Option<String> {
+        for param in &self.parameters {
+            if param.name == "name" {
+                match &param.value.as_ref().unwrap().inner.clone().unwrap() {
+                    simple_expression::Inner::Str(value) => return Some(value.value.clone()),
+                    _ => {}
+                }
+            }
+        }
+
+        None
+    }
 }
 
 /**

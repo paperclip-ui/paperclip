@@ -1,5 +1,8 @@
+use crate::utils::{get_node_name, node_contains_script, COMPILER_NAME};
+
 use super::context::Context;
 use anyhow::Result;
+use crc::crc32;
 use inflector::cases::pascalcase::to_pascal_case;
 use paperclip_common::get_or_short;
 use paperclip_evaluator::core::utils::get_style_namespace;
@@ -14,7 +17,7 @@ use paperclip_proto::ast::{
     pc as ast,
     shared::Reference,
 };
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 
 #[derive(Debug, Clone, Copy, Default)]
 struct Info {
@@ -44,8 +47,6 @@ impl Info {
     }
 }
 
-const COMPILER_NAME: &str = "react";
-
 pub fn compile_code(dependency: &Dependency, graph: &Graph) -> Result<String> {
     let mut context = Context::new(&dependency, graph);
     compile_document(
@@ -56,7 +57,10 @@ pub fn compile_code(dependency: &Dependency, graph: &Graph) -> Result<String> {
 }
 
 fn compile_document(document: &ast::Document, context: &mut Context) {
-    compile_imports(document, context);
+    let mut imports = BTreeMap::new();
+
+    collect_imports(document, &mut imports, context);
+    compile_imports(&imports, context);
     compile_nested_components(document, context);
     for item in &document.body {
         match item.get_inner() {
@@ -68,30 +72,47 @@ fn compile_document(document: &ast::Document, context: &mut Context) {
     }
 }
 
-fn compile_imports(document: &ast::Document, context: &mut Context) {
-    // Temporary until things stabilize - primarily for development of the editor
-    context.add_buffer(
+fn collect_imports(
+    document: &ast::Document,
+    imports: &mut BTreeMap<String, Option<String>>,
+    context: &mut Context,
+) {
+    imports.insert(
         format!(
-            "require(\"./{}.css\");\n",
+            "./{}.css",
             std::path::Path::new(&context.dependency.path)
                 .file_name()
                 .unwrap()
                 .to_str()
                 .unwrap()
-        )
-        .as_str(),
+        ),
+        None,
     );
-    context.add_buffer("import * as React from \"react\";\n");
+
+    imports.insert("react".to_string(), Some("React".to_string()));
+
     for item in &document.body {
         match item.get_inner() {
             ast::document_body_item::Inner::Import(import) => {
-                compile_import(import, context);
+                imports.insert(import.path.to_string(), Some(import.namespace.to_string()));
             }
             ast::document_body_item::Inner::Component(component) => {
-                include_component_script(component, context);
+                if let Some(script) = component.get_script(COMPILER_NAME) {
+                    let src = script.get_src().expect("src must exist");
+
+                    imports.insert(
+                        src.clone(),
+                        Some(format!("_{:x}", crc32::checksum_ieee(src.as_bytes())).to_string()),
+                    );
+                }
             }
             _ => {}
         }
+    }
+
+    let found = FindNodesWithScripts::find(document);
+    for node in &found {
+        add_nested_component_import(&node, imports);
     }
 }
 
@@ -107,26 +128,6 @@ impl FindNodesWithScripts {
     }
 }
 
-fn node_contains_script(node: &ast::Node) -> bool {
-    match node.get_inner() {
-        ast::node::Inner::Element(expr) => contains_script(&expr.body),
-        ast::node::Inner::Text(expr) => contains_script(&expr.body),
-        _ => false,
-    }
-}
-
-fn contains_script(body: &Vec<ast::Node>) -> bool {
-    body.iter()
-        .find(|child| {
-            if let ast::node::Inner::Script(script) = child.get_inner() {
-                script.get_target() == Some(String::from(COMPILER_NAME))
-            } else {
-                false
-            }
-        })
-        .is_some()
-}
-
 impl MutableVisitor<()> for FindNodesWithScripts {
     fn visit_node(&mut self, node: &mut ast::Node) -> VisitorResult<()> {
         if node_contains_script(node) {
@@ -138,16 +139,72 @@ impl MutableVisitor<()> for FindNodesWithScripts {
 
 fn compile_nested_components(document: &ast::Document, context: &mut Context) {
     let found = FindNodesWithScripts::find(document);
-    for node in &found {
-        compile_nested_component_import(&node, document, context);
-    }
+    // let mut imports: HashMap<String, HashMap<String, String>> = HashMap::new();
+    // for node in &found {
+    //     add_nested_component_import(&node, &mut imports);
+    // }
+
+    // for (path, namespaces) in imports {
+    //     let mut namespaces = namespaces.into_iter().peekable();
+
+    //     context.add_buffer("import { ");
+    //     while let Some((namespace, import_as)) = namespaces.next() {
+    //         context.add_buffer(format!("{} as {}", namespace, import_as).as_str());
+    //         if !namespaces.peek().is_none() {
+    //             context.add_buffer(", ");
+    //         }
+    //     }
+    //     context.add_buffer(format!(" }} from \"{}\"", path).as_str());
+    // }
+
     context.add_buffer("\n");
     for node in &found {
         compile_nested_component(&node, document, context);
     }
 }
 
-fn compile_nested_component_import(node: &ast::Node, doc: &ast::Document, context: &mut Context) {
+fn add_nested_component_import(
+    node: &ast::Node,
+    script_imports: &mut BTreeMap<String, Option<String>>,
+) {
+    // let (export_name, import_name) = get_node_import(node);
+    let script: ast::Script = get_node_script(node);
+    let src = script.get_src().expect("src must exist");
+    // let mut namespace_imports: HashMap<String, String> =
+    //     script_imports.get(&src).unwrap_or(&HashMap::new()).clone();
+
+    // namespace_imports.insert(export_name, import_name);
+    script_imports.insert(
+        src.to_string(),
+        Some(format!("_{:x}", crc32::checksum_ieee(src.as_bytes())).to_string()),
+    );
+}
+
+fn get_body_script(body: &Vec<ast::Node>) -> ast::Script {
+    body.iter()
+        .find(|item| matches!(item.get_inner(), ast::node::Inner::Script(_)))
+        .expect("Script must exist")
+        .try_into()
+        .expect("Cannot cast as script")
+}
+
+fn get_node_script(node: &ast::Node) -> ast::Script {
+    get_body_script(&match node.get_inner() {
+        ast::node::Inner::Element(el) => el.body.clone(),
+        _ => vec![],
+    })
+}
+
+fn get_node_import(node: &ast::Node) -> (String, String) {
+    let script = get_node_script(node);
+    let script_name = script.get_name().unwrap_or("default".to_string());
+    let src = script.get_src().expect("src must exist");
+
+    let hash = format!("{:x}", crc32::checksum_ieee(src.as_bytes())).to_string();
+    (script_name.clone(), format!("_{}_{}", hash, script_name))
+}
+
+fn compile_nested_component(node: &ast::Node, doc: &ast::Document, context: &mut Context) {
     let component =
         GetExpr::get_owner_component(&node.get_id(), doc).expect("Component must exist");
 
@@ -163,37 +220,19 @@ fn compile_nested_component_import(node: &ast::Node, doc: &ast::Document, contex
         .try_into()
         .expect("Cannot cast as script");
 
-    context.add_buffer(
-        format!(
-            "import {}{}Script from \"{}\";\n",
-            component.name,
-            to_pascal_case(&get_node_name(node)),
-            script.get_src().expect("src must exist")
-        )
-        .as_str(),
-    )
-}
+    let script_name = script.get_name().unwrap_or("default".to_string());
+    let src = script.get_src().expect("src must exist");
 
-fn get_node_name(node: &ast::Node) -> String {
-    let name = match node.get_inner() {
-        ast::node::Inner::Element(expr) => expr.name.clone(),
-        ast::node::Inner::Text(expr) => expr.name.clone(),
-        _ => None,
-    };
-    name.unwrap_or(node.get_id().to_string())
-}
+    let hash = format!("{:x}", crc32::checksum_ieee(src.as_bytes())).to_string();
 
-fn compile_nested_component(node: &ast::Node, doc: &ast::Document, context: &mut Context) {
-    let component =
-        GetExpr::get_owner_component(&node.get_id(), doc).expect("Component must exist");
+    let assigned_name = format!("_{}.{}", hash, script_name);
 
     context.add_buffer(
         format!(
-            "const {}{} = {}{}Script(React.forwardRef((props, ref) => {{\n",
+            "const {}{} = {}(React.forwardRef((props, ref) => {{\n",
             component.name,
             to_pascal_case(&get_node_name(node)),
-            component.name,
-            to_pascal_case(&get_node_name(node))
+            assigned_name
         )
         .as_str(),
     );
@@ -223,14 +262,14 @@ fn include_component_script(component: &ast::Component, context: &mut Context) {
     );
 }
 
-fn compile_import(import: &ast::Import, context: &mut Context) {
-    context.add_buffer(
-        format!(
-            "import * as {} from \"{}\";\n",
-            import.namespace, import.path
-        )
-        .as_str(),
-    );
+fn compile_imports(imports: &BTreeMap<String, Option<String>>, context: &mut Context) {
+    for (path, namespace) in imports {
+        if let Some(namespace) = namespace {
+            context.add_buffer(format!("import * as {} from \"{}\";\n", namespace, path).as_str());
+        } else {
+            context.add_buffer(format!("import \"{}\";\n", path).as_str());
+        }
+    }
 }
 
 macro_rules! compile_children {
@@ -286,12 +325,20 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
         .as_str(),
     );
 
-    if component.get_script(COMPILER_NAME).is_some() {
+    if let Some(script) = component.get_script(COMPILER_NAME) {
+        let hash = format!(
+            "{:x}",
+            crc32::checksum_ieee(script.get_src().expect("src must exist").as_bytes())
+        )
+        .to_string();
+
+        let name = script.get_name().unwrap_or("default".to_string()).clone();
+
         context.add_buffer(
             format!(
                 "{} = React.memo(React.forwardRef({}({})));\n",
                 component.name,
-                format!("{}Script", component.name),
+                format!("_{}.{}", hash, name),
                 component.name
             )
             .as_str(),

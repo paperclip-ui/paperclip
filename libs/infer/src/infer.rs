@@ -10,15 +10,11 @@ use crate::types;
 use paperclip_common::get_or_short;
 use paperclip_proto::ast::graph_ext::{Dependency, Graph};
 
-pub struct Inferencer {
-    component_cache: Rc<RefCell<BTreeMap<String, types::Component>>>,
-}
+pub struct Inferencer {}
 
 impl Inferencer {
     pub fn new() -> Self {
-        Self {
-            component_cache: Rc::new(RefCell::new(BTreeMap::new())),
-        }
+        Self {}
     }
     pub fn infer_dependency(&self, path: &str, graph: &Graph) -> Result<types::Map> {
         let dep = get_or_short!(
@@ -43,27 +39,30 @@ impl Inferencer {
             Err(Error::msg("Dependency doesn't exist"))
         );
 
-        let cache_key = format!("{}-{}", dep.hash, component.name);
-
-        if let Some(inference) = self.component_cache.borrow().get(&cache_key) {
-            return Ok(inference.clone());
-        }
-
         let mut context = InferContext::new(dep, graph, &self);
 
         infer_component(component, &mut context)?;
 
-        self.component_cache.borrow_mut().insert(
-            cache_key.to_string(),
-            context.scope.borrow().root_type.into_component()?,
+        let result = context.scope.borrow().root_type.into_component();
+        result
+    }
+
+    pub fn infer_node(
+        &self,
+        node: &ast::pc::Node,
+        path: &str,
+        graph: &Graph,
+    ) -> Result<types::Map> {
+        let dep = get_or_short!(
+            graph.dependencies.get(path),
+            Err(Error::msg("Dependency doesn't exist"))
         );
 
-        Ok(self
-            .component_cache
-            .borrow()
-            .get(&cache_key)
-            .unwrap()
-            .clone())
+        let mut context = InferContext::new(dep, graph, &self);
+        infer_node(node, &mut context)?;
+
+        let result = context.scope.borrow().root_type.into_map();
+        result
     }
 }
 

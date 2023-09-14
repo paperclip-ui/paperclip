@@ -3,6 +3,7 @@ use anyhow::Result;
 use inflector::cases::pascalcase::to_pascal_case;
 use paperclip_common::get_or_short;
 use paperclip_evaluator::core::utils::get_style_namespace;
+use paperclip_infer::infer;
 use paperclip_proto::ast::{
     all::{
         visit::{MutableVisitable, MutableVisitor, VisitorResult},
@@ -14,6 +15,34 @@ use paperclip_proto::ast::{
     shared::Reference,
 };
 use std::collections::BTreeMap;
+
+#[derive(Debug, Clone, Copy, Default)]
+struct Info {
+    is_component_render_node: bool,
+    is_script_render_node: bool,
+    is_instance: bool,
+}
+
+impl Info {
+    fn set_is_instance(&self, is_instance: bool) -> Info {
+        Info {
+            is_instance,
+            ..self.clone()
+        }
+    }
+    fn set_is_component_render_node(&self, is_component_render_node: bool) -> Info {
+        Info {
+            is_component_render_node,
+            ..self.clone()
+        }
+    }
+    fn set_is_script_render_node(&self, is_script_render_node: bool) -> Info {
+        Info {
+            is_script_render_node,
+            ..self.clone()
+        }
+    }
+}
 
 const COMPILER_NAME: &str = "react";
 
@@ -78,6 +107,14 @@ impl FindNodesWithScripts {
     }
 }
 
+fn node_contains_script(node: &ast::Node) -> bool {
+    match node.get_inner() {
+        ast::node::Inner::Element(expr) => contains_script(&expr.body),
+        ast::node::Inner::Text(expr) => contains_script(&expr.body),
+        _ => false,
+    }
+}
+
 fn contains_script(body: &Vec<ast::Node>) -> bool {
     body.iter()
         .find(|child| {
@@ -92,27 +129,11 @@ fn contains_script(body: &Vec<ast::Node>) -> bool {
 
 impl MutableVisitor<()> for FindNodesWithScripts {
     fn visit_node(&mut self, node: &mut ast::Node) -> VisitorResult<()> {
-        let found = match node.get_inner() {
-            ast::node::Inner::Element(expr) => contains_script(&expr.body),
-            ast::node::Inner::Text(expr) => contains_script(&expr.body),
-            _ => false,
-        };
-
-        if found {
+        if node_contains_script(node) {
             self.found.push(node.clone());
         }
-
-        //     if contains_script(&el.body) {
-        //         self.found.push(el.into());
-        //     }
         VisitorResult::Continue
     }
-    // fn visit_element(&mut self, el: &mut ast::Element) -> VisitorResult<()> {
-    //     if contains_script(&el.body) {
-    //         self.found.push(el.into());
-    //     }
-    //     VisitorResult::Continue
-    // }
 }
 
 fn compile_nested_components(document: &ast::Document, context: &mut Context) {
@@ -168,7 +189,7 @@ fn compile_nested_component(node: &ast::Node, doc: &ast::Document, context: &mut
 
     context.add_buffer(
         format!(
-            "const {}{} = {}{}Script(props => {{\n",
+            "const {}{} = {}{}Script(React.forwardRef((props, ref) => {{\n",
             component.name,
             to_pascal_case(&get_node_name(node)),
             component.name,
@@ -180,10 +201,14 @@ fn compile_nested_component(node: &ast::Node, doc: &ast::Document, context: &mut
 
     let node: &ast::Node = node.try_into().expect("Must be node");
     context.add_buffer("return ");
-    compile_node(&node, context, false);
+    compile_node(
+        &node,
+        context,
+        &Info::default().set_is_script_render_node(true),
+    );
     context.end_block();
     context.add_buffer("\n");
-    context.add_buffer("});\n\n");
+    context.add_buffer("}));\n\n");
 }
 
 fn include_component_script(component: &ast::Component, context: &mut Context) {
@@ -286,7 +311,7 @@ fn compile_component_render(component: &ast::Component, context: &mut Context) {
     compile_node(
         render.node.as_ref().expect("Node must exist"),
         context,
-        true,
+        &Info::default().set_is_component_render_node(true),
     );
     context.add_buffer(";\n");
 }
@@ -355,7 +380,7 @@ fn compile_repeat(repeat: &ast::Repeat, context: &mut Context) {
     context.add_buffer(")");
 }
 
-fn compile_element(element: &ast::Element, is_root: bool, context: &mut Context) {
+fn compile_element(element: &ast::Element, info: &Info, context: &mut Context) {
     let is_instance = context
         .dependency
         .document
@@ -375,7 +400,7 @@ fn compile_element(element: &ast::Element, is_root: bool, context: &mut Context)
     };
 
     context.add_buffer(format!("React.createElement({}, ", tag_name).as_str());
-    compile_element_parameters(element, is_instance, is_root, context);
+    compile_element_parameters(element, &info.set_is_instance(is_instance), context);
     compile_element_children(element, context);
     context.add_buffer(")")
 }
@@ -396,17 +421,46 @@ fn compile_node_children(children: &Vec<ast::Node>, context: &mut Context, inclu
     compile_children! {
       &children,
       |child: &ast::Node| {
-        compile_node(child, context, false)
+        compile_node(child, context, &Info::default())
       },
       context,
       include_ary
     }
 }
 
-fn compile_node(node: &ast::Node, context: &mut Context, is_root: bool) -> bool {
+fn compile_node_script(node: &ast::Node, context: &mut Context) -> bool {
+    let component = GetExpr::get_owner_component(&node.get_id(), context.dependency.get_document())
+        .expect("Component must exist");
+
+    let node_name = get_node_name(node);
+
+    let render_script_name = format!("{}{}", component.name, to_pascal_case(&node_name));
+
+    context.add_buffer(format!("React.createElement({}, {{\n", render_script_name).as_str());
+    context.start_block();
+
+    let inference = infer::Inferencer::new()
+        .infer_node(node, &context.dependency.path, &context.graph)
+        .expect("Cannot infer node");
+
+    for (key, _) in inference {
+        context.add_buffer(format!("{}: {}.{},\n", key, context.ctx_name, key).as_str());
+    }
+
+    context.end_block();
+    context.add_buffer("})");
+
+    true
+}
+
+fn compile_node(node: &ast::Node, context: &mut Context, info: &Info) -> bool {
+    if node_contains_script(node) && !info.is_script_render_node {
+        return compile_node_script(node, context);
+    }
+
     match node.get_inner() {
         ast::node::Inner::Text(expr) => compile_text_node(&expr, context),
-        ast::node::Inner::Element(expr) => compile_element(&expr, is_root, context),
+        ast::node::Inner::Element(expr) => compile_element(&expr, info, context),
         ast::node::Inner::Slot(expr) => compile_slot(&expr, context),
         ast::node::Inner::Switch(expr) => compile_switch(&expr, context),
         ast::node::Inner::Condition(expr) => compile_condition(&expr, context),
@@ -416,15 +470,10 @@ fn compile_node(node: &ast::Node, context: &mut Context, is_root: bool) -> bool 
     return true;
 }
 
-fn compile_element_parameters(
-    element: &ast::Element,
-    is_instance: bool,
-    is_root: bool,
-    context: &mut Context,
-) {
+fn compile_element_parameters(element: &ast::Element, info: &Info, context: &mut Context) {
     let raw_attrs = rename_attrs_for_react(
-        get_raw_element_attrs(element, is_instance, is_root, context),
-        is_instance,
+        get_raw_element_attrs(element, info, context),
+        info.is_instance,
     );
 
     if raw_attrs.len() == 0 {
@@ -454,8 +503,7 @@ fn compile_element_parameters(
 
 fn get_raw_element_attrs<'dependency>(
     element: &ast::Element,
-    is_instance: bool,
-    is_root: bool,
+    info: &Info,
     context: &mut Context<'dependency>,
 ) -> BTreeMap<String, Context<'dependency>> {
     let mut attrs: BTreeMap<String, Context<'dependency>> = BTreeMap::new();
@@ -469,7 +517,7 @@ fn get_raw_element_attrs<'dependency>(
         attrs.insert(parameter.name.to_string(), param_context);
     }
 
-    if is_instance || element.is_stylable() {
+    if info.is_instance || element.is_stylable() {
         let sub = context.with_new_content();
         sub.add_buffer(
             format!(
@@ -479,14 +527,14 @@ fn get_raw_element_attrs<'dependency>(
             .as_str(),
         );
 
-        if is_root {
+        if info.is_component_render_node {
             sub.add_buffer(
                 format!(" + (props.$$scopeClassName ? \" \" + props.$$scopeClassName : \"\")")
                     .as_str(),
             );
         }
 
-        if is_instance {
+        if info.is_instance {
             attrs.insert("$$scopeClassName".to_string(), sub);
         } else {
             if let Some(class) = attrs.get_mut("class") {
@@ -503,7 +551,7 @@ fn get_raw_element_attrs<'dependency>(
         attrs.insert(insert.name.to_string(), sub);
     }
 
-    if is_root {
+    if info.is_component_render_node || info.is_script_render_node {
         let sub = context.with_new_content();
         sub.add_buffer("ref");
         attrs.insert("ref".to_string(), sub);

@@ -817,8 +817,11 @@ add_case! {
   r#"
   public component AB {
     render div {
-      span test {
+      span test (onMouseDown: onMouseDown) {
         script(src: "./blah.tsx", target: "react")
+        slot insert {
+            a(href: href, onClick: onCLck)
+        }
       }
     }
   }
@@ -828,16 +831,81 @@ add_case! {
   import * as React from "react";
   import ABTestScript from "./blah.tsx";
 
-  const ABTest = ABTestScript(props => {
-    return React.createElement("span")
-  });
+  const ABTest = ABTestScript(React.forwardRef((props, ref) => {
+      return React.createElement("span", {
+          ...props.testProps,
+          "className": "_test-80f4925f-14",
+          "key": "80f4925f-14",
+          "onMouseDown": props.onMouseDown,
+          "ref": ref
+      },
+          props.insert || [
+              React.createElement("a", {
+                  "href": props.href,
+                  "key": "80f4925f-12",
+                  "onClick": props.onCLck
+              })
+          ]
+      )
+  }));
 
   const _AB = (props, ref) => {
       return React.createElement("div", {
-          "key": "80f4925f-3",
+          "key": "80f4925f-15",
           "ref": ref
       },
-          React.createElement("ABTest", props.testProps)
+          React.createElement(ABTest, {
+              insert: props.insert,
+              onMouseDown: props.onMouseDown,
+              test: props.test,
+          })
+      );
+  };
+  _AB.displayName = "AB";
+  let AB = React.memo(React.forwardRef(_AB));
+  export { AB };
+  "#
+}
+
+add_case! {
+  can_compile_an_inline_script_within_a_loop,
+  r#"
+  public component AB {
+    render div {
+      repeat items {
+        span test (onMouseDown: onMouseDown) {
+            script(src: "./item.tsx", target: "react")
+        }
+      }
+    }
+  }
+  "#,
+  r#"
+  require("./entry.pc.css");
+  import * as React from "react";
+  import ABTestScript from "./item.tsx";
+
+  const ABTest = ABTestScript(React.forwardRef((props, ref) => {
+      return React.createElement("span", {
+          ...props.testProps,
+          "className": "_test-80f4925f-8",
+          "key": "80f4925f-8",
+          "onMouseDown": props.onMouseDown,
+          "ref": ref
+      })
+  }));
+
+  const _AB = (props, ref) => {
+      return React.createElement("div", {
+          "key": "80f4925f-10",
+          "ref": ref
+      },
+          props.items && props.items.map(props_items => [
+              React.createElement(ABTest, {
+                  onMouseDown: props_items.onMouseDown,
+                  test: props_items.test,
+              })
+          ])
       );
   };
   _AB.displayName = "AB";

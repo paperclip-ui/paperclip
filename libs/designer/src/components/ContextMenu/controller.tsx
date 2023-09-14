@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "@paperclip-ui/common";
-import * as styles from "@paperclip-ui/designer/src/styles/context-menu.pc";
+import * as styles from "./context-menu.pc";
 import cx from "classnames";
 import React, { useEffect, useRef, useState } from "react";
 import { ShortcutCommand } from "../../domains/shortcuts/state";

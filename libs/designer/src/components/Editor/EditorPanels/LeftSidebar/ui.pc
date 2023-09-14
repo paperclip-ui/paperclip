@@ -218,9 +218,6 @@ public component LeftSidebar {
         if showFileNavigator {
             FileNavigator fileNavigator
         }
-        if showFileResources {
-            FileResources fileResources
-        }
     }
 }
 

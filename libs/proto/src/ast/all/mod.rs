@@ -207,6 +207,7 @@ expressions! {
     pc::node::Inner::Override,
     pc::node::Inner::Repeat,
     pc::node::Inner::Switch,
+    pc::node::Inner::Script,
     pc::node::Inner::Condition
   )),
   (Repeat, pc::Repeat, self => &self.id),

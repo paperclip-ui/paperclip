@@ -192,6 +192,7 @@ fn evaluate_node<'a, F: FileResolver>(
         ast::node::Inner::Insert(expr) => {
             evaluate_insert(expr, context);
         }
+        ast::node::Inner::Script(_expr) => {}
         ast::node::Inner::Slot(expr) => {
             evaluate_slot(expr, context);
         }

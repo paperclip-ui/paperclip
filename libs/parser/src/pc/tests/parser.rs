@@ -521,3 +521,29 @@ add_case! {
         }
     "#
 }
+
+add_case! {
+    can_parse_a_script_within_an_element,
+    r#"
+    public component Ab {
+        render div {
+            div abba {
+                script(src: "something.tsx")
+            }
+        }
+    }
+    "#
+}
+
+add_case! {
+    can_parse_a_script_within_a_text_node,
+    r#"
+        public component Ab {
+            render div {
+                text abba "hello" {
+                    script(src: "something.tsx")
+                }
+            }
+        }
+    "#
+}

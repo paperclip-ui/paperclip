@@ -231,6 +231,7 @@ impl Node {
             node::Inner::Style(_)
             | node::Inner::Override(_)
             | node::Inner::Repeat(_)
+            | node::Inner::Script(_)
             | node::Inner::Switch(_)
             | node::Inner::Condition(_) => None,
         }
@@ -287,6 +288,16 @@ impl TryFrom<Node> for DocumentBodyItem {
             node::Inner::Text(text) => {
                 Ok(document_body_item::Inner::Text(text.clone()).get_outer())
             }
+            _ => Err(()),
+        }
+    }
+}
+
+impl TryFrom<&Node> for Script {
+    type Error = ();
+    fn try_from(value: &Node) -> Result<Self, Self::Error> {
+        match value.get_inner() {
+            node::Inner::Script(script) => Ok(script.clone()),
             _ => Err(()),
         }
     }

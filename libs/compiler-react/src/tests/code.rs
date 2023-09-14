@@ -811,3 +811,37 @@ add_case! {
   export { AB };
   "#
 }
+
+add_case! {
+  can_compile_with_inline_script,
+  r#"
+  public component AB {
+    render div {
+      span test {
+        script(src: "./blah.tsx", target: "react")
+      }
+    }
+  }
+  "#,
+  r#"
+  require("./entry.pc.css");
+  import * as React from "react";
+  import ABTestScript from "./blah.tsx";
+
+  const ABTest = ABTestScript(props => {
+    return React.createElement("span")
+  });
+
+  const _AB = (props, ref) => {
+      return React.createElement("div", {
+          "key": "80f4925f-3",
+          "ref": ref
+      },
+          React.createElement("ABTest", props.testProps)
+      );
+  };
+  _AB.displayName = "AB";
+  let AB = React.memo(React.forwardRef(_AB));
+  export { AB };
+  "#
+}

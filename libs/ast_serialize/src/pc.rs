@@ -204,6 +204,7 @@ pub fn serialize_node(node: &ast::Node, context: &mut Context) {
         ast::node::Inner::Style(style) => serialize_style(style, context),
         ast::node::Inner::Override(over) => serialize_override(over, context),
         ast::node::Inner::Text(text) => serialize_text(text, context),
+        ast::node::Inner::Script(text) => serialize_script(text, context),
         ast::node::Inner::Condition(expr) => serialize_condition(expr, context),
         ast::node::Inner::Switch(expr) => serialize_switch(expr, context),
         ast::node::Inner::Repeat(expr) => serialize_repeat(expr, context),

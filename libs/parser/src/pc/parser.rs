@@ -720,6 +720,9 @@ fn parse_text(
                 Some(Token::Word(b"style")) => {
                     Ok(ast::node::Inner::Style(parse_style(context, false)?).get_outer())
                 }
+                Some(Token::Word(b"script")) => {
+                    Ok(ast::node::Inner::Script(parse_script(context)?).get_outer())
+                }
                 _ => Err(context.new_unexpected_token_error()),
             },
             Some((Token::CurlyOpen, Token::CurlyClose)),
@@ -829,6 +832,9 @@ fn parse_node(context: &mut PCContext) -> Result<ast::Node, err::ParserError> {
         }
         Some(Token::Word(b"if")) => {
             Ok(ast::node::Inner::Condition(parse_condition(context)?).get_outer())
+        }
+        Some(Token::Word(b"script")) => {
+            Ok(ast::node::Inner::Script(parse_script(context)?).get_outer())
         }
         Some(Token::Word(b"slot")) => Ok(ast::node::Inner::Slot(parse_slot(context)?).get_outer()),
         Some(Token::Word(b"override")) => {

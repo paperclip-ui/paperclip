@@ -18,3 +18,4 @@ paperclip_evaluator = { path = "../evaluator" }
 paperclip_infer = { path = "../infer" }
 anyhow = "1.0.61"
 futures = "0.3.25"
+Inflector = "0.11.4"

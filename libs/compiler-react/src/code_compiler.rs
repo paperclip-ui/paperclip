@@ -1,8 +1,14 @@
 use super::context::Context;
 use anyhow::Result;
+use inflector::cases::pascalcase::to_pascal_case;
 use paperclip_common::get_or_short;
 use paperclip_evaluator::core::utils::get_style_namespace;
 use paperclip_proto::ast::{
+    all::{
+        visit::{MutableVisitable, MutableVisitor, VisitorResult},
+        Expression,
+    },
+    get_expr::GetExpr,
     graph_ext::{Dependency, Graph},
     pc as ast,
     shared::Reference,
@@ -22,6 +28,7 @@ pub fn compile_code(dependency: &Dependency, graph: &Graph) -> Result<String> {
 
 fn compile_document(document: &ast::Document, context: &mut Context) {
     compile_imports(document, context);
+    compile_nested_components(document, context);
     for item in &document.body {
         match item.get_inner() {
             ast::document_body_item::Inner::Component(component) => {
@@ -57,7 +64,126 @@ fn compile_imports(document: &ast::Document, context: &mut Context) {
             _ => {}
         }
     }
+}
+
+struct FindNodesWithScripts {
+    found: Vec<ast::Node>,
+}
+
+impl FindNodesWithScripts {
+    fn find(document: &ast::Document) -> Vec<ast::Node> {
+        let mut inst = FindNodesWithScripts { found: vec![] };
+        document.clone().accept(&mut inst);
+        inst.found.clone()
+    }
+}
+
+fn contains_script(body: &Vec<ast::Node>) -> bool {
+    body.iter()
+        .find(|child| {
+            if let ast::node::Inner::Script(script) = child.get_inner() {
+                script.get_target() == Some(String::from(COMPILER_NAME))
+            } else {
+                false
+            }
+        })
+        .is_some()
+}
+
+impl MutableVisitor<()> for FindNodesWithScripts {
+    fn visit_node(&mut self, node: &mut ast::Node) -> VisitorResult<()> {
+        let found = match node.get_inner() {
+            ast::node::Inner::Element(expr) => contains_script(&expr.body),
+            ast::node::Inner::Text(expr) => contains_script(&expr.body),
+            _ => false,
+        };
+
+        if found {
+            self.found.push(node.clone());
+        }
+
+        //     if contains_script(&el.body) {
+        //         self.found.push(el.into());
+        //     }
+        VisitorResult::Continue
+    }
+    // fn visit_element(&mut self, el: &mut ast::Element) -> VisitorResult<()> {
+    //     if contains_script(&el.body) {
+    //         self.found.push(el.into());
+    //     }
+    //     VisitorResult::Continue
+    // }
+}
+
+fn compile_nested_components(document: &ast::Document, context: &mut Context) {
+    let found = FindNodesWithScripts::find(document);
+    for node in &found {
+        compile_nested_component_import(&node, document, context);
+    }
     context.add_buffer("\n");
+    for node in &found {
+        compile_nested_component(&node, document, context);
+    }
+}
+
+fn compile_nested_component_import(node: &ast::Node, doc: &ast::Document, context: &mut Context) {
+    let component =
+        GetExpr::get_owner_component(&node.get_id(), doc).expect("Component must exist");
+
+    let body: Vec<ast::Node> = match node.get_inner() {
+        ast::node::Inner::Element(el) => el.body.clone(),
+        _ => vec![],
+    };
+
+    let script: ast::Script = body
+        .iter()
+        .find(|item| matches!(item.get_inner(), ast::node::Inner::Script(_)))
+        .expect("Script must exist")
+        .try_into()
+        .expect("Cannot cast as script");
+
+    context.add_buffer(
+        format!(
+            "import {}{}Script from \"{}\";\n",
+            component.name,
+            to_pascal_case(&get_node_name(node)),
+            script.get_src().expect("src must exist")
+        )
+        .as_str(),
+    )
+}
+
+fn get_node_name(node: &ast::Node) -> String {
+    let name = match node.get_inner() {
+        ast::node::Inner::Element(expr) => expr.name.clone(),
+        ast::node::Inner::Text(expr) => expr.name.clone(),
+        _ => None,
+    };
+    name.unwrap_or(node.get_id().to_string())
+}
+
+fn compile_nested_component(node: &ast::Node, doc: &ast::Document, context: &mut Context) {
+    let component =
+        GetExpr::get_owner_component(&node.get_id(), doc).expect("Component must exist");
+
+    context.add_buffer(
+        format!(
+            "const {}{} = {}{}Script(props => {{\n",
+            component.name,
+            to_pascal_case(&get_node_name(node)),
+            component.name,
+            to_pascal_case(&get_node_name(node))
+        )
+        .as_str(),
+    );
+    context.start_block();
+
+    let node: &ast::Node = node.try_into().expect("Must be node");
+    context.add_buffer("return ");
+    compile_node(&node, context, false);
+    context.end_block();
+    context.add_buffer("\n");
+    context.add_buffer("});\n\n");
 }
 
 fn include_component_script(component: &ast::Component, context: &mut Context) {

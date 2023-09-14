@@ -455,6 +455,7 @@ fn evaluate_node<F: FileResolver>(
         }
         ast::node::Inner::Override(_)
         | ast::node::Inner::Style(_)
+        | ast::node::Inner::Script(_)
         | ast::node::Inner::Insert(_) => {}
     }
 }

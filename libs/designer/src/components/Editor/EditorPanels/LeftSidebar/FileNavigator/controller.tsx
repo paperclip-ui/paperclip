@@ -150,8 +150,12 @@ type FSItemProps = {
   depth: number;
 };
 
-const FSItem = (Base: React.FC<BaseFSItemProps>) =>
+export const FSItem = (Base: React.FC<BaseFSItemProps>) =>
   function FSItem({ depth, item }: FSItemProps) {
+    if (!item) {
+      return null;
+    }
+
     const dispatch = useDispatch<DesignerEvent>();
     const currentFilePath = useSelector(getCurrentFilePath);
     const selectedFilePath = useSelector(getSelectedFilePath);

@@ -13,7 +13,7 @@ import { Portal } from "../Portal";
 import { getHistoryState } from "../../domains/history/state";
 import { getEditorState, getHistoryStr } from "../../state";
 import { prettyKeyCombo } from "../../domains/ui/state";
-import { BaseContextMenuProps } from "./context-menu.pc";
+import { ContextMenuDivider, BaseContextMenuProps } from "./context-menu.pc";
 
 export type ContextMenuProps = {
   children: React.ReactElement;
@@ -126,5 +126,3 @@ const ContextMenuOption = ({
     </styles.ContextMenuItem>
   );
 };
-
-const ContextMenuDivider = styles.ContextMenuDivider;

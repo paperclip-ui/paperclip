@@ -272,7 +272,7 @@ public component AddLayerButton {
 }
 
 public component Layers {
-    script(src: "./Layers/controller.tsx", target: "react")
+    script(src: "./Layers/controller.tsx", target: "react", name: "Layers")
     render sidebar.SidebarPanel sidebar {
         LeftSidebarHeader header {
             insert title {

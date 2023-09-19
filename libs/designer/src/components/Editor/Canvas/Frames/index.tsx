@@ -151,15 +151,19 @@ const useFrames = ({ shouldCollectRects = true }: UseFramesProps) => {
       }
 
       const rects = getFrameRects(mount, data, frameIndex);
-      const computedStyles = computeAllStyles(mount, frameIndex);
+
+      // This is not used right now, so we're commenting this out for now
+      // since it's expensive. We may eventually want to use something like this at a
+      // later point, but will want to figure out a more performant way of doing this (such as computing styles on canvas click)
+      // const computedStyles = computeAllStyles(mount, frameIndex);
       dispatch({
         type: "ui/rectsCaptured",
         payload: { frameIndex, rects },
       });
-      dispatch({
-        type: "ui/computedStylesCaptured",
-        payload: computedStyles,
-      });
+      // dispatch({
+      //   type: "ui/computedStylesCaptured",
+      //   payload: computedStyles,
+      // });
     },
     [dispatch, shouldCollectRects]
   );

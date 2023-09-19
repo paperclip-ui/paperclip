@@ -38,7 +38,10 @@ export const leftSidebarReducer = (
         });
       } else {
         state = produce(state, (newState) => {
-          Object.assign(expandVirtIds([event.payload.virtId], newState));
+          Object.assign(
+            newState,
+            expandVirtIds([event.payload.virtId], newState)
+          );
         });
       }
 

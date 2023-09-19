@@ -84,6 +84,8 @@ public component SidebarPanel {
             overflow: scroll
             display: flex
             flex-direction: column
+            color: var(theme.gray0)
+            font-family: var(theme.defaultFontFamily)
         }
         slot children
         div {
@@ -241,3 +243,4 @@ public component SidebarPopupPanelContent {
         slot children
     }
 }
+

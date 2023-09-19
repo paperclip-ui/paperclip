@@ -124,21 +124,26 @@ public component FilteredFile {
     }
 }
 
+/**
+ * @bounds(x: 1059, y: 114, width: 1024, height: 768)
+*/
 public component FSItem {
     script(src: "./FileNavigator/controller.tsx", target: "react", name: "FSNavigatorItem")
     render TreeNavigationItem {
-      LayerNavigationItemHeader layerHeader (class: headerClass) {
-        slot header {
-            text "header"
+        LayerNavigationItemHeader layerHeader(class: headerClass) {
+            slot header {
+                text "header"
+            }
         }
-      }
-      TreeNavigationItemContent {
-        slot children {
+        TreeNavigationItemContent {
+            slot children
         }
-      }
     }
 }
 
+/**
+ * @bounds(x: -2102, y: -298, width: 380, height: 768)
+*/
 public component FileNavigator {
     script(src: "./FileNavigator/controller.tsx", target: "react", name: "FileNavigator")
     render sidebar.SidebarPanel {
@@ -166,11 +171,11 @@ public component FileNavigator {
                 }
                 slot layers {
                     FSItem(headerClass: "folder container open") {
-                      insert header {
-                        text "components/"
-                      }
-                      insert children {
-                        TreeNavigationItem {
+                        insert header {
+                            text "components/"
+                        }
+                        insert children {
+                            TreeNavigationItem {
                                 LayerNavigationItemHeader(class: "file open") {
                                     override container.root {
                                         style {
@@ -180,7 +185,7 @@ public component FileNavigator {
                                     text "index.tsx"
                                 }
                             }
-                      }
+                        }
                     }
                 }
             }
@@ -268,6 +273,9 @@ public component AddLayerButton {
     render etc.PlusButton(onClick: onClick, onBlur: onBlur)
 }
 
+/**
+ * @bounds(x: 28, y: 1424, width: 1024, height: 768)
+*/
 public component Layers {
     script(src: "./Layers/controller.tsx", target: "react", name: "Layers")
     render sidebar.SidebarPanel sidebar {
@@ -757,3 +765,4 @@ public component LayerNavigationItemHeader {
         }
     }
 }
+

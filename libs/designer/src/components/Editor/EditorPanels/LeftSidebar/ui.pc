@@ -274,7 +274,7 @@ public component AddLayerButton {
 }
 
 /**
- * @bounds(x: 28, y: 1424, width: 1024, height: 768)
+ * @bounds(x: 28, y: 1424, width: 369, height: 768)
 */
 public component Layers {
     script(src: "./Layers/controller.tsx", target: "react", name: "Layers")
@@ -370,7 +370,7 @@ public component Layers {
                                 }
                                 TreeNavigationItemContent {
                                     TreeNavigationItem {
-                                        LayerNavigationItemHeader(class: "text") {
+                                        LayerNavigationItemHeader(class: "condition") {
                                             override container.root {
                                                 style {
                                                     --depth: 3
@@ -384,109 +384,6 @@ public component Layers {
                         }
                     }
                 }
-            }
-        }
-    }
-}
-
-/**
- * @bounds(x: -374, y: 920, width: 90, height: 56)
-*/
-public component LayerIcon {
-    variant isComponent trigger {
-        ".component"
-    }
-    variant isInstance trigger {
-        ".instance"
-    }
-    variant isElement trigger {
-        ".element"
-    }
-    variant isCompositeToken trigger {
-        ".composite-token"
-    }
-    variant isFolder trigger {
-        ".folder"
-    }
-    variant isFile trigger {
-        ".file"
-    }
-    variant isAtomToken trigger {
-        ".atom-token"
-    }
-    variant isSlot trigger {
-        ".slot"
-    }
-    variant isText trigger {
-        ".text"
-    }
-    variant isTrigger trigger {
-        ".trigger"
-    }
-    render div root(class: class) {
-        style {
-            width: 12px
-            position: relative
-            height: 1em
-            flex-shrink: 0
-        }
-        div {
-            style extends theme.icon {
-                position: absolute
-                top: 50%
-                left: 50%
-                transform: translate(-50%, -50%)
-            }
-            style variant isComponent {
-                width: 1.1em
-                height: 1.1em
-                -webkit-mask-image: url("../../../../styles/component2.svg")
-            }
-            style variant isInstance {
-                width: 0.9em
-                height: 0.9em
-                -webkit-mask-image: url("../../../../styles/box-outline.svg")
-                transform: translate(-50%, -50%) rotate(45deg)
-            }
-            style variant isSlot {
-                -webkit-mask-image: url("../../../../styles/slot3.svg")
-            }
-            style variant isElement {
-                width: 0.75em
-                height: 0.75em
-                -webkit-mask-image: url("../../../../styles/square.svg")
-            }
-            style variant isFolder {
-                width: 0.9em
-                height: 0.9em
-                top: calc(50% + 1px)
-                -webkit-mask-image: url("../../../../styles/folder.svg")
-            }
-            style variant isFile {
-                width: 0.9em
-                height: 0.9em
-                -webkit-mask-image: url("../../../../styles/file.svg")
-            }
-            style variant isCompositeToken {
-                width: 0.9em
-                height: 0.9em
-                -webkit-mask-image: url("../../../../styles/group.svg")
-            }
-            style variant isAtomToken {
-                width: 0.8em
-                height: 0.8em
-                -webkit-mask-image: url("../../../../styles/dot4.svg")
-            }
-            style variant isTrigger {
-                width: 1.1em
-                height: 1.1em
-                position: relative
-                -webkit-mask-image: url("../../../../styles/lightning.svg")
-            }
-            style variant isText {
-                width: 0.8em
-                height: 0.8em
-                -webkit-mask-image: url("../../../../styles/text.svg")
             }
         }
     }
@@ -684,9 +581,12 @@ public component TreeNavigationItemHeader {
 }
 
 /**
- * @bounds(x: -446, y: 575, width: 350, height: 54)
+ * @bounds(x: 450, y: 1518, width: 350, height: 37)
 */
 public component LayerNavigationItemHeader {
+    variant isCondition trigger {
+        ".condition"
+    }
     variant isSlot trigger {
         ".slot"
     }
@@ -715,44 +615,103 @@ public component LayerNavigationItemHeader {
         ".text"
     }
     render TreeNavigationItemHeader container(class: class, style: style, onClick: onClick, onArrowClick: onArrowClick, onContextMenu: onContextMenu, onKeyDown: onKeyDown, onMouseDown: onMouseDown) {
-        override root {
-            style {
-                --depth: 1
-                --regular-layer: rgb(96, 149, 255)
-                white-space: nowrap
-            }
-            style variant isComponent {
-                --icon-color: var(theme.componentColor)
-            }
-            style variant isInstance {
-                --icon-color: rgb(219, 161, 255)
-            }
-            style variant isElement {
-                --icon-color: var(--regular-layer)
-            }
-            style variant isCompositeToken {
-                --icon-color: rgb(114, 247, 134)
-            }
-            style variant isAtomToken {
-                --icon-color: rgb(114, 247, 134)
-            }
-            style variant isTrigger {
-                --icon-color: rgb(114, 247, 134)
-            }
-            style variant isSlot {
-                --icon-color: var(--regular-layer)
-            }
-            style variant isText {
-                --icon-color: var(--regular-layer)
-            }
-            style variant isShadow {
-                --icon-color: var(theme.componentColor)
-            }
+        style variant isCondition {
+            --icon-color: rgba(180, 240, 4, 1)
         }
-        LayerIcon(class: class) {
-            override root {
-                style {
+        style {
+            --depth: 1
+            --regular-layer: rgb(96, 149, 255)
+            white-space: nowrap
+        }
+        style variant isComponent {
+            --icon-color: var(theme.componentColor)
+        }
+        style variant isInstance {
+            --icon-color: rgb(219, 161, 255)
+        }
+        style variant isElement {
+            --icon-color: var(--regular-layer)
+        }
+        style variant isCompositeToken {
+            --icon-color: rgb(114, 247, 134)
+        }
+        style variant isAtomToken {
+            --icon-color: rgb(114, 247, 134)
+        }
+        style variant isTrigger {
+            --icon-color: rgb(114, 247, 134)
+        }
+        style variant isSlot {
+            --icon-color: var(--regular-layer)
+        }
+        style variant isText {
+            --icon-color: var(--regular-layer)
+        }
+        style variant isShadow {
+            --icon-color: var(theme.componentColor)
+        }
+        div iconContainer {
+            style {
+                display: flex
+            }
+            div {
+                style variant isCondition + isCondition
+                style variant isCondition {
+                    mask-image: url("./hexagon.png")
+                }
+                style extends theme.icon {
                     color: var(--icon-color)
+                }
+                style variant isComponent {
+                    width: 1.1em
+                    height: 1.1em
+                    -webkit-mask-image: url("../../../../styles/component2.svg")
+                }
+                style variant isInstance {
+                    width: 0.9em
+                    height: 0.9em
+                    -webkit-mask-image: url("../../../../styles/box-outline.svg")
+                    transform: translate(-50%, -50%) rotate(45deg)
+                }
+                style variant isSlot {
+                    -webkit-mask-image: url("../../../../styles/slot3.svg")
+                }
+                style variant isElement {
+                    width: 0.75em
+                    height: 0.75em
+                    -webkit-mask-image: url("../../../../styles/square.svg")
+                }
+                style variant isFolder {
+                    width: 0.9em
+                    height: 0.9em
+                    top: calc(50% + 1px)
+                    -webkit-mask-image: url("../../../../styles/folder.svg")
+                }
+                style variant isFile {
+                    width: 0.9em
+                    height: 0.9em
+                    -webkit-mask-image: url("../../../../styles/file.svg")
+                }
+                style variant isCompositeToken {
+                    width: 0.9em
+                    height: 0.9em
+                    -webkit-mask-image: url("../../../../styles/group.svg")
+                }
+                style variant isAtomToken {
+                    width: 0.8em
+                    height: 0.8em
+                    -webkit-mask-image: url("../../../../styles/dot4.svg")
+                }
+                style variant isTrigger {
+                    width: 1.1em
+                    height: 1.1em
+                    position: relative
+                    -webkit-mask-image: url("../../../../styles/lightning.svg")
+                }
+                style variant isText {
+                    width: 0.8em
+                    height: 0.8em
+                    -webkit-mask-image: url("../../../../styles/text.svg")
                 }
             }
         }

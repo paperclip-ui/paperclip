@@ -70,9 +70,8 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
           state.graph
         );
         setTargetExprId(newState, getSelectedExprIdSourceId(state));
+        newState.centerOnRedirect = true;
       });
-
-      state = maybeCenterCanvas(state, true);
       return state;
     case ShortcutCommand.ShowHideUI:
       return produce(state, (newState) => {

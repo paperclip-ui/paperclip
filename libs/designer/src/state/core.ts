@@ -91,6 +91,7 @@ export type DesignerState = {
   scopedElementId?: string;
   projectDirectory?: FSDirectory;
   activeVariantId?: string;
+  centerOnRedirect?: boolean;
   projectInfo?: ProjectInfo;
   editVariantPopupOpen?: boolean;
   renderedFilePath?: string;

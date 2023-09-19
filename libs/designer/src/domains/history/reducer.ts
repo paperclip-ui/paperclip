@@ -6,6 +6,7 @@ import {
   getTargetExprId,
   resetCurrentDocument,
 } from "../../state";
+import { maybeCenterCanvas } from "../ui/state";
 
 export const historyReducer = (state: DesignerState, event: DesignerEvent) => {
   switch (event.type) {
@@ -25,6 +26,13 @@ export const historyReducer = (state: DesignerState, event: DesignerEvent) => {
 
       if (newPath == null) {
         state.renderedFilePath = null;
+      }
+
+      if (state.centerOnRedirect) {
+        state = produce(state, (draft) => {
+          draft.centerOnRedirect = false;
+        });
+        state = maybeCenterCanvas(state, true);
       }
 
       return state;

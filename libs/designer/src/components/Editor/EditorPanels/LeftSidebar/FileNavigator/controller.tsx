@@ -150,7 +150,7 @@ type FSItemProps = {
   depth: number;
 };
 
-export const FSItem = (Base: React.FC<BaseFSItemProps>) =>
+export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
   function FSItem({ depth, item }: FSItemProps) {
     if (!item) {
       return null;

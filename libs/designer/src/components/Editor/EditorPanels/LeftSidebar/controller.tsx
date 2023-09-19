@@ -13,7 +13,6 @@ export const LeftSidebar = (Base: React.FC<BaseLeftSidebarProps>) => () => {
     <SidebarContainer position="left">
       <Base
         fileNavigatorProps={null}
-        fileResourcesProps={null}
         layersProps={null}
         showFileNavigator
         showLayers

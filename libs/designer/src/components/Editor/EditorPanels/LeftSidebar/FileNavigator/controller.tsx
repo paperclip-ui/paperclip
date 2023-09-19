@@ -264,16 +264,16 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
               ref: setHeader,
               style: { "--depth": depth, opacity },
               onClick: onClick,
-              class: classNames({
-                file: item.kind === FSItemKind.File,
-                folder: item.kind === FSItemKind.Directory,
-                container: item.kind === FSItemKind.Directory,
-                showDropOver: isDraggingOver,
-                open,
-                selected,
-              }),
             }}
             header={dirname(item.path)}
+            headerClass={classNames({
+              file: item.kind === FSItemKind.File,
+              folder: item.kind === FSItemKind.Directory,
+              container: item.kind === FSItemKind.Directory,
+              showDropOver: isDraggingOver,
+              open,
+              selected,
+            })}
           >
             {item.kind === FSItemKind.Directory && open
               ? item.items.map((item) => {

@@ -26,6 +26,8 @@ import {
   TriggerBodyItem,
   TriggerBodyItemCombo,
   Variant,
+  Condition,
+  Repeat,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { Bool, Str } from "@paperclip-ui/proto/lib/generated/ast/base";
 import { ComputedStyleMap, serializeDeclaration } from "./serialize";
@@ -51,11 +53,13 @@ export namespace ast {
     TextNode,
     Trigger,
     TriggerCombo,
+    Condition,
     Slot,
     Insert,
     Override,
     Str,
     Bool,
+    Repeat,
     Style,
     Declaration,
     Arithmetic,
@@ -76,6 +80,8 @@ export namespace ast {
     | BaseExprInfo<Element, ExprKind.Element>
     | BaseExprInfo<Variant, ExprKind.Variant>
     | BaseExprInfo<Document, ExprKind.Document>
+    | BaseExprInfo<Condition, ExprKind.Condition>
+    | BaseExprInfo<Repeat, ExprKind.Repeat>
     | BaseExprInfo<Render, ExprKind.Render>
     | BaseExprInfo<any, ExprKind.DocComment>
     | BaseExprInfo<Override, ExprKind.Override>
@@ -248,6 +254,18 @@ export namespace ast {
       return {
         expr: expr as TriggerBodyItemCombo,
         kind: ExprKind.TriggerCombo,
+      };
+    }
+    if ((expr as Node).condition) {
+      return {
+        expr: (expr as Node).condition,
+        kind: ExprKind.Condition,
+      };
+    }
+    if ((expr as Node).repeat) {
+      return {
+        expr: (expr as Node).repeat,
+        kind: ExprKind.Repeat,
       };
     }
 

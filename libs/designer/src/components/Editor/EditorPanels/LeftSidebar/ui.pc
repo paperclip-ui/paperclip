@@ -371,18 +371,17 @@ public component Layers {
                                 TreeNavigationItemContent {
                                     TreeNavigationItem {
                                         LayerNavigationItemHeader(class: "condition") {
-                                                style {
-                                                    --depth: 3
-                                                }
+                                            style {
+                                                --depth: 3
+                                            }
                                             text "some condition"
                                         }
                                         TreeNavigationItemContent {
                                             TreeNavigationItem {
-                                                LayerNavigationItemHeader(class: "condition") {
-                                                     
-                                                style {
-                                                    --depth: 4
-                                                }
+                                                LayerNavigationItemHeader(class: "stack") {
+                                                    style {
+                                                        --depth: 4
+                                                    }
                                                     text "some condition"
                                                 }
                                             }
@@ -402,6 +401,9 @@ public component Layers {
  * @bounds(x: 593, y: 1429, width: 90, height: 56)
 */
 public component LayerIcon {
+    variant isStack trigger {
+        ".stack"
+    }
     variant isCondition trigger {
         ".condition"
     }
@@ -443,6 +445,9 @@ public component LayerIcon {
             flex-shrink: 0
         }
         div {
+            style variant isStack {
+                mask-image: url("./stack.png")
+            }
             style variant isCondition {
                 mask-image: url("./hexagon.png")
             }
@@ -701,6 +706,9 @@ public component TreeNavigationItemHeader {
  * @bounds(x: 629, y: 1548, width: 350, height: 37)
 */
 public component LayerNavigationItemHeader {
+    variant isStack trigger {
+        ".stack"
+    }
     variant isCondition trigger {
         ".condition"
     }
@@ -732,6 +740,9 @@ public component LayerNavigationItemHeader {
         ".text"
     }
     render TreeNavigationItemHeader container(class: class, style: style, onClick: onClick, onArrowClick: onArrowClick, onContextMenu: onContextMenu, onKeyDown: onKeyDown, onMouseDown: onMouseDown) {
+        style variant isStack {
+            --icon-color: rgba(230, 158, 15, 1)
+        }
         style variant isCondition {
             --icon-color: rgba(180, 240, 4, 1)
         }

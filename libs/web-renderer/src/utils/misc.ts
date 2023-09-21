@@ -1,3 +1,5 @@
+import * as html from "@paperclip-ui/proto/lib/generated/virt/html";
+
 export const preventDefault = (event: any) => {
   event.stopPropagation();
   event.preventDefault();
@@ -32,3 +34,6 @@ export const arraySplice = <TArray extends Array<any>>(
     ...array.slice(index + deleteCount),
   ];
 };
+
+export const getAttrValue = (value: html.Value) =>
+  String(value.str?.value ?? value?.num?.value ?? value?.bool?.value);

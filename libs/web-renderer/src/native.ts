@@ -1,7 +1,7 @@
 import * as html from "@paperclip-ui/proto/lib/generated/virt/html";
 import * as css from "@paperclip-ui/proto/lib/generated/virt/css";
 import { Html5Entities } from "html-entities";
-import { preventDefault, ATTR_ALIASES } from "./utils";
+import { preventDefault, ATTR_ALIASES, getAttrValue } from "./utils";
 import { NodeFactory } from "./node-factory";
 import { stringifyCSSRule } from "./sheet";
 
@@ -176,13 +176,14 @@ const createNativeElement = (
   nativeElement.id = "_" + element.id;
 
   for (let { name, value } of element.attributes) {
+    let strValue = getAttrValue(value);
     if (name === "src" && resolveUrl) {
-      value = resolveUrl(value);
+      strValue = resolveUrl(strValue);
     }
 
     const aliasName = ATTR_ALIASES[name] || name;
 
-    nativeElement.setAttribute(aliasName, value);
+    nativeElement.setAttribute(aliasName, strValue);
   }
 
   for (const child of element.children) {

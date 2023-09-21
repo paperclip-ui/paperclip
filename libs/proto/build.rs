@@ -16,7 +16,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 "src/ast_mutate/mod.proto",
                 "src/virt/css.proto",
                 "src/virt/html.proto",
-                "src/virt/core.proto",
                 "src/virt/module.proto",
                 "src/language_service/pc.proto",
             ],

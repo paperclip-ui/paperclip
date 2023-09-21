@@ -29,7 +29,11 @@ pub fn serialize_node(node: &virt::Node, context: &mut Context) {
 fn serialize_element(element: &virt::Element, context: &mut Context) {
     context.add_buffer(format!("<{}", element.tag_name).as_str());
     for attr in &element.attributes {
-        context.add_buffer(format!(" {}=\"{}\"", attr.name, attr.value).as_str());
+        if let Some(value) = &attr.value {
+            context.add_buffer(format!(" {}=\"{}\"", attr.name, value.to_string()).as_str());
+        } else {
+            context.add_buffer(format!(" {}", attr.name).as_str());
+        }
     }
     context.add_buffer(">\n");
     if is_void_tag(&element.tag_name) {

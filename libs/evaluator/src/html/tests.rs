@@ -439,12 +439,12 @@ add_case! {
 
 			}
 		}
-		A(class: "b c d e")
+		A inst(class: "b c d e")
 	"#)
     ],
     r#"
 	<div class="_A-80f4925f-3 undefined"> </div>
-	<div class="_A-80f4925f-3 _80f4925f-8 b c d e"> </div>
+	<div class="_A-80f4925f-3 _inst-80f4925f-8 b c d e"> </div>
 "#
 }
 add_case! {
@@ -620,6 +620,46 @@ add_case! {
 "#
 }
 
+add_case! {
+    scope_class_is_passed_down,
+    [
+    ("/entry.pc", r#"
+    component A {
+        render div root(class: class)
+    }
+    component B {
+        render A root(class: class)
+    }
+    component C {
+        render div {
+            B bbbbb {
+                style {
+                    color: blue
+                }
+            }
+            div {
+                style {
+                    color: red
+                }
+            }
+        }
+    }
+	"#)
+    ],
+    r#"
+    <div class="_A-root-80f4925f-3 undefined">
+    </div>
+    <div class="_A-root-80f4925f-3 _B-root-80f4925f-8 undefined">
+    </div>
+    <div class="_C-80f4925f-19">
+        <div class="_A-root-80f4925f-3 _C-bbbbb-80f4925f-14 _B-root-80f4925f-8 undefined">
+        </div>
+        <div class="_C-80f4925f-18">
+        </div>
+    </div>
+"#
+}
+
 #[test]
 fn bounds_are_attached_to_root_elements() {
     let doc = evaluate_doc(HashMap::from([(
@@ -682,8 +722,6 @@ fn bounds_are_attached_to_root_components() {
 
     let element = doc.children.get(0).expect("Node must exist").get_inner();
 
-    println!("{:#?}", element);
-
     assert_eq!(
         element,
         &virt::html::node::Inner::Element(virt::html::Element {
@@ -691,10 +729,10 @@ fn bounds_are_attached_to_root_components() {
             tag_name: "div".to_string(),
             source_id: Some("80f4925f-14".to_string()),
             source_instance_ids: vec![],
-            attributes: vec![virt::html::Attribute {
+            attributes: vec![virt::html::ObjectProperty {
                 source_id: None,
                 name: "class".to_string(),
-                value: "_A-80f4925f-14".to_string()
+                value: Some("_A-80f4925f-14".to_string().into())
             }],
             metadata: Some(virt::html::NodeMedata {
                 visible: Some(true),
@@ -769,10 +807,10 @@ fn bounds_are_attached_to_root_instances() {
             tag_name: "div".to_string(),
             source_id: Some("80f4925f-17".to_string()),
             source_instance_ids: vec!["80f4925f-17".to_string()],
-            attributes: vec![virt::html::Attribute {
+            attributes: vec![virt::html::ObjectProperty {
                 source_id: None,
                 name: "class".to_string(),
-                value: "_A-80f4925f-1 _80f4925f-17".to_string()
+                value: Some("_A-80f4925f-1 _80f4925f-17".to_string().into())
             }],
             metadata: Some(virt::html::NodeMedata {
                 visible: Some(true),

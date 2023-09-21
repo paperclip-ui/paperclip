@@ -1,7 +1,6 @@
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 
-use crate::utils::{contains_script, get_node_name, COMPILER_NAME};
-use paperclip_proto::ast::all::*;
+use crate::utils::{contains_script, COMPILER_NAME};
 
 use super::context::Context;
 use anyhow::Result;

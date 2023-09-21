@@ -17,7 +17,7 @@ use paperclip_proto::ast::{
     pc as ast,
     shared::Reference,
 };
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 
 #[derive(Debug, Clone, Copy, Default)]
 struct Info {
@@ -195,15 +195,6 @@ fn get_node_script(node: &ast::Node) -> ast::Script {
     })
 }
 
-fn get_node_import(node: &ast::Node) -> (String, String) {
-    let script = get_node_script(node);
-    let script_name = script.get_name().unwrap_or("default".to_string());
-    let src = script.get_src().expect("src must exist");
-
-    let hash = format!("{:x}", crc32::checksum_ieee(src.as_bytes())).to_string();
-    (script_name.clone(), format!("_{}_{}", hash, script_name))
-}
-
 fn compile_nested_component(node: &ast::Node, doc: &ast::Document, context: &mut Context) {
     let component =
         GetExpr::get_owner_component(&node.get_id(), doc).expect("Component must exist");
@@ -248,18 +239,6 @@ fn compile_nested_component(node: &ast::Node, doc: &ast::Document, context: &mut
     context.end_block();
     context.add_buffer("\n");
     context.add_buffer("}));\n\n");
-}
-
-fn include_component_script(component: &ast::Component, context: &mut Context) {
-    let script = get_or_short!(component.get_script(COMPILER_NAME), ());
-    context.add_buffer(
-        format!(
-            "import {}Script from \"{}\";\n",
-            component.name,
-            script.get_src().expect("Src must exist")
-        )
-        .as_str(),
-    );
 }
 
 fn compile_imports(imports: &BTreeMap<String, Option<String>>, context: &mut Context) {

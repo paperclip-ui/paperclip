@@ -1640,3 +1640,29 @@ add_case! {
   ._A-80f4925f-4 { color: blue; }
   "#
 }
+
+add_case! {
+  scope_class_is_passed_down,
+  [
+  ("/entry.pc", r#"
+  component A {
+      render div root(class: class)
+  }
+  component B {
+      render A root(class: class)
+  }
+  component C {
+      render div {
+          B {
+              style {
+                  color: orange
+              }
+          }
+      }
+  }
+"#)
+  ],
+  r#"
+  ._B-root-80f4925f-8._C-80f4925f-14 { color: orange; } 
+"#
+}

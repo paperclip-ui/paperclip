@@ -118,7 +118,10 @@ export namespace ast {
       item.override ||
       item.slot ||
       item.style ||
-      item.text
+      item.text ||
+      item.switch ||
+      item.repeat ||
+      item.condition
     );
   };
 
@@ -1088,6 +1091,26 @@ export namespace ast {
     })
   );
 
+  export const flattenCondition = memoize(
+    (expr: Condition): Record<string, InnerExpressionInfo> =>
+      Object.assign(
+        {
+          [expr.id]: { expr, kind: ExprKind.Condition },
+        },
+        ...expr.body.map(flattenNode)
+      )
+  );
+
+  export const flattenRepeat = memoize(
+    (expr: Repeat): Record<string, InnerExpressionInfo> =>
+      Object.assign(
+        {
+          [expr.id]: { expr, kind: ExprKind.Repeat },
+        },
+        ...expr.body.map(flattenNode)
+      )
+  );
+
   export const flattenNode = (
     expr: Node
   ): Record<string, InnerExpressionInfo> => {
@@ -1108,6 +1131,13 @@ export namespace ast {
 
     if (expr.insert) {
       return flattenInsert(expr.insert);
+    }
+
+    if (expr.condition) {
+      return flattenCondition(expr.condition);
+    }
+    if (expr.repeat) {
+      return flattenRepeat(expr.repeat);
     }
 
     return {};

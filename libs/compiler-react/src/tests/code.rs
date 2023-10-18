@@ -931,3 +931,109 @@ add_case! {
   export { ABCD };
   "#
 }
+
+
+add_case! {
+  can_compile_condition_within_insert,
+  r#"
+  public component A {
+    render div {
+      insert children {
+        if show {
+          text "hello"
+        }
+      }
+    }
+  }
+  "#,
+  r#"
+  import "./entry.pc.css";
+import * as React from "react";
+
+const _A = (props, ref) => {
+    return React.createElement("div", {
+        "children": [
+        props.show ? [
+            "hello"
+        ] : null
+    ],
+        "key": "80f4925f-4",
+        "ref": ref
+    });
+};
+_A.displayName = "A";
+let A = React.memo(React.forwardRef(_A));
+export { A };
+  "#
+}
+
+
+add_case! {
+  can_compile_condition_within_slot,
+  r#"
+  public component A {
+    render div {
+      slot children {
+        if show {
+          text "hello"
+        }
+      }
+    }
+  }
+  "#,
+  r#"
+  import "./entry.pc.css";
+  import * as React from "react";
+  
+  const _A = (props, ref) => {
+      return React.createElement("div", {
+          "key": "80f4925f-4",
+          "ref": ref
+      }, 
+          props.children || [
+              props.show ? [
+                  "hello"
+              ] : null
+          ]
+      );
+  };
+  _A.displayName = "A";
+  let A = React.memo(React.forwardRef(_A));
+  export { A };
+  "#
+}
+
+
+add_case! {
+  can_compile_repeat_in_slot,
+  r#"
+  public component A {
+    render div {
+      insert children {
+        repeat stuff {
+          text "hello"
+        }
+      }
+    }
+  }
+  "#,
+  r#"
+  import "./entry.pc.css";
+import * as React from "react";
+
+const _A = (props, ref) => {
+    return React.createElement("div", {
+        "children": [
+        props.stuff && props.stuff.map(props_stuff => [
+            "hello"
+        ])
+    ],
+        "key": "80f4925f-4",
+        "ref": ref
+    });
+};
+_A.displayName = "A";
+let A = React.memo(React.forwardRef(_A));
+export { A };
+  "#
+}

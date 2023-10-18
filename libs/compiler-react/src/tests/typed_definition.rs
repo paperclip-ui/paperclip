@@ -445,3 +445,32 @@ add_case! {
   export const A: React.FC<BaseAProps>;
   "#
 }
+
+
+add_case! {
+  can_compile_condition_within_a_slot,
+  [
+      (
+          "/entry.pc",
+          r#"
+          public component A {
+            render div {
+                insert children {
+                  if show {
+                      text "something"
+                  }
+                }
+            }
+          }
+          "#,
+      )
+  ],
+  r#"
+  import * as React from "react";
+  export type BaseAProps = {
+      "ref"?: any,
+      "show"?: boolean,
+  };
+  export const A: React.FC<BaseAProps>;
+  "#
+}

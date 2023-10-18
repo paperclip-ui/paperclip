@@ -217,11 +217,13 @@ component FileResources {
 public component LeftSidebar {
     script(src: "./controller.tsx", target: "react", name: "LeftSidebar")
     render sidebar.Sidebar {
-        if showLayers {
-            Layers layers
-        }
-        if showFileNavigator {
-            FileNavigator fileNavigator
+        insert children {
+            if showLayers {
+                Layers layers
+            }
+            if showFileNavigator {
+                FileNavigator fileNavigator
+            }
         }
     }
 }

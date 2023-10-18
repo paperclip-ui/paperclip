@@ -508,6 +508,12 @@ fn parse_slot(context: &mut PCContext) -> Result<ast::Slot, err::ParserError> {
                 Some(Token::Word(b"text")) => {
                     Ok(ast::node::Inner::Text(parse_text(None, context)?).get_outer())
                 }
+                Some(Token::Word(b"if")) => {
+                    Ok(ast::node::Inner::Condition(parse_condition(context)?).get_outer())
+                }
+                Some(Token::Word(b"repeat")) => {
+                    Ok(ast::node::Inner::Repeat(parse_repeat(context)?).get_outer())
+                }
                 Some(Token::Word(_)) => {
                     Ok(ast::node::Inner::Element(parse_element(None, context)?).get_outer())
                 }
@@ -678,6 +684,12 @@ fn parse_insert(context: &mut PCContext) -> Result<ast::Insert, err::ParserError
             }
             Some(Token::Word(b"slot")) => {
                 Ok(ast::node::Inner::Slot(parse_slot(context)?).get_outer())
+            }
+            Some(Token::Word(b"if")) => {
+                Ok(ast::node::Inner::Condition(parse_condition(context)?).get_outer())
+            }
+            Some(Token::Word(b"repeat")) => {
+                Ok(ast::node::Inner::Repeat(parse_repeat(context)?).get_outer())
             }
             Some(Token::Word(_)) => {
                 Ok(ast::node::Inner::Element(parse_element(None, context)?).get_outer())

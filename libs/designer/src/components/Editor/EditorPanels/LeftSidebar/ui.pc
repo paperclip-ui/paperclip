@@ -193,6 +193,9 @@ public component FileNavigator {
     }
 }
 
+/**
+ * @bounds(x: 9, y: 584, width: 337, height: 768)
+*/
 component FileResources {
     render sidebar.SidebarPanel {
         sidebar.SidebarSection {
@@ -214,16 +217,15 @@ component FileResources {
     }
 }
 
+/**
+ * @bounds(x: 761, y: 197, width: 1024, height: 768)
+*/
 public component LeftSidebar {
     script(src: "./controller.tsx", target: "react", name: "LeftSidebar")
     render sidebar.Sidebar {
         insert children {
-            if showLayers {
-                Layers layers
-            }
-            if showFileNavigator {
-                FileNavigator fileNavigator
-            }
+            Layers layers
+            FileNavigator fileNavigator
         }
     }
 }
@@ -270,6 +272,9 @@ component LeftSidebarHeader {
     }
 }
 
+/**
+ * @bounds(x: 791, y: 742, width: 1024, height: 768)
+*/
 public component AddLayerButton {
     script(src: "./Layers/AddLayerButton.tsx", target: "react", name: "AddLayerButton")
     render etc.PlusButton(onClick: onClick, onBlur: onBlur)

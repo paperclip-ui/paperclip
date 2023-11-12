@@ -74,3 +74,5 @@
 
 - Bugs / enhancements
   - ability to resize sidebars or scrollbars
+
+### Jumbles

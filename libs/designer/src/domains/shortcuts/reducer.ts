@@ -73,6 +73,23 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
         newState.centerOnRedirect = true;
       });
       return state;
+
+    case ShortcutCommand.GoToRenderNodeComponent:
+      state = produce(state, (newState) => {
+        const { expr } = ast.getExprByVirtId(
+          getTargetExprId(state),
+          state.graph
+        );
+
+        const renderNode = ast.getComponentRenderNode(expr);
+        const renderNodeComponent = ast.getInstanceComponent(
+          renderNode.expr,
+          state.graph
+        );
+        setTargetExprId(newState, renderNodeComponent.id);
+        newState.centerOnRedirect = true;
+      });
+      return state;
     case ShortcutCommand.ShowHideUI:
       return produce(state, (newState) => {
         newState.showLeftSidebar = newState.showRightsidebar =

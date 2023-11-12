@@ -187,17 +187,6 @@ public component VariantPopup {
 }
 
 /**
- * @bounds(x: 2670, y: 398, width: 1048, height: 774)
-*/
-div {
-    style {
-        position: relative
-    }
-    imp.ColorPicker
-    text ""
-}
-
-/**
  * @bounds(x: 3841, y: 76, width: 1024, height: 768)
 */
 input.SuggestionMenu

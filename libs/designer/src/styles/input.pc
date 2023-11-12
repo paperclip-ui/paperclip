@@ -4,39 +4,6 @@ import "../components/Sidebar/sidebar.pc" as sidebar
 import "./menu.pc" as menu
 
 /**
- * @bounds(x: -717, y: -1108, width: 136, height: 28)
-*/
-public component MultiSelectItem {
-    render div {
-        style extends theme.fontDefault {
-            display: inline-block
-            color: var(theme.backgroundSelectedText)
-            background: var(theme.blue02)
-            border-radius: var(theme.roundedSM)
-            padding: 0px 6px
-            font-weight: 500
-            display: flex
-            height: 100%
-            align-items: center
-        }
-        slot children {
-            text "multi-select item"
-        }
-    }
-}
-
-/**
- * @bounds(x: -794, y: -983, width: 297, height: 50)
-*/
-public component MultiSelectTextInput {
-    render input(style: style, onChange: onChange, autoFocus: autoFocus) {
-        style extends theme.reset {
-            width: 0px
-        }
-    }
-}
-
-/**
  * @bounds(x: 884, y: -2489, width: 1024, height: 768)
 */
 public component Select {
@@ -215,35 +182,6 @@ public component Fields {
             gap: var(theme.space04)
         }
         slot children
-    }
-}
-
-/**
- * @bounds(x: -718, y: -1156, width: 188, height: 26)
-*/
-public component MultiSelect {
-    render div(tabIndex: "0", onClick: onClick, onFocus: onFocus, onChange: onChange, onBlur: onBlur) {
-        style extends theme.input, theme.fontDefault {
-            display: flex
-            cursor: pointer
-            gap: var(theme.space02)
-            padding: var(theme.space02)
-            flex-wrap: wrap
-        }
-        div {
-            style {
-                opacity: 0.5
-            }
-            slot placeholder
-        }
-        slot children {
-            MultiSelectItem {
-                text "item 1"
-            }
-            MultiSelectItem {
-                text "item 2"
-            }
-        }
     }
 }
 
@@ -703,4 +641,9 @@ div textInputPreview {
         }
     }
 }
+
+/**
+ * @bounds(x: -1298, y: -928, width: 1024, height: 768)
+*/
+text ""
 

@@ -1,3 +1,4 @@
+import "../components/MultiSelectInput/ui.pc" as module2
 import "./decl-suggestion.pc" as module1
 import "./token-input.pc" as module
 import "./color-picker.pc" as imp2
@@ -247,17 +248,17 @@ public component Preview {
                         text "Variant"
                     }
                     insert input {
-                        input.MultiSelect {
-                            input.MultiSelectItem {
+                        module2.MultiSelect {
+                            module2.MultiSelectItem {
                                 text "mobile"
                             }
-                            input.MultiSelectItem {
+                            module2.MultiSelectItem {
                                 text "dark"
                             }
-                            input.MultiSelectItem {
+                            module2.MultiSelectItem {
                                 text "another variant"
                             }
-                            input.MultiSelectTextInput
+                            module2.MultiSelectTextInput
                         }
                     }
                 }

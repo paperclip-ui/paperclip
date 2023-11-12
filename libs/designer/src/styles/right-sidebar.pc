@@ -1,4 +1,5 @@
 import "./menu.pc" as imp1
+import "../components/SuggestionMenu/ui.pc" as sugg
 import "./color-picker.pc" as imp
 import "../components/Sidebar/sidebar.pc" as sidebar
 import "./theme.pc" as theme
@@ -195,15 +196,13 @@ input.SuggestionMenu
  * @bounds(x: 3316, y: 1217, width: 627, height: 768)
 */
 imp1.Menu {
-    input.SuggestionMenuSection {
-        override {
-            variant isFirst
-        }
+    sugg.SuggestionMenuSection {
+
         insert children {
             text "soemthing"
         }
     }
-    input.SuggestionMenuItem {
+    sugg.SuggestionMenuItem {
         override {
             variant checked
         }

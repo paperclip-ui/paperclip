@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef } from "react";
-import * as styles from "@paperclip-ui/designer/src/styles/input.pc";
+import * as styles from "./ui.pc";
 import { Portal } from "../Portal";
 import cx from "classnames";
 import { usePositioner } from "../hooks/usePositioner";

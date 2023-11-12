@@ -4,6 +4,7 @@
 
   - re-organize frames
   - add names
+  - reduce # of components
 
 - GOALS
 

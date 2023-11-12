@@ -1,0 +1,23 @@
+
+/**
+ * @bounds(x: 799, y: -1205, width: 1024, height: 768)
+*/
+public component SuggestionContainer {
+    render div(onFocus: onFocus, onBlur: onBlur) {
+        style {
+            position: relative
+        }
+        div input {
+            slot input
+        }
+        div {
+            style {
+                position: absolute
+                width: 100%
+                top: calc(100% + var(theme.space03))
+            }
+            slot menu
+        }
+    }
+}
+

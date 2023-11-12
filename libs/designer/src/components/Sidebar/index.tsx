@@ -9,7 +9,8 @@ type SidebarContainerProps = {
   position: "left" | "right";
 };
 
-export default (Base: React.FC<styles.BaseSidebarContainerProps>) =>
+export const SidebarContainer =
+  (Base: React.FC<styles.BaseSidebarContainerProps>) =>
   ({ children, position }: SidebarContainerProps) => {
     const [width, setWidth] = useState(300);
 

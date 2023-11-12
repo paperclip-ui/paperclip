@@ -1,6 +1,8 @@
 use futures::executor::block_on;
+use paperclip_parser::core::parser_context::Options;
 use paperclip_proto::ast::graph_ext as graph;
 use paperclip_proto_ext::graph::{load::LoadableGraph, test_utils};
+
 use std::collections::HashMap;
 
 use crate::infer::Inferencer;
@@ -13,7 +15,7 @@ macro_rules! add_case {
             let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
             let mut graph = graph::Graph::new();
 
-            if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
+            if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs, Options::new(vec![]))) {
                 panic!("Unable to load");
             }
 

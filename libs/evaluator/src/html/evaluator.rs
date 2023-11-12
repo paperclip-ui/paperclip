@@ -2,13 +2,13 @@ pub use super::context::{DocumentContext, Options};
 use super::virt;
 use crate::core::errors;
 use crate::core::utils::get_style_namespace;
-use crate::core::virt as core_virt;
 use paperclip_common::fs::FileResolver;
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::docco as docco_ast;
 use paperclip_proto::ast::graph_ext::ComponentRefInfo;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::ast::pc as ast;
+use paperclip_proto::virt::html;
 use paperclip_proto::virt::html::Bounds;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
@@ -225,10 +225,10 @@ fn evaluate_slot<F: FileResolver>(
 ) {
     if let Some(data) = &context.data {
         if let Some(reference) = data.get(&slot.name) {
-            if let core_virt::value::Inner::Ary(children) = reference.get_inner() {
+            if let html::value::Inner::Ary(children) = reference.get_inner() {
                 for item in &children.items {
                     match item.get_inner() {
-                        core_virt::value::Inner::Node(node) => {
+                        html::value::Inner::Node(node) => {
                             fragment.push(node.clone());
                         }
                         _ => {}
@@ -259,10 +259,15 @@ fn evaluate_instance<F: FileResolver>(
         return;
     };
 
-    let mut data = create_instance_params(element, context);
+    let mut data = create_instance_params(element, context, is_component_root);
     add_inserts_to_data(&mut create_inserts(element, context), &mut data);
 
-    let mut scope = context.render_scopes.clone();
+    let mut scope = if is_component_root {
+        context.render_scopes.clone()
+    } else {
+        vec![]
+    };
+
     scope.push(get_style_namespace(
         &element.name,
         &element.id,
@@ -279,22 +284,22 @@ fn evaluate_instance<F: FileResolver>(
             .within_path(&instance_of.path)
             .within_component(&instance_of.expr)
             .set_render_scope(scope),
-        is_component_root,
+        true,
         true,
     );
 }
 
-fn add_inserts_to_data(inserts: &mut InsertsMap, data: &mut core_virt::Obj) {
+fn add_inserts_to_data(inserts: &mut InsertsMap, data: &mut html::Obj) {
     for (name, (source_id, children)) in inserts.drain() {
-        data.properties.push(core_virt::ObjectProperty {
+        data.properties.push(html::ObjectProperty {
             source_id: Some(source_id.to_string()),
             name: name.to_string(),
             value: Some(
-                core_virt::value::Inner::Ary(core_virt::Ary {
+                html::value::Inner::Ary(html::Ary {
                     source_id: Some(source_id.to_string()),
                     items: children
                         .iter()
-                        .map(|child| core_virt::value::Inner::Node(child.clone()).get_outer())
+                        .map(|child| html::value::Inner::Node(child.clone()).get_outer())
                         .collect(),
                 })
                 .get_outer(),
@@ -448,7 +453,15 @@ fn evaluate_node<F: FileResolver>(
             evaluate_slot(&slot, fragment, context);
         }
         ast::node::Inner::Text(child) => evaluate_text_node(child, fragment, metadata, context),
-        _ => {}
+        ast::node::Inner::Switch(child) => evaluate_switch(child, fragment, metadata, context),
+        ast::node::Inner::Repeat(child) => evaluate_repeat(child, fragment, metadata, context),
+        ast::node::Inner::Condition(child) => {
+            evaluate_condition(child, fragment, metadata, context)
+        }
+        ast::node::Inner::Override(_)
+        | ast::node::Inner::Style(_)
+        | ast::node::Inner::Script(_)
+        | ast::node::Inner::Insert(_) => {}
     }
 }
 
@@ -457,7 +470,7 @@ fn create_native_attributes<F: FileResolver>(
     context: &DocumentContext<F>,
     is_instance: bool,
     is_root: bool,
-) -> Vec<virt::Attribute> {
+) -> Vec<virt::ObjectProperty> {
     let mut attributes = BTreeMap::new();
 
     for param in &element.parameters {
@@ -471,23 +484,25 @@ fn create_native_attributes<F: FileResolver>(
 
 fn evaluate_native_attribute<F: FileResolver>(
     param: &ast::Parameter,
-    attributes: &mut BTreeMap<String, virt::Attribute>,
+    attributes: &mut BTreeMap<String, virt::ObjectProperty>,
     context: &DocumentContext<F>,
 ) {
     attributes.insert(
         param.name.to_string(),
-        virt::Attribute {
+        virt::ObjectProperty {
             source_id: Some(param.id.to_string()),
             name: param.name.to_string(),
-            value: create_attribute_value(param.value.as_ref().expect("Value must exist"), context)
-                .to_string(),
+            value: Some(create_attribute_value(
+                param.value.as_ref().expect("Value must exist"),
+                context,
+            )),
         },
     );
 }
 
 fn resolve_element_attributes<F: FileResolver>(
     element: &ast::Element,
-    attributes: &mut BTreeMap<String, virt::Attribute>,
+    attributes: &mut BTreeMap<String, virt::ObjectProperty>,
     context: &DocumentContext<F>,
     is_instance: bool,
     is_root: bool,
@@ -498,7 +513,7 @@ fn resolve_element_attributes<F: FileResolver>(
         let mut class_name =
             get_style_namespace(&element.name, &element.id, context.current_component);
 
-        if is_root {
+        if is_root || is_instance {
             if !context.render_scopes.is_empty() {
                 class_name = format!("{} {}", class_name, context.render_scopes.join(" "));
             }
@@ -507,14 +522,16 @@ fn resolve_element_attributes<F: FileResolver>(
         }
 
         if let Some(class) = attributes.get_mut("class") {
-            class.value = format!("{} {}", class_name, class.value);
+            if let Some(value) = &class.value {
+                class.value = Some(format!("{} {}", class_name, value.to_string()).into())
+            }
         } else {
             attributes.insert(
                 "class".to_string(),
-                virt::Attribute {
+                virt::ObjectProperty {
                     source_id: None,
                     name: "class".to_string(),
-                    value: class_name,
+                    value: Some(class_name.into()),
                 },
             );
         }
@@ -523,12 +540,16 @@ fn resolve_element_attributes<F: FileResolver>(
     // resolve assets
     if element.namespace == None {
         if element.tag_name.as_str() == "img" {
-            if let Some(src) = attributes.get_mut("src") {
-                if !src.value.starts_with("http://") && !src.value.starts_with("https://") {
-                    let ret = context
-                        .file_resolver
-                        .resolve_file(&context.path, &src.value);
-                    src.value = ret.unwrap();
+            if let Some(property) = attributes.get_mut("src") {
+                if let Some(src) = &property.value {
+                    let str_value = src.to_string();
+
+                    if !str_value.starts_with("http://") && !str_value.starts_with("https://") {
+                        let ret = context
+                            .file_resolver
+                            .resolve_file(&context.path, &str_value);
+                        property.value = Some(ret.unwrap().into());
+                    }
                 }
             }
         }
@@ -538,52 +559,71 @@ fn resolve_element_attributes<F: FileResolver>(
 fn create_instance_params<F: FileResolver>(
     element: &ast::Element,
     context: &DocumentContext<F>,
-) -> core_virt::Obj {
-    let mut properties = vec![];
+    _is_component_root: bool,
+) -> html::Obj {
+    let mut properties: BTreeMap<String, html::ObjectProperty> = BTreeMap::new();
 
     for param in &element.parameters {
         evaluate_instance_param(param, &mut properties, context);
     }
 
-    core_virt::Obj {
+    // let mut class_name = get_style_namespace(&element.name, &element.id, context.current_component);
+
+    // if let Some(class) = properties.get("class") {
+    //     if let Some(value) = &class.value {
+    //         class_name = format!("{} {}", class_name, value.to_string());
+    //     }
+    // }
+
+    // properties.insert(
+    //     "class".to_string(),
+    //     html::ObjectProperty {
+    //         source_id: None,
+    //         name: "class".to_string(),
+    //         value: Some(class_name.into()),
+    //     },
+    // );
+
+    html::Obj {
         source_id: Some(element.id.to_string()),
-        properties,
+        properties: properties.values().cloned().collect(),
     }
 }
 
 fn evaluate_instance_param<F: FileResolver>(
     param: &ast::Parameter,
-    properties: &mut Vec<core_virt::ObjectProperty>,
+    properties: &mut BTreeMap<String, html::ObjectProperty>,
     context: &DocumentContext<F>,
 ) {
-    properties.push(core_virt::ObjectProperty {
-        source_id: Some(param.id.to_string()),
-        name: param.name.to_string(),
-        value: Some(create_attribute_value(
-            param.value.as_ref().expect("Value must exist"),
-            context,
-        )),
-    });
+    properties.insert(
+        param.name.to_string(),
+        html::ObjectProperty {
+            source_id: Some(param.id.to_string()),
+            name: param.name.to_string(),
+            value: Some(create_attribute_value(
+                param.value.as_ref().expect("Value must exist"),
+                context,
+            )),
+        },
+    );
 }
 
 fn create_attribute_value<F: FileResolver>(
     value: &ast::SimpleExpression,
     context: &DocumentContext<F>,
-) -> core_virt::Value {
+) -> html::Value {
     match value.get_inner() {
-        ast::simple_expression::Inner::Str(value) => core_virt::value::Inner::Str(core_virt::Str {
+        ast::simple_expression::Inner::Str(value) => html::value::Inner::Str(html::Str {
             value: value.value.to_string(),
             source_id: Some(value.id.to_string()),
         })
         .get_outer(),
-        ast::simple_expression::Inner::Bool(value) => {
-            core_virt::value::Inner::Bool(core_virt::Bool {
-                value: value.value,
-                source_id: Some(value.id.to_string()),
-            })
-            .get_outer()
-        }
-        ast::simple_expression::Inner::Num(value) => core_virt::value::Inner::Num(core_virt::Num {
+        ast::simple_expression::Inner::Bool(value) => html::value::Inner::Bool(html::Bool {
+            value: value.value,
+            source_id: Some(value.id.to_string()),
+        })
+        .get_outer(),
+        ast::simple_expression::Inner::Num(value) => html::value::Inner::Num(html::Num {
             value: value.value,
             source_id: Some(value.id.to_string()),
         })
@@ -595,16 +635,96 @@ fn create_attribute_value<F: FileResolver>(
                 }
             }
 
-            core_virt::value::Inner::Undef(core_virt::Undefined {
+            html::value::Inner::Undef(html::Undefined {
                 source_id: Some(value.id.to_string()),
             })
             .get_outer()
         }
-        ast::simple_expression::Inner::Ary(value) => core_virt::value::Inner::Ary(core_virt::Ary {
+        ast::simple_expression::Inner::Ary(value) => html::value::Inner::Ary(html::Ary {
             items: vec![],
             source_id: Some(value.id.to_string()),
         })
         .get_outer(),
+    }
+}
+
+fn evaluate_switch<F: FileResolver>(
+    expr: &ast::Switch,
+    fragment: &mut Vec<virt::Node>,
+    metadata: &Option<virt::NodeMedata>,
+    context: &mut DocumentContext<F>,
+) {
+    let value = context
+        .data
+        .as_ref()
+        .and_then(|data| data.get(&expr.property))
+        .and_then(|value| {
+            if let html::value::Inner::Str(value) = &value.get_inner() {
+                Some(&value.value)
+            } else {
+                None
+            }
+        });
+
+    let case = if let Some(value) = value {
+        expr.body.iter().find(|item| {
+            if let ast::switch_item::Inner::Case(case) = &item.get_inner() {
+                &case.condition == value
+            } else {
+                false
+            }
+        })
+    } else {
+        None
+    };
+
+    let case = case.or(expr
+        .body
+        .iter()
+        .find(|item| matches!(item.get_inner(), ast::switch_item::Inner::Default(_))));
+
+    if let Some(case) = case {
+        match case.get_inner() {
+            ast::switch_item::Inner::Case(case) => {
+                for item in &case.body {
+                    evaluate_node(item, fragment, metadata, context, false, false)
+                }
+            }
+            ast::switch_item::Inner::Default(case) => {
+                for item in &case.body {
+                    evaluate_node(item, fragment, metadata, context, false, false)
+                }
+            }
+        }
+    }
+}
+
+fn evaluate_condition<F: FileResolver>(
+    expr: &ast::Condition,
+    fragment: &mut Vec<virt::Node>,
+    metadata: &Option<virt::NodeMedata>,
+    context: &mut DocumentContext<F>,
+) {
+    let value = context
+        .data
+        .as_ref()
+        .and_then(|data| data.get(&expr.property))
+        .and_then(|value| if value.is_truthy() { Some(()) } else { None });
+
+    if value.is_some() {
+        for item in &expr.body {
+            evaluate_node(item, fragment, metadata, context, false, false)
+        }
+    }
+}
+fn evaluate_repeat<F: FileResolver>(
+    expr: &ast::Repeat,
+    fragment: &mut Vec<virt::Node>,
+    metadata: &Option<virt::NodeMedata>,
+    context: &mut DocumentContext<F>,
+) {
+    for item in &expr.body {
+        evaluate_node(item, fragment, metadata, context, false, false)
     }
 }
 
@@ -626,10 +746,10 @@ fn evaluate_text_node<F: FileResolver>(
             tag_name: "span".to_string(),
             source_id: Some(text_node.id.to_string()),
             source_instance_ids: context.instance_ids.clone(),
-            attributes: vec![virt::Attribute {
+            attributes: vec![virt::ObjectProperty {
                 source_id: None,
                 name: "class".to_string(),
-                value: class_name.to_string(),
+                value: Some(class_name.to_string().into()),
             }],
             metadata: metadata.clone(),
             children: vec![virt::node::Inner::TextNode(virt::TextNode {

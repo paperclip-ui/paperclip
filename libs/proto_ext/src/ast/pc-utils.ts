@@ -26,6 +26,8 @@ import {
   TriggerBodyItem,
   TriggerBodyItemCombo,
   Variant,
+  Condition,
+  Repeat,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { Bool, Str } from "@paperclip-ui/proto/lib/generated/ast/base";
 import { ComputedStyleMap, serializeDeclaration } from "./serialize";
@@ -51,11 +53,13 @@ export namespace ast {
     TextNode,
     Trigger,
     TriggerCombo,
+    Condition,
     Slot,
     Insert,
     Override,
     Str,
     Bool,
+    Repeat,
     Style,
     Declaration,
     Arithmetic,
@@ -76,6 +80,8 @@ export namespace ast {
     | BaseExprInfo<Element, ExprKind.Element>
     | BaseExprInfo<Variant, ExprKind.Variant>
     | BaseExprInfo<Document, ExprKind.Document>
+    | BaseExprInfo<Condition, ExprKind.Condition>
+    | BaseExprInfo<Repeat, ExprKind.Repeat>
     | BaseExprInfo<Render, ExprKind.Render>
     | BaseExprInfo<any, ExprKind.DocComment>
     | BaseExprInfo<Override, ExprKind.Override>
@@ -112,7 +118,10 @@ export namespace ast {
       item.override ||
       item.slot ||
       item.style ||
-      item.text
+      item.text ||
+      item.switch ||
+      item.repeat ||
+      item.condition
     );
   };
 
@@ -248,6 +257,18 @@ export namespace ast {
       return {
         expr: expr as TriggerBodyItemCombo,
         kind: ExprKind.TriggerCombo,
+      };
+    }
+    if ((expr as Node).condition) {
+      return {
+        expr: (expr as Node).condition,
+        kind: ExprKind.Condition,
+      };
+    }
+    if ((expr as Node).repeat) {
+      return {
+        expr: (expr as Node).repeat,
+        kind: ExprKind.Repeat,
       };
     }
 
@@ -1070,6 +1091,26 @@ export namespace ast {
     })
   );
 
+  export const flattenCondition = memoize(
+    (expr: Condition): Record<string, InnerExpressionInfo> =>
+      Object.assign(
+        {
+          [expr.id]: { expr, kind: ExprKind.Condition },
+        },
+        ...expr.body.map(flattenNode)
+      )
+  );
+
+  export const flattenRepeat = memoize(
+    (expr: Repeat): Record<string, InnerExpressionInfo> =>
+      Object.assign(
+        {
+          [expr.id]: { expr, kind: ExprKind.Repeat },
+        },
+        ...expr.body.map(flattenNode)
+      )
+  );
+
   export const flattenNode = (
     expr: Node
   ): Record<string, InnerExpressionInfo> => {
@@ -1090,6 +1131,13 @@ export namespace ast {
 
     if (expr.insert) {
       return flattenInsert(expr.insert);
+    }
+
+    if (expr.condition) {
+      return flattenCondition(expr.condition);
+    }
+    if (expr.repeat) {
+      return flattenRepeat(expr.repeat);
     }
 
     return {};

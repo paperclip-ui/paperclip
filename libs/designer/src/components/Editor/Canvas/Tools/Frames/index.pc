@@ -2,7 +2,6 @@
 /**
  * @bounds(width: 1024, height: 768, x: 1457, y: -176)
  */
-
 public component FramesContainer {
     render div(style: style, data-label: "Frames container", class: class) {
         style {
@@ -17,7 +16,6 @@ public component FramesContainer {
 /**
  * @bounds(width: 1024, height: 768, x: 668, y: 1081)
  */
-
 public component Frame {
     render div(style: style, class: class) {
         style {
@@ -30,7 +28,6 @@ public component Frame {
 /**
  * @bounds(width: 1024, height: 768, x: 91, y: -1397)
  */
-
 public component FrameTitle {
     render div(onDoubleClick: onDoubleClick, style: style, onClick: onClick, onMouseUp: onMouseUp) {
         style {

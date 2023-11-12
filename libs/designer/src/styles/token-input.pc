@@ -20,7 +20,6 @@ public style tokenPreview {
 /**
  * @bounds(x: 1146, y: 638, width: 310, height: 24)
 */
-
 public component BoxShadowTokenInputPreview {
     render TokenInput {
         Token(class: "number") {
@@ -75,7 +74,6 @@ public component BoxShadowTokenInputPreview {
 /**
  * @bounds(x: 699, y: 715, width: 325, height: 53)
 */
-
 public component BackgroundTokenInputPreview {
     render TokenInput {
         ColorTokenPreview(style: "--color: linear-gradient(#F60, #000)")
@@ -105,7 +103,6 @@ public component BackgroundTokenInputPreview {
 /**
  * @bounds(x: 643, y: 599, width: 381, height: 169)
 */
-
 public component ColorTokenPreview {
     render div(style: style) {
         style extends tokenPreview {
@@ -122,7 +119,6 @@ public component ColorTokenPreview {
 /**
  * @bounds(x: 1147, y: 478, width: 80, height: 57)
 */
-
 public component TokenInput {
     variant active trigger {
         ".active"
@@ -150,7 +146,6 @@ public component TokenInput {
 /**
  * @bounds(x: 1159, y: 442, width: 91, height: 20)
 */
-
 public component Token {
     variant active trigger {
         ":active"
@@ -194,7 +189,6 @@ public component Token {
 /**
  * @bounds(x: 341, y: 410, width: 273, height: 175)
 */
-
 div preview {
     style {
         position: relative

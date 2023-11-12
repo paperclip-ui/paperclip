@@ -66,7 +66,7 @@ impl<IO: ProjectIO> Project<IO> {
         self.graph
             .lock()
             .unwrap()
-            .load_files::<IO>(files, &self.io)
+            .load_files::<IO>(files, &self.io, self.get_config().into_parser_options())
             .await?;
         Ok(())
     }
@@ -75,7 +75,7 @@ impl<IO: ProjectIO> Project<IO> {
         self.graph
             .lock()
             .unwrap()
-            .load::<IO>(file, &self.io)
+            .load::<IO>(file, &self.io, self.get_config().into_parser_options())
             .await?;
 
         Ok(())
@@ -97,7 +97,9 @@ impl<IO: ProjectIO> Project<IO> {
 
     pub async fn compile_files(&self, files: &Vec<String>) -> Result<HashMap<String, String>> {
         let mut graph = self.graph.lock().unwrap();
-        graph.load_files::<IO>(files, &self.io).await?;
+        graph
+            .load_files::<IO>(files, &self.io, self.get_config().into_parser_options())
+            .await?;
         self.compiler.compile_files(files, &graph).await
     }
 }

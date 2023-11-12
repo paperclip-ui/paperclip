@@ -1,13 +1,9 @@
-import React, { memo, useEffect, useState } from "react";
-import * as styles from "@paperclip-ui/designer/src/styles/left-sidebar.pc";
-import * as sidebarStyles from "@paperclip-ui/designer/src/components/Sidebar/sidebar.pc";
+import React, { memo } from "react";
+import * as styles from "../ui.pc";
 import { useSelector } from "@paperclip-ui/common";
 import {
-  DesignerState,
-  getComponentSlots,
   getCurrentDependency,
   getCurrentFilePath,
-  getExpandedVirtIds,
   getGraph,
 } from "@paperclip-ui/designer/src/state";
 import {
@@ -24,39 +20,50 @@ import {
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import cx from "classnames";
-import { useHistory } from "@paperclip-ui/designer/src/domains/history/react";
 import { Atom } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { Leaf } from "./Leaf";
-import { AddLayerButton } from "./AddLayerButton";
+import { BaseLayersProps } from "../ui.pc";
 
-export const Layers = () => {
-  const { document, title } = useLayers();
+export const Layers = (Base: React.FC<BaseLayersProps>) =>
+  function Layers() {
+    const { document, title } = useLayers();
 
-  if (!document) {
-    return null;
-  }
+    if (!document) {
+      return null;
+    }
 
-  return (
-    <sidebarStyles.SidebarPanel>
-      <styles.LeftSidebarHeader title={title} />
-      <sidebarStyles.SidebarSection class="fill">
-        <sidebarStyles.SidebarPanelHeader>
-          Entities
-          <AddLayerButton />
-        </sidebarStyles.SidebarPanelHeader>
-        <styles.Layers>
-          {document.body.map((item) => (
-            <DocumentBodyItemLeaf
-              key={ast.getDocumentBodyInner(item).id}
-              depth={1}
-              expr={item}
-            />
-          ))}
-        </styles.Layers>
-      </sidebarStyles.SidebarSection>
-    </sidebarStyles.SidebarPanel>
-  );
-};
+    return (
+      <Base
+        sidebarProps={{}}
+        title={title}
+        entitiesProps={{}}
+        entitiesHeaderProps={{}}
+        headerProps={{}}
+        layers={document.body.map((item) => (
+          <DocumentBodyItemLeaf
+            key={ast.getDocumentBodyInner(item).id}
+            depth={1}
+            expr={item}
+          />
+        ))}
+      />
+    );
+
+    // return (
+    //   <sidebarStyles.SidebarPanel>
+    //     <styles.LeftSidebarHeader title={title} />
+    //     <sidebarStyles.SidebarSection class="fill">
+    //       <sidebarStyles.SidebarPanelHeader>
+    //         Entities
+    //         <AddLayerButton />
+    //       </sidebarStyles.SidebarPanelHeader>
+    //       <styles.Layers>
+    //         {}
+    //       </styles.Layers>
+    //     </sidebarStyles.SidebarSection>
+    //   </sidebarStyles.SidebarPanel>
+    // );
+  };
 
 const useLayers = () => {
   const currentFile = useSelector(getCurrentFilePath);

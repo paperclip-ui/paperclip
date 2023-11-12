@@ -70,9 +70,25 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
           state.graph
         );
         setTargetExprId(newState, getSelectedExprIdSourceId(state));
+        newState.centerOnRedirect = true;
       });
+      return state;
 
-      state = maybeCenterCanvas(state, true);
+    case ShortcutCommand.GoToRenderNodeComponent:
+      state = produce(state, (newState) => {
+        const { expr } = ast.getExprByVirtId(
+          getTargetExprId(state),
+          state.graph
+        );
+
+        const renderNode = ast.getComponentRenderNode(expr);
+        const renderNodeComponent = ast.getInstanceComponent(
+          renderNode.expr,
+          state.graph
+        );
+        setTargetExprId(newState, renderNodeComponent.id);
+        newState.centerOnRedirect = true;
+      });
       return state;
     case ShortcutCommand.ShowHideUI:
       return produce(state, (newState) => {

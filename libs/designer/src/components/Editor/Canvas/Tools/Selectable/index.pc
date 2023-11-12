@@ -119,7 +119,6 @@ public component Overlay {
 /**
  * @bounds(x: 26, y: -2, width: 476, height: 505)
 */
-
 div {
     div {
         style extends theme.centered {

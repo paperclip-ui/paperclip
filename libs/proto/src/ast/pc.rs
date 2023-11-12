@@ -33,6 +33,7 @@ add_inner_wrapper!(component_body_item::Inner, ComponentBodyItem);
 add_inner_wrapper!(document_body_item::Inner, DocumentBodyItem);
 add_inner_wrapper!(override_body_item::Inner, OverrideBodyItem);
 add_inner_wrapper!(trigger_body_item::Inner, TriggerBodyItem);
+add_inner_wrapper!(switch_item::Inner, SwitchItem);
 /**
  */
 
@@ -174,6 +175,18 @@ impl Script {
 
         None
     }
+    pub fn get_name(&self) -> Option<String> {
+        for param in &self.parameters {
+            if param.name == "name" {
+                match &param.value.as_ref().unwrap().inner.clone().unwrap() {
+                    simple_expression::Inner::Str(value) => return Some(value.value.clone()),
+                    _ => {}
+                }
+            }
+        }
+
+        None
+    }
 }
 
 /**
@@ -189,7 +202,12 @@ impl Element {
             .filter(|child| {
                 matches!(
                     child.get_inner(),
-                    node::Inner::Text(_) | node::Inner::Element(_) | node::Inner::Slot(_)
+                    node::Inner::Text(_)
+                        | node::Inner::Element(_)
+                        | node::Inner::Slot(_)
+                        | node::Inner::Repeat(_)
+                        | node::Inner::Switch(_)
+                        | node::Inner::Condition(_)
                 )
             })
             .collect()
@@ -222,7 +240,12 @@ impl Node {
             node::Inner::Text(text) => text.name.clone(),
             node::Inner::Insert(insert) => Some(insert.name.clone()),
             node::Inner::Slot(slot) => Some(slot.name.clone()),
-            node::Inner::Style(_) | node::Inner::Override(_) => None,
+            node::Inner::Style(_)
+            | node::Inner::Override(_)
+            | node::Inner::Repeat(_)
+            | node::Inner::Script(_)
+            | node::Inner::Switch(_)
+            | node::Inner::Condition(_) => None,
         }
     }
 }
@@ -277,6 +300,16 @@ impl TryFrom<Node> for DocumentBodyItem {
             node::Inner::Text(text) => {
                 Ok(document_body_item::Inner::Text(text.clone()).get_outer())
             }
+            _ => Err(()),
+        }
+    }
+}
+
+impl TryFrom<&Node> for Script {
+    type Error = ();
+    fn try_from(value: &Node) -> Result<Self, Self::Error> {
+        match value.get_inner() {
+            node::Inner::Script(script) => Ok(script.clone()),
             _ => Err(()),
         }
     }

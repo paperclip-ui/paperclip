@@ -348,7 +348,11 @@ visitable! {
     pc::node::Inner::Style,
     pc::node::Inner::Text,
     pc::node::Inner::Override,
-    pc::node::Inner::Slot
+    pc::node::Inner::Slot,
+    pc::node::Inner::Script,
+    pc::node::Inner::Condition,
+    pc::node::Inner::Switch,
+    pc::node::Inner::Repeat
       )
   }, {
     visit_enum!(self.get_inner_mut(), visitor,
@@ -357,8 +361,74 @@ visitable! {
     pc::node::Inner::Style,
     pc::node::Inner::Text,
     pc::node::Inner::Override,
-    pc::node::Inner::Slot
+    pc::node::Inner::Script,
+    pc::node::Inner::Slot,
+    pc::node::Inner::Condition,
+    pc::node::Inner::Switch,
+    pc::node::Inner::Repeat
+    )
+  }),
+
+  (Box<pc::Node>, visit_box_node, (self, visitor) {
+    visit_enum!(self.get_inner(), visitor,
+    pc::node::Inner::Element,
+    pc::node::Inner::Insert,
+    pc::node::Inner::Style,
+    pc::node::Inner::Script,
+    pc::node::Inner::Text,
+    pc::node::Inner::Override,
+    pc::node::Inner::Slot,
+    pc::node::Inner::Condition,
+    pc::node::Inner::Switch,
+    pc::node::Inner::Repeat
       )
+  }, {
+    visit_enum!(self.get_inner_mut(), visitor,
+    pc::node::Inner::Element,
+    pc::node::Inner::Insert,
+    pc::node::Inner::Style,
+    pc::node::Inner::Script,
+    pc::node::Inner::Text,
+    pc::node::Inner::Override,
+    pc::node::Inner::Slot,
+    pc::node::Inner::Condition,
+    pc::node::Inner::Switch,
+    pc::node::Inner::Repeat
+    )
+  }),
+  (pc::Condition, visit_condition, (self, visitor) {
+      visit_each!(&self.body, visitor)
+
+  }, {
+      visit_each!(&mut self.body, visitor)
+  }),
+  (pc::Switch, visit_switch, (self, visitor) {
+      visit_each!(&self.body, visitor)
+
+  }, {
+      visit_each!(&mut self.body, visitor)
+  }),
+  (pc::SwitchItem, visit_switch_item, (self, visitor) {
+      visit_enum!(self.get_inner(), visitor, pc::switch_item::Inner::Case, pc::switch_item::Inner::Default)
+
+  }, {
+      visit_enum!(self.get_inner_mut(), visitor, pc::switch_item::Inner::Case, pc::switch_item::Inner::Default)
+  }),
+  (pc::SwitchCase, visit_switch_case, (self, visitor) {
+    visit_each!(&self.body, visitor)
+
+  }, {
+      visit_each!(&mut self.body, visitor)
+  }),
+  (pc::SwitchDefault, visit_switch_default, (self, visitor) {
+      visit_each!(&self.body, visitor)
+  }, {
+      visit_each!(&mut self.body, visitor)
+  }),
+  (pc::Repeat, visit_repeat, (self, visitor) {
+      visit_each!(&self.body, visitor)
+  }, {
+      visit_each!(&mut self.body, visitor)
   }),
   (pc::Element, visit_element, (self, visitor) {
     if let VisitorResult::Return(ret) = visit_each!(&self.parameters, visitor) {

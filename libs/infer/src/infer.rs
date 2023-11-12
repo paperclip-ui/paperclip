@@ -1,24 +1,19 @@
 use anyhow::{Error, Result};
 use lazy_static::lazy_static;
 use paperclip_proto::ast;
-use std::cell::RefCell;
+
 use std::collections::HashMap;
-use std::{collections::BTreeMap, rc::Rc};
 
 use crate::context::InferContext;
 use crate::types;
 use paperclip_common::get_or_short;
 use paperclip_proto::ast::graph_ext::{Dependency, Graph};
 
-pub struct Inferencer {
-    component_cache: Rc<RefCell<BTreeMap<String, types::Component>>>,
-}
+pub struct Inferencer {}
 
 impl Inferencer {
     pub fn new() -> Self {
-        Self {
-            component_cache: Rc::new(RefCell::new(BTreeMap::new())),
-        }
+        Self {}
     }
     pub fn infer_dependency(&self, path: &str, graph: &Graph) -> Result<types::Map> {
         let dep = get_or_short!(
@@ -43,27 +38,30 @@ impl Inferencer {
             Err(Error::msg("Dependency doesn't exist"))
         );
 
-        let cache_key = format!("{}-{}", dep.hash, component.name);
-
-        if let Some(inference) = self.component_cache.borrow().get(&cache_key) {
-            return Ok(inference.clone());
-        }
-
         let mut context = InferContext::new(dep, graph, &self);
 
         infer_component(component, &mut context)?;
 
-        self.component_cache.borrow_mut().insert(
-            cache_key.to_string(),
-            context.scope.borrow().root_type.into_component()?,
+        let result = context.scope.borrow().root_type.into_component();
+        result
+    }
+
+    pub fn infer_node(
+        &self,
+        node: &ast::pc::Node,
+        path: &str,
+        graph: &Graph,
+    ) -> Result<types::Map> {
+        let dep = get_or_short!(
+            graph.dependencies.get(path),
+            Err(Error::msg("Dependency doesn't exist"))
         );
 
-        Ok(self
-            .component_cache
-            .borrow()
-            .get(&cache_key)
-            .unwrap()
-            .clone())
+        let mut context = InferContext::new(dep, graph, &self);
+        infer_node(node, &mut context)?;
+
+        let result = context.scope.borrow().root_type.into_map();
+        result
     }
 }
 
@@ -112,7 +110,7 @@ fn infer_render_node(node: &ast::pc::node::Inner, context: &mut InferContext) ->
 fn infer_element(expr: &ast::pc::Element, context: &mut InferContext) -> Result<()> {
     if let Some(name) = &expr.name {
         let el_type = types::Element {
-            id: name.to_string(),
+            id: expr.id.to_string(),
             tag_name: expr.tag_name.to_string(),
             namespace: expr.namespace.clone(),
         };
@@ -146,6 +144,60 @@ fn infer_insert(expr: &ast::pc::Insert, context: &mut InferContext) -> Result<()
     Ok(())
 }
 
+fn infer_switch(expr: &ast::pc::Switch, context: &mut InferContext) -> Result<()> {
+    context.step_in(&expr.property, true);
+    for child in &expr.body {
+        match child.get_inner() {
+            ast::pc::switch_item::Inner::Case(case) => infer_switch_case(case, context)?,
+            ast::pc::switch_item::Inner::Default(default) => {
+                infer_switch_default(default, context)?
+            }
+        }
+    }
+    context.step_out();
+    Ok(())
+}
+
+fn infer_switch_case(expr: &ast::pc::SwitchCase, context: &mut InferContext) -> Result<()> {
+    context.set_scope_type(
+        context
+            .get_scope_type()
+            .add_enum(types::Type::ExactString(expr.condition.clone())),
+    );
+
+    for child in &expr.body {
+        infer_node(child, context)?;
+    }
+    Ok(())
+}
+
+fn infer_switch_default(expr: &ast::pc::SwitchDefault, context: &mut InferContext) -> Result<()> {
+    for child in &expr.body {
+        infer_node(child, context)?;
+    }
+    Ok(())
+}
+
+fn infer_repeat(expr: &ast::pc::Repeat, context: &mut InferContext) -> Result<()> {
+    context.step_in(&expr.property, true);
+    context.set_scope_type(types::Type::Array(Box::new(types::Type::Unknown)));
+    for child in &expr.body {
+        infer_node(child, context)?;
+    }
+    context.step_out();
+    Ok(())
+}
+fn infer_condition(expr: &ast::pc::Condition, context: &mut InferContext) -> Result<()> {
+    context.step_in(&expr.property, true);
+    context.set_scope_type(types::Type::Boolean);
+    context.step_out();
+
+    for child in &expr.body {
+        infer_node(child, context)?;
+    }
+    Ok(())
+}
+
 fn infer_node(expr: &ast::pc::Node, context: &mut InferContext) -> Result<()> {
     match expr.get_inner() {
         ast::pc::node::Inner::Element(child) => {
@@ -156,6 +208,15 @@ fn infer_node(expr: &ast::pc::Node, context: &mut InferContext) -> Result<()> {
         }
         ast::pc::node::Inner::Insert(child) => {
             infer_insert(child, context)?;
+        }
+        ast::pc::node::Inner::Switch(child) => {
+            infer_switch(child, context)?;
+        }
+        ast::pc::node::Inner::Condition(child) => {
+            infer_condition(child, context)?;
+        }
+        ast::pc::node::Inner::Repeat(child) => {
+            infer_repeat(child, context)?;
         }
         _ => {}
     }

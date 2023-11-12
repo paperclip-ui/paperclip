@@ -6,7 +6,6 @@ import "./menu.pc" as menu
 /**
  * @bounds(x: -717, y: -1108, width: 136, height: 28)
 */
-
 public component MultiSelectItem {
     render div {
         style extends theme.fontDefault {
@@ -27,21 +26,8 @@ public component MultiSelectItem {
 }
 
 /**
- * @bounds(x: -794, y: -983, width: 297, height: 50)
-*/
-
-public component MultiSelectTextInput {
-    render input(style: style, onChange: onChange, autoFocus: autoFocus) {
-        style extends theme.reset {
-            width: 0px
-        }
-    }
-}
-
-/**
  * @bounds(x: 884, y: -2489, width: 1024, height: 768)
 */
-
 public component Select {
     render div(onClick: onClick, tabIndex: "-1") {
         style {
@@ -73,7 +59,6 @@ public component Select {
 /**
  * @bounds(x: 799, y: -1205, width: 1024, height: 768)
 */
-
 public component SuggestionContainer {
     render div(onFocus: onFocus, onBlur: onBlur) {
         style {
@@ -96,7 +81,6 @@ public component SuggestionContainer {
 /**
  * @bounds(x: 1259, y: -557, width: 1024, height: 768)
 */
-
 public component SuggestionMenu {
     render menu.Menu(style: style) {
         slot children
@@ -106,7 +90,6 @@ public component SuggestionMenu {
 /**
  * @bounds(x: -1053, y: -2729, width: 492, height: 91)
 */
-
 public component SuggestionMenuHeader {
     render div {
         style {
@@ -119,7 +102,6 @@ public component SuggestionMenuHeader {
 /**
  * @bounds(x: -1464, y: -326, width: 236, height: 31)
 */
-
 public component SuggestionMenuSearch {
     render TextInput(placeholder: placeholder, value: value) {
         override root {
@@ -133,7 +115,6 @@ public component SuggestionMenuSearch {
 /**
  * @bounds(x: -1092, y: -747, width: 433, height: 64)
 */
-
 public component SuggestionMenuItem {
     variant preselected trigger {
         ":hover"
@@ -162,7 +143,6 @@ public component SuggestionMenuItem {
 /**
  * @bounds(x: -1106, y: -341, width: 367, height: 55)
 */
-
 public component TextInput {
     variant medium trigger {
         ".medium"
@@ -192,7 +172,6 @@ public component TextInput {
 /**
  * @bounds(x: -1471, y: -211, width: 1024, height: 768)
 */
-
 public component ColorInput {
     render div root {
         style extends theme.input {
@@ -217,7 +196,6 @@ public component ColorInput {
 /**
  * @bounds(x: -1493, y: 393, width: 1024, height: 768)
 */
-
 public component Fields {
     render div {
         style {
@@ -232,7 +210,6 @@ public component Fields {
 /**
  * @bounds(x: -718, y: -1156, width: 188, height: 26)
 */
-
 public component MultiSelect {
     render div(tabIndex: "0", onClick: onClick, onFocus: onFocus, onChange: onChange, onBlur: onBlur) {
         style extends theme.input, theme.fontDefault {
@@ -262,7 +239,6 @@ public component MultiSelect {
 /**
  * @bounds(x: 1293, y: 111, width: 1024, height: 768)
 */
-
 public component TokenInput {
     render span {
         style variant isFunction {
@@ -317,7 +293,6 @@ public component Token {
 /**
  * @bounds(x: 1015, y: 858, width: 557, height: 114)
 */
-
 public component Field {
     render div(onFocus: onFocus, onBlur: onBlur) {
         style {
@@ -581,7 +556,6 @@ component TextInputAutoSuggest {
 /**
  * @bounds(x: -359, y: -1155, width: 915, height: 761)
 */
-
 div {
     style extends theme.fontDefault {
         padding: 30px
@@ -646,7 +620,6 @@ public component ListItemInput {
 /**
  * @bounds(x: -343, y: -1559, width: 249, height: 123)
 */
-
 public component RadioInput {
     variant on trigger {
         ".on"
@@ -686,7 +659,6 @@ public component RadioInput {
 /**
  * @bounds(x: -1149, y: -557, width: 293, height: 164)
 */
-
 div textInputPreview {
     style {
         font-family: var(theme.defaultFontFamily)
@@ -720,4 +692,10 @@ div textInputPreview {
         }
     }
 }
+
+/**
+ * @bounds(x: -1298, y: -928, width: 1024, height: 768)
+*/
+
+text ""
 

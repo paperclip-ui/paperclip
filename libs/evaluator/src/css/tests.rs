@@ -5,6 +5,7 @@ use anyhow::Result;
 use futures::executor::block_on;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::str_utils::strip_extra_ws;
+use paperclip_parser::core::parser_context::Options;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto_ext::graph::{load::LoadableGraph, test_utils};
 use std::collections::HashMap;
@@ -24,7 +25,15 @@ macro_rules! add_case {
             let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
             let mut graph = Graph::new();
 
-            if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
+            if let Err(_err) = block_on(graph.load(
+                "/entry.pc",
+                &mock_fs,
+                Options::new(vec![
+                    "repeat".to_string(),
+                    "switch".to_string(),
+                    "condition".to_string(),
+                ]),
+            )) {
                 panic!("Unable to load");
             }
             let resolver = PCFileResolver::new(mock_fs.clone(), MockResolver {}, None);
@@ -94,9 +103,9 @@ add_case! {
     "#,
   )],
   r#"
-  :root { 
-    --fontRegular-font-family-80f4925f-2: Helvetica; 
-    --fontRegular-font-weight-80f4925f-4: 600; 
+  :root {
+    --fontRegular-font-family-80f4925f-2: Helvetica;
+    --fontRegular-font-weight-80f4925f-4: 600;
   }
 
   ._80f4925f-10 {
@@ -118,7 +127,7 @@ add_case! {
       style b {
         color: orange
       }
-  
+
       div {
         style extends a, b {
           color: blue
@@ -127,9 +136,9 @@ add_case! {
     "#,
   )],
   r#"
-    :root { 
-      --a-color-80f4925f-2: red; 
-      --b-color-80f4925f-5: orange; 
+    :root {
+      --a-color-80f4925f-2: red;
+      --b-color-80f4925f-5: orange;
     }
 
     ._80f4925f-12 {
@@ -208,63 +217,63 @@ add_case! {
   )],
   r#"
 
-  ._A-80f4925f-31._variant-80f4925f-18._variant-80f4925f-21._variant-80f4925f-24 { 
-    color: blue; 
-  } 
-  
-  @supports mobile { 
-    @media screen and (max-width: 300px) { 
-      @media screen and (max-width: 100px) { 
-        ._A-80f4925f-31 { 
-          color: blue; 
-        } 
-      } 
-    } 
-  } 
-  @supports mobile { 
-    @media screen and (max-width: 400px) { 
-      @media screen and (max-width: 100px) { 
-        ._A-80f4925f-31 { 
-          color: blue; 
-        } 
-      } 
-    } 
-  } 
-  
-  @supports mobile { 
-    @media screen and (max-width: 100px) { 
-      ._A-80f4925f-31:nth-child(2n) { 
-        color: blue; 
-      } 
-    } 
-  } 
-  
-  @supports desktop { 
-    @media screen and (max-width: 300px) { 
-      @media screen and (max-width: 100px) { 
-        ._A-80f4925f-31 { 
-          color: blue; 
-        } 
-      } 
-    } 
-  } 
-  
-  @supports desktop { 
-    @media screen and (max-width: 400px) { 
-      @media screen and (max-width: 100px) { 
-        ._A-80f4925f-31 { 
-          color: blue; 
-        } 
-      } 
-    } 
-  } 
-  
-  @supports desktop { 
-    @media screen and (max-width: 100px) { 
-      ._A-80f4925f-31:nth-child(2n) { 
-        color: blue; 
-      } 
-    } 
+  ._A-80f4925f-31._variant-80f4925f-18._variant-80f4925f-21._variant-80f4925f-24 {
+    color: blue;
+  }
+
+  @supports mobile {
+    @media screen and (max-width: 300px) {
+      @media screen and (max-width: 100px) {
+        ._A-80f4925f-31 {
+          color: blue;
+        }
+      }
+    }
+  }
+  @supports mobile {
+    @media screen and (max-width: 400px) {
+      @media screen and (max-width: 100px) {
+        ._A-80f4925f-31 {
+          color: blue;
+        }
+      }
+    }
+  }
+
+  @supports mobile {
+    @media screen and (max-width: 100px) {
+      ._A-80f4925f-31:nth-child(2n) {
+        color: blue;
+      }
+    }
+  }
+
+  @supports desktop {
+    @media screen and (max-width: 300px) {
+      @media screen and (max-width: 100px) {
+        ._A-80f4925f-31 {
+          color: blue;
+        }
+      }
+    }
+  }
+
+  @supports desktop {
+    @media screen and (max-width: 400px) {
+      @media screen and (max-width: 100px) {
+        ._A-80f4925f-31 {
+          color: blue;
+        }
+      }
+    }
+  }
+
+  @supports desktop {
+    @media screen and (max-width: 100px) {
+      ._A-80f4925f-31:nth-child(2n) {
+        color: blue;
+      }
+    }
   }
   "#
 }
@@ -285,13 +294,13 @@ add_case! {
       "#)
   ],
   r#"
-  
-  ._A-80f4925f-8._variant-80f4925f-3 { 
-    color: blue; 
-  } 
-  
-  ._A-80f4925f-8:nth-child(2n) { 
-    color: blue; 
+
+  ._A-80f4925f-8._variant-80f4925f-3 {
+    color: blue;
+  }
+
+  ._A-80f4925f-8:nth-child(2n) {
+    color: blue;
   }
   "#
 }
@@ -403,13 +412,13 @@ add_case! {
     "#,
   )],
   r#"
-  ._Message-80f4925f-11._variant-80f4925f-6 { 
-      gap: 14px; 
-    } 
-    @media screen and (max-width: 100px) { 
-      ._Message-80f4925f-11 { 
-        gap: 14px; 
-      } 
+  ._Message-80f4925f-11._variant-80f4925f-6 {
+      gap: 14px;
+    }
+    @media screen and (max-width: 100px) {
+      ._Message-80f4925f-11 {
+        gap: 14px;
+      }
     }
   "#
 }
@@ -439,13 +448,13 @@ add_case! {
     "#,
   )],
   r#"
-  ._Message-80f4925f-12._variant-80f4925f-6 ._Message-80f4925f-11 { 
+  ._Message-80f4925f-12._variant-80f4925f-6 ._Message-80f4925f-11 {
     color: orange;
-    } 
-    @media screen and (max-width: 100px) { 
-      ._Message-80f4925f-12 ._Message-80f4925f-11 { 
+    }
+    @media screen and (max-width: 100px) {
+      ._Message-80f4925f-12 ._Message-80f4925f-11 {
         color: orange;
-      } 
+      }
     }
   "#
 }
@@ -455,9 +464,9 @@ add_case! {
   [(
       "/entry.pc",
       r#"
-      
+
 style fontRegular {
-  font-family: Helvetica   
+  font-family: Helvetica
 }
 
 div {
@@ -466,8 +475,8 @@ div {
     "#,
   )],
   r#"
-  :root { --fontRegular-font-family-80f4925f-3: Helvetica; }
-  ._80f4925f-7 { font-family: var(--fontRegular-font-family-80f4925f-3); }
+  :root { --fontRegular-font-family-80f4925f-2: Helvetica; }
+  ._80f4925f-6 { font-family: var(--fontRegular-font-family-80f4925f-2); }
   "#
 }
 
@@ -476,9 +485,9 @@ add_case! {
   [(
       "/entry.pc",
       r#"
-      
+
 style a {
-  font-family: Helvetica   
+  font-family: Helvetica
 }
 
 style b {
@@ -495,15 +504,15 @@ div {
   )],
   r#"
   :root {
-    --a-font-family-80f4925f-3: Helvetica; 
-    --b-color-80f4925f-6: red; --c-font-family-80f4925f-3: 
-    var(--a-font-family-80f4925f-3); 
-    --c-color-80f4925f-6: var(--b-color-80f4925f-6); 
-  } 
-  
-  ._80f4925f-13 { 
-    font-family: var(--a-font-family-80f4925f-3); 
-    color: var(--b-color-80f4925f-6); 
+    --a-font-family-80f4925f-2: Helvetica;
+    --b-color-80f4925f-5: red; --c-font-family-80f4925f-2:
+    var(--a-font-family-80f4925f-2);
+    --c-color-80f4925f-5: var(--b-color-80f4925f-5);
+  }
+
+  ._80f4925f-12 {
+    font-family: var(--a-font-family-80f4925f-2);
+    color: var(--b-color-80f4925f-5);
   }
   "#
 }
@@ -569,12 +578,12 @@ add_case! {
       "#),
   ],
   r#"._80f4925f-6 {
-    mask-size: var(--mask-mask-size-6bcf0994-2); 
-    --size: 
-    var(--icon---size-6bcf0994-6); 
-    width: var(--icon-width-6bcf0994-9); 
-    height: var(--icon-height-6bcf0994-12); 
-    mask-url: abba; 
+    mask-size: var(--mask-mask-size-6bcf0994-2);
+    --size:
+    var(--icon---size-6bcf0994-6);
+    width: var(--icon-width-6bcf0994-9);
+    height: var(--icon-height-6bcf0994-12);
+    mask-url: abba;
   }"#
 }
 
@@ -588,7 +597,7 @@ add_case! {
               style {
                 color: red
               }
-            }    
+            }
           }
         }
       "#)
@@ -706,7 +715,7 @@ add_case! {
          }
        }
       }
-      
+
        component A {
          render div something {
           style {
@@ -733,7 +742,7 @@ add_case! {
           }
         }
       }
-      
+
        component A {
          render div something {
           style {
@@ -772,7 +781,7 @@ add_case! {
       "#)
   ],
   r#"
-  ._A-acdc-80f4925f-4 { color: blue; } 
+  ._A-acdc-80f4925f-4 { color: blue; }
   ._80f4925f-14._B-a1-80f4925f-7._A-acdc-80f4925f-4 { color: orange; }
   "#
 }
@@ -806,18 +815,18 @@ add_case! {
       "#)
   ],
   r#"
-    ._A-root-80f4925f-4 { 
-      color: blue; 
-    } 
-    
-    ._B-inst-80f4925f-15._A-root-80f4925f-4._variant-80f4925f-9 { 
-      color: purple; 
-    } 
-    
-    @supports mobile { 
-      ._B-inst-80f4925f-15._A-root-80f4925f-4 { 
-        color: purple; 
-      } 
+    ._A-root-80f4925f-4 {
+      color: blue;
+    }
+
+    ._B-inst-80f4925f-15._A-root-80f4925f-4._variant-80f4925f-9 {
+      color: purple;
+    }
+
+    @supports mobile {
+      ._B-inst-80f4925f-15._A-root-80f4925f-4 {
+        color: purple;
+      }
     }
   "#
 }
@@ -878,7 +887,7 @@ add_case! {
       "#)
   ],
   r#"
-  ._A-aElement-80f4925f-6._variant-80f4925f-1 { color: blue; } 
+  ._A-aElement-80f4925f-6._variant-80f4925f-1 { color: blue; }
   ._B-aInstance-80f4925f-13._A-aElement-80f4925f-6 { color: blue; }
   "#
 }
@@ -900,7 +909,7 @@ add_case! {
       component B {
         render A {
           override {
-            variant isMobile trigger { 
+            variant isMobile trigger {
               "@media screen and (max-width: 1024px)"
             }
           }
@@ -936,7 +945,7 @@ add_case! {
       component B {
         render A {
           override {
-            variant a1 trigger { 
+            variant a1 trigger {
               true
             }
           }
@@ -946,8 +955,8 @@ add_case! {
       "#)
   ],
   r#"
-  ._A-80f4925f-12._variant-80f4925f-3._variant-80f4925f-6 { color: blue; } 
-  @media screen and (max-width: 200px) { ._A-80f4925f-12:nth-child(2n) { color: blue; } } 
+  ._A-80f4925f-12._variant-80f4925f-3._variant-80f4925f-6 { color: blue; }
+  @media screen and (max-width: 200px) { ._A-80f4925f-12:nth-child(2n) { color: blue; } }
   @media screen and (max-width: 200px) { ._B-80f4925f-19._A-80f4925f-12 { color: blue; } }
 
   "#
@@ -979,8 +988,8 @@ add_case! {
     "#)
   ],
   r#"
-  ._D-80f4925f-6._variant-80f4925f-1 { color: blue; } 
-  ._C-80f4925f-16._D-80f4925f-6._variant-80f4925f-11 { color: blue; } 
+  ._D-80f4925f-6._variant-80f4925f-1 { color: blue; }
+  ._C-80f4925f-16._D-80f4925f-6._variant-80f4925f-11 { color: blue; }
   ._C-80f4925f-16._D-80f4925f-6:nth-child(2n) { color: blue; }
   "#
 }
@@ -1058,13 +1067,13 @@ add_case! {
       "#)
   ],
   r#"
-  ._D-80f4925f-13._variant-80f4925f-3 { color: blue; } 
-  @media screen and (max-width: 10px) { ._D-80f4925f-13 { color: blue; } } 
+  ._D-80f4925f-13._variant-80f4925f-3 { color: blue; }
+  @media screen and (max-width: 10px) { ._D-80f4925f-13 { color: blue; } }
 
-  ._D-80f4925f-13._variant-80f4925f-3 ._D-something-80f4925f-12 { font-size: 32px; } 
-  @media screen and (max-width: 10px) { ._D-80f4925f-13 ._D-something-80f4925f-12 { font-size: 32px; } } 
+  ._D-80f4925f-13._variant-80f4925f-3 ._D-something-80f4925f-12 { font-size: 32px; }
+  @media screen and (max-width: 10px) { ._D-80f4925f-13 ._D-something-80f4925f-12 { font-size: 32px; } }
 
-  ._B-blarg-80f4925f-27 ._A-c-80f4925f-19._C-d-80f4925f-16._D-80f4925f-13 { color: blue; } 
+  ._B-blarg-80f4925f-27 ._A-c-80f4925f-19._C-d-80f4925f-16._D-80f4925f-13 { color: blue; }
   ._B-blarg-80f4925f-27 ._A-c-80f4925f-19._C-d-80f4925f-16 ._D-something-80f4925f-12 { font-size: 32px; }
   "#
 }
@@ -1146,9 +1155,9 @@ add_case! {
   ],
   r#"
 
-  ._Tree-root-80f4925f-5 { --depth: 1; } 
+  ._Tree-root-80f4925f-5 { --depth: 1; }
   ._Folder-container-80f4925f-14._Tree-root-80f4925f-5 { --depth: var(--depth); }
-  ._BBA-abba-80f4925f-21._Folder-container-80f4925f-14._Tree-root-80f4925f-5 { --depth: 2; } 
+  ._BBA-abba-80f4925f-21._Folder-container-80f4925f-14._Tree-root-80f4925f-5 { --depth: 2; }
   "#
 }
 
@@ -1213,12 +1222,12 @@ add_case! {
     "#)
   ],
   r#"
-  ._A-a_root-80f4925f-5 { display: none; } 
-  ._B-b_root-80f4925f-27._variant-80f4925f-10 ._B-text-80f4925f-26 { color: blue; } 
-  ._B-b_root-80f4925f-27.something ._B-text-80f4925f-26 { color: blue; } 
-  ._B-b_root-80f4925f-27._variant-80f4925f-10 ._B-80f4925f-21._A-a_root-80f4925f-5 { display: block; } 
-  ._B-b_root-80f4925f-27.something ._B-80f4925f-21._A-a_root-80f4925f-5 { display: block; } 
-  ._B-b_root-80f4925f-27._variant-80f4925f-10 ._B-80f4925f-21 ._A-a_text-80f4925f-4 { display: block; } 
+  ._A-a_root-80f4925f-5 { display: none; }
+  ._B-b_root-80f4925f-27._variant-80f4925f-10 ._B-text-80f4925f-26 { color: blue; }
+  ._B-b_root-80f4925f-27.something ._B-text-80f4925f-26 { color: blue; }
+  ._B-b_root-80f4925f-27._variant-80f4925f-10 ._B-80f4925f-21._A-a_root-80f4925f-5 { display: block; }
+  ._B-b_root-80f4925f-27.something ._B-80f4925f-21._A-a_root-80f4925f-5 { display: block; }
+  ._B-b_root-80f4925f-27._variant-80f4925f-10 ._B-80f4925f-21 ._A-a_text-80f4925f-4 { display: block; }
   ._B-b_root-80f4925f-27.something ._B-80f4925f-21 ._A-a_text-80f4925f-4 { display: block; }
   "#
 }
@@ -1255,10 +1264,10 @@ add_case! {
     "#)
   ],
   r#"
-   ._A-a_root-80f4925f-5 { display: none; } 
-   ._B-b_root-80f4925f-17._variant-80f4925f-10 ._B-80f4925f-16._A-a_root-80f4925f-5 { display: block; } 
-   @media (min-width: 100px) { 
-    ._B-b_root-80f4925f-17 ._B-80f4925f-16._A-a_root-80f4925f-5 { display: block; } 
+   ._A-a_root-80f4925f-5 { display: none; }
+   ._B-b_root-80f4925f-17._variant-80f4925f-10 ._B-80f4925f-16._A-a_root-80f4925f-5 { display: block; }
+   @media (min-width: 100px) {
+    ._B-b_root-80f4925f-17 ._B-80f4925f-16._A-a_root-80f4925f-5 { display: block; }
    }
   "#
 }
@@ -1281,7 +1290,7 @@ add_case! {
     "#)
   ],
   r#"
-  ._A-root-80f4925f-10 { display: none; } 
+  ._A-root-80f4925f-10 { display: none; }
   "#
 }
 
@@ -1316,8 +1325,8 @@ add_case! {
   ],
   r#"
   :root { --test-color-80f4925f-2: white; }
-  ._A-root-80f4925f-13._variant-80f4925f-4 { color: blue; } 
-  ._A-root-80f4925f-13 { color: var(--test-color-80f4925f-2); color: white; } 
+  ._A-root-80f4925f-13._variant-80f4925f-4 { color: blue; }
+  ._A-root-80f4925f-13 { color: var(--test-color-80f4925f-2); color: white; }
   ._instance-80f4925f-20._A-root-80f4925f-13 { color: blue; }
   "#
 }
@@ -1364,28 +1373,28 @@ add_case! {
   ],
   r#"
   :root { --test-color-80f4925f-2: white; }
-  
-  ._A-root-80f4925f-9._variant-80f4925f-4 { color: blue; } 
-  ._B-80f4925f-30._A-root-80f4925f-9._variant-80f4925f-14._variant-80f4925f-17 { color: blue; } 
 
-  @media screen and (max-width: 100px) { 
-    ._B-80f4925f-30._A-root-80f4925f-9._variant-80f4925f-17 { color: blue; } 
-  } 
-  
-  @supports mobile { 
-    ._B-80f4925f-30._A-root-80f4925f-9._variant-80f4925f-14 { 
-      color: blue; 
-    } 
-  } 
-  
-  @supports mobile { 
-    @media screen and (max-width: 100px) { 
-      ._B-80f4925f-30._A-root-80f4925f-9 { 
-        color: blue; 
-      } 
-    } 
-  } 
-  
+  ._A-root-80f4925f-9._variant-80f4925f-4 { color: blue; }
+  ._B-80f4925f-30._A-root-80f4925f-9._variant-80f4925f-14._variant-80f4925f-17 { color: blue; }
+
+  @media screen and (max-width: 100px) {
+    ._B-80f4925f-30._A-root-80f4925f-9._variant-80f4925f-17 { color: blue; }
+  }
+
+  @supports mobile {
+    ._B-80f4925f-30._A-root-80f4925f-9._variant-80f4925f-14 {
+      color: blue;
+    }
+  }
+
+  @supports mobile {
+    @media screen and (max-width: 100px) {
+      ._B-80f4925f-30._A-root-80f4925f-9 {
+        color: blue;
+      }
+    }
+  }
+
   ._B-80f4925f-30._A-root-80f4925f-9.test { color: blue; }
   "#
 }
@@ -1429,8 +1438,8 @@ add_case! {
   ],
   r#"
   :root { --test-color-80f4925f-2: white; }
-  ._A-root-80f4925f-9._variant-80f4925f-4 { color: blue; } 
-  ._B-80f4925f-23._variant-80f4925f-12 ._B-element-80f4925f-17._A-root-80f4925f-9 { color: blue; } 
+  ._A-root-80f4925f-9._variant-80f4925f-4 { color: blue; }
+  ._B-80f4925f-23._variant-80f4925f-12 ._B-element-80f4925f-17._A-root-80f4925f-9 { color: blue; }
   ._B-80f4925f-23._variant-80f4925f-12 ._B-80f4925f-22 { color: red; }
   "#
 }
@@ -1507,13 +1516,13 @@ component RadioInput {
     "#)
   ],
   r#"
-  ._RadioInput-container-80f4925f-21._variant-80f4925f-3 { background: var(theme.blue00); } 
-  ._RadioInput-container-80f4925f-21.on { background: var(theme.blue00); } 
-  ._RadioInput-container-80f4925f-21._variant-80f4925f-3 ._RadioInput-dot-80f4925f-20 { left: 100%; } 
-  ._RadioInput-container-80f4925f-21.on ._RadioInput-dot-80f4925f-20 { left: 100%; } 
-  ._RadioInput-dot-80f4925f-20 { left: 0px; } 
-  ._test-test-80f4925f-34._variant-80f4925f-24 { background: black; } 
-  ._test-test-80f4925f-34._variant-80f4925f-24 ._test-radio-80f4925f-33._RadioInput-container-80f4925f-21 { background: var(theme.blue00); } 
+  ._RadioInput-container-80f4925f-21._variant-80f4925f-3 { background: var(theme.blue00); }
+  ._RadioInput-container-80f4925f-21.on { background: var(theme.blue00); }
+  ._RadioInput-container-80f4925f-21._variant-80f4925f-3 ._RadioInput-dot-80f4925f-20 { left: 100%; }
+  ._RadioInput-container-80f4925f-21.on ._RadioInput-dot-80f4925f-20 { left: 100%; }
+  ._RadioInput-dot-80f4925f-20 { left: 0px; }
+  ._test-test-80f4925f-34._variant-80f4925f-24 { background: black; }
+  ._test-test-80f4925f-34._variant-80f4925f-24 ._test-radio-80f4925f-33._RadioInput-container-80f4925f-21 { background: var(theme.blue00); }
   ._test-test-80f4925f-34._variant-80f4925f-24 ._test-radio-80f4925f-33 ._RadioInput-dot-80f4925f-20 { left: 100%; }
   "#
 }
@@ -1545,8 +1554,115 @@ add_case! {
     "#)
   ],
   r#"
-  ._A-80f4925f-8 { color: orange; } 
-  ._A-80f4925f-7 { color: blue; } 
+  ._A-80f4925f-8 { color: orange; }
+  ._A-80f4925f-7 { color: blue; }
   ._A-80f4925f-8._80f4925f-14 { color: purple; }
   "#
+}
+
+add_case! {
+  evaluates_css_in_repeat,
+  [
+    ("/entry.pc", r#"
+
+
+    component A {
+      render div {
+        repeat items {
+          span {
+            style {
+                color: red
+            }
+          }
+        }
+      }
+    }
+    "#)
+  ],
+  r#"
+  ._A-80f4925f-4 { color: red; }
+  "#
+}
+
+add_case! {
+  evaluates_css_in_switch,
+  [
+    ("/entry.pc", r#"
+
+
+    component A {
+      render div {
+        switch a {
+          case "b" {
+            span {
+              style {
+                color: blue
+              }
+            }
+          }
+          case "c" {
+            span {
+              style {
+                color: purple
+              }
+            }
+          }
+        }
+      }
+    }
+    "#)
+  ],
+  r#"
+  ._A-80f4925f-4 { color: blue; } ._A-80f4925f-9 { color: purple; }
+  "#
+}
+
+add_case! {
+  evlauates_css_in_condition,
+  [
+    ("/entry.pc", r#"
+
+
+    component A {
+      render div {
+        if a {
+            span {
+                style {
+                    color: blue
+                }
+            }
+        }
+      }
+    }
+    "#)
+  ],
+  r#"
+  ._A-80f4925f-4 { color: blue; }
+  "#
+}
+
+add_case! {
+  scope_class_is_passed_down,
+  [
+  ("/entry.pc", r#"
+  component A {
+      render div root(class: class)
+  }
+  component B {
+      render A root(class: class)
+  }
+  component C {
+      render div {
+          B {
+              style {
+                  color: orange
+              }
+          }
+      }
+  }
+"#)
+  ],
+  r#"
+  ._B-root-80f4925f-8._C-80f4925f-14 { color: orange; } 
+"#
 }

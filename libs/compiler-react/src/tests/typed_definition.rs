@@ -2,6 +2,7 @@ use crate::compile_typed_definition;
 use paperclip_common::str_utils::strip_extra_ws;
 
 use futures::executor::block_on;
+use paperclip_parser::core::parser_context::Options;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto_ext::graph::{load::LoadableGraph, test_utils};
 use std::collections::HashMap;
@@ -15,12 +16,27 @@ macro_rules! add_case {
             let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
             let mut graph = Graph::new();
 
-            if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
+            if let Err(_err) = block_on(graph.load(
+                "/entry.pc",
+                &mock_fs,
+                Options::new(vec![
+                    "script".to_string(),
+                    "repeat".to_string(),
+                    "switch".to_string(),
+                    "condition".to_string(),
+                ]),
+            )) {
                 panic!("Unable to load");
             }
 
-            let dep = graph.dependencies.get("/entry.pc").unwrap();
-            let output = compile_typed_definition(&dep, &graph).unwrap();
+            let dep = graph
+                .dependencies
+                .get("/entry.pc")
+                .expect("Cannot get dependency");
+            let output = compile_typed_definition(&dep, &graph).expect("Cannot compile");
+
+            println!("{}", output);
+
             assert_eq!(
                 strip_extra_ws(output.as_str()),
                 strip_extra_ws($expected_output)
@@ -217,8 +233,8 @@ add_case! {
       )
   ],
   r#"
-    import * as React from "react";
     import * as mod from "/mod.pc";
+    import * as React from "react";
 
     export type BaseAProps = {
       "ref"?: any,
@@ -245,13 +261,216 @@ add_case! {
       )
   ],
   r#"
+    import * as _38b93036 from "./something.tsx";
     import * as React from "react";
-    import AScript from "./something.tsx";
 
     export type BaseAProps = {
         "ref"?: any,
     };
 
-    export const A: ReturnType<AScript>;
+    export const A: ReturnType<_38b93036.default>;
+  "#
+}
+
+add_case! {
+  switch_cases_are_compiled_as_enums,
+  [
+      (
+          "/entry.pc",
+          r#"
+          public component A {
+            render div {
+                switch show {
+                    case "a" {
+
+                    }
+                    case "b" {
+
+                    }
+                    default {
+
+                    }
+                }
+            }
+          }
+          "#,
+      )
+  ],
+  r#"
+  import * as React from "react";
+  export type BaseAProps = {
+      "ref"?: any,
+      "show"?: "b" | "a",
+  };
+  export const A: React.FC<BaseAProps>;
+  "#
+}
+
+add_case! {
+  repeat_cases_are_compiled_correctly,
+  [
+      (
+          "/entry.pc",
+          r#"
+          public component A {
+            render div {
+                repeat items {
+                    div(onClick: onClick)
+                }
+            }
+          }
+          "#,
+      )
+  ],
+  r#"
+  import * as React from "react";
+  export type BaseAProps = {
+      "ref"?: any,
+      "items"?: Array<{
+          "onClick"?: any,
+      }>,
+  };
+  export const A: React.FC<BaseAProps>;
+  "#
+}
+
+add_case! {
+  nested_repeats_are_compiled_correctly,
+  [
+      (
+          "/entry.pc",
+          r#"
+          public component A {
+            render div {
+                repeat a {
+                    span (onMouseDown: onMouseDown)
+                    repeat b {
+                        div (onClick: onClick) {
+                            switch c {
+                                case "d" {
+                                    text "span"
+                                }
+
+                                case "e" {
+                                        text "span"
+                                    }
+                            }
+                        }
+                    }
+                }
+                span (onClick: onClick)
+            }
+          }
+          "#,
+      )
+  ],
+  r#"
+  import * as React from "react";
+  export type BaseAProps = {
+      "ref"?: any,
+      "a"?: Array<{
+          "b"?: Array<{
+              "c"?: "e",
+              "onClick"?: any,
+          }>,
+          "onMouseDown"?: any,
+      }>,
+      "onClick"?: any,
+  };
+  export const A: React.FC<BaseAProps>;
+  "#
+}
+
+add_case! {
+  can_repeat_an_instance_with_script,
+  [
+      (
+          "/entry.pc",
+          r#"
+          public component B {
+            script(src: "./b.tsx", target: "react")
+            render div {
+
+            }
+          }
+          public component A {
+            render div {
+                repeat a {
+                    B bb
+                }
+            }
+          }
+          "#,
+      )
+  ],
+  r#"
+  import * as _5e3fc5cb from "./b.tsx";
+  import * as React from "react";
+  export type BaseBProps = {
+      "ref"?: any,
+  };
+  export const B: ReturnType<_5e3fc5cb.default>;
+  export type BaseAProps = {
+      "ref"?: any,
+      "a"?: Array<{
+          "bb": React.ComponentProps<typeof B>,
+      }>,
+  };
+  export const A: React.FC<BaseAProps>;
+  "#
+}
+
+add_case! {
+  can_compile_condition,
+  [
+      (
+          "/entry.pc",
+          r#"
+          public component A {
+            render div {
+                if show {
+                    text "something"
+                }
+            }
+          }
+          "#,
+      )
+  ],
+  r#"
+  import * as React from "react";
+  export type BaseAProps = {
+      "ref"?: any,
+      "show"?: boolean,
+  };
+  export const A: React.FC<BaseAProps>;
+  "#
+}
+
+
+add_case! {
+  can_compile_condition_within_a_slot,
+  [
+      (
+          "/entry.pc",
+          r#"
+          public component A {
+            render div {
+                insert children {
+                  if show {
+                      text "something"
+                  }
+                }
+            }
+          }
+          "#,
+      )
+  ],
+  r#"
+  import * as React from "react";
+  export type BaseAProps = {
+      "ref"?: any,
+      "show"?: boolean,
+  };
+  export const A: React.FC<BaseAProps>;
   "#
 }

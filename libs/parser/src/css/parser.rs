@@ -4,6 +4,7 @@ use crate::base::ast::Range;
 use crate::core::errors as err;
 use crate::core::errors::ParserError;
 use crate::core::parser_context::Context;
+use crate::core::parser_context::Options;
 use crate::core::string_scanner::StringScanner;
 use paperclip_common::id::IDGenerator;
 use paperclip_proto::ast::css as ast;
@@ -18,7 +19,7 @@ pub fn parse_style_declarations_with_string_scanner<'src, 'scanner, 'idgenerator
     id_generator: &'idgenerator mut IDGenerator,
     url: &String,
 ) -> Result<Vec<ast::StyleDeclaration>, ParserError> {
-    let mut context = Context::new(source, url, &next_token, id_generator)?;
+    let mut context = Context::new(source, url, &next_token, id_generator, Options::new(vec![]))?;
     parse_style_declarations(&mut context)
 }
 
@@ -27,7 +28,7 @@ pub fn parse_style_declaration_with_string_scanner<'src, 'scanner, 'idgenerator>
     id_generator: &'idgenerator mut IDGenerator,
     url: &String,
 ) -> Result<ast::DeclarationValue, ParserError> {
-    let mut context = Context::new(source, url, &next_token, id_generator)?;
+    let mut context = Context::new(source, url, &next_token, id_generator, Options::new(vec![]))?;
     context.skip(is_superfluous)?;
     Ok(parse_comma_list(&mut context)?.get_outer())
 }

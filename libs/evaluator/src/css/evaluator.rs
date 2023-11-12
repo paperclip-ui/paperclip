@@ -192,6 +192,7 @@ fn evaluate_node<'a, F: FileResolver>(
         ast::node::Inner::Insert(expr) => {
             evaluate_insert(expr, context);
         }
+        ast::node::Inner::Script(_expr) => {}
         ast::node::Inner::Slot(expr) => {
             evaluate_slot(expr, context);
         }
@@ -200,6 +201,15 @@ fn evaluate_node<'a, F: FileResolver>(
         }
         ast::node::Inner::Override(expr) => {
             evaluate_override(expr, parent, context);
+        }
+        ast::node::Inner::Switch(expr) => {
+            evaluate_switch(expr, parent, context);
+        }
+        ast::node::Inner::Condition(expr) => {
+            evaluate_condition(expr, parent, context);
+        }
+        ast::node::Inner::Repeat(expr) => {
+            evaluate_repeat(expr, parent, context);
         }
     }
 }
@@ -215,6 +225,46 @@ fn evaluate_element<F: FileResolver>(element: &ast::Element, context: &mut Docum
 fn evaluate_insert<F: FileResolver>(insert: &ast::Insert, context: &mut DocumentContext<F>) {
     for item in &insert.body {
         evaluate_node(item, Some(insert.into()), context);
+    }
+}
+
+fn evaluate_condition<'a, F: FileResolver>(
+    expr: &'a ast::Condition,
+    parent: Option<ImmutableExpressionRef<'a>>,
+    context: &mut DocumentContext<F>,
+) {
+    for item in &expr.body {
+        evaluate_node(item, parent.clone(), context);
+    }
+}
+fn evaluate_switch<'a, F: FileResolver>(
+    expr: &'a ast::Switch,
+    parent: Option<ImmutableExpressionRef<'a>>,
+    context: &mut DocumentContext<F>,
+) {
+    for item in &expr.body {
+        match item.get_inner() {
+            ast::switch_item::Inner::Case(expr) => {
+                for item in &expr.body {
+                    evaluate_node(item, parent.clone(), context)
+                }
+            }
+
+            ast::switch_item::Inner::Default(expr) => {
+                for item in &expr.body {
+                    evaluate_node(item, parent.clone(), context)
+                }
+            }
+        }
+    }
+}
+fn evaluate_repeat<'a, F: FileResolver>(
+    expr: &'a ast::Repeat,
+    parent: Option<ImmutableExpressionRef<'a>>,
+    context: &mut DocumentContext<F>,
+) {
+    for item in &expr.body {
+        evaluate_node(item, parent.clone(), context);
     }
 }
 

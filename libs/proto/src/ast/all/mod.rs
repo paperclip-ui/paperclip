@@ -204,8 +204,22 @@ expressions! {
     pc::node::Inner::Style,
     pc::node::Inner::Element,
     pc::node::Inner::Text,
-    pc::node::Inner::Override
+    pc::node::Inner::Override,
+    pc::node::Inner::Repeat,
+    pc::node::Inner::Switch,
+    pc::node::Inner::Script,
+    pc::node::Inner::Condition
   )),
+  (Repeat, pc::Repeat, self => &self.id),
+  (Condition, pc::Condition, self => &self.id),
+  (Switch, pc::Switch, self => &self.id),
+  (SwitchItem, pc::SwitchItem, self => &self.get_inner().get_id()),
+  (SwitchItemInner, pc::switch_item::Inner, self => match_each_expr_id!(self,
+      pc::switch_item::Inner::Case,
+      pc::switch_item::Inner::Default
+  )),
+  (SwitchCase, pc::SwitchCase, self => &self.id),
+  (SwitchDefault, pc::SwitchDefault, self => &self.id),
   (Slot, pc::Slot, self => &self.id),
   (Insert, pc::Insert, self => &self.id),
   (Override, pc::Override, self => &self.id),

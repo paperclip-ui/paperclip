@@ -1844,7 +1844,9 @@ dependencies = [
 name = "paperclip_compiler_react"
 version = "0.1.1"
 dependencies = [
+ "Inflector",
  "anyhow",
+ "crc 1.8.1",
  "futures",
  "paperclip_common",
  "paperclip_evaluator",
@@ -1941,6 +1943,7 @@ dependencies = [
  "anyhow",
  "crc 1.8.1",
  "futures",
+ "js-sys",
  "paperclip_ast_serialize",
  "paperclip_common",
  "paperclip_proto",

@@ -1,4 +1,7 @@
-import { FileResponse } from "@paperclip-ui/proto/lib/generated/service/designer";
+import {
+  FileResponse,
+  ProjectInfo,
+} from "@paperclip-ui/proto/lib/generated/service/designer";
 import { Box, Point, Size, Transform } from "./geom";
 
 import {
@@ -88,6 +91,8 @@ export type DesignerState = {
   scopedElementId?: string;
   projectDirectory?: FSDirectory;
   activeVariantId?: string;
+  centerOnRedirect?: boolean;
+  projectInfo?: ProjectInfo;
   editVariantPopupOpen?: boolean;
   renderedFilePath?: string;
   insertedNodeIds: string[];

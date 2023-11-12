@@ -86,8 +86,58 @@ message Node {
     Element element = 4;
     TextNode text = 5;
     Override override = 6;
+    Switch switch = 7;
+    Repeat repeat = 8;
+    Script script = 10;
+    Condition condition = 9;
   }
 }
+
+
+message Condition {
+    string id = 1;
+    ast.base.Range range = 2;
+    string property = 3;
+    repeated Node body = 4;
+}
+
+message Switch {
+    string id = 1;
+    ast.base.Range range = 2;
+    string property = 3;
+    repeated SwitchItem body = 4;
+}
+
+
+message SwitchItem {
+  oneof inner {
+    SwitchCase case = 1;
+    SwitchDefault default = 2;
+  }
+}
+
+
+message SwitchCase {
+  string id = 1;
+  ast.base.Range range = 2;
+  string condition = 3;
+  repeated Node body = 4;
+}
+
+message SwitchDefault {
+  string id = 1;
+  ast.base.Range range = 2;
+  repeated Node body = 3;
+}
+
+
+message Repeat {
+    string id = 1;
+    ast.base.Range range = 2;
+    string property = 3;
+    repeated Node body = 4;
+}
+
 
 message Atom {
   string id = 1;

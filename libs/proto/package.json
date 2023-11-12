@@ -1,11 +1,11 @@
 {
   "name": "@paperclip-ui/proto",
-  "version": "20.1.4",
+  "version": "20.2.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "build": "yarn build:proto; yarn build:tsc",
-    "build:proto": "mkdir -p lib src/generated && protoc --proto_path=src --plugin=\"protoc-gen-ts=../../node_modules/.bin/protoc-gen-ts_proto\" --ts_opt=\"useOptionals=all,useExactTypes=false,outputClientImpl=grpc-web\" --ts_out=\"./src/generated\" --js_out=\"import_style=commonjs:./lib\" src/service/designer.proto src/ast/pc.proto src/ast_mutate/mod.proto src/ast/css.proto  src/virt/core.proto   src/ast/graph.proto   src/virt/html.proto  src/ast/base.proto src/virt/module.proto  src/virt/css.proto src/ast/docco.proto src/language_service/pc.proto",
+    "build:proto": "mkdir -p lib src/generated && protoc --proto_path=src --plugin=\"protoc-gen-ts=../../node_modules/.bin/protoc-gen-ts_proto\" --ts_opt=\"useOptionals=all,useExactTypes=false,outputClientImpl=grpc-web\" --ts_out=\"./src/generated\" --js_out=\"import_style=commonjs:./lib\" src/service/designer.proto src/ast/pc.proto src/ast_mutate/mod.proto src/ast/css.proto src/ast/graph.proto   src/virt/html.proto  src/ast/base.proto src/virt/module.proto  src/virt/css.proto src/ast/docco.proto src/language_service/pc.proto",
     "build:tsc": "tsc"
   },
   "publishConfig": {

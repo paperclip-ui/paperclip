@@ -45,11 +45,21 @@ fn set_scope_type(
     owner: &types::Type,
     new_type: types::Type,
 ) -> types::Type {
+    // let new_type = if types::Array(ary) = owner {
+    //     owner.
+    // } else {
+    //     new_type
+    // };
+
     if let Some((part, optional)) = scope.get(index) {
         let optional = *optional;
         let mut new_owner = types::Map::new();
         if let types::Type::Map(prev_owner) = owner {
             new_owner.extend(prev_owner.clone());
+        } else if let types::Type::Array(value) = owner {
+            if let types::Type::Map(value) = *value.clone() {
+                new_owner.extend(value.clone());
+            }
         }
 
         new_owner.insert(
@@ -71,7 +81,13 @@ fn set_scope_type(
             },
         );
 
-        types::Type::Map(new_owner)
+        let inner = types::Type::Map(new_owner);
+
+        if let types::Type::Array(_) = owner {
+            types::Type::Array(Box::new(inner))
+        } else {
+            inner
+        }
     } else {
         new_type
     }
@@ -113,6 +129,9 @@ impl<'graph, 'infer> InferContext<'graph, 'infer> {
     }
     pub fn set_scope_type(&self, scope_type: types::Type) {
         self.scope.as_ref().borrow_mut().set_scope_type(scope_type);
+    }
+    pub fn get_scope_type(&self) -> types::Type {
+        self.scope.as_ref().borrow_mut().get_scope_type().clone()
     }
     pub fn with_instance_inference(&self, inference: types::Map) -> Self {
         InferContext {

@@ -1,5 +1,5 @@
 use super::super::parser::parse;
-use crate::core::errors as err;
+use crate::core::{errors as err, parser_context::Options};
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::str_utils::strip_extra_ws;
 
@@ -11,7 +11,15 @@ macro_rules! add_case {
         #[test]
         fn $name() {
             println!("Try parsing {}", $source);
-            let parse_result = parse($source, &"".to_string());
+            let parse_result = parse(
+                $source,
+                &"".to_string(),
+                &Options::new(vec![
+                    "script".to_string(),
+                    "switch".to_string(),
+                    "repeat".to_string(),
+                ]),
+            );
             if let Ok(ast) = parse_result {
                 let output = serialize(&ast);
                 assert_eq!(strip_extra_ws($source), strip_extra_ws(output.as_str()));
@@ -24,7 +32,15 @@ macro_rules! add_case {
         #[test]
         fn $name() {
             println!("Try parsing {}", $source);
-            let parse_result = parse($source, &"".to_string());
+            let parse_result = parse(
+                $source,
+                &"".to_string(),
+                &Options::new(vec![
+                    "script".to_string(),
+                    "switch".to_string(),
+                    "repeat".to_string(),
+                ]),
+            );
             pretty_assertions::assert_eq!(parse_result, $error)
         }
     };
@@ -475,6 +491,59 @@ add_case! {
         public component Ab {
             script(src: "./target.js", target: "react")
             render div
+        }
+    "#
+}
+
+add_case! {
+    can_parse_a_switch_block,
+    r#"
+        public component Ab {
+            render switch something {
+                case "showA" {
+                    text "a"
+                }
+                default {
+                    text "b"
+                }
+            }
+        }
+    "#
+}
+
+add_case! {
+    can_parse_a_repeat_block,
+    r#"
+        public component Ab {
+            render repeat items {
+                text "hello world"
+            }
+        }
+    "#
+}
+
+add_case! {
+    can_parse_a_script_within_an_element,
+    r#"
+    public component Ab {
+        render div {
+            div abba {
+                script(src: "something.tsx")
+            }
+        }
+    }
+    "#
+}
+
+add_case! {
+    can_parse_a_script_within_a_text_node,
+    r#"
+        public component Ab {
+            render div {
+                text abba "hello" {
+                    script(src: "something.tsx")
+                }
+            }
         }
     "#
 }

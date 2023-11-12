@@ -4,6 +4,7 @@
 
   - re-organize frames
   - add names
+  - reduce # of components
 
 - GOALS
 
@@ -74,3 +75,5 @@
 
 - Bugs / enhancements
   - ability to resize sidebars or scrollbars
+
+### Jumbles

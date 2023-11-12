@@ -1,6 +1,7 @@
 mod code_compiler;
 mod context;
 mod definition_compiler;
+mod utils;
 
 #[cfg(test)]
 mod tests;

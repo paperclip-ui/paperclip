@@ -16,9 +16,9 @@ use paperclip_proto::service::designer::{
     design_server_event, file_response, ApplyMutationsRequest, ApplyMutationsResult,
     CreateDesignFileRequest, CreateDesignFileResponse, CreateFileRequest, DeleteFileRequest,
     DesignServerEvent, Empty, FileChanged, FileRequest, FileResponse, FsItem, ModulesEvaluated,
-    MoveFileRequest, OpenCodeEditorRequest, OpenFileInNavigatorRequest, ReadDirectoryRequest,
-    ReadDirectoryResponse, ResourceFiles, ScreenshotCaptured, SearchFilesRequest,
-    SearchFilesResponse, UpdateFileRequest,
+    MoveFileRequest, OpenCodeEditorRequest, OpenFileInNavigatorRequest, ProjectInfo,
+    ReadDirectoryRequest, ReadDirectoryResponse, ResourceFiles, ScreenshotCaptured,
+    SearchFilesRequest, SearchFilesResponse, UpdateFileRequest,
 };
 use path_absolutize::*;
 use run_script::ScriptOptions;
@@ -146,6 +146,27 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         println!("Error: {}", error);
 
         Ok(Response::new(Empty {}))
+    }
+    async fn get_project_info(
+        &self,
+        _request: Request<Empty>,
+    ) -> Result<Response<ProjectInfo>, Status> {
+        let experimental_capabilities = self
+            .ctx
+            .store
+            .lock()
+            .unwrap()
+            .state
+            .options
+            .config_context
+            .config
+            .experimental
+            .clone()
+            .unwrap_or(vec![]);
+
+        Ok(Response::new(ProjectInfo {
+            experimental_capabilities,
+        }))
     }
 
     async fn read_directory(

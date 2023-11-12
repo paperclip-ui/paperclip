@@ -2,6 +2,7 @@ use crate::replace_child;
 use inflector::cases::pascalcase::to_pascal_case;
 use paperclip_ast_serialize::serializable::Serializable;
 use paperclip_common::get_or_short;
+use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::{
     ast::{
@@ -161,7 +162,7 @@ pub fn get_unique_component_name(base_name: &str, doc: &Document) -> String {
 }
 
 fn create_element(tag_name: &str, id_seed: &str) -> Element {
-    let doc = parse(tag_name, id_seed).unwrap();
+    let doc = parse(tag_name, id_seed, &Options::new(vec![])).unwrap();
     match doc.body.get(0).unwrap().get_inner() {
         document_body_item::Inner::Element(element) => Some(element),
         _ => None,
@@ -182,6 +183,7 @@ fn create_component(name: &str, render: &str, id_seed: &str) -> Component {
         )
         .as_str(),
         id_seed,
+        &Options::new(vec![]),
     )
     .unwrap();
     match doc.body.get(0).unwrap().get_inner() {

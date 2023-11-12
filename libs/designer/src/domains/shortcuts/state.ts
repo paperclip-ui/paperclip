@@ -15,6 +15,7 @@ export enum ShortcutCommand {
   CreateDesignFile,
   InsertElement,
   GoToMain,
+  GoToRenderNodeComponent,
   InsertResource,
   InsertText,
   ConvertToComponent,
@@ -44,6 +45,15 @@ export const ALLOW_DEFAULTS = [
 export const getEntityShortcuts = memoize(
   (id: string, graph: Graph): MenuItem<ShortcutCommand>[] => {
     const entity = ast.getExprInfoById(id, graph);
+
+    console.log(entity);
+
+    const isComponent = entity?.kind === ast.ExprKind.Component;
+
+    const renderNodeIsInstance = isComponent
+      ? ast.isInstance(ast.getComponentRenderNode(entity.expr).expr, graph)
+      : null;
+
     const isInstance =
       (id && id.includes(".")) ||
       (entity?.kind === ast.ExprKind.Element &&
@@ -84,6 +94,16 @@ export const getEntityShortcuts = memoize(
               kind: MenuItemKind.Option,
               label: "Go to main",
               command: ShortcutCommand.GoToMain,
+            },
+          ]
+        : []) as MenuItem<ShortcutCommand>[]),
+
+      ...((renderNodeIsInstance
+        ? [
+            {
+              kind: MenuItemKind.Option,
+              label: "Go to parent component",
+              command: ShortcutCommand.GoToRenderNodeComponent,
             },
           ]
         : []) as MenuItem<ShortcutCommand>[]),

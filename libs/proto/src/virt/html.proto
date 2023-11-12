@@ -18,15 +18,9 @@ message Element {
   string tag_name = 2;
   optional string source_id = 3;
   repeated string source_instance_ids = 4;
-  repeated Attribute attributes = 5;
+  repeated ObjectProperty attributes = 5;
   optional NodeMedata metadata = 6;
   repeated Node children = 7;
-}
-
-message Attribute {
-  optional string source_id = 1;
-  string name = 2;
-  string value = 3;
 }
 
 message TextNode {
@@ -47,5 +41,53 @@ message Node {
   oneof inner {
     Element element = 1;
     TextNode text_node = 2;
+  }
+}
+
+
+message ObjectProperty {
+  optional string source_id = 1;
+  string name = 2;
+  Value value = 3;
+}
+
+message Str {
+  optional string source_id = 1;
+  string value = 2;
+}
+
+message Num {
+  optional string source_id = 1;
+  float value = 2;
+}
+
+message Bool {
+  optional string source_id = 1;
+  bool value = 2;
+}
+
+message Undefined {
+  optional string source_id = 1;
+}
+
+message Ary {
+  optional string source_id = 1;
+  repeated Value items = 2;
+}
+
+message Obj {
+  optional string source_id = 1;
+  repeated ObjectProperty properties = 2;
+}
+
+message Value {
+  oneof inner {
+    Ary ary = 1;
+    Obj obj = 2;
+    Str str = 3;
+    Num num = 4;
+    Bool bool = 5;
+    Undefined undef = 6;
+    Node node = 7;
   }
 }

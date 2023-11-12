@@ -4,7 +4,6 @@ import "../components/Sidebar/sidebar.pc" as sidebar
 /**
  * @bounds(x: 1349, y: -31, width: 149, height: 104)
 */
-
 public component ToolbarButton {
     variant hovering trigger {
         ":hover"
@@ -42,7 +41,6 @@ public component ToolbarButton {
 /**
  * @bounds(x: 1341, y: 97, width: 201, height: 182)
 */
-
 public component ToolbarIcon {
     variant isText trigger {
         ".text"
@@ -93,7 +91,6 @@ public component ToolbarIcon {
 /**
  * @bounds(x: 1348, y: 406, width: 182, height: 121)
 */
-
 component Zoom {
     render div {
         slot children
@@ -103,7 +100,6 @@ component Zoom {
 /**
  * @bounds(x: 1376, y: 375, width: 100, height: 64)
 */
-
 public component ToolbarDivider {
     render div {
         style {
@@ -118,7 +114,6 @@ public component ToolbarDivider {
 /**
  * @bounds(x: 520, y: 166, width: 407, height: 78)
 */
-
 public component Toolbar {
     render div {
         style {

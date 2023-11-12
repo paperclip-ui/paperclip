@@ -4,6 +4,7 @@ use async_trait::async_trait;
 use crc::crc32;
 use futures::future::BoxFuture;
 use futures::lock::Mutex;
+use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast::graph_ext::{Dependency, Graph};
 use paperclip_proto::ast::pc::Document;
@@ -23,14 +24,25 @@ fn dep_hashes(graph: &Graph, omit: &Vec<String>) -> Arc<Mutex<HashMap<String, St
 
 #[async_trait]
 pub trait LoadableGraph {
-    async fn load<TIO: IO>(&mut self, path: &str, io: &TIO) -> Result<()>;
-    async fn load_files<TIO: IO>(&mut self, paths: &Vec<String>, io: &TIO) -> Result<()>;
-    async fn load_into_partial<TIO: IO>(&self, paths: &Vec<String>, io: &TIO) -> Result<Graph>;
+    async fn load<TIO: IO>(&mut self, path: &str, io: &TIO, options: Options) -> Result<()>;
+    async fn load_files<TIO: IO>(
+        &mut self,
+        paths: &Vec<String>,
+        io: &TIO,
+        options: Options,
+    ) -> Result<()>;
+    async fn load_into_partial<TIO: IO>(
+        &self,
+        paths: &Vec<String>,
+        io: &TIO,
+        options: Options,
+    ) -> Result<Graph>;
 
     async fn load_file<TIO: IO>(
         &mut self,
         path: &str,
         io: &TIO,
+        options: Options,
     ) -> Result<HashMap<String, &Dependency>>;
 
     async fn load_file2<TIO: IO>(
@@ -38,32 +50,51 @@ pub trait LoadableGraph {
         path: &str,
         io: &TIO,
         loaded: Arc<Mutex<HashMap<String, String>>>,
+        options: Options,
     ) -> Result<HashMap<String, &Dependency>>;
 }
 
 #[async_trait]
 impl LoadableGraph for Graph {
-    async fn load<TIO: IO>(&mut self, path: &str, io: &TIO) -> Result<()> {
+    async fn load<TIO: IO>(&mut self, path: &str, io: &TIO, options: Options) -> Result<()> {
         self.dependencies.extend(
-            load_dependencies::<TIO>(String::from(path), io, Arc::new(Mutex::new(HashMap::new())))
-                .await?,
+            load_dependencies::<TIO>(
+                String::from(path),
+                io,
+                Arc::new(Mutex::new(HashMap::new())),
+                options,
+            )
+            .await?,
         );
         Ok(())
     }
 
-    async fn load_files<TIO: IO>(&mut self, paths: &Vec<String>, io: &TIO) -> Result<()> {
+    async fn load_files<TIO: IO>(
+        &mut self,
+        paths: &Vec<String>,
+        io: &TIO,
+        options: Options,
+    ) -> Result<()> {
         let loaded = dep_hashes(&self, paths);
         for path in paths {
-            self.load_file2(&path, io, loaded.clone()).await?;
+            self.load_file2(&path, io, loaded.clone(), options.clone())
+                .await?;
         }
         Ok(())
     }
 
-    async fn load_into_partial<TIO: IO>(&self, paths: &Vec<String>, io: &TIO) -> Result<Graph> {
+    async fn load_into_partial<TIO: IO>(
+        &self,
+        paths: &Vec<String>,
+        io: &TIO,
+        options: Options,
+    ) -> Result<Graph> {
         let mut other = Graph::new();
         let loaded = dep_hashes(&self, paths);
         for path in paths {
-            other.load_file2(&path, io, loaded.clone()).await?;
+            other
+                .load_file2(&path, io, loaded.clone(), options.clone())
+                .await?;
         }
         Ok(other)
     }
@@ -72,8 +103,10 @@ impl LoadableGraph for Graph {
         &mut self,
         path: &str,
         io: &TIO,
+        options: Options,
     ) -> Result<HashMap<String, &Dependency>> {
-        self.load_file2(path, io, dep_hashes(self, &vec![])).await
+        self.load_file2(path, io, dep_hashes(self, &vec![]), options)
+            .await
     }
 
     async fn load_file2<TIO: IO>(
@@ -81,9 +114,10 @@ impl LoadableGraph for Graph {
         path: &str,
         io: &TIO,
         loaded: Arc<Mutex<HashMap<String, String>>>,
+        options: Options,
     ) -> Result<HashMap<String, &Dependency>> {
         let new_dependencies =
-            load_dependencies_wrapper::<TIO>(path.to_string(), io, loaded).await?;
+            load_dependencies_wrapper::<TIO>(path.to_string(), io, loaded, options).await?;
 
         let new_dep_keys = new_dependencies
             .keys()
@@ -130,6 +164,7 @@ async fn load_dependencies<'io, TIO: IO>(
     path: String,
     io: &TIO,
     loaded: Arc<Mutex<HashMap<String, String>>>,
+    options: Options,
 ) -> Result<HashMap<String, Dependency>> {
     let mut deps = HashMap::new();
 
@@ -145,7 +180,7 @@ async fn load_dependencies<'io, TIO: IO>(
         .await
         .insert(path.to_string(), hash.to_string());
 
-    let document = if let Ok(document) = parse_pc(content.as_str(), &path) {
+    let document = if let Ok(document) = parse_pc(content.as_str(), &path, &options) {
         document
     } else {
         // TODO: this needs to be bubbled
@@ -167,7 +202,10 @@ async fn load_dependencies<'io, TIO: IO>(
 
     if imports.len() > 0 {
         for path in imports.values() {
-            deps.extend(load_dependencies_wrapper(path.clone(), io, loaded.clone()).await?);
+            deps.extend(
+                load_dependencies_wrapper(path.clone(), io, loaded.clone(), options.clone())
+                    .await?,
+            );
         }
     }
 
@@ -178,6 +216,7 @@ fn load_dependencies_wrapper<'io, TIO: IO>(
     path: String,
     io: &'io TIO,
     loaded: Arc<Mutex<HashMap<String, String>>>,
+    options: Options,
 ) -> BoxFuture<'io, Result<HashMap<String, Dependency>>> {
-    Box::pin(load_dependencies(path, io, loaded))
+    Box::pin(load_dependencies(path, io, loaded, options))
 }

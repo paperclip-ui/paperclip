@@ -1235,7 +1235,7 @@ export const getCurrentStyleMixins = memoize(
                 dep.imports[
                   dep.document.body.find((item) => {
                     return item.import?.namespace === ref.path[0];
-                  }).import.path
+                  })?.import.path
                 ]
               ];
 

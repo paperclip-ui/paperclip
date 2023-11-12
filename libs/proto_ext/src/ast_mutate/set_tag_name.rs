@@ -38,8 +38,6 @@ impl MutableVisitor<()> for EditContext<SetTagName> {
             expr.tag_name = self.mutation.tag_name.clone();
             expr.namespace = namespace;
 
-            println!("{:?}", slot_names);
-
             for slot_name in slot_names {
                 let existing_insert = expr.body.iter_mut().find(|x| {
                     if let node::Inner::Insert(insert) = x.get_inner() {

@@ -14,7 +14,7 @@ import {
   UrlResolver,
 } from "./native";
 import { memoize } from "@paperclip-ui/common";
-import { traverseNativeNode } from "./utils";
+import { getAttrValue, traverseNativeNode } from "./utils";
 import { Html5Entities } from "html-entities";
 import { stringifyCSSRule } from "./sheet";
 const entities = new Html5Entities();
@@ -513,10 +513,11 @@ const patchAttributes = (
   node.id = "_" + curr.id;
 
   for (let { name: key, value } of curr.attributes) {
+    let strValue = getAttrValue(value);
     if (key === "src" && options.resolveUrl) {
-      value = options.resolveUrl(value);
+      strValue = options.resolveUrl(strValue);
     }
-    node.setAttribute(key, value);
+    node.setAttribute(key, strValue);
   }
   for (const { name: key } of prev.attributes) {
     if (!curr.attributes.some((b) => b.name === key)) {

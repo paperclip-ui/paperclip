@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
+import * as inputStyles from "./ui.pc";
 
 import { SuggestionMenu, SuggestionMenuItem } from "../SuggestionMenu";
 
@@ -44,7 +44,7 @@ export const MultiSelectInput = ({
         placeholder={pills.length === 0 ? placeholder : null}
       >
         {pills}
-        <inputStyles.MultiSelectTextInput />
+        {/* <inputStyles.MultiSelectTextInput /> */}
       </inputStyles.MultiSelect>
     </SuggestionMenu>
   );

@@ -5,6 +5,7 @@ use anyhow::Result;
 use futures::executor::block_on;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::str_utils::strip_extra_ws;
+use paperclip_parser::core::parser_context::Options as ParserOptions;
 use paperclip_proto::ast::graph;
 use paperclip_proto::virt;
 use paperclip_proto_ext::graph::load::LoadableGraph;
@@ -27,7 +28,15 @@ impl FileResolver for MockResolver {
 fn evaluate_doc(sources: HashMap<&str, &str>) -> virt::html::Document {
     let mock_fs = test_utils::MockFS::new(sources);
     let mut graph = graph::Graph::new();
-    if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
+    if let Err(_err) = block_on(graph.load(
+        "/entry.pc",
+        &mock_fs,
+        ParserOptions::new(vec![
+            "repeat".to_string(),
+            "switch".to_string(),
+            "condition".to_string(),
+        ]),
+    )) {
         panic!("Unable to load");
     }
     let resolver = MockResolver {};
@@ -334,7 +343,7 @@ add_case! {
 		"#)
     ],
     "<div class=\"_C-80f4925f-1\"> </div>
-    <div class=\"_C-80f4925f-1 _B-80f4925f-4\"> </div> 
+    <div class=\"_C-80f4925f-1 _B-80f4925f-4\"> </div>
     <div class=\"_C-80f4925f-1 _A-80f4925f-7 _B-80f4925f-4\"> </div>"
 }
 
@@ -416,7 +425,7 @@ add_case! {
     ],
     r#"
 	<div class="_A-80f4925f-3" data-test="undefined">
-	</div> 
+	</div>
 	<div class="_A-80f4925f-3 _80f4925f-8" data-test="b"> </div>
 "#
 }
@@ -430,12 +439,12 @@ add_case! {
 
 			}
 		}
-		A(class: "b c d e")
+		A inst(class: "b c d e")
 	"#)
     ],
     r#"
-	<div class="_A-80f4925f-3 undefined"> </div> 
-	<div class="_A-80f4925f-3 _80f4925f-8 b c d e"> </div>
+	<div class="_A-80f4925f-3 undefined"> </div>
+	<div class="_A-80f4925f-3 _inst-80f4925f-8 b c d e"> </div>
 "#
 }
 add_case! {
@@ -470,15 +479,15 @@ add_case! {
 	"#)
     ],
     r#"
-    <span class="_B-80f4925f-1"> </span> 
+    <span class="_B-80f4925f-1"> </span>
 
-    <div class="_A-root-80f4925f-5"> 
-        <span class="_B-80f4925f-1 _A-80f4925f-4"> </span> 
-    </div> 
-    
-    <div class="_A-root-80f4925f-5 _inst-80f4925f-8"> 
+    <div class="_A-root-80f4925f-5">
+        <span class="_B-80f4925f-1 _A-80f4925f-4"> </span>
+    </div>
+
+    <div class="_A-root-80f4925f-5 _inst-80f4925f-8">
         <span class="_B-80f4925f-1 _A-80f4925f-4">
-        </span> 
+        </span>
     </div>
 "#
 }
@@ -526,6 +535,128 @@ add_case! {
 <div class="_A-80f4925f-3 _80f4925f-7">
 blah
 </div>
+"#
+}
+
+add_case! {
+    can_evaluate_a_repeat_block,
+    [
+    ("/entry.pc", r#"
+        component A {
+            render div {
+                repeat items {
+                    div
+                }
+            }
+        }
+	"#)
+    ],
+    r#"
+    <div class="_A-80f4925f-3">
+        <div>
+        </div>
+    </div>
+"#
+}
+
+add_case! {
+    can_evaluate_a_switch_case,
+    [
+    ("/entry.pc", r#"
+        component A {
+            render switch show {
+                case "a" {
+                    text "a"
+                    span {
+                        text "a2"
+                    }
+                }
+                default {
+                        text "b"
+                    }
+            }
+        }
+
+        A(show: "a")
+	"#)
+    ],
+    r#"
+    b
+    a
+    <span>
+        a2
+    </span>
+"#
+}
+
+add_case! {
+    can_evaluate_a_condition,
+    [
+    ("/entry.pc", r#"
+        component A {
+            render div {
+                if show {
+                    text "blah"
+                }
+                text "something else"
+            }
+        }
+
+        A(show: true)
+        A
+	"#)
+    ],
+    r#"
+    <div class="_A-80f4925f-4">
+        something else
+    </div>
+    <div class="_A-80f4925f-4 _80f4925f-9">
+        blah
+        something else
+    </div>
+    <div class="_A-80f4925f-4 _80f4925f-10">
+        something else
+    </div>
+"#
+}
+
+add_case! {
+    scope_class_is_passed_down,
+    [
+    ("/entry.pc", r#"
+    component A {
+        render div root(class: class)
+    }
+    component B {
+        render A root(class: class)
+    }
+    component C {
+        render div {
+            B bbbbb {
+                style {
+                    color: blue
+                }
+            }
+            div {
+                style {
+                    color: red
+                }
+            }
+        }
+    }
+	"#)
+    ],
+    r#"
+    <div class="_A-root-80f4925f-3 undefined">
+    </div>
+    <div class="_A-root-80f4925f-3 _B-root-80f4925f-8 undefined">
+    </div>
+    <div class="_C-80f4925f-19">
+        <div class="_A-root-80f4925f-3 _C-bbbbb-80f4925f-14 _B-root-80f4925f-8 undefined">
+        </div>
+        <div class="_C-80f4925f-18">
+        </div>
+    </div>
 "#
 }
 
@@ -591,8 +722,6 @@ fn bounds_are_attached_to_root_components() {
 
     let element = doc.children.get(0).expect("Node must exist").get_inner();
 
-    println!("{:#?}", element);
-
     assert_eq!(
         element,
         &virt::html::node::Inner::Element(virt::html::Element {
@@ -600,10 +729,10 @@ fn bounds_are_attached_to_root_components() {
             tag_name: "div".to_string(),
             source_id: Some("80f4925f-14".to_string()),
             source_instance_ids: vec![],
-            attributes: vec![virt::html::Attribute {
+            attributes: vec![virt::html::ObjectProperty {
                 source_id: None,
                 name: "class".to_string(),
-                value: "_A-80f4925f-14".to_string()
+                value: Some("_A-80f4925f-14".to_string().into())
             }],
             metadata: Some(virt::html::NodeMedata {
                 visible: Some(true),
@@ -678,10 +807,10 @@ fn bounds_are_attached_to_root_instances() {
             tag_name: "div".to_string(),
             source_id: Some("80f4925f-17".to_string()),
             source_instance_ids: vec!["80f4925f-17".to_string()],
-            attributes: vec![virt::html::Attribute {
+            attributes: vec![virt::html::ObjectProperty {
                 source_id: None,
                 name: "class".to_string(),
-                value: "_A-80f4925f-1 _80f4925f-17".to_string()
+                value: Some("_A-80f4925f-1 _80f4925f-17".to_string().into())
             }],
             metadata: Some(virt::html::NodeMedata {
                 visible: Some(true),

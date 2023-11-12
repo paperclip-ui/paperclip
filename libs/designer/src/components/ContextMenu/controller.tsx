@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "@paperclip-ui/common";
-import * as styles from "@paperclip-ui/designer/src/styles/context-menu.pc";
+import * as styles from "./context-menu.pc";
 import cx from "classnames";
 import React, { useEffect, useRef, useState } from "react";
 import { ShortcutCommand } from "../../domains/shortcuts/state";
@@ -13,14 +13,15 @@ import { Portal } from "../Portal";
 import { getHistoryState } from "../../domains/history/state";
 import { getEditorState, getHistoryStr } from "../../state";
 import { prettyKeyCombo } from "../../domains/ui/state";
-import { BaseContextMenuProps } from "./context-menu.pc";
+import { ContextMenuDivider, BaseContextMenuProps } from "./context-menu.pc";
 
 export type ContextMenuProps = {
   children: React.ReactElement;
   menu: () => MenuItem<ShortcutCommand>[];
 };
 
-export default (Base: React.FC<BaseContextMenuProps>) =>
+export const ContextMenu =
+  (Base: React.FC<BaseContextMenuProps>) =>
   ({ children, menu }: ContextMenuProps) => {
     const otherRef = useRef<HTMLElement>();
     const ref = otherRef;
@@ -125,5 +126,3 @@ const ContextMenuOption = ({
     </styles.ContextMenuItem>
   );
 };
-
-const ContextMenuDivider = styles.ContextMenuDivider;

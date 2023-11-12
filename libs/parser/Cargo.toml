@@ -22,6 +22,7 @@ paperclip_common = { path = "../rs_common", features = []  }
 futures = "0.3.21"
 wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4.33"
+js-sys = "0.3.64"
 
 [dev-dependencies]
 pretty_assertions = "1.2.1"

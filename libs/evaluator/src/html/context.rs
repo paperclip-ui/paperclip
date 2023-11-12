@@ -1,11 +1,11 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use crate::core::virt as core_virt;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::id::{get_document_id, IDGenerator};
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::ast::pc as ast;
+use paperclip_proto::virt::html;
 
 #[derive(Clone)]
 pub struct Options {
@@ -16,7 +16,7 @@ pub struct Options {
 pub struct DocumentContext<'graph, 'expr, 'file_resolver, FR: FileResolver> {
     pub graph: &'graph Graph,
     pub path: String,
-    pub data: Option<core_virt::Obj>,
+    pub data: Option<html::Obj>,
     pub file_resolver: &'file_resolver FR,
     pub current_component: Option<&'expr ast::Component>,
     pub instance_ids: Vec<String>,
@@ -46,7 +46,7 @@ impl<'graph, 'expr, 'file_resolver, FR: FileResolver>
             instance_ids: vec![],
         }
     }
-    pub fn with_data(&self, data: core_virt::Obj) -> Self {
+    pub fn with_data(&self, data: html::Obj) -> Self {
         let mut clone = self.clone();
         clone.data = Some(data);
         clone

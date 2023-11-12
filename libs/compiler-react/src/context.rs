@@ -12,6 +12,7 @@ pub struct Context<'dependency> {
     pub dependency: &'dependency Dependency,
     pub graph: &'dependency Graph,
     pub current_component: Option<&'dependency ast::pc::Component>,
+    pub ctx_name: String,
 }
 
 impl<'dependency> Context<'dependency> {
@@ -21,11 +22,17 @@ impl<'dependency> Context<'dependency> {
             current_component: None,
             graph,
             dependency,
+            ctx_name: "props".to_string(),
         }
     }
     pub fn within_component(&self, component: &'dependency ast::pc::Component) -> Self {
         let mut clone = self.clone();
         clone.current_component = Some(component);
+        clone
+    }
+    pub fn with_ctx_name(&self, name: &str) -> Self {
+        let mut clone = self.clone();
+        clone.ctx_name = name.to_string();
         clone
     }
     pub fn add_buffer(&self, buffer: &str) {

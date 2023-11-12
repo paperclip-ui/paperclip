@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use super::base::EditContext;
 use super::utils::{parse_import, resolve_import, resolve_imports, NamespaceResolution};
 use paperclip_common::get_or_short;
+use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
@@ -194,7 +195,7 @@ fn get_dep_imports(
 }
 
 fn parse_style(source: &str, checksum: &str) -> ast::pc::Style {
-    parse_pc(source, checksum)
+    parse_pc(source, checksum, &Options::new(vec![]))
         .unwrap()
         .body
         .get(0)

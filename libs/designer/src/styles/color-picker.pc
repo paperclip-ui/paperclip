@@ -5,7 +5,6 @@ import "./theme.pc" as mod
 /**
  * @bounds(x: -872, y: 798, width: 22, height: 21)
 */
-
 public component ColorDrop {
     render div root(style: style) {
         style {
@@ -27,7 +26,6 @@ public component ColorDrop {
 /**
  * @bounds(x: -732, y: 404, width: 458, height: 311)
 */
-
 public component ColorBox {
     variant rounded trigger {
         ".rounded"
@@ -66,7 +64,6 @@ public component ColorBox {
 /**
  * @bounds(x: 0, y: 0, width: 843, height: 1000)
 */
-
 div inspiration {
     img(src: "./color-picker-screenshot.png")
 }
@@ -74,7 +71,6 @@ div inspiration {
 /**
  * @bounds(x: -746, y: 784, width: 496, height: 431)
 */
-
 public component ColorPicker {
     render div {
         style {
@@ -115,7 +111,6 @@ public component ColorPicker {
 /**
  * @bounds(x: -2094, y: 769, width: 1152, height: 1066)
 */
-
 div preview {
     div container {
         style extends mod.popup {

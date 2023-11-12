@@ -4,8 +4,37 @@ use crate::base::ast::U16Position;
 use crate::core::string_scanner::StringScanner;
 use paperclip_common::id::{get_document_id, IDGenerator};
 use std::collections::VecDeque;
+use wasm_bindgen::prelude::*;
 
 type NextToken<'src, Token> = dyn Fn(&mut StringScanner<'src>) -> Result<Token, ParserError>;
+
+#[derive(Clone)]
+#[wasm_bindgen]
+pub struct Options {
+    experimental: Vec<String>,
+}
+
+#[wasm_bindgen]
+impl Options {
+    #[wasm_bindgen(getter)]
+    pub fn experimental(&self) -> js_sys::Array {
+        self.experimental
+            .clone()
+            .into_iter()
+            .map(JsValue::from)
+            .collect()
+    }
+}
+
+impl Options {
+    pub fn new(experimental: Vec<String>) -> Self {
+        Options { experimental }
+    }
+
+    pub fn feature_enabled(&self, feature: &str) -> bool {
+        self.experimental.contains(&feature.to_string())
+    }
+}
 
 pub struct Context<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone> {
     pub curr_u16pos: U16Position,
@@ -14,6 +43,7 @@ pub struct Context<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone> {
     pub id_seed: String,
     pub id_generator: &'idgenerator mut IDGenerator,
     _next_token: &'tokenizer NextToken<'src, TToken>,
+    pub options: Options,
     pub scanner: &'scanner mut StringScanner<'src>, // pub tokenizer: &'tokenizer mut TTokenizer,
 }
 
@@ -25,12 +55,14 @@ impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone>
         id_seed: &str,
         _next_token: &'tokenizer NextToken<'src, TToken>,
         id_generator: &'idgenerator mut IDGenerator,
+        options: Options,
     ) -> Result<Context<'tokenizer, 'scanner, 'idgenerator, 'src, TToken>, ParserError> {
         Ok(Context {
             curr_u16pos: scanner.get_u16pos(),
             token_pool: VecDeque::new(),
             curr_token: Some(_next_token(scanner)?),
             _next_token,
+            options,
             id_seed: id_seed.to_string(),
             id_generator,
             scanner,

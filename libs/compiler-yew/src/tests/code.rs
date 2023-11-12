@@ -1,6 +1,7 @@
 use crate::compile_code;
 use futures::executor::block_on;
 use paperclip_common::str_utils::strip_extra_ws;
+use paperclip_parser::core::parser_context::Options;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto_ext::graph::{load::LoadableGraph, test_utils};
 use std::collections::HashMap;
@@ -13,7 +14,7 @@ macro_rules! add_case {
             let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
             let mut graph = Graph::new();
 
-            if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs)) {
+            if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs, Options::new(vec![]))) {
                 panic!("Unable to load");
             }
 
@@ -45,12 +46,12 @@ add_case! {
 
       use yew::prelude::*;
       use yew::{function_component, Children, html, Properties, Callback, MouseEvent};
-  
+
       #[derive(Properties, PartialEq)]
       struct AProps {
         pub __scope_class_name: Option<String>,
       }
-  
+
       #[function_component]
       fn A(props: &AProps) -> Html {
         html! {
@@ -253,16 +254,16 @@ add_case! {
 
     use yew::prelude::*;
     use yew::{function_component, Children, html, Properties, Callback, MouseEvent};
-    
+
     #[path = "a/b/c/module.pc.rs"]
     mod mod;
-    
+
     #[derive(Properties, PartialEq)]
     struct AProps {
         pub __scope_class_name: Option<String>,
         pub cls: String,
     }
-    
+
     #[function_component]
     fn A(props: &AProps) -> Html {
         html! {
@@ -292,13 +293,13 @@ add_case! {
 
   use yew::prelude::*;
   use yew::{function_component, Children, html, Properties, Callback, MouseEvent};
-  
+
   #[derive(Properties, PartialEq)]
   struct AProps {
       pub __scope_class_name: Option<String>,
       pub class: String,
   }
-  
+
   #[function_component]
   fn A(props: &AProps) -> Html {
       html! {

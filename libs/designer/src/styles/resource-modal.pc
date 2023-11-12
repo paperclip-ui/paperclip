@@ -6,7 +6,6 @@ import "./etc.pc" as etc
 /**
  * @bounds(x: -1, y: 0, width: 1024, height: 768)
 */
-
 public component Tab {
     variant selected trigger {
         ".selected"

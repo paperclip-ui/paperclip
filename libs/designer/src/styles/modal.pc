@@ -5,7 +5,6 @@ import "./theme.pc" as mod
 /**
  * @bounds(x: 1285, y: 559, width: 428, height: 38)
 */
-
 public component ModalFooter {
     render div content {
         style {
@@ -38,7 +37,6 @@ public component ModalFooter {
 /**
  * @bounds(x: 1162, y: 647, width: 567, height: 70)
 */
-
 public component ModalContent {
     render div content {
         style {
@@ -55,7 +53,6 @@ public component ModalContent {
 /**
  * @bounds(x: 1145, y: 709, width: 584, height: 70)
 */
-
 public component ModalHeader {
     render div header {
         style {
@@ -90,7 +87,6 @@ public component ModalHeader {
 /**
  * @bounds(x: 1168, y: 187, width: 557, height: 254)
 */
-
 public component Modal {
     render div modal {
         style extends mod.popup {
@@ -117,7 +113,6 @@ public component Modal {
 /**
  * @bounds(x: -53, y: 18, width: 1024, height: 768)
 */
-
 public component ModalContainer {
     render div container {
         div background(onClick: onBackgroundClick)
@@ -139,7 +134,6 @@ public component ModalContainer {
 /**
  * @bounds(x: -43, y: 896, width: 1024, height: 768)
 */
-
 ModalContainer promptPreview {
     insert children {
         Modal {
@@ -168,7 +162,6 @@ ModalContainer promptPreview {
 /**
  * @bounds(x: 1044, y: 913, width: 1024, height: 768)
 */
-
 ModalContainer confirmPreview {
     insert children {
         Modal {

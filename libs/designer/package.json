@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/designer",
-  "version": "20.2.0",
+  "version": "20.2.1",
   "description": "",
   "main": "index.js",
   "private": true,
@@ -23,7 +23,7 @@
     "@improbable-eng/grpc-web-node-http-transport": "^0.15.0",
     "@paperclip-ui/evaluator": "^20.2.0",
     "@paperclip-ui/parser": "^20.2.0",
-    "@paperclip-ui/workspace": "^20.2.0",
+    "@paperclip-ui/workspace": "^20.2.1",
     "@types/jest": "^29.2.3",
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
@@ -49,7 +49,7 @@
   },
   "dependencies": {
     "@paperclip-ui/proto": "^20.2.0",
-    "@paperclip-ui/proto-ext": "^20.2.0",
+    "@paperclip-ui/proto-ext": "^20.2.1",
     "@paperclip-ui/web-renderer": "^20.2.0",
     "@types/color": "^3.0.3",
     "classnames": "^2.3.2",

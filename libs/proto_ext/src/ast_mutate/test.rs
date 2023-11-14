@@ -3135,6 +3135,35 @@ case! {
 }
 
 case! {
+  can_define_mixins_on_a_text_node_without_a_style,
+  [
+    (
+      "/entry.pc", r#"
+      style a {
+        color: blue
+      }
+      text "blarg"
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleMixins(SetStyleMixins {
+    target_expr_id: "80f4925f-4".to_string(),
+    mixin_ids: vec!["80f4925f-3".to_string()],
+    variant_ids: vec![]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    style a {
+      color: blue
+    }
+    text "blarg" {
+      style extends a
+    }
+    "#
+  )]
+}
+
+case! {
   can_define_mixins_within_variant,
   [
     (

@@ -21,7 +21,7 @@ export const StylePanel = () => {
   return (
     <sidebarStyles.SidebarPanel>
       <Variants />
-      <InstanceVariants />
+      {/* <InstanceVariants /> */}
       <Mixins />
       <Declarations />
     </sidebarStyles.SidebarPanel>

@@ -1,4 +1,5 @@
 use crate::compile_code;
+use crate::context::Options as CompileOptions;
 use futures::executor::block_on;
 use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::core::parser_context::Options;
@@ -34,7 +35,9 @@ macro_rules! add_case {
 
             let dep = graph.dependencies.get("/entry.pc").unwrap();
 
-            let output = compile_code(&dep, &graph).unwrap();
+            let output = compile_code(&dep, &graph, CompileOptions {
+              use_exact_imports: false
+            }).unwrap();
 
             println!("{}", output);
 
@@ -44,7 +47,7 @@ macro_rules! add_case {
             );
         }
     };
-}
+} 
 
 add_case! {
   can_compile_a_simple_component,
@@ -1035,5 +1038,29 @@ const _A = (props, ref) => {
 _A.displayName = "A";
 let A = React.memo(React.forwardRef(_A));
 export { A };
+  "#
+}
+
+add_case! {
+  text_nodes_with_styles_are_rendered_as_spans,
+  r#"
+  public component A {
+    render text "something" {
+      style {
+        color: blue
+      }
+    }
+  }
+  "#,
+  r#"
+  import "./entry.pc.css";
+  import * as React from "react";
+  
+  const _A = (props, ref) => {
+      return React.createElement("span", { "className": "_A-80f4925f-4" }, "something");
+  };
+  _A.displayName = "A";
+  let A = React.memo(React.forwardRef(_A));
+  export { A };
   "#
 }

@@ -34,13 +34,12 @@ pub async fn init(_args: InitArgs) -> Result<()> {
             emit: Some(vec!["css".to_string(), "react.js:js".to_string()]),
             out_dir: Some("lib".to_string()),
             import_assets_as_modules: None,
-            // main_css_file_name: Some("main.css".to_string()),
             main_css_file_name: None,
             embed_asset_max_size: None,
-            // asset_out_dir: Some("assets".to_string()),
             asset_out_dir: None,
             asset_prefix: None,
             use_asset_hash_names: None,
+            use_exact_imports: None
         }]),
     };
 

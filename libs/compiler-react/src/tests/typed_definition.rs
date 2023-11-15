@@ -268,7 +268,7 @@ add_case! {
         "ref"?: any,
     };
 
-    export const A: ReturnType<_38b93036.default>;
+    export const A: ReturnType<typeof _38b93036.default>;
   "#
 }
 
@@ -409,7 +409,7 @@ add_case! {
   export type BaseBProps = {
       "ref"?: any,
   };
-  export const B: ReturnType<_5e3fc5cb.default>;
+  export const B: ReturnType<typeof _5e3fc5cb.default>;
   export type BaseAProps = {
       "ref"?: any,
       "a"?: Array<{

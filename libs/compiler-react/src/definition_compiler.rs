@@ -122,7 +122,7 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
 
         context.add_buffer(
             format!(
-                "export const {}: ReturnType<_{}.{}>;\n",
+                "export const {}: ReturnType<typeof _{}.{}>;\n",
                 component.name, hash, name
             )
             .as_str(),

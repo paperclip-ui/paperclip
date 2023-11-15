@@ -1,4 +1,7 @@
-use crate::{utils::{get_node_name, node_contains_script, COMPILER_NAME}, context::Options};
+use crate::{
+    context::Options,
+    utils::{get_node_name, node_contains_script, COMPILER_NAME},
+};
 
 use super::context::Context;
 use anyhow::Result;
@@ -244,11 +247,18 @@ fn compile_nested_component(node: &ast::Node, doc: &ast::Document, context: &mut
 fn compile_imports(imports: &BTreeMap<String, Option<String>>, context: &mut Context) {
     for (path, namespace) in imports {
         if let Some(namespace) = namespace {
-            context.add_buffer(format!("import * as {} from \"{}\";\n", namespace, if context.options.use_exact_imports && path.ends_with(".pc") {
-                format!("{}.js", path)
-            } else {
-                path.clone()
-            }).as_str());
+            context.add_buffer(
+                format!(
+                    "import * as {} from \"{}\";\n",
+                    namespace,
+                    if context.options.use_exact_imports && path.ends_with(".pc") {
+                        format!("{}.js", path)
+                    } else {
+                        path.clone()
+                    }
+                )
+                .as_str(),
+            );
         } else {
             context.add_buffer(format!("import \"{}\";\n", path).as_str());
         }

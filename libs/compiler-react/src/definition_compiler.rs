@@ -1,6 +1,9 @@
 use std::collections::BTreeMap;
 
-use crate::{utils::{contains_script, COMPILER_NAME}, context::Options};
+use crate::{
+    context::Options,
+    utils::{contains_script, COMPILER_NAME},
+};
 
 use super::context::Context;
 use anyhow::Result;
@@ -13,9 +16,13 @@ use paperclip_proto::ast::{
 };
 
 pub fn compile_typed_definition(dep: &Dependency, graph: &Graph) -> Result<String> {
-    let mut context = Context::new(dep, graph, Options {
-        use_exact_imports: false
-    });
+    let mut context = Context::new(
+        dep,
+        graph,
+        Options {
+            use_exact_imports: false,
+        },
+    );
     compile_document(&mut context);
     Ok(context.get_buffer())
 }

@@ -35,9 +35,14 @@ macro_rules! add_case {
 
             let dep = graph.dependencies.get("/entry.pc").unwrap();
 
-            let output = compile_code(&dep, &graph, CompileOptions {
-              use_exact_imports: false
-            }).unwrap();
+            let output = compile_code(
+                &dep,
+                &graph,
+                CompileOptions {
+                    use_exact_imports: false,
+                },
+            )
+            .unwrap();
 
             println!("{}", output);
 
@@ -47,7 +52,7 @@ macro_rules! add_case {
             );
         }
     };
-} 
+}
 
 add_case! {
   can_compile_a_simple_component,
@@ -935,7 +940,6 @@ add_case! {
   "#
 }
 
-
 add_case! {
   can_compile_condition_within_insert,
   r#"
@@ -969,7 +973,6 @@ let A = React.memo(React.forwardRef(_A));
 export { A };
   "#
 }
-
 
 add_case! {
   can_compile_condition_within_slot,
@@ -1005,7 +1008,6 @@ add_case! {
   export { A };
   "#
 }
-
 
 add_case! {
   can_compile_repeat_in_slot,

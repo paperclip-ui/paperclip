@@ -142,7 +142,7 @@ fn default_compiler_options_with_emit(emit: Vec<String>) -> CompilerOptions {
         asset_out_dir: None,
         asset_prefix: None,
         use_asset_hash_names: None,
-        use_exact_imports: None
+        use_exact_imports: None,
     }
 }
 

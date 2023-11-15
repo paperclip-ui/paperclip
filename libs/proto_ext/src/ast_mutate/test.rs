@@ -1082,6 +1082,30 @@ case! {
 }
 
 case! {
+  can_convert_a_frame_into_a_component,
+  [
+    (
+      "/entry.pc", r#"
+      /**
+       * @bounds(x: 635, y: 55, width: 430, height: 180)
+      */
+        div testtttt
+      "#
+    )
+  ],
+  mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
+    expression_id: "80f4925f-14".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    /** * @bounds(x: 635, y: 55, width: 430, height: 180) */
+    public component Testtttt { render div testtttt }
+    "#
+  )]
+}
+
+case! {
   can_convert_a_nested_element_to_component,
   [
     (

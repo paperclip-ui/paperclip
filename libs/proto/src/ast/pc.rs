@@ -2,6 +2,7 @@ use crate::add_inner_wrapper;
 
 use super::{
     all::ExpressionWrapper,
+    docco::Comment,
     get_expr::GetExpr,
     graph::{Dependency, Graph},
 };
@@ -248,6 +249,29 @@ impl Node {
             | node::Inner::Condition(_) => None,
         }
     }
+    pub fn strip_doc_comment(&self) -> Node {
+        match self.get_inner() {
+            node::Inner::Element(element) => {
+                let mut element = element.clone();
+                element.comment = None;
+                (&element).into()
+            }
+            node::Inner::Text(text) => {
+                let mut text = text.clone();
+                text.comment = None;
+                (&text).into()
+            }
+            _ => self.clone(),
+        }
+    }
+
+    pub fn get_doc_comment(&self) -> Option<Comment> {
+        match self.get_inner() {
+            node::Inner::Element(element) => element.comment.clone(),
+            node::Inner::Text(text) => text.comment.clone(),
+            _ => None,
+        }
+    }
 }
 
 /**
@@ -310,6 +334,62 @@ impl TryFrom<&Node> for Script {
     fn try_from(value: &Node) -> Result<Self, Self::Error> {
         match value.get_inner() {
             node::Inner::Script(script) => Ok(script.clone()),
+            _ => Err(()),
+        }
+    }
+}
+
+impl TryFrom<ExpressionWrapper> for Node {
+    type Error = ();
+
+    fn try_from(value: ExpressionWrapper) -> Result<Self, Self::Error> {
+        match &value {
+            ExpressionWrapper::Node(node) => Ok(node.clone()),
+            ExpressionWrapper::Element(node) => Ok(node.into()),
+            ExpressionWrapper::TextNode(node) => Ok(node.into()),
+            _ => Err(()),
+        }
+    }
+}
+
+impl TryFrom<ExpressionWrapper> for Variant {
+    type Error = ();
+
+    fn try_from(value: ExpressionWrapper) -> Result<Self, Self::Error> {
+        match &value {
+            ExpressionWrapper::Variant(node) => Ok(node.clone()),
+            _ => Err(()),
+        }
+    }
+}
+impl TryFrom<ExpressionWrapper> for Component {
+    type Error = ();
+
+    fn try_from(value: ExpressionWrapper) -> Result<Self, Self::Error> {
+        match &value {
+            ExpressionWrapper::Component(node) => Ok(node.clone()),
+            _ => Err(()),
+        }
+    }
+}
+
+impl TryFrom<ExpressionWrapper> for Element {
+    type Error = ();
+
+    fn try_from(value: ExpressionWrapper) -> Result<Self, Self::Error> {
+        match &value {
+            ExpressionWrapper::Element(node) => Ok(node.clone()),
+            _ => Err(()),
+        }
+    }
+}
+
+impl TryFrom<ExpressionWrapper> for Style {
+    type Error = ();
+
+    fn try_from(value: ExpressionWrapper) -> Result<Self, Self::Error> {
+        match &value {
+            ExpressionWrapper::Style(node) => Ok(node.clone()),
             _ => Err(()),
         }
     }
@@ -379,6 +459,7 @@ impl TryFrom<Node> for Element {
         }
     }
 }
+
 impl<'a> TryFrom<&'a mut Node> for &'a mut Element {
     type Error = ();
     fn try_from(value: &'a mut Node) -> Result<Self, Self::Error> {
@@ -386,6 +467,18 @@ impl<'a> TryFrom<&'a mut Node> for &'a mut Element {
             node::Inner::Element(expr) => Ok(expr),
             _ => Err(()),
         }
+    }
+}
+
+impl<'a> From<&Element> for Node {
+    fn from(value: &Element) -> Self {
+        node::Inner::Element(value.clone()).get_outer()
+    }
+}
+
+impl<'a> From<&TextNode> for Node {
+    fn from(value: &TextNode) -> Self {
+        node::Inner::Text(value.clone()).get_outer()
     }
 }
 

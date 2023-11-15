@@ -99,19 +99,6 @@ macro_rules! expressions {
             }
           }
 
-          impl TryFrom<ExpressionWrapper> for $expr {
-            type Error = ();
-            fn try_from(wrapper: ExpressionWrapper) -> Result<Self, Self::Error>  {
-                match wrapper {
-                    ExpressionWrapper::$name(expr) => {
-                        Ok(expr.clone())
-                    },
-                    _ => {
-                        Err(())
-                    }
-                }
-            }
-          }
 
 
           impl<'a> TryFrom<&'a ExpressionWrapper> for &'a $expr {

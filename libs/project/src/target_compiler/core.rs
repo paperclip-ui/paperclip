@@ -53,7 +53,7 @@ pub struct TargetCompiler<IO: FileReader + FileResolver> {
 
 struct TranslateOptions {
     global_imports: Vec<String>,
-    use_exact_imports: bool
+    use_exact_imports: bool,
 }
 
 impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
@@ -201,8 +201,8 @@ async fn translate<F: FileResolver>(
             graph.dependencies.get(path).unwrap(),
             graph,
             react::context::Options {
-                use_exact_imports: options.use_exact_imports
-            }
+                use_exact_imports: options.use_exact_imports,
+            },
         )?),
         "react.d.ts" => Some(react::compile_typed_definition(
             graph.dependencies.get(path).unwrap(),

@@ -129,7 +129,6 @@ pub struct CompilerOptions {
     #[serde(rename = "mainCssFileName", skip_serializing_if = "Option::is_none")]
     pub main_css_file_name: Option<String>,
 
-
     #[serde(rename = "useExactImports", skip_serializing_if = "Option::is_none")]
     pub use_exact_imports: Option<bool>,
 

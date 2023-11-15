@@ -85,7 +85,6 @@ impl MutableVisitor<()> for EditContext<SetStyleMixins> {
         edit_style(&mut style, &self);
 
         return VisitorResult::Return(());
-        
     }
     fn visit_element(&mut self, element: &mut ast::pc::Element) -> VisitorResult<()> {
         if self.mutation.target_expr_id != element.id {

@@ -446,7 +446,6 @@ add_case! {
   "#
 }
 
-
 add_case! {
   can_compile_condition_within_a_slot,
   [

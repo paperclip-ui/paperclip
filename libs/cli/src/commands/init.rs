@@ -39,7 +39,7 @@ pub async fn init(_args: InitArgs) -> Result<()> {
             asset_out_dir: None,
             asset_prefix: None,
             use_asset_hash_names: None,
-            use_exact_imports: None
+            use_exact_imports: None,
         }]),
     };
 

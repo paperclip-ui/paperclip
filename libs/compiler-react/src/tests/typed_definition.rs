@@ -59,6 +59,7 @@ add_case! {
     import * as React from "react";
 
     export type BaseAProps = {
+      
       "ref"?: any,
     };
     export const A: React.FC<BaseAProps>;
@@ -98,6 +99,7 @@ add_case! {
     import * as React from "react";
 
     export type BaseAProps = {
+      
       "ref"?: any,
       "class"?: string,
     };
@@ -120,6 +122,7 @@ add_case! {
     import * as React from "react";
 
     export type BaseAProps = {
+      
       "ref"?: any,
       "children"?: React.Children,
     };
@@ -142,6 +145,7 @@ add_case! {
     import * as React from "react";
 
     export type BaseAProps = {
+      
       "ref"?: any,
       "fsdfsdfs"?: any,
     };
@@ -164,6 +168,7 @@ add_case! {
     import * as React from "react";
 
     export type BaseAProps = {
+      
       "ref"?: any,
       "abProps"?: React.DOMAttributes<any>,
     };
@@ -195,12 +200,14 @@ add_case! {
     import * as React from "react";
 
     export type BaseAProps = {
+      
       "ref"?: any,
       "somethingProps": React.ComponentProps<typeof B>,
     };
     export const A: React.FC<BaseAProps>;
 
     export type BaseBProps = {
+      
       "ref"?: any,
     };
     export const B: React.FC<BaseBProps>;
@@ -237,6 +244,7 @@ add_case! {
     import * as React from "react";
 
     export type BaseAProps = {
+      
       "ref"?: any,
       "somethingProps": React.ComponentProps<typeof mod.B>,
     };
@@ -265,10 +273,11 @@ add_case! {
     import * as React from "react";
 
     export type BaseAProps = {
+      
         "ref"?: any,
     };
 
-    export const A: ReturnType<_38b93036.default>;
+    export const A: ReturnType<typeof _38b93036.default>;
   "#
 }
 
@@ -299,6 +308,7 @@ add_case! {
   r#"
   import * as React from "react";
   export type BaseAProps = {
+      
       "ref"?: any,
       "show"?: "b" | "a",
   };
@@ -325,6 +335,7 @@ add_case! {
   r#"
   import * as React from "react";
   export type BaseAProps = {
+      
       "ref"?: any,
       "items"?: Array<{
           "onClick"?: any,
@@ -367,6 +378,7 @@ add_case! {
   r#"
   import * as React from "react";
   export type BaseAProps = {
+      
       "ref"?: any,
       "a"?: Array<{
           "b"?: Array<{
@@ -407,10 +419,12 @@ add_case! {
   import * as _5e3fc5cb from "./b.tsx";
   import * as React from "react";
   export type BaseBProps = {
+      
       "ref"?: any,
   };
-  export const B: ReturnType<_5e3fc5cb.default>;
+  export const B: ReturnType<typeof _5e3fc5cb.default>;
   export type BaseAProps = {
+      
       "ref"?: any,
       "a"?: Array<{
           "bb": React.ComponentProps<typeof B>,
@@ -439,13 +453,13 @@ add_case! {
   r#"
   import * as React from "react";
   export type BaseAProps = {
+      
       "ref"?: any,
       "show"?: boolean,
   };
   export const A: React.FC<BaseAProps>;
   "#
 }
-
 
 add_case! {
   can_compile_condition_within_a_slot,
@@ -468,6 +482,7 @@ add_case! {
   r#"
   import * as React from "react";
   export type BaseAProps = {
+      
       "ref"?: any,
       "show"?: boolean,
   };

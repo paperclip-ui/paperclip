@@ -1,6 +1,9 @@
 use std::collections::BTreeMap;
 
-use crate::utils::{contains_script, COMPILER_NAME};
+use crate::{
+    context::Options,
+    utils::{contains_script, COMPILER_NAME},
+};
 
 use super::context::Context;
 use anyhow::Result;
@@ -13,7 +16,13 @@ use paperclip_proto::ast::{
 };
 
 pub fn compile_typed_definition(dep: &Dependency, graph: &Graph) -> Result<String> {
-    let mut context = Context::new(dep, graph);
+    let mut context = Context::new(
+        dep,
+        graph,
+        Options {
+            use_exact_imports: false,
+        },
+    );
     compile_document(&mut context);
     Ok(context.get_buffer())
 }
@@ -82,6 +91,9 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
 
     context.add_buffer(format!("export type Base{}Props = {{\n", component.name).as_str());
     context.start_block();
+
+    // Not yet
+    // context.add_buffer("\"is\"?: React.ComponentType<any>,\n");
     context.add_buffer("\"ref\"?: any,\n");
 
     for (name, prop) in &component_inference.properties {
@@ -113,7 +125,7 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
 
         context.add_buffer(
             format!(
-                "export const {}: ReturnType<_{}.{}>;\n",
+                "export const {}: ReturnType<typeof _{}.{}>;\n",
                 component.name, hash, name
             )
             .as_str(),

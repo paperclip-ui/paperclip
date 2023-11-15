@@ -1268,7 +1268,10 @@ const getStyleMixinRefs = (state: DesignerState): Reference[] => {
     .map((id) => ast.getExprByVirtId(id, state.graph)?.expr)
     .filter(Boolean);
 
-  if (expr.kind === ast.ExprKind.Element) {
+  if (
+    expr.kind === ast.ExprKind.Element ||
+    expr.kind === ast.ExprKind.TextNode
+  ) {
     const variantStyle = expr.expr.body.find((item) => {
       return (
         item.style &&

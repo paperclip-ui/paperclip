@@ -1082,6 +1082,30 @@ case! {
 }
 
 case! {
+  can_convert_a_frame_into_a_component,
+  [
+    (
+      "/entry.pc", r#"
+      /**
+       * @bounds(x: 635, y: 55, width: 430, height: 180)
+      */
+        div testtttt
+      "#
+    )
+  ],
+  mutation::Inner::ConvertToComponent(ConvertToComponent {
+    name: None,
+    expression_id: "80f4925f-14".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    /** * @bounds(x: 635, y: 55, width: 430, height: 180) */
+    public component Testtttt { render div testtttt }
+    "#
+  )]
+}
+
+case! {
   can_convert_a_nested_element_to_component,
   [
     (
@@ -3128,6 +3152,35 @@ case! {
       color: blue
     }
     div {
+      style extends a
+    }
+    "#
+  )]
+}
+
+case! {
+  can_define_mixins_on_a_text_node_without_a_style,
+  [
+    (
+      "/entry.pc", r#"
+      style a {
+        color: blue
+      }
+      text "blarg"
+      "#
+    )
+  ],
+  mutation::Inner::SetStyleMixins(SetStyleMixins {
+    target_expr_id: "80f4925f-4".to_string(),
+    mixin_ids: vec!["80f4925f-3".to_string()],
+    variant_ids: vec![]
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    style a {
+      color: blue
+    }
+    text "blarg" {
       style extends a
     }
     "#

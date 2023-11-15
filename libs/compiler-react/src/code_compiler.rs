@@ -1,4 +1,7 @@
-use crate::utils::{get_node_name, node_contains_script, COMPILER_NAME};
+use crate::{
+    context::Options,
+    utils::{get_node_name, node_contains_script, COMPILER_NAME},
+};
 
 use super::context::Context;
 use anyhow::Result;
@@ -47,8 +50,8 @@ impl Info {
     }
 }
 
-pub fn compile_code(dependency: &Dependency, graph: &Graph) -> Result<String> {
-    let mut context = Context::new(&dependency, graph);
+pub fn compile_code(dependency: &Dependency, graph: &Graph, options: Options) -> Result<String> {
+    let mut context = Context::new(&dependency, graph, options);
     compile_document(
         dependency.document.as_ref().expect("Document must exist"),
         &mut context,
@@ -244,7 +247,18 @@ fn compile_nested_component(node: &ast::Node, doc: &ast::Document, context: &mut
 fn compile_imports(imports: &BTreeMap<String, Option<String>>, context: &mut Context) {
     for (path, namespace) in imports {
         if let Some(namespace) = namespace {
-            context.add_buffer(format!("import * as {} from \"{}\";\n", namespace, path).as_str());
+            context.add_buffer(
+                format!(
+                    "import * as {} from \"{}\";\n",
+                    namespace,
+                    if context.options.use_exact_imports && path.ends_with(".pc") {
+                        format!("{}.js", path)
+                    } else {
+                        path.clone()
+                    }
+                )
+                .as_str(),
+            );
         } else {
             context.add_buffer(format!("import \"{}\";\n", path).as_str());
         }
@@ -343,7 +357,23 @@ fn compile_component_render(component: &ast::Component, context: &mut Context) {
 }
 
 fn compile_text_node(node: &ast::TextNode, context: &mut Context) {
-    context.add_buffer(format!("\"{}\"", node.value).as_str());
+    if node.is_stylable() {
+        context.add_buffer("React.createElement(\"span\", { ");
+        context.add_buffer("\"className\": ");
+        context.add_buffer(
+            format!(
+                "\"{}\"",
+                get_style_namespace(&node.name, &node.id, context.current_component)
+            )
+            .as_str(),
+        );
+
+        context.add_buffer(" }, ");
+        context.add_buffer(format!("\"{}\"", node.value).as_str());
+        context.add_buffer(")");
+    } else {
+        context.add_buffer(format!("\"{}\"", node.value).as_str());
+    }
 }
 
 fn compile_slot(node: &ast::Slot, context: &mut Context) {
@@ -425,7 +455,13 @@ fn compile_element(element: &ast::Element, info: &Info, context: &mut Context) {
         format!("\"{}\"", element.tag_name)
     };
 
-    context.add_buffer(format!("React.createElement({}, ", tag_name).as_str());
+    context.add_buffer("React.createElement(");
+
+    if info.is_component_render_node {
+        context.add_buffer("props.is || ");
+    }
+
+    context.add_buffer(format!("{}, ", tag_name).as_str());
     compile_element_parameters(element, &info.set_is_instance(is_instance), context);
     compile_element_children(element, context);
     context.add_buffer(")")

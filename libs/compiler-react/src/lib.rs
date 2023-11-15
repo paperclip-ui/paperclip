@@ -1,5 +1,5 @@
 mod code_compiler;
-mod context;
+pub mod context;
 mod definition_compiler;
 mod utils;
 

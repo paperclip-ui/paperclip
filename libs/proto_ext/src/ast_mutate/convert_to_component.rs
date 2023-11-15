@@ -1,7 +1,9 @@
 use crate::replace_child;
 use inflector::cases::pascalcase::to_pascal_case;
-use paperclip_ast_serialize::serializable::Serializable;
-use paperclip_common::get_or_short;
+use paperclip_ast_serialize::{
+    serializable::Serializable,
+};
+use paperclip_common::{get_or_short};
 use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::{
@@ -22,7 +24,7 @@ macro_rules! replace_child_with_instance {
         let checksum = $checksum;
 
         replace_child!($children, &$self.mutation.expression_id, |v: &Node| {
-            let target: ExpressionWrapper = v.into();
+            let target: &Node = v.into();
             let component_name = get_component_name(
                 &target,
                 &$self.mutation.name,
@@ -43,9 +45,18 @@ impl MutableVisitor<()> for EditContext<ConvertToComponent> {
             VisitorResult::Continue
         );
 
+        println!("NOT SKIP {:?}", found_expr);
+
+        let found_node: Node = match found_expr.try_into() {
+            Ok(node) => node,
+            Err(_) => {
+                return VisitorResult::Continue;
+            }
+        };
+
         let new_component = create_component(
-            &get_component_name(&found_expr, &self.mutation.name, expr),
-            found_expr.serialize().as_str(),
+            &get_component_name(&found_node, &self.mutation.name, expr),
+            &found_node,
             &self.new_id(),
         );
 
@@ -86,6 +97,7 @@ impl MutableVisitor<()> for EditContext<ConvertToComponent> {
             return VisitorResult::Continue;
         }
         let target: ExpressionWrapper = expr.node.as_mut().unwrap().into();
+        let target: Node = target.try_into().expect("Must be a node");
 
         let component_name = get_component_name(
             &target,
@@ -123,15 +135,10 @@ fn get_component_insert_index(matching_id: &str, expr: &Document) -> usize {
     }
 }
 
-fn get_component_name(expr: &ExpressionWrapper, name: &Option<String>, doc: &Document) -> String {
-    let base_name = name.clone().or(match expr {
-        ExpressionWrapper::Element(element) => element.name.clone(),
-        ExpressionWrapper::TextNode(node) => node.name.clone(),
-        ExpressionWrapper::Node(node) => match node.get_inner() {
-            node::Inner::Element(node) => node.name.clone(),
-            node::Inner::Text(node) => node.name.clone(),
-            _ => None,
-        },
+fn get_component_name(expr: &Node, name: &Option<String>, doc: &Document) -> String {
+    let base_name: Option<String> = name.clone().or(match expr.get_inner() {
+        node::Inner::Element(node) => node.name.clone(),
+        node::Inner::Text(node) => node.name.clone(),
         _ => None,
     });
 
@@ -171,21 +178,32 @@ fn create_element(tag_name: &str, id_seed: &str) -> Element {
     .clone()
 }
 
-fn create_component(name: &str, render: &str, id_seed: &str) -> Component {
-    let doc = parse(
-        format!(
-            r#"
-    public component {} {{
-      render {}
-    }}
-  "#,
-            name, render
-        )
-        .as_str(),
-        id_seed,
-        &Options::new(vec![]),
-    )
-    .unwrap();
+fn create_component(name: &str, render: &Node, id_seed: &str) -> Component {
+    let doc_comment = render
+        .get_doc_comment()
+        .and_then(|comment| {
+            let comment: ExpressionWrapper = (&comment).into();
+            Some(comment.serialize())
+        })
+        .unwrap_or("".to_string());
+
+    let render: ExpressionWrapper = (&render.strip_doc_comment()).into();
+
+    let new_source = format!(
+        r#"
+{}
+public component {} {{
+  render {}
+}}
+"#,
+        doc_comment,
+        name,
+        &render.serialize()
+    );
+
+    println!("Create component {}", new_source);
+
+    let doc = parse(&new_source, id_seed, &Options::new(vec![])).unwrap();
     match doc.body.get(0).unwrap().get_inner() {
         document_body_item::Inner::Component(expr) => Some(expr),
         _ => None,

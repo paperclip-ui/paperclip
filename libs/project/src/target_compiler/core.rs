@@ -53,6 +53,7 @@ pub struct TargetCompiler<IO: FileReader + FileResolver> {
 
 struct TranslateOptions {
     global_imports: Vec<String>,
+    use_exact_imports: bool,
 }
 
 impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
@@ -157,6 +158,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
 
     fn get_ext_translate_options(&self, ext: &str, path: &str, graph: &Graph) -> TranslateOptions {
         TranslateOptions {
+            use_exact_imports: matches!(self.context.options.use_exact_imports, Some(true)),
             global_imports: if ext == "css" {
                 vec![]
             } else {
@@ -198,6 +200,9 @@ async fn translate<F: FileResolver>(
         "react.js" => Some(react::compile_code(
             graph.dependencies.get(path).unwrap(),
             graph,
+            react::context::Options {
+                use_exact_imports: options.use_exact_imports,
+            },
         )?),
         "react.d.ts" => Some(react::compile_typed_definition(
             graph.dependencies.get(path).unwrap(),

@@ -13,13 +13,24 @@ pub struct Context<'dependency> {
     pub graph: &'dependency Graph,
     pub current_component: Option<&'dependency ast::pc::Component>,
     pub ctx_name: String,
+    pub options: Options,
+}
+
+#[derive(Clone)]
+pub struct Options {
+    pub use_exact_imports: bool,
 }
 
 impl<'dependency> Context<'dependency> {
-    pub fn new(dependency: &'dependency Dependency, graph: &'dependency Graph) -> Self {
+    pub fn new(
+        dependency: &'dependency Dependency,
+        graph: &'dependency Graph,
+        options: Options,
+    ) -> Self {
         Self {
             content: Rc::new(RefCell::new(SerializeContext::new(0))),
             current_component: None,
+            options,
             graph,
             dependency,
             ctx_name: "props".to_string(),

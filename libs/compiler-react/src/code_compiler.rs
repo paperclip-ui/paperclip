@@ -455,7 +455,13 @@ fn compile_element(element: &ast::Element, info: &Info, context: &mut Context) {
         format!("\"{}\"", element.tag_name)
     };
 
-    context.add_buffer(format!("React.createElement({}, ", tag_name).as_str());
+    context.add_buffer("React.createElement(");
+
+    if info.is_component_render_node {
+        context.add_buffer("props.is || ");
+    }
+
+    context.add_buffer(format!("{}, ", tag_name).as_str());
     compile_element_parameters(element, &info.set_is_instance(is_instance), context);
     compile_element_children(element, context);
     context.add_buffer(")")

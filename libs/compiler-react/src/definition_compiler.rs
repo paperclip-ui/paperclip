@@ -91,6 +91,7 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
 
     context.add_buffer(format!("export type Base{}Props = {{\n", component.name).as_str());
     context.start_block();
+    context.add_buffer("\"is\"?: React.ComponentType<any>,\n");
     context.add_buffer("\"ref\"?: any,\n");
 
     for (name, prop) in &component_inference.properties {

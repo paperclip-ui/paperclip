@@ -1,9 +1,9 @@
 use crate::replace_child;
 use inflector::cases::pascalcase::to_pascal_case;
 use paperclip_ast_serialize::{
-    docco::serialize_comment, pc::serialize_node, serializable::Serializable,
+    serializable::Serializable,
 };
-use paperclip_common::{get_or_short, serialize_context::Context};
+use paperclip_common::{get_or_short};
 use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::{

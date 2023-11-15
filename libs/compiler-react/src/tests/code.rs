@@ -66,7 +66,7 @@ add_case! {
     import * as React from "react";
 
     const _A = (props, ref) => {
-        return React.createElement("div", {
+        return React.createElement(props.is || "div", {
             "key": "80f4925f-1",
             "ref": ref
         });
@@ -88,7 +88,7 @@ add_case! {
     import * as React from "react";
 
     const _A = (props, ref) => {
-        return React.createElement("div", {
+        return React.createElement(props.is || "div", {
             "key": "80f4925f-1",
             "ref": ref
         });
@@ -113,7 +113,7 @@ add_case! {
   import * as React from "react";
 
   const _A = (props, ref) => {
-      return React.createElement("div", {
+      return React.createElement(props.is || "div", {
           "className": "_A-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
           "key": "80f4925f-4",
           "ref": ref
@@ -136,7 +136,7 @@ add_case! {
   import * as React from "react";
 
   const _A = (props, ref) => {
-      return React.createElement("div", {
+      return React.createElement(props.is || "div", {
           ...props.abProps,
           "className": "_A-ab-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
           "key": "80f4925f-1",
@@ -161,7 +161,7 @@ add_case! {
   import * as React from "react";
 
   const _A = (props, ref) => {
-      return React.createElement("span", {
+      return React.createElement(props.is || "span", {
           "key": "80f4925f-2",
           "ref": ref
       },
@@ -184,7 +184,7 @@ add_case! {
   import * as React from "react";
 
   const _A = (props, ref) => {
-      return React.createElement("span", {
+      return React.createElement(props.is || "span", {
           "aria-label": "something",
           "key": "80f4925f-3",
           "ref": ref
@@ -206,7 +206,7 @@ add_case! {
   import * as React from "react";
 
   const _A = (props, ref) => {
-      return React.createElement("span", {
+      return React.createElement(props.is || "span", {
           ...props.abProps,
           "className": "cd" + " " + "_A-ab-80f4925f-3" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
           "key": "80f4925f-3",
@@ -233,7 +233,7 @@ add_case! {
   import * as React from "react";
 
   const _A = (props, ref) => {
-      return React.createElement("span", {
+      return React.createElement(props.is || "span", {
           "key": "80f4925f-2",
           "ref": ref
       },
@@ -278,7 +278,7 @@ add_case! {
   import * as React from "react";
 
   const _A = (props, ref) => {
-      return React.createElement("div", {
+      return React.createElement(props.is || "div", {
           "key": "80f4925f-2",
           "ref": ref
       },
@@ -360,7 +360,7 @@ add_case! {
   let A = React.memo(React.forwardRef(_A));
 
   const _B = (props, ref) => {
-      return React.createElement(A, {
+      return React.createElement(props.is || A, {
           "$$scopeClassName": "_B-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
           "key": "80f4925f-4",
           "ref": ref
@@ -396,7 +396,7 @@ add_case! {
   let A = React.memo(React.forwardRef(_A));
 
   const _B = (props, ref) => {
-      return React.createElement(A, {
+      return React.createElement(props.is || A, {
           "$$scopeClassName": "_B-80f4925f-6" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
           "abba": [
           "Hello"
@@ -422,7 +422,7 @@ add_case! {
   import * as React from "react";
 
   const _A = (props, ref) => {
-      return React.createElement("div", {
+      return React.createElement(props.is || "div", {
           "key": "80f4925f-3",
           "onClick": props.onClick,
           "ref": ref
@@ -448,7 +448,7 @@ add_case! {
   import * as React from "react";
 
   const _B = (props, ref) => {
-      return React.createElement("div", {
+      return React.createElement(props.is || "div", {
           ...props.rootProps,
           "className": "_B-root-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
           "key": "80f4925f-1",
@@ -459,7 +459,7 @@ add_case! {
   let B = React.memo(React.forwardRef(_B));
 
   const _A = (props, ref) => {
-      return React.createElement(B, {
+      return React.createElement(props.is || B, {
           ...props.rootProps,
           "$$scopeClassName": "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
           "key": "80f4925f-4",
@@ -486,7 +486,7 @@ add_case! {
   import * as React from "react";
 
   const _A = (props, ref) => {
-      return React.createElement(test.B, {
+      return React.createElement(props.is || test.B, {
           "$$scopeClassName": "_A-80f4925f-2" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
           "key": "80f4925f-2",
           "ref": ref
@@ -524,7 +524,7 @@ add_case! {
   import * as React from "react";
 
   const _A = (props, ref) => {
-      return React.createElement("div", {
+      return React.createElement(props.is || "div", {
           ...props.rootProps,
           "className": props.class + " " + "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
           "key": "80f4925f-4",
@@ -535,7 +535,7 @@ add_case! {
   let A = React.memo(React.forwardRef(_A));
 
   const _B = (props, ref) => {
-      return React.createElement("div", {
+      return React.createElement(props.is || "div", {
           "key": "80f4925f-12",
           "ref": ref
       },
@@ -569,7 +569,7 @@ add_case! {
   import * as React from "react";
 
   const _A = (props, ref) => {
-      return React.createElement("div", {
+      return React.createElement(props.is || "div", {
           ...props.rootProps,
           "className": props.class + " " + "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
           "key": "80f4925f-4",
@@ -580,7 +580,7 @@ add_case! {
   let A = React.memo(React.forwardRef(_A));
 
   const _B = (props, ref) => {
-      return React.createElement(A, {
+      return React.createElement(props.is || A, {
           "$$scopeClassName": "_B-80f4925f-9" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
           "class": "blarg",
           "key": "80f4925f-9",
@@ -614,7 +614,7 @@ add_case! {
   import * as React from "react";
 
   const _A = (props, ref) => {
-      return React.createElement("div", {
+      return React.createElement(props.is || "div", {
           "className": "_A-80f4925f-7" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
           "key": "80f4925f-7",
           "ref": ref
@@ -649,7 +649,7 @@ add_case! {
   import * as React from "react";
 
   const _AB = (props, ref) => {
-      return React.createElement("div", {
+      return React.createElement(props.is || "div", {
           "key": "80f4925f-7",
           "ref": ref
       },
@@ -697,7 +697,7 @@ add_case! {
   import * as React from "react";
 
   const _AB = (props, ref) => {
-      return React.createElement("div", {
+      return React.createElement(props.is || "div", {
           "key": "80f4925f-12",
           "ref": ref
       },
@@ -742,7 +742,7 @@ add_case! {
   import * as React from "react";
 
   const _AB = (props, ref) => {
-      return React.createElement("div", {
+      return React.createElement(props.is || "div", {
           "key": "80f4925f-5",
           "ref": ref
       },
@@ -778,7 +778,7 @@ add_case! {
   import * as React from "react";
 
   const _AB = (props, ref) => {
-      return React.createElement("div", {
+      return React.createElement(props.is || "div", {
           "key": "80f4925f-3",
           "ref": ref
       },
@@ -831,7 +831,7 @@ add_case! {
   }));
 
   const _AB = (props, ref) => {
-      return React.createElement("div", {
+      return React.createElement(props.is || "div", {
           "key": "80f4925f-15",
           "ref": ref
       },
@@ -877,7 +877,7 @@ add_case! {
   }));
 
   const _AB = (props, ref) => {
-      return React.createElement("div", {
+      return React.createElement(props.is || "div", {
           "key": "80f4925f-10",
           "ref": ref
       },
@@ -917,7 +917,7 @@ add_case! {
   import * as React from "react";
 
   const _AB = (props, ref) => {
-      return React.createElement("div", {
+      return React.createElement(props.is || "div", {
           "key": "80f4925f-8",
           "ref": ref
       });
@@ -928,7 +928,7 @@ add_case! {
   export { AB };
 
   const _ABCD = (props, ref) => {
-      return React.createElement("div", {
+      return React.createElement(props.is || "div", {
           "key": "80f4925f-18",
           "ref": ref
       });
@@ -958,7 +958,7 @@ add_case! {
 import * as React from "react";
 
 const _A = (props, ref) => {
-    return React.createElement("div", {
+    return React.createElement(props.is || "div", {
         "children": [
         props.show ? [
             "hello"
@@ -992,7 +992,7 @@ add_case! {
   import * as React from "react";
   
   const _A = (props, ref) => {
-      return React.createElement("div", {
+      return React.createElement(props.is || "div", {
           "key": "80f4925f-4",
           "ref": ref
       }, 
@@ -1027,7 +1027,7 @@ add_case! {
 import * as React from "react";
 
 const _A = (props, ref) => {
-    return React.createElement("div", {
+    return React.createElement(props.is || "div", {
         "children": [
         props.stuff && props.stuff.map(props_stuff => [
             "hello"

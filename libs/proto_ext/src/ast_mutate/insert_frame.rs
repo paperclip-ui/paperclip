@@ -10,7 +10,6 @@ use paperclip_proto::{
 };
 
 use paperclip_parser::core::parser_context::Options;
-use paperclip_parser::docco::parser::parse as parse_comment;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast::all::visit::{MutableVisitable, MutableVisitor, VisitorResult};
 
@@ -23,33 +22,16 @@ impl MutableVisitor<()> for EditContext<InsertFrame> {
 
             let mut mutations = vec![];
 
-            let new_comment = parse_comment(
-                format!(
-                    "/**\n * @bounds(x: {}, y: {}, width: {}, height: {})\n*/",
-                    bounds.x, bounds.y, bounds.width, bounds.height
-                )
-                .trim(),
-                &self.new_id(),
-            )
-            .unwrap();
-
             let mut to_insert = parse_pc(
-                &self.mutation.node_source,
+                format!("
+                /**\n * @bounds(x: {}, y: {}, width: {}, height: {})\n*/
+                {}
+                ", bounds.x, bounds.y, bounds.width, bounds.height,  &self.mutation.node_source).as_str(),
                 &self.new_id(),
                 &Options::new(vec![]),
             )
             .unwrap();
             replace_namespaces(&mut to_insert, &imports);
-
-            mutations.push(
-                mutation_result::Inner::ExpressionInserted(ExpressionInserted {
-                    id: new_comment.id.to_string(),
-                })
-                .get_outer(),
-            );
-
-            expr.body
-                .push(ast::pc::document_body_item::Inner::DocComment(new_comment).get_outer());
 
             for node in to_insert.body {
                 mutations.push(

@@ -17,7 +17,7 @@ const OS_VENDOR = {
   win32: "x86_64-pc-windows-gnu",
   darwin: "x86_64-apple-darwin",
   linux: "x86_64-unknown-linux-musl",
-}[os.platform as any];
+}[os.platform()];
 
 const downloadRelease = async (versionDir: string) => {
   const version = path.basename(versionDir);

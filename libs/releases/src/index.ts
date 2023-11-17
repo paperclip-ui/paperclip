@@ -107,6 +107,7 @@ const decompress = async (filePath: string) => {
 
     await execa("hdiutil", ["detach", volumeDir]);
   } else {
+    logDebug(`unzip(${filePath}) -> ${path.dirname(filePath)}`);
     await pipeline(
       fs.createReadStream(filePath),
       tar.x({
@@ -123,7 +124,11 @@ export const loadCLIBinPath = async (cwd: string) => {
   if (!fs.existsSync(binPath)) {
     await downloadRelease(versionDir);
   }
-  logDebug(`returning ${binPath}`);
+  logDebug(
+    `returning ${binPath}. Contents in ${versionDir}: ${fs
+      .readdirSync(versionDir)
+      .join(",")}`
+  );
   return binPath;
 };
 

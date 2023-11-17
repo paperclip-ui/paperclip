@@ -7,11 +7,19 @@ import stream from "node:stream";
 import { promisify } from "node:util";
 import execa from "execa";
 
+const debugMode = process.env.DEBUG != null;
+
 const pipeline = promisify(stream.pipeline);
 
 const pkg = require("../package.json");
 const BIN_NAME = "paperclip_cli";
 import path from "path";
+
+const logDebug = (message: string) => {
+  if (debugMode) {
+    console.debug(`[DEBUG] ${message}`);
+  }
+};
 
 const OS_VENDOR = {
   win32: "x86_64-pc-windows-gnu",
@@ -20,6 +28,8 @@ const OS_VENDOR = {
 }[os.platform()];
 
 const downloadRelease = async (versionDir: string) => {
+  logDebug(`downloadRelease(${versionDir})`);
+
   const version = path.basename(versionDir);
   const currentVersion = extractVersionParts(version);
 
@@ -67,6 +77,8 @@ const downloadRelease = async (versionDir: string) => {
     path.basename(asset.browser_download_url)
   );
 
+  logDebug(`download(${asset.browser_download_url})`);
+
   await pipeline(
     got.stream(asset.browser_download_url),
     fs.createWriteStream(filePath)
@@ -104,6 +116,7 @@ const decompress = async (filePath: string) => {
 };
 
 export const loadCLIBinPath = async (cwd: string) => {
+  console.log("LOAD BIN", cwd);
   const versionDir = path.join(cwd, pkg.version);
   const binPath = path.join(versionDir, BIN_NAME);
   if (!fs.existsSync(binPath)) {

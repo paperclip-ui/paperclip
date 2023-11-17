@@ -89,6 +89,7 @@ const downloadRelease = async (versionDir: string) => {
 
 const decompress = async (filePath: string) => {
   if (/\.dmg$/.test(filePath)) {
+    logDebug(`unzipDmg(${filePath})`);
     const { stdout, stderr } = await execa(`hdiutil`, ["attach", filePath]);
 
     if (stderr) {
@@ -116,12 +117,13 @@ const decompress = async (filePath: string) => {
 };
 
 export const loadCLIBinPath = async (cwd: string) => {
-  console.log("LOAD BIN", cwd);
   const versionDir = path.join(cwd, pkg.version);
   const binPath = path.join(versionDir, BIN_NAME);
+  logDebug(`loadCLIBinPath: ${binPath}`);
   if (!fs.existsSync(binPath)) {
     await downloadRelease(versionDir);
   }
+  logDebug(`returning ${binPath}`);
   return binPath;
 };
 

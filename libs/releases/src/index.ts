@@ -25,7 +25,7 @@ const OS_VENDOR = {
   win32: "x86_64-pc-windows-gnu",
   darwin: "x86_64-apple-darwin",
   linux: "x86_64-unknown-linux-musl",
-}[os.platform()];
+}["linux"];
 
 const downloadRelease = async (versionDir: string) => {
   logDebug(`downloadRelease(${versionDir})`);
@@ -107,9 +107,11 @@ const decompress = async (filePath: string) => {
 
     await execa("hdiutil", ["detach", volumeDir]);
   } else {
+    logDebug(`unzip(${filePath}) -> ${path.dirname(filePath)}`);
     await pipeline(
       fs.createReadStream(filePath),
       tar.x({
+        strip: 1,
         C: path.dirname(filePath),
       })
     );
@@ -123,7 +125,11 @@ export const loadCLIBinPath = async (cwd: string) => {
   if (!fs.existsSync(binPath)) {
     await downloadRelease(versionDir);
   }
-  logDebug(`returning ${binPath}`);
+  logDebug(
+    `returning ${binPath}. Contents in ${versionDir}: ${fs
+      .readdirSync(versionDir)
+      .join(",")}, exists: ${fs.existsSync(binPath)}`
+  );
   return binPath;
 };
 

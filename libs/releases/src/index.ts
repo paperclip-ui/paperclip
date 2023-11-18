@@ -127,7 +127,7 @@ export const loadCLIBinPath = async (cwd: string) => {
   logDebug(
     `returning ${binPath}. Contents in ${versionDir}: ${fs
       .readdirSync(versionDir)
-      .join(",")}`
+      .join(",")}, exists: ${fs.existsSync(binPath)}`
   );
   return binPath;
 };

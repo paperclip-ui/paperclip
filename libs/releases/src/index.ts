@@ -25,7 +25,7 @@ const OS_VENDOR = {
   win32: "x86_64-pc-windows-gnu",
   darwin: "x86_64-apple-darwin",
   linux: "x86_64-unknown-linux-musl",
-}["linux"];
+}[os.platform()];
 
 const downloadRelease = async (versionDir: string) => {
   logDebug(`downloadRelease(${versionDir})`);

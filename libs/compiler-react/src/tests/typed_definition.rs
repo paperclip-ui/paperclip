@@ -170,7 +170,7 @@ add_case! {
     export type BaseAProps = {
       
       "ref"?: any,
-      "abProps"?: React.DOMAttributes<any>,
+      "abProps"?: React.HTMLAttributes<any>,
     };
     export const A: React.FC<BaseAProps>;
   "#

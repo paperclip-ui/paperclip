@@ -47,24 +47,10 @@ jobs:
       - uses: jetli/wasm-pack-action@v0.4.0
         with:
           version: "latest"
-      - uses: actions-rs/toolchain@v1
+      - name: Install toolchain if not cross-compiling
+        uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: nightly
-          override: true
-          target: ${{ matrix.platform.target }}
-      - name: Install musl-tools on Linux
-        run: sudo apt-get update --yes && sudo apt-get install --yes musl-tools
-        if: contains(matrix.platform.os, 'ubuntu') && !matrix.platform.cross
-      - name: Install cross if cross-compiling (*nix)
-        id: cross-nix
-        shell: bash
-        run: |
-          set -e
-          export TARGET="$HOME/bin"
-          mkdir -p "$TARGET"
-          ./bootstrap/bootstrap-ubi.sh
-          "$HOME/bin/ubi" --project cross-rs/cross --matching musl --in .
-        if: matrix.platform.cross && !contains(matrix.platform.os, 'windows')
+          targets: ${{ matrix.platform.target }}
       - uses: actions/setup-node@v3
         with:
           node-version: "20.x"

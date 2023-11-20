@@ -13,16 +13,29 @@ on:
 jobs:
   build:
     name: Build CLI
-    runs-on: macos-latest
     strategy:
       matrix:
-        target: [
-            # x86_64-pc-windows-gnu,
-            # x86_64-unknown-linux-musl,
-            x86_64-apple-darwin,
-            x86_64-unknown-linux-gnu,
-          ]
+        platform:
+          - os_name: Linux-x86_64
+            os: ubuntu-20.04
+            target: x86_64-unknown-linux-musl
+            cargo_command: cargo
+
+          - os_name: macOS-x86_64
+            os: macOS-latest
+            target: x86_64-apple-darwin
+            cargo_command: cargo
+
+        # matrix:
+        #   target: [
+        #       # x86_64-pc-windows-gnu,
+        #       # x86_64-unknown-linux-musl,
+        #       x86_64-apple-darwin,
+        #       x86_64-unknown-linux-gnu,
+        #     ]
+
         package: [libs/cli]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@master
       - uses: arduino/setup-protoc@v2

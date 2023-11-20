@@ -38,12 +38,13 @@ jobs:
         with:
           toolchain: nightly
           override: true
+          target: ${{ matrix.target }}
       - uses: actions/setup-node@v3
         with:
           node-version: "20.x"
       - run: yarn install
       - run: yarn build
-      - run: cargo build --release --locked
+      - run: cargo build --release --locked --target ${{ matrix.target }}
       - name: Sign Mac OS binary
         if: matrix.target == 'x86_64-apple-darwin'
         env:

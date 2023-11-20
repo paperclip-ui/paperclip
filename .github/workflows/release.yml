@@ -19,8 +19,7 @@ jobs:
           - os_name: Linux-x86_64
             os: ubuntu-20.04
             target: x86_64-unknown-linux-musl
-            cargo_command: cross
-            cross: true
+            cargo_command: cargo
 
           - os_name: macOS-x86_64
             os: macOS-latest

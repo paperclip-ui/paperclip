@@ -58,7 +58,7 @@ jobs:
         if: matrix.platform.os_name == 'macOS-x86_64'
       - uses: houseabsolute/actions-rust-cross@v0
         with:
-          command: ${{ matrix.platform.command }}
+          command: "both"
           target: ${{ matrix.platform.target }}
           args: "--locked --release"
           strip: true

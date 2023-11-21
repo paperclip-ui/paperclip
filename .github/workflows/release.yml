@@ -17,9 +17,13 @@ jobs:
       matrix:
         platform:
           - os_name: Linux-x86_64
-            os: ubuntu-20.04
+            os: ubuntu-latest
             target: x86_64-unknown-linux-musl
             cargo_command: cargo
+          # - os_name: Linux-x86_64
+          #   os: ubuntu-20.04
+          #   target: x86_64-unknown-linux-gnu
+          #   cargo_command: cargo
 
           - os_name: macOS-x86_64
             os: macOS-latest
@@ -58,7 +62,7 @@ jobs:
       - run: yarn install
       - run: rustup target add ${{ matrix.platform.target }}
       - run: yarn build
-      - run: ${{ matrix.platform.cargo_command }} build --release --locked
+      - run: ${{ matrix.platform.cargo_command }} build --release --locked --target=${{ matrix.platform.target }}
       - name: Sign Mac OS binary
         if: matrix.platform.target == 'x86_64-apple-darwin'
         env:

@@ -182,7 +182,7 @@ fn compile_inference(inference: &infer_types::Type, context: &mut Context) {
                             .as_str(),
                     );
                 } else {
-                    context.add_buffer("React.DOMAttributes<any>");
+                    context.add_buffer("React.HTMLAttributes<any>");
                 }
             }
         }

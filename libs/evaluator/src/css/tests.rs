@@ -39,6 +39,14 @@ macro_rules! add_case {
             let resolver = PCFileResolver::new(mock_fs.clone(), MockResolver {}, None);
 
             let doc = block_on(evaluate("/entry.pc", &graph, &resolver)).unwrap();
+
+            // for debugging
+            // for (path, _content) in $mock_files {
+            //   let doc = block_on(evaluate(path, &graph, &resolver)).unwrap();
+
+            //     println!("{}: {}", path, serialize(&doc));
+            // }
+            
             assert_eq!(
                 strip_extra_ws(serialize(&doc).as_str()),
                 strip_extra_ws($output)
@@ -1666,3 +1674,5 @@ add_case! {
   ._B-root-80f4925f-8._C-80f4925f-14 { color: orange; } 
 "#
 }
+
+

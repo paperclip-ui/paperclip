@@ -1,4 +1,4 @@
-import React, { DOMAttributes } from "react";
+import React from "react";
 import { useMemo } from "react";
 import { createEditorMachine } from "../machine";
 import { MachineContext } from "@paperclip-ui/common";

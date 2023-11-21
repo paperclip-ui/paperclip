@@ -13,17 +13,29 @@ on:
 jobs:
   build:
     name: Build CLI
-    runs-on: macos-latest
     strategy:
       matrix:
-        target:
-          [
-            x86_64-pc-windows-gnu,
-            x86_64-unknown-linux-musl,
-            x86_64-apple-darwin,
-            x86_64-unknown-linux-gnu,
-          ]
+        platform:
+          - os_name: Linux-x86_64
+            os: ubuntu-20.04
+            target: x86_64-unknown-linux-musl
+            cargo_command: cargo
+
+          - os_name: macOS-x86_64
+            os: macOS-latest
+            target: x86_64-apple-darwin
+            cargo_command: cargo
+
+        # matrix:
+        #   target: [
+        #       # x86_64-pc-windows-gnu,
+        #       # x86_64-unknown-linux-musl,
+        #       x86_64-apple-darwin,
+        #       x86_64-unknown-linux-gnu,
+        #     ]
+
         package: [libs/cli]
+    runs-on: ${{ matrix.platform.os }}
     steps:
       - uses: actions/checkout@master
       - uses: arduino/setup-protoc@v2
@@ -34,18 +46,21 @@ jobs:
       - uses: jetli/wasm-pack-action@v0.4.0
         with:
           version: "latest"
-      - uses: actions-rs/toolchain@v1
+      - name: Install toolchain if not cross-compiling
+        uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: nightly
           override: true
+          targets: ${{ matrix.platform.target }}
       - uses: actions/setup-node@v3
         with:
           node-version: "20.x"
       - run: yarn install
+      - run: rustup target add ${{ matrix.platform.target }}
       - run: yarn build
-      - run: cargo build --release --locked
+      - run: ${{ matrix.platform.cargo_command }} build --release --locked
       - name: Sign Mac OS binary
-        if: matrix.target == 'x86_64-apple-darwin'
+        if: matrix.platform.target == 'x86_64-apple-darwin'
         env:
           MACOS_CERTIFICATE: ${{ secrets.PROD_MACOS_CERTIFICATE }}
           MACOS_CERTIFICATE_PWD: ${{ secrets.PROD_MACOS_CERTIFICATE_PWD }}
@@ -71,7 +86,7 @@ jobs:
           /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime target/release/paperclip_cli -v
 
       - name: Notaize Mac OS binary
-        if: matrix.target == 'x86_64-apple-darwin'
+        if: matrix.platform.target == 'x86_64-apple-darwin'
         env:
           PROD_MACOS_NOTARIZATION_APPLE_ID: ${{ secrets.PROD_MACOS_NOTARIZATION_APPLE_ID }}
           PROD_MACOS_NOTARIZATION_TEAM_ID: ${{ secrets.PROD_MACOS_NOTARIZATION_TEAM_ID }}
@@ -92,7 +107,7 @@ jobs:
 
           mkdir -p dist
           cp target/release/paperclip_cli dist
-          DMG_NAME="${{ matrix.target }}-paperclip_cli.dmg"
+          DMG_NAME="${{ matrix.platform.target }}-paperclip_cli.dmg"
 
           hdiutil create $DMG_NAME -ov -volname "RecitalInstall" -fs HFS+ -srcfolder "dist"
 
@@ -112,24 +127,24 @@ jobs:
           xcrun stapler staple "$DMG_NAME"
 
       - name: Upload Mac OS binary to release
-        if: matrix.target == 'x86_64-apple-darwin'
+        if: matrix.platform.target == 'x86_64-apple-darwin'
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ matrix.target }}-paperclip_cli.dmg
+          file: ${{ matrix.platform.target }}-paperclip_cli.dmg
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref }}
 
       - name: Compress other binaries
-        if: matrix.target != 'x86_64-apple-darwin'
-        run: cd target/release && tar -czvf ${{ matrix.target }}-paperclip_cli.tar.gz paperclip_cli
+        if: matrix.platform.target != 'x86_64-apple-darwin'
+        run: cd target/release && tar -czvf ${{ matrix.platform.target }}-paperclip_cli.tar.gz paperclip_cli
 
       - name: Upload other binaries to release
-        if: matrix.target != 'x86_64-apple-darwin'
+        if: matrix.platform.target != 'x86_64-apple-darwin'
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/release/${{ matrix.target }}-paperclip_cli.tar.gz
+          file: target/release/${{ matrix.platform.target }}-paperclip_cli.tar.gz
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref }}
   publish:

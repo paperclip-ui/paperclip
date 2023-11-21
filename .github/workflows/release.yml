@@ -30,14 +30,6 @@ jobs:
             target: x86_64-apple-darwin
             cargo_command: cargo
 
-        # matrix:
-        #   target: [
-        #       # x86_64-pc-windows-gnu,
-        #       # x86_64-unknown-linux-musl,
-        #       x86_64-apple-darwin,
-        #       x86_64-unknown-linux-gnu,
-        #     ]
-
         package: [libs/cli]
     runs-on: ${{ matrix.platform.os }}
     steps:

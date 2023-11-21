@@ -62,7 +62,12 @@ jobs:
       - run: yarn install
       - run: rustup target add ${{ matrix.platform.target }}
       - run: yarn build
-      - run: ${{ matrix.platform.cargo_command }} build --release --locked --target=${{ matrix.platform.target }}
+      - run: ${{ matrix.platform.cargo_command }} build --release --locked
+        if: matrix.platform.os_name == 'macOS-x86_64'
+      - uses:  stevenleadbeater/rust-musl-builder@master
+        with:
+          args: /bin/bash -c "cargo build --release --locked --target=${{ matrix.platform.target }}"
+        if: matrix.platform.os_name == 'Linux-x86_64'
       - name: Sign Mac OS binary
         if: matrix.platform.target == 'x86_64-apple-darwin'
         env:

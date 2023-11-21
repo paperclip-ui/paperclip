@@ -24,5 +24,5 @@ console = "0.15.1"
 [dev-dependencies]
 
 
-#[target.x86_64-unknown-linux-gnu]
-#linker = "x86_64-unknown-linux-gnu-gcc"
+[target.x86_64-unknown-linux-musl]
+linker = "x86_64-linux-musl-gcc"

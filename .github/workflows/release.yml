@@ -8,7 +8,7 @@ on:
   push:
     branches:
       - master
-      - dev
+      - dev2
 
 jobs:
   build:

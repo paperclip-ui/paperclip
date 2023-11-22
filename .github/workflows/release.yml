@@ -57,6 +57,8 @@ jobs:
       - run: ${{ matrix.platform.cargo_command }} build --release --locked
         if: matrix.platform.os_name == 'macOS-x86_64'
       - uses: houseabsolute/actions-rust-cross@v0
+        env: 
+          RUSTFLAGS: "-C target-feature=-crt-static"
         with:
           command: build
           target: ${{ matrix.platform.target }}

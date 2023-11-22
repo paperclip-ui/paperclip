@@ -54,16 +54,18 @@ jobs:
       - run: yarn install
       - run: rustup target add ${{ matrix.platform.target }}
       - run: yarn build
-      - run: ${{ matrix.platform.cargo_command }} build --release --locked
-        if: matrix.platform.os_name == 'macOS-x86_64'
-      - uses: houseabsolute/actions-rust-cross@v0
+      - run: ${{ matrix.platform.cargo_command }} build --release --locked --target=${{ matrix.platform.target }}
         env: 
           RUSTFLAGS: "-C target-feature=-crt-static"
-        with:
-          command: build
-          target: ${{ matrix.platform.target }}
-          args: "--locked --release"
-          strip: true
+        # if: matrix.platform.os_name == 'macOS-x86_64'
+      # - uses: houseabsolute/actions-rust-cross@v0
+      #   env: 
+      #     RUSTFLAGS: "-C target-feature=-crt-static"
+      #   with:
+      #     command: build
+      #     target: ${{ matrix.platform.target }}
+      #     args: "--locked --release"
+      #     strip: true
           
         if: matrix.platform.os_name == 'Linux-x86_64'
       - name: Sign Mac OS binary

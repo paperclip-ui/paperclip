@@ -39,7 +39,7 @@ jobs:
         with:
           packages: musl-tools # provides musl-gcc
           version: 1.0
-      - run: sudo apt-get update && sudo apt-get install pkg-config libssl-dev 
+      - run: sudo apt-get update && sudo apt-get install pkg-config libssl-dev musl-tools -y
         if: matrix.platform.os_name == 'Linux-x86_64'
       - uses: arduino/setup-protoc@v2
         with:
@@ -64,7 +64,7 @@ jobs:
       - run: ${{ matrix.platform.cargo_command }} build --release --locked --target=${{ matrix.platform.target }}
         if: matrix.platform.os_name == 'Linux-x86_64'
         env: 
-          TARGET_CC: x86_64-linux-musl-gcc
+          # TARGET_CC: x86_64-linux-musl-gcc
           RUSTFLAGS: "-C target-feature=-crt-static"
           PKG_CONFIG_SYSROOT_DIR: "/"
           OPENSSL_LIB_DIR: /usr/lib/i386-linux-gnu/

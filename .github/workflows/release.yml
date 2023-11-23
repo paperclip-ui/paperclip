@@ -45,7 +45,7 @@ jobs:
         with:
           version: "24.x"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-
+      - run: pip3 install ziglang
       - uses: jetli/wasm-pack-action@v0.4.0
         with:
           version: "latest"
@@ -61,9 +61,9 @@ jobs:
       - run: yarn install
       - run: rustup target add ${{ matrix.platform.target }}
       - run: yarn build
-      - run: cargo install cross --git https://github.com/cross-rs/cross
-        if: matrix.platform.os_name == 'Linux-x86_64'
-      - run: ${{ matrix.platform.cargo_command }} build --release --locked --target=${{ matrix.platform.target }}
+      # - run: cargo install cross --git https://github.com/cross-rs/cross
+        # if: matrix.platform.os_name == 'Linux-x86_64'
+      - run: cargo zigbuild --release --locked --target=${{ matrix.platform.target }}
         if: matrix.platform.os_name == 'Linux-x86_64'
         env: 
           TARGET_CC: x86_64-linux-musl-gcc

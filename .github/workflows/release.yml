@@ -38,6 +38,7 @@ jobs:
         with:
           packages: musl-tools # provides musl-gcc
           version: 1.0
+        if: matrix.platform.os_name == 'Linux-x86_64'
       - uses: arduino/setup-protoc@v2
         with:
           version: "24.x"

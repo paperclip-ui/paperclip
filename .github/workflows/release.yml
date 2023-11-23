@@ -67,6 +67,8 @@ jobs:
       - run: yarn install
       - run: rustup target add ${{ matrix.platform.target }}
       - run: yarn build
+        env: 
+          RUSTFLAGS: "-C target-feature=-crt-static"
       - run: ${{ matrix.platform.cargo_command }} build --release --locked --target=${{ matrix.platform.target }}
         if: matrix.platform.os_name == 'Linux-x86_64'
         env: 

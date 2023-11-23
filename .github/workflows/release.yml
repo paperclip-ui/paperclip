@@ -19,7 +19,7 @@ jobs:
           - os_name: Linux-x86_64
             os: ubuntu-latest
             target: x86_64-unknown-linux-musl
-            cargo_command: cargo
+            cargo_command: cross
           # - os_name: Linux-x86_64
           #   os: ubuntu-20.04
           #   target: x86_64-unknown-linux-gnu
@@ -49,12 +49,19 @@ jobs:
       - uses: jetli/wasm-pack-action@v0.4.0
         with:
           version: "latest"
+      
+      - name: Install cross-compilation tools
+        uses: taiki-e/setup-cross-toolchain-action@v1
+        with:
+          target: aarch64-unknown-linux-gnu
+        if 
       - name: Install toolchain if not cross-compiling
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: nightly
           override: true
           targets: ${{ matrix.platform.target }}
+        if: matrix.platform.os_name == 'Linux-x86_64'
       - uses: actions/setup-node@v3
         with:
           node-version: "20.x"
@@ -65,12 +72,12 @@ jobs:
         if: matrix.platform.os_name == 'Linux-x86_64'
         env: 
           # TARGET_CC: x86_64-linux-musl-gcc
-          RUSTFLAGS: "-C target-feature=-crt-static"
-          PKG_CONFIG_SYSROOT_DIR: "/"
-          PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig
-          OPENSSL_LIB_DIR: /usr/lib/i386-linux-gnu/
-          OPENSSL_INCLUDE_DIR: /usr/include/openssl/
-          OPENSSL_DIR: /usr/local/ssl
+          # RUSTFLAGS: "-C target-feature=-crt-static"
+          # PKG_CONFIG_SYSROOT_DIR: "/"
+          # PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig
+          # OPENSSL_LIB_DIR: /usr/lib/i386-linux-gnu/
+          # OPENSSL_INCLUDE_DIR: /usr/include/openssl/
+          # OPENSSL_DIR: /usr/local/ssl
       - run: ${{ matrix.platform.cargo_command }} build --release --locked --target=${{ matrix.platform.target }}
         if: matrix.platform.os_name == 'macOS-x86_64'
         # if: matrix.platform.os_name == 'macOS-x86_64'

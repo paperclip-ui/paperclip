@@ -115,6 +115,7 @@ public component ToolbarDivider {
  * @bounds(x: 520, y: 166, width: 407, height: 78)
 */
 public component Toolbar {
+    script(src: "./logic/Editor/EditorPanels/Center/Toolbar/index.tsx", target: "react", name: "Toolbar")
     render div {
         style {
             display: flex

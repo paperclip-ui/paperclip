@@ -105,6 +105,9 @@ public component SplashInfo {
     }
 }
 
+/**
+ * @bounds(x: 1209, y: -99, width: 886, height: 213)
+*/
 public component CenterPanels {
     render div {
         style {
@@ -113,18 +116,10 @@ public component CenterPanels {
             flex-direction: column
             justify-content: space-between
         }
-        slot children
+        toolbar.Toolbar
     }
 }
 
-public component Preview {
-    render CenterPanels {
-        toolbar.Toolbar {
-            insert children {
-            }
-        }
-    }
-}
 
 /**
  * @bounds(x: 6874, y: 1592, width: 345, height: 71)
@@ -207,7 +202,7 @@ public component Editor {
                 leftSidebar.LeftSidebar leftSidebar
             }
             slot children {
-                centerPanels.Preview centerPanels
+                CenterPanels
                 module.SidebarContainer {
                     rightSidebar.RightSidebar rightPanel
                 }

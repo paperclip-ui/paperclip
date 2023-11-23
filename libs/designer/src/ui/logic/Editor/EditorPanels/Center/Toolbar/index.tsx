@@ -9,7 +9,7 @@ import {
 } from "@paperclip-ui/designer/src/state";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 
-export const Toolbar = () => {
+export const Toolbar = (Base: React.FC<toolbarStyles.BaseToolbarProps>) => () => {
   const {
     zoom,
     insertMode,
@@ -19,7 +19,7 @@ export const Toolbar = () => {
   } = useToolbar();
 
   return (
-    <toolbarStyles.Toolbar>
+    <Base>
       <toolbarStyles.ToolbarButton
         class={cx({ active: insertMode === InsertMode.Resource })}
         onClick={onInsertResourceClick}
@@ -43,7 +43,7 @@ export const Toolbar = () => {
       <toolbarStyles.ToolbarButton disabled class="wide" style={{ width: 75 }}>
         {zoom}%
       </toolbarStyles.ToolbarButton>
-    </toolbarStyles.Toolbar>
+    </Base>
   );
 };
 

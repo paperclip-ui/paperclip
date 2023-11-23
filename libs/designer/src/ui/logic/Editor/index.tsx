@@ -2,7 +2,6 @@ import React from "react";
 import * as styles from "../../editor.pc";
 import { RightSidebar } from "./EditorPanels/RightSidebar";
 import { LeftSidebar } from "./EditorPanels/LeftSidebar/ui.pc";
-import { CenterPanels } from "./EditorPanels/Center";
 import { ResourceModal } from "./ResourceModal";
 import { useSelector } from "@paperclip-ui/common";
 import { getCurrentFilePath } from "../../../state";
@@ -23,7 +22,7 @@ export const Editor = (Base: React.FC<styles.BaseEditorProps>) => () => {
     <Base leftSidebarProps={{}}>
         {currentFile ? (
           <>
-            <CenterPanels />
+            <styles.CenterPanels />
             <RightSidebar />
           </>
         ) : (

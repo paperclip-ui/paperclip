@@ -1,6 +1,6 @@
-import "./components/Editor/Canvas/Tools/Selectable/index.pc" as module
+import "./logic/Editor/Canvas/Tools/Selectable/index.pc" as module
 import "./theme.pc" as theme
-import "./components/Sidebar/sidebar.pc" as sidebar
+import "./logic/Sidebar/sidebar.pc" as sidebar
 import "./menu.pc" as menu
 
 /**
@@ -696,6 +696,5 @@ div textInputPreview {
 /**
  * @bounds(x: -1298, y: -928, width: 1024, height: 768)
 */
-
 text ""
 

@@ -1,0 +1,92 @@
+import "../../menu.pc" as menu
+import "../../theme.pc" as theme
+
+/**
+ * @bounds(x: 799, y: -1205, width: 1024, height: 768)
+*/
+public component SuggestionContainer {
+    render div(onFocus: onFocus, onBlur: onBlur) {
+        style {
+            position: relative
+        }
+        div input {
+            slot input
+        }
+        div {
+            style {
+                position: absolute
+                width: 100%
+                top: calc(100% + var(theme.space03))
+            }
+            slot menu
+        }
+    }
+}
+
+/**
+ * @bounds(x: 1259, y: -557, width: 1024, height: 768)
+*/
+public component SuggestionMenu {
+    render menu.Menu(style: style) {
+        slot children
+    }
+}
+
+/**
+ * @bounds(x: -1053, y: -2729, width: 492, height: 91)
+*/
+public component SuggestionMenuHeader {
+    render div {
+        style {
+            padding: var(theme.space03)
+        }
+        slot children
+    }
+}
+
+public component SuggestionMenuSection {
+    variant isFirst trigger {
+        ":first-child"
+    }
+    render div {
+        style {
+            background: var(theme.gray04)
+            width: 100%
+            padding: var(theme.space03) var(theme.space03)
+        }
+        style variant isFirst {
+            border-top-left-radius: 2px
+            border-top-right-radius: 2px
+        }
+        slot children
+    }
+}
+
+/**
+ * @bounds(x: -1092, y: -747, width: 433, height: 64)
+*/
+public component SuggestionMenuItem {
+    variant preselected trigger {
+        ":hover"
+        ".preselected"
+    }
+    variant selected trigger {
+        ".selected"
+    }
+    variant checked trigger {
+        ".checked"
+    }
+    render menu.MenuItem(onMouseDown: onMouseDown, onClick: onClick, class: class) {
+        slot children
+        div {
+            style {
+                display: none
+            }
+            style variant selected + checked {
+                display: block
+            }
+            text "✔"
+        }
+    }
+}
+

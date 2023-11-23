@@ -1,7 +1,7 @@
 import "./menu.pc" as imp1
-import "./components/SuggestionMenu/ui.pc" as sugg
+import "./logic/SuggestionMenu/ui.pc" as sugg
 import "./color-picker.pc" as imp
-import "./components/Sidebar/sidebar.pc" as sidebar
+import "./logic/Sidebar/sidebar.pc" as sidebar
 import "./theme.pc" as theme
 import "./input.pc" as input
 import "./styles-panel.pc" as stylesPanel
@@ -197,7 +197,6 @@ input.SuggestionMenu
 */
 imp1.Menu {
     sugg.SuggestionMenuSection {
-
         insert children {
             text "soemthing"
         }

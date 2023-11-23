@@ -203,10 +203,10 @@ public component Editor {
                 justify-content: space-between
                 pointer-events: none
             }
+            module.SidebarContainer {
+                leftSidebar.LeftSidebar leftSidebar
+            }
             slot children {
-                module.SidebarContainer {
-                    leftSidebar.LeftSidebar leftSidebar
-                }
                 centerPanels.Preview centerPanels
                 module.SidebarContainer {
                     rightSidebar.RightSidebar rightPanel
@@ -258,15 +258,6 @@ public component Canvas {
  * @bounds(x: 2751, y: 540, width: 1557, height: 993)
 */
 Editor splash {
-    module.SidebarContainer {
-        leftSidebar.LeftSidebar {
-            override {
-                variant onlyFileNavigator trigger {
-                    true
-                }
-            }
-        }
-    }
     SplashInfo
     style {
         position: relative

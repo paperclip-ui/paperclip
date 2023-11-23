@@ -20,8 +20,7 @@ export const Editor = (Base: React.FC<styles.BaseEditorProps>) => () => {
   return (
     <>
     <ResourceModal />
-    <Base>
-        <LeftSidebar />
+    <Base leftSidebarProps={{}}>
         {currentFile ? (
           <>
             <CenterPanels />

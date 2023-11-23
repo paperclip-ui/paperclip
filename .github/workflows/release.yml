@@ -67,8 +67,8 @@ jobs:
           # TARGET_CC: x86_64-linux-musl-gcc
           RUSTFLAGS: "-C target-feature=-crt-static"
           PKG_CONFIG_SYSROOT_DIR: "/"
-          OPENSSL_LIB_DIR: /usr/lib/i386-linux-gnu/
-          OPENSSL_INCLUDE_DIR: /usr/include/openssl/
+          # OPENSSL_LIB_DIR: /usr/lib/i386-linux-gnu/
+          # OPENSSL_INCLUDE_DIR: /usr/include/openssl/
       - run: ${{ matrix.platform.cargo_command }} build --release --locked --target=${{ matrix.platform.target }}
         if: matrix.platform.os_name == 'macOS-x86_64'
         # if: matrix.platform.os_name == 'macOS-x86_64'

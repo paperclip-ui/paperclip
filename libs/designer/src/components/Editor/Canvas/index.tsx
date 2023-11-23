@@ -12,7 +12,6 @@ import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
-  DesignerState,
   getCanvas,
   getCurrentDocument,
   getEditorState,

@@ -39,7 +39,7 @@ jobs:
         with:
           packages: musl-tools # provides musl-gcc
           version: 1.0
-      - run: sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get install pkg-config libssl-dev librust-openssl-sys-dev musl-tools -y
+      - run: sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get install pkg-config openssl-dev librust-openssl-sys-dev musl-tools -y
         if: matrix.platform.os_name == 'Linux-x86_64'
       - uses: arduino/setup-protoc@v2
         with:
@@ -72,9 +72,9 @@ jobs:
           # PROTOC: "/usr/bin/protoc"
           # PKG_CONFIG_SYSROOT_DIR: "/"
           # PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig
-          OPENSSL_LIB_DIR: /usr/lib/x86_64-linux-gnu/
+          #OPENSSL_LIB_DIR: /usr/lib/x86_64-linux-gnu/
           OPENSSL_INCLUDE_DIR: /usr/include/openssl
-          OPENSSL_DIR: /usr/local/ssl
+          #OPENSSL_DIR: /usr/local/ssl
       - run: ${{ matrix.platform.cargo_command }} build --release --locked --target=${{ matrix.platform.target }}
         if: matrix.platform.os_name == 'macOS-x86_64'
         # if: matrix.platform.os_name == 'macOS-x86_64'

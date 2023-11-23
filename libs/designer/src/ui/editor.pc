@@ -127,7 +127,7 @@ public component Preview {
 }
 
 /**
- * @bounds(x: 4855, y: 24, width: 1024, height: 768)
+ * @bounds(x: 6874, y: 1592, width: 345, height: 71)
 */
 public component SplashTip {
     render div {
@@ -163,7 +163,7 @@ public component SplashTip {
 }
 
 /**
- * @bounds(x: 319, y: -452, width: 1024, height: 768)
+ * @bounds(x: 1092, y: -452, width: 251, height: 118)
 */
 public component ComboKey {
     render span {
@@ -180,6 +180,9 @@ public component ComboKey {
     }
 }
 
+/**
+ * @bounds(x: 49, y: 913, width: 336, height: 795)
+*/
 public component EditorPanels {
     render div {
         style {

@@ -68,7 +68,7 @@ jobs:
           RUSTFLAGS: "-C target-feature=-crt-static"
           PKG_CONFIG_SYSROOT_DIR: "/"
           PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig
-          # OPENSSL_LIB_DIR: /usr/lib/i386-linux-gnu/
+          OPENSSL_LIB_DIR: /usr/lib/i386-linux-gnu/
           OPENSSL_INCLUDE_DIR: /usr/include/openssl/
           OPENSSL_DIR: /usr/local/ssl
       - run: ${{ matrix.platform.cargo_command }} build --release --locked --target=${{ matrix.platform.target }}

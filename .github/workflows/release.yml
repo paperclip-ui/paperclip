@@ -62,6 +62,7 @@ jobs:
       - run: ${{ matrix.platform.cargo_command }} build --release --locked --target=${{ matrix.platform.target }}
         env: 
           RUSTFLAGS: "-C target-feature=-crt-static"
+          PKG_CONFIG_SYSROOT_DIR: "/"
         # if: matrix.platform.os_name == 'macOS-x86_64'
       # - uses: houseabsolute/actions-rust-cross@v0
       #   env: 
@@ -72,7 +73,7 @@ jobs:
       #     args: "--locked --release"
       #     strip: true
           
-        if: matrix.platform.os_name == 'Linux-x86_64'
+        # if: matrix.platform.os_name == 'Linux-x86_64'
       - name: Sign Mac OS binary
         if: matrix.platform.target == 'x86_64-apple-darwin'
         env:

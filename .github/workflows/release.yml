@@ -34,12 +34,12 @@ jobs:
     runs-on: ${{ matrix.platform.os }}
     steps:
       - uses: actions/checkout@master
-      - uses: awalsh128/cache-apt-pkgs-action@v1
-        if: matrix.platform.os_name == 'Linux-x86_64'
+      # - uses: awalsh128/cache-apt-pkgs-action@v1
+      #   if: matrix.platform.os_name == 'Linux-x86_64'
         with:
           packages: musl-tools # provides musl-gcc
           version: 1.0
-      - run: sudo apt-get install libssl-dev
+      - run: sudo apt-get update && sudo apt-get install pkg-config libssl-dev 
         if: matrix.platform.os_name == 'Linux-x86_64'
       - uses: arduino/setup-protoc@v2
         with:
@@ -65,6 +65,8 @@ jobs:
         env: 
           RUSTFLAGS: "-C target-feature=-crt-static"
           PKG_CONFIG_SYSROOT_DIR: "/"
+          OPENSSL_LIB_DIR: /usr/lib/i386-linux-gnu/
+          OPENSSL_INCLUDE_DIR: /usr/include/openssl/
         # if: matrix.platform.os_name == 'macOS-x86_64'
       # - uses: houseabsolute/actions-rust-cross@v0
       #   env: 

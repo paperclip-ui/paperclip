@@ -224,6 +224,7 @@ public component Editor {
 }
 
 public component Artboard {
+    script(src: "./logic/Editor/Canvas/Frames/Frame.tsx", target: "react", name: "Frames")
     render div(style: style) {
         div {
             style {

@@ -69,7 +69,7 @@ jobs:
       - run: yarn build
       - run: ${{ matrix.platform.cargo_command }} build --release --locked --target=${{ matrix.platform.target }}
         if: matrix.platform.os_name == 'Linux-x86_64'
-        env: 
+        # env: 
           # TARGET_CC: x86_64-linux-musl-gcc
           # RUSTFLAGS: "-C target-feature=-crt-static"
           # PKG_CONFIG_SYSROOT_DIR: "/"

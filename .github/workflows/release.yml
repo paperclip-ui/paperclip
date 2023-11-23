@@ -53,15 +53,14 @@ jobs:
       - name: Install cross-compilation tools
         uses: taiki-e/setup-cross-toolchain-action@v1
         with:
-          target: aarch64-unknown-linux-gnu
-        if 
+          target: ${{ matrix.platform.target }}
+        if: matrix.platform.os_name == 'Linux-x86_64'
       - name: Install toolchain if not cross-compiling
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: nightly
           override: true
           targets: ${{ matrix.platform.target }}
-        if: matrix.platform.os_name == 'Linux-x86_64'
       - uses: actions/setup-node@v3
         with:
           node-version: "20.x"

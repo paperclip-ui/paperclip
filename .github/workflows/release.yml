@@ -46,6 +46,7 @@ jobs:
           version: "24.x"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - run: pip3 install ziglang
+      - run: cargo install cargo-zigbuild
       - uses: jetli/wasm-pack-action@v0.4.0
         with:
           version: "latest"

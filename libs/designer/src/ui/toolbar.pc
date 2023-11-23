@@ -1,5 +1,5 @@
 import "./theme.pc" as theme
-import "../components/Sidebar/sidebar.pc" as sidebar
+import "./components/Sidebar/sidebar.pc" as sidebar
 
 /**
  * @bounds(x: 1349, y: -31, width: 149, height: 104)

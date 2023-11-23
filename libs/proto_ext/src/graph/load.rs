@@ -166,6 +166,7 @@ async fn load_dependencies<'io, TIO: IO>(
     loaded: Arc<Mutex<HashMap<String, String>>>,
     options: Options,
 ) -> Result<HashMap<String, Dependency>> {
+    // println!("load {}", path);
     let mut deps = HashMap::new();
 
     let content = str::from_utf8(&*io.read_file(&path)?).unwrap().to_string();

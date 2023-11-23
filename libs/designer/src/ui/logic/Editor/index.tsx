@@ -18,9 +18,9 @@ export const Editor = (Base: React.FC<styles.BaseEditorProps>) => () => {
   const shortcuts = useSelector(getGlobalShortcuts);
 
   return (
+    <>
+    <ResourceModal />
     <Base>
-      <ResourceModal />
-      <styles.EditorPanels>
         <LeftSidebar />
         {currentFile ? (
           <>
@@ -54,7 +54,7 @@ export const Editor = (Base: React.FC<styles.BaseEditorProps>) => () => {
             }
           />
         )}
-      </styles.EditorPanels>
     </Base>
+    </>
   );
 };

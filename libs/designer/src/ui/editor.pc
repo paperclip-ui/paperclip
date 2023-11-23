@@ -181,25 +181,6 @@ public component ComboKey {
 }
 
 /**
- * @bounds(x: 49, y: 913, width: 336, height: 795)
-*/
-public component EditorPanels {
-    render div {
-        style {
-            display: flex
-            flex: 1
-            z-index: 3
-            gap: var(theme.space05)
-            position: relative
-            height: 100%
-            justify-content: space-between
-            pointer-events: none
-        }
-        slot children
-    }
-}
-
-/**
  * @bounds(x: 512, y: 542, width: 1830, height: 1256)
 */
 public component Editor {
@@ -211,8 +192,18 @@ public component Editor {
             background: var(theme.canvasColor)
         }
         Canvas
-        slot children {
-            EditorPanels panels {
+        div editorPanels {
+            style {
+                display: flex
+                flex: 1
+                z-index: 3
+                gap: var(theme.space05)
+                position: relative
+                height: 100%
+                justify-content: space-between
+                pointer-events: none
+            }
+            slot children {
                 module.SidebarContainer {
                     leftSidebar.LeftSidebar leftSidebar
                 }
@@ -220,8 +211,8 @@ public component Editor {
                 module.SidebarContainer {
                     rightSidebar.RightSidebar rightPanel
                 }
+                assetsModal.Container
             }
-            assetsModal.Container
         }
     }
 }
@@ -264,26 +255,22 @@ public component Canvas {
 }
 
 /**
- * @bounds(x: 2563, y: 595, width: 1557, height: 993)
+ * @bounds(x: 2751, y: 540, width: 1557, height: 993)
 */
 Editor splash {
-    EditorPanels splash {
-        module.SidebarContainer {
-            leftSidebar.LeftSidebar {
-                override {
-                    variant onlyFileNavigator trigger {
-                        true
-                    }
+    module.SidebarContainer {
+        leftSidebar.LeftSidebar {
+            override {
+                variant onlyFileNavigator trigger {
+                    true
                 }
             }
         }
-        SplashInfo
-        style {
-            position: relative
-            display: flex
-        }
+    }
+    SplashInfo
+    style {
+        position: relative
+        display: flex
     }
 }
-
-ComboKey
 

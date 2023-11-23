@@ -66,7 +66,7 @@ jobs:
       - run: ${{ matrix.platform.cargo_command }} build --release --locked --target=${{ matrix.platform.target }}
         if: matrix.platform.os_name == 'Linux-x86_64'
         env: 
-          # TARGET_CC: x86_64-linux-musl-gcc
+          TARGET_CC: x86_64-linux-musl-gcc
           RUSTFLAGS: "-C target-feature=-crt-static"
           PROTOC: "/usr/bin/protoc"
           # PKG_CONFIG_SYSROOT_DIR: "/"

@@ -6,7 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import { Frames } from "./Frames";
-import * as styles from "./styles.pc";
+import * as styles from "@paperclip-ui/designer/src/styles/editor.pc";
 import { normalizeWheel } from "./normalize-wheel";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 
@@ -23,17 +23,21 @@ export const Canvas = React.memo(() => {
     useCanvas();
 
   return (
-    <styles.Canvas ref={canvasRef} innerStyle={{
-      // Only want canvas to be visible after initially centered. Otherwise it feels janky
-      opacity: visible ? 1 : 0,
-      transform: `translateX(${actualTransform.x}px) translateY(${actualTransform.y}px) scale(${actualTransform.z}) translateZ(0)`,
+    <styles.Canvas ref={canvasRef}>
+      <styles.CanvasInner
+        style={{
+          // Only want canvas to be visible after initially centered. Otherwise it feels janky
+          opacity: visible ? 1 : 0,
+          transform: `translateX(${actualTransform.x}px) translateY(${actualTransform.y}px) scale(${actualTransform.z}) translateZ(0)`,
 
-      // fade in when centered for extra smoothness
-      transition: "0.2s",
-      transitionProperty: "opacity",
-      transformOrigin: "top left",
-    }}>
+          // fade in when centered for extra smoothness
+          transition: "0.2s",
+          transitionProperty: "opacity",
+          transformOrigin: "top left",
+        }}
+      >
         <Frames expandedFrameIndex={expanded ? activeFrameIndex : null} />
+      </styles.CanvasInner>
       <Tools />
     </styles.Canvas>
   );

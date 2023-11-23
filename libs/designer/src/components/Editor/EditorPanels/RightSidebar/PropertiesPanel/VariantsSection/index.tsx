@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
+import * as inputStyles from "@paperclip-ui/designer/src/ui/input.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   getActiveVariant,

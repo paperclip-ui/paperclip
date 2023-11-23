@@ -1,5 +1,5 @@
 import React from "react";
-import * as toolbarStyles from "@paperclip-ui/designer/src/styles/toolbar.pc";
+import * as toolbarStyles from "@paperclip-ui/designer/src/ui/toolbar.pc";
 import cx from "classnames";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {

@@ -31,7 +31,7 @@ import { ContextMenu } from "@paperclip-ui/designer/src/components/ContextMenu";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
 import { useHistory } from "@paperclip-ui/designer/src/domains/history/react";
 import { routes } from "@paperclip-ui/designer/src/state/routes";
-import { PlusButton } from "@paperclip-ui/designer/src/styles/etc.pc";
+import { PlusButton } from "@paperclip-ui/designer/src/ui/etc.pc";
 import {
   SuggestionMenu,
   SuggestionMenuItem,

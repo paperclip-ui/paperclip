@@ -1,5 +1,5 @@
 import React, { forwardRef, useCallback, useEffect, useRef } from "react";
-import * as styles from "@paperclip-ui/designer/src/styles/input.pc";
+import * as styles from "@paperclip-ui/designer/src/ui/input.pc";
 import classNames from "classnames";
 
 export type TextInputProps = {

@@ -1,5 +1,5 @@
 import React, { ReactElement, useCallback, useMemo } from "react";
-import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
+import * as inputStyles from "@paperclip-ui/designer/src/ui/input.pc";
 import { SuggestionMenu, SuggestionMenuItem } from "../SuggestionMenu";
 import { noop } from "lodash";
 

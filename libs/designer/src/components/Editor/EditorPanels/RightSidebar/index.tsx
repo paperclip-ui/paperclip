@@ -1,5 +1,5 @@
 import React from "react";
-import * as styles from "@paperclip-ui/designer/src/styles/right-sidebar.pc";
+import * as styles from "@paperclip-ui/designer/src/ui/right-sidebar.pc";
 import * as sidebarStyles from "@paperclip-ui/designer/src/components/Sidebar/sidebar.pc";
 import { StylePanel } from "./StylePanel";
 import { PropertiesPanel } from "./PropertiesPanel";

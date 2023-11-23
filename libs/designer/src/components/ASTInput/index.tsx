@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from "react";
-import * as styles from "@paperclip-ui/designer/src/styles/token-input.pc";
+import * as styles from "@paperclip-ui/designer/src/ui/token-input.pc";
 import { Range } from "@paperclip-ui/proto/lib/generated/ast/base";
 
 type GenericExpression = {

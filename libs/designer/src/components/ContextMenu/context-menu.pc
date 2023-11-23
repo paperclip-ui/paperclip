@@ -1,5 +1,5 @@
-import "../../styles/theme.pc" as imp
-import "../../styles/menu.pc" as menu
+import "../../ui/theme.pc" as imp
+import "../../ui/menu.pc" as menu
 
 /**
  * @bounds(x: 513, y: -909, width: 515, height: 326)

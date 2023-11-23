@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import * as styles from "@paperclip-ui/designer/src/styles/resource-modal.pc";
-import * as etcStyles from "@paperclip-ui/designer/src/styles/etc.pc";
+import * as styles from "@paperclip-ui/designer/src/ui/resource-modal.pc";
+import * as etcStyles from "@paperclip-ui/designer/src/ui/etc.pc";
 import { TextInput } from "../../TextInput";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {

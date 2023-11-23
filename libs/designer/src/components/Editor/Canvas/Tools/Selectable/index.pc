@@ -1,4 +1,4 @@
-import "../../../../../styles/theme.pc" as theme
+import "../../../../../ui/theme.pc" as theme
 
 public component Knob {
     variant topLeftBottomRight trigger {

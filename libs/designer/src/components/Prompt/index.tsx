@@ -1,6 +1,6 @@
 import React from "react";
-import * as styles from "@paperclip-ui/designer/src/styles/modal.pc";
-import * as buttonStyles from "@paperclip-ui/designer/src/styles/button.pc";
+import * as styles from "@paperclip-ui/designer/src/ui/modal.pc";
+import * as buttonStyles from "@paperclip-ui/designer/src/ui/button.pc";
 import { Portal } from "../Portal";
 import { TextInput } from "../TextInput";
 import { getEditorState } from "../../state";

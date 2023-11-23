@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { getSelectedExpressionInfo } from "@paperclip-ui/designer/src/state";
-import { Field } from "@paperclip-ui/designer/src/styles/input.pc";
+import { Field } from "@paperclip-ui/designer/src/ui/input.pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import React from "react";
 import { DeclarationValue } from "../StylePanel/Declarations/DeclarationValue";

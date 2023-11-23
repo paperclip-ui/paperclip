@@ -5,7 +5,7 @@ import { useDispatch } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { noop } from "lodash";
 import * as styles from "../ui.pc";
-import { Box } from "@paperclip-ui/designer/src/styles/layout.pc";
+import { Box } from "@paperclip-ui/designer/src/ui/layout.pc";
 import { BaseAddLayerButtonProps } from "../ui.pc";
 
 export const AddLayerButton =

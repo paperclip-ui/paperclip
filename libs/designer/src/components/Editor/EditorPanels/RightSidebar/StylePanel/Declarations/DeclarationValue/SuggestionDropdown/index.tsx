@@ -1,10 +1,10 @@
 import React from "react";
-import * as styles from "@paperclip-ui/designer/src/styles/decl-suggestion.pc";
+import * as styles from "@paperclip-ui/designer/src/ui/decl-suggestion.pc";
 import {
   SuggestionMenuContainer,
   SuggestionMenuProps,
 } from "@paperclip-ui/designer/src/components/SuggestionMenu";
-import { MenuList } from "@paperclip-ui/designer/src/styles/menu.pc";
+import { MenuList } from "@paperclip-ui/designer/src/ui/menu.pc";
 
 export type SuggestionDropdownProps = {
   editorInput?: React.ReactChild;

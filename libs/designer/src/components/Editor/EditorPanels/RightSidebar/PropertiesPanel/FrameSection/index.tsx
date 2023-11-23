@@ -1,6 +1,6 @@
 import React from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/components/Sidebar/sidebar.pc";
-import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
+import * as inputStyles from "@paperclip-ui/designer/src/ui/input.pc";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";
 import { Bounds } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
 import { useDispatch } from "@paperclip-ui/common";

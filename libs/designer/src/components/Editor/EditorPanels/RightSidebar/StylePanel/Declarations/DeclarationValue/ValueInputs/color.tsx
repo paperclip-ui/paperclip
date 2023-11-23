@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import * as styles from "@paperclip-ui/designer/src/styles/color-picker.pc";
+import * as styles from "@paperclip-ui/designer/src/ui/color-picker.pc";
 import { memoize } from "@paperclip-ui/common";
 import classNames from "classnames";
 import Color from "color";

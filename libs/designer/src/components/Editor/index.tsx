@@ -1,5 +1,5 @@
 import React from "react";
-import * as styles from "../../styles/editor.pc";
+import * as styles from "../../ui/editor.pc";
 import { Canvas } from "./Canvas";
 import { RightSidebar } from "./EditorPanels/RightSidebar";
 import { LeftSidebar } from "./EditorPanels/LeftSidebar/ui.pc";

@@ -7,7 +7,7 @@ import {
   MenuContent,
   SuggestionMenuSection,
   TokenMenuContent,
-} from "@paperclip-ui/designer/src/styles/input.pc";
+} from "@paperclip-ui/designer/src/ui/input.pc";
 import React, { useCallback, useMemo } from "react";
 import { TAG_NAMES } from "./constants";
 import { TextInput } from "@paperclip-ui/designer/src/components/TextInput";

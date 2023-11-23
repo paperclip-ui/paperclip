@@ -5,8 +5,8 @@ import React, {
   useState,
 } from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/components/Sidebar/sidebar.pc";
-import * as inputStyles from "@paperclip-ui/designer/src/styles/input.pc";
-import * as etcStyles from "@paperclip-ui/designer/src/styles/etc.pc";
+import * as inputStyles from "@paperclip-ui/designer/src/ui/input.pc";
+import * as etcStyles from "@paperclip-ui/designer/src/ui/etc.pc";
 import { useSelector } from "@paperclip-ui/common";
 import { getSelectedExprStyles } from "@paperclip-ui/designer/src/state/pc";
 import { Declaration } from "./Declaration";

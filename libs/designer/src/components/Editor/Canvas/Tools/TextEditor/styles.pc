@@ -1,5 +1,5 @@
-import "../../../../../styles/input.pc" as imp
-import "../../../../../styles/theme.pc" as theme
+import "../../../../../ui/input.pc" as imp
+import "../../../../../ui/theme.pc" as theme
 
 /**
  * @bounds(x: 344, y: -65, width: 218, height: 50)

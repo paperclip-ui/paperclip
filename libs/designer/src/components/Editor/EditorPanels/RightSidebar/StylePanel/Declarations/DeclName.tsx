@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import * as styles from "@paperclip-ui/designer/src/styles/styles-panel.pc";
+import * as styles from "@paperclip-ui/designer/src/ui/styles-panel.pc";
 import {
   ComputedStyle,
   serializeDeclaration,

@@ -1,7 +1,7 @@
-import "../../../../styles/input.pc" as module
+import "../../../../ui/input.pc" as module
 import "../../../../components/Sidebar/sidebar.pc" as sidebar
-import "../../../../styles/theme.pc" as theme
-import "../../../../styles/etc.pc" as etc
+import "../../../../ui/theme.pc" as theme
+import "../../../../ui/etc.pc" as etc
 
 /**
  * @bounds(x: -1561, y: 1882, width: 347, height: 768)
@@ -158,7 +158,7 @@ public component FileNavigator {
                     module.TextInput(value: "", placeholder: "filter...")
                     div {
                         style extends theme.icon {
-                            -webkit-mask-image: url("../../../../styles/plus.svg")
+                            -webkit-mask-image: url("../../../../ui/plus.svg")
                         }
                     }
                 }
@@ -208,7 +208,7 @@ component FileResources {
                 module.TextInput(value: "some file")
                 div {
                     style extends theme.icon {
-                        -webkit-mask-image: url("../../../../styles/plus.svg")
+                        -webkit-mask-image: url("../../../../ui/plus.svg")
                     }
                 }
             }
@@ -262,7 +262,7 @@ component LeftSidebarHeader {
             div controls {
                 style extends theme.icon {
                     cursor: pointer
-                    -webkit-mask-image: url("../../../../styles/hamburger.svg")
+                    -webkit-mask-image: url("../../../../ui/hamburger.svg")
                     width: 1.2em
                     height: 1.2em
                     display: none
@@ -467,53 +467,53 @@ public component LayerIcon {
             style variant isComponent {
                 width: 1.1em
                 height: 1.1em
-                -webkit-mask-image: url("../../../../styles/component2.svg")
+                -webkit-mask-image: url("../../../../ui/component2.svg")
             }
             style variant isInstance {
                 width: 0.9em
                 height: 0.9em
-                -webkit-mask-image: url("../../../../styles/box-outline.svg")
+                -webkit-mask-image: url("../../../../ui/box-outline.svg")
                 transform: translate(-50%, -50%) rotate(45deg)
             }
             style variant isSlot {
-                -webkit-mask-image: url("../../../../styles/slot3.svg")
+                -webkit-mask-image: url("../../../../ui/slot3.svg")
             }
             style variant isElement {
                 width: 0.75em
                 height: 0.75em
-                -webkit-mask-image: url("../../../../styles/square.svg")
+                -webkit-mask-image: url("../../../../ui/square.svg")
             }
             style variant isFolder {
                 width: 0.9em
                 height: 0.9em
                 top: calc(50% + 1px)
-                -webkit-mask-image: url("../../../../styles/folder.svg")
+                -webkit-mask-image: url("../../../../ui/folder.svg")
             }
             style variant isFile {
                 width: 0.9em
                 height: 0.9em
-                -webkit-mask-image: url("../../../../styles/file.svg")
+                -webkit-mask-image: url("../../../../ui/file.svg")
             }
             style variant isCompositeToken {
                 width: 0.9em
                 height: 0.9em
-                -webkit-mask-image: url("../../../../styles/group.svg")
+                -webkit-mask-image: url("../../../../ui/group.svg")
             }
             style variant isAtomToken {
                 width: 0.8em
                 height: 0.8em
-                -webkit-mask-image: url("../../../../styles/dot4.svg")
+                -webkit-mask-image: url("../../../../ui/dot4.svg")
             }
             style variant isTrigger {
                 width: 1.1em
                 height: 1.1em
                 position: relative
-                -webkit-mask-image: url("../../../../styles/lightning.svg")
+                -webkit-mask-image: url("../../../../ui/lightning.svg")
             }
             style variant isText {
                 width: 0.8em
                 height: 0.8em
-                -webkit-mask-image: url("../../../../styles/text.svg")
+                -webkit-mask-image: url("../../../../ui/text.svg")
             }
         }
     }
@@ -667,7 +667,7 @@ public component TreeNavigationItemHeader {
                 }
                 div(onClick: onArrowClick) {
                     style extends theme.icon {
-                        -webkit-mask-image: url("../../../../styles/chevron2.svg")
+                        -webkit-mask-image: url("../../../../ui/chevron2.svg")
                         opacity: 0
                         color: white
                         width: 0.9em

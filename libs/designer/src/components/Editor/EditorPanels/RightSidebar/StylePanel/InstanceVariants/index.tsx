@@ -1,6 +1,6 @@
 import React from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/components/Sidebar/sidebar.pc";
-import * as input from "@paperclip-ui/designer/src/styles/input.pc";
+import * as input from "@paperclip-ui/designer/src/ui/input.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   getGraph,

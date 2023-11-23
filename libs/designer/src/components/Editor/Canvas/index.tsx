@@ -6,7 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import { Frames } from "./Frames";
-import * as styles from "@paperclip-ui/designer/src/styles/editor.pc";
+import * as styles from "@paperclip-ui/designer/src/ui/editor.pc";
 import { normalizeWheel } from "./normalize-wheel";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 

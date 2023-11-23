@@ -5,8 +5,8 @@ import {
   getSelectedExpressionInfo,
 } from "@paperclip-ui/designer/src/state";
 import { routes } from "@paperclip-ui/designer/src/state/routes";
-import { Fields } from "@paperclip-ui/designer/src/styles/input.pc";
-import { UsedBy } from "@paperclip-ui/designer/src/styles/right-sidebar.pc";
+import { Fields } from "@paperclip-ui/designer/src/ui/input.pc";
+import { UsedBy } from "@paperclip-ui/designer/src/ui/right-sidebar.pc";
 import {
   SidebarSection,
   SidebarPanelHeader,

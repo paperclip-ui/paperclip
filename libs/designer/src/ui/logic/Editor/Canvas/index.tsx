@@ -32,9 +32,7 @@ export const Canvas = (Base: React.FC<styles.BaseCanvasProps>) => () => {
       transition: "0.2s",
       transitionProperty: "opacity",
       transformOrigin: "top left",
-    }} innerChildren={ <Frames expandedFrameIndex={expanded ? activeFrameIndex : null} />}>
-      <Tools />
-    </Base>
+    }} frames={ <Frames expandedFrameIndex={expanded ? activeFrameIndex : null} />} tools={<Tools />} />
   );
 };
 

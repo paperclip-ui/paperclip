@@ -224,7 +224,6 @@ public component Editor {
 }
 
 public component Artboard {
-    script(src: "./logic/Editor/Canvas/Frames/Frame.tsx", target: "react", name: "Frames")
     render div(style: style) {
         div {
             style {
@@ -255,9 +254,9 @@ public component Canvas {
                 width: 100%
                 height: 100%
             }
-            slot innerChildren
+            slot frames
         }
-        slot children
+        slot tools
     }
 }
 

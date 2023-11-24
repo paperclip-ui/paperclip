@@ -45,7 +45,8 @@ jobs:
         if: matrix.platform.os_name == 'Linux-x86_64'
       - run: |
           mkdir -p /tmp/protoc && cd /tmp/protoc
-          wget -qO- https://github.com/protocolbuffers/protobuf/releases/download/v25.1/protoc-25.1-linux-x86_64.zip  | tar -xvz
+          wget -qO- https://github.com/protocolbuffers/protobuf/releases/download/v25.1/protoc-25.1-linux-x86_64.zip -O temp.zip
+          unzip temp.zip
           mv bin/protoc /usr/bin/protoc
           mv include/* /usr/local
       - uses: arduino/setup-protoc@v2

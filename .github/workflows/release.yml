@@ -69,7 +69,7 @@ jobs:
         env: 
           TARGET_CC: x86_64-linux-musl-gcc
           RUSTFLAGS: "-C target-feature=-crt-static"
-          PROTOC: "/usr/bin/protoc"
+          # PROTOC: "/usr/bin/protoc"
           PKG_CONFIG_SYSROOT_DIR: "/"
           PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig
           OPENSSL_LIB_DIR: /usr/lib/x86_64-linux-gnu/

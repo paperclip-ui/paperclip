@@ -34,7 +34,7 @@ public component UsedBy {
 public component RightSidebar {
     script(src: "./logic/Editor/EditorPanels/RightSidebar/index.tsx", target: "react", name: "RightSidebar")
     render sidebar.SidebarContainer(position: "right") {
-        stylessidebar.Sidebar {
+        sidebar.Sidebar {
             slot children {
                 stylesPanel.Preview
                 sidebar.SidebarPanel {

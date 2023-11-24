@@ -49,6 +49,8 @@ jobs:
           unzip temp.zip
           sudo mv bin/protoc /usr/bin/protoc
           sudo mv include/* /usr/local
+
+          /usr/bin/protoc  --help
       - uses: arduino/setup-protoc@v2
         with:
           version: "24.x"

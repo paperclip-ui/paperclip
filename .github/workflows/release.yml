@@ -41,8 +41,13 @@ jobs:
         with:
           packages: musl-tools # provides musl-gcc
           version: 1.0
-      - run: sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get install pkg-config libssl-dev protobuf-compiler libprotobuf-dev libprotoc-dev librust-openssl-sys-dev musl-tools -y
+      - run: sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get install pkg-config musl-tools -y
         if: matrix.platform.os_name == 'Linux-x86_64'
+      - run: |
+          mkdir -p /tmp/protoc && cd /tmp/protoc
+          wget -qO- https://github.com/protocolbuffers/protobuf/releases/download/v25.1/protoc-25.1-linux-x86_64.zip  | tar -xvz
+          mv bin/protoc /usr/bin/protoc
+          mv include/* /usr/local
       - uses: arduino/setup-protoc@v2
         with:
           version: "24.x"

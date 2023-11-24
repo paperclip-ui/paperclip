@@ -73,8 +73,8 @@ jobs:
           # PKG_CONFIG_SYSROOT_DIR: "/"
           # PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig
           OPENSSL_LIB_DIR: /usr/lib/x86_64-linux-gnu/
-          OPENSSL_INCLUDE_DIR: /usr/include/x86_64-linux-gnu/
-          OPENSSL_DIR: /usr/local/ssl
+          OPENSSL_INCLUDE_DIR: /usr/include/openssl
+          OPENSSL_DIR: /usr/local/openssl
       - run: ${{ matrix.platform.cargo_command }} build --release --locked --target=${{ matrix.platform.target }}
         if: matrix.platform.os_name == 'macOS-x86_64'
         # if: matrix.platform.os_name == 'macOS-x86_64'

@@ -17,7 +17,8 @@ jobs:
       matrix:
         platform:
           - os_name: Linux-x86_64
-            os: ubuntu-20.04
+            # os: ubuntu-20.04
+            os: macOS-latest
             target: x86_64-unknown-linux-musl
             cargo_command: cargo
           # - os_name: Linux-x86_64
@@ -39,8 +40,8 @@ jobs:
         with:
           packages: musl-tools # provides musl-gcc
           version: 1.0
-      - run: sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get install pkg-config libssl-dev protobuf-compiler libprotobuf-dev libprotoc-dev librust-openssl-sys-dev musl-tools -y
-        if: matrix.platform.os_name == 'Linux-x86_64'
+      # - run: sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get install pkg-config libssl-dev protobuf-compiler libprotobuf-dev libprotoc-dev librust-openssl-sys-dev musl-tools -y
+      #   if: matrix.platform.os_name == 'Linux-x86_64'
       - uses: arduino/setup-protoc@v2
         with:
           version: "24.x"
@@ -76,7 +77,7 @@ jobs:
           OPENSSL_INCLUDE_DIR: /usr/include/openssl
           OPENSSL_DIR: /usr/local/openssl
       - run: ${{ matrix.platform.cargo_command }} build --release --locked --target=${{ matrix.platform.target }}
-        if: matrix.platform.os_name == 'macOS-x86_64'
+        # if: matrix.platform.os_name == 'macOS-x86_64'
         # if: matrix.platform.os_name == 'macOS-x86_64'
       # - uses: houseabsolute/actions-rust-cross@v0
       #   env: 

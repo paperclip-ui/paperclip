@@ -67,15 +67,15 @@ jobs:
         if: matrix.platform.os_name == 'Linux-x86_64'
       - run: cross build --release --locked --target=${{ matrix.platform.target }}
         if: matrix.platform.os_name == 'Linux-x86_64'
-        env: 
-          TARGET_CC: x86_64-linux-musl-gcc
-          RUSTFLAGS: "-C target-feature=-crt-static"
-          # PROTOC: "/usr/bin/protoc"
-          PKG_CONFIG_SYSROOT_DIR: "/"
-          PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig
-          OPENSSL_LIB_DIR: /usr/lib/x86_64-linux-gnu/
-          OPENSSL_INCLUDE_DIR: /usr/include/openssl
-          OPENSSL_DIR: /usr/local/openssl
+        # env: 
+        #   TARGET_CC: x86_64-linux-musl-gcc
+        #   RUSTFLAGS: "-C target-feature=-crt-static"
+        #   # PROTOC: "/usr/bin/protoc"
+        #   PKG_CONFIG_SYSROOT_DIR: "/"
+        #   PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig
+        #   OPENSSL_LIB_DIR: /usr/lib/x86_64-linux-gnu/
+        #   OPENSSL_INCLUDE_DIR: /usr/include/openssl
+        #   OPENSSL_DIR: /usr/local/openssl
       - run: ${{ matrix.platform.cargo_command }} build --release --locked --target=${{ matrix.platform.target }}
         # if: matrix.platform.os_name == 'macOS-x86_64'
         # if: matrix.platform.os_name == 'macOS-x86_64'

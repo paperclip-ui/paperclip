@@ -40,12 +40,13 @@ jobs:
         with:
           packages: musl-tools # provides musl-gcc
           version: 1.0
-      # - run: sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get install pkg-config libssl-dev protobuf-compiler libprotobuf-dev libprotoc-dev librust-openssl-sys-dev musl-tools -y
-      #   if: matrix.platform.os_name == 'Linux-x86_64'
+      - run: sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get install pkg-config libssl-dev protobuf-compiler libprotobuf-dev libprotoc-dev librust-openssl-sys-dev musl-tools -y
+        if: matrix.platform.os_name == 'Linux-x86_64'
       - uses: arduino/setup-protoc@v2
         with:
           version: "24.x"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+        if: matrix.platform.os_name == 'macOS-latest'
       # - run: pip3 install ziglang
       # - run: cargo install cargo-zigbuild
       - uses: jetli/wasm-pack-action@v0.4.0
@@ -70,7 +71,7 @@ jobs:
         env: 
         #   TARGET_CC: x86_64-linux-musl-gcc
           RUSTFLAGS: "-C target-feature=-crt-static"
-        #   # PROTOC: "/usr/bin/protoc"
+          PROTOC: "/usr/bin/protoc"
         #   PKG_CONFIG_SYSROOT_DIR: "/"
         #   PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig
         #   OPENSSL_LIB_DIR: /usr/lib/x86_64-linux-gnu/

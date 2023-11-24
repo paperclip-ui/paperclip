@@ -176,6 +176,7 @@ public component ComboKey {
 
 /**
  * @bounds(x: 512, y: 542, width: 1830, height: 1256)
+ * @previewAttributes(showCanvas: 1)
 */
 public component Editor {
     script(src: "./logic/Editor/index.tsx", target: "react", name: "Editor")

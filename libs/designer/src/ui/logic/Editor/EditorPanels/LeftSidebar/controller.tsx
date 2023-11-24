@@ -5,7 +5,7 @@ import { DesignerState } from "@paperclip-ui/designer/src/state";
 
 export const LeftSidebar = (Base: React.FC<BaseLeftSidebarProps>) => () => {
   const { show } = useLeftSidebar();
-  console.log("SHOW", show);
+
   if (!show) {
     return null;
   }

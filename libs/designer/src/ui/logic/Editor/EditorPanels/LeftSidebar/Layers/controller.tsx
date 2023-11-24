@@ -12,6 +12,7 @@ import {
   Element,
   Insert,
   Node,
+  Condition,
   Render,
   Slot,
   Style,
@@ -48,21 +49,6 @@ export const Layers = (Base: React.FC<BaseLayersProps>) =>
         ))}
       />
     );
-
-    // return (
-    //   <sidebarStyles.SidebarPanel>
-    //     <styles.LeftSidebarHeader title={title} />
-    //     <sidebarStyles.SidebarSection class="fill">
-    //       <sidebarStyles.SidebarPanelHeader>
-    //         Entities
-    //         <AddLayerButton />
-    //       </sidebarStyles.SidebarPanelHeader>
-    //       <styles.Layers>
-    //         {}
-    //       </styles.Layers>
-    //     </sidebarStyles.SidebarSection>
-    //   </sidebarStyles.SidebarPanel>
-    // );
   };
 
 const useLayers = () => {
@@ -124,8 +110,8 @@ const ComponentLeaf = memo(
             {render?.node.element
               ? render?.node.element.tagName
               : render?.node.text
-              ? "text"
-              : undefined}
+                ? "text"
+                : undefined}
           </styles.TagType>
         }
         depth={depth}
@@ -170,6 +156,9 @@ const NodeLeaf = memo(({ expr: node, depth, instanceOf }: LeafProps<Node>) => {
   }
   if (node.slot) {
     return <SlotLeaf expr={node.slot} depth={depth} instanceOf={instanceOf} />;
+  }
+  if (node.condition) {
+    return <ConditionLeaf expr={node.condition} depth={depth} instanceOf={instanceOf} />;
   }
   if (node.insert) {
     return (
@@ -324,6 +313,28 @@ const SlotLeaf = memo(({ expr: slot, depth, instanceOf }: LeafProps<Slot>) => {
     >
       {() =>
         slot.body.map((child) => (
+          <NodeLeaf
+            key={ast.getInnerExpression(child).id}
+            expr={child}
+            depth={depth + 1}
+          />
+        ))
+      }
+    </Leaf>
+  );
+});
+
+const ConditionLeaf = memo(({ expr, depth, instanceOf }: LeafProps<Condition>) => {
+  return (
+    <Leaf
+      id={expr.id}
+      className={cx("condition", { container: expr.body.length > 0 })}
+      text={expr.property}
+      depth={depth}
+      instanceOf={instanceOf}
+    >
+      {() =>
+        expr.body.map((child) => (
           <NodeLeaf
             key={ast.getInnerExpression(child).id}
             expr={child}

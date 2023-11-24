@@ -203,6 +203,7 @@ public component Editor {
                 gap: var(theme.space05)
                 position: absolute
                 height: 100%
+                width: 100%
                 justify-content: space-between
                 pointer-events: none
                 top: 0px

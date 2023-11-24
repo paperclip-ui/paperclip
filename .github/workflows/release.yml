@@ -61,7 +61,7 @@ jobs:
         with:
           node-version: "20.x"
       - run: yarn install
-      - run: rustup target add ${{ matrix.platform.target }}
+      - run: rustup target add ${{ matrix.platform.target }} -- -C link-arg=-lgcc
       - run: yarn build
       - run: cargo install cross --git https://github.com/cross-rs/cross
         if: matrix.platform.os_name == 'Linux-x86_64'

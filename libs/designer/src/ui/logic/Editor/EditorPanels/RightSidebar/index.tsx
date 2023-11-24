@@ -1,6 +1,5 @@
 import React from "react";
 import * as styles from "@paperclip-ui/designer/src/ui/right-sidebar.pc";
-import * as sidebarStyles from "@paperclip-ui/designer/src/ui/logic/Sidebar/sidebar.pc";
 import { StylePanel } from "./StylePanel";
 import { PropertiesPanel } from "./PropertiesPanel";
 import {
@@ -9,7 +8,7 @@ import {
 } from "@paperclip-ui/designer/src/state";
 import { useSelector } from "@paperclip-ui/common";
 
-export const RightSidebar = () => {
+export const RightSidebar = (Base: React.FC<styles.BaseRightSidebarProps>) => () => {
   const showUI = useSelector((state: DesignerState) => state.showRightsidebar);
   const expr = useSelector(getSelectedExpression);
   if (!showUI || !expr) {
@@ -17,11 +16,9 @@ export const RightSidebar = () => {
   }
 
   return (
-    <sidebarStyles.SidebarContainer position="right">
-      <styles.RightSidebar>
-        <StylePanel />
-        <PropertiesPanel />
-      </styles.RightSidebar>
-    </sidebarStyles.SidebarContainer>
+    <Base>
+      <StylePanel />
+      <PropertiesPanel />
+    </Base>
   );
 };

@@ -222,10 +222,12 @@ component FileResources {
 */
 public component LeftSidebar {
     script(src: "./controller.tsx", target: "react", name: "LeftSidebar")
-    render sidebar.Sidebar {
-        insert children {
-            Layers layers
-            FileNavigator fileNavigator
+    render sidebar.SidebarContainer(position: "left") {
+        sidebar.Sidebar {
+            insert children {
+                Layers layers
+                FileNavigator fileNavigator
+            }
         }
     }
 }

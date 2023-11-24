@@ -120,7 +120,6 @@ public component CenterPanels {
     }
 }
 
-
 /**
  * @bounds(x: 6874, y: 1592, width: 345, height: 71)
 */
@@ -186,27 +185,34 @@ public component Editor {
             height: 100vh
             background: var(theme.canvasColor)
         }
-        Canvas
+        if showCanvas {
+            Canvas
+        }
+        if showSplash {
+            SplashInfo {
+                insert commands {
+                    slot commands
+                }
+            }
+        }
         div editorPanels {
             style {
                 display: flex
                 flex: 1
                 z-index: 3
                 gap: var(theme.space05)
-                position: relative
+                position: absolute
                 height: 100%
                 justify-content: space-between
                 pointer-events: none
+                top: 0px
             }
-            module.SidebarContainer {
-                leftSidebar.LeftSidebar leftSidebar
-            }
-            slot children {
+            leftSidebar.LeftSidebar leftSidebar
+            if showCanvas {
                 CenterPanels
                 module.SidebarContainer {
                     rightSidebar.RightSidebar rightPanel
                 }
-                assetsModal.Container
             }
         }
     }
@@ -252,11 +258,4 @@ public component Canvas {
 /**
  * @bounds(x: 2751, y: 540, width: 1557, height: 993)
 */
-Editor splash {
-    SplashInfo
-    style {
-        position: relative
-        display: flex
-    }
-}
-
+Editor splash(showSplash: true)

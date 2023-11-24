@@ -32,110 +32,113 @@ public component UsedBy {
  * @bounds(x: 1043, y: 478, width: 331, height: 1270)
 */
 public component RightSidebar {
-    render sidebar.Sidebar {
-        slot children {
-            stylesPanel.Preview
-            sidebar.SidebarPanel {
-                sidebar.SidebarSection {
-                    sidebar.SidebarPanelHeader {
-                        text "Attributes"
-                        div {
-                            style extends theme.icon {
-                                -webkit-mask-image: url("./plus.svg")
-                            }
-                        }
-                    }
-                    sidebar.SidebarPanelContent {
-                        input.Fields {
-                            input.Field {
-                                insert name {
-                                    input.TextInput(value: "onClick")
-                                }
-                                insert input {
-                                    input.TextInput(value: "onClick") {
-                                        insert value {
-                                            text "onButtonClick"
-                                        }
-                                    }
-                                }
-                            }
-                            input.Field {
-                                insert name {
-                                    input.TextInput(value: "href") {
-                                        insert value {
-                                            text "onClick"
-                                        }
-                                    }
-                                }
-                                insert input {
-                                    input.TextInput(value: "http://google.com") {
-                                        insert value {
-                                            text "onButtonClick"
-                                        }
-                                    }
+    script(src: "./logic/Editor/EditorPanels/RightSidebar/index.tsx", target: "react", name: "RightSidebar")
+    render sidebar.SidebarContainer(position: "right") {
+        stylessidebar.Sidebar {
+            slot children {
+                stylesPanel.Preview
+                sidebar.SidebarPanel {
+                    sidebar.SidebarSection {
+                        sidebar.SidebarPanelHeader {
+                            text "Attributes"
+                            div {
+                                style extends theme.icon {
+                                    -webkit-mask-image: url("./plus.svg")
                                 }
                             }
                         }
-                    }
-                }
-                sidebar.SidebarSection {
-                    sidebar.SidebarPanelContent {
-                        input.Fields {
-                            input.Field {
-                                insert name {
-                                    text "Logic"
-                                }
-                                insert input {
-                                    input.TextInput(value: "./script.ts")
-                                }
-                            }
-                            input.Field {
-                                insert name {
-                                    text "Variants"
-                                    VariantPopup {
-                                        style {
-                                            display: none
+                        sidebar.SidebarPanelContent {
+                            input.Fields {
+                                input.Field {
+                                    insert name {
+                                        input.TextInput(value: "onClick")
+                                    }
+                                    insert input {
+                                        input.TextInput(value: "onClick") {
+                                            insert value {
+                                                text "onButtonClick"
+                                            }
                                         }
                                     }
                                 }
-                                insert input {
-                                    input.ListItemInput(class: "removable") {
-                                        text "isHover"
+                                input.Field {
+                                    insert name {
+                                        input.TextInput(value: "href") {
+                                            insert value {
+                                                text "onClick"
+                                            }
+                                        }
                                     }
-                                }
-                            }
-                            input.Field {
-                                insert input {
-                                    input.AddListItemButton
+                                    insert input {
+                                        input.TextInput(value: "http://google.com") {
+                                            insert value {
+                                                text "onButtonClick"
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                sidebar.SidebarSection {
-                    sidebar.SidebarPanelHeader {
-                        text "Used by"
+                    sidebar.SidebarSection {
+                        sidebar.SidebarPanelContent {
+                            input.Fields {
+                                input.Field {
+                                    insert name {
+                                        text "Logic"
+                                    }
+                                    insert input {
+                                        input.TextInput(value: "./script.ts")
+                                    }
+                                }
+                                input.Field {
+                                    insert name {
+                                        text "Variants"
+                                        VariantPopup {
+                                            style {
+                                                display: none
+                                            }
+                                        }
+                                    }
+                                    insert input {
+                                        input.ListItemInput(class: "removable") {
+                                            text "isHover"
+                                        }
+                                    }
+                                }
+                                input.Field {
+                                    insert input {
+                                        input.AddListItemButton
+                                    }
+                                }
+                            }
+                        }
                     }
-                    sidebar.SidebarPanelContent {
-                        input.Fields {
-                            UsedBy {
-                                insert children {
-                                    text "./another/file.pc"
+                    sidebar.SidebarSection {
+                        sidebar.SidebarPanelHeader {
+                            text "Used by"
+                        }
+                        sidebar.SidebarPanelContent {
+                            input.Fields {
+                                UsedBy {
+                                    insert children {
+                                        text "./another/file.pc"
+                                    }
                                 }
-                            }
-                            UsedBy {
-                                insert children {
-                                    text "./another/file.pc"
+                                UsedBy {
+                                    insert children {
+                                        text "./another/file.pc"
+                                    }
                                 }
-                            }
-                            UsedBy {
-                                insert children {
-                                    text "./another/file.pc"
+                                UsedBy {
+                                    insert children {
+                                        text "./another/file.pc"
+                                    }
                                 }
-                            }
-                            UsedBy {
-                                insert children {
-                                    text "./another/file.pc"
+                                UsedBy {
+                                    insert children {
+                                        text "./another/file.pc"
+                                    }
                                 }
                             }
                         }

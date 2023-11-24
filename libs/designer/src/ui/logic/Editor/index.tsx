@@ -18,41 +18,32 @@ export const Editor = (Base: React.FC<styles.BaseEditorProps>) => () => {
 
   return (
     <>
-    <ResourceModal />
-    <Base leftSidebarProps={{}}>
-        {currentFile ? (
-          <>
-            <styles.CenterPanels />
-            <RightSidebar />
-          </>
-        ) : (
-          <styles.SplashInfo
-            commands={
-              <>
-                {shortcuts
-                  .filter((shortcut) =>
-                    [
-                      ShortcutCommand.CreateDesignFile,
-                      ShortcutCommand.SearchFiles,
-                    ].includes((shortcut as MenuItemOption<any>).command)
-                  )
-                  .map((shortcut: MenuItemOption<any>) => (
-                    <styles.SplashTip
-                      label={shortcut.label}
-                      shortcuts={shortcut.shortcut.map((key) => {
-                        return (
-                          <styles.ComboKey key={key}>
-                            {prettyKeyCombo([key])}
-                          </styles.ComboKey>
-                        );
-                      })}
-                    />
-                  ))}
-              </>
-            }
-          />
-        )}
-    </Base>
+      <ResourceModal />
+      <Base leftSidebarProps={{}} rightPanelProps={{}} showCanvas={currentFile != null} showSplash={currentFile == null} commands={
+        <>
+          {shortcuts
+            .filter((shortcut) =>
+              [
+                ShortcutCommand.CreateDesignFile,
+                ShortcutCommand.SearchFiles,
+              ].includes((shortcut as MenuItemOption<any>).command)
+            )
+            .map((shortcut: MenuItemOption<any>) => (
+              <styles.SplashTip
+                label={shortcut.label}
+                shortcuts={shortcut.shortcut.map((key) => {
+                  return (
+                    <styles.ComboKey key={key}>
+                      {prettyKeyCombo([key])}
+                    </styles.ComboKey>
+                  );
+                })}
+              />
+            ))}
+        </>
+      } />
     </>
+
+
   );
 };

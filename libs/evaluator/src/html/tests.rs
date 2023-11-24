@@ -660,6 +660,38 @@ add_case! {
 "#
 }
 
+// add_case! {
+//     can_define_preview_attributes,
+//     [
+//     ("/entry.pc", r#"
+
+//     /**
+//      * @preview(showTest: true, someClass: "abba")
+//      */
+//     component A {
+//         render div(class: someClass) {
+//             if showTest {
+//                 text "Test!"
+//             }
+
+//         }
+//     }
+// 	"#)
+//     ],
+//     r#"
+//     <div class="_A-root-80f4925f-3 undefined">
+//     </div>
+//     <div class="_A-root-80f4925f-3 _B-root-80f4925f-8 undefined">
+//     </div>
+//     <div class="_C-80f4925f-19">
+//         <div class="_A-root-80f4925f-3 _C-bbbbb-80f4925f-14 _B-root-80f4925f-8 undefined">
+//         </div>
+//         <div class="_C-80f4925f-18">
+//         </div>
+//     </div>
+// "#
+// }
+
 #[test]
 fn bounds_are_attached_to_root_elements() {
     let doc = evaluate_doc(HashMap::from([(

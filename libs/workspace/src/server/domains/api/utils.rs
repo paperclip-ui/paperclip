@@ -28,7 +28,7 @@ pub mod content_types {
 
 pub fn create_design_file<TIO: ServerIO>(
     name: &str,
-    parent_dir: Option<String>,
+    parent_dir: &str,
     ctx: ServerEngineContext<TIO>,
 ) -> Result<String> {
     let config_ctx = ctx
@@ -39,9 +39,12 @@ pub fn create_design_file<TIO: ServerIO>(
         .options
         .config_context
         .clone();
-    let src_dir = &parent_dir
-        .or(config_ctx.config.designs_dir)
-        .or(config_ctx.config.src_dir);
+    let src_dir = if parent_dir == "" {
+        Some(parent_dir.to_string())
+    } else {
+        config_ctx.config.designs_dir
+            .or(config_ctx.config.src_dir)
+    };
 
     let mut file_dir: PathBuf = Path::new(&config_ctx.directory).to_path_buf();
 

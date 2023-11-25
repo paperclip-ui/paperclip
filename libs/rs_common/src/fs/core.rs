@@ -4,6 +4,7 @@ use futures_core::stream::Stream;
 
 #[cfg(feature = "local")]
 use path_absolutize::*;
+use std::{pin::Pin};
 use std::fs;
 use std::fs::File;
 use std::io::Read;
@@ -121,6 +122,5 @@ impl FileWatchEvent {
 }
 
 pub trait FileWatcher: Clone + Send + Sync {
-    type Str: Stream<Item = FileWatchEvent>;
-    fn watch(&self, path: &str) -> Self::Str;
+    fn watch(&self, path: &str) -> Pin<Box<dyn Stream<Item = FileWatchEvent>>>;
 }

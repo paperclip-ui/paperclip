@@ -4,6 +4,7 @@ use async_stream::stream;
 use futures::executor::block_on;
 use futures_core::stream::Stream;
 use futures_util::pin_mut;
+use std::{pin::Pin};
 use futures_util::StreamExt;
 use paperclip_common::fs::{
     FileReader, FileResolver, FileWatchEvent, FileWatchEventKind, FileWatcher,
@@ -22,11 +23,10 @@ impl GraphIO for MockIO {}
 impl ProjectIO for MockIO {}
 
 impl FileWatcher for MockIO {
-    type Str = impl Stream<Item = FileWatchEvent>;
-    fn watch(&self, _dir: &str) -> Self::Str {
-        stream! {
+    fn watch(&self, _dir: &str) -> Pin<Box<dyn Stream<Item = FileWatchEvent>>> {
+        Box::pin(stream! {
           yield FileWatchEvent::new(FileWatchEventKind::Create, &"nada".to_string());
-        }
+        })
     }
 }
 impl ConfigIO for MockIO {

@@ -227,6 +227,9 @@ public component Editor {
     }
 }
 
+/**
+ * @bounds(x: -1353, y: 1353, width: 1024, height: 768)
+*/
 public component Artboard {
     render div(style: style) {
         div {
@@ -241,6 +244,9 @@ public component Artboard {
     }
 }
 
+/**
+ * @bounds(x: -833, y: 2054, width: 1024, height: 768)
+*/
 public component Canvas {
     script(src: "./logic/Editor/Canvas/index.tsx", target: "react", name: "Canvas")
     render div(style: style, onMouseMove: onMouseMove, onScroll: onScroll, onWheelCapture: onWheelCapture, tabIndex: "0") {

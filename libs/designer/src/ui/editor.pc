@@ -149,8 +149,16 @@ public component SplashTip {
                 width: 50%
             }
             slot shortcuts {
-                ComboKey
-                ComboKey
+                ComboKey {
+                    insert children {
+                        text "⌘"
+                    }
+                }
+                ComboKey {
+                    insert children {
+                        text "⇧"
+                    }
+                }
             }
         }
     }
@@ -260,4 +268,14 @@ public component Canvas {
 /**
  * @bounds(x: 2751, y: 540, width: 1557, height: 993)
 */
-Editor splash(showSplash: true)
+Editor splash(showSplash: true) {
+    insert commands {
+        SplashTip
+    }
+}
+
+/**
+ * @bounds(x: 457, y: 2057, width: 2617, height: 1680)
+*/
+Editor splash(showCanvas: true)
+

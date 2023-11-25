@@ -48,6 +48,7 @@ jobs:
           wget -qO- https://github.com/protocolbuffers/protobuf/releases/download/v25.1/protoc-25.1-linux-x86_64.zip -O temp.zip
           unzip temp.zip
           sudo unzip -o temp.zip -d "/usr"
+          sudo chmod 755 /usr/bin/protoc
       - uses: arduino/setup-protoc@v2
         with:
           version: "24.x"
@@ -72,7 +73,7 @@ jobs:
       - run: yarn build
       - run: cargo install cross --git https://github.com/cross-rs/cross
         if: matrix.platform.os_name == 'Linux-x86_64'
-      - run: cargo build --release --locked --target=${{ matrix.platform.target }}
+      - run: cross build --release --locked --target=${{ matrix.platform.target }}
         if: matrix.platform.os_name == 'Linux-x86_64'
         env:
         #   TARGET_CC: x86_64-linux-musl-gcc

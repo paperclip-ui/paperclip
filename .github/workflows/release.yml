@@ -48,9 +48,6 @@ jobs:
           wget -qO- https://github.com/protocolbuffers/protobuf/releases/download/v25.1/protoc-25.1-linux-x86_64.zip -O temp.zip
           unzip temp.zip
           sudo unzip -o temp.zip -d "/usr"
-
-
-          /usr/bin/protoc  --help
       - uses: arduino/setup-protoc@v2
         with:
           version: "24.x"
@@ -70,6 +67,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: "20.x"
+      - run: /usr/bin/protoc  --help
       - run: yarn install
       - run: rustup target add ${{ matrix.platform.target }}
       - run: yarn build

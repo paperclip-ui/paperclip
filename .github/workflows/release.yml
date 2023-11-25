@@ -46,7 +46,9 @@ jobs:
       - run: |
           mkdir -p /tmp/protoc && cd /tmp/protoc
           wget -qO- https://github.com/protocolbuffers/protobuf/releases/download/v25.1/protoc-25.1-linux-x86_64.zip -O temp.zip
-          sudo unzip temp.zip -d "/usr"
+          unzip temp.zip
+          sudo unzip -o temp.zip -d "/usr"
+
 
           /usr/bin/protoc  --help
       - uses: arduino/setup-protoc@v2

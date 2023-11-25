@@ -14,6 +14,7 @@ pub enum Token<'src> {
     Word(&'src [u8]),
     ParenOpen,
     ParenClose,
+    Boolean(bool),
     Colon,
     Comma,
     PropertyName(&'src [u8]),
@@ -67,7 +68,13 @@ pub fn next_token<'src>(
             b'\"' | b'\'' => Token::String(scan_string(scanner, b)),
             _ if is_az(b) => {
                 let e_pos = scanner.scan(is_az).u8_pos;
-                Token::Word(&scanner.source[s_pos..e_pos])
+                let chars = &scanner.source[s_pos..e_pos];
+
+                if matches!(chars, b"true" | b"false") {
+                    Token::Boolean(chars == b"true")
+                } else {
+                    Token::Word(chars)
+                }
             }
             _ if is_digit(b) => Token::Number(scan_number2(scanner, s_pos)),
             _ if is_space(b) | is_newline(b) => {

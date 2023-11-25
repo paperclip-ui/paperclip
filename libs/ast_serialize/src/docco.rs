@@ -42,6 +42,14 @@ fn serialize_string(value: &base_ast::Str, context: &mut Context) {
     context.add_buffer(format!("\"{}\"", value.value).as_str());
 }
 
+fn serialize_boolean(value: &base_ast::Bool, context: &mut Context) {
+    context.add_buffer(format!("{}", if value.value {
+        "true"
+    } else {
+        "false"
+    }).as_str());
+}
+
 fn serialize_parameters(value: &ast::Parameters, context: &mut Context) {
     context.add_buffer("(");
     let mut it = (&value.items).into_iter().peekable();
@@ -63,6 +71,9 @@ fn serialize_parameter(value: &ast::Parameter, context: &mut Context) {
         }
         ast::parameter_value::Inner::Str(value) => {
             serialize_string(&value, context);
+        }
+        ast::parameter_value::Inner::Bool(value) => {
+            serialize_boolean(&value, context);
         }
     }
 }

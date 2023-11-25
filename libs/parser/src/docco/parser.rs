@@ -148,6 +148,19 @@ pub fn parse_number(context: &mut ParserContext) -> Result<base_ast::Num, Parser
     })
 }
 
+
+pub fn parse_boolean(context: &mut ParserContext) -> Result<base_ast::Bool, ParserError> {
+    let start = context.curr_u16pos.clone();
+    let value = extract_bool_value(context)?;
+    context.next_token()?; // eat
+    let end = context.curr_u16pos.clone();
+    Ok(base_ast::Bool {
+        id: context.next_id(),
+        range: Some(Range::new(start, end)),
+        value,
+    })
+}
+
 fn extract_number_value(context: &mut ParserContext) -> Result<f32, err::ParserError> {
     if let Some(Token::Number(value)) = context.curr_token {
         Ok(value)
@@ -159,6 +172,14 @@ fn extract_number_value(context: &mut ParserContext) -> Result<f32, err::ParserE
 fn extract_string_value(context: &mut ParserContext) -> Result<String, err::ParserError> {
     if let Some(Token::String(value)) = context.curr_token {
         Ok(trim_string(str::from_utf8(value).unwrap()))
+    } else {
+        return Err(context.new_unexpected_token_error());
+    }
+}
+
+fn extract_bool_value(context: &mut ParserContext) -> Result<bool, err::ParserError> {
+    if let Some(Token::Boolean(value)) = context.curr_token {
+        Ok(value)
     } else {
         return Err(context.new_unexpected_token_error());
     }
@@ -223,6 +244,7 @@ fn parse_parameter_value(
     match context.curr_token {
         Some(Token::String(_)) => Ok(ast::parameter_value::Inner::Str(parse_string(context)?)),
         Some(Token::Number(_)) => Ok(ast::parameter_value::Inner::Num(parse_number(context)?)),
+        Some(Token::Boolean(_)) => Ok(ast::parameter_value::Inner::Bool(parse_boolean(context)?)),
         _ => Err(context.new_unexpected_token_error()),
     }
 }

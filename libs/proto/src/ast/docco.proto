@@ -47,5 +47,6 @@ message ParameterValue {
   oneof inner {
     ast.base.Str str = 1;
     ast.base.Num num = 2;
+    ast.base.Bool bool = 3;
   }
 }

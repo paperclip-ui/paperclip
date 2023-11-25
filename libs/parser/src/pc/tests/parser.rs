@@ -343,7 +343,7 @@ add_case! {
     can_parse_a_component_with_a_doccomment,
     r#"
     /**
-     * @bounds(width: 100, height: 100, x: -100.5, y: -0.5)
+     * @bounds(width: 100, height: 100, x: -100.5, y: -0.5, test: true, another: false)
      */
     component A {
         render div

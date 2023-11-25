@@ -184,7 +184,6 @@ public component ComboKey {
 
 /**
  * @bounds(x: 512, y: 542, width: 1830, height: 1256)
- * @previewAttributes(showCanvas: 1)
 */
 public component Editor {
     script(src: "./logic/Editor/index.tsx", target: "react", name: "Editor")
@@ -259,7 +258,25 @@ public component Canvas {
                 width: 100%
                 height: 100%
             }
-            slot frames
+            slot frames {
+                Artboard {
+                    style extends theme.centered {
+                        width: 400px
+                        height: 300px
+                    }
+                    insert title {
+                        text "some title"
+                    }
+                    div {
+                        style {
+                            background: white
+                            width: 100%
+                            height: 100%
+                        }
+                        text "some canvas element"
+                    }
+                }
+            }
         }
         slot tools
     }

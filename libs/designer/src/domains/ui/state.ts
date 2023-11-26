@@ -14,7 +14,6 @@ import {
   getNodeBox,
   getPreviewFrameBoxes,
   getTargetExprId,
-  jsonToMetadataValue,
   setTargetExprId,
 } from "../../state";
 import {
@@ -26,6 +25,7 @@ import { Box, centerTransformZoom } from "../../state/geom";
 import { clamp, uniq } from "lodash";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { WritableDraft } from "immer/dist/internal";
+import { jsonToMetadataValue } from "@paperclip-ui/proto/lib/virt/html-utils";
 
 export const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
 export const PAN_X_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;

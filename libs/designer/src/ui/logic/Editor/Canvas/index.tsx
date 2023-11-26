@@ -18,6 +18,7 @@ import {
 } from "@paperclip-ui/designer/src/state";
 import { Tools } from "./Tools";
 import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
+import { metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
 
 export const Canvas = (Base: React.FC<styles.BaseCanvasProps>) => () => {
   const { canvasRef, actualTransform, expanded, activeFrameIndex, visible } =
@@ -54,7 +55,7 @@ const useCanvas = () => {
       }
       
       const frameBounds =
-        frame && virtHTML.metadataValueMapToJSON((frame.element ?? frame.textNode).metadata).bounds;
+        frame && metadataValueMapToJSON((frame.element ?? frame.textNode).metadata).bounds;
       return {
         x: -frameBounds.x,
         y: -frameBounds.y,

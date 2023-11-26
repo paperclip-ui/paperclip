@@ -5,6 +5,7 @@ import { Transform } from "@paperclip-ui/designer/src/state/geom";
 
 import { DEFAULT_FRAME_BOX } from "@paperclip-ui/designer/src/state";
 import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
+import { metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
 
 export type FramesProps = {
   frames: VirtNode[];
@@ -41,7 +42,7 @@ type FrameProps = {
 
 const Frame = memo(
   ({ frame, frameIndex, canvasTransform, readonly }: FrameProps) => {
-    const {bounds} = virtHTML.metadataValueMapToJSON((frame.element || frame.textNode).metadata);
+    const {bounds} = metadataValueMapToJSON((frame.element || frame.textNode).metadata);
     const frameBounds = bounds ?? DEFAULT_FRAME_BOX;
     const [editing, setEditing] = useState(false);
 

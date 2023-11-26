@@ -41,6 +41,7 @@ import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { memoize } from "@paperclip-ui/common";
 import { pickBy } from "lodash";
 import { hasUncaughtExceptionCaptureCallback } from "process";
+import { jsonToMetadataValue, metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
 
 export const MIXED_VALUE = "mixed";
 const EMPTY_ARRAY = [];
@@ -643,7 +644,7 @@ export const getExprBounds = (state: DesignerState): Record<string, number> => {
       | VirtElement
       | VirtText);
 
-  return virtHTML.metadataValueMapToJSON(node?.metadata);
+  return metadataValueMapToJSON(node?.metadata);
 };
 
 export const setSelectedNodeBounds = (
@@ -663,7 +664,7 @@ export const setSelectedNodeBounds = (
       node.metadata = {};
     }
     if (!node.metadata.value.bounds) {
-      node.metadata.value.bounds = virtHTML.jsonToMetadataValue({ x: 0, y: 0, width: 0, height: 0});
+      node.metadata.value.bounds = jsonToMetadataValue({ x: 0, y: 0, width: 0, height: 0});
     }
 
     node.metadata.value.bounds = {
@@ -1145,7 +1146,7 @@ export const getPreviewFrameBoxes = (preview: HTMLDocument) => {
   const currentPreview = preview;
   const frameBoxes = getPreviewChildren(currentPreview).map((frame: Node) => {
     
-    const metadata = virtHTML.metadataValueMapToJSON(getInnerNode(frame).metadata);
+    const metadata = metadataValueMapToJSON(getInnerNode(frame).metadata);
     const box = metadata.bounds || DEFAULT_FRAME_BOX;
     if (metadata.visible === false) {
       return null;

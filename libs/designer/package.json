@@ -5,7 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "build2": "yarn build:pc && yarn webpack",
+    "build": "yarn build:pc && yarn webpack",
     "build:watch": "rm -rf dist && yarn build:pc && concurrently \"yarn build:pc --watch\" \"webpack --watch\"",
     "build:pc": "../../target/debug/paperclip_cli build",
     "test": "jest --runInBand --testTimeout=10000 --env=jsdom",

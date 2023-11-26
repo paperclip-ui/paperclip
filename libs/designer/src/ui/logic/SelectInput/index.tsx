@@ -26,6 +26,7 @@ export const SelectInput = ({
   return (
     <SuggestionMenu menu={() => options} values={[value]} onSelect={onSelect}>
       <inputStyles.Select
+        rootPropsProps={{tabIndex: -1}}
         value={selectedOption?.props.label ?? selectedOption?.props.value}
       />
     </SuggestionMenu>

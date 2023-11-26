@@ -58,10 +58,14 @@ export const BaseConfirm = ({
           <styles.ModalFooter
             rightControls={
               <>
-                <buttonStyles.Button onClick={onCancel} class="secondary">
+                <buttonStyles.Button class="secondary" rootProps={{
+                  onClick: onCancel
+                }}>
                   Cancel
                 </buttonStyles.Button>
-                <buttonStyles.Button ref={okRef} onClick={onConfirm}>
+                <buttonStyles.Button ref={okRef} rootProps={{
+                  onClick: onConfirm
+                }}>
                   {okLabel}
                 </buttonStyles.Button>
               </>

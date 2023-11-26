@@ -13,7 +13,7 @@ public component Button {
     variant warning trigger {
         ".warning"
     }
-    render button(class: class, onClick: onClick, autoFocus: autoFocus) {
+    render button root(class: class) {
         style variant secondary {
             background: var(mod.gray02)
         }

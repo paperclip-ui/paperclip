@@ -67,10 +67,10 @@ export const Prompt = ({
           <styles.ModalFooter
             rightControls={
               <>
-                <buttonStyles.Button onClick={onCancel} class="secondary">
+                <buttonStyles.Button rootProps={{onClick: onCancel}} class="secondary">
                   Cancel
                 </buttonStyles.Button>
-                <buttonStyles.Button onClick={onSave}>
+                <buttonStyles.Button rootProps={{onClick: onSave}}>
                   {okLabel}
                 </buttonStyles.Button>
               </>

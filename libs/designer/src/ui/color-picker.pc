@@ -33,7 +33,7 @@ public component ColorBox {
     variant big trigger {
         ".big"
     }
-    render div(class: class, style: style, onMouseDown: onMouseDown, onMouseUp: onMouseUp) {
+    render div root(class: class) {
         style variant rounded {
             border-radius: 99px
         }

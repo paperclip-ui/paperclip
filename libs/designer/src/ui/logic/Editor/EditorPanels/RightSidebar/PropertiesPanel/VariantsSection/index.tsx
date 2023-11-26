@@ -39,10 +39,11 @@ export const VariantsSectionInner = () => {
         <inputStyles.ListItemInput
           key={variant.id}
           rootProps={{ onClick: () => onSelectVariant(variant), className: "removable" }}
-
-          onRemoveClick={(event: React.MouseEvent<any>) => {
-            event.stopPropagation();
-            onRemoveVariant(variant);
+          removeButtonProps={{
+            onClick: (event: React.MouseEvent<any>) => {
+              event.stopPropagation();
+              onRemoveVariant(variant);
+            }
           }}
         >
           {variant.name}

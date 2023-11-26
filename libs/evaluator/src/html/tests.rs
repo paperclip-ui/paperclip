@@ -693,3 +693,31 @@ add_case! {
     <div class="_B-80f4925f-20"> </div>
 "#
 }
+
+// add_case! {
+//     previews_are_also_used_in_instances,
+//     [
+//     ("/entry.pc", r#"
+
+//     /**
+//      * @preview(showTest: true, nested: (showSomethingElse: true))
+//      */
+//     component A {
+//         render div root {
+//             if showTest {
+//                 text "blarg"
+//             }
+//             B nested
+//         }
+//     }
+//     A
+// 	"#)
+//     ],
+//     r#"
+//     <div class="_A-root-80f4925f-15"> 
+//         blarg 
+//         <div class="_B-80f4925f-20 _A-nested-80f4925f-14"> something else </div> 
+//     </div> 
+//     <div class="_B-80f4925f-20"> </div>
+// "#
+// }

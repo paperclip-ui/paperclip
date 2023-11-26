@@ -241,6 +241,12 @@ fn evaluate_instance<F: FileResolver>(
     context: &mut DocumentContext<F>,
     is_component_root: bool,
 ) {
+
+    // let component_metadata = &instance_of.expr
+    // .comment
+    // .as_ref()
+    // .and_then(|comment| Some(evaluate_comment_metadata(&comment)));
+
     let render = if let Some(render) = instance_of.expr.get_render_expr() {
         render
     } else {

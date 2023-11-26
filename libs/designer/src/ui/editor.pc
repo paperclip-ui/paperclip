@@ -184,6 +184,7 @@ public component ComboKey {
 
 /**
  * @bounds(x: 512, y: 542, width: 1830, height: 1256)
+ * @preview(showCanvas: true)
 */
 public component Editor {
     script(src: "./logic/Editor/index.tsx", target: "react", name: "Editor")
@@ -290,14 +291,10 @@ public component Canvas {
 
 /**
  * @bounds(x: 2751, y: 540, width: 1557, height: 993)
+ * @preview(root:(showSplash: true))
 */
-Editor splash(showSplash: true) {
+Editor root {
     insert commands {
         SplashTip
     }
 }
-
-/**
- * @bounds(x: 457, y: 2057, width: 2617, height: 1680)
-*/
-Editor splash(showCanvas: true)

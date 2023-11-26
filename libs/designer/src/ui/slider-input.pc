@@ -22,7 +22,7 @@ public component Slider {
                 position: absolute
             }
         }
-        div knob(onMouseDown: onMouseDown) {
+        div knob  {
             style extends centerY {
                 background: var(theme.blue02)
                 position: absolute
@@ -34,4 +34,3 @@ public component Slider {
         }
     }
 }
-

@@ -99,22 +99,24 @@ const PreValue = ({ name: declName, value }: PreValueProps) => {
 
   return (
     <styles.InheritedDeclInfo
-      class={classNames({
-        text,
-        element,
-        mixin,
-      })}
-      onMouseDown={onMouseDown}
+      inheritedDeclInfoProps={{
+        className: classNames({
+          text,
+          element,
+          mixin,
+        }),
+        onMouseDown
+      }}
       name={
         name +
         (value.variantIds.length
           ? " / " +
-            value.variantIds
-              .map((variantId) => {
-                const variant = ast.getExprInfoById(variantId, graph);
-                return variant.expr.name;
-              })
-              .join("+")
+          value.variantIds
+            .map((variantId) => {
+              const variant = ast.getExprInfoById(variantId, graph);
+              return variant.expr.name;
+            })
+            .join("+")
           : "")
       }
       value={serializeDeclaration(value.value)}

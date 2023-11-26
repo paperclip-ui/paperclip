@@ -10,7 +10,7 @@ import "./styles-panel.pc" as stylesPanel
  * @bounds(x: 1424, y: 1394, width: 140, height: 35)
 */
 public component UsedBy {
-    render div(onClick: onClick) {
+    render div root {
         style {
             color: var(theme.gray02)
             text-align: right
@@ -33,7 +33,7 @@ public component UsedBy {
 */
 public component RightSidebar {
     script(src: "./logic/Editor/EditorPanels/RightSidebar/index.tsx", target: "react", name: "RightSidebar")
-    render sidebar.SidebarContainer(position: "right") {
+    render sidebar.SidebarContainer root {
         sidebar.Sidebar {
             slot children {
                 stylesPanel.Preview
@@ -215,4 +215,3 @@ imp1.Menu {
         }
     }
 }
-

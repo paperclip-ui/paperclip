@@ -49,9 +49,9 @@ export const BaseConfirm = ({
 
   return (
     <Portal>
-      <styles.ModalContainer onBackgroundClick={onCancel}>
+      <styles.ModalContainer backgroundProps={{ onClick: onCancel }}>
         <styles.Modal>
-          <styles.ModalHeader onCloseClick={onCancel}>
+          <styles.ModalHeader closeButtonProps={{ onClick: onCancel }}>
             {title}
           </styles.ModalHeader>
           <styles.ModalContent>{text}</styles.ModalContent>

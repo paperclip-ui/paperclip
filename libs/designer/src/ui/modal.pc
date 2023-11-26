@@ -67,7 +67,7 @@ public component ModalHeader {
         slot children {
             text "title"
         }
-        button(onClick: onCloseClick) {
+        button closeButton {
             style {
                 color: inherit
                 border: none
@@ -115,7 +115,7 @@ public component Modal {
 */
 public component ModalContainer {
     render div container {
-        div background(onClick: onBackgroundClick)
+        div background
         style {
             position: fixed
             background: rgba(0, 0, 0, 0.2)
@@ -179,4 +179,3 @@ ModalContainer confirmPreview {
         }
     }
 }
-

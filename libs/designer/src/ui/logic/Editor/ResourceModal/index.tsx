@@ -29,8 +29,8 @@ export const ResourceModal = () => {
   }
   return (
     <styles.Container
-      modalRef={ref}
-      onBackgroundClick={onBackgroundClick}
+      modalProps={{ ref: ref } as any}
+      backgroundProps={{ onClick: onBackgroundClick }}
       header={
         <TextInput
           autoFocus

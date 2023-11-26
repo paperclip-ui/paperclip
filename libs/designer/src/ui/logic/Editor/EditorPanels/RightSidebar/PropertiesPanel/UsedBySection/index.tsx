@@ -36,13 +36,15 @@ export const UsedBySection = () => {
             return (
               <UsedBy
                 key={instance.id}
-                onClick={() => {
-                  history.redirect(
-                    routes.editor({
-                      filePath: instancePath,
-                      nodeId: instance.id,
-                    })
-                  );
+                rootProps={{
+                  onClick: () => {
+                    history.redirect(
+                      routes.editor({
+                        filePath: instancePath,
+                        nodeId: instance.id,
+                      })
+                    );
+                  }
                 }}
               >
                 {instancePath.split("/").pop()}

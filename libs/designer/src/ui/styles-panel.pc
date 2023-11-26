@@ -103,7 +103,7 @@ public component InheritedDeclInfo {
         ".hovering"
         ":hover"
     }
-    render div inheritedDeclInfo(class: class, onClick: onClick, onMouseDown: onMouseDown) {
+    render div inheritedDeclInfo  {
         style variant hovering {
             padding: var(theme.space03)
             background: var(theme.gray04)
@@ -574,4 +574,3 @@ div preview {
         }
     }
 }
-

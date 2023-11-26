@@ -61,7 +61,7 @@ public component Container {
             left: 0px
             z-index: 1024
         }
-        div(onClick: onBackgroundClick) {
+        div background {
             style {
                 background: transparent
                 width: 933
@@ -71,7 +71,7 @@ public component Container {
                 left: 0px
             }
         }
-        div(onDragLeave: onDragLeave, ref: modalRef) {
+        div modal {
             style extends theme.centered, theme.card, theme.fontDefault {
                 width: 600px
                 height: 450px
@@ -127,4 +127,3 @@ public component Container {
         }
     }
 }
-

@@ -244,6 +244,7 @@ fn parse_property_value(
 ) -> Result<ast::property_value::Inner, err::ParserError> {
     match context.curr_token {
         Some(Token::String(_)) => Ok(ast::property_value::Inner::Str(parse_string(context)?)),
+        Some(Token::ParenOpen) => Ok(ast::property_value::Inner::Parameters(parse_parameters(context)?)),
         Some(Token::Number(_)) => Ok(ast::property_value::Inner::Num(parse_number(context)?)),
         Some(Token::Boolean(_)) => Ok(ast::property_value::Inner::Bool(parse_boolean(context)?)),
         _ => Err(context.new_unexpected_token_error()),

@@ -45,39 +45,43 @@ fn evaluate_document<F: FileResolver>(
         match item.get_inner() {
             ast::document_body_item::Inner::Component(component) => {
                 if context.options.include_components {
+                    let metadata = &component
+                        .comment
+                        .as_ref()
+                        .and_then(|comment| Some(evaluate_comment_metadata(&comment)));
+
                     evaluate_component::<F>(
                         component,
                         &mut children,
-                        &component
-                            .comment
-                            .as_ref()
-                            .and_then(|comment| Some(evaluate_comment_metadata(&comment))),
-                        context,
+                        &metadata,
+                        &mut context.with_metadata(get_preview_metadata(metadata.as_ref())),
                     );
                 }
             }
             ast::document_body_item::Inner::Element(element) => {
+                let metadata = &element
+                    .comment
+                    .as_ref()
+                    .and_then(|comment| Some(evaluate_comment_metadata(&comment)));
                 evaluate_element::<F>(
                     element,
                     &mut children,
-                    &element
-                        .comment
-                        .as_ref()
-                        .and_then(|comment| Some(evaluate_comment_metadata(&comment))),
-                    context,
+                    &metadata,
+                    &mut context.with_metadata(get_preview_metadata(metadata.as_ref())),
                     false,
                     false,
                 );
             }
             ast::document_body_item::Inner::Text(text_node) => {
+                let metadata = &text_node
+                    .comment
+                    .as_ref()
+                    .and_then(|comment| Some(evaluate_comment_metadata(&comment)));
                 evaluate_text_node(
                     text_node,
                     &mut children,
-                    &text_node
-                        .comment
-                        .as_ref()
-                        .and_then(|comment| Some(evaluate_comment_metadata(&comment))),
-                    context,
+                    &metadata,
+                    &mut context.with_metadata(get_preview_metadata(metadata.as_ref())),
                 );
             }
             _ => {}
@@ -117,8 +121,6 @@ pub fn evaluate_property_value(expr: &docco_ast::PropertyValue) -> virt::Metadat
 }
 
 pub fn evaluate_comment_metadata(expr: &docco_ast::Comment) -> virt::MetadataValueMap {
-
-
     let mut value = HashMap::new();
 
     for item in &expr.body {
@@ -130,71 +132,7 @@ pub fn evaluate_comment_metadata(expr: &docco_ast::Comment) -> virt::MetadataVal
         }
     }
 
-    // lazy af code. Clean me
-    // for item in &expr.body {
-    //     match item.get_inner() {
-    //         docco_ast::comment_body_item::Inner::Property(property) => {
-    //             match property.name.as_str() {
-    //                 "bounds" => {
-    //                     match property
-    //                         .value
-    //                         .as_ref()
-    //                         .expect("Value must exist")
-    //                         .get_inner()
-    //                     {
-    //                         docco_ast::property_value::Inner::Parameters(parameters) => {
-    //                             let mut bounds2 = Bounds::default();
-
-    //                             for item in &parameters.items {
-    //                                 let value =
-    //                                     item.value.as_ref().expect("Value must exist").get_inner();
-    //                                 let num_value = match value {
-    //                                     docco_ast::property_value::Inner::Num(number) => {
-    //                                         Some(number.value)
-    //                                     }
-    //                                     _ => None,
-    //                                 };
-
-    //                                 match item.name.as_str() {
-    //                                     "width" => {
-    //                                         if let Some(value) = num_value {
-    //                                             bounds2.width = value;
-    //                                         }
-    //                                     }
-    //                                     "height" => {
-    //                                         if let Some(value) = num_value {
-    //                                             bounds2.height = value;
-    //                                         }
-    //                                     }
-    //                                     "x" => {
-    //                                         if let Some(value) = num_value {
-    //                                             bounds2.x = value;
-    //                                         }
-    //                                     }
-    //                                     "y" => {
-    //                                         if let Some(value) = num_value {
-    //                                             bounds2.y = value;
-    //                                         }
-    //                                     }
-    //                                     _ => {}
-    //                                 }
-    //                             }
-
-    //                             bounds = Some(bounds2);
-    //                         }
-    //                         _ => {}
-    //                     }
-    //                 }
-    //                 _ => {}
-    //             }
-    //         }
-    //         _ => {}
-    //     }
-    // }
-
-    virt::MetadataValueMap {
-        value,
-    }
+    virt::MetadataValueMap { value }
 }
 
 fn evaluate_component<F: FileResolver>(
@@ -317,6 +255,17 @@ fn evaluate_instance<F: FileResolver>(
             .within_instance(&element.id)
             .within_path(&instance_of.path)
             .within_component(&instance_of.expr)
+            .with_metadata(context.curr_frame_metadata.as_ref().and_then(|preview| {
+                if let Some(name) = &element.name {
+                    if let Some(sub) = preview.value.get(name.as_str()) {
+                        if let html::metadata_value::Inner::Map(value) = &sub.get_inner() {
+                            return Some(value.clone());
+                        } 
+                    }
+                }
+
+                None
+            }))
             .set_render_scope(scope),
         true,
         true,
@@ -342,13 +291,28 @@ fn add_inserts_to_data(inserts: &mut InsertsMap, data: &mut html::Obj) {
     }
 }
 
+fn get_preview_metadata(
+    metadata: Option<&virt::MetadataValueMap>
+) -> Option<virt::MetadataValueMap> {
+   metadata
+        .and_then(|metadata| metadata.value.get("preview"))
+        .and_then(|preview| {
+            if let html::metadata_value::Inner::Map(value) = &preview.get_inner() {
+                Some(value.clone())
+            } else {
+                None
+            }
+        })
+}
+
+
 fn create_inserts<'expr, F: FileResolver>(
     element: &'expr ast::Element,
     context: &mut DocumentContext<F>,
 ) -> InsertsMap<'expr> {
     let mut inserts = HashMap::new();
     for child in &element.body {
-        evaluate_instance_child(element, child, &mut inserts, &None, context);
+        evaluate_instance_child(element, child, &mut inserts, context);
     }
     inserts
 }
@@ -368,7 +332,6 @@ fn evaluate_instance_child<'expr, F: FileResolver>(
     parent: &'expr ast::Element,
     child: &'expr ast::Node,
     inserts: &mut InsertsMap<'expr>,
-    metadata: &Option<virt::MetadataValueMap>,
     context: &mut DocumentContext<F>,
 ) {
     match child.get_inner() {
@@ -383,13 +346,13 @@ fn evaluate_instance_child<'expr, F: FileResolver>(
             let (_source_id, fragment) = get_insert!(inserts, &insert.name, &insert.id);
 
             for child in &insert.body {
-                evaluate_node(child, fragment, metadata, context, false, false);
+                evaluate_node(child, fragment, &None, context, false, false);
             }
         }
         _ => {
             let mut fragment: Vec<virt::Node> = vec![];
 
-            evaluate_node(child, &mut fragment, metadata, context, false, false);
+            evaluate_node(child, &mut fragment, &None, context, false, false);
 
             if !fragment.is_empty() {
                 get_insert!(inserts, "children", &parent.id)
@@ -733,6 +696,7 @@ fn evaluate_switch<F: FileResolver>(
     }
 }
 
+
 fn evaluate_condition<F: FileResolver>(
     expr: &ast::Condition,
     fragment: &mut Vec<virt::Node>,
@@ -745,7 +709,22 @@ fn evaluate_condition<F: FileResolver>(
         .and_then(|data| data.get(&expr.property))
         .and_then(|value| if value.is_truthy() { Some(()) } else { None });
 
-    if value.is_some() {
+    let show = value.is_some()
+        || context
+        .curr_frame_metadata
+        .as_ref()
+            .and_then(|metadata| metadata.value.get(&expr.property))
+            .and_then(|value| {
+                if let html::metadata_value::Inner::Bool(value) = &value.get_inner() {
+                    Some(*value)
+                } else {
+                    None
+                }
+            })
+            .unwrap_or(false);
+
+
+    if show {
         for item in &expr.body {
             evaluate_node(item, fragment, metadata, context, false, false)
         }

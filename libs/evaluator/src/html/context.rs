@@ -5,7 +5,7 @@ use paperclip_common::fs::FileResolver;
 use paperclip_common::id::{get_document_id, IDGenerator};
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::ast::pc as ast;
-use paperclip_proto::virt::html;
+use paperclip_proto::virt::{self, html};
 
 #[derive(Clone)]
 pub struct Options {
@@ -16,6 +16,7 @@ pub struct Options {
 pub struct DocumentContext<'graph, 'expr, 'file_resolver, FR: FileResolver> {
     pub graph: &'graph Graph,
     pub path: String,
+    pub curr_frame_metadata: Option<virt::html::MetadataValueMap>,
     pub data: Option<html::Obj>,
     pub file_resolver: &'file_resolver FR,
     pub current_component: Option<&'expr ast::Component>,
@@ -39,12 +40,18 @@ impl<'graph, 'expr, 'file_resolver, FR: FileResolver>
             path: path.to_string(),
             data: None,
             file_resolver,
+            curr_frame_metadata: None,
             options,
             id_generator: Rc::new(RefCell::new(IDGenerator::new(get_document_id(path)))),
             current_component: None,
             render_scopes: vec![],
             instance_ids: vec![],
         }
+    }
+    pub fn with_metadata(&self, data: Option<html::MetadataValueMap>) -> Self {
+        let mut clone = self.clone();
+        clone.curr_frame_metadata = data;
+        clone
     }
     pub fn with_data(&self, data: html::Obj) -> Self {
         let mut clone = self.clone();

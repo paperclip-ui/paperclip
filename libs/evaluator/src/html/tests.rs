@@ -661,6 +661,40 @@ add_case! {
 "#
 }
 
+add_case! {
+    can_use_preview_metadata_to_render_frame,
+    [
+    ("/entry.pc", r#"
+
+    /**
+     * @preview(showTest: true, nested: (showSomethingElse: true))
+     */
+    component A {
+        render div root {
+            if showTest {
+                text "blarg"
+            }
+            B nested
+        }
+    }
+    component B {
+        render div {
+            if showSomethingElse {
+                text "something else"
+            }
+        }
+    }
+	"#)
+    ],
+    r#"
+    <div class="_A-root-80f4925f-15"> 
+        blarg 
+        <div class="_B-80f4925f-20 _A-nested-80f4925f-14"> something else </div> 
+    </div> 
+    <div class="_B-80f4925f-20"> </div>
+"#
+}
+
 // add_case! {
 //     can_define_preview_attributes,
 //     [
@@ -718,7 +752,6 @@ fn bounds_are_attached_to_root_elements() {
             source_instance_ids: vec![],
             attributes: vec![],
             metadata: Some(virt::html::MetadataValueMap {
-
                 value: HashMap::from([(
                     "bounds".to_string(),
                     virt::html::metadata_value::Inner::Map(MetadataValueMap {
@@ -786,7 +819,6 @@ fn bounds_are_attached_to_root_components() {
                 value: Some("_A-80f4925f-14".to_string().into())
             }],
             metadata: Some(virt::html::MetadataValueMap {
-
                 value: HashMap::from([(
                     "bounds".to_string(),
                     virt::html::metadata_value::Inner::Map(MetadataValueMap {
@@ -839,8 +871,6 @@ fn bounds_are_attached_to_root_text_nodes() {
             source_id: Some("80f4925f-14".to_string()),
             source_instance_ids: vec![],
             metadata: Some(virt::html::MetadataValueMap {
-
-
                 value: HashMap::from([(
                     "bounds".to_string(),
                     virt::html::metadata_value::Inner::Map(MetadataValueMap {
@@ -901,7 +931,6 @@ fn bounds_are_attached_to_root_instances() {
                 value: Some("_A-80f4925f-1 _80f4925f-17".to_string().into())
             }],
             metadata: Some(virt::html::MetadataValueMap {
-
                 value: HashMap::from([(
                     "bounds".to_string(),
                     virt::html::metadata_value::Inner::Map(MetadataValueMap {

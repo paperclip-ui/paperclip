@@ -15,7 +15,7 @@ public component ToolbarButton {
     variant enabled trigger {
         ":not(:disabled)"
     }
-    render button root{
+    render button root {
         style extends theme.reset, theme.easeIn {
             padding: 0px
             cursor: pointer

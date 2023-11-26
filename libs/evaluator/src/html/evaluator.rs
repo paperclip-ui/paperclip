@@ -3,6 +3,7 @@ use super::virt;
 use crate::core::errors;
 use crate::core::utils::get_style_namespace;
 use paperclip_common::fs::FileResolver;
+use paperclip_parser::docco;
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::docco as docco_ast;
 use paperclip_proto::ast::graph_ext::ComponentRefInfo;
@@ -92,8 +93,32 @@ fn evaluate_document<F: FileResolver>(
     }
 }
 
+// pub fn evaluate_property_value(expr: &docco_ast::PropertyValue) -> virt::MetadataValue {
+//     match expr.get_inner() {
+//         docco_ast::property_value::Inner::Parameters(params) => {
+//             let value = HashMap::new();
+//             for item in &params.items {
+//                 value.insert(item.name.to_string(), evaluate_property_value(item.value.as_ref().expect("Value must exist")));
+//             }
+
+//             virt::metadata_value::Inner::Map(Box::new(value)).get_outer()            
+//         },
+//         docco_ast::property_value::Inner::Str(value) => {
+//             virt::metadata_value::Inner::Str(value.value.to_string()).get_outer()
+//         }
+//     }
+// }
+
 pub fn evaluate_comment_metadata(expr: &docco_ast::Comment) -> virt::NodeMedata {
     let mut bounds = None;
+
+    let value = HashMap::new();
+
+    for item in &expr.body {
+        if let docco_ast::comment_body_item::Inner::Property(property) = item.get_inner() {
+            // value.insert(propert.name.to_string(), evaluate_property_value(&property.value))
+        }
+    }
 
     // lazy af code. Clean me
     for item in &expr.body {
@@ -160,6 +185,7 @@ pub fn evaluate_comment_metadata(expr: &docco_ast::Comment) -> virt::NodeMedata 
     virt::NodeMedata {
         bounds,
         visible: Some(true),
+        value
     }
 }
 

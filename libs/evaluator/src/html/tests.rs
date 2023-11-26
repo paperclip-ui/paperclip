@@ -718,6 +718,7 @@ fn bounds_are_attached_to_root_elements() {
             attributes: vec![],
             metadata: Some(virt::html::NodeMedata {
                 visible: Some(true),
+                value: HashMap::new(),
                 bounds: Some(virt::html::Bounds {
                     x: 100.0,
                     y: 100.0,
@@ -768,6 +769,7 @@ fn bounds_are_attached_to_root_components() {
             }],
             metadata: Some(virt::html::NodeMedata {
                 visible: Some(true),
+                value: HashMap::new(),
                 bounds: Some(virt::html::Bounds {
                     x: 100.0,
                     y: 100.0,
@@ -803,6 +805,7 @@ fn bounds_are_attached_to_root_text_nodes() {
             source_instance_ids: vec![],
             metadata: Some(virt::html::NodeMedata {
                 visible: Some(true),
+                value: HashMap::new(),
                 bounds: Some(virt::html::Bounds {
                     x: 100.0,
                     y: 100.0,
@@ -846,6 +849,7 @@ fn bounds_are_attached_to_root_instances() {
             }],
             metadata: Some(virt::html::NodeMedata {
                 visible: Some(true),
+                value: HashMap::new(),
                 bounds: Some(virt::html::Bounds {
                     x: 100.0,
                     y: 100.0,

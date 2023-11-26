@@ -8,9 +8,25 @@ message Bounds {
   float height = 4;
 }
 
+message MetadataList {
+  repeated MetadataValue items = 1;
+}
+
+message MetadataValue {
+  oneof inner {
+    string str = 1;
+    float num = 2;
+    bool bool = 3;
+    Undefined undef = 4;
+    MetadataValue map = 5;
+    MetadataList list = 6;
+  }
+}
+
 message NodeMedata {
   optional Bounds bounds = 1;
   optional bool visible = 2;
+  map <string, MetadataValue> value = 3;
 }
 
 message Element {

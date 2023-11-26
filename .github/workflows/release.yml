@@ -65,8 +65,6 @@ jobs:
           RUSTFLAGS: "-C linker=clang -C link-arg=-fuse-ld=lld -C link-arg=-lpthread -C link-arg=-lm"
           PROTOC: "/usr/bin/protoc"
       - run: cargo run --verbose
-        env:
-          RUSTC_LOG: "trace"
       - run: find target -maxdepth 3
       - run: cargo build --release --locked --target=${{ matrix.platform.target }}
         if: matrix.platform.os_name == 'macOS-x86_64'

@@ -16,8 +16,6 @@ import * as pc from "@paperclip-ui/proto/lib/generated/ast/pc";
 import {
   Node,
   Document as HTMLDocument,
-  MetadataValue,
-  MetadataValueMap,
 } from "@paperclip-ui/proto/lib/generated/virt/html";
 import {
   Element as VirtElement,
@@ -647,6 +645,7 @@ export const getExprBounds = (state: DesignerState): Record<string, number> => {
   return metadataValueMapToJSON(node?.metadata);
 };
 
+
 export const setSelectedNodeBounds = (
   newBounds: Record<string, number>,
   state: DesignerState
@@ -661,10 +660,16 @@ export const setSelectedNodeBounds = (
       newState.currentDocument.paperclip.html
     );
     if (!node.metadata) {
-      node.metadata = {value:{}};
+      node.metadata = {properties: []}
     }
 
-    node.metadata.value.bounds = jsonToMetadataValue(newBounds);
+    node.metadata = jsonToMetadataValue({
+      ...metadataValueMapToJSON(node.metadata),
+      bounds: newBounds
+    }).obj;
+      
+
+    
   });
 };
 

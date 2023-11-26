@@ -5,6 +5,7 @@ import {
 } from "@paperclip-ui/proto/lib/generated/ast/css";
 import { Reference } from "@paperclip-ui/proto/lib/generated/ast/shared";
 
+
 import { Dependency, Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import {
   Atom,
@@ -31,7 +32,6 @@ import {
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { Bool, Str } from "@paperclip-ui/proto/lib/generated/ast/base";
 import { ComputedStyleMap, serializeDeclaration } from "./serialize";
-import { MetadataValue, MetadataValueMap } from "@paperclip-ui/proto/lib/generated/virt/html";
 
 const EMPTY_ARRAY = [];
 export namespace ast {

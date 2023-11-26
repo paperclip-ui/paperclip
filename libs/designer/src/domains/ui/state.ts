@@ -80,10 +80,16 @@ export const handleDragEvent = (
       // is a frame
     } else {
       if (!node.metadata) {
-        node.metadata = {value:{}};
+        node.metadata = { properties: []}
       }
 
-      node.metadata.value.bounds = jsonToMetadataValue(event.payload.newBounds);
+      
+
+    node.metadata = jsonToMetadataValue({
+      ...metadataValueMapToJSON(node.metadata),
+      bounds: event.payload.newBounds
+    }).obj;
+      
     }
   });
 };

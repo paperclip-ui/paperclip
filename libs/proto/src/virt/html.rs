@@ -6,7 +6,6 @@ include!(concat!(env!("OUT_DIR"), "/virt.html.rs"));
 
 add_inner_wrapper!(node::Inner, Node);
 add_inner_wrapper!(value::Inner, Value);
-add_inner_wrapper!(metadata_value::Inner, MetadataValue);
 
 impl ToString for Node {
     fn to_string(&self) -> String {
@@ -15,7 +14,7 @@ impl ToString for Node {
 }
 
 impl Node {
-    pub fn get_metadata(&self) -> &Option<MetadataValueMap> {
+    pub fn get_metadata(&self) -> &Option<Obj> {
         match self.get_inner() {
             node::Inner::Element(element) => &element.metadata,
             node::Inner::TextNode(text) => &text.metadata,

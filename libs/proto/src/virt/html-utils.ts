@@ -1,47 +1,54 @@
 import { memoize } from "@paperclip-ui/common";
-import { MetadataValue, MetadataValueMap } from "../generated/virt/html";
+import {  Obj, Value } from "../generated/virt/html";
+
 
 export const jsonToMetadataValue = memoize((value: any): any => {
     if (Array.isArray(value)) {
       return {
-        list: {
+        ary: {
           items: value.map(jsonToMetadataValue),
         },
       };
     } else if (typeof value === "object") {
-      const map = {};
+      const properties: any[] = [];
       for (const key in value) {
-        map[key] = jsonToMetadataValue(value[key]);
+        properties.push({
+          name: key,
+          value: jsonToMetadataValue(value[key])
+        })
       }
-      return { map: {value: map} };
+      return { obj: {properties} };
     } else if (typeof value === "string") {
-      return { str: value };
+      return { str: {value} };
     } else if (typeof value === "number") {
-      return { num: value };
+      return { num: {value} };
     }
-    return { bool: value };
+    return { bool: {value} };
   });
   
   
-  export const metadataValueToJSON = memoize((value: MetadataValue) => {
-    if (value.map) {
-      return metadataValueMapToJSON(value.map);
+  export const metadataValueToJSON = memoize((value: Value) => {
+    if (value.obj) {
+      return metadataValueMapToJSON(value.obj);
     }
-    if (value.list) {
-      return value.list.items.map(metadataValueToJSON);
+    if (value.ary) {
+      return value.ary.items.map(metadataValueToJSON);
     }
-    return value.bool ?? value.num ?? value.str;
+    return (value.bool ?? value.num ?? value.str)?.value;
   });
   
-  export const metadataValueMapToJSON = memoize((map: MetadataValueMap): any => {
+  export const metadataValueMapToJSON = memoize((map: Obj): any => {
     if (!map) {
       return {};
     }
+
   
     const values = {};
-    for (const key in map.value) {
-      values[key] = metadataValueToJSON(map.value[key]);
+    for (const {name, value} of map.properties) {
+      values[name] = metadataValueToJSON(value);
+
     }
+
     return values;
     
   });

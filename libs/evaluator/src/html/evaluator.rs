@@ -95,50 +95,66 @@ fn evaluate_document<F: FileResolver>(
     }
 }
 
-pub fn evaluate_property_value(expr: &docco_ast::PropertyValue) -> virt::MetadataValue {
+pub fn evaluate_property_value(expr: &docco_ast::PropertyValue) -> virt::Value {
     match expr.get_inner() {
         docco_ast::property_value::Inner::Parameters(params) => {
-            let mut value = HashMap::new();
+            let mut properties = vec![];
             for item in &params.items {
-                value.insert(
-                    item.name.to_string(),
-                    evaluate_property_value(item.value.as_ref().expect("Value must exist")),
+                properties.push(
+                    virt::ObjectProperty {
+                        name: item.name.to_string(),
+                        source_id: Some(item.id.to_string()),
+                        value: Some(evaluate_property_value(item.value.as_ref().expect("Value must exist")))
+                    }
                 );
             }
 
-            virt::metadata_value::Inner::Map(virt::MetadataValueMap { value }).get_outer()
+            virt::value::Inner::Obj(virt::Obj {
+                source_id: Some(params.id.clone()),
+                properties
+            }).get_outer()
         }
         docco_ast::property_value::Inner::Str(value) => {
-            virt::metadata_value::Inner::Str(value.value.to_string()).get_outer()
+            virt::value::Inner::Str(virt::Str {
+                value: value.value.to_string(),
+                source_id: Some(value.id.clone()),
+            }).get_outer()
         }
         docco_ast::property_value::Inner::Num(value) => {
-            virt::metadata_value::Inner::Num(value.value).get_outer()
+            virt::value::Inner::Num(virt::Num {
+                value: value.value,
+                source_id: Some(value.id.clone()),
+            }).get_outer()
         }
         docco_ast::property_value::Inner::Bool(value) => {
-            virt::metadata_value::Inner::Bool(value.value).get_outer()
+            virt::value::Inner::Bool(virt::Bool {
+                value: value.value,
+                source_id: Some(value.id.clone()),
+            }).get_outer()
         }
     }
 }
 
-pub fn evaluate_comment_metadata(expr: &docco_ast::Comment) -> virt::MetadataValueMap {
-    let mut value = HashMap::new();
+pub fn evaluate_comment_metadata(expr: &docco_ast::Comment) -> virt::Obj {
+    let mut properties = vec![];
 
     for item in &expr.body {
         if let docco_ast::comment_body_item::Inner::Property(property) = item.get_inner() {
-            value.insert(
-                property.name.to_string(),
-                evaluate_property_value(property.value.as_ref().expect("Value must exist")),
-            );
+            properties.push(virt::ObjectProperty {
+                name: property.name.clone(),
+                source_id: Some(property.id.clone()),
+                value: Some(evaluate_property_value(property.value.as_ref().expect("Value must exist")),)
+            });
         }
     }
 
-    virt::MetadataValueMap { value }
+    virt::Obj { source_id: Some(expr.id.clone()), properties }
 }
 
 fn evaluate_component<F: FileResolver>(
     component: &ast::Component,
     fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::MetadataValueMap>,
+    metadata: &Option<virt::Obj>,
     context: &mut DocumentContext<F>,
 ) {
     let render = if let Some(render) = component.get_render_expr() {
@@ -160,7 +176,7 @@ fn evaluate_component<F: FileResolver>(
 fn evaluate_element<F: FileResolver>(
     element: &ast::Element,
     fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::MetadataValueMap>,
+    metadata: &Option<virt::Obj>,
     context: &mut DocumentContext<F>,
     is_component_root: bool,
     is_instance: bool,
@@ -221,7 +237,7 @@ fn evaluate_instance<F: FileResolver>(
     element: &ast::Element,
     instance_of: &ComponentRefInfo,
     fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::MetadataValueMap>,
+    metadata: &Option<virt::Obj>,
     context: &mut DocumentContext<F>,
     is_component_root: bool,
 ) {
@@ -257,8 +273,8 @@ fn evaluate_instance<F: FileResolver>(
             .within_component(&instance_of.expr)
             .with_metadata(context.curr_frame_metadata.as_ref().and_then(|preview| {
                 if let Some(name) = &element.name {
-                    if let Some(sub) = preview.value.get(name.as_str()) {
-                        if let html::metadata_value::Inner::Map(value) = &sub.get_inner() {
+                    if let Some(sub) = preview.get(name.as_str()) {
+                        if let html::value::Inner::Obj(value) = &sub.get_inner() {
                             return Some(value.clone());
                         } 
                     }
@@ -292,12 +308,12 @@ fn add_inserts_to_data(inserts: &mut InsertsMap, data: &mut html::Obj) {
 }
 
 fn get_preview_metadata(
-    metadata: Option<&virt::MetadataValueMap>
-) -> Option<virt::MetadataValueMap> {
+    metadata: Option<&virt::Obj>
+) -> Option<virt::Obj> {
    metadata
-        .and_then(|metadata| metadata.value.get("preview"))
+        .and_then(|metadata| metadata.get("preview"))
         .and_then(|preview| {
-            if let html::metadata_value::Inner::Map(value) = &preview.get_inner() {
+            if let html::value::Inner::Obj(value) = &preview.get_inner() {
                 Some(value.clone())
             } else {
                 None
@@ -366,7 +382,7 @@ fn evaluate_instance_child<'expr, F: FileResolver>(
 fn evaluate_render<F: FileResolver>(
     render: &ast::Render,
     fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::MetadataValueMap>,
+    metadata: &Option<virt::Obj>,
     context: &mut DocumentContext<F>,
     is_component_root: bool,
     is_instance: bool,
@@ -400,7 +416,7 @@ fn get_source_id(expr_id: &str, instance_path: &Vec<String>, is_instance: bool) 
 fn evaluate_native_element<F: FileResolver>(
     element: &ast::Element,
     fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::MetadataValueMap>,
+    metadata: &Option<virt::Obj>,
     context: &mut DocumentContext<F>,
     is_component_root: bool,
     is_instance: bool,
@@ -432,7 +448,7 @@ fn evaluate_native_element<F: FileResolver>(
 fn evaluate_node<F: FileResolver>(
     child: &ast::Node,
     fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::MetadataValueMap>,
+    metadata: &Option<virt::Obj>,
     context: &mut DocumentContext<F>,
     is_component_root: bool,
     is_instance: bool,
@@ -648,7 +664,7 @@ fn create_attribute_value<F: FileResolver>(
 fn evaluate_switch<F: FileResolver>(
     expr: &ast::Switch,
     fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::MetadataValueMap>,
+    metadata: &Option<virt::Obj>,
     context: &mut DocumentContext<F>,
 ) {
     let value = context
@@ -700,7 +716,7 @@ fn evaluate_switch<F: FileResolver>(
 fn evaluate_condition<F: FileResolver>(
     expr: &ast::Condition,
     fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::MetadataValueMap>,
+    metadata: &Option<virt::Obj>,
     context: &mut DocumentContext<F>,
 ) {
     let value = context
@@ -713,10 +729,10 @@ fn evaluate_condition<F: FileResolver>(
         || context
         .curr_frame_metadata
         .as_ref()
-            .and_then(|metadata| metadata.value.get(&expr.property))
+            .and_then(|metadata| metadata.get(&expr.property))
             .and_then(|value| {
-                if let html::metadata_value::Inner::Bool(value) = &value.get_inner() {
-                    Some(*value)
+                if let html::value::Inner::Bool(value) = &value.get_inner() {
+                    Some(value.value.clone())
                 } else {
                     None
                 }
@@ -733,7 +749,7 @@ fn evaluate_condition<F: FileResolver>(
 fn evaluate_repeat<F: FileResolver>(
     expr: &ast::Repeat,
     fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::MetadataValueMap>,
+    metadata: &Option<virt::Obj>,
     context: &mut DocumentContext<F>,
 ) {
     for item in &expr.body {
@@ -744,7 +760,7 @@ fn evaluate_repeat<F: FileResolver>(
 fn evaluate_text_node<F: FileResolver>(
     text_node: &ast::TextNode,
     fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::MetadataValueMap>,
+    metadata: &Option<virt::Obj>,
     context: &mut DocumentContext<F>,
 ) {
     let node = if text_node.is_stylable() {

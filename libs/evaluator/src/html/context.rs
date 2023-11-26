@@ -16,7 +16,7 @@ pub struct Options {
 pub struct DocumentContext<'graph, 'expr, 'file_resolver, FR: FileResolver> {
     pub graph: &'graph Graph,
     pub path: String,
-    pub curr_frame_metadata: Option<virt::html::MetadataValueMap>,
+    pub curr_frame_metadata: Option<virt::html::Obj>,
     pub data: Option<html::Obj>,
     pub file_resolver: &'file_resolver FR,
     pub current_component: Option<&'expr ast::Component>,
@@ -48,7 +48,7 @@ impl<'graph, 'expr, 'file_resolver, FR: FileResolver>
             instance_ids: vec![],
         }
     }
-    pub fn with_metadata(&self, data: Option<html::MetadataValueMap>) -> Self {
+    pub fn with_metadata(&self, data: Option<html::Obj>) -> Self {
         let mut clone = self.clone();
         clone.curr_frame_metadata = data;
         clone

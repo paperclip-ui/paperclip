@@ -62,7 +62,7 @@ jobs:
         if: matrix.platform.os_name == 'Linux-x86_64'
         env:
           TARGET_CC: x86_64-linux-musl-gcc
-          RUSTFLAGS: "-C linker=clang -C link-arg=-fuse-ld=lld -C link-arg=-lpthread -C link-arg=-lm"
+          RUSTFLAGS: "-C link-arg=-fuse-ld=lld -C link-arg=-lpthread -C link-arg=-lm"
           PROTOC: "/usr/bin/protoc"
           RUSTC_LOG: "trace"
       - run: cargo run --verbose

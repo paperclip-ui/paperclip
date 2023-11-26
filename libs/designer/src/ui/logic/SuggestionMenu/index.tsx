@@ -97,20 +97,20 @@ export const useSuggestionMenu = ({
 
   const menuOptions = isOpen
     ? menu()
-        .filter(filterOption(customValue))
-        .map((child, i) => {
-          return React.cloneElement(child, {
-            selected: values.includes(child.props.value),
-            preselected: i === preselectedIndex,
-            onSelect: (event: React.MouseEvent) => {
-              // prevent blur mainly
-              event.preventDefault();
+      .filter(filterOption(customValue))
+      .map((child, i) => {
+        return React.cloneElement(child, {
+          selected: values.includes(child.props.value),
+          preselected: i === preselectedIndex,
+          onSelect: (event: React.MouseEvent) => {
+            // prevent blur mainly
+            event.preventDefault();
 
-              child.props.value &&
-                onSelect(child.props.selectValue || child.props.value);
-            },
-          });
-        })
+            child.props.value &&
+              onSelect(child.props.selectValue || child.props.value);
+          },
+        });
+      })
     : null;
 
   const firstSelectedIndex = menuOptions?.findIndex(
@@ -272,8 +272,9 @@ export const SuggestionMenuItem = ({
   return (
     <styles.SuggestionMenuItem
       ref={ref}
+      menuItemProps={{ onMouseDown: onSelect }}
       class={cx({ selected, preselected, checked })}
-      onMouseDown={onSelect}
+
     >
       {children || value}
     </styles.SuggestionMenuItem>

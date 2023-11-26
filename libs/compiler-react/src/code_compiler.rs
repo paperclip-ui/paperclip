@@ -596,6 +596,13 @@ fn get_raw_element_attrs<'dependency>(
             );
         }
 
+
+        if let Some(name) = &element.name {
+
+            let prop = format!("{}.{}Props", context.ctx_name, name);
+            sub.add_buffer(format!(" + ({} && {}.className ? \" \" + {}.className : \"\")", prop, prop, prop).as_str());
+        }
+
         if info.is_instance {
             attrs.insert("$$scopeClassName".to_string(), sub);
         } else {

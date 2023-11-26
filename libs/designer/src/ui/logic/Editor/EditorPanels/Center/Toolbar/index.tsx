@@ -18,6 +18,8 @@ export const Toolbar = (Base: React.FC<toolbarStyles.BaseToolbarProps>) => () =>
     onInsertResourceClick,
   } = useToolbar();
 
+  console.log(cx({ active: insertMode === InsertMode.Text }))
+
   return (
     <Base>
       <toolbarStyles.ToolbarButton rootProps={{ onClick: onInsertResourceClick, className: cx({ active: insertMode === InsertMode.Resource }) }}

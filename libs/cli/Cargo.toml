@@ -20,3 +20,7 @@ futures-util = "0.3.24"
 anyhow = "1.0.61"
 textwrap = "0.15.0"
 console = "0.15.1"
+
+[dependencies.compiler_builtins]
+git = "https://github.com/rust-lang/compiler-builtins"
+features = ["c"]

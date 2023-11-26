@@ -7,7 +7,7 @@ members = [
   "libs/rs_common",
   "libs/project",
   "libs/evaluator",
-  "libs/paperclip-loader",
+  # "libs/paperclip-loader",
   "libs/workspace",
   "libs/infer",
   "libs/proto",

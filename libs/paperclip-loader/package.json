@@ -4,7 +4,6 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "build": "yarn build:tsc && yarn build:rs",
     "build:watch": "concurrently \"yarn build:tsc --watch --preserveWatchOutput\" \"yarn build:rs --watch\"",
     "build:tsc": "tsc",
     "build:rs": "cargo-cp-artifact -nc lib/main.node -- cargo build --message-format=json-render-diagnostics",

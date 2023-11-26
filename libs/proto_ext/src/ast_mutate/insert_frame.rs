@@ -23,10 +23,14 @@ impl MutableVisitor<()> for EditContext<InsertFrame> {
             let mut mutations = vec![];
 
             let mut to_insert = parse_pc(
-                format!("
+                format!(
+                    "
                 /**\n * @bounds(x: {}, y: {}, width: {}, height: {})\n*/
                 {}
-                ", bounds.x, bounds.y, bounds.width, bounds.height,  &self.mutation.node_source).as_str(),
+                ",
+                    bounds.x, bounds.y, bounds.width, bounds.height, &self.mutation.node_source
+                )
+                .as_str(),
                 &self.new_id(),
                 &Options::new(vec![]),
             )

@@ -4,6 +4,7 @@ import * as styles from "@paperclip-ui/designer/src/ui/editor.pc";
 import { FrameContainer } from "@paperclip-ui/designer/src/ui/logic/FrameContainer";
 import { Node as VirtNode } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
+import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 
 const DEFAULT_BOUNDS = { x: 0, y: 0, width: 1024, height: 768 };
 
@@ -48,7 +49,7 @@ export const Frame = memo(
     );
 
     const frameStyle = useMemo(() => {
-      const bounds = getFrameBounds(preview) || DEFAULT_BOUNDS;
+      const bounds = getFrameBounds(preview).bounds || DEFAULT_BOUNDS;
 
       if (expanded) {
         return {
@@ -92,5 +93,6 @@ export const Frame = memo(
 );
 
 const getFrameBounds = (node: VirtNode) => {
-  return node.element?.metadata?.bounds || node.textNode?.metadata?.bounds;
+
+  return virtHTML.metadataValueMapToJSON(node.element?.metadata || node.textNode?.metadata)
 };

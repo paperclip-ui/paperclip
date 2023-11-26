@@ -16,6 +16,8 @@ import * as pc from "@paperclip-ui/proto/lib/generated/ast/pc";
 import {
   Node,
   Document as HTMLDocument,
+  MetadataValue,
+  MetadataValueMap,
 } from "@paperclip-ui/proto/lib/generated/virt/html";
 import {
   Element as VirtElement,
@@ -632,18 +634,20 @@ export const findVirtNode = (
   return virtHTML.getNodeById(virtId, state.currentDocument.paperclip.html);
 };
 
-export const getExprBounds = (state: DesignerState): Bounds => {
+
+
+export const getExprBounds = (state: DesignerState): Record<string, number> => {
   const node =
     state.currentDocument &&
     (findVirtNode(getTargetExprId(state), state) as any as
       | VirtElement
       | VirtText);
 
-  return node?.metadata?.bounds;
+  return virtHTML.metadataValueMapToJSON(node?.metadata);
 };
 
 export const setSelectedNodeBounds = (
-  newBounds: Bounds,
+  newBounds: Record<string, number>,
   state: DesignerState
 ) => {
   return produce(state, (newState) => {
@@ -658,12 +662,12 @@ export const setSelectedNodeBounds = (
     if (!node.metadata) {
       node.metadata = {};
     }
-    if (!node.metadata.bounds) {
-      node.metadata.bounds = { x: 0, y: 0, width: 0, height: 0 };
+    if (!node.metadata.value.bounds) {
+      node.metadata.value.bounds = virtHTML.jsonToMetadataValue({ x: 0, y: 0, width: 0, height: 0});
     }
 
-    node.metadata.bounds = {
-      ...newBounds,
+    node.metadata.value.bounds = {
+      map: newBounds
     };
   });
 };
@@ -1140,9 +1144,10 @@ export const getCurrentPreviewFrameBoxes = (editor: DesignerState) => {
 export const getPreviewFrameBoxes = (preview: HTMLDocument) => {
   const currentPreview = preview;
   const frameBoxes = getPreviewChildren(currentPreview).map((frame: Node) => {
-    const metadata = getInnerNode(frame).metadata;
-    const box = metadata?.bounds || DEFAULT_FRAME_BOX;
-    if (metadata?.visible === false) {
+    
+    const metadata = virtHTML.metadataValueMapToJSON(getInnerNode(frame).metadata);
+    const box = metadata.bounds || DEFAULT_FRAME_BOX;
+    if (metadata.visible === false) {
       return null;
     }
     return { ...DEFAULT_FRAME_BOX, ...box };

@@ -8,6 +8,7 @@ use paperclip_common::str_utils::strip_extra_ws;
 use paperclip_parser::core::parser_context::Options as ParserOptions;
 use paperclip_proto::ast::graph;
 use paperclip_proto::virt;
+use paperclip_proto::virt::html::MetadataValueMap;
 use paperclip_proto_ext::graph::load::LoadableGraph;
 use paperclip_proto_ext::graph::test_utils;
 use std::collections::HashMap;
@@ -716,15 +717,32 @@ fn bounds_are_attached_to_root_elements() {
             source_id: Some("80f4925f-15".to_string()),
             source_instance_ids: vec![],
             attributes: vec![],
-            metadata: Some(virt::html::NodeMedata {
-                visible: Some(true),
-                value: HashMap::new(),
-                bounds: Some(virt::html::Bounds {
-                    x: 100.0,
-                    y: 100.0,
-                    width: 100.0,
-                    height: 100.0
-                })
+            metadata: Some(virt::html::MetadataValueMap {
+
+                value: HashMap::from([(
+                    "bounds".to_string(),
+                    virt::html::metadata_value::Inner::Map(MetadataValueMap {
+                        value: HashMap::from([
+                            (
+                                "width".to_string(),
+                                virt::html::metadata_value::Inner::Num(100.0_f32).get_outer()
+                            ),
+                            (
+                                "height".to_string(),
+                                virt::html::metadata_value::Inner::Num(100.0_f32).get_outer()
+                            ),
+                            (
+                                "x".to_string(),
+                                virt::html::metadata_value::Inner::Num(100.0_f32).get_outer()
+                            ),
+                            (
+                                "y".to_string(),
+                                virt::html::metadata_value::Inner::Num(100.0_f32).get_outer()
+                            )
+                        ])
+                    })
+                    .get_outer()
+                )])
             }),
             children: vec![virt::html::Node {
                 inner: Some(virt::html::node::Inner::TextNode(virt::html::TextNode {
@@ -767,15 +785,32 @@ fn bounds_are_attached_to_root_components() {
                 name: "class".to_string(),
                 value: Some("_A-80f4925f-14".to_string().into())
             }],
-            metadata: Some(virt::html::NodeMedata {
-                visible: Some(true),
-                value: HashMap::new(),
-                bounds: Some(virt::html::Bounds {
-                    x: 100.0,
-                    y: 100.0,
-                    width: 100.0,
-                    height: 100.0
-                })
+            metadata: Some(virt::html::MetadataValueMap {
+
+                value: HashMap::from([(
+                    "bounds".to_string(),
+                    virt::html::metadata_value::Inner::Map(MetadataValueMap {
+                        value: HashMap::from([
+                            (
+                                "width".to_string(),
+                                virt::html::metadata_value::Inner::Num(100.0_f32).get_outer()
+                            ),
+                            (
+                                "height".to_string(),
+                                virt::html::metadata_value::Inner::Num(100.0_f32).get_outer()
+                            ),
+                            (
+                                "x".to_string(),
+                                virt::html::metadata_value::Inner::Num(100.0_f32).get_outer()
+                            ),
+                            (
+                                "y".to_string(),
+                                virt::html::metadata_value::Inner::Num(100.0_f32).get_outer()
+                            )
+                        ])
+                    })
+                    .get_outer()
+                )])
             }),
             children: vec![]
         })
@@ -803,15 +838,33 @@ fn bounds_are_attached_to_root_text_nodes() {
             value: "abba".to_string(),
             source_id: Some("80f4925f-14".to_string()),
             source_instance_ids: vec![],
-            metadata: Some(virt::html::NodeMedata {
-                visible: Some(true),
-                value: HashMap::new(),
-                bounds: Some(virt::html::Bounds {
-                    x: 100.0,
-                    y: 100.0,
-                    width: 100.0,
-                    height: 100.0
-                })
+            metadata: Some(virt::html::MetadataValueMap {
+
+
+                value: HashMap::from([(
+                    "bounds".to_string(),
+                    virt::html::metadata_value::Inner::Map(MetadataValueMap {
+                        value: HashMap::from([
+                            (
+                                "width".to_string(),
+                                virt::html::metadata_value::Inner::Num(100.0_f32).get_outer()
+                            ),
+                            (
+                                "height".to_string(),
+                                virt::html::metadata_value::Inner::Num(100.0_f32).get_outer()
+                            ),
+                            (
+                                "x".to_string(),
+                                virt::html::metadata_value::Inner::Num(100.0_f32).get_outer()
+                            ),
+                            (
+                                "y".to_string(),
+                                virt::html::metadata_value::Inner::Num(100.0_f32).get_outer()
+                            )
+                        ])
+                    })
+                    .get_outer()
+                )]),
             })
         })
     );
@@ -847,15 +900,32 @@ fn bounds_are_attached_to_root_instances() {
                 name: "class".to_string(),
                 value: Some("_A-80f4925f-1 _80f4925f-17".to_string().into())
             }],
-            metadata: Some(virt::html::NodeMedata {
-                visible: Some(true),
-                value: HashMap::new(),
-                bounds: Some(virt::html::Bounds {
-                    x: 100.0,
-                    y: 100.0,
-                    width: 100.0,
-                    height: 100.0
-                })
+            metadata: Some(virt::html::MetadataValueMap {
+
+                value: HashMap::from([(
+                    "bounds".to_string(),
+                    virt::html::metadata_value::Inner::Map(MetadataValueMap {
+                        value: HashMap::from([
+                            (
+                                "width".to_string(),
+                                virt::html::metadata_value::Inner::Num(100.0_f32).get_outer()
+                            ),
+                            (
+                                "height".to_string(),
+                                virt::html::metadata_value::Inner::Num(100.0_f32).get_outer()
+                            ),
+                            (
+                                "x".to_string(),
+                                virt::html::metadata_value::Inner::Num(100.0_f32).get_outer()
+                            ),
+                            (
+                                "y".to_string(),
+                                virt::html::metadata_value::Inner::Num(100.0_f32).get_outer()
+                            )
+                        ])
+                    })
+                    .get_outer()
+                )])
             }),
             children: vec![]
         })

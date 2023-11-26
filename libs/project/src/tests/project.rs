@@ -4,7 +4,6 @@ use async_stream::stream;
 use futures::executor::block_on;
 use futures_core::stream::Stream;
 use futures_util::pin_mut;
-use std::{pin::Pin};
 use futures_util::StreamExt;
 use paperclip_common::fs::{
     FileReader, FileResolver, FileWatchEvent, FileWatchEventKind, FileWatcher,
@@ -15,6 +14,7 @@ use paperclip_proto_ext::graph::{io::IO as GraphIO, test_utils::MockFS};
 use path_absolutize::*;
 use std::collections::HashMap;
 use std::path::Path;
+use std::pin::Pin;
 
 #[derive(Clone)]
 struct MockIO(MockFS<'static>);

@@ -2,8 +2,9 @@ import React, { memo, useCallback, useRef, useState } from "react";
 import * as styles from "./index.pc";
 import { Node as VirtNode } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { Transform } from "@paperclip-ui/designer/src/state/geom";
-import { useDispatch } from "@paperclip-ui/common";
+
 import { DEFAULT_FRAME_BOX } from "@paperclip-ui/designer/src/state";
+import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 
 export type FramesProps = {
   frames: VirtNode[];
@@ -40,9 +41,10 @@ type FrameProps = {
 
 const Frame = memo(
   ({ frame, frameIndex, canvasTransform, readonly }: FrameProps) => {
-    const metadata = (frame.element || frame.textNode).metadata;
-    const frameBounds = metadata?.bounds || DEFAULT_FRAME_BOX;
+    const {bounds} = virtHTML.metadataValueMapToJSON((frame.element || frame.textNode).metadata);
+    const frameBounds = bounds ?? DEFAULT_FRAME_BOX;
     const [editing, setEditing] = useState(false);
+
 
     const onClick = useCallback((event: React.MouseEvent<any>) => {
       // prevent canvas click event

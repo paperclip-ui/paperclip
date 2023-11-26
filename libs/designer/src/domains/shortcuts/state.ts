@@ -46,8 +46,6 @@ export const getEntityShortcuts = memoize(
   (id: string, graph: Graph): MenuItem<ShortcutCommand>[] => {
     const entity = ast.getExprInfoById(id, graph);
 
-    console.log(entity);
-
     const isComponent = entity?.kind === ast.ExprKind.Component;
 
     const renderNodeIsInstance = isComponent

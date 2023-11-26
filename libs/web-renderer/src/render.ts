@@ -1,6 +1,7 @@
 // FYI this code is super dumb and can definitely be made faster
 import * as html from "@paperclip-ui/proto/lib/generated/virt/html";
 import * as css from "@paperclip-ui/proto/lib/generated/virt/css";
+import {virtHTML} from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 import {
   PCModule,
   PCModuleImport,
@@ -559,5 +560,5 @@ const patchChildren = (
 };
 
 export const getFrameBounds = (node: html.Node) => {
-  return node.element?.metadata?.bounds || node.textNode?.metadata?.bounds;
+    return virtHTML.metadataValueMapToJSON(node.element?.metadata ?? node.textNode?.metadata).bounds;
 };

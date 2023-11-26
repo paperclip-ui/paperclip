@@ -31,6 +31,7 @@ import {
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { Bool, Str } from "@paperclip-ui/proto/lib/generated/ast/base";
 import { ComputedStyleMap, serializeDeclaration } from "./serialize";
+import { MetadataValue, MetadataValueMap } from "@paperclip-ui/proto/lib/generated/virt/html";
 
 const EMPTY_ARRAY = [];
 export namespace ast {
@@ -276,6 +277,8 @@ export namespace ast {
 
     throw new Error(`Unhandled type`);
   };
+
+
 
   export const getAncestorIds = memoize((id: string, graph: Graph) => {
     const ancestorIds: string[] = [];

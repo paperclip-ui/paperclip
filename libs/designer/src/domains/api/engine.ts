@@ -63,6 +63,7 @@ import {
   getSelectedExpressionInfo,
   getSelectedVariantIds,
   getStyleableTargetId,
+  metadataValueMapToJSON,
 } from "../../state/pc";
 import {
   getGlobalShortcuts,
@@ -405,7 +406,7 @@ const createEventHandler = (actions: Actions) => {
         },
       ]);
     } else {
-      const newBounds = node.metadata.bounds;
+      const newBounds = metadataValueMapToJSON(node.metadata).bounds;
 
       const mutation: Mutation = {
         setFrameBounds: {

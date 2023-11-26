@@ -42,8 +42,7 @@ pub fn create_design_file<TIO: ServerIO>(
     let src_dir = if parent_dir == "" {
         Some(parent_dir.to_string())
     } else {
-        config_ctx.config.designs_dir
-            .or(config_ctx.config.src_dir)
+        config_ctx.config.designs_dir.or(config_ctx.config.src_dir)
     };
 
     let mut file_dir: PathBuf = Path::new(&config_ctx.directory).to_path_buf();

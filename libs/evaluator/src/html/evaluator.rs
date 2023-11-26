@@ -3,14 +3,12 @@ use super::virt;
 use crate::core::errors;
 use crate::core::utils::get_style_namespace;
 use paperclip_common::fs::FileResolver;
-use paperclip_parser::docco;
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::docco as docco_ast;
 use paperclip_proto::ast::graph_ext::ComponentRefInfo;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::ast::pc as ast;
 use paperclip_proto::virt::html;
-use paperclip_proto::virt::html::Bounds;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 
@@ -93,106 +91,116 @@ fn evaluate_document<F: FileResolver>(
     }
 }
 
-// pub fn evaluate_property_value(expr: &docco_ast::PropertyValue) -> virt::MetadataValue {
-//     match expr.get_inner() {
-//         docco_ast::property_value::Inner::Parameters(params) => {
-//             let value = HashMap::new();
-//             for item in &params.items {
-//                 value.insert(item.name.to_string(), evaluate_property_value(item.value.as_ref().expect("Value must exist")));
-//             }
+pub fn evaluate_property_value(expr: &docco_ast::PropertyValue) -> virt::MetadataValue {
+    match expr.get_inner() {
+        docco_ast::property_value::Inner::Parameters(params) => {
+            let mut value = HashMap::new();
+            for item in &params.items {
+                value.insert(
+                    item.name.to_string(),
+                    evaluate_property_value(item.value.as_ref().expect("Value must exist")),
+                );
+            }
 
-//             virt::metadata_value::Inner::Map(Box::new(value)).get_outer()            
-//         },
-//         docco_ast::property_value::Inner::Str(value) => {
-//             virt::metadata_value::Inner::Str(value.value.to_string()).get_outer()
-//         }
-//     }
-// }
+            virt::metadata_value::Inner::Map(virt::MetadataValueMap { value }).get_outer()
+        }
+        docco_ast::property_value::Inner::Str(value) => {
+            virt::metadata_value::Inner::Str(value.value.to_string()).get_outer()
+        }
+        docco_ast::property_value::Inner::Num(value) => {
+            virt::metadata_value::Inner::Num(value.value).get_outer()
+        }
+        docco_ast::property_value::Inner::Bool(value) => {
+            virt::metadata_value::Inner::Bool(value.value).get_outer()
+        }
+    }
+}
 
-pub fn evaluate_comment_metadata(expr: &docco_ast::Comment) -> virt::NodeMedata {
-    let mut bounds = None;
+pub fn evaluate_comment_metadata(expr: &docco_ast::Comment) -> virt::MetadataValueMap {
 
-    let value = HashMap::new();
+
+    let mut value = HashMap::new();
 
     for item in &expr.body {
         if let docco_ast::comment_body_item::Inner::Property(property) = item.get_inner() {
-            // value.insert(propert.name.to_string(), evaluate_property_value(&property.value))
+            value.insert(
+                property.name.to_string(),
+                evaluate_property_value(property.value.as_ref().expect("Value must exist")),
+            );
         }
     }
 
     // lazy af code. Clean me
-    for item in &expr.body {
-        match item.get_inner() {
-            docco_ast::comment_body_item::Inner::Property(property) => {
-                match property.name.as_str() {
-                    "bounds" => {
-                        match property
-                            .value
-                            .as_ref()
-                            .expect("Value must exist")
-                            .get_inner()
-                        {
-                            docco_ast::property_value::Inner::Parameters(parameters) => {
-                                let mut bounds2 = Bounds::default();
+    // for item in &expr.body {
+    //     match item.get_inner() {
+    //         docco_ast::comment_body_item::Inner::Property(property) => {
+    //             match property.name.as_str() {
+    //                 "bounds" => {
+    //                     match property
+    //                         .value
+    //                         .as_ref()
+    //                         .expect("Value must exist")
+    //                         .get_inner()
+    //                     {
+    //                         docco_ast::property_value::Inner::Parameters(parameters) => {
+    //                             let mut bounds2 = Bounds::default();
 
-                                for item in &parameters.items {
-                                    let value =
-                                        item.value.as_ref().expect("Value must exist").get_inner();
-                                    let num_value = match value {
-                                        docco_ast::parameter_value::Inner::Num(number) => {
-                                            Some(number.value)
-                                        }
-                                        _ => None,
-                                    };
+    //                             for item in &parameters.items {
+    //                                 let value =
+    //                                     item.value.as_ref().expect("Value must exist").get_inner();
+    //                                 let num_value = match value {
+    //                                     docco_ast::property_value::Inner::Num(number) => {
+    //                                         Some(number.value)
+    //                                     }
+    //                                     _ => None,
+    //                                 };
 
-                                    match item.name.as_str() {
-                                        "width" => {
-                                            if let Some(value) = num_value {
-                                                bounds2.width = value;
-                                            }
-                                        }
-                                        "height" => {
-                                            if let Some(value) = num_value {
-                                                bounds2.height = value;
-                                            }
-                                        }
-                                        "x" => {
-                                            if let Some(value) = num_value {
-                                                bounds2.x = value;
-                                            }
-                                        }
-                                        "y" => {
-                                            if let Some(value) = num_value {
-                                                bounds2.y = value;
-                                            }
-                                        }
-                                        _ => {}
-                                    }
-                                }
+    //                                 match item.name.as_str() {
+    //                                     "width" => {
+    //                                         if let Some(value) = num_value {
+    //                                             bounds2.width = value;
+    //                                         }
+    //                                     }
+    //                                     "height" => {
+    //                                         if let Some(value) = num_value {
+    //                                             bounds2.height = value;
+    //                                         }
+    //                                     }
+    //                                     "x" => {
+    //                                         if let Some(value) = num_value {
+    //                                             bounds2.x = value;
+    //                                         }
+    //                                     }
+    //                                     "y" => {
+    //                                         if let Some(value) = num_value {
+    //                                             bounds2.y = value;
+    //                                         }
+    //                                     }
+    //                                     _ => {}
+    //                                 }
+    //                             }
 
-                                bounds = Some(bounds2);
-                            }
-                            _ => {}
-                        }
-                    }
-                    _ => {}
-                }
-            }
-            _ => {}
-        }
-    }
+    //                             bounds = Some(bounds2);
+    //                         }
+    //                         _ => {}
+    //                     }
+    //                 }
+    //                 _ => {}
+    //             }
+    //         }
+    //         _ => {}
+    //     }
+    // }
 
-    virt::NodeMedata {
-        bounds,
-        visible: Some(true),
-        value
+    virt::MetadataValueMap {
+        value,
     }
 }
 
 fn evaluate_component<F: FileResolver>(
     component: &ast::Component,
     fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::NodeMedata>,
+    metadata: &Option<virt::MetadataValueMap>,
     context: &mut DocumentContext<F>,
 ) {
     let render = if let Some(render) = component.get_render_expr() {
@@ -214,7 +222,7 @@ fn evaluate_component<F: FileResolver>(
 fn evaluate_element<F: FileResolver>(
     element: &ast::Element,
     fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::NodeMedata>,
+    metadata: &Option<virt::MetadataValueMap>,
     context: &mut DocumentContext<F>,
     is_component_root: bool,
     is_instance: bool,
@@ -275,7 +283,7 @@ fn evaluate_instance<F: FileResolver>(
     element: &ast::Element,
     instance_of: &ComponentRefInfo,
     fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::NodeMedata>,
+    metadata: &Option<virt::MetadataValueMap>,
     context: &mut DocumentContext<F>,
     is_component_root: bool,
 ) {
@@ -360,7 +368,7 @@ fn evaluate_instance_child<'expr, F: FileResolver>(
     parent: &'expr ast::Element,
     child: &'expr ast::Node,
     inserts: &mut InsertsMap<'expr>,
-    metadata: &Option<virt::NodeMedata>,
+    metadata: &Option<virt::MetadataValueMap>,
     context: &mut DocumentContext<F>,
 ) {
     match child.get_inner() {
@@ -395,7 +403,7 @@ fn evaluate_instance_child<'expr, F: FileResolver>(
 fn evaluate_render<F: FileResolver>(
     render: &ast::Render,
     fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::NodeMedata>,
+    metadata: &Option<virt::MetadataValueMap>,
     context: &mut DocumentContext<F>,
     is_component_root: bool,
     is_instance: bool,
@@ -429,7 +437,7 @@ fn get_source_id(expr_id: &str, instance_path: &Vec<String>, is_instance: bool) 
 fn evaluate_native_element<F: FileResolver>(
     element: &ast::Element,
     fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::NodeMedata>,
+    metadata: &Option<virt::MetadataValueMap>,
     context: &mut DocumentContext<F>,
     is_component_root: bool,
     is_instance: bool,
@@ -461,7 +469,7 @@ fn evaluate_native_element<F: FileResolver>(
 fn evaluate_node<F: FileResolver>(
     child: &ast::Node,
     fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::NodeMedata>,
+    metadata: &Option<virt::MetadataValueMap>,
     context: &mut DocumentContext<F>,
     is_component_root: bool,
     is_instance: bool,
@@ -677,7 +685,7 @@ fn create_attribute_value<F: FileResolver>(
 fn evaluate_switch<F: FileResolver>(
     expr: &ast::Switch,
     fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::NodeMedata>,
+    metadata: &Option<virt::MetadataValueMap>,
     context: &mut DocumentContext<F>,
 ) {
     let value = context
@@ -728,7 +736,7 @@ fn evaluate_switch<F: FileResolver>(
 fn evaluate_condition<F: FileResolver>(
     expr: &ast::Condition,
     fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::NodeMedata>,
+    metadata: &Option<virt::MetadataValueMap>,
     context: &mut DocumentContext<F>,
 ) {
     let value = context
@@ -746,7 +754,7 @@ fn evaluate_condition<F: FileResolver>(
 fn evaluate_repeat<F: FileResolver>(
     expr: &ast::Repeat,
     fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::NodeMedata>,
+    metadata: &Option<virt::MetadataValueMap>,
     context: &mut DocumentContext<F>,
 ) {
     for item in &expr.body {
@@ -757,7 +765,7 @@ fn evaluate_repeat<F: FileResolver>(
 fn evaluate_text_node<F: FileResolver>(
     text_node: &ast::TextNode,
     fragment: &mut Vec<virt::Node>,
-    metadata: &Option<virt::NodeMedata>,
+    metadata: &Option<virt::MetadataValueMap>,
     context: &mut DocumentContext<F>,
 ) {
     let node = if text_node.is_stylable() {

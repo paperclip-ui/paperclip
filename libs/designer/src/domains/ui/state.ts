@@ -14,6 +14,7 @@ import {
   getNodeBox,
   getPreviewFrameBoxes,
   getTargetExprId,
+  jsonToMetadataValue,
   setTargetExprId,
 } from "../../state";
 import {
@@ -81,12 +82,12 @@ export const handleDragEvent = (
       if (!node.metadata) {
         node.metadata = {};
       }
-      if (!node.metadata.bounds) {
-        node.metadata.bounds = { x: 0, y: 0, width: 0, height: 0 };
+      if (!node.metadata.value.bounds) {
+        node.metadata.value.bounds = jsonToMetadataValue({ x: 0, y: 0, width: 0, height: 0 });
       }
 
-      node.metadata.bounds = {
-        ...event.payload.newBounds,
+      node.metadata.value.bounds = {
+        ...jsonToMetadataValue(event.payload.newBounds),
       };
     }
   });

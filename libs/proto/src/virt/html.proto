@@ -1,15 +1,12 @@
 syntax = "proto3";
 package virt.html;
 
-message Bounds {
-  float x = 1;
-  float y = 2;
-  float width = 3;
-  float height = 4;
-}
-
 message MetadataList {
   repeated MetadataValue items = 1;
+}
+
+message MetadataValueMap {
+  map<string, MetadataValue> value = 1;
 }
 
 message MetadataValue {
@@ -18,15 +15,9 @@ message MetadataValue {
     float num = 2;
     bool bool = 3;
     Undefined undef = 4;
-    MetadataValue map = 5;
+    MetadataValueMap map = 5;
     MetadataList list = 6;
   }
-}
-
-message NodeMedata {
-  optional Bounds bounds = 1;
-  optional bool visible = 2;
-  map <string, MetadataValue> value = 3;
 }
 
 message Element {
@@ -35,7 +26,7 @@ message Element {
   optional string source_id = 3;
   repeated string source_instance_ids = 4;
   repeated ObjectProperty attributes = 5;
-  optional NodeMedata metadata = 6;
+  optional MetadataValueMap metadata = 6;
   repeated Node children = 7;
 }
 
@@ -44,7 +35,7 @@ message TextNode {
   optional string source_id = 2;
   repeated string source_instance_ids = 3;
   string value = 4;
-  optional NodeMedata metadata = 5;
+  optional MetadataValueMap metadata = 5;
 }
 
 message Document {

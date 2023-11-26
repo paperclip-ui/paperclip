@@ -4,11 +4,11 @@ use futures_core::stream::Stream;
 
 #[cfg(feature = "local")]
 use path_absolutize::*;
-use std::{pin::Pin};
 use std::fs;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
+use std::pin::Pin;
 
 pub enum FSItemKind {
     File,

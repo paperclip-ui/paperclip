@@ -46,7 +46,7 @@ macro_rules! add_case {
 
             //     println!("{}: {}", path, serialize(&doc));
             // }
-            
+
             assert_eq!(
                 strip_extra_ws(serialize(&doc).as_str()),
                 strip_extra_ws($output)
@@ -1674,5 +1674,3 @@ add_case! {
   ._B-root-80f4925f-8._C-80f4925f-14 { color: orange; } 
 "#
 }
-
-

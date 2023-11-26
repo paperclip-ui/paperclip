@@ -375,14 +375,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9226dbc05df4fb986f48d730b001532580883c4c06c5d1c213f4b34c1c157178"
 
 [[package]]
-name = "compiler_builtins"
-version = "0.1.103"
-source = "git+https://github.com/rust-lang/compiler-builtins#2a331a2831cd9dcb566f2b19b17df9a96baa7944"
-dependencies = [
- "cc",
-]
-
-[[package]]
 name = "concurrent-queue"
 version = "2.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1503,7 +1495,6 @@ version = "0.1.1"
 dependencies = [
  "anyhow",
  "clap",
- "compiler_builtins",
  "console",
  "futures",
  "futures-core",

@@ -76,7 +76,7 @@ jobs:
         env:
           TARGET_CC: x86_64-linux-musl-gcc
           # RUSTFLAGS: "-C target-feature=-crt-static"
-          RUSTFLAGS: "-C linker=clang -C link-arg=-fuse-ld=lld -C target-feature=-crt-static -C link-arg=-lpthread"
+          RUSTFLAGS: "-C linker=clang -C link-arg=-fuse-ld=lld -C target-feature=-crt-static -C link-arg=-lpthread -C link-arg=-lm"
           PROTOC: "/usr/bin/protoc"
         #   PKG_CONFIG_SYSROOT_DIR: "/"
         #   PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig

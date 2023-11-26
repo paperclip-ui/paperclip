@@ -23,16 +23,18 @@ export const Canvas = (Base: React.FC<styles.BaseCanvasProps>) => () => {
     useCanvas();
 
   return (
-    <Base ref={canvasRef} innerStyle={{
-      // Only want canvas to be visible after initially centered. Otherwise it feels janky
-      opacity: visible ? 1 : 0,
-      transform: `translateX(${actualTransform.x}px) translateY(${actualTransform.y}px) scale(${actualTransform.z}) translateZ(0)`,
+    <Base ref={canvasRef} innerProps={{
+      style: {
+        // Only want canvas to be visible after initially centered. Otherwise it feels janky
+        opacity: visible ? 1 : 0,
+        transform: `translateX(${actualTransform.x}px) translateY(${actualTransform.y}px) scale(${actualTransform.z}) translateZ(0)`,
 
-      // fade in when centered for extra smoothness
-      transition: "0.2s",
-      transitionProperty: "opacity",
-      transformOrigin: "top left",
-    }} frames={ <Frames expandedFrameIndex={expanded ? activeFrameIndex : null} />} tools={<Tools />} />
+        // fade in when centered for extra smoothness
+        transition: "0.2s",
+        transitionProperty: "opacity",
+        transformOrigin: "top left",
+      }
+    }} frames={<Frames expandedFrameIndex={expanded ? activeFrameIndex : null} />} tools={<Tools />} />
   );
 };
 

@@ -231,7 +231,7 @@ public component Editor {
  * @bounds(x: -1353, y: 1353, width: 1024, height: 768)
 */
 public component Artboard {
-    render div(style: style) {
+    render div root {
         div {
             style {
                 color: rgb(236, 236, 236)
@@ -249,7 +249,7 @@ public component Artboard {
 */
 public component Canvas {
     script(src: "./logic/Editor/Canvas/index.tsx", target: "react", name: "Canvas")
-    render div(style: style, onMouseMove: onMouseMove, onScroll: onScroll, onWheelCapture: onWheelCapture, tabIndex: "0") {
+    render div {
         style {
             flex: 1
             overflow: hidden
@@ -259,7 +259,7 @@ public component Canvas {
             width: 100%
             height: 100%
         }
-        div inner(style: innerStyle) {
+        div inner {
             style extends canvas {
                 width: 100%
                 height: 100%
@@ -301,4 +301,3 @@ Editor splash(showSplash: true) {
  * @bounds(x: 457, y: 2057, width: 2617, height: 1680)
 */
 Editor splash(showCanvas: true)
-

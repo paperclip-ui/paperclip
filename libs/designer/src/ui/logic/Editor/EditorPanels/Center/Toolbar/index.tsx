@@ -20,27 +20,23 @@ export const Toolbar = (Base: React.FC<toolbarStyles.BaseToolbarProps>) => () =>
 
   return (
     <Base>
-      <toolbarStyles.ToolbarButton
-        class={cx({ active: insertMode === InsertMode.Resource })}
-        onClick={onInsertResourceClick}
+      <toolbarStyles.ToolbarButton rootProps={{ onClick: onInsertResourceClick, className: cx({ active: insertMode === InsertMode.Resource }) }}
       >
         <toolbarStyles.ToolbarIcon class="library" />
       </toolbarStyles.ToolbarButton>
       <toolbarStyles.ToolbarDivider />
-      <toolbarStyles.ToolbarButton
-        class={cx({ active: insertMode === InsertMode.Text })}
-        onClick={onInsertTextClick}
+      <toolbarStyles.ToolbarButton rootProps={{ onClick: onInsertTextClick, className: cx({ active: insertMode === InsertMode.Text }) }}
+
       >
         <toolbarStyles.ToolbarIcon class="text" />
       </toolbarStyles.ToolbarButton>
-      <toolbarStyles.ToolbarButton
-        class={cx({ active: insertMode === InsertMode.Element })}
-        onClick={onInsertElementClick}
+      <toolbarStyles.ToolbarButton rootProps={{ onClick: onInsertElementClick, className: cx({ active: insertMode === InsertMode.Element }) }}
+
       >
         <toolbarStyles.ToolbarIcon class="element" />
       </toolbarStyles.ToolbarButton>
       <toolbarStyles.ToolbarDivider />
-      <toolbarStyles.ToolbarButton disabled class="wide" style={{ width: 75 }}>
+      <toolbarStyles.ToolbarButton rootProps={{ disabled: true, className: "wide", style: { width: 75 } } as any}>
         {zoom}%
       </toolbarStyles.ToolbarButton>
     </Base>

@@ -76,7 +76,7 @@ export const Frame = memo(
     ]) as any;
 
     return (
-      <styles.Artboard style={frameStyle}>
+      <styles.Artboard rootProps={{ style: frameStyle }}>
         <FrameContainer
           extraHTML={extraHTML}
           variantIds={variantIds}

@@ -24,16 +24,18 @@ export const TextInput = forwardRef((props: TextInputProps, forwardRef) => {
   return (
     <styles.TextInput
       ref={setRef}
-      class={classNames({ large })}
-      autoFocus={autoFocus}
-      placeholder={placeholder}
-      defaultValue={value}
-      onFocus={onFocus}
-      onBlur={onBlur}
-      onChange={onChange}
-      onClick={onClick}
-      onKeyDown={onKeyDown}
-      onKeyUp={onKeyUp}
+      rootProps={{
+        className: classNames({ large }),
+        autoFocus,
+        placeholder,
+        defaultValue: value,
+        onFocus,
+        onBlur,
+        onClick,
+        onChange,
+        onKeyDown,
+        onKeyUp
+      } as any}
     />
   );
 });

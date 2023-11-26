@@ -126,8 +126,7 @@ const RawInput = (props: RawInputProps) => {
             }
           >
             <inputStyles.TokenMenuContent
-              style={{ "--color": item.previewValue }}
-              title={item.previewValue}
+              rootProps={{ rootProps: { style: { "--color": item.previewValue } as any, title: item.previewValue } }}
               context={item.source?.split("/").pop()}
             >
               {item.label ?? item.value}

@@ -55,7 +55,7 @@ export const EditVariantPopup = (props: EditVariantPopupProps) => {
     ) : null,
     <inputStyles.AddListItemButton
       key="add-list-item-button"
-      onClick={onAddTriggerClick}
+      rootProps={{ onClick: onAddTriggerClick }}
     />,
   ].filter(Boolean);
 

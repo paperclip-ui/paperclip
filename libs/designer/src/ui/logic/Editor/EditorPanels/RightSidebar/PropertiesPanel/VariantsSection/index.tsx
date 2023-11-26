@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import * as inputStyles from "@paperclip-ui/designer/src/ui/input.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
@@ -38,8 +38,8 @@ export const VariantsSectionInner = () => {
       return (
         <inputStyles.ListItemInput
           key={variant.id}
-          onClick={() => onSelectVariant(variant)}
-          class="removable"
+          rootProps={{ onClick: () => onSelectVariant(variant), className: "removable" }}
+
           onRemoveClick={(event: React.MouseEvent<any>) => {
             event.stopPropagation();
             onRemoveVariant(variant);
@@ -49,7 +49,7 @@ export const VariantsSectionInner = () => {
         </inputStyles.ListItemInput>
       );
     }),
-    <inputStyles.AddListItemButton key="add-button" onClick={onAddClick} />,
+    <inputStyles.AddListItemButton key="add-button" rootProps={{ onClick: onAddClick }} />,
   ];
 
   return (

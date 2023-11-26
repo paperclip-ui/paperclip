@@ -29,7 +29,7 @@ public component MultiSelectItem {
  * @bounds(x: 884, y: -2489, width: 1024, height: 768)
 */
 public component Select {
-    render div(onClick: onClick, tabIndex: "-1") {
+    render div(tabIndex: "-1") {
         style {
             display: flex
             flex-direction: column
@@ -60,7 +60,7 @@ public component Select {
  * @bounds(x: 799, y: -1205, width: 1024, height: 768)
 */
 public component SuggestionContainer {
-    render div(onFocus: onFocus, onBlur: onBlur) {
+    render div root {
         style {
             position: relative
         }
@@ -82,7 +82,7 @@ public component SuggestionContainer {
  * @bounds(x: 1259, y: -557, width: 1024, height: 768)
 */
 public component SuggestionMenu {
-    render menu.Menu(style: style) {
+    render menu.Menu root {
         slot children
     }
 }
@@ -103,7 +103,7 @@ public component SuggestionMenuHeader {
  * @bounds(x: -1464, y: -326, width: 236, height: 31)
 */
 public component SuggestionMenuSearch {
-    render TextInput(placeholder: placeholder, value: value) {
+    render TextInput root {
         override root {
             style {
                 background: var(theme.inputBackgroun2)
@@ -126,7 +126,7 @@ public component SuggestionMenuItem {
     variant checked trigger {
         ".checked"
     }
-    render menu.MenuItem(onMouseDown: onMouseDown, onClick: onClick, class: class) {
+    render menu.MenuItem root {
         slot children
         div {
             style {
@@ -155,7 +155,7 @@ public component TextInput {
         ":focus"
         ".active"
     }
-    render input root(value: value, placeholder: placeholder, autoFocus: autoFocus, defaultValue: defaultValue, onKeyDown: onKeyDown, onKeyUp: onKeyUp, onBlur: onBlur, onChange: onChange, onFocus: onFocus, onBlur: onBlur, class: class, onClick: onClick) {
+    render input root {
         style variant medium {
             padding: var(theme.space04)
         }
@@ -211,7 +211,7 @@ public component Fields {
  * @bounds(x: -718, y: -1156, width: 188, height: 26)
 */
 public component MultiSelect {
-    render div(tabIndex: "0", onClick: onClick, onFocus: onFocus, onChange: onChange, onBlur: onBlur) {
+    render div root(tabIndex: "0") {
         style extends theme.input, theme.fontDefault {
             display: flex
             cursor: pointer
@@ -294,7 +294,7 @@ public component Token {
  * @bounds(x: 1015, y: 858, width: 557, height: 114)
 */
 public component Field {
-    render div(onFocus: onFocus, onBlur: onBlur) {
+    render div root {
         style {
             display: flex
             gap: var(theme.space03)
@@ -332,7 +332,7 @@ public component Field {
 }
 
 public component TokenMenuContent {
-    render MenuContent(style: style, title: title) {
+    render MenuContent root {
         insert children {
             div {
                 style {
@@ -358,7 +358,7 @@ public component TokenMenuContent {
 }
 
 public component MenuContent {
-    render div(style: style, title: title) {
+    render div root {
         style {
             display: flex
             align-items: center
@@ -582,7 +582,7 @@ div {
 }
 
 public component AddListItemButton {
-    render button(onClick: onClick) {
+    render button root {
         style extends theme.input {
             color: rgb(115, 115, 115)
             cursor: pointer
@@ -595,7 +595,7 @@ public component ListItemInput {
     variant isRemovable trigger {
         ".removable"
     }
-    render div(class: class, onClick: onClick) {
+    render div root {
         style extends theme.input {
             display: flex
             justify-content: space-between
@@ -624,7 +624,7 @@ public component RadioInput {
     variant on trigger {
         ".on"
     }
-    render div container(onClick: onClick, class: class) {
+    render div container {
         style variant on {
             background: var(theme.blue00)
         }
@@ -692,9 +692,3 @@ div textInputPreview {
         }
     }
 }
-
-/**
- * @bounds(x: -1298, y: -928, width: 1024, height: 768)
-*/
-text ""
-

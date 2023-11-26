@@ -49,7 +49,7 @@ export const AttributesSection = () => {
     <sidebarStyles.SidebarSection>
       <sidebarStyles.SidebarPanelHeader>
         Attributes
-        <etcStyles.PlusButton onClick={onNewClick} />
+        <etcStyles.PlusButton rootProps={{ onClick: onNewClick }} />
       </sidebarStyles.SidebarPanelHeader>
 
       <sidebarStyles.SidebarPanelContent>
@@ -118,9 +118,9 @@ const Attribute = ({
     value &&
     String(
       value.num?.value ||
-        value.str?.value ||
-        value.reference?.path.join(".") ||
-        value.bool?.value
+      value.str?.value ||
+      value.reference?.path.join(".") ||
+      value.bool?.value
     );
 
   if (value?.str) {

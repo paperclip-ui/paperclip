@@ -124,11 +124,13 @@ const Item = ({ component, screenshotUrl }: ItemProps) => {
   return (
     <etcStyles.Item
       ref={ref}
-      label={component.name}
-      style={style}
-      previewStyle={{
-        backgroundImage: `url(${screenshotUrl})`,
+      rootProps={{ style }}
+      previewProps={{
+        style: {
+          backgroundImage: `url(${screenshotUrl})`,
+        }
       }}
+      label={component.name}
     />
   );
 };

@@ -125,7 +125,7 @@ public component TokenInput {
         ":focus"
         ":active"
     }
-    render div input(onKeyDown: onKeyDown, onKeyPress: onKeyPress, onFocus: onFocus, onBlur: onBlur) {
+    render div input {
         style extends module.input {
             display: inline-flex
             aling-items: center
@@ -269,4 +269,3 @@ div preview {
         }
     }
 }
-

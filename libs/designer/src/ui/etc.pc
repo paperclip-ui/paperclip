@@ -7,7 +7,7 @@ public component Item {
         ":hover"
         ".active"
     }
-    render div(style: style, onClick: onClick, title: title) {
+    render div root {
         style variant hover {
             box-shadow: inset 0px 0px 0px 1px var(theme.selectedColor)
         }
@@ -18,7 +18,7 @@ public component Item {
             transition: 0.2s
             cursor: pointer
         }
-        div preview(style: previewStyle) {
+        div preview  {
             style {
                 width: 100%
                 height: 150px
@@ -45,7 +45,7 @@ public component Item {
  * @bounds(x: 191, y: 913, width: 107, height: 130)
 */
 public component PlusButton {
-    render button(onClick: onClick, onBlur: onBlur) {
+    render button root {
         style extends theme.icon {
             cursor: pointer
             -webkit-mask-image: url("./plus.svg")
@@ -53,4 +53,3 @@ public component PlusButton {
         }
     }
 }
-

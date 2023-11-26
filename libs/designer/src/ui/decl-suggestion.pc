@@ -20,7 +20,7 @@ public component Divider {
  * @bounds(x: -547, y: 5, width: 250, height: 585)
 */
 public component DeclSuggestionMenu {
-    render div(style: style, onKeyDown: onKeyDown, tabIndex: "-1") {
+    render div root {
         style extends theme.fontDefault, theme.popup {
             width: 250px
             position: relative
@@ -33,4 +33,3 @@ public component DeclSuggestionMenu {
         }
     }
 }
-

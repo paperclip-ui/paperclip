@@ -60,9 +60,7 @@ export const ExpressionInput = ({
   return (
     <styles.TokenInput
       ref={ref}
-      onKeyDown={onKeyDown}
-      onFocus={onFocus}
-      onBlur={onBlur}
+      inputProps={{ onKeyDown, onFocus, onBlur }}
     >
       {children}
     </styles.TokenInput>
@@ -78,6 +76,7 @@ type ExpressionProps = {
 export const Expression = () => {
   return;
 };
+
 
 const moveCaretToEnd = (element: HTMLElement) => {
   const sel = window.getSelection();

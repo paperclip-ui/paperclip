@@ -10,17 +10,11 @@ import {
 } from "@paperclip-ui/proto-ext/lib/ast/serialize";
 import { NameInput } from "./NameInput";
 import {
-  getAllStyleMixins,
-  getCurrentFilePath,
-  getGraph,
   getSelectedDeclName,
   getSelectedVariantIds,
   getStyleableTargetId,
-  getTargetExprId,
 } from "@paperclip-ui/designer/src/state";
 import { DeclName } from "./DeclName";
-import classNames from "classnames";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 
 type FieldProps = {
   name?: string;
@@ -113,8 +107,7 @@ export const Declaration = memo(
     return (
       <inputStyles.Field
         ref={ref}
-        onFocus={onFocus}
-        onBlur={onBlur2}
+        rootProps={{ onFocus, onBlur }}
         name={nameInput}
         input={input}
       />

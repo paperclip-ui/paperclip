@@ -4,7 +4,7 @@ import "./theme.pc" as theme
  * @bounds(x: 174, y: 399, width: 428, height: 311)
 */
 public component Menu {
-    render div(style: style, onKeyDown: onKeyDown, tabIndex: "-1") {
+    render div root {
         style extends theme.fontDefault, theme.popup {
             width: 250px
             overflow-y: scroll
@@ -50,7 +50,7 @@ public component MenuItem {
         ":not(:disabled)"
         ":not(.disabled)"
     }
-    render div(onMouseDown: onMouseDown, onClick: onClick, class: class, disabled: disabled) {
+    render div root {
         style {
             padding: var(theme.space03)
             cursor: pointer
@@ -136,4 +136,3 @@ div {
         }
     }
 }
-

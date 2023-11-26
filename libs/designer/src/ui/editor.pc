@@ -33,7 +33,7 @@ public component SplashInfo {
                 top: 50%
                 width: 600px
             }
-            div logo(src: "./logo.svg") {
+            div logo {
                 style {
                     width: 200px
                     opacity: 0.5

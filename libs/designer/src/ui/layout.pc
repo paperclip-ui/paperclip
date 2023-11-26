@@ -22,7 +22,7 @@ public component Box {
     variant column trigger {
         ".column"
     }
-    render div(class: class) {
+    render div root {
         style {
             position: relative
             display: flex
@@ -49,4 +49,3 @@ public component Box {
         slot children
     }
 }
-

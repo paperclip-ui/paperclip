@@ -44,7 +44,7 @@ jobs:
         with:
           version: "24.x"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-        if: matrix.platform.os_name == 'macOS-latest'
+        if: matrix.platform.os_name == 'macOS-x86_64'
       - uses: jetli/wasm-pack-action@v0.4.0
         with:
           version: "latest"

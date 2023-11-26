@@ -2376,7 +2376,6 @@ __metadata:
   dependencies:
     "@paperclip-ui/common": ^20.2.16
     "@paperclip-ui/proto": ^20.2.16
-    "@paperclip-ui/proto-ext": ^20.2.16
     html-entities: ^1.2.1
   languageName: unknown
   linkType: soft

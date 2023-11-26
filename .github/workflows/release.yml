@@ -18,26 +18,16 @@ jobs:
         platform:
           - os_name: Linux-x86_64
             os: ubuntu-20.04
-            #os: ubuntu-latest
-            # os: macOS-latest
             target: x86_64-unknown-linux-musl
-            cargo_command: cargo
-          # - os_name: Linux-x86_64
-          #   os: ubuntu-20.04
-          #   target: x86_64-unknown-linux-gnu
-          #   cargo_command: cargo
 
-          # - os_name: macOS-x86_64
-          #   os: macOS-latest
-          #   target: x86_64-apple-darwin
-          #   cargo_command: cargo
+          - os_name: macOS-x86_64
+            os: macOS-latest
+            target: x86_64-apple-darwin
 
         package: [libs/cli]
     runs-on: ${{ matrix.platform.os }}
     steps:
       - uses: actions/checkout@master
-      # - uses: awalsh128/cache-apt-pkgs-action@v1
-      #   if: matrix.platform.os_name == 'Linux-x86_64'
         with:
           packages: musl-tools # provides musl-gcc
           version: 1.0
@@ -54,8 +44,6 @@ jobs:
           version: "24.x"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
         if: matrix.platform.os_name == 'macOS-latest'
-      # - run: pip3 install ziglang
-      # - run: cargo install cargo-zigbuild
       - uses: jetli/wasm-pack-action@v0.4.0
         with:
           version: "latest"
@@ -75,27 +63,10 @@ jobs:
         if: matrix.platform.os_name == 'Linux-x86_64'
         env:
           TARGET_CC: x86_64-linux-musl-gcc
-          # RUSTFLAGS: "-C target-feature=-crt-static"
           RUSTFLAGS: "-C linker=clang -C link-arg=-fuse-ld=lld -C target-feature=-crt-static -C link-arg=-lpthread -C link-arg=-lm"
           PROTOC: "/usr/bin/protoc"
-        #   PKG_CONFIG_SYSROOT_DIR: "/"
-        #   PKG_CONFIG_PATH: /usr/lib/x86_64-linux-gnu/pkgconfig
-        #   OPENSSL_LIB_DIR: /usr/lib/x86_64-linux-gnu/
-        #   OPENSSL_INCLUDE_DIR: /usr/include/openssl
-        #   OPENSSL_DIR: /usr/local/openssl
-      - run: ${{ matrix.platform.cargo_command }} build --release --locked --target=${{ matrix.platform.target }}
-        # if: matrix.platform.os_name == 'macOS-x86_64'
-        # if: matrix.platform.os_name == 'macOS-x86_64'
-      # - uses: houseabsolute/actions-rust-cross@v0
-      #   env:
-      #     RUSTFLAGS: "-C target-feature=-crt-static"
-      #   with:
-      #     command: build
-      #     target: ${{ matrix.platform.target }}
-      #     args: "--locked --release"
-      #     strip: true
-
-        # if: matrix.platform.os_name == 'Linux-x86_64'
+      - run: cargo build --release --locked --target=${{ matrix.platform.target }}
+        if: matrix.platform.os_name == 'macOS-x86_64'
       - name: Sign Mac OS binary
         if: matrix.platform.target == 'x86_64-apple-darwin'
         env:

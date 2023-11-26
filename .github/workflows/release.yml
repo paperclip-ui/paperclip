@@ -66,7 +66,7 @@ jobs:
           TARGET_CC: x86_64-linux-musl-gcc
           RUSTFLAGS: "-C linker=clang -C link-arg=-fuse-ld=lld -C target-feature=-crt-static -C link-arg=-lpthread -C link-arg=-lm"
           PROTOC: "/usr/bin/protoc"
-      - run: find target -maxdepth 2
+      - run: find target -maxdepth 3
       - run: cargo build --release --locked --target=${{ matrix.platform.target }}
         if: matrix.platform.os_name == 'macOS-x86_64'
       - name: Sign Mac OS binary

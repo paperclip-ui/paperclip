@@ -13,7 +13,7 @@ export const jsonToMetadataValue = memoize((value: any): any => {
       for (const key in value) {
         map[key] = jsonToMetadataValue(value[key]);
       }
-      return { map: {value} };
+      return { map: {value: map} };
     } else if (typeof value === "string") {
       return { str: value };
     } else if (typeof value === "number") {

@@ -661,15 +661,10 @@ export const setSelectedNodeBounds = (
       newState.currentDocument.paperclip.html
     );
     if (!node.metadata) {
-      node.metadata = {};
-    }
-    if (!node.metadata.value.bounds) {
-      node.metadata.value.bounds = jsonToMetadataValue({ x: 0, y: 0, width: 0, height: 0});
+      node.metadata = {value:{}};
     }
 
-    node.metadata.value.bounds = {
-      map: newBounds
-    };
+    node.metadata.value.bounds = jsonToMetadataValue(newBounds);
   });
 };
 

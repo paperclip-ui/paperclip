@@ -34,4 +34,4 @@ RUN ls
 
 
 # RUN rustup target add ${TARGET}
-RUN ["./build.sh"]
+ENTRYPOINT ["./build.sh"]

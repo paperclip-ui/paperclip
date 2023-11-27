@@ -59,7 +59,7 @@ jobs:
         id: "linuxBuild"
         if: matrix.platform.os_name == 'Linux-x86_64'
         with:
-          project_dir: ${{ github.action_path }}
+          project_dir: ${{ github.workspace }}
       - run: rustup target add ${{ matrix.platform.target }}
         if: matrix.platform.os_name == 'macOS-x86_64'
       - run: yarn install

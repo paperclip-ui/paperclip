@@ -2,8 +2,6 @@ FROM messense/rust-musl-cross:x86_64-musl
 
 COPY . /app
 WORKDIR /app
-RUN echo $1
-RUN ls
 RUN rustup update beta && \
     rustup target add --toolchain beta x86_64-unknown-linux-musl
 
@@ -28,8 +26,6 @@ RUN wget -qO- https://github.com/protocolbuffers/protobuf/releases/download/v25.
 RUN unzip temp.zip
 RUN unzip -o temp.zip -d "/usr"
 RUN chmod 755 /usr/bin/protoc
-
-RUN ls
 
 
 

@@ -58,14 +58,9 @@ jobs:
       - run: yarn install
       - run: rustup target add ${{ matrix.platform.target }}
       - run: yarn build
-      - run: cargo build --release --locked --target=${{ matrix.platform.target }}
+      - uses: ./
+        id: "linuxBuild"
         if: matrix.platform.os_name == 'Linux-x86_64'
-        env:
-          TARGET_CC: x86_64-linux-musl-gcc
-          RUSTFLAGS: "-C linker=clang -C link-arg=-fuse-ld=lld -C link-arg=-lpthread -C link-arg=-lm"
-          PROTOC: "/usr/bin/protoc"
-      # - run: cargo run  --release
-      - run: find target -maxdepth 3
       - run: cargo build --release --locked --target=${{ matrix.platform.target }}
         if: matrix.platform.os_name == 'macOS-x86_64'
       - name: Sign Mac OS binary
@@ -144,9 +139,13 @@ jobs:
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref }}
 
-      - name: Compress other binaries
+      - name: Compress other binaries (macOS)
         if: matrix.platform.target != 'x86_64-apple-darwin'
         run: cd target/release && tar -czvf ${{ matrix.platform.target }}-paperclip_cli.tar.gz paperclip_cli
+
+      - name: Compress other binaries (Linux)
+        if: matrix.platform.target != 'Linux-x86_64'
+        run: tar -czvf ${{ matrix.platform.target }}-paperclip_cli.tar.gz ${{ steps.linuxBuild.outputs.BIN_FILE }}
 
       - name: Upload other binaries to release
         if: matrix.platform.target != 'x86_64-apple-darwin'

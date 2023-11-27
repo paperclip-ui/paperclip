@@ -1,0 +1,10 @@
+# action.yml
+name: 'Build Release'
+outputs:
+  bin_file: # id of output
+    description: 'The generated binary file'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.who-to-greet }}

@@ -11,4 +11,4 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.roject_dir }}
+    - ${{ inputs.project_dir }}

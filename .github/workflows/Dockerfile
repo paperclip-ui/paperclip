@@ -1,8 +1,9 @@
 FROM messense/rust-musl-cross:x86_64-musl
 
-COPY . /app
+COPY /home/runner/work/paperclip/paperclip /app
 WORKDIR /app
 RUN echo $1
+RUN ls
 RUN rustup update beta && \
     rustup target add --toolchain beta x86_64-unknown-linux-musl
 

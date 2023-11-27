@@ -27,6 +27,8 @@ RUN unzip temp.zip
 RUN unzip -o temp.zip -d "/usr"
 RUN chmod 755 /usr/bin/protoc
 
+RUN ls
+
 
 
 # RUN rustup target add ${TARGET}

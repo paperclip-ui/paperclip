@@ -1,7 +1,5 @@
 FROM messense/rust-musl-cross:x86_64-musl
 
-COPY . /app
-WORKDIR /app
 RUN rustup update beta && \
     rustup target add --toolchain beta x86_64-unknown-linux-musl
 
@@ -28,6 +26,8 @@ RUN unzip -o temp.zip -d "/usr"
 RUN chmod 755 /usr/bin/protoc
 
 RUN ls
+
+COPY ./build.sh ./build.sh
 
 
 

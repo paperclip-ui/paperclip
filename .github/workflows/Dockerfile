@@ -27,9 +27,10 @@ RUN chmod 755 /usr/bin/protoc
 
 RUN ls
 
-COPY ./build.sh ./build.sh
+COPY build.sh /build.sh
+RUN chmod 555 /build.sh
 
 
 
 # RUN rustup target add ${TARGET}
-ENTRYPOINT ["./build.sh"]
+ENTRYPOINT ["/build.sh"]

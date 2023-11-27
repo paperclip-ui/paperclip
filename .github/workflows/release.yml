@@ -61,6 +61,8 @@ jobs:
       - uses: ./.github/workflows
         id: "linuxBuild"
         if: matrix.platform.os_name == 'Linux-x86_64'
+        with:
+          project_dir: ${{ github.action_path }}
       - run: cargo build --release --locked --target=${{ matrix.platform.target }}
         if: matrix.platform.os_name == 'macOS-x86_64'
       - name: Sign Mac OS binary

@@ -2,6 +2,7 @@ FROM messense/rust-musl-cross:x86_64-musl
 
 COPY . /app
 WORKDIR /app
+RUN echo $1
 RUN rustup update beta && \
     rustup target add --toolchain beta x86_64-unknown-linux-musl
 

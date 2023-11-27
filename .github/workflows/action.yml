@@ -1,5 +1,9 @@
 # action.yml
 name: 'Build Release'
+inputs: 
+  project_dir: 
+    description: 'The directory of the project'
+    required: true
 outputs:
   bin_file: # id of output
     description: 'The generated binary file'
@@ -7,4 +11,4 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.who-to-greet }}
+    - ${{ inputs.roject_dir }}

@@ -29,5 +29,6 @@ RUN chmod 755 /usr/bin/protoc
 
 
 
+
 # RUN rustup target add ${TARGET}
-RUN ["./build.sh"]
+RUN [".github/workflows/build.sh"]

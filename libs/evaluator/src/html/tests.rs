@@ -695,19 +695,20 @@ add_case! {
 }
 
 // add_case! {
-//     previews_are_also_used_in_instances,
+//     previews_can_define_a_collection_of_values,
 //     [
 //     ("/entry.pc", r#"
 
 //     /**
-//      * @preview(showTest: true, nested: (showSomethingElse: true))
+//      * @preview(items: [(value: 1), (value: 2)])
 //      */
 //     component A {
 //         render div root {
-//             if showTest {
-//                 text "blarg"
+//             repeat items {
+//                 div {
+//                     slot value
+//                 }
 //             }
-//             B nested
 //         }
 //     }
 //     A

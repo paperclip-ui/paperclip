@@ -19,7 +19,7 @@ export const Editor = (Base: React.FC<styles.BaseEditorProps>) => () => {
   return (
     <>
       <ResourceModal />
-      <Base leftSidebarProps={{}} rightPanelProps={{}} showCanvas={currentFile != null} showSplash={currentFile == null} commands={
+      <Base leftSidebarProps={{}} rightPanelProps={{}} showCanvas={currentFile != null} showSplash={currentFile == null} splashProps={{commands:
         <>
           {shortcuts
             .filter((shortcut) =>
@@ -41,7 +41,7 @@ export const Editor = (Base: React.FC<styles.BaseEditorProps>) => () => {
               />
             ))}
         </>
-      } />
+      }} />
     </>
 
 

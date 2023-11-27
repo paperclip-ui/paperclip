@@ -14,6 +14,8 @@ pub enum Token<'src> {
     Word(&'src [u8]),
     ParenOpen,
     ParenClose,
+    BracketOpen,
+    BracketClose,
     Boolean(bool),
     Colon,
     Comma,
@@ -36,6 +38,8 @@ pub fn next_token<'src>(
             b'@' => Token::At,
             b'(' => Token::ParenOpen,
             b')' => Token::ParenClose,
+            b'[' => Token::BracketOpen,
+            b']' => Token::BracketClose,
             b':' => Token::Colon,
             b',' => Token::Comma,
             b'-' => {

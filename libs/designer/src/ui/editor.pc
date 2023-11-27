@@ -47,7 +47,7 @@ public component SplashInfo {
                     top: 60px
                 }
             }
-            div commands {
+            div commandsContainer {
                 style {
                     display: flex
                     flex-direction: column
@@ -102,21 +102,6 @@ public component SplashInfo {
                 }
             }
         }
-    }
-}
-
-/**
- * @bounds(x: 1209, y: -99, width: 886, height: 213)
-*/
-public component CenterPanels {
-    render div {
-        style {
-            display: flex
-            flex: 1
-            flex-direction: column
-            justify-content: space-between
-        }
-        toolbar.Toolbar
     }
 }
 
@@ -198,11 +183,7 @@ public component Editor {
             Canvas
         }
         if showSplash {
-            SplashInfo {
-                insert commands {
-                    slot commands
-                }
-            }
+            SplashInfo splash
         }
         div editorPanels {
             style {
@@ -219,7 +200,15 @@ public component Editor {
             }
             leftSidebar.LeftSidebar leftSidebar
             if showCanvas {
-                CenterPanels
+                render div centerPanels {
+                    style {
+                        display: flex
+                        flex: 1
+                        flex-direction: column
+                        justify-content: space-between
+                    }
+                    toolbar.Toolbar
+                }
                 module.SidebarContainer {
                     rightSidebar.RightSidebar rightPanel
                 }

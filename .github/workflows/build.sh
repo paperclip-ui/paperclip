@@ -1,3 +1,5 @@
+#!/bin/sh -l
+
 yarn install
 cargo build --release --locked --target x86_64-unknown-linux-musl
 

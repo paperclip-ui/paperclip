@@ -58,7 +58,7 @@ jobs:
       - run: yarn install
       - run: rustup target add ${{ matrix.platform.target }}
       - run: yarn build
-      - uses: ./github//workflows
+      - uses: ./.github/workflows
         id: "linuxBuild"
         if: matrix.platform.os_name == 'Linux-x86_64'
       - run: cargo build --release --locked --target=${{ matrix.platform.target }}

@@ -55,14 +55,17 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: "20.x"
-      - run: yarn install
-      - run: rustup target add ${{ matrix.platform.target }}
-      - run: yarn build
       - uses: ./.github/workflows
         id: "linuxBuild"
         if: matrix.platform.os_name == 'Linux-x86_64'
         with:
           project_dir: ${{ github.action_path }}
+      - run: rustup target add ${{ matrix.platform.target }}
+        if: matrix.platform.os_name == 'macOS-x86_64'
+      - run: yarn install
+        if: matrix.platform.os_name == 'macOS-x86_64'
+      - run: yarn build
+        if: matrix.platform.os_name == 'macOS-x86_64'
       - run: cargo build --release --locked --target=${{ matrix.platform.target }}
         if: matrix.platform.os_name == 'macOS-x86_64'
       - name: Sign Mac OS binary

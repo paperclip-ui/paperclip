@@ -1,6 +1,6 @@
 FROM messense/rust-musl-cross:x86_64-musl
 
-COPY /home/runner/work/paperclip/paperclip /app
+COPY . /app
 WORKDIR /app
 RUN echo $1
 RUN ls

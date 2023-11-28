@@ -156,12 +156,15 @@ export namespace ast {
 
   export const getChildren = memoize(
     ({ expr, kind }: InnerExpressionInfo): InnerExpressionInfo[] => {
+      
       switch (kind) {
         case ExprKind.Component:
         case ExprKind.Slot:
         case ExprKind.Insert:
         case ExprKind.TextNode:
-        case ExprKind.Document:
+          case ExprKind.Document:
+            case ExprKind.Condition:
+              case ExprKind.Repeat:
         case ExprKind.Element:
           return (expr.body || EMPTY_ARRAY).map(getChildExprInner);
         case ExprKind.Render:

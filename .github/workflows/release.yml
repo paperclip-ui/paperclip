@@ -90,7 +90,7 @@ jobs:
           # print for debugging
           security find-certificate -a
 
-          /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime target/release/paperclip_cli -v
+          /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime target/${{ matrix.platform.target }}/release/paperclip_cli -v
 
       - name: Notaize Mac OS binary
         if: matrix.platform.target == 'x86_64-apple-darwin'
@@ -113,7 +113,7 @@ jobs:
 
 
           mkdir -p dist
-          cp target/release/paperclip_cli dist
+          cp target/${{ matrix.platform.target }}/release/paperclip_cli dist
           DMG_NAME="${{ matrix.platform.target }}-paperclip_cli.dmg"
 
           hdiutil create $DMG_NAME -ov -volname "RecitalInstall" -fs HFS+ -srcfolder "dist"
@@ -142,15 +142,11 @@ jobs:
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref }}
 
-      - name: Compress other binaries (macOS)
+      - name: Compress binaries
         if: matrix.platform.os_name == 'macOS-x86_64'
-        run: tar -czvf ${{ matrix.platform.target }}-paperclip_cli.tar.gz target/release/paperclip_cli
+        run: tar -czvf ${{ matrix.platform.target }}-paperclip_cli.tar.gz target/${{ matrix.platform.target }}/release/paperclip_cli
 
-      - name: Compress other binaries (Linux)
-        if: matrix.platform.os_name == 'Linux-x86_64'
-        run: tar -czvf ${{ matrix.platform.target }}-paperclip_cli.tar.gz ${{ steps.linuxBuild.outputs.BIN_FILE }}
-
-      - name: Upload other binaries to release
+      - name: Upload binaries to release
         if: matrix.platform.target != 'x86_64-apple-darwin'
         uses: svenstaro/upload-release-action@v2
         with:

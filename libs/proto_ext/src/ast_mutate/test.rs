@@ -26,7 +26,7 @@ macro_rules! case {
             let mut graph = graph::Graph::new();
 
             for (path, _) in $mock_files {
-                block_on(graph.load(&path, &mock_fs, Options::new(vec![])))
+                block_on(graph.load(&path, &mock_fs, Options::new(vec!["condition".to_string()])))
                     .expect("Unable to load");
             }
 
@@ -1734,12 +1734,18 @@ case! {
   ],
 
   mutation::Inner::SetId(SetId {
-    expression_id: "80f4925f-1".to_string(),
+    expression_id: "80f4925f-2".to_string(),
     value: "blarg".to_string()
   }).get_outer(),
   [(
     "/entry.pc", r#"
-      div a
+    component A {
+      render div {
+        if blarg {
+          text "somethingElse"
+        }
+      }
+    }
     "#
   )]
 }

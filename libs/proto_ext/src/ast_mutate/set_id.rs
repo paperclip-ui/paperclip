@@ -116,4 +116,19 @@ impl MutableVisitor<()> for EditContext<SetId> {
         );
         VisitorResult::Continue
     }
+    fn visit_condition(&mut self, expr: &mut paperclip_proto::ast::pc::Condition) -> VisitorResult<()> {
+        
+        if expr.id == self.mutation.expression_id {
+            expr.property = get_valid_name(&self.mutation.value, Case::Camel);
+            self.add_change(
+                mutation_result::Inner::ExpressionUpdated(ExpressionUpdated {
+                    id: expr.id.to_string(),
+                })
+                .get_outer(),
+            );
+            VisitorResult::Return(())
+        } else {
+            VisitorResult::Continue
+        }
+    }
 }

@@ -531,7 +531,7 @@ const createEventHandler = (actions: Actions) => {
         ast.ExprKind.Component,
         ast.ExprKind.Slot,
         ast.ExprKind.Insert,
-      ].includes(targetExpr.kind)
+      ].includes(targetExpr?.kind)
     ) {
       parentId = targetExpr.expr.id;
     }

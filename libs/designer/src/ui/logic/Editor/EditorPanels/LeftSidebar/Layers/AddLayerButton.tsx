@@ -22,37 +22,37 @@ export const AddLayerButton =
         onSelect={onChange}
         menu={() => [
           <SuggestionMenuItem value={LayerKind.Atom}>
-            <Box rootProps={{ className: "space03" }}>
+            <Box className="space03">
               <styles.LayerIcon class="atom-token" />
               Atom
             </Box>
           </SuggestionMenuItem>,
           <SuggestionMenuItem value={LayerKind.Style}>
-            <Box rootProps={{ className: "space03" }}>
+            <Box className="space03">
               <styles.LayerIcon class="composite-token" />
               Style mixin
             </Box>
           </SuggestionMenuItem>,
           <SuggestionMenuItem value={LayerKind.Element}>
-            <Box rootProps={{ className: "space03" }}>
+            <Box className="space03">
               <styles.LayerIcon class="element" />
               Element
             </Box>
           </SuggestionMenuItem>,
           <SuggestionMenuItem value={LayerKind.Text}>
-            <Box rootProps={{ className: "space03" }}>
+            <Box className="space03">
               <styles.LayerIcon class="text" />
               Text
             </Box>
           </SuggestionMenuItem>,
           <SuggestionMenuItem value={LayerKind.Component}>
-            <Box rootProps={{ className: "space03" }}>
+            <Box className="space03">
               <styles.LayerIcon class="component" />
               Component
             </Box>
           </SuggestionMenuItem>,
           <SuggestionMenuItem value={LayerKind.Trigger}>
-            <Box rootProps={{ className: "space03" }}>
+            <Box className="space03">
               <styles.LayerIcon class="trigger" />
               Trigger
             </Box>

@@ -4,7 +4,6 @@ import * as styles from "@paperclip-ui/designer/src/ui/editor.pc";
 import { FrameContainer } from "@paperclip-ui/designer/src/ui/logic/FrameContainer";
 import { Node as VirtNode } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
-import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 import { metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
 
 const DEFAULT_BOUNDS = { x: 0, y: 0, width: 1024, height: 768 };

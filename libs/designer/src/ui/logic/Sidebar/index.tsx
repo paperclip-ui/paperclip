@@ -5,7 +5,7 @@ import { startDOMDrag } from "../utils/dnd";
 import { clamp } from "lodash";
 
 type SidebarContainerProps = {
-  children: any;
+  children?: any;
   position: "left" | "right";
 };
 

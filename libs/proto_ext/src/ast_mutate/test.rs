@@ -1717,6 +1717,32 @@ case! {
     "#
   )]
 }
+case! {
+  can_change_the_property_of_a_condition,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+          render div {
+            if something {
+              text "somethingElse"
+            }
+          }
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-1".to_string(),
+    value: "blarg".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      div a
+    "#
+  )]
+}
 
 case! {
   can_change_the_id_of_a_text_node,

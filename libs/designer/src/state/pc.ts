@@ -642,7 +642,8 @@ export const getExprBounds = (state: DesignerState): Record<string, number> => {
       | VirtElement
       | VirtText);
 
-  return metadataValueMapToJSON(node?.metadata);
+  return metadataValueMapToJSON(node?.metadata).bounds;
+  
 };
 
 

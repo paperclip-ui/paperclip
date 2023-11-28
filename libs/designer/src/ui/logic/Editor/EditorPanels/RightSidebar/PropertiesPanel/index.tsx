@@ -60,6 +60,7 @@ const IDField = () => {
     expr.kind !== ast.ExprKind.Element &&
     expr.kind !== ast.ExprKind.TextNode &&
     expr.kind !== ast.ExprKind.Atom &&
+    expr.kind !== ast.ExprKind.Condition &&
     expr.kind !== ast.ExprKind.Style &&
     expr.kind !== ast.ExprKind.Slot &&
     expr.kind !== ast.ExprKind.Component
@@ -73,10 +74,25 @@ const IDField = () => {
       input={
         <TextInput
           placeholder="Undefined"
-          value={expr.expr.name}
+          value={getExprName(expr)}
           onSave={onSave}
         />
       }
     />
   );
 };
+
+const getExprName = (expr: ast.InnerExpressionInfo) => {
+  switch(expr.kind) {
+    case ast.ExprKind.Element:
+    case ast.ExprKind.TextNode:
+    case ast.ExprKind.Atom:
+    case ast.ExprKind.Style:
+    case ast.ExprKind.Slot:
+    case ast.ExprKind.Component:
+      return expr.expr.name;
+    case ast.ExprKind.Condition:
+      return expr.expr.property;
+
+  }
+}

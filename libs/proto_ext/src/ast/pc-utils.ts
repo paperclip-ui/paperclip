@@ -76,6 +76,7 @@ export namespace ast {
     | BaseExprInfo<Component, ExprKind.Component>
     | BaseExprInfo<Atom, ExprKind.Atom>
     | BaseExprInfo<Reference, ExprKind.Reference>
+    | BaseExprInfo<Condition, ExprKind.Condition>
     | BaseExprInfo<Trigger, ExprKind.Trigger>
     | BaseExprInfo<Script, ExprKind.Script>
     | BaseExprInfo<Element, ExprKind.Element>

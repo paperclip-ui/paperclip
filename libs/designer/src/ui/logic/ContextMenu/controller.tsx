@@ -117,11 +117,11 @@ const ContextMenuOption = ({
   };
   return (
     <styles.ContextMenuItem
-    containerProps={{rootProps:{
-      className: cx({ disabled: enabled === false }),
+    containerProps={{
+      class: cx({ disabled: enabled === false }),
       onClick: onSelect
 
-    }}}
+    }}
       keyCommand={shortcut ? prettyKeyCombo(shortcut) : null}
     >
       {label}

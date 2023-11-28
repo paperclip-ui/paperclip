@@ -279,7 +279,7 @@ component LeftSidebarHeader {
 */
 public component AddLayerButton {
     script(src: "./Layers/AddLayerButton.tsx", target: "react", name: "AddLayerButton")
-    render etc.PlusButton(onClick: onClick, onBlur: onBlur)
+    render etc.PlusButton(onClick: onClick, class: class)
 }
 
 /**

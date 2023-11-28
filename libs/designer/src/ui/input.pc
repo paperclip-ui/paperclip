@@ -112,6 +112,7 @@ public component SuggestionMenuSearch {
     }
 }
 
+
 /**
  * @bounds(x: -1092, y: -747, width: 433, height: 64)
 */
@@ -126,7 +127,7 @@ public component SuggestionMenuItem {
     variant checked trigger {
         ".checked"
     }
-    render menu.MenuItem root {
+    render menu.MenuItem(onClick: onClick, onMouseDown: onMouseDown, class: class) {
         slot children
         div {
             style {

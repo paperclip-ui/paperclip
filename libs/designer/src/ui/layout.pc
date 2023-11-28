@@ -22,7 +22,7 @@ public component Box {
     variant column trigger {
         ".column"
     }
-    render div root {
+    render div(onClick: onClick, class: class) {
         style {
             position: relative
             display: flex

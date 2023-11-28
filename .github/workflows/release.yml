@@ -144,14 +144,14 @@ jobs:
 
       - name: Compress binaries
         if: matrix.platform.os_name != 'macOS-x86_64'
-        run: cd target/${{ matrix.platform.target }}/release && tar -czvf ${{ matrix.platform.target }}-paperclip_cli.tar.gz paperclip_cli
+        run: tar -czvf ${{ matrix.platform.target }}-paperclip_cli.tar.gz -C target/${{ matrix.platform.target }}/release paperclip_cli
 
       - name: Upload binaries to release
         if: matrix.platform.target != 'x86_64-apple-darwin'
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/${{ matrix.platform.target }}/release/${{ matrix.platform.target }}-paperclip_cli.tar.gz
+          file: ${{ matrix.platform.target }}-paperclip_cli.tar.gz
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref }}
   publish:

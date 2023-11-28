@@ -143,11 +143,11 @@ jobs:
           tag: ${{ github.ref }}
 
       - name: Compress other binaries (macOS)
-        if: matrix.platform.target != 'x86_64-apple-darwin'
+        if: matrix.platform.os_name == 'macOS-x86_64'
         run: cd target/release && tar -czvf ${{ matrix.platform.target }}-paperclip_cli.tar.gz paperclip_cli
 
       - name: Compress other binaries (Linux)
-        if: matrix.platform.target != 'Linux-x86_64'
+        if: matrix.platform.os_name == 'Linux-x86_64'
         run: tar -czvf ${{ matrix.platform.target }}-paperclip_cli.tar.gz ${{ steps.linuxBuild.outputs.BIN_FILE }}
 
       - name: Upload other binaries to release

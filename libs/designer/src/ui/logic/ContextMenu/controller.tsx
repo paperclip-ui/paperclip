@@ -10,8 +10,7 @@ import {
   MenuItemOption,
 } from "../../../modules/shortcuts/base";
 import { Portal } from "../Portal";
-import { getHistoryState } from "../../../domains/history/state";
-import { getEditorState, getHistoryStr } from "../../../state";
+import {  getHistoryStr } from "../../../state";
 import { prettyKeyCombo } from "../../../domains/ui/state";
 import { ContextMenuDivider, BaseContextMenuProps } from "./context-menu.pc";
 
@@ -87,7 +86,7 @@ export const ContextMenu =
         })}
         <Portal>
           {anchorStyle && (
-            <Base style={anchorStyle}>
+            <Base containerProps={{rootProps:{style: anchorStyle}}}>
               {menu().map((item) => {
                 if (item.kind === MenuItemKind.Divider) {
                   return <ContextMenuDivider />;
@@ -118,9 +117,12 @@ const ContextMenuOption = ({
   };
   return (
     <styles.ContextMenuItem
+    containerProps={{rootProps:{
+      className: cx({ disabled: enabled === false }),
+      onClick: onSelect
+
+    }}}
       keyCommand={shortcut ? prettyKeyCombo(shortcut) : null}
-      class={cx({ disabled: enabled === false })}
-      onClick={onSelect}
     >
       {label}
     </styles.ContextMenuItem>

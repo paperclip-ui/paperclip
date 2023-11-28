@@ -6,7 +6,7 @@ import "../../menu.pc" as menu
 */
 public component ContextMenu {
     script(src: "./controller.tsx", target: "react", name: "ContextMenu")
-    render menu.Menu(style: style, onKeyDown: onKeyDown) {
+    render menu.Menu container {
         slot children {
             ContextMenuItem {
                 text "Create component"
@@ -71,7 +71,7 @@ public component ContextMenuItem {
     variant first trigger {
         ":first-child"
     }
-    render menu.MenuItem(onMouseDown: onMouseDown, onClick: onClick, class: class, disabled: disabled) {
+    render menu.MenuItem container {
         slot children {
             text "Context menu item"
         }

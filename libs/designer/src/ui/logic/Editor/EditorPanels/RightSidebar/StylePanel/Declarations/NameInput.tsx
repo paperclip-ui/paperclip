@@ -32,6 +32,8 @@ export const NameInput = ({ name, onChange }: NameInputProps) => {
     });
   }, []);
 
+
+
   return (
     <SuggestionMenu values={[name]} menu={menu} onSelect={onSelect}>
       <TextInput autoFocus value={name} onChange={onChange} />

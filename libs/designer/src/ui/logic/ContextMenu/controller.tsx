@@ -118,9 +118,10 @@ const ContextMenuOption = ({
   return (
     <styles.ContextMenuItem
     containerProps={{
-      class: cx({ disabled: enabled === false }),
-      onClick: onSelect
-
+      rootProps: {
+        className: cx({ disabled: enabled === false }),
+        onClick: onSelect
+      }
     }}
       keyCommand={shortcut ? prettyKeyCombo(shortcut) : null}
     >

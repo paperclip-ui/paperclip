@@ -76,7 +76,7 @@ public component SuggestionMenuItem {
     variant checked trigger {
         ".checked"
     }
-    render menu.MenuItem menuItem(class: class) {
+    render menu.MenuItem root {
         slot children
         div {
             style {

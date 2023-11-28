@@ -49,7 +49,7 @@ export const AttributesSection = () => {
     <sidebarStyles.SidebarSection>
       <sidebarStyles.SidebarPanelHeader>
         Attributes
-        <etcStyles.PlusButton rootProps={{ onClick: onNewClick }} />
+        <etcStyles.PlusButton onClick={onNewClick} />
       </sidebarStyles.SidebarPanelHeader>
 
       <sidebarStyles.SidebarPanelContent>

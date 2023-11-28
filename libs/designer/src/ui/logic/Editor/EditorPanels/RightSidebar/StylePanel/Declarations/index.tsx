@@ -80,7 +80,7 @@ const GroupSection = ({ targetId, name, style }: GroupSectionProps) => {
     <sidebarStyles.SidebarSection>
       <sidebarStyles.SidebarPanelHeader>
         {name.charAt(0).toUpperCase() + name.substring(1)}
-        <etcStyles.PlusButton rootProps={{ onClick: onPlusClick }} />
+        <etcStyles.PlusButton onClick={onPlusClick} />
       </sidebarStyles.SidebarPanelHeader>
       <sidebarStyles.SidebarPanelContent>
         <inputStyles.Fields>{decls}</inputStyles.Fields>

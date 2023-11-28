@@ -5,6 +5,11 @@ import "./right-sidebar.pc" as rightSidebar
 import "./resource-modal.pc" as assetsModal
 import "./toolbar.pc" as toolbar
 
+/**
+ * @bounds(x: -918, y: -272, width: 1024, height: 768)
+*/
+div unnamed
+
 token iconSize var(theme.fontSize03)
 /**
  * @bounds(x: 4694, y: 896, width: 1926, height: 1486)
@@ -200,7 +205,8 @@ public component Editor {
             }
             leftSidebar.LeftSidebar leftSidebar
             if showCanvas {
-                render div centerPanels {
+                render div
+                centerPanels {
                     style {
                         display: flex
                         flex: 1
@@ -280,10 +286,11 @@ public component Canvas {
 
 /**
  * @bounds(x: 2751, y: 540, width: 1557, height: 993)
- * @preview(root:(showSplash: true))
+ * @preview(root: (showSplash: true))
 */
 Editor root {
     insert commands {
         SplashTip
     }
 }
+

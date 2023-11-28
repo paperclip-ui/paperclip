@@ -17,6 +17,8 @@ RUN apt-get install -y wget
 # RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 # ENV PATH="/root/.cargo/bin:${PATH}"
 
+RUN curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
 ENV NODE_VERSION=16.13.0
 RUN apt install -y curl
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash

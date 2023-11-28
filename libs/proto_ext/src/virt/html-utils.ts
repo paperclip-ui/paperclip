@@ -87,6 +87,7 @@ export namespace virtHTML {
     }
   );
 
+
   export const containsNode = <TNode extends BaseTreeNode>(
     node: TNode,
     root: TNode

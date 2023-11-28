@@ -1,0 +1,181 @@
+import "./input.pc" as module1
+import "./button.pc" as module
+import "./theme.pc" as mod
+
+/**
+ * @bounds(x: 1285, y: 559, width: 428, height: 38)
+*/
+public component ModalFooter {
+    render div content {
+        style {
+            display: flex
+            justify-content: space-between
+        }
+        div left
+        div right {
+            style {
+                display: flex
+                gap: var(mod.space03)
+            }
+            slot rightControls {
+                module.Button {
+                    override {
+                        variant secondary trigger {
+                            true
+                        }
+                    }
+                    text "cancel"
+                }
+                module.Button {
+                    text "ok"
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: 1162, y: 647, width: 567, height: 70)
+*/
+public component ModalContent {
+    render div content {
+        style {
+            height: 100%
+            min-height: 0px
+            max-width: 300px
+        }
+        slot children {
+            text "some description of text and stuff"
+        }
+    }
+}
+
+/**
+ * @bounds(x: 1145, y: 709, width: 584, height: 70)
+*/
+public component ModalHeader {
+    render div header {
+        style {
+            font-weight: bold
+            font-size: var(mod.fontSize02)
+            display: flex
+            justify-content: space-between
+            align-items: flex-start
+            bakground: blue
+            background: transparent
+        }
+        slot children {
+            text "title"
+        }
+        button closeButton {
+            style {
+                color: inherit
+                border: none
+                padding: 0
+                margin: 0
+                font-size: inherit
+                align-items: center
+                display: flex
+                background: transparent
+                cursor: pointer
+            }
+            text "×"
+        }
+    }
+}
+
+/**
+ * @bounds(x: 1168, y: 187, width: 557, height: 254)
+*/
+public component Modal {
+    render div modal {
+        style extends mod.popup {
+            position: absolute
+            left: 50%
+            top: 50%
+            transform: translate(-50%, -50%)
+            color: var(mod.fontColor01)
+            font-family: var(mod.defaultFontFamily)
+            padding: var(mod.space05)
+            display: flex
+            flex-direction: column
+            gap: var(mod.space05)
+            min-width: 300px
+        }
+        slot children {
+            ModalHeader
+            ModalContent
+            ModalFooter
+        }
+    }
+}
+
+/**
+ * @bounds(x: -53, y: 18, width: 1024, height: 768)
+*/
+public component ModalContainer {
+    render div container {
+        div background
+        style {
+            position: fixed
+            background: rgba(0, 0, 0, 0.2)
+            top: 0px
+            left: 0px
+            width: 100vw
+            height: 100vh
+            z-index: 1024
+        }
+        slot children {
+            Modal
+        }
+    }
+}
+
+/**
+ * @bounds(x: -43, y: 896, width: 1024, height: 768)
+*/
+ModalContainer promptPreview {
+    insert children {
+        Modal {
+            ModalHeader {
+                insert children {
+                    text "Create a new file"
+                }
+            }
+            ModalContent {
+                insert children {
+                    module1.TextInput(placeholder: "new file name", value: "") {
+                        override {
+                            variant large
+                            variant medium trigger {
+                                true
+                            }
+                        }
+                    }
+                }
+            }
+            ModalFooter
+        }
+    }
+}
+
+/**
+ * @bounds(x: 1044, y: 913, width: 1024, height: 768)
+*/
+ModalContainer confirmPreview {
+    insert children {
+        Modal {
+            ModalHeader {
+                insert children {
+                    text "Are you sure?"
+                }
+            }
+            ModalContent {
+                insert children {
+                    text "Are you sure you want to move this file to the trash?"
+                }
+            }
+            ModalFooter
+        }
+    }
+}

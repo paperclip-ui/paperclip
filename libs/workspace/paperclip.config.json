@@ -2,7 +2,7 @@
   "srcDir": "src",
   "moduleDirs": ["node_module"],
   "globalScripts": [
-    "./src/styles/globals.css",
+    "./src/ui/globals.css",
     "https://rsms.me/inter/inter.css"
   ],
   "compilerOptions": [

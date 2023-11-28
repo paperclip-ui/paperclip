@@ -1,0 +1,289 @@
+import "./logic/Sidebar/sidebar.pc" as module
+import "./theme.pc" as theme
+import "./logic/Editor/EditorPanels/LeftSidebar/ui.pc" as leftSidebar
+import "./right-sidebar.pc" as rightSidebar
+import "./resource-modal.pc" as assetsModal
+import "./toolbar.pc" as toolbar
+
+token iconSize var(theme.fontSize03)
+/**
+ * @bounds(x: 4694, y: 896, width: 1926, height: 1486)
+*/
+public component SplashInfo {
+    render div {
+        style {
+            width: 100%
+            left: 0px
+            top: 0px
+            position: relative
+            height: 100%
+        }
+        div {
+            style {
+                transform: translate(-50%, -50%)
+                font-size: 1em
+                font-family: var(theme.defaultFontFamily)
+                display: flex
+                flex-direction: column
+                gap: var(theme.space08)
+                align-items: center
+                color: var(theme.gray0)
+                position: absolute
+                left: 50%
+                top: 50%
+                width: 600px
+            }
+            div logo {
+                style {
+                    width: 200px
+                    opacity: 0.5
+                    mask-image: url("./logo.svg")
+                    height: 200px
+                    background: var(theme.gray06)
+                    mask-repeat: no-repeat
+                    mask-position: center
+                    mask-size: 100%
+                    position: relative
+                    top: 60px
+                }
+            }
+            div commandsContainer {
+                style {
+                    display: flex
+                    flex-direction: column
+                    gap: var(theme.space02)
+                    width: 100%
+                }
+                slot commands {
+                    SplashTip {
+                        insert label {
+                            text "Create design file"
+                        }
+                        insert shortcuts {
+                            ComboKey {
+                                style
+                                insert children {
+                                    text "⌘"
+                                }
+                            }
+                            ComboKey {
+                                style
+                                insert children {
+                                    text "⇧"
+                                }
+                            }
+                            ComboKey {
+                                style
+                                insert children {
+                                    text "d"
+                                }
+                            }
+                        }
+                    }
+                    SplashTip {
+                        insert label {
+                            text "Find design file"
+                        }
+                        insert shortcuts {
+                            ComboKey {
+                                style
+                                insert children {
+                                    text "⌘"
+                                }
+                            }
+                            ComboKey {
+                                style
+                                insert children {
+                                    text "f"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: 6874, y: 1592, width: 345, height: 71)
+*/
+public component SplashTip {
+    render div {
+        style {
+            display: flex
+            gap: var(theme.space04)
+            align-items: center
+            font-family: var(theme.defaultFontFamily)
+            color: var(theme.gray0)
+            justify-content: flex-end
+            width: 100%
+        }
+        slot label {
+            div {
+                style {
+                    font-weight: bold
+                }
+                text "Create a design file"
+            }
+        }
+        div {
+            style {
+                display: flex
+                gap: var(theme.space02)
+                width: 50%
+            }
+            slot shortcuts {
+                ComboKey {
+                    insert children {
+                        text "⌘"
+                    }
+                }
+                ComboKey {
+                    insert children {
+                        text "⇧"
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: 1092, y: -452, width: 251, height: 118)
+*/
+public component ComboKey {
+    render span {
+        style {
+            background: var(theme.gray06)
+            padding: var(theme.space02)
+            border-radius: var(theme.space03)
+            width: 30px
+            text-align: center
+        }
+        slot children {
+            text "meta"
+        }
+    }
+}
+
+/**
+ * @bounds(x: 512, y: 542, width: 1830, height: 1256)
+ * @preview(showCanvas: true)
+*/
+public component Editor {
+    script(src: "./logic/Editor/index.tsx", target: "react", name: "Editor")
+    render div {
+        style extends theme.fontDefault {
+            width: 100vw
+            height: 100vh
+            background: var(theme.canvasColor)
+        }
+        if showCanvas {
+            Canvas
+        }
+        if showSplash {
+            SplashInfo splash
+        }
+        div editorPanels {
+            style {
+                display: flex
+                flex: 1
+                z-index: 3
+                gap: var(theme.space05)
+                position: absolute
+                height: 100%
+                width: 100%
+                justify-content: space-between
+                pointer-events: none
+                top: 0px
+            }
+            leftSidebar.LeftSidebar leftSidebar
+            if showCanvas {
+                render div centerPanels {
+                    style {
+                        display: flex
+                        flex: 1
+                        flex-direction: column
+                        justify-content: space-between
+                    }
+                    toolbar.Toolbar
+                }
+                module.SidebarContainer {
+                    rightSidebar.RightSidebar rightPanel
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: -1353, y: 1353, width: 1024, height: 768)
+*/
+public component Artboard {
+    render div root {
+        div {
+            style {
+                color: rgb(236, 236, 236)
+                position: absolute
+                transform: translateY(calc(-100% - 0.5em))
+            }
+            slot title
+        }
+        slot children
+    }
+}
+
+/**
+ * @bounds(x: -833, y: 2054, width: 1024, height: 768)
+*/
+public component Canvas {
+    script(src: "./logic/Editor/Canvas/index.tsx", target: "react", name: "Canvas")
+    render div {
+        style {
+            flex: 1
+            overflow: hidden
+            position: absolute
+            top: 0px
+            left: 0px
+            width: 100%
+            height: 100%
+        }
+        div inner {
+            style extends canvas {
+                width: 100%
+                height: 100%
+            }
+            slot frames {
+                Artboard {
+                    style extends theme.centered {
+                        width: 400px
+                        height: 300px
+                    }
+                    insert title {
+                        text "some title"
+                    }
+                    div {
+                        style {
+                            background: white
+                            width: 100%
+                            height: 100%
+                        }
+                        text "some canvas element"
+                    }
+                }
+            }
+        }
+        slot tools
+    }
+}
+
+/**
+ * @bounds(x: 2751, y: 540, width: 1557, height: 993)
+ * @preview(root:(showSplash: true))
+*/
+Editor root {
+    insert commands {
+        SplashTip
+    }
+}

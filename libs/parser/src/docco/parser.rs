@@ -148,6 +148,18 @@ pub fn parse_number(context: &mut ParserContext) -> Result<base_ast::Num, Parser
     })
 }
 
+pub fn parse_boolean(context: &mut ParserContext) -> Result<base_ast::Bool, ParserError> {
+    let start = context.curr_u16pos.clone();
+    let value = extract_bool_value(context)?;
+    context.next_token()?; // eat
+    let end = context.curr_u16pos.clone();
+    Ok(base_ast::Bool {
+        id: context.next_id(),
+        range: Some(Range::new(start, end)),
+        value,
+    })
+}
+
 fn extract_number_value(context: &mut ParserContext) -> Result<f32, err::ParserError> {
     if let Some(Token::Number(value)) = context.curr_token {
         Ok(value)
@@ -164,6 +176,14 @@ fn extract_string_value(context: &mut ParserContext) -> Result<String, err::Pars
     }
 }
 
+fn extract_bool_value(context: &mut ParserContext) -> Result<bool, err::ParserError> {
+    if let Some(Token::Boolean(value)) = context.curr_token {
+        Ok(value)
+    } else {
+        return Err(context.new_unexpected_token_error());
+    }
+}
+
 fn extract_word_value(context: &mut ParserContext) -> Result<String, err::ParserError> {
     if let Some(Token::Word(value)) = context.curr_token {
         Ok(str::from_utf8(value).unwrap().to_string())
@@ -172,12 +192,14 @@ fn extract_word_value(context: &mut ParserContext) -> Result<String, err::Parser
     }
 }
 
-fn parse_parameters(context: &mut ParserContext) -> Result<ast::Parameters, err::ParserError> {
+fn parse_parameters(
+    context: &mut ParserContext,
+) -> Result<ast::PropertyValueMap, err::ParserError> {
     let start = context.curr_u16pos.clone();
 
     context.next_token()?; // eat (
 
-    let mut items: Vec<ast::Parameter> = vec![];
+    let mut items: Vec<ast::Property> = vec![];
     while context.curr_token != None {
         items.push(parse_parameter(context)?);
         if context.curr_token == Some(Token::ParenClose) {
@@ -192,24 +214,24 @@ fn parse_parameters(context: &mut ParserContext) -> Result<ast::Parameters, err:
 
     let end = context.curr_u16pos.clone();
 
-    Ok(ast::Parameters {
+    Ok(ast::PropertyValueMap {
         id: context.next_id(),
         range: Some(Range::new(start, end)),
         items,
     })
 }
 
-fn parse_parameter(context: &mut ParserContext) -> Result<ast::Parameter, err::ParserError> {
+fn parse_parameter(context: &mut ParserContext) -> Result<ast::Property, err::ParserError> {
     let start = context.curr_u16pos.clone();
     let name = extract_word_value(context)?;
     context.next_token()?; // eat name
     context.skip(is_superfluous)?;
     context.next_token()?; // eat :
     context.skip(is_superfluous)?;
-    let value = Some(parse_parameter_value(context)?.get_outer());
+    let value = Some(parse_property_value(context)?.get_outer());
     let end = context.curr_u16pos.clone();
 
-    Ok(ast::Parameter {
+    Ok(ast::Property {
         id: context.next_id(),
         range: Some(Range::new(start, end)),
         name,
@@ -217,12 +239,15 @@ fn parse_parameter(context: &mut ParserContext) -> Result<ast::Parameter, err::P
     })
 }
 
-fn parse_parameter_value(
+fn parse_property_value(
     context: &mut ParserContext,
-) -> Result<ast::parameter_value::Inner, err::ParserError> {
+) -> Result<ast::property_value::Inner, err::ParserError> {
     match context.curr_token {
-        Some(Token::String(_)) => Ok(ast::parameter_value::Inner::Str(parse_string(context)?)),
-        Some(Token::Number(_)) => Ok(ast::parameter_value::Inner::Num(parse_number(context)?)),
+        Some(Token::String(_)) => Ok(ast::property_value::Inner::Str(parse_string(context)?)),
+        Some(Token::ParenOpen) => Ok(ast::property_value::Inner::Parameters(parse_parameters(context)?)),
+        // Some(Token::BracketOpen) => Ok(ast::property_value::Inner::Parameters(parse_parameters(context)?)),
+        Some(Token::Number(_)) => Ok(ast::property_value::Inner::Num(parse_number(context)?)),
+        Some(Token::Boolean(_)) => Ok(ast::property_value::Inner::Bool(parse_boolean(context)?)),
         _ => Err(context.new_unexpected_token_error()),
     }
 }

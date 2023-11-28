@@ -1,0 +1,576 @@
+import "./logic/MultiSelectInput/ui.pc" as module2
+import "./decl-suggestion.pc" as module1
+import "./token-input.pc" as module
+import "./color-picker.pc" as imp2
+import "./button.pc" as imp1
+import "./menu.pc" as imp
+import "./logic/Sidebar/sidebar.pc" as sidebar
+import "./theme.pc" as theme
+import "./input.pc" as input
+import "./etc.pc" as etc
+
+/**
+ * @bounds(x: 298, y: -131, width: 289, height: 162)
+*/
+public component DeclInfoCard {
+    render div card {
+        style variant open {
+            pointer-events: initial
+            transform: translateX(-50%) translateY(4px)
+        }
+        style variant hovering {
+            left: 50%
+            min-width: 200px
+            width: 200px
+        }
+        style extends theme.fontDefault, theme.popup {
+            transform: translateX(-50%) translateY(4px)
+            position: absolute
+            border-radius: var(theme.roundedMD)
+            left: 50%
+            width: 200px
+            pointer-events: initial
+        }
+        div header {
+            style {
+                padding: var(theme.space03)
+                font-weight: 600
+            }
+            slot header {
+                text "This value comes from:"
+            }
+        }
+        div list {
+            slot children {
+                InheritedDeclInfo {
+                    override {
+                        variant hovering trigger {
+                            true
+                        }
+                        variant mixin trigger {
+                            true
+                        }
+                    }
+                }
+                InheritedDeclInfo {
+                    override {
+                        variant hovering
+                        variant mixin
+                        variant otherVariant trigger {
+                            true
+                        }
+                    }
+                }
+                InheritedDeclInfo {
+                    override {
+                        variant hovering
+                        variant mixin trigger {
+                            true
+                        }
+                    }
+                }
+            }
+        }
+        div arrow {
+            style {
+                background-color: var(theme.popupBackgroundColor)
+                width: 5px
+                height: 5px
+                position: absolute
+                left: 50%
+                top: -3px
+                transform: translateX(-50%) rotate(45deg)
+                pointer-events: none
+                border: 1px solid var(theme.borderColor)
+                border-right: none
+                border-bottom: none
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: -131, y: -562, width: 447, height: 73)
+*/
+public component InheritedDeclInfo {
+    variant otherVariant trigger {
+        ".variant"
+    }
+    variant mixin trigger {
+        ".mixin"
+    }
+    variant hovering trigger {
+        ".hovering"
+        ":hover"
+    }
+    render div inheritedDeclInfo  {
+        style variant hovering {
+            padding: var(theme.space03)
+            background: var(theme.gray04)
+            display: flex
+            justify-content: space-between
+        }
+        style extends theme.fontDefault {
+            padding: var(theme.space03)
+            display: flex
+            text-overflow: ellipsis
+            white-space: nowrap
+            overflow: hidden
+            justify-content: space-between
+            align-items: center
+            cursor: pointer
+            gap: var(theme.space02)
+        }
+        div ownerName {
+            style {
+                display: inline-flex
+                gap: var(theme.space02)
+                align-items: center
+                overflow: hidden
+                text-overflow: ellipsis
+                white-space: nowrap
+                width: 100%
+            }
+            div icon {
+                style variant otherVariant {
+                    mask-image: url("./square.svg")
+                    background-color: var(theme.blue01)
+                }
+                style variant mixin {
+                    mask-image: url("./group.svg")
+                }
+                style extends theme.icon {
+                    flex-shrink: 0
+                }
+            }
+            div {
+                style {
+                    overflow: hidden
+                    display: inline
+                    text-overflow: ellipsis
+                }
+                slot name {
+                    text "a suppper long name that should split"
+                }
+            }
+        }
+        div value {
+            style {
+                opacity: 0.5
+                overflow: hidden
+                text-overflow: ellipsis
+                width: 100%
+            }
+            slot value {
+                text unnamed "var(theme.backgroundColorSomethingBig)"
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: 633, y: -467, width: 355, height: 254)
+*/
+public component DeclInheritanceInfo {
+    variant open trigger {
+        ".open"
+    }
+    render div container(class: class) {
+        style {
+            display: inline-block
+            position: relative
+        }
+        slot children {
+            DeclName {
+                insert children {
+                }
+            }
+            DeclInfoCard
+        }
+    }
+}
+
+/**
+ * @bounds(x: 1184, y: -293, width: 1024, height: 768)
+*/
+public component DeclName {
+    variant overridden trigger {
+        ".overridden"
+    }
+    variant inherited trigger {
+        ".inherited"
+    }
+    render div(class: class, title: title, onClick: onClick) {
+        style variant overridden {
+            position: relative
+            border-radius: var(theme.roundedSM)
+            display: inline-block
+            font-family: var(theme.defaultFontFamily)
+            color: var(theme.gray0)
+            background: rgba(46, 72, 124, 1)
+        }
+        style variant inherited {
+            color: var(theme.gray0)
+            background: rgba(121, 41, 119, 1)
+        }
+        style {
+            cursor: pointer
+            font-family: var(theme.defaultFontFamily)
+            color: var(theme.gray0)
+            display: inline-block
+            border-radius: var(theme.roundedSM)
+            padding: var(theme.space01)
+            position: relative
+            overflow: hidden
+            text-overflow: ellipsis
+            white-space: nowrap
+            max-width: 100%
+        }
+        slot children {
+            text "background-image"
+        }
+    }
+}
+
+/**
+ * @bounds(x: 0, y: 0, width: 271, height: 768)
+*/
+public component Preview {
+    render sidebar.SidebarPanel {
+        style {
+            font-family: var(theme.defaultFontFamily)
+            color: var(theme.gray0)
+        }
+        sidebar.SidebarSection {
+            sidebar.SidebarPanelContent {
+                input.Field {
+                    insert name {
+                        text "Variant"
+                    }
+                    insert input {
+                        module2.MultiSelect {
+                            module2.MultiSelectItem {
+                                text "mobile"
+                            }
+                            module2.MultiSelectItem {
+                                text "dark"
+                            }
+                            module2.MultiSelectItem {
+                                text "another variant"
+                            }
+                            module2.MultiSelectTextInput
+                        }
+                    }
+                }
+            }
+        }
+        sidebar.SidebarSection {
+            sidebar.SidebarPanelHeader {
+                text "Instance"
+                etc.PlusButton
+            }
+            sidebar.SidebarPanelContent {
+                input.Fields {
+                    input.Field {
+                        insert name {
+                            text "mobile"
+                        }
+                        insert input {
+                            input.RadioInput
+                        }
+                    }
+                    input.Field {
+                        insert name {
+                            text "dark"
+                        }
+                        insert input {
+                            input.RadioInput {
+                                override {
+                                    variant on trigger {
+                                        true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    input.Field {
+                        insert name {
+                            text "asupperlongpropthatneedstrimming"
+                        }
+                        insert input {
+                            input.RadioInput {
+                                override {
+                                    variant on trigger {
+                                        true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        sidebar.SidebarSection {
+            sidebar.SidebarPanelHeader {
+                text "Layout"
+                etc.PlusButton
+            }
+            sidebar.SidebarPanelContent {
+                input.Fields {
+                    input.Field {
+                        insert name {
+                            DeclName(class: "inherited") {
+                                override {
+                                    variant inherited trigger {
+                                        inherited
+                                    }
+                                }
+                            }
+                        }
+                        insert input {
+                            input.Select {
+                                insert value {
+                                    input.Token(class: "keyword") {
+                                        text "flex"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    input.Field {
+                        insert name {
+                            DeclName {
+                                override {
+                                    variant overridden trigger {
+                                        true
+                                    }
+                                }
+                                insert children {
+                                    text "Padding" {
+                                        style variant inherited + overridden {
+                                            left: NaNpx
+                                            top: NaNpx
+                                            position: relative
+                                            width: 46px
+                                            height: 15px
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        insert input {
+                            input.TextInput(value: "", placeholder: "0px", class: "active")
+                        }
+                    }
+                    input.Field {
+                        insert name {
+                            DeclName {
+                                override {
+                                    variant overridden trigger {
+                                        true
+                                    }
+                                }
+                                text "Margin"
+                            }
+                        }
+                        insert input {
+                            input.TextInput(value: "", placeholder: "0px")
+                        }
+                    }
+                    input.Field {
+                        insert name {
+                            DeclName {
+                                override {
+                                    variant overridden trigger {
+                                        true
+                                    }
+                                }
+                                text "Position"
+                            }
+                        }
+                        insert input {
+                            input.Select {
+                                insert value {
+                                    input.Token(class: "keyword") {
+                                        text "static"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    input.Field {
+                        style {
+                            position: relative
+                        }
+                        insert name {
+                            DeclName {
+                                override {
+                                    variant inherited trigger {
+                                        true
+                                    }
+                                }
+                                text "Box Sizing"
+                            }
+                        }
+                        insert input {
+                            input.Select {
+                                insert value {
+                                    input.Token(class: "keyword") {
+                                        text "border-box"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        sidebar.SidebarSection {
+            sidebar.SidebarPanelHeader {
+                text "Style"
+                etc.PlusButton
+            }
+            sidebar.SidebarPanelContent {
+                input.Fields {
+                    input.Field {
+                        insert name {
+                            text "Background"
+                        }
+                        insert input {
+                            module.BackgroundTokenInputPreview {
+                                override root {
+                                    style {
+                                        --color: rgb(255, 81, 119)
+                                    }
+                                }
+                                span {
+                                    input.Token(class: "call") {
+                                        text "rgb"
+                                    }
+                                    input.Token(class: "punc") {
+                                        text "("
+                                    }
+                                    input.Token(class: "number") {
+                                        text "255"
+                                    }
+                                    input.Token(class: "punc") {
+                                        text ", "
+                                    }
+                                    input.Token(class: "number") {
+                                        text "255"
+                                    }
+                                    input.Token(class: "punc") {
+                                        text ", "
+                                    }
+                                    input.Token(class: "number") {
+                                        text "255"
+                                    }
+                                    input.Token(class: "punc") {
+                                        text ")"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    input.Field {
+                        insert input {
+                            module.BoxShadowTokenInputPreview {
+                                override root {
+                                    style {
+                                        --color: magenta
+                                    }
+                                }
+                                span {
+                                    input.Token(class: "keyword") {
+                                        text "magenta"
+                                    }
+                                }
+                            }
+                        }
+                        insert name {
+                            text "box-shadow"
+                        }
+                    }
+                    input.Field {
+                        insert name {
+                            text "Border"
+                        }
+                        insert input {
+                            input.TextInput(value: "", placeholder: "0px") {
+                                text "solid"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        sidebar.SidebarSection {
+            sidebar.SidebarPanelContent {
+                input.Fields {
+                    input.Field {
+                        insert name {
+                            div {
+                                style {
+                                    display: flex
+                                    align-items: center
+                                    gap: var(theme.space02)
+                                }
+                                div {
+                                    style extends theme.icon {
+                                        width: 0.8em
+                                        height: 0.8em
+                                        -webkit-mask-image: url("./group.svg")
+                                    }
+                                }
+                                text "Tokens"
+                            }
+                        }
+                        insert input {
+                            input.Select {
+                                insert value {
+                                    text "input"
+                                }
+                            }
+                        }
+                    }
+                    input.Field {
+                        insert input {
+                            input.Select {
+                                insert value {
+                                    text "fontDefault"
+                                }
+                            }
+                        }
+                    }
+                    input.Field {
+                        insert input {
+                            input.Select {
+                                insert value {
+                                    text "add..."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: 452, y: 107, width: 345, height: 214)
+*/
+div preview {
+    DeclInheritanceInfo {
+        override {
+            variant open trigger {
+                true
+            }
+        }
+        style {
+            position: absolute
+            left: 50%
+            transform: translateX(-50%)
+        }
+    }
+}

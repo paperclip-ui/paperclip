@@ -8,7 +8,7 @@ on:
 #   push:
 #     branches:
 #       - master
-#       - dev
+#       - dev2
 
 jobs:
   build:
@@ -19,46 +19,53 @@ jobs:
           - os_name: Linux-x86_64
             os: ubuntu-20.04
             target: x86_64-unknown-linux-musl
-            cargo_command: cargo
 
           - os_name: macOS-x86_64
             os: macOS-latest
             target: x86_64-apple-darwin
-            cargo_command: cargo
-
-        # matrix:
-        #   target: [
-        #       # x86_64-pc-windows-gnu,
-        #       # x86_64-unknown-linux-musl,
-        #       x86_64-apple-darwin,
-        #       x86_64-unknown-linux-gnu,
-        #     ]
 
         package: [libs/cli]
     runs-on: ${{ matrix.platform.os }}
     steps:
       - uses: actions/checkout@master
+        with:
+          packages: musl-tools # provides musl-gcc
+          version: 1.0
+      - run: sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get install clang pkg-config musl-tools -y
+        if: matrix.platform.os_name == 'Linux-x86_64'
+      - run: |
+          mkdir -p /tmp/protoc && cd /tmp/protoc
+          wget -qO- https://github.com/protocolbuffers/protobuf/releases/download/v25.1/protoc-25.1-linux-x86_64.zip -O temp.zip
+          unzip temp.zip
+          sudo unzip -o temp.zip -d "/usr"
+          sudo chmod 755 /usr/bin/protoc
+        if: matrix.platform.os_name == 'Linux-x86_64'
       - uses: arduino/setup-protoc@v2
         with:
           version: "24.x"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-
+        if: matrix.platform.os_name == 'macOS-x86_64'
       - uses: jetli/wasm-pack-action@v0.4.0
         with:
           version: "latest"
       - name: Install toolchain if not cross-compiling
         uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: nightly
-          override: true
           targets: ${{ matrix.platform.target }}
       - uses: actions/setup-node@v3
         with:
           node-version: "20.x"
-      - run: yarn install
+      - uses: ./.github/workflows
+        id: "linuxBuild"
+        if: matrix.platform.os_name == 'Linux-x86_64'
       - run: rustup target add ${{ matrix.platform.target }}
+        if: matrix.platform.os_name == 'macOS-x86_64'
+      - run: yarn install
+        if: matrix.platform.os_name == 'macOS-x86_64'
       - run: yarn build
-      - run: ${{ matrix.platform.cargo_command }} build --release --locked
+        if: matrix.platform.os_name == 'macOS-x86_64'
+      - run: cargo build --release --locked --target=${{ matrix.platform.target }}
+        if: matrix.platform.os_name == 'macOS-x86_64'
       - name: Sign Mac OS binary
         if: matrix.platform.target == 'x86_64-apple-darwin'
         env:
@@ -83,7 +90,7 @@ jobs:
           # print for debugging
           security find-certificate -a
 
-          /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime target/release/paperclip_cli -v
+          /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime target/${{ matrix.platform.target }}/release/paperclip_cli -v
 
       - name: Notaize Mac OS binary
         if: matrix.platform.target == 'x86_64-apple-darwin'
@@ -106,7 +113,7 @@ jobs:
 
 
           mkdir -p dist
-          cp target/release/paperclip_cli dist
+          cp target/${{ matrix.platform.target }}/release/paperclip_cli dist
           DMG_NAME="${{ matrix.platform.target }}-paperclip_cli.dmg"
 
           hdiutil create $DMG_NAME -ov -volname "RecitalInstall" -fs HFS+ -srcfolder "dist"
@@ -135,16 +142,16 @@ jobs:
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref }}
 
-      - name: Compress other binaries
-        if: matrix.platform.target != 'x86_64-apple-darwin'
-        run: cd target/release && tar -czvf ${{ matrix.platform.target }}-paperclip_cli.tar.gz paperclip_cli
+      - name: Compress binaries
+        if: matrix.platform.os_name == 'macOS-x86_64'
+        run: tar -czvf ${{ matrix.platform.target }}-paperclip_cli.tar.gz target/${{ matrix.platform.target }}/release/paperclip_cli
 
-      - name: Upload other binaries to release
+      - name: Upload binaries to release
         if: matrix.platform.target != 'x86_64-apple-darwin'
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/release/${{ matrix.platform.target }}-paperclip_cli.tar.gz
+          file: ${{ matrix.platform.target }}-paperclip_cli.tar.gz
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref }}
   publish:

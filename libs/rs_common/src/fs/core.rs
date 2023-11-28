@@ -8,6 +8,7 @@ use std::fs;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
+use std::pin::Pin;
 
 pub enum FSItemKind {
     File,
@@ -121,6 +122,5 @@ impl FileWatchEvent {
 }
 
 pub trait FileWatcher: Clone + Send + Sync {
-    type Str: Stream<Item = FileWatchEvent>;
-    fn watch(&self, path: &str) -> Self::Str;
+    fn watch(&self, path: &str) -> Pin<Box<dyn Stream<Item = FileWatchEvent>>>;
 }

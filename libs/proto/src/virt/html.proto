@@ -1,25 +1,13 @@
 syntax = "proto3";
 package virt.html;
 
-message Bounds {
-  float x = 1;
-  float y = 2;
-  float width = 3;
-  float height = 4;
-}
-
-message NodeMedata {
-  optional Bounds bounds = 1;
-  optional bool visible = 2;
-}
-
 message Element {
   string id = 1;
   string tag_name = 2;
   optional string source_id = 3;
   repeated string source_instance_ids = 4;
   repeated ObjectProperty attributes = 5;
-  optional NodeMedata metadata = 6;
+  optional Obj metadata = 6;
   repeated Node children = 7;
 }
 
@@ -28,7 +16,7 @@ message TextNode {
   optional string source_id = 2;
   repeated string source_instance_ids = 3;
   string value = 4;
-  optional NodeMedata metadata = 5;
+  optional Obj metadata = 5;
 }
 
 message Document {

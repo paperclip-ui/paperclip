@@ -39,6 +39,7 @@ import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { memoize } from "@paperclip-ui/common";
 import { pickBy } from "lodash";
 import { hasUncaughtExceptionCaptureCallback } from "process";
+import { jsonToMetadataValue, metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
 
 export const MIXED_VALUE = "mixed";
 const EMPTY_ARRAY = [];
@@ -632,18 +633,22 @@ export const findVirtNode = (
   return virtHTML.getNodeById(virtId, state.currentDocument.paperclip.html);
 };
 
-export const getExprBounds = (state: DesignerState): Bounds => {
+
+
+export const getExprBounds = (state: DesignerState): Record<string, number> => {
   const node =
     state.currentDocument &&
     (findVirtNode(getTargetExprId(state), state) as any as
       | VirtElement
       | VirtText);
 
-  return node?.metadata?.bounds;
+  return metadataValueMapToJSON(node?.metadata).bounds;
+  
 };
 
+
 export const setSelectedNodeBounds = (
-  newBounds: Bounds,
+  newBounds: Record<string, number>,
   state: DesignerState
 ) => {
   return produce(state, (newState) => {
@@ -656,15 +661,16 @@ export const setSelectedNodeBounds = (
       newState.currentDocument.paperclip.html
     );
     if (!node.metadata) {
-      node.metadata = {};
-    }
-    if (!node.metadata.bounds) {
-      node.metadata.bounds = { x: 0, y: 0, width: 0, height: 0 };
+      node.metadata = {properties: []}
     }
 
-    node.metadata.bounds = {
-      ...newBounds,
-    };
+    node.metadata = jsonToMetadataValue({
+      ...metadataValueMapToJSON(node.metadata),
+      bounds: newBounds
+    }).obj;
+      
+
+    
   });
 };
 
@@ -1140,9 +1146,10 @@ export const getCurrentPreviewFrameBoxes = (editor: DesignerState) => {
 export const getPreviewFrameBoxes = (preview: HTMLDocument) => {
   const currentPreview = preview;
   const frameBoxes = getPreviewChildren(currentPreview).map((frame: Node) => {
-    const metadata = getInnerNode(frame).metadata;
-    const box = metadata?.bounds || DEFAULT_FRAME_BOX;
-    if (metadata?.visible === false) {
+    
+    const metadata = metadataValueMapToJSON(getInnerNode(frame).metadata);
+    const box = metadata.bounds || DEFAULT_FRAME_BOX;
+    if (metadata.visible === false) {
       return null;
     }
     return { ...DEFAULT_FRAME_BOX, ...box };

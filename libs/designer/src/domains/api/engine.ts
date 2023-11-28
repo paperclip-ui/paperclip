@@ -80,6 +80,7 @@ import { ExpressionPasted } from "../clipboard/events";
 import { Range } from "@paperclip-ui/proto/lib/generated/ast/base";
 import { get, kebabCase } from "lodash";
 import { ConfirmKind } from "../../state/confirm";
+import { metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -405,7 +406,7 @@ const createEventHandler = (actions: Actions) => {
         },
       ]);
     } else {
-      const newBounds = node.metadata.bounds;
+      const newBounds = metadataValueMapToJSON(node.metadata).bounds;
 
       const mutation: Mutation = {
         setFrameBounds: {

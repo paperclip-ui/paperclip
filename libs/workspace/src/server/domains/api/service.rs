@@ -261,7 +261,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
     ) -> Result<Response<Empty>, Status> {
         let file_path: String = request.get_ref().file_path.clone();
 
-        println!("open{}", file_path);
+        println!("open {}", file_path);
 
         let result = open::that(&file_path);
 
@@ -336,7 +336,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
     ) -> Result<Response<CreateDesignFileResponse>, Status> {
         if let Ok(file_path) = create_design_file(
             &request.get_ref().name.to_string(),
-            request.get_ref().parent_dir.clone(),
+            &request.get_ref().parent_dir,
             self.ctx.clone(),
         ) {
             Ok(Response::new(CreateDesignFileResponse { file_path }))

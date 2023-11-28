@@ -3,7 +3,7 @@
   "moduleDirs": ["node_module"],
   "experimental": ["script", "condition", "repeat"],
   "globalScripts": [
-    "./src/styles/globals.css",
+    "./src/ui/globals.css",
     "https://rsms.me/inter/inter.css"
   ],
   "compilerOptions": [

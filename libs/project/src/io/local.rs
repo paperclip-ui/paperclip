@@ -12,6 +12,7 @@ use paperclip_config::{ConfigContext, ConfigIO};
 use paperclip_proto_ext::graph::io::IO as GraphIO;
 use path_absolutize::*;
 use std::path::Path;
+use std::pin::Pin;
 use wax::Glob;
 
 #[derive(Clone, Default)]
@@ -20,10 +21,9 @@ impl GraphIO for LocalIO {}
 impl ProjectIO for LocalIO {}
 
 impl FileWatcher for LocalIO {
-    type Str = impl Stream<Item = FileWatchEvent>;
-    fn watch(&self, directory: &str) -> Self::Str {
+    fn watch(&self, directory: &str) -> Pin<Box<dyn Stream<Item = FileWatchEvent>>> {
         let dir = directory.to_string();
-        stream! {
+        Box::pin(stream! {
             let s = async_watch(dir);
             pin_mut!(s);
             while let Some(Ok(event)) = s.next().await {
@@ -43,7 +43,7 @@ impl FileWatcher for LocalIO {
                     }
                 }
             }
-        }
+        })
     }
 }
 impl ConfigIO for LocalIO {

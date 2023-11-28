@@ -14,6 +14,7 @@ use paperclip_proto_ext::graph::{io::IO as GraphIO, test_utils::MockFS};
 use path_absolutize::*;
 use std::collections::HashMap;
 use std::path::Path;
+use std::pin::Pin;
 
 #[derive(Clone)]
 struct MockIO(MockFS<'static>);
@@ -22,11 +23,10 @@ impl GraphIO for MockIO {}
 impl ProjectIO for MockIO {}
 
 impl FileWatcher for MockIO {
-    type Str = impl Stream<Item = FileWatchEvent>;
-    fn watch(&self, _dir: &str) -> Self::Str {
-        stream! {
+    fn watch(&self, _dir: &str) -> Pin<Box<dyn Stream<Item = FileWatchEvent>>> {
+        Box::pin(stream! {
           yield FileWatchEvent::new(FileWatchEventKind::Create, &"nada".to_string());
-        }
+        })
     }
 }
 impl ConfigIO for MockIO {

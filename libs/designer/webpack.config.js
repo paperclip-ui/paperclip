@@ -33,7 +33,7 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, "src/styles/custom-elements.js"),
+          from: path.resolve(__dirname, "src/ui/custom-elements.js"),
           to: ".",
         },
       ],

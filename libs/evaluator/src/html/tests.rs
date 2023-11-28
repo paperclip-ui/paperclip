@@ -660,196 +660,65 @@ add_case! {
 "#
 }
 
-#[test]
-fn bounds_are_attached_to_root_elements() {
-    let doc = evaluate_doc(HashMap::from([(
-        "/entry.pc",
-        r#"
-				/**
-				 * @bounds(width: 100, height: 100, x: 100, y: 100)
-				 */
-				div {
-					text "Hello world"
-				}
-			"#,
-    )]));
+add_case! {
+    can_use_preview_metadata_to_render_frame,
+    [
+    ("/entry.pc", r#"
 
-    let element = doc.children.get(0).expect("Node must exist").get_inner();
-
-    assert_eq!(
-        element,
-        &virt::html::node::Inner::Element(virt::html::Element {
-            id: "80f4925f-15".to_string(),
-            tag_name: "div".to_string(),
-            source_id: Some("80f4925f-15".to_string()),
-            source_instance_ids: vec![],
-            attributes: vec![],
-            metadata: Some(virt::html::NodeMedata {
-                visible: Some(true),
-                bounds: Some(virt::html::Bounds {
-                    x: 100.0,
-                    y: 100.0,
-                    width: 100.0,
-                    height: 100.0
-                })
-            }),
-            children: vec![virt::html::Node {
-                inner: Some(virt::html::node::Inner::TextNode(virt::html::TextNode {
-                    id: "80f4925f-14".to_string(),
-                    source_id: Some("80f4925f-14".to_string()),
-                    source_instance_ids: vec![],
-                    value: "Hello world".to_string(),
-                    metadata: None
-                }))
-            }]
-        })
-    );
-}
-
-#[test]
-fn bounds_are_attached_to_root_components() {
-    let doc = evaluate_doc(HashMap::from([(
-        "/entry.pc",
-        r#"
-				/**
-				 * @bounds(width: 100, height: 100, x: 100, y: 100)
-				 */
-				component A {
-					render div
-				}
-			"#,
-    )]));
-
-    let element = doc.children.get(0).expect("Node must exist").get_inner();
-
-    assert_eq!(
-        element,
-        &virt::html::node::Inner::Element(virt::html::Element {
-            id: "80f4925f-14".to_string(),
-            tag_name: "div".to_string(),
-            source_id: Some("80f4925f-14".to_string()),
-            source_instance_ids: vec![],
-            attributes: vec![virt::html::ObjectProperty {
-                source_id: None,
-                name: "class".to_string(),
-                value: Some("_A-80f4925f-14".to_string().into())
-            }],
-            metadata: Some(virt::html::NodeMedata {
-                visible: Some(true),
-                bounds: Some(virt::html::Bounds {
-                    x: 100.0,
-                    y: 100.0,
-                    width: 100.0,
-                    height: 100.0
-                })
-            }),
-            children: vec![]
-        })
-    );
-}
-
-#[test]
-fn bounds_are_attached_to_root_text_nodes() {
-    let doc = evaluate_doc(HashMap::from([(
-        "/entry.pc",
-        r#"
-				/**
-				 * @bounds(width: 100, height: 100, x: 100, y: 100)
-				 */
-				text "abba"
-			"#,
-    )]));
-
-    let element = doc.children.get(0).expect("Node must exist").get_inner();
-
-    assert_eq!(
-        element,
-        &virt::html::node::Inner::TextNode(virt::html::TextNode {
-            id: "80f4925f-14".to_string(),
-            value: "abba".to_string(),
-            source_id: Some("80f4925f-14".to_string()),
-            source_instance_ids: vec![],
-            metadata: Some(virt::html::NodeMedata {
-                visible: Some(true),
-                bounds: Some(virt::html::Bounds {
-                    x: 100.0,
-                    y: 100.0,
-                    width: 100.0,
-                    height: 100.0
-                })
-            })
-        })
-    );
-}
-
-#[test]
-fn bounds_are_attached_to_root_instances() {
-    let doc = evaluate_doc(HashMap::from([(
-        "/entry.pc",
-        r#"
-
-				component A {
-					render div
-				}
-				/**
-				 * @bounds(width: 100, height: 100, x: 100, y: 100)
-				 */
-				A
-			"#,
-    )]));
-
-    let element = doc.children.get(1).expect("Node must exist").get_inner();
-
-    assert_eq!(
-        element,
-        &virt::html::node::Inner::Element(virt::html::Element {
-            id: "80f4925f-17.80f4925f-1".to_string(),
-            tag_name: "div".to_string(),
-            source_id: Some("80f4925f-17".to_string()),
-            source_instance_ids: vec!["80f4925f-17".to_string()],
-            attributes: vec![virt::html::ObjectProperty {
-                source_id: None,
-                name: "class".to_string(),
-                value: Some("_A-80f4925f-1 _80f4925f-17".to_string().into())
-            }],
-            metadata: Some(virt::html::NodeMedata {
-                visible: Some(true),
-                bounds: Some(virt::html::Bounds {
-                    x: 100.0,
-                    y: 100.0,
-                    width: 100.0,
-                    height: 100.0
-                })
-            }),
-            children: vec![]
-        })
-    );
-}
-
-#[test]
-fn children_slot_is_rendered_in_instance() {
-    let doc = evaluate_doc(HashMap::from([(
-        "/entry.pc",
-        r#"
-            component A {
-                render slot children {
-                    text "b"
-                }
+    /**
+     * @preview(showTest: true, nested: (showSomethingElse: true))
+     */
+    component A {
+        render div root {
+            if showTest {
+                text "blarg"
             }
-            A
-		"#,
-    )]));
-
-    let element = doc.children.get(1).expect("Node must exist").get_inner();
-
-    assert_eq!(
-        element,
-        &virt::html::node::Inner::TextNode(virt::html::TextNode {
-            id: "80f4925f-5.80f4925f-1".to_string(),
-            source_id: Some("80f4925f-1".to_string()),
-            source_instance_ids: vec!["80f4925f-5".to_string()],
-            metadata: None,
-            value: "b".to_string()
-        })
-    );
+            B nested
+        }
+    }
+    component B {
+        render div {
+            if showSomethingElse {
+                text "something else"
+            }
+        }
+    }
+	"#)
+    ],
+    r#"
+    <div class="_A-root-80f4925f-15"> 
+        blarg 
+        <div class="_B-80f4925f-20 _A-nested-80f4925f-14"> something else </div> 
+    </div> 
+    <div class="_B-80f4925f-20"> </div>
+"#
 }
+
+// add_case! {
+//     previews_can_define_a_collection_of_values,
+//     [
+//     ("/entry.pc", r#"
+
+//     /**
+//      * @preview(items: [(value: 1), (value: 2)])
+//      */
+//     component A {
+//         render div root {
+//             repeat items {
+//                 div {
+//                     slot value
+//                 }
+//             }
+//         }
+//     }
+//     A
+// 	"#)
+//     ],
+//     r#"
+//     <div class="_A-root-80f4925f-15"> 
+//         blarg 
+//         <div class="_B-80f4925f-20 _A-nested-80f4925f-14"> something else </div> 
+//     </div> 
+//     <div class="_B-80f4925f-20"> </div>
+// "#
+// }

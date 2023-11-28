@@ -21,8 +21,6 @@ anyhow = "1.0.61"
 textwrap = "0.15.0"
 console = "0.15.1"
 
-[dev-dependencies]
-
-
-#[target.x86_64-unknown-linux-gnu]
-#linker = "x86_64-unknown-linux-gnu-gcc"
+# [dependencies.compiler_builtins]
+# git = "https://github.com/rust-lang/compiler-builtins"
+# features = ["c"]

@@ -1,4 +1,4 @@
-use core::parser_context::Options;
+use crate::core::parser_context::Options;
 
 use wasm_bindgen::prelude::*;
 

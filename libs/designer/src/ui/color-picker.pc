@@ -1,0 +1,166 @@
+import "./menu.pc" as module
+import "./input.pc" as module1
+import "./theme.pc" as mod
+
+/**
+ * @bounds(x: -872, y: 798, width: 22, height: 21)
+*/
+public component ColorDrop {
+    render div root(style: style) {
+        style {
+            width: var(mod.space06)
+            height: var(mod.space06)
+            top: 0px
+            transform: translate(-50%, -50%)
+            left: 0px
+            background: transparent
+            border-radius: 16px
+            cursor: pointer
+            position: absolute
+            box-shadow: inset 0px 0px 0px 4px white
+            filter: drop-shadow(0px 0px 2px rgba(0, 0, 0, 1))
+        }
+    }
+}
+
+/**
+ * @bounds(x: -732, y: 404, width: 458, height: 311)
+*/
+public component ColorBox {
+    variant rounded trigger {
+        ".rounded"
+    }
+    variant big trigger {
+        ".big"
+    }
+    render div root(class: class) {
+        style variant rounded {
+            border-radius: 99px
+        }
+        style variant big {
+            height: 100%
+        }
+        slot children {
+            div {
+                style {
+                    background: gray
+                    width: 100%
+                    height: 100%
+                }
+            }
+            ColorDrop drop
+        }
+        style {
+            position: relative
+            flex-shrink: 1
+            min-height: 24px
+            border-radius: 0px
+            width: 100%
+            background-color: var(mod.gray02)
+        }
+    }
+}
+
+/**
+ * @bounds(x: 0, y: 0, width: 843, height: 1000)
+*/
+div inspiration {
+    img(src: "./color-picker-screenshot.png")
+}
+
+/**
+ * @bounds(x: -746, y: 784, width: 496, height: 431)
+*/
+public component ColorPicker {
+    render div {
+        style {
+            display: flex
+            flex-direction: column
+            gap: var(mod.space05)
+            padding: var(mod.space03)
+            color: var(mod.gray0)
+            font-family: var(mod.defaultFontFamily)
+            width: 250px
+            border-radius: 0px
+            border: 0px
+        }
+        slot children {
+            ColorBox top(class: "big") {
+                override {
+                    variant rounded
+                }
+            }
+            ColorBox {
+                override {
+                    variant rounded trigger {
+                        true
+                    }
+                }
+            }
+            ColorBox {
+                override {
+                    variant rounded trigger {
+                        true
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: -2094, y: 769, width: 1152, height: 1066)
+*/
+div preview {
+    div container {
+        style extends mod.popup {
+            position: absolute
+            top: 50%
+            left: 50%
+            transform: translate(-50%, -50%)
+            width: 250px
+        }
+        ColorPicker
+        hr {
+            style {
+                height: 1px
+                background: var(mod.borderColor)
+                border: none
+            }
+        }
+        div {
+            div {
+                module.MenuItem {
+                    text "rgba(0, 0, 0, 0.5)"
+                }
+                module.MenuItem {
+                    text "rgba(0, 0, 0, 1)"
+                }
+                module.MenuItem {
+                    override {
+                        variant selected trigger {
+                            true
+                        }
+                    }
+                    text "red"
+                }
+                module.MenuItem {
+                    text "blue"
+                }
+                module.MenuItem {
+                    text "orange"
+                }
+            }
+            style {
+                color: var(mod.gray0)
+                font-family: var(mod.defaultFontFamily)
+                display: flex
+                flex-direction: column
+                gap: var(mod.space03)
+            }
+        }
+        insert children {
+        }
+    }
+}
+

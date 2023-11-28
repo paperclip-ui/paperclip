@@ -1,12 +1,12 @@
 {
   "srcDir": "src",
-  "designsDir": "src/styles",
+  "designsDir": "src/ui",
   "experimental": ["script", "condition", "repeat"],
   "moduleDirs": [],
   "globalScripts": [
     "https://rsms.me/inter/inter.css",
-    "src/styles/globals.css",
-    "src/styles/custom-elements.js"
+    "src/ui/globals.css",
+    "src/ui/custom-elements.js"
   ],
   "openCodeEditorCommandTemplate": "code --goto \"<file>:<line>:<column>\"",
   "compilerOptions": [

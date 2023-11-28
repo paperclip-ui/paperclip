@@ -25,6 +25,7 @@ import { Box, centerTransformZoom } from "../../state/geom";
 import { clamp, uniq } from "lodash";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { WritableDraft } from "immer/dist/internal";
+import { jsonToMetadataValue, metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
 
 export const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
 export const PAN_X_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;
@@ -79,15 +80,16 @@ export const handleDragEvent = (
       // is a frame
     } else {
       if (!node.metadata) {
-        node.metadata = {};
-      }
-      if (!node.metadata.bounds) {
-        node.metadata.bounds = { x: 0, y: 0, width: 0, height: 0 };
+        node.metadata = { properties: []}
       }
 
-      node.metadata.bounds = {
-        ...event.payload.newBounds,
-      };
+      
+
+    node.metadata = jsonToMetadataValue({
+      ...metadataValueMapToJSON(node.metadata),
+      bounds: event.payload.newBounds
+    }).obj;
+      
     }
   });
 };

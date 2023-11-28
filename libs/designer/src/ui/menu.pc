@@ -1,0 +1,138 @@
+import "./theme.pc" as theme
+
+/**
+ * @bounds(x: 174, y: 399, width: 428, height: 311)
+*/
+public component Menu {
+    render div root {
+        style extends theme.fontDefault, theme.popup {
+            width: 250px
+            overflow-y: scroll
+            overflow-x: hidden
+            max-height: 300px
+        }
+        slot children {
+            MenuItem {
+                text "something"
+            }
+            MenuItem(class: "preselected") {
+                text "something"
+            }
+            MenuItem {
+                text "something"
+            }
+            MenuItem(class: "selected") {
+                text "something"
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: 632, y: 415, width: 323, height: 84)
+*/
+public component MenuItem {
+    variant preselected trigger {
+        ":hover"
+        ".preselected"
+    }
+    variant selected trigger {
+        ".selected"
+    }
+    variant checked trigger {
+        ".checked"
+    }
+    variant disabled trigger {
+        ":disabled"
+        ".disabled"
+    }
+    variant enabled trigger {
+        ":not(:disabled)"
+        ":not(.disabled)"
+    }
+    render div root {
+        style {
+            padding: var(theme.space03)
+            cursor: pointer
+            display: flex
+            flex-direction: row
+            justify-content: space-between
+        }
+        style variant disabled {
+            opacity: 0.3
+        }
+        style variant preselected + enabled {
+            background: var(theme.blue01)
+        }
+        style variant selected + enabled {
+            background: var(theme.blue02)
+        }
+        slot children
+    }
+}
+
+/**
+ * @bounds(x: 450, y: 732, width: 421, height: 295)
+*/
+public component MenuList {
+    render div {
+        style {
+            position: relative
+            overflow: scroll
+            max-height: 300px
+        }
+        slot children {
+            MenuItem {
+                text "something"
+            }
+            MenuItem(class: "preselected") {
+                text "something"
+            }
+            MenuItem {
+                text "something"
+            }
+            MenuItem(class: "selected") {
+                text "something"
+            }
+            MenuItem {
+                text "something"
+            }
+            MenuItem(class: "selected") {
+                text "something"
+            }
+            MenuItem {
+                text "something"
+            }
+            MenuItem(class: "selected") {
+                text "something"
+            }
+            MenuItem {
+                text "something"
+            }
+            MenuItem(class: "selected") {
+                text "something"
+            }
+            MenuItem {
+                text "something"
+            }
+            MenuItem(class: "selected") {
+                text "something"
+            }
+        }
+    }
+}
+
+/**
+ * @bounds(x: 1092, y: 367, width: 418, height: 284)
+*/
+div {
+    Menu {
+        style {
+            position: absolute
+            left: 100px
+            top: 100px
+        }
+        insert children {
+        }
+    }
+}

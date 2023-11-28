@@ -48,7 +48,7 @@ pub async fn start<IO: ServerIO>(
         domains::config::engine,
         domains::api::engine,
         domains::paperclip::engine,
-        domains::screenshots::engine,
+        // domains::screenshots::engine,
         domains::local::engine
     );
 

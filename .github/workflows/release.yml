@@ -1,14 +1,14 @@
 name: Release
 
-# on:
-#   release:
-#     types: [created]
-
 on:
-  push:
-    branches:
-      - master
-      - dev2
+  release:
+    types: [created]
+
+# on:
+#   push:
+#     branches:
+#       - master
+#       - dev2
 
 jobs:
   build:
@@ -16,9 +16,9 @@ jobs:
     strategy:
       matrix:
         platform:
-          # - os_name: Linux-x86_64
-          #   os: ubuntu-20.04
-          #   target: x86_64-unknown-linux-musl
+          - os_name: Linux-x86_64
+            os: ubuntu-20.04
+            target: x86_64-unknown-linux-musl
 
           - os_name: macOS-x86_64
             os: macOS-latest

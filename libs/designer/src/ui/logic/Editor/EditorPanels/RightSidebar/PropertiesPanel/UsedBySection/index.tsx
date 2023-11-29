@@ -36,7 +36,7 @@ export const UsedBySection = () => {
             return (
               <UsedBy
                 key={instance.id}
-                rootProps={{
+                root={{
                   onClick: () => {
                     history.redirect(
                       routes.editor({

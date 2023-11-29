@@ -9,7 +9,7 @@ type BoxProps = {
 }
 
 export const Box = (Base: React.FC<BaseBoxProps>) => ({children, ...rest}: BoxProps) => {
-  return <Base rootProps={rest}>
+  return <Base root={rest}>
     {children}
   </Base>
 };

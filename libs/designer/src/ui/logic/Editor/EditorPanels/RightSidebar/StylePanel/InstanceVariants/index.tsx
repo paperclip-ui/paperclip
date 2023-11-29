@@ -62,7 +62,7 @@ export const InstanceVariantsInner = ({ expr }: InstanceVariantsInnerProps) => {
                 name={variant.variant.name}
                 input={
                   <input.RadioInput
-                    containerProps={{ className: classNames({ on }), onClick: () => onVariantToggle(variant.variant.id) }}
+                    container={{ className: classNames({ on }), onClick: () => onVariantToggle(variant.variant.id) }}
 
                   />
                 }

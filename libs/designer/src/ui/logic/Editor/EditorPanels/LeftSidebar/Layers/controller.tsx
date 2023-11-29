@@ -35,11 +35,11 @@ export const Layers = (Base: React.FC<BaseLayersProps>) =>
 
     return (
       <Base
-        sidebarProps={{}}
+        sidebar={{}}
         title={title}
-        entitiesProps={{}}
-        entitiesHeaderProps={{}}
-        headerProps={{}}
+        entities={{}}
+        entitiesHeader={{}}
+        header={{}}
         layers={document.body.map((item) => (
           <DocumentBodyItemLeaf
             key={ast.getDocumentBodyInner(item).id}

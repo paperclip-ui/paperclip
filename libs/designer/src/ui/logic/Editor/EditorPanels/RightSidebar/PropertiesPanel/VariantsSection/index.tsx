@@ -38,8 +38,8 @@ export const VariantsSectionInner = () => {
       return (
         <inputStyles.ListItemInput
           key={variant.id}
-          rootProps={{ onClick: () => onSelectVariant(variant), className: "removable" }}
-          removeButtonProps={{
+          root={{ onClick: () => onSelectVariant(variant), className: "removable" }}
+          removeButton={{
             onClick: (event: React.MouseEvent<any>) => {
               event.stopPropagation();
               onRemoveVariant(variant);
@@ -50,7 +50,7 @@ export const VariantsSectionInner = () => {
         </inputStyles.ListItemInput>
       );
     }),
-    <inputStyles.AddListItemButton key="add-button" rootProps={{ onClick: onAddClick }} />,
+    <inputStyles.AddListItemButton key="add-button" root={{ onClick: onAddClick }} />,
   ];
 
   return (

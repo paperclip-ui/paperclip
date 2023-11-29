@@ -24,7 +24,7 @@ export const TextInput = forwardRef((props: TextInputProps, forwardRef) => {
   return (
     <styles.TextInput
       ref={setRef}
-      rootProps={{
+      root={{
         className: classNames({ large }),
         autoFocus,
         placeholder,

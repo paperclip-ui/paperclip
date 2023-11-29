@@ -16,7 +16,7 @@ export const RightSidebar = (Base: React.FC<styles.BaseRightSidebarProps>) => ()
   }
 
   return (
-    <Base rootProps={{ position: "right" }}>
+    <Base root={{ position: "right" }}>
       <StylePanel />
       <PropertiesPanel />
     </Base>

@@ -86,7 +86,7 @@ export const ContextMenu =
         })}
         <Portal>
           {anchorStyle && (
-            <Base containerProps={{rootProps:{style: anchorStyle}}}>
+            <Base container={{root:{style: anchorStyle}}}>
               {menu().map((item) => {
                 if (item.kind === MenuItemKind.Divider) {
                   return <ContextMenuDivider />;
@@ -117,8 +117,8 @@ const ContextMenuOption = ({
   };
   return (
     <styles.ContextMenuItem
-    containerProps={{
-      rootProps: {
+    container={{
+      root: {
         className: cx({ disabled: enabled === false }),
         onClick: onSelect
       }

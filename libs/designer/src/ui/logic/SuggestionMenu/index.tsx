@@ -272,7 +272,7 @@ export const SuggestionMenuItem = ({
   return (
     <styles.SuggestionMenuItem
       ref={ref}
-      rootProps={{ rootProps: {onMouseDown: onSelect, className: cx({ selected, preselected, checked }) }}}
+      root={{ root: {onMouseDown: onSelect, className: cx({ selected, preselected, checked }) }}}
     >
       {children || value}
     </styles.SuggestionMenuItem>

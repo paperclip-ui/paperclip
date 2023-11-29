@@ -831,3 +831,53 @@ add_case! {
 </div>
 "#
 }
+
+
+
+
+// add_case! {
+//     repeated_items_use_default_props,
+//     [
+//     ("/entry.pc", r#"
+
+//     component Item {
+//         render div {
+//             slot children {
+//                 text "Item"
+//             }
+//         }
+//     }
+
+
+//     /**
+//      * @preview(items: [(item: (label: "aba"), label: "aba")])
+//      */
+//     component A {
+//         render div {
+//             repeat items {
+//                 Item item {
+//                     slot label
+//                 }
+//             }
+//         }
+//     }
+// 	"#)
+//     ],
+//     r#"
+//     <div class="_A-80f4925f-12">
+//     aye!
+// </div>
+// <div class="_B-80f4925f-16">
+//     <div class="_A-80f4925f-12 _B-aInst-80f4925f-15">
+//         aye!
+//     </div>
+// </div>
+// <div class="_C-80f4925f-33">
+//     <div class="_B-80f4925f-16 _C-bInst-80f4925f-32">
+//         <div class="_A-80f4925f-12 _B-aInst-80f4925f-15">
+//             other!
+//         </div>
+//     </div>
+// </div>
+// "#
+// }

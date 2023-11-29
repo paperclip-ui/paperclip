@@ -277,10 +277,6 @@ fn evaluate_instance<F: FileResolver>(
     context: &mut DocumentContext<F>,
     is_component_root: bool,
 ) {
-    // let component_metadata = &instance_of.expr
-    // .comment
-    // .as_ref()
-    // .and_then(|comment| Some(evaluate_comment_metadata(&comment)));
 
     let render = if let Some(render) = instance_of.expr.get_render_expr() {
         render
@@ -296,6 +292,13 @@ fn evaluate_instance<F: FileResolver>(
     } else {
         vec![]
     };
+
+    
+    let instance_preview_data = get_preview_metadata(instance_of.expr
+        .comment
+        .as_ref()
+        .and_then(|comment| Some(evaluate_comment_metadata(&comment))).as_ref());
+    
 
     scope.push(get_style_namespace(
         &element.name,
@@ -314,10 +317,7 @@ fn evaluate_instance<F: FileResolver>(
             None
         }
     })
-    .unwrap_or(virt::Obj {
-        source_id: None,
-        properties: vec![],
-    });
+    .unwrap_or(instance_preview_data);
 
     evaluate_render(
         &render,

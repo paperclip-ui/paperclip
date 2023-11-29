@@ -690,7 +690,6 @@ add_case! {
             }
         }
     }
-    A
 	"#)
     ],
     r#"
@@ -704,8 +703,6 @@ add_case! {
     <span>
         true
     </span>
-</div>
-<div class="_A-root-80f4925f-20 _80f4925f-23">
 </div>
 "#
 }
@@ -730,7 +727,6 @@ add_case! {
             }
         }
     }
-    A
 	"#)
     ],
     r#"
@@ -742,8 +738,6 @@ add_case! {
     2
     b
     3
-</div>
-<div class="_A-root-80f4925f-25 _80f4925f-28">
 </div>
 "#
 }
@@ -768,7 +762,6 @@ add_case! {
             }
         }
     }
-    A
 	"#)
     ],
     r#"
@@ -777,7 +770,64 @@ add_case! {
     b
     a
 </div>
-<div class="_A-root-80f4925f-18 _80f4925f-21">
+"#
+}
+
+
+
+
+add_case! {
+    instances_use_preview_data,
+    [
+    ("/entry.pc", r#"
+
+
+    /**
+     * @preview(show: true)
+     */
+    component A {
+        render div {
+            if show {
+                text "aye!"
+            }
+            if showOther {
+                text "other!"
+            }
+        }
+    }
+    
+    component B {
+        render div {
+            A aInst
+        }
+    }
+
+    /**
+     * @preview(bInst:(aInst:(show: false, showOther: true)))
+     */
+
+    component C {
+        render div {
+            B bInst
+        }
+    }
+	"#)
+    ],
+    r#"
+    <div class="_A-80f4925f-12">
+    aye!
+</div>
+<div class="_B-80f4925f-16">
+    <div class="_A-80f4925f-12 _B-aInst-80f4925f-15">
+        aye!
+    </div>
+</div>
+<div class="_C-80f4925f-33">
+    <div class="_B-80f4925f-16 _C-bInst-80f4925f-32">
+        <div class="_A-80f4925f-12 _B-aInst-80f4925f-15">
+            other!
+        </div>
+    </div>
 </div>
 "#
 }

@@ -34,6 +34,21 @@ impl Value {
     }
 }
 
+impl From<&Value> for Ary {
+    fn from(value: &Value) -> Self {
+        if let Some(value::Inner::Ary(ary)) = &value.inner {
+            ary.clone()
+        } else {
+            Ary {
+
+                // this should really be get_id but I'm lazy
+                source_id: None,
+                items: vec![value.clone()],
+            }
+        }
+    }
+}
+
 impl From<String> for Value {
     fn from(value: String) -> Self {
         Value {
@@ -62,12 +77,40 @@ impl Obj {
                 .collect(),
         }
     }
+    pub fn new_empty(
+    ) -> Self {
+        Self::new(None, vec![])
+    }
     pub fn extend(&mut self, other: &mut Obj) {
         let mut combined = self.to_map();
         combined.extend(other.to_map());
         self.properties = vec![];
         for (_, property) in combined {
             self.properties.push(property);
+        }
+    }
+    pub fn merge(&mut self, other: &mut Obj) {
+        for other_prop in &other.properties {
+            let self_value = self.get(&other_prop.name);
+            let mut new_prop = other_prop.clone();
+            if let Some(Value {
+                inner: Some(value::Inner::Obj(self_obj)),
+            }) = &mut self_value.clone()
+            {
+                if let Some(Value {
+                    inner: Some(value::Inner::Obj(other_obj)),
+                }) = &mut other_prop.value.clone()
+                {
+                    let mut new_obj = self_obj.clone();
+                    new_obj.merge(other_obj);
+                    new_prop.value = Some(Value {
+                        inner: Some(value::Inner::Obj(new_obj)),
+                    });
+                    continue;
+                }
+            }
+
+            self.properties.push(new_prop);
         }
     }
     fn to_map(&mut self) -> BTreeMap<String, ObjectProperty> {

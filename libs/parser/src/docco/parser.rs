@@ -221,6 +221,33 @@ fn parse_parameters(
     })
 }
 
+fn parse_list(context: &mut ParserContext) -> Result<ast::PropertyValueList, err::ParserError> {
+    let start = context.curr_u16pos.clone();
+
+    context.next_token()?; // eat [
+
+    let mut items: Vec<ast::PropertyValue> = vec![];
+    while context.curr_token != None {
+        items.push(parse_property_value(context)?.get_outer());
+        if context.curr_token == Some(Token::BracketClose) {
+            break;
+        }
+        if context.curr_token == Some(Token::Comma) {
+            context.next_token()?; // eat ,
+            context.skip(is_superfluous)?;
+        }
+    }
+    context.next_token()?; // eat ]
+
+    let end = context.curr_u16pos.clone();
+
+    Ok(ast::PropertyValueList {
+        id: context.next_id(),
+        range: Some(Range::new(start, end)),
+        items,
+    })
+}
+
 fn parse_parameter(context: &mut ParserContext) -> Result<ast::Property, err::ParserError> {
     let start = context.curr_u16pos.clone();
     let name = extract_word_value(context)?;
@@ -244,8 +271,10 @@ fn parse_property_value(
 ) -> Result<ast::property_value::Inner, err::ParserError> {
     match context.curr_token {
         Some(Token::String(_)) => Ok(ast::property_value::Inner::Str(parse_string(context)?)),
-        Some(Token::ParenOpen) => Ok(ast::property_value::Inner::Parameters(parse_parameters(context)?)),
-        // Some(Token::BracketOpen) => Ok(ast::property_value::Inner::Parameters(parse_parameters(context)?)),
+        Some(Token::ParenOpen) => Ok(ast::property_value::Inner::Parameters(parse_parameters(
+            context,
+        )?)),
+        Some(Token::BracketOpen) => Ok(ast::property_value::Inner::List(parse_list(context)?)),
         Some(Token::Number(_)) => Ok(ast::property_value::Inner::Num(parse_number(context)?)),
         Some(Token::Boolean(_)) => Ok(ast::property_value::Inner::Bool(parse_boolean(context)?)),
         _ => Err(context.new_unexpected_token_error()),

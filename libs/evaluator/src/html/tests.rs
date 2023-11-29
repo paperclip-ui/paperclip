@@ -539,27 +539,6 @@ blah
 }
 
 add_case! {
-    can_evaluate_a_repeat_block,
-    [
-    ("/entry.pc", r#"
-        component A {
-            render div {
-                repeat items {
-                    div
-                }
-            }
-        }
-	"#)
-    ],
-    r#"
-    <div class="_A-80f4925f-3">
-        <div>
-        </div>
-    </div>
-"#
-}
-
-add_case! {
     can_evaluate_a_switch_case,
     [
     ("/entry.pc", r#"
@@ -694,31 +673,111 @@ add_case! {
 "#
 }
 
-// add_case! {
-//     previews_can_define_a_collection_of_values,
-//     [
-//     ("/entry.pc", r#"
+add_case! {
+    previews_can_define_a_collection_of_values,
+    [
+    ("/entry.pc", r#"
 
-//     /**
-//      * @preview(items: [(value: 1), (value: 2)])
-//      */
-//     component A {
-//         render div root {
-//             repeat items {
-//                 div {
-//                     slot value
-//                 }
-//             }
-//         }
-//     }
-//     A
-// 	"#)
-//     ],
-//     r#"
-//     <div class="_A-root-80f4925f-15"> 
-//         blarg 
-//         <div class="_B-80f4925f-20 _A-nested-80f4925f-14"> something else </div> 
-//     </div> 
-//     <div class="_B-80f4925f-20"> </div>
-// "#
-// }
+    /**
+     * @preview(items: [(value: 1), (value: "2"), (value: true)])
+     */
+    component A {
+        render div root {
+            repeat items {
+                span {
+                    slot value
+                }
+            }
+        }
+    }
+    A
+	"#)
+    ],
+    r#"
+    <div class="_A-root-80f4925f-20">
+    <span>
+        1
+    </span>
+    <span>
+        2
+    </span>
+    <span>
+        true
+    </span>
+</div>
+<div class="_A-root-80f4925f-20 _80f4925f-23">
+</div>
+"#
+}
+
+
+add_case! {
+    can_render_a_nested_list,
+    [
+    ("/entry.pc", r#"
+
+    /**
+     * @preview(a: [(b: [(c: 1), (c: 2), (c: 3)])])
+     */
+    component A {
+        render div root {
+            repeat a {
+                text "a"
+                repeat b {
+                    text "b"
+                    slot c
+                }
+            }
+        }
+    }
+    A
+	"#)
+    ],
+    r#"
+    <div class="_A-root-80f4925f-25">
+    a
+    b
+    1
+    b
+    2
+    b
+    3
+</div>
+<div class="_A-root-80f4925f-25 _80f4925f-28">
+</div>
+"#
+}
+
+
+
+add_case! {
+    can_render_conditionals_in_repeated_lists,
+    [
+    ("/entry.pc", r#"
+
+    /**
+     * @preview(a: [(show: true), (show: false)])
+     */
+    component A {
+        render div root {
+            repeat a {
+                text "a"
+                if show {
+                    text "b"
+                }
+            }
+        }
+    }
+    A
+	"#)
+    ],
+    r#"
+    <div class="_A-root-80f4925f-18">
+    a
+    b
+    a
+</div>
+<div class="_A-root-80f4925f-18 _80f4925f-21">
+</div>
+"#
+}

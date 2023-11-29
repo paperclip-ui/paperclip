@@ -259,8 +259,8 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
       <ContextMenu menu={() => shortcuts}>
         <div>
           <Base
-            layerHeaderProps={{
-              containerProps: null,
+            layerHeader={{
+              container: null,
               ref: setHeader,
               style: { "--depth": depth, opacity },
               onClick: onClick,

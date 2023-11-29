@@ -60,7 +60,7 @@ export const ExpressionInput = ({
   return (
     <styles.TokenInput
       ref={ref}
-      inputProps={{ onKeyDown, onFocus, onBlur }}
+      input={{ onKeyDown, onFocus, onBlur }}
     >
       {children}
     </styles.TokenInput>

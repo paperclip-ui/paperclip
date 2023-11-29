@@ -49,9 +49,9 @@ export const Prompt = ({
 
   return (
     <Portal>
-      <styles.ModalContainer backgroundProps={{ onClick: onCancel }}>
+      <styles.ModalContainer background={{ onClick: onCancel }}>
         <styles.Modal>
-          <styles.ModalHeader closeButtonProps={{ onClick: onCancel }}>
+          <styles.ModalHeader closeButton={{ onClick: onCancel }}>
             {title}
           </styles.ModalHeader>
           <styles.ModalContent>
@@ -67,10 +67,10 @@ export const Prompt = ({
           <styles.ModalFooter
             rightControls={
               <>
-                <buttonStyles.Button rootProps={{onClick: onCancel}} class="secondary">
+                <buttonStyles.Button root={{onClick: onCancel}} class="secondary">
                   Cancel
                 </buttonStyles.Button>
-                <buttonStyles.Button rootProps={{onClick: onSave}}>
+                <buttonStyles.Button root={{onClick: onSave}}>
                   {okLabel}
                 </buttonStyles.Button>
               </>

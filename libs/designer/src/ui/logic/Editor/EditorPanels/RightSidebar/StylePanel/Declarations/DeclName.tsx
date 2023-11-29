@@ -99,7 +99,7 @@ const PreValue = ({ name: declName, value }: PreValueProps) => {
 
   return (
     <styles.InheritedDeclInfo
-      inheritedDeclInfoProps={{
+      inheritedDeclInfo={{
         className: classNames({
           text,
           element,

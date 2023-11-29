@@ -24,7 +24,7 @@ export const Canvas = (Base: React.FC<styles.BaseCanvasProps>) => () => {
     useCanvas();
 
   return (
-    <Base ref={canvasRef} innerProps={{
+    <Base ref={canvasRef} inner={{
       style: {
         // Only want canvas to be visible after initially centered. Otherwise it feels janky
         opacity: visible ? 1 : 0,

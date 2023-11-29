@@ -107,7 +107,7 @@ export const Declaration = memo(
     return (
       <inputStyles.Field
         ref={ref}
-        rootProps={{ onFocus, onBlur: onBlur2 }}
+        root={{ onFocus, onBlur: onBlur2 }}
         name={nameInput}
         input={input}
       />

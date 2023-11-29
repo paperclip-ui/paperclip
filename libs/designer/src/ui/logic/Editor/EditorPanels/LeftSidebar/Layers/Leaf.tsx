@@ -57,7 +57,7 @@ export const Leaf = ({
       <ContextMenu menu={contextMenu}>
         <div style={{ width: "100%" }}>
           <styles.LayerNavigationItemHeader
-            containerProps={null}
+            container={null}
             ref={setHeaderRef}
             class={cx(className, {
               open,

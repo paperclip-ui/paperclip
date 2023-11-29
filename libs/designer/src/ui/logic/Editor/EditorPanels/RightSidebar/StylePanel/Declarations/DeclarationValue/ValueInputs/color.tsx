@@ -185,7 +185,7 @@ const ColorBox = ({
   return (
     <styles.ColorBox
       ref={ref}
-      rootProps={{onMouseDown, style: { width, height}}}
+      root={{onMouseDown, style: { width, height}}}
       class={classNames({
         big,
       })}

@@ -29,8 +29,8 @@ export const ResourceModal = () => {
   }
   return (
     <styles.Container
-      modalProps={{ ref: ref } as any}
-      backgroundProps={{ onClick: onBackgroundClick }}
+      modal={{ ref: ref } as any}
+      background={{ onClick: onBackgroundClick }}
       header={
         <TextInput
           autoFocus
@@ -124,8 +124,8 @@ const Item = ({ component, screenshotUrl }: ItemProps) => {
   return (
     <etcStyles.Item
       ref={ref}
-      rootProps={{ style }}
-      previewProps={{
+      root={{ style }}
+      preview={{
         style: {
           backgroundImage: `url(${screenshotUrl})`,
         }

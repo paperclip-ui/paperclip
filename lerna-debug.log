@@ -1,9 +1,10 @@
 0 silly argv {
-0 silly argv   _: [ 'run' ],
-0 silly argv   concurrency: 1,
+0 silly argv   _: [ 'version' ],
+0 silly argv   'force-publish': true,
+0 silly argv   forcePublish: true,
 0 silly argv   lernaVersion: '7.2.0',
-0 silly argv   '$0': '../node_modules/lerna/dist/cli.js',
-0 silly argv   script: 'build'
+0 silly argv   '$0': '../../node_modules/lerna/dist/cli.js',
+0 silly argv   bump: 'patch'
 0 silly argv }
 1 notice cli v7.2.0
 2 verbose packageConfigs Resolving packages based on package.json "workspaces" configuration.

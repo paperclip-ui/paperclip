@@ -137,8 +137,8 @@ add_case! {
 
   const _A = (props, ref) => {
       return React.createElement(props.is || "div", {
-          ...props.abProps,
-          "className": "_A-ab-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.abProps && props.abProps.className ? " " + props.abProps.className : ""),
+          ...props.ab,
+          "className": "_A-ab-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.ab && props.ab.className ? " " + props.ab.className : ""),
           "key": "80f4925f-1",
           "ref": ref
       });
@@ -207,8 +207,8 @@ add_case! {
 
   const _A = (props, ref) => {
       return React.createElement(props.is || "span", {
-          ...props.abProps,
-          "className": "cd" + " " + "_A-ab-80f4925f-3" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.abProps && props.abProps.className ? " " + props.abProps.className : ""),
+          ...props.ab,
+          "className": "cd" + " " + "_A-ab-80f4925f-3" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.ab && props.ab.className ? " " + props.ab.className : ""),
           "key": "80f4925f-3",
           "ref": ref
       });
@@ -449,8 +449,8 @@ add_case! {
 
   const _B = (props, ref) => {
       return React.createElement(props.is || "div", {
-          ...props.rootProps,
-          "className": "_B-root-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.rootProps && props.rootProps.className ? " " + props.rootProps.className : ""),
+          ...props.root,
+          "className": "_B-root-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.root && props.root.className ? " " + props.root.className : ""),
           "key": "80f4925f-1",
           "ref": ref
       });
@@ -460,8 +460,8 @@ add_case! {
 
   const _A = (props, ref) => {
       return React.createElement(props.is || B, {
-          ...props.rootProps,
-          "$$scopeClassName": "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.rootProps && props.rootProps.className ? " " + props.rootProps.className : ""),
+          ...props.root,
+          "$$scopeClassName": "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.root && props.root.className ? " " + props.root.className : ""),
           "key": "80f4925f-4",
           "ref": ref
       });
@@ -525,8 +525,8 @@ add_case! {
 
   const _A = (props, ref) => {
       return React.createElement(props.is || "div", {
-          ...props.rootProps,
-          "className": props.class + " " + "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.rootProps && props.rootProps.className ? " " + props.rootProps.className : ""),
+          ...props.root,
+          "className": props.class + " " + "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.root && props.root.className ? " " + props.root.className : ""),
           "key": "80f4925f-4",
           "ref": ref
       });
@@ -570,8 +570,8 @@ add_case! {
 
   const _A = (props, ref) => {
       return React.createElement(props.is || "div", {
-          ...props.rootProps,
-          "className": props.class + " " + "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.rootProps && props.rootProps.className ? " " + props.rootProps.className : ""),
+          ...props.root,
+          "className": props.class + " " + "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.root && props.root.className ? " " + props.root.className : ""),
           "key": "80f4925f-4",
           "ref": ref
       });
@@ -654,8 +654,8 @@ add_case! {
           "ref": ref
       },
           React.createElement("span", {
-              ...props.abbaProps,
-              "className": "_AB-abba-80f4925f-6" + (props.abbaProps && props.abbaProps.className ? " " + props.abbaProps.className : ""),
+              ...props.abba,
+              "className": "_AB-abba-80f4925f-6" + (props.abba && props.abba.className ? " " + props.abba.className : ""),
               "key": "80f4925f-6"
           })
       );
@@ -748,8 +748,8 @@ add_case! {
       },
           props.items && props.items.map(props_items => [
               React.createElement("div", {
-                  ...props_items.somethingProps,
-                  "className": "_AB-something-80f4925f-3" + (props_items.somethingProps && props_items.somethingProps.className ? " " + props_items.somethingProps.className : ""),
+                  ...props_items.something,
+                  "className": "_AB-something-80f4925f-3" + (props_items.something && props_items.something.className ? " " + props_items.something.className : ""),
                   "key": "80f4925f-3",
                   "onClick": props_items.onClick
               })
@@ -814,8 +814,8 @@ add_case! {
 
   const ABTest = _12bdbcf9.default(React.forwardRef((props, ref) => {
       return React.createElement("span", {
-          ...props.testProps,
-          "className": "_test-80f4925f-14" + (props.testProps && props.testProps.className ? " " + props.testProps.className : ""),
+          ...props.test,
+          "className": "_test-80f4925f-14" + (props.test && props.test.className ? " " + props.test.className : ""),
           "key": "80f4925f-14",
           "onMouseDown": props.onMouseDown,
           "ref": ref
@@ -868,8 +868,8 @@ add_case! {
 
   const ABTest = _4897bf60.default(React.forwardRef((props, ref) => {
       return React.createElement("span", {
-          ...props.testProps,
-          "className": "_test-80f4925f-8" + (props.testProps && props.testProps.className ? " " + props.testProps.className : ""),
+          ...props.test,
+          "className": "_test-80f4925f-8" + (props.test && props.test.className ? " " + props.test.className : ""),
           "key": "80f4925f-8",
           "onMouseDown": props.onMouseDown,
           "ref": ref

@@ -54,7 +54,7 @@ fn evaluate_document<F: FileResolver>(
                         component,
                         &mut children,
                         &metadata,
-                        &mut context.with_metadata(get_preview_metadata(metadata.as_ref())),
+                        &mut context.with_preview_data(get_preview_metadata(metadata.as_ref())),
                     );
                 }
             }
@@ -67,7 +67,7 @@ fn evaluate_document<F: FileResolver>(
                     element,
                     &mut children,
                     &metadata,
-                    &mut context.with_metadata(get_preview_metadata(metadata.as_ref())),
+                    &mut context.with_preview_data(get_preview_metadata(metadata.as_ref())),
                     false,
                     false,
                 );
@@ -81,7 +81,7 @@ fn evaluate_document<F: FileResolver>(
                     text_node,
                     &mut children,
                     &metadata,
-                    &mut context.with_metadata(get_preview_metadata(metadata.as_ref())),
+                    &mut context.with_preview_data(get_preview_metadata(metadata.as_ref())),
                 );
             }
             _ => {}
@@ -100,37 +100,47 @@ pub fn evaluate_property_value(expr: &docco_ast::PropertyValue) -> virt::Value {
         docco_ast::property_value::Inner::Parameters(params) => {
             let mut properties = vec![];
             for item in &params.items {
-                properties.push(
-                    virt::ObjectProperty {
-                        name: item.name.to_string(),
-                        source_id: Some(item.id.to_string()),
-                        value: Some(evaluate_property_value(item.value.as_ref().expect("Value must exist")))
-                    }
-                );
+                properties.push(virt::ObjectProperty {
+                    name: item.name.to_string(),
+                    source_id: Some(item.id.to_string()),
+                    value: Some(evaluate_property_value(
+                        item.value.as_ref().expect("Value must exist"),
+                    )),
+                });
             }
 
             virt::value::Inner::Obj(virt::Obj {
                 source_id: Some(params.id.clone()),
-                properties
-            }).get_outer()
+                properties,
+            })
+            .get_outer()
         }
-        docco_ast::property_value::Inner::Str(value) => {
-            virt::value::Inner::Str(virt::Str {
-                value: value.value.to_string(),
-                source_id: Some(value.id.clone()),
-            }).get_outer()
-        }
-        docco_ast::property_value::Inner::Num(value) => {
-            virt::value::Inner::Num(virt::Num {
-                value: value.value,
-                source_id: Some(value.id.clone()),
-            }).get_outer()
-        }
-        docco_ast::property_value::Inner::Bool(value) => {
-            virt::value::Inner::Bool(virt::Bool {
-                value: value.value,
-                source_id: Some(value.id.clone()),
-            }).get_outer()
+        docco_ast::property_value::Inner::Str(value) => virt::value::Inner::Str(virt::Str {
+            value: value.value.to_string(),
+            source_id: Some(value.id.clone()),
+        })
+        .get_outer(),
+        docco_ast::property_value::Inner::Num(value) => virt::value::Inner::Num(virt::Num {
+            value: value.value,
+            source_id: Some(value.id.clone()),
+        })
+        .get_outer(),
+        docco_ast::property_value::Inner::Bool(value) => virt::value::Inner::Bool(virt::Bool {
+            value: value.value,
+            source_id: Some(value.id.clone()),
+        })
+        .get_outer(),
+        docco_ast::property_value::Inner::List(list) => {
+            let mut items = vec![];
+            for item in &list.items {
+                items.push(evaluate_property_value(&item));
+            }
+
+            virt::value::Inner::Ary(virt::Ary {
+                source_id: Some(list.id.clone()),
+                items,
+            })
+            .get_outer()
         }
     }
 }
@@ -143,12 +153,17 @@ pub fn evaluate_comment_metadata(expr: &docco_ast::Comment) -> virt::Obj {
             properties.push(virt::ObjectProperty {
                 name: property.name.clone(),
                 source_id: Some(property.id.clone()),
-                value: Some(evaluate_property_value(property.value.as_ref().expect("Value must exist")),)
+                value: Some(evaluate_property_value(
+                    property.value.as_ref().expect("Value must exist"),
+                )),
             });
         }
     }
 
-    virt::Obj { source_id: Some(expr.id.clone()), properties }
+    virt::Obj {
+        source_id: Some(expr.id.clone()),
+        properties,
+    }
 }
 
 fn evaluate_component<F: FileResolver>(
@@ -211,26 +226,47 @@ fn evaluate_slot<F: FileResolver>(
     fragment: &mut Vec<virt::Node>,
     context: &mut DocumentContext<F>,
 ) {
-    if let Some(data) = &context.data {
-        if let Some(reference) = data.get(&slot.name) {
-            if let html::value::Inner::Ary(children) = reference.get_inner() {
-                for item in &children.items {
-                    match item.get_inner() {
-                        html::value::Inner::Node(node) => {
-                            fragment.push(node.clone());
-                        }
-                        _ => {}
+    if let Some(reference) = context.get_data(&slot.name) {
+
+        let children: html::Ary = reference.into();
+        
+            for item in &children.items {
+                match item.get_inner() {
+                    html::value::Inner::Node(node) => {
+                        fragment.push(node.clone());
+                    }
+                    html::value::Inner::Num(node) => {
+
+                        fragment.push(create_text_node(node.value.to_string().as_str(), context));
+                    }
+                    html::value::Inner::Str(node) => {
+                        fragment.push(create_text_node(node.value.to_string().as_str(), context));
+                    }
+                    html::value::Inner::Bool(node) => {
+                        fragment.push(create_text_node(node.value.to_string().as_str(), context));
+                    }
+                    html::value::Inner::Undef(_) | html::value::Inner::Ary(_) | html::value::Inner::Obj(_) => {
                     }
                 }
             }
-            return;
-        }
+        return;
     }
 
     // render default children
     for child in &slot.body {
         evaluate_node(child, fragment, &None, context, false, false);
     }
+}
+
+fn create_text_node<F: FileResolver>(value: &str, context: &DocumentContext<F>) -> virt::Node {
+    virt::node::Inner::TextNode(virt::TextNode {
+        id: get_virt_id(value, &context.instance_ids, false),
+        source_id: Some(value.to_string()),
+        metadata: None,
+        value: value.to_string(),
+        source_instance_ids: vec![],
+    })
+    .get_outer()
 }
 
 fn evaluate_instance<F: FileResolver>(
@@ -241,11 +277,6 @@ fn evaluate_instance<F: FileResolver>(
     context: &mut DocumentContext<F>,
     is_component_root: bool,
 ) {
-
-    // let component_metadata = &instance_of.expr
-    // .comment
-    // .as_ref()
-    // .and_then(|comment| Some(evaluate_comment_metadata(&comment)));
 
     let render = if let Some(render) = instance_of.expr.get_render_expr() {
         render
@@ -262,11 +293,31 @@ fn evaluate_instance<F: FileResolver>(
         vec![]
     };
 
+    
+    let instance_preview_data = get_preview_metadata(instance_of.expr
+        .comment
+        .as_ref()
+        .and_then(|comment| Some(evaluate_comment_metadata(&comment))).as_ref());
+    
+
     scope.push(get_style_namespace(
         &element.name,
         &element.id,
         context.current_component,
     ));
+
+    let preview_data = element
+    .name
+    .as_ref()
+    .and_then(|name| context.preview_data.get(name.as_str()))
+    .and_then(|value| {
+        if let html::value::Inner::Obj(value) = &value.get_inner() {
+            Some(value.clone())
+        } else {
+            None
+        }
+    })
+    .unwrap_or(instance_preview_data);
 
     evaluate_render(
         &render,
@@ -274,20 +325,10 @@ fn evaluate_instance<F: FileResolver>(
         metadata,
         &mut context
             .with_data(data)
+            .with_preview_data(preview_data)
             .within_instance(&element.id)
             .within_path(&instance_of.path)
             .within_component(&instance_of.expr)
-            .with_metadata(context.curr_frame_metadata.as_ref().and_then(|preview| {
-                if let Some(name) = &element.name {
-                    if let Some(sub) = preview.get(name.as_str()) {
-                        if let html::value::Inner::Obj(value) = &sub.get_inner() {
-                            return Some(value.clone());
-                        } 
-                    }
-                }
-
-                None
-            }))
             .set_render_scope(scope),
         true,
         true,
@@ -313,10 +354,8 @@ fn add_inserts_to_data(inserts: &mut InsertsMap, data: &mut html::Obj) {
     }
 }
 
-fn get_preview_metadata(
-    metadata: Option<&virt::Obj>
-) -> Option<virt::Obj> {
-   metadata
+fn get_preview_metadata(metadata: Option<&virt::Obj>) -> virt::Obj {
+    metadata
         .and_then(|metadata| metadata.get("preview"))
         .and_then(|preview| {
             if let html::value::Inner::Obj(value) = &preview.get_inner() {
@@ -325,8 +364,11 @@ fn get_preview_metadata(
                 None
             }
         })
+        .unwrap_or(virt::Obj {
+            source_id: None,
+            properties: vec![],
+        })
 }
-
 
 fn create_inserts<'expr, F: FileResolver>(
     element: &'expr ast::Element,
@@ -648,10 +690,8 @@ fn create_attribute_value<F: FileResolver>(
         })
         .get_outer(),
         ast::simple_expression::Inner::Reference(value) => {
-            if let Some(data) = &context.data {
-                if let Some(value) = data.get_deep(&value.path) {
-                    return value.clone();
-                }
+            if let Some(value) = context.get_deep(&value.path) {
+                return value.clone();
             }
 
             html::value::Inner::Undef(html::Undefined {
@@ -673,17 +713,13 @@ fn evaluate_switch<F: FileResolver>(
     metadata: &Option<virt::Obj>,
     context: &mut DocumentContext<F>,
 ) {
-    let value = context
-        .data
-        .as_ref()
-        .and_then(|data| data.get(&expr.property))
-        .and_then(|value| {
-            if let html::value::Inner::Str(value) = &value.get_inner() {
-                Some(&value.value)
-            } else {
-                None
-            }
-        });
+    let value = context.get_data(&expr.property).and_then(|value| {
+        if let html::value::Inner::Str(value) = &value.get_inner() {
+            Some(&value.value)
+        } else {
+            None
+        }
+    });
 
     let case = if let Some(value) = value {
         expr.body.iter().find(|item| {
@@ -718,33 +754,16 @@ fn evaluate_switch<F: FileResolver>(
     }
 }
 
-
 fn evaluate_condition<F: FileResolver>(
     expr: &ast::Condition,
     fragment: &mut Vec<virt::Node>,
     metadata: &Option<virt::Obj>,
     context: &mut DocumentContext<F>,
 ) {
-    let value = context
-        .data
-        .as_ref()
-        .and_then(|data| data.get(&expr.property))
-        .and_then(|value| if value.is_truthy() { Some(()) } else { None });
-
-    let show = value.is_some()
-        || context
-        .curr_frame_metadata
-        .as_ref()
-            .and_then(|metadata| metadata.get(&expr.property))
-            .and_then(|value| {
-                if let html::value::Inner::Bool(value) = &value.get_inner() {
-                    Some(value.value.clone())
-                } else {
-                    None
-                }
-            })
-            .unwrap_or(false);
-
+    let show = context
+        .get_data(&expr.property)
+        .and_then(|value| Some(value.is_truthy()))
+        .unwrap_or(false);
 
     if show {
         for item in &expr.body {
@@ -758,8 +777,29 @@ fn evaluate_repeat<F: FileResolver>(
     metadata: &Option<virt::Obj>,
     context: &mut DocumentContext<F>,
 ) {
-    for item in &expr.body {
-        evaluate_node(item, fragment, metadata, context, false, false)
+    let list = context.get_data(&expr.property).and_then(|data| {
+        if let html::value::Inner::Ary(value) = data.get_inner() {
+            Some(value.clone())
+        } else {
+            None
+        }
+    });
+
+    if let Some(list) = list {
+        for item in &list.items {
+
+            let preview_data = if let virt::value::Inner::Obj(value) = &item.get_inner() {
+                value.clone()
+            } else {
+                virt::Obj::new_empty()
+            };
+
+            let mut sub_ctx = context.with_preview_data(preview_data.clone());
+
+            for node in &expr.body {
+                evaluate_node(node, fragment, metadata, &mut sub_ctx, false, false)
+            }
+        }
     }
 }
 

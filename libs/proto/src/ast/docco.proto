@@ -29,6 +29,7 @@ message PropertyValue {
     ast.base.Num num = 2;
     ast.base.Bool bool = 3;
     PropertyValueMap parameters = 4;
+    PropertyValueList list = 5;
   }
 }
 
@@ -36,4 +37,10 @@ message PropertyValueMap {
   string id = 1;
   ast.base.Range range = 2;
   repeated Property items = 3;
+}
+
+message PropertyValueList {
+  string id = 1;
+  ast.base.Range range = 2;
+  repeated PropertyValue items = 3;
 }

@@ -5,6 +5,7 @@ use paperclip_common::fs::FileResolver;
 use paperclip_common::id::{get_document_id, IDGenerator};
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::ast::pc as ast;
+use paperclip_proto::virt::html::Value;
 use paperclip_proto::virt::{self, html};
 
 #[derive(Clone)]
@@ -16,8 +17,8 @@ pub struct Options {
 pub struct DocumentContext<'graph, 'expr, 'file_resolver, FR: FileResolver> {
     pub graph: &'graph Graph,
     pub path: String,
-    pub curr_frame_metadata: Option<virt::html::Obj>,
-    pub data: Option<html::Obj>,
+    pub preview_data: html::Obj,
+    pub data: html::Obj,
     pub file_resolver: &'file_resolver FR,
     pub current_component: Option<&'expr ast::Component>,
     pub instance_ids: Vec<String>,
@@ -38,9 +39,9 @@ impl<'graph, 'expr, 'file_resolver, FR: FileResolver>
         Self {
             graph,
             path: path.to_string(),
-            data: None,
+            data: virt::html::Obj::new(None, vec![]),
+            preview_data: virt::html::Obj::new(None, vec![]),
             file_resolver,
-            curr_frame_metadata: None,
             options,
             id_generator: Rc::new(RefCell::new(IDGenerator::new(get_document_id(path)))),
             current_component: None,
@@ -48,15 +49,22 @@ impl<'graph, 'expr, 'file_resolver, FR: FileResolver>
             instance_ids: vec![],
         }
     }
-    pub fn with_metadata(&self, data: Option<html::Obj>) -> Self {
+    pub fn with_preview_data(&self, preview_data: html::Obj) -> Self {
         let mut clone = self.clone();
-        clone.curr_frame_metadata = data;
+        clone.preview_data = preview_data;
         clone
     }
+
     pub fn with_data(&self, data: html::Obj) -> Self {
         let mut clone = self.clone();
-        clone.data = Some(data);
+        clone.data = data;
         clone
+    }
+    pub fn get_data(&self, name: &str) -> Option<&Value> {
+        self.preview_data.get(name).or(self.data.get(name))
+    }
+    pub fn get_deep(&self, path: &Vec<String>) -> Option<&Value> {
+        self.preview_data.get_deep(path).or(self.data.get_deep(path))
     }
     pub fn within_component(&self, component: &'expr ast::Component) -> Self {
         let mut clone = self.clone();

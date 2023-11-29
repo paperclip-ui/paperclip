@@ -9,7 +9,7 @@ public component SuggestionContainer {
         style {
             position: relative
         }
-        div input {
+        div inputContainer {
             slot input
         }
         div {

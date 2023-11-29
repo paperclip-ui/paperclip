@@ -103,12 +103,12 @@ public component FilteredFile {
                     width: 100%
                     gap: var(theme.space05)
                 }
-                div basename {
+                div basenameContainer {
                     slot basename {
                         text "file.pc"
                     }
                 }
-                div dirname(title: dirTitle) {
+                div dirnameContainer(title: dirTitle) {
                     style {
                         opacity: 0.5
                         overflow: hidden

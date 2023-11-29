@@ -154,7 +154,7 @@ public component InheritedDeclInfo {
                 }
             }
         }
-        div value {
+        div valueContainer {
             style {
                 opacity: 0.5
                 overflow: hidden

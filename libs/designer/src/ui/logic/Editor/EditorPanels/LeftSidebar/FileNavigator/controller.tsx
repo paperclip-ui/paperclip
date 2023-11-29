@@ -50,6 +50,7 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
       dispatch({ type: "ui/fileFilterChanged", payload: value });
     };
 
+
     return (
       <Base
         header={

@@ -546,7 +546,7 @@ fn compile_element_parameters(element: &ast::Element, info: &Info, context: &mut
     context.add_buffer("{\n");
     context.start_block();
     if let Some(name) = &element.name {
-        context.add_buffer(format!("...{}.{}Props,\n", context.ctx_name, name).as_str());
+        context.add_buffer(format!("...{}.{},\n", context.ctx_name, name).as_str());
     }
 
     let mut attrs = raw_attrs.iter().peekable();
@@ -597,7 +597,7 @@ fn get_raw_element_attrs<'dependency>(
         }
 
         if let Some(name) = &element.name {
-            let prop = format!("{}.{}Props", context.ctx_name, name);
+            let prop = format!("{}.{}", context.ctx_name, name);
             sub.add_buffer(
                 format!(
                     " + ({} && {}.className ? \" \" + {}.className : \"\")",

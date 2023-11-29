@@ -98,7 +98,7 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
 
     for (name, prop) in &component_inference.properties {
         let name = if matches!(prop.prop_type, infer_types::Type::Element(_)) {
-            format!("{}Props", name)
+            format!("{}", name)
         } else {
             name.clone()
         };

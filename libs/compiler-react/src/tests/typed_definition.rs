@@ -170,7 +170,7 @@ add_case! {
     export type BaseAProps = {
       
       "ref"?: any,
-      "abProps"?: React.HTMLAttributes<any>,
+      "ab"?: React.HTMLAttributes<any>,
     };
     export const A: React.FC<BaseAProps>;
   "#
@@ -202,7 +202,7 @@ add_case! {
     export type BaseAProps = {
       
       "ref"?: any,
-      "somethingProps": React.ComponentProps<typeof B>,
+      "something": React.ComponentProps<typeof B>,
     };
     export const A: React.FC<BaseAProps>;
 
@@ -246,7 +246,7 @@ add_case! {
     export type BaseAProps = {
       
       "ref"?: any,
-      "somethingProps": React.ComponentProps<typeof mod.B>,
+      "something": React.ComponentProps<typeof mod.B>,
     };
     export const A: React.FC<BaseAProps>;
 

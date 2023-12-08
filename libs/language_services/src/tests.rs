@@ -389,7 +389,7 @@ test_case! {
   collects_colors_after_bounds,
   r#"
     /**
-     * @bounds(width: 100, height: 100, x: 100, y: 100)
+     * @frame(width: 100, height: 100, x: 100, y: 100)
      */
     div test {
       override {
@@ -410,8 +410,8 @@ test_case! {
         }),
 
         position: Some(Position {
-          start: 138,
-          end: 142
+          start: 137,
+          end: 141
         })
       }
     ]

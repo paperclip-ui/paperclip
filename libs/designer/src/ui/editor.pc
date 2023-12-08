@@ -6,13 +6,13 @@ import "./resource-modal.pc" as assetsModal
 import "./toolbar.pc" as toolbar
 
 /**
- * @bounds(x: -918, y: -272, width: 1024, height: 768)
+ * @frame(x: -918, y: -272, width: 1024, height: 768)
 */
 div unnamed
 
 token iconSize var(theme.fontSize03)
 /**
- * @bounds(x: 4694, y: 896, width: 1926, height: 1486)
+ * @frame(x: 4694, y: 896, width: 1926, height: 1486)
 */
 public component SplashInfo {
     render div {
@@ -111,7 +111,7 @@ public component SplashInfo {
 }
 
 /**
- * @bounds(x: 6874, y: 1592, width: 345, height: 71)
+ * @frame(x: 6874, y: 1592, width: 345, height: 71)
 */
 public component SplashTip {
     render div {
@@ -155,7 +155,7 @@ public component SplashTip {
 }
 
 /**
- * @bounds(x: 1092, y: -452, width: 251, height: 118)
+ * @frame(x: 1092, y: -452, width: 251, height: 118)
 */
 public component ComboKey {
     render span {
@@ -173,7 +173,7 @@ public component ComboKey {
 }
 
 /**
- * @bounds(x: 512, y: 542, width: 1830, height: 1256)
+ * @frame(x: 512, y: 542, width: 1830, height: 1256)
  * @preview(showCanvas: true)
 */
 public component Editor {
@@ -215,16 +215,14 @@ public component Editor {
                     }
                     toolbar.Toolbar
                 }
-                module.SidebarContainer {
-                    rightSidebar.RightSidebar rightPanel
-                }
+                rightSidebar.RightSidebar rightPanel
             }
         }
     }
 }
 
 /**
- * @bounds(x: -1353, y: 1353, width: 1024, height: 768)
+ * @frame(x: -1353, y: 1353, width: 1024, height: 768)
 */
 public component Artboard {
     render div root {
@@ -241,7 +239,7 @@ public component Artboard {
 }
 
 /**
- * @bounds(x: -833, y: 2054, width: 1024, height: 768)
+ * @frame(x: -833, y: 2054, width: 1024, height: 768)
 */
 public component Canvas {
     script(src: "./logic/Editor/Canvas/index.tsx", target: "react", name: "Canvas")
@@ -285,7 +283,7 @@ public component Canvas {
 }
 
 /**
- * @bounds(x: 2751, y: 540, width: 1557, height: 993)
+ * @frame(x: 2751, y: 540, width: 1557, height: 993)
  * @preview(root: (showSplash: true))
 */
 Editor root {
@@ -293,4 +291,3 @@ Editor root {
         SplashTip
     }
 }
-

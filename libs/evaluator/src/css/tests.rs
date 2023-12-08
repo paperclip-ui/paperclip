@@ -1455,7 +1455,7 @@ add_case! {
 /*
 
 /**
- * @bounds(x: 434, y: 640, width: 349, height: 181)
+ * @frame(x: 434, y: 640, width: 349, height: 181)
 */
 
 public component test {
@@ -1671,6 +1671,6 @@ add_case! {
 "#)
   ],
   r#"
-  ._B-root-80f4925f-8._C-80f4925f-14 { color: orange; } 
+  ._B-root-80f4925f-8._C-80f4925f-14 { color: orange; }
 "#
 }

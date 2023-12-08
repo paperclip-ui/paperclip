@@ -2,7 +2,7 @@ import "../../../../../input.pc" as imp
 import "../../../../../theme.pc" as theme
 
 /**
- * @bounds(x: 344, y: -65, width: 218, height: 50)
+ * @frame(x: 344, y: -65, width: 218, height: 50)
 */
 public component TextInput {
     variant active trigger {
@@ -20,4 +20,3 @@ public component TextInput {
         }
     }
 }
-

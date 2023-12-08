@@ -42,14 +42,37 @@ fn evaluate_document<F: FileResolver>(
 ) -> virt::Document {
     let mut children = vec![];
     for item in &document.body {
+        let metadata = item
+            .get_comment()
+            .and_then(|comment| Some(evaluate_comment_metadata(&comment)));
+
+        let visible = metadata
+            .as_ref()
+            .and_then(|metadata| metadata.get("frame"))
+            .and_then(|bounds| {
+                if let html::value::Inner::Obj(obj) = bounds.get_inner() {
+                    Some(obj)
+                } else {
+                    None
+                }
+            })
+            .and_then(|bounds| bounds.get("visible"))
+            .and_then(|visible| {
+                if let html::value::Inner::Bool(value) = visible.get_inner() {
+                    Some(value.value)
+                } else {
+                    None
+                }
+            })
+            .unwrap_or(true);
+
+        if !visible {
+            continue;
+        }
+
         match item.get_inner() {
             ast::document_body_item::Inner::Component(component) => {
                 if context.options.include_components {
-                    let metadata = &component
-                        .comment
-                        .as_ref()
-                        .and_then(|comment| Some(evaluate_comment_metadata(&comment)));
-
                     evaluate_component::<F>(
                         component,
                         &mut children,
@@ -59,10 +82,6 @@ fn evaluate_document<F: FileResolver>(
                 }
             }
             ast::document_body_item::Inner::Element(element) => {
-                let metadata = &element
-                    .comment
-                    .as_ref()
-                    .and_then(|comment| Some(evaluate_comment_metadata(&comment)));
                 evaluate_element::<F>(
                     element,
                     &mut children,
@@ -73,10 +92,6 @@ fn evaluate_document<F: FileResolver>(
                 );
             }
             ast::document_body_item::Inner::Text(text_node) => {
-                let metadata = &text_node
-                    .comment
-                    .as_ref()
-                    .and_then(|comment| Some(evaluate_comment_metadata(&comment)));
                 evaluate_text_node(
                     text_node,
                     &mut children,
@@ -227,28 +242,27 @@ fn evaluate_slot<F: FileResolver>(
     context: &mut DocumentContext<F>,
 ) {
     if let Some(reference) = context.get_data(&slot.name) {
-
         let children: html::Ary = reference.into();
-        
-            for item in &children.items {
-                match item.get_inner() {
-                    html::value::Inner::Node(node) => {
-                        fragment.push(node.clone());
-                    }
-                    html::value::Inner::Num(node) => {
 
-                        fragment.push(create_text_node(node.value.to_string().as_str(), context));
-                    }
-                    html::value::Inner::Str(node) => {
-                        fragment.push(create_text_node(node.value.to_string().as_str(), context));
-                    }
-                    html::value::Inner::Bool(node) => {
-                        fragment.push(create_text_node(node.value.to_string().as_str(), context));
-                    }
-                    html::value::Inner::Undef(_) | html::value::Inner::Ary(_) | html::value::Inner::Obj(_) => {
-                    }
+        for item in &children.items {
+            match item.get_inner() {
+                html::value::Inner::Node(node) => {
+                    fragment.push(node.clone());
                 }
+                html::value::Inner::Num(node) => {
+                    fragment.push(create_text_node(node.value.to_string().as_str(), context));
+                }
+                html::value::Inner::Str(node) => {
+                    fragment.push(create_text_node(node.value.to_string().as_str(), context));
+                }
+                html::value::Inner::Bool(node) => {
+                    fragment.push(create_text_node(node.value.to_string().as_str(), context));
+                }
+                html::value::Inner::Undef(_)
+                | html::value::Inner::Ary(_)
+                | html::value::Inner::Obj(_) => {}
             }
+        }
         return;
     }
 
@@ -277,7 +291,6 @@ fn evaluate_instance<F: FileResolver>(
     context: &mut DocumentContext<F>,
     is_component_root: bool,
 ) {
-
     let render = if let Some(render) = instance_of.expr.get_render_expr() {
         render
     } else {
@@ -293,12 +306,14 @@ fn evaluate_instance<F: FileResolver>(
         vec![]
     };
 
-    
-    let instance_preview_data = get_preview_metadata(instance_of.expr
-        .comment
-        .as_ref()
-        .and_then(|comment| Some(evaluate_comment_metadata(&comment))).as_ref());
-    
+    let instance_preview_data = get_preview_metadata(
+        instance_of
+            .expr
+            .comment
+            .as_ref()
+            .and_then(|comment| Some(evaluate_comment_metadata(&comment)))
+            .as_ref(),
+    );
 
     scope.push(get_style_namespace(
         &element.name,
@@ -307,17 +322,17 @@ fn evaluate_instance<F: FileResolver>(
     ));
 
     let preview_data = element
-    .name
-    .as_ref()
-    .and_then(|name| context.preview_data.get(name.as_str()))
-    .and_then(|value| {
-        if let html::value::Inner::Obj(value) = &value.get_inner() {
-            Some(value.clone())
-        } else {
-            None
-        }
-    })
-    .unwrap_or(instance_preview_data);
+        .name
+        .as_ref()
+        .and_then(|name| context.preview_data.get(name.as_str()))
+        .and_then(|value| {
+            if let html::value::Inner::Obj(value) = &value.get_inner() {
+                Some(value.clone())
+            } else {
+                None
+            }
+        })
+        .unwrap_or(instance_preview_data);
 
     evaluate_render(
         &render,
@@ -787,7 +802,6 @@ fn evaluate_repeat<F: FileResolver>(
 
     if let Some(list) = list {
         for item in &list.items {
-
             let preview_data = if let virt::value::Inner::Obj(value) = &item.get_inner() {
                 value.clone()
             } else {

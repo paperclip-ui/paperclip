@@ -49,7 +49,7 @@ export const Frame = memo(
     );
 
     const frameStyle = useMemo(() => {
-      const bounds = getFrameBounds(preview).bounds || DEFAULT_BOUNDS;
+      const bounds = getFrameBounds(preview).frame || DEFAULT_BOUNDS;
 
       if (expanded) {
         return {

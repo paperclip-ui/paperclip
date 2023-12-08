@@ -560,5 +560,5 @@ const patchChildren = (
 };
 
 export const getFrameBounds = (node: html.Node) => {
-    return metadataValueMapToJSON(node.element?.metadata ?? node.textNode?.metadata).bounds;
+    return metadataValueMapToJSON(node.element?.metadata ?? node.textNode?.metadata).frame;
 };

@@ -2,7 +2,7 @@ import "../../theme.pc" as imp
 import "../../menu.pc" as menu
 
 /**
- * @bounds(x: 513, y: -909, width: 515, height: 326)
+ * @frame(x: 513, y: -909, width: 515, height: 326)
 */
 public component ContextMenu {
     script(src: "./controller.tsx", target: "react", name: "ContextMenu")
@@ -47,7 +47,7 @@ public component ContextMenu {
 }
 
 /**
- * @bounds(x: 0, y: 0, width: 149, height: 66)
+ * @frame(x: 0, y: 0, width: 149, height: 66)
 */
 public component ContextMenuDivider {
     render hr {
@@ -62,7 +62,7 @@ public component ContextMenuDivider {
 }
 
 /**
- * @bounds(x: 202, y: -900, width: 263, height: 44)
+ * @frame(x: 202, y: -900, width: 263, height: 44)
 */
 public component ContextMenuItem {
     variant last trigger {
@@ -84,4 +84,3 @@ public component ContextMenuItem {
         }
     }
 }
-

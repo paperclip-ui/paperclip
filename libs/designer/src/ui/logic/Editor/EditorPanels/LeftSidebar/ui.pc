@@ -4,7 +4,7 @@ import "../../../../theme.pc" as theme
 import "../../../../etc.pc" as etc
 
 /**
- * @bounds(x: -1561, y: 1882, width: 347, height: 768)
+ * @frame(x: -1561, y: 1882, width: 347, height: 768)
 */
 public component FilteredFiles {
     script(src: "./FileNavigator/controller.tsx", target: "react", name: "FilteredFiles")
@@ -60,7 +60,7 @@ public component FilteredFiles {
 }
 
 /**
- * @bounds(x: -2077, y: 1894, width: 442, height: 64)
+ * @frame(x: -2077, y: 1894, width: 442, height: 64)
 */
 public component FilteredFile {
     script(src: "./FileNavigator/controller.tsx", target: "react", name: "FilteredFile")
@@ -125,7 +125,7 @@ public component FilteredFile {
 }
 
 /**
- * @bounds(x: 1059, y: 114, width: 1024, height: 768)
+ * @frame(x: 1059, y: 114, width: 1024, height: 768)
 */
 public component FSItem {
     script(src: "./FileNavigator/controller.tsx", target: "react", name: "FSNavigatorItem")
@@ -142,7 +142,7 @@ public component FSItem {
 }
 
 /**
- * @bounds(x: -2102, y: -298, width: 380, height: 768)
+ * @frame(x: -2102, y: -298, width: 380, height: 768)
 */
 public component FileNavigator {
     script(src: "./FileNavigator/controller.tsx", target: "react", name: "FileNavigator")
@@ -194,7 +194,7 @@ public component FileNavigator {
 }
 
 /**
- * @bounds(x: 9, y: 584, width: 337, height: 768)
+ * @frame(x: 9, y: 584, width: 337, height: 768)
 */
 component FileResources {
     render sidebar.SidebarPanel {
@@ -218,7 +218,7 @@ component FileResources {
 }
 
 /**
- * @bounds(x: 761, y: 197, width: 1024, height: 768)
+ * @frame(x: 761, y: 197, width: 1024, height: 768)
 */
 public component LeftSidebar {
     script(src: "./controller.tsx", target: "react", name: "LeftSidebar")
@@ -233,7 +233,7 @@ public component LeftSidebar {
 }
 
 /**
- * @bounds(x: -1009, y: 946, width: 201, height: 52)
+ * @frame(x: -1009, y: 946, width: 201, height: 52)
 */
 component LeftSidebarHeader {
     render sidebar.SidebarPanelContent {
@@ -275,7 +275,7 @@ component LeftSidebarHeader {
 }
 
 /**
- * @bounds(x: 791, y: 742, width: 1024, height: 768)
+ * @frame(x: 791, y: 742, width: 1024, height: 768)
 */
 public component AddLayerButton {
     script(src: "./Layers/AddLayerButton.tsx", target: "react", name: "AddLayerButton")
@@ -283,7 +283,7 @@ public component AddLayerButton {
 }
 
 /**
- * @bounds(x: 28, y: 1424, width: 459, height: 768)
+ * @frame(x: 28, y: 1424, width: 459, height: 768)
 */
 public component Layers {
     script(src: "./Layers/controller.tsx", target: "react", name: "Layers")
@@ -407,7 +407,7 @@ public component Layers {
 }
 
 /**
- * @bounds(x: 593, y: 1429, width: 90, height: 56)
+ * @frame(x: 593, y: 1429, width: 90, height: 56)
 */
 public component LayerIcon {
     variant isStack trigger {
@@ -522,7 +522,7 @@ public component LayerIcon {
 }
 
 /**
- * @bounds(x: 428, y: -205, width: 1024, height: 768)
+ * @frame(x: 428, y: -205, width: 1024, height: 768)
 */
 public component TreeNavigationItemContent {
     render div {
@@ -531,7 +531,7 @@ public component TreeNavigationItemContent {
 }
 
 /**
- * @bounds(x: -453, y: 1092, width: 202, height: 112)
+ * @frame(x: -453, y: 1092, width: 202, height: 112)
 */
 public component TreeNavigationItem {
     render div(class: class, style: style) {
@@ -540,7 +540,7 @@ public component TreeNavigationItem {
 }
 
 /**
- * @bounds(x: -459, y: 1034, width: 93, height: 37)
+ * @frame(x: -459, y: 1034, width: 93, height: 37)
 */
 public component TagType {
     render span {
@@ -552,7 +552,7 @@ public component TagType {
 }
 
 /**
- * @bounds(x: -1928, y: 3271, width: 1024, height: 768)
+ * @frame(x: -1928, y: 3271, width: 1024, height: 768)
 */
 public component DropZoneDivider {
     variant top trigger {
@@ -597,7 +597,7 @@ public component DropZoneDivider {
 }
 
 /**
- * @bounds(x: -1036, y: 1079, width: 224, height: 38)
+ * @frame(x: -1036, y: 1079, width: 224, height: 38)
 */
 public component TreeNavigationItemHeader {
     variant isContainer trigger {
@@ -712,7 +712,7 @@ public component TreeNavigationItemHeader {
 }
 
 /**
- * @bounds(x: 629, y: 1548, width: 350, height: 37)
+ * @frame(x: 629, y: 1548, width: 350, height: 37)
 */
 public component LayerNavigationItemHeader {
     variant isStack trigger {
@@ -800,4 +800,3 @@ public component LayerNavigationItemHeader {
         }
     }
 }
-

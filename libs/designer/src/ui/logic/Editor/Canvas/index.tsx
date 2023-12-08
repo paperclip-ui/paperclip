@@ -52,9 +52,9 @@ const useCanvas = () => {
       if (!frame) {
         return canvas.transform;
       }
-      
+
       const frameBounds =
-        frame && metadataValueMapToJSON((frame.element ?? frame.textNode).metadata).bounds;
+        frame && metadataValueMapToJSON((frame.element ?? frame.textNode).metadata).frame;
       return {
         x: -frameBounds.x,
         y: -frameBounds.y,
@@ -118,6 +118,13 @@ const useCanvas = () => {
     },
     [canvasRef, dispatch, setCanvasPanTimer]
   );
+
+  // !! Need to reset scroll since scrollLeft and scrollTop can change
+  // on load
+  useEffect(() => {
+    canvasRef.current.scrollLeft = 0;
+    canvasRef.current.scrollTop = 0;
+  }, [actualTransform])
 
   useEffect(() => {
     const ref = canvasRef.current;

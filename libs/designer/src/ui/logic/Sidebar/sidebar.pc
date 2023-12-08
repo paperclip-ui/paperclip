@@ -40,7 +40,7 @@ public component SidebarContainer {
 }
 
 /**
- * @bounds(x: 1329, y: -71, width: 243, height: 768)
+ * @frame(x: 1329, y: -71, width: 243, height: 768)
 */
 public component Sidebar {
     render div root(class: class, style: style) {
@@ -74,7 +74,7 @@ public component Sidebar {
 }
 
 /**
- * @bounds(x: 1598, y: -49, width: 189, height: 369)
+ * @frame(x: 1598, y: -49, width: 189, height: 369)
 */
 public component SidebarPanel {
     render div {
@@ -130,7 +130,7 @@ public component SidebarSection {
 }
 
 /**
- * @bounds(x: 325, y: 958, width: 1024, height: 768)
+ * @frame(x: 325, y: 958, width: 1024, height: 768)
 */
 public component SidebarPanelHeader {
     render div {
@@ -197,7 +197,7 @@ public component SidebarHeaderButton {
 }
 
 /**
- * @bounds(x: 93, y: 904, width: 378, height: 267)
+ * @frame(x: 93, y: 904, width: 378, height: 267)
 */
 public component SidebarPopup {
     render div(style: style) {
@@ -243,4 +243,3 @@ public component SidebarPopupPanelContent {
         slot children
     }
 }
-

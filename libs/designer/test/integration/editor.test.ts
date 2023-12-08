@@ -13,7 +13,7 @@ describe.skip(__filename + "#", () => {
     const designer = await startDesigner({
       "entry.pc": `
         /**
-         * @bounds(x:25px)
+         * @frame(x:25px)
          */
 
         div

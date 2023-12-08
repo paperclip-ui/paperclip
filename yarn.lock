@@ -2332,6 +2332,7 @@ __metadata:
   dependencies:
     "@babel/core": ^7.20.2
     "@babel/preset-env": ^7.20.2
+    "@paperclip-ui/workspace": "workspace:^"
     babel-jest: ^29.3.1
     jest: ^29.3.1
   languageName: unknown
@@ -2379,7 +2380,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@paperclip-ui/workspace@^20.3.5, @paperclip-ui/workspace@workspace:libs/workspace":
+"@paperclip-ui/workspace@^20.3.5, @paperclip-ui/workspace@workspace:^, @paperclip-ui/workspace@workspace:libs/workspace":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/workspace@workspace:libs/workspace"
   dependencies:

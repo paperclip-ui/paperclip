@@ -833,7 +833,7 @@ add_case! {
 
 
     /**
-     * @bounds(visible: false)
+     * @frame(visible: false)
      */
     component A {
         render div {

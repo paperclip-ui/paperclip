@@ -83,13 +83,13 @@ export const handleDragEvent = (
         node.metadata = { properties: []}
       }
 
-      
+
 
     node.metadata = jsonToMetadataValue({
       ...metadataValueMapToJSON(node.metadata),
-      bounds: event.payload.newBounds
+      frame: event.payload.newBounds
     }).obj;
-      
+
     }
   });
 };

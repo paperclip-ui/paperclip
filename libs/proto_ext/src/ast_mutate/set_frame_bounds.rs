@@ -19,7 +19,7 @@ impl MutableVisitor<()> for EditContext<SetFrameBounds> {
         let bounds = self.mutation.bounds.as_ref().unwrap();
         let new_comment = parse_comment(
             format!(
-                "/**\n * @bounds(x: {}, y: {}, width: {}, height: {})\n*/",
+                "/**\n * @frame(x: {}, y: {}, width: {}, height: {})\n*/",
                 bounds.x, bounds.y, bounds.width, bounds.height
             )
             .trim(),
@@ -37,7 +37,7 @@ impl MutableVisitor<()> for EditContext<SetFrameBounds> {
         let bounds = self.mutation.bounds.as_ref().unwrap();
         let new_comment = parse_comment(
             format!(
-                "/**\n * @bounds(x: {}, y: {}, width: {}, height: {})\n*/",
+                "/**\n * @frame(x: {}, y: {}, width: {}, height: {})\n*/",
                 bounds.x, bounds.y, bounds.width, bounds.height
             )
             .trim(),
@@ -55,7 +55,7 @@ impl MutableVisitor<()> for EditContext<SetFrameBounds> {
         let bounds = self.mutation.bounds.as_ref().unwrap();
         let new_comment = parse_comment(
             format!(
-                "/**\n * @bounds(x: {}, y: {}, width: {}, height: {})\n*/",
+                "/**\n * @frame(x: {}, y: {}, width: {}, height: {})\n*/",
                 bounds.x, bounds.y, bounds.width, bounds.height
             )
             .trim(),

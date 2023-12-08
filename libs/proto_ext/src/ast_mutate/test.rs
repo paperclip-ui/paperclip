@@ -145,7 +145,7 @@ case! {
   [(
     "/entry.pc", r#"
       /**
-       * @bounds(x: 100, y: 200, width: 300, height: 400)
+       * @frame(x: 100, y: 200, width: 300, height: 400)
        */
       div
     "#
@@ -220,7 +220,7 @@ case! {
         }
       }
       /**
-       * @bounds(x:100,y:200,width:300,height:400)
+       * @frame(x:100,y:200,width:300,height:400)
        */
       text "Hello"
     "#
@@ -629,7 +629,7 @@ case! {
   [(
     "/entry.pc", r#"
     /**
-     * @bounds(x: 100, y: 200, width: 300, height: 400)
+     * @frame(x: 100, y: 200, width: 300, height: 400)
      */
 
      component A {
@@ -1087,7 +1087,7 @@ case! {
     (
       "/entry.pc", r#"
       /**
-       * @bounds(x: 635, y: 55, width: 430, height: 180)
+       * @frame(x: 635, y: 55, width: 430, height: 180)
       */
         div testtttt
       "#
@@ -1099,7 +1099,7 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-    /** * @bounds(x: 635, y: 55, width: 430, height: 180) */
+    /** * @frame(x: 635, y: 55, width: 430, height: 180) */
     public component Testtttt { render div testtttt }
     "#
   )]
@@ -1523,7 +1523,7 @@ case! {
     "/entry.pc", r#"
       import "./test.pc" as mod
       /**
-       * @bounds(x: 100, y: 200, width: 300, height: 400)
+       * @frame(x: 100, y: 200, width: 300, height: 400)
        */
       mod.A
     "#
@@ -1562,7 +1562,7 @@ case! {
     "/entry.pc", r#"
       import "/test.pc" as imp
       /**
-       * @bounds(x: 100, y: 200, width: 300, height: 400)
+       * @frame(x: 100, y: 200, width: 300, height: 400)
        */
       imp.A
     "#
@@ -1607,7 +1607,7 @@ case! {
       import "./test.pc" as mod1
       import "/test2.pc" as mod
       /**
-       * @bounds(x: 100, y: 200, width: 300, height: 400)
+       * @frame(x: 100, y: 200, width: 300, height: 400)
        */
       mod1.A
     "#
@@ -1645,7 +1645,7 @@ case! {
       }
 
       /**
-       * @bounds(x: 100, y: 200, width: 300, height: 400)
+       * @frame(x: 100, y: 200, width: 300, height: 400)
        */
       A
     "#
@@ -2313,7 +2313,7 @@ case! {
         a
 
         /**
-         * @bounds(x: 100, y: 200, width: 300, height: 400)
+         * @frame(x: 100, y: 200, width: 300, height: 400)
          */
         b
       "#
@@ -2328,7 +2328,7 @@ case! {
   [(
     "/entry.pc", r#"
     /**
-     * @bounds(x: 100, y: 200, width: 300, height: 400)
+     * @frame(x: 100, y: 200, width: 300, height: 400)
      */
     b
     a
@@ -2342,7 +2342,7 @@ case! {
     (
       "/entry.pc", r#"
         /**
-         * @bounds(x: 100, y: 200, width: 300, height: 400)
+         * @frame(x: 100, y: 200, width: 300, height: 400)
          */
         a
 
@@ -2360,7 +2360,7 @@ case! {
     "/entry.pc", r#"
     b
     /**
-     * @bounds(x: 100, y: 200, width: 300, height: 400)
+     * @frame(x: 100, y: 200, width: 300, height: 400)
      */
     a
     "#
@@ -2374,12 +2374,12 @@ case! {
       "/entry.pc", r#"
 
         /**
-         * @bounds(x: 100, y: 200, width: 300, height: 400)
+         * @frame(x: 100, y: 200, width: 300, height: 400)
          */
         a
 
         /**
-         * @bounds(x: 100, y: 200, width: 300, height: 400)
+         * @frame(x: 100, y: 200, width: 300, height: 400)
          */
         b
       "#
@@ -2396,12 +2396,12 @@ case! {
 
 
     /**
-     * @bounds(x: 100, y: 200, width: 300, height: 400)
+     * @frame(x: 100, y: 200, width: 300, height: 400)
      */
     b
 
     /**
-     * @bounds(x: 100, y: 200, width: 300, height: 400)
+     * @frame(x: 100, y: 200, width: 300, height: 400)
      */
     a
     "#
@@ -2415,12 +2415,12 @@ case! {
       "/entry.pc", r#"
 
         /**
-         * @bounds(x: 100, y: 200, width: 300, height: 400)
+         * @frame(x: 100, y: 200, width: 300, height: 400)
          */
         a
 
         /**
-         * @bounds(x: 100, y: 200, width: 300, height: 400)
+         * @frame(x: 100, y: 200, width: 300, height: 400)
          */
         b
       "#
@@ -2437,12 +2437,12 @@ case! {
 
 
     /**
-     * @bounds(x: 100, y: 200, width: 300, height: 400)
+     * @frame(x: 100, y: 200, width: 300, height: 400)
      */
     b
 
     /**
-     * @bounds(x: 100, y: 200, width: 300, height: 400)
+     * @frame(x: 100, y: 200, width: 300, height: 400)
      */
     a
     "#

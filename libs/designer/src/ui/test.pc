@@ -13,7 +13,7 @@ public style aMixin {
 }
 
 /**
- * @bounds(x: 1380, y: -234, width: 430, height: 185)
+ * @frame(x: 1380, y: -234, width: 430, height: 185)
 */
 public component Something {
     variant cd
@@ -34,7 +34,7 @@ public component Something {
 }
 
 /**
- * @bounds(x: 622, y: -252, width: 456, height: 205)
+ * @frame(x: 622, y: -252, width: 456, height: 205)
 */
 div {
     style extends aMixin {
@@ -42,4 +42,3 @@ div {
         font-size: 32px
     }
 }
-

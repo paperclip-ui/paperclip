@@ -48,7 +48,7 @@ fn evaluate_document<F: FileResolver>(
 
         let visible = metadata
             .as_ref()
-            .and_then(|metadata| metadata.get("bounds"))
+            .and_then(|metadata| metadata.get("frame"))
             .and_then(|bounds| {
                 if let html::value::Inner::Obj(obj) = bounds.get_inner() {
                     Some(obj)

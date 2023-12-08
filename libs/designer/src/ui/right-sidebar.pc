@@ -7,7 +7,7 @@ import "./input.pc" as input
 import "./styles-panel.pc" as stylesPanel
 
 /**
- * @bounds(x: 1424, y: 1394, width: 140, height: 35)
+ * @frame(x: 1424, y: 1394, width: 140, height: 35)
 */
 public component UsedBy {
     render div root {
@@ -29,7 +29,7 @@ public component UsedBy {
 }
 
 /**
- * @bounds(x: 1043, y: 478, width: 331, height: 1270)
+ * @frame(x: 1043, y: 478, width: 331, height: 1270)
 */
 public component RightSidebar {
     script(src: "./logic/Editor/EditorPanels/RightSidebar/index.tsx", target: "react", name: "RightSidebar")
@@ -150,7 +150,7 @@ public component RightSidebar {
 }
 
 /**
- * @bounds(x: -207, y: 537, width: 901, height: 931)
+ * @frame(x: -207, y: 537, width: 901, height: 931)
 */
 public component VariantPopup {
     render sidebar.SidebarPopup {
@@ -191,12 +191,12 @@ public component VariantPopup {
 }
 
 /**
- * @bounds(x: 3841, y: 76, width: 1024, height: 768)
+ * @frame(x: 3841, y: 76, width: 1024, height: 768)
 */
 input.SuggestionMenu
 
 /**
- * @bounds(x: 3316, y: 1217, width: 627, height: 768)
+ * @frame(x: 3316, y: 1217, width: 627, height: 768)
 */
 imp1.Menu {
     sugg.SuggestionMenuSection {

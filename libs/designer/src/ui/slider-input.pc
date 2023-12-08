@@ -7,7 +7,7 @@ public style centerY {
 }
 
 /**
- * @bounds(x: 388, y: 528, width: 506, height: 59)
+ * @frame(x: 388, y: 528, width: 506, height: 59)
 */
 public component Slider {
     render div {

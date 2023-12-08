@@ -1,7 +1,7 @@
 import "./theme.pc" as mod
 
 /**
- * @bounds(x: 571, y: 201, width: 512, height: 215)
+ * @frame(x: 571, y: 201, width: 512, height: 215)
 */
 public component Button {
     variant danger trigger {
@@ -37,7 +37,7 @@ public component Button {
 }
 
 /**
- * @bounds(x: 1158, y: 198, width: 486, height: 235)
+ * @frame(x: 1158, y: 198, width: 486, height: 235)
 */
 div preview {
     style {
@@ -92,7 +92,7 @@ div preview {
 }
 
 /**
- * @bounds(x: 603, y: 613, width: 438, height: 253)
+ * @frame(x: 603, y: 613, width: 438, height: 253)
 */
 public component Something {
     render div {
@@ -109,7 +109,7 @@ public component Something {
 }
 
 /**
- * @bounds(x: 371, y: 1289, width: 1024, height: 768)
+ * @frame(x: 371, y: 1289, width: 1024, height: 768)
 */
 component Card {
     variant light trigger {
@@ -130,7 +130,6 @@ component Card {
 }
 
 /**
- * @bounds(x: 675, y: 2376, width: 1024, height: 768)
+ * @frame(x: 675, y: 2376, width: 1024, height: 768)
 */
 Card(class: "light")
-

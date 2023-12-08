@@ -2,7 +2,7 @@ import "../../menu.pc" as menu
 import "../../theme.pc" as theme
 
 /**
- * @bounds(x: 799, y: -1205, width: 1024, height: 768)
+ * @frame(x: 799, y: -1205, width: 1024, height: 768)
 */
 public component SuggestionContainer {
     render div root {
@@ -24,7 +24,7 @@ public component SuggestionContainer {
 }
 
 /**
- * @bounds(x: 1259, y: -557, width: 1024, height: 768)
+ * @frame(x: 1259, y: -557, width: 1024, height: 768)
 */
 public component SuggestionMenu {
     render menu.Menu(style: style) {
@@ -33,7 +33,7 @@ public component SuggestionMenu {
 }
 
 /**
- * @bounds(x: -1053, y: -2729, width: 492, height: 91)
+ * @frame(x: -1053, y: -2729, width: 492, height: 91)
 */
 public component SuggestionMenuHeader {
     render div {
@@ -63,7 +63,7 @@ public component SuggestionMenuSection {
 }
 
 /**
- * @bounds(x: -1092, y: -747, width: 433, height: 64)
+ * @frame(x: -1092, y: -747, width: 433, height: 64)
 */
 public component SuggestionMenuItem {
     variant preselected trigger {

@@ -25,7 +25,7 @@ impl MutableVisitor<()> for EditContext<InsertFrame> {
             let mut to_insert = parse_pc(
                 format!(
                     "
-                /**\n * @bounds(x: {}, y: {}, width: {}, height: {})\n*/
+                /**\n * @frame(x: {}, y: {}, width: {}, height: {})\n*/
                 {}
                 ",
                     bounds.x, bounds.y, bounds.width, bounds.height, &self.mutation.node_source

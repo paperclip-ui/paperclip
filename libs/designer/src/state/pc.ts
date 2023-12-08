@@ -10,7 +10,6 @@ import {
 import { ComputedStyleMap } from "@paperclip-ui/proto-ext/lib/ast/serialize";
 import { WritableDraft } from "immer/dist/internal";
 import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
-import { Bounds } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
 
 import * as pc from "@paperclip-ui/proto/lib/generated/ast/pc";
 import {
@@ -642,8 +641,8 @@ export const getExprBounds = (state: DesignerState): Record<string, number> => {
       | VirtElement
       | VirtText);
 
-  return metadataValueMapToJSON(node?.metadata).bounds;
-  
+  return metadataValueMapToJSON(node?.metadata).frame;
+
 };
 
 
@@ -666,11 +665,11 @@ export const setSelectedNodeBounds = (
 
     node.metadata = jsonToMetadataValue({
       ...metadataValueMapToJSON(node.metadata),
-      bounds: newBounds
+      frame: newBounds
     }).obj;
-      
 
-    
+
+
   });
 };
 
@@ -1146,9 +1145,9 @@ export const getCurrentPreviewFrameBoxes = (editor: DesignerState) => {
 export const getPreviewFrameBoxes = (preview: HTMLDocument) => {
   const currentPreview = preview;
   const frameBoxes = getPreviewChildren(currentPreview).map((frame: Node) => {
-    
+
     const metadata = metadataValueMapToJSON(getInnerNode(frame).metadata);
-    const box = metadata.bounds || DEFAULT_FRAME_BOX;
+    const box = metadata.frame || DEFAULT_FRAME_BOX;
     if (metadata.visible === false) {
       return null;
     }

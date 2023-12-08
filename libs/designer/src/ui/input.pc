@@ -4,7 +4,7 @@ import "./logic/Sidebar/sidebar.pc" as sidebar
 import "./menu.pc" as menu
 
 /**
- * @bounds(x: -717, y: -1108, width: 136, height: 28)
+ * @frame(x: -717, y: -1108, width: 136, height: 28)
 */
 public component MultiSelectItem {
     render div {
@@ -26,7 +26,7 @@ public component MultiSelectItem {
 }
 
 /**
- * @bounds(x: 884, y: -2489, width: 1024, height: 768)
+ * @frame(x: 884, y: -2489, width: 1024, height: 768)
 */
 public component Select {
     render div rootProps {
@@ -57,7 +57,7 @@ public component Select {
 }
 
 /**
- * @bounds(x: 799, y: -1205, width: 1024, height: 768)
+ * @frame(x: 799, y: -1205, width: 1024, height: 768)
 */
 public component SuggestionContainer {
     render div root {
@@ -79,7 +79,7 @@ public component SuggestionContainer {
 }
 
 /**
- * @bounds(x: 1259, y: -557, width: 1024, height: 768)
+ * @frame(x: 1259, y: -557, width: 1024, height: 768)
 */
 public component SuggestionMenu {
     render menu.Menu root {
@@ -88,7 +88,7 @@ public component SuggestionMenu {
 }
 
 /**
- * @bounds(x: -1053, y: -2729, width: 492, height: 91)
+ * @frame(x: -1053, y: -2729, width: 492, height: 91)
 */
 public component SuggestionMenuHeader {
     render div {
@@ -100,7 +100,7 @@ public component SuggestionMenuHeader {
 }
 
 /**
- * @bounds(x: -1464, y: -326, width: 236, height: 31)
+ * @frame(x: -1464, y: -326, width: 236, height: 31)
 */
 public component SuggestionMenuSearch {
     render TextInput root {
@@ -114,7 +114,7 @@ public component SuggestionMenuSearch {
 
 
 /**
- * @bounds(x: -1092, y: -747, width: 433, height: 64)
+ * @frame(x: -1092, y: -747, width: 433, height: 64)
 */
 public component SuggestionMenuItem {
     variant preselected trigger {
@@ -142,7 +142,7 @@ public component SuggestionMenuItem {
 }
 
 /**
- * @bounds(x: -1106, y: -341, width: 367, height: 55)
+ * @frame(x: -1106, y: -341, width: 367, height: 55)
 */
 public component TextInput {
     variant medium trigger {
@@ -171,7 +171,7 @@ public component TextInput {
 }
 
 /**
- * @bounds(x: -1471, y: -211, width: 1024, height: 768)
+ * @frame(x: -1471, y: -211, width: 1024, height: 768)
 */
 public component ColorInput {
     render div root {
@@ -195,7 +195,7 @@ public component ColorInput {
 }
 
 /**
- * @bounds(x: -1493, y: 393, width: 1024, height: 768)
+ * @frame(x: -1493, y: 393, width: 1024, height: 768)
 */
 public component Fields {
     render div {
@@ -209,7 +209,7 @@ public component Fields {
 }
 
 /**
- * @bounds(x: -718, y: -1156, width: 188, height: 26)
+ * @frame(x: -718, y: -1156, width: 188, height: 26)
 */
 public component MultiSelect {
     render div root(tabIndex: "0") {
@@ -238,7 +238,7 @@ public component MultiSelect {
 }
 
 /**
- * @bounds(x: 1293, y: 111, width: 1024, height: 768)
+ * @frame(x: 1293, y: 111, width: 1024, height: 768)
 */
 public component TokenInput {
     render span {
@@ -292,7 +292,7 @@ public component Token {
 }
 
 /**
- * @bounds(x: 1015, y: 858, width: 557, height: 114)
+ * @frame(x: 1015, y: 858, width: 557, height: 114)
 */
 public component Field {
     render div root {
@@ -555,7 +555,7 @@ component TextInputAutoSuggest {
 }
 
 /**
- * @bounds(x: -359, y: -1155, width: 915, height: 761)
+ * @frame(x: -359, y: -1155, width: 915, height: 761)
 */
 div {
     style extends theme.fontDefault {
@@ -619,7 +619,7 @@ public component ListItemInput {
 }
 
 /**
- * @bounds(x: -343, y: -1559, width: 249, height: 123)
+ * @frame(x: -343, y: -1559, width: 249, height: 123)
 */
 public component RadioInput {
     variant on trigger {
@@ -658,7 +658,7 @@ public component RadioInput {
 }
 
 /**
- * @bounds(x: -1149, y: -557, width: 293, height: 164)
+ * @frame(x: -1149, y: -557, width: 293, height: 164)
 */
 div textInputPreview {
     style {

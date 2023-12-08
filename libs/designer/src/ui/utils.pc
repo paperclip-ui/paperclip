@@ -1,7 +1,7 @@
 import "./theme.pc" as mod
 
 /**
- * @bounds(x: 533, y: 271, width: 399, height: 194)
+ * @frame(x: 533, y: 271, width: 399, height: 194)
 */
 public component Note {
     render div {
@@ -24,4 +24,3 @@ public component Note {
         }
     }
 }
-

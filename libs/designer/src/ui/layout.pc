@@ -1,7 +1,7 @@
 import "./theme.pc" as mod
 
 /**
- * @bounds(x: 597, y: 294, width: 453, height: 280)
+ * @frame(x: 597, y: 294, width: 453, height: 280)
 */
 public component Box {
     script(src: "./Box.tsx", target: "react", name: "Box")

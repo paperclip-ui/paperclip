@@ -224,7 +224,7 @@ describe.skip(__filename + "#", () => {
       {
         "entry.pc": `
           /**
-           * @bounds(x:0, y: 0, width: 1024, height: 768)
+           * @frame(x:0, y: 0, width: 1024, height: 768)
            */
           div
       `,

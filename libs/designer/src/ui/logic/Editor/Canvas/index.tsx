@@ -52,9 +52,9 @@ const useCanvas = () => {
       if (!frame) {
         return canvas.transform;
       }
-      
+
       const frameBounds =
-        frame && metadataValueMapToJSON((frame.element ?? frame.textNode).metadata).bounds;
+        frame && metadataValueMapToJSON((frame.element ?? frame.textNode).metadata).frame;
       return {
         x: -frameBounds.x,
         y: -frameBounds.y,

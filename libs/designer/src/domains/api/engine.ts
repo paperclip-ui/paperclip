@@ -406,7 +406,7 @@ const createEventHandler = (actions: Actions) => {
         },
       ]);
     } else {
-      const newBounds = metadataValueMapToJSON(node.metadata).bounds;
+      const newBounds = metadataValueMapToJSON(node.metadata).frame;
 
       const mutation: Mutation = {
         setFrameBounds: {

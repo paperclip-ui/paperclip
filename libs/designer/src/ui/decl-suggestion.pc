@@ -3,7 +3,7 @@ import "./theme.pc" as theme
 import "./color-picker.pc" as imp
 
 /**
- * @bounds(x: -151, y: 15, width: 250, height: 32)
+ * @frame(x: -151, y: 15, width: 250, height: 32)
 */
 public component Divider {
     render hr {
@@ -17,7 +17,7 @@ public component Divider {
 }
 
 /**
- * @bounds(x: -547, y: 5, width: 250, height: 585)
+ * @frame(x: -547, y: 5, width: 250, height: 585)
 */
 public component DeclSuggestionMenu {
     render div root {

@@ -119,6 +119,13 @@ const useCanvas = () => {
     [canvasRef, dispatch, setCanvasPanTimer]
   );
 
+  // !! Need to reset scroll since scrollLeft and scrollTop can change
+  // on load
+  useEffect(() => {
+    canvasRef.current.scrollLeft = 0;
+    canvasRef.current.scrollTop = 0;
+  }, [actualTransform])
+
   useEffect(() => {
     const ref = canvasRef.current;
     if (!ref) {

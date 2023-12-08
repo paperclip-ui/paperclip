@@ -242,6 +242,7 @@ export const selectNode = (
 const boundsIsNull = (bounds: Box) =>
   bounds.x + bounds.y + bounds.width + bounds.height === 0;
 
+
 // https://github.com/crcn/tandem/blob/10.0.0/packages/dashboard/src/state/index.ts#L1304
 export const centerEditorCanvas = (
   editor: DesignerState,
@@ -265,6 +266,21 @@ export const centerEditorCanvas = (
     x: -innerBounds.x + width / 2 - innerBounds.width / 2,
     y: -innerBounds.y + height / 2 - innerBounds.height / 2,
   };
+
+  try {
+    const scale =
+      typeof zoomOrZoomToFit === "boolean"
+        ? Math.min(
+            (width - INITIAL_ZOOM_PADDING) / innerBounds.width,
+            (height - INITIAL_ZOOM_PADDING) / innerBounds.height
+          )
+        : typeof zoomOrZoomToFit === "number"
+        ? zoomOrZoomToFit
+        : transform.z;
+  } catch(e) {
+    console.error(e)
+
+  }
 
   const scale =
     typeof zoomOrZoomToFit === "boolean"

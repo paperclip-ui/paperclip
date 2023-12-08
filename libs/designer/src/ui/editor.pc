@@ -215,9 +215,7 @@ public component Editor {
                     }
                     toolbar.Toolbar
                 }
-                module.SidebarContainer {
-                    rightSidebar.RightSidebar rightPanel
-                }
+                rightSidebar.RightSidebar rightPanel
             }
         }
     }

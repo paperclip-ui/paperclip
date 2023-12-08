@@ -312,6 +312,14 @@ impl DocumentBodyItem {
             document_body_item::Inner::Import(_) | document_body_item::Inner::DocComment(_) => None,
         }
     }
+    pub fn get_comment(&self) -> Option<&Comment> {
+        match self.get_inner() {
+            document_body_item::Inner::Component(expr) => expr.comment.as_ref(),
+            document_body_item::Inner::Element(expr) => expr.comment.as_ref(),
+            document_body_item::Inner::Text(expr) => expr.comment.as_ref(),
+            _ => None,
+        }
+    }
 }
 
 impl TryFrom<Node> for DocumentBodyItem {

@@ -665,10 +665,10 @@ add_case! {
 	"#)
     ],
     r#"
-    <div class="_A-root-80f4925f-15"> 
-        blarg 
-        <div class="_B-80f4925f-20 _A-nested-80f4925f-14"> something else </div> 
-    </div> 
+    <div class="_A-root-80f4925f-15">
+        blarg
+        <div class="_B-80f4925f-20 _A-nested-80f4925f-14"> something else </div>
+    </div>
     <div class="_B-80f4925f-20"> </div>
 "#
 }
@@ -707,7 +707,6 @@ add_case! {
 "#
 }
 
-
 add_case! {
     can_render_a_nested_list,
     [
@@ -742,8 +741,6 @@ add_case! {
 "#
 }
 
-
-
 add_case! {
     can_render_conditionals_in_repeated_lists,
     [
@@ -773,9 +770,6 @@ add_case! {
 "#
 }
 
-
-
-
 add_case! {
     instances_use_preview_data,
     [
@@ -795,7 +789,7 @@ add_case! {
             }
         }
     }
-    
+
     component B {
         render div {
             A aInst
@@ -832,8 +826,30 @@ add_case! {
 "#
 }
 
+add_case! {
+    frames_can_be_hidden,
+    [
+    ("/entry.pc", r#"
 
 
+    /**
+     * @bounds(visible: false)
+     */
+    component A {
+        render div {
+            text "a"
+        }
+    }
+
+    A
+	"#)
+    ],
+    r#"
+    <div class="_A-80f4925f-9 _80f4925f-12">
+        a
+    </div>
+"#
+}
 
 // add_case! {
 //     repeated_items_use_default_props,
@@ -847,7 +863,6 @@ add_case! {
 //             }
 //         }
 //     }
-
 
 //     /**
 //      * @preview(items: [(item: (label: "aba"), label: "aba")])

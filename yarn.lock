@@ -2332,7 +2332,6 @@ __metadata:
   dependencies:
     "@babel/core": ^7.20.2
     "@babel/preset-env": ^7.20.2
-    "@paperclip-ui/workspace": ^20.3.4
     babel-jest: ^29.3.1
     jest: ^29.3.1
   languageName: unknown

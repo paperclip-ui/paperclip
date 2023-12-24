@@ -457,8 +457,8 @@ fn compile_element(element: &ast::Element, info: &Info, context: &mut Context) {
 
     context.add_buffer("React.createElement(");
 
-    if info.is_component_render_node {
-        context.add_buffer("props.is || ");
+    if let Some(name) = &element.name {
+        context.add_buffer(format!("{}.{}.as || ", context.ctx_name, name).as_str());
     }
 
     context.add_buffer(format!("{}, ", tag_name).as_str());

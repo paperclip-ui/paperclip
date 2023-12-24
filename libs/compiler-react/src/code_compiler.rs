@@ -64,6 +64,7 @@ fn compile_document(document: &ast::Document, context: &mut Context) {
 
     collect_imports(document, &mut imports, context);
     compile_imports(&imports, context);
+    compile_utils(context);
     compile_nested_components(document, context);
     for item in &document.body {
         match item.get_inner() {
@@ -265,6 +266,25 @@ fn compile_imports(imports: &BTreeMap<String, Option<String>>, context: &mut Con
     }
 }
 
+fn compile_utils(context: &mut Context) {
+    context.add_buffer("\n");
+    context.add_buffer("const omit = (obj, keys) => {\n");
+    context.start_block();
+    context.add_buffer("const newObj = {};\n");
+    context.add_buffer("for (const key in obj) {\n");
+    context.start_block();
+    context.add_buffer("if (!keys.includes(key)) {\n");
+    context.start_block();
+    context.add_buffer("newObj[key] = obj[key];\n");
+    context.end_block();
+    context.add_buffer("}\n");
+    context.end_block();
+    context.add_buffer("}\n");
+    context.add_buffer("return newObj;\n");
+    context.end_block();
+    context.add_buffer("};\n");
+}
+
 macro_rules! compile_children {
     ($expr: expr, $cb: expr, $context: expr, $include_ary: expr) => {{
         if $include_ary {
@@ -458,7 +478,13 @@ fn compile_element(element: &ast::Element, info: &Info, context: &mut Context) {
     context.add_buffer("React.createElement(");
 
     if let Some(name) = &element.name {
-        context.add_buffer(format!("{}.{}.as || ", context.ctx_name, name).as_str());
+        context.add_buffer(
+            format!(
+                "{}.{} && {}.{}.as || ",
+                context.ctx_name, name, context.ctx_name, name
+            )
+            .as_str(),
+        );
     }
 
     context.add_buffer(format!("{}, ", tag_name).as_str());
@@ -546,7 +572,7 @@ fn compile_element_parameters(element: &ast::Element, info: &Info, context: &mut
     context.add_buffer("{\n");
     context.start_block();
     if let Some(name) = &element.name {
-        context.add_buffer(format!("...{}.{},\n", context.ctx_name, name).as_str());
+        context.add_buffer(format!("...omit({}.{}, [\"as\"]),\n", context.ctx_name, name).as_str());
     }
 
     let mut attrs = raw_attrs.iter().peekable();

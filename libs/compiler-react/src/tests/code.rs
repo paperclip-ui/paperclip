@@ -65,6 +65,16 @@ add_case! {
     import "./entry.pc.css";
     import * as React from "react";
 
+    const omit = (obj, keys) => {
+        const newObj = {};
+        for (const key in obj) {
+            if (!keys.includes(key)) {
+                newObj[key] = obj[key];
+            }
+        }
+        return newObj;
+    };
+
     const _A = (props, ref) => {
         return React.createElement("div", {
             "key": "80f4925f-1",
@@ -86,6 +96,16 @@ add_case! {
   r#"
     import "./entry.pc.css";
     import * as React from "react";
+
+    const omit = (obj, keys) => {
+        const newObj = {};
+        for (const key in obj) {
+            if (!keys.includes(key)) {
+                newObj[key] = obj[key];
+            }
+        }
+        return newObj;
+    };
 
     const _A = (props, ref) => {
         return React.createElement("div", {
@@ -112,6 +132,16 @@ add_case! {
   import "./entry.pc.css";
   import * as React from "react";
 
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
+
   const _A = (props, ref) => {
       return React.createElement("div", {
           "className": "_A-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
@@ -135,9 +165,19 @@ add_case! {
   import "./entry.pc.css";
   import * as React from "react";
 
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
+
   const _A = (props, ref) => {
-      return React.createElement(props.ab.as || "div", {
-          ...props.ab,
+      return React.createElement(props.ab && props.ab.as || "div", {
+          ...omit(props.ab, ["as"]),
           "className": "_A-ab-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.ab && props.ab.className ? " " + props.ab.className : ""),
           "key": "80f4925f-1",
           "ref": ref
@@ -159,6 +199,16 @@ add_case! {
   r#"
   import "./entry.pc.css";
   import * as React from "react";
+
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
 
   const _A = (props, ref) => {
       return React.createElement("span", {
@@ -183,6 +233,16 @@ add_case! {
   import "./entry.pc.css";
   import * as React from "react";
 
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
+
   const _A = (props, ref) => {
       return React.createElement("span", {
           "aria-label": "something",
@@ -205,9 +265,19 @@ add_case! {
   import "./entry.pc.css";
   import * as React from "react";
 
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
+
   const _A = (props, ref) => {
-      return React.createElement(props.ab.as || "span", {
-          ...props.ab,
+      return React.createElement(props.ab && props.ab.as || "span", {
+          ...omit(props.ab, ["as"]),
           "className": "cd" + " " + "_A-ab-80f4925f-3" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.ab && props.ab.className ? " " + props.ab.className : ""),
           "key": "80f4925f-3",
           "ref": ref
@@ -231,6 +301,16 @@ add_case! {
   r#"
   import "./entry.pc.css";
   import * as React from "react";
+
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
 
   const _A = (props, ref) => {
       return React.createElement("span", {
@@ -257,6 +337,16 @@ add_case! {
   import "./entry.pc.css";
   import * as React from "react";
 
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
+
   const _A = (props, ref) => {
       return "ab";
   };
@@ -276,6 +366,16 @@ add_case! {
   r#"
   import "./entry.pc.css";
   import * as React from "react";
+
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
 
   const _A = (props, ref) => {
       return React.createElement("div", {
@@ -300,6 +400,16 @@ add_case! {
   import "./entry.pc.css";
   import * as React from "react";
 
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
+
   const _A = (props, ref) => {
       return props.abba;
   };
@@ -322,6 +432,16 @@ add_case! {
   r#"
   import "./entry.pc.css";
   import * as React from "react";
+
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
 
   const _A = (props, ref) => {
       return props.abba || [
@@ -352,6 +472,16 @@ add_case! {
   r#"
   import "./entry.pc.css";
   import * as React from "react";
+
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
 
   const _A = (props, ref) => {
       return props.abba;
@@ -389,6 +519,16 @@ add_case! {
   import "./entry.pc.css";
   import * as React from "react";
 
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
+
   const _A = (props, ref) => {
       return props.abba;
   };
@@ -421,6 +561,16 @@ add_case! {
   import "./entry.pc.css";
   import * as React from "react";
 
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
+
   const _A = (props, ref) => {
       return React.createElement("div", {
           "key": "80f4925f-3",
@@ -447,9 +597,19 @@ add_case! {
   import "./entry.pc.css";
   import * as React from "react";
 
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
+
   const _B = (props, ref) => {
-      return React.createElement(props.root.as || "div", {
-          ...props.root,
+      return React.createElement(props.root && props.root.as || "div", {
+          ...omit(props.root, ["as"]),
           "className": "_B-root-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.root && props.root.className ? " " + props.root.className : ""),
           "key": "80f4925f-1",
           "ref": ref
@@ -459,8 +619,8 @@ add_case! {
   let B = React.memo(React.forwardRef(_B));
 
   const _A = (props, ref) => {
-      return React.createElement(props.root.as || B, {
-          ...props.root,
+      return React.createElement(props.root && props.root.as || B, {
+          ...omit(props.root, ["as"]),
           "$$scopeClassName": "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.root && props.root.className ? " " + props.root.className : ""),
           "key": "80f4925f-4",
           "ref": ref
@@ -484,6 +644,16 @@ add_case! {
   import "./entry.pc.css";
   import * as test from "/test.pc";
   import * as React from "react";
+
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
 
   const _A = (props, ref) => {
       return React.createElement(test.B, {
@@ -523,9 +693,19 @@ add_case! {
   import * as test from "/test.pc";
   import * as React from "react";
 
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
+
   const _A = (props, ref) => {
-      return React.createElement(props.root.as || "div", {
-          ...props.root,
+      return React.createElement(props.root && props.root.as || "div", {
+          ...omit(props.root, ["as"]),
           "className": props.class + " " + "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.root && props.root.className ? " " + props.root.className : ""),
           "key": "80f4925f-4",
           "ref": ref
@@ -568,9 +748,19 @@ add_case! {
   import * as test from "/test.pc";
   import * as React from "react";
 
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
+
   const _A = (props, ref) => {
-      return React.createElement(props.root.as || "div", {
-          ...props.root,
+      return React.createElement(props.root && props.root.as || "div", {
+          ...omit(props.root, ["as"]),
           "className": props.class + " " + "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.root && props.root.className ? " " + props.root.className : ""),
           "key": "80f4925f-4",
           "ref": ref
@@ -613,6 +803,16 @@ add_case! {
   import * as test from "/test.pc";
   import * as React from "react";
 
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
+
   const _A = (props, ref) => {
       return React.createElement("div", {
           "className": "_A-80f4925f-7" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
@@ -648,13 +848,23 @@ add_case! {
   import * as _f2903221 from "./test.js";
   import * as React from "react";
 
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
+
   const _AB = (props, ref) => {
       return React.createElement("div", {
           "key": "80f4925f-7",
           "ref": ref
       },
-          React.createElement(props.abba.as || "span", {
-              ...props.abba,
+          React.createElement(props.abba && props.abba.as || "span", {
+              ...omit(props.abba, ["as"]),
               "className": "_AB-abba-80f4925f-6" + (props.abba && props.abba.className ? " " + props.abba.className : ""),
               "key": "80f4925f-6"
           })
@@ -695,6 +905,16 @@ add_case! {
   r#"
   import "./entry.pc.css";
   import * as React from "react";
+
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
 
   const _AB = (props, ref) => {
       return React.createElement("div", {
@@ -741,14 +961,24 @@ add_case! {
   import "./entry.pc.css";
   import * as React from "react";
 
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
+
   const _AB = (props, ref) => {
       return React.createElement("div", {
           "key": "80f4925f-5",
           "ref": ref
       },
           props.items && props.items.map(props_items => [
-              React.createElement(props_items.something.as || "div", {
-                  ...props_items.something,
+              React.createElement(props_items.something && props_items.something.as || "div", {
+                  ...omit(props_items.something, ["as"]),
                   "className": "_AB-something-80f4925f-3" + (props_items.something && props_items.something.className ? " " + props_items.something.className : ""),
                   "key": "80f4925f-3",
                   "onClick": props_items.onClick
@@ -776,6 +1006,16 @@ add_case! {
   r#"
   import "./entry.pc.css";
   import * as React from "react";
+
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
 
   const _AB = (props, ref) => {
       return React.createElement("div", {
@@ -812,9 +1052,19 @@ add_case! {
   import "./entry.pc.css";
   import * as React from "react";
 
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
+
   const ABTest = _12bdbcf9.default(React.forwardRef((props, ref) => {
-      return React.createElement(props.test.as || "span", {
-          ...props.test,
+      return React.createElement(props.test && props.test.as || "span", {
+          ...omit(props.test, ["as"]),
           "className": "_test-80f4925f-14" + (props.test && props.test.className ? " " + props.test.className : ""),
           "key": "80f4925f-14",
           "onMouseDown": props.onMouseDown,
@@ -866,9 +1116,19 @@ add_case! {
   import * as _4897bf60 from "./item.tsx";
   import * as React from "react";
 
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
+
   const ABTest = _4897bf60.default(React.forwardRef((props, ref) => {
-      return React.createElement(props.test.as || "span", {
-          ...props.test,
+      return React.createElement(props.test && props.test.as || "span", {
+          ...omit(props.test, ["as"]),
           "className": "_test-80f4925f-8" + (props.test && props.test.className ? " " + props.test.className : ""),
           "key": "80f4925f-8",
           "onMouseDown": props.onMouseDown,
@@ -916,6 +1176,16 @@ add_case! {
   import "./entry.pc.css";
   import * as React from "react";
 
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
+
   const _AB = (props, ref) => {
       return React.createElement("div", {
           "key": "80f4925f-8",
@@ -957,6 +1227,17 @@ add_case! {
   import "./entry.pc.css";
 import * as React from "react";
 
+
+const omit = (obj, keys) => {
+    const newObj = {};
+    for (const key in obj) {
+        if (!keys.includes(key)) {
+            newObj[key] = obj[key];
+        }
+    }
+    return newObj;
+};
+
 const _A = (props, ref) => {
     return React.createElement("div", {
         "children": [
@@ -990,6 +1271,16 @@ add_case! {
   r#"
   import "./entry.pc.css";
   import * as React from "react";
+
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
 
   const _A = (props, ref) => {
       return React.createElement("div", {
@@ -1026,6 +1317,16 @@ add_case! {
   import "./entry.pc.css";
 import * as React from "react";
 
+const omit = (obj, keys) => {
+    const newObj = {};
+    for (const key in obj) {
+        if (!keys.includes(key)) {
+            newObj[key] = obj[key];
+        }
+    }
+    return newObj;
+};
+
 const _A = (props, ref) => {
     return React.createElement("div", {
         "children": [
@@ -1057,6 +1358,17 @@ add_case! {
   r#"
   import "./entry.pc.css";
   import * as React from "react";
+
+
+  const omit = (obj, keys) => {
+      const newObj = {};
+      for (const key in obj) {
+          if (!keys.includes(key)) {
+              newObj[key] = obj[key];
+          }
+      }
+      return newObj;
+  };
 
   const _A = (props, ref) => {
       return React.createElement("span", { "className": "_A-80f4925f-4" }, "something");

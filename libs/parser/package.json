@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/parser",
-  "version": "20.3.7",
+  "version": "20.3.8",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@paperclip-ui/proto": "^20.3.7"
+    "@paperclip-ui/proto": "^20.3.8"
   },
   "gitHead": "9cbfaf54c043385661768ba1b1a41de3ec872d1d"
 }

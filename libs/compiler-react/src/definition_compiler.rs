@@ -93,7 +93,6 @@ fn compile_component(component: &ast::Component, context: &mut Context) {
     context.start_block();
 
     // Not yet
-    // context.add_buffer("\"is\"?: React.ComponentType<any>,\n");
     context.add_buffer("\"ref\"?: any,\n");
 
     for (name, prop) in &component_inference.properties {
@@ -165,7 +164,9 @@ fn compile_inference(inference: &infer_types::Type, context: &mut Context) {
                     component.name.clone()
                 };
 
-                context.add_buffer(format!("React.ComponentProps<typeof {}>", ref_name).as_str());
+                context.add_buffer(
+                    format!("{{ as?: any }} & React.ComponentProps<typeof {}>", ref_name).as_str(),
+                );
             } else {
                 let el: ast::Element =
                     GetExpr::get_expr(&el.id, &context.dependency.get_document())
@@ -182,7 +183,7 @@ fn compile_inference(inference: &infer_types::Type, context: &mut Context) {
                             .as_str(),
                     );
                 } else {
-                    context.add_buffer("React.HTMLAttributes<any>");
+                    context.add_buffer("{ as?: any } & React.HTMLAttributes<any>");
                 }
             }
         }

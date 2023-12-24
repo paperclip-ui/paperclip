@@ -136,7 +136,7 @@ add_case! {
   import * as React from "react";
 
   const _A = (props, ref) => {
-      return React.createElement(props.ab.as || "div", {
+      return React.createElement(props.ab && props.ab.as || "div", {
           ...props.ab,
           "className": "_A-ab-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.ab && props.ab.className ? " " + props.ab.className : ""),
           "key": "80f4925f-1",
@@ -206,7 +206,7 @@ add_case! {
   import * as React from "react";
 
   const _A = (props, ref) => {
-      return React.createElement(props.ab.as || "span", {
+      return React.createElement(props.ab && props.ab.as || "span", {
           ...props.ab,
           "className": "cd" + " " + "_A-ab-80f4925f-3" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.ab && props.ab.className ? " " + props.ab.className : ""),
           "key": "80f4925f-3",
@@ -448,7 +448,7 @@ add_case! {
   import * as React from "react";
 
   const _B = (props, ref) => {
-      return React.createElement(props.root.as || "div", {
+      return React.createElement(props.root && props.root.as || "div", {
           ...props.root,
           "className": "_B-root-80f4925f-1" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.root && props.root.className ? " " + props.root.className : ""),
           "key": "80f4925f-1",
@@ -459,7 +459,7 @@ add_case! {
   let B = React.memo(React.forwardRef(_B));
 
   const _A = (props, ref) => {
-      return React.createElement(props.root.as || B, {
+      return React.createElement(props.root && props.root.as || B, {
           ...props.root,
           "$$scopeClassName": "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.root && props.root.className ? " " + props.root.className : ""),
           "key": "80f4925f-4",
@@ -524,7 +524,7 @@ add_case! {
   import * as React from "react";
 
   const _A = (props, ref) => {
-      return React.createElement(props.root.as || "div", {
+      return React.createElement(props.root && props.root.as || "div", {
           ...props.root,
           "className": props.class + " " + "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.root && props.root.className ? " " + props.root.className : ""),
           "key": "80f4925f-4",
@@ -569,7 +569,7 @@ add_case! {
   import * as React from "react";
 
   const _A = (props, ref) => {
-      return React.createElement(props.root.as || "div", {
+      return React.createElement(props.root && props.root.as || "div", {
           ...props.root,
           "className": props.class + " " + "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.root && props.root.className ? " " + props.root.className : ""),
           "key": "80f4925f-4",
@@ -653,7 +653,7 @@ add_case! {
           "key": "80f4925f-7",
           "ref": ref
       },
-          React.createElement(props.abba.as || "span", {
+          React.createElement(props.abba && props.abba.as || "span", {
               ...props.abba,
               "className": "_AB-abba-80f4925f-6" + (props.abba && props.abba.className ? " " + props.abba.className : ""),
               "key": "80f4925f-6"
@@ -747,7 +747,7 @@ add_case! {
           "ref": ref
       },
           props.items && props.items.map(props_items => [
-              React.createElement(props_items.something.as || "div", {
+              React.createElement(props_items.something && props_items.something.as || "div", {
                   ...props_items.something,
                   "className": "_AB-something-80f4925f-3" + (props_items.something && props_items.something.className ? " " + props_items.something.className : ""),
                   "key": "80f4925f-3",
@@ -813,7 +813,7 @@ add_case! {
   import * as React from "react";
 
   const ABTest = _12bdbcf9.default(React.forwardRef((props, ref) => {
-      return React.createElement(props.test.as || "span", {
+      return React.createElement(props.test && props.test.as || "span", {
           ...props.test,
           "className": "_test-80f4925f-14" + (props.test && props.test.className ? " " + props.test.className : ""),
           "key": "80f4925f-14",
@@ -867,7 +867,7 @@ add_case! {
   import * as React from "react";
 
   const ABTest = _4897bf60.default(React.forwardRef((props, ref) => {
-      return React.createElement(props.test.as || "span", {
+      return React.createElement(props.test && props.test.as || "span", {
           ...props.test,
           "className": "_test-80f4925f-8" + (props.test && props.test.className ? " " + props.test.className : ""),
           "key": "80f4925f-8",

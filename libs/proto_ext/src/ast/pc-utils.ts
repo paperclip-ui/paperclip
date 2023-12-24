@@ -5,7 +5,6 @@ import {
 } from "@paperclip-ui/proto/lib/generated/ast/css";
 import { Reference } from "@paperclip-ui/proto/lib/generated/ast/shared";
 
-
 import { Dependency, Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import {
   Atom,
@@ -157,15 +156,14 @@ export namespace ast {
 
   export const getChildren = memoize(
     ({ expr, kind }: InnerExpressionInfo): InnerExpressionInfo[] => {
-      
       switch (kind) {
         case ExprKind.Component:
         case ExprKind.Slot:
         case ExprKind.Insert:
         case ExprKind.TextNode:
-          case ExprKind.Document:
-            case ExprKind.Condition:
-              case ExprKind.Repeat:
+        case ExprKind.Document:
+        case ExprKind.Condition:
+        case ExprKind.Repeat:
         case ExprKind.Element:
           return (expr.body || EMPTY_ARRAY).map(getChildExprInner);
         case ExprKind.Render:
@@ -257,6 +255,12 @@ export namespace ast {
     if ((expr as TriggerBodyItem).bool) {
       return { expr: (expr as TriggerBodyItem).bool, kind: ExprKind.Bool };
     }
+    if ((expr as TriggerBodyItem).reference) {
+      return {
+        expr: (expr as TriggerBodyItem).reference,
+        kind: ExprKind.Reference,
+      };
+    }
 
     if ((expr as TriggerBodyItemCombo).items) {
       return {
@@ -281,8 +285,6 @@ export namespace ast {
 
     throw new Error(`Unhandled type`);
   };
-
-
 
   export const getAncestorIds = memoize((id: string, graph: Graph) => {
     const ancestorIds: string[] = [];

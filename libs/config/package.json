@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/config",
-  "version": "20.3.8",
+  "version": "20.3.9",
   "description": "Crate for managing paperclip config files + utils for things like:",
   "main": "index.js",
   "scripts": {

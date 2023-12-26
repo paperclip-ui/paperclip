@@ -1046,7 +1046,7 @@ fn create_extended_style_declarations<F: FileResolver>(
     let mut decls = evaluate_style_extends(style, context);
 
     for decl in &style.declarations {
-        decls.push(evaluate_extended_style_declaration(style, decl));
+        decls.push(evaluate_extended_style_declaration(style, decl, context));
     }
     decls
 }
@@ -1066,15 +1066,25 @@ fn create_style_mixin_declarations<F: FileResolver>(
         .collect()
 }
 
-fn evaluate_extended_style_declaration(
+fn evaluate_extended_style_declaration<F: FileResolver>(
     style: &ast::Style,
     decl: &css_ast::StyleDeclaration,
+    context: &DocumentContext<F>,
 ) -> virt::StyleDeclaration {
+    // necessary if value is something like var(--icon). In this case
+    // --icon will be pulled from :root instead of element where it could be defined. SO
+    // we use fallback param so that this value may be set
+    let value = stringify_style_decl_value(decl.value.as_ref().expect("Value must exist"), context);
+
     virt::StyleDeclaration {
         id: "dec".to_string(),
         source_id: decl.id.to_string(),
         name: decl.name.to_string(),
-        value: format!("var({})", get_decl_var_name(style, &decl.name, &decl.id)),
+        value: format!(
+            "var({}, {})",
+            get_decl_var_name(style, &decl.name, &decl.id),
+            value
+        ),
     }
 }
 

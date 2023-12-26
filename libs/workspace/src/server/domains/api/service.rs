@@ -5,7 +5,6 @@ use crate::server::core::{ServerEngineContext, ServerEvent, ServerStore};
 use crate::server::domains::paperclip::utils::apply_mutations;
 use crate::server::io::ServerIO;
 use futures::Stream;
-use glob::glob;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::fs::FSItemKind;
 use paperclip_language_services::DocumentInfo;
@@ -88,15 +87,17 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         let store = self.ctx.store.clone();
         let project_dir = &store.lock().unwrap().state.options.config_context.directory;
 
-        let pat = format!("{}/**/*{}*", project_dir, query);
+        // match path or file name
+        let pat = format!(
+            "{{{}/**/*{}*,{}/**/*{}*/**/*}}",
+            project_dir, query, project_dir, query
+        );
+
+        println!("Search {}", pat);
 
         let mut paths: Vec<String> = vec![];
 
-        for entry in glob(&pat).expect("Failed to read glob pattern") {
-            if let Ok(path) = entry {
-                paths.push(path.to_str().unwrap().to_string());
-            }
-        }
+        find_files(project_dir, &query, &mut paths);
 
         Ok(Response::new(SearchFilesResponse {
             root_dir: project_dir.clone(),
@@ -296,7 +297,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         &self,
         _request: Request<Empty>,
     ) -> Result<Response<Self::GetResourceFilesStream>, Status> {
-        let (tx, rx) = mpsc::channel(128);
+        let (tx, rx) = mpsc::channel(999);
         let output = ReceiverStream::new(rx);
 
         let store = self.ctx.store.clone();
@@ -313,6 +314,8 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                     .map(|key| key.to_string())
                     .collect::<Vec<String>>();
 
+                println!("get_files_response() -> {:?}", file_paths);
+
                 Ok(ResourceFiles { file_paths })
             };
 
@@ -321,7 +324,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                 .expect("Failed to send stream, must be closed");
 
             handle_store_events!(store.clone(), ServerEvent::DependencyGraphLoaded { graph: _ } => {
-                tx.send((get_files_response)(store.clone())).await.expect("Failed to send stream, must be closed");
+                tx.send((get_files_response)(store.clone())).await.expect("get_resource_files ERR!");
             });
         });
 
@@ -379,16 +382,18 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
     ) -> Result<Response<Self::GetGraphStream>, Status> {
         let store = self.ctx.store.clone();
 
-        let (tx, rx) = mpsc::channel(128);
+        let (tx, rx) = mpsc::channel(999);
 
         tokio::spawn(async move {
             let graph = store.lock().unwrap().state.graph.clone();
-            tx.send(Result::Ok(graph)).await.expect("Can't send");
+            tx.send(Result::Ok(graph))
+                .await
+                .expect("get_graph err: Can't send graph");
             handle_store_events!(store.clone(),
                 ServerEvent::DependencyGraphLoaded { graph } => {
                     tx.send(Result::Ok(
                         graph.clone()
-                    )).await.expect("Can't send");
+                    )).await.expect("get_graph err: Can't send after dependency graph loaded");
                 },
                 ServerEvent::MutationsApplied { result: _, updated_graph: _ } | ServerEvent::UndoRequested | ServerEvent::RedoRequested => {
                     let graph = store.clone().lock().unwrap().state.graph.clone();
@@ -396,7 +401,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                     // TODO - need to pick out files that have changed
                     tx.send(Result::Ok(
                         graph
-                    )).await.expect("Can't send");
+                    )).await.expect("get_graph err: Can't send after mutations applied");
                 }
             );
         });
@@ -412,7 +417,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
     ) -> Result<Response<Self::OnEventStream>, Status> {
         let store = self.ctx.store.clone();
 
-        let (tx, rx) = mpsc::channel(128);
+        let (tx, rx) = mpsc::channel(999);
 
         tokio::spawn(async move {
             let file_changed = |path: String, content: Vec<u8>| {
@@ -432,10 +437,10 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                             expr_id: expr_id.to_string()
                         })
                         .get_outer(),
-                    )).await.expect("Can't send");
+                    )).await.expect("Can't send (ScreenshotCaptured)");
                 },
                 ServerEvent::UpdateFileRequested { path, content } => {
-                    tx.send((file_changed)(path.to_string(), content.clone())).await.expect("Can't send");
+                    tx.send((file_changed)(path.to_string(), content.clone())).await.expect("on_event err: Can't send after update file");
                 },
                 ServerEvent::ModulesEvaluated(map) => {
                     tx.send(Ok(design_server_event::Inner::ModulesEvaluated(ModulesEvaluated {
@@ -443,7 +448,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                             key.to_string()
                         }).collect()
                     })
-                    .get_outer())).await.expect("Can't send changes");
+                    .get_outer())).await.expect("on_event ERR!");
                 },
                 ServerEvent::MutationsApplied { result: _, updated_graph: _ } | ServerEvent::UndoRequested | ServerEvent::RedoRequested => {
 
@@ -451,7 +456,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                     let file_cache = store.lock().unwrap().state.file_cache.clone();
                     for file_path in &updated_files {
                         if let Some(content) = file_cache.get(file_path) {
-                            tx.send((file_changed)(file_path.to_string(), content.clone())).await.expect("Can't send");
+                            tx.send((file_changed)(file_path.to_string(), content.clone())).await.expect("on_event err: Can't send afer mutations aplpied");
                         }
                     }
                 }
@@ -508,5 +513,30 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         }
 
         Err(Status::invalid_argument("File does not exist"))
+    }
+}
+
+fn find_files(dir: &str, pattern: &str, found: &mut Vec<String>) {
+    for entry in std::fs::read_dir(dir).expect("Can't read dir") {
+        let entry = entry.expect("Can't read entry");
+        let is_dir = entry.metadata().expect("Can't get metadata").is_dir();
+
+        let path = entry
+            .path()
+            .as_os_str()
+            .to_str()
+            .expect("Can't convert")
+            .to_string();
+
+        if is_dir {
+            find_files(&path, pattern, found);
+        } else {
+            if path
+                .to_lowercase()
+                .contains(&pattern.to_string().to_lowercase())
+            {
+                found.push(path.to_string());
+            }
+        }
     }
 }

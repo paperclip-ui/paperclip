@@ -19,12 +19,14 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
     fn handle_event(&self, state: &mut ServerState, event: &ServerEvent) {
         match event {
             ServerEvent::DependencyGraphLoaded { graph } => {
+                println!("ServerEvent::DependencyGraphLoaded");
                 state.graph =
                     std::mem::replace(&mut state.graph, Graph::new()).merge(graph.clone());
 
                 store_history(state);
             }
             ServerEvent::UpdateFileRequested { path, content } => {
+                println!("ServerEvent::UpdateFileRequested");
                 // onyl flag as changed if content actually changed.
                 if let Some(existing_content) = state.file_cache.get(path) {
                     if content != existing_content {
@@ -38,6 +40,7 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 result: _result,
                 updated_graph,
             } => {
+                println!("ServerEvent::MutationsApplied");
                 state.graph =
                     std::mem::replace(&mut state.graph, Graph::new()).merge(updated_graph.clone());
 
@@ -45,9 +48,11 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 store_history(state);
             }
             ServerEvent::FileWatchEvent(event) => {
+                println!("ServerEvent::FileWatchEvent");
                 state.file_cache.remove(&event.path);
             }
             ServerEvent::ScreenshotsStarted => {
+                println!("ServerEvent::ScreenshotsStarted");
                 state.screenshot_queue = HashSet::default();
                 state.screenshots_running = true;
             }
@@ -55,12 +60,15 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 state.screenshots_running = false;
             }
             ServerEvent::UndoRequested => {
+                println!("ServerEvent::UndoRequested");
                 load_history(state, HistoryStep::Back);
             }
             ServerEvent::RedoRequested => {
+                println!("ServerEvent::RedoRequested");
                 load_history(state, HistoryStep::Forward);
             }
             ServerEvent::ModulesEvaluated(modules) => {
+                println!("ServerEvent::ModulesEvaluated");
                 state.evaluated_modules.extend(modules.clone());
                 state.updated_files = vec![];
                 for (path, _) in modules {
@@ -68,6 +76,7 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 }
             }
             ServerEvent::GlobalScriptsLoaded(global_scripts) => {
+                println!("ServerEvent::GlobalScriptsLoaded");
                 for (path, content) in global_scripts {
                     state.file_cache.insert(path.to_string(), content.clone());
                 }

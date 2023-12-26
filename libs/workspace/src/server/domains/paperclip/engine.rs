@@ -132,6 +132,8 @@ async fn load_dependency_graph<TIO: ServerIO>(
 }
 
 async fn load_pc_file<TIO: ServerIO>(ctx: ServerEngineContext<TIO>, file: &str) -> Result<()> {
+    println!("load_pc_file {:?}", file);
+
     let graph = ctx.store.lock().unwrap().state.graph.clone();
     let parse_options = ctx
         .store
@@ -143,7 +145,6 @@ async fn load_pc_file<TIO: ServerIO>(ctx: ServerEngineContext<TIO>, file: &str) 
         .config
         .into_parser_options();
 
-    // let store = self.store.lock().await;
     let graph = graph
         .load_into_partial(&vec![file.to_string()], &ctx.io, parse_options)
         .await?;
@@ -228,7 +229,20 @@ async fn evaluate_dependency_graph<TIO: ServerIO>(
         let resolver = PCFileResolver::new(ctx.io.clone(), ctx.io.clone(), None);
         let graph = &ctx.store.lock().unwrap().state.graph;
 
-        for path in &files {
+        // if something like Button.pc changes, we want to update all dependents
+        // of that too.
+        let all_files: Vec<String> = files.iter().fold(vec![], |mut all, path| {
+            let deps = graph.get_all_dependents(&path);
+            all.push(path.to_string());
+            for dep in deps {
+                if !all.contains(&dep.path) {
+                    all.push(dep.path.to_string());
+                }
+            }
+            all
+        });
+
+        for path in &all_files {
             let css = block_on(css::evaluator::evaluate(path, &graph, &resolver))?;
             let html = block_on(html::evaluator::evaluate(
                 path,
@@ -241,9 +255,8 @@ async fn evaluate_dependency_graph<TIO: ServerIO>(
 
             output.insert(path.to_string(), (css, html));
         }
+        println!("Modules evaluated: {:?}", all_files);
     }
-
-    println!("Modules evaluated: {:?}", files);
 
     ctx.emit(ServerEvent::ModulesEvaluated(output));
 

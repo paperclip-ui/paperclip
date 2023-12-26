@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/proto",
-  "version": "20.3.10",
+  "version": "20.3.11",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
     "protoc-gen-grpc-web": "^1.4.0",
     "protoc-gen-js": "^3.21.2",
     "protoc-gen-ts": "^0.8.5",
-    "ts-proto": "^1.131.2"
+    "ts-proto": "^1.165.3"
   },
   "gitHead": "9cbfaf54c043385661768ba1b1a41de3ec872d1d",
   "dependencies": {

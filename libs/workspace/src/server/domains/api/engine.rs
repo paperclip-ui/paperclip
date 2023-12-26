@@ -38,7 +38,7 @@ async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
 
     let designer = DesignerService::new(ctx.clone());
     let designer_server = DesignerServer::new(designer);
-    let designer_server = tonic_web::config().enable(designer_server);
+    let designer_server = tonic_web::enable(designer_server);
 
     let server = Server::bind(&addr).serve(make_service_fn(move |_| {
         let cors = warp::cors().allow_any_origin();

@@ -94,11 +94,10 @@ export const createDesignerEngine =
     dispatch: Dispatch<DesignerEngineEvent>,
     getState: () => DesignerState
   ): Engine<DesignerState, DesignerEngineEvent> => {
-    const client = new DesignerClientImpl(
-      new GrpcWebImpl((protocol || "http:") + "//" + host, {
-        transport,
-      })
-    );
+    const impl = new GrpcWebImpl((protocol || "http:") + "//" + host, {
+      transport,
+    });
+    const client = new DesignerClientImpl(impl);
 
     const actions = createActions(client, dispatch);
     const handleEvent = createEventHandler(actions);
@@ -176,6 +175,9 @@ const createActions = (
         next(event) {
           dispatch({ type: "designer-engine/serverEvent", payload: event });
         },
+        complete() {
+          console.log("syncEvents COMPLETE");
+        },
         error: () => {
           dispatch({ type: "designer-engine/apiError" });
         },
@@ -196,6 +198,9 @@ const createActions = (
             payload: data.filePaths,
           });
         },
+        complete() {
+          console.log("syncResourceFiles COMPLETE");
+        },
         error: () => {
           dispatch({ type: "designer-engine/apiError" });
         },
@@ -214,6 +219,9 @@ const createActions = (
       client.GetGraph({}).subscribe({
         next(data) {
           dispatch({ type: "designer-engine/graphLoaded", payload: data });
+        },
+        complete() {
+          console.log("syncGraph COMPLETE");
         },
         error: () => {},
       });

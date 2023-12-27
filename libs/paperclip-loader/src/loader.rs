@@ -3,6 +3,7 @@ use neon::prelude::*;
 use paperclip_common::fs::LocalFileReader;
 use paperclip_config::ConfigContext;
 use paperclip_project::{LocalIO, Project};
+use paperclip_proto::notice::base::NoticeResult;
 use std::collections::HashMap;
 
 pub struct Loader {
@@ -22,7 +23,10 @@ impl Loader {
     pub fn get_config_context(&self) -> &ConfigContext {
         &self.project.config_context
     }
-    pub async fn compile_file(&self, file_path: &str) -> Result<HashMap<String, String>> {
+    pub async fn compile_file(
+        &self,
+        file_path: &str,
+    ) -> Result<HashMap<String, String>, NoticeResult> {
         self.project
             .compile_files(&vec![file_path.to_string()])
             .await

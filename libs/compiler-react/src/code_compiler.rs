@@ -20,6 +20,7 @@ use paperclip_proto::ast::{
     pc as ast,
     shared::Reference,
 };
+use paperclip_proto::notice::base::NoticeResult;
 use std::collections::BTreeMap;
 
 #[derive(Debug, Clone, Copy, Default)]
@@ -50,7 +51,11 @@ impl Info {
     }
 }
 
-pub fn compile_code(dependency: &Dependency, graph: &Graph, options: Options) -> Result<String> {
+pub fn compile_code(
+    dependency: &Dependency,
+    graph: &Graph,
+    options: Options,
+) -> Result<String, NoticeResult> {
     let mut context = Context::new(&dependency, graph, options);
     compile_document(
         dependency.document.as_ref().expect("Document must exist"),

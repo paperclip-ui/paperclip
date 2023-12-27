@@ -40,7 +40,6 @@ impl From<&Value> for Ary {
             ary.clone()
         } else {
             Ary {
-
                 // this should really be get_id but I'm lazy
                 source_id: None,
                 items: vec![value.clone()],
@@ -77,8 +76,7 @@ impl Obj {
                 .collect(),
         }
     }
-    pub fn new_empty(
-    ) -> Self {
+    pub fn new_empty() -> Self {
         Self::new(None, vec![])
     }
     pub fn extend(&mut self, other: &mut Obj) {

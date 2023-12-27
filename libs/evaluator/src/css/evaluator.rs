@@ -1,5 +1,4 @@
 use super::context::{CurrentNode, DocumentContext, PrioritizedRule};
-use super::errors;
 use super::virt;
 use crate::core::utils::{get_style_namespace, get_variant_namespace};
 use paperclip_common::fs::FileResolver;
@@ -8,9 +7,10 @@ use paperclip_proto::ast::all::{Expression, ImmutableExpressionRef};
 use paperclip_proto::ast::css::{self as css_ast};
 use paperclip_proto::ast::graph_ext::{self as graph};
 use paperclip_proto::ast::graph_ext::{self as graph_ref, Expr};
-use paperclip_proto::ast::pc::override_body_item;
 use paperclip_proto::ast::pc::{self as ast};
+use paperclip_proto::ast::pc::{override_body_item, trigger_body_item};
 use paperclip_proto::ast::shared::Reference;
+use paperclip_proto::notice::base::{Notice, NoticeResult};
 use paperclip_proto::virt::css::Rule;
 use std::string::ToString;
 
@@ -27,16 +27,10 @@ pub async fn evaluate<'asset_resolver, FR: FileResolver>(
     path: &str,
     graph: &graph::Graph,
     file_resolver: &'asset_resolver FR,
-) -> Result<virt::Document, errors::RuntimeError> {
+) -> Result<virt::Document, NoticeResult> {
     let dependencies = &graph.dependencies;
 
-    let dependency = if let Some(dependency) = dependencies.get(path) {
-        dependency
-    } else {
-        return Err(errors::RuntimeError {
-            message: "not found".to_string(),
-        });
-    };
+    let dependency = dependencies.get(path).expect("Dependency must exist");
 
     let mut context = DocumentContext::new(path, graph, file_resolver);
 
@@ -44,6 +38,12 @@ pub async fn evaluate<'asset_resolver, FR: FileResolver>(
         dependency.document.as_ref().expect("Document must exist"),
         &mut context,
     );
+
+    if !context.notices.borrow().is_empty() {
+        return Err(NoticeResult {
+            notices: context.notices.borrow().clone(),
+        });
+    }
 
     Ok(virt::Document {
         id: dependency
@@ -165,6 +165,9 @@ fn evaluate_component<F: FileResolver>(
     context: &mut DocumentContext<F>,
 ) {
     for item in &component.body {
+        if let ast::component_body_item::Inner::Variant(variant) = item.get_inner() {
+            validate_variant(variant, context);
+        }
         if let ast::component_body_item::Inner::Render(render) = item.get_inner() {
             let mut context = context.within_component(component);
 
@@ -174,6 +177,44 @@ fn evaluate_component<F: FileResolver>(
                 &mut context,
             );
         }
+    }
+}
+
+fn validate_variant<F: FileResolver>(variant: &ast::Variant, context: &mut DocumentContext<F>) {
+    for combo in &variant.triggers {
+        validate_trigger_combo(combo, context);
+    }
+}
+fn validate_trigger_combo<F: FileResolver>(
+    combo: &ast::TriggerBodyItemCombo,
+    context: &mut DocumentContext<F>,
+) {
+    for trigger in &combo.items {
+        validate_trigger(trigger, context);
+    }
+}
+fn validate_trigger<F: FileResolver>(
+    trigger: &ast::TriggerBodyItem,
+    context: &mut DocumentContext<F>,
+) {
+    match trigger.get_inner() {
+        trigger_body_item::Inner::Reference(reference) => {
+            validate_reference(reference, context);
+        }
+        trigger_body_item::Inner::Bool(_) | trigger_body_item::Inner::Str(_) => {}
+    }
+}
+fn validate_reference<F: FileResolver>(expr: &Reference, context: &mut DocumentContext<F>) {
+    let reference = context.graph.get_ref(
+        &expr.path,
+        &context.path,
+        context
+            .current_component
+            .and_then(|component| Some(Expr::Component(component))),
+    );
+
+    if reference.is_none() {
+        context.add_notice(Notice::reference_not_found(&context.path, &expr.range));
     }
 }
 
@@ -792,6 +833,11 @@ fn collect_style_variant_selectors<F: FileResolver>(
                     }
                     combo_triggers = new_combos;
                 }
+            } else {
+                context.add_notice(Notice::reference_not_found(
+                    &context.path,
+                    &variant_ref.range,
+                ));
             }
         }
     }
@@ -1033,6 +1079,8 @@ fn evaluate_style_extends<F: FileResolver>(
                     &mut context.within_path(&reference.path),
                 ));
             }
+        } else {
+            context.add_notice(Notice::reference_not_found(&context.path, &reference.range));
         }
     }
 
@@ -1123,9 +1171,18 @@ fn stringify_style_decl_value<F: FileResolver>(
             )
         }
         css_ast::declaration_value::Inner::FunctionCall(expr) => {
-            if expr.name == "var" && !expr.name.starts_with("--") {
+            if expr.name == "var" {
                 if let Some(atom) = context.graph.get_var_ref(expr, &context.path) {
                     return format!("var({})", atom.get_var_name());
+
+                // Crude way of checking for --var but this works
+                } else if !stringify_style_decl_value(
+                    &expr.arguments.as_ref().expect("arguments missing"),
+                    context,
+                )
+                .starts_with("--")
+                {
+                    context.add_notice(Notice::reference_not_found(&context.path, &expr.range));
                 }
             }
 
@@ -1167,12 +1224,12 @@ fn stringify_url_arg_value<F: FileResolver>(
 ) -> String {
     match &decl.get_inner() {
         css_ast::declaration_value::Inner::Str(expr) => {
-            format!(
-                "\"{}\"",
-                context
-                    .resolve_asset(&expr.value)
-                    .unwrap_or(expr.value.to_string())
-            )
+            if let Ok(url) = context.resolve_asset(&expr.value, &expr.range) {
+                return format!("\"{}\"", url);
+            } else {
+                context.add_notice(Notice::file_not_found(&context.path, &expr.range));
+                return format!("\"{}\"", expr.value.to_string());
+            }
         }
         _ => stringify_style_decl_value(decl, context),
     }

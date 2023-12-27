@@ -1,7 +1,9 @@
 use super::io::IO;
 use anyhow::{Error, Result};
 use paperclip_common::fs::{FileReader, FileResolver};
+use path_absolutize::*;
 use std::collections::HashMap;
+use std::path::Path;
 use std::sync::Arc;
 
 #[derive(Clone)]
@@ -42,7 +44,21 @@ impl<'kv> FileReader for MockFS<'kv> {
     }
 }
 impl<'kv> FileResolver for MockFS<'kv> {
-    fn resolve_file(&self, _from_path: &str, to_path: &str) -> Result<String> {
-        Ok(to_path.to_string())
+    fn resolve_file(&self, from_path: &str, to_path: &str) -> Result<String> {
+        let path = Path::new(&from_path)
+            .parent()
+            .unwrap()
+            .join(to_path)
+            .absolutize()
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .to_string();
+
+        if self.file_exists(&path) {
+            Ok(path)
+        } else {
+            Err(Error::msg("File not found"))
+        }
     }
 }

@@ -14,8 +14,9 @@ use paperclip_proto::ast::{
     graph_ext::{Dependency, Graph},
     pc as ast,
 };
+use paperclip_proto::notice::base::NoticeResult;
 
-pub fn compile_typed_definition(dep: &Dependency, graph: &Graph) -> Result<String> {
+pub fn compile_typed_definition(dep: &Dependency, graph: &Graph) -> Result<String, NoticeResult> {
     let mut context = Context::new(
         dep,
         graph,

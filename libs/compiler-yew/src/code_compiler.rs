@@ -8,11 +8,12 @@ use paperclip_proto::ast::{
     graph_ext::{Dependency, Graph},
     pc as ast,
 };
+use paperclip_proto::notice::base::NoticeResult;
 use pathdiff::diff_paths;
 use std::collections::BTreeMap;
 use std::path::Path;
 
-pub fn compile_code(dependency: &Dependency, graph: &Graph) -> Result<String> {
+pub fn compile_code(dependency: &Dependency, graph: &Graph) -> Result<String, NoticeResult> {
     let mut context = Context::new(&dependency, graph);
     compile_document(
         dependency.document.as_ref().expect("Document must exist"),
@@ -21,7 +22,7 @@ pub fn compile_code(dependency: &Dependency, graph: &Graph) -> Result<String> {
     Ok(context.get_buffer())
 }
 
-fn compile_document(document: &ast::Document, context: &mut Context) -> Result<()> {
+fn compile_document(document: &ast::Document, context: &mut Context) -> Result<(), NoticeResult> {
     compile_auto_gen_banner(context);
     compile_imports(document, context);
     for item in &document.body {
@@ -85,7 +86,10 @@ macro_rules! compile_children {
     }};
 }
 
-fn compile_component(component: &ast::Component, context: &mut Context) -> Result<()> {
+fn compile_component(
+    component: &ast::Component,
+    context: &mut Context,
+) -> Result<(), NoticeResult> {
     let render_node = get_or_short!(component.get_render_expr(), Ok(()));
 
     compile_component_props(component, context)?;
@@ -110,7 +114,10 @@ fn compile_component(component: &ast::Component, context: &mut Context) -> Resul
     Ok(())
 }
 
-fn compile_component_props(component: &ast::Component, context: &mut Context) -> Result<()> {
+fn compile_component_props(
+    component: &ast::Component,
+    context: &mut Context,
+) -> Result<(), NoticeResult> {
     let component_inference =
         Inferencer::new().infer_component(component, &context.dependency.path, context.graph)?;
 

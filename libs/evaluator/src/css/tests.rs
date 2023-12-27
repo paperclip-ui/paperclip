@@ -1281,28 +1281,6 @@ add_case! {
 }
 
 add_case! {
-  styles_with_variants_that_dont_exist_are_no_op,
-  [
-    ("/entry.pc", r#"
-      component A {
-        variant a
-        render span root {
-          style {
-            display: none
-          }
-          style variant a + b {
-            color: blue
-          }
-        }
-      }
-    "#)
-  ],
-  r#"
-  ._A-root-80f4925f-10 { display: none; }
-  "#
-}
-
-add_case! {
   can_toggle_root_instance_variant_style,
   [
     ("/entry.pc", r#"
@@ -1491,7 +1469,7 @@ component RadioInput {
     }
     render div container(onClick: onClick, class: class) {
         style variant on {
-            background: var(theme.blue00)
+            background: var(--blue00)
         }
         div dot {
             style variant on {
@@ -1524,13 +1502,13 @@ component RadioInput {
     "#)
   ],
   r#"
-  ._RadioInput-container-80f4925f-21._variant-80f4925f-3 { background: var(theme.blue00); }
-  ._RadioInput-container-80f4925f-21.on { background: var(theme.blue00); }
+  ._RadioInput-container-80f4925f-21._variant-80f4925f-3 { background: var(--blue00); }
+  ._RadioInput-container-80f4925f-21.on { background: var(--blue00); }
   ._RadioInput-container-80f4925f-21._variant-80f4925f-3 ._RadioInput-dot-80f4925f-20 { left: 100%; }
   ._RadioInput-container-80f4925f-21.on ._RadioInput-dot-80f4925f-20 { left: 100%; }
   ._RadioInput-dot-80f4925f-20 { left: 0px; }
   ._test-test-80f4925f-34._variant-80f4925f-24 { background: black; }
-  ._test-test-80f4925f-34._variant-80f4925f-24 ._test-radio-80f4925f-33._RadioInput-container-80f4925f-21 { background: var(theme.blue00); }
+  ._test-test-80f4925f-34._variant-80f4925f-24 ._test-radio-80f4925f-33._RadioInput-container-80f4925f-21 { background: var(--blue00); }
   ._test-test-80f4925f-34._variant-80f4925f-24 ._test-radio-80f4925f-33 ._RadioInput-dot-80f4925f-20 { left: 100%; }
   "#
 }

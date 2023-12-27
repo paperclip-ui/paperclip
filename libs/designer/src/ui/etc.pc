@@ -18,7 +18,7 @@ public component Item {
             transition: 0.2s
             cursor: pointer
         }
-        div preview  {
+        div preview {
             style {
                 width: 100%
                 height: 150px
@@ -53,3 +53,4 @@ public component PlusButton {
         }
     }
 }
+

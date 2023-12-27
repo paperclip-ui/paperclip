@@ -5,6 +5,7 @@ use anyhow::Result;
 use futures_core::stream::Stream;
 use paperclip_config::{Config, ConfigContext};
 use paperclip_proto::ast::graph_ext::Graph;
+use paperclip_proto::notice::base::NoticeResult;
 use paperclip_proto_ext::graph::load::LoadableGraph;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
@@ -87,14 +88,17 @@ impl<IO: ProjectIO> Project<IO> {
     pub fn compile_all<'a>(
         &self,
         options: CompileOptions,
-    ) -> impl Stream<Item = Result<(String, String), anyhow::Error>> + '_ {
+    ) -> impl Stream<Item = Result<(String, String), NoticeResult>> + '_ {
         self.compiler.compile_graph(self.graph.clone(), options)
     }
 
     ///
     /// Explicitly compiles files that are part of this project
 
-    pub async fn compile_files(&self, files: &Vec<String>) -> Result<HashMap<String, String>> {
+    pub async fn compile_files(
+        &self,
+        files: &Vec<String>,
+    ) -> Result<HashMap<String, String>, NoticeResult> {
         let mut graph = self.graph.lock().unwrap();
         graph
             .load_files::<IO>(files, &self.io, self.get_config().into_parser_options())

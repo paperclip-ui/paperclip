@@ -1,5 +1,5 @@
 use crate::{CompileOptions, Project, ProjectIO};
-use anyhow::Result;
+use anyhow::{Error, Result};
 use async_stream::stream;
 use futures::executor::block_on;
 use futures_core::stream::Stream;
@@ -63,7 +63,11 @@ impl FileResolver for MockIO {
                 .unwrap(),
         );
 
-        Ok(resolved_path)
+        if !self.file_exists(&resolved_path) {
+            Err(Error::msg("file does not exist"))
+        } else {
+            Ok(resolved_path)
+        }
     }
 }
 
@@ -386,6 +390,9 @@ test_case! {
         }
         text "A"
       }
+    "#),
+    ("/project/image.png", r#"
+      stub
     "#)
   ],
   [
@@ -421,6 +428,9 @@ test_case! {
         }
         text "A"
       }
+    "#),
+    ("/project/src/image.png", r#"
+      Mock
     "#)
   ],
   [

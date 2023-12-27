@@ -10,6 +10,7 @@ clap = { version = "3.2.17", features = ["derive"] }
 paperclip_parser = { path = "../parser" }
 paperclip_project = { path = "../project" }
 paperclip_common = { path = "../rs_common" }
+paperclip_validate = { path = "../validate" }
 paperclip_ast_serialize = { path = "../ast_serialize" }
 paperclip_workspace = { path = "../workspace" }
 paperclip_config = { path = "../config" }

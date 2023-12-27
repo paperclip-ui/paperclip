@@ -1,6 +1,5 @@
 pub use super::context::{DocumentContext, Options};
 use super::virt;
-use crate::core::errors;
 use crate::core::utils::get_style_namespace;
 use paperclip_common::fs::FileResolver;
 use paperclip_proto::ast::all::Expression;
@@ -8,6 +7,8 @@ use paperclip_proto::ast::docco as docco_ast;
 use paperclip_proto::ast::graph_ext::ComponentRefInfo;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::ast::pc as ast;
+use paperclip_proto::notice::base::Notice;
+use paperclip_proto::notice::base::NoticeResult;
 use paperclip_proto::virt::html;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
@@ -19,20 +20,21 @@ pub async fn evaluate<F: FileResolver>(
     graph: &Graph,
     file_resolver: &F,
     options: Options,
-) -> Result<virt::Document, errors::RuntimeError> {
+) -> Result<virt::Document, NoticeResult> {
     let dependencies = &graph.dependencies;
 
-    if let Some(dependency) = dependencies.get(path) {
-        let mut context = DocumentContext::new(path, graph, file_resolver, options);
-        let document = evaluate_document(
-            dependency.document.as_ref().expect("Document must exist"),
-            &mut context,
-        );
-        Ok(document)
-    } else {
-        Err(errors::RuntimeError {
-            message: "not found".to_string(),
+    let dependency = dependencies.get(path).expect("Dependency must exist");
+    let mut context = DocumentContext::new(path, graph, file_resolver, options);
+    let document = evaluate_document(
+        dependency.document.as_ref().expect("Document must exist"),
+        &mut context,
+    );
+    if !context.notices.borrow().is_empty() {
+        Err(NoticeResult {
+            notices: context.notices.borrow().clone(),
         })
+    } else {
+        Ok(document)
     }
 }
 
@@ -225,6 +227,15 @@ fn evaluate_element<F: FileResolver>(
             is_component_root,
         );
     } else {
+        if element.namespace.is_some() {
+            context.add_notice(Notice::reference_not_found(&context.path, &element.range));
+
+        // or check capital
+        } else if let Some(first_char) = element.tag_name.chars().nth(0) {
+            if first_char.is_uppercase() {
+                context.add_notice(Notice::reference_not_found(&context.path, &element.range));
+            }
+        }
         evaluate_native_element(
             element,
             fragment,
@@ -623,8 +634,13 @@ fn resolve_element_attributes<F: FileResolver>(
                     if !str_value.starts_with("http://") && !str_value.starts_with("https://") {
                         let ret = context
                             .file_resolver
-                            .resolve_file(&context.path, &str_value);
-                        property.value = Some(ret.unwrap().into());
+                            .resolve_file(&context.path, &str_value)
+                            .map_err(|_| Notice::file_not_found(&context.path, &element.range));
+                        if let Err(err) = ret {
+                            context.notices.borrow_mut().push(err);
+                        } else {
+                            property.value = Some(ret.unwrap().into());
+                        }
                     }
                 }
             }

@@ -5,6 +5,7 @@ use paperclip_common::fs::FileResolver;
 use paperclip_common::id::{get_document_id, IDGenerator};
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::ast::pc as ast;
+use paperclip_proto::notice::base::Notice;
 use paperclip_proto::virt::html::Value;
 use paperclip_proto::virt::{self, html};
 
@@ -18,6 +19,7 @@ pub struct DocumentContext<'graph, 'expr, 'file_resolver, FR: FileResolver> {
     pub graph: &'graph Graph,
     pub path: String,
     pub preview_data: html::Obj,
+    pub notices: Rc<RefCell<Vec<Notice>>>,
     pub data: html::Obj,
     pub file_resolver: &'file_resolver FR,
     pub current_component: Option<&'expr ast::Component>,
@@ -39,6 +41,7 @@ impl<'graph, 'expr, 'file_resolver, FR: FileResolver>
         Self {
             graph,
             path: path.to_string(),
+            notices: Rc::new(RefCell::new(vec![])),
             data: virt::html::Obj::new(None, vec![]),
             preview_data: virt::html::Obj::new(None, vec![]),
             file_resolver,
@@ -48,6 +51,9 @@ impl<'graph, 'expr, 'file_resolver, FR: FileResolver>
             render_scopes: vec![],
             instance_ids: vec![],
         }
+    }
+    pub fn add_notice(&self, notice: Notice) {
+        self.notices.borrow_mut().push(notice);
     }
     pub fn with_preview_data(&self, preview_data: html::Obj) -> Self {
         let mut clone = self.clone();
@@ -64,7 +70,9 @@ impl<'graph, 'expr, 'file_resolver, FR: FileResolver>
         self.preview_data.get(name).or(self.data.get(name))
     }
     pub fn get_deep(&self, path: &Vec<String>) -> Option<&Value> {
-        self.preview_data.get_deep(path).or(self.data.get_deep(path))
+        self.preview_data
+            .get_deep(path)
+            .or(self.data.get_deep(path))
     }
     pub fn within_component(&self, component: &'expr ast::Component) -> Self {
         let mut clone = self.clone();

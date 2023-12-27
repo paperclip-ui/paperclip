@@ -13,6 +13,7 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 paperclip_common = { path = "../rs_common" }
 paperclip_project = { path = "../project" }
+paperclip_proto = { path = "../proto" }
 paperclip_config = { path = "../config" }
 futures = "0.3.21"
 anyhow = "1.0.61"

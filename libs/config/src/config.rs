@@ -3,6 +3,7 @@ use anyhow::Result;
 use paperclip_common::fs::FileReader;
 use paperclip_common::join_path;
 use paperclip_parser::core::parser_context::Options;
+use path_absolutize::*;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 use std::str;
@@ -43,6 +44,23 @@ impl ConfigContext {
                 )
             })
             .unwrap_or(vec![])
+    }
+    pub fn resolve_path(&self, path: &str) -> Option<String> {
+        if path.starts_with(".") {
+            return None;
+        }
+
+        return self.config.src_dir.as_ref().and_then(|src_dir| {
+            return Some(String::from(
+                Path::new(&self.directory)
+                    .join(src_dir)
+                    .join(path)
+                    .absolutize()
+                    .unwrap()
+                    .to_str()
+                    .unwrap(),
+            ));
+        });
     }
 
     pub fn load<FR: FileReader>(cwd: &str, file_name: Option<String>, io: &FR) -> Result<Self> {

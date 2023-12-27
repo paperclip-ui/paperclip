@@ -1494,6 +1494,7 @@ dependencies = [
  "futures-core",
  "futures-util",
  "paperclip_ast_serialize",
+ "paperclip_common",
  "paperclip_config",
  "paperclip_parser",
  "paperclip_project",
@@ -1537,6 +1538,7 @@ dependencies = [
  "paperclip_parser",
  "paperclip_proto",
  "paperclip_proto_ext",
+ "pathdiff",
 ]
 
 [[package]]

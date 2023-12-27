@@ -98,7 +98,27 @@ fn collect_imports(
     for item in &document.body {
         match item.get_inner() {
             ast::document_body_item::Inner::Import(import) => {
-                imports.insert(import.path.to_string(), Some(import.namespace.to_string()));
+                let resolved_path = context.dependency.imports.get(&import.path);
+                if let Some(resolved_path) = resolved_path {
+                    let mut rel_path = pathdiff::diff_paths(
+                        resolved_path,
+                        std::path::Path::new(&context.dependency.path)
+                            .parent()
+                            .unwrap()
+                            .to_str()
+                            .unwrap(),
+                    )
+                    .unwrap()
+                    .to_str()
+                    .unwrap()
+                    .to_string();
+
+                    if !rel_path.starts_with(".") {
+                        rel_path = format!("./{}", rel_path);
+                    }
+
+                    imports.insert(rel_path, Some(import.namespace.to_string()));
+                }
             }
             ast::document_body_item::Inner::Component(component) => {
                 if let Some(script) = component.get_script(COMPILER_NAME) {

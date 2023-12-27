@@ -1,7 +1,7 @@
 use anyhow::{Error, Result};
 use clap::Args;
+use paperclip_common::fs::LocalFileReader;
 use paperclip_config::ConfigContext;
-use paperclip_project::LocalIO;
 use paperclip_workspace::server::io::LocalServerIO;
 use paperclip_workspace::server::server::{start, StartOptions};
 
@@ -27,22 +27,19 @@ pub struct StartDesignServerArgs {
 }
 
 pub async fn start_design_server(args: StartDesignServerArgs) -> Result<()> {
-    let project_io = LocalIO::default();
-
     let config_context = ConfigContext::load(
         env::current_dir()?.display().to_string().as_str(),
         args.config.clone(),
-        &project_io,
+        &LocalFileReader::default(),
     )?;
-
     if let Err(_) = start(
         StartOptions {
-            config_context,
+            config_context: config_context.clone(),
             port: args.port,
             open: args.open,
             component_screenshots: args.screenshots,
         },
-        LocalServerIO::default(),
+        LocalServerIO::new(config_context.clone()),
     ) {
         Err(Error::msg("Can't start design server"))
     } else {

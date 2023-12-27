@@ -1,4 +1,4 @@
-import "../../theme.pc" as theme
+import "ui/theme.pc" as theme
 
 /**
  * @frame(x: -794, y: -983, width: 297, height: 50)

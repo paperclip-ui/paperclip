@@ -1,7 +1,6 @@
 use futures::executor::block_on;
 use loader::Loader;
 use neon::prelude::*;
-use paperclip_project::LocalIO;
 use std::cell::RefCell;
 mod loader;
 extern crate neon_serde3;
@@ -9,17 +8,16 @@ extern crate neon_serde3;
 #[cfg(test)]
 mod tests;
 
-type BoxedLoader = JsBox<RefCell<Loader<LocalIO>>>;
+type BoxedLoader = JsBox<RefCell<Loader>>;
 
 fn loader_new(mut cx: FunctionContext) -> JsResult<BoxedLoader> {
     let directory = cx.argument::<JsString>(0)?;
     let config_name = cx.argument::<JsString>(1)?;
 
     let loader = RefCell::new(
-        Loader::<LocalIO>::start(
+        Loader::start(
             directory.value(&mut cx).as_str(),
             config_name.value(&mut cx).as_str(),
-            LocalIO::default(),
         )
         .unwrap(),
     );

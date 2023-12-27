@@ -15,8 +15,16 @@ use std::path::Path;
 use std::pin::Pin;
 use wax::Glob;
 
-#[derive(Clone, Default)]
-pub struct LocalIO;
+#[derive(Clone)]
+pub struct LocalIO {
+    pub config_context: ConfigContext,
+}
+
+impl LocalIO {
+    pub fn new(config_context: ConfigContext) -> Self {
+        Self { config_context }
+    }
+}
 impl GraphIO for LocalIO {}
 impl ProjectIO for LocalIO {}
 
@@ -47,14 +55,15 @@ impl FileWatcher for LocalIO {
     }
 }
 impl ConfigIO for LocalIO {
-    fn get_all_designer_files(&self, config_context: &ConfigContext) -> Vec<String> {
-        let pattern = config_context
+    fn get_all_designer_files(&self) -> Vec<String> {
+        let pattern = self
+            .config_context
             .config
             .get_relative_source_files_glob_pattern();
         let glob = Glob::new(pattern.as_str()).unwrap();
         let mut all_files: Vec<String> = vec![];
 
-        for entry in glob.walk(&config_context.directory) {
+        for entry in glob.walk(&self.config_context.directory) {
             let entry = entry.unwrap();
             all_files.push(String::from(entry.path().to_str().unwrap()));
         }
@@ -80,15 +89,18 @@ impl FileReader for LocalIO {
 
 impl FileResolver for LocalIO {
     fn resolve_file(&self, from_path: &str, to_path: &str) -> Result<String> {
-        Ok(String::from(
-            Path::new(from_path)
-                .parent()
-                .unwrap()
-                .join(to_path)
-                .absolutize()
-                .unwrap()
-                .to_str()
-                .unwrap(),
-        ))
+        return Ok(self
+            .config_context
+            .resolve_path(to_path)
+            .unwrap_or(String::from(
+                Path::new(from_path)
+                    .parent()
+                    .unwrap()
+                    .join(to_path)
+                    .absolutize()
+                    .unwrap()
+                    .to_str()
+                    .unwrap(),
+            )));
     }
 }

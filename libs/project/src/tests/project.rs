@@ -30,7 +30,7 @@ impl FileWatcher for MockIO {
     }
 }
 impl ConfigIO for MockIO {
-    fn get_all_designer_files(&self, _context: &ConfigContext) -> Vec<String> {
+    fn get_all_designer_files(&self) -> Vec<String> {
         vec![]
     }
 }

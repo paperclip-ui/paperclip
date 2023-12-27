@@ -4,7 +4,6 @@ import {
   FSItemKind,
   NewFileKind,
   expandDirs,
-  getActiveFilePath,
   getActiveRelativeDirectory,
   getCurrentFilePath,
   getTargetExprId,

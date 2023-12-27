@@ -1,9 +1,9 @@
-import "./logic/Sidebar/sidebar.pc" as module
-import "./theme.pc" as theme
-import "./logic/Editor/EditorPanels/LeftSidebar/ui.pc" as leftSidebar
-import "./right-sidebar.pc" as rightSidebar
-import "./resource-modal.pc" as assetsModal
-import "./toolbar.pc" as toolbar
+import "ui/logic/Sidebar/sidebar.pc" as module
+import "ui/theme.pc" as theme
+import "ui/logic/Editor/EditorPanels/LeftSidebar/ui.pc" as leftSidebar
+import "ui/right-sidebar.pc" as rightSidebar
+import "ui/resource-modal.pc" as assetsModal
+import "ui/toolbar.pc" as toolbar
 
 /**
  * @frame(x: -918, y: -272, width: 1024, height: 768)

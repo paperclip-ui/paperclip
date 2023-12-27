@@ -11,6 +11,7 @@ use paperclip_config::ConfigContext;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::notice::base::NoticeResult;
 use paperclip_proto_ext::graph::load::LoadableGraph;
+use paperclip_validate::validate;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
@@ -82,18 +83,20 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
                 .collect::<Vec<String>>();
 
                 let files = self.compile_files(&graph_files, &graph).await;
-
                 if let Ok(files) = files {
                     for (file_path, content) in files {
-
-
                         // keep tabs on immediately compiled files so that we prevent them from being emitted later if
                         // in watch mode and they haven't changed.
                         compile_cache.insert(file_path.to_string(), content.to_string());
                         yield Ok((file_path.to_string(), content.to_string()));
                     }
-                } else if let Err(err) = files {
-                    yield Err(err);
+                }
+
+                let options = self.config_context.config.into_parser_options();
+                let notice = validate::validate_documents(&graph_files, &self.io, &options).await;
+
+                if notice.contains_error() {
+                    yield Err(notice);
                 }
             }
 
@@ -108,14 +111,25 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
                         let _ = graph.load(&value.path, &self.io, self.config_context.config.into_parser_options()).await;
 
 
-                        let files = self.maybe_recompile_file(&value.path, &graph).await;
+                        let graph_files = graph
+                        .dependencies
+                        .keys()
+                        .map(|key| key.to_string())
+                        .collect::<Vec<String>>();
 
+
+                        let files = self.maybe_recompile_file(&value.path, &graph).await;
                         if let Ok(files) = files {
                             for (file_path, content) in files {
                                 yield Ok((file_path.to_string(), content.to_string()));
                             }
-                        } else if let Err(err) = files {
-                            yield Err(err);
+                        }
+
+                        let options = self.config_context.config.into_parser_options();
+                        let notice = validate::validate_documents(&graph_files, &self.io, &options).await;
+
+                        if notice.contains_error() {
+                            yield Err(notice);
                         }
                     }
                 }

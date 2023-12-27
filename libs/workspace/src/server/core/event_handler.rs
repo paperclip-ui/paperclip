@@ -48,7 +48,6 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 store_history(state);
             }
             ServerEvent::FileWatchEvent(event) => {
-                println!("ServerEvent::FileWatchEvent");
                 state.file_cache.remove(&event.path);
             }
             ServerEvent::ScreenshotsStarted => {

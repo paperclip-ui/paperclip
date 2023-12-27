@@ -2,6 +2,7 @@ use anyhow::Result;
 use clap::Args;
 use futures_util::pin_mut;
 use futures_util::stream::StreamExt;
+use paperclip_common::fs::LocalFileReader;
 use paperclip_config::{ConfigContext, DEFAULT_CONFIG_NAME};
 use paperclip_project::{CompileOptions, LocalIO, Project};
 use std::env;
@@ -25,8 +26,9 @@ pub struct BuildArgs {
 
 pub async fn build(args: BuildArgs) -> Result<()> {
     let current_dir = String::from(env::current_dir()?.to_str().unwrap());
-    let io = LocalIO::default();
-    let config_context = ConfigContext::load(&current_dir, Some(args.config), &io)?;
+    let fr = LocalFileReader::default();
+    let config_context = ConfigContext::load(&current_dir, Some(args.config), &fr)?;
+    let io = LocalIO::new(config_context.clone());
 
     let mut project = Project::new(config_context, io);
     project.load_all_files().await?;

@@ -1,16 +1,19 @@
 use anyhow::Result;
 use neon::prelude::*;
+use paperclip_common::fs::LocalFileReader;
 use paperclip_config::ConfigContext;
-use paperclip_project::{LocalIO, Project, ProjectIO};
+use paperclip_project::{LocalIO, Project};
 use std::collections::HashMap;
 
-pub struct Loader<TIO: ProjectIO> {
-    pub(crate) project: Project<TIO>,
+pub struct Loader {
+    pub(crate) project: Project<LocalIO>,
 }
 
-impl<TIO: ProjectIO> Loader<TIO> {
-    pub fn start(directory: &str, config_name: &str, io: TIO) -> Result<Self> {
-        let config_context = ConfigContext::load(directory, Some(config_name.to_string()), &io)?;
+impl Loader {
+    pub fn start(directory: &str, config_name: &str) -> Result<Self> {
+        let fr = LocalFileReader::default();
+        let config_context = ConfigContext::load(directory, Some(config_name.to_string()), &fr)?;
+        let io = LocalIO::new(config_context.clone());
 
         Ok(Self {
             project: Project::new(config_context, io),
@@ -26,4 +29,4 @@ impl<TIO: ProjectIO> Loader<TIO> {
     }
 }
 
-impl Finalize for Loader<LocalIO> {}
+impl Finalize for Loader {}

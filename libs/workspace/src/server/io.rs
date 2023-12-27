@@ -8,8 +8,16 @@ use paperclip_proto_ext::graph::io::IO as GraphIO;
 
 pub trait ServerIO: GraphIO + ConfigIO + FileWriter<String> + 'static {}
 
-#[derive(Clone, Default)]
-pub struct LocalServerIO {}
+#[derive(Clone)]
+pub struct LocalServerIO {
+    pub config_context: ConfigContext,
+}
+
+impl LocalServerIO {
+    pub fn new(config_context: ConfigContext) -> Self {
+        Self { config_context }
+    }
+}
 
 impl FileReader for LocalServerIO {
     fn read_file(&self, path: &str) -> Result<Box<[u8]>> {
@@ -36,13 +44,17 @@ impl FileWriter<String> for LocalServerIO {
 }
 
 impl ConfigIO for LocalServerIO {
-    fn get_all_designer_files(&self, config_context: &ConfigContext) -> Vec<String> {
-        LocalConfigIO::default().get_all_designer_files(config_context)
+    fn get_all_designer_files(&self) -> Vec<String> {
+        LocalConfigIO::new(self.config_context.clone()).get_all_designer_files()
     }
 }
 
 impl FileResolver for LocalServerIO {
     fn resolve_file(&self, from: &str, to: &str) -> Result<String> {
+        if let Some(path) = self.config_context.resolve_path(to) {
+            return Ok(path);
+        }
+
         LocalFileResolver::default().resolve_file(from, to)
     }
 }

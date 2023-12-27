@@ -155,15 +155,7 @@ async fn load_pc_file<TIO: ServerIO>(ctx: ServerEngineContext<TIO>, file: &str) 
 }
 
 async fn load_files<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
-    let state = ctx
-        .store
-        .lock()
-        .unwrap()
-        .state
-        .options
-        .config_context
-        .clone();
-    let files = ctx.io.get_all_designer_files(&state);
+    let files = ctx.io.get_all_designer_files();
 
     println!("Loaded designer files: {:?}", files);
 

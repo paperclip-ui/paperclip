@@ -431,18 +431,22 @@ pub fn parse_variant(context: &mut PCContext) -> Result<ast::Variant, err::Parse
 }
 
 fn parse_script(context: &mut PCContext) -> Result<ast::Script, err::ParserError> {
-    if !context.options.feature_enabled("script") {
-        return Err(err::ParserError::new_feature_not_enabled("script"));
-    }
 
     context.next_token()?; // eat script
     context.skip(is_superfluous_or_newline)?;
     let start = context.curr_u16pos.clone();
     let parameters = parse_parameters(context)?;
     let end = context.curr_u16pos.clone();
+
+    let range = base_ast::Range::new(start, end);
+
+    if !context.options.feature_enabled("script") {
+        return Err(err::ParserError::new_feature_not_enabled("script", &range));
+    }
+
     Ok(ast::Script {
         id: context.next_id(),
-        range: Some(base_ast::Range::new(start, end)),
+        range: Some(range),
         parameters,
     })
 }
@@ -536,9 +540,6 @@ fn parse_slot(context: &mut PCContext) -> Result<ast::Slot, err::ParserError> {
 }
 
 fn parse_condition(context: &mut PCContext) -> Result<ast::Condition, err::ParserError> {
-    if !context.options.feature_enabled("condition") {
-        return Err(err::ParserError::new_feature_not_enabled("condition"));
-    }
 
     let start = context.curr_u16pos.clone();
 
@@ -555,19 +556,21 @@ fn parse_condition(context: &mut PCContext) -> Result<ast::Condition, err::Parse
     )?;
 
     let end = context.curr_u16pos.clone();
+    let range = base_ast::Range::new(start, end);
+
+    if !context.options.feature_enabled("condition") {
+        return Err(err::ParserError::new_feature_not_enabled("condition", &range));
+    }
 
     Ok(ast::Condition {
         id: context.next_id(),
-        range: Some(base_ast::Range::new(start, end)),
+        range: Some(range),
         property,
         body,
     })
 }
 
 fn parse_repeat(context: &mut PCContext) -> Result<ast::Repeat, err::ParserError> {
-    if !context.options.feature_enabled("repeat") {
-        return Err(err::ParserError::new_feature_not_enabled("repeat"));
-    }
 
     let start = context.curr_u16pos.clone();
 
@@ -584,19 +587,21 @@ fn parse_repeat(context: &mut PCContext) -> Result<ast::Repeat, err::ParserError
     )?;
 
     let end = context.curr_u16pos.clone();
+    let range = base_ast::Range::new(start, end);
+
+    if !context.options.feature_enabled("repeat") {
+        return Err(err::ParserError::new_feature_not_enabled("repeat", &range));
+    }
 
     Ok(ast::Repeat {
         id: context.next_id(),
-        range: Some(base_ast::Range::new(start, end)),
+        range: Some(range),
         property,
         body,
     })
 }
 
 fn parse_switch(context: &mut PCContext) -> Result<ast::Switch, err::ParserError> {
-    if !context.options.feature_enabled("switch") {
-        return Err(err::ParserError::new_feature_not_enabled("switch"));
-    }
 
     let start = context.curr_u16pos.clone();
     context.next_token()?;
@@ -620,9 +625,15 @@ fn parse_switch(context: &mut PCContext) -> Result<ast::Switch, err::ParserError
     )?;
     let end = context.curr_u16pos.clone();
 
+    let range = base_ast::Range::new(start, end);
+
+    if !context.options.feature_enabled("switch") {
+        return Err(err::ParserError::new_feature_not_enabled("switch", &range));
+    }
+
     Ok(ast::Switch {
         id: context.id_generator.new_id(),
-        range: Some(base_ast::Range::new(start, end)),
+        range: Some(range),
         property,
         body,
     })

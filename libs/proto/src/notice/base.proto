@@ -7,8 +7,15 @@ message NoticeResult {
 }
 
 enum Code {
+
+    // Runtime
     FileNotFound = 0;
     ReferenceNotFound = 1;
+
+    // Parsing
+    UnexpectedToken = 3;
+    EndOfFile = 4;
+    ExperimentalFlagNotEnabled = 5;
 }
 enum Level {
     Warning = 0;

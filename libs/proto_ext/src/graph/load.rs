@@ -195,13 +195,9 @@ async fn load_dependencies<'io, TIO: IO>(
         .await
         .insert(path.to_string(), hash.to_string());
 
-    let document = if let Ok(document) = parse_pc(content.as_str(), &path, &options) {
-        document
-    } else {
-        // TODO: this needs to be bubbled
-        println!("Failed to parse {}", path);
-        return Ok(deps);
-    };
+    let document = parse_pc(content.as_str(), &path, &options).map_err(|err| {
+        err.into_notice_result(&path)
+    })?;
 
     let imports = get_document_imports(&document, &path, io)?;
 
@@ -214,6 +210,7 @@ async fn load_dependencies<'io, TIO: IO>(
             document: Some(document),
         },
     );
+    
 
     if imports.len() > 0 {
         for path in imports.values() {

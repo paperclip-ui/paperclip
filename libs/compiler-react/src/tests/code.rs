@@ -20,7 +20,7 @@ macro_rules! add_case {
 
             let mut graph = Graph::new();
 
-            if let Err(_err) = block_on(graph.load(
+            if let Err(err) = block_on(graph.load(
                 "/entry.pc",
                 &mock_fs,
                 Options::new(vec![
@@ -30,7 +30,7 @@ macro_rules! add_case {
                     "condition".to_string(),
                 ]),
             )) {
-                panic!("Unable to load");
+                panic!("{:?}", err);
             }
 
             let dep = graph.dependencies.get("/entry.pc").unwrap();

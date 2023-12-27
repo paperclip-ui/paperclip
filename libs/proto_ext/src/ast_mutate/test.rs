@@ -25,13 +25,15 @@ macro_rules! case {
             let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
             let mut graph = graph::Graph::new();
 
+            let features = vec!["condition".to_string()];
+
             for (path, _) in $mock_files {
-                block_on(graph.load(&path, &mock_fs, Options::new(vec!["condition".to_string()])))
+                block_on(graph.load(&path, &mock_fs, Options::new(features.clone())))
                     .expect("Unable to load");
             }
 
-            if let Err(_err) = block_on(graph.load("/entry.pc", &mock_fs, Options::new(vec![]))) {
-                panic!("Unable to load");
+            if let Err(err) = block_on(graph.load("/entry.pc", &mock_fs, Options::new(features.clone()))) {
+                panic!("Unable to load {:#?}", err);
             }
 
             // println!("{:#?}", graph.dependencies);

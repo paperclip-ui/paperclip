@@ -1,3 +1,5 @@
+use paperclip_proto::notice::base as notice;
+
 use crate::base::ast::{Range, U16Position};
 use std::error::Error;
 use std::fmt;
@@ -31,12 +33,25 @@ impl ParserError {
             kind: ErrorKind::EOF,
         }
     }
-    pub fn new_feature_not_enabled(feature: &str) -> ParserError {
+    pub fn new_feature_not_enabled(feature: &str, range: &Range) -> ParserError {
         ParserError {
             message: format!("Experimental feature \"{}\" not enabled", feature).to_string(),
-            range: Range::new(U16Position::new(0, 0, 0), U16Position::new(0, 0, 0)),
+            range: range.clone(),
             kind: ErrorKind::Experimental,
         }
+    }
+    pub fn into_notice_result(&self, path: &str) -> notice::NoticeResult {
+        notice::NoticeResult::from(notice::Notice::error(match self.kind {
+            ErrorKind::EOF => {
+                notice::Code::EndOfFile
+            },
+            ErrorKind::Experimental => {
+                notice::Code::ExperimentalFlagNotEnabled
+            },
+            ErrorKind::UnexpectedToken => {
+                notice::Code::UnexpectedToken
+            }
+        }, self.message.clone(), path.to_string(), Some(self.range.clone())))
     }
 }
 

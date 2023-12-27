@@ -17,11 +17,20 @@ impl Notice {
     pub fn error(code: notice::base::Code, message: String, path: String, content_range: Option<Range>) -> Self {
         Self::new(notice::base::Level::Error, code, message, path, content_range)
     }
+    pub fn warning(code: notice::base::Code, message: String, path: String, content_range: Option<Range>) -> Self {
+        Self::new(notice::base::Level::Warning, code, message, path, content_range)
+    }
     pub fn file_not_found(path: String, content_range: Option<Range>) -> Self {
         Self::new(notice::base::Level::Error, notice::base::Code::FileNotFound, "File not found".to_string(), path, content_range)
     }
-    pub fn warning(code: notice::base::Code, message: String, path: String, content_range: Option<Range>) -> Self {
-        Self::new(notice::base::Level::Warning, code, message, path, content_range)
+    pub fn unexpected_token(path: String, content_range: Range) -> Self {
+        Self::new(notice::base::Level::Error, notice::base::Code::UnexpectedToken, "Unexpected token".to_string(), path, Some(content_range))
+    }
+    pub fn end_of_file(path: String, content_range: Range) -> Self {
+        Self::new(notice::base::Level::Error, notice::base::Code::EndOfFile, "Unexpected end of file".to_string(), path, Some(content_range))
+    }
+    pub fn experimental_flag_not_enabled(feature: String, path: String, content_range: Option<Range>) -> Self {
+        Self::new(notice::base::Level::Error, notice::base::Code::ExperimentalFlagNotEnabled, format!("Experimental feature \"{}\" not enabled", feature), path, content_range)
     }
 }
 

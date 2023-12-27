@@ -1,7 +1,7 @@
-import "../../../../input.pc" as module
-import "../../../Sidebar/sidebar.pc" as sidebar
-import "../../../../theme.pc" as theme
-import "../../../../etc.pc" as etc
+import "ui/input.pc" as module
+import "ui/logic/Sidebar/sidebar.pc" as sidebar
+import "ui/theme.pc" as theme
+import "ui/etc.pc" as etc
 
 /**
  * @frame(x: -1561, y: 1882, width: 347, height: 768)

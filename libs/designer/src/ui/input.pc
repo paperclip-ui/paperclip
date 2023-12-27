@@ -112,7 +112,6 @@ public component SuggestionMenuSearch {
     }
 }
 
-
 /**
  * @frame(x: -1092, y: -747, width: 433, height: 64)
 */
@@ -693,3 +692,4 @@ div textInputPreview {
         }
     }
 }
+

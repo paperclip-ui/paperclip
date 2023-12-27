@@ -133,3 +133,4 @@ component Card {
  * @frame(x: 675, y: 2376, width: 1024, height: 768)
 */
 Card(class: "light")
+

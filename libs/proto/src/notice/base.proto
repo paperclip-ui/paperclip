@@ -1,0 +1,35 @@
+syntax = "proto3";
+import "ast/base.proto";
+package notice.base;
+
+message NoticeResult {
+    repeated Notice notices = 1;
+}
+
+enum Code {
+    ImportNotFound = 0;
+    ReferenceNotFound = 1;
+}
+enum Level {
+    Warning = 0;
+    Error = 1;
+}
+
+/**
+ * Notice message for parsing + runtime
+ */
+
+message Notice {
+
+    // Error or warning
+    Level level = 1;
+
+    // Specific notice code
+    Code code = 2;
+
+    // User-friendly message
+    string message = 3;
+
+    // range of the source code where the error happened
+    ast.base.Range source_range = 4;
+}

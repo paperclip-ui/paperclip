@@ -195,7 +195,7 @@ public component FileNavigator {
 }
 
 /**
- * @frame(x: 9, y: 584, width: 337, height: 768)
+ * @frame(x: 250, y: 180, width: 337, height: 768)
 */
 component FileResources {
     render sidebar.SidebarPanel {
@@ -276,7 +276,7 @@ component LeftSidebarHeader {
 }
 
 /**
- * @frame(x: 791, y: 742, width: 1024, height: 768)
+ * @frame(x: 2038, y: 1206, width: 151, height: 152)
 */
 public component AddLayerButton {
     script(src: "./Layers/AddLayerButton.tsx", target: "react", name: "AddLayerButton")
@@ -284,7 +284,7 @@ public component AddLayerButton {
 }
 
 /**
- * @frame(x: 28, y: 1424, width: 459, height: 768)
+ * @frame(x: -295, y: 172, width: 459, height: 768)
 */
 public component Layers {
     script(src: "./Layers/controller.tsx", target: "react", name: "Layers")

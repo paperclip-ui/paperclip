@@ -16,7 +16,7 @@ import {
   getKeyboardMenuCommand,
   ShortcutCommand,
 } from "./state";
-import { getSelectedExprIdSourceId, maybeCenterCanvas } from "../ui/state";
+import { getSelectedExprIdSourceId } from "../ui/state";
 
 export const shortcutReducer = (state: DesignerState, event: DesignerEvent) => {
   switch (event.type) {

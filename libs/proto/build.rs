@@ -18,6 +18,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 "src/virt/html.proto",
                 "src/virt/module.proto",
                 "src/language_service/pc.proto",
+                "src/notice/base.proto",
             ],
             &["src/"],
         )?;

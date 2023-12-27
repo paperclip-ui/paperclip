@@ -1,0 +1,22 @@
+[package]
+name = "paperclip_lint"
+version = "0.1.1"
+authors = ["Craig Condon <craig.j.condon@gmail.com>"]
+edition = "2021"
+exclude = []
+
+
+[lib]
+name = "paperclip_lint"
+
+[dependencies]
+paperclip_common = { path = "../rs_common" }
+paperclip_proto = { path = "../proto" }
+paperclip_proto_ext = { path = "../proto_ext" }
+
+
+[dev-dependencies]
+paperclip_evaluator = { path = "../evaluator" }
+paperclip_parser = { path = "../parser" }
+futures = "0.3.21"
+anyhow = "1.0.61"

@@ -283,8 +283,7 @@ public component Canvas {
 }
 
 /**
- * @frame(x: 2751, y: 540, width: 1557, height: 993)
- * @preview(root: (showSplash: true))
+ * @frame(x: 2751, y: 540, width: 1690, height: 1243)
 */
 Editor root {
     insert commands {

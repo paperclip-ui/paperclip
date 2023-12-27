@@ -1,7 +1,7 @@
 import "./theme.pc" as mod
 
 /**
- * @frame(x: 571, y: 201, width: 512, height: 215)
+ * @frame(x: 576, y: 1023, width: 512, height: 215)
 */
 public component Button {
     variant danger trigger {
@@ -109,7 +109,7 @@ public component Something {
 }
 
 /**
- * @frame(x: 371, y: 1289, width: 1024, height: 768)
+ * @frame(x: 1311, y: 774, width: 1024, height: 768)
 */
 component Card {
     variant light trigger {

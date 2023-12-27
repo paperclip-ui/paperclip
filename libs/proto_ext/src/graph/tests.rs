@@ -3,7 +3,10 @@ use super::test_utils::MockFS;
 
 use futures::executor::block_on;
 use paperclip_parser::core::parser_context::Options;
+use paperclip_proto::ast::base::{Range, U16Position};
 use paperclip_proto::ast::graph_ext::Graph;
+use paperclip_proto::notice;
+use paperclip_proto::notice::base::{NoticeResult, Notice};
 use std::collections::HashMap;
 
 #[test]
@@ -70,6 +73,40 @@ fn recursive_graphs_work() {
     {
         panic!("unable to load");
     }
+
+    // assert_eq!(block_on(graph.dependencies.lock()).len(), 2);
+}
+
+
+#[test]
+fn errors_if_import_doesnt_exist() {
+    let mock_fs = MockFS::new(HashMap::from([
+        (
+            "/entry.pc",
+            r#"
+                  import "/test.pc" as test
+                  component Test {
+                    render div {
+                      test.El
+                    }
+                  }
+                "#,
+        )
+    ]));
+
+    let mut graph = Graph::new();
+
+    let err = block_on(graph.load(&"/entry.pc".to_string(), &mock_fs, Options::new(vec![])));
+
+        assert_eq!(err, Err(NoticeResult {
+          notices: vec![Notice {
+            level: notice::base::Level::Error.into(),
+            code: notice::base::Code::FileNotFound.into(),
+            message: "File not found".to_string(),
+            path: "/test.pc".to_string(),
+            content_range: Some(Range::new(U16Position::new(19, 2, 19), U16Position::new(63, 3, 19)))
+          }]
+        }))
 
     // assert_eq!(block_on(graph.dependencies.lock()).len(), 2);
 }

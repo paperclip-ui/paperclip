@@ -7,7 +7,7 @@ message NoticeResult {
 }
 
 enum Code {
-    ImportNotFound = 0;
+    FileNotFound = 0;
     ReferenceNotFound = 1;
 }
 enum Level {
@@ -30,6 +30,9 @@ message Notice {
     // User-friendly message
     string message = 3;
 
-    // range of the source code where the error happened
-    ast.base.Range source_range = 4;
+    string path = 4;
+
+    // range of the source code where the error happened. OPTIONAL
+    // since the warning or error might happen before parsing (like if there's a parsing error)
+    optional ast.base.Range content_range = 5;
 }

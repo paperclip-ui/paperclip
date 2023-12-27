@@ -34,7 +34,7 @@ macro_rules! case {
                 panic!("Unable to load");
             }
 
-            println!("{:#?}", graph.dependencies);
+            // println!("{:#?}", graph.dependencies);
 
             edit_graph(&mut graph, &vec![$edit], &mock_fs).expect("Can't edit graph");
 
@@ -4105,6 +4105,13 @@ case! {
     ),
     (
       "/some/module.pc", r#"
+
+      component B {
+      }
+      "#
+    ),
+    (
+      "/some/dir/module2.pc", r#"
 
       component B {
       }

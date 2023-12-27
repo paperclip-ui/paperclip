@@ -1709,6 +1709,7 @@ dependencies = [
  "paperclip_common",
  "paperclip_parser",
  "paperclip_proto",
+ "path-absolutize",
  "pathdiff",
  "regex",
 ]

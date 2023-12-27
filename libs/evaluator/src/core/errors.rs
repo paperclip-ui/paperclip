@@ -1,9 +1,41 @@
 use std::error::Error;
 use std::fmt;
 
+use paperclip_proto::ast::base::Range;
+use paperclip_proto::notice::base::{Code, Notice, NoticeResult};
+
+#[derive(Debug, PartialEq, Clone)]
+pub enum RuntimeErrorCode {
+    FileNotFound,
+    ReferenceNotFound,
+}
+
 #[derive(Debug, PartialEq, Clone)]
 pub struct RuntimeError {
+    pub code: RuntimeErrorCode,
     pub message: String,
+    pub range: Option<Range>,
+}
+
+impl RuntimeError {
+    pub fn new(code: RuntimeErrorCode, message: String, range: Option<Range>) -> Self {
+        Self {
+            code,
+            message,
+            range,
+        }
+    }
+    pub fn into_notice(&self, path: &str) -> NoticeResult {
+        NoticeResult::from(Notice::error(
+            match self.code {
+                RuntimeErrorCode::FileNotFound => Code::FileNotFound,
+                RuntimeErrorCode::ReferenceNotFound => Code::ReferenceNotFound,
+            },
+            self.message.clone(),
+            path.to_string(),
+            self.range.clone(),
+        ))
+    }
 }
 
 impl fmt::Display for RuntimeError {

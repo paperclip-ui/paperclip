@@ -642,7 +642,7 @@ add_case! {
   "#,
   r#"
   import "./entry.pc.css";
-  import * as test from "/test.pc";
+  import * as test from "./test.pc";
   import * as React from "react";
 
   const omit = (obj, keys) => {
@@ -690,7 +690,7 @@ add_case! {
   "#,
   r#"
   import "./entry.pc.css";
-  import * as test from "/test.pc";
+  import * as test from "./test.pc";
   import * as React from "react";
 
   const omit = (obj, keys) => {
@@ -745,7 +745,7 @@ add_case! {
   "#,
   r#"
   import "./entry.pc.css";
-  import * as test from "/test.pc";
+  import * as test from "./test.pc";
   import * as React from "react";
 
   const omit = (obj, keys) => {
@@ -800,7 +800,7 @@ add_case! {
   "#,
   r#"
   import "./entry.pc.css";
-  import * as test from "/test.pc";
+  import * as test from "./test.pc";
   import * as React from "react";
 
   const omit = (obj, keys) => {

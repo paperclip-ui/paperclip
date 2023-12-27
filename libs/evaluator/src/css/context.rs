@@ -1,13 +1,16 @@
-use anyhow::Result;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::id::{get_document_id, IDGenerator};
 use paperclip_proto::ast::all::Expression;
+use paperclip_proto::ast::base::Range;
 use paperclip_proto::ast::graph_ext as graph;
 use paperclip_proto::ast::graph_ext::ComponentRefInfo;
 use paperclip_proto::ast::pc as ast;
+use paperclip_proto::notice::base::Notice;
 use paperclip_proto::virt::css::Rule;
 use std::cell::RefCell;
 use std::rc::Rc;
+
+use crate::core::errors::{RuntimeError, RuntimeErrorCode};
 
 #[derive(Clone, Copy, Debug)]
 pub enum CurrentNode<'expr> {
@@ -60,6 +63,8 @@ pub struct DocumentContext<'expr, 'resolve_asset, FR: FileResolver> {
     pub graph: &'expr graph::Graph,
     pub path: String,
 
+    pub notices: Rc<RefCell<Vec<Notice>>>,
+
     // the current element in focus, used when style child is on deck
     pub target_node: Option<CurrentNode<'expr>>,
 
@@ -94,6 +99,7 @@ impl<'expr, 'resolve_asset, FR: FileResolver> DocumentContext<'expr, 'resolve_as
             id_generator: id_generator.clone(),
             file_resolver,
             graph,
+            notices: Rc::new(RefCell::new(vec![])),
             current_instance: None,
             path: path.to_string(),
             current_component: None,
@@ -106,9 +112,24 @@ impl<'expr, 'resolve_asset, FR: FileResolver> DocumentContext<'expr, 'resolve_as
             priority: 0,
         }
     }
+    pub fn add_notice(&self, notice: Notice) {
+        self.notices.borrow_mut().push(notice);
+    }
 
-    pub fn resolve_asset(&self, asset_path: &str) -> Result<String> {
-        self.file_resolver.resolve_file(&self.path, asset_path)
+    pub fn resolve_asset(
+        &self,
+        asset_path: &str,
+        from_range: &Option<Range>,
+    ) -> Result<String, RuntimeError> {
+        self.file_resolver
+            .resolve_file(&self.path, asset_path)
+            .map_err(|_| {
+                RuntimeError::new(
+                    RuntimeErrorCode::FileNotFound,
+                    format!("File \"{}\" not found", asset_path),
+                    from_range.clone(),
+                )
+            })
     }
     pub fn get_ref_context(&self) -> &Self {
         if let Some(ref_context) = &self.current_ref_context {

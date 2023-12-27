@@ -5,6 +5,7 @@ use futures_util::stream::StreamExt;
 use paperclip_common::fs::LocalFileReader;
 use paperclip_config::{ConfigContext, DEFAULT_CONFIG_NAME};
 use paperclip_project::{CompileOptions, LocalIO, Project};
+use paperclip_validate::print::PrettyPrint;
 use std::env;
 use std::fs::File;
 use std::io::prelude::*;
@@ -30,19 +31,26 @@ pub async fn build(args: BuildArgs) -> Result<()> {
     let config_context = ConfigContext::load(&current_dir, Some(args.config), &fr)?;
     let io = LocalIO::new(config_context.clone());
 
-    let mut project = Project::new(config_context, io);
+    let mut project = Project::new(config_context, io.clone());
+
     project.load_all_files().await?;
 
     let s = project.compile_all(CompileOptions { watch: args.watch });
     pin_mut!(s);
-    while let Some(Ok((path, content))) = s.next().await {
-        // replace cd with relative since it's a prettier output
-        println!("✍🏻  {}", path.replace(&format!("{}/", current_dir), ""));
-        if args.print {
-            println!("{}", content);
-        } else {
-            let mut file = File::create(path)?;
-            file.write_all(content.as_str().as_bytes())?;
+    while let Some(result) = s.next().await {
+        if let Ok((path, content)) = result {
+            // replace cd with relative since it's a prettier output
+            println!("✍🏻  {}", path.replace(&format!("{}/", current_dir), ""));
+            if args.print {
+                println!("{}", content);
+            } else {
+                let mut file = File::create(path)?;
+                file.write_all(content.as_str().as_bytes())?;
+            }
+        } else if let Err(err) = result {
+            let pretty =
+                PrettyPrint::from_notice(&err, &current_dir, &io).expect("Cannot pretty print");
+            println!("{}", pretty.to_string());
         }
     }
 

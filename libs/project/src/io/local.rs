@@ -1,6 +1,6 @@
 use super::core::ProjectIO;
 use crate::utils::watch_local::async_watch;
-use anyhow::Result;
+use anyhow::{Error, Result};
 use async_stream::stream;
 use futures_core::stream::Stream;
 use futures_util::pin_mut;
@@ -89,7 +89,7 @@ impl FileReader for LocalIO {
 
 impl FileResolver for LocalIO {
     fn resolve_file(&self, from_path: &str, to_path: &str) -> Result<String> {
-        return Ok(self
+        let resolved = self
             .config_context
             .resolve_path(to_path)
             .unwrap_or(String::from(
@@ -101,6 +101,12 @@ impl FileResolver for LocalIO {
                     .unwrap()
                     .to_str()
                     .unwrap(),
-            )));
+            ));
+
+        if !self.file_exists(&resolved) {
+            Err(Error::msg("file does not exist"))
+        } else {
+            Ok(resolved)
+        }
     }
 }

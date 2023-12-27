@@ -163,11 +163,9 @@ public component SidebarPanelContent {
             height: 100%
             overflow: scroll
         }
-        style variant flush {
-            padding: var(theme.space05) 0px
-        }
         slot children
     }
+    
 }
 
 public component SidebarHeader {

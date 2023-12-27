@@ -1,7 +1,7 @@
 use crate::io::ProjectIO;
 use crate::target_compiler::TargetCompiler;
 use anyhow::Result;
-use async_stream::try_stream;
+use async_stream::stream;
 use futures_core::stream::Stream;
 use futures_util::pin_mut;
 use futures_util::stream::StreamExt;
@@ -9,6 +9,7 @@ use paperclip_common::get_or_short;
 use paperclip_common::pc::is_paperclip_file;
 use paperclip_config::ConfigContext;
 use paperclip_proto::ast::graph_ext::Graph;
+use paperclip_proto::notice::base::NoticeResult;
 use paperclip_proto_ext::graph::load::LoadableGraph;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
@@ -68,8 +69,8 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
         &'a self,
         graph: Arc<Mutex<Graph>>,
         options: CompileOptions,
-    ) -> impl Stream<Item = Result<(String, String), anyhow::Error>> + '_ {
-        try_stream! {
+    ) -> impl Stream<Item = Result<(String, String), NoticeResult>> + '_ {
+        stream! {
             let mut graph = graph.lock().unwrap();
             {
                 let mut compile_cache = self.compile_cache.lock().unwrap();
@@ -80,14 +81,19 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
                 .map(|key| key.to_string())
                 .collect::<Vec<String>>();
 
-                let files = self.compile_files(&graph_files, &graph).await?;
+                let files = self.compile_files(&graph_files, &graph).await;
 
-                for (file_path, content) in files {
+                if let Ok(files) = files {
+                    for (file_path, content) in files {
 
-                    // keep tabs on immediately compiled files so that we prevent them from being emitted later if
-                    // in watch mode and they haven't changed.
-                    compile_cache.insert(file_path.to_string(), content.to_string());
-                    yield (file_path.to_string(), content.to_string());
+
+                        // keep tabs on immediately compiled files so that we prevent them from being emitted later if
+                        // in watch mode and they haven't changed.
+                        compile_cache.insert(file_path.to_string(), content.to_string());
+                        yield Ok((file_path.to_string(), content.to_string()));
+                    }
+                } else if let Err(err) = files {
+                    yield Err(err);
                 }
             }
 
@@ -99,9 +105,17 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
                     if is_paperclip_file(&value.path) {
 
                         // blah, this shouldn't be happening.....
-                        graph.load(&value.path, &self.io, self.config_context.config.into_parser_options()).await?;
-                        for (file_path, content) in self.maybe_recompile_file(&value.path, &graph).await? {
-                            yield (file_path.to_string(), content.to_string());
+                        let _ = graph.load(&value.path, &self.io, self.config_context.config.into_parser_options()).await;
+
+
+                        let files = self.maybe_recompile_file(&value.path, &graph).await;
+
+                        if let Ok(files) = files {
+                            for (file_path, content) in files {
+                                yield Ok((file_path.to_string(), content.to_string()));
+                            }
+                        } else if let Err(err) = files {
+                            yield Err(err);
                         }
                     }
                 }
@@ -116,7 +130,7 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
         &self,
         files: &Vec<String>,
         graph: &Graph,
-    ) -> Result<HashMap<String, String>> {
+    ) -> Result<HashMap<String, String>, NoticeResult> {
         let mut compiled_files = HashMap::new();
         for target in &self.targets {
             compiled_files.extend(target.compile_files(files, graph).await?);
@@ -133,7 +147,7 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
         &self,
         path: &str,
         graph: &Graph,
-    ) -> Result<HashMap<String, String>> {
+    ) -> Result<HashMap<String, String>, NoticeResult> {
         let dep = get_or_short!(graph.dependencies.get(path), Ok(HashMap::new()));
 
         let mut compile_cache = self.compile_cache.lock().unwrap();

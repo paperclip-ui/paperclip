@@ -14,15 +14,6 @@ import "./etc.pc" as etc
 */
 public component DeclInfoCard {
     render div card {
-        style variant open {
-            pointer-events: initial
-            transform: translateX(-50%) translateY(4px)
-        }
-        style variant hovering {
-            left: 50%
-            min-width: 200px
-            width: 200px
-        }
         style extends theme.fontDefault, theme.popup {
             transform: translateX(-50%) translateY(4px)
             position: absolute
@@ -347,13 +338,6 @@ public component Preview {
                                 }
                                 insert children {
                                     text "Padding" {
-                                        style variant inherited + overridden {
-                                            left: NaNpx
-                                            top: NaNpx
-                                            position: relative
-                                            width: 46px
-                                            height: 15px
-                                        }
                                     }
                                 }
                             }

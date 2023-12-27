@@ -369,6 +369,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "colored"
+version = "2.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cbf2150cce219b664a8a70df7a1f933836724b503f8a413af9365b4dcc4d90b8"
+dependencies = [
+ "lazy_static",
+ "windows-sys 0.48.0",
+]
+
+[[package]]
 name = "colors-transform"
 version = "0.2.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1473,6 +1483,7 @@ dependencies = [
  "paperclip_common",
  "paperclip_config",
  "paperclip_project",
+ "paperclip_proto",
 ]
 
 [[package]]
@@ -1498,6 +1509,7 @@ dependencies = [
  "paperclip_config",
  "paperclip_parser",
  "paperclip_project",
+ "paperclip_validate",
  "paperclip_workspace",
  "serde",
  "serde_json",
@@ -1622,19 +1634,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "paperclip_lint"
-version = "0.1.1"
-dependencies = [
- "anyhow",
- "futures",
- "paperclip_common",
- "paperclip_evaluator",
- "paperclip_parser",
- "paperclip_proto",
- "paperclip_proto_ext",
-]
-
-[[package]]
 name = "paperclip_parser"
 version = "0.1.1"
 dependencies = [
@@ -1712,6 +1711,20 @@ dependencies = [
  "path-absolutize",
  "pathdiff",
  "regex",
+]
+
+[[package]]
+name = "paperclip_validate"
+version = "0.1.1"
+dependencies = [
+ "anyhow",
+ "colored",
+ "futures",
+ "paperclip_common",
+ "paperclip_evaluator",
+ "paperclip_parser",
+ "paperclip_proto",
+ "paperclip_proto_ext",
 ]
 
 [[package]]

@@ -241,9 +241,6 @@ public component MultiSelect {
 */
 public component TokenInput {
     render span {
-        style variant isFunction {
-            color: rgb(0, 162, 255)
-        }
         slot children
     }
 }

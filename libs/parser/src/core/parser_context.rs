@@ -68,7 +68,7 @@ impl<'tokenizer, 'scanner, 'idgenerator, 'src, TToken: Clone>
             scanner,
         })
     }
-    
+
     pub fn next_id(&mut self) -> String {
         self.id_generator.new_id()
     }

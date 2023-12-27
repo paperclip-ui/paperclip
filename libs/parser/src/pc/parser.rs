@@ -431,7 +431,6 @@ pub fn parse_variant(context: &mut PCContext) -> Result<ast::Variant, err::Parse
 }
 
 fn parse_script(context: &mut PCContext) -> Result<ast::Script, err::ParserError> {
-
     context.next_token()?; // eat script
     context.skip(is_superfluous_or_newline)?;
     let start = context.curr_u16pos.clone();
@@ -540,7 +539,6 @@ fn parse_slot(context: &mut PCContext) -> Result<ast::Slot, err::ParserError> {
 }
 
 fn parse_condition(context: &mut PCContext) -> Result<ast::Condition, err::ParserError> {
-
     let start = context.curr_u16pos.clone();
 
     context.next_token()?; // eat "if"
@@ -559,7 +557,10 @@ fn parse_condition(context: &mut PCContext) -> Result<ast::Condition, err::Parse
     let range = base_ast::Range::new(start, end);
 
     if !context.options.feature_enabled("condition") {
-        return Err(err::ParserError::new_feature_not_enabled("condition", &range));
+        return Err(err::ParserError::new_feature_not_enabled(
+            "condition",
+            &range,
+        ));
     }
 
     Ok(ast::Condition {
@@ -571,7 +572,6 @@ fn parse_condition(context: &mut PCContext) -> Result<ast::Condition, err::Parse
 }
 
 fn parse_repeat(context: &mut PCContext) -> Result<ast::Repeat, err::ParserError> {
-
     let start = context.curr_u16pos.clone();
 
     context.next_token()?; // eat repeat
@@ -602,7 +602,6 @@ fn parse_repeat(context: &mut PCContext) -> Result<ast::Repeat, err::ParserError
 }
 
 fn parse_switch(context: &mut PCContext) -> Result<ast::Switch, err::ParserError> {
-
     let start = context.curr_u16pos.clone();
     context.next_token()?;
     // each switch

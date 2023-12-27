@@ -1,6 +1,6 @@
 use super::io::ConfigIO;
 use crate::config::ConfigContext;
-use anyhow::Result;
+use anyhow::{Error, Result};
 use paperclip_common::fs::{FileReader, FileResolver, LocalFileReader};
 use paperclip_proto_ext::graph::io::IO as GraphIO;
 use path_absolutize::*;
@@ -54,8 +54,7 @@ impl FileReader for LocalIO {
 
 impl FileResolver for LocalIO {
     fn resolve_file(&self, from_path: &str, to_path: &str) -> Result<String> {
-        println!("RESOL");
-        Ok(String::from(
+        let resolved = String::from(
             Path::new(from_path)
                 .parent()
                 .unwrap()
@@ -64,6 +63,11 @@ impl FileResolver for LocalIO {
                 .unwrap()
                 .to_str()
                 .unwrap(),
-        ))
+        );
+        if !self.file_exists(&resolved) {
+            Err(Error::msg("file does not exist"))
+        } else {
+            Ok(resolved)
+        }
     }
 }

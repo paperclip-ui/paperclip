@@ -41,17 +41,16 @@ impl ParserError {
         }
     }
     pub fn into_notice_result(&self, path: &str) -> notice::NoticeResult {
-        notice::NoticeResult::from(notice::Notice::error(match self.kind {
-            ErrorKind::EOF => {
-                notice::Code::EndOfFile
+        notice::NoticeResult::from(notice::Notice::error(
+            match self.kind {
+                ErrorKind::EOF => notice::Code::EndOfFile,
+                ErrorKind::Experimental => notice::Code::ExperimentalFlagNotEnabled,
+                ErrorKind::UnexpectedToken => notice::Code::UnexpectedToken,
             },
-            ErrorKind::Experimental => {
-                notice::Code::ExperimentalFlagNotEnabled
-            },
-            ErrorKind::UnexpectedToken => {
-                notice::Code::UnexpectedToken
-            }
-        }, self.message.clone(), path.to_string(), Some(self.range.clone())))
+            self.message.clone(),
+            path.to_string(),
+            Some(self.range.clone()),
+        ))
     }
 }
 

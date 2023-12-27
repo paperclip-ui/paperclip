@@ -32,7 +32,9 @@ macro_rules! case {
                     .expect("Unable to load");
             }
 
-            if let Err(err) = block_on(graph.load("/entry.pc", &mock_fs, Options::new(features.clone()))) {
+            if let Err(err) =
+                block_on(graph.load("/entry.pc", &mock_fs, Options::new(features.clone())))
+            {
                 panic!("Unable to load {:#?}", err);
             }
 

@@ -254,10 +254,6 @@ public component Canvas {
             height: 100%
         }
         div inner {
-            style extends canvas {
-                width: 100%
-                height: 100%
-            }
             slot frames {
                 Artboard {
                     style extends theme.centered {

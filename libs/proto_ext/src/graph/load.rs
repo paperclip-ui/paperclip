@@ -7,10 +7,9 @@ use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast::graph_ext::{Dependency, Graph};
 use paperclip_proto::ast::pc::Document;
-use paperclip_proto::notice::base::{NoticeResult, Notice};
+use paperclip_proto::notice::base::{Notice, NoticeResult};
 use std::collections::HashMap;
 use std::str;
-use anyhow::Error;
 use std::sync::Arc;
 
 fn dep_hashes(graph: &Graph, omit: &Vec<String>) -> Arc<Mutex<HashMap<String, String>>> {
@@ -25,7 +24,12 @@ fn dep_hashes(graph: &Graph, omit: &Vec<String>) -> Arc<Mutex<HashMap<String, St
 
 #[async_trait]
 pub trait LoadableGraph {
-    async fn load<TIO: IO>(&mut self, path: &str, io: &TIO, options: Options) -> Result<(), NoticeResult>;
+    async fn load<TIO: IO>(
+        &mut self,
+        path: &str,
+        io: &TIO,
+        options: Options,
+    ) -> Result<(), NoticeResult>;
     async fn load_files<TIO: IO>(
         &mut self,
         paths: &Vec<String>,
@@ -57,7 +61,12 @@ pub trait LoadableGraph {
 
 #[async_trait]
 impl LoadableGraph for Graph {
-    async fn load<TIO: IO>(&mut self, path: &str, io: &TIO, options: Options) -> Result<(), NoticeResult> {
+    async fn load<TIO: IO>(
+        &mut self,
+        path: &str,
+        io: &TIO,
+        options: Options,
+    ) -> Result<(), NoticeResult> {
         self.dependencies.extend(
             load_dependencies::<TIO>(
                 String::from(path),
@@ -148,20 +157,11 @@ pub fn get_document_imports<TIO: IO>(
     let mut imports = HashMap::new();
 
     for import in &document.get_imports() {
-        let resolved_path = io.resolve_file(document_path, &import.path).and_then(|path| {
-            if io.file_exists(&path) {
-                Ok(path.to_string())
-            } else {
-                Err(Error::msg("file not found"))
-            }
-        }).map_err(|_| {
-            NoticeResult::from(Notice::file_not_found(import.path.clone(), import.range.clone()))
+        let resolved_path = io.resolve_file(document_path, &import.path).map_err(|_| {
+            NoticeResult::from(Notice::file_not_found(&document_path, &import.range))
         })?;
 
-        imports.insert(
-            import.path.to_string(),
-            resolved_path 
-        );
+        imports.insert(import.path.to_string(), resolved_path);
     }
 
     Ok(imports)
@@ -175,13 +175,13 @@ async fn load_dependencies<'io, TIO: IO>(
     path: String,
     io: &TIO,
     loaded: Arc<Mutex<HashMap<String, String>>>,
-    options: Options
+    options: Options,
 ) -> Result<HashMap<String, Dependency>, NoticeResult> {
     let mut deps = HashMap::new();
 
-    let content = io.read_file(&path).map_err(|_| {
-        NoticeResult::from(Notice::file_not_found(path.clone(), None))
-    })?;
+    let content = io
+        .read_file(&path)
+        .map_err(|_| NoticeResult::from(Notice::file_not_found(&path, &None)))?;
 
     let content = str::from_utf8(&*content).unwrap().to_string();
     let hash = format!("{:x}", crc32::checksum_ieee(content.as_bytes())).to_string();
@@ -195,9 +195,8 @@ async fn load_dependencies<'io, TIO: IO>(
         .await
         .insert(path.to_string(), hash.to_string());
 
-    let document = parse_pc(content.as_str(), &path, &options).map_err(|err| {
-        err.into_notice_result(&path)
-    })?;
+    let document =
+        parse_pc(content.as_str(), &path, &options).map_err(|err| err.into_notice_result(&path))?;
 
     let imports = get_document_imports(&document, &path, io)?;
 
@@ -210,7 +209,6 @@ async fn load_dependencies<'io, TIO: IO>(
             document: Some(document),
         },
     );
-    
 
     if imports.len() > 0 {
         for path in imports.values() {

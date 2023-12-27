@@ -3,7 +3,6 @@ import "../../../Sidebar/sidebar.pc" as sidebar
 import "../../../../theme.pc" as theme
 import "../../../../etc.pc" as etc
 
-
 /**
  * @frame(x: -1561, y: 1882, width: 347, height: 768)
 */
@@ -11,7 +10,7 @@ public component FilteredFiles {
     script(src: "./FileNavigator/controller.tsx", target: "react", name: "FilteredFiles")
     render div filteredFiles {
         slot children {
-            FilteredFile(class: "hover") {
+            FilteredFile(class: "preselected") {
                 override {
                     variant hovering trigger {
                         hovering
@@ -64,12 +63,13 @@ public component FilteredFiles {
  * @frame(x: -2077, y: 1894, width: 442, height: 64)
 */
 public component FilteredFile {
-    script(src: "./FileNavigator/controller.tsx", target: "react", name: "FilteredFile")
     variant hovering trigger {
         ".hover"
         ":hover"
+        ".preselected"
     }
-    render div container(onClick: onClick, class: class) {
+    script(src: "./FileNavigator/controller.tsx", target: "react", name: "FilteredFile")
+    render div container(class: class) {
         style {
             display: flex
             align-items: center

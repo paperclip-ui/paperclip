@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import {
   BaseFileNavigatorProps,
@@ -18,7 +24,7 @@ import {
   getSearchedFilesRoot,
   getSelectedFilePath,
 } from "@paperclip-ui/designer/src/state";
-import classNames from "classnames";
+import cx from "classnames";
 import * as ui from "../ui.pc";
 import {
   isPaperclipFile,
@@ -45,11 +51,37 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
     const dispatch = useDispatch<DesignerEvent>();
     const fileFilter = useSelector(getFileFilter);
     const focusOnFileFilter = useSelector(getFocusOnFileFilter);
+    const [preselectedPath, setPreselectedPath] = useState<string>(null);
+    let paths = useSelector(getSearchedFiles);
+    paths = useMemo(() => {
+      return paths.filter(isOpenableFile).slice(0, 20);
+    }, [paths]);
+
+    const history = useHistory();
+
+    useEffect(() => {
+      setPreselectedPath(paths[0]);
+    }, [paths]);
 
     const onFilter = (value: string) => {
       dispatch({ type: "ui/fileFilterChanged", payload: value });
     };
 
+    const onFilteredFileOver = setPreselectedPath;
+
+    const onFilterKeyDown = (event: React.KeyboardEvent<any>) => {
+      if (event.key === "Enter" && preselectedPath) {
+        history.redirect(routes.editor({ filePath: preselectedPath }));
+      } else if (event.key === "ArrowUp") {
+        setPreselectedPath(
+          paths[Math.max(paths.indexOf(preselectedPath) - 1, 0)]
+        );
+      } else if (event.key === "ArrowDown") {
+        setPreselectedPath(
+          paths[Math.min(paths.indexOf(preselectedPath) + 1, paths.length - 1)]
+        );
+      }
+    };
 
     return (
       <Base
@@ -59,6 +91,7 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
             <TextInput
               autoFocus={focusOnFileFilter}
               onChange={onFilter}
+              onKeyDown={onFilterKeyDown}
               value={fileFilter}
               placeholder="search..."
             />
@@ -67,7 +100,11 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
         }
         layers={
           fileFilter ? (
-            <ui.FilteredFiles />
+            <ui.FilteredFiles
+              paths={paths}
+              onMouseOver={onFilteredFileOver}
+              preselectedPath={preselectedPath}
+            />
           ) : (
             state.projectDirectory?.items.map((item) => {
               return <ui.FSItem key={item.path} item={item} depth={1} />;
@@ -105,30 +142,44 @@ export const AddFileButton = () => {
 
 const isOpenableFile = (path: string) => /\.pc$/.test(path);
 
-export const FilteredFiles = (Base: React.FC<BaseFilteredFileProps>) => () => {
-  const paths = useSelector(getSearchedFiles);
-  const rootDir = useSelector(getSearchedFilesRoot);
-
-  return (
-    <Base>
-      {paths
-        .filter(isOpenableFile)
-        .slice(0, 20)
-        .map((path) => {
-          return <ui.FilteredFile key={path} path={path} rootDir={rootDir} />;
-        })}
-    </Base>
-  );
+type FilteredFilesProps = {
+  paths: string[];
+  onMouseOver: (path: string) => void;
+  preselectedPath: string | null;
 };
+
+export const FilteredFiles =
+  (Base: React.FC<BaseFilteredFileProps>) =>
+  ({ paths, preselectedPath, onMouseOver }: FilteredFilesProps) => {
+    const rootDir = useSelector(getSearchedFilesRoot);
+
+    return (
+      <Base>
+        {paths.map((path) => {
+          return (
+            <ui.FilteredFile
+              key={path}
+              path={path}
+              rootDir={rootDir}
+              preselected={path === preselectedPath}
+              onMouseOver={() => onMouseOver(path)}
+            />
+          );
+        })}
+      </Base>
+    );
+  };
 
 type FilteredFileProps = {
   path: string;
   rootDir: string;
+  preselected?: boolean;
+  onMouseOver?: () => void;
 };
 
 export const FilteredFile =
   (Base: React.FC<BaseFilteredFileProps>) =>
-  ({ path, rootDir }: FilteredFileProps) => {
+  ({ path, rootDir, preselected, onMouseOver }: FilteredFileProps) => {
     const parts = path.split("/");
     const basename = parts.pop();
     const dirname = parts.join("/").replace(rootDir + "/", "");
@@ -136,12 +187,17 @@ export const FilteredFile =
     const onClick = () => {
       history.redirect(routes.editor({ filePath: path }));
     };
+
     return (
       <Base
+        container={{
+          onClick,
+          onMouseOver,
+        }}
+        class={cx({ preselected })}
         basename={basename}
         dirname={dirname}
         dirTitle={dirname}
-        onClick={onClick}
       />
     );
   };
@@ -267,7 +323,7 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
               onClick: onClick,
             }}
             header={dirname(item.path)}
-            headerClass={classNames({
+            headerClass={cx({
               file: item.kind === FSItemKind.File,
               folder: item.kind === FSItemKind.Directory,
               container: item.kind === FSItemKind.Directory,

@@ -19,7 +19,7 @@ Or download one of the standalone binaries here: https://github.com/paperclip-ui
 
 ---
 
-Paperclip is a tiny styling language that compiles to HTML and CSS. Here's an example of what it looks like:
+Paperclip is a tiny styling language for ambitions web applitions. Here's an example of what it looks like:
 
 ```javascript
 

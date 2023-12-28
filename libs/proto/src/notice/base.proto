@@ -2,8 +2,8 @@ syntax = "proto3";
 import "ast/base.proto";
 package notice.base;
 
-message NoticeResult {
-    repeated Notice notices = 1;
+message NoticeList {
+    repeated Notice items = 1;
 }
 
 enum Code {
@@ -11,11 +11,15 @@ enum Code {
     // Runtime
     FileNotFound = 0;
     ReferenceNotFound = 1;
+    Unexpected = 7;
 
     // Parsing
     UnexpectedToken = 3;
     EndOfFile = 4;
     ExperimentalFlagNotEnabled = 5;
+
+    // Generic for anything really
+    UnableToParse = 6;
 }
 enum Level {
     Warning = 0;
@@ -37,7 +41,7 @@ message Notice {
     // User-friendly message
     string message = 3;
 
-    string path = 4;
+    optional string path = 4;
 
     // range of the source code where the error happened. OPTIONAL
     // since the warning or error might happen before parsing (like if there's a parsing error)

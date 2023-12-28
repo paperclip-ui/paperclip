@@ -1,25 +1,27 @@
 use anyhow::Result;
 use colored::Colorize;
-use paperclip_common::fs::FileReader;
-use paperclip_proto::notice::base::{Level, Notice, NoticeResult};
-use std::{self};
+use paperclip_common::fs::{FileReader, LocalFileReader};
+use paperclip_proto::notice::base::{Level, Notice, NoticeList};
+use std::{self, env};
 
 #[derive(Debug, PartialEq)]
 pub struct Message {
     // Code snippet printed
-    pub relative_path: String,
+    pub relative_path: Option<String>,
     pub lines: Option<Vec<String>>,
     pub notice: Notice,
 }
 
 impl Message {
     pub fn from<TIO: FileReader>(notice: &Notice, project_dir: &str, io: &TIO) -> Result<Self> {
-        let content = io.read_file(&notice.path)?;
-        let content = std::str::from_utf8(&*content).unwrap().to_string();
+        let content = notice
+            .path
+            .as_ref()
+            .and_then(|path| io.read_file(&path).ok())
+            .and_then(|content| std::str::from_utf8(&*content).ok().map(str::to_string));
 
-        Ok(Self {
-            relative_path: notice.path.replace(&project_dir, ""),
-            lines: notice.content_range.as_ref().and_then(|range| {
+        let lines = content.and_then(|content| {
+            notice.content_range.as_ref().and_then(|range| {
                 let lines = content
                     .split("\n")
                     .map(|line| line.to_string())
@@ -30,7 +32,15 @@ impl Message {
                 let relevant_lines = &lines[(start.line - 1) as usize..end.line as usize];
 
                 Some(relevant_lines.to_vec())
-            }),
+            })
+        });
+
+        Ok(Self {
+            relative_path: notice
+                .path
+                .as_ref()
+                .and_then(|path| Some(path.replace(&project_dir, ""))),
+            lines,
             notice: notice.clone(),
         })
     }
@@ -53,9 +63,15 @@ impl ToString for Message {
             "".to_string()
         };
 
-        let mut buffer = format!(
+        let mut buffer = "".to_string();
+
+        if let Some(path) = &self.relative_path {
+            buffer = format!("{}", path);
+        }
+
+        buffer = format!(
             "{}{} - {}: {}\n\n",
-            self.relative_path.cyan(),
+            buffer,
             range.yellow(),
             level,
             self.notice.message.as_str().bold()
@@ -73,7 +89,8 @@ impl ToString for Message {
                         line
                     );
 
-                    let pre = " ".repeat(cline.to_string().len());
+                    // + 1 to include :
+                    let pre = " ".repeat(cline.to_string().len() + 1);
 
                     if start.line == end.line {
                         buffer = format!(
@@ -91,7 +108,7 @@ impl ToString for Message {
                             buffer,
                             pre,
                             " ".repeat((start.column + 1) as usize),
-                            "^".repeat((line.len() as u32 - start.column) as usize)
+                            "^".repeat((line.len() as u32 - start.column + 1) as usize)
                                 .bold()
                                 .bright_red()
                         );
@@ -107,7 +124,7 @@ impl ToString for Message {
                             "{}{}{}\n",
                             buffer,
                             pre,
-                            "^".repeat(line.len()).bold().bright_red()
+                            "^".repeat(line.len() + 1).bold().bright_red()
                         );
                     }
                 }
@@ -126,13 +143,13 @@ pub struct PrettyPrint {
 
 impl PrettyPrint {
     pub fn from_notice<TIO: FileReader>(
-        notice: &NoticeResult,
+        notice: &NoticeList,
         project_dir: &str,
         io: &TIO,
     ) -> Result<PrettyPrint> {
         let mut messages: Vec<Message> = vec![];
 
-        for notice in &notice.notices {
+        for notice in &notice.items {
             messages.push(Message::from(notice, project_dir, io)?);
         }
 
@@ -151,5 +168,22 @@ impl ToString for PrettyPrint {
             .map(|message| message.to_string())
             .collect::<Vec<String>>()
             .join("\n");
+    }
+}
+
+pub trait ToPrettyString {
+    fn to_pretty_string(&self) -> String;
+}
+
+impl ToPrettyString for NoticeList {
+    fn to_pretty_string(&self) -> String {
+        let pretty = PrettyPrint::from_notice(
+            &self,
+            env::current_dir().unwrap().to_str().unwrap(),
+            &LocalFileReader::default(),
+        )
+        .expect("Cannot pretty print");
+
+        return pretty.to_string();
     }
 }

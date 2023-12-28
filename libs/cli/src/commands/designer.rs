@@ -1,11 +1,10 @@
-use anyhow::{Error, Result};
+use anyhow::Result;
 use clap::Args;
 use paperclip_common::fs::LocalFileReader;
 use paperclip_config::ConfigContext;
+use paperclip_proto::notice::base::{Notice, NoticeList};
 use paperclip_workspace::server::io::LocalServerIO;
 use paperclip_workspace::server::server::{start, StartOptions};
-
-use std::env;
 
 #[derive(Debug, Args)]
 pub struct StartDesignServerArgs {
@@ -26,12 +25,9 @@ pub struct StartDesignServerArgs {
     config: Option<String>,
 }
 
-pub async fn start_design_server(args: StartDesignServerArgs) -> Result<()> {
-    let config_context = ConfigContext::load(
-        env::current_dir()?.display().to_string().as_str(),
-        args.config.clone(),
-        &LocalFileReader::default(),
-    )?;
+pub async fn start_design_server(args: StartDesignServerArgs, cwd: &str) -> Result<(), NoticeList> {
+    let config_context =
+        ConfigContext::load(cwd, args.config.clone(), &LocalFileReader::default())?;
     if let Err(_) = start(
         StartOptions {
             config_context: config_context.clone(),
@@ -41,7 +37,7 @@ pub async fn start_design_server(args: StartDesignServerArgs) -> Result<()> {
         },
         LocalServerIO::new(config_context.clone()),
     ) {
-        Err(Error::msg("Can't start design server"))
+        Err(Notice::unexpected("Unable to start server", None).to_list())
     } else {
         Ok(())
     }

@@ -245,6 +245,10 @@ export type FileNavigatorItemClicked = BaseEvent<
   "ui/FileNavigatorItemClicked",
   FSItem
 >;
+export type FileNavigatorContextMenuOpened = BaseEvent<
+  "ui/FileNavigatorContextMenuOpened",
+  FSItem
+>;
 
 export type InsertElementReleased = BaseEvent<"ui/insertElementReleased", Box>;
 
@@ -259,6 +263,7 @@ export type UIEvent =
   | AddLayerMenuItemClicked
   | BoundsChanged
   | CanvasResized
+  | FileNavigatorContextMenuOpened
   | ToolsLayerDrop
   | PromptClosed
   | FileNavigatorItemClicked

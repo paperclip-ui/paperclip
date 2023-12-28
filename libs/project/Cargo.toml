@@ -8,16 +8,21 @@ exclude = []
 [lib]
 name = "paperclip_project"
 
+[features]
+default = ["local"]
+local = ["paperclip_proto_ext/local", "paperclip_common/local", "paperclip_config/local", "paperclip_compiler_react/local", "paperclip_compiler_yew/local", "paperclip_parser/local"]
+
+
 [dependencies]
-paperclip_parser = { path = "../parser" }
-paperclip_proto = { path = "../proto" }
-paperclip_proto_ext = { path = "../proto_ext" }
-paperclip_evaluator = { path = "../evaluator" }
-paperclip_validate = { path = "../validate" }
-paperclip_compiler_react = { path = "../compiler-react" }
-paperclip_compiler_yew = { path = "../compiler-yew" }
-paperclip_config = { path = "../config" }
-paperclip_common = { path = "../rs_common" }
+paperclip_parser = { path = "../parser", features = [] }
+paperclip_proto = { path = "../proto", features = [] }
+paperclip_proto_ext = { path = "../proto_ext", features = [] }
+paperclip_evaluator = { path = "../evaluator", features = [] }
+paperclip_validate = { path = "../validate", features = [] }
+paperclip_compiler_react = { path = "../compiler-react", features = [] }
+paperclip_compiler_yew = { path = "../compiler-yew", features = [] }
+paperclip_config = { path = "../config", features = [] }
+paperclip_common = { path = "../rs_common", features = [] }
 textwrap = "0.15.0"
 serde = { version = "1.0.143", features = ["derive"] }
 serde_json = { version = "1.0.83" }

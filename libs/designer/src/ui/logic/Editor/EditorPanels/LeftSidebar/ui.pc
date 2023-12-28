@@ -11,11 +11,6 @@ public component FilteredFiles {
     render div filteredFiles {
         slot children {
             FilteredFile(class: "preselected") {
-                override {
-                    variant hovering trigger {
-                        hovering
-                    }
-                }
                 insert basename {
                     text "file.svg"
                 }
@@ -178,11 +173,6 @@ public component FileNavigator {
                         insert children {
                             TreeNavigationItem {
                                 LayerNavigationItemHeader(class: "file open") {
-                                    override container.root {
-                                        style {
-                                            --depth: 2
-                                        }
-                                    }
                                     text "index.tsx"
                                 }
                             }
@@ -319,45 +309,19 @@ public component Layers {
                         TreeNavigationItemContent {
                             TreeNavigationItem {
                                 LayerNavigationItemHeader(class: "shadow element container open showDropOver") {
-                                    override container.root {
-                                        style {
-                                            --depth: 2
-                                        }
-                                    }
                                     text "container"
                                 }
                             }
                             TreeNavigationItem {
                                 LayerNavigationItemHeader(class: "slot container open") {
-                                    override {
-                                        variant isCompositeToken
-                                    }
-                                    override container.root {
-                                        style {
-                                            --depth: 2
-                                        }
-                                    }
                                     text "label"
                                 }
                                 TreeNavigationItemContent {
                                     TreeNavigationItem {
                                         LayerNavigationItemHeader(class: "text showDropTop") {
-                                            override container.root {
-                                                style {
-                                                    --depth: 3
-                                                }
-                                            }
                                             text "some label"
                                         }
                                         LayerNavigationItemHeader(class: "element") {
-                                            override {
-                                                variant isElement
-                                            }
-                                            override container.root {
-                                                style {
-                                                    --depth: 4
-                                                }
-                                            }
                                             text "some long label"
                                             TagType {
                                                 text "div"
@@ -371,11 +335,6 @@ public component Layers {
                             }
                             TreeNavigationItem {
                                 LayerNavigationItemHeader(class: "selected slot container open") {
-                                    override container.root {
-                                        style {
-                                            --depth: 2
-                                        }
-                                    }
                                     text "description"
                                 }
                                 TreeNavigationItemContent {
@@ -640,13 +599,7 @@ public component TreeNavigationItemHeader {
         style variant isSelected {
             background: var(theme.gray04)
         }
-        DropZoneDivider(class: "top") {
-            override root {
-                style variant showDropTop {
-                    display: block
-                }
-            }
-        }
+        DropZoneDivider(class: "top")
         div {
             style {
                 display: flex
@@ -699,13 +652,7 @@ public component TreeNavigationItemHeader {
                 slot controls
             }
         }
-        DropZoneDivider(class: "bottom") {
-            override root {
-                style variant showDropBottom {
-                    display: block
-                }
-            }
-        }
+        DropZoneDivider(class: "bottom")
     }
 }
 
@@ -798,4 +745,3 @@ public component LayerNavigationItemHeader {
         }
     }
 }
-

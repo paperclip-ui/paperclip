@@ -1484,6 +1484,7 @@ dependencies = [
  "paperclip_config",
  "paperclip_project",
  "paperclip_proto",
+ "paperclip_validate",
 ]
 
 [[package]]
@@ -1509,6 +1510,7 @@ dependencies = [
  "paperclip_config",
  "paperclip_parser",
  "paperclip_project",
+ "paperclip_proto",
  "paperclip_validate",
  "paperclip_workspace",
  "serde",
@@ -1523,6 +1525,7 @@ dependencies = [
  "anyhow",
  "async-channel",
  "async-stream",
+ "colored",
  "crc 1.8.1",
  "crossbeam-channel",
  "event-listener",

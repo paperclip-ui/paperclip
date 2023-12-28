@@ -1,9 +1,9 @@
 use super::io::IO;
 use anyhow::{Error, Result};
 use paperclip_common::fs::{FileReader, FileResolver};
-use path_absolutize::*;
 use std::collections::HashMap;
 use std::path::Path;
+use std::path::PathBuf;
 use std::sync::Arc;
 
 #[derive(Clone)]
@@ -45,12 +45,7 @@ impl<'kv> FileReader for MockFS<'kv> {
 }
 impl<'kv> FileResolver for MockFS<'kv> {
     fn resolve_file(&self, from_path: &str, to_path: &str) -> Result<String> {
-        let path = Path::new(&from_path)
-            .parent()
-            .unwrap()
-            .join(to_path)
-            .absolutize()
-            .unwrap()
+        let path = absolutize(Path::new(&from_path).parent().unwrap().join(to_path))
             .to_str()
             .unwrap()
             .to_string();
@@ -61,4 +56,15 @@ impl<'kv> FileResolver for MockFS<'kv> {
             Err(Error::msg("File not found"))
         }
     }
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+fn absolutize(pt: PathBuf) -> PathBuf {
+    use path_absolutize::*;
+    pt.absolutize().unwrap().to_path_buf()
+}
+
+#[cfg(target_arch = "wasm32")]
+fn absolutize(pt: PathBuf) -> PathBuf {
+    pt
 }

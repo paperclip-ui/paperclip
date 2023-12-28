@@ -3,6 +3,7 @@
 use crate::server::{core::ServerEngineContext, io::ServerIO};
 use anyhow::{Error, Result};
 use inflector::cases::kebabcase::to_kebab_case;
+use paperclip_common::log::verbose;
 use std::path::{Path, PathBuf};
 
 // https://github.com/hyperium/tonic/blob/4b0ece6d2854af088fbc1bdb55c2cdd19ec9bb92/tonic-web/src/call.rs#L14
@@ -28,7 +29,7 @@ pub mod content_types {
 
 pub fn create_design_file<TIO: ServerIO>(
     name: &str,
-    parent_dir: &str,
+    parent_dir: Option<String>,
     ctx: ServerEngineContext<TIO>,
 ) -> Result<String> {
     let config_ctx = ctx
@@ -39,18 +40,17 @@ pub fn create_design_file<TIO: ServerIO>(
         .options
         .config_context
         .clone();
-    let src_dir = if parent_dir == "" {
-        Some(parent_dir.to_string())
-    } else {
-        config_ctx.config.designs_dir.or(config_ctx.config.src_dir)
-    };
+    let src_dir = config_ctx.config.designs_dir.or(config_ctx.config.src_dir);
+    let project_dir: PathBuf = Path::new(&config_ctx.directory).to_path_buf();
 
-    let mut file_dir: PathBuf = Path::new(&config_ctx.directory).to_path_buf();
-
-    file_dir = if let Some(src_dir) = src_dir {
-        file_dir.join(src_dir)
+    let file_dir: PathBuf = if let Some(parent_dir) = parent_dir {
+        Path::new(&parent_dir).to_path_buf()
     } else {
-        file_dir
+        if let Some(src_dir) = src_dir {
+            project_dir.join(src_dir)
+        } else {
+            project_dir
+        }
     };
 
     let file_path = file_dir
@@ -64,7 +64,7 @@ pub fn create_design_file<TIO: ServerIO>(
         return Err(Error::msg("Design file already exists."));
     }
 
-    println!("Created design file: {}", file_path);
+    verbose(&format!("✍️ Created design file: {}", file_path));
 
     ctx.io.write_file(&file_path, "".to_string())?;
 

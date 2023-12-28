@@ -7,7 +7,7 @@ use crate::context::InferContext;
 use crate::types;
 use paperclip_common::get_or_short;
 use paperclip_proto::ast::graph_ext::{Dependency, Graph};
-use paperclip_proto::notice::base::NoticeResult;
+use paperclip_proto::notice::base::NoticeList;
 
 pub struct Inferencer {}
 
@@ -15,7 +15,7 @@ impl Inferencer {
     pub fn new() -> Self {
         Self {}
     }
-    pub fn infer_dependency(&self, path: &str, graph: &Graph) -> Result<types::Map, NoticeResult> {
+    pub fn infer_dependency(&self, path: &str, graph: &Graph) -> Result<types::Map, NoticeList> {
         let dep = graph.dependencies.get(path).expect("Dependency must exist");
         let mut context = InferContext::new(dep, graph, &self);
 
@@ -34,7 +34,7 @@ impl Inferencer {
         component: &ast::pc::Component,
         path: &str,
         graph: &Graph,
-    ) -> Result<types::Component, NoticeResult> {
+    ) -> Result<types::Component, NoticeList> {
         let dep = graph.dependencies.get(path).expect("Dependency must exist");
         let mut context = InferContext::new(dep, graph, &self);
 
@@ -54,7 +54,7 @@ impl Inferencer {
         node: &ast::pc::Node,
         path: &str,
         graph: &Graph,
-    ) -> Result<types::Map, NoticeResult> {
+    ) -> Result<types::Map, NoticeList> {
         let dep = graph.dependencies.get(path).expect("Dependency must exist");
 
         let mut context = InferContext::new(dep, graph, &self);
@@ -70,7 +70,7 @@ impl Inferencer {
     }
 }
 
-fn infer_dep(dep: &Dependency, context: &mut InferContext) -> Result<(), NoticeResult> {
+fn infer_dep(dep: &Dependency, context: &mut InferContext) -> Result<(), NoticeList> {
     for component in dep
         .document
         .as_ref()
@@ -87,7 +87,7 @@ fn infer_dep(dep: &Dependency, context: &mut InferContext) -> Result<(), NoticeR
 fn infer_component(
     component: &ast::pc::Component,
     context: &mut InferContext,
-) -> Result<(), NoticeResult> {
+) -> Result<(), NoticeList> {
     if let Some(render) = component.get_render_expr() {
         infer_render_node(
             render.node.as_ref().expect("Node must exist").get_inner(),
@@ -108,7 +108,7 @@ fn infer_component(
 fn infer_render_node(
     node: &ast::pc::node::Inner,
     context: &mut InferContext,
-) -> Result<(), NoticeResult> {
+) -> Result<(), NoticeList> {
     match node {
         ast::pc::node::Inner::Element(expr) => {
             infer_element(expr, context)?;
@@ -118,7 +118,7 @@ fn infer_render_node(
     Ok(())
 }
 
-fn infer_element(expr: &ast::pc::Element, context: &mut InferContext) -> Result<(), NoticeResult> {
+fn infer_element(expr: &ast::pc::Element, context: &mut InferContext) -> Result<(), NoticeList> {
     if let Some(name) = &expr.name {
         let el_type = types::Element {
             id: expr.id.to_string(),
@@ -141,21 +141,21 @@ fn infer_element(expr: &ast::pc::Element, context: &mut InferContext) -> Result<
     Ok(())
 }
 
-fn infer_slot(expr: &ast::pc::Slot, context: &mut InferContext) -> Result<(), NoticeResult> {
+fn infer_slot(expr: &ast::pc::Slot, context: &mut InferContext) -> Result<(), NoticeList> {
     context.step_in(&expr.name, true);
     context.set_scope_type(types::Type::Slot);
     context.step_out();
     Ok(())
 }
 
-fn infer_insert(expr: &ast::pc::Insert, context: &mut InferContext) -> Result<(), NoticeResult> {
+fn infer_insert(expr: &ast::pc::Insert, context: &mut InferContext) -> Result<(), NoticeList> {
     for child in &expr.body {
         infer_node(child, context)?;
     }
     Ok(())
 }
 
-fn infer_switch(expr: &ast::pc::Switch, context: &mut InferContext) -> Result<(), NoticeResult> {
+fn infer_switch(expr: &ast::pc::Switch, context: &mut InferContext) -> Result<(), NoticeList> {
     context.step_in(&expr.property, true);
     for child in &expr.body {
         match child.get_inner() {
@@ -172,7 +172,7 @@ fn infer_switch(expr: &ast::pc::Switch, context: &mut InferContext) -> Result<()
 fn infer_switch_case(
     expr: &ast::pc::SwitchCase,
     context: &mut InferContext,
-) -> Result<(), NoticeResult> {
+) -> Result<(), NoticeList> {
     context.set_scope_type(
         context
             .get_scope_type()
@@ -188,14 +188,14 @@ fn infer_switch_case(
 fn infer_switch_default(
     expr: &ast::pc::SwitchDefault,
     context: &mut InferContext,
-) -> Result<(), NoticeResult> {
+) -> Result<(), NoticeList> {
     for child in &expr.body {
         infer_node(child, context)?;
     }
     Ok(())
 }
 
-fn infer_repeat(expr: &ast::pc::Repeat, context: &mut InferContext) -> Result<(), NoticeResult> {
+fn infer_repeat(expr: &ast::pc::Repeat, context: &mut InferContext) -> Result<(), NoticeList> {
     context.step_in(&expr.property, true);
     context.set_scope_type(types::Type::Array(Box::new(types::Type::Unknown)));
     for child in &expr.body {
@@ -207,7 +207,7 @@ fn infer_repeat(expr: &ast::pc::Repeat, context: &mut InferContext) -> Result<()
 fn infer_condition(
     expr: &ast::pc::Condition,
     context: &mut InferContext,
-) -> Result<(), NoticeResult> {
+) -> Result<(), NoticeList> {
     context.step_in(&expr.property, true);
     context.set_scope_type(types::Type::Boolean);
     context.step_out();
@@ -218,7 +218,7 @@ fn infer_condition(
     Ok(())
 }
 
-fn infer_node(expr: &ast::pc::Node, context: &mut InferContext) -> Result<(), NoticeResult> {
+fn infer_node(expr: &ast::pc::Node, context: &mut InferContext) -> Result<(), NoticeList> {
     match expr.get_inner() {
         ast::pc::node::Inner::Element(child) => {
             infer_element(child, context)?;
@@ -243,10 +243,7 @@ fn infer_node(expr: &ast::pc::Node, context: &mut InferContext) -> Result<(), No
     Ok(())
 }
 
-fn infer_attributes(
-    expr: &ast::pc::Element,
-    context: &mut InferContext,
-) -> Result<(), NoticeResult> {
+fn infer_attributes(expr: &ast::pc::Element, context: &mut InferContext) -> Result<(), NoticeList> {
     let instance_props = infer_instance(expr, context)?;
     let context = context.with_instance_inference(instance_props);
 
@@ -319,7 +316,7 @@ lazy_static! {
 fn infer_instance(
     expr: &ast::pc::Element,
     context: &InferContext,
-) -> Result<types::Map, NoticeResult> {
+) -> Result<types::Map, NoticeList> {
     // TODO: decouple this from inference engine
     let native_element_props = NATIVE_ELEMENT_TYPES.get(expr.tag_name.as_str());
 
@@ -366,7 +363,7 @@ fn infer_instance(
 fn infer_unknown_element(
     expr: &ast::pc::Element,
     _context: &InferContext,
-) -> Result<types::Map, NoticeResult> {
+) -> Result<types::Map, NoticeList> {
     let mut map = types::Map::new();
 
     for param in &expr.parameters {

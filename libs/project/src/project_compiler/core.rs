@@ -9,13 +9,14 @@ use paperclip_common::get_or_short;
 use paperclip_common::pc::is_paperclip_file;
 use paperclip_config::ConfigContext;
 use paperclip_proto::ast::graph_ext::Graph;
-use paperclip_proto::notice::base::NoticeResult;
+use paperclip_proto::notice::base::NoticeList;
 use paperclip_proto_ext::graph::load::LoadableGraph;
 use paperclip_validate::validate;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
 pub struct CompileOptions {
+    pub initial: bool,
     pub watch: bool,
 }
 
@@ -70,10 +71,11 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
         &'a self,
         graph: Arc<Mutex<Graph>>,
         options: CompileOptions,
-    ) -> impl Stream<Item = Result<(String, String), NoticeResult>> + '_ {
+    ) -> impl Stream<Item = Result<(String, String), NoticeList>> + '_ {
         stream! {
             let mut graph = graph.lock().unwrap();
-            {
+
+            if options.initial {
                 let mut compile_cache = self.compile_cache.lock().unwrap();
 
                 let graph_files = graph
@@ -144,7 +146,7 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
         &self,
         files: &Vec<String>,
         graph: &Graph,
-    ) -> Result<HashMap<String, String>, NoticeResult> {
+    ) -> Result<HashMap<String, String>, NoticeList> {
         let mut compiled_files = HashMap::new();
         for target in &self.targets {
             compiled_files.extend(target.compile_files(files, graph).await?);
@@ -161,7 +163,7 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
         &self,
         path: &str,
         graph: &Graph,
-    ) -> Result<HashMap<String, String>, NoticeResult> {
+    ) -> Result<HashMap<String, String>, NoticeList> {
         let dep = get_or_short!(graph.dependencies.get(path), Ok(HashMap::new()));
 
         let mut compile_cache = self.compile_cache.lock().unwrap();

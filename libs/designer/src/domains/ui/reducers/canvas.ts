@@ -9,10 +9,14 @@ import {
   getTargetExprId,
   highlightNode,
   InsertMode,
+  newConvertToSlotPrompt,
+  redirect,
   resetCurrentDocument,
 } from "@paperclip-ui/designer/src/state";
 import { centerTransformZoom } from "@paperclip-ui/designer/src/state/geom";
+import { routes } from "@paperclip-ui/designer/src/state/routes";
 import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
+import { FileChangedKind } from "@paperclip-ui/proto/lib/generated/service/designer";
 import produce from "immer";
 import { clamp, mapValues } from "lodash";
 import {
@@ -58,6 +62,19 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
       return produce(state, (newState) => {
         newState.insertMode = event.payload.mode;
       });
+    }
+
+    case "designer-engine/serverEvent": {
+      // If current file is deleted, then direct to blank screen
+      if (event.payload.fileChanged?.kind === FileChangedKind.DELETED) {
+        if (
+          event.payload.fileChanged.path.includes(getCurrentFilePath(state))
+        ) {
+          return redirect(state, routes.editor());
+        }
+      }
+
+      return state;
     }
 
     case "ui/canvasMouseDown": {

@@ -25,7 +25,7 @@ macro_rules! case {
             let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
             let mut graph = graph::Graph::new();
 
-            let features = vec!["condition".to_string()];
+            let features = vec!["condition".to_string(), "styleOverride".to_string()];
 
             for (path, _) in $mock_files {
                 block_on(graph.load(&path, &mock_fs, Options::new(features.clone())))
@@ -53,7 +53,7 @@ macro_rules! case {
                 })
                 .collect::<HashMap<String, String>>();
 
-            println!("{:#?}", graph.dependencies);
+            verbose(println!("{:#?}", graph.dependencies));
 
             for (path, content) in $expected_mock_files {
                 if let Some(serialized_content) = edited_docs.get(path) {

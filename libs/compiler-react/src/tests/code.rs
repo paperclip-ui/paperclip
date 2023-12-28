@@ -28,6 +28,7 @@ macro_rules! add_case {
                     "repeat".to_string(),
                     "switch".to_string(),
                     "condition".to_string(),
+                    "styleOverride".to_string(),
                 ]),
             )) {
                 panic!("{:?}", err);

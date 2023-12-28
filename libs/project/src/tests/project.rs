@@ -90,7 +90,10 @@ macro_rules! test_case {
                 panic!("{:?}", error);
             }
 
-            let output = project.compile_all(CompileOptions { watch: false });
+            let output = project.compile_all(CompileOptions {
+                watch: false,
+                initial: true,
+            });
 
             pin_mut!(output);
             let expected_files = HashMap::from($output_files);

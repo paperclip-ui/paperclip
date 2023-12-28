@@ -1,7 +1,8 @@
 use paperclip_config::{CompilerOptions, Config};
+use paperclip_proto::notice::base::NoticeList;
 use std::fs::File;
+use std::io::Write;
 use std::path::Path;
-use std::{env, io::Write};
 
 use anyhow::Result;
 use clap::Args;
@@ -10,8 +11,7 @@ use console::style;
 #[derive(Debug, Args)]
 pub struct InitArgs {}
 
-pub async fn init(_args: InitArgs) -> Result<()> {
-    let current_dir = String::from(env::current_dir()?.to_str().unwrap());
+pub async fn init(_args: InitArgs, cwd: &str) -> Result<(), NoticeList> {
     let config_name = "paperclip.config.json";
 
     let info = format!(
@@ -46,7 +46,7 @@ pub async fn init(_args: InitArgs) -> Result<()> {
     let config_content =
         serde_json::to_string_pretty(&new_config).expect("Couldn't serialize JSON");
 
-    let config_path = Path::new(&current_dir).join(config_name);
+    let config_path = Path::new(&cwd).join(config_name);
 
     File::create(config_path)
         .expect("Coudn't create JSON file")

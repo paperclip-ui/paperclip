@@ -287,6 +287,11 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
       setOpen(!open);
     }, [open, item.path]);
 
+    const onContextMenuOpen = useCallback(() => {
+      dispatch({ type: "ui/FileNavigatorContextMenuOpened", payload: item });
+      setOpen(true);
+    }, [item.path]);
+
     useEffect(() => {
       if (selected) {
         headerRef.current?.scrollIntoView({
@@ -313,7 +318,7 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
     }
 
     return (
-      <ContextMenu menu={() => shortcuts}>
+      <ContextMenu menu={() => shortcuts} onOpen={onContextMenuOpen}>
         <div>
           <Base
             layerHeader={{

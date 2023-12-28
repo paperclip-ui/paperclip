@@ -1,7 +1,9 @@
 use futures::executor::block_on;
 use loader::Loader;
 use neon::prelude::*;
+use paperclip_validate::print::ToPrettyString;
 use std::cell::RefCell;
+
 mod loader;
 extern crate neon_serde3;
 
@@ -41,17 +43,25 @@ fn compile_file(mut cx: FunctionContext) -> JsResult<JsObject> {
         loader
             .borrow()
             .compile_file(file_path.value(&mut cx).as_str()),
-    )
-    .unwrap();
+    );
 
-    let ret: Handle<JsObject> = cx.empty_object();
+    match files {
+        Ok(files) => {
+            let ret: Handle<JsObject> = cx.empty_object();
 
-    for (key, content) in files {
-        let value = cx.string(content.to_string());
-        ret.set(&mut cx, key.as_str(), value)?;
+            for (key, content) in files {
+                let value = cx.string(content.to_string());
+                ret.set(&mut cx, key.as_str(), value)?;
+            }
+
+            Ok(ret)
+        }
+        Err(err) => {
+            println!("{}", err.to_pretty_string());
+
+            cx.throw_error("Unexpected error. See above.".to_string())
+        }
     }
-
-    Ok(ret)
 }
 
 #[neon::main]

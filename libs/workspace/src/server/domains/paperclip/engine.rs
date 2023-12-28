@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use anyhow::Result;
+use paperclip_common::log::verbose;
 use paperclip_evaluator::core::io::PCFileResolver;
 use paperclip_evaluator::css;
 
@@ -46,7 +47,7 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
         ServerEvent::UpdateFileRequested { path: _path, content: _content } => {
             let updated_files = next.clone().store.lock().unwrap().state.updated_files.clone();
 
-            println!("Updated files {:?}", updated_files);
+            verbose(&format!("Updated files {:?}", updated_files));
 
             for update_file in updated_files {
                 load_dependency_graph(next.clone(), &vec![update_file]).await.expect("Unable to load dependency");
@@ -132,7 +133,7 @@ async fn load_dependency_graph<TIO: ServerIO>(
 }
 
 async fn load_pc_file<TIO: ServerIO>(ctx: ServerEngineContext<TIO>, file: &str) -> Result<()> {
-    println!("load_pc_file {:?}", file);
+    verbose(&format!("load_pc_file {:?}", file));
 
     let graph = ctx.store.lock().unwrap().state.graph.clone();
     let parse_options = ctx
@@ -157,7 +158,7 @@ async fn load_pc_file<TIO: ServerIO>(ctx: ServerEngineContext<TIO>, file: &str) 
 async fn load_files<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()> {
     let files = ctx.io.get_all_designer_files();
 
-    println!("Loaded designer files: {:?}", files);
+    verbose(&format!("Loaded designer files: {:?}", files));
 
     ctx.emit(ServerEvent::PaperclipFilesLoaded { files });
     Ok(())
@@ -247,7 +248,7 @@ async fn evaluate_dependency_graph<TIO: ServerIO>(
 
             output.insert(path.to_string(), (css, html));
         }
-        println!("Modules evaluated: {:?}", all_files);
+        verbose(&format!("Modules evaluated: {:?}", all_files));
     }
 
     ctx.emit(ServerEvent::ModulesEvaluated(output));

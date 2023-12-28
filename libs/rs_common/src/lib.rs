@@ -6,6 +6,7 @@ pub mod event_bus;
 pub mod fs;
 pub mod fun;
 pub mod id;
+pub mod log;
 pub mod path;
 pub mod pc;
 pub mod serialize_context;

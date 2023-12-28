@@ -9,12 +9,17 @@ exclude = []
 [lib]
 name = "paperclip_validate"
 
+
+[features]
+default = ["local"]
+local = ["paperclip_common/local", "paperclip_proto/local", "paperclip_proto_ext/local", "paperclip_parser/local", "paperclip_evaluator/local"]
+
 [dependencies]
-paperclip_common = { path = "../rs_common" }
-paperclip_proto = { path = "../proto" }
-paperclip_proto_ext = { path = "../proto_ext" }
-paperclip_parser = { path = "../parser" }
-paperclip_evaluator = { path = "../evaluator" }
+paperclip_common = { path = "../rs_common", features = []  }
+paperclip_proto = { path = "../proto", features = []  }
+paperclip_proto_ext = { path = "../proto_ext", features = [] }
+paperclip_parser = { path = "../parser", features = []  }
+paperclip_evaluator = { path = "../evaluator", features = []  }
 anyhow = "1.0.61"
 colored = "2.1.0"
 

@@ -87,7 +87,7 @@ export const renameFilePrompt = (filePath: string): Prompt => ({
   okLabel: "Rename file",
 });
 
-export const newDirectoryPrompt = (parentDirectory?: string): Prompt => ({
+export const newDirectoryPrompt = (parentDirectory: string): Prompt => ({
   details: { kind: PromptKind.NewDirectory, parentDirectory },
   title: "New directory",
   placeholder: "directory name",

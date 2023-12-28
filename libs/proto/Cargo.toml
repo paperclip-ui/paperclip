@@ -10,6 +10,7 @@ name = "paperclip_proto"
 
 [features]
 transport = ["tonic/transport", "tonic-build/transport"]
+local = []
 
 [dependencies]
 serde = { version = "1.0.143", features = ["derive", "rc"] }

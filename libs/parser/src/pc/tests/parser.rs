@@ -18,6 +18,7 @@ macro_rules! add_case {
                     "script".to_string(),
                     "switch".to_string(),
                     "repeat".to_string(),
+                    "styleOverride".to_string(),
                 ]),
             );
             if let Ok(ast) = parse_result {

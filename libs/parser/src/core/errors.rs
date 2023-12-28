@@ -40,15 +40,15 @@ impl ParserError {
             kind: ErrorKind::Experimental,
         }
     }
-    pub fn into_notice_result(&self, path: &str) -> notice::NoticeResult {
-        notice::NoticeResult::from(notice::Notice::error(
+    pub fn into_notice_result(&self, path: &str) -> notice::NoticeList {
+        notice::NoticeList::from(notice::Notice::error(
             match self.kind {
                 ErrorKind::EOF => notice::Code::EndOfFile,
                 ErrorKind::Experimental => notice::Code::ExperimentalFlagNotEnabled,
                 ErrorKind::UnexpectedToken => notice::Code::UnexpectedToken,
             },
             self.message.clone(),
-            path.to_string(),
+            Some(path.to_string()),
             Some(self.range.clone()),
         ))
     }

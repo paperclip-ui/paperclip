@@ -2,6 +2,7 @@ use crate::server::core::ServerEvent;
 use anyhow::Result;
 use notify::{Config, RecommendedWatcher, RecursiveMode, Watcher};
 use paperclip_common::fs::{FileWatchEvent, FileWatchEventKind};
+use paperclip_common::log::verbose;
 
 use crate::server::core::ServerEngineContext;
 use crate::server::io::ServerIO;
@@ -36,7 +37,7 @@ async fn file_watcher<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
         )
         .unwrap();
 
-        println!("watching {:?}", config_context.directory);
+        verbose(&format!("watching {:?}", config_context.directory));
 
         watcher
             .watch(config_context.directory.as_ref(), RecursiveMode::Recursive)
@@ -44,26 +45,36 @@ async fn file_watcher<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
 
         while let Some(e) = rx.recv().await {
             if let Ok(event) = e {
+                verbose(&format!("File event: {:?}", event));
                 for path in &event.paths {
-                    let path = path.clone().into_os_string().into_string().unwrap();
+                    let path_str = path.clone().into_os_string().into_string().unwrap();
                     match &event.kind {
                         notify::EventKind::Modify(notify::event::ModifyKind::Data(_)) => {
                             ctx.emit(ServerEvent::FileWatchEvent(FileWatchEvent::new(
                                 FileWatchEventKind::Change,
-                                &path,
+                                &path_str,
                             )));
                         }
                         notify::EventKind::Create(_) => {
                             ctx.emit(ServerEvent::FileWatchEvent(FileWatchEvent::new(
                                 FileWatchEventKind::Create,
-                                &path,
+                                &path_str,
                             )));
                         }
                         notify::EventKind::Remove(_) => {
                             ctx.emit(ServerEvent::FileWatchEvent(FileWatchEvent::new(
                                 FileWatchEventKind::Remove,
-                                &path,
+                                &path_str,
                             )));
+                        }
+                        notify::EventKind::Modify(_) => {
+                            // May happen when deleting directories
+                            if !path.exists() {
+                                ctx.emit(ServerEvent::FileWatchEvent(FileWatchEvent::new(
+                                    FileWatchEventKind::Remove,
+                                    &path_str,
+                                )));
+                            }
                         }
                         _ => {}
                     }

@@ -1,11 +1,10 @@
 use crate::io::ProjectIO;
 pub use crate::project_compiler::CompileOptions;
 use crate::project_compiler::ProjectCompiler;
-use anyhow::Result;
 use futures_core::stream::Stream;
 use paperclip_config::{Config, ConfigContext};
 use paperclip_proto::ast::graph_ext::Graph;
-use paperclip_proto::notice::base::NoticeResult;
+use paperclip_proto::notice::base::NoticeList;
 use paperclip_proto_ext::graph::load::LoadableGraph;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
@@ -42,7 +41,7 @@ impl<IO: ProjectIO> Project<IO> {
         }
     }
 
-    pub async fn load_all_files(&mut self) -> Result<()> {
+    pub async fn load_all_files(&mut self) -> Result<(), NoticeList> {
         self.load_files(&self.io.get_all_designer_files()).await
     }
 
@@ -62,7 +61,7 @@ impl<IO: ProjectIO> Project<IO> {
         &self.config_context.config
     }
 
-    pub async fn load_files(&mut self, files: &Vec<String>) -> Result<()> {
+    pub async fn load_files(&mut self, files: &Vec<String>) -> Result<(), NoticeList> {
         self.graph
             .lock()
             .unwrap()
@@ -71,7 +70,7 @@ impl<IO: ProjectIO> Project<IO> {
         Ok(())
     }
 
-    pub async fn load_file(&mut self, file: &str) -> Result<()> {
+    pub async fn load_file(&mut self, file: &str) -> Result<(), NoticeList> {
         self.graph
             .lock()
             .unwrap()
@@ -88,7 +87,7 @@ impl<IO: ProjectIO> Project<IO> {
     pub fn compile_all<'a>(
         &self,
         options: CompileOptions,
-    ) -> impl Stream<Item = Result<(String, String), NoticeResult>> + '_ {
+    ) -> impl Stream<Item = Result<(String, String), NoticeList>> + '_ {
         self.compiler.compile_graph(self.graph.clone(), options)
     }
 
@@ -98,7 +97,7 @@ impl<IO: ProjectIO> Project<IO> {
     pub async fn compile_files(
         &self,
         files: &Vec<String>,
-    ) -> Result<HashMap<String, String>, NoticeResult> {
+    ) -> Result<HashMap<String, String>, NoticeList> {
         let mut graph = self.graph.lock().unwrap();
         graph
             .load_files::<IO>(files, &self.io, self.get_config().into_parser_options())

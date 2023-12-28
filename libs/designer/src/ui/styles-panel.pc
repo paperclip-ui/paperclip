@@ -33,33 +33,9 @@ public component DeclInfoCard {
         }
         div list {
             slot children {
-                InheritedDeclInfo {
-                    override {
-                        variant hovering trigger {
-                            true
-                        }
-                        variant mixin trigger {
-                            true
-                        }
-                    }
-                }
-                InheritedDeclInfo {
-                    override {
-                        variant hovering
-                        variant mixin
-                        variant otherVariant trigger {
-                            true
-                        }
-                    }
-                }
-                InheritedDeclInfo {
-                    override {
-                        variant hovering
-                        variant mixin trigger {
-                            true
-                        }
-                    }
-                }
+                InheritedDeclInfo
+                InheritedDeclInfo
+                InheritedDeclInfo
             }
         }
         div arrow {
@@ -275,13 +251,7 @@ public component Preview {
                             text "dark"
                         }
                         insert input {
-                            input.RadioInput {
-                                override {
-                                    variant on trigger {
-                                        true
-                                    }
-                                }
-                            }
+                            input.RadioInput
                         }
                     }
                     input.Field {
@@ -289,13 +259,7 @@ public component Preview {
                             text "asupperlongpropthatneedstrimming"
                         }
                         insert input {
-                            input.RadioInput {
-                                override {
-                                    variant on trigger {
-                                        true
-                                    }
-                                }
-                            }
+                            input.RadioInput
                         }
                     }
                 }
@@ -310,13 +274,7 @@ public component Preview {
                 input.Fields {
                     input.Field {
                         insert name {
-                            DeclName(class: "inherited") {
-                                override {
-                                    variant inherited trigger {
-                                        inherited
-                                    }
-                                }
-                            }
+                            DeclName(class: "inherited")
                         }
                         insert input {
                             input.Select {
@@ -331,11 +289,6 @@ public component Preview {
                     input.Field {
                         insert name {
                             DeclName {
-                                override {
-                                    variant overridden trigger {
-                                        true
-                                    }
-                                }
                                 insert children {
                                     text "Padding" {
                                     }
@@ -349,11 +302,6 @@ public component Preview {
                     input.Field {
                         insert name {
                             DeclName {
-                                override {
-                                    variant overridden trigger {
-                                        true
-                                    }
-                                }
                                 text "Margin"
                             }
                         }
@@ -364,11 +312,6 @@ public component Preview {
                     input.Field {
                         insert name {
                             DeclName {
-                                override {
-                                    variant overridden trigger {
-                                        true
-                                    }
-                                }
                                 text "Position"
                             }
                         }
@@ -388,11 +331,6 @@ public component Preview {
                         }
                         insert name {
                             DeclName {
-                                override {
-                                    variant inherited trigger {
-                                        true
-                                    }
-                                }
                                 text "Box Sizing"
                             }
                         }
@@ -422,11 +360,6 @@ public component Preview {
                         }
                         insert input {
                             module.BackgroundTokenInputPreview {
-                                override root {
-                                    style {
-                                        --color: rgb(255, 81, 119)
-                                    }
-                                }
                                 span {
                                     input.Token(class: "call") {
                                         text "rgb"
@@ -459,11 +392,6 @@ public component Preview {
                     input.Field {
                         insert input {
                             module.BoxShadowTokenInputPreview {
-                                override root {
-                                    style {
-                                        --color: magenta
-                                    }
-                                }
                                 span {
                                     input.Token(class: "keyword") {
                                         text "magenta"
@@ -546,11 +474,6 @@ public component Preview {
 */
 div preview {
     DeclInheritanceInfo {
-        override {
-            variant open trigger {
-                true
-            }
-        }
         style {
             position: absolute
             left: 50%
@@ -558,4 +481,3 @@ div preview {
         }
     }
 }
-

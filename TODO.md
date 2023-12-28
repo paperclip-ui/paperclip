@@ -1,4 +1,11 @@
+#### FOCUS
+
+- visual editing and edge case
+  - moving files arond
+
 #### Warm up!
+
+- replace anyhow::Result with Notice
 
 - clean up \*.pc files
 

@@ -91,6 +91,7 @@ export const leftSidebarReducer = (
         }
       });
     }
+    case "ui/FileNavigatorContextMenuOpened":
     case "ui/FileNavigatorItemClicked": {
       if (event.payload.kind === FSItemKind.File) {
         state = redirect(

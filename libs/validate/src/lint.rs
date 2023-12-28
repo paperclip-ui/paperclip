@@ -1,6 +1,6 @@
 use paperclip_proto::ast::graph_ext as graph;
 use paperclip_proto::notice::base as notice;
-use paperclip_proto::notice::base::NoticeResult;
+use paperclip_proto::notice::base::NoticeList;
 
 struct Context {
     // graph: &'expr graph::Graph,
@@ -19,7 +19,7 @@ TODO:
     - lint variant refs
     - lint variant refs
 */
-pub fn lint_document<'expr>(_path: &str, _graph: &'expr graph::Graph) -> NoticeResult {
+pub fn lint_document<'expr>(_path: &str, _graph: &'expr graph::Graph) -> NoticeList {
     // let dep = graph.dependencies.get(path).expect("Dependency must exist");
 
     let context = Context {
@@ -32,8 +32,8 @@ pub fn lint_document<'expr>(_path: &str, _graph: &'expr graph::Graph) -> NoticeR
     //     &mut context,
     // );
 
-    return notice::NoticeResult {
-        notices: context.notices,
+    return notice::NoticeList {
+        items: context.notices,
     };
 }
 

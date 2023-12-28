@@ -101,7 +101,7 @@ message ApplyMutationsResult {
 
 message CreateDesignFileRequest {
   string name = 1;
-  string parent_dir = 2;
+  optional string parent_dir = 2;
 }
 
 message CreateDesignFileResponse {
@@ -135,9 +135,16 @@ message DesignServerEvent {
   }
 }
 
+enum FileChangedKind {
+    CONTENT = 0;
+    DELETED = 1;
+    CREATED = 2;
+}
+
 message FileChanged {
-  string path = 1;
-  bytes content = 2;
+  FileChangedKind kind = 1;
+  string path = 2;
+  optional bytes content = 3;
 }
 
 message ModulesEvaluated {

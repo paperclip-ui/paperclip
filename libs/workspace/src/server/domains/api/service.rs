@@ -6,7 +6,8 @@ use crate::server::domains::paperclip::utils::apply_mutations;
 use crate::server::io::ServerIO;
 use futures::Stream;
 use paperclip_ast_serialize::pc::serialize;
-use paperclip_common::fs::FSItemKind;
+use paperclip_common::fs::{FSItemKind, FileWatchEventKind};
+use paperclip_common::log::verbose;
 use paperclip_language_services::DocumentInfo;
 use paperclip_proto::ast::base::Range;
 use paperclip_proto::ast::graph_ext::Graph;
@@ -14,9 +15,9 @@ use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
     design_server_event, file_response, ApplyMutationsRequest, ApplyMutationsResult,
     CreateDesignFileRequest, CreateDesignFileResponse, CreateFileRequest, DeleteFileRequest,
-    DesignServerEvent, Empty, FileChanged, FileRequest, FileResponse, FsItem, ModulesEvaluated,
-    MoveFileRequest, OpenCodeEditorRequest, OpenFileInNavigatorRequest, ProjectInfo,
-    ReadDirectoryRequest, ReadDirectoryResponse, ResourceFiles, ScreenshotCaptured,
+    DesignServerEvent, Empty, FileChanged, FileChangedKind, FileRequest, FileResponse, FsItem,
+    ModulesEvaluated, MoveFileRequest, OpenCodeEditorRequest, OpenFileInNavigatorRequest,
+    ProjectInfo, ReadDirectoryRequest, ReadDirectoryResponse, ResourceFiles, ScreenshotCaptured,
     SearchFilesRequest, SearchFilesResponse, UpdateFileRequest,
 };
 use path_absolutize::*;
@@ -93,7 +94,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
             project_dir, query, project_dir, query
         );
 
-        println!("Search {}", pat);
+        verbose(&format!("Search {}", pat));
 
         let mut paths: Vec<String> = vec![];
 
@@ -131,10 +132,10 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         let range: Range = request.get_ref().range.clone().expect("Range must exist");
         let start = range.start.as_ref().expect("Stat must exist");
 
-        println!(
+        verbose(&format!(
             "Opening code editor with \"{}\"",
             code_editor_command_template
-        );
+        ));
 
         let command = code_editor_command_template
             .replace("<file>", &path)
@@ -143,8 +144,8 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
 
         let (_, output, error) = run_script::run(&command, &vec![], &ScriptOptions::new()).unwrap();
 
-        println!("Output: {}", output);
-        println!("Error: {}", error);
+        verbose(&format!("Output: {}", output));
+        verbose(&format!("Error: {}", error));
 
         Ok(Response::new(Empty {}))
     }
@@ -238,7 +239,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         let from_path: String = request.get_ref().from_path.clone();
         let to_path: String = request.get_ref().to_path.clone();
 
-        println!("mv {} {}", from_path, to_path);
+        verbose(&format!("mv {} {}", from_path, to_path));
 
         let result = std::fs::rename(&from_path, &to_path);
 
@@ -262,7 +263,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
     ) -> Result<Response<Empty>, Status> {
         let file_path: String = request.get_ref().file_path.clone();
 
-        println!("open {}", file_path);
+        verbose(&format!("open {}", file_path));
 
         let result = open::that(&file_path);
 
@@ -281,8 +282,10 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         let kind: i32 = request.get_ref().kind;
 
         let result = if kind == 0 {
+            verbose(&format!("create dir: {}", path));
             self.ctx.io.create_directory(&path)
         } else {
+            verbose(&format!("create file: {}", path));
             self.ctx.io.write_file(&path, "".to_string())
         };
 
@@ -314,8 +317,6 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                     .map(|key| key.to_string())
                     .collect::<Vec<String>>();
 
-                println!("get_files_response() -> {:?}", file_paths);
-
                 Ok(ResourceFiles { file_paths })
             };
 
@@ -339,7 +340,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
     ) -> Result<Response<CreateDesignFileResponse>, Status> {
         if let Ok(file_path) = create_design_file(
             &request.get_ref().name.to_string(),
-            &request.get_ref().parent_dir,
+            request.get_ref().parent_dir.clone(),
             self.ctx.clone(),
         ) {
             Ok(Response::new(CreateDesignFileResponse { file_path }))
@@ -423,8 +424,9 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
             let file_changed = |path: String, content: Vec<u8>| {
                 Result::Ok(
                     design_server_event::Inner::FileChanged(FileChanged {
+                        kind: FileChangedKind::Content.into(),
                         path: path.to_string(),
-                        content: content.clone(),
+                        content: Some(content.clone()),
                     })
                     .get_outer(),
                 )
@@ -442,6 +444,31 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                 ServerEvent::UpdateFileRequested { path, content } => {
                     tx.send((file_changed)(path.to_string(), content.clone())).await.expect("on_event err: Can't send after update file");
                 },
+                ServerEvent::FileWatchEvent(event) => {
+                    verbose(&format!("Sending file change {}:{:?}", event.path, event.kind));
+                    match event.kind {
+                        FileWatchEventKind::Create => {
+                            tx.send(Result::Ok(design_server_event::Inner::FileChanged(FileChanged {
+                                kind: FileChangedKind::Created.into(),
+                                path: event.path.to_string(),
+                                content: None
+                            })
+                            .get_outer())).await.expect("Can't send");
+                        },
+                        FileWatchEventKind::Remove => {
+                            tx.send(Result::Ok(design_server_event::Inner::FileChanged(FileChanged {
+                                    kind: FileChangedKind::Deleted.into(),
+                                    path: event.path.to_string(),
+                                    content: None
+                                })
+                                .get_outer())).await.expect("Can't send");
+
+                        },
+                        _ => {
+
+                        }
+                    }
+                },
                 ServerEvent::ModulesEvaluated(map) => {
                     tx.send(Ok(design_server_event::Inner::ModulesEvaluated(ModulesEvaluated {
                         file_paths: map.keys().map(|key| {
@@ -451,7 +478,6 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                     .get_outer())).await.expect("on_event ERR!");
                 },
                 ServerEvent::MutationsApplied { result: _, updated_graph: _ } | ServerEvent::UndoRequested | ServerEvent::RedoRequested => {
-
                     let updated_files = store.lock().unwrap().state.updated_files.clone();
                     let file_cache = store.lock().unwrap().state.file_cache.clone();
                     for file_path in &updated_files {

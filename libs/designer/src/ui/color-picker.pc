@@ -85,25 +85,9 @@ public component ColorPicker {
             border: 0px
         }
         slot children {
-            ColorBox top(class: "big") {
-                override {
-                    variant rounded
-                }
-            }
-            ColorBox {
-                override {
-                    variant rounded trigger {
-                        true
-                    }
-                }
-            }
-            ColorBox {
-                override {
-                    variant rounded trigger {
-                        true
-                    }
-                }
-            }
+            ColorBox top(class: "big")
+            ColorBox
+            ColorBox
         }
     }
 }
@@ -136,14 +120,7 @@ div preview {
                 module.MenuItem {
                     text "rgba(0, 0, 0, 1)"
                 }
-                module.MenuItem {
-                    override {
-                        variant selected trigger {
-                            true
-                        }
-                    }
-                    text "red"
-                }
+                module.MenuItem
                 module.MenuItem {
                     text "blue"
                 }
@@ -163,4 +140,3 @@ div preview {
         }
     }
 }
-

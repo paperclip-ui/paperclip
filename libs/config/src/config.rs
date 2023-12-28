@@ -3,6 +3,7 @@ use anyhow::Result;
 use paperclip_common::fs::FileReader;
 use paperclip_common::join_path;
 use paperclip_parser::core::parser_context::Options;
+use paperclip_proto::notice::base::{Notice, NoticeList};
 use path_absolutize::*;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
@@ -50,20 +51,26 @@ impl ConfigContext {
             return None;
         }
 
-        return self.config.src_dir.as_ref().and_then(|src_dir| {
-            return Some(String::from(
-                Path::new(&self.directory)
-                    .join(src_dir)
-                    .join(path)
-                    .absolutize()
-                    .unwrap()
-                    .to_str()
-                    .unwrap(),
-            ));
-        });
+        // if src dir is specified, then use that as the root
+        let src_dir = self.config.src_dir.clone().unwrap_or("".to_string());
+
+        // Otherwise use paperclip config directory
+        return Some(String::from(
+            Path::new(&self.directory)
+                .join(src_dir)
+                .join(path)
+                .absolutize()
+                .unwrap()
+                .to_str()
+                .unwrap(),
+        ));
     }
 
-    pub fn load<FR: FileReader>(cwd: &str, file_name: Option<String>, io: &FR) -> Result<Self> {
+    pub fn load<FR: FileReader>(
+        cwd: &str,
+        file_name: Option<String>,
+        io: &FR,
+    ) -> Result<Self, NoticeList> {
         let file_name = if let Some(value) = file_name {
             value
         } else {
@@ -73,9 +80,12 @@ impl ConfigContext {
         let file_path = Path::new(cwd).join(file_name.to_string());
 
         let config = if file_path.exists() {
-            let content = io.read_file(file_path.to_str().unwrap())?;
+            let content = io
+                .read_file(file_path.to_str().unwrap())
+                .expect("Unable to read");
             let content = str::from_utf8(&*content).unwrap().to_string();
-            serde_json::from_str::<Config>(content.as_str())?
+            serde_json::from_str::<Config>(content.as_str())
+                .map_err(|_| Notice::unable_to_parse(file_path.to_str().unwrap()).to_list())?
         } else {
             Config::default()
         };

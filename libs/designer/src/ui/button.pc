@@ -58,32 +58,16 @@ div preview {
             }
         }
         Button {
-            override {
-                variant secondary trigger {
-                    true
-                }
-            }
             insert children {
                 text "secondary"
             }
         }
         Button {
-            override {
-                variant warning trigger {
-                    true
-                }
-            }
             insert children {
                 text "warning (todo)"
             }
         }
         Button {
-            override {
-                variant warning
-                variant danger trigger {
-                    true
-                }
-            }
             insert children {
                 text "danger (todo)"
             }
@@ -133,4 +117,3 @@ component Card {
  * @frame(x: 675, y: 2376, width: 1024, height: 768)
 */
 Card(class: "light")
-

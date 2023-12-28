@@ -2,7 +2,7 @@ use std::error::Error;
 use std::fmt;
 
 use paperclip_proto::ast::base::Range;
-use paperclip_proto::notice::base::{Code, Notice, NoticeResult};
+use paperclip_proto::notice::base::{Code, Notice, NoticeList};
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum RuntimeErrorCode {
@@ -25,14 +25,14 @@ impl RuntimeError {
             range,
         }
     }
-    pub fn into_notice(&self, path: &str) -> NoticeResult {
-        NoticeResult::from(Notice::error(
+    pub fn into_notice(&self, path: &str) -> NoticeList {
+        NoticeList::from(Notice::error(
             match self.code {
                 RuntimeErrorCode::FileNotFound => Code::FileNotFound,
                 RuntimeErrorCode::ReferenceNotFound => Code::ReferenceNotFound,
             },
             self.message.clone(),
-            path.to_string(),
+            Some(path.to_string()),
             self.range.clone(),
         ))
     }

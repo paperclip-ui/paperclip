@@ -6,7 +6,7 @@ use paperclip_common::fs::FileResolver;
 use paperclip_parser::core::parser_context::Options;
 use paperclip_proto::{
     ast::base::{Range, U16Position},
-    notice::base::{Code, Level, Notice, NoticeResult},
+    notice::base::{Code, Level, Notice, NoticeList},
 };
 use paperclip_proto_ext::graph::test_utils::{self, MockFS};
 
@@ -20,7 +20,7 @@ impl FileResolver for MockResolver {
     }
 }
 
-fn validate_doc(mock_fs: &MockFS) -> NoticeResult {
+fn validate_doc(mock_fs: &MockFS) -> NoticeList {
     block_on(validate_document(
         "/entry.pc",
         mock_fs,
@@ -44,8 +44,8 @@ macro_rules! add_case {
 add_case! {
     can_validate_a_simple_doc,
     [("/entry.pc", "div")],
-    NoticeResult {
-        notices: vec![]
+    NoticeList {
+        items: vec![]
     }
 }
 
@@ -54,8 +54,8 @@ add_case! {
     [("/entry.pc", r#"
         import "/test.pc" as test
     "#)],
-    NoticeResult {
-        notices: vec![Notice::new(Level::Error, Code::FileNotFound, "File not found".to_string(), "/entry.pc".to_string(), Some(Range::new(U16Position::new(9, 2, 9), U16Position::new(39, 3, 5))))]
+    NoticeList {
+        items: vec![Notice::new(Level::Error, Code::FileNotFound, "File not found".to_string(), "/entry.pc".to_string(), Some(Range::new(U16Position::new(9, 2, 9), U16Position::new(39, 3, 5))))]
     }
 }
 
@@ -66,8 +66,8 @@ add_case! {
 
         }
     "#)],
-    NoticeResult {
-        notices: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(28, 2, 28), U16Position::new(35, 2, 35))))]
+    NoticeList {
+        items: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(28, 2, 28), U16Position::new(35, 2, 35))))]
     }
 }
 
@@ -78,8 +78,8 @@ add_case! {
             font-family: var(missing)
         }
     "#)],
-    NoticeResult {
-        notices: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(47, 3, 26), U16Position::new(59, 3, 38))))]
+    NoticeList {
+        items: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(47, 3, 26), U16Position::new(59, 3, 38))))]
     }
 }
 
@@ -93,8 +93,8 @@ add_case! {
             render div
         }
     "#)],
-    NoticeResult {
-        notices: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(76, 4, 17), U16Position::new(83, 4, 24))))]
+    NoticeList {
+        items: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(76, 4, 17), U16Position::new(83, 4, 24))))]
     }
 }
 
@@ -107,8 +107,8 @@ add_case! {
             }
         }
     "#)],
-    NoticeResult {
-        notices: vec![Notice::new(Level::Error, Code::ReferenceNotFound, "Reference not found".to_string(), "/entry.pc".to_string(), Some(Range::new(U16Position::new(80, 4, 31), U16Position::new(87, 4, 38))))]
+    NoticeList {
+        items: vec![Notice::new(Level::Error, Code::ReferenceNotFound, "Reference not found".to_string(), "/entry.pc".to_string(), Some(Range::new(U16Position::new(80, 4, 31), U16Position::new(87, 4, 38))))]
     }
 }
 
@@ -117,8 +117,8 @@ add_case! {
     [("/entry.pc", r#"
         Missing
     "#)],
-    NoticeResult {
-        notices: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(9, 2, 9), U16Position::new(21, 3, 5))))]
+    NoticeList {
+        items: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(9, 2, 9), U16Position::new(21, 3, 5))))]
     }
 }
 
@@ -127,19 +127,19 @@ add_case! {
     [("/entry.pc", r#"
         core.Missing
     "#)],
-    NoticeResult {
-        notices: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(9, 2, 9), U16Position::new(26, 3, 5))))]
+    NoticeList {
+        items: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(9, 2, 9), U16Position::new(26, 3, 5))))]
     }
 }
 
 add_case! {
     can_validate_a_missing_instance_import,
     [("/entry.pc", r#"
-    import "./core.pc" as core 
+    import "./core.pc" as core
     core.Missing
 "#), ("/core.pc", r#""#)],
-    NoticeResult {
-        notices: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(37, 3, 5), U16Position::new(50, 3, 18))))]
+    NoticeList {
+        items: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(37, 3, 5), U16Position::new(50, 3, 18))))]
 
     }
 }
@@ -151,8 +151,8 @@ add_case! {
             background: url("./missing.svg")
         }
     "#)],
-    NoticeResult {
-        notices: vec![Notice::file_not_found("/entry.pc", &Some(Range::new(U16Position::new(55, 3, 29), U16Position::new(70, 3, 44))))]
+    NoticeList {
+        items: vec![Notice::file_not_found("/entry.pc", &Some(Range::new(U16Position::new(55, 3, 29), U16Position::new(70, 3, 44))))]
     }
 }
 
@@ -161,7 +161,7 @@ add_case! {
     [("/entry.pc", r#"
         img(src: "missing.svg")
     "#)],
-    NoticeResult {
-        notices: vec![Notice::file_not_found("/entry.pc", &Some(Range::new(U16Position::new(9, 2, 9), U16Position::new(37, 3, 5))))]
+    NoticeList {
+        items: vec![Notice::file_not_found("/entry.pc", &Some(Range::new(U16Position::new(9, 2, 9), U16Position::new(37, 3, 5))))]
     }
 }

@@ -6,7 +6,7 @@ use paperclip_parser::core::parser_context::Options;
 use paperclip_proto::ast::base::{Range, U16Position};
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::notice;
-use paperclip_proto::notice::base::{Notice, NoticeResult};
+use paperclip_proto::notice::base::{Notice, NoticeList};
 use std::collections::HashMap;
 
 #[test]
@@ -97,8 +97,8 @@ fn errors_if_import_doesnt_exist() {
 
     assert_eq!(
         err,
-        Err(NoticeResult {
-            notices: vec![Notice {
+        Err(NoticeList {
+            items: vec![Notice {
                 level: notice::base::Level::Error.into(),
                 code: notice::base::Code::FileNotFound.into(),
                 message: "File not found".to_string(),

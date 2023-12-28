@@ -8,7 +8,7 @@ use paperclip_evaluator::css::serializer::serialize as serialize_css;
 use paperclip_evaluator::html::evaluator::{evaluate as evaluate_html, Options as HTMLOptions};
 use paperclip_evaluator::html::serializer::serialize as serialize_html;
 use paperclip_proto::ast::graph_ext::Graph;
-use paperclip_proto::notice::base::NoticeResult;
+use paperclip_proto::notice::base::NoticeList;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 use std::path::Path;
@@ -75,11 +75,11 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
         &self,
         file_paths: &Vec<String>,
         graph: &Graph,
-    ) -> Result<BTreeMap<String, String>, NoticeResult> {
+    ) -> Result<BTreeMap<String, String>, NoticeList> {
         let mut all_compiled_files: BTreeMap<String, String> = BTreeMap::new();
         let mut all_compiled_css = self.all_compiled_css.lock().unwrap();
 
-        let mut notice = NoticeResult::new();
+        let mut notice = NoticeList::new();
 
         for dep_file_path in file_paths {
             let compiled_files = self
@@ -123,7 +123,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
         path: &str,
         graph: &Graph,
         file_resolver: &F,
-    ) -> Result<HashMap<String, String>, NoticeResult> {
+    ) -> Result<HashMap<String, String>, NoticeList> {
         let data = self
             .translate_with_options(path, graph, file_resolver)
             .await?;
@@ -144,7 +144,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
         path: &str,
         graph: &Graph,
         file_resolver: &F,
-    ) -> Result<HashMap<String, String>, NoticeResult> {
+    ) -> Result<HashMap<String, String>, NoticeList> {
         let mut data = HashMap::new();
 
         if let Some(emit) = &self.context.options.emit {
@@ -201,7 +201,7 @@ async fn translate<F: FileResolver>(
     graph: &Graph,
     file_resolver: &F,
     options: TranslateOptions,
-) -> Result<Option<String>, NoticeResult> {
+) -> Result<Option<String>, NoticeList> {
     Ok(match into {
         "css" => Some(translate_css(path, graph, file_resolver).await?),
         "html" => Some(translate_html(path, graph, file_resolver, options).await?),
@@ -239,7 +239,7 @@ async fn translate_css<F: FileResolver>(
     path: &str,
     graph: &Graph,
     file_resolver: &F,
-) -> Result<String, NoticeResult> {
+) -> Result<String, NoticeList> {
     Ok(serialize_css(
         &evaluate_css(path, graph, file_resolver).await?,
     ))
@@ -250,7 +250,7 @@ async fn translate_html<F: FileResolver>(
     graph: &Graph,
     file_resolver: &F,
     options: TranslateOptions,
-) -> Result<String, NoticeResult> {
+) -> Result<String, NoticeList> {
     let body = serialize_html(
         &evaluate_html(
             path,

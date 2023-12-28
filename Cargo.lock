@@ -1509,6 +1509,7 @@ dependencies = [
  "paperclip_config",
  "paperclip_parser",
  "paperclip_project",
+ "paperclip_proto",
  "paperclip_validate",
  "paperclip_workspace",
  "serde",

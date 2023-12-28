@@ -5,6 +5,8 @@
 
 #### Warm up!
 
+- replace anyhow::Result with Notice
+
 - clean up \*.pc files
 
   - re-organize frames

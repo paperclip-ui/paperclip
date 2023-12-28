@@ -10,7 +10,7 @@ use paperclip_proto::ast::graph_ext::{self as graph_ref, Expr};
 use paperclip_proto::ast::pc::{self as ast};
 use paperclip_proto::ast::pc::{override_body_item, trigger_body_item};
 use paperclip_proto::ast::shared::Reference;
-use paperclip_proto::notice::base::{Notice, NoticeResult};
+use paperclip_proto::notice::base::{Notice, NoticeList};
 use paperclip_proto::virt::css::Rule;
 use std::string::ToString;
 
@@ -27,7 +27,7 @@ pub async fn evaluate<'asset_resolver, FR: FileResolver>(
     path: &str,
     graph: &graph::Graph,
     file_resolver: &'asset_resolver FR,
-) -> Result<virt::Document, NoticeResult> {
+) -> Result<virt::Document, NoticeList> {
     let dependencies = &graph.dependencies;
 
     let dependency = dependencies.get(path).expect("Dependency must exist");
@@ -40,8 +40,8 @@ pub async fn evaluate<'asset_resolver, FR: FileResolver>(
     );
 
     if !context.notices.borrow().is_empty() {
-        return Err(NoticeResult {
-            notices: context.notices.borrow().clone(),
+        return Err(NoticeList {
+            items: context.notices.borrow().clone(),
         });
     }
 

@@ -205,9 +205,6 @@ imp1.Menu {
         }
     }
     sugg.SuggestionMenuItem {
-        override {
-            variant checked
-        }
         insert children {
             div {
                 text "something else"
@@ -215,4 +212,3 @@ imp1.Menu {
         }
     }
 }
-

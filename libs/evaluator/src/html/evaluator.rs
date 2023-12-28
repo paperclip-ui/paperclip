@@ -8,7 +8,7 @@ use paperclip_proto::ast::graph_ext::ComponentRefInfo;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::ast::pc as ast;
 use paperclip_proto::notice::base::Notice;
-use paperclip_proto::notice::base::NoticeResult;
+use paperclip_proto::notice::base::NoticeList;
 use paperclip_proto::virt::html;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
@@ -20,7 +20,7 @@ pub async fn evaluate<F: FileResolver>(
     graph: &Graph,
     file_resolver: &F,
     options: Options,
-) -> Result<virt::Document, NoticeResult> {
+) -> Result<virt::Document, NoticeList> {
     let dependencies = &graph.dependencies;
 
     let dependency = dependencies.get(path).expect("Dependency must exist");
@@ -30,8 +30,8 @@ pub async fn evaluate<F: FileResolver>(
         &mut context,
     );
     if !context.notices.borrow().is_empty() {
-        Err(NoticeResult {
-            notices: context.notices.borrow().clone(),
+        Err(NoticeList {
+            items: context.notices.borrow().clone(),
         })
     } else {
         Ok(document)

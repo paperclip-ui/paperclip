@@ -9,7 +9,7 @@ impl Notice {
         level: notice::base::Level,
         code: notice::base::Code,
         message: String,
-        path: String,
+        path: Option<String>,
         content_range: Option<Range>,
     ) -> Self {
         Self {
@@ -20,10 +20,13 @@ impl Notice {
             content_range,
         }
     }
+    pub fn to_list(&self) -> NoticeList {
+        NoticeList::from(self.clone())
+    }
     pub fn error(
         code: notice::base::Code,
         message: String,
-        path: String,
+        path: Option<String>,
         content_range: Option<Range>,
     ) -> Self {
         Self::new(
@@ -37,7 +40,7 @@ impl Notice {
     pub fn warning(
         code: notice::base::Code,
         message: String,
-        path: String,
+        path: Option<String>,
         content_range: Option<Range>,
     ) -> Self {
         Self::new(
@@ -49,90 +52,105 @@ impl Notice {
         )
     }
     pub fn file_not_found(path: &str, content_range: &Option<Range>) -> Self {
-        Self::new(
-            notice::base::Level::Error,
+        Self::error(
             notice::base::Code::FileNotFound,
             "File not found".to_string(),
-            path.to_string(),
+            Some(path.to_string()),
             content_range.clone(),
         )
     }
-    pub fn unexpected_token(path: String, content_range: Range) -> Self {
-        Self::new(
-            notice::base::Level::Error,
+    pub fn unexpected_token(path: &str, content_range: &Range) -> Self {
+        Self::error(
             notice::base::Code::UnexpectedToken,
             "Unexpected token".to_string(),
-            path.to_string(),
-            Some(content_range),
+            Some(path.to_string()),
+            Some(content_range.clone()),
         )
     }
-    pub fn end_of_file(path: String, content_range: Range) -> Self {
-        Self::new(
-            notice::base::Level::Error,
+    pub fn unable_to_parse(path: &str) -> Self {
+        Self::error(
+            notice::base::Code::UnableToParse,
+            "Unable to parse file".to_string(),
+            Some(path.to_string()),
+            None,
+        )
+    }
+    pub fn unexpected(message: &str, path: Option<String>) -> Self {
+        Self::error(
+            notice::base::Code::UnableToParse,
+            message.to_string(),
+            path,
+            None,
+        )
+    }
+    pub fn end_of_file(path: &str, content_range: &Range) -> Self {
+        Self::error(
             notice::base::Code::EndOfFile,
             "Unexpected end of file".to_string(),
-            path,
-            Some(content_range),
+            Some(path.to_string()),
+            Some(content_range.clone()),
         )
     }
     pub fn experimental_flag_not_enabled(
-        feature: String,
-        path: String,
-        content_range: Option<Range>,
+        feature: &str,
+        path: &str,
+        content_range: &Option<Range>,
     ) -> Self {
-        Self::new(
-            notice::base::Level::Error,
+        Self::error(
             notice::base::Code::ExperimentalFlagNotEnabled,
             format!("Experimental feature \"{}\" not enabled", feature),
-            path,
-            content_range,
+            Some(path.to_string()),
+            content_range.clone(),
         )
     }
     pub fn reference_not_found(path: &str, content_range: &Option<Range>) -> Self {
-        Self::new(
-            notice::base::Level::Error,
+        Self::error(
             notice::base::Code::ReferenceNotFound,
             "Reference not found".to_string(),
-            path.to_string(),
+            Some(path.to_string()),
             content_range.clone(),
         )
     }
 }
 
-impl NoticeResult {
+impl NoticeList {
     pub fn new() -> Self {
-        Self { notices: vec![] }
+        Self { items: vec![] }
     }
-    pub fn extend(&mut self, other: &NoticeResult) {
-        self.notices.extend(other.notices.clone());
+    pub fn extend(&mut self, other: &NoticeList) {
+        self.items.extend(other.items.clone());
+    }
+    pub fn extend_from_option(&mut self, other: Option<NoticeList>) {
+        if let Some(other) = other {
+            self.items.extend(other.items.clone());
+        }
     }
     pub fn contains_error(&self) -> bool {
-        self.notices
+        self.items
             .iter()
             .any(|notice| notice.level == notice::base::Level::Error.into())
     }
-    pub fn to_result(&self) -> Result<NoticeResult, NoticeResult> {
-        let clone = self.clone();
+    pub fn into_result<TRet>(self, ret: TRet) -> Result<TRet, NoticeList> {
         if self.contains_error() {
-            Err(clone)
+            Err(self)
         } else {
-            Ok(clone)
+            Ok(ret)
         }
     }
     pub fn from(notice: Notice) -> Self {
         Self {
-            notices: vec![notice],
+            items: vec![notice],
         }
     }
 }
 
-impl fmt::Display for NoticeResult {
+impl fmt::Display for NoticeList {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        for notice in &self.notices {
+        for notice in &self.items {
             write!(f, "{}", notice.message)?;
         }
         Ok(())
     }
 }
 
-impl Error for NoticeResult {}
+impl Error for NoticeList {}

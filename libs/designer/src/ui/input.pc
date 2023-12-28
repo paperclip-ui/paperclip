@@ -103,13 +103,7 @@ public component SuggestionMenuHeader {
  * @frame(x: -1464, y: -326, width: 236, height: 31)
 */
 public component SuggestionMenuSearch {
-    render TextInput root {
-        override root {
-            style {
-                background: var(theme.inputBackgroun2)
-            }
-        }
-    }
+    render TextInput root
 }
 
 /**
@@ -672,21 +666,7 @@ div textInputPreview {
             width: 200px
         }
         TextInput(value: "regular")
-        TextInput(value: "regular") {
-            override {
-                variant large trigger {
-                    true
-                }
-            }
-        }
-        TextInput(value: "regular") {
-            override {
-                variant large
-                variant medium trigger {
-                    true
-                }
-            }
-        }
+        TextInput(value: "regular")
+        TextInput(value: "regular")
     }
 }
-

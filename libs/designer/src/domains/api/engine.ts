@@ -995,6 +995,7 @@ const createEventHandler = (actions: Actions) => {
       case "ui/canvasMouseUp": {
         return handleCanvasMouseUp(newState, prevState);
       }
+      case "ui/FileNavigatorContextMenuOpened":
       case "ui/FileNavigatorItemClicked": {
         return handleFileNavigatorItemClicked(event.payload);
       }

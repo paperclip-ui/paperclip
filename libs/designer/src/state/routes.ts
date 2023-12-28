@@ -1,5 +1,5 @@
 type EditorRedirectInfo = {
-  filePath: string;
+  filePath?: string;
   nodeId?: string;
   declName?: string;
   variantIds?: string[];
@@ -12,15 +12,11 @@ export namespace routes {
     nodeId,
     declName,
     variantIds = [],
-  }: EditorRedirectInfo) => {
-    const query = {
-      file: encodeURIComponent(filePath),
-      nodeId,
-      declName,
-    };
-
+  }: EditorRedirectInfo = {}) => {
     const params = new URLSearchParams();
-    params.set("file", filePath);
+    if (filePath) {
+      params.set("file", filePath);
+    }
     if (nodeId) {
       params.set("nodeId", nodeId);
     }

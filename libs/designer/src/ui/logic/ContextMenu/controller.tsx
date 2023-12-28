@@ -10,18 +10,19 @@ import {
   MenuItemOption,
 } from "../../../modules/shortcuts/base";
 import { Portal } from "../Portal";
-import {  getHistoryStr } from "../../../state";
+import { getHistoryStr } from "../../../state";
 import { prettyKeyCombo } from "../../../domains/ui/state";
 import { ContextMenuDivider, BaseContextMenuProps } from "./context-menu.pc";
 
 export type ContextMenuProps = {
   children: React.ReactElement;
   menu: () => MenuItem<ShortcutCommand>[];
+  onOpen?: () => void;
 };
 
 export const ContextMenu =
   (Base: React.FC<BaseContextMenuProps>) =>
-  ({ children, menu }: ContextMenuProps) => {
+  ({ children, menu, onOpen }: ContextMenuProps) => {
     const otherRef = useRef<HTMLElement>();
     const ref = otherRef;
     const history = useSelector(getHistoryStr);
@@ -37,6 +38,12 @@ export const ContextMenu =
         top: event.pageY,
       });
     };
+
+    useEffect(() => {
+      if (anchorStyle) {
+        onOpen?.();
+      }
+    }, [anchorStyle]);
 
     const onTargetKeyDown = (event: React.KeyboardEvent<any>) => {
       if (children.props.onKeyDown) {
@@ -86,7 +93,7 @@ export const ContextMenu =
         })}
         <Portal>
           {anchorStyle && (
-            <Base container={{root:{style: anchorStyle}}}>
+            <Base container={{ root: { style: anchorStyle } }}>
               {menu().map((item) => {
                 if (item.kind === MenuItemKind.Divider) {
                   return <ContextMenuDivider />;
@@ -117,12 +124,12 @@ const ContextMenuOption = ({
   };
   return (
     <styles.ContextMenuItem
-    container={{
-      root: {
-        className: cx({ disabled: enabled === false }),
-        onClick: onSelect
-      }
-    }}
+      container={{
+        root: {
+          className: cx({ disabled: enabled === false }),
+          onClick: onSelect,
+        },
+      }}
       keyCommand={shortcut ? prettyKeyCombo(shortcut) : null}
     >
       {label}

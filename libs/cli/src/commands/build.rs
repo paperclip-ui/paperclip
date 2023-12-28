@@ -32,7 +32,9 @@ pub async fn build(args: BuildArgs, cwd: &str) -> Result<(), NoticeList> {
 
     let mut project = Project::new(config_context, io.clone());
 
-    project.load_all_files().await;
+    // skip error capturing since the REST of the stuff below will
+    // run into the same errors
+    let _ = project.load_all_files().await;
 
     let s = project.compile_all(CompileOptions { watch: args.watch });
     pin_mut!(s);

@@ -3,6 +3,7 @@
 use headers::{AcceptRanges, ContentLength, ContentType, HeaderMapExt};
 use hyper::Body;
 use include_dir::{include_dir, Dir, File};
+use paperclip_common::log::warning;
 use warp::any;
 use warp::path::{tail, Tail};
 use warp::reject::Rejection;
@@ -51,7 +52,7 @@ pub async fn static_file_reply(path: String) -> Result<StaticFile, Rejection> {
     if let Some(file) = file {
         return Ok(StaticFile(resolved_path, &file));
     } else {
-        println!("File {} not found", path);
+        warning(&format!("Static file {} not found", path));
     }
     Err(warp::reject::not_found())
 }

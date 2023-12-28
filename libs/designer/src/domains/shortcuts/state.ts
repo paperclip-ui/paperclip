@@ -13,6 +13,7 @@ import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 export enum ShortcutCommand {
   SearchFiles,
   CreateDesignFile,
+  CreateDirectory,
   InsertElement,
   GoToMain,
   GoToRenderNodeComponent,
@@ -235,14 +236,28 @@ export const getFileShortcuts = (
       shortcut: [],
       command: ShortcutCommand.RenameFile,
     },
-    isDir
-      ? {
-          kind: MenuItemKind.Option,
-          label: "Open In File Navigator",
-          shortcut: [],
-          command: ShortcutCommand.OpenFileInNavigator,
-        }
-      : null,
+    ...(isDir
+      ? [
+          {
+            kind: MenuItemKind.Option,
+            label: "Open In File Navigator",
+            shortcut: [],
+            command: ShortcutCommand.OpenFileInNavigator,
+          },
+          {
+            kind: MenuItemKind.Option,
+            label: "Create Design File",
+            shortcut: [],
+            command: ShortcutCommand.CreateDesignFile,
+          },
+          {
+            kind: MenuItemKind.Option,
+            label: "Create Directory",
+            shortcut: [],
+            command: ShortcutCommand.CreateDirectory,
+          },
+        ]
+      : []),
   ].filter(Boolean) as MenuItem<ShortcutCommand>[];
 };
 

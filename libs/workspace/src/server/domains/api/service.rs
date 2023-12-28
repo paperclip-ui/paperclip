@@ -282,8 +282,10 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         let kind: i32 = request.get_ref().kind;
 
         let result = if kind == 0 {
+            verbose(&format!("create dir: {}", path));
             self.ctx.io.create_directory(&path)
         } else {
+            verbose(&format!("create file: {}", path));
             self.ctx.io.write_file(&path, "".to_string())
         };
 
@@ -315,8 +317,6 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                     .map(|key| key.to_string())
                     .collect::<Vec<String>>();
 
-                verbose(&format!("get_files_response() -> {:?}", file_paths));
-
                 Ok(ResourceFiles { file_paths })
             };
 
@@ -340,7 +340,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
     ) -> Result<Response<CreateDesignFileResponse>, Status> {
         if let Ok(file_path) = create_design_file(
             &request.get_ref().name.to_string(),
-            &request.get_ref().parent_dir,
+            request.get_ref().parent_dir.clone(),
             self.ctx.clone(),
         ) {
             Ok(Response::new(CreateDesignFileResponse { file_path }))

@@ -9,6 +9,8 @@ import {
   newConvertToSlotPrompt,
   newDesignFilePrompt,
   setTargetExprId,
+  newDirectoryPrompt,
+  getActiveRelativeDirectory,
 } from "../../state";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import {
@@ -97,7 +99,13 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
       });
     case ShortcutCommand.CreateDesignFile:
       return produce(state, (newState) => {
-        newState.prompt = newDesignFilePrompt();
+        newState.prompt = newDesignFilePrompt(
+          getActiveRelativeDirectory(state)
+        );
+      });
+    case ShortcutCommand.CreateDirectory:
+      return produce(state, (newState) => {
+        newState.prompt = newDirectoryPrompt(getActiveRelativeDirectory(state));
       });
     case ShortcutCommand.Escape:
       return produce(state, (newState) => {

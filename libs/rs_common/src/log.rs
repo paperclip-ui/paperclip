@@ -18,3 +18,7 @@ pub fn verbose(message: &str) {
 pub fn notice(message: &str) {
     println!("{}", message);
 }
+
+pub fn warning(message: &str) {
+    println!("{}", message.bright_yellow());
+}

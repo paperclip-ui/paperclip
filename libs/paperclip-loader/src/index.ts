@@ -31,7 +31,7 @@ module.exports = function (source: string) {
   const { configFile = DEFAULT_CONFIG_FILE_NAME } = options;
   const loader = getLoader(process.cwd(), configFile);
 
-  const compiledFiles = compileFile(loader, this.resourcePath);
+  const compiledFiles = compileFile(loader, this.resourcePath) || {};
   let mainContent: string;
   for (const compiledFilePath in compiledFiles) {
     if (/\.js$/.test(compiledFilePath)) {

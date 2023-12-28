@@ -17,6 +17,7 @@ local = ["paperclip_proto/local", "paperclip_config/local"]
 [dependencies]
 paperclip_common = { path = "../rs_common" }
 paperclip_project = { path = "../project" }
+paperclip_validate = { path = "../validate" }
 paperclip_proto = { path = "../proto", features = [] }
 paperclip_config = { path = "../config", features = [] }
 futures = "0.3.21"

@@ -1484,6 +1484,7 @@ dependencies = [
  "paperclip_config",
  "paperclip_project",
  "paperclip_proto",
+ "paperclip_validate",
 ]
 
 [[package]]

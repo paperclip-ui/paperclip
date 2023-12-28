@@ -34,9 +34,16 @@ pub async fn build(args: BuildArgs, cwd: &str) -> Result<(), NoticeList> {
 
     // skip error capturing since the REST of the stuff below will
     // run into the same errors
-    let _ = project.load_all_files().await;
+    let load_files_result = project.load_all_files().await;
 
-    let s = project.compile_all(CompileOptions { watch: args.watch });
+    if let Err(err) = &load_files_result {
+        println!("{}", err.to_pretty_string());
+    }
+
+    let s = project.compile_all(CompileOptions {
+        watch: args.watch,
+        initial: load_files_result.is_ok(),
+    });
     pin_mut!(s);
     while let Some(result) = s.next().await {
         if let Ok((path, content)) = result {

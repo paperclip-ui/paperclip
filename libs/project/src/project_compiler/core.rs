@@ -16,6 +16,7 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
 pub struct CompileOptions {
+    pub initial: bool,
     pub watch: bool,
 }
 
@@ -73,7 +74,8 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
     ) -> impl Stream<Item = Result<(String, String), NoticeList>> + '_ {
         stream! {
             let mut graph = graph.lock().unwrap();
-            {
+
+            if options.initial {
                 let mut compile_cache = self.compile_cache.lock().unwrap();
 
                 let graph_files = graph

@@ -19,11 +19,6 @@ public component ModalFooter {
             }
             slot rightControls {
                 module.Button {
-                    override {
-                        variant secondary trigger {
-                            true
-                        }
-                    }
                     text "cancel"
                 }
                 module.Button {
@@ -144,14 +139,7 @@ ModalContainer promptPreview {
             }
             ModalContent {
                 insert children {
-                    module1.TextInput(placeholder: "new file name", value: "") {
-                        override {
-                            variant large
-                            variant medium trigger {
-                                true
-                            }
-                        }
-                    }
+                    module1.TextInput(placeholder: "new file name", value: "")
                 }
             }
             ModalFooter
@@ -179,4 +167,3 @@ ModalContainer confirmPreview {
         }
     }
 }
-

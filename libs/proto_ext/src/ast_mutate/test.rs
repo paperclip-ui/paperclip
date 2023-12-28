@@ -53,7 +53,7 @@ macro_rules! case {
                 })
                 .collect::<HashMap<String, String>>();
 
-            (println!("{:#?}", graph.dependencies);
+            verbose(println!("{:#?}", graph.dependencies));
 
             for (path, content) in $expected_mock_files {
                 if let Some(serialized_content) = edited_docs.get(path) {

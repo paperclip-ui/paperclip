@@ -3,6 +3,8 @@ import {
   GrpcWebImpl,
   DesignServerEvent,
   ModulesEvaluated,
+  FileChanged,
+  FileChangedKind,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { Engine, Dispatch } from "@paperclip-ui/common";
 import { DesignerEngineEvent, DocumentOpened } from "./events";
@@ -157,8 +159,6 @@ const createActions = (
         type: "designer-engine/fileCreated",
         payload: { filePath, kind: FSItemKind.Directory },
       });
-
-      readDirectory(parentDir);
     },
     async createDesignFile(name: string, parentDir?: string) {
       const { filePath } = await client.CreateDesignFile({
@@ -198,9 +198,6 @@ const createActions = (
             payload: data.filePaths,
           });
         },
-        complete() {
-          console.log("syncResourceFiles COMPLETE");
-        },
         error: () => {
           dispatch({ type: "designer-engine/apiError" });
         },
@@ -219,9 +216,6 @@ const createActions = (
       client.GetGraph({}).subscribe({
         next(data) {
           dispatch({ type: "designer-engine/graphLoaded", payload: data });
-        },
-        complete() {
-          console.log("syncGraph COMPLETE");
         },
         error: () => {},
       });
@@ -940,12 +934,25 @@ const createEventHandler = (actions: Actions) => {
     actions.createDesignFile(name);
   };
 
+  const handleFileChanged = (event: FileChanged, state: DesignerState) => {
+    if (
+      event.kind === FileChangedKind.CREATED ||
+      event.kind === FileChangedKind.DELETED
+    ) {
+      const parts = event.path.split("/");
+      parts.pop();
+      actions.readDirectory(parts.join("/"));
+    }
+  };
+
   const handleServerEvent = (
     event: DesignServerEvent,
     state: DesignerState
   ) => {
     if (event.modulesEvaluated) {
       handleModulesEvaluated(event.modulesEvaluated, state);
+    } else if (event.fileChanged) {
+      handleFileChanged(event.fileChanged, state);
     }
   };
   const handleModulesEvaluated = (

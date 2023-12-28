@@ -47,7 +47,7 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
         ServerEvent::UpdateFileRequested { path: _path, content: _content } => {
             let updated_files = next.clone().store.lock().unwrap().state.updated_files.clone();
 
-            println!("Updated files {:?}", updated_files);
+            verbose(&format!("Updated files {:?}", updated_files));
 
             for update_file in updated_files {
                 load_dependency_graph(next.clone(), &vec![update_file]).await.expect("Unable to load dependency");

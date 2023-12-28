@@ -45,6 +45,7 @@ impl FileWatcher for LocalIO {
                             yield FileWatchEvent::new(FileWatchEventKind::Create, &path);
                         }
                         notify::EventKind::Remove(_) => {
+
                             yield FileWatchEvent::new(FileWatchEventKind::Remove, &path);
                         },
                         _ => {}

@@ -58,13 +58,13 @@ impl<'kv> FileResolver for MockFS<'kv> {
     }
 }
 
-#[cfg(feature = "local")]
+#[cfg(feature = "absolutize")]
 fn absolutize(pt: PathBuf) -> PathBuf {
     use path_absolutize::*;
-    pt.absolutize().unwrap()
+    pt.absolutize().unwrap().to_path_buf()
 }
 
-#[cfg(not(feature = "local"))]
+#[cfg(not(feature = "absolutize"))]
 fn absolutize(pt: PathBuf) -> PathBuf {
     pt
 }

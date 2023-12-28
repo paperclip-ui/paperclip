@@ -12,7 +12,7 @@ name = "paperclip_validate"
 [dependencies]
 paperclip_common = { path = "../rs_common" }
 paperclip_proto = { path = "../proto" }
-paperclip_proto_ext = { path = "../proto_ext" }
+paperclip_proto_ext = { path = "../proto_ext", features = [] }
 paperclip_parser = { path = "../parser" }
 paperclip_evaluator = { path = "../evaluator" }
 anyhow = "1.0.61"

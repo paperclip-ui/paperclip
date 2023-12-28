@@ -9,8 +9,9 @@ exclude = []
 name = "paperclip_proto_ext"
 
 [features]
-default = []
-local = ["paperclip_common/local", "dep:path-absolutize"]
+default = ["local"]
+absolutize = ["dep:path-absolutize"]
+local = ["paperclip_common/local", "absolutize"]
 
 [dependencies]
 paperclip_proto = { path = "../proto" }

@@ -826,10 +826,18 @@ fn parse_override(context: &mut PCContext) -> Result<ast::Override, err::ParserE
     };
 
     let end = context.curr_u16pos.clone();
+    let range = base_ast::Range::new(start, end);
+
+    if !context.options.feature_enabled("styleOverride") {
+        return Err(err::ParserError::new_feature_not_enabled(
+            "styleOverride",
+            &range,
+        ));
+    }
 
     Ok(ast::Override {
         id: context.next_id(),
-        range: Some(base_ast::Range::new(start, end)),
+        range: Some(range),
         path,
         body,
     })

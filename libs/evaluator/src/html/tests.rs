@@ -35,6 +35,7 @@ fn evaluate_doc(sources: HashMap<&str, &str>) -> virt::html::Document {
             "repeat".to_string(),
             "switch".to_string(),
             "condition".to_string(),
+            "styleOverride".to_string(),
         ]),
     )) {
         panic!("Unable to load");

@@ -1,3 +1,8 @@
+#### FOCUS
+
+- visual editing and edge case
+  - moving files arond
+
 #### Warm up!
 
 - clean up \*.pc files

@@ -8,11 +8,15 @@ exclude = []
 [lib]
 name = "paperclip_config"
 
+[features]
+default = ["local"]
+local = ["paperclip_proto_ext/local"]
+
 [dependencies]
 ts-rs = "6.1"
 paperclip_common = { path = "../rs_common" }
 paperclip_parser = { path = "../parser" }
-paperclip_proto_ext = { path = "../proto_ext" }
+paperclip_proto_ext = { path = "../proto_ext", features = [] }
 paperclip_proto = { path = "../proto" }
 serde = { version = "1.0.143", features = ["derive"] }
 path-absolutize = "3.0.13"

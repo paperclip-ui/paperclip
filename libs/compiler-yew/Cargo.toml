@@ -9,11 +9,15 @@ exclude = []
 [lib]
 name = "paperclip_compiler_yew"
 
+[features]
+default = ["local"]
+local = ["paperclip_proto_ext/local"]
+
 [dependencies]
 paperclip_parser = { path = "../parser" }
 paperclip_common = { path = "../rs_common" }
 paperclip_proto = { path = "../proto" }
-paperclip_proto_ext = { path = "../proto_ext" }
+paperclip_proto_ext = { path = "../proto_ext", features = [] }
 paperclip_evaluator = { path = "../evaluator" }
 paperclip_infer = { path = "../infer" }
 anyhow = "1.0.61"

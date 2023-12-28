@@ -8,10 +8,15 @@ exclude = []
 [lib]
 name = "paperclip_project"
 
+[features]
+default = ["local"]
+local = ["paperclip_proto_ext/local", "paperclip_compiler_react/local", "paperclip_compiler_yew/local", "paperclip_parser/local"]
+
+
 [dependencies]
-paperclip_parser = { path = "../parser" }
-paperclip_proto = { path = "../proto" }
-paperclip_proto_ext = { path = "../proto_ext" }
+paperclip_parser = { path = "../parser", features = [] }
+paperclip_proto = { path = "../proto", features = [] }
+paperclip_proto_ext = { path = "../proto_ext", features = [] }
 paperclip_evaluator = { path = "../evaluator" }
 paperclip_validate = { path = "../validate" }
 paperclip_compiler_react = { path = "../compiler-react" }

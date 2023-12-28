@@ -11,9 +11,11 @@ macro_rules! test_case {
         fn $name() {
             let mock_fs = MockFS::new(HashMap::from([("/entry.pc", $source)]));
             let mut graph = Graph::new();
-            if let Err(_err) =
-                block_on(graph.load(&"/entry.pc".to_string(), &mock_fs, Options::new(vec![])))
-            {
+            if let Err(_err) = block_on(graph.load(
+                &"/entry.pc".to_string(),
+                &mock_fs,
+                Options::new(vec!["styleOverride".to_string()]),
+            )) {
                 panic!("unable to load");
             }
             let info = get_document_info(&"/entry.pc", &graph).unwrap();

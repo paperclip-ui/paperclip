@@ -185,7 +185,7 @@ async fn take_page_screenshot(
     browser: Arc<headless_chrome::Browser>,
 ) -> Result<()> {
     let tmp_file_path = save_tmp_page_html(document_id, &html)?;
-    println!("📸 {}", path);
+    verbose!(&format!("📸 {}", path));
     take_file_screenshot(&tmp_file_path, &document_id, bounds, browser).await
 }
 

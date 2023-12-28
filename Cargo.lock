@@ -1525,6 +1525,7 @@ dependencies = [
  "anyhow",
  "async-channel",
  "async-stream",
+ "colored",
  "crc 1.8.1",
  "crossbeam-channel",
  "event-listener",

@@ -1,7 +1,7 @@
 use crate::replace_child;
 use inflector::cases::pascalcase::to_pascal_case;
 use paperclip_ast_serialize::serializable::Serializable;
-use paperclip_common::get_or_short;
+use paperclip_common::{get_or_short, log::verbose};
 use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::{
@@ -42,8 +42,6 @@ impl MutableVisitor<()> for EditContext<ConvertToComponent> {
             GetExpr::get_expr(&self.mutation.expression_id, expr),
             VisitorResult::Continue
         );
-
-        println!("NOT SKIP {:?}", found_expr);
 
         let found_node: Node = match found_expr.try_into() {
             Ok(node) => node,
@@ -199,7 +197,7 @@ public component {} {{
         &render.serialize()
     );
 
-    println!("Create component {}", new_source);
+    verbose(&format!("Create component {}", new_source));
 
     let doc = parse(&new_source, id_seed, &Options::new(vec![])).unwrap();
     match doc.body.get(0).unwrap().get_inner() {

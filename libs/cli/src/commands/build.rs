@@ -3,6 +3,7 @@ use clap::Args;
 use futures_util::pin_mut;
 use futures_util::stream::StreamExt;
 use paperclip_common::fs::LocalFileReader;
+use paperclip_common::log::notice;
 use paperclip_config::{ConfigContext, DEFAULT_CONFIG_NAME};
 use paperclip_project::{CompileOptions, LocalIO, Project};
 use paperclip_proto::notice::base::NoticeList;
@@ -37,7 +38,7 @@ pub async fn build(args: BuildArgs, cwd: &str) -> Result<(), NoticeList> {
     let load_files_result = project.load_all_files().await;
 
     if let Err(err) = &load_files_result {
-        println!("{}", err.to_pretty_string());
+        notice(&format!("{}", err.to_pretty_string()));
     }
 
     let s = project.compile_all(CompileOptions {
@@ -48,7 +49,7 @@ pub async fn build(args: BuildArgs, cwd: &str) -> Result<(), NoticeList> {
     while let Some(result) = s.next().await {
         if let Ok((path, content)) = result {
             // replace cd with relative since it's a prettier output
-            println!("✍🏻  {}", path.replace(&format!("{}/", cwd), ""));
+            notice(&format!("✍🏻  {}", path.replace(&format!("{}/", cwd), "")));
             if args.print {
                 println!("{}", content);
             } else {
@@ -57,7 +58,7 @@ pub async fn build(args: BuildArgs, cwd: &str) -> Result<(), NoticeList> {
                     .expect("Unable to write contents");
             }
         } else if let Err(err) = result {
-            println!("{}", err.to_pretty_string());
+            notice(&format!("{}", err.to_pretty_string()));
         }
     }
 

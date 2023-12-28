@@ -9,6 +9,7 @@ use crate::server::io::ServerIO;
 use anyhow::Result;
 use futures::future::{self, Either, TryFutureExt};
 use hyper::{service::make_service_fn, service::service_fn, Server};
+use paperclip_common::log::notice;
 use paperclip_proto::service::designer::designer_server::DesignerServer;
 use std::convert::Infallible;
 use tower::Service;
@@ -34,7 +35,7 @@ async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
 
     let addr = ([127, 0, 0, 1], port).into();
 
-    println!("🎨 Starting design server on port {}", port);
+    notice(&format!("🎨 Starting design server on port {}", port));
 
     let designer = DesignerService::new(ctx.clone());
     let designer_server = DesignerServer::new(designer);

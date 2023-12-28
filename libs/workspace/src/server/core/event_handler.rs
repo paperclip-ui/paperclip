@@ -4,6 +4,7 @@ use super::ServerEvent;
 use super::ServerState;
 use crate::machine::store::EventHandler;
 use paperclip_ast_serialize::pc::serialize;
+use paperclip_common::log::verbose;
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::graph_ext::Graph;
 
@@ -19,14 +20,14 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
     fn handle_event(&self, state: &mut ServerState, event: &ServerEvent) {
         match event {
             ServerEvent::DependencyGraphLoaded { graph } => {
-                println!("ServerEvent::DependencyGraphLoaded");
+                verbose("ServerEvent::DependencyGraphLoaded");
                 state.graph =
                     std::mem::replace(&mut state.graph, Graph::new()).merge(graph.clone());
 
                 store_history(state);
             }
             ServerEvent::UpdateFileRequested { path, content } => {
-                println!("ServerEvent::UpdateFileRequested");
+                verbose("ServerEvent::UpdateFileRequested");
                 // onyl flag as changed if content actually changed.
                 if let Some(existing_content) = state.file_cache.get(path) {
                     if content != existing_content {
@@ -40,7 +41,7 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 result: _result,
                 updated_graph,
             } => {
-                println!("ServerEvent::MutationsApplied");
+                verbose("ServerEvent::MutationsApplied");
                 state.graph =
                     std::mem::replace(&mut state.graph, Graph::new()).merge(updated_graph.clone());
 
@@ -51,7 +52,7 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 state.file_cache.remove(&event.path);
             }
             ServerEvent::ScreenshotsStarted => {
-                println!("ServerEvent::ScreenshotsStarted");
+                verbose("ServerEvent::ScreenshotsStarted");
                 state.screenshot_queue = HashSet::default();
                 state.screenshots_running = true;
             }
@@ -59,15 +60,15 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 state.screenshots_running = false;
             }
             ServerEvent::UndoRequested => {
-                println!("ServerEvent::UndoRequested");
+                verbose("ServerEvent::UndoRequested");
                 load_history(state, HistoryStep::Back);
             }
             ServerEvent::RedoRequested => {
-                println!("ServerEvent::RedoRequested");
+                verbose("ServerEvent::RedoRequested");
                 load_history(state, HistoryStep::Forward);
             }
             ServerEvent::ModulesEvaluated(modules) => {
-                println!("ServerEvent::ModulesEvaluated");
+                verbose("ServerEvent::ModulesEvaluated");
                 state.evaluated_modules.extend(modules.clone());
                 state.updated_files = vec![];
                 for (path, _) in modules {
@@ -75,7 +76,7 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 }
             }
             ServerEvent::GlobalScriptsLoaded(global_scripts) => {
-                println!("ServerEvent::GlobalScriptsLoaded");
+                verbose("ServerEvent::GlobalScriptsLoaded");
                 for (path, content) in global_scripts {
                     state.file_cache.insert(path.to_string(), content.clone());
                 }
@@ -103,7 +104,7 @@ fn store_history(state: &mut ServerState) {
             updated_file.to_string(),
             state.graph.dependencies.get(updated_file).unwrap().clone(),
         );
-        println!("Storing {} in history", updated_file);
+        verbose(&format!("Storing {} in history", updated_file));
     }
     if !state.updated_files.is_empty() {
         state.history.changes.truncate(state.history.position + 1);
@@ -113,11 +114,11 @@ fn store_history(state: &mut ServerState) {
 }
 
 fn load_history(state: &mut ServerState, step: HistoryStep) {
-    println!(
+    verbose(&format!(
         "Loading history pos: {}, len: {}",
         state.history.position,
         state.history.changes.len()
-    );
+    ));
 
     state.updated_files = vec![];
 
@@ -191,7 +192,7 @@ fn update_changed_files(state: &mut ServerState) {
         let checksum = dep.document.as_ref().unwrap().checksum();
 
         if !state.doc_checksums.get(path).eq(&Some(&checksum)) {
-            println!("Updating {}", path);
+            verbose(&format!("Updating {}", path));
             let content = serialize(dep.document.as_ref().expect("Document must exist"))
                 .as_bytes()
                 .to_vec();

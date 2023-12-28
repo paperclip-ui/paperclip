@@ -2,6 +2,7 @@ use crate::server::core::ServerEvent;
 use anyhow::Result;
 use notify::{Config, RecommendedWatcher, RecursiveMode, Watcher};
 use paperclip_common::fs::{FileWatchEvent, FileWatchEventKind};
+use paperclip_common::log::verbose;
 
 use crate::server::core::ServerEngineContext;
 use crate::server::io::ServerIO;
@@ -36,7 +37,7 @@ async fn file_watcher<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
         )
         .unwrap();
 
-        println!("watching {:?}", config_context.directory);
+        verbose(&format!("watching {:?}", config_context.directory));
 
         watcher
             .watch(config_context.directory.as_ref(), RecursiveMode::Recursive)

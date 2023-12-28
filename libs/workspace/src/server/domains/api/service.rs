@@ -7,6 +7,7 @@ use crate::server::io::ServerIO;
 use futures::Stream;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::fs::FSItemKind;
+use paperclip_common::log::verbose;
 use paperclip_language_services::DocumentInfo;
 use paperclip_proto::ast::base::Range;
 use paperclip_proto::ast::graph_ext::Graph;
@@ -93,7 +94,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
             project_dir, query, project_dir, query
         );
 
-        println!("Search {}", pat);
+        verbose(&format!("Search {}", pat));
 
         let mut paths: Vec<String> = vec![];
 
@@ -131,10 +132,10 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         let range: Range = request.get_ref().range.clone().expect("Range must exist");
         let start = range.start.as_ref().expect("Stat must exist");
 
-        println!(
+        verbose(&format!(
             "Opening code editor with \"{}\"",
             code_editor_command_template
-        );
+        ));
 
         let command = code_editor_command_template
             .replace("<file>", &path)
@@ -143,8 +144,8 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
 
         let (_, output, error) = run_script::run(&command, &vec![], &ScriptOptions::new()).unwrap();
 
-        println!("Output: {}", output);
-        println!("Error: {}", error);
+        verbose(&format!("Output: {}", output));
+        verbose(&format!("Error: {}", error));
 
         Ok(Response::new(Empty {}))
     }
@@ -238,7 +239,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         let from_path: String = request.get_ref().from_path.clone();
         let to_path: String = request.get_ref().to_path.clone();
 
-        println!("mv {} {}", from_path, to_path);
+        verbose(&format!("mv {} {}", from_path, to_path));
 
         let result = std::fs::rename(&from_path, &to_path);
 
@@ -262,7 +263,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
     ) -> Result<Response<Empty>, Status> {
         let file_path: String = request.get_ref().file_path.clone();
 
-        println!("open {}", file_path);
+        verbose(&format!("open {}", file_path));
 
         let result = open::that(&file_path);
 
@@ -314,7 +315,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                     .map(|key| key.to_string())
                     .collect::<Vec<String>>();
 
-                println!("get_files_response() -> {:?}", file_paths);
+                verbose(&format!("get_files_response() -> {:?}", file_paths));
 
                 Ok(ResourceFiles { file_paths })
             };

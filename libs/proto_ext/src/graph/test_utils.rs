@@ -58,13 +58,13 @@ impl<'kv> FileResolver for MockFS<'kv> {
     }
 }
 
-#[cfg(feature = "absolutize")]
+#[cfg(not(target_arch = "wasm32"))]
 fn absolutize(pt: PathBuf) -> PathBuf {
     use path_absolutize::*;
     pt.absolutize().unwrap().to_path_buf()
 }
 
-#[cfg(not(feature = "absolutize"))]
+#[cfg(target_arch = "wasm32")]
 fn absolutize(pt: PathBuf) -> PathBuf {
     pt
 }

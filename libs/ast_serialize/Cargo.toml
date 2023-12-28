@@ -8,6 +8,13 @@ exclude = []
 [lib]
 name = "paperclip_ast_serialize"
 
+[features]
+default = ["local"]
+local = [
+"paperclip_proto/local",
+"paperclip_common/local"
+]
+
 [dependencies]
 paperclip_proto = { path = "../proto", features = [] }
 paperclip_common = { path = "../rs_common", features = [] }

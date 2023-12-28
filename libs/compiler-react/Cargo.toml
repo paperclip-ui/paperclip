@@ -10,15 +10,15 @@ name = "paperclip_compiler_react"
 
 [features]
 default = ["local"]
-local = ["paperclip_proto_ext/local"]
+local = ["paperclip_parser/local", "paperclip_common/local" , "paperclip_proto/local", "paperclip_proto_ext/local", "paperclip_evaluator/local", "paperclip_infer/local"]
 
 [dependencies]
-paperclip_parser = { path = "../parser" }
-paperclip_common = { path = "../rs_common" }
-paperclip_proto = { path = "../proto" }
+paperclip_parser = { path = "../parser", features = [] }
+paperclip_common = { path = "../rs_common", features = [] }
+paperclip_proto = { path = "../proto", features = [] }
 paperclip_proto_ext = { path = "../proto_ext", features = [] }
-paperclip_evaluator = { path = "../evaluator" }
-paperclip_infer = { path = "../infer" }
+paperclip_evaluator = { path = "../evaluator", features = [] }
+paperclip_infer = { path = "../infer", features = [] }
 anyhow = "1.0.61"
 futures = "0.3.25"
 Inflector = "0.11.4"

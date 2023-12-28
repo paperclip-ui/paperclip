@@ -10,12 +10,11 @@ name = "paperclip_proto_ext"
 
 [features]
 default = ["local"]
-absolutize = ["dep:path-absolutize"]
-local = ["paperclip_common/local", "absolutize"]
+local = ["paperclip_proto/local", "paperclip_parser/local", "paperclip_common/local"]
 
 [dependencies]
-paperclip_proto = { path = "../proto" }
-paperclip_parser = { path = "../parser" }
+paperclip_proto = { path = "../proto", features = [] }
+paperclip_parser = { path = "../parser", features = [] }
 paperclip_common = { path = "../rs_common", features = [] }
 anyhow = "1.0.66"
 futures = "0.3.25"
@@ -26,4 +25,7 @@ convert_case = "0.6.0"
 regex = "1.7.0"
 paperclip_ast_serialize = { path = "../ast_serialize" }
 Inflector = "0.11.4"
-path-absolutize = { version = "3.1.1", optional = true }
+
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+path-absolutize = { version = "3.0.14" }

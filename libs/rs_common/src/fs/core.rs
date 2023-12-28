@@ -2,7 +2,7 @@ use anyhow::Error;
 use anyhow::Result;
 use futures_core::stream::Stream;
 
-#[cfg(feature = "local")]
+#[cfg(not(target_arch = "wasm32"))]
 use path_absolutize::*;
 use std::fs;
 use std::fs::File;
@@ -79,11 +79,11 @@ pub trait FileResolver: Clone {
     fn resolve_file(&self, from: &str, to: &str) -> Result<String>;
 }
 
-#[cfg(feature = "local")]
+#[cfg(not(target_arch = "wasm32"))]
 #[derive(Default, Clone)]
 pub struct LocalFileResolver;
 
-#[cfg(feature = "local")]
+#[cfg(not(target_arch = "wasm32"))]
 impl FileResolver for LocalFileResolver {
     fn resolve_file(&self, from_path: &str, to_path: &str) -> Result<String> {
         Ok(String::from(

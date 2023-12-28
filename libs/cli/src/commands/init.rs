@@ -55,7 +55,7 @@ pub async fn init(_args: InitArgs, cwd: &str) -> Result<(), NoticeList> {
 
     println!(
         "You can learn more at {}",
-        style("https://paperclip.dev/docs/configure-paperclip").bold()
+        style("https://github.com/paperclip-ui/paperclip/blob/master/docs/config.md").bold()
     );
     Ok(())
 }

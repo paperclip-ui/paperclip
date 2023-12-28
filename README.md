@@ -19,7 +19,7 @@ Or download one of the standalone binaries here: https://github.com/paperclip-ui
 
 ---
 
-Paperclip is a tiny styling language for ambitions web applitions. Here's an example of what it looks like:
+**Paperclip is a tiny styling language for ambitions web applitions**. Here's an example of what it looks like:
 
 ```javascript
 
@@ -36,7 +36,7 @@ public style defaultFont {
   color: var(fontColor)
 }
 
-// re-usable chunk of HTML and CSS
+// This is a styled component that you can use in your app
 public component Button {
   variant hover trigger {
     ":hover"
@@ -54,7 +54,7 @@ public component Button {
 }
 ```
 
-This is a basic example, but gives you an idea of how Paperclip blends HTML and CSS into a different format. Here's what the compiled output looks like:
+Here's what the compiled CSS looks like:
 
 ```css
 :root {
@@ -75,7 +75,7 @@ This is a basic example, but gives you an idea of how Paperclip blends HTML and 
 }
 ```
 
-Paperclip also emits code for different libraries. Here's an example of what's emitted for React:
+The styled components defined in Paperclip can be compiled to different libraries and frameworks. For example, here's what the emitted React code looks like:
 
 ```tsx
 export const Button = ({ children }) => (
@@ -83,23 +83,23 @@ export const Button = ({ children }) => (
 );
 ```
 
-In, your app code, you may use Paperclip like so:
+Here's how you import Paperclip into your app:
 
 ```tsx
-import { Button } from "./button.pc";
+import { Button } from "./button.pc.js";
 
 <Button>Click me!</Button>;
 ```
 
 ### Why Paperclip?
 
-- Provides a safe and scalable approach to styling web app.s
+- Provides a scalable approach to styling web apps.
   - Paperclip is strongly typed, and generates strongly typed code.
   - There's no cascading styles in Paperclip. Instead, Paperclip uses component variants.
 - No runtime. Paperclip is compiled to static HTML and CSS.
 - Comes with a designer that allows you to visually edit Paperclip files.
 - No dependencies! Just [download one of the standalone binaries](https://github.com/paperclip-ui/paperclip/releases).
-- Super fast compiler built in Rust.
+- Framework / language agnostic, meaning that you can re-use your `*.pc` files anywhere you want. 
 
 #### Comparing CSS-in-JS
 

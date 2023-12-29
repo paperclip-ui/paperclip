@@ -15,6 +15,7 @@ macro_rules! visitable {
 
     pub enum VisitorResult<TRet> {
       Return(TRet),
+      Break,
       Continue
     }
 

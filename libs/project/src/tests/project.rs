@@ -133,6 +133,7 @@ fn default_config_with_compiler_options(src: &str, options: Vec<CompilerOptions>
         src_dir: Some(src.to_string()),
         global_scripts: None,
         designs_dir: None,
+        lint: None,
         module_dirs: None,
         compiler_options: Some(options),
         open_code_editor_command_template: None,

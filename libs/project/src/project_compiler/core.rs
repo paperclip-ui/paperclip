@@ -11,7 +11,7 @@ use paperclip_config::ConfigContext;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::notice::base::NoticeList;
 use paperclip_proto_ext::graph::load::LoadableGraph;
-use paperclip_validate::validate;
+use paperclip_validate::validate::{self, ValidateOptions};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
@@ -95,7 +95,7 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
                 }
 
                 let options = self.config_context.config.into_parser_options();
-                let notice = validate::validate_documents(&graph_files, &self.io, &options).await;
+                let notice = validate::validate_documents(&graph_files, &self.io, &ValidateOptions::from_parse_options(options.clone())).await;
 
                 if notice.contains_error() {
                     yield Err(notice);
@@ -128,7 +128,7 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
                         }
 
                         let options = self.config_context.config.into_parser_options();
-                        let notice = validate::validate_documents(&graph_files, &self.io, &options).await;
+                        let notice = validate::validate_documents(&graph_files, &self.io, &ValidateOptions::from_parse_options(options.clone())).await;
 
                         if notice.contains_error() {
                             yield Err(notice);

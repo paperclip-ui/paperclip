@@ -6,6 +6,7 @@ use paperclip_parser::core::parser_context::Options;
 use paperclip_proto::notice::base::{Notice, NoticeList};
 use path_absolutize::*;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::path::Path;
 use std::str;
 use ts_rs::TS;
@@ -109,6 +110,10 @@ pub struct Config {
     #[serde(rename = "globalScripts", skip_serializing_if = "Option::is_none")]
     pub global_scripts: Option<Vec<String>>,
 
+    /// Global scripts that are injected into the page (JS, and CSS)
+    #[serde(rename = "lint", skip_serializing_if = "Option::is_none")]
+    pub lint: Option<LintConfig>,
+
     /// source directory where *.pc files live
     #[serde(rename = "srcDir", skip_serializing_if = "Option::is_none")]
     pub src_dir: Option<String>,
@@ -131,6 +136,14 @@ pub struct Config {
         skip_serializing_if = "Option::is_none"
     )]
     pub open_code_editor_command_template: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone, TS, Default)]
+#[ts(export)]
+pub struct LintConfig {
+    /// rules for linting. E.g: { "vars": [["error", "font-family"]]}
+    #[serde(rename = "rules", skip_serializing_if = "Option::is_none")]
+    pub rules: Option<HashMap<String, Vec<Vec<String>>>>,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone, TS)]

@@ -48,9 +48,9 @@ impl Message {
 
 impl ToString for Message {
     fn to_string(&self) -> String {
-        let level = if self.notice.level == Level::Error.into() {
+        let level = if self.notice.level == Level::Error as i32 {
             "error".bright_red().bold().to_string()
-        } else if self.notice.level == Level::Warning.into() {
+        } else if self.notice.level == Level::Warning as i32 {
             "warning".bright_yellow().bold().to_string()
         } else {
             "".to_string()

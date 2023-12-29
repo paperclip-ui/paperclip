@@ -12,10 +12,11 @@ name = "paperclip_validate"
 
 [features]
 default = ["local"]
-local = ["paperclip_common/local", "paperclip_proto/local", "paperclip_proto_ext/local", "paperclip_parser/local", "paperclip_evaluator/local"]
+local = ["paperclip_common/local", "paperclip_proto/local", "paperclip_proto_ext/local", "paperclip_parser/local", "paperclip_evaluator/local", "paperclip_evaluator/local"]
 
 [dependencies]
 paperclip_common = { path = "../rs_common", features = []  }
+paperclip_config = { path = "../config", features = []  }
 paperclip_proto = { path = "../proto", features = []  }
 paperclip_proto_ext = { path = "../proto_ext", features = [] }
 paperclip_parser = { path = "../parser", features = []  }

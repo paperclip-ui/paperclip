@@ -102,7 +102,7 @@ fn errors_if_import_doesnt_exist() {
                 level: notice::base::Level::Error.into(),
                 code: notice::base::Code::FileNotFound.into(),
                 message: "File not found".to_string(),
-                path: "/entry.pc".to_string(),
+                path: Some("/entry.pc".to_string()),
                 content_range: Some(Range::new(
                     U16Position::new(19, 2, 19),
                     U16Position::new(63, 3, 19)

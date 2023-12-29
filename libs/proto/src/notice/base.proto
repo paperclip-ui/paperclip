@@ -20,6 +20,9 @@ enum Code {
 
     // Generic for anything really
     UnableToParse = 6;
+
+    // Linting
+    LintMagicValue = 8;
 }
 enum Level {
     Warning = 0;

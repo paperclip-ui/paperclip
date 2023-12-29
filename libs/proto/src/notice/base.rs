@@ -91,6 +91,15 @@ impl Notice {
             Some(content_range.clone()),
         )
     }
+    pub fn lint_magic_value(level: Level, path: &str, content_range: &Option<Range>) -> Self {
+        Self::new(
+            level,
+            notice::base::Code::LintMagicValue,
+            "Unexpected value. This should be elevated to a variable.".to_string(),
+            Some(path.to_string()),
+            content_range.clone(),
+        )
+    }
     pub fn experimental_flag_not_enabled(
         feature: &str,
         path: &str,

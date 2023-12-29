@@ -8,6 +8,7 @@ use paperclip_proto::notice::base::Level;
 use paperclip_proto::notice::base::NoticeList;
 
 struct Context<'expr> {
+    path: String,
     current_style_name: Option<String>,
     graph: &'expr graph::Graph,
     notices: Vec<notice::Notice>,
@@ -35,6 +36,7 @@ pub fn lint_document<'expr>(
 
     let mut context = Context {
         notices: vec![],
+        path: path.to_string(),
         graph,
         config,
         current_style_name: None,
@@ -130,7 +132,7 @@ fn lint_decl_value(decl_name: &str, decl: &css::DeclarationValue, context: &mut 
             if let Some(level) = get_lint_notice_level("var", decl_name, context.config) {
                 context.notices.push(notice::Notice::lint_magic_value(
                     level,
-                    path,
+                    &context.path,
                     decl.get_range(),
                 ))
             }

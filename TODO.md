@@ -1,7 +1,6 @@
 #### FOCUS
 
-- visual editing and edge case
-  - moving files around
+- functionality that gets in the way of productivity for Shaya
 
 #### Immediate
 

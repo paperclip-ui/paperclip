@@ -1,6 +1,4 @@
 use paperclip_config::LintConfig;
-use paperclip_proto::ast::all::visit::MutableVisitor;
-use paperclip_proto::ast::all::visit::VisitorResult;
 use paperclip_proto::ast::css;
 use paperclip_proto::ast::css::declaration_value;
 use paperclip_proto::ast::graph_ext as graph;
@@ -236,10 +234,16 @@ fn lint_render(expr: &pc::Render, context: &mut Context) {
     lint_node(expr.node.as_ref().expect("Node must exist"), context);
 }
 
+fn lint_condition(expr: &pc::Condition, context: &mut Context) {
+    for item in &expr.body {
+        lint_node(item, context);
+    }
+}
+
 fn lint_node(expr: &pc::Node, context: &mut Context) {
     match expr.get_inner() {
         pc::node::Inner::Condition(expr) => {
-            // TODO
+            lint_condition(expr, context);
         }
         pc::node::Inner::Element(expr) => {
             lint_element(expr, context);

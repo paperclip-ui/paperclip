@@ -27,7 +27,7 @@ fn lint_doc(mock_fs: &MockFS, config: LintConfig) -> NoticeList {
     block_on(validate_document(
         "/entry.pc",
         mock_fs,
-        &ValidateOptions::new(config, Options::new(vec!["repeat".to_string()])),
+        &ValidateOptions::new(config, Options::new(vec!["condition".to_string()])),
     ))
 }
 
@@ -182,5 +182,28 @@ add_case! {
     },
     NoticeList {
         items: vec![Notice::new(Level::Error, Code::LintMagicValue, "Unexpected value. This should be elevated to a variable.".to_string(), Some("/entry.pc".to_string()), Some(Range::new(U16Position::new(140, 6, 38), U16Position::new(150, 6, 48))))]
+    }
+}
+
+add_case! {
+    can_lint_style_in_condition,
+    [("/entry.pc", r#"
+        component A {
+            render div {
+               if test {
+                span {
+                    style {
+                        font-family: sans-serif
+                    }
+                }
+               }
+            }
+        }
+    "#)],
+    lint_config! {
+        "noMagicValue" => [["error", "font-family"]]
+    },
+    NoticeList {
+        items: vec![Notice::new(Level::Error, Code::LintMagicValue, "Unexpected value. This should be elevated to a variable.".to_string(), Some("/entry.pc".to_string()), Some(Range::new(U16Position::new(161, 7, 38), U16Position::new(171, 7, 48))))]
     }
 }

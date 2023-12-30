@@ -5,6 +5,8 @@
 
 #### Immediate
 
+- designer stops working after lint error
+
 - editing
 
   - circular dependencies

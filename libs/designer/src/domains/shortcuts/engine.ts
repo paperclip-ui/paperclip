@@ -21,8 +21,6 @@ export const createShortcutsEngine =
         return;
       }
 
-      console.log(event.key);
-
       const command = getKeyboardMenuCommand(
         createKeyDownEvent(event),
         getGlobalShortcuts(getState())

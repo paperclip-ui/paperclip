@@ -1,0 +1,13 @@
+import "./test-2.pc" as imp
+
+/**
+ * @frame(x: 610, y: 277, width: 441, height: 289)
+*/
+public component A {
+    render div {
+        style {
+            position: relative
+        }
+        text "blarg"
+    }
+}

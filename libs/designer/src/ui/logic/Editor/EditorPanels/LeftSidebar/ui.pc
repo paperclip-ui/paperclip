@@ -121,7 +121,7 @@ public component FilteredFile {
 }
 
 /**
- * @frame(x: 1059, y: 114, width: 1024, height: 768)
+ * @frame(x: 1787, y: 217, width: 225, height: 54)
 */
 public component FSItem {
     script(src: "./FileNavigator/controller.tsx", target: "react", name: "FSNavigatorItem")
@@ -745,3 +745,4 @@ public component LayerNavigationItemHeader {
         }
     }
 }
+

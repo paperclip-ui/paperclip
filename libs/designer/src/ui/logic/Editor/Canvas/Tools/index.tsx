@@ -16,8 +16,12 @@ import { ContextMenu } from "../../../ContextMenu";
 import { getSelectedEntityShortcuts } from "@paperclip-ui/designer/src/domains/shortcuts/state";
 import { DropTarget } from "./DropTarget";
 import { TextEditor } from "./TextEditor";
-import { getSelectedExpressionInfo } from "@paperclip-ui/designer/src/state/pc";
+import {
+  getGraph,
+  getSelectedExpressionInfo,
+} from "@paperclip-ui/designer/src/state/pc";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { ExpressionKind } from "../../EditorPanels/RightSidebar/StylePanel/Declarations/DeclarationValue/state";
 
 export const Tools = () => {
   const {
@@ -131,8 +135,12 @@ const useTools = () => {
 
   const contextMenu = useSelector(getSelectedEntityShortcuts);
   const selectedExpr = useSelector(getSelectedExpressionInfo);
+  const graph = useSelector(getGraph);
 
-  const resizeable = true;
+  const resizeable =
+    selectedExpr &&
+    ast.getParentExprInfo(selectedExpr.expr.id, graph).kind ==
+      ast.ExprKind.Document;
 
   const getMousePoint = (event) => {
     const rect: ClientRect = (

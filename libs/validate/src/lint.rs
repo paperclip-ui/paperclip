@@ -176,7 +176,13 @@ fn lint_decl_value(decl_name: &str, decl: &css::DeclarationValue, context: &mut 
 
                     if !matches!(
                         serialize.buffer.as_str(),
-                        "0" | "0px" | "currentColor" | "initial" | "inherit" | "unset" | "revert"
+                        "0" | "0px"
+                            | "currentColor"
+                            | "initial"
+                            | "inherit"
+                            | "unset"
+                            | "revert"
+                            | "auto"
                     ) {
                         context.notices.borrow_mut().push(Notice::lint_magic_value(
                             level,

@@ -364,3 +364,26 @@ add_case! {
         items: vec![]
     }
 }
+
+add_case! {
+    auto_is_ignored,
+    [("/entry.pc", r#"
+        component A {
+            render div {
+               if test {
+                span {
+                    style {
+                        margin: auto
+                    }
+                }
+               }
+            }
+        }
+    "#)],
+    lint_config! {
+        "enforceVars" => [["error", "margin"]]
+    },
+    NoticeList {
+        items: vec![]
+    }
+}

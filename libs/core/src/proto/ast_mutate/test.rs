@@ -40,7 +40,16 @@ macro_rules! case {
     ($name: ident, $mock_files: expr, $edit: expr, $expected_mock_files: expr) => {
         #[test]
         pub fn $name() {
-            let mock_fs = test_utils::MockFS::new(HashMap::from($mock_files));
+            let config_context = ConfigContext {
+                directory: "/".to_string(),
+                file_name: "paperclip.config.json".to_string(),
+                config: Config::default(),
+            };
+
+            let mock_fs = test_utils::MockFS::from_config_context(
+                HashMap::from($mock_files),
+                &config_context,
+            );
             let mut graph = graph::Graph::new();
 
             let features = vec!["condition".to_string(), "styleOverride".to_string()];
@@ -55,12 +64,6 @@ macro_rules! case {
             {
                 panic!("Unable to load {:#?}", err);
             }
-
-            let config_context = ConfigContext {
-                directory: "/path/to/file.pc".to_string(),
-                file_name: "paperclip.config.json".to_string(),
-                config: Config::default(),
-            };
 
             // println!("{:#?}", graph.dependencies);
 
@@ -4125,21 +4128,21 @@ case! {
   [
     (
       "/entry.pc", r#"
-      import "/some/module.pc" as mod
+      import "module.pc" as mod
 
       component A {
       }
       "#
     ),
     (
-      "/some/module.pc", r#"
+      "/module.pc", r#"
 
       component B {
       }
       "#
     ),
     (
-      "/some/dir/module2.pc", r#"
+      "/dir/module2.pc", r#"
 
       component B {
       }
@@ -4147,18 +4150,18 @@ case! {
     )
   ],
   mutation::Inner::UpdateDependencyPath(UpdateDependencyPath {
-      old_path: "/some/module.pc".to_string(),
-      new_path: "/some/dir/module2.pc".to_string(),
+      old_path: "/module.pc".to_string(),
+      new_path: "/dir/module2.pc".to_string(),
   }).get_outer(),
   [(
     "/entry.pc", r#"
-    import "some/dir/module2.pc" as mod
+    import "dir/module2.pc" as mod
 
     component A {
     }
     "#
   ),(
-    "/some/dir/module2.pc", r#"
+    "/dir/module2.pc", r#"
     component B {
     }
     "#
@@ -4176,7 +4179,15 @@ case! {
     ),
     (
       "/some/module.pc", r#"
-      import "/entry.pc" as entry
+      import "../entry.pc" as entry
+
+      component B {
+      }
+      "#
+    ),
+    (
+      "/some/dir/module2.pc", r#"
+      import "entry.pc" as entry
 
       component B {
       }
@@ -4189,7 +4200,7 @@ case! {
   }).get_outer(),
   [(
     "/some/dir/module2.pc", r#"
-    import "../../entry.pc" as entry
+    import "entry.pc" as entry
 
     component B {
     }
@@ -4202,7 +4213,7 @@ case! {
   [
     (
       "/entry.pc", r#"
-      img(src: "./test.svg")
+      img(src: "./path/to/test.svg")
       "#
     )
   ],
@@ -4212,7 +4223,7 @@ case! {
   }).get_outer(),
   [(
     "/some/dir/entry.pc", r#"
-    img(src: "../../test.svg")
+    img(src: "path/to/test.svg")
     "#
   )]
 }
@@ -4256,7 +4267,7 @@ case! {
     "/some/dir/entry.pc", r#"
 
     style {
-      background: url("../../img.svg")
+      background: url("img.svg")
     }
     "#
   )]
@@ -4292,22 +4303,22 @@ case! {
     (
       "/entry.pc", r#"
       style {
-        background: url("img.svg")
-        background: url("dont-touch.svg")
+        background: url("./img.svg")
+        background: url("./dont-touch.svg")
       }
       "#
     )
   ],
   mutation::Inner::UpdateDependencyPath(UpdateDependencyPath {
       old_path: "/img.svg".to_string(),
-      new_path: "/some/dir/img.svg".to_string(),
+      new_path: "/dir/img.svg".to_string(),
   }).get_outer(),
   [(
     "/entry.pc", r#"
 
     style {
-      background: url("some/dir/img.svg")
-      background: url("dont-touch.svg")
+      background: url("dir/img.svg")
+      background: url("./dont-touch.svg")
     }
     "#
   )]

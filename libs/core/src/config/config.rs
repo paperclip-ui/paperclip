@@ -7,7 +7,7 @@ use paperclip_proto::notice::base::{Notice, NoticeList};
 use path_absolutize::*;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::str;
 use ts_rs::TS;
 
@@ -52,19 +52,31 @@ impl ConfigContext {
             return None;
         }
 
-        // if src dir is specified, then use that as the root
-        let src_dir = self.config.src_dir.clone().unwrap_or("".to_string());
-
         // Otherwise use paperclip config directory
         return Some(String::from(
-            Path::new(&self.directory)
-                .join(src_dir)
+            self.get_src_dir()
                 .join(path)
                 .absolutize()
                 .unwrap()
                 .to_str()
                 .unwrap(),
         ));
+    }
+
+    pub fn get_src_dir(&self) -> PathBuf {
+        // if src dir is specified, then use that as the root
+        let src_dir = self.config.src_dir.clone().unwrap_or("".to_string());
+
+        Path::new(&self.directory).join(src_dir)
+    }
+
+    pub fn get_module_import_path(&self, path: &str) -> String {
+        path[self
+            .get_src_dir()
+            .to_str()
+            .expect("Can't get src dir")
+            .len()..]
+            .to_string()
     }
 
     pub fn load<FR: FileReader>(

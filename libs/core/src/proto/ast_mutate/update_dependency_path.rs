@@ -1,10 +1,12 @@
+use crate::config::ConfigContext;
+
 use super::base::EditContext;
 use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast::css::{declaration_value, FunctionCall};
 use paperclip_proto::ast::graph::Dependency;
 use paperclip_proto::ast::pc::{simple_expression, Element, Import};
 use paperclip_proto::ast_mutate::UpdateDependencyPath;
-use pathdiff::diff_paths;
+use path_absolutize::Absolutize;
 use std::path::Path;
 
 // TODO
@@ -32,6 +34,7 @@ impl MutableVisitor<()> for EditContext<UpdateDependencyPath> {
                             &self.mutation.old_path,
                             &self.mutation.new_path,
                             &self.get_dependency().path,
+                            &self.config_context,
                         );
                     }
                 }
@@ -50,6 +53,7 @@ impl MutableVisitor<()> for EditContext<UpdateDependencyPath> {
                             &self.mutation.old_path,
                             &self.mutation.new_path,
                             &self.get_dependency().path,
+                            &self.config_context,
                         );
                     }
                 }
@@ -63,32 +67,44 @@ impl MutableVisitor<()> for EditContext<UpdateDependencyPath> {
             &self.mutation.old_path,
             &self.mutation.new_path,
             &self.get_dependency().path,
+            &self.config_context,
         );
         VisitorResult::Continue
     }
 }
 
 fn resolve_new_asset_path(
-    rel_path: &str,
+    current_import_rel_path: &str,
     old_path: &str,
     new_path: &str,
-    current_path: &str,
+    module_path: &str,
+    config_context: &ConfigContext,
 ) -> String {
-    let resolved_path = Path::new(current_path).parent().unwrap().join(rel_path);
-    let resolved_path = resolved_path.as_os_str().to_str().unwrap();
-    if resolved_path == old_path {
-        resolve_path(current_path, new_path)
-    } else if current_path == old_path {
-        resolve_path(new_path, resolved_path)
+    let import_abs_path = resolve_import_path(module_path, current_import_rel_path, config_context);
+
+    // this module is moved
+    if module_path == old_path {
+        // just resolve from config. This may be a no-op, and that's fine.
+        config_context.get_module_import_path(&import_abs_path)
+
+    // an asset is moved
+    } else if import_abs_path == old_path {
+        config_context.get_module_import_path(new_path)
     } else {
-        rel_path.to_string()
+        current_import_rel_path.to_string()
     }
 }
 
-fn resolve_path(from: &str, to: &str) -> String {
-    diff_paths(to, Path::new(&from).parent().unwrap())
-        .unwrap()
-        .to_str()
-        .unwrap()
-        .to_string()
+fn resolve_import_path(from: &str, to: &str, config_context: &ConfigContext) -> String {
+    config_context.resolve_path(to).unwrap_or(
+        Path::new(from)
+            .parent()
+            .unwrap()
+            .join(to)
+            .absolutize()
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .to_string(),
+    )
 }

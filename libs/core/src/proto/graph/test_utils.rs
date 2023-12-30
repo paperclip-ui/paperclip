@@ -1,3 +1,6 @@
+use crate::config::Config;
+use crate::config::ConfigContext;
+
 use super::io::IO;
 use anyhow::{Error, Result};
 use paperclip_common::fs::{FileReader, FileResolver};
@@ -9,12 +12,27 @@ use std::sync::Arc;
 #[derive(Clone)]
 pub struct MockFS<'kv> {
     pub files: Arc<HashMap<&'kv str, &'kv str>>,
+    pub config_context: ConfigContext,
 }
 
 impl<'kv> MockFS<'kv> {
     pub fn new(files: HashMap<&'kv str, &'kv str>) -> Self {
         Self {
             files: Arc::new(files),
+            config_context: ConfigContext {
+                directory: "/".to_string(),
+                file_name: "paperclip.config.json".to_string(),
+                config: Config::default(),
+            },
+        }
+    }
+    pub fn from_config_context(
+        files: HashMap<&'kv str, &'kv str>,
+        config_context: &ConfigContext,
+    ) -> Self {
+        Self {
+            files: Arc::new(files),
+            config_context: config_context.clone(),
         }
     }
 }
@@ -45,10 +63,12 @@ impl<'kv> FileReader for MockFS<'kv> {
 }
 impl<'kv> FileResolver for MockFS<'kv> {
     fn resolve_file(&self, from_path: &str, to_path: &str) -> Result<String> {
-        let path = absolutize(Path::new(&from_path).parent().unwrap().join(to_path))
-            .to_str()
-            .unwrap()
-            .to_string();
+        let path = self.config_context.resolve_path(to_path).unwrap_or(
+            absolutize(Path::new(&from_path).parent().unwrap().join(to_path))
+                .to_str()
+                .unwrap()
+                .to_string(),
+        );
 
         if self.file_exists(&path) {
             Ok(path)

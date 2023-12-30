@@ -18,7 +18,12 @@ import {
   getKeyboardMenuCommand,
   ShortcutCommand,
 } from "./state";
-import { getSelectedExprIdSourceId } from "../ui/state";
+import {
+  getSelectedExprIdSourceId,
+  maybeCenterCanvas,
+  normalizeZoom,
+  zoomCanvas,
+} from "../ui/state";
 
 export const shortcutReducer = (state: DesignerState, event: DesignerEvent) => {
   switch (event.type) {
@@ -97,6 +102,15 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
         newState.showLeftSidebar = newState.showRightsidebar =
           !newState.showLeftSidebar;
       });
+    case ShortcutCommand.CenterInCanvas:
+      return maybeCenterCanvas(state, true);
+
+    case ShortcutCommand.ZoomIn:
+      return zoomCanvas(normalizeZoom(state.canvas.transform.z * 2), state);
+
+    case ShortcutCommand.ZoomOut:
+      return zoomCanvas(normalizeZoom(state.canvas.transform.z / 2), state);
+
     case ShortcutCommand.CreateDesignFile:
       return produce(state, (newState) => {
         newState.prompt = newDesignFilePrompt(

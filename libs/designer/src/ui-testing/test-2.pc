@@ -1,0 +1,12 @@
+import "./test.pc" as imp
+
+/**
+ * @frame(x: 561, y: 267, width: 1024, height: 768)
+*/
+div {
+    style {
+        position: relative
+    }
+    div(showPlaceholder: true)
+}
+

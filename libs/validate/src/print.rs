@@ -1,5 +1,6 @@
 use anyhow::Result;
 use colored::Colorize;
+use itertools::Itertools;
 use paperclip_common::fs::{FileReader, LocalFileReader};
 use paperclip_proto::notice::base::{Level, Notice, NoticeList};
 use std::{self, env};
@@ -48,9 +49,9 @@ impl Message {
 
 impl ToString for Message {
     fn to_string(&self) -> String {
-        let level = if self.notice.level == Level::Error.into() {
+        let level = if self.notice.level == Level::Error as i32 {
             "error".bright_red().bold().to_string()
-        } else if self.notice.level == Level::Warning.into() {
+        } else if self.notice.level == Level::Warning as i32 {
             "warning".bright_yellow().bold().to_string()
         } else {
             "".to_string()
@@ -97,7 +98,7 @@ impl ToString for Message {
                             "{}{}{}{}\n",
                             buffer,
                             pre,
-                            " ".repeat((start.column + 1) as usize),
+                            " ".repeat((start.column) as usize),
                             "^".repeat((end.column - start.column) as usize)
                                 .bold()
                                 .bright_red()
@@ -149,7 +150,9 @@ impl PrettyPrint {
     ) -> Result<PrettyPrint> {
         let mut messages: Vec<Message> = vec![];
 
-        for notice in &notice.items {
+        let unique_items: Vec<Notice> = notice.items.clone().into_iter().unique().collect();
+
+        for notice in &unique_items {
             messages.push(Message::from(notice, project_dir, io)?);
         }
 
@@ -171,6 +174,10 @@ impl ToString for PrettyPrint {
     }
 }
 
+pub trait PrintPrettyError {
+    fn print_pretty_error(&self);
+}
+
 pub trait ToPrettyString {
     fn to_pretty_string(&self) -> String;
 }
@@ -185,5 +192,13 @@ impl ToPrettyString for NoticeList {
         .expect("Cannot pretty print");
 
         return pretty.to_string();
+    }
+}
+
+impl<Expr> PrintPrettyError for Result<Expr, NoticeList> {
+    fn print_pretty_error(&self) {
+        if let Err(err) = self {
+            println!("{}", err.to_pretty_string());
+        }
     }
 }

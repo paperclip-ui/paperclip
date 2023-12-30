@@ -1,26 +1,35 @@
 import React, { memo, useCallback, useRef, useState } from "react";
 import * as styles from "./index.pc";
 import { Node as VirtNode } from "@paperclip-ui/proto/lib/generated/virt/html";
-import { Transform } from "@paperclip-ui/designer/src/state/geom";
+import { Transform, Point } from "@paperclip-ui/designer/src/state/geom";
 
-import { DEFAULT_FRAME_BOX } from "@paperclip-ui/designer/src/state";
+import { DEFAULT_FRAME_BOX, getGraph } from "@paperclip-ui/designer/src/state";
 import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
 import { metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
+import { useSelector } from "@paperclip-ui/common";
+import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import {
+  TextNode,
+  Element,
+  Component,
+} from "@paperclip-ui/proto/lib/generated/ast/pc";
 
 export type FramesProps = {
+  canvasScroll: Point;
   frames: VirtNode[];
   canvasTransform: Transform;
   readonly: boolean;
 };
 
 export const Frames = memo(
-  ({ frames, canvasTransform, readonly }: FramesProps) => {
+  ({ canvasScroll, frames, canvasTransform, readonly }: FramesProps) => {
     return (
       <>
         {frames.map((frame, i) => {
           return (
             <Frame
               key={i}
+              canvasScroll={canvasScroll}
               frameIndex={i}
               frame={frame}
               canvasTransform={canvasTransform}
@@ -34,6 +43,7 @@ export const Frames = memo(
 );
 
 type FrameProps = {
+  canvasScroll: Point;
   frame: VirtNode;
   frameIndex: number;
   canvasTransform: Transform;
@@ -41,11 +51,33 @@ type FrameProps = {
 };
 
 const Frame = memo(
-  ({ frame, frameIndex, canvasTransform, readonly }: FrameProps) => {
-    const {bounds} = metadataValueMapToJSON((frame.element || frame.textNode).metadata);
+  ({
+    frame,
+    canvasScroll,
+    frameIndex,
+    canvasTransform,
+    readonly,
+  }: FrameProps) => {
+    const { frame: bounds } = metadataValueMapToJSON(
+      (frame.element || frame.textNode).metadata
+    );
+
+    const graph = useSelector(getGraph);
+
+    const expr = ast.getExprByVirtId(
+      frame.element?.id ?? frame.textNode?.id,
+      graph
+    );
+
+    // could be component which is NOT rendered
+    const frameExpr =
+      (expr && ast.getExprOwnerComponent(expr.expr, graph)) || expr?.expr;
+
+    const title =
+      (frameExpr as Element | TextNode | Component)?.name ?? "Undefined";
+
     const frameBounds = bounds ?? DEFAULT_FRAME_BOX;
     const [editing, setEditing] = useState(false);
-
 
     const onClick = useCallback((event: React.MouseEvent<any>) => {
       // prevent canvas click event
@@ -86,19 +118,22 @@ const Frame = memo(
       },
       [onChanged]
     );
+
+    const left =
+      (frameBounds.x - canvasScroll.x) * canvasTransform.z + canvasTransform.x;
+    const top =
+      (frameBounds.y - canvasScroll.y) * canvasTransform.z + canvasTransform.y;
+
     return (
       <styles.Frame
         style={{
           left: 0,
           top: 0,
           width: frameBounds.width * canvasTransform.z,
-          height: "auto",
-          transform: `translateX(${
-            canvasTransform.x + frameBounds.x * canvasTransform.z
-          }px) translateY(${
-            canvasTransform.y + frameBounds.y * canvasTransform.z
-          }px) translateZ(0)`,
+          height: frameBounds.height * canvasTransform.z,
+          transform: `translateX(${left}px) translateY(${top}px) translateZ(0)`,
           transformOrigin: "top left",
+          position: "absolute",
         }}
       >
         <styles.FrameTitle
@@ -107,7 +142,7 @@ const Frame = memo(
           onDoubleClick={onDoubleClick}
           // inputRef={inputRef}
           onMouseUp={onClick}
-          // value={annotations.frame?.title || "Untitled"}
+          value={title}
         />
       </styles.Frame>
     );

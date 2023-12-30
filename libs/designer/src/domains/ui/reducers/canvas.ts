@@ -27,10 +27,12 @@ import {
   MAX_ZOOM,
   maybeCenterCanvas,
   MIN_ZOOM,
+  panCanvas,
   PAN_X_SENSITIVITY,
   PAN_Y_SENSITIVITY,
   pruneDanglingRects,
   selectNode,
+  zoomCanvas,
   ZOOM_SENSITIVITY,
 } from "../state";
 
@@ -152,36 +154,29 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
 
       const delta2X = deltaX * PAN_X_SENSITIVITY;
       const delta2Y = deltaY * PAN_Y_SENSITIVITY;
+      const transform = state.canvas.transform;
 
-      return produce(state, (newState) => {
-        const transform = newState.canvas.transform;
-
-        if (metaKey || ctrlKey) {
-          newState.canvas.transform = centerTransformZoom(
-            newState.canvas.transform,
-            {
-              x: 0,
-              y: 0,
-              width: size.width,
-              height: size.height,
-            },
-            clamp(
-              transform.z + (transform.z * -deltaY) / ZOOM_SENSITIVITY,
-              MIN_ZOOM,
-              MAX_ZOOM
-            ),
-            mousePosition
-          );
-        } else {
-          newState.canvas.transform.x = transform.x - delta2X;
-          newState.canvas.transform.y = transform.y - delta2Y;
-        }
-
-        Object.assign(
-          newState.canvas,
-          clampCanvasTransform(newState.canvas, newState.rects)
-        );
+      state = produce(state, (draft) => {
+        draft.canvas.size = size;
+        draft.canvas.mousePosition = mousePosition;
       });
+
+      if (metaKey || ctrlKey) {
+        state = zoomCanvas(
+          transform.z + (transform.z * -deltaY) / ZOOM_SENSITIVITY,
+          state
+        );
+      } else {
+        state = panCanvas(
+          {
+            x: transform.x - delta2X,
+            y: transform.y - delta2Y,
+          },
+          state
+        );
+      }
+
+      return state;
     }
 
     case "ui/canvasMouseMoved": {

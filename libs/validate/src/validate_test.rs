@@ -10,7 +10,7 @@ use paperclip_proto::{
 };
 use paperclip_proto_ext::graph::test_utils::{self, MockFS};
 
-use crate::validate::validate_document;
+use crate::validate::{validate_document, ValidateOptions};
 
 #[derive(Clone)]
 struct MockResolver;
@@ -24,7 +24,7 @@ fn validate_doc(mock_fs: &MockFS) -> NoticeList {
     block_on(validate_document(
         "/entry.pc",
         mock_fs,
-        &Options::new(vec!["repeat".to_string()]),
+        &ValidateOptions::from_parse_options(Options::new(vec!["repeat".to_string()])),
     ))
 }
 
@@ -55,7 +55,7 @@ add_case! {
         import "/test.pc" as test
     "#)],
     NoticeList {
-        items: vec![Notice::new(Level::Error, Code::FileNotFound, "File not found".to_string(), "/entry.pc".to_string(), Some(Range::new(U16Position::new(9, 2, 9), U16Position::new(39, 3, 5))))]
+        items: vec![Notice::new(Level::Error, Code::FileNotFound, "File not found".to_string(), Some("/entry.pc".to_string()), Some(Range::new(U16Position::new(9, 2, 9), U16Position::new(39, 3, 5))))]
     }
 }
 
@@ -108,7 +108,7 @@ add_case! {
         }
     "#)],
     NoticeList {
-        items: vec![Notice::new(Level::Error, Code::ReferenceNotFound, "Reference not found".to_string(), "/entry.pc".to_string(), Some(Range::new(U16Position::new(80, 4, 31), U16Position::new(87, 4, 38))))]
+        items: vec![Notice::new(Level::Error, Code::ReferenceNotFound, "Reference not found".to_string(), Some("/entry.pc".to_string()), Some(Range::new(U16Position::new(80, 4, 31), U16Position::new(87, 4, 38))))]
     }
 }
 
@@ -139,7 +139,7 @@ add_case! {
     core.Missing
 "#), ("/core.pc", r#""#)],
     NoticeList {
-        items: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(37, 3, 5), U16Position::new(50, 3, 18))))]
+        items: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(36, 3, 5), U16Position::new(49, 3, 18))))]
 
     }
 }

@@ -93,6 +93,7 @@ export const Frame = memo(
 );
 
 const getFrameBounds = (node: VirtNode) => {
-
-  return metadataValueMapToJSON(node.element?.metadata || node.textNode?.metadata)
+  return metadataValueMapToJSON(
+    node.element?.metadata || node.textNode?.metadata
+  );
 };

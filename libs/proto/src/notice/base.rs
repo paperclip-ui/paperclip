@@ -1,8 +1,19 @@
 use crate::{ast::base::Range, notice};
 use std::error::Error;
 use std::fmt;
-
+use std::hash::{Hash, Hasher};
 include!(concat!(env!("OUT_DIR"), "/notice.base.rs"));
+
+impl Eq for Notice {}
+impl Hash for Notice {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.level.hash(state);
+        self.code.hash(state);
+        self.message.hash(state);
+        self.path.hash(state);
+        self.content_range.hash(state);
+    }
+}
 
 impl Notice {
     pub fn new(
@@ -91,6 +102,15 @@ impl Notice {
             Some(content_range.clone()),
         )
     }
+    pub fn lint_magic_value(level: Level, path: &str, content_range: &Option<Range>) -> Self {
+        Self::new(
+            level,
+            notice::base::Code::LintMagicValue,
+            "This value should be elevated to a variable.".to_string(),
+            Some(path.to_string()),
+            content_range.clone(),
+        )
+    }
     pub fn experimental_flag_not_enabled(
         feature: &str,
         path: &str,
@@ -129,6 +149,9 @@ impl NoticeList {
         self.items
             .iter()
             .any(|notice| notice.level == notice::base::Level::Error.into())
+    }
+    pub fn has_some(&self) -> bool {
+        !self.items.is_empty()
     }
     pub fn into_result<TRet>(self, ret: TRet) -> Result<TRet, NoticeList> {
         if self.contains_error() {

@@ -54,7 +54,7 @@ export const Leaf = ({
   const shadow = instanceOf != null;
   return (
     <styles.TreeNavigationItem style={style}>
-      <ContextMenu menu={contextMenu}>
+      <ContextMenu menu={contextMenu} onOpen={onClick}>
         <div style={{ width: "100%" }}>
           <styles.LayerNavigationItemHeader
             container={null}

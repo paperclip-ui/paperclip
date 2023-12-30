@@ -20,6 +20,7 @@ public component Frame {
     render div(style: style, class: class) {
         style {
             position: relative
+            pointer-events: none
         }
         slot children
     }
@@ -36,8 +37,9 @@ public component FrameTitle {
             user-select: none
             top: 0px
             left: 0px
-            text-shadow: 1px 1px white
-            color: grey
+            color: white
+            opacity: 0.5
+
             width: 100%
             display: flex
             justify-content: space-between
@@ -54,4 +56,3 @@ public component FrameTitle {
         }
     }
 }
-

@@ -27,6 +27,7 @@ local = [
 paperclip_project = { path = "../project", features = [] }
 paperclip_proto = { path = "../proto", features = ["transport"] }
 paperclip_proto_ext = { path = "../proto_ext", features = [] }
+paperclip_validate = { path = "../validate" }
 tonic = { version = "0.10.2" }
 tonic-web = "0.10.2"
 prost = "0.11.0"

@@ -1,9 +1,10 @@
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import * as styles from "./context-menu.pc";
 import cx from "classnames";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { ShortcutCommand } from "../../../domains/shortcuts/state";
 import { DesignerEvent } from "../../../events";
+import { clamp } from "lodash";
 import {
   MenuItem,
   MenuItemKind,
@@ -27,16 +28,38 @@ export const ContextMenu =
     const ref = otherRef;
     const history = useSelector(getHistoryStr);
 
-    const [anchorStyle, setAnchorStyle] = useState<any>(null);
+    const [anchorPosition, setAnchorPosition] = useState<
+      [number, number] | null
+    >();
+    const [menuRect, setMenuRect] = useState<{ width: number; height: number }>(
+      { width: 0, height: 0 }
+    );
+
+    const anchorStyle = useMemo(() => {
+      if (!anchorPosition) {
+        return null;
+      }
+
+      return {
+        position: "fixed",
+        zIndex: 1024,
+        left: clamp(anchorPosition[0], 0, window.innerWidth - menuRect.width),
+        top: clamp(anchorPosition[1], 0, window.innerHeight - menuRect.height),
+      };
+    }, [anchorPosition, menuRect.width, menuRect.height]);
+
     const onContextMenu = (event: React.MouseEvent<any>) => {
       event.stopPropagation();
       event.preventDefault();
-      setAnchorStyle({
-        position: "fixed",
-        zIndex: 1024,
-        left: event.pageX,
-        top: event.pageY,
-      });
+      setAnchorPosition([event.pageX, event.pageY]);
+    };
+
+    const setMenuRef = (current: HTMLDivElement) => {
+      if (current) {
+        setTimeout(() => {
+          setMenuRect(current.getBoundingClientRect());
+        });
+      }
     };
 
     useEffect(() => {
@@ -51,14 +74,9 @@ export const ContextMenu =
       }
 
       if (event.key === "Escape") {
-        setAnchorStyle(null);
+        setAnchorPosition(null);
       }
     };
-
-    // close context menu if history changes
-    useEffect(() => {
-      setAnchorStyle(null);
-    }, [history]);
 
     const onTargetMouseDown = (event: React.MouseEvent<any>) => {
       ref.current.focus();
@@ -73,13 +91,13 @@ export const ContextMenu =
       }
 
       const onClick = () => {
-        setAnchorStyle(null);
+        setAnchorPosition(null);
       };
 
-      document.body.addEventListener("click", onClick);
+      document.body.addEventListener("mousedown", onClick);
 
       return () => {
-        document.body.removeEventListener("click", onClick);
+        document.body.removeEventListener("mousedown", onClick);
       };
     }, [anchorStyle]);
 
@@ -93,7 +111,10 @@ export const ContextMenu =
         })}
         <Portal>
           {anchorStyle && (
-            <Base container={{ root: { style: anchorStyle } }}>
+            <Base
+              ref={setMenuRef}
+              container={{ root: { style: anchorStyle as any } }}
+            >
               {menu().map((item) => {
                 if (item.kind === MenuItemKind.Divider) {
                   return <ContextMenuDivider />;
@@ -127,7 +148,7 @@ const ContextMenuOption = ({
       container={{
         root: {
           className: cx({ disabled: enabled === false }),
-          onClick: onSelect,
+          onMouseDown: onSelect,
         },
       }}
       keyCommand={shortcut ? prettyKeyCombo(shortcut) : null}

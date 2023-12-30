@@ -10,6 +10,23 @@ export type UseFrameContainerProps = {
   extraHTML?: string;
 };
 
+const defaultExtraHTML = `
+  <style>
+  :not([class]):empty {
+    min-width: 100px;
+    height: 100px;
+    padding: 10px;
+    border: 2px dashed grey;
+  }
+  :not([class]):empty:before {
+    content: "Insert children here";
+    font-family: sans-serif;
+    color: grey;
+    font-size: 16px;
+  }
+  </style>
+`;
+
 export const useFrameContainer = ({
   mount,
   frameIndex,
@@ -25,7 +42,7 @@ export const useFrameContainer = ({
   }, []);
 
   useEffect(() => {
-    extraHTMLContainer.innerHTML = extraHTML || "";
+    extraHTMLContainer.innerHTML = defaultExtraHTML + (extraHTML ?? "");
     onInjectedExtraHTML && onInjectedExtraHTML();
   }, [extraHTMLContainer, extraHTML]);
 

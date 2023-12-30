@@ -22,7 +22,7 @@ export const createEngine = (
 ) =>
   combineEngineCreators<DesignerState, any>(
     createDesignerEngine(options),
-    createShortcutsEngine(options.history),
+    createShortcutsEngine(),
     createClipboardEngine,
     createHistoryEngine(options.history),
     createKeyboardEngine,

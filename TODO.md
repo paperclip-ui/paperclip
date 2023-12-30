@@ -1,9 +1,11 @@
 #### FOCUS
 
-- visual editing and edge case
-  - moving files around
+- functionality that gets in the way of productivity for Shaya
+  - designer breaks if lint errors happen
 
 #### Immediate
+
+- designer stops working after lint error
 
 - editing
 

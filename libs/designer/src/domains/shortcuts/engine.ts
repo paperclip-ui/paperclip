@@ -1,6 +1,6 @@
 import { Dispatch, Engine } from "@paperclip-ui/common";
 import { DesignerEvent } from "../../events";
-import { DesignerState, getTargetExprId } from "../../state";
+import { DesignerState } from "../../state";
 import { createKeyDownEvent } from "../keyboard/events";
 import {
   ALLOW_DEFAULTS,
@@ -8,13 +8,10 @@ import {
   getGlobalShortcuts,
   getKeyboardMenuCommand,
 } from "./state";
-import { History } from "../history/history";
-import { routes } from "../../state/routes";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { isEventTargetTextInput } from "../../state/utils";
 
 export const createShortcutsEngine =
-  (history: History) =>
+  () =>
   (
     _dispatch: Dispatch<DesignerEvent>,
     getState: () => DesignerState
@@ -23,6 +20,8 @@ export const createShortcutsEngine =
       if (isEventTargetTextInput(event.target)) {
         return;
       }
+
+      console.log(event.key);
 
       const command = getKeyboardMenuCommand(
         createKeyDownEvent(event),

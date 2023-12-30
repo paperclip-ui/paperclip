@@ -21,11 +21,14 @@ import {
   ResizerPathMoved,
   ResizerPathStoppedMoving,
 } from "./events";
-import { Box, centerTransformZoom } from "../../state/geom";
+import { Box, Point, centerTransformZoom } from "../../state/geom";
 import { clamp, uniq } from "lodash";
 import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
 import { WritableDraft } from "immer/dist/internal";
-import { jsonToMetadataValue, metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
+import {
+  jsonToMetadataValue,
+  metadataValueMapToJSON,
+} from "@paperclip-ui/proto/lib/virt/html-utils";
 
 export const ZOOM_SENSITIVITY = IS_WINDOWS ? 2500 : 250;
 export const PAN_X_SENSITIVITY = IS_WINDOWS ? 0.05 : 1;
@@ -80,16 +83,13 @@ export const handleDragEvent = (
       // is a frame
     } else {
       if (!node.metadata) {
-        node.metadata = { properties: []}
+        node.metadata = { properties: [] };
       }
 
-
-
-    node.metadata = jsonToMetadataValue({
-      ...metadataValueMapToJSON(node.metadata),
-      frame: event.payload.newBounds
-    }).obj;
-
+      node.metadata = jsonToMetadataValue({
+        ...metadataValueMapToJSON(node.metadata),
+        frame: event.payload.newBounds,
+      }).obj;
     }
   });
 };
@@ -242,6 +242,34 @@ export const selectNode = (
 const boundsIsNull = (bounds: Box) =>
   bounds.x + bounds.y + bounds.width + bounds.height === 0;
 
+export const zoomCanvas = (zoom: number, state: DesignerState) => {
+  return produce(state, (draft) => {
+    draft.canvas.transform = centerTransformZoom(
+      state.canvas.transform,
+      {
+        x: 0,
+        y: 0,
+        width: state.canvas.size.width,
+        height: state.canvas.size.height,
+      },
+      clamp(zoom, MIN_ZOOM, MAX_ZOOM),
+      state.canvas.mousePosition
+    );
+
+    draft.canvas = clampCanvasTransform(draft.canvas, state.rects);
+  });
+};
+
+export const normalizeZoom = (zoom: number) => {
+  return zoom < 1 ? 1 / Math.round(1 / zoom) : Math.round(zoom);
+};
+
+export const panCanvas = (point: Point, state: DesignerState) => {
+  return produce(state, (draft) => {
+    draft.canvas.transform.x = point.x;
+    draft.canvas.transform.y = point.y;
+  });
+};
 
 // https://github.com/crcn/tandem/blob/10.0.0/packages/dashboard/src/state/index.ts#L1304
 export const centerEditorCanvas = (
@@ -277,9 +305,8 @@ export const centerEditorCanvas = (
         : typeof zoomOrZoomToFit === "number"
         ? zoomOrZoomToFit
         : transform.z;
-  } catch(e) {
-    console.error(e)
-
+  } catch (e) {
+    console.error(e);
   }
 
   const scale =

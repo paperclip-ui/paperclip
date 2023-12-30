@@ -1,3 +1,4 @@
+use std::hash::{Hash, Hasher};
 include!(concat!(env!("OUT_DIR"), "/ast.base.rs"));
 
 #[derive(Debug)]
@@ -34,6 +35,14 @@ impl U16Position {
     }
 }
 
+impl Hash for U16Position {
+    fn hash<H: Hasher>(&self, hasher: &mut H) {
+        self.pos.hash(hasher);
+        self.line.hash(hasher);
+        self.column.hash(hasher);
+    }
+}
+
 impl Range {
     pub fn new(start: U16Position, end: U16Position) -> Range {
         Range {
@@ -43,5 +52,12 @@ impl Range {
     }
     pub fn nil() -> Range {
         Range::new(U16Position::new(0, 0, 0), U16Position::new(0, 0, 0))
+    }
+}
+
+impl Hash for Range {
+    fn hash<H: Hasher>(&self, hasher: &mut H) {
+        self.start.hash(hasher);
+        self.end.hash(hasher);
     }
 }

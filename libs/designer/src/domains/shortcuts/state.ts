@@ -19,6 +19,8 @@ export enum ShortcutCommand {
   GoToRenderNodeComponent,
   InsertResource,
   InsertText,
+  ZoomIn,
+  ZoomOut,
   ConvertToComponent,
   ShowHideUI,
   DeleteFile,
@@ -27,6 +29,7 @@ export enum ShortcutCommand {
   ConvertToSlot,
   WrapInElement,
   OpenCodeEditor,
+  CenterInCanvas,
   Cut,
   Copy,
   Delete,
@@ -84,6 +87,13 @@ export const getEntityShortcuts = memoize(
         label: "Open code editor",
         shortcut: ["alt", "shift", "c"],
         command: ShortcutCommand.OpenCodeEditor,
+      },
+      // Instance specific
+      {
+        kind: MenuItemKind.Option,
+        label: "Center in canvas",
+        shortcut: [],
+        command: ShortcutCommand.CenterInCanvas,
       },
       // Instance specific
 
@@ -155,6 +165,18 @@ export const getGlobalShortcuts = (
     label: "Escape",
     shortcut: ["escape"],
     command: ShortcutCommand.Escape,
+  },
+  {
+    kind: MenuItemKind.Option,
+    label: "Zoom in",
+    shortcut: ["meta", "="],
+    command: ShortcutCommand.ZoomIn,
+  },
+  {
+    kind: MenuItemKind.Option,
+    label: "Zoom out",
+    shortcut: ["meta", "-"],
+    command: ShortcutCommand.ZoomOut,
   },
   { kind: MenuItemKind.Divider },
   {

@@ -280,22 +280,8 @@ const createEventHandler = (actions: Actions) => {
 
       actions.applyChanges([mutation]);
     } else {
-      const relBox = {
-        ...bounds,
-        x: bounds.x - intersectingNode.box.x,
-        y: bounds.y - intersectingNode.box.y,
-      };
-
       const childSource = {
         [InsertMode.Element]: `div {
-          style {
-            background: rgba(0,0,0,0.1)
-            position: absolute
-            left: ${relBox.x}px
-            top: ${relBox.y}px
-            width: ${relBox.width}px
-            height: ${relBox.height}px
-          }
         }`,
         [InsertMode.Text]: `text ""`,
       }[insertMode];
@@ -806,10 +792,11 @@ const createEventHandler = (actions: Actions) => {
       const dir = details.filePath.split("/").slice(0, -1).join("/");
       const ext = details.filePath.split("/").pop().split(".").pop();
 
-      actions.moveFile(
-        details.filePath,
-        dir + "/" + kebabCase(value).replace("." + ext, "") + "." + ext
-      );
+      // could be dir, so we leave out .
+      const fileName =
+        ext.length === 1 ? value : value.replace("." + ext, "") + "." + ext[1];
+
+      actions.moveFile(details.filePath, dir + "/" + fileName);
     }
   };
 

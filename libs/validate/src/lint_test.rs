@@ -1,9 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{
-    lint::lint_document,
-    validate::{validate_document, ValidateOptions},
-};
+use crate::validate::{validate_document, ValidateOptions};
 use anyhow::Result;
 use futures::executor::block_on;
 use paperclip_common::fs::FileResolver;
@@ -76,10 +73,10 @@ add_case! {
         }
     "#)],
     lint_config! {
-        "noMagicValue" => [["error", "font-family"]]
+        "enforceVars" => [["error", "font-family"]]
     },
     NoticeList {
-        items: vec![Notice::new(Level::Error, Code::LintMagicValue, "Unexpected value. This should be elevated to a variable.".to_string(), Some("/entry.pc".to_string()), Some(Range::new(U16Position::new(54, 3, 26), U16Position::new(64, 3, 36))))]
+        items: vec![Notice::new(Level::Error, Code::LintMagicValue, "This value should be elevated to a variable.".to_string(), Some("/entry.pc".to_string()), Some(Range::new(U16Position::new(54, 3, 26), U16Position::new(64, 3, 36))))]
     }
 }
 
@@ -92,7 +89,7 @@ add_case! {
         }
     "#)],
     lint_config! {
-        "noMagicValue" => [["error", "font-family"]]
+        "enforceVars" => [["error", "font-family"]]
     },
     NoticeList {
         items: vec![]
@@ -111,10 +108,10 @@ add_case! {
         }
     "#)],
     lint_config! {
-        "noMagicValue" => [["error", "font-family"]]
+        "enforceVars" => [["error", "font-family"]]
     },
     NoticeList {
-        items: vec![Notice::new(Level::Error, Code::LintMagicValue, "Unexpected value. This should be elevated to a variable.".to_string(), Some("/entry.pc".to_string()), Some(Range::new(U16Position::new(105, 5, 34), U16Position::new(115, 5, 44))))]
+        items: vec![Notice::new(Level::Error, Code::LintMagicValue, "This value should be elevated to a variable.".to_string(), Some("/entry.pc".to_string()), Some(Range::new(U16Position::new(105, 5, 34), U16Position::new(115, 5, 44))))]
     }
 }
 
@@ -134,10 +131,10 @@ add_case! {
         }
     "#)],
     lint_config! {
-        "noMagicValue" => [["warning", "font-family"]]
+        "enforceVars" => [["warning", "font-family"]]
     },
     NoticeList {
-        items: vec![Notice::new(Level::Warning, Code::LintMagicValue, "Unexpected value. This should be elevated to a variable.".to_string(), Some("/entry.pc".to_string()), Some(Range::new(U16Position::new(172, 7, 42), U16Position::new(182, 7, 52))))]
+        items: vec![Notice::new(Level::Warning, Code::LintMagicValue, "This value should be elevated to a variable.".to_string(), Some("/entry.pc".to_string()), Some(Range::new(U16Position::new(172, 7, 42), U16Position::new(182, 7, 52))))]
     }
 }
 
@@ -157,10 +154,10 @@ add_case! {
         }
     "#)],
     lint_config! {
-        "noMagicValue" => [["error", "font-family"]]
+        "enforceVars" => [["error", "font-family"]]
     },
     NoticeList {
-        items: vec![Notice::new(Level::Error, Code::LintMagicValue, "Unexpected value. This should be elevated to a variable.".to_string(), Some("/entry.pc".to_string()), Some(Range::new(U16Position::new(174, 7, 42), U16Position::new(184, 7, 52))))]
+        items: vec![Notice::new(Level::Error, Code::LintMagicValue, "This value should be elevated to a variable.".to_string(), Some("/entry.pc".to_string()), Some(Range::new(U16Position::new(174, 7, 42), U16Position::new(184, 7, 52))))]
     }
 }
 
@@ -178,10 +175,10 @@ add_case! {
         }
     "#)],
     lint_config! {
-        "noMagicValue" => [["error", "font-family"]]
+        "enforceVars" => [["error", "font-family"]]
     },
     NoticeList {
-        items: vec![Notice::new(Level::Error, Code::LintMagicValue, "Unexpected value. This should be elevated to a variable.".to_string(), Some("/entry.pc".to_string()), Some(Range::new(U16Position::new(140, 6, 38), U16Position::new(150, 6, 48))))]
+        items: vec![Notice::new(Level::Error, Code::LintMagicValue, "This value should be elevated to a variable.".to_string(), Some("/entry.pc".to_string()), Some(Range::new(U16Position::new(140, 6, 38), U16Position::new(150, 6, 48))))]
     }
 }
 
@@ -201,9 +198,169 @@ add_case! {
         }
     "#)],
     lint_config! {
-        "noMagicValue" => [["error", "font-family"]]
+        "enforceVars" => [["error", "font-family"]]
     },
     NoticeList {
-        items: vec![Notice::new(Level::Error, Code::LintMagicValue, "Unexpected value. This should be elevated to a variable.".to_string(), Some("/entry.pc".to_string()), Some(Range::new(U16Position::new(161, 7, 38), U16Position::new(171, 7, 48))))]
+        items: vec![Notice::new(Level::Error, Code::LintMagicValue, "This value should be elevated to a variable.".to_string(), Some("/entry.pc".to_string()), Some(Range::new(U16Position::new(161, 7, 38), U16Position::new(171, 7, 48))))]
+    }
+}
+
+add_case! {
+    zero_is_ignored,
+    [("/entry.pc", r#"
+        component A {
+            render div {
+               if test {
+                span {
+                    style {
+                        margin: 0
+                    }
+                }
+               }
+            }
+        }
+    "#)],
+    lint_config! {
+        "enforceVars" => [["error", "margin"]]
+    },
+    NoticeList {
+        items: vec![]
+    }
+}
+
+add_case! {
+    initial_is_ignored,
+    [("/entry.pc", r#"
+        component A {
+            render div {
+               if test {
+                span {
+                    style {
+                        margin: initial
+                    }
+                }
+               }
+            }
+        }
+    "#)],
+    lint_config! {
+        "enforceVars" => [["error", "margin"]]
+    },
+    NoticeList {
+        items: vec![]
+    }
+}
+
+add_case! {
+    inherit_is_ignored,
+    [("/entry.pc", r#"
+        component A {
+            render div {
+               if test {
+                span {
+                    style {
+                        margin: inherit
+                    }
+                }
+               }
+            }
+        }
+    "#)],
+    lint_config! {
+        "enforceVars" => [["error", "margin"]]
+    },
+    NoticeList {
+        items: vec![]
+    }
+}
+
+add_case! {
+    zero_px_is_ignored,
+    [("/entry.pc", r#"
+        component A {
+            render div {
+               if test {
+                span {
+                    style {
+                        margin: 0px
+                    }
+                }
+               }
+            }
+        }
+    "#)],
+    lint_config! {
+        "enforceVars" => [["error", "margin"]]
+    },
+    NoticeList {
+        items: vec![]
+    }
+}
+
+add_case! {
+    current_color_is_ignored,
+    [("/entry.pc", r#"
+        component A {
+            render div {
+               if test {
+                span {
+                    style {
+                        margin: currentColor
+                    }
+                }
+               }
+            }
+        }
+    "#)],
+    lint_config! {
+        "enforceVars" => [["error", "margin"]]
+    },
+    NoticeList {
+        items: vec![]
+    }
+}
+
+add_case! {
+    revert_is_ignored,
+    [("/entry.pc", r#"
+        component A {
+            render div {
+               if test {
+                span {
+                    style {
+                        margin: revert
+                    }
+                }
+               }
+            }
+        }
+    "#)],
+    lint_config! {
+        "enforceVars" => [["error", "margin"]]
+    },
+    NoticeList {
+        items: vec![]
+    }
+}
+add_case! {
+    unset_is_ignored,
+    [("/entry.pc", r#"
+        component A {
+            render div {
+               if test {
+                span {
+                    style {
+                        margin: unset
+                    }
+                }
+               }
+            }
+        }
+    "#)],
+    lint_config! {
+        "enforceVars" => [["error", "margin"]]
+    },
+    NoticeList {
+        items: vec![]
     }
 }

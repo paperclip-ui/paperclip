@@ -97,7 +97,7 @@ impl ToString for Message {
                             "{}{}{}{}\n",
                             buffer,
                             pre,
-                            " ".repeat((start.column + 1) as usize),
+                            " ".repeat((start.column) as usize),
                             "^".repeat((end.column - start.column) as usize)
                                 .bold()
                                 .bright_red()

@@ -1,4 +1,4 @@
-use paperclip_config::LintConfig;
+use paperclip_config::{Config, LintConfig};
 use paperclip_evaluator::css::evaluator as css_evaluator;
 use paperclip_evaluator::html::evaluator as html_evaluator;
 use paperclip_parser::core::parser_context::Options;
@@ -18,6 +18,12 @@ impl ValidateOptions {
             parse_options,
             lint_config,
         }
+    }
+    pub fn from_config(config: &Config) -> Self {
+        Self::new(
+            config.lint.clone().unwrap_or(LintConfig::default()),
+            config.into_parser_options(),
+        )
     }
     pub fn from_parse_options(parse_options: Options) -> Self {
         Self::new(LintConfig::default(), parse_options)

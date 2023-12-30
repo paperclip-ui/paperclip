@@ -1,6 +1,7 @@
 #### FOCUS
 
 - functionality that gets in the way of productivity for Shaya
+  - designer breaks if lint errors happen
 
 #### Immediate
 

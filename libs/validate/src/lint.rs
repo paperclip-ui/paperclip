@@ -1,3 +1,5 @@
+use paperclip_ast_serialize::css::serialize_decl_value;
+use paperclip_common::serialize_context::Context as SerializeContext;
 use paperclip_config::LintConfig;
 use paperclip_proto::ast::css;
 use paperclip_proto::ast::css::declaration_value;
@@ -51,8 +53,6 @@ pub fn lint_document<'expr>(
         config,
         is_within_var: false,
     };
-
-    // context.visit_dependency(dep);
 
     lint_document_body_items(
         dep.document.as_ref().expect("Document must exist"),
@@ -169,13 +169,21 @@ fn lint_decl_value(decl_name: &str, decl: &css::DeclarationValue, context: &mut 
         | declaration_value::Inner::Measurement(_) => {
             if !context.is_within_var {
                 if let Some(level) =
-                    get_lint_notice_level("noMagicValue", "font-family", &context.config)
+                    get_lint_notice_level("enforceVars", decl_name, &context.config)
                 {
-                    context.notices.borrow_mut().push(Notice::lint_magic_value(
-                        level,
-                        &context.path,
-                        &decl.get_range(),
-                    ))
+                    let mut serialize = SerializeContext::new(0);
+                    serialize_decl_value(decl, &mut serialize);
+
+                    if !matches!(
+                        serialize.buffer.as_str(),
+                        "0" | "0px" | "currentColor" | "initial" | "inherit" | "unset" | "revert"
+                    ) {
+                        context.notices.borrow_mut().push(Notice::lint_magic_value(
+                            level,
+                            &context.path,
+                            &decl.get_range(),
+                        ))
+                    }
                 }
             }
         }
@@ -205,7 +213,7 @@ fn get_lint_notice_level(lint_name: &str, expr_name: &str, config: &LintConfig) 
                 None
             };
 
-            if option.contains(&expr_name.to_string()) {
+            if option.contains(&expr_name.to_string()) || option.contains(&"*".to_string()) {
                 return level;
             }
         }
@@ -217,13 +225,13 @@ fn get_lint_notice_level(lint_name: &str, expr_name: &str, config: &LintConfig) 
 fn lint_component(component: &pc::Component, context: &mut Context) {
     for item in &component.body {
         match item.get_inner() {
-            pc::component_body_item::Inner::Script(expr) => {
+            pc::component_body_item::Inner::Script(_) => {
                 // TODO
             }
             pc::component_body_item::Inner::Render(expr) => {
                 lint_render(expr, context);
             }
-            pc::component_body_item::Inner::Variant(expr) => {
+            pc::component_body_item::Inner::Variant(_) => {
                 // TODO
             }
         }
@@ -254,10 +262,10 @@ fn lint_node(expr: &pc::Node, context: &mut Context) {
         pc::node::Inner::Insert(expr) => {
             lint_insert(expr, context);
         }
-        pc::node::Inner::Repeat(expr) => {
+        pc::node::Inner::Repeat(_) => {
             // TODO
         }
-        pc::node::Inner::Script(expr) => {
+        pc::node::Inner::Script(_) => {
             // TODO
         }
         pc::node::Inner::Style(expr) => {

@@ -95,7 +95,7 @@ impl Notice {
         Self::new(
             level,
             notice::base::Code::LintMagicValue,
-            "Unexpected value. This should be elevated to a variable.".to_string(),
+            "This value should be elevated to a variable.".to_string(),
             Some(path.to_string()),
             content_range.clone(),
         )
@@ -138,6 +138,9 @@ impl NoticeList {
         self.items
             .iter()
             .any(|notice| notice.level == notice::base::Level::Error.into())
+    }
+    pub fn has_some(&self) -> bool {
+        !self.items.is_empty()
     }
     pub fn into_result<TRet>(self, ret: TRet) -> Result<TRet, NoticeList> {
         if self.contains_error() {

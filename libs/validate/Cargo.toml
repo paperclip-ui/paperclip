@@ -18,6 +18,7 @@ local = ["paperclip_common/local", "paperclip_proto/local", "paperclip_proto_ext
 paperclip_common = { path = "../rs_common", features = []  }
 paperclip_config = { path = "../config", features = []  }
 paperclip_proto = { path = "../proto", features = []  }
+paperclip_ast_serialize = { path = "../ast_serialize", features = []  }
 paperclip_proto_ext = { path = "../proto_ext", features = [] }
 paperclip_parser = { path = "../parser", features = []  }
 paperclip_evaluator = { path = "../evaluator", features = []  }

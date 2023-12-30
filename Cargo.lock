@@ -1724,6 +1724,7 @@ dependencies = [
  "anyhow",
  "colored",
  "futures",
+ "paperclip_ast_serialize",
  "paperclip_common",
  "paperclip_config",
  "paperclip_evaluator",

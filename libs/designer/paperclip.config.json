@@ -3,6 +3,13 @@
   "designsDir": "src/ui",
   "experimental": ["script", "condition", "repeat"],
   "moduleDirs": [],
+  "lint": {
+    "rules": {
+      "enforceVars": [
+        ["warning", "font-family", "color", "font-size", "padding", "margin"]
+      ]
+    }
+  },
   "globalScripts": [
     "https://rsms.me/inter/inter.css",
     "src/ui/globals.css",

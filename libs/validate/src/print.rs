@@ -149,6 +149,7 @@ impl PrettyPrint {
         io: &TIO,
     ) -> Result<PrettyPrint> {
         let mut messages: Vec<Message> = vec![];
+
         let unique_items: Vec<Notice> = notice.items.clone().into_iter().unique().collect();
 
         for notice in &unique_items {

@@ -75,17 +75,13 @@ export const useSuggestionMenu = ({
 
   const onFocus = (event) => {
     dispatch({ type: "focused" });
-    if (oldProps.onFocus) {
-      oldProps.onFocus(event);
-    }
+    oldProps.onFocus?.(event);
   };
 
   const onBlur = (event: React.FocusEvent | React.KeyboardEvent) => {
     dispatch({ type: "blurred" });
 
-    if (oldProps.onBlur) {
-      oldProps.onBlur(event);
-    }
+    oldProps.onBlur?.(event);
   };
 
   const onSelect = (value: any) => {
@@ -97,20 +93,20 @@ export const useSuggestionMenu = ({
 
   const menuOptions = isOpen
     ? menu()
-      .filter(filterOption(customValue))
-      .map((child, i) => {
-        return React.cloneElement(child, {
-          selected: values.includes(child.props.value),
-          preselected: i === preselectedIndex,
-          onSelect: (event: React.MouseEvent) => {
-            // prevent blur mainly
-            event.preventDefault();
+        .filter(filterOption(customValue))
+        .map((child, i) => {
+          return React.cloneElement(child, {
+            selected: values.includes(child.props.value),
+            preselected: i === preselectedIndex,
+            onSelect: (event: React.MouseEvent) => {
+              // prevent blur mainly
+              event.preventDefault();
 
-            child.props.value &&
-              onSelect(child.props.selectValue || child.props.value);
-          },
-        });
-      })
+              child.props.value &&
+                onSelect(child.props.selectValue || child.props.value);
+            },
+          });
+        })
     : null;
 
   const firstSelectedIndex = menuOptions?.findIndex(
@@ -272,7 +268,12 @@ export const SuggestionMenuItem = ({
   return (
     <styles.SuggestionMenuItem
       ref={ref}
-      root={{ root: {onMouseDown: onSelect, className: cx({ selected, preselected, checked }) }}}
+      root={{
+        root: {
+          onMouseDown: onSelect,
+          className: cx({ selected, preselected, checked }),
+        },
+      }}
     >
       {children || value}
     </styles.SuggestionMenuItem>

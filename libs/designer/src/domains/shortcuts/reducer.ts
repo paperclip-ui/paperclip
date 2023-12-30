@@ -19,7 +19,6 @@ import {
   ShortcutCommand,
 } from "./state";
 import {
-  centerNodeInCanvas,
   getSelectedExprIdSourceId,
   maybeCenterCanvas,
   normalizeZoom,

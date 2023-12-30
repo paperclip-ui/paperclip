@@ -78,11 +78,6 @@ export const ContextMenu =
       }
     };
 
-    // close context menu if history changes
-    useEffect(() => {
-      setAnchorPosition(null);
-    }, [history]);
-
     const onTargetMouseDown = (event: React.MouseEvent<any>) => {
       ref.current.focus();
       if (children.props.onMouseDown) {

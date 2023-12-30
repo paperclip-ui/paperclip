@@ -23,6 +23,7 @@ message DeclarationValue {
     HexColor hex_color = 7;
     SpacedList spaced_list = 8;
     CommaList comma_list = 9;
+    Keyword keyword = 10;
   }
 }
 
@@ -64,4 +65,9 @@ message CommaList {
   string id = 1;
   ast.base.Range range = 2;
   repeated DeclarationValue items = 3;
+}
+message Keyword {
+  string id = 1;
+  ast.base.Range range = 2;
+  string value = 3;
 }

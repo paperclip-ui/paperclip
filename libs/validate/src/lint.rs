@@ -164,6 +164,7 @@ fn lint_decl_value(decl_name: &str, decl: &css::DeclarationValue, context: &mut 
         // leaf
         declaration_value::Inner::Number(_)
         | declaration_value::Inner::Reference(_)
+        | declaration_value::Inner::Keyword(_)
         | declaration_value::Inner::Str(_)
         | declaration_value::Inner::HexColor(_)
         | declaration_value::Inner::Measurement(_) => {

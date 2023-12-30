@@ -60,7 +60,7 @@ pub fn clone_pasted_expr<Mutation>(
             let namespace = if component_dep.path == dep.path {
                 None
             } else {
-                Some(resolve_import_ns(dep, &component_dep.path).0)
+                Some(resolve_import_ns(dep, &component_dep.path).namespace)
             };
 
             let slot_names = FindSlotNames::find_slot_names(component);
@@ -128,15 +128,14 @@ impl MutableVisitor<()> for EditContext<PasteExpression> {
                 .expect("Component must exist");
 
             if component_dep.path != self.get_dependency().path {
-                let (ns, is_new_import) =
-                    resolve_import_ns(&self.get_dependency(), &component_dep.path);
+                let info = resolve_import_ns(&self.get_dependency(), &component_dep.path);
 
-                if is_new_import {
+                if info.is_new {
                     let relative = &self
                         .config_context
                         .get_module_import_path(&component_dep.path);
                     expr.body
-                        .insert(0, create_import(&relative, &ns, &self.new_id()));
+                        .insert(0, create_import(&relative, &info.namespace, &self.new_id()));
                 }
             }
         }

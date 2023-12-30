@@ -32,6 +32,7 @@ impl<'expr> Visitor<()> for GetExpr {
     getters! {
       (visit_element, pc::Element),
       (visit_component, pc::Component),
+      (visit_trigger, pc::Trigger),
       (visit_text_node, pc::TextNode),
       (visit_variant, pc::Variant),
       (visit_style, pc::Style),

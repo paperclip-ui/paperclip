@@ -50,6 +50,19 @@ macro_rules! expressions {
         }
     }
 
+    impl visit::MutableVisitable for ExpressionWrapper {
+        fn accept<TRet, TVisitor: visit::MutableVisitor<TRet>>(&mut self, visitor: &mut TVisitor) -> visit::VisitorResult<TRet> {
+            match self {
+                $(
+                    ExpressionWrapper::$name(exp) => {
+                        exp.accept(visitor)
+                    },
+                )*
+            }
+        }
+
+    }
+
 
     #[derive(Clone)]
     pub enum ImmutableExpression {
@@ -129,7 +142,7 @@ macro_rules! expressions {
 }
 
 macro_rules! match_each_expr_id {
-  ($this:ident, $($name:path),*) => {
+  ($this:expr, $($name:path),*) => {
       match $this {
           $(
               $name(expr) => &expr.id,
@@ -140,8 +153,7 @@ macro_rules! match_each_expr_id {
 
 expressions! {
   (Document, pc::Document, self => &self.id),
-  (DocumentBodyItem, pc::DocumentBodyItem, self => &self.get_inner().get_id()),
-  (DocumentBodyItemInner, pc::document_body_item::Inner, self => match_each_expr_id!(self,
+  (DocumentBodyItem, pc::DocumentBodyItem, self => &match_each_expr_id!(&self.get_inner(),
       pc::document_body_item::Inner::Import,
       pc::document_body_item::Inner::Style,
       pc::document_body_item::Inner::Component,
@@ -151,11 +163,12 @@ expressions! {
       pc::document_body_item::Inner::Trigger,
       pc::document_body_item::Inner::Element
   )),
+
   (Import, pc::Import, self => &self.id),
   (Style, pc::Style, self => &self.id),
   (Component, pc::Component, self => &self.id),
-  (ComponentBodyItem, pc::ComponentBodyItem, self => self.get_inner().get_id()),
-  (ComponentBodyItemInner, pc::component_body_item::Inner, self => match_each_expr_id!(self,
+  // (ComponentBodyItem, pc::ComponentBodyItem, self => self.get_inner().get_id()),
+  (ComponentBodyItem, pc::ComponentBodyItem, self => match_each_expr_id!(&self.get_inner(),
     pc::component_body_item::Inner::Render,
     pc::component_body_item::Inner::Variant,
     pc::component_body_item::Inner::Script
@@ -165,16 +178,16 @@ expressions! {
   (Render, pc::Render, self => &self.id),
   (Atom, pc::Atom, self => &self.id),
   (Trigger, pc::Trigger, self => &self.id),
-  (TriggerBodyItem, pc::TriggerBodyItem, self => self.get_inner().get_id()),
-  (TriggerBodyItemInner, pc::trigger_body_item::Inner, self => match_each_expr_id!(self,
+  // (TriggerBodyItem, pc::TriggerBodyItem, self => self.get_inner().get_id()),
+  (TriggerBodyItem, pc::TriggerBodyItem, self => match_each_expr_id!(&self.get_inner(),
     pc::trigger_body_item::Inner::Str,
     pc::trigger_body_item::Inner::Reference,
     pc::trigger_body_item::Inner::Bool
   )),
   (TextNode, pc::TextNode, self => &self.id),
   (Parameter, pc::Parameter, self => &self.id),
-  (SimpleExpression,pc::SimpleExpression, self => &self.get_inner().get_id()),
-  (SimpleExpressionInner, pc::simple_expression::Inner, self => match_each_expr_id!(self,
+  // (SimpleExpression,pc::SimpleExpression, self => &self.get_inner().get_id()),
+  (SimpleExpression, pc::SimpleExpression, self => match_each_expr_id!(&self.get_inner(),
     pc::simple_expression::Inner::Str,
     pc::simple_expression::Inner::Num,
     pc::simple_expression::Inner::Bool,
@@ -184,8 +197,8 @@ expressions! {
   (Reference, shared::Reference, self => &self.id),
   (Ary, pc::Ary, self => &self.id),
   (Element, pc::Element, self => &self.id),
-  (Node, pc::Node, self => &self.get_inner().get_id()),
-  (NodeInner, pc::node::Inner, self => match_each_expr_id!(self,
+  // (Node, pc::Node, self => &self.get_inner().get_id()),
+  (Node, pc::Node, self => match_each_expr_id!(&self.get_inner(),
     pc::node::Inner::Slot,
     pc::node::Inner::Insert,
     pc::node::Inner::Style,
@@ -200,8 +213,8 @@ expressions! {
   (Repeat, pc::Repeat, self => &self.id),
   (Condition, pc::Condition, self => &self.id),
   (Switch, pc::Switch, self => &self.id),
-  (SwitchItem, pc::SwitchItem, self => &self.get_inner().get_id()),
-  (SwitchItemInner, pc::switch_item::Inner, self => match_each_expr_id!(self,
+  // (SwitchItem, pc::SwitchItem, self => &self.get_inner().get_id()),
+  (SwitchItem, pc::SwitchItem, self => match_each_expr_id!(self.get_inner(),
       pc::switch_item::Inner::Case,
       pc::switch_item::Inner::Default
   )),
@@ -210,8 +223,8 @@ expressions! {
   (Slot, pc::Slot, self => &self.id),
   (Insert, pc::Insert, self => &self.id),
   (Override, pc::Override, self => &self.id),
-  (OverrideBodyItem, pc::OverrideBodyItem, self => self.get_inner().get_id()),
-  (OverrideBodyItemInner, pc::override_body_item::Inner, self => match_each_expr_id!(self,
+  // (OverrideBodyItem, pc::OverrideBodyItem, self => self.get_inner().get_id()),
+  (OverrideBodyItem, pc::OverrideBodyItem, self => match_each_expr_id!(self.get_inner(),
     pc::override_body_item::Inner::Style,
     pc::override_body_item::Inner::Variant
   )),

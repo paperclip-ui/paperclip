@@ -1206,6 +1206,7 @@ fn stringify_style_decl_value<F: FileResolver>(
             format!("#{}", expr.value)
         }
         css_ast::declaration_value::Inner::Reference(expr) => expr.path.join("."),
+        css_ast::declaration_value::Inner::Keyword(expr) => expr.value.to_string(),
         css_ast::declaration_value::Inner::Measurement(expr) => {
             format!("{}{}", expr.value, expr.unit)
         }

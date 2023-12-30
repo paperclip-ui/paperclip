@@ -96,11 +96,16 @@ pub fn create_import(path: &str, ns: &str, checksum: &str) -> DocumentBodyItem {
     new_imp_doc.body.get(0).unwrap().clone()
 }
 
-pub fn resolve_import_ns(document_dep: &Dependency, path: &str) -> (String, bool) {
+pub struct ResolvedImport {
+    pub namespace: String,
+    pub is_new: bool,
+}
+
+pub fn resolve_import_ns(document_dep: &Dependency, path: &str) -> ResolvedImport {
     for (rel_path, resolved_path) in &document_dep.imports {
         if resolved_path == path {
-            return (
-                document_dep
+            return ResolvedImport {
+                namespace: document_dep
                     .document
                     .as_ref()
                     .unwrap()
@@ -110,18 +115,18 @@ pub fn resolve_import_ns(document_dep: &Dependency, path: &str) -> (String, bool
                     .unwrap()
                     .namespace
                     .clone(),
-                false,
-            );
+                is_new: false,
+            };
         }
     }
 
-    return (
-        get_unique_namespace(
+    return ResolvedImport {
+        namespace: get_unique_namespace(
             "module",
             document_dep.document.as_ref().expect("Document must exist"),
         ),
-        true,
-    );
+        is_new: true,
+    };
 }
 
 pub fn upsert_render_expr<'a, Mutation>(
@@ -192,18 +197,18 @@ pub fn import_dep<Mutation>(
     let document_dep = ctx.get_dependency();
     let ns = resolve_import_ns(document_dep, path);
 
-    if ns.1 {
+    if ns.is_new {
         document.body.insert(
             0,
             create_import(
                 &ctx.config_context.get_module_import_path(path),
-                &ns.0,
+                &ns.namespace,
                 &ctx.new_id(),
             ),
         );
     }
 
-    return ns.0;
+    return ns.namespace;
 }
 
 pub struct NamespaceResolution {

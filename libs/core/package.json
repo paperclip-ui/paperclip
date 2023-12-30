@@ -1,0 +1,20 @@
+{
+  "name": "@paperclip-ui/core",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "^7.20.2",
+    "@babel/preset-env": "^7.20.2",
+    "@paperclip-ui/common": "workspace:^",
+    "@paperclip-ui/proto": "workspace:^",
+    "@paperclip-ui/workspace": "workspace:^",
+    "babel-jest": "^29.3.1",
+    "jest": "^29.3.1"
+  }
+}

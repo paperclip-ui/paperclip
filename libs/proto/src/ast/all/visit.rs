@@ -188,6 +188,7 @@ visitable! {
           css::declaration_value::Inner::Reference,
           css::declaration_value::Inner::Str,
           css::declaration_value::Inner::Measurement,
+          css::declaration_value::Inner::Keyword,
           css::declaration_value::Inner::FunctionCall,
           css::declaration_value::Inner::Arithmetic,
           css::declaration_value::Inner::HexColor,
@@ -200,6 +201,7 @@ visitable! {
           css::declaration_value::Inner::Reference,
           css::declaration_value::Inner::Str,
           css::declaration_value::Inner::Measurement,
+          css::declaration_value::Inner::Keyword,
           css::declaration_value::Inner::FunctionCall,
           css::declaration_value::Inner::Arithmetic,
           css::declaration_value::Inner::HexColor,
@@ -213,6 +215,7 @@ visitable! {
           css::declaration_value::Inner::Reference,
           css::declaration_value::Inner::Str,
           css::declaration_value::Inner::Measurement,
+          css::declaration_value::Inner::Keyword,
           css::declaration_value::Inner::FunctionCall,
           css::declaration_value::Inner::Arithmetic,
           css::declaration_value::Inner::HexColor,
@@ -226,6 +229,7 @@ visitable! {
           css::declaration_value::Inner::Str,
           css::declaration_value::Inner::Measurement,
           css::declaration_value::Inner::FunctionCall,
+          css::declaration_value::Inner::Keyword,
           css::declaration_value::Inner::Arithmetic,
           css::declaration_value::Inner::HexColor,
           css::declaration_value::Inner::SpacedList,
@@ -233,6 +237,11 @@ visitable! {
       )
   }),
   (css::Measurement, visit_css_measurement, (self, visitor) {
+      VisitorResult::Continue
+  },{
+      VisitorResult::Continue
+  }),
+  (css::Keyword, visit_css_keyword, (self, visitor) {
       VisitorResult::Continue
   },{
       VisitorResult::Continue
@@ -305,9 +314,9 @@ visitable! {
     VisitorResult::Continue
   }),
   (pc::Atom, visit_atom, (self, visitor) {
-    VisitorResult::Continue
+      self.value.as_ref().expect("Value must exist").accept(visitor)
   }, {
-    VisitorResult::Continue
+      self.value.as_mut().expect("Value must exist").accept(visitor)
   }),
   (pc::Ary, visit_ary, (self, visitor) {
     visit_each!(&self.items, visitor)
@@ -315,9 +324,9 @@ visitable! {
       visit_each!(&mut self.items, visitor)
   }),
   (pc::Trigger, visit_trigger, (self, visitor) {
-    VisitorResult::Continue
+    visit_each!(&self.body, visitor)
   }, {
-    VisitorResult::Continue
+      visit_each!(&mut self.body, visitor)
   }),
   (pc::Parameter, visit_parameter, (self, visitor) {
       self.value.as_ref().expect("Value must exist").accept(visitor)

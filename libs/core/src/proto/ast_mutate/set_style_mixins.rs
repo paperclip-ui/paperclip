@@ -153,7 +153,7 @@ fn edit_style(style: &mut ast::pc::Style, ctx: &EditContext<SetStyleMixins>) {
         let mut path = vec![mixin.name.expect("Name must exist").clone()];
 
         if dep.path != style_dep.path {
-            path.insert(0, resolve_import_ns(style_dep, &dep.path).0)
+            path.insert(0, resolve_import_ns(style_dep, &dep.path).namespace)
         }
 
         style.extends.push(Reference {

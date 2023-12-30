@@ -65,7 +65,7 @@ macro_rules! case {
                 panic!("Unable to load {:#?}", err);
             }
 
-            // println!("{:#?}", graph.dependencies);
+            println!("{:#?}", graph.dependencies);
 
             edit_graph(&mut graph, &vec![$edit], &mock_fs, &config_context)
                 .expect("Can't edit graph");
@@ -81,7 +81,7 @@ macro_rules! case {
                 })
                 .collect::<HashMap<String, String>>();
 
-            println!("{:#?}", graph.dependencies);
+            // println!("{:#?}", graph.dependencies);
 
             for (path, content) in $expected_mock_files {
                 if let Some(serialized_content) = edited_docs.get(path) {
@@ -4397,6 +4397,46 @@ case! {
 }
 
 case! {
+  token_refs_are_updated_when_moved,
+  [
+      (
+          "/entry.pc", r#"
+          public token a Inter
+          public token b var(a)
+          public style test {
+            font-family: var(b)
+          }
+          "#
+      ),
+        (
+            "/b.pc", r#"
+
+            "#
+          )
+  ],
+  mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
+      expression_id: "80f4925f-5".to_string(),
+      new_file_path: "/b.pc".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    import "b.pc" as module
+    public token a Inter
+    public style test {
+        font-family: var(module.b)
+    }
+    "#
+  ),
+  (
+      "/b.pc", r#"
+      import "entry.pc" as module
+      public token b var(module.a)
+
+      "#
+    )]
+}
+
+case! {
   refs_are_updated_when_style_is_moved,
   [
       (
@@ -4570,12 +4610,108 @@ case! {
   ),
   (
       "/a.pc", r#"
+      import "entry.pc" as module
 
       div {
                   style {
-                      background: var(blue)
+                      background: var(module.blue)
                   }
                 }
+      "#
+    )]
+}
+
+case! {
+  trigger_refs_are_updated,
+  [
+      (
+          "/entry.pc", r#"
+
+          trigger otherTrigger {
+            ".something"
+          }
+
+          trigger mobileTrigger {
+            "@media screen and (max-width: 600px)"
+            otherTrigger
+          }
+
+           component A {
+            variant mobile trigger {
+                mobileTrigger
+            }
+           }
+          "#
+      ),
+        (
+            "/a.pc", r#"
+            "#
+          )
+  ],
+  mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
+      expression_id: "80f4925f-8".to_string(),
+      new_file_path: "/a.pc".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+        import "a.pc" as module
+
+        trigger otherTrigger {
+            ".something"
+        }
+
+        component A {
+            variant mobile trigger {
+                module.mobileTrigger
+            }
+        }
+    "#
+  ),
+  (
+      "/a.pc", r#"
+      import "entry.pc" as module
+      trigger mobileTrigger {
+        "@media screen and (max-width: 600px)"
+        module.otherTrigger
+    }
+      "#
+    )]
+}
+
+case! {
+  css_keywords_are_left_alone,
+  [
+      (
+          "/entry.pc", r#"
+            public token blue blue
+            public style bg {
+                color: blue
+                background: var(blue)
+            }
+          "#
+      ),
+        (
+            "/a.pc", r#"
+            "#
+          )
+  ],
+  mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
+      expression_id: "80f4925f-2".to_string(),
+      new_file_path: "/a.pc".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+        import "a.pc" as module
+
+        public style bg {
+            color: blue
+            background: var(module.blue)
+        }
+    "#
+  ),
+  (
+      "/a.pc", r#"
+      public token blue blue
       "#
     )]
 }

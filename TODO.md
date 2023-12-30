@@ -4,6 +4,7 @@
   - ensure that paths are absolute
   - can move components to to other files
     - references are updated
+    - update refs OF expression moved
 
 #### Immediate
 

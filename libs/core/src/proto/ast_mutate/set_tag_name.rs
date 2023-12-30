@@ -15,7 +15,7 @@ impl MutableVisitor<()> for EditContext<SetTagName> {
         if expr.get_id() == &self.mutation.element_id {
             let namespace = if let Some(file_path) = &self.mutation.tag_file_path {
                 if file_path != &self.get_dependency().path {
-                    Some(resolve_import_ns(&self.get_dependency(), &file_path).0)
+                    Some(resolve_import_ns(&self.get_dependency(), &file_path).namespace)
                 } else {
                     None
                 }

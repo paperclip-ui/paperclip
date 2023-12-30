@@ -2231,7 +2231,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@paperclip-ui/common@^20.4.5, @paperclip-ui/common@workspace:libs/js-common":
+"@paperclip-ui/common@^20.4.5, @paperclip-ui/common@workspace:^, @paperclip-ui/common@workspace:libs/js-common":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/common@workspace:libs/js-common"
   dependencies:
@@ -2241,9 +2241,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@paperclip-ui/config@^20.4.5, @paperclip-ui/config@workspace:libs/config":
+"@paperclip-ui/config@npm:^20.4.5":
+  version: 20.4.5
+  resolution: "@paperclip-ui/config@npm:20.4.5"
+  checksum: 6f0b1f855f83667f3773f5f5805819e83d41706f70cf72c0f9e343f159c036423916ad0a3eff2fd1fa192a4aeb3805aa5b32979eb348788b112e35b0b8537a06
+  languageName: node
+  linkType: hard
+
+"@paperclip-ui/core@workspace:libs/core":
   version: 0.0.0-use.local
-  resolution: "@paperclip-ui/config@workspace:libs/config"
+  resolution: "@paperclip-ui/core@workspace:libs/core"
+  dependencies:
+    "@babel/core": ^7.20.2
+    "@babel/preset-env": ^7.20.2
+    "@paperclip-ui/common": "workspace:^"
+    "@paperclip-ui/proto": "workspace:^"
+    "@paperclip-ui/workspace": "workspace:^"
+    babel-jest: ^29.3.1
+    jest: ^29.3.1
   languageName: unknown
   linkType: soft
 
@@ -2326,19 +2341,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@paperclip-ui/proto-ext@^20.4.5, @paperclip-ui/proto-ext@workspace:libs/proto_ext":
-  version: 0.0.0-use.local
-  resolution: "@paperclip-ui/proto-ext@workspace:libs/proto_ext"
-  dependencies:
-    "@babel/core": ^7.20.2
-    "@babel/preset-env": ^7.20.2
-    "@paperclip-ui/workspace": "workspace:^"
-    babel-jest: ^29.3.1
-    jest: ^29.3.1
-  languageName: unknown
-  linkType: soft
+"@paperclip-ui/proto-ext@npm:^20.4.5":
+  version: 20.4.5
+  resolution: "@paperclip-ui/proto-ext@npm:20.4.5"
+  checksum: f4d17d9dd0224c7ac1bf28ab70dd1b96f3eb137c8925b36797ac13e84eae4b7165b2f45f2077ca38dd6a766c6c952c184c22614389a96fc4faf7b85ee59d1c08
+  languageName: node
+  linkType: hard
 
-"@paperclip-ui/proto@^20.4.5, @paperclip-ui/proto@workspace:libs/proto":
+"@paperclip-ui/proto@^20.4.5, @paperclip-ui/proto@workspace:^, @paperclip-ui/proto@workspace:libs/proto":
   version: 0.0.0-use.local
   resolution: "@paperclip-ui/proto@workspace:libs/proto"
   dependencies:

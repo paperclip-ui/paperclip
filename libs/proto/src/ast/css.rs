@@ -11,6 +11,7 @@ impl DeclarationValue {
         match self.get_inner() {
             declaration_value::Inner::Arithmetic(expr) => &expr.range,
             declaration_value::Inner::CommaList(expr) => &expr.range,
+            declaration_value::Inner::Keyword(expr) => &expr.range,
             declaration_value::Inner::FunctionCall(expr) => &expr.range,
             declaration_value::Inner::HexColor(expr) => &expr.range,
             declaration_value::Inner::Measurement(expr) => &expr.range,

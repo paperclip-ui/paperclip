@@ -19,7 +19,9 @@ import {
   ShortcutCommand,
 } from "./state";
 import {
+  centerNodeInCanvas,
   getSelectedExprIdSourceId,
+  maybeCenterCanvas,
   normalizeZoom,
   zoomCanvas,
 } from "../ui/state";
@@ -101,6 +103,8 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
         newState.showLeftSidebar = newState.showRightsidebar =
           !newState.showLeftSidebar;
       });
+    case ShortcutCommand.CenterInCanvas:
+      return maybeCenterCanvas(state, true);
 
     case ShortcutCommand.ZoomIn:
       return zoomCanvas(normalizeZoom(state.canvas.transform.z * 2), state);

@@ -29,6 +29,7 @@ export enum ShortcutCommand {
   ConvertToSlot,
   WrapInElement,
   OpenCodeEditor,
+  CenterInCanvas,
   Cut,
   Copy,
   Delete,
@@ -86,6 +87,13 @@ export const getEntityShortcuts = memoize(
         label: "Open code editor",
         shortcut: ["alt", "shift", "c"],
         command: ShortcutCommand.OpenCodeEditor,
+      },
+      // Instance specific
+      {
+        kind: MenuItemKind.Option,
+        label: "Center in canvas",
+        shortcut: [],
+        command: ShortcutCommand.CenterInCanvas,
       },
       // Instance specific
 

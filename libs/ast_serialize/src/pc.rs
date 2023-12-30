@@ -37,10 +37,10 @@ pub fn serialize_document(document: &ast::Document, context: &mut Context) {
             ast::document_body_item::Inner::Component(comp) => serialize_component(&comp, context),
             ast::document_body_item::Inner::Style(style) => serialize_style(&style, context),
             ast::document_body_item::Inner::Element(element) => {
-                serialize_element(&element, context)
+                serialize_element(&element, true, context)
             }
             ast::document_body_item::Inner::Trigger(expr) => serialize_trigger(&expr, context),
-            ast::document_body_item::Inner::Text(text) => serialize_text(&text, context),
+            ast::document_body_item::Inner::Text(text) => serialize_text(&text, true, context),
         }
 
         // extra space for document body items
@@ -198,12 +198,12 @@ pub fn serialize_render(imp: &ast::Render, context: &mut Context) {
 
 pub fn serialize_node(node: &ast::Node, context: &mut Context) {
     match node.get_inner() {
-        ast::node::Inner::Element(element) => serialize_element(element, context),
+        ast::node::Inner::Element(element) => serialize_element(element, false, context),
         ast::node::Inner::Slot(slot) => serialize_slot(slot, context),
         ast::node::Inner::Insert(insert) => serialize_insert(insert, context),
         ast::node::Inner::Style(style) => serialize_style(style, context),
         ast::node::Inner::Override(over) => serialize_override(over, context),
-        ast::node::Inner::Text(text) => serialize_text(text, context),
+        ast::node::Inner::Text(text) => serialize_text(text, false, context),
         ast::node::Inner::Script(text) => serialize_script(text, context),
         ast::node::Inner::Condition(expr) => serialize_condition(expr, context),
         ast::node::Inner::Switch(expr) => serialize_switch(expr, context),
@@ -260,9 +260,11 @@ pub fn serialize_repeat(expr: &ast::Repeat, context: &mut Context) {
     context.add_buffer("}\n");
 }
 
-pub fn serialize_text(node: &ast::TextNode, context: &mut Context) {
-    if let Some(comment) = &node.comment {
-        serialize_doc_comment2(comment, context);
+pub fn serialize_text(node: &ast::TextNode, is_root: bool, context: &mut Context) {
+    if is_root {
+        if let Some(comment) = &node.comment {
+            serialize_doc_comment2(comment, context);
+        }
     }
     context.add_buffer("text");
     maybe_serialize_ref_name(&node.name, context);
@@ -282,10 +284,13 @@ pub fn serialize_text(node: &ast::TextNode, context: &mut Context) {
     context.add_buffer("\n");
 }
 
-pub fn serialize_element(node: &ast::Element, context: &mut Context) {
-    if let Some(comment) = &node.comment {
-        serialize_doc_comment2(comment, context);
+pub fn serialize_element(node: &ast::Element, is_root: bool, context: &mut Context) {
+    if is_root {
+        if let Some(comment) = &node.comment {
+            serialize_doc_comment2(comment, context);
+        }
     }
+
     if let Some(namespace) = &node.namespace {
         context.add_buffer(format!("{}.", namespace).as_str());
     }

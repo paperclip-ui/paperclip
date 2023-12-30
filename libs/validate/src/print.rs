@@ -174,6 +174,10 @@ impl ToString for PrettyPrint {
     }
 }
 
+pub trait PrintPrettyError {
+    fn print_pretty_error(&self);
+}
+
 pub trait ToPrettyString {
     fn to_pretty_string(&self) -> String;
 }
@@ -188,5 +192,13 @@ impl ToPrettyString for NoticeList {
         .expect("Cannot pretty print");
 
         return pretty.to_string();
+    }
+}
+
+impl<Expr> PrintPrettyError for Result<Expr, NoticeList> {
+    fn print_pretty_error(&self) {
+        if let Err(err) = self {
+            println!("{}", err.to_pretty_string());
+        }
     }
 }

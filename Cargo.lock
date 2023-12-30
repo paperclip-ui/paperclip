@@ -1777,6 +1777,7 @@ dependencies = [
  "paperclip_project",
  "paperclip_proto",
  "paperclip_proto_ext",
+ "paperclip_validate",
  "parking_lot",
  "path-absolutize",
  "portpicker",

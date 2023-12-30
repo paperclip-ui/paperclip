@@ -4,6 +4,8 @@ use anyhow::Result;
 use paperclip_common::log::verbose;
 use paperclip_evaluator::core::io::PCFileResolver;
 use paperclip_evaluator::css;
+use paperclip_proto::notice::base::NoticeList;
+use paperclip_validate::print::PrintPrettyError;
 
 use futures::executor::block_on;
 use paperclip_common::fs::{FileReader, FileResolver};
@@ -31,18 +33,18 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
     handle_store_events!(
         &ctx.store,
         ServerEvent::PaperclipFilesLoaded { files } => {
-            load_dependency_graph(next.clone(), &files).await.expect("Unable to load dependency graph");
+            load_dependency_graph(next.clone(), &files).await.print_pretty_error();
         },
         ServerEvent::FileMoved { from_path, to_path } => {
-            move_pc_file(ctx.clone(), from_path, to_path).await.expect("Unable to update refs");
+            let _ = move_pc_file(ctx.clone(), from_path, to_path).await;
         },
         ServerEvent::DependencyGraphLoaded { graph } => {
             evaluate_dependency_graph(next.clone(), Some(graph.dependencies.keys().map(|k| {
                 k.to_string()
-            }).collect())).await.expect("Unable to evaluate Dependency graph");
+            }).collect())).await.print_pretty_error();
         },
         ServerEvent::GlobalScriptsLoaded(_) => {
-            evaluate_dependency_graph(next.clone(), None).await.expect("Unable to evaluate Dependency graph");
+            evaluate_dependency_graph(next.clone(), None).await.print_pretty_error();
         },
         ServerEvent::UpdateFileRequested { path: _path, content: _content } => {
             let updated_files = next.clone().store.lock().unwrap().state.updated_files.clone();
@@ -50,15 +52,15 @@ async fn handle_events<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) {
             verbose(&format!("Updated files {:?}", updated_files));
 
             for update_file in updated_files {
-                load_dependency_graph(next.clone(), &vec![update_file]).await.expect("Unable to load dependency");
+                load_dependency_graph(next.clone(), &vec![update_file]).await.print_pretty_error();
             }
         },
         ServerEvent::MutationsApplied {result: _, updated_graph: _} | ServerEvent::UndoRequested | ServerEvent::RedoRequested  => {
-            evaluate_dependency_graph(next.clone(), None).await.expect("Unable to evaluate Dependency graph");
+            evaluate_dependency_graph(next.clone(), None).await.print_pretty_error();
         },
         ServerEvent::FileWatchEvent(event) => {
             if paperclip_common::pc::is_paperclip_file(&event.path) {
-                load_pc_file(next.clone(), &event.path).await.expect(format!("Unable to evaluate file {}", event.path).as_str());
+                load_pc_file(next.clone(), &event.path).await.print_pretty_error();
             }
         }
     );
@@ -110,7 +112,7 @@ impl<TIO: ServerIO> FileResolver for VirtGraphIO<TIO> {
 async fn load_dependency_graph<TIO: ServerIO>(
     ctx: ServerEngineContext<TIO>,
     files: &Vec<String>,
-) -> Result<()> {
+) -> Result<(), NoticeList> {
     let graph = ctx.store.lock().unwrap().state.graph.clone();
     let parse_options = ctx
         .store
@@ -132,7 +134,10 @@ async fn load_dependency_graph<TIO: ServerIO>(
     Ok(())
 }
 
-async fn load_pc_file<TIO: ServerIO>(ctx: ServerEngineContext<TIO>, file: &str) -> Result<()> {
+async fn load_pc_file<TIO: ServerIO>(
+    ctx: ServerEngineContext<TIO>,
+    file: &str,
+) -> Result<(), NoticeList> {
     verbose(&format!("load_pc_file {:?}", file));
 
     let graph = ctx.store.lock().unwrap().state.graph.clone();
@@ -188,8 +193,7 @@ async fn move_pc_file<TIO: ServerIO>(
         .get_outer()],
         ctx.clone(),
     )
-    .await
-    .expect("Could not update imports");
+    .await?;
 
     ctx.emit(ServerEvent::MutationsInternallyApplied);
 
@@ -199,7 +203,7 @@ async fn move_pc_file<TIO: ServerIO>(
 async fn evaluate_dependency_graph<TIO: ServerIO>(
     ctx: ServerEngineContext<TIO>,
     files: Option<Vec<String>>,
-) -> Result<()> {
+) -> Result<(), NoticeList> {
     let files = if let Some(files) = files {
         files
     } else {

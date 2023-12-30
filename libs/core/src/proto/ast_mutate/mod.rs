@@ -27,7 +27,7 @@ mod wrap_in_element;
 mod utils;
 use std::{collections::HashMap, rc::Rc};
 
-use crate::graph::{get_document_imports, io::IO};
+use super::graph::{get_document_imports, io::IO};
 pub use add_import::*;
 use anyhow::Result;
 pub use append_child::*;

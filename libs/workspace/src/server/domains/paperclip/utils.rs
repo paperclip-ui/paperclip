@@ -5,8 +5,8 @@ use crate::server::{
 use anyhow::Result;
 
 use paperclip_common::log::verbose;
+use paperclip_core::proto::ast_mutate::edit_graph;
 use paperclip_proto::ast_mutate::{Mutation, MutationResult};
-use paperclip_proto_ext::ast_mutate::edit_graph;
 
 pub async fn apply_mutations<TIO: ServerIO>(
     mutations: &Vec<Mutation>,

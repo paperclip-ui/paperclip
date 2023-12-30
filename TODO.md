@@ -1,7 +1,9 @@
 #### FOCUS
 
-- functionality that gets in the way of productivity for Shaya
-  - designer breaks if lint errors happen
+- focus on editing
+  - ensure that paths are absolute
+  - can move components to to other files
+    - references are updated
 
 #### Immediate
 

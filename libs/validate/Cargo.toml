@@ -10,18 +10,13 @@ exclude = []
 name = "paperclip_validate"
 
 
-[features]
-default = ["local"]
-local = ["paperclip_common/local", "paperclip_proto/local", "paperclip_proto_ext/local", "paperclip_parser/local", "paperclip_evaluator/local", "paperclip_evaluator/local"]
-
 [dependencies]
-paperclip_common = { path = "../rs_common", features = []  }
-paperclip_config = { path = "../config", features = []  }
-paperclip_proto = { path = "../proto", features = []  }
-paperclip_ast_serialize = { path = "../ast_serialize", features = []  }
-paperclip_proto_ext = { path = "../proto_ext", features = [] }
-paperclip_parser = { path = "../parser", features = []  }
-paperclip_evaluator = { path = "../evaluator", features = []  }
+paperclip_common = { path = "../rs_common" }
+paperclip_proto = { path = "../proto" }
+paperclip_ast_serialize = { path = "../ast_serialize" }
+paperclip_core = { path = "../core"}
+paperclip_parser = { path = "../parser" }
+paperclip_evaluator = { path = "../evaluator" }
 anyhow = "1.0.61"
 colored = "2.1.0"
 itertools = "0.12.0"

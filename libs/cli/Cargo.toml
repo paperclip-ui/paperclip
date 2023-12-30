@@ -14,7 +14,7 @@ paperclip_common = { path = "../rs_common" }
 paperclip_validate = { path = "../validate" }
 paperclip_ast_serialize = { path = "../ast_serialize" }
 paperclip_workspace = { path = "../workspace" }
-paperclip_config = { path = "../config" }
+paperclip_core = { path = "../core" }
 serde_json = { version = "1.0.83" }
 serde = "1.0.143"
 futures = "0.3.21"

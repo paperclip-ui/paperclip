@@ -1,21 +1,18 @@
 [package]
-name = "paperclip_proto_ext"
+name = "paperclip_core"
 version = "0.1.1"
 authors = ["Craig Condon <craig.j.condon@gmail.com>"]
 edition = "2021"
 exclude = []
 
 [lib]
-name = "paperclip_proto_ext"
+name = "paperclip_core"
 
-[features]
-default = ["local"]
-local = ["paperclip_proto/local", "paperclip_parser/local", "paperclip_common/local"]
 
 [dependencies]
-paperclip_proto = { path = "../proto", features = [] }
-paperclip_parser = { path = "../parser", features = [] }
-paperclip_common = { path = "../rs_common", features = [] }
+paperclip_proto = { path = "../proto"  }
+paperclip_parser = { path = "../parser" }
+paperclip_common = { path = "../rs_common" }
 anyhow = "1.0.66"
 futures = "0.3.25"
 crc = "1.8.1"
@@ -25,6 +22,11 @@ convert_case = "0.6.0"
 regex = "1.7.0"
 paperclip_ast_serialize = { path = "../ast_serialize" }
 Inflector = "0.11.4"
+ts-rs = "6.1"
+serde = { version = "1.0.143", features = ["derive"] }
+serde_json = { version = "1.0.83" }
+wax = "0.5.0"
+
 
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]

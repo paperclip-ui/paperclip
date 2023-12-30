@@ -8,37 +8,23 @@ exclude = []
 [lib]
 name = "paperclip_workspace"
 
-[features]
-default = ["local"]
-local = [
-"paperclip_project/local",
-"paperclip_proto/local",
-"paperclip_proto_ext/local",
-"paperclip_ast_serialize/local",
-"paperclip_common/local",
-"paperclip_evaluator/local",
-"paperclip_config/local",
-"paperclip_parser/local",
-"paperclip_language_services/local"
-]
 
 
 [dependencies]
-paperclip_project = { path = "../project", features = [] }
+paperclip_project = { path = "../project"}
 paperclip_proto = { path = "../proto", features = ["transport"] }
-paperclip_proto_ext = { path = "../proto_ext", features = [] }
+paperclip_core = { path = "../core"}
 paperclip_validate = { path = "../validate" }
 tonic = { version = "0.10.2" }
 tonic-web = "0.10.2"
 prost = "0.11.0"
 crc = "1.8.1"
-paperclip_ast_serialize = { path = "../ast_serialize", features = [] }
+paperclip_ast_serialize = { path = "../ast_serialize"}
 tokio = { version = "1.35.1", features = [ "rt-multi-thread", "time", "fs", "macros", "net", "signal"] }
-paperclip_common = { path = "../rs_common", features = [] }
-paperclip_evaluator = { path = "../evaluator", features = [] }
-paperclip_config = { path = "../config", features = [] }
-paperclip_parser = { path = "../parser", features = [] }
-paperclip_language_services = { path = "../language_services", features = [] }
+paperclip_common = { path = "../rs_common"}
+paperclip_evaluator = { path = "../evaluator"}
+paperclip_parser = { path = "../parser"}
+paperclip_language_services = { path = "../language_services"}
 async-trait = "0.1.57"
 async-channel = "1.7.1"
 parking_lot = "0.12.1"

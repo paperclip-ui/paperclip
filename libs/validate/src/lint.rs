@@ -1,6 +1,6 @@
 use paperclip_ast_serialize::css::serialize_decl_value;
 use paperclip_common::serialize_context::Context as SerializeContext;
-use paperclip_config::LintConfig;
+use paperclip_core::config::LintConfig;
 use paperclip_proto::ast::css;
 use paperclip_proto::ast::css::declaration_value;
 use paperclip_proto::ast::graph_ext as graph;

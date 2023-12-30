@@ -8,7 +8,7 @@ use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::pc::Node;
 use paperclip_proto::ast_mutate::{mutation_result, ExpressionInserted, PrependChild};
 
-use crate::ast_mutate::utils::upsert_render_expr;
+use super::utils::upsert_render_expr;
 
 macro_rules! prepend_child {
     ($self:expr, $expr: expr) => {{

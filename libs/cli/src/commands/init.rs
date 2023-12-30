@@ -1,4 +1,4 @@
-use paperclip_config::{CompilerOptions, Config};
+use paperclip_core::config::{CompilerOptions, Config};
 use paperclip_proto::notice::base::NoticeList;
 use std::fs::File;
 use std::io::Write;

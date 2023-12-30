@@ -1,4 +1,4 @@
-use crate::ast_mutate::utils::import_dep;
+use super::utils::import_dep;
 
 use super::base::EditContext;
 use paperclip_proto::{ast::pc::Document, ast_mutate::AddImport};

@@ -1,8 +1,8 @@
 use super::io::ConfigIO;
 use crate::config::ConfigContext;
+use crate::proto::graph::io::IO as GraphIO;
 use anyhow::{Error, Result};
 use paperclip_common::fs::{FileReader, FileResolver, LocalFileReader};
-use paperclip_proto_ext::graph::io::IO as GraphIO;
 use path_absolutize::*;
 use std::path::Path;
 use wax::Glob;

@@ -1,4 +1,4 @@
-use crate::ast_mutate::utils::resolve_import_ns;
+use super::utils::resolve_import_ns;
 
 use super::base::EditContext;
 use paperclip_common::get_or_short;

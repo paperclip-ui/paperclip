@@ -9,9 +9,9 @@ use paperclip_validate::print::PrintPrettyError;
 
 use futures::executor::block_on;
 use paperclip_common::fs::{FileReader, FileResolver};
+use paperclip_core::proto::ast_mutate;
+use paperclip_core::proto::graph::{io::IO as GraphIO, load::LoadableGraph};
 use paperclip_evaluator::html;
-use paperclip_proto_ext::ast_mutate;
-use paperclip_proto_ext::graph::{io::IO as GraphIO, load::LoadableGraph};
 
 use crate::handle_store_events;
 use crate::server::core::{ServerEngineContext, ServerEvent};

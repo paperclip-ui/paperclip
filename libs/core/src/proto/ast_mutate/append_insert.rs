@@ -3,7 +3,7 @@ use paperclip_proto::ast;
 use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast_mutate::{mutation_result, AppendInsert, ExpressionInserted};
 
-use crate::ast_mutate::utils::parse_node;
+use super::utils::parse_node;
 use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 
 impl MutableVisitor<()> for EditContext<AppendInsert> {

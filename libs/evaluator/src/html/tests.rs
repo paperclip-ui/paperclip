@@ -5,11 +5,11 @@ use anyhow::Result;
 use futures::executor::block_on;
 use paperclip_common::fs::FileResolver;
 use paperclip_common::str_utils::strip_extra_ws;
+use paperclip_core::proto::graph::load::LoadableGraph;
+use paperclip_core::proto::graph::test_utils;
 use paperclip_parser::core::parser_context::Options as ParserOptions;
 use paperclip_proto::ast::graph;
 use paperclip_proto::virt;
-use paperclip_proto_ext::graph::load::LoadableGraph;
-use paperclip_proto_ext::graph::test_utils;
 use std::collections::HashMap;
 
 // TODO: ensure no infinite loop

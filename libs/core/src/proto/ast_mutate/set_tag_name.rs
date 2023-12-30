@@ -7,7 +7,7 @@ use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::pc::node;
 use paperclip_proto::ast_mutate::SetTagName;
 
-use crate::ast::pc::FindSlotNames;
+use super::super::ast::pc::FindSlotNames;
 use paperclip_proto::ast::get_expr::GetExpr;
 
 impl MutableVisitor<()> for EditContext<SetTagName> {

@@ -3,12 +3,12 @@ use std::collections::HashMap;
 use anyhow::Result;
 use futures::executor::block_on;
 use paperclip_common::fs::FileResolver;
+use paperclip_core::proto::graph::test_utils::{self, MockFS};
 use paperclip_parser::core::parser_context::Options;
 use paperclip_proto::{
     ast::base::{Range, U16Position},
     notice::base::{Code, Level, Notice, NoticeList},
 };
-use paperclip_proto_ext::graph::test_utils::{self, MockFS};
 
 use crate::validate::{validate_document, ValidateOptions};
 

@@ -12,9 +12,8 @@ members = [
   "libs/workspace",
   "libs/infer",
   "libs/proto",
-  "libs/proto_ext",
+  "libs/core",
   "libs/ast_serialize",
-  "libs/config",
   "libs/language_services"
 ]
 

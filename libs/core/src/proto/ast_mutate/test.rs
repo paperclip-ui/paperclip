@@ -1,5 +1,5 @@
+use super::super::graph::{load::LoadableGraph, test_utils};
 use super::edit_graph;
-use crate::graph::{load::LoadableGraph, test_utils};
 use futures::executor::block_on;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::str_utils::strip_extra_ws;
@@ -17,6 +17,22 @@ use paperclip_proto::ast_mutate::{
     WrapInElement,
 };
 use std::collections::HashMap;
+
+/*
+
+TODO:
+
+- component
+    - can move to another file
+        - update references
+    - rename
+        - update references
+- token
+    - rename
+        - update references
+    - delete
+        - error if references
+*/
 
 macro_rules! case {
     ($name: ident, $mock_files: expr, $edit: expr, $expected_mock_files: expr) => {

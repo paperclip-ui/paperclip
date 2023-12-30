@@ -2,7 +2,7 @@ use super::context::TargetCompilerContext;
 use anyhow::Result;
 use paperclip_common::fs::{FileReader, FileResolver};
 use paperclip_compiler_react as react;
-use paperclip_config::{CompilerOptions, ConfigContext};
+use paperclip_core::config::{CompilerOptions, ConfigContext};
 use paperclip_evaluator::css::evaluator::evaluate as evaluate_css;
 use paperclip_evaluator::css::serializer::serialize as serialize_css;
 use paperclip_evaluator::html::evaluator::{evaluate as evaluate_html, Options as HTMLOptions};

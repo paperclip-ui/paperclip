@@ -12,11 +12,12 @@ use paperclip_proto::ast::{
     graph_ext::Dependency,
     pc::{Document, DocumentBodyItem, Node},
 };
-use pathdiff::diff_paths;
 use regex::Regex;
-use std::{collections::HashMap, fmt::Debug, path::Path};
+use std::{collections::HashMap, fmt::Debug};
 
 use paperclip_proto::ast::all::visit::{Visitable, Visitor, VisitorResult};
+
+use crate::config::ConfigContext;
 
 use super::EditContext;
 
@@ -84,7 +85,7 @@ pub fn get_named_expr_id<TVisitable: Visitable + Debug>(
     }
 }
 
-pub fn parse_import(path: &str, ns: &str, checksum: &str) -> DocumentBodyItem {
+pub fn create_import(path: &str, ns: &str, checksum: &str) -> DocumentBodyItem {
     let new_imp_doc = parse(
         format!("import \"{}\" as {}", path, ns).as_str(),
         checksum,
@@ -93,17 +94,6 @@ pub fn parse_import(path: &str, ns: &str, checksum: &str) -> DocumentBodyItem {
     .unwrap();
 
     new_imp_doc.body.get(0).unwrap().clone()
-}
-
-pub fn resolve_import(from: &str, to: &str) -> String {
-    let relative = diff_paths(to, Path::new(from).parent().unwrap()).unwrap();
-    let mut relative = relative.to_str().unwrap().to_string();
-
-    if !relative.starts_with(".") {
-        relative = format!("./{}", relative);
-    }
-
-    relative
 }
 
 pub fn resolve_import_ns(document_dep: &Dependency, path: &str) -> (String, bool) {
@@ -205,8 +195,8 @@ pub fn import_dep<Mutation>(
     if ns.1 {
         document.body.insert(
             0,
-            parse_import(
-                &resolve_import(&document_dep.path, path),
+            create_import(
+                &ctx.config_context.get_module_import_path(path),
                 &ns.0,
                 &ctx.new_id(),
             ),
@@ -220,11 +210,13 @@ pub struct NamespaceResolution {
     pub prev: String,
     pub resolved: Option<String>,
     pub is_new: bool,
+    pub module_path: String,
 }
 
 pub fn resolve_imports(
     namespaces: &HashMap<String, String>,
     dependency: &Dependency,
+    context: &ConfigContext,
 ) -> HashMap<String, NamespaceResolution> {
     let mut actual_namespaces = HashMap::new();
     let document = dependency.document.as_ref().expect("Document must exist!");
@@ -237,6 +229,7 @@ pub fn resolve_imports(
                     prev: ns.to_string(),
                     resolved: None,
                     is_new: false,
+                    module_path: context.get_module_import_path(path),
                 },
             );
             continue;
@@ -264,6 +257,7 @@ pub fn resolve_imports(
                 NamespaceResolution {
                     prev: ns.to_string(),
                     resolved: Some(imp.namespace.to_string()),
+                    module_path: context.get_module_import_path(path),
                     is_new: false,
                 },
             );
@@ -274,6 +268,7 @@ pub fn resolve_imports(
                 NamespaceResolution {
                     prev: ns.to_string(),
                     resolved: Some(unique_ns.to_string()),
+                    module_path: context.get_module_import_path(path),
                     is_new: true,
                 },
             );
@@ -289,14 +284,18 @@ pub fn add_imports<Mutation>(
     ctx: &EditContext<Mutation>,
 ) -> HashMap<String, NamespaceResolution> {
     let dependency = &ctx.get_dependency();
-    let actual_namespaces = resolve_imports(namespaces, dependency);
+    let actual_namespaces = resolve_imports(namespaces, dependency, &ctx.config_context);
 
     for (path, resolution) in &actual_namespaces {
         if resolution.is_new {
             if let Some(ns) = &resolution.resolved {
                 document.body.insert(
                     0,
-                    parse_import(&resolve_import(&dependency.path, path), ns, &ctx.new_id()),
+                    create_import(
+                        &ctx.config_context.get_module_import_path(path),
+                        ns,
+                        &ctx.new_id(),
+                    ),
                 );
             }
         }

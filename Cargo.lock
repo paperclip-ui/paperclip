@@ -1595,7 +1595,6 @@ dependencies = [
  "paperclip_parser",
  "paperclip_proto",
  "path-absolutize",
- "pathdiff",
  "regex",
  "serde",
  "serde_json",

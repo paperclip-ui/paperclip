@@ -1,7 +1,9 @@
 use std::collections::HashMap;
 
+use crate::config::ConfigContext;
+
 use super::base::EditContext;
-use super::utils::{parse_import, resolve_import, resolve_imports, NamespaceResolution};
+use super::utils::{create_import, resolve_imports, NamespaceResolution};
 use paperclip_common::get_or_short;
 use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse as parse_pc;
@@ -21,7 +23,7 @@ impl MutableVisitor<()> for EditContext<SetStyleDeclarations> {
     fn visit_style(&mut self, expr: &mut ast::pc::Style) -> VisitorResult<()> {
         if expr.get_id() == self.mutation.expression_id {
             let new_style = parse_style(
-                &mutation_to_style(&self.mutation, self.get_dependency()),
+                &mutation_to_style(&self.mutation, self.get_dependency(), &self.config_context),
                 &self.new_id(),
             );
             update_style(expr, &new_style, &get_styles_to_delete(&self.mutation));
@@ -37,12 +39,15 @@ impl MutableVisitor<()> for EditContext<SetStyleDeclarations> {
             return VisitorResult::Continue;
         }
 
-        for (path, resolution) in get_dep_imports(&self.mutation, self.get_dependency()) {
+        for (_, resolution) in
+            get_dep_imports(&self.mutation, self.get_dependency(), &self.config_context)
+        {
             if resolution.is_new {
                 if let Some(ns) = &resolution.resolved {
-                    let relative = resolve_import(&self.get_dependency().path, &path);
-                    doc.body
-                        .insert(0, parse_import(&relative, &ns, &self.new_id()));
+                    doc.body.insert(
+                        0,
+                        create_import(&resolution.module_path, &ns, &self.new_id()),
+                    );
                 }
             }
         }
@@ -113,8 +118,10 @@ fn add_child_style(
     let mutation = &ctx.mutation;
     let dependency = ctx.get_dependency();
 
-    let mut new_style: ast::pc::Style =
-        parse_style(&mutation_to_style(mutation, dependency), &ctx.new_id());
+    let mut new_style: ast::pc::Style = parse_style(
+        &mutation_to_style(mutation, dependency, &ctx.config_context),
+        &ctx.new_id(),
+    );
 
     let mut doc = dependency.document.clone().expect("Document must exist");
 
@@ -181,11 +188,12 @@ fn variant_combo_equals(a: &Vec<ast::shared::Reference>, b: &Vec<ast::shared::Re
 fn get_dep_imports(
     mutation: &SetStyleDeclarations,
     dep: &Dependency,
+    config_context: &ConfigContext,
 ) -> HashMap<String, NamespaceResolution> {
     let mut imports = HashMap::new();
 
     for decl in &mutation.declarations {
-        let resolved = resolve_imports(&decl.imports, dep);
+        let resolved = resolve_imports(&decl.imports, dep, config_context);
         for (path, resolution) in resolved {
             imports.insert(path.to_string(), resolution);
         }
@@ -205,8 +213,12 @@ fn parse_style(source: &str, checksum: &str) -> ast::pc::Style {
         .unwrap()
 }
 
-fn mutation_to_style(mutation: &SetStyleDeclarations, dep: &Dependency) -> String {
-    let imports = get_dep_imports(mutation, dep);
+fn mutation_to_style(
+    mutation: &SetStyleDeclarations,
+    dep: &Dependency,
+    config_context: &ConfigContext,
+) -> String {
+    let imports = get_dep_imports(mutation, dep, config_context);
 
     let mut buffer = "style {\n".to_string();
 

@@ -1,5 +1,5 @@
 use super::base::EditContext;
-use super::utils::{parse_declaration_value, parse_import, resolve_import, resolve_imports};
+use super::utils::{create_import, parse_declaration_value, resolve_imports};
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast::get_expr::GetExpr;
@@ -24,12 +24,17 @@ impl MutableVisitor<()> for EditContext<SetStyleDeclarationValue> {
             return VisitorResult::Continue;
         }
 
-        for (path, resolution) in resolve_imports(&self.mutation.imports, self.get_dependency()) {
+        for (_, resolution) in resolve_imports(
+            &self.mutation.imports,
+            self.get_dependency(),
+            &self.config_context,
+        ) {
             if resolution.is_new {
                 if let Some(ns) = &resolution.resolved {
-                    let relative = resolve_import(&self.get_dependency().path, &path);
-                    doc.body
-                        .insert(0, parse_import(&relative, &ns, &self.new_id()));
+                    doc.body.insert(
+                        0,
+                        create_import(&resolution.module_path, &ns, &self.new_id()),
+                    );
                 }
             }
         }

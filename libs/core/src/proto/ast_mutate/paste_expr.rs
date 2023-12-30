@@ -10,9 +10,11 @@ use paperclip_proto::ast::{all::Expression, pc::node};
 use paperclip_proto::ast_mutate::{mutation_result, ExpressionInserted};
 use paperclip_proto::ast_mutate::{paste_expression, PasteExpression};
 
+use crate::proto::ast_mutate::utils::create_import;
+
 use super::super::ast::pc::FindSlotNames;
+use super::utils::parse_node;
 use super::utils::resolve_import_ns;
-use super::utils::{parse_import, parse_node, resolve_import};
 use super::EditContext;
 use paperclip_proto::ast::get_expr::GetExpr;
 
@@ -130,9 +132,11 @@ impl MutableVisitor<()> for EditContext<PasteExpression> {
                     resolve_import_ns(&self.get_dependency(), &component_dep.path);
 
                 if is_new_import {
-                    let relative = resolve_import(&self.get_dependency().path, &component_dep.path);
+                    let relative = &self
+                        .config_context
+                        .get_module_import_path(&component_dep.path);
                     expr.body
-                        .insert(0, parse_import(&relative, &ns, &self.new_id()));
+                        .insert(0, create_import(&relative, &ns, &self.new_id()));
                 }
             }
         }

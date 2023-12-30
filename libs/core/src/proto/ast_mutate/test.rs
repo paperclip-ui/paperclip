@@ -374,7 +374,7 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-      import "./module.pc" as mod
+      import "module.pc" as mod
       public token something var(mod.something)
     "#
   )]
@@ -513,7 +513,7 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-      import "./module.pc" as mod
+      import "module.pc" as mod
       div {
         style {
           color: var(mod.blue01)
@@ -1552,7 +1552,7 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-      import "./test.pc" as mod
+      import "test.pc" as mod
       /**
        * @frame(x: 100, y: 200, width: 300, height: 400)
        */
@@ -1635,7 +1635,7 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-      import "./test.pc" as mod1
+      import "test.pc" as mod1
       import "/test2.pc" as mod
       /**
        * @frame(x: 100, y: 200, width: 300, height: 400)
@@ -3186,7 +3186,7 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-    import "./theme.pc" as module
+    import "theme.pc" as module
     style a extends module.test
     "#
   )]
@@ -3509,7 +3509,7 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-    import "./module.pc" as module
+    import "module.pc" as module
     module.A
     "#
   )]
@@ -3788,7 +3788,7 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-    import "./test.pc" as module
+    import "test.pc" as module
     public component A {
       render div
     }
@@ -4376,7 +4376,7 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-    import "./b.pc" as module
+    import "b.pc" as module
     import "/a.pc" as mod
 
     module.A
@@ -4427,7 +4427,7 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-    import "./b.pc" as module
+    import "b.pc" as module
     import "/a.pc" as mod
 
     div {
@@ -4479,7 +4479,7 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-    import "./b.pc" as module
+    import "b.pc" as module
     import "/a.pc" as mod
 
     div {
@@ -4525,7 +4525,7 @@ case! {
   }).get_outer(),
   [(
     "/entry.pc", r#"
-    import "./a.pc" as module
+    import "a.pc" as module
 
     div {
         style {

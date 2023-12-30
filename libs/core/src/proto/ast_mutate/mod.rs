@@ -27,6 +27,8 @@ mod wrap_in_element;
 mod utils;
 use std::{collections::HashMap, rc::Rc};
 
+use crate::config::ConfigContext;
+
 use super::graph::{get_document_imports, io::IO};
 pub use add_import::*;
 use anyhow::Result;
@@ -84,6 +86,7 @@ pub fn edit_graph<TIO: IO>(
     graph: &mut Graph,
     mutations: &Vec<Mutation>,
     io: &TIO,
+    config_context: &ConfigContext,
 ) -> Result<Vec<(String, Vec<MutationResult>)>> {
     let mut changed: Vec<(String, Vec<MutationResult>)> = vec![];
 
@@ -95,7 +98,12 @@ pub fn edit_graph<TIO: IO>(
 
             while !mutations.is_empty() {
                 let mutation = mutations.remove(0);
-                let mut ctx = EditContext::new(mutation.clone(), &dep.path, ctx_graph.clone());
+                let mut ctx = EditContext::new(
+                    mutation.clone(),
+                    &dep.path,
+                    ctx_graph.clone(),
+                    config_context,
+                );
                 dep.accept(&mut ctx);
                 if ctx.changes.borrow().len() > 0 {
                     changed.push((path.to_string(), ctx.changes.borrow().clone().to_vec()));

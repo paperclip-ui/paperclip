@@ -8,6 +8,8 @@ use paperclip_proto::{
     ast::{graph::Dependency, graph_ext::Graph},
     ast_mutate::MutationResult,
 };
+
+use crate::config::ConfigContext;
 pub struct EditContext<Mutation> {
     id_generator: Rc<RefCell<IDGenerator>>,
     pub mutation: Mutation,
@@ -15,6 +17,7 @@ pub struct EditContext<Mutation> {
     pub graph: Rc<Graph>,
     pub changes: Rc<RefCell<Vec<MutationResult>>>,
     pub post_mutations: Rc<RefCell<Vec<ast_mutate::Mutation>>>,
+    pub config_context: ConfigContext,
 }
 
 impl<'a, Mutation> EditContext<Mutation> {
@@ -38,12 +41,18 @@ impl<'a, Mutation> EditContext<Mutation> {
             graph: self.graph.clone(),
             changes: self.changes.clone(),
             post_mutations: self.post_mutations.clone(),
+            config_context: self.config_context.clone(),
         }
     }
     pub fn add_post_mutation(&mut self, mutation: ast_mutate::Mutation) {
         self.post_mutations.borrow_mut().push(mutation);
     }
-    pub fn new(mutation: Mutation, path: &str, graph: Rc<Graph>) -> EditContext<Mutation> {
+    pub fn new(
+        mutation: Mutation,
+        path: &str,
+        graph: Rc<Graph>,
+        config_context: &ConfigContext,
+    ) -> EditContext<Mutation> {
         let dep: &Dependency = graph
             .dependencies
             .get(path)
@@ -62,6 +71,7 @@ impl<'a, Mutation> EditContext<Mutation> {
             path: path.to_string(),
             graph: graph.clone(),
             changes: Rc::new(RefCell::new(vec![])),
+            config_context: config_context.clone(),
         }
     }
 }

@@ -1,3 +1,5 @@
+use crate::config::{Config, ConfigContext};
+
 use super::super::graph::{load::LoadableGraph, test_utils};
 use super::edit_graph;
 use futures::executor::block_on;
@@ -54,9 +56,16 @@ macro_rules! case {
                 panic!("Unable to load {:#?}", err);
             }
 
+            let config_context = ConfigContext {
+                directory: "/path/to/file.pc".to_string(),
+                file_name: "paperclip.config.json".to_string(),
+                config: Config::default(),
+            };
+
             // println!("{:#?}", graph.dependencies);
 
-            edit_graph(&mut graph, &vec![$edit], &mock_fs).expect("Can't edit graph");
+            edit_graph(&mut graph, &vec![$edit], &mock_fs, &config_context)
+                .expect("Can't edit graph");
 
             let edited_docs = graph
                 .dependencies
@@ -81,7 +90,6 @@ macro_rules! case {
         }
     };
 }
-
 case! {
   can_insert_an_element_into_the_document,
   [(

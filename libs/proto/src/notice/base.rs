@@ -1,8 +1,19 @@
 use crate::{ast::base::Range, notice};
 use std::error::Error;
 use std::fmt;
-
+use std::hash::{Hash, Hasher};
 include!(concat!(env!("OUT_DIR"), "/notice.base.rs"));
+
+impl Eq for Notice {}
+impl Hash for Notice {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.level.hash(state);
+        self.code.hash(state);
+        self.message.hash(state);
+        self.path.hash(state);
+        self.content_range.hash(state);
+    }
+}
 
 impl Notice {
     pub fn new(

@@ -1,5 +1,6 @@
 use anyhow::Result;
 use colored::Colorize;
+use itertools::Itertools;
 use paperclip_common::fs::{FileReader, LocalFileReader};
 use paperclip_proto::notice::base::{Level, Notice, NoticeList};
 use std::{self, env};
@@ -148,8 +149,9 @@ impl PrettyPrint {
         io: &TIO,
     ) -> Result<PrettyPrint> {
         let mut messages: Vec<Message> = vec![];
+        let unique_items: Vec<Notice> = notice.items.clone().into_iter().unique().collect();
 
-        for notice in &notice.items {
+        for notice in &unique_items {
             messages.push(Message::from(notice, project_dir, io)?);
         }
 

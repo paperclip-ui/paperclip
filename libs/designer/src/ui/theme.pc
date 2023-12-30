@@ -50,6 +50,7 @@ public token roundedSM 0.125rem
 public token rounded 0.25rem
 public token roundedMD 0.375rem
 public token inputHeight 24px
+
 public style mask {
     background-color: currentColor
     -webkit-mask-size: 100%
@@ -131,5 +132,3 @@ public style centered {
 trigger mobile {
     "@media screen and (max-width: 480px)"
 }
-
-

@@ -19,6 +19,8 @@ export enum ShortcutCommand {
   GoToRenderNodeComponent,
   InsertResource,
   InsertText,
+  ZoomIn,
+  ZoomOut,
   ConvertToComponent,
   ShowHideUI,
   DeleteFile,
@@ -155,6 +157,18 @@ export const getGlobalShortcuts = (
     label: "Escape",
     shortcut: ["escape"],
     command: ShortcutCommand.Escape,
+  },
+  {
+    kind: MenuItemKind.Option,
+    label: "Zoom in",
+    shortcut: ["meta", "="],
+    command: ShortcutCommand.ZoomIn,
+  },
+  {
+    kind: MenuItemKind.Option,
+    label: "Zoom out",
+    shortcut: ["meta", "-"],
+    command: ShortcutCommand.ZoomOut,
   },
   { kind: MenuItemKind.Divider },
   {

@@ -5,10 +5,6 @@ import "ui/right-sidebar.pc" as rightSidebar
 import "ui/resource-modal.pc" as assetsModal
 import "ui/toolbar.pc" as toolbar
 
-/**
- * @frame(x: -918, y: -272, width: 1024, height: 768)
-*/
-div unnamed
 
 token iconSize var(theme.fontSize03)
 /**
@@ -226,14 +222,6 @@ public component Editor {
 */
 public component Artboard {
     render div root {
-        div {
-            style {
-                color: rgb(236, 236, 236)
-                position: absolute
-                transform: translateY(calc(-100% - 0.5em))
-            }
-            slot title
-        }
         slot children
     }
 }
@@ -279,11 +267,10 @@ public component Canvas {
 }
 
 /**
- * @frame(x: 2751, y: 540, width: 1690, height: 1243)
+ * @frame(x: 2751, y: 540, width: 1690, height: 1243, visible: false)
 */
 Editor root {
     insert commands {
         SplashTip
     }
 }
-

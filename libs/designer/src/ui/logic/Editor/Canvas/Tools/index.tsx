@@ -105,6 +105,7 @@ export const Tools = () => {
               />
             )}
           <Frames
+            canvasScroll={canvas.scrollPosition}
             frames={frames}
             canvasTransform={canvas.transform}
             readonly={readonly}

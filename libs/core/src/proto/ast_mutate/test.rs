@@ -93,6 +93,10 @@ macro_rules! case {
         }
     };
 }
+
+macro_rules! xcase {
+    ($name: ident, $mock_files: expr, $edit: expr, $expected_mock_files: expr) => {};
+}
 case! {
   can_insert_an_element_into_the_document,
   [(
@@ -4878,6 +4882,195 @@ case! {
             something.mobileTrigger
         }
         render div
+        }
+        "#
+      )]
+}
+
+xcase! {
+  syle_mixin_ref_is_updated_when_moved_to_another_file,
+  [
+      (
+          "/entry.pc", r#"
+            import "a.pc" as mod
+
+            div {
+                style extends mod.something
+            }
+          "#
+      ),
+      (
+            "/a.pc", r#"
+                style something {
+                    background: blue
+                }
+                div {
+                    style extends something
+                }
+            "#
+          )
+  ],
+
+  mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
+      expression_id: "98523c41-3".to_string(),
+      new_file_path: "/entry.pc".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+        import "a.pc" as mod
+
+          div {
+              style extends something
+          }
+
+          style something {
+            background: blue
+          }
+    "#
+  ),
+  (
+      "/a.pc", r#"
+      "#
+    )]
+}
+
+case! {
+  ns_is_reused_of_ref_moved_to_already_imported_file,
+  [
+      (
+          "/entry.pc", r#"
+          import "a.pc" as mod
+          import "b.pc" as mod2
+
+            div {
+                style extends mod.a
+            }
+            div {
+                            style extends mod2.b
+                        }
+          "#
+      ),
+      (
+            "/a.pc", r#"
+                public style a {
+                    background: blue
+                }
+            "#
+          ),
+          (
+                "/b.pc", r#"
+                    public style b {
+                        background: orange
+                    }
+                "#
+              )
+  ],
+
+  mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
+      expression_id: "98523c41-3".to_string(),
+      new_file_path: "/b.pc".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    import "a.pc" as mod
+    import "b.pc" as mod2
+
+      div {
+          style extends mod2.a
+      }
+      div {
+                      style extends mod2.b
+                  }
+
+    "#
+  ),
+  (
+      "/a.pc", r#"
+      "#
+    )]
+}
+
+case! {
+  reference_is_given_a_unique_name_if_moved_to_file_with_same,
+  [
+      (
+          "/entry.pc", r#"
+            import "a.pc" as mod
+
+            style something {
+                background: orange
+            }
+
+            div {
+                style extends mod.something
+            }
+
+            div {
+                style extends something
+            }
+          "#
+      ),
+      (
+            "/a.pc", r#"
+                public style something {
+                    background: blue
+                }
+                div {
+                    style extends something
+                }
+            "#
+          ),
+          (
+                "/b.pc", r#"
+                    import "a.pc" as a
+                    div {
+                        style extends a.something
+                    }
+                "#
+              )
+  ],
+
+  mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
+      expression_id: "98523c41-3".to_string(),
+      new_file_path: "/entry.pc".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    import "a.pc" as mod
+
+    style something {
+        background: orange
+    }
+
+    div {
+        style extends something1
+    }
+
+    div {
+        style extends something
+    }
+
+    public style something1 {
+        background: blue
+    }
+    "#
+  ),
+  (
+      "/a.pc", r#"
+      import "entry.pc" as module
+      div {
+        style extends module.something1
+      }
+      "#
+    ),
+
+    (
+        "/b.pc", r#"
+        import "entry.pc" as module
+        import "a.pc" as a
+
+        div {
+          style extends module.something1
         }
         "#
       )]

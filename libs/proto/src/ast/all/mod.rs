@@ -38,6 +38,8 @@ macro_rules! expressions {
     }
 
 
+
+
     impl ExpressionWrapper {
         pub fn get_id(&self) -> &str {
             match self {
@@ -109,6 +111,11 @@ macro_rules! expressions {
           impl From<&$expr> for ExpressionWrapper {
             fn from(expr: &$expr) -> Self {
                 ExpressionWrapper::$name(expr.clone())
+            }
+          }
+          impl From<$expr> for ExpressionWrapper {
+            fn from(expr: $expr) -> Self {
+                ExpressionWrapper::$name(expr)
             }
           }
 
@@ -234,4 +241,54 @@ expressions! {
   (Boolean, base::Bool, self => &self.id),
   (Number, base::Num, self => &self.id)
 
+}
+
+impl ExpressionWrapper {
+    pub fn get_name(&self) -> Option<String> {
+        match self {
+            ExpressionWrapper::Atom(atom) => Some(atom.name.to_string()),
+            ExpressionWrapper::Component(component) => Some(component.name.to_string()),
+            ExpressionWrapper::Style(style) => style.name.clone(),
+            ExpressionWrapper::Element(element) => element.name.clone(),
+            ExpressionWrapper::TextNode(text_node) => text_node.name.clone(),
+            ExpressionWrapper::Trigger(trigger) => Some(trigger.name.clone()),
+            _ => None,
+        }
+    }
+
+    pub fn rename(self, new_name: &str) -> ExpressionWrapper {
+        match self {
+            ExpressionWrapper::Atom(atom) => pc::Atom {
+                name: new_name.to_string(),
+                ..atom
+            }
+            .into(),
+            ExpressionWrapper::Component(atom) => pc::Component {
+                name: new_name.to_string(),
+                ..atom
+            }
+            .into(),
+            ExpressionWrapper::Style(atom) => pc::Style {
+                name: Some(new_name.to_string()),
+                ..atom
+            }
+            .into(),
+            ExpressionWrapper::Element(expr) => pc::Element {
+                name: Some(new_name.to_string()),
+                ..expr
+            }
+            .into(),
+            ExpressionWrapper::TextNode(expr) => pc::TextNode {
+                name: Some(new_name.to_string()),
+                ..expr
+            }
+            .into(),
+            ExpressionWrapper::Trigger(expr) => pc::Trigger {
+                name: new_name.to_string(),
+                ..expr
+            }
+            .into(),
+            _ => self,
+        }
+    }
 }

@@ -140,7 +140,7 @@ const useTools = () => {
 
   const resizeable =
     selectedExpr &&
-    ast.getParentExprInfo(selectedExpr.expr.id, graph).kind ==
+    ast.getParentExprInfo(selectedExpr.expr.id, graph)?.kind ==
       ast.ExprKind.Document;
 
   const getMousePoint = (event) => {

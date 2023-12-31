@@ -138,6 +138,7 @@ export namespace ast {
       item.number ||
       item.reference ||
       item.spacedList ||
+      item.keyword ||
       item.str
     );
   };

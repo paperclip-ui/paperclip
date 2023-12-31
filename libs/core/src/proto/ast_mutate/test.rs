@@ -94,9 +94,9 @@ macro_rules! case {
     };
 }
 
-macro_rules! xcase {
-    ($name: ident, $mock_files: expr, $edit: expr, $expected_mock_files: expr) => {};
-}
+// macro_rules! xcase {
+//     ($name: ident, $mock_files: expr, $edit: expr, $expected_mock_files: expr) => {};
+// }
 case! {
   can_insert_an_element_into_the_document,
   [(

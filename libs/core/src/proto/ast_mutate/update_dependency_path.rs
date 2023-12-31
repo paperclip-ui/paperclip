@@ -1,12 +1,12 @@
 use crate::config::ConfigContext;
 
 use super::base::EditContext;
+use paperclip_common::path::absolutize;
 use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast::css::{declaration_value, FunctionCall};
 use paperclip_proto::ast::graph::Dependency;
 use paperclip_proto::ast::pc::{simple_expression, Element, Import};
 use paperclip_proto::ast_mutate::UpdateDependencyPath;
-use path_absolutize::Absolutize;
 use std::path::Path;
 
 // TODO
@@ -97,12 +97,7 @@ fn resolve_new_asset_path(
 
 fn resolve_import_path(from: &str, to: &str, config_context: &ConfigContext) -> String {
     config_context.resolve_path(to).unwrap_or(
-        Path::new(from)
-            .parent()
-            .unwrap()
-            .join(to)
-            .absolutize()
-            .unwrap()
+        absolutize(Path::new(from).parent().unwrap().join(to))
             .to_str()
             .unwrap()
             .to_string(),

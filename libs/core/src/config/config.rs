@@ -1,11 +1,11 @@
 // From https://paperclip.dev/docs/configure-paperclip
 use anyhow::Result;
 use paperclip_common::fs::FileReader;
-use paperclip_common::join_path;
+use paperclip_common::{join_path, path::absolutize};
 use paperclip_parser::core::parser_context::Options;
 use paperclip_proto::notice::base::{Notice, NoticeList};
-use path_absolutize::*;
 use serde::{Deserialize, Serialize};
+
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::str;
@@ -54,12 +54,7 @@ impl ConfigContext {
 
         // Otherwise use paperclip config directory
         return Some(String::from(
-            self.get_src_dir()
-                .join(path)
-                .absolutize()
-                .unwrap()
-                .to_str()
-                .unwrap(),
+            absolutize(self.get_src_dir().join(path)).to_str().unwrap(),
         ));
     }
 

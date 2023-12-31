@@ -4,9 +4,9 @@ use crate::config::ConfigContext;
 use super::io::IO;
 use anyhow::{Error, Result};
 use paperclip_common::fs::{FileReader, FileResolver};
+use paperclip_common::path::absolutize;
 use std::collections::HashMap;
 use std::path::Path;
-use std::path::PathBuf;
 use std::sync::Arc;
 
 #[derive(Clone)]
@@ -76,15 +76,4 @@ impl<'kv> FileResolver for MockFS<'kv> {
             Err(Error::msg("File not found"))
         }
     }
-}
-
-#[cfg(not(target_arch = "wasm32"))]
-fn absolutize(pt: PathBuf) -> PathBuf {
-    use path_absolutize::*;
-    pt.absolutize().unwrap().to_path_buf()
-}
-
-#[cfg(target_arch = "wasm32")]
-fn absolutize(pt: PathBuf) -> PathBuf {
-    pt
 }

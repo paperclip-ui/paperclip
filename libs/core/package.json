@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/core",
-  "version": "20.4.11",
+  "version": "20.4.14",
   "description": "",
   "main": "lib/index.js",
   "scripts": {

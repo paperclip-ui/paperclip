@@ -35,13 +35,14 @@ macro_rules! replace_child_with_instance {
 
 impl MutableVisitor<()> for EditContext<ConvertToComponent> {
     fn visit_document(
-        &mut self,
+        &self,
         expr: &mut paperclip_proto::ast::pc::Document,
-    ) -> VisitorResult<()> {
+    ) -> VisitorResult<(), EditContext<ConvertToComponent>> {
         let found_expr = get_or_short!(
             GetExpr::get_expr(&self.mutation.expression_id, expr),
             VisitorResult::Continue
-        );
+        )
+        .expr;
 
         let found_node: Node = match found_expr.try_into() {
             Ok(node) => node,
@@ -80,15 +81,21 @@ impl MutableVisitor<()> for EditContext<ConvertToComponent> {
 
         VisitorResult::Continue
     }
-    fn visit_element(&mut self, expr: &mut paperclip_proto::ast::pc::Element) -> VisitorResult<()> {
+    fn visit_element(
+        &self,
+        expr: &mut paperclip_proto::ast::pc::Element,
+    ) -> VisitorResult<(), Self> {
         replace_child_with_instance!(self, expr.body, self.new_id());
         VisitorResult::Continue
     }
-    fn visit_slot(&mut self, expr: &mut paperclip_proto::ast::pc::Slot) -> VisitorResult<()> {
+    fn visit_slot(&self, expr: &mut paperclip_proto::ast::pc::Slot) -> VisitorResult<(), Self> {
         replace_child_with_instance!(self, expr.body, self.new_id());
         VisitorResult::Continue
     }
-    fn visit_render(&mut self, expr: &mut paperclip_proto::ast::pc::Render) -> VisitorResult<()> {
+    fn visit_render(
+        &self,
+        expr: &mut paperclip_proto::ast::pc::Render,
+    ) -> VisitorResult<(), EditContext<ConvertToComponent>> {
         if expr.node.as_ref().unwrap().get_id() != self.mutation.expression_id {
             return VisitorResult::Continue;
         }
@@ -105,7 +112,7 @@ impl MutableVisitor<()> for EditContext<ConvertToComponent> {
         VisitorResult::Continue
     }
 
-    fn visit_insert(&mut self, expr: &mut paperclip_proto::ast::pc::Insert) -> VisitorResult<()> {
+    fn visit_insert(&self, expr: &mut paperclip_proto::ast::pc::Insert) -> VisitorResult<(), Self> {
         replace_child_with_instance!(self, expr.body, self.new_id());
         VisitorResult::Continue
     }

@@ -64,13 +64,14 @@ mod test;
 macro_rules! mutations {
     ($($name:ident), *) => {
       impl MutableVisitor<()> for base::EditContext<Mutation> {
-        fn visit_dependency(&mut self, dependency: &mut ast::graph::Dependency) -> VisitorResult<()> {
+        fn visit_dependency(&self, dependency: &mut ast::graph::Dependency) -> VisitorResult<(), base::EditContext<Mutation>> {
           match self.mutation.inner.as_ref().expect("Inner must exist") {
             $(
               mutation::Inner::$name(mutation) => {
                 let mut sub = self.with_mutation(mutation.clone());
                 let ret = dependency.accept(&mut sub);
-                ret
+                let option: Option<()> = ret.into();
+                option.into()
               }
             )*
             _ => {

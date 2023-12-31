@@ -2074,6 +2074,392 @@ case! {
 }
 
 case! {
+  style_refs_are_updated_when_renamed,
+  [
+    (
+      "/entry.pc", r#"
+        import "b.pc" as b
+        div {
+            style extends b.something
+        }
+      "#
+    ),
+    (
+      "/b.pc", r#"
+        public style something {
+            background: orange
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "8ae793af-3".to_string(),
+    value: "somethingElse".to_string()
+  }).get_outer(),
+  [
+      (
+        "/entry.pc", r#"
+          import "b.pc" as b
+          div {
+            style extends b.somethingElse
+          }
+        "#
+      ),
+      (
+        "/b.pc", r#"
+          public style somethingElse {
+              background: orange
+          }
+        "#
+      )
+  ]
+}
+
+case! {
+  style_refs_are_updated_in_same_doc_when_renamed,
+  [
+    (
+      "/entry.pc", r#"
+        div {
+            style extends something
+        }
+        style something {
+            background: purple
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-6".to_string(),
+    value: "somethingElse".to_string()
+  }).get_outer(),
+  [
+      (
+        "/entry.pc", r#"
+          div {
+              style extends somethingElse
+          }
+          style somethingElse {
+              background: purple
+          }
+        "#
+      )
+  ]
+}
+
+case! {
+  references_are_given_unique_names,
+  [
+    (
+      "/entry.pc", r#"
+        div {
+            style extends something
+        }
+        span {
+              style extends somethingElse
+          }
+        style something {
+            background: orange
+        }
+        style somethingElse {
+            background: purple
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-9".to_string(),
+    value: "somethingElse".to_string()
+  }).get_outer(),
+  [
+      (
+        "/entry.pc", r#"
+        div {
+            style extends somethingElse1
+        }
+        span {
+              style extends somethingElse
+          }
+        style somethingElse1 {
+            background: orange
+        }
+        style somethingElse {
+            background: purple
+        }
+        "#
+      )
+  ]
+}
+
+case! {
+  atom_refs_are_updated_when_names_change,
+  [
+    (
+      "/entry.pc", r#"
+        import "theme.pc" as theme
+        div {
+            style {
+                fontFamily: var(theme.fontFamily)
+            }
+        }
+      "#
+    ),
+    (
+      "/theme.pc", r#"
+        public token fontFamily Inter
+        public token defaultFontFamily sans-serif
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "63c0af9a-2".to_string(),
+    value: "defaultFontFamily".to_string()
+  }).get_outer(),
+  [
+      (
+        "/entry.pc", r#"
+        import "theme.pc" as theme
+        div {
+            style {
+                fontFamily: var(theme.defaultFontFamily1)
+            }
+        }
+        "#
+      ),
+      (
+        "/theme.pc", r#"
+        public token defaultFontFamily1 Inter
+        public token defaultFontFamily sans-serif
+        "#
+      )
+  ]
+}
+
+case! {
+  inserts_are_updated_when_slots_are_renamed,
+  [
+    (
+      "/entry.pc", r#"
+      import "core.pc" as core
+
+      div {
+        core.Card {
+            insert title {
+                text "Something else"
+            }
+        }
+      }
+
+      component CD {
+        render core.Card {
+            insert title {
+
+            }
+            text "blarg"
+        }
+      }
+
+      "#
+    ),
+    (
+      "/core.pc", r#"
+        public component Card {
+            render div {
+                slot title {
+                    text "Hello"
+                }
+                slot children {
+
+                }
+            }
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "bde891f8-2".to_string(),
+    value: "header".to_string()
+  }).get_outer(),
+  [
+      (
+        "/entry.pc", r#"
+        import "core.pc" as core
+
+        div {
+          core.Card {
+              insert header {
+                  text "Something else"
+              }
+          }
+        }
+
+        component CD {
+          render core.Card {
+              insert header {
+
+              }
+              text "blarg"
+          }
+        }
+        "#
+      ),
+      (
+        "/core.pc", r#"
+        public component Card {
+            render div {
+                slot header {
+                    text "Hello"
+                }
+                slot children
+            }
+        }
+        "#
+      )
+  ]
+}
+
+case! {
+  unique_name_is_given_to_renamed_slots,
+  [
+    (
+      "/entry.pc", r#"
+      component Card {
+        render div {
+            slot title {
+
+            }
+            slot another {
+
+            }
+        }
+      }
+
+      Card {
+        insert title {
+            text "something"
+        }
+      }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-1".to_string(),
+    value: "another".to_string()
+  }).get_outer(),
+  [
+      (
+        "/entry.pc", r#"
+        component Card {
+          render div {
+              slot another1
+              slot another
+          }
+        }
+
+        Card {
+          insert another1 {
+              text "something"
+          }
+        }
+        "#
+      )
+  ]
+}
+
+// slots are given unique names
+xcase! {
+  explicit_inserts_are_added_when_children_slot_is_renamed,
+  [
+    (
+      "/entry.pc", r#"
+      import "core.pc" as core
+
+      div {
+        CD {
+            insert title {
+                text "Something else"
+            }
+        }
+      }
+
+      component CD {
+        render Card {
+            insert title {
+
+            }
+            text "blarg"
+        }
+      }
+
+      "#
+    ),
+    (
+      "/core.pc", r#"
+        public component Card {
+            render div {
+                slot title {
+                    text "Hello"
+                }
+                slot children {
+
+                }
+            }
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "bde891f8-2".to_string(),
+    value: "header".to_string()
+  }).get_outer(),
+  [
+      (
+        "/entry.pc", r#"
+        import "core.pc" as core
+
+        div {
+          CD {
+              insert header {
+                  text "Something else"
+              }
+          }
+        }
+
+        component CD {
+          render Card {
+              insert header {
+
+              }
+              text "blarg"
+          }
+        }
+        "#
+      ),
+      (
+        "/core.pc", r#"
+        public component Card {
+            render div {
+                slot header {
+                    text "Hello"
+                }
+                slot children {
+
+                }
+            }
+        }
+        "#
+      )
+  ]
+}
+
+case! {
   can_append_an_insert,
   [
     (

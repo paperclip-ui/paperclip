@@ -13,13 +13,13 @@ use std::path::Path;
 // use path_absolutize::*;
 
 impl MutableVisitor<()> for EditContext<UpdateDependencyPath> {
-    fn visit_dependency(&mut self, dep: &mut Dependency) -> VisitorResult<()> {
+    fn visit_dependency(&self, dep: &mut Dependency) -> VisitorResult<(), Self> {
         if dep.path == self.mutation.old_path {
             dep.path = self.mutation.new_path.clone();
         }
         VisitorResult::Continue
     }
-    fn visit_element(&mut self, el: &mut Element) -> VisitorResult<()> {
+    fn visit_element(&self, el: &mut Element) -> VisitorResult<(), Self> {
         for param in &mut el.parameters {
             if param.name == "src" {
                 if let simple_expression::Inner::Str(value) = param
@@ -43,7 +43,7 @@ impl MutableVisitor<()> for EditContext<UpdateDependencyPath> {
 
         VisitorResult::Continue
     }
-    fn visit_css_function_call(&mut self, expr: &mut Box<FunctionCall>) -> VisitorResult<()> {
+    fn visit_css_function_call(&self, expr: &mut Box<FunctionCall>) -> VisitorResult<(), Self> {
         if expr.name == "url" {
             for arg in &mut expr.arguments {
                 if let declaration_value::Inner::Str(value) = &mut arg.get_inner_mut() {
@@ -61,7 +61,7 @@ impl MutableVisitor<()> for EditContext<UpdateDependencyPath> {
         }
         VisitorResult::Continue
     }
-    fn visit_import(&mut self, import: &mut Import) -> VisitorResult<()> {
+    fn visit_import(&self, import: &mut Import) -> VisitorResult<(), Self> {
         import.path = resolve_new_asset_path(
             &import.path,
             &self.mutation.old_path,

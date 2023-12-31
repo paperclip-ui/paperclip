@@ -10,7 +10,7 @@ use paperclip_proto::ast_mutate::SetStyleMixins;
 use paperclip_proto::ast::get_expr::GetExpr;
 
 impl MutableVisitor<()> for EditContext<SetStyleMixins> {
-    fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
+    fn visit_document(&self, expr: &mut ast::pc::Document) -> VisitorResult<(), Self> {
         if GetExpr::get_expr(&self.mutation.target_expr_id, expr).is_none() {
             return VisitorResult::Continue;
         }
@@ -26,7 +26,7 @@ impl MutableVisitor<()> for EditContext<SetStyleMixins> {
 
         VisitorResult::Continue
     }
-    fn visit_style(&mut self, expr: &mut ast::pc::Style) -> VisitorResult<()> {
+    fn visit_style(&self, expr: &mut ast::pc::Style) -> VisitorResult<(), Self> {
         if self.mutation.target_expr_id != expr.id {
             return VisitorResult::Continue;
         }
@@ -35,7 +35,7 @@ impl MutableVisitor<()> for EditContext<SetStyleMixins> {
 
         return VisitorResult::Return(());
     }
-    fn visit_text_node(&mut self, node: &mut ast::pc::TextNode) -> VisitorResult<()> {
+    fn visit_text_node(&self, node: &mut ast::pc::TextNode) -> VisitorResult<(), Self> {
         if self.mutation.target_expr_id != node.id {
             return VisitorResult::Continue;
         }
@@ -86,7 +86,7 @@ impl MutableVisitor<()> for EditContext<SetStyleMixins> {
 
         return VisitorResult::Return(());
     }
-    fn visit_element(&mut self, element: &mut ast::pc::Element) -> VisitorResult<()> {
+    fn visit_element(&self, element: &mut ast::pc::Element) -> VisitorResult<(), Self> {
         if self.mutation.target_expr_id != element.id {
             return VisitorResult::Continue;
         }
@@ -138,6 +138,13 @@ impl MutableVisitor<()> for EditContext<SetStyleMixins> {
         return VisitorResult::Return(());
     }
 }
+
+/*
+
+impl Fold for GetIdPath {
+    fn visit_element
+}
+*/
 
 fn edit_style(style: &mut ast::pc::Style, ctx: &EditContext<SetStyleMixins>) {
     style.extends = vec![];

@@ -158,7 +158,7 @@ impl FindNodesWithScripts {
 }
 
 impl MutableVisitor<()> for FindNodesWithScripts {
-    fn visit_node(&mut self, node: &mut ast::Node) -> VisitorResult<()> {
+    fn visit_node(&mut self, node: &mut ast::Node) -> VisitorResult<(), FindNodesWithScripts> {
         if node_contains_script(node) {
             self.found.push(node.clone());
         }

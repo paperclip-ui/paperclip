@@ -53,7 +53,7 @@ macro_rules! expressions {
     }
 
     impl visit::MutableVisitable for ExpressionWrapper {
-        fn accept<TRet, TVisitor: visit::MutableVisitor<TRet>>(&mut self, visitor: &mut TVisitor) -> visit::VisitorResult<TRet> {
+        fn accept<TRet, TVisitor: visit::MutableVisitor<TRet>>(&mut self, visitor: &TVisitor) -> visit::VisitorResult<TRet, TVisitor> {
             match self {
                 $(
                     ExpressionWrapper::$name(exp) => {

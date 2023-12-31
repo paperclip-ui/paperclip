@@ -6,7 +6,10 @@ use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast_mutate::{mutation_result, DeleteExpression, ExpressionDeleted};
 
 impl MutableVisitor<()> for EditContext<DeleteExpression> {
-    fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
+    fn visit_document(
+        &self,
+        expr: &mut ast::pc::Document,
+    ) -> VisitorResult<(), EditContext<DeleteExpression>> {
         if let Some((i, _)) = try_remove_child!(expr.body, &self.mutation.expression_id) {
             let prev_index: i32 = (i as i32) - 1;
             let mut results = vec![
@@ -36,7 +39,10 @@ impl MutableVisitor<()> for EditContext<DeleteExpression> {
         }
         VisitorResult::Continue
     }
-    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
+    fn visit_element(
+        &self,
+        expr: &mut ast::pc::Element,
+    ) -> VisitorResult<(), EditContext<DeleteExpression>> {
         if matches!(
             try_remove_child!(expr.body, &self.mutation.expression_id),
             Some(_)
@@ -82,7 +88,10 @@ impl MutableVisitor<()> for EditContext<DeleteExpression> {
         // }
         VisitorResult::Continue
     }
-    fn visit_slot(&mut self, expr: &mut ast::pc::Slot) -> VisitorResult<()> {
+    fn visit_slot(
+        &self,
+        expr: &mut ast::pc::Slot,
+    ) -> VisitorResult<(), EditContext<DeleteExpression>> {
         if matches!(
             try_remove_child!(expr.body, &self.mutation.expression_id),
             Some(_)
@@ -96,7 +105,10 @@ impl MutableVisitor<()> for EditContext<DeleteExpression> {
         }
         VisitorResult::Continue
     }
-    fn visit_insert(&mut self, expr: &mut ast::pc::Insert) -> VisitorResult<()> {
+    fn visit_insert(
+        &self,
+        expr: &mut ast::pc::Insert,
+    ) -> VisitorResult<(), EditContext<DeleteExpression>> {
         if matches!(
             try_remove_child!(expr.body, &self.mutation.expression_id),
             Some(_)
@@ -112,7 +124,10 @@ impl MutableVisitor<()> for EditContext<DeleteExpression> {
 
         VisitorResult::Continue
     }
-    fn visit_text_node(&mut self, expr: &mut ast::pc::TextNode) -> VisitorResult<()> {
+    fn visit_text_node(
+        &self,
+        expr: &mut ast::pc::TextNode,
+    ) -> VisitorResult<(), EditContext<DeleteExpression>> {
         if matches!(
             try_remove_child!(expr.body, &self.mutation.expression_id),
             Some(_)
@@ -127,7 +142,10 @@ impl MutableVisitor<()> for EditContext<DeleteExpression> {
 
         VisitorResult::Continue
     }
-    fn visit_component(&mut self, expr: &mut ast::pc::Component) -> VisitorResult<()> {
+    fn visit_component(
+        &self,
+        expr: &mut ast::pc::Component,
+    ) -> VisitorResult<(), EditContext<DeleteExpression>> {
         let target_id = if let Some(render_node) = expr.get_render_expr() {
             if render_node.node.as_ref().expect("node must exist").get_id()
                 == self.mutation.expression_id

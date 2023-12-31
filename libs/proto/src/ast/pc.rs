@@ -1,7 +1,15 @@
+use std::cell::RefCell;
+
+use anyhow::Result;
+
 use crate::add_inner_wrapper;
+use std::rc::Rc;
 
 use super::{
-    all::ExpressionWrapper,
+    all::{
+        visit::{Visitable, Visitor, VisitorResult},
+        ExpressionWrapper,
+    },
     docco::Comment,
     get_expr::GetExpr,
     graph::{Dependency, Graph},
@@ -116,6 +124,17 @@ impl Document {
     }
 }
 
+struct GetSlots {
+    slots: Rc<RefCell<Vec<Slot>>>,
+}
+
+impl Visitor<()> for GetSlots {
+    fn visit_slot(&self, slot: &Slot) -> VisitorResult<(), Self> {
+        self.slots.borrow_mut().push(slot.clone());
+        VisitorResult::Continue
+    }
+}
+
 /**
  */
 
@@ -153,6 +172,70 @@ impl Component {
         }
 
         None
+    }
+    pub fn get_slot(&self, name: &str) -> Option<Slot> {
+        return self.get_slots().into_iter().find(|slot| slot.name == name);
+    }
+    pub fn get_slots(&self) -> Vec<Slot> {
+        let slots = Rc::new(RefCell::new(vec![]));
+
+        self.accept(&GetSlots {
+            slots: slots.clone(),
+        });
+
+        let slots = slots.borrow();
+        return slots.clone();
+    }
+}
+
+impl Insert {
+    pub fn get_slot<'expr>(&self, graph: &'expr Graph) -> Option<(Slot, &'expr Dependency)> {
+        graph
+            .get_expr(&self.id)
+            .and_then(|(info, _)| {
+                if let Some(instance_id) = info.path.get(info.path.len() - 2) {
+                    graph.get_expr(&instance_id)
+                } else {
+                    None
+                }
+            })
+            .and_then(|(instance_info, dep)| {
+                if let ExpressionWrapper::Element(expr) = instance_info.expr {
+                    if let Some(component) = expr.get_instance_component(graph) {
+                        component
+                            .get_slot(&self.name)
+                            .and_then(|slot| Some((slot, dep)))
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                }
+            })
+    }
+}
+
+impl Slot {
+    pub fn get_component<'expr>(
+        &self,
+        graph: &'expr Graph,
+    ) -> Option<(Component, &'expr Dependency)> {
+        graph
+            .get_expr(&self.id)
+            .and_then(|(info, _)| {
+                if let Some(component_id) = info.path.get(0) {
+                    graph.get_expr(&component_id)
+                } else {
+                    None
+                }
+            })
+            .and_then(|(component_info, dep)| {
+                if let ExpressionWrapper::Component(expr) = component_info.expr {
+                    Some((expr, dep))
+                } else {
+                    None
+                }
+            })
     }
 }
 
@@ -399,10 +482,19 @@ impl TryFrom<ExpressionWrapper> for Element {
 
 impl TryFrom<ExpressionWrapper> for Style {
     type Error = ();
-
     fn try_from(value: ExpressionWrapper) -> Result<Self, Self::Error> {
         match &value {
             ExpressionWrapper::Style(node) => Ok(node.clone()),
+            _ => Err(()),
+        }
+    }
+}
+
+impl TryFrom<ExpressionWrapper> for Slot {
+    type Error = ();
+    fn try_from(value: ExpressionWrapper) -> Result<Self, Self::Error> {
+        match &value {
+            ExpressionWrapper::Slot(node) => Ok(node.clone()),
             _ => Err(()),
         }
     }

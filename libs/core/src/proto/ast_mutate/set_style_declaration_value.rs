@@ -6,7 +6,7 @@ use paperclip_proto::ast::get_expr::GetExpr;
 use paperclip_proto::ast_mutate::SetStyleDeclarationValue;
 
 impl MutableVisitor<()> for EditContext<SetStyleDeclarationValue> {
-    fn visit_atom(&mut self, expr: &mut ast::pc::Atom) -> VisitorResult<()> {
+    fn visit_atom(&self, expr: &mut ast::pc::Atom) -> VisitorResult<(), Self> {
         if expr.id != self.mutation.target_id {
             return VisitorResult::Continue;
         }
@@ -19,7 +19,7 @@ impl MutableVisitor<()> for EditContext<SetStyleDeclarationValue> {
         VisitorResult::Return(())
     }
 
-    fn visit_document(&mut self, doc: &mut ast::pc::Document) -> VisitorResult<()> {
+    fn visit_document(&self, doc: &mut ast::pc::Document) -> VisitorResult<(), Self> {
         if !matches!(GetExpr::get_expr(&self.mutation.target_id, doc), Some(_)) {
             return VisitorResult::Continue;
         }

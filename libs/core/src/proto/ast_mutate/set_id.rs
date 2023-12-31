@@ -1,10 +1,14 @@
+use crate::proto::ast_mutate::utils::{get_unique_document_body_item_name, get_unique_valid_name};
+
 use super::utils::{get_unique_component_name, get_valid_name};
 use convert_case::Case;
+use paperclip_common::get_or_short;
 use paperclip_proto::{
     ast::all::{
         visit::{MutableVisitor, VisitorResult},
         ExpressionWrapper,
     },
+    ast::{graph, pc, shared},
     ast_mutate::{mutation_result, ExpressionUpdated, SetId},
 };
 
@@ -30,7 +34,7 @@ macro_rules! set_name {
 }
 
 impl MutableVisitor<()> for EditContext<SetId> {
-    fn visit_element(&mut self, expr: &mut paperclip_proto::ast::pc::Element) -> VisitorResult<()> {
+    fn visit_element(&self, expr: &mut pc::Element) -> VisitorResult<(), EditContext<SetId>> {
         if set_name!(
             self,
             expr,
@@ -61,30 +65,78 @@ impl MutableVisitor<()> for EditContext<SetId> {
 
         VisitorResult::Continue
     }
-    fn visit_style(&mut self, expr: &mut paperclip_proto::ast::pc::Style) -> VisitorResult<()> {
+    fn visit_reference(
+        &self,
+        reference: &mut shared::Reference,
+    ) -> VisitorResult<(), EditContext<SetId>> {
+        let (expr, expr_dep) =
+            get_or_short!(reference.follow(&self.graph), VisitorResult::Continue);
+
+        if expr.get_id() != self.mutation.expression_id {
+            return VisitorResult::Continue;
+        }
+
+        let new_expr_name = get_unique_document_body_item_name(&self.mutation.value, expr_dep);
+
+        if reference.path.len() == 1 {
+            reference.path = vec![new_expr_name];
+        } else {
+            reference.path = vec![
+                reference.path.get(0).expect("namespace must exist").clone(),
+                new_expr_name,
+            ];
+        }
+
+        VisitorResult::Continue
+    }
+    fn visit_style(&self, expr: &mut pc::Style) -> VisitorResult<(), EditContext<SetId>> {
         set_name!(
             self,
             expr,
-            Some(get_valid_name(&self.mutation.value, Case::Camel))
+            Some(get_unique_valid_name(
+                &self.mutation.value,
+                Case::Camel,
+                &self.get_dependency()
+            ))
         );
         VisitorResult::Continue
     }
-    fn visit_insert(&mut self, _expr: &mut paperclip_proto::ast::pc::Insert) -> VisitorResult<()> {
+    fn visit_insert(&self, expr: &mut pc::Insert) -> VisitorResult<(), Self> {
+        let slot_info = get_or_short!(expr.get_slot(&self.graph), VisitorResult::Continue);
+
+        if slot_info.0.id != self.mutation.expression_id {
+            return VisitorResult::Continue;
+        }
+
+        expr.name = get_unique_slot_name(
+            &self.mutation.value,
+            Case::Camel,
+            &slot_info
+                .0
+                .get_component(&self.graph)
+                .expect("Component must exist")
+                .0,
+        );
+
         // TODO - ensure that this is renamed if assoc slot is
         VisitorResult::Continue
     }
-    fn visit_slot(&mut self, expr: &mut paperclip_proto::ast::pc::Slot) -> VisitorResult<()> {
+    fn visit_slot(&self, expr: &mut pc::Slot) -> VisitorResult<(), EditContext<SetId>> {
         set_name!(
             self,
             expr,
-            get_valid_name(&self.mutation.value, Case::Camel)
+            get_unique_slot_name(
+                &self.mutation.value,
+                Case::Camel,
+                &expr
+                    .get_component(&self.graph)
+                    .expect("Component must exist")
+                    .0
+            )
         );
         VisitorResult::Continue
     }
-    fn visit_component(
-        &mut self,
-        expr: &mut paperclip_proto::ast::pc::Component,
-    ) -> VisitorResult<()> {
+    fn visit_component(&self, expr: &mut pc::Component) -> VisitorResult<(), EditContext<SetId>> {
         if expr.name != self.mutation.value {
             set_name!(
                 self,
@@ -97,10 +149,7 @@ impl MutableVisitor<()> for EditContext<SetId> {
         }
         VisitorResult::Continue
     }
-    fn visit_text_node(
-        &mut self,
-        expr: &mut paperclip_proto::ast::pc::TextNode,
-    ) -> VisitorResult<()> {
+    fn visit_text_node(&self, expr: &mut pc::TextNode) -> VisitorResult<(), EditContext<SetId>> {
         set_name!(
             self,
             expr,
@@ -108,18 +157,15 @@ impl MutableVisitor<()> for EditContext<SetId> {
         );
         VisitorResult::Continue
     }
-    fn visit_atom(&mut self, expr: &mut paperclip_proto::ast::pc::Atom) -> VisitorResult<()> {
+    fn visit_atom(&self, expr: &mut pc::Atom) -> VisitorResult<(), EditContext<SetId>> {
         set_name!(
             self,
             expr,
-            get_valid_name(&self.mutation.value, Case::Camel)
+            get_unique_valid_name(&self.mutation.value, Case::Camel, &self.get_dependency())
         );
         VisitorResult::Continue
     }
-    fn visit_condition(
-        &mut self,
-        expr: &mut paperclip_proto::ast::pc::Condition,
-    ) -> VisitorResult<()> {
+    fn visit_condition(&self, expr: &mut pc::Condition) -> VisitorResult<(), EditContext<SetId>> {
         if expr.id == self.mutation.expression_id {
             expr.property = get_valid_name(&self.mutation.value, Case::Camel);
             self.add_change(
@@ -133,4 +179,15 @@ impl MutableVisitor<()> for EditContext<SetId> {
             VisitorResult::Continue
         }
     }
+}
+
+fn get_unique_slot_name(name: &str, case: Case, component: &pc::Component) -> String {
+    let mut i = 0;
+    let fixed_name = get_valid_name(name, case);
+    let mut new_name = fixed_name.to_string();
+    while matches!(component.get_slot(&new_name), Some(_)) {
+        i = i + 1;
+        new_name = format!("{}{}", fixed_name, i);
+    }
+    new_name
 }

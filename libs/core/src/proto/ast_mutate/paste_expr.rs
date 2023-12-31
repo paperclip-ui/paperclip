@@ -102,19 +102,28 @@ pub fn clone_pasted_expr<Mutation>(
 }
 
 impl MutableVisitor<()> for EditContext<PasteExpression> {
-    fn visit_element(&mut self, expr: &mut paperclip_proto::ast::pc::Element) -> VisitorResult<()> {
+    fn visit_element(
+        &self,
+        expr: &mut paperclip_proto::ast::pc::Element,
+    ) -> VisitorResult<(), EditContext<PasteExpression>> {
         paste_expr!(self, expr)
     }
-    fn visit_slot(&mut self, expr: &mut paperclip_proto::ast::pc::Slot) -> VisitorResult<()> {
+    fn visit_slot(
+        &self,
+        expr: &mut paperclip_proto::ast::pc::Slot,
+    ) -> VisitorResult<(), EditContext<PasteExpression>> {
         paste_expr!(self, expr)
     }
-    fn visit_insert(&mut self, expr: &mut paperclip_proto::ast::pc::Insert) -> VisitorResult<()> {
+    fn visit_insert(
+        &self,
+        expr: &mut paperclip_proto::ast::pc::Insert,
+    ) -> VisitorResult<(), EditContext<PasteExpression>> {
         paste_expr!(self, expr)
     }
     fn visit_document(
-        &mut self,
+        &self,
         expr: &mut paperclip_proto::ast::pc::Document,
-    ) -> VisitorResult<()> {
+    ) -> VisitorResult<(), EditContext<PasteExpression>> {
         let doc = self.get_dependency().document.as_ref().unwrap();
 
         if self.mutation.target_expression_id != expr.id

@@ -14,7 +14,10 @@ use super::{utils::get_named_expr_id, EditContext};
 use crate::replace_child;
 
 impl MutableVisitor<()> for EditContext<ConvertToSlot> {
-    fn visit_render(&mut self, expr: &mut paperclip_proto::ast::pc::Render) -> VisitorResult<()> {
+    fn visit_render(
+        &self,
+        expr: &mut paperclip_proto::ast::pc::Render,
+    ) -> VisitorResult<(), EditContext<ConvertToSlot>> {
         if expr.node.as_ref().unwrap().get_id() != self.mutation.expression_id {
             return VisitorResult::Continue;
         }
@@ -26,21 +29,24 @@ impl MutableVisitor<()> for EditContext<ConvertToSlot> {
 
         VisitorResult::Return(())
     }
-    fn visit_slot(&mut self, expr: &mut paperclip_proto::ast::pc::Slot) -> VisitorResult<()> {
+    fn visit_slot(&self, expr: &mut paperclip_proto::ast::pc::Slot) -> VisitorResult<(), Self> {
         replace_child!(
             &mut expr.body,
             self.mutation.expression_id,
             |child: &Node| { create_slot(self, child.clone(), &self.new_id()) }
         )
     }
-    fn visit_element(&mut self, expr: &mut paperclip_proto::ast::pc::Element) -> VisitorResult<()> {
+    fn visit_element(
+        &self,
+        expr: &mut paperclip_proto::ast::pc::Element,
+    ) -> VisitorResult<(), Self> {
         replace_child!(
             &mut expr.body,
             self.mutation.expression_id,
             |child: &Node| { create_slot(self, child.clone(), &self.new_id()) }
         )
     }
-    fn visit_insert(&mut self, expr: &mut paperclip_proto::ast::pc::Insert) -> VisitorResult<()> {
+    fn visit_insert(&self, expr: &mut paperclip_proto::ast::pc::Insert) -> VisitorResult<(), Self> {
         replace_child!(
             &mut expr.body,
             self.mutation.expression_id,
@@ -49,7 +55,7 @@ impl MutableVisitor<()> for EditContext<ConvertToSlot> {
     }
 }
 
-fn create_slot(ctx: &mut EditContext<ConvertToSlot>, child: Node, id: &str) -> Node {
+fn create_slot(ctx: &EditContext<ConvertToSlot>, child: Node, id: &str) -> Node {
     ctx.add_change(
         mutation_result::Inner::ExpressionInserted(ExpressionInserted { id: id.to_string() })
             .get_outer(),

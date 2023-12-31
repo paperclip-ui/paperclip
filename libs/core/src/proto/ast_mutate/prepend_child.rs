@@ -28,7 +28,10 @@ macro_rules! prepend_child {
 }
 
 impl MutableVisitor<()> for EditContext<PrependChild> {
-    fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
+    fn visit_document(
+        &self,
+        expr: &mut ast::pc::Document,
+    ) -> VisitorResult<(), EditContext<PrependChild>> {
         if expr.get_id() == &self.mutation.parent_id {
             let child = parse_pc(
                 &self.mutation.child_source,
@@ -54,10 +57,16 @@ impl MutableVisitor<()> for EditContext<PrependChild> {
         }
         VisitorResult::Continue
     }
-    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
+    fn visit_element(
+        &self,
+        expr: &mut ast::pc::Element,
+    ) -> VisitorResult<(), EditContext<PrependChild>> {
         prepend_child!(self, expr)
     }
-    fn visit_component(&mut self, expr: &mut ast::pc::Component) -> VisitorResult<()> {
+    fn visit_component(
+        &self,
+        expr: &mut ast::pc::Component,
+    ) -> VisitorResult<(), EditContext<PrependChild>> {
         if expr.get_id() != &self.mutation.parent_id {
             return VisitorResult::Continue;
         }
@@ -80,10 +89,13 @@ impl MutableVisitor<()> for EditContext<PrependChild> {
             .expect("Node must exist")
             .accept(&mut ctx)
     }
-    fn visit_insert(&mut self, expr: &mut ast::pc::Insert) -> VisitorResult<()> {
+    fn visit_insert(
+        &self,
+        expr: &mut ast::pc::Insert,
+    ) -> VisitorResult<(), EditContext<PrependChild>> {
         prepend_child!(self, expr)
     }
-    fn visit_slot(&mut self, expr: &mut ast::pc::Slot) -> VisitorResult<()> {
+    fn visit_slot(&self, expr: &mut ast::pc::Slot) -> VisitorResult<(), EditContext<PrependChild>> {
         prepend_child!(self, expr)
     }
 }

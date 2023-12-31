@@ -6,7 +6,10 @@ use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast_mutate::SetFrameBounds;
 
 impl MutableVisitor<()> for EditContext<SetFrameBounds> {
-    fn visit_component(&mut self, expr: &mut ast::pc::Component) -> VisitorResult<()> {
+    fn visit_component(
+        &self,
+        expr: &mut ast::pc::Component,
+    ) -> VisitorResult<(), EditContext<SetFrameBounds>> {
         if expr.id != self.mutation.frame_id {
             if let Some(render) = expr.get_render_expr() {
                 if render.node.as_ref().expect("Node must exist").get_id() != self.mutation.frame_id
@@ -30,7 +33,10 @@ impl MutableVisitor<()> for EditContext<SetFrameBounds> {
         expr.comment = Some(new_comment);
         VisitorResult::Return(())
     }
-    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
+    fn visit_element(
+        &self,
+        expr: &mut ast::pc::Element,
+    ) -> VisitorResult<(), EditContext<SetFrameBounds>> {
         if expr.id != self.mutation.frame_id {
             return VisitorResult::Continue;
         }
@@ -48,7 +54,10 @@ impl MutableVisitor<()> for EditContext<SetFrameBounds> {
         expr.comment = Some(new_comment);
         VisitorResult::Continue
     }
-    fn visit_text_node(&mut self, expr: &mut ast::pc::TextNode) -> VisitorResult<()> {
+    fn visit_text_node(
+        &self,
+        expr: &mut ast::pc::TextNode,
+    ) -> VisitorResult<(), EditContext<SetFrameBounds>> {
         if expr.id != self.mutation.frame_id {
             return VisitorResult::Continue;
         }

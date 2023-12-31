@@ -37,19 +37,22 @@ macro_rules! wrap_in_element {
 
 impl MutableVisitor<()> for EditContext<WrapInElement> {
     fn visit_document(
-        &mut self,
+        &self,
         expr: &mut paperclip_proto::ast::pc::Document,
-    ) -> VisitorResult<()> {
+    ) -> VisitorResult<(), Self> {
         wrap_in_element!(self, expr.body)
     }
 
-    fn visit_element(&mut self, expr: &mut paperclip_proto::ast::pc::Element) -> VisitorResult<()> {
+    fn visit_element(
+        &self,
+        expr: &mut paperclip_proto::ast::pc::Element,
+    ) -> VisitorResult<(), Self> {
         wrap_in_element!(self, expr.body)
     }
-    fn visit_insert(&mut self, expr: &mut paperclip_proto::ast::pc::Insert) -> VisitorResult<()> {
+    fn visit_insert(&self, expr: &mut paperclip_proto::ast::pc::Insert) -> VisitorResult<(), Self> {
         wrap_in_element!(self, expr.body)
     }
-    fn visit_slot(&mut self, expr: &mut paperclip_proto::ast::pc::Slot) -> VisitorResult<()> {
+    fn visit_slot(&self, expr: &mut paperclip_proto::ast::pc::Slot) -> VisitorResult<(), Self> {
         wrap_in_element!(self, expr.body)
     }
 }

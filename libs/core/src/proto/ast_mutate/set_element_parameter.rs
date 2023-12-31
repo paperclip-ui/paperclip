@@ -45,7 +45,10 @@ fn set_element_attribute(element: &mut Element, ctx: &EditContext<SetElementPara
 }
 
 impl MutableVisitor<()> for EditContext<SetElementParameter> {
-    fn visit_element(&mut self, element: &mut ast::pc::Element) -> VisitorResult<()> {
+    fn visit_element(
+        &self,
+        element: &mut ast::pc::Element,
+    ) -> VisitorResult<(), EditContext<SetElementParameter>> {
         if self.mutation.target_id != element.get_id() {
             return VisitorResult::Continue;
         }
@@ -54,7 +57,10 @@ impl MutableVisitor<()> for EditContext<SetElementParameter> {
         VisitorResult::Return(())
     }
 
-    fn visit_component(&mut self, component: &mut ast::pc::Component) -> VisitorResult<()> {
+    fn visit_component(
+        &self,
+        component: &mut ast::pc::Component,
+    ) -> VisitorResult<(), EditContext<SetElementParameter>> {
         if self.mutation.target_id != component.get_id() {
             return VisitorResult::Continue;
         }

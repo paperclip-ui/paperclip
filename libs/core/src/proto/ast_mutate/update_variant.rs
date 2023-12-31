@@ -19,9 +19,9 @@ use super::{utils::get_valid_name, EditContext};
 
 impl MutableVisitor<()> for EditContext<UpdateVariant> {
     fn visit_component(
-        &mut self,
+        &self,
         expr: &mut paperclip_proto::ast::pc::Component,
-    ) -> VisitorResult<()> {
+    ) -> VisitorResult<(), EditContext<UpdateVariant>> {
         if expr.id != self.mutation.component_id {
             return VisitorResult::Continue;
         }

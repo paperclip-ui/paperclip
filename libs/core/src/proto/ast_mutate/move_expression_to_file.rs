@@ -68,30 +68,6 @@ impl MutableVisitor<()> for EditContext<MoveExpressionToFile> {
             );
         }
 
-        // let ns = get_or_short!(&el.namespace, VisitorResult::Continue);
-        // let el_dep = self
-        //     .get_dependency()
-        //     .resolve_import_from_ns(&ns, &self.graph)
-        //     .expect("Import must exist");
-
-        // let (expr, expr_dep) =
-        //     GetExpr::get_expr_from_graph(&self.mutation.expression_id, &self.graph)
-        //         .expect("Component must exist");
-
-        // if component.name == el.tag_name && el_dep.path == expr_dep.path {
-        //     let new_ns =
-        //         resolve_import_ns(&self.get_dependency(), &self.mutation.new_file_path).namespace;
-        //     el.namespace = Some(new_ns.clone());
-
-        //     self.add_post_mutation(
-        //         mutation::Inner::AddImport(AddImport {
-        //             ns: new_ns.clone(),
-        //             path: self.mutation.new_file_path.clone(),
-        //         })
-        //         .get_outer(),
-        //     );
-        // }
-
         VisitorResult::Continue
     }
 
@@ -206,7 +182,6 @@ impl<'a> MutableVisitor<()> for UpdateExprImports<'a> {
 
                 expr.path = vec![info.namespace.to_string(), name.to_string()];
             }
-            // let info = resolve_import_ns(self.to_dep, &self.from_dep.path);
         }
 
         VisitorResult::Continue

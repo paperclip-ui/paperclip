@@ -1,4 +1,4 @@
-use crate::proto::ast_mutate::utils::{get_unique_document_body_item_name, get_unique_valid_name};
+use crate::proto::ast_mutate::utils::get_unique_valid_name;
 
 use super::utils::{get_unique_component_name, get_valid_name};
 use convert_case::Case;
@@ -49,7 +49,8 @@ impl MutableVisitor<()> for EditContext<SetId> {
                 match &info.0 {
                     ExpressionWrapper::Component(comp) => {
                         if comp.name != self.mutation.value {
-                            expr.tag_name = get_unique_component_name(&self.mutation.value, info.1);
+                            expr.tag_name =
+                                get_unique_component_name(&comp.id, &self.mutation.value, info.1);
                             self.add_change(
                                 mutation_result::Inner::ExpressionUpdated(ExpressionUpdated {
                                     id: expr.id.to_string(),
@@ -93,6 +94,7 @@ impl MutableVisitor<()> for EditContext<SetId> {
             self,
             item,
             get_unique_variant_name(
+                &item.id,
                 &self.mutation.value,
                 &item
                     .get_component(&self.graph)
@@ -107,6 +109,7 @@ impl MutableVisitor<()> for EditContext<SetId> {
             self,
             expr,
             Some(get_unique_valid_name(
+                &expr.id,
                 &self.mutation.value,
                 Case::Camel,
                 &self.get_dependency()
@@ -122,6 +125,7 @@ impl MutableVisitor<()> for EditContext<SetId> {
         }
 
         expr.name = get_unique_slot_name(
+            &expr.id,
             &self.mutation.value,
             &slot_info
                 .0
@@ -138,6 +142,7 @@ impl MutableVisitor<()> for EditContext<SetId> {
             self,
             expr,
             get_unique_slot_name(
+                &expr.id,
                 &self.mutation.value,
                 &expr
                     .get_component(&self.graph)
@@ -153,6 +158,7 @@ impl MutableVisitor<()> for EditContext<SetId> {
                 self,
                 expr,
                 get_unique_component_name(
+                    &expr.id,
                     &self.mutation.value,
                     &self.graph.dependencies.get(&self.path).unwrap()
                 )
@@ -172,7 +178,12 @@ impl MutableVisitor<()> for EditContext<SetId> {
         set_name!(
             self,
             expr,
-            get_unique_valid_name(&self.mutation.value, Case::Camel, &self.get_dependency())
+            get_unique_valid_name(
+                &expr.id,
+                &self.mutation.value,
+                Case::Camel,
+                &self.get_dependency()
+            )
         );
         VisitorResult::Continue
     }
@@ -196,6 +207,7 @@ fn get_unique_name(expr_id: &str, name: &str, graph: &graph::Graph) -> String {
     let (info, dep) = graph.get_expr(expr_id).expect("Must exist");
     match info.expr {
         ExpressionWrapper::Variant(variant) => get_unique_variant_name(
+            expr_id,
             name,
             &variant
                 .get_component(graph)
@@ -204,29 +216,37 @@ fn get_unique_name(expr_id: &str, name: &str, graph: &graph::Graph) -> String {
         ),
 
         ExpressionWrapper::Slot(slot) => get_unique_slot_name(
+            expr_id,
             name,
             &slot.get_component(graph).expect("Component must exist").0,
         ),
-        _ => get_unique_document_body_item_name(name, dep),
+        _ => get_unique_valid_name(expr_id, name, Case::Camel, dep),
     }
 }
 
-fn get_unique_slot_name(name: &str, component: &pc::Component) -> String {
+fn get_unique_slot_name(expr_id: &str, name: &str, component: &pc::Component) -> String {
     let mut i = 0;
     let fixed_name = get_valid_name(name, Case::Camel);
     let mut new_name = fixed_name.to_string();
-    while matches!(component.get_slot(&new_name), Some(_)) {
+    while let Some(expr) = component.get_slot(&new_name) {
+        if expr.id == expr_id {
+            return new_name;
+        }
+
         i = i + 1;
         new_name = format!("{}{}", fixed_name, i);
     }
     new_name
 }
 
-fn get_unique_variant_name(name: &str, component: &pc::Component) -> String {
+fn get_unique_variant_name(expr_id: &str, name: &str, component: &pc::Component) -> String {
     let mut i = 0;
     let fixed_name = get_valid_name(name, Case::Camel);
     let mut new_name = fixed_name.to_string();
-    while matches!(component.get_variant(&new_name), Some(_)) {
+    while let Some(expr) = component.get_variant(&new_name) {
+        if expr.id == expr_id {
+            return new_name;
+        }
         i = i + 1;
         new_name = format!("{}{}", fixed_name, i);
     }

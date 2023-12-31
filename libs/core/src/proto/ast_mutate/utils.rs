@@ -331,12 +331,23 @@ pub fn get_unique_namespace(base: &str, document: &Document) -> String {
     })
 }
 
-pub fn get_unique_component_name(base: &str, dep: &Dependency) -> String {
-    get_unique_document_body_item_name(&get_valid_name(base, Case::Pascal), dep)
+pub fn get_unique_component_name(expr_id: &str, base: &str, dep: &Dependency) -> String {
+    get_unique_document_body_item_name(expr_id, &get_valid_name(base, Case::Pascal), dep)
 }
 
-pub fn get_unique_document_body_item_name(base: &str, dep: &Dependency) -> String {
+pub fn get_unique_document_body_item_name(expr_id: &str, base: &str, dep: &Dependency) -> String {
     let body = &dep.document.as_ref().unwrap().body;
+
+    let mut i = 0;
+    let mut unique_id = base.to_string();
+
+    while let Some(expr) = dep.get_document().get_export(&unique_id) {
+        if expr.get_id() == expr_id {
+            return unique_id;
+        }
+        i += 1;
+        unique_id = format!("{}{}", base, i);
+    }
 
     get_unique_id(base, |id| {
         matches!(
@@ -355,8 +366,8 @@ pub fn get_valid_name(name: &str, case: Case) -> String {
     name.to_case(case)
 }
 
-pub fn get_unique_valid_name(name: &str, case: Case, dep: &Dependency) -> String {
-    get_unique_document_body_item_name(&get_valid_name(name, case), dep)
+pub fn get_unique_valid_name(expr_id: &str, name: &str, case: Case, dep: &Dependency) -> String {
+    get_unique_document_body_item_name(expr_id, &get_valid_name(name, case), dep)
 }
 
 pub fn parse_node(source: &str, checksum: &str) -> Node {

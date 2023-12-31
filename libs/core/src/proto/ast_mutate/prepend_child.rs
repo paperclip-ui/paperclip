@@ -42,6 +42,7 @@ impl MutableVisitor<()> for EditContext<PrependChild> {
             let mut child = child.body.get(0).unwrap().clone();
 
             child.set_name(&get_unique_document_body_item_name(
+                &child.get_id(),
                 &child.get_name().unwrap_or("unnamed".to_string()),
                 &self.get_dependency(),
             ));

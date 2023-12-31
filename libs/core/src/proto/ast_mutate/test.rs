@@ -2373,6 +2373,34 @@ case! {
 }
 
 case! {
+  strange_atom_names_are_corrected,
+  [
+    (
+      "/entry.pc", r#"
+
+      public token abba sans-serif
+      style test {
+        font-family: var(abba)
+      }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-2".to_string(),
+    value: "something else $$0fsd fsjifsdn".to_string()
+  }).get_outer(),
+  [
+      (
+        "/entry.pc", r#"
+        public token somethingElse0FsdFsjifsdn sans-serif
+        style test { font-family: var(somethingElse0FsdFsjifsdn) }
+        "#
+      )
+  ]
+}
+
+case! {
   can_rename_a_variant,
   [
     (
@@ -2410,6 +2438,37 @@ case! {
           }
           render div {
               style variant another1 + another
+          }
+        }
+        "#
+      )
+  ]
+}
+
+case! {
+  element_given_same_name_stays_same,
+  [
+    (
+      "/entry.pc", r#"
+      component Card {
+        variant mobile trigger {
+            ".mobile"
+        }
+      }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-3".to_string(),
+    value: "mobile".to_string()
+  }).get_outer(),
+  [
+      (
+        "/entry.pc", r#"
+        component Card {
+          variant mobile trigger {
+              ".mobile"
           }
         }
         "#

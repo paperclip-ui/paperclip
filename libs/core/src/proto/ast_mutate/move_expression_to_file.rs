@@ -229,5 +229,9 @@ fn get_expr_unique_name(expr: &ExpressionWrapper, to_dep: &Dependency) -> Option
         return None;
     };
 
-    return Some(get_unique_document_body_item_name(&current_name, to_dep));
+    return Some(get_unique_document_body_item_name(
+        expr.get_id(),
+        &current_name,
+        to_dep,
+    ));
 }

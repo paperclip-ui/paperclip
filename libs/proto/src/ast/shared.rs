@@ -27,7 +27,6 @@ impl Reference {
         } else if self.path.len() == 1 {
             let name = self.path.get(0).expect("Name must exist");
             for id in info.path.iter().rev() {
-                println!("ID {}", id);
                 let reference = graph.get_expr(id).expect("Must exist");
 
                 if let ExpressionWrapper::Component(component) = reference.0.expr {

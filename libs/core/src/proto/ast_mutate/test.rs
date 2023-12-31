@@ -4717,6 +4717,259 @@ case! {
 }
 
 case! {
+  style_extends_are_updated,
+  [
+      (
+          "/entry.pc", r#"
+            public style a {
+                color: blue
+            }
+            public style b extends a{
+                color: orange
+            }
+          "#
+      ),
+        (
+            "/a.pc", r#"
+            "#
+          )
+  ],
+
+  mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
+      expression_id: "80f4925f-3".to_string(),
+      new_file_path: "/a.pc".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+        import "a.pc" as module
+
+        public style b extends module.a {
+            color: orange
+        }
+    "#
+  ),
+  (
+      "/a.pc", r#"
+      public style a {
+        color: blue
+      }
+      "#
+    )]
+}
+
+case! {
+  imports_are_includes_of_expr_moved_to_another_file,
+  [
+      (
+          "/entry.pc", r#"
+            import "a.pc" as mod
+
+            public component A {
+                render div {
+                    style extends mod.something
+                }
+            }
+
+            component B {
+                render A
+            }
+          "#
+      ),
+      (
+            "/a.pc", r#"
+            public style something {
+                color: blue
+            }
+            "#
+          ),
+          (
+                "/b.pc", r#"
+                "#
+              )
+  ],
+
+  mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
+      expression_id: "80f4925f-6".to_string(),
+      new_file_path: "/b.pc".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+        import "b.pc" as module
+        import "a.pc" as mod
+        component B {
+            render module.A
+        }
+    "#
+  ),
+  (
+      "/a.pc", r#"
+      public style something {
+        color: blue
+      }
+      "#
+    ),
+
+    (
+        "/b.pc", r#"
+        import "a.pc" as module
+
+        public component A {
+                        render div {
+                            style extends module.something
+                        }
+                    }
+        "#
+      )]
+}
+
+case! {
+  ns_is_used_if_moving_to_doc_with_same_import,
+  [
+      (
+          "/entry.pc", r#"
+            import "a.pc" as theme
+
+            public component A {
+                variant mobile trigger {
+                    theme.mobileTrigger
+                }
+                render div {
+                }
+            }
+          "#
+      ),
+      (
+            "/a.pc", r#"
+                public trigger mobileTrigger {
+                    "@media screen and (max-width: 100px)"
+                }
+            "#
+          ),
+          (
+                "/b.pc", r#"
+                    import "a.pc" as something
+                "#
+              )
+  ],
+
+  mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
+      expression_id: "80f4925f-7".to_string(),
+      new_file_path: "/b.pc".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+        import "a.pc" as theme
+    "#
+  ),
+  (
+      "/a.pc", r#"
+      public trigger mobileTrigger {
+          "@media screen and (max-width: 100px)"
+      }
+      "#
+    ),
+
+    (
+        "/b.pc", r#"
+        import "a.pc" as something
+
+        public component A {
+        variant mobile trigger {
+            something.mobileTrigger
+        }
+        render div
+        }
+        "#
+      )]
+}
+
+case! {
+  other_modules_are_updated_if_style_ref_is_moved,
+  [
+      (
+          "/entry.pc", r#"
+            import "a.pc" as a
+
+            public component A {
+                render div {
+                    slot ab {
+                        div {
+                            style extends a.something
+                        }
+                    }
+                }
+            }
+          "#
+      ),
+      (
+            "/a.pc", r#"
+                public style something {
+                    color: orange
+                }
+            "#
+          ),
+          (
+                "/b.pc", r#"
+                    import "a.pc" as mod
+
+                    style c extends mod.something {
+                        color: black
+                    }
+                "#
+              )
+              ,
+              (
+                  "/c.pc", r#"
+
+                      "#
+                )
+  ],
+
+  mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
+      expression_id: "98523c41-3".to_string(),
+      new_file_path: "/c.pc".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    import "c.pc" as module
+    import "a.pc" as a
+
+    public component A {
+        render div {
+            slot ab {
+                div {
+                    style extends module.something
+                }
+            }
+        }
+    }
+    "#
+  ),
+  (
+      "/a.pc", r#"
+
+      "#
+    ),
+    (
+        "/b.pc", r#"
+
+        import "c.pc" as module
+        import "a.pc" as mod
+
+            style c extends module.something {
+                color: black
+            }
+        "#
+      ),
+
+    (
+        "/c.pc", r#"
+        public style something { color: orange }
+        "#
+      )]
+}
+
+case! {
   can_move_a_text_node_to_a_doc,
   [
       (

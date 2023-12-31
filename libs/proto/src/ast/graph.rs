@@ -4,7 +4,6 @@ use std::collections::{HashMap, HashSet};
 
 pub use super::graph_ext::*;
 use super::{
-    all::ExpressionWrapper,
     get_expr::{GetExpr, GetExprResult},
     pc::{Document, Element},
 };

@@ -12,14 +12,33 @@ pub fn absolutize(pt: PathBuf) -> PathBuf {
 }
 
 #[macro_export]
+#[cfg(not(target_arch = "wasm32"))]
 macro_rules! join_path {
   ($part: expr, $($rest: expr), +) => {{
       use std::path::Path;
-      absolutize(Path::new($part)
+      use path_absolutize::*;
+      Path::new($part)
       $(
           .join($rest)
       )+
-      )
+      .absolutize()
+      .unwrap()
+      .to_str()
+      .unwrap()
+      .to_string()
+  }};
+}
+
+#[macro_export]
+#[cfg(target_arch = "wasm32")]
+macro_rules! join_path {
+  ($part: expr, $($rest: expr), +) => {{
+      use std::path::Path;
+      Path::new($part)
+      $(
+          .join($rest)
+      )+
+
       .to_str()
       .unwrap()
       .to_string()

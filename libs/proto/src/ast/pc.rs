@@ -239,6 +239,30 @@ impl Slot {
     }
 }
 
+impl Variant {
+    pub fn get_component<'expr>(
+        &self,
+        graph: &'expr Graph,
+    ) -> Option<(Component, &'expr Dependency)> {
+        graph
+            .get_expr(&self.id)
+            .and_then(|(info, _)| {
+                if let Some(component_id) = info.path.get(info.path.len() - 2) {
+                    graph.get_expr(&component_id)
+                } else {
+                    None
+                }
+            })
+            .and_then(|(component_info, dep)| {
+                if let ExpressionWrapper::Component(expr) = component_info.expr {
+                    Some((expr, dep))
+                } else {
+                    None
+                }
+            })
+    }
+}
+
 impl Script {
     pub fn get_target(&self) -> Option<String> {
         for param in &self.parameters {

@@ -69,14 +69,13 @@ impl MutableVisitor<()> for EditContext<SetId> {
         &self,
         reference: &mut shared::Reference,
     ) -> VisitorResult<(), EditContext<SetId>> {
-        let (expr, expr_dep) =
-            get_or_short!(reference.follow(&self.graph), VisitorResult::Continue);
+        let (expr, _) = get_or_short!(reference.follow(&self.graph), VisitorResult::Continue);
 
         if expr.get_id() != self.mutation.expression_id {
             return VisitorResult::Continue;
         }
 
-        let new_expr_name = get_unique_document_body_item_name(&self.mutation.value, expr_dep);
+        let new_expr_name = get_unique_name(expr.get_id(), &self.mutation.value, &self.graph);
 
         if reference.path.len() == 1 {
             reference.path = vec![new_expr_name];
@@ -87,6 +86,20 @@ impl MutableVisitor<()> for EditContext<SetId> {
             ];
         }
 
+        VisitorResult::Continue
+    }
+    fn visit_variant(&self, item: &mut pc::Variant) -> VisitorResult<(), Self> {
+        set_name!(
+            self,
+            item,
+            get_unique_variant_name(
+                &self.mutation.value,
+                &item
+                    .get_component(&self.graph)
+                    .expect("Component must exist")
+                    .0
+            )
+        );
         VisitorResult::Continue
     }
     fn visit_style(&self, expr: &mut pc::Style) -> VisitorResult<(), EditContext<SetId>> {
@@ -110,7 +123,6 @@ impl MutableVisitor<()> for EditContext<SetId> {
 
         expr.name = get_unique_slot_name(
             &self.mutation.value,
-            Case::Camel,
             &slot_info
                 .0
                 .get_component(&self.graph)
@@ -127,7 +139,6 @@ impl MutableVisitor<()> for EditContext<SetId> {
             expr,
             get_unique_slot_name(
                 &self.mutation.value,
-                Case::Camel,
                 &expr
                     .get_component(&self.graph)
                     .expect("Component must exist")
@@ -181,11 +192,41 @@ impl MutableVisitor<()> for EditContext<SetId> {
     }
 }
 
-fn get_unique_slot_name(name: &str, case: Case, component: &pc::Component) -> String {
+fn get_unique_name(expr_id: &str, name: &str, graph: &graph::Graph) -> String {
+    let (info, dep) = graph.get_expr(expr_id).expect("Must exist");
+    match info.expr {
+        ExpressionWrapper::Variant(variant) => get_unique_variant_name(
+            name,
+            &variant
+                .get_component(graph)
+                .expect("Component must exist")
+                .0,
+        ),
+
+        ExpressionWrapper::Slot(slot) => get_unique_slot_name(
+            name,
+            &slot.get_component(graph).expect("Component must exist").0,
+        ),
+        _ => get_unique_document_body_item_name(name, dep),
+    }
+}
+
+fn get_unique_slot_name(name: &str, component: &pc::Component) -> String {
     let mut i = 0;
-    let fixed_name = get_valid_name(name, case);
+    let fixed_name = get_valid_name(name, Case::Camel);
     let mut new_name = fixed_name.to_string();
     while matches!(component.get_slot(&new_name), Some(_)) {
+        i = i + 1;
+        new_name = format!("{}{}", fixed_name, i);
+    }
+    new_name
+}
+
+fn get_unique_variant_name(name: &str, component: &pc::Component) -> String {
+    let mut i = 0;
+    let fixed_name = get_valid_name(name, Case::Camel);
+    let mut new_name = fixed_name.to_string();
+    while matches!(component.get_variant(&new_name), Some(_)) {
         i = i + 1;
         new_name = format!("{}{}", fixed_name, i);
     }

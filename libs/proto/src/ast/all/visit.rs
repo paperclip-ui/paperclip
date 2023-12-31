@@ -193,10 +193,14 @@ visitable! {
   }),
   (pc::Style, visit_style, (self, visitor) {
       visit_each!(&self.extends, visitor).or(&mut |other| {
+          visit_each!(&self.variant_combo, other.as_ref().unwrap_or(visitor))
+      }).or(&mut |other| {
           visit_each!(&self.declarations, other.as_ref().unwrap_or(visitor))
       })
   },{
       visit_each!(&mut self.extends, visitor).or(&mut |other| {
+          visit_each!(&mut self.variant_combo, other.as_ref().unwrap_or(visitor))
+      }).or(&mut |other| {
           visit_each!(&mut self.declarations, other.as_ref().unwrap_or(visitor))
       })
   }),

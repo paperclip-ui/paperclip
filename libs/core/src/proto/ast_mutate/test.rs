@@ -2372,6 +2372,51 @@ case! {
   ]
 }
 
+case! {
+  can_rename_a_variant,
+  [
+    (
+      "/entry.pc", r#"
+      component Card {
+        variant mobile trigger {
+            ".mobile"
+        }
+        variant another trigger {
+            ".blarg"
+        }
+        render div {
+            style variant mobile + another {
+
+            }
+        }
+      }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-3".to_string(),
+    value: "another".to_string()
+  }).get_outer(),
+  [
+      (
+        "/entry.pc", r#"
+        component Card {
+          variant another1 trigger {
+              ".mobile"
+          }
+          variant another trigger {
+              ".blarg"
+          }
+          render div {
+              style variant another1 + another
+          }
+        }
+        "#
+      )
+  ]
+}
+
 // slots are given unique names
 xcase! {
   explicit_inserts_are_added_when_children_slot_is_renamed,

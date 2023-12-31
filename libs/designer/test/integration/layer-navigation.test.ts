@@ -4,7 +4,7 @@
 
 import { getTargetExprId } from "@paperclip-ui/designer/src/state";
 import { startDesigner, waitUntilDesignerReady } from "../controls";
-import { ast } from "@paperclip-ui/core/lib/src/proto/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 
 describe.skip(__filename + "#", () => {
   xit(`Can select a simple layer`, async () => {

@@ -10,7 +10,7 @@ import {
 } from "../domains/history/state";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { WritableDraft } from "immer/dist/internal";
-import { ast } from "@paperclip-ui/core/lib/src/proto/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import produce from "immer";
 import { uniq } from "lodash";
 import { Prompt } from "./prompt";

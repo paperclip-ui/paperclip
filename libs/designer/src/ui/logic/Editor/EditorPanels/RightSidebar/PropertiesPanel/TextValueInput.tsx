@@ -3,7 +3,7 @@ import { TextInput } from "@paperclip-ui/designer/src/ui/logic/TextInput";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { getSelectedExpressionInfo } from "@paperclip-ui/designer/src/state";
 import { Field } from "@paperclip-ui/designer/src/ui/input.pc";
-import { ast } from "@paperclip-ui/core/lib/src/proto/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import React from "react";
 
 export const TextValueField = () => {

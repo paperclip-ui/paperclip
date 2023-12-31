@@ -20,7 +20,7 @@ import {
   getGraph,
   getSelectedExpressionInfo,
 } from "@paperclip-ui/designer/src/state/pc";
-import { ast } from "@paperclip-ui/core/lib/src/proto/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import { ExpressionKind } from "../../EditorPanels/RightSidebar/StylePanel/Declarations/DeclarationValue/state";
 
 export const Tools = () => {

@@ -17,7 +17,6 @@ anyhow = "1.0.66"
 futures = "0.3.25"
 crc = "1.8.1"
 async-trait = "0.1.58"
-
 convert_case = "0.6.0"
 regex = "1.7.0"
 paperclip_ast_serialize = { path = "../ast_serialize" }

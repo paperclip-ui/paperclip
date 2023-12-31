@@ -1,8 +1,8 @@
-import { ast } from "@paperclip-ui/core/lib/src/proto/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import { DesignerState, getTargetExprId } from "./core";
 import { Box } from "./geom";
 import { findVirtNode } from "./pc";
-import { virtHTML } from "@paperclip-ui/core/lib/src/proto/virt/html-utils";
+import { virtHTML } from "@paperclip-ui/core/lib/proto/virt/html-utils";
 
 export const getInsertMode = (state: DesignerState) => state.insertMode;
 

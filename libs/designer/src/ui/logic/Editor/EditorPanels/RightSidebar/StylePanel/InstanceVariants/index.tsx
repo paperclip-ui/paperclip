@@ -8,7 +8,7 @@ import {
   getSelectedExprOwnerComponent,
   getSelectedVariantIds,
 } from "@paperclip-ui/designer/src/state";
-import { ast } from "@paperclip-ui/core/lib/src/proto/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import { Element } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import classNames from "classnames";

@@ -5,7 +5,7 @@ import {
   getSelectedExpression,
   getTargetExprId,
 } from "../../state";
-import { ast } from "@paperclip-ui/core/lib/src/proto/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import { isEventTargetTextInput } from "../../state/utils";
 
 export const createClipboardEngine = (

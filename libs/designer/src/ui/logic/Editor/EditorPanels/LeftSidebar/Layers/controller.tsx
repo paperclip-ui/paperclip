@@ -19,7 +19,7 @@ import {
   TextNode,
   Trigger,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
-import { ast } from "@paperclip-ui/core/lib/src/proto/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import cx from "classnames";
 import { Atom } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { Leaf } from "./Leaf";

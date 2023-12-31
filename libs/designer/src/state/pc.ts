@@ -1,4 +1,4 @@
-import { ast } from "@paperclip-ui/core/lib/src/proto/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import {
   BoxNodeInfo,
   DesignerState,
@@ -7,9 +7,9 @@ import {
   getRenderedFilePath,
   getTargetExprId,
 } from "./core";
-import { ComputedStyleMap } from "@paperclip-ui/core/lib/src/proto/ast/serialize";
+import { ComputedStyleMap } from "@paperclip-ui/core/lib/proto/ast/serialize";
 import { WritableDraft } from "immer/dist/internal";
-import { virtHTML } from "@paperclip-ui/core/lib/src/proto/virt/html-utils";
+import { virtHTML } from "@paperclip-ui/core/lib/proto/virt/html-utils";
 
 import * as pc from "@paperclip-ui/proto/lib/generated/ast/pc";
 import {

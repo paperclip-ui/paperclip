@@ -9,7 +9,7 @@ import {
   getAllComponents,
   getStyleableTarget,
 } from "@paperclip-ui/designer/src/state";
-import { ast } from "@paperclip-ui/core/lib/src/proto/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import {
   SuggestionMenu,

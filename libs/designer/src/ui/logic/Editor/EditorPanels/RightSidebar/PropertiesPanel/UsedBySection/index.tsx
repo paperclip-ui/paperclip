@@ -12,7 +12,7 @@ import {
   SidebarPanelHeader,
   SidebarPanelContent,
 } from "@paperclip-ui/designer/src/ui/logic/Sidebar/sidebar.pc";
-import { ast } from "@paperclip-ui/core/lib/src/proto/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import React from "react";
 
 export const UsedBySection = () => {

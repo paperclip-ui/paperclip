@@ -1,5 +1,5 @@
 import { BaseEvent } from "@paperclip-ui/common";
-import { ast } from "@paperclip-ui/core/lib/src/proto/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 
 export type ExpressionPasted = BaseEvent<
   "clipboard/expressionPasted",

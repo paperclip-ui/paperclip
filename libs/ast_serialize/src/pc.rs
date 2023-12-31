@@ -53,6 +53,9 @@ pub fn serialize_import(imp: &ast::Import, context: &mut Context) {
 }
 
 pub fn serialize_trigger(trigger: &ast::Trigger, context: &mut Context) {
+    if trigger.is_public {
+        context.add_buffer("public ");
+    }
     context.add_buffer(format!("trigger {} ", trigger.name).as_str());
     serialize_trigger_body(&trigger.body, context);
     context.add_buffer("\n\n");

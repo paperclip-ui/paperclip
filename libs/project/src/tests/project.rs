@@ -9,8 +9,8 @@ use paperclip_common::fs::{
     FileReader, FileResolver, FileWatchEvent, FileWatchEventKind, FileWatcher,
 };
 use paperclip_common::str_utils::strip_extra_ws;
-use paperclip_config::{CompilerOptions, Config, ConfigContext, ConfigIO};
-use paperclip_proto_ext::graph::{io::IO as GraphIO, test_utils::MockFS};
+use paperclip_core::config::{CompilerOptions, Config, ConfigContext, ConfigIO};
+use paperclip_core::proto::graph::{io::IO as GraphIO, test_utils::MockFS};
 use path_absolutize::*;
 use std::collections::HashMap;
 use std::path::Path;

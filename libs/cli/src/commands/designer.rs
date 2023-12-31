@@ -1,7 +1,7 @@
 use anyhow::Result;
 use clap::Args;
 use paperclip_common::fs::LocalFileReader;
-use paperclip_config::ConfigContext;
+use paperclip_core::config::ConfigContext;
 use paperclip_proto::notice::base::{Notice, NoticeList};
 use paperclip_workspace::server::io::LocalServerIO;
 use paperclip_workspace::server::server::{start, StartOptions};

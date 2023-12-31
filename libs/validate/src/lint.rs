@@ -1,6 +1,6 @@
 use paperclip_ast_serialize::css::serialize_decl_value;
 use paperclip_common::serialize_context::Context as SerializeContext;
-use paperclip_config::LintConfig;
+use paperclip_core::config::LintConfig;
 use paperclip_proto::ast::css;
 use paperclip_proto::ast::css::declaration_value;
 use paperclip_proto::ast::graph_ext as graph;
@@ -164,6 +164,7 @@ fn lint_decl_value(decl_name: &str, decl: &css::DeclarationValue, context: &mut 
         // leaf
         declaration_value::Inner::Number(_)
         | declaration_value::Inner::Reference(_)
+        | declaration_value::Inner::Keyword(_)
         | declaration_value::Inner::Str(_)
         | declaration_value::Inner::HexColor(_)
         | declaration_value::Inner::Measurement(_) => {

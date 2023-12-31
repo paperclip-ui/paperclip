@@ -29,6 +29,9 @@ pub fn serialize_decl_value(value: &ast::DeclarationValue, context: &mut Context
             ast::declaration_value::Inner::Number(number) => {
                 context.add_buffer(format!("{}", number.value).as_str());
             }
+            ast::declaration_value::Inner::Keyword(keyword) => {
+                context.add_buffer(format!("{}", keyword.value).as_str());
+            }
             ast::declaration_value::Inner::FunctionCall(call) => {
                 context.add_buffer(format!("{}(", call.name).as_str());
                 // context.add_buffer(format!("{}", call.name));

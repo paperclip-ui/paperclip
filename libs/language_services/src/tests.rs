@@ -1,8 +1,8 @@
 use crate::{get_document_info, ColorInfo, ColorValue, DocumentInfo, Position};
 use ::futures::executor::block_on;
+use paperclip_core::proto::graph::{load::LoadableGraph, test_utils::MockFS};
 use paperclip_parser::core::parser_context::Options;
 use paperclip_proto::ast::graph_ext::Graph;
-use paperclip_proto_ext::graph::{load::LoadableGraph, test_utils::MockFS};
 use std::collections::HashMap;
 
 macro_rules! test_case {

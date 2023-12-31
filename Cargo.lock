@@ -1490,7 +1490,7 @@ dependencies = [
  "neon",
  "neon-serde3",
  "paperclip_common",
- "paperclip_config",
+ "paperclip_core",
  "paperclip_project",
  "paperclip_proto",
  "paperclip_validate",
@@ -1516,7 +1516,7 @@ dependencies = [
  "futures-util",
  "paperclip_ast_serialize",
  "paperclip_common",
- "paperclip_config",
+ "paperclip_core",
  "paperclip_parser",
  "paperclip_project",
  "paperclip_proto",
@@ -1557,11 +1557,11 @@ dependencies = [
  "crc 1.8.1",
  "futures",
  "paperclip_common",
+ "paperclip_core",
  "paperclip_evaluator",
  "paperclip_infer",
  "paperclip_parser",
  "paperclip_proto",
- "paperclip_proto_ext",
  "pathdiff",
 ]
 
@@ -1572,25 +1572,30 @@ dependencies = [
  "anyhow",
  "futures",
  "paperclip_common",
+ "paperclip_core",
  "paperclip_evaluator",
  "paperclip_infer",
  "paperclip_parser",
  "paperclip_proto",
- "paperclip_proto_ext",
  "pathdiff",
 ]
 
 [[package]]
-name = "paperclip_config"
+name = "paperclip_core"
 version = "0.1.1"
 dependencies = [
+ "Inflector",
  "anyhow",
+ "async-trait",
+ "convert_case",
+ "crc 1.8.1",
  "futures",
+ "paperclip_ast_serialize",
  "paperclip_common",
  "paperclip_parser",
  "paperclip_proto",
- "paperclip_proto_ext",
  "path-absolutize",
+ "regex",
  "serde",
  "serde_json",
  "ts-rs",
@@ -1606,9 +1611,9 @@ dependencies = [
  "futures",
  "mime_guess",
  "paperclip_common",
+ "paperclip_core",
  "paperclip_parser",
  "paperclip_proto",
- "paperclip_proto_ext",
  "regex",
  "serde",
  "serde-wasm-bindgen",
@@ -1625,9 +1630,9 @@ dependencies = [
  "futures",
  "lazy_static",
  "paperclip_common",
+ "paperclip_core",
  "paperclip_parser",
  "paperclip_proto",
- "paperclip_proto_ext",
 ]
 
 [[package]]
@@ -1640,9 +1645,9 @@ dependencies = [
  "futures",
  "paperclip_ast_serialize",
  "paperclip_common",
+ "paperclip_core",
  "paperclip_parser",
  "paperclip_proto",
- "paperclip_proto_ext",
 ]
 
 [[package]]
@@ -1680,11 +1685,10 @@ dependencies = [
  "paperclip_common",
  "paperclip_compiler_react",
  "paperclip_compiler_yew",
- "paperclip_config",
+ "paperclip_core",
  "paperclip_evaluator",
  "paperclip_parser",
  "paperclip_proto",
- "paperclip_proto_ext",
  "paperclip_validate",
  "path-absolutize",
  "serde",
@@ -1708,25 +1712,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "paperclip_proto_ext"
-version = "0.1.1"
-dependencies = [
- "Inflector",
- "anyhow",
- "async-trait",
- "convert_case",
- "crc 1.8.1",
- "futures",
- "paperclip_ast_serialize",
- "paperclip_common",
- "paperclip_parser",
- "paperclip_proto",
- "path-absolutize",
- "pathdiff",
- "regex",
-]
-
-[[package]]
 name = "paperclip_validate"
 version = "0.1.1"
 dependencies = [
@@ -1736,11 +1721,10 @@ dependencies = [
  "itertools 0.12.0",
  "paperclip_ast_serialize",
  "paperclip_common",
- "paperclip_config",
+ "paperclip_core",
  "paperclip_evaluator",
  "paperclip_parser",
  "paperclip_proto",
- "paperclip_proto_ext",
 ]
 
 [[package]]
@@ -1770,13 +1754,12 @@ dependencies = [
  "open",
  "paperclip_ast_serialize",
  "paperclip_common",
- "paperclip_config",
+ "paperclip_core",
  "paperclip_evaluator",
  "paperclip_language_services",
  "paperclip_parser",
  "paperclip_project",
  "paperclip_proto",
- "paperclip_proto_ext",
  "paperclip_validate",
  "parking_lot",
  "path-absolutize",

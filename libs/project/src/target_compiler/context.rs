@@ -1,5 +1,5 @@
 use paperclip_common::{get_or_short, join_path};
-use paperclip_config::{CompilerOptions, ConfigContext};
+use paperclip_core::config::{CompilerOptions, ConfigContext};
 
 #[derive(Clone)]
 pub struct TargetCompilerContext {

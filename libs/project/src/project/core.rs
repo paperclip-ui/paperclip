@@ -2,10 +2,10 @@ use crate::io::ProjectIO;
 pub use crate::project_compiler::CompileOptions;
 use crate::project_compiler::ProjectCompiler;
 use futures_core::stream::Stream;
-use paperclip_config::{Config, ConfigContext};
+use paperclip_core::config::{Config, ConfigContext};
+use paperclip_core::proto::graph::load::LoadableGraph;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::notice::base::NoticeList;
-use paperclip_proto_ext::graph::load::LoadableGraph;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 

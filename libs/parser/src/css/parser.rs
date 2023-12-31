@@ -7,7 +7,10 @@ use crate::core::parser_context::Context;
 use crate::core::parser_context::Options;
 use crate::core::string_scanner::StringScanner;
 use paperclip_common::id::IDGenerator;
+use paperclip_proto::ast::base::U16Position;
 use paperclip_proto::ast::css as ast;
+use paperclip_proto::ast::css::declaration_value;
+use paperclip_proto::ast::css::DeclarationValue;
 use paperclip_proto::ast::shared as shared_ast;
 use std::str;
 
@@ -30,7 +33,7 @@ pub fn parse_style_declaration_with_string_scanner<'src, 'scanner, 'idgenerator>
 ) -> Result<ast::DeclarationValue, ParserError> {
     let mut context = Context::new(source, url, &next_token, id_generator, Options::new(vec![]))?;
     context.skip(is_superfluous)?;
-    Ok(parse_comma_list(&mut context)?.get_outer())
+    parse_comma_list(&mut context)
 }
 
 fn parse_style_declarations(
@@ -62,7 +65,7 @@ fn parse_style_declaration(
     context.next_token()?; // eat :
     context.skip(is_superfluous)?;
 
-    let value = parse_comma_list(context)?.get_outer();
+    let value = parse_comma_list(context)?;
 
     let end = context.curr_u16pos.clone();
 
@@ -74,25 +77,40 @@ fn parse_style_declaration(
     });
 }
 
-fn parse_comma_list(
-    context: &mut ParserContext,
-) -> Result<ast::declaration_value::Inner, err::ParserError> {
+fn parse_comma_list(context: &mut ParserContext) -> Result<DeclarationValue, err::ParserError> {
     let start = context.curr_u16pos.clone();
-    let first = parse_spaced_list(context)?;
+    let first = parse_spaced_list(context)?.get_outer();
     context.skip(is_superfluous)?;
+    parse_comma_list_rest(start, first, context)
+}
+
+fn parse_var_list(context: &mut ParserContext) -> Result<DeclarationValue, err::ParserError> {
+    let start = context.curr_u16pos.clone();
+    let first = parse_reference(context)?;
+    context.skip(is_superfluous)?;
+    parse_comma_list_rest(start, first, context)
+}
+
+fn parse_comma_list_rest(
+    start: U16Position,
+    first: DeclarationValue,
+    context: &mut ParserContext,
+) -> Result<DeclarationValue, err::ParserError> {
     Ok(if matches!(context.curr_token, Some(Token::Comma)) {
-        let mut items = vec![first.get_outer()];
+        let mut items = vec![first];
         while matches!(context.curr_token, Some(Token::Comma)) {
             context.next_token()?;
             context.skip(is_superfluous)?;
             items.push(parse_spaced_list(context)?.get_outer());
         }
+
         let end = context.curr_u16pos.clone();
         ast::declaration_value::Inner::CommaList(ast::CommaList {
             id: context.next_id(),
             range: Some(Range::new(start, end)),
             items,
         })
+        .get_outer()
     } else {
         first
     })
@@ -176,7 +194,7 @@ fn parse_keyword(
     Ok(if context.peek(1) == &Some(Token::ParenOpen) {
         ast::declaration_value::Inner::FunctionCall(Box::new(parse_call(context)?))
     } else {
-        ast::declaration_value::Inner::Reference(parse_reference(context)?)
+        parse_keyword_value(context)?
     })
 }
 
@@ -230,7 +248,12 @@ fn parse_call(context: &mut ParserContext) -> Result<ast::FunctionCall, err::Par
 
     context.next_token()?;
     context.next_token()?; // eat (
-    let arguments = parse_comma_list(context)?.get_outer();
+    let arguments = if name == "var" {
+        parse_var_list(context)
+    } else {
+        parse_comma_list(context)
+    }?;
+
     context.next_token()?;
     let end = context.curr_u16pos.clone();
     Ok(ast::FunctionCall {
@@ -241,7 +264,27 @@ fn parse_call(context: &mut ParserContext) -> Result<ast::FunctionCall, err::Par
     })
 }
 
-fn parse_reference(context: &mut ParserContext) -> Result<shared_ast::Reference, err::ParserError> {
+fn parse_keyword_value(
+    context: &mut ParserContext,
+) -> Result<declaration_value::Inner, err::ParserError> {
+    let value = if let Some(Token::Keyword(word)) = context.curr_token {
+        str::from_utf8(word).unwrap().to_string()
+    } else {
+        return Err(context.new_unexpected_token_error());
+    };
+
+    let start = context.curr_u16pos.clone();
+    context.next_token()?; // eat it
+    let end = context.curr_u16pos.clone();
+
+    Ok(ast::declaration_value::Inner::Keyword(ast::Keyword {
+        id: context.next_id(),
+        range: Some(Range::new(start, end)),
+        value,
+    }))
+}
+
+fn parse_reference(context: &mut ParserContext) -> Result<DeclarationValue, err::ParserError> {
     let start = context.curr_u16pos.clone();
     let mut path: Vec<String> = vec![];
 
@@ -257,11 +300,12 @@ fn parse_reference(context: &mut ParserContext) -> Result<shared_ast::Reference,
         }
     }
     let end = context.curr_u16pos.clone();
-    Ok(shared_ast::Reference {
+    Ok(declaration_value::Inner::Reference(shared_ast::Reference {
         id: context.next_id(),
         range: Some(Range::new(start, end)),
         path,
     })
+    .get_outer())
 }
 
 fn parse_decl_number(

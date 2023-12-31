@@ -1,6 +1,6 @@
 use anyhow::{Error, Result};
 use paperclip_common::get_or_short;
-use paperclip_config::ConfigContext;
+use paperclip_core::config::ConfigContext;
 use paperclip_evaluator::css;
 use paperclip_evaluator::html;
 use paperclip_proto::ast::graph_ext::Graph;

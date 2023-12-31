@@ -4,7 +4,7 @@ use futures_util::pin_mut;
 use futures_util::stream::StreamExt;
 use paperclip_common::fs::LocalFileReader;
 use paperclip_common::log::notice;
-use paperclip_config::{ConfigContext, DEFAULT_CONFIG_NAME};
+use paperclip_core::config::{ConfigContext, DEFAULT_CONFIG_NAME};
 use paperclip_project::{CompileOptions, LocalIO, Project};
 use paperclip_proto::notice::base::NoticeList;
 use paperclip_validate::print::ToPrettyString;

@@ -1,10 +1,10 @@
 use anyhow::Result;
 use paperclip_common::fs::{FileReader, FileWriter, LocalFileReader};
 use paperclip_common::fs::{FileResolver, LocalFileResolver};
-use paperclip_config::ConfigContext;
-use paperclip_config::ConfigIO;
-use paperclip_config::LocalIO as LocalConfigIO;
-use paperclip_proto_ext::graph::io::IO as GraphIO;
+use paperclip_core::config::ConfigContext;
+use paperclip_core::config::ConfigIO;
+use paperclip_core::config::LocalIO as LocalConfigIO;
+use paperclip_core::proto::graph::io::IO as GraphIO;
 
 pub trait ServerIO: GraphIO + ConfigIO + FileWriter<String> + 'static {}
 

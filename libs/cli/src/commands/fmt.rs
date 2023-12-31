@@ -2,7 +2,7 @@ use anyhow::Result;
 use clap::Args;
 use paperclip_ast_serialize::pc::serialize as serialize_pc;
 use paperclip_common::fs::LocalFileReader;
-use paperclip_config::{ConfigContext, DEFAULT_CONFIG_NAME};
+use paperclip_core::config::{ConfigContext, DEFAULT_CONFIG_NAME};
 use paperclip_project::{LocalIO, Project};
 use paperclip_proto::notice::base::NoticeList;
 use std::fs::File;

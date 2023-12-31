@@ -8,15 +8,11 @@ exclude = []
 [lib]
 name = "paperclip_infer"
 
-[features]
-default = ["local"]
-local = ["paperclip_proto/local", "paperclip_parser/local", "paperclip_common/local", "paperclip_proto_ext/local"]
-
 [dependencies]
-paperclip_proto = { path = "../proto", features = []  }
-paperclip_parser = { path = "../parser", features = []  }
-paperclip_common = { path = "../rs_common", features = []  }
-paperclip_proto_ext = { path = "../proto_ext", features = [] }
+paperclip_proto = { path = "../proto" }
+paperclip_parser = { path = "../parser" }
+paperclip_common = { path = "../rs_common"  }
+paperclip_core = { path = "../core" }
 anyhow = "1.0.61"
 futures = "0.3.25"
 lazy_static = "1.4.0"

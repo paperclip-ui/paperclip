@@ -9,19 +9,16 @@ exclude = []
 name = "paperclip_evaluator"
 crate-type = ["cdylib", "rlib"]
 
-[features]
-default = []
-local = ["paperclip_parser/local", "paperclip_common/local", "paperclip_proto/local", "paperclip_proto_ext/local"]
 
 [dependencies]
-paperclip_parser = { path = "../parser", features = [] }
+paperclip_parser = { path = "../parser" }
 serde = { version = "1.0.143", features = ["derive"] }
 serde-wasm-bindgen = "0.4"
-paperclip_common = { path = "../rs_common", features = [] }
-paperclip_proto = { path = "../proto", features = [] }
+paperclip_common = { path = "../rs_common" }
+paperclip_proto = { path = "../proto"}
 wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4.33"
-paperclip_proto_ext = { path = "../proto_ext", features = [] }
+paperclip_core = { path = "../core" }
 mime_guess = "2.0.4"
 anyhow = "1.0.61"
 futures = "0.3.21"

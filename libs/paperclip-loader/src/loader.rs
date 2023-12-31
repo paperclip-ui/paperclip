@@ -1,7 +1,7 @@
 use anyhow::Result;
 use neon::prelude::*;
 use paperclip_common::fs::LocalFileReader;
-use paperclip_config::ConfigContext;
+use paperclip_core::config::ConfigContext;
 use paperclip_project::{LocalIO, Project};
 use paperclip_proto::notice::base::NoticeList;
 use std::collections::HashMap;

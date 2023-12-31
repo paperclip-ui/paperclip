@@ -11,13 +11,16 @@ use super::{
 
 impl<'a> Dependency {
     pub fn resolve_import_from_ns(&'a self, ns: &str, graph: &'a Graph) -> Option<&'a Dependency> {
+        if let Some(resolved_path) = self.get_resolved_import_path(ns) {
+            graph.dependencies.get(resolved_path)
+        } else {
+            None
+        }
+    }
+    pub fn get_resolved_import_path(&'a self, ns: &str) -> Option<&String> {
         let imp = self.get_document().get_import_by_ns(ns);
         if let Some(imp) = imp {
-            if let Some(resolved_path) = self.imports.get(&imp.path) {
-                graph.dependencies.get(resolved_path)
-            } else {
-                None
-            }
+            self.imports.get(&imp.path)
         } else {
             None
         }

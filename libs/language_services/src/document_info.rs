@@ -208,13 +208,9 @@ fn scan_declaration_value(value: &declaration_value::Inner, ctx: &mut Context) {
                 }
             }
         }
-        declaration_value::Inner::Reference(reference) => {
-            if reference.path.len() == 1 {
-                if let Some(part) = reference.path.get(0).as_ref() {
-                    if let Ok(rgba) = format!("{}", part).parse::<Srgb>() {
-                        add_color(rgba, reference.range.as_ref().unwrap(), ctx);
-                    }
-                }
+        declaration_value::Inner::Keyword(keyword) => {
+            if let Ok(rgba) = format!("{}", keyword.value).parse::<Srgb>() {
+                add_color(rgba, keyword.range.as_ref().unwrap(), ctx);
             }
         }
         declaration_value::Inner::HexColor(color) => {

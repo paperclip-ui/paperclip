@@ -1,9 +1,9 @@
-use paperclip_config::{Config, LintConfig};
+use paperclip_core::config::{Config, LintConfig};
+use paperclip_core::proto::graph::{io::IO, LoadableGraph};
 use paperclip_evaluator::css::evaluator as css_evaluator;
 use paperclip_evaluator::html::evaluator as html_evaluator;
 use paperclip_parser::core::parser_context::Options;
 use paperclip_proto::{ast::graph, notice::base::NoticeList};
-use paperclip_proto_ext::graph::{io::IO, LoadableGraph};
 
 use crate::lint::lint_document;
 

@@ -8,8 +8,8 @@ use futures_util::stream::StreamExt;
 use paperclip_common::fs::{
     FileReader, FileResolver, FileWatchEvent, FileWatchEventKind, FileWatcher, LocalFileReader,
 };
-use paperclip_config::{ConfigContext, ConfigIO};
-use paperclip_proto_ext::graph::io::IO as GraphIO;
+use paperclip_core::config::{ConfigContext, ConfigIO};
+use paperclip_core::proto::graph::io::IO as GraphIO;
 use path_absolutize::*;
 use std::path::Path;
 use std::pin::Pin;

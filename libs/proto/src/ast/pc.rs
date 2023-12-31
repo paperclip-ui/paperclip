@@ -76,6 +76,11 @@ impl Document {
                         return Some(atom.into());
                     }
                 }
+                document_body_item::Inner::Trigger(trigger) => {
+                    if trigger.name == name {
+                        return Some(trigger.into());
+                    }
+                }
                 _ => {}
             }
         }

@@ -12,7 +12,7 @@ import {
   redirect,
   renameFilePrompt,
 } from "@paperclip-ui/designer/src/state";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/src/proto/ast/pc-utils";
 import produce from "immer";
 import { expandVirtIds, selectNode } from "../state";
 import { uniq } from "lodash";

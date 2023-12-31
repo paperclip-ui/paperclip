@@ -52,8 +52,8 @@ import {
   Mutation,
   NodePosition,
 } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
-import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { virtHTML } from "@paperclip-ui/core/lib/src/proto/virt/html-utils";
+import { ast } from "@paperclip-ui/core/lib/src/proto/ast/pc-utils";
 import {
   Element as VirtElement,
   TextNode as VirtTextNode,

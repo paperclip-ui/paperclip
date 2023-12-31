@@ -8,7 +8,7 @@ import {
   getSelectedExprOwnerComponent,
   getSelectedVariantIds,
 } from "@paperclip-ui/designer/src/state";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/src/proto/ast/pc-utils";
 import { Element } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import classNames from "classnames";
@@ -62,8 +62,10 @@ export const InstanceVariantsInner = ({ expr }: InstanceVariantsInnerProps) => {
                 name={variant.variant.name}
                 input={
                   <input.RadioInput
-                    container={{ className: classNames({ on }), onClick: () => onVariantToggle(variant.variant.id) }}
-
+                    container={{
+                      className: classNames({ on }),
+                      onClick: () => onVariantToggle(variant.variant.id),
+                    }}
                   />
                 }
               />

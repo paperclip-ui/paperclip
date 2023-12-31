@@ -6,7 +6,7 @@ import {
   getSelectedExpressionInfo,
   getExprBounds,
 } from "@paperclip-ui/designer/src/state";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/src/proto/ast/pc-utils";
 import { VariantsSection } from "./VariantsSection";
 import { TextInput } from "@paperclip-ui/designer/src/ui/logic/TextInput";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
@@ -83,7 +83,7 @@ const IDField = () => {
 };
 
 const getExprName = (expr: ast.InnerExpressionInfo) => {
-  switch(expr.kind) {
+  switch (expr.kind) {
     case ast.ExprKind.Element:
     case ast.ExprKind.TextNode:
     case ast.ExprKind.Atom:
@@ -93,6 +93,5 @@ const getExprName = (expr: ast.InnerExpressionInfo) => {
       return expr.expr.name;
     case ast.ExprKind.Condition:
       return expr.expr.property;
-
   }
-}
+};

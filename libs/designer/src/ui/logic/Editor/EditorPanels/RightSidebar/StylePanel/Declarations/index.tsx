@@ -11,7 +11,7 @@ import { useSelector } from "@paperclip-ui/common";
 import { getSelectedExprStyles } from "@paperclip-ui/designer/src/state/pc";
 import { Declaration } from "./Declaration";
 import { getStyleableTargetId } from "@paperclip-ui/designer/src/state";
-import { ComputedStyleMap } from "@paperclip-ui/proto-ext/lib/ast/serialize";
+import { ComputedStyleMap } from "@paperclip-ui/core/lib/src/proto/ast/serialize";
 
 export const Declarations = () => {
   const { style, targetId } = useDeclarations();

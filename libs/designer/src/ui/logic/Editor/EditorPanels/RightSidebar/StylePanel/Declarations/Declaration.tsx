@@ -7,7 +7,7 @@ import { noop } from "lodash";
 import {
   ComputedStyle,
   serializeDeclaration,
-} from "@paperclip-ui/proto-ext/lib/ast/serialize";
+} from "@paperclip-ui/core/lib/src/proto/ast/serialize";
 import { NameInput } from "./NameInput";
 import {
   getSelectedDeclName,

@@ -50,6 +50,9 @@ export const serializeDeclaration = memoize((expr: DeclarationValue) => {
   if (expr.reference) {
     return `${expr.reference.path.join(".")}`;
   }
+  if (expr.keyword) {
+    return `${expr.keyword}`;
+  }
   if (expr.spacedList) {
     return expr.spacedList.items
       .map((expr) => serializeDeclaration(expr))

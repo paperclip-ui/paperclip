@@ -12,7 +12,7 @@ import {
   SidebarPanelHeader,
   SidebarPanelContent,
 } from "@paperclip-ui/designer/src/ui/logic/Sidebar/sidebar.pc";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/src/proto/ast/pc-utils";
 import React from "react";
 
 export const UsedBySection = () => {
@@ -44,7 +44,7 @@ export const UsedBySection = () => {
                         nodeId: instance.id,
                       })
                     );
-                  }
+                  },
                 }}
               >
                 {instancePath.split("/").pop()}

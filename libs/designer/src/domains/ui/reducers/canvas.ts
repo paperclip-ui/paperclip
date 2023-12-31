@@ -15,7 +15,7 @@ import {
 } from "@paperclip-ui/designer/src/state";
 import { centerTransformZoom } from "@paperclip-ui/designer/src/state/geom";
 import { routes } from "@paperclip-ui/designer/src/state/routes";
-import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
+import { virtHTML } from "@paperclip-ui/core/lib/src/proto/virt/html-utils";
 import { FileChangedKind } from "@paperclip-ui/proto/lib/generated/service/designer";
 import produce from "immer";
 import { clamp, mapValues } from "lodash";

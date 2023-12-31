@@ -12,7 +12,7 @@ import {
   newDirectoryPrompt,
   getActiveRelativeDirectory,
 } from "../../state";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/src/proto/ast/pc-utils";
 import {
   getGlobalShortcuts,
   getKeyboardMenuCommand,

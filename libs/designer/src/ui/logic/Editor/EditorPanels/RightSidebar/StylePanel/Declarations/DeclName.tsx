@@ -3,7 +3,7 @@ import * as styles from "@paperclip-ui/designer/src/ui/styles-panel.pc";
 import {
   ComputedStyle,
   serializeDeclaration,
-} from "@paperclip-ui/proto-ext/lib/ast/serialize";
+} from "@paperclip-ui/core/lib/src/proto/ast/serialize";
 import classNames from "classnames";
 import { Portal } from "@paperclip-ui/designer/src/ui/logic/Portal";
 import { usePositioner } from "@paperclip-ui/designer/src/ui/logic/hooks/usePositioner";
@@ -11,7 +11,7 @@ import { useHistory } from "@paperclip-ui/designer/src/domains/history/react";
 import { routes } from "@paperclip-ui/designer/src/state/routes";
 import { useSelector } from "@paperclip-ui/common";
 import { getGraph } from "@paperclip-ui/designer/src/state";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/src/proto/ast/pc-utils";
 
 export type DeclNameProps = {
   name: string;
@@ -105,18 +105,18 @@ const PreValue = ({ name: declName, value }: PreValueProps) => {
           element,
           mixin,
         }),
-        onMouseDown
+        onMouseDown,
       }}
       name={
         name +
         (value.variantIds.length
           ? " / " +
-          value.variantIds
-            .map((variantId) => {
-              const variant = ast.getExprInfoById(variantId, graph);
-              return variant.expr.name;
-            })
-            .join("+")
+            value.variantIds
+              .map((variantId) => {
+                const variant = ast.getExprInfoById(variantId, graph);
+                return variant.expr.name;
+              })
+              .join("+")
           : "")
       }
       value={serializeDeclaration(value.value)}

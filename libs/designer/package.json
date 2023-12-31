@@ -49,8 +49,8 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
+    "@paperclip-ui/core": "^20.4.5",
     "@paperclip-ui/proto": "^20.4.6",
-    "@paperclip-ui/proto-ext": "^20.4.5",
     "@paperclip-ui/web-renderer": "^20.4.6",
     "@types/color": "^3.0.3",
     "classnames": "^2.3.2",

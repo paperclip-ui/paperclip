@@ -19,11 +19,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "cargo-cp-artifact": "^0.1",
-    "lodash": "^4.17.21"
+    "cargo-cp-artifact": "^0.1"
   },
   "dependencies": {
-    "@paperclip-ui/config": "^20.4.5",
     "loader-utils": "^3.2.0"
   },
   "gitHead": "9cbfaf54c043385661768ba1b1a41de3ec872d1d"

@@ -1,5 +1,5 @@
 const { startLoader, compileFile, getConfigContext } = require("./main.node");
-import { ConfigContext } from "@paperclip-ui/config";
+// import { ConfigContext } from "@paperclip-ui/core/bindings/ConfigContext";
 import * as path from "path";
 import * as fs from "fs";
 
@@ -39,7 +39,7 @@ module.exports = function (source: string) {
     }
   }
 
-  const configContext: ConfigContext = getConfigContext(loader);
+  const configContext: any = getConfigContext(loader);
 
   // inspiration: https://github.com/sveltejs/svelte-loader/blob/master/index.js
   if (configContext.config.globalScripts) {

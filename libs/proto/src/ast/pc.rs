@@ -56,6 +56,9 @@ impl Document {
     pub fn get_styles(&self) -> Vec<&Style> {
         get_body_items!(&self.body, document_body_item::Inner::Style, Style)
     }
+    pub fn get_triggers(&self) -> Vec<&Trigger> {
+        get_body_items!(&self.body, document_body_item::Inner::Trigger, Trigger)
+    }
     pub fn get_import_by_ns(&self, ns: &str) -> Option<&Import> {
         self.get_imports()
             .into_iter()

@@ -1,0 +1,18 @@
+
+public trigger unnamed {
+    ".something"
+    ".something-else"
+}
+
+
+/**
+ * @frame(x: 599, y: 208, width: 359, height: 235)
+*/
+public component Test {
+    render div {
+        style {
+            position: relative
+        }
+    }
+}
+

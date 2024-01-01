@@ -43,6 +43,9 @@ message Mutation {
     // Component
     UpdateVariant update_variant = 12;
 
+    // Trigger
+    UpdateTrigger update_trigger = 28;
+
     // Instance
     AppendInsert append_insert = 17;
 
@@ -110,6 +113,12 @@ message UpdateVariant {
   optional string variant_id = 2;
   string name = 3;
   repeated UpdateVariantTrigger triggers = 4;
+}
+
+
+message UpdateTrigger {
+  string trigger_id = 1;
+  repeated UpdateVariantTrigger triggers = 2;
 }
 
 message UpdateVariantTrigger {

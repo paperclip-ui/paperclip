@@ -20,6 +20,7 @@ mod set_tag_name;
 mod set_text_node_value;
 mod toggle_instance_variant;
 mod update_dependency_path;
+mod update_trigger;
 mod update_variant;
 mod wrap_in_element;
 #[macro_use]
@@ -55,6 +56,7 @@ pub use set_tag_name::*;
 pub use set_text_node_value::*;
 pub use toggle_instance_variant::*;
 pub use update_dependency_path::*;
+pub use update_trigger::*;
 pub use update_variant::*;
 pub use wrap_in_element::*;
 
@@ -136,6 +138,7 @@ mutations! {
   UpdateDependencyPath,
   UpdateVariant,
   MoveExpressionToFile,
+  UpdateTrigger,
   AddImport,
   AppendInsert,
   SetTagName,

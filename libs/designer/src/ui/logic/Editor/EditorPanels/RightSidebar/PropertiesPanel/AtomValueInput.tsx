@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from "@paperclip-ui/common";
-import { TextInput } from "@paperclip-ui/designer/src/ui/logic/TextInput";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { getSelectedExpressionInfo } from "@paperclip-ui/designer/src/state";
 import { Field } from "@paperclip-ui/designer/src/ui/input.pc";

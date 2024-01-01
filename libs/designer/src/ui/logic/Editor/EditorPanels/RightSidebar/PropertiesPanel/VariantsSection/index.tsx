@@ -8,7 +8,7 @@ import {
   getSelectedExpressionInfo,
 } from "@paperclip-ui/designer/src/state/pc";
 import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
-import { EditVariantPopup, SaveOptions } from "./EditVariantPopup";
+import { EditVariantPopup } from "./EditVariantPopup";
 import { Component, Variant } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 
@@ -109,7 +109,7 @@ const useVariantsSection = () => {
     dispatch({ type: "ui/editVariantPopupClosed" });
   };
 
-  const onSaveCurrentVariant = ({ name, triggers }: SaveOptions) => {
+  const onSaveCurrentVariant = ({ name, triggers }: any) => {
     dispatch({
       type: "designer/variantEdited",
       payload: {

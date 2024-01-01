@@ -17,6 +17,7 @@ import { AttributesSection } from "./AttributesSection";
 import { UsedBySection } from "./UsedBySection";
 import { TextValueField } from "./TextValueInput";
 import { AtomValueField } from "./AtomValueInput";
+import { TriggersSection } from "./TriggersSection";
 
 export const PropertiesPanel = () => {
   const expr = useSelector(getSelectedExpressionInfo);
@@ -38,6 +39,7 @@ export const PropertiesPanel = () => {
             <AtomValueField />
             <ExprTagNameField />
             <VariantsSection />
+            <TriggersSection />
           </inputStyles.Fields>
         </sidebarStyles.SidebarPanelContent>
       </sidebarStyles.SidebarSection>
@@ -61,6 +63,7 @@ const IDField = () => {
     expr.kind !== ast.ExprKind.TextNode &&
     expr.kind !== ast.ExprKind.Atom &&
     expr.kind !== ast.ExprKind.Condition &&
+    expr.kind !== ast.ExprKind.Trigger &&
     expr.kind !== ast.ExprKind.Style &&
     expr.kind !== ast.ExprKind.Slot &&
     expr.kind !== ast.ExprKind.Component
@@ -90,6 +93,7 @@ const getExprName = (expr: ast.InnerExpressionInfo) => {
     case ast.ExprKind.Style:
     case ast.ExprKind.Slot:
     case ast.ExprKind.Component:
+    case ast.ExprKind.Trigger:
       return expr.expr.name;
     case ast.ExprKind.Condition:
       return expr.expr.property;

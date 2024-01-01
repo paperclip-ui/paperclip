@@ -49,7 +49,7 @@ const useEditVariantPopup = ({
   triggers,
   onSave,
 }: EditVariantPopupProps) => {
-  const callbacksRef = useRef<Callbacks>();
+  const callbacksRef = useRef<any>();
   callbacksRef.current = { onSave };
 
   const [newName, setName] = useState(name);

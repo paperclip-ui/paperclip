@@ -32,3 +32,4 @@ paperclip-html.tmLanguage.json
 !.yarn/sdks
 !.yarn/versions
 .pnp.*
+lerna-debug.log

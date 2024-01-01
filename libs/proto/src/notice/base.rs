@@ -153,6 +153,9 @@ impl NoticeList {
     pub fn has_some(&self) -> bool {
         !self.items.is_empty()
     }
+    pub fn push(&mut self, notice: Notice) {
+        self.items.push(notice);
+    }
     pub fn into_result<TRet>(self, ret: TRet) -> Result<TRet, NoticeList> {
         if self.contains_error() {
             Err(self)

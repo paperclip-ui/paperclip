@@ -344,10 +344,10 @@ visitable! {
   }, {
     VisitorResult::Continue
   }),
-  (pc::TextNode, visit_text_node, (self, _visitor) {
-    VisitorResult::Continue
+  (pc::TextNode, visit_text_node, (self, visitor) {
+      visit_each!(&self.body, visitor)
   }, {
-    VisitorResult::Continue
+      visit_each!(&mut self.body, visitor)
   }),
   (pc::Atom, visit_atom, (self, visitor) {
       self.value.as_ref().expect("Value must exist").accept(visitor)

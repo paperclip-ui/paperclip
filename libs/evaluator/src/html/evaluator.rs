@@ -23,7 +23,9 @@ pub async fn evaluate<F: FileResolver>(
 ) -> Result<virt::Document, NoticeList> {
     let dependencies = &graph.dependencies;
 
-    let dependency = dependencies.get(path).expect("Dependency must exist");
+    let dependency = dependencies
+        .get(path)
+        .expect("Dependency must exist (html evaluator)");
     let mut context = DocumentContext::new(path, graph, file_resolver, options);
     let document = evaluate_document(
         dependency.document.as_ref().expect("Document must exist"),

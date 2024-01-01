@@ -334,7 +334,7 @@ impl Element {
         if let Some(ns) = &self.namespace {
             owner_dep
                 .resolve_import_from_ns(&ns, graph)
-                .expect("Dependency must exist")
+                .expect("Dependency must exist (get source dep)")
         } else {
             owner_dep
         }

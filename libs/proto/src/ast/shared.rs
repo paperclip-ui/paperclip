@@ -10,7 +10,9 @@ impl Reference {
      * Follows reference to source
      */
     pub fn follow<'a>(&'a self, graph: &'a Graph) -> Option<(ExpressionWrapper, &'a Dependency)> {
-        let (info, ref_dep) = graph.get_expr(&self.id).expect("Dependency must exist");
+        let (info, ref_dep) = graph
+            .get_expr(&self.id)
+            .expect("Dependency must exist (reference follow)");
 
         if self.path.len() == 2 {
             let namespace = self.path.get(0).expect("Namespace must exist");

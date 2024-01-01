@@ -57,11 +57,11 @@ impl<'a, Mutation> EditContext<Mutation> {
             .dependencies
             .get(path)
             .as_ref()
-            .expect("Dependency must exist");
+            .expect("Dependency must exist(EditContext<Mutation>)");
         let checksum = dep
             .document
             .as_ref()
-            .expect("Document must exist")
+            .expect("Document must exist (EditContext<Mutation>)")
             .checksum();
 
         Self {

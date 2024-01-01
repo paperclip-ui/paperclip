@@ -11,8 +11,15 @@ use super::{
 impl<'a> Dependency {
     pub fn resolve_import_from_ns(&'a self, ns: &str, graph: &'a Graph) -> Option<&'a Dependency> {
         if let Some(resolved_path) = self.get_resolved_import_path(ns) {
-            graph.dependencies.get(resolved_path)
+            graph.dependencies.get(resolved_path).or_else(|| {
+                println!(
+                    "Dependency {} does not exist for {}. This is a bug",
+                    resolved_path, self.path
+                );
+                None
+            })
         } else {
+            println!("Namespace {} does not exist in {}", ns, self.path);
             None
         }
     }

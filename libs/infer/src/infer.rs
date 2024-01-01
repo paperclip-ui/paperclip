@@ -16,7 +16,10 @@ impl Inferencer {
         Self {}
     }
     pub fn infer_dependency(&self, path: &str, graph: &Graph) -> Result<types::Map, NoticeList> {
-        let dep = graph.dependencies.get(path).expect("Dependency must exist");
+        let dep = graph
+            .dependencies
+            .get(path)
+            .expect("Dependency must exist (infer)");
         let mut context = InferContext::new(dep, graph, &self);
 
         infer_dep(dep, &mut context)?;
@@ -35,7 +38,10 @@ impl Inferencer {
         path: &str,
         graph: &Graph,
     ) -> Result<types::Component, NoticeList> {
-        let dep = graph.dependencies.get(path).expect("Dependency must exist");
+        let dep = graph
+            .dependencies
+            .get(path)
+            .expect("Dependency must exist (infer component)");
         let mut context = InferContext::new(dep, graph, &self);
 
         infer_component(component, &mut context)?;
@@ -55,7 +61,10 @@ impl Inferencer {
         path: &str,
         graph: &Graph,
     ) -> Result<types::Map, NoticeList> {
-        let dep = graph.dependencies.get(path).expect("Dependency must exist");
+        let dep = graph
+            .dependencies
+            .get(path)
+            .expect("Dependency must exist (infer node)");
 
         let mut context = InferContext::new(dep, graph, &self);
         infer_node(node, &mut context)?;

@@ -30,7 +30,9 @@ pub async fn evaluate<'asset_resolver, FR: FileResolver>(
 ) -> Result<virt::Document, NoticeList> {
     let dependencies = &graph.dependencies;
 
-    let dependency = dependencies.get(path).expect("Dependency must exist");
+    let dependency = dependencies
+        .get(path)
+        .expect("Dependency must exist (css evaluator)");
 
     let mut context = DocumentContext::new(path, graph, file_resolver);
 

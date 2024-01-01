@@ -73,6 +73,7 @@ pub fn clone_pasted_expr<Mutation>(
                 tag_name: graph_component.name.to_string(),
                 parameters: vec![],
                 range: None,
+                tag_name_range: None,
                 body: slot_names
                     .iter()
                     .map(|name| {

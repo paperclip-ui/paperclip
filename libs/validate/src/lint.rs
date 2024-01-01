@@ -8,7 +8,7 @@ use paperclip_proto::{
         all::visit::{Visitable, Visitor, VisitorResult},
         css::{declaration_value, DeclarationValue, FunctionCall, StyleDeclaration},
         graph,
-        pc::Element,
+        pc::{Element, Parameter},
         shared::Reference,
     },
     notice::base::{Level, Notice, NoticeList},
@@ -22,6 +22,7 @@ struct Linter<'a> {
     path: &'a str,
     current_decl_name: Option<String>,
     is_within_var: bool,
+    is_within_param: bool,
     config: &'a LintConfig,
     graph: &'a graph::Graph,
     notices: Rc<RefCell<NoticeList>>,
@@ -51,20 +52,55 @@ impl<'a> Visitor<()> for Linter<'a> {
         }))
     }
     fn visit_reference(&self, reference: &Reference) -> VisitorResult<(), Self> {
+        // skip (onClick: onClick)
+        //                ^^^^^^^
+        if self.is_within_param {
+            return VisitorResult::Continue;
+        }
+
+        // ignore var(--something)
+        if self.is_within_var
+            && reference
+                .path
+                .get(0)
+                .expect("path must be present")
+                .starts_with("--")
+        {
+            return VisitorResult::Continue;
+        }
+
         if reference.follow(self.graph).is_none() {
             self.add_notice(Notice::reference_not_found(&self.path, &reference.range));
         }
 
         VisitorResult::Continue
     }
+    fn visit_parameter(&self, _: &Parameter) -> VisitorResult<(), Self> {
+        VisitorResult::Map(Box::new(Linter {
+            is_within_param: true,
+            ..self.clone()
+        }))
+    }
     fn visit_element(&self, element: &Element) -> VisitorResult<(), Self> {
+        let component = element.get_instance_component(self.graph);
+
+        if component.is_some() {
+            return VisitorResult::Continue;
+        }
+
         if element.namespace.is_some() {
-            self.add_notice(Notice::reference_not_found(&self.path, &element.range));
+            self.add_notice(Notice::reference_not_found(
+                &self.path,
+                &element.tag_name_range,
+            ));
 
         // or check capital
         } else if let Some(first_char) = element.tag_name.chars().nth(0) {
             if first_char.is_uppercase() {
-                self.add_notice(Notice::reference_not_found(&self.path, &element.range));
+                self.add_notice(Notice::reference_not_found(
+                    &self.path,
+                    &element.tag_name_range,
+                ));
             }
         }
 
@@ -158,6 +194,7 @@ pub fn lint_document<'expr>(
         current_decl_name: None,
         graph,
         is_within_var: false,
+        is_within_param: false,
         config,
         notices: Rc::new(RefCell::new(NoticeList::new())),
     };

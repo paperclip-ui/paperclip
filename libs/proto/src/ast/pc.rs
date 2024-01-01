@@ -328,21 +328,18 @@ impl Element {
     pub fn get_inserts(&self) -> Vec<&Insert> {
         get_body_items!(&self.body, node::Inner::Insert, Insert)
     }
-    pub fn get_source_dep<'a>(&'a self, graph: &'a Graph) -> &'a Dependency {
+    pub fn get_source_dep<'a>(&'a self, graph: &'a Graph) -> Option<&'a Dependency> {
         let (_, owner_dep) =
             GetExpr::get_expr_from_graph(&self.id, graph).expect("Expr must exist in graph");
         if let Some(ns) = &self.namespace {
-            owner_dep
-                .resolve_import_from_ns(&ns, graph)
-                .expect("Dependency must exist (get source dep)")
+            owner_dep.resolve_import_from_ns(&ns, graph)
         } else {
-            owner_dep
+            Some(owner_dep)
         }
     }
     pub fn get_instance_component<'a>(&'a self, graph: &'a Graph) -> Option<&'a Component> {
         self.get_source_dep(graph)
-            .get_document()
-            .get_component_by_name(&self.tag_name)
+            .and_then(|dep| dep.get_document().get_component_by_name(&self.tag_name))
     }
 }
 

@@ -118,7 +118,7 @@ add_case! {
         Missing
     "#)],
     NoticeList {
-        items: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(9, 2, 9), U16Position::new(21, 3, 5))))]
+        items: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(9, 2, 9), U16Position::new(16, 2, 16))))]
     }
 }
 
@@ -128,7 +128,7 @@ add_case! {
         core.Missing
     "#)],
     NoticeList {
-        items: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(9, 2, 9), U16Position::new(26, 3, 5))))]
+        items: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(9, 2, 9), U16Position::new(21, 2, 21))))]
     }
 }
 
@@ -139,7 +139,7 @@ add_case! {
     core.Missing
 "#), ("/core.pc", r#""#)],
     NoticeList {
-        items: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(36, 3, 5), U16Position::new(49, 3, 18))))]
+        items: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(36, 3, 5), U16Position::new(48, 3, 17))))]
 
     }
 }
@@ -176,6 +176,20 @@ add_case! {
         }
     "#)],
     NoticeList {
-        items: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(42, 3, 20), U16Position::new(75, 6, 9))))]
+        items: vec![Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(42, 3, 20), U16Position::new(49, 3, 27))))]
+    }
+}
+
+add_case! {
+    element_params_arent_linted,
+    [("/entry.pc", r#"
+        component A {
+            render div(onClick: onClick) {
+
+            }
+        }
+    "#)],
+    NoticeList {
+        items: vec![]
     }
 }

@@ -387,3 +387,58 @@ add_case! {
         items: vec![]
     }
 }
+
+add_case! {
+    css_vars_are_ignored,
+    [("/entry.pc", r#"
+        div {
+            style {
+                color: var(--test)
+            }
+        }
+    "#)],
+    lint_config! {
+        "enforceVars" => [["error", "color"]]
+    },
+    NoticeList {
+        items: vec![]
+    }
+}
+
+add_case! {
+    missing_instances_are_checked,
+    [("/entry.pc", r#"
+        Tag.Tag
+    "#)],
+    lint_config! {
+        "enforceVars" => [["error", "color"]]
+    },
+    NoticeList {
+        items: vec![
+            Notice::reference_not_found("/entry.pc", &Some(Range::new(U16Position::new(9, 2, 9), U16Position::new(16, 2, 16))))
+
+        ]
+    }
+}
+
+add_case! {
+    existing_instances_are_left_alone,
+    [("/entry.pc", r#"
+        import "b.pc" as b
+        b.Tag {
+
+        }
+    "#),
+    ("/b.pc", r#"
+        public component Tag {
+            render div
+        }
+    "#)],
+    lint_config! {
+        "enforceVars" => [["error", "color"]]
+    },
+    NoticeList {
+        items: vec![
+        ]
+    }
+}

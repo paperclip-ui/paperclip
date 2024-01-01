@@ -1,12 +1,15 @@
 import "./test.pc" as imp
 
+public style unnamed {
+    background: blue
+}
+
 /**
- * @frame(x: 561, y: 267, width: 1024, height: 768)
+ * @frame(x: 638, y: 364, width: 399, height: 267)
 */
 div {
-    style {
+    style extends unnamed {
         position: relative
     }
-    div(showPlaceholder: true)
 }
 

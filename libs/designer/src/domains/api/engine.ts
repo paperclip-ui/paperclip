@@ -26,6 +26,7 @@ import {
   TextValueChanged,
   ToolsLayerDrop,
   VariantEdited,
+  TriggersEdited,
 } from "../ui/events";
 
 import {
@@ -52,8 +53,8 @@ import {
   Mutation,
   NodePosition,
 } from "@paperclip-ui/proto/lib/generated/ast_mutate/mod";
-import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { virtHTML } from "@paperclip-ui/core/lib/proto/virt/html-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import {
   Element as VirtElement,
   TextNode as VirtTextNode,
@@ -174,9 +175,6 @@ const createActions = (
       client.OnEvent({}).subscribe({
         next(event) {
           dispatch({ type: "designer-engine/serverEvent", payload: event });
-        },
-        complete() {
-          console.log("syncEvents COMPLETE");
         },
         error: () => {
           dispatch({ type: "designer-engine/apiError" });
@@ -561,6 +559,21 @@ const createEventHandler = (actions: Actions) => {
         },
       ]);
     }
+  };
+
+  const handleTriggerEdited = (
+    { payload: { triggers } }: TriggersEdited,
+    state: DesignerState
+  ) => {
+    const triggerId = getTargetExprId(state);
+    actions.applyChanges([
+      {
+        updateTrigger: {
+          triggerId,
+          triggers,
+        },
+      },
+    ]);
   };
 
   const handleToolsTextEditorChanged = (
@@ -1031,6 +1044,9 @@ const createEventHandler = (actions: Actions) => {
       }
       case "designer/variantEdited": {
         return handleVariantEdited(event, newState);
+      }
+      case "designer/triggersEdited": {
+        return handleTriggerEdited(event, newState);
       }
       case "ui/AddLayerMenuItemClicked": {
         return handleAddLayerMenuItemClick(event, newState);

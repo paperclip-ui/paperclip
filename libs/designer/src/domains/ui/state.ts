@@ -3,7 +3,7 @@ import {
   Element as VirtElement,
   TextNode as VirtText,
 } from "@paperclip-ui/proto/lib/generated/virt/html";
-import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
+import { virtHTML } from "@paperclip-ui/core/lib/proto/virt/html-utils";
 import {
   Canvas,
   DesignerState,
@@ -23,7 +23,7 @@ import {
 } from "./events";
 import { Box, Point, centerTransformZoom } from "../../state/geom";
 import { clamp, uniq } from "lodash";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import { WritableDraft } from "immer/dist/internal";
 import {
   jsonToMetadataValue,

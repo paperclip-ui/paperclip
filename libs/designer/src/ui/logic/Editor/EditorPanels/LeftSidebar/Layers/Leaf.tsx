@@ -7,7 +7,7 @@ import {
   getGraph,
   getTargetExprId,
 } from "@paperclip-ui/designer/src/state";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import cx from "classnames";
 import { useDrag, useDrop } from "react-dnd";

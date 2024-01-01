@@ -47,6 +47,12 @@ export type VariantEdited = BaseEvent<
     triggers: UpdateVariantTrigger[];
   }
 >;
+export type TriggersEdited = BaseEvent<
+  "designer/triggersEdited",
+  {
+    triggers: UpdateVariantTrigger[];
+  }
+>;
 
 export type IDChanged = BaseEvent<"ui/idChanged", { value: string }>;
 
@@ -261,6 +267,7 @@ export type UIEvent =
   | CanvasMouseMoved
   | ToolsLayerDragOver
   | AddLayerMenuItemClicked
+  | TriggersEdited
   | BoundsChanged
   | CanvasResized
   | FileNavigatorContextMenuOpened

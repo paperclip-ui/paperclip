@@ -891,6 +891,8 @@ fn parse_element(
 
     let tag_name: String = tag_parts.last().unwrap().clone();
 
+    let tag_name_end = context.curr_u16pos.clone();
+
     context.skip(is_superfluous)?;
 
     let ref_name = parse_optional_ref_name(context)?;
@@ -922,7 +924,8 @@ fn parse_element(
         comment,
         namespace,
         tag_name,
-        range: Some(base_ast::Range::new(start, end)),
+        range: Some(base_ast::Range::new(start.clone(), end)),
+        tag_name_range: Some(base_ast::Range::new(start, tag_name_end)),
         body,
     })
 }

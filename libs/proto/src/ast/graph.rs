@@ -4,16 +4,22 @@ use std::collections::{HashMap, HashSet};
 
 pub use super::graph_ext::*;
 use super::{
-    all::ExpressionWrapper,
-    get_expr::GetExpr,
+    get_expr::{GetExpr, GetExprResult},
     pc::{Document, Element},
 };
 
 impl<'a> Dependency {
     pub fn resolve_import_from_ns(&'a self, ns: &str, graph: &'a Graph) -> Option<&'a Dependency> {
         if let Some(resolved_path) = self.get_resolved_import_path(ns) {
-            graph.dependencies.get(resolved_path)
+            graph.dependencies.get(resolved_path).or_else(|| {
+                println!(
+                    "Dependency {} does not exist for {}. This is a bug",
+                    resolved_path, self.path
+                );
+                None
+            })
         } else {
+            println!("Namespace {} does not exist in {}", ns, self.path);
             None
         }
     }
@@ -28,7 +34,7 @@ impl<'a> Dependency {
     pub fn get_document(&self) -> &Document {
         self.document.as_ref().expect("Document must exist")
     }
-    pub fn get_expr(&self, id: &str) -> Option<ExpressionWrapper> {
+    pub fn get_expr(&self, id: &str) -> Option<GetExprResult> {
         GetExpr::get_expr(id, &self.document.as_ref().expect("Document must exist"))
     }
     pub fn find_instances_of(&self, component_name: &str, component_source: &str) -> Vec<&Element> {
@@ -76,10 +82,10 @@ impl Graph {
         }
         dependents
     }
-    pub fn get_expr_dep<'a>(&'a self, id: &str) -> Option<(ExpressionWrapper, &'a Dependency)> {
+    pub fn get_expr<'a>(&'a self, id: &str) -> Option<(GetExprResult, &'a Dependency)> {
         for (_path, dep) in &self.dependencies {
-            if let Some(expr) = dep.get_expr(id) {
-                return Some((expr, dep));
+            if let Some(info) = dep.get_expr(id) {
+                return Some((info, dep));
             }
         }
         return None;

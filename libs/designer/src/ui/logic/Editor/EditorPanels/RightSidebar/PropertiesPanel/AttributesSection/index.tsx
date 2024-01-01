@@ -9,7 +9,7 @@ import {
   getAllComponents,
   getStyleableTarget,
 } from "@paperclip-ui/designer/src/state";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import {
   SuggestionMenu,
@@ -118,9 +118,9 @@ const Attribute = ({
     value &&
     String(
       value.num?.value ||
-      value.str?.value ||
-      value.reference?.path.join(".") ||
-      value.bool?.value
+        value.str?.value ||
+        value.reference?.path.join(".") ||
+        value.bool?.value
     );
 
   if (value?.str) {

@@ -138,6 +138,7 @@ export namespace ast {
       item.number ||
       item.reference ||
       item.spacedList ||
+      item.keyword ||
       item.str
     );
   };
@@ -858,7 +859,10 @@ export namespace ast {
     return getExprInfoById(id, graph)?.expr;
   };
 
-  export const getExprInfoById = (id: string, graph: Graph) => {
+  export const getExprInfoById = (
+    id: string,
+    graph: Graph
+  ): InnerExpressionInfo | null => {
     const dep = getOwnerDependency(id, graph);
     return dep && flattenDocument(dep.document)[id];
   };

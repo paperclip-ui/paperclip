@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 
-use super::utils::resolve_import_ns;
+use super::utils::{get_unique_document_body_item_name, resolve_import_ns};
+use std::cell::RefCell;
+use std::rc::Rc;
 
 use super::base::EditContext;
 use paperclip_common::get_or_short;
@@ -16,18 +18,21 @@ use paperclip_proto::{
 };
 
 use paperclip_proto::ast::all::visit::{MutableVisitable, MutableVisitor, VisitorResult};
-use paperclip_proto::ast::get_expr::GetExpr;
 
 impl MutableVisitor<()> for EditContext<MoveExpressionToFile> {
-    fn visit_document(&mut self, doc: &mut Document) -> VisitorResult<()> {
-        let (expr, expr_dep) =
-            GetExpr::get_expr_from_graph(&self.mutation.expression_id, &self.graph)
-                .expect("Dep must exist");
+    fn visit_document(
+        &self,
+        doc: &mut Document,
+    ) -> VisitorResult<(), EditContext<MoveExpressionToFile>> {
+        let (expr, expr_dep) = self
+            .graph
+            .get_expr(&self.mutation.expression_id)
+            .expect("Dep must exist");
 
         if self.mutation.new_file_path == self.get_dependency().path {
-            let new_imports = insert_document_expr(doc, expr, expr_dep, self.get_dependency());
+            let imports = insert_document_expr(doc, expr.expr, expr_dep, self.get_dependency());
 
-            for (ns, path) in new_imports {
+            for (ns, path) in imports {
                 self.add_post_mutation(
                     mutation::Inner::AddImport(AddImport { ns, path }).get_outer(),
                 );
@@ -37,7 +42,7 @@ impl MutableVisitor<()> for EditContext<MoveExpressionToFile> {
             let i = doc
                 .body
                 .iter()
-                .position(|item| item.get_id() == expr.get_id());
+                .position(|item| item.get_id() == expr.expr.get_id());
             if let Some(i) = i {
                 doc.body.remove(i);
             }
@@ -48,7 +53,10 @@ impl MutableVisitor<()> for EditContext<MoveExpressionToFile> {
     }
 
     // check for Instances
-    fn visit_element(&mut self, el: &mut Element) -> VisitorResult<()> {
+    fn visit_element(
+        &self,
+        el: &mut Element,
+    ) -> VisitorResult<(), EditContext<MoveExpressionToFile>> {
         let component = get_or_short!(
             el.get_instance_component(&self.graph),
             VisitorResult::Continue
@@ -68,36 +76,33 @@ impl MutableVisitor<()> for EditContext<MoveExpressionToFile> {
             );
         }
 
-        // let ns = get_or_short!(&el.namespace, VisitorResult::Continue);
-        // let el_dep = self
-        //     .get_dependency()
-        //     .resolve_import_from_ns(&ns, &self.graph)
-        //     .expect("Import must exist");
-
-        // let (expr, expr_dep) =
-        //     GetExpr::get_expr_from_graph(&self.mutation.expression_id, &self.graph)
-        //         .expect("Component must exist");
-
-        // if component.name == el.tag_name && el_dep.path == expr_dep.path {
-        //     let new_ns =
-        //         resolve_import_ns(&self.get_dependency(), &self.mutation.new_file_path).namespace;
-        //     el.namespace = Some(new_ns.clone());
-
-        //     self.add_post_mutation(
-        //         mutation::Inner::AddImport(AddImport {
-        //             ns: new_ns.clone(),
-        //             path: self.mutation.new_file_path.clone(),
-        //         })
-        //         .get_outer(),
-        //     );
-        // }
-
         VisitorResult::Continue
     }
 
-    fn visit_reference(&mut self, reference: &mut Reference) -> VisitorResult<()> {
+    fn visit_reference(
+        &self,
+        reference: &mut Reference,
+    ) -> VisitorResult<(), EditContext<MoveExpressionToFile>> {
         if let Some((expr, _dep)) = reference.follow(&self.graph) {
-            if expr.get_id() == &self.mutation.expression_id {
+            if expr.get_id() != &self.mutation.expression_id {
+                return VisitorResult::Continue;
+            }
+
+            let to_dep = self
+                .graph
+                .dependencies
+                .get(&self.mutation.new_file_path)
+                .expect("Dep must exist!");
+
+            // Expect here otherwise it's a bug. Likely a missing match statement
+            let unique_name = get_expr_unique_name(&expr, to_dep).expect("Name must be present");
+
+            // if moving to THIS file, the want to strip away the namespace
+            if self.mutation.new_file_path == self.get_dependency().path {
+                reference.path = vec![unique_name];
+
+            // otherwise we should update it
+            } else {
                 let ns = resolve_import_ns(self.get_dependency(), &self.mutation.new_file_path)
                     .namespace;
 
@@ -109,11 +114,7 @@ impl MutableVisitor<()> for EditContext<MoveExpressionToFile> {
                     .get_outer(),
                 );
 
-                if reference.path.len() == 2 {
-                    let _ = std::mem::replace(&mut reference.path[0], ns);
-                } else if reference.path.len() == 1 {
-                    reference.path.insert(0, ns);
-                }
+                reference.path = vec![ns, unique_name];
             }
         }
         VisitorResult::Continue
@@ -127,8 +128,16 @@ fn insert_document_expr(
     new_dep: &Dependency,
 ) -> HashMap<String, String> {
     let mut expr = expr;
-    let new_imports = UpdateExprImports::apply(&mut expr, expr_dep, new_dep);
 
+    // if inserting into doc, need to potentially rename in case there is another instance
+    // with the same name.
+    if let Some(unique_name) = get_expr_unique_name(&expr, new_dep) {
+        expr = expr.rename(&unique_name);
+    }
+
+    let imports = UpdateExprImports::apply(&mut expr, expr_dep, new_dep);
+
+    // TODO: should move this to TryFrom instead of having a match here
     let body_item = match expr {
         ExpressionWrapper::Component(expr) => {
             Some(document_body_item::Inner::Component(expr.clone()).get_outer())
@@ -155,7 +164,7 @@ fn insert_document_expr(
         doc.body.push(item);
     }
 
-    new_imports
+    imports
 }
 
 struct UpdateExprImports<'a> {
@@ -163,7 +172,7 @@ struct UpdateExprImports<'a> {
     to_dep: &'a Dependency,
 
     // ns: path
-    new_imports: HashMap<String, String>,
+    imports: Rc<RefCell<HashMap<String, String>>>,
 }
 
 impl<'a> UpdateExprImports<'a> {
@@ -172,26 +181,29 @@ impl<'a> UpdateExprImports<'a> {
         from_dep: &'a Dependency,
         to_dep: &'a Dependency,
     ) -> HashMap<String, String> {
+        let imports = Rc::new(RefCell::new(HashMap::new()));
+
         let mut imp = UpdateExprImports {
             from_dep,
             to_dep,
-            new_imports: HashMap::new(),
+            imports: imports.clone(),
         };
         expr.accept(&mut imp);
-        imp.new_imports
+        let x = imports.borrow().clone();
+        x
     }
 }
 
 impl<'a> MutableVisitor<()> for UpdateExprImports<'a> {
-    fn visit_reference(&mut self, expr: &mut Reference) -> VisitorResult<()> {
+    fn visit_reference(&self, expr: &mut Reference) -> VisitorResult<(), UpdateExprImports<'a>> {
         // Dealing with local instance that needs to be updated
         if expr.path.len() == 1 {
             let info = resolve_import_ns(self.to_dep, &self.from_dep.path);
+
             expr.path.insert(0, info.namespace.to_string());
-            if info.is_new {
-                self.new_imports
-                    .insert(info.namespace.to_string(), self.from_dep.path.to_string());
-            }
+            self.imports
+                .borrow_mut()
+                .insert(info.namespace.to_string(), self.from_dep.path.to_string());
         } else {
             let ns = expr.path.get(0).expect("Namespace must exist");
             let name = expr.path.get(1).expect("Reference name must exist");
@@ -199,16 +211,27 @@ impl<'a> MutableVisitor<()> for UpdateExprImports<'a> {
             let ns_path = self.from_dep.get_resolved_import_path(ns);
             if let Some(ns_path) = ns_path {
                 let info = resolve_import_ns(self.to_dep, ns_path);
-                if info.is_new {
-                    self.new_imports
-                        .insert(info.namespace.to_string(), ns_path.to_string());
-                }
-
+                self.imports
+                    .borrow_mut()
+                    .insert(info.namespace.to_string(), ns_path.to_string());
                 expr.path = vec![info.namespace.to_string(), name.to_string()];
             }
-            // let info = resolve_import_ns(self.to_dep, &self.from_dep.path);
         }
 
         VisitorResult::Continue
     }
+}
+
+fn get_expr_unique_name(expr: &ExpressionWrapper, to_dep: &Dependency) -> Option<String> {
+    let current_name = if let Some(name) = expr.get_name() {
+        name
+    } else {
+        return None;
+    };
+
+    return Some(get_unique_document_body_item_name(
+        expr.get_id(),
+        &current_name,
+        to_dep,
+    ));
 }

@@ -1,4 +1,4 @@
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import {
   BoxNodeInfo,
   DesignerState,
@@ -7,9 +7,9 @@ import {
   getRenderedFilePath,
   getTargetExprId,
 } from "./core";
-import { ComputedStyleMap } from "@paperclip-ui/proto-ext/lib/ast/serialize";
+import { ComputedStyleMap } from "@paperclip-ui/core/lib/proto/ast/serialize";
 import { WritableDraft } from "immer/dist/internal";
-import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
+import { virtHTML } from "@paperclip-ui/core/lib/proto/virt/html-utils";
 
 import * as pc from "@paperclip-ui/proto/lib/generated/ast/pc";
 import {
@@ -38,7 +38,10 @@ import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { memoize } from "@paperclip-ui/common";
 import { pickBy } from "lodash";
 import { hasUncaughtExceptionCaptureCallback } from "process";
-import { jsonToMetadataValue, metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
+import {
+  jsonToMetadataValue,
+  metadataValueMapToJSON,
+} from "@paperclip-ui/proto/lib/virt/html-utils";
 
 export const MIXED_VALUE = "mixed";
 const EMPTY_ARRAY = [];
@@ -632,8 +635,6 @@ export const findVirtNode = (
   return virtHTML.getNodeById(virtId, state.currentDocument.paperclip.html);
 };
 
-
-
 export const getExprBounds = (state: DesignerState): Record<string, number> => {
   const node =
     state.currentDocument &&
@@ -642,9 +643,7 @@ export const getExprBounds = (state: DesignerState): Record<string, number> => {
       | VirtText);
 
   return metadataValueMapToJSON(node?.metadata).frame;
-
 };
-
 
 export const setSelectedNodeBounds = (
   newBounds: Record<string, number>,
@@ -660,16 +659,13 @@ export const setSelectedNodeBounds = (
       newState.currentDocument.paperclip.html
     );
     if (!node.metadata) {
-      node.metadata = {properties: []}
+      node.metadata = { properties: [] };
     }
 
     node.metadata = jsonToMetadataValue({
       ...metadataValueMapToJSON(node.metadata),
-      frame: newBounds
+      frame: newBounds,
     }).obj;
-
-
-
   });
 };
 
@@ -1145,7 +1141,6 @@ export const getCurrentPreviewFrameBoxes = (editor: DesignerState) => {
 export const getPreviewFrameBoxes = (preview: HTMLDocument) => {
   const currentPreview = preview;
   const frameBoxes = getPreviewChildren(currentPreview).map((frame: Node) => {
-
     const metadata = metadataValueMapToJSON(getInnerNode(frame).metadata);
     const box = metadata.frame || DEFAULT_FRAME_BOX;
     if (metadata.visible === false) {

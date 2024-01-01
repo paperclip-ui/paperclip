@@ -14,7 +14,7 @@ import {
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 import { Node } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import { Atom } from "@paperclip-ui/proto/lib/generated/ast/pc";
 
 type FramesProps = {

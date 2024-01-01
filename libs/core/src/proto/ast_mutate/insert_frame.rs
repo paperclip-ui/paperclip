@@ -14,7 +14,10 @@ use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast::all::visit::{MutableVisitable, MutableVisitor, VisitorResult};
 
 impl MutableVisitor<()> for EditContext<InsertFrame> {
-    fn visit_document(&mut self, expr: &mut ast::pc::Document) -> VisitorResult<()> {
+    fn visit_document(
+        &self,
+        expr: &mut ast::pc::Document,
+    ) -> VisitorResult<(), EditContext<InsertFrame>> {
         if expr.id == self.mutation.document_id {
             let bounds = self.mutation.bounds.as_ref().unwrap();
 
@@ -60,7 +63,7 @@ struct NamespaceReplacer {
 }
 
 impl MutableVisitor<()> for NamespaceReplacer {
-    fn visit_element(&mut self, el: &mut ast::pc::Element) -> VisitorResult<()> {
+    fn visit_element(&self, el: &mut ast::pc::Element) -> VisitorResult<(), NamespaceReplacer> {
         if el.namespace.as_ref() == Some(&self.old) {
             el.namespace = self.new.clone();
         }

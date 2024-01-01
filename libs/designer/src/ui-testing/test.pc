@@ -1,13 +1,18 @@
-import "./test-2.pc" as imp
+
+public trigger unnamed {
+    ".something"
+    ".something-else"
+}
+
 
 /**
- * @frame(x: 610, y: 277, width: 441, height: 289)
+ * @frame(x: 599, y: 208, width: 359, height: 235)
 */
-public component A {
+public component Test {
     render div {
         style {
             position: relative
         }
-        text "blarg"
     }
 }
+

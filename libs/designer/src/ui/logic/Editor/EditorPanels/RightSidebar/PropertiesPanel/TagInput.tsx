@@ -11,7 +11,7 @@ import {
 import React, { useCallback, useMemo } from "react";
 import { TAG_NAMES } from "./constants";
 import { TextInput } from "@paperclip-ui/designer/src/ui/logic/TextInput";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import { Element } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";

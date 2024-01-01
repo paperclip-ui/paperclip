@@ -70,19 +70,28 @@ macro_rules! move_child {
 }
 
 impl MutableVisitor<()> for EditContext<MoveNode> {
-    fn visit_element(&mut self, expr: &mut paperclip_proto::ast::pc::Element) -> VisitorResult<()> {
+    fn visit_element(
+        &self,
+        expr: &mut paperclip_proto::ast::pc::Element,
+    ) -> VisitorResult<(), EditContext<MoveNode>> {
         move_child!(self, expr)
     }
-    fn visit_slot(&mut self, expr: &mut paperclip_proto::ast::pc::Slot) -> VisitorResult<()> {
+    fn visit_slot(
+        &self,
+        expr: &mut paperclip_proto::ast::pc::Slot,
+    ) -> VisitorResult<(), EditContext<MoveNode>> {
         move_child!(self, expr)
     }
-    fn visit_insert(&mut self, expr: &mut paperclip_proto::ast::pc::Insert) -> VisitorResult<()> {
+    fn visit_insert(
+        &self,
+        expr: &mut paperclip_proto::ast::pc::Insert,
+    ) -> VisitorResult<(), EditContext<MoveNode>> {
         move_child!(self, expr)
     }
     fn visit_document(
-        &mut self,
+        &self,
         expr: &mut paperclip_proto::ast::pc::Document,
-    ) -> VisitorResult<()> {
+    ) -> VisitorResult<(), EditContext<MoveNode>> {
         let mut doc_co = None;
 
         if let Some((i, _)) = try_remove_child!(expr.body, &self.mutation.node_id) {
@@ -178,9 +187,9 @@ impl MutableVisitor<()> for EditContext<MoveNode> {
     }
 
     fn visit_component(
-        &mut self,
+        &self,
         expr: &mut paperclip_proto::ast::pc::Component,
-    ) -> VisitorResult<()> {
+    ) -> VisitorResult<(), EditContext<MoveNode>> {
         if self.mutation.target_id != expr.id {
             return VisitorResult::Continue;
         }

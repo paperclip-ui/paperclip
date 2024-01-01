@@ -1,10 +1,16 @@
 #### FOCUS
 
 - focus on editing
+
   - ensure that paths are absolute
   - can move components to to other files
     - references are updated
     - update refs OF expression moved
+
+- everything should be editable in the UI
+  - should be able to edit variant triggers
+  - should be able to add scripts
+  - prohibit things from being deleted if references to them
 
 #### Immediate
 

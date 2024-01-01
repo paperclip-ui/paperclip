@@ -20,7 +20,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 impl MutableVisitor<()> for EditContext<SetStyleDeclarations> {
-    fn visit_style(&mut self, expr: &mut ast::pc::Style) -> VisitorResult<()> {
+    fn visit_style(&self, expr: &mut ast::pc::Style) -> VisitorResult<(), Self> {
         if expr.get_id() == self.mutation.expression_id {
             let new_style = parse_style(
                 &mutation_to_style(&self.mutation, self.get_dependency(), &self.config_context),
@@ -31,7 +31,7 @@ impl MutableVisitor<()> for EditContext<SetStyleDeclarations> {
         VisitorResult::Continue
     }
 
-    fn visit_document(&mut self, doc: &mut ast::pc::Document) -> VisitorResult<()> {
+    fn visit_document(&self, doc: &mut ast::pc::Document) -> VisitorResult<(), Self> {
         if !matches!(
             GetExpr::get_expr(&self.mutation.expression_id, doc),
             Some(_)
@@ -55,7 +55,7 @@ impl MutableVisitor<()> for EditContext<SetStyleDeclarations> {
         VisitorResult::Continue
     }
 
-    fn visit_text_node(&mut self, expr: &mut ast::pc::TextNode) -> VisitorResult<()> {
+    fn visit_text_node(&self, expr: &mut ast::pc::TextNode) -> VisitorResult<(), Self> {
         if expr.get_id() != self.mutation.expression_id {
             return VisitorResult::Continue;
         }
@@ -67,7 +67,7 @@ impl MutableVisitor<()> for EditContext<SetStyleDeclarations> {
         );
     }
 
-    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
+    fn visit_element(&self, expr: &mut ast::pc::Element) -> VisitorResult<(), Self> {
         if expr.get_id() == &self.mutation.expression_id {
             return add_child_style(
                 self.changes.clone(),
@@ -79,7 +79,7 @@ impl MutableVisitor<()> for EditContext<SetStyleDeclarations> {
 
         VisitorResult::Continue
     }
-    fn visit_component(&mut self, expr: &mut ast::pc::Component) -> VisitorResult<()> {
+    fn visit_component(&self, expr: &mut ast::pc::Component) -> VisitorResult<(), Self> {
         if expr.get_id() == &self.mutation.expression_id {
             let render_expr: &mut Render = get_or_short!(
                 expr.body.iter_mut().find(|x| {
@@ -114,7 +114,7 @@ fn add_child_style(
     children: &mut Vec<ast::pc::Node>,
     parent_id: &str,
     ctx: &EditContext<SetStyleDeclarations>,
-) -> VisitorResult<()> {
+) -> VisitorResult<(), EditContext<SetStyleDeclarations>> {
     let mutation = &ctx.mutation;
     let dependency = ctx.get_dependency();
 
@@ -129,7 +129,10 @@ fn add_child_style(
         .variant_ids
         .iter()
         .map(|id| match GetExpr::get_expr(id, &mut doc) {
-            Some(ExpressionWrapper::Variant(variant)) => Some(variant.name.to_string()),
+            Some(info) => match info.expr {
+                ExpressionWrapper::Variant(variant) => Some(variant.name.to_string()),
+                _ => None,
+            },
             _ => None,
         })
         .filter_map(|name| name)

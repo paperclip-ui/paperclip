@@ -10,7 +10,7 @@ import {
   simpleParser,
 } from "./utils";
 import { declSuggestionMap, defaultDeclSuggestions } from "./css";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import { DeclarationValueType, inferDeclarationValueType } from "./css-utils";
 import { camelCase } from "lodash";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";

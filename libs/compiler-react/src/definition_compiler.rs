@@ -172,6 +172,7 @@ fn compile_inference(inference: &infer_types::Type, context: &mut Context) {
                 let el: ast::Element =
                     GetExpr::get_expr(&el.id, &context.dependency.get_document())
                         .expect("Element must exist")
+                        .expr
                         .try_into()
                         .expect("Cannot convert into element");
                 let component =

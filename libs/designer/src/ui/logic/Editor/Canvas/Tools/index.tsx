@@ -20,7 +20,7 @@ import {
   getGraph,
   getSelectedExpressionInfo,
 } from "@paperclip-ui/designer/src/state/pc";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import { ExpressionKind } from "../../EditorPanels/RightSidebar/StylePanel/Declarations/DeclarationValue/state";
 
 export const Tools = () => {
@@ -140,7 +140,7 @@ const useTools = () => {
 
   const resizeable =
     selectedExpr &&
-    ast.getParentExprInfo(selectedExpr.expr.id, graph).kind ==
+    ast.getParentExprInfo(selectedExpr.expr.id, graph)?.kind ==
       ast.ExprKind.Document;
 
   const getMousePoint = (event) => {

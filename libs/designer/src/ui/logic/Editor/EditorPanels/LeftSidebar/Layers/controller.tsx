@@ -19,7 +19,7 @@ import {
   TextNode,
   Trigger,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import cx from "classnames";
 import { Atom } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { Leaf } from "./Leaf";
@@ -110,8 +110,8 @@ const ComponentLeaf = memo(
             {render?.node.element
               ? render?.node.element.tagName
               : render?.node.text
-                ? "text"
-                : undefined}
+              ? "text"
+              : undefined}
           </styles.TagType>
         }
         depth={depth}
@@ -158,7 +158,13 @@ const NodeLeaf = memo(({ expr: node, depth, instanceOf }: LeafProps<Node>) => {
     return <SlotLeaf expr={node.slot} depth={depth} instanceOf={instanceOf} />;
   }
   if (node.condition) {
-    return <ConditionLeaf expr={node.condition} depth={depth} instanceOf={instanceOf} />;
+    return (
+      <ConditionLeaf
+        expr={node.condition}
+        depth={depth}
+        instanceOf={instanceOf}
+      />
+    );
   }
   if (node.insert) {
     return (
@@ -324,27 +330,29 @@ const SlotLeaf = memo(({ expr: slot, depth, instanceOf }: LeafProps<Slot>) => {
   );
 });
 
-const ConditionLeaf = memo(({ expr, depth, instanceOf }: LeafProps<Condition>) => {
-  return (
-    <Leaf
-      id={expr.id}
-      className={cx("condition", { container: expr.body.length > 0 })}
-      text={expr.property}
-      depth={depth}
-      instanceOf={instanceOf}
-    >
-      {() =>
-        expr.body.map((child) => (
-          <NodeLeaf
-            key={ast.getInnerExpression(child).id}
-            expr={child}
-            depth={depth + 1}
-          />
-        ))
-      }
-    </Leaf>
-  );
-});
+const ConditionLeaf = memo(
+  ({ expr, depth, instanceOf }: LeafProps<Condition>) => {
+    return (
+      <Leaf
+        id={expr.id}
+        className={cx("condition", { container: expr.body.length > 0 })}
+        text={expr.property}
+        depth={depth}
+        instanceOf={instanceOf}
+      >
+        {() =>
+          expr.body.map((child) => (
+            <NodeLeaf
+              key={ast.getInnerExpression(child).id}
+              expr={child}
+              depth={depth + 1}
+            />
+          ))
+        }
+      </Leaf>
+    );
+  }
+);
 
 const InsertLeaf = memo(
   ({ expr: insert, depth, instanceOf }: LeafProps<Insert>) => {

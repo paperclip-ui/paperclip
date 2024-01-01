@@ -4,10 +4,10 @@ import { Node as VirtNode } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { Transform, Point } from "@paperclip-ui/designer/src/state/geom";
 
 import { DEFAULT_FRAME_BOX, getGraph } from "@paperclip-ui/designer/src/state";
-import { virtHTML } from "@paperclip-ui/proto-ext/lib/virt/html-utils";
+import { virtHTML } from "@paperclip-ui/core/lib/proto/virt/html-utils";
 import { metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
 import { useSelector } from "@paperclip-ui/common";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import {
   TextNode,
   Element,

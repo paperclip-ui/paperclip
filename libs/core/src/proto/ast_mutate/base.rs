@@ -24,10 +24,10 @@ impl<'a, Mutation> EditContext<Mutation> {
     pub fn get_dependency(&self) -> &Dependency {
         self.graph.dependencies.get(&self.path).as_ref().unwrap()
     }
-    pub fn add_change(&mut self, change: MutationResult) {
+    pub fn add_change(&self, change: MutationResult) {
         self.changes.borrow_mut().push(change);
     }
-    pub fn add_changes(&mut self, changes: Vec<MutationResult>) {
+    pub fn add_changes(&self, changes: Vec<MutationResult>) {
         self.changes.borrow_mut().extend(changes);
     }
     pub fn new_id(&self) -> String {
@@ -44,7 +44,7 @@ impl<'a, Mutation> EditContext<Mutation> {
             config_context: self.config_context.clone(),
         }
     }
-    pub fn add_post_mutation(&mut self, mutation: ast_mutate::Mutation) {
+    pub fn add_post_mutation(&self, mutation: ast_mutate::Mutation) {
         self.post_mutations.borrow_mut().push(mutation);
     }
     pub fn new(
@@ -57,11 +57,11 @@ impl<'a, Mutation> EditContext<Mutation> {
             .dependencies
             .get(path)
             .as_ref()
-            .expect("Dependency must exist");
+            .expect("Dependency must exist(EditContext<Mutation>)");
         let checksum = dep
             .document
             .as_ref()
-            .expect("Document must exist")
+            .expect("Document must exist (EditContext<Mutation>)")
             .checksum();
 
         Self {

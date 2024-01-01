@@ -7,9 +7,9 @@ use super::EditContext;
 
 impl MutableVisitor<()> for EditContext<SetTextNodeValue> {
     fn visit_text_node(
-        &mut self,
+        &self,
         expr: &mut paperclip_proto::ast::pc::TextNode,
-    ) -> VisitorResult<()> {
+    ) -> VisitorResult<(), Self> {
         if expr.id != self.mutation.text_node_id {
             return VisitorResult::Continue;
         }

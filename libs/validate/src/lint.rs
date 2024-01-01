@@ -1,199 +1,152 @@
 use paperclip_ast_serialize::css::serialize_decl_value;
+use paperclip_common::get_or_short;
 use paperclip_common::serialize_context::Context as SerializeContext;
 use paperclip_core::config::LintConfig;
-use paperclip_proto::ast::css;
-use paperclip_proto::ast::css::declaration_value;
-use paperclip_proto::ast::graph_ext as graph;
-use paperclip_proto::ast::pc;
-use paperclip_proto::notice::base as notice;
-use paperclip_proto::notice::base::Level;
-use paperclip_proto::notice::base::Notice;
-use paperclip_proto::notice::base::NoticeList;
+
+use paperclip_proto::{
+    ast::{
+        all::visit::{Visitable, Visitor, VisitorResult},
+        css::{declaration_value, DeclarationValue, FunctionCall, StyleDeclaration},
+        graph,
+        pc::{Element, Parameter},
+        shared::Reference,
+    },
+    notice::base::{Level, Notice, NoticeList},
+};
+
 use std::cell::RefCell;
 use std::rc::Rc;
 
-#[derive(Debug, Clone)]
-struct Context<'expr> {
-    path: String,
-    notices: Rc<RefCell<Vec<notice::Notice>>>,
-    config: &'expr LintConfig,
+#[derive(Clone)]
+struct Linter<'a> {
+    path: &'a str,
+    current_decl_name: Option<String>,
     is_within_var: bool,
+    is_within_param: bool,
+    config: &'a LintConfig,
+    graph: &'a graph::Graph,
+    notices: Rc<RefCell<NoticeList>>,
 }
 
-impl<'expr> Context<'expr> {
-    fn within_var(&self) -> Self {
-        let mut clone = self.clone();
-        clone.is_within_var = true;
-        clone
+impl<'a> Linter<'a> {
+    fn add_notice(&self, notice: Notice) {
+        self.notices.borrow_mut().push(notice);
     }
 }
 
-/*
-TODO:
+impl<'a> Visitor<()> for Linter<'a> {
+    fn visit_css_function_call(&self, expr: &Box<FunctionCall>) -> VisitorResult<(), Self> {
+        if expr.name == "var" {
+            VisitorResult::Map(Box::new(Linter {
+                is_within_var: true,
+                ..self.clone()
+            }))
+        } else {
+            VisitorResult::Continue
+        }
+    }
+    fn visit_css_declaration(&self, item: &StyleDeclaration) -> VisitorResult<(), Self> {
+        VisitorResult::Map(Box::new(Linter {
+            current_decl_name: Some(item.name.to_string()),
+            ..self.clone()
+        }))
+    }
+    fn visit_reference(&self, reference: &Reference) -> VisitorResult<(), Self> {
+        // skip (onClick: onClick)
+        //                ^^^^^^^
+        if self.is_within_param {
+            return VisitorResult::Continue;
+        }
 
-- Check to make sure that instance exists
-  - Follow instances and look for component. Should throw NotFound error
-- lint styles
-    - lint url() imports
-    - lint vars
-    - lint style refs
-    - lint variant refs
-    - lint variant refs
-*/
-pub fn lint_document<'expr>(
-    path: &str,
-    graph: &'expr graph::Graph,
-    config: &LintConfig,
-) -> NoticeList {
-    let dep = graph.dependencies.get(path).expect("Dependency must exist");
+        // ignore var(--something)
+        if self.is_within_var
+            && reference
+                .path
+                .get(0)
+                .expect("path must be present")
+                .starts_with("--")
+        {
+            return VisitorResult::Continue;
+        }
 
-    let mut context = Context {
-        notices: Rc::new(RefCell::new(vec![])),
-        path: path.to_string(),
-        config,
-        is_within_var: false,
-    };
+        if reference.follow(self.graph).is_none() {
+            self.add_notice(Notice::reference_not_found(&self.path, &reference.range));
+        }
 
-    lint_document_body_items(
-        dep.document.as_ref().expect("Document must exist"),
-        &mut context,
-    );
+        VisitorResult::Continue
+    }
+    fn visit_parameter(&self, _: &Parameter) -> VisitorResult<(), Self> {
+        VisitorResult::Map(Box::new(Linter {
+            is_within_param: true,
+            ..self.clone()
+        }))
+    }
+    fn visit_element(&self, element: &Element) -> VisitorResult<(), Self> {
+        let component = element.get_instance_component(self.graph);
 
-    return notice::NoticeList {
-        items: context.notices.borrow().clone(),
-    };
-}
+        if component.is_some() {
+            return VisitorResult::Continue;
+        }
 
-fn lint_document_body_items(document: &pc::Document, context: &mut Context) {
-    for item in &document.body {
+        if element.namespace.is_some() {
+            self.add_notice(Notice::reference_not_found(
+                &self.path,
+                &element.tag_name_range,
+            ));
+
+        // or check capital
+        } else if let Some(first_char) = element.tag_name.chars().nth(0) {
+            if first_char.is_uppercase() {
+                self.add_notice(Notice::reference_not_found(
+                    &self.path,
+                    &element.tag_name_range,
+                ));
+            }
+        }
+
+        VisitorResult::Continue
+    }
+    fn visit_css_declaration_value(&self, item: &DeclarationValue) -> VisitorResult<(), Self> {
+        let decl_name = get_or_short!(&self.current_decl_name, VisitorResult::Continue);
+
         match item.get_inner() {
-            pc::document_body_item::Inner::Component(expr) => {
-                lint_component(expr, context);
-            }
-            pc::document_body_item::Inner::Atom(_) => {}
-            pc::document_body_item::Inner::DocComment(_) => {
-                // TODO
-            }
-            pc::document_body_item::Inner::Element(expr) => {
-                lint_element(expr, context);
-            }
-            pc::document_body_item::Inner::Text(expr) => {
-                lint_text_node(expr, context);
-            }
-            pc::document_body_item::Inner::Trigger(_) => {
-                // TODO
-            }
-            pc::document_body_item::Inner::Style(style) => {
-                lint_style(style, context);
-            }
-            pc::document_body_item::Inner::Import(_) => {
-                // TODO
-            }
-        }
-    }
-}
+            declaration_value::Inner::Number(_)
+            | declaration_value::Inner::Reference(_)
+            | declaration_value::Inner::Keyword(_)
+            | declaration_value::Inner::Str(_)
+            | declaration_value::Inner::HexColor(_)
+            | declaration_value::Inner::Measurement(_) => {
+                if !self.is_within_var {
+                    if let Some(level) =
+                        get_lint_notice_level("enforceVars", &decl_name, &self.config)
+                    {
+                        let mut serialize = SerializeContext::new(0);
+                        serialize_decl_value(item, &mut serialize);
 
-fn lint_element(expr: &pc::Element, context: &mut Context) {
-    for child in &expr.body {
-        lint_node(child, context);
-    }
-}
-
-fn lint_text_node(expr: &pc::TextNode, context: &mut Context) {
-    for child in &expr.body {
-        lint_node(child, context);
-    }
-}
-
-fn lint_insert(expr: &pc::Insert, context: &mut Context) {
-    for child in &expr.body {
-        lint_node(child, context);
-    }
-}
-
-fn lint_slot(expr: &pc::Slot, context: &mut Context) {
-    for child in &expr.body {
-        lint_node(child, context);
-    }
-}
-
-fn lint_style(style: &pc::Style, context: &mut Context) {
-    for decl in &style.declarations {
-        lint_style_declaration(decl, context);
-    }
-}
-
-fn lint_style_declaration(decl: &css::StyleDeclaration, context: &mut Context) {
-    lint_decl_value(
-        &decl.name,
-        decl.value.as_ref().expect("Value must exist"),
-        context,
-    );
-}
-
-fn lint_decl_value(decl_name: &str, decl: &css::DeclarationValue, context: &mut Context) {
-    match decl.get_inner() {
-        declaration_value::Inner::Arithmetic(expr) => {
-            lint_decl_value(
-                decl_name,
-                expr.left.as_ref().expect("Left must exist"),
-                context,
-            );
-            lint_decl_value(
-                decl_name,
-                expr.right.as_ref().expect("Left must exist"),
-                context,
-            );
-        }
-        declaration_value::Inner::CommaList(expr) => {
-            for item in &expr.items {
-                lint_decl_value(decl_name, item, context);
-            }
-        }
-        declaration_value::Inner::SpacedList(expr) => {
-            for item in &expr.items {
-                lint_decl_value(decl_name, item, context);
-            }
-        }
-        declaration_value::Inner::FunctionCall(expr) => {
-            for item in &expr.arguments {
-                lint_decl_value(decl_name, item, &mut context.within_var());
-            }
-        }
-
-        // leaf
-        declaration_value::Inner::Number(_)
-        | declaration_value::Inner::Reference(_)
-        | declaration_value::Inner::Keyword(_)
-        | declaration_value::Inner::Str(_)
-        | declaration_value::Inner::HexColor(_)
-        | declaration_value::Inner::Measurement(_) => {
-            if !context.is_within_var {
-                if let Some(level) =
-                    get_lint_notice_level("enforceVars", decl_name, &context.config)
-                {
-                    let mut serialize = SerializeContext::new(0);
-                    serialize_decl_value(decl, &mut serialize);
-
-                    if !matches!(
-                        serialize.buffer.as_str(),
-                        "0" | "0px"
-                            | "currentColor"
-                            | "initial"
-                            | "inherit"
-                            | "unset"
-                            | "revert"
-                            | "auto"
-                    ) {
-                        context.notices.borrow_mut().push(Notice::lint_magic_value(
-                            level,
-                            &context.path,
-                            &decl.get_range(),
-                        ))
+                        if !matches!(
+                            serialize.buffer.as_str(),
+                            "0" | "0px"
+                                | "currentColor"
+                                | "initial"
+                                | "inherit"
+                                | "unset"
+                                | "revert"
+                                | "auto"
+                        ) {
+                            self.notices.borrow_mut().push(Notice::lint_magic_value(
+                                level,
+                                &self.path,
+                                &item.get_range(),
+                            ))
+                        }
                     }
                 }
             }
+
+            _ => {}
         }
+
+        VisitorResult::Continue
     }
 }
 
@@ -229,60 +182,29 @@ fn get_lint_notice_level(lint_name: &str, expr_name: &str, config: &LintConfig) 
     None
 }
 
-fn lint_component(component: &pc::Component, context: &mut Context) {
-    for item in &component.body {
-        match item.get_inner() {
-            pc::component_body_item::Inner::Script(_) => {
-                // TODO
-            }
-            pc::component_body_item::Inner::Render(expr) => {
-                lint_render(expr, context);
-            }
-            pc::component_body_item::Inner::Variant(_) => {
-                // TODO
-            }
-        }
-    }
-}
+pub fn lint_document<'expr>(
+    path: &str,
+    graph: &'expr graph::Graph,
+    config: &LintConfig,
+) -> NoticeList {
+    let dep = graph.dependencies.get(path).expect("Dependency must exist");
 
-fn lint_render(expr: &pc::Render, context: &mut Context) {
-    lint_node(expr.node.as_ref().expect("Node must exist"), context);
-}
+    let linter = Linter {
+        path,
+        current_decl_name: None,
+        graph,
+        is_within_var: false,
+        is_within_param: false,
+        config,
+        notices: Rc::new(RefCell::new(NoticeList::new())),
+    };
 
-fn lint_condition(expr: &pc::Condition, context: &mut Context) {
-    for item in &expr.body {
-        lint_node(item, context);
-    }
-}
+    dep.document
+        .as_ref()
+        .expect("Document must exist")
+        .accept(&linter);
 
-fn lint_node(expr: &pc::Node, context: &mut Context) {
-    match expr.get_inner() {
-        pc::node::Inner::Condition(expr) => {
-            lint_condition(expr, context);
-        }
-        pc::node::Inner::Element(expr) => {
-            lint_element(expr, context);
-        }
-        pc::node::Inner::Text(expr) => {
-            lint_text_node(expr, context);
-        }
-        pc::node::Inner::Insert(expr) => {
-            lint_insert(expr, context);
-        }
-        pc::node::Inner::Repeat(_) => {
-            // TODO
-        }
-        pc::node::Inner::Script(_) => {
-            // TODO
-        }
-        pc::node::Inner::Style(expr) => {
-            lint_style(expr, context);
-        }
-        pc::node::Inner::Slot(expr) => {
-            lint_slot(expr, context);
-        }
-        pc::node::Inner::Override(_) | pc::node::Inner::Switch(_) => {
-            panic!("Not implemented yet");
-        }
-    }
+    let notices = linter.notices.borrow();
+
+    notices.clone()
 }

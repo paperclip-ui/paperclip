@@ -78,7 +78,7 @@ async fn handle_modules_evaluated2<IO: ServerIO>(
                 .graph
                 .dependencies
                 .get(&path)
-                .expect("Dependency must exist!");
+                .expect("Dependency must exist (screenshot engine)");
 
             let bundle = state.bundle_evaluated_module(&path).unwrap();
 

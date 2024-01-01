@@ -1,25 +1,25 @@
 use crate::config::ConfigContext;
 
 use super::base::EditContext;
+use paperclip_common::path::absolutize;
 use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast::css::{declaration_value, FunctionCall};
 use paperclip_proto::ast::graph::Dependency;
 use paperclip_proto::ast::pc::{simple_expression, Element, Import};
 use paperclip_proto::ast_mutate::UpdateDependencyPath;
-use path_absolutize::Absolutize;
 use std::path::Path;
 
 // TODO
 // use path_absolutize::*;
 
 impl MutableVisitor<()> for EditContext<UpdateDependencyPath> {
-    fn visit_dependency(&mut self, dep: &mut Dependency) -> VisitorResult<()> {
+    fn visit_dependency(&self, dep: &mut Dependency) -> VisitorResult<(), Self> {
         if dep.path == self.mutation.old_path {
             dep.path = self.mutation.new_path.clone();
         }
         VisitorResult::Continue
     }
-    fn visit_element(&mut self, el: &mut Element) -> VisitorResult<()> {
+    fn visit_element(&self, el: &mut Element) -> VisitorResult<(), Self> {
         for param in &mut el.parameters {
             if param.name == "src" {
                 if let simple_expression::Inner::Str(value) = param
@@ -43,7 +43,7 @@ impl MutableVisitor<()> for EditContext<UpdateDependencyPath> {
 
         VisitorResult::Continue
     }
-    fn visit_css_function_call(&mut self, expr: &mut Box<FunctionCall>) -> VisitorResult<()> {
+    fn visit_css_function_call(&self, expr: &mut Box<FunctionCall>) -> VisitorResult<(), Self> {
         if expr.name == "url" {
             for arg in &mut expr.arguments {
                 if let declaration_value::Inner::Str(value) = &mut arg.get_inner_mut() {
@@ -61,7 +61,7 @@ impl MutableVisitor<()> for EditContext<UpdateDependencyPath> {
         }
         VisitorResult::Continue
     }
-    fn visit_import(&mut self, import: &mut Import) -> VisitorResult<()> {
+    fn visit_import(&self, import: &mut Import) -> VisitorResult<(), Self> {
         import.path = resolve_new_asset_path(
             &import.path,
             &self.mutation.old_path,
@@ -97,12 +97,7 @@ fn resolve_new_asset_path(
 
 fn resolve_import_path(from: &str, to: &str, config_context: &ConfigContext) -> String {
     config_context.resolve_path(to).unwrap_or(
-        Path::new(from)
-            .parent()
-            .unwrap()
-            .join(to)
-            .absolutize()
-            .unwrap()
+        absolutize(Path::new(from).parent().unwrap().join(to))
             .to_str()
             .unwrap()
             .to_string(),

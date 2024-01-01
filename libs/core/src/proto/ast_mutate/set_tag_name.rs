@@ -11,7 +11,7 @@ use super::super::ast::pc::FindSlotNames;
 use paperclip_proto::ast::get_expr::GetExpr;
 
 impl MutableVisitor<()> for EditContext<SetTagName> {
-    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
+    fn visit_element(&self, expr: &mut ast::pc::Element) -> VisitorResult<(), Self> {
         if expr.get_id() == &self.mutation.element_id {
             let namespace = if let Some(file_path) = &self.mutation.tag_file_path {
                 if file_path != &self.get_dependency().path {
@@ -62,7 +62,7 @@ impl MutableVisitor<()> for EditContext<SetTagName> {
             VisitorResult::Continue
         }
     }
-    fn visit_document(&mut self, document: &mut ast::pc::Document) -> VisitorResult<()> {
+    fn visit_document(&self, document: &mut ast::pc::Document) -> VisitorResult<(), Self> {
         let expr = GetExpr::get_expr(&self.mutation.element_id, document);
         if expr.is_none() {
             return VisitorResult::Continue;
@@ -78,7 +78,7 @@ impl MutableVisitor<()> for EditContext<SetTagName> {
 
         VisitorResult::Continue
     }
-    fn visit_component(&mut self, expr: &mut ast::pc::Component) -> VisitorResult<()> {
+    fn visit_component(&self, expr: &mut ast::pc::Component) -> VisitorResult<(), Self> {
         if expr.get_id() != &self.mutation.element_id {
             return VisitorResult::Continue;
         }

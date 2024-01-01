@@ -7,7 +7,10 @@ use super::utils::parse_node;
 use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 
 impl MutableVisitor<()> for EditContext<AppendInsert> {
-    fn visit_element(&mut self, expr: &mut ast::pc::Element) -> VisitorResult<()> {
+    fn visit_element(
+        &self,
+        expr: &mut ast::pc::Element,
+    ) -> VisitorResult<(), EditContext<AppendInsert>> {
         if expr.id != self.mutation.instance_id {
             return VisitorResult::Continue;
         }

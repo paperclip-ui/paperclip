@@ -4,36 +4,49 @@ use super::pc::{document_body_item, DocumentBodyItem};
 use super::shared;
 use super::{all::ExpressionWrapper, pc::Component};
 
-// use crate::ast::all::Visitable;
 use super::all::visit::{Visitable, Visitor, VisitorResult};
 
-// use super::all::{Visitor, VisitorResult};
+pub struct GetExprResult {
+    pub expr: ExpressionWrapper,
+    pub path: Vec<String>,
+}
 
+#[derive(Clone)]
 pub struct GetExpr {
     id: String,
-    reference: Option<ExpressionWrapper>,
+    current_path: Vec<String>,
 }
 
 macro_rules! getters {
     ($(($name: ident, $expr: ty)), *) => {
         $(
-          fn $name(&mut self, expr: &$expr) -> VisitorResult<()> {
+            fn $name(&self, expr: &$expr) -> VisitorResult<GetExprResult, GetExpr> {
+
+                let mut clone = self.clone();
+                clone.current_path.push(expr.id.clone());
+
             if expr.id == self.id {
-                self.reference = Some(expr.into());
-                return VisitorResult::Return(());
+                return VisitorResult::Return(GetExprResult {
+                    expr: expr.into(),
+                    path: clone.current_path.clone()
+                });
             }
-            VisitorResult::Continue
+
+            VisitorResult::Map(Box::new(clone))
           }
         )*
     };
 }
 
-impl<'expr> Visitor<()> for GetExpr {
+impl<'expr> Visitor<GetExprResult> for GetExpr {
     getters! {
       (visit_element, pc::Element),
       (visit_component, pc::Component),
       (visit_trigger, pc::Trigger),
       (visit_text_node, pc::TextNode),
+      (visit_render, pc::Render),
+      (visit_slot, pc::Slot),
+      (visit_insert, pc::Insert),
       (visit_variant, pc::Variant),
       (visit_style, pc::Style),
       (visit_reference, shared::Reference),
@@ -49,25 +62,24 @@ impl<'expr> GetExpr {
         for (_path, dep) in &graph.dependencies {
             if let Some(document) = &dep.document {
                 if let Some(reference) = GetExpr::get_expr(id, document) {
-                    return Some((reference.clone(), &dep));
+                    return Some((reference.expr.clone(), &dep));
                 }
             }
         }
 
         None
     }
-    pub fn get_expr(id: &str, doc: &pc::Document) -> Option<ExpressionWrapper> {
+    pub fn get_expr(id: &str, doc: &pc::Document) -> Option<GetExprResult> {
         let mut imp = GetExpr {
             id: id.to_string(),
-            reference: None,
+            current_path: vec![],
         };
-        doc.accept(&mut imp);
-        imp.reference.clone()
+        doc.accept(&mut imp).into()
     }
     pub fn get_owner_component(id: &str, doc: &'expr pc::Document) -> Option<&'expr Component> {
         let mut imp = GetExpr {
             id: id.to_string(),
-            reference: None,
+            current_path: vec![],
         };
 
         let mut found: Option<&DocumentBodyItem> = None;
@@ -88,14 +100,14 @@ impl<'expr> GetExpr {
     }
 }
 
-pub fn get_expr(id: &str, dep: &Dependency) -> Option<ExpressionWrapper> {
+pub fn get_expr(id: &str, dep: &Dependency) -> Option<GetExprResult> {
     GetExpr::get_expr(id, &dep.document.as_ref().expect("Document must exist"))
 }
 
 pub fn get_expr_dep<'a>(id: &str, graph: &'a Graph) -> Option<(ExpressionWrapper, &'a Dependency)> {
     for (_path, dep) in &graph.dependencies {
-        if let Some(expr) = get_expr(id, dep) {
-            return Some((expr, dep));
+        if let Some(result) = get_expr(id, dep) {
+            return Some((result.expr, dep));
         }
     }
     return None;

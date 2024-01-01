@@ -11,15 +11,13 @@ import {
 } from "../../state";
 import { DesignerEngineEvent, GraphLoaded } from "./events";
 import { DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import jasonpatch from "fast-json-patch";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
 import { routes } from "../../state/routes";
+import { DesignerEvent } from "../../events";
 
-export const apiReducer = (
-  state: DesignerState,
-  event: DesignerEngineEvent
-) => {
+export const apiReducer = (state: DesignerState, event: DesignerEvent) => {
   switch (event.type) {
     case "designer-engine/serverEvent":
       return serverEventReducer(state, event.payload);

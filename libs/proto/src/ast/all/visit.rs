@@ -5,6 +5,46 @@ pub use super::super::graph;
 pub use super::super::pc;
 pub use super::super::shared;
 
+pub enum VisitorResult<TRet, TVisitor: ?Sized> {
+    Return(TRet),
+    Map(Box<TVisitor>),
+    Break,
+    Continue,
+}
+
+impl<TRet, TVisitor> VisitorResult<TRet, TVisitor> {
+    fn or<Other>(self, other: &mut Other) -> VisitorResult<TRet, TVisitor>
+    where
+        Other: FnMut(Option<TVisitor>) -> VisitorResult<TRet, TVisitor>,
+    {
+        match self {
+            VisitorResult::Continue => other(None),
+            VisitorResult::Map(other_visitor) => other(Some(*other_visitor)),
+            _ => self,
+        }
+    }
+}
+
+impl<TRet, TVisitor> From<VisitorResult<TRet, TVisitor>> for Option<TRet> {
+    fn from(value: VisitorResult<TRet, TVisitor>) -> Self {
+        if let VisitorResult::Return(value) = value {
+            Some(value)
+        } else {
+            None
+        }
+    }
+}
+
+impl<TRet, TVisitor> From<Option<TRet>> for VisitorResult<TRet, TVisitor> {
+    fn from(value: Option<TRet>) -> VisitorResult<TRet, TVisitor> {
+        if let Some(value) = value {
+            VisitorResult::Return(value)
+        } else {
+            VisitorResult::Continue
+        }
+    }
+}
+
 macro_rules! visitable {
 (
   $(
@@ -13,25 +53,9 @@ macro_rules! visitable {
 
 ) => {
 
-    pub enum VisitorResult<TRet> {
-      Return(TRet),
-      Break,
-      Continue
-    }
-
-    impl<TRet> VisitorResult<TRet> {
-        fn or<Other>(self, other: &mut Other) -> VisitorResult<TRet> where Other: FnMut() -> VisitorResult<TRet> {
-            if let VisitorResult::Return(value) = self {
-                VisitorResult::Return(value)
-            } else {
-                other()
-            }
-        }
-    }
-
     pub trait Visitor<TRet> {
       $(
-        fn $visit_name(&mut self, _item: &$match) -> VisitorResult<TRet> {
+        fn $visit_name(&self, _item: &$match) -> VisitorResult<TRet, Self> {
           VisitorResult::Continue
         }
       )*
@@ -39,44 +63,51 @@ macro_rules! visitable {
 
     pub trait MutableVisitor<TRet> {
       $(
-        fn $visit_name(&mut self, _item: &mut $match) -> VisitorResult<TRet> {
+        fn $visit_name(&self, _item: &mut $match) -> VisitorResult<TRet, Self> {
           VisitorResult::Continue
         }
       )*
     }
 
     pub trait Visitable {
-      fn accept<TRet, TVisitor: Visitor<TRet>>(&self, visitor: &mut TVisitor) -> VisitorResult<TRet>;
+      fn accept<TRet, TVisitor: Visitor<TRet>>(&self, visitor: &TVisitor) -> VisitorResult<TRet, TVisitor>;
     }
+
 
     $(
           impl Visitable for $match {
-              fn accept<TRet, TVisitor: Visitor<TRet>>(&$self, $visitor: &mut TVisitor) -> VisitorResult<TRet> {
+              fn accept<TRet, TVisitor: Visitor<TRet>>(&$self, $visitor: &TVisitor) -> VisitorResult<TRet, TVisitor> {
                 let ret = $visitor.$visit_name($self);
 
                 if matches!(ret, VisitorResult::Return(_)) {
                   ret
-                } else {
+                } else if let VisitorResult::Map($visitor) = ret {
+                  let $visitor = &*$visitor;
                   $visit_children
+                } else {
+                    $visit_children
                 }
               }
           }
     )*
 
     pub trait MutableVisitable {
-      fn accept<TRet, TVisitor: MutableVisitor<TRet>>(&mut self, visitor: &mut TVisitor) -> VisitorResult<TRet>;
+      fn accept<TRet, TVisitor: MutableVisitor<TRet>>(&mut self, visitor: &TVisitor) -> VisitorResult<TRet, TVisitor>;
     }
 
 
     $(
       impl MutableVisitable for $match {
-          fn accept<TRet, TVisitor: MutableVisitor<TRet>>(&mut $self, $visitor: &mut TVisitor) -> VisitorResult<TRet> {
+          fn accept<TRet, TVisitor: MutableVisitor<TRet>>(&mut $self, $visitor: &TVisitor) -> VisitorResult<TRet, TVisitor> {
             let ret = $visitor.$visit_name($self);
 
             if matches!(ret, VisitorResult::Return(_)) {
               ret
-            } else {
+            } else if let VisitorResult::Map($visitor) = ret {
+              let $visitor = &*$visitor;
               $visit_children_mut
+            } else {
+                $visit_children_mut
             }
           }
       }
@@ -101,9 +132,10 @@ macro_rules! visit_enum {
 macro_rules! visit_each {
     ($items: expr, $visitor:expr) => {{
         let mut ret = VisitorResult::Continue;
+        let vis = $visitor;
         for item in $items {
-            ret = item.accept($visitor);
-            if matches!(ret, VisitorResult::Return(_)) {
+            ret = item.accept(vis);
+            if matches!(ret, VisitorResult::Return(_) | VisitorResult::Break) {
                 break;
             }
         }
@@ -154,18 +186,22 @@ visitable! {
       pc::document_body_item::Inner::Element
   )
 }),
-  (pc::Import, visit_import, (self, visitor) {
+  (pc::Import, visit_import, (self, _visitor) {
       VisitorResult::Continue
   }, {
     VisitorResult::Continue
   }),
   (pc::Style, visit_style, (self, visitor) {
-      visit_each!(&self.extends, visitor).or(&mut || {
-          visit_each!(&self.declarations, visitor)
+      visit_each!(&self.extends, visitor).or(&mut |other| {
+          visit_each!(&self.variant_combo, other.as_ref().unwrap_or(visitor))
+      }).or(&mut |other| {
+          visit_each!(&self.declarations, other.as_ref().unwrap_or(visitor))
       })
   },{
-      visit_each!(&mut self.extends, visitor).or(&mut || {
-          visit_each!(&mut self.declarations, visitor)
+      visit_each!(&mut self.extends, visitor).or(&mut |other| {
+          visit_each!(&mut self.variant_combo, other.as_ref().unwrap_or(visitor))
+      }).or(&mut |other| {
+          visit_each!(&mut self.declarations, other.as_ref().unwrap_or(visitor))
       })
   }),
   (css::StyleDeclaration, visit_css_declaration, (self, visitor) {
@@ -236,12 +272,12 @@ visitable! {
           css::declaration_value::Inner::CommaList
       )
   }),
-  (css::Measurement, visit_css_measurement, (self, visitor) {
+  (css::Measurement, visit_css_measurement, (self, _visitor) {
       VisitorResult::Continue
   },{
       VisitorResult::Continue
   }),
-  (css::Keyword, visit_css_keyword, (self, visitor) {
+  (css::Keyword, visit_css_keyword, (self, _visitor) {
       VisitorResult::Continue
   },{
       VisitorResult::Continue
@@ -252,15 +288,15 @@ visitable! {
       visit_each!(&mut self.arguments, visitor)
   }),
   (Box<css::Arithmetic>, visit_css_bx_arithmetic, (self, visitor) {
-      self.left.as_ref().expect("Left must exist").accept(visitor).or(&mut || {
-          self.right.as_ref().expect("Right must exist").accept(visitor)
+      self.left.as_ref().expect("Left must exist").accept(visitor).or(&mut |fork| {
+          self.right.as_ref().expect("Right must exist").accept(fork.as_ref().unwrap_or(visitor))
       })
   },{
-      self.left.as_mut().expect("Left must exist").accept(visitor).or(&mut || {
-          self.right.as_mut().expect("Right must exist").accept(visitor)
+      self.left.as_mut().expect("Left must exist").accept(visitor).or(&mut |fork| {
+          self.right.as_mut().expect("Right must exist").accept(fork.as_ref().unwrap_or(visitor))
       })
   }),
-  (css::HexColor, visit_css_hex_color, (self, visitor) {
+  (css::HexColor, visit_css_hex_color, (self, _visitor) {
       VisitorResult::Continue
   },{
       VisitorResult::Continue
@@ -298,20 +334,20 @@ visitable! {
   }, {
     self.node.as_mut().expect("Node must exist").accept(visitor)
   }),
-  (pc::Script, visit_script, (self, visitor) {
+  (pc::Script, visit_script, (self, _visitor) {
     VisitorResult::Continue
   }, {
     VisitorResult::Continue
   }),
-  (docco::Comment, visit_comment, (self, visitor) {
+  (docco::Comment, visit_comment, (self, _visitor) {
     VisitorResult::Continue
   }, {
     VisitorResult::Continue
   }),
   (pc::TextNode, visit_text_node, (self, visitor) {
-    VisitorResult::Continue
+      visit_each!(&self.body, visitor)
   }, {
-    VisitorResult::Continue
+      visit_each!(&mut self.body, visitor)
   }),
   (pc::Atom, visit_atom, (self, visitor) {
       self.value.as_ref().expect("Value must exist").accept(visitor)
@@ -488,22 +524,22 @@ visit_enum!(self.get_inner_mut(), visitor, pc::trigger_body_item::Inner::Str, pc
 }, {
   visit_each!(&mut self.items, visitor)
 }),
-  (shared::Reference, visit_reference, (self, visitor) {
+  (shared::Reference, visit_reference, (self, _visitor) {
     VisitorResult::Continue
   }, {
     VisitorResult::Continue
   }),
-  (base::Str, visit_str, (self, visitor) {
+  (base::Str, visit_str, (self, _visitor) {
     VisitorResult::Continue
   }, {
     VisitorResult::Continue
   }),
-  (base::Num, visit_num, (self, visitor) {
+  (base::Num, visit_num, (self, _visitor) {
     VisitorResult::Continue
   }, {
     VisitorResult::Continue
   }),
-  (base::Bool, visit_boolean, (self, visitor) {
+  (base::Bool, visit_boolean, (self, _visitor) {
     VisitorResult::Continue
   }, {
     VisitorResult::Continue

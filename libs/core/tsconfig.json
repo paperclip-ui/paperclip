@@ -16,6 +16,6 @@
       "@paperclip-ui/core/src/*": ["./src/*"]
     }
   },
-  "exclude": ["node_modules", "*-test", "lib", "index.d.ts"],
-  "filesGlob": ["./src/**/*.ts"]
+  "exclude": ["node_modules", "*-test", "lib", "index.d.ts", "bindings"],
+  "rootDir": "src/"
 }

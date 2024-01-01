@@ -7,7 +7,7 @@ import {
   setSelectedNodeBounds,
 } from "@paperclip-ui/designer/src/state";
 import { routes } from "@paperclip-ui/designer/src/state/routes";
-import { ast } from "@paperclip-ui/proto-ext/lib/ast/pc-utils";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import produce from "immer";
 import { get } from "lodash";
 

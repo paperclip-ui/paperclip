@@ -3,7 +3,7 @@ use crate::config::ConfigContext;
 use crate::proto::graph::io::IO as GraphIO;
 use anyhow::{Error, Result};
 use paperclip_common::fs::{FileReader, FileResolver, LocalFileReader};
-use path_absolutize::*;
+use paperclip_common::path::absolutize;
 use std::path::Path;
 use wax::Glob;
 
@@ -55,12 +55,7 @@ impl FileReader for LocalIO {
 impl FileResolver for LocalIO {
     fn resolve_file(&self, from_path: &str, to_path: &str) -> Result<String> {
         let resolved = String::from(
-            Path::new(from_path)
-                .parent()
-                .unwrap()
-                .join(to_path)
-                .absolutize()
-                .unwrap()
+            absolutize(Path::new(from_path).parent().unwrap().join(to_path))
                 .to_str()
                 .unwrap(),
         );

@@ -20,6 +20,7 @@ mod set_tag_name;
 mod set_text_node_value;
 mod toggle_instance_variant;
 mod update_dependency_path;
+mod update_trigger;
 mod update_variant;
 mod wrap_in_element;
 #[macro_use]
@@ -55,6 +56,7 @@ pub use set_tag_name::*;
 pub use set_text_node_value::*;
 pub use toggle_instance_variant::*;
 pub use update_dependency_path::*;
+pub use update_trigger::*;
 pub use update_variant::*;
 pub use wrap_in_element::*;
 
@@ -64,13 +66,14 @@ mod test;
 macro_rules! mutations {
     ($($name:ident), *) => {
       impl MutableVisitor<()> for base::EditContext<Mutation> {
-        fn visit_dependency(&mut self, dependency: &mut ast::graph::Dependency) -> VisitorResult<()> {
+        fn visit_dependency(&self, dependency: &mut ast::graph::Dependency) -> VisitorResult<(), base::EditContext<Mutation>> {
           match self.mutation.inner.as_ref().expect("Inner must exist") {
             $(
               mutation::Inner::$name(mutation) => {
                 let mut sub = self.with_mutation(mutation.clone());
                 let ret = dependency.accept(&mut sub);
-                ret
+                let option: Option<()> = ret.into();
+                option.into()
               }
             )*
             _ => {
@@ -135,6 +138,7 @@ mutations! {
   UpdateDependencyPath,
   UpdateVariant,
   MoveExpressionToFile,
+  UpdateTrigger,
   AddImport,
   AppendInsert,
   SetTagName,

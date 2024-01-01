@@ -21,7 +21,9 @@ use paperclip_proto::ast::{
     shared::Reference,
 };
 use paperclip_proto::notice::base::NoticeList;
+use std::cell::RefCell;
 use std::collections::BTreeMap;
+use std::rc::Rc;
 
 #[derive(Debug, Clone, Copy, Default)]
 struct Info {
@@ -146,21 +148,24 @@ fn collect_imports(
 }
 
 struct FindNodesWithScripts {
-    found: Vec<ast::Node>,
+    found: Rc<RefCell<Vec<ast::Node>>>,
 }
 
 impl FindNodesWithScripts {
     fn find(document: &ast::Document) -> Vec<ast::Node> {
-        let mut inst = FindNodesWithScripts { found: vec![] };
+        let mut inst = FindNodesWithScripts {
+            found: Rc::new(RefCell::new(vec![])),
+        };
         document.clone().accept(&mut inst);
-        inst.found.clone()
+        let found = inst.found.borrow();
+        found.clone()
     }
 }
 
 impl MutableVisitor<()> for FindNodesWithScripts {
-    fn visit_node(&mut self, node: &mut ast::Node) -> VisitorResult<()> {
+    fn visit_node(&self, node: &mut ast::Node) -> VisitorResult<(), FindNodesWithScripts> {
         if node_contains_script(node) {
-            self.found.push(node.clone());
+            self.found.borrow_mut().push(node.clone());
         }
         VisitorResult::Continue
     }
@@ -168,24 +173,6 @@ impl MutableVisitor<()> for FindNodesWithScripts {
 
 fn compile_nested_components(document: &ast::Document, context: &mut Context) {
     let found = FindNodesWithScripts::find(document);
-    // let mut imports: HashMap<String, HashMap<String, String>> = HashMap::new();
-    // for node in &found {
-    //     add_nested_component_import(&node, &mut imports);
-    // }
-
-    // for (path, namespaces) in imports {
-    //     let mut namespaces = namespaces.into_iter().peekable();
-
-    //     context.add_buffer("import { ");
-    //     while let Some((namespace, import_as)) = namespaces.next() {
-    //         context.add_buffer(format!("{} as {}", namespace, import_as).as_str());
-    //         if !namespaces.peek().is_none() {
-    //             context.add_buffer(", ");
-    //         }
-    //     }
-    //     context.add_buffer(format!(" }} from \"{}\"", path).as_str());
-    // }
-
     context.add_buffer("\n");
     for node in &found {
         compile_nested_component(&node, document, context);

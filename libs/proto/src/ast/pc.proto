@@ -205,6 +205,7 @@ message Ary {
 message Element {
   optional string namespace = 1;
   string tag_name = 2;
+  ast.base.Range tag_name_range = 9;
   optional string name = 3;
   repeated Parameter parameters = 4;
   string id = 5;

@@ -229,15 +229,6 @@ fn evaluate_element<F: FileResolver>(
             is_component_root,
         );
     } else {
-        if element.namespace.is_some() {
-            context.add_notice(Notice::reference_not_found(&context.path, &element.range));
-
-        // or check capital
-        } else if let Some(first_char) = element.tag_name.chars().nth(0) {
-            if first_char.is_uppercase() {
-                context.add_notice(Notice::reference_not_found(&context.path, &element.range));
-            }
-        }
         evaluate_native_element(
             element,
             fragment,
@@ -639,7 +630,7 @@ fn resolve_element_attributes<F: FileResolver>(
                             .resolve_file(&context.path, &str_value)
                             .map_err(|_| Notice::file_not_found(&context.path, &element.range));
                         if let Err(err) = ret {
-                            context.notices.borrow_mut().push(err);
+                            context.add_notice(err);
                         } else {
                             property.value = Some(ret.unwrap().into());
                         }

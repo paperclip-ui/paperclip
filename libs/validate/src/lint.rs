@@ -8,6 +8,8 @@ use paperclip_proto::{
         all::visit::{Visitable, Visitor, VisitorResult},
         css::{declaration_value, DeclarationValue, FunctionCall, StyleDeclaration},
         graph,
+        pc::Element,
+        shared::Reference,
     },
     notice::base::{Level, Notice, NoticeList},
 };
@@ -21,7 +23,14 @@ struct Linter<'a> {
     current_decl_name: Option<String>,
     is_within_var: bool,
     config: &'a LintConfig,
+    graph: &'a graph::Graph,
     notices: Rc<RefCell<NoticeList>>,
+}
+
+impl<'a> Linter<'a> {
+    fn add_notice(&self, notice: Notice) {
+        self.notices.borrow_mut().push(notice);
+    }
 }
 
 impl<'a> Visitor<()> for Linter<'a> {
@@ -40,6 +49,26 @@ impl<'a> Visitor<()> for Linter<'a> {
             current_decl_name: Some(item.name.to_string()),
             ..self.clone()
         }))
+    }
+    fn visit_reference(&self, reference: &Reference) -> VisitorResult<(), Self> {
+        if reference.follow(self.graph).is_none() {
+            self.add_notice(Notice::reference_not_found(&self.path, &reference.range));
+        }
+
+        VisitorResult::Continue
+    }
+    fn visit_element(&self, element: &Element) -> VisitorResult<(), Self> {
+        if element.namespace.is_some() {
+            self.add_notice(Notice::reference_not_found(&self.path, &element.range));
+
+        // or check capital
+        } else if let Some(first_char) = element.tag_name.chars().nth(0) {
+            if first_char.is_uppercase() {
+                self.add_notice(Notice::reference_not_found(&self.path, &element.range));
+            }
+        }
+
+        VisitorResult::Continue
     }
     fn visit_css_declaration_value(&self, item: &DeclarationValue) -> VisitorResult<(), Self> {
         let decl_name = get_or_short!(&self.current_decl_name, VisitorResult::Continue);
@@ -127,6 +156,7 @@ pub fn lint_document<'expr>(
     let linter = Linter {
         path,
         current_decl_name: None,
+        graph,
         is_within_var: false,
         config,
         notices: Rc::new(RefCell::new(NoticeList::new())),

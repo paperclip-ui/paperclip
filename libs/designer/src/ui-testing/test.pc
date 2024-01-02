@@ -13,6 +13,15 @@ public component Test {
         style {
             position: relative
         }
+        slot something {
+            text "test"
+        }
+    }
+}
+
+Test {
+    insert something {
+        text "something else"
     }
 }
 

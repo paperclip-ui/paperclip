@@ -4,7 +4,7 @@ use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
 use paperclip_proto::ast::all::Expression;
-use paperclip_proto::ast::pc::Node;
+use paperclip_proto::ast::pc::Element;
 use paperclip_proto::ast_mutate::{mutation_result, AppendChild, ExpressionInserted};
 
 use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
@@ -43,7 +43,15 @@ impl MutableVisitor<()> for EditContext<AppendChild> {
         expr: &mut ast::pc::Element,
     ) -> VisitorResult<(), EditContext<AppendChild>> {
         if expr.get_id() == &self.mutation.parent_id {
-            let child: Node = parse_node(&self.mutation.child_source, &self.new_id());
+            let div: Element = parse_node(
+                format!("div {{{}}}", &self.mutation.child_source).as_str(),
+                &self.new_id(),
+            )
+            .try_into()
+            .expect("Cannot parse node");
+
+            let child = div.body.get(0).expect("Child must exist");
+
             expr.body.push(child.clone());
 
             self.add_change(

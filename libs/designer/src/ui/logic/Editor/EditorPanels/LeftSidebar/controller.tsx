@@ -9,7 +9,8 @@ export const LeftSidebar = (Base: React.FC<BaseLeftSidebarProps>) => () => {
   if (!show) {
     return null;
   }
-  return <Base fileNavigator={null} layers={null} />
+
+  return <Base fileNavigator={null} layers={null} />;
 };
 
 const useLeftSidebar = () => {

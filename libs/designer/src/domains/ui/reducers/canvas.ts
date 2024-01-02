@@ -9,24 +9,19 @@ import {
   getTargetExprId,
   highlightNode,
   InsertMode,
-  newConvertToSlotPrompt,
   redirect,
   resetCurrentDocument,
 } from "@paperclip-ui/designer/src/state";
-import { centerTransformZoom } from "@paperclip-ui/designer/src/state/geom";
 import { routes } from "@paperclip-ui/designer/src/state/routes";
 import { virtHTML } from "@paperclip-ui/core/lib/proto/virt/html-utils";
 import { FileChangedKind } from "@paperclip-ui/proto/lib/generated/service/designer";
 import produce from "immer";
 import { clamp, mapValues } from "lodash";
 import {
-  clampCanvasTransform,
   handleDoubleClick,
   handleDragEvent,
   // includeExtraRects,
-  MAX_ZOOM,
   maybeCenterCanvas,
-  MIN_ZOOM,
   panCanvas,
   PAN_X_SENSITIVITY,
   PAN_Y_SENSITIVITY,

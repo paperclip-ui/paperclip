@@ -166,11 +166,6 @@ const NodeLeaf = memo(({ expr: node, depth, instanceOf }: LeafProps<Node>) => {
       />
     );
   }
-  if (node.insert) {
-    return (
-      <InsertLeaf expr={node.insert} depth={depth} instanceOf={instanceOf} />
-    );
-  }
   return null;
 });
 
@@ -202,12 +197,29 @@ const InstanceLeaf = ({
 }: LeafProps<Element>) => {
   const graph = useSelector(getGraph);
   const component = ast.getInstanceComponent(instance, graph);
+  const slots = ast.getComponentSlots(component, graph);
+
+  const instanceSlots = slots.reduce((map, slot) => {
+    map[slot.name] = {
+      targetId: `${instance.id}.${slot.id}`,
+      insert: [],
+    };
+    return map;
+  }, {} as Record<string, { targetId: string; insert: Node[] }>);
+
+  for (const child of instance.body) {
+    if (child.insert) {
+      instanceSlots[child.insert.name!].insert = child.insert.body;
+    } else if (instanceSlots.children) {
+      instanceSlots.children.insert.push(child);
+    }
+  }
 
   return (
     <Leaf
       id={instance.id}
       className={cx("instance", {
-        container: instance.body.length > 0,
+        container: slots.length > 0,
       })}
       text={<>{instance.name || "Instance"}</>}
       altText={<styles.TagType>{instance.tagName}</styles.TagType>}
@@ -217,14 +229,18 @@ const InstanceLeaf = ({
       {() => {
         return (
           <>
-            {instance.body.map((child) => (
-              <NodeLeaf
-                key={ast.getNodeInner(child).id}
-                expr={child}
-                depth={depth + 1}
-                instanceOf={instanceOf}
-              />
-            ))}
+            {Object.keys(instanceSlots).map((key) => {
+              const { targetId, insert } = instanceSlots[key];
+              return (
+                <InsertLeaf
+                  depth={depth + 1}
+                  targetId={targetId}
+                  name={key}
+                  key={key}
+                  insert={insert}
+                />
+              );
+            })}
           </>
         );
       }}
@@ -354,24 +370,30 @@ const ConditionLeaf = memo(
   }
 );
 
+type InsertLeafProps = {
+  insert: Node[];
+  name: string;
+  targetId: string;
+  depth: number;
+};
+
 const InsertLeaf = memo(
-  ({ expr: insert, depth, instanceOf }: LeafProps<Insert>) => {
+  ({ targetId, insert, depth, name }: InsertLeafProps) => {
     return (
+      // instance.slot denotes virtual ID which DOES exist
       <Leaf
-        id={insert.id}
-        className={cx("slot", { container: insert.body.length > 0 })}
-        text={insert.name}
+        id={targetId}
+        className={cx("slot", { container: insert.length > 0 })}
+        text={name}
         depth={depth}
-        instanceOf={instanceOf}
       >
         {() => (
           <>
-            {insert.body.map((child) => (
+            {insert.map((child) => (
               <NodeLeaf
                 key={ast.getInnerExpression(child).id}
                 expr={child}
                 depth={depth + 1}
-                instanceOf={instanceOf}
               />
             ))}
           </>

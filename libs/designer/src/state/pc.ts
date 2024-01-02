@@ -1159,7 +1159,6 @@ export const highlightNode = (
   return produce(designer, (newDesigner) => {
     newDesigner.canvas.mousePosition = mousePosition;
     const info = getNodeInfoAtCurrentPoint(designer);
-
     newDesigner.highlightedNodeId = info?.nodeId;
   });
 };

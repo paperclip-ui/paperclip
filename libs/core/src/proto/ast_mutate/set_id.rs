@@ -1,4 +1,4 @@
-use crate::proto::ast_mutate::utils::{get_unique_document_body_item_name, get_unique_valid_name};
+use crate::proto::ast_mutate::utils::get_unique_valid_name;
 
 use super::utils::{get_unique_component_name, get_valid_name};
 use convert_case::Case;

@@ -458,7 +458,6 @@ impl TryFrom<&Node> for Script {
         }
     }
 }
-
 impl TryFrom<ExpressionWrapper> for Node {
     type Error = ();
 

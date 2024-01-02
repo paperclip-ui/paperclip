@@ -1,10 +1,5 @@
 #### Immediate
 
-- post edit clean up
-
-  - prune unused imports
-  - add inserts of elements
-
 - layers panel
 
   - ability to drop assets to the canvas

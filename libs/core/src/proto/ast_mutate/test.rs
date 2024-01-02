@@ -11,12 +11,11 @@ use paperclip_proto::ast::pc::{
     component_body_item, node, Component, Element, Render, Slot, TextNode,
 };
 use paperclip_proto::ast_mutate::{
-    mutation, paste_expression, update_variant_trigger, AppendChild, AppendInsert, Bounds,
-    ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveExpressionToFile,
-    MoveNode, PasteExpression, PrependChild, SetElementParameter, SetFrameBounds, SetId,
-    SetStyleDeclaration, SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins,
-    SetTagName, SetTextNodeValue, ToggleInstanceVariant, UpdateDependencyPath, UpdateVariant,
-    WrapInElement,
+    mutation, paste_expression, update_variant_trigger, AppendChild, Bounds, ConvertToComponent,
+    ConvertToSlot, DeleteExpression, InsertFrame, MoveExpressionToFile, MoveNode, PasteExpression,
+    PrependChild, SetElementParameter, SetFrameBounds, SetId, SetStyleDeclaration,
+    SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue,
+    ToggleInstanceVariant, UpdateDependencyPath, UpdateVariant, WrapInElement,
 };
 use std::collections::HashMap;
 
@@ -304,6 +303,62 @@ case! {
               color: orange
             }
           }
+        }
+      }
+    "#
+  )]
+}
+
+case! {
+  can_append_a_child_to_an_insert,
+  [(
+    "/entry.pc", r#"
+    A {
+        insert a {
+
+        }
+    }
+    "#
+  )],
+  mutation::Inner::AppendChild(AppendChild {
+    parent_id: "80f4925f-1".to_string(),
+    child_source: r#"
+      text "Hello"
+    "#.to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      A {
+        insert a {
+            text "Hello"
+        }
+      }
+    "#
+  )]
+}
+
+case! {
+  can_append_child_to_slot,
+  [(
+    "/entry.pc", r#"
+    component A {
+        render slot a {
+
+        }
+    }
+    "#
+  )],
+  mutation::Inner::AppendChild(AppendChild {
+    parent_id: "80f4925f-1".to_string(),
+    child_source: r#"
+      text "Hello"
+    "#.to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component A {
+        render slot a {
+            text "Hello"
         }
       }
     "#
@@ -2474,97 +2529,6 @@ case! {
         "#
       )
   ]
-}
-
-case! {
-  can_append_an_insert,
-  [
-    (
-      "/entry.pc", r#"
-        component A {
-          render slot test
-        }
-
-        A
-      "#
-    )
-  ],
-
-  mutation::Inner::AppendInsert(AppendInsert {
-    instance_id: "80f4925f-4".to_string(),
-    slot_name: "test".to_string(),
-    child_source: r#"
-      text "abba" {
-        style {
-          color: blue
-        }
-      }
-    "#.to_string()
-  }).get_outer(),
-  [(
-    "/entry.pc", r#"
-      component A {
-        render slot test
-      }
-      A {
-        insert test {
-          text "abba" {
-            style {
-              color: blue
-            }
-          }
-        }
-      }
-    "#
-  )]
-}
-
-case! {
-  can_append_to_an_existing_insert,
-  [
-    (
-      "/entry.pc", r#"
-        component A {
-          render slot test
-        }
-
-        A {
-          insert test {
-            div
-          }
-        }
-      "#
-    )
-  ],
-
-  mutation::Inner::AppendInsert(AppendInsert {
-    instance_id: "80f4925f-6".to_string(),
-    slot_name: "test".to_string(),
-    child_source: r#"
-      text "abba" {
-        style {
-          color: blue
-        }
-      }
-    "#.to_string()
-  }).get_outer(),
-  [(
-    "/entry.pc", r#"
-      component A {
-        render slot test
-      }
-      A {
-        insert test {
-          div
-          text "abba" {
-            style {
-              color: blue
-            }
-          }
-        }
-      }
-    "#
-  )]
 }
 
 case! {

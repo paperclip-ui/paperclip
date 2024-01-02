@@ -19,9 +19,8 @@ public component Test {
     }
 }
 
-Test {
-    insert something {
-        text "something else"
-    }
-}
+/**
+ * @frame(x: 31, y: 115, width: 255, height: 283)
+*/
 
+Test

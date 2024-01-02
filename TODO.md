@@ -1,10 +1,3 @@
-#### FOCUS
-
-- layers
-  - select slots
-  - ensure that all inserts are created
-  - proper UI for inserts
-
 #### Immediate
 
 - post edit clean up

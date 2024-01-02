@@ -282,7 +282,7 @@ const createEventHandler = (actions: Actions) => {
       const childSource = {
         [InsertMode.Element]: `div {
         }`,
-        [InsertMode.Text]: `text ""`,
+        [InsertMode.Text]: `text "type to insert"`,
       }[insertMode];
 
       const exprInfo = ast.getExprByVirtId(
@@ -291,14 +291,15 @@ const createEventHandler = (actions: Actions) => {
       );
 
       if (exprInfo?.kind === ast.ExprKind.Slot) {
-        const [instanceId] = intersectingNode.nodeId.split(".");
-        // const instance = findVirtNode(instanceId, state);
+        const targetExpr = await resolveTargetExprId(
+          intersectingNode.nodeId,
+          state
+        );
 
         actions.applyChanges([
           {
-            appendInsert: {
-              instanceId,
-              slotName: exprInfo.expr.name,
+            appendChild: {
+              parentId: targetExpr.id,
               childSource,
             },
           },
@@ -405,16 +406,18 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
-  const handleExprNavigatorDroppedNode = (
+  const handleExprNavigatorDroppedNode = async (
     event: ExprNavigatorDroppedNode,
     state: DesignerState
   ) => {
     const { targetId, droppedExprId, position } = event.payload;
 
+    const resolvedTarget = await resolveTargetExprId(targetId, state);
+
     actions.applyChanges([
       {
         moveNode: {
-          targetId,
+          targetId: resolvedTarget.id,
           nodeId: droppedExprId,
           position: {
             before: NodePosition.BEFORE,

@@ -46,9 +46,6 @@ message Mutation {
     // Trigger
     UpdateTrigger update_trigger = 28;
 
-    // Instance
-    AppendInsert append_insert = 17;
-
     // Module
     UpdateDependencyPath update_dependency_path = 25;
 

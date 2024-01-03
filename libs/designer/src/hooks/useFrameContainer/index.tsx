@@ -12,18 +12,19 @@ export type UseFrameContainerProps = {
 
 const defaultExtraHTML = `
   <style>
-  :not([class]):empty {
+  [id]:not([class]):empty {
     min-width: 100px;
     height: 100px;
     padding: 10px;
     border: 2px dashed grey;
   }
-  :not([class]):empty:before {
+  [id]:not([class]):empty:before {
     content: "Insert children here";
     font-family: sans-serif;
     color: grey;
     font-size: 16px;
   }
+
   </style>
 `;
 

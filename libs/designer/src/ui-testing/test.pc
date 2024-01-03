@@ -28,3 +28,14 @@ Test {
     text "Hello world"
     text "Hello world2"
 }
+
+/**
+ * @frame(x: 1233, y: -301, width: 663, height: 281)
+*/
+div {
+    style {
+        position: relative
+    }
+    div
+}
+

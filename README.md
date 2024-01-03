@@ -8,11 +8,30 @@
 
 https://github.com/paperclip-ui/paperclip/assets/757408/429b22e0-41d6-4621-8b6e-613c1686cdda
 
-Paperclip files are designed to compile to any target language or framework you want (currently supporting React), and can even be compiled down to vanilla HTML and CSS. No runtime! 🎉
+Paperclip emits primitive components that you can use in your existing codebase. For example:
+
+```
+import React from "react";
+import * as styles from "./button.pc";
+export const Button = ({children, onClick}) => {
+  return <styles.Button onClick={onClick}>
+    {children}
+  </styles.Button>
+};
+```
+
+Paperclip _only_ covers styles and primitive components, and is not a replacement to code. You can think of it like a design system creator.
+
+### Project goals + highlights
+
+- Languange + framework agnostic
+- Provide a scalable way of styling with CSS without the cascading part
+- No runtime. PC files are compiled to static HTML and CSS.
+- Lower the barrier to UI development to so that designers and other teammembers can edit UIs
 
 ### File format
 
-Here's an example of a Paperclip file:
+Paperclip emits plain-text design files. Here's an example of of one:
 
 ```javascript
 

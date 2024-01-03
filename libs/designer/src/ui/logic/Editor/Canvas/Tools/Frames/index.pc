@@ -20,7 +20,6 @@ public component Frame {
     render div(style: style, class: class) {
         style {
             position: relative
-            pointer-events: none
         }
         slot children
     }

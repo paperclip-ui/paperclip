@@ -11,13 +11,14 @@ import {
 } from "@paperclip-ui/designer/src/state";
 import { virtHTML } from "@paperclip-ui/core/lib/proto/virt/html-utils";
 import { metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
-import { useSelector } from "@paperclip-ui/common";
+import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import {
   TextNode,
   Element,
   Component,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 
 export type FramesProps = {
   canvasScroll: Point;
@@ -69,6 +70,7 @@ const Frame = memo(
     // const dep = useSelector(getCurrentDependency);
 
     const graph = useSelector(getGraph);
+    const dispatch = useDispatch<DesignerEvent>();
 
     // we want top-most
     const expr = ast.getExprInfoById(
@@ -91,6 +93,12 @@ const Frame = memo(
     const [editing, setEditing] = useState(false);
 
     const onClick = useCallback((event: React.MouseEvent<any>) => {
+      console.log("frame");
+      dispatch({
+        type: "ui/frameTitleClicked",
+        payload: { frameId: expr.expr.id },
+      });
+
       // prevent canvas click event
       event.stopPropagation();
     }, []);

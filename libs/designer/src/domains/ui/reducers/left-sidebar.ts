@@ -115,7 +115,7 @@ export const leftSidebarReducer = (
       });
     }
     case "ui/layerLeafClicked": {
-      state = selectNode(event.payload.virtId, false, false, state);
+      state = selectNode(event.payload.virtId, state);
       return state;
     }
   }

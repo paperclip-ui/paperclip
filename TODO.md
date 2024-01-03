@@ -1,7 +1,5 @@
 #### Immediate
 
-- fix exception being thrown when editing variant
-  (can't edit button variants)
 - fix selection colors
 - deselect variants when selecting other elements
 - ability to define script in UI

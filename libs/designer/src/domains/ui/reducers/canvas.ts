@@ -126,12 +126,10 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
       // Don't do this until deselecting can be handled properly
       const nodeId = getNodeInfoAtCurrentPoint(state)?.nodeId;
 
-      return selectNode(
-        nodeId,
-        event.payload.shiftKey,
-        event.payload.metaKey,
-        state
-      );
+      return selectNode(nodeId, state);
+    }
+    case "ui/frameTitleClicked": {
+      return selectNode(event.payload.frameId, state);
     }
     case "ui/canvasPanned": {
       // do not allow panning when expanded

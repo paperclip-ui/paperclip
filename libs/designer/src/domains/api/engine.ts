@@ -84,6 +84,7 @@ import { Range } from "@paperclip-ui/proto/lib/generated/ast/base";
 import { get, kebabCase } from "lodash";
 import { ConfirmKind } from "../../state/confirm";
 import { metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
+import { ExpressionKind } from "../../ui/logic/Editor/EditorPanels/RightSidebar/StylePanel/Declarations/DeclarationValue/state";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -281,7 +282,7 @@ const createEventHandler = (actions: Actions) => {
       const childSource = {
         [InsertMode.Element]: `div {
         }`,
-        [InsertMode.Text]: `text ""`,
+        [InsertMode.Text]: `text "type to insert"`,
       }[insertMode];
 
       const exprInfo = ast.getExprByVirtId(
@@ -290,14 +291,15 @@ const createEventHandler = (actions: Actions) => {
       );
 
       if (exprInfo?.kind === ast.ExprKind.Slot) {
-        const [instanceId] = intersectingNode.nodeId.split(".");
-        // const instance = findVirtNode(instanceId, state);
+        const targetExpr = await resolveTargetExprId(
+          intersectingNode.nodeId,
+          state
+        );
 
         actions.applyChanges([
           {
-            appendInsert: {
-              instanceId,
-              slotName: exprInfo.expr.name,
+            appendChild: {
+              parentId: targetExpr.id,
               childSource,
             },
           },
@@ -404,16 +406,18 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
-  const handleExprNavigatorDroppedNode = (
+  const handleExprNavigatorDroppedNode = async (
     event: ExprNavigatorDroppedNode,
     state: DesignerState
   ) => {
     const { targetId, droppedExprId, position } = event.payload;
 
+    const resolvedTarget = await resolveTargetExprId(targetId, state);
+
     actions.applyChanges([
       {
         moveNode: {
-          targetId,
+          targetId: resolvedTarget.id,
           nodeId: droppedExprId,
           position: {
             before: NodePosition.BEFORE,
@@ -487,7 +491,75 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
-  const handleAddLayerMenuItemClick = (
+  type ResolveTargetExprInfo = {
+    kind: ast.ExprKind;
+    id: string;
+  };
+
+  // for cases where virtual node is selected but doesn't exist. E.g: instance inserts
+  const resolveTargetExprId = async (
+    id: string,
+    state: DesignerState
+  ): Promise<ResolveTargetExprInfo> => {
+    if (!id.includes(".")) {
+      const info = ast.getExprInfoById(id, state.graph);
+      return { kind: info.kind, id };
+    }
+    const instanceParts = id.split(".");
+
+    const targetExpr = ast.getExprInfoById(instanceParts.pop(), state.graph);
+
+    if (targetExpr.kind === ast.ExprKind.Slot) {
+      const instanceExpr = ast.getExprInfoById(
+        instanceParts.pop(),
+        state.graph
+      );
+
+      if (instanceExpr.kind === ast.ExprKind.Element) {
+        // children slot provided? Then return the instance
+        if (targetExpr.expr.name === "children") {
+          return { kind: targetExpr.kind, id: instanceExpr.expr.id };
+        }
+
+        // Otherwise find an insert to use
+        const targetInsert = instanceExpr.expr.body.find((child) => {
+          return child.insert?.name === targetExpr.expr.name;
+        });
+
+        // target expr already exists? Send it!
+        if (targetInsert) {
+          return {
+            kind: ast.ExprKind.Insert,
+            id: targetInsert.insert.id,
+          };
+        }
+
+        // No insert found? No problem! Create one!
+        const result = await actions.applyChanges([
+          {
+            appendChild: {
+              parentId: instanceExpr.expr.id,
+              childSource: `
+              insert ${targetExpr.expr.name} {
+
+              }
+              `,
+            },
+          },
+        ]);
+
+        const targetId = result.changes.find((change) => {
+          return change.expressionInserted;
+        }).expressionInserted.id;
+
+        return { kind: ast.ExprKind.Insert, id: targetId };
+      }
+    }
+
+    throw new Error(`Cannot resolve expression`);
+  };
+
+  const handleAddLayerMenuItemClick = async (
     { payload: layerKind }: AddLayerMenuItemClicked,
     state: DesignerState
   ) => {
@@ -507,8 +579,11 @@ const createEventHandler = (actions: Actions) => {
     // start with document for safety. Some exprs cannot be added
     // to parent els
     let parentId = getCurrentDependency(state).document.id;
+    const targetId = getTargetExprId(state);
 
-    const targetExpr = ast.getExprInfoById(getTargetExprId(state), state.graph);
+    const targetExpr = targetId
+      ? await resolveTargetExprId(getTargetExprId(state), state)
+      : { kind: ast.ExprKind.Document, id: parentId };
 
     if (
       [LayerKind.Element, LayerKind.Text].includes(layerKind) &&
@@ -519,7 +594,7 @@ const createEventHandler = (actions: Actions) => {
         ast.ExprKind.Insert,
       ].includes(targetExpr?.kind)
     ) {
-      parentId = targetExpr.expr.id;
+      parentId = targetExpr.id;
     }
 
     actions.applyChanges([

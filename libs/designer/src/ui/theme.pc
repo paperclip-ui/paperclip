@@ -1,4 +1,6 @@
 
+public token roundedXl 0.75rem
+public token roundedLg 0.5rem
 public token popupBackgroundColor var(gray06)
 public token gray0 rgb(210, 210, 210)
 public token gray02 rgb(115, 115, 115)
@@ -78,6 +80,7 @@ public style input {
     border: none
     color: currentColor
     min-height: var(inputHeight)
+    transition: 0.2
 }
 
 public style card {
@@ -93,8 +96,8 @@ public style inputActive {
 
 public style popup {
     background: var(popupBackgroundColor)
-    border-radius: var(rounded)
-    filter: drop-shadow(5px 5px 8px rgba(0, 0, 0, 0.7))
+    border-radius: var(roundedLg)
+    filter: drop-shadow(5px 5px 8px rgba(0, 0, 0, 0.3))
     border: 1px solid var(borderColor)
 }
 

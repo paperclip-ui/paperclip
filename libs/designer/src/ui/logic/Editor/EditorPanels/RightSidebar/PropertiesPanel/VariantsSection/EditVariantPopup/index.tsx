@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import * as sidebarStyles from "@paperclip-ui/designer/src/ui/logic/Sidebar/sidebar.pc";
 import * as inputStyles from "@paperclip-ui/designer/src/ui/input.pc";
 import { TextInput } from "@paperclip-ui/designer/src/ui/logic/TextInput";
@@ -49,9 +49,6 @@ const useEditVariantPopup = ({
   triggers,
   onSave,
 }: EditVariantPopupProps) => {
-  const callbacksRef = useRef<Callbacks>();
-  callbacksRef.current = { onSave };
-
   const [newName, setName] = useState(name);
 
   const onNameChange = setName;

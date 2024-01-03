@@ -1,5 +1,5 @@
 use paperclip_common::serialize_context::Context;
-use paperclip_proto::ast::all::ExpressionWrapper;
+use paperclip_proto::ast::wrapper::ExpressionWrapper;
 
 use crate::pc::{
     serialize_array, serialize_atom, serialize_boolean, serialize_component,

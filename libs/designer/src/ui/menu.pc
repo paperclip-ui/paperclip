@@ -1,15 +1,16 @@
 import "./theme.pc" as theme
 
 /**
- * @frame(x: 174, y: 399, width: 428, height: 311)
+ * @frame(x: 171, y: 535, width: 234, height: 179)
 */
 public component Menu {
     render div root {
         style extends theme.fontDefault, theme.popup {
-            width: 250px
             overflow-y: scroll
             overflow-x: hidden
             max-height: 600px
+            min-width: 150px
+            filter: blue
         }
         slot children {
             MenuItem {
@@ -29,7 +30,7 @@ public component Menu {
 }
 
 /**
- * @frame(x: 632, y: 415, width: 323, height: 84)
+ * @frame(x: 188, y: 990, width: 323, height: 84)
 */
 public component MenuItem {
     variant preselected trigger {
@@ -72,7 +73,7 @@ public component MenuItem {
 }
 
 /**
- * @frame(x: 450, y: 732, width: 421, height: 295)
+ * @frame(x: 177, y: 777, width: 131, height: 131)
 */
 public component MenuList {
     render div {
@@ -123,9 +124,9 @@ public component MenuList {
 }
 
 /**
- * @frame(x: 1092, y: 367, width: 418, height: 284)
+ * @frame(x: 727, y: 412, width: 439, height: 298)
 */
-div {
+div sillyPreview {
     Menu {
         style {
             position: absolute

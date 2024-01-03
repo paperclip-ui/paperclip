@@ -1,6 +1,6 @@
 use super::{
-    all::ExpressionWrapper,
     graph::{Dependency, Graph},
+    wrapper::ExpressionWrapper,
 };
 
 include!(concat!(env!("OUT_DIR"), "/ast.shared.rs"));

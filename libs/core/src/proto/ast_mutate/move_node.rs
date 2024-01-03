@@ -1,10 +1,10 @@
-use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast::pc::Node;
+use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast_mutate::{mutation_result, ExpressionDeleted};
 use paperclip_proto::{
     ast::{
-        all::{Expression, ExpressionWrapper},
         pc::{document_body_item, node},
+        wrapper::{Expression, ExpressionWrapper},
     },
     ast_mutate::MoveNode,
 };

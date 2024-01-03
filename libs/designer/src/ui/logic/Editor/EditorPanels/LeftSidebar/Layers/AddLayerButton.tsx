@@ -3,7 +3,6 @@ import { SuggestionMenu, SuggestionMenuItem } from "../../../../SuggestionMenu";
 import { LayerKind } from "@paperclip-ui/designer/src/state";
 import { useDispatch } from "@paperclip-ui/common";
 import { DesignerEvent } from "@paperclip-ui/designer/src/events";
-import { noop } from "lodash";
 import * as styles from "../ui.pc";
 import { Box } from "@paperclip-ui/designer/src/ui/layout.pc";
 import { BaseAddLayerButtonProps } from "../ui.pc";

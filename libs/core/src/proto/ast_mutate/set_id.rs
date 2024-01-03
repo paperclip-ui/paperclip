@@ -1,14 +1,17 @@
-use crate::proto::ast_mutate::utils::{get_unique_document_body_item_name, get_unique_valid_name};
+use crate::proto::ast_mutate::utils::get_unique_valid_name;
 
 use super::utils::{get_unique_component_name, get_valid_name};
 use convert_case::Case;
 use paperclip_common::get_or_short;
 use paperclip_proto::{
-    ast::all::{
-        visit::{MutableVisitor, VisitorResult},
-        ExpressionWrapper,
+    ast::visit::{MutableVisitor, VisitorResult},
+    ast::wrapper::ExpressionWrapper,
+    ast::{
+        expr_map::ExprMap,
+        graph,
+        pc::{self, node},
+        shared,
     },
-    ast::{graph, pc, shared},
     ast_mutate::{mutation_result, ExpressionUpdated, SetId},
 };
 
@@ -42,8 +45,65 @@ impl MutableVisitor<()> for EditContext<SetId> {
         ) {
             return VisitorResult::Continue;
         }
+        let expr_map = self.expr_map.borrow();
 
-        if let Some(component) = expr.get_instance_component(&self.graph) {
+        let target_expr = expr_map
+            .get_expr(&self.mutation.expression_id)
+            .expect("Expr must exist!");
+
+        let instance_component = expr_map.get_instance_component(&expr.id);
+
+        // if children slot is renamed, then take all instance children and wrap in a slot
+        if let ExpressionWrapper::Slot(slot) = target_expr {
+            if slot.name == "children" {
+                let slot_component = slot
+                    .get_component(&expr_map)
+                    .expect("Slot component must exist");
+
+                let new_name =
+                    get_unique_slot_name(&slot.id, &self.mutation.value, &slot_component);
+
+                if slot.name == new_name {
+                    return VisitorResult::Continue;
+                }
+
+                let instance_component = if let Some(instance_component) = instance_component {
+                    instance_component
+                } else {
+                    return VisitorResult::Continue;
+                };
+
+                if slot_component.id == instance_component.id {
+                    let mut new_body = vec![];
+                    let mut slot_children = vec![];
+
+                    for child in &expr.body {
+                        match child.get_inner() {
+                            node::Inner::Element(_) | node::Inner::Text(_) => {
+                                slot_children.push(child.clone());
+                            }
+                            _ => {
+                                new_body.push(child.clone());
+                            }
+                        }
+                    }
+
+                    let children_insert = node::Inner::Insert(pc::Insert {
+                        id: self.new_id(),
+                        range: None,
+                        name: new_name,
+                        body: slot_children,
+                    })
+                    .get_outer();
+
+                    new_body.push(children_insert);
+
+                    expr.body = new_body;
+                };
+            }
+        }
+
+        if let Some(component) = instance_component {
             if component.id == self.mutation.expression_id {
                 let info = get_expr_dep(&self.mutation.expression_id, &self.graph).unwrap();
                 match &info.0 {
@@ -76,7 +136,12 @@ impl MutableVisitor<()> for EditContext<SetId> {
             return VisitorResult::Continue;
         }
 
-        let new_expr_name = get_unique_name(expr.get_id(), &self.mutation.value, &self.graph);
+        let new_expr_name = get_unique_name(
+            expr.get_id(),
+            &self.mutation.value,
+            &self.graph,
+            &self.expr_map.borrow(),
+        );
 
         if reference.path.len() == 1 {
             reference.path = vec![new_expr_name];
@@ -118,20 +183,21 @@ impl MutableVisitor<()> for EditContext<SetId> {
         VisitorResult::Continue
     }
     fn visit_insert(&self, expr: &mut pc::Insert) -> VisitorResult<(), Self> {
-        let slot_info = get_or_short!(expr.get_slot(&self.graph), VisitorResult::Continue);
+        let slot = get_or_short!(
+            expr.get_slot(&self.expr_map.borrow()),
+            VisitorResult::Continue
+        );
 
-        if slot_info.0.id != self.mutation.expression_id {
+        if slot.id != self.mutation.expression_id {
             return VisitorResult::Continue;
         }
 
         expr.name = get_unique_slot_name(
-            &expr.id,
+            &slot.id,
             &self.mutation.value,
-            &slot_info
-                .0
-                .get_component(&self.graph)
-                .expect("Component must exist")
-                .0,
+            &slot
+                .get_component(&self.expr_map.borrow())
+                .expect("Component must exist"),
         );
 
         // TODO - ensure that this is renamed if assoc slot is
@@ -145,9 +211,8 @@ impl MutableVisitor<()> for EditContext<SetId> {
                 &expr.id,
                 &self.mutation.value,
                 &expr
-                    .get_component(&self.graph)
+                    .get_component(&self.expr_map.borrow())
                     .expect("Component must exist")
-                    .0
             )
         );
         VisitorResult::Continue
@@ -218,7 +283,7 @@ impl MutableVisitor<()> for EditContext<SetId> {
     }
 }
 
-fn get_unique_name(expr_id: &str, name: &str, graph: &graph::Graph) -> String {
+fn get_unique_name(expr_id: &str, name: &str, graph: &graph::Graph, map: &ExprMap) -> String {
     let (info, dep) = graph.get_expr(expr_id).expect("Must exist");
     match info.expr {
         ExpressionWrapper::Variant(variant) => get_unique_variant_name(
@@ -233,7 +298,7 @@ fn get_unique_name(expr_id: &str, name: &str, graph: &graph::Graph) -> String {
         ExpressionWrapper::Slot(slot) => get_unique_slot_name(
             expr_id,
             name,
-            &slot.get_component(graph).expect("Component must exist").0,
+            &slot.get_component(&map).expect("Component must exist"),
         ),
         _ => get_unique_valid_name(expr_id, name, Case::Camel, dep),
     }

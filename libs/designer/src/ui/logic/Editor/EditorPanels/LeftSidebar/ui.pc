@@ -4,7 +4,7 @@ import "ui/theme.pc" as theme
 import "ui/etc.pc" as etc
 
 /**
- * @frame(x: -1561, y: 1882, width: 347, height: 768)
+ * @frame(x: 258, y: 1039, width: 347, height: 252)
 */
 public component FilteredFiles {
     script(src: "./FileNavigator/controller.tsx", target: "react", name: "FilteredFiles")
@@ -12,7 +12,7 @@ public component FilteredFiles {
         slot children {
             FilteredFile(class: "preselected") {
                 insert basename {
-                    text "file.svg"
+                    text "some long base name that should work"
                 }
                 insert dirname {
                     text "./path/to/some/dir"
@@ -55,7 +55,7 @@ public component FilteredFiles {
 }
 
 /**
- * @frame(x: -2077, y: 1894, width: 442, height: 64)
+ * @frame(x: 266, y: 1343, width: 354, height: 88)
 */
 public component FilteredFile {
     variant hovering trigger {
@@ -100,6 +100,11 @@ public component FilteredFile {
                     gap: var(theme.space05)
                 }
                 div basenameContainer {
+                    style {
+                        white-space: nowrap
+                        text-overflow: ellipsis
+                        overflow: hidden
+                    }
                     slot basename {
                         text "file.pc"
                     }
@@ -367,7 +372,7 @@ public component Layers {
 }
 
 /**
- * @frame(x: 593, y: 1429, width: 90, height: 56)
+ * @frame(x: 808, y: 1052, width: 90, height: 56)
 */
 public component LayerIcon {
     variant isStack trigger {
@@ -657,7 +662,7 @@ public component TreeNavigationItemHeader {
 }
 
 /**
- * @frame(x: 629, y: 1548, width: 350, height: 37)
+ * @frame(x: 795, y: 1167, width: 350, height: 37)
 */
 public component LayerNavigationItemHeader {
     variant isStack trigger {
@@ -745,3 +750,4 @@ public component LayerNavigationItemHeader {
         }
     }
 }
+

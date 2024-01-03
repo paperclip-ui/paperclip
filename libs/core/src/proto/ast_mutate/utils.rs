@@ -15,7 +15,7 @@ use paperclip_proto::ast::{
 use regex::Regex;
 use std::{collections::HashMap, fmt::Debug};
 
-use paperclip_proto::ast::all::visit::{Visitable, Visitor, VisitorResult};
+use paperclip_proto::ast::visit::{Visitable, Visitor, VisitorResult};
 
 use crate::config::ConfigContext;
 

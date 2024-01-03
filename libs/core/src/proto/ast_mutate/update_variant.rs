@@ -3,11 +3,9 @@ use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::{
     ast::{
-        all::{
-            visit::{MutableVisitor, VisitorResult},
-            Expression,
-        },
         pc::{component_body_item, ComponentBodyItem},
+        visit::{MutableVisitor, VisitorResult},
+        wrapper::Expression,
     },
     ast_mutate::{
         mutation_result, update_variant_trigger, ExpressionInserted, ExpressionUpdated,

@@ -21,6 +21,9 @@ impl Context {
     pub fn end_block(&mut self) {
         self.depth -= 1;
     }
+    pub fn replace_buffer(&mut self, buffer: &str) {
+        self.buffer = buffer.to_string();
+    }
     pub fn add_buffer(&mut self, buffer: &str) {
         let indent = if self.is_new_line {
             "  ".repeat((self.depth * self.indent_size) as usize)

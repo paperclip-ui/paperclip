@@ -1,6 +1,7 @@
 // From https://paperclip.dev/docs/configure-paperclip
 use anyhow::Result;
 use paperclip_common::fs::FileReader;
+use paperclip_common::log::verbose;
 use paperclip_common::{join_path, path::absolutize};
 use paperclip_parser::core::parser_context::Options;
 use paperclip_proto::notice::base::{Notice, NoticeList};
@@ -62,16 +63,34 @@ impl ConfigContext {
         // if src dir is specified, then use that as the root
         let src_dir = self.config.src_dir.clone().unwrap_or("".to_string());
 
-        Path::new(&self.directory).join(src_dir)
+        absolutize(Path::new(&self.directory).join(src_dir))
     }
 
     pub fn get_module_import_path(&self, path: &str) -> String {
-        path[self
-            .get_src_dir()
-            .to_str()
-            .expect("Can't get src dir")
-            .len()..]
-            .to_string()
+        let src_dir = self.get_src_dir();
+        let abs_src = src_dir.to_str().expect("Can't get src dir");
+
+        // in case abs_src dir is "/" - this would happen during testing
+        let chop_pos = if abs_src == "/" {
+            abs_src.len()
+        } else {
+            abs_src.len() + 1
+        };
+
+        // in case we have a scenario like `/path/to/////module.pc
+        let abs_path = absolutize(Path::new(path).to_path_buf());
+
+        let relative_path = abs_path.to_str().unwrap()[chop_pos..].to_string();
+
+        verbose(
+            format!(
+                "Resolved module {} -> {} from {}",
+                path, relative_path, abs_src
+            )
+            .as_str(),
+        );
+
+        relative_path
     }
 
     pub fn load<FR: FileReader>(

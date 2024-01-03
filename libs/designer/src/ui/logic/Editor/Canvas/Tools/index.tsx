@@ -75,6 +75,12 @@ export const Tools = () => {
           onMouseLeave={onMouseLeave}
           style={style}
         >
+          <Frames
+            canvasScroll={canvas.scrollPosition}
+            frames={frames}
+            canvasTransform={canvas.transform}
+            readonly={readonly}
+          />
           {insertMode == InsertMode.Element && <InsertElement />}
 
           {!resizerMoving && (
@@ -104,12 +110,6 @@ export const Tools = () => {
                 canvas={canvas}
               />
             )}
-          <Frames
-            canvasScroll={canvas.scrollPosition}
-            frames={frames}
-            canvasTransform={canvas.transform}
-            readonly={readonly}
-          />
         </styles.Tools>
       </ContextMenu>
     </DropTarget>

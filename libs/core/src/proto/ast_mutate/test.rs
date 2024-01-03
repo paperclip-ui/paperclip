@@ -11,12 +11,11 @@ use paperclip_proto::ast::pc::{
     component_body_item, node, Component, Element, Render, Slot, TextNode,
 };
 use paperclip_proto::ast_mutate::{
-    mutation, paste_expression, update_variant_trigger, AppendChild, AppendInsert, Bounds,
-    ConvertToComponent, ConvertToSlot, DeleteExpression, InsertFrame, MoveExpressionToFile,
-    MoveNode, PasteExpression, PrependChild, SetElementParameter, SetFrameBounds, SetId,
-    SetStyleDeclaration, SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins,
-    SetTagName, SetTextNodeValue, ToggleInstanceVariant, UpdateDependencyPath, UpdateVariant,
-    WrapInElement,
+    mutation, paste_expression, update_variant_trigger, AppendChild, Bounds, ConvertToComponent,
+    ConvertToSlot, DeleteExpression, InsertFrame, MoveExpressionToFile, MoveNode, PasteExpression,
+    PrependChild, SetElementParameter, SetFrameBounds, SetId, SetStyleDeclaration,
+    SetStyleDeclarationValue, SetStyleDeclarations, SetStyleMixins, SetTagName, SetTextNodeValue,
+    ToggleInstanceVariant, UpdateDependencyPath, UpdateVariant, WrapInElement,
 };
 use std::collections::HashMap;
 
@@ -94,9 +93,9 @@ macro_rules! case {
     };
 }
 
-// macro_rules! xcase {
-//     ($name: ident, $mock_files: expr, $edit: expr, $expected_mock_files: expr) => {};
-// }
+macro_rules! xcase {
+    ($name: ident, $mock_files: expr, $edit: expr, $expected_mock_files: expr) => {};
+}
 case! {
   can_insert_an_element_into_the_document,
   [(
@@ -304,6 +303,62 @@ case! {
               color: orange
             }
           }
+        }
+      }
+    "#
+  )]
+}
+
+case! {
+  can_append_a_child_to_an_insert,
+  [(
+    "/entry.pc", r#"
+    A {
+        insert a {
+
+        }
+    }
+    "#
+  )],
+  mutation::Inner::AppendChild(AppendChild {
+    parent_id: "80f4925f-1".to_string(),
+    child_source: r#"
+      text "Hello"
+    "#.to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      A {
+        insert a {
+            text "Hello"
+        }
+      }
+    "#
+  )]
+}
+
+case! {
+  can_append_child_to_slot,
+  [(
+    "/entry.pc", r#"
+    component A {
+        render slot a {
+
+        }
+    }
+    "#
+  )],
+  mutation::Inner::AppendChild(AppendChild {
+    parent_id: "80f4925f-1".to_string(),
+    child_source: r#"
+      text "Hello"
+    "#.to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+      component A {
+        render slot a {
+            text "Hello"
         }
       }
     "#
@@ -1752,6 +1807,113 @@ case! {
     "#
   )]
 }
+
+case! {
+  noop_if_slot_name_doesnt_change,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+            render div {
+                slot children
+            }
+        }
+
+        A {
+            text "abba"
+        }
+
+        A {
+            insert children {
+                text "baab"
+            }
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-1".to_string(),
+    value: "children".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+        render div {
+            slot children
+        }
+    }
+
+    A {
+        text "abba"
+    }
+
+    A {
+        insert children {
+            text "baab"
+        }
+    }
+    "#
+  )]
+}
+
+case! {
+  moves_default_children_to_explicit_slot_when_slot_is_renamed,
+  [
+    (
+      "/entry.pc", r#"
+        public component Card {
+            render div {
+                div headerContainer {
+                    slot title
+                }
+                div contentContainer {
+                    slot children
+                }
+            }
+        }
+
+        Card {
+            insert title {
+                text "title"
+            }
+            text "a"
+            text "b"
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-3".to_string(),
+    value: "content".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    public component Card {
+        render div {
+            div headerContainer {
+                slot title
+            }
+            div contentContainer {
+                slot content
+            }
+        }
+    }
+
+    Card {
+        insert title {
+            text "title"
+        }
+        insert content {
+            text "a"
+            text "b"
+        }
+    }
+    "#
+  )]
+}
+
 case! {
   can_change_the_property_of_a_condition,
   [
@@ -2477,97 +2639,6 @@ case! {
 }
 
 case! {
-  can_append_an_insert,
-  [
-    (
-      "/entry.pc", r#"
-        component A {
-          render slot test
-        }
-
-        A
-      "#
-    )
-  ],
-
-  mutation::Inner::AppendInsert(AppendInsert {
-    instance_id: "80f4925f-4".to_string(),
-    slot_name: "test".to_string(),
-    child_source: r#"
-      text "abba" {
-        style {
-          color: blue
-        }
-      }
-    "#.to_string()
-  }).get_outer(),
-  [(
-    "/entry.pc", r#"
-      component A {
-        render slot test
-      }
-      A {
-        insert test {
-          text "abba" {
-            style {
-              color: blue
-            }
-          }
-        }
-      }
-    "#
-  )]
-}
-
-case! {
-  can_append_to_an_existing_insert,
-  [
-    (
-      "/entry.pc", r#"
-        component A {
-          render slot test
-        }
-
-        A {
-          insert test {
-            div
-          }
-        }
-      "#
-    )
-  ],
-
-  mutation::Inner::AppendInsert(AppendInsert {
-    instance_id: "80f4925f-6".to_string(),
-    slot_name: "test".to_string(),
-    child_source: r#"
-      text "abba" {
-        style {
-          color: blue
-        }
-      }
-    "#.to_string()
-  }).get_outer(),
-  [(
-    "/entry.pc", r#"
-      component A {
-        render slot test
-      }
-      A {
-        insert test {
-          div
-          text "abba" {
-            style {
-              color: blue
-            }
-          }
-        }
-      }
-    "#
-  )]
-}
-
-case! {
   can_delete_an_expr_from_an_insert,
   [
     (
@@ -2977,6 +3048,7 @@ case! {
       name: None,
       comment: None,
       parameters: vec![],
+      tag_name_range: None,
       range: None,
       body: vec![],
       tag_name: "span".to_string(),
@@ -3009,6 +3081,7 @@ case! {
       namespace: None,
       name: None,
       comment: None,
+      tag_name_range: None,
       parameters: vec![],
       range: None,
       body: vec![],
@@ -3139,6 +3212,7 @@ case! {
     target_expression_id: "80f4925f-2".to_string(),
     item: Some(paste_expression::Item::Element(Element {
       namespace: None,
+      tag_name_range: None,
       comment: None,
       name: None,
       parameters: vec![],
@@ -3180,6 +3254,7 @@ case! {
     item: Some(paste_expression::Item::Element(Element {
       namespace: None,
       name: None,
+      tag_name_range: None,
       comment: None,
       parameters: vec![],
       range: None,
@@ -4490,6 +4565,7 @@ case! {
             id: "div".to_string(),
             comment: None,
             tag_name: "div".to_string(),
+            tag_name_range: None,
             namespace: None,
             name: None,
             parameters: vec![],

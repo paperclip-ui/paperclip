@@ -5,11 +5,11 @@ use paperclip_core::config::LintConfig;
 
 use paperclip_proto::{
     ast::{
-        all::visit::{Visitable, Visitor, VisitorResult},
         css::{declaration_value, DeclarationValue, FunctionCall, StyleDeclaration},
         graph,
         pc::{Element, Parameter},
         shared::Reference,
+        visit::{Visitable, Visitor, VisitorResult},
     },
     notice::base::{Level, Notice, NoticeList},
 };

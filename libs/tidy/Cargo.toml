@@ -1,0 +1,12 @@
+[package]
+name = "paperclip_tidy"
+version = "0.1.1"
+authors = ["Craig Condon <craig.j.condon@gmail.com>"]
+edition = "2021"
+exclude = []
+
+[dependencies]
+paperclip_project = { path = "../project"}
+paperclip_proto = { path = "../proto", features = ["transport"] }
+paperclip_core = { path = "../core"}
+paperclip_validate = { path = "../validate" }

@@ -17,6 +17,17 @@ import { getEntityShortcuts } from "@paperclip-ui/designer/src/domains/shortcuts
 type DropHotSpot = "inside" | "before" | "after";
 const BORDER_MARGIN = 10;
 
+type LeafProps = {
+  children?: () => any;
+  className: string;
+  id?: string;
+  depth: number;
+  text: any;
+  altText?: any;
+  controls?: any;
+  instanceOf?: string[];
+};
+
 export const Leaf = ({
   children,
   className,
@@ -26,16 +37,7 @@ export const Leaf = ({
   altText,
   controls,
   instanceOf,
-}: {
-  children?: () => any;
-  className: string;
-  id?: string;
-  depth: number;
-  text: any;
-  altText?: any;
-  controls?: any;
-  instanceOf: string[];
-}) => {
+}: LeafProps) => {
   const {
     selected,
     open,
@@ -47,7 +49,7 @@ export const Leaf = ({
     style,
     dropHotSpot,
   } = useLeaf({
-    exprId: id,
+    targetId: id,
     instanceOf,
   });
 
@@ -83,21 +85,21 @@ export const Leaf = ({
 };
 
 const useLeaf = ({
-  exprId,
+  targetId,
   instanceOf,
 }: {
-  exprId: string;
+  targetId: string;
   instanceOf: string[];
 }) => {
-  const virtId = exprId && [...(instanceOf || []), exprId].join(".");
+  const virtId = targetId && [...(instanceOf || []), targetId].join(".");
   const open = useSelector(getExpandedVirtIds).includes(virtId);
   const selectedId = useSelector(getTargetExprId);
 
   const graph = useSelector(getGraph);
 
   const contextMenu = useCallback(
-    () => getEntityShortcuts(exprId, graph),
-    [exprId, graph]
+    () => getEntityShortcuts(targetId, graph),
+    [targetId, graph]
   );
 
   const selected = selectedId === virtId;
@@ -109,7 +111,7 @@ const useLeaf = ({
   const [{ opacity }, dragRef] = useDrag(
     () => ({
       type: DNDKind.Node,
-      item: { id: exprId },
+      item: { id: targetId },
       collect: (monitor) => ({
         opacity: monitor.isDragging() ? 0.5 : 1,
         cursor: monitor.isDragging() ? "copy" : "initial",
@@ -129,7 +131,7 @@ const useLeaf = ({
           let isTop = offset.y < rect.top + BORDER_MARGIN;
           let isBottom = offset.y > rect.bottom - BORDER_MARGIN;
 
-          const expr = ast.getExprInfoById(exprId, graph);
+          const expr = ast.getExprInfoById(targetId, graph);
           const draggedExpr = ast.getExprInfoById(draggedExprId, graph);
 
           // can only insert before or after text nodes
@@ -156,20 +158,20 @@ const useLeaf = ({
           type: "ui/exprNavigatorDroppedNode",
           payload: {
             position: dropHotSpot,
-            targetId: exprId,
+            targetId,
             droppedExprId: item.id,
           },
         });
       },
       canDrop({ id: draggedExprId }, _monitor) {
-        if (draggedExprId === exprId) {
+        if (draggedExprId === targetId) {
           return false;
         }
 
         // don't allow dropping a node into a node that is already in it
         const draggedExpr = ast.getExprInfoById(draggedExprId, graph);
 
-        return ast.flattenExpressionInfo(draggedExpr)[exprId] == null;
+        return ast.flattenExpressionInfo(draggedExpr)[targetId] == null;
       },
       collect(monitor) {
         return {

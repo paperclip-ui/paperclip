@@ -9,24 +9,19 @@ import {
   getTargetExprId,
   highlightNode,
   InsertMode,
-  newConvertToSlotPrompt,
   redirect,
   resetCurrentDocument,
 } from "@paperclip-ui/designer/src/state";
-import { centerTransformZoom } from "@paperclip-ui/designer/src/state/geom";
 import { routes } from "@paperclip-ui/designer/src/state/routes";
 import { virtHTML } from "@paperclip-ui/core/lib/proto/virt/html-utils";
 import { FileChangedKind } from "@paperclip-ui/proto/lib/generated/service/designer";
 import produce from "immer";
-import { clamp, mapValues } from "lodash";
+import { mapValues } from "lodash";
 import {
-  clampCanvasTransform,
   handleDoubleClick,
   handleDragEvent,
   // includeExtraRects,
-  MAX_ZOOM,
   maybeCenterCanvas,
-  MIN_ZOOM,
   panCanvas,
   PAN_X_SENSITIVITY,
   PAN_Y_SENSITIVITY,
@@ -131,12 +126,10 @@ export const canvasReducer = (state: DesignerState, event: DesignerEvent) => {
       // Don't do this until deselecting can be handled properly
       const nodeId = getNodeInfoAtCurrentPoint(state)?.nodeId;
 
-      return selectNode(
-        nodeId,
-        event.payload.shiftKey,
-        event.payload.metaKey,
-        state
-      );
+      return selectNode(nodeId, state);
+    }
+    case "ui/frameTitleClicked": {
+      return selectNode(event.payload.frameId, state);
     }
     case "ui/canvasPanned": {
       // do not allow panning when expanded

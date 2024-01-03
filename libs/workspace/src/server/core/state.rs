@@ -3,11 +3,13 @@ use paperclip_common::get_or_short;
 use paperclip_core::config::ConfigContext;
 use paperclip_evaluator::css;
 use paperclip_evaluator::html;
+use paperclip_proto::ast::expr_map::ExprMap;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::virt::module::pc_module_import;
 use paperclip_proto::virt::module::{GlobalScript, PcModule, PcModuleImport, PccssImport};
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::time::SystemTime;
 
 pub struct History {
     pub changes: Vec<Graph>,
@@ -53,6 +55,10 @@ impl ServerState {
         }
     }
 
+    pub fn update_graph(&mut self, other_graph: &Graph) {
+        self.graph = std::mem::replace(&mut self.graph, Graph::new()).merge(other_graph.clone());
+    }
+
     // TODO - this needs to be moved to PC runtime instead
     pub fn bundle_evaluated_module(&self, path: &str) -> Result<PcModule> {
         let (css, html) = get_or_short!(
@@ -64,8 +70,11 @@ impl ServerState {
         let mut to_import: Vec<String> = vec![path.to_string()];
         let mut imports = vec![];
 
-        while let Some(path) = to_import.pop() {
-            let dep = self.graph.dependencies.get(&path).unwrap();
+        while let Some(import_path) = to_import.pop() {
+            let dep =
+                self.graph.dependencies.get(&import_path).expect(
+                    format!("Dependency {} doesn't exist for {}", import_path, path).as_str(),
+                );
 
             for (_rel, path) in &dep.imports {
                 if !imported.contains(path) {

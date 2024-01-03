@@ -3,16 +3,16 @@ use std::cell::RefCell;
 use anyhow::Result;
 
 use crate::add_inner_wrapper;
+use std::collections::HashMap;
 use std::rc::Rc;
 
 use super::{
-    all::{
-        visit::{Visitable, Visitor, VisitorResult},
-        ExpressionWrapper,
-    },
     docco::Comment,
+    expr_map::ExprMap,
     get_expr::GetExpr,
     graph::{Dependency, Graph},
+    visit::{Visitable, Visitor, VisitorResult},
+    wrapper::ExpressionWrapper,
 };
 include!(concat!(env!("OUT_DIR"), "/ast.pc.rs"));
 
@@ -58,6 +58,29 @@ impl Document {
     }
     pub fn get_triggers(&self) -> Vec<&Trigger> {
         get_body_items!(&self.body, document_body_item::Inner::Trigger, Trigger)
+    }
+    pub fn get_declarations(&self) -> HashMap<String, ExpressionWrapper> {
+        let mut exports = HashMap::new();
+        for child in &self.body {
+            match child.get_inner() {
+                document_body_item::Inner::Atom(expr) => {
+                    exports.insert(expr.name.to_string(), expr.into());
+                }
+                document_body_item::Inner::Component(expr) => {
+                    exports.insert(expr.name.to_string(), expr.into());
+                }
+                document_body_item::Inner::Trigger(expr) => {
+                    exports.insert(expr.name.to_string(), expr.into());
+                }
+                document_body_item::Inner::Style(expr) => {
+                    if let Some(name) = &expr.name {
+                        exports.insert(name.to_string(), expr.into());
+                    }
+                }
+                _ => {}
+            }
+        }
+        exports
     }
     pub fn get_import_by_ns(&self, ns: &str) -> Option<&Import> {
         self.get_imports()
@@ -192,53 +215,18 @@ impl Component {
 }
 
 impl Insert {
-    pub fn get_slot<'expr>(&self, graph: &'expr Graph) -> Option<(Slot, &'expr Dependency)> {
-        graph
-            .get_expr(&self.id)
-            .and_then(|(info, _)| {
-                if let Some(instance_id) = info.path.get(info.path.len() - 2) {
-                    graph.get_expr(&instance_id)
-                } else {
-                    None
-                }
-            })
-            .and_then(|(instance_info, dep)| {
-                if let ExpressionWrapper::Element(expr) = instance_info.expr {
-                    if let Some(component) = expr.get_instance_component(graph) {
-                        component
-                            .get_slot(&self.name)
-                            .and_then(|slot| Some((slot, dep)))
-                    } else {
-                        None
-                    }
-                } else {
-                    None
-                }
-            })
+    pub fn get_slot(&self, map: &ExprMap) -> Option<Slot> {
+        let instance = map.get_parent(&self.id)?;
+
+        let instance_component = map.get_instance_component(instance.get_id())?;
+
+        instance_component.get_slot(&self.name)
     }
 }
 
 impl Slot {
-    pub fn get_component<'expr>(
-        &self,
-        graph: &'expr Graph,
-    ) -> Option<(Component, &'expr Dependency)> {
-        graph
-            .get_expr(&self.id)
-            .and_then(|(info, _)| {
-                if let Some(component_id) = info.path.get(0) {
-                    graph.get_expr(&component_id)
-                } else {
-                    None
-                }
-            })
-            .and_then(|(component_info, dep)| {
-                if let ExpressionWrapper::Component(expr) = component_info.expr {
-                    Some((expr, dep))
-                } else {
-                    None
-                }
-            })
+    pub fn get_component<'expr>(&self, map: &'expr ExprMap) -> Option<&'expr Component> {
+        map.get_owner_component(&self.id)
     }
 }
 
@@ -454,71 +442,6 @@ impl TryFrom<&Node> for Script {
     fn try_from(value: &Node) -> Result<Self, Self::Error> {
         match value.get_inner() {
             node::Inner::Script(script) => Ok(script.clone()),
-            _ => Err(()),
-        }
-    }
-}
-
-impl TryFrom<ExpressionWrapper> for Node {
-    type Error = ();
-
-    fn try_from(value: ExpressionWrapper) -> Result<Self, Self::Error> {
-        match &value {
-            ExpressionWrapper::Node(node) => Ok(node.clone()),
-            ExpressionWrapper::Element(node) => Ok(node.into()),
-            ExpressionWrapper::TextNode(node) => Ok(node.into()),
-            _ => Err(()),
-        }
-    }
-}
-
-impl TryFrom<ExpressionWrapper> for Variant {
-    type Error = ();
-
-    fn try_from(value: ExpressionWrapper) -> Result<Self, Self::Error> {
-        match &value {
-            ExpressionWrapper::Variant(node) => Ok(node.clone()),
-            _ => Err(()),
-        }
-    }
-}
-impl TryFrom<ExpressionWrapper> for Component {
-    type Error = ();
-
-    fn try_from(value: ExpressionWrapper) -> Result<Self, Self::Error> {
-        match &value {
-            ExpressionWrapper::Component(node) => Ok(node.clone()),
-            _ => Err(()),
-        }
-    }
-}
-
-impl TryFrom<ExpressionWrapper> for Element {
-    type Error = ();
-
-    fn try_from(value: ExpressionWrapper) -> Result<Self, Self::Error> {
-        match &value {
-            ExpressionWrapper::Element(node) => Ok(node.clone()),
-            _ => Err(()),
-        }
-    }
-}
-
-impl TryFrom<ExpressionWrapper> for Style {
-    type Error = ();
-    fn try_from(value: ExpressionWrapper) -> Result<Self, Self::Error> {
-        match &value {
-            ExpressionWrapper::Style(node) => Ok(node.clone()),
-            _ => Err(()),
-        }
-    }
-}
-
-impl TryFrom<ExpressionWrapper> for Slot {
-    type Error = ();
-    fn try_from(value: ExpressionWrapper) -> Result<Self, Self::Error> {
-        match &value {
-            ExpressionWrapper::Slot(node) => Ok(node.clone()),
             _ => Err(()),
         }
     }

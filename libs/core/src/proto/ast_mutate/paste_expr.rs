@@ -3,10 +3,10 @@
  */
 use paperclip_ast_serialize::pc::serialize_node;
 use paperclip_common::serialize_context::Context;
-use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast::graph_ext::{Dependency, Graph};
 use paperclip_proto::ast::pc::{Component, Element, Insert, Node};
-use paperclip_proto::ast::{all::Expression, pc::node};
+use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
+use paperclip_proto::ast::{pc::node, wrapper::Expression};
 use paperclip_proto::ast_mutate::{mutation_result, ExpressionInserted};
 use paperclip_proto::ast_mutate::{paste_expression, PasteExpression};
 

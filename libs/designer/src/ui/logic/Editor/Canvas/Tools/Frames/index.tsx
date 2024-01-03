@@ -3,16 +3,22 @@ import * as styles from "./index.pc";
 import { Node as VirtNode } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { Transform, Point } from "@paperclip-ui/designer/src/state/geom";
 
-import { DEFAULT_FRAME_BOX, getGraph } from "@paperclip-ui/designer/src/state";
+import {
+  DEFAULT_FRAME_BOX,
+  getCurrentDependency,
+  getCurrentDocument,
+  getGraph,
+} from "@paperclip-ui/designer/src/state";
 import { virtHTML } from "@paperclip-ui/core/lib/proto/virt/html-utils";
 import { metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
-import { useSelector } from "@paperclip-ui/common";
+import { useDispatch, useSelector } from "@paperclip-ui/common";
 import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import {
   TextNode,
   Element,
   Component,
 } from "@paperclip-ui/proto/lib/generated/ast/pc";
+import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 
 export type FramesProps = {
   canvasScroll: Point;
@@ -61,25 +67,38 @@ const Frame = memo(
     const { frame: bounds } = metadataValueMapToJSON(
       (frame.element || frame.textNode).metadata
     );
+    // const dep = useSelector(getCurrentDependency);
 
     const graph = useSelector(getGraph);
+    const dispatch = useDispatch<DesignerEvent>();
 
-    const expr = ast.getExprByVirtId(
-      frame.element?.id ?? frame.textNode?.id,
+    // we want top-most
+    const expr = ast.getExprInfoById(
+      (frame.element?.id ?? frame.textNode?.id).split(".").shift(),
       graph
     );
 
     // could be component which is NOT rendered
     const frameExpr =
-      (expr && ast.getExprOwnerComponent(expr.expr, graph)) || expr?.expr;
+      (expr &&
+        ast.getParentExprInfo(expr.expr.id, graph)?.kind ===
+          ast.ExprKind.Render &&
+        ast.getExprOwnerComponent(expr.expr, graph)) ||
+      expr?.expr;
 
     const title =
-      (frameExpr as Element | TextNode | Component)?.name ?? "Undefined";
+      (frameExpr as Element | TextNode | Component)?.name ?? "Untitled";
 
     const frameBounds = bounds ?? DEFAULT_FRAME_BOX;
     const [editing, setEditing] = useState(false);
 
     const onClick = useCallback((event: React.MouseEvent<any>) => {
+      console.log("frame");
+      dispatch({
+        type: "ui/frameTitleClicked",
+        payload: { frameId: expr.expr.id },
+      });
+
       // prevent canvas click event
       event.stopPropagation();
     }, []);

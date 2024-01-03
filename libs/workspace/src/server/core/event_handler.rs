@@ -5,8 +5,8 @@ use super::ServerState;
 use crate::machine::store::EventHandler;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::log::verbose;
-use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::graph_ext::Graph;
+use paperclip_proto::ast::wrapper::Expression;
 
 enum HistoryStep {
     Forward,
@@ -21,9 +21,7 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
         match event {
             ServerEvent::DependencyGraphLoaded { graph } => {
                 verbose("ServerEvent::DependencyGraphLoaded");
-                state.graph =
-                    std::mem::replace(&mut state.graph, Graph::new()).merge(graph.clone());
-
+                state.update_graph(graph);
                 store_history(state);
             }
             ServerEvent::UpdateFileRequested { path, content } => {
@@ -42,9 +40,7 @@ impl EventHandler<ServerState, ServerEvent> for ServerStateEventHandler {
                 updated_graph,
             } => {
                 verbose("ServerEvent::MutationsApplied");
-                state.graph =
-                    std::mem::replace(&mut state.graph, Graph::new()).merge(updated_graph.clone());
-
+                state.update_graph(updated_graph);
                 update_changed_files(state);
                 store_history(state);
             }

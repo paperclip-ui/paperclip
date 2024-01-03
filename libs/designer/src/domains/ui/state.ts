@@ -221,8 +221,6 @@ export const findSelectableExprId = (
 
 export const selectNode = (
   virtNodeId: string | null,
-  shiftKey: boolean,
-  metaKey: boolean,
   designer: DesignerState
 ) => {
   virtNodeId = virtNodeId && findSelectableExprId(virtNodeId, designer);

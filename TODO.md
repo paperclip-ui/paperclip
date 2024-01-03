@@ -1,40 +1,54 @@
-#### FOCUS
-
-- focus on editing
-
-  - ensure that paths are absolute
-  - can move components to to other files
-    - references are updated
-    - update refs OF expression moved
-
-- everything should be editable in the UI
-  - should be able to edit variant triggers
-  - should be able to add scripts
-  - prohibit things from being deleted if references to them
-
 #### Immediate
 
-- designer stops working after lint error
+- ability to define script in UI
+- ability to define trigger reference
+- ability to elevate declaration value to mixin
+- tab to create new attribute
+- "instances of" section should display directory, too.
+- mixins should be searchable
 
-- editing
+- start on AI backend
 
-  - circular dependencies
-  - ability to move tokens to other files
-  - ability to move mixins to other files
-  - ability to move components to other files
-  - ability to move triggers to other files
-  - ensure that
-    - all instances of each expression is updated
+- ability to toggle frame visiblity
 
-- linting
+  - show eye button in layer
 
-  - ensure that no magic colors are present
-  - ensure that no magic measurements are present
+- ability to wire up script
+
+#### Next
 
 - layers panel
 
-  - ability to drop files into file navigator
+  - ability to drop assets to the canvas
+
+- canvas
+  - topbar should not move when panels hide / show
+- AI
+
+  - CLI tool for interacting with code
+  - compare before committing
+
+- Online editor
+
+  - WASM bridge
 
 - file navigator
 
-- styles
+  - ability to drop files to file navigator
+  - display assets
+
+- resource panel
+
+  - display components
+  - display assets (svg, png)
+  - ability to drop assets to canvas
+
+- styles panel
+
+- properties panel
+
+  - text input should be text area
+
+- compiler
+  - compile style mixins as css selectors
+  - compile style vars

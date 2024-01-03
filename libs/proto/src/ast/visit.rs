@@ -1,9 +1,9 @@
-pub use super::super::base;
-pub use super::super::css;
-pub use super::super::docco;
-pub use super::super::graph;
-pub use super::super::pc;
-pub use super::super::shared;
+pub use super::base;
+pub use super::css;
+pub use super::docco;
+pub use super::graph;
+pub use super::pc;
+pub use super::shared;
 
 pub enum VisitorResult<TRet, TVisitor: ?Sized> {
     Return(TRet),

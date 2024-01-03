@@ -6,13 +6,25 @@ public trigger unnamed {
 
 
 /**
- * @frame(x: 599, y: 208, width: 359, height: 235)
+ * @frame(x: 975, y: 112, width: 477, height: 305)
 */
 public component Test {
     render div {
         style {
             position: relative
         }
+        slot title {
+            text "type to insert"
+        }
+        slot children {
+            text "content"
+        }
     }
 }
 
+Test {
+    insert title {
+    }
+    text "Hello world"
+    text "Hello world2"
+}

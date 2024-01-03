@@ -622,7 +622,7 @@ add_case! {
   const _A = (props, ref) => {
       return React.createElement(props.root && props.root.as || B, {
           ...omit(props.root, ["as"]),
-          "$$scopeClassName": "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : "") + (props.root && props.root.className ? " " + props.root.className : ""),
+          "$$scopeClassName": "_A-root-80f4925f-4" + (props.$$scopeClassName ? " " + props.$$scopeClassName : ""),
           "key": "80f4925f-4",
           "ref": ref
       });
@@ -982,7 +982,7 @@ add_case! {
                   ...omit(props_items.something, ["as"]),
                   "className": "_AB-something-80f4925f-3" + (props_items.something && props_items.something.className ? " " + props_items.something.className : ""),
                   "key": "80f4925f-3",
-                  "onClick": props_items.onClick
+                  "onClick": (props_items.something && props_items.something.onClick) || props_items.onClick
               })
           ])
       );
@@ -1068,7 +1068,7 @@ add_case! {
           ...omit(props.test, ["as"]),
           "className": "_test-80f4925f-14" + (props.test && props.test.className ? " " + props.test.className : ""),
           "key": "80f4925f-14",
-          "onMouseDown": props.onMouseDown,
+          "onMouseDown": (props.test && props.test.onMouseDown) || props.onMouseDown,
           "ref": ref
       },
           props.insert || [
@@ -1132,7 +1132,7 @@ add_case! {
           ...omit(props.test, ["as"]),
           "className": "_test-80f4925f-8" + (props.test && props.test.className ? " " + props.test.className : ""),
           "key": "80f4925f-8",
-          "onMouseDown": props.onMouseDown,
+          "onMouseDown": (props.test && props.test.onMouseDown) || props.onMouseDown,
           "ref": ref
       })
   }));

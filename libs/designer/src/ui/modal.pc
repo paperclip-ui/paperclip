@@ -1,9 +1,10 @@
+import "state/theme.pc" as theme
 import "./input.pc" as module1
 import "./button.pc" as module
 import "./theme.pc" as mod
 
 /**
- * @frame(x: 1285, y: 559, width: 428, height: 38)
+ * @frame(x: 1950, y: 362, width: 428, height: 38)
 */
 public component ModalFooter {
     render div content {
@@ -15,10 +16,10 @@ public component ModalFooter {
         div right {
             style {
                 display: flex
-                gap: var(mod.space03)
+                gap: var(mod.space05)
             }
             slot rightControls {
-                module.Button {
+                module.Button(class: "secondary") {
                     text "cancel"
                 }
                 module.Button {
@@ -30,14 +31,14 @@ public component ModalFooter {
 }
 
 /**
- * @frame(x: 1162, y: 647, width: 567, height: 70)
+ * @frame(x: 1932, y: 181, width: 567, height: 70)
 */
 public component ModalContent {
     render div content {
         style {
             height: 100%
             min-height: 0px
-            max-width: 300px
+            width: 100%
         }
         slot children {
             text "some description of text and stuff"
@@ -46,13 +47,13 @@ public component ModalContent {
 }
 
 /**
- * @frame(x: 1145, y: 709, width: 584, height: 70)
+ * @frame(x: 1936, y: 39, width: 584, height: 70)
 */
 public component ModalHeader {
     render div header {
         style {
             font-weight: bold
-            font-size: var(mod.fontSize02)
+            font-size: var(mod.fontSize03)
             display: flex
             justify-content: space-between
             align-items: flex-start
@@ -91,11 +92,11 @@ public component Modal {
             transform: translate(-50%, -50%)
             color: var(mod.fontColor01)
             font-family: var(mod.defaultFontFamily)
-            padding: var(mod.space05)
+            padding: var(mod.space04)
             display: flex
             flex-direction: column
-            gap: var(mod.space05)
-            min-width: 300px
+            gap: var(theme.space05)
+            min-width: 350px
         }
         slot children {
             ModalHeader
@@ -139,7 +140,7 @@ ModalContainer promptPreview {
             }
             ModalContent {
                 insert children {
-                    module1.TextInput(placeholder: "new file name", value: "")
+                    module1.TextInput(placeholder: "New file name...", value: "undefined", class: "large")
                 }
             }
             ModalFooter
@@ -167,3 +168,4 @@ ModalContainer confirmPreview {
         }
     }
 }
+

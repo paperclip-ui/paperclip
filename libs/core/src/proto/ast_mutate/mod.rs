@@ -1,6 +1,5 @@
 mod add_import;
 mod append_child;
-mod append_insert;
 mod base;
 mod convert_to_component;
 mod convert_to_slot;
@@ -34,7 +33,6 @@ use super::graph::{get_document_imports, io::IO};
 pub use add_import::*;
 use anyhow::Result;
 pub use append_child::*;
-pub use append_insert::*;
 pub use base::*;
 pub use convert_to_component::*;
 pub use convert_to_slot::*;
@@ -42,8 +40,8 @@ pub use delete_expression::*;
 pub use move_expression_to_file::*;
 pub use move_node::*;
 pub use paperclip_proto::ast;
-use paperclip_proto::ast::all::visit::{MutableVisitable, MutableVisitor, VisitorResult};
 use paperclip_proto::ast::graph_ext::Graph;
+use paperclip_proto::ast::visit::{MutableVisitable, MutableVisitor, VisitorResult};
 pub use paperclip_proto::ast_mutate::*;
 pub use paste_expr::*;
 pub use set_element_parameter::*;
@@ -140,7 +138,6 @@ mutations! {
   MoveExpressionToFile,
   UpdateTrigger,
   AddImport,
-  AppendInsert,
   SetTagName,
   PrependChild,
   SetTextNodeValue,

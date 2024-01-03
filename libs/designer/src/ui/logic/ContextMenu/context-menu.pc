@@ -1,3 +1,4 @@
+import "state/theme.pc" as theme
 import "../../theme.pc" as imp
 import "../../menu.pc" as menu
 
@@ -9,7 +10,7 @@ public component ContextMenu {
     render menu.Menu container {
         slot children {
             ContextMenuItem {
-                text "Create component"
+                text "Super long item that should be cut"
                 insert keyCommand {
                     text "⌥⌘K"
                 }
@@ -47,7 +48,7 @@ public component ContextMenu {
 }
 
 /**
- * @frame(x: 0, y: 0, width: 149, height: 66)
+ * @frame(x: 0, y: 0, width: 465, height: 64)
 */
 public component ContextMenuDivider {
     render hr {
@@ -72,8 +73,19 @@ public component ContextMenuItem {
         ":first-child"
     }
     render menu.MenuItem container {
-        slot children {
-            text "Context menu item"
+        style {
+            display: flex
+            gap: var(theme.space03)
+        }
+        div label {
+            style {
+                overflow: hidden
+                white-space: nowrap
+                text-overflow: ellipsis
+            }
+            slot children {
+                text "Context menu item"
+            }
         }
         div {
             style {

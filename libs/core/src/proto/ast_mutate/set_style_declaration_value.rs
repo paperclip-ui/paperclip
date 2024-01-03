@@ -1,8 +1,8 @@
 use super::base::EditContext;
 use super::utils::{create_import, parse_declaration_value, resolve_imports};
 use paperclip_proto::ast;
-use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast::get_expr::GetExpr;
+use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast_mutate::SetStyleDeclarationValue;
 
 impl MutableVisitor<()> for EditContext<SetStyleDeclarationValue> {

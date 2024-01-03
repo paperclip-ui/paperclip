@@ -153,6 +153,12 @@ export type ElementTagChanged = BaseEvent<
     sourceFilePath?: string;
   }
 >;
+export type FrameTitleClicked = BaseEvent<
+  "ui/frameTitleClicked",
+  {
+    frameId: string;
+  }
+>;
 export type ExprNavigatorDroppedNode = BaseEvent<
   "ui/exprNavigatorDroppedNode",
   {
@@ -270,6 +276,7 @@ export type UIEvent =
   | TriggersEdited
   | BoundsChanged
   | CanvasResized
+  | FrameTitleClicked
   | FileNavigatorContextMenuOpened
   | ToolsLayerDrop
   | PromptClosed

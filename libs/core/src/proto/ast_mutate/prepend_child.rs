@@ -3,9 +3,9 @@ use super::utils::{get_unique_document_body_item_name, parse_node};
 use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
-use paperclip_proto::ast::all::visit::{MutableVisitable, MutableVisitor, VisitorResult};
-use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::pc::Node;
+use paperclip_proto::ast::visit::{MutableVisitable, MutableVisitor, VisitorResult};
+use paperclip_proto::ast::wrapper::Expression;
 use paperclip_proto::ast_mutate::{mutation_result, ExpressionInserted, PrependChild};
 
 use super::utils::upsert_render_expr;

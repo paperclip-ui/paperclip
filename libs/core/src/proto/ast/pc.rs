@@ -1,5 +1,5 @@
-use paperclip_proto::ast::all::visit::{Visitable, Visitor, VisitorResult};
 use paperclip_proto::ast::pc::Component;
+use paperclip_proto::ast::visit::{Visitable, Visitor, VisitorResult};
 use std::cell::RefCell;
 use std::rc::Rc;
 

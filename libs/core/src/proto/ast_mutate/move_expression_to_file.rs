@@ -9,15 +9,15 @@ use paperclip_common::get_or_short;
 use paperclip_proto::{
     ast::pc::Element,
     ast::{
-        all::{Expression, ExpressionWrapper},
         graph_ext::Dependency,
         pc::{document_body_item, Document},
         shared::Reference,
+        wrapper::{Expression, ExpressionWrapper},
     },
     ast_mutate::{mutation, AddImport, MoveExpressionToFile},
 };
 
-use paperclip_proto::ast::all::visit::{MutableVisitable, MutableVisitor, VisitorResult};
+use paperclip_proto::ast::visit::{MutableVisitable, MutableVisitor, VisitorResult};
 
 impl MutableVisitor<()> for EditContext<MoveExpressionToFile> {
     fn visit_document(

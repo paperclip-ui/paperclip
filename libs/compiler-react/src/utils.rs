@@ -1,5 +1,5 @@
 use paperclip_proto::ast;
-use paperclip_proto::ast::all::*;
+use paperclip_proto::ast::wrapper::*;
 
 pub const COMPILER_NAME: &str = "react";
 

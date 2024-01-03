@@ -3,6 +3,12 @@
 - fix exception being thrown when editing variant
   (can't edit button variants)
 - fix selection colors
+- deselect variants when selecting other elements
+- ability to define script in UI
+- ability to define trigger reference
+- ability to elevate declaration value to mixin
+
+- start on AI backend
 
 - ability to toggle frame visiblity
 

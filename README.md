@@ -19,7 +19,13 @@ Or download one of the standalone binaries here: https://github.com/paperclip-ui
 
 ---
 
-Paperclip is a tiny styling language that compiles to HTML and CSS. Here's an example of what it looks like:
+Paperclip is a UI builder for creating **styled components** visually.
+
+https://github.com/paperclip-ui/paperclip/assets/757408/429b22e0-41d6-4621-8b6e-613c1686cdda
+
+Paperclip files are designed to compile to any target language or framework you want (currently supporting React), and can even be compiled down to vanilla HTML and CSS. No runtime.
+
+Here's an example of Paperclip's file format:
 
 ```javascript
 
@@ -54,7 +60,7 @@ public component Button {
 }
 ```
 
-This is a basic example, but gives you an idea of how Paperclip blends HTML and CSS into a different format. Here's what the compiled output looks like:
+Here's what the compile CSS looks like:
 
 ```css
 :root {
@@ -75,112 +81,13 @@ This is a basic example, but gives you an idea of how Paperclip blends HTML and 
 }
 ```
 
-Paperclip also emits code for different libraries. Here's an example of what's emitted for React:
+And here's what a styled component looks like:
 
 ```tsx
 export const Button = ({ children }) => (
   <button className="Button">{children}</button>
 );
 ```
-
-In, your app code, you may use Paperclip like so:
-
-```tsx
-import { Button } from "./button.pc";
-
-<Button>Click me!</Button>;
-```
-
-### Why Paperclip?
-
-- Provides a safe and scalable approach to styling web app.s
-  - Paperclip is strongly typed, and generates strongly typed code.
-  - There's no cascading styles in Paperclip. Instead, Paperclip uses component variants.
-- No runtime. Paperclip is compiled to static HTML and CSS.
-- Comes with a designer that allows you to visually edit Paperclip files.
-- No dependencies! Just [download one of the standalone binaries](https://github.com/paperclip-ui/paperclip/releases).
-- Super fast compiler built in Rust.
-
-#### Comparing CSS-in-JS
-
-Paperclip supports styled components. For example:
-
-```javascript
-public component Card {
-  render div {
-    style {
-      padding: 14px
-      font-size: 16px
-      font-family: sans-serif
-    }
-    slot children
-  }
-}
-```
-
-Here's the equivalent code using `styled-components`:
-
-```typescript
-import styled from "styled-components";
-
-export const Card = styled.div`
-  padding: 14px;
-  font-size: 16px;
-  font-family: sans-serif;
-`;
-```
-
-Paperclip compiles to static HTML and CSS, meaning that there's no runtime, which is comparable to CSS-in-JS options that use Babel transforms.
-
-#### Comparing with CSS
-
-Paperclip is different than CSS in that Paperclip doesn't support the cascading part (which means that you don't risk style collisions). Instead, you have variants. For example, in CSS you might write:
-
-```css
-.Page {
-  font-size: 14px;
-}
-@media screen and (max-width: 700px) {
-  .Page {
-    font-size: 21px;
-  }
-}
-```
-
-In Paperclip, the equivalent would be:
-
-```typescript
-trigger mobileTrigger "@media screen and (max-width: 700px)"
-
-public component Page {
-  variant mobile trigger {
-    mobileTrigger
-  }
-  render div {
-    style {
-      font-size: 14px
-    }
-    style variant mobile {
-      font-size: 21px
-    }
-    slot children
-  }
-}
-```
-
-Paperclip is also strongly typed. For example:
-
-```typescript
-style defaultFont {
-
-  // Error!
-  font-family: var(fontFamily)
-}
-```
-
-Would emit an error since `fontFamily` doesn't exist.
-
-Lastly, Paperclip files aren't limited to CSS, and are designed to compile to different targets (more of this in the future).
 
 ### Getting Started
 
@@ -213,7 +120,3 @@ This will compile your `*.pc` files into code that you can import
 directly into your app.
 
 And that's it! 🎉
-
-<!--## Designer
-
-https://github.com/paperclip-ui/paperclip/assets/757408/429b22e0-41d6-4621-8b6e-613c1686cdda-->

@@ -2,7 +2,8 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use paperclip_common::id::IDGenerator;
-use paperclip_proto::ast::all::Expression;
+use paperclip_proto::ast::expr_map::ExprMap;
+use paperclip_proto::ast::wrapper::Expression;
 use paperclip_proto::ast_mutate::{self};
 use paperclip_proto::{
     ast::{graph::Dependency, graph_ext::Graph},
@@ -14,6 +15,7 @@ pub struct EditContext<Mutation> {
     id_generator: Rc<RefCell<IDGenerator>>,
     pub mutation: Mutation,
     pub path: String,
+    pub expr_map: Rc<RefCell<ExprMap>>,
     pub graph: Rc<Graph>,
     pub changes: Rc<RefCell<Vec<MutationResult>>>,
     pub post_mutations: Rc<RefCell<Vec<ast_mutate::Mutation>>>,
@@ -38,6 +40,7 @@ impl<'a, Mutation> EditContext<Mutation> {
             mutation,
             id_generator: self.id_generator.clone(),
             path: self.path.clone(),
+            expr_map: self.expr_map.clone(),
             graph: self.graph.clone(),
             changes: self.changes.clone(),
             post_mutations: self.post_mutations.clone(),
@@ -68,6 +71,7 @@ impl<'a, Mutation> EditContext<Mutation> {
             mutation,
             post_mutations: Rc::new(RefCell::new(vec![])),
             id_generator: Rc::new(RefCell::new(IDGenerator::new(checksum))),
+            expr_map: Rc::new(RefCell::new(ExprMap::from_graph(&graph))),
             path: path.to_string(),
             graph: graph.clone(),
             changes: Rc::new(RefCell::new(vec![])),

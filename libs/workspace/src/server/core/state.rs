@@ -3,11 +3,13 @@ use paperclip_common::get_or_short;
 use paperclip_core::config::ConfigContext;
 use paperclip_evaluator::css;
 use paperclip_evaluator::html;
+use paperclip_proto::ast::expr_map::ExprMap;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::virt::module::pc_module_import;
 use paperclip_proto::virt::module::{GlobalScript, PcModule, PcModuleImport, PccssImport};
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::time::SystemTime;
 
 pub struct History {
     pub changes: Vec<Graph>,
@@ -51,6 +53,10 @@ impl ServerState {
             evaluated_modules: HashMap::new(),
             updated_files: vec![],
         }
+    }
+
+    pub fn update_graph(&mut self, other_graph: &Graph) {
+        self.graph = std::mem::replace(&mut self.graph, Graph::new()).merge(other_graph.clone());
     }
 
     // TODO - this needs to be moved to PC runtime instead

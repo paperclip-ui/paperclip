@@ -1,9 +1,9 @@
 use super::base::EditContext;
 use super::utils::{parse_element_attribute_value, upsert_render_expr};
 use paperclip_proto::ast;
-use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
-use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::pc::{Element, Parameter};
+use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
+use paperclip_proto::ast::wrapper::Expression;
 use paperclip_proto::ast_mutate::SetElementParameter;
 
 fn set_element_attribute(element: &mut Element, ctx: &EditContext<SetElementParameter>) {

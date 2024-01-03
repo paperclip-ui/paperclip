@@ -87,7 +87,7 @@ const Frame = memo(
       expr?.expr;
 
     const title =
-      (frameExpr as Element | TextNode | Component)?.name ?? "Undefined";
+      (frameExpr as Element | TextNode | Component)?.name ?? "Untitled";
 
     const frameBounds = bounds ?? DEFAULT_FRAME_BOX;
     const [editing, setEditing] = useState(false);

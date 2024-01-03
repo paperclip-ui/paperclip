@@ -149,7 +149,7 @@ public component TextInput {
         ":focus"
         ".active"
     }
-    render input root(class: class) {
+    render input root(class: class, placeholder: placeholder) {
         style variant medium {
             padding: var(theme.space04)
         }

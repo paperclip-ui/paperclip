@@ -6,8 +6,8 @@ use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::{
     ast::{
-        all::{Expression, ExpressionWrapper},
         pc::{document_body_item, node, Component, Document, DocumentBodyItem, Element, Node},
+        wrapper::{Expression, ExpressionWrapper},
     },
     ast_mutate::{mutation_result, ConvertToComponent, ExpressionInserted},
 };
@@ -15,7 +15,7 @@ use paperclip_proto::{
 use super::EditContext;
 use paperclip_proto::ast::get_expr::GetExpr;
 
-use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
+use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
 
 macro_rules! replace_child_with_instance {
     ($self: expr, $children: expr, $checksum: expr) => {

@@ -93,9 +93,9 @@ macro_rules! case {
     };
 }
 
-// macro_rules! xcase {
-//     ($name: ident, $mock_files: expr, $edit: expr, $expected_mock_files: expr) => {};
-// }
+macro_rules! xcase {
+    ($name: ident, $mock_files: expr, $edit: expr, $expected_mock_files: expr) => {};
+}
 case! {
   can_insert_an_element_into_the_document,
   [(
@@ -1807,6 +1807,113 @@ case! {
     "#
   )]
 }
+
+case! {
+  noop_if_slot_name_doesnt_change,
+  [
+    (
+      "/entry.pc", r#"
+        component A {
+            render div {
+                slot children
+            }
+        }
+
+        A {
+            text "abba"
+        }
+
+        A {
+            insert children {
+                text "baab"
+            }
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-1".to_string(),
+    value: "children".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    component A {
+        render div {
+            slot children
+        }
+    }
+
+    A {
+        text "abba"
+    }
+
+    A {
+        insert children {
+            text "baab"
+        }
+    }
+    "#
+  )]
+}
+
+case! {
+  moves_default_children_to_explicit_slot_when_slot_is_renamed,
+  [
+    (
+      "/entry.pc", r#"
+        public component Card {
+            render div {
+                div headerContainer {
+                    slot title
+                }
+                div contentContainer {
+                    slot children
+                }
+            }
+        }
+
+        Card {
+            insert title {
+                text "title"
+            }
+            text "a"
+            text "b"
+        }
+      "#
+    )
+  ],
+
+  mutation::Inner::SetId(SetId {
+    expression_id: "80f4925f-3".to_string(),
+    value: "content".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    public component Card {
+        render div {
+            div headerContainer {
+                slot title
+            }
+            div contentContainer {
+                slot content
+            }
+        }
+    }
+
+    Card {
+        insert title {
+            text "title"
+        }
+        insert content {
+            text "a"
+            text "b"
+        }
+    }
+    "#
+  )]
+}
+
 case! {
   can_change_the_property_of_a_condition,
   [

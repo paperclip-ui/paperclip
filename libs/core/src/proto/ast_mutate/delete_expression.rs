@@ -1,8 +1,8 @@
 use super::base::EditContext;
 use crate::try_remove_child;
 use paperclip_proto::ast;
-use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
-use paperclip_proto::ast::all::Expression;
+use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
+use paperclip_proto::ast::wrapper::Expression;
 use paperclip_proto::ast_mutate::{mutation_result, DeleteExpression, ExpressionDeleted};
 
 impl MutableVisitor<()> for EditContext<DeleteExpression> {

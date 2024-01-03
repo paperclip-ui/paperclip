@@ -1,10 +1,10 @@
 use paperclip_common::fs::FileResolver;
 use paperclip_common::id::{get_document_id, IDGenerator};
-use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::base::Range;
 use paperclip_proto::ast::graph_ext as graph;
 use paperclip_proto::ast::graph_ext::ComponentRefInfo;
 use paperclip_proto::ast::pc as ast;
+use paperclip_proto::ast::wrapper::Expression;
 use paperclip_proto::notice::base::Notice;
 use paperclip_proto::virt::css::Rule;
 use std::cell::RefCell;

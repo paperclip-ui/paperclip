@@ -8,11 +8,11 @@ use paperclip_common::get_or_short;
 use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
-use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
-use paperclip_proto::ast::all::{Expression, ExpressionWrapper};
 use paperclip_proto::ast::get_expr::GetExpr;
 use paperclip_proto::ast::graph_ext::Dependency;
 use paperclip_proto::ast::pc::Render;
+use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
+use paperclip_proto::ast::wrapper::{Expression, ExpressionWrapper};
 use paperclip_proto::ast_mutate::{
     mutation_result, ExpressionUpdated, MutationResult, SetStyleDeclarations,
 };

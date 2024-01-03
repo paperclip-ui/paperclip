@@ -5,6 +5,9 @@
 - ability to define script in UI
 - ability to define trigger reference
 - ability to elevate declaration value to mixin
+- tab to create new attribute
+- "instances of" section should display directory, too.
+- mixins should be searchable
 
 - start on AI backend
 

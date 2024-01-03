@@ -3,11 +3,11 @@ use super::utils::{get_unique_document_body_item_name, parse_node};
 use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
-use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::pc::Element;
+use paperclip_proto::ast::wrapper::Expression;
 use paperclip_proto::ast_mutate::{mutation_result, AppendChild, ExpressionInserted};
 
-use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
+use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
 
 macro_rules! append_child {
     ($context:expr, $expr: expr) => {{

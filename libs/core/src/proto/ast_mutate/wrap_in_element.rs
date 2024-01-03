@@ -1,11 +1,11 @@
-use paperclip_proto::ast::{all::Expression, pc::node};
+use paperclip_proto::ast::{pc::node, wrapper::Expression};
 use paperclip_proto::ast_mutate::WrapInElement;
 use paperclip_proto::ast_mutate::{mutation_result, ExpressionInserted};
 
 use super::utils::parse_node;
 use super::EditContext;
 use crate::try_remove_child;
-use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
+use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
 
 #[macro_export]
 macro_rules! wrap_in_element {

@@ -1,11 +1,9 @@
 use paperclip_proto::{
     ast::{
-        all::{
-            visit::{MutableVisitor, VisitorResult},
-            Expression,
-        },
-        get_expr::GetExpr,
-        pc::{node, Document, Node, Slot},
+        expr_map::ExprMap,
+        pc::{node, Node, Slot},
+        visit::{MutableVisitor, VisitorResult},
+        wrapper::Expression,
     },
     ast_mutate::{mutation_result, ConvertToSlot, ExpressionInserted},
 };
@@ -61,25 +59,23 @@ fn create_slot(ctx: &EditContext<ConvertToSlot>, child: Node, id: &str) -> Node 
             .get_outer(),
     );
 
+    let expr_map: &ExprMap = &ctx.expr_map.borrow();
+
     node::Inner::Slot(Slot {
         id: id.to_string(),
-        name: get_unique_slot_name(
-            &ctx.mutation.expression_id,
-            &ctx.mutation.name,
-            ctx.get_dependency()
-                .document
-                .as_ref()
-                .expect("Document must exist"),
-        ),
+        name: get_unique_slot_name(&ctx.mutation.expression_id, &ctx.mutation.name, expr_map),
         range: None,
         body: vec![child],
     })
     .get_outer()
 }
 
-fn get_unique_slot_name(id: &str, name: &String, doc: &Document) -> String {
+fn get_unique_slot_name(id: &str, name: &String, expr_map: &ExprMap) -> String {
     let base_name = name.clone();
-    let owner_component = GetExpr::get_owner_component(id, doc).expect("Component must exist!");
+    let owner_component = expr_map
+        .get_owner_component(id)
+        .expect("Component must exist!");
+
     let mut i = 0;
     let mut name = base_name.to_string();
 

@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 use super::base::EditContext;
 use super::utils::{add_imports, NamespaceResolution};
-use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::pc::Document;
+use paperclip_proto::ast::wrapper::Expression;
 use paperclip_proto::{
     ast,
     ast_mutate::{mutation_result, ExpressionInserted, InsertFrame},
@@ -11,7 +11,7 @@ use paperclip_proto::{
 
 use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse as parse_pc;
-use paperclip_proto::ast::all::visit::{MutableVisitable, MutableVisitor, VisitorResult};
+use paperclip_proto::ast::visit::{MutableVisitable, MutableVisitor, VisitorResult};
 
 impl MutableVisitor<()> for EditContext<InsertFrame> {
     fn visit_document(

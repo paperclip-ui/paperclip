@@ -210,7 +210,7 @@ const InstanceLeaf = ({
   for (const child of instance.body) {
     if (child.insert) {
       if (instanceSlots[child.insert.name]) {
-        instanceSlots[child.insert.name!].insert = child.insert.body;
+        instanceSlots[child.insert.name!].insert = child.insert.body.concat();
       }
     } else if (instanceSlots.children) {
       instanceSlots.children.insert.push(child);

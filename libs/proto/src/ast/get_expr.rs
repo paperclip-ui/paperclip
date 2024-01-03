@@ -2,9 +2,9 @@ use super::graph_ext::{Dependency, Graph};
 use super::pc;
 use super::pc::{document_body_item, DocumentBodyItem};
 use super::shared;
-use super::{all::ExpressionWrapper, pc::Component};
+use super::{pc::Component, wrapper::ExpressionWrapper};
 
-use super::all::visit::{Visitable, Visitor, VisitorResult};
+use super::visit::{Visitable, Visitor, VisitorResult};
 
 pub struct GetExprResult {
     pub expr: ExpressionWrapper,

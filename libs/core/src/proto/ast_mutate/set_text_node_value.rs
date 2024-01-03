@@ -1,5 +1,5 @@
 use paperclip_proto::{
-    ast::all::visit::{MutableVisitor, VisitorResult},
+    ast::visit::{MutableVisitor, VisitorResult},
     ast_mutate::{mutation_result, ExpressionUpdated, SetTextNodeValue},
 };
 

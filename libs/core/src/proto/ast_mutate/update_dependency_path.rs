@@ -2,10 +2,10 @@ use crate::config::ConfigContext;
 
 use super::base::EditContext;
 use paperclip_common::path::absolutize;
-use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast::css::{declaration_value, FunctionCall};
 use paperclip_proto::ast::graph::Dependency;
 use paperclip_proto::ast::pc::{simple_expression, Element, Import};
+use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast_mutate::UpdateDependencyPath;
 use std::path::Path;
 

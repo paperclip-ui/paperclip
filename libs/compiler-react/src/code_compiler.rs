@@ -11,14 +11,12 @@ use paperclip_common::get_or_short;
 use paperclip_evaluator::core::utils::get_style_namespace;
 use paperclip_infer::infer;
 use paperclip_proto::ast::{
-    all::{
-        visit::{MutableVisitable, MutableVisitor, VisitorResult},
-        Expression,
-    },
     get_expr::GetExpr,
     graph_ext::{Dependency, Graph},
     pc as ast,
     shared::Reference,
+    visit::{MutableVisitable, MutableVisitor, VisitorResult},
+    wrapper::Expression,
 };
 use paperclip_proto::notice::base::NoticeList;
 use std::cell::RefCell;

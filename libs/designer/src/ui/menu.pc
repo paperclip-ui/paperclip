@@ -1,7 +1,7 @@
 import "./theme.pc" as theme
 
 /**
- * @frame(x: 171, y: 535, width: 138, height: 145)
+ * @frame(x: 171, y: 535, width: 234, height: 179)
 */
 public component Menu {
     render div root {

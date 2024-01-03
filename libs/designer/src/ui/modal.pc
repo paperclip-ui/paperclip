@@ -1,3 +1,4 @@
+import "state/theme.pc" as theme
 import "./input.pc" as module1
 import "./button.pc" as module
 import "./theme.pc" as mod
@@ -15,7 +16,7 @@ public component ModalFooter {
         div right {
             style {
                 display: flex
-                gap: var(mod.space03)
+                gap: var(mod.space05)
             }
             slot rightControls {
                 module.Button(class: "secondary") {
@@ -52,7 +53,7 @@ public component ModalHeader {
     render div header {
         style {
             font-weight: bold
-            font-size: var(mod.fontSize02)
+            font-size: var(mod.fontSize03)
             display: flex
             justify-content: space-between
             align-items: flex-start
@@ -91,11 +92,11 @@ public component Modal {
             transform: translate(-50%, -50%)
             color: var(mod.fontColor01)
             font-family: var(mod.defaultFontFamily)
-            padding: var(mod.space06)
+            padding: var(mod.space04)
             display: flex
             flex-direction: column
-            gap: var(mod.space06)
-            min-width: 400px
+            gap: var(theme.space05)
+            min-width: 350px
         }
         slot children {
             ModalHeader
@@ -139,7 +140,7 @@ ModalContainer promptPreview {
             }
             ModalContent {
                 insert children {
-                    module1.TextInput(placeholder: "new file name", value: "")
+                    module1.TextInput(placeholder: "New file name...", value: "undefined", class: "large")
                 }
             }
             ModalFooter

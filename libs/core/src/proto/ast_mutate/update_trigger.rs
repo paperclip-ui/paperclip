@@ -1,8 +1,8 @@
 use paperclip_parser::{core::parser_context::Options, pc::parser::parse};
 use paperclip_proto::{
     ast::{
-        all::visit::{MutableVisitor, VisitorResult},
         pc::Trigger,
+        visit::{MutableVisitor, VisitorResult},
     },
     ast_mutate::{update_variant_trigger, UpdateTrigger},
 };

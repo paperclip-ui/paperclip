@@ -2,9 +2,9 @@ use super::base::EditContext;
 use super::utils::import_dep;
 use super::utils::resolve_import_ns;
 use paperclip_proto::ast;
-use paperclip_proto::ast::all::visit::MutableVisitor;
-use paperclip_proto::ast::all::visit::VisitorResult;
 use paperclip_proto::ast::shared::Reference;
+use paperclip_proto::ast::visit::MutableVisitor;
+use paperclip_proto::ast::visit::VisitorResult;
 use paperclip_proto::ast_mutate::SetStyleMixins;
 
 use paperclip_proto::ast::get_expr::GetExpr;

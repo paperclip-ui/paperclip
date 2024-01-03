@@ -2,9 +2,9 @@ use super::base::EditContext;
 use super::utils::{get_instance_component, import_dep, resolve_import_ns, upsert_render_expr};
 use paperclip_common::get_or_short;
 use paperclip_proto::ast;
-use paperclip_proto::ast::all::visit::{MutableVisitor, VisitorResult};
-use paperclip_proto::ast::all::Expression;
 use paperclip_proto::ast::pc::node;
+use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
+use paperclip_proto::ast::wrapper::Expression;
 use paperclip_proto::ast_mutate::SetTagName;
 
 use super::super::ast::pc::FindSlotNames;

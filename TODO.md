@@ -1,6 +1,5 @@
 #### Immediate
 
-- deselect variants when selecting other elements
 - ability to define script in UI
 - ability to define trigger reference
 - ability to elevate declaration value to mixin

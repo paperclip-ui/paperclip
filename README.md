@@ -10,13 +10,11 @@ https://github.com/paperclip-ui/paperclip/assets/757408/429b22e0-41d6-4621-8b6e-
 
 Paperclip emits primitive components that you can use in your existing codebase. For example:
 
-```
+```jsx
 import React from "react";
 import * as styles from "./button.pc";
-export const Button = ({children, onClick}) => {
-  return <styles.Button onClick={onClick}>
-    {children}
-  </styles.Button>
+export const Button = ({ children, onClick }) => {
+  return <styles.Button onClick={onClick}>{children}</styles.Button>;
 };
 ```
 

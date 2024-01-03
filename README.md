@@ -126,7 +126,7 @@ public component Hello {
 }
 ```
 
-3. **Run `paperclip build`**
+3. **Run `npx paperclip build`**
 
 This will compile your `*.pc` files into code that you can import
 directly into your app.

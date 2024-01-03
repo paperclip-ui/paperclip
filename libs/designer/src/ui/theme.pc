@@ -78,6 +78,7 @@ public style input {
     border: none
     color: currentColor
     min-height: var(inputHeight)
+    transition: 0.2
 }
 
 public style card {
@@ -88,7 +89,7 @@ public style card {
 }
 
 public style inputActive {
-    box-shadow: inset 0px 0px 0px 1px white
+    box-shadow: inset 0px 0px 0px 1px var(blue01)
 }
 
 public style popup {

@@ -1,5 +1,9 @@
 #### Immediate
 
+- fix exception being thrown when editing variant
+  (can't edit button variants)
+- fix selection colors
+
 - ability to toggle frame visiblity
 
   - show eye button in layer

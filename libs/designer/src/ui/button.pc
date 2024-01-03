@@ -19,15 +19,16 @@ public component Button {
     }
     render button root(class: class) {
         style variant secondary + hover {
-            color: white
-            border-color: white
+            color: var(mod.blue00)
+            border-color: var(mod.blue00)
         }
         style variant hover {
-            background: rgba(101, 100, 100, 1)
+            background: var(mod.blue00)
         }
         style variant secondary {
             background: transparent
-            border-color: var(mod.gray0)
+            border-color: var(mod.blue01)
+            color: var(mod.blue01)
         }
         style variant danger {
             background: red
@@ -35,8 +36,8 @@ public component Button {
         }
         style {
             position: relative
-            background: var(mod.gray02)
-            border: 1px solid var(mod.gray02)
+            background: var(mod.blue01)
+            border: 1px solid var(mod.blue01)
             border-radius: var(mod.space02)
             padding: var(mod.space04) var(mod.space06)
             color: var(mod.gray0)
@@ -98,3 +99,4 @@ div preview {
         }
     }
 }
+

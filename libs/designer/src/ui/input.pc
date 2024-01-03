@@ -164,7 +164,7 @@ public component TextInput {
 }
 
 /**
- * @frame(x: -1471, y: -211, width: 1024, height: 768)
+ * @frame(x: -2954, y: -372, width: 1024, height: 768)
 */
 public component ColorInput {
     render div root {
@@ -188,7 +188,7 @@ public component ColorInput {
 }
 
 /**
- * @frame(x: -1493, y: 393, width: 1024, height: 768)
+ * @frame(x: -2911, y: 541, width: 1024, height: 768)
 */
 public component Fields {
     render div {
@@ -648,7 +648,7 @@ public component RadioInput {
 }
 
 /**
- * @frame(x: -2440, y: -1596, width: 293, height: 164)
+ * @frame(x: -2440, y: -1596, width: 418, height: 236)
 */
 div textInputPreview {
     style {

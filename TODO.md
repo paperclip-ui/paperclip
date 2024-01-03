@@ -1,5 +1,10 @@
 #### Immediate
 
+- ability to toggle frame visiblity
+  - show eye button in layer
+
+#### Next
+
 - layers panel
 
   - ability to drop assets to the canvas

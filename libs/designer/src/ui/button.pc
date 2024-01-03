@@ -4,6 +4,9 @@ import "./theme.pc" as mod
  * @frame(x: 576, y: 1023, width: 512, height: 215)
 */
 public component Button {
+    variant hover trigger {
+        ":hover"
+    }
     variant danger trigger {
         ".danger"
     }
@@ -14,6 +17,12 @@ public component Button {
         ".warning"
     }
     render button root(class: class) {
+        style variant secondary + hover {
+            background: rgba(133, 133, 133, 1)
+        }
+        style variant hover {
+            background: rgba(43, 113, 255, 1)
+        }
         style variant secondary {
             background: var(mod.gray02)
         }
@@ -26,9 +35,10 @@ public component Button {
             background: var(mod.blue02)
             border: 0px
             border-radius: var(mod.space02)
-            padding: var(mod.space02) var(mod.space04)
+            padding: var(mod.space04) var(mod.space06)
             color: var(mod.gray0)
             cursor: pointer
+            transition: 0.2s
         }
         slot children {
             text "a button"
@@ -117,3 +127,4 @@ component Card {
  * @frame(x: 675, y: 2376, width: 1024, height: 768)
 */
 Card(class: "light")
+

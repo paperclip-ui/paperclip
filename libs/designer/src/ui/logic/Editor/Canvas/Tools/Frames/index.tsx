@@ -3,7 +3,12 @@ import * as styles from "./index.pc";
 import { Node as VirtNode } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { Transform, Point } from "@paperclip-ui/designer/src/state/geom";
 
-import { DEFAULT_FRAME_BOX, getGraph } from "@paperclip-ui/designer/src/state";
+import {
+  DEFAULT_FRAME_BOX,
+  getCurrentDependency,
+  getCurrentDocument,
+  getGraph,
+} from "@paperclip-ui/designer/src/state";
 import { virtHTML } from "@paperclip-ui/core/lib/proto/virt/html-utils";
 import { metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
 import { useSelector } from "@paperclip-ui/common";
@@ -61,17 +66,23 @@ const Frame = memo(
     const { frame: bounds } = metadataValueMapToJSON(
       (frame.element || frame.textNode).metadata
     );
+    // const dep = useSelector(getCurrentDependency);
 
     const graph = useSelector(getGraph);
 
-    const expr = ast.getExprByVirtId(
-      frame.element?.id ?? frame.textNode?.id,
+    // we want top-most
+    const expr = ast.getExprInfoById(
+      (frame.element?.id ?? frame.textNode?.id).split(".").shift(),
       graph
     );
 
     // could be component which is NOT rendered
     const frameExpr =
-      (expr && ast.getExprOwnerComponent(expr.expr, graph)) || expr?.expr;
+      (expr &&
+        ast.getParentExprInfo(expr.expr.id, graph)?.kind ===
+          ast.ExprKind.Render &&
+        ast.getExprOwnerComponent(expr.expr, graph)) ||
+      expr?.expr;
 
     const title =
       (frameExpr as Element | TextNode | Component)?.name ?? "Undefined";

@@ -88,13 +88,13 @@ public style card {
 }
 
 public style inputActive {
-    box-shadow: inset 0px 0px 0px 1px var(blue01)
+    box-shadow: inset 0px 0px 0px 1px white
 }
 
 public style popup {
     background: var(popupBackgroundColor)
     border-radius: var(rounded)
-    filter: drop-shadow(5px 5px 8px rgba(0, 0, 0, 0.7))
+    filter: drop-shadow(5px 5px 8px rgba(0, 0, 0, 0.3))
     border: 1px solid var(borderColor)
 }
 

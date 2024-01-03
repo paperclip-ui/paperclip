@@ -1,7 +1,10 @@
 #### Immediate
 
 - ability to toggle frame visiblity
+
   - show eye button in layer
+
+- ability to wire up script
 
 #### Next
 

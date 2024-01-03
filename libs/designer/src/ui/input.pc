@@ -135,21 +135,21 @@ public component SuggestionMenuItem {
 }
 
 /**
- * @frame(x: -1106, y: -341, width: 367, height: 55)
+ * @frame(x: -2435, y: -1739, width: 367, height: 55)
 */
 public component TextInput {
-    variant medium trigger {
-        ".medium"
-    }
     variant large trigger {
         ".large"
+    }
+    variant medium trigger {
+        ".medium"
     }
     variant isActive trigger {
         ":active"
         ":focus"
         ".active"
     }
-    render input root {
+    render input root(class: class) {
         style variant medium {
             padding: var(theme.space04)
         }
@@ -609,7 +609,7 @@ public component ListItemInput {
 }
 
 /**
- * @frame(x: -343, y: -1559, width: 249, height: 123)
+ * @frame(x: -366, y: -1262, width: 74, height: 34)
 */
 public component RadioInput {
     variant on trigger {
@@ -648,7 +648,7 @@ public component RadioInput {
 }
 
 /**
- * @frame(x: -1149, y: -557, width: 293, height: 164)
+ * @frame(x: -2440, y: -1596, width: 293, height: 164)
 */
 div textInputPreview {
     style {
@@ -665,8 +665,10 @@ div textInputPreview {
             gap: var(theme.space03)
             width: 200px
         }
-        TextInput(value: "regular")
-        TextInput(value: "regular")
-        TextInput(value: "regular")
+        TextInput(class: "large", placeholder: "Large")
+        TextInput(class: "medium", placeholder: "Medium")
+        TextInput(value: "regular", placeholder: "Regular")
+        TextInput(class: "medium active", placeholder: "Medium")
     }
 }
+

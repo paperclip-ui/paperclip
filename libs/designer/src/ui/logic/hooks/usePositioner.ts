@@ -27,7 +27,9 @@ export const usePositioner = (
       position: "fixed",
       zIndex: 9999,
       top: `${bounds.top + bounds.height * topMultiplier}px`,
-      minWidth: `${bounds.width}px`,
+
+      // don't want this because it messes with actual min width
+      // minWidth: `${bounds.width}px`,
       scroll: "hidden",
       display: "inline-block",
     });

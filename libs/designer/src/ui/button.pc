@@ -1,11 +1,12 @@
 import "./theme.pc" as mod
 
 /**
- * @frame(x: 576, y: 1023, width: 512, height: 215)
+ * @frame(x: 1108, y: 346, width: 512, height: 215)
 */
 public component Button {
     variant hover trigger {
         ":hover"
+        ".hover"
     }
     variant danger trigger {
         ".danger"
@@ -18,13 +19,15 @@ public component Button {
     }
     render button root(class: class) {
         style variant secondary + hover {
-            background: rgba(133, 133, 133, 1)
+            color: white
+            border-color: white
         }
         style variant hover {
-            background: rgba(43, 113, 255, 1)
+            background: rgba(101, 100, 100, 1)
         }
         style variant secondary {
-            background: var(mod.gray02)
+            background: transparent
+            border-color: var(mod.gray0)
         }
         style variant danger {
             background: red
@@ -32,8 +35,8 @@ public component Button {
         }
         style {
             position: relative
-            background: var(mod.blue02)
-            border: 0px
+            background: var(mod.gray02)
+            border: 1px solid var(mod.gray02)
             border-radius: var(mod.space02)
             padding: var(mod.space04) var(mod.space06)
             color: var(mod.gray0)
@@ -47,7 +50,7 @@ public component Button {
 }
 
 /**
- * @frame(x: 1158, y: 198, width: 486, height: 235)
+ * @frame(x: 960, y: -56, width: 632, height: 280)
 */
 div preview {
     style {
@@ -61,13 +64,14 @@ div preview {
             align-items: flex-start
             gap: var(mod.space03)
             cursor: pointer
+            flex-wrap: wrap
         }
         Button {
             insert children {
                 text "primary"
             }
         }
-        Button {
+        Button(class: "secondary") {
             insert children {
                 text "secondary"
             }
@@ -82,49 +86,15 @@ div preview {
                 text "danger (todo)"
             }
         }
-    }
-}
-
-/**
- * @frame(x: 603, y: 613, width: 438, height: 253)
-*/
-public component Something {
-    render div {
-        style extends mod.card {
-            position: relative
-            font-family: var(mod.defaultFontFamily)
+        Button(class: "hover") {
+            insert children {
+                text "primary:hover"
+            }
         }
-        text "Hello world" {
-            style {
-                color: var(mod.gray0)
+        Button(class: "secondary hover") {
+            insert children {
+                text "secondary:hover"
             }
         }
     }
 }
-
-/**
- * @frame(x: 1311, y: 774, width: 1024, height: 768)
-*/
-component Card {
-    variant light trigger {
-        ".light"
-        "@media screen and (min-width: 400px)"
-    }
-    render div(class: class) {
-        style variant light {
-            color: black
-            background: white
-        }
-        style {
-            background: black
-            color: white
-        }
-        text "Hello"
-    }
-}
-
-/**
- * @frame(x: 675, y: 2376, width: 1024, height: 768)
-*/
-Card(class: "light")
-

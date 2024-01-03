@@ -16,7 +16,7 @@ import { routes } from "@paperclip-ui/designer/src/state/routes";
 import { virtHTML } from "@paperclip-ui/core/lib/proto/virt/html-utils";
 import { FileChangedKind } from "@paperclip-ui/proto/lib/generated/service/designer";
 import produce from "immer";
-import { clamp, mapValues } from "lodash";
+import { mapValues } from "lodash";
 import {
   handleDoubleClick,
   handleDragEvent,

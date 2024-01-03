@@ -15,6 +15,7 @@ import produce from "immer";
 import { uniq } from "lodash";
 import { Prompt } from "./prompt";
 import { Confirm } from "./confirm";
+import { getSelectedVariantIds } from "./pc";
 
 export const IS_WINDOWS = false;
 
@@ -183,6 +184,28 @@ export const getRenderedFilePath = (state: DesignerState) => {
 export const getTargetExprId = (state: DesignerState) => {
   return state.history?.query.nodeId;
 };
+
+export const canDefineVariantForExprId = (
+  exprId: string,
+  state: DesignerState | WritableDraft<DesignerState>
+) => {
+  const selectedVariantId = getSelectedVariantIds(state as DesignerState)[0];
+  if (!selectedVariantId) {
+    return false;
+  }
+  const selectedVariant = ast.getExprInfoById(selectedVariantId, state.graph);
+  const expr = ast.getExprInfoById(exprId, state.graph);
+  const ownerComponent = ast.getExprOwnerComponent(
+    selectedVariant.expr,
+    state.graph
+  );
+
+  return (
+    ownerComponent &&
+    ast.getExprOwnerComponent(expr.expr, state.graph)?.id === ownerComponent?.id
+  );
+};
+
 export const setTargetExprId = (
   state: WritableDraft<DesignerState>,
   nodeId: string
@@ -198,6 +221,11 @@ export const setTargetExprId = (
     state.redirect.query.nodeId = nodeId;
   } else {
     delete state.redirect.query.nodeId;
+  }
+
+  // deselect variant ids if they're selected
+  if (!canDefineVariantForExprId(nodeId, state)) {
+    delete state.redirect.query.variantIds;
   }
 
   if (nodeId != null) {

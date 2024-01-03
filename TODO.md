@@ -1,6 +1,5 @@
 #### Immediate
 
-- fix selection colors
 - deselect variants when selecting other elements
 - ability to define script in UI
 - ability to define trigger reference

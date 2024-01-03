@@ -105,17 +105,15 @@ export const Button = ({ children }) => (
 
 ### Getting Started
 
-1. **[download one of the releases](https://github.com/paperclip-ui/paperclip/releases), or run `yarn install paperclip -D`**
-
-2. **run this command in your project directory:**
+`. **run this command in your project directory:**
 
 ```
-paperclip init
+npx paperclip init
 ```
 
 This will create a `paperclip.config.json` file for you.
 
-3. **Copy the following contents to `src/hello.pc`**
+2. **Copy the following contents to `src/hello.pc`**
 
 ```typescript
 public component Hello {
@@ -128,7 +126,7 @@ public component Hello {
 }
 ```
 
-4. **Run `paperclip build`**
+3. **Run `npx paperclip build`**
 
 This will compile your `*.pc` files into code that you can import
 directly into your app.

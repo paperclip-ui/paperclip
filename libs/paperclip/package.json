@@ -7,6 +7,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@paperclip-ui/cli": "20.4.20"
+    "@paperclip-ui/cli": "workspace:^"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@paperclip-ui/releases",
-  "version": "20.4.18",
+  "version": "20.4.19",
   "description": "",
   "main": "lib/index.js",
   "scripts": {

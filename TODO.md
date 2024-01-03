@@ -1,5 +1,7 @@
 #### Immediate
 
+- better instance editor
+
 - export public styles, too
 
 - ability to define script in UI

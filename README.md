@@ -5,7 +5,7 @@
 > Join the [Discord channel](https://discord.gg/H6wEVtd) for the latest updates!
 
 ```sh
-yarn add @paperclip-ui/cli -D && yarn paperclip designer --open
+npx paperclip designer --open
 ```
 
 Or download one of the standalone binaries here: https://github.com/paperclip-ui/paperclip/releases
@@ -91,7 +91,7 @@ export const Button = ({ children }) => (
 
 ### Getting Started
 
-1. **[download one of the releases](https://github.com/paperclip-ui/paperclip/releases), or run `yarn install @paperclip-ui/cli -D`**
+1. **[download one of the releases](https://github.com/paperclip-ui/paperclip/releases), or run `yarn install paperclip -D`**
 
 2. **run this command in your project directory:**
 

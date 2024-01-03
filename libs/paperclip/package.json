@@ -1,0 +1,12 @@
+{
+  "name": "paperclip",
+  "version": "20.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": "node_modules/@paperclip-ui/cli/bin/paperclip",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@paperclip-ui/cli": "20.4.20"
+  }
+}

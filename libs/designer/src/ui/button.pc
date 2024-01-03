@@ -1,7 +1,7 @@
 import "./theme.pc" as mod
 
 /**
- * @frame(x: 1108, y: 346, width: 512, height: 215)
+ * @frame(x: 960, y: 89, width: 144, height: 39)
 */
 public component Button {
     variant hover trigger {
@@ -51,7 +51,7 @@ public component Button {
 }
 
 /**
- * @frame(x: 960, y: -56, width: 632, height: 280)
+ * @frame(x: 960, y: -56, width: 449, height: 105)
 */
 div preview {
     style {

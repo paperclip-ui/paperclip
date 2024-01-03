@@ -64,8 +64,11 @@ impl ServerState {
         let mut to_import: Vec<String> = vec![path.to_string()];
         let mut imports = vec![];
 
-        while let Some(path) = to_import.pop() {
-            let dep = self.graph.dependencies.get(&path).unwrap();
+        while let Some(import_path) = to_import.pop() {
+            let dep =
+                self.graph.dependencies.get(&import_path).expect(
+                    format!("Dependency {} doesn't exist for {}", import_path, path).as_str(),
+                );
 
             for (_rel, path) in &dep.imports {
                 if !imported.contains(path) {

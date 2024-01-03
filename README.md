@@ -4,6 +4,10 @@
 
 > Join the [Discord channel](https://discord.gg/H6wEVtd) for the latest updates!
 
+```
+npx paperclip designer --open
+```
+
 ### Paperclip is a UI builder for creating **styled components** visually.
 
 https://github.com/paperclip-ui/paperclip/assets/757408/429b22e0-41d6-4621-8b6e-613c1686cdda

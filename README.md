@@ -18,14 +18,19 @@ export const Button = ({ children, onClick }) => {
 };
 ```
 
-Paperclip _only_ covers styles and primitive components, and is not a replacement to code. You can think of it like a design system creator.
+Paperclip compliments our existing codebase by covering _just_ the visual aspect - HTML and CSS. In a way, you can think of Paperclip like a design system creator.
+
+Paperclip can replace your existing CSS-in-JS solution since components are compiled straight to code and don't require a runtime.
+
+You may use Paperclip with existing CSS frameworks like Tailwind. If you want, you may even be able to load these CSS frameworks into the Paperclip designer so that you can build with these CSS frameworks visually.
 
 ### Project goals + highlights
 
 - Languange + framework agnostic
 - Provide a scalable way of styling with CSS without the cascading part
 - No runtime. PC files are compiled to static HTML and CSS.
-- Lower the barrier to UI development to so that designers and other teammembers can edit UIs
+- Make it easier for anyone to build UIs
+- No dependencies! Just download one of the [releases to run Paperclip](https://github.com/paperclip-ui/paperclip/releases)
 
 ### File format
 

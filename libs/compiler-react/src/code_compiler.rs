@@ -610,10 +610,28 @@ fn get_raw_element_attrs<'dependency>(
 
     for parameter in &element.parameters {
         let mut param_context = context.with_new_content();
-        compile_simple_expression(
-            &parameter.value.as_ref().expect("Value must exist"),
-            &mut param_context,
-        );
+        let value = parameter.value.as_ref().expect("Value must exist");
+        compile_simple_expression(&value, &mut param_context);
+
+        if let Some(name) = &element.name {
+            let prop = format!("{}.{}", context.ctx_name, name);
+
+            // is included below so just cover everything else
+            if parameter.name != "class" {
+                let attr_alias = attr_alias(&parameter.name);
+                param_context.replace_buffer(
+                    format!(
+                        " ({} && {}.{}) || {}",
+                        prop,
+                        prop,
+                        attr_alias,
+                        param_context.get_buffer()
+                    )
+                    .as_str(),
+                );
+            }
+        }
+
         attrs.insert(parameter.name.to_string(), param_context);
     }
 
@@ -634,20 +652,20 @@ fn get_raw_element_attrs<'dependency>(
             );
         }
 
-        if let Some(name) = &element.name {
-            let prop = format!("{}.{}", context.ctx_name, name);
-            sub.add_buffer(
-                format!(
-                    " + ({} && {}.className ? \" \" + {}.className : \"\")",
-                    prop, prop, prop
-                )
-                .as_str(),
-            );
-        }
-
         if info.is_instance {
             attrs.insert("$$scopeClassName".to_string(), sub);
         } else {
+            if let Some(name) = &element.name {
+                let prop = format!("{}.{}", context.ctx_name, name);
+
+                sub.add_buffer(
+                    format!(
+                        " + ({} && {}.className ? \" \" + {}.className : \"\")",
+                        prop, prop, prop
+                    )
+                    .as_str(),
+                );
+            }
             if let Some(class) = attrs.get_mut("class") {
                 class.add_buffer(format!(" + \" \" + {}", sub.get_buffer()).as_str());
             } else {

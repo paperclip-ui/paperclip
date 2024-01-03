@@ -49,6 +49,9 @@ impl<'dependency> Context<'dependency> {
     pub fn add_buffer(&self, buffer: &str) {
         self.content.borrow_mut().add_buffer(buffer);
     }
+    pub fn replace_buffer(&self, buffer: &str) {
+        self.content.borrow_mut().replace_buffer(buffer);
+    }
     pub fn start_block(&self) {
         self.content.borrow_mut().start_block();
     }

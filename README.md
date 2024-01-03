@@ -4,28 +4,15 @@
 
 > Join the [Discord channel](https://discord.gg/H6wEVtd) for the latest updates!
 
-```sh
-npx paperclip designer --open
-```
-
-Or download one of the standalone binaries here: https://github.com/paperclip-ui/paperclip/releases
-
----
-
-- Documentation
-  - [Syntax](./docs/syntax.md) - Info about the DSL
-  - [Getting Started](#getting-started)
-  - [CLI Usage](#cli)
-
----
-
-Paperclip is a UI builder for creating **styled components** visually.
+### Paperclip is a UI builder for creating **styled components** visually.
 
 https://github.com/paperclip-ui/paperclip/assets/757408/429b22e0-41d6-4621-8b6e-613c1686cdda
 
-Paperclip files are designed to compile to any target language or framework you want (currently supporting React), and can even be compiled down to vanilla HTML and CSS. No runtime.
+Paperclip files are designed to compile to any target language or framework you want (currently supporting React), and can even be compiled down to vanilla HTML and CSS. No runtime! 🎉
 
-Here's an example of Paperclip's file format:
+### File format
+
+Here's an example of a Paperclip file:
 
 ```javascript
 
@@ -60,7 +47,8 @@ public component Button {
 }
 ```
 
-Here's what the compile CSS looks like:
+This can compile to vanilla HTML and CSS, as well any supported target framework or language of your choosing. Here's an example of how
+the example above might be compiled to CSS:
 
 ```css
 :root {
@@ -81,7 +69,7 @@ Here's what the compile CSS looks like:
 }
 ```
 
-And here's what a styled component looks like:
+And here's how the file might be compiled to React code:
 
 ```tsx
 export const Button = ({ children }) => (

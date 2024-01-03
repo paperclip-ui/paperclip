@@ -1,5 +1,7 @@
 #### Immediate
 
+- export public styles, too
+
 - ability to define script in UI
 - ability to define trigger reference
 - ability to elevate declaration value to mixin

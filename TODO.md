@@ -1,26 +1,20 @@
 #### Immediate
 
-- assets
-
-  - ability to drag resources to canvas
-    - from file navigator
-    - from search
-  - ability to drop files into file navigator
-
 - file navigator
 
-  - ability to drop files from local system
+  - ability to drop assets to stage
+  - ability to drop searched files to stage
+  - ability to drag local files into navigator
+  - expressions
+    - can insert instance into dropped target
+    - can apply token to dropped target
+    - can apply mixin to dropped target
+    - when SVG is dropped to element, set background CSS
+    - honor variants
   - open file in code editor
-  - drag assets to canvas
-
-    - files
-    - components
-    - tokens - should apply to element being dropped to
-    - mixins - should apply to element being dropped to
-
-  - insert modal
-    - display files
-    - display components assoc with files
+  - clean up menu items (use zed as example)
+    - right click directory
+    - right click file
 
 - resource search
 

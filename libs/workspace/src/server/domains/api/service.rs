@@ -11,6 +11,8 @@ use paperclip_common::log::verbose;
 use paperclip_language_services::DocumentInfo;
 use paperclip_proto::ast::base::Range;
 use paperclip_proto::ast::graph_ext::Graph;
+use paperclip_proto::ast::pc::document_body_item;
+use paperclip_proto::ast::wrapper::Expression;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
     design_server_event, file_response, ApplyMutationsRequest, ApplyMutationsResult,
@@ -87,7 +89,8 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
     ) -> Result<Response<SearchResourcesResponse>, Status> {
         let query = request.get_ref().query.clone();
         let store = self.ctx.store.clone();
-        let project_dir = &store.lock().unwrap().state.options.config_context.directory;
+        let state = &store.lock().unwrap().state;
+        let project_dir = &state.options.config_context.directory;
 
         // match path or file name
         let pat = format!(
@@ -99,6 +102,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
 
         let mut items: Vec<Resource> = vec![];
 
+        find_resources(&query, &state.graph, &mut items);
         find_files(project_dir, &query, &mut items);
 
         Ok(Response::new(SearchResourcesResponse {
@@ -558,10 +562,7 @@ fn find_files(dir: &str, pattern: &str, found: &mut Vec<Resource>) {
         if is_dir {
             find_files(&path, pattern, found);
         } else {
-            if path
-                .to_lowercase()
-                .contains(&pattern.to_string().to_lowercase())
-            {
+            if matches_search_pattern(&path, &pattern) {
                 let parts = Path::new(&path);
 
                 found.push(Resource {
@@ -573,4 +574,48 @@ fn find_files(dir: &str, pattern: &str, found: &mut Vec<Resource>) {
             }
         }
     }
+}
+
+fn find_resources(pattern: &str, graph: &Graph, found: &mut Vec<Resource>) {
+    for (path, dep) in &graph.dependencies {
+        let doc = dep.document.as_ref().expect("Document must exist");
+        for item in &doc.body {
+            let name = if let Some(name) = item.get_name() {
+                name
+            } else {
+                continue;
+            };
+
+            if !matches_search_pattern(
+                format!("{}{}", path, &name).to_lowercase().as_str(),
+                pattern,
+            ) {
+                continue;
+            }
+
+            let kind = match item.get_inner() {
+                document_body_item::Inner::Component(_) => ResourceKind::Component,
+                document_body_item::Inner::Atom(_) => ResourceKind::Token,
+                document_body_item::Inner::Style(_) => ResourceKind::StyleMixin,
+                _ => {
+                    continue;
+                }
+            };
+
+            found.push(Resource {
+                parent_path: path.to_string(),
+                kind: kind.into(),
+                name: name.to_string(),
+                id: item.get_id().to_string(),
+            });
+        }
+    }
+}
+
+fn matches_search_pattern(value: &str, pattern: &str) -> bool {
+    let value = value.to_lowercase();
+    let pattern = pattern.to_lowercase();
+    // println!("{}", pattern);
+    // value.contains(pattern.as_str())
+    pattern.split(" ").all(|part| value.contains(part))
 }

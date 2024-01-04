@@ -150,7 +150,14 @@ export const AddFileButton = () => {
   );
 };
 
-const isOpenableFile = (resource: Resource) => /\.pc$/.test(resource.name);
+const isOpenableFile = (resource: Resource) => {
+  if (resource.kind === ResourceKind.File2) {
+    return /\.pc$/.test(resource.name);
+  }
+
+  // everything else is an entity
+  return true;
+};
 
 type FilteredFilesProps = {
   resources: Resource[];

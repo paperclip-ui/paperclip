@@ -1,7 +1,5 @@
 #### Immediate
 
-- exception w/ paperclip init and outDir undefined
-- exc
 - cut + paste (resource item)
 
 - resource search

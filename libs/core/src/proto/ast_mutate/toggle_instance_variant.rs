@@ -6,7 +6,6 @@ use paperclip_proto::ast::shared::Reference;
 use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast_mutate::ToggleInstanceVariant;
 
-use paperclip_proto::ast::get_expr::GetExpr;
 impl MutableVisitor<()> for EditContext<ToggleInstanceVariant> {
     fn visit_element(&self, expr: &mut ast::pc::Element) -> VisitorResult<(), Self> {
         if expr.id != self.mutation.instance_id {
@@ -14,10 +13,10 @@ impl MutableVisitor<()> for EditContext<ToggleInstanceVariant> {
         }
 
         let variant: Variant = get_or_short!(
-            GetExpr::get_expr_from_graph(&self.mutation.variant_id, &self.graph),
+            self.expr_map.get_expr(&self.mutation.variant_id),
             VisitorResult::Return(())
         )
-        .0
+        .clone()
         .try_into()
         .expect("Variant must be a variant");
 
@@ -47,9 +46,10 @@ impl MutableVisitor<()> for EditContext<ToggleInstanceVariant> {
             .combo_variant_ids
             .iter()
             .map(|id| {
-                GetExpr::get_expr_from_graph(id, &self.graph)
+                self.expr_map
+                    .get_expr(id)
                     .expect("Variant doesn't exist")
-                    .0
+                    .clone()
                     .try_into()
                     .expect("Variant must be a variant")
             })

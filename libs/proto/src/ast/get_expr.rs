@@ -99,25 +99,3 @@ impl<'expr> GetExpr {
         })
     }
 }
-
-pub fn get_expr(id: &str, dep: &Dependency) -> Option<GetExprResult> {
-    GetExpr::get_expr(id, &dep.document.as_ref().expect("Document must exist"))
-}
-
-pub fn get_expr_dep<'a>(id: &str, graph: &'a Graph) -> Option<(ExpressionWrapper, &'a Dependency)> {
-    for (_path, dep) in &graph.dependencies {
-        if let Some(result) = get_expr(id, dep) {
-            return Some((result.expr, dep));
-        }
-    }
-    return None;
-}
-
-pub fn get_ref_id(expr: ExpressionWrapper, graph: &Graph) -> Option<String> {
-    match &expr {
-        ExpressionWrapper::Element(element) => element
-            .get_instance_component(graph)
-            .and_then(|component| Some(component.id.clone())),
-        _ => None,
-    }
-}

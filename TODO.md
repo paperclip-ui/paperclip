@@ -1,6 +1,7 @@
 #### Immediate
 
 - cut + paste (resource item)
+- Symbol Table in ExprMap
 
 - insert modal
 

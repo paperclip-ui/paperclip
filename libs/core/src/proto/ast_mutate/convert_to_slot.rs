@@ -59,7 +59,7 @@ fn create_slot(ctx: &EditContext<ConvertToSlot>, child: Node, id: &str) -> Node 
             .get_outer(),
     );
 
-    let expr_map: &ExprMap = &ctx.expr_map.borrow();
+    let expr_map: &ExprMap = &ctx.expr_map;
 
     node::Inner::Slot(Slot {
         id: id.to_string(),

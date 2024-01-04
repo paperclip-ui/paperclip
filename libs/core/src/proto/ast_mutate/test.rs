@@ -4880,6 +4880,46 @@ case! {
 }
 
 case! {
+  import_not_added_for_exprs_moved_to_same_file_imported_in,
+  [
+      (
+          "/entry.pc", r#"
+          import "/a.pc" as mod
+
+          mod.A
+          "#
+      ),
+        (
+            "/a.pc", r#"
+            public component A {
+                render div {
+
+                }
+            }
+            "#
+          )
+  ],
+  mutation::Inner::MoveExpressionToFile(MoveExpressionToFile {
+      expression_id: "98523c41-3".to_string(),
+      new_file_path: "/entry.pc".to_string()
+  }).get_outer(),
+  [(
+    "/entry.pc", r#"
+    import "/a.pc" as mod
+
+    A
+    public component A {
+        render div
+    }
+    "#
+  ),
+  (
+      "/a.pc", r#"
+      "#
+    )]
+}
+
+case! {
   token_refs_are_updated_when_moved,
   [
       (

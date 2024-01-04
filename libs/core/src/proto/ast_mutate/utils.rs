@@ -1,3 +1,4 @@
+use anyhow::{Error, Result};
 use convert_case::{Case, Casing};
 use paperclip_common::get_or_short;
 use paperclip_parser::core::parser_context::Options;
@@ -96,14 +97,24 @@ pub fn create_import(path: &str, ns: &str, checksum: &str) -> DocumentBodyItem {
 }
 
 pub struct ResolvedImport {
+    pub path: String,
     pub namespace: String,
     pub is_new: bool,
 }
 
-pub fn resolve_import_ns(document_dep: &Dependency, path: &str) -> ResolvedImport {
+pub fn resolve_import_ns(
+    document_dep: &Dependency,
+    path: &str,
+    refered_namespace: Option<String>,
+) -> Result<ResolvedImport> {
+    if document_dep.path == path {
+        return Err(Error::msg("Cannot import self"));
+    }
+
     for (rel_path, resolved_path) in &document_dep.imports {
         if resolved_path == path {
-            return ResolvedImport {
+            return Ok(ResolvedImport {
+                path: path.to_string(),
                 namespace: document_dep
                     .document
                     .as_ref()
@@ -115,17 +126,18 @@ pub fn resolve_import_ns(document_dep: &Dependency, path: &str) -> ResolvedImpor
                     .namespace
                     .clone(),
                 is_new: false,
-            };
+            });
         }
     }
 
-    return ResolvedImport {
+    return Ok(ResolvedImport {
+        path: path.to_string(),
         namespace: get_unique_namespace(
-            "module",
+            refered_namespace.unwrap_or("module".to_string()).as_str(),
             document_dep.document.as_ref().expect("Document must exist"),
         ),
         is_new: true,
-    };
+    });
 }
 
 pub fn upsert_render_expr<'a, Mutation>(
@@ -191,10 +203,11 @@ pub fn get_instance_component<'a>(
 pub fn import_dep<Mutation>(
     document: &mut ast::pc::Document,
     path: &str,
+    prefered_namespace: Option<String>,
     ctx: &EditContext<Mutation>,
-) -> String {
+) -> Result<String> {
     let document_dep = ctx.get_dependency();
-    let ns = resolve_import_ns(document_dep, path);
+    let ns = resolve_import_ns(document_dep, path, prefered_namespace)?;
 
     if ns.is_new {
         document.body.insert(
@@ -207,7 +220,7 @@ pub fn import_dep<Mutation>(
         );
     }
 
-    return ns.namespace;
+    return Ok(ns.namespace.to_string());
 }
 
 pub struct NamespaceResolution {
@@ -331,17 +344,21 @@ pub fn get_unique_namespace(base: &str, document: &Document) -> String {
     })
 }
 
-pub fn get_unique_component_name(expr_id: &str, base: &str, dep: &Dependency) -> String {
-    get_unique_document_body_item_name(expr_id, &get_valid_name(base, Case::Pascal), dep)
+pub fn get_unique_component_name(expr_id: &str, base: &str, document: &Document) -> String {
+    get_unique_document_body_item_name(expr_id, &get_valid_name(base, Case::Pascal), document)
 }
 
-pub fn get_unique_document_body_item_name(expr_id: &str, base: &str, dep: &Dependency) -> String {
-    let body = &dep.document.as_ref().unwrap().body;
+pub fn get_unique_document_body_item_name(
+    expr_id: &str,
+    base: &str,
+    document: &Document,
+) -> String {
+    let body = &document.body;
 
     let mut i = 0;
     let mut unique_id = base.to_string();
 
-    while let Some(expr) = dep.get_document().get_export(&unique_id) {
+    while let Some(expr) = document.get_export(&unique_id) {
         if expr.get_id() == expr_id {
             return unique_id;
         }
@@ -366,8 +383,8 @@ pub fn get_valid_name(name: &str, case: Case) -> String {
     name.to_case(case)
 }
 
-pub fn get_unique_valid_name(expr_id: &str, name: &str, case: Case, dep: &Dependency) -> String {
-    get_unique_document_body_item_name(expr_id, &get_valid_name(name, case), dep)
+pub fn get_unique_valid_name(expr_id: &str, name: &str, case: Case, document: &Document) -> String {
+    get_unique_document_body_item_name(expr_id, &get_valid_name(name, case), document)
 }
 
 pub fn parse_node(source: &str, checksum: &str) -> Node {

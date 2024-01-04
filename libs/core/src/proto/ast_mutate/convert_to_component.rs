@@ -13,7 +13,6 @@ use paperclip_proto::{
 };
 
 use super::EditContext;
-use paperclip_proto::ast::get_expr::GetExpr;
 
 use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
 
@@ -39,10 +38,10 @@ impl MutableVisitor<()> for EditContext<ConvertToComponent> {
         expr: &mut paperclip_proto::ast::pc::Document,
     ) -> VisitorResult<(), EditContext<ConvertToComponent>> {
         let found_expr = get_or_short!(
-            GetExpr::get_expr(&self.mutation.expression_id, expr),
+            self.expr_map.get_expr(&self.mutation.expression_id),
             VisitorResult::Continue
         )
-        .expr;
+        .clone();
 
         let found_node: Node = match found_expr.try_into() {
             Ok(node) => node,

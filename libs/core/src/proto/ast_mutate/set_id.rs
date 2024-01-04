@@ -8,14 +8,11 @@ use paperclip_proto::{
     ast::wrapper::ExpressionWrapper,
     ast::{
         expr_map::ExprMap,
-        graph,
         pc::{self, node},
         shared,
     },
     ast_mutate::{mutation_result, ExpressionUpdated, SetId},
 };
-
-use paperclip_proto::ast::get_expr::get_expr_dep;
 
 use super::EditContext;
 
@@ -45,7 +42,7 @@ impl MutableVisitor<()> for EditContext<SetId> {
         ) {
             return VisitorResult::Continue;
         }
-        let expr_map = self.expr_map.borrow();
+        let expr_map = &self.expr_map;
 
         let target_expr = expr_map
             .get_expr(&self.mutation.expression_id)
@@ -105,12 +102,21 @@ impl MutableVisitor<()> for EditContext<SetId> {
 
         if let Some(component) = instance_component {
             if component.id == self.mutation.expression_id {
-                let info = get_expr_dep(&self.mutation.expression_id, &self.graph).unwrap();
-                match &info.0 {
+                let comp = self
+                    .expr_map
+                    .get_expr(&self.mutation.expression_id)
+                    .expect("Expr must exist");
+
+                match comp {
                     ExpressionWrapper::Component(comp) => {
                         if comp.name != self.mutation.value {
-                            expr.tag_name =
-                                get_unique_component_name(&comp.id, &self.mutation.value, info.1);
+                            expr.tag_name = get_unique_component_name(
+                                &comp.id,
+                                &self.mutation.value,
+                                self.expr_map
+                                    .get_document(&self.mutation.expression_id)
+                                    .expect("Document must exist"),
+                            );
                             self.add_change(
                                 mutation_result::Inner::ExpressionUpdated(ExpressionUpdated {
                                     id: expr.id.to_string(),
@@ -130,18 +136,13 @@ impl MutableVisitor<()> for EditContext<SetId> {
         &self,
         reference: &mut shared::Reference,
     ) -> VisitorResult<(), EditContext<SetId>> {
-        let (expr, _) = get_or_short!(reference.follow(&self.graph), VisitorResult::Continue);
+        let expr = get_or_short!(reference.follow(&self.expr_map), VisitorResult::Continue);
 
         if expr.get_id() != self.mutation.expression_id {
             return VisitorResult::Continue;
         }
 
-        let new_expr_name = get_unique_name(
-            expr.get_id(),
-            &self.mutation.value,
-            &self.graph,
-            &self.expr_map.borrow(),
-        );
+        let new_expr_name = get_unique_name(expr.get_id(), &self.mutation.value, &self.expr_map);
 
         if reference.path.len() == 1 {
             reference.path = vec![new_expr_name];
@@ -162,9 +163,8 @@ impl MutableVisitor<()> for EditContext<SetId> {
                 &item.id,
                 &self.mutation.value,
                 &item
-                    .get_component(&self.graph)
+                    .get_component(&self.expr_map)
                     .expect("Component must exist")
-                    .0
             )
         );
         VisitorResult::Continue
@@ -177,16 +177,16 @@ impl MutableVisitor<()> for EditContext<SetId> {
                 &expr.id,
                 &self.mutation.value,
                 Case::Camel,
-                &self.get_dependency()
+                self.get_dependency()
+                    .document
+                    .as_ref()
+                    .expect("Document must exist")
             ))
         );
         VisitorResult::Continue
     }
     fn visit_insert(&self, expr: &mut pc::Insert) -> VisitorResult<(), Self> {
-        let slot = get_or_short!(
-            expr.get_slot(&self.expr_map.borrow()),
-            VisitorResult::Continue
-        );
+        let slot = get_or_short!(expr.get_slot(&self.expr_map), VisitorResult::Continue);
 
         if slot.id != self.mutation.expression_id {
             return VisitorResult::Continue;
@@ -196,7 +196,7 @@ impl MutableVisitor<()> for EditContext<SetId> {
             &slot.id,
             &self.mutation.value,
             &slot
-                .get_component(&self.expr_map.borrow())
+                .get_component(&self.expr_map)
                 .expect("Component must exist"),
         );
 
@@ -211,7 +211,7 @@ impl MutableVisitor<()> for EditContext<SetId> {
                 &expr.id,
                 &self.mutation.value,
                 &expr
-                    .get_component(&self.expr_map.borrow())
+                    .get_component(&self.expr_map)
                     .expect("Component must exist")
             )
         );
@@ -225,7 +225,10 @@ impl MutableVisitor<()> for EditContext<SetId> {
                 get_unique_component_name(
                     &expr.id,
                     &self.mutation.value,
-                    &self.graph.dependencies.get(&self.path).unwrap()
+                    self.get_dependency()
+                        .document
+                        .as_ref()
+                        .expect("Document must exist")
                 )
             );
         }
@@ -240,7 +243,10 @@ impl MutableVisitor<()> for EditContext<SetId> {
                     &expr.id,
                     &self.mutation.value,
                     Case::Camel,
-                    &self.graph.dependencies.get(&self.path).unwrap()
+                    self.get_dependency()
+                        .document
+                        .as_ref()
+                        .expect("Document must exist")
                 )
             );
         }
@@ -262,7 +268,10 @@ impl MutableVisitor<()> for EditContext<SetId> {
                 &expr.id,
                 &self.mutation.value,
                 Case::Camel,
-                &self.get_dependency()
+                self.get_dependency()
+                    .document
+                    .as_ref()
+                    .expect("Document must exist")
             )
         );
         VisitorResult::Continue
@@ -283,16 +292,13 @@ impl MutableVisitor<()> for EditContext<SetId> {
     }
 }
 
-fn get_unique_name(expr_id: &str, name: &str, graph: &graph::Graph, map: &ExprMap) -> String {
-    let (info, dep) = graph.get_expr(expr_id).expect("Must exist");
-    match info.expr {
+fn get_unique_name(expr_id: &str, name: &str, map: &ExprMap) -> String {
+    let expr = map.get_expr(expr_id).expect("Expression must exist");
+    match expr {
         ExpressionWrapper::Variant(variant) => get_unique_variant_name(
             expr_id,
             name,
-            &variant
-                .get_component(graph)
-                .expect("Component must exist")
-                .0,
+            &variant.get_component(map).expect("Component must exist"),
         ),
 
         ExpressionWrapper::Slot(slot) => get_unique_slot_name(
@@ -300,7 +306,12 @@ fn get_unique_name(expr_id: &str, name: &str, graph: &graph::Graph, map: &ExprMa
             name,
             &slot.get_component(&map).expect("Component must exist"),
         ),
-        _ => get_unique_valid_name(expr_id, name, Case::Camel, dep),
+        _ => get_unique_valid_name(
+            expr_id,
+            name,
+            Case::Camel,
+            map.get_document(expr_id).expect("Doc must exist"),
+        ),
     }
 }
 

@@ -7,8 +7,12 @@ use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
 
 impl MutableVisitor<()> for EditContext<AddImport> {
     fn visit_document(&self, doc: &mut Document) -> VisitorResult<(), EditContext<AddImport>> {
-        import_dep(doc, &self.mutation.path, self);
-
+        let _ = import_dep(
+            doc,
+            &self.mutation.path,
+            Some(self.mutation.ns.clone()),
+            self,
+        );
         VisitorResult::Return(())
     }
 }

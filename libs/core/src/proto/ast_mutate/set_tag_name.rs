@@ -8,20 +8,18 @@ use paperclip_proto::ast::wrapper::Expression;
 use paperclip_proto::ast_mutate::SetTagName;
 
 use super::super::ast::pc::FindSlotNames;
-use paperclip_proto::ast::get_expr::GetExpr;
 
 impl MutableVisitor<()> for EditContext<SetTagName> {
     fn visit_element(&self, expr: &mut ast::pc::Element) -> VisitorResult<(), Self> {
         if expr.get_id() == &self.mutation.element_id {
-            let namespace = if let Some(file_path) = &self.mutation.tag_file_path {
-                if file_path != &self.get_dependency().path {
-                    Some(resolve_import_ns(&self.get_dependency(), &file_path).namespace)
-                } else {
-                    None
-                }
-            } else {
-                None
-            };
+            let namespace = self
+                .mutation
+                .tag_file_path
+                .as_ref()
+                .and_then(|file_path| {
+                    resolve_import_ns(&self.get_dependency(), file_path, None).ok()
+                })
+                .and_then(|imp| Some(imp.namespace.to_string()));
 
             let inst_component = get_instance_component(
                 &self.mutation.tag_name,
@@ -63,7 +61,7 @@ impl MutableVisitor<()> for EditContext<SetTagName> {
         }
     }
     fn visit_document(&self, document: &mut ast::pc::Document) -> VisitorResult<(), Self> {
-        let expr = GetExpr::get_expr(&self.mutation.element_id, document);
+        let expr = self.expr_map.get_expr(&self.mutation.element_id);
         if expr.is_none() {
             return VisitorResult::Continue;
         }
@@ -74,7 +72,7 @@ impl MutableVisitor<()> for EditContext<SetTagName> {
             return VisitorResult::Continue;
         }
 
-        import_dep(document, imp, &self);
+        let _ = import_dep(document, imp, None, &self);
 
         VisitorResult::Continue
     }

@@ -20,6 +20,7 @@ pub struct ExprMapItem {
 
 #[derive(Clone, Debug)]
 pub struct DocumentMap {
+    path: String,
     declarations: HashMap<String, ExpressionWrapper>,
     imports: HashMap<String, String>,
 }
@@ -46,13 +47,14 @@ impl DocumentMap {
         }
 
         Self {
+            path: dep.path.to_string(),
             declarations: document.get_declarations(),
             imports: import_map,
         }
     }
 }
 
-#[derive(Clone, Default, Debug)]
+#[derive(Clone, Debug)]
 pub struct ExprMap {
     document_maps: HashMap<String, DocumentMap>,
     map: HashMap<String, ExprMapItem>,
@@ -65,13 +67,19 @@ impl ExprMap {
             document_maps: HashMap::new(),
         };
         for (_path, dep) in &graph.dependencies {
-            map.map_dep(dep, graph);
+            map.map_dep(dep, &graph);
         }
         map
     }
 
     pub fn get_expr<'a>(&'a self, id: &str) -> Option<&'a ExpressionWrapper> {
         self.map.get(id).and_then(|expr| Some(&expr.expr))
+    }
+
+    pub fn get_expr_path<'a>(&'a self, id: &str) -> Option<&String> {
+        let expr_doc = self.get_owner_document(id)?;
+        let doc_info = self.document_maps.get(&expr_doc.id)?;
+        Some(&doc_info.path)
     }
 
     pub fn get_parent<'a>(&'a self, id: &str) -> Option<&'a ExpressionWrapper> {
@@ -92,6 +100,11 @@ impl ExprMap {
     }
 
     pub fn get_document<'a>(&'a self, expr_id: &str) -> Option<&'a Document> {
+        let expr = self.get_expr(expr_id);
+        if let Some(ExpressionWrapper::Document(doc)) = expr {
+            return Some(doc);
+        }
+
         self.find_ancestor(expr_id, |ancestor| {
             matches!(ancestor.expr, ExpressionWrapper::Document(_))
         })
@@ -99,10 +112,16 @@ impl ExprMap {
         .and_then(|ancestor| ancestor.try_into().ok())
     }
 
-    pub fn get_document_import(&self, document_id: &str, namespace: &str) -> Option<&String> {
-        self.document_maps
-            .get(document_id)
+    pub fn get_document_import<'a>(
+        &'a self,
+        expr_or_doc_id: &str,
+        namespace: &str,
+    ) -> Option<&'a Document> {
+        self.get_document(expr_or_doc_id)
+            .and_then(|doc| self.document_maps.get(&doc.id))
             .and_then(|map| map.imports.get(namespace))
+            .and_then(|id| self.get_expr(id))
+            .and_then(|doc| doc.try_into().ok())
     }
 
     pub fn get_owner_document<'a>(&'a self, expr_id: &str) -> Option<&'a Document> {
@@ -119,7 +138,7 @@ impl ExprMap {
                     Some(expr_document)
                 }
             }
-            _ => None,
+            _ => Some(expr_document),
         }
     }
 

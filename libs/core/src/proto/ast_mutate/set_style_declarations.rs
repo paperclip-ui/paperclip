@@ -1,20 +1,17 @@
 use std::collections::HashMap;
 
-use crate::config::ConfigContext;
-
 use super::base::EditContext;
-use super::utils::{create_import, resolve_imports, NamespaceResolution};
+use super::utils::{resolve_imports, NamespaceResolution};
 use paperclip_common::get_or_short;
 use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
 use paperclip_proto::ast::get_expr::GetExpr;
-use paperclip_proto::ast::graph_ext::Dependency;
 use paperclip_proto::ast::pc::Render;
 use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast::wrapper::{Expression, ExpressionWrapper};
 use paperclip_proto::ast_mutate::{
-    mutation_result, ExpressionUpdated, MutationResult, SetStyleDeclarations,
+    mutation, mutation_result, AddImport, ExpressionUpdated, MutationResult, SetStyleDeclarations,
 };
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -22,36 +19,9 @@ use std::rc::Rc;
 impl MutableVisitor<()> for EditContext<SetStyleDeclarations> {
     fn visit_style(&self, expr: &mut ast::pc::Style) -> VisitorResult<(), Self> {
         if expr.get_id() == self.mutation.expression_id {
-            let new_style = parse_style(
-                &mutation_to_style(&self.mutation, self.get_dependency(), &self.config_context),
-                &self.new_id(),
-            );
+            let new_style = parse_style(&mutation_to_style(&self), &self.new_id());
             update_style(expr, &new_style, &get_styles_to_delete(&self.mutation));
         }
-        VisitorResult::Continue
-    }
-
-    fn visit_document(&self, doc: &mut ast::pc::Document) -> VisitorResult<(), Self> {
-        if !matches!(
-            GetExpr::get_expr(&self.mutation.expression_id, doc),
-            Some(_)
-        ) {
-            return VisitorResult::Continue;
-        }
-
-        for (_, resolution) in
-            get_dep_imports(&self.mutation, self.get_dependency(), &self.config_context)
-        {
-            if resolution.is_new {
-                if let Some(ns) = &resolution.resolved {
-                    doc.body.insert(
-                        0,
-                        create_import(&resolution.module_path, &ns, &self.new_id()),
-                    );
-                }
-            }
-        }
-
         VisitorResult::Continue
     }
 
@@ -118,10 +88,7 @@ fn add_child_style(
     let mutation = &ctx.mutation;
     let dependency = ctx.get_dependency();
 
-    let mut new_style: ast::pc::Style = parse_style(
-        &mutation_to_style(mutation, dependency, &ctx.config_context),
-        &ctx.new_id(),
-    );
+    let mut new_style: ast::pc::Style = parse_style(&mutation_to_style(ctx), &ctx.new_id());
 
     let mut doc = dependency.document.clone().expect("Document must exist");
 
@@ -188,16 +155,23 @@ fn variant_combo_equals(a: &Vec<ast::shared::Reference>, b: &Vec<ast::shared::Re
     )
 }
 
-fn get_dep_imports(
-    mutation: &SetStyleDeclarations,
-    dep: &Dependency,
-    config_context: &ConfigContext,
+fn resolve_dep_imports(
+    ctx: &EditContext<SetStyleDeclarations>,
 ) -> HashMap<String, NamespaceResolution> {
     let mut imports = HashMap::new();
 
-    for decl in &mutation.declarations {
-        let resolved = resolve_imports(&decl.imports, dep, config_context);
+    for decl in &ctx.mutation.declarations {
+        let resolved = resolve_imports(&decl.imports, ctx.get_dependency(), &ctx.config_context);
         for (path, resolution) in resolved {
+            if let Some(namespace) = &resolution.resolved {
+                ctx.add_post_mutation(
+                    mutation::Inner::AddImport(AddImport {
+                        ns: namespace.to_string(),
+                        path: path.to_string(),
+                    })
+                    .get_outer(),
+                );
+            }
             imports.insert(path.to_string(), resolution);
         }
     }
@@ -216,16 +190,12 @@ fn parse_style(source: &str, checksum: &str) -> ast::pc::Style {
         .unwrap()
 }
 
-fn mutation_to_style(
-    mutation: &SetStyleDeclarations,
-    dep: &Dependency,
-    config_context: &ConfigContext,
-) -> String {
-    let imports = get_dep_imports(mutation, dep, config_context);
+fn mutation_to_style(ctx: &EditContext<SetStyleDeclarations>) -> String {
+    let imports = resolve_dep_imports(ctx);
 
     let mut buffer = "style {\n".to_string();
 
-    for kv in &mutation.declarations {
+    for kv in &ctx.mutation.declarations {
         let mut value = kv.value.to_string();
 
         for (_, resolution) in imports.iter() {

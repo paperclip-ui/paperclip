@@ -7,20 +7,24 @@ use paperclip_proto::ast::visit::MutableVisitor;
 use paperclip_proto::ast::visit::VisitorResult;
 use paperclip_proto::ast_mutate::SetStyleMixins;
 
-use paperclip_proto::ast::get_expr::GetExpr;
-
 impl MutableVisitor<()> for EditContext<SetStyleMixins> {
     fn visit_document(&self, expr: &mut ast::pc::Document) -> VisitorResult<(), Self> {
-        if GetExpr::get_expr(&self.mutation.target_expr_id, expr).is_none() {
+        if self
+            .expr_map
+            .get_expr(&self.mutation.target_expr_id)
+            .is_none()
+        {
             return VisitorResult::Continue;
         }
 
         for mixin_id in &self.mutation.mixin_ids {
-            let (_, dep) =
-                GetExpr::get_expr_from_graph(mixin_id, &self.graph).expect("Mixin must exist");
+            let expr_path = self
+                .expr_map
+                .get_expr_path(mixin_id)
+                .expect("Mixin must exist");
 
-            if dep.path != self.get_dependency().path {
-                import_dep(expr, &dep.path, self);
+            if expr_path != &self.get_dependency().path {
+                let _ = import_dep(expr, expr_path, None, self);
             }
         }
 
@@ -45,9 +49,9 @@ impl MutableVisitor<()> for EditContext<SetStyleMixins> {
             .variant_ids
             .iter()
             .map(|x| {
-                let (variant, _) =
-                    GetExpr::get_expr_from_graph(x, &self.graph).expect("Variant must exist");
-                let variant: ast::pc::Variant = variant.try_into().expect("Must be variant");
+                let variant = self.expr_map.get_expr(x).expect("Variant must exist");
+                let variant: ast::pc::Variant =
+                    variant.clone().try_into().expect("Must be variant");
                 variant.name.clone()
             })
             .collect::<Vec<String>>();
@@ -96,9 +100,9 @@ impl MutableVisitor<()> for EditContext<SetStyleMixins> {
             .variant_ids
             .iter()
             .map(|x| {
-                let (variant, _) =
-                    GetExpr::get_expr_from_graph(x, &self.graph).expect("Variant must exist");
-                let variant: ast::pc::Variant = variant.try_into().expect("Must be variant");
+                let variant = self.expr_map.get_expr(x).expect("Variant must exist");
+                let variant: ast::pc::Variant =
+                    variant.clone().try_into().expect("Must be variant");
                 variant.name.clone()
             })
             .collect::<Vec<String>>();
@@ -149,18 +153,27 @@ impl Fold for GetIdPath {
 fn edit_style(style: &mut ast::pc::Style, ctx: &EditContext<SetStyleMixins>) {
     style.extends = vec![];
     let mutation = &ctx.mutation;
-    let graph = &ctx.graph;
     let style_dep = ctx.get_dependency();
 
     for mixin_id in &mutation.mixin_ids {
-        let (mixin, dep) =
-            GetExpr::get_expr_from_graph(mixin_id, &graph).expect("Mixin must exist");
+        let mixin = ctx
+            .expr_map
+            .get_expr(mixin_id)
+            .expect("Mixin must exist")
+            .clone();
+
+        let mixin_path = ctx
+            .expr_map
+            .get_expr_path(mixin_id)
+            .expect("Mixin must exist");
 
         let mixin: ast::pc::Style = mixin.try_into().expect("Must be style");
         let mut path = vec![mixin.name.expect("Name must exist").clone()];
 
-        if dep.path != style_dep.path {
-            path.insert(0, resolve_import_ns(style_dep, &dep.path).namespace)
+        if mixin_path != &style_dep.path {
+            if let Ok(imp) = resolve_import_ns(style_dep, mixin_path, None) {
+                path.insert(0, imp.namespace);
+            }
         }
 
         style.extends.push(Reference {

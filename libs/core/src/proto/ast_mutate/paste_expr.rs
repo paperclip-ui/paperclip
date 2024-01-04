@@ -3,20 +3,16 @@
  */
 use paperclip_ast_serialize::pc::serialize_node;
 use paperclip_common::serialize_context::Context;
-use paperclip_proto::ast::graph_ext::{Dependency, Graph};
 use paperclip_proto::ast::pc::{Component, Element, Insert, Node};
 use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast::{pc::node, wrapper::Expression};
-use paperclip_proto::ast_mutate::{mutation_result, ExpressionInserted};
+use paperclip_proto::ast_mutate::{mutation, mutation_result, AddImport, ExpressionInserted};
 use paperclip_proto::ast_mutate::{paste_expression, PasteExpression};
-
-use crate::proto::ast_mutate::utils::create_import;
 
 use super::super::ast::pc::FindSlotNames;
 use super::utils::parse_node;
 use super::utils::resolve_import_ns;
 use super::EditContext;
-use paperclip_proto::ast::get_expr::GetExpr;
 
 macro_rules! paste_expr {
     ($self: expr, $expr: expr) => {{
@@ -26,7 +22,7 @@ macro_rules! paste_expr {
 
         let item = $self.mutation.item.as_ref().expect("item must exist");
 
-        let node = clone_pasted_expr(&$self, item, $self.get_dependency(), &$self.graph);
+        let node = clone_pasted_expr(item, &$self);
 
         if let Some(node) = node {
             $self.add_change(
@@ -42,26 +38,35 @@ macro_rules! paste_expr {
     }};
 }
 
-pub fn clone_pasted_expr<Mutation>(
-    ctx: &EditContext<Mutation>,
+fn clone_pasted_expr<Mutation>(
     expr: &paste_expression::Item,
-    dep: &Dependency,
-    graph: &Graph,
+    ctx: &EditContext<Mutation>,
 ) -> Option<Node> {
+    let dep = ctx.get_dependency();
+
     let node = match expr {
         paste_expression::Item::Element(el) => Some(node::Inner::Element(el.clone()).get_outer()),
         paste_expression::Item::TextNode(el) => Some(node::Inner::Text(el.clone()).get_outer()),
         paste_expression::Item::Component(component) => {
-            let (graph_component, component_dep) =
-                GetExpr::get_expr_from_graph(&component.id, &graph).expect("Component must exist");
+            let expr = ctx.expr_map.get_expr(&component.id)?;
+            let expr_path = ctx.expr_map.get_expr_path(&component.id)?;
 
-            let graph_component: Component = graph_component.try_into().expect("Must be component");
+            let graph_component: Component = expr.clone().try_into().expect("Must be component");
 
-            let namespace = if component_dep.path == dep.path {
-                None
-            } else {
-                Some(resolve_import_ns(dep, &component_dep.path).namespace)
-            };
+            let namespace = (expr_path != &dep.path)
+                .then(|| resolve_import_ns(dep, &expr_path, None).ok())
+                .flatten()
+                .and_then(|imp| Some(imp.namespace.to_string()));
+
+            if let Some(namespace) = &namespace {
+                ctx.add_post_mutation(
+                    mutation::Inner::AddImport(AddImport {
+                        ns: namespace.clone(),
+                        path: expr_path.to_string(),
+                    })
+                    .get_outer(),
+                )
+            }
 
             let slot_names = FindSlotNames::find_slot_names(component);
 
@@ -125,31 +130,6 @@ impl MutableVisitor<()> for EditContext<PasteExpression> {
         &self,
         expr: &mut paperclip_proto::ast::pc::Document,
     ) -> VisitorResult<(), EditContext<PasteExpression>> {
-        let doc = self.get_dependency().document.as_ref().unwrap();
-
-        if self.mutation.target_expression_id != expr.id
-            && GetExpr::get_expr(&self.mutation.target_expression_id, doc).is_none()
-        {
-            return VisitorResult::Continue;
-        }
-
-        if let Some(paste_expression::Item::Component(component)) = &self.mutation.item {
-            let (_, component_dep) = GetExpr::get_expr_from_graph(&component.id, &self.graph)
-                .expect("Component must exist");
-
-            if component_dep.path != self.get_dependency().path {
-                let info = resolve_import_ns(&self.get_dependency(), &component_dep.path);
-
-                if info.is_new {
-                    let relative = &self
-                        .config_context
-                        .get_module_import_path(&component_dep.path);
-                    expr.body
-                        .insert(0, create_import(&relative, &info.namespace, &self.new_id()));
-                }
-            }
-        }
-
         paste_expr!(self, expr)
     }
 }

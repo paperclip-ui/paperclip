@@ -4,7 +4,7 @@ use crate::server::{
 };
 use anyhow::Result;
 
-use paperclip_common::log::verbose;
+use paperclip_common::log::log_verbose;
 use paperclip_core::proto::ast_mutate::edit_graph;
 use paperclip_proto::ast_mutate::{Mutation, MutationResult};
 
@@ -22,9 +22,9 @@ pub async fn apply_mutations<TIO: ServerIO>(
         .config_context
         .clone();
 
-    verbose(&format!("Applying {:#?}", mutations));
+    log_verbose(&format!("Applying {:#?}", mutations));
     let result = edit_graph(&mut graph, mutations, &ctx.io, &config_context)?;
-    verbose(&format!("Mutation result: {:#?}", result));
+    log_verbose(&format!("Mutation result: {:#?}", result));
 
     let mut latest_ast_changes = vec![];
 

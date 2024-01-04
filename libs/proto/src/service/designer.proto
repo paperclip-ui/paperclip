@@ -19,6 +19,7 @@ service Designer {
   rpc DeleteFile(DeleteFileRequest) returns (Empty);
   rpc MoveFile(MoveFileRequest) returns (Empty);
   rpc OpenCodeEditor(OpenCodeEditorRequest) returns (Empty);
+  rpc SaveFile(SaveFileRequest) returns (Empty);
   rpc CreateFile(CreateFileRequest) returns (Empty);
   rpc CreateDesignFile(CreateDesignFileRequest) returns (CreateDesignFileResponse);
   rpc GetResourceFiles(Empty) returns (stream ResourceFiles);
@@ -31,6 +32,11 @@ service Designer {
 
 message ProjectInfo {
     repeated string experimental_capabilities = 1;
+}
+
+message SaveFileRequest {
+    string path = 1;
+    bytes content = 2;
 }
 
 message SearchResourcesRequest {

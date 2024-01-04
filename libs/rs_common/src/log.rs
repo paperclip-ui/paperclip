@@ -9,16 +9,16 @@ fn is_log_level_enabled(value: &str) -> bool {
         .contains(&value.to_string())
 }
 
-pub fn verbose(message: &str) {
+pub fn log_verbose(message: &str) {
     if is_log_level_enabled("VERBOSE") || is_log_level_enabled("ALL") {
         println!("{}", message.dimmed());
     }
 }
 
-pub fn notice(message: &str) {
+pub fn log_notice(message: &str) {
     println!("{}", message);
 }
 
-pub fn warning(message: &str) {
+pub fn log_warning(message: &str) {
     println!("{}", message.bright_yellow());
 }

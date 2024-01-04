@@ -2,7 +2,7 @@ use crate::server::core::ServerEvent;
 use anyhow::Result;
 use notify::{Config, RecommendedWatcher, RecursiveMode, Watcher};
 use paperclip_common::fs::{FileWatchEvent, FileWatchEventKind};
-use paperclip_common::log::verbose;
+use paperclip_common::log::log_verbose;
 
 use crate::server::core::ServerEngineContext;
 use crate::server::io::ServerIO;
@@ -37,7 +37,7 @@ async fn file_watcher<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
         )
         .unwrap();
 
-        verbose(&format!("watching {:?}", config_context.directory));
+        log_verbose(&format!("watching {:?}", config_context.directory));
 
         watcher
             .watch(config_context.directory.as_ref(), RecursiveMode::Recursive)
@@ -45,7 +45,7 @@ async fn file_watcher<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
 
         while let Some(e) = rx.recv().await {
             if let Ok(event) = e {
-                verbose(&format!("File event: {:?}", event));
+                log_verbose(&format!("File event: {:?}", event));
                 for path in &event.paths {
                     let path_str = path.clone().into_os_string().into_string().unwrap();
                     match &event.kind {

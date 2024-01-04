@@ -1,7 +1,7 @@
 use crate::replace_child;
 use inflector::cases::pascalcase::to_pascal_case;
 use paperclip_ast_serialize::serializable::Serializable;
-use paperclip_common::{get_or_short, log::verbose};
+use paperclip_common::{get_or_short, log::log_verbose};
 use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse;
 use paperclip_proto::{
@@ -203,7 +203,7 @@ public component {} {{
         &render.serialize()
     );
 
-    verbose(&format!("Create component {}", new_source));
+    log_verbose(&format!("Create component {}", new_source));
 
     let doc = parse(&new_source, id_seed, &Options::new(vec![])).unwrap();
     match doc.body.get(0).unwrap().get_inner() {

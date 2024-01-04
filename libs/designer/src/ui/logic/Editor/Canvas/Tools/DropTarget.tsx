@@ -3,6 +3,7 @@ import { DesignerEvent } from "@paperclip-ui/designer/src/events";
 import { DNDKind } from "@paperclip-ui/designer/src/state";
 import React, { useEffect, useRef, useState } from "react";
 import { useDrop } from "react-dnd";
+import { NativeTypes } from "react-dnd-html5-backend";
 
 type DropTargetProps = {
   children: any;
@@ -28,22 +29,26 @@ const useDropTarget = () => {
   const dispatch = useDispatch<DesignerEvent>();
 
   const [{ isDraggingOver }, dragRef] = useDrop({
-    accept: DNDKind.Resource,
+    accept: [DNDKind.Resource, NativeTypes.FILE],
     hover: (item, monitor) => {
       const offset = monitor.getClientOffset();
-      dispatch({
-        type: "ui/toolsLayerDragOver",
-        payload: {
-          x: offset.x,
-          y: offset.y,
-        },
-      });
+
+      // might not happen with file
+      if (offset) {
+        dispatch({
+          type: "ui/toolsLayerDragOver",
+          payload: {
+            x: offset.x,
+            y: offset.y,
+          },
+        });
+      }
     },
     drop(item, monitor) {
       dispatch({
         type: "ui/toolsLayerDrop",
         payload: {
-          kind: DNDKind.Resource,
+          kind: monitor.getItemType() as any,
           item,
           point: monitor.getSourceClientOffset(),
         },

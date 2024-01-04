@@ -1,9 +1,26 @@
 #### Immediate
 
-- insert modal
+- assets
 
-  - display files
-  - display components assoc with files
+  - display svg / png in resources
+  - ability to drag resources to canvas
+  - ability to drop files from desktop to canvas
+  - ability to preview assets
+
+- file navigator
+
+  - ability to drop files from local system
+  - open file in code editor
+  - drag assets to canvas
+
+    - files
+    - components
+    - tokens - should apply to element being dropped to
+    - mixins - should apply to element being dropped to
+
+  - insert modal
+    - display files
+    - display components assoc with files
 
 - resource search
 

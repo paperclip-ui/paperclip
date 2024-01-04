@@ -1023,7 +1023,9 @@ const createEventHandler = (actions: Actions) => {
           ({
             appendChild: {
               parentId: document.id,
-              childSource: `img(src: "./${file.name}")`,
+              childSource: `div {
+                img(src: "./${file.name}")
+              }`,
             },
           } as Mutation)
       )

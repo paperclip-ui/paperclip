@@ -316,9 +316,11 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
 
     useEffect(() => {
       if (selected) {
-        headerRef.current?.scrollIntoView({
-          block: "nearest",
-        });
+        setTimeout(() => {
+          headerRef.current?.scrollIntoView({
+            block: "nearest",
+          });
+        }, 100);
       }
     }, [selected]);
 

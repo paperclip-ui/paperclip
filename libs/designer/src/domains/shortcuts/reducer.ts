@@ -70,6 +70,15 @@ const handleCommand = (state: DesignerState, command: ShortcutCommand) => {
         newState.focusOnFileSearch = true;
       });
 
+    case ShortcutCommand.Cut:
+      return produce(state, (newState) => {
+        newState.cuttingId = getTargetExprId(state);
+      });
+    case ShortcutCommand.Paste:
+      return produce(state, (newState) => {
+        newState.cuttingId = null;
+      });
+
     case ShortcutCommand.GoToMain:
       state = produce(state, (newState) => {
         const { expr } = ast.getExprByVirtId(

@@ -2,6 +2,11 @@
 
 - cut + paste (resource item)
 
+- insert modal
+
+  - display files
+  - display components assoc with files
+
 - resource search
 
   - components

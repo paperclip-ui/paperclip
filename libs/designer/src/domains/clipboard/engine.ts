@@ -12,7 +12,7 @@ export const createClipboardEngine = (
   dispatch: Dispatch<DesignerEvent>,
   getState: () => DesignerState
 ): Engine<DesignerState, DesignerEvent> => {
-  const onCopy = (event: ClipboardEvent) => {
+  const onCutCopy = (event: ClipboardEvent) => {
     const state = getState();
 
     if (isEventTargetTextInput(event.target)) {
@@ -24,7 +24,10 @@ export const createClipboardEngine = (
     }
 
     const expr = ast.getExprInfoById(getTargetExprId(state), state.graph);
-    event.clipboardData.setData("text/plain", JSON.stringify(expr));
+    event.clipboardData.setData(
+      "text/plain",
+      JSON.stringify({ expr, type: event.type })
+    );
     event.preventDefault();
   };
 
@@ -40,7 +43,8 @@ export const createClipboardEngine = (
     }
   };
 
-  window.document.addEventListener("copy", onCopy);
+  window.document.addEventListener("cut", onCutCopy);
+  window.document.addEventListener("copy", onCutCopy);
   window.document.addEventListener("paste", onPaste);
 
   const handleEvent = (event: DesignerEvent, state: DesignerState) => {};

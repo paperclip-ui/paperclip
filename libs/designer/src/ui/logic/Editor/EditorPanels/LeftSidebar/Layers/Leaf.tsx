@@ -3,6 +3,7 @@ import * as styles from "../ui.pc";
 import { useDispatch, useSelector } from "@paperclip-ui/common";
 import {
   DNDKind,
+  getCuttingExprId,
   getExpandedVirtIds,
   getGraph,
   getTargetExprId,
@@ -43,6 +44,7 @@ export const Leaf = ({
     open,
     onClick,
     contextMenu,
+    cutting,
     onArrowClick,
     setHeaderRef,
     labelRef,
@@ -63,6 +65,7 @@ export const Leaf = ({
             ref={setHeaderRef}
             class={cx(className, {
               open,
+              cutting,
               selected,
               shadow,
               showDropTop: dropHotSpot === "before",
@@ -94,6 +97,9 @@ const useLeaf = ({
   const virtId = targetId && [...(instanceOf || []), targetId].join(".");
   const open = useSelector(getExpandedVirtIds).includes(virtId);
   const selectedId = useSelector(getTargetExprId);
+  const cuttingId = useSelector(getCuttingExprId);
+
+  const cutting = cuttingId === targetId;
 
   const graph = useSelector(getGraph);
 
@@ -222,6 +228,7 @@ const useLeaf = ({
     onClick,
     onArrowClick,
     contextMenu,
+    cutting,
     dropHotSpot,
     setHeaderRef,
     labelRef,

@@ -93,6 +93,7 @@ export type DesignerState = {
   projectDirectory?: FSDirectory;
   activeVariantId?: string;
   centerOnRedirect?: boolean;
+  cuttingId?: string;
   projectInfo?: ProjectInfo;
   editVariantPopupOpen?: boolean;
   renderedFilePath?: string;

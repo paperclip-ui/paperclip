@@ -459,36 +459,49 @@ const createEventHandler = (actions: Actions) => {
     event: ExpressionPasted,
     state: DesignerState
   ) => {
+    const { expr, type } = event.payload;
+
     const kind = {
       [ast.ExprKind.TextNode]: "textNode",
       [ast.ExprKind.Element]: "element",
       [ast.ExprKind.Component]: "component",
-    }[event.payload.kind];
+    }[expr.kind];
 
     if (!kind) {
-      console.error(`Cannot paste: `, event.payload.expr);
+      console.error(`Cannot paste: `, expr);
       return;
     }
 
-    let targetExpressionId = getTargetExprId(state);
+    if (type === "copy") {
+      let targetExpressionId = getTargetExprId(state);
 
-    if (!targetExpressionId) {
-      targetExpressionId = state.currentDocument.paperclip.html.sourceId;
-    }
+      if (!targetExpressionId) {
+        targetExpressionId = state.currentDocument.paperclip.html.sourceId;
+      }
 
-    // TODO: need to check when user selects leaf in left sidebar, then need to use
-    // that state to insert INTO the element instead of adjacent to it. This is an
-    // incomplete solution necessary for cases like: copy -> paste -> paste -> paste
-    targetExpressionId = ast.getParent(targetExpressionId, state.graph).id;
+      // TODO: need to check when user selects leaf in left sidebar, then need to use
+      // that state to insert INTO the element instead of adjacent to it. This is an
+      // incomplete solution necessary for cases like: copy -> paste -> paste -> paste
+      targetExpressionId = ast.getParent(targetExpressionId, state.graph)?.id;
 
-    actions.applyChanges([
-      {
-        pasteExpression: {
-          targetExpressionId,
-          [kind]: event.payload.expr,
+      actions.applyChanges([
+        {
+          pasteExpression: {
+            targetExpressionId,
+            [kind]: expr.expr,
+          },
         },
-      },
-    ]);
+      ]);
+    } else if (type === "cut") {
+      actions.applyChanges([
+        {
+          moveExpressionToFile: {
+            newFilePath: getCurrentFilePath(state),
+            expressionId: expr.expr.id,
+          },
+        },
+      ]);
+    }
   };
 
   type ResolveTargetExprInfo = {

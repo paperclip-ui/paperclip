@@ -5,6 +5,9 @@ import { FrameContainer } from "@paperclip-ui/designer/src/ui/logic/FrameContain
 import { Node as VirtNode } from "@paperclip-ui/proto/lib/generated/virt/html";
 import { PCModule } from "@paperclip-ui/proto/lib/generated/virt/module";
 import { metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
+import { useSelector } from "@paperclip-ui/common";
+import { getCuttingExprId, getGraph } from "@paperclip-ui/designer/src/state";
+import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 
 const DEFAULT_BOUNDS = { x: 0, y: 0, width: 1024, height: 768 };
 
@@ -33,6 +36,25 @@ export const Frame = memo(
     if (!preview) {
       return null;
     }
+
+    // const graph = useSelector(getGraph);
+
+    // we want top-most
+    // const expr = ast.getExprInfoById(
+    //   (preview.element?.id ?? preview.textNode?.id).split(".").shift(),
+    //   graph
+    // );
+
+    // // could be component which is NOT rendered
+    // const frameExpr =
+    //   (expr &&
+    //     ast.getParentExprInfo(expr.expr.id, graph)?.kind ===
+    //       ast.ExprKind.Render &&
+    //     ast.getExprOwnerComponent(expr.expr, graph)) ||
+    //   expr?.expr;
+
+    // const cuttingId = useSelector(getCuttingExprId);
+    // const cutting = frameExpr?.id === cuttingId;
 
     const onLoad2 = useCallback(
       (mount: HTMLElement) => {

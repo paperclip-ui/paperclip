@@ -307,7 +307,7 @@ public component Layers {
                         LayerNavigationItemHeader(class: "instance container open") {
                             text "Some instance"
                         }
-                        LayerNavigationItemHeader(class: "component container open") {
+                        LayerNavigationItemHeader(class: "cutting component container open") {
                             text "Some component"
                             text "some blarggggfgdf gdfgd"
                         }
@@ -665,6 +665,9 @@ public component TreeNavigationItemHeader {
  * @frame(x: 795, y: 1167, width: 350, height: 37)
 */
 public component LayerNavigationItemHeader {
+    variant cutting trigger {
+        ".cutting"
+    }
     variant isStack trigger {
         ".stack"
     }
@@ -699,6 +702,9 @@ public component LayerNavigationItemHeader {
         ".text"
     }
     render TreeNavigationItemHeader container(class: class, style: style, onClick: onClick, onArrowClick: onArrowClick, onContextMenu: onContextMenu, onKeyDown: onKeyDown, onMouseDown: onMouseDown) {
+        style variant cutting {
+            opacity: 0.3
+        }
         style variant isStack {
             --icon-color: rgba(230, 158, 15, 1)
         }

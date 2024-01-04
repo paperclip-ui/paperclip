@@ -1,3 +1,4 @@
+import "state/theme.pc" as theme1
 import "ui/input.pc" as module
 import "ui/logic/Sidebar/sidebar.pc" as sidebar
 import "ui/theme.pc" as theme
@@ -10,7 +11,7 @@ public component FilteredFiles {
     script(src: "./FileNavigator/controller.tsx", target: "react", name: "FilteredFiles")
     render div filteredFiles {
         slot children {
-            FilteredFile(class: "preselected") {
+            FilteredFile(class: "preselected component") {
                 insert basename {
                     text "some long base name that should work"
                 }
@@ -18,8 +19,8 @@ public component FilteredFiles {
                     text "./path/to/some/dir"
                 }
             }
-            FilteredFile
-            FilteredFile {
+            FilteredFile(class: "file")
+            FilteredFile(class: "atom-token") {
                 insert basename {
                     text "file.svg"
                 }
@@ -27,7 +28,7 @@ public component FilteredFiles {
                     text "./path/to/some/dir"
                 }
             }
-            FilteredFile {
+            FilteredFile(class: "composite-token") {
                 insert basename {
                     text "file.svg"
                 }
@@ -35,7 +36,7 @@ public component FilteredFiles {
                     text "./path/to/some/dir"
                 }
             }
-            FilteredFile {
+            FilteredFile(class: "component") {
                 insert basename {
                     text "file.svg"
                 }
@@ -58,6 +59,20 @@ public component FilteredFiles {
  * @frame(x: 266, y: 1343, width: 354, height: 88)
 */
 public component FilteredFile {
+    variant isStyleMixin trigger {
+        ".composite-token"
+        ".style-mixin"
+    }
+    variant isToken trigger {
+        ".token"
+        ".atom-token"
+    }
+    variant isFile trigger {
+        ".file"
+    }
+    variant isComponent trigger {
+        ".component"
+    }
     variant hovering trigger {
         ".hover"
         ":hover"
@@ -65,6 +80,12 @@ public component FilteredFile {
     }
     script(src: "./FileNavigator/controller.tsx", target: "react", name: "FilteredFile")
     render div container(class: class) {
+        style variant isStyleMixin {
+            color: var(theme.atomColor)
+        }
+        style variant isToken {
+            color: var(theme.atomColor)
+        }
         style {
             display: flex
             align-items: center
@@ -99,14 +120,28 @@ public component FilteredFile {
                     width: 100%
                     gap: var(theme.space05)
                 }
-                div basenameContainer {
+                div {
                     style {
-                        white-space: nowrap
-                        text-overflow: ellipsis
-                        overflow: hidden
+                        display: flex
+                        align-items: center
+                        gap: var(theme1.space03)
                     }
-                    slot basename {
-                        text "file.pc"
+                    div iconWraper {
+                        style variant isComponent {
+                            color: var(theme.componentColor)
+                        }
+                        style variant isStyleMixin
+                        LayerIcon(class: class)
+                    }
+                    div basenameContainer {
+                        style {
+                            white-space: nowrap
+                            text-overflow: ellipsis
+                            overflow: hidden
+                        }
+                        slot basename {
+                            text "file.pc"
+                        }
                     }
                 }
                 div dirnameContainer(title: dirTitle) {
@@ -375,6 +410,12 @@ public component Layers {
  * @frame(x: 808, y: 1052, width: 90, height: 56)
 */
 public component LayerIcon {
+    variant isCompositeToken trigger {
+        ".composite-token"
+    }
+    variant isAtomToken trigger {
+        ".atom-token"
+    }
     variant isStack trigger {
         ".stack"
     }
@@ -390,17 +431,11 @@ public component LayerIcon {
     variant isElement trigger {
         ".element"
     }
-    variant isCompositeToken trigger {
-        ".composite-token"
-    }
     variant isFolder trigger {
         ".folder"
     }
     variant isFile trigger {
         ".file"
-    }
-    variant isAtomToken trigger {
-        ".atom-token"
     }
     variant isSlot trigger {
         ".slot"
@@ -725,7 +760,7 @@ public component LayerNavigationItemHeader {
             --icon-color: var(--regular-layer)
         }
         style variant isCompositeToken {
-            --icon-color: rgb(114, 247, 134)
+            --icon-color: var(theme.atomColor)
         }
         style variant isAtomToken {
             --icon-color: rgb(114, 247, 134)

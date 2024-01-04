@@ -212,7 +212,13 @@ export const FilteredFile =
           onClick,
           onMouseOver,
         }}
-        class={cx({ preselected })}
+        class={cx({
+          preselected,
+          component: resource.kind === ResourceKind.Component,
+          file: resource.kind === ResourceKind.File2,
+          "atom-token": resource.kind === ResourceKind.Token,
+          "composite-token": resource.kind === ResourceKind.StyleMixin,
+        })}
         basename={resource.name}
         dirname={resource.parentPath.replace(rootDir, "")}
         dirTitle={dirname}

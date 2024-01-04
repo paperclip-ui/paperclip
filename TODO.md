@@ -4,6 +4,8 @@
 
   - atoms
 
+- BUG: when moving components over with variants, ensure that variant refs aren't updated.
+
 - cut + paste (resource item)
 - Symbol Table in ExprMap
 

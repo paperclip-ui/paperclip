@@ -1,6 +1,7 @@
 import "ui/AssetPreview/ui.pc" as module1
 import "ui/logic/Sidebar/sidebar.pc" as module
 import "ui/theme.pc" as theme
+
 import "ui/logic/Editor/EditorPanels/LeftSidebar/ui.pc" as leftSidebar
 import "ui/right-sidebar.pc" as rightSidebar
 import "ui/resource-modal.pc" as assetsModal
@@ -277,4 +278,3 @@ Editor root {
         SplashTip
     }
 }
-

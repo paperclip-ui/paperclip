@@ -174,21 +174,15 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         &self,
         _request: Request<Empty>,
     ) -> Result<Response<ProjectInfo>, Status> {
-        let experimental_capabilities = self
-            .ctx
-            .store
-            .lock()
-            .unwrap()
-            .state
-            .options
-            .config_context
-            .config
-            .experimental
-            .clone()
-            .unwrap_or(vec![]);
+        let config_context = &self.ctx.store.lock().unwrap().state.options.config_context;
+
+        let experimental_capabilities =
+            config_context.config.experimental.clone().unwrap_or(vec![]);
+        let src_directory = config_context.get_src_dir().to_str().unwrap().to_string();
 
         Ok(Response::new(ProjectInfo {
             experimental_capabilities,
+            src_directory,
         }))
     }
 

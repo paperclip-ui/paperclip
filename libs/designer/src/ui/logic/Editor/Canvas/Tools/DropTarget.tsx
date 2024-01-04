@@ -29,7 +29,7 @@ const useDropTarget = () => {
   const dispatch = useDispatch<DesignerEvent>();
 
   const [{ isDraggingOver }, dragRef] = useDrop({
-    accept: [DNDKind.Resource, NativeTypes.FILE],
+    accept: [DNDKind.Resource, NativeTypes.FILE, DNDKind.File],
     hover: (item, monitor) => {
       const offset = monitor.getClientOffset();
 

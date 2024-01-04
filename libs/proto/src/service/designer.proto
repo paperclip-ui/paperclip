@@ -32,6 +32,7 @@ service Designer {
 
 message ProjectInfo {
     repeated string experimental_capabilities = 1;
+    string src_directory = 2;
 }
 
 message SaveFileRequest {

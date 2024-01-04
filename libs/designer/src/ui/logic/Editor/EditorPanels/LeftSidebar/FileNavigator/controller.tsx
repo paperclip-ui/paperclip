@@ -55,6 +55,8 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
     const dispatch = useDispatch<DesignerEvent>();
     const fileFilter = useSelector(getFileFilter);
     const focusOnFileFilter = useSelector(getFocusOnFileFilter);
+    const currentFile = useSelector(getCurrentFilePath);
+
     const [preselectedResource, setPreselectedResource] =
       useState<Resource>(null);
     let resources = useSelector(getSearchedFiles);
@@ -92,6 +94,10 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
         );
       }
     };
+
+    // if (currentFile && isPaperclipFile(currentFile) && !focusOnFileFilter) {
+    //   return null;
+    // }
 
     return (
       <Base

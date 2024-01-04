@@ -1024,12 +1024,45 @@ const createEventHandler = (actions: Actions) => {
             appendChild: {
               parentId: document.id,
               childSource: `div {
-                img(src: "./${file.name}")
-              }`,
+                  img(src: "./${file.name}")
+                }`,
             },
           } as Mutation)
       )
     );
+  };
+
+  const handleDroppedFileNavigatorItem = async (
+    { payload: { item, point } }: ToolsLayerDrop,
+    state: DesignerState
+  ) => {
+    const document = getCurrentDependency(state).document;
+
+    const bounds = {
+      ...DEFAULT_FRAME_BOX,
+      ...getScaledPoint(point, state.canvas.transform),
+    };
+
+    actions.applyChanges([
+      {
+        appendChild: {
+          parentId: document.id,
+          childSource: `
+            /**
+             * @frame(width: ${bounds.width}, height: ${bounds.height}, x: ${
+            bounds.x
+          }, y: ${bounds.y})
+             */
+             div {
+                 img(src: "${item.path.replace(
+                   state.projectInfo.srcDirectory + "/",
+                   ""
+                 )}")
+               }
+          `,
+        },
+      },
+    ]);
   };
 
   const handleDropItem = (event: ToolsLayerDrop, state: DesignerState) => {
@@ -1037,6 +1070,8 @@ const createEventHandler = (actions: Actions) => {
       handleDroppedResource(event, state);
     } else if (event.payload.kind === NativeTypes.FILE) {
       handleDroppedFile(event, state);
+    } else if (event.payload.kind === DNDKind.File) {
+      handleDroppedFileNavigatorItem(event, state);
     }
   };
 

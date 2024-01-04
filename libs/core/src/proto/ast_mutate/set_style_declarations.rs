@@ -6,7 +6,6 @@ use paperclip_common::get_or_short;
 use paperclip_parser::core::parser_context::Options;
 use paperclip_parser::pc::parser::parse as parse_pc;
 use paperclip_proto::ast;
-use paperclip_proto::ast::get_expr::GetExpr;
 use paperclip_proto::ast::pc::Render;
 use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast::wrapper::{Expression, ExpressionWrapper};
@@ -95,8 +94,8 @@ fn add_child_style(
     let variant_names = mutation
         .variant_ids
         .iter()
-        .map(|id| match GetExpr::get_expr(id, &mut doc) {
-            Some(info) => match info.expr {
+        .map(|id| match ctx.expr_map.get_expr(id) {
+            Some(info) => match info {
                 ExpressionWrapper::Variant(variant) => Some(variant.name.to_string()),
                 _ => None,
             },

@@ -1,15 +1,11 @@
 #### Immediate
 
-- Return NoticeResult after editing graph
-
-  - Display message if error comes up
-
 - assets
 
-  - display svg / png in resources
   - ability to drag resources to canvas
-  - ability to drop files from desktop to canvas
-  - ability to preview assets
+    - from file navigator
+    - from search
+  - ability to drop files into file navigator
 
 - file navigator
 

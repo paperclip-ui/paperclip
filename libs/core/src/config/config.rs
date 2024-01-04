@@ -1,7 +1,7 @@
 // From https://paperclip.dev/docs/configure-paperclip
 use anyhow::Result;
 use paperclip_common::fs::FileReader;
-use paperclip_common::log::verbose;
+use paperclip_common::log::log_verbose;
 use paperclip_common::{join_path, path::absolutize};
 use paperclip_parser::core::parser_context::Options;
 use paperclip_proto::notice::base::{Notice, NoticeList};
@@ -82,7 +82,7 @@ impl ConfigContext {
 
         let relative_path = abs_path.to_str().unwrap()[chop_pos..].to_string();
 
-        verbose(
+        log_verbose(
             format!(
                 "Resolved module {} -> {} from {}",
                 path, relative_path, abs_src

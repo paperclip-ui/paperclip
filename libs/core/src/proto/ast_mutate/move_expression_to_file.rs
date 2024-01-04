@@ -24,13 +24,23 @@ impl MutableVisitor<()> for EditContext<MoveExpressionToFile> {
         &self,
         doc: &mut Document,
     ) -> VisitorResult<(), EditContext<MoveExpressionToFile>> {
-        let (expr, expr_dep) = self
-            .graph
+        let expr = self
+            .expr_map
             .get_expr(&self.mutation.expression_id)
             .expect("Dep must exist");
 
+        let expr_path = self
+            .expr_map
+            .get_expr_path(&self.mutation.expression_id)
+            .expect("Dep must exist");
+        let expr_dep = self
+            .graph
+            .dependencies
+            .get(expr_path)
+            .expect("Dep must exist");
+
         if self.mutation.new_file_path == self.get_dependency().path {
-            let imports = insert_document_expr(doc, expr.expr, expr_dep, self.get_dependency());
+            let imports = insert_document_expr(doc, expr.clone(), expr_dep, self.get_dependency());
 
             for (ns, path) in imports {
                 self.add_post_mutation(
@@ -42,7 +52,7 @@ impl MutableVisitor<()> for EditContext<MoveExpressionToFile> {
             let i = doc
                 .body
                 .iter()
-                .position(|item| item.get_id() == expr.expr.get_id());
+                .position(|item| item.get_id() == expr.get_id());
             if let Some(i) = i {
                 doc.body.remove(i);
             }
@@ -58,22 +68,24 @@ impl MutableVisitor<()> for EditContext<MoveExpressionToFile> {
         el: &mut Element,
     ) -> VisitorResult<(), EditContext<MoveExpressionToFile>> {
         let component = get_or_short!(
-            el.get_instance_component(&self.graph),
+            el.get_instance_component(&self.expr_map),
             VisitorResult::Continue
         );
 
         if component.get_id() == &self.mutation.expression_id {
-            let new_ns =
-                resolve_import_ns(&self.get_dependency(), &self.mutation.new_file_path).namespace;
-            el.namespace = Some(new_ns.clone());
-
-            self.add_post_mutation(
-                mutation::Inner::AddImport(AddImport {
-                    ns: new_ns.clone(),
-                    path: self.mutation.new_file_path.clone(),
-                })
-                .get_outer(),
-            );
+            el.namespace =
+                resolve_import_ns(&self.get_dependency(), &self.mutation.new_file_path, None)
+                    .ok()
+                    .and_then(|info| {
+                        self.add_post_mutation(
+                            mutation::Inner::AddImport(AddImport {
+                                ns: info.namespace.clone(),
+                                path: self.mutation.new_file_path.clone(),
+                            })
+                            .get_outer(),
+                        );
+                        Some(info.namespace.clone())
+                    });
         }
 
         VisitorResult::Continue
@@ -83,7 +95,7 @@ impl MutableVisitor<()> for EditContext<MoveExpressionToFile> {
         &self,
         reference: &mut Reference,
     ) -> VisitorResult<(), EditContext<MoveExpressionToFile>> {
-        if let Some((expr, _dep)) = reference.follow(&self.graph) {
+        if let Some(expr) = reference.follow(&self.expr_map) {
             if expr.get_id() != &self.mutation.expression_id {
                 return VisitorResult::Continue;
             }
@@ -103,18 +115,19 @@ impl MutableVisitor<()> for EditContext<MoveExpressionToFile> {
 
             // otherwise we should update it
             } else {
-                let ns = resolve_import_ns(self.get_dependency(), &self.mutation.new_file_path)
-                    .namespace;
+                if let Ok(info) =
+                    resolve_import_ns(self.get_dependency(), &self.mutation.new_file_path, None)
+                {
+                    self.add_post_mutation(
+                        mutation::Inner::AddImport(AddImport {
+                            ns: info.namespace.clone(),
+                            path: self.mutation.new_file_path.clone(),
+                        })
+                        .get_outer(),
+                    );
 
-                self.add_post_mutation(
-                    mutation::Inner::AddImport(AddImport {
-                        ns: ns.clone(),
-                        path: self.mutation.new_file_path.clone(),
-                    })
-                    .get_outer(),
-                );
-
-                reference.path = vec![ns, unique_name];
+                    reference.path = vec![info.namespace, unique_name];
+                }
             }
         }
         VisitorResult::Continue
@@ -198,24 +211,26 @@ impl<'a> MutableVisitor<()> for UpdateExprImports<'a> {
     fn visit_reference(&self, expr: &mut Reference) -> VisitorResult<(), UpdateExprImports<'a>> {
         // Dealing with local instance that needs to be updated
         if expr.path.len() == 1 {
-            let info = resolve_import_ns(self.to_dep, &self.from_dep.path);
-
-            expr.path.insert(0, info.namespace.to_string());
-            self.imports
-                .borrow_mut()
-                .insert(info.namespace.to_string(), self.from_dep.path.to_string());
-        } else {
-            let ns = expr.path.get(0).expect("Namespace must exist");
-            let name = expr.path.get(1).expect("Reference name must exist");
-
-            let ns_path = self.from_dep.get_resolved_import_path(ns);
-            if let Some(ns_path) = ns_path {
-                let info = resolve_import_ns(self.to_dep, ns_path);
+            if let Ok(info) = resolve_import_ns(self.to_dep, &self.from_dep.path, None) {
+                expr.path.insert(0, info.namespace.to_string());
                 self.imports
                     .borrow_mut()
-                    .insert(info.namespace.to_string(), ns_path.to_string());
-                expr.path = vec![info.namespace.to_string(), name.to_string()];
+                    .insert(info.namespace.to_string(), self.from_dep.path.to_string());
             }
+        } else {
+            let ns = expr.path.get(0).expect("Namespace must exist");
+            let name = expr.path.get(1).expect("Reference name must exist").clone();
+
+            let ns_path = self.from_dep.get_resolved_import_path(ns);
+            ns_path
+                .and_then(|ns_path| resolve_import_ns(self.to_dep, ns_path, None).ok())
+                .and_then(|info| {
+                    self.imports
+                        .borrow_mut()
+                        .insert(info.namespace.to_string(), info.path.to_string());
+                    expr.path = vec![info.namespace.to_string(), name.to_string()];
+                    Some(())
+                });
         }
 
         VisitorResult::Continue
@@ -232,6 +247,6 @@ fn get_expr_unique_name(expr: &ExpressionWrapper, to_dep: &Dependency) -> Option
     return Some(get_unique_document_body_item_name(
         expr.get_id(),
         &current_name,
-        to_dep,
+        to_dep.document.as_ref().expect("Document must exist"),
     ));
 }

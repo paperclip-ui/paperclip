@@ -1,6 +1,26 @@
 #### Immediate
 
-- cut + paste (resource item)
+- assets
+
+  - ability to drag resources to canvas
+    - from file navigator
+    - from search
+  - ability to drop files into file navigator
+
+- file navigator
+
+  - ability to drop files from local system
+  - open file in code editor
+  - drag assets to canvas
+
+    - files
+    - components
+    - tokens - should apply to element being dropped to
+    - mixins - should apply to element being dropped to
+
+  - insert modal
+    - display files
+    - display components assoc with files
 
 - resource search
 

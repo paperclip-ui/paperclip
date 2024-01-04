@@ -9,14 +9,13 @@ use super::context::Context;
 use anyhow::Result;
 use paperclip_infer::infer::Inferencer;
 use paperclip_infer::types as infer_types;
-use paperclip_proto::ast::{
-    get_expr::GetExpr,
-    graph_ext::{Dependency, Graph},
-    pc as ast,
-};
+use paperclip_proto::ast::{graph_container::GraphContainer, graph_ext::Dependency, pc as ast};
 use paperclip_proto::notice::base::NoticeList;
 
-pub fn compile_typed_definition(dep: &Dependency, graph: &Graph) -> Result<String, NoticeList> {
+pub fn compile_typed_definition(
+    dep: &Dependency,
+    graph: &GraphContainer,
+) -> Result<String, NoticeList> {
     let mut context = Context::new(
         dep,
         graph,
@@ -87,7 +86,7 @@ fn compile_components(context: &mut Context) {
 
 fn compile_component(component: &ast::Component, context: &mut Context) {
     let component_inference = Inferencer::new()
-        .infer_component(component, &context.dependency.path, context.graph)
+        .infer_component(component, &context.dependency.path, context.graph())
         .expect("Cannot infer component");
 
     context.add_buffer(format!("export type Base{}Props = {{\n", component.name).as_str());
@@ -157,7 +156,7 @@ fn compile_inference(inference: &infer_types::Type, context: &mut Context) {
         }
         infer_types::Type::Element(el) => {
             if let Some(component) =
-                el.get_instance_component(&context.dependency.path, &context.graph)
+                el.get_instance_component(&context.dependency.path, &context.graph())
             {
                 let ref_name = if let Some(ns) = &el.namespace {
                     format!("{}.{}", ns, component.name.clone()).to_string()
@@ -169,15 +168,17 @@ fn compile_inference(inference: &infer_types::Type, context: &mut Context) {
                     format!("{{ as?: any }} & React.ComponentProps<typeof {}>", ref_name).as_str(),
                 );
             } else {
-                let el: ast::Element =
-                    GetExpr::get_expr(&el.id, &context.dependency.get_document())
-                        .expect("Element must exist")
-                        .expr
-                        .try_into()
-                        .expect("Cannot convert into element");
-                let component =
-                    GetExpr::get_owner_component(&el.id, &context.dependency.get_document())
-                        .expect("Inferred element must exist within component");
+                let el: ast::Element = context
+                    .expr_map()
+                    .get_expr(&el.id)
+                    .expect("Element must exist")
+                    .clone()
+                    .try_into()
+                    .expect("Cannot convert into element");
+                let component = context
+                    .expr_map()
+                    .get_owner_component(&el.id)
+                    .expect("Inferred element must exist within component");
 
                 if contains_script(&el.body) {
                     context.add_buffer(

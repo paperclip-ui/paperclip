@@ -122,13 +122,13 @@ export type ItemProps = {
 const Item = ({ component, screenshotUrl }: ItemProps) => {
   const { style, ref } = useItem({ component });
   return (
-    <etcStyles.Item
+    <styles.Item
       ref={ref}
       root={{ style }}
       preview={{
         style: {
           backgroundImage: `url(${screenshotUrl})`,
-        }
+        },
       }}
       label={component.name}
     />

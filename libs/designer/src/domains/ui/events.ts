@@ -12,6 +12,8 @@ import {
 } from "../../state";
 import { ConfirmDetails } from "../../state/confirm";
 
+import { NativeTypes } from "react-dnd-html5-backend";
+
 export type DashboardAddFileConfirmed = BaseEvent<
   "ui/dashboardAddFileConfirmed",
   { name: string }
@@ -199,7 +201,8 @@ export type ConfirmClosed = BaseEvent<
 export type ToolsLayerDragOver = BaseEvent<"ui/toolsLayerDragOver", Point>;
 export type ToolsLayerDrop = BaseEvent<
   "ui/toolsLayerDrop",
-  { kind: DNDKind; item: any; point: Point }
+  | { kind: DNDKind; item: any; point: Point }
+  | { kind: typeof NativeTypes.FILE; item: any; point: Point }
 >;
 
 export type ResizerPathStoppedMoving = BaseEvent<

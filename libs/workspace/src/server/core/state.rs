@@ -3,13 +3,11 @@ use paperclip_common::get_or_short;
 use paperclip_core::config::ConfigContext;
 use paperclip_evaluator::css;
 use paperclip_evaluator::html;
-use paperclip_proto::ast::expr_map::ExprMap;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::virt::module::pc_module_import;
 use paperclip_proto::virt::module::{GlobalScript, PcModule, PcModuleImport, PccssImport};
 use std::collections::HashMap;
 use std::collections::HashSet;
-use std::time::SystemTime;
 
 pub struct History {
     pub changes: Vec<Graph>,

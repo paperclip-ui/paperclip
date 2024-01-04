@@ -29,6 +29,8 @@ export const getHighlightedNodeId = (designer: DesignerState) =>
 export const getResizerMoving = (designer: DesignerState) =>
   designer.resizerMoving;
 
+export const getCuttingExprId = (designer: DesignerState) => designer.cuttingId;
+
 export const getSelectedNodePath = (designer: DesignerState) => {
   const nodeId = getTargetExprId(designer);
   if (!nodeId || !designer.currentDocument) {

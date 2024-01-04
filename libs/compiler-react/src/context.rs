@@ -1,6 +1,8 @@
 use paperclip_common::serialize_context::Context as SerializeContext;
 use paperclip_proto::ast::{
     self,
+    expr_map::ExprMap,
+    graph_container::GraphContainer,
     graph_ext::{Dependency, Graph},
 };
 use std::cell::RefCell;
@@ -8,9 +10,9 @@ use std::rc::Rc;
 
 #[derive(Clone)]
 pub struct Context<'dependency> {
+    graph_container: &'dependency GraphContainer<'dependency>,
     pub content: Rc<RefCell<SerializeContext>>,
     pub dependency: &'dependency Dependency,
-    pub graph: &'dependency Graph,
     pub current_component: Option<&'dependency ast::pc::Component>,
     pub ctx_name: String,
     pub options: Options,
@@ -24,17 +26,23 @@ pub struct Options {
 impl<'dependency> Context<'dependency> {
     pub fn new(
         dependency: &'dependency Dependency,
-        graph: &'dependency Graph,
+        graph_container: &'dependency GraphContainer,
         options: Options,
     ) -> Self {
         Self {
             content: Rc::new(RefCell::new(SerializeContext::new(0))),
             current_component: None,
             options,
-            graph,
+            graph_container,
             dependency,
             ctx_name: "props".to_string(),
         }
+    }
+    pub fn graph(&self) -> &Graph {
+        &self.graph_container.graph
+    }
+    pub fn expr_map(&self) -> &ExprMap {
+        &self.graph_container.get_expr_map()
     }
     pub fn within_component(&self, component: &'dependency ast::pc::Component) -> Self {
         let mut clone = self.clone();

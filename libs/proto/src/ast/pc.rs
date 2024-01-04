@@ -9,8 +9,6 @@ use std::rc::Rc;
 use super::{
     docco::Comment,
     expr_map::ExprMap,
-    get_expr::GetExpr,
-    graph::{Dependency, Graph},
     visit::{Visitable, Visitor, VisitorResult},
     wrapper::ExpressionWrapper,
 };
@@ -231,26 +229,8 @@ impl Slot {
 }
 
 impl Variant {
-    pub fn get_component<'expr>(
-        &self,
-        graph: &'expr Graph,
-    ) -> Option<(Component, &'expr Dependency)> {
-        graph
-            .get_expr(&self.id)
-            .and_then(|(info, _)| {
-                if let Some(component_id) = info.path.get(info.path.len() - 2) {
-                    graph.get_expr(&component_id)
-                } else {
-                    None
-                }
-            })
-            .and_then(|(component_info, dep)| {
-                if let ExpressionWrapper::Component(expr) = component_info.expr {
-                    Some((expr, dep))
-                } else {
-                    None
-                }
-            })
+    pub fn get_component<'expr>(&self, map: &'expr ExprMap) -> Option<&'expr Component> {
+        map.get_owner_component(&self.id)
     }
 }
 
@@ -319,18 +299,11 @@ impl Element {
     pub fn get_inserts(&self) -> Vec<&Insert> {
         get_body_items!(&self.body, node::Inner::Insert, Insert)
     }
-    pub fn get_source_dep<'a>(&'a self, graph: &'a Graph) -> Option<&'a Dependency> {
-        let (_, owner_dep) =
-            GetExpr::get_expr_from_graph(&self.id, graph).expect("Expr must exist in graph");
-        if let Some(ns) = &self.namespace {
-            owner_dep.resolve_import_from_ns(&ns, graph)
-        } else {
-            Some(owner_dep)
-        }
+    pub fn get_source_document<'a>(&'a self, map: &'a ExprMap) -> Option<&'a Document> {
+        map.get_owner_document(&self.id)
     }
-    pub fn get_instance_component<'a>(&'a self, graph: &'a Graph) -> Option<&'a Component> {
-        self.get_source_dep(graph)
-            .and_then(|dep| dep.get_document().get_component_by_name(&self.tag_name))
+    pub fn get_instance_component<'a>(&'a self, map: &'a ExprMap) -> Option<&'a Component> {
+        map.get_instance_component(&self.id)
     }
 }
 

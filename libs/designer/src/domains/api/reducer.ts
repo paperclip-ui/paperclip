@@ -9,7 +9,7 @@ import {
   setDirItems,
   setTargetExprId,
 } from "../../state";
-import { DesignerEngineEvent, GraphLoaded } from "./events";
+import { GraphLoaded } from "./events";
 import { DesignServerEvent } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 import jasonpatch from "fast-json-patch";
@@ -35,7 +35,7 @@ export const apiReducer = (state: DesignerState, event: DesignerEvent) => {
     case "designer-engine/fileSearchResult": {
       return produce(state, (newState) => {
         newState.searchedFilePathRoot = event.payload.rootDir;
-        newState.searchedFilePaths = event.payload.paths;
+        newState.searchedResources = event.payload.items;
       });
     }
     case "designer-engine/designFileCreated": {

@@ -9,7 +9,7 @@ use crate::server::io::ServerIO;
 use anyhow::Result;
 use futures::future::{self, Either, TryFutureExt};
 use hyper::{service::make_service_fn, service::service_fn, Server};
-use paperclip_common::log::notice;
+use paperclip_common::log::log_notice;
 use paperclip_proto::service::designer::designer_server::DesignerServer;
 use std::convert::Infallible;
 use tower::Service;
@@ -32,10 +32,19 @@ async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
     } else {
         portpicker::pick_unused_port().expect("No ports free")
     };
+    let project_dir = ctx
+        .store
+        .lock()
+        .unwrap()
+        .state
+        .options
+        .config_context
+        .directory
+        .clone();
 
     let addr = ([127, 0, 0, 1], port).into();
 
-    notice(&format!("🎨 Starting design server on port {}", port));
+    log_notice(&format!("🎨 Starting design server on port {}", port));
 
     let designer = DesignerService::new(ctx.clone());
     let designer_server = DesignerServer::new(designer);
@@ -45,6 +54,7 @@ async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
         let cors = warp::cors().allow_any_origin();
         let route = routes::screenshots_route()
             .or(routes::static_files_route())
+            .or(routes::assets_route(project_dir.clone()))
             .with(cors);
 
         let mut warp = warp::service(route);

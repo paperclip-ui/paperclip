@@ -44,7 +44,10 @@ impl MutableVisitor<()> for EditContext<PrependChild> {
             child.set_name(&get_unique_document_body_item_name(
                 &child.get_id(),
                 &child.get_name().unwrap_or("unnamed".to_string()),
-                &self.get_dependency(),
+                self.get_dependency()
+                    .document
+                    .as_ref()
+                    .expect("Document must exist"),
             ));
 
             self.changes.borrow_mut().push(

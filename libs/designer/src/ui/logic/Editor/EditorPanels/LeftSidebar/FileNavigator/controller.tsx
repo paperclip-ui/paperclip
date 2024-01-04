@@ -44,6 +44,10 @@ import {
 } from "@paperclip-ui/designer/src/ui/logic/SuggestionMenu";
 import { getFileShortcuts } from "@paperclip-ui/designer/src/domains/shortcuts/state";
 import { useDrag, useDrop } from "react-dnd";
+import {
+  Resource,
+  ResourceKind,
+} from "@paperclip-ui/proto/lib/generated/service/designer";
 
 export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
   function FileNavigator() {
@@ -51,34 +55,40 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
     const dispatch = useDispatch<DesignerEvent>();
     const fileFilter = useSelector(getFileFilter);
     const focusOnFileFilter = useSelector(getFocusOnFileFilter);
-    const [preselectedPath, setPreselectedPath] = useState<string>(null);
-    let paths = useSelector(getSearchedFiles);
-    paths = useMemo(() => {
-      return paths.filter(isOpenableFile).slice(0, 20);
-    }, [paths]);
+    const [preselectedResource, setPreselectedResource] =
+      useState<Resource>(null);
+    let resources = useSelector(getSearchedFiles);
+    resources = useMemo(() => {
+      return resources.filter(isOpenableFile).slice(0, 20);
+    }, [resources]);
 
     const history = useHistory();
 
     useEffect(() => {
-      setPreselectedPath(paths[0]);
-    }, [paths]);
+      setPreselectedResource(resources[0]);
+    }, [resources]);
 
     const onFilter = (value: string) => {
       dispatch({ type: "ui/fileFilterChanged", payload: value });
     };
 
-    const onFilteredFileOver = setPreselectedPath;
+    const onFilteredFileOver = setPreselectedResource;
 
     const onFilterKeyDown = (event: React.KeyboardEvent<any>) => {
-      if (event.key === "Enter" && preselectedPath) {
-        history.redirect(routes.editor({ filePath: preselectedPath }));
+      if (event.key === "Enter" && preselectedResource) {
+        history.redirect(getResourceRedirect(preselectedResource));
       } else if (event.key === "ArrowUp") {
-        setPreselectedPath(
-          paths[Math.max(paths.indexOf(preselectedPath) - 1, 0)]
+        setPreselectedResource(
+          resources[Math.max(resources.indexOf(preselectedResource) - 1, 0)]
         );
       } else if (event.key === "ArrowDown") {
-        setPreselectedPath(
-          paths[Math.min(paths.indexOf(preselectedPath) + 1, paths.length - 1)]
+        setPreselectedResource(
+          resources[
+            Math.min(
+              resources.indexOf(preselectedResource) + 1,
+              resources.length - 1
+            )
+          ]
         );
       }
     };
@@ -93,7 +103,7 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
               onChange={onFilter}
               onKeyDown={onFilterKeyDown}
               value={fileFilter}
-              placeholder="search..."
+              placeholder="Search..."
             />
             <AddFileButton />
           </>
@@ -101,12 +111,13 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
         layers={
           fileFilter ? (
             <ui.FilteredFiles
-              paths={paths}
+              resources={resources}
               onMouseOver={onFilteredFileOver}
-              preselectedPath={preselectedPath}
+              preselectedResource={preselectedResource}
             />
           ) : (
-            state.projectDirectory?.items.map((item) => {
+            state.projectDirectory?.items &&
+            sortFsItems(state.projectDirectory.items).map((item) => {
               return <ui.FSItem key={item.path} item={item} depth={1} />;
             })
           )
@@ -140,29 +151,36 @@ export const AddFileButton = () => {
   );
 };
 
-const isOpenableFile = (path: string) => /\.pc$/.test(path);
+const isOpenableFile = (resource: Resource) => {
+  if (resource.kind === ResourceKind.File2) {
+    return /\.(pc|svg|png)$/.test(resource.name);
+  }
+
+  // everything else is an entity
+  return true;
+};
 
 type FilteredFilesProps = {
-  paths: string[];
-  onMouseOver: (path: string) => void;
-  preselectedPath: string | null;
+  resources: Resource[];
+  onMouseOver: (path: Resource) => void;
+  preselectedResource: Resource | null;
 };
 
 export const FilteredFiles =
   (Base: React.FC<BaseFilteredFileProps>) =>
-  ({ paths, preselectedPath, onMouseOver }: FilteredFilesProps) => {
+  ({ resources, preselectedResource, onMouseOver }: FilteredFilesProps) => {
     const rootDir = useSelector(getSearchedFilesRoot);
 
     return (
       <Base>
-        {paths.map((path) => {
+        {resources.map((resource) => {
           return (
             <ui.FilteredFile
-              key={path}
-              path={path}
+              key={resource.id}
+              resource={resource}
               rootDir={rootDir}
-              preselected={path === preselectedPath}
-              onMouseOver={() => onMouseOver(path)}
+              preselected={resource.id === preselectedResource?.id}
+              onMouseOver={() => onMouseOver(resource)}
             />
           );
         })}
@@ -171,33 +189,57 @@ export const FilteredFiles =
   };
 
 type FilteredFileProps = {
-  path: string;
+  resource: Resource;
   rootDir: string;
   preselected?: boolean;
   onMouseOver?: () => void;
 };
 
+const getResourceRedirect = (resource: Resource) => {
+  if (resource.kind === ResourceKind.File2) {
+    return routes.editor({ filePath: resource.id });
+  } else {
+    return routes.editor({
+      filePath: resource.parentPath,
+      nodeId: resource.id,
+    });
+  }
+};
+
 export const FilteredFile =
   (Base: React.FC<BaseFilteredFileProps>) =>
-  ({ path, rootDir, preselected, onMouseOver }: FilteredFileProps) => {
-    const parts = path.split("/");
-    const basename = parts.pop();
-    const dirname = parts.join("/").replace(rootDir + "/", "");
+  ({ resource, rootDir, preselected, onMouseOver }: FilteredFileProps) => {
     const history = useHistory();
     const onClick = () => {
-      history.redirect(routes.editor({ filePath: path }));
+      history.redirect(getResourceRedirect(resource));
     };
+    const ref = useRef<HTMLDivElement>();
+
+    useEffect(() => {
+      if (preselected) {
+        ref.current?.scrollIntoView({
+          block: "nearest",
+        });
+      }
+    }, [preselected]);
 
     return (
       <Base
+        ref={ref}
         container={{
           onClick,
           onMouseOver,
         }}
-        class={cx({ preselected })}
-        basename={basename}
-        dirname={dirname}
-        dirTitle={dirname}
+        class={cx({
+          preselected,
+          component: resource.kind === ResourceKind.Component,
+          file: resource.kind === ResourceKind.File2,
+          "atom-token": resource.kind === ResourceKind.Token,
+          "composite-token": resource.kind === ResourceKind.StyleMixin,
+        })}
+        basename={resource.name}
+        dirname={resource.parentPath.replace(rootDir, "")}
+        dirTitle={basename}
       />
     );
   };
@@ -236,16 +278,6 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
     const [{ isDraggingOver }, dropRef] = useDrop(
       {
         accept: [DNDKind.File, DNDKind.Node],
-        // hover: (_, monitor) => {
-        //   const offset = monitor.getClientOffset();
-        //   const rect = headerRef.current?.getBoundingClientRect();
-
-        //   if (offset && rect && monitor.isOver() && monitor.canDrop()) {
-        //     setIsOver(true);
-        //   } else {
-        //     setIsOver(false);
-        //   }
-        // },
         drop(droppedItem: any, monitor) {
           if (monitor.getItemType() === DNDKind.File) {
             dispatch({
@@ -294,9 +326,11 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
 
     useEffect(() => {
       if (selected) {
-        headerRef.current?.scrollIntoView({
-          block: "nearest",
-        });
+        setTimeout(() => {
+          headerRef.current?.scrollIntoView({
+            block: "nearest",
+          });
+        }, 100);
       }
     }, [selected]);
 
@@ -313,10 +347,6 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
       dragRef(current);
     };
 
-    if (item.kind === FSItemKind.File && !isPaperclipFile(item.path)) {
-      return null;
-    }
-
     return (
       <ContextMenu menu={() => shortcuts} onOpen={onContextMenuOpen}>
         <div>
@@ -327,7 +357,7 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
               style: { "--depth": depth, opacity },
               onClick: onClick,
             }}
-            header={dirname(item.path)}
+            header={basename(item.path)}
             headerClass={cx({
               file: item.kind === FSItemKind.File,
               folder: item.kind === FSItemKind.Directory,
@@ -338,7 +368,7 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
             })}
           >
             {item.kind === FSItemKind.Directory && open
-              ? item.items.map((item) => {
+              ? sortFsItems(item.items).map((item) => {
                   return (
                     <ui.FSItem key={item.path} item={item} depth={depth + 1} />
                   );
@@ -350,4 +380,20 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
     );
   };
 
-const dirname = memoize((path: string) => path.split("/").pop());
+const sortFsItems = memoize((items: FSItem[]) =>
+  items
+    .concat()
+
+    // sort directories at top
+    .sort((a, b) => {
+      if (a.kind === b.kind) {
+        return basename(a.path).toLowerCase().charAt(0) >
+          basename(b.path).toLowerCase().charAt(0)
+          ? 1
+          : -1;
+      }
+      return a.kind === FSItemKind.Directory ? -1 : 1;
+    })
+);
+
+const basename = memoize((path: string) => path.split("/").pop());

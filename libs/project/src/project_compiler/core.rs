@@ -9,6 +9,7 @@ use paperclip_common::get_or_short;
 use paperclip_common::pc::is_paperclip_file;
 use paperclip_core::config::ConfigContext;
 use paperclip_core::proto::graph::load::LoadableGraph;
+use paperclip_proto::ast::graph_container::GraphContainer;
 use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::notice::base::NoticeList;
 use paperclip_validate::validate::{self, ValidateOptions};
@@ -142,14 +143,15 @@ impl<IO: ProjectIO> ProjectCompiler<IO> {
     ///
     /// Compiles only a select number of files
 
-    pub async fn compile_files(
+    pub async fn compile_files<'graph>(
         &self,
         files: &Vec<String>,
-        graph: &Graph,
+        graph: &'graph Graph,
     ) -> Result<HashMap<String, String>, NoticeList> {
         let mut compiled_files = HashMap::new();
+        let container = GraphContainer::new(graph);
         for target in &self.targets {
-            compiled_files.extend(target.compile_files(files, graph).await?);
+            compiled_files.extend(target.compile_files(files, &container).await?);
         }
 
         Ok(compiled_files)

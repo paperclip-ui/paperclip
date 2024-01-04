@@ -7,21 +7,26 @@ use crate::server::io::ServerIO;
 use futures::Stream;
 use paperclip_ast_serialize::pc::serialize;
 use paperclip_common::fs::{FSItemKind, FileWatchEventKind};
-use paperclip_common::log::verbose;
+use paperclip_common::log::log_verbose;
 use paperclip_language_services::DocumentInfo;
 use paperclip_proto::ast::base::Range;
 use paperclip_proto::ast::graph_ext::Graph;
+use paperclip_proto::ast::pc::document_body_item;
+use paperclip_proto::ast::wrapper::Expression;
 use paperclip_proto::service::designer::designer_server::Designer;
 use paperclip_proto::service::designer::{
     design_server_event, file_response, ApplyMutationsRequest, ApplyMutationsResult,
     CreateDesignFileRequest, CreateDesignFileResponse, CreateFileRequest, DeleteFileRequest,
     DesignServerEvent, Empty, FileChanged, FileChangedKind, FileRequest, FileResponse, FsItem,
     ModulesEvaluated, MoveFileRequest, OpenCodeEditorRequest, OpenFileInNavigatorRequest,
-    ProjectInfo, ReadDirectoryRequest, ReadDirectoryResponse, ResourceFiles, ScreenshotCaptured,
-    SearchFilesRequest, SearchFilesResponse, UpdateFileRequest,
+    ProjectInfo, ReadDirectoryRequest, ReadDirectoryResponse, Resource, ResourceFiles,
+    ResourceKind, SaveFileRequest, ScreenshotCaptured, SearchResourcesRequest,
+    SearchResourcesResponse, UpdateFileRequest,
 };
 use path_absolutize::*;
 use run_script::ScriptOptions;
+use std::fs::File;
+use std::io::Write;
 use std::path::Path;
 use std::pin::Pin;
 use std::sync::Arc;
@@ -80,13 +85,14 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         }
     }
 
-    async fn search_files(
+    async fn search_resources(
         &self,
-        request: Request<SearchFilesRequest>,
-    ) -> Result<Response<SearchFilesResponse>, Status> {
+        request: Request<SearchResourcesRequest>,
+    ) -> Result<Response<SearchResourcesResponse>, Status> {
         let query = request.get_ref().query.clone();
         let store = self.ctx.store.clone();
-        let project_dir = &store.lock().unwrap().state.options.config_context.directory;
+        let state = &store.lock().unwrap().state;
+        let project_dir = &state.options.config_context.directory;
 
         // match path or file name
         let pat = format!(
@@ -94,16 +100,31 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
             project_dir, query, project_dir, query
         );
 
-        verbose(&format!("Search {}", pat));
+        log_verbose(&format!("Search {}", pat));
 
-        let mut paths: Vec<String> = vec![];
+        let mut items: Vec<Resource> = vec![];
 
-        find_files(project_dir, &query, &mut paths);
+        find_resources(&query, &state.graph, &mut items);
+        find_files(project_dir, &query, &mut items);
 
-        Ok(Response::new(SearchFilesResponse {
+        Ok(Response::new(SearchResourcesResponse {
             root_dir: project_dir.clone(),
-            paths,
+            items,
         }))
+    }
+    async fn save_file(
+        &self,
+        request: Request<SaveFileRequest>,
+    ) -> Result<Response<Empty>, Status> {
+        let path = request.get_ref().path.clone();
+        let content = request.get_ref().content.clone();
+
+        log_verbose(format!("Saving file {}", path).as_str());
+
+        let mut file = File::create(path)?;
+        file.write_all(&content)?;
+
+        Ok(Response::new(Empty {}))
     }
 
     async fn open_code_editor(
@@ -132,7 +153,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         let range: Range = request.get_ref().range.clone().expect("Range must exist");
         let start = range.start.as_ref().expect("Stat must exist");
 
-        verbose(&format!(
+        log_verbose(&format!(
             "Opening code editor with \"{}\"",
             code_editor_command_template
         ));
@@ -144,8 +165,8 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
 
         let (_, output, error) = run_script::run(&command, &vec![], &ScriptOptions::new()).unwrap();
 
-        verbose(&format!("Output: {}", output));
-        verbose(&format!("Error: {}", error));
+        log_verbose(&format!("Output: {}", output));
+        log_verbose(&format!("Error: {}", error));
 
         Ok(Response::new(Empty {}))
     }
@@ -239,7 +260,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         let from_path: String = request.get_ref().from_path.clone();
         let to_path: String = request.get_ref().to_path.clone();
 
-        verbose(&format!("mv {} {}", from_path, to_path));
+        log_verbose(&format!("mv {} {}", from_path, to_path));
 
         let result = std::fs::rename(&from_path, &to_path);
 
@@ -263,7 +284,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
     ) -> Result<Response<Empty>, Status> {
         let file_path: String = request.get_ref().file_path.clone();
 
-        verbose(&format!("open {}", file_path));
+        log_verbose(&format!("open {}", file_path));
 
         let result = open::that(&file_path);
 
@@ -282,10 +303,10 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         let kind: i32 = request.get_ref().kind;
 
         let result = if kind == 0 {
-            verbose(&format!("create dir: {}", path));
+            log_verbose(&format!("create dir: {}", path));
             self.ctx.io.create_directory(&path)
         } else {
-            verbose(&format!("create file: {}", path));
+            log_verbose(&format!("create file: {}", path));
             self.ctx.io.write_file(&path, "".to_string())
         };
 
@@ -445,7 +466,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
                     tx.send((file_changed)(path.to_string(), content.clone())).await.expect("on_event err: Can't send after update file");
                 },
                 ServerEvent::FileWatchEvent(event) => {
-                    verbose(&format!("Sending file change {}:{:?}", event.path, event.kind));
+                    log_verbose(&format!("Sending file change {}:{:?}", event.path, event.kind));
                     match event.kind {
                         FileWatchEventKind::Create => {
                             tx.send(Result::Ok(design_server_event::Inner::FileChanged(FileChanged {
@@ -542,7 +563,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
     }
 }
 
-fn find_files(dir: &str, pattern: &str, found: &mut Vec<String>) {
+fn find_files(dir: &str, pattern: &str, found: &mut Vec<Resource>) {
     for entry in std::fs::read_dir(dir).expect("Can't read dir") {
         let entry = entry.expect("Can't read entry");
         let is_dir = entry.metadata().expect("Can't get metadata").is_dir();
@@ -557,12 +578,60 @@ fn find_files(dir: &str, pattern: &str, found: &mut Vec<String>) {
         if is_dir {
             find_files(&path, pattern, found);
         } else {
-            if path
-                .to_lowercase()
-                .contains(&pattern.to_string().to_lowercase())
-            {
-                found.push(path.to_string());
+            if matches_search_pattern(&path, &pattern) {
+                let parts = Path::new(&path);
+
+                found.push(Resource {
+                    kind: ResourceKind::File2.into(),
+                    id: path.to_string(),
+                    parent_path: parts.parent().unwrap().to_str().unwrap().to_string(),
+                    name: parts.file_name().unwrap().to_str().unwrap().to_string(),
+                });
             }
         }
     }
+}
+
+fn find_resources(pattern: &str, graph: &Graph, found: &mut Vec<Resource>) {
+    for (path, dep) in &graph.dependencies {
+        let doc = dep.document.as_ref().expect("Document must exist");
+        for item in &doc.body {
+            let name = if let Some(name) = item.get_name() {
+                name
+            } else {
+                continue;
+            };
+
+            if !matches_search_pattern(
+                format!("{}{}", path, &name).to_lowercase().as_str(),
+                pattern,
+            ) {
+                continue;
+            }
+
+            let kind = match item.get_inner() {
+                document_body_item::Inner::Component(_) => ResourceKind::Component,
+                document_body_item::Inner::Atom(_) => ResourceKind::Token,
+                document_body_item::Inner::Style(_) => ResourceKind::StyleMixin,
+                _ => {
+                    continue;
+                }
+            };
+
+            found.push(Resource {
+                parent_path: path.to_string(),
+                kind: kind.into(),
+                name: name.to_string(),
+                id: item.get_id().to_string(),
+            });
+        }
+    }
+}
+
+fn matches_search_pattern(value: &str, pattern: &str) -> bool {
+    let value = value.to_lowercase();
+    let pattern = pattern.to_lowercase();
+    // println!("{}", pattern);
+    // value.contains(pattern.as_str())
+    pattern.split(" ").all(|part| value.contains(part))
 }

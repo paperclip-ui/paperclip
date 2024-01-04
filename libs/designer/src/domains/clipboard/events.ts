@@ -3,7 +3,7 @@ import { ast } from "@paperclip-ui/core/lib/proto/ast/pc-utils";
 
 export type ExpressionPasted = BaseEvent<
   "clipboard/expressionPasted",
-  ast.InnerExpressionInfo
+  { expr: ast.InnerExpressionInfo; type: "cut" | "copy" }
 >;
 
 export type ClipboardEvent = ExpressionPasted;

@@ -4,7 +4,7 @@ import "./input.pc" as input
 import "./etc.pc" as etc
 
 /**
- * @frame(x: 1205, y: -3, width: 1024, height: 768)
+ * @frame(x: 2045, y: -831, width: 1024, height: 768)
 */
 public component Tab {
     variant selected trigger {
@@ -55,7 +55,7 @@ public component Tabs {
 }
 
 /**
- * @frame(x: -108, y: -335, width: 1024, height: 768)
+ * @frame(x: 863, y: 16, width: 1024, height: 768)
 */
 public component Container {
     render div {
@@ -113,20 +113,20 @@ public component Container {
                         overflow: scroll
                     }
                     slot items {
-                        etc.Item {
+                        Item {
                             insert label {
                                 text "ComboBox"
                             }
                         }
-                        etc.Item
-                        etc.Item
-                        etc.Item
-                        etc.Item
-                        etc.Item
-                        etc.Item
-                        etc.Item
-                        etc.Item
-                        etc.Item
+                        Item
+                        Item
+                        Item
+                        Item
+                        Item
+                        Item
+                        Item
+                        Item
+                        Item
                     }
                 }
             }
@@ -134,3 +134,44 @@ public component Container {
     }
 }
 
+/**
+ * @frame(x: 884, y: -824, width: 1024, height: 768)
+*/
+public component Item {
+    variant hover trigger {
+        ":hover"
+        ".active"
+    }
+    render div root {
+        style variant hover {
+            box-shadow: inset 0px 0px 0px 1px var(theme.selectedColor)
+        }
+        style extends theme.fontDefault {
+            background: rgba(0, 0, 0, 0.1)
+            border-radius: var(theme.rounded)
+            width: 100%
+            transition: 0.2s
+            cursor: pointer
+        }
+        div preview {
+            style {
+                width: 100%
+                height: 150px
+                background: white
+                border-top-left-radius: var(theme.rounded)
+                border-top-right-radius: var(theme.rounded)
+                background-size: calc(100% - var(theme.space05))
+                background-repeat: no-repeat
+                background-position: 50% 50%
+            }
+        }
+        div {
+            style {
+                padding: var(theme.space02) var(theme.space04)
+            }
+            slot label {
+                text "label"
+            }
+        }
+    }
+}

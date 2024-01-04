@@ -1,3 +1,4 @@
+import "ui/AssetPreview/ui.pc" as module1
 import "ui/logic/Sidebar/sidebar.pc" as module
 import "ui/theme.pc" as theme
 import "ui/logic/Editor/EditorPanels/LeftSidebar/ui.pc" as leftSidebar
@@ -184,6 +185,9 @@ public component Editor {
         }
         if showSplash {
             SplashInfo splash
+        }
+        if showAssetPreview {
+            module1.AssetPreview assetPreview
         }
         div editorPanels {
             style {

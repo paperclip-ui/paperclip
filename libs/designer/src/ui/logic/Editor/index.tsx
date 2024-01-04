@@ -11,39 +11,50 @@ import {
 } from "../../../domains/shortcuts/state";
 import { MenuItemOption } from "../../../modules/shortcuts/base";
 import { prettyKeyCombo } from "../../../domains/ui/state";
+import { isPaperclipFile } from "@paperclip-ui/common";
 
 export const Editor = (Base: React.FC<styles.BaseEditorProps>) => () => {
   const currentFile = useSelector(getCurrentFilePath);
   const shortcuts = useSelector(getGlobalShortcuts);
 
+  const currentFileIsDesignFile = isPaperclipFile(currentFile);
+
   return (
     <>
       <ResourceModal />
-      <Base leftSidebar={{}} rightPanel={{}} showCanvas={currentFile != null} showSplash={currentFile == null} splash={{commands:
-        <>
-          {shortcuts
-            .filter((shortcut) =>
-              [
-                ShortcutCommand.CreateDesignFile,
-                ShortcutCommand.SearchFiles,
-              ].includes((shortcut as MenuItemOption<any>).command)
-            )
-            .map((shortcut: MenuItemOption<any>) => (
-              <styles.SplashTip
-                label={shortcut.label}
-                shortcuts={shortcut.shortcut.map((key) => {
-                  return (
-                    <styles.ComboKey key={key}>
-                      {prettyKeyCombo([key])}
-                    </styles.ComboKey>
-                  );
-                })}
-              />
-            ))}
-        </>
-      }} />
+      <Base
+        leftSidebar={{}}
+        rightPanel={{}}
+        showCanvas={currentFile != null && isPaperclipFile(currentFile)}
+        showSplash={currentFile == null}
+        showAssetPreview={!currentFileIsDesignFile}
+        assetPreview={null}
+        splash={{
+          commands: (
+            <>
+              {shortcuts
+                .filter((shortcut) =>
+                  [
+                    ShortcutCommand.CreateDesignFile,
+                    ShortcutCommand.SearchFiles,
+                  ].includes((shortcut as MenuItemOption<any>).command)
+                )
+                .map((shortcut: MenuItemOption<any>) => (
+                  <styles.SplashTip
+                    label={shortcut.label}
+                    shortcuts={shortcut.shortcut.map((key) => {
+                      return (
+                        <styles.ComboKey key={key}>
+                          {prettyKeyCombo([key])}
+                        </styles.ComboKey>
+                      );
+                    })}
+                  />
+                ))}
+            </>
+          ),
+        }}
+      />
     </>
-
-
   );
 };

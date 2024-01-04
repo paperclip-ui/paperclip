@@ -1,7 +1,6 @@
 use super::base::EditContext;
 use super::utils::{create_import, parse_declaration_value, resolve_imports};
 use paperclip_proto::ast;
-use paperclip_proto::ast::get_expr::GetExpr;
 use paperclip_proto::ast::visit::{MutableVisitor, VisitorResult};
 use paperclip_proto::ast_mutate::SetStyleDeclarationValue;
 
@@ -20,7 +19,7 @@ impl MutableVisitor<()> for EditContext<SetStyleDeclarationValue> {
     }
 
     fn visit_document(&self, doc: &mut ast::pc::Document) -> VisitorResult<(), Self> {
-        if !matches!(GetExpr::get_expr(&self.mutation.target_id, doc), Some(_)) {
+        if !matches!(self.expr_map.get_expr(&self.mutation.target_id), Some(_)) {
             return VisitorResult::Continue;
         }
 

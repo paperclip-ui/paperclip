@@ -61,7 +61,9 @@ impl MutableVisitor<()> for EditContext<UpdateVariant> {
         );
 
         // ooof...
-        let doc = parse(&mock_src, &self.new_id(), &Options::new(vec![])).unwrap();
+
+        let doc = parse(&mock_src, &self.new_id(), &Options::new(vec![]))
+            .expect(format!("Unable to parse {}", mock_src).as_str());
         let new_variants = doc.get_components().get(0).unwrap().get_variants();
 
         let variant = *new_variants.get(0).unwrap();

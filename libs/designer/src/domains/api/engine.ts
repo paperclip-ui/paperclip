@@ -85,6 +85,7 @@ import { get, kebabCase } from "lodash";
 import { ConfirmKind } from "../../state/confirm";
 import { metadataValueMapToJSON } from "@paperclip-ui/proto/lib/virt/html-utils";
 import { ExpressionKind } from "../../ui/logic/Editor/EditorPanels/RightSidebar/StylePanel/Declarations/DeclarationValue/state";
+import { NativeTypes } from "react-dnd-html5-backend";
 
 export type DesignerEngineOptions = {
   protocol?: string;
@@ -224,16 +225,20 @@ const createActions = (
       dispatch({ type: "designer-engine/changesApplied", payload: changes });
       return changes;
     },
+    async saveFile(path: string, content: Uint8Array) {
+      await client.SaveFile({ path, content }, null);
+    },
     async loadProjectInfo() {
       const info = await client.GetProjectInfo({}, null);
       dispatch({ type: "designer-engine/ProjectInfoResult", payload: info });
       return info;
     },
     async searchFiles(query: string) {
-      const { paths, rootDir } = await client.SearchFiles({ query }, null);
+      const { items, rootDir } = await client.SearchResources({ query }, null);
+
       dispatch({
         type: "designer-engine/fileSearchResult",
-        payload: { paths, rootDir },
+        payload: { items, rootDir },
       });
     },
   };
@@ -459,36 +464,49 @@ const createEventHandler = (actions: Actions) => {
     event: ExpressionPasted,
     state: DesignerState
   ) => {
+    const { expr, type } = event.payload;
+
     const kind = {
       [ast.ExprKind.TextNode]: "textNode",
       [ast.ExprKind.Element]: "element",
       [ast.ExprKind.Component]: "component",
-    }[event.payload.kind];
+    }[expr.kind];
 
     if (!kind) {
-      console.error(`Cannot paste: `, event.payload.expr);
+      console.error(`Cannot paste: `, expr);
       return;
     }
 
-    let targetExpressionId = getTargetExprId(state);
+    if (type === "copy") {
+      let targetExpressionId = getTargetExprId(state);
 
-    if (!targetExpressionId) {
-      targetExpressionId = state.currentDocument.paperclip.html.sourceId;
-    }
+      if (!targetExpressionId) {
+        targetExpressionId = state.currentDocument.paperclip.html.sourceId;
+      }
 
-    // TODO: need to check when user selects leaf in left sidebar, then need to use
-    // that state to insert INTO the element instead of adjacent to it. This is an
-    // incomplete solution necessary for cases like: copy -> paste -> paste -> paste
-    targetExpressionId = ast.getParent(targetExpressionId, state.graph).id;
+      // TODO: need to check when user selects leaf in left sidebar, then need to use
+      // that state to insert INTO the element instead of adjacent to it. This is an
+      // incomplete solution necessary for cases like: copy -> paste -> paste -> paste
+      targetExpressionId = ast.getParent(targetExpressionId, state.graph)?.id;
 
-    actions.applyChanges([
-      {
-        pasteExpression: {
-          targetExpressionId,
-          [kind]: event.payload.expr,
+      actions.applyChanges([
+        {
+          pasteExpression: {
+            targetExpressionId,
+            [kind]: expr.expr,
+          },
         },
-      },
-    ]);
+      ]);
+    } else if (type === "cut") {
+      actions.applyChanges([
+        {
+          moveExpressionToFile: {
+            newFilePath: getCurrentFilePath(state),
+            expressionId: expr.expr.id,
+          },
+        },
+      ]);
+    }
   };
 
   type ResolveTargetExprInfo = {
@@ -744,7 +762,7 @@ const createEventHandler = (actions: Actions) => {
     ]);
   };
 
-  const handleDroppedFile = (event: FileNavigatorDroppedFile) => {
+  const handleMovedFile = (event: FileNavigatorDroppedFile) => {
     // mv /some/path/to/file-or-dir -> /new/path + /file-or-dir
     actions.moveFile(
       event.payload.item.path,
@@ -877,7 +895,7 @@ const createEventHandler = (actions: Actions) => {
     } else if (details.kind === PromptKind.ConvertToSlot) {
       handleConvertToSlot(value, details);
     } else if (details.kind === PromptKind.RenameFile) {
-      const dir = details.filePath.split("/").slice(0, -1).join("/");
+      const dir = dirname(details.filePath);
       const ext = details.filePath.split("/").pop().split(".").pop();
 
       // could be dir, so we leave out .
@@ -933,36 +951,92 @@ const createEventHandler = (actions: Actions) => {
     }
   };
 
-  const handleDropItem = (
+  const handleDroppedResource = (
     { payload: { kind, item, point } }: ToolsLayerDrop,
     state: DesignerState
   ) => {
-    if (kind === DNDKind.Resource) {
-      const bounds = {
-        ...DEFAULT_FRAME_BOX,
-        ...getScaledPoint(point, state.canvas.transform),
-      };
+    const bounds = {
+      ...DEFAULT_FRAME_BOX,
+      ...getScaledPoint(point, state.canvas.transform),
+    };
 
-      const expr = ast.getExprInfoById(item.id, state.graph);
+    const expr = ast.getExprInfoById(item.id, state.graph);
 
-      let changes = [];
+    let changes = [];
 
-      if (expr.kind === ast.ExprKind.Component) {
-        changes = [
-          {
-            insertFrame: {
-              documentId: state.currentDocument.paperclip.html.sourceId,
-              bounds: roundBox(bounds),
-              nodeSource: `imp.${expr.expr.name}`,
-              imports: {
-                imp: ast.getOwnerDependencyPath(item.id, state.graph),
-              },
+    if (expr.kind === ast.ExprKind.Component) {
+      changes = [
+        {
+          insertFrame: {
+            documentId: state.currentDocument.paperclip.html.sourceId,
+            bounds: roundBox(bounds),
+            nodeSource: `imp.${expr.expr.name}`,
+            imports: {
+              imp: ast.getOwnerDependencyPath(item.id, state.graph),
             },
           },
-        ];
-      }
+        },
+      ];
+    }
 
-      actions.applyChanges(changes);
+    actions.applyChanges(changes);
+  };
+
+  const saveFiles = async (files: File[], state: DesignerState) => {
+    const currentFilePath = getCurrentFilePath(state);
+    const currentDir = currentFilePath
+      ? dirname(currentFilePath)
+      : state.projectDirectory;
+
+    if (!currentDir) {
+      return console.error(`Can't find directory to drop file to!`);
+    }
+
+    await Promise.all(
+      files.map(async (file) => {
+        const buff = await file.arrayBuffer();
+        actions.saveFile(currentDir + "/" + file.name, new Uint8Array(buff));
+      })
+    );
+
+    // return files.map((file) => {
+    //   return (currentDir + "/" + file.name).replace(
+    //     state.projectDirectory + "/",
+    //     ""
+    //   );
+    // });
+  };
+
+  const handleDroppedFile = async (
+    { payload: { item } }: ToolsLayerDrop,
+    state: DesignerState
+  ) => {
+    const files = item.files as File[];
+    const document = getCurrentDependency(state).document;
+
+    await saveFiles(files, state);
+
+    // drop files onto the canvas
+    actions.applyChanges(
+      files.map(
+        (file) =>
+          ({
+            appendChild: {
+              parentId: document.id,
+              childSource: `div {
+                img(src: "./${file.name}")
+              }`,
+            },
+          } as Mutation)
+      )
+    );
+  };
+
+  const handleDropItem = (event: ToolsLayerDrop, state: DesignerState) => {
+    if (event.payload.kind === DNDKind.Resource) {
+      handleDroppedResource(event, state);
+    } else if (event.payload.kind === NativeTypes.FILE) {
+      handleDroppedFile(event, state);
     }
   };
 
@@ -1014,9 +1088,7 @@ const createEventHandler = (actions: Actions) => {
       event.kind === FileChangedKind.CREATED ||
       event.kind === FileChangedKind.DELETED
     ) {
-      const parts = event.path.split("/");
-      parts.pop();
-      actions.readDirectory(parts.join("/"));
+      actions.readDirectory(dirname(event.path));
     }
   };
 
@@ -1115,7 +1187,7 @@ const createEventHandler = (actions: Actions) => {
         return handleDeleteExpression(event.payload.variantId, newState);
       }
       case "ui/FileNavigatorDroppedFile": {
-        return handleDroppedFile(event);
+        return handleMovedFile(event);
       }
       case "designer/variantEdited": {
         return handleVariantEdited(event, newState);
@@ -1211,4 +1283,10 @@ const bootstrap = (
   }
 
   syncGraph();
+};
+
+const dirname = (path: string) => {
+  const parts = path.split("/");
+  parts.pop();
+  return parts.join("/");
 };

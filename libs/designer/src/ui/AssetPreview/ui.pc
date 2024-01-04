@@ -1,0 +1,25 @@
+import "ui/theme.pc" as module
+
+/**
+ * @frame(x: 2535, y: -901, width: 1571, height: 1140)
+*/
+public component AssetPreview {
+    script(src: "./controller.tsx", target: "react", name: "AssetPreview")
+    render div {
+        style {
+            position: relative
+            width: 100%
+            height: 100%
+        }
+        div {
+            slot children {
+                img(src: "../file.svg", width: "100%", height: "100%")
+            }
+            style extends module.centered {
+                max-width: 500px
+                background: white
+            }
+        }
+    }
+}
+

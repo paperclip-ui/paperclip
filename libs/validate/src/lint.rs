@@ -6,6 +6,7 @@ use paperclip_core::config::LintConfig;
 use paperclip_proto::{
     ast::{
         css::{declaration_value, DeclarationValue, FunctionCall, StyleDeclaration},
+        expr_map::ExprMap,
         graph,
         pc::{Element, Parameter},
         shared::Reference,
@@ -24,8 +25,8 @@ struct Linter<'a> {
     is_within_var: bool,
     is_within_param: bool,
     config: &'a LintConfig,
-    graph: &'a graph::Graph,
     notices: Rc<RefCell<NoticeList>>,
+    expr_map: &'a ExprMap,
 }
 
 impl<'a> Linter<'a> {
@@ -69,7 +70,7 @@ impl<'a> Visitor<()> for Linter<'a> {
             return VisitorResult::Continue;
         }
 
-        if reference.follow(self.graph).is_none() {
+        if reference.follow(self.expr_map).is_none() {
             self.add_notice(Notice::reference_not_found(&self.path, &reference.range));
         }
 
@@ -82,7 +83,7 @@ impl<'a> Visitor<()> for Linter<'a> {
         }))
     }
     fn visit_element(&self, element: &Element) -> VisitorResult<(), Self> {
-        let component = element.get_instance_component(self.graph);
+        let component = element.get_instance_component(self.expr_map);
 
         if component.is_some() {
             return VisitorResult::Continue;
@@ -188,11 +189,12 @@ pub fn lint_document<'expr>(
     config: &LintConfig,
 ) -> NoticeList {
     let dep = graph.dependencies.get(path).expect("Dependency must exist");
+    let expr_map = ExprMap::from_graph(graph);
 
     let linter = Linter {
         path,
         current_decl_name: None,
-        graph,
+        expr_map: &expr_map,
         is_within_var: false,
         is_within_param: false,
         config,

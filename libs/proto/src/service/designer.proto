@@ -11,7 +11,7 @@ service Designer {
   rpc OpenFile(FileRequest) returns (FileResponse);
   rpc GetGraph(Empty) returns (stream ast.graph.Graph);
   rpc GetProjectInfo(Empty) returns (ProjectInfo);
-  rpc SearchFiles(SearchFilesRequest) returns (SearchFilesResponse);
+  rpc SearchResources(SearchResourcesRequest) returns (SearchResourcesResponse);
   rpc OpenFileInNavigator(OpenFileInNavigatorRequest) returns (Empty);
   rpc OnEvent(Empty) returns (stream DesignServerEvent);
   rpc UpdateFile(UpdateFileRequest) returns (Empty);
@@ -19,6 +19,7 @@ service Designer {
   rpc DeleteFile(DeleteFileRequest) returns (Empty);
   rpc MoveFile(MoveFileRequest) returns (Empty);
   rpc OpenCodeEditor(OpenCodeEditorRequest) returns (Empty);
+  rpc SaveFile(SaveFileRequest) returns (Empty);
   rpc CreateFile(CreateFileRequest) returns (Empty);
   rpc CreateDesignFile(CreateDesignFileRequest) returns (CreateDesignFileResponse);
   rpc GetResourceFiles(Empty) returns (stream ResourceFiles);
@@ -33,7 +34,12 @@ message ProjectInfo {
     repeated string experimental_capabilities = 1;
 }
 
-message SearchFilesRequest {
+message SaveFileRequest {
+    string path = 1;
+    bytes content = 2;
+}
+
+message SearchResourcesRequest {
   string query = 1;
 }
 
@@ -41,9 +47,27 @@ message OpenFileInNavigatorRequest {
   string file_path = 1;
 }
 
-message SearchFilesResponse {
+message SearchResourcesResponse {
   string root_dir = 1;
-  repeated string paths = 2;
+  repeated Resource items = 2;
+}
+
+enum ResourceKind {
+  Component = 0;
+  Token = 1;
+  StyleMixin = 2;
+  Trigger = 3;
+
+  // GRPC doesn't like if there's another enum with this name so fuck it,
+  // we give it the name we kind-of want.
+  File2 = 4;
+}
+
+message Resource {
+    string parent_path = 1;
+    string name = 2;
+    string id = 3;
+    ResourceKind kind = 4;
 }
 
 message CreateFileRequest {

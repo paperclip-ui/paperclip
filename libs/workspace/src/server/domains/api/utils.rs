@@ -3,7 +3,7 @@
 use crate::server::{core::ServerEngineContext, io::ServerIO};
 use anyhow::{Error, Result};
 use inflector::cases::kebabcase::to_kebab_case;
-use paperclip_common::log::verbose;
+use paperclip_common::log::log_verbose;
 use std::path::{Path, PathBuf};
 
 // https://github.com/hyperium/tonic/blob/4b0ece6d2854af088fbc1bdb55c2cdd19ec9bb92/tonic-web/src/call.rs#L14
@@ -64,7 +64,7 @@ pub fn create_design_file<TIO: ServerIO>(
         return Err(Error::msg("Design file already exists."));
     }
 
-    verbose(&format!("✍️ Created design file: {}", file_path));
+    log_verbose(&format!("✍️ Created design file: {}", file_path));
 
     ctx.io.write_file(&file_path, "".to_string())?;
 

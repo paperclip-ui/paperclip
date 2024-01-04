@@ -3,10 +3,7 @@ include!(concat!(env!("OUT_DIR"), "/ast.graph.rs"));
 use std::collections::{HashMap, HashSet};
 
 pub use super::graph_ext::*;
-use super::{
-    get_expr::{GetExpr, GetExprResult},
-    pc::{Document, Element},
-};
+use super::pc::{Document, Element};
 
 impl<'a> Dependency {
     pub fn resolve_import_from_ns(&'a self, ns: &str, graph: &'a Graph) -> Option<&'a Dependency> {
@@ -19,7 +16,7 @@ impl<'a> Dependency {
                 None
             })
         } else {
-            println!("Namespace {} does not exist in {}", ns, self.path);
+            // println!("Namespace {} does not exist in {}", ns, self.path);
             None
         }
     }
@@ -33,9 +30,6 @@ impl<'a> Dependency {
     }
     pub fn get_document(&self) -> &Document {
         self.document.as_ref().expect("Document must exist")
-    }
-    pub fn get_expr(&self, id: &str) -> Option<GetExprResult> {
-        GetExpr::get_expr(id, &self.document.as_ref().expect("Document must exist"))
     }
     pub fn find_instances_of(&self, component_name: &str, component_source: &str) -> Vec<&Element> {
         let import_rel_path = self
@@ -81,14 +75,6 @@ impl Graph {
             }
         }
         dependents
-    }
-    pub fn get_expr<'a>(&'a self, id: &str) -> Option<(GetExprResult, &'a Dependency)> {
-        for (_path, dep) in &self.dependencies {
-            if let Some(info) = dep.get_expr(id) {
-                return Some((info, dep));
-            }
-        }
-        return None;
     }
     pub fn get_all_dependents(&self, path: &str) -> Vec<&Dependency> {
         let mut all_dependents: Vec<&Dependency> = vec![];

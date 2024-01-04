@@ -12,7 +12,6 @@ use paperclip_proto::{
 use super::utils::upsert_render_expr;
 use super::EditContext;
 use crate::try_remove_child;
-use paperclip_proto::ast::get_expr::{get_expr_dep, GetExpr};
 
 #[macro_export]
 macro_rules! move_child {
@@ -40,8 +39,10 @@ macro_rules! move_child {
         if ($expr.id == $self.mutation.target_id && $self.mutation.position == 2)
             || (pos > -1 && $self.mutation.position != 2)
         {
-            let (child, _) =
-                get_expr_dep(&$self.mutation.node_id, &$self.graph).expect("Dep must exist");
+            let child = $self
+                .expr_map
+                .get_expr(&$self.mutation.node_id)
+                .expect("Expr must exist");
             let node = match child {
                 ExpressionWrapper::TextNode(child) => {
                     Some(node::Inner::Text(child.clone()).get_outer())
@@ -128,8 +129,10 @@ impl MutableVisitor<()> for EditContext<MoveNode> {
         if (expr.id == self.mutation.target_id && self.mutation.position == 2)
             || (pos > -1 && self.mutation.position != 2)
         {
-            let (child, _) =
-                get_expr_dep(&self.mutation.node_id, &self.graph).expect("Dep must exist");
+            let child = self
+                .expr_map
+                .get_expr(&self.mutation.node_id)
+                .expect("Dep must exist");
 
             let node = match child {
                 ExpressionWrapper::TextNode(child) => {
@@ -198,13 +201,14 @@ impl MutableVisitor<()> for EditContext<MoveNode> {
             return VisitorResult::Continue;
         }
 
-        let node = GetExpr::get_expr_from_graph(&self.mutation.node_id, &self.graph)
-            .expect("Node must exist")
-            .0;
+        let node = self
+            .expr_map
+            .get_expr(&self.mutation.node_id)
+            .expect("Expr must exist");
 
         let node = match node {
-            ExpressionWrapper::Element(node) => node::Inner::Element(node).get_outer(),
-            ExpressionWrapper::TextNode(node) => node::Inner::Text(node).get_outer(),
+            ExpressionWrapper::Element(node) => node::Inner::Element(node.clone()).get_outer(),
+            ExpressionWrapper::TextNode(node) => node::Inner::Text(node.clone()).get_outer(),
             _ => return VisitorResult::Return(()),
         };
 

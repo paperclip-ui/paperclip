@@ -3,7 +3,7 @@
 use headers::{AcceptRanges, ContentLength, ContentType, HeaderMapExt};
 use hyper::Body;
 use include_dir::{include_dir, Dir, File};
-use paperclip_common::log::warning;
+use paperclip_common::log::log_warning;
 use warp::any;
 use warp::path::{tail, Tail};
 use warp::reject::Rejection;
@@ -35,6 +35,11 @@ impl Reply for StaticFile {
 pub fn screenshots_route() -> impl Filter<Extract = (warp::fs::File,), Error = Rejection> + Clone {
     warp::path("screenshots").and(warp::fs::dir(tmp_screenshot_dir()))
 }
+pub fn assets_route(
+    cwd: String,
+) -> impl Filter<Extract = (warp::fs::File,), Error = Rejection> + Clone {
+    warp::path("assets").and(warp::fs::dir(cwd))
+}
 
 pub fn static_files_route() -> impl Filter<Extract = (StaticFile,), Error = Rejection> + Clone {
     any().and(path_from_tail()).and_then(static_file_reply)
@@ -52,7 +57,7 @@ pub async fn static_file_reply(path: String) -> Result<StaticFile, Rejection> {
     if let Some(file) = file {
         return Ok(StaticFile(resolved_path, &file));
     } else {
-        warning(&format!("Static file {} not found", path));
+        log_warning(&format!("Static file {} not found", path));
     }
     Err(warp::reject::not_found())
 }

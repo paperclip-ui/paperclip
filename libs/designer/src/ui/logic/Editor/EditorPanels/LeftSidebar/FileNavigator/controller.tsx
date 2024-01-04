@@ -213,9 +213,19 @@ export const FilteredFile =
     const onClick = () => {
       history.redirect(getResourceRedirect(resource));
     };
+    const ref = useRef<HTMLDivElement>();
+
+    useEffect(() => {
+      if (preselected) {
+        ref.current?.scrollIntoView({
+          block: "nearest",
+        });
+      }
+    }, [preselected]);
 
     return (
       <Base
+        ref={ref}
         container={{
           onClick,
           onMouseOver,

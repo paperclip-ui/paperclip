@@ -25,12 +25,13 @@ import cx from "classnames";
 import { Atom } from "@paperclip-ui/proto/lib/generated/ast/pc";
 import { Leaf } from "./Leaf";
 import { BaseLayersProps } from "../ui.pc";
+import { isPaperclipFile } from "@paperclip-ui/common";
 
 export const Layers = (Base: React.FC<BaseLayersProps>) =>
   function Layers() {
-    const { document, title } = useLayers();
+    const { document, title, shouldShow } = useLayers();
 
-    if (!document) {
+    if (!shouldShow) {
       return null;
     }
 
@@ -59,6 +60,7 @@ const useLayers = () => {
   return {
     title: currentFile && currentFile.split("/").pop(),
     document: dependency?.document,
+    shouldShow: dependency?.document && isPaperclipFile(currentFile),
   };
 };
 

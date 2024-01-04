@@ -7,7 +7,7 @@ use paperclip_evaluator::css::evaluator::evaluate as evaluate_css;
 use paperclip_evaluator::css::serializer::serialize as serialize_css;
 use paperclip_evaluator::html::evaluator::{evaluate as evaluate_html, Options as HTMLOptions};
 use paperclip_evaluator::html::serializer::serialize as serialize_html;
-use paperclip_proto::ast::graph_ext::Graph;
+use paperclip_proto::ast::graph_container::GraphContainer;
 use paperclip_proto::notice::base::NoticeList;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
@@ -74,7 +74,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
     pub async fn compile_files(
         &self,
         file_paths: &Vec<String>,
-        graph: &Graph,
+        graph: &GraphContainer<'_>,
     ) -> Result<BTreeMap<String, String>, NoticeList> {
         let mut all_compiled_files: BTreeMap<String, String> = BTreeMap::new();
         let mut all_compiled_css = self.all_compiled_css.lock().unwrap();
@@ -121,7 +121,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
     async fn compile_dependency<F: FileResolver>(
         &self,
         path: &str,
-        graph: &Graph,
+        graph: &GraphContainer<'_>,
         file_resolver: &F,
     ) -> Result<HashMap<String, String>, NoticeList> {
         let data = self
@@ -142,7 +142,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
     async fn translate_with_options<F: FileResolver>(
         &self,
         path: &str,
-        graph: &Graph,
+        graph: &GraphContainer<'_>,
         file_resolver: &F,
     ) -> Result<HashMap<String, String>, NoticeList> {
         let mut data = HashMap::new();
@@ -168,7 +168,12 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
         Ok(data)
     }
 
-    fn get_ext_translate_options(&self, ext: &str, path: &str, graph: &Graph) -> TranslateOptions {
+    fn get_ext_translate_options(
+        &self,
+        ext: &str,
+        path: &str,
+        graph: &GraphContainer,
+    ) -> TranslateOptions {
         TranslateOptions {
             use_exact_imports: matches!(self.context.options.use_exact_imports, Some(true)),
             global_imports: if ext == "css" {
@@ -183,6 +188,7 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
 
                     imports.extend(
                         graph
+                            .graph
                             .get_all_dependencies(path)
                             .iter()
                             .map(|dep| format!("{}.css", dep.path)),
@@ -198,23 +204,23 @@ impl<'options, IO: FileReader + FileResolver> TargetCompiler<IO> {
 async fn translate<F: FileResolver>(
     into: &str,
     path: &str,
-    graph: &Graph,
+    graph_container: &GraphContainer<'_>,
     file_resolver: &F,
     options: TranslateOptions,
 ) -> Result<Option<String>, NoticeList> {
     Ok(match into {
-        "css" => Some(translate_css(path, graph, file_resolver).await?),
-        "html" => Some(translate_html(path, graph, file_resolver, options).await?),
+        "css" => Some(translate_css(path, graph_container, file_resolver).await?),
+        "html" => Some(translate_html(path, graph_container, file_resolver, options).await?),
         "react.js" => Some(react::compile_code(
-            graph.dependencies.get(path).unwrap(),
-            graph,
+            graph_container.graph.dependencies.get(path).unwrap(),
+            graph_container,
             react::context::Options {
                 use_exact_imports: options.use_exact_imports,
             },
         )?),
         "react.d.ts" => Some(react::compile_typed_definition(
-            graph.dependencies.get(path).unwrap(),
-            graph,
+            graph_container.graph.dependencies.get(path).unwrap(),
+            graph_container,
         )?),
         _ => None,
     })
@@ -237,24 +243,24 @@ fn extract_emit_info(value: &str) -> EmitInfo {
 
 async fn translate_css<F: FileResolver>(
     path: &str,
-    graph: &Graph,
+    graph: &GraphContainer<'_>,
     file_resolver: &F,
 ) -> Result<String, NoticeList> {
     Ok(serialize_css(
-        &evaluate_css(path, graph, file_resolver).await?,
+        &evaluate_css(path, &graph.graph, file_resolver).await?,
     ))
 }
 
 async fn translate_html<F: FileResolver>(
     path: &str,
-    graph: &Graph,
+    graph: &GraphContainer<'_>,
     file_resolver: &F,
     options: TranslateOptions,
 ) -> Result<String, NoticeList> {
     let body = serialize_html(
         &evaluate_html(
             path,
-            graph,
+            &graph.graph,
             file_resolver,
             HTMLOptions {
                 include_components: false,

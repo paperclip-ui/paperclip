@@ -267,16 +267,6 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
     const [{ isDraggingOver }, dropRef] = useDrop(
       {
         accept: [DNDKind.File, DNDKind.Node],
-        // hover: (_, monitor) => {
-        //   const offset = monitor.getClientOffset();
-        //   const rect = headerRef.current?.getBoundingClientRect();
-
-        //   if (offset && rect && monitor.isOver() && monitor.canDrop()) {
-        //     setIsOver(true);
-        //   } else {
-        //     setIsOver(false);
-        //   }
-        // },
         drop(droppedItem: any, monitor) {
           if (monitor.getItemType() === DNDKind.File) {
             dispatch({
@@ -343,10 +333,6 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
       dropRef(current);
       dragRef(current);
     };
-
-    if (item.kind === FSItemKind.File && !isPaperclipFile(item.path)) {
-      return null;
-    }
 
     return (
       <ContextMenu menu={() => shortcuts} onOpen={onContextMenuOpen}>

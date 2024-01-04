@@ -11,6 +11,8 @@ use paperclip_common::get_or_short;
 use paperclip_evaluator::core::utils::get_style_namespace;
 use paperclip_infer::infer;
 use paperclip_proto::ast::{
+    expr_map::ExprMap,
+    graph_container::GraphContainer,
     graph_ext::{Dependency, Graph},
     pc as ast,
     shared::Reference,
@@ -52,7 +54,7 @@ impl Info {
 
 pub fn compile_code(
     dependency: &Dependency,
-    graph: &Graph,
+    graph: &GraphContainer,
     options: Options,
 ) -> Result<String, NoticeList> {
     let mut context = Context::new(&dependency, graph, options);
@@ -210,7 +212,7 @@ fn get_node_script(node: &ast::Node) -> ast::Script {
 
 fn compile_nested_component(node: &ast::Node, context: &mut Context) {
     let component = context
-        .expr_map
+        .expr_map()
         .get_owner_component(&node.get_id())
         .expect("Component must exist");
 
@@ -529,7 +531,7 @@ fn compile_node_children(children: &Vec<ast::Node>, context: &mut Context, inclu
 
 fn compile_node_script(node: &ast::Node, context: &mut Context) -> bool {
     let component = context
-        .expr_map
+        .expr_map()
         .get_owner_component(&node.get_id())
         .expect("Component must exist");
 
@@ -541,7 +543,7 @@ fn compile_node_script(node: &ast::Node, context: &mut Context) -> bool {
     context.start_block();
 
     let inference = infer::Inferencer::new()
-        .infer_node(node, &context.dependency.path, &context.graph)
+        .infer_node(node, &context.dependency.path, &context.graph())
         .expect("Cannot infer node");
 
     for (key, _) in inference {

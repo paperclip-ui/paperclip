@@ -16,7 +16,7 @@ impl<'a> Dependency {
                 None
             })
         } else {
-            println!("Namespace {} does not exist in {}", ns, self.path);
+            // println!("Namespace {} does not exist in {}", ns, self.path);
             None
         }
     }

@@ -1,7 +1,5 @@
 #### Immediate
 
-- ability to drag + drop resource items to canvas
-
 - insert modal
 
   - display files

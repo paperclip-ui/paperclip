@@ -38,7 +38,8 @@ impl MutableVisitor<()> for EditContext<ConvertToComponent> {
         expr: &mut paperclip_proto::ast::pc::Document,
     ) -> VisitorResult<(), EditContext<ConvertToComponent>> {
         let found_expr = get_or_short!(
-            self.expr_map.get_expr(&self.mutation.expression_id),
+            self.expr_map
+                .get_expr_in(&self.mutation.expression_id, &expr.id),
             VisitorResult::Continue
         )
         .clone();

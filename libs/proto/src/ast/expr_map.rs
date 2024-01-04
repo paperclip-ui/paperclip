@@ -75,6 +75,20 @@ impl ExprMap {
     pub fn get_expr<'a>(&'a self, id: &str) -> Option<&'a ExpressionWrapper> {
         self.map.get(id).and_then(|expr| Some(&expr.expr))
     }
+    pub fn get_expr_in<'a>(
+        &'a self,
+        descendent_id: &str,
+        id: &str,
+    ) -> Option<&'a ExpressionWrapper> {
+        self.contains_expr(id, descendent_id)
+            .then(|| self.get_expr(descendent_id))
+            .flatten()
+    }
+
+    pub fn contains_expr<'a>(&'a self, id: &str, descendent_id: &str) -> bool {
+        self.find_ancestor(descendent_id, |ancestor| ancestor.expr.get_id() == id)
+            .is_some()
+    }
 
     pub fn get_expr_path<'a>(&'a self, id: &str) -> Option<&String> {
         let expr_doc = self.get_owner_document(id)?;

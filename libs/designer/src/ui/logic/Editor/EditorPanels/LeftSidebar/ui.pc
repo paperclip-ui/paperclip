@@ -271,7 +271,7 @@ component LeftSidebarHeader {
 }
 
 /**
- * @frame(x: 2038, y: 1206, width: 151, height: 152)
+ * @frame(x: 1999, y: 725, width: 27, height: 28)
 */
 public component AddLayerButton {
     script(src: "./Layers/AddLayerButton.tsx", target: "react", name: "AddLayerButton")

@@ -1,5 +1,25 @@
 #### Immediate
 
+- cut + paste (resource item)
+
+- resource search
+
+  - components
+    - ability to drag to element
+  - tokens
+    - ability to drag onto element
+  - style mixins
+    - ability to drag onto element
+
+- ability to define script on component
+
+  - properties panel
+  - display icon for frames that have controller
+
+- file navigator item
+
+  - open in code editor
+
 - better instance editor
 
 - export public styles, too

@@ -3,13 +3,15 @@ use clap::Args;
 use futures_util::pin_mut;
 use futures_util::stream::StreamExt;
 use paperclip_common::fs::LocalFileReader;
-use paperclip_common::log::notice;
+use paperclip_common::log::{notice, verbose};
 use paperclip_core::config::{ConfigContext, DEFAULT_CONFIG_NAME};
 use paperclip_project::{CompileOptions, LocalIO, Project};
 use paperclip_proto::notice::base::NoticeList;
 use paperclip_validate::print::ToPrettyString;
+use std::fs;
 use std::fs::File;
 use std::io::prelude::*;
+use std::path::Path;
 
 #[derive(Debug, Args)]
 pub struct BuildArgs {
@@ -30,6 +32,11 @@ pub async fn build(args: BuildArgs, cwd: &str) -> Result<(), NoticeList> {
     let fr = LocalFileReader::default();
     let config_context = ConfigContext::load(&cwd, Some(args.config), &fr)?;
     let io = LocalIO::new(config_context.clone());
+
+    if !config_context.get_src_dir().exists() {
+        verbose("Src dir doesn't exist");
+        return Ok(());
+    }
 
     let mut project = Project::new(config_context, io.clone());
 
@@ -53,6 +60,9 @@ pub async fn build(args: BuildArgs, cwd: &str) -> Result<(), NoticeList> {
             if args.print {
                 println!("{}", content);
             } else {
+                let dir = Path::new(&path).parent().unwrap();
+                let _ = fs::create_dir_all(dir.to_str().unwrap());
+
                 let mut file = File::create(path).expect("Unable to create path");
                 file.write_all(content.as_str().as_bytes())
                     .expect("Unable to write contents");

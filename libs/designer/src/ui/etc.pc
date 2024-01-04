@@ -2,6 +2,9 @@ import "./editor.pc" as imp
 import "./theme.pc" as theme
 import "./input.pc" as input
 
+/**
+ * @frame(x: 453, y: -311, width: 1024, height: 768)
+*/
 public component Item {
     variant hover trigger {
         ":hover"
@@ -45,7 +48,6 @@ public component Item {
  * @frame(x: 191, y: 913, width: 107, height: 130)
 */
 public component PlusButton {
-
     render button root(onBlur: onBlur, onClick: onClick, class: class, tabIndex: "-1") {
         style extends theme.icon {
             cursor: pointer
@@ -54,3 +56,4 @@ public component PlusButton {
         }
     }
 }
+

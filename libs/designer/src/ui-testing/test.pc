@@ -1,41 +1,15 @@
 
-public trigger unnamed {
-    ".something"
-    ".something-else"
-}
-
-
 /**
- * @frame(x: 975, y: 112, width: 477, height: 305)
+ * @frame(x: 545, y: -278, width: 934, height: 607)
 */
 public component Test {
     render div {
         style {
             position: relative
+            font-family: sans-serif
+            color: white
         }
-        slot title {
-            text "type to insert"
-        }
-        slot children {
-            text "content"
-        }
+        text "hello world"
     }
-}
-
-Test {
-    insert title {
-    }
-    text "Hello world"
-    text "Hello world2"
-}
-
-/**
- * @frame(x: 1233, y: -301, width: 663, height: 281)
-*/
-div {
-    style {
-        position: relative
-    }
-    div
 }
 

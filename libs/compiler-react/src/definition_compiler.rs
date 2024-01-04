@@ -10,7 +10,6 @@ use anyhow::Result;
 use paperclip_infer::infer::Inferencer;
 use paperclip_infer::types as infer_types;
 use paperclip_proto::ast::{
-    get_expr::GetExpr,
     graph_ext::{Dependency, Graph},
     pc as ast,
 };
@@ -169,15 +168,17 @@ fn compile_inference(inference: &infer_types::Type, context: &mut Context) {
                     format!("{{ as?: any }} & React.ComponentProps<typeof {}>", ref_name).as_str(),
                 );
             } else {
-                let el: ast::Element =
-                    GetExpr::get_expr(&el.id, &context.dependency.get_document())
-                        .expect("Element must exist")
-                        .expr
-                        .try_into()
-                        .expect("Cannot convert into element");
-                let component =
-                    GetExpr::get_owner_component(&el.id, &context.dependency.get_document())
-                        .expect("Inferred element must exist within component");
+                let el: ast::Element = context
+                    .expr_map
+                    .get_expr(&el.id)
+                    .expect("Element must exist")
+                    .clone()
+                    .try_into()
+                    .expect("Cannot convert into element");
+                let component = context
+                    .expr_map
+                    .get_owner_component(&el.id)
+                    .expect("Inferred element must exist within component");
 
                 if contains_script(&el.body) {
                     context.add_buffer(

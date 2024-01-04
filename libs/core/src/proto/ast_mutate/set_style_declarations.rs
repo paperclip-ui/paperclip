@@ -85,11 +85,7 @@ fn add_child_style(
     ctx: &EditContext<SetStyleDeclarations>,
 ) -> VisitorResult<(), EditContext<SetStyleDeclarations>> {
     let mutation = &ctx.mutation;
-    let dependency = ctx.get_dependency();
-
     let mut new_style: ast::pc::Style = parse_style(&mutation_to_style(ctx), &ctx.new_id());
-
-    let mut doc = dependency.document.clone().expect("Document must exist");
 
     let variant_names = mutation
         .variant_ids

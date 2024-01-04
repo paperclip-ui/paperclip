@@ -25,7 +25,6 @@ struct Linter<'a> {
     is_within_var: bool,
     is_within_param: bool,
     config: &'a LintConfig,
-    graph: &'a graph::Graph,
     notices: Rc<RefCell<NoticeList>>,
     expr_map: &'a ExprMap,
 }
@@ -196,7 +195,6 @@ pub fn lint_document<'expr>(
         path,
         current_decl_name: None,
         expr_map: &expr_map,
-        graph,
         is_within_var: false,
         is_within_param: false,
         config,

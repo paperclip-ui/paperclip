@@ -1,6 +1,7 @@
 use paperclip_common::serialize_context::Context as SerializeContext;
 use paperclip_proto::ast::{
     self,
+    expr_map::ExprMap,
     graph_ext::{Dependency, Graph},
 };
 use std::cell::RefCell;
@@ -11,6 +12,7 @@ pub struct Context<'dependency> {
     pub content: Rc<RefCell<SerializeContext>>,
     pub dependency: &'dependency Dependency,
     pub graph: &'dependency Graph,
+    pub expr_map: ExprMap,
     pub current_component: Option<&'dependency ast::pc::Component>,
     pub ctx_name: String,
     pub options: Options,
@@ -32,6 +34,7 @@ impl<'dependency> Context<'dependency> {
             current_component: None,
             options,
             graph,
+            expr_map: ExprMap::from_graph(graph),
             dependency,
             ctx_name: "props".to_string(),
         }

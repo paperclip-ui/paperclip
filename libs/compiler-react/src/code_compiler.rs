@@ -11,9 +11,8 @@ use paperclip_common::get_or_short;
 use paperclip_evaluator::core::utils::get_style_namespace;
 use paperclip_infer::infer;
 use paperclip_proto::ast::{
-    expr_map::ExprMap,
     graph_container::GraphContainer,
-    graph_ext::{Dependency, Graph},
+    graph_ext::Dependency,
     pc as ast,
     shared::Reference,
     visit::{MutableVisitable, MutableVisitor, VisitorResult},

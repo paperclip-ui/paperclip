@@ -9,11 +9,7 @@ use super::context::Context;
 use anyhow::Result;
 use paperclip_infer::infer::Inferencer;
 use paperclip_infer::types as infer_types;
-use paperclip_proto::ast::{
-    graph_container::GraphContainer,
-    graph_ext::{Dependency, Graph},
-    pc as ast,
-};
+use paperclip_proto::ast::{graph_container::GraphContainer, graph_ext::Dependency, pc as ast};
 use paperclip_proto::notice::base::NoticeList;
 
 pub fn compile_typed_definition(

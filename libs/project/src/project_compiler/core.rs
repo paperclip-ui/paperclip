@@ -14,7 +14,6 @@ use paperclip_proto::ast::graph_ext::Graph;
 use paperclip_proto::notice::base::NoticeList;
 use paperclip_validate::validate::{self, ValidateOptions};
 use std::collections::HashMap;
-use std::rc::Rc;
 use std::sync::{Arc, Mutex};
 
 pub struct CompileOptions {

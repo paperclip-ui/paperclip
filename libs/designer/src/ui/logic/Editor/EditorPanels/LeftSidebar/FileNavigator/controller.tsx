@@ -116,7 +116,8 @@ export const FileNavigator = (Base: React.FC<BaseFileNavigatorProps>) =>
               preselectedResource={preselectedResource}
             />
           ) : (
-            state.projectDirectory?.items.map((item) => {
+            state.projectDirectory?.items &&
+            sortFsItems(state.projectDirectory.items).map((item) => {
               return <ui.FSItem key={item.path} item={item} depth={1} />;
             })
           )
@@ -228,7 +229,7 @@ export const FilteredFile =
         })}
         basename={resource.name}
         dirname={resource.parentPath.replace(rootDir, "")}
-        dirTitle={dirname}
+        dirTitle={basename}
       />
     );
   };
@@ -344,7 +345,7 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
               style: { "--depth": depth, opacity },
               onClick: onClick,
             }}
-            header={dirname(item.path)}
+            header={basename(item.path)}
             headerClass={cx({
               file: item.kind === FSItemKind.File,
               folder: item.kind === FSItemKind.Directory,
@@ -355,7 +356,7 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
             })}
           >
             {item.kind === FSItemKind.Directory && open
-              ? item.items.map((item) => {
+              ? sortFsItems(item.items).map((item) => {
                   return (
                     <ui.FSItem key={item.path} item={item} depth={depth + 1} />
                   );
@@ -367,4 +368,20 @@ export const FSNavigatorItem = (Base: React.FC<BaseFSItemProps>) =>
     );
   };
 
-const dirname = memoize((path: string) => path.split("/").pop());
+const sortFsItems = memoize((items: FSItem[]) =>
+  items
+    .concat()
+
+    // sort directories at top
+    .sort((a, b) => {
+      if (a.kind === b.kind) {
+        return basename(a.path).toLowerCase().charAt(0) >
+          basename(b.path).toLowerCase().charAt(0)
+          ? 1
+          : -1;
+      }
+      return a.kind === FSItemKind.Directory ? -1 : 1;
+    })
+);
+
+const basename = memoize((path: string) => path.split("/").pop());

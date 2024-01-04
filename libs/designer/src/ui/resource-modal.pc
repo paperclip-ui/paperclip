@@ -4,7 +4,7 @@ import "./input.pc" as input
 import "./etc.pc" as etc
 
 /**
- * @frame(x: -1, y: 0, width: 1024, height: 768)
+ * @frame(x: 1205, y: -3, width: 1024, height: 768)
 */
 public component Tab {
     variant selected trigger {
@@ -26,6 +26,9 @@ public component Tab {
     }
 }
 
+/**
+ * @frame(x: 70, y: 890, width: 1024, height: 768)
+*/
 public component Tabs {
     render div {
         style {
@@ -51,6 +54,9 @@ public component Tabs {
     }
 }
 
+/**
+ * @frame(x: -108, y: -335, width: 1024, height: 768)
+*/
 public component Container {
     render div {
         style {

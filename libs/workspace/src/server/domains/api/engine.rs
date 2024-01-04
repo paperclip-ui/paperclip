@@ -32,6 +32,15 @@ async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
     } else {
         portpicker::pick_unused_port().expect("No ports free")
     };
+    let project_dir = ctx
+        .store
+        .lock()
+        .unwrap()
+        .state
+        .options
+        .config_context
+        .directory
+        .clone();
 
     let addr = ([127, 0, 0, 1], port).into();
 
@@ -45,6 +54,7 @@ async fn start_server<TIO: ServerIO>(ctx: ServerEngineContext<TIO>) -> Result<()
         let cors = warp::cors().allow_any_origin();
         let route = routes::screenshots_route()
             .or(routes::static_files_route())
+            .or(routes::assets_route(project_dir.clone()))
             .with(cors);
 
         let mut warp = warp::service(route);

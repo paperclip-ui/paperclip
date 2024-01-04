@@ -1,5 +1,9 @@
 #### Immediate
 
+- Return NoticeResult after editing graph
+
+  - Display message if error comes up
+
 - assets
 
   - display svg / png in resources

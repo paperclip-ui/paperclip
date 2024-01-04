@@ -1,3 +1,4 @@
+import "ui/theme.pc" as module
 
 /**
  * @frame(width: 1024, height: 768, x: 1457, y: -176)
@@ -38,7 +39,6 @@ public component FrameTitle {
             left: 0px
             color: white
             opacity: 0.5
-
             width: 100%
             display: flex
             justify-content: space-between
@@ -55,3 +55,4 @@ public component FrameTitle {
         }
     }
 }
+

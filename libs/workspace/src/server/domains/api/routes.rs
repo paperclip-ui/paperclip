@@ -35,6 +35,11 @@ impl Reply for StaticFile {
 pub fn screenshots_route() -> impl Filter<Extract = (warp::fs::File,), Error = Rejection> + Clone {
     warp::path("screenshots").and(warp::fs::dir(tmp_screenshot_dir()))
 }
+pub fn assets_route(
+    cwd: String,
+) -> impl Filter<Extract = (warp::fs::File,), Error = Rejection> + Clone {
+    warp::path("assets").and(warp::fs::dir(cwd))
+}
 
 pub fn static_files_route() -> impl Filter<Extract = (StaticFile,), Error = Rejection> + Clone {
     any().and(path_from_tail()).and_then(static_file_reply)

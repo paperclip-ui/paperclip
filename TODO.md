@@ -16,6 +16,15 @@
     - right click directory
     - right click file
 
+- Polish
+
+  - hide file navigator when current file is open
+  - display arrow in layer
+
+- resource panel
+
+  - display preview (50x50)
+
 - resource search
 
   - components

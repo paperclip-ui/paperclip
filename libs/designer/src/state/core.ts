@@ -1,6 +1,7 @@
 import {
   FileResponse,
   ProjectInfo,
+  Resource,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { Box, Point, Size, Transform } from "./geom";
 
@@ -102,7 +103,7 @@ export type DesignerState = {
   insertMode?: InsertMode;
   focusOnFileSearch?: boolean;
   resourceFilePaths: string[];
-  searchedFilePaths?: string[];
+  searchedResources?: Resource[];
   selectedFilePath?: string;
   expandedDirs?: string[];
   searchedFilePathRoot?: string;
@@ -277,7 +278,7 @@ export const getFocusOnFileFilter = (state: DesignerState) =>
   state.focusOnFileSearch;
 
 export const getSearchedFiles = (state: DesignerState) =>
-  state.searchedFilePaths || [];
+  state.searchedResources || [];
 export const getSearchedFilesRoot = (state: DesignerState) =>
   state.searchedFilePathRoot;
 

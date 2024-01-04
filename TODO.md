@@ -1,5 +1,9 @@
 #### Immediate
 
+- resource window should also include
+
+  - atoms
+
 - cut + paste (resource item)
 - Symbol Table in ExprMap
 

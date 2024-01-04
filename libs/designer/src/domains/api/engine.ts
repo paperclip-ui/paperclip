@@ -230,10 +230,11 @@ const createActions = (
       return info;
     },
     async searchFiles(query: string) {
-      const { paths, rootDir } = await client.SearchFiles({ query }, null);
+      const { items, rootDir } = await client.SearchResources({ query }, null);
+
       dispatch({
         type: "designer-engine/fileSearchResult",
-        payload: { paths, rootDir },
+        payload: { items, rootDir },
       });
     },
   };

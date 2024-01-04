@@ -17,8 +17,9 @@ use paperclip_proto::service::designer::{
     CreateDesignFileRequest, CreateDesignFileResponse, CreateFileRequest, DeleteFileRequest,
     DesignServerEvent, Empty, FileChanged, FileChangedKind, FileRequest, FileResponse, FsItem,
     ModulesEvaluated, MoveFileRequest, OpenCodeEditorRequest, OpenFileInNavigatorRequest,
-    ProjectInfo, ReadDirectoryRequest, ReadDirectoryResponse, ResourceFiles, ScreenshotCaptured,
-    SearchFilesRequest, SearchFilesResponse, UpdateFileRequest,
+    ProjectInfo, ReadDirectoryRequest, ReadDirectoryResponse, Resource, ResourceFiles,
+    ResourceKind, ScreenshotCaptured, SearchResourcesRequest, SearchResourcesResponse,
+    UpdateFileRequest,
 };
 use path_absolutize::*;
 use run_script::ScriptOptions;
@@ -80,10 +81,10 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
         }
     }
 
-    async fn search_files(
+    async fn search_resources(
         &self,
-        request: Request<SearchFilesRequest>,
-    ) -> Result<Response<SearchFilesResponse>, Status> {
+        request: Request<SearchResourcesRequest>,
+    ) -> Result<Response<SearchResourcesResponse>, Status> {
         let query = request.get_ref().query.clone();
         let store = self.ctx.store.clone();
         let project_dir = &store.lock().unwrap().state.options.config_context.directory;
@@ -96,13 +97,13 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
 
         verbose(&format!("Search {}", pat));
 
-        let mut paths: Vec<String> = vec![];
+        let mut items: Vec<Resource> = vec![];
 
-        find_files(project_dir, &query, &mut paths);
+        find_files(project_dir, &query, &mut items);
 
-        Ok(Response::new(SearchFilesResponse {
+        Ok(Response::new(SearchResourcesResponse {
             root_dir: project_dir.clone(),
-            paths,
+            items,
         }))
     }
 
@@ -542,7 +543,7 @@ impl<TIO: ServerIO> Designer for DesignerService<TIO> {
     }
 }
 
-fn find_files(dir: &str, pattern: &str, found: &mut Vec<String>) {
+fn find_files(dir: &str, pattern: &str, found: &mut Vec<Resource>) {
     for entry in std::fs::read_dir(dir).expect("Can't read dir") {
         let entry = entry.expect("Can't read entry");
         let is_dir = entry.metadata().expect("Can't get metadata").is_dir();
@@ -561,7 +562,14 @@ fn find_files(dir: &str, pattern: &str, found: &mut Vec<String>) {
                 .to_lowercase()
                 .contains(&pattern.to_string().to_lowercase())
             {
-                found.push(path.to_string());
+                let parts = Path::new(&path);
+
+                found.push(Resource {
+                    kind: ResourceKind::File2.into(),
+                    id: path.to_string(),
+                    parent_path: parts.parent().unwrap().to_str().unwrap().to_string(),
+                    name: parts.file_name().unwrap().to_str().unwrap().to_string(),
+                });
             }
         }
     }

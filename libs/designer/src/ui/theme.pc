@@ -80,7 +80,7 @@ public style input {
     border: none
     color: currentColor
     min-height: var(inputHeight)
-    transition: 0.2
+    transition: 0.2s
 }
 
 public style card {

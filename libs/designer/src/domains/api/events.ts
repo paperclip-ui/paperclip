@@ -3,6 +3,7 @@ import {
   FileResponse,
   ProjectInfo,
   ReadDirectoryResponse,
+  Resource,
 } from "@paperclip-ui/proto/lib/generated/service/designer";
 import { BaseEvent } from "@paperclip-ui/common";
 import { Graph } from "@paperclip-ui/proto/lib/generated/ast/graph";
@@ -29,7 +30,7 @@ export type FileSearchResult = BaseEvent<
   "designer-engine/fileSearchResult",
   {
     rootDir: string;
-    paths: string[];
+    items: Resource[];
   }
 >;
 export type ProjectInfoResult = BaseEvent<

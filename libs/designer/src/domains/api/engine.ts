@@ -982,12 +982,7 @@ const createEventHandler = (actions: Actions) => {
     actions.applyChanges(changes);
   };
 
-  const handleDroppedFile = async (
-    { payload: { item } }: ToolsLayerDrop,
-    state: DesignerState
-  ) => {
-    const files = item.files as File[];
-
+  const saveFiles = async (files: File[], state: DesignerState) => {
     const currentFilePath = getCurrentFilePath(state);
     const currentDir = currentFilePath
       ? dirname(currentFilePath)
@@ -1004,7 +999,35 @@ const createEventHandler = (actions: Actions) => {
       })
     );
 
-    // console.log("FILE", event);
+    // return files.map((file) => {
+    //   return (currentDir + "/" + file.name).replace(
+    //     state.projectDirectory + "/",
+    //     ""
+    //   );
+    // });
+  };
+
+  const handleDroppedFile = async (
+    { payload: { item } }: ToolsLayerDrop,
+    state: DesignerState
+  ) => {
+    const files = item.files as File[];
+    const document = getCurrentDependency(state).document;
+
+    await saveFiles(files, state);
+
+    // drop files onto the canvas
+    actions.applyChanges(
+      files.map(
+        (file) =>
+          ({
+            appendChild: {
+              parentId: document.id,
+              childSource: `img(src: "./${file.name}")`,
+            },
+          } as Mutation)
+      )
+    );
   };
 
   const handleDropItem = (event: ToolsLayerDrop, state: DesignerState) => {
